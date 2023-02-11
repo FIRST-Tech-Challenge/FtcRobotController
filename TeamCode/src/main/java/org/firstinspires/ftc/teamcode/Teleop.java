@@ -99,7 +99,6 @@ public abstract class Teleop extends LinearOpMode {
     /* Declare OpMode members. */
     HardwareSlimbot robot = new HardwareSlimbot();
 
-
     //Files to access the algorithm constants
     File wheelBaseSeparationFile  = AppUtil.getInstance().getSettingsFile("wheelBaseSeparation.txt");
     File horizontalTickOffsetFile = AppUtil.getInstance().getSettingsFile("horizontalTickOffset.txt");
@@ -351,6 +350,7 @@ public abstract class Teleop extends LinearOpMode {
             rearLeft   = -fineStrafeSpeed;
             rearRight  =  fineStrafeSpeed;
         }
+
 /*  INSTEAD USE LEFT/RIGHT FOR FINE-TURNING CONTROL
         else if( gamepad1.dpad_left ) {
             telemetry.addData("Dpad","TURN");
@@ -367,7 +367,9 @@ public abstract class Teleop extends LinearOpMode {
             rearRight  = -fineTurnSpeed;
         }
  */
- /*      else if( autoDrive || (gamepad1_touchpad_now && !gamepad1_touchpad_last) ) {
+
+ /* TOUCHPAD CONTROL FOR AUTO-DRIVE NOT USED FOR TELEOP THIS YEAR
+       else if( autoDrive || (gamepad1_touchpad_now && !gamepad1_touchpad_last) ) {
             telemetry.addData("Touchpad","FORWARD");
             frontLeft  = autoDriveSpeed;
             frontRight = autoDriveSpeed;
@@ -375,7 +377,6 @@ public abstract class Teleop extends LinearOpMode {
             rearRight  = autoDriveSpeed;
             autoDrive = true;
         }
-
   */
         else {
             dPadMode = false;
@@ -760,13 +761,13 @@ public abstract class Teleop extends LinearOpMode {
         else if( manual_turret_control || turretTweaked ) {
             // Does user want to rotate turret LEFT (negative joystick input)
             if( safeToManuallyLeft && (gamepad2_left_stick < -0.05) ) {
-                double motorPower = gamepad2_left_stick/4.0; // NEGATIVE
+                double motorPower = 0.50 * gamepad2_left_stick; // NEGATIVE
                 robot.turretMotor.setPower( motorPower );   // 0% to -25%
                 turretTweaked = true;
             }
             // Does user want to rotate turret RIGHT (positive joystick input)
             else if( safeToManuallyRight && (gamepad2_left_stick > 0.05) ) {
-                double motorPower = gamepad2_left_stick/4.0; // POSITIVE
+                double motorPower = 0.50 * gamepad2_left_stick; // POSITIVE
                 robot.turretMotor.setPower( motorPower );   // 0% to +25%
                 turretTweaked = true;
             }
@@ -899,13 +900,13 @@ public abstract class Teleop extends LinearOpMode {
         }
         //===================================================================
         // Check for input on the LEFT TRIGGER
-        else if( gamepad2.left_trigger > 0.5  )
+        else if( gamepad2.left_trigger > 0.50  )
         {   // rotate collector toward -0.50
             double newTilt = robot.currentTilt - 0.003;
             robot.grabberSetTilt( newTilt );
         }
         // Check for input on the RIGHT TRIGGER
-        else if( gamepad2.right_trigger > 0.5  )
+        else if( gamepad2.right_trigger > 0.50  )
         {   // rotate collector toward +0.50
             double newTilt = robot.currentTilt + 0.003;
             robot.grabberSetTilt( newTilt );

@@ -78,55 +78,6 @@ public class TurretPIDTester extends LinearOpMode
     }
 
     boolean turretMotorPIDAuto = false;
-    boolean turretMotorLogging = false;
-    boolean turretMotorLogEnable = false;
-    public final static int TURRETMOTORLOG_SIZE  = 128;   // 128 entries = 2+ seconds @ 16msec/60Hz
-    double turretAngleTarget;
-    int turretMotorCycles = 0;
-    int turretMotorWait   = 0;
-    int turretMotorLogIndex = 0;
-    protected double[]      turretMotorLogTime   = new double[TURRETMOTORLOG_SIZE];  // msec
-    protected double[]      turretMotorLogAngle  = new double[TURRETMOTORLOG_SIZE];  // Angle [degrees]
-    protected double[]      turretMotorLogPwr    = new double[TURRETMOTORLOG_SIZE];  // Power
-    protected double[]      turretMotorLogAmps   = new double[TURRETMOTORLOG_SIZE];  // mAmp
-    protected ElapsedTime turretMotorTimer     = new ElapsedTime();
-    /*--------------------------------------------------------------------------------------------*/
-    public void writeTurretLog() {
-        // Are we even logging these events?
-        if( !turretMotorLogging) return;
-        // Movement must be complete (disable further logging to memory)
-        turretMotorLogEnable = false;
-        // Create a subdirectory based on DATE
-        String dateString = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(new Date());
-        String directoryPath = Environment.getExternalStorageDirectory().getPath() + "//FIRST//TurretMotor//" + dateString;
-        // Ensure that directory path exists
-        File directory = new File(directoryPath);
-        directory.mkdirs();
-        // Create a filename based on TIME
-        String timeString = new SimpleDateFormat("hh-mm-ss", Locale.getDefault()).format(new Date());
-        String filePath = directoryPath + "/" + "turret_" + timeString + ".txt";
-        // Open the file
-        FileWriter turretLog;
-        try {
-            turretLog = new FileWriter(filePath, false);
-            turretLog.write("TurretMotor\r\n");
-            turretLog.write("Target Angle," + turretAngleTarget + "\r\n");
-            // Log Column Headings
-            turretLog.write("msec,pwr,mAmp,angle\r\n");
-            // Log all the data recorded
-            for( int i=0; i<turretMotorLogIndex; i++ ) {
-                String msecString = String.format("%.3f, ", turretMotorLogTime[i] );
-                String pwrString  = String.format("%.3f, ", turretMotorLogPwr[i]  );
-                String ampString  = String.format("%.0f, ", turretMotorLogAmps[i] );
-                String degString  = String.format("%.2f\r\n", turretMotorLogAngle[i]  );
-                turretLog.write( msecString + pwrString + ampString + degString );
-            }
-            turretLog.flush();
-            turretLog.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    } // writeTurretLog()
 
     ElapsedTime intakeTimer = new ElapsedTime();
     /*--------------------------------------------------------------------------------------------*/
@@ -289,7 +240,7 @@ public class TurretPIDTester extends LinearOpMode
 
         oldWay.reset();
         // Right
-        performTeleOldLift( 21.9, -50.5 );
+        //performTeleOldLift( 21.9, -50.5 );
         // Left
         //performTeleOldLift ( -21.9, 50.5 );
         oldTime = oldWay.milliseconds();
@@ -366,19 +317,4 @@ public class TurretPIDTester extends LinearOpMode
         telemetry.update();
     } // logPid
 
-    /**
-     * Ensure angle is in the range of -180 to +180 deg (-PI to +PI)
-     * This function won't have to be copied, it is part of auto base.
-     * @param angleDegrees
-     * @return
-     */
-    public double AngleWrapDegrees( double angleDegrees ){
-        while( angleDegrees < -180 ) {
-            angleDegrees += 360.0;
-        }
-        while( angleDegrees > 180 ){
-            angleDegrees -= 360.0;
-        }
-        return angleDegrees;
-    } // AngleWrapDegrees
 }
