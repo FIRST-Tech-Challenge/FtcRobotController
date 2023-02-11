@@ -30,11 +30,13 @@ public abstract class Teleop extends LinearOpMode {
     boolean gamepad1_l_bumper_last,   gamepad1_l_bumper_now   = false;
     boolean gamepad1_r_bumper_last,   gamepad1_r_bumper_now   = false;
     boolean gamepad1_touchpad_last,   gamepad1_touchpad_now   = false;  // autodrive to cone storage area
+    boolean gamepad1_l_trigger_last,  gamepad1_l_trigger_now  = false;
+    boolean gamepad1_r_trigger_last,  gamepad1_r_trigger_now  = false;
 
-    boolean gamepad2_triangle_last,   gamepad2_triangle_now   = false;  // Raise lift to TRANSPORT position
+    boolean gamepad2_triangle_last,   gamepad2_triangle_now   = false;  // Lower lift to collect from current stack height
     boolean gamepad2_circle_last,     gamepad2_circle_now     = false;  // Flip intake (toggle)
     boolean gamepad2_cross_last,      gamepad2_cross_now      = false;  // Lower lift to COLLECT position
-    boolean gamepad2_square_last,     gamepad2_square_now     = false;  // UNUSED
+    boolean gamepad2_square_last,     gamepad2_square_now     = false;  // Raise lift to TRANSPORT position
     boolean gamepad2_dpad_up_last,    gamepad2_dpad_up_now    = false;  // Lift to HIGH junction
     boolean gamepad2_dpad_down_last,  gamepad2_dpad_down_now  = false;  // Lift to MEDIUM junction
     boolean gamepad2_dpad_left_last,  gamepad2_dpad_left_now  = false;  // Lift to LOW junction
@@ -85,9 +87,13 @@ public abstract class Teleop extends LinearOpMode {
     double    liftTarget             = 0.0;
     boolean   liftTargetUpward       = false;
     boolean   liftFrontToBack        = false;  // safer to assume this, since smaller rotation involved if we're wrong
+    boolean   collectingFromStack    = false;
+    int       conesOnStack           = 2;
+    boolean   needCycleReset         = false; // Have we cycled on the high junction and need to reset the lift and turret for collecting?
 
     /* Declare OpMode members. */
     HardwareSlimbot robot = new HardwareSlimbot();
+
 
     //Files to access the algorithm constants
     File wheelBaseSeparationFile  = AppUtil.getInstance().getSettingsFile("wheelBaseSeparation.txt");
@@ -175,6 +181,8 @@ public abstract class Teleop extends LinearOpMode {
             // Execute any automatic movements
             robot.liftPosRun();
             robot.turretPosRun(true);
+            robot.liftPIDPosRun(true);
+            robot.turretPIDPosRun(true);
 
             // Check for an OFF-to-ON toggle of the gamepad1 SQUARE button (toggles DRIVER-CENTRIC drive control)
             if( gamepad1_square_now && !gamepad1_square_last)
@@ -279,6 +287,8 @@ public abstract class Teleop extends LinearOpMode {
         gamepad1_l_bumper_last   = gamepad1_l_bumper_now;    gamepad1_l_bumper_now   = gamepad1.left_bumper;
         gamepad1_r_bumper_last   = gamepad1_r_bumper_now;    gamepad1_r_bumper_now   = gamepad1.right_bumper;
 //      gamepad1_touchpad_last   = gamepad1_touchpad_now;    gamepad1_touchpad_now   = gamepad1.touchpad;
+        gamepad1_l_trigger_last  = gamepad1_l_trigger_now;   gamepad1_l_trigger_now  = (gamepad1.left_trigger >= 0.5);
+        gamepad1_r_trigger_last  = gamepad1_r_trigger_now;   gamepad1_r_trigger_now  = (gamepad1.right_trigger >= 0.5);
     } // captureGamepad1Buttons
 
     /*---------------------------------------------------------------------------------*/
@@ -351,7 +361,7 @@ public abstract class Teleop extends LinearOpMode {
             rearRight  = -fineTurnSpeed;
         }
  */
-        else if( autoDrive || (gamepad1_touchpad_now && !gamepad1_touchpad_last) ) {
+ /*      else if( autoDrive || (gamepad1_touchpad_now && !gamepad1_touchpad_last) ) {
             telemetry.addData("Touchpad","FORWARD");
             frontLeft  = autoDriveSpeed;
             frontRight = autoDriveSpeed;
@@ -359,6 +369,8 @@ public abstract class Teleop extends LinearOpMode {
             rearRight  = autoDriveSpeed;
             autoDrive = true;
         }
+
+  */
         else {
             dPadMode = false;
         }
@@ -645,7 +657,7 @@ public abstract class Teleop extends LinearOpMode {
               robot.turretPosInit( -50.5 );
            }
         }
-        // Check for an OFF-to-ON toggle of the gamepad2 RIGHT BUMPER
+        // Check for an OFF-to-ON toggle of the gamepad1 RIGHT BUMPER
         else if( gamepad1_r_bumper_now && !gamepad1_r_bumper_last )
         {
            // Is the driver assisting with COLLECTION? (rotate turret toward substation)
@@ -657,6 +669,39 @@ public abstract class Teleop extends LinearOpMode {
               robot.turretPosInit( +50.5 );
            }
         }
+        //===================================================================
+        // Check if gamepad1 RIGHT TRIGGER has a value >= 0.5
+        else if ( gamepad1_l_trigger_now && !gamepad1_l_trigger_last)
+        {
+            // Are we trying to collect or cycle?
+            if(!needCycleReset)
+            {
+                robot.performCycle(robot.TURRET_ANGLE_CYCLE_L);
+                needCycleReset = true;
+            }
+            else
+            {
+                robot.resetCycle(robot.TURRET_ANGLE_COLLECT_L);
+                needCycleReset = false;
+            }
+        }
+
+        // Check if gamepad1 LEFT TRIGGER has a value >= 0.5
+        else if ( gamepad1_r_trigger_now && !gamepad1_r_trigger_last )
+        {
+            // Are we trying to collect or cycle?
+            if(!needCycleReset)
+            {
+                robot.performCycle(robot.TURRET_ANGLE_CYCLE_R);
+                needCycleReset = true;
+            }
+            else
+            {
+                robot.resetCycle(robot.TURRET_ANGLE_COLLECT_R);
+                needCycleReset = false;
+            }
+        }
+
         //===================================================================
         else if( manual_turret_control || turretTweaked ) {
             // Does user want to rotate turret LEFT (negative joystick input)
@@ -712,6 +757,8 @@ public abstract class Teleop extends LinearOpMode {
         if( gamepad2_cross_now && !gamepad2_cross_last)
         {   // Lower lift to COLLECT position and adjust collector tilt horizontal
             robot.grabberSpinStop();
+            // Were we previously collecting from the stack?
+            collectingFromStack = false;
             robot.turretPosInit( robot.TURRET_ANGLE_CENTER );
             needFlip       = false;  // collector upright for grabbing
             grabberTarget1 = robot.GRABBER_TILT_GRAB;
@@ -720,6 +767,35 @@ public abstract class Teleop extends LinearOpMode {
             liftTargetUpward = (liftTarget < robot.liftAngle)? true : false;
             liftCycleCount = LIFT_CYCLECOUNT_START;
             liftFrontToBack = false;  // lowering (BackToFront)
+
+        }
+        // Check for an OFF-to-ON toggle of the gamepad2 TRIANGLE button
+        else if( gamepad2_triangle_now && !gamepad2_triangle_last)
+        {   // Lower lift to COLLECT FROM STACK position and adjust collector tilt angled
+            robot.grabberSpinStop();
+            robot.turretPosInit( robot.TURRET_ANGLE_CENTER );
+            needFlip       = false;  // collector upright for grabbing
+            grabberTarget1 = robot.GRABBER_TILT_GRAB;
+            grabberTarget2 = robot.GRABBER_TILT_GRAB2;
+
+            //If we're at the 5th cone height, reset to 2nd cone height
+            if(conesOnStack == 5)
+            {
+                conesOnStack = 2;
+            }
+            else
+            {
+                conesOnStack++;
+            }
+
+            // Sets lift position to a height dependent on how many cones are left on the stack
+            liftTarget = robot.coneStackHeights[conesOnStack -1];
+
+            liftTargetUpward = (liftTarget < robot.liftAngle)? true : false;
+            liftCycleCount = LIFT_CYCLECOUNT_START;
+            liftFrontToBack = false;  // lowering (BackToFront)
+            collectingFromStack = true;
+
         }
         // Check for an OFF-to-ON toggle of the gamepad2 CIRCLE button
         else if( gamepad2_circle_now && !gamepad2_circle_last )
@@ -769,13 +845,13 @@ public abstract class Teleop extends LinearOpMode {
         }
         //===================================================================
         // Check for input on the LEFT TRIGGER
-        else if( gamepad2.left_trigger > 0.05  )
+        else if( gamepad2.left_trigger > 0.5  )
         {   // rotate collector toward -0.50
             double newTilt = robot.currentTilt - 0.003;
             robot.grabberSetTilt( newTilt );
         }
         // Check for input on the RIGHT TRIGGER
-        else if( gamepad2.right_trigger > 0.05  )
+        else if( gamepad2.right_trigger > 0.5  )
         {   // rotate collector toward +0.50
             double newTilt = robot.currentTilt + 0.003;
             robot.grabberSetTilt( newTilt );
@@ -785,7 +861,16 @@ public abstract class Teleop extends LinearOpMode {
         else if( gamepad2_dpad_up_now && !gamepad2_dpad_up_last)
         {   // Raise lift to HIGH junction
             robot.grabberSpinStop();
-            grabberTarget1 = robot.GRABBER_TILT_STORE;
+            //Tilts grabber back before raising to prevent knocking stack over
+            if(collectingFromStack)
+            {
+                grabberTarget1 = robot.GRABBER_TILT_GRAB3;
+                collectingFromStack= false;
+            }
+            else
+            {
+                grabberTarget1 = robot.GRABBER_TILT_STORE;
+            }
             needFlip       = (rearScoring)? true : false;  // collector flipped/REAR or normal/FRONT
             grabberTarget2 = (rearScoring)? robot.GRABBER_TILT_BACK_H : robot.GRABBER_TILT_FRONT_H;
             liftTarget     = (rearScoring)? robot.LIFT_ANGLE_HIGH_B   : robot.LIFT_ANGLE_HIGH;
@@ -797,7 +882,16 @@ public abstract class Teleop extends LinearOpMode {
         else if( gamepad2_dpad_left_now && !gamepad2_dpad_left_last)
         {   // Raise lift to MEDIUM junction
             robot.grabberSpinStop();
-            grabberTarget1 = robot.GRABBER_TILT_STORE;
+            //Tilts grabber back before raising to prevent knocking stack over
+            if(collectingFromStack)
+            {
+                grabberTarget1 = robot.GRABBER_TILT_GRAB3;
+                collectingFromStack= false;
+            }
+            else
+            {
+                grabberTarget1 = robot.GRABBER_TILT_STORE;
+            }
             needFlip       = (rearScoring)? true : false;  // collector flipped/REAR or normal/FRONT
             grabberTarget2 = (rearScoring)? robot.GRABBER_TILT_BACK_M : robot.GRABBER_TILT_FRONT_M;
             liftTarget     = (rearScoring)? robot.LIFT_ANGLE_MED_B   : robot.LIFT_ANGLE_MED;
@@ -809,8 +903,17 @@ public abstract class Teleop extends LinearOpMode {
         else if( gamepad2_dpad_down_now && !gamepad2_dpad_down_last)
         {   // Raise lift to LOW junction
             robot.grabberSpinStop();
-            robot.grabberSetTilt( robot.GRABBER_TILT_FRONT_L );
+            //Tilts grabber back before raising to prevent knocking stack over
+            if(collectingFromStack)
+            {
+                grabberTarget1 = robot.GRABBER_TILT_GRAB3;
+            }
+            else
+            {
+                grabberTarget1 = robot.GRABBER_TILT_FRONT_L;
+            }
             robot.liftPosInit( robot.LIFT_ANGLE_LOW );
+            grabberTarget2 = robot.GRABBER_TILT_FRONT_L;
             liftFrontToBack = true;  // lifting
         }
         // Check for an OFF-to-ON toggle of the gamepad2 DPAD RIGHT
@@ -904,6 +1007,12 @@ public abstract class Teleop extends LinearOpMode {
                     grabberRunTimer.reset();
                     grabberLifting = true;
                 }
+                // Did we collect a cone from the cone stack?
+                if(collectingFromStack && !robot.topConeSensor.getState())
+                {
+                    collectingFromStack = false;
+                }
+
                 // Is second phase complete?
                 else if( (elapsedTime >= 300) && grabberLifting ) {
                     // halt lift motors
