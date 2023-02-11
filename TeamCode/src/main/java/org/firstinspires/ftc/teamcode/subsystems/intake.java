@@ -1,6 +1,5 @@
 package org.firstinspires.ftc.teamcode.subsystems;
 
-import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.teamcode.teamUtil.configNames;
@@ -9,27 +8,40 @@ import org.firstinspires.ftc.teamcode.teamUtil.robotConstants;
 
 public class intake {
     robotConfig r;
-    Servo intake;
-    private double intakePos;
+
+    public enum intakePos{
+        OPEN(0),
+        CLOSED(1);
+
+        intakePos(double position){
+            this.position = position;
+        }
+
+        private final double position;
+
+        public double getPosition() {
+            return position;
+        }
+    }
+
+    private final Servo intake;
+    private double intakePosition;
 
     public intake(robotConfig r) {
         this.r = r;
-
         intake = r.hardwareMap.get(Servo.class, configNames.intake);
         intake.scaleRange(robotConstants.intakeOpen, robotConstants.intakeClosed);
-        setPos(0);
     }
 
-    /**
-     sets the wrist target position for the wrist servo.
-     robotConstants.wristFront and robotConstants.wristBack have been set to 0 and 1.0 respectively
-     */
-    public void setPos(double targetPos)    {
-        intakePos = targetPos;
+    public void freeTargetPosition(double targetPos){
+        this.intakePosition = targetPos;
+    }
+
+    public void presetTargetPosition(intakePos intakePos){
+        this.intakePosition = intakePos.getPosition();
     }
 
     public void update(){
-        intake.setPosition(intakePos);
+        intake.setPosition(intakePosition);
     }
-
 }

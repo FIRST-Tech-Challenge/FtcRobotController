@@ -2,7 +2,15 @@ package org.firstinspires.ftc.teamcode.subsystems;
 
 import static java.lang.Double.isNaN;
 
+import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
+import com.qualcomm.robotcore.hardware.IMU;
+
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
+import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
+import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 import org.firstinspires.ftc.teamcode.teamUtil.angle;
+import org.firstinspires.ftc.teamcode.teamUtil.configNames;
 import org.firstinspires.ftc.teamcode.teamUtil.log;
 import org.firstinspires.ftc.teamcode.teamUtil.pose2D;
 import org.firstinspires.ftc.teamcode.teamUtil.robotConfig;
@@ -16,6 +24,8 @@ public class swerveDriveBase {
 
     static public swerveModule left;
     static public swerveModule right;
+
+    public static IMU imu;
 
     public static pose2D leftPose2D;
     public static pose2D rightPose2D;
@@ -35,6 +45,20 @@ public class swerveDriveBase {
         swerveDriveBase.enabledModules = enabledModules;
         swerveDriveBase.r = r;
 
+        imu = r.hardwareMap.get(IMU.class, configNames.imu);
+        imu.initialize(
+                new IMU.Parameters(
+                        new RevHubOrientationOnRobot(
+                                new Orientation(
+                                        AxesReference.INTRINSIC,
+                                        AxesOrder.ZYX,
+                                        AngleUnit.DEGREES,
+                                        90,0,0, //NO IDEA HOW THESE WORK RN LMAO (kinda)
+                                        0 //ignore, something about time or smth
+                                )
+                        )
+                )
+        );
         switch (enabledModules) {
             case LEFT:
                 left = new swerveModule(r, robotConstants.moduleSides.LEFT);
@@ -83,7 +107,7 @@ public class swerveDriveBase {
                 break;
         }
         robotConfig.previousRobotPose2D = robotConfig.robotPose2D;
-        robotConfig.robotPose2D = pose2D.moduleProcessor(leftPose2D, rightPose2D, enabledModules);
+        robotConfig.robotPose2D = pose2D.moduleProcessor(leftPose2D, rightPose2D, new angle(imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES)), enabledModules);
 
         log.logData(0, targetPose2D.coordinate2D.x);
         log.logData(1, targetPose2D.coordinate2D.y);

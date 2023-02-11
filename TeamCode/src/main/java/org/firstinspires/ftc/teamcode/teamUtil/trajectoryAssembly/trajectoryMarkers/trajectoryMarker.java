@@ -7,6 +7,8 @@ public class trajectoryMarker {
     private double startTime;
     private final markerType markerType;
     private final markerAction markerAction;
+
+    private markerType referenceType;
     private int referenceIndex;
 
     public trajectoryMarker(double startTime, pose2D pose2D, double turnPower){
@@ -20,13 +22,15 @@ public class trajectoryMarker {
 
     /**
      * The user generated action marker, sets it time referentially according to where its added to the pool.
-     * @param referenceIndex the index of the trajectorySegment marker that this action offsets from
+     * @param referenceIndex the index of the referenceType markerType that this action offsets from
+     * @param referenceType the reference type of the trajectoryMarker to refer to
      * @param startTime initially, this should hold the offset from its reference segment, and then on .build() will be overridden and then sorted into the correct space and order
      * @param markerAction the user specified instruction for the robot, this should be a lambda expression or the :: operator, or an @override of the interface method
      */
-    public trajectoryMarker(int referenceIndex, double startTime, markerAction markerAction){
+    public trajectoryMarker(int referenceIndex, markerType referenceType, double startTime, markerAction markerAction){
         this.referenceIndex = referenceIndex;
-        this.startTime = startTime; //temporarily stores an index number before building
+        this.referenceType = referenceType;
+        this.startTime = startTime;
         markerType = org.firstinspires.ftc.teamcode.teamUtil.trajectoryAssembly.trajectoryMarkers.markerType.ACTION;
         this.markerAction = markerAction;
     }
@@ -73,5 +77,9 @@ public class trajectoryMarker {
 
     public int getReferenceIndex() {
         return referenceIndex;
+    }
+
+    public org.firstinspires.ftc.teamcode.teamUtil.trajectoryAssembly.trajectoryMarkers.markerType getReferenceType() {
+        return referenceType;
     }
 }

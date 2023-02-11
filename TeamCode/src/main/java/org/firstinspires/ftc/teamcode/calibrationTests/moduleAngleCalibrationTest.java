@@ -103,7 +103,8 @@ public class moduleAngleCalibrationTest extends LinearOpMode{
                 if (gamepad1.a && !aPressed) {
                     telemetry.addData("Status", "Initialising");
                     telemetry.update();
-                    r = new robotConfig(this, modules);
+                    r = robotConfig.getInstance(this);
+                    r.initSystems(modules);
                     telemetry.addData("Status", "Initialised");
                     telemetry.update();
                     state = testState.SELECT_ROTATIONS;

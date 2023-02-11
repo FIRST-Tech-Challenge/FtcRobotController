@@ -20,7 +20,8 @@ public class swerveTest extends OpMode{
     public void init(){
         telemetry.addData("Status", "Initialising");
         telemetry.update();
-        r = new robotConfig(this, robotConstants.configuredSystems.BOTH_MODULES);
+        r = robotConfig.getInstance(this);
+        r.initSystems(robotConstants.configuredSystems.BOTH_MODULES);
         telemetry.addData("Status", "Initialised");
         telemetry.update();
     }
@@ -38,19 +39,17 @@ public class swerveTest extends OpMode{
 
     @Override
     public void loop(){
-        r.gamepadEX1.action(() -> (r.gamepadEX1.a.isPressed() && r.gamepadEX2.a.onPress()), () -> item1.setValue(true));
+        r.commandControl.conditionalAction(() -> (r.gamepadEX1.a.isPressed() && r.gamepadEX2.a.onPress()), () -> item1.setValue(true));
 
-        r.gamepadEX1.action(() -> (r.gamepadEX1.b.isPressed() && r.gamepadEX2.b.onPress()), () -> item1.setValue(false));
-
-        r.gamepadEX2.x.isPressed();
+        r.commandControl.conditionalAction(() -> (r.gamepadEX1.b.isPressed() && r.gamepadEX2.b.onPress()), () -> item1.setValue(false));
 
         r.encoderRead.encoderBulkRead();
         r.swerve.manualDrive(gamepad1.left_stick_y, gamepad1.left_stick_x, gamepad1.right_stick_x, gamepad1.right_stick_y, (1-gamepad1.right_trigger), false);
-        r.systemsUpdate();
+        r.systemsEndLoopUpdate();
     }
 
     @Override
     public void stop(){
-        robotConfig.closeLogs();
+        r.closeLogs();
     }
 }

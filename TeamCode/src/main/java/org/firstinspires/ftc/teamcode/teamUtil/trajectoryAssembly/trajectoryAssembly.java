@@ -14,6 +14,8 @@ public class trajectoryAssembly {
     private final List<trajectorySegment> trajectorySegments;
     private final log log;
 
+    private markerType lastMarkerType;
+
     public trajectoryAssembly(){
         trajectorySegments = new ArrayList<>();
         trajectoryMarkers = new ArrayList<>();
@@ -27,6 +29,7 @@ public class trajectoryAssembly {
         else{
             this.trajectorySegments.add(new trajectorySegment(trajectorySegments.get(trajectorySegments.size()-1).endPose2D, endPose2D));
         }
+        lastMarkerType = markerType.POSITION;
         return this;
     }
 
@@ -43,12 +46,18 @@ public class trajectoryAssembly {
         else{
             this.trajectorySegments.add(new trajectorySegment(trajectorySegments.get(trajectorySegments.size()-1).endPose2D, endPose2D, turnPower));
         }
+        lastMarkerType = markerType.POSITION;
         return this;
     }
 
     public trajectoryAssembly addOffsetActionMarker(double offset, markerAction action){
         if(!trajectorySegments.isEmpty()){
-            trajectoryMarkers.add(new trajectoryMarker(trajectorySegments.size()-1, offset, action));
+            if(lastMarkerType == markerType.ACTION){
+                trajectoryMarkers.add(new trajectoryMarker(trajectoryMarkers.size()-1, markerType.ACTION, offset, action));
+            }
+            else{
+                trajectoryMarkers.add(new trajectoryMarker(trajectorySegments.size()-1, markerType.POSITION, offset, action));
+            }
         }
         else if(offset>0){
             trajectoryMarkers.add(new trajectoryMarker(offset, action));
@@ -56,6 +65,7 @@ public class trajectoryAssembly {
         else{
             trajectoryMarkers.add(new trajectoryMarker(0, action));
         }
+        lastMarkerType = markerType.ACTION;
         return this;
     }
 
@@ -74,7 +84,7 @@ public class trajectoryAssembly {
         angle previousModuleHeading = null;
         boolean firstSegment = true;
         double initialVelocity = 0;
-        for (int i = 1; i < trajectorySegments.size(); i++) {
+        for (int i = 0; i < trajectorySegments.size(); i++) {
             double pathTime;
             double maxVelocity = trajectorySegments.get(i).velocity;
             if(!firstSegment && (i == trajectorySegments.size()-1)){
@@ -169,15 +179,15 @@ public class trajectoryAssembly {
     }
 
     private void actionMarkerTimeFinalising(){
-        List<Integer> list = new ArrayList<>();
+        List<Integer> actionMarkerlist = new ArrayList<>();
         for (int i = 0; i < trajectoryMarkers.size(); i++) {
             if(trajectoryMarkers.get(i).getMarkerType() == markerType.ACTION){
-                list.add(i);
+                actionMarkerlist.add(i);
             }
         }
-        for (int i = 0; i < list.size(); i++) {
-            double startTime = getIndexOfTagType(markerType.POSITION, trajectoryMarkers.get(list.get(i)).getReferenceIndex()).getStartTime();
-            trajectoryMarkers.get(list.get(i)).setStartTime(startTime+trajectoryMarkers.get(list.get(i)).getStartTime());
+        for (int i = 0; i < actionMarkerlist.size(); i++) {
+            double startTime = getIndexOfTagType(trajectoryMarkers.get(actionMarkerlist.get(i)).getReferenceType(), trajectoryMarkers.get(actionMarkerlist.get(i)).getReferenceIndex()).getStartTime();
+            trajectoryMarkers.get(actionMarkerlist.get(i)).setStartTime(startTime+trajectoryMarkers.get(actionMarkerlist.get(i)).getStartTime());
         }
     }
 
@@ -196,7 +206,7 @@ public class trajectoryAssembly {
     }
 
     public void update(){
-        if(robotConfig.currentTrajectoryAssembly.trajectoryMarkers.isEmpty()){
+        if(robotConfig.currentTrajectoryAssembly.trajectoryMarkers.isEmpty()){ //TODO fix up to ensure that the end of a path is reached before continuing to the next one, maybe add a nullification action to the end of the markers list during build instead
             robotConfig.currentTrajectoryAssembly = null;
             return;
         }

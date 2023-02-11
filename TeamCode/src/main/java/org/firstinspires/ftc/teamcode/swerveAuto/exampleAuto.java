@@ -16,7 +16,8 @@ public class exampleAuto extends LinearOpMode {
     public void runOpMode() {
         telemetry.addLine("initilising");
         telemetry.update();
-        r = new robotConfig(this, robotConstants.configuredSystems.BOTH_MODULES);
+        r = robotConfig.getInstance(this);
+        r.initSystems(robotConstants.configuredSystems.BOTH_MODULES);
         telemetry.addLine("initilised");
         telemetry.update();
 
@@ -28,10 +29,10 @@ public class exampleAuto extends LinearOpMode {
                 .addOffsetActionMarker(10, () -> {
                     telemetry.addLine("hey");
                 })
-                .addSegment(new pose2D(new coordinate2D(2000, 0), new angle(90)))
-                .addSegment(new pose2D(new coordinate2D(2000, 2000), new angle(90)))
-                .addSegment(new pose2D(new coordinate2D(0, 2000), new angle(90)))
-                .addOffsetActionMarker(10, () -> {
+                .addSegment(new pose2D(new coordinate2D(1000, 0), new angle(90)))
+                .addSegment(new pose2D(new coordinate2D(1000, 1000), new angle(90)))
+                .addSegment(new pose2D(new coordinate2D(0, 1000), new angle(90)))
+                .addOffsetActionMarker(1, () -> {
                     telemetry.addLine("hey");
                 })
                 .addSegment(new pose2D(new coordinate2D(0, 0), new angle(90)))
@@ -49,6 +50,6 @@ public class exampleAuto extends LinearOpMode {
             r.swerve.trajectoryFollowerUpdate();
         }
 
-        robotConfig.closeLogs();
+        r.closeLogs();
     }
 }

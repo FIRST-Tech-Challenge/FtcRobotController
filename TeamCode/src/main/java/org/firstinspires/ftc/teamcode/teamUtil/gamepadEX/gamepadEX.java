@@ -25,21 +25,23 @@ public class gamepadEX {
     public continuousInput left_trigger;
     public continuousInput right_trigger;
 
-
+    Gamepad gamepad;
 
     public gamepadEX(Gamepad gamepad){
-        a = new button(buttons.a, gamepad);
-        b = new button(buttons.b, gamepad);
-        x = new button(buttons.x, gamepad);
-        y = new button(buttons.y, gamepad);
+        this.gamepad = gamepad;
 
-        dpad_up = new button(buttons.dpad_up, gamepad);
-        dpad_down = new button(buttons.dpad_down, gamepad);
-        dpad_left = new button(buttons.dpad_left, gamepad);
-        dpad_right = new button(buttons.dpad_right, gamepad);
+        a = new button();
+        b = new button();
+        x = new button();
+        y = new button();
 
-        left_bumper = new button(buttons.left_bumper, gamepad);
-        right_bumper = new button(buttons.right_bumper, gamepad);
+        dpad_up = new button();
+        dpad_down = new button();
+        dpad_left = new button();
+        dpad_right = new button();
+
+        left_bumper = new button();
+        right_bumper = new button();
 
         leftX = new continuousInput(continuousInputs.leftX, gamepad);
         leftY = new continuousInput(continuousInputs.leftY, gamepad);
@@ -48,19 +50,6 @@ public class gamepadEX {
 
         left_trigger = new continuousInput(continuousInputs.left_trigger, gamepad);
         right_trigger = new continuousInput(continuousInputs.right_trigger, gamepad);
-    }
-
-    public enum buttons{
-        a,
-        b,
-        x,
-        y,
-        dpad_up,
-        dpad_down,
-        dpad_left,
-        dpad_right,
-        right_bumper,
-        left_bumper
     }
 
     public enum continuousInputs{
@@ -72,23 +61,32 @@ public class gamepadEX {
         right_trigger
     }
 
-    public void action(button.buttonCondition buttonCondition, button.buttonAction buttonAction){
-        if(buttonCondition.buttonCondition()){
-            buttonAction.buttonAction();
-        }
+    public void startLoopUpdate(){
+        a.startLoopUpdate(gamepad.a);
+        b.startLoopUpdate(gamepad.b);
+        x.startLoopUpdate(gamepad.x);
+        y.startLoopUpdate(gamepad.y);
+
+        dpad_up.startLoopUpdate(gamepad.dpad_up);
+        dpad_down.startLoopUpdate(gamepad.dpad_down);
+        dpad_left.startLoopUpdate(gamepad.dpad_left);
+        dpad_right.startLoopUpdate(gamepad.dpad_right);
+
+        left_bumper.startLoopUpdate(gamepad.left_bumper);
+        right_bumper.startLoopUpdate(gamepad.right_bumper);
     }
 
-    public void update(){
-        a.update();
-        b.update();
-        x.update();
-        y.update();
-        dpad_up.update();
-        dpad_down.update();
-        dpad_left.update();
-        dpad_right.update();
-        left_bumper.update();
-        right_bumper.update();
+    public void endLoopUpdate(){
+        a.endLoopUpdate();
+        b.endLoopUpdate();
+        x.endLoopUpdate();
+        y.endLoopUpdate();
+        dpad_up.endLoopUpdate();
+        dpad_down.endLoopUpdate();
+        dpad_left.endLoopUpdate();
+        dpad_right.endLoopUpdate();
+        left_bumper.endLoopUpdate();
+        right_bumper.endLoopUpdate();
     }
 }
 

@@ -17,11 +17,14 @@ public class teleopOscarTest extends OpMode{
 
     @Override
     public void init() {
-        telemetry.addData("Status", "Initialising");
-        telemetry.update();
-        r = new robotConfig(this, robotConstants.configuredSystems.MECANUM, robotConstants.configuredSystems.ARM, robotConstants.configuredSystems.WRIST, robotConstants.configuredSystems.INTAKE, robotConstants.configuredSystems.LIFT);
-        telemetry.addData("Status", "Initialised");
-        telemetry.update();
+        r = robotConfig.getInstance(this);
+        r.initSystems(
+                robotConstants.configuredSystems.MECANUM,
+                robotConstants.configuredSystems.ARM,
+                robotConstants.configuredSystems.WRIST,
+                robotConstants.configuredSystems.INTAKE,
+                robotConstants.configuredSystems.LIFT
+        );
     }
 
     @Override
@@ -55,19 +58,19 @@ public class teleopOscarTest extends OpMode{
         }
 
         if(!armState){
-            r.arm.setPos(0);
-            r.wrist.setPos(1.0);
+            r.arm.freeTargetPosition(0);
+            r.wrist.freeTargetPosition(1.0);
         }
         else{
-            r.arm.setPos(1.0);
-            r.wrist.setPos(0);
+            r.arm.freeTargetPosition(1.0);
+            r.wrist.freeTargetPosition(0);
         }
 
         if(intakeInput){
-            r.intake.setPos(1.0);
+            r.intake.freeTargetPosition(1.0);
         }
         else {
-            r.intake.setPos(0);
+            r.intake.freeTargetPosition(0);
         }
 
 

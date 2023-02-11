@@ -7,13 +7,14 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 
 import org.firstinspires.ftc.teamcode.subsystems.*;
-import org.firstinspires.ftc.teamcode.teamUtil.gamepadEX.gamepadEX;
+import org.firstinspires.ftc.teamcode.teamUtil.gamepadEX.commandControl;
+import org.firstinspires.ftc.teamcode.teamUtil.gamepadEX.*;
 import org.firstinspires.ftc.teamcode.teamUtil.robotConstants.configuredSystems;
 import org.firstinspires.ftc.teamcode.teamUtil.trajectoryAssembly.trajectoryAssembly;
 
 public class robotConfig {
     public HardwareMap hardwareMap;
-    public OpMode opmode;
+    public OpMode opMode;
     /**
      * note that the auto clearing setting on telemetry has been turned off, and telemetry item objects need to be used to update lines with new values. allows for some better control.
      */
@@ -38,12 +39,20 @@ public class robotConfig {
     public gamepadEX gamepadEX1;
     public gamepadEX gamepadEX2;
 
+    public commandControl commandControl;
 
-    public robotConfig(OpMode opmode, configuredSystems... config){
-        this.opmode = opmode;
-        this.hardwareMap = opmode.hardwareMap;
-        this.telemetry = opmode.telemetry;
-        this.telemetry.setAutoClear(false);
+    private static robotConfig r_instance;
+
+    private boolean built = false;
+    public static robotConfig getInstance(OpMode OpMode){
+        if(r_instance == null){
+            r_instance = new robotConfig(OpMode);
+        }
+        return r_instance;
+    }
+
+    public void initSystems(configuredSystems... config){
+        if (built) return;
         configuredSystems = new configuredSystems[config.length+3];
         configuredSystems[0] = robotConstants.configuredSystems.LOGGING;
         configuredSystems[1] = robotConstants.configuredSystems.ENCODER_READ;
@@ -102,17 +111,26 @@ public class robotConfig {
                     break;
 
                 case GAMEPADS:
-                    gamepadEX1 = new gamepadEX(opmode.gamepad1);
-                    gamepadEX2 = new gamepadEX(opmode.gamepad2);
+                    commandControl = new commandControl();
+                    gamepadEX1 = new gamepadEX(opMode.gamepad1);
+                    gamepadEX2 = new gamepadEX(opMode.gamepad2);
                     break;
             }
             initialisedSystems.append("\n").append(system.toString());
             initialisedSubsystems.setValue(initialisedSystems);
             telemetry.update();
         }
-
+        currentSubsystem.setValue("");
+        telemetry.update();
+        built = true;
     }
-    public static void closeLogs(){
+    private robotConfig(OpMode OpMode){
+        this.opMode = OpMode;
+        this.hardwareMap = OpMode.hardwareMap;
+        this.telemetry = OpMode.telemetry;
+        this.telemetry.setAutoClear(false);
+    }
+    public void closeLogs(){
         for (configuredSystems system : configuredSystems) {
             switch (system){
                 case MECANUM:
@@ -148,9 +166,40 @@ public class robotConfig {
         }
     }
 
-    public void systemsUpdate(){
-        telemetry.update();
-        gamepadEX1.update();
-        gamepadEX2.update();
+    public void systemsEndLoopUpdate(){
+
+        for (configuredSystems system : configuredSystems) {
+            switch (system){
+                case MECANUM:
+                    break;
+                case BOTH_MODULES:
+                    break;
+                case LEFT_MODULE:
+                    break;
+                case RIGHT_MODULE:
+                    break;
+                case LIFT:
+                    break;
+                case WRIST:
+                    wrist.update();
+                    break;
+                case INTAKE:
+                    intake.update();
+                    break;
+                case ARM:
+                    arm.update();
+                    break;
+                case LOGGING:
+                    break;
+                case ENCODER_READ:
+                    break;
+                case LIMIT_SWITCH:
+                    break;
+                case GAMEPADS:
+                    gamepadEX1.endLoopUpdate();
+                    gamepadEX2.endLoopUpdate();
+                    break;
+            }
+        }
     }
 }

@@ -16,4 +16,7 @@ public class configNames { //contains the string name constants in the config, i
     public static final String arm = "arm";
     public static final String wrist = "wrist";
     public static final String intake = "Grab";
+
+    public static final String imu = "imu";
+
 }

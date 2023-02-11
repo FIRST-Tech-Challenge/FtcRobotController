@@ -1,6 +1,5 @@
 package org.firstinspires.ftc.teamcode.subsystems;
 
-import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.teamcode.teamUtil.configNames;
@@ -10,7 +9,20 @@ import org.firstinspires.ftc.teamcode.teamUtil.robotConstants;
 public class arm {
     robotConfig r;
 
-    double jump = 100.68;
+    public enum armPos{
+        FRONT(0),
+        BACK(1);
+
+        private armPos(double position){
+            this.position = position;
+        }
+
+        private final double position;
+
+        public double getPosition() {
+            return position;
+        }
+    }
 
     Servo arm;
     private double armPos;
@@ -19,22 +31,18 @@ public class arm {
         this.r = r;
         arm = r.hardwareMap.get(Servo.class,configNames.arm);
         arm.scaleRange(robotConstants.armBack, robotConstants.armFront);
-        setPos(0);
+        freeTargetPosition(0);
     }
 
-    public void setPos(double targetPos){
+    public void freeTargetPosition(double targetPos){
         armPos = targetPos;
+    }
+
+    public void presetTargetPosition(armPos armPos){
+        this.armPos = armPos.getPosition();
     }
 
     public void update(){
         arm.setPosition(armPos);
-    }
-
-    public double returnJump(){
-        return jump;
-    }
-
-    public void setJump(double value){
-        jump = value;
     }
 }

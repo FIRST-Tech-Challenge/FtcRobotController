@@ -1,12 +1,8 @@
 package org.firstinspires.ftc.teamcode.subsystems;
 
-import static org.firstinspires.ftc.teamcode.teamUtil.robotConstants.poleHeightValues;
-
 import static java.lang.Double.isNaN;
 
 import com.qualcomm.robotcore.hardware.DcMotorEx;
-import com.qualcomm.robotcore.hardware.HardwareMap;
-
 import org.firstinspires.ftc.teamcode.teamUtil.configNames;
 import org.firstinspires.ftc.teamcode.teamUtil.robotConfig;
 import org.firstinspires.ftc.teamcode.teamUtil.robotConstants;
@@ -89,16 +85,16 @@ public class lift {
         previousTime = currentTime;
     }
 
-    private void positionControl(double liftPositioner, boolean limitIsPressed, int button_pressed){
-        lift.targetPos = lift.targetPos +((int) (liftPositioner*100));
-        if (isNaN(liftPositioner) && !spoolHold){
+    private void positionControl(double liftPosition, boolean limitIsPressed, int button_pressed){
+        lift.targetPos = lift.targetPos +((int) (liftPosition*100));
+        if (isNaN(liftPosition) && !spoolHold){
             spoolHoldPosition = lift.liftPos;
             spoolHold = true;
         }
-        if(isNaN(liftPositioner)){
+        if(isNaN(liftPosition)){
             lift.targetPos = spoolHoldPosition;
         }
-        if (!isNaN(liftPositioner)){
+        if (!isNaN(liftPosition)){
             spoolHold = false;
         }
         if((lift.targetPos > lift.liftPos) && limitIsPressed){
@@ -107,25 +103,25 @@ public class lift {
         if (lift.targetPos>0){
             lift.targetPos = 0;
         }
-        if(lift.targetPos<poleHeightValues.getOrDefault(robotConstants.poleHeightNames.HIGH, -2750)-100) {
-            lift.targetPos = poleHeightValues.getOrDefault(robotConstants.poleHeightNames.HIGH, -2750)-100;
+        if(lift.targetPos < robotConstants.poleHeights.HIGH.getEncoderValue() - 100) {
+            lift.targetPos = robotConstants.poleHeights.HIGH.getEncoderValue() - 100;
         }
         switch (button_pressed){
             case 1:
-                lift.targetPos = poleHeightValues.getOrDefault(robotConstants.poleHeightNames.HIGH, 0);
-                spoolHoldPosition = poleHeightValues.getOrDefault(robotConstants.poleHeightNames.HIGH_DROP, 0);
+                lift.targetPos = robotConstants.poleHeights.HIGH.getEncoderValue();
+                spoolHoldPosition = robotConstants.poleHeights.HIGH_DROP.getEncoderValue();
                 break;
             case 2:
-                lift.targetPos = poleHeightValues.getOrDefault(robotConstants.poleHeightNames.MEDIUM, 0);
-                spoolHoldPosition = poleHeightValues.getOrDefault(robotConstants.poleHeightNames.MEDIUM_DROP, 0);
+                lift.targetPos = robotConstants.poleHeights.MEDIUM.getEncoderValue();
+                spoolHoldPosition = robotConstants.poleHeights.MEDIUM_DROP.getEncoderValue();
                 break;
             case 3:
-                lift.targetPos = poleHeightValues.getOrDefault(robotConstants.poleHeightNames.LOW, 0);
-                spoolHoldPosition = poleHeightValues.getOrDefault(robotConstants.poleHeightNames.LOW_DROP, 0);
+                lift.targetPos = robotConstants.poleHeights.LOW.getEncoderValue();
+                spoolHoldPosition = robotConstants.poleHeights.LOW_DROP.getEncoderValue();
                 break;
             case 4:
-                lift.targetPos = poleHeightValues.getOrDefault(robotConstants.poleHeightNames.GROUND, 0);
-                spoolHoldPosition = poleHeightValues.getOrDefault(robotConstants.poleHeightNames.GROUND, 0);
+                lift.targetPos = robotConstants.poleHeights.GROUND.getEncoderValue();
+                spoolHoldPosition = robotConstants.poleHeights.GROUND.getEncoderValue();
                 break;
             default:
                 break;

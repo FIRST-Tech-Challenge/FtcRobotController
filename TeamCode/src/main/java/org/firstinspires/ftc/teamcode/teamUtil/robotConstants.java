@@ -16,32 +16,39 @@ public class robotConstants {
         MECANUM, BOTH_MODULES, LEFT_MODULE, RIGHT_MODULE, LIFT, WRIST, INTAKE, ARM, LOGGING, ENCODER_READ, LIMIT_SWITCH, GAMEPADS
     }
 
-    public enum poleHeightNames {
-        HIGH, MEDIUM, LOW, GROUND, HIGH_DROP, MEDIUM_DROP, LOW_DROP, STACK4, STACK3, STACK2, STACK1, STACK0
+    public enum poleHeights {
+        HIGH(-2750),
+        MEDIUM(-1950),
+        LOW(-1250),
+        GROUND(0),
+        HIGH_DROP(-2350),
+        MEDIUM_DROP(-1750),
+        LOW_DROP(-1000),
+        STACK4(-350),
+        STACK3(-260),
+        STACK2(-170),
+        STACK1(-110),
+        STACK0(0);
+
+        poleHeights(int encoderValue){
+            this.encoderValue = encoderValue;
+        }
+
+        private final int encoderValue;
+
+        public int getEncoderValue() {
+            return encoderValue;
+        }
     }
-    static public HashMap<Enum<poleHeightNames>, Integer> poleHeightValues = new HashMap<>();
-    static {
-        poleHeightValues.put(poleHeightNames.HIGH, -2750);
-        poleHeightValues.put(poleHeightNames.HIGH_DROP, -2350);
-        poleHeightValues.put(poleHeightNames.MEDIUM, -1950);
-        poleHeightValues.put(poleHeightNames.MEDIUM_DROP, -1750);
-        poleHeightValues.put(poleHeightNames.LOW, -1250);
-        poleHeightValues.put(poleHeightNames.LOW_DROP, -1000);
-        poleHeightValues.put(poleHeightNames.GROUND, 0);
-        poleHeightValues.put(poleHeightNames.STACK3, -260);
-        poleHeightValues.put(poleHeightNames.STACK2, -170);
-        poleHeightValues.put(poleHeightNames.STACK1, -110);
-        poleHeightValues.put(poleHeightNames.STACK0, 0);
-    }
 
-    public static final double armBack = 0.08;
-    public static final double armFront = 0.89; //0.92
+    public static final double armBack = 0.06;
+    public static final double armFront = 0.87;
 
-    public static final double wristFront = 0.25;
-    public static final double wristBack = 0.95;
+    public static final double wristFront = 0;
+    public static final double wristBack = 0.66;
 
-    public static final double intakeOpen = 0;
-    public static final double intakeClosed = 0.6;
+    public static final double intakeOpen = 0.3;
+    public static final double intakeClosed = 0.49;
 
     public static final double motorResolution = 134.4; //per revolution
     public static final double colsonCircumference = Math.PI*63.50000006477; //mm
@@ -54,7 +61,7 @@ public class robotConstants {
 
     public static final double maxSwerveRPS = (114.0/60.0);
     public static final double maxSwerveVelocity = maxSwerveRPS * colsonCircumference; // (mm/s)
-    public static final double maxSwerveAcceleration = 300;// (mm/s/s)
+    public static final double maxSwerveAcceleration = 900;// (mm/s/s)
 
     public static double ticksPerDegreeLeftSwerve = 31921.0/3600.0;
     public static double ticksPerDegreeRightSwerve = 31921.0/3600.0;
@@ -77,5 +84,5 @@ public class robotConstants {
 
     public static final double swerveDistance = 10;
 
-    public static final boolean robotFlipping = true;
+    public static final boolean robotFlipping = false;
 }

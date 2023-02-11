@@ -69,7 +69,6 @@ public class angle {
 
     public double angleShortDifference(angle comparator){
         double difference = this.value - comparator.value;
-
         if (difference > 180) {
             return (-360) + difference;
         }
@@ -79,7 +78,6 @@ public class angle {
         else {
             return difference;
         }
-
     }
 
     public static angle atanHandler(double planarX, double planarY){
