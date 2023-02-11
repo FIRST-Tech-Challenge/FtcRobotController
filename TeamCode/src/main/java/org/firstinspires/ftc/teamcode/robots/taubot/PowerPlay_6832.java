@@ -212,7 +212,7 @@ public class PowerPlay_6832 extends OpMode {
         loopTimeSmoother = new ExponentialSmoother(AVERAGE_LOOP_TIME_SMOOTHING_FACTOR);
         averageUpdateTimeSmoother = new ExponentialSmoother(AVERAGE_LOOP_TIME_SMOOTHING_FACTOR);
 
-        robot = new Robot(hardwareMap,false);
+        robot = new Robot(hardwareMap,true);
 
         // gamepads
         dc = new DriverControls(gamepad1,gamepad2);

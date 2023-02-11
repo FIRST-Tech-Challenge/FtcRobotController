@@ -425,7 +425,8 @@ public class Crane implements Subsystem {
         start,
         calibrate,
         transfer,
-        robotDriving
+        robotDriving,
+        postTransfer
     }
 
     public Articulation getArticulation() {
@@ -454,6 +455,11 @@ public class Crane implements Subsystem {
                 break;
             case noIK:
 
+                break;
+            case postTransfer:
+                if(postTransfer()){
+                    articulation = Articulation.pickupCone;
+                }
                 break;
             case start:
                 if(craneStart()){
@@ -507,6 +513,35 @@ public class Crane implements Subsystem {
                 return target;
         }
         return target;
+    }
+
+    int postTransferStage = 0;
+    long postTransferTimer = 0;
+
+    public boolean postTransfer(){ //flips the flipper gripper to the correct flipper gripper flipped position
+        switch (postTransferStage){
+            case 0:
+                setShoulderTargetAngle(0);
+                postTransferStage++;
+                break;
+            case 1:
+                if(shoulderOnTarget()){
+                    setExtendTargetPos(1); //makes arm go fast forward
+                    postTransferTimer = futureTime(0.4);
+                    postTransferStage++;
+                }
+                break;
+            case 2:
+                if(System.nanoTime() >= postTransferTimer){
+                    setExtendTargetPos(0.05); //snaps crane back making the flipper gripper flip to downwards flipper gripper flipping position
+                    postTransferStage++;
+                }
+                break;
+            case 3:
+                postTransferStage = 0;
+                return true;
+        }
+        return false;
     }
 
     public boolean atTransferPosition(){

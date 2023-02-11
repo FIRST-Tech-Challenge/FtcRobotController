@@ -53,6 +53,9 @@ public class UnderArm implements Subsystem {
     public static double LASSO_CLOSED = 1500;
     public static double LASSO_OPEN = 1500;
 
+    public static double TRANSFER_SHOULDER_ANGLE = 0;
+    public static double TRANSFER_ELBOW_ANGLE = 0;
+
     boolean lassoGripped = false;
 
     public static double UNDERARM_HEIGHT = 7; //height of rotation of shoulder motor   INCHES
@@ -74,7 +77,7 @@ public class UnderArm implements Subsystem {
         this.robot = robot;
         PwmControl.PwmRange axonRange = new PwmControl.PwmRange(500, 2500);
 
-        if (false) { //if (simulated) { ignoring simulation as a way to test real underarm off robot
+        if (simulated) { //if (simulated) { ignoring simulation as a way to test real underarm off robot
             shoulderServo = new ServoSim();
             elbowServo = new ServoSim();
             wristServo = new ServoSim();
@@ -183,14 +186,13 @@ public class UnderArm implements Subsystem {
         return false;
     }
 
-    public static double TRANSFER_SHOULDER_ANGLE = 0;
-    public static double TRANSFER_ELBOW_ANGLE = 0;
-
     long transferTimer;
     int transferStage = 0;
+    boolean atTransfer = false;
     public boolean goToTransfer(){
         switch (transferStage) {
             case 0: //sets home position
+                atTransfer = false;
                 robot.driveTrain.tuck();
                 setTurretTargetAngle(0);
                 setElbowTargetAngle(TRANSFER_ELBOW_ANGLE);
@@ -201,12 +203,17 @@ public class UnderArm implements Subsystem {
             case 1:
                 if (System.nanoTime() > transferTimer) {
                     transferStage = 0;
+                    atTransfer = true;
                     return true;
                 }
                 break;
         }
 
         return false;
+    }
+
+    public boolean atTransfer(){
+        return atTransfer;
     }
 
     double calculatedTurretAngle;

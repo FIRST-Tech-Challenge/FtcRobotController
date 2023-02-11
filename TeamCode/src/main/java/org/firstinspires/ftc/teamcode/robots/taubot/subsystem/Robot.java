@@ -421,6 +421,7 @@ public class Robot implements Subsystem {
     }
 
     int transferStage = 0;
+    long transferTimer = 0;
     public boolean transfer(){
 
         switch (transferStage) {
@@ -430,14 +431,20 @@ public class Robot implements Subsystem {
                 transferStage++;
                 break;
             case 1:
-                if(crane.atTransferPosition()){
+                if(crane.atTransferPosition() && underarm.atTransfer()){
+                    crane.grab();
+                    underarm.release();
+                    transferTimer = futureTime(0.3);
                     transferStage++;
                 }
                 break;
             case 2:
-                transferStage = 0;
-                return true;
-                //todo add transfer of cone from underarm to crane
+                if(System.nanoTime() >= transferTimer) {
+                    underarm.articulate(UnderArm.Articulation.home);
+                    crane.articulate(Crane.Articulation.postTransfer);
+                    transferStage = 0;
+                    return true;
+                }
         }
         return false;
     }

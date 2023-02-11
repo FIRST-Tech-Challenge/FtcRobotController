@@ -162,6 +162,13 @@ public class DriveTrain extends DiffyDrive implements Subsystem {
             chariotMotor = hardwareMap.get(DcMotorEx.class, "motorChariot");
             motors = Arrays.asList(leftMotor, rightMotor, chariotMotor);
 
+            imu = hardwareMap.get(BNO055IMU.class, "baseIMU");
+            BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
+            parameters.angleUnit = BNO055IMU.AngleUnit.RADIANS;
+            imu.initialize(parameters);
+            //because the Expansion hub is upsidedown:
+            BNO055IMUUtil.remapZAxis(imu, AxisDirection.NEG_Y);
+
         }
             for (DcMotorEx motor : motors) {
                 if (!simulated) {
@@ -179,13 +186,6 @@ public class DriveTrain extends DiffyDrive implements Subsystem {
         leftMotor.setDirection(DcMotorSimple.Direction.REVERSE);
             chariotMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
             chariotMotor.setDirection(DcMotor.Direction.REVERSE);
-
-                imu = hardwareMap.get(BNO055IMU.class, "baseIMU");
-                BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
-                parameters.angleUnit = BNO055IMU.AngleUnit.RADIANS;
-                imu.initialize(parameters);
-                //because the Expansion hub is upsidedown:
-                BNO055IMUUtil.remapZAxis(imu, AxisDirection.NEG_Y);
 
         headingPID = new PIDController(HEADING_PID);
         headingPID.setInputRange(0, Math.toRadians(360));
