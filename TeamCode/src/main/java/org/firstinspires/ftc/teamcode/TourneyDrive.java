@@ -35,9 +35,9 @@ public class TourneyDrive extends LinearOpMode {
     double rbAdjust =   0;
 
     double lastAdjusted = runtime.seconds();
+    double lastSwitched = runtime.seconds();
 
     public enum LiftState{
-        LIFT_INIT,
         LIFT_START,
         LIFT_RAISE,
         LIFT_CORRECT,
@@ -142,6 +142,7 @@ public class TourneyDrive extends LinearOpMode {
             boolean grabberClose = gamepad2.right_bumper;
 
             if(!autoLift) {
+                liftMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
                 if (liftFast > .05 || liftFast < -.05 || liftSlow > .05 || liftSlow < -.05 && (!(liftMotor.getCurrentPosition() > MAX_LIFT_POS) || !(liftMotor.getCurrentPosition() < MIN_LIFT_POS))) {
                     if (liftFast > .05 || liftFast < -.05) {
                         if (liftFast > .05 && liftMotor.getCurrentPosition() < MAX_LIFT_POS) {
@@ -167,9 +168,6 @@ public class TourneyDrive extends LinearOpMode {
 
             if(autoLift) {
                 switch (liftState) {
-                    case LIFT_INIT:
-                        liftMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-                        break;
                     case LIFT_START:
                         liftMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
                         if (liftDown) {
@@ -179,7 +177,7 @@ public class TourneyDrive extends LinearOpMode {
                             moveLift(1, (173 * 15) + MIN_LIFT_POS);
                             liftState = LiftState.LIFT_RAISE;
                         } else if (liftMedium) {
-                            moveLift(1, (173 * 25)+ MIN_LIFT_POS);
+                            moveLift(1, (173 * 25) + MIN_LIFT_POS);
                             liftState = LiftState.LIFT_RAISE;
                         } else if (liftHigh) {
                             moveLift(1, MAX_LIFT_POS);
@@ -199,28 +197,19 @@ public class TourneyDrive extends LinearOpMode {
                         }
                         break;
                     default:
-                        if (autoLift) {
-                            liftState = LiftState.LIFT_START;
-                        } else {
-                            liftState = LiftState.LIFT_INIT;
-                        }
+                        liftState = LiftState.LIFT_START;
                         break;
                 }
             }
 
             if (stopAutoLift && liftState != LiftState.LIFT_START) {
-                liftState = LiftState.LIFT_INIT;
+                liftState = LiftState.LIFT_START;
                 autoLift = false;
             }
 
-            if(switchAutoLift){
-                if(liftState == LiftState.LIFT_INIT){
-                    liftState = LiftState.LIFT_START;
-                    autoLift = true;
-                }else{
-                    liftState = LiftState.LIFT_INIT;
-                    autoLift = false;
-                }
+            if(switchAutoLift && runtime.seconds() >= lastSwitched + .25){
+                autoLift = !autoLift;
+                lastSwitched = runtime.seconds();
             }
 
             if(grabberClose){
@@ -277,14 +266,14 @@ public class TourneyDrive extends LinearOpMode {
             }
 
             if(raiseMaxHeight && runtime.seconds() >= lastAdjusted + .5){
-                MAX_LIFT_POS += 17.3;
-                MIN_LIFT_POS += 17.3;
+                MAX_LIFT_POS += 50;
+                MIN_LIFT_POS += 50;
                 lastAdjusted = runtime.seconds();
             }
 
             if(lowerMaxHeight && runtime.seconds() >= lastAdjusted + .5){
-                MAX_LIFT_POS -= 17.3;
-                MIN_LIFT_POS -= 17.3;
+                MAX_LIFT_POS -= 50;
+                MIN_LIFT_POS -= 50;
                 lastAdjusted = runtime.seconds();
             }
 
@@ -335,6 +324,7 @@ public class TourneyDrive extends LinearOpMode {
             telemetry.addData("Status", "Run Time: " + runtime);
             telemetry.addData("Front left/Right", "%4.2f, %4.2f", leftFrontPower, rightFrontPower);
             telemetry.addData("Back  left/Right", "%4.2f, %4.2f", leftBackPower, rightBackPower);
+            telemetry.addData("servo position",servoGrabber1.getPosition());
             telemetry.update();
         }
     }
