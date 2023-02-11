@@ -240,7 +240,7 @@ public class TurretPIDTester extends LinearOpMode
 
         oldWay.reset();
         // Right
-        performTeleOldLift( 21.9, -50.5 );
+        //performTeleOldLift( 21.9, -50.5 );
         // Left
         //performTeleOldLift ( -21.9, 50.5 );
         oldTime = oldWay.milliseconds();

@@ -162,7 +162,11 @@ public class HardwareSlimbot
     public double       LIFT_ANGLE_MED_B   = -70.0;   // lift position for MEDIUM junction (BACK Teleop)
     public double       LIFT_ANGLE_MIN     = -72.0;   //* absolute encoder angle at maximum rotation REAR
 
-    public double[]     coneStackHeights   = {111.0, 111.0, 110.0, 106.0, 103.0}; // lift positions for each cone on stack
+    public double[]     coneStackHeights   = {111.0,  // 0 = ground level of 5-stack
+                                              111.0,  // 1 = 2nd cone
+                                              110.0,  // 2 = 3rd cone
+                                              106.0,  // 3 = 4th cone
+                                              103.0}; // 4 = 5th cone
 
     // there are additional LIFT_ANGLE_xxx settings in collectCone() in AutonomousLeft and AutonomousRight!
 
@@ -602,7 +606,7 @@ public class HardwareSlimbot
         }
         else {
         // Limit motor acceleration by clamping how big a change we can do in one cycle
-        power = restrictDeltaPower( power, turretMotorPwrSet, 0.20 );
+        power = restrictDeltaPower( power, turretMotorPwrSet, 0.25 );
         // Positive turret power
           if(power > 0.0) {
             // Limit automatic turret movement to within the min/max safe range
@@ -727,12 +731,15 @@ public class HardwareSlimbot
     {
         // Current distance from target (degrees)
         double degreesToGo = newAngle - turretAngle;
-        // pStatic = 0.0860 @ 12.30V 1
-        // pStatic = 0.0650 @ 13.54V 2
-        double pStatic = getInterpolatedMinPower(0.0860, 12300, 0.0650, 13540);
+        // pStatic = 0.0860 @ 12.30V 1  (117 rpm)
+        // pStatic = 0.0650 @ 13.54V 2  (117 rpm)
 
-        turretPidController = new PIDControllerTurret(0.00575, 0.0005, 0.0011,
-                pStatic);
+        // pStatic = 0.0500 @ 12.8V 1  (43 rpm)
+        // pStatic = 0.0400 @ 13.9V 2  (43 rpm)
+
+        double pStatic = getInterpolatedMinPower(0.0500, 12800, 0.0400, 13900);
+
+        turretPidController = new PIDControllerTurret(0.018, 0.0005, 0.0, pStatic);
 
         // Are we ALREADY at the specified angle?
         if( Math.abs(degreesToGo) <= 1.0 )
@@ -859,6 +866,7 @@ public class HardwareSlimbot
             }
         } // liftMotorPIDAuto
     } // liftPIDPosRun
+	
     public void performCycle(double scoreAngle)
     {
         // Now reverse the lift to raise off the cone stack
@@ -869,6 +877,7 @@ public class HardwareSlimbot
         // Perform setup to center turret and raise lift to scoring position
         grabberSetTilt( GRABBER_TILT_FRONT_H );
     }
+	
     public void resetCycle(double collectAngle)
     {
         liftPIDPosInit(LIFT_ANGLE_COLLECT);
@@ -994,8 +1003,6 @@ public class HardwareSlimbot
         }
     } // writeLiftLog()
 
-
-
     /*--------------------------------------------------------------------------------------------*/
     /* turretPosInit()                                                                            */
     /* - newAngle = desired turret angle                                                          */
@@ -1055,15 +1062,15 @@ public class HardwareSlimbot
                 turretMotorWait = 0;
                 double turretMotorPower;
                 if( teleopMode ) {  // Teleop (be FAST)
-                    turretMotorPower = (degreesToGoAbs < 5.0)? 0.0 : (0.006 * degreesToGo);
-                    turretMotorPower += (degreesToGo > 0)? 0.08 : -0.08;  // min power
+                    turretMotorPower = (degreesToGoAbs < 5.0)? 0.0 : (0.016 * degreesToGo);
+                    turretMotorPower += (degreesToGo > 0)? 0.06 : -0.06;  // min power
                 }
                 else {  // Autonomous (be ACCURATE)
-                    turretMotorPower = 0.004 * degreesToGo;
-                    turretMotorPower += (degreesToGo > 0)? 0.11 : -0.11;  // min power
+                    turretMotorPower = 0.011 * degreesToGo;
+                    turretMotorPower += (degreesToGo > 0)? 0.06 : -0.06;  // min power
                 }
-                if( turretMotorPower < -0.25 ) turretMotorPower = -0.25;
-                if( turretMotorPower > +0.25 ) turretMotorPower = +0.25;
+                if( turretMotorPower < -0.75 ) turretMotorPower = -0.75;
+                if( turretMotorPower > +0.75 ) turretMotorPower = +0.75;
                 turretMotorSetPower( turretMotorPower );
             }
         } // turretMotorAuto
