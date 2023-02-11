@@ -14,8 +14,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 @TeleOp(name = "donga")
 
 public class main extends LinearOpMode {
-    ArrayList<DcMotor> movement_motors = new ArrayList<>();
-    movement movement = new movement(movement_motors);
+    movement movement = new movement();
 
 
 
@@ -42,6 +41,7 @@ public class main extends LinearOpMode {
 
 
         // Put hardware into a global list
+        ArrayList<DcMotor> movement_motors = new ArrayList<>();
         movement_motors.add(motor1);
         movement_motors.add(motor2);
         movement_motors.add(motor3);
