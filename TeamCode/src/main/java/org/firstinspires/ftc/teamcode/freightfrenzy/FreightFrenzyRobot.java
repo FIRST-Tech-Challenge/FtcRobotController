@@ -9,6 +9,7 @@ import com.arcrobotics.ftclib.command.WaitCommand;
 import com.arcrobotics.ftclib.command.button.Trigger;
 import com.arcrobotics.ftclib.gamepad.GamepadEx;
 import com.arcrobotics.ftclib.gamepad.GamepadKeys;
+import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.vuforia.InstanceId;
 
@@ -21,8 +22,8 @@ public class FreightFrenzyRobot extends RobotEx {
     private SliderSubsystem slider;
     private IntakeSubsystem intake;
 
-    public FreightFrenzyRobot(HardwareMap hardwareMap, Telemetry telemetry, GamepadEx driverOp,
-                              GamepadEx toolOp) {
+    public FreightFrenzyRobot(HardwareMap hardwareMap, Telemetry telemetry, Gamepad driverOp,
+                              Gamepad toolOp) {
         super(hardwareMap, telemetry, driverOp, toolOp);
     }
 

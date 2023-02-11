@@ -13,10 +13,7 @@ public class PowerPlayTeleOp extends CommandOpMode {
 
     @Override
     public void initialize() {
-        GamepadEx driverOp = new GamepadEx(gamepad1);
-        GamepadEx toolOp = new GamepadEx(gamepad2);
-
-        robot = new PowerPlayRobot(hardwareMap, telemetry, driverOp, toolOp);
+        robot = new PowerPlayRobot(hardwareMap, telemetry, gamepad1, gamepad2);
     }
 
     @Override

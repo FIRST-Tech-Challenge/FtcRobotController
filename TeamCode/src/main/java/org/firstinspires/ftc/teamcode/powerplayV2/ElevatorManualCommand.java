@@ -2,31 +2,30 @@ package org.firstinspires.ftc.teamcode.powerplayV2;
 
 import com.arcrobotics.ftclib.command.CommandBase;
 
-public class SliderManualCommand extends CommandBase {
-    private final SliderSubsystem slider;
+public class ElevatorManualCommand extends CommandBase {
+    private final ElevatorSubsystem elevator;
     private final int direction;
     private static final int step = 20;
 
-    public SliderManualCommand(SliderSubsystem slider, int direction){
-        this.slider = slider;
+    public ElevatorManualCommand(ElevatorSubsystem elevator, int direction){
+        this.elevator = elevator;
         this.direction = direction;
-        addRequirements(this.slider);
+        addRequirements(this.elevator);
     }
 
     @Override
     public void initialize() {
-//        slider.setHeight(slider.getHeight() + step*direction);
-        slider.setManual();
+        elevator.setManual();
     }
 
     @Override
     public void execute() {
-        slider.setPower(0.4*direction);
+        elevator.setPower(0.4*direction);
     }
 
     @Override
     public void end(boolean interrupted) {
-        slider.stop();
+        elevator.stop();
     }
 
     @Override

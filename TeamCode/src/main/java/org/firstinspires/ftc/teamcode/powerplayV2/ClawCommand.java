@@ -16,10 +16,8 @@ public class ClawCommand extends CommandBase {
     public void initialize() {
         clawState = claw.getState();
 
-        if (clawState == ClawSubsystem.State.RELEASE)
-            claw.grab();
-        else if (clawState == ClawSubsystem.State.GRAB)
-            claw.release();
+        if (clawState == ClawSubsystem.State.RELEASE) claw.grab();
+        else if (clawState == ClawSubsystem.State.GRAB) claw.release();
     }
 
     @Override

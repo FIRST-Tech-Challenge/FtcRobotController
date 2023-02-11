@@ -1,36 +1,25 @@
-package org.firstinspires.ftc.teamcode.robotbase;
+package org.firstinspires.ftc.teamcode;
 
-import com.arcrobotics.ftclib.command.SubsystemBase;
 import com.arcrobotics.ftclib.drivebase.MecanumDrive;
-import com.arcrobotics.ftclib.hardware.motors.MotorEx;
-//import org.firstinspires.ftc.teamcode.MotorEx;
-
 import com.arcrobotics.ftclib.hardware.motors.Motor;
-import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
-import org.firstinspires.ftc.teamcode.MotorExEx;
-
-public class MecanumDriveSubsystem  extends SubsystemBase {
-    private final MotorExEx frontLeft, frontRight, rearRight, rearLeft;
-    private final MecanumDrive drive;
+@TeleOp
+public class MecanumTest extends LinearOpMode {
+    private MotorExEx frontLeft, frontRight, rearRight, rearLeft;
+    private MecanumDrive drive;
 
     public static double KP = 1.1;
     public static double KI = 2.7;
+//    public static double KP = 0;
+//    public static double KI = 0;
     public static double KD = 0;
-    public static double A_KD = 0.5;
-
-    public static double A = 0.3;
-
     public static double minIntegralBound = -400;
     public static double maxIntegralBound = 400;
 
-    public MecanumDriveSubsystem(HardwareMap hardwareMap) {
-        this(hardwareMap, true, true, true, true);
-    }
-
-    public MecanumDriveSubsystem(HardwareMap hardwareMap, Boolean frontLeftInvert,
-                                 Boolean frontRightInvert, Boolean rearLeftInvert,
-                                 Boolean rearRightInvert) {
+    @Override
+    public void runOpMode() throws InterruptedException {
         frontLeft = new MotorExEx(hardwareMap, "frontLeft", Motor.GoBILDA.RPM_312);
         frontRight = new MotorExEx(hardwareMap, "frontRight", Motor.GoBILDA.RPM_312);
         rearRight = new MotorExEx(hardwareMap, "rearRight", Motor.GoBILDA.RPM_312);
@@ -54,18 +43,20 @@ public class MecanumDriveSubsystem  extends SubsystemBase {
         rearRight.setFeedforwardCoefficients(220, 1.07, 0);//2795
         frontLeft.setIntegralBounds(minIntegralBound, maxIntegralBound);
 
-        frontLeft.setInverted(frontLeftInvert);
-        frontRight.setInverted(frontRightInvert);
-        rearRight.setInverted(rearRightInvert);
-        rearLeft.setInverted(rearLeftInvert);
+//        frontLeft.setInverted(true);
+//        frontRight.setInverted(true);
+//        rearRight.setInverted(true);
+//        rearLeft.setInverted(true);
 
         drive = new MecanumDrive(frontLeft, frontRight, rearLeft, rearRight);
-    }
+//        drive.setMaxSpeed();
 
-    void drive(double strafeSpeed, double forwardSpeed, double turnSpeed, double heading,
-               double maxSpeed) {
-        drive.setMaxSpeed(0.5 * (1 + maxSpeed));
-        drive.driveFieldCentric(strafeSpeed, forwardSpeed, turnSpeed, heading);
-//        drive.driveRobotCentric(strafeSpeed, forwardSpeed, turnSpeed);
+        waitForStart();
+
+        while(opModeIsActive()) {
+            telemetry.addData("Hello", "");
+            telemetry.update();
+            drive.driveRobotCentric(gamepad1.left_stick_x, gamepad1.left_stick_y, gamepad1.right_stick_x);
+        }
     }
 }
