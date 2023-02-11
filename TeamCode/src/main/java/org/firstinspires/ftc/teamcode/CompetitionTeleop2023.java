@@ -23,7 +23,7 @@ public class CompetitionTeleop2023 extends OpMode {
     private DcMotor arm = null; //Located on Expansion Hub- Motor port 0
     private Servo gripper = null; //Located on Expansion Hub- Servo port 0
 
-    private double PowerFactor = 8.0f; //Max power available for wheels
+    private double PowerFactor = 0.8f; //Max power available for wheels
     private int maxEncode = 4200; //4200 for higher, 2175 for lower-- Max so arm won't overextend and position 3
     private int minEncode = 110;//Minimum so string on arm lift doesn't break and position 0
     private int pos1 = 1850; //Position 1
@@ -73,11 +73,7 @@ public class CompetitionTeleop2023 extends OpMode {
     /*
      * Code to run REPEATEDLY after the driver hits INIT, but before they hit PLAY
      */
-    @Override
-    public void init_loop() {
-        //Set gripper servo to 0
-        gripper.setPosition(0.2);
-    }
+
 
     /*
      * Code to run ONCE when the driver hits PLAY
@@ -92,22 +88,13 @@ public class CompetitionTeleop2023 extends OpMode {
         double RBPower;
 
         //Code for gamepad1
-        //Allows the driver to alter speed and make the robot move faster or slower
-        /*if (gamepad1.y && !changed2) {
-            if (PowerFactor == 0.8f) {
-                PowerFactor = 0.3f;
-            } else {
-                PowerFactor = (0.8f);
-            }
-            changed2 = true;
-        } else if (!gamepad1.y) {
-            changed2 = false;
-        }
-*/
+        //Code for throttling the power factor
+        PowerFactor = (1 - gamepad1.right_trigger) *.8f;
+
         //Code for mecanum wheels
         double r = Math.hypot(gamepad1.left_stick_x, gamepad1.left_stick_y) * PowerFactor;
         double robotAngle = Math.atan2(gamepad1.left_stick_y, gamepad1.left_stick_x) - Math.PI / 4;
-        double rightX = Math.pow(gamepad1.right_stick_x, 5.0);
+        double rightX = Math.pow(gamepad1.right_stick_x, 5.0)*(1-gamepad1.right_trigger);
         //double rightX = (-gamepad1.right_stick_x);
         LBPower = r * Math.cos(robotAngle) - rightX;
         RBPower = r * Math.sin(robotAngle) + rightX;
