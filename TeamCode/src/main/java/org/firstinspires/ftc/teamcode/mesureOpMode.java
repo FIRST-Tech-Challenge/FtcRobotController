@@ -14,7 +14,7 @@ public class mesureOpMode extends OpMode {
     @Override
     public void init() {
         robotManager = new RobotManager(hardwareMap, gamepad1, gamepad2, new ArrayList<>(Collections.emptyList()),
-                RobotManager.AllianceColor.BLUE, RobotManager.StartingSide.OUR_COLOR,
+                RobotManager.AllianceColor.BLUE, RobotManager.StartingSide.LEFT,
                 Navigation.MovementMode.STRAFE, telemetry, elapsedTime);
         IMUPositioning.Initialize(this);
         robotManager.mechanismDriving.testing=true;

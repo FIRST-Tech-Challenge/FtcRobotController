@@ -21,7 +21,7 @@ public class RobotManager {
     static final double TRIGGER_DEAD_ZONE_SIZE = 0.05;
 
     public enum AllianceColor {BLUE, RED}
-    public enum StartingSide {OUR_COLOR, THEIR_COLOR} //add starting side here later
+    public enum StartingSide {LEFT, RIGHT} //add starting side here later
     public enum ParkingPosition {LEFT, RIGHT, MIDDLE}
     public Robot robot;
     public AllianceColor allianceColor;
@@ -282,6 +282,58 @@ public class RobotManager {
         mechanismDriving.updateClaw(robot);
         // Wait for claw to close.
         while (robot.elapsedTime.milliseconds() - startingTime < MechanismDriving.CLAW_SERVO_TIME) {}
+    }
+
+    /** Runs the auton path.
+     */
+
+    public void runAutonPath() {
+        for (int i = 0; i < navigation.path.size(); i++) {
+            Position pos = navigation.path.get(i);
+            // Things to do before moving to the location
+            if (pos.getAction() == Navigation.Action.PICK_UP_FIRST_STACK_CONE) {
+                mechanismDriving.setSlidePosition(robot, 1800);
+                mechanismDriving.updateSlides(robot, 1);
+                robot.desiredClawRotatorState = Robot.ClawRotatorState.REAR;
+                mechanismDriving.updateClawRotator(robot);
+                openClaw();
+            }
+            else if (pos.getAction() == Navigation.Action.PICK_UP_SECOND_STACK_CONE) {
+                mechanismDriving.setSlidePosition(robot, 1600);
+                mechanismDriving.updateSlides(robot, 1);
+                robot.desiredClawRotatorState = Robot.ClawRotatorState.REAR;
+                mechanismDriving.updateClawRotator(robot);
+                openClaw();
+            }
+            else if (pos.getAction() == Navigation.Action.DELIVER_CONE_HIGH) {
+                mechanismDriving.setSlidePosition(robot, mechanismDriving.slidePositions.get(Robot.SlidesState.HIGH));
+                mechanismDriving.updateSlides(robot, mechanismDriving.SLIDES_MAX_SPEED);
+            }
+            else if (pos.getAction() == Navigation.Action.DELIVER_CONE_HIGH_90) {
+                mechanismDriving.setSlidePosition(robot, mechanismDriving.slidePositions.get(Robot.SlidesState.HIGH));
+                mechanismDriving.updateSlides(robot, mechanismDriving.SLIDES_MAX_SPEED);
+                robot.desiredClawRotatorState = Robot.ClawRotatorState.REAR;
+                mechanismDriving.updateClawRotator(robot);
+            }
+            travelToNextPOI();
+            // Things to do after moving to the location
+            if (pos.getAction() == Navigation.Action.PICK_UP_FIRST_STACK_CONE) {
+                closeClaw();
+                mechanismDriving.setSlidePosition(robot, mechanismDriving.slidePositions.get(Robot.SlidesState.LOW));
+                mechanismDriving.updateSlides(robot, mechanismDriving.SLIDES_MAX_SPEED);
+            }
+            else if (pos.getAction() == Navigation.Action.PICK_UP_SECOND_STACK_CONE) {
+                closeClaw();
+                mechanismDriving.setSlidePosition(robot, mechanismDriving.slidePositions.get(Robot.SlidesState.LOW));
+                mechanismDriving.updateSlides(robot, mechanismDriving.SLIDES_MAX_SPEED);
+            }
+            else if (pos.getAction() == Navigation.Action.DELIVER_CONE_HIGH) {
+                openClaw();
+            }
+            else if (pos.getAction() == Navigation.Action.DELIVER_CONE_HIGH_90) {
+                openClaw();
+            }
+        }
     }
 
     /** Finds the lowered SlidesState given a standard SlidesState
