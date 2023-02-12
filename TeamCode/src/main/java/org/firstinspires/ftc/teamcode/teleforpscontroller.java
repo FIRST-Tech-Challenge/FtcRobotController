@@ -6,10 +6,8 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.hardware.rev.Rev2mDistanceSensor;
 
-import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
-
 @TeleOp
-public class singledriver extends LinearOpMode {
+public class teleforpscontroller extends LinearOpMode {
 
     private DcMotor frontLeft;
     private DcMotor frontRight;                                         //Declaring Motor varibles
@@ -69,13 +67,13 @@ public class singledriver extends LinearOpMode {
             strafeLeft = gamepad1.left_bumper;
             strafeRight = gamepad1.right_bumper;
 
-            crainpower = gamepad1.right_stick_y;
-            spinpowerup = gamepad1.dpad_right;
-            spincenter = gamepad1.y;
-            opspincenter = gamepad1.x;
-            spinpowerdown =gamepad1.dpad_left;
-            pickup = gamepad1.left_trigger;
-            dropoff = gamepad1.right_trigger;
+            crainpower = gamepad2.right_stick_y;
+            spinpowerup = gamepad2.dpad_right;
+            spincenter = gamepad2.triangle;
+            opspincenter = gamepad2.square;
+            spinpowerdown =gamepad2.dpad_left;
+            pickup = gamepad2.left_trigger;
+            dropoff = gamepad2.right_trigger;
 
 
 
