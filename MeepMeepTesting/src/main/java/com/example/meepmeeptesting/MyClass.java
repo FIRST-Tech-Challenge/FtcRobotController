@@ -12,6 +12,7 @@ import com.acmerobotics.roadrunner.trajectory.constraints.TrajectoryVelocityCons
 import com.acmerobotics.roadrunner.trajectory.constraints.TranslationalVelocityConstraint;
 import com.noahbres.meepmeep.MeepMeep;
 import com.noahbres.meepmeep.roadrunner.DefaultBotBuilder;
+import com.noahbres.meepmeep.roadrunner.SampleMecanumDrive;
 import com.noahbres.meepmeep.roadrunner.entity.RoadRunnerBotEntity;
 import com.noahbres.meepmeep.roadrunner.trajectorysequence.TrajectorySequence;
 import com.noahbres.meepmeep.roadrunner.trajectorysequence.TrajectorySequenceBuilder;
@@ -30,15 +31,20 @@ public class MyClass {
 
         MeepMeep meepMeep = new MeepMeep(1000);
 
-        Pose2d homePose = new Pose2d(35, -70.625, Math.toRadians(90));
-        Pose2d midPose = new Pose2d(35, -12, Math.toRadians(90));
-        Pose2d grabbingPose = new Pose2d(71.25 - robotFB, -12, Math.toRadians(180));
-        Pose2d releasingPose = new Pose2d(24 + dposition, 0 - dposition, Math.toRadians(135));
-        Pose2d parking1 = new Pose2d(12, -12, Math.toRadians(90));
-
-        Pose2d parking2 = new Pose2d(36, -12, Math.toRadians(90));
-
-        Pose2d parking3 = new Pose2d(60, -12, Math.toRadians(90));
+         Pose2d homePose = new Pose2d(35 ,-64.015 , Math.toRadians(90));
+         Pose2d midPose = new Pose2d(35, -20, Math.toRadians( -90));
+         Pose2d planAMidPose = new Pose2d( 35, -20, Math.toRadians(-14.25));
+         Pose2d midPose2 = new Pose2d(35, -55, Math.toRadians(0));
+        //   protected Pose2d grabbingPose = new Pose2d(71.25 - robotFB, -12, Math.toRadians(180));
+         Pose2d scoringPose = new Pose2d(24 + 21.80769231, 0 - 5.538461538, Math.toRadians(-14.25));
+         Pose2d grabbingPosePlanB = new Pose2d(71.25 - robotFB, -12, Math.toRadians(0));
+         Pose2d scoringPosePlanB = new Pose2d( 0 + dposition , -23.62 + dposition, Math.toRadians(45));
+         Pose2d grabbingToReleasingPosePlanB = new Pose2d(28, -14, Math.toRadians(45));
+         Pose2d scoringPosePlanC = new Pose2d(-24 - 21.80769231, 0 - 5.538461538, Math.toRadians(194.25));
+         Pose2d midPosePlanC = new Pose2d(23, -12, Math.toRadians(180));
+         Pose2d midPosePlanC2 = new Pose2d(-20, -12, Math.toRadians(194.25));
+         Pose2d parking1 = new Pose2d(12, -12, Math.toRadians( -90));
+         Pose2d parking3 = new Pose2d(60, -12, Math.toRadians( 90));
         TrajectoryVelocityConstraint velConstraint = new MinVelocityConstraint(
                 Arrays.asList(new TranslationalVelocityConstraint(60), new AngularVelocityConstraint(60))
         );
@@ -46,54 +52,57 @@ public class MyClass {
 
         Trajectory hm;
         hm = new TrajectoryBuilder(homePose, 2.2, velConstraint, accelConstraint)
-                .lineToLinearHeading(midPose)
+                .forward(4)
+                .splineToConstantHeading(midPose2.vec(), Math.toRadians(90))
+                .splineToSplineHeading(planAMidPose, Math.toRadians(90))
+                .splineToConstantHeading(scoringPose.vec(), Math.toRadians(90))
                 .build();
 
-        Trajectory home;
-        home = new TrajectoryBuilder(midPose, 2.2, velConstraint, accelConstraint)
-                .lineToLinearHeading(homePose)
-                .build();
-
-        Trajectory mr;
-        mr = new TrajectoryBuilder(midPose, 2.2, velConstraint, accelConstraint)
-                .lineToLinearHeading(releasingPose)
-                .build();
-
-        Trajectory rg;
-        rg = new TrajectoryBuilder(releasingPose, 2.2, velConstraint, accelConstraint)
-                 .lineToLinearHeading(grabbingPose)
-                 .build();
-
-        Trajectory gr;
-        gr = new TrajectoryBuilder(grabbingPose, 2.2, velConstraint, accelConstraint)
-                .lineToLinearHeading(releasingPose)
-                .build();
-
-        Trajectory rm;
-        rm = new TrajectoryBuilder(releasingPose, 2.2, velConstraint, accelConstraint)
-                .lineToLinearHeading(midPose)
-                .build();
-
-        Trajectory gm;
-        gm = new TrajectoryBuilder(grabbingPose, 2.2, velConstraint, accelConstraint)
-                .lineToLinearHeading(midPose)
+//        Trajectory home;
+//        home = new TrajectoryBuilder(midPose, 2.2, velConstraint, accelConstraint)
+//                .lineToLinearHeading(homePose)
+//                .build();
+//
+//        Trajectory mr;
+//        mr = new TrajectoryBuilder(midPose, 2.2, velConstraint, accelConstraint)
+//                .lineToLinearHeading(releasingPose)
+//                .build();
+//
+//        Trajectory rg;
+//        rg = new TrajectoryBuilder(releasingPose, 2.2, velConstraint, accelConstraint)
+//                 .lineToLinearHeading(grabbingPose)
+//                 .build();
+//
+//        Trajectory gr;
+//        gr = new TrajectoryBuilder(grabbingPose, 2.2, velConstraint, accelConstraint)
+//                .lineToLinearHeading(releasingPose)
+//                .build();
+//
+//        Trajectory rm;
+//        rm = new TrajectoryBuilder(releasingPose, 2.2, velConstraint, accelConstraint)
+//                .lineToLinearHeading(midPose)
+//                .build();
+//
+//        Trajectory gm;
+//        gm = new TrajectoryBuilder(grabbingPose, 2.2, velConstraint, accelConstraint)
+//                .lineToLinearHeading(midPose)
+//                .build();
+        Trajectory sm;
+        sm = new TrajectoryBuilder(scoringPose, 2.2, velConstraint, accelConstraint)
+                .strafeRight(1)
+                .splineToConstantHeading(midPose.vec(), Math.toRadians(-90))
                 .build();
 
         Trajectory p1;
-        p1 = new TrajectoryBuilder(midPose, 2.2, velConstraint, accelConstraint)
-                .lineToLinearHeading(parking1)
-                .build();
-
-        Trajectory p2;
-        p2 = new TrajectoryBuilder(midPose, 2.2, velConstraint, accelConstraint)
-                .lineToLinearHeading(parking2)
+        p1 = new TrajectoryBuilder(scoringPose, 2.2, velConstraint, accelConstraint)
+                .strafeRight(1)
+                .splineToSplineHeading(parking1, Math.toRadians(180))
                 .build();
 
         Trajectory p3;
-        p3 = new TrajectoryBuilder(midPose, 2.2, velConstraint, accelConstraint)
-//                .lineToLinearHeading(midPose)
-//                .lineToLinearHeading(parking2)
-                .lineToLinearHeading(parking3)
+        p3 = new TrajectoryBuilder(scoringPose, 2.2, velConstraint, accelConstraint)
+                .strafeRight(1)
+                .splineToConstantHeading(parking3.vec(), Math.toRadians(0))
                 .build();
 
         RoadRunnerBotEntity myBot = new DefaultBotBuilder(meepMeep)
@@ -103,11 +112,11 @@ public class MyClass {
                 .followTrajectorySequence(drive ->
                         drive.trajectorySequenceBuilder(homePose)
                                 .addTrajectory(hm)
-                                .addTrajectory(mr)
-                                .addTrajectory(rg)
-                                .addTrajectory(gr)
-                                .addTrajectory(rm)
-                                .addTrajectory(p1)
+                                .addTrajectory(sm)
+//                                .addTrajectory()
+//                                .addTrajectory)
+//                                .addTrajectory(rm)
+//                                .addTrajectory()
 
                                 .build()
                 );
