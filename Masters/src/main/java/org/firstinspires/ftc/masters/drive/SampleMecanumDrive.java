@@ -480,7 +480,7 @@ public class SampleMecanumDrive extends MecanumDrive {
                 rightRear.setPower(0);
                 return true;
         }
-        return true;
+        return false;
     }
 
 }
