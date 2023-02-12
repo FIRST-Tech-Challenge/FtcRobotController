@@ -4,6 +4,7 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
@@ -22,6 +23,8 @@ public class CompetitionTeleop2023 extends OpMode {
     //Declare variables used for our arm lift
     private DcMotor arm = null; //Located on Expansion Hub- Motor port 0
     private Servo gripper = null; //Located on Expansion Hub- Servo port 0
+    //variable for distance sensor
+    private DistanceSensor gripperSensor;
 
     private double PowerFactor = 0.8f; //Max power available for wheels
     private int maxEncode = 4200; //4200 for higher, 2175 for lower-- Max so arm won't overextend and position 3
@@ -52,6 +55,9 @@ public class CompetitionTeleop2023 extends OpMode {
         RB = hardwareMap.get(DcMotor.class, "RB");
         arm = hardwareMap.get(DcMotor.class, "arm");
         gripper = hardwareMap.get(Servo.class, "gripper");
+
+        //gripper sensor for pulling arm down
+        gripperSensor  = hardwareMap.get(DistanceSensor .class, "pole_sensor");
 
         // Most robots need the motor on one side to be reversed to drive forward
         // Reverse the motor that runs backwards when connected directly to the battery
@@ -120,21 +126,33 @@ public class CompetitionTeleop2023 extends OpMode {
             changed3 = !changed3;
         }
         //Moves the arm up
-        if (!changed3) {
-            if (gamepad2.left_trigger >= .1 && arm.getCurrentPosition() < maxEncode) {
+        if (!changed3)
+        {
+            if (gamepad2.left_trigger >= .1 && arm.getCurrentPosition() < maxEncode)
+            {
                 arm.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
                 arm.setPower(gamepad2.left_trigger);
                 telemetry.addData("arm ticks", arm.getCurrentPosition());
                 telemetry.update();
                 //Moves the arm down
-            } else if (gamepad2.right_trigger >= .1 && arm.getCurrentPosition() > 10) {
+            }
+            else if (gamepad2.right_trigger >= .1 && gripperSensor.getDistance(DistanceUnit.INCH)>2)
+            {
                 arm.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
                 arm.setPower(-gamepad2.right_trigger);
-            } else {
+            }
+            else
+            {
+                if (gripperSensor.getDistance(DistanceUnit.INCH)<=2)
+                {
+                    arm.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+                }
                 arm.setPower(0);
                 arm.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
             }
-        } else {
+        }
+        else
+        {
             //Allows the arm to stay in the location the drivers want
             if (!gamepad2.b && gamebpush) {
                 desiredpos += 1;
