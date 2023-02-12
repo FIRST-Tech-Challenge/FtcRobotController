@@ -18,7 +18,6 @@ import static org.firstinspires.ftc.masters.BadgerConstants.TIP_FRONT;
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
-import com.arcrobotics.ftclib.controller.PIDController;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -27,11 +26,9 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.checkerframework.checker.units.qual.A;
-
 @Config
 @TeleOp(name="Power Play TeleOp COLORADO", group = "competition")
-public class PowerPlayTeleopTry extends LinearOpMode {
+public class PowerPlayTeleopColorado extends LinearOpMode {
 
 
     private final FtcDashboard dashboard = FtcDashboard.getInstance();
@@ -72,6 +69,7 @@ public class PowerPlayTeleopTry extends LinearOpMode {
 
     int liftOffset;
     int armOffset;
+    PowerPlayComputerVisionPipelines  CV= null;
 
 
     @Override
@@ -94,6 +92,7 @@ public class PowerPlayTeleopTry extends LinearOpMode {
             --------
 
         */
+        CV = new PowerPlayComputerVisionPipelines(hardwareMap, telemetry);
         telemetry.addData("Status", "Initialized");
        // telemetry.update();
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
@@ -153,8 +152,13 @@ public class PowerPlayTeleopTry extends LinearOpMode {
         boolean moveArm = false;
         boolean openClaw = true;
 
+        boolean aligning = false;
+        boolean yPushed= false;
 
         waitForStart();
+        if (!CV.isError()){
+            CV.setPipeDetectionFront();
+        }
         runtime.reset();
 
 
@@ -214,6 +218,22 @@ public class PowerPlayTeleopTry extends LinearOpMode {
             } else if (gamepad1.b) {
                 maxPowerConstraint = 0.25;
             }
+
+            if (gamepad1.y){
+                if (!yPushed){
+                    aligning = !aligning;
+                }
+
+                yPushed = true;
+
+            } else {
+                yPushed = false;
+            }
+            if (aligning){
+                aligning = !alignPole();
+            }
+
+
 
             if (gamepad1.left_trigger>0.2){
                 armMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -456,6 +476,45 @@ public class PowerPlayTeleopTry extends LinearOpMode {
 
     enum STATE{
         ZERO, BOTTOM, MID, HIGH, BACK_MID, BACK_HIGH, MANUAL, CONE
+    }
+
+    public boolean alignPole() {
+        PowerPlayComputerVisionPipelines.PipeDetectionPipeline.PipePosition pos = CV.pipeDetectionPipeline.position;
+        switch (pos) {
+            case LEFT1:
+            case LEFT2:
+            case LEFT3:
+            case LEFT4:
+            case LEFT5:
+            case LEFT6:
+            case LEFT7:
+            case LEFT8:
+                leftFrontMotor.setPower(-.2);
+                leftRearMotor.setPower(-.2);
+                rightFrontMotor.setPower(.2);
+                rightRearMotor.setPower(.2);
+                break;
+            case RIGHT1:
+            case RIGHT2:
+            case RIGHT3:
+            case RIGHT4:
+            case RIGHT5:
+            case RIGHT6:
+            case RIGHT7:
+            case RIGHT8:
+                leftFrontMotor.setPower(.2);
+                leftRearMotor.setPower(.2);
+                rightFrontMotor.setPower(-.2);
+                rightRearMotor.setPower(-.2);
+                break;
+            case CENTER:
+                leftFrontMotor.setPower(0);
+                leftRearMotor.setPower(0);
+                rightFrontMotor.setPower(0);
+                rightRearMotor.setPower(0);
+                return true;
+        }
+        return false;
     }
 
 

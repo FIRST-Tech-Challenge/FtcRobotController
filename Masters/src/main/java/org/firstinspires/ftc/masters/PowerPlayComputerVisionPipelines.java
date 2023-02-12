@@ -50,6 +50,8 @@ public class PowerPlayComputerVisionPipelines {
     public SleevePipeline sleevePipeline;
     public PipeDetectionPipeline pipeDetectionPipeline;
     public BlueStackPipeline blueStackDetectionPipeline;
+    Telemetry telemetry;
+    boolean error = false;
 
 //    Random useful tidbit of information, to access the camera stream, hit innit, then
 //    press the ellipsis button on the top right of the screen, then select "Camera Stream".
@@ -61,6 +63,7 @@ public class PowerPlayComputerVisionPipelines {
 //        Get and store camera monitor view id.
 //        int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
 
+        this.telemetry = telemetry;
         webcam = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "webcam"));
         sleevePipeline = new SleevePipeline(telemetry);
         pipeDetectionPipeline = new PipeDetectionPipeline(telemetry);
@@ -97,6 +100,7 @@ public class PowerPlayComputerVisionPipelines {
             public void onError(int errorCode) {
                 telemetry.addLine("Can't open camera");
                 telemetry.update();
+                error= true;
                 /*
                  * This will be called if the camera could not be opened
                  */
@@ -118,6 +122,26 @@ public class PowerPlayComputerVisionPipelines {
             }
         });
 
+    }
+
+    public boolean isError() {
+        return error;
+    }
+
+    public void setSleevePipeline(){
+        sleeveWebcam.setPipeline(new SleevePipeline(this.telemetry));
+    }
+
+    public void setPipeDetectionFront(){
+        sleeveWebcam.setPipeline(new PipeDetectionPipeline(this.telemetry));
+    }
+
+    public void setPipeDetectionBack(){
+        webcam.setPipeline(new PipeDetectionPipeline(this.telemetry));
+    }
+
+    public void setBlueStackDetectionPipeline(){
+        sleeveWebcam.setPipeline(new BlueStackPipeline(this.telemetry));
     }
 
     public void stopCamera(){
