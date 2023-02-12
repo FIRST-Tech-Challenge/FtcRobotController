@@ -8,8 +8,6 @@ abstract public class AutoFramework extends BaseAutonomous {
      * @throws InterruptedException If you haven't added a config for that autonomous
      */
     public void runAuto(int AutoSelector) throws InterruptedException {
-
-
         //set values here
         int driveCourse;
         int targetDistance = 11;
@@ -27,7 +25,7 @@ abstract public class AutoFramework extends BaseAutonomous {
                 driveCourse = 90;
                 break;
             default:
-                throw new IllegalArgumentException("you gotta edit AutoFramework to do that");
+                throw new IllegalArgumentException("You need to add a new case to AutoFramework in order to run that");
         }
 
         // initialize motors, servos, imu, cameras, etc.
@@ -76,9 +74,6 @@ abstract public class AutoFramework extends BaseAutonomous {
         driveSlidesAutonomous(Constants.SLIDE_BOTTOM);
 
         // park in correct signal position
-
-
-
         switch (signal) {
             // strafe left to park in zone 1
             case 0:
