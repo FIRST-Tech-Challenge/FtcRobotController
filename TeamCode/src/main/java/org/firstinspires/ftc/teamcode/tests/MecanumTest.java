@@ -2,12 +2,14 @@ package org.firstinspires.ftc.teamcode.tests;
 
 import com.arcrobotics.ftclib.drivebase.MecanumDrive;
 import com.arcrobotics.ftclib.hardware.motors.Motor;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.robotbase.MotorExEx;
 
 @TeleOp
+@Disabled
 public class MecanumTest extends LinearOpMode {
     private MotorExEx frontLeft, frontRight, rearRight, rearLeft;
     private MecanumDrive drive;

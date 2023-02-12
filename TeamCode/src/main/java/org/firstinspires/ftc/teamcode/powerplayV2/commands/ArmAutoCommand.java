@@ -1,6 +1,8 @@
-package org.firstinspires.ftc.teamcode.powerplayV2;
+package org.firstinspires.ftc.teamcode.powerplayV2.commands;
 
 import com.arcrobotics.ftclib.command.CommandBase;
+
+import org.firstinspires.ftc.teamcode.powerplayV2.subsystems.ArmSubsystem;
 
 import java.util.function.IntSupplier;
 
@@ -22,6 +24,6 @@ public class ArmAutoCommand extends CommandBase {
 
     @Override
     public boolean isFinished() {
-        return true;
+        return true ;
     }
 }

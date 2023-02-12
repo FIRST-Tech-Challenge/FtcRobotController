@@ -1,29 +1,39 @@
-package org.firstinspires.ftc.teamcode.powerplay;
+package org.firstinspires.ftc.teamcode.powerplayV2.subsystems;
 
 import com.arcrobotics.ftclib.command.SubsystemBase;
 import com.arcrobotics.ftclib.hardware.motors.Motor;
 import com.arcrobotics.ftclib.hardware.motors.MotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
-public class SliderSubsystem extends SubsystemBase {
+public class ElevatorSubsystem extends SubsystemBase {
     private final MotorEx motor;
 
+    private double KP = 1;
+    private double KS = 0, KV = 0, KA = 0;
+
     public enum Level {
-        PARK, GRAB, LOW, MID, HIGH;
+        LOW, MID, HIGH;
     }
 
     private Level level;
 
-    private int[] levelPositions = {0, 200, 533, 1121, 1678};
+    private int[] levelPositions = {0, 620, 2000};
 
-    public SliderSubsystem(HardwareMap hardwareMap) {
+    public ElevatorSubsystem(HardwareMap hardwareMap) {
         motor = new MotorEx(hardwareMap, "slider");
-        motor.setInverted(true);
-        motor.setRunMode(MotorEx.RunMode.PositionControl);
+//        motor.setInverted(true);
         motor.setZeroPowerBehavior(MotorEx.ZeroPowerBehavior.BRAKE);
         motor.setPositionTolerance(10);   // allowed maximum error
-        level = Level.PARK;
-        setLevel(Level.PARK);
+        motor.setPositionCoefficient(KP);
+
+        // Velocity Control
+        motor.setFeedforwardCoefficients(KS, KV, KA);
+
+        motor.resetEncoder();
+
+        setAuto();
+        level = Level.LOW;
+        setLevel(Level.LOW);
     }
 
     public void run() {
@@ -36,16 +46,14 @@ public class SliderSubsystem extends SubsystemBase {
 
     public void setLevel(Level levelPicked) {
         level = levelPicked;
-        int levelIdx = 1;
+        int levelIdx = 0;
 
         if(level == Level.LOW)
-            levelIdx = 2;
-        else if (level == Level.MID)
-            levelIdx = 3;
-        else if (level == Level.HIGH)
-            levelIdx = 4;
-        else if (level == Level.GRAB)
             levelIdx = 0;
+        else if (level == Level.MID)
+            levelIdx = 1;
+        else if (level == Level.HIGH)
+            levelIdx = 2;
 
         motor.setTargetPosition(levelPositions[levelIdx]);
     }
@@ -59,10 +67,6 @@ public class SliderSubsystem extends SubsystemBase {
 
     public int getHeight(){
         return motor.getCurrentPosition();
-    }
-
-    public void setHeight(int pos) {
-        motor.setTargetPosition(pos);
     }
 
     public Level getLevel() {

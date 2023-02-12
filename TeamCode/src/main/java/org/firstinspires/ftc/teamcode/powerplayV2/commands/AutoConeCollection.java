@@ -5,9 +5,9 @@ import com.arcrobotics.ftclib.command.InstantCommand;
 import com.arcrobotics.ftclib.command.ParallelCommandGroup;
 import com.arcrobotics.ftclib.command.SequentialCommandGroup;
 
-import org.firstinspires.ftc.teamcode.powerplayV2.ArmSubsystem;
-import org.firstinspires.ftc.teamcode.powerplayV2.ClawSubsystem;
-import org.firstinspires.ftc.teamcode.powerplayV2.FrontSliderSubsystem;
+import org.firstinspires.ftc.teamcode.powerplayV2.subsystems.ArmSubsystem;
+import org.firstinspires.ftc.teamcode.powerplayV2.subsystems.ClawSubsystem;
+import org.firstinspires.ftc.teamcode.powerplayV2.subsystems.FrontSliderSubsystem;
 
 public class AutoConeCollection extends CommandBase {
     private ClawSubsystem claw;

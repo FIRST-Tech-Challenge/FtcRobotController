@@ -1,6 +1,8 @@
-package org.firstinspires.ftc.teamcode.powerplayV2;
+package org.firstinspires.ftc.teamcode.powerplayV2.commands;
 
 import com.arcrobotics.ftclib.command.CommandBase;
+
+import org.firstinspires.ftc.teamcode.powerplayV2.subsystems.BasketSubsystem;
 
 public class BasketCommand extends CommandBase {
     private BasketSubsystem basket;

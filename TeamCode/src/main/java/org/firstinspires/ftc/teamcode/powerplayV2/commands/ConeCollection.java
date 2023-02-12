@@ -4,10 +4,11 @@ import com.arcrobotics.ftclib.command.CommandBase;
 import com.arcrobotics.ftclib.command.InstantCommand;
 import com.arcrobotics.ftclib.command.ParallelCommandGroup;
 import com.arcrobotics.ftclib.command.SequentialCommandGroup;
+import com.arcrobotics.ftclib.command.WaitCommand;
 
-import org.firstinspires.ftc.teamcode.powerplayV2.ArmSubsystem;
-import org.firstinspires.ftc.teamcode.powerplayV2.ClawSubsystem;
-import org.firstinspires.ftc.teamcode.powerplayV2.FrontSliderSubsystem;
+import org.firstinspires.ftc.teamcode.powerplayV2.subsystems.ArmSubsystem;
+import org.firstinspires.ftc.teamcode.powerplayV2.subsystems.ClawSubsystem;
+import org.firstinspires.ftc.teamcode.powerplayV2.subsystems.FrontSliderSubsystem;
 
 public class ConeCollection extends CommandBase {
     private ClawSubsystem claw;
@@ -23,6 +24,7 @@ public class ConeCollection extends CommandBase {
 
         actions = new SequentialCommandGroup(
                 new InstantCommand(claw::grab, claw),
+                new WaitCommand(500),
                 new ParallelCommandGroup(
                         new InstantCommand(arm::setMid, arm),
                         new InstantCommand(front_slider::close, front_slider)

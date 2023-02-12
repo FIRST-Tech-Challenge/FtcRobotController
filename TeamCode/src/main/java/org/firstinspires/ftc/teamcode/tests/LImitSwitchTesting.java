@@ -1,10 +1,12 @@
 package org.firstinspires.ftc.teamcode.tests;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DigitalChannel;
 
 @TeleOp
+@Disabled
 public class LImitSwitchTesting extends LinearOpMode {
     DigitalChannel limitSwitch;
 

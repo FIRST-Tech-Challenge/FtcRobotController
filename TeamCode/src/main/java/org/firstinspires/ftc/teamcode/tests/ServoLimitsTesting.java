@@ -15,9 +15,10 @@ import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 
 @Config
 @TeleOp
+//@Disabled
 public class ServoLimitsTesting extends LinearOpMode {
     ServoImplEx servo1;
-    ServoImplEx servo2;
+//    ServoImplEx servo2;
 //    CRServoImpl servocr1;
 //    CRServoImpl servocr2;
 
@@ -28,8 +29,8 @@ public class ServoLimitsTesting extends LinearOpMode {
 
     Telemetry dahsboardTelemetry = FtcDashboard.getInstance().getTelemetry();
 
-    public static double max = 0.2;
-    public static double min = 0.1;
+    public static double max = 0.48;
+    public static double min = 0.01;
 
 //    double last_min=min, last_max=max;
 
@@ -38,7 +39,7 @@ public class ServoLimitsTesting extends LinearOpMode {
 
     @Override
     public void runOpMode() throws InterruptedException {
-        servo1 = hardwareMap.get(ServoImplEx.class, "claw");
+        servo1 = hardwareMap.get(ServoImplEx.class, "basket");
 //        servo2 = hardwareMap.get(ServoImplEx.class, "frontSlL");
 
         waitForStart();

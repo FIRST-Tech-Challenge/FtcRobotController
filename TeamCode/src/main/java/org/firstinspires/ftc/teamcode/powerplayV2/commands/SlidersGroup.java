@@ -4,9 +4,8 @@ import com.arcrobotics.ftclib.command.CommandBase;
 import com.arcrobotics.ftclib.command.InstantCommand;
 import com.arcrobotics.ftclib.command.ParallelCommandGroup;
 
-import org.firstinspires.ftc.teamcode.powerplayV2.ElevatorCommand;
-import org.firstinspires.ftc.teamcode.powerplayV2.ElevatorSubsystem;
-import org.firstinspires.ftc.teamcode.powerplayV2.FrontSliderSubsystem;
+import org.firstinspires.ftc.teamcode.powerplayV2.subsystems.ElevatorSubsystem;
+import org.firstinspires.ftc.teamcode.powerplayV2.subsystems.FrontSliderSubsystem;
 
 public class SlidersGroup extends CommandBase {
     private ElevatorSubsystem elevator;

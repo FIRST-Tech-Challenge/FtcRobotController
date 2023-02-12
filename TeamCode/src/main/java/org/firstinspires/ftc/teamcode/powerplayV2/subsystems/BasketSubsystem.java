@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.powerplayV2;
+package org.firstinspires.ftc.teamcode.powerplayV2.subsystems;
 
 import com.arcrobotics.ftclib.command.SubsystemBase;
 import com.arcrobotics.ftclib.hardware.SimpleServo;

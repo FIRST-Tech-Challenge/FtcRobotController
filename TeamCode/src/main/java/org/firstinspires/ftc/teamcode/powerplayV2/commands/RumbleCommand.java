@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.powerplayV2;
+package org.firstinspires.ftc.teamcode.powerplayV2.commands;
 
 import com.arcrobotics.ftclib.command.CommandBase;
 

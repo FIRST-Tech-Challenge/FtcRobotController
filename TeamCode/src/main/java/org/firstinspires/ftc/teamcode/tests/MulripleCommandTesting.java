@@ -1,23 +1,22 @@
 package org.firstinspires.ftc.teamcode.tests;
 
-import android.text.style.IconMarginSpan;
-
 import com.arcrobotics.ftclib.command.CommandOpMode;
 import com.arcrobotics.ftclib.command.InstantCommand;
 import com.arcrobotics.ftclib.command.ParallelCommandGroup;
 import com.arcrobotics.ftclib.command.SequentialCommandGroup;
 import com.arcrobotics.ftclib.command.WaitCommand;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
-import org.firstinspires.ftc.teamcode.powerplayV2.ArmAutoCommand;
-import org.firstinspires.ftc.teamcode.powerplayV2.ArmSubsystem;
-import org.firstinspires.ftc.teamcode.powerplayV2.BasketSubsystem;
-import org.firstinspires.ftc.teamcode.powerplayV2.ClawSubsystem;
-import org.firstinspires.ftc.teamcode.powerplayV2.ElevatorCommand;
-import org.firstinspires.ftc.teamcode.powerplayV2.ElevatorSubsystem;
+import org.firstinspires.ftc.teamcode.powerplayV2.subsystems.ArmSubsystem;
+import org.firstinspires.ftc.teamcode.powerplayV2.subsystems.BasketSubsystem;
+import org.firstinspires.ftc.teamcode.powerplayV2.subsystems.ClawSubsystem;
+import org.firstinspires.ftc.teamcode.powerplayV2.commands.ElevatorCommand;
+import org.firstinspires.ftc.teamcode.powerplayV2.subsystems.ElevatorSubsystem;
 import org.firstinspires.ftc.teamcode.powerplayV2.commands.ResetSliderBasket;
 
 @TeleOp
+@Disabled
 public class MulripleCommandTesting extends CommandOpMode {
     SequentialCommandGroup actions;
     ClawSubsystem claw;
@@ -30,7 +29,7 @@ public class MulripleCommandTesting extends CommandOpMode {
         claw = new ClawSubsystem(hardwareMap);
         elevator = new ElevatorSubsystem(hardwareMap);
         basket = new BasketSubsystem(hardwareMap);
-        arm = new ArmSubsystem(hardwareMap);
+//        arm = new ArmSubsystem(hardwareMap);
 
         actions = new SequentialCommandGroup(
                 new InstantCommand(claw::grab, claw),

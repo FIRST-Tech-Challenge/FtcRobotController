@@ -1,6 +1,8 @@
-package org.firstinspires.ftc.teamcode.powerplayV2;
+package org.firstinspires.ftc.teamcode.powerplayV2.commands;
 
 import com.arcrobotics.ftclib.command.CommandBase;
+
+import org.firstinspires.ftc.teamcode.powerplayV2.subsystems.ElevatorSubsystem;
 
 public class ElevatorManualCommand extends CommandBase {
     private final ElevatorSubsystem elevator;

@@ -4,9 +4,8 @@ import com.arcrobotics.ftclib.command.CommandBase;
 import com.arcrobotics.ftclib.command.InstantCommand;
 import com.arcrobotics.ftclib.command.ParallelCommandGroup;
 
-import org.firstinspires.ftc.teamcode.powerplayV2.BasketSubsystem;
-import org.firstinspires.ftc.teamcode.powerplayV2.ElevatorCommand;
-import org.firstinspires.ftc.teamcode.powerplayV2.ElevatorSubsystem;
+import org.firstinspires.ftc.teamcode.powerplayV2.subsystems.BasketSubsystem;
+import org.firstinspires.ftc.teamcode.powerplayV2.subsystems.ElevatorSubsystem;
 
 public class ResetSliderBasket extends CommandBase {
     private ElevatorSubsystem elevator;

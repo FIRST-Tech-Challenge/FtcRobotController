@@ -14,7 +14,7 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 
 import java.util.List;
 
-//@Disabled
+@Disabled
 @Config
 @TeleOp
 public class SliderConstantsTesting extends LinearOpMode {

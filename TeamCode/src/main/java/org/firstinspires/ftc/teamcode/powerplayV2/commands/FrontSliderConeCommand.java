@@ -1,6 +1,9 @@
-package org.firstinspires.ftc.teamcode.powerplayV2;
+package org.firstinspires.ftc.teamcode.powerplayV2.commands;
 
 import com.arcrobotics.ftclib.command.CommandBase;
+
+import org.firstinspires.ftc.teamcode.powerplayV2.subsystems.ArmSubsystem;
+import org.firstinspires.ftc.teamcode.powerplayV2.subsystems.FrontSliderSubsystem;
 
 import java.util.function.BooleanSupplier;
 
@@ -25,7 +28,12 @@ public class FrontSliderConeCommand extends CommandBase {
 
     @Override
     public void execute() {
-//        frontSlider.increasePosition();
+        frontSlider.open();
+    }
+
+    @Override
+    public void end(boolean interrupted) {
+        frontSlider.stop();
     }
 
     @Override

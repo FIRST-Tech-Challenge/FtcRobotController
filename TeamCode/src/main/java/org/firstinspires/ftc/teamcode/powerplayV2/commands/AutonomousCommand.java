@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.powerplayV2;
+package org.firstinspires.ftc.teamcode.powerplayV2.commands;
 
 import com.arcrobotics.ftclib.command.CommandBase;
 import com.arcrobotics.ftclib.command.InstantCommand;
@@ -7,11 +7,11 @@ import com.arcrobotics.ftclib.command.SequentialCommandGroup;
 import com.arcrobotics.ftclib.command.WaitCommand;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
-import org.firstinspires.ftc.teamcode.powerplayV2.commands.ConeCollection;
-import org.firstinspires.ftc.teamcode.powerplayV2.commands.ResetSliderBasket;
-import org.firstinspires.ftc.teamcode.powerplayV2.commands.SlidersGroup;
-
-import java.util.function.DoubleSupplier;
+import org.firstinspires.ftc.teamcode.powerplayV2.subsystems.ArmSubsystem;
+import org.firstinspires.ftc.teamcode.powerplayV2.subsystems.BasketSubsystem;
+import org.firstinspires.ftc.teamcode.powerplayV2.subsystems.ClawSubsystem;
+import org.firstinspires.ftc.teamcode.powerplayV2.subsystems.ElevatorSubsystem;
+import org.firstinspires.ftc.teamcode.powerplayV2.subsystems.FrontSliderSubsystem;
 
 public class AutonomousCommand extends CommandBase {
     // Constants
@@ -33,8 +33,8 @@ public class AutonomousCommand extends CommandBase {
         claw = new ClawSubsystem(hardwareMap);
         elevator = new ElevatorSubsystem(hardwareMap);
         basket = new BasketSubsystem(hardwareMap);
-        arm = new ArmSubsystem(hardwareMap);
-        frontSlider = new FrontSliderSubsystem(hardwareMap);
+//        arm = new ArmSubsystem(hardwareMap);
+//        frontSlider = new FrontSliderSubsystem(hardwareMap);
 
         actions = new SequentialCommandGroup(
                 new ParallelCommandGroup(

@@ -1,7 +1,6 @@
-package org.firstinspires.ftc.teamcode.powerplay;
+package org.firstinspires.ftc.teamcode.powerplayV2.subsystems;
 
 import com.arcrobotics.ftclib.command.SubsystemBase;
-import com.arcrobotics.ftclib.hardware.SensorDistanceEx;
 import com.arcrobotics.ftclib.hardware.SensorRevTOFDistance;
 import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.HardwareMap;

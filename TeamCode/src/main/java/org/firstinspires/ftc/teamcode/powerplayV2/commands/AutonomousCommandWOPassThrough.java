@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.powerplayV2;
+package org.firstinspires.ftc.teamcode.powerplayV2.commands;
 
 import com.arcrobotics.ftclib.command.CommandBase;
 import com.arcrobotics.ftclib.command.InstantCommand;
@@ -9,10 +9,10 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.teamcode.powerplay.SliderCommand;
 import org.firstinspires.ftc.teamcode.powerplay.SliderSubsystem;
-import org.firstinspires.ftc.teamcode.powerplayV2.commands.ConeCollection;
-import org.firstinspires.ftc.teamcode.powerplayV2.commands.ResetSliderBasket;
-import org.firstinspires.ftc.teamcode.powerplayV2.commands.SlidersGroup;
-import org.firstinspires.ftc.teamcode.robotbase.TelemetrySubsystem;
+import org.firstinspires.ftc.teamcode.powerplayV2.subsystems.ArmSubsystem;
+import org.firstinspires.ftc.teamcode.powerplayV2.subsystems.BasketSubsystem;
+import org.firstinspires.ftc.teamcode.powerplayV2.subsystems.ClawSubsystem;
+import org.firstinspires.ftc.teamcode.powerplayV2.subsystems.ElevatorSubsystem;
 
 public class AutonomousCommandWOPassThrough extends CommandBase {
     // Constants

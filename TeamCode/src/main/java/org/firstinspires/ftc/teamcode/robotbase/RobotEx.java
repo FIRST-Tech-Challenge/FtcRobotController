@@ -37,25 +37,21 @@ public class RobotEx {
 
     protected IMUSubsystem gyro;
 
-    protected BalancingSubsystem balancer;
-
-    protected TelemetrySubsystem telemetryEx;
-
     public RobotEx(HardwareMap hardwareMap, Telemetry telemetry, GamepadExEx driverOp,
                    GamepadExEx toolOp) {
         this(hardwareMap, telemetry, driverOp, toolOp, OpModeType.TELEOP, false, false,
-                false, false, false, false, true);
+                false, false, false, false);
     }
 
     public RobotEx(HardwareMap hardwareMap, Telemetry telemetry, GamepadExEx driverOp,
                    GamepadExEx toolOp, OpModeType type, Boolean initCamera, Boolean useCameraFollower,
                    Boolean frontLeftInvert, Boolean frontRightInvert, Boolean rearLeftInvert,
-                   Boolean rearRightInvert, Boolean useBalancingController) {
+                   Boolean rearRightInvert) {
         initCommon(hardwareMap, telemetry);
         this.initCamera = initCamera;
         if (type == OpModeType.TELEOP) {
             initTele(hardwareMap, telemetry, driverOp, toolOp, useCameraFollower, frontLeftInvert,
-                    frontRightInvert, rearLeftInvert, rearRightInvert, useBalancingController);
+                    frontRightInvert, rearLeftInvert, rearRightInvert);
             opModeType = OpModeType.TELEOP;
         } else {
             initAuto(hardwareMap, telemetry);
@@ -68,30 +64,6 @@ public class RobotEx {
         dashboard = FtcDashboard.getInstance();
         dashboardTelemetry = dashboard.getTelemetry();
         this.telemetry = telemetry;
-    }
-
-    public void initAuto(HardwareMap hardwareMap, Telemetry telemetry) {
-        //////////////////////////////////////////// IMU ///////////////////////////////////////////
-        gyro = new IMUSubsystem(hardwareMap, this.telemetry, dashboardTelemetry);
-        CommandScheduler.getInstance().registerSubsystem(gyro);
-
-        ////////////////////////////////////////// Camera //////////////////////////////////////////
-        camera = new Camera(hardwareMap, dashboard, telemetry,
-                () -> this.driverOp.getButton(GamepadKeys.Button.BACK));
-
-        //////////////////////////////////////// Drivetrain ////////////////////////////////////////
-        SampleMecanumDrive rrDrive = new SampleMecanumDrive(hardwareMap);
-
-        ////////////////////////// Setup and Initialize Mechanisms Objects /////////////////////////
-        initMechanismsAutonomous(hardwareMap);
-    }
-
-    public void initTele(HardwareMap hardwareMap, Telemetry telemetry, GamepadExEx driverOp,
-                         GamepadExEx toolOp, Boolean useCameraFollower, Boolean frontLeftInvert, Boolean frontRightInvert, Boolean rearLeftInvert,
-                         Boolean rearRightInvert, Boolean useBalancingController) {
-        ///////////////////////////////////////// Gamepads /////////////////////////////////////////
-        this.driverOp = driverOp;
-        this.toolOp = toolOp;
 
         //////////////////////////////////////////// IMU ///////////////////////////////////////////
         gyro = new IMUSubsystem(hardwareMap, this.telemetry, dashboardTelemetry);
@@ -102,6 +74,22 @@ public class RobotEx {
             camera = new Camera(hardwareMap, dashboard, telemetry,
                     () -> this.driverOp.getButton(GamepadKeys.Button.BACK));
         }
+    }
+
+    public void initAuto(HardwareMap hardwareMap, Telemetry telemetry) {
+        //////////////////////////////////////// Drivetrain ////////////////////////////////////////
+        SampleMecanumDrive rrDrive = new SampleMecanumDrive(hardwareMap);
+
+        ////////////////////////// Setup and Initialize Mechanisms Objects /////////////////////////
+        initMechanismsAutonomous(hardwareMap);
+    }
+
+    public void initTele(HardwareMap hardwareMap, Telemetry telemetry, GamepadExEx driverOp,
+                         GamepadExEx toolOp, Boolean useCameraFollower, Boolean frontLeftInvert, Boolean frontRightInvert, Boolean rearLeftInvert,
+                         Boolean rearRightInvert) {
+        ///////////////////////////////////////// Gamepads /////////////////////////////////////////
+        this.driverOp = driverOp;
+        this.toolOp = toolOp;
 
         //////////////////////////////////////// Drivetrain ////////////////////////////////////////
         drive = new MecanumDriveSubsystem(hardwareMap, frontLeftInvert, frontRightInvert,
@@ -135,18 +123,11 @@ public class RobotEx {
         driverOp.getGamepadButton(GamepadKeys.Button.RIGHT_STICK_BUTTON)
                 .whenPressed(new InstantCommand(gyroFollow::toggleState, gyroFollow));
 
-        telemetryEx.addMonitor("Left X: ", () -> toolOp.getLeftX());
-
-        telemetryEx.addMonitor("Left Y: ", () -> toolOp.getLeftY());
-        telemetryEx.addMonitor("Right X: ", () -> toolOp.getRightX());
-        telemetryEx.addMonitor("Right Y: ", () -> toolOp.getRightY());
-
-        /////////////////////////////////// Balancing Controller ///////////////////////////////////
-        if (useBalancingController) {
-            balancer = new BalancingSubsystem(gyro::getPitch, gyro::getRoll);
-            driverOp.getGamepadButton(GamepadKeys.Button.LEFT_STICK_BUTTON)
-                    .whenPressed(new InstantCommand(balancer::toggleState, balancer));
-        }
+//        telemetryEx.addMonitor("Left X: ", () -> toolOp.getLeftX());
+//
+//        telemetryEx.addMonitor("Left Y: ", () -> toolOp.getLeftY());
+//        telemetryEx.addMonitor("Right X: ", () -> toolOp.getRightX());
+//        telemetryEx.addMonitor("Right Y: ", () -> toolOp.getRightY());
 
         ////////////////////////////////////// Camera Follower /////////////////////////////////////
 //        if (initCamera && useCameraFollower) {
@@ -168,16 +149,10 @@ public class RobotEx {
     }
 
     public double drivetrainStrafe() {
-        if (balancer.isEnabled())
-            return balancer.getRollCorrection() + driverOp.getLeftX();
-
         return driverOp.getLeftX();
     }
 
     public double drivetrainForward() {
-        if (balancer.isEnabled())
-            return -balancer.getPitchCorrection() + driverOp.getLeftY();
-
         return driverOp.getLeftY();
     }
 

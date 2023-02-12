@@ -48,27 +48,6 @@ public class IMUSubsystem extends SubsystemBase {
         rawRoll = angles[2];
 
         calculateContinuousValue();
-        if(imu.getRevIMU() instanceof BNO055IMU) {
-            accel = imu.getXYZGs();
-
-            maxAccelX = accel[0] > maxAccelX ? accel[0] : maxAccelX;
-            maxAccelY = accel[1] > maxAccelY ? accel[1] : maxAccelY;
-            maxAccelZ = accel[2] > maxAccelZ ? accel[2] : maxAccelZ;
-
-            telemetry.addData("Accel X: ", accel[0]);
-            telemetry.addData("Accel Y: ", accel[1]);
-            telemetry.addData("Accel Z: ", accel[2]);
-            telemetry.addData("Max Accel X: ", maxAccelX);
-            telemetry.addData("Max Accel Y: ", maxAccelY);
-            telemetry.addData("Max Accel Z: ", maxAccelZ);
-
-            dashboardTelemetry.addData("Accel X: ", accel[0]);
-            dashboardTelemetry.addData("Accel Y: ", accel[1]);
-            dashboardTelemetry.addData("Accel Z: ", accel[2]);
-            dashboardTelemetry.addData("Max Accel X: ", maxAccelX);
-            dashboardTelemetry.addData("Max Accel Y: ", maxAccelY);
-            dashboardTelemetry.addData("Max Accel Z: ", maxAccelZ);
-        }
 
         telemetry.addData("Gyro Yaw:", rawYaw);
         telemetry.addData("Gyro Pitch:", rawPitch);
