@@ -26,7 +26,7 @@ public class VSlider {
 
         hwMap = ahwMap;
         motor = hwMap.get(DcMotor.class, "vSlider");
-        motor.setDirection(DcMotorSimple.Direction.FORWARD);
+        //Direction set in robot class
         motor.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
         motor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         motor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -50,6 +50,20 @@ public class VSlider {
         while ((runtime.milliseconds() < timeout_ms) && (motor.isBusy())) {
         }
         motor.setPower(0);
+    }
+
+    public void MoveSliderWithEncoder (double speed, int Position) {
+        timeout_ms = 5000;
+
+        runtime.reset();
+        motor.setTargetPosition(Position);
+        motor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        motor.setPower(speed);
+        //Run to position.
+        while ((runtime.milliseconds() < timeout_ms) && (motor.isBusy())) {
+        }
+        motor.setPower(0);
+
     }
 
 }

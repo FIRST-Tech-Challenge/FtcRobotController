@@ -35,9 +35,10 @@ public class VSliderTest extends LinearOpMode {
 
         while (opModeIsActive()) {
             if (gamepad2.a) {
-                robot.vSlider.MoveSlider(1,1000,1000);
-                sleep(1000);
-                robot.vSlider.MoveSlider(1,-1000,1000);
+                robot.vSlider.MoveSliderWithEncoder(1,1000);
+                //sleep(1000);
+                telemetry.addData("slider position", robot.vSlider.motor.getCurrentPosition());
+                telemetry.update();
             }
 
         }

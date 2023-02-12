@@ -109,6 +109,12 @@ public class Teleop extends LinearOpMode {
                 robot.arm.swingDown();
             }
 
+            if(robot.chassis.isRobotStable() == false) {
+                while(robot.chassis.isRobotStable() == false) {
+                    robot.chassis.stopDriveMotors();
+                }
+            }
+
 
             telemetry.addData("FL Motor Encoder", robot.chassis.FLMotor.getCurrentPosition());
             telemetry.addData("BL Motor Encoder", robot.chassis.BLMotor.getCurrentPosition());
@@ -124,6 +130,7 @@ public class Teleop extends LinearOpMode {
             int angleFloat = (int) (robot.modAngle(angle.firstAngle));
             telemetry.addData("Orientation in 0-360", angleFloat);
             telemetry.addData("Robot Location", "(" + robot.chassis.robotX + ", " + robot.chassis.robotY + ")");
+            telemetry.addData("IsRobotStable", robot.chassis.isRobotStable());
 
             telemetry.update();
 

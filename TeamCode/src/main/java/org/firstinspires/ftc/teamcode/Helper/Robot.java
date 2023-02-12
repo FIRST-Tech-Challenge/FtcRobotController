@@ -67,7 +67,7 @@ public class Robot {
             claw.servo.setDirection(Servo.Direction.FORWARD);
         } else if (robotInUse == 2022) {
             arm.motor.setDirection(DcMotorSimple.Direction.REVERSE);
-            vSlider.motor.setDirection(DcMotorSimple.Direction.FORWARD);
+            vSlider.motor.setDirection(DcMotorSimple.Direction.REVERSE);
             claw.servo.setDirection(Servo.Direction.REVERSE);
         }
 

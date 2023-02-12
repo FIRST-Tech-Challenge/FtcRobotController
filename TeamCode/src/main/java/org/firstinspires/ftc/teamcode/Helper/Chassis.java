@@ -5,9 +5,11 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.util.ElapsedTime;
+import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 
 import java.util.Arrays;
 import java.util.concurrent.TimeUnit;
+import java.util.*;
 
 public class Chassis {
 
@@ -17,8 +19,12 @@ public class Chassis {
 
     public int[] Location = {robotX,robotY};
 
+
+
     //IMU
     public  BNO055IMU imu;
+
+    public Orientation angles;
 
     private ElapsedTime runtime = new ElapsedTime();
 
@@ -128,6 +134,14 @@ public class Chassis {
         imu.initialize(parameters);
     }
 
+    public boolean isRobotStable(){
+        angles = imu.getAngularOrientation();
+        if(Math.abs(angles.secondAngle) >= 3 || Math.abs(angles.thirdAngle) >= 3) {
+            return false;
+        } else {
+            return true;
+        }
+    }
 
     public void Drive(double speed, int distance) {
 
