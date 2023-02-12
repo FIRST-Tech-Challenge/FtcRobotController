@@ -50,8 +50,8 @@ public class UnderArm implements Subsystem {
     public static double WRIST_DEG_MAX = 180;
     public static double TURRET_DEG_MAX = 45;
 
-    public static double LASSO_CLOSED = 1500;
-    public static double LASSO_OPEN = 1500;
+    public static double LASSO_CLOSED = 1150;
+    public static double LASSO_OPEN = 2500;
 
     public static double TRANSFER_SHOULDER_ANGLE = 0;
     public static double TRANSFER_ELBOW_ANGLE = 0;
@@ -306,11 +306,11 @@ public class UnderArm implements Subsystem {
     }
 
     public void grip(){
-        lassoServo.setPosition(servoNormalize(LASSO_CLOSED));
+        lassoServo.setPosition(servoNormalizeExtended(LASSO_CLOSED));
     }
 
     public void release(){
-        lassoServo.setPosition(servoNormalize(LASSO_OPEN));
+        lassoServo.setPosition(servoNormalizeExtended(LASSO_OPEN));
     }
 
     public void toggleLasso(){
