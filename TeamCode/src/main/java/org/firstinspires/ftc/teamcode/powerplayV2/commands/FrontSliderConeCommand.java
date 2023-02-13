@@ -28,7 +28,7 @@ public class FrontSliderConeCommand extends CommandBase {
 
     @Override
     public void execute() {
-        frontSlider.open();
+        frontSlider.open(0.2);
     }
 
     @Override

@@ -24,8 +24,7 @@ public class Camera {
     // UNITS ARE METERS
     double tagsize = 0.166;
 
-    public Camera(HardwareMap hardwareMap, FtcDashboard dashboard, Telemetry telemetry,
-                  BooleanSupplier colorSet) {
+    public Camera(HardwareMap hardwareMap, FtcDashboard dashboard, Telemetry telemetry) {
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier(
                 "cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
         webcam = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class,

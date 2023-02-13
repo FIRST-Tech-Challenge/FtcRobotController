@@ -7,8 +7,8 @@ import com.arcrobotics.ftclib.command.SequentialCommandGroup;
 import com.arcrobotics.ftclib.command.WaitCommand;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
-import org.firstinspires.ftc.teamcode.powerplay.SliderCommand;
-import org.firstinspires.ftc.teamcode.powerplay.SliderSubsystem;
+//import org.firstinspires.ftc.teamcode.powerplay.SliderCommand;
+//import org.firstinspires.ftc.teamcode.powerplay.SliderSubsystem;
 import org.firstinspires.ftc.teamcode.powerplayV2.subsystems.ArmSubsystem;
 import org.firstinspires.ftc.teamcode.powerplayV2.subsystems.BasketSubsystem;
 import org.firstinspires.ftc.teamcode.powerplayV2.subsystems.ClawSubsystem;
@@ -24,7 +24,6 @@ public class AutonomousCommandWOPassThrough extends CommandBase {
     ElevatorSubsystem elevator;
     BasketSubsystem basket;
     ArmSubsystem arm;
-    TelemetrySubsystem telemetryEx;
 
     private int index;
 
@@ -33,7 +32,7 @@ public class AutonomousCommandWOPassThrough extends CommandBase {
 
     public AutonomousCommandWOPassThrough(int index, ClawSubsystem claw,
                                           ElevatorSubsystem elevator, BasketSubsystem basket,
-                                          ArmSubsystem arm, TelemetrySubsystem telemetryEx) {
+                                          ArmSubsystem arm) {
         this.hardwareMap = hardwareMap;
 
         this.index = index;
@@ -42,9 +41,6 @@ public class AutonomousCommandWOPassThrough extends CommandBase {
         this.elevator = elevator;
         this.basket = basket;
         this.arm = arm;
-        this.telemetryEx = telemetryEx;
-
-        telemetryEx.addMonitor("Constructor was Scheduled: ", () -> index);
 
         actions = new SequentialCommandGroup(
                 new InstantCommand(claw::grab, claw),
@@ -108,7 +104,6 @@ public class AutonomousCommandWOPassThrough extends CommandBase {
 
     @Override
     public void end(boolean interrupted) {
-        telemetryEx.addMonitor("End was Scheduled: ", () -> index);
 
 //        if(index < 5) this(hardwareMap, ++index).schedule();
     }

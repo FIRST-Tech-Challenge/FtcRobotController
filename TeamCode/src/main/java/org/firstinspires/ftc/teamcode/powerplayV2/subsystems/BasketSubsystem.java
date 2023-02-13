@@ -11,7 +11,7 @@ public class BasketSubsystem extends SubsystemBase {
     private ServoImplEx servo;
     private final double MIN = 0.01, MAX = 0.48;
 
-    enum State {
+    public enum State {
         OUTTAKE,
         TRAVEL
     }
@@ -21,6 +21,13 @@ public class BasketSubsystem extends SubsystemBase {
     public BasketSubsystem(HardwareMap hardwareMap) {
         servo = hardwareMap.get(ServoImplEx.class, "basket");
         state = State.TRAVEL;
+    }
+
+    public void toggleState() {
+        if (state == State.OUTTAKE)
+            setTravel();
+        else
+            setOuttake();
     }
 
     public void setTravel() {

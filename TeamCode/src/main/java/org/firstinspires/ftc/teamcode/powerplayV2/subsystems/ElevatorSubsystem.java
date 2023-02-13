@@ -8,7 +8,8 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 public class ElevatorSubsystem extends SubsystemBase {
     private final MotorEx motor;
 
-    private double KP = 1;
+    private double KP = 0.2;
+
     private double KS = 0, KV = 0, KA = 0;
 
     public enum Level {
@@ -37,7 +38,7 @@ public class ElevatorSubsystem extends SubsystemBase {
     }
 
     public void run() {
-        motor.set(0.1);
+        motor.set(0.15);
     }
 
     public void stop() {

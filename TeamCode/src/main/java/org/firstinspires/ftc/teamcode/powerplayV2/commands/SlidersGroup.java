@@ -19,7 +19,7 @@ public class SlidersGroup extends CommandBase {
 
         actions = extend ? new ParallelCommandGroup(
                 new ElevatorCommand(elevator, ElevatorSubsystem.Level.HIGH),
-                new InstantCommand(front_slider::open)
+                new InstantCommand(() -> front_slider.open(0.3))
         ) : new ParallelCommandGroup(
                 new ElevatorCommand(elevator, ElevatorSubsystem.Level.LOW),
                 new InstantCommand(front_slider::close)

@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.powerplayV2;
 
+import com.arcrobotics.ftclib.command.CommandScheduler;
 import com.arcrobotics.ftclib.command.InstantCommand;
 import com.arcrobotics.ftclib.command.ParallelCommandGroup;
 import com.arcrobotics.ftclib.command.SequentialCommandGroup;
@@ -9,14 +10,13 @@ import com.arcrobotics.ftclib.gamepad.GamepadKeys;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
-import org.firstinspires.ftc.teamcode.powerplayV2.commands.BasketCommand;
-import org.firstinspires.ftc.teamcode.powerplayV2.commands.ClawCommand;
 import org.firstinspires.ftc.teamcode.powerplayV2.commands.ElevatorCommand;
 import org.firstinspires.ftc.teamcode.powerplayV2.commands.ElevatorManualCommand;
 import org.firstinspires.ftc.teamcode.powerplayV2.commands.FrontSliderConeCommand;
-import org.firstinspires.ftc.teamcode.powerplayV2.commands.FrontSliderRetractCommand;
+import org.firstinspires.ftc.teamcode.powerplayV2.commands.FrontSliderManualCommand;
 import org.firstinspires.ftc.teamcode.powerplayV2.commands.ResetSliderBasket;
 import org.firstinspires.ftc.teamcode.powerplayV2.commands.RumbleCommand;
+import org.firstinspires.ftc.teamcode.powerplayV2.commands.SimpleAuto;
 import org.firstinspires.ftc.teamcode.powerplayV2.subsystems.ArmSubsystem;
 import org.firstinspires.ftc.teamcode.powerplayV2.subsystems.BasketSubsystem;
 import org.firstinspires.ftc.teamcode.powerplayV2.subsystems.ClawSubsystem;
@@ -25,6 +25,7 @@ import org.firstinspires.ftc.teamcode.powerplayV2.subsystems.ElevatorSubsystem;
 import org.firstinspires.ftc.teamcode.powerplayV2.subsystems.FrontSliderSubsystem;
 import org.firstinspires.ftc.teamcode.powerplayV2.subsystems.LimitSwitchSubsystem;
 import org.firstinspires.ftc.teamcode.robotbase.GamepadExEx;
+import org.firstinspires.ftc.teamcode.robotbase.MecanumDriveCommand;
 import org.firstinspires.ftc.teamcode.robotbase.RobotEx;
 
 public class PowerPlayRobotV2 extends RobotEx {
@@ -53,7 +54,7 @@ public class PowerPlayRobotV2 extends RobotEx {
         rightServoLim = new LimitSwitchSubsystem(hardwareMap, "rightSwitch");
         leftServoLim = new LimitSwitchSubsystem(hardwareMap, "leftSwitch");
         frontSlider = new FrontSliderSubsystem(hardwareMap, () -> rightServoLim.getState(),
-                () -> leftServoLim.getState());
+                () -> leftServoLim.getState(), telemetry);
         arm = new ArmSubsystem(hardwareMap, telemetry);
         basket = new BasketSubsystem(hardwareMap);
         cone_detector = new ConeDetectorSubsystem(hardwareMap, 15);
@@ -83,10 +84,10 @@ public class PowerPlayRobotV2 extends RobotEx {
         rightServoLim = new LimitSwitchSubsystem(hardwareMap, "rightSwitch");
         leftServoLim = new LimitSwitchSubsystem(hardwareMap, "leftSwitch");
         frontSlider = new FrontSliderSubsystem(hardwareMap, () -> rightServoLim.getState(),
-                () -> leftServoLim.getState());
+                () -> leftServoLim.getState(), telemetry);
         arm = new ArmSubsystem(hardwareMap, telemetry);
         basket = new BasketSubsystem(hardwareMap);
-        cone_detector = new ConeDetectorSubsystem(hardwareMap, 15);
+        cone_detector = new ConeDetectorSubsystem(hardwareMap, 20);
 
         //Autonomous Commands
 //        PerpetualCommand autoLoop = new PerpetualCommand(new SequentialCommandGroup(
@@ -110,7 +111,7 @@ public class PowerPlayRobotV2 extends RobotEx {
 
         /////////////////////////////////////////// Claw ///////////////////////////////////////////
         toolOp.getGamepadButton(GamepadKeys.Button.A)
-                .whenPressed(new ClawCommand(claw));
+                .whenPressed(new InstantCommand(claw::toggleState, claw));
 
         ////////////////////////////////////////// Slider //////////////////////////////////////////
 
@@ -123,10 +124,13 @@ public class PowerPlayRobotV2 extends RobotEx {
                 .whenPressed(new ElevatorCommand(elevator, ElevatorSubsystem.Level.HIGH));
 
         //Manual Height Adjustment
-        new Trigger(() -> toolOp.getLeftY() >= 0.6).whileActiveContinuous(
-                new ElevatorManualCommand(elevator, 1));
-        new Trigger(() -> toolOp.getLeftY() <= -0.6).whileActiveContinuous(
-                new ElevatorManualCommand(elevator, -1));
+//        new Trigger(() -> toolOp.getLeftY() >= 0.6).whileActiveContinuous(
+//                new ElevatorManualCommand(elevator, 1));
+//        new Trigger(() -> toolOp.getLeftY() <= -0.6).whileActiveContinuous(
+//                new ElevatorManualCommand(elevator, -1));
+
+        CommandScheduler.getInstance().registerSubsystem(elevator);
+        elevator.setDefaultCommand(new ElevatorManualCommand(elevator, toolOp::getLeftY));
 
         //Only for rumble testing
 //        toolOp.getGamepadButton(GamepadKeys.Button.BACK)
@@ -139,31 +143,38 @@ public class PowerPlayRobotV2 extends RobotEx {
 //                new InstantCommand(frontSlider::open, frontSlider),
 //                new InstantCommand(frontSlider::stop, frontSlider));
 
-        new Trigger(() -> -toolOp.getRightY() >= 0.6).whenActive(
-                new InstantCommand(frontSlider::open, frontSlider)
-        );
-        new Trigger(() -> -toolOp.getRightY() < 0.6 && -toolOp.getRightY() >= 0).whenActive(
-                new InstantCommand(frontSlider::stop, frontSlider)
-        );
+//        new Trigger(() -> toolOp.getRightY() >= 0.4).toggleWhenActive(
+//                new InstantCommand(() -> frontSlider.manual(0.2), frontSlider),
+//                new InstantCommand(frontSlider::stop, frontSlider)
+//        );
+//        new Trigger(() -> toolOp.getRightY() <= -0.4).whenActive(
+//                new InstantCommand(() -> frontSlider.manual(-0.2), frontSlider)
+//        );
+//        new Trigger(() -> -toolOp.getRightY() < 0.6 && -toolOp.getRightY() >= 0).whenActive(
+//                new InstantCommand(frontSlider::stop, frontSlider)
+//        );
+//
+//        new Trigger(() -> -toolOp.getRightY() <= -0.6).whenActive(
+//                new InstantCommand(frontSlider::close, frontSlider)
+//        );
+//        new Trigger(() -> -toolOp.getRightY() > -0.6 && -toolOp.getRightY() <= 0).whenActive(
+//                new InstantCommand(frontSlider::stop, frontSlider)
+//        );
 
-        new Trigger(() -> -toolOp.getRightY() <= -0.6).whenActive(
-                new InstantCommand(frontSlider::close, frontSlider)
-        );
-        new Trigger(() -> -toolOp.getRightY() > -0.6 && -toolOp.getRightY() <= 0).whenActive(
-                new InstantCommand(frontSlider::stop, frontSlider)
-        );
+        CommandScheduler.getInstance().registerSubsystem(frontSlider);
+        frontSlider.setDefaultCommand(new FrontSliderManualCommand(frontSlider, toolOp::getRightY));
 
         toolOp.getGamepadButton(GamepadKeys.Button.RIGHT_STICK_BUTTON)
-                .whenPressed(new FrontSliderRetractCommand(frontSlider));
+                .whenPressed(new InstantCommand(frontSlider::close, frontSlider));
 
-        //Limit(Bound) Switches
-        new Trigger(() -> rightServoLim.getState()).whenActive(
-                new InstantCommand(frontSlider::stopRight, frontSlider)
-        );
-
-        new Trigger(() -> leftServoLim.getState()).whenActive(
-                new InstantCommand(frontSlider::stopLeft, frontSlider)
-        );
+//        //Limit(Bound) Switches
+//        new Trigger(() -> rightServoLim.getState()).whenActive(
+//                new InstantCommand(frontSlider::stopRight, frontSlider)
+//        );
+//
+//        new Trigger(() -> leftServoLim.getState()).whenActive(
+//                new InstantCommand(frontSlider::stopLeft, frontSlider)
+//        );
 
 
         /////////////////////////////////////////// Arm ////////////////////////////////////////////
@@ -174,8 +185,8 @@ public class PowerPlayRobotV2 extends RobotEx {
         toolOp.getGamepadButton(GamepadKeys.Button.X)
                 .whenPressed(new InstantCommand(arm::setMid, arm));
 
-        new Trigger(() -> toolOp.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER) >= 0.5)
-                .whileActiveContinuous(new InstantCommand(arm::increasePos));
+//        new Trigger(() -> toolOp.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER) >= 0.5)
+//                .whileActiveContinuous(new InstantCommand(arm::increasePos));
         new Trigger(() -> toolOp.getTrigger(GamepadKeys.Trigger.LEFT_TRIGGER) >= 0.5)
                 .whileActiveContinuous(new InstantCommand(arm::decreasePos));
 
@@ -183,7 +194,7 @@ public class PowerPlayRobotV2 extends RobotEx {
         ////////////////////////////////////////// Basket //////////////////////////////////////////
 
         toolOp.getGamepadButton(GamepadKeys.Button.B)
-                .whenPressed(new BasketCommand(basket));
+                .whenPressed(new InstantCommand(basket::toggleState, basket));
 
         ////////////////////////////// Autonomous Test w/o Pas Through /////////////////////////////
 
@@ -193,10 +204,10 @@ public class PowerPlayRobotV2 extends RobotEx {
 
 
 
-        //////////////////////////////////----- Auto Actions -----//////////////////////////////////
+//        //////////////////////////////////----- Auto Actions -----//////////////////////////////////
         new Trigger(() -> cone_detector.isConeDetected())
                 .whenActive(toolOp::rumble);
-
+//
         toolOp.getGamepadButton(GamepadKeys.Button.LEFT_BUMPER)
                         .whenPressed(new SequentialCommandGroup(
                                 new FrontSliderConeCommand(frontSlider,
@@ -213,7 +224,8 @@ public class PowerPlayRobotV2 extends RobotEx {
                                                 new WaitCommand(500),
                                                 new ParallelCommandGroup(
                                                         new InstantCommand(arm::setMid, arm),
-                                                        new FrontSliderRetractCommand(frontSlider)
+//                                                        new FrontSliderRetractCommand(frontSlider)
+                                                        new InstantCommand(frontSlider::close, frontSlider)
                                                 )
                                         ),
                                         new ElevatorCommand(elevator, ElevatorSubsystem.Level.LOW),
@@ -225,11 +237,16 @@ public class PowerPlayRobotV2 extends RobotEx {
                                 new RumbleCommand(driverOp),
                                 new WaitCommand(100),
                                 new InstantCommand(claw::release, claw), // Release the cone to tha basket
+                                new WaitCommand(500),
+                                new InstantCommand(() -> frontSlider.manual(0.3), frontSlider),
                                 new WaitCommand(400),
-                                new InstantCommand(arm::setMid, arm)
+                                new InstantCommand(() -> frontSlider.stop(), frontSlider),
+                                new InstantCommand(arm::setMid, arm),
+                                new WaitCommand(800),
+                                new InstantCommand(frontSlider::close, frontSlider)
                         )
                 );
-
+//
         new Trigger(() -> toolOp.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER) > 0.8)
                 .whenActive(new SequentialCommandGroup(
                         new InstantCommand(basket::setOuttake, basket), //Outtake Cone
@@ -237,6 +254,19 @@ public class PowerPlayRobotV2 extends RobotEx {
                         new ParallelCommandGroup( // Rumble, Reset Slider and Basket to Original Pos
                                 new RumbleCommand(driverOp),
                                 new ResetSliderBasket(elevator, basket)
+                        )
+                ));
+
+        toolOp.getGamepadButton(GamepadKeys.Button.LEFT_STICK_BUTTON).whenPressed(
+                new SequentialCommandGroup(
+                        new InstantCommand(arm::setMid, arm),
+                        new WaitCommand(300),
+                        new ElevatorCommand(elevator, ElevatorSubsystem.Level.HIGH),
+                        new InstantCommand(basket::setOuttake, basket),
+                        new WaitCommand(1500),
+                        new ParallelCommandGroup(
+                                new InstantCommand(basket::setTravel, basket),
+                                new ElevatorCommand(elevator, ElevatorSubsystem.Level.LOW)
                         )
                 ));
     }

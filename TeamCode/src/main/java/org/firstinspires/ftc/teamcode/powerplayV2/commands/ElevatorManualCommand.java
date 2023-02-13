@@ -4,14 +4,17 @@ import com.arcrobotics.ftclib.command.CommandBase;
 
 import org.firstinspires.ftc.teamcode.powerplayV2.subsystems.ElevatorSubsystem;
 
+import java.util.function.DoubleSupplier;
+
 public class ElevatorManualCommand extends CommandBase {
     private final ElevatorSubsystem elevator;
-    private final int direction;
-    private static final int step = 20;
+    private final DoubleSupplier elevate_speed;
+//    private final int direction;
 
-    public ElevatorManualCommand(ElevatorSubsystem elevator, int direction){
+    public ElevatorManualCommand(ElevatorSubsystem elevator, DoubleSupplier elevate_speed){
         this.elevator = elevator;
-        this.direction = direction;
+        this.elevate_speed = elevate_speed;
+//        this.direction = direction;
         addRequirements(this.elevator);
     }
 
@@ -22,18 +25,16 @@ public class ElevatorManualCommand extends CommandBase {
 
     @Override
     public void execute() {
-        elevator.setPower(0.4*direction);
+        elevator.setPower(elevate_speed.getAsDouble());
     }
 
-    @Override
-    public void end(boolean interrupted) {
-        elevator.stop();
-    }
+//    @Override
+//    public void end(boolean interrupted) {
+//        elevator.stop();
+//    }
 
-    @Override
-    public boolean isFinished() {
-        return false;
-    }
-
-
+//    @Override
+//    public boolean isFinished() {
+//        return false;
+//    }
 }

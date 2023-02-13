@@ -70,10 +70,10 @@ public class RobotEx {
         CommandScheduler.getInstance().registerSubsystem(gyro);
 
         ////////////////////////////////////////// Camera //////////////////////////////////////////
-        if (initCamera) {
-            camera = new Camera(hardwareMap, dashboard, telemetry,
-                    () -> this.driverOp.getButton(GamepadKeys.Button.BACK));
-        }
+//        if (initCamera) {
+//            camera = new Camera(hardwareMap, dashboard, telemetry,
+//                    () -> this.driverOp.getButton(GamepadKeys.Button.BACK));
+//        }
     }
 
     public void initAuto(HardwareMap hardwareMap, Telemetry telemetry) {
@@ -159,8 +159,8 @@ public class RobotEx {
     public double drivetrainTurn() {
         if (gyroFollow.isEnabled())
             return -gyroFollow.calculateTurn();
-        if (initCamera && cameraFollow.isEnabled())
-            return cameraFollow.calculateTurn();
+//        if (initCamera && cameraFollow.isEnabled())
+//            return cameraFollow.calculateTurn();
 
         return driverOp.getRightX();
     }
