@@ -20,12 +20,12 @@ public class CraneEncoderTest extends LinearOpMode {
 
         while (opModeIsActive()) {
 
-            double throttle;
+            double cranepower;
             boolean spinpowerup;
             boolean spinpowerdown;
             spinpowerup = gamepad2.dpad_right;
             spinpowerdown =gamepad2.dpad_left;
-            throttle = gamepad2.left_stick_y;
+            cranepower = gamepad2.right_stick_y;
 
             if (spinpowerdown){
                 spin.setPower(-1);
@@ -37,7 +37,9 @@ public class CraneEncoderTest extends LinearOpMode {
                 spin.setPower(0);
             }
 
-            crane.setPower(throttle);
+            crane.setPower(cranepower);
+
+
             telemetry.addData("spin encoder",spin.getCurrentPosition());
             telemetry.addData("encoder value", crane.getCurrentPosition());
             telemetry.update();

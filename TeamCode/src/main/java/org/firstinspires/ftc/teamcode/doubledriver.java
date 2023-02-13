@@ -43,7 +43,7 @@ public class doubledriver extends LinearOpMode {
         frontRight.setDirection(DcMotorSimple.Direction.REVERSE);
         backLeft.setDirection(DcMotorSimple.Direction.FORWARD);                 //setting direction of drive train 
         backRight.setDirection(DcMotorSimple.Direction.FORWARD);
-
+        Crain.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         Spin.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         Spin.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         waitForStart();
@@ -159,7 +159,8 @@ public class doubledriver extends LinearOpMode {
                 }
             }
             */
-
+            telemetry.addData("encoder value", Crain.getCurrentPosition());
+            telemetry.update();
 
 
            //telemetry.addData("distance",distance.getDistance(DistanceUnit.INCH));
