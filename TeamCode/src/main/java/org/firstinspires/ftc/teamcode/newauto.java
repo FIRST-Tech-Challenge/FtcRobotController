@@ -180,44 +180,51 @@ public class newauto extends LinearOpMode {
 
 
         if (opModeIsActive()) {//start of queue for autonnums movment
+            Spin.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
             Left.setPower(.3);
             //move to medium junction and raise crane
-            moveandcrane(.8,1500,-1,2000);
-            Crane.setPower(-.2);
+            moveandcrane(.9,1550,-1,2000);
+            //Crane.setPower(-.02);
+            spin(1,-300);
             stopMotors();
-            //strafe onto it
-            strafeLeft(1,200);
             sleep(100);
-            intake(-1,1000);
+            //strafe onto it
+            strafeLeft(1,300);
+            intake(-1,500);
+            crane(-1,100);
+            sleep(100);
             //strafe off and lower crane
-            strafeRightwithcrane(1,200,1,1000);
-            gyroTurning(0);
+            strafeRightwithcrane(1,310,1,500);
+            //gyroTurning(0);
             //move to stack
-            moveandspin(.8,500,1,500);
-            gyroTurning(90);
-            move(.8,600);
+            sleep(100);
+            moveandspin(1,550,1,10);//591
+            gyroTurning(-88);
+            move(1,700);
             stopMotors();
-            move(.2,400);
+            gyroTurning(-88);
+            move(.2,440);
             //pick up cone
-            craneinput(400);
+            craneinput(300);
             crane(-1,1000);
+
             //move to high junction
-            moveandspinandcrane(.8,-1500,-1,500,-1,1500);
+            moveandspinandcrane(.8,-1500,1,-315,-1,2000);//315
             Crane.setPower(-.2);
             stopMotors();
             //strafe onto it
-            strafeLeft(.2,200);
+            strafeLeft(.2,300);
             intake(-1,1000);
             strafeRightwithcrane(.2,200,1,1000);
-            gyroTurning(0);
+            gyroTurning(-90);
             //move back to stack
-            moveandspin(.8,1100,1,500);
+            moveandspin(.8,1100,1,-591);
             move(.2,400);
             //pick up another cone
             craneinput(400);
             crane(-1,1000);
             //move to large junction again
-            moveandspinandcrane(.8,-1500,-1,500,-1,1500);
+            moveandspinandcrane(.8,-1500,1,-315,-1,1500);
             Crane.setPower(-.2);
             stopMotors();
             strafeLeft(.2,200);
@@ -292,7 +299,7 @@ public class newauto extends LinearOpMode {
             telemetry.addData("Angle", currentAngle);
             telemetry.addData("targetangle", targetAngle);
             telemetry.update();
-            if (angles.firstAngle >= targetAngle - 0.1 && angles.firstAngle <= targetAngle + 0.1) {
+            if (angles.firstAngle >= targetAngle - 0.12 && angles.firstAngle <= targetAngle + 0.12) {
                 frontLeft.setPower(0);
                 frontRight.setPower(0);
                 backLeft.setPower(0);
@@ -303,30 +310,30 @@ public class newauto extends LinearOpMode {
 
             } else if (angles.firstAngle >= targetAngle + 0.5) {
                 if (angles.firstAngle <= targetAngle - 5) {
-                    frontLeft.setPower(0.25);
-                    frontRight.setPower(-0.25);
-                    backLeft.setPower(0.25);
-                    backRight.setPower(-0.25);
+                    frontLeft.setPower(0.3);
+                    frontRight.setPower(-0.3);
+                    backLeft.setPower(0.3);
+                    backRight.setPower(-0.3);
                     foundAngle = false;
                 } else {
-                    frontLeft.setPower(-0.25);
-                    frontRight.setPower(0.25);
-                    backLeft.setPower(-0.25);
-                    backRight.setPower(0.25);
+                    frontLeft.setPower(-0.3);
+                    frontRight.setPower(0.3);
+                    backLeft.setPower(-0.3);
+                    backRight.setPower(0.3);
                     foundAngle = false;
                 }
             } else if (angles.firstAngle <= targetAngle - 0.5) {
                 if (angles.firstAngle >= targetAngle + 5) {
-                    frontLeft.setPower(-0.25);
-                    frontRight.setPower(0.25);
-                    backLeft.setPower(-0.25);
-                    backRight.setPower(0.25);
+                    frontLeft.setPower(-0.3);
+                    frontRight.setPower(0.3);
+                    backLeft.setPower(-0.3);
+                    backRight.setPower(0.3);
                     foundAngle = false;
                 } else {
-                    frontLeft.setPower(.25);
-                    frontRight.setPower(-.25);
-                    backLeft.setPower(.25);
-                    backRight.setPower(-.25);
+                    frontLeft.setPower(.3);
+                    frontRight.setPower(-.3);
+                    backLeft.setPower(.3);
+                    backRight.setPower(-.3);
                     foundAngle = false;
                 }
             }
@@ -398,7 +405,7 @@ public class newauto extends LinearOpMode {
         frontLeft.setPower(power);
         backRight.setPower(power);
         backLeft.setPower(power);
-        spin2(powers,times);
+        spin(powers,times);
         while (frontLeft.isBusy() && opModeIsActive()) {
 
         }
@@ -428,7 +435,7 @@ public class newauto extends LinearOpMode {
         frontLeft.setPower(power);
         backRight.setPower(power);
         backLeft.setPower(power);
-        spin2(powers,times);
+        spin(powers,times);
         crane(powerc,timec);
         while (frontLeft.isBusy() && opModeIsActive()) {
 
@@ -583,7 +590,6 @@ public class newauto extends LinearOpMode {
         frontLeft.setPower(power);
         backRight.setPower(power);
         backLeft.setPower(power);
-        crane(-1,2100);
         while (frontLeft.isBusy() && opModeIsActive()) {
         }
 
