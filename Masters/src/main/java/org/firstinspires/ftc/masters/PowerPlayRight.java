@@ -58,7 +58,7 @@ public class PowerPlayRight extends LinearOpMode {
 
         PowerPlayComputerVisionPipelines CV = new PowerPlayComputerVisionPipelines(hardwareMap, telemetry);
         PowerPlayComputerVisionPipelines.SleevePipeline.SleeveColor sleeveColor = null;
-        CV.setSleevePipeline();
+
 
         SampleMecanumDriveCancelable drive = new SampleMecanumDriveCancelable(hardwareMap, telemetry);
         Pose2d startPose = new Pose2d(new Vector2d(36, -64.25), Math.toRadians(90)); //Start position for roadrunner
@@ -80,41 +80,10 @@ public class PowerPlayRight extends LinearOpMode {
         Trajectory forward;
 
         Trajectory backUpFromJunction;
-
-//        Trajectory firstDepositToConeStack1 = drive.trajectoryBuilder(backUpFromJunction.end().minus(new Pose2d(0,0,Math.toRadians(45))))
-//                .splineToLinearHeading(new Pose2d(new Vector2d(xIntermediateStack, yIntermediateStack), 0), 0)
-//
-//                .build();
-//        Trajectory toConeStack2 = drive.trajectoryBuilder(firstDepositToConeStack1.end())
-//                .lineTo(new Vector2d(xStack, yStack))
-//                .build();
-//
-//
-//        Trajectory scoreNewCone = drive.trajectoryBuilder(toConeStack2.end())
-//                .splineToLinearHeading(new Pose2d(new Vector2d(22,-9.5), -45),Math.toRadians(135))
-//
-//                .build();
-
-//        Trajectory fromScoreNewConeToConeStack = drive.trajectoryBuilder(scoreNewCone.end())
-//                .lineToLinearHeading(new Pose2d(new Vector2d(59,-14),Math.toRadians(0)))
-//                .build();
-
         Trajectory parkRed = null;
-        //= drive.trajectoryBuilder(backUpFromJunction.end().minus(new Pose2d(0,0,Math.toRadians(turnJunction))))
-//                .lineToLinearHeading(new Pose2d(new Vector2d(36,-38),Math.toRadians(90)))
-//
-//                .build();
-
         Trajectory parkGreen = null;
 
-        //drive.trajectoryBuilder(backUpFromJunction.end().minus(new Pose2d(0,0,Math.toRadians(turnJunction))))
-        //        .lineToLinearHeading(new Pose2d(new Vector2d(62,-38 ),Math.toRadians(90)))
-               // .strafeTo(new Vector2d(62,-37))
-         //       .build();
-
-//        Trajectory parkRed = drive.trajectoryBuilder(scoreNewCone.end())
-//                .splineToLinearHeading(new Pose2d(new Vector2d(23.5,-11.5),Math.toRadians(315)),Math.toRadians(155))
-//                .build();
+        CV.setSleevePipeline();
 
         waitForStart();
 
@@ -142,7 +111,7 @@ public class PowerPlayRight extends LinearOpMode {
                 case SCORE_1:
                     if (!drive.isBusy()) {
                         currentState= State.ALIGN;
-                        drive.alignPole(CV.pipeDetectionPipeline.position);
+                        drive.alignPole(CV.sleevePipeline.position);
                        // drive.followTrajectoryAsync(forward);
                     } else {
                         armTarget = ARM_MID_TOP;
@@ -154,7 +123,7 @@ public class PowerPlayRight extends LinearOpMode {
                     }
                     break;
                 case ALIGN:
-                    if (drive.alignPole(CV.pipeDetectionPipeline.position)){
+                    if (drive.alignPole(CV.sleevePipeline.position)){
                         currentState = State.FORWARD;
                         forward = drive.trajectoryBuilder(drive.getPoseEstimate())
                                 .forward(2.5)

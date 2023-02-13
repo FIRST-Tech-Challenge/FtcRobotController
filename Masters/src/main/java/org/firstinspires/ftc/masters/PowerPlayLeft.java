@@ -68,6 +68,7 @@ public class PowerPlayLeft extends LinearOpMode {
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
 
         PowerPlayComputerVisionPipelines CV = new PowerPlayComputerVisionPipelines(hardwareMap, telemetry);
+        CV.setSleevePipeline();
         PowerPlayComputerVisionPipelines.SleevePipeline.SleeveColor sleeveColor = null;
 
         SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);

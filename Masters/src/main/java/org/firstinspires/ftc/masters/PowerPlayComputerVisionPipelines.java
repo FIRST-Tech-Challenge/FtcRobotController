@@ -42,35 +42,42 @@ import java.util.ArrayList;
 
 public class PowerPlayComputerVisionPipelines {
 
-//    Declare webcam
+    public enum PipelineType {SLEEVE, PIPE, RED_CONE, BLUE_CONE}
+
+    //    Declare webcam
     public OpenCvWebcam webcam;
     public OpenCvWebcam sleeveWebcam;
 
-//    Initial declaration of pipelines (One for each we use)
+    //    Initial declaration of pipelines (One for each we use)
+    public FrontPipeline frontPipeline;
+
     public SleevePipeline sleevePipeline;
-    public PipeDetectionPipeline pipeDetectionPipeline;
+    //public PipeDetectionPipeline pipeDetectionPipeline;
     public BlueStackPipeline blueStackDetectionPipeline;
     Telemetry telemetry;
     boolean error = false;
+    public PipelineType sleeveWebcamPipeline = PipelineType.SLEEVE;
 
 //    Random useful tidbit of information, to access the camera stream, hit innit, then
 //    press the ellipsis button on the top right of the screen, then select "Camera Stream".
 //    Follow same path to turn it off
 
 
-    public PowerPlayComputerVisionPipelines(HardwareMap hardwareMap, Telemetry telemetry){
+    public PowerPlayComputerVisionPipelines(HardwareMap hardwareMap, Telemetry telemetry) {
 
 //        Get and store camera monitor view id.
 //        int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
 
+
         this.telemetry = telemetry;
         webcam = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "webcam"));
         sleevePipeline = new SleevePipeline(telemetry);
-        pipeDetectionPipeline = new PipeDetectionPipeline(telemetry);
+        sleevePipeline.setPipelineType(PipelineType.SLEEVE);
+        //pipeDetectionPipeline = new PipeDetectionPipeline(telemetry);
         blueStackDetectionPipeline = new BlueStackPipeline(telemetry);
 
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
-        sleeveWebcam = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "webcamSleeve"),cameraMonitorViewId);
+        sleeveWebcam = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "webcamSleeve"), cameraMonitorViewId);
 
         webcam.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
             @Override
@@ -100,7 +107,7 @@ public class PowerPlayComputerVisionPipelines {
             public void onError(int errorCode) {
                 telemetry.addLine("Can't open camera");
                 telemetry.update();
-                error= true;
+                error = true;
                 /*
                  * This will be called if the camera could not be opened
                  */
@@ -110,8 +117,8 @@ public class PowerPlayComputerVisionPipelines {
         sleeveWebcam.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
             @Override
             public void onOpened() {
-                telemetry.addData("webcam open", "yes");
-                sleeveWebcam.setPipeline(blueStackDetectionPipeline);
+                telemetry.addData("sleeve webcam open", "yes");
+                sleeveWebcam.setPipeline(sleevePipeline);
                 sleeveWebcam.startStreaming(640, 360, OpenCvCameraRotation.UPRIGHT);
             }
 
@@ -128,34 +135,36 @@ public class PowerPlayComputerVisionPipelines {
         return error;
     }
 
-    public void setSleevePipeline(){
-        sleeveWebcam.setPipeline(new SleevePipeline(this.telemetry));
+    public void setSleevePipeline() {
+        sleeveWebcamPipeline = PipelineType.SLEEVE;
+        sleevePipeline.setPipelineType(sleeveWebcamPipeline);
+
     }
 
-    public void setPipeDetectionFront(){
-        sleeveWebcam.setPipeline(new PipeDetectionPipeline(this.telemetry));
+    public void setPipeDetectionFront() {
+        sleeveWebcamPipeline = PipelineType.PIPE;
+        sleevePipeline.setPipelineType(sleeveWebcamPipeline);
+        telemetry.addData("swicthing", "pipe");
+        telemetry.update();
     }
 
-    public void setPipeDetectionBack(){
-        webcam.setPipeline(new PipeDetectionPipeline(this.telemetry));
+
+    public void setBlueStackDetectionPipeline() {
+        sleeveWebcamPipeline = PipelineType.BLUE_CONE;
     }
 
-    public void setBlueStackDetectionPipeline(){
-        sleeveWebcam.setPipeline(new BlueStackPipeline(this.telemetry));
-    }
-
-    public void stopCamera(){
+    public void stopCamera() {
         webcam.stopStreaming();
         webcam.setPipeline(new DoNothingPipeline());
     }
 
-    public void stopSleeveCamera(){
+    public void stopSleeveCamera() {
         sleeveWebcam.stopStreaming();
         sleeveWebcam.setPipeline(new DoNothingPipeline());
     }
 
-//    The aforementioned pipeline. Aptly named.
-    public static class DoNothingPipeline extends OpenCvPipeline{
+    //    The aforementioned pipeline. Aptly named.
+    public static class DoNothingPipeline extends OpenCvPipeline {
 
         @Override
         public Mat processFrame(Mat input) {
@@ -163,19 +172,55 @@ public class PowerPlayComputerVisionPipelines {
         }
     }
 
-//Pipeline for finding sleeve color
-    public static class SleevePipeline extends OpenCvPipeline{
+    public static class FrontPipeline extends OpenCvPipeline {
+
+        @Override
+        public Mat processFrame(Mat input) {
+            return null;
+        }
+    }
+
+    //Pipeline for finding sleeve color
+    public static class SleevePipeline extends OpenCvPipeline {
         Telemetry telemetry;
+        PipelineType pipelineType = PipelineType.SLEEVE;
+
         public SleevePipeline(Telemetry telemetry) {
             this.telemetry = telemetry;
         }
 
-//    All possible regions to be detected in are stored in an enum
+        public void setPipelineType(PipelineType pipelineType) {
+            this.pipelineType = pipelineType;
+        }
+
+        //    All possible regions to be detected in are stored in an enum
         public enum SleeveColor {
             RED,
             GREEN,
             GRAY,
             INDETERMINATE
+        }
+
+        //    All possible regions to be detected in are stored in an enum
+        public enum PipePosition {
+            LEFT8,
+            LEFT7,
+            LEFT6,
+            LEFT5,
+            LEFT4,
+            LEFT3,
+            LEFT2,
+            LEFT1,
+            CENTER,
+            RIGHT1,
+            RIGHT2,
+            RIGHT3,
+            RIGHT4,
+            RIGHT5,
+            RIGHT6,
+            RIGHT7,
+            RIGHT8,
+            SHRUG_NOISES
         }
 
 
@@ -187,20 +232,20 @@ public class PowerPlayComputerVisionPipelines {
 //        static final Scalar RED = new Scalar(255, 0, 0); e
 
 
-//        Sizes for subregions of the camera from which our data is extracted
-        static final int REGION_WIDTH = 32;
-        static final int REGION_HEIGHT = 50;
+        //        Sizes for subregions of the camera from which our data is extracted
+        static final int SLEEVE_REGION_WIDTH = 32;
+        static final int SLEEVE_REGION_HEIGHT = 50;
 
         /*
          * List for the storage of points, if you're only dealing with a few regions declare them all separately, the freight regions in the other pipeline
          * are done like this.
          */
 
-        Point topLeftPoint = new Point(304, 186);
-        Point bottomRightPoint = new Point(topLeftPoint.x+REGION_WIDTH, topLeftPoint.y+REGION_HEIGHT);
+        Point sleeveTopLeftPoint = new Point(304, 186);
+        Point sleeveBottomRightPoint = new Point(sleeveTopLeftPoint.x + SLEEVE_REGION_WIDTH, sleeveTopLeftPoint.y + SLEEVE_REGION_HEIGHT);
 
 
-//        The thresholds to which the averages are compared.
+        //        The thresholds to which the averages are compared.
         final int RED_SLEEVE_SIDE = 180;
         final int GRAY_SLEEVE_SIDE = 126;
         final int GREEN_SLEEVE_SIDE = 117;
@@ -209,23 +254,40 @@ public class PowerPlayComputerVisionPipelines {
         int distanceFromRed;
         int distanceFromGray;
 
+        static final int PIPE_REGION_WIDTH = 40;
+        static final int PIPE_REGION_HEIGHT = 100;
 
+        ArrayList<Point> pipeTopLeftPoints = new ArrayList<>();
+        ArrayList<Point> pipeBottomRightPoints = new ArrayList<>();
+
+        final int PIPE_PRESENT_THRESHOLD = 155; //swicthing to 150 seems affected by the light was  174;
+
+        // Volatile since accessed by OpMode thread w/o synchronization
+        public volatile PipePosition position = PipePosition.SHRUG_NOISES;
+        public volatile SleeveColor color = SleeveColor.RED;
         /*
          * Empty matrices that data will be stored in
          */
 
-        Mat LAB = new Mat();
-        Mat A = new Mat();
-        Mat B = new Mat();
+        Mat SLEEVE_LAB = new Mat();
+        Mat SLEEVE_A = new Mat();
+        Mat SLEEVE_B = new Mat();
 
-        Mat aRegion;
-        Mat bRegion;
+        Mat sleeve_aRegion;
+        Mat sleeve_bRegion;
 
-        int aChannelAvg;
-        int bChannelAvg;
+        int sleeve_aChannelAvg;
+        int sleeve_bChannelAvg;
 
-        // Volatile since accessed by OpMode thread w/o synchronization
-        public volatile SleeveColor color = SleeveColor.RED;
+        Mat PIPE_LAB = new Mat();
+        Mat PIPE_A = new Mat();
+        Mat PIPE_B = new Mat();
+
+        Mat pipe_aRegion;
+        Mat pipe_bRegion;
+
+        int pipe_aChannelAvg;
+        int pipe_bChannelAvg;
 
         /*
          * This function takes the RGB frame, converts to LAB,
@@ -233,48 +295,75 @@ public class PowerPlayComputerVisionPipelines {
          */
         void inputToLAB(Mat input) {
 
-            Imgproc.cvtColor(input, LAB, Imgproc.COLOR_RGB2Lab);
-            Core.extractChannel(LAB, A, 1);
-            Core.extractChannel(LAB, B, 2);
+            if (pipelineType == PipelineType.SLEEVE) {
+                Imgproc.cvtColor(input, SLEEVE_LAB, Imgproc.COLOR_RGB2Lab);
+                Core.extractChannel(SLEEVE_LAB, SLEEVE_A, 1);
+                Core.extractChannel(SLEEVE_LAB, SLEEVE_B, 2);
+            }
+            if (pipelineType == PipelineType.PIPE){
+                Imgproc.cvtColor(input, PIPE_LAB, Imgproc.COLOR_RGB2Lab);
+                Core.extractChannel(PIPE_LAB, PIPE_A, 1);
+                Core.extractChannel(PIPE_LAB, PIPE_B, 2);
+            }
         }
 
-//        Done in innit, this was a more complicated formation of subregions for detecting the duck, but essentially
+        //        Done in innit, this was a more complicated formation of subregions for detecting the duck, but essentially
 //        just assign the top left and bottom right points for each region you desire.
         @Override
         public void init(Mat firstFrame) {
+                pipeTopLeftPoints.add(new Point(140, 30));
+                pipeBottomRightPoints.add(new Point(pipeTopLeftPoints.get(0).x + PIPE_REGION_WIDTH, pipeTopLeftPoints.get(0).y + PIPE_REGION_HEIGHT));
+
+                for (int i = 1; i < 17; i++) {
+                    pipeTopLeftPoints.add(new Point(pipeTopLeftPoints.get(i - 1).x + PIPE_REGION_WIDTH / 2, pipeTopLeftPoints.get(0).y));
+                    pipeBottomRightPoints.add(new Point(pipeTopLeftPoints.get(i).x + PIPE_REGION_WIDTH, pipeTopLeftPoints.get(i).y + PIPE_REGION_HEIGHT));
+                }
+
             inputToLAB(firstFrame);
         }
 
-//        Process frame, takes a matrix input and processes it. I still have no idea WHERE this is called, but it is absolutely essential to CV functioning
+        //        Process frame, takes a matrix input and processes it. I still have no idea WHERE this is called, but it is absolutely essential to CV functioning
         @Override
         public Mat processFrame(Mat input) {
+            if (this.pipelineType == PipelineType.SLEEVE) {
+                return processSleeve(input);
+            }
+            if (this.pipelineType == PipelineType.PIPE) {
+                return processPipe(input);
+            }
+            if (this.pipelineType == PipelineType.BLUE_CONE) {
+
+            }
+            return input;
+
+        }
+
+        public Mat processSleeve(Mat input) {
             inputToLAB(input);
 
 //            Declare regions
-            aRegion = A.submat(new Rect(topLeftPoint, bottomRightPoint));
-            bRegion = B.submat(new Rect(topLeftPoint, bottomRightPoint));
+            sleeve_aRegion = SLEEVE_A.submat(new Rect(sleeveTopLeftPoint, sleeveBottomRightPoint));
+            sleeve_bRegion = SLEEVE_B.submat(new Rect(sleeveTopLeftPoint, sleeveBottomRightPoint));
 
-            aChannelAvg = (int) Core.mean(aRegion).val[0];
-            bChannelAvg = (int) Core.mean(bRegion).val[0];
+            sleeve_aChannelAvg = (int) Core.mean(sleeve_aRegion).val[0];
+            sleeve_bChannelAvg = (int) Core.mean(sleeve_bRegion).val[0];
 
 
 //              This is what displays the rectangle to the camera stream on the drive hub
             Imgproc.rectangle(
                     input, // Buffer to draw on
-                    topLeftPoint, // First point which defines the rectangle
-                    bottomRightPoint, // Second point which defines the rectangle
+                    sleeveTopLeftPoint, // First point which defines the rectangle
+                    sleeveBottomRightPoint, // Second point which defines the rectangle
                     BLUE, // The color the rectangle is drawn in
                     2); // Thickness of the rectangle lines
 
 //            Display telemetry
-            telemetry.addData("A Average", aChannelAvg);
-            telemetry.addData("B Average", bChannelAvg);
+            telemetry.addData("A Average",sleeve_aChannelAvg);
+            telemetry.addData("B Average", sleeve_bChannelAvg);
 
-
-//
-            distanceFromGreen = Math.abs(aChannelAvg - GREEN_SLEEVE_SIDE);
-            distanceFromRed = Math.abs(aChannelAvg - RED_SLEEVE_SIDE);
-            distanceFromGray = Math.abs(aChannelAvg - GRAY_SLEEVE_SIDE);
+            distanceFromGreen = Math.abs(sleeve_aChannelAvg - GREEN_SLEEVE_SIDE);
+            distanceFromRed = Math.abs(sleeve_aChannelAvg - RED_SLEEVE_SIDE);
+            distanceFromGray = Math.abs(sleeve_aChannelAvg - GRAY_SLEEVE_SIDE);
 
 
             telemetry.addData("distanceFromGreen", distanceFromGreen);
@@ -293,14 +382,68 @@ public class PowerPlayComputerVisionPipelines {
             telemetry.addData("Color detected", color);
             telemetry.update();
 
-            LAB.release();
-            A.release();
-            B.release();
-            aRegion.release();
-            bRegion.release();
+            SLEEVE_LAB.release();
+            SLEEVE_A.release();
+            SLEEVE_B.release();
+            sleeve_aRegion.release();
+            sleeve_aRegion.release();
 
             return input;
+        }
 
+        public Mat processPipe(Mat input) {
+            inputToLAB(input);
+
+//            Declare list of regions
+            ArrayList<Mat> region = new ArrayList<>();
+
+//            Put the necessary data from the frame to each region
+            for (int i = 0; i < 17; i++) {
+                region.add(PIPE_B.submat(new Rect(pipeTopLeftPoints.get(i), pipeBottomRightPoints.get(i))));
+            }
+
+            ArrayList<Integer> regionAvgs = new ArrayList<>();
+
+            for (int i = 0; i < 17; i++) {
+                regionAvgs.add((int) Core.mean(region.get(i)).val[0]);
+            }
+
+//              This is what displays the rectangles to the camera stream on the drive hub
+            for (int i = 0; i < 17; i++) {
+                Imgproc.rectangle(
+                        input, // Buffer to draw on
+                        pipeTopLeftPoints.get(i), // First point which defines the rectangle
+                        pipeBottomRightPoints.get(i), // Second point which defines the rectangle
+                        BLUE, // The color the rectangle is drawn in
+                        2); // Thickness of the rectangle lines
+
+            }
+
+//            The next several lines determine which region has the highest B average.
+            int indexOfMaximumBAvg = 0;
+
+            for (int i = 0; i < 17; i++) {
+                if (regionAvgs.get(i) >= regionAvgs.get(indexOfMaximumBAvg)) {
+                    indexOfMaximumBAvg = i;
+                }
+            }
+
+//            Display telemetry
+            telemetry.addData("B Averages", regionAvgs);
+            telemetry.addData("Index of highest likelihood.", indexOfMaximumBAvg);
+
+//            Fix indexes (Regions are stacked 17 to a row)
+            if (regionAvgs.get(indexOfMaximumBAvg) >= PIPE_PRESENT_THRESHOLD) {
+                position = PipePosition.values()[indexOfMaximumBAvg];
+            } else {
+                position = PipePosition.SHRUG_NOISES; // Default enum result. Aptly named
+            }
+
+
+            telemetry.addData("Position", position);
+            telemetry.update();
+
+            return input;
         }
     }
 
@@ -430,12 +573,10 @@ public class PowerPlayComputerVisionPipelines {
             telemetry.addData("Position", position);
             telemetry.update();
 
-
-            telemetry.update();
-
             return input;
         }
     }
+
     public static class BlueStackPipeline extends OpenCvPipeline {
         Telemetry telemetry;
 

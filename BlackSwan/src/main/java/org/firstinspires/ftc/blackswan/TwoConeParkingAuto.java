@@ -25,7 +25,7 @@ import org.openftc.easyopencv.OpenCvWebcam;
 @Autonomous(name = "TwoConeParkingAuto")
 public class TwoConeParkingAuto extends LinearOpMode {
 
-    ParkingComputerVision.DeterminationPipeline pipeline;
+    DeterminationPipeline pipeline;
 
     TelemetryPacket packet = new TelemetryPacket();
 
@@ -37,7 +37,7 @@ public class TwoConeParkingAuto extends LinearOpMode {
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
         OpenCvWebcam webcam = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "webcam"), cameraMonitorViewId);
         FtcDashboard.getInstance().startCameraStream(webcam, 0);
-        pipeline = new ParkingComputerVision.DeterminationPipeline(telemetry, packet);
+        pipeline = new DeterminationPipeline(telemetry, packet);
         webcam.setPipeline(pipeline);
 
         webcam.setViewportRenderingPolicy(OpenCvCamera.ViewportRenderingPolicy.OPTIMIZE_VIEW);
@@ -189,6 +189,8 @@ public class TwoConeParkingAuto extends LinearOpMode {
                     region1_pointB, // Second point which defines the rectangle
                     RED, // The color the rectangle is drawn in
                     2); // Thickness of the rectangle lines
+
+            Imgproc.rectangle(input, new Point(200,200), new Point(300, 300), GREEN, 2 );
 
             telemetry.update();
 

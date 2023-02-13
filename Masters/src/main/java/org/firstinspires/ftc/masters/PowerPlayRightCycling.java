@@ -37,11 +37,13 @@ public class PowerPlayRightCycling extends LinearOpMode {
 
         CYCLE_SCORE_PATH1,
         CYCLE_SCORE_TURN,
+        CYCLE_SCORE_ALIGN,
         CYCLE_SCORE_CONE,
         CYCLE_BACK_UP,
 
         PICKUP,
         BACK_UP,
+        ALIGN,
 
         PARK_GRAY,
         PARK_RED,
@@ -150,6 +152,8 @@ public class PowerPlayRightCycling extends LinearOpMode {
         long startTime = new Date().getTime();
         long time = 0;
 
+        long alignTime = new Date().getTime();
+
         while (time < 200 && opModeIsActive()) {
             time = new Date().getTime() - startTime;
             sleeveColor = CV.sleevePipeline.color;
@@ -157,7 +161,7 @@ public class PowerPlayRightCycling extends LinearOpMode {
             telemetry.addData("Position", sleeveColor);
             telemetry.update();
         }
-        CV.stopSleeveCamera();
+        CV.setPipeDetectionFront();
 
         currentState = State.FIRST_DEPOSIT_PATH_1;
         drive.followTrajectoryAsync(firstDepositPath1);
@@ -182,12 +186,28 @@ public class PowerPlayRightCycling extends LinearOpMode {
                 case FIRST_DEPOSIT_TURN:
                     if (!drive.isBusy()) {
                         drive.followTrajectoryAsync(firstDepositScoreCone);
-                        currentState = State.FIRST_DEPOSIT_SCORE_CONE;
+                        currentState = State.ALIGN;
+                        alignTime = new Date().getTime();
                     }
+                    break;
+                case ALIGN:
+                    if (drive.alignPole(CV.sleevePipeline.position) || new Date().getTime()- alignTime >1000){
+                        telemetry.addData("done aligning", "score cone");
+                        currentState = State.FIRST_DEPOSIT_SCORE_CONE;
+                        firstDepositScoreCone = drive.trajectoryBuilder(drive.getPoseEstimate())
+                                .forward(2.5)
+                                .build();
+                        drive.followTrajectoryAsync(firstDepositScoreCone);
+                    }
+                    telemetry.addData("still aliging", "1");
                     break;
                 case FIRST_DEPOSIT_SCORE_CONE:
                     if (!drive.isBusy()) {
-                        sleep(300);
+//                        backUpFromJunction=drive.trajectoryBuilder(drive.getPoseEstimate())
+//                                .back(6)
+//                                .build();
+                        telemetry.addData("done aligning", "deposit");
+                        sleep(100);
                         drive.openClaw();
                         sleep(300);
                         drive.closeClaw();
@@ -220,10 +240,12 @@ public class PowerPlayRightCycling extends LinearOpMode {
                             drive.followTrajectoryAsync(cyclePickupPath1);
                         }
                     } else {
-//                        liftTarget = 0;
-//                        if (drive.linearSlide.getCurrentPosition() < 100) {
-//                            armTarget = ARM_CONE_STACK;
-//                        }
+                        if (!retractArm) {
+                            liftTarget = 0;
+                            if (drive.linearSlide.getCurrentPosition() < 100) {
+                                armTarget = ARM_CONE_STACK;
+                            }
+                        }
                     }
                     break;
                 case CYCLE_PICKUP_PATH1:
@@ -266,8 +288,8 @@ public class PowerPlayRightCycling extends LinearOpMode {
                     break;
                 case CYCLE_SCORE_TURN:
                     if (!drive.isBusy()){
-                        currentState = State.CYCLE_SCORE_CONE;
-                        drive.followTrajectoryAsync(cycleDepositScoreCone);
+                        currentState = State.CYCLE_SCORE_ALIGN;
+                        //drive.followTrajectoryAsync(cycleDepositScoreCone);
                     } else{
                         liftTarget= SLIDE_THROUGH;
                         if (drive.linearSlide.getCurrentPosition()>SLIDE_THROUGH-100){
@@ -280,9 +302,21 @@ public class PowerPlayRightCycling extends LinearOpMode {
                     }
                     break;
 
+                case CYCLE_SCORE_ALIGN:
+                    if (drive.alignPole(CV.sleevePipeline.position)){
+                        currentState = State.CYCLE_SCORE_CONE;
+                        cycleDepositScoreCone = drive.trajectoryBuilder(drive.getPoseEstimate())
+                                .forward(2.5)
+                                .build();
+                        drive.followTrajectoryAsync(cycleDepositScoreCone);
+                    }
+                    break;
                 case CYCLE_SCORE_CONE:
                     if (!drive.isBusy()) {
-                        sleep(300);
+                        cycleBackUpFromJunction=drive.trajectoryBuilder(drive.getPoseEstimate())
+                                .back(6)
+                                .build();
+                        sleep(100);
                         drive.openClaw();
                         sleep(300);
                         drive.closeClaw();
@@ -483,7 +517,7 @@ public class PowerPlayRightCycling extends LinearOpMode {
             telemetry.addData("lift target", liftTarget);
             telemetry.addData(" lift position", drive.linearSlide.getCurrentPosition());
 
-            telemetry.update();
+          //  telemetry.update();
 
         }
 

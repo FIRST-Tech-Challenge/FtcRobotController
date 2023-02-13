@@ -154,11 +154,9 @@ public class PowerPlayTeleopColorado extends LinearOpMode {
 
         boolean aligning = false;
         boolean yPushed= false;
-
+        CV.setPipeDetectionFront();
         waitForStart();
-        if (!CV.isError()){
-            CV.setPipeDetectionFront();
-        }
+
         runtime.reset();
 
 
@@ -479,7 +477,7 @@ public class PowerPlayTeleopColorado extends LinearOpMode {
     }
 
     public boolean alignPole() {
-        PowerPlayComputerVisionPipelines.PipeDetectionPipeline.PipePosition pos = CV.pipeDetectionPipeline.position;
+        PowerPlayComputerVisionPipelines.SleevePipeline.PipePosition pos = CV.sleevePipeline.position;
         switch (pos) {
             case LEFT1:
             case LEFT2:
