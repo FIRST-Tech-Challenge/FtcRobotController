@@ -27,6 +27,7 @@ public class Robot {
     public ClawRotatorState desiredClawRotatorState;
     public ClawState desiredClawState;
     public boolean previousSlidesLimitSwitchState = false;
+    public boolean previousClawLimitSwitchState = false;
 
     enum MovementMode {NORMAL, FINE, ULTRA_FINE}
     MovementMode movementMode = MovementMode.NORMAL;
@@ -38,6 +39,8 @@ public class Robot {
     public DcMotor slidesMotor1, slidesMotor2;
     public Servo clawRotator, claw, clawIndicator;
     public DigitalChannel slidesLimitSwitch;
+    public DigitalChannel clawLimitSwitch;
+
 
     // Other
     public Telemetry telemetry;
@@ -59,6 +62,7 @@ public class Robot {
         clawIndicator = hardwareMap.get(Servo.class, RobotConfig.ServoNames.get(RobotConfig.Servos.CLAW_INDICATOR));
 
         slidesLimitSwitch = hardwareMap.get(DigitalChannel.class, RobotConfig.SwitchNames.get(RobotConfig.Switches.SLIDES_LIMIT));
+        clawLimitSwitch = hardwareMap.get(DigitalChannel.class, RobotConfig.SwitchNames.get(RobotConfig.Switches.CLAW_LIMIT));
 
         for (RobotConfig.DriveMotors motor : RobotConfig.DriveMotors.values()) {
             driveMotors.put(motor, hardwareMap.get(DcMotor.class, RobotConfig.DriveMotorNames.get(motor)));
@@ -99,14 +103,19 @@ public class Robot {
  *  pertaining to the robot's state.
  */
 class RobotConfig {
-    enum Switches {SLIDES_LIMIT}
+    enum DistanceSensors {CLAW_DISTANCE_SENSOR}
+    enum Switches {SLIDES_LIMIT, CLAW_LIMIT}
     enum Motors {SLIDES_MOTOR_1, SLIDES_MOTOR_2}
     public enum DriveMotors {REAR_LEFT, REAR_RIGHT, FRONT_LEFT, FRONT_RIGHT};
     enum Servos {CLAW_ROTATOR, CLAW, CLAW_INDICATOR}
 
+    public static final Map<DistanceSensors, String> DistanceSensorNames = new HashMap<DistanceSensors, String>();//FINISH THIS
+
     public static final Map<Switches, String> SwitchNames = new HashMap<Switches, String>() {{
         put(Switches.SLIDES_LIMIT, "slides_limit");
+        put(Switches.CLAW_LIMIT, "claw_limit");
     }};
+
     public static final Map<Motors, String> MotorNames = new HashMap<Motors, String>() {{
         put(Motors.SLIDES_MOTOR_1, "slides_motor_1");
         put(Motors.SLIDES_MOTOR_2, "slides_motor_2");

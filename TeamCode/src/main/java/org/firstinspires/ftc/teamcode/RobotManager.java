@@ -19,6 +19,7 @@ public class RobotManager {
 
     static final double JOYSTICK_DEAD_ZONE_SIZE = 0.05;
     static final double TRIGGER_DEAD_ZONE_SIZE = 0.05;
+    static final double DISTANCE_SENSOR_THRESHOLD = 12;
 
     public enum AllianceColor {BLUE, RED}
     public enum StartingSide {LEFT, RIGHT} //add starting side here later
@@ -156,17 +157,45 @@ public class RobotManager {
     /** Updates desired states based on sensor inputs.
      */
     public void readSensorInputs() {
+        readSlidesLimitSwitch();
+        readClawLimitSwitch();
+        readDistanceSensor();
+    }
+
+
+    public void readSlidesLimitSwitch() {
         boolean currentSlidesLimitSwitchState = robot.slidesLimitSwitch.getState();
         if (currentSlidesLimitSwitchState) {
-            robot.telemetry.addData("Limit switch state", "pressed");
+            robot.telemetry.addData("Slides limit switch state", "pressed");
         }
-        else {robot.telemetry.addData("Limit switch state", "unpressed");}
+        else {robot.telemetry.addData("Slides limit switch state", "unpressed");}
         // Only true on the first frame that it is pressed - don't want it to get stuck in STOPPED state.
         if (currentSlidesLimitSwitchState && !robot.previousSlidesLimitSwitchState) {
             Robot.desiredSlidesState = Robot.SlidesState.STOPPED;
             mechanismDriving.setSlideZeroPosition(robot);
         }
         robot.previousSlidesLimitSwitchState = currentSlidesLimitSwitchState;
+    }
+
+    public void readClawLimitSwitch() {
+        boolean currentClawLimitSwitchState = robot.clawLimitSwitch.getState();
+        if (currentClawLimitSwitchState) {
+            robot.telemetry.addData("Claw limit switch state", "pressed");
+        }
+        else {robot.telemetry.addData("Claw limit switch state", "unpressed");}
+        // Only true on the first frame that it is pressed - don't want it to get stuck in STOPPED state.
+        if (currentClawLimitSwitchState && !robot.previousClawLimitSwitchState) {
+            closeClaw();
+        }
+        robot.previousClawLimitSwitchState = currentClawLimitSwitchState;
+    }
+
+    public void readDistanceSensor() {
+        boolean currentClawLimitSwitchState = robot.clawLimitSwitch.getState();
+        //double distance = robot.; PLACEHOLDER; replace
+//        if( distance <= DISTANCE_SENSOR_THRESHOLD){
+//            robot.telemetry.addData("Distance Sensor", distance);
+//        }
     }
 
     /** Calls all non-blocking FSM methods to read from state and act accordingly.
