@@ -5,7 +5,9 @@ import static org.firstinspires.ftc.teamcode.Components.Lift.LiftConstants.LIFT_
 import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.logger;
 import static java.lang.Math.toRadians;
 
+import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
+import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
@@ -19,7 +21,6 @@ import org.firstinspires.ftc.teamcode.roadrunner.trajectorysequence.TrajectorySe
 
 import java.util.ArrayList;
 //@Disabled
-@Disabled
 
 @Config
 @Autonomous(name = "BlueLeftAutoCycleTuned")
@@ -47,10 +48,11 @@ public class BlueLeftAutoCycleTuned extends LinearOpMode {
     public static double dummyX2 = 35, dummyY2 = 11, dummyA2 = 0;
 
     public static double dummyX3 = 53, dummyY3 = 11, dummyA3 = 0;
-    public static double dropX=29.75+0.5, dropY=4.9;
+    public static double dropX=30.75+0.5, dropY=6;
     double[] stackPos = {400*1.03,330*1.03,235*1.03,80*1.03,0};
 
     public void runOpMode() {
+        telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
         PwPRobot robot = new PwPRobot(this, false);
         robot.roadrun.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         Pose2d startPose = new Pose2d(42, 63.25, Math.toRadians(90));
@@ -63,9 +65,10 @@ public class BlueLeftAutoCycleTuned extends LinearOpMode {
 //                .lineToConstantHeading(new Vector2d(36, 57))
 //                .build();
         TrajectorySequence preloadtrajectory = robot.roadrun.trajectorySequenceBuilder(new Pose2d(42,63.5, Math.toRadians(90)))
-                .setReversed(true).splineToSplineHeading(new Pose2d(38, 51, toRadians(70)), toRadians(250))
-                .splineTo(new Vector2d(38, 18), toRadians(260))
-                .splineToSplineHeading(new Pose2d(26.5, 7.2, Math.toRadians(55)), Math.toRadians(230))
+                .setReversed(true)
+                .splineToSplineHeading(new Pose2d(38, 51, toRadians(70)), toRadians(255))
+                .splineTo(new Vector2d(37, 20), toRadians(260))
+                .splineToSplineHeading(new Pose2d(26.5, 7.2, toRadians(55)), toRadians(230))
                 .build();
 //        Trajectory preloadtrajectory2 = robot.roadrun.trajectoryBuilder(new Pose2d(37,50, Math.toRadians(70)))
 //                .lineToConstantHeading(new Vector2d(36, 12))
@@ -78,15 +81,15 @@ public class BlueLeftAutoCycleTuned extends LinearOpMode {
 //                .build();
         TrajectorySequence pickupTrajectory = robot.roadrun.trajectorySequenceBuilder(new Pose2d(26.9,7.6,Math.toRadians(55)))
                 .setReversed(false)
-                .splineToSplineHeading(new Pose2d(48, 8.2 + (robot.getVoltage()-12)/1.5, Math.toRadians(0)), Math.toRadians(0))
-                .splineToConstantHeading(new Vector2d(63.8, 13), Math.toRadians(0))
+                .splineToSplineHeading(new Pose2d(50, 8.2 + (robot.getVoltage()-12)/1.5, Math.toRadians(0)), Math.toRadians(0))
+                .splineToConstantHeading(new Vector2d(62.5, 13), Math.toRadians(0))
                 .addTemporalMarker(robot::done)
                 .build();
 
         TrajectorySequence pickupTrajectory2 = robot.roadrun.trajectorySequenceBuilder(new Pose2d(dropX,dropY,Math.toRadians(40)))
                 .setReversed(false)
                 .splineToSplineHeading(new Pose2d(48, 10+(robot.getVoltage()-12)/2, Math.toRadians(0)), Math.toRadians(0))
-                .splineToConstantHeading(new Vector2d(63.8, 13), Math.toRadians(0))
+                .splineToConstantHeading(new Vector2d(62.5, 13), Math.toRadians(0))
                 .addTemporalMarker(robot::done)
                 .build();
 //        TrajectorySequence approachTrajectory = robot.roadrun.trajectorySequenceBuilder(new Pose2d(dummyx3,dummyy3,Math.toRadians(dummya3))).
@@ -97,7 +100,7 @@ public class BlueLeftAutoCycleTuned extends LinearOpMode {
 //                .build();
         ArrayList<TrajectorySequence> dropTrajectory = new ArrayList<>();
         for(int i=0;i<5;i++){
-            dropTrajectory.add(robot.roadrun.trajectorySequenceBuilder(new Pose2d(63.8,13,Math.toRadians(0)))
+            dropTrajectory.add(robot.roadrun.trajectorySequenceBuilder(new Pose2d(62.5,13,Math.toRadians(0)))
                     .setReversed(true)
                     .splineToSplineHeading(new Pose2d(dropX-(i+1)*0.4, dropY+(i+1)*0.3, Math.toRadians(42)), Math.toRadians(222))
                     .UNSTABLE_addTemporalMarkerOffset(0.4,robot::done)
@@ -132,6 +135,7 @@ public class BlueLeftAutoCycleTuned extends LinearOpMode {
         while(!isStarted()){
             telemetry.addData("pos",robot.cv.getPosition());
             telemetry.addData("CLAW_CLOSED:", CLAW_CLOSED.getStatus());
+            telemetry.addData("ANGLE:", robot.getAngleToConeStack());
             telemetry.update();
             robot.updateClawStates();
             robot.updateLiftArmStates();
