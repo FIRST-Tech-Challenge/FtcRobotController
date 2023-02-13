@@ -10,7 +10,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 
 public class ClawSubsystem extends SubsystemBase {
     private final ServoImplEx servo;
-    private final double MIN = 0.08, MAX = 0.29;
+    private final double MIN = 0, MAX = 0.26;
 
     public enum State {
         GRAB, RELEASE

@@ -8,17 +8,17 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 public class ElevatorSubsystem extends SubsystemBase {
     private final MotorEx motor;
 
-    private double KP = 0.2;
+    private double KP = 0.08;
 
     private double KS = 0, KV = 0, KA = 0;
 
     public enum Level {
-        LOW, MID, HIGH;
+        LOW, TRAVEL, MID, HIGH;
     }
 
     private Level level;
 
-    private int[] levelPositions = {0, 620, 2000};
+    private int[] levelPositions = {0, 100, 620, 2000};
 
     public ElevatorSubsystem(HardwareMap hardwareMap) {
         motor = new MotorEx(hardwareMap, "slider");
@@ -51,10 +51,12 @@ public class ElevatorSubsystem extends SubsystemBase {
 
         if(level == Level.LOW)
             levelIdx = 0;
-        else if (level == Level.MID)
+        else if (level == Level.TRAVEL)
             levelIdx = 1;
-        else if (level == Level.HIGH)
+        else if (level == Level.MID)
             levelIdx = 2;
+        else if (level == Level.HIGH)
+            levelIdx = 3;
 
         motor.setTargetPosition(levelPositions[levelIdx]);
     }

@@ -238,12 +238,16 @@ public class PowerPlayRobotV2 extends RobotEx {
                                 new WaitCommand(100),
                                 new InstantCommand(claw::release, claw), // Release the cone to tha basket
                                 new WaitCommand(500),
-                                new InstantCommand(() -> frontSlider.manual(0.3), frontSlider),
-                                new WaitCommand(400),
+                                new ElevatorCommand(elevator, ElevatorSubsystem.Level.TRAVEL),
+                                new WaitCommand(100),
+                                new InstantCommand(() -> frontSlider.manual(0.5), frontSlider),
+                                new WaitCommand(800),
                                 new InstantCommand(() -> frontSlider.stop(), frontSlider),
                                 new InstantCommand(arm::setMid, arm),
                                 new WaitCommand(800),
-                                new InstantCommand(frontSlider::close, frontSlider)
+                                new InstantCommand(frontSlider::close, frontSlider),
+                                new WaitCommand(100),
+                                new ElevatorCommand(elevator, ElevatorSubsystem.Level.LOW)
                         )
                 );
 //
@@ -257,17 +261,17 @@ public class PowerPlayRobotV2 extends RobotEx {
                         )
                 ));
 
-        toolOp.getGamepadButton(GamepadKeys.Button.LEFT_STICK_BUTTON).whenPressed(
-                new SequentialCommandGroup(
-                        new InstantCommand(arm::setMid, arm),
-                        new WaitCommand(300),
-                        new ElevatorCommand(elevator, ElevatorSubsystem.Level.HIGH),
-                        new InstantCommand(basket::setOuttake, basket),
-                        new WaitCommand(1500),
-                        new ParallelCommandGroup(
-                                new InstantCommand(basket::setTravel, basket),
-                                new ElevatorCommand(elevator, ElevatorSubsystem.Level.LOW)
-                        )
-                ));
+//        toolOp.getGamepadButton(GamepadKeys.Button.LEFT_STICK_BUTTON).whenPressed(
+//                new SequentialCommandGroup(
+//                        new InstantCommand(arm::setMid, arm),
+//                        new WaitCommand(300),
+//                        new ElevatorCommand(elevator, ElevatorSubsystem.Level.HIGH),
+//                        new InstantCommand(basket::setOuttake, basket),
+//                        new WaitCommand(1500),
+//                        new ParallelCommandGroup(
+//                                new InstantCommand(basket::setTravel, basket),
+//                                new ElevatorCommand(elevator, ElevatorSubsystem.Level.LOW)
+//                        )
+//                ));
     }
 }

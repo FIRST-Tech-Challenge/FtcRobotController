@@ -9,7 +9,7 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 
 public class ArmSubsystem extends SubsystemBase {
     private final ServoImplEx servo;
-    private final double MIN = 0, MAX = 0.92; // MAX = 0.925;
+    private final double MIN = 0, MAX = 1; // MAX = 0.925;
     private double pos;
     private double step = 0.01;
 //    private double threshold = 0.02;

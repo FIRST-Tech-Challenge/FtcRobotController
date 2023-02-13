@@ -29,17 +29,15 @@ public class ServoLimitsTesting extends LinearOpMode {
 
     Telemetry dahsboardTelemetry = FtcDashboard.getInstance().getTelemetry();
 
-    public static double max = 0.48;
-    public static double min = 0.01;
+    public static double max = 0.34;
+    public static double min = 0;
 
 //    double last_min=min, last_max=max;
-
-    public static double pos = 0.2;
     double step = 0.01;
 
     @Override
     public void runOpMode() throws InterruptedException {
-        servo1 = hardwareMap.get(ServoImplEx.class, "basket");
+        servo1 = hardwareMap.get(ServoImplEx.class, "claw");
 //        servo2 = hardwareMap.get(ServoImplEx.class, "frontSlL");
 
         waitForStart();
