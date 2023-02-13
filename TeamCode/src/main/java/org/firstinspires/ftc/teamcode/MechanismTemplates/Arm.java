@@ -24,7 +24,7 @@ public class Arm {
     public static double armKi = 0.0;
     public static double armKd = 0.00002;
     public static double armKf = 0;
-    public static double EXTAKE_POS = 950; // 1255 Actual position based on encoder readings; 1155 old val
+    public static double EXTAKE_POS = 10; // 950 old val
     public static double INTAKE_POS = 10;
     private final double MAX = 1350;
 
@@ -40,12 +40,17 @@ public class Arm {
         armMotor.setRunMode(Motor.RunMode.VelocityControl);
         armMotor.resetEncoder(); // We want the arm to start at a position of 0
         armPIDF = new PIDFController(armKp, armKi, armKd, armKf);
-        sensor = hardwareMap.analogInput.get("ARM_ENC");
+        sensor = hardwareMap.analogInput.get("ARM_ENC"); // encoder port 1 on control hub
     }
 
     public double getArmPosition(){
         // Don't question this very sus math okay it works (:
-        return 2.5 * 480 * ((sensor.getVoltage() - 0.3520574787720445) - 0.5);
+
+        // RETURNING ENCODER TICKS
+         return 2.5 * 480 * ((sensor.getVoltage() - 0.3520574787720445) - 0.5);
+
+        // RETURNING DEGREES
+        // return sensor.getVoltage()/sensor.getMaxVoltage()*360;
     }
 
     public void update(Telemetry telemetry){
@@ -73,3 +78,39 @@ public class Arm {
     }
 
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

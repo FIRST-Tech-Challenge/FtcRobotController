@@ -33,8 +33,6 @@ public class PP_MecanumTeleOp extends OpMode
     SignalEdgeDetector gamepad2_X = new SignalEdgeDetector(() -> gamepad2.x);
     SignalEdgeDetector gamepad2_Y = new SignalEdgeDetector(() -> gamepad2.y);
 
-
-
     // Declaring mechanism objects
     private Arm armControl;
     private Slide slideControl;
@@ -193,7 +191,6 @@ public class PP_MecanumTeleOp extends OpMode
             clawControl.wristInExtakePosition = false;
             armControl.setIntake();
             slideControl.setIntakeOrGround();
-
         }
     }
 
