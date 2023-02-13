@@ -14,6 +14,19 @@ object MoerTeasting {
 var HELLO = 4.0.toInt().coerceAtLeast(2).clamp<Int>(0, 5)
 var WHELLO = "4"
 
+// SUCC := λnfa.f﹩nfa
+//
+// ZERO  := λfa.a
+// ONE   := λfa.fa
+// TWO   := λfa.f﹩fa
+// THREE := λfa.f﹩f﹩fa
+// FOUR  := SUCC(THREE)
+// FIVE  := SUCC(FOUR)
+//
+// ADD := λxy.ySUCCx
+// MUL := λxy.y(ADDx)ZERO // there must be a better way
+// POW := λxy.yx // Idk how this works but I derived it by accident
+
 fun main() {
     val jstr = """
         T := λxy.x
@@ -29,22 +42,22 @@ fun main() {
         XOR  := λab.a(~b)b
         
         NAND := λab.a(~b)T
-        NOR  := λa.λb.a(λx.λy.y) ﹩ (λa.λx.λy.ayx)b
+        NOR  := λa.λb.a(λx.λy.y)﹩(λa.λx.λy.ayx)b
         
         // ---------------------------------------------------
         
-        SUCC := λnfa.f﹩nfa
+        ZERO  := λpfa.a
+        ONE   := λp.p(λfa.fa)(λpfa.a)
+        TWO   := λp.p(λfa.f(fa))(λp.p(λfa.fa)(λpfa.a))
+        THREE := SUCC(TWO)
         
-        ZERO  := λfa.a
-        ONE   := λfa.fa
-        TWO   := λfa.f﹩fa
-        THREE := λfa.f﹩f﹩fa
-        FOUR  := SUCC(THREE)
-        FIVE  := SUCC(FOUR)
+        GET  := λnfa.nTfa
+        PRED := λnfa.nFfa
+        SUCC := λnp.p(λfa.f(nTfa))(n)
         
-        ADD := λxy.ySUCCx
-        MUL := λxy.y(ADDx)ZERO // there must be a better way
-        POW := λxy.yx // Idk how this works but I derived it by accident
+        ADD := λxy.y(T)SUCCx
+        MUL := λxy.y(T)(ADDx)ZERO
+        POW := λxy.yT(xT)
         
         // ---------------------------------------------------
         
@@ -55,16 +68,19 @@ fun main() {
         // ---------------------------------------------------
         
         return [
-            count ﹩ ADD(FOUR)(THREE)
-           ,count ﹩ MUL(FOUR)(THREE)
-           ,count ﹩ POW(FOUR)(THREE)
+            count﹩GET﹩SUCC(ZERO)
+           ,count﹩GET﹩ONE
+           ,count﹩GET﹩PRED(TWO)
+           ,count﹩GET﹩ADD(THREE)(TWO)
+           ,count﹩GET﹩MUL(THREE)(TWO)
+           ,count﹩GET﹩POW(THREE)(TWO)
         ].join('\n')
     """.trimIndent()
         .expand3()
         .also(::printWithSep)
         .expand1()
         .expand4()
-//        .expand2(2)
+        .expand2(2)
         .also(::printWithSep)
         .split("\n")
         .joinToString("\n", transform = String::test1)
@@ -76,6 +92,10 @@ fun main() {
         .start()
 
     process.inputStream.bufferedReader().use {
+        it.readLines().forEach(::println)
+    }
+
+    process.errorStream.bufferedReader().use {
         it.readLines().forEach(::println)
     }
 
