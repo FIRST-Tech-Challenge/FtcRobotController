@@ -1,4 +1,5 @@
 @file:ConfigKt
+@file:Suppress("SpellCheckingInspection")
 
 package org.firstinspires.ftc.teamcodekt
 
@@ -15,26 +16,56 @@ var WHELLO = "4"
 
 fun main() {
     val jstr = """
-        const T = λxy.x
-        const F = λxy.y
+        T := λxy.x
+        F := λxy.y
         
-        const Yes = λa.a
-        const Not = λaxy.ayx
+        YES := λa.a
+        NOT := λaxy.ayx
         
-        const And = λab.aba
-        const Or  = λab.aab
+        AND := λab.aba
+        OR  := λab.aab
         
-        const Leq = λab.ab $ `Not`b
-        const Xor = λab.a(`Not`b)b 
+        XNOR := λab.ab﹩~b
+        XOR  := λab.a(~b)b
         
-        const Nand = λab.a(`Not`b)T
-        const Nor  = λab.aF(`Not`b)
+        NAND := λab.a(~b)T
+        NOR  := λa.λb.a(λx.λy.y) ﹩ (λa.λx.λy.ayx)b
         
-        return Nand(F)(F)('true')('false')
+        // ---------------------------------------------------
+        
+        SUCC := λnfa.f﹩nfa
+        
+        ZERO  := λfa.a
+        ONE   := λfa.fa
+        TWO   := λfa.f﹩fa
+        THREE := λfa.f﹩f﹩fa
+        FOUR  := SUCC(THREE)
+        FIVE  := SUCC(FOUR)
+        
+        ADD := λxy.ySUCCx
+        MUL := λxy.y(ADDx)ZERO // there must be a better way
+        POW := λxy.yx // Idk how this works but I derived it by accident
+        
+        // ---------------------------------------------------
+        
+        function count(f) {
+            return f(a => a + 1)(0)
+        }
+        
+        // ---------------------------------------------------
+        
+        return [
+            count ﹩ ADD(FOUR)(THREE)
+           ,count ﹩ MUL(FOUR)(THREE)
+           ,count ﹩ POW(FOUR)(THREE)
+        ].join('\n')
     """.trimIndent()
-        .lamdafy()
+        .expand3()
         .also(::printWithSep)
         .expand1()
+        .expand4()
+//        .expand2(2)
+        .also(::printWithSep)
         .split("\n")
         .joinToString("\n", transform = String::test1)
         .also(::printWithSep)
@@ -45,11 +76,54 @@ fun main() {
         .start()
 
     process.inputStream.bufferedReader().use {
-        it.readLine().also(::println)
+        it.readLines().forEach(::println)
     }
 
     process.waitFor()
 }
+
+fun String.expand2(expandTImes: Int): String {
+    var acc = this
+
+    for (i in 0..expandTImes) {
+        Regex("(.*)const ([A-Z]+)\\s+=\\s+(.*)\\s+")
+            .findAll(this)
+            .filter {
+                "//" !in it.groupValues[1]
+            }
+            .forEach {
+                val name = it.groupValues[2]
+                val replacement = it.groupValues[3]
+
+                val regex = "(?<!const |[A-Z])$name(?![A-Z])".toRegex()
+
+                acc = acc.replace(regex) {
+                    val a = it.range.first - 1
+                    val b = it.range.last + 1
+
+                    if (a > 0 && acc[a] == '(' && b < acc.length && acc[b] == ')') {
+                        replacement
+                    } else {
+                        "($replacement)"
+                    }
+                }
+            }
+    }
+
+    return acc
+}
+
+fun String.expand3() = this
+    .replace("~", "NOT")
+    .split('\n')
+    .joinToString("\n") {
+        var numParens = 0
+
+        it.replace("\\s*﹩\\s*".toRegex()) {
+            numParens++
+            "("
+        } + ")".repeat(numParens)
+    }
 
 fun String.lamdafy() =
     replace('\\', 'λ')
@@ -64,9 +138,18 @@ fun String.expand1() =
             .joinToString(".λ")
     }
 
+fun String.expand4() =
+    replace("([A-Z]+)(\\s+):=".toRegex()) {
+        "const ${it.groupValues[1]}${it.groupValues[2]}="
+    }
+
 fun String.test1(): String {
-    if ('λ' !in this) {
+    if ('λ' !in this || this.startsWith("//")) {
         return this
+    }
+
+    operator fun StringBuilder.plusAssign(other: Any) {
+        this.append(other)
     }
 
     val s = StringBuilder()
@@ -75,60 +158,65 @@ fun String.test1(): String {
     val arr1 = arrayOf('λ', '.')
     val parens = arrayOf('(', ')')
 
-    s.append(substring(0, i))
-
-    var numParens = 0
+    s += substring(0, i)
 
     while (i < length) {
         while (i < length && this[i] in arr1 || (this[i - 1] in arr1 && this[i].isLetter()))
-            s.append( this[i++] )
+            s += this[i++]
 
         if (i == length)
             break
 
-        val doParens = s.last() != '(' && s.last() !in arr1
+        val doParens = s.last() !in arr1 + '('
 
         when {
             this[i] == '[' -> {
                 while (this[++i] != ']') {
-                    s.append( this[i] )
+                    s += this[i]
                 }
             }
 
+            this[i].isUpperCase() -> {
+                if (doParens) s += "("
+
+                while (i < length && this[i].isUpperCase())
+                    s += this[i++]
+
+                if (doParens) s += ")"
+                i--
+            }
+
+            this[i] == '\'' -> {
+                s += '\''
+
+                while (this[++i] != '\'')
+                    s += this[i]
+
+                s += '\''
+            }
+
             this[i] == '`' -> {
-                if (doParens) s.append("(")
-
                 while (this[++i] != '`')
-                    s.append(this[i])
-
-                if (doParens) s.append(")")
+                    s += this[i]
             }
 
             this[i] == ' ' -> {}
 
-            this[i] == '$' -> {
-                s.append("(")
-                numParens++
-            }
-
-            this[i] in parens || !doParens -> {
-                s.append(this[i])
+            this[i] in parens + ',' || !doParens -> {
+                s += this[i]
             }
 
             this[i] == '/' -> {
-                s.append(' ')
-                s.append(substring(i))
+                s += " ${substring(i)}"
                 break
             }
 
             else -> {
-                s.append("(${this[i]})")
+                s += "(${this[i]})"
             }
         }
         i++
     }
-
-    s.append(")".repeat(numParens))
 
     return s.toString()
         .replace(Regex("λ(\\w)\\.")) {

@@ -24,7 +24,7 @@ The Scheduler model is a loop that runs until the OpMode is stopped, and this lo
 
 ### Listeners👂
 
-👀 This is the juicy bit, these are the backbone of the Scheduler API. Or wait, are they more like limbs? Anyways, they run *before* `beforeEach` and *after* `afterEach` (🤯)
+👀 This is the juicy bit, these are the backbone of the Scheduler API. Or wait, are they more like limbs? Anyways, they run *after* `beforeEach` and *before* `afterEach` (🤯)
 
 Listeners are objects which hold a condition which hook to and are updated every cycle of the Scheduler. They can be
 subscribed to to perform certain actions when certain events are in certain states.
