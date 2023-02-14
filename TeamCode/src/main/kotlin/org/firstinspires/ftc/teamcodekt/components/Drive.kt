@@ -1,4 +1,5 @@
 @file:Suppress("LocalVariableName")
+@file:ConfigKt
 
 package org.firstinspires.ftc.teamcodekt.components
 
@@ -10,12 +11,19 @@ import com.qualcomm.robotcore.hardware.Gamepad
 import com.qualcomm.robotcore.util.ElapsedTime
 import ftc.rogue.blacksmith.BlackOp
 import ftc.rogue.blacksmith.BlackOp.Companion.hwMap
+import ftc.rogue.blacksmith.annotations.ConfigKt
 import ftc.rogue.blacksmith.util.kt.invoke
 import ftc.rogue.blacksmith.util.kt.maxMagnitudeAbs
 import ftc.rogue.blacksmith.util.kt.pow
 import org.firstinspires.ftc.teamcodekt.components.meta.DeviceNames
 import java.util.*
 import kotlin.math.*
+
+@JvmField
+var tiltCorrectionMult = 0.001
+
+@JvmField
+var imuAngleUsed = 2 // or 0/1, not sure which one it is... will have to test.
 
 class Drivetrain {
     private val frontLeft  = hwMap<DcMotorEx>(DeviceNames.DRIVE_FL).apply { direction = Direction.REVERSE }
@@ -93,11 +101,13 @@ class Drivetrain {
 
         val max = maxMagnitudeAbs<Double>(xComponent, yComponent, 1e-16)
 
+        val correctionTilt = tiltCorrectionMult * imu.angles.get(imuAngleUsed)
+
         val powers = doubleArrayOf(
-            power * (xComponent / max) + r,
-            power * (yComponent / max) - r,
-            power * (yComponent / max) + r,
-            power * (xComponent / max) - r,
+            power * (xComponent / max) + r + correctionTilt, // TODO: Check if this code works, also if imuAngleUsed is correct.
+            power * (yComponent / max) - r + correctionTilt, // TODO: If I add a power value to each one, then will all motors go forward?
+            power * (yComponent / max) + r + correctionTilt,
+            power * (xComponent / max) - r + correctionTilt,
         )
 
         if (power + abs(r) > 1) {
