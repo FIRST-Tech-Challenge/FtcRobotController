@@ -21,10 +21,11 @@ import kotlin.reflect.KProperty
  * Still nice for Java too.
  *
  * Provides some nice utilities for writing OpModes, such as:
- *  - mTelemetry which logs to both driver station and dashboard
- *  - hwMap, just short for hardwareMap
- *  - Emits a message (BlackOp.STARTING_MSG) which can be subscribed to do something with Scheduler.on
- *  - Allows use of `createOnGo` for Kotlin (read docs for this it is **very** nice)
+ *  - A global mTelemetry which logs to both driver station and FTCDashboard
+ *  - a global hwMap, short for hardwareMap
+ *  - Emits a message (`BlackOp.STARTING_MSG`) which can be subscribed to do something with `Scheduler.on(BlackOp.STARTING_MSG, () -> { ... })`
+ *  - Allows use of `@CreateOnGo` for Java (read docs for this, it is quite nice)
+ *  - Allows use of `createOnGo/evalOnGo` for Kotlin (read docs for this, it is quite nice)
  *  - Sounds kinda cool Idk
  *
  *  i like cars

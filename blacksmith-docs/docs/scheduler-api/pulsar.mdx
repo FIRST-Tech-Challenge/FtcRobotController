@@ -1,0 +1,100 @@
+---
+sidebar_position: 6
+---
+
+import { TypeLinks } from '../../src/util/type-links';
+import ParamsList from '../../src/components/ParamsList';
+import Returns from '../../src/components/Returns';
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+# Pulsars
+
+:::warning
+A pulsar's resolution is tied to the performance of the Scheduler loop. If there's a heavy computation involved,
+the pulsar may not fire at the exact time it was scheduled for.
+
+For example, if you have a pulsar set to go off in 50ms intervals, but the loop is busy for an extra
+50ms, the pulsar will fire up to 100ms after it was scheduled.
+
+This is not meant for very precise timing. But then again, without multithreading (which I don't reallly recommend for
+most cases), it's not really possible to get a higher resolution timer anyways. **It's good enough for most use cases.**
+:::
+
+:::info
+also doesn't work unless Scheduler is running.
+:::
+
+## Overview
+
+Pulsars are akin to timers, except they're like timers on a loop, where they 'pulse' every 'x' time units.
+You can use one to do something every, say, 100ms.
+
+## Pulsar methods
+
+### Construction
+
+Constructs a new Pulsar with the given interval. Pulsar is automatically started upon creation.
+
+<ParamsList params={[
+  {
+    name: 'interval',
+    type: 'long',
+    desc: 'The interval the pulsar should pulse at, in milliseconds',
+  },
+  {
+    name: 'unit',
+    type: 'TimeUnit',
+    desc: 'The time unit of the timer. Defaults to milliseconds',
+    typeLink: TypeLinks.TIME_UNIT,
+    defaultsTo: 'TimeUnit.MILLISECONDS',
+  }
+]}/>
+
+### pulsar.onPulse()
+
+Calls the given callback every Scheduler cycle while the timer is either running *or* pending.
+
+<ParamsList params={[
+  {
+    name: 'callback',
+    type: 'Runnable',
+    desc: 'The function to run every x time units',
+    typeLink: TypeLinks.LAMBDA,
+  }
+]}/>
+
+<Returns returns={{
+  type: 'Timer',
+  desc: 'The Timer itself to allow for method chaining',
+  typeLink: TypeLinks.TIMER,
+}}/>
+
+<Tabs groupId="programming-language">
+<TabItem value="java" label="Java">
+
+  ```java
+  Pulsar pulsar = new Pulsar(500); // Pulses every 500ms
+
+  pulsar.onPulse(() -> {
+      System.out.println("Hi!"); // Prints every 500ms
+  });
+
+  Scheduler.launchManually(() -> true); // Won't work until Scheduler is running
+  ```
+
+</TabItem>
+<TabItem value="kt" label="Kotlin">
+
+  ```kotlin
+  var pulsar = Pulsar(500) // Pulses every 500ms
+
+  pulsar.onPulse {
+      System.out.println("Hi!") // Prints every 500ms
+  }
+
+  Scheduler.launchManually({ true }) // Won't work until Scheduler is running
+  ```
+
+</TabItem>
+</Tabs>

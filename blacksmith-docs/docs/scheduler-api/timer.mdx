@@ -17,8 +17,12 @@ the timer may not fire at the exact time it was scheduled for.
 For example, if you have a timer set to go off in 50ms, but the loop is busy for an extra 50ms, the timer will fire up to
 100ms after it was scheduled.
 
-This is not meant for very precise timing. But then again, without multithreading(which I don't reallly recommend for
+This is not meant for very precise timing. But then again, without multithreading (which I don't reallly recommend for
 most cases), it's not really possible to get a higher resolution timer anyways. **It's good enough for most use cases.**
+:::
+
+:::info
+also doesn't work unless Scheduler is running.
 :::
 
 ## Overview

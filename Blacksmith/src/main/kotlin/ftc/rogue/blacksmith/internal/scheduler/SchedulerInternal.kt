@@ -1,3 +1,5 @@
+@file:Suppress("SpellCheckingInspection")
+
 package ftc.rogue.blacksmith.internal.scheduler
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode
@@ -7,7 +9,8 @@ import ftc.rogue.blacksmith.internal.util.DoubleConsumer
 import ftc.rogue.blacksmith.internal.util.consume
 import ftc.rogue.blacksmith.listeners.Listener
 
-class SchedulerInternal {
+@PublishedApi
+internal class SchedulerInternal {
     val listeners = mutableSetOf<Listener>()
 
     var beforeEach = Runnable {}
@@ -15,11 +18,7 @@ class SchedulerInternal {
     fun launch(opmode: LinearOpMode, afterEach: Runnable) {
         Scheduler.emit(Scheduler.STARTING_MSG)
 
-        while (opmode.opModeIsActive() && !opmode.isStopRequested) {
-            updateListenersSet()
-
-            beforeEach.run()
-            tick()
+        launchManually({ opmode.opModeIsActive() && !opmode.isStopRequested }) {
             afterEach.run()
         }
     }
@@ -29,31 +28,37 @@ class SchedulerInternal {
         launch(opmode, afterEach)
     }
 
+    inline fun launchManually(condition: () -> Boolean, afterEach: Runnable = Runnable {}) {
+        while (condition()) {
+            updateListenersSet()
+
+            beforeEach.run()
+            tick()
+            afterEach.run()
+        }
+    }
+
     fun time(opmode: LinearOpMode, afterEach: DoubleConsumer) {
         Scheduler.emit(Scheduler.STARTING_MSG)
 
         val elapsedTime = ElapsedTime()
 
-        while (opmode.opModeIsActive() && !opmode.isStopRequested) {
-            updateListenersSet()
+        launchManually({ opmode.opModeIsActive() && !opmode.isStopRequested }) {
+            val time = elapsedTime.milliseconds()
 
-            beforeEach.run()
-            tick()
+            elapsedTime.reset()
 
-            elapsedTime.milliseconds().let {
-                elapsedTime.reset()
-                afterEach.consume(it)
-            }
+            afterEach.consume(time)
         }
     }
 
-    fun manuallyUpdateListeners() {
-        updateListenersSet()
-        tick()
-    }
-
     fun reset() {
-        listeners.clear()
+        listeners.forEach {
+            it.destroy()
+        }
+
+        messages.clear()
+
         beforeEach = Runnable {}
     }
 
@@ -78,12 +83,18 @@ class SchedulerInternal {
         listenersToRemove += listener
     }
 
-    private fun updateListenersSet() {
+    @JvmSynthetic
+    @PublishedApi
+    internal fun updateListenersSet() {
         listeners += listenersToAdd
         listenersToAdd.clear()
         listeners -= listenersToRemove
         listenersToRemove.clear()
     }
 
-    private fun tick() = listeners.forEach(Listener::tick)
+    @JvmSynthetic
+    @PublishedApi
+    internal fun tick() {
+        listeners.forEach(Listener::tick)
+    }
 }

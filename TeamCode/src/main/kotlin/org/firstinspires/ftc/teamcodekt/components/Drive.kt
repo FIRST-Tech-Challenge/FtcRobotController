@@ -11,7 +11,9 @@ import com.qualcomm.robotcore.hardware.Gamepad
 import com.qualcomm.robotcore.util.ElapsedTime
 import ftc.rogue.blacksmith.BlackOp
 import ftc.rogue.blacksmith.BlackOp.Companion.hwMap
+import ftc.rogue.blacksmith.BlackOp.Companion.mTelemetry
 import ftc.rogue.blacksmith.annotations.ConfigKt
+import ftc.rogue.blacksmith.listeners.Pulsar
 import ftc.rogue.blacksmith.util.kt.invoke
 import ftc.rogue.blacksmith.util.kt.maxMagnitudeAbs
 import ftc.rogue.blacksmith.util.kt.pow
@@ -62,15 +64,13 @@ class Drivetrain {
 
     private val red = green.replace("\uD83D\uDFE9", "\uD83D\uDFE5")
 
-    private val elapsedTime = ElapsedTime()
-
     private var currentColor = red
 
     fun drive(gamepad: Gamepad, powerMulti: Double) {
-        if (elapsedTime.milliseconds() > 1000) {
-            currentColor = if (currentColor === red) green else red
-            elapsedTime.reset()
-        }
+        Pulsar(interval = 1000)
+            .onPulse {
+                currentColor = if (currentColor === red) green else red
+            }
 
         if (shouldDriveRC) {
             driveRC(gamepad, powerMulti)
@@ -78,7 +78,7 @@ class Drivetrain {
             driveFC(gamepad, powerMulti)
         }
 
-        BlackOp.mTelemetry.addLine(currentColor)
+        mTelemetry.addLine(currentColor)
     }
 
     fun switchMode() {
@@ -101,7 +101,7 @@ class Drivetrain {
 
         val max = maxMagnitudeAbs<Double>(xComponent, yComponent, 1e-16)
 
-        val correctionTilt = tiltCorrectionMult * imu.angles.get(imuAngleUsed)
+        val correctionTilt = tiltCorrectionMult * imu.angles[imuAngleUsed]
 
         val powers = doubleArrayOf(
             power * (xComponent / max) + r + correctionTilt, // TODO: Check if this code works, also if imuAngleUsed is correct.
@@ -121,6 +121,12 @@ class Drivetrain {
         withEachMotor {
             this.power = powers[it]
         }
+
+        val (a, b, c) = imu.angles
+
+        mTelemetry.addData("0rd angle", a)
+        mTelemetry.addData("1nd angle", b)
+        mTelemetry.addData("2st angle", c)
     }
 
     private fun driveFC(gamepad: Gamepad, powerMulti: Double) {

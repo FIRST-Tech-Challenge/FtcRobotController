@@ -128,6 +128,11 @@ object Scheduler {
     }
 
     @JvmStatic
+    inline fun launchManually(condition: () -> Boolean, afterEach: Runnable = Runnable {}) {
+        internal.launchManually(condition, afterEach)
+    }
+
+    @JvmStatic
     fun time(opmode: LinearOpMode, afterEach: DoubleConsumer) {
         internal.time(opmode, afterEach)
     }
@@ -143,16 +148,15 @@ object Scheduler {
     }
 
     @JvmStatic
-    fun manuallyUpdateListeners() {
-        internal.manuallyUpdateListeners()
-    }
-
-    @JvmStatic
     fun reset() {
         internal.reset()
     }
 
-    private val internal = SchedulerInternal()
+    // -- INTERNAL --
+
+    @JvmSynthetic
+    @PublishedApi
+    internal val internal = SchedulerInternal()
 
     @JvmSynthetic
     internal fun hookListener(listener: Listener) {

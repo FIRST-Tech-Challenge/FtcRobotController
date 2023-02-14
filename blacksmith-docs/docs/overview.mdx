@@ -1,5 +1,5 @@
 ---
-sidebar_position: 0
+sidebar_position: -1
 ---
 
 import Tabs from '@theme/Tabs';
@@ -36,6 +36,7 @@ Here's a basic example of a TeleOp before and after using Blacksmith:
   <TabItem value="java" label="Java">
 
   ```java
+  @TeleOp
   public class NotCoolTeleOp extends OpMode {
       @Override
       public void init() {
@@ -66,6 +67,7 @@ Here's a basic example of a TeleOp before and after using Blacksmith:
   <TabItem value="kt" label="Kotlin">
 
   ```kotlin
+  @TeleOp
   class `NotCoolTeleOp😔` : OpMode() {
       override fun init() {
           // Initialize hardware
@@ -94,56 +96,55 @@ Here's a basic example of a TeleOp before and after using Blacksmith:
 </Tabs>
 
 <Tabs groupId="programming-language">
-  <TabItem value="java" label="Java">
+<TabItem value="java" label="Java">
 
-  ```java
-  public class CoolTeleOp extends LinearOpMode {
-      private ReforgedGamepad codriver;
+```java
+@TeleOp
+public class CoolTeleOp extends BlackOp {
+    private ReforgedGamepad codriver;
 
-      @Override
-      public void runOpMode() throws InterruptedException {
-          codriver = new ReforgedGamepad(gamepad2); // Initialize hardware
+    @Override
+    public void go() {
+        codriver = new ReforgedGamepad(gamepad2);
 
-          describeControls(); // Good idea to move it to a method for readability
+        describeControls(); // Good idea to move it to a method for readability
 
-          Scheduler.launchOnStart(this, () -> {
-              // Any extra loop code (runs after every Listener)
-          });
-      }
+        Scheduler.launchOnStart(this, () -> {
+            // Any extra loop code (runs after every Listener)
+        });
+    }
 
-      private void describeControls() {
-          codriver.a.onRise(claw::intake); // Simple and easy to read
-          codriver.a.onFall(claw::close); // Complexity is abstracted away
-      }
-  }
-  ```
+    private void describeControls() {
+        codriver.a.onRise(() -> claw.intake()); // Simple and easy to read
+        codriver.a.onFall(() -> claw.close()); // Complexity is abstracted away
+    }
+}
+```
 
-  </TabItem>
-  <TabItem value="kt" label="Kotlin">
+</TabItem>
+<TabItem value="kt" label="Kotlin">
 
-  ```kotlin
-  class `CoolTeleOp😎` : LinearOpMode() {
-      private val codriver by createOnGo<ReforgedGamepad>({ gamepad2 })
+```kotlin
+@TeleOp
+class `CoolTeleOp😎` : BlackOp() {
+    private val codriver by createOnGo<ReforgedGamepad> { gamepad2 }
 
-      // Initialize other hardware w/ createOnGo
+    override fun go() {
+        describeControls() // Good idea to move it to a method for readability
 
-      override fun runOpMode() {
+        Scheduler.launchOnStart(this) {
+            // Any extra loop code (runs after every Listener)
+        }
+    }
 
-          describeControls() // Good idea to move it to a method for readability
+    private fun describeControls() {
+        codriver.a.onRise(claw::intake) // Simple and easy to read
+        codriver.a.onFall(claw::close) // Complexity is abstracted away
+    }
+}
+```
 
-          Scheduler.launchOnStart(this) {
-              // Any extra loop code (runs after every Listener)
-          }
-      }
-
-      private fun describeControls() {
-          codriver.a.onRise(claw::intake) // Simple and easy to read
-          codriver.a.onFall(claw::close) // Complexity is abstracted away
-      }
-  }
-  ```
-
-  </TabItem>
+</TabItem>
 </Tabs>
 
 As you can see, the Blacksmith version is much different, but it's much more readable and easier to make changes to.
@@ -155,6 +156,10 @@ The guide does require some knowledge of Java, but it's not very hard to learn. 
 checking out the FAQ page for some resources to learn what you need to know for this framework.
 
 If you're using Kotlin, this guide does somewhat presume you know what you're doing and won't explain the Kotlin as much.
+
+## I don't understand all these words
+
+They're probably described in the docs somewhere, just keep reading.
 
 ## Okay... but what about performance?
 

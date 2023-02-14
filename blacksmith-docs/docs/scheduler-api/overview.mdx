@@ -23,6 +23,7 @@ Let's take a look at some basic bog-standard TeleOp code:
 <TabItem value="java" label="Java">
 
 ```java
+@TeleOp
 public class NotCoolTeleOp extends OpMode {
     @Override
     public void init() {
@@ -53,6 +54,7 @@ public class NotCoolTeleOp extends OpMode {
 <TabItem value="kt" label="Kotlin">
 
 ```kotlin
+@TeleOp
 class `NotCoolTeleOp😔` : OpMode() {
     override fun init() {
         // Initialize hardware
@@ -86,11 +88,12 @@ Now the same TelpOp after receiving the Scheduler treatment:
 <TabItem value="java" label="Java">
 
 ```java
-public class CoolTeleOp extends LinearOpMode {
+@TeleOp
+public class CoolTeleOp extends BlackOp {
     private ReforgedGamepad codriver;
 
     @Override
-    public void runOpMode() throws InterruptedException {
+    public void go() {
         codriver = new ReforgedGamepad(gamepad2);
 
         describeControls(); // Good idea to move it to a method for readability
@@ -111,12 +114,11 @@ public class CoolTeleOp extends LinearOpMode {
 <TabItem value="kt" label="Kotlin">
 
 ```kotlin
-class `CoolTeleOp😎` : LinearOpMode() {
-    private lateinit var codriver: ReforgedGamepad
+@TeleOp
+class `CoolTeleOp😎` : BlackOp() {
+    private val codriver by createOnGo<ReforgedGamepad> { gamepad2 }
 
-    override fun runOpMode() {
-        codriver = ReforgedGamepad(gamepad2)
-
+    override fun go() {
         describeControls() // Good idea to move it to a method for readability
 
         Scheduler.launchOnStart(this) {
@@ -139,7 +141,9 @@ after all, you no longer have to deal with any logic (at least with the basics).
 
 🚀 *Instead of telling the code exactly what to do, you just tell it what you want!*
 
-## Uh, what are those weird symbols (like `() ->`)?
+## Confused?
+
+### Uh, what are those weird symbols (like `() ->`)?
 
 Those are called [lambdas](https://en.wikipedia.org/wiki/Anonymous_function#Java), and they're simply a way of
 passing in functions to other functions to be called later.
@@ -148,3 +152,21 @@ The Scheduler API does require some medium-level knowledge of Java, but it's not
 have surface level knowledge of lambdas and what `this` is and such to use this API.
 
 (I'm assuming if you're using Kotlin, you're already familiar with such higher level concepts)
+
+### What is BlackOp?
+
+You don't need to use this, you can use LinearOpMode if you'd like, but atm the Scheduler doesn't
+support normal OpModes.
+Check out [this](../black-op/overview) for more info
+
+### (Kotlin) what is createOnGo?
+
+A very nice part of [BlackOp](../black-op/create-on-go-kt). There's a `@CreateOnGo`
+[equivalent](../black-op/create-on-go-java) for Java too!
+
+### Wth is a ReforgedGamepad or `codriver.a.onRise`??
+
+Read on, it's described in the docs in a little bit. Or click [here.](./reforged-gamepad)
+
+### What is 'x'?
+it's probably described in the docs somewhere, I can't list everything, sorry.

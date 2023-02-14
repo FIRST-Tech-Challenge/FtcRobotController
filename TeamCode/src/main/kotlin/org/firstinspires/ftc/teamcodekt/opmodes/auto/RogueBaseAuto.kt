@@ -9,6 +9,7 @@ import ftc.rogue.blacksmith.Anvil
 import ftc.rogue.blacksmith.BlackOp
 import ftc.rogue.blacksmith.Scheduler
 import ftc.rogue.blacksmith.listeners.Listener
+import ftc.rogue.blacksmith.listeners.ReforgedGamepad
 import ftc.rogue.blacksmith.util.SignalEdgeDetector
 import ftc.rogue.blacksmith.units.DistanceUnit
 import ftc.rogue.blacksmith.util.kt.LateInitVal
@@ -21,7 +22,7 @@ import kotlin.math.absoluteValue
 import kotlin.properties.Delegates
 
 abstract class RogueBaseAuto : BlackOp() {
-    protected var bot by LateInitVal<AutoBotComponents>()
+    protected val bot by evalOnGo(::createAutoBotComponents)
     protected var signalID by Delegates.notNull<Int>()
 
     protected abstract val startPose: Pose2d
@@ -31,8 +32,6 @@ abstract class RogueBaseAuto : BlackOp() {
         private set
 
     final override fun go() {
-        bot = createAutoBotComponents()
-
         PhotonCore.enable()
 
         readPoleOffset()
@@ -51,27 +50,16 @@ abstract class RogueBaseAuto : BlackOp() {
     }
 
     private fun readPoleOffset() {
-        mTelemetry.addLine("Starting reading cone")
-        mTelemetry.update()
-
-        val rightSED = Listener { gamepad1.dpad_right }
-        val leftSED  = Listener { gamepad1.dpad_left  }
-        val upSED    = Listener { gamepad1.dpad_up    }
-        val downSED  = Listener { gamepad1.dpad_down  }
+        val driver = ReforgedGamepad(gamepad1)
 
         var x = 0.0
         var y = 0.0
 
-        while (!gamepad1.a) {
-            rightSED.onRise { x += .25 }
-
-            leftSED.onRise  { x -= .25 }
-
-            upSED.onRise    { y += .25 }
-
-            downSED.onRise  { y -= .25 }
-
-            Scheduler.manuallyUpdateListeners()
+        Scheduler.launchManually({ !gamepad1.a }) {
+            driver.dpad_right.onRise { x += .25 }
+            driver.dpad_left.onRise  { x -= .25 }
+            driver.dpad_up.onRise    { y += .25 }
+            driver.dpad_down.onRise  { y -= .25 }
 
             val xf = (if (x > 0) "+" else "-") + "%4.2f".format(x.absoluteValue)
             val yf = (if (y > 0) "+" else "-") + "%4.2f".format(y.absoluteValue)
@@ -86,6 +74,7 @@ abstract class RogueBaseAuto : BlackOp() {
         }
 
         poleOffset = Vector2d(x.toCm(DistanceUnit.INCHES), y.toCm(DistanceUnit.INCHES))
+        Scheduler.reset()
     }
 
     companion object {

@@ -36,13 +36,13 @@ internal inline fun <reified T> CreateOnGoInternal(vararg args: () -> Any) =
 class CreateOnGoInternal<T : Any>
     @PublishedApi
     internal constructor(
-        constructor: () -> T
+        valueProvider: () -> T
     ) {
 
     private lateinit var value: T
 
     init {
-        Scheduler.on(BlackOp.STARTING_MSG) { value = constructor() }
+        Scheduler.on(BlackOp.STARTING_MSG) { value = valueProvider() }
     }
 
     operator fun getValue(thisRef: Any, property: KProperty<*>): T {

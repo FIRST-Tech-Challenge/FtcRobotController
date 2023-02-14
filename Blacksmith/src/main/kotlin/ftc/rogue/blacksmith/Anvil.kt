@@ -202,17 +202,17 @@ class Anvil
     // -- Markers --
 
     @JvmOverloads
-    fun addTemporalMarker(offset: Number = 0.0, action: MarkerCallback) = tap {
-        internal._addTemporalMarker(offset, action)
+    fun addTemporalMarker(offset: Number = 0.0, callback: MarkerCallback) = tap {
+        internal._addTemporalMarker(offset, callback)
     }
 
     @JvmOverloads
-    fun addDisplacementMarker(offset: Number = 0.0, action: MarkerCallback) = tap {
-        internal._addDisplacementMarker(offset, action)
+    fun addDisplacementMarker(offset: Number = 0.0, callback: MarkerCallback) = tap {
+        internal._addDisplacementMarker(offset, callback)
     }
 
-    fun addSpatialMarker(offsetX: Number, offsetY: Number, action: MarkerCallback) = tap {
-        internal._addSpatialMarker(offsetX, offsetY, action)
+    fun addSpatialMarker(offsetX: Number, offsetY: Number, callback: MarkerCallback) = tap {
+        internal._addSpatialMarker(offsetX, offsetY, callback)
     }
 
     // -- Utilities --

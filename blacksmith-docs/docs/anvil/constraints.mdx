@@ -1,0 +1,176 @@
+---
+sidebar_position: 5
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+import ParamsList from '../../src/components/ParamsList';
+import Returns from '../../src/components/Returns';
+
+# Constraints
+
+:::warning
+None of the methods in this page auto-convert units. They're all whatever units Roadrunner uses
+(iirc, inches, rads, in/sec, rad/sec, etc.)
+:::
+
+These are all mappings to the constraint functions. All of these functions return the Anvil instance
+to allow for method chaining (like so)
+
+<Tabs groupId="programming-language">
+<TabItem value="java" label="Java">
+
+  ```java
+  Anvil.forgeTrajectory(drive, startPose)
+      .forward(...)
+      .back(...)
+      .lineTo(...);
+  ```
+
+</TabItem>
+<TabItem value="kt" label="Kotlin">
+
+  ```kotlin
+  Anvil.forgeTrajectory(drive, startPose)
+      .forward(...)
+      .back(...)
+      .lineTo(...)
+  ```
+
+</TabItem>
+</Tabs>
+
+:::tip
+Click on the 'Roadrunner mapping' link to go to the LearnRoadRunner docs for the method! Heavy credit
+goes to the Roadrunner/LearnRoadRunner team fo their great library and documentation.
+:::
+
+### anvil.resetConstraints()
+
+[Roadrunner mapping (resetConstraints)](https://learnroadrunner.com/trajectory-sequence.html#resetconstraints)
+
+Clears any temporary constraints set by setConstraints(). Defaults to the ones in DRIVE_CONSTANTS,
+unless you did something weird.
+
+## Velocity constraints
+
+### anvil.setVelConstraint() (#1)
+
+[Roadrunner mapping (setVelConstraint)](https://learnroadrunner.com/trajectory-sequence.html#setvelconstraint-trajectoryvelocityconstraint)
+
+Allows you to set a custom, temporary, TrajectoryVelocityConstraint for the rest of the trajectory,
+or at least until it is reset/overridden.
+
+<ParamsList params={[
+  {
+    name: 'velConstraint',
+    type: 'TrajectoryVelocityConstraint',
+    desc: 'The TrajectoryVelocityConstraint to use',
+  },
+]}/>
+
+### anvil.setVelConstraint() (#2)
+
+[Roadrunner mapping (setVelConstraint)](https://learnroadrunner.com/trajectory-sequence.html#setvelconstraint-trajectoryvelocityconstraint)
+
+Allows you to set a custom, temporary, TrajectoryVelocityConstraint for the rest of the trajectory,
+or at least until it is reset/overridden.
+
+This one creates the TrajectoryVelocityConstraint for you, using `SampleMecanumDrive.getVelocityConstraint()`.
+Keep in mind this does not auto-convert units.
+
+<ParamsList params={[
+  {
+    name: 'maxVel',
+    type: 'Number',
+    desc: 'The max velocity in inches/second',
+  },
+  {
+    name: 'maxAngularVel',
+    type: 'Number',
+    desc: 'The max angular velocity in radians/second',
+  },
+  {
+    name: 'trackWidth',
+    type: 'Number',
+    desc: 'The bots track width in inches (should prob leave this the same as the one in DRIVE_CONSTANTS)',
+  },
+]}/>
+
+### anvil.resetVelConstraint()
+
+[Roadrunner mapping (resetVelConstraint)](https://learnroadrunner.com/trajectory-sequence.html#resetvelconstraint)
+
+Clears any temporary constraints set by setVelConstraint(). Defaults to the ones in DRIVE_CONSTANTS,
+unless you did something weird.
+
+## Acceleration constraints
+
+### anvil.setAccelConstraint() (#1)
+
+[Roadrunner mapping (setAccelConstraint)](https://learnroadrunner.com/trajectory-sequence.html#setaccelconstraint-trajectoryaccelerationconstraint)
+
+Allows you to set a custom, temporary, TrajectoryAccelerationConstraint for the rest of the trajectory,
+or at least until it is reset/overridden.
+
+<ParamsList params={[
+  {
+    name: 'velConstraint',
+    type: 'TrajectoryAccelerationConstraint',
+    desc: 'The TrajectoryAccelerationConstraint to use',
+  },
+]}/>
+
+### anvil.setAccelConstraint() (#2)
+
+[Roadrunner mapping (setAccelConstraint)](https://learnroadrunner.com/trajectory-sequence.html#setaccelconstraint-trajectoryaccelerationconstraint)
+
+Allows you to set a custom, temporary, TrajectoryAccelerationConstraint for the rest of the trajectory,
+or at least until it is reset/overridden.
+
+This one creates the TrajectoryAccelerationConstraint for you, using `SampleMecanumDrive.getAccelerationConstraint()`.
+Keep in mind this does not auto-convert units.
+
+<ParamsList params={[
+  {
+    name: 'maxAccel',
+    type: 'Number',
+    desc: 'The max acceleration in (I think) inches/second^2',
+  },
+]}/>
+
+### anvil.resetAccelConstraint()
+
+[Roadrunner mapping (resetVelConstraint)](https://learnroadrunner.com/trajectory-sequence.html#resetaccelconstraint)
+
+Clears any temporary constraints set by setAccelConstraint(). Defaults to the ones in DRIVE_CONSTANTS,
+unless you did something weird.
+
+## Turn constraints
+
+### anvil.setTurnConstraint()
+
+[Roadrunner mapping (setTurnConstraint)](https://learnroadrunner.com/trajectory-sequence.html#setturnconstraint-maxangvel-maxangaccel)
+
+Allows you to set a custom, temporary, turn constraint for the rest of the trajectory,
+or at least until it is reset/overridden.
+
+<ParamsList params={[
+  {
+    name: 'maxAngVel',
+    type: 'Number',
+    desc: 'The max angular velocity in (I think) radians/second',
+  },
+  {
+    name: 'maxAngAccel',
+    type: 'Number',
+    desc: 'The max angular acceleration in (I think) radians/second^2',
+  },
+]}/>
+
+### anvil.resetTurnConstraint()
+
+[Roadrunner mapping (resetTurnConstraint)](https://learnroadrunner.com/trajectory-sequence.html#resetturnconstraint)
+
+Clears any temporary constraints set by setTurnConstraint(). Defaults to the ones in DRIVE_CONSTANTS,
+unless you did something weird.

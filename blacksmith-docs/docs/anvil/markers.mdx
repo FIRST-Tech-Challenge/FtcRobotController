@@ -1,0 +1,211 @@
+---
+sidebar_position: 7
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+import ParamsList from '../../src/components/ParamsList';
+import Returns from '../../src/components/Returns';
+
+# Markers
+
+:::info
+All of these methods autoconvert to inches/radians/seconds behind the scenes, from the units set up
+in [GlobalUnits](../util/global-units).
+
+For example, if GlobalUnits is set-up as inches/degrees/milliseconds, you can do something like
+`.turn(90)` to turn 90 degrees, and it does `Math.toRadians(90)` automatically.
+:::
+
+These are the three mappings that correspond to the built-in markers.
+
+All of these functions return the Anvil instance to allow for method chaining (like so)
+
+<Tabs groupId="programming-language">
+<TabItem value="java" label="Java">
+
+  ```java
+  Anvil.forgeTrajectory(drive, startPose)
+      .forward(...)
+      .back(...)
+      .lineTo(...);
+  ```
+
+</TabItem>
+<TabItem value="kt" label="Kotlin">
+
+  ```kotlin
+  Anvil.forgeTrajectory(drive, startPose)
+      .forward(...)
+      .back(...)
+      .lineTo(...)
+  ```
+
+</TabItem>
+</Tabs>
+
+:::tip
+Click on the 'Roadrunner mapping' link to go to the LearnRoadRunner docs for the method! Heavy credit
+goes to the Roadrunner/LearnRoadRunner team fo their great library and documentation.
+:::
+
+### Some resources
+
+[Roadrunner marker use examples](https://learnroadrunner.com/trajectory-sequence.html#marker-use-examples)
+
+[Visual explanation of TrajectorySequences & Markers](https://www.youtube.com/watch?v=BF_C4szJ4vU)
+
+### anvil.addTemporalMarker()
+
+[Roadrunner mapping (UNSTABLE_addTemporalMarkerOffset)](https://learnroadrunner.com/trajectory-sequence.html#unstable-addtemporalmarkeroffset-offset-markercallback)
+
+This function allows you to set a marker at the current duration plus the offset.
+The offset runs 'x' time units relative to where it was called. An offset of zero means that it
+should run immediately when it's called.
+
+Time unit (e.g. milliseconds or centuries or something) can be specified in [GlobalUnits](../util/global-units)
+
+**Defaults to seconds*
+
+<ParamsList params={[
+  {
+    name: 'offset',
+    type: 'Number',
+    desc: 'The amount of time to wait before running the callback (can be negative)',
+    defaultsTo: '0'
+  },
+  {
+    name: 'callback',
+    type: 'MarkerCallback',
+    desc: 'The block of code to run after the given offset',
+  },
+]}/>
+
+<Tabs groupId="programming-language">
+<TabItem value="java" label="Java">
+
+  ```java
+  Anvil.forgeTrajectory(...)
+      .addTemporalMarker(10, () -> { // Called 10 sec after traj start
+          telemetry.addLine("I'm called last!");
+      })
+
+      .waitTime(5) // Waits 5 seconds before continuing
+
+      .addTemporalMarker(() -> { // Called 5 sec + 0 sec after traj start
+          telemetry.addLine("I'm called second!");
+      })
+
+      .addTemporalMarker(-2, () -> { // Called 5 sec - 2 sec after traj start
+          telemetry.addLine("I'm called first"!);
+      });
+  ```
+
+</TabItem>
+<TabItem value="kt" label="Kotlin">
+
+  ```kotlin
+  Anvil.forgeTrajectory(...)
+      .addTemporalMarker(10) { // Called 10 sec after traj start
+          telemetry.addLine("I'm called last!")
+      }
+
+      .waitTime(5) // Waits 5 seconds before continuing
+
+      .addTemporalMarker { // Called 5 sec + 0 sec after traj start
+          telemetry.addLine("I'm called second!")
+      }
+
+      .addTemporalMarker(-2) { // Called 5 sec - 2 sec after traj start
+          telemetry.addLine("I'm called first"!)
+      }
+  ```
+
+</TabItem>
+</Tabs>
+
+### anvil.addDisplacementMarker()
+
+[Roadrunner mapping (UNSTABLE_addDisplacementMarkerOffset)](https://learnroadrunner.com/trajectory-sequence.html#unstable-adddisplacementmarkeroffset-offset-markercallback)
+
+This function allows you to set a marker at the current displacement plus the offset.
+The offset runs 'x' displacement relative to where it was called. An offset of zero means that it
+should run immediately when it's called.
+
+Distance unit (e.g. cm or smoots or something) can be specified in [GlobalUnits](../util/global-units)
+
+**Defaults to inches*
+
+<ParamsList params={[
+  {
+    name: 'offset',
+    type: 'Number',
+    desc: 'The displacement to wait before running the callback (can be negative)',
+    defaultsTo: '0'
+  },
+  {
+    name: 'callback',
+    type: 'MarkerCallback',
+    desc: 'The block of code to run after the given offset',
+  },
+]}/>
+
+<Tabs groupId="programming-language">
+<TabItem value="java" label="Java">
+
+  ```java
+  Anvil.forgeTrajectory(...)
+      .splineTo(10, 10, 0)
+
+      // Will run at whatever time after the initial splineTo PLUS 3 distance units.
+      .addDisplacementMarker(3, () -> {
+          telemetry.addLine("Hi!");
+      });
+  ```
+
+</TabItem>
+<TabItem value="kt" label="Kotlin">
+
+  ```kotlin
+  Anvil.forgeTrajectory(...)
+      .splineTo(10, 10, 0)
+
+      // Will run at whatever time after the initial splineTo PLUS 3 distance units.
+      .addDisplacementMarker(3) {
+          telemetry.addLine("Hi!")
+      }
+  ```
+
+</TabItem>
+</Tabs>
+
+### anvil.addSpatialMarker()
+
+[Roadrunner mapping (addSpatialMarker)](https://learnroadrunner.com/markers.html#spatial-markers-basics)
+
+"Spatial markers allow you to run an action based on a specified coordinate. This may be a bit
+unpredictable as Road Runner will project that coordinate you specified onto the path.
+This means that it will run at the point in the path closest to your specified coordinate. <ins>I
+personally don't recommend using spatial markers as they aren't very explicit.</ins>" ~ LRR docs
+
+Distance unit (e.g. cm or smoots or something) can be specified in [GlobalUnits](../util/global-units)
+
+**Defaults to inches*
+
+<ParamsList params={[
+  {
+    name: 'offsetX',
+    type: 'Number',
+    desc: 'The x component of the desired target pose',
+  },
+  {
+    name: 'offsetY',
+    type: 'Number',
+    desc: 'The y component of the desired target pose',
+  },
+  {
+    name: 'callback',
+    type: 'MarkerCallback',
+    desc: 'The block of code to run after it reaches closes to the given marker',
+  },
+]}/>

@@ -57,7 +57,7 @@ fun main() {
         
         ADD := λxy.y(T)SUCCx
         MUL := λxy.y(T)(ADDx)ZERO
-        POW := λxy.yT(xT)
+        POW := λxy.y(T)(SUCCx)ONE
         
         // ---------------------------------------------------
         
