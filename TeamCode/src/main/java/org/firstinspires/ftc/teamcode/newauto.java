@@ -183,33 +183,53 @@ public class newauto extends LinearOpMode {
             Spin.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
             Left.setPower(.3);
             //move to medium junction and raise crane
-            moveandcrane(.9,1550,-1,2000);
-            //Crane.setPower(-.02);
-            spin(1,-300);
+                /*starting fowards
+                moveandcrane(.9,1550,-1,2000);
+                //Crane.setPower(-.02);
+                spin(1,-300);
+                stopMotors();
+                sleep(100);
+                //strafe onto it
+                strafeLeft(1,300);
+                intake(-1,500);
+                crane(-1,100);
+                sleep(100);
+                //strafe off and lower crane
+                strafeRightwithcrane(1,310,1,500);
+                //gyroTurning(0);
+                */
+            strafeLeftwithdistanceandcrane(1,31,-1,2000);
+            move(.5,-330);
+            sleep(100);
+            move(.5,40);
+            sleep(100);
+            crane(1,200);//
+            intake(-1,1300);
+            crane(-1,250);
+            move(.5,290);
+            strafeLeftwithdistanceandcrane(1,45,1,500);
+            gyroTurning(0);
+                /*code with foward
+                //move to stack
+                sleep(100);
+                moveandspin(1,550,1,10);//591
+                gyroTurning(-88);
+                move(1,700);
+                stopMotors();
+                gyroTurning(-88);
+                move(.2,440);
+                */
+            //side set up
             stopMotors();
+            moveandspin(1,700,1,591);
             sleep(100);
-            //strafe onto it
-            strafeLeft(1,300);
-            intake(-1,500);
-            crane(-1,100);
-            sleep(100);
-            //strafe off and lower crane
-            strafeRightwithcrane(1,310,1,500);
-            //gyroTurning(0);
-            //move to stack
-            sleep(100);
-            moveandspin(1,550,1,10);//591
-            gyroTurning(-88);
-            move(1,700);
-            stopMotors();
-            gyroTurning(-88);
-            move(.2,440);
+            move(.3,440);  
             //pick up cone
             craneinput(300);
             crane(-1,1000);
 
             //move to high junction
-            moveandspinandcrane(.8,-1500,1,-315,-1,2000);//315
+            moveandspinandcrane(.8,-1500,1,315,-1,2000);//-315
             Crane.setPower(-.02);
             stopMotors();
             //strafe onto it
@@ -217,6 +237,7 @@ public class newauto extends LinearOpMode {
             intake(-1,500);
             strafeRightwithcrane(.2,200,1,1000);
             gyroTurning(-90);
+            //////////////////////////////////////////////////////////////////not made for side past this 
             //move back to stack
             moveandspin(.8,1100,1,-591);
             move(.2,400);
