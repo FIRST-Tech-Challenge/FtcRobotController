@@ -445,7 +445,7 @@ public class SampleMecanumDrive extends MecanumDrive {
 
     }
 
-    public boolean alignPole(PowerPlayComputerVisionPipelines.SleevePipeline.PipePosition pos) {
+    public boolean alignPole(PowerPlayComputerVisionPipelines.PipePosition pos) {
         switch (pos) {
             case LEFT1:
             case LEFT2:

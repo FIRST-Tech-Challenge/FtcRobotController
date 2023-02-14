@@ -477,7 +477,7 @@ public class PowerPlayTeleopColorado extends LinearOpMode {
     }
 
     public boolean alignPole() {
-        PowerPlayComputerVisionPipelines.SleevePipeline.PipePosition pos = CV.sleevePipeline.position;
+        PowerPlayComputerVisionPipelines.PipePosition pos = CV.sleevePipeline.position;
         switch (pos) {
             case LEFT1:
             case LEFT2:
