@@ -41,6 +41,26 @@ import java.util.ArrayList;
 
 
 public class PowerPlayComputerVisionPipelines {
+    public enum PipePosition {
+        LEFT8,
+        LEFT7,
+        LEFT6,
+        LEFT5,
+        LEFT4,
+        LEFT3,
+        LEFT2,
+        LEFT1,
+        CENTER,
+        RIGHT1,
+        RIGHT2,
+        RIGHT3,
+        RIGHT4,
+        RIGHT5,
+        RIGHT6,
+        RIGHT7,
+        RIGHT8,
+        SHRUG_NOISES
+    }
 
     public enum PipelineType {SLEEVE, PIPE, RED_CONE, BLUE_CONE}
 
@@ -52,7 +72,7 @@ public class PowerPlayComputerVisionPipelines {
     public FrontPipeline frontPipeline;
 
     public SleevePipeline sleevePipeline;
-    //public PipeDetectionPipeline pipeDetectionPipeline;
+    public PipeDetectionPipeline pipeDetectionPipeline;
     public BlueStackPipeline blueStackDetectionPipeline;
     Telemetry telemetry;
     boolean error = false;
@@ -73,7 +93,7 @@ public class PowerPlayComputerVisionPipelines {
         webcam = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "webcam"));
         sleevePipeline = new SleevePipeline(telemetry);
         sleevePipeline.setPipelineType(PipelineType.SLEEVE);
-        //pipeDetectionPipeline = new PipeDetectionPipeline(telemetry);
+        pipeDetectionPipeline = new PipeDetectionPipeline(telemetry);
         blueStackDetectionPipeline = new BlueStackPipeline(telemetry);
 
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
@@ -99,7 +119,7 @@ public class PowerPlayComputerVisionPipelines {
                  * away from the user.
                  */
                 telemetry.addData("webcam open", "yes");
-                webcam.setPipeline(new DoNothingPipeline());
+                webcam.setPipeline(pipeDetectionPipeline);
                 webcam.startStreaming(640, 360, OpenCvCameraRotation.UPRIGHT);
             }
 
@@ -144,8 +164,6 @@ public class PowerPlayComputerVisionPipelines {
     public void setPipeDetectionFront() {
         sleeveWebcamPipeline = PipelineType.PIPE;
         sleevePipeline.setPipelineType(sleeveWebcamPipeline);
-        telemetry.addData("swicthing", "pipe");
-        telemetry.update();
     }
 
 
@@ -199,28 +217,6 @@ public class PowerPlayComputerVisionPipelines {
             GREEN,
             GRAY,
             INDETERMINATE
-        }
-
-        //    All possible regions to be detected in are stored in an enum
-        public enum PipePosition {
-            LEFT8,
-            LEFT7,
-            LEFT6,
-            LEFT5,
-            LEFT4,
-            LEFT3,
-            LEFT2,
-            LEFT1,
-            CENTER,
-            RIGHT1,
-            RIGHT2,
-            RIGHT3,
-            RIGHT4,
-            RIGHT5,
-            RIGHT6,
-            RIGHT7,
-            RIGHT8,
-            SHRUG_NOISES
         }
 
 
@@ -455,26 +451,7 @@ public class PowerPlayComputerVisionPipelines {
         }
 
         //    All possible regions to be detected in are stored in an enum
-        public enum PipePosition {
-            LEFT8,
-            LEFT7,
-            LEFT6,
-            LEFT5,
-            LEFT4,
-            LEFT3,
-            LEFT2,
-            LEFT1,
-            CENTER,
-            RIGHT1,
-            RIGHT2,
-            RIGHT3,
-            RIGHT4,
-            RIGHT5,
-            RIGHT6,
-            RIGHT7,
-            RIGHT8,
-            SHRUG_NOISES
-        }
+
 
         static final Scalar BLUE = new Scalar(0, 0, 255);
 

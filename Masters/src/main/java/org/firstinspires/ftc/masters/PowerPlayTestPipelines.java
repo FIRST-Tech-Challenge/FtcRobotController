@@ -21,7 +21,7 @@ public class PowerPlayTestPipelines extends LinearOpMode {
 
         PowerPlayComputerVisionPipelines CV = new PowerPlayComputerVisionPipelines(hardwareMap, telemetry);
         //PowerPlayComputerVisionPipelines.BlueStackPipeline.StackPosition pos = null;
-        PowerPlayComputerVisionPipelines.SleevePipeline.PipePosition pos = null;
+        PowerPlayComputerVisionPipelines.PipePosition pos = null;
         SampleMecanumDriveCancelable drive = new SampleMecanumDriveCancelable(hardwareMap,telemetry);
         Pose2d startPose = new Pose2d(new Vector2d(36, -64.25), Math.toRadians(90)); //Start position for roadrunner
         drive.setPoseEstimate(startPose);

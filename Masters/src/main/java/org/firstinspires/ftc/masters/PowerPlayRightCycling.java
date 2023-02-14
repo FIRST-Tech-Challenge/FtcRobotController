@@ -195,7 +195,7 @@ public class PowerPlayRightCycling extends LinearOpMode {
                         telemetry.addData("done aligning", "score cone");
                         currentState = State.FIRST_DEPOSIT_SCORE_CONE;
                         firstDepositScoreCone = drive.trajectoryBuilder(drive.getPoseEstimate())
-                                .forward(2.5)
+                                .forward(6)
                                 .build();
                         drive.followTrajectoryAsync(firstDepositScoreCone);
                     }
@@ -303,10 +303,10 @@ public class PowerPlayRightCycling extends LinearOpMode {
                     break;
 
                 case CYCLE_SCORE_ALIGN:
-                    if (drive.alignPole(CV.sleevePipeline.position)){
+                    if (drive.alignPole(CV.pipeDetectionPipeline.position)){
                         currentState = State.CYCLE_SCORE_CONE;
                         cycleDepositScoreCone = drive.trajectoryBuilder(drive.getPoseEstimate())
-                                .forward(2.5)
+                                .forward(6)
                                 .build();
                         drive.followTrajectoryAsync(cycleDepositScoreCone);
                     }
