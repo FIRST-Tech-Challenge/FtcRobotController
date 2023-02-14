@@ -10,7 +10,7 @@ public class LiftPIDController {
     PIDController liftController;
     int target =0;
     public static double multiplier = 0.5;
-    public static double multiplierZero = 0.02;
+    public static double multiplierZero = 0.09;
     public static double p=0.04, i=0, d=0.0001;
     public static double f=0.06;
 
@@ -33,11 +33,28 @@ public class LiftPIDController {
 
         double power = pid +f;
 
-       if (target<300){
+       if (target<150){
            power = power* multiplierZero;
        } else{
            power = power*multiplier;
        }
+
+        return power;
+    }
+
+    public double calculatePower(DcMotorEx motor){
+
+        liftController.setPID(p, i, d);
+        int liftPos = motor.getCurrentPosition();
+        double pid = liftController.calculate(liftPos, target);
+
+        double power = pid +f;
+
+        if (target<150){
+            power = power* multiplierZero;
+        } else{
+            power = power*multiplier;
+        }
 
         return power;
     }
