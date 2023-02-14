@@ -18,8 +18,8 @@ public class TourneyDrive extends LinearOpMode {
 
     private DcMotor liftMotor = null;
 
-    static final double MAX_POS     =    .52;
-    static final double MAX_POS2    =    .48;
+    static final double MAX_POS     =    .78;
+    static final double MAX_POS2    =    .22;
     static final double MIN_POS     =     1;
     static final double MIN_POS2    =     0;
 
@@ -44,7 +44,7 @@ public class TourneyDrive extends LinearOpMode {
     }
 
     LiftState liftState = LiftState.LIFT_START;
-    boolean autoLift = true;
+    boolean autoLift = false;
     double targetPos = 0;
 
     @Override
@@ -166,52 +166,54 @@ public class TourneyDrive extends LinearOpMode {
                 }
             }
 
-            if(autoLift) {
-                switch (liftState) {
-                    case LIFT_START:
+            switch (liftState) {
+                case LIFT_START:
+                    if (liftDown) {
                         liftMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-                        if (liftDown) {
-                            moveLift(1, MIN_LIFT_POS);
-                            liftState = LiftState.LIFT_RAISE;
-                        } else if (liftLow) {
-                            moveLift(1, (173 * 15) + MIN_LIFT_POS);
-                            liftState = LiftState.LIFT_RAISE;
-                        } else if (liftMedium) {
-                            moveLift(1, (173 * 25) + MIN_LIFT_POS);
-                            liftState = LiftState.LIFT_RAISE;
-                        } else if (liftHigh) {
-                            moveLift(1, MAX_LIFT_POS);
-                            liftState = LiftState.LIFT_RAISE;
-                        }
-                        break;
-                    case LIFT_RAISE:
-                        if (liftMotor.getCurrentPosition() <= targetPos + 173 && liftMotor.getCurrentPosition() >= targetPos - 173) {
-                            moveLift(.25, targetPos);
-                            liftState = LiftState.LIFT_CORRECT;
-                        }
-                        break;
-                    case LIFT_CORRECT:
-                        if (liftMotor.getCurrentPosition() <= targetPos + 17.3 && liftMotor.getCurrentPosition() >= targetPos - 17.3) {
-                            liftMotor.setPower(0);
-                            liftState = LiftState.LIFT_START;
-                        }
-                        break;
-                    default:
+                        autoLift = true;
+                        moveLift(1, MIN_LIFT_POS);
+                        liftState = LiftState.LIFT_RAISE;
+                    } else if (liftLow) {
+                        liftMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+                        autoLift = true;
+                        moveLift(1, (173 * 15) + MIN_LIFT_POS);
+                        liftState = LiftState.LIFT_RAISE;
+                    } else if (liftMedium) {
+                        liftMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+                        autoLift = true;
+                        moveLift(1, (173 * 25) + MIN_LIFT_POS);
+                        liftState = LiftState.LIFT_RAISE;
+                    } else if (liftHigh) {
+                        liftMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+                        autoLift = true;
+                        moveLift(1, MAX_LIFT_POS);
+                        liftState = LiftState.LIFT_RAISE;
+                    }
+                    break;
+                case LIFT_RAISE:
+                    liftMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+                    if (liftMotor.getCurrentPosition() <= targetPos + 173 && liftMotor.getCurrentPosition() >= targetPos - 173) {
+                        moveLift(.25, targetPos);
+                        liftState = LiftState.LIFT_CORRECT;
+                    }
+                    break;
+                case LIFT_CORRECT:
+                    if (liftMotor.getCurrentPosition() <= targetPos + 17.3 && liftMotor.getCurrentPosition() >= targetPos - 17.3) {
+                        liftMotor.setPower(0);
                         liftState = LiftState.LIFT_START;
-                        break;
-                }
+                        autoLift = false;
+                    }
+                    break;
+                default:
+                    liftState = LiftState.LIFT_START;
+                    break;
             }
 
             if (stopAutoLift && liftState != LiftState.LIFT_START) {
                 liftState = LiftState.LIFT_START;
                 autoLift = false;
             }
-
-            if(switchAutoLift && runtime.seconds() >= lastSwitched + .25){
-                autoLift = !autoLift;
-                lastSwitched = runtime.seconds();
-            }
-
+            
             if(grabberClose){
                 servoGrabber1.setPosition(MAX_POS);
                 servoGrabber2.setPosition(MAX_POS2);
