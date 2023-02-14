@@ -29,6 +29,8 @@
 
 package org.firstinspires.ftc.teamcode;
 
+import android.annotation.SuppressLint;
+
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
@@ -42,10 +44,14 @@ import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 import org.firstinspires.ftc.robotcore.external.navigation.Position;
 import org.firstinspires.ftc.robotcore.external.navigation.Velocity;
+import org.openftc.easyopencv.OpenCvCamera;
+import org.openftc.easyopencv.OpenCvCameraRotation;
 
 @TeleOp(name = "TeleOp", group = "Robot")
 public class Tele extends OpMode {
     Hardware robot = new Hardware();
+    AutoDetectionJunction.JunctionDeterminationPipeline pipeline;
+
     double speedLimit = 1;
     double oldTime;
     int autoState = 1;
@@ -94,6 +100,41 @@ public class Tele extends OpMode {
         robot.wrist.setPosition(0.1);
         gunner = gunnerControlMode.NORMAL;
         telemetry.setMsTransmissionInterval(20);
+
+        pipeline = new AutoDetectionJunction.JunctionDeterminationPipeline();
+        robot.webcam2.setPipeline(pipeline);
+        robot.webcam2.setMillisecondsPermissionTimeout(2500); // Timeout for obtaining permission is configurable. Set before opening.
+        robot.webcam2.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
+            @Override
+            public void onOpened() {
+                /*
+                 * Tell the webcam to start streaming images to us! Note that you must make sure
+                 * the resolution you specify is supported by the camera. If it is not, an exception
+                 * will be thrown.
+                 *
+                 * Keep in mind that the SDK's UVC driver (what OpenCvWebcam uses under the hood) only
+                 * supports streaming from the webcam in the uncompressed YUV image format. This means
+                 * that the maximum resolution you can stream at and still get up to 30FPS is 480p (640x480).
+                 * Streaming at e.g. 720p will limit you to up to 10FPS and so on and so forth.
+                 *
+                 * Also, we specify the rotation that the webcam is used in. This is so that the image
+                 * from the camera sensor can be rotated such that it is always displayed with the image upright.
+                 * For a front facing camera, rotation is defined assuming the user is looking at the screen.
+                 * For a rear facing camera or a webcam, rotation is defined assuming the camera is facing
+                 * away from the user.
+                 */
+                robot.webcam2.startStreaming(800, 600, OpenCvCameraRotation.UPRIGHT);
+            }
+
+            @Override
+            public void onError(int errorCode) {
+                /*
+                 * This will be called if the camera could not be opened
+                 */
+                telemetry.addData("Camera unable to open,", "will run left");
+                telemetry.update();
+            }
+        });
     }
     /*
      * Code to run REPEATEDLY after the driver hits INIT, but before they hit PLAY
@@ -114,6 +155,7 @@ public class Tele extends OpMode {
     /*
      * Code to run REPEATEDLY after the driver hits PLAY but before they hit STOP
      */
+    @SuppressLint("SuspiciousIndentation")
     @Override
     public void loop() {
         drive(-gamepad1.left_stick_y, gamepad1.left_stick_x, gamepad1.right_stick_x, speedLimit);
@@ -319,12 +361,12 @@ public class Tele extends OpMode {
                 robot.gripperWheel.setPower(1);
                 currentGripSwitch = true;
             } else {
-                robot.gripperWheel.setPower(-0.05);
+                robot.gripperWheel.setPower(0.05);
 
                 if (currentGripSwitch && !lastGripSwitch) {
                     if (!gamepad2.isRumbling())  // Check for possible overlap of rumbles.
-                        gamepad2.rumble(.55,.55,150);
-                        gamepad1.rumble(.55,.55,150);
+                        gamepad2.rumble(.65,.65,150);
+                        gamepad1.rumble(.65,.65,150);
                 }
                 lastGripSwitch = currentGripSwitch;
             }

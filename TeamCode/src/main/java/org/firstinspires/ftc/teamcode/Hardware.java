@@ -87,6 +87,7 @@ public class Hardware {
     //public RevBlinkinLedDriver illuminate = null;
 
     public OpenCvWebcam webcam;
+    public OpenCvWebcam webcam2;
 
     /* local OpMode members. */
     HardwareMap hwMap = null;
@@ -126,7 +127,9 @@ public class Hardware {
         //rightColor = hwMap.get(RevColorSensorV3.class, "rcolor");
         //leftColor = hwMap.get(RevColorSensorV3.class, "lcolor");
         int cameraMonitorViewId = hwMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hwMap.appContext.getPackageName());
-        webcam = OpenCvCameraFactory.getInstance().createWebcam(hwMap.get(WebcamName.class, "webcam"), cameraMonitorViewId);
+        webcam = OpenCvCameraFactory.getInstance().createWebcam(hwMap.get(WebcamName.class, "webcam"));
+        webcam2 = OpenCvCameraFactory.getInstance().createWebcam(hwMap.get(WebcamName.class, "webcam2"), cameraMonitorViewId);
+
 
         //  bottomColorSensor = hwMap.get(RevColorSensorV3.class, "bottomColor");
         backLeftDrive.setDirection(DcMotor.Direction.REVERSE);
