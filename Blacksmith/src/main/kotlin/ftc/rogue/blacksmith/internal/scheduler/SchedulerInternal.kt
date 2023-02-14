@@ -62,7 +62,7 @@ internal class SchedulerInternal {
         beforeEach = Runnable {}
     }
 
-    private val messages = mutableMapOf<Any, MutableList<Runnable>>()
+    val messages = mutableMapOf<Any, MutableList<Runnable>>()
 
     fun on(message: Any, callback: Runnable) {
         messages.getOrPut(message, ::ArrayList) += callback

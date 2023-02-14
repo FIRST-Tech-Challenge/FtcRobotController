@@ -10,7 +10,7 @@ import org.firstinspires.ftc.teamcodekt.components.meta.TeleOpBotComponents
 class RegularDepositChain(val bot: TeleOpBotComponents) : CancellableChain {
     private var isCancelled = false
 
-    override fun invokeOn(button: Listener) = (button + { bot.lift.clippedHeight > 500 })
+    override fun invokeOn(button: Listener) = (button + { bot.lift.clippedHeight > 50 })
         .onRise {
             isCancelled = false
             bot.arm.setToForwardsPos()

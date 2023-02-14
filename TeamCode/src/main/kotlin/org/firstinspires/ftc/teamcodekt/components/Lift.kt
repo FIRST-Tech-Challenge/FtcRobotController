@@ -22,18 +22,18 @@ import kotlin.math.abs
 // Too many fields...
 
 @JvmField var LIFT_ZERO = 0
-@JvmField var LIFT_LOW = 707 - 128
-@JvmField var LIFT_MID = 1140 - 128
-@JvmField var LIFT_HIGH = 1590 - 128
+@JvmField var LIFT_LOW = 250
+@JvmField var LIFT_MID = 400
+@JvmField var LIFT_HIGH = 700
 
 @JvmField var ANGLED_LIFT_LOW = 120
 @JvmField var ANGLED_LIFT_MID = 620
 @JvmField var ANGLED_LIFT_HIGH = 1110
 
-@JvmField var NORMAL_LIFT_P = 0.00185
-@JvmField var NORMAL_LIFT_I = 0.01
-@JvmField var NORMAL_LIFT_D = 0.0002
-@JvmField var NORMAL_LIFT_F = 0.00002
+@JvmField var NORMAL_LIFT_P = 0.01
+@JvmField var NORMAL_LIFT_I = 0.0
+@JvmField var NORMAL_LIFT_D = 0.0013
+@JvmField var NORMAL_LIFT_F = 0.0000
 
 @JvmField var MOTION_PROFILE_LIFT_P = 0.026
 @JvmField var MOTION_PROFILE_LIFT_I = 0.0002
@@ -43,8 +43,8 @@ import kotlin.math.abs
 @JvmField var LIFT_MAX_A = 25000.0
 @JvmField var LIFT_MAX_J = 18000.0
 
-@JvmField var PROCESS_NOISE = 0.01
-@JvmField var MEASUREMENT_NOISE = 0.01
+@JvmField var PROCESS_NOISE = 10.0
+@JvmField var MEASUREMENT_NOISE = 10.0
 
 /**
  * Lift object representing the lift on our V2 robot.

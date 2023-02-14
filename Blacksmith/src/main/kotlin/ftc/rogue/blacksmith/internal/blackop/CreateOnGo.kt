@@ -41,8 +41,13 @@ class CreateOnGoInternal<T : Any>
 
     private lateinit var value: T
 
+    var vale = "s"
+
     init {
-        Scheduler.on(BlackOp.STARTING_MSG) { value = valueProvider() }
+        Scheduler.on(BlackOp.STARTING_MSG) {
+            vale = "inti"
+            value = valueProvider()
+        }
     }
 
     operator fun getValue(thisRef: Any, property: KProperty<*>): T {

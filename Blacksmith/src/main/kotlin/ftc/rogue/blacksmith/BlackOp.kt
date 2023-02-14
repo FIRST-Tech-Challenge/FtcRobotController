@@ -38,12 +38,14 @@ abstract class BlackOp : LinearOpMode() {
      */
     abstract fun go()
 
+    init {
+        Scheduler.reset()
+    }
+
     /**
      * Please override `go()` instead of this method.
      */
     final override fun runOpMode() {
-        Scheduler.reset()
-
         hwMap = hardwareMap
         mTelemetry = MultipleTelemetry(telemetry, FtcDashboard.getInstance().telemetry)
 

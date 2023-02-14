@@ -18,6 +18,7 @@ abstract class BaseBotComponents {
         arm.update()
         wrist.update()
         lift.update()
+        lift.printLiftTelem()
     }
 }
 

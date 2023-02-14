@@ -1,5 +1,5 @@
 @file:Suppress("LocalVariableName")
-@file:ConfigKt
+@file:Config
 
 package org.firstinspires.ftc.teamcodekt.components
 
@@ -22,10 +22,10 @@ import java.util.*
 import kotlin.math.*
 
 @JvmField
-var tiltCorrectionMult = 0.001
+var tiltCorrectionMult = 0.01
 
 @JvmField
-var imuAngleUsed = 2 // or 0/1, not sure which one it is... will have to test.
+var imuAngleUsed = 1 // or 0/1, not sure which one it is... will have to test.
 
 class Drivetrain {
     private val frontLeft  = hwMap<DcMotorEx>(DeviceNames.DRIVE_FL).apply { direction = Direction.REVERSE }
@@ -96,18 +96,19 @@ class Drivetrain {
         val theta = atan2(y, x)
         val power = hypot(x, y)
 
-        val xComponent = power * cos(theta - PI / 4)
-        val yComponent = power * sin(theta - PI / 4)
+        var xComponent = power * cos(theta - PI / 4)
+        var yComponent = power * sin(theta - PI / 4)
 
         val max = maxMagnitudeAbs<Double>(xComponent, yComponent, 1e-16)
 
         val correctionTilt = tiltCorrectionMult * imu.angles[imuAngleUsed]
+        xComponent += correctionTilt
 
         val powers = doubleArrayOf(
-            power * (xComponent / max) + r + correctionTilt, // TODO: Check if this code works, also if imuAngleUsed is correct.
-            power * (yComponent / max) - r + correctionTilt, // TODO: If I add a power value to each one, then will all motors go forward?
-            power * (yComponent / max) + r + correctionTilt,
-            power * (xComponent / max) - r + correctionTilt,
+            power * (xComponent / max) + r,
+            power * (yComponent / max) - r,
+            power * (yComponent / max) + r,
+            power * (xComponent / max) - r,
         )
 
         if (power + abs(r) > 1) {

@@ -36,6 +36,7 @@ abstract class RogueBaseTele : BlackOp() {
             bot.drivetrain.drive(driver.gamepad, powerMulti)
             bot.updateBaseComponents()
             bot.lift.printLiftTelem()
+            mTelemetry.update()
         }
     }
 
