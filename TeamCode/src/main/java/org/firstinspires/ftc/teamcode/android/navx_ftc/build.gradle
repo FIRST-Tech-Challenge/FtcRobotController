@@ -1,0 +1,56 @@
+package org.firstinspires.ftc.teamcode.android.navx_ftc
+
+apply plugin: 'com.android.library'
+
+android {
+    defaultConfig {
+        minSdkVersion 19
+        targetSdkVersion 26
+    }
+    compileSdkVersion 28
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_7
+        targetCompatibility JavaVersion.VERSION_1_7
+    }
+}
+
+buildscript {
+    repositories {
+        google()
+        jcenter()
+    }
+    dependencies {
+        classpath 'com.android.tools.build:gradle:3.5.1'
+
+        // NOTE: Do not place your application dependencies here; they belong
+        // in the individual module build.gradle files
+    }
+}
+
+repositories {
+    flatDir {
+        dirs '..\\ftc_app\\libs'
+    }
+}
+
+allprojects {
+    repositories {
+        google()
+        jcenter()
+        flatDir {
+            dirs 'out'
+        }
+    }
+}
+
+dependencies {
+    //implementation fileTree(include: ['*.jar'], dir: 'libs')
+    //implementation (name:'Inspection-release', ext: 'aar')
+    //compile files('libs/android-support-v4.jar')
+    implementation(name: 'RobotCore-release', ext: 'aar')
+    //compile(name: 'ModernRobotics-release', ext: 'aar')
+    implementation(name: 'Hardware-release', ext: 'aar')
+    //compile(name: 'FtcCommon-release', ext: 'aar')
+    //implementation 'com.android.support:support-compat:28.0.0'
+}
