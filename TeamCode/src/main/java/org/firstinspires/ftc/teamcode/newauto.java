@@ -210,11 +210,11 @@ public class newauto extends LinearOpMode {
 
             //move to high junction
             moveandspinandcrane(.8,-1500,1,-315,-1,2000);//315
-            Crane.setPower(-.2);
+            Crane.setPower(-.02);
             stopMotors();
             //strafe onto it
             strafeLeft(.2,300);
-            intake(-1,1000);
+            intake(-1,500);
             strafeRightwithcrane(.2,200,1,1000);
             gyroTurning(-90);
             //move back to stack
