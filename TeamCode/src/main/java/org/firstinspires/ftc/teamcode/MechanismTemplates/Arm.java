@@ -9,7 +9,7 @@ import com.qualcomm.robotcore.hardware.VoltageSensor;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 
 @Config
-public class Arm {
+public class Arm{
     private  PIDFController armPIDF;
     private Motor armMotor;
     private final AnalogInput sensor;
@@ -21,18 +21,18 @@ public class Arm {
 //    public static double armKf = 0.0000001;
 
     // New PID values
-    public static double armKp = 0.00085;
-    public static double armKi = 0.0;
+    public static double armKp = 0.012;
+    public static double armKi = 0.00001;
     public static double armKd = 0.00002;
     public static double armKf = 0;
-    public static double EXTAKE_POS = 10; // 950 old val
-    public static double INTAKE_POS = 10;
+    public static double EXTAKE_POS = 185; // 950 old val
+    public static double INTAKE_POS = 82;
 
     // Initially set to 0 because we only want the claw to move when given input from the controller
     // initializing the targetPos value to a greater positive value would cause the update() method to
     // immediately start moving the arm since a difference between the current motor encoder position
     // and the target position is created (error).
-    private double targetPos = 0.0;
+    private double targetPos =85;
 
     public Arm(HardwareMap hardwareMap){
         armMotor = new Motor(hardwareMap, "ARM", Motor.GoBILDA.RPM_84); // Pin 0 on control hub -> pin 1 control hub
@@ -48,7 +48,7 @@ public class Arm {
         // return 2.5 * 480 * ((sensor.getVoltage() - 0.3520574787720445) - 0.5);
 
         // DEGREES
-          return sensor.getVoltage()/sensor.getMaxVoltage()*360;
+          return (sensor.getVoltage()/3.3) *360;
     }
 
     public void update(Telemetry telemetry){
@@ -76,39 +76,3 @@ public class Arm {
     }
 
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

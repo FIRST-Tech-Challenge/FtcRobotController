@@ -8,13 +8,12 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.AnalogInput;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.VoltageSensor;
-
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 
 @Config
 @TeleOp(name = "armEncoderTest")
 public class armEncoderTest extends OpMode {
-    Telemetry mTelmeurytrue = FtcDashboard.getInstance().getTelemetry();
+    //Telemetry mTelmeurytrue = FtcDashboard.getInstance().getTelemetry();
     AnalogInput sensor;
 
     @Override
@@ -24,8 +23,9 @@ public class armEncoderTest extends OpMode {
 
     @Override
     public void loop() {
-        mTelmeurytrue.addData("some numbers that mean something", 2.5 * 480 * ((sensor.getVoltage() - 0.3520574787720445) - 0.5));
-        mTelmeurytrue.addData("Voltage of AbsEncoder: ", sensor.getVoltage());
-        mTelmeurytrue.update();
+        //mTelmeurytrue.addData("some numbers that mean something", 2.5 * 480 * ((sensor.getVoltage() - 0.3520574787720445) - 0.5));
+        telemetry.addData("Voltage of AbsEncoder: ", sensor.getVoltage());
+        telemetry.addData("degrees", sensor.getVoltage()/3.3 *360);
+        telemetry.update();
     }
 }
