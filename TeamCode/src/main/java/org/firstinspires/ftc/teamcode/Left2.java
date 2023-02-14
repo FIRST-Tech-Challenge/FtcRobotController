@@ -417,14 +417,14 @@ public class Left2 extends LinearOpMode {
 
     }
     public void strafeLeftwithcrane2(double power, int distances,double powerc, int timec) {
-        crane(powerc, timec);
+
         distancesnap=distance.getDistance(DistanceUnit.INCH);
 
         frontRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         frontLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         backRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         backLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-
+        crane(powerc, timec);
         while(distance.getDistance(DistanceUnit.INCH)<distances && opModeIsActive()){
             frontRight.setPower(-power);
             frontLeft.setPower(power);

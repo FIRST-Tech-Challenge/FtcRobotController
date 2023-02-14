@@ -528,7 +528,7 @@ public class newauto extends LinearOpMode {
         }
 
     }
-    public void strafeLeftwithcrane2(double power, int distances,double powerc, int timec) {
+    public void strafeLeftwithdistanceandcrane(double power, int distances,double powerc, int timec) {
         frontLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         frontRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         backLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -543,10 +543,14 @@ public class newauto extends LinearOpMode {
         backLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
         while(distance.getDistance(DistanceUnit.INCH)<distances && opModeIsActive()){
-            frontRight.setPower(-power);
-            frontLeft.setPower(power);
-            backRight.setPower(power);
-            backLeft.setPower(-power);
+            //frontRight.setPower(-power);
+            //frontLeft.setPower(power);
+            //backRight.setPower(power);
+            //backLeft.setPower(-power-.2);
+            frontLeft.setPower(1);
+            frontRight.setPower(-1);
+            backLeft.setPower(-1);
+            backRight.setPower(1);
 
         }
         stopMotors();
