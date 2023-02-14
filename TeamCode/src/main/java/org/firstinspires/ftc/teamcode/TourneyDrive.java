@@ -127,16 +127,15 @@ public class TourneyDrive extends LinearOpMode {
             double liftFast = -gamepad2.left_stick_y;
             double liftSlow = -gamepad2.right_stick_y;
 
-            boolean raiseMaxHeight = gamepad2.a;
-            boolean lowerMaxHeight = gamepad2.b;
+            boolean raiseMaxHeight = gamepad2.y;
+            boolean lowerMaxHeight = gamepad2.x;
 
             boolean liftDown = gamepad2.dpad_down;
             boolean liftLow = gamepad2.dpad_left;
             boolean liftMedium = gamepad2.dpad_right;
             boolean liftHigh = gamepad2.dpad_up;
 
-            boolean stopAutoLift = gamepad2.y;
-            boolean switchAutoLift = gamepad2.x;
+            boolean stopAutoLift = gamepad2.a;
 
             boolean grabberOpen = gamepad2.left_bumper;
             boolean grabberClose = gamepad2.right_bumper;
@@ -213,7 +212,7 @@ public class TourneyDrive extends LinearOpMode {
                 liftState = LiftState.LIFT_START;
                 autoLift = false;
             }
-            
+
             if(grabberClose){
                 servoGrabber1.setPosition(MAX_POS);
                 servoGrabber2.setPosition(MAX_POS2);
