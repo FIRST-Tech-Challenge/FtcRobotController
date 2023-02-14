@@ -13,7 +13,7 @@ public class SingleControllerDrive extends LinearOpMode {
 
     // Declare OpMode members for each of the 4 motors.
     private final ElapsedTime runtime = new ElapsedTime();
-    
+
     static final double MAX_POS     =    .52;
     static final double MAX_POS2    =    .48;
     static final double MIN_POS     =     1;
