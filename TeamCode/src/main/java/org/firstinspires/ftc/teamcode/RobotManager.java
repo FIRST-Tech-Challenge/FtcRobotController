@@ -10,6 +10,7 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import com.qualcomm.robotcore.hardware.Gamepad;
+import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 
 
 /** A completely encompassing class of all functionality of the robot. An OpMode should interface through an instance of
@@ -19,7 +20,7 @@ public class RobotManager {
 
     static final double JOYSTICK_DEAD_ZONE_SIZE = 0.05;
     static final double TRIGGER_DEAD_ZONE_SIZE = 0.05;
-    static final double DISTANCE_SENSOR_THRESHOLD = 12;
+    static final double DISTANCE_SENSOR_THRESHOLD = 6;
 
     public enum AllianceColor {BLUE, RED}
     public enum StartingSide {LEFT, RIGHT} //add starting side here later
@@ -191,11 +192,11 @@ public class RobotManager {
     }
 
     public void readDistanceSensor() {
-        boolean currentClawLimitSwitchState = robot.clawLimitSwitch.getState();
-        //double distance = robot.; PLACEHOLDER; replace
-//        if( distance <= DISTANCE_SENSOR_THRESHOLD){
-//            robot.telemetry.addData("Distance Sensor", distance);
-//        }
+        double distance = robot.clawDistanceSensor.getDistance(DistanceUnit.INCH);
+        if (distance <= DISTANCE_SENSOR_THRESHOLD && Robot.desiredSlidesState != Robot.SlidesState.RETRACTED) {
+            robot.telemetry.addData("Distance Sensor", distance);
+            openClaw();
+        }
     }
 
     /** Calls all non-blocking FSM methods to read from state and act accordingly.
@@ -283,8 +284,12 @@ public class RobotManager {
      */
     public void flipHorseshoe() {
         switch (robot.desiredClawRotatorState) {
-            case FRONT: robot.desiredClawRotatorState = Robot.ClawRotatorState.REAR;
-            case REAR: robot.desiredClawRotatorState = Robot.ClawRotatorState.FRONT;
+            case FRONT:
+                robot.desiredClawRotatorState = Robot.ClawRotatorState.REAR;
+                break;
+            case REAR:
+                robot.desiredClawRotatorState = Robot.ClawRotatorState.FRONT;
+                break;
         }
         double startTime = robot.elapsedTime.milliseconds(); //Starts the time of the robot in milliseconds.
         mechanismDriving.updateClawRotator(robot);

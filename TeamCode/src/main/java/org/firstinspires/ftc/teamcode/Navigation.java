@@ -58,9 +58,8 @@ public class Navigation {
 
     // Speeds relative to one another. RR is positive on purpose!
     //                              RL   RR   FL   FR
-//    public double[] wheel_speeds = {-1.0, 1.0, -0.97, -1.0};
-//    public double[] wheel_speeds = {-0.5, -0.5, 0.485, 0.5};
-    public double[] wheel_speeds = {0.3, 0.3, -0.291, -0.3};
+    public double[] wheel_speeds = {1.0, 1.0, -0.97, -1.0};
+//    public double[] wheel_speeds = {0.3, 0.3, -0.291, -0.3};
 
     public double strafePower;  // Tele-Op only
 
@@ -547,16 +546,16 @@ public static class AutonomousPaths {
     //Positions
 
     //Junctions
-    public static Position nearHighJunction = new Position(1 * TILE_SIZE, 1.5*TILE_SIZE, "POI nearHighJunction", Action.DELIVER_CONE_HIGH, 1, 1, Math.PI / 2);
+    public static Position nearHighJunction = new Position(1 * TILE_SIZE, -1.5*TILE_SIZE, "POI nearHighJunction", Action.DELIVER_CONE_HIGH, 1, 1, Math.PI / 2);
     public static Position farHighJunction = new Position(0.5 * TILE_SIZE,
-            2 * TILE_SIZE, "POI farHighJunction", Action.DELIVER_CONE_HIGH_90, 1, 1, Math.PI / 2);
-    public static Position mediumJunction = new Position(0, 1.5*TILE_SIZE, "POI mediumJunction", Action.DELIVER_CONE_MEDIUM, 1, 1, 0);
+            -2 * TILE_SIZE, "POI farHighJunction", Action.DELIVER_CONE_HIGH_90, 1, 1, Math.PI / 2);
+    public static Position mediumJunction = new Position(0, -1.5*TILE_SIZE, "POI mediumJunction", Action.DELIVER_CONE_MEDIUM, 1, 1, 0);
     public static Position nearLowJunction = new Position(0.5*TILE_SIZE, 0, "POI nearLowJunction", Action.DELIVER_CONE_LOW, 1, 1, 0);
-    public static Position farLowJunction = new Position(-0.5*TILE_SIZE, TILE_SIZE, "POI farLowJunction", Action.DELIVER_CONE_LOW, 1, 1, 0);
+    public static Position farLowJunction = new Position(-0.5*TILE_SIZE, -TILE_SIZE, "POI farLowJunction", Action.DELIVER_CONE_LOW, 1, 1, 0);
 
     //Cone Stack
-    public static Position coneStack1 = new Position(-0.75 * TILE_SIZE, 2 * TILE_SIZE, "POI coneStackFirstCone", Action.PICK_UP_FIRST_STACK_CONE, 1, 1, Math.PI / 2);
-    public static Position coneStack2 = new Position(-0.75 * TILE_SIZE, 2 * TILE_SIZE, "POI coneStackSecondCone", Action.PICK_UP_SECOND_STACK_CONE, 1, 1, Math.PI / 2);
+    public static Position coneStack1 = new Position(-0.75 * TILE_SIZE, -2 * TILE_SIZE, "POI coneStackFirstCone", Action.PICK_UP_FIRST_STACK_CONE, 1, 1, Math.PI / 2);
+    public static Position coneStack2 = new Position(-0.75 * TILE_SIZE, -2 * TILE_SIZE, "POI coneStackSecondCone", Action.PICK_UP_SECOND_STACK_CONE, 1, 1, Math.PI / 2);
 
     //Intermediate Locations. Since these values could be transformed, inner refers to the middle of the entire field, center
     // to the center of the left or right, and outer refers to the very edges of the field next to either side wall
@@ -564,18 +563,18 @@ public static class AutonomousPaths {
     public static Position intermediateInnerBack = new Position(TILE_SIZE, 0, 0, "intermediateInnerBack");
     public static Position intermediateCenterBack = new Position(0, 0, 0, "intermediateCenterBack");
     public static Position intermediateOuterBack = new Position(-TILE_SIZE, 0, 0, "intermediateOuterBack");
-    public static Position intermediateInnerMiddle = new Position(TILE_SIZE, TILE_SIZE, 0, "intermediateInnerMiddle");
-    public static Position intermediateCenterMiddle = new Position(0, TILE_SIZE, 0, "intermediateCenterMiddle");
-    public static Position intermediateOuterMiddle = new Position(-TILE_SIZE, TILE_SIZE, 0, "intermediateOuterMiddle");
-    public static Position intermediateInnerFront = new Position(TILE_SIZE, 2*TILE_SIZE, 0, "intermediateInnerFront");
-    public static Position intermediateCenterFront = new Position(0, 2*TILE_SIZE, 0, "intermediateCenterFront");
-    public static Position intermediateOuterFront = new Position(0,2 * TILE_SIZE, 0, "intermediateOuterFront");
+    public static Position intermediateInnerMiddle = new Position(TILE_SIZE, -TILE_SIZE, 0, "intermediateInnerMiddle");
+    public static Position intermediateCenterMiddle = new Position(0, -TILE_SIZE, 0, "intermediateCenterMiddle");
+    public static Position intermediateOuterMiddle = new Position(-TILE_SIZE, -TILE_SIZE, 0, "intermediateOuterMiddle");
+    public static Position intermediateInnerFront = new Position(TILE_SIZE, -2*TILE_SIZE, 0, "intermediateInnerFront");
+    public static Position intermediateCenterFront = new Position(0, -2*TILE_SIZE, 0, "intermediateCenterFront");
+    public static Position intermediateOuterFront = new Position(0,-2 * TILE_SIZE, 0, "intermediateOuterFront");
 
     //Parking Locations
     //Make sure NOT to transform these in transformPath()
-    public static Position leftBarcode = new Position(-TILE_SIZE, 1.5 * TILE_SIZE, 0, "leftBarcodeParkingPosition");
-    public static Position centerBarcode = new Position(0, 1.5 * TILE_SIZE, 0, "centerBarcodeParkingPosition");
-    public static Position rightBarcode = new Position(TILE_SIZE, 1.5 * TILE_SIZE, 0, "rightBarcodeParkingPosition");
+    public static Position leftBarcode = new Position(-TILE_SIZE, -1.5 * TILE_SIZE, 0, "leftBarcodeParkingPosition");
+    public static Position centerBarcode = new Position(0, -1.5 * TILE_SIZE, 0, "centerBarcodeParkingPosition");
+    public static Position rightBarcode = new Position(TILE_SIZE, -1.5 * TILE_SIZE, 0, "rightBarcodeParkingPosition");
 
     //ZE ULTIMATE PATH - Prepare for trouble! And make it double! To protect the world from devastation!
     //To unite all peoples within our nation! To denounce the evils of truth and love!

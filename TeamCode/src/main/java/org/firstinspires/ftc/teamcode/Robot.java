@@ -1,9 +1,6 @@
 package org.firstinspires.ftc.teamcode;
 
-import com.qualcomm.robotcore.hardware.DigitalChannel;
-import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.HardwareMap;
-import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.hardware.*;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 
@@ -40,6 +37,7 @@ public class Robot {
     public Servo clawRotator, claw, clawIndicator;
     public DigitalChannel slidesLimitSwitch;
     public DigitalChannel clawLimitSwitch;
+    public DistanceSensor clawDistanceSensor;
 
 
     // Other
@@ -63,6 +61,8 @@ public class Robot {
 
         slidesLimitSwitch = hardwareMap.get(DigitalChannel.class, RobotConfig.SwitchNames.get(RobotConfig.Switches.SLIDES_LIMIT));
         clawLimitSwitch = hardwareMap.get(DigitalChannel.class, RobotConfig.SwitchNames.get(RobotConfig.Switches.CLAW_LIMIT));
+
+        clawDistanceSensor = hardwareMap.get(DistanceSensor.class, RobotConfig.DistanceSensorNames.get(RobotConfig.DistanceSensors.CLAW_DISTANCE_SENSOR));
 
         for (RobotConfig.DriveMotors motor : RobotConfig.DriveMotors.values()) {
             driveMotors.put(motor, hardwareMap.get(DcMotor.class, RobotConfig.DriveMotorNames.get(motor)));
@@ -109,7 +109,9 @@ class RobotConfig {
     public enum DriveMotors {REAR_LEFT, REAR_RIGHT, FRONT_LEFT, FRONT_RIGHT};
     enum Servos {CLAW_ROTATOR, CLAW, CLAW_INDICATOR}
 
-    public static final Map<DistanceSensors, String> DistanceSensorNames = new HashMap<DistanceSensors, String>();//FINISH THIS
+    public static final Map<DistanceSensors, String> DistanceSensorNames = new HashMap<DistanceSensors, String>() {{
+        put(DistanceSensors.CLAW_DISTANCE_SENSOR, "distance_sensor");
+    }};
 
     public static final Map<Switches, String> SwitchNames = new HashMap<Switches, String>() {{
         put(Switches.SLIDES_LIMIT, "slides_limit");
