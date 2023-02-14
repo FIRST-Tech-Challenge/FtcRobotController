@@ -319,6 +319,7 @@ public class RobotManager {
     public void runAutonPath() {
         for (int i = 0; i < navigation.path.size(); i++) {
             Position pos = navigation.path.get(i);
+            robot.telemetry.update();
             // Things to do before moving to the location
             if (pos.getAction() == Navigation.Action.PICK_UP_FIRST_STACK_CONE) {
                 mechanismDriving.setSlidePosition(robot, 1800);
@@ -345,6 +346,8 @@ public class RobotManager {
                 mechanismDriving.updateClawRotator(robot);
             }
             travelToNextPOI();
+            robot.telemetry.addData("movement finished!", pos.getName());
+            robot.telemetry.update();
             // Things to do after moving to the location
             if (pos.getAction() == Navigation.Action.PICK_UP_FIRST_STACK_CONE) {
                 closeClaw();
@@ -362,6 +365,8 @@ public class RobotManager {
             else if (pos.getAction() == Navigation.Action.DELIVER_CONE_HIGH_90) {
                 openClaw();
             }
+            robot.telemetry.addData("finished!", pos.getName());
+            robot.telemetry.update();
         }
     }
 
