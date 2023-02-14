@@ -10,7 +10,6 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 
 @Config
 public class Arm {
-
     private  PIDFController armPIDF;
     private Motor armMotor;
     private final AnalogInput sensor;
@@ -20,13 +19,14 @@ public class Arm {
 //    public static double armKi = 0.000001;
 //    public static double armKd = 0.000005;
 //    public static double armKf = 0.0000001;
+
+    // New PID values
     public static double armKp = 0.00085;
     public static double armKi = 0.0;
     public static double armKd = 0.00002;
     public static double armKf = 0;
     public static double EXTAKE_POS = 10; // 950 old val
     public static double INTAKE_POS = 10;
-    private final double MAX = 1350;
 
     // Initially set to 0 because we only want the claw to move when given input from the controller
     // initializing the targetPos value to a greater positive value would cause the update() method to
@@ -38,19 +38,17 @@ public class Arm {
         armMotor = new Motor(hardwareMap, "ARM", Motor.GoBILDA.RPM_84); // Pin 0 on control hub -> pin 1 control hub
         armMotor.setZeroPowerBehavior(Motor.ZeroPowerBehavior.BRAKE);
         armMotor.setRunMode(Motor.RunMode.VelocityControl);
-        armMotor.resetEncoder(); // We want the arm to start at a position of 0
+        //armMotor.resetEncoder(); // We want the arm to start at a position of 0
         armPIDF = new PIDFController(armKp, armKi, armKd, armKf);
         sensor = hardwareMap.analogInput.get("ARM_ENC"); // encoder port 1 on control hub
     }
 
     public double getArmPosition(){
-        // Don't question this very sus math okay it works (:
+        // ENCODER TICKS
+        // return 2.5 * 480 * ((sensor.getVoltage() - 0.3520574787720445) - 0.5);
 
-        // RETURNING ENCODER TICKS
-         return 2.5 * 480 * ((sensor.getVoltage() - 0.3520574787720445) - 0.5);
-
-        // RETURNING DEGREES
-        // return sensor.getVoltage()/sensor.getMaxVoltage()*360;
+        // DEGREES
+          return sensor.getVoltage()/sensor.getMaxVoltage()*360;
     }
 
     public void update(Telemetry telemetry){
@@ -62,7 +60,7 @@ public class Arm {
         telemetry.addData("Target Position: ", targetPos);
         telemetry.addData("Motor Position: ", getArmPosition());
         telemetry.update();
-        armMotor.set(correction); // returns a voltage for the arm motor
+        armMotor.set(correction); // sets a PID-tuned voltage for the arm motor
     }
 
     public void setExtake(){
