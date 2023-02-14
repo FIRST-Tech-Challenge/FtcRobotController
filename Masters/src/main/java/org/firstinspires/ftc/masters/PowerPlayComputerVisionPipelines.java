@@ -88,9 +88,9 @@ public class PowerPlayComputerVisionPipelines {
 //        Get and store camera monitor view id.
 //        int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
 
-
-        this.telemetry = telemetry;
         webcam = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "webcam"));
+        this.telemetry = telemetry;
+
         sleevePipeline = new SleevePipeline(telemetry);
         sleevePipeline.setPipelineType(PipelineType.SLEEVE);
         pipeDetectionPipeline = new PipeDetectionPipeline(telemetry);
@@ -435,6 +435,9 @@ public class PowerPlayComputerVisionPipelines {
                 position = PipePosition.SHRUG_NOISES; // Default enum result. Aptly named
             }
 
+            for (Mat mat: region){
+                mat.release();
+            }
 
             telemetry.addData("Position", position);
             telemetry.update();
@@ -461,7 +464,7 @@ public class PowerPlayComputerVisionPipelines {
         ArrayList<Point> topLeftPoints = new ArrayList<>();
         ArrayList<Point> bottomRightPoints = new ArrayList<>();
 
-        final int PIPE_PRESENT_THRESHOLD = 174;
+        final int PIPE_PRESENT_THRESHOLD = 155;
 
         Mat LAB = new Mat();
         Mat A = new Mat();

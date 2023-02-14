@@ -32,7 +32,7 @@ public class PowerPlayTestPipelines extends LinearOpMode {
         boolean centered = false;
 
         while (opModeIsActive()) {
-            pos = CV.sleevePipeline.position;
+            pos = CV.pipeDetectionPipeline.position;
             centered = drive.alignPole(pos);
             telemetry.addData("pos",pos);
             telemetry.update();
