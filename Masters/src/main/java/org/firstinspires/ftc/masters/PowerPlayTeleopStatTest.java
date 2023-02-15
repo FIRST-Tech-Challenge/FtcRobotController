@@ -26,9 +26,11 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.checkerframework.checker.units.qual.A;
+
 @Config
-@TeleOp(name="Power Play TeleOp COLORADO", group = "competition")
-public class PowerPlayTeleopColorado extends LinearOpMode {
+@TeleOp(name="Power Play TeleOp TESTING", group = "test")
+public class PowerPlayTeleopStatTest extends LinearOpMode {
 
 
     private final FtcDashboard dashboard = FtcDashboard.getInstance();
@@ -50,11 +52,12 @@ public class PowerPlayTeleopColorado extends LinearOpMode {
 
     public static double ALIGN_SPEED =0.2;
 
+
     Servo clawServo = null;
     DcMotorEx armMotor = null;
     Servo tippingServo = null;
 
-    double maxPowerConstraint = 1;
+    double maxPowerConstraint = 0.75;
 
     int strafeConstant=1;
 
@@ -214,6 +217,8 @@ public class PowerPlayTeleopColorado extends LinearOpMode {
                 maxPowerConstraint = 1;
             } else if (gamepad1.x) {
                 maxPowerConstraint = 0.75;
+            } else if (gamepad1.b) {
+                maxPowerConstraint = 0.25;
             }
 
             if (gamepad1.y){
@@ -247,21 +252,21 @@ public class PowerPlayTeleopColorado extends LinearOpMode {
 
             }
 
-            if (gamepad2.x){
-                tippingServo.setPosition(TIP_FRONT);
-            }
-            if (gamepad2.y){
-                tippingServo.setPosition(TIP_BACK);
-            }
-            if (gamepad2.right_trigger>0.1){
-                tippingServo.setPosition(TIP_CENTER);
-            }
+//            if (gamepad2.x){
+//                tippingServo.setPosition(TIP_FRONT);
+//            }
+//            if (gamepad2.y){
+//                tippingServo.setPosition(TIP_BACK);
+//            }
+//            if (gamepad2.right_trigger>0.1){
+//                tippingServo.setPosition(TIP_CENTER);
+//            }
 
       if (gamepad2.dpad_up && gamepad2.left_trigger>0.1){
                 previousState = currentState;
                 currentState = STATE.BACK_HIGH;
                 armSelection = ARM_BACK - armOffset;
-                slideSelection= SLIDE_HIGH - liftOffset;
+                slideSelection= SLIDE_HIGH +200;
 
                 if (previousState == STATE.ZERO){
                     armTarget= armSelection;
@@ -277,7 +282,7 @@ public class PowerPlayTeleopColorado extends LinearOpMode {
                 previousState = currentState;
                 currentState = STATE.HIGH;
                 armSelection = ARM_MID_TOP - armOffset;
-                slideSelection= SLIDE_HIGH - liftOffset;
+                slideSelection= SLIDE_HIGH +200;
 
                 if (previousState == STATE.ZERO){
                     armTarget= ARM_MID_TOP - armOffset;
@@ -293,7 +298,7 @@ public class PowerPlayTeleopColorado extends LinearOpMode {
             if (gamepad2.dpad_right && gamepad2.left_trigger>0.1){
                 previousState = currentState;
                 currentState = STATE.BACK_MID;
-                slideSelection = SLIDE_MIDDLE - liftOffset;
+                slideSelection = SLIDE_MIDDLE +200;
                 armSelection = ARM_BACK - armOffset;
                 if (previousState == STATE.ZERO){
                     armTarget = armSelection;
@@ -307,7 +312,7 @@ public class PowerPlayTeleopColorado extends LinearOpMode {
             else if (gamepad2.dpad_right) {
                 previousState = currentState;
                 currentState = STATE.MID;
-                slideSelection = SLIDE_MIDDLE - liftOffset;
+                slideSelection = SLIDE_MIDDLE +200;
                 armSelection = ARM_MID_TOP - armOffset;
                 if (previousState == STATE.ZERO){
                     armTarget = ARM_MID_TOP -armOffset;
@@ -337,7 +342,7 @@ public class PowerPlayTeleopColorado extends LinearOpMode {
             }
 
             if (gamepad2.dpad_left) {
-                if (currentState!=STATE.ZERO) {
+                if (currentState!= STATE.ZERO) {
                     previousState = currentState;
                     currentState = STATE.ZERO;
                     armSelection = ARM_BOTTOM -armOffset;
@@ -359,7 +364,7 @@ public class PowerPlayTeleopColorado extends LinearOpMode {
                         slideTarget = slideSelection;
                     }
                 }
-            } else if (currentState == STATE.ZERO && previousState!=STATE.ZERO ){
+            } else if (currentState == STATE.ZERO && previousState!= STATE.ZERO ){
 
                 if (linearSlideMotor.getCurrentPosition()<100 ){
                     armTarget=ARM_BOTTOM;
@@ -374,10 +379,10 @@ public class PowerPlayTeleopColorado extends LinearOpMode {
             }
             if (armMotor.getCurrentPosition()>200 && !set){
                 if (currentState == STATE.BOTTOM || currentState == STATE.MID || currentState == STATE.HIGH){
-                    tippingServo.setPosition(TIP_FRONT);
+                    //tippingServo.setPosition(TIP_FRONT);
                     set=true;
                 } else if (currentState== STATE.BACK_HIGH || currentState == STATE.BACK_MID){
-                    tippingServo.setPosition(TIP_BACK);
+                    //tippingServo.setPosition(TIP_BACK);
                     set=true;
                 }
             }
