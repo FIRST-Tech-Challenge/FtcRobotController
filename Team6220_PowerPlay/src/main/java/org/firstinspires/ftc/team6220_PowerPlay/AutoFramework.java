@@ -2,25 +2,28 @@ package org.firstinspires.ftc.team6220_PowerPlay;
 
 
 abstract public class AutoFramework extends BaseAutonomous {
+    public enum AutoState {
+        LeftAutos,
+        RightAutos,
+    }
 
     /**
-     * @param AutoSelector Assign to 0 or 1, corresponding to BlueLeft/RedLeft, or BlueRight/RedRight respectively
+     * @param AutoSelector, controls left or right
      * @throws InterruptedException If you haven't added a config for that autonomous
      */
-    public void runAuto(int AutoSelector) throws InterruptedException {
+    public void runAuto(AutoState AutoSelector) throws InterruptedException {
         //set values here
         int driveCourse;
         int targetDistance = 11;
         int[] signalArray;
         switch (AutoSelector) {
 
-            //BlueLeft & RedLeft
-            case 0:
+            case LeftAutos:
                 signalArray = new int[] {90, 33, 90, 11, -90, 11};
                 driveCourse = -90;
                 break;
-            //BlueRight & RedRight
-            case 1:
+
+            case RightAutos:
                 signalArray = new int[] {90, 11, -90, 11, -90, 33};
                 driveCourse = 90;
                 break;
@@ -31,8 +34,8 @@ abstract public class AutoFramework extends BaseAutonomous {
         // initialize motors, servos, imu, cameras, etc.
         initialize();
 
-        // detect april tag in initialize
-        int signal = detectSignal();
+        // detect april tag in initialize //i added one because it looks more cooler
+        int signal = 1 + detectSignal();
 
         // grab pre-loaded cone
         driveGrabber(Constants.GRABBER_CLOSE_POSITION);
@@ -73,20 +76,23 @@ abstract public class AutoFramework extends BaseAutonomous {
         // lower slides to ground
         driveSlidesAutonomous(Constants.SLIDE_BOTTOM);
 
+
+        // this is not an enum because these are the value that the
+        // signal detector method returns and the zones are called zones 1, 2 and 3.
         // park in correct signal position
         switch (signal) {
-            // strafe left to park in zone 1
-            case 0:
+            // strafe to park in zone 1
+            case 1:
                 driveAutonomous(signalArray[0], signalArray[1]);
                 break;
 
-            // strafe left to park in zone 2
-            case 1:
+            // strafe to park in zone 2
+            case 2:
                 driveAutonomous(signalArray[2], signalArray[3]);
                 break;
 
-            // strafe right to park in zone 3
-            case 2:
+            // strafe to park in zone 3
+            case 3:
                 driveAutonomous(signalArray[4], signalArray[5]);
                 break;
         }

@@ -13,7 +13,7 @@ public class RedLeft extends AutoFramework {
 
     @Override
     public void runOpMode() throws InterruptedException {
-        runAuto(0);
+        runAuto(AutoState.LeftAutos);
         }
 
 }

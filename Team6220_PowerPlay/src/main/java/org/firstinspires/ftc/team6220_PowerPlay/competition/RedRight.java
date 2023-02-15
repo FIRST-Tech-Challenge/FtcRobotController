@@ -13,7 +13,7 @@ public class RedRight extends AutoFramework {
 
     @Override
     public void runOpMode() throws InterruptedException {
-        runAuto(1);
+        runAuto(AutoState.RightAutos);
         }
 
 }
