@@ -105,8 +105,8 @@ public class Teleoptest extends LinearOpMode {
                 rfPower = gamepad1.right_stick_y;
 
             }
-            tower1.setPower(tPower * -0.90);
-            tower1.setPower(tdPower * 0.5);
+            tower1.setPower(tPower * -1.0);
+            tower1.setPower(tdPower * 0.6);
             lf.setPower(lfPower * 0.5);
             lb.setPower(lbPower * 0.5);
             rb.setPower(rbPower * 0.5);
