@@ -19,7 +19,7 @@ import java.util.Collections;
 public class PowerPlayTeleOp extends OpMode {
 
     private RobotManager robotManager;
-    private ElapsedTime elapsedTime = new ElapsedTime();
+    private ElapsedTime elapsedTime = new ElapsedTime(ElapsedTime.Resolution.MILLISECONDS);
 
     @Override
     public void init() {
@@ -40,11 +40,15 @@ public class PowerPlayTeleOp extends OpMode {
         telemetry.addData("Pos X", robotManager.robot.positionManager.position.getX());
         telemetry.addData("Pos Y", robotManager.robot.positionManager.position.getY());
         telemetry.addData("Pos R", robotManager.robot.positionManager.position.getRotation());
-
+        double start_time = robotManager.elapsedTime.time();
         robotManager.readControllerInputs();
+        telemetry.addData("after read controller inputs", robotManager.elapsedTime.time()-start_time);
         robotManager.readSensorInputs();
+        telemetry.addData("after read sensor inputs", robotManager.elapsedTime.time()-start_time);
         robotManager.driveMechanisms();
+        telemetry.addData("after drive mechanisms", robotManager.elapsedTime.time()-start_time);
         robotManager.maneuver();
+        telemetry.addData("after maneuver", robotManager.elapsedTime.time()-start_time);
 
         telemetry.update();
     }

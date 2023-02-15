@@ -29,9 +29,9 @@ public class Navigation {
     static final double ROTATION_CORRECTION_POWER = 0.2;
     // Accepted amounts of deviation between the robot's desired position and actual position.
 //    static final double EPSILON_LOC = 1.4;
-    static final double EPSILON_LOC = 5;
+    static final double EPSILON_LOC = 10;
 
-    static final double EPSILON_ANGLE = 0.19;
+    static final double EPSILON_ANGLE = 0.35;
     // The number of frames to wait after a rotate or travelLinear call in order to check for movement from momentum.
     static final int NUM_CHECK_FRAMES = 10;
 
@@ -412,7 +412,8 @@ public class Navigation {
     /** Calculates the angle at which the robot must strafe in order to get to a target location.
      */
     private double getStrafeAngle(Position currentLoc, Position target) {
-        double strafeAngle = currentLoc.getRotation() - getAngleBetween(currentLoc.getX(), currentLoc.getY(), target.getX(), target.getY());
+
+        double strafeAngle = getAngleBetween(currentLoc.getX(), currentLoc.getY(), target.getX(), target.getY()) - currentLoc.getRotation();
         if (strafeAngle > Math.PI) {
             strafeAngle -= 2 * Math.PI;
         }
@@ -423,8 +424,8 @@ public class Navigation {
         return strafeAngle;
     }
 
-    /** Determines the angle between the horizontal axis and the segment connecting A and B.
-     *  TODO: update this method to be consistent with new coordinate system
+    /** Determines the angle between the horizontal axis (currently left side of the robot) and the segment connecting A and B.
+     *  Currently being negated so that the tangent values are positive for the robot moving away from the wall
      */
     private double getAngleBetween(double x1, double y1, double x2, double y2) { return -1* Math.atan2((y2 - y1), (x2 - x1)); }
 
@@ -571,7 +572,7 @@ public static class AutonomousPaths {
     public static Position intermediateInnerMiddle = new Position(TILE_SIZE, -TILE_SIZE, 0, "intermediateInnerMiddle");
     public static Position intermediateCenterMiddle = new Position(0, -TILE_SIZE, 0, "intermediateCenterMiddle");
     public static Position intermediateOuterMiddle = new Position(-TILE_SIZE, -TILE_SIZE, 0, "intermediateOuterMiddle");
-    public static Position intermediateInnerFront = new Position(TILE_SIZE, -2*TILE_SIZE, 0, "intermediateInnerFront");
+    public static Position intermediateInnerFront = new Position(TILE_SIZE, -2*TILE_SIZE, Math.PI / 2, "intermediateInnerFront");
     public static Position intermediateCenterFront = new Position(0, -2*TILE_SIZE, 0, "intermediateCenterFront");
     public static Position intermediateOuterFront = new Position(0,-2 * TILE_SIZE, 0, "intermediateOuterFront");
 
