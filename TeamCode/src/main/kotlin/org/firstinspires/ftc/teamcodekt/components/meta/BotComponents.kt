@@ -30,7 +30,7 @@ fun createTeleOpBotComponents() =
         Intake(),
         Arm(),
         Wrist(),
-        Lift(false)
+        Lift(usingMotionProfiling = false)
     )
 
 data class TeleOpBotComponents(

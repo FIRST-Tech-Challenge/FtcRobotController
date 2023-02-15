@@ -8,15 +8,11 @@ import com.outoftheboxrobotics.photoncore.PhotonCore
 import ftc.rogue.blacksmith.Anvil
 import ftc.rogue.blacksmith.BlackOp
 import ftc.rogue.blacksmith.Scheduler
-import ftc.rogue.blacksmith.listeners.Listener
 import ftc.rogue.blacksmith.listeners.ReforgedGamepad
-import ftc.rogue.blacksmith.util.SignalEdgeDetector
 import ftc.rogue.blacksmith.units.DistanceUnit
-import ftc.rogue.blacksmith.util.kt.LateInitVal
 import ftc.rogue.blacksmith.util.toCm
 import org.firstinspires.ftc.teamcode.AutoData
 import org.firstinspires.ftc.teamcodekt.components.*
-import org.firstinspires.ftc.teamcodekt.components.meta.AutoBotComponents
 import org.firstinspires.ftc.teamcodekt.components.meta.createAutoBotComponents
 import kotlin.math.absoluteValue
 import kotlin.properties.Delegates
@@ -74,7 +70,7 @@ abstract class RogueBaseAuto : BlackOp() {
         }
 
         poleOffset = Vector2d(x.toCm(DistanceUnit.INCHES), y.toCm(DistanceUnit.INCHES))
-        Scheduler.reset()
+        Scheduler.nuke()
     }
 
     companion object {

@@ -225,13 +225,13 @@ you want with
 </TabItem>
 </Tabs>
 
-### Scheduler.reset
+### Scheduler.nuke
 
-Removes all the subscribed [Listeners](./listeners) and resets the `beforeEach` lambda. Not entirely sure why you'd want to do this,
-but hey, I'm not one to judge ¯\\\_(ツ)_/¯
+Goes nuclear.
 
-Note that the removed Listeners will resubscribe themselves whenever a new action is subscribed to the Listener,
-or if `listener.hook` is called on them.
+Destroys everything Scheduler API related.
+
+Clears and unhooks all of the listeners, clears all of the messages, clears the beforeEach block.
 
 <Tabs groupId="programming-language">
 <TabItem value="java" label="Java">
@@ -243,10 +243,13 @@ or if `listener.hook` is called on them.
 
       Listener(() -> true).whileHigh(() -> System.out.println("I'm high!"));
 
+      Scheduler.on("message", () -> ...)
+
       Scheduler.reset()
 
       // Scheduler.beforeEach == () -> {}
       // Scheduler.listeners.size == 0
+      // Scheduler.messages.size == 0
   }
   ```
 
@@ -259,10 +262,13 @@ or if `listener.hook` is called on them.
 
       Listener { true }.whileHigh { println("I'm high!") }
 
+      Scheduler.on("message") {}
+
       Scheduler.reset()
 
       // Scheduler.beforeEach == () -> {}
       // Scheduler.listeners.size == 0
+      // Scheduler.messages.size == 0
   }
   ```
 

@@ -11,7 +11,7 @@ import org.junit.jupiter.api.TestInstance
 internal class ListenerTest {
     @BeforeEach
     fun setUp() {
-        Scheduler.reset()
+        Scheduler.nuke()
     }
 
     @Test

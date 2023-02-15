@@ -26,7 +26,7 @@ internal class SchedulerTest {
 
     @BeforeEach
     fun setUp() {
-        Scheduler.reset()
+        Scheduler.nuke()
         clearMocks(telemetry)
         isStopped = false
     }

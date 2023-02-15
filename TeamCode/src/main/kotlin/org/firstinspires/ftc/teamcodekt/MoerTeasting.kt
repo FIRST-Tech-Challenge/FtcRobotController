@@ -228,7 +228,6 @@ fun String.test1(): String {
     return s.toString()
         .replace(Regex("λ(\\w)\\.")) {
             val arg = it.groupValues[1]
-
             "$arg => "
         }
 }

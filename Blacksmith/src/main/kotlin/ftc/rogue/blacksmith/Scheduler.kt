@@ -4,7 +4,6 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode
 import ftc.rogue.blacksmith.internal.util.DoubleConsumer
 import ftc.rogue.blacksmith.internal.scheduler.SchedulerInternal
 import ftc.rogue.blacksmith.listeners.*
-import org.firstinspires.ftc.robotcore.external.Telemetry
 
 /**
  * [**LINK TO OFFICIAL DOCS (click on me) (please read) (I like cars)**](https://blacksmithftc.vercel.app/scheduler-api/overview)
@@ -148,8 +147,8 @@ object Scheduler {
     }
 
     @JvmStatic
-    fun reset() {
-        internal.reset()
+    fun nuke() {
+        internal.nuke()
     }
 
     // -- INTERNAL --

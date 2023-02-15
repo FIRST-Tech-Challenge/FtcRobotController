@@ -5,6 +5,7 @@ import com.acmerobotics.dashboard.FtcDashboard
 import com.acmerobotics.dashboard.config.reflection.ClasspathScanner
 import com.acmerobotics.dashboard.config.reflection.ReflectionConfig
 import ftc.rogue.blacksmith.annotations.ConfigKt
+import org.firstinspires.ftc.ftccommon.external.OnCreate
 import java.util.concurrent.Executors
 
 // TODO: literally everything
@@ -26,21 +27,19 @@ fun ftcDashboardStartedListener(context: Context) {
         }
 
         tryConfigKtSetup(
-            setOf(
-                "java",
-                "android",
-                "com.sun",
-                "com.vuforia",
-                "com.google",
-                "kotlin",
-            )
+            "java",
+            "android",
+            "com.sun",
+            "com.vuforia",
+            "com.google",
+            "kotlin",
         )
 
         executor.shutdown()
     }
 }
 
-fun tryConfigKtSetup(packageIgnorePrefixes: Set<String>) =
+fun tryConfigKtSetup(vararg packageIgnorePrefixes: String) =
     try {
         val scanner = ClasspathScanner(object : ClasspathScanner.Callback {
             override fun shouldProcessClass(className: String): Boolean {

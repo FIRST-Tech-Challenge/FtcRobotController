@@ -5,6 +5,7 @@ package org.firstinspires.ftc.teamcodekt.components
 
 import com.acmerobotics.dashboard.config.Config
 import com.arcrobotics.ftclib.hardware.RevIMU
+import com.noahbres.meepmeep.core.exhaustive
 import com.qualcomm.robotcore.hardware.DcMotor
 import com.qualcomm.robotcore.hardware.DcMotorEx
 import com.qualcomm.robotcore.hardware.DcMotorSimple.Direction
@@ -18,6 +19,7 @@ import ftc.rogue.blacksmith.listeners.Pulsar
 import ftc.rogue.blacksmith.util.kt.invoke
 import ftc.rogue.blacksmith.util.kt.maxMagnitudeAbs
 import ftc.rogue.blacksmith.util.kt.pow
+import ftc.rogue.blacksmith.util.kt.withDeadzone
 import org.firstinspires.ftc.teamcodekt.components.meta.DeviceNames
 import java.util.*
 import kotlin.math.*
@@ -68,10 +70,10 @@ class Drivetrain {
     private var currentColor = red
 
     fun drive(gamepad: Gamepad, powerMulti: Double) {
-        Pulsar(interval = 1000)
-            .onPulse {
-                currentColor = if (currentColor === red) green else red
-            }
+//        Pulsar(interval = 1000)
+//            .onPulse {
+//                currentColor = if (currentColor === red) green else red
+//            }
 
         if (shouldDriveRC) {
             driveRC(gamepad, powerMulti)
@@ -79,7 +81,7 @@ class Drivetrain {
             driveFC(gamepad, powerMulti)
         }
 
-        mTelemetry.addLine(currentColor)
+//        mTelemetry.addLine(currentColor)
     }
 
     fun switchMode() {
@@ -91,19 +93,21 @@ class Drivetrain {
     }
 
     private fun driveRC(gamepad: Gamepad, powerMulti: Double) {
-        val (x, y, _r) = gamepad.getDriveSticks()
-        val r = _r * .9
+        var (x, y, r) = gamepad.getDriveSticks()
+        r *= .9f
+
+
+//        mTelemetry.addData("x corection", (tiltCorrectionMult * imu.angles[imuAngleUsed]).withDeadzone<Float>(.25))
 
         val theta = atan2(y, x)
         val power = hypot(x, y)
 
         var xComponent = power * cos(theta - PI / 4)
-        var yComponent = power * sin(theta - PI / 4)
+        val yComponent = power * sin(theta - PI / 4)
+
+//        xComponent += (tiltCorrectionMult * imu.angles[imuAngleUsed]).withDeadzone<Float>(.25)
 
         val max = maxMagnitudeAbs<Double>(xComponent, yComponent, 1e-16)
-
-        val correctionTilt = tiltCorrectionMult * imu.angles[imuAngleUsed]
-        xComponent += correctionTilt
 
         val powers = doubleArrayOf(
             power * (xComponent / max) + r,
@@ -124,11 +128,11 @@ class Drivetrain {
             this.power = powers[it]
         }
 
-        val (a, b, c) = imu.angles
-
-        mTelemetry.addData("0rd angle", a)
-        mTelemetry.addData("1nd angle", b)
-        mTelemetry.addData("2st angle", c)
+//        val (a, b, c) = imu.angles
+//
+//        mTelemetry.addData("0rd angle", a)
+//        mTelemetry.addData("1nd angle", b)
+//        mTelemetry.addData("2st angle", c)
     }
 
     private fun driveFC(gamepad: Gamepad, powerMulti: Double) {

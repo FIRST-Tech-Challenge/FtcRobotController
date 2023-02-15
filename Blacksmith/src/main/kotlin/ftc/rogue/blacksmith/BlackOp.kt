@@ -9,8 +9,6 @@ import com.qualcomm.robotcore.hardware.HardwareMap
 import ftc.rogue.blacksmith.internal.blackop.CreateOnGoInternal
 import ftc.rogue.blacksmith.internal.blackop.injectCreateOnGoFields
 import ftc.rogue.blacksmith.internal.util.NotNull
-import ftc.rogue.blacksmith.internal.util.getFieldsAnnotatedWith
-import kotlin.reflect.KProperty
 
 /**
  * [**LINK TO OFFICIAL DOCS (click on me) (please read) (I like cars)**](https://blacksmithftc.vercel.app/black-op/overview)
@@ -39,7 +37,7 @@ abstract class BlackOp : LinearOpMode() {
     abstract fun go()
 
     init {
-        Scheduler.reset()
+        Scheduler.nuke()
     }
 
     /**

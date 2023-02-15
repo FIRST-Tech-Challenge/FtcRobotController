@@ -52,7 +52,7 @@ internal class SchedulerInternal {
         }
     }
 
-    fun reset() {
+    fun nuke() {
         listeners.forEach {
             it.destroy()
         }
@@ -62,7 +62,7 @@ internal class SchedulerInternal {
         beforeEach = Runnable {}
     }
 
-    val messages = mutableMapOf<Any, MutableList<Runnable>>()
+    private val messages = mutableMapOf<Any, MutableList<Runnable>>()
 
     fun on(message: Any, callback: Runnable) {
         messages.getOrPut(message, ::ArrayList) += callback

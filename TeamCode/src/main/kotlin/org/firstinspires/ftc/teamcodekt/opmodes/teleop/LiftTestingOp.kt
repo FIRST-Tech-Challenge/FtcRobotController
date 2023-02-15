@@ -7,7 +7,6 @@ import org.firstinspires.ftc.teamcode.AutoData.*
 
 
 @Config
-@Disabled
 @TeleOp
 class LiftTestingOp : RogueBaseTele() {
     override fun describeControls(): Unit = with(bot) {
@@ -15,6 +14,9 @@ class LiftTestingOp : RogueBaseTele() {
         driver.b.onRise(::setHeight2)
         driver.x.onRise(::setHeight3)
         driver.y.onRise(::setHeight4)
+
+        driver.dpad_up.onRise(lift::goToMid)
+        driver.dpad_down.onRise(lift::goToLow)
 
         (driver.a + driver.b).onRise(::setHeight5)
 
