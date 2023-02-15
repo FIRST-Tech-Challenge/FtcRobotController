@@ -227,7 +227,11 @@ public class PowerPlayTeleopColorado extends LinearOpMode {
                 yPushed = false;
             }
             if (aligning){
-                aligning = !alignPole();
+                if (alignPole()){
+                    aligning = false;
+
+                }
+
             }
 
 

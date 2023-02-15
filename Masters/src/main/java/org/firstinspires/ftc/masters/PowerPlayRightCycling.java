@@ -205,7 +205,7 @@ public class PowerPlayRightCycling extends LinearOpMode {
 
                         //sleep(100);
                         drive.openClaw();
-                        sleep(250);
+                        sleep(500);
                         drive.closeClaw();
                         drive.followTrajectoryAsync(backUpFromJunction);
                         currentState = State.BACK_UP_FROM_JUNCTION;
@@ -319,7 +319,7 @@ public class PowerPlayRightCycling extends LinearOpMode {
                                 .build();
                         //sleep(100);
                         drive.openClaw();
-                        sleep(300);
+                        sleep(500);
 
 
                         drive.followTrajectoryAsync(cycleBackUpFromJunction);
