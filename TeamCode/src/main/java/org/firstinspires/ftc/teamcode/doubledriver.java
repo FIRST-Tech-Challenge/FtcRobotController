@@ -64,6 +64,10 @@ public class doubledriver extends LinearOpMode {
             boolean spincenter;
             boolean opspincenter;
             boolean burst;
+                    //Pole Preset
+            boolean smallJunction;
+            boolean mediumJunction;
+            boolean tallJunction;
 
             throttle = gamepad1.left_stick_y;
             turn = gamepad1.right_stick_x;
@@ -72,12 +76,14 @@ public class doubledriver extends LinearOpMode {
 
             crainpower = gamepad2.right_stick_y;
             spinpowerup = gamepad2.dpad_right;
-            spincenter = gamepad2.y;
-            opspincenter = gamepad2.x;
+
             spinpowerdown =gamepad2.dpad_left;
             pickup = gamepad2.left_trigger;
             dropoff = gamepad2.right_trigger;
-            burst = gamepad2.b;
+            //Pole Presets
+            smallJunction = gamepad2.x;
+            mediumJunction = gamepad2.y;
+            tallJunction = gamepad2.b;
 
 
             if (strafeRight) {
@@ -117,16 +123,17 @@ public class doubledriver extends LinearOpMode {
                 Spin.setPower(0);
             }
 
-            if (spincenter){
+            /*if (spincenter){
                 Spin.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
                 Spin.setTargetPosition(-20);
                 Spin.setPower(1);
                 Spin.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 sleep(1500);
                 Spin.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-            }
+            }*/
 
-            if (opspincenter){
+            /*
+            if (opspincenter) {
                 Spin.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
                 Spin.setTargetPosition(-589);
                 Spin.setPower(1);
@@ -134,6 +141,7 @@ public class doubledriver extends LinearOpMode {
                 sleep(1500);
                 Spin.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
             }
+               */
 
             if (pickup>0) {
 
@@ -145,12 +153,38 @@ public class doubledriver extends LinearOpMode {
                 Left.setPower(1);
 
             }
-
             if (dropoff == 0 && pickup == 0){
 
                 Left.setPower(0);
 
             }
+                        //Pole Preset
+            if (smallJunction) {
+                Crain.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+                Crain.setTargetPosition(-3000);
+                Crain.setPower(1);
+                Crain.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                while (Crain.isBusy()&&opModeIsActive()){
+
+                }
+                Crain.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+            }
+            if (mediumJunction) {
+                Crain.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+                Crain.setTargetPosition(-4500);
+                Crain.setPower(1);
+                Crain.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                Crain.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+            }
+            if (tallJunction) {
+                Crain.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+                Crain.setTargetPosition(-6500);
+                Crain.setPower(1);
+                Crain.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                Crain.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+            }
+
+
             /*
             while (burst) {
                 Left.setPower(.8);

@@ -15,7 +15,7 @@ public class CraneEncoderTest extends LinearOpMode {
         crane = hardwareMap.get(DcMotor.class, "Crane");
         spin =hardwareMap.get(DcMotor.class,"Spin");
         crane.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        //crane.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        crane.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         waitForStart();
 
         while (opModeIsActive()) {

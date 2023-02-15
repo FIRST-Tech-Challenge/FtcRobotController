@@ -198,17 +198,25 @@ public class newauto extends LinearOpMode {
                 strafeRightwithcrane(1,310,1,500);
                 //gyroTurning(0);
                 */
-            strafeLeftwithdistanceandcrane(1,31,-1,2000);
-            move(.5,-330);
+            //strafeLeftwithdistanceandcrane(31,-1,2000);
+            strafeLeftwithcrane(1,2700,-1,3100);
+            Crane.setPower(-.1);
             sleep(100);
-            move(.5,40);
+            spin(1,260);
+            move(.5,-400);
+            strafeLeft(1,300);
             sleep(100);
-            crane(1,200);//
+            //move(.5,40);
+            sleep(100);
+            //crane(1,200);//
+            sleep(100);
             intake(-1,1300);
-            crane(-1,250);
-            move(.5,290);
-            strafeLeftwithdistanceandcrane(1,45,1,500);
-            gyroTurning(0);
+            crane(-1,220);
+
+            //move(.5,180);
+            //strafeLeftwithdistanceandcrane(45,1,100);
+            strafeRightwithcrane(1,500,1,600);
+            //gyroTurning(0);
                 /*code with foward
                 //move to stack
                 sleep(100);
@@ -221,19 +229,25 @@ public class newauto extends LinearOpMode {
                 */
             //side set up
             stopMotors();
-            moveandspin(1,700,1,591);
+            gyroTurning(0);
+            moveandspin(1,1200,1,591);
             sleep(100);
-            move(.3,440);  
+            gyroTurning(0);
+            //move(.3,520);
+            movewithdistacne(-.3,.05);
             //pick up cone
-            craneinput(300);
+            craneinput(600);
             crane(-1,1000);
+            Left.setPower(.1);
 
             //move to high junction
-            moveandspinandcrane(.8,-1500,1,315,-1,2000);//-315
+            move(.4,-400);
+            gyroTurning(0);
+            moveandspinandcrane(.8,-1150,1,315,-1,2000);//-315
             Crane.setPower(-.02);
             stopMotors();
             //strafe onto it
-            strafeLeft(.2,300);
+            strafeLeft(.2,200);
             intake(-1,500);
             strafeRightwithcrane(.2,200,1,1000);
             gyroTurning(-90);
@@ -320,7 +334,7 @@ public class newauto extends LinearOpMode {
             telemetry.addData("Angle", currentAngle);
             telemetry.addData("targetangle", targetAngle);
             telemetry.update();
-            if (angles.firstAngle >= targetAngle - 0.12 && angles.firstAngle <= targetAngle + 0.12) {
+            if (angles.firstAngle >= targetAngle - 0.15 && angles.firstAngle <= targetAngle + 0.15) {
                 frontLeft.setPower(0);
                 frontRight.setPower(0);
                 backLeft.setPower(0);
@@ -362,51 +376,6 @@ public class newauto extends LinearOpMode {
         return foundAngle;
     }
 
-
-    public void strafeLeftwithdistanceandcraneg(double power, int distances,double powerc, int timec) {
-
-            frontLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-            frontRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-            backLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-            backRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-            boolean foundAngle;
-            foundAngle = false;
-
-                angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
-                final double startingAngle = angles.firstAngle;
-                double currentAngle =angles.firstAngle;
-                telemetry.addData("Angle", currentAngle);
-                telemetry.addData("startingangle", startingAngle);
-                telemetry.update();
-        frontLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        frontRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        backLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        backRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-
-        crane(powerc, timec);
-
-        while(distance.getDistance(DistanceUnit.INCH)<distances && opModeIsActive()){
-            if (angles.firstAngle >= startingAngle - 1 && angles.firstAngle <= startingAngle + 1) {
-                frontLeft.setPower(1);
-                frontRight.setPower(-1);
-                backLeft.setPower(-1);
-                backRight.setPower(1);
-            }
-            else if (angles.firstAngle>=startingAngle+4){
-                frontLeft.setPower(-1);
-                frontRight.setPower(1);
-                backLeft.setPower(-1);
-                backRight.setPower(1);
-
-            }
-        }
-        stopMotors();
-        frontRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        frontLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        backRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        backLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-
-    }
     public void stopMotors() {
         frontLeft.setPower(0);
         frontRight.setPower(0);
@@ -540,7 +509,7 @@ public class newauto extends LinearOpMode {
     public void craneinput(int time) {
         crane(1,time);
         intake(1,1000);
-        sleep(1500);
+        sleep(500);
     }
 
     public void strafeLeftwithcrane(double power, int position,double powerc, int timec)  {
@@ -564,16 +533,21 @@ public class newauto extends LinearOpMode {
         backLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         backRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
-        frontRight.setPower(power);
-        frontLeft.setPower(power);
-        backRight.setPower(power);
-        backLeft.setPower(power);
+
+        frontLeft.setPower(1);
+        frontRight.setPower(-1);
+        backLeft.setPower(-.75);
+        backRight.setPower(1);
+        //frontRight.setPower(power);
+        //frontLeft.setPower(power);
+        //backRight.setPower(power);
+        //backLeft.setPower(power);
         crane(powerc,timec);
         while (frontLeft.isBusy() && opModeIsActive()) {
         }
 
     }
-    public void strafeLeftwithdistanceandcrane(double power, int distances,double powerc, int timec) {
+    public void strafeLeftwithdistanceandcrane(int distances,double powerc, int timec) {
         frontLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         frontRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         backLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -594,7 +568,7 @@ public class newauto extends LinearOpMode {
             //backLeft.setPower(-power-.2);
             frontLeft.setPower(1);
             frontRight.setPower(-1);
-            backLeft.setPower(-1);
+            backLeft.setPower(-.75);
             backRight.setPower(1);
 
         }
@@ -604,6 +578,30 @@ public class newauto extends LinearOpMode {
         backRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         backLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
+    }
+
+
+    public void movewithdistacne(double power,double distances) {
+        frontRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        frontLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        backRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        backLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        while(distance.getDistance(DistanceUnit.INCH)>=distances && opModeIsActive()){
+            //frontRight.setPower(-power);
+            //frontLeft.setPower(power);
+            //backRight.setPower(power);
+            //backLeft.setPower(-power-.2);
+            frontLeft.setPower(power);
+            frontRight.setPower(power);
+            backLeft.setPower(power);
+            backRight.setPower(power);
+
+        }
+        stopMotors();
+        frontRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        frontLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        backRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        backLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
     }
     public void strafeRightwithcrane(double power, int position,double powerc, int timec)  {
         frontLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -706,6 +704,7 @@ public class newauto extends LinearOpMode {
     public void spin(double power, int position) {
         telemetry.addData("spin", Spin.getCurrentPosition());
         telemetry.update();
+        Spin.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         Spin.setTargetPosition(position);
         Spin.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         Spin.setPower(power);
