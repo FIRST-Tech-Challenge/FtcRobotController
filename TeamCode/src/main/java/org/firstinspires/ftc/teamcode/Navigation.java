@@ -389,9 +389,9 @@ public class Navigation {
 
             robot.telemetry.addData("Target X", target.x);
             robot.telemetry.addData("Target Y", target.y);
-            robot.telemetry.addData("strafe testing", (target.y-currentY));
+            robot.telemetry.addData("strafe testingy", (target.y-currentY));
             robot.telemetry.addData("strafe testingx", (target.x-currentX));
-            robot.telemetry.addData("Strafe angle", getAngleBetween(currentX,currentY, target.x,target.y));
+            robot.telemetry.addData("get angle between angle", getAngleBetween(currentX,currentY, target.x,target.y));
             robot.telemetry.update();
 
             if (distanceToTarget > EPSILON_LOC) {
@@ -424,8 +424,9 @@ public class Navigation {
     }
 
     /** Determines the angle between the horizontal axis and the segment connecting A and B.
+     *  TODO: update this method to be consistent with new coordinate system
      */
-    private double getAngleBetween(double x1, double y1, double x2, double y2) { return Math.atan2((y2 - y1), (x2 - x1)); }
+    private double getAngleBetween(double x1, double y1, double x2, double y2) { return -1* Math.atan2((y2 - y1), (x2 - x1)); }
 
     /** Calculates the euclidean distance between two points.
      *
@@ -546,15 +547,19 @@ public static class AutonomousPaths {
     //Positions
 
     //Junctions
-    public static Position nearHighJunction = new Position(1 * TILE_SIZE, -1.5*TILE_SIZE, "POI nearHighJunction", Action.DELIVER_CONE_HIGH, 1, 1, Math.PI / 2);
+//    public static Position nearHighJunction = new Position(1 * TILE_SIZE, -1.5*TILE_SIZE, "POI nearHighJunction", Action.DELIVER_CONE_HIGH, 1, 1, Math.PI / 2);
+    public static Position nearHighJunction = new Position(1 * TILE_SIZE, -1.5*TILE_SIZE, "POI nearHighJunction", Action.NONE, 1, 1, Math.PI / 2);
+//    public static Position farHighJunction = new Position(0.5 * TILE_SIZE,
+//            -2 * TILE_SIZE, "POI farHighJunction", Action.DELIVER_CONE_HIGH_90, 1, 1, Math.PI / 2);
     public static Position farHighJunction = new Position(0.5 * TILE_SIZE,
-            -2 * TILE_SIZE, "POI farHighJunction", Action.DELIVER_CONE_HIGH_90, 1, 1, Math.PI / 2);
+            -2 * TILE_SIZE, "POI farHighJunction", Action.NONE, 1, 1, Math.PI / 2);
     public static Position mediumJunction = new Position(0, -1.5*TILE_SIZE, "POI mediumJunction", Action.DELIVER_CONE_MEDIUM, 1, 1, 0);
     public static Position nearLowJunction = new Position(0.5*TILE_SIZE, 0, "POI nearLowJunction", Action.DELIVER_CONE_LOW, 1, 1, 0);
     public static Position farLowJunction = new Position(-0.5*TILE_SIZE, -TILE_SIZE, "POI farLowJunction", Action.DELIVER_CONE_LOW, 1, 1, 0);
 
     //Cone Stack
-    public static Position coneStack1 = new Position(-0.75 * TILE_SIZE, -2 * TILE_SIZE, "POI coneStackFirstCone", Action.PICK_UP_FIRST_STACK_CONE, 1, 1, Math.PI / 2);
+//    public static Position coneStack1 = new Position(-0.75 * TILE_SIZE, -2 * TILE_SIZE, "POI coneStackFirstCone", Action.PICK_UP_FIRST_STACK_CONE, 1, 1, Math.PI / 2);
+    public static Position coneStack1 = new Position(-0.75 * TILE_SIZE, -2 * TILE_SIZE, "POI coneStackFirstCone", Action.NONE, 1, 1, Math.PI / 2);
     public static Position coneStack2 = new Position(-0.75 * TILE_SIZE, -2 * TILE_SIZE, "POI coneStackSecondCone", Action.PICK_UP_SECOND_STACK_CONE, 1, 1, Math.PI / 2);
 
     //Intermediate Locations. Since these values could be transformed, inner refers to the middle of the entire field, center
