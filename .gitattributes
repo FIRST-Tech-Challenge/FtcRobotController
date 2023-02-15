@@ -1,1 +1,3 @@
-FtcRobotController/** linguist-vendored
+FtcRobotController/** linguist-vendored=true
+TeamCode/src/main/java/org/firstinspires/ftc/teamcode/roadrunner/** linguist-vendored=true
+Blacksmith/src/test/java/testutil/roadrunner/** linguist-vendored=true
