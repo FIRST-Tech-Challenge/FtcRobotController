@@ -99,6 +99,11 @@ public class HardwareSlimbot
     public double       turretMotorPwr     = 0.0;     // turret motor power setpoint (-1.0 to +1.0)
     public double       turretMotorAmps    = 0.0;     // turret motor current power draw (Amps)
 
+    PIDControllerTurret turretPidController;          // PID parameters for the turret motor:
+    public double       turretMotorPID_p   = 0.0200;  //   p = proportional
+    public double       turretMotorPID_i   = 0.0000;  //   i = integral
+    public double       turretMotorPID_d   = 0.0007;  //   d = derivative
+
     protected AnalogInput turretEncoder    = null;    // US Digital absolute magnetic encoder (MA3)
     public double       turretAngle        = 0.0;     // 0V = 0 degrees; 3.3V = 359.99 degrees
     public double       turretAngleOffset  = 299.0;   // allows us to adjust the 0-360 deg range
@@ -606,7 +611,7 @@ public class HardwareSlimbot
         }
         else {
         // Limit motor acceleration by clamping how big a change we can do in one cycle
-        power = restrictDeltaPower( power, turretMotorPwrSet, 0.25 );
+        power = restrictDeltaPower( power, turretMotorPwrSet, 0.333 );
         // Positive turret power
           if(power > 0.0) {
             // Limit automatic turret movement to within the min/max safe range
@@ -722,8 +727,6 @@ public class HardwareSlimbot
         return pMin;
     }
 
-    PIDControllerTurret turretPidController;
-
     /*--------------------------------------------------------------------------------------------*/
     /* turretPIDPosInit()                                                                         */
     /* - newAngle = desired turret angle                                                          */
@@ -739,7 +742,10 @@ public class HardwareSlimbot
 
         double pStatic = getInterpolatedMinPower(0.0500, 12800, 0.0400, 13900);
 
-        turretPidController = new PIDControllerTurret(0.018, 0.0005, 0.0, pStatic);
+        turretPidController = new PIDControllerTurret( turretMotorPID_p, 
+                                                       turretMotorPID_i,
+                                                       turretMotorPID_d,
+                                                       pStatic );
 
         // Are we ALREADY at the specified angle?
         if( Math.abs(degreesToGo) <= 1.0 )
@@ -777,19 +783,37 @@ public class HardwareSlimbot
             // Current distance from target (angle degrees)
             double degreesToGo = turretAngleTarget - turretAngle;
             double degreesToGoAbs = Math.abs(degreesToGo);
-            int waitCycles = (teleopMode) ? 5 : 2;
-            double power = turretPidController.update(turretAngleTarget, turretAngle);
-            turretMotorSetPower(power);
+            int waitCycles = (teleopMode)? 5 : 2;
+            double turretMotorPower = turretPidController.update( turretAngleTarget, turretAngle );
+            turretMotorSetPower( turretMotorPower );
             // Have we achieved the target?
             // (temporarily limit to 16 cycles when verifying any major math changes!)
+//          if( turretMotorCycles >= 16 ) {
             if( degreesToGoAbs <= 1.0 ) {
+                turretMotorSetPower( 0.0 );
                 if( ++turretMotorWait >= waitCycles ) {
                     turretMotorPIDAuto = false;
-                    turretMotorSetPower(0.0);
                     writeTurretLog();
                 }
             }
+            // No, still not within tolerance of desired target
+            else {
+                // Reset the wait count back to zero
+                turretMotorWait = 0;
+            }
         } // turretMotorPIDAuto
+
+        // Has a fixed power movement been initiated?
+        else if( turretMotorRunning ) {
+            if((turretMotorPwrSet > 0) && (turretAngle >= TURRET_ANGLE_MAX)) {
+                // If we are at max angle, set the power to 0.
+                turretMotorSetPower(0.0);
+            } else if((turretMotorPwrSet < 0) && (turretAngle <= TURRET_ANGLE_MIN)) {
+                // If we are at max angle, set the power to 0.
+                turretMotorSetPower(0.0);
+            }
+        } // turretMotorRunning
+
     } // turretPIDPosRun
 
     // pStaticLower = 0.0 @ V
@@ -1074,6 +1098,7 @@ public class HardwareSlimbot
                 turretMotorSetPower( turretMotorPower );
             }
         } // turretMotorAuto
+
         // Has a fixed power movement been initiated?
         else if( turretMotorRunning ) {
             if((turretMotorPwrSet > 0) && (turretAngle >= TURRET_ANGLE_MAX)) {
@@ -1083,7 +1108,8 @@ public class HardwareSlimbot
                 // If we are at max angle, set the power to 0.
                 turretMotorSetPower(0.0);
             }
-        }
+        } // turretMotorRunning
+
     } // turretPosRun
 
     /*--------------------------------------------------------------------------------------------*/
@@ -1106,6 +1132,9 @@ public class HardwareSlimbot
         try {
             turretLog = new FileWriter(filePath, false);
             turretLog.write("TurretMotor\r\n");
+            turretLog.write("PID-p," + turretMotorPID_p + "\r\n");
+            turretLog.write("PID-i," + turretMotorPID_i + "\r\n");
+            turretLog.write("PID-d," + turretMotorPID_d + "\r\n");
             turretLog.write("Battery Voltage," + turretMotorLogVbat + "\r\n");
             turretLog.write("Target Angle," + turretAngleTarget + "\r\n");
             // Log Column Headings
