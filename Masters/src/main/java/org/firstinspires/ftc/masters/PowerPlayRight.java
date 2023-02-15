@@ -45,11 +45,6 @@ public class PowerPlayRight extends LinearOpMode {
     public static  double xCenterJunction = 8;
     public static double yCenterJunction =-33;
 
-    public static double xIntermediateStack =20;
-    public static double yIntermediateStack = -12;
-    public static double xStack =56;
-    public static double yStack = -8;
-
     public static int turnJunction = 45;
 
     @Override
@@ -112,7 +107,6 @@ public class PowerPlayRight extends LinearOpMode {
                     if (!drive.isBusy()) {
                         currentState= State.ALIGN;
                         drive.alignPole(CV.sleevePipeline.position);
-                       // drive.followTrajectoryAsync(forward);
                     } else {
                         armTarget = ARM_MID_TOP;
                         if (drive.armMotor.getCurrentPosition()>100){
@@ -199,10 +193,11 @@ public class PowerPlayRight extends LinearOpMode {
             liftPIDController.setTarget(liftTarget);
 
             double power = liftPIDController.calculatePower();
+            double powerLeft= liftPIDController.calculatePower(drive.slideOtherer);
 
             drive.linearSlide.setPower(power);
             drive.frontSlide.setPower(power);
-            drive.slideOtherer.setPower(power);
+            drive.slideOtherer.setPower(powerLeft);
 
           //  telemetry.addData("power ", power);
             telemetry.addData("arm target", armTarget);
