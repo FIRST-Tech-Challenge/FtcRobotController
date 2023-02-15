@@ -44,11 +44,11 @@ public class UnderArm implements Subsystem {
 
     public static double ELBOW_DEG_MIN = -80;
     public static double WRIST_DEG_MIN = -180;
-    public static double TURRET_DEG_MIN = -45;
+    public static double TURRET_DEG_MIN = -360;
 
     public static double ELBOW_DEG_MAX = 140;
     public static double WRIST_DEG_MAX = 180;
-    public static double TURRET_DEG_MAX = 45;
+    public static double TURRET_DEG_MAX = 360;
 
     public static double LASSO_CLOSED = 1150;
     public static double LASSO_OPEN = 2500;
@@ -99,10 +99,10 @@ public class UnderArm implements Subsystem {
         fieldPositionTarget = getUnderArmPosition(); //crane default IK starting point is
     }
 
-    Vector3 undeArmPosition = new Vector3(0,0,0);
+    Vector3 underArmPosition = new Vector3(0,0,0);
 
     public Vector3 getUnderArmPosition(){
-        return undeArmPosition;        //returns the calculated underarm position
+        return underArmPosition;        //returns the calculated underarm position
     }
 
     Vector3 fieldPositionTarget = new Vector3(0,0,0);
@@ -231,16 +231,16 @@ public class UnderArm implements Subsystem {
 
         z /= INCHES_PER_METER;
 
-        calculatedTurretAngle = Math.toDegrees(Math.atan2(y - undeArmPosition.y, x-undeArmPosition.x));
+        calculatedTurretAngle = Math.toDegrees(Math.atan2(y - underArmPosition.y, x- underArmPosition.x));
 
         calculatedHeight = z-shoulderHeight;
 
-        calculatedDistance = (Math.sqrt(Math.pow(y - undeArmPosition.y,2) + Math.pow(x - undeArmPosition.x,2)))/INCHES_PER_METER;
+        calculatedDistance = (Math.sqrt(Math.pow(y - underArmPosition.y,2) + Math.pow(x - underArmPosition.x,2)))/INCHES_PER_METER;
 
-        double virtualLength = Math.sqrt( Math.pow(x,2) + Math.pow(y,2) );
+        double virtualLength = Math.sqrt( Math.pow(calculatedDistance,2) + Math.pow(calculatedHeight,2) );
 
-        calculatedElbowAngle = 2*Math.asin( virtualLength / (ARM_LENGTH + ELBOW_LENGTH) );
-        calculatedShoulderAngle = Math.atan2( y , x );
+        calculatedElbowAngle = Math.toDegrees(2*Math.asin( virtualLength / (SHOULDER_TO_ELBOW + ELBOW_TO_WRIST) ));
+        calculatedShoulderAngle = Math.toDegrees(Math.atan2( calculatedDistance , calculatedHeight ) + (90 - calculatedElbowAngle/2));
 
         return true;
     }
@@ -248,19 +248,19 @@ public class UnderArm implements Subsystem {
     //todo these adjust methods are horrid - they need to have range limits applied to them and time based velocity if we are keeping them
 
     public void adjustShoulder(double speed){
-        shoulderTargetAngle -= 2*speed;
+        shoulderTargetAngle -= 20*speed*robot.deltaTime;
     }
 
     public void adjustElbow(double speed){
-        elbowTargetAngle += 2*speed;
+        elbowTargetAngle += 20*speed*robot.deltaTime;
     }
 
     public void adjustLasso(double speed){
-        wristTargetAngle += 2*speed;
+        wristTargetAngle += 20*speed*robot.deltaTime;
     }
 
     public void adjustTurret(double speed){
-        turretTargetAngle += 2*speed;
+        turretTargetAngle += 40*speed*robot.deltaTime;
     }
 
     public static double ADJUST_HEIGHT_SPEED = 2;
@@ -284,7 +284,7 @@ public class UnderArm implements Subsystem {
         double headingRad = robot.driveTrain.getRawHeading();
         double underArmLengthInches = robot.driveTrain.getChassisLength();
 
-        undeArmPosition =  new Vector3(robotPosInches.getX()+underArmLengthInches*Math.cos(headingRad),
+        underArmPosition =  new Vector3(robotPosInches.getX()+underArmLengthInches*Math.cos(headingRad),
                 robotPosInches.getY()+underArmLengthInches*Math.sin(headingRad),
                 UNDERARM_HEIGHT); //calculates and sets the position of underarm in world coordinates
 
@@ -306,10 +306,12 @@ public class UnderArm implements Subsystem {
     }
 
     public void grip(){
+        lassoGripped = true;
         lassoServo.setPosition(servoNormalizeExtended(LASSO_CLOSED));
     }
 
     public void release(){
+        lassoGripped = false;
         lassoServo.setPosition(servoNormalizeExtended(LASSO_OPEN));
     }
 
@@ -341,14 +343,19 @@ public class UnderArm implements Subsystem {
             telemetryMap.put("Shoulder Target Angle", shoulderTargetAngle);
             telemetryMap.put("Elbow Target Angle", elbowTargetAngle);
             telemetryMap.put("Wrist Target Angle", wristTargetAngle);
-            telemetryMap.put("Under Arm Pos X", undeArmPosition.x);
-            telemetryMap.put("Under Arm Pos Y", undeArmPosition.y);
+            telemetryMap.put("Turret Target Angle", turretTargetAngle);
+            telemetryMap.put("Under Arm Pos X", underArmPosition.x);
+            telemetryMap.put("Under Arm Pos Y", underArmPosition.y);
             telemetryMap.put("Under Arm Target X", fieldPositionTarget.x);
             telemetryMap.put("Under Arm Target Y", fieldPositionTarget.y);
             telemetryMap.put("Under Arm Target Z", fieldPositionTarget.z);
 
             telemetryMap.put("Elbow Target PWM", elbowServoValue(elbowTargetAngle));
+            telemetryMap.put("Shoulder Target PWM", shoulderServoValue(shoulderTargetAngle));
             telemetryMap.put("Wrist Target PWM", wristServoValue(wristTargetAngle));
+            telemetryMap.put("Turret Target PWM", turretServoValue(turretTargetAngle));
+            telemetryMap.put("Lasso Target PWM", lassoServo.getPosition());
+            telemetryMap.put("Lasso Grip", lassoGripped);
 
             telemetryMap.put("chariot distance", getChariotDistance());
 

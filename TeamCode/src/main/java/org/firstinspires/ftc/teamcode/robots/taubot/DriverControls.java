@@ -352,20 +352,24 @@ public class DriverControls {
             robot.articulate(Robot.Articulation.TRANSFER);
         }
 
+        if(stickyGamepad2.x){
+            robot.underarm.articulate(UnderArm.Articulation.noIK);
+        }
+
         if(stickyGamepad2.b){
             robot.articulate(Robot.Articulation.MANUAL);
         }
 
         if(notJoystickDeadZone(gamepad2.right_stick_x)){
-            robot.underarm.adjustY(gamepad2.right_stick_x);
+            robot.underarm.adjustShoulder(gamepad2.right_stick_x);
         }
 
         if(notJoystickDeadZone(gamepad2.right_stick_y)){
-            robot.underarm.adjustX(gamepad2.right_stick_y);
+            robot.underarm.adjustElbow(gamepad2.right_stick_y);
         }
 
-        if(notJoystickDeadZone(gamepad2.right_stick_y)){
-            robot.underarm.adjustX(gamepad2.right_stick_y);
+        if(notJoystickDeadZone(gamepad2.left_stick_y)){
+            robot.underarm.adjustTurret(gamepad2.left_stick_y);
         }
 
         if (gamepad1.right_trigger>.05) robot.underarm.adjustZ(gamepad1.right_trigger);
