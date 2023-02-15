@@ -21,8 +21,8 @@ import org.firstinspires.ftc.masters.drive.SampleMecanumDrive;
 import java.util.Date;
 
 @Config
-@Autonomous(name = "Power Play Right Cycling")
-public class PowerPlayRightCycling extends LinearOpMode {
+@Autonomous(name = "Power Play Left Cycling")
+public class PowerPlayLeftCycling extends LinearOpMode {
 
     enum State {
         FIRST_DEPOSIT_PATH_1,
@@ -58,7 +58,7 @@ public class PowerPlayRightCycling extends LinearOpMode {
 
     int armTarget = 0, liftTarget = 0;
 
-    public static double xStack = 53;
+    public static double xStack = -53;
     public static double yStack = -13;
 
     public static int turnJunction = 45;
@@ -72,7 +72,7 @@ public class PowerPlayRightCycling extends LinearOpMode {
         PowerPlayComputerVisionPipelines.SleevePipeline.SleeveColor sleeveColor = null;
 
         SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
-        Pose2d startPose = new Pose2d(new Vector2d(36, -64.25), Math.toRadians(90)); //Start position for roadrunner
+        Pose2d startPose = new Pose2d(new Vector2d(-37, -64.25), Math.toRadians(90)); //Start position for roadrunner
         drive.setPoseEstimate(startPose);
 
         liftPIDController = new LiftPIDController(drive.linearSlide, drive.frontSlide, drive.slideOtherer);
@@ -84,11 +84,11 @@ public class PowerPlayRightCycling extends LinearOpMode {
 
         // Trajectory from start to nearest tall pole
         Trajectory firstDepositPath1 = drive.trajectoryBuilder(startPose)
-                .splineToConstantHeading(new Vector2d(36, -14), Math.toRadians(90))
+                .splineToConstantHeading(new Vector2d(-36, -14), Math.toRadians(90))
                 .build();
 
-        Trajectory firstDepositScoreCone = drive.trajectoryBuilder(firstDepositPath1.end().plus(new Pose2d(0, 0, Math.toRadians(turnJunction))))
-                .lineTo(new Vector2d(31, -8))
+        Trajectory firstDepositScoreCone = drive.trajectoryBuilder(firstDepositPath1.end().plus(new Pose2d(0, 0, Math.toRadians(-turnJunction))))
+                .lineTo(new Vector2d(-31, -8))
                 .build();
 
         Trajectory backUpFromJunction = drive.trajectoryBuilder(firstDepositScoreCone.end())
@@ -96,21 +96,21 @@ public class PowerPlayRightCycling extends LinearOpMode {
                 .build();
 
 
-        Trajectory cyclePickupPath1 = drive.trajectoryBuilder(backUpFromJunction.end().plus(new Pose2d(0,0,Math.toRadians(-turnJunction-90))))
-                .splineToLinearHeading(new Pose2d(new Vector2d(53, -13),0),0)
+        Trajectory cyclePickupPath1 = drive.trajectoryBuilder(backUpFromJunction.end().plus(new Pose2d(0,0,Math.toRadians(turnJunction-90))))
+                .splineToLinearHeading(new Pose2d(new Vector2d(-53, -13),0),0)
                // .lineTo(new Vector2d(xStack, yStack))
                 .build();
         Trajectory cyclePickupPath2 = drive.trajectoryBuilder(cyclePickupPath1.end())
-                .lineTo(new Vector2d(xStack+7.5, yStack))
+                .lineTo(new Vector2d(-(xStack+7.5), yStack))
                 .build();
         ;
 
         Trajectory cycleScorePath1 = drive.trajectoryBuilder(cyclePickupPath2.end())
-                .lineTo(new Vector2d(36, -13))
+                .lineTo(new Vector2d(-36, -13))
                 .build();
 
-        Trajectory cycleDepositScoreCone = drive.trajectoryBuilder(cycleScorePath1.end().plus(new Pose2d(0, 0, Math.toRadians(-turnJunction))))
-                .lineTo(new Vector2d(31, -8))
+        Trajectory cycleDepositScoreCone = drive.trajectoryBuilder(cycleScorePath1.end().plus(new Pose2d(0, 0, Math.toRadians(turnJunction))))
+                .lineTo(new Vector2d(-31, -8))
                 .build();
 
         Trajectory cycleBackUpFromJunction = drive.trajectoryBuilder(cycleDepositScoreCone.end())
@@ -118,9 +118,14 @@ public class PowerPlayRightCycling extends LinearOpMode {
                 .build();
 
         Trajectory fromScoreNewConeToConeStack = drive.trajectoryBuilder(cycleScorePath1.end())
-                .lineToLinearHeading(new Pose2d(new Vector2d(59, -14), Math.toRadians(0)))
+                .lineToLinearHeading(new Pose2d(new Vector2d(-59, -14), Math.toRadians(0)))
                 .build();
 
+
+
+//        Trajectory parkRed = drive.trajectoryBuilder(scoreNewCone.end())
+//                .splineToLinearHeading(new Pose2d(new Vector2d(23.5,-11.5),Math.toRadians(315)),Math.toRadians(155))
+//                .build();
 
         waitForStart();
 
@@ -180,6 +185,7 @@ public class PowerPlayRightCycling extends LinearOpMode {
                     break;
                 case FIRST_DEPOSIT_SCORE_CONE:
                     if (!drive.isBusy()) {
+
                         //sleep(100);
                         drive.openClaw();
                         sleep(500);
@@ -198,22 +204,22 @@ public class PowerPlayRightCycling extends LinearOpMode {
                 case CYCLE_PICKUP_TURN:
                     if (!drive.isBusy()){
                         time = new Date().getTime() - startTime;
-                        if (time>22*1000){
-
+                        if (time>20*1000){
                             if (drive.linearSlide.getCurrentPosition() < 100) {
                                 armTarget = 0;
                             }
                             if (sleeveColor == PowerPlayComputerVisionPipelines.SleevePipeline.SleeveColor.RED) {
 
                             } else if (sleeveColor == PowerPlayComputerVisionPipelines.SleevePipeline.SleeveColor.GREEN) {
-                                Trajectory parkGreen = drive.trajectoryBuilder(drive.getPoseEstimate())
-                                        .lineTo(new Vector2d(60, -12))
+
+                                Trajectory parkGreen = drive.trajectoryBuilder(cycleBackUpFromJunction.end().minus(new Pose2d(0, 0, Math.toRadians(-turnJunction))))
+                                        .lineTo(new Vector2d(-60, -12))
                                         .build();
                                 drive.followTrajectoryAsync(parkGreen);
                                 currentState = State.PARK_GREEN;
                             } else if (sleeveColor == PowerPlayComputerVisionPipelines.SleevePipeline.SleeveColor.GRAY) {
-                                Trajectory parkGray = drive.trajectoryBuilder(drive.getPoseEstimate())
-                                        .lineTo(new Vector2d(12, -12))
+                                Trajectory parkGray = drive.trajectoryBuilder(cycleBackUpFromJunction.end().minus(new Pose2d(0, 0, Math.toRadians(-turnJunction))))
+                                        .lineTo(new Vector2d(-12, -12))
                                         .build();
                                 currentState = State.PARK_GRAY;
                                 drive.followTrajectoryAsync(parkGray);
@@ -339,6 +345,7 @@ public class PowerPlayRightCycling extends LinearOpMode {
                         }
                     }
                     break;
+
             }
 
             if (retractArm){
