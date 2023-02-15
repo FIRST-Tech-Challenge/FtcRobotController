@@ -362,6 +362,51 @@ public class newauto extends LinearOpMode {
         return foundAngle;
     }
 
+
+    public void strafeLeftwithdistanceandcraneg(double power, int distances,double powerc, int timec) {
+
+            frontLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+            frontRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+            backLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+            backRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+            boolean foundAngle;
+            foundAngle = false;
+
+                angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
+                final double startingAngle = angles.firstAngle;
+                double currentAngle =angles.firstAngle;
+                telemetry.addData("Angle", currentAngle);
+                telemetry.addData("startingangle", startingAngle);
+                telemetry.update();
+        frontLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        frontRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        backLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        backRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
+        crane(powerc, timec);
+
+        while(distance.getDistance(DistanceUnit.INCH)<distances && opModeIsActive()){
+            if (angles.firstAngle >= startingAngle - 1 && angles.firstAngle <= startingAngle + 1) {
+                frontLeft.setPower(1);
+                frontRight.setPower(-1);
+                backLeft.setPower(-1);
+                backRight.setPower(1);
+            }
+            else if (angles.firstAngle>=startingAngle+4){
+                frontLeft.setPower(-1);
+                frontRight.setPower(1);
+                backLeft.setPower(-1);
+                backRight.setPower(1);
+
+            }
+        }
+        stopMotors();
+        frontRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        frontLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        backRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        backLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+    }
     public void stopMotors() {
         frontLeft.setPower(0);
         frontRight.setPower(0);
