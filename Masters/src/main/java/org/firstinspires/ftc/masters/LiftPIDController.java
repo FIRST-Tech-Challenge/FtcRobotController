@@ -33,7 +33,7 @@ public class LiftPIDController {
 
         double power = pid +f;
 
-       if (target<150){
+       if (target<100){
            power = power* multiplierZero;
        } else{
            power = power*multiplier;

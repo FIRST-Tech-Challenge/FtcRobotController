@@ -213,8 +213,6 @@ public class PowerPlayTeleopColorado extends LinearOpMode {
                 maxPowerConstraint = 1;
             } else if (gamepad1.x) {
                 maxPowerConstraint = 0.75;
-            } else if (gamepad1.b) {
-                maxPowerConstraint = 0.25;
             }
 
             if (gamepad1.y){
@@ -228,7 +226,11 @@ public class PowerPlayTeleopColorado extends LinearOpMode {
                 yPushed = false;
             }
             if (aligning){
-                aligning = !alignPole();
+                if (alignPole()){
+                    aligning = false;
+
+                }
+
             }
 
 
