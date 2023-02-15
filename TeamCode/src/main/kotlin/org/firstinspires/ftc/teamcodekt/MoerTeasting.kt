@@ -14,19 +14,6 @@ object MoerTeasting {
 var HELLO = 4.0.toInt().coerceAtLeast(2).clamp<Int>(0, 5)
 var WHELLO = "4"
 
-// SUCC := λnfa.f﹩nfa
-//
-// ZERO  := λfa.a
-// ONE   := λfa.fa
-// TWO   := λfa.f﹩fa
-// THREE := λfa.f﹩f﹩fa
-// FOUR  := SUCC(THREE)
-// FIVE  := SUCC(FOUR)
-//
-// ADD := λxy.ySUCCx
-// MUL := λxy.y(ADDx)ZERO // there must be a better way
-// POW := λxy.yx // Idk how this works but I derived it by accident
-
 fun main() {
     val jstr = """
         T := λxy.x
@@ -42,7 +29,7 @@ fun main() {
         XOR  := λab.a(~b)b
         
         NAND := λab.a(~b)T
-        NOR  := λa.λb.a(λx.λy.y)﹩(λa.λx.λy.ayx)b
+        NOR  := λab.aF(~b)
         
         // ---------------------------------------------------
         
@@ -57,7 +44,7 @@ fun main() {
         
         ADD := λxy.y(T)SUCCx
         MUL := λxy.y(T)(ADDx)ZERO
-        POW := λxy.y(T)(SUCCx)ONE
+        POW := λxy.y(T)(MULx)ONE
         
         // ---------------------------------------------------
         
@@ -73,7 +60,7 @@ fun main() {
            ,count﹩GET﹩PRED(TWO)
            ,count﹩GET﹩ADD(THREE)(TWO)
            ,count﹩GET﹩MUL(THREE)(TWO)
-           ,count﹩GET﹩POW(THREE)(TWO)
+           ,count﹩GET﹩POW(THREE)(THREE)
         ].join('\n')
     """.trimIndent()
         .expand3()

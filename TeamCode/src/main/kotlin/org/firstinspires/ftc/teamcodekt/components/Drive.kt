@@ -3,6 +3,7 @@
 
 package org.firstinspires.ftc.teamcodekt.components
 
+import com.acmerobotics.dashboard.config.Config
 import com.arcrobotics.ftclib.hardware.RevIMU
 import com.qualcomm.robotcore.hardware.DcMotor
 import com.qualcomm.robotcore.hardware.DcMotorEx
