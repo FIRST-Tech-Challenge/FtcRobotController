@@ -5,7 +5,7 @@ import com.arcrobotics.ftclib.controller.PIDFController;
 import com.arcrobotics.ftclib.hardware.motors.Motor;
 import com.qualcomm.robotcore.hardware.AnalogInput;
 import com.qualcomm.robotcore.hardware.HardwareMap;
-import com.qualcomm.robotcore.hardware.VoltageSensor;
+
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 
 @Config
@@ -14,52 +14,63 @@ public class Arm{
     private Motor armMotor;
     private final AnalogInput sensor;
 
-    // Declaring and Initializing PIDF values
+//    Declaring and Initializing PIDF values
 //    public static double armKp = 0.003;
 //    public static double armKi = 0.000001;
 //    public static double armKd = 0.000005;
 //    public static double armKf = 0.0000001;
 
     // New PID values
-    public static double armKp = 0.012;
+    public static double armKpUp = 0.016; // old is 0.012
+    public static double armKpDown = 0.0035;
     public static double armKi = 0.00001;
     public static double armKd = 0.00002;
     public static double armKf = 0;
     public static double EXTAKE_POS = 185; // 950 old val
-    public static double INTAKE_POS = 82;
+    public static double INTAKE_POS = 82; // in degrees of absolute encoder
 
     // Initially set to 0 because we only want the claw to move when given input from the controller
     // initializing the targetPos value to a greater positive value would cause the update() method to
     // immediately start moving the arm since a difference between the current motor encoder position
     // and the target position is created (error).
-    private double targetPos =85;
+    private double targetPos = 85;
 
     public Arm(HardwareMap hardwareMap){
         armMotor = new Motor(hardwareMap, "ARM", Motor.GoBILDA.RPM_84); // Pin 0 on control hub -> pin 1 control hub
         armMotor.setZeroPowerBehavior(Motor.ZeroPowerBehavior.BRAKE);
         armMotor.setRunMode(Motor.RunMode.VelocityControl);
         //armMotor.resetEncoder(); // We want the arm to start at a position of 0
-        armPIDF = new PIDFController(armKp, armKi, armKd, armKf);
+        armPIDF = new PIDFController(armKpUp, armKi, armKd, armKf);
         sensor = hardwareMap.analogInput.get("ARM_ENC"); // encoder port 1 on control hub
     }
 
     public double getArmPosition(){
         // ENCODER TICKS
         // return 2.5 * 480 * ((sensor.getVoltage() - 0.3520574787720445) - 0.5);
-
         // DEGREES
           return (sensor.getVoltage()/3.3) *360;
     }
 
     public void update(Telemetry telemetry){
-        armPIDF.setPIDF(armKp, armKi, armKd, armKf);
+        if(getArmPosition() < targetPos){
+            armPIDF.setPIDF(armKpUp, armKi, armKd, armKf);
+            telemetry.addData("Kp being used: ", armKpUp);
+        }
+
+        else if(getArmPosition() > targetPos){
+            armPIDF.setPIDF(armKpDown, armKi, armKd, armKf);
+            telemetry.addData("Kp being used: ", armKpDown);
+        }
+
         // Correction represents the error term of the PIDF loop
         double correction = armPIDF.calculate(getArmPosition(), targetPos);
 
         telemetry.addData("Correction: ", correction);
         telemetry.addData("Target Position: ", targetPos);
         telemetry.addData("Motor Position: ", getArmPosition());
+
         telemetry.update();
+
         armMotor.set(correction); // sets a PID-tuned voltage for the arm motor
     }
 
