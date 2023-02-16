@@ -64,6 +64,8 @@ public class PowerPlayRightCycling extends LinearOpMode {
     public static int turnJunction = 45;
     boolean retractArm=false;
 
+    double MAX_VELOCITY = 435/60 * 384.5;
+
     @Override
     public void runOpMode() {
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
@@ -364,11 +366,16 @@ public class PowerPlayRightCycling extends LinearOpMode {
             liftPIDController.setTarget(liftTarget);
 
             double power = liftPIDController.calculatePower();
-            double powerLeft= liftPIDController.calculatePower(drive.slideOtherer);
+            double velocity = power *MAX_VELOCITY;
+            //double powerLeft= liftPIDController.calculatePower(drive.slideOtherer);
 
-            drive.linearSlide.setPower(power);
-            drive.frontSlide.setPower(power);
-            drive.slideOtherer.setPower(powerLeft);
+//            drive.linearSlide.setPower(power);
+//            drive.frontSlide.setPower(power);
+//            drive.slideOtherer.setPower(power);
+
+            drive.linearSlide.setVelocity(velocity);
+            drive.frontSlide.setVelocity(velocity);
+            drive.slideOtherer.setVelocity(velocity);
 
             //  telemetry.addData("power ", power);
             telemetry.addData("arm target", armTarget);
