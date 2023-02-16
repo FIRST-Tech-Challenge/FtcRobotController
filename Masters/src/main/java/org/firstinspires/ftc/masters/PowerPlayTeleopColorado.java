@@ -46,7 +46,7 @@ public class PowerPlayTeleopColorado extends LinearOpMode {
     DcMotorEx frontSlide = null;
     DcMotorEx slideOtherer = null;
 
-    private final double ticks_in_degree = 1425/360;
+    private final double MAX_VELOCITY= 435/60*384.5;
 
     public static double ALIGN_SPEED =0.2;
 
@@ -456,11 +456,22 @@ public class PowerPlayTeleopColorado extends LinearOpMode {
         liftPIDController.setTarget(slideTarget);
 
         double power= liftPIDController.calculatePower();
-        double powerLeft= liftPIDController.calculatePower(slideOtherer);
+//        double powerLeft= liftPIDController.calculatePower(slideOtherer);
+//
+//        linearSlideMotor.setPower(power);
+//        frontSlide.setPower(power);
+//        slideOtherer.setPower(powerLeft);
 
-        linearSlideMotor.setPower(power);
-        frontSlide.setPower(power);
-        slideOtherer.setPower(powerLeft);
+        double velocity = power *MAX_VELOCITY;
+        //double powerLeft= liftPIDController.calculatePower(drive.slideOtherer);
+
+//            drive.linearSlide.setPower(power);
+//            drive.frontSlide.setPower(power);
+//            drive.slideOtherer.setPower(power);
+
+        linearSlideMotor.setVelocity(velocity);
+        frontSlide.setVelocity(velocity);
+        slideOtherer.setVelocity(velocity);
 
         telemetry.addData("slide", linearSlideMotor.getCurrentPosition());
         telemetry.addData("front", frontSlide.getCurrentPosition());
