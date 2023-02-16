@@ -74,7 +74,7 @@ afterEvaluate {
 
                 groupId = 'com.github.RR-9527'
                 artifactId = 'blacksmith-ftc'
-                version = '0.3'
+                version = '0.3.1'
             }
         }
     }
