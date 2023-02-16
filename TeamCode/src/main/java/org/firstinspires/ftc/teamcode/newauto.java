@@ -6,6 +6,7 @@ import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.hardware.rev.RevColorSensorV3;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
@@ -55,7 +56,9 @@ public class newauto extends LinearOpMode {
     DcMotor Spin;
     DcMotor Crane;
     CRServo Left;
+
     Rev2mDistanceSensor distance;
+    RevColorSensorV3 color;
 
 
     BNO055IMU imu;
@@ -171,6 +174,7 @@ public class newauto extends LinearOpMode {
         Spin = hardwareMap.get(DcMotor.class, "Spin");
         Crane = hardwareMap.get(DcMotor.class, "Crane");
 
+        color=hardwareMap.get(RevColorSensorV3.class,"Color");
         distance=hardwareMap.get(Rev2mDistanceSensor.class,"distance");
 
         frontLeft.setDirection(DcMotorSimple.Direction.FORWARD);
@@ -198,14 +202,16 @@ public class newauto extends LinearOpMode {
                 strafeRightwithcrane(1,310,1,500);
                 //gyroTurning(0);
                 */
-            //strafeLeftwithdistanceandcrane(31,-1,2000);
+
+            //move and spin to high junction
             strafeLeftwithcrane(1,2700,-1,3100);
             Crane.setPower(-.1);
             sleep(100);
             spin(1,260);
             move(.5,-400);
+
+            //drop cone
             strafeLeft(1,300);
-            sleep(100);
             //move(.5,40);
             sleep(100);
             //crane(1,200);//
@@ -227,7 +233,7 @@ public class newauto extends LinearOpMode {
                 gyroTurning(-88);
                 move(.2,440);
                 */
-            //side set up
+            //move to stack
             stopMotors();
             gyroTurning(0);
             moveandspin(1,1200,1,591);
@@ -250,7 +256,7 @@ public class newauto extends LinearOpMode {
             strafeLeft(.2,200);
             intake(-1,500);
             strafeRightwithcrane(.2,200,1,1000);
-            gyroTurning(-90);
+            gyroTurning(0);
             //////////////////////////////////////////////////////////////////not made for side past this 
             //move back to stack
             moveandspin(.8,1100,1,-591);
@@ -506,6 +512,50 @@ public class newauto extends LinearOpMode {
 
         }
     }
+    public void movewithdistacne(double power,double distances) {
+        frontRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        frontLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        backRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        backLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        while(distance.getDistance(DistanceUnit.INCH)>=distances && opModeIsActive()){
+            //frontRight.setPower(-power);
+            //frontLeft.setPower(power);
+            //backRight.setPower(power);
+            //backLeft.setPower(-power-.2);
+            frontLeft.setPower(power);
+            frontRight.setPower(power);
+            backLeft.setPower(power);
+            backRight.setPower(power);
+
+        }
+        stopMotors();
+        frontRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        frontLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        backRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        backLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+    }
+    public void movewithcolor(double power,double colors) {
+        frontRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        frontLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        backRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        backLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        while(color.red()==1 && opModeIsActive()){
+            //frontRight.setPower(-power);
+            //frontLeft.setPower(power);
+            //backRight.setPower(power);
+            //backLeft.setPower(-power-.2);
+            frontLeft.setPower(power);
+            frontRight.setPower(power);
+            backLeft.setPower(power);
+            backRight.setPower(power);
+
+        }
+        stopMotors();
+        frontRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        frontLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        backRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        backLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+    }
     public void craneinput(int time) {
         crane(1,time);
         intake(1,1000);
@@ -578,30 +628,6 @@ public class newauto extends LinearOpMode {
         backRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         backLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
-    }
-
-
-    public void movewithdistacne(double power,double distances) {
-        frontRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        frontLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        backRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        backLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        while(distance.getDistance(DistanceUnit.INCH)>=distances && opModeIsActive()){
-            //frontRight.setPower(-power);
-            //frontLeft.setPower(power);
-            //backRight.setPower(power);
-            //backLeft.setPower(-power-.2);
-            frontLeft.setPower(power);
-            frontRight.setPower(power);
-            backLeft.setPower(power);
-            backRight.setPower(power);
-
-        }
-        stopMotors();
-        frontRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        frontLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        backRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        backLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
     }
     public void strafeRightwithcrane(double power, int position,double powerc, int timec)  {
         frontLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
