@@ -58,7 +58,7 @@ public class newauto extends LinearOpMode {
     CRServo Left;
 
     Rev2mDistanceSensor distance;
-    RevColorSensorV3 color;
+    Rev2mDistanceSensor distance2;
 
 
     BNO055IMU imu;
@@ -174,7 +174,7 @@ public class newauto extends LinearOpMode {
         Spin = hardwareMap.get(DcMotor.class, "Spin");
         Crane = hardwareMap.get(DcMotor.class, "Crane");
 
-        color=hardwareMap.get(RevColorSensorV3.class,"Color");
+        distance2=hardwareMap.get(Rev2mDistanceSensor.class,"distance 2");
         distance=hardwareMap.get(Rev2mDistanceSensor.class,"distance");
 
         frontLeft.setDirection(DcMotorSimple.Direction.FORWARD);
@@ -205,13 +205,14 @@ public class newauto extends LinearOpMode {
 
             //move and spin to high junction
             strafeLeftwithcrane(1,2700,-1,3100);
-            Crane.setPower(-.1);
+            Crane.setPower(-.2);
             sleep(100);
             spin(1,260);
-            move(.5,-400);
 
+            //movewithdistance2(.5,12);
+            move(.5, -350);
             //drop cone
-            strafeLeft(1,300);
+                //strafeLeft(1,300);
             //move(.5,40);
             sleep(100);
             //crane(1,200);//
@@ -221,7 +222,7 @@ public class newauto extends LinearOpMode {
 
             //move(.5,180);
             //strafeLeftwithdistanceandcrane(45,1,100);
-            strafeRightwithcrane(1,500,1,600);
+            strafeRightwithcrane(1,300,1,620);
             //gyroTurning(0);
                 /*code with foward
                 //move to stack
@@ -244,20 +245,24 @@ public class newauto extends LinearOpMode {
             //pick up cone
             craneinput(600);
             crane(-1,1000);
-            Left.setPower(.1);
+            Left.setPower(.2);
 
             //move to high junction
             move(.4,-400);
             gyroTurning(0);
-            moveandspinandcrane(.8,-1150,1,315,-1,2000);//-315
-            Crane.setPower(-.02);
+            moveandspinandcrane(.8,-950,1,315,-1,2100);//-315
+            movewithdistance2(.5, 12);
+            Crane.setPower(-.2);
+            move(.5, -230);
+
             stopMotors();
             //strafe onto it
             strafeLeft(.2,200);
+            sleep(100);
             intake(-1,500);
             strafeRightwithcrane(.2,200,1,1000);
             gyroTurning(0);
-            //////////////////////////////////////////////////////////////////not made for side past this 
+            //////////////////////////////////////////////////////////////////not made for side past this
             //move back to stack
             moveandspin(.8,1100,1,-591);
             move(.2,400);
@@ -534,12 +539,13 @@ public class newauto extends LinearOpMode {
         backRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         backLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
     }
-    public void movewithcolor(double power,double colors) {
+
+    public void movewithdistance2(double power,double distances) {
         frontRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         frontLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         backRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         backLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        while(color.red()==1 && opModeIsActive()){
+        while(distance2.getDistance(DistanceUnit.INCH)>=distances && opModeIsActive()){
             //frontRight.setPower(-power);
             //frontLeft.setPower(power);
             //backRight.setPower(power);
@@ -556,6 +562,7 @@ public class newauto extends LinearOpMode {
         backRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         backLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
     }
+
     public void craneinput(int time) {
         crane(1,time);
         intake(1,1000);
