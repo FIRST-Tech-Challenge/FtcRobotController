@@ -165,7 +165,29 @@ public class doubledriver extends LinearOpMode {
                 Crain.setPower(1);
                 Crain.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 while (Crain.isBusy()&&opModeIsActive()){
+                    if (strafeRight) {
+                        frontLeft.setPower(-.8);
+                        frontRight.setPower(1);                         //conecting motor varibles to controler inputs
+                        backLeft.setPower(1);
+                        backRight.setPower(-1);
+                    }
+                    if (strafeLeft) {
+                        frontLeft.setPower(1);
+                        frontRight.setPower(-1);
+                        backLeft.setPower(-.8);
+                        backRight.setPower(1);
+                    }
 
+
+                    frontLeft.setPower(throttle*.91);
+                    frontRight.setPower(throttle);
+                    backLeft.setPower(throttle*.91);
+                    backRight.setPower(throttle);
+
+                    frontLeft.setPower(-turn);
+                    frontRight.setPower(turn);
+                    backLeft.setPower(-turn);
+                    backRight.setPower(turn);
                 }
                 Crain.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
             }
