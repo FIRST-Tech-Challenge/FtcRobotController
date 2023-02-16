@@ -1,7 +1,7 @@
 package org.firstinspires.ftc.teamcode.opModes.test;
 
+import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
-import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.libs.brightonCollege.modeBases.AutonomousModeBase;
 
@@ -18,7 +18,7 @@ import org.firstinspires.ftc.teamcode.libs.brightonCollege.modeBases.AutonomousM
  *  [servo3] Unused
  */
 @Disabled // REMEMBER TO REMOVE THIS WHEN RUNNING.
-@TeleOp(name="Example Iterative Auto Op Mode", group="Example")
+@Autonomous(name="Example Iterative Auto Op Mode", group="Example")
 public class ExampleIterAutoOpMode extends AutonomousModeBase {
     // Declare class members here
 
