@@ -18,8 +18,8 @@ public class TourneyDrive extends LinearOpMode {
 
     private DcMotor liftMotor = null;
 
-    static final double MAX_POS     =    .78;
-    static final double MAX_POS2    =    .22;
+    static final double MAX_POS     =    .72;
+    static final double MAX_POS2    =    .28;
     static final double MIN_POS     =     1;
     static final double MIN_POS2    =     0;
 
