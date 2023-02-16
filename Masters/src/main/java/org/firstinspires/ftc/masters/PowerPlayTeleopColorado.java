@@ -459,9 +459,9 @@ public class PowerPlayTeleopColorado extends LinearOpMode {
         linearSlideMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         frontSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         slideOtherer.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        linearSlideMotor.setPower(0.9);
-        frontSlide.setPower(0.9);
-        slideOtherer.setPower(0.9);
+        linearSlideMotor.setPower(1);
+        frontSlide.setPower(1);
+        slideOtherer.setPower(1);
 
 
 
