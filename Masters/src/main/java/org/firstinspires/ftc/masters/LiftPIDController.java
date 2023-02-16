@@ -27,7 +27,7 @@ public class LiftPIDController {
 
     public double calculatePower(){
 
-        liftController.setPID(p, i, d);
+       // liftController.setPID(p, i, d);
         int liftPos = mainSlideMotor.getCurrentPosition();
         double pid = liftController.calculate(liftPos, target);
 
@@ -43,14 +43,14 @@ public class LiftPIDController {
     }
 
     public double calculatePower(DcMotorEx motor){
+       // d=0.0005;
+      //  liftController.setPID(p, i, d);
 
-        liftController.setPID(p, i, d);
-        int liftPos = motor.getCurrentPosition();
-        double pid = liftController.calculate(liftPos, target);
+        double pid = liftController.calculate(motor.getCurrentPosition(), target);
 
         double power = pid +f;
 
-        if (target<150){
+        if (target<100){
             power = power* multiplierZero;
         } else{
             power = power*multiplier;
