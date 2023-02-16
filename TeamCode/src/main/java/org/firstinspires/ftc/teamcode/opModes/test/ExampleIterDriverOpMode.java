@@ -1,14 +1,14 @@
 package org.firstinspires.ftc.teamcode.opModes.test;
 
-import com.arcrobotics.ftclib.drivebase.DifferentialDrive;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
+import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.libs.brightonCollege.modeBases.TeleOpModeBase;
-import org.firstinspires.ftc.teamcode.libs.brightonCollege.util.HardwareMapContainer;
 
 /**
  * Description: [Fill in]
  * Hardware:
- *  [motor0] Left Drive Motor
+ *  [motor0] Unused
  *  [motor1] Unused
  *  [motor2] Unused
  *  [motor3] Unused
@@ -19,15 +19,18 @@ import org.firstinspires.ftc.teamcode.libs.brightonCollege.util.HardwareMapConta
  * Controls:
  *  [Button] Function
  */
-public class ExampleOpMode extends TeleOpModeBase {
+@Disabled // REMEMBER TO REMOVE THIS WHEN RUNNING.
+@TeleOp(name="Example Iterative Driver Op Mode", group="Example")
+public class ExampleIterDriverOpMode extends TeleOpModeBase {
+    // Declare class members here
+
     @Override
     public void setup() {
-        // Initialise drivetrain
-        DifferentialDrive drivetrain = new DifferentialDrive(HardwareMapContainer.motor0, HardwareMapContainer.motor1);
+        // Code to run once after `INIT` is pressed
     }
 
     @Override
     public void every_tick() {
-
+        // Code to run in a loop after `PLAY` is pressed
     }
 }

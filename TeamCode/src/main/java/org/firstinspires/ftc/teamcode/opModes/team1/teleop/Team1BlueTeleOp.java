@@ -5,12 +5,13 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import org.firstinspires.ftc.teamcode.libs.brightonCollege.modeBases.TeleOpModeBase;
 import org.firstinspires.ftc.teamcode.libs.brightonCollege.util.TeamColour;
 
-@TeleOp(name="Team 1 blue", group="Team 1")
+@TeleOp(name="Team 1 Blue", group="Team 1")
 public class Team1BlueTeleOp extends TeleOpModeBase {
     Team1GenericTeleOp teleop;
 
     @Override
     public void setup() {
+        // Runs once at INIT
         teleop = new Team1GenericTeleOp();
         teleop.setup(TeamColour.BLUE);
     }
