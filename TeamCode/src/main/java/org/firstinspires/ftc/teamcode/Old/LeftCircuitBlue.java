@@ -1,9 +1,10 @@
-package org.firstinspires.ftc.teamcode.Test;
+package org.firstinspires.ftc.teamcode.Old;
 
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
 import com.qualcomm.hardware.modernrobotics.ModernRoboticsI2cGyro;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -16,8 +17,9 @@ import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 
-@Autonomous(name="LeftCircuit")
-public class LeftCircuit extends LinearOpMode {
+@Autonomous(name="LeftCircuitBlue")
+@Disabled
+public class LeftCircuitBlue extends LinearOpMode {
 
     DcMotor frontleft;
     DcMotor frontright;
@@ -155,7 +157,7 @@ public class LeftCircuit extends LinearOpMode {
             gyroTurn(TURN_SPEED, -52);
             gyroDrive(DRIVE_SPEED07,-11,-11,-11,-11,-52);
 
-          //drop cone at high 1
+            //drop cone at high 1
             sleep(1);
             letgogirl();
             gyroDrive(DRIVE_SPEED07,13,13,13,13,-52);
@@ -221,7 +223,7 @@ public class LeftCircuit extends LinearOpMode {
             golift(86,.9);
             gyroDrive(DRIVE_SPEED07,-24,-24,-24,-24,-82);
             gyroTurn(TURN_SPEED, -52);
-            gyroDrive(DRIVE_SPEED07,-11,-11,-11,-11,-52);
+            gyroDrive(DRIVE_SPEED07,-11,-11,-11,-11,-35);
 
             //drop cone at high 1
             sleep(1);
@@ -317,7 +319,7 @@ public class LeftCircuit extends LinearOpMode {
 
 
     public void findline(){
-        while (color.red() <= 180) {
+        while (color.blue() <= 280) {
             backright.setPower(-.1);
             backleft.setPower(.1);
             frontright.setPower(.1);

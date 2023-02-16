@@ -13,8 +13,8 @@ import org.firstinspires.ftc.teamcode.Base.VariablesBase;
 //Blue Autonomous: Delivers Duck and Parks in WH/
 //Starting Position: Back facing Carousel (10 degrees from wall)
 
-@Autonomous(name= "Test")
-public class Test extends LinearOpMode{
+@Autonomous(name= "strafetest")
+public class strafetest extends LinearOpMode{
 
     MainBase base = new MainBase();
     VariablesBase var = new VariablesBase();
@@ -36,15 +36,30 @@ public class Test extends LinearOpMode{
         base.backright.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         base.backleft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
-        telemetry.addLine("God Speed");
+
+
+        while(base.navx_device.isCalibrating()){
+            telemetry.addLine("navx start");
+            telemetry.update();
+        }
+
+        //reset navx yaw
+        base.navx_device.zeroYaw();
+
+
+        telemetry.addLine("GOD SPEED");
+        telemetry.addLine("navx calibrated");
+        telemetry.addData("compass heading:", base.navx_device.getCompassHeading());
+        telemetry.addData("yaw", base.navx_device.getYaw());
         telemetry.update();
+
+
+
 
         waitForStart();
 
 
-        base.gyroStrafe(60,0,var.DRIVE_SPEED07,this);
-        base.gyroHold(.2, 0,3,this);
-
+        base.navxgyroDrive(0.1, 40,40,40,40,0,this);
 
     }
 }

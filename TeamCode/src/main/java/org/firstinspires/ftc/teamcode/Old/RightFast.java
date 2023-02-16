@@ -1,9 +1,10 @@
-package org.firstinspires.ftc.teamcode.Test;
+package org.firstinspires.ftc.teamcode.Old;
 
-import com.qualcomm.hardware.bosch.BNO055IMU;
-import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
 import com.qualcomm.hardware.modernrobotics.ModernRoboticsI2cGyro;
+import com.qualcomm.hardware.modernrobotics.ModernRoboticsI2cRangeSensor;
+import com.qualcomm.hardware.rev.Rev2mDistanceSensor;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -11,13 +12,11 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
 
 import org.firstinspires.ftc.robotcore.external.navigation.Acceleration;
-import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
-import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
-import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
+import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 
-@Autonomous(name="RightCircuit")
-public class RightCircuit extends LinearOpMode {
+@Autonomous(name="OneConeRight")
+public class RightFast extends LinearOpMode {
 
     DcMotor frontleft;
     DcMotor frontright;
@@ -26,9 +25,12 @@ public class RightCircuit extends LinearOpMode {
     DcMotor lift;
     DcMotor rightgrabber;
     DcMotor leftgrabber;
-    ColorSensor color;
 
+    ColorSensor color;
+    ModernRoboticsI2cRangeSensor rangebrothers;
+    Rev2mDistanceSensor rangebrothers2;
     ModernRoboticsI2cGyro gyro;
+
 
 
     //28 * 20 / (2ppi * 4.125)
@@ -37,7 +39,7 @@ public class RightCircuit extends LinearOpMode {
     Integer gearratio = 40;
     Double diameter = 4.125;
     Double cpi = (cpr * gearratio) / (Math.PI * diameter); //counts per inch, 28cpr * gear ratio / (2 * pi * diameter (in inches, in the center))
-    Double bias = 0.8;//default 0.8
+    Double bias = 1.0;//default 0.8
     Double meccyBias = 0.9;//change to adjust only strafing movement
     double amountError = 2;
 
@@ -45,22 +47,31 @@ public class RightCircuit extends LinearOpMode {
     static final double P_TURN_COEFF = 0.1;     // Larger is more responsive, but also less stable
     static final double P_DRIVE_COEFF = 0.07;     // Larger is more responsive, but also less stable
 
-    double DRIVE_SPEED08 = 0.8;
-    double DRIVE_SPEED07 = 0.7;
-    double DRIVE_SPEED05 = 0.5;
+    double DRIVE_SPEED08 = 0.88;
+    double DRIVE_SPEED07 = 0.4;
+    double DRIVE_SPEED06 = 0.3;
+    double ranged = 0.15;
 
-    double TURN_SPEED = 0.6;
+
+    public static double   MAX_ACCEPTABLE_ERROR = 10;
+
+    double TURN_SPEED = 0.65;
+    double TURN_SPEED_FIX = 0.3;
+    double TIME = 0.4;
+
 
     Double conversion = cpi * bias;
     Boolean exit = false;
 
-    BNO055IMU imu;
+
     Orientation angles;
     Acceleration gravity;
 
+    private ElapsedTime runtime = new ElapsedTime();
+
     public void runOpMode() throws InterruptedException {
 
-        initGyro();
+
 
         frontleft = hardwareMap.dcMotor.get("frontleft");
         frontright = hardwareMap.dcMotor.get("frontright");
@@ -70,7 +81,8 @@ public class RightCircuit extends LinearOpMode {
         leftgrabber = hardwareMap.get(DcMotor.class, "leftgrabber");
         rightgrabber = hardwareMap.get(DcMotor.class, "rightgrabber");
         gyro = hardwareMap.get(ModernRoboticsI2cGyro.class, "Gyro");
-        color = hardwareMap. get(ColorSensor.class,"sensor_color");
+        color = hardwareMap.get(ColorSensor.class, "sensor_color");
+
 
 
         backleft.setDirection(DcMotor.Direction.FORWARD);
@@ -134,86 +146,118 @@ public class RightCircuit extends LinearOpMode {
 
         telemetry.addData("Red", detector.one);
         telemetry.addData("Green", detector.two);
-        telemetry.addData("Blue", detector.red);
+        telemetry.addData("Blue", detector.three);
+        telemetry.update();
 
-        //neg strafe = left strafing
-
+        //pos strafe = left strafing
         //high =
         //mid =
         //low =
 
 
+        gyroDrive(DRIVE_SPEED07, 20,20,20,20,0);
 
-        if (detector.one == true) {
 
-            //no strafing
-            gyroDrive(DRIVE_SPEED07,12 ,12,12,12,0);
-            drivebackleftandfrontright(32,DRIVE_SPEED07);
-            gyroTurn(TURN_SPEED, 88);
-            gyroDrive(DRIVE_SPEED07,-23,-23,-23,-23,88);
-            golift(86,.9);
-            gyroDrive(DRIVE_SPEED07,-23,-24,-24,-24,88);
-            gyroTurn(TURN_SPEED, 35);
-            gyroDrive(.4,-12,-12,-12,-12,35);
-            sleep(1);
-            letgogirl();
-            gyroDrive(DRIVE_SPEED07,7.5,7.5,7.5,7.5,40);
-            gyroTurn(TURN_SPEED,0);
-            golift(-60, .4);
-            gyroDrive(DRIVE_SPEED08, -50, -50, -50, -50,0);
-            gyroDrive(DRIVE_SPEED05, -12, -12, -12, -12,0);
-            findline();
-//            golift(-12,.3);
-//            getitgirl();
-//            golift(74, .8);
-//            gyroDrive(DRIVE_SPEED, 43, 43, 43, 43,0);
-//            gyroTurn(.6, 79);
-//            gyroDrive(DRIVE_SPEED,-4.5,-4.5,-4.5,-4.5,88);
-//            sleep(100);
-//            letgogirl();
-//            gyroDrive(DRIVE_SPEED,5.5,5.5,5.5,5.5,88);
-//            golift(-60,.5);
-//            gyroTurn(.6,0);
-//            gyroDrive(.7, -30, -30, -30, -30,1);
-//            strafeToPosition(6,DRIVE_SPEED);
-//            gyroDrive(.4, -18, -18, -18, -18,1);
-//            golift(-15,.3);
-//            getitgirl();
-//            golift(35, .8);
-//            gyroDrive(DRIVE_SPEED, 57, 57, 57, 57,0);
-//            gyroTurn(.4,-62);
-//            gyroDrive(.6, -38, -38, -38, -38,-62);
-//            golift(-15,3);
-//            letgogirl();
-//            golift(20,.5);
-//            gyroDrive(.9,20,20,20,20,-62);
-
-        } else if (detector.two == true) {
+        }
 
 
 
+
+
+
+
+
+
+
+
+    public void rangeDrive (double speed, double backDistance) {
+
+        speed = Range.clip(Math.abs(speed), 0.0, 1.0);
+
+//        if (rangebrothers.getDistance(DistanceUnit.INCH) >= backDistance) {
+            while (rangebrothers.getDistance(DistanceUnit.INCH) < backDistance) {
+                if (Math.abs(rangebrothers.getDistance(DistanceUnit.INCH) - backDistance) > MAX_ACCEPTABLE_ERROR) {
+                    if (!rangeCheck(rangebrothers, backDistance)) {
+                        break;
+                    }
+                }
+                frontleft.setPower(speed);
+                backleft.setPower(speed);
+                frontright.setPower(speed);
+                backright.setPower(speed);
+
+                telemetry.addData("Sensor Back Distance: ", rangebrothers.getDistance(DistanceUnit.INCH));
+                telemetry.addData("Target Back Distance: ", backDistance);
+                telemetry.addLine("Moving Backwards");
+                telemetry.update();
+            }
+//            while (rangebrothers.getDistance(DistanceUnit.INCH) > backDistance) {
+//                if (Math.abs(rangebrothers.getDistance(DistanceUnit.INCH) - backDistance) > MAX_ACCEPTABLE_ERROR) {
+//                    if (!rangeCheck(rangebrothers, backDistance)) {
+//                        break;
+//                    }
+//                }
+//                frontleft.setPower(-speed);
+//                backleft.setPower(-speed);
+//                frontright.setPower(-speed);
+//                backright.setPower(-speed);
 //
+//                telemetry.addData("Sensor Back Distance: ", rangebrothers.getDistance(DistanceUnit.INCH));
+//                telemetry.addData("Target Back Distance: ", backDistance);
+//                telemetry.addLine("Moving Forwards");
+//                telemetry.update();
+//            }
+        frontleft.setPower(0);
+        backleft.setPower(0);
+        frontright.setPower(0);
+        backright.setPower(0);
 
 
-        } else if (detector.three == true) {
+        }
+
+
+
+        private boolean rangeCheck(ModernRoboticsI2cRangeSensor range_sensor, double desired_distance){
+            final int TRIES = 3;
+            for (int i = 0; i < TRIES; i++){
+                if (Math.abs(range_sensor.getDistance(DistanceUnit.INCH) - desired_distance) < MAX_ACCEPTABLE_ERROR){
+                    return true;
+                }
+                telemetry.addData("TRY ",i);
+                telemetry.addData("Range Value: ", range_sensor.getDistance(DistanceUnit.INCH));
+                telemetry.addData("Target: ", desired_distance);
+                telemetry.update();
+                try {
+                    Thread.sleep(1500);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+            return false;
+        }
 
 
 
 
 
 
-
-
+    public void sensewall1(){
+        while (rangebrothers.getDistance(DistanceUnit.CM) <= 85) {
+            backright.setPower(.3);
+            backleft.setPower(.3);
+            frontright.setPower(.3);
+            frontleft.setPower(.3);
 
         }
     }
 
-    public void findline(){
-        while (color.blue() <= 280) {
-            backright.setPower(-.1);
-            backleft.setPower(.1);
-            frontright.setPower(.1);
-            frontleft.setPower(-.1);
+    public void sensewall2(){
+        while (rangebrothers.getDistance(DistanceUnit.CM) <= 52) {
+            backright.setPower(.3);
+            backleft.setPower(.3);
+            frontright.setPower(.3);
+            frontleft.setPower(.3);
+
         }
         backright.setPower(0);
         backleft.setPower(0);
@@ -222,8 +266,107 @@ public class RightCircuit extends LinearOpMode {
     }
 
 
+    public void findline(double holdTime){
+
+
+        ElapsedTime holdTimer = new ElapsedTime();
+
+        // keep looping while we have time remaining.
+        holdTimer.reset();
+            while (color.blue() <= 270 && (holdTimer.time() < holdTime)) {
+                backright.setPower(-.05);
+                backleft.setPower(.05);
+                frontright.setPower(.05);
+                frontleft.setPower(-.05);
+
+        }
+
+        backright.setPower(0);
+        backleft.setPower(0);
+        frontright.setPower(0);
+        frontleft.setPower(0);
+    }
+
+    public void moveToPosition(double inches, double speed){
+        //
+        int move = (int)(Math.round(inches*conversion));
+        //
+        backleft.setTargetPosition(backleft.getCurrentPosition() + move);
+        frontleft.setTargetPosition(frontleft.getCurrentPosition() + move);
+        backright.setTargetPosition(backright.getCurrentPosition() + move);
+        frontright.setTargetPosition(frontright.getCurrentPosition() + move);
+        //
+        frontleft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        frontright.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        backleft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        backright.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+        frontleft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        backleft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        frontright.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        backright.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        //
+        frontleft.setPower(speed);
+        backleft.setPower(speed);
+        frontright.setPower(speed);
+        backright.setPower(speed);
+        //
+        while (frontleft.isBusy() && frontright.isBusy() && backleft.isBusy() && backright.isBusy()){
+            if (exit){
+                frontright.setPower(0);
+                frontleft.setPower(0);
+                backright.setPower(0);
+                backleft.setPower(0);
+                return;
+            }
+        }
+        frontright.setPower(0);
+        frontleft.setPower(0);
+        backright.setPower(0);
+        backleft.setPower(0);
+        frontright.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        frontleft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        backright.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        backleft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        return;
+
+
+    }
+
+
+
+
+    public void drivebackleftandfrontright(double inches, double speed) {
+
+
+        int move = (int) (Math.round(inches * cpi * meccyBias));
+
+        frontleft.setTargetPosition(frontleft.getCurrentPosition() + move);
+        backright.setTargetPosition(backright.getCurrentPosition() + move);
+
+        frontleft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        backright.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+        frontleft.setPower(speed);
+        backright.setPower(speed);
+
+        while ( frontleft.isBusy() && backright.isBusy()) {
+        }
+
+        frontleft.setPower(0);
+        backright.setPower(0);
+        return;
+
+    }
+
+
     public void golift(double inches, double speed){
-        int move =  -(int)(Math.round(inches*conversion));
+
+        telemetry.addData("Encodercount", lift.getCurrentPosition() );
+        telemetry.update();
+        lift.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
+        int move =  -(int)(Math.round(inches*93.3));
 
         lift.setTargetPosition(lift.getCurrentPosition() + move);
         lift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
@@ -232,13 +375,15 @@ public class RightCircuit extends LinearOpMode {
 
 
     public void letgogirl(){
+        golift(-6,.7);
         while(lift.isBusy()){
         }
         leftgrabber.setPower(-1);
         rightgrabber.setPower(1);
-        sleep(800);
+        sleep(700);
         rightgrabber.setPower(0);
         leftgrabber.setPower(0);
+        golift(6,.9);
     }
 
 
@@ -247,187 +392,121 @@ public class RightCircuit extends LinearOpMode {
         }
         leftgrabber.setPower(.7);
         rightgrabber.setPower(-.7);
-        sleep(1200);
+        sleep(1000);
         rightgrabber.setPower(0);
         leftgrabber.setPower(0);
     }
 
-    public void drivebackrightandfrontleft(double inches, double speed) {
-
-        //
-        int move = (int) (Math.round(inches * cpi * meccyBias));
-        //
-        backleft.setTargetPosition(backleft.getCurrentPosition() - move);
-        //frontleft.setTargetPosition(frontleft.getCurrentPosition() + move);
-        //backright.setTargetPosition(backright.getCurrentPosition() + move);
-        frontright.setTargetPosition(frontright.getCurrentPosition() - move);
-        //
-        //frontleft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        frontright.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        backleft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        //backright.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        //
-        //frontleft.setPower(speed);
-        backleft.setPower(speed);
-        frontright.setPower(speed);
-        //backright.setPower(speed);
-        //
-        while ( frontright.isBusy() && backleft.isBusy()) {
-        }
-        frontright.setPower(0);
-        //frontleft.setPower(0);
-        //backright.setPower(0);
-        backleft.setPower(0);
-        return;
-
-    }
 
 
 
-    public void drivebackleftandfrontright(double inches, double speed) {
-
-        //
-        int move = (int) (Math.round(inches * cpi * meccyBias));
-        //
-       // backleft.setTargetPosition(backleft.getCurrentPosition() - move);
-        frontleft.setTargetPosition(frontleft.getCurrentPosition() + move);
-        backright.setTargetPosition(backright.getCurrentPosition() + move);
-        //frontright.setTargetPosition(frontright.getCurrentPosition() - move);
-        //
-        frontleft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-      //  frontright.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-      //  backleft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        backright.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        //
-        frontleft.setPower(speed);
-       // backleft.setPower(speed);
-       // frontright.setPower(speed);
-        backright.setPower(speed);
-        //
-        while ( frontleft.isBusy() && backright.isBusy()) {
-        }
-        //frontright.setPower(0);
-        frontleft.setPower(0);
-        backright.setPower(0);
-        //backleft.setPower(0);
-        return;
-
-    }
-
-
-
-
-
-
-
-
-    public void turnWithGyro(double degrees, double speedDirection) {
-        //<editor-fold desc="Initialize">
-        angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
-        double yaw = -angles.firstAngle;//make this negative
-        telemetry.addData("Speed Direction", speedDirection);
-        telemetry.addData("Yaw", yaw);
-        telemetry.update();
-        //
-        telemetry.addData("stuff", speedDirection);
-        telemetry.update();
-        //
-        double first;
-        double second;
-        //</editor-fold>
-        //
-        if (speedDirection > 0) {//set target positions
-            //<editor-fold desc="turn right">
-            if (degrees > 10) {
-                first = (degrees - 10) + devertify(yaw);
-                second = degrees + devertify(yaw);
-            } else {
-                first = devertify(yaw);
-                second = degrees + devertify(yaw);
-            }
-            //</editor-fold>
-        } else {
-            //<editor-fold desc="turn left">
-            if (degrees > 10) {
-                first = devertify(-(degrees - 10) + devertify(yaw));
-                second = devertify(-degrees + devertify(yaw));
-            } else {
-                first = devertify(yaw);
-                second = devertify(-degrees + devertify(yaw));
-            }
-            //
-            //</editor-fold>
-        }
-        //
-        //<editor-fold desc="Go to position">
-        Double firsta = convertify(first - 5);//175
-        Double firstb = convertify(first + 5);//-175
-        //
-        turnWithEncoder(speedDirection);
-        //
-        if (Math.abs(firsta - firstb) < 11) {
-            while (!(firsta < yaw && yaw < firstb) && opModeIsActive()) {//within range?
-                angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
-                gravity = imu.getGravity();
-                yaw = -angles.firstAngle;
-                telemetry.addData("Position", yaw);
-                telemetry.addData("first before", first);
-                telemetry.addData("first after", convertify(first));
-                telemetry.update();
-            }
-        } else {
-            //
-            while (!((firsta < yaw && yaw < 180) || (-180 < yaw && yaw < firstb)) && opModeIsActive()) {//within range?
-                angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
-                gravity = imu.getGravity();
-                yaw = -angles.firstAngle;
-                telemetry.addData("Position", yaw);
-                telemetry.addData("first before", first);
-                telemetry.addData("first after", convertify(first));
-                telemetry.update();
-            }
-        }
-        //
-        Double seconda = convertify(second - 5);//175
-        Double secondb = convertify(second + 5);//-175
-        //
-        turnWithEncoder(speedDirection / 3);
-        //
-        if (Math.abs(seconda - secondb) < 11) {
-            while (!(seconda < yaw && yaw < secondb) && opModeIsActive()) {//within range?
-                angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
-                gravity = imu.getGravity();
-                yaw = -angles.firstAngle;
-                telemetry.addData("Position", yaw);
-                telemetry.addData("second before", second);
-                telemetry.addData("second after", convertify(second));
-                telemetry.update();
-            }
-            while (!((seconda < yaw && yaw < 180) || (-180 < yaw && yaw < secondb)) && opModeIsActive()) {//within range?
-                angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
-                gravity = imu.getGravity();
-                yaw = -angles.firstAngle;
-                telemetry.addData("Position", yaw);
-                telemetry.addData("second before", second);
-                telemetry.addData("second after", convertify(second));
-                telemetry.update();
-            }
-            frontleft.setPower(0);
-            frontright.setPower(0);
-            backleft.setPower(0);
-            backright.setPower(0);
-        }
-        //</editor-fold>
-        //
-        frontleft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        frontright.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        backleft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        backright.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        frontleft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        frontright.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        backleft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        backright.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-    }
+//    public void turnWithGyro(double degrees, double speedDirection) {
+//        //<editor-fold desc="Initialize">
+//        angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
+//        double yaw = -angles.firstAngle;//make this negative
+//        telemetry.addData("Speed Direction", speedDirection);
+//        telemetry.addData("Yaw", yaw);
+//        telemetry.update();
+//        //
+//        telemetry.addData("stuff", speedDirection);
+//        telemetry.update();
+//        //
+//        double first;
+//        double second;
+//        //</editor-fold>
+//        //
+//        if (speedDirection > 0) {//set target positions
+//            //<editor-fold desc="turn right">
+//            if (degrees > 10) {
+//                first = (degrees - 10) + devertify(yaw);
+//                second = degrees + devertify(yaw);
+//            } else {
+//                first = devertify(yaw);
+//                second = degrees + devertify(yaw);
+//            }
+//            //</editor-fold>
+//        } else {
+//            //<editor-fold desc="turn left">
+//            if (degrees > 10) {
+//                first = devertify(-(degrees - 10) + devertify(yaw));
+//                second = devertify(-degrees + devertify(yaw));
+//            } else {
+//                first = devertify(yaw);
+//                second = devertify(-degrees + devertify(yaw));
+//            }
+//            //
+//            //</editor-fold>
+//        }
+//        //
+//        //<editor-fold desc="Go to position">
+//        Double firsta = convertify(first - 5);//175
+//        Double firstb = convertify(first + 5);//-175
+//        //
+//        turnWithEncoder(speedDirection);
+//        //
+//        if (Math.abs(firsta - firstb) < 11) {
+//            while (!(firsta < yaw && yaw < firstb) && opModeIsActive()) {//within range?
+//                angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
+//                gravity = imu.getGravity();
+//                yaw = -angles.firstAngle;
+//                telemetry.addData("Position", yaw);
+//                telemetry.addData("first before", first);
+//                telemetry.addData("first after", convertify(first));
+//                telemetry.update();
+//            }
+//        } else {
+//            //
+//            while (!((firsta < yaw && yaw < 180) || (-180 < yaw && yaw < firstb)) && opModeIsActive()) {//within range?
+//                angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
+//                gravity = imu.getGravity();
+//                yaw = -angles.firstAngle;
+//                telemetry.addData("Position", yaw);
+//                telemetry.addData("first before", first);
+//                telemetry.addData("first after", convertify(first));
+//                telemetry.update();
+//            }
+//        }
+//        //
+//        Double seconda = convertify(second - 5);//175
+//        Double secondb = convertify(second + 5);//-175
+//        //
+//        turnWithEncoder(speedDirection / 3);
+//        //
+//        if (Math.abs(seconda - secondb) < 11) {
+//            while (!(seconda < yaw && yaw < secondb) && opModeIsActive()) {//within range?
+//                angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
+//                gravity = imu.getGravity();
+//                yaw = -angles.firstAngle;
+//                telemetry.addData("Position", yaw);
+//                telemetry.addData("second before", second);
+//                telemetry.addData("second after", convertify(second));
+//                telemetry.update();
+//            }
+//            while (!((seconda < yaw && yaw < 180) || (-180 < yaw && yaw < secondb)) && opModeIsActive()) {//within range?
+//                angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
+//                gravity = imu.getGravity();
+//                yaw = -angles.firstAngle;
+//                telemetry.addData("Position", yaw);
+//                telemetry.addData("second before", second);
+//                telemetry.addData("second after", convertify(second));
+//                telemetry.update();
+//            }
+//            frontleft.setPower(0);
+//            frontright.setPower(0);
+//            backleft.setPower(0);
+//            backright.setPower(0);
+//        }
+//        //</editor-fold>
+//        //
+//        frontleft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+//        frontright.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+//        backleft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+//        backright.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+//        frontleft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+//        frontright.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+//        backleft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+//        backright.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+//    }
 
     //
     /*
@@ -460,14 +539,6 @@ public class RightCircuit extends LinearOpMode {
         backright.setPower(0);
         backleft.setPower(0);
         return;
-        //
-//        while (frontleft.isBusy() && frontright.isBusy() && backleft.isBusy() && backright.isBusy()) {
-//        }
-//        frontright.setPower(0);
-//        frontleft.setPower(0);
-//        backright.setPower(0);
-//        backleft.setPower(0);
-//        return;
     }
 
     //
@@ -498,18 +569,18 @@ public class RightCircuit extends LinearOpMode {
     This function is called at the beginning of the program to activate
     the IMU Integrated Gyro.
      */
-    public void initGyro() {
-        BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
-        parameters.angleUnit = BNO055IMU.AngleUnit.DEGREES;
-        parameters.accelUnit = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
-        //parameters.calibrationDataFile = "GyroCal.json"; // see the calibration sample opmode
-        parameters.loggingEnabled = true;
-        parameters.loggingTag = "IMU";
-        parameters.accelerationIntegrationAlgorithm = new JustLoggingAccelerationIntegrator();
-        //
-        imu = hardwareMap.get(BNO055IMU.class, "imu");
-        imu.initialize(parameters);
-    }
+//    public void initGyro() {
+//        BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
+//        parameters.angleUnit = BNO055IMU.AngleUnit.DEGREES;
+//        parameters.accelUnit = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
+//        //parameters.calibrationDataFile = "GyroCal.json"; // see the calibration sample opmode
+//        parameters.loggingEnabled = true;
+//        parameters.loggingTag = "IMU";
+//        parameters.accelerationIntegrationAlgorithm = new JustLoggingAccelerationIntegrator();
+//        //
+//        imu = hardwareMap.get(BNO055IMU.class, "imu");
+//        imu.initialize(parameters);
+//    }
 
     //
     /*
@@ -615,11 +686,11 @@ public class RightCircuit extends LinearOpMode {
                 backright.setPower(backRightSpeed);
 
                 // Display drive status for the driver.
-                telemetry.addData("Err/St", "%5.1f/%5.1f", error, steer);
-                telemetry.addData("Target", "%7d:%7d", newBackLeftTarget, newBackRightTarget, newFrontLeftTarget, newFrontRightTarget);
-                telemetry.addData("Actual", "%7d:%7d", backleft.getCurrentPosition(), backright.getCurrentPosition(), frontleft.getCurrentPosition(), frontright.getCurrentPosition());
-                telemetry.addData("Speed", "%5.2f:%5.2f", backLeftSpeed, backRightSpeed, frontLeftSpeed, frontRightSpeed);
-                telemetry.update();
+//                telemetry.addData("Err/St", "%5.1f/%5.1f", error, steer);
+//                telemetry.addData("Target", "%7d:%7d", newBackLeftTarget, newBackRightTarget, newFrontLeftTarget, newFrontRightTarget);
+//                telemetry.addData("Actual", "%7d:%7d", backleft.getCurrentPosition(), backright.getCurrentPosition(), frontleft.getCurrentPosition(), frontright.getCurrentPosition());
+//                telemetry.addData("Speed", "%5.2f:%5.2f", backLeftSpeed, backRightSpeed, frontLeftSpeed, frontRightSpeed);
+//                telemetry.update();
 
                 ErrorAmount = ((Math.abs(((newBackLeftTarget) - (backleft.getCurrentPosition())))
                         + (Math.abs(((newFrontLeftTarget) - (frontleft.getCurrentPosition()))))
@@ -637,6 +708,7 @@ public class RightCircuit extends LinearOpMode {
             backright.setPower(0);
 
             // Turn off RUN_TO_POSITION
+
             frontleft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
             frontright.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
             backleft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -658,6 +730,7 @@ public class RightCircuit extends LinearOpMode {
         backleft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         frontright.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         backright.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
     }
 
     /**
@@ -732,9 +805,9 @@ public class RightCircuit extends LinearOpMode {
         frontright.setPower(rightSpeed);
 
         // Display it for the driver.
-        telemetry.addData("Target", "%5.2f", angle);
-        telemetry.addData("Err/St", "%5.2f/%5.2f", error, steer);
-        telemetry.addData("Speed.", "%5.2f:%5.2f", leftSpeed, rightSpeed);
+//        telemetry.addData("Target", "%5.2f", angle);
+//        telemetry.addData("Err/St", "%5.2f/%5.2f", error, steer);
+//        telemetry.addData("Speed.", "%5.2f:%5.2f", leftSpeed, rightSpeed);
 
         return onTarget;
     }

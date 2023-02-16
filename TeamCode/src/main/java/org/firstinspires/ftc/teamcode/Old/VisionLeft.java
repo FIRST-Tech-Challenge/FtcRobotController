@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.Test;
+package org.firstinspires.ftc.teamcode.Old;
 
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 
@@ -14,20 +14,19 @@ import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
 import org.openftc.easyopencv.OpenCvPipeline;
 
-public class VisionRight {
+public class VisionLeft {
     OpMode opMode;
     OpenCvCamera camera;
 
     AddBoxesPipeline pipeline;
 
-    private final Point centerBox_topLeft    = new Point(102,20);
-    private final Point centerBox_bottomRight    = new Point(62, 90);
+    private final Point centerBox_topLeft    = new Point(185,75);
+    private final Point centerBox_bottomRight    = new Point(230, 140);
 
-//    private final Point leftBox_topLeft    = new Point(0,60);
-//    private final Point leftBox_bottomRight    = new Point(30, 110);
-//
-//    private final Point rightBox_topLeft    = new Point(280,60);
-//    private final Point rightBox_bottomRight    = new Point(320, 110);
+//    private final Point centerBox_topLeft    = new Point(230,30);
+//    private final Point centerBox_bottomRight    = new Point(190, 100);
+
+
 
     Mat YCrCb = new Mat();
     Mat red = new Mat();
@@ -38,14 +37,14 @@ public class VisionRight {
     boolean one = false, two = false, three = false;
 
 
-    public VisionRight(OpMode op){
+    public VisionLeft(OpMode op){
 
         opMode = op;
 
         int cameraMonitorViewId = opMode.hardwareMap.appContext.getResources().getIdentifier(
                 "cameraMonitorViewId", "id", opMode.hardwareMap.appContext.getPackageName());
 
-        camera = OpenCvCameraFactory.getInstance().createWebcam(opMode.hardwareMap.get(WebcamName.class, "Webcam Blue"), cameraMonitorViewId);
+        camera = OpenCvCameraFactory.getInstance().createWebcam(opMode.hardwareMap.get(WebcamName.class, "Webcam Red"), cameraMonitorViewId);
 
         pipeline = new AddBoxesPipeline();
         camera.openCameraDevice();
@@ -108,7 +107,7 @@ public class VisionRight {
                 two = false;
                 three = true;
             }
-////dddd
+
             //opMode.telemetry.addData("boxRight: ", right_avg);
             //opMode.telemetry.update();
 //            else if(right_avg <= left_avg && right_avg <= center_avg){

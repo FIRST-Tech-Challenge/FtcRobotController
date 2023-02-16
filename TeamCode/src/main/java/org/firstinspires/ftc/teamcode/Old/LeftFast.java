@@ -1,9 +1,10 @@
-package org.firstinspires.ftc.teamcode.Test;
+package org.firstinspires.ftc.teamcode.Old;
 
 import com.qualcomm.hardware.modernrobotics.ModernRoboticsI2cGyro;
 import com.qualcomm.hardware.modernrobotics.ModernRoboticsI2cRangeSensor;
 import com.qualcomm.hardware.rev.Rev2mDistanceSensor;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -14,8 +15,9 @@ import org.firstinspires.ftc.robotcore.external.navigation.Acceleration;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 
-@Autonomous(name="OneConeRight")
-public class RightFast extends LinearOpMode {
+@Autonomous(name="OneConeLeft")
+@Disabled
+public class LeftFast extends LinearOpMode {
 
     DcMotor frontleft;
     DcMotor frontright;
@@ -54,8 +56,8 @@ public class RightFast extends LinearOpMode {
 
     public static double   MAX_ACCEPTABLE_ERROR = 10;
 
-    double TURN_SPEED = 0.65;
-    double TURN_SPEED_FIX = 0.3;
+    double TURN_SPEED = 0.3;
+    double TURN_SPEED_FIX = 0.2;
     double TIME = 0.4;
 
 
@@ -130,7 +132,7 @@ public class RightFast extends LinearOpMode {
         leftgrabber.setPower(0);
         rightgrabber.setPower(0);
 
-        VisionRight detector = new VisionRight(this);
+        VisionLeft detector = new VisionLeft(this);
 
 
         telemetry.addLine("Start Gyro");
@@ -161,24 +163,25 @@ public class RightFast extends LinearOpMode {
 
 
             gyroDrive(DRIVE_SPEED06, 11, 11, 11, 11, 0);
-            drivebackleftandfrontright(32,DRIVE_SPEED06);
-            gyroTurn(TURN_SPEED, 88);
-            gyroHold(TURN_SPEED_FIX,88, TIME);
-            gyroDrive(DRIVE_SPEED07,-10,-10,-10,-10,88);
-            golift(31,.6);
-            gyroHold(TURN_SPEED_FIX,88, TIME);
-            gyroDrive(DRIVE_SPEED07,-36,-36,-36,-36,88);
-            gyroTurn(TURN_SPEED, 53);
-            gyroHold(TURN_SPEED_FIX,53, TIME);
-            gyroDrive(DRIVE_SPEED07,-13.8,-13.8,-13.8,-13.8,53);
+            drivebackrightandfrontleft(-32,DRIVE_SPEED06);
+            gyroTurn(TURN_SPEED, -88);
+            gyroHold(TURN_SPEED_FIX,-88, TIME);
+            gyroHold(TURN_SPEED_FIX,-88, TIME);
+            gyroDrive(DRIVE_SPEED07,-10,-10,-10,-10,-88);
+            golift(30,.6);
+            gyroHold(TURN_SPEED_FIX,-88, TIME);
+            gyroDrive(DRIVE_SPEED07,-36,-36,-36,-36,-88);
+            gyroTurn(TURN_SPEED, -51);
+            gyroHold(TURN_SPEED_FIX,-51, TIME);
+            gyroDrive(DRIVE_SPEED07,-13.2,-13.2,-13.2,-13.2,-51);
 
 
             //drop cone at high 1
             letgogirl();
-            gyroDrive(DRIVE_SPEED07,13,13,13,13,41);
-            gyroTurn(TURN_SPEED, 88);
-            gyroHold(TURN_SPEED_FIX,88, TIME);
-            gyroDrive(DRIVE_SPEED07,6,6,6,6,0);
+            gyroDrive(DRIVE_SPEED07,14,14,14,14,-51);
+            gyroTurn(TURN_SPEED, 0);
+            gyroHold(TURN_SPEED_FIX,0, TIME);
+            gyroDrive(DRIVE_SPEED07,-55,-55,-55,-55,0);
 
 //            gyroDrive(DRIVE_SPEED07,10.8,10.8,10.8,10.8,39);
 //            gyroHold(TURN_SPEED_FIX,41, TIME);
@@ -227,21 +230,22 @@ public class RightFast extends LinearOpMode {
 //
         } else if (detector.two == true) {
             gyroDrive(DRIVE_SPEED06, 11, 11, 11, 11, 0);
-            drivebackleftandfrontright(32,DRIVE_SPEED06);
-            gyroTurn(TURN_SPEED, 88);
-            gyroHold(TURN_SPEED_FIX,88, TIME);
-            gyroDrive(DRIVE_SPEED07,-10,-10,-10,-10,88);
-            golift(31,.6);
-            gyroHold(TURN_SPEED_FIX,88, TIME);
-            gyroDrive(DRIVE_SPEED07,-36,-36,-36,-36,88);
-            gyroTurn(TURN_SPEED, 53);
-            gyroHold(TURN_SPEED_FIX,53, TIME);
-            gyroDrive(DRIVE_SPEED07,-13.8,-13.8,-13.8,-13.8,53);
+            drivebackrightandfrontleft(-32,DRIVE_SPEED06);
+            gyroTurn(TURN_SPEED, -88);
+            gyroHold(TURN_SPEED_FIX,-88, TIME);
+            gyroHold(TURN_SPEED_FIX,-88, TIME);
+            gyroDrive(DRIVE_SPEED07,-10,-10,-10,-10,-88);
+            golift(30,.6);
+            gyroHold(TURN_SPEED_FIX,-88, TIME);
+            gyroDrive(DRIVE_SPEED07,-36,-36,-36,-36,-88);
+            gyroTurn(TURN_SPEED, -51);
+            gyroHold(TURN_SPEED_FIX,-51, TIME);
+            gyroDrive(DRIVE_SPEED07,-13.2,-13.2,-13.2,-13.2,-51);
 
 
             //drop cone at high 1
             letgogirl();
-            gyroDrive(DRIVE_SPEED07,13,13,13,13,41);
+            gyroDrive(DRIVE_SPEED07,14,14,14,14,-51);
             gyroTurn(TURN_SPEED, 0);
             gyroHold(TURN_SPEED_FIX,0, TIME);
             gyroDrive(DRIVE_SPEED07,-24,-24,-24,-24,0);
@@ -302,30 +306,31 @@ public class RightFast extends LinearOpMode {
 //
         }
 //
-         else if (detector.three == true) {
+        else if (detector.three == true) {
 
 
 
             gyroDrive(DRIVE_SPEED06, 11, 11, 11, 11, 0);
-            drivebackleftandfrontright(32,DRIVE_SPEED06);
-            gyroTurn(TURN_SPEED, 88);
-            gyroHold(TURN_SPEED_FIX,88, TIME);
-            gyroDrive(DRIVE_SPEED07,-10,-10,-10,-10,88);
-            golift(31,.6);
-            gyroHold(TURN_SPEED_FIX,88, TIME);
-            gyroDrive(DRIVE_SPEED07,-36,-36,-36,-36,88);
-            gyroTurn(TURN_SPEED, 53);
-            gyroHold(TURN_SPEED_FIX,53, TIME);
-            gyroDrive(DRIVE_SPEED07,-13.8,-13.8,-13.8,-13.8,53);
+            drivebackrightandfrontleft(-32,DRIVE_SPEED06);
+            gyroTurn(TURN_SPEED, -88);
+            gyroHold(TURN_SPEED_FIX,-88, TIME);
+            gyroHold(TURN_SPEED_FIX,-88, TIME);
+            gyroDrive(DRIVE_SPEED07,-10,-10,-10,-10,-88);
+            golift(30,.6);
+            gyroHold(TURN_SPEED_FIX,-88, TIME);
+            gyroDrive(DRIVE_SPEED07,-36,-36,-36,-36,-88);
+            gyroTurn(TURN_SPEED, -51);
+            gyroHold(TURN_SPEED_FIX,-51, TIME);
+            gyroDrive(DRIVE_SPEED07,-13.2,-13.2,-13.2,-13.2,-51);
 
 
             //drop cone at high 1
             letgogirl();
-            gyroDrive(DRIVE_SPEED07,13,13,13,13,41);
-            gyroTurn(TURN_SPEED, 0);
-            gyroHold(TURN_SPEED_FIX,0, TIME);
-            gyroDrive(DRIVE_SPEED07,-55,-55,-55,-55,0);
-//
+            gyroDrive(DRIVE_SPEED07,14,14,14,14,-51);
+            gyroTurn(TURN_SPEED, -88);
+            gyroHold(TURN_SPEED_FIX,-88, TIME);
+            gyroDrive(DRIVE_SPEED07,6,6,6,6,-88);
+
 //            gyroDrive(DRIVE_SPEED07,11,11,11,11,0);
 //            drivebackleftandfrontright(32,DRIVE_SPEED05);
 //            gyroTurn(TURN_SPEED, 88);
@@ -388,13 +393,41 @@ public class RightFast extends LinearOpMode {
         }
 
 
+    }
+
+
+
+
+
+    public void drivebackrightandfrontleft(double inches, double speed) {
+
+        //
+        int move = (int) (Math.round(inches * cpi * meccyBias));
+        //
+        backleft.setTargetPosition(backleft.getCurrentPosition() - move);
+        //frontleft.setTargetPosition(frontleft.getCurrentPosition() + move);
+        //backright.setTargetPosition(backright.getCurrentPosition() + move);
+        frontright.setTargetPosition(frontright.getCurrentPosition() - move);
+        //
+        //frontleft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        frontright.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        backleft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        //backright.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        //
+        //frontleft.setPower(speed);
+        backleft.setPower(speed);
+        frontright.setPower(speed);
+        //backright.setPower(speed);
+        //
+        while ( frontright.isBusy() && backleft.isBusy()) {
         }
+        frontright.setPower(0);
+        //frontleft.setPower(0);
+        //backright.setPower(0);
+        backleft.setPower(0);
+        return;
 
-
-
-
-
-
+    }
 
 
 
@@ -405,22 +438,22 @@ public class RightFast extends LinearOpMode {
         speed = Range.clip(Math.abs(speed), 0.0, 1.0);
 
 //        if (rangebrothers.getDistance(DistanceUnit.INCH) >= backDistance) {
-            while (rangebrothers.getDistance(DistanceUnit.INCH) < backDistance) {
-                if (Math.abs(rangebrothers.getDistance(DistanceUnit.INCH) - backDistance) > MAX_ACCEPTABLE_ERROR) {
-                    if (!rangeCheck(rangebrothers, backDistance)) {
-                        break;
-                    }
+        while (rangebrothers.getDistance(DistanceUnit.INCH) < backDistance) {
+            if (Math.abs(rangebrothers.getDistance(DistanceUnit.INCH) - backDistance) > MAX_ACCEPTABLE_ERROR) {
+                if (!rangeCheck(rangebrothers, backDistance)) {
+                    break;
                 }
-                frontleft.setPower(speed);
-                backleft.setPower(speed);
-                frontright.setPower(speed);
-                backright.setPower(speed);
-
-                telemetry.addData("Sensor Back Distance: ", rangebrothers.getDistance(DistanceUnit.INCH));
-                telemetry.addData("Target Back Distance: ", backDistance);
-                telemetry.addLine("Moving Backwards");
-                telemetry.update();
             }
+            frontleft.setPower(speed);
+            backleft.setPower(speed);
+            frontright.setPower(speed);
+            backright.setPower(speed);
+
+            telemetry.addData("Sensor Back Distance: ", rangebrothers.getDistance(DistanceUnit.INCH));
+            telemetry.addData("Target Back Distance: ", backDistance);
+            telemetry.addLine("Moving Backwards");
+            telemetry.update();
+        }
 //            while (rangebrothers.getDistance(DistanceUnit.INCH) > backDistance) {
 //                if (Math.abs(rangebrothers.getDistance(DistanceUnit.INCH) - backDistance) > MAX_ACCEPTABLE_ERROR) {
 //                    if (!rangeCheck(rangebrothers, backDistance)) {
@@ -443,28 +476,28 @@ public class RightFast extends LinearOpMode {
         backright.setPower(0);
 
 
-        }
+    }
 
 
 
-        private boolean rangeCheck(ModernRoboticsI2cRangeSensor range_sensor, double desired_distance){
-            final int TRIES = 3;
-            for (int i = 0; i < TRIES; i++){
-                if (Math.abs(range_sensor.getDistance(DistanceUnit.INCH) - desired_distance) < MAX_ACCEPTABLE_ERROR){
-                    return true;
-                }
-                telemetry.addData("TRY ",i);
-                telemetry.addData("Range Value: ", range_sensor.getDistance(DistanceUnit.INCH));
-                telemetry.addData("Target: ", desired_distance);
-                telemetry.update();
-                try {
-                    Thread.sleep(1500);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
+    private boolean rangeCheck(ModernRoboticsI2cRangeSensor range_sensor, double desired_distance){
+        final int TRIES = 3;
+        for (int i = 0; i < TRIES; i++){
+            if (Math.abs(range_sensor.getDistance(DistanceUnit.INCH) - desired_distance) < MAX_ACCEPTABLE_ERROR){
+                return true;
             }
-            return false;
+            telemetry.addData("TRY ",i);
+            telemetry.addData("Range Value: ", range_sensor.getDistance(DistanceUnit.INCH));
+            telemetry.addData("Target: ", desired_distance);
+            telemetry.update();
+            try {
+                Thread.sleep(1500);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
         }
+        return false;
+    }
 
 
 
@@ -503,11 +536,11 @@ public class RightFast extends LinearOpMode {
 
         // keep looping while we have time remaining.
         holdTimer.reset();
-            while (color.blue() <= 270 && (holdTimer.time() < holdTime)) {
-                backright.setPower(-.05);
-                backleft.setPower(.05);
-                frontright.setPower(.05);
-                frontleft.setPower(-.05);
+        while (color.blue() <= 270 && (holdTimer.time() < holdTime)) {
+            backright.setPower(-.05);
+            backleft.setPower(.05);
+            frontright.setPower(.05);
+            frontleft.setPower(-.05);
 
         }
 
