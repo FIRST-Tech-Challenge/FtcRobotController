@@ -198,7 +198,7 @@ public class PowerPlayRightCycling extends LinearOpMode {
                 case CYCLE_PICKUP_TURN:
                     if (!drive.isBusy()){
                         time = new Date().getTime() - startTime;
-                        if (time>22*1000){
+                        if (time>18*1000){
 
                             if (drive.linearSlide.getCurrentPosition() < 100) {
                                 armTarget = 0;
@@ -350,7 +350,6 @@ public class PowerPlayRightCycling extends LinearOpMode {
                 }
             }
 
-
             armPIDController.setTarget(armTarget);
             double armPower = armPIDController.calculateVelocity();
             if (armTarget==ARM_BACK){
@@ -364,11 +363,11 @@ public class PowerPlayRightCycling extends LinearOpMode {
             liftPIDController.setTarget(liftTarget);
 
             double power = liftPIDController.calculatePower();
-            double powerLeft= liftPIDController.calculatePower(drive.slideOtherer);
+            //double powerLeft= liftPIDController.calculatePower(drive.slideOtherer);
 
             drive.linearSlide.setPower(power);
             drive.frontSlide.setPower(power);
-            drive.slideOtherer.setPower(powerLeft);
+            drive.slideOtherer.setPower(power*1.1);
 
             //  telemetry.addData("power ", power);
             telemetry.addData("arm target", armTarget);
