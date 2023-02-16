@@ -46,7 +46,7 @@ public class PowerPlayTeleopColorado extends LinearOpMode {
     DcMotorEx frontSlide = null;
     DcMotorEx slideOtherer = null;
 
-    private final double MAX_VELOCITY= 435/60*384.5;
+    private final double MAX_VELOCITY= 435/60*384.5*0.8;
 
     public static double ALIGN_SPEED =0.2;
 
@@ -453,29 +453,38 @@ public class PowerPlayTeleopColorado extends LinearOpMode {
 
     protected void moveSlideMotors (){
 
-        liftPIDController.setTarget(slideTarget);
+        linearSlideMotor.setTargetPosition(slideTarget);
+        frontSlide.setTargetPosition(slideTarget);
+        slideOtherer.setTargetPosition(slideTarget);
+        linearSlideMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        frontSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        slideOtherer.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        linearSlideMotor.setPower(0.9);
+        frontSlide.setPower(0.9);
+        slideOtherer.setPower(0.9);
 
-        double power= liftPIDController.calculatePower();
-//        double powerLeft= liftPIDController.calculatePower(slideOtherer);
+
+
+//        liftPIDController.setTarget(slideTarget);
 //
+//        double power= liftPIDController.calculatePower();
+//        double powerLeft= liftPIDController.calculatePower(slideOtherer);
+////
 //        linearSlideMotor.setPower(power);
 //        frontSlide.setPower(power);
 //        slideOtherer.setPower(powerLeft);
-
-        double velocity = power *MAX_VELOCITY;
-        //double powerLeft= liftPIDController.calculatePower(drive.slideOtherer);
-
-//            drive.linearSlide.setPower(power);
-//            drive.frontSlide.setPower(power);
-//            drive.slideOtherer.setPower(power);
-
-        linearSlideMotor.setVelocity(velocity);
-        frontSlide.setVelocity(velocity);
-        slideOtherer.setVelocity(velocity);
-
-        telemetry.addData("slide", linearSlideMotor.getCurrentPosition());
-        telemetry.addData("front", frontSlide.getCurrentPosition());
-        telemetry.addData("other", slideOtherer.getCurrentPosition());
+//
+//        double velocity = power *MAX_VELOCITY;
+//        //double powerLeft= liftPIDController.calculatePower(drive.slideOtherer);
+//
+//
+////        linearSlideMotor.setVelocity(velocity);
+////        frontSlide.setVelocity(velocity);
+////        slideOtherer.setVelocity(velocity);
+//
+//        telemetry.addData("slide", linearSlideMotor.getCurrentPosition());
+//        telemetry.addData("front", frontSlide.getCurrentPosition());
+//        telemetry.addData("other", slideOtherer.getCurrentPosition());
 
     }
 
