@@ -1,3 +1,5 @@
+@file:Suppress("UNCHECKED_CAST")
+
 package ftc.rogue.blacksmith.internal.util
 
 import java.lang.reflect.Field

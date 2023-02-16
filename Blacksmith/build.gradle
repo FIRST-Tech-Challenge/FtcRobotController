@@ -66,15 +66,15 @@ java {
     targetCompatibility = JavaVersion.VERSION_1_8
 }
 
-afterEvaluate {
-    publishing {
-        publications {
-            release(MavenPublication) {
-                from components.release
+publishing {
+    publications {
+        release(MavenPublication) {
+            groupId = 'com.github.RR-9527'
+            artifactId = 'blacksmith-ftc'
+            version = '0.3.2'
 
-                groupId = 'com.github.RR-9527'
-                artifactId = 'blacksmith-ftc'
-                version = '0.3.1'
+            afterEvaluate {
+                from components.release
             }
         }
     }

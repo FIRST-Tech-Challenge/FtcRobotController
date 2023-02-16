@@ -1,19 +1,12 @@
 package ftc.rogue.blacksmith.listeners
 
-import ftc.rogue.blacksmith.Scheduler
 import org.junit.jupiter.api.Assertions.assertAll
 import org.junit.jupiter.api.Assertions.assertEquals
-import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInstance
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 internal class ListenerTest {
-    @BeforeEach
-    fun setUp() {
-        Scheduler.nuke()
-    }
-
     @Test
     fun `listener correctly works with high & low`() {
         var shouldIncrement = true
