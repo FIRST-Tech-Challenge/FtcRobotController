@@ -87,6 +87,11 @@ public abstract class Teleop extends LinearOpMode {
     double    liftTarget             = 0.0;
     boolean   liftTargetUpward       = false;
     boolean   liftFrontToBack        = false;  // safer to assume this, since smaller rotation involved if we're wrong
+    final  int TURRET_CYCLECOUNT_START = 2;
+    final  int TURRET_CYCLECOUNT_CONE  = 1;
+    final  int TURRET_CYCLECOUNT_DONE  = 0;
+    int       turretCycleCount        = TURRET_CYCLECOUNT_DONE;
+    double    turretTarget            = 0.0;
     boolean   collectingFromStack    = false;
     int       conesOnStack           = 2;
     boolean   needCycleReset         = false; // Have we cycled on the high junction and need to reset the lift and turret for collecting?
@@ -176,6 +181,7 @@ public abstract class Teleop extends LinearOpMode {
             processTurretControls();
             processLiftControls();
             processGrabberControls();
+            processCycleControls();
 
             // Execute any automatic movements
 //          robot.liftPosRun();
@@ -633,6 +639,84 @@ public abstract class Teleop extends LinearOpMode {
     } // processCollectorFlip
 
     /*---------------------------------------------------------------------------------*/
+    void processCycleControls()
+    {
+        // Check if gamepad1 RIGHT TRIGGER has a value >= 0.5
+        // RIGHT TRIGGER used for CYCLING ON RIGHT
+        if ( gamepad1_r_trigger_now && !gamepad1_r_trigger_last)
+        {
+            // Are we trying to collect or cycle?
+            if(!needCycleReset)
+            {
+                liftTarget = robot.LIFT_ANGLE_HIGH;
+                turretTarget = robot.TURRET_ANGLE_CYCLE_L;
+                turretCycleCount = TURRET_CYCLECOUNT_START;
+                needCycleReset = true;
+            }
+            else
+            {
+                liftTarget = robot.LIFT_ANGLE_COLLECT;
+                turretTarget = robot.TURRET_ANGLE_COLLECT_L;
+                turretCycleCount = TURRET_CYCLECOUNT_START;
+                needCycleReset = false;
+            }
+        }
+
+        // Check if gamepad1 LEFT TRIGGER has a value >= 0.5
+        // LEFT TRIGGER used for CYCLING ON LEFT
+        else if ( gamepad1_l_trigger_now && !gamepad1_l_trigger_last )
+        {
+            // Are we trying to collect or cycle?
+            if(!needCycleReset)
+            {
+                liftTarget = robot.LIFT_ANGLE_HIGH;
+                turretTarget = robot.TURRET_ANGLE_CYCLE_R;
+                turretCycleCount = TURRET_CYCLECOUNT_START;
+                needCycleReset = true;
+            }
+            else
+            {
+                liftTarget = robot.LIFT_ANGLE_COLLECT;
+                turretTarget = robot.TURRET_ANGLE_COLLECT_R;
+                turretCycleCount = TURRET_CYCLECOUNT_START;
+                needCycleReset = false;
+            }
+        }
+
+        //=========================================================
+
+        if(turretCycleCount >= TURRET_CYCLECOUNT_START)
+        {
+            // Start by setting the position of the arm and tilt the collector to avoid damage
+            robot.liftPIDPosInit(liftTarget);
+            robot.grabberSetTilt(robot.GRABBER_TILT_STORE);
+            turretCycleCount--;
+        }
+        else if(turretCycleCount == TURRET_CYCLECOUNT_CONE)
+        {
+            // If the arm is going to the score position, wait until it's above the motors to turn the turret/ adjust collector
+            if((needCycleReset) && robot.liftAngle < robot.LIFT_ANGLE_MOTORS)
+            {
+                robot.turretPIDPosInit(turretTarget);
+                robot.grabberSetTilt(robot.GRABBER_TILT_FRONT_H);
+                turretCycleCount--;
+            }
+
+            // If the arm is resetting back to collect position, wait until it's below the motors to turn the turret/ adjust collector
+            else if((!needCycleReset) && robot.liftAngle > robot.LIFT_ANGLE_MOTORS)
+            {
+                robot.turretPosInit(turretTarget);
+                robot.grabberSetTilt(robot.GRABBER_TILT_GRAB);
+                turretCycleCount--;
+            }
+
+            // Do nothing until the arm is above the motors
+            else
+            {
+
+            }
+        }
+    }
     void processTurretControls() {
         boolean safeToManuallyLeft  = (robot.turretAngle > robot.TURRET_ANGLE_MIN);
         boolean safeToManuallyRight = (robot.turretAngle < robot.TURRET_ANGLE_MAX );
@@ -671,37 +755,7 @@ public abstract class Teleop extends LinearOpMode {
            }
         }
         //===================================================================
-        // Check if gamepad1 RIGHT TRIGGER has a value >= 0.5
-        else if ( gamepad1_l_trigger_now && !gamepad1_l_trigger_last)
-        {
-            // Are we trying to collect or cycle?
-            if(!needCycleReset)
-            {
-                robot.performCycle(robot.TURRET_ANGLE_CYCLE_L);
-                needCycleReset = true;
-            }
-            else
-            {
-                robot.resetCycle(robot.TURRET_ANGLE_COLLECT_L);
-                needCycleReset = false;
-            }
-        }
 
-        // Check if gamepad1 LEFT TRIGGER has a value >= 0.5
-        else if ( gamepad1_r_trigger_now && !gamepad1_r_trigger_last )
-        {
-            // Are we trying to collect or cycle?
-            if(!needCycleReset)
-            {
-                robot.performCycle(robot.TURRET_ANGLE_CYCLE_R);
-                needCycleReset = true;
-            }
-            else
-            {
-                robot.resetCycle(robot.TURRET_ANGLE_COLLECT_R);
-                needCycleReset = false;
-            }
-        }
 
         //===================================================================
         else if( manual_turret_control || turretTweaked ) {
