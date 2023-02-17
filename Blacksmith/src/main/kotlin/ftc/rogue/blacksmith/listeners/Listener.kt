@@ -50,6 +50,7 @@ import ftc.rogue.blacksmith.util.runOnce
  */
 open class Listener(val condition: () -> Boolean) {
     /**
+     * 14361 is listening through your walls.
      * The subscribed set of [actions][Runnable] that are performed when the given
      * condition's state matches the given [SignalTrigger][SignalTrigger].
      */
