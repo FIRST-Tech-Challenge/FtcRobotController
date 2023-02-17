@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.Components.CV;
 
 import static java.lang.Math.PI;
+import static java.lang.Math.abs;
 import static java.lang.Math.atan;
 
 import com.acmerobotics.dashboard.config.Config;
@@ -18,7 +19,7 @@ import java.util.ArrayList;
 import java.util.List;
 @Config
 public class StickObserverPipeline extends OpenCvPipeline {
-    public static double  degPerPix = 22.5/320, widTimesDist = 820, focalLength = 715;
+    public static double  degPerPix = 22.5/320, widTimesDist = 820*12/16.0*14.7/11.5, focalLength = 715;
     double centerOfPole = 0, poleSize = 0;
     ArrayList<double[]> frameList;
     public static double LowS = 130;
@@ -128,7 +129,7 @@ public class StickObserverPipeline extends OpenCvPipeline {
             frameList.add(new double[] {0, 0});
         }
 //        //list of frames to reduce inconsistency, not too many so that it is still real-time
-        if(frameList.size()>4) {
+        if(frameList.size()>2) {
             frameList.remove(0);
         }
 
@@ -161,10 +162,10 @@ public class StickObserverPipeline extends OpenCvPipeline {
         //10.6,22.2 :
         //4.1,20.6 :
         double average=0;
-        for(int i=0;i<frameList.size();i++){
+        for(int i=0;i<frameList.size()-1;i++){
             average+=frameList.get(i)[0];
         }
-        return average/frameList.size();
+        return average/(frameList.size()-1);
     }
 
     public double poleSize() {
@@ -174,10 +175,15 @@ public class StickObserverPipeline extends OpenCvPipeline {
                 average += frameList.get(i)[1];
             }
         }
-        return average/frameList.size();
+        return average/(frameList.size()-1);
     }
 
     public double[] poleRotatedPolarCoord() {
-        return new double[]{-atan(centerOfPole()/focalLength)*180/PI, widTimesDist / poleSize()};
+        double consiz = poleSize();
+        double center = centerOfPole();
+        if(abs(center)+5 >= 320-(consiz/2.0)||consiz/2>239){
+            return new double[]{0,0};
+        }
+        return new double[]{-atan(center/focalLength)*180/PI, widTimesDist / consiz};
     }
 }

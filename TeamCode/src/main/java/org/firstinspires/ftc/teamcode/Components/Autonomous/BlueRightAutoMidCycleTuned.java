@@ -67,9 +67,8 @@ public class BlueRightAutoMidCycleTuned extends LinearOpMode {
         ArrayList<TrajectorySequence> dropTrajectory = new ArrayList<>();
         for(int i=0;i<5;i++){
             dropTrajectory.add(robot.roadrun.trajectorySequenceBuilder(new Pose2d(pickupX2-0.5, pickupY2, pickupA2))
-                    .setReversed(true)
-//                .splineToSplineHeading(new Pose2d(pickupX2+15, pickupY2,pickupA2),0)
-                    .splineToSplineHeading(new Pose2d(dropX+(i+1)*0.4,dropY-(i+1)*1.1,dropA),dropET)
+                    .setTangentOffset((toRadians(180+10)))
+                    .splineToSplineHeading(new Pose2d(dropX,dropY,dropA),dropET)
 //                    .UNSTABLE_addTemporalMarkerOffset(0.4,robot::done)
                             .addTemporalMarker(robot::done)
                     .build());
@@ -91,7 +90,7 @@ public class BlueRightAutoMidCycleTuned extends LinearOpMode {
                 .splineToLinearHeading(new Pose2d(-10,5,toRadians(270)), toRadians(135))
                 .build();
         Trajectory park2trajectory = robot.roadrun.trajectoryBuilder(new Pose2d(dropX,dropY, dropA))
-                .lineToLinearHeading(new Pose2d(-33, 13, toRadians(180)))
+                .lineToLinearHeading(new Pose2d(-33, 12, toRadians(180)))
                 .build();
         TrajectorySequence park3trajectory = robot.roadrun.trajectorySequenceBuilder(new Pose2d(dropX,dropY, dropA))
                 .setReversed(false)

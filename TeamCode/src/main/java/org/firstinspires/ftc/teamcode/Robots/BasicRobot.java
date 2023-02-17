@@ -8,7 +8,7 @@ import org.firstinspires.ftc.teamcode.Components.Queuer;
 public class BasicRobot{
     public static Logger logger;
     public static LinearOpMode op = null;
-    protected Queuer queuer = null;
+    public Queuer queuer = null;
     public static boolean isTeleop;
     public static FtcDashboard dashboard;
     public BasicRobot(LinearOpMode opMode, boolean p_isTeleop){

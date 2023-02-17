@@ -6,6 +6,7 @@ import static org.firstinspires.ftc.teamcode.Components.Claw.ClawStates.CLAW_CLO
 import static org.firstinspires.ftc.teamcode.Components.Claw.ClawStates.CLAW_OPEN;
 import static org.firstinspires.ftc.teamcode.Components.Claw.ClawStates.CLAW_OPENING;
 import static org.firstinspires.ftc.teamcode.Components.Claw.ClawStates.CLAW_WIDE;
+import static org.firstinspires.ftc.teamcode.Components.Claw.ClawStates.CLAW_WIDING;
 import static org.firstinspires.ftc.teamcode.Components.LiftArm.liftArmStates.ARM_INTAKE;
 import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.isTeleop;
 import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.logger;
@@ -61,7 +62,8 @@ public class Claw {
         CLAW_CLOSING(false, "CLAW_CLOSING"),
         CLAW_OPEN(true, "CLAW_OPEN"),
         CLAW_OPENING(false, "CLAW_OPENING"),
-        CLAW_WIDE(false, "CLAW_OPEN");
+        CLAW_WIDE(false, "CLAW_WIDE"),
+        CLAW_WIDING(false,"CLAW_WIDING");
 
         boolean status;
         String name;
@@ -117,6 +119,10 @@ public class Claw {
         if (CLAW_OPENING.status && op.getRuntime() - claw.getLastTime() > CLAW_SERVO_SWITCH_TIME) {
             CLAW_OPEN.setStatus(true);
         }
+        if (CLAW_WIDING.status && op.getRuntime() - claw.getLastTime() > CLAW_SERVO_SWITCH_TIME) {
+            CLAW_WIDE.setStatus(true);
+        }
+
 //        op.telemetry.addData("coneDist",coneObserver.getDistance(INCH));
     }
     public double getLastTime(){
@@ -146,10 +152,9 @@ public class Claw {
                 CLAW_SERVO_SWITCH_TIME + " " + op.getRuntime());
     }
     public void wideClaw(){
-        if(ARM_INTAKE.getStatus()&& (CLAW_OPEN.status|| CLAW_CLOSED.status)){
+        if((CLAW_OPEN.status|| CLAW_CLOSED.status)){
             claw.setPosition(CLAW_WIDE_POS+0.04);
-            ClawStates.CLAW_WIDE.setStatus(true);
-            clawPos = CLAW_WIDE_POS;
+            CLAW_WIDING.setStatus(true);
         }
     }
     public void teleClaw(){
@@ -222,10 +227,7 @@ public class Claw {
 
             //set state of claw open to true
             CLAW_OPENING.setStatus(true);
-            CLAW_CLOSED.setStatus(false);
-            CLAW_WIDE.setStatus(false);
 
-            clawPos= CLAW_OPEN_POS;
             //log to general robot log that the claw has been opened through function openClaw()
             logger.log("/RobotLogs/GeneralRobot", claw.getDeviceName() + ",openClaw()"
                     + CLAW_OPENING.status +"clawClosed" + CLAW_CLOSED.getStatus() + "clawWide" + CLAW_WIDE.getStatus(), true);
@@ -244,7 +246,6 @@ public class Claw {
 
             //set state of claw open to true
             CLAW_OPENING.setStatus(true);
-            clawPos= CLAW_OPEN_POS;
             //log to general robot log that the claw has been opened through function openClaw()
             logger.log("/RobotLogs/GeneralRobot", claw.getDeviceName() + ",openClaw()"
                     + ",Claw Opened", true);

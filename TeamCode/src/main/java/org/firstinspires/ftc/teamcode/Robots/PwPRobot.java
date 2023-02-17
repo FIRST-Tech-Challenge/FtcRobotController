@@ -3,11 +3,14 @@ package org.firstinspires.ftc.teamcode.Robots;
 import static org.firstinspires.ftc.teamcode.Components.Claw.ClawStates.CLAW_CLOSED;
 import static org.firstinspires.ftc.teamcode.Components.Claw.ClawStates.CLAW_CLOSING;
 import static org.firstinspires.ftc.teamcode.Components.Claw.ClawStates.CLAW_OPEN;
+import static org.firstinspires.ftc.teamcode.Components.Claw.ClawStates.CLAW_OPENING;
 import static org.firstinspires.ftc.teamcode.Components.Claw.ClawStates.CLAW_WIDE;
+import static org.firstinspires.ftc.teamcode.Components.Claw.ClawStates.CLAW_WIDING;
 import static org.firstinspires.ftc.teamcode.Components.Lift.LiftConstants.LIFT_HIGH_JUNCTION;
 import static org.firstinspires.ftc.teamcode.Components.Lift.LiftConstants.LIFT_MED_JUNCTION;
 import static org.firstinspires.ftc.teamcode.Components.LiftArm.liftArmStates.ARM_INTAKE;
 import static org.firstinspires.ftc.teamcode.Components.LiftArm.liftArmStates.ARM_OUTTAKE;
+import static org.firstinspires.ftc.teamcode.Components.RFModules.Devices.RFMotor.VOLTAGE_CONST;
 import static java.lang.Math.abs;
 import static java.lang.Math.pow;
 import static java.lang.Math.toRadians;
@@ -60,6 +63,7 @@ public class PwPRobot extends BasicRobot {
         voltageSensor = op.hardwareMap.voltageSensor.iterator().next();
         voltage = voltageSensor.getVoltage();
         RFMotor.kP*= 13/ voltageSensor.getVoltage();
+        VOLTAGE_CONST *= 13.8/ voltageSensor.getVoltage();
         RFMotor.kA*= 13/ voltageSensor.getVoltage();
         DriveConstants.TRACK_WIDTH *= 12.7/ voltageSensor.getVoltage();
         DriveConstants.kV *= 12.7/ voltageSensor.getVoltage();
@@ -137,35 +141,34 @@ public class PwPRobot extends BasicRobot {
     }
     public void updateTrajectoryWithCam(){
         if (queuer.queue(true, field.isDoneLookin())) {
-            field.setDoneLookin(false);
             if(field.lookingAtPole()){
                 Pose2d target = field.polePos();
                 TrajectorySequence trajectory = roadrun.getCurrentTraj();
                 roadrun.changeTrajectorySequence(roadrun.trajectorySequenceBuilder(trajectory.start())
                                 .setReversed(true)
                         .splineTo(target.vec(), target.getHeading()).build());
-                field.setDoneLookin(true);
+//                field.setDoneLookin(true);
                 logger.log("/RobotLogs/GeneralRobot", "mr.obama"+target+"im pole"+roadrun.getPoseEstimate());
-                logger.log("/RobotLogs/GeneralRobot", "coords"+cv.rotatedPolarCoord()[0]+","+cv.rotatedPolarCoord()[1]);
-
+//                logger.log("/RobotLogs/GeneralRobot", "coords"+cv.rotatedPolarCoord()[0]+","+cv.rotatedPolarCoord()[1]);
             }
+            field.setDoneLookin(false);
         }
     }
     public void updateTrajectoryWithCone(){
-        if (queuer.queue(true, field.isDoneLookin())) {
-            field.setDoneLookin(false);
-            if(field.lookingAtCone()){
-                Pose2d target = field.conePos();
-                TrajectorySequence trajectory = roadrun.getCurrentTraj();
-                roadrun.changeTrajectorySequence(roadrun.trajectorySequenceBuilder(trajectory.start())
-                        .setReversed(false)
-                        .splineToLinearHeading(new Pose2d(target.vec(),toRadians(180)), toRadians(180)).build());
-                field.setDoneLookin(true);
-                logger.log("/RobotLogs/GeneralRobot", "mr.obama"+target+"im cone"+roadrun.getPoseEstimate());
-                logger.log("/RobotLogs/GeneralRobot", "coords"+cv.rotatedConarCoord()[0]+","+cv.rotatedConarCoord()[1]);
-
-            }
-        }
+//        if (queuer.queue(true, field.isDoneLookin())) {
+//            field.setDoneLookin(false);
+//            if(field.lookingAtCone()){
+//                Pose2d target = field.conePos();
+//                TrajectorySequence trajectory = roadrun.getCurrentTraj();
+//                roadrun.changeTrajectorySequence(roadrun.trajectorySequenceBuilder(trajectory.start())
+//                        .setReversed(false)
+//                        .splineToLinearHeading(new Pose2d(target.vec(),toRadians(180)), toRadians(180)).build());
+//                field.setDoneLookin(true);
+//                logger.log("/RobotLogs/GeneralRobot", "mr.obama"+target+"im cone"+roadrun.getPoseEstimate());
+//                logger.log("/RobotLogs/GeneralRobot", "coords"+cv.rotatedConarCoord()[0]+","+cv.rotatedConarCoord()[1]);
+//
+//            }
+//        }
     }
     public void teleAutoAim(Trajectory trajectory) {
         roadrun.followTrajectoryAsync(trajectory);
@@ -174,6 +177,18 @@ public class PwPRobot extends BasicRobot {
     public void followTrajectorySequenceAsync(TrajectorySequence trajectorySequence) {
         if (queuer.queue(false, !roadrun.isBusy()&&roadrun.getPoseEstimate().vec().distTo(trajectorySequence.end().vec())<3)) {
             if (!roadrun.isBusy()) {
+                roadrun.followTrajectorySequenceAsync(trajectorySequence);
+            }
+        }
+    }
+    public void splineTo(Pose2d position, double endHeading, double tangentOffset){
+        if (queuer.queue(false, !roadrun.isBusy()&&roadrun.getPoseEstimate().vec().distTo(position.vec())<3)) {
+            if (!roadrun.isBusy()) {
+                TrajectorySequence trajectorySequence = roadrun.trajectorySequenceBuilder(roadrun.getPoseEstimate())
+                        .setTangentOffset(tangentOffset)
+                        .splineToSplineHeading(position,endHeading)
+                        .addTemporalMarker(this::done)
+                                        .build();
                 roadrun.followTrajectorySequenceAsync(trajectorySequence);
             }
         }
@@ -204,7 +219,7 @@ public class PwPRobot extends BasicRobot {
     }
 
     public void openClaw(boolean p_asynchronous) {
-        if (queuer.queue(p_asynchronous, CLAW_OPEN.getStatus())) {
+        if (queuer.queue(p_asynchronous, !CLAW_OPENING.getStatus())) {
             claw.updateClawStates();
             claw.openClaw();
         }
@@ -218,7 +233,7 @@ public class PwPRobot extends BasicRobot {
     }
 
     public void closeClaw(boolean p_asynchronous) {
-        if (queuer.queue(p_asynchronous, CLAW_CLOSED.getStatus())) {
+        if (queuer.queue(p_asynchronous, !CLAW_CLOSING.getStatus())) {
             claw.updateClawStates();
             claw.closeClawRaw();
         }
@@ -244,13 +259,13 @@ public class PwPRobot extends BasicRobot {
     }
 
     public void liftToPosition(Lift.LiftConstants targetJunction) {
-        if (queuer.queue(true, lift.isDone()&&lift.getLiftTarget()!= targetJunction.getValue() || abs(lift.getLiftPosition() - targetJunction.getValue()) < 50)) {
+        if (queuer.queue(true, lift.getLiftTarget()!= targetJunction.getValue() || abs(lift.getLiftPosition() - targetJunction.getValue()) < 100)) {
             lift.liftToPosition(targetJunction);
         }
     }
 
     public void wideClaw() {
-        if (queuer.queue(true, claw.isClawWide())) {
+        if (queuer.queue(true, !CLAW_WIDING.getStatus())) {
             claw.wideClaw();
         }
     }
@@ -260,7 +275,7 @@ public class PwPRobot extends BasicRobot {
     }
 
     public void liftToPosition(int tickTarget) {
-        if (queuer.queue(true, lift.isDone()&&lift.getLiftTarget()!= tickTarget || abs(lift.getLiftPosition() - tickTarget) < 50)) {
+        if (queuer.queue(true, lift.getLiftTarget()!= tickTarget || abs(lift.getLiftPosition() - tickTarget) < 100)) {
             lift.liftToPosition(tickTarget);
         }
     }
@@ -268,7 +283,7 @@ public class PwPRobot extends BasicRobot {
         roadrun.changeTrajectorySequence(trajectorySequence);
     }
     public void liftToPosition(int tickTarget, boolean p_asynchronous) {
-        if (queuer.queue(p_asynchronous, lift.isDone() || abs(lift.getLiftPosition() - tickTarget) < 50)) {
+        if (queuer.queue(p_asynchronous, lift.getLiftTarget()!= tickTarget || abs(lift.getLiftPosition() - tickTarget) < 100)) {
             lift.liftToPosition(tickTarget);
         }
     }

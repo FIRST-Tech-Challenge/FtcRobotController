@@ -32,7 +32,7 @@ public class ConeObserverTest extends LinearOpMode {
             loopStart[0] = getRuntime();
             robot.roadrun.update();
 //                robot.autoAim();
-//                logger.log("/RobotLogs/GeneralRobot", "distance"+robot.cv.rotatedPolarCoord()[1]);
+            logger.log("/RobotLogs/GeneralRobot", "distance"+robot.cv.rotatedConarCoord()[1]);
             logger.log("/RobotLogs/GeneralRobot", "angle"+robot.cv.rotatedConarCoord()[0]+","+robot.cv.rotatedConarCoord()[1]);
             robot.setFirstLoop(false);
         }

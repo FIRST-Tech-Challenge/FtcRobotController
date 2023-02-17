@@ -1,7 +1,6 @@
 package org.firstinspires.ftc.teamcode.Components.Autonomous;
 
 import static org.firstinspires.ftc.teamcode.Components.Claw.ClawStates.CLAW_CLOSED;
-import static org.firstinspires.ftc.teamcode.Components.Lift.LiftConstants.LIFT_HIGH_JUNCTION;
 import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.logger;
 import static java.lang.Math.toRadians;
 
@@ -9,7 +8,6 @@ import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
@@ -17,7 +15,6 @@ import org.firstinspires.ftc.teamcode.Robots.PwPRobot;
 import org.firstinspires.ftc.teamcode.roadrunner.trajectorysequence.TrajectorySequence;
 
 import java.util.ArrayList;
-@Disabled
 
 @Config
 @Autonomous(name = "BlueRightAutoCycleTunedCamera")
@@ -27,7 +24,7 @@ public class BlueRightAutoCycleTunedCamera extends LinearOpMode {
 
     public static double dummyP = 3;
 
-    public static double dropX = -29, dropY = 4, dropA = toRadians(140), dropET = toRadians(310);
+    public static double dropX = -31, dropY = 2.6, dropA = toRadians(140), dropET = toRadians(310);
 
     public static double pickupX1 = -45.5, pickupY1 = 11.75, pickupA1 = toRadians(180), pickupET1 = toRadians(180);
     public static double pickupX2 = -62.9, pickupY2 = 11.75, pickupA2 = toRadians(180), pickupET2 = toRadians(180);
@@ -45,8 +42,8 @@ public class BlueRightAutoCycleTunedCamera extends LinearOpMode {
         robot.cv.observeSleeve();
         TrajectorySequence initialtrajectory = robot.roadrun.trajectorySequenceBuilder(new Pose2d(-29.6, 62.25, toRadians(90)))
                 .setReversed(true)
-                .splineToSplineHeading(new Pose2d(-33, 35,toRadians(90)), toRadians(270))
-                .splineToSplineHeading(new Pose2d(-29.4, 3.9, toRadians(140)), toRadians(310))
+                .splineToSplineHeading(new Pose2d(-33, 20,toRadians(90)), toRadians(270))
+                .splineToSplineHeading(new Pose2d(-29.4, 2.9, toRadians(140)), toRadians(310))
                 .addTemporalMarker(robot::done)
                 .build();
         TrajectorySequence pickupSecondPartTrajectory = robot.roadrun.trajectorySequenceBuilder(new Pose2d(-52, 11.75, toRadians(180)))
@@ -60,7 +57,7 @@ public class BlueRightAutoCycleTunedCamera extends LinearOpMode {
 //                .splineTo(new Vector2d(-48,8), toRadians(180))
                 .setTangentOffset(toRadians(toRadians(10)*robot.getVoltage()/12))
 //                .splineToSplineHeading(new Pose2d(new Vector2d(-55,10.5),toRadians(180)), toRadians(180))
-                .splineToSplineHeading(new Pose2d(-63.5,11.25,toRadians(180)), toRadians(180))
+                .splineToSplineHeading(new Pose2d(-63,11.25,toRadians(180)), toRadians(180))
                 .addTemporalMarker(()->{robot.done();})
                 .build();
         ArrayList<TrajectorySequence> pick = new ArrayList<>();
@@ -134,7 +131,6 @@ public class BlueRightAutoCycleTunedCamera extends LinearOpMode {
                 }
             }
         }
-        robot.cv.observeCone();
 //        robot.cv.observeStick();
 
         waitForStart();
@@ -142,74 +138,86 @@ public class BlueRightAutoCycleTunedCamera extends LinearOpMode {
 //        dummyP = 1;
 
         if (isStopRequested()) return;
+        robot.cv.observeCone();
+
         robot.cv.observeStick();
         while (opModeIsActive() && !isStopRequested() && getRuntime() < 29.8) {
             logger.loopcounter++;
             robot.followTrajectorySequenceAsync(initialtrajectory);
             robot.delay(0.3);
-            robot.raiseLiftArmToOuttake(true);
+//            robot.raiseLiftArmToOuttake(true);
             robot.delay(0.4);
-            robot.liftToPosition(1720);
-            robot.delay(0.2);
-            robot.openClaw(false);
-            robot.delay(0.5);
-            robot.cycleLiftArmToCycle(true);
-            robot.delay(0.5);
-            robot.wideClaw();
-            robot.delay(0.6);
-            robot.liftToPosition((int) stackPos[0],true);
-            robot.delay(0.1);
-            robot.followTrajectorySequenceAsync(pickupTrajectory);
-            robot.closeClaw(false);
-            robot.followTrajectorySequenceAsync(dropTrajectory.get(0));
-//            robot.delay(0.4);
-            robot.updateTrajectoryWithCam();
-            robot.delay(0.01);
-            robot.liftToPosition((int)LIFT_HIGH_JUNCTION.getValue(), true);
-            robot.delay(0.5);
-            robot.raiseLiftArmToOuttake(true);
+//            robot.liftToPosition((int)LIFT_HIGH_JUNCTION.getValue());
+//            robot.liftToPosition((int)LIFT_HIGH_JUNCTION.getValue()-220, false);
             robot.delay(0.15);
-            robot.openClaw(false);
+            robot.wideClaw();
+            robot.splineTo(new Pose2d(-63.5,11.75,toRadians(180)),toRadians(180),toRadians(0));
+//            robot.liftToPosition((int)LIFT_HIGH_JUNCTION.getValue()+50, true);
+            robot.delay(0.3);
+//            robot.openClaw(true);
+            robot.delay(0.4);
+//            robot.cycleLiftArmToCycle(true);
+            robot.delay(0.8);
+//            robot.wideClaw();
+            robot.delay(0.6);
+//            robot.liftToPosition((int) stackPos[0],true);
+//            robot.closeClaw(false);
+            robot.splineTo(new Pose2d(dropX,dropY,toRadians(130)),toRadians(310),toRadians(-170));
+            robot.delay(0.4);
+//            robot.updateTrajectoryWithCam();
+            robot.delay(0.01);
+//            robot.liftToPosition((int)LIFT_HIGH_JUNCTION.getValue(), true);
+            robot.delay(0.5);
+//            robot.raiseLiftArmToOuttake(true);
+//            robot.liftToPosition((int)LIFT_HIGH_JUNCTION.getValue()-220, false);
+            robot.delay(0.15);
+//            robot.wideClaw();
+            robot.splineTo(new Pose2d(-64,11.75,toRadians(180)),toRadians(180),toRadians(-5));
+//            robot.liftToPosition((int)LIFT_HIGH_JUNCTION.getValue()+50, true);
             for (int i = 0; i < 4; i++) {
-                robot.delay(0.7);
-                if(i!=3) {
-                    robot.cycleLiftArmToCycle(true);
-                }else{
-                    robot.cycleLiftArmToCycle(true);
-                }
-                robot.delay(0.7);
-                robot.wideClaw();
-                robot.delay(0.8);
-                robot.liftToPosition((int) stackPos[i + 1]);
-                robot.delay(0.1);
-                robot.followTrajectorySequenceAsync(pickupTrajectory2);
+                robot.delay(0.3);
+//                robot.openClaw(true);
                 robot.delay(0.4);
+                if(i!=3) {
+//                    robot.cycleLiftArmToCycle(true);
+                }else{
+//                    robot.cycleLiftArmToCycle(true);
+                }
+                robot.delay(0.8);
+//                robot.wideClaw();
+                robot.delay(0.6);
+//                robot.liftToPosition((int) stackPos[i + 1]);
                 robot.updateTrajectoryWithCone();
-                robot.closeClaw(false);
+//                robot.closeClaw(false);
                 if(false){//claw no detect
 
                 }
-                robot.followTrajectorySequenceAsync(dropTrajectory.get(i));
+                robot.splineTo(new Pose2d(dropX+0.3,dropY-0.5,toRadians(130)),toRadians(310),toRadians(-170));
                 robot.delay(0.4);
-                robot.updateTrajectoryWithCam();
-                robot.delay(0.045+(3-i)*0.005);
-                robot.liftToPosition(LIFT_HIGH_JUNCTION);
-                robot.delay(0.27+0.005*(3-i));
-                robot.raiseLiftArmToOuttake(true);
+//                robot.updateTrajectoryWithCam();
+                robot.delay(0.1+(3-i)*0.005);
+//                robot.liftToPosition((int)LIFT_HIGH_JUNCTION.getValue());
+                robot.delay(0.33+0.005*(3-i));
+//                robot.raiseLiftArmToOuttake(true);
+//                robot.liftToPosition((int)LIFT_HIGH_JUNCTION.getValue()-220, false);
                 robot.delay(0.15);
-                robot.openClaw(false);
+//                robot.wideClaw();
+                robot.splineTo(new Pose2d(-64,11.75,toRadians(180)),toRadians(180),toRadians(0));
+//                robot.liftToPosition((int)LIFT_HIGH_JUNCTION.getValue()+50, true);
             }
-            robot.delay(0.8);
-            robot.lowerLiftArmToIntake(true);
+            robot.delay(0.3);
+//            robot.openClaw(true);
+            robot.delay(0.3);
+//            robot.lowerLiftArmToIntake(true);
             robot.delay(1.5);
-            robot.wideClaw();
-            robot.delay(1.5);
-            robot.liftToPosition(0);
+//            robot.wideClaw();
+            robot.delay(0.4);
+//            robot.liftToPosition(0);
 
             if (dummyP == 1) {
                 robot.followTrajectorySequenceAsync(park1trajectory);
             } else if (dummyP == 3) {
-                robot.followTrajectorySequenceAsync(park3trajectory);
+                robot.splineTo(new Pose2d(-60,11.5,toRadians(180)),toRadians(180),toRadians(0));
             } else {
                 robot.followTrajectorySequenceAsync(park2trajectory);
             }

@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.Components.CV;
 
 import static java.lang.Math.PI;
+import static java.lang.Math.abs;
 import static java.lang.Math.atan;
 
 import com.acmerobotics.dashboard.config.Config;
@@ -18,7 +19,7 @@ import java.util.ArrayList;
 import java.util.List;
 @Config
 public class ConeObserverPipeline extends OpenCvPipeline {
-    public static double  degPerPix = 22.5/320, widTimesDist = 820*4, focalLength = 715;
+    public static double  degPerPix = 22.5/320, widTimesDist = 820*4*24/31.0, focalLength = 715;
     double centerOfPole = 0, poleSize = 0;
     ArrayList<double[]> frameList;
     public static double LowS = 50;
@@ -74,7 +75,7 @@ public class ConeObserverPipeline extends OpenCvPipeline {
         double maxWidth = 0;
         //iterate through each rotatedRect find largest
         for (int i = 0; i < rectangle.length; i++) {
-            if(rectangle[i].size.height/rectangle[i].size.width>1.5 ||rectangle[i].size.width/rectangle[i].size.height>1.5) {
+//            if(rectangle[i].size.height/rectangle[i].size.width>1.5 ||rectangle[i].size.width/rectangle[i].size.height>1.5) {
 //                if(rectangle[i].size.height > 300 || rectangle[i].size.width >300) {
                     if (rectangle[i].size.height < rectangle[i].size.width) {
                         if (rectangle[i].size.height > maxWidth) {
@@ -88,7 +89,7 @@ public class ConeObserverPipeline extends OpenCvPipeline {
                         }
 //                    }
                 }
-            }
+//            }
         }
 //        //if there is a detected largest contour, record information about it
         if(rectangle.length>0) {
@@ -129,10 +130,10 @@ public class ConeObserverPipeline extends OpenCvPipeline {
     public double centerOfCone() {
 
         double average=0;
-        for(int i=0;i<frameList.size();i++){
+        for(int i=0;i<frameList.size()-1;i++){
             average+=frameList.get(i)[0];
         }
-        return average/frameList.size();
+        return average/(frameList.size()-1);
     }
 
     public double coneSize() {
@@ -142,10 +143,15 @@ public class ConeObserverPipeline extends OpenCvPipeline {
                 average += frameList.get(i)[1];
             }
         }
-        return average/frameList.size();
+        return average/(frameList.size()-1);
     }
 
     public double[] coneRotatedPolarCoord() {
-        return new double[]{-atan(centerOfCone()/focalLength)*180/PI, widTimesDist / coneSize()};
+        double consiz = coneSize();
+        double center = centerOfCone();
+        if(abs(center)+5 >= 320-(consiz/2.0)||consiz/2>239){
+            return new double[]{0,0};
+        }
+        return new double[]{-atan(center/focalLength)*180/PI,widTimesDist / consiz};
     }
 }

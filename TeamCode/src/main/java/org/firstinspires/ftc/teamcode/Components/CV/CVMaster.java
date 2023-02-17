@@ -27,6 +27,7 @@ public class CVMaster {
     }
     public void observeStick(){
         opencv = new StickObserverPipeline();
+        webcam.setPipeline(opencv);
 
         webcam.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener()
         {
@@ -91,7 +92,7 @@ public class CVMaster {
                  * away from the user.
                  */
                 clawCam.setPipeline(cone);
-                clawCam.startStreaming(640, 480, OpenCvCameraRotation.UPRIGHT);
+//                clawCam.startStreaming(640, 480, OpenCvCameraRotation.UPRIGHT);
 
                 dashboard.startCameraStream(clawCam, 10);
 
@@ -134,7 +135,7 @@ public class CVMaster {
                 webcam.setPipeline(openSleevi);
                 webcam.startStreaming(640, 480, OpenCvCameraRotation.UPRIGHT);
 
-                dashboard.startCameraStream(webcam, 5);
+//                dashboard.startCameraStream(webcam, 10);
 
             }
 

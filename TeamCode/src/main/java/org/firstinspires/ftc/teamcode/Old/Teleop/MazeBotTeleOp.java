@@ -8,7 +8,6 @@ import static java.lang.Math.pow;
 import static java.lang.Math.sin;
 import static java.lang.Math.sqrt;
 
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -16,14 +15,13 @@ import com.qualcomm.robotcore.hardware.DcMotorEx;
 
 import org.firstinspires.ftc.teamcode.Old.Robots.FWDRobot;
 
-@Disabled
 @TeleOp(name = "MazeBotTeleOp")
 
 public class MazeBotTeleOp extends LinearOpMode {
-    DcMotorEx motorLeftFront;
-    DcMotorEx motorRightFront;
-    DcMotorEx motorLeftBack;
-    DcMotorEx motorRightBack;
+    DcMotorEx leftFront;
+    DcMotorEx rightFront;
+    DcMotorEx leftRear;
+    DcMotorEx rightRear;
 
     public void runOpMode() {
 
@@ -31,15 +29,18 @@ public class MazeBotTeleOp extends LinearOpMode {
 
         telemetry.addData("Status", "Before new Robot");
         telemetry.update();
-        motorLeftFront = (DcMotorEx) op.hardwareMap.dcMotor.get("motorLeftFront");
-        motorRightFront = (DcMotorEx) op.hardwareMap.dcMotor.get("motorRightFront");
-        motorLeftBack = (DcMotorEx) op.hardwareMap.dcMotor.get("motorLeftBack");
-        motorRightBack = (DcMotorEx) op.hardwareMap.dcMotor.get("motorRightBack");
-
-        motorLeftFront.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        motorRightFront.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        motorLeftBack.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        motorRightBack.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        leftFront = hardwareMap.get(DcMotorEx.class, "motorLeftFront");
+        leftRear = hardwareMap.get(DcMotorEx.class, "motorLeftBack");
+        rightRear = hardwareMap.get(DcMotorEx.class, "motorRightBack");
+        rightFront = hardwareMap.get(DcMotorEx.class, "motorRightFront");
+        rightFront.setDirection(DcMotor.Direction.FORWARD);
+        leftFront.setDirection(DcMotor.Direction.REVERSE);
+        leftRear.setDirection(DcMotor.Direction.REVERSE);
+        rightRear.setDirection(DcMotor.Direction.FORWARD);
+        leftFront.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        rightFront.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        leftRear.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        rightRear.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
         while (!opModeIsActive() && !isStopRequested()) {
             telemetry.addData("status", "waiting for start command...");
@@ -96,11 +97,11 @@ public class MazeBotTeleOp extends LinearOpMode {
                 powera*=1/abs(powerb);
                 powerb*=1/abs(powerb);
             }
-            motorLeftFront.setPower((powerb * leftStickr - rightStick));
-            motorRightBack.setPower((powerb * leftStickr + rightStick));
+            leftFront.setPower((powerb * leftStickr));
+            rightRear.setPower((powerb * leftStickr ));
 
-            motorRightFront.setPower((powera * leftStickr + rightStick));
-            motorLeftBack.setPower((powera * leftStickr - rightStick));
+            rightFront.setPower((powera * leftStickr));
+            leftRear.setPower((powera * leftStickr ));
 
 //        }
         }
