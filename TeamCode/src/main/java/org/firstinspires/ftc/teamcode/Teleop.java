@@ -641,9 +641,9 @@ public abstract class Teleop extends LinearOpMode {
     /*---------------------------------------------------------------------------------*/
     void processCycleControls()
     {
-        // Check if gamepad1 LEFT TRIGGER has a value >= 0.5
-        // LEFT TRIGGER used for CYCLING ON LEFT
-        if ( gamepad1_l_trigger_now && !gamepad1_l_trigger_last)
+        // Check if gamepad1 RIGHT TRIGGER has a value >= 0.5
+        // RIGHT TRIGGER used for CYCLING ON RIGHT
+        if ( gamepad1_r_trigger_now && !gamepad1_r_trigger_last)
         {
             // Are we trying to collect or cycle?
             if(!needCycleReset)
@@ -662,9 +662,9 @@ public abstract class Teleop extends LinearOpMode {
             }
         }
 
-        // Check if gamepad1 RIGHT TRIGGER has a value >= 0.5
-        // RIGHT TRIGGER used for CYCLING ON RIGHT
-        else if ( gamepad1_r_trigger_now && !gamepad1_r_trigger_last )
+        // Check if gamepad1 LEFT TRIGGER has a value >= 0.5
+        // LEFT TRIGGER used for CYCLING ON LEFT
+        else if ( gamepad1_l_trigger_now && !gamepad1_l_trigger_last )
         {
             // Are we trying to collect or cycle?
             if(!needCycleReset)
