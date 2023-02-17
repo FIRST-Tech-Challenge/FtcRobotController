@@ -56,10 +56,10 @@ var NORMAL_LIFT_D = 0.00001
 var MOTION_PROFILE_LIFT_P = 0.022
 
 @JvmField
-var MOTION_PROFILE_LIFT_I = 0.0003
+var MOTION_PROFILE_LIFT_I = 0.55
 
 @JvmField
-var MOTION_PROFILE_LIFT_D = 0.00025
+var MOTION_PROFILE_LIFT_D = 0.0013
 
 @JvmField
 var LIFT_MAX_V = 32000.0
@@ -71,10 +71,10 @@ var LIFT_MAX_A = 21000.0
 var LIFT_MAX_J = 12000.0
 
 @JvmField
-var PROCESS_NOISE = 1.0
+var PROCESS_NOISE = 10.0
 
 @JvmField
-var MEASUREMENT_NOISE = 1.0
+var MEASUREMENT_NOISE = 10.0
 
 /**
  * Lift object representing the lift on our V2 robot.
@@ -185,11 +185,12 @@ class Lift(private val usingMotionProfiling: Boolean) {
 //                val correction = liftNormalPID.update(liftHeight.toDouble(), liftVelocity)
                 val correction = liftNormalPID.calculate(liftHeight.toDouble(), targetHeight.toDouble())
                 val filteredCorrection = liftFilter.filter(correction)
-//                if (abs(filteredCorrection) < 0.05)
-//                    liftMotor.power = 0.0
-//                else
-                drivenCorrection = filteredCorrection
-                liftMotor.power = filteredCorrection
+                if (abs(filteredCorrection) < 0.05)
+                    liftMotor.power = 0.0
+                else {
+                    drivenCorrection = filteredCorrection
+                    liftMotor.power = filteredCorrection
+                }
             }
         }
     }
