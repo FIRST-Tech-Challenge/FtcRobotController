@@ -95,6 +95,11 @@ public class UnderArm implements Subsystem {
             ((ServoImplEx) turretServo).setPwmRange(axonRange);
         }
 
+        shoulderTargetAngle = 0;
+        elbowTargetAngle = 0;
+        wristTargetAngle = 0;
+        turretTargetAngle = 0;
+
         articulation = Articulation.noIK;
         fieldPositionTarget = getUnderArmPosition(); //crane default IK starting point is
     }
@@ -248,19 +253,19 @@ public class UnderArm implements Subsystem {
     //todo these adjust methods are horrid - they need to have range limits applied to them and time based velocity if we are keeping them
 
     public void adjustShoulder(double speed){
-        shoulderTargetAngle -= 20*speed*robot.deltaTime;
+        shoulderTargetAngle -= 100*speed*robot.deltaTime;
     }
 
     public void adjustElbow(double speed){
-        elbowTargetAngle += 20*speed*robot.deltaTime;
+        elbowTargetAngle += 100*speed*robot.deltaTime;
     }
 
     public void adjustLasso(double speed){
-        wristTargetAngle += 20*speed*robot.deltaTime;
+        wristTargetAngle += 100*speed*robot.deltaTime;
     }
 
     public void adjustTurret(double speed){
-        turretTargetAngle += 40*speed*robot.deltaTime;
+        turretTargetAngle += 400*speed*robot.deltaTime;
     }
 
     public static double ADJUST_HEIGHT_SPEED = 2;
@@ -292,12 +297,7 @@ public class UnderArm implements Subsystem {
 
         articulate(articulation);
 
-        if (shoulderTargetAngle > 180)
-            shoulderTargetAngle -= 360;
-        if (elbowTargetAngle > 180)
-            elbowTargetAngle -= 360;
-        if (wristTargetAngle > 180)
-            wristTargetAngle -= 360;
+
 
         shoulderServo.setPosition(servoNormalizeExtended(shoulderServoValue(shoulderTargetAngle)));
         elbowServo.setPosition(servoNormalizeExtended(elbowServoValue(elbowTargetAngle)));
