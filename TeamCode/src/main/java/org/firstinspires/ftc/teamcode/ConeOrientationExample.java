@@ -69,8 +69,8 @@ public class ConeOrientationExample extends LinearOpMode
 
     public void performEveryLoop() {
         robot.readBulkData();
-        robot.turretPosRun(false);
-        robot.liftPosRun();
+        robot.turretPIDPosRun(false);
+        robot.liftPIDPosRun(false);
     }
         /**
          * NOTE: Many comments have been omitted from this sample for the
@@ -153,7 +153,7 @@ public class ConeOrientationExample extends LinearOpMode
         waitForStart();
 
         // Perform setup needed to center turret
-        robot.turretPosInit( robot.TURRET_ANGLE_CENTER );
+        robot.turretPIDPosInit( robot.TURRET_ANGLE_CENTER );
 
         while (opModeIsActive())
         {

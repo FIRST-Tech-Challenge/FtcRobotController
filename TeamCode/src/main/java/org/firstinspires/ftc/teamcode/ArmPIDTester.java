@@ -71,8 +71,8 @@ public class ArmPIDTester extends LinearOpMode
 
     public void performEveryLoop() {
         robot.readBulkData();
-        robot.turretPosRun(false);
-        robot.liftPosRun();
+//      robot.turretPosRun(false);
+//      robot.liftPosRun();
         robot.turretPIDPosRun(false);
         robot.liftPIDPosRun(false);
     }
@@ -163,8 +163,8 @@ public class ArmPIDTester extends LinearOpMode
         performEveryLoop();
 
         // Perform setup needed to center lift
-        robot.turretPosInit( robot.TURRET_ANGLE_CENTER );
-        robot.liftPosInit( robot.LIFT_ANGLE_HIGH );
+        robot.turretPIDPosInit( robot.TURRET_ANGLE_CENTER );
+        robot.liftPIDPosInit( robot.LIFT_ANGLE_HIGH );
         while( !isStopRequested() && ( robot.turretMotorAuto == true || robot.liftMotorAuto == true )) {
             performEveryLoop();
         }
