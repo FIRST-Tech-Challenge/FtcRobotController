@@ -15,7 +15,7 @@ import org.firstinspires.ftc.teamcode.Robots.PwPRobot;
 import org.firstinspires.ftc.teamcode.roadrunner.trajectorysequence.TrajectorySequence;
 
 import java.util.ArrayList;
-@Disabled
+
 @Config
 @Autonomous(name = "BlueLeftAutoCycleTunedCamera")
 
