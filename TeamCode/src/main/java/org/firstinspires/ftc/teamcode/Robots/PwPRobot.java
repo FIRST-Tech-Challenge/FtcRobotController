@@ -399,6 +399,10 @@ public class PwPRobot extends BasicRobot {
         leds.violet();
     }
 
+    public void blue() {
+        leds.blue();
+    }
+
     public void rainbowRainbow() {
         leds.rainbowrainbow();
     }
