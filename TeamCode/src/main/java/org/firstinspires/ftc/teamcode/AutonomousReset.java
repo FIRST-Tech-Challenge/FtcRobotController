@@ -52,8 +52,8 @@ public class AutonomousReset extends LinearOpMode {
      */
     public void performEveryLoop() {
         robot.readBulkData();
-        robot.liftPosRun();
-        robot.turretPosRun(false);
+        robot.liftPIDPosRun(false);
+        robot.turretPIDPosRun(false);
     }
     /*--------------------------------------------------------------------------------------------*/
     // Automatically move the robot mechanisms to the starting Autonomous configuration
@@ -63,9 +63,9 @@ public class AutonomousReset extends LinearOpMode {
         // Ensure collector rotated to the upward position
         robot.rotateServo.setPosition( robot.GRABBER_ROTATE_UP );
         // Initialize turret control (ensure we're centered!)
-        robot.turretPosInit( robot.TURRET_ANGLE_CENTER );
+        robot.turretPIDPosInit( robot.TURRET_ANGLE_CENTER );
         // Initialize lift control (lower to start position for autonomous)
-        robot.liftPosInit( robot.LIFT_ANGLE_ASTART );
+        robot.liftPIDPosInit( robot.LIFT_ANGLE_ASTART );
         // Wait until both motions are complete
         while( opModeIsActive() && ((robot.turretMotorAuto == true) || (robot.liftMotorAuto == true)) ) {
             performEveryLoop();

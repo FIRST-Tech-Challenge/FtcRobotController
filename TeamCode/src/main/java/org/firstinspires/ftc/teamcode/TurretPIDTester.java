@@ -71,8 +71,8 @@ public class TurretPIDTester extends LinearOpMode
 
     public void performEveryLoop() {
         robot.readBulkData();
-        robot.turretPosRun(false);
-        robot.liftPosRun();
+//      robot.turretPosRun(false);
+//      robot.liftPosRun();
         robot.turretPIDPosRun(false);
         robot.liftPIDPosRun( false );
     }
@@ -100,38 +100,6 @@ public class TurretPIDTester extends LinearOpMode
 
     } // scoreCone
 
-    public void performAutoOldLift() {
-        // Now reverse the lift to raise off the cone stack
-        robot.liftPosInit( robot.LIFT_ANGLE_5STACK );
-        while( opModeIsActive() && (robot.liftMotorAuto == true) ) {
-            performEveryLoop();
-        }
-        // halt lift motors
-        robot.liftMotorsSetPower( 0.0 );
-
-        // Perform setup to center turret and raise lift to scoring position
-        robot.turretPosInit( robot.TURRET_ANGLE_5STACK_L);
-        robot.liftPosInit( robot.LIFT_ANGLE_HIGH_BA );
-        robot.grabberSetTilt( robot.GRABBER_TILT_BACK_H );
-        robot.rotateServo.setPosition( robot.GRABBER_ROTATE_DOWN );
-        while( opModeIsActive() && ( robot.turretMotorAuto == true || robot.liftMotorAuto == true )) {
-            performEveryLoop();
-        }
-
-        scoreCone();
-
-        robot.turretPosInit( robot.TURRET_ANGLE_CENTER );
-        robot.liftPosInit( robot.LIFT_ANGLE_5STACK );
-        robot.rotateServo.setPosition( robot.GRABBER_ROTATE_UP );
-        while( opModeIsActive() && ((robot.turretMotorAuto == true) || (robot.liftMotorAuto == true)) ) {
-            performEveryLoop();
-        }
-        robot.liftPosInit( robot.LIFT_ANGLE_COLLECT );
-        while( opModeIsActive() && ((robot.liftMotorAuto == true)) ) {
-            performEveryLoop();
-        }
-    }
-
     public void performAutoNewLift() {
         // Now reverse the lift to raise off the cone stack
         robot.liftPIDPosInit( robot.LIFT_ANGLE_HIGH );
@@ -155,27 +123,6 @@ public class TurretPIDTester extends LinearOpMode
         }
         robot.liftPIDPosInit( robot.LIFT_ANGLE_COLLECT );
         while( opModeIsActive() && ((robot.liftMotorPIDAuto == true)) ) {
-            performEveryLoop();
-        }
-    }
-
-    public void performTeleOldLift(double collectAngle, double scoreAngle) {
-        // Now reverse the lift to raise off the cone stack
-        // Perform setup to center turret and raise lift to scoring position
-        robot.turretPosInit( scoreAngle );
-        robot.liftPosInit( robot.LIFT_ANGLE_HIGH_B );
-        robot.grabberSetTilt( robot.GRABBER_TILT_BACK_H );
-        robot.rotateServo.setPosition( robot.GRABBER_ROTATE_DOWN );
-        while( opModeIsActive() && ( robot.turretMotorAuto == true || robot.liftMotorAuto == true )) {
-            performEveryLoop();
-        }
-
-        scoreCone();
-
-        robot.turretPosInit( collectAngle );
-        robot.liftPosInit( robot.LIFT_ANGLE_COLLECT );
-        robot.rotateServo.setPosition( robot.GRABBER_ROTATE_UP );
-        while( opModeIsActive() && ((robot.turretMotorAuto == true) || (robot.liftMotorAuto == true)) ) {
             performEveryLoop();
         }
     }
@@ -227,8 +174,8 @@ public class TurretPIDTester extends LinearOpMode
         performEveryLoop();
 
         // Perform setup needed to center turret
-        robot.turretPosInit( 21.9 );
-        robot.liftPosInit( robot.LIFT_ANGLE_COLLECT );
+        robot.turretPIDPosInit( 21.9 );
+        robot.liftPIDPosInit( robot.LIFT_ANGLE_COLLECT );
         while( !isStopRequested() && ( robot.turretMotorAuto == true || robot.liftMotorAuto == true )) {
             performEveryLoop();
         }

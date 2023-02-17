@@ -75,8 +75,8 @@ public class PoleOrientationExample extends LinearOpMode
 
     public void performEveryLoop() {
         robot.readBulkData();
-        robot.turretPosRun(false);
-        robot.liftPosRun();
+        robot.turretPIDPosRun(false);
+        robot.liftPIDPosRun(false);
     }
 
     @Override
@@ -155,9 +155,9 @@ public class PoleOrientationExample extends LinearOpMode
         sleep(300);
 
         // Perform setup needed to center turret
-//        robot.turretPosInit( robot.TURRET_ANGLE_CENTER );
-        robot.turretPosInit(+32.5 );
-        robot.liftPosInit( robot.LIFT_ANGLE_HIGH_BA );
+//      robot.turretPIDPosInit( robot.TURRET_ANGLE_CENTER );
+        robot.turretPIDPosInit(+32.5 );
+        robot.liftPIDPosInit( robot.LIFT_ANGLE_HIGH_BA );
         while( robot.turretMotorAuto == true || robot.liftMotorAuto == true) {
             performEveryLoop();
         }

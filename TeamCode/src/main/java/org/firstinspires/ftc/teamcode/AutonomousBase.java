@@ -75,8 +75,7 @@ public abstract class AutonomousBase extends LinearOpMode {
 
     boolean     blueAlliance    = true;  // Is alliance BLUE (true) or RED (false)?
     boolean     forceAlliance   = false; // Override vision pipeline? (toggled during init phase of autonomous)
-    public int         fiveStackHeight = 5;     // Number of cones remaining on the 5-stack (always starts at 5)
-
+    int         fiveStackHeight = 5;     // Number of cones remaining on the 5-stack (always starts at 5)
     int         fiveStackCycles = 3;     // How many we want to attempt to collect/score? (adjustable during init)
     ElapsedTime autonomousTimer = new ElapsedTime();
 
@@ -103,8 +102,8 @@ public abstract class AutonomousBase extends LinearOpMode {
     public void performEveryLoop() {
         robot.readBulkData();
         globalCoordinatePositionUpdate();
-        robot.liftPosRun();
-        robot.turretPosRun(false);
+        robot.liftPIDPosRun(false);
+        robot.turretPIDPosRun(false);
     } // performEveryLoop
 
     /*---------------------------------------------------------------------------------*/

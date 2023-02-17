@@ -184,8 +184,8 @@ public abstract class Teleop extends LinearOpMode {
             processCycleControls();
 
             // Execute any automatic movements
-            robot.liftPosRun();
-            robot.turretPosRun(true);
+//          robot.liftPosRun();
+//          robot.turretPosRun(true);
             robot.liftPIDPosRun(true);
             robot.turretPIDPosRun(true);
 
@@ -727,7 +727,7 @@ public abstract class Teleop extends LinearOpMode {
         // Check for an OFF-to-ON toggle of the gamepad1 CROSS button
         if( gamepad1_cross_now && !gamepad1_cross_last)
         {
-            robot.turretPosInit( robot.TURRET_ANGLE_CENTER );
+            robot.turretPIDPosInit( robot.TURRET_ANGLE_CENTER );
         }
         //===================================================================
         // Check for an OFF-to-ON toggle of the gamepad1 LEFT BUMPER
@@ -735,11 +735,11 @@ public abstract class Teleop extends LinearOpMode {
         {
            // Is the driver assisting with COLLECTION? (rotate turret toward substation)
            if( liftFrontToBack == false ) {
-              robot.turretPosInit( robot.TURRET_ANGLE_COLLECT_R );
+              robot.turretPIDPosInit( +21.9 );
            }
            // Driver must be assisting with SCORING? (rotate turret toward junction pole)
            else {  // liftFrontToBack == true
-              robot.turretPosInit( -50.5 );
+              robot.turretPIDPosInit( -50.5 );
            }
         }
         // Check for an OFF-to-ON toggle of the gamepad1 RIGHT BUMPER
@@ -747,11 +747,11 @@ public abstract class Teleop extends LinearOpMode {
         {
            // Is the driver assisting with COLLECTION? (rotate turret toward substation)
             if( liftFrontToBack == false ) {
-              robot.turretPosInit( robot.TURRET_ANGLE_COLLECT_L );
+              robot.turretPIDPosInit( -21.9 );
            }
            // Driver must be assisting with SCORING? (rotate turret toward junction pole)
            else {   // liftFrontToBack == true
-              robot.turretPosInit( +50.5 );
+              robot.turretPIDPosInit( +50.5 );
            }
         }
         //===================================================================
@@ -814,7 +814,7 @@ public abstract class Teleop extends LinearOpMode {
             robot.grabberSpinStop();
             // Were we previously collecting from the stack?
             collectingFromStack = false;
-            robot.turretPosInit( robot.TURRET_ANGLE_CENTER );
+            robot.turretPIDPosInit( robot.TURRET_ANGLE_CENTER );
             needFlip       = false;  // collector upright for grabbing
             grabberTarget1 = robot.GRABBER_TILT_GRAB;
             grabberTarget2 = robot.GRABBER_TILT_GRAB;
@@ -828,7 +828,7 @@ public abstract class Teleop extends LinearOpMode {
         else if( gamepad2_triangle_now && !gamepad2_triangle_last)
         {   // Lower lift to COLLECT FROM STACK position and adjust collector tilt angled
             robot.grabberSpinStop();
-            robot.turretPosInit( robot.TURRET_ANGLE_CENTER );
+            robot.turretPIDPosInit( robot.TURRET_ANGLE_CENTER );
             needFlip       = false;  // collector upright for grabbing
             grabberTarget1 = robot.GRABBER_TILT_GRAB;
             grabberTarget2 = robot.GRABBER_TILT_GRAB2;
@@ -967,7 +967,7 @@ public abstract class Teleop extends LinearOpMode {
             {
                 grabberTarget1 = robot.GRABBER_TILT_FRONT_L;
             }
-            robot.liftPosInit( robot.LIFT_ANGLE_LOW );
+            robot.liftPIDPosInit( robot.LIFT_ANGLE_LOW );
             grabberTarget2 = robot.GRABBER_TILT_FRONT_L;
             liftFrontToBack = true;  // lifting
         }
@@ -1000,7 +1000,7 @@ public abstract class Teleop extends LinearOpMode {
         //===================================================================
         if( liftCycleCount >= LIFT_CYCLECOUNT_START ) {
            robot.grabberSetTilt( grabberTarget1 );
-           robot.liftPosInit( liftTarget );
+           robot.liftPIDPosInit( liftTarget );
             processCollectorFlip();
            liftCycleCount--;  // exit this state
         } // LIFT_CYCLECOUNT_START

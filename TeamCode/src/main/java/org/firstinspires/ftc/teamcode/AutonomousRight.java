@@ -360,10 +360,10 @@ public class AutonomousRight extends AutonomousBase {
 
         // The grabber finished the tilt down during the 90deg turn movement, so
         // it's safe now to command the lift to raise to scoring position
-        robot.liftPosInit( robot.LIFT_ANGLE_HIGH_BA );
+        robot.liftPIDPosInit( robot.LIFT_ANGLE_HIGH_BA );
 
         // We're past the medium junction pole, so okay to rotate the turret
-        robot.turretPosInit( +49.0 );
+        robot.turretPIDPosInit( +49.0 );
 
         // Drive partway there (while lift raises past the front motor)
         autoYpos=34.5;  autoXpos=-4.5;
@@ -410,8 +410,8 @@ public class AutonomousRight extends AutonomousBase {
     private void moveToConeStack() {
 
         // Establish targets for turret angle (centered) and lift height (5-stack)
-        robot.turretPosInit( robot.TURRET_ANGLE_CENTER );
-        robot.liftPosInit( robot.LIFT_ANGLE_5STACK );
+        robot.turretPIDPosInit( robot.TURRET_ANGLE_CENTER );
+        robot.liftPIDPosInit( robot.LIFT_ANGLE_5STACK );
 
         // Having just scored on the tall poll, turn left (-90deg) to point toward the 5-stack
         autoYpos=51.5;  autoXpos=7.0;  autoAngle=+90.0;    // (inches, inches, degrees)
@@ -440,8 +440,8 @@ public class AutonomousRight extends AutonomousBase {
 
 
         // Lower the lift to the desired height (and ensure we're centered)
-        robot.liftPosInit( liftAngle5stack );
-        robot.turretPosInit( robot.TURRET_ANGLE_CENTER );
+        robot.liftPIDPosInit( liftAngle5stack );
+        robot.turretPIDPosInit( robot.TURRET_ANGLE_CENTER );
         while( opModeIsActive() && ((robot.turretMotorAuto == true) || (robot.liftMotorAuto == true)) ) {
             performEveryLoop();
         }
@@ -466,7 +466,7 @@ public class AutonomousRight extends AutonomousBase {
         robot.grabberSetTilt( robot.GRABBER_TILT_GRAB3 );
 
         // Now reverse the lift to raise off the cone stack
-        robot.liftPosInit( robot.LIFT_ANGLE_5STACK );
+        robot.liftPIDPosInit( robot.LIFT_ANGLE_5STACK );
         while( opModeIsActive() && (robot.liftMotorAuto == true) ) {
             performEveryLoop();
         }
@@ -481,8 +481,8 @@ public class AutonomousRight extends AutonomousBase {
     private void moveToTallJunctionFromStack() {
 
         // Perform setup to center turret and raise lift to scoring position
-        robot.turretPosInit( robot.TURRET_ANGLE_5STACK_R );
-        robot.liftPosInit( robot.LIFT_ANGLE_HIGH_BA );
+        robot.turretPIDPosInit( robot.TURRET_ANGLE_5STACK_R );
+        robot.liftPIDPosInit( robot.LIFT_ANGLE_HIGH_BA );
         robot.grabberSetTilt( robot.GRABBER_TILT_BACK_H );
         robot.rotateServo.setPosition( robot.GRABBER_ROTATE_DOWN );
 
@@ -518,7 +518,7 @@ public class AutonomousRight extends AutonomousBase {
         robot.rotateServo.setPosition( robot.GRABBER_ROTATE_UP );
 
         // Initialize so that turret rotates back to center as we turn
-        robot.turretPosInit( robot.TURRET_ANGLE_CENTER );
+        robot.turretPIDPosInit( robot.TURRET_ANGLE_CENTER );
 
         // Determine the angle to turn the drivetrain
         switch( signalZoneLocation ) {
@@ -528,7 +528,7 @@ public class AutonomousRight extends AutonomousBase {
         driveToPosition( autoYpos, autoXpos, autoAngle, DRIVE_SPEED_90, TURN_SPEED_80, DRIVE_TO );
 
         // Initialize so that lift lowers to driving position
-        robot.liftPosInit( robot.LIFT_ANGLE_COLLECT );
+        robot.liftPIDPosInit( robot.LIFT_ANGLE_COLLECT );
 
         if( signalZoneLocation == 3 ) {  // BLUE
             // Drive one tile closer to field wall
@@ -539,7 +539,7 @@ public class AutonomousRight extends AutonomousBase {
             driveToPosition( autoYpos, autoXpos, autoAngle, DRIVE_SPEED_90, TURN_SPEED_80, DRIVE_THRU );
             // Back away from center line, but stay within Signal Zone 1
             autoYpos=38.5;  autoXpos=+17.0;
-            robot.turretPosInit( robot.TURRET_ANGLE_CENTER );
+            robot.turretPIDPosInit( robot.TURRET_ANGLE_CENTER );
             driveToPosition( autoYpos, autoXpos, autoAngle, DRIVE_SPEED_90, TURN_SPEED_80, DRIVE_TO );
         } // signalZoneLocation 3
         else if( signalZoneLocation == 1 ) { // RED
@@ -551,13 +551,13 @@ public class AutonomousRight extends AutonomousBase {
             driveToPosition( autoYpos, autoXpos, autoAngle, DRIVE_SPEED_90, TURN_SPEED_80, DRIVE_THRU );
             // Drive closer to the substation to center in Signal Zone 3
             autoYpos=38.5;  autoXpos=-28.0;
-            robot.turretPosInit( robot.TURRET_ANGLE_CENTER );
+            robot.turretPIDPosInit( robot.TURRET_ANGLE_CENTER );
             driveToPosition( autoYpos, autoXpos, autoAngle, DRIVE_SPEED_90, TURN_SPEED_80, DRIVE_TO );
         } // signalZoneLocation 1
         else { // signalZoneLocation 2  // GREEN
             // Drive back one tile closer to the substation in Signal Zone 2
             autoYpos=38.5;  autoXpos=-4.0;
-            robot.turretPosInit( robot.TURRET_ANGLE_CENTER );
+            robot.turretPIDPosInit( robot.TURRET_ANGLE_CENTER );
             driveToPosition( autoYpos, autoXpos, autoAngle, DRIVE_SPEED_90, TURN_SPEED_80, DRIVE_TO );
         } // signalZoneLocation 2
 
