@@ -14,7 +14,7 @@ import java.util.ArrayList;
 @Config
 public class SleeveObserverPipeline extends OpenCvPipeline {
     ArrayList<double[]> frameList;
-    public static double p1x = 460, p1y =300, p2x = 640, p2y =440,
+    public static double p1x = 470, p1y =300, p2x = 590, p2y =440,
 
         h1 = 120,s1 = 0, v1 =0,
             h1u = 160,s1u = 255, v1u =255,
@@ -37,12 +37,12 @@ public class SleeveObserverPipeline extends OpenCvPipeline {
         Rect ROI = new Rect( //130 x 210, 60 x 120
                 new Point(p1x,p1y),
                 new Point(p2x,p2y));
-        Mat mat = new Mat();
-
-        //mat turns into HSV value
-        if (mat.empty()) {
-            return input;
-        }
+//        Mat mat = new Mat();
+//
+//        //mat turns into HSV value
+//        if (mat.empty()) {
+//            return input;
+//        }
 
 //        Scalar lowpurpleHSV = new Scalar(h1, s1, v1); //lower bound HSV for purple
 //        Scalar highpurpleHSV = new Scalar(h1u, s1u, v1u); //higher bound HSV for purple
@@ -64,7 +64,7 @@ public class SleeveObserverPipeline extends OpenCvPipeline {
         double greenValue = Core.sumElems(cone).val[1]/ROI.area()/255;
 
         double blueValue = Core.sumElems(cone).val[2]/ROI.area()/255;
-        frameList.add(new double[]{redValue, greenValue, greenValue});
+        frameList.add(new double[]{redValue, greenValue, blueValue});
         if(frameList.size()>5) {
             frameList.remove(0);
         }
@@ -75,8 +75,8 @@ public class SleeveObserverPipeline extends OpenCvPipeline {
 
 
         //release all the data
-        input.release();
-        mat.release();
+//        input.release();
+//        mat.release();
         Scalar color = new Scalar(255,0,0);
             Imgproc.rectangle(input, ROI, color, 5);
 

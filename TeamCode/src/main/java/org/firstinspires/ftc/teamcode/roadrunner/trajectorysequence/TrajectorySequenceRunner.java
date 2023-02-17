@@ -9,7 +9,7 @@ import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.acmerobotics.roadrunner.control.PIDCoefficients;
 import com.acmerobotics.roadrunner.control.PIDFController;
 import com.acmerobotics.roadrunner.drive.DriveSignal;
-import com.acmerobotics.roadrunner.followers.TrajectoryFollower;
+import com.acmerobotics.roadrunner.followers.RFTrajectoryFollower;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.profile.MotionState;
 import com.acmerobotics.roadrunner.trajectory.Trajectory;
@@ -39,7 +39,7 @@ public class TrajectorySequenceRunner {
 
     public static int POSE_HISTORY_LIMIT = 100;
 
-    private final TrajectoryFollower follower;
+    private final RFTrajectoryFollower follower;
 
     private final PIDFController turnController;
 
@@ -57,7 +57,7 @@ public class TrajectorySequenceRunner {
     private final FtcDashboard dashboard;
     private final LinkedList<Pose2d> poseHistory = new LinkedList<>();
 
-    public TrajectorySequenceRunner(TrajectoryFollower follower, PIDCoefficients headingPIDCoefficients) {
+    public TrajectorySequenceRunner(RFTrajectoryFollower follower, PIDCoefficients headingPIDCoefficients) {
         this.follower = follower;
 
         turnController = new PIDFController(headingPIDCoefficients);

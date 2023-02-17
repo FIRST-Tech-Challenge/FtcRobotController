@@ -20,14 +20,14 @@ import com.acmerobotics.roadrunner.util.NanoClock
  * @param timeout max time to wait for the error to be admissible
  * @param clock clock
  */
-class HolonomicPIDVAFollower @JvmOverloads constructor(
+class RFHolonomicPIDVAFollower @JvmOverloads constructor(
     axialCoeffs: PIDCoefficients,
     lateralCoeffs: PIDCoefficients,
     headingCoeffs: PIDCoefficients,
     admissibleError: Pose2d = Pose2d(),
     timeout: Double = 0.0,
     clock: NanoClock = NanoClock.system()
-) : TrajectoryFollower(admissibleError, timeout, clock) {
+) : RFTrajectoryFollower(admissibleError, timeout, clock) {
     private val axialController = PIDFController(axialCoeffs)
     private val lateralController = PIDFController(lateralCoeffs)
     private val headingController = PIDFController(headingCoeffs)
@@ -45,6 +45,7 @@ class HolonomicPIDVAFollower @JvmOverloads constructor(
 
         super.followTrajectory(trajectory)
     }
+
 
     override fun internalUpdate(currentPose: Pose2d, currentRobotVel: Pose2d?): DriveSignal {
         val t = elapsedTime()

@@ -21,8 +21,8 @@ import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.roadrunner.control.PIDCoefficients;
 import com.acmerobotics.roadrunner.drive.DriveSignal;
 import com.acmerobotics.roadrunner.drive.MecanumDrive;
-import com.acmerobotics.roadrunner.followers.HolonomicPIDVAFollower;
-import com.acmerobotics.roadrunner.followers.TrajectoryFollower;
+import com.acmerobotics.roadrunner.followers.RFHolonomicPIDVAFollower;
+import com.acmerobotics.roadrunner.followers.RFTrajectoryFollower;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.trajectory.Trajectory;
 import com.acmerobotics.roadrunner.trajectory.TrajectoryBuilder;
@@ -44,6 +44,7 @@ import com.qualcomm.robotcore.hardware.configuration.typecontainers.MotorConfigu
 import org.firstinspires.ftc.teamcode.roadrunner.trajectorysequence.TrajectorySequence;
 import org.firstinspires.ftc.teamcode.roadrunner.trajectorysequence.TrajectorySequenceBuilder;
 import org.firstinspires.ftc.teamcode.roadrunner.trajectorysequence.TrajectorySequenceRunner;
+import org.firstinspires.ftc.teamcode.roadrunner.trajectorysequence.sequencesegment.TrajectorySegment;
 import org.firstinspires.ftc.teamcode.roadrunner.util.LimitSwitches;
 import org.firstinspires.ftc.teamcode.roadrunner.util.LynxModuleUtil;
 import org.firstinspires.ftc.teamcode.roadrunner.util.Ultrasonics;
@@ -74,7 +75,7 @@ public class SampleMecanumDrive extends MecanumDrive {
     private static final TrajectoryVelocityConstraint VEL_CONSTRAINT = getVelocityConstraint(MAX_VEL, MAX_ANG_VEL, TRACK_WIDTH);
     private static final TrajectoryAccelerationConstraint ACCEL_CONSTRAINT = getAccelerationConstraint(MAX_ACCEL);
 
-    private TrajectoryFollower follower;
+    private RFTrajectoryFollower follower;
 
     private DcMotorEx leftFront, leftRear, rightRear, rightFront;
     private List<DcMotorEx> motors;
@@ -92,7 +93,7 @@ public class SampleMecanumDrive extends MecanumDrive {
                 TRACK_WIDTH,
                 TRACK_WIDTH,
                 LATERAL_MULTIPLIER);
-        follower = new HolonomicPIDVAFollower(TRANSLATIONAL_PID, TRANSLATIONAL_PID, HEADING_PID,
+        follower = new RFHolonomicPIDVAFollower(TRANSLATIONAL_PID, TRANSLATIONAL_PID, HEADING_PID,
                 new Pose2d(0.5, 0.5, Math.toRadians(5.0)), 0.5);
 
         LynxModuleUtil.ensureMinimumFirmwareVersion(hardwareMap);
@@ -253,7 +254,8 @@ public class SampleMecanumDrive extends MecanumDrive {
     public void changeTrajectorySequence(TrajectorySequence trajectorySequence) {
         trajectorySequenceRunner.changeTrajectorySequence(trajectorySequence);
         trajectorySeq = trajectorySequence;
-
+        Trajectory tragedy = ((TrajectorySegment)trajectorySequence.get(0)).getTrajectory();
+        follower.changeTrajectory(tragedy);
     }
 
     public void breakFollowing() {
