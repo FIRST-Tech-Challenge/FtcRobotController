@@ -75,7 +75,6 @@ public class ConeObserverPipeline extends OpenCvPipeline {
         double maxWidth = 0;
         //iterate through each rotatedRect find largest
         for (int i = 0; i < rectangle.length; i++) {
-//            if(rectangle[i].size.height/rectangle[i].size.width>1.5 ||rectangle[i].size.width/rectangle[i].size.height>1.5) {
 //                if(rectangle[i].size.height > 300 || rectangle[i].size.width >300) {
                     if (rectangle[i].size.height < rectangle[i].size.width) {
                         if (rectangle[i].size.height > maxWidth) {
@@ -89,20 +88,24 @@ public class ConeObserverPipeline extends OpenCvPipeline {
                         }
 //                    }
                 }
-//            }
         }
 //        //if there is a detected largest contour, record information about it
         if(rectangle.length>0) {
-            if(rectangle[maxAreaIndex].size.height<rectangle[maxAreaIndex].size.width) {
-                poleSize = rectangle[maxAreaIndex].size.height;
-                centerOfPole = rectangle[maxAreaIndex].center.x - 320;
+            if(rectangle[maxAreaIndex].size.height/rectangle[maxAreaIndex].size.width>1.25 ||rectangle[maxAreaIndex].size.width/rectangle[maxAreaIndex].size.height>1.25) {
+
+                if (rectangle[maxAreaIndex].size.height < rectangle[maxAreaIndex].size.width) {
+                    poleSize = rectangle[maxAreaIndex].size.height;
+                    centerOfPole = rectangle[maxAreaIndex].center.x - 320;
+                } else {
+                    poleSize = rectangle[maxAreaIndex].size.width;
+                    centerOfPole = rectangle[maxAreaIndex].center.x - 320;
+
+                }
+                frameList.add(new double[]{centerOfPole, poleSize});
             }
             else{
-                poleSize = rectangle[maxAreaIndex].size.width;
-                centerOfPole = rectangle[maxAreaIndex].center.x - 320;
-
+                frameList.add(new double[] {0, 0});
             }
-            frameList.add(new double[]{centerOfPole, poleSize});
         }
         else{
             frameList.add(new double[] {0, 0});

@@ -151,10 +151,10 @@ public class BlueRightAutoCycleTunedCamera extends LinearOpMode {
 //            robot.liftToPosition((int)LIFT_HIGH_JUNCTION.getValue()-220, false);
             robot.delay(0.15);
             robot.wideClaw();
-            robot.splineTo(new Pose2d(-63.5,11.75,toRadians(180)),toRadians(180),toRadians(0));
+            robot.splineTo(new Pose2d(-64,11.75,toRadians(180)),toRadians(180),toRadians(0));
 //            robot.liftToPosition((int)LIFT_HIGH_JUNCTION.getValue()+50, true);
             robot.delay(0.3);
-//            robot.openClaw(true);
+            robot.openClaw(true);
             robot.delay(0.4);
 //            robot.cycleLiftArmToCycle(true);
             robot.delay(0.8);
@@ -192,7 +192,7 @@ public class BlueRightAutoCycleTunedCamera extends LinearOpMode {
                 if(false){//claw no detect
 
                 }
-                robot.splineTo(new Pose2d(dropX+0.3,dropY-0.5,toRadians(130)),toRadians(310),toRadians(-170));
+                robot.splineTo(new Pose2d(dropX,dropY,toRadians(130)),toRadians(310),toRadians(-170));
                 robot.delay(0.4);
 //                robot.updateTrajectoryWithCam();
                 robot.delay(0.1+(3-i)*0.005);
@@ -217,7 +217,7 @@ public class BlueRightAutoCycleTunedCamera extends LinearOpMode {
             if (dummyP == 1) {
                 robot.followTrajectorySequenceAsync(park1trajectory);
             } else if (dummyP == 3) {
-                robot.splineTo(new Pose2d(-60,11.5,toRadians(180)),toRadians(180),toRadians(0));
+                robot.splineTo(new Pose2d(-60,11.5,toRadians(180)),toRadians(180),toRadians(-5));
             } else {
                 robot.followTrajectorySequenceAsync(park2trajectory);
             }

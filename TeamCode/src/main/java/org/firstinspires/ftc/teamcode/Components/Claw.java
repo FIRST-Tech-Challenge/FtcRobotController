@@ -105,6 +105,9 @@ public class Claw {
         else{
             claw.setPosition(CLAW_OPEN_POS);
             CLAW_OPEN.setStatus(true);
+            clawServoLastSwitchTime=0;
+            claw.setFlipTime(-2);
+
         }
         shouldUseClawSensor = true;
     }

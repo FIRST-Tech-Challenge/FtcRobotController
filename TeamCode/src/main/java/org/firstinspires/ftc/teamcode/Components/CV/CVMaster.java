@@ -92,7 +92,7 @@ public class CVMaster {
                  * away from the user.
                  */
                 clawCam.setPipeline(cone);
-//                clawCam.startStreaming(640, 480, OpenCvCameraRotation.UPRIGHT);
+                clawCam.startStreaming(640, 480, OpenCvCameraRotation.UPRIGHT);
 
                 dashboard.startCameraStream(clawCam, 10);
 
