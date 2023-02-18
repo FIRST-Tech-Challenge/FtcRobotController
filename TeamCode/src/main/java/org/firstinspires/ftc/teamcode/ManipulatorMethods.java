@@ -1,77 +1,114 @@
 package org.firstinspires.ftc.teamcode;
 
+import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.DistanceSensor;
+import com.qualcomm.robotcore.hardware.HardwareMap;
 
 public class ManipulatorMethods {
-    Hardware robot;
+    public DcMotor rightSlides = null;
+    public DcMotor leftSlides = null;
 
-    public ManipulatorMethods(Hardware r) {
-        robot = r;
+    public CRServo leftIntake = null;
+    public CRServo rightIntake = null;
+
+    public DistanceSensor distanceSensor = null;
+
+
+    // Other variable names
+
+    public ManipulatorMethods(HardwareMap hwMap) {
+        rightSlides = hwMap.dcMotor.get("rightSlides");
+
+        leftSlides = hwMap.dcMotor.get("leftSlides");
+
+
+        // Define Servos
+        leftIntake = hwMap.crservo.get("leftIntake");
+
+        rightIntake = hwMap.crservo.get("rightIntake");
+
+        // ******MAY CHANGE *******  Fix Forward/Reverse under testing
+
+        //Subsystem Motors & Servos
+        rightSlides.setDirection(DcMotorSimple.Direction.REVERSE);
+        leftSlides.setDirection(DcMotorSimple.Direction.FORWARD);
+
+        rightSlides.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        leftSlides.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        rightSlides.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        leftSlides.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
+        //SENSORS
+        distanceSensor = hwMap.get(DistanceSensor.class, "distance");
+
+        rightSlides.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        leftSlides.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
     }
 
     public void moveSlideEncoder(int height, double speed) {
-        robot.rightSlides.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        robot.leftSlides.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        rightSlides.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        leftSlides.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
-        robot.rightSlides.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        robot.leftSlides.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        rightSlides.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        leftSlides.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
-        robot.rightSlides.setTargetPosition(height);
-        robot.leftSlides.setTargetPosition(height);
+        rightSlides.setTargetPosition(height);
+        leftSlides.setTargetPosition(height);
 
-        robot.rightSlides.setPower(speed);
-        robot.leftSlides.setPower(speed);
+        rightSlides.setPower(speed);
+        leftSlides.setPower(speed);
 
-        robot.rightSlides.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        robot.leftSlides.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        rightSlides.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        leftSlides.setMode(DcMotor.RunMode.RUN_TO_POSITION);
     }
     public void moveSlideEncoder(int leftHeight, int rightHeight, double speed) {
-        robot.rightSlides.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        robot.leftSlides.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        rightSlides.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        leftSlides.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
-        robot.rightSlides.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        robot.leftSlides.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        rightSlides.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        leftSlides.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
-        robot.rightSlides.setTargetPosition(rightHeight);
-        robot.leftSlides.setTargetPosition(leftHeight);
+        rightSlides.setTargetPosition(rightHeight);
+        leftSlides.setTargetPosition(leftHeight);
 
+        rightSlides.setPower(speed);
+        leftSlides.setPower(speed);
 
-        robot.rightSlides.setPower(speed);
-        robot.leftSlides.setPower(speed);
-
-        robot.rightSlides.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        robot.leftSlides.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        rightSlides.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        leftSlides.setMode(DcMotor.RunMode.RUN_TO_POSITION);
     }
     public void resetSlides() {
-        robot.rightSlides.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        robot.leftSlides.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        rightSlides.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        leftSlides.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
     }
     public void moveSlides(double speed) {
-        robot.rightSlides.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        robot.leftSlides.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        rightSlides.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        leftSlides.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
-        robot.rightSlides.setPower(speed);
-        robot.leftSlides.setPower(speed);
+        rightSlides.setPower(speed);
+        leftSlides.setPower(speed);
     }
     public void stopSlides() {
-        robot.rightSlides.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        robot.leftSlides.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        rightSlides.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        leftSlides.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
-        robot.rightSlides.setPower(0);
-        robot.leftSlides.setPower(0);
+        rightSlides.setPower(0);
+        leftSlides.setPower(0);
     }
 
     public void intake(){
-        robot.rightIntake.setPower(-1);
-        robot.leftIntake.setPower(1);
+        rightIntake.setPower(-1);
+        leftIntake.setPower(1);
 
     }
     public void outtake(){
-        robot.rightIntake.setPower(1);
-        robot.leftIntake.setPower(-1);
+        rightIntake.setPower(1);
+        leftIntake.setPower(-1);
     }
     public void stopIntake(){
-        robot.rightIntake.setPower(0);
-        robot.leftIntake.setPower(0);
+        rightIntake.setPower(0);
+        leftIntake.setPower(0);
     }
 }
