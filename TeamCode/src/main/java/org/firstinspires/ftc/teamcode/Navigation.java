@@ -18,7 +18,12 @@ public class Navigation {
     // AUTON CONSTANTS
     // ===============
     public enum MovementMode {FORWARD_ONLY, STRAFE}
-
+    static final double STRAFE_ACCELERATION = 0.1; // Inches per second squared
+    static final double ROTATE_ACCELERATION = 0.1; // Radians per second squared
+    static final double SPEED_FACTOR = 1.0; // Speed of robot when all motors are set to full power
+    // TODO: empirically measure speed factor
+    static final double ROTATION_RADIUS = 1.0; //Radius of the robot's rotation
+    // TODO: empirically measure and calculate rotation radius
     static final double STRAFE_RAMP_DISTANCE = 3;  // Inches
     static final double ROTATION_RAMP_DISTANCE = Math.PI / 3;  // Radians
     static final double MAX_STRAFE_POWER = 0.4;
@@ -98,7 +103,7 @@ public class Navigation {
             robot.telemetry.update();
             switch (movementMode) {
                 case FORWARD_ONLY:
-                    rotate(getAngleBetween(robot.getPosition().x, robot.getPosition().y, target.x, target.y) - Math.PI / 2,
+                    rotate(getAngleBetween(robot.getPosition(), target) - Math.PI / 2,
                             target.rotatePower, robot);
                     travelLinear(target, target.getStrafePower(), robot);
                     rotate(target.getRotation(), target.getRotatePower(), robot);
@@ -214,17 +219,19 @@ public class Navigation {
 
     /** Rotates the robot a number of degrees.
      *
-     * @param target The orientation the robot should assume once this method exits.
+     *  @param target The orientation the robot should assume once this method exits.
      *               Within the interval (-pi, pi].
-     * @param constantPower A hard-coded power value for the method to use instead of ramping. Ignored if set to zero.
+     *  @param constantPower A hard-coded power value for the method to use instead of ramping. Ignored if set to zero.
      */
     public void rotate(double target, double constantPower, Robot robot) {
         robot.positionManager.updatePosition(robot);
         // Both values are restricted to interval (-pi, pi].
         final double startOrientation = robot.getPosition().getRotation();
         double currentOrientation = startOrientation;  // Copies by value because double is primitive.
+        double startingTime = robot.elapsedTime.milliseconds();
 
         double rotationSize = getRotationSize(startOrientation, target);
+        double halfRotateTime = getHalfRotateTime(rotationSize);
 
         double power;
         boolean ramping = true;
@@ -235,33 +242,31 @@ public class Navigation {
         else {
             power = MIN_ROTATION_POWER;
         }
-        double rotationRemaining = getRotationSize(currentOrientation, target);
+
         double rotationProgress = getRotationSize(startOrientation, currentOrientation);
+        double rotationRemaining = getRotationSize(currentOrientation, target);
         boolean finishedRotation = false;
         int numFramesSinceLastFailure = 0;
         boolean checkFrames = false;
+        double timeElapsed = 0;
+        double timeRemaining = 2 * halfRotateTime - timeElapsed;
 
-        while (!finishedRotation) {
+        while (timeElapsed < 2 * halfRotateTime) {
             robot.telemetry.addData("rot left", rotationRemaining);
             robot.telemetry.addData("current orientation", currentOrientation);
             robot.telemetry.addData("target", target);
             robot.telemetry.update();
 
             if (ramping) {
-                if (rotationProgress < rotationSize / 2) {
-                    // Ramping up.
-                    if (rotationProgress <= ROTATION_RAMP_DISTANCE) {
-                        power = Range.clip(
-                                (rotationProgress / ROTATION_RAMP_DISTANCE) * MAX_ROTATION_POWER,
-                                MIN_ROTATION_POWER, MAX_ROTATION_POWER);
-                    }
-                } else {
-                    // Ramping down.
-                    if (rotationRemaining <= ROTATION_RAMP_DISTANCE) {
-                        power = Range.clip(
-                                (rotationRemaining / ROTATION_RAMP_DISTANCE) * MAX_ROTATION_POWER,
-                                MIN_ROTATION_POWER, MAX_ROTATION_POWER);
-                    }
+                if (timeElapsed < halfRotateTime) { // Ramping up
+                    power = Range.clip(
+                            (timeElapsed / halfRotateTime) * MAX_ROTATION_POWER,
+                            MIN_ROTATION_POWER, MAX_ROTATION_POWER);
+                }
+                else { // Ramping down
+                    power = Range.clip(
+                            (timeRemaining / halfRotateTime) * MAX_ROTATION_POWER,
+                            MIN_ROTATION_POWER, MAX_ROTATION_POWER);
                 }
             }
 
@@ -281,8 +286,10 @@ public class Navigation {
             robot.positionManager.updatePosition(robot);
             currentOrientation = robot.getPosition().getRotation();
 
-            rotationRemaining = getRotationSize(currentOrientation, target);
             rotationProgress = getRotationSize(startOrientation, currentOrientation);
+            rotationRemaining = getRotationSize(currentOrientation, target);
+            timeElapsed = robot.elapsedTime.milliseconds() - startingTime;
+            timeRemaining = 2 * halfRotateTime - timeElapsed;
 
             if (rotationRemaining > EPSILON_ANGLE) {
                 numFramesSinceLastFailure = 0;
@@ -299,6 +306,9 @@ public class Navigation {
     }
 
     /** Determines whether the robot has to turn clockwise or counterclockwise to get from theta to target.
+     *
+     *  @param theta the current orientation
+     *  @param target the desired orientation
      */
     private RotationDirection getRotationDirection(double theta, double target) {
         double angleDiff = target - theta;  // Counterclockwise distance to target
@@ -309,6 +319,9 @@ public class Navigation {
     }
 
     /** Calculates the number of radians of rotation required to get from theta to target.
+     *
+     *  @param theta the current orientation
+     *  @param target the desired orientation
      */
     private double getRotationSize(double theta, double target) {
         double rotationSize = Math.abs(target - theta);
@@ -325,10 +338,16 @@ public class Navigation {
      */
     public void travelLinear(Position target, double constantPower, Robot robot) {
         robot.positionManager.updatePosition(robot);
-        final double startX = robot.getPosition().getX();
-        final double startY = robot.getPosition().getY();
+        final Position startPosition = robot.getPosition();
+        final double startX = startPosition.getX();
+        final double startY = startPosition.getY();
+        Position currentPosition = robot.getPosition();
+        double currentX = currentPosition.getX();
+        double currentY = currentPosition.getY();
+        double startingTime = robot.elapsedTime.milliseconds();
 
-        double totalDistance = getEuclideanDistance(startX, startY, target.x, target.y);
+        double totalDistance = getEuclideanDistance(startPosition, target);
+        double halfStrafeTime = getHalfStrafeTime(totalDistance, getAngleBetween(startPosition, target));
 
         double power;
         boolean ramping = true;
@@ -340,36 +359,29 @@ public class Navigation {
         else {
             power = MIN_STRAFE_POWER;
         }
-        double distanceToTarget;
-        double distanceTraveled;
+
+        double distanceTraveled = getEuclideanDistance(startPosition, currentPosition);
+        double distanceRemaining = getEuclideanDistance(currentPosition, target);
         boolean finishedTravel = false;
         double numFramesSinceLastFailure = 0;
         boolean checkFrames = false;
+        double timeElapsed = 0;
+        double timeRemaining = 2 * halfStrafeTime - timeElapsed;
 
-        while (!finishedTravel) {
+        while (timeElapsed < 2 * halfStrafeTime) {
 
             robot.positionManager.updatePosition(robot);
-            double currentX = robot.getPosition().getX();
-            double currentY = robot.getPosition().getY();
-
-            distanceToTarget = getEuclideanDistance(currentX, currentY, target.x, target.y);
-            distanceTraveled = getEuclideanDistance(startX, startY, currentX, currentY);
 
             if (ramping) {
-                if (distanceTraveled < totalDistance / 2) {
-                    // Ramping up.
-                    if (distanceTraveled <= STRAFE_RAMP_DISTANCE) {
-                        power = Range.clip(
-                                (distanceTraveled / STRAFE_RAMP_DISTANCE) * MAX_STRAFE_POWER,
-                                MIN_STRAFE_POWER, MAX_STRAFE_POWER);
-                    }
-                } else {
-                    // Ramping down.
-                    if (distanceToTarget <= STRAFE_RAMP_DISTANCE) {
-                        power = Range.clip(
-                                (distanceToTarget / STRAFE_RAMP_DISTANCE) * MAX_STRAFE_POWER,
-                                MIN_STRAFE_POWER, MAX_STRAFE_POWER);
-                    }
+                if (timeElapsed < halfStrafeTime) { // Ramping up
+                    power = Range.clip(
+                            (timeElapsed / halfStrafeTime) * MAX_STRAFE_POWER,
+                            MIN_STRAFE_POWER, MAX_STRAFE_POWER);
+                }
+                else { // Ramping down
+                    power = Range.clip(
+                            (timeRemaining / halfStrafeTime) * MAX_STRAFE_POWER,
+                            MIN_STRAFE_POWER, MAX_STRAFE_POWER);
                 }
             }
 
@@ -380,7 +392,15 @@ public class Navigation {
             double strafeAngle = getStrafeAngle(robot.getPosition(), target);
             robot.telemetry.addData("starting rotation", robot.getPosition().getRotation());
             robot.telemetry.addData("used strafe angle", strafeAngle);
+
             setDriveMotorPowers(strafeAngle, power, 0.0, robot, false);
+
+            robot.positionManager.updatePosition(robot);
+            currentPosition = robot.getPosition();
+            distanceTraveled = getEuclideanDistance(startPosition, currentPosition);
+            distanceRemaining = getEuclideanDistance(currentPosition, target);
+            timeElapsed = robot.elapsedTime.milliseconds() - startingTime;
+            timeRemaining = 2 * halfStrafeTime - timeElapsed;
 
             robot.telemetry.addData("Start X", startX);
             robot.telemetry.addData("Start Y", startY);
@@ -389,12 +409,12 @@ public class Navigation {
 
             robot.telemetry.addData("Target X", target.x);
             robot.telemetry.addData("Target Y", target.y);
-            robot.telemetry.addData("strafe testingy", (target.y-currentY));
-            robot.telemetry.addData("strafe testingx", (target.x-currentX));
-            robot.telemetry.addData("get angle between angle", getAngleBetween(currentX,currentY, target.x,target.y));
+            robot.telemetry.addData("strafe testing y", (target.y-currentY));
+            robot.telemetry.addData("strafe testing x", (target.x-currentX));
+            robot.telemetry.addData("get angle between angle", getAngleBetween(currentPosition, target));
             robot.telemetry.update();
 
-            if (distanceToTarget > EPSILON_LOC) {
+            if (distanceRemaining > EPSILON_LOC) {
                 numFramesSinceLastFailure = 0;
             }
             else {
@@ -405,15 +425,17 @@ public class Navigation {
                 }
             }
         }
-
         stopMovement(robot);
     }
 
     /** Calculates the angle at which the robot must strafe in order to get to a target location.
+     *
+     *  @param currentLoc the current position
+     *  @param target the desired position
      */
     private double getStrafeAngle(Position currentLoc, Position target) {
 
-        double strafeAngle = getAngleBetween(currentLoc.getX(), currentLoc.getY(), target.getX(), target.getY()) - currentLoc.getRotation();
+        double strafeAngle = getAngleBetween(currentLoc, target) - currentLoc.getRotation();
         if (strafeAngle > Math.PI) {
             strafeAngle -= 2 * Math.PI;
         }
@@ -424,17 +446,87 @@ public class Navigation {
         return strafeAngle;
     }
 
+    /** Calculates the speed of the robot when strafing given the direction of strafing and the strafing speed
+     *
+     *  @param strafeAngle the direction (angle) in which the robot should strafe
+     *  @param power the strafing speed of the robot
+     *  @return the speed of the robot
+     */
+    private double getRobotSpeed(double strafeAngle, double power) {
+        double powerSet1 = Math.sin(strafeAngle) + Math.cos(strafeAngle);
+        double powerSet2 = Math.sin(strafeAngle) - Math.cos(strafeAngle);
+        double[] rawPowers = scaleRange(powerSet1, powerSet2);
+
+        if (strafeAngle > -Math.PI/2 && strafeAngle < Math.PI/2) {
+            return (SPEED_FACTOR * power * Math.sqrt(2 * Math.pow(rawPowers[1]/rawPowers[0], 2) + 2)) / 2;
+        }
+        else {
+            return (SPEED_FACTOR * power * Math.sqrt(2 * Math.pow(rawPowers[0]/rawPowers[1], 2) + 2)) / 2;
+        }
+    }
+
+    /** Calculates half the amount of time it is estimated for a linear strafe to take.
+     *
+     *  @param distance the distance of the strafe
+     *  @param strafeAngle the angle of the strafe
+     */
+    private double getHalfStrafeTime(double distance, double strafeAngle) {
+        // Inches per second
+        double min_strafe_speed = getRobotSpeed(strafeAngle, MIN_STRAFE_POWER);
+        double max_strafe_speed = getRobotSpeed(strafeAngle, MAX_STRAFE_POWER);
+
+
+        double ramp_distance = (max_strafe_speed + min_strafe_speed) / 2
+                * (max_strafe_speed - min_strafe_speed) / STRAFE_ACCELERATION;
+        if (distance / 2 >= ramp_distance) {
+            return (distance / 2 - ramp_distance) / max_strafe_speed
+                    + (max_strafe_speed - min_strafe_speed) / STRAFE_ACCELERATION;
+        }
+        else {  // We never get to max_strafe_speed
+            return (-min_strafe_speed + Math.sqrt(Math.pow(min_strafe_speed, 2) + distance * STRAFE_ACCELERATION))
+                    / 0.5 * STRAFE_ACCELERATION;
+        }
+    }
+
+    /** Calculates half the amount of time it is estimated for a rotation to take.
+     *
+     *  @param angle The angle of the rotation
+     */
+    private double getHalfRotateTime(double angle) {
+        // Radians per second
+        double min_rotate_speed = (SPEED_FACTOR * MIN_ROTATION_POWER) / ROTATION_RADIUS;
+        double max_rotate_speed = (SPEED_FACTOR * MAX_ROTATION_POWER) / ROTATION_RADIUS;
+
+
+        double ramp_angle = (max_rotate_speed + min_rotate_speed) / 2
+                * (max_rotate_speed - min_rotate_speed) / ROTATE_ACCELERATION;
+        if (angle / 2 >= ramp_angle) {
+            return (angle / 2 - ramp_angle) / max_rotate_speed
+                    + (max_rotate_speed - min_rotate_speed) / ROTATE_ACCELERATION;
+        }
+        else {  // We never get to max_rotate_speed
+            return (-min_rotate_speed + Math.sqrt(Math.pow(min_rotate_speed, 2) + angle * ROTATE_ACCELERATION))
+                    / 0.5 * ROTATE_ACCELERATION;
+        }
+    }
+
     /** Determines the angle between the horizontal axis (currently left side of the robot) and the segment connecting A and B.
      *  Currently being negated so that the tangent values are positive for the robot moving away from the wall
+     *
+     *  @param a the starting position
+     *  @param b the desired position
      */
-    private double getAngleBetween(double x1, double y1, double x2, double y2) { return -1* Math.atan2((y2 - y1), (x2 - x1)); }
+    private double getAngleBetween(Position a, Position b) {
+        return -Math.atan2((b.y - a.y), (b.x - a.x));
+    }
 
     /** Calculates the euclidean distance between two points.
      *
-     *  TODO: make this take two Positions
+     *  @param a the starting position
+     *  @param b the desired position
      */
-    private double getEuclideanDistance(double x1, double y1, double x2, double y2) {
-        return Math.sqrt(Math.pow(x1 - x2, 2) + Math.pow(y1 - y2, 2));
+    private double getEuclideanDistance(Position a, Position b) {
+        return Math.sqrt(Math.pow(a.x - b.x, 2) + Math.pow(a.y - b.y, 2));
     }
 
     /** Transforms the robot's path based on the alliance color and side of the field it is starting on.
@@ -531,7 +623,7 @@ public class Navigation {
      * @param b value to be scaled
      * @return an array containing the scaled versions of a and b
      */
-    double[] scaleRange(double a, double b) {
+    public double[] scaleRange(double a, double b) {
         double max = Math.max(Math.abs(a), Math.abs(b));
         return new double[] {a / max, b / max};
     }
