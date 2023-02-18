@@ -50,7 +50,7 @@ import org.openftc.easyopencv.OpenCvCameraRotation;
 @TeleOp(name = "TeleOp", group = "Robot")
 public class Tele extends OpMode {
     Hardware robot = new Hardware();
-    AutoDetectionJunction.JunctionDeterminationPipeline pipeline;
+//    AutoDetectionJunction.JunctionDeterminationPipeline pipeline;
 
     double speedLimit = 1;
     double oldTime;
@@ -101,41 +101,42 @@ public class Tele extends OpMode {
         gunner = gunnerControlMode.NORMAL;
         telemetry.setMsTransmissionInterval(20);
 
-        pipeline = new AutoDetectionJunction.JunctionDeterminationPipeline();
-        robot.webcam2.setPipeline(pipeline);
-        robot.webcam2.setMillisecondsPermissionTimeout(2500); // Timeout for obtaining permission is configurable. Set before opening.
-        robot.webcam2.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
-            @Override
-            public void onOpened() {
-                /*
-                 * Tell the webcam to start streaming images to us! Note that you must make sure
-                 * the resolution you specify is supported by the camera. If it is not, an exception
-                 * will be thrown.
-                 *
-                 * Keep in mind that the SDK's UVC driver (what OpenCvWebcam uses under the hood) only
-                 * supports streaming from the webcam in the uncompressed YUV image format. This means
-                 * that the maximum resolution you can stream at and still get up to 30FPS is 480p (640x480).
-                 * Streaming at e.g. 720p will limit you to up to 10FPS and so on and so forth.
-                 *
-                 * Also, we specify the rotation that the webcam is used in. This is so that the image
-                 * from the camera sensor can be rotated such that it is always displayed with the image upright.
-                 * For a front facing camera, rotation is defined assuming the user is looking at the screen.
-                 * For a rear facing camera or a webcam, rotation is defined assuming the camera is facing
-                 * away from the user.
-                 */
-                robot.webcam2.startStreaming(800, 600, OpenCvCameraRotation.UPRIGHT);
-            }
-
-            @Override
-            public void onError(int errorCode) {
-                /*
-                 * This will be called if the camera could not be opened
-                 */
-                telemetry.addData("Camera unable to open,", "will run left");
-                telemetry.update();
-            }
-        });
+//        pipeline = new AutoDetectionJunction.JunctionDeterminationPipeline();
+//        robot.webcam2.setPipeline(pipeline);
+//        robot.webcam2.setMillisecondsPermissionTimeout(2500); // Timeout for obtaining permission is configurable. Set before opening.
+//        robot.webcam2.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
+//            @Override
+//            public void onOpened() {
+//                /*
+//                 * Tell the webcam to start streaming images to us! Note that you must make sure
+//                 * the resolution you specify is supported by the camera. If it is not, an exception
+//                 * will be thrown.
+//                 *
+//                 * Keep in mind that the SDK's UVC driver (what OpenCvWebcam uses under the hood) only
+//                 * supports streaming from the webcam in the uncompressed YUV image format. This means
+//                 * that the maximum resolution you can stream at and still get up to 30FPS is 480p (640x480).
+//                 * Streaming at e.g. 720p will limit you to up to 10FPS and so on and so forth.
+//                 *
+//                 * Also, we specify the rotation that the webcam is used in. This is so that the image
+//                 * from the camera sensor can be rotated such that it is always displayed with the image upright.
+//                 * For a front facing camera, rotation is defined assuming the user is looking at the screen.
+//                 * For a rear facing camera or a webcam, rotation is defined assuming the camera is facing
+//                 * away from the user.
+//                 */
+//                robot.webcam2.startStreaming(800, 600, OpenCvCameraRotation.UPRIGHT);
+//            }
+//
+//            @Override
+//            public void onError(int errorCode) {
+//                /*
+//                 * This will be called if the camera could not be opened
+//                 */
+//                telemetry.addData("Camera unable to open,", "will run left");
+//                telemetry.update();
+//            }
+//        });
     }
+
     /*
      * Code to run REPEATEDLY after the driver hits INIT, but before they hit PLAY
      */
@@ -152,6 +153,7 @@ public class Tele extends OpMode {
     public void start() {
         runtime.reset();
     }
+
     /*
      * Code to run REPEATEDLY after the driver hits PLAY but before they hit STOP
      */
@@ -208,99 +210,123 @@ public class Tele extends OpMode {
 //            } else {
 //                robot.lift.setPower(-gamepad2.left_stick_y * .65);
 //            }
-            if (robot.toggleSwitch.getVoltage() < 3) {
-                if (gamepad2.left_stick_y < 0) {
-                    robot.lift.setPower(0);
-                } else{
-                    robot.lift.setPower(-gamepad2.left_stick_y);
-                }
-            } else if (robot.bottomSwitch.getVoltage() > 3) {
-                if (gamepad2.left_stick_y > 0) {
-                    robot.lift.setPower(0);
-                    robot.lift.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-                } else {
-                    robot.lift.setPower(-gamepad2.left_stick_y);
-                }
+
+            if (robot.lift.isBusy() || robot.upperLift.isBusy()) {
+
             } else {
-                robot.lift.setPower(-gamepad2.left_stick_y);
+                robot.lift.setPower(0);
+                robot.upperLift.setPower(0);
             }
 
-            if (robot.upperUpSwitch.getVoltage() < 3) {
-                if (gamepad2.right_stick_y < 0) {
-                    robot.upperLift.setPower(0);
-                } else{
-                    robot.upperLift.setPower(-gamepad2.right_stick_y);
-                }
-            } else if (robot.upperDownSwitch.getVoltage() > 3) {
-                if (gamepad2.right_stick_y > 0) {
-                    robot.upperLift.setPower(0);
-                    robot.upperLift.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-                } else {
-                    robot.upperLift.setPower(-gamepad2.right_stick_y);
-                }
-            } else {
-                robot.upperLift.setPower(-gamepad2.right_stick_y);
-            }
 
             if (gamepad2.left_stick_y > .05 || gamepad2.left_stick_y < -.05 || gamepad2.right_stick_y > .05 || gamepad2.right_stick_y < -.05) {
-                robot.lift.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-                robot.upperLift.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
                 liftPos = 0;
+                robot.upperLift.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+                robot.lift.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+                if (robot.toggleSwitch.getVoltage() < 3) {
+                    if (gamepad2.left_stick_y < 0) {
+                        robot.lift.setPower(0);
+                    } else {
+                        robot.lift.setPower(-gamepad2.left_stick_y);
+                    }
+                } else if (robot.bottomSwitch.getVoltage() > 3) {
+                    if (gamepad2.left_stick_y > 0) {
+                        robot.lift.setPower(0);
+                        robot.lift.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+                    } else {
+                        robot.lift.setPower(-gamepad2.left_stick_y);
+                    }
+                } else {
+                    robot.lift.setPower(-gamepad2.left_stick_y);
+                }
+
+                if (robot.upperUpSwitch.getVoltage() < 3) {
+                    if (gamepad2.right_stick_y < 0) {
+                        robot.upperLift.setPower(0);
+                    } else {
+                        robot.upperLift.setPower(-gamepad2.right_stick_y);
+                    }
+                } else if (robot.upperDownSwitch.getVoltage() > 3) {
+                    if (gamepad2.right_stick_y > 0) {
+                        robot.upperLift.setPower(0);
+                        robot.upperLift.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+                    } else {
+                        robot.upperLift.setPower(-gamepad2.right_stick_y);
+                    }
+                } else {
+                    robot.upperLift.setPower(-gamepad2.right_stick_y);
+                }
             } else if (gamepad2.dpad_down || gamepad2.dpad_up || gamepad2.dpad_left || gamepad2.dpad_right) {
-                robot.lift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-                robot.upperLift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-            }
-
-
-            if (gamepad2.dpad_up) {
-                liftPos = 4;
-            } else if (gamepad2.dpad_left) {
-                liftPos = 3;
-            } else if (gamepad2.dpad_down) {
-                liftPos = 2;
-            } else if (gamepad2.dpad_right) {
-                robot.upperLift.setTargetPosition(0);
-                robot.upperLift.setPower(1);
-                robot.lift.setTargetPosition(0);
-                robot.lift.setPower(1);
-                robot.lift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                robot.upperLift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            }
-
-            switch (liftPos) {
-                case 0:
-                    break;
-                case 1:
-                    liftPos = 2;
-                    break;
-                case 2: //Low junction
+                if (gamepad2.dpad_up) {
                     robot.upperLift.setTargetPosition(2940);
-                    robot.upperLift.setPower(.85);
-                    robot.lift.setTargetPosition(690);
-                    robot.lift.setPower(.85);
-                    robot.lift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                     robot.upperLift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                    break;
-                case 3: //Medium junction
-                    robot.upperLift.setTargetPosition(2940);
-                    robot.upperLift.setPower(.85);
-                    robot.lift.setTargetPosition(2080);
-                    robot.lift.setPower(.85);
-                    robot.lift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                    robot.upperLift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                    break;
-                case 4: //High junction
-                    robot.upperLift.setTargetPosition(2940);
                     robot.upperLift.setPower(.85);
                     robot.lift.setTargetPosition(4920);
+                    robot.lift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                     robot.lift.setPower(.85);
+                } else if (gamepad2.dpad_left) {
+                    robot.upperLift.setTargetPosition(2940);
+                    robot.upperLift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                    robot.upperLift.setPower(.85);
+                    robot.lift.setTargetPosition(2080);
+                    robot.lift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                    robot.lift.setPower(.85);
+                } else if (gamepad2.dpad_down) {
+                    robot.upperLift.setTargetPosition(2940);
+                    robot.upperLift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                    robot.upperLift.setPower(1);
+                    robot.lift.setTargetPosition(690);
+                    robot.lift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                    robot.lift.setPower(1);
+                } else if (gamepad2.dpad_right) {
+                    robot.upperLift.setTargetPosition(0);
+                    robot.upperLift.setPower(1);
+                    robot.lift.setTargetPosition(0);
+                    robot.lift.setPower(1);
                     robot.lift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                     robot.upperLift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                    break;
-                case 5:
-                    liftPos = 4;
-                    break;
+                }
+            } else {
+                if (!robot.lift.isBusy() && !robot.upperLift.isBusy()) {
+                    robot.lift.setPower(0);
+                    robot.upperLift.setPower(0);
+                    switch (liftPos) {
+                        case 0:
+                            break;
+                        case 1:
+                            liftPos = 2;
+                            break;
+                        case 2: //Low junction
+                            robot.upperLift.setTargetPosition(2940);
+                            robot.upperLift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                            robot.upperLift.setPower(1);
+                            robot.lift.setTargetPosition(690);
+                            robot.lift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                            robot.lift.setPower(1);
+                            break;
+                        case 3: //Medium junction
+                            robot.upperLift.setTargetPosition(2940);
+                            robot.upperLift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                            robot.upperLift.setPower(.85);
+                            robot.lift.setTargetPosition(2080);
+                            robot.lift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                            robot.lift.setPower(.85);
+                            break;
+                        case 4: //High junction
+                            robot.upperLift.setTargetPosition(2940);
+                            robot.upperLift.setPower(.85);
+                            robot.lift.setTargetPosition(4920);
+                            robot.lift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                            robot.lift.setPower(.85);
+                            break;
+                        case 5:
+                            liftPos = 4;
+                            break;
+                    }
+                } else {
+                }
             }
+
 
             if (gamepad2.x) {
                 robot.wrist.setPosition(wrist_MID);
@@ -365,8 +391,8 @@ public class Tele extends OpMode {
 
                 if (currentGripSwitch && !lastGripSwitch) {
                     if (!gamepad2.isRumbling())  // Check for possible overlap of rumbles.
-                        gamepad2.rumble(.65,.65,150);
-                        gamepad1.rumble(.65,.65,150);
+                        gamepad2.rumble(.65, .65, 150);
+                    gamepad1.rumble(.65, .65, 150);
                 }
                 lastGripSwitch = currentGripSwitch;
             }
@@ -382,7 +408,7 @@ public class Tele extends OpMode {
         telemetry.addData("Gunner Control Mode:", gunner);
         telemetry.addData("Upper Top", robot.upperUpSwitch.getVoltage());
         telemetry.addData("Upper Bottom", robot.upperDownSwitch.getVoltage());
-        
+
 
         telemetry.update();
     }
