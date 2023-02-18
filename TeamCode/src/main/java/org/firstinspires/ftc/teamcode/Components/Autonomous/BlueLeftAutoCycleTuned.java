@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.Components.Autonomous;
 
 import static org.firstinspires.ftc.teamcode.Components.Claw.ClawStates.CLAW_CLOSED;
 import static org.firstinspires.ftc.teamcode.Components.Lift.LiftConstants.LIFT_HIGH_JUNCTION;
+import static org.firstinspires.ftc.teamcode.Components.Lift.LiftConstants.LIFT_MED_JUNCTION;
 import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.logger;
 import static java.lang.Math.toRadians;
 
@@ -187,18 +188,14 @@ public class BlueLeftAutoCycleTuned extends LinearOpMode {
             robot.liftToPosition(LIFT_HIGH_JUNCTION);
             robot.delay(0.55);
             robot.raiseLiftArmToOuttake(true);
-            robot.waitForFinish();
-            robot.delay(0.25);
+            robot.liftToPosition((int)LIFT_HIGH_JUNCTION.getValue()-220, false);
+            robot.delay(0.15);
             robot.wideClaw();
-            robot.delay(0.3);
-            robot.openClaw(true);
-            for (int i = 0; i < 4; i++) {
-                robot.followTrajectorySequenceAsync(pick.get(i));
-                if(i!=3) {
-                    robot.cycleLiftArmToCycle(true);
-                }else{
-                    robot.lowerLiftArmToIntake(true);
-                }
+            robot.followTrajectorySequenceAsync(pickupTrajectory2);
+            robot.liftToPosition((int)LIFT_HIGH_JUNCTION.getValue() + 50, true);
+            for (int i = 0; i < 3; i++) {
+
+                robot.lowerLiftArmToIntake(true);
                 robot.delay(0.5);
                 robot.wideClaw();
                 robot.delay(0.5);
@@ -209,41 +206,27 @@ public class BlueLeftAutoCycleTuned extends LinearOpMode {
                 robot.liftToPosition(LIFT_HIGH_JUNCTION);
                 robot.delay(0.3+0.005*(3-i));
                 robot.raiseLiftArmToOuttake(true);
-                robot.waitForFinish();
+                robot.liftToPosition((int)LIFT_HIGH_JUNCTION.getValue()-220, false);
                 robot.delay(0.15);
                 robot.wideClaw();
-                robot.delay(0.3);
-                robot.openClaw(true);
+                robot.followTrajectorySequenceAsync(pick.get(i));
+                robot.liftToPosition((int)LIFT_HIGH_JUNCTION.getValue() + 50, true);
             }
-//
-//            robot.lowerLiftArmToIntake(false);
-//            robot.delay(1);
-//            robot.wideClaw();
-//            robot.delay(0.5);
-//            robot.liftToPosition((int) stackPos[4]);
-//            robot.followTrajectorySequenceAsync(pickupTrajectory2);
-//            robot.waitForFinish();
-//            robot.closeClaw(false);
-//            robot.waitForFinish();
-//            robot.raiseLiftArmToOuttake(true);
-//            robot.delay(0.3);
-//            robot.liftToPosition(LIFT_HIGH_JUNCTION);
-//            robot.followTrajectorySequenceAsync(dropTrajectory);
-//            robot.delay(1.5);
-//            robot.openClaw();
-//            robot.waitForFinish();
-//            robot.lowerLiftArmToIntake(true);
-//            robot.delay(1);
-//            robot.liftToPosition(0);
-//            robot.delay(0.7);
 
-            robot.delay(0.9);
-            robot.lowerLiftArmToIntake(true);
-            robot.delay(1.6);
+            robot.cycleLiftArmToCycle(true);
+            robot.delay(0.5);
             robot.wideClaw();
-            robot.delay(2.0);
-            robot.liftToPosition(0);
-
+            robot.delay(0.5);
+            robot.liftToPosition((int) stackPos[4]);
+            robot.closeClaw(false);
+            robot.followTrajectorySequenceAsync(dropTrajectory.get(3));
+            robot.delay(0.0+0.005*(3-3));
+            robot.liftToPosition(LIFT_HIGH_JUNCTION);
+            robot.delay(0.3+0.005*(3-3));
+            robot.raiseLiftArmToOuttake(true);
+            robot.liftToPosition((int)LIFT_HIGH_JUNCTION.getValue()-220, false);
+            robot.delay(0.15);
+            robot.wideClaw();
 
             if (dummyP == 1) {
                 robot.followTrajectorySequenceAsync(park1trajectory);
@@ -252,6 +235,16 @@ public class BlueLeftAutoCycleTuned extends LinearOpMode {
             } else {
                 robot.followTrajectorySequenceAsync(park2trajectory);
             }
+
+            robot.liftToPosition((int)LIFT_HIGH_JUNCTION.getValue() + 50, true);
+
+
+            robot.lowerLiftArmToIntake(true);
+            robot.delay(1.6);
+            robot.wideClaw();
+            robot.delay(1.5);
+            robot.liftToPosition(0);
+
 
             robot.setFirstLoop(false);
             robot.liftToTargetAuto();
