@@ -40,24 +40,29 @@ public class RoadRunnerTest extends LinearOpMode {
         telemetry.update();
         timer.reset();
 
-        drive.setPoseEstimate(new Pose2d());
+        drive.setPoseEstimate(new Pose2d(-36, -63, Math.toRadians(90)));
 
-        Trajectory traj = drive.trajectoryBuilder(new Pose2d(70, -36, 0))
-                .forward(70,
-                        SampleMecanumDrive.getVelocityConstraint(13, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
-                        SampleMecanumDrive.getAccelerationConstraint(DriveConstants.MAX_ACCEL))
+        Trajectory traj = drive.trajectoryBuilder(new Pose2d(-36, -63, Math.toRadians(90)))
+                .forward(60)
                 .build();
         Trajectory traj2 = drive.trajectoryBuilder(traj.end())
-                .back(12)
+                .lineToLinearHeading(new Pose2d(-39, -24, 0))
                 .build();
-
+        Trajectory traj3 = drive.trajectoryBuilder(traj2.end())
+                .splineToLinearHeading(new Pose2d(-38, -12, Math.toRadians(180)), Math.toRadians(270))
+                .build();
+        Trajectory traj4 = drive.trajectoryBuilder(traj3.end())
+                .lineToLinearHeading(new Pose2d(-64, -12, Math.toRadians(180)))
+                .build();
         waitForStart();
 
         if(isStopRequested()) return;
 
         drive.followTrajectory(traj);
-        //drive.followTrajectory(traj2);
-        drive.turn(Math.toRadians(90));
+        drive.followTrajectory(traj2);
+        //drive.turn(Math.toRadians(90));
+        drive.followTrajectory(traj3);
+        drive.followTrajectory(traj4);
     }
 
 }
