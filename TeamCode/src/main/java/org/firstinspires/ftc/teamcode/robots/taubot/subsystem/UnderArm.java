@@ -242,10 +242,20 @@ public class UnderArm implements Subsystem {
 
         calculatedDistance = (Math.sqrt(Math.pow(y - underArmPosition.y,2) + Math.pow(x - underArmPosition.x,2)))/INCHES_PER_METER;
 
-        double virtualLength = Math.sqrt( Math.pow(calculatedDistance,2) + Math.pow(calculatedHeight,2) );
+//        double virtualLength = Math.sqrt( Math.pow(calculatedDistance,2) + Math.pow(calculatedHeight,2) );
 
-        calculatedElbowAngle = Math.toDegrees(2*Math.asin( virtualLength / (SHOULDER_TO_ELBOW + ELBOW_TO_WRIST) ));
-        calculatedShoulderAngle = Math.toDegrees(Math.atan2( calculatedDistance , calculatedHeight ) + (90 - calculatedElbowAngle/2));
+//        calculatedElbowAngle = Math.toDegrees(2*Math.asin( virtualLength / (SHOULDER_TO_ELBOW + ELBOW_TO_WRIST) ));
+//        calculatedShoulderAngle = Math.toDegrees(Math.atan2( calculatedDistance , calculatedHeight ) + (90 - calculatedElbowAngle/2));
+
+        //todo: hope and pray that this works
+        calculatedShoulderAngle = Math.toDegrees(Math.acos(
+                (Math.pow(ARM_LENGTH, 2) + Math.pow(x, 2) + Math.pow(z, 2) - Math.pow(ELBOW_LENGTH, 2))
+                                        / (2 * ARM_LENGTH * calculatedDistance))
+                                        + Math.acos(x / calculatedDistance));
+
+        calculatedElbowAngle = Math.toDegrees(Math.acos(
+                                (Math.pow(ARM_LENGTH, 2) + Math.pow(ELBOW_LENGTH, 2) - Math.pow(x, 2) - Math.pow(z , 2))
+                                                            / (2 * ARM_LENGTH * ELBOW_LENGTH)));
 
         return true;
     }
