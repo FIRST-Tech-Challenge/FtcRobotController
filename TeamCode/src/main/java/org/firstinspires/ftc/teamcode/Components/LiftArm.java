@@ -16,7 +16,7 @@ public class LiftArm {
 
     private RFDualServo liftArmServo;
 
-    private final double LIFT_ARM_INTAKE_POS = 1;
+    private final double LIFT_ARM_INTAKE_POS = 0.98;
     private final double LIFT_ARM_CYCLE_POS = 0.955;
 
     private final double LIFT_ARM_OUTTAKE_POS = 0.16;

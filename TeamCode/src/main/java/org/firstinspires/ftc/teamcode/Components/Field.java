@@ -109,7 +109,7 @@ public class Field {
         logger.log("/RobotLogs/GeneralRobot", "polePos"+polePos);
         logger.log("/RobotLogs/GeneralRobot", "coords"+coords[0]+","+coords[1]);
 
-        if(abs(coords[1])<18&&coords[1]>3){
+        if(abs(coords[1])<18&&coords[1]>3 && abs(polePos.vec().distTo(roadrun.getCurrentTraj().end().vec()))<5){
             return true;
         }
         return false;

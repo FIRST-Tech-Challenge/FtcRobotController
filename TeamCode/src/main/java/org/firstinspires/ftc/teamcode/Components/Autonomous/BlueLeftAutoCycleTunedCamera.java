@@ -7,7 +7,6 @@ import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
@@ -133,8 +132,7 @@ public class BlueLeftAutoCycleTunedCamera extends LinearOpMode {
             robot.delay(0.4);
             robot.liftToPosition(1720);
             robot.delay(0.2);
-            robot.openClaw(false);
-//            robot.delay(0.5);
+            robot.wideClaw();//            robot.delay(0.5);
 //            robot.cycleLiftArmToCycle(true);
 //            robot.delay(0.5);
 //            robot.wideClaw();
