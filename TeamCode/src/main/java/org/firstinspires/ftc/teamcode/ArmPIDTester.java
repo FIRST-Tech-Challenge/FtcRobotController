@@ -165,7 +165,7 @@ public class ArmPIDTester extends LinearOpMode
         // Perform setup needed to center lift
         robot.turretPIDPosInit( robot.TURRET_ANGLE_CENTER );
         robot.liftPIDPosInit( robot.LIFT_ANGLE_HIGH );
-        while( !isStopRequested() && ( robot.turretMotorAuto == true || robot.liftMotorAuto == true )) {
+        while( !isStopRequested() && ( robot.turretMotorPIDAuto == true || robot.liftMotorPIDAuto == true )) {
             performEveryLoop();
         }
         robot.grabberSetTilt( robot.GRABBER_TILT_FRONT_H );

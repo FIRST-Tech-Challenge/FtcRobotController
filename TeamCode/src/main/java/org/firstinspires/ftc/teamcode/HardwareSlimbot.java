@@ -90,7 +90,7 @@ public class HardwareSlimbot
     protected DcMotorEx turretMotor        = null;    // A pair of motors operated as one with a Y cable
     public int          turretMotorPos     = 0;       // current encoder count
     public double       turretMotorVel     = 0.0;     // encoder counts per second
-    public boolean      turretMotorAuto    = false;   // Automatic movement in progress
+//  public boolean      turretMotorAuto    = false;   // Automatic movement in progress
     public boolean      turretMotorPIDAuto = false;   // Automatic movement in progress (PID)
     public boolean      turretMotorRunning = false;   // We did a turret set power, check the angle
     public double       turretMotorPwrSet  = 0.0;     // What we commanded the turret power to
@@ -114,9 +114,9 @@ public class HardwareSlimbot
     public double       TURRET_ANGLE_MIN    = -170.0;   // absolute encoder angles at maximum rotation LEFT
     public double       TURRET_ANGLE_5STACK_L = -62.0;
     public double       TURRET_ANGLE_5STACK_R = +77.0;
-    public double       TURRET_ANGLE_CYCLE_R  = 129.5;
-    public double       TURRET_ANGLE_CYCLE_L  = -129.5;
-    public double       TURRET_ANGLE_COLLECT_R = 21.9;
+    public double       TURRET_ANGLE_CYCLE_R  =  133.5;
+    public double       TURRET_ANGLE_CYCLE_L  = -133.5;
+    public double       TURRET_ANGLE_COLLECT_R =  21.9;
     public double       TURRET_ANGLE_COLLECT_L = -21.9;
 
     // Instrumentation:  writing to input/output is SLOW, so to avoid impacting loop time as we capture
@@ -134,7 +134,7 @@ public class HardwareSlimbot
 
     protected DcMotorEx liftMotorF         = null;    // FRONT lift motor
     protected DcMotorEx liftMotorB         = null;    // BACK lift motor
-    public boolean      liftMotorAuto      = false;   // Automatic movement in progress
+//  public boolean      liftMotorAuto      = false;   // Automatic movement in progress
     public boolean      liftMotorPIDAuto   = false;   // Automatic movement in progress (PID)
     public int          liftMotorCycles    = 0;       // Automatic movement cycle count
     public int          liftMotorWait      = 0;       // Automatic movement wait count (truly there! not just passing thru)
@@ -166,12 +166,13 @@ public class HardwareSlimbot
     public double       LIFT_ANGLE_ASTART  = 116.0;   // lift position for starting autonomous
     public double       LIFT_ANGLE_COLLECT = 111.0;   // lift position for collecting cones (185mm)
     public double       LIFT_ANGLE_GROUND  = 111.0;   // lift position for GROUND junction
+    public double       LIFT_ANGLE_CONE    = 105.0;   // lift position for cleaning a cone on a ground junction
     public double       LIFT_ANGLE_LOW     =  92.2;   // lift position for LOW junction
     public double       LIFT_ANGLE_MOTORS  =  91.0;   // lift position for cleaning front turret motor
     public double       LIFT_ANGLE_5STACK  =  87.0;   // lift position for 5-stack ultrasonic reading
     public double       LIFT_ANGLE_MED     =  67.0;   // lift position for MEDIUM junction (FRONT Teleop)
     public double       LIFT_ANGLE_AUTO_H  =  37.0;   // lift position for AUTONOMOUS (HIGH junction)
-    public double       LIFT_ANGLE_HIGH    =  37.0;   // lift position for HIGH junction (FRONT Teleop)
+    public double       LIFT_ANGLE_HIGH    =  29.8;   // lift position for HIGH junction (FRONT Teleop)
     public double       LIFT_ANGLE_HIGH_BA = -36.8;   // lift position for HIGH junction (BACK Auto)
                                                       // (cone is loaded lower for auto, so higher lift point)
     public double       LIFT_ANGLE_HIGH_B  = -41.0;   // lift position for HIGH junction (BACK Teleop)
@@ -186,7 +187,7 @@ public class HardwareSlimbot
 
     // Instrumentation:  writing to input/output is SLOW, so to avoid impacting loop time as we capture
     // motor performance we store data to memory until the movement is complete, then dump to a file.
-    public boolean          liftMotorLogging   = true;  // only enable during development!! (RVS)
+    public boolean          liftMotorLogging   = false; // only enable during development!! (RVS)
     public final static int LIFTMOTORLOG_SIZE  = 128;   // 128 entries = 2+ seconds @ 16msec/60Hz
     protected double[]      liftMotorLogTime   = new double[LIFTMOTORLOG_SIZE];  // msec
     protected double[]      liftMotorLogAngle  = new double[LIFTMOTORLOG_SIZE];  // Angle [degrees]
@@ -791,7 +792,7 @@ public class HardwareSlimbot
             // Current distance from target (angle degrees)
             double degreesToGo = turretAngleTarget - turretAngle;
             double degreesToGoAbs = Math.abs(degreesToGo);
-            int waitCycles = (teleopMode)? 5 : 2;
+            int waitCycles = (teleopMode)? 2 : 2;
             double turretMotorPower = turretPidController.update( turretAngleTarget, turretAngle );
             turretMotorSetPower( turretMotorPower );
             // Have we achieved the target?
@@ -881,7 +882,7 @@ public class HardwareSlimbot
             // Current distance from target (angle degrees)
             double degreesToGo = liftAngleTarget - liftAngle;
             double degreesToGoAbs = Math.abs(degreesToGo);
-            int waitCycles = (teleopMode) ? 5 : 2;
+            int waitCycles = (teleopMode) ? 2 : 2;
             double power = liftPidController.update(liftAngleTarget, liftAngle);
             liftMotorsSetPower(power);
             // Have we achieved the target?

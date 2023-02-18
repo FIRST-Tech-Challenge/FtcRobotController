@@ -67,7 +67,7 @@ public class AutonomousReset extends LinearOpMode {
         // Initialize lift control (lower to start position for autonomous)
         robot.liftPIDPosInit( robot.LIFT_ANGLE_ASTART );
         // Wait until both motions are complete
-        while( opModeIsActive() && ((robot.turretMotorAuto == true) || (robot.liftMotorAuto == true)) ) {
+        while( opModeIsActive() && ((robot.turretMotorPIDAuto == true) || (robot.liftMotorPIDAuto == true)) ) {
             performEveryLoop();
         }
         // With arm in starting position, it's safe to store the collector

@@ -374,7 +374,7 @@ public class AutonomousLeft extends AutonomousBase {
         driveToPosition( autoYpos, autoXpos, autoAngle, DRIVE_SPEED_90, TURN_SPEED_70, DRIVE_TO );
 
         // Both mechanisms should be finished, but pause here if they haven't (until they do)
-        while( opModeIsActive() && ((robot.turretMotorAuto == true) || (robot.liftMotorAuto == true)) ) {
+        while( opModeIsActive() && ((robot.turretMotorPIDAuto == true) || (robot.liftMotorPIDAuto == true)) ) {
             performEveryLoop();
         }
 
@@ -417,7 +417,7 @@ public class AutonomousLeft extends AutonomousBase {
         // Drive closer to the 5-stack against the wall (same Y and ANGLE, but new X)
         autoXpos=-13.0;
         driveToPosition( autoYpos, autoXpos, autoAngle, DRIVE_SPEED_90, TURN_SPEED_80, DRIVE_TO );
-        while( opModeIsActive() && ((robot.turretMotorAuto == true) || (robot.liftMotorAuto == true)) ) {
+        while( opModeIsActive() && ((robot.turretMotorPIDAuto == true) || (robot.liftMotorPIDAuto == true)) ) {
             performEveryLoop();
         }
     } // moveToConeStack
@@ -444,7 +444,7 @@ public class AutonomousLeft extends AutonomousBase {
         // Lower the lift to the desired height (and ensure we're centered)
         robot.liftPIDPosInit( liftAngle5stack );
         robot.turretPIDPosInit( robot.TURRET_ANGLE_CENTER );
-        while( opModeIsActive() && ((robot.turretMotorAuto == true) || (robot.liftMotorAuto == true)) ) {
+        while( opModeIsActive() && ((robot.turretMotorPIDAuto == true) || (robot.liftMotorPIDAuto == true)) ) {
             performEveryLoop();
         }
 
@@ -469,7 +469,7 @@ public class AutonomousLeft extends AutonomousBase {
 
         // Now reverse the lift to raise off the cone stack
         robot.liftPIDPosInit( robot.LIFT_ANGLE_5STACK );
-        while( opModeIsActive() && (robot.liftMotorAuto == true) ) {
+        while( opModeIsActive() && (robot.liftMotorPIDAuto == true) ) {
             performEveryLoop();
         }
         // halt lift motors
@@ -494,7 +494,7 @@ public class AutonomousLeft extends AutonomousBase {
         driveToPosition( autoYpos, autoXpos, autoAngle, DRIVE_SPEED_90, TURN_SPEED_80, DRIVE_TO );
 
         // Re-center turret again (if it shifted while driving)
-        while( opModeIsActive() && (robot.turretMotorAuto == true) ) {
+        while( opModeIsActive() && (robot.turretMotorPIDAuto == true) ) {
             performEveryLoop();
         }
 
@@ -571,7 +571,7 @@ public class AutonomousLeft extends AutonomousBase {
         } // signalZoneLocation 2
 
         // Ensure we complete all lift movement before ending autonomous
-        while( opModeIsActive() && (robot.liftMotorAuto == true) ) {
+        while( opModeIsActive() && (robot.liftMotorPIDAuto == true) ) {
             performEveryLoop();
         }
 

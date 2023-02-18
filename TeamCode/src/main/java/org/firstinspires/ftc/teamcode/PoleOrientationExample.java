@@ -158,7 +158,7 @@ public class PoleOrientationExample extends LinearOpMode
 //      robot.turretPIDPosInit( robot.TURRET_ANGLE_CENTER );
         robot.turretPIDPosInit(+32.5 );
         robot.liftPIDPosInit( robot.LIFT_ANGLE_HIGH_BA );
-        while( robot.turretMotorAuto == true || robot.liftMotorAuto == true) {
+        while( robot.turretMotorPIDAuto == true || robot.liftMotorPIDAuto == true) {
             performEveryLoop();
         }
         robot.grabberSetTilt( robot.GRABBER_TILT_BACK_H );

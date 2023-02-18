@@ -174,9 +174,9 @@ public class TurretPIDTester extends LinearOpMode
         performEveryLoop();
 
         // Perform setup needed to center turret
-        robot.turretPIDPosInit( 21.9 );
+        robot.turretPIDPosInit( robot.TURRET_ANGLE_COLLECT_R );
         robot.liftPIDPosInit( robot.LIFT_ANGLE_COLLECT );
-        while( !isStopRequested() && ( robot.turretMotorAuto == true || robot.liftMotorAuto == true )) {
+        while( !isStopRequested() && ( robot.turretMotorPIDAuto == true || robot.liftMotorPIDAuto == true )) {
             performEveryLoop();
         }
 
