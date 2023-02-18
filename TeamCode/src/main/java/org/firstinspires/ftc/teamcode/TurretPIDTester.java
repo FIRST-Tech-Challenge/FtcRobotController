@@ -22,19 +22,18 @@
 package org.firstinspires.ftc.teamcode;
 
 import static java.lang.Math.abs;
-
-import android.os.Environment;
+import static java.lang.Math.cos;
+import static java.lang.Math.sin;
+import static java.lang.Math.toRadians;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.Locale;
+import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
+import org.openftc.easyopencv.OpenCvCamera;
+import org.openftc.easyopencv.OpenCvCameraFactory;
+import org.openftc.easyopencv.OpenCvCameraRotation;
 
 /*
  * This is an advanced sample showcasing detecting and determining the orientation
@@ -43,8 +42,13 @@ import java.util.Locale;
  */
 @TeleOp(name="Turret-Test", group="Skunkworks")
 //@Disabled
-public class TurretPIDTester extends LinearOpMode
+public class TurretPIDTester extends AutonomousBase
 {
+    OpenCvCamera webcamFront;
+    OpenCvCamera webcamLow;
+    PowerPlaySuperPipeline pipelineLow;
+    PowerPlaySuperPipeline pipelineFront;
+    ElapsedTime autonomousTimer = new ElapsedTime();
     final int LOGSIZE = 12;
     double[]  errorHistory = new double[LOGSIZE];
     double[]  kpMinHistory = new double[LOGSIZE];
@@ -59,7 +63,7 @@ public class TurretPIDTester extends LinearOpMode
     boolean ranging = false;
     boolean turretFacingFront = false;
     boolean lowCameraInitialized = false;
-    boolean backCameraInitialized = false;
+    boolean frontCameraInitialized = false;
     double maxPower = 0.0;
 
     /**
@@ -68,14 +72,6 @@ public class TurretPIDTester extends LinearOpMode
      * you should take a look at or its
      * webcam counterpart,first.
      */
-
-    public void performEveryLoop() {
-        robot.readBulkData();
-//      robot.turretPosRun(false);
-//      robot.liftPosRun();
-        robot.turretPIDPosRun(false);
-        robot.liftPIDPosRun( false );
-    }
 
     boolean turretMotorPIDAuto = false;
 
@@ -150,13 +146,108 @@ public class TurretPIDTester extends LinearOpMode
         }
     }
 
+    void alignToPole(boolean turretFacingFront) {
+        PowerPlaySuperPipeline alignmentPipeline;
+        PowerPlaySuperPipeline.AnalyzedPole theLocalPole;
+        final double DRIVE_SLOPE  = 0.004187;
+        final double DRIVE_OFFSET = 0.04522;
+        final int TURRET_CYCLES_AT_POS = 8;
+        // minPower=0; kp = 0.0027
+        // Converting from pixels to degrees
+
+        double targetAngle;
+        double targetDistanceX;
+        double targetDistanceY;
+        double targetPositionX;
+        double targetPositionY;
+        double turretPower;
+        double turretPowerMax = 0.14;  // maximum we don't want the PID to exceed
+        double drivePower;
+
+        double startTime = autonomousTimer.milliseconds();
+        double abortTime = startTime + 3000.0;  // abort after 3 seconds
+
+        // If we add back front camera, use boolean to determine which pipeline to use.
+//        alignmentPipeline = turretFacingFront ? pipelineFront : pipelineBack;
+        alignmentPipeline = pipelineFront;
+
+        theLocalPole = alignmentPipeline.getDetectedPole();
+        // This is the angle the pole is in relation to the turret angle
+        targetAngle = robot.turretAngle + theLocalPole.centralOffsetDegrees;
+        robot.turretPIDPosInit(targetAngle);
+        targetDistanceX = theLocalPole.highDistanceOffsetCm * cos(toRadians(targetAngle));
+        targetDistanceY = theLocalPole.highDistanceOffsetCm * sin(toRadians(targetAngle));
+        targetPositionX = robotGlobalXCoordinatePosition + targetDistanceX;
+        targetPositionY = robotGlobalYCoordinatePosition + targetDistanceY;
+        driveToPosition( targetPositionY, targetPositionX, targetAngle, DRIVE_SPEED_50, TURN_SPEED_40, DRIVE_THRU );
+        while(opModeIsActive() && robot.turretMotorPIDAuto) {
+            performEveryLoop();
+        }
+
+        robot.stopMotion();
+        robot.turretMotorSetPower(0.0);
+    } // alignToPole
+
     @Override
     public void runOpMode() throws InterruptedException {
         double oldTime;
         double newTime;
         double target = 20.0;
-        ElapsedTime oldWay = new ElapsedTime();
-        ElapsedTime newWay = new ElapsedTime();
+        int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
+        int[] viewportContainerIds = OpenCvCameraFactory.getInstance()
+                .splitLayoutForMultipleViewports(
+                        cameraMonitorViewId, //The container we're splitting
+                        2, //The number of sub-containers to create
+                        OpenCvCameraFactory.ViewportSplitMethod.VERTICALLY); //Whether to split the container vertically or horizontally
+
+        // This will be called if the camera could not be opened
+
+        webcamFront = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class,
+                "Webcam Front"), viewportContainerIds[0]);
+        webcamFront.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener()
+        {
+            @Override
+            public void onOpened()
+            {
+                pipelineFront = new PowerPlaySuperPipeline(false, true, false, false, 144.0);
+                webcamFront.setPipeline(pipelineFront);
+                webcamFront.startStreaming(320, 240, OpenCvCameraRotation.UPRIGHT);
+                frontCameraInitialized = true;
+            }
+
+            @Override
+            public void onError(int errorCode)
+            {
+                // This will be called if the camera could not be opened
+            }
+        });
+        webcamFront.showFpsMeterOnViewport(false);
+
+        webcamLow = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class,
+                "Webcam Low"), viewportContainerIds[1]);
+        webcamLow.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener()
+        {
+            @Override
+            public void onOpened()
+            {
+                pipelineLow = new PowerPlaySuperPipeline(true, false,
+                        false, false, 160.0);
+                webcamLow.setPipeline(pipelineLow);
+                webcamLow.startStreaming(320, 240, OpenCvCameraRotation.UPRIGHT);
+                lowCameraInitialized = true;
+            }
+
+            @Override
+            public void onError(int errorCode)
+            {
+                // This will be called if the camera could not be opened
+            }
+        });
+        webcamLow.showFpsMeterOnViewport(false);
+
+        while(!(lowCameraInitialized && frontCameraInitialized)) {
+            sleep(100);
+        }
         telemetry.addLine("Robot initializing, wait for completion.");
         telemetry.update();
 
@@ -169,13 +260,13 @@ public class TurretPIDTester extends LinearOpMode
         telemetry.addLine("Hardware initialized...");
         telemetry.update();
 
-        robot.grabberSetTilt( robot.GRABBER_TILT_GRAB3 );
+        robot.grabberSetTilt( robot.GRABBER_TILT_FRONT_H );
         sleep(300);
         performEveryLoop();
 
         // Perform setup needed to center turret
         robot.turretPIDPosInit( robot.TURRET_ANGLE_COLLECT_R );
-        robot.liftPIDPosInit( robot.LIFT_ANGLE_COLLECT );
+        robot.liftPIDPosInit( robot.LIFT_ANGLE_HIGH );
         while( !isStopRequested() && ( robot.turretMotorPIDAuto == true || robot.liftMotorPIDAuto == true )) {
             performEveryLoop();
         }
@@ -184,36 +275,12 @@ public class TurretPIDTester extends LinearOpMode
         telemetry.update();
 
         waitForStart();
-
-        oldWay.reset();
-        // Right
-        //performTeleOldLift( 21.9, -50.5 );
-        // Left
-        //performTeleOldLift ( -21.9, 50.5 );
-        oldTime = oldWay.milliseconds();
-
-        newWay.reset();
-        // Right
-        performTeleNewLift( 21.9, 129.5 );
-        // Left
-        //performTeleNewLift ( -21.9, -129.5 );
-        newTime = newWay.milliseconds();
-
-        telemetry.addData("Old Timer", oldTime);
-        telemetry.addData("New Timer", newTime);
-        telemetry.update();
-        sleep(10000);
+        globalCoordinatePositionReset();
 
         while (opModeIsActive())
         {
             performEveryLoop();
-            robot.turretPIDPosInit(robot.TURRET_ANGLE_CENTER);
-            // Execute the automatic turret movement code
-            telemetry.addData("pStatic", robot.turretPidController.kStatic);
-            telemetry.addData("kp", robot.turretPidController.kp);
-            while(turretMotorPIDAuto && opModeIsActive()) {
-                performEveryLoop();
-            }
+            alignToPole(true);
 
             // Use the camera to align to the pole, and set the correct distance away
             int sleepCycles = 5;
