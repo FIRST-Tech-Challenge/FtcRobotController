@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode;
 
+import com.qualcomm.hardware.ams.AMSColorSensor;
+import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -8,9 +10,10 @@ import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 
-@TeleOp(name="FSM Example2")
+@Autonomous(name="FSM Example2")
 public class StatemachineTest extends OpMode {
 
     private int lfPos;
@@ -62,30 +65,42 @@ public class StatemachineTest extends OpMode {
 
     private DistanceSensor sensorRange;
     private DigitalChannel sensorTouch;
+    private  DigitalChannel limitSwitch = null;
 
 
-    ElapsedTime liftTimer = new ElapsedTime();
+    private ElapsedTime runtime = new ElapsedTime();
 
     final double DUMP_IDLE = -0.5;
     final double DUMP_DEPOSIT = 0.7;
     final double DUMP_TIME = .5;
     final int LIFT_LOW = 0;
     final int LIFT_HIGH = 100;
-
+    double liftPower = 0.0;
+    double targetheight = 0.0;
 
     public enum LiftState {
         START,
-        FORWARD,
-        LIFT,
+        LIFTING,
+        LIFT_STOP,
+        LIFT_SET_LOW,
+        LIFTING_LOW,
+
         WAIT_LIFT,
         WAIT,
-        DONE
+
+    }
+
+    public enum Drivestate {
+        FORWARD,
+        WAIT_DRIVE
     }
 
     LiftState liftState = LiftState.START;
+    Drivestate drivestate = Drivestate.FORWARD;
+
 
     public void init() {
-        liftTimer.reset();
+        runtime.reset();
         liftMotor1 = hardwareMap.get(DcMotor.class, "LiftMotor1");
         liftMotor2 = hardwareMap.get(DcMotor.class, "LiftMotor2");
         liftMotor1.setDirection(DcMotor.Direction.REVERSE);
@@ -108,51 +123,76 @@ public class StatemachineTest extends OpMode {
         sensorTouch = hardwareMap.get(DigitalChannel.class, "sensor_touch");
         sensorTouch.setMode(DigitalChannel.Mode.INPUT);
 
+        limitSwitch = hardwareMap.get(DigitalChannel.class, "limitSwitch");
+
 
     }
 
     public void loop() {
+       /* switch (drivestate) {
+            case FORWARD:
+                moveForward(24,medium);
+                drivestate = drivestate.WAIT_DRIVE;
+        }
+        break;
+        case
+            }*/
 
 
-        switch (liftState) {
+
+       /* switch (drivestate) {
+            case FORWARD:
+            moveForward(24,medium);
+            break;}*/
+        //set target to med
+        targetheight=MED_HEIGHT;
+        switch (liftState){
             case START:
-                /*liftMotor1.setTargetPosition(200);
-                liftMotor2.setTargetPosition(200);*/
-                leftFrontDrive.setTargetPosition(100);
-                leftBackDrive.setTargetPosition(100);
-                rightFrontDrive.setTargetPosition(100);
-                rightBackDrive.setTargetPosition(100);
 
-                leftFrontDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                leftBackDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                rightFrontDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                rightBackDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                if (leftFrontDrive.getCurrentPosition() < 50)
+                    liftState = liftState.LIFTING;
 
-                    liftMotor1.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                liftMotor2.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                if (liftMotor1.getCurrentPosition() > 50) {
-                    MoveLift(LOW_HEIGHT);
-                    liftState = liftState.WAIT;
+                break;
+            case LIFTING:
+                //Move lift to target position
+                MoveLift(targetheight);
+                //One lift reaches target height, change state to LIFT_STOP
+                if (sensorRange.getDistance(DistanceUnit.CM) >= targetheight- WIGGLE_ROOM) {
+                    liftState = liftState.LIFT_SET_LOW;
+                    Wait(5.0);
+
                 }
                 break;
-            case WAIT:
-                if (liftMotor1.isBusy() && liftMotor2.isBusy()) {
-                    liftState = liftState.WAIT_LIFT;
+            case LIFT_SET_LOW:
+               targetheight=LOW_HEIGHT;
+               liftState=liftState.LIFTING_LOW;
+               break;
+            case LIFTING_LOW:
+                MoveLift(targetheight);
+                if(sensorRange.getDistance(DistanceUnit.CM) >= targetheight- WIGGLE_ROOM) {
+                    liftState = liftState.LIFT_STOP;
                 }
                 break;
-            case WAIT_LIFT:
-                if (!liftMotor1.isBusy() && !liftMotor2.isBusy()) {
-                    liftState = liftState.DONE;
-                }
-                break;
-            case DONE:
-                liftState = liftState.START;
+            case LIFT_STOP:
+                dualLift(0.0);
                 break;
 
 
         }
+        //moveForward(24, medium);
+
+
+        telemetry.addData("Lift Motors", "%5.2f", liftPower);
+        telemetry.addData("Set Height","%5.2f", targetheight);
+        telemetry.addData("Current State", liftState.toString());
+        telemetry.addData("Current State",liftState.name());
+        telemetry.addData("Current Height","%5.2f", sensorRange.getDistance(DistanceUnit.CM));
+        telemetry.update();
+
+
+
+
     }
+
 
 
     public void dualPosition(int position) {
@@ -175,25 +215,28 @@ public class StatemachineTest extends OpMode {
 
     public void MoveLift(double targetHeight) {
 
-        double liftPower = 0.0;
-        while (sensorRange.getDistance(DistanceUnit.CM) < targetHeight - WIGGLE_ROOM) {
+
+        if (sensorRange.getDistance(DistanceUnit.CM) < targetHeight - WIGGLE_ROOM) {
+
             liftPower = RampUpLiftPower(liftPower);
+            dualLift(liftPower);}
+
+        else if (sensorRange.getDistance(DistanceUnit.CM) > targetHeight + WIGGLE_ROOM ){
+            liftPower = RampDownLiftPower(liftPower);
+            dualLift(liftPower);}
+       /* else if (!limitSwitch.getState() && liftMotor1.getPower() > 0 ); {
+            dualLift(0.0);
+        }*/
+         else {
+            liftPower = 0.0;
             dualLift(liftPower);
+
         }
-        liftPower = 0.0;
-        dualLift(liftPower);
-        while (sensorRange.getDistance(DistanceUnit.CM) > targetHeight + WIGGLE_ROOM) {
-            if (!sensorTouch.getState()) {
-                dualLift(0.0);
-                break;
-            } else {
-                liftPower = RampDownLiftPower(liftPower);
-                dualLift(liftPower);
-            }
-        }
-        liftPower = 0.0;
-        dualLift(liftPower);
+
+
     }
+
+
 
     public double RampUpLiftPower(double liftPower) {
 
@@ -619,6 +662,12 @@ public class StatemachineTest extends OpMode {
         rightFrontDrive.setPower(0);
         leftBackDrive.setPower(0);
         rightBackDrive.setPower(0);
+    }
+    private void Wait(double seconds) {
+        runtime.reset();
+        while (runtime.time() < seconds) {
+
+        }
     }
 }
 
