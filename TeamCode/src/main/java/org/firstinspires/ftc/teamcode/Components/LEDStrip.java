@@ -3,7 +3,6 @@ package org.firstinspires.ftc.teamcode.Components;
 import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.op;
 
 import com.qualcomm.hardware.rev.RevBlinkinLedDriver;
-import com.qualcomm.robotcore.hardware.ServoControllerEx;
 
 public class LEDStrip{
     RevBlinkinLedDriver blinkin;
@@ -78,6 +77,7 @@ public class LEDStrip{
     public void violet() {
         blinkin.setPattern(RevBlinkinLedDriver.BlinkinPattern.VIOLET);
     }
+    public void pattern29(){blinkin.setPattern(RevBlinkinLedDriver.BlinkinPattern.RAINBOW_PARTY_PALETTE);}
 
 
 

@@ -415,6 +415,10 @@ public class PwPRobot extends BasicRobot {
         leds.setStackLevelColor(level);
     }
 
+    public void partycolorwave() {
+        leds.red();
+    }
+
     public void teleOp() {
 //        if (progNameLogged == false) {
 //            logger.log("/RobotLogs/GeneralRobot", "PROGRAM RUN: PwPTeleOp", false);
@@ -446,7 +450,7 @@ public class PwPRobot extends BasicRobot {
         }
 
         if (CLAW_CLOSED.getStatus()) {
-            heartbeatRed();
+            partycolorwave();
         }
         if (CLAW_OPEN.getStatus()) {
             darkGreen();
@@ -559,8 +563,8 @@ public class PwPRobot extends BasicRobot {
             if (regularDrive) {
                 roadrun.setWeightedDrivePower(
                         new Pose2d(
-                                abs(vals[1] - 0.0001) / -vals[1] * (minBoost[1] + 0.6 * abs(vals[1]) + 0.15 * pow(abs(vals[1]), 2.4)),
-                                abs(vals[0] - 0.0001) / -vals[0] * (minBoost[0] + 0.6 * abs(vals[0]) + 0.15 * pow(abs(vals[0]), 2.4)),
+                                abs(vals[1] - 0.0001) / -vals[1] * (minBoost[1] + 0.65 * abs(vals[1]) + 0.15 * pow(abs(vals[1]), 2.4)),
+                                abs(vals[0] - 0.0001) / -vals[0] * (minBoost[0] + 0.65 * abs(vals[0]) + 0.15 * pow(abs(vals[0]), 2.4)),
                                 abs(vals[2] - 0.0001) / -vals[2] * (minBoost[2] + 0.75 * abs(vals[2]))
                         )
                 );
@@ -569,9 +573,9 @@ public class PwPRobot extends BasicRobot {
                         abs(vals[0] - 0.0001) / -vals[0] * (minBoost[0] + 0.5 * abs(vals[0]) + 0.15 * pow(abs(vals[0]), 3)));
                 input = input.rotated(-roadrun.getPoseEstimate().getHeading()- toRadians(90));
                 roadrun.setWeightedDrivePower(
-                        new Pose2d(input.getX(),
-                                input.getY(),
-                                abs(vals[2] - 0.0001) / -vals[2] * (minBoost[2] + 0.5 * abs(vals[2]) + 0.15 * pow(abs(vals[2]), 3)))
+                        new Pose2d(-vals[1],
+                                -vals[0],
+                                -vals[2])
                 );
             }
         }

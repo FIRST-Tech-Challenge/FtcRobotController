@@ -91,7 +91,8 @@ public class ConeObserverPipeline extends OpenCvPipeline {
         }
 //        //if there is a detected largest contour, record information about it
         if(rectangle.length>0) {
-            if(rectangle[maxAreaIndex].size.height/rectangle[maxAreaIndex].size.width>1.25 ||rectangle[maxAreaIndex].size.width/rectangle[maxAreaIndex].size.height>1.25) {
+            double ratio = rectangle[maxAreaIndex].size.height/rectangle[maxAreaIndex].size.width;
+            if(ratio>1.1&&ratio<1.4 ||1/ratio>1.1&&1/ratio<1.4) {
 
                 if (rectangle[maxAreaIndex].size.height < rectangle[maxAreaIndex].size.width) {
                     poleSize = rectangle[maxAreaIndex].size.height;
