@@ -211,12 +211,6 @@ public class Tele extends OpMode {
 //                robot.lift.setPower(-gamepad2.left_stick_y * .65);
 //            }
 
-            if (robot.lift.isBusy() || robot.upperLift.isBusy()) {
-
-            } else {
-                robot.lift.setPower(0);
-                robot.upperLift.setPower(0);
-            }
 
 
             if (gamepad2.left_stick_y > .05 || gamepad2.left_stick_y < -.05 || gamepad2.right_stick_y > .05 || gamepad2.right_stick_y < -.05) {
@@ -287,44 +281,45 @@ public class Tele extends OpMode {
                     robot.upperLift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 }
             } else {
+//                    switch (liftPos) {
+//                        case 0:
+//                            break;
+//                        case 1:
+//                            liftPos = 2;
+//                            break;
+//                        case 2: //Low junction
+//                            robot.upperLift.setTargetPosition(2940);
+//                            robot.upperLift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+//                            robot.upperLift.setPower(1);
+//                            robot.lift.setTargetPosition(690);
+//                            robot.lift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+//                            robot.lift.setPower(1);
+//                            break;
+//                        case 3: //Medium junction
+//                            robot.upperLift.setTargetPosition(2940);
+//                            robot.upperLift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+//                            robot.upperLift.setPower(.85);
+//                            robot.lift.setTargetPosition(2080);
+//                            robot.lift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+//                            robot.lift.setPower(.85);
+//                            break;
+//                        case 4: //High junction
+//                            robot.upperLift.setTargetPosition(2940);
+//                            robot.upperLift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+//                            robot.upperLift.setPower(.85);
+//                            robot.lift.setTargetPosition(4920);
+//                            robot.lift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+//                            robot.lift.setPower(.85);
+//                            break;
+//                        case 5:
+//                            liftPos = 4;
+//                            break;
                 if (!robot.lift.isBusy() && !robot.upperLift.isBusy()) {
                     robot.lift.setPower(0);
                     robot.upperLift.setPower(0);
-                    switch (liftPos) {
-                        case 0:
-                            break;
-                        case 1:
-                            liftPos = 2;
-                            break;
-                        case 2: //Low junction
-                            robot.upperLift.setTargetPosition(2940);
-                            robot.upperLift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                            robot.upperLift.setPower(1);
-                            robot.lift.setTargetPosition(690);
-                            robot.lift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                            robot.lift.setPower(1);
-                            break;
-                        case 3: //Medium junction
-                            robot.upperLift.setTargetPosition(2940);
-                            robot.upperLift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                            robot.upperLift.setPower(.85);
-                            robot.lift.setTargetPosition(2080);
-                            robot.lift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                            robot.lift.setPower(.85);
-                            break;
-                        case 4: //High junction
-                            robot.upperLift.setTargetPosition(2940);
-                            robot.upperLift.setPower(.85);
-                            robot.lift.setTargetPosition(4920);
-                            robot.lift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                            robot.lift.setPower(.85);
-                            break;
-                        case 5:
-                            liftPos = 4;
-                            break;
-                    }
-                } else {
                 }
+
+
             }
 
 
@@ -408,6 +403,9 @@ public class Tele extends OpMode {
         telemetry.addData("Gunner Control Mode:", gunner);
         telemetry.addData("Upper Top", robot.upperUpSwitch.getVoltage());
         telemetry.addData("Upper Bottom", robot.upperDownSwitch.getVoltage());
+        telemetry.addData("Bottom Up", robot.toggleSwitch.getVoltage());
+        telemetry.addData("Bottom Down", robot.bottomSwitch.getVoltage());
+        telemetry.addData("Grip Switch", robot.gripSwitch.getVoltage());
 
 
         telemetry.update();

@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/PowerPlay2022-23.iml" filepath="$PROJECT_DIR$/.idea/modules/PowerPlay2022-23.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/FtcRobotController/PowerPlay2022-23.FtcRobotController.iml" filepath="$PROJECT_DIR$/.idea/modules/FtcRobotController/PowerPlay2022-23.FtcRobotController.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/FtcRobotController/PowerPlay2022-23.FtcRobotController.androidTest.iml" filepath="$PROJECT_DIR$/.idea/modules/FtcRobotController/PowerPlay2022-23.FtcRobotController.androidTest.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/FtcRobotController/PowerPlay2022-23.FtcRobotController.main.iml" filepath="$PROJECT_DIR$/.idea/modules/FtcRobotController/PowerPlay2022-23.FtcRobotController.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/FtcRobotController/PowerPlay2022-23.FtcRobotController.unitTest.iml" filepath="$PROJECT_DIR$/.idea/modules/FtcRobotController/PowerPlay2022-23.FtcRobotController.unitTest.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/TeamCode/PowerPlay2022-23.TeamCode.iml" filepath="$PROJECT_DIR$/.idea/modules/TeamCode/PowerPlay2022-23.TeamCode.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/TeamCode/PowerPlay2022-23.TeamCode.androidTest.iml" filepath="$PROJECT_DIR$/.idea/modules/TeamCode/PowerPlay2022-23.TeamCode.androidTest.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/TeamCode/PowerPlay2022-23.TeamCode.main.iml" filepath="$PROJECT_DIR$/.idea/modules/TeamCode/PowerPlay2022-23.TeamCode.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/TeamCode/PowerPlay2022-23.TeamCode.unitTest.iml" filepath="$PROJECT_DIR$/.idea/modules/TeamCode/PowerPlay2022-23.TeamCode.unitTest.iml" />
+    </modules>
+  </component>
+</project>
