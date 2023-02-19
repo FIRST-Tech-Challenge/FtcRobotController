@@ -49,95 +49,47 @@ public class RoadRunnerTest extends LinearOpMode {
 
         drive.setPoseEstimate(new Pose2d(-36, -63, Math.toRadians(90)));
 
-        /*Trajectory pushCone = drive.trajectoryBuilder(new Pose2d(-36, -63, Math.toRadians(90)))
-                .forward(55)
+        Trajectory firstMidPole = drive.trajectoryBuilder(new Pose2d(-36, -63, Math.toRadians(90)))
+                .splineToLinearHeading(new Pose2d(-36, -12, Math.toRadians(90)), Math.toRadians(90))
+                .splineToSplineHeading(new Pose2d(-28.5, -19.5, Math.toRadians(315)), Math.toRadians(315))
                 .build();
-        Trajectory pushConeBack = drive.trajectoryBuilder(pushCone.end())
-                .back(5)
-                .build();
-        Trajectory firstMidPole = drive.trajectoryBuilder(pushConeBack.end())
-                .lineToLinearHeading(new Pose2d(-39, -24, 0))
-                .build();
-        Trajectory firstMidPoleForward = drive.trajectoryBuilder(firstMidPole.end())
+        telemetry.addLine("Traj1");
+        telemetry.update();
+        /*Trajectory firstMidPoleForward = drive.trajectoryBuilder(firstMidPole.end())
                 .forward(6.5)
+                .build();*/
+        Trajectory firstMidPoleBack = drive.trajectoryBuilder(firstMidPole.end())
+                .back(6)
                 .build();
-        Trajectory firstMidPoleBack = drive.trajectoryBuilder(firstMidPoleForward.end())
-                .back(6.5)
-                .build();
-        Trajectory stackMidPoint = drive.trajectoryBuilder(firstMidPoleBack.end())
+        telemetry.addLine("Traj2");
+        telemetry.update();
+        Trajectory stackMidPoint = drive.trajectoryBuilder(firstMidPole.end())
                 .splineToLinearHeading(new Pose2d(-38, -12, Math.toRadians(180)), Math.toRadians(270))
                 .build();
+        telemetry.addLine("Traj3");
+        telemetry.update();
         Trajectory stack = drive.trajectoryBuilder(stackMidPoint.end())
                 .lineToLinearHeading(new Pose2d(-64, -12, Math.toRadians(180)))
                 .build();
+        telemetry.addLine("Traj4");
+        telemetry.update();
         Trajectory stackBack = drive.trajectoryBuilder(stack.end())
                 .back(4)
                 .build();
-        Trajectory secMidPole = drive.trajectoryBuilder(stackBack.end())
-                .lineToLinearHeading(new Pose2d(-36, -12, Math.toRadians(320)))
-                .build();
-        Trajectory secMidPoleForward = drive.trajectoryBuilder(secMidPole.end())
-                .forward(8)
-                .build();
-        Trajectory secMidPoleBack = drive.trajectoryBuilder(secMidPoleForward.end())
-                .back(8)
-                .build();
-        Trajectory stack2 = drive.trajectoryBuilder(secMidPoleBack.end())
-                .lineToLinearHeading(new Pose2d(-64, -12, Math.toRadians(180)))
-                .build();*/
+        telemetry.addLine("Traj5");
+        telemetry.update();
 
-        Trajectory traj = drive.trajectoryBuilder(new Pose2d(-36, -63, Math.toRadians(90)))
-                .splineToLinearHeading(new Pose2d(-36, -12, Math.toRadians(90)), Math.toRadians(90))
-                .splineToSplineHeading(new Pose2d(-36, -24, Math.toRadians(0)), Math.toRadians(90))
-                .build();
-        Trajectory traj1 = drive.trajectoryBuilder(traj.end())
-                .forward(4)
-                .addDisplacementMarker(() -> {
-                    manipulator.outtake();
-
-        })
-                .build();
-        Trajectory traj12 = drive.trajectoryBuilder(traj1.end())
-                .back(4)
-                .build();
-        Trajectory traj2 = drive.trajectoryBuilder(traj12.end())
-                .lineToSplineHeading(new Pose2d(-36, -12, Math.toRadians(180)))
-                .build();
-        Trajectory traj3 = drive.trajectoryBuilder(traj2.end())
-                .forward(24)
-                .build();
-        Trajectory traj4 = drive.trajectoryBuilder(traj3.end())
-                .splineToSplineHeading(new Pose2d(-30, -20, Math.toRadians(315)), Math.toRadians(315))
-                .build();
         waitForStart();
         if(isStopRequested()) return;
-        manipulator.moveSlideEncoder(MID_TICKS, 1);
-        drive.followTrajectory(traj);
-        drive.followTrajectory(traj1);
-        drive.followTrajectory(traj12);
-//        manipulator.outtake();
-//        sleep(1250);
-//        manipulator.stopIntake();
-        manipulator.moveSlideEncoder(LOW_TICKS,1);
-        drive.followTrajectory(traj2);
-        drive.followTrajectory(traj3);
-        drive.followTrajectory(traj4);
-        /*manipulator.resetSlides();
-        manipulator.moveSlideEncoder(LOW_TICKS, 1);
-
-        drive.followTrajectory(pushCone);
-        manipulator.moveSlideEncoder(MID_TICKS, 1);
-        drive.followTrajectory(pushConeBack);
         drive.followTrajectory(firstMidPole);
-        drive.followTrajectory(firstMidPoleForward);
         manipulator.outtake();
         sleep(1250);
         manipulator.stopIntake();
         drive.followTrajectory(firstMidPoleBack);
-        manipulator.moveSlideEncoder(LOW_TICKS, 1);*/
+        manipulator.moveSlideEncoder(LOW_TICKS, 1);
 
         //drive.turn(Math.toRadians(90));
-        /*drive.followTrajectory(stackMidPoint);
+        drive.followTrajectory(stackMidPoint);
         drive.followTrajectory(stack);
         manipulator.moveSlideEncoder(LOW_TICKS - 850, 1);
         manipulator.intake();
@@ -147,30 +99,6 @@ public class RoadRunnerTest extends LinearOpMode {
         sleep(1000);
         drive.followTrajectory(stackBack);
         manipulator.moveSlideEncoder(MID_TICKS, 1);
-        drive.followTrajectory(secMidPole);
-        drive.followTrajectory(secMidPoleForward);
-        manipulator.outtake();
-        sleep(1250);
-        manipulator.stopIntake();
-        drive.followTrajectory(secMidPoleBack);
-        manipulator.moveSlideEncoder(LOW_TICKS - 100, 1);
-        drive.followTrajectory(stack2);
-        manipulator.moveSlideEncoder(LOW_TICKS - 1050, 1);
-        manipulator.intake();
-        sleep(1250);
-        manipulator.stopIntake();
-        manipulator.moveSlideEncoder(LOW_TICKS, 1);
-        sleep(250);
-        drive.followTrajectory(stackBack);
-        manipulator.moveSlideEncoder(MID_TICKS, 1);
-        drive.followTrajectory(secMidPole);
-        drive.followTrajectory(secMidPoleForward);
-        manipulator.outtake();
-        sleep(1250);
-        manipulator.stopIntake();
-        drive.followTrajectory(secMidPoleBack);*/
-
-
     }
 
 }
