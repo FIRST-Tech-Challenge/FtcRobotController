@@ -64,4 +64,6 @@ public class FieldThing {
     public Vector2 getPositionVec(){
         return pos;
     }
+
+    public double getBearringTo(double x, double y){return Math.toDegrees(Math.atan2(pos.y-y,pos.x-x));}
 }

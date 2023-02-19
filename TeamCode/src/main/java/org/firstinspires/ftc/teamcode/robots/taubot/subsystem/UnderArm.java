@@ -229,18 +229,31 @@ public class UnderArm implements Subsystem {
 
     public static double shoulderHeight = 0.25;
 
-    public static double ARM_LENGTH = 10;
-    public static double ELBOW_LENGTH = 10;
+    public static double UPPER_ARM_LENGTH = 14.06;
+    public static double LOWER_ARM_LENGTH = 11.02;
 
     public boolean calculateFieldTargeting(double x, double y, double z){ //THIS IS IN INCHES!!!!!!!!
 
         z /= INCHES_PER_METER;
 
-        calculatedTurretAngle = Math.toDegrees(Math.atan2(y - underArmPosition.y, x- underArmPosition.x));
+        double hypotToTarget;
+        double locX;
+        double locY;
+//        double calculatedDistanceFieldUnits;
+
+        locX = x - underArmPosition.x;
+        locY = y - underArmPosition.y;
+
+
+        calculatedTurretAngle = Math.toDegrees(Math.atan2(locY, locX));
 
         calculatedHeight = z-shoulderHeight;
 
-        calculatedDistance = (Math.sqrt(Math.pow(y - underArmPosition.y,2) + Math.pow(x - underArmPosition.x,2)))/INCHES_PER_METER;
+        calculatedDistance = (Math.sqrt(Math.pow(locY,2) + Math.pow(locX,2)));
+
+//        calculatedDistanceFieldUnits = (Math.sqrt(Math.pow(locY,2) + Math.pow(locX,2)));
+
+        hypotToTarget = Math.sqrt(Math.pow(calculatedHeight, 2) + Math.pow(calculatedDistance, 2));
 
 //        double virtualLength = Math.sqrt( Math.pow(calculatedDistance,2) + Math.pow(calculatedHeight,2) );
 
@@ -249,13 +262,13 @@ public class UnderArm implements Subsystem {
 
         //todo: hope and pray that this works
         calculatedShoulderAngle = Math.toDegrees(Math.acos(
-                (Math.pow(ARM_LENGTH, 2) + Math.pow(x, 2) + Math.pow(z, 2) - Math.pow(ELBOW_LENGTH, 2))
-                                        / (2 * ARM_LENGTH * calculatedDistance))
-                                        + Math.acos(x / calculatedDistance));
+                (Math.pow(UPPER_ARM_LENGTH, 2) + Math.pow(calculatedDistance, 2) + Math.pow(calculatedHeight, 2) - Math.pow(LOWER_ARM_LENGTH, 2))
+                                        / (2 * UPPER_ARM_LENGTH * hypotToTarget))
+                                        + Math.acos(calculatedDistance / hypotToTarget));
 
         calculatedElbowAngle = Math.toDegrees(Math.acos(
-                                (Math.pow(ARM_LENGTH, 2) + Math.pow(ELBOW_LENGTH, 2) - Math.pow(x, 2) - Math.pow(z , 2))
-                                                            / (2 * ARM_LENGTH * ELBOW_LENGTH)));
+                                (Math.pow(UPPER_ARM_LENGTH, 2) + Math.pow(LOWER_ARM_LENGTH, 2) - Math.pow(calculatedDistance, 2) - Math.pow(calculatedHeight , 2))
+                                                            / (2 * UPPER_ARM_LENGTH * LOWER_ARM_LENGTH)));
 
         return true;
     }
