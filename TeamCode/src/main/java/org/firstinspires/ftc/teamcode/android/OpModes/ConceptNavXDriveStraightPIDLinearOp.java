@@ -75,7 +75,7 @@ public class ConceptNavXDriveStraightPIDLinearOp extends LinearOpMode {
 
     private final byte NAVX_DEVICE_UPDATE_RATE_HZ = 50;
 
-    private final double TARGET_ANGLE_DEGREES = 0.0;
+    private final double TARGET_ANGLE_DEGREES = 0;
     private final double TOLERANCE_DEGREES = 2.0;
     private final double MIN_MOTOR_OUTPUT_VALUE = -1.0;
     private final double MAX_MOTOR_OUTPUT_VALUE = 1.0;

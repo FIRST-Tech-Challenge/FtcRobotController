@@ -13,8 +13,8 @@ import org.firstinspires.ftc.teamcode.Base.VariablesBase;
 //Blue Autonomous: Delivers Duck and Parks in WH/
 //Starting Position: Back facing Carousel (10 degrees from wall)
 
-@Autonomous(name= "strafetest")
-public class strafetest extends LinearOpMode{
+@Autonomous(name= "old")
+public class old extends LinearOpMode{
 
     MainBase base = new MainBase();
     VariablesBase var = new VariablesBase();
@@ -53,18 +53,12 @@ public class strafetest extends LinearOpMode{
         telemetry.addData("yaw", base.navx_device.getYaw());
         telemetry.update();
 
-        base.yawPIDController.yawReset();
-
 
 
 
         waitForStart();
 
 
-        base.navxgyroTurn(90, this);
-
-        base.navx_device.close();
-        base.yawPIDController.enable(false);
-
+        base.MRgyroDrive(.5,30,30,30,30,0,this);
     }
 }

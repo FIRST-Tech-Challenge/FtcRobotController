@@ -21,6 +21,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 import org.firstinspires.ftc.teamcode.android.navx_ftc.src.main.java.com.kauailabs.navx.ftc.AHRS;
 import org.firstinspires.ftc.teamcode.android.navx_ftc.src.main.java.com.kauailabs.navx.ftc.navXPIDController;
 
+import java.nio.channels.ScatteringByteChannel;
 import java.text.DecimalFormat;
 
 
@@ -89,12 +90,12 @@ public class MainBase {
     public final byte NAVX_DEVICE_UPDATE_RATE_HZ = 50;
 
     public final double TARGET_ANGLE_DEGREES = 0.0;
-    public final double TOLERANCE_DEGREES = 2.0;
+    public final double TOLERANCE_DEGREES = .2;
     public final double MIN_MOTOR_OUTPUT_VALUE = -1.0;
     public final double MAX_MOTOR_OUTPUT_VALUE = 1.0;
-    public final double YAW_PID_P = 0.001;
-    public final double YAW_PID_I = 0.0003;
-    public final double YAW_PID_D = 0.0003;
+    public final double YAW_PID_P = 0.08;
+    public final double YAW_PID_I = 0;
+    public final double YAW_PID_D = 0;
 
 
     public boolean calibration_complete = false;
@@ -203,34 +204,63 @@ public class MainBase {
     // ***************************************************************
 
 
+    public void navxgyroTurn(
+                       double targetAngle,
+                       LinearOpMode opMode) {
+
+        yawPIDController = new navXPIDController(navx_device,
+                navXPIDController.navXTimestampedDataSource.YAW);
+
+        /* Configure the PID controller */
+        yawPIDController.setPID(YAW_PID_P, YAW_PID_I, YAW_PID_D);
+        yawPIDController.setSetpoint(targetAngle);
+        yawPIDController.setContinuous(true);
+        yawPIDController.setOutputRange(MIN_MOTOR_OUTPUT_VALUE, MAX_MOTOR_OUTPUT_VALUE);
+        yawPIDController.setTolerance(navXPIDController.ToleranceType.ABSOLUTE, TOLERANCE_DEGREES);
+        yawPIDController.enable(true);
+
+        navx_device.zeroYaw();
+
+        /* Wait for new Yaw PID output values, then update the motors
+           with the new PID value with each new output value.
+         */
 
 
+        navXPIDController.PIDResult yawPIDResult = new navXPIDController.PIDResult();
 
+        /* Drive straight forward at 1/2 of full drive speed */
+        double drive_speed = 0.5;
 
+        DecimalFormat df = new DecimalFormat("#.##");
+        opMode.telemetry.addData("error", yawPIDController.getError());
+        opMode.telemetry.update();
+        opMode.sleep(5000);
 
+        if(opMode.opModeIsActive() && yawPIDController.getError() <= .5){
+                    double output = yawPIDResult.getOutput();
+                    frontright.setPower(drive_speed + output);
+                    frontleft.setPower(drive_speed - output);
+                    backleft.setPower(drive_speed - output);
+                    backright.setPower(drive_speed + output);
+                    opMode.telemetry.addLine("FIXING");
+                    opMode.telemetry.addData("Error", yawPIDController.getError());
+                    opMode.telemetry.addData("PIDOutput", df.format(limit(drive_speed + output)) + ", " +
+                            df.format(limit(drive_speed - output)));
+        }
 
+            // Stop all motion;
+            frontleft.setPower(0);
+            frontright.setPower(0);
+            backleft.setPower(0);
+            backright.setPower(0);
 
+            // Turn off RUN_TO_POSITION
 
-//    public void navxgyroTurn(double speed, double angle , LinearOpMode opmode) {
-//        frontleft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-//        backleft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-//        frontright.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-//        backright.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-//        yawPIDController.setSetpoint(angle);
-//        // keep looping while we are still active, and not on heading.
-//        while (opmode.opModeIsActive() && yawPIDController.getError() <= HEADING_THRESHOLD) {
-//            // Update telemetry & Allow time for other processes to run.
-//            opMode.telemetry.update();
-//            frontleft.setPower(-speed);
-//            backleft.setPower(-speed);
-//            frontright.setPower(speed);
-//            backright.setPower(speed);
-//        }
-//        frontleft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-//        backleft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-//        frontright.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-//        backright.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-
+            frontleft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            frontright.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            backleft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            backright.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        }
 
 
 
@@ -242,31 +272,20 @@ public class MainBase {
      * @param targetDistance
      * @param opMode
      */
-    public void navxDriveExample(double targetDistance, LinearOpMode opMode)  {
+    public void navxDriveExample(double targetAngle, double targetDistance, LinearOpMode opMode)  {
 
         /* Create a PID Controller which uses the Yaw Angle as input. */
         yawPIDController = new navXPIDController( navx_device,
                 navXPIDController.navXTimestampedDataSource.YAW);
 
         /* Configure the PID controller */
-        yawPIDController.setSetpoint(targetDistance);
+        yawPIDController.setSetpoint(targetAngle);
         yawPIDController.setContinuous(true);
         yawPIDController.setOutputRange(MIN_MOTOR_OUTPUT_VALUE, MAX_MOTOR_OUTPUT_VALUE);
         yawPIDController.setTolerance(navXPIDController.ToleranceType.ABSOLUTE, TOLERANCE_DEGREES);
         yawPIDController.setPID(YAW_PID_P, YAW_PID_I, YAW_PID_D);
         yawPIDController.enable(true);
 
-        while ( !calibration_complete ) {
-            /* navX-Micro Calibration completes automatically ~15 seconds after it is
-            powered on, as long as the device is still.  To handle the case where the
-            navX-Micro has not been able to calibrate successfully, hold off using
-            the navX-Micro Yaw value until calibration is complete.
-             */
-            calibration_complete = !navx_device.isCalibrating();
-            if (!calibration_complete) {
-                opMode.telemetry.addData("navX-Micro", "Startup Calibration in Progress");
-            }
-        }
         navx_device.zeroYaw();
 
         /* Wait for new Yaw PID output values, then update the motors
@@ -317,6 +336,8 @@ public class MainBase {
             opMode.telemetry.addData("LinearOp", "Complete");
         }
     }
+
+
 
 
     /**
@@ -473,156 +494,6 @@ public class MainBase {
 
 
 
-    /**
-     *
-     * Drives using navx gyro. References Yahya's code
-     * @param speed
-     * @param frontLeftInches
-     * @param frontRightInches
-     * @param backLeftInches
-     * @param backRightInches
-     * @param angle
-     * @param opMode
-     */
-    public void navxgyroDrive(double speed,
-                          double frontLeftInches, double frontRightInches, double backLeftInches,
-                          double backRightInches,
-                          double angle, LinearOpMode opMode) {
-
-        int newFrontLeftTarget;
-        int newFrontRightTarget;
-        int newBackLeftTarget;
-        int newBackRightTarget;
-
-
-
-        yawPIDController = new navXPIDController( navx_device,
-                navXPIDController.navXTimestampedDataSource.YAW);
-        //AHRS navx_device;
-        navXPIDController.PIDResult yawPIDResult = new navXPIDController.PIDResult();
-
-        yawPIDController.setSetpoint(angle);
-
-        opMode.telemetry.addData("yawPIDController.getSetpoint()",yawPIDController.getSetpoint());
-        opMode.telemetry.update();
-
-        double HalfMaxOne;
-        double HalfMaxTwo;
-
-        double max;
-
-        double error;
-        double steer;
-        double frontLeftSpeed;
-        double frontRightSpeed;
-        double backLeftSpeed;
-        double backRightSpeed;
-
-        double ErrorAmount;
-        boolean goodEnough = false;
-
-        // Ensure that the opmode is still active
-        if (opMode.opModeIsActive()) {
-
-            opMode.telemetry.addData("yawPIDController.getSetpoint()",yawPIDController.getSetpoint());
-            opMode.telemetry.update();
-
-            // Determine new target position, and pass to motor controller
-            newFrontLeftTarget = frontleft.getCurrentPosition() + (int) (frontLeftInches * cpi);
-            newFrontRightTarget = frontright.getCurrentPosition() + (int) (frontRightInches * cpi);
-            newBackLeftTarget = backleft.getCurrentPosition() + (int) (backLeftInches * cpi);
-            newBackRightTarget = backright.getCurrentPosition() + (int) (backRightInches * cpi);
-
-
-            // Set Target and Turn On RUN_TO_POSITION
-            frontleft.setTargetPosition(newFrontLeftTarget);
-            frontright.setTargetPosition(newFrontRightTarget);
-            backleft.setTargetPosition(newBackLeftTarget);
-            backright.setTargetPosition(newBackRightTarget);
-
-            frontleft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            frontright.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            backleft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            backright.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-
-            frontleft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-            backright.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-            backleft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-            frontright.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-
-
-
-            // start motion.
-            speed = Range.clip(Math.abs(speed), 0.0, 1.0);
-            frontleft.setPower(Math.abs(speed));
-            frontright.setPower(Math.abs(speed));
-            backleft.setPower(Math.abs(speed));
-            backright.setPower(Math.abs(speed));
-            // keep looping while we are still active, and BOTH motors are running.
-            while (opMode.opModeIsActive()   // run as long as the operation mode is active. e.g. stop when ...
-                    && ((frontleft.isBusy() && frontright.isBusy()) && (backleft.isBusy() && backright.isBusy()))
-                    && !goodEnough) {
-
-                opMode.telemetry.addData("yawPIDController.getSetpoint()",yawPIDController.getSetpoint());
-                opMode.telemetry.update();
-                // adjust relative speed based on heading error.
-                steer = yawPIDResult.getOutput();
-
-                // if driving in reverse, the motor correction also needs to be reversed
-                if (frontLeftInches < 0 && frontRightInches < 0 && backLeftInches < 0 && backRightInches < 0)
-                    steer *= -1.0;
-
-                frontLeftSpeed = speed - steer;
-                backLeftSpeed = speed - steer;
-                backRightSpeed = speed + steer;
-                frontRightSpeed = speed + steer;
-
-                // Normalize speeds if either one exceeds +/- 1.0;
-                HalfMaxOne = Math.max(Math.abs(frontLeftSpeed), Math.abs(backLeftSpeed));
-                HalfMaxTwo = Math.max(Math.abs(frontRightSpeed), Math.abs(backRightSpeed));
-                max = Math.max(Math.abs(HalfMaxOne), Math.abs(HalfMaxTwo));
-                if (max > 1.0) {
-                    frontLeftSpeed /= max;
-                    frontRightSpeed /= max;
-                    backLeftSpeed /= max;
-                    backRightSpeed /= max;
-                }
-
-                frontleft.setPower(frontLeftSpeed);
-                frontright.setPower(frontRightSpeed);
-                backleft.setPower(backLeftSpeed);
-                backright.setPower(backRightSpeed);
-
-                // Display drive status for the driver.
-//                telemetry.addData("Err/St", "%5.1f/%5.1f", error, steer);
-//                telemetry.addData("Target", "%7d:%7d", newBackLeftTarget, newBackRightTarget, newFrontLeftTarget, newFrontRightTarget);
-//                telemetry.addData("Actual", "%7d:%7d", backleft.getCurrentPosition(), backright.getCurrentPosition(), frontleft.getCurrentPosition(), frontright.getCurrentPosition());
-//                telemetry.addData("Speed", "%5.2f:%5.2f", backLeftSpeed, backRightSpeed, frontLeftSpeed, frontRightSpeed);
-//                telemetry.update();
-
-                ErrorAmount = ((Math.abs(((newBackLeftTarget) - (backleft.getCurrentPosition())))
-                        + (Math.abs(((newFrontLeftTarget) - (frontleft.getCurrentPosition()))))
-                        + (Math.abs((newBackRightTarget) - (backright.getCurrentPosition())))
-                        + (Math.abs(((newFrontRightTarget) - (frontright.getCurrentPosition()))))) / cpi);
-                if (ErrorAmount < amountError) {
-                    goodEnough = true;
-                }
-            }
-
-            // Stop all motion;
-            frontleft.setPower(0);
-            frontright.setPower(0);
-            backleft.setPower(0);
-            backright.setPower(0);
-
-            // Turn off RUN_TO_POSITION
-
-            frontleft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-            frontright.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-            backleft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-            backright.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        }
-    }
 
 
     /**
@@ -633,9 +504,9 @@ public class MainBase {
      * @param opMode
      */
     public void MRgyroStrafe(double inches,double angle, double speed, LinearOpMode opMode) {
-//
+
         int move = (int) (Math.round(inches * cpi * meccyBias));
-//\
+
         int newFrontLeftTarget = frontleft.getCurrentPosition() + move;
         int newFrontRightTarget = frontright.getCurrentPosition() - move;
         int newBackLeftTarget = backleft.getCurrentPosition() - move;
@@ -871,20 +742,10 @@ public class MainBase {
     }
 
 
-
-    /**
-     *  Driving using Modern Robotics Gyro
-     * @param speed
-     * @param frontLeftInches
-     * @param frontRightInches
-     * @param backLeftInches
-     * @param backRightInches
-     * @param angle
-     */
     public void MRgyroDrive(double speed,
-                          double frontLeftInches, double frontRightInches, double backLeftInches,
-                          double backRightInches,
-                          double angle,
+                            double frontLeftInches, double frontRightInches, double backLeftInches,
+                            double backRightInches,
+                            double angle,
                             LinearOpMode opMode) {
 
         int newFrontLeftTarget;
@@ -977,6 +838,7 @@ public class MainBase {
 //                telemetry.addData("Speed", "%5.2f:%5.2f", backLeftSpeed, backRightSpeed, frontLeftSpeed, frontRightSpeed);
 //                telemetry.update();
 
+
                 ErrorAmount = ((Math.abs(((newBackLeftTarget) - (backleft.getCurrentPosition())))
                         + (Math.abs(((newFrontLeftTarget) - (frontleft.getCurrentPosition()))))
                         + (Math.abs((newBackRightTarget) - (backright.getCurrentPosition())))
@@ -1000,6 +862,172 @@ public class MainBase {
             backright.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         }
     }
+
+
+
+    /**
+     *  Driving using Modern Robotics Gyro
+     * @param speed
+     * @param frontLeftInches
+     * @param frontRightInches
+     * @param backLeftInches
+     * @param backRightInches
+     * @param
+     */
+    public void Arezoo(double speed,
+                          double frontLeftInches, double frontRightInches, double backLeftInches,
+                          double backRightInches,
+                          double targetAngle,
+                            LinearOpMode opMode) {
+
+        yawPIDController = new navXPIDController(navx_device,
+                navXPIDController.navXTimestampedDataSource.YAW);
+
+        /* Configure the PID controller */
+        yawPIDController.setPID(YAW_PID_P, YAW_PID_I, YAW_PID_D);
+
+        yawPIDController.setSetpoint(targetAngle);
+        yawPIDController.setContinuous(true);
+        yawPIDController.setOutputRange(MIN_MOTOR_OUTPUT_VALUE, MAX_MOTOR_OUTPUT_VALUE);
+        yawPIDController.setTolerance(navXPIDController.ToleranceType.ABSOLUTE, TOLERANCE_DEGREES);
+        yawPIDController.enable(true);
+
+        navx_device.zeroYaw();
+
+        /* Wait for new Yaw PID output values, then update the motors
+           with the new PID value with each new output value.
+         */
+
+        final double TOTAL_RUN_TIME_SECONDS = 10.0;
+        int DEVICE_TIMEOUT_MS = 500;
+        navXPIDController.PIDResult yawPIDResult = new navXPIDController.PIDResult();
+
+        /* Drive straight forward at 1/2 of full drive speed */
+        double drive_speed = 0.5;
+
+        DecimalFormat df = new DecimalFormat("#.##");
+
+
+        int newFrontLeftTarget;
+        int newFrontRightTarget;
+        int newBackLeftTarget;
+        int newBackRightTarget;
+
+        double HalfMaxOne;
+        double HalfMaxTwo;
+
+        double max;
+
+        double error;
+        double steer;
+        double frontLeftSpeed;
+        double frontRightSpeed;
+        double backLeftSpeed;
+        double backRightSpeed;
+
+        double ErrorAmount;
+        boolean goodEnough = false;
+
+        // Ensure that the opmode is still active
+
+        if (opMode.opModeIsActive()) {
+
+            opMode.telemetry.addData("Error", yawPIDController.getError());
+            opMode.telemetry.update();
+
+            // Determine new target position, and pass to motor controller
+            newFrontLeftTarget = frontleft.getCurrentPosition() + (int) (frontLeftInches * cpi);
+            newFrontRightTarget = frontright.getCurrentPosition() + (int) (frontRightInches * cpi);
+            newBackLeftTarget = backleft.getCurrentPosition() + (int) (backLeftInches * cpi);
+            newBackRightTarget = backright.getCurrentPosition() + (int) (backRightInches * cpi);
+
+
+            // Set Target and Turn On RUN_TO_POSITION
+            frontleft.setTargetPosition(newFrontLeftTarget);
+            frontright.setTargetPosition(newFrontRightTarget);
+            backleft.setTargetPosition(newBackLeftTarget);
+            backright.setTargetPosition(newBackRightTarget);
+
+            frontleft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            frontright.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            backleft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            backright.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+            // start motion.
+            speed = Range.clip(Math.abs(speed), 0.0, 1.0);
+            frontleft.setPower(Math.abs(speed));
+            frontright.setPower(Math.abs(speed));
+            backleft.setPower(Math.abs(speed));
+            backright.setPower(Math.abs(speed));
+            // keep looping while we are still active, and BOTH motors are running.
+
+
+//            try {
+                while ((opMode.opModeIsActive()
+                        && ((frontleft.isBusy() && frontright.isBusy()) && (backleft.isBusy() && backright.isBusy()))
+                        && !goodEnough)) {
+                    opMode.sleep(20);
+//                    if (yawPIDController.waitForNewUpdate(yawPIDResult, DEVICE_TIMEOUT_MS)) {
+                    if (yawPIDController.isOnTarget()) {
+                        frontleft.setPower(drive_speed);
+                        frontright.setPower(drive_speed);
+                        backleft.setPower(drive_speed);
+                        backright.setPower(drive_speed);
+                        opMode.telemetry.addLine("NOT FIXING");
+                        opMode.telemetry.addData("Error", yawPIDController.getError());
+                        opMode.telemetry.addData("PIDOutput", df.format(drive_speed) + ", " +
+                                df.format(drive_speed));
+
+                    } else {
+                        double output = yawPIDResult.getOutput();
+                        frontright.setPower(drive_speed + output);
+                        frontleft.setPower(drive_speed - output);
+                        backleft.setPower(drive_speed - output);
+                        backright.setPower(drive_speed + output);
+                        opMode.telemetry.addLine("FIXING");
+                        opMode.telemetry.addData("Error", yawPIDController.getError());
+                        opMode.telemetry.addData("PIDOutput", df.format(limit(drive_speed + output)) + ", " +
+                                df.format(limit(drive_speed - output)));
+                    }
+                    opMode.telemetry.addData("Yaw", df.format(navx_device.getYaw()));
+                    opMode.telemetry.addData("Error", yawPIDController.getError());
+                    opMode.telemetry.update();
+//                    }
+//                    else {
+//                        /* A timeout occurred */
+//                        opMode.telemetry.addLine("DONE");
+//                        opMode.telemetry.update();
+//                        Log.w("navXDriveStraightOp", "Yaw PID waitForNewUpdate() TIMEOUT.");
+//                    }
+                    ErrorAmount = ((Math.abs(((newBackLeftTarget) - (backleft.getCurrentPosition())))
+                            + (Math.abs(((newFrontLeftTarget) - (frontleft.getCurrentPosition()))))
+                            + (Math.abs((newBackRightTarget) - (backright.getCurrentPosition())))
+                            + (Math.abs(((newFrontRightTarget) - (frontright.getCurrentPosition()))))) / cpi);
+                    if (ErrorAmount < amountError) {
+                        goodEnough = true;
+                    }
+                }
+//            } catch (InterruptedException ex) {
+//                Thread.currentThread().interrupt();
+//           }
+
+                // Stop all motion;
+                frontleft.setPower(0);
+                frontright.setPower(0);
+                backleft.setPower(0);
+                backright.setPower(0);
+
+                // Turn off RUN_TO_POSITION
+
+                frontleft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+                frontright.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+                backleft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+                backright.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            }
+        }
+
+
+
 
 
 
@@ -1125,15 +1153,15 @@ public class MainBase {
 
         yawPIDController.setSetpoint(angle);
         // determine turn power based on +/- error
-        error = yawPIDController.getError();
 
-        if (Math.abs(error) <= HEADING_THRESHOLD) {
+
+        if (yawPIDController.getError() <= HEADING_THRESHOLD) {
             steer = 0.0;
             leftSpeed = 0.0;
             rightSpeed = 0.0;
             onTarget = true;
         } else {
-            steer = getSteer(error, PCoeff);
+            steer = getSteer(yawPIDController.getError(), PCoeff);
             rightSpeed = speed * steer;
             leftSpeed = -rightSpeed;
         }
