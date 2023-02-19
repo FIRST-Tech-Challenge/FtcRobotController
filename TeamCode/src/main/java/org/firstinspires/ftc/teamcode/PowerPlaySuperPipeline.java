@@ -21,10 +21,11 @@
 
 package org.firstinspires.ftc.teamcode;
 
-import static org.firstinspires.ftc.teamcode.PowerPlaySuperPipeline.DebugObjects.Pole;
 import static java.lang.Math.abs;
 import static java.lang.Math.pow;
 import static java.lang.Math.sqrt;
+import static java.lang.Math.tan;
+import static java.lang.Math.toRadians;
 
 import android.os.Environment;
 
@@ -218,6 +219,7 @@ class PowerPlaySuperPipeline extends OpenCvPipeline
 
         allianceDetectRightTl = new Point(263, 89); // 17x39 pixel box for 5-stack
         allianceDetectRightBr = new Point(279, 125);
+        POLE_HIGH_DISTANCE = polePixelWidthToDistance(POLE_HIGH_PIXEL_WIDTH);
     }
 
     /*
@@ -388,7 +390,7 @@ class PowerPlaySuperPipeline extends OpenCvPipeline
     /*
      * The box constraint that considers a pole "centered"
      */
-    FourPointRect CENTERED_OBJECT;
+    protected FourPointRect CENTERED_OBJECT;
 
     /*
      * Colors
@@ -404,13 +406,15 @@ class PowerPlaySuperPipeline extends OpenCvPipeline
     static final int CR_CHAN_IDX = 1;
 
     static final double PIXELS_TO_DEGREES = 0.15;
-    // Need to calculate this
-    static final double PIXELS_TO_CM = 0.15;
     // This is the allowable distance from the center of the pole to the "center"
     // of the image in degrees with 0.15 degrees per pixel.
     static final double MAX_POLE_OFFSET = 2.7;   // 18 +/- pixels
     // This  is how wide a pole is at the proper scoring distance on a high pole
-    static final int POLE_HIGH_DISTANCE = 40;
+    static final int POLE_HIGH_PIXEL_WIDTH = 40;
+    // Converts the target pixels width to a cm distance of the robot from the pole. The pole is
+    // 1" diameter, which is 1.27 cm radius.
+    protected double POLE_HIGH_DISTANCE;
+
     // This is how many pixels wide the pole can vary at the proper scoring distance
     // on a high pole.
     static final int MAX_HIGH_DISTANCE_OFFSET = 3;
@@ -1255,6 +1259,11 @@ class PowerPlaySuperPipeline extends OpenCvPipeline
         return true;
     }
 
+    public double polePixelWidthToDistance(double pixels) {
+        // Pole diameter is 1", so 1.27cm radius.
+        return (1.27 / tan(toRadians((pixels / 2) * PIXELS_TO_DEGREES)));
+    }
+
     public AnalyzedPole getDetectedPole()
     {
         synchronized(lockPole) {
@@ -1337,8 +1346,8 @@ class PowerPlaySuperPipeline extends OpenCvPipeline
             analyzedPole.corners = rectFitToContour.clone();
             analyzedPole.centralOffset = CENTERED_OBJECT.center.x - rectFitToContour.center.x;
             analyzedPole.centralOffsetDegrees = analyzedPole.centralOffset * PIXELS_TO_DEGREES;
-            analyzedPole.highDistanceOffset = POLE_HIGH_DISTANCE - rectFitToContour.width;
-            analyzedPole.highDistanceOffsetCm = analyzedPole.highDistanceOffset * PIXELS_TO_CM;
+            analyzedPole.highDistanceOffset = POLE_HIGH_PIXEL_WIDTH - rectFitToContour.width;
+            analyzedPole.highDistanceOffsetCm = POLE_HIGH_DISTANCE - polePixelWidthToDistance(rectFitToContour.width);
             analyzedPole.aligned = abs(analyzedPole.centralOffsetDegrees) <= MAX_POLE_OFFSET;
             analyzedPole.properDistanceHigh = abs(analyzedPole.highDistanceOffset) <= MAX_HIGH_DISTANCE_OFFSET;
             internalPoleList.add(analyzedPole);
