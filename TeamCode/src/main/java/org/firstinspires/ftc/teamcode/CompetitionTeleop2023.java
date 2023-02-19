@@ -143,10 +143,10 @@ public class CompetitionTeleop2023 extends OpMode {
             }
             else
             {
-                if (gripperSensor.getDistance(DistanceUnit.INCH)<=2)
+             /*   if (gripperSensor.getDistance(DistanceUnit.INCH)<=2)
                 {
                     arm.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-                }
+                }*/
                 arm.setPower(0);
                 arm.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
             }
