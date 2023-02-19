@@ -49,61 +49,84 @@ public class RoadRunnerLeft extends LinearOpMode {
 
         drive.setPoseEstimate(new Pose2d(-36, -63, Math.toRadians(90)));
 
-        Trajectory traj = drive.trajectoryBuilder(new Pose2d(-36, -63, Math.toRadians(90)))
-                .splineToLinearHeading(new Pose2d(-36, -12, Math.toRadians(90)), Math.toRadians(90))
-                .splineToSplineHeading(new Pose2d(-36, -24, Math.toRadians(0)), Math.toRadians(90))
-                .build();
-        Trajectory pushCone = drive.trajectoryBuilder(new Pose2d(-36, -63, Math.toRadians(90)))
+        telemetry.addLine("SetPose");
+        telemetry.update();
+
+        /*Trajectory pushCone = drive.trajectoryBuilder(new Pose2d(-36, -63, Math.toRadians(90)))
                 .forward(55)
                 .build();
         Trajectory pushConeBack = drive.trajectoryBuilder(pushCone.end())
                 .back(5)
-                .build();
-        Trajectory firstMidPole = drive.trajectoryBuilder(pushConeBack.end())
+                .build();*/
+        /*Trajectory firstMidPole = drive.trajectoryBuilder(pushConeBack.end())
                 .lineToLinearHeading(new Pose2d(-39, -24, 0))
+                .build();*/
+        Trajectory firstMidPole = drive.trajectoryBuilder(new Pose2d(-36, -63, Math.toRadians(90)))
+                .splineToLinearHeading(new Pose2d(-36, -12, Math.toRadians(90)), Math.toRadians(90))
+                .splineToSplineHeading(new Pose2d(-28.5, -19.5, Math.toRadians(315)), Math.toRadians(315))
                 .build();
-        Trajectory firstMidPoleForward = drive.trajectoryBuilder(firstMidPole.end())
+        telemetry.addLine("Traj1");
+        telemetry.update();
+        /*Trajectory firstMidPoleForward = drive.trajectoryBuilder(firstMidPole.end())
                 .forward(6.5)
+                .build();*/
+       Trajectory firstMidPoleBack = drive.trajectoryBuilder(firstMidPole.end())
+                .back(6)
                 .build();
-        Trajectory firstMidPoleBack = drive.trajectoryBuilder(firstMidPoleForward.end())
-                .back(6.5)
-                .build();
-        Trajectory stackMidPoint = drive.trajectoryBuilder(firstMidPoleBack.end())
+        telemetry.addLine("Traj2");
+        telemetry.update();
+        Trajectory stackMidPoint = drive.trajectoryBuilder(firstMidPole.end())
                 .splineToLinearHeading(new Pose2d(-38, -12, Math.toRadians(180)), Math.toRadians(270))
                 .build();
+        telemetry.addLine("Traj3");
+        telemetry.update();
         Trajectory stack = drive.trajectoryBuilder(stackMidPoint.end())
                 .lineToLinearHeading(new Pose2d(-64, -12, Math.toRadians(180)))
                 .build();
+        telemetry.addLine("Traj4");
+        telemetry.update();
         Trajectory stackBack = drive.trajectoryBuilder(stack.end())
                 .back(4)
                 .build();
+        telemetry.addLine("Traj5");
+        telemetry.update();
         Trajectory secMidPole = drive.trajectoryBuilder(stackBack.end())
                 .lineToLinearHeading(new Pose2d(-36, -12, Math.toRadians(320)))
                 .build();
+        telemetry.addLine("Traj6");
+        telemetry.update();
         Trajectory secMidPoleForward = drive.trajectoryBuilder(secMidPole.end())
                 .forward(8)
                 .build();
+        telemetry.addLine("Traj7");
+        telemetry.update();
         Trajectory secMidPoleBack = drive.trajectoryBuilder(secMidPoleForward.end())
                 .back(8)
                 .build();
+        telemetry.addLine("Traj8");
+        telemetry.update();
         Trajectory stack2 = drive.trajectoryBuilder(secMidPoleBack.end())
                 .lineToLinearHeading(new Pose2d(-64, -12, Math.toRadians(180)))
                 .build();
 
+        telemetry.addLine("Built Trajs");
+        telemetry.update();
         waitForStart();
+        telemetry.addLine("Start requested");
+        telemetry.update();
         if(isStopRequested()) return;
         manipulator.resetSlides();
         manipulator.moveSlideEncoder(MID_TICKS, 1);
 
-        drive.followTrajectory(traj);
+//        drive.followTrajectory(traj);
 //        manipulator.moveSlideEncoder(MID_TICKS, 1);
 //        drive.followTrajectory(pushConeBack);
+        //drive.followTrajectory(firstMidPole);
         drive.followTrajectory(firstMidPole);
-        drive.followTrajectory(firstMidPoleForward);
         manipulator.outtake();
         sleep(1250);
         manipulator.stopIntake();
-        drive.followTrajectory(firstMidPoleBack);
+//        drive.followTrajectory(firstMidPoleBack);
         manipulator.moveSlideEncoder(LOW_TICKS, 1);
 
         //drive.turn(Math.toRadians(90));
