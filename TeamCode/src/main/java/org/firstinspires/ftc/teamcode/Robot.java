@@ -34,7 +34,7 @@ public class Robot {
 
     // Hardware
     public DcMotor slidesMotor1, slidesMotor2;
-    public Servo clawRotator, claw, clawIndicator;
+    public Servo clawRotator, claw;
     public DigitalChannel slidesLimitSwitch;
     public DigitalChannel clawLimitSwitch;
     public DistanceSensor clawDistanceSensor;
@@ -42,7 +42,7 @@ public class Robot {
 
     // Other
     public Telemetry telemetry;
-    public ElapsedTime elapsedTime;
+    public ElapsedTime elapsedTime = new ElapsedTime(ElapsedTime.Resolution.MILLISECONDS);
     public PositionManager positionManager;
 
     public Robot(HardwareMap hardwareMap, Telemetry telemetry, ElapsedTime elapsedTime) {
@@ -57,7 +57,6 @@ public class Robot {
         slidesMotor2 = hardwareMap.get(DcMotor.class, RobotConfig.MotorNames.get(RobotConfig.Motors.SLIDES_MOTOR_2));
         clawRotator = hardwareMap.get(Servo.class, RobotConfig.ServoNames.get(RobotConfig.Servos.CLAW_ROTATOR));
         claw = hardwareMap.get(Servo.class, RobotConfig.ServoNames.get(RobotConfig.Servos.CLAW));
-        clawIndicator = hardwareMap.get(Servo.class, RobotConfig.ServoNames.get(RobotConfig.Servos.CLAW_INDICATOR));
 
         slidesLimitSwitch = hardwareMap.get(DigitalChannel.class, RobotConfig.SwitchNames.get(RobotConfig.Switches.SLIDES_LIMIT));
         clawLimitSwitch = hardwareMap.get(DigitalChannel.class, RobotConfig.SwitchNames.get(RobotConfig.Switches.CLAW_LIMIT));

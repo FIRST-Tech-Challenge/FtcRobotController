@@ -14,7 +14,7 @@ import java.util.Objects;
 public class Navigation {
     public enum RotationDirection {CLOCKWISE, COUNTERCLOCKWISE}
     public static enum Action {NONE, DELIVER_CONE_LOW, DELIVER_CONE_MEDIUM, DELIVER_CONE_HIGH, DELIVER_CONE_HIGH_90,
-        PICK_UP_FIRST_STACK_CONE, PICK_UP_SECOND_STACK_CONE}
+        PICK_UP_FIRST_STACK_CONE, PICK_UP_SECOND_STACK_CONE, RETRACT_SLIDES}
     // AUTON CONSTANTS
     // ===============
     public enum MovementMode {FORWARD_ONLY, STRAFE}
@@ -63,8 +63,8 @@ public class Navigation {
 
     // Speeds relative to one another. RR is positive on purpose!
     //                              RL   RR   FL   FR
-    public double[] wheel_speeds = {1.0, 1.0, -0.97, -1.0};
-//    public double[] wheel_speeds = {0.3, 0.3, -0.291, -0.3};
+//    public double[] wheel_speeds = {1.0, 1.0, -0.97, -1.0};
+    public double[] wheel_speeds = {0.3, 0.27, -0.27, -0.3};
 
     public double strafePower;  // Tele-Op only
 
@@ -91,37 +91,37 @@ public class Navigation {
     /** Makes the robot travel along the path until it reaches a POI.
      */
     public Position travelToNextPOI(Robot robot) {
-        while (true) {
-            if (path.size() <= pathIndex) {
-                robot.telemetry.addData("Path size <= to path index, end of travel. pathIndex:", pathIndex);
-                return null;
-            }
-            Position target = path.get(pathIndex);
-            robot.positionManager.updatePosition(robot);
-            robot.telemetry.addData("Going to", target.getX() + ", " + target.getY());
-            robot.telemetry.addData("name", target.getName());
-            robot.telemetry.update();
-            switch (movementMode) {
-                case FORWARD_ONLY:
-                    rotate(getAngleBetween(robot.getPosition(), target) - Math.PI / 2,
-                            target.rotatePower, robot);
-                    travelLinear(target, target.getStrafePower(), robot);
-                    rotate(target.getRotation(), target.getRotatePower(), robot);
-                    break;
-                case STRAFE:
-                    travelLinear(target, target.strafePower, robot);
-                    rotate(target.getRotation(), target.rotatePower, robot);
-                    break;
-            }
+//        while (true) {
+        if (path.size() <= pathIndex) {
+            robot.telemetry.addData("Path size <= to path index, end of travel. pathIndex:", pathIndex);
+            return null;
+        }
+        Position target = path.get(pathIndex);
+        robot.positionManager.updatePosition(robot);
+        robot.telemetry.addData("Going to", target.getX() + ", " + target.getY());
+        robot.telemetry.addData("name", target.getName());
+        robot.telemetry.update();
+        switch (movementMode) {
+            case FORWARD_ONLY:
+                rotate(getAngleBetween(robot.getPosition(), target) - Math.PI / 2,
+                        target.rotatePower, robot);
+                travelLinear(target, target.getStrafePower(), robot);
+                rotate(target.getRotation(), target.getRotatePower(), robot);
+                break;
+            case STRAFE:
+                travelLinear(target, target.strafePower, robot);
+                rotate(target.getRotation(), target.rotatePower, robot);
+                break;
+        }
 
-            pathIndex++;
+        pathIndex++;
 
-            robot.telemetry.addData("Got to", target.name);
-            robot.telemetry.update();
+        robot.telemetry.addData("Got to", target.name);
+        robot.telemetry.update();
 
 //            if (target.name.startsWith("POI")) break;
-        }
-//        return path.get(pathIndex - 1);
+//        }
+        return path.get(pathIndex - 1);
     }
 
     /** Updates the strafe power according to movement mode and gamepad 1 left trigger.
@@ -627,7 +627,8 @@ public class Navigation {
 /** Hardcoded paths through the playing field during the Autonomous period.
  */
 public static class AutonomousPaths {
-    public static final double TILE_SIZE = 23.5625;
+//    public static final double TILE_SIZE = 23.5625;
+    public static final double TILE_SIZE = 24;
 
     public static final double FIELD_WIDTH = 6;//placeholder - field is 6 x 6 square
 
@@ -636,19 +637,19 @@ public static class AutonomousPaths {
     //Positions
 
     //Junctions
-    public static Position nearHighJunction = new Position(1 * TILE_SIZE, -1.5*TILE_SIZE, "POI nearHighJunction", Action.DELIVER_CONE_HIGH, 1, 1, Math.PI / 2);
-//    public static Position nearHighJunction = new Position(1 * TILE_SIZE, -1.5*TILE_SIZE, "POI nearHighJunction", Action.NONE, 1, 1, Math.PI / 2);
-    public static Position farHighJunction = new Position(0.5 * TILE_SIZE,
-            -2 * TILE_SIZE, "POI farHighJunction", Action.DELIVER_CONE_HIGH_90, 1, 1, Math.PI / 2);
+//    public static Position nearHighJunction = new Position(1 * TILE_SIZE, -1.5*TILE_SIZE, "POI nearHighJunction", Action.DELIVER_CONE_HIGH, 1, 1, Math.PI / 2);
+    public static Position nearHighJunction = new Position(1 * TILE_SIZE, -1.5*TILE_SIZE, "POI nearHighJunction", Action.NONE, 1, 1, Math.PI / 2);
 //    public static Position farHighJunction = new Position(0.5 * TILE_SIZE,
-//            -2 * TILE_SIZE, "POI farHighJunction", Action.NONE, 1, 1, Math.PI / 2);
+//            -2 * TILE_SIZE, "POI farHighJunction", Action.DELIVER_CONE_HIGH_90, 1, 1, Math.PI / 2);
+    public static Position farHighJunction = new Position(0.5 * TILE_SIZE,
+            -2 * TILE_SIZE, "POI farHighJunction", Action.NONE, 1, 1, Math.PI / 2);
     public static Position mediumJunction = new Position(0, -1.5*TILE_SIZE, "POI mediumJunction", Action.DELIVER_CONE_MEDIUM, 1, 1, 0);
     public static Position nearLowJunction = new Position(0.5*TILE_SIZE, 0, "POI nearLowJunction", Action.DELIVER_CONE_LOW, 1, 1, 0);
     public static Position farLowJunction = new Position(-0.5*TILE_SIZE, -TILE_SIZE, "POI farLowJunction", Action.DELIVER_CONE_LOW, 1, 1, 0);
 
     //Cone Stack
-    public static Position coneStack1 = new Position(-0.75 * TILE_SIZE, -2 * TILE_SIZE, "POI coneStackFirstCone", Action.PICK_UP_FIRST_STACK_CONE, 1, 1, Math.PI / 2);
-//    public static Position coneStack1 = new Position(-0.75 * TILE_SIZE, -2 * TILE_SIZE, "POI coneStackFirstCone", Action.NONE, 1, 1, Math.PI / 2);
+//    public static Position coneStack1 = new Position(-0.75 * TILE_SIZE, -2 * TILE_SIZE, "POI coneStackFirstCone", Action.PICK_UP_FIRST_STACK_CONE, 1, 1, Math.PI / 2);
+    public static Position coneStack1 = new Position(-0.75 * TILE_SIZE, -2 * TILE_SIZE, "POI coneStackFirstCone", Action.NONE, 1, 1, Math.PI / 2);
     public static Position coneStack2 = new Position(-0.75 * TILE_SIZE, -2 * TILE_SIZE, "POI coneStackSecondCone", Action.PICK_UP_SECOND_STACK_CONE, 1, 1, Math.PI / 2);
 
     //Intermediate Locations. Since these values could be transformed, inner refers to the middle of the entire field, center
@@ -666,9 +667,12 @@ public static class AutonomousPaths {
 
     //Parking Locations
     //Make sure NOT to transform these in transformPath()
-    public static Position leftBarcode = new Position(-TILE_SIZE, -1.5 * TILE_SIZE, 0, "leftBarcodeParkingPosition");
-    public static Position centerBarcode = new Position(0, -1.5 * TILE_SIZE, 0, "centerBarcodeParkingPosition");
-    public static Position rightBarcode = new Position(TILE_SIZE, -1.5 * TILE_SIZE, 0, "rightBarcodeParkingPosition");
+//    public static Position leftBarcode = new Position(-TILE_SIZE, -1.5 * TILE_SIZE,  "leftBarcodeParkingPosition", Action.RETRACT_SLIDES, 1, 1, 0);
+    public static Position leftBarcode = new Position(-TILE_SIZE, -1.5 * TILE_SIZE,  "leftBarcodeParkingPosition", Action.NONE, 1, 1, 0);
+//    public static Position centerBarcode = new Position(0, -1.5 * TILE_SIZE,  "centerBarcodeParkingPosition", Action.RETRACT_SLIDES, 1, 1, 0);
+    public static Position centerBarcode = new Position(0, -1.5 * TILE_SIZE,  "centerBarcodeParkingPosition", Action.NONE, 1, 1, 0);
+//    public static Position rightBarcode = new Position(TILE_SIZE, -1.5 * TILE_SIZE,  "rightBarcodeParkingPosition", Action.RETRACT_SLIDES, 1, 1, 0);
+    public static Position rightBarcode = new Position(TILE_SIZE, -1.5 * TILE_SIZE,  "rightBarcodeParkingPosition", Action.NONE, 1, 1, 0);
 
     //ZE ULTIMATE PATH - Prepare for trouble! And make it double! To protect the world from devastation!
     //To unite all peoples within our nation! To denounce the evils of truth and love!

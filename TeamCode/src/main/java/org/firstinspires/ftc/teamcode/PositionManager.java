@@ -91,7 +91,7 @@ class EncoderPositioning {
     static int ENCODER_COUNTS_PER_ROTATION = 560;
 
 //    static double MAGICAL_FACTOR = 8.64;
-    static double MAGICAL_FACTOR = 22;
+    static double MAGICAL_FACTOR = 12.6;
 
     static double MAGICAL_RATIO = MAGICAL_FACTOR / ENCODER_COUNTS_PER_ROTATION;
 
@@ -135,7 +135,7 @@ class EncoderPositioning {
             int encoderCounts = Objects.requireNonNull(wheelEncoderCounts.get(rollerAngle.getKey()));
             double force = rollerAngle.getValue();
 
-            encoderCounts = 1;
+//            encoderCounts = 1;
 //            deltaPSumX += encoderCounts * ((Math.cos(theta) * Math.cos(force)) - (Math.sin(theta) * Math.sin(force))) / 2.0;
 //            deltaPSumY += encoderCounts * ((Math.sin(theta) * Math.cos(force)) + (Math.cos(theta) * Math.sin(force))) / 2.0;
             // New testing code

@@ -13,16 +13,16 @@ public class MechanismDriving {
     public boolean testing=false;
 
     public static Map<Robot.SlidesState, Integer> slidePositions = new HashMap<Robot.SlidesState, Integer>() {{
-       put(Robot.SlidesState.RETRACTED, -170);
-       put(Robot.SlidesState.LOW, 2874);
-       put(Robot.SlidesState.MEDIUM, 4863);
-       put(Robot.SlidesState.HIGH, 6700);
+       put(Robot.SlidesState.RETRACTED, 0);
+       put(Robot.SlidesState.LOW, 1070);
+       put(Robot.SlidesState.MEDIUM, 1996);
+       put(Robot.SlidesState.HIGH, 2600);
        put(Robot.SlidesState.UNREADY, 0);
 
-       put(Robot.SlidesState.FIRST_STACK_CONE, 1800);
-       put(Robot.SlidesState.SECOND_STACK_CONE, 1600);
+       put(Robot.SlidesState.FIRST_STACK_CONE, 675);
+       put(Robot.SlidesState.SECOND_STACK_CONE, 600);
     }};
-    public static final double CLAW_CLOSED_POS = 0, CLAW_OPEN_POS = 0.7; //These are not final values
+    public static final double CLAW_CLOSED_POS = 0.83, CLAW_OPEN_POS = 0.65; //These are not final values
     // How long it takes for the claw servo to be guaranteed to have moved to its new position.
     public static final long CLAW_SERVO_TIME = 500;
     //SPEED INFO: Scale from 0-1 in speed.

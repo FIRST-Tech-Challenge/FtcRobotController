@@ -43,13 +43,13 @@ public class GamepadWrapper {
             case TOGGLE_WHEEL_SPEED_ADJUSTMENT:
                 return gamepad1.left_bumper;
             case MOVE_STRAIGHT_FORWARD:
-                return gamepad1.dpad_down;
-            case MOVE_STRAIGHT_BACKWARD:
                 return gamepad1.dpad_up;
+            case MOVE_STRAIGHT_BACKWARD:
+                return gamepad1.dpad_down;
             case MOVE_STRAIGHT_LEFT:
-                return gamepad1.dpad_right;
-            case MOVE_STRAIGHT_RIGHT:
                 return gamepad1.dpad_left;
+            case MOVE_STRAIGHT_RIGHT:
+                return gamepad1.dpad_right;
 //            case TURN_COUNTER_CLOCKWISE:
 //                return gamepad1.b;
 //            case TURN_CLOCKWISE:
