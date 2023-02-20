@@ -47,7 +47,7 @@ public class DriveConstants {
      */
     public static double WHEEL_RADIUS = 1.8898; // in
     public static double GEAR_RATIO = 1; // output (wheel) speed / input (motor) speed
-    public static double TRACK_WIDTH = 9.681; // in
+    public static double TRACK_WIDTH = 10; // 9.681; // in
 
     /*
      * These are the feedforward parameters used to model the drive motor behavior. If you are using
@@ -55,8 +55,8 @@ public class DriveConstants {
      * motor encoders or have elected not to use them for velocity control, these values should be
      * empirically tuned.
      */
-    public static double kV = 0.0168;
-    public static double kA = 0.0052;
+    public static double kV = 0.0154; //0.0181818181818182; // 1/[maxVelocity]  | 0.0158 / rpmToVelocity(MAX_RPM);
+    public static double kA = 0.0027; //0.0052
     public static double kStatic = 0;
 
     /*
@@ -85,12 +85,12 @@ public class DriveConstants {
      *
      * Maximum Angular Velocity is calculated as: maximum velocity / trackWidth * (180 / Math.PI) but capped at 360°/s.
      * You are free to raise this on your own if you would like. It is best determined through experimentation.
-
      */
-    public static double MAX_VEL = 63;
-    public static double MAX_ACCEL = 63;
-    public static double MAX_ANG_VEL = Math.toRadians(388.23830548721475);
-    public static double MAX_ANG_ACCEL = Math.toRadians(88.19389954947438);
+
+    public static double MAX_VEL = 45; //55; // 63 should be roughly 90-95% of dashboard readings
+    public static double MAX_ACCEL = 45; //55; // 63 Only really found through experimentation; you may need to re-tune your PID values if you change this
+    public static double MAX_ANG_VEL = 4.5; //5.5 //2.776036713115465; //Math.toRadians(388.23830548721475);
+    public static double MAX_ANG_ACCEL = 2.776036713115465; //Math.toRadians(88.19389954947438);
 
 
     public static double encoderTicksToInches(double ticks) {

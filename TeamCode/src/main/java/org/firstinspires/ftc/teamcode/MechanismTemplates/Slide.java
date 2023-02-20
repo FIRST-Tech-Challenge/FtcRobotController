@@ -21,7 +21,7 @@ public class Slide {
 
     public static double slideKp = 0.003; //0.00326; //0.0039;
     public static double slideKi = 0.000000325; //0.00000325;
-    public static double slideKd = 0.0000000051; //0.000001;
+    public static double slideKd = 0.000000062; //0.000001;
     public static double slideKf = 0.000069; //0.000069;
 
     private final double[] PIDF_COFFECIENTS = {slideKp, slideKi, slideKd, slideKf};

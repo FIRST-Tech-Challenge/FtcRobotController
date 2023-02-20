@@ -26,7 +26,7 @@ public class Arm{
     public static double armKi = 0.00001;
     public static double armKd = 0.00002;
     public static double armKf = 0;
-    public static double EXTAKE_POS = 185; // 950 old val
+    public static double EXTAKE_POS = 180; // 950 old val
     public static double INTAKE_POS = 82; // in degrees of absolute encoder
 
     // Initially set to 0 because we only want the claw to move when given input from the controller

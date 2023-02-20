@@ -57,16 +57,11 @@ public class FINALAutoLeftSide extends PowerPlay_AprilTagDetectionDeposit {
 
 	public static double xParkZoneThree=-46;
 	public static double yParkZoneThree=-25;
-
-
-
-
 	public static int strafeThird = -28;
 
 	public void initialize(){
 		armControl = new Arm(hardwareMap);
 		slideControl = new Slide(hardwareMap);
-
 	}
 
 	public void scan(){
@@ -254,9 +249,7 @@ public class FINALAutoLeftSide extends PowerPlay_AprilTagDetectionDeposit {
 					}
 				})
 				.waitSeconds(3)
-
 				.build();
-
 		scan();
 
 		waitForStart();

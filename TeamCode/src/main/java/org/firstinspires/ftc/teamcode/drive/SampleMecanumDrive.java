@@ -54,10 +54,10 @@ import static org.firstinspires.ftc.teamcode.drive.DriveConstants.kV;
 
 @Config
 public class SampleMecanumDrive extends MecanumDrive {
-    public static PIDCoefficients TRANSLATIONAL_PID = new PIDCoefficients(9.5, 0, 0.003);
-    public static PIDCoefficients HEADING_PID = new PIDCoefficients(11.75, 0, 0);
+    public static PIDCoefficients TRANSLATIONAL_PID = new PIDCoefficients(11, 0, 0.003); //9.5 kp
+    public static PIDCoefficients HEADING_PID = new PIDCoefficients(9, 0, 0);//1.75 kp
 
-    public static double LATERAL_MULTIPLIER = ((double)60/58.0);
+    public static double LATERAL_MULTIPLIER = ((double)60/58);
 
     public static double VX_WEIGHT = 1;
     public static double VY_WEIGHT = 1;
@@ -118,7 +118,7 @@ public class SampleMecanumDrive extends MecanumDrive {
         // For example, if +Y in this diagram faces downwards, you would use AxisDirection.NEG_Y.
         // BNO055IMUUtil.remapZAxis(imu, AxisDirection.NEG_Y);
 
-        leftFront = hardwareMap.get(DcMotorEx.class, "FL");
+        leftFront = hardwareMap.get(DcMotorEx.class, "FL"); // should line up with our ds configuration
         leftRear = hardwareMap.get(DcMotorEx.class, "BL");
         rightRear = hardwareMap.get(DcMotorEx.class, "BR");
         rightFront = hardwareMap.get(DcMotorEx.class, "FR");
@@ -144,6 +144,12 @@ public class SampleMecanumDrive extends MecanumDrive {
         }
 
         // TODO: reverse any motors using DcMotor.setDirection()
+
+        // If your bot spins in circles during straight test, come back here to fix it.
+        // If your bot drives the opposite way, come back here to fix this.
+        // If your bot strafes the opposite direction, come back here to fix this.
+        // If your bot follows splines correctly but mirrored
+
         leftFront.setDirection(DcMotorEx.Direction.REVERSE);
         leftRear.setDirection(DcMotorEx.Direction.REVERSE);
 
