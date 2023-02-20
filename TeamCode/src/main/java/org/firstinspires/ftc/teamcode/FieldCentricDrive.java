@@ -75,46 +75,6 @@ public class FieldCentricDrive extends LinearOpMode {
             double x = gamepad1.left_stick_x * 1.1; // Counteract imperfect strafing
             double rx = gamepad1.right_stick_x;
 
-            double lift = -gamepad2.left_stick_y;
-            double grabber = -gamepad2.right_stick_y;
-
-            if(lift > .05){
-                liftMotor.setPower(1);
-            }else{
-                liftMotor.setPower(0);
-            }
-            if(lift < -.05){
-                liftMotor.setPower(-.4);
-            }else{
-                liftMotor.setPower(0);
-            }
-
-            if(grabber>.1 || grabber<-.1){
-                if(grabber<.05){
-                    direction = .1;
-                }else{
-                    direction = -.1;
-                }
-            }else{
-                direction = 0;
-            }
-
-            position+=direction;
-            position2+= -direction;
-
-            if(position < MAX_POS || position2 > MAX_POS2){
-                position=MAX_POS;
-                position2=MAX_POS2;
-            }
-
-            if(position > MIN_POS || position2 < MIN_POS2){
-                position=MIN_POS;
-                position2=MIN_POS2;
-            }
-
-            servoGrabber1.setPosition(position);
-            servoGrabber2.setPosition(position2);
-
             // Read inverse IMU heading, as the IMU heading is CW positive
             double botHeading = -imu.getAngularOrientation().firstAngle;
 
