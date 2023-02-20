@@ -171,47 +171,19 @@ public class Tele extends OpMode {
             gunner = gunnerControlMode.ONEMAN;
         }
 
-        if (gamepad1.right_trigger > 0.5) {
-            speedLimit = 0.3;
-            rotationSpeedLimit = 0.35;
-        } else if (robot.lift.getCurrentPosition() > 300) {
-            speedLimit = 0.5674;
-            rotationSpeedLimit = 0.5;
-        } else {
-            speedLimit = 0.9;
-            rotationSpeedLimit = 0.9;
-        }
 
         /** Josh Gunner Controls **/
         if (gunner == gunnerControlMode.NORMAL) {
-//            if (robot.toggleSwitch.getVoltage() < 3) {
-//                if (gamepad2.left_stick_y < 0) { //UP
-//                    if (robot.upperUpSwitch.getVoltage() < 3) {
-//                        robot.upperLift.setPower(0);
-//                    } else {
-//                        if (robot.upperLift.getCurrentPosition() < 2200 || robot.upperLift.getCurrentPosition() > 600) {
-//                            robot.upperLift.setPower(-gamepad2.left_stick_y);
-//                        } else {
-//                            robot.upperLift.setPower(-gamepad2.left_stick_y * .3);
-//                        }
-//                        robot.lift.setPower(0);
-//                    }
-//                } else { //DOWN
-//                    if (robot.upperDownSwitch.getVoltage() < 3) {
-//                        robot.upperLift.setPower(-gamepad2.left_stick_y);
-//                        robot.lift.setPower(0);
-//                    } else {
-//                        robot.upperLift.setPower(0);
-//                        robot.lift.setPower(-gamepad2.left_stick_y);
-//                    }
-//                }
-//            } else if (robot.lift.getCurrentPosition() < 3000) {
-//                robot.lift.setPower(-gamepad2.left_stick_y);
-//            } else {
-//                robot.lift.setPower(-gamepad2.left_stick_y * .65);
-//            }
-
-
+            if (gamepad1.right_trigger > 0.5) {
+                speedLimit = 0.3;
+                rotationSpeedLimit = 0.35;
+            } else if (robot.lift.getCurrentPosition() > 300) {
+                speedLimit = 0.5674;
+                rotationSpeedLimit = 0.5;
+            } else {
+                speedLimit = 0.9;
+                rotationSpeedLimit = 0.9;
+            }
 
             if (gamepad2.left_stick_y > .05 || gamepad2.left_stick_y < -.05 || gamepad2.right_stick_y > .05 || gamepad2.right_stick_y < -.05) {
                 liftPos = 0;
@@ -394,6 +366,126 @@ public class Tele extends OpMode {
 
             /** One Man Gunner Controls **/
         } else if (gunner == gunnerControlMode.ONEMAN) {
+            if (gamepad1.right_bumper) {
+                speedLimit = 0.3;
+                rotationSpeedLimit = 0.35;
+            } else if (robot.lift.getCurrentPosition() > 600) {
+                speedLimit = 0.5674;
+                rotationSpeedLimit = 0.5;
+            } else {
+                speedLimit = 0.8;
+                rotationSpeedLimit = 0.8;
+            }
+
+            switch (autoState) {
+                case 0: //Do not run
+                    break;
+                case 1:
+                    if (gamepad1.b) {
+                        oldTime = runtime.milliseconds();
+                        autoState++;
+                        robot.gripper.setPosition(grip_OPEN);
+                    } else if (gamepad1.left_trigger > 0.5) {
+                        robot.gripper.setPosition(grip_OPEN);
+                        robot.gripperWheel.setPower(0);
+                    } else {
+                        robot.gripper.setPosition(grip_CLOSED);
+                    }
+                    break;
+                case 2:
+                    if (runtime.milliseconds() > oldTime + 200) {
+                        robot.wrist.setPosition(wrist_UP);
+                        autoState = 1;
+                    }
+                    break;
+            }
+
+            switch (autoState) {
+                case 0: //Do not run
+                    break;
+                case 1:
+                    if (gamepad1.b) {
+                        oldTime = runtime.milliseconds();
+                        autoState++;
+                        robot.gripper.setPosition(0);
+                    }
+                    break;
+                case 2:
+                    if (runtime.milliseconds() > oldTime + 200) {
+                        robot.wrist.setPosition(0.1);
+                        autoState = 1;
+                    }
+                    break;
+            }
+
+            if (gamepad1.x) {
+                robot.wrist.setPosition(wrist_MID);
+            } else if (gamepad1.y) {
+                robot.wrist.setPosition(wrist_UP);
+            } else if (gamepad1.a) {
+                robot.wrist.setPosition(wrist_DOWN);
+            }
+
+
+            if (robot.gripSwitch.getVoltage() < 3) {
+                currentGripSwitch = true;
+            } else {
+                currentGripSwitch = false;
+            }
+
+            if (gamepad1.right_trigger > 0.5 && robot.gripSwitch.getVoltage() > 3) {
+                robot.gripperWheel.setPower(1);
+                currentGripSwitch = true;
+            } else {
+                robot.gripperWheel.setPower(0.05);
+
+                if (currentGripSwitch && !lastGripSwitch) {
+                    if (!gamepad2.isRumbling())  // Check for possible overlap of rumbles.
+                    gamepad1.rumble(.65, .65, 150);
+                }
+                lastGripSwitch = currentGripSwitch;
+            }
+
+            if(robot.upperDownSwitch.getVoltage() > 3 && gamepad1.left_bumper) {
+                robot.upperLift.setPower(0);
+                robot.upperLift.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            }
+
+            if(robot.bottomSwitch.getVoltage() > 3 && gamepad1.left_bumper) {
+                robot.lift.setPower(0);
+                robot.lift.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            }
+
+
+            if (gamepad1.dpad_up) {
+                robot.upperLift.setTargetPosition(2940);
+                robot.upperLift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                robot.upperLift.setPower(.85);
+                robot.lift.setTargetPosition(4920);
+                robot.lift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                robot.lift.setPower(.85);
+            } else if (gamepad1.dpad_left) {
+                robot.upperLift.setTargetPosition(2940);
+                robot.upperLift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                robot.upperLift.setPower(.85);
+                robot.lift.setTargetPosition(2080);
+                robot.lift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                robot.lift.setPower(.85);
+            } else if (gamepad1.dpad_down) {
+                robot.upperLift.setTargetPosition(2940);
+                robot.upperLift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                robot.upperLift.setPower(1);
+                robot.lift.setTargetPosition(690);
+                robot.lift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                robot.lift.setPower(1);
+            } else if (gamepad1.dpad_right) {
+                robot.upperLift.setTargetPosition(0);
+                robot.upperLift.setPower(1);
+                robot.lift.setTargetPosition(0);
+                robot.lift.setPower(1);
+                robot.lift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                robot.upperLift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            }
 
         }
 
