@@ -84,7 +84,7 @@ public class TurretPIDTester extends AutonomousBase
         while( opModeIsActive() ) {
             performEveryLoop();
             // Ensure we eject for at least 250 msec before using sensor (in case sensor fails)
-            boolean bottomSensorClear = robot.bottomConeSensor.getState() && (intakeTimer.milliseconds() > 250);
+            boolean bottomSensorClear = robot.bottomConeState && (intakeTimer.milliseconds() > 250);
             // Also have a max timeout in case sensor fails
             boolean maxEjectTimeReached = (intakeTimer.milliseconds() >= 400);
             // Is cycle complete?

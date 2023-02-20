@@ -265,9 +265,10 @@ public abstract class Teleop extends LinearOpMode {
                     robot.leftOdometerCount, robot.rightOdometerCount, robot.strafeOdometerCount );
             telemetry.addData("World X",     "%.2f in", (robotGlobalYCoordinatePosition / robot.COUNTS_PER_INCH2) );
             telemetry.addData("World Y",     "%.2f in", (robotGlobalXCoordinatePosition / robot.COUNTS_PER_INCH2) );
-            telemetry.addData("Orientation", "%.2f deg (IMU %.2f)", Math.toDegrees(robotOrientationRadians),  robot.headingIMU() );
+            // This incurs a 4msec loop tax
+//            telemetry.addData("Orientation", "%.2f deg (IMU %.2f)", Math.toDegrees(robotOrientationRadians),  robot.headingIMU() );
             telemetry.addData("CycleTime", "%.1f msec (%.1f Hz)", elapsedTime, elapsedHz );
-            telemetry.addData("Cone Sensors", "Top: %b Bottom: %b", robot.topConeSensor.getState(), robot.bottomConeSensor.getState());
+            telemetry.addData("Cone Sensors", "Top: %b Bottom: %b", robot.topConeState, robot.bottomConeState);
             if( batteryVoltsEnabled ) {
                telemetry.addData("Batteries", "CtlHub=%.3f V, ExHub=%.3f V",
                     robot.readBatteryControlHub()/1000.0, robot.readBatteryExpansionHub()/1000.0 );
@@ -1088,9 +1089,8 @@ public abstract class Teleop extends LinearOpMode {
                     robot.turretMotorPIDAuto = false;
                 }
                 // Is first phase of collection complete?
-                boolean stopForSensor  = !robot.topConeSensor.getState();
                 boolean stopForTimeout = (elapsedTime >= 1000)? true : false;
-                if( (stopForSensor || stopForTimeout ) && !grabberLifting) {
+                if( (!robot.topConeState || stopForTimeout ) && !grabberLifting) {
                     // stop collecting
                     robot.grabberSpinStop();
                     // reverse lift motors
@@ -1113,7 +1113,7 @@ public abstract class Teleop extends LinearOpMode {
             // Currently on an EJECTION cycle?
             else {
                 // Ensure we eject for at least 200 msec before using sensor (in case sensor fails)
-                boolean bottomSensorClear = robot.bottomConeSensor.getState() && (elapsedTime > 200);
+                boolean bottomSensorClear = robot.bottomConeState && (elapsedTime > 200);
                 // Also have a max timeout in case sensor fails
                 boolean maxEjectTimeReached = (elapsedTime >= 400);
                 // Is cycle complete?

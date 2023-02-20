@@ -245,8 +245,9 @@ public class HardwareSlimbot
 
     //====== INFRARED PROXIMITY DETECTORS FOR CONE GRABBER ====================================================================
     public DigitalChannel topConeSensor;
+    public boolean      topConeState = false;
     public DigitalChannel bottomConeSensor;
-
+    public boolean      bottomConeState = false;
     //====== NAVIGATION DISTANCE SENSORS ================================================================
     private MaxSonarI2CXL sonarRangeL = null;   // Must include MaxSonarI2CXL.java in teamcode folder
     private MaxSonarI2CXL sonarRangeR = null;
@@ -471,24 +472,24 @@ public class HardwareSlimbot
         //===== CONTROL HUB VALUES =====
         frontLeftMotorPos  = frontLeftMotor.getCurrentPosition();
         frontLeftMotorVel  = frontLeftMotor.getVelocity();
-        frontLeftMotorAmps = frontLeftMotor.getCurrent(MILLIAMPS);
+//        frontLeftMotorAmps = frontLeftMotor.getCurrent(MILLIAMPS);
         frontRightMotorPos = frontRightMotor.getCurrentPosition();
         frontRightMotorVel = frontRightMotor.getVelocity();
-        frontRightMotorAmps= frontRightMotor.getCurrent(MILLIAMPS);
+//        frontRightMotorAmps= frontRightMotor.getCurrent(MILLIAMPS);
         rearRightMotorPos  = rearRightMotor.getCurrentPosition();
         rearRightMotorVel  = rearRightMotor.getVelocity();
-        rearRightMotorAmps = rearRightMotor.getCurrent(MILLIAMPS);
+//        rearRightMotorAmps = rearRightMotor.getCurrent(MILLIAMPS);
         rearLeftMotorPos   = rearLeftMotor.getCurrentPosition();
         rearLeftMotorVel   = rearLeftMotor.getVelocity();
-        rearLeftMotorAmps  = rearLeftMotor.getCurrent(MILLIAMPS);
+//        rearLeftMotorAmps  = rearLeftMotor.getCurrent(MILLIAMPS);
         turretAngle        = computeAbsoluteAngle( turretEncoder.getVoltage(), turretAngleOffset );
         liftAngle          = computeAbsoluteAngle( liftEncoder.getVoltage(),   liftAngleOffset );
         //===== EXPANSION HUB VALUES =====
         turretMotorPos     = turretMotor.getCurrentPosition();
         turretMotorVel     = turretMotor.getVelocity();
         turretMotorPwr     = turretMotor.getPower();
-        turretMotorAmps    = turretMotor.getCurrent(MILLIAMPS);
-        liftMotorAmps      = liftMotorF.getCurrent(MILLIAMPS) + liftMotorB.getCurrent(MILLIAMPS);
+//        turretMotorAmps    = turretMotor.getCurrent(MILLIAMPS);
+//        liftMotorAmps      = liftMotorF.getCurrent(MILLIAMPS) + liftMotorB.getCurrent(MILLIAMPS);
         double liftMotorPwrPrior = liftMotorPwr;
         liftMotorPwr       = liftMotorF.getPower();
         liftMotorRamp      = isPwrRampingDown( liftMotorPwrPrior, liftMotorPwr );
@@ -501,9 +502,13 @@ public class HardwareSlimbot
         // Parse rear odometry encoder
         strafeOdometerPrev  = strafeOdometerCount;
         strafeOdometerCount = -liftMotorF.getCurrentPosition();  // Must be POSITIVE when bot moves RIGHT
+        // Get the cone sensor states
+        topConeState = topConeSensor.getState();
+        bottomConeState = bottomConeSensor.getState();
 
         // Do we need to capture lift motor instrumentation data?
         if( liftMotorLogEnable ) {
+            liftMotorAmps      = liftMotorF.getCurrent(MILLIAMPS) + liftMotorB.getCurrent(MILLIAMPS);
             liftMotorLogTime[liftMotorLogIndex]  = liftMotorTimer.milliseconds();
             liftMotorLogAngle[liftMotorLogIndex] = liftAngle;
             liftMotorLogPwr[liftMotorLogIndex]   = liftMotorPwr;
@@ -515,6 +520,7 @@ public class HardwareSlimbot
 
         // Do we need to capture turret motor instrumentation data?
         if( turretMotorLogEnable ) {
+            turretMotorAmps    = turretMotor.getCurrent(MILLIAMPS);
             turretMotorLogTime[turretMotorLogIndex]  = turretMotorTimer.milliseconds();
             turretMotorLogAngle[turretMotorLogIndex] = turretAngle;
             turretMotorLogPwr[turretMotorLogIndex]   = turretMotorPwr;
@@ -523,7 +529,6 @@ public class HardwareSlimbot
             if( ++turretMotorLogIndex >= TURRETMOTORLOG_SIZE )
                 turretMotorLogEnable = false;
         } // turretMotorLogEnable
-
     } // readBulkData
 
     /*--------------------------------------------------------------------------------------------*/

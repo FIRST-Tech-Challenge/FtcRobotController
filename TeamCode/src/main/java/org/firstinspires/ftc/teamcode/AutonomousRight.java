@@ -394,7 +394,7 @@ public class AutonomousRight extends AutonomousBase {
         while( opModeIsActive() ) {
             performEveryLoop();
             // Ensure we eject for at least 250 msec before using sensor (in case sensor fails)
-            boolean bottomSensorClear = robot.bottomConeSensor.getState() && (intakeTimer.milliseconds() > 250);
+            boolean bottomSensorClear = robot.bottomConeState && (intakeTimer.milliseconds() > 250);
             // Also have a max timeout in case sensor fails
             boolean maxEjectTimeReached = (intakeTimer.milliseconds() >= 400);
             // Is cycle complete?
@@ -451,7 +451,7 @@ public class AutonomousRight extends AutonomousBase {
         intakeTimer.reset();
         // start to slowly lower onto cone
         robot.liftMotorsSetPower( -0.25 );
-        while(robot.topConeSensor.getState() && intakeTimer.milliseconds() <= 600) {
+        while(robot.topConeState && intakeTimer.milliseconds() <= 600) {
             performEveryLoop();
             // Limit DOWNWARD lift movement even if collector is still lifting cone up to sensor
             if( robot.liftAngle >= robot.LIFT_ANGLE_MAX ) {
