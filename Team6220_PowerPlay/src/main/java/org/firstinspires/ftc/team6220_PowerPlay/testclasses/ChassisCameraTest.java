@@ -34,6 +34,7 @@ public class ChassisCameraTest extends BaseAutonomous {
             @Override
             public void onError(int errorCode) {}
         });
+
         //Set pipeline
         robotCamera.setPipeline(robotCameraPipeline);
         telemetry.addLine("6220 rap at worlds");

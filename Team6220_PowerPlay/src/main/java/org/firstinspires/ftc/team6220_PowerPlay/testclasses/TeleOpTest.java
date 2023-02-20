@@ -17,15 +17,15 @@ public class TeleOpTest extends BaseTeleOp {
     @Override
     public void runOpMode() {
         String color = "blue";
-        //Initialize new cameras due to funny init method
+        // initialize new cameras due to funny init method
         int robotCameraStream = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
         robotCamera = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "RobotCamera"),robotCameraStream);
         robotCameraPipeline = new RobotCameraPipeline();
 
-        //Set camera ranges (Blue atm)
+        // set camera ranges (Blue atm)
         robotCameraPipeline.setRanges(Constants.LOWER_BLUE, Constants.UPPER_BLUE);
 
-        //Start camera streaming
+        // start camera streaming
         robotCamera.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
             @Override
             public void onOpened() {
@@ -35,10 +35,15 @@ public class TeleOpTest extends BaseTeleOp {
             @Override
             public void onError(int errorCode) {}
         });
-        //Set pipeline
+
+        // set the robot camera to the pipeline
         robotCamera.setPipeline(robotCameraPipeline);
+
+        // wait for start and funnee line
         telemetry.addLine("6220 rap at worlds");
         waitForStart();
+
+        // color range switching based on gamepad inputs
         while(opModeIsActive()){
             if(gamepad1.b){
                 robotCameraPipeline.setRanges(Constants.LOWER_RED, Constants.UPPER_RED);
@@ -53,6 +58,8 @@ public class TeleOpTest extends BaseTeleOp {
                 robotCameraPipeline.setRanges(Constants.LOWER_YELLOW, Constants.UPPER_YELLOW);
                 color = "yellow";
             }
+
+            //telemetry
             telemetry.addLine(color);
             telemetry.addData("width", robotCameraPipeline.width);
             telemetry.addData("positionX", robotCameraPipeline.xPosition);
