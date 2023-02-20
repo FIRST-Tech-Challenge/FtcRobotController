@@ -1,24 +1,3 @@
-/*
- * Copyright (c) 2021 OpenFTC Team
- *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
- * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, and to permit persons to whom the Software is
- * furnished to do so, subject to the following conditions:
- *
- * The above copyright notice and this permission notice shall be included in all
- * copies or substantial portions of the Software.
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
- * SOFTWARE.
- */
-
 package org.firstinspires.ftc.teamcode;
 
 import static com.qualcomm.robotcore.hardware.DcMotor.RunMode.RUN_TO_POSITION;
@@ -86,8 +65,8 @@ public class AprilTagTestAuto extends LinearOpMode
     public double rpm = 340;
     public double diameter = 10; //cm
 
-    public double angleCorrectionCW = 8.17;
-    public double angleCorrectionCCW = 11.26;
+    public double angleCorrectionCW = 0;
+    public double angleCorrectionCCW = 3;
 
     // Cone information
     public int coneCount = 1;
@@ -225,62 +204,42 @@ public class AprilTagTestAuto extends LinearOpMode
             telemetry.update();
         }
 
-        /*moveLift(19);
-        waitTime(1);
+        telemetry.addData("angle",getAngle());
+        telemetry.update();
+        turnNinety(true);
+        waitTime(5);
+        telemetry.addData("angle",getAngle());
+        telemetry.update();
+        turnNinety(true);
+        waitTime(5);
+        telemetry.addData("angle",getAngle());
+        telemetry.update();
+        /*moveGrabber(true);
+        waitTime(.5);
+        moveLiftAndDrive(true, 18.25, 17);
         turnNinety(false);
-        while(opModeIsActive()) {
-            telemetry.addData("angle: ", getAngle());
-            telemetry.update();
-        }*/
-        if(tagOfInterest == null){
-            moveGrabber(true);
-            waitTime(.5);
-            moveLiftAndDrive(true,19.25,17);
+        moveInchAmount(true, .25);
+        sleep(500);
+        moveGrabber(false);
+        moveInchAmount(false, .25);
+        turnNinety(true);
+        moveLiftAndDrive(true, 39.25, 0);
+        sleep(100);
+        turnNinety(true);
+        for(int i = 0; i < 1; i++) {
+            moveToTape();
+            pickupCone();
+            moveLiftAndDrive(false, 45, MAX_LIFT_POS);
+            sleep(100);
             turnNinety(false);
-            moveInchAmount(true,.25);
-            sleep(500);
+            moveLift(30);
             moveGrabber(false);
-            moveInchAmount(false,.25);
-            turnNinety(true);
-            moveLiftAndDrive(true,39.25,0);
+            moveLift(32);
             sleep(100);
             turnNinety(true);
-            for(int i = 0; i < 3; i++){
-                moveToTape();
-                pickupCone();
-                moveLiftAndDrive(false,45,MAX_LIFT_POS);
-                sleep(100);
-                turnNinety(false);
-                moveLift(30);
-                moveGrabber(false);
-                moveLift(32);
-                sleep(100);
-                turnNinety(true);
-                moveLiftAndDrive(true,28,8);
-            }
-        }else{
-            moveGrabber(true);
-            waitTime(.5);
-            moveLiftAndDrive(true,19.25,17);
-            turnNinety(false);
-            moveInchAmount(true,.25);
-            sleep(500);
-            moveGrabber(false);
-            moveInchAmount(false,.25);
-            turnNinety(true);
-            moveLiftAndDrive(true,12.75,0);
-            if(tagOfInterest.id == ID_TAG_OF_INTEREST_1){
-                sleep(100);
-                turnNinety(false);
-                moveInchAmount(true,24);
-            }else if(tagOfInterest.id == ID_TAG_OF_INTEREST_3){
-                sleep(100);
-                waitTime(3);
-                turnNinety(true);
-                waitTime(3);
-                moveInchAmount(true,24);
-            }
+            moveLiftAndDrive(true, 28, 8);
         }
+        moveLift(0)*/
     }
 
     public void setUpHardware() { // Assigns motor names in phone to the objects in code
@@ -351,25 +310,25 @@ public class AprilTagTestAuto extends LinearOpMode
         if(CW) {
             if(originalAngle - 90 < 0 && !(originalAngle < 0)) {
                 while (opModeIsActive() && (getAngle() < originalAngle + 5 || getAngle() > originalAngle - 90 + angleCorrectionCW + 360)) {
-                    leftVelo(.75);
-                    rightVelo(-.75);
+                    leftVelo(.25);
+                    rightVelo(-.25);
                 }
             }else{
                 while (opModeIsActive() && getAngle() > originalAngle - 90 + angleCorrectionCW && getAngle() < originalAngle + 5) {
-                    leftVelo(.75);
-                    rightVelo(-.75);
+                    leftVelo(.25);
+                    rightVelo(-.25);
                 }
             }
         }else{
             if(originalAngle + 90 > 360) {
                 while (opModeIsActive() && (getAngle() > originalAngle - 5 || getAngle() < originalAngle + 90 - angleCorrectionCCW - 360)) {
-                    leftVelo(-.75);
-                    rightVelo(.75);
+                    leftVelo(-.25);
+                    rightVelo(.25);
                 }
             }else{
                 while (opModeIsActive() && getAngle() < originalAngle + 90 - angleCorrectionCCW && getAngle() > originalAngle - 5) {
-                    leftVelo(-.75);
-                    rightVelo(.75);
+                    leftVelo(-.25);
+                    rightVelo(.25);
                 }
             }
         }
@@ -468,8 +427,7 @@ public class AprilTagTestAuto extends LinearOpMode
             motorsOn(.5);
         }
         motorsOff();
-        moveLift(12);
-        moveInchAmount(true, 10.5);
+        moveLiftAndDrive(true,10.5,12);
     }
 
     /**
@@ -516,6 +474,8 @@ public class AprilTagTestAuto extends LinearOpMode
         int targetTick = (int) (tickPerInchForLift * height);
 
         boolean correctionsDone = false;
+        boolean liftOff = false;
+        boolean motorsOff = false;
 
         // Drive train calculations
         double driveTrainCorrection = 1;
@@ -534,28 +494,33 @@ public class AprilTagTestAuto extends LinearOpMode
         runtime.reset();
         if(forward){
             motorsOn(.75);
-            while(opModeIsActive() && (liftMotor.isBusy() || leftBackDrive.getCurrentPosition() < totalTicks)){
-                if(leftBackDrive.getCurrentPosition() > totalTicks){
+            while(opModeIsActive() && (!liftOff || !motorsOff)){
+                if(leftBackDrive.getCurrentPosition() >= totalTicks){
                     motorsOff();
+                    motorsOff = true;
                 }
-                if(!liftMotor.isBusy() && !correctionsDone){
+                if(liftMotor.getCurrentPosition() > targetTick - 173 && liftMotor.getCurrentPosition() < targetTick + 173 && !correctionsDone){
                     liftMotor.setTargetPosition(targetTick);
                     liftMotor.setMode(RUN_TO_POSITION);
                     liftMotor.setPower(.25);
                     correctionsDone = true;
-                }else if(!liftMotor.isBusy()){
+                }else if(liftMotor.getCurrentPosition() > targetTick - 17.3 && liftMotor.getCurrentPosition() < targetTick + 17.3){
                     liftMotor.setPower(0);
+                    liftOff = true;
                 }
                 if(runtime.seconds() > 8){
                     break;
                 }
+                telemetry.addData("Lift is busy:", liftMotor.isBusy());
+                telemetry.update();
             }
         }else{
             totalTicks = -totalTicks;
             motorsOn(-.75);
-            while(opModeIsActive() && liftMotor.isBusy() || leftBackDrive.getCurrentPosition() > totalTicks){
-                if(leftBackDrive.getCurrentPosition() < totalTicks){
+            while(opModeIsActive() && (!liftOff || !motorsOff)){
+                if(leftBackDrive.getCurrentPosition() <= totalTicks){
                     motorsOff();
+                    motorsOff = true;
                 }
                 if(!liftMotor.isBusy() && !correctionsDone){
                     liftMotor.setTargetPosition(targetTick);
@@ -564,10 +529,13 @@ public class AprilTagTestAuto extends LinearOpMode
                     correctionsDone = true;
                 }else{
                     liftMotor.setPower(0);
+                    liftOff = true;
                 }
-                if(runtime.seconds() > 8){
+                if(runtime.seconds() > 6){
                     break;
                 }
+                telemetry.addData("Lift is busy:", liftMotor.isBusy());
+                telemetry.update();
             }
         }
         resetEncoders();
