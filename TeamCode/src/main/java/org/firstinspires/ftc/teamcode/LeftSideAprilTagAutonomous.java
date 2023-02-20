@@ -516,6 +516,8 @@ public class LeftSideAprilTagAutonomous extends LinearOpMode
         int targetTick = (int) (tickPerInchForLift * height);
 
         boolean correctionsDone = false;
+        boolean motorsOff = false;
+        boolean liftOff = false;
 
         // Drive train calculations
         double driveTrainCorrection = 1;
@@ -534,19 +536,21 @@ public class LeftSideAprilTagAutonomous extends LinearOpMode
         runtime.reset();
         if(forward){
             motorsOn(.75);
-            while(opModeIsActive() && (liftMotor.isBusy() || leftBackDrive.getCurrentPosition() < totalTicks)){
+            while(opModeIsActive() && (!liftOff || !motorsOff)){
                 if(leftBackDrive.getCurrentPosition() >= totalTicks){
                     motorsOff();
+                    motorsOff = true;
                 }
-                if(!liftMotor.isBusy() && !correctionsDone){
+                if(liftMotor.getCurrentPosition() > targetTick - 173 && liftMotor.getCurrentPosition() < targetTick + 173 && !correctionsDone){
                     liftMotor.setTargetPosition(targetTick);
                     liftMotor.setMode(RUN_TO_POSITION);
                     liftMotor.setPower(.25);
                     correctionsDone = true;
-                }else if(!liftMotor.isBusy()){
+                }else if(liftMotor.getCurrentPosition() > targetTick - 17.3 && liftMotor.getCurrentPosition() < targetTick + 17.3){
                     liftMotor.setPower(0);
+                    liftOff = true;
                 }
-                if(runtime.seconds() > 6){
+                if(runtime.seconds() > 8){
                     break;
                 }
                 telemetry.addData("Lift is busy:", liftMotor.isBusy());
@@ -555,9 +559,10 @@ public class LeftSideAprilTagAutonomous extends LinearOpMode
         }else{
             totalTicks = -totalTicks;
             motorsOn(-.75);
-            while(opModeIsActive() && liftMotor.isBusy() || leftBackDrive.getCurrentPosition() > totalTicks){
+            while(opModeIsActive() && (!liftOff || !motorsOff)){
                 if(leftBackDrive.getCurrentPosition() <= totalTicks){
                     motorsOff();
+                    motorsOff = true;
                 }
                 if(!liftMotor.isBusy() && !correctionsDone){
                     liftMotor.setTargetPosition(targetTick);
@@ -566,6 +571,7 @@ public class LeftSideAprilTagAutonomous extends LinearOpMode
                     correctionsDone = true;
                 }else{
                     liftMotor.setPower(0);
+                    liftOff = true;
                 }
                 if(runtime.seconds() > 6){
                     break;
