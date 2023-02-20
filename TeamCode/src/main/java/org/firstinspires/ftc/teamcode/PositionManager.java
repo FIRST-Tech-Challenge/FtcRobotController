@@ -135,11 +135,11 @@ class EncoderPositioning {
             int encoderCounts = Objects.requireNonNull(wheelEncoderCounts.get(rollerAngle.getKey()));
             double force = rollerAngle.getValue();
 
-//            encoderCounts = 1;
-//            deltaPSumX += -encoderCounts * ((Math.cos(theta) * Math.cos(force)) - (Math.sin(theta) * Math.sin(force))) / 2.0;
+            encoderCounts = 1;
+//            deltaPSumX += encoderCounts * ((Math.cos(theta) * Math.cos(force)) - (Math.sin(theta) * Math.sin(force))) / 2.0;
 //            deltaPSumY += encoderCounts * ((Math.sin(theta) * Math.cos(force)) + (Math.cos(theta) * Math.sin(force))) / 2.0;
             // New testing code
-            if (rollerAngle.getKey().toString() == "FRONT_LEFT" || rollerAngle.getKey().toString() == "REAR_LEFT") {
+            if (rollerAngle.getKey().toString().equals("FRONT_LEFT") || rollerAngle.getKey().toString().equals("REAR_LEFT")) {
                 deltaPSumY += -encoderCounts * ((Math.cos(theta) * Math.cos(force)) - (Math.sin(theta) * Math.sin(force))) / 2.0;
                 deltaPSumX += -encoderCounts * ((Math.sin(theta) * Math.cos(force)) + (Math.cos(theta) * Math.sin(force))) / 2.0;
             }

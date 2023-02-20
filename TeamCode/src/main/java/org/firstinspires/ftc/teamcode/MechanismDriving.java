@@ -18,6 +18,9 @@ public class MechanismDriving {
        put(Robot.SlidesState.MEDIUM, 4863);
        put(Robot.SlidesState.HIGH, 6700);
        put(Robot.SlidesState.UNREADY, 0);
+
+       put(Robot.SlidesState.FIRST_STACK_CONE, 1800);
+       put(Robot.SlidesState.SECOND_STACK_CONE, 1600);
     }};
     public static final double CLAW_CLOSED_POS = 0, CLAW_OPEN_POS = 0.7; //These are not final values
     // How long it takes for the claw servo to be guaranteed to have moved to its new position.

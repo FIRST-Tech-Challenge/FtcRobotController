@@ -32,38 +32,26 @@ public class PowerPlayAuton extends LinearOpMode {
             parkingPosition = robotManager.computerVision.getParkingPosition();
             waitMilliseconds(20);
         }
-//      Transform the path and add the parking location based on the result of cv
+
+//        telemetry.addData("Path name", navigationPath.toString());
+//        telemetry.addData("AutonomousPaths.CYCLE_HIGH.size()", Navigation.AutonomousPaths.CYCLE_HIGH.size());
+//        telemetry.addData("PowerPlayAuton.navigationPath.size()", PowerPlayAuton.navigationPath.size());
+//        telemetry.addData("robotManager.navigation.path.size()", robotManager.navigation.path.size());
+//        telemetry.update();
+
+        // Transform the path and add the parking location based on the result of cv
         robotManager.navigation.configurePath(startingSide, parkingPosition);
+
+        waitMilliseconds(PowerPlayAuton.waitTime);
+
         robotManager.runAutonPath();
-//        boolean moving = true;
-//        switch (parkingPosition) {
-//            case LEFT:
-//                robotManager.navigation.setDriveMotorPowers(0, Navigation.MAX_STRAFE_POWER, 0, robotManager.robot, false);
-//                waitMilliseconds(1175);
-//                break;
-//            case MIDDLE:
-//                moving = false;
-//                break;
-//            case RIGHT:
-//                robotManager.navigation.setDriveMotorPowers(Math.PI, Navigation.MAX_STRAFE_POWER, 0, robotManager.robot, false);
-//                waitMilliseconds(975);
-//        }
-//
-//        if (moving) {
-//            robotManager.navigation.stopMovement(robotManager.robot);
-//        }
-//
-//        // Move forward
-//        robotManager.navigation.setDriveMotorPowers(-Math.PI / 2, Navigation.MAX_STRAFE_POWER, 0, robotManager.robot, false);
-//        waitMilliseconds(1300);
-//        robotManager.navigation.stopMovement(robotManager.robot);
 
         while (opModeIsActive()) {}
     }
 
     private void waitMilliseconds(long ms) {
         double start_time = elapsedTime.time();
-        while (elapsedTime.time() - start_time < ms) {}
+        while (opModeIsActive() && elapsedTime.time() - start_time < ms) {}
     }
 
     // ANDROID SHARED PREFERENCES
@@ -159,8 +147,10 @@ public class PowerPlayAuton extends LinearOpMode {
 //                PowerPlayAuton.navigationPath = (ArrayList<Position>) AutonomousPaths.PARK_ONLY.clone();
             case "CYCLE_HIGH":
                 PowerPlayAuton.navigationPath = (ArrayList<Position>) Navigation.AutonomousPaths.CYCLE_HIGH.clone();
+                break;
             case "PARK_ONLY":
-                PowerPlayAuton.navigationPath = (ArrayList<Position>) Navigation.AutonomousPaths.CYCLE_HIGH.clone();
+                PowerPlayAuton.navigationPath = new ArrayList<>();
+                break;
         }
     }
 }

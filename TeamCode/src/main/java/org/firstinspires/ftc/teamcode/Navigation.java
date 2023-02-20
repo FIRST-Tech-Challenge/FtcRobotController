@@ -26,8 +26,8 @@ public class Navigation {
     // TODO: empirically measure and calculate rotation radius
     static final double STRAFE_RAMP_DISTANCE = 3;  // Inches
     static final double ROTATION_RAMP_DISTANCE = Math.PI / 3;  // Radians
-    static final double MAX_STRAFE_POWER = 0.4;
-    static final double MIN_STRAFE_POWER = 0.5;
+    static final double MIN_STRAFE_POWER = 0.3;
+    static final double MAX_STRAFE_POWER = 0.5;
     static final double STRAFE_CORRECTION_POWER = 0.3;
     static final double MAX_ROTATION_POWER = 0.5;
     static final double MIN_ROTATION_POWER = 0.4;
@@ -251,7 +251,7 @@ public class Navigation {
         double timeElapsed = 0;
         double timeRemaining = 2 * halfRotateTime - timeElapsed;
 
-        while (timeElapsed < 2 * halfRotateTime) {
+        while (rotationRemaining > EPSILON_ANGLE) {
             robot.telemetry.addData("rot left", rotationRemaining);
             robot.telemetry.addData("current orientation", currentOrientation);
             robot.telemetry.addData("target", target);
@@ -368,7 +368,7 @@ public class Navigation {
         double timeElapsed = 0;
         double timeRemaining = 2 * halfStrafeTime - timeElapsed;
 
-        while (timeElapsed < 2 * halfStrafeTime) {
+        while (distanceRemaining > EPSILON_LOC) {
 
             robot.positionManager.updatePosition(robot);
 
@@ -547,10 +547,10 @@ public class Navigation {
         }
     }
 
+    /**
+     * Adds final parking location as the final position on the path.
+     */
     private void setParkingLocation(RobotManager.StartingSide startingSide, RobotManager.ParkingPosition parking_position) {
-        /**
-        //Parks in a terminal or a substation for 2 points
-         */
         // TO DO: Add paths for three different paths
         //Parks in a signal parking spot to have a chance for 20 points
         if (parking_position == RobotManager.ParkingPosition.LEFT) {
@@ -640,19 +640,19 @@ public static class AutonomousPaths {
     //Positions
 
     //Junctions
-//    public static Position nearHighJunction = new Position(1 * TILE_SIZE, -1.5*TILE_SIZE, "POI nearHighJunction", Action.DELIVER_CONE_HIGH, 1, 1, Math.PI / 2);
-    public static Position nearHighJunction = new Position(1 * TILE_SIZE, -1.5*TILE_SIZE, "POI nearHighJunction", Action.NONE, 1, 1, Math.PI / 2);
-//    public static Position farHighJunction = new Position(0.5 * TILE_SIZE,
-//            -2 * TILE_SIZE, "POI farHighJunction", Action.DELIVER_CONE_HIGH_90, 1, 1, Math.PI / 2);
+    public static Position nearHighJunction = new Position(1 * TILE_SIZE, -1.5*TILE_SIZE, "POI nearHighJunction", Action.DELIVER_CONE_HIGH, 1, 1, Math.PI / 2);
+//    public static Position nearHighJunction = new Position(1 * TILE_SIZE, -1.5*TILE_SIZE, "POI nearHighJunction", Action.NONE, 1, 1, Math.PI / 2);
     public static Position farHighJunction = new Position(0.5 * TILE_SIZE,
-            -2 * TILE_SIZE, "POI farHighJunction", Action.NONE, 1, 1, Math.PI / 2);
+            -2 * TILE_SIZE, "POI farHighJunction", Action.DELIVER_CONE_HIGH_90, 1, 1, Math.PI / 2);
+//    public static Position farHighJunction = new Position(0.5 * TILE_SIZE,
+//            -2 * TILE_SIZE, "POI farHighJunction", Action.NONE, 1, 1, Math.PI / 2);
     public static Position mediumJunction = new Position(0, -1.5*TILE_SIZE, "POI mediumJunction", Action.DELIVER_CONE_MEDIUM, 1, 1, 0);
     public static Position nearLowJunction = new Position(0.5*TILE_SIZE, 0, "POI nearLowJunction", Action.DELIVER_CONE_LOW, 1, 1, 0);
     public static Position farLowJunction = new Position(-0.5*TILE_SIZE, -TILE_SIZE, "POI farLowJunction", Action.DELIVER_CONE_LOW, 1, 1, 0);
 
     //Cone Stack
-//    public static Position coneStack1 = new Position(-0.75 * TILE_SIZE, -2 * TILE_SIZE, "POI coneStackFirstCone", Action.PICK_UP_FIRST_STACK_CONE, 1, 1, Math.PI / 2);
-    public static Position coneStack1 = new Position(-0.75 * TILE_SIZE, -2 * TILE_SIZE, "POI coneStackFirstCone", Action.NONE, 1, 1, Math.PI / 2);
+    public static Position coneStack1 = new Position(-0.75 * TILE_SIZE, -2 * TILE_SIZE, "POI coneStackFirstCone", Action.PICK_UP_FIRST_STACK_CONE, 1, 1, Math.PI / 2);
+//    public static Position coneStack1 = new Position(-0.75 * TILE_SIZE, -2 * TILE_SIZE, "POI coneStackFirstCone", Action.NONE, 1, 1, Math.PI / 2);
     public static Position coneStack2 = new Position(-0.75 * TILE_SIZE, -2 * TILE_SIZE, "POI coneStackSecondCone", Action.PICK_UP_SECOND_STACK_CONE, 1, 1, Math.PI / 2);
 
     //Intermediate Locations. Since these values could be transformed, inner refers to the middle of the entire field, center
