@@ -269,6 +269,11 @@ public class PwPRobot extends BasicRobot {
             claw.wideClaw();
         }
     }
+    public void wideClaw(boolean asyn) {
+        if (queuer.queue(false, !CLAW_WIDING.getStatus())) {
+            claw.wideClaw();
+        }
+    }
 
     public void liftToTargetAuto() {
         lift.liftToTargetAuto();

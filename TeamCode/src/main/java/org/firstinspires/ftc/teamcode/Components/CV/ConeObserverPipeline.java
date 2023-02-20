@@ -28,7 +28,18 @@ public class ConeObserverPipeline extends OpenCvPipeline {
     public static double HighH = 140;
     public static double LowV = 0;
     public static double HighV = 255;
-
+    public static double LowS1 = 50;
+    public static double HighS1 = 255;
+    public static double LowH1 = 100;
+    public static double HighH1 = 140;
+    public static double LowV1 = 0;
+    public static double HighV1 = 255;
+    public static double LowS2 = 50;
+    public static double HighS2 = 255;
+    public static double LowH2 = 100;
+    public static double HighH2 = 140;
+    public static double LowV2 = 0;
+    public static double HighV2 = 255;
 
 
     public ConeObserverPipeline() {
@@ -53,11 +64,33 @@ public class ConeObserverPipeline extends OpenCvPipeline {
         // Get a black and white image of yellow objects
         Core.inRange(mat, lowHSV, highHSV, thresh);
 
+        Scalar lowHSV1 = new Scalar(LowH1, LowS1, LowV1); // lenient lower bound HSV for yellow
+        Scalar highHSV1 = new Scalar(HighH1, HighS1, HighV1); // lenient higher bound HSV for yellow
+
+        Mat thresh2 = new Mat();
+
+        // Get a black and white image of yellow objects
+        Core.inRange(mat, lowHSV1, highHSV1, thresh2);
+        Scalar lowHSV2 = new Scalar(LowH2, LowS2, LowV2); // lenient lower bound HSV for yellow
+        Scalar highHSV2 = new Scalar(HighH2, HighS2, HighV2); // lenient higher bound HSV for yellow
+
+        Mat thresh3 = new Mat();
+
+        // Get a black and white image of yellow objects
+        Core.inRange(mat, lowHSV2, highHSV2, thresh3);
+
+        Mat thresh4 = new Mat();
+
+                Core.bitwise_and(thresh, thresh2, thresh4);
+        Mat thresh5 = new Mat();
+
+        Core.bitwise_and(thresh4, thresh3, thresh5);
+
 
         List<MatOfPoint> contours = new ArrayList<>();
         Mat hierarchy = new Mat();
         //find contours of edges
-        Imgproc.findContours(thresh, contours, hierarchy, Imgproc.RETR_TREE, Imgproc.CHAIN_APPROX_SIMPLE);
+        Imgproc.findContours(thresh5, contours, hierarchy, Imgproc.RETR_TREE, Imgproc.CHAIN_APPROX_SIMPLE);
         MatOfPoint2f[] contoursPoly = new MatOfPoint2f[contours.size()];
         //rotatedRect because it allows for more accurate bounding rectangles, perfect if pole is slanted
         RotatedRect[] rectangle = new RotatedRect[contours.size()];
