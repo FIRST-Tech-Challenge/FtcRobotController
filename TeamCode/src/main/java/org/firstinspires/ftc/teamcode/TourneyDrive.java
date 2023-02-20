@@ -168,29 +168,29 @@ public class TourneyDrive extends LinearOpMode {
             switch (liftState) {
                 case LIFT_START:
                     if (liftDown) {
-                        liftMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+                        liftMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                         autoLift = true;
                         moveLift(1, MIN_LIFT_POS);
                         liftState = LiftState.LIFT_RAISE;
                     } else if (liftLow) {
-                        liftMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+                        liftMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                         autoLift = true;
                         moveLift(1, (173 * 15) + MIN_LIFT_POS);
                         liftState = LiftState.LIFT_RAISE;
                     } else if (liftMedium) {
-                        liftMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+                        liftMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                         autoLift = true;
                         moveLift(1, (173 * 25) + MIN_LIFT_POS);
                         liftState = LiftState.LIFT_RAISE;
                     } else if (liftHigh) {
-                        liftMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+                        liftMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                         autoLift = true;
                         moveLift(1, MAX_LIFT_POS);
                         liftState = LiftState.LIFT_RAISE;
                     }
                     break;
                 case LIFT_RAISE:
-                    liftMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+                    liftMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                     if (liftMotor.getCurrentPosition() <= targetPos + 173 && liftMotor.getCurrentPosition() >= targetPos - 173) {
                         moveLift(.25, targetPos);
                         liftState = LiftState.LIFT_CORRECT;
@@ -325,7 +325,6 @@ public class TourneyDrive extends LinearOpMode {
             telemetry.addData("Status", "Run Time: " + runtime);
             telemetry.addData("Front left/Right", "%4.2f, %4.2f", leftFrontPower, rightFrontPower);
             telemetry.addData("Back  left/Right", "%4.2f, %4.2f", leftBackPower, rightBackPower);
-            telemetry.addData("servo position",servoGrabber1.getPosition());
             telemetry.update();
         }
     }
