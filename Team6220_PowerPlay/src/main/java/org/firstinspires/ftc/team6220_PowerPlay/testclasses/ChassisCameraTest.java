@@ -39,6 +39,8 @@ public class ChassisCameraTest extends BaseAutonomous {
         robotCamera.setPipeline(robotCameraPipeline);
         telemetry.addLine("6220 rap at worlds");
         waitForStart();
+
+        //telemetry
         while(opModeIsActive()){
             telemetry.addData("width", robotCameraPipeline.width);
             telemetry.addData("positionX", robotCameraPipeline.xPosition);
