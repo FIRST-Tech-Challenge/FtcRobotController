@@ -339,11 +339,7 @@ public class Navigation {
     public void travelLinear(Position target, double constantPower, Robot robot) {
         robot.positionManager.updatePosition(robot);
         final Position startPosition = robot.getPosition();
-        final double startX = startPosition.getX();
-        final double startY = startPosition.getY();
         Position currentPosition = robot.getPosition();
-        double currentX = currentPosition.getX();
-        double currentY = currentPosition.getY();
         double startingTime = robot.elapsedTime.milliseconds();
 
         double totalDistance = getEuclideanDistance(startPosition, target);
@@ -402,16 +398,16 @@ public class Navigation {
             timeElapsed = robot.elapsedTime.milliseconds() - startingTime;
             timeRemaining = 2 * halfStrafeTime - timeElapsed;
 
-            robot.telemetry.addData("Start X", startX);
-            robot.telemetry.addData("Start Y", startY);
-            robot.telemetry.addData("Current X", currentX);
-            robot.telemetry.addData("Current Y", currentY);
+            robot.telemetry.addData("Start X", startPosition.getX());
+            robot.telemetry.addData("Start Y", startPosition.getY());
+            robot.telemetry.addData("Current X", currentPosition.getX());
+            robot.telemetry.addData("Current Y", currentPosition.getY());
 
             robot.telemetry.addData("Target X", target.x);
             robot.telemetry.addData("Target Y", target.y);
-            robot.telemetry.addData("strafe testing y", (target.y-currentY));
-            robot.telemetry.addData("strafe testing x", (target.x-currentX));
-            robot.telemetry.addData("get angle between angle", getAngleBetween(currentPosition, target));
+//            robot.telemetry.addData("strafe testing y", (target.y-currentY));
+//            robot.telemetry.addData("strafe testing x", (target.x-currentX));
+            robot.telemetry.addData("getAngleBetween(): ", getAngleBetween(currentPosition, target));
             robot.telemetry.update();
 
             if (distanceRemaining > EPSILON_LOC) {
