@@ -77,7 +77,6 @@ public class ArmPIDTester extends LinearOpMode
         robot.liftPIDPosRun(false);
     }
 
-    boolean liftMotorPIDAuto = false;
     boolean liftMotorLogging = false;
     boolean liftMotorLogEnable = false;
     public final static int LIFTMOTORLOG_SIZE  = 128;   // 128 entries = 2+ seconds @ 16msec/60Hz
@@ -178,12 +177,12 @@ public class ArmPIDTester extends LinearOpMode
         while (opModeIsActive())
         {
             performEveryLoop();
-            robot.liftPIDPosInit( robot.LIFT_ANGLE_ASTART );
+//          robot.liftPIDPosInit( robot.LIFT_ANGLE_ASTART );
             // Execute the automatic turret movement code
             telemetry.addData("pSinLift", robot.liftPidController.ksinLift);
             telemetry.addData("pStaticLift", robot.liftPidController.kStaticLift);
             telemetry.addData("kpLift", robot.liftPidController.pidLift.kp);
-            while(liftMotorPIDAuto && opModeIsActive()) {
+            while(robot.liftMotorPIDAuto && opModeIsActive()) {
                 performEveryLoop();
             }
 

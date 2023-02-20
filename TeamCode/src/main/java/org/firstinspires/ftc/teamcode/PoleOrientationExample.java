@@ -202,7 +202,7 @@ public class PoleOrientationExample extends LinearOpMode
     /*---------------------------------------------------------------------------------*/
 
     void logPid(int alignedCount, double turretPower, PIDController pid) {
-        // Only save "meaningful" entries (not final 15 aligned results with all zeros!)
+        // Only save "meaningful" entries (not final 8 aligned results with all zeros!)
         if( alignedCount <= 3 ) {
             // Shift all previous instrumentation readings down one entry
             for( int index=1; index<LOGSIZE; index++ ) {

@@ -73,7 +73,6 @@ public class TurretPIDTester extends AutonomousBase
      * webcam counterpart,first.
      */
 
-    boolean turretMotorPIDAuto = false;
 
     ElapsedTime intakeTimer = new ElapsedTime();
     /*--------------------------------------------------------------------------------------------*/
