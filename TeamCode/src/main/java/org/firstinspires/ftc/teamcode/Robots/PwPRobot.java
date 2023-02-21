@@ -155,20 +155,20 @@ public class PwPRobot extends BasicRobot {
         }
     }
     public void updateTrajectoryWithCone(){
-//        if (queuer.queue(true, field.isDoneLookin())) {
-//            field.setDoneLookin(false);
-//            if(field.lookingAtCone()){
-//                Pose2d target = field.conePos();
-//                TrajectorySequence trajectory = roadrun.getCurrentTraj();
-//                roadrun.changeTrajectorySequence(roadrun.trajectorySequenceBuilder(trajectory.start())
-//                        .setReversed(false)
-//                        .splineToLinearHeading(new Pose2d(target.vec(),toRadians(180)), toRadians(180)).build());
+        if (queuer.queue(true, field.isDoneLookin())) {
+            field.setDoneLookin(false);
+            if(field.lookingAtCone()){
+                Pose2d target = field.conePos();
+                TrajectorySequence trajectory = roadrun.getCurrentTraj();
+                roadrun.changeTrajectorySequence(roadrun.trajectorySequenceBuilder(trajectory.start())
+                        .setReversed(false)
+                        .splineToSplineHeading(new Pose2d(target.vec(),toRadians(180)), toRadians(180)).build());
 //                field.setDoneLookin(true);
-//                logger.log("/RobotLogs/GeneralRobot", "mr.obama"+target+"im cone"+roadrun.getPoseEstimate());
+                logger.log("/RobotLogs/GeneralRobot", "mr.obama"+target+"im cone"+roadrun.getPoseEstimate());
 //                logger.log("/RobotLogs/GeneralRobot", "coords"+cv.rotatedConarCoord()[0]+","+cv.rotatedConarCoord()[1]);
-//
-//            }
-//        }
+
+            }
+        }
     }
     public void teleAutoAim(Trajectory trajectory) {
         roadrun.followTrajectoryAsync(trajectory);

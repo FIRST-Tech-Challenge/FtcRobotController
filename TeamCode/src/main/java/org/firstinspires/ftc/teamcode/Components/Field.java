@@ -103,13 +103,16 @@ public class Field {
         Pose2d pos = roadrun.getPoseEstimate();
         pos = new Pose2d(pos.getX(),pos.getY(),pos.getHeading()+coords[0]*PI/180+PI);
         polePos = new Pose2d(pos.getX()+cos(pos.getHeading())*coords[1],pos.getY()+sin(pos.getHeading())*coords[1],pos.getHeading());
-        if(abs(coords[1])<4){
-//            setDoneLookin(true);
+        if(abs(coords[1])<5&&abs(coords[1])>0){
+            setDoneLookin(true);
+        }
+        if(abs(pos.vec().distTo(roadrun.getCurrentTraj().end().vec()))<5){
+            setDoneLookin(true);
         }
         logger.log("/RobotLogs/GeneralRobot", "polePos"+polePos);
         logger.log("/RobotLogs/GeneralRobot", "coords"+coords[0]+","+coords[1]);
 
-        if(abs(coords[1])<18&&coords[1]>3 && abs(polePos.vec().distTo(roadrun.getCurrentTraj().end().vec()))<5){
+        if(abs(coords[1])<18&&coords[1]>3&&(roadrun.getCurrentTraj()==null||abs(polePos.vec().distTo(roadrun.getCurrentTraj().end().vec()))<4)){
             return true;
         }
         return false;
@@ -120,12 +123,16 @@ public class Field {
         coords[1] -=2;
         Pose2d pos = roadrun.getPoseEstimate();
         pos = new Pose2d(pos.getX(),pos.getY(),pos.getHeading()+coords[0]*PI/180);
-        conePos = new Pose2d(pos.getX()+cos(pos.getHeading())*coords[1],pos.getY()+sin(pos.getHeading())*coords[1],pos.getHeading());
-        if(abs(coords[1])<6){
+        conePos = new Pose2d(pos.getX()+cos(pos.getHeading())*coords[1],pos.getY()+sin(pos.getHeading())*coords[1]+1,pos.getHeading());
+        if(abs(coords[1])<5&&abs(coords[1])>-1){
             setDoneLookin(true);
         }
-        if(abs(coords[0])<20&&abs(coords[1])<15&&abs(coords[1])>1){
-            return true;
+        logger.log("/RobotLogs/GeneralRobot", "CONePos"+ conePos);
+        logger.log("/RobotLogs/GeneralRobot", "coords"+coords[0]+","+coords[1]);
+        if(abs(coords[0])<20&&abs(coords[1])>4&&abs(coords[1])<15&&abs(abs(pos.getHeading()-coords[0]*PI/180)-PI)<10*PI/180){
+            if(roadrun.getCurrentTraj()==null|| abs(conePos.vec().distTo(roadrun.getCurrentTraj().end().vec()))<10&&abs(conePos().getX())>60) {
+                return true;
+            }
         }
         return false;
     }

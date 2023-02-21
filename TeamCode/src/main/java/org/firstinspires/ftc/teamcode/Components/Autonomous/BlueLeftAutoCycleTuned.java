@@ -47,7 +47,7 @@ public class BlueLeftAutoCycleTuned extends LinearOpMode {
     public static double dummyX2 = 35, dummyY2 = 11, dummyA2 = 0;
 
     public static double dummyX3 = 53, dummyY3 = 11, dummyA3 = 0;
-    public static double dropX=29.25, dropY=5.25;
+    public static double dropX=28.25, dropY=5.25;
     double[] stackPos = {420*1.03,330*1.03,235*1.03,80*1.03,0};
 
     public void runOpMode() {
@@ -111,7 +111,7 @@ public class BlueLeftAutoCycleTuned extends LinearOpMode {
             pick.add(robot.roadrun.trajectorySequenceBuilder(new Pose2d(dropX,dropY,Math.toRadians(40)))
                     .setReversed(false)
                     .splineToSplineHeading(new Pose2d(48, 11.75+(robot.getVoltage()-12)/2, Math.toRadians(0)), Math.toRadians(0))
-                    .splineToConstantHeading(new Vector2d(63.5+i*0.2, 11.75+(robot.getVoltage()-12)/2-i*0.5), Math.toRadians(0))
+                    .splineToConstantHeading(new Vector2d(63.8+i*0.3, 11.75+(robot.getVoltage()-12)/2-i*0.5), Math.toRadians(0))
                     .addTemporalMarker(robot::done)
                     .build());
         }
@@ -174,7 +174,7 @@ public class BlueLeftAutoCycleTuned extends LinearOpMode {
             robot.raiseLiftArmToOuttake(true);
             robot.delay(0.5);
             robot.liftToPosition(LIFT_HIGH_JUNCTION);
-            robot.openClaw(false);
+            robot.openClaw(  false);
             robot.delay(0.4);
             robot.cycleLiftArmToCycle(true);
             robot.delay(0.5);
@@ -194,23 +194,23 @@ public class BlueLeftAutoCycleTuned extends LinearOpMode {
             robot.followTrajectorySequenceAsync(pickupTrajectory2);
 //            robot.liftToPosition((int)LIFT_HIGH_JUNCTION.getValue() + 50, true);
             for (int i = 0; i < 3; i++) {
-                robot.delay(0.25);
+                robot.delay(0.15);
                 robot.lowerLiftArmToIntake(true);
-                robot.delay(0.25);
+                robot.delay(0.15);
                 robot.wideClaw();
-                robot.delay(0.25);
+                robot.delay(0.15);
                 robot.liftToPosition((int) stackPos[i + 1]);
                 robot.closeClaw(false);
                 robot.followTrajectorySequenceAsync(dropTrajectory.get(i));
-                robot.delay(0.0+0.005*(3-i));
+                robot.delay(0.03+0.005*(3-i));
                 robot.liftToPosition(LIFT_HIGH_JUNCTION);
-                robot.delay(0.3+0.005*(3-i));
+                robot.delay(0.36+0.005*(3-i));
                 robot.raiseLiftArmToOuttake(true);
-                robot.delay(0.6);
+                robot.delay(0.5);
 //                robot.liftToPosition((int)LIFT_HIGH_JUNCTION.getValue()-250, false);
 //                robot.delay(0.65);
                 robot.wideClaw(false);
-                robot.delay(0.25);
+                robot.delay(0.15);
                 robot.followTrajectorySequenceAsync(pick.get(i));
 //                robot.liftToPosition((int)LIFT_HIGH_JUNCTION.getValue() + 50, true);
             }
@@ -223,9 +223,9 @@ public class BlueLeftAutoCycleTuned extends LinearOpMode {
             robot.liftToPosition((int) stackPos[4]);
             robot.closeClaw(false);
             robot.followTrajectorySequenceAsync(dropTrajectory.get(3));
-            robot.delay(0.0+0.005*(3-3));
+            robot.delay(0.03+0.005*(3-3));
             robot.liftToPosition(LIFT_HIGH_JUNCTION);
-            robot.delay(0.3+0.005*(3-3));
+            robot.delay(0.36+0.005*(3-3));
             robot.raiseLiftArmToOuttake(true);
 //            robot.liftToPosition((int)LIFT_HIGH_JUNCTION.getValue()-220, false);
             robot.delay(1.75);

@@ -10,7 +10,7 @@ import org.opencv.core.Core;
 import org.opencv.core.Mat;
 import org.opencv.core.MatOfPoint;
 import org.opencv.core.MatOfPoint2f;
-import org.opencv.core.RotatedRect;
+import org.opencv.core.Rect;
 import org.opencv.core.Scalar;
 import org.opencv.imgproc.Imgproc;
 import org.openftc.easyopencv.OpenCvPipeline;
@@ -19,7 +19,7 @@ import java.util.ArrayList;
 import java.util.List;
 @Config
 public class ConeObserverPipeline extends OpenCvPipeline {
-    public static double  degPerPix = 22.5/320, widTimesDist = 820*4*24/31.0, focalLength = 715;
+    public static double  degPerPix = 22.5/320, widTimesDist = 820*4*24/31.0*12/8.7*13.5/14.9, focalLength = 715;
     double centerOfPole = 0, poleSize = 0;
     ArrayList<double[]> frameList;
     public static double LowS = 50;
@@ -30,14 +30,14 @@ public class ConeObserverPipeline extends OpenCvPipeline {
     public static double HighV = 255;
     public static double LowS1 = 50;
     public static double HighS1 = 255;
-    public static double LowH1 = 100;
-    public static double HighH1 = 140;
+    public static double LowH1 = 210;
+    public static double HighH1 = 255;
     public static double LowV1 = 0;
     public static double HighV1 = 255;
     public static double LowS2 = 50;
     public static double HighS2 = 255;
-    public static double LowH2 = 100;
-    public static double HighH2 = 140;
+    public static double LowH2 = 0;
+    public static double HighH2 = 15;
     public static double LowV2 = 0;
     public static double HighV2 = 255;
 
@@ -81,10 +81,12 @@ public class ConeObserverPipeline extends OpenCvPipeline {
 
         Mat thresh4 = new Mat();
 
-                Core.bitwise_and(thresh, thresh2, thresh4);
+        Core.bitwise_and(thresh, thresh2, thresh4);
+        Core.add(thresh,thresh2,thresh4);
+
         Mat thresh5 = new Mat();
 
-        Core.bitwise_and(thresh4, thresh3, thresh5);
+        Core.add(thresh4, thresh3, thresh5);
 
 
         List<MatOfPoint> contours = new ArrayList<>();
@@ -93,14 +95,14 @@ public class ConeObserverPipeline extends OpenCvPipeline {
         Imgproc.findContours(thresh5, contours, hierarchy, Imgproc.RETR_TREE, Imgproc.CHAIN_APPROX_SIMPLE);
         MatOfPoint2f[] contoursPoly = new MatOfPoint2f[contours.size()];
         //rotatedRect because it allows for more accurate bounding rectangles, perfect if pole is slanted
-        RotatedRect[] rectangle = new RotatedRect[contours.size()];
+        Rect[] rectangle = new Rect[contours.size()];
         //iterate through each contour
         for (int i = 0; i < contours.size(); i++) {
             contoursPoly[i] = new MatOfPoint2f();
             //convert contour to approximate polygon
             Imgproc.approxPolyDP(new MatOfPoint2f(contours.get(i).toArray()), contoursPoly[i], 10, true);
             //find rotatedRect for polygon
-            rectangle[i] = Imgproc.minAreaRect(contoursPoly[i]);
+            rectangle[i] = Imgproc.boundingRect(contoursPoly[i]);
         }
 //
 //        //find index of largest rotatedRect(assumed that it is closest tile)
@@ -109,32 +111,25 @@ public class ConeObserverPipeline extends OpenCvPipeline {
         //iterate through each rotatedRect find largest
         for (int i = 0; i < rectangle.length; i++) {
 //                if(rectangle[i].size.height > 300 || rectangle[i].size.width >300) {
-                    if (rectangle[i].size.height < rectangle[i].size.width) {
-                        if (rectangle[i].size.height > maxWidth) {
+                    if (rectangle[i].height < rectangle[i].width) {
+                        if (rectangle[i].height > maxWidth) {
                             maxAreaIndex = i;
-                            maxWidth = rectangle[i].size.height;
+                            maxWidth = rectangle[i].height;
                         }
                     } else {
-                        if (rectangle[i].size.width > maxWidth) {
+                        if (rectangle[i].width > maxWidth) {
                             maxAreaIndex = i;
-                            maxWidth = rectangle[i].size.width;
+                            maxWidth = rectangle[i].width;
                         }
 //                    }
                 }
         }
 //        //if there is a detected largest contour, record information about it
         if(rectangle.length>0) {
-            double ratio = rectangle[maxAreaIndex].size.height/rectangle[maxAreaIndex].size.width;
-            if(ratio>1.1&&ratio<1.4 ||1/ratio>1.1&&1/ratio<1.4) {
-
-                if (rectangle[maxAreaIndex].size.height < rectangle[maxAreaIndex].size.width) {
-                    poleSize = rectangle[maxAreaIndex].size.height;
-                    centerOfPole = rectangle[maxAreaIndex].center.x - 320;
-                } else {
-                    poleSize = rectangle[maxAreaIndex].size.width;
-                    centerOfPole = rectangle[maxAreaIndex].center.x - 320;
-
-                }
+            double ratio = abs((double)rectangle[maxAreaIndex].height/rectangle[maxAreaIndex].width);
+            if(ratio>1.1) {
+                poleSize = rectangle[maxAreaIndex].width;
+                centerOfPole = rectangle[maxAreaIndex].x - 320;
                 frameList.add(new double[]{centerOfPole, poleSize});
             }
             else{
@@ -145,7 +140,7 @@ public class ConeObserverPipeline extends OpenCvPipeline {
             frameList.add(new double[] {0, 0});
         }
 //        //list of frames to reduce inconsistency, not too many so that it is still real-time
-        if(frameList.size()>4) {
+        if(frameList.size()>3) {
             frameList.remove(0);
         }
 
@@ -157,8 +152,12 @@ public class ConeObserverPipeline extends OpenCvPipeline {
         rectangle=null;
         contoursPoly = null;
 //        masked.release();
-        thresh.copyTo(input);
+        thresh5.copyTo(input);
         thresh.release();
+        thresh2.release();
+        thresh3.release();
+        thresh4.release();
+        thresh5.release();
         hierarchy.release();
 
         return input;

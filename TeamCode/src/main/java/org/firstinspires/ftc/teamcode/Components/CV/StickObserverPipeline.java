@@ -19,7 +19,7 @@ import java.util.ArrayList;
 import java.util.List;
 @Config
 public class StickObserverPipeline extends OpenCvPipeline {
-    public static double  degPerPix = 22.5/320, widTimesDist = 820*12/16.0*14.7/11.5, focalLength = 715;
+    public static double  degPerPix = 22.5/320, widTimesDist = 820*12/16.0*14.7/11.5*9.5/9, focalLength = 715;
     double centerOfPole = 0, poleSize = 0;
     ArrayList<double[]> frameList;
     public static double LowS = 130;

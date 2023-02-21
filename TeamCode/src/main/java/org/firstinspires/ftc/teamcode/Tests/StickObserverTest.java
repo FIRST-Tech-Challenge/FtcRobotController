@@ -23,9 +23,11 @@ public class StickObserverTest extends LinearOpMode {
         sleep(500);
         Pose2d startPose = new Pose2d(-29.6, 62.25, toRadians(90));
         robot.roadrun.setPoseEstimate(startPose);
-        robot.cv.observeStick();
+        robot.cv.observeSleeve();
         waitForStart();
         double[] loopStart={0,0};
+        robot.cv.observeStick();
+
         while(opModeIsActive()) {
 
                 if(robot.field.lookingAtPole()){
