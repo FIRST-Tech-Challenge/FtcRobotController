@@ -158,27 +158,27 @@ public class HardwareSlimbot
 
     protected AnalogInput liftEncoder      = null;    // US Digital absolute magnetic encoder (MA3)
     public double       liftAngle          = 0.0;     // 0V = 0 degrees; 3.3V = 359.99 degrees
-    public double       liftAngleOffset    = 74.8;    // allows us to adjust the -180 to +180 deg range
+    public double       liftAngleOffset    = 77.2;    // allows us to adjust the -180 to +180 deg range
     public double       liftAngleTarget    = 0.0;     // Automatic movement target angle (degrees)li
 
     // NOTE: the motor doesn't stop immediately, so set the limits short of the absolute maximum
     // Cone collect:  lift=116.7,  grabber=0.08/0.92, trigger BOTTOM proximity only (existing 3" high team element)
-    public double       LIFT_ANGLE_MAX     = 116.0;   // absolute encoder angle at maximum rotation FRONT
+    public double       LIFT_ANGLE_MAX     = 116.5;   // absolute encoder angle at maximum rotation FRONT
     public double       LIFT_ANGLE_ASTART  = 116.0;   // lift position for starting autonomous
-    public double       LIFT_ANGLE_COLLECT = 112.0;   // lift position for collecting cones (185mm)
-    public double       LIFT_ANGLE_GROUND  = 112.0;   // lift position for GROUND junction
-    public double       LIFT_ANGLE_CONE    = 105.0;   // lift position for cleaning a cone on a ground junction
-    public double       LIFT_ANGLE_LOW     =  92.2;   // lift position for LOW junction
+    public double       LIFT_ANGLE_COLLECT = 110.0;   // lift position for collecting cones (185mm)
+    public double       LIFT_ANGLE_GROUND  = 110.0;   // lift position for GROUND junction
+    public double       LIFT_ANGLE_CONE    = 103.0;   // lift position for cleaning a cone on a ground junction
+    public double       LIFT_ANGLE_LOW     =  90.8;   // lift position for LOW junction
     public double       LIFT_ANGLE_MOTORS  =  91.0;   // lift position for cleaning front turret motor
     public double       LIFT_ANGLE_5STACK  =  87.0;   // lift position for 5-stack ultrasonic reading
-    public double       LIFT_ANGLE_MED     =  61.2;   // lift position for MEDIUM junction (FRONT Teleop)
+    public double       LIFT_ANGLE_MED     =  61.0;   // lift position for MEDIUM junction (FRONT Teleop)
     public double       LIFT_ANGLE_AUTO_H  =  37.0;   // lift position for AUTONOMOUS (HIGH junction)
-    public double       LIFT_ANGLE_HIGH    =  29.8;   // lift position for HIGH junction (FRONT Teleop)
-    public double       LIFT_ANGLE_HIGH_BA = -32.1;   // lift position for HIGH junction (BACK Auto)
+    public double       LIFT_ANGLE_HIGH    =  28.5;   // lift position for HIGH junction (FRONT Teleop)
+    public double       LIFT_ANGLE_HIGH_BA = -41.0;   // lift position for HIGH junction (BACK Auto)
                                                       // (cone is loaded lower for auto, so higher lift point)
-    public double       LIFT_ANGLE_HIGH_B  = -41.0;   // lift position for HIGH junction (BACK Teleop)
-    public double       LIFT_ANGLE_MED_B   = -72.8;   // lift position for MEDIUM junction (BACK Teleop)
-    public double       LIFT_ANGLE_MIN     = -72.0;   //* absolute encoder angle at maximum rotation REAR
+    public double       LIFT_ANGLE_HIGH_B  = -43.0;   // lift position for HIGH junction (BACK Teleop)
+    public double       LIFT_ANGLE_MED_B   = -73.9;   // lift position for MEDIUM junction (BACK Teleop)
+    public double       LIFT_ANGLE_MIN     = -75.0;   //* absolute encoder angle at maximum rotation REAR
 
     public double[]     coneStackHeights   = {111.0,  // 0 = ground level of 5-stack
                                               111.0,  // 1 = 2nd cone
@@ -245,9 +245,9 @@ public class HardwareSlimbot
 
     //====== INFRARED PROXIMITY DETECTORS FOR CONE GRABBER ====================================================================
     public DigitalChannel topConeSensor;
-    public boolean      topConeState = false;
+    public boolean        topConeState = false;
     public DigitalChannel bottomConeSensor;
-    public boolean      bottomConeState = false;
+    public boolean        bottomConeState = false;
     //====== NAVIGATION DISTANCE SENSORS ================================================================
     private MaxSonarI2CXL sonarRangeL = null;   // Must include MaxSonarI2CXL.java in teamcode folder
     private MaxSonarI2CXL sonarRangeR = null;
@@ -392,7 +392,7 @@ public class HardwareSlimbot
 //      sonarRangeB = hwMap.get( MaxSonarI2CXL.class, "backUltrasonic" );   // I2C Bus 1
         sonarRangeF = hwMap.get( MaxSonarI2CXL.class, "frontUltrasonic" );  // I2C Bus 2
 //      sonarRangeR = hwMap.get( MaxSonarI2CXL.class, "rightUltrasonic" );  // I2C Bus 3
-        topConeSensor = hwMap.get( DigitalChannel.class, "ProxTop" );
+        topConeSensor    = hwMap.get( DigitalChannel.class, "ProxTop" );
         bottomConeSensor = hwMap.get( DigitalChannel.class, "ProxBottom" );
 
         // Make a note that we just finished autonomous setup
@@ -472,24 +472,24 @@ public class HardwareSlimbot
         //===== CONTROL HUB VALUES =====
         frontLeftMotorPos  = frontLeftMotor.getCurrentPosition();
         frontLeftMotorVel  = frontLeftMotor.getVelocity();
-//        frontLeftMotorAmps = frontLeftMotor.getCurrent(MILLIAMPS);
+//      frontLeftMotorAmps = frontLeftMotor.getCurrent(MILLIAMPS);
         frontRightMotorPos = frontRightMotor.getCurrentPosition();
         frontRightMotorVel = frontRightMotor.getVelocity();
-//        frontRightMotorAmps= frontRightMotor.getCurrent(MILLIAMPS);
+//      frontRightMotorAmps= frontRightMotor.getCurrent(MILLIAMPS);
         rearRightMotorPos  = rearRightMotor.getCurrentPosition();
         rearRightMotorVel  = rearRightMotor.getVelocity();
-//        rearRightMotorAmps = rearRightMotor.getCurrent(MILLIAMPS);
+//      rearRightMotorAmps = rearRightMotor.getCurrent(MILLIAMPS);
         rearLeftMotorPos   = rearLeftMotor.getCurrentPosition();
         rearLeftMotorVel   = rearLeftMotor.getVelocity();
-//        rearLeftMotorAmps  = rearLeftMotor.getCurrent(MILLIAMPS);
+//      rearLeftMotorAmps  = rearLeftMotor.getCurrent(MILLIAMPS);
         turretAngle        = computeAbsoluteAngle( turretEncoder.getVoltage(), turretAngleOffset );
         liftAngle          = computeAbsoluteAngle( liftEncoder.getVoltage(),   liftAngleOffset );
         //===== EXPANSION HUB VALUES =====
         turretMotorPos     = turretMotor.getCurrentPosition();
         turretMotorVel     = turretMotor.getVelocity();
         turretMotorPwr     = turretMotor.getPower();
-//        turretMotorAmps    = turretMotor.getCurrent(MILLIAMPS);
-//        liftMotorAmps      = liftMotorF.getCurrent(MILLIAMPS) + liftMotorB.getCurrent(MILLIAMPS);
+//      turretMotorAmps    = turretMotor.getCurrent(MILLIAMPS);
+//      liftMotorAmps      = liftMotorF.getCurrent(MILLIAMPS) + liftMotorB.getCurrent(MILLIAMPS);
         double liftMotorPwrPrior = liftMotorPwr;
         liftMotorPwr       = liftMotorF.getPower();
         liftMotorRamp      = isPwrRampingDown( liftMotorPwrPrior, liftMotorPwr );
@@ -503,7 +503,7 @@ public class HardwareSlimbot
         strafeOdometerPrev  = strafeOdometerCount;
         strafeOdometerCount = -liftMotorF.getCurrentPosition();  // Must be POSITIVE when bot moves RIGHT
         // Get the cone sensor states
-        topConeState = topConeSensor.getState();
+        topConeState    = topConeSensor.getState();
         bottomConeState = bottomConeSensor.getState();
 
         // Do we need to capture lift motor instrumentation data?
@@ -529,6 +529,7 @@ public class HardwareSlimbot
             if( ++turretMotorLogIndex >= TURRETMOTORLOG_SIZE )
                 turretMotorLogEnable = false;
         } // turretMotorLogEnable
+
     } // readBulkData
 
     /*--------------------------------------------------------------------------------------------*/

@@ -73,6 +73,7 @@ public abstract class Teleop extends LinearOpMode {
 
     ElapsedTime grabberRunTimer = new ElapsedTime();
     boolean     grabberRunning  = false;    // is an automatic collector activity running?
+    int         grabberCount    = 0;        // Number of cycles the grabber proximity detector has been ON
     boolean     grabberIntake   = true;     // is it an INTAKE activity? (false means EJECTION activity)
     boolean     grabberLifting  = false;    // if an INTAKE, has the collection occurred and now we're auto-lifting?
     double      grabberTarget1  = 0.0;      // grabber tilt for start of motion
@@ -266,9 +267,11 @@ public abstract class Teleop extends LinearOpMode {
             telemetry.addData("World X",     "%.2f in", (robotGlobalYCoordinatePosition / robot.COUNTS_PER_INCH2) );
             telemetry.addData("World Y",     "%.2f in", (robotGlobalXCoordinatePosition / robot.COUNTS_PER_INCH2) );
             // This incurs a 4msec loop tax
-//            telemetry.addData("Orientation", "%.2f deg (IMU %.2f)", Math.toDegrees(robotOrientationRadians),  robot.headingIMU() );
+//          telemetry.addData("Orientation", "%.2f deg (IMU %.2f)", Math.toDegrees(robotOrientationRadians),  robot.headingIMU() );
             telemetry.addData("CycleTime", "%.1f msec (%.1f Hz)", elapsedTime, elapsedHz );
-            telemetry.addData("Cone Sensors", "Top: %b Bottom: %b", robot.topConeState, robot.bottomConeState);
+            telemetry.addData("Cone Sensors", "Top: %s Bottom: %s",
+                                 ((robot.topConeState)?    "off":"ON"),
+                                 ((robot.bottomConeState)? "off":"ON") );
             if( batteryVoltsEnabled ) {
                telemetry.addData("Batteries", "CtlHub=%.3f V, ExHub=%.3f V",
                     robot.readBatteryControlHub()/1000.0, robot.readBatteryExpansionHub()/1000.0 );
@@ -904,6 +907,7 @@ public abstract class Teleop extends LinearOpMode {
         {   // intake cone
             robot.grabberSpinCollect();
             grabberRunning  = true;
+            grabberCount    = 0;     // reset our proximity detector counter
             grabberIntake   = true;
             grabberLifting  = false;
             // abort any automatic turret rotation that was still wrapping up
@@ -920,6 +924,7 @@ public abstract class Teleop extends LinearOpMode {
         {   // eject cone
             robot.grabberSpinEject();
             grabberRunning  = true;
+            grabberCount    = 0;     // reset our proximity detector counter
             grabberIntake   = false;
             grabberLifting  = false;
             grabberRunTimer.reset();
@@ -1081,7 +1086,7 @@ public abstract class Teleop extends LinearOpMode {
                 // Ensure we don't drive down below the lower limit, or at  unsafe turret angle
                 boolean stopForHeight = (robot.liftAngle >= robot.LIFT_ANGLE_MAX)? true : false;
                 boolean stopForLocation = (Math.abs(robot.turretAngle) >= 45.0)? true : false;
-                if( stopForHeight || stopForLocation ) {
+                if( !grabberLifting && (stopForHeight || stopForLocation) ) {
                     robot.liftMotorsSetPower( 0.0 );
                     robot.turretMotorSetPower( 0.0 );
                     // Ensure no automatic lift motion was involved
@@ -1089,22 +1094,20 @@ public abstract class Teleop extends LinearOpMode {
                     robot.turretMotorPIDAuto = false;
                 }
                 // Is first phase of collection complete?
+                boolean detectThisCycle = !robot.topConeState;
+                grabberCount += (detectThisCycle)? 1 : 0;
+                boolean stopForSensor  = (grabberCount >= 3);
                 boolean stopForTimeout = (elapsedTime >= 1000)? true : false;
-                if( (!robot.topConeState || stopForTimeout ) && !grabberLifting) {
+                if( (stopForSensor || stopForTimeout ) && !grabberLifting) {
                     // stop collecting
                     robot.grabberSpinStop();
                     // reverse lift motors
-                    robot.liftMotorsSetPower( 0.40 );
+                    robot.liftMotorsSetPower( 0.45 );
                     grabberRunTimer.reset();
                     grabberLifting = true;
                 }
-                // Did we collect a cone from the cone stack?
-//              if(collectingFromStack && !robot.topConeSensor.getState())
-//              {
-//                  collectingFromStack = false;
-//              }
                 // Is second phase complete?
-                else if( (elapsedTime >= 300) && grabberLifting ) {
+                else if( (elapsedTime >= 500) && grabberLifting ) {
                     // halt lift motors
                     robot.liftMotorsSetPower( 0.0 );
                     grabberRunning = false;
