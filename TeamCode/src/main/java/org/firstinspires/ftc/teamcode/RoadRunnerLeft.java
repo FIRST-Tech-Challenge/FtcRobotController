@@ -55,12 +55,12 @@ public class RoadRunnerLeft extends LinearOpMode {
     double tagsize = 0.166;
 
     // Tag ID 1,2,3 from the 36h11 family
-    int LEFT = 1;
-    int MIDDLE = 2;
-    int RIGHT = 3;
+    int LEFT = 0;
+    int MIDDLE = 1;
+    int RIGHT = 2;
 
     AprilTagDetection tagOfInterest = null;
-    int tag = 0;
+    int tagNum = 0;
 
 
     public void runOpMode() {
@@ -112,6 +112,7 @@ public class RoadRunnerLeft extends LinearOpMode {
                     if(tag.id == LEFT || tag.id == MIDDLE || tag.id == RIGHT)
                     {
                         tagOfInterest = tag;
+                        tagNum = tag.id;
                         tagFound = true;
                         break;
                     }
@@ -162,7 +163,7 @@ public class RoadRunnerLeft extends LinearOpMode {
 
         Trajectory firstMidPole = drive.trajectoryBuilder(new Pose2d(-36, -63, Math.toRadians(90)))
                 .splineToLinearHeading(new Pose2d(-36, -12, Math.toRadians(90)), Math.toRadians(90))
-                .splineToSplineHeading(new Pose2d(-30, -19, Math.toRadians(315)), Math.toRadians(315))
+                .splineToSplineHeading(new Pose2d(-30, -18.5, Math.toRadians(315)), Math.toRadians(315))
                 .build();
 
         Trajectory stackMidPoint = drive.trajectoryBuilder(firstMidPole.end())
@@ -171,7 +172,7 @@ public class RoadRunnerLeft extends LinearOpMode {
                 .build();
 
         Trajectory stack = drive.trajectoryBuilder(stackMidPoint.end())
-                .lineToLinearHeading(new Pose2d(-64, -9, Math.toRadians(180)))
+                .lineToLinearHeading(new Pose2d(-61.5, -8, Math.toRadians(180)))
                 .build();
 
         Trajectory stackBack = drive.trajectoryBuilder(stack.end())
@@ -179,27 +180,27 @@ public class RoadRunnerLeft extends LinearOpMode {
                 .build();
 
         Trajectory secMidPole = drive.trajectoryBuilder(stackBack.end())
-                .lineToLinearHeading(new Pose2d(-36, -14, Math.toRadians(320)))
+                .lineToLinearHeading(new Pose2d(-36, -14.25, Math.toRadians(320)))
                 .build();
 
         Trajectory secMidPoleForward = drive.trajectoryBuilder(secMidPole.end())
-                .forward(8)
+                .forward(7)
                 .build();
 
         Trajectory secMidPoleBack = drive.trajectoryBuilder(secMidPoleForward.end())
-                .back(10)
+                .back(9)
                 .build();
 
         Trajectory stack2 = drive.trajectoryBuilder(secMidPoleBack.end())
-                .lineToLinearHeading(new Pose2d(-64, -9, Math.toRadians(180)))
+                .lineToLinearHeading(new Pose2d(-61.5, -8, Math.toRadians(180)))
                 .build();
 
         Trajectory park1 = drive.trajectoryBuilder(secMidPoleBack.end())
-                .lineToLinearHeading(new Pose2d(-36, -12, Math.toRadians(180)))
+                .lineToLinearHeading(new Pose2d(-58, -12, Math.toRadians(180)))
                 .build();
 
         Trajectory park2 = drive.trajectoryBuilder(secMidPoleBack.end())
-                .lineToLinearHeading(new Pose2d(-64, -12, Math.toRadians(180)))
+                .lineToLinearHeading(new Pose2d(-36, -12, Math.toRadians(180)))
                 .build();
 
         Trajectory park3 = drive.trajectoryBuilder(secMidPoleBack.end())
@@ -266,12 +267,16 @@ public class RoadRunnerLeft extends LinearOpMode {
 
         drive.followTrajectory(secMidPoleBack);
 
-        if (tag == 1) {
+        manipulator.moveSlideEncoder(INTAKE_TICKS, 1);
+        PoseHolder.slideHeight = INTAKE_TICKS;
+
+        if (tagNum == 0) {
             drive.followTrajectory(park1);
-        } else if (tag == 2) {
+        } else if (tagNum == 1) {
             drive.followTrajectory(park2);
         } else {
             drive.followTrajectory(park3);
+
         }
     }
 

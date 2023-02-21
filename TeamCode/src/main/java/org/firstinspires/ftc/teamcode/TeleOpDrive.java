@@ -254,6 +254,7 @@ public class TeleOpDrive extends LinearOpMode{
 //                drive.turnWithPID(0, 1, 0, 0.0001, 1);
 //            }
 //            if (gamepad1.dpad_down) {
+
 //                drive.turnWithPID(180, 1, 0, 0.0001, 1);
 //            }
 //
@@ -270,9 +271,10 @@ public class TeleOpDrive extends LinearOpMode{
             } else if (gamepad2.dpad_down) {
                 manipulator.moveSlides(-0.9);
             } else {
-                if (gamepad1.left_stick_button) {
-                    manipulator.moveSlideEncoder(START_TICKS,0.9);
-                } else if (gamepad1.right_stick_button) {
+                if (gamepad1.y || (gamepad2.left_trigger > 0.2)) {
+                    manipulator.moveSlideEncoder(START_TICKS,0.9
+                    );
+                } else if (gamepad1.a) {
                     manipulator.moveSlideEncoder(INTAKE_TICKS,0.9);
                 } else if (gamepad2.a) {
                     manipulator.moveSlideEncoder(LOW_TICKS,0.9);
