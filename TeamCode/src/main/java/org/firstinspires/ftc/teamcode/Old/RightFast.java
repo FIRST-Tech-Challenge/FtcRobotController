@@ -16,6 +16,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 
 @Autonomous(name="OneConeRight")
+@Disabled
 public class RightFast extends LinearOpMode {
 
     DcMotor frontleft;

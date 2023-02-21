@@ -204,74 +204,69 @@ public class MainBase {
     // ***************************************************************
 
 
-    public void navxgyroTurn(
-                       double targetAngle,
-                       LinearOpMode opMode) {
 
-        yawPIDController = new navXPIDController(navx_device,
-                navXPIDController.navXTimestampedDataSource.YAW);
+//    public void navxgyroTurn(double speed,
+//                       double targetAngle,
+//                       LinearOpMode opMode) {
+//
+////        yawPIDController = new navXPIDController(navx_device,
+////                navXPIDController.navXTimestampedDataSource.YAW);
+////
+////        double TURN_P = 0.08;
+////        double TURN_I = 0;
+////        double TURN_D = 0;
+////        double TURN_TOLERANCE_DEGREES = .4;
+////        /* Configure the PID controller */
+////        yawPIDController.setPID(TURN_P, TURN_I, TURN_D);
+////
+////        yawPIDController.setSetpoint(targetAngle);
+////        yawPIDController.setContinuous(true);
+////        yawPIDController.setOutputRange(MIN_MOTOR_OUTPUT_VALUE, MAX_MOTOR_OUTPUT_VALUE);
+////        yawPIDController.setTolerance(navXPIDController.ToleranceType.ABSOLUTE, TURN_TOLERANCE_DEGREES);
+////        yawPIDController.enable(true);
+//
+//
+//        /* Wait for new Yaw PID output values, then update the motors
+//           with the new PID value with each new output value.
+//         */
+////            navXPIDController.PIDResult yawPIDResult = new navXPIDController.PIDResult();
+//
+//            DecimalFormat df = new DecimalFormat("#.##");
+//
+//            while (opMode.opModeIsActive() && navx_device.getYaw() <= targetAngle) {
+//                frontleft.setPower(-speed);
+//                frontright.setPower(speed);
+//                backleft.setPower(-speed);
+//                backright.setPower(speed);
+//                opMode.telemetry.addLine("Turning");
+//                opMode.telemetry.addData("Current Yaw", df.format(navx_device.getYaw()));
+//                opMode.telemetry.addData("Error", yawPIDController.getError());
+//                opMode.telemetry.update();
+//            }
+//
+//        frontleft.setPower(0);
+//        frontright.setPower(0);
+//        backleft.setPower(0);
+//        backright.setPower(0);
+//        opMode.telemetry.addData("Current Yaw", df.format(navx_device.getYaw()));
+//        opMode.telemetry.addData("Error", yawPIDController.getError());
+//        opMode.telemetry.update();
+//
+//
+//        }
 
-        /* Configure the PID controller */
-        yawPIDController.setPID(YAW_PID_P, YAW_PID_I, YAW_PID_D);
-        yawPIDController.setSetpoint(targetAngle);
-        yawPIDController.setContinuous(true);
-        yawPIDController.setOutputRange(MIN_MOTOR_OUTPUT_VALUE, MAX_MOTOR_OUTPUT_VALUE);
-        yawPIDController.setTolerance(navXPIDController.ToleranceType.ABSOLUTE, TOLERANCE_DEGREES);
-        yawPIDController.enable(true);
 
-        navx_device.zeroYaw();
 
-        /* Wait for new Yaw PID output values, then update the motors
-           with the new PID value with each new output value.
+
+
+
+        /**
+         * --------------------DOES NOT WORK-------------------------------
+         * this is the ConceptNavxDriveStraightPIDLinearOp from navx example made into a function
+         * used PID which is set above
+         * @param targetDistance
+         * @param opMode
          */
-
-
-        navXPIDController.PIDResult yawPIDResult = new navXPIDController.PIDResult();
-
-        /* Drive straight forward at 1/2 of full drive speed */
-        double drive_speed = 0.5;
-
-        DecimalFormat df = new DecimalFormat("#.##");
-        opMode.telemetry.addData("error", yawPIDController.getError());
-        opMode.telemetry.update();
-        opMode.sleep(5000);
-
-        if(opMode.opModeIsActive() && yawPIDController.getError() <= .5){
-                    double output = yawPIDResult.getOutput();
-                    frontright.setPower(drive_speed + output);
-                    frontleft.setPower(drive_speed - output);
-                    backleft.setPower(drive_speed - output);
-                    backright.setPower(drive_speed + output);
-                    opMode.telemetry.addLine("FIXING");
-                    opMode.telemetry.addData("Error", yawPIDController.getError());
-                    opMode.telemetry.addData("PIDOutput", df.format(limit(drive_speed + output)) + ", " +
-                            df.format(limit(drive_speed - output)));
-        }
-
-            // Stop all motion;
-            frontleft.setPower(0);
-            frontright.setPower(0);
-            backleft.setPower(0);
-            backright.setPower(0);
-
-            // Turn off RUN_TO_POSITION
-
-            frontleft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-            frontright.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-            backleft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-            backright.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        }
-
-
-
-
-    /**
-     * --------------------DOES NOT WORK-------------------------------
-     * this is the ConceptNavxDriveStraightPIDLinearOp from navx example made into a function
-     * used PID which is set above
-     * @param targetDistance
-     * @param opMode
-     */
     public void navxDriveExample(double targetAngle, double targetDistance, LinearOpMode opMode)  {
 
         /* Create a PID Controller which uses the Yaw Angle as input. */
@@ -370,8 +365,7 @@ public class MainBase {
 
         yawPIDController.setSetpoint(angle);
 
-        opMode.telemetry.addData("yawPIDController.getSetpoint()",yawPIDController.getSetpoint());
-        opMode.telemetry.update();
+
 
         double HalfMaxOne;
         double HalfMaxTwo;
@@ -664,19 +658,16 @@ public class MainBase {
      * Find tape on field using color sensor
      * Change FIND_LINE_TIME to tell it how long it has to find the line before exiting program
      */
-    public void findLine(){
-
-
+    public void findLine(double holdTime, LinearOpMode opMode){
         ElapsedTime holdTimer = new ElapsedTime();
 
         // keep looping while we have time remaining.
         holdTimer.reset();
-        while (color.blue() <= 270 && (holdTimer.time() < FIND_LINE_TIME)) {
+        while (color.blue() <= 270 || (holdTimer.time() < holdTime)) {
             backright.setPower(-.05);
             backleft.setPower(.05);
             frontright.setPower(.05);
             frontleft.setPower(-.05);
-
         }
 
         backright.setPower(0);
@@ -716,7 +707,7 @@ public class MainBase {
         leftgrabber.setPower(.7);
         rightgrabber.setPower(-.7);
 
-        opMode.sleep(1000);
+        opMode.sleep(700);
 
         rightgrabber.setPower(0);
         leftgrabber.setPower(0);
@@ -728,17 +719,17 @@ public class MainBase {
      * Let go of cone
      */
     public void letGoGirl(LinearOpMode opMode){
-        goLift(-6,.7);
+        goLift(-5,.4);
         while(lift.isBusy()){
         }
         leftgrabber.setPower(-1);
         rightgrabber.setPower(1);
 
-        opMode.sleep(700);
+        opMode.sleep(600);
 
         rightgrabber.setPower(0);
         leftgrabber.setPower(0);
-        goLift(6,.9);
+        goLift(5,.9);
     }
 
 
@@ -892,7 +883,6 @@ public class MainBase {
         yawPIDController.setTolerance(navXPIDController.ToleranceType.ABSOLUTE, TOLERANCE_DEGREES);
         yawPIDController.enable(true);
 
-        navx_device.zeroYaw();
 
         /* Wait for new Yaw PID output values, then update the motors
            with the new PID value with each new output value.
@@ -1088,7 +1078,40 @@ public class MainBase {
         frontright.setPower(0);
     }
 
+    public void navxgyroHold(double speed, double angle, double holdTime, LinearOpMode opMode) {
 
+        ElapsedTime holdTimer = new ElapsedTime();
+
+        // keep looping while we have time remaining.
+        holdTimer.reset();
+        while (opMode.opModeIsActive() && (holdTimer.time() < holdTime)) {
+            // Update telemetry & Allow time for other processes to run.
+            navxonHeading(speed, angle, P_TURN_COEFF);
+            opMode.telemetry.update();
+
+        }
+
+        // Stop all motion;
+        frontleft.setPower(0);
+        backleft.setPower(0);
+        backright.setPower(0);
+        frontright.setPower(0);
+    }
+
+    public void navxgyroTurn(double speed, double angle, LinearOpMode opMode) {
+
+
+        // Update telemetry & Allow time for other processes to run.
+        navxonHeading(speed, angle, P_TURN_COEFF);
+        opMode.telemetry.update();
+
+
+        // Stop all motion;
+        frontleft.setPower(0);
+        backleft.setPower(0);
+        backright.setPower(0);
+        frontright.setPower(0);
+    }
 
 
     // ***************************************************************
@@ -1144,33 +1167,102 @@ public class MainBase {
         return onTarget;
     }
 
-    boolean navxonHeading(double speed, double angle, double PCoeff) {
+
+
+    boolean navxonHeading(double speed, double targetAngle, double PCoeff) {
         double error;
         double steer;
         boolean onTarget = false;
         double leftSpeed;
         double rightSpeed;
 
-        yawPIDController.setSetpoint(angle);
+        yawPIDController = new navXPIDController(navx_device,
+                navXPIDController.navXTimestampedDataSource.YAW);
+
+        /* Configure the PID controller */
+
+        yawPIDController.setSetpoint(targetAngle);
+//        yawPIDController.setContinuous(true);
+        yawPIDController.enable(true);
+
         // determine turn power based on +/- error
 
 
-        if (yawPIDController.getError() <= HEADING_THRESHOLD) {
-            steer = 0.0;
-            leftSpeed = 0.0;
-            rightSpeed = 0.0;
-            onTarget = true;
-        } else {
-            steer = getSteer(yawPIDController.getError(), PCoeff);
-            rightSpeed = speed * steer;
-            leftSpeed = -rightSpeed;
-        }
+        opMode.telemetry.addData("Current Yaw", navx_device.getYaw());
+        opMode.telemetry.addData("Error", yawPIDController.getError());
+//            if (yawPIDController.getError() <= .2 && yawPIDController.getError() >= -.2) {
+//            steer = 0.0;
+//            leftSpeed = 0;
+//            rightSpeed = 0;
+//            onTarget = true;
+//            opMode.telemetry.addLine("NOTHING");
+//            } else {
+//                steer = getSteer(yawPIDController.getError(), PCoeff);
+//                rightSpeed = speed * -steer;
+//                leftSpeed = -rightSpeed;
+//                //turning Left
+//                opMode.telemetry.addLine("Left");
+//            }
 
-        // Send desired speeds to motors.
-        frontleft.setPower(leftSpeed);
-        backleft.setPower(leftSpeed);
-        backright.setPower(rightSpeed);
-        frontright.setPower(rightSpeed);
+        while(!((navx_device.getYaw() <= targetAngle + .5) && (navx_device.getYaw() >= targetAngle - .5))){
+            opMode.telemetry.addData("Current Yaw", navx_device.getYaw());
+            opMode.telemetry.addData("Error", yawPIDController.getError());
+            opMode.telemetry.addLine("IN LOOP");
+
+            if (navx_device.getYaw() <= targetAngle + .5){
+//                steer = Range.clip(yawPIDController.getError() * PCoeff, -DRIVE_SPEED07, 1);
+                rightSpeed = speed;
+                leftSpeed = -rightSpeed;
+                //turning Left
+                opMode.telemetry.addLine("TURNING LEFT");
+            }else{
+//                steer = Range.clip(yawPIDController.getError() * PCoeff, -DRIVE_SPEED07, 1);
+                rightSpeed = -speed;
+                leftSpeed = -rightSpeed;
+                //turning Left
+                opMode.telemetry.addLine("TURNING RIGHT");
+            }
+            opMode.telemetry.update();
+            // Send desired speeds to motors.
+            frontleft.setPower(leftSpeed);
+            backleft.setPower(leftSpeed);
+            backright.setPower(rightSpeed);
+            frontright.setPower(rightSpeed);
+        }
+        frontleft.setPower(0);
+        backleft.setPower(0);
+        backright.setPower(0);
+        frontright.setPower(0);
+        opMode.telemetry.addLine("EXITED LOOP");
+
+
+//        if ((yawPIDController.getError() <= .5) && (yawPIDController.getError() >= -.5)) {
+//            steer = 0.0;
+//            leftSpeed = 0;
+//            rightSpeed = 0;
+//            onTarget = true;
+//            opMode.telemetry.addLine("NOTHING");
+//        } else if (yawPIDController.getError() <= -.2){
+//            steer = getSteer(yawPIDController.getError(), PCoeff);
+//            rightSpeed = speed * -steer;
+//            leftSpeed = -rightSpeed;
+//            //turning Left
+//            opMode.telemetry.addLine("TURNING LEFT");
+//        }else{
+//            steer = getSteer(yawPIDController.getError(), PCoeff);
+//            rightSpeed = speed * -steer;
+//            leftSpeed = -rightSpeed;
+//            //turning Left
+//            opMode.telemetry.addLine("TURNING RIGHT");
+//        }
+//            opMode.telemetry.update();
+//
+//            frontleft.setPower(leftSpeed);
+//            backleft.setPower(leftSpeed);
+//            backright.setPower(rightSpeed);
+//            frontright.setPower(rightSpeed);
+
+
 
         // Display it for the driver.
 //        telemetry.addData("Target", "%5.2f", angle);
