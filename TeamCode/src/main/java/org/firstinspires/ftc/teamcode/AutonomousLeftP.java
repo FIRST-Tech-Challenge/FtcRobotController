@@ -138,7 +138,7 @@ public class AutonomousLeftP extends AutonomousBase {
         // Only do these steps if we didn't hit STOP
         if( opModeIsActive() ) {
             signalZone = pipelineLow.signalZoneL;
-            pipelineLow.saveLastAutoImage(blueAlliance, true);
+            pipelineLow.saveLastAutoImage( );
         }
         // Turn off detecting the signal.
         pipelineLow.signalDetection(false);

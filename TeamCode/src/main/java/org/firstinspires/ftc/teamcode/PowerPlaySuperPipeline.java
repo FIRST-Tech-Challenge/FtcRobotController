@@ -253,16 +253,22 @@ class PowerPlaySuperPipeline extends OpenCvPipeline
     // Call these functions to save the image associated with the detected object.
     public void saveConeAutoImage(AnalyzedCone detectedCone) {
         String timeString = new SimpleDateFormat("hh-mm-ss", Locale.getDefault()).format(new Date());
+
+        createImageStorageFolder( );
         String filePath = directory + "/" + "ConeImage_" + timeString + ".png";
         saveImage(filePath, detectedCone.analyzedFrame);
     }
     public void saveTapeAutoImage(AnalyzedTape detectedTape) {
         String timeString = new SimpleDateFormat("hh-mm-ss", Locale.getDefault()).format(new Date());
+
+        createImageStorageFolder( );
         String filePath = directory + "/" + "TapeImage_" + timeString + ".png";
         saveImage(filePath, detectedTape.analyzedFrame);
     }
     public void savePoleAutoImage(AnalyzedPole detectedPole) {
         String timeString = new SimpleDateFormat("hh-mm-ss", Locale.getDefault()).format(new Date());
+
+        createImageStorageFolder( );
         String filePath = directory + "/" + "PoleImage_" + timeString + ".png";
         saveImage(filePath, detectedPole.analyzedFrame);
     }
@@ -275,8 +281,8 @@ class PowerPlaySuperPipeline extends OpenCvPipeline
             {
                 try
                 {
-                    Imgproc.cvtColor(finalAutoImage, finalAutoImage, Imgproc.COLOR_RGB2BGR);
-                    Imgcodecs.imwrite(filePath, finalAutoImage);
+                    Imgproc.cvtColor(image, image, Imgproc.COLOR_RGB2BGR);
+                    Imgcodecs.imwrite(filePath, image);
                 }
                 catch (Exception e)
                 {
@@ -284,25 +290,24 @@ class PowerPlaySuperPipeline extends OpenCvPipeline
                 }
                 finally
                 {
-                    finalAutoImage.release();
+                    image.release();
                 }
             }
         }).start();
     }
 
-    public void saveLastAutoImage(boolean blueAlliance, boolean leftSide) {
+    protected void createImageStorageFolder( ) {
         // Create a subdirectory based on DATE
         String dateString = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(new Date());
-        String timeString = new SimpleDateFormat("hh-mm-ss", Locale.getDefault()).format(new Date());
         directory = Environment.getExternalStorageDirectory().getPath() + "//FIRST//Webcam//" + dateString;
-        if (blueAlliance) {
-            if (leftSide) {
+        if (isBlueAlliance) {
+            if (isLeft) {
                 directory += "/blue_left";
             } else {
                 directory += "/blue_right";
             }
         } else {
-            if (leftSide) {
+            if (isLeft) {
                 directory += "/red_left";
             } else {
                 directory += "/red_right";
@@ -311,7 +316,12 @@ class PowerPlaySuperPipeline extends OpenCvPipeline
         // Create the directory structure to store the autonomous image used to start auto.
         File baseDir = new File(directory);
         baseDir.mkdirs();
+    }
 
+    public void saveLastAutoImage( ) {
+        String timeString = new SimpleDateFormat("hh-mm-ss", Locale.getDefault()).format(new Date());
+
+        createImageStorageFolder( );
         String filePath = directory + "/" + "AutoImage_" + timeString + ".png";
         saveImage(filePath, finalAutoImage);
     }

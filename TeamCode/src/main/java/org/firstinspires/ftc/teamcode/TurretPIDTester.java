@@ -44,6 +44,8 @@ import org.openftc.easyopencv.OpenCvCameraRotation;
 //@Disabled
 public class TurretPIDTester extends AutonomousBase
 {
+    boolean alignToFront = true;
+    OpenCvCamera webcamBack;
     OpenCvCamera webcamFront;
     OpenCvCamera webcamLow;
     PowerPlaySuperPipeline pipelineLow;
@@ -64,6 +66,7 @@ public class TurretPIDTester extends AutonomousBase
     boolean turretFacingFront = false;
     boolean lowCameraInitialized = false;
     boolean frontCameraInitialized = false;
+    boolean backCameraInitialized = false;
     double maxPower = 0.0;
 
     /**
@@ -148,29 +151,22 @@ public class TurretPIDTester extends AutonomousBase
     void alignToPole(boolean turretFacingFront) {
         PowerPlaySuperPipeline alignmentPipeline;
         PowerPlaySuperPipeline.AnalyzedPole theLocalPole;
-        final double DRIVE_SLOPE  = 0.004187;
-        final double DRIVE_OFFSET = 0.04522;
-        final int TURRET_CYCLES_AT_POS = 8;
-        // minPower=0; kp = 0.0027
-        // Converting from pixels to degrees
 
         double targetAngle;
         double targetDistanceX;
         double targetDistanceY;
         double targetPositionX;
         double targetPositionY;
-        double turretPower;
-        double turretPowerMax = 0.14;  // maximum we don't want the PID to exceed
-        double drivePower;
-
-        double startTime = autonomousTimer.milliseconds();
-        double abortTime = startTime + 3000.0;  // abort after 3 seconds
 
         // If we add back front camera, use boolean to determine which pipeline to use.
-//        alignmentPipeline = turretFacingFront ? pipelineFront : pipelineBack;
-        alignmentPipeline = pipelineFront;
+        alignmentPipeline = turretFacingFront ? pipelineFront : pipelineBack;
 
+        alignmentPipeline.isBlueAlliance = true;
+        alignmentPipeline.isLeft = true;
+
+        // Get the image to do our decision making
         theLocalPole = alignmentPipeline.getDetectedPole();
+        alignmentPipeline.savePoleAutoImage(theLocalPole);
         // This is the angle the pole is in relation to the turret angle
         targetAngle = robot.turretAngle + theLocalPole.centralOffsetDegrees;
         robot.turretPIDPosInit(targetAngle);
@@ -185,6 +181,10 @@ public class TurretPIDTester extends AutonomousBase
 
         robot.stopMotion();
         robot.turretMotorSetPower(0.0);
+
+        // Get the image after our adjustments
+        theLocalPole = alignmentPipeline.getDetectedPole();
+        alignmentPipeline.savePoleAutoImage(theLocalPole);
     } // alignToPole
 
     @Override
@@ -199,28 +199,43 @@ public class TurretPIDTester extends AutonomousBase
                         2, //The number of sub-containers to create
                         OpenCvCameraFactory.ViewportSplitMethod.VERTICALLY); //Whether to split the container vertically or horizontally
 
-        // This will be called if the camera could not be opened
+        if(alignToFront) {
+            webcamFront = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class,
+                    "Webcam Front"), viewportContainerIds[0]);
+            webcamFront.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
+                @Override
+                public void onOpened() {
+                    pipelineFront = new PowerPlaySuperPipeline(false, true, false, false, 144.0);
+                    webcamFront.setPipeline(pipelineFront);
+                    webcamFront.startStreaming(320, 240, OpenCvCameraRotation.UPRIGHT);
+                    frontCameraInitialized = true;
+                }
 
-        webcamFront = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class,
-                "Webcam Front"), viewportContainerIds[0]);
-        webcamFront.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener()
-        {
-            @Override
-            public void onOpened()
-            {
-                pipelineFront = new PowerPlaySuperPipeline(false, true, false, false, 144.0);
-                webcamFront.setPipeline(pipelineFront);
-                webcamFront.startStreaming(320, 240, OpenCvCameraRotation.UPRIGHT);
-                frontCameraInitialized = true;
-            }
+                @Override
+                public void onError(int errorCode) {
+                    // This will be called if the camera could not be opened
+                }
+            });
+            webcamFront.showFpsMeterOnViewport(false);
+        } else {
+            webcamBack = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class,
+                    "Webcam Back"), viewportContainerIds[0]);
+            webcamBack.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
+                @Override
+                public void onOpened() {
+                    pipelineBack = new PowerPlaySuperPipeline(false, true, false, false, 144.0);
+                    webcamBack.setPipeline(pipelineFront);
+                    webcamBack.startStreaming(320, 240, OpenCvCameraRotation.UPRIGHT);
+                    backCameraInitialized = true;
+                }
 
-            @Override
-            public void onError(int errorCode)
-            {
-                // This will be called if the camera could not be opened
-            }
-        });
-        webcamFront.showFpsMeterOnViewport(false);
+                @Override
+                public void onError(int errorCode) {
+                    // This will be called if the camera could not be opened
+                }
+            });
+            webcamFront.showFpsMeterOnViewport(false);
+        }
 
         webcamLow = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class,
                 "Webcam Low"), viewportContainerIds[1]);
@@ -244,7 +259,7 @@ public class TurretPIDTester extends AutonomousBase
         });
         webcamLow.showFpsMeterOnViewport(false);
 
-        while(!(lowCameraInitialized && frontCameraInitialized)) {
+        while(!(lowCameraInitialized && (frontCameraInitialized || backCameraInitialized))) {
             sleep(100);
         }
         telemetry.addLine("Robot initializing, wait for completion.");
@@ -279,9 +294,8 @@ public class TurretPIDTester extends AutonomousBase
         while (opModeIsActive())
         {
             performEveryLoop();
-            alignToPole(true);
+            alignToPole(alignToFront);
 
-            // Use the camera to align to the pole, and set the correct distance away
             int sleepCycles = 5;
             while(sleepCycles > 0) {
                 sleepCycles--;
@@ -295,7 +309,7 @@ public class TurretPIDTester extends AutonomousBase
                             kpMinHistory[index], kpHistory[index], kiHistory[index], kdHistory[index]);
                 }
                 telemetry.update();
-                sleep(1000);
+                sleep(10000);
             }
         }
     }
