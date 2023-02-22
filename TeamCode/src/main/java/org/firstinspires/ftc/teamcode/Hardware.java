@@ -36,6 +36,8 @@ import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.DigitalChannel;
+import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -84,6 +86,9 @@ public class Hardware {
     public RevColorSensorV3 leftColor = null;
     public RevColorSensorV3 rightColor = null;
 
+    public DigitalChannel redLED = null;
+    public DigitalChannel greenLED = null;
+
     //public RevBlinkinLedDriver illuminate = null;
 
     public OpenCvWebcam webcam;
@@ -124,12 +129,18 @@ public class Hardware {
         gripperWheel = hwMap.get(CRServo.class, "gw");
 
         imu = hwMap.get(BNO055IMU.class, "imu");
+
+        redLED = hwMap.get(DigitalChannel.class, "red");
+        greenLED = hwMap.get(DigitalChannel.class, "green");
+
         //rightColor = hwMap.get(RevColorSensorV3.class, "rcolor");
         //leftColor = hwMap.get(RevColorSensorV3.class, "lcolor");
         int cameraMonitorViewId = hwMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hwMap.appContext.getPackageName());
         webcam = OpenCvCameraFactory.getInstance().createWebcam(hwMap.get(WebcamName.class, "webcam"));
         webcam2 = OpenCvCameraFactory.getInstance().createWebcam(hwMap.get(WebcamName.class, "webcam2"), cameraMonitorViewId);
 
+        redLED.setMode(DigitalChannel.Mode.OUTPUT);
+        greenLED.setMode(DigitalChannel.Mode.OUTPUT);
 
         //  bottomColorSensor = hwMap.get(RevColorSensorV3.class, "bottomColor");
         backLeftDrive.setDirection(DcMotor.Direction.REVERSE);

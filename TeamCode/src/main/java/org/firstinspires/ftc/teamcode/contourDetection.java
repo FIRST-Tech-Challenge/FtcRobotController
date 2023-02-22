@@ -91,15 +91,22 @@ public class contourDetection extends LinearOpMode {
         while (opModeIsActive()) {
             // Don't burn an insane amount of CPU cycles in this sample because
             // we're not doing anything else
-            sleep(20);
+            sleep(2000);
 
             // Figure out which stones the pipeline detected, and print them to telemetry
             ArrayList<StoneOrientationAnalysisPipeline.AnalyzedStone> stones = pipeline.getDetectedStones();
+
+            for (StoneOrientationAnalysisPipeline.AnalyzedStone stone : stones) {
+                if (stone.area > pipeline.maxArea) {
+                    pipeline.maxArea = stone.position;
+                }
+            }
+
             if (stones.isEmpty()) {
                 telemetry.addLine("No stones detected");
             } else {
                 for (StoneOrientationAnalysisPipeline.AnalyzedStone stone : stones) {
-                    telemetry.addLine(String.format("Stone: Orientation=%s, Angle=%f", stone.orientation.toString(), stone.angle));
+                    telemetry.addLine(String.format("Area=%f", pipeline.maxArea));
                 }
             }
 
@@ -117,12 +124,6 @@ public class contourDetection extends LinearOpMode {
         Mat contoursOnPlainImageMat = new Mat();
 
         /*
-         * Threshold values
-         */
-        static final int CB_CHAN_MASK_THRESHOLD = 80;
-        static final double DENSITY_UPRIGHT_THRESHOLD = 0.03;
-
-        /*
          * The elements we use for noise reduction
          */
         Mat erodeElement = Imgproc.getStructuringElement(Imgproc.MORPH_RECT, new Size(3, 3));
@@ -137,12 +138,15 @@ public class contourDetection extends LinearOpMode {
         static final Scalar GREEN = new Scalar(0, 255, 0);
         static final Scalar BLUE = new Scalar(0, 0, 255);
 
+        double maxArea = 1;
+
         static final int CONTOUR_LINE_THICKNESS = 2;
         static final int CB_CHAN_IDX = 2;
 
         static class AnalyzedStone {
             StoneOrientation orientation;
-            double angle;
+            double position;
+            double area;
         }
 
         enum StoneOrientation {
@@ -163,6 +167,7 @@ public class contourDetection extends LinearOpMode {
             MASK_NR,
             CONTOURS;
         }
+
 
         Stage[] stages = Stage.values();
 
@@ -237,12 +242,14 @@ public class contourDetection extends LinearOpMode {
             ArrayList<MatOfPoint> contoursList = new ArrayList<>();
 
             // Convert the input image to YCrCb color space, then extract the Cb channel
-            Imgproc.cvtColor(input, imgHSV, Imgproc.COLOR_RGB2HSV);
+            //Imgproc.cvtColor(input, imgHSV, Imgproc.COLOR_RGB2HSV);
+            Imgproc.cvtColor(input, imgHSV, Imgproc.COLOR_RGB2Lab);
             //Core.extractChannel(imgHSV, imgHSV, CB_CHAN_IDX);
 
+
             // Threshold the Cb channel to form a mask, then run some noise reduction
-            //Imgproc.threshold(imgHSV, thresholdMat, CB_CHAN_MASK_THRESHOLD, 255, Imgproc.THRESH_BINARY_INV);
-            Core.inRange(imgHSV, new Scalar(20,100,100), new Scalar(60,255,255), imgHSV);
+            //Core.inRange(imgHSV, new Scalar(20,100,100), new Scalar(60,255,255), imgHSV);
+            Core.inRange(imgHSV, new Scalar(50,100,150), new Scalar(240,150,255),imgHSV);
             morphMask(imgHSV, morphedThreshold);
 
 
@@ -268,7 +275,7 @@ public class contourDetection extends LinearOpMode {
             Imgproc.dilate(output, output, dilateElement);
         }
 
-        void analyzeContour(MatOfPoint contour, Mat input) {
+        ContourRegionAnalysis analyzeContour(MatOfPoint contour, Mat input) {
             // Transform the contour to a different format
             Point[] points = contour.toArray();
             MatOfPoint2f contour2f = new MatOfPoint2f(contour.toArray());
@@ -280,20 +287,10 @@ public class contourDetection extends LinearOpMode {
             // The angle OpenCV gives us can be ambiguous, so look at the shape of
             // the rectangle to fix that.
             double rotRectAngle = rotatedRectFitToContour.angle;
-            if (rotatedRectFitToContour.size.width < rotatedRectFitToContour.size.height) {
+            double centerLinePos = rotatedRectFitToContour.center.x;
+            if (rotatedRectFitToContour.size.width > rotatedRectFitToContour.size.height) {
                 rotRectAngle += 90;
             }
-
-            // Figure out the slope of a line which would run through the middle, lengthwise
-            // (Slope as in m from 'Y = mx + b')
-            double midlineSlope = Math.tan(Math.toRadians(rotRectAngle));
-
-            // We're going to split the this contour into two regions: one region for the points
-            // which fall above the midline, and one region for the points which fall below.
-            // We'll need a place to store the points as we split them, so we make ArrayLists
-
-            // Now that we've split the contour into those two regions, we analyze each
-            // region independently.
 
             // We're going to draw line from the center of the bounding rect, to outside the bounding rect, in the
             // direction of the side of the stone with the nubs.
@@ -304,16 +301,31 @@ public class contourDetection extends LinearOpMode {
              * then we assume the stone is on its side. Otherwise, if the difference is inside
              * of the threshold, we assume it's upright.
              */
-            Imgproc.line(
-                    input, // Buffer we're drawing on
-                    new Point( // First point of the line (center of bounding rect)
-                            rotatedRectFitToContour.center.x + displOfOrientationLinePoint2.x,
-                            rotatedRectFitToContour.center.y + displOfOrientationLinePoint2.y),
-                    new Point( // Second point of the line (center - displacement we calculated earlier)
-                            rotatedRectFitToContour.center.x - displOfOrientationLinePoint2.x,
-                            rotatedRectFitToContour.center.y - displOfOrientationLinePoint2.y),
-                    PURPLE, // Color we're drawing the line in
-                    2); // Thickness of the line we're drawing
+
+            ContourRegionAnalysis regionMetrics = analyzeContourRegion(new ArrayList<>(contour2f.toList()));
+
+
+
+                Imgproc.line(
+                        input, // Buffer we're drawing on
+                        new Point( // First point of the line (center of bounding rect)
+                                rotatedRectFitToContour.center.x + displOfOrientationLinePoint2.x,
+                                rotatedRectFitToContour.center.y + displOfOrientationLinePoint2.y),
+                        new Point( // Second point of the line (center - displacement we calculated earlier)
+                                rotatedRectFitToContour.center.x - displOfOrientationLinePoint2.x,
+                                rotatedRectFitToContour.center.y - displOfOrientationLinePoint2.y),
+                        PURPLE, // Color we're drawing the line in
+                        2); // Thickness of the line we're drawing
+
+                AnalyzedStone analyzedStone = new AnalyzedStone();
+                analyzedStone.area = regionMetrics.contourArea;
+                analyzedStone.position = rotatedRectFitToContour.center.x;
+
+                //internalStoneList.clear();
+                internalStoneList.add(analyzedStone);
+
+
+            return regionMetrics;
         }
 
         static class ContourRegionAnalysis {
@@ -378,10 +390,10 @@ public class contourDetection extends LinearOpMode {
             Point point = new Point();
 
             // Figure out the length of the short side of the rect
-            double shortSideLen = Math.min(rect.size.width, rect.size.height);
+            double longSideLen = Math.max(rect.size.width, rect.size.height);
 
             // We draw a line that's 3/4 of the length of the short side of the rect
-            double lineLength = shortSideLen * .75;
+            double lineLength = longSideLen * .5;
 
             // The line is to be drawn at 90 deg relative to the midline running through
             // the rect lengthwise
@@ -389,19 +401,6 @@ public class contourDetection extends LinearOpMode {
             point.y = (int) (lineLength * Math.sin(Math.toRadians(unambiguousAngle + 90)));
 
             return point;
-        }
-
-        static void drawTagText(RotatedRect rect, String text, Mat mat) {
-            Imgproc.putText(
-                    mat, // The buffer we're drawing on
-                    text, // The text we're drawing
-                    new Point( // The anchor point for the text
-                            rect.center.x - 50,  // x anchor point
-                            rect.center.y + 25), // y anchor point
-                    Imgproc.FONT_HERSHEY_PLAIN, // Font
-                    1, // Font size
-                    TEAL, // Font color
-                    1); // Font thickness
         }
 
         static void drawRotatedRect(RotatedRect rect, Mat drawOn) {
