@@ -4,7 +4,6 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
-import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.TouchSensor;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -127,14 +126,16 @@ public class CompetitionTeleop2023 extends OpMode {
         if (gamepad2.y) {
             changed3 = !changed3;
         }
+
         if (gamepad2.left_trigger >= .1)
         {
             touchIsPressed = false;
         }
-        else if (touch.isPressed())
+        else if (!touch.isPressed())
         {
             touchIsPressed = true;
         }
+
         //Moves the arm up
         if (!changed3)
         {
@@ -146,7 +147,7 @@ public class CompetitionTeleop2023 extends OpMode {
                 telemetry.update();
                 //Moves the arm down
             }
-            else if (gamepad2.right_trigger >= .1 && arm.getCurrentPosition() > minEncode && !touchIsPressed)
+            else if (gamepad2.right_trigger >= .1 &&/* arm.getCurrentPosition() > minEncode &&*/ !touchIsPressed)
             {
                 arm.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
                 arm.setPower(-gamepad2.right_trigger);
