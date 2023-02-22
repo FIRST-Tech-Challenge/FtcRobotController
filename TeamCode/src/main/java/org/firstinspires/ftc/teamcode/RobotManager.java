@@ -159,8 +159,8 @@ public class RobotManager {
      */
     public void readSensorInputs() {
         double startTime = robot.elapsedTime.time();
-//        readSlidesLimitSwitch();
-//        robot.telemetry.addData("after slides limit",robot.elapsedTime.time());
+        readSlidesLimitSwitch();
+        robot.telemetry.addData("after slides limit",robot.elapsedTime.time());
 //        readClawLimitSwitch();
 //        robot.telemetry.addData("after claw limit", robot.elapsedTime.time());
 //        readDistanceSensor();
@@ -289,25 +289,6 @@ public class RobotManager {
     // Each of these methods manually sets the robot state so that a specific task is started, and forces these tasks to
     // be synchronous by repeatedly calling the mechanism driving methods. These are to be used in an autonomous OpMode.
 
-    /** Horse shoe code
-     *  This horse shoe code here is part of the linear slides and helps the cone position into the poles.
-     */
-    public void flipHorseshoe() {
-        switch (robot.desiredClawRotatorState) {
-            case FRONT:
-                robot.desiredClawRotatorState = Robot.ClawRotatorState.REAR;
-                break;
-            case REAR:
-                robot.desiredClawRotatorState = Robot.ClawRotatorState.FRONT;
-                break;
-        }
-        double startTime = robot.elapsedTime.milliseconds(); //Starts the time of the robot in milliseconds.
-        mechanismDriving.updateClawRotator(robot);
-        //case Robot.HorseshoeState.FRONT/REAR (Remove the / in between if needed to be added back. Only set 1 variable at a time)
-        //Waiting for servo to finish rotation
-        while (robot.elapsedTime.milliseconds() - startTime < MechanismDriving.HORSESHOE_TIME) {}
-    }
-
     /** Opens the claw.
      */
     public void openClaw() {
@@ -394,83 +375,6 @@ public class RobotManager {
     public void moveSlides(Robot.SlidesState targetSlidesState) {
         Robot.desiredSlidesState = targetSlidesState;
         while (!mechanismDriving.updateSlides(robot, MechanismDriving.SLIDES_MAX_SPEED)) {}
-    }
-
-    /** Finds the lowered SlidesState given a standard SlidesState
-     *
-     *  @param currentSlidesState the current state of the linear slides
-     *  @return the lowered SlidesState (or the retracted SlidesState if it was already retracted)
-     */
-//    public Robot.SlidesState getLoweredSlidesState(Robot.SlidesState currentSlidesState) {
-//        switch (currentSlidesState) {
-//            case LOW: return Robot.SlidesState.LOW_LOWERED;
-//            case MEDIUM: return Robot.SlidesState.MEDIUM_LOWERED;
-//            case HIGH: return Robot.SlidesState.HIGH_LOWERED;
-//            default: return Robot.SlidesState.RETRACTED;
-//        }
-//    }
-
-    /** Delivers a cone to a pole.
-     *
-     *  @param level the level/height of the pole to which the cone needs to be delivered
-     */
-    public void deliverToPole(Robot.SlidesState level, Robot robot) {
-//        // Extend slides.
-//        robot.desiredSlidesState = level;
-//        boolean extended = mechanismDriving.updateSlides(robot);
-//        while (!extended) {
-//            extended = mechanismDriving.updateSlides(robot);
-//        }
-//        flipHorseshoe();
-//
-//        // Move into drop-off position.
-//        robot.positionManager.updatePosition(robot);
-//        Position startPos = new Position(robot.getPosition().getX(), robot.getPosition().getY(),
-//                robot.getPosition().getRotation(), "POI startPos");
-//
-//        //The direction that the robot moves away at will need to depend on which side we are playing on
-//        switch(startingSide) {
-//            case OUR_COLOR:
-//                navigation.path.add(navigation.pathIndex,
-//                    new Position(startPos.getX(), startPos.getY() + Navigation.HORSESHOE_SIZE, //horseshoe moves towards junction
-//                            startPos.getRotation(), "POI dropoff our color"));
-//                break;
-//            case THEIR_COLOR:
-//                navigation.path.add(navigation.pathIndex,
-//                        new Position(startPos.getX(), startPos.getY() - Navigation.HORSESHOE_SIZE,
-//                                startPos.getRotation(), "POI dropoff their color"));
-//                break;
-//        }
-//
-//        travelToNextPOI();
-//
-//        //flipHorseshoe(); not needed anymore because no more servo
-//
-//        // Lower linear slides
-////        robot.desiredSlidesState = getLoweredSlidesState(robot.desiredSlidesState);
-//        boolean lowered = mechanismDriving.updateSlides(robot);
-//        while (!lowered) {
-//            lowered = mechanismDriving.updateSlides(robot);
-//        }
-//
-//        // Drop cone
-//        openClaw();
-//
-//        // Move back to starting position.
-//        navigation.path.add(navigation.pathIndex, startPos);
-//        travelToNextPOI();
-//
-//        // Retract slides.
-//        flipHorseshoe();
-//        robot.desiredSlidesState = Robot.SlidesState.RETRACTED;
-//        boolean retracted = mechanismDriving.updateSlides(robot);
-//        while (!retracted) {
-//            retracted = mechanismDriving.updateSlides(robot);
-//        }
-//
-//        // TODO: ROBOT NEEDS TO BACK UP otherwise flipping horeshoe will cause problems
-//
-//        //flipHorseshoe(); not needed anymore because no more horseshoe
     }
 
     /** Picks up a cone.

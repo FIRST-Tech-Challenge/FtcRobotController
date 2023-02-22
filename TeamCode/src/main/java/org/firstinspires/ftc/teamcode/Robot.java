@@ -34,7 +34,7 @@ public class Robot {
 
     // Hardware
     public DcMotor slidesMotor1, slidesMotor2;
-    public Servo clawRotator, claw;
+    public Servo clawRotator, claw, secondaryClaw, secondaryClawRotator, clawLimitSwitchServo;
     public DigitalChannel slidesLimitSwitch;
     public DigitalChannel clawLimitSwitch;
     public DistanceSensor clawDistanceSensor;
@@ -57,6 +57,9 @@ public class Robot {
         slidesMotor2 = hardwareMap.get(DcMotor.class, RobotConfig.MotorNames.get(RobotConfig.Motors.SLIDES_MOTOR_2));
         clawRotator = hardwareMap.get(Servo.class, RobotConfig.ServoNames.get(RobotConfig.Servos.CLAW_ROTATOR));
         claw = hardwareMap.get(Servo.class, RobotConfig.ServoNames.get(RobotConfig.Servos.CLAW));
+        secondaryClaw = hardwareMap.get(Servo.class, RobotConfig.ServoNames.get(RobotConfig.Servos.SECONDARY_CLAW));
+        secondaryClawRotator = hardwareMap.get(Servo.class, RobotConfig.ServoNames.get(RobotConfig.Servos.SECONDARY_CLAW_ROTATOR));
+        clawLimitSwitchServo = hardwareMap.get(Servo.class, RobotConfig.ServoNames.get(RobotConfig.Servos.CLAW_LIMIT_SERVO));
 
         slidesLimitSwitch = hardwareMap.get(DigitalChannel.class, RobotConfig.SwitchNames.get(RobotConfig.Switches.SLIDES_LIMIT));
         clawLimitSwitch = hardwareMap.get(DigitalChannel.class, RobotConfig.SwitchNames.get(RobotConfig.Switches.CLAW_LIMIT));
@@ -106,7 +109,7 @@ class RobotConfig {
     enum Switches {SLIDES_LIMIT, CLAW_LIMIT}
     enum Motors {SLIDES_MOTOR_1, SLIDES_MOTOR_2}
     public enum DriveMotors {REAR_LEFT, REAR_RIGHT, FRONT_LEFT, FRONT_RIGHT};
-    enum Servos {CLAW_ROTATOR, CLAW, CLAW_INDICATOR}
+    enum Servos {CLAW_ROTATOR, CLAW, SECONDARY_CLAW, SECONDARY_CLAW_ROTATOR, CLAW_LIMIT_SERVO}
 
     public static final Map<DistanceSensors, String> DistanceSensorNames = new HashMap<DistanceSensors, String>() {{
         put(DistanceSensors.CLAW_DISTANCE_SENSOR, "distance_sensor");
@@ -139,6 +142,8 @@ class RobotConfig {
     public static final Map<Servos, String> ServoNames = new HashMap<Servos, String>() {{
         put(Servos.CLAW_ROTATOR, "claw_rotator");
         put(Servos.CLAW, "claw");
-        put(Servos.CLAW_INDICATOR, "claw_indicator");
+        put(Servos.SECONDARY_CLAW, "secondary_claw");
+        put(Servos.SECONDARY_CLAW_ROTATOR, "secondary_claw_rotator");
+        put(Servos.CLAW_LIMIT_SERVO, "claw_limit_switch_servo");
     }};
 }

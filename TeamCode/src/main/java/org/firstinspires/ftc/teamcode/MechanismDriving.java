@@ -45,7 +45,7 @@ public class MechanismDriving {
 //        slidePositions.put(Robot.SlidesState.HIGH_LOWERED, slidePositions.get(Robot.SlidesState.HIGH) - LOWERING_AMOUNT);
     }
 
-    /** Sets the claw position to the robot's desired state.
+    /** Opens/closes the claw to the desired state.
      */
     public void updateClaw(Robot robot) {
         robot.telemetry.addData("robot desired claw state",robot.desiredClawState);
@@ -76,6 +76,8 @@ public class MechanismDriving {
                 break;
         }
     }
+
+
 
     /** Sets the preferred position of the slides
      *
