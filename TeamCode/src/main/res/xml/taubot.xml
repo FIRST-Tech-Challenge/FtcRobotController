@@ -25,7 +25,7 @@
             <Servo name="shoulderServo" port="0" />
             <Servo name="elbowServo" port="1" />
             <Servo name="wristServo" port="2" />
-            <Servo name="lassoServo" port="3" />
+            <Servo name="lassoJoint" port="3" />
             <Servo name="turretServo" port="4" />
             <REV_VL53L0X_RANGE_SENSOR name="distChariot" port="0" bus="0" />
         </LynxModule>

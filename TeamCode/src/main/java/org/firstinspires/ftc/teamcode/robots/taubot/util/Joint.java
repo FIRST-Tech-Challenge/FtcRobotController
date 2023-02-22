@@ -10,7 +10,7 @@ import org.firstinspires.ftc.teamcode.robots.taubot.simulation.ServoSim;
 
 public class Joint {
 
-    private Servo motor;
+    private Servo motor = null;
     private double HOME_PWM, PWM_PER_DEGREE, DEG_MIN, DEG_MAX;
     private double interimAngle;
     private double targetAngle, oldTargetAngle;
@@ -23,9 +23,8 @@ public class Joint {
     //todo: add servo feedback functionality
     //todo if necessary: cap min and max speed for another safety layer after testing
 
-    public Joint(HardwareMap hardwareMap, Servo motor, String name, boolean simulated, double HOME, double PER_DEGREE, double MIN, double MAX, double startAngle, double speed)
+    public Joint(HardwareMap hardwareMap, String name, boolean simulated, double HOME, double PER_DEGREE, double MIN, double MAX, double startAngle, double speed)
     {
-        this.motor = motor;
         this.name = name;
         HOME_PWM = HOME;
         PWM_PER_DEGREE = PER_DEGREE;
@@ -44,7 +43,7 @@ public class Joint {
         }
 
         else {
-            hardwareMap.get(ServoImplEx.class, name);
+            motor = hardwareMap.get(ServoImplEx.class, name);
             ((ServoImplEx) motor).setPwmRange(new PwmControl.PwmRange(500, 2500));
         }
     }
@@ -66,6 +65,10 @@ public class Joint {
         oldTargetAngle = interimAngle;
         targetAngle = angle;
         oldTime = System.nanoTime() / 1e6;
+    }
+
+    public double getPosition(){
+        return motor.getPosition();
     }
 
     public void setSpeed (double speed){

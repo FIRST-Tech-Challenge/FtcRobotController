@@ -18,6 +18,7 @@ import com.qualcomm.robotcore.hardware.ServoImplEx;
 import com.qualcomm.robotcore.util.Range;
 
 import org.firstinspires.ftc.teamcode.robots.taubot.simulation.ServoSim;
+import org.firstinspires.ftc.teamcode.robots.taubot.util.Joint;
 import org.firstinspires.ftc.teamcode.util.Vector3;
 
 import java.util.LinkedHashMap;
@@ -50,8 +51,8 @@ public class UnderArm implements Subsystem {
     public static double WRIST_DEG_MAX = 180;
     public static double TURRET_DEG_MAX = 360;
 
-    public static double LASSO_CLOSED = 1150;
-    public static double LASSO_OPEN = 2500;
+    public static double LASSO_CLOSED = 90;
+    public static double LASSO_OPEN = 0;
 
     public static double TRANSFER_SHOULDER_ANGLE = 0;
     public static double TRANSFER_ELBOW_ANGLE = 0;
@@ -66,6 +67,7 @@ public class UnderArm implements Subsystem {
 
     public Servo elbowServo, wristServo, lassoServo;
     public Servo shoulderServo, turretServo;
+    public Joint lasso;
 
     private double chariotDistance;
     private double shoulderAngle;
@@ -89,10 +91,9 @@ public class UnderArm implements Subsystem {
             elbowServo = hardwareMap.get(ServoImplEx.class, "elbowServo");
             ((ServoImplEx) elbowServo).setPwmRange(axonRange);
             wristServo = hardwareMap.get(ServoImplEx.class, "wristServo");
-            lassoServo = hardwareMap.get(ServoImplEx.class, "lassoServo");
-            ((ServoImplEx) lassoServo).setPwmRange(axonRange);
             turretServo = hardwareMap.get(ServoImplEx.class, "turretServo");
             ((ServoImplEx) turretServo).setPwmRange(axonRange);
+            lasso = new Joint(hardwareMap, "lassoJoint", false, 1540, SHOULDER_PWM_PER_DEGREE, SHOULDER_DEG_MIN, SHOULDER_DEG_MAX, 0, 20);
         }
 
         shoulderTargetAngle = 0;
@@ -307,7 +308,7 @@ public class UnderArm implements Subsystem {
     }
     @Override
     public void update(Canvas fieldOverlay) {
-
+        lasso.update();
         Pose2d robotPosInches = robot.driveTrain.getPoseEstimate();
         double headingRad = robot.driveTrain.getRawHeading();
         double underArmLengthInches = robot.driveTrain.getChassisLength();
@@ -330,12 +331,12 @@ public class UnderArm implements Subsystem {
 
     public void grip(){
         lassoGripped = true;
-        lassoServo.setPosition(servoNormalizeExtended(LASSO_CLOSED));
+        lasso.setTargetAngle(LASSO_CLOSED, 20);
     }
 
     public void release(){
         lassoGripped = false;
-        lassoServo.setPosition(servoNormalizeExtended(LASSO_OPEN));
+        lasso.setTargetAngle(LASSO_OPEN, 20);
     }
 
     public void toggleLasso(){
@@ -377,7 +378,7 @@ public class UnderArm implements Subsystem {
             telemetryMap.put("Shoulder Target PWM", shoulderServoValue(shoulderTargetAngle));
             telemetryMap.put("Wrist Target PWM", wristServoValue(wristTargetAngle));
             telemetryMap.put("Turret Target PWM", turretServoValue(turretTargetAngle));
-            telemetryMap.put("Lasso Target PWM", lassoServo.getPosition());
+            telemetryMap.put("Lasso Target PWM", lasso.getPosition());
             telemetryMap.put("Lasso Grip", lassoGripped);
 
             telemetryMap.put("chariot distance", getChariotDistance());
