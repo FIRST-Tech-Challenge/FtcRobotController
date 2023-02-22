@@ -7,11 +7,12 @@ import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.masters.drive.SampleMecanumDriveCancelable;
 
 @Config
-@Autonomous(name = "Power Play CV Pipe")
+@TeleOp(name = "Power Play CV Pipe", group= "demo")
 public class PowerPlayTestPipelines extends LinearOpMode {
 
     @Override

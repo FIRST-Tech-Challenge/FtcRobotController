@@ -16,7 +16,7 @@ import com.qualcomm.robotcore.hardware.configuration.typecontainers.MotorConfigu
 import org.firstinspires.ftc.masters.oldAndUselessStuff.TuningController;
 
 @Config
-@TeleOp
+@TeleOp(name="veloPidTuner", group="roadrunner")
 public class VeloPIDTuner extends LinearOpMode {
     public static PIDFCoefficients MOTOR_VELO_PID = new PIDFCoefficients(0, 0, 0, 0);
 

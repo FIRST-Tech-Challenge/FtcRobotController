@@ -48,7 +48,7 @@ public class PowerPlayTeleopColorado extends LinearOpMode {
 
     private final double MAX_VELOCITY= 435/60*384.5*0.8;
 
-    public static double ALIGN_SPEED =0.2;
+    public static double ALIGN_SPEED =0.15;
 
     Servo clawServo = null;
     DcMotorEx armMotor = null;
@@ -175,6 +175,7 @@ public class PowerPlayTeleopColorado extends LinearOpMode {
             y = -gamepad1.left_stick_y;
             x = gamepad1.left_stick_x;
             rx = gamepad1.right_stick_x;
+            
             if (Math.abs(y) < 0.2) {
                 y = 0;
             }
@@ -459,9 +460,10 @@ public class PowerPlayTeleopColorado extends LinearOpMode {
         linearSlideMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         frontSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         slideOtherer.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        slideOtherer.setPower(1);
         linearSlideMotor.setPower(1);
         frontSlide.setPower(1);
-        slideOtherer.setPower(1);
+
 
 
 

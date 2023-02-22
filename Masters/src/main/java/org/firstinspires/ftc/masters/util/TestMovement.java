@@ -6,7 +6,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.masters.RobotClass;
 
-@Autonomous(name="test servo")
+@Autonomous(name="test servo", group="test")
 public class TestMovement extends LinearOpMode {
     RobotClass robot;
     @Override

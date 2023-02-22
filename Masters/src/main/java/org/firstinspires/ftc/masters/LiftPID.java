@@ -11,7 +11,7 @@ import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
 @Config
-@TeleOp(name="Lift PID")
+@TeleOp(name="Lift PID", group="pid")
 public class LiftPID extends LinearOpMode {
 
     PIDController liftController;

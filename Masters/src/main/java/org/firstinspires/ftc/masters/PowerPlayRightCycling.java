@@ -4,6 +4,7 @@ import static org.firstinspires.ftc.masters.BadgerConstants.ARM_BACK;
 import static org.firstinspires.ftc.masters.BadgerConstants.ARM_CONE_STACK;
 import static org.firstinspires.ftc.masters.BadgerConstants.ARM_MID_TOP;
 import static org.firstinspires.ftc.masters.BadgerConstants.SLIDE_HIGH;
+import static org.firstinspires.ftc.masters.BadgerConstants.SLIDE_HIGH_AUTO;
 import static org.firstinspires.ftc.masters.BadgerConstants.SLIDE_MIDDLE;
 import static org.firstinspires.ftc.masters.BadgerConstants.SLIDE_THROUGH;
 
@@ -22,7 +23,7 @@ import org.firstinspires.ftc.masters.drive.SampleMecanumDrive;
 import java.util.Date;
 
 @Config
-@Autonomous(name = "Power Play Right Cycling")
+@Autonomous(name = "Power Play Right Cycling", group = "competition")
 public class PowerPlayRightCycling extends LinearOpMode {
 
     enum State {
@@ -96,7 +97,7 @@ public class PowerPlayRightCycling extends LinearOpMode {
                 .build();
 
         Trajectory backUpFromJunction = drive.trajectoryBuilder(firstDepositScoreCone.end())
-                .back(6)
+                .back(7)
                 .build();
 
 
@@ -159,7 +160,7 @@ public class PowerPlayRightCycling extends LinearOpMode {
                     } else {
                         armTarget = ARM_MID_TOP;
                         if (drive.armMotor.getCurrentPosition() > 100) {
-                            liftTarget = SLIDE_HIGH;
+                            liftTarget = SLIDE_HIGH_AUTO;
                             drive.tipFront();
                             drive.closeClaw();
                         }
@@ -177,7 +178,7 @@ public class PowerPlayRightCycling extends LinearOpMode {
                         telemetry.addData("done aligning", "score cone");
                         currentState = State.FIRST_DEPOSIT_SCORE_CONE;
                         firstDepositScoreCone = drive.trajectoryBuilder(drive.getPoseEstimate())
-                                .forward(6)
+                                .forward(7)
                                 .build();
                         drive.followTrajectoryAsync(firstDepositScoreCone);
                     }
@@ -295,7 +296,7 @@ public class PowerPlayRightCycling extends LinearOpMode {
                     if (drive.alignPole(CV.pipeDetectionPipeline.position) || new Date().getTime()- alignTime >1000){
                         currentState = State.CYCLE_SCORE_CONE;
                         cycleDepositScoreCone = drive.trajectoryBuilder(drive.getPoseEstimate())
-                                .back(8)
+                                .back(9)
                                 .build();
                         drive.followTrajectoryAsync(cycleDepositScoreCone);
                     }
@@ -303,7 +304,7 @@ public class PowerPlayRightCycling extends LinearOpMode {
                 case CYCLE_SCORE_CONE:
                     if (!drive.isBusy()) {
                         cycleBackUpFromJunction=drive.trajectoryBuilder(drive.getPoseEstimate())
-                                .forward(8)
+                                .forward(9)
                                 .build();
                         //sleep(100);
                         drive.openClaw();
@@ -316,7 +317,7 @@ public class PowerPlayRightCycling extends LinearOpMode {
                     if (!drive.isBusy()){
                         retractArm= true;
                         currentState = State.CYCLE_PICKUP_END;
-                        drive.turnAsync(Math.toRadians(-45));
+                        drive.turnAsync(Math.toRadians(-turnJunction));
 
                     } else {
                         drive.closeClaw();
@@ -336,13 +337,13 @@ public class PowerPlayRightCycling extends LinearOpMode {
 
                             } else if (sleeveColor == PowerPlayComputerVisionPipelines.SleevePipeline.SleeveColor.GREEN) {
                                 Trajectory parkGreen = drive.trajectoryBuilder(drive.getPoseEstimate())
-                                        .lineTo(new Vector2d(60, -12))
+                                        .lineTo(new Vector2d(60, -13))
                                         .build();
                                 drive.followTrajectoryAsync(parkGreen);
                                 currentState = State.PARK_GREEN;
                             } else if (sleeveColor == PowerPlayComputerVisionPipelines.SleevePipeline.SleeveColor.GRAY) {
                                 Trajectory parkGray = drive.trajectoryBuilder(drive.getPoseEstimate())
-                                        .lineTo(new Vector2d(12, -12))
+                                        .lineTo(new Vector2d(12, -13))
                                         .build();
                                 currentState = State.PARK_GRAY;
                                 drive.followTrajectoryAsync(parkGray);
@@ -409,7 +410,7 @@ public class PowerPlayRightCycling extends LinearOpMode {
             drive.frontSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             drive.slideOtherer.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             drive.linearSlide.setPower(1);
-            drive.linearSlide.setPower(1);
+            drive.frontSlide.setPower(1);
             drive.slideOtherer.setPower(1);
 
 //            liftPIDController.setTarget(liftTarget);

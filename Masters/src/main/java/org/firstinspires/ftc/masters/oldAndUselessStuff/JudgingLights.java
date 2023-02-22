@@ -13,7 +13,7 @@ import org.firstinspires.ftc.masters.trajectorySequence.TrajectorySequence;
 
 import java.util.Date;
 
-@Autonomous(name = "Judging LEDs", group = "competition")
+//@Autonomous(name = "Judging LEDs", group = "test")
 public class JudgingLights extends LinearOpMode {
 
     public DigitalChannel redLED, greenLED, redLED2, greenLED2;

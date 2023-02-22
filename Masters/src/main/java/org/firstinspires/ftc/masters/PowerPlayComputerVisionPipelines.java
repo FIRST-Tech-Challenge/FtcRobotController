@@ -256,7 +256,7 @@ public class PowerPlayComputerVisionPipelines {
         ArrayList<Point> pipeTopLeftPoints = new ArrayList<>();
         ArrayList<Point> pipeBottomRightPoints = new ArrayList<>();
 
-        final int PIPE_PRESENT_THRESHOLD = 155; //swicthing to 150 seems affected by the light was  174;
+        final int PIPE_PRESENT_THRESHOLD = 155; //switching to 155, seems affected by the light was  174;
 
         // Volatile since accessed by OpMode thread w/o synchronization
         public volatile PipePosition position = PipePosition.SHRUG_NOISES;
