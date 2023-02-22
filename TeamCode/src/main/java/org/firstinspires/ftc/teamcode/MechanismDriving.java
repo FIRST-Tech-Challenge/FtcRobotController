@@ -14,27 +14,32 @@ public class MechanismDriving {
 
     public static Map<Robot.SlidesState, Integer> slidePositions = new HashMap<Robot.SlidesState, Integer>() {{
        put(Robot.SlidesState.RETRACTED, 0);
-       put(Robot.SlidesState.LOW, 1070);
+       put(Robot.SlidesState.LOW, 1170);
        put(Robot.SlidesState.MEDIUM, 1996);
-       put(Robot.SlidesState.HIGH, 2600);
+       put(Robot.SlidesState.HIGH, 2670);
        put(Robot.SlidesState.UNREADY, 0);
 
-       put(Robot.SlidesState.FIRST_STACK_CONE, 675);
-       put(Robot.SlidesState.SECOND_STACK_CONE, 600);
+       put(Robot.SlidesState.FIRST_STACK_CONE, 500);
+       put(Robot.SlidesState.SECOND_STACK_CONE, 375);
     }};
     public static final double CLAW_CLOSED_POS = 0.83, CLAW_OPEN_POS = 0.65; //These are not final values
+
+    public static final double CLAW_LIMIT_SWITCH_SERVO_LOW = 0.5, CLAW_LIMIT_SWITCH_SERVO_HIGH = 0; //These are not final values
+    public static final double SECONDARY_CLAW_CLOSED = 0, SECONDARY_CLAW_OPEN = 0.5; //These are not final values
+    public static final double SECONDARY_CLAW_ROTATOR_HIGH = 0, SECONDARY_CLAW_ROTATOR_LOW = 0.5; //These are not final values
+
     // How long it takes for the claw servo to be guaranteed to have moved to its new position.
     public static final long CLAW_SERVO_TIME = 500;
     //SPEED INFO: Scale from 0-1 in speed.
     public static final double CLAW_ROTATOR_FRONT_POS = 0, CLAW_ROTATOR_REAR_POS = 0.8, CLAW_ROTATOR_SIDE_POS = 0.4;
     // How long it takes for the horseshoe wheels to be guaranteed to have pushed the cone into the horseshoe.
     public static final long HORSESHOE_TIME = 500;
-    public static final int EPSILON = 120;  // slide encoder position tolerance;
+    public static final int EPSILON = 150;  // slide encoder position tolerance;
 
     public static final double SLIDE_RAMP_DIST = 400;
     public static final double SLIDES_MAX_SPEED = 1;
     public static final double SLIDE_MIN_SPEED = 0.4;
-    public static final double SLIDE_REDUCED_SPEED_COEF = 0.7;
+    public static final double SLIDE_REDUCED_SPEED_COEF = 0.9;
 
 
     public static final int slidesAdjustmentSpeed = 2;
@@ -77,6 +82,48 @@ public class MechanismDriving {
         }
     }
 
+    // Sets the claw limit switch servo to the desired state
+    public void updateClawLimitSwitchServo(Robot robot) {
+        robot.telemetry.addData("within claw limit function!", robot.desiredClawLimitSwitchServoState);
+//        robot.telemetry.update();
+        switch (robot.desiredClawLimitSwitchServoState) {
+            case LOW:
+                robot.clawLimitSwitchServo.setPosition(CLAW_LIMIT_SWITCH_SERVO_LOW); //facing the front of the robot
+                break;
+            case HIGH:
+                robot.clawLimitSwitchServo.setPosition(CLAW_LIMIT_SWITCH_SERVO_HIGH); //facing the rear of the robot
+                break;
+        }
+    }
+
+    // Sets the secondary claw position to the robot's desired state
+    public void updateSecondaryClaw(Robot robot) {
+        switch(robot.desiredSecondaryClawState) {
+            case CLOSED:
+                robot.secondaryClaw.setPosition(SECONDARY_CLAW_CLOSED);
+                break;
+            case OPEN:
+                robot.secondaryClaw.setPosition(SECONDARY_CLAW_OPEN);
+                break;
+        }
+    }
+
+    // Sets the secondary claw rotator position to the robot's desired state
+    public void updateSecondaryClawRotator(Robot robot) {
+        switch(robot.desiredSecondaryClawRotatorState) {
+            case DOWN:
+                robot.secondaryClawRotator.setPosition(SECONDARY_CLAW_ROTATOR_LOW);
+                robot.secondaryClawRotator.setPosition(SECONDARY_CLAW_ROTATOR_LOW);
+                robot.secondaryClawRotator.setPosition(SECONDARY_CLAW_ROTATOR_LOW);
+                break;
+            case UP:
+                robot.secondaryClawRotator.setPosition(SECONDARY_CLAW_ROTATOR_LOW);
+                robot.secondaryClawRotator.setPosition(SECONDARY_CLAW_ROTATOR_LOW);
+                robot.secondaryClawRotator.setPosition(SECONDARY_CLAW_ROTATOR_HIGH);
+                break;
+        }
+    }
+
     /** Sets the preferred position of the slides
      *
      * @param position - The encoder count that the motors for the slide should get to
@@ -115,11 +162,25 @@ public class MechanismDriving {
      *
      * @return whether the slides are in the desired position.
      */
-    public boolean updateSlides(Robot robot, double slidesPower) {
+    public boolean updateSlides(RobotManager robotManager, Robot robot, double slidesPower) {
 
        if (Robot.desiredSlidesState != Robot.SlidesState.UNREADY) {
            if(!testing)
                setSlidePosition(robot, getTargetSlidesEncoderCount(robot));
+
+           // Move the claw limit switch servo
+           robot.telemetry.addData("desired slides state", robot.desiredSlidesState);
+           if (Robot.desiredSlidesState == Robot.SlidesState.HIGH || Robot.desiredSlidesState == Robot.SlidesState.MEDIUM) {
+               robot.desiredClawLimitSwitchServoState = Robot.ClawLimitSwitchServoState.LOW;
+               updateClawLimitSwitchServo(robot);
+               robot.telemetry.addData("CLAW LIMIT SWITCH SET TO LOW", robot.desiredClawLimitSwitchServoState);
+           }
+           if (Robot.desiredSlidesState == Robot.SlidesState.RETRACTED || Robot.desiredSlidesState == Robot.SlidesState.LOW) {
+               robot.desiredClawLimitSwitchServoState = Robot.ClawLimitSwitchServoState.HIGH;
+               updateClawLimitSwitchServo(robot);
+               robot.telemetry.addData("CLAW LIMIT SWITCH SET TO HIGH", robot.desiredClawLimitSwitchServoState);
+           }
+//           robot.telemetry.update();
 
            robot.telemetry.addData("slide 1 current pos: ", robot.slidesMotor1.getCurrentPosition());
            robot.telemetry.addData("slide 2 current pos: ", robot.slidesMotor2.getCurrentPosition());
@@ -129,7 +190,8 @@ public class MechanismDriving {
            int avgSlideDiff = (slideDiff1 + slideDiff2) / 2;
 
            robot.telemetry.addData("current pos: ", getAverageSlidePosition(robot));
-
+           robot.telemetry.update();
+//           robotManager.readSlidesLimitSwitch();
            // Stop motors if we have reached the desired position
            if (Math.abs(avgSlideDiff) < EPSILON) {
                robot.slidesMotor1.setPower(0);

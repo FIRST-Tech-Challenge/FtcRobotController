@@ -159,17 +159,17 @@ public class RobotManager {
      */
     public void readSensorInputs() {
         double startTime = robot.elapsedTime.time();
-//        readSlidesLimitSwitch();
-//        robot.telemetry.addData("after slides limit",robot.elapsedTime.time());
-//        readClawLimitSwitch();
-//        robot.telemetry.addData("after claw limit", robot.elapsedTime.time());
-//        readDistanceSensor();
-//        robot.telemetry.addData("after distance sensor", robot.elapsedTime.time());
+        readSlidesLimitSwitch();
+        robot.telemetry.addData("after slides limit",robot.elapsedTime.time()-startTime);
+        readClawLimitSwitch();
+        robot.telemetry.addData("after claw limit", robot.elapsedTime.time()-startTime);
+        readDistanceSensor();
+        robot.telemetry.addData("after distance sensor", robot.elapsedTime.time()-startTime);
     }
 
 
     public void readSlidesLimitSwitch() {
-        boolean currentSlidesLimitSwitchState = robot.slidesLimitSwitch.getState();
+        boolean currentSlidesLimitSwitchState = robot.slidesLimitSwitch.isPressed();
         if (currentSlidesLimitSwitchState) {
             robot.telemetry.addData("Slides limit switch state", "pressed");
             robot.telemetry.addData("Current slides limit switch state", currentSlidesLimitSwitchState);
@@ -189,7 +189,7 @@ public class RobotManager {
     }
 
     public void readClawLimitSwitch() {
-        boolean currentClawLimitSwitchState = robot.clawLimitSwitch.getState();
+        boolean currentClawLimitSwitchState = robot.clawLimitSwitch.isPressed();
         if (currentClawLimitSwitchState) {
             robot.telemetry.addData("Claw limit switch state", "pressed");
         }
@@ -211,7 +211,7 @@ public class RobotManager {
 
     /** Calls all non-blocking FSM methods to read from state and act accordingly.
      */
-    public void driveMechanisms() {
+    public void driveMechanisms(RobotManager robotManager) {
 //        double slidesPower = Range.clip(Math.abs(gamepads.getAnalogValues().gamepad2LeftStickY), 0, 1);
 //        if (slidesPower < JOYSTICK_DEAD_ZONE_SIZE) {
 //            slidesPower = MechanismDriving.SLIDES_MAX_SPEED;
@@ -219,8 +219,9 @@ public class RobotManager {
         double slidesPower = MechanismDriving.SLIDES_MAX_SPEED;
 
         mechanismDriving.updateClawRotator(robot);
-        mechanismDriving.updateSlides(robot, slidesPower);
+        mechanismDriving.updateSlides(robotManager, robot, slidesPower);
         mechanismDriving.updateClaw(robot);
+//        if ()
     }
 
     /** Changes drivetrain motor inputs based off the controller inputs.
@@ -336,53 +337,67 @@ public class RobotManager {
             Position pos = navigation.path.get(i);
             // Things to do before moving to the location
             if (pos.getAction() == Navigation.Action.PICK_UP_FIRST_STACK_CONE) {
-                moveSlides(Robot.SlidesState.FIRST_STACK_CONE);
+                moveSlides(this, Robot.SlidesState.FIRST_STACK_CONE);
                 robot.telemetry.addData("slides state: first stack", Robot.SlidesState.FIRST_STACK_CONE);
-                robot.telemetry.update();
-                robot.desiredClawRotatorState = Robot.ClawRotatorState.REAR;
+//                robot.telemetry.update();
+                robot.desiredClawRotatorState = Robot.ClawRotatorState.FRONT;
                 mechanismDriving.updateClawRotator(robot);
                 openClaw();
             }
             else if (pos.getAction() == Navigation.Action.PICK_UP_SECOND_STACK_CONE) {
-                moveSlides(Robot.SlidesState.SECOND_STACK_CONE);
+                moveSlides(this, Robot.SlidesState.SECOND_STACK_CONE);
                 robot.telemetry.addData("slides state: second stack", Robot.SlidesState.SECOND_STACK_CONE);
-                robot.telemetry.update();
-                robot.desiredClawRotatorState = Robot.ClawRotatorState.REAR;
+//                robot.telemetry.update();
+                robot.desiredClawRotatorState = Robot.ClawRotatorState.FRONT;
                 mechanismDriving.updateClawRotator(robot);
                 openClaw();
             }
             else if (pos.getAction() == Navigation.Action.DELIVER_CONE_HIGH) {
                 robot.telemetry.addData("slides state: high", Robot.SlidesState.HIGH);
-                robot.telemetry.update();
+//                robot.telemetry.update();
 //                moveSlides(Robot.SlidesState.HIGH);
             }
             else if (pos.getAction() == Navigation.Action.DELIVER_CONE_HIGH_90) {
                 robot.telemetry.addData("slides state: high", Robot.SlidesState.HIGH);
-                robot.telemetry.update();
+//                robot.telemetry.update();
 //                moveSlides(Robot.SlidesState.HIGH);
 
             }
             travelToNextPOI();
             robot.telemetry.addData("movement finished!", pos.getName());
-            robot.telemetry.update();
+//            robot.telemetry.update();
             // Things to do after moving to the location
             if (pos.getAction() == Navigation.Action.PICK_UP_FIRST_STACK_CONE || pos.getAction() == Navigation.Action.PICK_UP_SECOND_STACK_CONE) {
                 closeClaw();
             }
             else if (pos.getAction() == Navigation.Action.DELIVER_CONE_HIGH) {
-                moveSlides(Robot.SlidesState.HIGH);
+                moveSlides(this, Robot.SlidesState.HIGH);
+                robot.desiredClawRotatorState = Robot.ClawRotatorState.FRONT;
+                mechanismDriving.updateClawRotator(robot);
+                double startTime = robot.elapsedTime.time();
+                while (robot.elapsedTime.time()-startTime < 1000) {}
                 openClaw();
             }
             else if (pos.getAction() == Navigation.Action.DELIVER_CONE_HIGH_90) {
-                moveSlides(Robot.SlidesState.HIGH);
+                moveSlides(this, Robot.SlidesState.HIGH);
                 robot.desiredClawRotatorState = Robot.ClawRotatorState.SIDE;
                 mechanismDriving.updateClawRotator(robot);
+                double startTime = robot.elapsedTime.time();
+                while (robot.elapsedTime.time()-startTime < 1000) {}
+                openClaw();
+            }
+            else if (pos.getAction() == Navigation.Action.DELIVER_CONE_HIGH_180) {
+                moveSlides(this, Robot.SlidesState.HIGH);
+                robot.desiredClawRotatorState = Robot.ClawRotatorState.REAR;
+                mechanismDriving.updateClawRotator(robot);
+                double startTime = robot.elapsedTime.time();
+                while (robot.elapsedTime.time()-startTime < 1000) {}
                 openClaw();
             }
             else if (pos.getAction() == Navigation.Action.RETRACT_SLIDES) {
                 robot.desiredClawRotatorState = Robot.ClawRotatorState.FRONT;
                 mechanismDriving.updateClawRotator(robot);
-                moveSlides(Robot.SlidesState.RETRACTED);
+                moveSlides(this, Robot.SlidesState.RETRACTED);
             }
             robot.telemetry.addData("finished!", pos.getName());
             robot.telemetry.update();
@@ -391,9 +406,9 @@ public class RobotManager {
 
     /** Blocking method to raise/lower linear slides during Auton.
      */
-    public void moveSlides(Robot.SlidesState targetSlidesState) {
+    public void moveSlides(RobotManager robotManager, Robot.SlidesState targetSlidesState) {
         Robot.desiredSlidesState = targetSlidesState;
-        while (!mechanismDriving.updateSlides(robot, MechanismDriving.SLIDES_MAX_SPEED)) {}
+        while (!mechanismDriving.updateSlides(robotManager, robot, MechanismDriving.SLIDES_MAX_SPEED)) {}
     }
 
     /** Finds the lowered SlidesState given a standard SlidesState

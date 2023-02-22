@@ -91,9 +91,11 @@ class EncoderPositioning {
     static int ENCODER_COUNTS_PER_ROTATION = 560;
 
 //    static double MAGICAL_FACTOR = 8.64;
-    static double MAGICAL_FACTOR = 12.6;
+    static double MAGICAL_FACTOR_X = 17.6;
+    static double MAGICAL_FACTOR_Y = 18.4;
 
-    static double MAGICAL_RATIO = MAGICAL_FACTOR / ENCODER_COUNTS_PER_ROTATION;
+    static double MAGICAL_RATIO_X = MAGICAL_FACTOR_X / ENCODER_COUNTS_PER_ROTATION;
+    static double MAGICAL_RATIO_Y = MAGICAL_FACTOR_Y / ENCODER_COUNTS_PER_ROTATION;
 
     static HashMap<RobotConfig.DriveMotors, Double> RollerAngles = new HashMap<RobotConfig.DriveMotors, Double>() {{
         put(RobotConfig.DriveMotors.FRONT_RIGHT, Math.PI / 4.d);
@@ -156,7 +158,7 @@ class EncoderPositioning {
 
         resetEncoders(robot);
 
-        return new Position(MAGICAL_RATIO * deltaPSumX, MAGICAL_RATIO * deltaPSumY, 0.0);
+        return new Position(MAGICAL_RATIO_X * deltaPSumX, MAGICAL_RATIO_Y * deltaPSumY, 0.0);
     }
 
 

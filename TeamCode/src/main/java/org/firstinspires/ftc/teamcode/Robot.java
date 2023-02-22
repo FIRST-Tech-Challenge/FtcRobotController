@@ -19,10 +19,18 @@ public class Robot {
     public enum ParkingPosition {INSIDE, MIDDLE, OUTSIDE}
     public enum ClawRotatorState {FRONT, SIDE, REAR}
     public enum ClawState {OPEN, CLOSED}
+    public enum SecondaryClawState {OPEN, CLOSED}
+    public enum SecondaryClawRotatorState {DOWN, UP}
+    public enum ClawLimitSwitchServoState {HIGH, LOW}
 
     public static SlidesState desiredSlidesState = SlidesState.UNREADY;
     public ClawRotatorState desiredClawRotatorState;
+    public ClawLimitSwitchServoState desiredClawLimitSwitchState;
     public ClawState desiredClawState;
+    public SecondaryClawState desiredSecondaryClawState;
+    public SecondaryClawRotatorState desiredSecondaryClawRotatorState;
+    public ClawLimitSwitchServoState desiredClawLimitSwitchServoState;
+
     public boolean previousSlidesLimitSwitchState = false;
     public boolean previousClawLimitSwitchState = false;
 
@@ -34,10 +42,11 @@ public class Robot {
 
     // Hardware
     public DcMotor slidesMotor1, slidesMotor2;
-    public Servo clawRotator, claw;
-    public DigitalChannel slidesLimitSwitch;
-    public DigitalChannel clawLimitSwitch;
+    public Servo clawRotator, claw, clawLimitSwitchServo, secondaryClaw, secondaryClawRotator;
+    public TouchSensor slidesLimitSwitch;
+    public TouchSensor clawLimitSwitch;
     public DistanceSensor clawDistanceSensor;
+
 
 
     // Other
@@ -57,9 +66,13 @@ public class Robot {
         slidesMotor2 = hardwareMap.get(DcMotor.class, RobotConfig.MotorNames.get(RobotConfig.Motors.SLIDES_MOTOR_2));
         clawRotator = hardwareMap.get(Servo.class, RobotConfig.ServoNames.get(RobotConfig.Servos.CLAW_ROTATOR));
         claw = hardwareMap.get(Servo.class, RobotConfig.ServoNames.get(RobotConfig.Servos.CLAW));
+        clawLimitSwitchServo = hardwareMap.get(Servo.class, RobotConfig.ServoNames.get(RobotConfig.Servos.CLAW_LIMIT_SWITCH_SERVO));
+        secondaryClaw = hardwareMap.get(Servo.class, RobotConfig.ServoNames.get(RobotConfig.Servos.SECONDARY_CLAW));
+        secondaryClawRotator = hardwareMap.get(Servo.class, RobotConfig.ServoNames.get(RobotConfig.Servos.SECONDARY_CLAW_ROTATOR));
 
-        slidesLimitSwitch = hardwareMap.get(DigitalChannel.class, RobotConfig.SwitchNames.get(RobotConfig.Switches.SLIDES_LIMIT));
-        clawLimitSwitch = hardwareMap.get(DigitalChannel.class, RobotConfig.SwitchNames.get(RobotConfig.Switches.CLAW_LIMIT));
+
+        slidesLimitSwitch = hardwareMap.get(TouchSensor.class, RobotConfig.SwitchNames.get(RobotConfig.Switches.SLIDES_LIMIT));
+        clawLimitSwitch = hardwareMap.get(TouchSensor.class, RobotConfig.SwitchNames.get(RobotConfig.Switches.CLAW_LIMIT));
 
         clawDistanceSensor = hardwareMap.get(DistanceSensor.class, RobotConfig.DistanceSensorNames.get(RobotConfig.DistanceSensors.CLAW_DISTANCE_SENSOR));
 
@@ -106,7 +119,7 @@ class RobotConfig {
     enum Switches {SLIDES_LIMIT, CLAW_LIMIT}
     enum Motors {SLIDES_MOTOR_1, SLIDES_MOTOR_2}
     public enum DriveMotors {REAR_LEFT, REAR_RIGHT, FRONT_LEFT, FRONT_RIGHT};
-    enum Servos {CLAW_ROTATOR, CLAW, CLAW_INDICATOR}
+    enum Servos {CLAW_ROTATOR, CLAW, CLAW_INDICATOR, CLAW_LIMIT_SWITCH_SERVO, SECONDARY_CLAW, SECONDARY_CLAW_ROTATOR}
 
     public static final Map<DistanceSensors, String> DistanceSensorNames = new HashMap<DistanceSensors, String>() {{
         put(DistanceSensors.CLAW_DISTANCE_SENSOR, "distance_sensor");
@@ -140,5 +153,8 @@ class RobotConfig {
         put(Servos.CLAW_ROTATOR, "claw_rotator");
         put(Servos.CLAW, "claw");
         put(Servos.CLAW_INDICATOR, "claw_indicator");
+        put(Servos.CLAW_LIMIT_SWITCH_SERVO, "claw_limit_switch_servo");
+        put(Servos.SECONDARY_CLAW, "secondary_claw");
+        put(Servos.SECONDARY_CLAW_ROTATOR, "secondary_claw_rotator");
     }};
 }
