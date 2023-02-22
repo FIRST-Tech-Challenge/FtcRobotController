@@ -220,7 +220,13 @@ public class SampleMecanumDrive extends MecanumDrive {
     public void lowerDaBoi(){
         linearslide.setTargetPosition(0);
         linearslide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        linearslide.setPower(.7);
+        linearslide.setPower(.3);
+    }
+
+    public void thingDaBoi(){
+        linearslide.setTargetPosition(50);
+        linearslide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        linearslide.setPower(.3);
     }
 
     public void closeClaw(){

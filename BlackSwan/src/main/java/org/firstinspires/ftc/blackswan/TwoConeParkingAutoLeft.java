@@ -22,14 +22,14 @@ import org.openftc.easyopencv.OpenCvCameraRotation;
 import org.openftc.easyopencv.OpenCvPipeline;
 import org.openftc.easyopencv.OpenCvWebcam;
 
-@Autonomous(name = "TwoConeParkingAuto")
-public class TwoConeParkingAuto extends LinearOpMode {
+@Autonomous(name = "AutoLeft")
+public class TwoConeParkingAutoLeft extends LinearOpMode {
 
-    ParkingComputerVision.DeterminationPipeline pipeline;
+    DeterminationPipeline pipeline;
 
     TelemetryPacket packet = new TelemetryPacket();
 
-    public static int ParkDot;
+    public int parking;
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -37,7 +37,7 @@ public class TwoConeParkingAuto extends LinearOpMode {
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
         OpenCvWebcam webcam = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "webcam"), cameraMonitorViewId);
         FtcDashboard.getInstance().startCameraStream(webcam, 0);
-        pipeline = new ParkingComputerVision.DeterminationPipeline(telemetry, packet);
+        pipeline = new DeterminationPipeline(telemetry, packet);
         webcam.setPipeline(pipeline);
 
         webcam.setViewportRenderingPolicy(OpenCvCamera.ViewportRenderingPolicy.OPTIMIZE_VIEW);
@@ -61,6 +61,11 @@ public class TwoConeParkingAuto extends LinearOpMode {
         drive.setArm();
 
         waitForStart();
+
+        parking = pipeline.ParkDot;
+
+        telemetry.addData("parking dot number", parking);
+        telemetry.update();
 
 
 //            telemetry.addData("Lightness", pipeline.AVG_L);
@@ -93,13 +98,21 @@ public class TwoConeParkingAuto extends LinearOpMode {
                 .build();
 
         TrajectorySequence trajSeq2 = drive.trajectorySequenceBuilder(trajSeq.end())
-                .forward(8)
+                .forward(9)
                 .build();
 
         TrajectorySequence trajSeq3 = drive.trajectorySequenceBuilder(trajSeq.end())
-                .back(5)
+                .back(7)
                 .turn(Math.toRadians(40))
                 .back(20)
+                .build();
+
+        TrajectorySequence left = drive.trajectorySequenceBuilder(trajSeq3.end())
+                .strafeLeft(31)
+                .build();
+
+        TrajectorySequence right = drive.trajectorySequenceBuilder(trajSeq3.end())
+                .strafeRight(31)
                 .build();
 
         if (!isStopRequested()) {
@@ -112,6 +125,15 @@ public class TwoConeParkingAuto extends LinearOpMode {
             drive.closeClaw();
             drive.followTrajectorySequence(trajSeq3);
             drive.pause(2000);
+            if (parking == 1){
+                drive.followTrajectorySequence(left);
+            } else if (parking == 3) {
+                drive.followTrajectorySequence(right);
+            }
+            drive.lowerDaBoi();
+            drive.pause(5000);
+            drive.lowerDaBoi();
+            drive.thingDaBoi();
         }
     }
 
@@ -129,7 +151,7 @@ public class TwoConeParkingAuto extends LinearOpMode {
         static final Scalar GREEN = new Scalar(0, 255, 0);
         static final Scalar RED = new Scalar(255, 0, 0);
 
-        static final Point DETECTION_ANCHOR = new Point(100, 100);
+        static final Point DETECTION_ANCHOR = new Point(200, 40);
 
         static final int DETECTION_WIDTH = 20;
         static final int DETECTION_HEIGHT = 20;
@@ -140,6 +162,8 @@ public class TwoConeParkingAuto extends LinearOpMode {
         Point region1_pointB = new Point(
                 DETECTION_ANCHOR.x + DETECTION_WIDTH,
                 DETECTION_ANCHOR.y - DETECTION_HEIGHT);
+
+        public int ParkDot = 0;
 
         Mat DETECTION_L;
         Mat DETECTION_A;
@@ -192,7 +216,7 @@ public class TwoConeParkingAuto extends LinearOpMode {
 
             telemetry.update();
 
-            int ParkDot = 0;
+
 
             // A = GM // B = BY
             // one dot values, GM 174, BY 124

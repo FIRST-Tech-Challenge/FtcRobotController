@@ -7,6 +7,9 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
+
+import java.util.Date;
+
 @Config
 @TeleOp(name = "Teleop 2 controllers")
 public class Teleop2Controllers extends LinearOpMode {
@@ -15,6 +18,9 @@ public class Teleop2Controllers extends LinearOpMode {
     public static double closeClaw = 0.2 ;
     public static double rotateClaw = 0.70;
     public static double unRotateClaw = 0;
+
+    double manRotClaw = 0;
+
     @Override
     public void runOpMode() throws InterruptedException {
         DcMotor motorFrontLeft = hardwareMap.dcMotor.get("frontLeft");
@@ -78,13 +84,22 @@ public class Teleop2Controllers extends LinearOpMode {
                 clawservo.setPosition(closeClaw);
             }
             if (gamepad2.left_bumper && linearslide.getCurrentPosition() > 1000){
-                daSpinster.setPosition(rotateClaw);
+//                daSpinster.setPosition(rotateClaw);
+
+                  manRotClaw+=0.0035;
             }
             if (gamepad2.right_bumper && linearslide.getCurrentPosition() > 1000){
-                daSpinster.setPosition(unRotateClaw);
+//                daSpinster.setPosition(unRotateClaw);
+
+                manRotClaw-=0.0035;
             }
+
+            daSpinster.setPosition(manRotClaw);
+
+
             telemetry.addData("GamepadX", x);
             telemetry.addData("GamepadY", y);
+            telemetry.addData("armpos", clawservo.getPosition());
             telemetry.addData("servopos", clawservo.getPosition());
             telemetry.addData("Linear Slide Position", linearslide.getCurrentPosition());
             telemetry.update();
