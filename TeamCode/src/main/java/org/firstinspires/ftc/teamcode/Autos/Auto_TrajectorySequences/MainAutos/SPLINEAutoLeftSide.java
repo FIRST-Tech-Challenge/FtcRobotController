@@ -4,6 +4,7 @@ import com.acmerobotics.roadrunner.geometry.Pose2d;
 
 import org.firstinspires.ftc.teamcode.MechanismTemplates.Arm;
 import org.firstinspires.ftc.teamcode.MechanismTemplates.Claw;
+import org.firstinspires.ftc.teamcode.MechanismTemplates.OdoPod;
 import org.firstinspires.ftc.teamcode.MechanismTemplates.Slide;
 import org.firstinspires.ftc.teamcode.TeleOps.AprilTags.PowerPlay_AprilTagDetectionDeposit;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
@@ -25,9 +26,14 @@ public class SPLINEAutoLeftSide extends PowerPlay_AprilTagDetectionDeposit {
 	// [CLAW]
 	    private Claw clawControl;
 
-	// [MEDIUM JUNCTION]
-	public static double mediumX = 45;
-	public static double mediumY = -4;
+		//Opening Move
+	public static double openingX = 43.5;
+	public static double openingY = 0;
+
+		// [MEDIUM JUNCTION]
+	public static double mediumX = 44.12;
+	public static double mediumY = -4.85;
+
 
 	// [CONE STACK]
 	public static double xConeStack = 45;
@@ -35,10 +41,10 @@ public class SPLINEAutoLeftSide extends PowerPlay_AprilTagDetectionDeposit {
 	public static double coneStackForward = 8.7;
 
 	// [OPENING MOVE]
-	public static double forwardAmount = -50;
+	public static double forwardAmount = -47;
 
 	// [OPENING MOVE --> MEDIUM JUNCTION]
-	public static double openingHeading = 52;
+	public static double openingHeading = 90;
 	// [1] MEDIUM JUNCTION --> CONE STACK
 	public static double coneStackHeading1 = 93;
 	// [1] CONE STACK --> MEDIUM JUNCTION
@@ -68,18 +74,34 @@ public class SPLINEAutoLeftSide extends PowerPlay_AprilTagDetectionDeposit {
 		Pose2d startPose = new Pose2d(0, 0, Math.toRadians(180));
 		SampleMecanumDrive bot = new SampleMecanumDrive(hardwareMap);
 		bot.setPoseEstimate(startPose);
+		initialize();
 
 		TrajectorySequence junction = bot.trajectorySequenceBuilder(startPose)
-				/*
+
 				.UNSTABLE_addTemporalMarkerOffset(0,()->{
 					clawControl = new Claw(hardwareMap);
 					OdoPod odoControl = new OdoPod(hardwareMap);
 				})
-				 */ // claw close
-				.waitSeconds(0.5)
-				.forward(forwardAmount)
-				.waitSeconds(0.5)
-				.lineToLinearHeading(new Pose2d(mediumX,mediumY,Math.toRadians(openingHeading)))
+				  // claw close
+				.waitSeconds(0.25)
+				//.forward(forwardAmount)
+				.UNSTABLE_addTemporalMarkerOffset(1,()->{
+					slideControl.setMidJunction();
+					armControl.setExtake();
+					clawControl.toggleWristRotate();
+				})
+				.lineToLinearHeading(new Pose2d(openingX,openingY,Math.toRadians(openingHeading)))
+				.UNSTABLE_addTemporalMarkerOffset(0.15,()->{
+					slideControl.setIntakeOrGround();
+				})
+				.waitSeconds(0.25)
+				.UNSTABLE_addTemporalMarkerOffset(0,()->{
+					clawControl.toggleAutoOpenClose();
+				})
+				.waitSeconds(0.25)
+				.UNSTABLE_addTemporalMarkerOffset(0,()->{
+					armControl.setIntake();
+				})
 				.waitSeconds(1)
 				.splineTo(new Vector2d(xConeStack, yConeStack), Math.toRadians(coneStackHeading1))
 				//.splineToSplineHeading(new Pose2d(xConeStack, yConeStack, Math.toRadians(endTurn1)), Math.toRadians(endTangent1))
