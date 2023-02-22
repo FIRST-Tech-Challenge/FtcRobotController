@@ -16,7 +16,7 @@ import org.openftc.easyopencv.OpenCvCameraRotation;
 
 import java.util.Date;
 
-@Autonomous(name="Pipe Align Test", group="drive")
+@Autonomous(name="Pipe Align Test", group="test")
 public class PipeAlignTest extends LinearOpMode {
     private OpenCvCamera webcam;
 

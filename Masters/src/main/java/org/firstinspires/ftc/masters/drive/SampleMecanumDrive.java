@@ -50,6 +50,7 @@ import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.VoltageSensor;
 import com.qualcomm.robotcore.hardware.configuration.typecontainers.MotorConfigurationType;
 
+import org.firstinspires.ftc.masters.PowerPlayComputerVisionPipelines;
 import org.firstinspires.ftc.masters.trajectorySequence.TrajectorySequence;
 import org.firstinspires.ftc.masters.trajectorySequence.TrajectorySequenceBuilder;
 import org.firstinspires.ftc.masters.trajectorySequence.TrajectorySequenceRunner;
@@ -81,7 +82,7 @@ public class SampleMecanumDrive extends MecanumDrive {
 
     protected TrajectoryFollower follower;
 
-    private DcMotorEx leftFront, leftRear, rightRear, rightFront;
+    public DcMotorEx leftFront, leftRear, rightRear, rightFront;
     //private Encoder leftEncoder, rightEncoder, middleEncoder;
     private List<DcMotorEx> motors;
     public DcMotorEx linearSlide;
@@ -99,6 +100,7 @@ public class SampleMecanumDrive extends MecanumDrive {
 
         follower = new HolonomicPIDVAFollower(TRANSLATIONAL_PID, TRANSLATIONAL_PID, HEADING_PID,
                 new Pose2d(0.5, 0.5, Math.toRadians(5.0)), 0.5);
+
 
         LynxModuleUtil.ensureMinimumFirmwareVersion(hardwareMap);
 
@@ -443,4 +445,43 @@ public class SampleMecanumDrive extends MecanumDrive {
     public void breakFollowing() {
 
     }
+
+    public boolean alignPole(PowerPlayComputerVisionPipelines.PipePosition pos) {
+        switch (pos) {
+            case LEFT1:
+            case LEFT2:
+            case LEFT3:
+            case LEFT4:
+            case LEFT5:
+            case LEFT6:
+            case LEFT7:
+            case LEFT8:
+                leftFront.setPower(-.2);
+                leftRear.setPower(-.2);
+                rightFront.setPower(.2);
+                rightRear.setPower(.2);
+                break;
+            case RIGHT1:
+            case RIGHT2:
+            case RIGHT3:
+            case RIGHT4:
+            case RIGHT5:
+            case RIGHT6:
+            case RIGHT7:
+            case RIGHT8:
+                leftFront.setPower(.2);
+                leftRear.setPower(.2);
+                rightFront.setPower(-.2);
+                rightRear.setPower(-.2);
+                break;
+            case CENTER:
+                leftFront.setPower(0);
+                leftRear.setPower(0);
+                rightFront.setPower(0);
+                rightRear.setPower(0);
+                return true;
+        }
+        return false;
+    }
+
 }

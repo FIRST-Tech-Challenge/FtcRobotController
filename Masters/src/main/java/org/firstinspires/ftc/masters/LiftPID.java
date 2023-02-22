@@ -11,7 +11,7 @@ import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
 @Config
-@TeleOp(name="Lift PID")
+@TeleOp(name="Lift PID", group="pid")
 public class LiftPID extends LinearOpMode {
 
     PIDController liftController;
@@ -56,11 +56,7 @@ public class LiftPID extends LinearOpMode {
 
         waitForStart();
         while (opModeIsActive()){
-            if (target ==0){
-                multi= multiplierZero;
-            } else {
-                multi= multiplier;
-            }
+
             liftController.setPID(p, i, d);
             int liftPos = linearSlideMotor.getCurrentPosition();
             double pid = liftController.calculate(liftPos, target);
@@ -69,7 +65,7 @@ public class LiftPID extends LinearOpMode {
 
             linearSlideMotor.setPower((liftController.calculate(linearSlideMotor.getCurrentPosition(), target)+f) *multi);
             frontSlide.setPower((liftController.calculate(linearSlideMotor.getCurrentPosition(), target)+f) *multi);
-            slideOtherer.setPower((liftController.calculate(linearSlideMotor.getCurrentPosition(), target)+f) *multi);
+            slideOtherer.setPower((liftController.calculate(slideOtherer.getCurrentPosition(), target)+f) *multi);
 
             telemetry.addData("slide", linearSlideMotor.getCurrentPosition());
             telemetry.addData("front", frontSlide.getCurrentPosition());

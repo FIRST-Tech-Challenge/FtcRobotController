@@ -12,7 +12,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 
 @Config
-@TeleOp(name = "carousel test quick duck")
+//@TeleOp(name = "carousel test quick duck")
 public class CarouselMotionProfile extends LinearOpMode {
 
     public static int accelerate1 = 75;

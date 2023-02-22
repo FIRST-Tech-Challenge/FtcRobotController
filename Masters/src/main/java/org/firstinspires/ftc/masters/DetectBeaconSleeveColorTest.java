@@ -3,7 +3,7 @@ package org.firstinspires.ftc.masters;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
-@TeleOp(name = "Power Play Sleeve Test", group = "competition")
+@TeleOp(name = "Power Play Sleeve Test", group = "test")
 public class DetectBeaconSleeveColorTest extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {

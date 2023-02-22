@@ -1,7 +1,6 @@
 package org.firstinspires.ftc.masters.drive;
 
 import com.acmerobotics.dashboard.config.Config;
-import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.masters.trajectorySequence.TrajectorySequenceRunnerCancelable;
@@ -17,7 +16,7 @@ public class SampleMecanumDriveCancelable extends SampleMecanumDrive {
     //private final TrajectorySequenceRunnerCancelable trajectorySequenceRunnerCancelable;
 
 
-    public SampleMecanumDriveCancelable(HardwareMap hardwareMap, LinearOpMode opMode, Telemetry telemetry) {
+    public SampleMecanumDriveCancelable(HardwareMap hardwareMap, Telemetry telemetry) {
         super(hardwareMap);
 
         trajectorySequenceRunner = new TrajectorySequenceRunnerCancelable(follower, HEADING_PID);

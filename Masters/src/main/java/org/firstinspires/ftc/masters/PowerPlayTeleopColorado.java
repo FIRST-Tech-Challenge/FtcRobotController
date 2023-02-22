@@ -18,7 +18,6 @@ import static org.firstinspires.ftc.masters.BadgerConstants.TIP_FRONT;
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
-import com.arcrobotics.ftclib.controller.PIDController;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -27,11 +26,9 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.checkerframework.checker.units.qual.A;
-
 @Config
 @TeleOp(name="Power Play TeleOp COLORADO", group = "competition")
-public class PowerPlayTeleopTry extends LinearOpMode {
+public class PowerPlayTeleopColorado extends LinearOpMode {
 
 
     private final FtcDashboard dashboard = FtcDashboard.getInstance();
@@ -49,14 +46,15 @@ public class PowerPlayTeleopTry extends LinearOpMode {
     DcMotorEx frontSlide = null;
     DcMotorEx slideOtherer = null;
 
-    private final double ticks_in_degree = 1425/360;
+    private final double MAX_VELOCITY= 435/60*384.5*0.8;
 
+    public static double ALIGN_SPEED =0.15;
 
     Servo clawServo = null;
     DcMotorEx armMotor = null;
     Servo tippingServo = null;
 
-    double maxPowerConstraint = 0.75;
+    double maxPowerConstraint = 1;
 
     int strafeConstant=1;
 
@@ -72,6 +70,7 @@ public class PowerPlayTeleopTry extends LinearOpMode {
 
     int liftOffset;
     int armOffset;
+    PowerPlayComputerVisionPipelines  CV= null;
 
 
     @Override
@@ -94,6 +93,7 @@ public class PowerPlayTeleopTry extends LinearOpMode {
             --------
 
         */
+        CV = new PowerPlayComputerVisionPipelines(hardwareMap, telemetry);
         telemetry.addData("Status", "Initialized");
        // telemetry.update();
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
@@ -153,8 +153,11 @@ public class PowerPlayTeleopTry extends LinearOpMode {
         boolean moveArm = false;
         boolean openClaw = true;
 
-
+        boolean aligning = false;
+        boolean yPushed= false;
+        CV.setPipeDetectionFront();
         waitForStart();
+
         runtime.reset();
 
 
@@ -172,6 +175,7 @@ public class PowerPlayTeleopTry extends LinearOpMode {
             y = -gamepad1.left_stick_y;
             x = gamepad1.left_stick_x;
             rx = gamepad1.right_stick_x;
+            
             if (Math.abs(y) < 0.2) {
                 y = 0;
             }
@@ -211,9 +215,27 @@ public class PowerPlayTeleopTry extends LinearOpMode {
                 maxPowerConstraint = 1;
             } else if (gamepad1.x) {
                 maxPowerConstraint = 0.75;
-            } else if (gamepad1.b) {
-                maxPowerConstraint = 0.25;
             }
+
+            if (gamepad1.y){
+                if (!yPushed){
+                    aligning = !aligning;
+                }
+
+                yPushed = true;
+
+            } else {
+                yPushed = false;
+            }
+            if (aligning){
+                if (alignPole()){
+                    aligning = false;
+
+                }
+
+            }
+
+
 
             if (gamepad1.left_trigger>0.2){
                 armMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -432,17 +454,39 @@ public class PowerPlayTeleopTry extends LinearOpMode {
 
     protected void moveSlideMotors (){
 
-        liftPIDController.setTarget(slideTarget);
+        linearSlideMotor.setTargetPosition(slideTarget);
+        frontSlide.setTargetPosition(slideTarget);
+        slideOtherer.setTargetPosition(slideTarget);
+        linearSlideMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        frontSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        slideOtherer.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        slideOtherer.setPower(1);
+        linearSlideMotor.setPower(1);
+        frontSlide.setPower(1);
 
-        double power= liftPIDController.calculatePower();
 
-        linearSlideMotor.setPower(power);
-        frontSlide.setPower(power);
-        slideOtherer.setPower(power);
 
-        telemetry.addData("slide", linearSlideMotor.getCurrentPosition());
-        telemetry.addData("front", frontSlide.getCurrentPosition());
-        telemetry.addData("other", slideOtherer.getCurrentPosition());
+
+//        liftPIDController.setTarget(slideTarget);
+//
+//        double power= liftPIDController.calculatePower();
+//        double powerLeft= liftPIDController.calculatePower(slideOtherer);
+////
+//        linearSlideMotor.setPower(power);
+//        frontSlide.setPower(power);
+//        slideOtherer.setPower(powerLeft);
+//
+//        double velocity = power *MAX_VELOCITY;
+//        //double powerLeft= liftPIDController.calculatePower(drive.slideOtherer);
+//
+//
+////        linearSlideMotor.setVelocity(velocity);
+////        frontSlide.setVelocity(velocity);
+////        slideOtherer.setVelocity(velocity);
+//
+//        telemetry.addData("slide", linearSlideMotor.getCurrentPosition());
+//        telemetry.addData("front", frontSlide.getCurrentPosition());
+//        telemetry.addData("other", slideOtherer.getCurrentPosition());
 
     }
 
@@ -456,6 +500,45 @@ public class PowerPlayTeleopTry extends LinearOpMode {
 
     enum STATE{
         ZERO, BOTTOM, MID, HIGH, BACK_MID, BACK_HIGH, MANUAL, CONE
+    }
+
+    public boolean alignPole() {
+        PowerPlayComputerVisionPipelines.PipePosition pos = CV.sleevePipeline.position;
+        switch (pos) {
+            case LEFT1:
+            case LEFT2:
+            case LEFT3:
+            case LEFT4:
+            case LEFT5:
+            case LEFT6:
+            case LEFT7:
+            case LEFT8:
+                leftFrontMotor.setPower(-ALIGN_SPEED);
+                leftRearMotor.setPower(-ALIGN_SPEED);
+                rightFrontMotor.setPower(ALIGN_SPEED);
+                rightRearMotor.setPower(ALIGN_SPEED);
+                break;
+            case RIGHT1:
+            case RIGHT2:
+            case RIGHT3:
+            case RIGHT4:
+            case RIGHT5:
+            case RIGHT6:
+            case RIGHT7:
+            case RIGHT8:
+                leftFrontMotor.setPower(ALIGN_SPEED);
+                leftRearMotor.setPower(ALIGN_SPEED);
+                rightFrontMotor.setPower(-ALIGN_SPEED);
+                rightRearMotor.setPower(-ALIGN_SPEED);
+                break;
+            case CENTER:
+                leftFrontMotor.setPower(0);
+                leftRearMotor.setPower(0);
+                rightFrontMotor.setPower(0);
+                rightRearMotor.setPower(0);
+                return true;
+        }
+        return false;
     }
 
 

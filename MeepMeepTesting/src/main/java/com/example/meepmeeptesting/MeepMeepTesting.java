@@ -26,15 +26,20 @@ public class MeepMeepTesting {
 
 
                 .followTrajectorySequence(drive ->
-                        drive.trajectorySequenceBuilder(new Pose2d(new Vector2d(36, -64.25), Math.toRadians(90)))
-                                .splineToConstantHeading(new Vector2d(12,-61),Math.toRadians(90))
-                                .splineTo(new Vector2d(xCenterJunction, yCenterJunction),Math.toRadians(135))
-                                .back(3)
-                                .splineToLinearHeading(new Pose2d(new Vector2d(xIntermediateStack, yIntermediateStack), 0), 0)
+                        drive.trajectorySequenceBuilder(new Pose2d(new Vector2d(0, 0), Math.toRadians(180)))
 
-                                .splineTo(new Vector2d(xStack, yStack), 0)
-                               // .lineToConstantHeading(new Vector2d(49, -9))
-                                .splineToLinearHeading(new Pose2d(new Vector2d(30.5,-9.5), -45),Math.toRadians(135))
+                                .splineToLinearHeading(new Pose2d(new Vector2d(-53, 0),Math.toRadians(180)),Math.toRadians(180))
+                                //.turn(Math.toRadians(45))
+                               // .lineTo(new Vector2d(31, -8))
+                                //.splineToLinearHeading(new Pose2d(new Vector2d(53, -13),0),0)
+//                                .splineToConstantHeading(new Vector2d(12,-61),Math.toRadians(90))
+//                                .splineTo(new Vector2d(xCenterJunction, yCenterJunction),Math.toRadians(135))
+//                                .back(3)
+//                                .splineToLinearHeading(new Pose2d(new Vector2d(xIntermediateStack, yIntermediateStack), 0), 0)
+//
+//                                .splineTo(new Vector2d(xStack, yStack), 0)
+//                               // .lineToConstantHeading(new Vector2d(49, -9))
+//                                .splineToLinearHeading(new Pose2d(new Vector2d(30.5,-9.5), -45),Math.toRadians(135))
                               //  .splineToConstantHeading(new Vector2d(10,-24), Math.toRadians(135))
 //                                .splineTo(new Vector2d(xIntermediateStack,yIntermediateStack), Math.toRadians(angleIntermediateStack))
 //                                .splineTo(new Vector2d(xStack, yStack), Math.toRadians(180))

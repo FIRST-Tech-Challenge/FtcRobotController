@@ -7,7 +7,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import java.util.Date;
 
-@Autonomous(name="Computer Vision Test")
+//@Autonomous(name="Computer Vision Test")
 public class ComputerVisionCodeAlongAuto extends LinearOpMode {
 
     @Override

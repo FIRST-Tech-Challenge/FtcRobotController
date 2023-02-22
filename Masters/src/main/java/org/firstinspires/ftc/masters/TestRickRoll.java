@@ -5,7 +5,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 
-@TeleOp(name="Testing")
+@TeleOp(name="Testing", group="test")
 public class TestRickRoll extends LinearOpMode {
 
     private boolean rickAstleyFound;

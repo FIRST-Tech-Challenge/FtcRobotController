@@ -212,6 +212,8 @@ public class TwoConeParkingAutoRight extends LinearOpMode {
                     RED, // The color the rectangle is drawn in
                     2); // Thickness of the rectangle lines
 
+            Imgproc.rectangle(input, new Point(200,200), new Point(300, 300), GREEN, 2 );
+
             telemetry.update();
 
 
