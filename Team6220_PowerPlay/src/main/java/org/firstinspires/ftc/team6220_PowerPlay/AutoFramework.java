@@ -2,11 +2,6 @@ package org.firstinspires.ftc.team6220_PowerPlay;
 
 
 abstract public class AutoFramework extends BaseAutonomous {
-    public enum AutoState {
-        LeftAutos,
-        RightAutos,
-    }
-
     /**
      * @param AutoSelector, controls left or right
      * @throws InterruptedException If you haven't added a config for that autonomous
@@ -19,12 +14,12 @@ abstract public class AutoFramework extends BaseAutonomous {
         switch (AutoSelector) {
 
             case LeftAutos:
-                signalArray = new int[] {90, 33, 90, 11, -90, 11};
+                signalArray = new int[]{90, 33, 90, 11, -90, 11};
                 driveCourse = -90;
                 break;
 
             case RightAutos:
-                signalArray = new int[] {90, 11, -90, 11, -90, 33};
+                signalArray = new int[]{90, 11, -90, 11, -90, 33};
                 driveCourse = 90;
                 break;
             default:
@@ -96,5 +91,10 @@ abstract public class AutoFramework extends BaseAutonomous {
                 driveAutonomous(signalArray[4], signalArray[5]);
                 break;
         }
+    }
+
+    public enum AutoState {
+        LeftAutos,
+        RightAutos,
     }
 }
