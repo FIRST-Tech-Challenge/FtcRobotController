@@ -11,7 +11,7 @@ import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
 @Config
-@TeleOp(name="Arm PID")
+@TeleOp(name="Arm PID", group="pid")
 public class ArmPID extends LinearOpMode {
 
    ArmPIDController armPIDController;

@@ -16,7 +16,7 @@ import org.openftc.easyopencv.OpenCvCameraRotation;
 import org.openftc.easyopencv.OpenCvPipeline;
 import org.openftc.easyopencv.OpenCvWebcam;
 
-@TeleOp(name="Continuously adaptive meanshift")
+@TeleOp(name="Continuously adaptive meanshift", group="test")
 public class OpenCVCamshiftMaybe extends LinearOpMode {
     public OpenCvWebcam webcam;
 

@@ -62,7 +62,7 @@ import org.firstinspires.ftc.masters.drive.StandardTrackingWheelLocalizer;
  * precision. The heading should still line up.
  */
 @Config
-@TeleOp(group = "drive")
+@TeleOp(group = "roadrunner")
 public class TrackingWheelLateralDistanceTuner extends LinearOpMode {
     public static int NUM_TURNS = 10;
 

@@ -16,7 +16,7 @@ import org.openftc.easyopencv.OpenCvCameraRotation;
 
 import java.util.Date;
 
-@Autonomous(name="Cone Align Test", group="drive")
+@Autonomous(name="Cone Align Test", group="demo")
 public class ConeAlignTest extends LinearOpMode {
     private OpenCvCamera webcam;
 

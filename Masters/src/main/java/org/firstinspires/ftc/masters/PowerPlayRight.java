@@ -3,6 +3,7 @@ package org.firstinspires.ftc.masters;
 import static org.firstinspires.ftc.masters.BadgerConstants.ARM_BACK;
 import static org.firstinspires.ftc.masters.BadgerConstants.ARM_MID_TOP;
 import static org.firstinspires.ftc.masters.BadgerConstants.SLIDE_HIGH;
+import static org.firstinspires.ftc.masters.BadgerConstants.SLIDE_HIGH_AUTO;
 
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
@@ -12,6 +13,7 @@ import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.acmerobotics.roadrunner.trajectory.Trajectory;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.hardware.DcMotor;
 
 import org.firstinspires.ftc.masters.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.masters.drive.SampleMecanumDriveCancelable;
@@ -19,7 +21,7 @@ import org.firstinspires.ftc.masters.drive.SampleMecanumDriveCancelable;
 import java.util.Date;
 
 @Config
-@Autonomous(name = "Power Play Right")
+@Autonomous(name = "Power Play Right", group = "competition")
 public class PowerPlayRight extends LinearOpMode {
 
     enum State {
@@ -110,7 +112,7 @@ public class PowerPlayRight extends LinearOpMode {
                     } else {
                         armTarget = ARM_MID_TOP;
                         if (drive.armMotor.getCurrentPosition()>100){
-                            liftTarget= SLIDE_HIGH;
+                            liftTarget= SLIDE_HIGH_AUTO;
                             drive.tipFront();
                             drive.closeClaw();
                         }
@@ -120,7 +122,7 @@ public class PowerPlayRight extends LinearOpMode {
                     if (drive.alignPole(CV.sleevePipeline.position)){
                         currentState = State.FORWARD;
                         forward = drive.trajectoryBuilder(drive.getPoseEstimate())
-                                .forward(2.5)
+                                .forward(8)
                                 .build();
                         drive.followTrajectoryAsync(forward);
                     }
@@ -128,7 +130,7 @@ public class PowerPlayRight extends LinearOpMode {
                 case FORWARD:
                     if (!drive.isBusy()){
                         backUpFromJunction = drive.trajectoryBuilder(drive.getPoseEstimate())
-                                .back(6)
+                                .back(10)
                                 .build();
                         sleep(100);
                         drive.openClaw();
@@ -190,14 +192,23 @@ public class PowerPlayRight extends LinearOpMode {
             armPIDController.setTarget(armTarget);
             drive.armMotor.setPower(armPIDController.calculateVelocity());
 
-            liftPIDController.setTarget(liftTarget);
-
-            double power = liftPIDController.calculatePower();
-            double powerLeft= liftPIDController.calculatePower(drive.slideOtherer);
-
-            drive.linearSlide.setPower(power);
-            drive.frontSlide.setPower(power);
-            drive.slideOtherer.setPower(powerLeft);
+//            liftPIDController.setTarget(liftTarget);
+//
+//            double power = liftPIDController.calculatePower();
+//            double powerLeft= liftPIDController.calculatePower(drive.slideOtherer);
+//
+//            drive.linearSlide.setPower(power);
+//            drive.frontSlide.setPower(power);
+//            drive.slideOtherer.setPower(powerLeft);
+            drive.linearSlide.setTargetPosition(liftTarget);
+            drive.frontSlide.setTargetPosition(liftTarget);
+            drive.slideOtherer.setTargetPosition(liftTarget);
+            drive.linearSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            drive.frontSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            drive.slideOtherer.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            drive.linearSlide.setPower(1);
+            drive.frontSlide.setPower(1);
+            drive.slideOtherer.setPower(1);
 
           //  telemetry.addData("power ", power);
             telemetry.addData("arm target", armTarget);

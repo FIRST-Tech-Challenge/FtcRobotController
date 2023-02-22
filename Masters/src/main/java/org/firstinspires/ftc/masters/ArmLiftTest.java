@@ -11,7 +11,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import org.firstinspires.ftc.masters.drive.SampleMecanumDrive;
 
 @Config
-@Autonomous(name = "Arm Lift Test")
+@Autonomous(name = "Arm Lift Test", group="pid")
 public class ArmLiftTest extends LinearOpMode {
 
 
