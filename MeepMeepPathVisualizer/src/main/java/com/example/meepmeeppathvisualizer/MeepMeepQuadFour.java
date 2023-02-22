@@ -14,7 +14,7 @@ public class MeepMeepQuadFour {
         new MeepMeepPersistence(mm);
         MeepMeepPersistence persist = new MeepMeepPersistence(mm);
         persist.restore();
-        Pose2d startPose = new Pose2d(45, 15, Math.toRadians(96));
+        Pose2d startPose = new Pose2d(-32, -23, Math.toRadians(180));
 
         // Creating bot
         RoadRunnerBotEntity bot = new DefaultBotBuilder(mm)
@@ -31,7 +31,10 @@ public class MeepMeepQuadFour {
 
                 .followTrajectorySequence(drive -> {
                     TrajectorySequenceBuilder builder = drive.trajectorySequenceBuilder(startPose);
-                    builder.lineToLinearHeading(new Pose2d(45, -4, Math.toRadians(52)));
+                   builder .setReversed(false);
+                    builder.strafeRight(10);
+                            builder.splineToLinearHeading(new Pose2d(-50, -10, Math.toRadians(180)), Math.toRadians(40));
+                            builder.setReversed(false);
                     return builder.build();
                 });
 

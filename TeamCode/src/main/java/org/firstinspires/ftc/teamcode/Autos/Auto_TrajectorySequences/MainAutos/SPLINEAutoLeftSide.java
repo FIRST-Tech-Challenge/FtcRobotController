@@ -15,7 +15,9 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
 @Config
 @Autonomous(name = "testAuto")
-public class SPLINEAutoLeftSide extends PowerPlay_AprilTagDetectionDeposit {
+public class SPLINEAutoLeftSide extends PowerPlay_AprilTagDetectionDeposit{
+    public static double endTangent1 = 40;
+    public static double openingStrafe = 8;
 	// [ARM]
 		private Arm armControl;
 		public static int armPosition = 0;
@@ -26,22 +28,18 @@ public class SPLINEAutoLeftSide extends PowerPlay_AprilTagDetectionDeposit {
 	// [CLAW]
 	    private Claw clawControl;
 
-		//Opening Move
-	public static double openingX = 43.5;
-	public static double openingY = 0;
+	// [OPENING MOVE]
+	public static double openingX = 37.7;
+	public static double openingY = -1;
 
-		// [MEDIUM JUNCTION]
+	// [MEDIUM JUNCTION]
 	public static double mediumX = 44.12;
 	public static double mediumY = -4.85;
-
 
 	// [CONE STACK]
 	public static double xConeStack = 45;
 	public static double yConeStack = 15;
 	public static double coneStackForward = 8.7;
-
-	// [OPENING MOVE]
-	public static double forwardAmount = -47;
 
 	// [OPENING MOVE --> MEDIUM JUNCTION]
 	public static double openingHeading = 90;
@@ -77,14 +75,12 @@ public class SPLINEAutoLeftSide extends PowerPlay_AprilTagDetectionDeposit {
 		initialize();
 
 		TrajectorySequence junction = bot.trajectorySequenceBuilder(startPose)
-
 				.UNSTABLE_addTemporalMarkerOffset(0,()->{
 					clawControl = new Claw(hardwareMap);
 					OdoPod odoControl = new OdoPod(hardwareMap);
 				})
-				  // claw close
+				 // claw close
 				.waitSeconds(0.25)
-				//.forward(forwardAmount)
 				.UNSTABLE_addTemporalMarkerOffset(1,()->{
 					slideControl.setMidJunction();
 					armControl.setExtake();
@@ -92,27 +88,34 @@ public class SPLINEAutoLeftSide extends PowerPlay_AprilTagDetectionDeposit {
 				})
 				.lineToLinearHeading(new Pose2d(openingX,openingY,Math.toRadians(openingHeading)))
 				.UNSTABLE_addTemporalMarkerOffset(0.15,()->{
-					slideControl.setIntakeOrGround();
+					slideControl.setIntakeOrGround(); // TODO change this to custom height since we'll be at the conestack height
 				})
+
 				.waitSeconds(0.25)
 				.UNSTABLE_addTemporalMarkerOffset(0,()->{
 					clawControl.toggleAutoOpenClose();
 				})
 				.waitSeconds(0.25)
+
 				.UNSTABLE_addTemporalMarkerOffset(0,()->{
 					armControl.setIntake();
+					clawControl.toggleWristRotate();
 				})
 				.waitSeconds(1)
-				.splineTo(new Vector2d(xConeStack, yConeStack), Math.toRadians(coneStackHeading1))
-				//.splineToSplineHeading(new Pose2d(xConeStack, yConeStack, Math.toRadians(endTurn1)), Math.toRadians(endTangent1))
-				.waitSeconds(0.7)
-				.forward(coneStackForward)
-				.waitSeconds(1)
+				//.splineTo(new Vector2d(xConeStack, yConeStack), Math.toRadians(coneStackHeading1))
+				//.strafeRight(openingStrafe)
+
+				//.splineToLinearHeading(new Pose2d(xConeStack, yConeStack, Math.toRadians(coneStackHeading1)), Math.toRadians(endTangent1))
+				//.forward(coneStackForward)
+
+				.lineToLinearHeading(new Pose2d(48.7,-1,Math.toRadians(90)))
+				/*
 				.setReversed(true)
 				.splineTo(new Vector2d(mediumX, mediumY), Math.toRadians(mediumHeading1))
 				.setReversed(false)
 				//.splineToSplineHeading(new Pose2d(mediumX, mediumY, Math.toRadians(mediumHeading2)), Math.toRadians(mediumEndTangent2))
 				.waitSeconds(1)
+				*/
 				.build();
 		scan();
 		waitForStart();
