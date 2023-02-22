@@ -348,16 +348,20 @@ public class DriverControls {
             robot.underarm.toggleLasso();
         }
 
-        if(stickyGamepad2.a){
-            robot.articulate(Robot.Articulation.TRANSFER);
+        if(stickyGamepad2.x){
+            robot.underarm.articulate(UnderArm.Articulation.jointAngles);
         }
 
-        if(stickyGamepad2.x){
-            robot.underarm.articulate(UnderArm.Articulation.noIK);
+        if(stickyGamepad2.a){
+            robot.underarm.setJointAngle(UnderArm.JointAngle.Home);
         }
 
         if(stickyGamepad2.b){
-            robot.articulate(Robot.Articulation.MANUAL);
+            robot.underarm.setJointAngle(UnderArm.JointAngle.Test3);
+        }
+
+        if(stickyGamepad2.y){
+            robot.underarm.setJointAngle(UnderArm.JointAngle.Test4);
         }
 
         if(notJoystickDeadZone(gamepad2.left_stick_y)){

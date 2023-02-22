@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.robots.taubot.util;
 
+import static org.firstinspires.ftc.teamcode.robots.taubot.util.Utils.servoNormalize;
+
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.PwmControl;
 import com.qualcomm.robotcore.hardware.Servo;
@@ -37,6 +39,10 @@ public class Joint {
         initJoint(simulated, hardwareMap);
     }
 
+    public void setPWM_PER_DEGREE(double PWM){
+        PWM_PER_DEGREE = PWM;
+    }
+
     public void initJoint(boolean simulated, HardwareMap hardwareMap){
         if(simulated) {
             motor = new ServoSim();
@@ -62,14 +68,19 @@ public class Joint {
 
     public void setTargetAngle(double angle, double speed){
         jointSpeed = speed / 1000;
-        oldTargetAngle = interimAngle;
         targetAngle = angle;
         oldTime = System.nanoTime() / 1e6;
+        if(interimAngle > targetAngle)
+            targetIsHigher = false;
+        else
+            targetIsHigher = true;
     }
 
     public double getPosition(){
         return motor.getPosition();
     }
+
+    public double getTargetAngle() { return interimAngle; }
 
     public void setSpeed (double speed){
         //parameter in degrees per second, jointSpeed in ms for smoothness
@@ -79,11 +90,11 @@ public class Joint {
     public void update(){
         double newTime = System.nanoTime() / 1e6;
         //calculates position based on time passed since angle set and degrees per ms
-        if(targetAngle < interimAngle && !targetIsHigher) {
-            interimAngle = oldTargetAngle - (newTime - oldTime) * jointSpeed;
+        if (targetAngle < interimAngle && !targetIsHigher) {
+            interimAngle -= (newTime - oldTime) * jointSpeed;
         }
         else if (targetAngle > interimAngle && targetIsHigher) {
-            interimAngle = oldTargetAngle + (newTime - oldTime) * jointSpeed;
+            interimAngle += (newTime - oldTime) * jointSpeed;
         }
         //once target is reached or exceeded, servo is told to go to targetAngle
         if (targetIsHigher && interimAngle > targetAngle)
@@ -91,7 +102,7 @@ public class Joint {
         if(!targetIsHigher && interimAngle < targetAngle)
             interimAngle = targetAngle;
 
-        motor.setPosition(calcTargetPosition(interimAngle));
+        motor.setPosition(servoNormalize(calcTargetPosition(interimAngle)));
     }
 
     private double calcTargetPosition(double targetPos) {

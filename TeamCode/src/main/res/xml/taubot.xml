@@ -22,8 +22,8 @@
             <RevRobotics40HDHexMotor name="motorLeft" port="1" />
             <RevRobotics40HDHexMotor name="motorChariot" port="2" />
             <LynxEmbeddedIMU name="baseIMU" port="0" bus="0" />
-            <Servo name="shoulderServo" port="0" />
-            <Servo name="elbowServo" port="1" />
+            <Servo name="shoulderJoint" port="0" />
+            <Servo name="elbowJoint" port="1" />
             <Servo name="wristServo" port="2" />
             <Servo name="lassoJoint" port="3" />
             <Servo name="turretServo" port="4" />
