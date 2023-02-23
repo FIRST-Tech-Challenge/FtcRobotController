@@ -47,7 +47,7 @@ public class SPLINEAutoLeftSide extends PowerPlay_AprilTagDetectionDeposit{
 	// [1] MEDIUM JUNCTION --> CONE STACK
 	public static double coneStackHeading1 = 93;
 	// [1] CONE STACK --> MEDIUM JUNCTION
-	public static double mediumHeading1 = 210; // no end tangent for splineTo
+	public static double mediumHeading1 = 230; // no end tangent for splineTo
 
 	// [2] MEDIUM JUNCTION --> CONE STACK
 	public static double coneStackHeading2 = 45;
@@ -81,7 +81,7 @@ public class SPLINEAutoLeftSide extends PowerPlay_AprilTagDetectionDeposit{
 					OdoPod odoControl = new OdoPod(hardwareMap);
 				})
 				 // claw close
-				.waitSeconds(0.25)
+				.waitSeconds(0.45)
 				.UNSTABLE_addTemporalMarkerOffset(1,()->{
 					slideControl.setMidJunction();
 					armControl.setExtake();
@@ -119,7 +119,7 @@ public class SPLINEAutoLeftSide extends PowerPlay_AprilTagDetectionDeposit{
 				})
 				.waitSeconds(0.2)
 				.UNSTABLE_addTemporalMarkerOffset(0,()->{
-					slideControl.setCustom(800);
+					slideControl.setCustom(1275);
 				})
 				.waitSeconds(0.5)
 
