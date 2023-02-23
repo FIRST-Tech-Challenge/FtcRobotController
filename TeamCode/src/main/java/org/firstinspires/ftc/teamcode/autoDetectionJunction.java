@@ -48,9 +48,9 @@ import java.util.List;
  * of the vision processing to usercode.
  */
 @TeleOp
-public class contourDetection extends LinearOpMode {
+public class autoDetectionJunction extends LinearOpMode {
     Hardware robot = new Hardware();
-    StoneOrientationAnalysisPipeline pipeline;
+    JunctionAnalysisPipeline pipeline;
 
     @Override
     public void runOpMode() {
@@ -71,7 +71,7 @@ public class contourDetection extends LinearOpMode {
             public void onOpened() {
                 robot.webcam2.startStreaming(320, 240, OpenCvCameraRotation.UPRIGHT);
 
-                pipeline = new StoneOrientationAnalysisPipeline();
+                pipeline = new JunctionAnalysisPipeline();
                 robot.webcam2.setPipeline(pipeline);
             }
 
@@ -94,9 +94,9 @@ public class contourDetection extends LinearOpMode {
             sleep(2000);
 
             // Figure out which stones the pipeline detected, and print them to telemetry
-            ArrayList<StoneOrientationAnalysisPipeline.AnalyzedStone> stones = pipeline.getDetectedStones();
+            ArrayList<JunctionAnalysisPipeline.AnalyzedJunction> stones = pipeline.getDetectedStones();
 
-            for (StoneOrientationAnalysisPipeline.AnalyzedStone stone : stones) {
+            for (JunctionAnalysisPipeline.AnalyzedJunction stone : stones) {
                 if (stone.area > pipeline.maxArea) {
                     pipeline.maxArea = stone.position;
                 }
@@ -105,7 +105,7 @@ public class contourDetection extends LinearOpMode {
             if (stones.isEmpty()) {
                 telemetry.addLine("No stones detected");
             } else {
-                for (StoneOrientationAnalysisPipeline.AnalyzedStone stone : stones) {
+                for (JunctionAnalysisPipeline.AnalyzedJunction stone : stones) {
                     telemetry.addLine(String.format("Area=%f", pipeline.maxArea));
                 }
             }
@@ -114,7 +114,7 @@ public class contourDetection extends LinearOpMode {
         }
     }
 
-    static class StoneOrientationAnalysisPipeline extends OpenCvPipeline {
+    static class JunctionAnalysisPipeline extends OpenCvPipeline {
         /*
          * Our working image buffers
          */
@@ -143,19 +143,18 @@ public class contourDetection extends LinearOpMode {
         static final int CONTOUR_LINE_THICKNESS = 2;
         static final int CB_CHAN_IDX = 2;
 
-        static class AnalyzedStone {
-            StoneOrientation orientation;
+        static class AnalyzedJunction {
             double position;
             double area;
         }
 
-        enum StoneOrientation {
+        enum JunctionOrientation {
             UPRIGHT,
             NOT_UPRIGHT
         }
 
-        ArrayList<AnalyzedStone> internalStoneList = new ArrayList<>();
-        volatile ArrayList<AnalyzedStone> clientStoneList = new ArrayList<>();
+        ArrayList<AnalyzedJunction> internalStoneList = new ArrayList<>();
+        volatile ArrayList<AnalyzedJunction> clientStoneList = new ArrayList<>();
 
         /*
          * Some stuff to handle returning our various buffers
@@ -233,7 +232,7 @@ public class contourDetection extends LinearOpMode {
             return input;
         }
 
-        public ArrayList<AnalyzedStone> getDetectedStones() {
+        public ArrayList<AnalyzedJunction> getDetectedStones() {
             return clientStoneList;
         }
 
@@ -317,12 +316,12 @@ public class contourDetection extends LinearOpMode {
                         PURPLE, // Color we're drawing the line in
                         2); // Thickness of the line we're drawing
 
-                AnalyzedStone analyzedStone = new AnalyzedStone();
-                analyzedStone.area = regionMetrics.contourArea;
-                analyzedStone.position = rotatedRectFitToContour.center.x;
+                AnalyzedJunction analyzedJunction = new AnalyzedJunction();
+                analyzedJunction.area = regionMetrics.contourArea;
+                analyzedJunction.position = rotatedRectFitToContour.center.x;
 
                 //internalStoneList.clear();
-                internalStoneList.add(analyzedStone);
+                internalStoneList.add(analyzedJunction);
 
 
             return regionMetrics;

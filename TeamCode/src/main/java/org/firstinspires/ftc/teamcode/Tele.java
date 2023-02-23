@@ -52,8 +52,7 @@ import java.util.ArrayList;
 @TeleOp(name = "TeleOp", group = "Robot")
 public class Tele extends OpMode {
     Hardware robot = new Hardware();
-//    AutoDetectionJunction.JunctionDeterminationPipeline pipeline;
-    contourDetection.StoneOrientationAnalysisPipeline junctionPipeline;
+    autoDetectionJunction.JunctionAnalysisPipeline junctionPipeline;
 
     double speedLimit = 1;
     double oldTime;
@@ -113,7 +112,7 @@ public class Tele extends OpMode {
             public void onOpened() {
                 robot.webcam2.startStreaming(800, 600, OpenCvCameraRotation.UPRIGHT);
 
-                junctionPipeline = new contourDetection.StoneOrientationAnalysisPipeline();
+                junctionPipeline = new autoDetectionJunction.JunctionAnalysisPipeline();
                 robot.webcam2.setPipeline(junctionPipeline);
             }
 
@@ -192,9 +191,9 @@ public class Tele extends OpMode {
     @SuppressLint("SuspiciousIndentation")
     @Override
     public void loop() {
-        ArrayList<contourDetection.StoneOrientationAnalysisPipeline.AnalyzedStone> stones = junctionPipeline.getDetectedStones();
+        ArrayList<autoDetectionJunction.JunctionAnalysisPipeline.AnalyzedJunction> stones = junctionPipeline.getDetectedStones();
 
-        for (contourDetection.StoneOrientationAnalysisPipeline.AnalyzedStone stone : stones) {
+        for (autoDetectionJunction.JunctionAnalysisPipeline.AnalyzedJunction stone : stones) {
             if (stone.area > junctionPipeline.maxArea) {
                 junctionPipeline.maxArea = stone.position;
             }
@@ -294,39 +293,6 @@ public class Tele extends OpMode {
                     robot.upperLift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 }
             } else {
-//                    switch (liftPos) {
-//                        case 0:
-//                            break;
-//                        case 1:
-//                            liftPos = 2;
-//                            break;
-//                        case 2: //Low junction
-//                            robot.upperLift.setTargetPosition(2940);
-//                            robot.upperLift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-//                            robot.upperLift.setPower(1);
-//                            robot.lift.setTargetPosition(690);
-//                            robot.lift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-//                            robot.lift.setPower(1);
-//                            break;
-//                        case 3: //Medium junction
-//                            robot.upperLift.setTargetPosition(2940);
-//                            robot.upperLift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-//                            robot.upperLift.setPower(.85);
-//                            robot.lift.setTargetPosition(2080);
-//                            robot.lift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-//                            robot.lift.setPower(.85);
-//                            break;
-//                        case 4: //High junction
-//                            robot.upperLift.setTargetPosition(2940);
-//                            robot.upperLift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-//                            robot.upperLift.setPower(.85);
-//                            robot.lift.setTargetPosition(4920);
-//                            robot.lift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-//                            robot.lift.setPower(.85);
-//                            break;
-//                        case 5:
-//                            liftPos = 4;
-//                            break;
                 if (!robot.lift.isBusy() && !robot.upperLift.isBusy()) {
                     robot.lift.setPower(0);
                     robot.upperLift.setPower(0);
