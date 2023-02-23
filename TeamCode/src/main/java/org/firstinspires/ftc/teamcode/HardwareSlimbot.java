@@ -93,10 +93,10 @@ public class HardwareSlimbot
 //  public boolean      turretMotorAuto    = false;   // Automatic movement in progress
     public boolean      turretMotorPIDAuto = false;   // Automatic movement in progress (PID)
     public boolean      turretMotorRunning = false;   // We did a turret set power, check the angle
-    public double       turretMotorPwrSet  = 0.0;     // What we commanded the turret power to
     public int          turretMotorCycles  = 0;       // Automatic movement cycle count
     public int          turretMotorWait    = 0;       // Automatic movement wait count (truly there! not just passing thru)
-    public double       turretMotorPwr     = 0.0;     // turret motor power setpoint (-1.0 to +1.0)
+    public double       turretMotorPwrSet  = 0.0;     // What we commanded the turret power to
+    public double       turretMotorPwr     = 0.0;     // What we read-back for turret power (-1.0 to +1.0)
     public double       turretMotorAmps    = 0.0;     // turret motor current power draw (Amps)
 
     PIDControllerTurret turretPidController;          // PID parameters for the turret motor:
@@ -122,7 +122,7 @@ public class HardwareSlimbot
     // Instrumentation:  writing to input/output is SLOW, so to avoid impacting loop time as we capture
     // motor performance we store data to memory until the movement is complete, then dump to a file.
     public boolean          turretMotorLogging   = false; // only enable during development!!
-    public final static int TURRETMOTORLOG_SIZE  = 256;   // 256 entries = 5+ seconds @ 20msec/50Hz
+    public final static int TURRETMOTORLOG_SIZE  = 256;   // 256 entries = 2.5 seconds @ 10msec/100Hz
     protected double[]      turretMotorLogTime   = new double[TURRETMOTORLOG_SIZE];  // msec
     protected double[]      turretMotorLogAngle  = new double[TURRETMOTORLOG_SIZE];  // Angle [degrees]
     protected double[]      turretMotorLogPwr    = new double[TURRETMOTORLOG_SIZE];  // Power
@@ -138,7 +138,8 @@ public class HardwareSlimbot
     public boolean      liftMotorPIDAuto   = false;   // Automatic movement in progress (PID)
     public int          liftMotorCycles    = 0;       // Automatic movement cycle count
     public int          liftMotorWait      = 0;       // Automatic movement wait count (truly there! not just passing thru)
-    public double       liftMotorPwr       = 0.0;     // lift motors power setpoint (-1.0 to +1.0)
+    public double       liftMotorPwrSet    = 0.0;     // What we commanded the lift power to
+    public double       liftMotorPwr       = 0.0;     // What we read-back for lift power (-1.0 to +1.0)
     public double       liftMotorAmps      = 0.0;     // lift motors current power draw (Amps)
     public boolean      liftMotorRamp      = false;   // motor power setting is ramping down
 
@@ -149,9 +150,9 @@ public class HardwareSlimbot
     public double        liftMotorPIDr_d   = -0.007;  //  Raise d = derivative
     public double        liftMotorPIDr_f   =  0.007;  //  Raise f = sin() function
     
-    public double        liftMotorPIDl_p   = -0.040;  //  Lower p = proportional
+    public double        liftMotorPIDl_p   = -0.035;  //  Lower p = proportional
     public double        liftMotorPIDl_i   =  0.000;  //  Lower i = integral
-    public double        liftMotorPIDl_d   = -0.007;  //  Lower d = derivative
+    public double        liftMotorPIDl_d   =  0.000;  //  Lower d = derivative
     public double        liftMotorPIDl_f   =  0.007;  //  Lower f = sin() function
 
     public final double LIFT_MOTOR_MAX     =  1.00;   // maximum motor power we allow for the lift (gear slippage!)
@@ -189,7 +190,7 @@ public class HardwareSlimbot
     // Instrumentation:  writing to input/output is SLOW, so to avoid impacting loop time as we capture
     // motor performance we store data to memory until the movement is complete, then dump to a file.
     public boolean          liftMotorLogging   = false; // only enable during development!! (RVS)
-    public final static int LIFTMOTORLOG_SIZE  = 128;   // 128 entries = 2+ seconds @ 16msec/60Hz
+    public final static int LIFTMOTORLOG_SIZE  = 256;   // 256 entries = 2.5 seconds @ 10msec/100Hz
     protected double[]      liftMotorLogTime   = new double[LIFTMOTORLOG_SIZE];  // msec
     protected double[]      liftMotorLogAngle  = new double[LIFTMOTORLOG_SIZE];  // Angle [degrees]
     protected double[]      liftMotorLogPwr    = new double[LIFTMOTORLOG_SIZE];  // Power
@@ -472,24 +473,18 @@ public class HardwareSlimbot
         //===== CONTROL HUB VALUES =====
         frontLeftMotorPos  = frontLeftMotor.getCurrentPosition();
         frontLeftMotorVel  = frontLeftMotor.getVelocity();
-//      frontLeftMotorAmps = frontLeftMotor.getCurrent(MILLIAMPS);
         frontRightMotorPos = frontRightMotor.getCurrentPosition();
         frontRightMotorVel = frontRightMotor.getVelocity();
-//      frontRightMotorAmps= frontRightMotor.getCurrent(MILLIAMPS);
         rearRightMotorPos  = rearRightMotor.getCurrentPosition();
         rearRightMotorVel  = rearRightMotor.getVelocity();
-//      rearRightMotorAmps = rearRightMotor.getCurrent(MILLIAMPS);
         rearLeftMotorPos   = rearLeftMotor.getCurrentPosition();
         rearLeftMotorVel   = rearLeftMotor.getVelocity();
-//      rearLeftMotorAmps  = rearLeftMotor.getCurrent(MILLIAMPS);
         turretAngle        = computeAbsoluteAngle( turretEncoder.getVoltage(), turretAngleOffset );
         liftAngle          = computeAbsoluteAngle( liftEncoder.getVoltage(),   liftAngleOffset );
         //===== EXPANSION HUB VALUES =====
         turretMotorPos     = turretMotor.getCurrentPosition();
         turretMotorVel     = turretMotor.getVelocity();
         turretMotorPwr     = turretMotor.getPower();
-//      turretMotorAmps    = turretMotor.getCurrent(MILLIAMPS);
-//      liftMotorAmps      = liftMotorF.getCurrent(MILLIAMPS) + liftMotorB.getCurrent(MILLIAMPS);
         double liftMotorPwrPrior = liftMotorPwr;
         liftMotorPwr       = liftMotorF.getPower();
         liftMotorRamp      = isPwrRampingDown( liftMotorPwrPrior, liftMotorPwr );
@@ -506,9 +501,17 @@ public class HardwareSlimbot
         topConeState    = topConeSensor.getState();
         bottomConeState = bottomConeSensor.getState();
 
+        // NOTE: motor mA data is NOT part of the bulk-read, so increase cycle time!
+//      frontLeftMotorAmps  = frontLeftMotor.getCurrent(MILLIAMPS);
+//      frontRightMotorAmps = frontRightMotor.getCurrent(MILLIAMPS);
+//      rearRightMotorAmps  = rearRightMotor.getCurrent(MILLIAMPS);
+//      rearLeftMotorAmps   = rearLeftMotor.getCurrent(MILLIAMPS);
+//      turretMotorAmps     = turretMotor.getCurrent(MILLIAMPS);
+//      liftMotorAmps       = liftMotorF.getCurrent(MILLIAMPS) + liftMotorB.getCurrent(MILLIAMPS);
+
         // Do we need to capture lift motor instrumentation data?
         if( liftMotorLogEnable ) {
-            liftMotorAmps      = liftMotorF.getCurrent(MILLIAMPS) + liftMotorB.getCurrent(MILLIAMPS);
+//          liftMotorAmps = liftMotorF.getCurrent(MILLIAMPS) + liftMotorB.getCurrent(MILLIAMPS);
             liftMotorLogTime[liftMotorLogIndex]  = liftMotorTimer.milliseconds();
             liftMotorLogAngle[liftMotorLogIndex] = liftAngle;
             liftMotorLogPwr[liftMotorLogIndex]   = liftMotorPwr;
@@ -520,7 +523,7 @@ public class HardwareSlimbot
 
         // Do we need to capture turret motor instrumentation data?
         if( turretMotorLogEnable ) {
-            turretMotorAmps    = turretMotor.getCurrent(MILLIAMPS);
+//          turretMotorAmps = turretMotor.getCurrent(MILLIAMPS);
             turretMotorLogTime[turretMotorLogIndex]  = turretMotorTimer.milliseconds();
             turretMotorLogAngle[turretMotorLogIndex] = turretAngle;
             turretMotorLogPwr[turretMotorLogIndex]   = turretMotorPwr;
@@ -691,8 +694,16 @@ public class HardwareSlimbot
     /*--------------------------------------------------------------------------------------------*/
     public void liftMotorsSetPower( double motorPower )
     {
-        liftMotorF.setPower( motorPower );
-        liftMotorB.setPower( motorPower );
+        // Are we stopping? (allow that no matter what the current liftAngle or power setting)
+        if( Math.abs(motorPower) <= 0.0001 ) {
+           liftMotorPwrSet = 0.0;
+        }
+        else {
+           // Limit motor acceleration by clamping how big a change we can do in one cycle
+           liftMotorPwrSet = restrictDeltaPower( motorPower, liftMotorPwrSet, 0.333 );
+        }
+        liftMotorF.setPower( liftMotorPwrSet );
+        liftMotorB.setPower( liftMotorPwrSet );
     } // liftMotorsSetPower
 
     /*--------------------------------------------------------------------------------------------*/

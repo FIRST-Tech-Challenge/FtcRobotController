@@ -252,21 +252,21 @@ class PowerPlaySuperPipeline extends OpenCvPipeline
 
     // Call these functions to save the image associated with the detected object.
     public void saveConeAutoImage(AnalyzedCone detectedCone) {
-        String timeString = new SimpleDateFormat("hh-mm-ss", Locale.getDefault()).format(new Date());
+        String timeString = new SimpleDateFormat("hh-mm-ss.SSS", Locale.getDefault()).format(new Date());
 
         createImageStorageFolder( );
         String filePath = directory + "/" + "ConeImage_" + timeString + ".png";
         saveImage(filePath, detectedCone.analyzedFrame);
     }
     public void saveTapeAutoImage(AnalyzedTape detectedTape) {
-        String timeString = new SimpleDateFormat("hh-mm-ss", Locale.getDefault()).format(new Date());
+        String timeString = new SimpleDateFormat("hh-mm-ss.SSS", Locale.getDefault()).format(new Date());
 
         createImageStorageFolder( );
         String filePath = directory + "/" + "TapeImage_" + timeString + ".png";
         saveImage(filePath, detectedTape.analyzedFrame);
     }
     public void savePoleAutoImage(AnalyzedPole detectedPole) {
-        String timeString = new SimpleDateFormat("hh-mm-ss", Locale.getDefault()).format(new Date());
+        String timeString = new SimpleDateFormat("hh-mm-ss.SSS", Locale.getDefault()).format(new Date());
 
         createImageStorageFolder( );
         String filePath = directory + "/" + "PoleImage_" + timeString + ".png";
@@ -300,6 +300,14 @@ class PowerPlaySuperPipeline extends OpenCvPipeline
         // Create a subdirectory based on DATE
         String dateString = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(new Date());
         directory = Environment.getExternalStorageDirectory().getPath() + "//FIRST//Webcam//" + dateString;
+
+        if(overrideAlliance) {
+            isBlueAlliance = overrideIsBlue;
+        }
+        if(overrideSide) {
+            isLeft = overrideIsLeft;
+        }
+
         if (isBlueAlliance) {
             if (isLeft) {
                 directory += "/blue_left";
@@ -573,7 +581,7 @@ class PowerPlaySuperPipeline extends OpenCvPipeline
 
     public void overrideAlliance(boolean isBlue) {
         overrideAlliance = true;
-        overrideIsBlue = isLeft;
+        overrideIsBlue = isBlue;
     }
 
     @Override

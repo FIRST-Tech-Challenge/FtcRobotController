@@ -60,7 +60,6 @@ public class TurretPIDTester extends AutonomousBase
     double[]  kTHistory    = new double[LOGSIZE];
 
     /* Declare OpMode members. */
-    HardwareSlimbot robot = new HardwareSlimbot();
     boolean aligning = false;
     boolean ranging = false;
     boolean turretFacingFront = false;
@@ -157,6 +156,7 @@ public class TurretPIDTester extends AutonomousBase
         double targetDistanceY;
         double targetPositionX;
         double targetPositionY;
+        double targetPositionAngle;
 
         // If we add back front camera, use boolean to determine which pipeline to use.
         alignmentPipeline = turretFacingFront ? pipelineFront : pipelineBack;
@@ -168,20 +168,19 @@ public class TurretPIDTester extends AutonomousBase
         theLocalPole = alignmentPipeline.getDetectedPole();
         alignmentPipeline.savePoleAutoImage(theLocalPole);
         // This is the angle the pole is in relation to the turret angle
-        targetAngle = robot.turretAngle + theLocalPole.centralOffsetDegrees;
+        targetAngle = robot.turretAngle - theLocalPole.centralOffsetDegrees;
         robot.turretPIDPosInit(targetAngle);
-        targetDistanceX = theLocalPole.highDistanceOffsetCm * cos(toRadians(targetAngle));
-        targetDistanceY = theLocalPole.highDistanceOffsetCm * sin(toRadians(targetAngle));
-        targetPositionX = robotGlobalXCoordinatePosition + targetDistanceX;
-        targetPositionY = robotGlobalYCoordinatePosition + targetDistanceY;
-        driveToPosition( targetPositionY, targetPositionX, targetAngle, DRIVE_SPEED_50, TURN_SPEED_40, DRIVE_THRU );
+        targetDistanceX = (theLocalPole.highDistanceOffsetCm * cos(toRadians(targetAngle)))/2.54;
+        targetDistanceY = (theLocalPole.highDistanceOffsetCm * sin(toRadians(targetAngle)))/2.54;
+        targetPositionX = (robotGlobalXCoordinatePosition / robot.COUNTS_PER_INCH2) - targetDistanceX;
+        targetPositionY = (robotGlobalYCoordinatePosition / robot.COUNTS_PER_INCH2) - targetDistanceY;
+        targetPositionAngle = Math.toDegrees(robotOrientationRadians);
+        driveToPosition( targetPositionY, targetPositionX, targetPositionAngle, DRIVE_SPEED_50, TURN_SPEED_40, DRIVE_TO );
         while(opModeIsActive() && robot.turretMotorPIDAuto) {
             performEveryLoop();
         }
-
         robot.stopMotion();
         robot.turretMotorSetPower(0.0);
-
         // Get the image after our adjustments
         theLocalPole = alignmentPipeline.getDetectedPole();
         alignmentPipeline.savePoleAutoImage(theLocalPole);
@@ -205,7 +204,7 @@ public class TurretPIDTester extends AutonomousBase
             webcamFront.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
                 @Override
                 public void onOpened() {
-                    pipelineFront = new PowerPlaySuperPipeline(false, true, false, false, 144.0);
+                    pipelineFront = new PowerPlaySuperPipeline(false, true, false, false, 176.0);
                     webcamFront.setPipeline(pipelineFront);
                     webcamFront.startStreaming(320, 240, OpenCvCameraRotation.UPRIGHT);
                     frontCameraInitialized = true;
@@ -234,7 +233,7 @@ public class TurretPIDTester extends AutonomousBase
                     // This will be called if the camera could not be opened
                 }
             });
-            webcamFront.showFpsMeterOnViewport(false);
+            webcamBack.showFpsMeterOnViewport(false);
         }
 
         webcamLow = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class,
@@ -287,6 +286,8 @@ public class TurretPIDTester extends AutonomousBase
 
         telemetry.addLine("Turret positioned, ready to start.");
         telemetry.update();
+        pipelineFront.overrideAlliance(true);
+        pipelineFront.overrideSide(true);
 
         waitForStart();
         globalCoordinatePositionReset();

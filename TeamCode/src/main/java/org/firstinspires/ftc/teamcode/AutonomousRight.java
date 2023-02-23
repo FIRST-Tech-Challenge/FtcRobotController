@@ -173,6 +173,7 @@ public class AutonomousRight extends AutonomousBase {
         // Only do these steps if we didn't hit STOP
         if( opModeIsActive() ) {
             signalZone = pipelineLow.signalZoneR;
+            pipelineLow.overrideAlliance(blueAlliance);
             pipelineLow.saveLastAutoImage( );
         }
         // Turn off detecting the signal.

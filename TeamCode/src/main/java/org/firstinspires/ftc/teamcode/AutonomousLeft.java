@@ -173,6 +173,7 @@ public class AutonomousLeft extends AutonomousBase {
         // Only do these steps if we didn't hit STOP
         if( opModeIsActive() ) {
             signalZone = pipelineLow.signalZoneL;
+            pipelineLow.overrideAlliance(blueAlliance);
             pipelineLow.saveLastAutoImage( );
         }
         // Turn off detecting the signal.
@@ -229,27 +230,35 @@ public class AutonomousLeft extends AutonomousBase {
 
     /*--------------------------------------------------------------------------------------------*/
     private void mainAutonomous() {
+        double[] timePoleArrive  = {0,0,0,0,0,0};
+        double[] timePoleDepart  = {0,0,0,0,0,0};
+        double[] timeStackArrive = {0,0,0,0,0,0};
+        double[] timeStackDepart = {0,0,0,0,0,0};
+        double   timeNow;
+        int      timeIndex = 0;
 
         // Drive forward to the center-line tall junction pole
         if( opModeIsActive() ) {
-            telemetry.addData("Motion", "moveToTallJunction (%.1f)",
-                    autonomousTimer.milliseconds()/1000.0 );
+            timeNow = autonomousTimer.milliseconds()/1000.0;
+            telemetry.addData("Motion", "moveToTallJunction (%.1f)", timeNow );
             telemetry.update();
             moveToTallJunction();
+            timeNow = autonomousTimer.milliseconds()/1000.0;
+            timePoleArrive[timeIndex] = timeNow;
         }
 
         // Center on pole
 //      if( opModeIsActive()) {
-//          telemetry.addData("Skill", "alignToPole (%.1f)",
-//                  autonomousTimer.milliseconds()/1000.0 );
+//         timeNow = autonomousTimer.milliseconds()/1000.0;
+//          telemetry.addData("Skill", "alignToPole (%.1f)", timeNow );
 //          telemetry.update();
 //          alignToPole(false);
 //      }
 
         // Deposit cone on junction
         if( opModeIsActive() ) {
-            telemetry.addData("Skill", "scoreCone (%.1f)",
-                    autonomousTimer.milliseconds()/1000.0 );
+            timeNow = autonomousTimer.milliseconds()/1000.0;
+            telemetry.addData("Skill", "scoreCone (%.1f)", timeNow );
             telemetry.update();
             scoreCone();
         }
@@ -267,9 +276,10 @@ public class AutonomousLeft extends AutonomousBase {
         double poleAlignTimeout = 26000.0;  // 26.0 sec elapsed (
         while (opModeIsActive() && (autonomousTimer.milliseconds() <= newCycleTimeout) && (fiveStackCycles > 0)) {
             if (opModeIsActive()) {
-                telemetry.addData("Skill", "moveToConeStack (%.1f)",
-                        autonomousTimer.milliseconds()/1000.0 );
+                timeNow = autonomousTimer.milliseconds()/1000.0;
+                telemetry.addData("Skill", "moveToConeStack (%.1f)", timeNow );
                 telemetry.update();
+                timePoleDepart[timeIndex] = timeNow;
                 moveToConeStack();
             }
 
@@ -282,29 +292,31 @@ public class AutonomousLeft extends AutonomousBase {
                     case 1:  cycleDistance = 27; break;
                     default: cycleDistance = 27;
                 }
-                telemetry.addData("Skill", "alignToConeStack (%.1f)",
-                        autonomousTimer.milliseconds()/1000.0);
+                timeNow = autonomousTimer.milliseconds()/1000.0;
+                telemetry.addData("Skill", "alignToConeStack (%.1f)", timeNow );
                 telemetry.update();
+                timeStackArrive[timeIndex] = timeNow;
                 alignToConeStack(blueAlliance, cycleDistance);
             }
 
             if (opModeIsActive()) {
-                telemetry.addData("Skill", "collectCone (%.1f)",
-                autonomousTimer.milliseconds()/1000.0);
+                timeNow = autonomousTimer.milliseconds()/1000.0;
+                telemetry.addData("Skill", "collectCone (%.1f)", timeNow );
                 telemetry.update();
                 collectCone();  // decrements fiveStackHeight!
             }
 
             if (opModeIsActive()) {
-                telemetry.addData("Skill", "moveToTallJunctionFromStack (%.1f)",
-                        autonomousTimer.milliseconds()/1000.0);
+                timeNow = autonomousTimer.milliseconds()/1000.0;
+                telemetry.addData("Skill", "moveToTallJunctionFromStack (%.1f)", timeNow );
                 telemetry.update();
+                timeStackDepart[timeIndex] = timeNow;
                 moveToTallJunctionFromStack();
             }
 
             if( opModeIsActive()) {
-                telemetry.addData("Skill", "alignToPole (%.1f)",
-                autonomousTimer.milliseconds()/1000.0);
+                timeNow = autonomousTimer.milliseconds()/1000.0;
+                telemetry.addData("Skill", "alignToPole (%.1f)", timeNow );
                 telemetry.update();
                 // make sure we have time left to alignToPole and then park!
                 // (otherwise just drop it and park)
@@ -314,8 +326,8 @@ public class AutonomousLeft extends AutonomousBase {
             }
 
             if( opModeIsActive() ) {
-                telemetry.addData("Skill", "scoreCone (%.1f)",
-                autonomousTimer.milliseconds()/1000.0);
+                timeNow = autonomousTimer.milliseconds()/1000.0;
+                telemetry.addData("Skill", "scoreCone (%.1f)", timeNow );
                 telemetry.update();
                 scoreCone();
             }
@@ -325,8 +337,8 @@ public class AutonomousLeft extends AutonomousBase {
 
         // Park in signal zone
         if( opModeIsActive() ) {
-            telemetry.addData("Motion", "signalZoneParking (%.1f)",
-                    autonomousTimer.milliseconds()/1000.0);
+            timeNow = autonomousTimer.milliseconds()/1000.0;
+            telemetry.addData("Motion", "signalZoneParking (%.1f)", timeNow );
             telemetry.update();
             signalZoneParking( signalZone );
         }
