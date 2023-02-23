@@ -293,6 +293,8 @@ public class PowerPlay_6832 extends OpMode {
         rumble();
 
         teleOpIndex = 0;
+
+        robot.articulate(Robot.Articulation.UNFOLD);
     }
 
     public void resetGame(){

@@ -369,6 +369,7 @@ public class Robot implements Subsystem {
         MANUAL,
         AUTON,
         ROBOTDRIVE,
+        UNFOLD,
 
         // misc. articulations
         INIT,
@@ -403,6 +404,11 @@ public class Robot implements Subsystem {
                     articulation = Articulation.MANUAL;
                 }
                 break;
+            case UNFOLD:
+                if(unfold()){
+                    articulation = Articulation.MANUAL;
+                }
+                break;
             case ROBOTDRIVE:
                 crane.articulate(Crane.Articulation.robotDriving); //keeps crane in safe position
                 underarm.articulate(UnderArm.Articulation.home); //keeps underarm in safe position
@@ -418,6 +424,29 @@ public class Robot implements Subsystem {
 
     public void driverNotDriving(){
         articulate(Articulation.MANUAL);
+    }
+
+    int unfoldStage = 0;
+    long unfoldTimer = 0;
+
+    public boolean unfold(){
+        switch (unfoldStage){
+            case 0:
+                unfoldStage++;
+            case 1:
+                underarm.articulate(UnderArm.Articulation.foldTransfer);
+                unfoldTimer = futureTime(1);
+                unfoldStage++;
+            case 2:
+                if(System.nanoTime() > unfoldTimer){
+                    unfoldStage++;
+                }
+            case 3:
+                underarm.articulate(UnderArm.Articulation.home);
+                unfoldStage = 0;
+                return true;
+        }
+        return false;
     }
 
     int transferStage = 0;

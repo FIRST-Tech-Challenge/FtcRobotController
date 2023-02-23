@@ -4,6 +4,8 @@ package org.firstinspires.ftc.teamcode.robots.taubot.subsystem;
 
 import static org.firstinspires.ftc.teamcode.robots.reachRefactor.util.Constants.ELBOW_TO_WRIST;
 import static org.firstinspires.ftc.teamcode.robots.taubot.util.Constants.INCHES_PER_METER;
+import static org.firstinspires.ftc.teamcode.robots.taubot.util.Constants.MAX_CHASSIS_LENGTH;
+import static org.firstinspires.ftc.teamcode.robots.taubot.util.Constants.MIN_CHASSIS_LENGTH;
 import static org.firstinspires.ftc.teamcode.robots.taubot.util.Constants.SHOULDER_TO_ELBOW;
 import static org.firstinspires.ftc.teamcode.robots.taubot.util.Utils.*;
 import static org.firstinspires.ftc.teamcode.util.utilMethods.futureTime;
@@ -106,7 +108,7 @@ public class UnderArm implements Subsystem {
         wristTargetAngle = 0;
         turretTargetAngle = 0;
 
-        articulation = Articulation.noIK;
+        articulation = Articulation.fold;
         fieldPositionTarget = new Vector3(0,0,0); //crane default IK starting point is
     }
 
@@ -124,19 +126,29 @@ public class UnderArm implements Subsystem {
         manual,
         noIK,
         fold,
+        foldTransfer,
         jointAngles
     }
 
     private JointAngle jointAngle;
 
     public enum JointAngle{
-        Home(0,0,0),
+        Home(0,0,0,MAX_CHASSIS_LENGTH),
         Test1(90,0,0),
         Test2(90,90,0),
         Test3(0,90,0),
-        Test4(90,0,30);
+        Test4(90,0,30),
+        FoldPosition(FOLDPOS_SHOULDER_ANGLE,FOLDPOS_ELBOW_ANGLE,FOLDPOS_TURRET_ANGLE,MIN_CHASSIS_LENGTH),
+        FoldTransferPosition(FOLDPOS_SHOULDER_ANGLE,FOLDPOS_ELBOW_ANGLE,FOLDPOS_TURRET_ANGLE,MAX_CHASSIS_LENGTH);
 
-        public double shoulderAngle, elbowAngle, turretAngle;
+        public double shoulderAngle, elbowAngle, turretAngle, chassisLength;
+
+        JointAngle(double shoulder, double elbow, double turret, double length){
+            this.shoulderAngle = shoulder;
+            this.elbowAngle = elbow;
+            this.turretAngle = turret;
+            this.chassisLength = length;
+        }
 
         JointAngle(double shoulder, double elbow, double turret){
             this.shoulderAngle = shoulder;
@@ -158,15 +170,20 @@ public class UnderArm implements Subsystem {
 
         switch(articulation){
             case fold: //PROB NOT NEEDED but added just in case
-                setShoulderTargetAngle(FOLDPOS_SHOULDER_ANGLE);
-                setElbowTargetAngle(FOLDPOS_ELBOW_ANGLE);
-                setTurretTargetAngle(FOLDPOS_TURRET_ANGLE);
+                jointAngle = JointAngle.FoldPosition;
+                goToJointAngleAndLength(jointAngle);
+                break;
+            case foldTransfer: //PROB NOT NEEDED but added just in case
+                jointAngle = JointAngle.FoldTransferPosition;
+                goToJointAngleAndLength(jointAngle);
                 break;
             case transfer: //transfer position
                 goToTransfer();
                 break;
             case home: //safe position for transiting the field
-                goHome();
+                if(goHome()){
+                    articulation = Articulation.manual;
+                }
                 break;
             case manual: //normal IK intake mode
                 //holdTarget(fieldPositionTarget.x,fieldPositionTarget.y,fieldPositionTarget.z);
@@ -175,14 +192,24 @@ public class UnderArm implements Subsystem {
 
                 break;
             case jointAngles:
-                setShoulderTargetAngle(jointAngle.shoulderAngle);
-                setElbowTargetAngle(jointAngle.elbowAngle);
-                setTurretTargetAngle(jointAngle.turretAngle);
+                goToJointAngle(jointAngle);
             default:
 
         }
-
         return target;
+    }
+
+    public void goToJointAngle(JointAngle joint){
+        setShoulderTargetAngle(joint.shoulderAngle);
+        setElbowTargetAngle(joint.elbowAngle);
+        setTurretTargetAngle(joint.turretAngle);
+    }
+
+    public void goToJointAngleAndLength(JointAngle joint){
+        setShoulderTargetAngle(joint.shoulderAngle);
+        setElbowTargetAngle(joint.elbowAngle);
+        setTurretTargetAngle(joint.turretAngle);
+        robot.driveTrain.setChassisLength(joint.chassisLength);
     }
 
     public void holdTarget(double x, double y, double z){
