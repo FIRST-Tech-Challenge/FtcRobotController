@@ -4,8 +4,11 @@ import static org.firstinspires.ftc.teamcode.HardwareSlimbot.UltrasonicsInstance
 import static org.firstinspires.ftc.teamcode.HardwareSlimbot.UltrasonicsModes.SONIC_FIRST_PING;
 import static org.firstinspires.ftc.teamcode.HardwareSlimbot.UltrasonicsModes.SONIC_MOST_RECENT;
 import static java.lang.Math.abs;
+import static java.lang.Math.cos;
+import static java.lang.Math.sin;
 import static java.lang.Math.toRadians;
 
+import android.os.Environment;
 import android.os.SystemClock;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -17,6 +20,9 @@ import com.qualcomm.robotcore.util.ReadWriteFile;
 import org.firstinspires.ftc.robotcore.internal.system.AppUtil;
 
 import java.io.File;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
 
 public abstract class AutonomousBase extends LinearOpMode {
     /* Declare OpMode members. */
@@ -73,6 +79,8 @@ public abstract class AutonomousBase extends LinearOpMode {
     double autoYpos                             = 0.0;   // (useful when a given value remains UNCHANGED from one
     double autoAngle                            = 0.0;   // movement to the next, or INCREMENTAL change from current location).
 
+    String      storageDir;
+    boolean     alignToFront    = true;  // Use front facing camera or back facing
     boolean     blueAlliance    = true;  // Is alliance BLUE (true) or RED (false)?
     boolean     forceAlliance   = false; // Override vision pipeline? (toggled during init phase of autonomous)
     int         fiveStackHeight = 5;     // Number of cones remaining on the 5-stack (always starts at 5)
@@ -87,7 +95,7 @@ public abstract class AutonomousBase extends LinearOpMode {
 
     // Vision stuff
     PowerPlaySuperPipeline pipelineLow;
-//    PowerPlaySuperPipeline pipelineFront;
+    PowerPlaySuperPipeline pipelineFront;
     PowerPlaySuperPipeline pipelineBack;
 
     /*---------------------------------------------------------------------------------*/
@@ -105,6 +113,33 @@ public abstract class AutonomousBase extends LinearOpMode {
         robot.liftPIDPosRun(false);
         robot.turretPIDPosRun(false);
     } // performEveryLoop
+
+    // Create a time stamped folder in
+    public void createAutoStorageFolder( boolean isBlue, boolean isLeft ) {
+        // Create a subdirectory based on DATE
+        String timeString = new SimpleDateFormat("hh-mm-ss", Locale.getDefault()).format(new Date());
+        String dateString = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(new Date());
+        storageDir = Environment.getExternalStorageDirectory().getPath() + "//FIRST//Webcam//" + dateString;
+
+        if (isBlue) {
+            if (isLeft) {
+                storageDir += "//blue_left//";
+            } else {
+                storageDir += "//blue_right//";
+            }
+        } else {
+            if (isLeft) {
+                storageDir += "//red_left//";
+            } else {
+                storageDir += "//red_right//";
+            }
+        }
+        storageDir += timeString;
+
+        // Create the directory structure to store the autonomous image used to start auto.
+        File baseDir = new File(storageDir);
+        baseDir.mkdirs();
+    }
 
     /*---------------------------------------------------------------------------------*/
     // DEPRICATED!  The ultrasonic range sensors return values in whole numbers of centimeters
@@ -200,6 +235,50 @@ public abstract class AutonomousBase extends LinearOpMode {
     } // driveAndRotateTurretAngle
 
     void alignToPole(boolean turretFacingFront) {
+        PowerPlaySuperPipeline alignmentPipeline;
+        PowerPlaySuperPipeline.AnalyzedPole theLocalPole;
+
+        double targetAngle;
+        double targetDistanceX;
+        double targetDistanceY;
+        double targetPositionX;
+        double targetPositionY;
+        double targetPositionAngle;
+
+        alignmentPipeline = turretFacingFront ? pipelineFront : pipelineBack;
+
+        alignmentPipeline.isBlueAlliance = true;
+        alignmentPipeline.isLeft = true;
+
+        // Get the image to do our decision making
+        theLocalPole = alignmentPipeline.getDetectedPole();
+        alignmentPipeline.savePoleAutoImage(theLocalPole);
+        // This is the angle the pole is in relation to the turret angle
+        if(turretFacingFront) {
+            targetAngle = robot.turretAngle - theLocalPole.centralOffsetDegrees;
+        } else {
+            // This is untested
+            targetAngle = robot.turretAngle + theLocalPole.centralOffsetDegrees + 180.0;
+        }
+        robot.turretPIDPosInit(targetAngle);
+        targetDistanceX = (theLocalPole.highDistanceOffsetCm * cos(toRadians(targetAngle)))/2.54;
+        targetDistanceY = (theLocalPole.highDistanceOffsetCm * sin(toRadians(targetAngle)))/2.54;
+        // Not sure if this needs to be flipped if we are rear facing or not.
+        targetPositionX = (robotGlobalXCoordinatePosition / robot.COUNTS_PER_INCH2) - targetDistanceX;
+        targetPositionY = (robotGlobalYCoordinatePosition / robot.COUNTS_PER_INCH2) - targetDistanceY;
+        targetPositionAngle = Math.toDegrees(robotOrientationRadians);
+        driveToPosition( targetPositionY, targetPositionX, targetPositionAngle, DRIVE_SPEED_50, TURN_SPEED_40, DRIVE_TO );
+        while(opModeIsActive() && robot.turretMotorPIDAuto) {
+            performEveryLoop();
+        }
+        robot.stopMotion();
+        robot.turretMotorSetPower(0.0);
+        // Get the image after our adjustments
+        theLocalPole = alignmentPipeline.getDetectedPole();
+        alignmentPipeline.savePoleAutoImage(theLocalPole);
+    } // alignToPole
+
+    void alignToPoleOld(boolean turretFacingFront) {
         PowerPlaySuperPipeline alignmentPipeline;
         PowerPlaySuperPipeline.AnalyzedPole theLocalPole;
         final double DRIVE_SLOPE  = 0.004187;

@@ -112,8 +112,8 @@ public class HardwareSlimbot
     public double       TURRET_ANGLE_MAX    = 170.0;   // absolute encoder angles at maximum rotation RIGHT
     public double       TURRET_ANGLE_CENTER = 0.0 ;    // turret centered
     public double       TURRET_ANGLE_MIN    = -170.0;   // absolute encoder angles at maximum rotation LEFT
-    public double       TURRET_ANGLE_5STACK_L = -62.0;
-    public double       TURRET_ANGLE_5STACK_R = +77.0;
+    public double       TURRET_ANGLE_5STACK_L = 118.0;
+    public double       TURRET_ANGLE_5STACK_R = +-103.0;
     public double       TURRET_ANGLE_CYCLE_R  =  133.5;
     public double       TURRET_ANGLE_CYCLE_L  = -133.5;
     public double       TURRET_ANGLE_COLLECT_R =  21.9;

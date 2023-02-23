@@ -187,6 +187,7 @@ class PowerPlaySuperPipeline extends OpenCvPipeline
     public Object lockPole = new Object();
     boolean detectPole, detectRedCone, detectBlueCone, detectSignal, isBlueAlliance, isLeft;
     boolean overrideSide, overrideAlliance, overrideIsLeft, overrideIsBlue;
+    String storageFolder = Environment.getExternalStorageDirectory().getPath() + "//FIRST//Webcam//Default";
 
     public PowerPlaySuperPipeline(boolean signalDetection, boolean poleDetection,
                                   boolean redConeDetection, boolean blueConeDetection,
@@ -220,6 +221,10 @@ class PowerPlaySuperPipeline extends OpenCvPipeline
         allianceDetectRightTl = new Point(263, 89); // 17x39 pixel box for 5-stack
         allianceDetectRightBr = new Point(279, 125);
         POLE_HIGH_DISTANCE = polePixelWidthToDistance(POLE_HIGH_PIXEL_WIDTH);
+    }
+
+    public void setStorageFolder(String storageDir) {
+        storageFolder = storageDir;
     }
 
     /*

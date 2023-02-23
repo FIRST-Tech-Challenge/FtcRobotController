@@ -69,28 +69,43 @@ public class AutonomousLeft extends AutonomousBase {
                         2, //The number of sub-containers to create
                         OpenCvCameraFactory.ViewportSplitMethod.VERTICALLY); //Whether to split the container vertically or horizontally
 
-                // This will be called if the camera could not be opened
+        if(alignToFront) {
+            webcamFront = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class,
+                    "Webcam Front"), viewportContainerIds[0]);
+            webcamFront.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
+                @Override
+                public void onOpened() {
+                    pipelineFront = new PowerPlaySuperPipeline(false, true, false, false, 176.0);
+                    webcamFront.setPipeline(pipelineFront);
+                    webcamFront.startStreaming(320, 240, OpenCvCameraRotation.UPRIGHT);
+                    frontCameraInitialized = true;
+                }
 
-        webcamBack = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class,
-                "Webcam Back"), viewportContainerIds[0]);
-        webcamBack.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener()
-        {
-            @Override
-            public void onOpened()
-            {
-                pipelineBack = new PowerPlaySuperPipeline(false, true, false, false, 144.0);
-                webcamBack.setPipeline(pipelineBack);
-                webcamBack.startStreaming(320, 240, OpenCvCameraRotation.UPRIGHT);
-                backCameraInitialized = true;
-            }
+                @Override
+                public void onError(int errorCode) {
+                    // This will be called if the camera could not be opened
+                }
+            });
+            webcamFront.showFpsMeterOnViewport(false);
+        } else {
+            webcamBack = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class,
+                    "Webcam Back"), viewportContainerIds[0]);
+            webcamBack.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
+                @Override
+                public void onOpened() {
+                    pipelineBack = new PowerPlaySuperPipeline(false, true, false, false, 144.0);
+                    webcamBack.setPipeline(pipelineFront);
+                    webcamBack.startStreaming(320, 240, OpenCvCameraRotation.UPRIGHT);
+                    backCameraInitialized = true;
+                }
 
-            @Override
-            public void onError(int errorCode)
-            {
-                // This will be called if the camera could not be opened
-            }
-        });
-        webcamBack.showFpsMeterOnViewport(false);
+                @Override
+                public void onError(int errorCode) {
+                    // This will be called if the camera could not be opened
+                }
+            });
+            webcamBack.showFpsMeterOnViewport(false);
+        }
 
         webcamLow = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class,
                 "Webcam Low"), viewportContainerIds[1]);
@@ -114,7 +129,7 @@ public class AutonomousLeft extends AutonomousBase {
         });
         webcamLow.showFpsMeterOnViewport(false);
 
-        while(!(lowCameraInitialized && backCameraInitialized)) {
+        while(!(lowCameraInitialized && (backCameraInitialized || frontCameraInitialized))) {
             sleep(100);
         }
         telemetry.addData("State", "Webcam Initialized");
@@ -172,6 +187,13 @@ public class AutonomousLeft extends AutonomousBase {
 
         // Only do these steps if we didn't hit STOP
         if( opModeIsActive() ) {
+            createAutoStorageFolder(blueAlliance, true);
+            pipelineLow.setStorageFolder(storageDir);
+            if(alignToFront) {
+                pipelineFront.setStorageFolder(storageDir);
+            } else {
+                pipelineBack.setStorageFolder(storageDir);
+            }
             signalZone = pipelineLow.signalZoneL;
             pipelineLow.overrideAlliance(blueAlliance);
             pipelineLow.saveLastAutoImage( );
@@ -248,12 +270,12 @@ public class AutonomousLeft extends AutonomousBase {
         }
 
         // Center on pole
-//      if( opModeIsActive()) {
-//         timeNow = autonomousTimer.milliseconds()/1000.0;
-//          telemetry.addData("Skill", "alignToPole (%.1f)", timeNow );
-//          telemetry.update();
-//          alignToPole(false);
-//      }
+      if( opModeIsActive()) {
+         timeNow = autonomousTimer.milliseconds()/1000.0;
+          telemetry.addData("Skill", "alignToPole (%.1f)", timeNow );
+          telemetry.update();
+          alignToPole(true);
+      }
 
         // Deposit cone on junction
         if( opModeIsActive() ) {
@@ -368,10 +390,10 @@ public class AutonomousLeft extends AutonomousBase {
 
         // The grabber finished the tilt down during the 90deg turn movement, so
         // it's safe now to command the lift to raise to scoring position
-        robot.liftPIDPosInit( robot.LIFT_ANGLE_HIGH_BA );
+        robot.liftPIDPosInit( robot.LIFT_ANGLE_AUTO_H );
 
         // We're past the medium junction pole, so okay to rotate the turret
-        robot.turretPIDPosInit( -38.0 );
+        robot.turretPIDPosInit( 142.0 );
 
         // Drive partway there (while lift raises past the front motor)
         autoYpos=34.5;  autoXpos=4.5;
@@ -496,7 +518,7 @@ public class AutonomousLeft extends AutonomousBase {
 
         // Perform setup to center turret and raise lift to scoring position
         robot.turretPIDPosInit( robot.TURRET_ANGLE_5STACK_L);
-        robot.liftPIDPosInit( robot.LIFT_ANGLE_HIGH_BA );
+        robot.liftPIDPosInit( robot.LIFT_ANGLE_AUTO_H );
         robot.grabberSetTilt( robot.GRABBER_TILT_BACK_H );
         robot.rotateServo.setPosition( robot.GRABBER_ROTATE_DOWN );
 
