@@ -33,10 +33,10 @@ public class UnderArm implements Subsystem {
     public static int WRIST_HOME_PWM = 1500;
     public static int TURRET_HOME_PWM = 1500;
 
-    public static double SHOULDER_PWM_PER_DEGREE = 4; //eyeball calibration 1/16/23
-    public static double ELBOW_PWM_PER_DEGREE = 4;
+    public static double SHOULDER_PWM_PER_DEGREE = 4.5; //eyeball calibration 1/16/23
+    public static double ELBOW_PWM_PER_DEGREE = 4.5;
     public static double WRIST_PWM_PER_DEGREE = 750.0 / 180.0; //todo if we need it
-    public static double TURRET_PWM_PER_DEGREE = 750.0 / 180.0; //todo
+    public static double TURRET_PWM_PER_DEGREE = 16; //todo
 
     public static double ELBOW_SPEED = 150;
     public static double SHOULDER_SPEED = 150;
@@ -47,16 +47,16 @@ public class UnderArm implements Subsystem {
     public static double SHOULDER_DEG_MIN = -60; // negative angles are counter clockwise while looking at the left side
     public static double SHOULDER_DEG_MAX = 90; // of the robot
 
-    public static double ELBOW_DEG_MIN = -80;
+    public static double ELBOW_DEG_MIN = -150;
     public static double WRIST_DEG_MIN = -180;
     public static double TURRET_DEG_MIN = -360;
 
-    public static double ELBOW_DEG_MAX = 140;
+    public static double ELBOW_DEG_MAX = 150;
     public static double WRIST_DEG_MAX = 180;
     public static double TURRET_DEG_MAX = 360;
 
-    public static double LASSO_CLOSED = 90;
-    public static double LASSO_OPEN = 0;
+    public static double LASSO_CLOSED = 1050;
+    public static double LASSO_OPEN = 2500;
 
     public static double TRANSFER_SHOULDER_ANGLE = 0;
     public static double TRANSFER_ELBOW_ANGLE = 0;
@@ -66,8 +66,6 @@ public class UnderArm implements Subsystem {
     public static double UNDERARM_HEIGHT = 7; //height of rotation of shoulder motor   INCHES
 
     //these 5 config variables won't have any effect if changed in dashboard since they are currently assigned at compile
-
-    public static double P = 0.995;
 
     public Servo elbowServo, wristServo, lassoServo;
     public Servo shoulderServo, turretServo;
@@ -99,7 +97,8 @@ public class UnderArm implements Subsystem {
             ((ServoImplEx) turretServo).setPwmRange(axonRange);
             elbow = new Joint(hardwareMap, "elbowJoint", simulated, ELBOW_HOME_PWM, ELBOW_PWM_PER_DEGREE, ELBOW_DEG_MIN, ELBOW_DEG_MAX, 0, ELBOW_SPEED);
             shoulder = new Joint(hardwareMap, "shoulderJoint", simulated, SHOULDER_HOME_PWM, SHOULDER_PWM_PER_DEGREE, SHOULDER_DEG_MIN, SHOULDER_DEG_MAX, 0, SHOULDER_SPEED);
-            lasso = new Joint(hardwareMap, "lassoJoint", simulated, 1540, SHOULDER_PWM_PER_DEGREE, SHOULDER_DEG_MIN, SHOULDER_DEG_MAX, 0, LASSO_SPEED);
+            lassoServo = hardwareMap.get(ServoImplEx.class, "lassoJoint");
+            ((ServoImplEx) lassoServo).setPwmRange(axonRange);
         }
 
         shoulderTargetAngle = 0;
@@ -108,16 +107,16 @@ public class UnderArm implements Subsystem {
         turretTargetAngle = 0;
 
         articulation = Articulation.noIK;
-        fieldPositionTarget = getUnderArmPosition(); //crane default IK starting point is
+        fieldPositionTarget = new Vector3(0,0,0); //crane default IK starting point is
     }
 
-    Vector3 underArmPosition = new Vector3(0,0,0);
+    Vector3 underArmPosition;
 
     public Vector3 getUnderArmPosition(){
         return underArmPosition;        //returns the calculated underarm position
     }
 
-    public static Vector3 fieldPositionTarget = new Vector3(0,0,0);
+    Vector3 fieldPositionTarget;
 
     public enum Articulation {
         transfer,
@@ -170,7 +169,7 @@ public class UnderArm implements Subsystem {
                 goHome();
                 break;
             case manual: //normal IK intake mode
-                holdTarget(fieldPositionTarget.x,fieldPositionTarget.y,fieldPositionTarget.z);
+                //holdTarget(fieldPositionTarget.x,fieldPositionTarget.y,fieldPositionTarget.z);
                 break;
             case noIK: //no targets are set
 
@@ -263,7 +262,7 @@ public class UnderArm implements Subsystem {
     double calculatedShoulderAngle;
     double calculatedElbowAngle;
 
-    public static double shoulderHeight = 0.25;
+    public static double shoulderHeight = 9;
 
     public static double UPPER_ARM_LENGTH = 14.06;
     public static double LOWER_ARM_LENGTH = 11.02;
@@ -281,7 +280,7 @@ public class UnderArm implements Subsystem {
         locY = y - underArmPosition.y;
 
 
-        calculatedTurretAngle = Math.toDegrees(Math.atan2(locY, locX));
+        calculatedTurretAngle = Math.toDegrees(robot.driveTrain.gridHeading) - Math.toDegrees(Math.atan2(locY, locX));
 
         calculatedHeight = z-shoulderHeight;
 
@@ -312,11 +311,11 @@ public class UnderArm implements Subsystem {
     //todo these adjust methods are horrid - they need to have range limits applied to them and time based velocity if we are keeping them
 
     public void adjustShoulder(double speed){
-        shoulderTargetAngle -= 100*speed*robot.deltaTime;
+        shoulderTargetAngle -= ADJUST_SHOULDER*speed*robot.deltaTime;
     }
 
     public void adjustElbow(double speed){
-        elbowTargetAngle += 100*speed*robot.deltaTime;
+        elbowTargetAngle += ADJUST_ELBOW*speed*robot.deltaTime;
     }
 
     public void adjustLasso(double speed){
@@ -324,8 +323,12 @@ public class UnderArm implements Subsystem {
     }
 
     public void adjustTurret(double speed){
-        turretTargetAngle += 400*speed*robot.deltaTime;
+        turretTargetAngle += ADJUST_TURRET*speed*robot.deltaTime;
     }
+
+    public static double ADJUST_TURRET = 50;
+    public static double ADJUST_ELBOW = 50;
+    public static double ADJUST_SHOULDER = 50;
 
     public static double ADJUST_HEIGHT_SPEED = 2;
     public static double ADJUST_POSITION_SPEED = 2;
@@ -343,11 +346,9 @@ public class UnderArm implements Subsystem {
     }
     @Override
     public void update(Canvas fieldOverlay) {
-        lasso.update();
         elbow.update();
         shoulder.update();
 
-        lasso.setSpeed(LASSO_SPEED);
         elbow.setSpeed(ELBOW_SPEED);
         shoulder.setSpeed(SHOULDER_SPEED);
 
@@ -367,6 +368,17 @@ public class UnderArm implements Subsystem {
         articulate(articulation);
 
 
+        if(elbowTargetAngle > 150){
+            elbowTargetAngle = 150;
+        }else if(elbowTargetAngle < -150){
+            elbowTargetAngle = -150;
+        }
+
+        if(shoulderTargetAngle > 100){
+            shoulderTargetAngle = 100;
+        }else if(shoulderTargetAngle < -100){
+            shoulderTargetAngle = -100;
+        }
 
         shoulder.setTargetAngle(shoulderTargetAngle);
         elbow.setTargetAngle(elbowTargetAngle);
@@ -376,12 +388,12 @@ public class UnderArm implements Subsystem {
 
     public void grip(){
         lassoGripped = true;
-        lasso.setTargetAngle(LASSO_CLOSED, 120);
+        lassoServo.setPosition(servoNormalize(LASSO_CLOSED));
     }
 
     public void release(){
         lassoGripped = false;
-        lasso.setTargetAngle(LASSO_OPEN, 120);
+        lassoServo.setPosition(servoNormalize(LASSO_OPEN));
     }
 
     public void toggleLasso(){
@@ -413,6 +425,8 @@ public class UnderArm implements Subsystem {
             telemetryMap.put("Elbow Target Angle", elbowTargetAngle);
             telemetryMap.put("Wrist Target Angle", wristTargetAngle);
             telemetryMap.put("Turret Target Angle", turretTargetAngle);
+            telemetryMap.put("Calc Elbow", calculatedElbowAngle);
+            telemetryMap.put("Calc Shoulder", calculatedShoulderAngle);
             telemetryMap.put("Under Arm Pos X", underArmPosition.x);
             telemetryMap.put("Under Arm Pos Y", underArmPosition.y);
             telemetryMap.put("Under Arm Target X", fieldPositionTarget.x);
@@ -423,8 +437,7 @@ public class UnderArm implements Subsystem {
             telemetryMap.put("Shoulder Target PWM", shoulderServoValue(shoulderTargetAngle));
             telemetryMap.put("Wrist Target PWM", wristServoValue(wristTargetAngle));
             telemetryMap.put("Turret Target PWM", turretServoValue(turretTargetAngle));
-            telemetryMap.put("Lasso Position", lasso.getPosition());
-            telemetryMap.put("Lasso Target", lasso.getTargetAngle());
+            telemetryMap.put("Lasso Position", lassoServo.getPosition());
             telemetryMap.put("Lasso Grip", lassoGripped);
 
             telemetryMap.put("chariot distance", getChariotDistance());
