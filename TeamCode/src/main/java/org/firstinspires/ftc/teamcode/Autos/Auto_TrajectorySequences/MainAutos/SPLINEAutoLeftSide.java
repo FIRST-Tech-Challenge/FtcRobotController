@@ -47,7 +47,7 @@ public class SPLINEAutoLeftSide extends PowerPlay_AprilTagDetectionDeposit{
 	// [1] MEDIUM JUNCTION --> CONE STACK
 	public static double coneStackHeading1 = 93;
 	// [1] CONE STACK --> MEDIUM JUNCTION
-	public static double mediumHeading1 = 210; // no end tangent for splineTo
+	public static double mediumHeading1 = 230; // no end tangent for splineTo
 
 	// [2] MEDIUM JUNCTION --> CONE STACK
 	public static double coneStackHeading2 = 45;
