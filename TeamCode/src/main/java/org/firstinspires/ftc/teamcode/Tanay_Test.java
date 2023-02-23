@@ -188,6 +188,7 @@ public class Tanay_Test extends OpMode {
 
         telemetry.addData("ClawX Pos", ClawX.getPosition());
         telemetry.addData("ClawY Pos", ClawY.getPosition());
+        telemetry.addData("SlidePos", Slide.getCurrentPosition());
         telemetry.update();
     }
 }
