@@ -37,8 +37,9 @@ public class SPLINEAutoLeftSide extends PowerPlay_AprilTagDetectionDeposit{
 	public static double mediumY = -4.85;
 
 	// [CONE STACK]
-	public static double xConeStack = 45;
-	public static double yConeStack = 15;
+	public static double xConeStack = 48.7;
+	public static double yConeStack = 26.85;
+	public static double coneStackHeading = 89;
 	public static double coneStackForward = 8.7;
 
 	// [OPENING MOVE --> MEDIUM JUNCTION]
@@ -101,18 +102,46 @@ public class SPLINEAutoLeftSide extends PowerPlay_AprilTagDetectionDeposit{
 					armControl.setIntake();
 					clawControl.toggleWristRotate();
 				})
-				.waitSeconds(1)
+				.waitSeconds(0.25)
+				.UNSTABLE_addTemporalMarkerOffset(0,()->{
+					slideControl.setCustom(680);
+				})
 				//.splineTo(new Vector2d(xConeStack, yConeStack), Math.toRadians(coneStackHeading1))
 				//.strafeRight(openingStrafe)
 
 				//.splineToLinearHeading(new Pose2d(xConeStack, yConeStack, Math.toRadians(coneStackHeading1)), Math.toRadians(endTangent1))
 				//.forward(coneStackForward)
 
-				.lineToLinearHeading(new Pose2d(48.7,-1,Math.toRadians(90)))
-				/*
+				.lineToLinearHeading(new Pose2d(xConeStack,-1,Math.toRadians(coneStackHeading)))
+				.forward(yConeStack)
+				.UNSTABLE_addTemporalMarkerOffset(0,()->{
+					clawControl.toggleAutoOpenClose();
+				})
+				.waitSeconds(0.2)
+				.UNSTABLE_addTemporalMarkerOffset(0,()->{
+					slideControl.setCustom(800);
+				})
+				.waitSeconds(0.5)
+
+				.UNSTABLE_addTemporalMarkerOffset(0.5,()->{
+					slideControl.setMidJunction();
+					armControl.setExtake();
+					clawControl.toggleWristRotate();
+				})
 				.setReversed(true)
 				.splineTo(new Vector2d(mediumX, mediumY), Math.toRadians(mediumHeading1))
 				.setReversed(false)
+				.UNSTABLE_addTemporalMarkerOffset(0,()->{
+					slideControl.setIntakeOrGround();
+				})
+				.waitSeconds(0.2)
+				.UNSTABLE_addTemporalMarkerOffset(0,()->{
+					clawControl.toggleAutoOpenClose();
+				})
+				.waitSeconds(0.2)
+
+				/*
+
 				//.splineToSplineHeading(new Pose2d(mediumX, mediumY, Math.toRadians(mediumHeading2)), Math.toRadians(mediumEndTangent2))
 				.waitSeconds(1)
 				*/
