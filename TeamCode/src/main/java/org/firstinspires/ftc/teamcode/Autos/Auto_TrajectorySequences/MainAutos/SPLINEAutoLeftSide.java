@@ -11,6 +11,7 @@ import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequence;
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
+import com.acmerobotics.roadrunner.trajectory.Trajectory;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
 @Config
@@ -33,12 +34,25 @@ public class SPLINEAutoLeftSide extends PowerPlay_AprilTagDetectionDeposit{
 	public static double openingY = -1;
 
 	// [MEDIUM JUNCTION]
-	public static double mediumX = 44.12;
-	public static double mediumY = -4.85;
+	public static double mediumX1 = 45.5;
+	public static double mediumY1 = -3.75;
+	public static double mediumX2 = 45.5;
+	public static double mediumY2 = -3.75;
+	public static double mediumX3 = 45.5;
+	public static double mediumY3 = -3.75;
+	public static double mediumX4 = 45.5;
+	public static double mediumY4 = -3.75;
+	public static double mediumX5 = 45.5;
+	public static double mediumY5 = -3.75;
+
 
 	// [CONE STACK]
-	public static double xConeStack = 48.7;
+	public static double xConeStack1 = 48.7;
 	public static double yConeStack = 26.85;
+	public static double xConeStack2 = 49.7;
+	public static double xConeStack3 = 50.7;
+	public static double xConeStack4 = 51.7;
+	public static double xConeStack5 = 52.7;
 	public static double coneStackHeading = 89;
 	public static double coneStackForward = 8.7;
 
@@ -52,12 +66,17 @@ public class SPLINEAutoLeftSide extends PowerPlay_AprilTagDetectionDeposit{
 	// [2] MEDIUM JUNCTION --> CONE STACK
 	public static double coneStackHeading2 = 45;
 	// [2] CONE STACK --> MEDIUM JUNCTION
-	public static double mediumHeading2 = 45;
+	public static double mediumHeading2 = 230;
 
 	// [3] MEDIUM JUNCTION --> CONE STACK
 	public static double coneStackHeading3 = 45;
 	// [3] CONE STACK --> MEDIUM JUNCTION
-	public static double mediumHeading3 = 45;
+	public static double mediumHeading3 = 230;
+
+	// [4] MEDIUM JUNCTION --> CONE STACK
+	public static double coneStackHeading4 = 45;
+	// [4] CONE STACK --> MEDIUM JUNCTION
+	public static double mediumHeading4 = 230;
 
 	public void initialize(){
 		armControl = new Arm(hardwareMap);
@@ -104,7 +123,7 @@ public class SPLINEAutoLeftSide extends PowerPlay_AprilTagDetectionDeposit{
 				})
 				.waitSeconds(0.25)
 				.UNSTABLE_addTemporalMarkerOffset(0,()->{
-					slideControl.setCustom(680);
+					slideControl.setCustom(600);
 				})
 				//.splineTo(new Vector2d(xConeStack, yConeStack), Math.toRadians(coneStackHeading1))
 				//.strafeRight(openingStrafe)
@@ -112,7 +131,7 @@ public class SPLINEAutoLeftSide extends PowerPlay_AprilTagDetectionDeposit{
 				//.splineToLinearHeading(new Pose2d(xConeStack, yConeStack, Math.toRadians(coneStackHeading1)), Math.toRadians(endTangent1))
 				//.forward(coneStackForward)
 
-				.lineToLinearHeading(new Pose2d(xConeStack,-1,Math.toRadians(coneStackHeading)))
+				.lineToLinearHeading(new Pose2d(xConeStack1,-1,Math.toRadians(coneStackHeading)))
 				.forward(yConeStack)
 				.UNSTABLE_addTemporalMarkerOffset(0,()->{
 					clawControl.toggleAutoOpenClose();
@@ -125,11 +144,11 @@ public class SPLINEAutoLeftSide extends PowerPlay_AprilTagDetectionDeposit{
 
 				.UNSTABLE_addTemporalMarkerOffset(0.5,()->{
 					slideControl.setMidJunction();
-					armControl.setExtake();
+					armControl.setAutoExtake();
 					clawControl.toggleWristRotate();
 				})
 				.setReversed(true)
-				.splineTo(new Vector2d(mediumX, mediumY), Math.toRadians(mediumHeading1))
+				.splineTo(new Vector2d(mediumX1, mediumY1), Math.toRadians(mediumHeading1))
 				.setReversed(false)
 				.UNSTABLE_addTemporalMarkerOffset(0,()->{
 					slideControl.setIntakeOrGround();
@@ -139,6 +158,146 @@ public class SPLINEAutoLeftSide extends PowerPlay_AprilTagDetectionDeposit{
 					clawControl.toggleAutoOpenClose();
 				})
 				.waitSeconds(0.2)
+
+				.UNSTABLE_addTemporalMarkerOffset(0,()->{
+					armControl.setIntake();
+					clawControl.toggleWristRotate();
+				})
+				.waitSeconds(0.25)
+				.UNSTABLE_addTemporalMarkerOffset(0,()->{
+					slideControl.setCustom(475);
+				})
+				//.splineTo(new Vector2d(xConeStack, yConeStack), Math.toRadians(coneStackHeading1))
+				//.strafeRight(openingStrafe)
+
+				//.splineToLinearHeading(new Pose2d(xConeStack, yConeStack, Math.toRadians(coneStackHeading1)), Math.toRadians(endTangent1))
+				//.forward(coneStackForward)
+
+				.lineToLinearHeading(new Pose2d(xConeStack2,-1,Math.toRadians(coneStackHeading)))
+				.forward(yConeStack)
+				.UNSTABLE_addTemporalMarkerOffset(0,()->{
+					clawControl.toggleAutoOpenClose();
+				})
+				.waitSeconds(0.2)
+				.UNSTABLE_addTemporalMarkerOffset(0,()->{
+					slideControl.setCustom(1275);
+				})
+				.waitSeconds(0.5)
+
+				.UNSTABLE_addTemporalMarkerOffset(0.5,()->{
+					slideControl.setMidJunction();
+					armControl.setAutoExtake();
+					clawControl.toggleWristRotate();
+				})
+				.setReversed(true)
+				.splineTo(new Vector2d(mediumX2, mediumY2), Math.toRadians(mediumHeading2))
+				.setReversed(false)
+				.UNSTABLE_addTemporalMarkerOffset(0,()->{
+					slideControl.setIntakeOrGround();
+				})
+				.waitSeconds(0.2)
+				.UNSTABLE_addTemporalMarkerOffset(0,()->{
+					clawControl.toggleAutoOpenClose();
+				})
+				.waitSeconds(0.2)
+				.UNSTABLE_addTemporalMarkerOffset(0,()->{
+					armControl.setIntake();
+					clawControl.toggleWristRotate();
+				})
+				.waitSeconds(0.25)
+				.UNSTABLE_addTemporalMarkerOffset(0,()->{
+					slideControl.setCustom(350);
+				})
+				.lineToLinearHeading(new Pose2d(xConeStack3,-1,Math.toRadians(coneStackHeading)))
+				.forward(yConeStack)
+				.UNSTABLE_addTemporalMarkerOffset(0,()->{
+					clawControl.toggleAutoOpenClose();
+				})
+				.waitSeconds(0.2)
+				.UNSTABLE_addTemporalMarkerOffset(0,()->{
+					slideControl.setCustom(1275);
+				})
+				.waitSeconds(0.5)
+
+				.UNSTABLE_addTemporalMarkerOffset(0.5,()->{
+					slideControl.setMidJunction();
+					armControl.setAutoExtake();
+					clawControl.toggleWristRotate();
+				})
+				.setReversed(true)
+				.splineTo(new Vector2d(mediumX3, mediumY3), Math.toRadians(mediumHeading3))
+				.setReversed(false)
+				.UNSTABLE_addTemporalMarkerOffset(0,()->{
+					slideControl.setIntakeOrGround();
+				})
+				.waitSeconds(0.2)
+				.UNSTABLE_addTemporalMarkerOffset(0,()->{
+					clawControl.toggleAutoOpenClose();
+				})
+				.waitSeconds(0.2)
+				.UNSTABLE_addTemporalMarkerOffset(0,()->{
+					armControl.setIntake();
+					clawControl.toggleWristRotate();
+				})
+				.waitSeconds(0.25)
+				.UNSTABLE_addTemporalMarkerOffset(0,()->{
+					slideControl.setCustom(225);
+
+				})
+				.lineToLinearHeading(new Pose2d(xConeStack4,-1,Math.toRadians(coneStackHeading)))
+				.forward(yConeStack)
+				.UNSTABLE_addTemporalMarkerOffset(0,()->{
+					clawControl.toggleAutoOpenClose();
+				})
+				.waitSeconds(0.2)
+				.UNSTABLE_addTemporalMarkerOffset(0,()->{
+					slideControl.setCustom(1275);
+				})
+				.waitSeconds(0.5)
+
+				.UNSTABLE_addTemporalMarkerOffset(0.5,()->{
+					slideControl.setMidJunction();
+					armControl.setAutoExtake();
+					clawControl.toggleWristRotate();
+				})
+				.setReversed(true)
+				.splineTo(new Vector2d(mediumX4, mediumY4), Math.toRadians(mediumHeading4))
+				.setReversed(false)
+				.UNSTABLE_addTemporalMarkerOffset(0,()->{
+					slideControl.setIntakeOrGround();
+				})
+				.waitSeconds(0.2)
+				.UNSTABLE_addTemporalMarkerOffset(0,()->{
+					clawControl.toggleAutoOpenClose();
+				})
+				.waitSeconds(0.2)
+				.UNSTABLE_addTemporalMarkerOffset(0,()->{
+					armControl.setIntake();
+					clawControl.toggleWristRotate();
+				})
+				.waitSeconds(0.25)
+				.UNSTABLE_addTemporalMarkerOffset(0,()->{
+					slideControl.setIntakeOrGround();
+				})
+				.waitSeconds(0.1)
+				.addTemporalMarker(() -> {
+					if(tagUse == 1){
+						TrajectorySequence zoneOne = bot.trajectorySequenceBuilder(new Pose2d(mediumX4,mediumY4,Math.toRadians(mediumHeading4)))
+								.lineToLinearHeading(new Pose2d(51 ,27, Math.toRadians(89)))
+								.build();
+						bot.followTrajectorySequenceAsync(zoneOne);
+					}else if(tagUse == 2) {
+						TrajectorySequence zoneTwo = bot.trajectorySequenceBuilder(new Pose2d(mediumX4,mediumY4,Math.toRadians(mediumHeading4)))
+								.lineToLinearHeading(new Pose2d(51 ,0, Math.toRadians(89)))
+								.build();
+						bot.followTrajectorySequenceAsync(zoneTwo);
+					}else{
+						Trajectory zoneThree = bot.trajectoryBuilder(new Pose2d(mediumX4,mediumY4,Math.toRadians(mediumHeading4)))
+								.lineToLinearHeading(new Pose2d(51 ,-23, Math.toRadians(89)))
+								.build();
+						bot.followTrajectoryAsync(zoneThree);
+					}
+				})
 
 				/*
 

@@ -29,6 +29,8 @@ public class Arm{
     public static double EXTAKE_POS = 180; // 950 old val
     public static double INTAKE_POS = 82; // in degrees of absolute encoder
 
+    public static double AUTOEXTAKE_POS = 182.5;
+
     // Initially set to 0 because we only want the claw to move when given input from the controller
     // initializing the targetPos value to a greater positive value would cause the update() method to
     // immediately start moving the arm since a difference between the current motor encoder position
@@ -77,6 +79,7 @@ public class Arm{
     public void setExtake(){
         targetPos = EXTAKE_POS;
     }
+    public void setAutoExtake(){targetPos = AUTOEXTAKE_POS;}
 
     public void setIntake(){
         targetPos = INTAKE_POS;
