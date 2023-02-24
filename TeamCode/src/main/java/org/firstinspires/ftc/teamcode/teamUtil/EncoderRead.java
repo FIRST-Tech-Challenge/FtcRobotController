@@ -26,6 +26,8 @@ public class EncoderRead {
         }
         for (RobotConstants.configuredSystems system : RobotConfig.configuredSystems) {
             switch (system){
+                case MECANUM:
+                    break;
                 case BOTH_MODULES:
                 case RIGHT_MODULE:
                 case LEFT_MODULE:
@@ -33,6 +35,18 @@ public class EncoderRead {
                     break;
                 case LIFT:
                     Lift.readEncoder();
+                    break;
+                case WRIST:
+                    break;
+                case INTAKE:
+                    break;
+                case ARM:
+                    break;
+                case ENCODER_READ:
+                    break;
+                case LIMIT_SWITCH:
+                    break;
+                case GAMEPADS:
                     break;
                 default:
                     break;

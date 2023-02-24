@@ -21,7 +21,8 @@ public class RobotConstants {
         ARM,
         ENCODER_READ,
         LIMIT_SWITCH,
-        GAMEPADS;
+        GAMEPADEX_1,
+        GAMEPADEX_2;
     }
 
     public enum poleHeights {

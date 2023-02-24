@@ -3,11 +3,11 @@ package org.firstinspires.ftc.teamcode.teleop;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
-import org.firstinspires.ftc.teamcode.subsystems.Arm;
-import org.firstinspires.ftc.teamcode.subsystems.Intake;
-import org.firstinspires.ftc.teamcode.subsystems.Wrist;
+import org.firstinspires.ftc.teamcode.subsystems.*;
 import org.firstinspires.ftc.teamcode.teamUtil.ConfiguredOpMode;
 import org.firstinspires.ftc.teamcode.teamUtil.RobotConstants;
+import org.firstinspires.ftc.teamcode.teamUtil.gamepadEX.CommandController;
+import org.firstinspires.ftc.teamcode.teamUtil.gamepadEX.GamepadEX;
 
 @TeleOp(name="Configured Servo Arm Test", group="TEST")
 public class ConfiguredOpModeArmTest extends ConfiguredOpMode {
@@ -18,14 +18,23 @@ public class ConfiguredOpModeArmTest extends ConfiguredOpMode {
 
     Telemetry.Item intakePositionData;
 
+    private Arm arm;
+    private Wrist wrist;
+    private Intake intake;
+    private GamepadEX gamepadEX1;
+    private GamepadEX gamepadEX2;
+    CommandController commandController;
     @Override
     public void superInit() {
         r.initSystems(
-                RobotConstants.configuredSystems.ARM,
-                RobotConstants.configuredSystems.WRIST,
-                RobotConstants.configuredSystems.INTAKE,
-                RobotConstants.configuredSystems.LIFT
+            RobotConstants.configuredSystems.ARM,
+            RobotConstants.configuredSystems.WRIST,
+            RobotConstants.configuredSystems.INTAKE,
+            RobotConstants.configuredSystems.LIFT
         );
+        arm = r.getSubsystem(RobotConstants.configuredSystems.ARM);
+        wrist = r.getSubsystem(RobotConstants.configuredSystems.WRIST);
+        intake = r.getSubsystem(RobotConstants.configuredSystems.INTAKE);
     }
 
     @Override
@@ -40,18 +49,18 @@ public class ConfiguredOpModeArmTest extends ConfiguredOpMode {
 
     @Override
     public void superLoop() {
-        r.commandControl.conditionalAction(() -> r.gamepadEX1.a.onPress(), () -> armState = !armState);
+        commandController.conditionalAction(() -> gamepadEX1.a.onPress(), () -> armState = !armState);
 
         /*
         r.commandControl.conditionalAction(() -> r.gamepadEX1.dpad_up.onPress(), () -> intakePosition += 0.1);
         r.commandControl.conditionalAction(() -> r.gamepadEX1.dpad_down.onPress(), () -> intakePosition -= 0.1);
          */
 
-        if(r.gamepadEX1.b.isPressed()){
-            r.intake.presetTargetPosition(Intake.intakePos.OPEN);
+        if(gamepadEX1.b.isPressed()){
+            intake.presetTargetPosition(Intake.intakePos.OPEN);
         }
         else{
-            r.intake.presetTargetPosition(Intake.intakePos.CLOSED);
+            intake.presetTargetPosition(Intake.intakePos.CLOSED);
         }
 
         if(intakePosition > 1){
@@ -61,19 +70,19 @@ public class ConfiguredOpModeArmTest extends ConfiguredOpMode {
         }
 
         if(armState){
-            r.arm.presetTargetPosition(Arm.armPos.FRONT);
-            r.wrist.presetTargetPosition(Wrist.wristPos.FRONT);
+            arm.presetTargetPosition(Arm.armPos.FRONT);
+            wrist.presetTargetPosition(Wrist.wristPos.FRONT);
         }
         else{
-            r.arm.presetTargetPosition(Arm.armPos.BACK);
-            r.wrist.presetTargetPosition(Wrist.wristPos.BACK);
+            arm.presetTargetPosition(Arm.armPos.BACK);
+            wrist.presetTargetPosition(Wrist.wristPos.BACK);
         }
 
-        //r.intake.freeTargetPosition(intakePosition);
+        //intake.freeTargetPosition(intakePosition);
 
         //intakePositionData.setValue(intakePosition);
 
-        intakePositionData.setValue(r.gamepadEX1.b.isPressed());
+        intakePositionData.setValue(gamepadEX1.b.isPressed());
     }
 
     @Override

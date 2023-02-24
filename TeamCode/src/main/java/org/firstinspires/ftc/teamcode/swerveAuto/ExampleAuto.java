@@ -1,16 +1,24 @@
 package org.firstinspires.ftc.teamcode.swerveAuto;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.firstinspires.ftc.teamcode.subsystems.SwerveDriveBase;
 import org.firstinspires.ftc.teamcode.teamUtil.*;
 import org.firstinspires.ftc.teamcode.teamUtil.trajectoryAssembly.*;
 
+/**
+ * This is outdated lmao
+ */
+@Disabled
 @Autonomous(name="Swerve Auto Test", group="Worlds")
 public class ExampleAuto extends LinearOpMode {
     RobotConfig r;
     ElapsedTime elapsedTime = new ElapsedTime();
+
+    SwerveDriveBase swerve;
 
     @Override
     public void runOpMode() {
@@ -21,9 +29,11 @@ public class ExampleAuto extends LinearOpMode {
         telemetry.addLine("initilised");
         telemetry.update();
 
+        swerve = r.getSubsystem(RobotConstants.configuredSystems.BOTH_MODULES);
+
         Pose2D startPose = new Pose2D(new Coordinate2D(0,0), new Angle(90, Angle.angleType.ABSOLUTE));
 
-        r.swerve.setStartPose2D(startPose);
+        swerve.setStartPose2D(startPose);
 
         TrajectoryAssembly testDrive = new TrajectoryAssembly()
                 .addOffsetActionMarker(10, () -> {
@@ -42,12 +52,12 @@ public class ExampleAuto extends LinearOpMode {
         waitForStart();
         RobotConfig.elapsedTime.reset();
 
-        r.swerve.setTrajectoryAssembly(testDrive);
+        swerve.setTrajectoryAssembly(testDrive);
         elapsedTime.reset();
         while (opModeIsActive()){
-            r.encoderRead.encoderBulkRead();
+            //encoderRead.encoderBulkRead();
 
-            r.swerve.trajectoryFollowerUpdate();
+            swerve.trajectoryFollowerUpdate();
         }
 
         r.closeLogs();

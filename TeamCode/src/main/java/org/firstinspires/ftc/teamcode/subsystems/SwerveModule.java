@@ -47,7 +47,7 @@ public class SwerveModule {
             bottom = r.hardwareMap.get(DcMotorEx.class, ConfigNames.rightBottom);
         }
 
-        top.setDirection(DcMotorEx.Direction.REVERSE);
+        //top.setDirection(DcMotorEx.Direction.REVERSE);
         bottom.setDirection(DcMotorEx.Direction.REVERSE);
 
         top.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);

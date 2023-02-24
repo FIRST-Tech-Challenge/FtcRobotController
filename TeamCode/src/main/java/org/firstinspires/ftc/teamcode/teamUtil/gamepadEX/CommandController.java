@@ -1,8 +1,8 @@
 package org.firstinspires.ftc.teamcode.teamUtil.gamepadEX;
 
-public class CommandControl {
+public class CommandController {
 
-    public CommandControl(){}
+    public CommandController(){}
     public void conditionalAction(ButtonEX.buttonCondition buttonCondition, ButtonEX.buttonAction buttonAction){
         if(buttonCondition.buttonCondition()){
             buttonAction.buttonAction();

@@ -31,7 +31,6 @@ public abstract class ConfiguredOpMode extends OpMode {
     public void start() {
         r.telemetry.clear();
         superStart();
-
     }
 
     public abstract void superLoop();
@@ -45,8 +44,8 @@ public abstract class ConfiguredOpMode extends OpMode {
     public abstract void superStop();
     @Override
     public void stop(){
-
         superStop();
         r.closeLogs();
+        r.lockDown();
     }
 }
