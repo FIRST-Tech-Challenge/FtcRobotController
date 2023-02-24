@@ -1,9 +1,12 @@
 package org.firstinspires.ftc.teamcode.opModes.test;
 
 import com.arcrobotics.ftclib.hardware.motors.Motor;
+import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.components.DirectLiftComponent;
 import org.firstinspires.ftc.teamcode.libs.brightonCollege.inputs.Inputs;
+import org.firstinspires.ftc.teamcode.libs.brightonCollege.modeBases.AutonomousLinearModeBase;
 import org.firstinspires.ftc.teamcode.libs.brightonCollege.modeBases.TeleOpModeBase;
 import org.firstinspires.ftc.teamcode.libs.brightonCollege.util.HardwareMapContainer;
 
@@ -21,9 +24,12 @@ import org.firstinspires.ftc.teamcode.libs.brightonCollege.util.HardwareMapConta
  * Controls:
  *  [Left Joystick] Pull up or down to lift arm from starting position
  */
+@TeleOp(name="Direct Lift Component", group="Test")
 public class TestDirectLiftComponent extends TeleOpModeBase {
 
     DirectLiftComponent lift;
+
+    double targetPosition;
 
     @Override
     public void setup() {
@@ -33,6 +39,13 @@ public class TestDirectLiftComponent extends TeleOpModeBase {
 
     @Override
     public void every_tick() {
-        lift.setHeight(Math.abs(Inputs.gamepad1.getLeftY()));
+        if(Math.abs(Inputs.gamepad1.getLeftY()) != this.targetPosition) {
+            this.targetPosition = Math.abs(Inputs.gamepad1.getLeftY());
+            lift.setHeight(this.targetPosition);
+        } else {
+            telemetry.addLine("[Lift] BUSY");
+        }
+        telemetry.addData("[Lift] Last set position to", this.targetPosition);
+        telemetry.addData("[Lift] Position of gamepad", Math.abs(Inputs.gamepad1.getLeftY()));
     }
 }
