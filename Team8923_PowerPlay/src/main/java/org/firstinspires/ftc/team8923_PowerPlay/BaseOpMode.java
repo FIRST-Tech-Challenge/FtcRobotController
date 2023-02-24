@@ -91,10 +91,10 @@ abstract public class BaseOpMode extends LinearOpMode {
         imu = hardwareMap.get(BNO055IMU.class, "imu");
         imu.initialize(parameters);
 
-        sleep(2000);// a wait, so the imu can process
+        sleep(2000);
     }
 
-    public void driveMecanum(double driveAngle, double drivePower, double turnPower) {
+    public void driveMecanum(double driveAngle, double drivePower, double turnPower){
         // Calculate x and y components of drive power, where y is forward (0 degrees) and x is right (-90 degrees)
         double x = drivePower * Math.cos(Math.toRadians(driveAngle));
         double y = drivePower * Math.sin(Math.toRadians(driveAngle));
@@ -126,9 +126,9 @@ abstract public class BaseOpMode extends LinearOpMode {
     }
 
     public void driveMecanumGyro(double driveAngle, double drivePower, double turnPower){
+
         // proportionality constant to correct angle error
         double kpConstant = 0.01;
-
         // Calculate x and y components of drive power, where y is forward (0 degrees) and x is right (-90 degrees)
         double x = drivePower * Math.cos(Math.toRadians(driveAngle));
         double y = drivePower * Math.sin(Math.toRadians(driveAngle));
@@ -137,10 +137,10 @@ abstract public class BaseOpMode extends LinearOpMode {
 
         double angleError = robotAngle - referenceAngle;
 
-        if (angleError > 180.0) {
+        if(angleError > 180.0){
             angleError -= 360.0;
-        } else if(angleError < -180.0) {
-
+        } else if(angleError < -180.0){
+            angleError += 360.0;
         }
         double pivotCorrection = angleError * kpConstant;
 
