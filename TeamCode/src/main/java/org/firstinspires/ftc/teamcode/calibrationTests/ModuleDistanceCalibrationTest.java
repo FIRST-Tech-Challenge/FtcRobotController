@@ -5,6 +5,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.subsystems.SwerveDriveBase;
+import org.firstinspires.ftc.teamcode.teamUtil.EncoderRead;
 import org.firstinspires.ftc.teamcode.teamUtil.RobotConfig;
 import org.firstinspires.ftc.teamcode.teamUtil.RobotConstants;
 
@@ -17,6 +18,8 @@ public class ModuleDistanceCalibrationTest extends LinearOpMode{
     enum testState {
         INIT_POS, SELECT_DISTANCE, DISTANCE, RETURN_VALUE, FINISHED
     }
+
+    EncoderRead encoderRead;
 
     testState state = testState.INIT_POS;
 
@@ -34,6 +37,7 @@ public class ModuleDistanceCalibrationTest extends LinearOpMode{
         double finalTicksRight = 0;
         String finalTicksLeftString = "";
         String finalTicksRightString = "";
+        encoderRead = r.getSubsystem(RobotConstants.configuredSystems.ENCODER_READ);
 
         waitForStart();
 
@@ -123,7 +127,7 @@ public class ModuleDistanceCalibrationTest extends LinearOpMode{
                 }
             }
             if (state == testState.SELECT_DISTANCE && !gamepad1.b) {
-                r.encoderRead.encoderBulkRead();
+                encoderRead.encoderBulkRead();
                 telemetry.addLine("use dpad up and down to change the distance to be used for calibration in the test, use dpad left and right to select if testing for x or y position, press a when finished");
                 telemetry.addData("distance to be tested over (mm)", mmPerTest);
                 if(xSelected){
@@ -190,7 +194,7 @@ public class ModuleDistanceCalibrationTest extends LinearOpMode{
                 }
             }
             if (state == testState.DISTANCE && !gamepad1.b) {
-                r.encoderRead.encoderBulkRead();
+                encoderRead.encoderBulkRead();
                 telemetry.addLine("press b to reset, press y to end program");
                 if(xSelected){
                     telemetry.addLine("move the robot along the x axis " + mmPerTest + "mm, press a when finished");
@@ -236,7 +240,7 @@ public class ModuleDistanceCalibrationTest extends LinearOpMode{
             }
 
             if (state == testState.RETURN_VALUE && !gamepad1.b) {
-                r.encoderRead.encoderBulkRead();
+                encoderRead.encoderBulkRead();
                 if (!testFinished) {
                     if(xSelected) {
                         switch (SwerveDriveBase.enabledModules) {

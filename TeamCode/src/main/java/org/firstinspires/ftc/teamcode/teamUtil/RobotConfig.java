@@ -4,7 +4,6 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.checkerframework.checker.units.qual.A;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 
 import org.firstinspires.ftc.teamcode.subsystems.*;
@@ -23,7 +22,6 @@ public class RobotConfig {
      */
     public Telemetry telemetry;
     public static configuredSystems[] configuredSystems = new configuredSystems[0];
-    //public static ArrayList<configuredSystems> configuredSystems = new ArrayList<>();
 
     public static Pose2D
             robotPose2D,

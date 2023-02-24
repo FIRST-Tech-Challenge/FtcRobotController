@@ -46,7 +46,9 @@ public class EncoderRead {
                     break;
                 case LIMIT_SWITCH:
                     break;
-                case GAMEPADS:
+                case GAMEPADEX_1:
+                    break;
+                case GAMEPADEX_2:
                     break;
                 default:
                     break;

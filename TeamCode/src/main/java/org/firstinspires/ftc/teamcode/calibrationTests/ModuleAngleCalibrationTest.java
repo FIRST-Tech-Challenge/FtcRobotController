@@ -7,6 +7,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.subsystems.SwerveDriveBase;
 import org.firstinspires.ftc.teamcode.teamUtil.Angle;
+import org.firstinspires.ftc.teamcode.teamUtil.EncoderRead;
 import org.firstinspires.ftc.teamcode.teamUtil.RobotConfig;
 import org.firstinspires.ftc.teamcode.teamUtil.RobotConstants;
 @Disabled
@@ -19,6 +20,8 @@ public class ModuleAngleCalibrationTest extends LinearOpMode{
     enum testState {
         INIT_POS, SELECT_ROTATIONS, ROTATION, RETURN_VALUE, FINISHED
     }
+
+    EncoderRead encoderRead;
 
     testState state = testState.INIT_POS;
 
@@ -35,6 +38,8 @@ public class ModuleAngleCalibrationTest extends LinearOpMode{
         double finalTicksRight = 0;
         String finalTicksLeftString = "";
         String finalTicksRightString = "";
+        encoderRead = r.getSubsystem(RobotConstants.configuredSystems.ENCODER_READ);
+
 
         waitForStart();
 
@@ -125,7 +130,7 @@ public class ModuleAngleCalibrationTest extends LinearOpMode{
                 }
             }
             if (state == testState.SELECT_ROTATIONS && !gamepad1.b) {
-                r.encoderRead.encoderBulkRead();
+                encoderRead.encoderBulkRead();
                 telemetry.addLine("use dpad up and down to change the number of rotations in the test, press a when finished");
                 telemetry.addData("rotations to be done", rotationsPerTest);
                 switch (SwerveDriveBase.enabledModules) {
@@ -162,7 +167,7 @@ public class ModuleAngleCalibrationTest extends LinearOpMode{
                 }
             }
             if (state == testState.ROTATION && !gamepad1.b) {
-                r.encoderRead.encoderBulkRead();
+                encoderRead.encoderBulkRead();
                 telemetry.addLine("rotate the module by hand " + rotationsPerTest + " times, press a when finished");
                 telemetry.addLine("press b to reset, press y to end program");
                 switch (SwerveDriveBase.enabledModules) {
@@ -187,7 +192,7 @@ public class ModuleAngleCalibrationTest extends LinearOpMode{
             }
 
             if (state == testState.RETURN_VALUE && !gamepad1.b) {
-                r.encoderRead.encoderBulkRead();
+                encoderRead.encoderBulkRead();
                 if (!testFinished) {
                     switch (SwerveDriveBase.enabledModules) {
                         case LEFT:

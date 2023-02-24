@@ -5,6 +5,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.teamcode.subsystems.SwerveDriveBase;
 import org.firstinspires.ftc.teamcode.teamUtil.gamepadEX.ButtonEX;
 import org.firstinspires.ftc.teamcode.teamUtil.RobotConfig;
 import org.firstinspires.ftc.teamcode.teamUtil.RobotConstants;
@@ -14,6 +15,7 @@ public class SwerveTest extends OpMode{
 
     RobotConfig r;
     private final ElapsedTime runTime = new ElapsedTime();
+    SwerveDriveBase swerve;
 
     @Override
     public void init(){
@@ -21,6 +23,7 @@ public class SwerveTest extends OpMode{
         telemetry.update();
         r = RobotConfig.getInstance(this);
         r.initSystems(RobotConstants.configuredSystems.LEFT_MODULE);
+        swerve = r.getSubsystem(RobotConstants.configuredSystems.LEFT_MODULE);
         telemetry.addData("Status", "Initialised");
         telemetry.update();
     }
@@ -37,7 +40,7 @@ public class SwerveTest extends OpMode{
     @Override
     public void loop(){
         r.systemsStartLoopUpdate();
-        r.swerve.manualDrive(gamepad1.left_stick_y, gamepad1.left_stick_x, gamepad1.right_stick_x, gamepad1.right_stick_y, (1-gamepad1.right_trigger), false);
+        swerve.manualDrive(gamepad1.left_stick_y, gamepad1.left_stick_x, gamepad1.right_stick_x, gamepad1.right_stick_y, (1-gamepad1.right_trigger), false);
         r.systemsEndLoopUpdate();
     }
 
