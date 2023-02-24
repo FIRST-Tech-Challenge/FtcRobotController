@@ -30,7 +30,7 @@ public class MechanismDriving {
     public static final double CLAW_CLOSED_POS = 0.83, CLAW_OPEN_POS = 0.63; //These are not final values
 
     public static final double CLAW_LIMIT_SWITCH_SERVO_LOW = 0.5, CLAW_LIMIT_SWITCH_SERVO_HIGH = 0; //These are not final values
-    public static final double SECONDARY_CLAW_CLOSED = 0.1, SECONDARY_CLAW_OPEN = -1.2; //These are not final values
+    public static final double SECONDARY_CLAW_CLOSED = 0.4, SECONDARY_CLAW_OPEN = -1.2; //These are not final values
     public static final double SECONDARY_CLAW_ROTATOR_HIGH = 0, SECONDARY_CLAW_ROTATOR_LOW = 0.7; //These are not final values
 
     // How long it takes for the claw servo to be guaranteed to have moved to its new position.
@@ -245,7 +245,7 @@ public class MechanismDriving {
             if (robot.desiredSecondarySlidePosition == Robot.SecondarySlidesState.EXTENDED) {
                 robot.secondarySlidesMotor.setPower(slidesPower);
                 double start_time = robot.elapsedTime.time();
-                while (robot.elapsedTime.time()-start_time < 1880) {}
+                while (robot.elapsedTime.time()-start_time < 1920) {}
                 robot.secondarySlidesMotor.setPower(0);
             }
             if (robot.desiredSecondarySlidePosition == Robot.SecondarySlidesState.RETRACTED) {
@@ -257,13 +257,13 @@ public class MechanismDriving {
             if (robot.desiredSecondarySlidePosition == Robot.SecondarySlidesState.PLACE_CONE) {
                 robot.secondarySlidesMotor.setPower(-slidesPower);
                 double start_time = robot.elapsedTime.time();
-                while (robot.elapsedTime.time()-start_time < 880) {}
+                while (robot.elapsedTime.time()-start_time < 920) {}
                 robot.secondarySlidesMotor.setPower(0);
             }
             if (robot.desiredSecondarySlidePosition == Robot.SecondarySlidesState.FINAL_RETRACTED) {
                 robot.secondarySlidesMotor.setPower(-slidesPower);
                 double start_time = robot.elapsedTime.time();
-                while (robot.elapsedTime.time()-start_time < 120) {}
+                while (robot.elapsedTime.time()-start_time < 80) {}
                 robot.secondarySlidesMotor.setPower(0);
             }
             robot.previousDesiredSecondarySlidePosition = robot.desiredSecondarySlidePosition;
