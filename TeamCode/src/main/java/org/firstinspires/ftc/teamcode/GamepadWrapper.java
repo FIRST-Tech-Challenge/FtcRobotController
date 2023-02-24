@@ -10,7 +10,9 @@ public class GamepadWrapper {
         TOGGLE_WHEEL_SPEED_ADJUSTMENT, MOVE_STRAIGHT_FORWARD, MOVE_STRAIGHT_BACKWARD, MOVE_STRAIGHT_LEFT,
         MOVE_STRAIGHT_RIGHT, TURN_COUNTER_CLOCKWISE, TURN_CLOCKWISE, POSITION_CLAW_FRONT, POSITION_CLAW_SIDE,
         POSITION_CLAW_REAR, CLAW_OPEN, CLAW_CLOSE, SECONDARY_CLAW_OPEN, SECONDARY_CLAW_CLOSE,
-        POSITION_SECONDARY_CLAW_TRANSFER, POSITION_SECONDARY_CLAW_DOWN, SET_SECONDARY_SLIDES_EXTENDED, SET_SECONDARY_SLIDES_RETRACTED
+        POSITION_SECONDARY_CLAW_UP, POSITION_SECONDARY_CLAW_DOWN, SET_SECONDARY_SLIDES_EXTENDED, SET_SECONDARY_SLIDES_RETRACTED,
+        RUN_SECONDARY_SYSTEM, STOP_SECONDARY_SYSTEM
+        
     }
 
     Gamepad gamepad1, gamepad2;
@@ -51,12 +53,7 @@ public class GamepadWrapper {
                 return gamepad1.dpad_left;
             case MOVE_STRAIGHT_RIGHT:
                 return gamepad1.dpad_right;
-            case POSITION_CLAW_FRONT:
-                return gamepad1.y;
-            case POSITION_CLAW_SIDE:
-                return gamepad1.b;
-            case POSITION_CLAW_REAR:
-                return gamepad1.a;
+
 
             // Gamepad 2 Controls
             case SET_SLIDES_RETRACTED:
@@ -71,17 +68,27 @@ public class GamepadWrapper {
                 return gamepad2.left_bumper;
             case CLAW_CLOSE:
                 return gamepad2.right_bumper;
-            case SECONDARY_CLAW_OPEN:
-                return gamepad2.x;
-            case SECONDARY_CLAW_CLOSE:
-                return gamepad2.b;
-            case POSITION_SECONDARY_CLAW_DOWN:
-                return gamepad2.a;
-            case POSITION_SECONDARY_CLAW_TRANSFER:
+            case POSITION_CLAW_FRONT:
                 return gamepad2.y;
-            case SET_SECONDARY_SLIDES_EXTENDED:
+            case POSITION_CLAW_SIDE:
+                return gamepad2.b;
+            case POSITION_CLAW_REAR:
+                return gamepad2.a;
+//             case SECONDARY_CLAW_OPEN:
+//                 return gamepad2.x;
+//             case SECONDARY_CLAW_CLOSE:
+//                 return gamepad2.b;
+//             case POSITION_SECONDARY_CLAW_DOWN:
+//                 return gamepad2.a;
+//             case POSITION_SECONDARY_CLAW_UP:
+//                 return gamepad2.y;
+//             case SET_SECONDARY_SLIDES_EXTENDED:
+//                 return gamepad2.left_trigger > 0.5;
+//             case SET_SECONDARY_SLIDES_RETRACTED:
+//                 return gamepad2.right_trigger > 0.5;
+             case RUN_SECONDARY_SYSTEM:
                 return gamepad2.left_trigger > 0.5;
-            case SET_SECONDARY_SLIDES_RETRACTED:
+             case STOP_SECONDARY_SYSTEM:
                 return gamepad2.right_trigger > 0.5;
         }
         assert false;

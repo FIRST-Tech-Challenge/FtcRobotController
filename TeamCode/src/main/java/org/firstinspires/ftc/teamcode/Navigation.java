@@ -29,12 +29,13 @@ public class Navigation {
     static final double MIN_STRAFE_POWER = 0.3;
     static final double MAX_STRAFE_POWER = 0.5;
     static final double STRAFE_CORRECTION_POWER = 0.3;
+    static final double STRAFE_SLOW = 0.1;
     static final double MAX_ROTATION_POWER = 0.3;
     static final double MIN_ROTATION_POWER = 0.04;
     static final double ROTATION_CORRECTION_POWER = 0.04;
     // Accepted amounts of deviation between the robot's desired position and actual position.
-    static final double EPSILON_LOC = 1;
-//    static final double EPSILON_LOC = 10;
+//    static final double EPSILON_LOC = 1;
+    static final double EPSILON_LOC = 10;
 
 //    static final double EPSILON_ANGLE = 0.35;
     static final double EPSILON_ANGLE = 0.35;
@@ -63,9 +64,10 @@ public class Navigation {
     // ===================
 
     // Speeds relative to one another. RR is positive on purpose!
-    //                              RL   RR   FL   FR
-//    public double[] wheel_speeds = {1.0, 1.0, -0.97, -1.0};
-    public double[] wheel_speeds = {0.3, 0.3, -0.3, -0.3};
+//                                  RL   RR   FL   FR
+    // 0.935*0.96 = 0.9024
+    public double[] wheel_speeds = {0.8976, 0.96, -0.935, -1.0};
+//    public double[] wheel_speeds = {0.3, 0.3, -0.3, -0.3};
 
     public double strafePower;  // Tele-Op only
 
@@ -101,7 +103,7 @@ public class Navigation {
         robot.positionManager.updatePosition(robot);
         robot.telemetry.addData("Going to", target.getX() + ", " + target.getY());
         robot.telemetry.addData("name", target.getName());
-        robot.telemetry.update();
+//        robot.telemetry.update();
         switch (movementMode) {
             case FORWARD_ONLY:
                 rotate(getAngleBetween(robot.getPosition(), target) - Math.PI / 2,
@@ -118,7 +120,7 @@ public class Navigation {
         pathIndex++;
 
         robot.telemetry.addData("Got to", target.name);
-        robot.telemetry.update();
+//        robot.telemetry.update();
 
 //            if (target.name.startsWith("POI")) break;
 //        }
@@ -235,7 +237,7 @@ public class Navigation {
         double halfRotateTime = getHalfRotateTime(rotationSize);
 
         double power;
-        boolean ramping = true;
+        boolean ramping = false;
         if (Math.abs(constantPower - 0) > FLOAT_EPSILON) {
             power = constantPower;
             ramping = false;
@@ -256,7 +258,7 @@ public class Navigation {
             robot.telemetry.addData("rot left", rotationRemaining);
             robot.telemetry.addData("current orientation", currentOrientation);
             robot.telemetry.addData("target", target);
-            robot.telemetry.update();
+//            robot.telemetry.update();
 
             if (ramping) {
                 if (timeElapsed < halfRotateTime) { // Ramping up
@@ -347,7 +349,7 @@ public class Navigation {
         double halfStrafeTime = getHalfStrafeTime(totalDistance, getAngleBetween(startPosition, target));
 
         double power;
-        boolean ramping = true;
+        boolean ramping = false;
 
         if (Math.abs(constantPower - 0.0) > FLOAT_EPSILON) {
             power = constantPower;
@@ -385,6 +387,9 @@ public class Navigation {
             if (checkFrames) {
                 power = STRAFE_CORRECTION_POWER;
             }
+            if (distanceRemaining < 15) {
+                power = STRAFE_SLOW;
+            }
 
             double strafeAngle = getStrafeAngle(robot.getPosition(), target);
             robot.telemetry.addData("starting rotation", robot.getPosition().getRotation());
@@ -409,7 +414,7 @@ public class Navigation {
 //            robot.telemetry.addData("strafe testing y", (target.y-currentY));
 //            robot.telemetry.addData("strafe testing x", (target.x-currentX));
             robot.telemetry.addData("getAngleBetween(): ", getAngleBetween(currentPosition, target));
-            robot.telemetry.update();
+//            robot.telemetry.update();
 
             if (distanceRemaining > EPSILON_LOC) {
                 numFramesSinceLastFailure = 0;
@@ -641,23 +646,23 @@ public static class AutonomousPaths {
     //Positions
 
     //Junctions
-    public static Position nearHighJunction = new Position(0.85 * TILE_SIZE, -1.70*TILE_SIZE, "POI nearHighJunction", Action.NONE, 1, 1, 0);
+    public static Position nearHighJunction = new Position(0.85 * TILE_SIZE, -1.70*TILE_SIZE, "POI nearHighJunction", Action.NONE, 0.5, 0.3, 0);
 //    public static Position nearHighJunction = new Position(1 * TILE_SIZE, -1.5*TILE_SIZE, "POI nearHighJunction", Action.NONE, 1, 1, -9* Math.PI / 20);
-    public static Position nearInHighJunction = new Position(0.7 * TILE_SIZE, -1.70*TILE_SIZE, "POI nearInHighJunction", Action.DELIVER_CONE_HIGH_180, 1, 1, -47* Math.PI / 100);
+    public static Position nearInHighJunction = new Position(0.7 * TILE_SIZE, -1.70*TILE_SIZE, "POI nearInHighJunction", Action.DELIVER_CONE_HIGH_180, 0.5, 0.3, -47* Math.PI / 100);
     public static Position farHighJunction = new Position(-0.15*TILE_SIZE,
-            -2.75 * TILE_SIZE, "POI farHighJunction", Action.DELIVER_CONE_HIGH_180, 1, 1, -47* Math.PI / 100);
+            -2.75 * TILE_SIZE, "POI farHighJunction", Action.DELIVER_CONE_HIGH_180, 0.5, 0.3, -47* Math.PI / 100);
 //    public static Position farHighJunction = new Position(0,
 //            -2.75 * TILE_SIZE, "POI farHighJunction", Action.NONE, 1, 1, -9*Math.PI / 20);
     public static Position farInHighJunction = new Position(-0.05*TILE_SIZE,
-        -2.75 * TILE_SIZE, "POI farInHighJunction", Action.DELIVER_CONE_HIGH_180, 1, 1, -47* Math.PI / 100);
-    public static Position mediumJunction = new Position(-0.15*TILE_SIZE, -1.75*TILE_SIZE, "POI mediumJunction", Action.DELIVER_CONE_MEDIUM, 1, 1, 0);
-    public static Position nearLowJunction = new Position(0.35*TILE_SIZE, -0.25, "POI nearLowJunction", Action.DELIVER_CONE_LOW, 1, 1, 0);
-    public static Position farLowJunction = new Position(-0.65*TILE_SIZE, -1.25*TILE_SIZE, "POI farLowJunction", Action.DELIVER_CONE_LOW, 1, 1, 0);
+        -2.75 * TILE_SIZE, "POI farInHighJunction", Action.DELIVER_CONE_HIGH_180, 0.5, 0.3, -47* Math.PI / 100);
+    public static Position mediumJunction = new Position(-0.15*TILE_SIZE, -1.75*TILE_SIZE, "POI mediumJunction", Action.DELIVER_CONE_MEDIUM, 0.5, 0.3, 0);
+    public static Position nearLowJunction = new Position(0.35*TILE_SIZE, -0.25, "POI nearLowJunction", Action.DELIVER_CONE_LOW, 0.5, 0.3, 0);
+    public static Position farLowJunction = new Position(-0.65*TILE_SIZE, -1.25*TILE_SIZE, "POI farLowJunction", Action.DELIVER_CONE_LOW, 0.5, 0.3, 0);
 
     //Cone Stack
-    public static Position coneStack1 = new Position(-1.08 * TILE_SIZE, -2.25 * TILE_SIZE, "POI coneStackFirstCone", Action.PICK_UP_FIRST_STACK_CONE, 1, 1, -47* Math.PI / 1000);
+    public static Position coneStack1 = new Position(-1.08 * TILE_SIZE, -2.25 * TILE_SIZE, "POI coneStackFirstCone", Action.PICK_UP_FIRST_STACK_CONE, 0.5, 0.3, -47* Math.PI / 1000);
 //    public static Position coneStack1 = new Position(-0.5 * TILE_SIZE, -2 * TILE_SIZE, "POI coneStackFirstCone", Action.NONE, 1, 1, -47* Math.PI / 100);
-    public static Position coneStack2 = new Position(-1.08 * TILE_SIZE, -2.25 * TILE_SIZE, "POI coneStackSecondCone", Action.PICK_UP_SECOND_STACK_CONE, 1, 1, -47* Math.PI / 100);
+    public static Position coneStack2 = new Position(-1.08 * TILE_SIZE, -2.25 * TILE_SIZE, "POI coneStackSecondCone", Action.PICK_UP_SECOND_STACK_CONE, 0.5, 0.3, -47* Math.PI / 100);
 
     //Intermediate Locations. Since these values could be transformed, inner refers to the middle of the entire field, center
     // to the center of the left or right, and outer refers to the very edges of the field next to either side wall
@@ -674,21 +679,23 @@ public static class AutonomousPaths {
 
     //Parking Locations
     //Make sure NOT to transform these in transformPath()
-    public static Position leftBarcode = new Position(-0.8*TILE_SIZE, -2 * TILE_SIZE,  "leftBarcodeParkingPosition", Action.RETRACT_SLIDES, 1, 1, -47* Math.PI / 100);
+    public static Position leftBarcode = new Position(-0.95*TILE_SIZE, -2.25 * TILE_SIZE,  "leftBarcodeParkingPosition", Action.RETRACT_SLIDES, 0.5, 0.3, -47* Math.PI / 100);
 //    public static Position leftBarcode = new Position(-0.9*TILE_SIZE, -2 * TILE_SIZE,  "leftBarcodeParkingPosition", Action.NONE, 1, 1, -Math.PI / 2);
-    public static Position centerBarcode = new Position(0, -2 * TILE_SIZE,  "centerBarcodeParkingPosition", Action.RETRACT_SLIDES, 1, 1, -9* Math.PI / 20);
+    public static Position centerBarcode = new Position(-0.15*TILE_SIZE, -2.25 * TILE_SIZE,  "centerBarcodeParkingPosition", Action.RETRACT_SLIDES, 0.5, 0.3, -9* Math.PI / 20);
 //    public static Position centerBarcode = new Position(0, -2 * TILE_SIZE,  "centerBarcodeParkingPosition", Action.NONE, 1, 1, -Math.PI / 2);
-    public static Position rightBarcode = new Position(TILE_SIZE, -2 * TILE_SIZE,  "rightBarcodeParkingPosition", Action.RETRACT_SLIDES, 1, 1, -9* Math.PI / 20);
+    public static Position rightBarcode = new Position(0.85*TILE_SIZE, -2.25 * TILE_SIZE,  "rightBarcodeParkingPosition", Action.RETRACT_SLIDES, 0.5, 0.3, -9* Math.PI / 20);
 //    public static Position rightBarcode = new Position(TILE_SIZE, -2 * TILE_SIZE,  "rightBarcodeParkingPosition", Action.NONE, 1, 1, -Math.PI / 2);
 
     //ZE ULTIMATE PATH - Prepare for trouble! And make it double! To protect the world from devastation!
     //To unite all peoples within our nation! To denounce the evils of truth and love!
     public static final ArrayList<Position> CYCLE_HIGH = new ArrayList<>(Arrays.asList(
-            intermediateInnerBack,
-            nearHighJunction,
-            nearInHighJunction,
-            nearHighJunction,
-            intermediateInnerFront,
+//            intermediateInnerBack,
+//            nearHighJunction,
+//            nearInHighJunction,
+//            nearHighJunction,
+            farHighJunction,
+            intermediateCenterFront,
+//            intermediateInnerFront,
             coneStack1,
             intermediateCenterFront,
             farHighJunction,

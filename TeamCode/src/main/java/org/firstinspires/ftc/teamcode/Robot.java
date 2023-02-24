@@ -22,7 +22,9 @@ public class Robot {
     public enum SecondaryClawState {OPEN, CLOSED}
     public enum SecondaryClawRotatorState {DOWN, UP}
     public enum ClawLimitSwitchServoState {HIGH, LOW}
-    public enum SecondarySlidesState {RETRACTED, EXTENDED}
+    public enum SecondarySlidesState {RETRACTED, EXTENDED, PLACE_CONE, INITIAL_EXTENDED, FINAL_RETRACTED}
+    public enum SecondarySystemStatus {ON, OFF};
+
 
     public static SlidesState desiredSlidesState = SlidesState.UNREADY;
     public ClawRotatorState desiredClawRotatorState;
@@ -31,9 +33,15 @@ public class Robot {
     public SecondaryClawState desiredSecondaryClawState;
     public SecondaryClawRotatorState desiredSecondaryClawRotatorState;
     public ClawLimitSwitchServoState desiredClawLimitSwitchServoState;
+    public SecondarySlidesState desiredSecondarySlidePosition;
+
+    public SecondarySystemStatus secondarySystemStatus;
 
     public boolean previousSlidesLimitSwitchState = false;
     public boolean previousClawLimitSwitchState = false;
+    public SecondarySlidesState previousDesiredSecondarySlidePosition;
+    public SecondarySystemStatus previousSecondarySystemStatus;
+
 
     enum MovementMode {NORMAL, FINE, ULTRA_FINE}
     MovementMode movementMode = MovementMode.NORMAL;
@@ -62,6 +70,11 @@ public class Robot {
 
         desiredClawRotatorState = ClawRotatorState.FRONT;
         desiredClawState = ClawState.CLOSED;
+        desiredSecondarySlidePosition = SecondarySlidesState.RETRACTED;
+        desiredSecondaryClawState = SecondaryClawState.CLOSED;
+        desiredSecondaryClawRotatorState = SecondaryClawRotatorState.UP;
+        previousDesiredSecondarySlidePosition = SecondarySlidesState.RETRACTED;
+        secondarySystemStatus = SecondarySystemStatus.OFF;
 
         slidesMotor1 = hardwareMap.get(DcMotor.class, RobotConfig.MotorNames.get(RobotConfig.Motors.SLIDES_MOTOR_1));
         slidesMotor2 = hardwareMap.get(DcMotor.class, RobotConfig.MotorNames.get(RobotConfig.Motors.SLIDES_MOTOR_2));
@@ -71,7 +84,6 @@ public class Robot {
         clawLimitSwitchServo = hardwareMap.get(Servo.class, RobotConfig.ServoNames.get(RobotConfig.Servos.CLAW_LIMIT_SWITCH_SERVO));
         secondaryClaw = hardwareMap.get(Servo.class, RobotConfig.ServoNames.get(RobotConfig.Servos.SECONDARY_CLAW));
         secondaryClawRotator = hardwareMap.get(Servo.class, RobotConfig.ServoNames.get(RobotConfig.Servos.SECONDARY_CLAW_ROTATOR));
-
 
         slidesLimitSwitch = hardwareMap.get(TouchSensor.class, RobotConfig.SwitchNames.get(RobotConfig.Switches.SLIDES_LIMIT));
         clawLimitSwitch = hardwareMap.get(TouchSensor.class, RobotConfig.SwitchNames.get(RobotConfig.Switches.CLAW_LIMIT));

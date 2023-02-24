@@ -49,6 +49,9 @@ public class PowerPlayTeleOp extends OpMode {
         telemetry.addData("after drive mechanisms", robotManager.elapsedTime.time()-start_time);
         robotManager.maneuver();
         telemetry.addData("after maneuver", robotManager.elapsedTime.time()-start_time);
+        robotManager.runSecondarySystem();
+        telemetry.addData("previous secondary system state", robotManager.robot.previousSecondarySystemStatus);
+        telemetry.addData("current seoncary system state", robotManager.robot.secondarySystemStatus);
 
         telemetry.update();
     }
