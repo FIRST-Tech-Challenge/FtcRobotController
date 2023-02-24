@@ -94,7 +94,7 @@ public class AutonomousLeft extends AutonomousBase {
                 @Override
                 public void onOpened() {
                     pipelineBack = new PowerPlaySuperPipeline(false, true, false, false, 144.0);
-                    webcamBack.setPipeline(pipelineFront);
+                    webcamBack.setPipeline(pipelineBack);
                     webcamBack.startStreaming(320, 240, OpenCvCameraRotation.UPRIGHT);
                     backCameraInitialized = true;
                 }
@@ -385,23 +385,14 @@ public class AutonomousLeft extends AutonomousBase {
         driveToPosition( autoYpos, autoXpos, autoAngle, DRIVE_SPEED_60, TURN_SPEED_60, DRIVE_THRU );
 
         // The 2nd movement is to rotate 90deg so we don't entrap the beacon cone
+        robot.liftPIDPosInit( robot.LIFT_ANGLE_HIGH_A);
+        robot.turretPIDPosInit( robot.TURRET_ANGLE_AUTO_R );
         autoYpos=18.0;  autoXpos=5.5;  autoAngle=-90.0;    // (inches, inches, degrees)
         driveToPosition( autoYpos, autoXpos, autoAngle, DRIVE_SPEED_60, TURN_SPEED_60, DRIVE_THRU );
 
-        // The grabber finished the tilt down during the 90deg turn movement, so
-        // it's safe now to command the lift to raise to scoring position
-        robot.liftPIDPosInit( robot.LIFT_ANGLE_AUTO_H );
-
-        // We're past the medium junction pole, so okay to rotate the turret
-        robot.turretPIDPosInit( 142.0 );
-
-        // Drive partway there (while lift raises past the front motor)
+        // Drive partway there very fast
         autoYpos=34.5;  autoXpos=4.5;
         driveToPosition( autoYpos, autoXpos, autoAngle, DRIVE_SPEED_100, TURN_SPEED_80, DRIVE_THRU );
-
-        // Tilt grabber backward to final scoring position and rotate cone over
-        robot.grabberSetTilt( robot.GRABBER_TILT_BACK_H );
-        robot.rotateServo.setPosition( robot.GRABBER_ROTATE_DOWN );
 
         // Drive the final distance to the high junction pole
         autoYpos=55.3;  autoXpos=7.0;
@@ -411,6 +402,10 @@ public class AutonomousLeft extends AutonomousBase {
         while( opModeIsActive() && ((robot.turretMotorPIDAuto == true) || (robot.liftMotorPIDAuto == true)) ) {
             performEveryLoop();
         }
+
+        // Tilt grabber down to final scoring position
+        robot.grabberSetTilt( robot.GRABBER_TILT_FRONT_H );
+        sleep( 500 );
 
     } // moveToTallJunction
 
@@ -518,9 +513,8 @@ public class AutonomousLeft extends AutonomousBase {
 
         // Perform setup to center turret and raise lift to scoring position
         robot.turretPIDPosInit( robot.TURRET_ANGLE_5STACK_L);
-        robot.liftPIDPosInit( robot.LIFT_ANGLE_AUTO_H );
-        robot.grabberSetTilt( robot.GRABBER_TILT_BACK_H );
-        robot.rotateServo.setPosition( robot.GRABBER_ROTATE_DOWN );
+        robot.liftPIDPosInit( robot.LIFT_ANGLE_HIGH_A);
+        robot.grabberSetTilt( robot.GRABBER_TILT_FRONT_H );
 
         // Drive back to tall junction (adjusting lift along the way)
         // (stay along Y=51.5 instead of returning to Y=54.0, but rotate turret more (-56.5, not -34.5)

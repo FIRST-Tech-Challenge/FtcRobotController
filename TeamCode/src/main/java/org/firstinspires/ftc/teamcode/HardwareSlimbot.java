@@ -1,6 +1,5 @@
 package org.firstinspires.ftc.teamcode;
 
-import static org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit.MILLIAMPS;
 import static java.lang.Math.abs;
 import static java.lang.Thread.sleep;
 
@@ -109,15 +108,16 @@ public class HardwareSlimbot
     public double       turretAngleOffset  = 299.0;   // allows us to adjust the 0-360 deg range
     public double       turretAngleTarget  = 0.0;     // Automatic movement target angle (degrees)
 
-    public double       TURRET_ANGLE_MAX    = 170.0;   // absolute encoder angles at maximum rotation RIGHT
-    public double       TURRET_ANGLE_CENTER = 0.0 ;    // turret centered
-    public double       TURRET_ANGLE_MIN    = -170.0;   // absolute encoder angles at maximum rotation LEFT
-    public double       TURRET_ANGLE_5STACK_L = 118.0;
-    public double       TURRET_ANGLE_5STACK_R = +-103.0;
-    public double       TURRET_ANGLE_CYCLE_R  =  133.5;
-    public double       TURRET_ANGLE_CYCLE_L  = -133.5;
-    public double       TURRET_ANGLE_COLLECT_R =  21.9;
-    public double       TURRET_ANGLE_COLLECT_L = -21.9;
+    public double       TURRET_ANGLE_MAX       =  170.0;  // absolute encoder angles at maximum rotation RIGHT
+    public double       TURRET_ANGLE_AUTO_R    =  142.0;  // scoring the autonomous pre-load cone
+    public double       TURRET_ANGLE_CYCLE_R   =  133.5;
+    public double       TURRET_ANGLE_5STACK_L  =  118.0;
+    public double       TURRET_ANGLE_COLLECT_R =   21.9;
+    public double       TURRET_ANGLE_CENTER    =    0.0;  // turret centered
+    public double       TURRET_ANGLE_COLLECT_L =  -21.9;
+    public double       TURRET_ANGLE_5STACK_R  = -103.0;
+    public double       TURRET_ANGLE_CYCLE_L   = -133.5;
+    public double       TURRET_ANGLE_MIN       = -170.0;  // absolute encoder angles at maximum rotation LEFT
 
     // Instrumentation:  writing to input/output is SLOW, so to avoid impacting loop time as we capture
     // motor performance we store data to memory until the movement is complete, then dump to a file.
@@ -150,7 +150,7 @@ public class HardwareSlimbot
     public double        liftMotorPIDr_d   = -0.007;  //  Raise d = derivative
     public double        liftMotorPIDr_f   =  0.007;  //  Raise f = sin() function
     
-    public double        liftMotorPIDl_p   = -0.035;  //  Lower p = proportional
+    public double        liftMotorPIDl_p   = -0.030;  //  Lower p = proportional
     public double        liftMotorPIDl_i   =  0.000;  //  Lower i = integral
     public double        liftMotorPIDl_d   =  0.000;  //  Lower d = derivative
     public double        liftMotorPIDl_f   =  0.007;  //  Lower f = sin() function
@@ -165,7 +165,7 @@ public class HardwareSlimbot
     // NOTE: the motor doesn't stop immediately, so set the limits short of the absolute maximum
     // Cone collect:  lift=116.7,  grabber=0.08/0.92, trigger BOTTOM proximity only (existing 3" high team element)
     public double       LIFT_ANGLE_MAX     = 116.5;   // absolute encoder angle at maximum rotation FRONT
-    public double       LIFT_ANGLE_ASTART  = 116.0;   // lift position for starting autonomous
+    public double       LIFT_ANGLE_ASTART  = 115.0;   // lift position for starting autonomous
     public double       LIFT_ANGLE_COLLECT = 110.0;   // lift position for collecting cones (185mm)
     public double       LIFT_ANGLE_GROUND  = 110.0;   // lift position for GROUND junction
     public double       LIFT_ANGLE_CONE    = 103.0;   // lift position for cleaning a cone on a ground junction
@@ -173,7 +173,7 @@ public class HardwareSlimbot
     public double       LIFT_ANGLE_MOTORS  =  91.0;   // lift position for cleaning front turret motor
     public double       LIFT_ANGLE_5STACK  =  87.0;   // lift position for 5-stack ultrasonic reading
     public double       LIFT_ANGLE_MED     =  61.0;   // lift position for MEDIUM junction (FRONT Teleop)
-    public double       LIFT_ANGLE_AUTO_H  =  37.0;   // lift position for AUTONOMOUS (HIGH junction)
+    public double       LIFT_ANGLE_HIGH_A  =  22.0;   // lift position for HIGH junction (Front Auto)
     public double       LIFT_ANGLE_HIGH    =  28.5;   // lift position for HIGH junction (FRONT Teleop)
     public double       LIFT_ANGLE_HIGH_BA = -41.0;   // lift position for HIGH junction (BACK Auto)
                                                       // (cone is loaded lower for auto, so higher lift point)

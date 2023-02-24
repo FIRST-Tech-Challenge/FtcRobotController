@@ -383,7 +383,7 @@ public class AutonomousRight extends AutonomousBase {
 
         // The grabber finished the tilt down during the 90deg turn movement, so
         // it's safe now to command the lift to raise to scoring position
-        robot.liftPIDPosInit( robot.LIFT_ANGLE_AUTO_H );
+        robot.liftPIDPosInit( robot.LIFT_ANGLE_HIGH_A);
 
         // We're past the medium junction pole, so okay to rotate the turret
         robot.turretPIDPosInit( -131.0 );
@@ -505,7 +505,7 @@ public class AutonomousRight extends AutonomousBase {
 
         // Perform setup to center turret and raise lift to scoring position
         robot.turretPIDPosInit( robot.TURRET_ANGLE_5STACK_R );
-        robot.liftPIDPosInit( robot.LIFT_ANGLE_AUTO_H );
+        robot.liftPIDPosInit( robot.LIFT_ANGLE_HIGH_A);
         robot.grabberSetTilt( robot.GRABBER_TILT_BACK_H );
         robot.rotateServo.setPosition( robot.GRABBER_ROTATE_DOWN );
 
