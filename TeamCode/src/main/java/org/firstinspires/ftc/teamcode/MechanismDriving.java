@@ -9,6 +9,7 @@ import java.util.Map;
 public class MechanismDriving {
 
     private static int desiredSlidePosition;
+    private static Robot.SecondarySlidesState desiredSecondarySlidePosition;
     private static int slideZeroPosition = 0;
     public boolean testing=false;
 
@@ -21,6 +22,10 @@ public class MechanismDriving {
 
        put(Robot.SlidesState.FIRST_STACK_CONE, 500);
        put(Robot.SlidesState.SECOND_STACK_CONE, 375);
+    }};
+    public static Map<Robot.SecondarySlidesState, Integer> secondarySlidePositions = new HashMap<Robot.SecondarySlidesState, Integer>() {{
+       put(Robot.SecondarySlidesState.RETRACTED, 0);
+       put(Robot.SecondarySlidesState.EXTENDED, 2000); // TODO: empirically measure this value
     }};
     public static final double CLAW_CLOSED_POS = 0.83, CLAW_OPEN_POS = 0.65; //These are not final values
 
@@ -220,9 +225,29 @@ public class MechanismDriving {
        return false;
     }
 
+    /** Sets motor power for secondary slides motor
+     */
+    public void updateSecondarySlides(Robot robot, double slidesPower) {
+        if (desiredSecondarySlidePosition == Robot.SecondarySlidesState.EXTENDED) {
+            robot.secondarySlidesMotor.setPower(slidesPower);
+            try {
+                wait(1000);
+            } catch (InterruptedException ignored) {}
+            robot.secondarySlidesMotor.setPower(0);
+        }
+        if (desiredSecondarySlidePosition == Robot.SecondarySlidesState.RETRACTED) {
+            robot.secondarySlidesMotor.setPower(-slidesPower);
+            try {
+                wait(1000);
+            } catch (InterruptedException ignored) {}
+            robot.secondarySlidesMotor.setPower(0);
+        }
+        robot.telemetry.addData("secondary slide current pos: ", robot.secondarySlidesMotor.getCurrentPosition());
+    }
+
     /** Returns the average encoder count from the two slides.
      */
-    private int getAverageSlidePosition(Robot robot) {
+    public int getAverageSlidePosition(Robot robot) {
         return (robot.slidesMotor1.getCurrentPosition() + robot.slidesMotor2.getCurrentPosition()) / 2;
     }
 

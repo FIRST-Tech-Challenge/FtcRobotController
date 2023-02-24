@@ -66,23 +66,38 @@ public class RobotManager {
         // Linear slides
         if (!robot.wheelSpeedAdjustment) {
             if (getButtonRelease(GamepadWrapper.DriverAction.SET_SLIDES_RETRACTED)) {
-                if (robot.desiredClawRotatorState == Robot.ClawRotatorState.FRONT)
+                if (robot.desiredClawRotatorState == Robot.ClawRotatorState.FRONT) {
                     Robot.desiredSlidesState = Robot.SlidesState.RETRACTED;
+                    robot.desiredClawLimitSwitchServoState = Robot.ClawLimitSwitchServoState.HIGH;
+                }
             }
             else if (getButtonRelease(GamepadWrapper.DriverAction.SET_SLIDES_LOW)) {
                 Robot.desiredSlidesState = Robot.SlidesState.LOW;
+                robot.desiredClawLimitSwitchServoState = Robot.ClawLimitSwitchServoState.HIGH;
             }
             else if (getButtonRelease(GamepadWrapper.DriverAction.SET_SLIDES_MEDIUM)) {
                 Robot.desiredSlidesState = Robot.SlidesState.MEDIUM;
+                robot.desiredClawLimitSwitchServoState = Robot.ClawLimitSwitchServoState.LOW;
             }
             else if (getButtonRelease(GamepadWrapper.DriverAction.SET_SLIDES_HIGH)) {
                 Robot.desiredSlidesState = Robot.SlidesState.HIGH;
+                robot.desiredClawLimitSwitchServoState = Robot.ClawLimitSwitchServoState.LOW;
             }
             else if (gamepads.getAnalogValues().gamepad2LeftStickY > RobotManager.JOYSTICK_DEAD_ZONE_SIZE) {
                 Robot.desiredSlidesState = Robot.SlidesState.MOVE_DOWN;
+                if (mechanismDriving.getAverageSlidePosition(robot) < mechanismDriving.slidePositions.get(Robot.SlidesState.MEDIUM)) {
+                    robot.desiredClawLimitSwitchServoState = Robot.ClawLimitSwitchServoState.HIGH;
+                } else {
+                    robot.desiredClawLimitSwitchServoState = Robot.ClawLimitSwitchServoState.LOW;
+                }
             }
             else if (gamepads.getAnalogValues().gamepad2LeftStickY < -RobotManager.JOYSTICK_DEAD_ZONE_SIZE) {
                 Robot.desiredSlidesState = Robot.SlidesState.MOVE_UP;
+                if (mechanismDriving.getAverageSlidePosition(robot) > mechanismDriving.slidePositions.get(Robot.SlidesState.MEDIUM)) {
+                    robot.desiredClawLimitSwitchServoState = Robot.ClawLimitSwitchServoState.LOW;
+                } else {
+                    robot.desiredClawLimitSwitchServoState = Robot.ClawLimitSwitchServoState.HIGH;
+                }
             } else if (Robot.desiredSlidesState == Robot.SlidesState.MOVE_DOWN || Robot.desiredSlidesState == Robot.SlidesState.MOVE_UP) {
                 Robot.desiredSlidesState = Robot.SlidesState.STOPPED;
             }
@@ -111,6 +126,22 @@ public class RobotManager {
         if (getButtonRelease(GamepadWrapper.DriverAction.CLAW_CLOSE)) {
             robot.desiredClawState = Robot.ClawState.CLOSED;
         }
+
+        // Secondary Claw
+        if (getButtonRelease(GamepadWrapper.DriverAction.SECONDARY_CLAW_OPEN)) {
+            robot.desiredSecondaryClawState = Robot.SecondaryClawState.OPEN;
+        }
+        if (getButtonRelease(GamepadWrapper.DriverAction.SECONDARY_CLAW_CLOSE)) {
+            robot.desiredSecondaryClawState = Robot.SecondaryClawState.CLOSED;
+        }
+        //rotator
+        if(getButtonRelease(GamepadWrapper.DriverAction.POSITION_SECONDARY_CLAW_TRANSFER)) {
+            robot.desiredSecondaryClawRotatorState = Robot.SecondaryClawRotatorState.UP;
+        }
+        if(getButtonRelease(GamepadWrapper.DriverAction.POSITION_SECONDARY_CLAW_DOWN)) {
+            robot.desiredSecondaryClawRotatorState = Robot.SecondaryClawRotatorState.DOWN;
+        }
+
         // Adjust relative wheel speeds.
 
         if (robot.wheelSpeedAdjustment) {
@@ -221,7 +252,9 @@ public class RobotManager {
         mechanismDriving.updateClawRotator(robot);
         mechanismDriving.updateSlides(robotManager, robot, slidesPower);
         mechanismDriving.updateClaw(robot);
-//        if ()
+        mechanismDriving.updateSecondaryClaw(robot);
+        mechanismDriving.updateSecondaryClawRotator(robot);
+        mechanismDriving.updateSecondarySlides(robot, slidesPower);
     }
 
     /** Changes drivetrain motor inputs based off the controller inputs.

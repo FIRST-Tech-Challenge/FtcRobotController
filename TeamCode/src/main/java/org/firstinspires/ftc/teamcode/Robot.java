@@ -22,6 +22,7 @@ public class Robot {
     public enum SecondaryClawState {OPEN, CLOSED}
     public enum SecondaryClawRotatorState {DOWN, UP}
     public enum ClawLimitSwitchServoState {HIGH, LOW}
+    public enum SecondarySlidesState {RETRACTED, EXTENDED}
 
     public static SlidesState desiredSlidesState = SlidesState.UNREADY;
     public ClawRotatorState desiredClawRotatorState;
@@ -41,7 +42,7 @@ public class Robot {
     HashMap<RobotConfig.DriveMotors, DcMotor> driveMotors = new HashMap<RobotConfig.DriveMotors, DcMotor>();
 
     // Hardware
-    public DcMotor slidesMotor1, slidesMotor2;
+    public DcMotor slidesMotor1, slidesMotor2, secondarySlidesMotor;
     public Servo clawRotator, claw, clawLimitSwitchServo, secondaryClaw, secondaryClawRotator;
     public TouchSensor slidesLimitSwitch;
     public TouchSensor clawLimitSwitch;
@@ -64,6 +65,7 @@ public class Robot {
 
         slidesMotor1 = hardwareMap.get(DcMotor.class, RobotConfig.MotorNames.get(RobotConfig.Motors.SLIDES_MOTOR_1));
         slidesMotor2 = hardwareMap.get(DcMotor.class, RobotConfig.MotorNames.get(RobotConfig.Motors.SLIDES_MOTOR_2));
+        secondarySlidesMotor = hardwareMap.get(DcMotor.class, RobotConfig.MotorNames.get(RobotConfig.Motors.SECONDARY_SLIDES_MOTOR));
         clawRotator = hardwareMap.get(Servo.class, RobotConfig.ServoNames.get(RobotConfig.Servos.CLAW_ROTATOR));
         claw = hardwareMap.get(Servo.class, RobotConfig.ServoNames.get(RobotConfig.Servos.CLAW));
         clawLimitSwitchServo = hardwareMap.get(Servo.class, RobotConfig.ServoNames.get(RobotConfig.Servos.CLAW_LIMIT_SWITCH_SERVO));
@@ -90,6 +92,7 @@ public class Robot {
 
         slidesMotor1.setDirection(DcMotor.Direction.FORWARD);
         slidesMotor2.setDirection(DcMotor.Direction.REVERSE);
+        secondarySlidesMotor.setDirection(DcMotor.Direction.FORWARD);
 
         if (desiredSlidesState == SlidesState.UNREADY) {//if the slides have yet to be initialised then reset the encoders for the slides and set the slide state to retracted
             this.telemetry.addData("desired string state", desiredSlidesState.toString());
@@ -97,10 +100,13 @@ public class Robot {
             slidesMotor1.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
             slidesMotor2.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
             slidesMotor2.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            secondarySlidesMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            secondarySlidesMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
             desiredSlidesState = SlidesState.RETRACTED;
         }
         slidesMotor1.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         slidesMotor2.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        secondarySlidesMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
     }
 
     /** Returns the position of the robot.
@@ -117,7 +123,7 @@ public class Robot {
 class RobotConfig {
     enum DistanceSensors {CLAW_DISTANCE_SENSOR}
     enum Switches {SLIDES_LIMIT, CLAW_LIMIT}
-    enum Motors {SLIDES_MOTOR_1, SLIDES_MOTOR_2}
+    enum Motors {SLIDES_MOTOR_1, SLIDES_MOTOR_2, SECONDARY_SLIDES_MOTOR}
     public enum DriveMotors {REAR_LEFT, REAR_RIGHT, FRONT_LEFT, FRONT_RIGHT};
     enum Servos {CLAW_ROTATOR, CLAW, CLAW_INDICATOR, CLAW_LIMIT_SWITCH_SERVO, SECONDARY_CLAW, SECONDARY_CLAW_ROTATOR}
 
@@ -133,6 +139,7 @@ class RobotConfig {
     public static final Map<Motors, String> MotorNames = new HashMap<Motors, String>() {{
         put(Motors.SLIDES_MOTOR_1, "slides_motor_1");
         put(Motors.SLIDES_MOTOR_2, "slides_motor_2");
+        put(Motors.SECONDARY_SLIDES_MOTOR, "secondary_slides_motor");
     }};
 
     public static final Map<DriveMotors, String> DriveMotorNames = new HashMap<DriveMotors, String>() {{
