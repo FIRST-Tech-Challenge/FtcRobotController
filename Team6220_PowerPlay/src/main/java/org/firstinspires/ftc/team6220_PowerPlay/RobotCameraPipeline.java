@@ -17,6 +17,7 @@ public class RobotCameraPipeline extends OpenCvPipeline {
     public double yPosition = Constants.CAMERA_CENTER_Y;
     public double width = 0.0;
     public double height = 0.0;
+    public boolean invert;
 
     List<MatOfPoint> contours = new ArrayList<>();
 
@@ -34,6 +35,10 @@ public class RobotCameraPipeline extends OpenCvPipeline {
         this.upperRange = upperRange;
     }
 
+    public void invertRange(boolean bool){
+        invert = bool;
+    }
+
     @Override
     public Mat processFrame(Mat input) {
         // transform the RGB frame into a HSV frame
@@ -44,6 +49,12 @@ public class RobotCameraPipeline extends OpenCvPipeline {
 
         // mask the blurred frame
         Core.inRange(mat, lowerRange, upperRange, mat);
+
+        //invert ranges if looking for red
+        if(invert)
+        {
+            Core.bitwise_not(mat, mat);
+        }
 
         // find the contours in the masked frame
         Imgproc.findContours(mat, contours, hierarchy, Imgproc.RETR_LIST, Imgproc.CHAIN_APPROX_SIMPLE);

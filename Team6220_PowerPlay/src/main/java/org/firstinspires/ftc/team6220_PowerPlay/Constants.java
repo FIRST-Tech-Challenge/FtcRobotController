@@ -62,8 +62,8 @@ public class Constants {
     public static final int JUNCTION_TOP_TOLERANCE = 5;
     public static final double JUNCTION_TOP_CENTERING_KP = 0.1;
 
-    public static final Scalar LOWER_RED = new Scalar(170, 125, 50);
-    public static final Scalar UPPER_RED = new Scalar(180, 255, 255);
+    public static final Scalar LOWER_RED = new Scalar(20, 0, 0);
+    public static final Scalar UPPER_RED = new Scalar(160, 255, 252);
 
     public static final Scalar LOWER_BLUE = new Scalar(100, 125, 75);
     public static final Scalar UPPER_BLUE = new Scalar(140, 255, 255);
@@ -71,8 +71,9 @@ public class Constants {
     public static final Scalar LOWER_YELLOW = new Scalar(15, 75, 100);
     public static final Scalar UPPER_YELLOW = new Scalar(35, 255, 255);
 
-    public static final Scalar LOWER_BLACK = new Scalar(50, 0, 0);
-    public static final Scalar UPPER_BLACK = new Scalar(115, 255, 40);
+    public static final Scalar LOWER_BLACK = new Scalar(0, 0, 0);
+    public static final Scalar UPPER_BLACK = new Scalar(180, 255, 40);
+
 
     public static final Size BLUR_SIZE = new Size(5, 5);
 

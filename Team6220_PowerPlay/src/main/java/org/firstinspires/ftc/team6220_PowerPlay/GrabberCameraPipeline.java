@@ -17,10 +17,20 @@ public class GrabberCameraPipeline extends OpenCvPipeline {
     public double xPosition = Constants.CAMERA_CENTER_X;
     public double yPosition = Constants.CAMERA_CENTER_Y;
     public boolean detected = false;
+    public boolean invert = false;
+
+    private Scalar lowerRange;
+    private Scalar upperRange;
 
     List<MatOfPoint> contours = new ArrayList<>();
     Mat hierarchy = new Mat();
     Mat mat = new Mat();
+
+    public void setRanges(Scalar lowerRange, Scalar upperRange)
+    {
+        this.lowerRange = lowerRange;
+        this.upperRange = upperRange;
+    }
 
     @Override
     public Mat processFrame(Mat input) {
@@ -31,7 +41,7 @@ public class GrabberCameraPipeline extends OpenCvPipeline {
         Imgproc.GaussianBlur(mat, mat, Constants.BLUR_SIZE, 0);
 
         // masks blurred frame within black ranges to find junction top
-        Core.inRange(mat, Constants.LOWER_BLACK, Constants.UPPER_BLACK, mat);
+        Core.inRange(mat, lowerRange, upperRange, mat);
 
         // single out all areas of black
         Imgproc.findContours(mat, contours, hierarchy, Imgproc.RETR_LIST, Imgproc.CHAIN_APPROX_SIMPLE);

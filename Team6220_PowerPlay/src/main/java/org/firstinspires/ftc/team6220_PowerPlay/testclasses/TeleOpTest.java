@@ -48,15 +48,19 @@ public class TeleOpTest extends BaseTeleOp {
             if(gamepad1.b){
                 robotCameraPipeline.setRanges(Constants.LOWER_RED, Constants.UPPER_RED);
                 color = "red";
+                robotCameraPipeline.invertRange(true);
             }else if (gamepad1.x){
                 robotCameraPipeline.setRanges(Constants.LOWER_BLUE, Constants.UPPER_BLUE);
+                robotCameraPipeline.invertRange(false);
                 color = "blue";
             }else if(gamepad1.a){
                 robotCameraPipeline.setRanges(Constants.LOWER_BLACK, Constants.UPPER_BLACK);
                 color = "black";
+                robotCameraPipeline.invertRange(false);
             }else if(gamepad1.y){
                 robotCameraPipeline.setRanges(Constants.LOWER_YELLOW, Constants.UPPER_YELLOW);
                 color = "yellow";
+                robotCameraPipeline.invertRange(false);
             }
 
             //telemetry
@@ -64,7 +68,7 @@ public class TeleOpTest extends BaseTeleOp {
             telemetry.addData("width", robotCameraPipeline.width);
             telemetry.addData("positionX", robotCameraPipeline.xPosition);
             telemetry.addData("positionY", robotCameraPipeline.yPosition);
-            telemetry.addData("distance from center", (400-robotCameraPipeline.xPosition));
+            telemetry.addData("distance from center", (robotCameraPipeline.xPosition-400));
             telemetry.addData("L-H ratio", (robotCameraPipeline.width / robotCameraPipeline.height));
             telemetry.update();
         }
