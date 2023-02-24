@@ -343,7 +343,7 @@ public class AutonomousLeft extends AutonomousBase {
                 // make sure we have time left to alignToPole and then park!
                 // (otherwise just drop it and park)
                 if( autonomousTimer.milliseconds() <= poleAlignTimeout ) {
-                    alignToPole(false);
+                    alignToPole(true);
                 }
             }
 
