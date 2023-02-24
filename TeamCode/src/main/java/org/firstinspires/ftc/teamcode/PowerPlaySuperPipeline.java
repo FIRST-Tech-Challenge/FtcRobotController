@@ -140,6 +140,12 @@ class PowerPlaySuperPipeline extends OpenCvPipeline
     private Mat allianceRL = new Mat();
     private Mat allianceBL = new Mat();
 
+    private Mat analyzedPoleImage = new Mat();
+    private Mat analyzedBlueConeImage = new Mat();
+    private Mat analyzedRedConeImage = new Mat();
+    private Mat analyzedBlueTapeImage = new Mat();
+    private Mat analyzedRedTapeImage = new Mat();
+
     private int maxL;
     public int avgRL;
     public int avgGL;
@@ -467,10 +473,6 @@ class PowerPlaySuperPipeline extends OpenCvPipeline
             cloneBaby.highDistanceOffsetCm = highDistanceOffsetCm;
             cloneBaby.aligned = aligned;
             cloneBaby.properDistanceHigh = properDistanceHigh;
-            if (analyzedFrame != null) {
-                cloneBaby.analyzedFrame = new Mat();
-                analyzedFrame.copyTo(cloneBaby.analyzedFrame);
-            }
 
             return cloneBaby;
         }
@@ -506,10 +508,6 @@ class PowerPlaySuperPipeline extends OpenCvPipeline
             cloneBaby.centralOffset = centralOffset;
             cloneBaby.centralOffsetDegrees = centralOffsetDegrees;
             cloneBaby.aligned = aligned;
-            if (analyzedFrame != null) {
-                cloneBaby.analyzedFrame = new Mat();
-                analyzedFrame.copyTo(cloneBaby.analyzedFrame);
-            }
 
             return cloneBaby;
         }
@@ -543,10 +541,6 @@ class PowerPlaySuperPipeline extends OpenCvPipeline
             cloneBaby.centralOffsetDegrees = centralOffsetDegrees;
             cloneBaby.aligned = aligned;
             cloneBaby.angle = angle;
-            if (analyzedFrame != null) {
-                cloneBaby.analyzedFrame = new Mat();
-                analyzedFrame.copyTo(cloneBaby.analyzedFrame);
-            }
 
             return cloneBaby;
         }
@@ -840,7 +834,7 @@ class PowerPlaySuperPipeline extends OpenCvPipeline
                 } else {
                     thePole.properDistanceHighCount = 0;
                 }
-                input.copyTo(thePole.analyzedFrame);
+                input.copyTo(analyzedPoleImage);
             }
         }
         if(detectBlueCone) {
@@ -852,7 +846,7 @@ class PowerPlaySuperPipeline extends OpenCvPipeline
                     theBlueCone.alignedCount = 0;
                     drawFourPointRect(theBlueCone.corners, input, RED);
                 }
-                input.copyTo(theBlueCone.analyzedFrame);
+                input.copyTo(analyzedBlueConeImage);
             }
             synchronized(lockBlueTape) {
                 if (theBlueTape.aligned) {
@@ -862,7 +856,7 @@ class PowerPlaySuperPipeline extends OpenCvPipeline
                     theBlueTape.alignedCount = 0;
                     drawFourPointRect(theBlueTape.corners, input, RED);
                 }
-                input.copyTo(theBlueTape.analyzedFrame);
+                input.copyTo(analyzedBlueTapeImage);
             }
         }
         if(detectRedCone) {
@@ -874,7 +868,7 @@ class PowerPlaySuperPipeline extends OpenCvPipeline
                     theRedCone.alignedCount = 0;
                     drawFourPointRect(theRedCone.corners, input, RED);
                 }
-                input.copyTo(theRedCone.analyzedFrame);
+                input.copyTo(analyzedRedConeImage);
             }
             synchronized(lockRedTape) {
                 if (theRedTape.aligned) {
@@ -884,7 +878,7 @@ class PowerPlaySuperPipeline extends OpenCvPipeline
                     theRedTape.alignedCount = 0;
                     drawFourPointRect(theRedTape.corners, input, RED);
                 }
-                input.copyTo(theRedTape.analyzedFrame);
+                input.copyTo(analyzedRedTapeImage);
             }
         }
         drawFourPointRect(CENTERED_OBJECT, input, BLUE);
@@ -950,14 +944,20 @@ class PowerPlaySuperPipeline extends OpenCvPipeline
     public AnalyzedCone getDetectedRedCone()
     {
         synchronized(lockRedCone) {
-            return theRedCone.clone();
+            AnalyzedCone cloneBaby = theRedCone.clone();
+            cloneBaby.analyzedFrame = new Mat();
+            analyzedRedConeImage.copyTo(cloneBaby.analyzedFrame);
+            return cloneBaby;
         }
     }
 
     public AnalyzedTape getDetectedRedTape()
     {
         synchronized(lockRedTape) {
-            return theRedTape.clone();
+            AnalyzedTape cloneBaby = theRedTape.clone();
+            cloneBaby.analyzedFrame = new Mat();
+            analyzedRedTapeImage.copyTo(cloneBaby.analyzedFrame);
+            return cloneBaby;
         }
     }
 
@@ -1034,13 +1034,15 @@ class PowerPlaySuperPipeline extends OpenCvPipeline
     {
         boolean foundCone = false;
         synchronized(lockRedCone) {
-            theRedCone.centralOffset = 0;
             theRedCone.corners = new FourPointRect();
+            theRedCone.centralOffset = 0;
+            theRedCone.centralOffsetDegrees = 0.0;
             theRedCone.aligned = false;
             for (AnalyzedCone aCone : internalRedConeList) {
-                if (aCone.corners.height > theRedCone.corners.height) {
+                if (aCone.corners.height > theBlueCone.corners.height) {
                     theRedCone.corners = aCone.corners.clone();
                     theRedCone.centralOffset = aCone.centralOffset;
+                    theRedCone.centralOffsetDegrees = aCone.centralOffsetDegrees;
                     theRedCone.aligned = aCone.aligned;
                     foundCone = true;
                 }
@@ -1074,13 +1076,16 @@ class PowerPlaySuperPipeline extends OpenCvPipeline
     {
         boolean foundTape = false;
         synchronized(lockRedTape) {
-            theRedTape.centralOffset = 0;
             theRedTape.corners = new FourPointRect();
+            theRedTape.centralOffset = 0;
+            theRedTape.centralOffsetDegrees = 0.0;
             theRedTape.aligned = false;
+            theRedTape.angle = 0.0;
             for (AnalyzedTape aTape : internalRedTapeList) {
                 if (aTape.corners.height > theRedTape.corners.height) {
                     theRedTape.corners = aTape.corners.clone();
                     theRedTape.centralOffset = aTape.centralOffset;
+                    theRedTape.centralOffsetDegrees = aTape.centralOffsetDegrees;
                     theRedTape.aligned = aTape.aligned;
                     theRedTape.angle = aTape.angle;
                     foundTape = true;
@@ -1093,14 +1098,20 @@ class PowerPlaySuperPipeline extends OpenCvPipeline
     public AnalyzedCone getDetectedBlueCone()
     {
         synchronized(lockBlueCone) {
-            return theBlueCone.clone();
+            AnalyzedCone cloneBaby = theBlueCone.clone();
+            cloneBaby.analyzedFrame = new Mat();
+            analyzedBlueConeImage.copyTo(cloneBaby.analyzedFrame);
+            return cloneBaby;
         }
     }
 
     public AnalyzedTape getDetectedBlueTape()
     {
         synchronized(lockBlueTape) {
-            return theBlueTape.clone();
+            AnalyzedTape cloneBaby = theBlueTape.clone();
+            cloneBaby.analyzedFrame = new Mat();
+            analyzedBlueTapeImage.copyTo(cloneBaby.analyzedFrame);
+            return cloneBaby;
         }
     }
 
@@ -1212,13 +1223,15 @@ class PowerPlaySuperPipeline extends OpenCvPipeline
     {
         boolean foundCone = false;
         synchronized(lockBlueCone) {
-            theBlueCone.centralOffset = 0;
             theBlueCone.corners = new FourPointRect();
+            theBlueCone.centralOffset = 0;
+            theBlueCone.centralOffsetDegrees = 0.0;
             theBlueCone.aligned = false;
             for (AnalyzedCone aCone : internalBlueConeList) {
                 if (aCone.corners.height > theBlueCone.corners.height) {
                     theBlueCone.corners = aCone.corners.clone();
                     theBlueCone.centralOffset = aCone.centralOffset;
+                    theBlueCone.centralOffsetDegrees = aCone.centralOffsetDegrees;
                     theBlueCone.aligned = aCone.aligned;
                     foundCone = true;
                 }
@@ -1259,15 +1272,18 @@ class PowerPlaySuperPipeline extends OpenCvPipeline
     {
         boolean foundTape = false;
         synchronized(lockBlueTape) {
-            theBlueTape.centralOffset = 0;
             theBlueTape.corners = new FourPointRect();
+            theBlueTape.centralOffset = 0;
+            theBlueTape.centralOffsetDegrees = 0.0;
+            theBlueTape.angle = 0.0;
             theBlueTape.aligned = false;
             for (AnalyzedTape aTape : internalBlueTapeList) {
                 if (aTape.corners.height > theBlueTape.corners.height) {
                     theBlueTape.corners = aTape.corners.clone();
                     theBlueTape.centralOffset = aTape.centralOffset;
-                    theBlueTape.aligned = aTape.aligned;
+                    theBlueTape.centralOffsetDegrees = aTape.centralOffsetDegrees;
                     theBlueTape.angle = aTape.angle;
+                    theBlueTape.aligned = aTape.aligned;
                     foundTape = true;
                 }
             }
@@ -1290,7 +1306,10 @@ class PowerPlaySuperPipeline extends OpenCvPipeline
     public AnalyzedPole getDetectedPole()
     {
         synchronized(lockPole) {
-            return thePole.clone();
+            AnalyzedPole cloneBaby = thePole.clone();
+            cloneBaby.analyzedFrame = new Mat();
+            analyzedPoleImage.copyTo(cloneBaby.analyzedFrame);
+            return cloneBaby;
         }
     }
 

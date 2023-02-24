@@ -154,9 +154,9 @@ public class TurretPIDTester extends AutonomousBase
         double targetAngle;
         double targetDistanceX;
         double targetDistanceY;
-        double targetPositionX;
-        double targetPositionY;
-        double targetPositionAngle;
+//      double targetPositionX;
+//      double targetPositionY;
+//      double targetPositionAngle;
 
         // If we add back front camera, use boolean to determine which pipeline to use.
         alignmentPipeline = turretFacingFront ? pipelineFront : pipelineBack;
@@ -273,13 +273,13 @@ public class TurretPIDTester extends AutonomousBase
         telemetry.addLine("Hardware initialized...");
         telemetry.update();
 
-        robot.grabberSetTilt( robot.GRABBER_TILT_FRONT_H );
+        robot.grabberSetTilt( robot.GRABBER_TILT_FRONT_H_A );
         sleep(300);
         performEveryLoop();
 
         // Perform setup needed to center turret
-        robot.turretPIDPosInit( robot.TURRET_ANGLE_COLLECT_R );
-        robot.liftPIDPosInit( robot.LIFT_ANGLE_HIGH );
+        robot.turretPIDPosInit( robot.TURRET_ANGLE_AUTO_R );
+        robot.liftPIDPosInit( robot.LIFT_ANGLE_HIGH_A );
         while( !isStopRequested() && ( robot.turretMotorPIDAuto == true || robot.liftMotorPIDAuto == true )) {
             performEveryLoop();
         }

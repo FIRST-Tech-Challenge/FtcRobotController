@@ -79,6 +79,19 @@ public abstract class AutonomousBase extends LinearOpMode {
     double autoYpos                             = 0.0;   // (useful when a given value remains UNCHANGED from one
     double autoAngle                            = 0.0;   // movement to the next, or INCREMENTAL change from current location).
 
+    double currentPositionX                     = 0.0;   // Keeps track of our Autonomous alignToPole() target position
+    double currentPositionY                     = 0.0;
+    double currentPositionAngle                 = 0.0;
+
+    double targetPositionX                      = 0.0;   // Keeps track of our Autonomous alignToPole() target position
+    double targetPositionY                      = 0.0;
+    double targetPositionAngle                  = 0.0;
+
+    double targetDistanceX                      = 0.0;   // How far do we need to move robot base to alignToPole()?
+    double targetDistanceY                      = 0.0;
+
+    double targetAngle                          = 0.0;   // Keeps track of our Autonomous alignToPole() target turret angle
+
     String      storageDir;
     boolean     alignToFront    = true;  // Use front facing camera or back facing
     boolean     blueAlliance    = true;  // Is alliance BLUE (true) or RED (false)?
@@ -86,6 +99,15 @@ public abstract class AutonomousBase extends LinearOpMode {
     int         fiveStackHeight = 5;     // Number of cones remaining on the 5-stack (always starts at 5)
     int         fiveStackCycles = 3;     // How many we want to attempt to collect/score? (adjustable during init)
     ElapsedTime autonomousTimer = new ElapsedTime();
+
+    double[] timePoleArrive   = {0,0,0,0,0,0};  // Time to drive to pole
+    double[] timePoleScore    = {0,0,0,0,0,0};  // Time to alignToPole() and scoreCone()
+    double[] timePoleDepart   = {0,0,0,0,0,0};  // Time we depart the pole
+    double[] timeStackArrive  = {0,0,0,0,0,0};  // Time we arrive at 5-stack using moveToConeStack()
+    double[] timeStackCollect = {0,0,0,0,0,0};  // Time to collect the next cone off the 5-stack
+    double[] timeStackDepart  = {0,0,0,0,0,0};  // Time we depart the 5-stack
+    double   timeNow;
+    int      timeIndex = 0;
 
     // gamepad controls for changing autonomous options
     boolean gamepad1_circle_last,   gamepad1_circle_now  =false;
@@ -234,19 +256,14 @@ public abstract class AutonomousBase extends LinearOpMode {
         robot.turretMotorSetPower(turretPower);
     } // driveAndRotateTurretAngle
 
+    /*---------------------------------------------------------------------------------*/
     void alignToPole(boolean turretFacingFront) {
         PowerPlaySuperPipeline alignmentPipeline;
         PowerPlaySuperPipeline.AnalyzedPole theLocalPole;
 
-        double targetAngle;
-        double targetDistanceX;
-        double targetDistanceY;
-        double targetPositionX;
-        double targetPositionY;
-        double targetPositionAngle;
-
         alignmentPipeline = turretFacingFront ? pipelineFront : pipelineBack;
 
+        // Store all our images in the blue_left folder for now
         alignmentPipeline.isBlueAlliance = true;
         alignmentPipeline.isLeft = true;
 
@@ -261,12 +278,19 @@ public abstract class AutonomousBase extends LinearOpMode {
             targetAngle = robot.turretAngle + theLocalPole.centralOffsetDegrees + 180.0;
         }
         robot.turretPIDPosInit(targetAngle);
+        // Where are we right now? (may not have stopped exactly at the commanded location)
+        currentPositionX = (robotGlobalXCoordinatePosition / robot.COUNTS_PER_INCH2);
+        currentPositionY = (robotGlobalYCoordinatePosition / robot.COUNTS_PER_INCH2);
+        currentPositionAngle = Math.toDegrees(robotOrientationRadians);
+        // How many inches do we need to move the robot drivetrain?
         targetDistanceX = (theLocalPole.highDistanceOffsetCm * cos(toRadians(targetAngle)))/2.54;
         targetDistanceY = (theLocalPole.highDistanceOffsetCm * sin(toRadians(targetAngle)))/2.54;
-        // Not sure if this needs to be flipped if we are rear facing or not.
-        targetPositionX = (robotGlobalXCoordinatePosition / robot.COUNTS_PER_INCH2) - targetDistanceX;
-        targetPositionY = (robotGlobalYCoordinatePosition / robot.COUNTS_PER_INCH2) - targetDistanceY;
-        targetPositionAngle = Math.toDegrees(robotOrientationRadians);
+        // Add that offset to our current position to create an absolute X-Y position and angle
+        // (not sure if this needs to be flipped if we are rear facing or not)
+        targetPositionX = currentPositionX - targetDistanceX;
+        targetPositionY = currentPositionY - targetDistanceY;
+        targetPositionAngle = currentPositionAngle;
+        // Drive to that new position, maintaining the current rotation angle of the drivetrain
         driveToPosition( targetPositionY, targetPositionX, targetPositionAngle, DRIVE_SPEED_50, TURN_SPEED_40, DRIVE_TO );
         while(opModeIsActive() && robot.turretMotorPIDAuto) {
             performEveryLoop();
@@ -278,6 +302,7 @@ public abstract class AutonomousBase extends LinearOpMode {
         alignmentPipeline.savePoleAutoImage(theLocalPole);
     } // alignToPole
 
+    /*---------------------------------------------------------------------------------*/
     void alignToPoleOld(boolean turretFacingFront) {
         PowerPlaySuperPipeline alignmentPipeline;
         PowerPlaySuperPipeline.AnalyzedPole theLocalPole;
@@ -381,14 +406,14 @@ public abstract class AutonomousBase extends LinearOpMode {
                 properDistanceCount = 0;
             }
             drivePower = (distanceError > 0) ? (-distanceError * DRIVE_SLOPE - DRIVE_OFFSET) :
-                    (-distanceError * DRIVE_SLOPE + DRIVE_OFFSET);
+                                               (-distanceError * DRIVE_SLOPE + DRIVE_OFFSET);
             turnPower = (theLocalCone.centralOffsetDegrees > 0) ?
                     (theLocalCone.centralOffsetDegrees * TURN_SLOPE + TURN_OFFSET) :
                     (theLocalCone.centralOffsetDegrees * TURN_SLOPE - TURN_OFFSET);
             driveAndRotate(drivePower, turnPower);
             telemetry.addData("Cone Data", "drvPwr %.2f turnPwr %.2f", drivePower, turnPower);
-            telemetry.addData("Cone Data", "coneDst %d dstErr %d offset %.2f", coneDistance,
-                    distanceError, theLocalCone.centralOffset);
+            telemetry.addData("Cone Data", "sonar %d dstErr %d angle-err %.2f", coneDistance,
+                    distanceError, theLocalCone.centralOffsetDegrees);
             telemetry.update();
             // Do we need to abort?
             if( autonomousTimer.milliseconds() >= abortTime )
@@ -1073,10 +1098,10 @@ public abstract class AutonomousBase extends LinearOpMode {
 
         // Convert from cm to inches
 //        double errorMultiplier = 0.014;
-        double errorMultiplier = 0.036;
+        double errorMultiplier = 0.033;
         double speedMin = MIN_DRIVE_MAGNITUDE;
 //        double allowedError = 2;
-        double allowedError = (driveType == DRIVE_THRU) ? 2.75 : 0.75;
+        double allowedError = (driveType == DRIVE_THRU) ? 2.75 : 0.5;
 
         return (driveToXY(yTarget, xTarget, angleTarget, speedMin, speedMax, errorMultiplier,
                 allowedError, driveType));

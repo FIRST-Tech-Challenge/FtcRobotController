@@ -109,13 +109,14 @@ public class HardwareSlimbot
     public double       turretAngleTarget  = 0.0;     // Automatic movement target angle (degrees)
 
     public double       TURRET_ANGLE_MAX       =  170.0;  // absolute encoder angles at maximum rotation RIGHT
-    public double       TURRET_ANGLE_AUTO_R    =  142.0;  // scoring the autonomous pre-load cone
+    public double       TURRET_ANGLE_AUTO_R    =  116.5;  // scoring the autonomous pre-load cone
     public double       TURRET_ANGLE_CYCLE_R   =  133.5;
     public double       TURRET_ANGLE_5STACK_L  =  118.0;
     public double       TURRET_ANGLE_COLLECT_R =   21.9;
     public double       TURRET_ANGLE_CENTER    =    0.0;  // turret centered
     public double       TURRET_ANGLE_COLLECT_L =  -21.9;
     public double       TURRET_ANGLE_5STACK_R  = -103.0;
+    public double       TURRET_ANGLE_AUTO_L    = -131.0;  // scoring the autonomous pre-load cone
     public double       TURRET_ANGLE_CYCLE_L   = -133.5;
     public double       TURRET_ANGLE_MIN       = -170.0;  // absolute encoder angles at maximum rotation LEFT
 
@@ -166,14 +167,14 @@ public class HardwareSlimbot
     // Cone collect:  lift=116.7,  grabber=0.08/0.92, trigger BOTTOM proximity only (existing 3" high team element)
     public double       LIFT_ANGLE_MAX     = 116.5;   // absolute encoder angle at maximum rotation FRONT
     public double       LIFT_ANGLE_ASTART  = 115.0;   // lift position for starting autonomous
-    public double       LIFT_ANGLE_COLLECT = 110.0;   // lift position for collecting cones (185mm)
+    public double       LIFT_ANGLE_COLLECT = 105.5;   // lift position for collecting cones (185mm)
     public double       LIFT_ANGLE_GROUND  = 110.0;   // lift position for GROUND junction
     public double       LIFT_ANGLE_CONE    = 103.0;   // lift position for cleaning a cone on a ground junction
-    public double       LIFT_ANGLE_LOW     =  90.8;   // lift position for LOW junction
+    public double       LIFT_ANGLE_LOW     =  86.0;   // lift position for LOW junction
     public double       LIFT_ANGLE_MOTORS  =  91.0;   // lift position for cleaning front turret motor
     public double       LIFT_ANGLE_5STACK  =  87.0;   // lift position for 5-stack ultrasonic reading
     public double       LIFT_ANGLE_MED     =  61.0;   // lift position for MEDIUM junction (FRONT Teleop)
-    public double       LIFT_ANGLE_HIGH_A  =  22.0;   // lift position for HIGH junction (Front Auto)
+    public double       LIFT_ANGLE_HIGH_A  =  34.7;   // lift position for HIGH junction (FRONT Auto)
     public double       LIFT_ANGLE_HIGH    =  28.5;   // lift position for HIGH junction (FRONT Teleop)
     public double       LIFT_ANGLE_HIGH_BA = -41.0;   // lift position for HIGH junction (BACK Auto)
                                                       // (cone is loaded lower for auto, so higher lift point)
@@ -227,6 +228,7 @@ public class HardwareSlimbot
     public double       GRABBER_TILT_SAFE    = -0.12;  // Maximum upward tilt that's safe to raise/lower collector past front lift motor
     public double       GRABBER_TILT_STORE   = -0.14;  // Stored angle for autonomous driving around
     public double       GRABBER_TILT_AUTO_F  = -0.21;  // 45deg tilt for front scoring in autonomous
+    public double       GRABBER_TILT_FRONT_H_A = -0.18;  // Front scoring on the high pole
     public double       GRABBER_TILT_FRONT_H = -0.30;  // Front scoring on the high pole
     public double       GRABBER_TILT_FRONT_M = -0.28;  // Front scoring on the mid pole
     public double       GRABBER_TILT_FRONT_L = -0.28;  // Front scoring on the low pole
