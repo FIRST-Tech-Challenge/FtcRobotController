@@ -371,6 +371,9 @@ public class AutonomousRight extends AutonomousBase {
         // to raise the lift and not hit the front lift motor (since we're turning outward
         // toward GROUND junction, it's okay for robot length to exceed the 24" tile width
         robot.grabberSetTilt( robot.GRABBER_TILT_STORE );
+//        robot.grabberSetTilt( robot.GRABBER_TILT_FRONT_H );
+//        robot.liftPIDPosInit( robot.LIFT_ANGLE_HIGH_A);
+//        robot.turretPIDPosInit( -131.0 );
 
         // Initial movement is just to steer clear of the ground junction in front of the robot
         // (once we start to rotate the robot becomes much wider)
