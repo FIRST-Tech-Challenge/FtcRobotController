@@ -97,7 +97,7 @@ public class Crane implements Subsystem {
     public static double EXTENDER_TOLERANCE = 1;
     public static double EXTENDER_POWER = 1.0;
     public static double EXTENDER_TICS_MIN = 0;
-    public static double EXTENDER_TICS_MAX = 3100; // of the robot
+    public static double EXTENDER_TICS_MAX = 3075; // of the robot
     boolean EXTENDER_CALIBRATE_MAX = false; //keep false except if calibrating EXTENDER_TICS_MAX
 
     public static double BULB_OPEN_POS = 1500;
@@ -426,7 +426,8 @@ public class Crane implements Subsystem {
         calibrate,
         transfer,
         robotDriving,
-        postTransfer
+        postTransfer,
+        init
     }
 
     public Articulation getArticulation() {
@@ -453,6 +454,9 @@ public class Crane implements Subsystem {
                     return Articulation.start;
                 }
                 break;
+            case init:
+                robot.turret.articulate(Turret.Articulation.fold);
+                break;
             case noIK:
 
                 break;
@@ -463,8 +467,8 @@ public class Crane implements Subsystem {
                 break;
             case start:
                 if(craneStart()){
-                    articulation = Articulation.manual;
-                    return Articulation.manual;
+                    articulation = Articulation.init;
+                    return Articulation.init;
                 }
                 break;
             case manual:
@@ -1172,7 +1176,7 @@ public class Crane implements Subsystem {
     public  void setShoulderTargetAngle(double t){ shoulderTargetAngle = (Math.max(Math.min(t,SHOULDER_DEG_MAX),SHOULDER_DEG_MIN)); }
     public  double getShoulderTargetAngle(){ return shoulderTargetAngle; }
     public double getExtenderTargetPos(){ return extenderTargetPos+craneLengthOffset; }
-    public  void setExtendTargetPos(double t){ extenderTargetPos = Math.min(3075/EXTEND_TICKS_PER_METER,Math.max(t-craneLengthOffset, 0)); }
+    public  void setExtendTargetPos(double t){ extenderTargetPos = Math.min(EXTENDER_TICS_MAX/EXTEND_TICKS_PER_METER,Math.max(t-craneLengthOffset, 0)); }
     public boolean nearTargetShoulder(){
         if ((Math.abs( getShoulderAngle()- getShoulderTargetAngle()))<2) return true;
         else return false;

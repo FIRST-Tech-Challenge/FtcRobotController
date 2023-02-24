@@ -100,6 +100,7 @@ public class Robot implements Subsystem {
         telemetryMap.put("AutonState", autonIndex);
         telemetryMap.put("Time Thing", timeSupervisor);
         telemetryMap.put("Auton Time", (totalAutonTime-System.nanoTime())/1e9);
+        telemetryMap.put("Unfold Stage", unfoldStage);
         telemetryMap.put("auto-dump enabled", autoDumpEnabled);
 
         for (int i = 0; i < subsystems.length; i++) {
@@ -393,6 +394,8 @@ public class Robot implements Subsystem {
         DOUBLE_DUCK_DUMP_AND_SET_CRANE_FOR_TRANSFER
     }
 
+    boolean unfolded = false;
+
     public Articulation articulate(Articulation articulation) {
         this.articulation = articulation;
 
@@ -406,6 +409,7 @@ public class Robot implements Subsystem {
                 break;
             case UNFOLD:
                 if(unfold()){
+                    unfolded = true;
                     articulation = Articulation.MANUAL;
                 }
                 break;
@@ -413,17 +417,22 @@ public class Robot implements Subsystem {
                 crane.articulate(Crane.Articulation.robotDriving); //keeps crane in safe position
                 underarm.articulate(UnderArm.Articulation.home); //keeps underarm in safe position
                 break;
+            case INIT:
+                crane.articulate(Crane.Articulation.init);
+                underarm.articulate(UnderArm.Articulation.fold);
         }
 
         return this.articulation;
     }
 
     public void driverIsDriving(){
-        articulate(Articulation.ROBOTDRIVE);
+        if(unfolded)
+            articulate(Articulation.ROBOTDRIVE);
     }
 
     public void driverNotDriving(){
-        articulate(Articulation.MANUAL);
+        if(unfolded)
+            articulate(Articulation.MANUAL);
     }
 
     int unfoldStage = 0;
@@ -432,16 +441,25 @@ public class Robot implements Subsystem {
     public boolean unfold(){
         switch (unfoldStage){
             case 0:
+                crane.articulate(Crane.Articulation.noIK);
+                crane.setShoulderTargetAngle(70);
+                unfoldTimer = futureTime(0.7);
                 unfoldStage++;
+                break;
             case 1:
-                underarm.articulate(UnderArm.Articulation.foldTransfer);
-                unfoldTimer = futureTime(1);
-                unfoldStage++;
+                if(System.nanoTime() > unfoldTimer) {
+                    underarm.articulate(UnderArm.Articulation.foldTransfer);
+                    unfoldTimer = futureTime(1);
+                    unfoldStage++;
+                }
+                break;
             case 2:
                 if(System.nanoTime() > unfoldTimer){
                     unfoldStage++;
                 }
+                break;
             case 3:
+                crane.articulate(Crane.Articulation.manual);
                 underarm.articulate(UnderArm.Articulation.home);
                 unfoldStage = 0;
                 return true;

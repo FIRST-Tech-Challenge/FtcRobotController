@@ -114,7 +114,8 @@ public class Turret implements Subsystem {
     public enum Articulation{
         runToAngle,
         home,
-        transfer
+        transfer,
+        fold
     }
 
     public Articulation articulate(Articulation target){
@@ -126,6 +127,9 @@ public class Turret implements Subsystem {
                 break;
             case home: //home position is facing facing back of robot not towards underarm
                 turretPID.setInput(-distanceBetweenAngles(heading,180 + Math.toDegrees(robot.driveTrain.getRawHeading())));
+                break;
+            case fold: //home position is facing facing back of robot not towards underarm
+                turretPID.setInput(-distanceBetweenAngles(heading,Math.toDegrees(robot.driveTrain.getRawHeading())));
                 break;
             case transfer: //transfer position is facing facing back of robot not towards underarm
                 turretPID.setInput(-distanceBetweenAngles(heading,180 + Math.toDegrees(robot.driveTrain.getRawHeading())));

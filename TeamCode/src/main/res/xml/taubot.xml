@@ -24,7 +24,7 @@
             <LynxEmbeddedIMU name="baseIMU" port="0" bus="0" />
             <Servo name="shoulderJoint" port="0" />
             <Servo name="elbowJoint" port="1" />
-            <Servo name="wristServo" port="2" />
+            <Servo name="wristServo" port="5" />
             <Servo name="lassoJoint" port="3" />
             <Servo name="turretServo" port="4" />
             <REV_VL53L0X_RANGE_SENSOR name="distChariot" port="0" bus="0" />

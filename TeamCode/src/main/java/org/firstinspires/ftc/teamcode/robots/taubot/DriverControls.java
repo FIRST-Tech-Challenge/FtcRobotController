@@ -348,20 +348,8 @@ public class DriverControls {
             robot.underarm.toggleLasso();
         }
 
-        if(stickyGamepad2.x){
-            robot.underarm.articulate(UnderArm.Articulation.jointAngles);
-        }
-
-        if(stickyGamepad2.a){
-            robot.underarm.setJointAngle(UnderArm.JointAngle.Home);
-        }
-
-        if(stickyGamepad2.b){
-            robot.underarm.setJointAngle(UnderArm.JointAngle.Test3);
-        }
-
-        if(stickyGamepad2.y){
-            robot.underarm.setJointAngle(UnderArm.JointAngle.Test4);
+        if(stickyGamepad2.dpad_up){
+            robot.underarm.articulate(UnderArm.Articulation.home);
         }
 
         if(notJoystickDeadZone(gamepad2.left_stick_y)){
@@ -370,6 +358,10 @@ public class DriverControls {
 
         if(notJoystickDeadZone(gamepad2.right_stick_y)){
             robot.underarm.adjustElbow(-gamepad2.right_stick_y);
+        }
+
+        if(notJoystickDeadZone(gamepad2.right_stick_x)){
+            robot.underarm.adjustWrist(-gamepad2.right_stick_x);
         }
 
         if(notJoystickDeadZone(gamepad2.left_stick_x)){
@@ -387,9 +379,6 @@ public class DriverControls {
         }
         if(Math.abs(gamepad1.right_stick_y) > 0.05){
             robot.underarm.adjustElbow(gamepad1.right_stick_y);
-        }
-        if(Math.abs(gamepad1.right_stick_x) > 0.05){
-            robot.underarm.adjustLasso(gamepad1.right_stick_x);
         }
         if(Math.abs(gamepad1.left_stick_x) > 0.05){
             robot.underarm.adjustTurret(gamepad1.left_stick_x);

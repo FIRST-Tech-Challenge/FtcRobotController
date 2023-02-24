@@ -2,7 +2,7 @@ package org.firstinspires.ftc.teamcode.robots.taubot.subsystem;
 
 
 import static org.firstinspires.ftc.teamcode.robots.taubot.util.Constants.DISTANCE_SENSOR_TO_FRONT_AXLE;
-import static org.firstinspires.ftc.teamcode.robots.taubot.util.Constants.DISTANCE_TARGET_TO_BACK_WHEEL;
+import static org.firstinspires.ftc.teamcode.robots.taubot.util.Constants.Distance_HUB_TO_UNDERARM_MIN;
 import static org.firstinspires.ftc.teamcode.robots.taubot.util.Constants.MAX_CHASSIS_LENGTH;
 import static org.firstinspires.ftc.teamcode.robots.taubot.util.Constants.MIN_CHASSIS_LENGTH;
 import static org.firstinspires.ftc.teamcode.robots.taubot.util.Constants.*;
@@ -148,7 +148,7 @@ public class DriveTrain extends DiffyDrive implements Subsystem {
         if (simulated) {
             //todo uncomment distance sensor lines when it's added
             chassisLengthDistanceSensor = new DistanceSensorSim(
-                            MIN_CHASSIS_LENGTH - (DISTANCE_SENSOR_TO_FRONT_AXLE + DISTANCE_TARGET_TO_BACK_WHEEL));
+                            MIN_CHASSIS_LENGTH - (DISTANCE_SENSOR_TO_FRONT_AXLE + Distance_HUB_TO_UNDERARM_MIN));
             leftMotor = new DcMotorExSim(USE_MOTOR_SMOOTHING);
             rightMotor = new DcMotorExSim(USE_MOTOR_SMOOTHING);
             chariotMotor = new DcMotorExSim(USE_MOTOR_SMOOTHING);
@@ -315,14 +315,14 @@ public class DriveTrain extends DiffyDrive implements Subsystem {
             double dt = loopTime / 1e9;
             leftPosition += leftVelocity * dt;
             rightPosition += rightVelocity * dt;
-            chassisLength = DISTANCE_SENSOR_TO_FRONT_AXLE + DISTANCE_TARGET_TO_BACK_WHEEL;
+            chassisLength = DISTANCE_SENSOR_TO_FRONT_AXLE + Distance_HUB_TO_UNDERARM_MIN;
 
 
         } else {
             leftPosition = diffEncoderTicksToInches(leftMotor.getCurrentPosition() - leftRelOffset);
             rightPosition = diffEncoderTicksToInches(rightMotor.getCurrentPosition() - rightRelOffset);
             //todo - add chassis length distance sensor
-            chassisLength = chassisLengthDistanceSensor.getDistance(DistanceUnit.INCH) + DISTANCE_SENSOR_TO_FRONT_AXLE + DISTANCE_TARGET_TO_BACK_WHEEL;
+            chassisLength = chassisLengthDistanceSensor.getDistance(DistanceUnit.INCH) + Distance_HUB_TO_UNDERARM_MIN;
 
         }
 

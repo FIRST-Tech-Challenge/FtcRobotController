@@ -6,6 +6,7 @@ import static org.firstinspires.ftc.teamcode.robots.reachRefactor.util.Constants
 import static org.firstinspires.ftc.teamcode.robots.taubot.util.Constants.INCHES_PER_METER;
 import static org.firstinspires.ftc.teamcode.robots.taubot.util.Constants.MAX_CHASSIS_LENGTH;
 import static org.firstinspires.ftc.teamcode.robots.taubot.util.Constants.MIN_CHASSIS_LENGTH;
+import static org.firstinspires.ftc.teamcode.robots.taubot.util.Constants.MIN_SAFE_CHASSIS_LENGTH;
 import static org.firstinspires.ftc.teamcode.robots.taubot.util.Constants.SHOULDER_TO_ELBOW;
 import static org.firstinspires.ftc.teamcode.robots.taubot.util.Utils.*;
 import static org.firstinspires.ftc.teamcode.util.utilMethods.futureTime;
@@ -46,8 +47,8 @@ public class UnderArm implements Subsystem {
 
     public static double kF = 0.0;
 
-    public static double SHOULDER_DEG_MIN = -60; // negative angles are counter clockwise while looking at the left side
-    public static double SHOULDER_DEG_MAX = 90; // of the robot
+    public static double SHOULDER_DEG_MIN = -110; // negative angles are counter clockwise while looking at the left side
+    public static double SHOULDER_DEG_MAX = 110; // of the robot
 
     public static double ELBOW_DEG_MIN = -150;
     public static double WRIST_DEG_MIN = -180;
@@ -139,7 +140,7 @@ public class UnderArm implements Subsystem {
         Test3(0,90,0),
         Test4(90,0,30),
         FoldPosition(FOLDPOS_SHOULDER_ANGLE,FOLDPOS_ELBOW_ANGLE,FOLDPOS_TURRET_ANGLE,MIN_CHASSIS_LENGTH),
-        FoldTransferPosition(FOLDPOS_SHOULDER_ANGLE,FOLDPOS_ELBOW_ANGLE,FOLDPOS_TURRET_ANGLE,MAX_CHASSIS_LENGTH);
+        FoldTransferPosition(FOLDPOS_SHOULDER_ANGLE+30,FOLDPOS_ELBOW_ANGLE,FOLDPOS_TURRET_ANGLE,MAX_CHASSIS_LENGTH);
 
         public double shoulderAngle, elbowAngle, turretAngle, chassisLength;
 
@@ -161,7 +162,7 @@ public class UnderArm implements Subsystem {
         jointAngle = angle;
     }
 
-    public static double FOLDPOS_SHOULDER_ANGLE = 0;
+    public static double FOLDPOS_SHOULDER_ANGLE = -70;
     public static double FOLDPOS_ELBOW_ANGLE = 0;
     public static double FOLDPOS_TURRET_ANGLE = 0;
 
@@ -170,8 +171,15 @@ public class UnderArm implements Subsystem {
 
         switch(articulation){
             case fold: //PROB NOT NEEDED but added just in case
+                /*
                 jointAngle = JointAngle.FoldPosition;
                 goToJointAngleAndLength(jointAngle);
+
+                 */
+                setShoulderTargetAngle(FOLDPOS_SHOULDER_ANGLE);
+                setElbowTargetAngle(FOLDPOS_ELBOW_ANGLE);
+                setTurretTargetAngle(FOLDPOS_TURRET_ANGLE);
+                robot.driveTrain.setChassisLength(MIN_SAFE_CHASSIS_LENGTH);
                 break;
             case foldTransfer: //PROB NOT NEEDED but added just in case
                 jointAngle = JointAngle.FoldTransferPosition;
@@ -345,8 +353,8 @@ public class UnderArm implements Subsystem {
         elbowTargetAngle += ADJUST_ELBOW*speed*robot.deltaTime;
     }
 
-    public void adjustLasso(double speed){
-        wristTargetAngle += 100*speed*robot.deltaTime;
+    public void adjustWrist(double speed){
+        wristTargetAngle += ADJUST_WRIST*speed*robot.deltaTime;
     }
 
     public void adjustTurret(double speed){
@@ -356,6 +364,7 @@ public class UnderArm implements Subsystem {
     public static double ADJUST_TURRET = 50;
     public static double ADJUST_ELBOW = 50;
     public static double ADJUST_SHOULDER = 50;
+    public static double ADJUST_WRIST = 50;
 
     public static double ADJUST_HEIGHT_SPEED = 2;
     public static double ADJUST_POSITION_SPEED = 2;
@@ -466,6 +475,7 @@ public class UnderArm implements Subsystem {
             telemetryMap.put("Turret Target PWM", turretServoValue(turretTargetAngle));
             telemetryMap.put("Lasso Position", lassoServo.getPosition());
             telemetryMap.put("Lasso Grip", lassoGripped);
+            telemetryMap.put("Home Stage", homeStage);
 
             telemetryMap.put("chariot distance", getChariotDistance());
 
@@ -516,19 +526,19 @@ public class UnderArm implements Subsystem {
     }
 
     public void setShoulderTargetAngle(double shoulderTargetAngle) {
-        this.shoulderTargetAngle = wrapAngle(shoulderTargetAngle);
+        this.shoulderTargetAngle = shoulderTargetAngle;
     }
 
     public void setElbowTargetAngle(double elbowTargetAngle) {
-        this.elbowTargetAngle = wrapAngle(elbowTargetAngle);
+        this.elbowTargetAngle = elbowTargetAngle;
     }
 
     public void setWristTargetAngle(double wristTargetAngle) {
-        this.wristTargetAngle = wrapAngle(wristTargetAngle);
+        this.wristTargetAngle = wristTargetAngle;
     }
 
     public void setTurretTargetAngle(double turretTargetAngle) {
-        this.turretTargetAngle = wrapAngle(turretTargetAngle);
+        this.turretTargetAngle =turretTargetAngle;
     }
 
     public double getShoulderTargetAngle() {
