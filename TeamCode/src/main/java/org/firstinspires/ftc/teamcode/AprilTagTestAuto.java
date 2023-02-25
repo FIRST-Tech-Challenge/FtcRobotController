@@ -204,26 +204,16 @@ public class AprilTagTestAuto extends LinearOpMode
             telemetry.update();
         }
 
-        telemetry.addData("angle",getAngle());
-        telemetry.update();
-        turnNinety(true);
-        waitTime(5);
-        telemetry.addData("angle",getAngle());
-        telemetry.update();
-        turnNinety(true);
-        waitTime(5);
-        telemetry.addData("angle",getAngle());
-        telemetry.update();
-        /*moveGrabber(true);
+        moveGrabber(true);
         waitTime(.5);
-        moveLiftAndDrive(true, 18.25, 17);
+        moveLiftAndDrive(true, 16.5, 17);
         turnNinety(false);
         moveInchAmount(true, .25);
         sleep(500);
         moveGrabber(false);
         moveInchAmount(false, .25);
         turnNinety(true);
-        moveLiftAndDrive(true, 39.25, 0);
+        moveLiftAndDrive(true, 38.25, 5);
         sleep(100);
         turnNinety(true);
         for(int i = 0; i < 1; i++) {
@@ -232,14 +222,14 @@ public class AprilTagTestAuto extends LinearOpMode
             moveLiftAndDrive(false, 45, MAX_LIFT_POS);
             sleep(100);
             turnNinety(false);
-            moveLift(30);
+            sleep(500);
             moveGrabber(false);
-            moveLift(32);
             sleep(100);
             turnNinety(true);
             moveLiftAndDrive(true, 28, 8);
         }
-        moveLift(0)*/
+        moveLift(0);
+        turnNinety(true);
     }
 
     public void setUpHardware() { // Assigns motor names in phone to the objects in code
