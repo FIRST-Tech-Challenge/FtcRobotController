@@ -37,23 +37,18 @@ public class ArmPIDController {
     public double calculateVelocity() {
         controller = new PIDController(p_arm, i_arm, d_arm);
 
+
         int armPos = armMotor.getCurrentPosition();
         double pid = controller.calculate(armPos, target);
 
-        double ff = Math.cos(Math.toRadians(target / ticks_in_degree)) * f_arm;
+        double ff = Math.cos(Math.toRadians((target+400) / ticks_in_degree)) * f_arm;
 
         double power = pid + ff;
 
-//        if (power>1){
-//            power =1;
-//        }
-//
-//        if (target == 0 && armPos< 400){
-//            power = - Math.min(Math.abs(power), 0.2);
-//        }
 
         return power;
 
     }
+
 
 }
