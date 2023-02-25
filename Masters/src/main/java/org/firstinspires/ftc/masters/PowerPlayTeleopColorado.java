@@ -51,7 +51,7 @@ public class PowerPlayTeleopColorado extends LinearOpMode {
     DcMotorEx frontSlide = null;
     DcMotorEx slideOtherer = null;
 
-    private final double MAX_VELOCITY= 435/60*384.5*0.8;
+//    private final double MAX_VELOCITY= 435/60*384.5*0.8;
     ProfiledPIDController m_controller;
 
     public static double ALIGN_SPEED = 0.15;
@@ -79,9 +79,6 @@ public class PowerPlayTeleopColorado extends LinearOpMode {
     PowerPlayComputerVisionPipelines  CV= null;
 
     public static double kp=6, ki=0, kd=0.09;
-    public static double f_arm = 0.09;
-    private final double ticks_in_degree = 2785 / 360;
-    private final double ticks_per_seconds = 2785 * 60 /60;
 
 
     @Override
@@ -151,6 +148,9 @@ public class PowerPlayTeleopColorado extends LinearOpMode {
         slideOtherer.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         frontSlide.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         linearSlideMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        slideOtherer.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        frontSlide.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        linearSlideMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
         //liftController = new PIDController(p, i, d);
 //        armController = new PIDController(p_arm, i_arm, d_arm);
@@ -187,7 +187,7 @@ public class PowerPlayTeleopColorado extends LinearOpMode {
         // run until the end of the match (driver presses STOP)
         while (opModeIsActive()) {
 //            telemetry.addData("linear slide encoder",  + linearSlideMotor.getCurrentPosition());
-            telemetry.addData("arm encoder", armMotor.getCurrentPosition());
+            telemetry.addData("lift", slideOtherer.getCurrentPosition());
             double y = 0;
             double x = 0;
             double rx = 0;
@@ -473,6 +473,7 @@ public class PowerPlayTeleopColorado extends LinearOpMode {
     }
 
     protected void moveSlideMotors (){
+        telemetry.addData("target", slideTarget);
         liftPIDController.setTarget(slideTarget);
         linearSlideMotor.setPower(liftPIDController.calculatePower(linearSlideMotor));
         slideOtherer.setPower(liftPIDController.calculatePower(slideOtherer));
