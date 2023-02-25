@@ -221,9 +221,9 @@ public class TourneyDrive extends LinearOpMode {
                 servoGrabber2.setPosition(MIN_POS2);
             }
 
-            if(coneFlipUp > .05){
+            if(coneFlipUp > .01){
                 coneFlipper.setPower(-.75);
-            }else if(coneFlipDown > .05){
+            }else if(coneFlipDown > .01){
                 coneFlipper.setPower(.75);
             }else{
                 coneFlipper.setPower(0);
@@ -325,6 +325,7 @@ public class TourneyDrive extends LinearOpMode {
             telemetry.addData("Status", "Run Time: " + runtime);
             telemetry.addData("Front left/Right", "%4.2f, %4.2f", leftFrontPower, rightFrontPower);
             telemetry.addData("Back  left/Right", "%4.2f, %4.2f", leftBackPower, rightBackPower);
+            telemetry.addData("Servo power: ", coneFlipper.getPower());
             telemetry.update();
         }
     }
