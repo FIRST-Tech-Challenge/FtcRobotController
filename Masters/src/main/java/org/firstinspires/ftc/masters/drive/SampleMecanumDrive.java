@@ -194,6 +194,8 @@ public class SampleMecanumDrive extends MecanumDrive {
         frontSlide.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         slideOtherer.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         armMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+
+        armMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
     }
 
     public void openClaw(){
