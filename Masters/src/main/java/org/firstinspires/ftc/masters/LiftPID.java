@@ -17,11 +17,11 @@ public class LiftPID extends LinearOpMode {
     PIDController liftController;
     ArmPIDController armPIDController;
 
-    public static double p=0.04, i=0, d=0.0001;
-    public static double f=0.06;
+    public static double p=0.025, i=0, d=0.000001;
+    public static double f=0.03;
     public static double p_arm=0.025, i_arm=0.05, d_arm=0.0001;
     public static double f_arm=0.16;
-    public static double multiplier = 0.5;
+    public static double multiplier = 1;
     public  static double multiplierZero = 0.2;
 
     public int ticks= 385;
@@ -50,6 +50,10 @@ public class LiftPID extends LinearOpMode {
         frontSlide.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         linearSlideMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
+        slideOtherer.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        frontSlide.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        linearSlideMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
         double ticks_in_degree = 1425/360;
 
         armPIDController = new ArmPIDController(armServo);
@@ -63,16 +67,25 @@ public class LiftPID extends LinearOpMode {
 
             double power = pid +f;
 
-            linearSlideMotor.setPower((liftController.calculate(linearSlideMotor.getCurrentPosition(), target)+f) *multi);
-            frontSlide.setPower((liftController.calculate(linearSlideMotor.getCurrentPosition(), target)+f) *multi);
-            slideOtherer.setPower((liftController.calculate(slideOtherer.getCurrentPosition(), target)+f) *multi);
+            if (target == 0 && liftPos<100){
+telemetry.addData("power", 0);
+                linearSlideMotor.setPower(0);
+                frontSlide.setPower(0);
+                slideOtherer.setPower(0);
+            } else {
+
+                linearSlideMotor.setPower((liftController.calculate(linearSlideMotor.getCurrentPosition(), target) + f) * multi);
+                frontSlide.setPower((liftController.calculate(linearSlideMotor.getCurrentPosition(), target) + f) * multi);
+                slideOtherer.setPower((liftController.calculate(slideOtherer.getCurrentPosition(), target) + f) * multi);
+
+            }
 
             telemetry.addData("slide", linearSlideMotor.getCurrentPosition());
             telemetry.addData("front", frontSlide.getCurrentPosition());
             telemetry.addData("other", slideOtherer.getCurrentPosition());
 
             armPIDController.setTarget(armTarget);
-            armServo.setVelocity(armPIDController.calculateVelocity());
+            armServo.setPower(armPIDController.calculateVelocity());
 
 
             telemetry.addData("target", target);

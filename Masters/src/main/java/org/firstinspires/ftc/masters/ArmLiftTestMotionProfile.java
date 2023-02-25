@@ -23,9 +23,11 @@ public class ArmLiftTestMotionProfile extends LinearOpMode {
     public static int liftTarget = 0;
     public static double maxSpeed = 0.3;
     public static double kp=6, ki=0, kd=0.09;
-    public static double f_arm = 0.09;
+    public static double f_arm = 0.01;
     private final double ticks_in_degree = 2785 / 360;
     private final double ticks_per_seconds = 2785 * 60 /60;
+
+    int startPos=0;
 
 
     @Override
@@ -39,7 +41,7 @@ public class ArmLiftTestMotionProfile extends LinearOpMode {
         TrapezoidProfile.Constraints m_constraints = new TrapezoidProfile.Constraints(2800, 3000);
 
         ProfiledPIDController m_controller = new ProfiledPIDController(kp, ki, kd, m_constraints);
-m_controller.setTolerance(3);
+        m_controller.setTolerance(3);
 
         drive.tipCenter();
         drive.closeClaw();
@@ -58,25 +60,28 @@ m_controller.setTolerance(3);
 
             m_controller.setGoal(armTarget);
 
+
            // if(!m_controller.atGoal()) {
+            if (drive.armMotor.getCurrentPosition()>800 && armTarget>900){
+                m_controller.setConstraints(new TrapezoidProfile.Constraints(200, 3000));
+            } else {
+                m_controller.setConstraints(new TrapezoidProfile.Constraints(2800, 3000));
+            }
                 double output = m_controller.calculate(
                         drive.armMotor.getCurrentPosition()  // the measured value
                 );
 
-                double ff = Math.cos(Math.toRadians((armTarget+400) / ticks_in_degree)) * f_arm * ticks_per_seconds;
-                telemetry.addData("output", output + ff);
-                drive.armMotor.setVelocity(output+ ff);
+
+
+              //  double ff = Math.cos(Math.toRadians((armTarget+326) / ticks_in_degree)) * f_arm * ticks_per_seconds;
+               // telemetry.addData("output", output + ff);
+                drive.armMotor.setVelocity(output);
                 telemetry.addData("arm target", armTarget);
                 telemetry.addData("arm position", drive.armMotor.getCurrentPosition());
 
 
                 telemetry.update();
-           // }
 
-
-
-
-            //  telemetry.addData("power ", power);
             telemetry.addData("arm target", armTarget);
             telemetry.addData("arm position", drive.armMotor.getCurrentPosition());
 

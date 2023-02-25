@@ -18,6 +18,8 @@ import static org.firstinspires.ftc.masters.BadgerConstants.TIP_FRONT;
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
+import com.arcrobotics.ftclib.controller.wpilibcontroller.ProfiledPIDController;
+import com.arcrobotics.ftclib.trajectory.TrapezoidProfile;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -47,6 +49,7 @@ public class PowerPlayTeleopColorado extends LinearOpMode {
     DcMotorEx slideOtherer = null;
 
     private final double MAX_VELOCITY= 435/60*384.5*0.8;
+    ProfiledPIDController m_controller;
 
     public static double ALIGN_SPEED =0.15;
 
@@ -71,6 +74,11 @@ public class PowerPlayTeleopColorado extends LinearOpMode {
     int liftOffset;
     int armOffset;
     PowerPlayComputerVisionPipelines  CV= null;
+
+    public static double kp=6, ki=0, kd=0.09;
+    public static double f_arm = 0.09;
+    private final double ticks_in_degree = 2785 / 360;
+    private final double ticks_per_seconds = 2785 * 60 /60;
 
 
     @Override
@@ -143,6 +151,11 @@ public class PowerPlayTeleopColorado extends LinearOpMode {
 
         //liftController = new PIDController(p, i, d);
 //        armController = new PIDController(p_arm, i_arm, d_arm);
+        TrapezoidProfile.Constraints m_constraints = new TrapezoidProfile.Constraints(2800, 3000);
+
+        m_controller = new ProfiledPIDController(kp, ki, kd, m_constraints);
+        m_controller.setTolerance(3);
+
         armPIDController = new ArmPIDController(armMotor);
         liftPIDController = new LiftPIDController(linearSlideMotor, frontSlide, slideOtherer);
 
@@ -467,7 +480,18 @@ public class PowerPlayTeleopColorado extends LinearOpMode {
     }
 
     protected void moveArm (){
-        armPIDController.setTarget(armTarget);
+
+        m_controller.setGoal(armTarget);
+
+        double output = m_controller.calculate(
+                armMotor.getCurrentPosition()  // the measured value
+        );
+
+        double ff = Math.cos(Math.toRadians((armTarget+400) / ticks_in_degree)) * f_arm * ticks_per_seconds;
+        telemetry.addData("output", output + ff);
+        armMotor.setVelocity(output+ ff);
+
+        //armPIDController.setTarget(armTarget);
         double velocity = armPIDController.calculateVelocity();
         armMotor.setPower(velocity);
 
