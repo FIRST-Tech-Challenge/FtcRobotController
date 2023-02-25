@@ -2,10 +2,8 @@ package org.firstinspires.ftc.teamcode.Components.RFModules.Devices;
 
 import static com.qualcomm.robotcore.hardware.Servo.Direction.FORWARD;
 import static com.qualcomm.robotcore.hardware.Servo.Direction.REVERSE;
-
 import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.logger;
 import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.op;
-
 
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.ServoController;
@@ -129,6 +127,28 @@ public class RFDualServo implements Servo {
 
     public double getLastTime() {
         return lasttime;
+    }
+
+    public void disableServos() {
+        ServoController rfServoController1 = (ServoController) dualServo1.getController();
+        ServoController rfServoController2 = (ServoController) dualServo2.getController();
+        rfServoController1.pwmDisable();
+        rfServoController2.pwmDisable();
+    }
+    public void enableServos() {
+        ServoController rfServoController1 = (ServoController) dualServo1.getController();
+        ServoController rfServoController2 = (ServoController) dualServo2.getController();
+        rfServoController1.pwmEnable();
+        rfServoController2.pwmEnable();
+    }
+    public boolean abledServos() {
+        ServoController rfServoController1 = (ServoController) dualServo1.getController();
+        ServoController rfServoController2 = (ServoController) dualServo2.getController();
+        if(rfServoController1.getPwmStatus()== ServoController.PwmStatus.ENABLED){
+            return true;
+        }else{
+            return false;
+        }
     }
 
 

@@ -25,7 +25,7 @@ public class BlueRightAutoCycleTunedCamera extends LinearOpMode {
 
     public static double dummyP = 3;
 
-    public static double dropX = -30.5, dropY = 2.5, dropA = toRadians(140), dropET = toRadians(310);
+    public static double dropX = -30.5, dropY = 3.5, dropA = toRadians(140), dropET = toRadians(310);
 
     public static double pickupX1 = -45.5, pickupY1 = 11.75, pickupA1 = toRadians(180), pickupET1 = toRadians(180);
     public static double pickupX2 = -62.9, pickupY2 = 11.75, pickupA2 = toRadians(180), pickupET2 = toRadians(180);
@@ -44,8 +44,8 @@ public class BlueRightAutoCycleTunedCamera extends LinearOpMode {
         robot.cv.observeCone();
         TrajectorySequence initialtrajectory = robot.roadrun.trajectorySequenceBuilder(new Pose2d(-29.6, 62.25, toRadians(90)))
                 .setReversed(true)
-                .splineToSplineHeading(new Pose2d(-35, 38, toRadians(90)), toRadians(270))
-                .splineToSplineHeading(new Pose2d(-29.4, 3.2, toRadians(140)), toRadians(310))
+                .splineToSplineHeading(new Pose2d(-35.4, 34, toRadians(90)), toRadians(270))
+                .splineToSplineHeading(new Pose2d(-30.4, 3.6, toRadians(140)), toRadians(310))
                 .addTemporalMarker(robot::done)
                 .build();
         TrajectorySequence pickupSecondPartTrajectory = robot.roadrun.trajectorySequenceBuilder(new Pose2d(-52, 11.75, toRadians(180)))
@@ -80,8 +80,8 @@ public class BlueRightAutoCycleTunedCamera extends LinearOpMode {
 //                .splineToSplineHeading(new Pose2d(-52.4, 5+(robot.getVoltage()-12)/1.5,toRadians(180)), toRadians(180))
 //                .splineToSplineHeading(new Pose2d(-45, 11,toRadians(180)), toRadians(180))
 //                .splineTo(new Vector2d(-50,11), toRadians(179))
-                    .setTangentOffset(toRadians(toRadians(10) * robot.getVoltage() / 12))
-//                .splineToSplineHeading(new Pose2d(new Vector2d(-55,10.5),toRadians(180)), toRadians(180))
+                    .setTangentOffset(toRadians(10))
+                .splineToSplineHeading(new Pose2d(new Vector2d(-55,11.75),toRadians(180)), toRadians(180))
                     .splineTo(new Vector2d(-64.5, 11.75), toRadians(180))
                     .addTemporalMarker(() -> {
                         robot.done();
@@ -103,7 +103,7 @@ public class BlueRightAutoCycleTunedCamera extends LinearOpMode {
                 .splineToSplineHeading(new Pose2d(-36, 33, toRadians(90)), toRadians(90))
                 .build();
         TrajectorySequence park1trajectory = robot.roadrun.trajectorySequenceBuilder(new Pose2d(dropX, dropY, dropA))
-                .splineToLinearHeading(new Pose2d(dropX - 5, dropY + 7, toRadians(185)), toRadians(dropA))
+                .splineToLinearHeading(new Pose2d(dropX - 4, dropY + 5, toRadians(185)), toRadians(dropA))
                 .setReversed(true)
                 .splineToLinearHeading(new Pose2d(-12, 12, toRadians(180)), toRadians(0))
                 .build();
@@ -148,17 +148,17 @@ public class BlueRightAutoCycleTunedCamera extends LinearOpMode {
         while (opModeIsActive() && !isStopRequested() && getRuntime() < 29.8) {
             logger.loopcounter++;
             robot.followTrajectorySequenceAsync(initialtrajectory);
+//            robot.delay(2.2);
+//            robot.updateTrajectoryWithCam();
             robot.delay(0.3);
             robot.raiseLiftArmToOuttake(true);
             robot.delay(0.5);
             robot.liftToPosition((int) LIFT_HIGH_JUNCTION.getValue());
-            robot.liftToPosition((int) LIFT_HIGH_JUNCTION.getValue() - 220, false);
+//            robot.liftToPosition((int) LIFT_HIGH_JUNCTION.getValue() - 180, false);
             robot.delay(0.15);
-            robot.wideClaw();
-            robot.splineTo(new Pose2d(-64, 11.75, toRadians(180)), toRadians(180), toRadians(0));
-            robot.liftToPosition((int) LIFT_HIGH_JUNCTION.getValue() + 50, true);
-            robot.delay(0.3);
-            robot.openClaw(true);
+            robot.wideClaw(false);
+            robot.splineTo(new Pose2d(-64.25, 11.5, toRadians(180)), toRadians(180), toRadians(-5));
+//            robot.liftToPosition((int) LIFT_HIGH_JUNCTION.getValue() + 50, true);
             robot.delay(0.4);
             robot.cycleLiftArmToCycle(true);
             robot.delay(0.8);
@@ -166,50 +166,48 @@ public class BlueRightAutoCycleTunedCamera extends LinearOpMode {
             robot.delay(0.6);
             robot.liftToPosition((int) stackPos[0], true);
             robot.closeClaw(false);
-            robot.splineTo(new Pose2d(dropX, dropY, toRadians(130)), toRadians(310), toRadians(-170));
-            robot.delay(0.4);
+            robot.splineTo(new Pose2d(dropX, dropY, toRadians(127)), toRadians(300), toRadians(-180));
+//            robot.delay(0.4);
             robot.updateTrajectoryWithCam();
             robot.delay(0.01);
             robot.liftToPosition((int) LIFT_HIGH_JUNCTION.getValue(), true);
-            robot.delay(0.5);
+            robot.delay(0.2);
             robot.raiseLiftArmToOuttake(true);
-            robot.delay(0.4);
-            robot.liftToPosition((int) LIFT_HIGH_JUNCTION.getValue() - 220, false);
-            robot.delay(0.55);
-            robot.wideClaw();
+//            robot.delay(0.1);
+//            robot.liftToPosition((int) LIFT_HIGH_JUNCTION.getValue() - 180, false);
+            robot.delay(0.25);
+            robot.wideClaw(false);
             for (int i = 0; i < 4; i++) {
-                robot.delay(0.4);
-//                robot.splineTo(new Pose2d(-64.5,11.75,toRadians(180)),toRadians(180),toRadians(0));
-                robot.followTrajectorySequenceAsync(pick.get(i));
-                robot.liftToPosition((int) LIFT_HIGH_JUNCTION.getValue() + 50, true);
-                robot.delay(0.3);
-                robot.openClaw(true);
+                robot.delay(0.2);
+                robot.splineTo(new Pose2d(-64.25,11.5,toRadians(180)),toRadians(180),toRadians(-5));
+//                robot.liftToPosition((int) LIFT_HIGH_JUNCTION.getValue() + 50, true);
+
                 robot.delay(0.4);
                 if (i != 3) {
                     robot.cycleLiftArmToCycle(true);
                 } else {
                     robot.cycleLiftArmToCycle(true);
                 }
-                robot.delay(0.8);
+                robot.delay(0.5);
                 robot.wideClaw();
-                robot.delay(0.6);
+                robot.delay(0.8);
                 robot.liftToPosition((int) stackPos[i + 1]);
-                robot.updateTrajectoryWithCone();
+//                robot.updateTrajectoryWithCone();
                 robot.closeClaw(false);
                 if (false) {//claw no detect
 
                 }
-                robot.splineTo(new Pose2d(dropX, dropY, toRadians(130)), toRadians(310), toRadians(-170));
+                robot.splineTo(new Pose2d(dropX, dropY, toRadians(127)), toRadians(300), toRadians(-180));
                 robot.delay(0.9);
                 robot.updateTrajectoryWithCam();
                 robot.delay(0.1 + (3 - i) * 0.005);
                 robot.liftToPosition((int) LIFT_HIGH_JUNCTION.getValue());
                 robot.delay(0.36 + 0.005 * (3 - i));
                 robot.raiseLiftArmToOuttake(true);
-                robot.delay(0.4);
-                robot.liftToPosition((int) LIFT_HIGH_JUNCTION.getValue() - 220, false);
-                robot.delay(0.55);
-                robot.wideClaw();
+//                robot.delay(0.1);
+//                robot.liftToPosition((int) LIFT_HIGH_JUNCTION.getValue() - 180, false);
+                robot.delay(0.25);
+                robot.wideClaw(false);
             }
             if (dummyP == 1) {
                 robot.delay(0.4);
@@ -222,18 +220,17 @@ public class BlueRightAutoCycleTunedCamera extends LinearOpMode {
                 robot.followTrajectorySequenceAsync(park2trajectory);
             }
             robot.liftToPosition((int) LIFT_HIGH_JUNCTION.getValue() + 50, true);
-            robot.delay(0.6);
-            robot.openClaw(true);
-            robot.delay(0.6);
+            robot.delay(0.3);
             robot.lowerLiftArmToIntake(true);
-            robot.delay(1.8);
+            robot.delay(1.5);
             robot.wideClaw();
-            robot.delay(0.7);
+            robot.delay(0.6);
             robot.liftToPosition(0);
 
 
             robot.queuedStop();
             robot.setFirstLoop(false);
+            robot.liftToTargetAuto();
             robot.liftToTargetAuto();
             robot.roadrun.update();
             robot.updateClawStates();

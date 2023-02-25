@@ -11,8 +11,14 @@ import static org.firstinspires.ftc.teamcode.Components.Lift.LiftConstants.LIFT_
 import static org.firstinspires.ftc.teamcode.Components.LiftArm.liftArmStates.ARM_INTAKE;
 import static org.firstinspires.ftc.teamcode.Components.LiftArm.liftArmStates.ARM_OUTTAKE;
 import static org.firstinspires.ftc.teamcode.Components.RFModules.Devices.RFMotor.VOLTAGE_CONST;
+import static org.firstinspires.ftc.teamcode.roadrunner.drive.DriveConstants.TRACK_WIDTH;
+import static org.firstinspires.ftc.teamcode.roadrunner.drive.DriveConstants.kV;
+import static java.lang.Math.PI;
 import static java.lang.Math.abs;
+import static java.lang.Math.atan2;
 import static java.lang.Math.pow;
+import static java.lang.Math.sin;
+import static java.lang.Math.sqrt;
 import static java.lang.Math.toRadians;
 
 import com.acmerobotics.roadrunner.geometry.Pose2d;
@@ -66,7 +72,7 @@ public class PwPRobot extends BasicRobot {
         VOLTAGE_CONST *= 13.8/ voltageSensor.getVoltage();
         RFMotor.kA*= 13/ voltageSensor.getVoltage();
         DriveConstants.TRACK_WIDTH *= 12.7/ voltageSensor.getVoltage();
-        DriveConstants.kV *= 12.7/ voltageSensor.getVoltage();
+        kV *= 12.7/ voltageSensor.getVoltage();
         DriveConstants.kA *= 12.7/ voltageSensor.getVoltage();
         DriveConstants.kStatic *= 12.7/ voltageSensor.getVoltage();
 
@@ -146,6 +152,7 @@ public class PwPRobot extends BasicRobot {
                 TrajectorySequence trajectory = roadrun.getCurrentTraj();
                 roadrun.changeTrajectorySequence(roadrun.trajectorySequenceBuilder(trajectory.start())
                                 .setReversed(true)
+//                                .splineTo(target.vec(), target.getHeading())
                         .splineTo(target.vec(), target.getHeading()).build());
 //                field.setDoneLookin(true);
                 logger.log("/RobotLogs/GeneralRobot", "mr.obama"+target+"im pole"+roadrun.getPoseEstimate());
@@ -193,6 +200,35 @@ public class PwPRobot extends BasicRobot {
             }
         }
     }
+    public void setTRUEMAXDrivingExperience(double y,double x,double a){
+        double angle = atan2(y,x);
+        double powera = sin(angle + PI/4);
+        double powerb = sin(angle - PI/4);
+        if(abs(powera)>abs(powerb)
+        ){
+            powerb*=1/abs(powera);
+            powera*=1/abs(powera);
+        }
+        else{
+            powera*=1/abs(powerb);
+            powerb*=1/abs(powerb);
+        }
+        double magnitude = sqrt(x*x+y*y);
+                //wheel : y , x
+        double[] maxes = {75,50,7};
+        double[] targetVelocity = {maxes[0]*y, maxes[1]*x, maxes[2]*a};
+        Pose2d actualVelocity = roadrun.getPoseVelocity();
+        double[] diffs = {targetVelocity[0]- actualVelocity.getY(),targetVelocity[1]- actualVelocity.getX(), targetVelocity[2]- actualVelocity.getHeading()};
+        double cAngle = atan2(diffs[0],diffs[1]);
+        double cMag = sqrt(diffs[1]*diffs[1]+diffs[0]*diffs[0])*kV*2;
+        double correctiona = sin(cAngle + PI/4);
+        double correctionb = sin(cAngle - PI/4);
+        double angleCorrection = diffs[2]*TRACK_WIDTH*kV*0.2;
+        roadrun.setMotorPowers(powerb*magnitude-a-angleCorrection+correctionb*cMag,
+                powera*magnitude-a-angleCorrection+correctiona*cMag,
+                powerb*magnitude+a+angleCorrection+ correctionb*cMag,
+                powera*magnitude+a+angleCorrection+correctiona*cMag);
+    }
 
     public void followTrajectoryAsync(Trajectory trajectory) {
         if (queuer.queue(false, !roadrun.isBusy())) {
@@ -230,6 +266,7 @@ public class PwPRobot extends BasicRobot {
 
     public void closeClaw() {
         closeClaw(true);
+
     }
 
     public void closeClaw(boolean p_asynchronous) {
@@ -425,15 +462,17 @@ public class PwPRobot extends BasicRobot {
     }
 
     public void teleOp() {
+        roadrun.update();
 //        if (progNameLogged == false) {
 //            logger.log("/RobotLogs/GeneralRobot", "PROGRAM RUN: PwPTeleOp", false);
 //            progNameLogged = true;
 //        }
         gp.readGamepad(op.gamepad2.y, "gamepad2_y", "Status");
-        gp.readGamepad(op.gamepad1.x, "gamepad1_x", "Status");
+//        gp.readGamepad(op.gamepad1.x, "gamepad1_x", "Status");
         boolean isY = gp.readGamepad(op.gamepad1.y, "gamepad1_y", "Status");
                 gp.readGamepad(op.gamepad2.a, "gamepad1_a", "Status");
         boolean isX2 = gp.readGamepad(op.gamepad2.x, "gamepad2_x", "Status");
+        boolean isA = gp.readGamepad(op.gamepad1.x,"gamepad1_a", "Status");
         gp.readGamepad(op.gamepad2.a, "gamepad1_a", "Status");
         gp.readGamepad(op.gamepad2.b, "gamepad1_b", "Status");
         gp.readGamepad(op.gamepad1.left_stick_y, "gamepad1_left_stick_y", "Value");
@@ -444,6 +483,15 @@ public class PwPRobot extends BasicRobot {
         gp.readGamepad(op.gamepad2.right_bumper, "gamepad2_right_bumper", "Status");
         boolean isBumper2 =         gp.readGamepad(op.gamepad2.left_bumper, "gamepad2_left_bumper", "Status");
 
+
+        if (isA) {
+            if(liftArm.ableArmed()) {
+                liftArm.disableArm();
+            }
+            else{
+                liftArm.enableArm();
+            }
+        }
         if (isY) {
             regularDrive = !regularDrive;
         }
@@ -566,13 +614,12 @@ public class PwPRobot extends BasicRobot {
                 field.breakAutoTele();
             }
             if (regularDrive) {
-                roadrun.setWeightedDrivePower(
-                        new Pose2d(
-                                abs(vals[1] - 0.0001) / -vals[1] * (minBoost[1] + 0.65 * abs(vals[1]) + 0.15 * pow(abs(vals[1]), 2.4)),
-                                abs(vals[0] - 0.0001) / -vals[0] * (minBoost[0] + 0.65 * abs(vals[0]) + 0.15 * pow(abs(vals[0]), 2.4)),
-                                abs(vals[2] - 0.0001) / -vals[2] * (minBoost[2] + 0.75 * abs(vals[2]))
-                        )
-                );
+                roadrun.setWeightedDrivePower(new Pose2d(
+
+                                0.6*abs(vals[1] - 0.0001) / -vals[1] * (minBoost[1] + 0.65 * abs(vals[1]) + 0.15 * pow(abs(vals[1]), 2.4)),
+                                0.6*abs(vals[0] - 0.0001) / -vals[0] * (minBoost[0] + 0.65 * abs(vals[0]) + 0.15 * pow(abs(vals[0]), 2.4)),
+                                0.8*abs(vals[2] - 0.0001) / -vals[2] * (minBoost[2] + 0.75 * abs(vals[2])))
+                        );
             } else {
                 Vector2d input = new Vector2d(abs(vals[1] - 0.0001) / -vals[1] * (minBoost[1] + 0.5 * abs(vals[1]) + 0.15 * pow(abs(vals[1]), 3)),
                         abs(vals[0] - 0.0001) / -vals[0] * (minBoost[0] + 0.5 * abs(vals[0]) + 0.15 * pow(abs(vals[0]), 3)));
@@ -640,7 +687,6 @@ public class PwPRobot extends BasicRobot {
         if (gp.updateSequence()) {
             field.autoMovement();
         }
-        roadrun.update();
         field.updateMoves(false);
         liftArm.updateLiftArmStates();
         claw.updateClawStates();

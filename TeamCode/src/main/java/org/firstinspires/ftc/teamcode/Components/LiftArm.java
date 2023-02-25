@@ -166,5 +166,15 @@ public class LiftArm {
         }
     }
 
+    public void disableArm() {
+        liftArmServo.disableServos();
+    }
+    public void enableArm(){
+        liftArmServo.enableServos();
+    }
+    public boolean ableArmed(){
+        return liftArmServo.abledServos();
+    }
+
 }
 

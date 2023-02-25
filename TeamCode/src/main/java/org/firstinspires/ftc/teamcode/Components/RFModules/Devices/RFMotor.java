@@ -163,10 +163,10 @@ public class RFMotor extends Motor {
 
     public void getAvgResistance() {
         double resistances = 0;
-        resistances -= 150 + 0.39 * position/* - 0.000135* position * position*/;
+        resistances -= 200 + 0.6 * position/* - 0.000135* position * position*/;
         resistances -= velocity * 0.2 * pow(abs(position) + 1, -.13);
         resistance = resistances* VOLTAGE_CONST;
-        resistances -= 150 + 0.39 * targetPos/* - 0.000135 * targetPos * targetPos*/;
+        resistances -= 200 + 0.6 * targetPos/* - 0.000135 * targetPos * targetPos*/;
         avgResistance = resistances / 2 * VOLTAGE_CONST;
     }
 
@@ -223,8 +223,9 @@ public class RFMotor extends Motor {
 
     public void setPower(double power) {
         rfMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        getAvgResistance();
 //        logger.log("/RobotLogs/GeneralRobot", rfMotorName + ",setPower():,Setting Power: " + power, false, false);
-        rfMotor.setPower(power - kP * getResistance());
+        rfMotor.setPower(power - kP * resistance);
         logger.log("/MotorLogs/RFMotor" + rfMotorName, "Setting Power," + (power - kP * getResistance()), false, false);
 
     }

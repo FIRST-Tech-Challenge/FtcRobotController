@@ -129,7 +129,7 @@ public class Field {
         }
         logger.log("/RobotLogs/GeneralRobot", "CONePos"+ conePos);
         logger.log("/RobotLogs/GeneralRobot", "coords"+coords[0]+","+coords[1]);
-        if(abs(coords[0])<20&&abs(coords[1])>4&&abs(coords[1])<15&&abs(abs(pos.getHeading()-coords[0]*PI/180)-PI)<10*PI/180){
+        if(abs(coords[0])<20&&abs(coords[1])>4&&abs(coords[1])<15&&abs(abs(pos.getHeading()-coords[0]*PI/180)-PI)<20*PI/180){
             if(roadrun.getCurrentTraj()==null|| abs(conePos.vec().distTo(roadrun.getCurrentTraj().end().vec()))<10&&abs(conePos().getX())>60) {
                 return true;
             }
