@@ -450,7 +450,6 @@ public class SampleMecanumDrive extends MecanumDrive {
 
     public boolean alignPole(PowerPlayComputerVisionPipelines.PipePosition pos) {
         switch (pos) {
-            case LEFT1:
             case LEFT2:
             case LEFT3:
             case LEFT4:
@@ -463,7 +462,6 @@ public class SampleMecanumDrive extends MecanumDrive {
                 rightFront.setPower(.2);
                 rightRear.setPower(.2);
                 break;
-            case RIGHT1:
             case RIGHT2:
             case RIGHT3:
             case RIGHT4:
@@ -476,12 +474,15 @@ public class SampleMecanumDrive extends MecanumDrive {
                 rightFront.setPower(-.2);
                 rightRear.setPower(-.2);
                 break;
-            case CENTER:
+            case LEFT1:
+            case RIGHT1:
                 leftFront.setPower(0);
                 leftRear.setPower(0);
                 rightFront.setPower(0);
                 rightRear.setPower(0);
                 return true;
+            case CENTER:
+                break;
         }
         return false;
     }
