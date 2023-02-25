@@ -521,7 +521,6 @@ public class PowerPlayTeleopColorado extends LinearOpMode {
     public boolean alignPole() {
         PowerPlayComputerVisionPipelines.PipePosition pos = CV.sleevePipeline.position;
         switch (pos) {
-            case LEFT1:
             case LEFT2:
             case LEFT3:
             case LEFT4:
@@ -534,7 +533,6 @@ public class PowerPlayTeleopColorado extends LinearOpMode {
                 rightFrontMotor.setPower(ALIGN_SPEED);
                 rightRearMotor.setPower(ALIGN_SPEED);
                 break;
-            case RIGHT1:
             case RIGHT2:
             case RIGHT3:
             case RIGHT4:
@@ -548,6 +546,9 @@ public class PowerPlayTeleopColorado extends LinearOpMode {
                 rightRearMotor.setPower(-ALIGN_SPEED);
                 break;
             case CENTER:
+                break;
+            case LEFT1:
+            case RIGHT1:
                 leftFrontMotor.setPower(0);
                 leftRearMotor.setPower(0);
                 rightFrontMotor.setPower(0);
