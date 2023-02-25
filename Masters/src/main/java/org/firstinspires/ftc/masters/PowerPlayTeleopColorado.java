@@ -35,7 +35,7 @@ public class PowerPlayTeleopColorado extends LinearOpMode {
 
     private final FtcDashboard dashboard = FtcDashboard.getInstance();
 
-    ArmPIDController armPIDController;
+    ArmPIDControllerMotionProfile armPIDController;
     LiftPIDController liftPIDController;
     /* Declare OpMode members. */
     private final ElapsedTime runtime = new ElapsedTime();
@@ -156,7 +156,7 @@ public class PowerPlayTeleopColorado extends LinearOpMode {
         m_controller = new ProfiledPIDController(kp, ki, kd, m_constraints);
         m_controller.setTolerance(3);
 
-        armPIDController = new ArmPIDController(armMotor);
+        armPIDController = new ArmPIDControllerMotionProfile(armMotor);
         liftPIDController = new LiftPIDController(linearSlideMotor, frontSlide, slideOtherer);
 
         // Wait for the game to start (driver presses PLAY)
@@ -466,36 +466,42 @@ public class PowerPlayTeleopColorado extends LinearOpMode {
     }
 
     protected void moveSlideMotors (){
+        liftPIDController.setTarget(slideTarget);
+        linearSlideMotor.setPower(liftPIDController.calculatePower(linearSlideMotor));
+        slideOtherer.setPower(liftPIDController.calculatePower(slideOtherer));
+        frontSlide.setPower(liftPIDController.calculatePower(frontSlide));
 
-        linearSlideMotor.setTargetPosition(slideTarget);
-        frontSlide.setTargetPosition(slideTarget);
-        slideOtherer.setTargetPosition(slideTarget);
-        linearSlideMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        frontSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        slideOtherer.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        slideOtherer.setPower(1);
-        linearSlideMotor.setPower(1);
-        frontSlide.setPower(1);
+//        linearSlideMotor.setTargetPosition(slideTarget);
+//        frontSlide.setTargetPosition(slideTarget);
+//        slideOtherer.setTargetPosition(slideTarget);
+//        linearSlideMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+//        frontSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+//        slideOtherer.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+//        slideOtherer.setPower(1);
+//        linearSlideMotor.setPower(1);
+//        frontSlide.setPower(1);
 
     }
 
     protected void moveArm (){
+        armPIDController.setTarget(armTarget);
+        armMotor.setVelocity(armPIDController.calculateVelocity());
 
-        m_controller.setGoal(armTarget);
+//        m_controller.setGoal(armTarget);
+//
+//        double output = m_controller.calculate(
+//                armMotor.getCurrentPosition()  // the measured value
+//        );
+//
+//        double ff = Math.cos(Math.toRadians((armTarget+400) / ticks_in_degree)) * f_arm * ticks_per_seconds;
+//        telemetry.addData("output", output + ff);
+//        armMotor.setVelocity(output+ ff);
+//
+//        //armPIDController.setTarget(armTarget);
+//        double velocity = armPIDController.calculateVelocity();
+//        armMotor.setPower(velocity);
 
-        double output = m_controller.calculate(
-                armMotor.getCurrentPosition()  // the measured value
-        );
-
-        double ff = Math.cos(Math.toRadians((armTarget+400) / ticks_in_degree)) * f_arm * ticks_per_seconds;
-        telemetry.addData("output", output + ff);
-        armMotor.setVelocity(output+ ff);
-
-        //armPIDController.setTarget(armTarget);
-        double velocity = armPIDController.calculateVelocity();
-        armMotor.setPower(velocity);
-
-        telemetry.addData("power", velocity);
+       // telemetry.addData("power", velocity);
     }
 
     enum STATE{
