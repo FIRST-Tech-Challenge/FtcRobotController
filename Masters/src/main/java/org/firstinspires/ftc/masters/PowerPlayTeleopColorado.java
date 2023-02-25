@@ -1,6 +1,6 @@
 package org.firstinspires.ftc.masters;
 
-import static org.firstinspires.ftc.masters.BadgerConstants.ARM_BACK;
+import static org.firstinspires.ftc.masters.BadgerConstants.ARM_BACK_TOP;
 import static org.firstinspires.ftc.masters.BadgerConstants.ARM_BOTTOM;
 import static org.firstinspires.ftc.masters.BadgerConstants.ARM_BOTTOM_JUNCTION;
 import static org.firstinspires.ftc.masters.BadgerConstants.ARM_CONE_STACK;
@@ -51,7 +51,7 @@ public class PowerPlayTeleopColorado extends LinearOpMode {
     private final double MAX_VELOCITY= 435/60*384.5*0.8;
     ProfiledPIDController m_controller;
 
-    public static double ALIGN_SPEED =0.15;
+    public static double ALIGN_SPEED = 0.15;
 
     Servo clawServo = null;
     DcMotorEx armMotor = null;
@@ -65,7 +65,7 @@ public class PowerPlayTeleopColorado extends LinearOpMode {
 
     int armSelection =0, slideSelection =0;
 
-    int armTarget =0, slideTarget =0;
+    int   armTarget =0, slideTarget =0;
     boolean set = true;
     boolean trigger = false;
 
@@ -245,10 +245,7 @@ public class PowerPlayTeleopColorado extends LinearOpMode {
                     aligning = false;
 
                 }
-
             }
-
-
 
             if (gamepad1.left_trigger>0.2){
                 armMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -278,7 +275,7 @@ public class PowerPlayTeleopColorado extends LinearOpMode {
       if (gamepad2.dpad_up && gamepad2.left_trigger>0.1){
                 previousState = currentState;
                 currentState = STATE.BACK_HIGH;
-                armSelection = ARM_BACK - armOffset;
+                armSelection = ARM_BACK_TOP - armOffset;
                 slideSelection= SLIDE_HIGH - liftOffset;
 
                 if (previousState == STATE.ZERO){
@@ -312,7 +309,7 @@ public class PowerPlayTeleopColorado extends LinearOpMode {
                 previousState = currentState;
                 currentState = STATE.BACK_MID;
                 slideSelection = SLIDE_MIDDLE - liftOffset;
-                armSelection = ARM_BACK - armOffset;
+                armSelection = ARM_BACK_TOP - armOffset;
                 if (previousState == STATE.ZERO){
                     armTarget = armSelection;
                 } else {

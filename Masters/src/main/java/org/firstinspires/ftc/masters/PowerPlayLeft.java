@@ -45,7 +45,7 @@ public class PowerPlayLeft extends LinearOpMode {
     }
 
     LiftPIDController liftPIDController;
-    ArmPIDController armPIDController;
+    ArmPIDControllerMotionProfile armPIDController;
 
     int armTarget = 0, liftTarget = 0;
 
@@ -71,7 +71,7 @@ public class PowerPlayLeft extends LinearOpMode {
         drive.setPoseEstimate(startPose);
 
         liftPIDController = new LiftPIDController(drive.linearSlide, drive.frontSlide, drive.slideOtherer);
-        armPIDController = new ArmPIDController(drive.armMotor);
+        armPIDController = new ArmPIDControllerMotionProfile(drive.armMotor);
         drive.tipCenter();
         drive.closeClaw();
 
