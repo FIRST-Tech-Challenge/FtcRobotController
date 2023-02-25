@@ -14,6 +14,7 @@ public class BadgerConstants {
     public static  int ARM_BOTTOM = 0;
     public static  int ARM_MID_TOP = 800;
     public static  int ARM_CONE_STACK=290;
+    public static int ARM_BACK_TOP=1250;
 
     public static  int ARM_BOTTOM_JUNCTION = 600;
     public static int ARM_BACK = -1310;

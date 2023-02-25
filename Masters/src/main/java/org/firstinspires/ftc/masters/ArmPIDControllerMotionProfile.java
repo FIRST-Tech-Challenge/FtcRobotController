@@ -21,6 +21,7 @@ public class ArmPIDControllerMotionProfile {
     }
 
     public void setTarget(int target) {
+        pidController.setGoal(target);
         this.target = target;
     }
 
