@@ -10,7 +10,7 @@ public class LiftPIDController {
     PIDController liftController;
     int target =0;
     public static double multiplier = 1;
-    public static double p=0.25, i=0, d=0.00001;
+    public static double p=0.02, i=0, d=0.00001;
     public static double f=0.03;
 
     public LiftPIDController (DcMotorEx mainSlideMotor, DcMotorEx slideMotor2, DcMotorEx slideMotor3){
@@ -18,6 +18,7 @@ public class LiftPIDController {
         this.slideMotor2 = slideMotor2;
         this.slideMotor3 = slideMotor3;
         liftController = new PIDController(p, i,d);
+        liftController.setTolerance(5);
     }
 
     public void setTarget(int target){
@@ -45,6 +46,7 @@ public class LiftPIDController {
 
         int liftPos = motor.getCurrentPosition();
         double pid = liftController.calculate(liftPos, target);
+
 
         if (target == 0 && liftPos<100){
             return 0;
