@@ -1,8 +1,11 @@
 package org.firstinspires.ftc.teamcode;
 
+import android.util.Log;
+
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
+import org.firstinspires.ftc.robotcore.external.hardware.camera.controls.PtzControl;
 import org.firstinspires.ftc.teamcode.hardware.ConeImageProcessor;
 import org.firstinspires.ftc.teamcode.hardware.ConeQRProcessor;
 import org.firstinspires.ftc.teamcode.hardware.SleeveSide;
@@ -23,6 +26,10 @@ import org.firstinspires.ftc.teamcode.hardware.MecanumWheels;
 
 //@Autonomous(name = "BaseAuto")
 public abstract class BaseAuto extends LinearOpMode {
+
+    PtzControl myPtzControl;
+
+    int curZoom = 200;
 
     OpenCvWebcam webCam;
     ConeQRProcessor coneImgPipeline;
@@ -62,7 +69,13 @@ public abstract class BaseAuto extends LinearOpMode {
             @Override
             public void onOpened()
             {
-                webCam.startStreaming(1280,720, OpenCvCameraRotation.UPRIGHT);
+                myPtzControl = webCam.getPtzControl();
+                myPtzControl.setZoom(curZoom);
+                Log.d("9010", "min zoom" + myPtzControl.getMinZoom());
+                Log.d("9010", "max zoom" + myPtzControl.getMaxZoom());
+
+
+                webCam.startStreaming(1920,1080, OpenCvCameraRotation.UPRIGHT);
             }
 
             @Override

@@ -96,6 +96,14 @@ public class ConeQRProcessor  extends OpenCvPipeline {
 
         Mat croppedQR = null;
 
+        Mat origin = input.clone();
+        Rect cropRect = new Rect();
+        cropRect.x = 640;
+        cropRect.y = 0;
+        cropRect.width = 640;
+        cropRect.height=1080;
+        input = origin.submat(cropRect);
+
         if ( !decoded) {
             Log.d("9010", "Starting qr code process ");
             startMills  = System.currentTimeMillis();
@@ -143,7 +151,7 @@ public class ConeQRProcessor  extends OpenCvPipeline {
                     Mat result  = new Mat(croppedQR.size(), CvType.CV_8UC3, new Scalar(255, 255, 255));
                     croppedQR.copyTo(result, tobeRemove);
                     Imgcodecs.imwrite("/sdcard/FIRST/crop-removed.jpg",result );
-                    Log.d("9010", result.dump());
+                    //Log.d("9010", result.dump());
 
                     Mat hsvResult = new Mat();
                     Imgproc.cvtColor(result, hsvResult, Imgproc.COLOR_RGB2HSV);
@@ -234,7 +242,7 @@ public class ConeQRProcessor  extends OpenCvPipeline {
                     //System.out.println("data is: " + hue );
                 }
                 if ( hue> 0 && hue < 165 ) {
-                    Log.d("9010","hue : " + hue + " Posiiton: " + h + "," + w  );
+                    //Log.d("9010","hue : " + hue + " Posiiton: " + h + "," + w  );
                     total += hue;
                     count ++;
                 }

@@ -83,6 +83,9 @@ public class Hardware2022 {
     public DcMotorEx wheelFrontLeft = null;
     public DcMotorEx wheelBackRight = null;
     public DcMotorEx wheelBackLeft = null;
+    public DcMotorEx vertEncoder1 = null;
+    public DcMotorEx vertEncoder2 = null;
+    public DcMotorEx hortEncoder = null;
 
     //Touch sensor
     DigitalChannel clawTouch ;
