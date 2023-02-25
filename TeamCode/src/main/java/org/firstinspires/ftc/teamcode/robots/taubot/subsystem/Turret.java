@@ -26,7 +26,7 @@ import java.util.Map;
 @Config(value = "PPTurret")
 public class Turret implements Subsystem {
 
-    public static PIDCoefficients TURRET_PID = new PIDCoefficients(0.02, 0.02, 0.002); //0.02, 0.01, 0.05)
+    public static PIDCoefficients TURRET_PID = new PIDCoefficients(0.04, 0.02, 0.002); //0.02, 0.01, 0.05)
     public static final double TICKS_PER_DEGREE = 36;
     public static double TURRET_TOLERANCE = 1;
 

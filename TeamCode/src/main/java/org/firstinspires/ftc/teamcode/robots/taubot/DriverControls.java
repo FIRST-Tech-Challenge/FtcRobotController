@@ -115,11 +115,11 @@ public class DriverControls {
             //manual override of drivetrain
             if (notJoystickDeadZone(gamepad1.left_stick_y) || notJoystickDeadZone(gamepad1.left_stick_x)) {
                 robot.driveTrain.ManualArcadeDrive(-0.7 * gamepad1.left_stick_y, 0.7 * gamepad1.left_stick_x);
-                robot.crane.driverIsDriving();
+                //robot.crane.driverIsDriving();
             }
             else {
                 robot.driveTrain.ManualDriveOff();
-                robot.crane.driverNotDriving();
+                //robot.crane.driverNotDriving();
             }
         }else{
             if (notJoystickDeadZone(gamepad1.right_stick_x)){
@@ -136,11 +136,11 @@ public class DriverControls {
             //manual override of drivetrain
             if (notJoystickDeadZone(gamepad1.left_stick_y) || notJoystickDeadZone(gamepad1.left_stick_x)) {
                 robot.driveTrain.ManualArcadeDrive(-gamepad1.left_stick_y, gamepad1.left_stick_x);
-                robot.crane.driverIsDriving();
+                //robot.crane.driverIsDriving();
             }
             else {
                 robot.driveTrain.ManualDriveOff();
-                robot.crane.driverNotDriving();
+                //robot.crane.driverNotDriving();
             }
         }
     }

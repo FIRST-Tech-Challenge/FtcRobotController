@@ -66,7 +66,7 @@ public class Crane implements Subsystem {
 
     public static double SHOULDER_TICK_MAX = 1849;
 
-    public static double EXTEND_TICKS_PER_METER = 806/.2921; //todo verify this is still true
+    public static double EXTEND_TICKS_PER_METER = 3700/1.6129; //todo verify this is still true
 
     public static void setShoulderImuEnable(boolean shoulderImuEnable) {
         SHOULDER_IMU_ENABLE = shoulderImuEnable;
@@ -97,7 +97,7 @@ public class Crane implements Subsystem {
     public static double EXTENDER_TOLERANCE = 1;
     public static double EXTENDER_POWER = 1.0;
     public static double EXTENDER_TICS_MIN = 0;
-    public static double EXTENDER_TICS_MAX = 3100; // of the robot
+    public static double EXTENDER_TICS_MAX = 3700; // of the robot
     boolean EXTENDER_CALIBRATE_MAX = false; //keep false except if calibrating EXTENDER_TICS_MAX
 
     public static double BULB_OPEN_POS = 1500;
@@ -1125,7 +1125,7 @@ public class Crane implements Subsystem {
     public  void setShoulderTargetAngle(double t){ shoulderTargetAngle = (Math.max(Math.min(t,SHOULDER_DEG_MAX),SHOULDER_DEG_MIN)); }
     public  double getShoulderTargetAngle(){ return shoulderTargetAngle; }
     public double getExtenderTargetPos(){ return extenderTargetPos+craneLengthOffset; }
-    public  void setExtendTargetPos(double t){ extenderTargetPos = Math.min(3075/EXTEND_TICKS_PER_METER,Math.max(t-craneLengthOffset, 0)); }
+    public  void setExtendTargetPos(double t){ extenderTargetPos = Math.min(EXTENDER_TICS_MAX/EXTEND_TICKS_PER_METER,Math.max(t-craneLengthOffset, 0)); }
     public boolean nearTargetShoulder(){
         if ((Math.abs( getShoulderAngle()- getShoulderTargetAngle()))<2) return true;
         else return false;
