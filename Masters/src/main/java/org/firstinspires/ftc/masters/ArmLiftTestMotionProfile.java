@@ -23,6 +23,9 @@ public class ArmLiftTestMotionProfile extends LinearOpMode {
     public static int liftTarget = 0;
     public static double maxSpeed = 0.3;
     public static double kp=6, ki=0, kd=0.09;
+    public static double f_arm = 0.09;
+    private final double ticks_in_degree = 2785 / 360;
+    private final double ticks_per_seconds = 2785 * 60 /60;
 
 
     @Override
@@ -59,8 +62,10 @@ m_controller.setTolerance(3);
                 double output = m_controller.calculate(
                         drive.armMotor.getCurrentPosition()  // the measured value
                 );
-                telemetry.addData("output", output);
-                drive.armMotor.setVelocity(output);
+
+                double ff = Math.cos(Math.toRadians((armTarget+400) / ticks_in_degree)) * f_arm * ticks_per_seconds;
+                telemetry.addData("output", output + ff);
+                drive.armMotor.setVelocity(output+ ff);
                 telemetry.addData("arm target", armTarget);
                 telemetry.addData("arm position", drive.armMotor.getCurrentPosition());
 
