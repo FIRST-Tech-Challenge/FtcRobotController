@@ -29,7 +29,7 @@ public class Arm{
     public static double EXTAKE_POS = 180; // 950 old val
     public static double INTAKE_POS = 82; // in degrees of absolute encoder
 
-    public static double AUTOEXTAKE_POS = 182.5;
+    public static double AUTOEXTAKE_POS = 179.2;
 
     // Initially set to 0 because we only want the claw to move when given input from the controller
     // initializing the targetPos value to a greater positive value would cause the update() method to
