@@ -7,6 +7,7 @@ import org.firstinspires.ftc.teamcode.MechanismTemplates.Claw;
 import org.firstinspires.ftc.teamcode.MechanismTemplates.OdoPod;
 import org.firstinspires.ftc.teamcode.MechanismTemplates.Slide;
 import org.firstinspires.ftc.teamcode.TeleOps.AprilTags.PowerPlay_AprilTagDetectionDeposit;
+import org.firstinspires.ftc.teamcode.drive.DriveConstants;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequence;
 import com.acmerobotics.dashboard.config.Config;
@@ -17,11 +18,11 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 @Config
 @Autonomous(name = "testAuto2")
 public class SPLINEAutoRightSide extends PowerPlay_AprilTagDetectionDeposit{
-	public static double endTangent1 = 40;
-	public static double openingStrafe = 8;
+	//public static double endTangent1 = 40;
+	//public static double openingStrafe = 8;
 	// [ARM]
 	private Arm armControl;
-	public static int armPosition = 0;
+	//public static int armPosition = 0;
 
 	// [SLIDES]
 	private Slide slideControl;
@@ -31,56 +32,67 @@ public class SPLINEAutoRightSide extends PowerPlay_AprilTagDetectionDeposit{
 
 	// [OPENING MOVE]
 	public static double openingX = 35;
-	public static double openingY = 1;
+	public static double openingY = 1.25;
 
 	// [MEDIUM JUNCTION]
-	public static double mediumX1 = 43.5;
-	public static double mediumY1 = 5;
-	public static double mediumX2 = 43.5;
-	public static double mediumY2 = 5;
-	public static double mediumX3 = 43.5;
-	public static double mediumY3 = 5;
-	public static double mediumX4 = 43.5;
-	public static double mediumY4 = 5;
-	public static double mediumX5 = 43.5;
-	public static double mediumY5 = 5;
+	public static double mediumX1 = 41.75;
+	public static double mediumY1 = 6;
+	public static double mediumX2 = 41.75;
+	public static double mediumY2 = 6;
+	public static double mediumX3 = 41.75;
+	public static double mediumY3 = 6;
+	public static double mediumX4 = 41.75;
+	public static double mediumY4 = 6;
+	//public static double mediumX5 = 43.5;
+	//public static double mediumY5 = 5;
+
+	//parking coordinates
+	//public static double zone1X = 51;
+	//public static double zone1Y = 27.5;
+	public static double zone2X = 45.8;
+	public static double zone2Y = 1;
+	//public static double zone3X = 51;
+	//public static double zone3Y = -23;
+	public static double zone1backwards =22;
+	public static double zone3forwards = 19.5;
 
 
 	// [CONE STACK]
 	public static double xConeStack1 = 48.7;
 	public static double yConeStack = 26.85;
-	public static double xConeStack2 = 48.7;
-	public static double xConeStack3 = 48.7;
-	public static double xConeStack4 = 48.7;
-	public static double xConeStack5 = 48.7;
+	public static double xConeStack2 = 46.7;
+	public static double xConeStack3 = 46.7;
+	public static double xConeStack4 = 45.8;
+	//public static double xConeStack5 = 48.7;
 	public static double coneStackHeading = 269;
-	public static double coneStackForward = 8.7;
+	//public static double coneStackForward = 8.7;
 
 	// [OPENING MOVE --> MEDIUM JUNCTION]
 	public static double openingHeading = 270;
 	// [1] MEDIUM JUNCTION --> CONE STACK
-	public static double coneStackHeading1 = 267;
+	//public static double coneStackHeading1 = 267;
 	// [1] CONE STACK --> MEDIUM JUNCTION
 	public static double mediumHeading1 = 145; // no end tangent for splineTo
 
 	// [2] MEDIUM JUNCTION --> CONE STACK
-	public static double coneStackHeading2 = 45;
+	//public static double coneStackHeading2 = 45;
 	// [2] CONE STACK --> MEDIUM JUNCTION
 	public static double mediumHeading2 = 145;
 
 	// [3] MEDIUM JUNCTION --> CONE STACK
-	public static double coneStackHeading3 = 45;
+	//public static double coneStackHeading3 = 45;
 	// [3] CONE STACK --> MEDIUM JUNCTION
 	public static double mediumHeading3 = 145;
 
 	// [4] MEDIUM JUNCTION --> CONE STACK
-	public static double coneStackHeading4 = 45;
+	//public static double coneStackHeading4 = 45;
 	// [4] CONE STACK --> MEDIUM JUNCTION
 	public static double mediumHeading4 = 145;
 
 	public void initialize(){
 		armControl = new Arm(hardwareMap);
 		slideControl = new Slide(hardwareMap);
+		//DriveConstants.MAX_VEL = 48.5;
 	}
 
 	public void scan(){
@@ -93,6 +105,7 @@ public class SPLINEAutoRightSide extends PowerPlay_AprilTagDetectionDeposit{
 		SampleMecanumDrive bot = new SampleMecanumDrive(hardwareMap);
 		bot.setPoseEstimate(startPose);
 		initialize();
+
 
 		TrajectorySequence junction = bot.trajectorySequenceBuilder(startPose)
 				.UNSTABLE_addTemporalMarkerOffset(0,()->{
@@ -282,21 +295,35 @@ public class SPLINEAutoRightSide extends PowerPlay_AprilTagDetectionDeposit{
 				})
 				.waitSeconds(0.1)
 				.addTemporalMarker(() -> {
-					if(tagUse == 1){
-						TrajectorySequence zoneOne = bot.trajectorySequenceBuilder(new Pose2d(mediumX4,mediumY4,Math.toRadians(mediumHeading4)))
-								.lineToLinearHeading(new Pose2d(51 ,27, Math.toRadians(271)))
-								.build();
-						bot.followTrajectorySequenceAsync(zoneOne);
-					}else if(tagUse == 2) {
+					if(tagUse == 2) {
 						TrajectorySequence zoneTwo = bot.trajectorySequenceBuilder(new Pose2d(mediumX4,mediumY4,Math.toRadians(mediumHeading4)))
-								.lineToLinearHeading(new Pose2d(51 ,0, Math.toRadians(271)))
+								.lineToLinearHeading(new Pose2d(zone2X ,zone2Y, Math.toRadians(271)))
 								.build();
 						bot.followTrajectorySequenceAsync(zoneTwo);
-					}else{
-						Trajectory zoneThree = bot.trajectoryBuilder(new Pose2d(mediumX4,mediumY4,Math.toRadians(mediumHeading4)))
-								.lineToLinearHeading(new Pose2d(51 ,-23, Math.toRadians(271)))
+					}else if(tagUse == 1){
+
+						TrajectorySequence zoneOne = bot.trajectorySequenceBuilder(new Pose2d(mediumX4,mediumY4,Math.toRadians(mediumHeading4)))
+								.lineToLinearHeading(new Pose2d(zone2X ,zone2Y, Math.toRadians(271)))
 								.build();
+						Trajectory backward1 = bot.trajectoryBuilder(new Pose2d(zone2X ,zone2Y, Math.toRadians(271)))
+								.back(zone1backwards)
+								.build();
+						bot.followTrajectorySequenceAsync(zoneOne);
+						bot.followTrajectoryAsync(backward1);
+
+					}else{
+
+						Trajectory zoneThree = bot.trajectoryBuilder(new Pose2d(mediumX4,mediumY4,Math.toRadians(mediumHeading4)))
+								.lineToLinearHeading(new Pose2d(zone2X ,zone2Y, Math.toRadians(271)))
+								.build();
+						Trajectory forward3 = bot.trajectoryBuilder(new Pose2d(zone2X ,zone2Y, Math.toRadians(271)))
+								.forward(zone3forwards)
+								.build();
+
 						bot.followTrajectoryAsync(zoneThree);
+						bot.followTrajectoryAsync(forward3);
+
+
 					}
 				})
 
@@ -309,6 +336,8 @@ public class SPLINEAutoRightSide extends PowerPlay_AprilTagDetectionDeposit{
 		scan();
 		waitForStart();
 		bot.followTrajectorySequenceAsync(junction);
+
+		//DriveConstants.MAX_VEL = 55;
 
 		while(opModeIsActive()  && !isStopRequested()){
 			bot.update();
