@@ -139,6 +139,7 @@ public class UnderArm implements Subsystem {
         Test2(90,90,0),
         Test3(0,90,0),
         Test4(90,0,30),
+        SafePos(90,0,0,MAX_CHASSIS_LENGTH),
         FoldPosition(FOLDPOS_SHOULDER_ANGLE,FOLDPOS_ELBOW_ANGLE,FOLDPOS_TURRET_ANGLE,MIN_CHASSIS_LENGTH),
         FoldTransferPosition(FOLDPOS_SHOULDER_ANGLE+30,FOLDPOS_ELBOW_ANGLE,FOLDPOS_TURRET_ANGLE,MAX_CHASSIS_LENGTH);
 

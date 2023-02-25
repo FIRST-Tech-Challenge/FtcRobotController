@@ -66,15 +66,8 @@ public class DriverControls {
             robot.driveTrain.toggleExtension();
         }
 
-        if(stickyGamepad1.a) {
-            robot.crane.pickupSequence();
-
-        }
-
         if(stickyGamepad1.b){
-            robot.crane.dropSequence();
-            robot.field.incTarget();
-            robot.crane.updateScoringPattern();
+            robot.articulate(Robot.Articulation.DROP);
         }
 
         if(stickyGamepad1.x){
@@ -152,11 +145,11 @@ public class DriverControls {
         }
 
         if(gamepad1.left_bumper){
-            robot.crane.incNudgeIndex();
+            robot.driveTrain.adjustChassisLength(-1);
         }
 
         if(gamepad1.right_bumper){
-            robot.crane.decNudgeIndex();
+            robot.driveTrain.adjustChassisLength(1);
         }
 
         if(stickyGamepad1.start){
@@ -164,8 +157,7 @@ public class DriverControls {
         }
 
         if(stickyGamepad1.a) {
-            robot.crane.pickupSequence();
-
+            robot.articulate(Robot.Articulation.PICKUP);
         }
 
         if(stickyGamepad1.b){
@@ -336,15 +328,11 @@ public class DriverControls {
 
     public void UnderarmControls(){
 
-        if(gamepad2.left_bumper){
-            robot.driveTrain.adjustChassisLength(-1);
+        if(stickyGamepad2.a){
+            robot.articulate(Robot.Articulation.PICKUP);
         }
 
-        if(gamepad2.right_bumper){
-            robot.driveTrain.adjustChassisLength(1);
-        }
-
-        if(stickyGamepad2.start){
+        if(stickyGamepad2.y){
             robot.underarm.toggleLasso();
         }
 

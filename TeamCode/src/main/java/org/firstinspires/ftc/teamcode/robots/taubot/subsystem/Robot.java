@@ -379,7 +379,8 @@ public class Robot implements Subsystem {
         START_END_GAME, //use on a timer to automatically deploy carousel spinner 10 seconds before end game
 
         // tele-op articulations
-        TRANSFER,
+        PICKUP,
+        DROP,
         DUMP_AND_SET_CRANE_FOR_TRANSFER,
         GRAB_AND_TRANSFER,
 
@@ -402,11 +403,15 @@ public class Robot implements Subsystem {
         switch (this.articulation){
             case MANUAL:
                 break;
-            case TRANSFER:
-                if(transfer()){
+            case PICKUP:
+                if(pickup()){
                     articulation = Articulation.MANUAL;
                 }
                 break;
+            case DROP:
+                if(drop()){
+                    articulation = Articulation.MANUAL;
+                }
             case UNFOLD:
                 if(unfold()){
                     unfolded = true;
@@ -462,6 +467,48 @@ public class Robot implements Subsystem {
                 crane.articulate(Crane.Articulation.manual);
                 underarm.articulate(UnderArm.Articulation.home);
                 unfoldStage = 0;
+                return true;
+        }
+        return false;
+    }
+
+    int pickupStage = 0;
+    long pickupTimer = 0;
+
+    public boolean pickup(){
+        switch (pickupStage){
+            case 0:
+                underarm.grip();
+                pickupStage++;
+                break;
+            case 1:
+                if(transfer()){
+                    pickupStage++;
+                }
+                break;
+            case 2:
+                pickupStage = 0;
+                return true;
+        }
+        return false;
+    }
+
+    int dropStage = 0;
+    long dropTimer = 0;
+
+    public boolean drop(){
+        switch (dropStage){
+            case 0:
+                field.incTarget();
+                crane.updateScoringPattern();
+                dropStage++;
+                break;
+            case 1:
+                crane.articulate(Crane.Articulation.dropCone);
+                dropStage++;
+                break;
+            case 2:
+                dropStage = 0;
                 return true;
         }
         return false;

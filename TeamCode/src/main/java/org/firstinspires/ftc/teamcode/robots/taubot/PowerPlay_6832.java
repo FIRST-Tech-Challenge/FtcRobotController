@@ -46,6 +46,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 import org.firstinspires.ftc.robotcore.internal.system.Misc;
 import org.firstinspires.ftc.teamcode.robots.taubot.subsystem.Crane;
 import org.firstinspires.ftc.teamcode.robots.taubot.subsystem.Robot;
+import org.firstinspires.ftc.teamcode.robots.taubot.subsystem.UnderArm;
 import org.firstinspires.ftc.teamcode.robots.taubot.util.Constants;
 import org.firstinspires.ftc.teamcode.robots.taubot.util.ExponentialSmoother;
 import org.firstinspires.ftc.teamcode.robots.taubot.util.TelemetryProvider;
@@ -280,11 +281,15 @@ public class PowerPlay_6832 extends OpMode {
 
         if(gameState.equals(GameState.TELE_OP)){
             robot.crane.resetCrane(startingPosition);
+            robot.underarm.setJointAngle(UnderArm.JointAngle.SafePos);
+            robot.underarm.articulate(UnderArm.Articulation.jointAngles);
         }
 
         if(gameState.equals(GameState.TEST)){
             robot.driveTrain.setPoseEstimate(startingPosition.getPose());
             robot.crane.resetCrane(startingPosition);
+            robot.underarm.setJointAngle(UnderArm.JointAngle.SafePos);
+            robot.underarm.articulate(UnderArm.Articulation.jointAngles);
         }
         robot.crane.updateScoringPattern();
 

@@ -66,7 +66,7 @@ public class Crane implements Subsystem {
 
     public static double SHOULDER_TICK_MAX = 1849;
 
-    public static double EXTEND_TICKS_PER_METER = 806/.2921; //todo verify this is still true
+    public static double EXTEND_TICKS_PER_METER = 3700/1.6129; //todo verify this is still true
 
     public static void setShoulderImuEnable(boolean shoulderImuEnable) {
         SHOULDER_IMU_ENABLE = shoulderImuEnable;
@@ -97,7 +97,7 @@ public class Crane implements Subsystem {
     public static double EXTENDER_TOLERANCE = 1;
     public static double EXTENDER_POWER = 1.0;
     public static double EXTENDER_TICS_MIN = 0;
-    public static double EXTENDER_TICS_MAX = 3075; // of the robot
+    public static double EXTENDER_TICS_MAX = 3700; // of the robot
     boolean EXTENDER_CALIBRATE_MAX = false; //keep false except if calibrating EXTENDER_TICS_MAX
 
     public static double BULB_OPEN_POS = 1500;
@@ -478,8 +478,7 @@ public class Crane implements Subsystem {
                 pickupConeStage = 0;
                 updateScoringPattern();
                 if(dropCone(source)){
-                    articulation = Articulation.manual;
-                    return Articulation.manual;
+                    articulation = Articulation.transfer;
                 }
                 break;
 
@@ -488,7 +487,6 @@ public class Crane implements Subsystem {
                 dropConeStage = 0;
                 if(goHome()){
                     articulation = Articulation.manual;
-                    return Articulation.manual;
                 }
                 break;
 
@@ -497,20 +495,17 @@ public class Crane implements Subsystem {
                 updateScoringPattern();
                 if(pickupCone(targetPole)){
                     articulation = Articulation.manual;
-                    return Articulation.manual;
                 }
 
                 break;
             case coneStackRight:
                 if(coneStack(true)){
                     articulation = Articulation.manual;
-                    return Articulation.manual;
                 }
                 break;
             case coneStackLeft:
                 if(coneStack(false)){
                     articulation = Articulation.manual;
-                    return Articulation.manual;
                 }
                 break;
             default:
@@ -1138,10 +1133,6 @@ public class Crane implements Subsystem {
 
     public void grab(){
         bulbGripped = true;
-    }
-
-    public void pickupSequence(){
-        articulate(Articulation.pickupCone);
     }
 
     public void release(){
