@@ -175,7 +175,7 @@ public class PowerPlayTeleopColorado extends LinearOpMode {
             y = -gamepad1.left_stick_y;
             x = gamepad1.left_stick_x;
             rx = gamepad1.right_stick_x;
-            
+
             if (Math.abs(y) < 0.2) {
                 y = 0;
             }
@@ -463,30 +463,6 @@ public class PowerPlayTeleopColorado extends LinearOpMode {
         slideOtherer.setPower(1);
         linearSlideMotor.setPower(1);
         frontSlide.setPower(1);
-
-
-
-
-//        liftPIDController.setTarget(slideTarget);
-//
-//        double power= liftPIDController.calculatePower();
-//        double powerLeft= liftPIDController.calculatePower(slideOtherer);
-////
-//        linearSlideMotor.setPower(power);
-//        frontSlide.setPower(power);
-//        slideOtherer.setPower(powerLeft);
-//
-//        double velocity = power *MAX_VELOCITY;
-//        //double powerLeft= liftPIDController.calculatePower(drive.slideOtherer);
-//
-//
-////        linearSlideMotor.setVelocity(velocity);
-////        frontSlide.setVelocity(velocity);
-////        slideOtherer.setVelocity(velocity);
-//
-//        telemetry.addData("slide", linearSlideMotor.getCurrentPosition());
-//        telemetry.addData("front", frontSlide.getCurrentPosition());
-//        telemetry.addData("other", slideOtherer.getCurrentPosition());
 
     }
 
