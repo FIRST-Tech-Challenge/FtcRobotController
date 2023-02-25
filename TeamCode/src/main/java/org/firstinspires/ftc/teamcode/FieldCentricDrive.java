@@ -23,15 +23,17 @@ public class FieldCentricDrive extends LinearOpMode {
 
         // Reverse the right side motors
         // Reverse left motors if you are using NeveRests
-        motorFrontRight.setDirection(DcMotorSimple.Direction.REVERSE);
-        motorBackRight.setDirection(DcMotorSimple.Direction.REVERSE);
+        motorFrontLeft.setDirection(DcMotor.Direction.REVERSE);
+        motorBackLeft.setDirection(DcMotor.Direction.REVERSE);
+        motorFrontRight.setDirection(DcMotor.Direction.FORWARD);
+        motorBackRight.setDirection(DcMotor.Direction.FORWARD);
 
         // Retrieve the IMU from the hardware map
         IMU imu = hardwareMap.get(IMU.class, "imu");
         // Adjust the orientation parameters to match your robot
         IMU.Parameters parameters = new IMU.Parameters(new RevHubOrientationOnRobot(
-                RevHubOrientationOnRobot.LogoFacingDirection.UP,
-                RevHubOrientationOnRobot.UsbFacingDirection.FORWARD));
+                RevHubOrientationOnRobot.LogoFacingDirection.FORWARD,
+                RevHubOrientationOnRobot.UsbFacingDirection.UP));
         // Without this, the REV Hub's orientation is assumed to be logo up / USB forward
         imu.initialize(parameters);
 
