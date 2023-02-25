@@ -9,9 +9,7 @@ import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.Servo;
-import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.robotcore.external.navigation.Acceleration;
@@ -33,7 +31,6 @@ public class RightLowOnly extends LinearOpMode {
     private SampleMecanumDrive drive;
     private Servo gripper = null; //Located on Expansion Hub- Servo port 0
     private DcMotor arm = null;
-    private DistanceSensor gripperSensor;
 
     static final float MAX_SPEED = 1.0f;
     static final float MIN_SPEED = 0.4f;
@@ -59,8 +56,6 @@ public class RightLowOnly extends LinearOpMode {
         drive.setPoseEstimate(startPose);
         //TrajectorySequence aSeq = autoSeq(startPose);
 
-        gripperSensor  = hardwareMap.get(DistanceSensor .class, "pole_sensor");
-        //Sensor for arm to stop at end of autonomous
 
         //Reverse the arm direction so it moves in the proper direction
         arm.setDirection(DcMotor.Direction.REVERSE);
