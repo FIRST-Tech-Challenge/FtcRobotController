@@ -63,12 +63,9 @@ public class LiftPID extends LinearOpMode {
 
             liftController.setPID(p, i, d);
             int liftPos = linearSlideMotor.getCurrentPosition();
-            double pid = liftController.calculate(liftPos, target);
-
-            double power = pid +f;
 
             if (target == 0 && liftPos<100){
-telemetry.addData("power", 0);
+                telemetry.addData("power", 0);
                 linearSlideMotor.setPower(0);
                 frontSlide.setPower(0);
                 slideOtherer.setPower(0);
