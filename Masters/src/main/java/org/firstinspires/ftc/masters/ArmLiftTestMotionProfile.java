@@ -7,11 +7,12 @@ import com.arcrobotics.ftclib.controller.wpilibcontroller.ProfiledPIDController;
 import com.arcrobotics.ftclib.trajectory.TrapezoidProfile;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.masters.drive.SampleMecanumDrive;
 
 @Config
-@Autonomous(name = "Arm Lift Test Motion Profile", group="pid")
+@TeleOp(name = "Arm Lift Test Motion Profile", group="pid")
 public class ArmLiftTestMotionProfile extends LinearOpMode {
 
 
@@ -21,7 +22,7 @@ public class ArmLiftTestMotionProfile extends LinearOpMode {
     public static int armTarget = 0;
     public static int liftTarget = 0;
     public static double maxSpeed = 0.3;
-    public static double kp=0, ki=0, kd=0;
+    public static double kp=6, ki=0, kd=0.09;
 
 
     @Override
@@ -32,10 +33,10 @@ public class ArmLiftTestMotionProfile extends LinearOpMode {
 
         liftPIDController = new LiftPIDController(drive.linearSlide, drive.frontSlide, drive.slideOtherer);
 
-        TrapezoidProfile.Constraints m_constraints = new TrapezoidProfile.Constraints(2500, 1500);
-        Object kDt;
-        ProfiledPIDController m_controller = new ProfiledPIDController(kp, ki, kd, m_constraints);
+        TrapezoidProfile.Constraints m_constraints = new TrapezoidProfile.Constraints(2800, 3000);
 
+        ProfiledPIDController m_controller = new ProfiledPIDController(kp, ki, kd, m_constraints);
+m_controller.setTolerance(3);
 
         drive.tipCenter();
         drive.closeClaw();
@@ -48,20 +49,24 @@ public class ArmLiftTestMotionProfile extends LinearOpMode {
 
 
         while (opModeIsActive() && !isStopRequested()) {
+            m_controller.setD(kd);
+            m_controller.setI(ki);
+            m_controller.setP(kp);
 
             m_controller.setGoal(armTarget);
 
-            if(!m_controller.atGoal()) {
+           // if(!m_controller.atGoal()) {
                 double output = m_controller.calculate(
                         drive.armMotor.getCurrentPosition()  // the measured value
                 );
+                telemetry.addData("output", output);
                 drive.armMotor.setVelocity(output);
                 telemetry.addData("arm target", armTarget);
                 telemetry.addData("arm position", drive.armMotor.getCurrentPosition());
 
 
                 telemetry.update();
-            }
+           // }
 
 
 
