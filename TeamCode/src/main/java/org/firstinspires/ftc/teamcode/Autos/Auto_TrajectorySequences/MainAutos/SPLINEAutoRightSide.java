@@ -15,68 +15,68 @@ import com.acmerobotics.roadrunner.trajectory.Trajectory;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
 @Config
-@Autonomous(name = "testAuto")
-public class SPLINEAutoLeftSide extends PowerPlay_AprilTagDetectionDeposit{
-    public static double endTangent1 = 40;
-    public static double openingStrafe = 8;
+@Autonomous(name = "testAuto2")
+public class SPLINEAutoRightSide extends PowerPlay_AprilTagDetectionDeposit{
+	public static double endTangent1 = 40;
+	public static double openingStrafe = 8;
 	// [ARM]
-		private Arm armControl;
-		public static int armPosition = 0;
+	private Arm armControl;
+	public static int armPosition = 0;
 
 	// [SLIDES]
-		private Slide slideControl;
+	private Slide slideControl;
 
 	// [CLAW]
-	    private Claw clawControl;
+	private Claw clawControl;
 
 	// [OPENING MOVE]
-	public static double openingX = 37.7;
-	public static double openingY = -1;
+	public static double openingX = 35;
+	public static double openingY = 1;
 
 	// [MEDIUM JUNCTION]
-	public static double mediumX1 = 45.5;
-	public static double mediumY1 = -3.75;
-	public static double mediumX2 = 45.5;
-	public static double mediumY2 = -3.75;
-	public static double mediumX3 = 45.5;
-	public static double mediumY3 = -3.75;
-	public static double mediumX4 = 45.5;
-	public static double mediumY4 = -3.75;
-	public static double mediumX5 = 45.5;
-	public static double mediumY5 = -3.75;
+	public static double mediumX1 = 43.5;
+	public static double mediumY1 = 5;
+	public static double mediumX2 = 43.5;
+	public static double mediumY2 = 5;
+	public static double mediumX3 = 43.5;
+	public static double mediumY3 = 5;
+	public static double mediumX4 = 43.5;
+	public static double mediumY4 = 5;
+	public static double mediumX5 = 43.5;
+	public static double mediumY5 = 5;
 
 
 	// [CONE STACK]
 	public static double xConeStack1 = 48.7;
 	public static double yConeStack = 26.85;
-	public static double xConeStack2 = 49.7;
-	public static double xConeStack3 = 50.7;
-	public static double xConeStack4 = 51.7;
-	public static double xConeStack5 = 52.7;
-	public static double coneStackHeading = 89;
+	public static double xConeStack2 = 48.7;
+	public static double xConeStack3 = 48.7;
+	public static double xConeStack4 = 48.7;
+	public static double xConeStack5 = 48.7;
+	public static double coneStackHeading = 269;
 	public static double coneStackForward = 8.7;
 
 	// [OPENING MOVE --> MEDIUM JUNCTION]
-	public static double openingHeading = 90;
+	public static double openingHeading = 270;
 	// [1] MEDIUM JUNCTION --> CONE STACK
-	public static double coneStackHeading1 = 93;
+	public static double coneStackHeading1 = 267;
 	// [1] CONE STACK --> MEDIUM JUNCTION
-	public static double mediumHeading1 = 230; // no end tangent for splineTo
+	public static double mediumHeading1 = 145; // no end tangent for splineTo
 
 	// [2] MEDIUM JUNCTION --> CONE STACK
 	public static double coneStackHeading2 = 45;
 	// [2] CONE STACK --> MEDIUM JUNCTION
-	public static double mediumHeading2 = 230;
+	public static double mediumHeading2 = 145;
 
 	// [3] MEDIUM JUNCTION --> CONE STACK
 	public static double coneStackHeading3 = 45;
 	// [3] CONE STACK --> MEDIUM JUNCTION
-	public static double mediumHeading3 = 230;
+	public static double mediumHeading3 = 145;
 
 	// [4] MEDIUM JUNCTION --> CONE STACK
 	public static double coneStackHeading4 = 45;
 	// [4] CONE STACK --> MEDIUM JUNCTION
-	public static double mediumHeading4 = 230;
+	public static double mediumHeading4 = 145;
 
 	public void initialize(){
 		armControl = new Arm(hardwareMap);
@@ -99,7 +99,7 @@ public class SPLINEAutoLeftSide extends PowerPlay_AprilTagDetectionDeposit{
 					clawControl = new Claw(hardwareMap);
 					OdoPod odoControl = new OdoPod(hardwareMap);
 				})
-				 // claw close
+				// claw close
 				.waitSeconds(0.45)
 				.UNSTABLE_addTemporalMarkerOffset(1,()->{
 					slideControl.setMidJunction();
@@ -131,7 +131,7 @@ public class SPLINEAutoLeftSide extends PowerPlay_AprilTagDetectionDeposit{
 				//.splineToLinearHeading(new Pose2d(xConeStack, yConeStack, Math.toRadians(coneStackHeading1)), Math.toRadians(endTangent1))
 				//.forward(coneStackForward)
 
-				.lineToLinearHeading(new Pose2d(xConeStack1,-1,Math.toRadians(coneStackHeading)))
+				.lineToLinearHeading(new Pose2d(xConeStack1,1,Math.toRadians(coneStackHeading)))
 				.forward(yConeStack)
 				.UNSTABLE_addTemporalMarkerOffset(0,()->{
 					clawControl.toggleAutoOpenClose();
@@ -174,7 +174,7 @@ public class SPLINEAutoLeftSide extends PowerPlay_AprilTagDetectionDeposit{
 				//.splineToLinearHeading(new Pose2d(xConeStack, yConeStack, Math.toRadians(coneStackHeading1)), Math.toRadians(endTangent1))
 				//.forward(coneStackForward)
 
-				.lineToLinearHeading(new Pose2d(xConeStack2,-1,Math.toRadians(coneStackHeading)))
+				.lineToLinearHeading(new Pose2d(xConeStack2,1,Math.toRadians(coneStackHeading)))
 				.forward(yConeStack)
 				.UNSTABLE_addTemporalMarkerOffset(0,()->{
 					clawControl.toggleAutoOpenClose();
@@ -209,7 +209,7 @@ public class SPLINEAutoLeftSide extends PowerPlay_AprilTagDetectionDeposit{
 				.UNSTABLE_addTemporalMarkerOffset(0,()->{
 					slideControl.setCustom(350);
 				})
-				.lineToLinearHeading(new Pose2d(xConeStack3,-1,Math.toRadians(coneStackHeading)))
+				.lineToLinearHeading(new Pose2d(xConeStack3,1,Math.toRadians(coneStackHeading)))
 				.forward(yConeStack)
 				.UNSTABLE_addTemporalMarkerOffset(0,()->{
 					clawControl.toggleAutoOpenClose();
@@ -245,7 +245,7 @@ public class SPLINEAutoLeftSide extends PowerPlay_AprilTagDetectionDeposit{
 					slideControl.setCustom(225);
 
 				})
-				.lineToLinearHeading(new Pose2d(xConeStack4,-1,Math.toRadians(coneStackHeading)))
+				.lineToLinearHeading(new Pose2d(xConeStack4,1,Math.toRadians(coneStackHeading)))
 				.forward(yConeStack)
 				.UNSTABLE_addTemporalMarkerOffset(0,()->{
 					clawControl.toggleAutoOpenClose();
@@ -284,17 +284,17 @@ public class SPLINEAutoLeftSide extends PowerPlay_AprilTagDetectionDeposit{
 				.addTemporalMarker(() -> {
 					if(tagUse == 1){
 						TrajectorySequence zoneOne = bot.trajectorySequenceBuilder(new Pose2d(mediumX4,mediumY4,Math.toRadians(mediumHeading4)))
-								.lineToLinearHeading(new Pose2d(51 ,27, Math.toRadians(89)))
+								.lineToLinearHeading(new Pose2d(51 ,27, Math.toRadians(271)))
 								.build();
 						bot.followTrajectorySequenceAsync(zoneOne);
 					}else if(tagUse == 2) {
 						TrajectorySequence zoneTwo = bot.trajectorySequenceBuilder(new Pose2d(mediumX4,mediumY4,Math.toRadians(mediumHeading4)))
-								.lineToLinearHeading(new Pose2d(51 ,0, Math.toRadians(89)))
+								.lineToLinearHeading(new Pose2d(51 ,0, Math.toRadians(271)))
 								.build();
 						bot.followTrajectorySequenceAsync(zoneTwo);
 					}else{
 						Trajectory zoneThree = bot.trajectoryBuilder(new Pose2d(mediumX4,mediumY4,Math.toRadians(mediumHeading4)))
-								.lineToLinearHeading(new Pose2d(51 ,-23, Math.toRadians(89)))
+								.lineToLinearHeading(new Pose2d(51 ,-23, Math.toRadians(271)))
 								.build();
 						bot.followTrajectoryAsync(zoneThree);
 					}
