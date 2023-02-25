@@ -261,14 +261,14 @@ public class RightSideAprilTagAutonomous extends LinearOpMode
         }else{
             moveGrabber(true);
             waitTime(.5);
-            moveLiftAndDrive(true,18.25,17);
+            moveLiftAndDrive(true,16.5,17);
             turnNinety(false);
             moveInchAmount(true,2.5);
-            sleep(1000);
+            sleep(500);
             moveGrabber(false);
             moveInchAmount(false,2.5);
             turnNinety(true);
-            moveLiftAndDrive(true,12.75,0);
+            moveLiftAndDrive(true,11.5,0);
             if(tagOfInterest.id == ID_TAG_OF_INTEREST_1){
                 sleep(100);
                 turnNinety(false);
@@ -723,7 +723,13 @@ public class RightSideAprilTagAutonomous extends LinearOpMode
     @SuppressLint("DefaultLocale")
     void tagToTelemetry(AprilTagDetection detection)
     {
-        telemetry.addLine(String.format("\nDetected tag ID=%d", detection.id));
+        if(detection.id == 7){
+            telemetry.addLine("\nDetected tag location = 1");
+        }else if(detection.id == 9){
+            telemetry.addLine("\nDetected tag location = 2");
+        }else if(detection.id == 12){
+            telemetry.addLine("\nDetected tag location = 3");
+        }
         telemetry.addLine(String.format("Translation X: %.2f feet", detection.pose.x*FEET_PER_METER));
         telemetry.addLine(String.format("Translation Y: %.2f feet", detection.pose.y*FEET_PER_METER));
         telemetry.addLine(String.format("Translation Z: %.2f feet", detection.pose.z*FEET_PER_METER));
