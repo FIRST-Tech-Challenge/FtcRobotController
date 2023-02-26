@@ -1,7 +1,9 @@
 package org.firstinspires.ftc.team8923_PowerPlay;
 
 import static org.firstinspires.ftc.team8923_PowerPlay.Constants.CLOSED_CLAW;
+import static org.firstinspires.ftc.team8923_PowerPlay.Constants.DRIVE_SPEED;
 import static org.firstinspires.ftc.team8923_PowerPlay.Constants.OPEN_CLAW;
+import static org.firstinspires.ftc.team8923_PowerPlay.Constants.SLOW_DRIVE_SPEED;
 
 import com.qualcomm.robotcore.util.Range;
 
@@ -29,9 +31,9 @@ abstract public class BaseTeleOp extends BaseOpMode {
     public void driveRobotSpeed() {
         isSlowMode = driveSpeedToggle.toggle(gamepad1.left_bumper);
         if (isSlowMode) {
-            driveSpeed = 0.3;
+            driveSpeed = SLOW_DRIVE_SPEED;
         } else {
-            driveSpeed = 0.8;
+            driveSpeed = DRIVE_SPEED;
         }
     }
 
