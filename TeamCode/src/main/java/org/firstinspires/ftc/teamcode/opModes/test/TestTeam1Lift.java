@@ -27,9 +27,9 @@ import org.firstinspires.ftc.teamcode.libs.brightonCollege.util.HardwareMapConta
  *
  */
 
-@TeleOp(name="Arm Controller [12sliu]", group="test")
+@TeleOp(name="Test Team 1 Lift", group="Test")
 //@Disabled
-public class TWELVESLIUArmController extends TeleOpModeBase {
+public class TestTeam1Lift extends TeleOpModeBase { // TODO: Test
     Motor motor;
     GamepadButton grabButton;
     boolean buttonPressed;
