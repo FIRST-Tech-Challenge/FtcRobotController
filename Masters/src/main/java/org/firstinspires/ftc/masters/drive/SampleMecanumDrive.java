@@ -66,10 +66,10 @@ import java.util.List;
 @Config
 public class SampleMecanumDrive extends MecanumDrive {
 
-    public static PIDCoefficients TRANSLATIONAL_PID = new PIDCoefficients(12, 0, 1);
-    public static PIDCoefficients HEADING_PID = new PIDCoefficients(11.5, 0, 1);
+    public static PIDCoefficients TRANSLATIONAL_PID = new PIDCoefficients(8, 0, 1);
+    public static PIDCoefficients HEADING_PID = new PIDCoefficients(9, 0, 1);
 
-    public static double LATERAL_MULTIPLIER = 60/54 * 60/59;
+    public static double LATERAL_MULTIPLIER = 60.0/64.0;
 
     public static double VX_WEIGHT = 1;
     public static double VY_WEIGHT = 1;
@@ -457,10 +457,10 @@ public class SampleMecanumDrive extends MecanumDrive {
             case LEFT6:
             case LEFT7:
             case LEFT8:
-                leftFront.setPower(-.2);
-                leftRear.setPower(-.2);
-                rightFront.setPower(.2);
-                rightRear.setPower(.2);
+                leftFront.setPower(-.4);
+                leftRear.setPower(-.4);
+                rightFront.setPower(.4);
+                rightRear.setPower(.4);
                 break;
             case RIGHT2:
             case RIGHT3:
@@ -469,10 +469,10 @@ public class SampleMecanumDrive extends MecanumDrive {
             case RIGHT6:
             case RIGHT7:
             case RIGHT8:
-                leftFront.setPower(.2);
-                leftRear.setPower(.2);
-                rightFront.setPower(-.2);
-                rightRear.setPower(-.2);
+                leftFront.setPower(.4);
+                leftRear.setPower(.4);
+                rightFront.setPower(-.4);
+                rightRear.setPower(-.4);
                 break;
             case LEFT1:
             case RIGHT1:

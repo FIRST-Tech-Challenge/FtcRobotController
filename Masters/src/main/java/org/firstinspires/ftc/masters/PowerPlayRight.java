@@ -189,26 +189,14 @@ public class PowerPlayRight extends LinearOpMode {
             }
 
 
-            armPIDController.setTarget(armTarget);
-            drive.armMotor.setPower(armPIDController.calculateVelocity());
 
-//            liftPIDController.setTarget(liftTarget);
-//
-//            double power = liftPIDController.calculatePower();
-//            double powerLeft= liftPIDController.calculatePower(drive.slideOtherer);
-//
-//            drive.linearSlide.setPower(power);
-//            drive.frontSlide.setPower(power);
-//            drive.slideOtherer.setPower(powerLeft);
-            drive.linearSlide.setTargetPosition(liftTarget);
-            drive.frontSlide.setTargetPosition(liftTarget);
-            drive.slideOtherer.setTargetPosition(liftTarget);
-            drive.linearSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            drive.frontSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            drive.slideOtherer.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            drive.linearSlide.setPower(1);
-            drive.frontSlide.setPower(1);
-            drive.slideOtherer.setPower(1);
+            armPIDController.setTarget(armTarget);
+            drive.armMotor.setVelocity(armPIDController.calculateVelocity());
+
+            liftPIDController.setTarget(liftTarget);
+            drive.linearSlide.setPower(liftPIDController.calculatePower(drive.linearSlide));
+            drive.slideOtherer.setPower(liftPIDController.calculatePower(drive.slideOtherer));
+            drive.frontSlide.setPower(liftPIDController.calculatePower(drive.frontSlide));
 
           //  telemetry.addData("power ", power);
             telemetry.addData("arm target", armTarget);

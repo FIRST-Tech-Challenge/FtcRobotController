@@ -54,7 +54,7 @@ public class PowerPlayTeleopColorado extends LinearOpMode {
 //    private final double MAX_VELOCITY= 435/60*384.5*0.8;
     ProfiledPIDController m_controller;
 
-    public static double ALIGN_SPEED = 0.15;
+    public static double ALIGN_SPEED = 0.4;
 
     Servo clawServo = null;
     DcMotorEx armMotor = null;
