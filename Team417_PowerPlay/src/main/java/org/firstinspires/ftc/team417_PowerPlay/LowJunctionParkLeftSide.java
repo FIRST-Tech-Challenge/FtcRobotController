@@ -41,7 +41,6 @@ public class LowJunctionParkLeftSide extends BaseAutonomous {
 
         updateTelemetryAfterStart();
 
-
         grabberServo.setPosition(GRABBER_CLOSED);
 
         raiseAndHoldArmGroundJunctionPosition();
