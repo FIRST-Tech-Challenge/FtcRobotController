@@ -394,24 +394,22 @@ public class PowerPlayRightCycling extends LinearOpMode {
             }
 
             armPIDController.setTarget(armTarget);
-            double armPower = armPIDController.calculateVelocity();
-            if (armTarget==ARM_BACK){
-                if (armPower<0){
-                    armPower= Math.max(armPower, -0.6);
-                }
-                else armPower = Math.min(armPower, 0.6);
-            }
-            drive.armMotor.setPower(armPower);
+            drive.armMotor.setVelocity(armPIDController.calculateVelocity());
 
-            drive.linearSlide.setTargetPosition(liftTarget);
-            drive.frontSlide.setTargetPosition(liftTarget);
-            drive.slideOtherer.setTargetPosition(liftTarget);
-            drive.linearSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            drive.frontSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            drive.slideOtherer.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            drive.linearSlide.setPower(1);
-            drive.frontSlide.setPower(1);
-            drive.slideOtherer.setPower(1);
+            liftPIDController.setTarget(liftTarget);
+            drive.linearSlide.setPower(liftPIDController.calculatePower(drive.linearSlide));
+            drive.slideOtherer.setPower(liftPIDController.calculatePower(drive.slideOtherer));
+            drive.frontSlide.setPower(liftPIDController.calculatePower(drive.frontSlide));
+
+//            drive.linearSlide.setTargetPosition(liftTarget);
+//            drive.frontSlide.setTargetPosition(liftTarget);
+//            drive.slideOtherer.setTargetPosition(liftTarget);
+//            drive.linearSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+//            drive.frontSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+//            drive.slideOtherer.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+//            drive.linearSlide.setPower(1);
+//            drive.frontSlide.setPower(1);
+//            drive.slideOtherer.setPower(1);
 
 //            liftPIDController.setTarget(liftTarget);
 //
