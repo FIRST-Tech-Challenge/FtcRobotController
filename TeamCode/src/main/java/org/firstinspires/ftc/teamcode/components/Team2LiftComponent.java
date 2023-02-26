@@ -6,7 +6,7 @@ import com.arcrobotics.ftclib.hardware.motors.Motor;
 /**
  * Team 2's lift which lifts to a certain height
  */
-public class DirectLiftComponent {
+public class Team2LiftComponent {
     /**
      * The Core Hex Motor used to move the lift from the bottom
      */
@@ -31,7 +31,7 @@ public class DirectLiftComponent {
      * @param countsPerRadian Encoder counts per radian of motor
      * @param initialHeightOffset Initial height of the hand above ground (when bar is horizontal) (m)
      */
-    public DirectLiftComponent(Motor motor, double barLength, int countsPerRadian, double initialHeightOffset) {
+    public Team2LiftComponent(Motor motor, double barLength, int countsPerRadian, double initialHeightOffset) {
         motor.setRunMode(Motor.RunMode.PositionControl); // So setTargetPosition works
 
         this.motor = motor;
