@@ -41,8 +41,8 @@ public class MiddleJunctionParkRightSide extends BaseAutonomous {
         while (!isStarted() && !isStopRequested()) {
             detectAprilTag();
         }
-        updateTelemetryAfterStart();
 
+        updateTelemetryAfterStart();
 
         grabberServo.setPosition(GRABBER_CLOSED);
 
@@ -56,8 +56,8 @@ public class MiddleJunctionParkRightSide extends BaseAutonomous {
         drive.followTrajectory(leftToMidJunction);
         motorArm.setPower(0);
         sleep(1300);
-        // open servo
 
+        // open servo
         grabberServo.setPosition(GRABBER_OPEN);
 
         drive.followTrajectory(clearJunction);

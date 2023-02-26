@@ -70,7 +70,6 @@ public class LowJunctionParkRightSide extends BaseAutonomous {
 
         updateTelemetryAfterStart();
 
-
         grabberServo.setPosition(GRABBER_CLOSED);
 
         raiseAndHoldArmGroundJunctionPosition();
@@ -82,8 +81,8 @@ public class LowJunctionParkRightSide extends BaseAutonomous {
         drive.followTrajectory(rightToLowJunction);
         motorArm.setPower(0);
         sleep(800);
-        // open servo
 
+        // open servo
         grabberServo.setPosition(GRABBER_OPEN);
 
         drive.followTrajectory(clearJunction);
@@ -96,6 +95,5 @@ public class LowJunctionParkRightSide extends BaseAutonomous {
             drive.followTrajectory(parkRight);
             drive.followTrajectory(forwardToMiddleOfTile);
         }
-
     }
 }
