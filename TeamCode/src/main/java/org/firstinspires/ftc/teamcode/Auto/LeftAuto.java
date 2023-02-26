@@ -84,7 +84,8 @@ public class LeftAuto extends LinearOpMode {
 
                 .waitSeconds(0.2)
 
-                .turn(45)
+                .lineToLinearHeading(new Pose2d(33,-3, Math.toRadians(45)))
+
 
                 .addTemporalMarker(() -> ClawHold())
                 .waitSeconds(0.1)
