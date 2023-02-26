@@ -125,7 +125,7 @@ abstract public class BaseOpMode extends LinearOpMode {
         motorBR.setPower(powerBR);
     }
 
-    public void driveMecanumGyro(double driveAngle, double drivePower, double turnPower){
+    public void driveMecanumGyro(double driveAngle, double drivePower, double turnPower) {
         // proportionality constant to correct angle error
         double kpConstant = 0.01;
 
@@ -139,9 +139,8 @@ abstract public class BaseOpMode extends LinearOpMode {
 
         if (angleError > 180.0) {
             angleError -= 360.0;
-        } else if(angleError < -180.0) {
-
         }
+
         double pivotCorrection = angleError * kpConstant;
 
         double sumPivotTurning = pivotCorrection + turnPower;
