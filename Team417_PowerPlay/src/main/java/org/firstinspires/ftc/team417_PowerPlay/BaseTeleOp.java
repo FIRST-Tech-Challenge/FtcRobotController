@@ -85,7 +85,11 @@ abstract public class BaseTeleOp extends BaseOpMode {
                 }
             }
         }
+<<<<<<< HEAD
 
+=======
+        
+>>>>>>> 1f7cccba60dd2f10dd4938b9d733432d221bc320
         boolean leftPress = gamepad2.left_bumper;
         boolean rightPress = gamepad2.right_bumper;
         boolean armAtStack = gamepad2.y;
