@@ -33,24 +33,24 @@ class Left : KOpMode() {
     private val path1 = HermitePath(
         FLIPPED_HEADING_CONTROLLER,
         Pose(startPose.x, startPose.y, 0.0),
-        Pose(-11.0, 32.0, 310.0.radians)
+        Pose(-10.0, 32.5, 310.0.radians)
     )
 
     private val intakePath1 = HermitePath(
         DEFAULT_HEADING_CONTROLLER,
-        Pose(-11.5, 32.5, 120.0.radians),
+        Pose(-10.0, 32.5, 120.0.radians),
         Pose(-13.5, 60.5, 90.0.radians)
     )
 
     private val intakePath2 = HermitePath(
-        DEFAULT_HEADING_CONTROLLER,
-        Pose(-15.0, 31.5, 90.0.radians),
+            DEFAULT_HEADING_CONTROLLER,
+        Pose(-16.5, 32.5, 70.0.radians),
         Pose(-12.5, 60.5, 90.0.radians)
     )
 
     private val intakePath3 = HermitePath(
-        DEFAULT_HEADING_CONTROLLER,
-        Pose(-15.0, 31.5, 90.0.radians),
+            DEFAULT_HEADING_CONTROLLER,
+        Pose(-16.5, 32.5, 70.0.radians),
         Pose(-11.5, 60.5, 90.0.radians)
     )
 
@@ -58,7 +58,7 @@ class Left : KOpMode() {
         FLIPPED_HEADING_CONTROLLER,
         Pose(-14.0, 59.0, 270.0.radians),
         Pose(-14.0, 53.0, 270.0.radians),
-        Pose(-24.5, 34.0, 210.0.radians)
+        Pose(-23.0, 35.5, 210.0.radians)
     )
 
     private val leftPath = HermitePath(
@@ -98,7 +98,7 @@ class Left : KOpMode() {
                 robot.drive,
                 SimpleGVFController(path1, 0.4, 20.0, 12.0, 0.6, 3.0, 3.0),
                 Pair(
-                    AutoDepositSequence(robot.lift, robot.arm, robot.claw, robot.guide, robot.whacker, 137.0, LiftConstants.highPos, GuideConstants.depositPos, WhackerConstants.rightPos), ProjQuery(
+                    AutoDepositSequence(robot.lift, robot.arm, robot.claw, robot.guide, robot.whacker, 130.0, LiftConstants.highPos, GuideConstants.depositPos, WhackerConstants.rightPos), ProjQuery(
                         Vector(-60.0, 40.0)
                     )
                 )
@@ -181,7 +181,7 @@ class Left : KOpMode() {
             AutoHomeSequence(robot.lift, robot.claw, robot.arm, robot.guide, ArmConstants.autoIntervalPos, ArmConstants.groundPos, 0.5, GuideConstants.telePos),
             GVFCmd(
                 robot.drive,
-                SimpleGVFController(intakePath3, 0.6, 20.0, 12.0, 0.4, 1.5, 1.5)
+                SimpleGVFController(intakePath3, 0.6, 20.0, 12.0, 0.4, 2.0, 2.0)
             )
             ),
             WaitCmd(0.1),
@@ -202,7 +202,7 @@ class Left : KOpMode() {
             ClawCmds.ClawOpenCmd(robot.claw, robot.guide, GuideConstants.telePos),
             WaitCmd(0.1),
             ParallelGroup(
-                AutoHomeSequence(robot.lift, robot.claw, robot.arm, robot.guide, ArmConstants.autoIntervalPos, ArmConstants.groundPos, 0.0, GuideConstants.telePos),
+                AutoHomeSequence(robot.lift, robot.claw, robot.arm, robot.guide, ArmConstants.autoIntervalPos, -75.0, 0.0, GuideConstants.telePos),
                 GVFCmd(
                     robot.drive,
                     SimpleGVFController(intakePath3, 0.6, 20.0, 12.0, 0.4, 1.5, 1.5)

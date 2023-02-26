@@ -80,13 +80,13 @@ class Hardware(startPose: Pose) {
 
     val limitSwitch = KLimitSwitch("LimitSwitch")
 
-    private val leftEncoder = EncoderFactory(Hardware.ticksPerUnit)
+    private val leftEncoder = EncoderFactory(ticksPerUnit)
         .revEncoder
         .build(fl)
-    private val rightEncoder = EncoderFactory(Hardware.ticksPerUnit)
+    private val rightEncoder = EncoderFactory(ticksPerUnit)
         .revEncoder
         .build(bl)
-    private val auxEncoder = EncoderFactory(Hardware.ticksPerUnit)
+    private val auxEncoder = EncoderFactory(ticksPerUnit)
         .reverse
         .revEncoder
         .build(fr)

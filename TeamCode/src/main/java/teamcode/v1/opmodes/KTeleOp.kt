@@ -1,7 +1,6 @@
 package teamcode.v1.opmodes
 
 import com.asiankoala.koawalib.command.KOpMode
-import com.asiankoala.koawalib.command.commands.ChooseCmd
 import com.asiankoala.koawalib.command.commands.Cmd
 import com.asiankoala.koawalib.command.commands.InstantCmd
 import com.asiankoala.koawalib.logger.Logger
@@ -13,11 +12,9 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp
 import teamcode.v1.Robot
 import teamcode.v1.commands.sequences.DepositSequence
 import teamcode.v1.commands.sequences.HomeSequence
-import teamcode.v1.commands.sequences.StackSeq
 import teamcode.v1.commands.subsystems.ClawCmds
 import teamcode.v1.constants.*
 import kotlin.math.max
-import kotlin.math.min
 import kotlin.math.pow
 import kotlin.math.sign
 
@@ -78,6 +75,8 @@ open class KTeleOp : KOpMode(photonEnabled = false) {
         gunner.rightTrigger.onPress(InstantCmd({robot.arm.setPos(-270.0)}))
         gunner.leftBumper.onPress(InstantCmd({robot.lift.setPos(11.0)}))
         gunner.rightBumper.onPress(InstantCmd({robot.lift.setPos(0.0)}))
+
+        robot.arm.switch.onPress(ClawCmds.ClawOpenCmd(robot.claw, robot.guide, GuideConstants.telePos))
     }
 
     private fun scheduleTest() {
@@ -95,5 +94,6 @@ open class KTeleOp : KOpMode(photonEnabled = false) {
         Logger.addTelemetryData("arm power", robot.arm.motor.power)
         Logger.addTelemetryData("lift power", robot.hardware.liftLeadMotor.power)
         Logger.addTelemetryData("whacker pos", robot.hardware.whackerServo.position)
+        Logger.addTelemetryData("limit switch", robot.arm.switch.invoke())
     }
 }
