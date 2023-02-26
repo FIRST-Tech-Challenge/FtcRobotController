@@ -7,7 +7,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 @Autonomous (name="FSM new")
-public class BetterFSMTest extends BaseAutonomous {
+public class CycleMidJunctionRightSide extends BaseAutonomous {
     ElapsedTime time;
     enum State {
         GO_TO_MID_JUNCTION,
