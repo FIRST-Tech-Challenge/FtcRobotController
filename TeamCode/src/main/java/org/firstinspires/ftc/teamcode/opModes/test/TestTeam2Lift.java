@@ -23,7 +23,8 @@ import org.firstinspires.ftc.teamcode.libs.brightonCollege.util.HardwareMapConta
  *  [Left Joystick] Pull up or down to lift arm from starting position
  */
 @TeleOp(name="Test Team 2 Lift", group="Test")
-public class TestTeam2LiftComponent extends TeleOpModeBase { // TODO: Test
+// @Disabled
+public class TestTeam2Lift extends TeleOpModeBase { // TODO: Test
 
     Team2LiftComponent lift;
 
