@@ -4,9 +4,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 @TeleOp(name = "TestTeleOp")
 
-public class TestTeleOP extends BaseTeleOp{
-
-
+public class TestTeleOP extends BaseTeleOp {
 
     @Override
     public void runOpMode() throws InterruptedException{
@@ -15,12 +13,12 @@ public class TestTeleOP extends BaseTeleOp{
 
         referenceAngle = imu.getAngularOrientation().firstAngle;
 
-        while (opModeIsActive()){
+        while (opModeIsActive()) {
             double y = -gamepad1.left_stick_y;
             double x = gamepad1.left_stick_x;
             double rotationalPower = gamepad1.right_stick_x;
 
-            if(rotationalPower != 0){
+            if (rotationalPower != 0) {
                 referenceAngle = imu.getAngularOrientation().firstAngle;
             }
 
