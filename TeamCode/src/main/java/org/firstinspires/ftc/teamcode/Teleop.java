@@ -69,7 +69,7 @@ public abstract class Teleop extends LinearOpMode {
     boolean   liftTweaked      = false;    // Reminder to zero power when input stops
     boolean   collectorFlipped = false;    // Collector has been flipped to upside down orientation
     boolean   needFlip         = false;    // Collector needs to be flipped for this scoring orientation
-    boolean   rearScoring      = true;     // D-pad controls for HIGH/MEDIUM/LOW assume REAR scoring (false=FRONT)
+    boolean   rearScoring      = false;    // D-pad controls for HIGH/MEDIUM/LOW assume REAR scoring (false=FRONT)
 
     ElapsedTime grabberRunTimer = new ElapsedTime();
     boolean     grabberRunning  = false;    // is an automatic collector activity running?
@@ -735,6 +735,10 @@ public abstract class Teleop extends LinearOpMode {
                 turretCycleCount--;  // TURRET_CYCLECOUNT_DONE
                 if( liftTarget == robot.LIFT_ANGLE_COLLECT ) {
                     gamepad2.runRumbleEffect(coneRumbleEffect1);
+                }
+                // double-check the grabber tilt
+                if( liftTarget == robot.LIFT_ANGLE_HIGH ) {
+                    robot.grabberSetTilt(robot.GRABBER_TILT_FRONT_H);
                 }
             } // liftMotorAuto
         } // TURRET_CYCLECOUNT_RUMBLE

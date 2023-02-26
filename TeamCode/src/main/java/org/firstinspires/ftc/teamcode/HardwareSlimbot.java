@@ -165,20 +165,20 @@ public class HardwareSlimbot
 
     // NOTE: the motor doesn't stop immediately, so set the limits short of the absolute maximum
     // Cone collect:  lift=116.7,  grabber=0.08/0.92, trigger BOTTOM proximity only (existing 3" high team element)
-    public double       LIFT_ANGLE_MAX     = 116.5;   // absolute encoder angle at maximum rotation FRONT
-    public double       LIFT_ANGLE_ASTART  = 115.0;   // lift position for starting autonomous
-    public double       LIFT_ANGLE_COLLECT = 105.5;   // lift position for collecting cones (185mm)
-    public double       LIFT_ANGLE_GROUND  = 110.0;   // lift position for GROUND junction
+    public double       LIFT_ANGLE_MAX     = 114.0;   // absolute encoder angle at maximum rotation FRONT
+    public double       LIFT_ANGLE_ASTART  = 113.0;   // lift position for starting autonomous
+    public double       LIFT_ANGLE_COLLECT = 109.0;   // lift position for collecting cones (185mm)
+    public double       LIFT_ANGLE_GROUND  = 109.0;   // lift position for GROUND junction
     public double       LIFT_ANGLE_CONE    = 103.0;   // lift position for cleaning a cone on a ground junction
     public double       LIFT_ANGLE_LOW     =  86.0;   // lift position for LOW junction
     public double       LIFT_ANGLE_MOTORS  =  91.0;   // lift position for cleaning front turret motor
     public double       LIFT_ANGLE_5STACK  =  87.0;   // lift position for 5-stack ultrasonic reading
-    public double       LIFT_ANGLE_MED     =  61.0;   // lift position for MEDIUM junction (FRONT Teleop)
+    public double       LIFT_ANGLE_MED     =  57.5;   // lift position for MEDIUM junction (FRONT Teleop)
     public double       LIFT_ANGLE_HIGH_A  =  34.7;   // lift position for HIGH junction (FRONT Auto)
-    public double       LIFT_ANGLE_HIGH    =  28.5;   // lift position for HIGH junction (FRONT Teleop)
+    public double       LIFT_ANGLE_HIGH    =  24.9;   // lift position for HIGH junction (FRONT Teleop)
     public double       LIFT_ANGLE_HIGH_BA = -41.0;   // lift position for HIGH junction (BACK Auto)
                                                       // (cone is loaded lower for auto, so higher lift point)
-    public double       LIFT_ANGLE_HIGH_B  = -43.0;   // lift position for HIGH junction (BACK Teleop)
+    public double       LIFT_ANGLE_HIGH_B  = -45.8;   // lift position for HIGH junction (BACK Teleop)
     public double       LIFT_ANGLE_MED_B   = -73.9;   // lift position for MEDIUM junction (BACK Teleop)
     public double       LIFT_ANGLE_MIN     = -75.0;   //* absolute encoder angle at maximum rotation REAR
 
@@ -234,11 +234,11 @@ public class HardwareSlimbot
     public double       GRABBER_TILT_FRONT_L = -0.28;  // Front scoring on the low pole
     public double       GRABBER_TILT_GRAB3   = -0.25;  // Further angled back for 5-stack drive-away (front) NO WALL CONFLICT!
     public double       GRABBER_TILT_GRAB2   = -0.30;  // Slightly angled up for collecting from 5-stack (front)
-    public double       GRABBER_TILT_GRAB    = -0.36;  // Extended horizontal at ground level for grabbing (front)
+    public double       GRABBER_TILT_GRAB    = -0.34;  // Extended horizontal at ground level for grabbing (front)
     public double       GRABBER_TILT_MIN     = -0.50;  // As far down as we can tilt (manual control)
 
     public Servo        rotateServo         = null;   // rotate GRABBER left/right
-    public double       GRABBER_ROTATE_UP   = 0.290;  // normal (upright) orientation
+    public double       GRABBER_ROTATE_UP   = 0.270;  // normal (upright) orientation
     public double       GRABBER_ROTATE_DOWN = 0.970;  // flipped (upside-down) orientation
 
     public CRServo      leftSpinServo       = null;   // continuous rotation/spin (left side)
