@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<QCARConfig xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="qcar_config.xsd">
+  <Tracking>
+    <ImageTarget name="TargetElement" size="101.599998 95.250000" />
+    <ImageTarget name="BridgeBlueRear" size="112.000000 47.740002" />
+    <ImageTarget name="BridgeRedRear" size="112.000000 47.740002" />
+    <ImageTarget name="BridgeRedFront" size="112.000000 47.740002" />
+    <ImageTarget name="BridgeBlueFront" size="112.000000 47.740002" />
+    <ImageTarget name="RedPerimeterTgt1" size="254.000000 168.116257" />
+    <ImageTarget name="RedPerimeterTgt2" size="254.000000 169.227493" />
+    <ImageTarget name="FrontPerimeterTgt1" size="254.000000 169.492188" />
+    <ImageTarget name="FrontPerimeterTgt2" size="254.000000 103.504997" />
+    <ImageTarget name="BluePerimeterTgt1" size="254.000000 169.386246" />
+    <ImageTarget name="BluePerimeterTgt2" size="254.000000 106.362503" />
+    <ImageTarget name="RearPerimeterTgt1" size="254.000000 169.239258" />
+    <ImageTarget name="RearPerimeterTgt2" size="254.000000 142.875000" />
+  </Tracking>
+</QCARConfig>
