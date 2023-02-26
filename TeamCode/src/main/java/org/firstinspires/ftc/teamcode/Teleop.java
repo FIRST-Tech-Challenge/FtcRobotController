@@ -1,4 +1,4 @@
-/* FTC Team 7572 - Version 1.0 (10/28/2022)
+/* FTC Team 7572 - Version 2.0 (02/26/2023)
 */
 package org.firstinspires.ftc.teamcode;
 
@@ -71,13 +71,13 @@ public abstract class Teleop extends LinearOpMode {
     boolean   needFlip         = false;    // Collector needs to be flipped for this scoring orientation
     boolean   rearScoring      = false;    // D-pad controls for HIGH/MEDIUM/LOW assume REAR scoring (false=FRONT)
 
-    ElapsedTime grabberRunTimer = new ElapsedTime();
-    boolean     grabberRunning  = false;    // is an automatic collector activity running?
-    int         grabberCount    = 0;        // Number of cycles the grabber proximity detector has been ON
-    boolean     grabberIntake   = true;     // is it an INTAKE activity? (false means EJECTION activity)
-    boolean     grabberLifting  = false;    // if an INTAKE, has the collection occurred and now we're auto-lifting?
-    double      grabberTarget1  = 0.0;      // grabber tilt for start of motion
-    double      grabberTarget2  = 0.0;      // grabber tilt for end of motion
+    ElapsedTime grabberRunTimer      = new ElapsedTime();
+    boolean     grabberRunning       = false;    // is an automatic collector activity running?
+    int         grabberDetectCount   = 0;        // Number of cycles the grabber proximity detector has been ON
+    boolean     grabberIntake        = true;     // is it an INTAKE activity? (false means EJECTION activity)
+    boolean     grabberLifting       = false;    // if an INTAKE, has the collection occurred and now we're auto-lifting?
+    double      grabberTarget1       = 0.0;      // grabber tilt for start of motion
+    double      grabberTarget2       = 0.0;      // grabber tilt for end of motion
 
     final int LIFT_CYCLECOUNT_START  = 4;  // Lift just started moving (1st cycle)
     final int LIFT_CYCLECOUNT_MOTORS = 3;  // Lift passing turret motors level (safe to orient the collector)
@@ -93,10 +93,10 @@ public abstract class Teleop extends LinearOpMode {
     final int TURRET_CYCLECOUNT_RUMBLE = 1;  // Motion is complete; give the operator a rumble
     final int TURRET_CYCLECOUNT_DONE   = 0;
     int       turretCycleCount         = TURRET_CYCLECOUNT_DONE;
-    double    turretTarget            = 0.0;
+    double    turretTarget             = 0.0;
 //  boolean   collectingFromStack    = false;
-    int       conesOnStack           = 2;
-    boolean   needCycleReset         = false; // Have we cycled on the high junction and need to reset the lift and turret for collecting?
+//  int       conesOnStack           = 2;
+    boolean   fastScoringCycleUpward = false; // Are we on the UPWARD phase of the fast scoring cycle? (false = DOWNWARD)
 
     /* Declare OpMode members. */
     HardwareSlimbot robot = new HardwareSlimbot();
@@ -183,7 +183,7 @@ public abstract class Teleop extends LinearOpMode {
             processTurretControls();
             processLiftControls();
             processGrabberControls();
-            processCycleControls();
+            processFastScoringCycleControls();
 
             // Execute any automatic movements
 //          robot.liftPosRun();
@@ -644,25 +644,30 @@ public abstract class Teleop extends LinearOpMode {
     } // processCollectorFlip
 
     /*---------------------------------------------------------------------------------*/
-    void processCycleControls()
+    void processFastScoringCycleControls()
     {   // Are we still in the first phase of the grabber collection (driving downward?)
-        boolean unsafeToStart = ((grabberRunning == true) && (grabberLifting == false));
-        boolean safeToStart = !unsafeToStart;
+        boolean unsafeToStartCycle = ((grabberRunning == true) && (grabberLifting == false));
+        boolean safeToStartCycle = !unsafeToStartCycle;
 
         // gamepad1 RIGHT TRIGGER used for CYCLING ON RIGHT
-        if( safeToStart && (gamepad1_r_trigger_now && !gamepad1_r_trigger_last) )
+        if( safeToStartCycle && (gamepad1_r_trigger_now && !gamepad1_r_trigger_last) )
         {
-            // Alternate to the other phase of our cycle
-            needCycleReset = !needCycleReset;
+            // Alternate to the other phase of our fast scoring cycle
+            fastScoringCycleUpward = !fastScoringCycleUpward;
 
             // Are we trying to score?
-            if( needCycleReset )
+            if( fastScoringCycleUpward )
             {
                 liftTarget = robot.LIFT_ANGLE_HIGH;
                 turretTarget = robot.TURRET_ANGLE_CYCLE_L;
                 turretCycleCount = TURRET_CYCLECOUNT_START;
+                // If the driver commands the start of the fast scoring cycle before the
+                // 2nd phase of processLiftControls() completes, go ahead and abort it
+                // so we don't accidentally zero lift motor power, interrupting this action
+                grabberRunning = false;
+
             }
-            else // or cycle back to collect?
+            else // or cycle back down to collect position?
             {
                 liftTarget = robot.LIFT_ANGLE_COLLECT;
                 turretTarget = robot.TURRET_ANGLE_COLLECT_L;
@@ -671,19 +676,23 @@ public abstract class Teleop extends LinearOpMode {
         }
 
         // gamepad1 LEFT TRIGGER used for CYCLING ON LEFT
-        else if( safeToStart && (gamepad1_l_trigger_now && !gamepad1_l_trigger_last) )
+        else if( safeToStartCycle && (gamepad1_l_trigger_now && !gamepad1_l_trigger_last) )
         {
-            // Alternate to the other phase of our cycle
-            needCycleReset = !needCycleReset;
+            // Alternate to the other phase of our fast scoring cycle
+            fastScoringCycleUpward = !fastScoringCycleUpward;
 
             // Are we trying to score?
-            if( needCycleReset)
+            if( fastScoringCycleUpward)
             {
                 liftTarget = robot.LIFT_ANGLE_HIGH;
                 turretTarget = robot.TURRET_ANGLE_CYCLE_R;
                 turretCycleCount = TURRET_CYCLECOUNT_START;
+                // If the driver commands the start of the fast scoring cycle before the
+                // 2nd phase of processLiftControls() completes, go ahead and abort it
+                // so we don't accidentally zero lift motor power, interrupting this action
+                grabberRunning = false;
             }
-            else // or cycle back to collect?
+            else // or cycle back down to collect position?
             {
                 liftTarget = robot.LIFT_ANGLE_COLLECT;
                 turretTarget = robot.TURRET_ANGLE_COLLECT_R;
@@ -700,7 +709,7 @@ public abstract class Teleop extends LinearOpMode {
             // Whether we're going up or down, initialize the lift auto-movement
             robot.liftPIDPosInit(liftTarget);
             // If we're going down, initialize the turret rotation right away
-            if( !needCycleReset ) {
+            if( !fastScoringCycleUpward ) {
                 robot.turretPIDPosInit(turretTarget);
             }
             // Transition to the next state
@@ -710,7 +719,7 @@ public abstract class Teleop extends LinearOpMode {
         else if(turretCycleCount == TURRET_CYCLECOUNT_CONE)
         {
             // If we're going up
-            if( needCycleReset ) {
+            if( fastScoringCycleUpward ) {
                 // Wait to rotate until above the height of the cone on the ground junction
                 // (we don't want our cone to knock over the opponent cone and incur a penalty)
                 if (robot.liftAngle < robot.LIFT_ANGLE_CONE) {
@@ -743,7 +752,7 @@ public abstract class Teleop extends LinearOpMode {
             } // liftMotorAuto
         } // TURRET_CYCLECOUNT_RUMBLE
 
-    } // processCycleControls
+    } // processFastScoringCycleControls
 
     void processTurretControls() {
         boolean safeToManuallyLeft  = (robot.turretAngle > robot.TURRET_ANGLE_MIN);
@@ -910,10 +919,10 @@ public abstract class Teleop extends LinearOpMode {
         else if( gamepad2_l_bumper_now && !gamepad2_l_bumper_last )
         {   // intake cone
             robot.grabberSpinCollect();
-            grabberRunning  = true;
-            grabberCount    = 0;     // reset our proximity detector counter
-            grabberIntake   = true;
-            grabberLifting  = false;
+            grabberRunning     = true;
+            grabberDetectCount = 0;     // reset our proximity detector counter
+            grabberIntake      = true;
+            grabberLifting     = false;
             // abort any automatic turret rotation that was still wrapping up
             robot.turretMotorPIDAuto = false;
             robot.turretMotorSetPower( 0.0 );
@@ -927,10 +936,10 @@ public abstract class Teleop extends LinearOpMode {
         else if( gamepad2_r_bumper_now && !gamepad2_r_bumper_last )
         {   // eject cone
             robot.grabberSpinEject();
-            grabberRunning  = true;
-            grabberCount    = 0;     // reset our proximity detector counter
-            grabberIntake   = false;
-            grabberLifting  = false;
+            grabberRunning     = true;
+            grabberDetectCount = 0;     // reset our proximity detector counter
+            grabberIntake      = false;
+            grabberLifting     = false;
             grabberRunTimer.reset();
         }
         //===================================================================
@@ -1081,15 +1090,18 @@ public abstract class Teleop extends LinearOpMode {
 
     /*---------------------------------------------------------------------------------*/
     void processGrabberControls() {
-        // Anything to process?
+        // Anything to process? (is a grabber automatic cycle running?)
         if( grabberRunning ) {
-            // How much time has elapsed?
+            // How much time has elapsed in this phase of the cycle?
             double elapsedTime = grabberRunTimer.milliseconds();
-            // Current on an INTAKE cycle?
+            // Currently on an INTAKE cycle?
             if( grabberIntake ) {
                 // Ensure we don't drive down below the lower limit, or at  unsafe turret angle
                 boolean stopForHeight = (robot.liftAngle >= robot.LIFT_ANGLE_MAX)? true : false;
                 boolean stopForLocation = (Math.abs(robot.turretAngle) >= 45.0)? true : false;
+                // Only apply safeguards when automatically moving DOWNWARD (when LIFTING, we
+                // may begin BELOW the max limit, but it's okay to keep moving UPWARD from that
+                // point (ie, let it keep lifting to get us back ABOVE the max limit)
                 if( !grabberLifting && (stopForHeight || stopForLocation) ) {
                     robot.liftMotorsSetPower( 0.0 );
                     robot.turretMotorSetPower( 0.0 );
@@ -1097,12 +1109,13 @@ public abstract class Teleop extends LinearOpMode {
                     robot.liftMotorPIDAuto = false;
                     robot.turretMotorPIDAuto = false;
                 }
-                // Is first phase of collection complete?
-                boolean detectThisCycle = !robot.topConeState;
-                grabberCount += (detectThisCycle)? 1 : 0;
-                boolean stopForSensor  = (grabberCount >= 3);
+                // Whether we're still lowering or have stopped, is first phase of collection
+                // complete? (meaning we've detected the cone or timed-out waiting)
+                boolean detectConeThisCycle = !robot.topConeState;
+                grabberDetectCount += (detectConeThisCycle)? 1 : 0;
+                boolean stopForSensor  = (grabberDetectCount >= 3); // let collector lift cone a bit higher
                 boolean stopForTimeout = (elapsedTime >= 1000)? true : false;
-                if( (stopForSensor || stopForTimeout ) && !grabberLifting) {
+                if( !grabberLifting && (stopForSensor || stopForTimeout) ) {
                     // stop collecting
                     robot.grabberSpinStop();
                     // reverse lift motors
@@ -1110,8 +1123,8 @@ public abstract class Teleop extends LinearOpMode {
                     grabberRunTimer.reset();
                     grabberLifting = true;
                 }
-                // Is second phase complete?
-                else if( (elapsedTime >= 500) && grabberLifting ) {
+                // Is second phase of collecting complete? (lifting cone off floor)
+                else if( grabberLifting && (elapsedTime >= 500) ) {
                     // halt lift motors
                     robot.liftMotorsSetPower( 0.0 );
                     grabberRunning = false;
