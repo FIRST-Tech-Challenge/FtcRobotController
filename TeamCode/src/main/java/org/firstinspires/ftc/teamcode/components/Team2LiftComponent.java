@@ -10,7 +10,7 @@ public class Team2LiftComponent {
     /**
      * The Core Hex Motor used to move the lift from the bottom
      */
-    Motor motor;
+    public Motor motor;
     /**
      * The length of the bar the motor is attached to (m)
      */
@@ -48,5 +48,9 @@ public class Team2LiftComponent {
         height -= initialHeightOffset; // Get height relative to starting position
         double angle = Math.asin(height/(2*this.barLength));
         this.motor.setTargetPosition((int)(countsPerRadian*angle));
+
+        while (!this.motor.atTargetPosition()) {
+            this.motor.set(0.75);
+        }
     }
 }
