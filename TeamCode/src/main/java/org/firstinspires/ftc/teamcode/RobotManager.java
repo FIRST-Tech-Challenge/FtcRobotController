@@ -462,49 +462,106 @@ public class RobotManager {
     public void runSecondarySystem() {
         if (robot.secondarySystemStatus != robot.previousSecondarySystemStatus) {
             if (robot.secondarySystemStatus == Robot.SecondarySystemStatus.ON) {
-                // Picking up a cone
-                robot.desiredSecondarySlidePosition = Robot.SecondarySlidesState.INITIAL_EXTENDED;
-                mechanismDriving.updateSecondarySlides(robot, 1);
-                dropSecondaryClawRotator();
-                double start_time = elapsedTime.time();
-                while (elapsedTime.time() - start_time < 1000) {}
-                closeSecondaryClaw();
-                robot.telemetry.addData("passed closed claw", elapsedTime.time()-start_time);
+                if (robot.secondaryConeRetrieved == Robot.SecondaryConeRetrieved.NOT_DONE) {
+                    // Picking up a cone
+                    robot.desiredSecondarySlidePosition = Robot.SecondarySlidesState.INITIAL_EXTENDED;
+                    mechanismDriving.updateSecondarySlides(robot, 1);
+                    dropSecondaryClawRotator();
+//                double start_time = elapsedTime.time();
+//                while (elapsedTime.time() - start_time < 1000) {}
+                    closeSecondaryClaw();
+//                robot.telemetry.addData("passed closed claw", elapsedTime.time()-start_time);
 
-                // Move grabbed cone to main claw
-                liftSecondaryClawRotator();
-                robot.desiredSecondarySlidePosition = Robot.SecondarySlidesState.PLACE_CONE;
-                mechanismDriving.updateSecondarySlides(robot, 1);
-                dropSecondaryClawRotator();
-                openSecondaryClaw();
-                start_time = elapsedTime.time();
-                while (elapsedTime.time() - start_time < 500) {}
-                liftSecondaryClawRotator();
-                closeClaw();
+                    // Move grabbed cone to main claw
+                    liftSecondaryClawRotator();
+                    robot.desiredSecondarySlidePosition = Robot.SecondarySlidesState.PLACE_CONE;
+                    mechanismDriving.updateSecondarySlides(robot, 1);
+                    dropSecondaryClawRotator();
+                    openSecondaryClaw();
+                    double start_time = elapsedTime.time();
+                    while (elapsedTime.time() - start_time < 50) {}
+                    liftSecondaryClawRotator();
+                    closeClaw();
+                }
 
                 // Put cone on pole with main slides
                 moveSlides(this, Robot.SlidesState.HIGH);
                 robot.desiredClawRotatorState = Robot.ClawRotatorState.REAR;
-                start_time = elapsedTime.time();
+                double start_time = elapsedTime.time();
                 while (elapsedTime.time() - start_time < 1000) {
                     moveSlides(this, Robot.SlidesState.HIGH);
                     mechanismDriving.updateClawRotator(robot);
                 }
+
+                // while stop button is pressed, move robot
+                while(gamepads.getButtonState(GamepadWrapper.DriverAction.STOP_SECONDARY_SYSTEM)) {
+                    maneuver();
+                }
                 openClaw();
                 start_time = elapsedTime.time();
-                while (elapsedTime.time() - start_time < 300) {};
+                while (elapsedTime.time() - start_time < 200) {};
 
 
-                // Resetting everything
+                // Initial while loop to lower slides/extend secondary slides
                 robot.desiredClawRotatorState = Robot.ClawRotatorState.FRONT;
-                mechanismDriving.updateClawRotator(robot);
-                openClaw();
-                moveSlides(this, Robot.SlidesState.RETRACTED);
-                liftSecondaryClawRotator();
-                openSecondaryClaw();
-                robot.desiredSecondarySlidePosition = Robot.SecondarySlidesState.FINAL_RETRACTED;
-                mechanismDriving.updateSecondarySlides(robot, 1);
+                robot.desiredClawState = Robot.ClawState.OPEN;
+                robot.desiredSlidesState = Robot.SlidesState.RETRACTED;
+                robot.desiredSecondaryClawRotatorState = Robot.SecondaryClawRotatorState.UP;
+                robot.desiredSecondaryClawState = Robot.SecondaryClawState.OPEN;
+                robot.desiredSecondarySlidePosition = Robot.SecondarySlidesState.EXTENDED;
+                start_time = elapsedTime.time();
+                while (elapsedTime.time() - start_time < 3000) {
+//                openClaw();
+//                moveSlides(this, Robot.SlidesState.RETRACTED);
+                    mechanismDriving.updateClawRotator(robot);
+                    mechanismDriving.updateClaw(robot);
+                    mechanismDriving.updateSlides(this, robot, MechanismDriving.SLIDES_MAX_SPEED);
 
+                    mechanismDriving.updateSecondaryClaw(robot);
+//                liftSecondaryClawRotator();
+//                openSecondaryClaw();
+                    boolean slidesFinished = mechanismDriving.updateSecondarySlides(robot, 1);
+                    if (slidesFinished) {
+                        robot.desiredSecondaryClawRotatorState = Robot.SecondaryClawRotatorState.DOWN;
+                        robot.desiredSecondaryClawState = Robot.SecondaryClawState.OPEN;
+                    }
+                    mechanismDriving.updateSecondaryClawRotator(robot);
+                }
+
+                // While loop to get the secondary claw and continue doing things
+                robot.desiredSecondaryClawRotatorState = Robot.SecondaryClawRotatorState.UP;
+                robot.desiredSecondaryClawState = Robot.SecondaryClawState.CLOSED;
+                robot.desiredSecondarySlidePosition = Robot.SecondarySlidesState.RETRACTED;
+                start_time = elapsedTime.time();
+                while (elapsedTime.time() - start_time < 3000) {
+//                openClaw();
+//                moveSlides(this, Robot.SlidesState.RETRACTED);
+                    mechanismDriving.updateClawRotator(robot);
+                    mechanismDriving.updateClaw(robot);
+                    mechanismDriving.updateSlides(this, robot, MechanismDriving.SLIDES_MAX_SPEED);
+
+                    mechanismDriving.updateSecondaryClaw(robot);
+//                liftSecondaryClawRotator();
+//                openSecondaryClaw();
+                    boolean slidesFinished = mechanismDriving.updateSecondarySlides(robot, 1);
+                    if (slidesFinished) {
+                        robot.desiredSecondaryClawRotatorState = Robot.SecondaryClawRotatorState.UP;
+                        robot.desiredSecondaryClawState = Robot.SecondaryClawState.CLOSED;
+                    }
+                    mechanismDriving.updateSecondaryClawRotator(robot);
+                }
+
+                // Last while loop to drop off the cone and return to position for new start
+                robot.desiredSecondaryClawRotatorState = Robot.SecondaryClawRotatorState.UP;
+                robot.desiredSecondaryClawState = Robot.SecondaryClawState.OPEN;
+                start_time = elapsedTime.time();
+                while (elapsedTime.time() - start_time < 1000) {
+                    mechanismDriving.updateSecondaryClaw(robot);
+                    mechanismDriving.updateSecondaryClawRotator(robot);
+
+                }
+
+                robot.secondaryConeRetrieved = Robot.SecondaryConeRetrieved.DONE;
                 robot.secondarySystemStatus = Robot.SecondarySystemStatus.OFF;
             }
             else {

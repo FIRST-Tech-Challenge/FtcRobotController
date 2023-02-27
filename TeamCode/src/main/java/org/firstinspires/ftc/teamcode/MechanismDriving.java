@@ -10,6 +10,8 @@ import java.util.Map;
 public class MechanismDriving {
 
     private static int desiredSlidePosition;
+    private static int desiredSecondarySlidePosition;
+
     private static int slideZeroPosition = 0;
     public boolean testing=false;
 
@@ -25,7 +27,8 @@ public class MechanismDriving {
     }};
     public static Map<Robot.SecondarySlidesState, Integer> secondarySlidePositions = new HashMap<Robot.SecondarySlidesState, Integer>() {{
        put(Robot.SecondarySlidesState.RETRACTED, 0);
-       put(Robot.SecondarySlidesState.EXTENDED, 2000); // TODO: empirically measure this value
+        put(Robot.SecondarySlidesState.PLACE_CONE, 80);
+        put(Robot.SecondarySlidesState.EXTENDED, 1080); // TODO: empirically measure this value
     }};
     public static final double CLAW_CLOSED_POS = 0.83, CLAW_OPEN_POS = 0.63; //These are not final values
 
@@ -125,12 +128,8 @@ public class MechanismDriving {
         switch(robot.desiredSecondaryClawRotatorState) {
             case DOWN:
                 robot.secondaryClawRotator.setPosition(SECONDARY_CLAW_ROTATOR_LOW);
-//                robot.secondaryClawRotator.setPosition(SECONDARY_CLAW_ROTATOR_LOW);
-//                robot.secondaryClawRotator.setPosition(SECONDARY_CLAW_ROTATOR_LOW);
                 break;
             case UP:
-//                robot.secondaryClawRotator.setPosition(SECONDARY_CLAW_ROTATOR_LOW);
-//                robot.secondaryClawRotator.setPosition(SECONDARY_CLAW_ROTATOR_LOW);
                 robot.secondaryClawRotator.setPosition(SECONDARY_CLAW_ROTATOR_HIGH);
                 break;
         }
@@ -142,6 +141,10 @@ public class MechanismDriving {
      */
     public void setSlidePosition(Robot robot, int position) {
         desiredSlidePosition = position;
+    }
+
+    public void setSecondarySlidePosition(Robot robot, int position) {
+        desiredSecondarySlidePosition = position;
     }
 
     /** Returns the target encoder count given the robot's desired slides state.
@@ -234,41 +237,76 @@ public class MechanismDriving {
 
     /** Sets motor power for secondary slides motor
      */
-    public void updateSecondarySlides(Robot robot, double slidesPower) {
-        if (robot.previousDesiredSecondarySlidePosition != robot.desiredSecondarySlidePosition) {
-            if (robot.desiredSecondarySlidePosition == Robot.SecondarySlidesState.INITIAL_EXTENDED) {
-                robot.secondarySlidesMotor.setPower(slidesPower);
-                double start_time = robot.elapsedTime.time();
-                while (robot.elapsedTime.time()-start_time < 2000) {}
-                robot.secondarySlidesMotor.setPower(0);
-            }
-            if (robot.desiredSecondarySlidePosition == Robot.SecondarySlidesState.EXTENDED) {
-                robot.secondarySlidesMotor.setPower(slidesPower);
-                double start_time = robot.elapsedTime.time();
-                while (robot.elapsedTime.time()-start_time < 1920) {}
-                robot.secondarySlidesMotor.setPower(0);
-            }
-            if (robot.desiredSecondarySlidePosition == Robot.SecondarySlidesState.RETRACTED) {
-                robot.secondarySlidesMotor.setPower(-slidesPower);
-                double start_time = robot.elapsedTime.time();
-                while (robot.elapsedTime.time()-start_time < 1000) {}
-                robot.secondarySlidesMotor.setPower(0);
-            }
-            if (robot.desiredSecondarySlidePosition == Robot.SecondarySlidesState.PLACE_CONE) {
-                robot.secondarySlidesMotor.setPower(-slidesPower);
-                double start_time = robot.elapsedTime.time();
-                while (robot.elapsedTime.time()-start_time < 920) {}
-                robot.secondarySlidesMotor.setPower(0);
-            }
-            if (robot.desiredSecondarySlidePosition == Robot.SecondarySlidesState.FINAL_RETRACTED) {
-                robot.secondarySlidesMotor.setPower(-slidesPower);
-                double start_time = robot.elapsedTime.time();
-                while (robot.elapsedTime.time()-start_time < 80) {}
-                robot.secondarySlidesMotor.setPower(0);
-            }
-            robot.previousDesiredSecondarySlidePosition = robot.desiredSecondarySlidePosition;
-            robot.telemetry.addData("secondary slide current pos: ", robot.secondarySlidesMotor.getCurrentPosition());
+    public boolean updateSecondarySlides(Robot robot, double slidesPower) {
+        if (robot.desiredSecondarySlidePosition == Robot.SecondarySlidesState.EXTENDED) {
+            setSecondarySlidePosition(robot, secondarySlidePositions.get(Robot.SecondarySlidesState.EXTENDED));
         }
+        if (robot.desiredSecondarySlidePosition == Robot.SecondarySlidesState.PLACE_CONE) {
+            setSecondarySlidePosition(robot, secondarySlidePositions.get(Robot.SecondarySlidesState.PLACE_CONE));
+        }
+        if (robot.desiredSecondarySlidePosition == Robot.SecondarySlidesState.RETRACTED) {
+            setSecondarySlidePosition(robot, secondarySlidePositions.get(Robot.SecondarySlidesState.RETRACTED));
+        }
+
+        int slideDiff1 = desiredSecondarySlidePosition - robot.secondarySlidesMotor.getCurrentPosition();
+        robot.telemetry.addData("current secondary slides pos: ", getAverageSlidePosition(robot));
+        robot.telemetry.update();
+//           robotManager.readSlidesLimitSwitch();
+        // Stop motors if we have reached the desired position
+        if (slidesPower < EPSILON) {
+            robot.secondarySlidesMotor.setPower(0);
+//            Robot.desiredSecondarySlidesPosition = Robot.SecondarySlidesState.STOPPED;
+            return true;
+        }
+
+        // Slides need to be moved`
+        // Speed is proportional to the fraction of the ramp distance that we have left
+        double slidesSpeed = slidesPower * clipAbsVal(slideDiff1 / SLIDE_RAMP_DIST, SLIDE_MIN_SPEED, 1);
+//        double reducedSlidesSpeed = clipAbsVal(SLIDE_REDUCED_SPEED_COEF * slidesSpeed, SLIDE_MIN_SPEED, 1);
+
+//        if (robot.previousDesiredSecondarySlidePosition != robot.desiredSecondarySlidePosition) {
+//            if (robot.desiredSecondarySlidePosition == Robot.SecondarySlidesState.INITIAL_EXTENDED) {
+//                robot.secondarySlidesMotor.setPower(slidesPower);
+//                double start_time = robot.elapsedTime.time();
+//                while (robot.elapsedTime.time()-start_time < 1080) {}
+//                robot.secondarySlidesMotor.setPower(0);
+//                return true;
+//            }
+//            if (robot.desiredSecondarySlidePosition == Robot.SecondarySlidesState.EXTENDED) {
+//                robot.secondarySlidesMotor.setPower(slidesPower);
+//                double start_time = robot.elapsedTime.time();
+//                while (robot.elapsedTime.time()-start_time < 1000) {}
+//                robot.secondarySlidesMotor.setPower(0);
+//                return true;
+//            }
+//            if (robot.desiredSecondarySlidePosition == Robot.SecondarySlidesState.RETRACTED) {
+//                robot.secondarySlidesMotor.setPower(-slidesPower);
+//                double start_time = robot.elapsedTime.time();
+//                while (robot.elapsedTime.time()-start_time < 1000) {}
+//                robot.secondarySlidesMotor.setPower(0);
+//                return true;
+//            }
+//            if (robot.desiredSecondarySlidePosition == Robot.SecondarySlidesState.PLACE_CONE) {
+//                robot.secondarySlidesMotor.setPower(-slidesPower);
+//                double start_time = robot.elapsedTime.time();
+//                while (robot.elapsedTime.time()-start_time < 920) {}
+//                robot.secondarySlidesMotor.setPower(0);
+//                return true;
+//            }
+//            if (robot.desiredSecondarySlidePosition == Robot.SecondarySlidesState.FINAL_RETRACTED) {
+//                robot.secondarySlidesMotor.setPower(-slidesPower);
+//                double start_time = robot.elapsedTime.time();
+//                while (robot.elapsedTime.time()-start_time < 80) {}
+//                robot.secondarySlidesMotor.setPower(0);
+//                return true;
+//            }
+//            robot.previousDesiredSecondarySlidePosition = robot.desiredSecondarySlidePosition;
+            robot.telemetry.addData("secondary slide current pos: ", robot.secondarySlidesMotor.getCurrentPosition());
+//        }
+//        else {
+//            return true;
+//        }
+        return false;
     }
 
     /** Returns the average encoder count from the two slides.

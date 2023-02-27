@@ -24,6 +24,7 @@ public class Robot {
     public enum ClawLimitSwitchServoState {HIGH, LOW}
     public enum SecondarySlidesState {RETRACTED, EXTENDED, PLACE_CONE, INITIAL_EXTENDED, FINAL_RETRACTED}
     public enum SecondarySystemStatus {ON, OFF};
+    public enum SecondaryConeRetrieved {DONE, NOT_DONE};
 
 
     public static SlidesState desiredSlidesState = SlidesState.UNREADY;
@@ -36,6 +37,7 @@ public class Robot {
     public SecondarySlidesState desiredSecondarySlidePosition;
 
     public SecondarySystemStatus secondarySystemStatus;
+    public SecondaryConeRetrieved secondaryConeRetrieved;
 
     public boolean previousSlidesLimitSwitchState = false;
     public boolean previousClawLimitSwitchState = false;
@@ -75,6 +77,7 @@ public class Robot {
         desiredSecondaryClawRotatorState = SecondaryClawRotatorState.UP;
         previousDesiredSecondarySlidePosition = SecondarySlidesState.RETRACTED;
         secondarySystemStatus = SecondarySystemStatus.OFF;
+        secondaryConeRetrieved = SecondaryConeRetrieved.NOT_DONE;
 
         slidesMotor1 = hardwareMap.get(DcMotor.class, RobotConfig.MotorNames.get(RobotConfig.Motors.SLIDES_MOTOR_1));
         slidesMotor2 = hardwareMap.get(DcMotor.class, RobotConfig.MotorNames.get(RobotConfig.Motors.SLIDES_MOTOR_2));
