@@ -43,9 +43,9 @@ public class Constants {
     public static final int SLIDE_STACK_ONE = 170;
     public static final int SLIDE_BOTTOM = 0;
 
-    public static final double GRABBER_INITIALIZE_POSITION = 1.0;
-    public static final double GRABBER_OPEN_POSITION = 0.6;
-    public static final double GRABBER_CLOSE_POSITION = 0.0;
+    public static final double GRABBER_INITIALIZE_POSITION = 0.17;
+    public static final double GRABBER_OPEN_POSITION = 0.46;
+    public static final double GRABBER_CLOSE_POSITION = 1.0;
 
     public static final double WHEEL_CIRCUMFERENCE = 96 / 25.4 * Math.PI;
     public static final double DRIVE_MOTOR_TICKS_TO_INCHES = WHEEL_CIRCUMFERENCE * Math.sqrt(2) / 537.6;
@@ -73,7 +73,6 @@ public class Constants {
 
     public static final Scalar LOWER_BLACK = new Scalar(0, 0, 0);
     public static final Scalar UPPER_BLACK = new Scalar(180, 255, 40);
-
 
     public static final Size BLUR_SIZE = new Size(5, 5);
 

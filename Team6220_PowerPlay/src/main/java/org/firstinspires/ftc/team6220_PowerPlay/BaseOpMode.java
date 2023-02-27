@@ -99,7 +99,7 @@ public abstract class BaseOpMode extends LinearOpMode {
         motorRightSlides.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
 
         // servos
-        PwmControl.PwmRange maxRange = new PwmControl.PwmRange(500, 2500, 20000);
+        PwmControl.PwmRange maxRange = new PwmControl.PwmRange(505, 2495, 20000);
         servoGrabber = (ServoImplEx) hardwareMap.servo.get("servoGrabber");
         servoGrabber.setPwmRange(maxRange);
 
