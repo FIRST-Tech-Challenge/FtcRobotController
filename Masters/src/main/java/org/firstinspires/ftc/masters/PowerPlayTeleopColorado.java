@@ -475,9 +475,10 @@ public class PowerPlayTeleopColorado extends LinearOpMode {
     protected void moveSlideMotors (){
         telemetry.addData("target", slideTarget);
         liftPIDController.setTarget(slideTarget);
-        linearSlideMotor.setPower(liftPIDController.calculatePower(linearSlideMotor));
+        double power = liftPIDController.calculatePower(linearSlideMotor);
+        linearSlideMotor.setPower(power);
         slideOtherer.setPower(liftPIDController.calculatePower(slideOtherer));
-        frontSlide.setPower(liftPIDController.calculatePower(frontSlide));
+        frontSlide.setPower(power);
 
 //        linearSlideMotor.setTargetPosition(slideTarget);
 //        frontSlide.setTargetPosition(slideTarget);

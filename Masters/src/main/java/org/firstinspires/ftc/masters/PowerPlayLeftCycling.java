@@ -80,6 +80,7 @@ public class PowerPlayLeftCycling extends LinearOpMode {
         drive.setPoseEstimate(startPose);
 
         liftPIDController = new LiftPIDController(drive.linearSlide, drive.frontSlide, drive.slideOtherer);
+        liftPIDController.setP(0.015);
         armPIDController = new ArmPIDControllerMotionProfile(drive.armMotor);
         drive.tipCenter();
         drive.closeClaw();
@@ -125,12 +126,6 @@ public class PowerPlayLeftCycling extends LinearOpMode {
                 .lineToLinearHeading(new Pose2d(new Vector2d(-59, -14), Math.toRadians(0)))
                 .build();
 
-
-
-//        Trajectory parkRed = drive.trajectoryBuilder(scoreNewCone.end())
-//                .splineToLinearHeading(new Pose2d(new Vector2d(23.5,-11.5),Math.toRadians(315)),Math.toRadians(155))
-//                .build();
-
         waitForStart();
 
         drive.closeClaw();
@@ -158,7 +153,6 @@ public class PowerPlayLeftCycling extends LinearOpMode {
             switch (currentState) {
                 case FIRST_DEPOSIT_PATH_1:
                     if (!drive.isBusy()) {
-
                         currentState = State.FIRST_DEPOSIT_TURN;
                         drive.turnAsync(Math.toRadians(-turnJunction));
                     } else {
@@ -418,9 +412,10 @@ public class PowerPlayLeftCycling extends LinearOpMode {
             drive.armMotor.setVelocity(armPIDController.calculateVelocity());
 
             liftPIDController.setTarget(liftTarget);
-            drive.linearSlide.setPower(liftPIDController.calculatePower(drive.linearSlide));
+            double power = liftPIDController.calculatePower(drive.linearSlide);
+            drive.linearSlide.setPower(power);
             drive.slideOtherer.setPower(liftPIDController.calculatePower(drive.slideOtherer));
-            drive.frontSlide.setPower(liftPIDController.calculatePower(drive.frontSlide));
+            drive.frontSlide.setPower(power);
 
 //            liftPIDController.setTarget(liftTarget);
 //
@@ -433,9 +428,9 @@ public class PowerPlayLeftCycling extends LinearOpMode {
 
             //  telemetry.addData("power ", power);
             telemetry.addData("arm target", armTarget);
-            telemetry.addData("arm position", drive.armMotor.getCurrentPosition());
+           // telemetry.addData("arm position", drive.armMotor.getCurrentPosition());
             telemetry.addData("lift target", liftTarget);
-            telemetry.addData(" lift position", drive.linearSlide.getCurrentPosition());
+           // telemetry.addData(" lift position", drive.linearSlide.getCurrentPosition());
 
           //  telemetry.update();
 

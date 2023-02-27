@@ -18,17 +18,24 @@ public class MeepMeepTesting {
     public static void main(String[] args) {
         MeepMeep meepMeep = new MeepMeep(800);
 
+        Pose2d startPose = new Pose2d(new Vector2d(-60, -12), Math.toRadians(180));
+
 
 
         RoadRunnerBotEntity myBot = new DefaultBotBuilder(meepMeep)
                 // Set bot constraints: maxVel, maxAccel, maxAngVel, maxAngAccel, track width
-                .setConstraints(45, 60, Math.toRadians(60), Math.toRadians(60), 16.4)
+                .setConstraints(60, 60, Math.toRadians(180), Math.toRadians(180), 16.4)
 
 
                 .followTrajectorySequence(drive ->
-                        drive.trajectorySequenceBuilder(new Pose2d(new Vector2d(0, 0), Math.toRadians(180)))
+                        drive.trajectorySequenceBuilder(startPose)
 
-                                .splineToLinearHeading(new Pose2d(new Vector2d(-53, 0),Math.toRadians(180)),Math.toRadians(180))
+                                //.splineToLinearHeading( new Vector2d(-36, -14), Math.toRadians(45))
+                                .lineToSplineHeading(new Pose2d(new Vector2d(-36, -14), Math.toRadians(225)))
+                                //.back(10)
+                            //    .splineToLinearHeading(new Pose2d(new Vector2d(-53, -13),Math.toRadians(180)),Math.toRadians(180))
+                                //.lineTo(new Vector2d(31, -8))
+
                                 //.turn(Math.toRadians(45))
                                // .lineTo(new Vector2d(31, -8))
                                 //.splineToLinearHeading(new Pose2d(new Vector2d(53, -13),0),0)

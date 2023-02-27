@@ -196,6 +196,9 @@ public class SampleMecanumDrive extends MecanumDrive {
         armMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
         armMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        slideOtherer.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        frontSlide.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        linearSlide.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
     }
 
     public void openClaw(){
@@ -457,10 +460,10 @@ public class SampleMecanumDrive extends MecanumDrive {
             case LEFT6:
             case LEFT7:
             case LEFT8:
-                leftFront.setPower(-.4);
-                leftRear.setPower(-.4);
-                rightFront.setPower(.4);
-                rightRear.setPower(.4);
+                leftFront.setPower(-.35);
+                leftRear.setPower(-.35);
+                rightFront.setPower(.35);
+                rightRear.setPower(.35);
                 break;
             case RIGHT2:
             case RIGHT3:
@@ -469,10 +472,10 @@ public class SampleMecanumDrive extends MecanumDrive {
             case RIGHT6:
             case RIGHT7:
             case RIGHT8:
-                leftFront.setPower(.4);
-                leftRear.setPower(.4);
-                rightFront.setPower(-.4);
-                rightRear.setPower(-.4);
+                leftFront.setPower(.35);
+                leftRear.setPower(.35);
+                rightFront.setPower(-.35);
+                rightRear.setPower(-.35);
                 break;
             case LEFT1:
             case RIGHT1:

@@ -21,6 +21,11 @@ public class LiftPIDController {
         liftController.setTolerance(5);
     }
 
+    public void setP(double p){
+        this.p=p;
+        liftController.setP(p);
+    }
+
     public void setTarget(int target){
         this.target = target;
     }
