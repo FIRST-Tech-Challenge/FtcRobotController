@@ -23,7 +23,7 @@ public class ArmLiftTest extends LinearOpMode {
 
 
     LiftPIDController liftPIDController;
-    ArmPIDController armPIDController;
+    ArmPIDControllerMotionProfile armPIDController;
 
     public static int armTarget = 0;
     public static int liftTarget = 0;
@@ -45,7 +45,7 @@ public class ArmLiftTest extends LinearOpMode {
         SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
 
         liftPIDController = new LiftPIDController(drive.linearSlide, drive.frontSlide, drive.slideOtherer);
-        armPIDController = new ArmPIDController(drive.armMotor);
+        armPIDController = new ArmPIDControllerMotionProfile(drive.armMotor);
         drive.tipCenter();
         drive.closeClaw();
 
@@ -63,54 +63,16 @@ public class ArmLiftTest extends LinearOpMode {
 
         while (opModeIsActive() && !isStopRequested()) {
 
-            if (armTarget != previousTarget) {
-                previousTarget = armTarget;
 
-
-                motionProfile = MotionProfileGenerator.generateSimpleMotionProfile(new MotionState(drive.armMotor.getCurrentPosition(), 0, 0),
-                        new MotionState(armTarget, 0, 0),
-                        25,
-                        40,
-                        100);
-                startTime = new Date().getTime();
-            }
-            PIDCoefficients coeffs = new PIDCoefficients(kP, kI, kD);
-// create the controller
-            controller = new PIDFController(coeffs);
-
-// specify the setpoint
-            controller.setTargetPosition(armTarget);
+            armPIDController.setTarget(armTarget);
 
 
 // in each iteration of the control loop
 // measure the position or output variable
 // apply the correction to the input variable
 
-            if (motionProfile!=null && controller!=null) {
-                MotionState state = motionProfile.get((new Date().getTime() - startTime) / 1000);
 
-                controller.setTargetPosition(state.getX());
-                controller.setTargetVelocity(state.getV());
-                controller.setTargetAcceleration(state.getA());
-
-
-
-                telemetry.addData("x", state.getX());
-                telemetry.addData("v", state.getV());
-                telemetry.addData("a", state.getA());
-
-
-                double correction = controller.update(drive.armMotor.getCurrentPosition());
-
-//            armPIDController.setTarget(armTarget);
-//            double armPower = armPIDController.calculateVelocity();
-//            if (armTarget<0){
-//                if (armPower<0){
-//                    armPower= Math.max(armPower, -maxSpeed);
-//                }
-//                else armPower = Math.min(armPower, maxSpeed);
-//            }
-            drive.armMotor.setPower(correction);
+            drive.armMotor.setVelocity(armPIDController.calculateVelocity());
 //
 //            liftPIDController.setTarget(liftTarget);
 //
@@ -121,8 +83,8 @@ public class ArmLiftTest extends LinearOpMode {
 //            drive.slideOtherer.setPower(power);
 
                 //  telemetry.addData("power ", power);
-                telemetry.addData("power", correction);
-            }
+               // telemetry.addData("power", correction);
+
             telemetry.addData("arm target", armTarget);
             telemetry.addData("arm position", drive.armMotor.getCurrentPosition());
 
