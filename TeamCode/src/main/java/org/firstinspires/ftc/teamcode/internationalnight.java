@@ -16,13 +16,13 @@ public class internationalnight extends LinearOpMode {
         while(opModeIsActive()){
             sleep(1000);
             spin.setTargetPosition(591);
-            spin.setPower(1);
+            spin.setPower(.2);
             while (spin.isBusy()&&opModeIsActive()){
 
             }
             sleep(1000);
             spin.setTargetPosition(0);
-            spin.setPower(1);
+            spin.setPower(.2);
             while (spin.isBusy()&&opModeIsActive()){
 
             }
