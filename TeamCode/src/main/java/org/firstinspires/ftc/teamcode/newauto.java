@@ -204,25 +204,25 @@ public class newauto extends LinearOpMode {
                 */
 
             //move and spin to high junction
-            strafeLeftwithcrane(1,2700,-1,3100);
+            strafeLeftwithcrane(1, 2700, -1, 3100);
             Crane.setPower(-.2);
             sleep(100);
-            spin(1,260);
+            spin(1, 260);
 
             //movewithdistance2(.5,12);
             move(.5, -350);
             //drop cone
-                //strafeLeft(1,300);
+            //strafeLeft(1,300);
             //move(.5,40);
             sleep(100);
             //crane(1,200);//
             sleep(100);
-            intake(-1,1300);
-            crane(-1,220);
+            intake(-1, 1300);
+            crane(-1, 220);
 
             //move(.5,180);
             //strafeLeftwithdistanceandcrane(45,1,100);
-            strafeRightwithcrane(1,300,1,620);
+            strafeRightwithcrane(1, 300, 1, 620);
             //gyroTurning(0);
                 /*code with foward
                 //move to stack
@@ -237,75 +237,75 @@ public class newauto extends LinearOpMode {
             //move to stack
             stopMotors();
             gyroTurning(0);
-            moveandspin(1,1200,1,591);
+            moveandspin(1, 1200, 1, 591);
             sleep(100);
             gyroTurning(0);
             //move(.3,520);
-            movewithdistacne(-.3,.05);
+            movewithdistacne(-.3, .05);
             //pick up cone
             craneinput(600);
-            crane(-1,1000);
+            crane(-1, 1000);
             Left.setPower(.2);
 
             //move to high junction
-            move(.4,-400);
+            move(.4, -400);
             gyroTurning(0);
-            moveandspinandcrane(.8,-950,1,315,-1,2100);//-315
+            moveandspinandcrane(.8, -950, 1, 315, -1, 2100);//-315
             movewithdistance2(.5, 12);
             Crane.setPower(-.2);
             move(.5, -230);
 
             stopMotors();
             //strafe onto it
-            strafeLeft(.2,200);
+            strafeLeft(.2, 200);
             sleep(100);
-            intake(-1,500);
-            strafeRightwithcrane(.2,200,1,1000);
+            intake(-1, 500);
+            strafeRightwithcrane(.2, 200, 1, 1000);
             gyroTurning(0);
-            //////////////////////////////////////////////////////////////////not made for side past this
-            //move back to stack
-            moveandspin(.8,1100,1,-591);
-            move(.2,400);
-            //pick up another cone
-            craneinput(400);
-            crane(-1,1000);
-            //move to large junction again
-            moveandspinandcrane(.8,-1500,1,-315,-1,1500);
-            Crane.setPower(-.2);
-            stopMotors();
-            strafeLeft(.2,200);
-            //release cone
-            intake(-1,1000);
-            strafeRightwithcrane(.2,200,1,1000);
+
+            if (getRuntime() > 22) {
+                //////////////////////////////////////////////////////////////////not made for side past this
+                //move back to stack
+                moveandspin(.8, 1100, 1, -591);
+                move(.2, 400);
+                //pick up another cone
+                craneinput(400);
+                crane(-1, 1000);
+                //move to large junction again
+                moveandspinandcrane(.8, -1500, 1, -315, -1, 1500);
+                Crane.setPower(-.2);
+                stopMotors();
+                strafeLeft(.2, 200);
+                //release cone
+                intake(-1, 1000);
+                strafeRightwithcrane(.2, 200, 1, 1000);
 
 
+                switch (location) {//determine where to park
+                    case 0:
+                        move(.2, -300);
+                        stopMotors();
+                        sleep(3000);
+                        break;
+                    case 1:
 
-
-
-            switch (location){//determine where to park
-                case 0:
-                    move(.2,-300);
-                    stopMotors();
-                    sleep(3000);
-                    break;
-                case 1:
-
-                    gyroTurning(0);
-                    move(.4,800);
-                    stopMotors();
-                    sleep(3000);
-                    break;
-                case 2:
-                    move(.2,-300);
-                    stopMotors();
-                    sleep(3000);
-                    break;
-                case 3:
-                    gyroTurning(0);
-                    move(.4,-2500);
-                    stopMotors();
-                    sleep(3000);
-                    break;
+                        gyroTurning(0);
+                        move(.4, 800);
+                        stopMotors();
+                        sleep(3000);
+                        break;
+                    case 2:
+                        move(.2, -300);
+                        stopMotors();
+                        sleep(3000);
+                        break;
+                    case 3:
+                        gyroTurning(0);
+                        move(.4, -2500);
+                        stopMotors();
+                        sleep(3000);
+                        break;
+                }
             }
         }
     }
