@@ -75,7 +75,7 @@ public class AutonomousLeft extends AutonomousBase {
             webcamFront.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
                 @Override
                 public void onOpened() {
-                    pipelineFront = new PowerPlaySuperPipeline(false, true, false, false, 176.0);
+                    pipelineFront = new PowerPlaySuperPipeline(false, true, false, false, 160.0);
                     webcamFront.setPipeline(pipelineFront);
                     webcamFront.startStreaming(320, 240, OpenCvCameraRotation.UPRIGHT);
                     frontCameraInitialized = true;
@@ -93,7 +93,7 @@ public class AutonomousLeft extends AutonomousBase {
             webcamBack.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
                 @Override
                 public void onOpened() {
-                    pipelineBack = new PowerPlaySuperPipeline(false, true, false, false, 144.0);
+                    pipelineBack = new PowerPlaySuperPipeline(false, true, false, false, 160.0);
                     webcamBack.setPipeline(pipelineBack);
                     webcamBack.startStreaming(320, 240, OpenCvCameraRotation.UPRIGHT);
                     backCameraInitialized = true;
@@ -269,7 +269,7 @@ public class AutonomousLeft extends AutonomousBase {
             telemetry.addData("Drive", "Arrive %.1f sec", timePoleArrive[0] );
             telemetry.addData("Skill", "alignToPole (%.1f)", timeNow );
             telemetry.update();
-            alignToPole(true);
+            alignToPole(true, false);
         }
 
         // Deposit cone on junction
@@ -313,7 +313,6 @@ public class AutonomousLeft extends AutonomousBase {
                 telemetry.addData("Turret", "%.1f deg", targetAngle );
                 telemetry.addData("Skill", "moveToConeStack (%.1f)", timeNow );
                 telemetry.update();
-sleep(5000);
                 moveToConeStack();
             }
 
@@ -355,7 +354,7 @@ sleep(5000);
                 // make sure we have time left to alignToPole and then park!
                 // (otherwise just drop it and park)
                 if( autonomousTimer.milliseconds() <= poleAlignTimeout ) {
-                    alignToPole(true);
+                    alignToPole(true, true);
                 }
             }
 
@@ -404,21 +403,21 @@ sleep(5000);
         driveToPosition( autoYpos, autoXpos, autoAngle, DRIVE_SPEED_80, TURN_SPEED_80, DRIVE_THRU );
 
         // Drive most of the way there very fast, and centered in the row of tiles
-        autoYpos=39.0;  autoXpos=4.5;
+        autoYpos=37.0;  autoXpos=4.5;
         driveToPosition( autoYpos, autoXpos, autoAngle, DRIVE_SPEED_100, TURN_SPEED_100, DRIVE_THRU );
 
         // We're close, so tilt grabber down to final scoring position
         robot.grabberSetTilt( robot.GRABBER_TILT_FRONT_H_A );
 
         // Drive the final distance to the high junction pole at a slower/controlled speed
-        autoYpos=49.5;  autoXpos=8.2;
+        autoYpos=49.0;  autoXpos=9.0;
         driveToPosition( autoYpos, autoXpos, autoAngle, DRIVE_SPEED_100, TURN_SPEED_100, DRIVE_TO );
 
         // Both mechanisms should be finished, but pause here if they haven't (until they do)
         while( opModeIsActive() && ((robot.turretMotorPIDAuto == true) || (robot.liftMotorPIDAuto == true)) ) {
             performEveryLoop();
         }
-sleep(30000);
+
     } // moveToTallJunction
 
     /*--------------------------------------------------------------------------------------------*/
@@ -456,7 +455,7 @@ sleep(30000);
         robot.rotateServo.setPosition( robot.GRABBER_ROTATE_UP );
 
         // Drive closer to the 5-stack against the wall (same Y and ANGLE, but new X)
-        autoXpos=-13.0;
+        autoXpos=-13.3;
         driveToPosition( autoYpos, autoXpos, autoAngle, DRIVE_SPEED_90, TURN_SPEED_80, DRIVE_TO );
         while( opModeIsActive() && ((robot.turretMotorPIDAuto == true) || (robot.liftMotorPIDAuto == true)) ) {
             performEveryLoop();
@@ -520,11 +519,11 @@ sleep(30000);
         // Perform setup to center turret and raise lift to scoring position
         robot.turretPIDPosInit( robot.TURRET_ANGLE_5STACK_L);
         robot.liftPIDPosInit( robot.LIFT_ANGLE_HIGH_A);
-        robot.grabberSetTilt( robot.GRABBER_TILT_FRONT_H );
+        robot.grabberSetTilt( robot.GRABBER_TILT_FRONT_H_A );
 
         // Drive back to tall junction (adjusting lift along the way)
         // (stay along Y=51.5 instead of returning to Y=54.0, but rotate turret more (-56.5, not -34.5)
-        autoYpos=51.5;  autoXpos=10.0;  autoAngle=-90.0;    // (inches, inches, degrees)
+        autoYpos=46.8;  autoXpos=8.6;  autoAngle=-90.0;    // (inches, inches, degrees)
         driveToPosition( autoYpos, autoXpos, autoAngle, DRIVE_SPEED_90, TURN_SPEED_80, DRIVE_TO );
 
         // Re-center turret again (if it shifted while driving)

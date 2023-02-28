@@ -257,7 +257,8 @@ public abstract class AutonomousBase extends LinearOpMode {
     } // driveAndRotateTurretAngle
 
     /*---------------------------------------------------------------------------------*/
-    void alignToPole(boolean turretFacingFront) {
+    void alignToPole(boolean turretFacingFront, boolean fromStack) {
+        double stackFactor = fromStack ? 2.0 : 0.0;
         PowerPlaySuperPipeline alignmentPipeline;
         PowerPlaySuperPipeline.AnalyzedPole theLocalPole;
 
@@ -283,12 +284,13 @@ public abstract class AutonomousBase extends LinearOpMode {
         currentPositionY = (robotGlobalYCoordinatePosition / robot.COUNTS_PER_INCH2);
         currentPositionAngle = Math.toDegrees(robotOrientationRadians);
         // How many inches do we need to move the robot drivetrain?
-        targetDistanceX = (theLocalPole.highDistanceOffsetCm * cos(toRadians(targetAngle)))/2.54;
-        targetDistanceY = (theLocalPole.highDistanceOffsetCm * sin(toRadians(targetAngle)))/2.54;
+        double targetDistance = theLocalPole.highDistanceOffsetCm + stackFactor;
+        targetDistanceX = (targetDistance * cos(toRadians(targetAngle)))/2.54;
+        targetDistanceY = (targetDistance * sin(toRadians(targetAngle)))/2.54;
         // Add that offset to our current position to create an absolute X-Y position and angle
         // (not sure if this needs to be flipped if we are rear facing or not)
-        targetPositionX = currentPositionX - targetDistanceX;
-        targetPositionY = currentPositionY - targetDistanceY;
+        targetPositionX = currentPositionX + targetDistanceX;
+        targetPositionY = currentPositionY + targetDistanceY;
         targetPositionAngle = currentPositionAngle;
         // Drive to that new position, maintaining the current rotation angle of the drivetrain
         driveToPosition( targetPositionY, targetPositionX, targetPositionAngle, DRIVE_SPEED_50, TURN_SPEED_40, DRIVE_TO );

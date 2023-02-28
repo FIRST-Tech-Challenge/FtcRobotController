@@ -68,6 +68,19 @@ public class TurretPIDTester extends AutonomousBase
     boolean backCameraInitialized = false;
     double maxPower = 0.0;
 
+    double currentPositionX                     = 0.0;   // Keeps track of our Autonomous alignToPole() target position
+    double currentPositionY                     = 0.0;
+    double currentPositionAngle                 = 0.0;
+
+    double targetPositionX                      = 0.0;   // Keeps track of our Autonomous alignToPole() target position
+    double targetPositionY                      = 0.0;
+    double targetPositionAngle                  = 0.0;
+
+    double targetDistanceX                      = 0.0;   // How far do we need to move robot base to alignToPole()?
+    double targetDistanceY                      = 0.0;
+
+    double targetAngle                          = 0.0;   // Keeps track of our Autonomous alignToPole() target turret angle
+
     /**
      * NOTE: Many comments have been omitted from this sample for the
      * sake of conciseness. If you're just starting out with EasyOpenCv,
@@ -151,13 +164,6 @@ public class TurretPIDTester extends AutonomousBase
         PowerPlaySuperPipeline alignmentPipeline;
         PowerPlaySuperPipeline.AnalyzedPole theLocalPole;
 
-        double targetAngle;
-        double targetDistanceX;
-        double targetDistanceY;
-//      double targetPositionX;
-//      double targetPositionY;
-//      double targetPositionAngle;
-
         // If we add back front camera, use boolean to determine which pipeline to use.
         alignmentPipeline = turretFacingFront ? pipelineFront : pipelineBack;
 
@@ -170,11 +176,19 @@ public class TurretPIDTester extends AutonomousBase
         // This is the angle the pole is in relation to the turret angle
         targetAngle = robot.turretAngle - theLocalPole.centralOffsetDegrees;
         robot.turretPIDPosInit(targetAngle);
+        // Where are we right now? (may not have stopped exactly at the commanded location)
+        currentPositionX = (robotGlobalXCoordinatePosition / robot.COUNTS_PER_INCH2);
+        currentPositionY = (robotGlobalYCoordinatePosition / robot.COUNTS_PER_INCH2);
+        currentPositionAngle = Math.toDegrees(robotOrientationRadians);
+        // How many inches do we need to move the robot drivetrain?
         targetDistanceX = (theLocalPole.highDistanceOffsetCm * cos(toRadians(targetAngle)))/2.54;
         targetDistanceY = (theLocalPole.highDistanceOffsetCm * sin(toRadians(targetAngle)))/2.54;
-        targetPositionX = (robotGlobalXCoordinatePosition / robot.COUNTS_PER_INCH2) - targetDistanceX;
-        targetPositionY = (robotGlobalYCoordinatePosition / robot.COUNTS_PER_INCH2) - targetDistanceY;
-        targetPositionAngle = Math.toDegrees(robotOrientationRadians);
+        // Add that offset to our current position to create an absolute X-Y position and angle
+        // (not sure if this needs to be flipped if we are rear facing or not)
+        targetPositionX = currentPositionX + targetDistanceX;
+        targetPositionY = currentPositionY + targetDistanceY;
+        targetPositionAngle = currentPositionAngle;
+        // Drive to that new position, maintaining the current rotation angle of the drivetrain
         driveToPosition( targetPositionY, targetPositionX, targetPositionAngle, DRIVE_SPEED_50, TURN_SPEED_40, DRIVE_TO );
         while(opModeIsActive() && robot.turretMotorPIDAuto) {
             performEveryLoop();
@@ -204,7 +218,7 @@ public class TurretPIDTester extends AutonomousBase
             webcamFront.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
                 @Override
                 public void onOpened() {
-                    pipelineFront = new PowerPlaySuperPipeline(false, true, false, false, 176.0);
+                    pipelineFront = new PowerPlaySuperPipeline(false, true, false, false, 160.0);
                     webcamFront.setPipeline(pipelineFront);
                     webcamFront.startStreaming(320, 240, OpenCvCameraRotation.UPRIGHT);
                     frontCameraInitialized = true;
@@ -222,7 +236,7 @@ public class TurretPIDTester extends AutonomousBase
             webcamBack.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
                 @Override
                 public void onOpened() {
-                    pipelineBack = new PowerPlaySuperPipeline(false, true, false, false, 144.0);
+                    pipelineBack = new PowerPlaySuperPipeline(false, true, false, false, 160.0);
                     webcamBack.setPipeline(pipelineFront);
                     webcamBack.startStreaming(320, 240, OpenCvCameraRotation.UPRIGHT);
                     backCameraInitialized = true;
@@ -302,13 +316,17 @@ public class TurretPIDTester extends AutonomousBase
                 sleepCycles--;
                 telemetry.addLine("Aligned... waiting for kick");
                 telemetry.addData("Time remaining", sleepCycles);
-                telemetry.addData("Max Power", maxPower);
-                telemetry.addData(" ", "#  ERR @ Pwr  (Pmin   +   P   +   I   +   D)");
-                for (int index = 0; index < LOGSIZE; index++) {
-                    telemetry.addData(" ", "%2d %.1f @ %.2f (%.2f + %.2f + %.2f + %.2f)",
-                            index, errorHistory[index], kTHistory[index],
-                            kpMinHistory[index], kpHistory[index], kiHistory[index], kdHistory[index]);
-                }
+                telemetry.addData("Current", "X=%.1f, Y=%.1f, Angle=%.1f", currentPositionX, currentPositionY, currentPositionAngle );
+                telemetry.addData(" offsets", "x=%.1f, y=%.1f", targetDistanceX, targetDistanceY );
+                telemetry.addData("Odometry", "X=%.1f, Y=%.1f, Angle=%.1f", targetPositionX, targetPositionY, targetPositionAngle );
+                telemetry.addData("Turret", "%.1f deg", targetAngle );
+//              telemetry.addData("Max Power", maxPower);
+//              telemetry.addData(" ", "#  ERR @ Pwr  (Pmin   +   P   +   I   +   D)");
+//              for (int index = 0; index < LOGSIZE; index++) {
+//                  telemetry.addData(" ", "%2d %.1f @ %.2f (%.2f + %.2f + %.2f + %.2f)",
+//                          index, errorHistory[index], kTHistory[index],
+//                          kpMinHistory[index], kpHistory[index], kiHistory[index], kdHistory[index]);
+//              }
                 telemetry.update();
                 sleep(10000);
             }

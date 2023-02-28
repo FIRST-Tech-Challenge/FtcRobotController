@@ -269,7 +269,7 @@ public class AutonomousRight extends AutonomousBase {
             telemetry.addData("Drive", "Arrive %.1f sec", timePoleArrive[0] );
             telemetry.addData("Skill", "alignToPole (%.1f)", timeNow );
             telemetry.update();
-            alignToPole(true);
+            alignToPole(true, false);
         }
 
         // Deposit cone on junction
@@ -351,7 +351,7 @@ public class AutonomousRight extends AutonomousBase {
                 // make sure we have time left to alignToPole and then park!
                 // (otherwise just drop it and park)
                 if( autonomousTimer.milliseconds() <= poleAlignTimeout ) {
-                    alignToPole(true);
+                    alignToPole(true, true);
                 }
             }
 
