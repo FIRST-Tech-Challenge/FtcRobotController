@@ -17,6 +17,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
@@ -28,6 +29,8 @@ import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
 import org.openftc.easyopencv.OpenCvWebcam;
+
+import java.util.concurrent.TimeUnit;
 
 @TeleOp(name = "FinalDrive", group = "Taus")
 //@Disabled
@@ -46,18 +49,19 @@ public class TeleOpDrive extends LinearOpMode{
     // Define 2 states, driver control or alignment control
     enum Mode {
         NORMAL_CONTROL,
+        ALIGN_RIGHT,
+        ALIGN_LEFT,
+        ALIGN_UP,
+        ALIGN_DOWN,
         ALIGN_TO_POLE
     }
+
 
     private Mode currentMode = Mode.NORMAL_CONTROL;
 
     // Declare a PIDF Controller to regulate heading
     // Use the same gains as SampleMecanumDrive's heading controller
     private PIDFController headingController = new PIDFController(SampleMecanumDrive.HEADING_PID);
-
-    // Declare a target vector you'd like your bot to align with
-    // Can be any x/y coordinate of your choosing
-    private Vector2d targetPosition = new Vector2d(0, 0);
 
 
     public void runOpMode() {
@@ -79,7 +83,7 @@ public class TeleOpDrive extends LinearOpMode{
                 webcam.setPipeline(opencv);
                 //start streaming the camera
                 //
-                // webcam.startStreaming(1280, 720, OpenCvCameraRotation.UPRIGHT);
+                webcam.startStreaming(1280, 720, OpenCvCameraRotation.UPRIGHT);
             }
 
             @Override
@@ -105,6 +109,7 @@ public class TeleOpDrive extends LinearOpMode{
         waitForStart();
 
         telemetry.addLine("Running");
+        ElapsedTime headingTurnTimer = new ElapsedTime();
 
         while (opModeIsActive()) {
 
@@ -121,13 +126,36 @@ public class TeleOpDrive extends LinearOpMode{
             TelemetryPacket packet = new TelemetryPacket();
             Canvas fieldOverlay = packet.fieldOverlay();
 
+            // Declare a target vector you'd like your bot to align with
+            // Can be any x/y coordinate of your choosing
+            Vector2d RightDpadTargetPosition = new Vector2d(72, drive.getLocalizer().getPoseEstimate().getY());
+            Vector2d LeftDpadTargetPosition = new Vector2d(-72, drive.getLocalizer().getPoseEstimate().getY());
+            Vector2d UpDpadTargetPosition = new Vector2d(drive.getLocalizer().getPoseEstimate().getX(), 72);
+            Vector2d DownDpadTargetPosition = new Vector2d(drive.getLocalizer().getPoseEstimate().getX(), -72);
+
             //DRIVEBASE
             switch (currentMode) {
                 case NORMAL_CONTROL:
                     // Switch into alignment mode if `a` is pressed
-                    /*if (gamepad1.dpad_left) {
+                    if (gamepad1.dpad_left) {
+                        headingTurnTimer.reset();
+                        currentMode = Mode.ALIGN_LEFT;
+                    }
+                    if (gamepad1.dpad_right) {
+                        headingTurnTimer.reset();
+                        currentMode = Mode.ALIGN_RIGHT;
+                    }
+                    if (gamepad1.dpad_up) {
+                        headingTurnTimer.reset();
+                        currentMode = Mode.ALIGN_UP;
+                    }
+                    if (gamepad1.dpad_down) {
+                        headingTurnTimer.reset();
+                        currentMode = Mode.ALIGN_DOWN;
+                    }
+                    if (gamepad1.left_bumper) {
                         currentMode = Mode.ALIGN_TO_POLE;
-                    }*/
+                    }
 
                     // Standard teleop control
                     // Convert gamepad input into desired pose velocity
@@ -137,12 +165,7 @@ public class TeleOpDrive extends LinearOpMode{
                             gamepad1.right_stick_x
                     );
                     break;
-                case ALIGN_TO_POLE:
-                    // Switch back into normal driver control mode if `b` is pressed
-                    if (gamepad1.dpad_right) {
-                        currentMode = Mode.NORMAL_CONTROL;
-                    }
-
+                case ALIGN_RIGHT:
                     // Create a vector from the gamepad x/y inputs which is the field relative movement
                     // Then, rotate that vector by the inverse of that heading for field centric control
                     Vector2d fieldFrameInput = new Vector2d(
@@ -152,7 +175,7 @@ public class TeleOpDrive extends LinearOpMode{
                     Vector2d robotFrameInput = fieldFrameInput.rotated(-poseEstimate.getHeading());
 
                     // Difference between the target vector and the bot's position
-                    Vector2d difference = targetPosition.minus(poseEstimate.vec());
+                    Vector2d difference = RightDpadTargetPosition.minus(poseEstimate.vec());
                     // Obtain the target angle for feedback and derivative for feedforward
                     double theta = difference.angle();
 
@@ -176,15 +199,263 @@ public class TeleOpDrive extends LinearOpMode{
 
                     // Draw the target on the field
                     fieldOverlay.setStroke("#dd2c00");
-                    fieldOverlay.strokeCircle(targetPosition.getX(), targetPosition.getY(), DRAWING_TARGET_RADIUS);
+                    fieldOverlay.strokeCircle(RightDpadTargetPosition.getX(), RightDpadTargetPosition.getY(), DRAWING_TARGET_RADIUS);
 
                     // Draw lines to target
                     fieldOverlay.setStroke("#b89eff");
-                    fieldOverlay.strokeLine(targetPosition.getX(), targetPosition.getY(), poseEstimate.getX(), poseEstimate.getY());
+                    fieldOverlay.strokeLine(RightDpadTargetPosition.getX(), RightDpadTargetPosition.getY(), poseEstimate.getX(), poseEstimate.getY());
                     fieldOverlay.setStroke("#ffce7a");
-                    fieldOverlay.strokeLine(targetPosition.getX(), targetPosition.getY(), targetPosition.getX(), poseEstimate.getY());
-                    fieldOverlay.strokeLine(targetPosition.getX(), poseEstimate.getY(), poseEstimate.getX(), poseEstimate.getY());
+                    fieldOverlay.strokeLine(RightDpadTargetPosition.getX(), RightDpadTargetPosition.getY(), RightDpadTargetPosition.getX(), poseEstimate.getY());
+                    fieldOverlay.strokeLine(RightDpadTargetPosition.getX(), poseEstimate.getY(), poseEstimate.getX(), poseEstimate.getY());
+
+                    if (gamepad1.left_stick_x > 0.2 || gamepad1.left_stick_x < -0.2 || gamepad1.left_stick_y > 0.2 || gamepad1.left_stick_y < -0.2 || gamepad1.right_stick_x > 0.2 || gamepad1.right_stick_x < -0.2) {
+
+                        currentMode = Mode.NORMAL_CONTROL;
+                    }
+
                     break;
+                case ALIGN_LEFT:
+                    // Create a vector from the gamepad x/y inputs which is the field relative movement
+                    // Then, rotate that vector by the inverse of that heading for field centric control
+                    Vector2d fieldFrameInput2 = new Vector2d(
+                            -gamepad1.left_stick_y,
+                            -gamepad1.left_stick_x
+                    );
+                    Vector2d robotFrameInput2 = fieldFrameInput2.rotated(-poseEstimate.getHeading());
+
+                    // Difference between the target vector and the bot's position
+                    Vector2d difference2 = LeftDpadTargetPosition.minus(poseEstimate.vec());
+                    // Obtain the target angle for feedback and derivative for feedforward
+                    double theta2 = difference2.angle();
+
+                    // Not technically omega because its power. This is the derivative of atan2
+                    double thetaFF2 = -fieldFrameInput2.rotated(-Math.PI / 2).dot(difference2) / (difference2.norm() * difference2.norm());
+
+                    // Set the target heading for the heading controller to our desired angle
+                    headingController.setTargetPosition(theta2);
+
+                    // Set desired angular velocity to the heading controller output + angular
+                    // velocity feedforward
+                    double headingInput2 = (headingController.update(poseEstimate.getHeading())
+                            * DriveConstants.kV + thetaFF2)
+                            * DriveConstants.TRACK_WIDTH;
+
+                    // Combine the field centric x/y velocity with our derived angular velocity
+                    driveDirection = new Pose2d(
+                            robotFrameInput2,
+                            headingInput2
+                    );
+
+                    // Draw the target on the field
+                    fieldOverlay.setStroke("#dd2c00");
+                    fieldOverlay.strokeCircle(LeftDpadTargetPosition.getX(), LeftDpadTargetPosition.getY(), DRAWING_TARGET_RADIUS);
+
+                    // Draw lines to target
+                    fieldOverlay.setStroke("#b89eff");
+                    fieldOverlay.strokeLine(LeftDpadTargetPosition.getX(), LeftDpadTargetPosition.getY(), poseEstimate.getX(), poseEstimate.getY());
+                    fieldOverlay.setStroke("#ffce7a");
+                    fieldOverlay.strokeLine(LeftDpadTargetPosition.getX(), LeftDpadTargetPosition.getY(), LeftDpadTargetPosition.getX(), poseEstimate.getY());
+                    fieldOverlay.strokeLine(LeftDpadTargetPosition.getX(), poseEstimate.getY(), poseEstimate.getX(), poseEstimate.getY());
+
+                    if (gamepad1.left_stick_x > 0.2 || gamepad1.left_stick_x < -0.2 || gamepad1.left_stick_y > 0.2 || gamepad1.left_stick_y < -0.2 || gamepad1.right_stick_x > 0.2 || gamepad1.right_stick_x < -0.2) {
+                        currentMode = Mode.NORMAL_CONTROL;
+                    }
+
+
+                    break;
+                case ALIGN_UP:
+                    // Create a vector from the gamepad x/y inputs which is the field relative movement
+                    // Then, rotate that vector by the inverse of that heading for field centric control
+                    Vector2d fieldFrameInput3 = new Vector2d(
+                            -gamepad1.left_stick_y,
+                            -gamepad1.left_stick_x
+                    );
+                    Vector2d robotFrameInput3 = fieldFrameInput3.rotated(-poseEstimate.getHeading());
+
+                    // Difference between the target vector and the bot's position
+                    Vector2d difference3 = UpDpadTargetPosition.minus(poseEstimate.vec());
+                    // Obtain the target angle for feedback and derivative for feedforward
+                    double theta3 = difference3.angle();
+
+                    // Not technically omega because its power. This is the derivative of atan2
+                    double thetaFF3 = -fieldFrameInput3.rotated(-Math.PI / 2).dot(difference3) / (difference3.norm() * difference3.norm());
+
+                    // Set the target heading for the heading controller to our desired angle
+                    headingController.setTargetPosition(theta3);
+
+                    // Set desired angular velocity to the heading controller output + angular
+                    // velocity feedforward
+                    double headingInput3 = (headingController.update(poseEstimate.getHeading())
+                            * DriveConstants.kV + thetaFF3)
+                            * DriveConstants.TRACK_WIDTH;
+
+                    // Combine the field centric x/y velocity with our derived angular velocity
+                    driveDirection = new Pose2d(
+                            robotFrameInput3,
+                            headingInput3
+                    );
+
+                    // Draw the target on the field
+                    fieldOverlay.setStroke("#dd2c00");
+                    fieldOverlay.strokeCircle(UpDpadTargetPosition.getX(), UpDpadTargetPosition.getY(), DRAWING_TARGET_RADIUS);
+
+                    // Draw lines to target
+                    fieldOverlay.setStroke("#b89eff");
+                    fieldOverlay.strokeLine(UpDpadTargetPosition.getX(), UpDpadTargetPosition.getY(), poseEstimate.getX(), poseEstimate.getY());
+                    fieldOverlay.setStroke("#ffce7a");
+                    fieldOverlay.strokeLine(UpDpadTargetPosition.getX(), UpDpadTargetPosition.getY(), UpDpadTargetPosition.getX(), poseEstimate.getY());
+                    fieldOverlay.strokeLine(UpDpadTargetPosition.getX(), poseEstimate.getY(), poseEstimate.getX(), poseEstimate.getY());
+
+                    if (gamepad1.left_stick_x > 0.2 || gamepad1.left_stick_x < -0.2 || gamepad1.left_stick_y > 0.2 || gamepad1.left_stick_y < -0.2 || gamepad1.right_stick_x > 0.2 || gamepad1.right_stick_x < -0.2) {
+                        currentMode = Mode.NORMAL_CONTROL;
+                    }
+
+
+                    break;
+                case ALIGN_DOWN:
+                    // Create a vector from the gamepad x/y inputs which is the field relative movement
+                    // Then, rotate that vector by the inverse of that heading for field centric control
+                    Vector2d fieldFrameInput4 = new Vector2d(
+                            -gamepad1.left_stick_y,
+                            -gamepad1.left_stick_x
+                    );
+                    Vector2d robotFrameInput4 = fieldFrameInput4.rotated(-poseEstimate.getHeading());
+
+                    // Difference between the target vector and the bot's position
+                    Vector2d difference4 = DownDpadTargetPosition.minus(poseEstimate.vec());
+                    // Obtain the target angle for feedback and derivative for feedforward
+                    double theta4 = difference4.angle();
+
+                    // Not technically omega because its power. This is the derivative of atan2
+                    double thetaFF4 = -fieldFrameInput4.rotated(-Math.PI / 2).dot(difference4) / (difference4.norm() * difference4.norm());
+
+                    // Set the target heading for the heading controller to our desired angle
+                    headingController.setTargetPosition(theta4);
+
+                    // Set desired angular velocity to the heading controller output + angular
+                    // velocity feedforward
+                    double headingInput4 = (headingController.update(poseEstimate.getHeading())
+                            * DriveConstants.kV + thetaFF4)
+                            * DriveConstants.TRACK_WIDTH;
+
+                    // Combine the field centric x/y velocity with our derived angular velocity
+                    driveDirection = new Pose2d(
+                            robotFrameInput4,
+                            headingInput4
+                    );
+
+                    // Draw the target on the field
+                    fieldOverlay.setStroke("#dd2c00");
+                    fieldOverlay.strokeCircle(DownDpadTargetPosition.getX(), DownDpadTargetPosition.getY(), DRAWING_TARGET_RADIUS);
+
+                    // Draw lines to target
+                    fieldOverlay.setStroke("#b89eff");
+                    fieldOverlay.strokeLine(DownDpadTargetPosition.getX(), DownDpadTargetPosition.getY(), poseEstimate.getX(), poseEstimate.getY());
+                    fieldOverlay.setStroke("#ffce7a");
+                    fieldOverlay.strokeLine(DownDpadTargetPosition.getX(), DownDpadTargetPosition.getY(), DownDpadTargetPosition.getX(), poseEstimate.getY());
+                    fieldOverlay.strokeLine(DownDpadTargetPosition.getX(), poseEstimate.getY(), poseEstimate.getX(), poseEstimate.getY());
+
+                    if (gamepad1.left_stick_x > 0.2 || gamepad1.left_stick_x < -0.2 || gamepad1.left_stick_y > 0.2 || gamepad1.left_stick_y < -0.2 || gamepad1.right_stick_x > 0.2 || gamepad1.right_stick_x < -0.2) {
+                        currentMode = Mode.NORMAL_CONTROL;
+                    }
+
+
+                    break;
+                case ALIGN_TO_POLE:
+                    double PIXELS_PER_DEGREE = 26.70190509190664625235159202721;
+                    double poleX = opencv.poleCenterX;
+                    double poleWidth = opencv.poleWidth;
+                    double errorX = poleX - 640;
+                    double POLE_DISTANCE_CONSTANT = 0.02;
+
+                    //TODO: need to add the actual math for pole detection/alignment
+                    //we know the angle of the pole in relation to the robot
+                    //and we know the width of the pole (in pixels, so need to convert to inches with tuning)
+                    //so that's an angle and an adjacent side to a right triangle
+                    //so then solve the rest of triangle and figure out the position of the pole in x,y inches
+
+                    double headingDiff = Math.toDegrees(poseEstimate.getHeading()) - (errorX/PIXELS_PER_DEGREE);
+//                    double headingDiff = (errorX/PIXELS_PER_DEGREE);
+                    double poleDistanceEstimate = poleWidth * POLE_DISTANCE_CONSTANT;
+//                    double otherAngle = 90 - headingDiff;
+
+
+                    int closestAngle = 0;
+
+                    int temp = (int)(Math.toDegrees(poseEstimate.getHeading()) / 90);
+                    if (temp == 0) {
+                        closestAngle = 0;
+                    } else if (temp == 1) {
+                        closestAngle = 90;
+                    } else if (temp == 2) {
+                        closestAngle = 180;
+                    } else if (temp == 3) {
+                        closestAngle = 270;
+                    } else {
+                        closestAngle = 360;
+                    }
+
+                    double angleToNearest90 = Math.toDegrees(poseEstimate.getHeading()) - closestAngle;
+                    double other90Angle = headingDiff - angleToNearest90;
+
+                    double XDiff = Math.sin(Math.toRadians(other90Angle)) * poleDistanceEstimate;
+                    double YDiff = Math.cos(Math.toRadians(other90Angle)) * poleDistanceEstimate;
+
+                    double test = poseEstimate.getHeading() + headingDiff;
+
+                    Vector2d PoleAlignPosition = new Vector2d(drive.getLocalizer().getPoseEstimate().getX() + XDiff, drive.getLocalizer().getPoseEstimate().getY() + YDiff);
+//                    Vector2d PoleAlignPosition = Vector2d.polar(poleDistanceEstimate, Math.toRadians(headingDiff));
+
+                    // Create a vector from the gamepad x/y inputs which is the field relative movement
+                    // Then, rotate that vector by the inverse of that heading for f
+                    // ield centric control
+                    Vector2d fieldFrameInput5 = new Vector2d(
+                            -gamepad1.left_stick_y,
+                            -gamepad1.left_stick_x
+                    );
+                    Vector2d robotFrameInput5 = fieldFrameInput5.rotated(-poseEstimate.getHeading());
+
+                    // Difference between the target vector and the bot's position
+                    Vector2d difference5 = PoleAlignPosition.minus(poseEstimate.vec());
+                    // Obtain the target angle for feedback and derivative for feedforward
+                    double theta5 = difference5.angle();
+
+                    // Not technically omega because its power. This is the derivative of atan2
+                    double thetaFF5 = -fieldFrameInput5.rotated(-Math.PI / 2).dot(difference5) / (difference5.norm() * difference5.norm());
+
+                    // Set the target heading for the heading controller to our desired angle
+                    headingController.setTargetPosition(theta5);
+
+                    // Set desired angular velocity to the heading controller output + angular
+                    // velocity feedforward
+                    double headingInput5 = (headingController.update(poseEstimate.getHeading())
+                            * DriveConstants.kV + thetaFF5)
+                            * DriveConstants.TRACK_WIDTH;
+
+                    // Combine the field centric x/y velocity with our derived angular velocity
+                    driveDirection = new Pose2d(
+                            robotFrameInput5,
+                            headingInput5
+                    );
+
+                    // Draw the target on the field
+                    fieldOverlay.setStroke("#dd2c00");
+                    fieldOverlay.strokeCircle(PoleAlignPosition.getX(), PoleAlignPosition.getY(), DRAWING_TARGET_RADIUS);
+
+                    // Draw lines to target
+                    fieldOverlay.setStroke("#b89eff");
+                    fieldOverlay.strokeLine(PoleAlignPosition.getX(), PoleAlignPosition.getY(), poseEstimate.getX(), poseEstimate.getY());
+                    fieldOverlay.setStroke("#ffce7a");
+                    fieldOverlay.strokeLine(PoleAlignPosition.getX(), PoleAlignPosition.getY(), PoleAlignPosition.getX(), poseEstimate.getY());
+                    fieldOverlay.strokeLine(PoleAlignPosition.getX(), poseEstimate.getY(), poseEstimate.getX(), poseEstimate.getY());
+
+                    if (gamepad1.right_stick_x > 0.2 || gamepad1.right_stick_x < -0.2) {
+                        currentMode = Mode.NORMAL_CONTROL;
+                    }
+
+
+                    break;
+
             }
 
             /***********************************************************************************************************************************/
@@ -195,6 +466,7 @@ public class TeleOpDrive extends LinearOpMode{
                 manipulator.outtake();
             } else {
                 manipulator.stopIntake();
+
             }
 
 
