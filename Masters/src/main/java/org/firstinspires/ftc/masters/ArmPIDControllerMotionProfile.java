@@ -14,7 +14,7 @@ public class ArmPIDControllerMotionProfile {
     DcMotorEx armMotor;
     ProfiledPIDController pidController;
     int target;
-    private final double ticks_in_degree = 2785 / 360;
+    private final double degree_per_ticks = 360/2786.2 ;
     public static double f_arm=0;
 
     public ArmPIDControllerMotionProfile(DcMotorEx armMotor) {
@@ -36,6 +36,6 @@ public class ArmPIDControllerMotionProfile {
             pidController.setConstraints(constraintFast);
         }
 
-        return pidController.calculate(armMotor.getCurrentPosition())+ Math.cos(Math.toRadians((target+325)/ticks_in_degree))*f_arm;
+        return pidController.calculate(armMotor.getCurrentPosition())+ Math.sin(Math.toRadians((target+325)/ degree_per_ticks))*f_arm;
     }
 }
