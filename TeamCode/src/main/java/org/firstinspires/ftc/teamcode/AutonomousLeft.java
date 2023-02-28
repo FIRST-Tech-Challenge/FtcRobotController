@@ -196,7 +196,7 @@ public class AutonomousLeft extends AutonomousBase {
             }
             signalZone = pipelineLow.signalZoneL;
             pipelineLow.overrideAlliance(blueAlliance);
-            pipelineLow.saveLastAutoImage( );
+            pipelineLow.saveSignalAutoImage( );
         }
         // Turn off detecting the signal.
         pipelineLow.signalDetection(false);
@@ -270,6 +270,10 @@ public class AutonomousLeft extends AutonomousBase {
             telemetry.addData("Skill", "alignToPole (%.1f)", timeNow );
             telemetry.update();
             alignToPole(true, false);
+            timeNow = autonomousTimer.milliseconds()/1000.0;
+            telemetry.addData("Skill", "rotateTurretToPole (%.1f)", timeNow );
+            telemetry.update();
+            rotateTurretToPole(true);
         }
 
         // Deposit cone on junction
@@ -355,6 +359,10 @@ public class AutonomousLeft extends AutonomousBase {
                 // (otherwise just drop it and park)
                 if( autonomousTimer.milliseconds() <= poleAlignTimeout ) {
                     alignToPole(true, true);
+                    timeNow = autonomousTimer.milliseconds()/1000.0;
+                    telemetry.addData("Skill", "rotateTurretToPole (%.1f)", timeNow );
+                    telemetry.update();
+                    rotateTurretToPole(true);
                 }
             }
 

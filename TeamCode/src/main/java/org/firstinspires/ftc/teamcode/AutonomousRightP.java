@@ -137,8 +137,10 @@ public class AutonomousRightP extends AutonomousBase {
         
         // Only do these steps if we didn't hit STOP
         if( opModeIsActive() ) {
+            createAutoStorageFolder(blueAlliance, false);
+            pipelineLow.setStorageFolder(storageDir);
             signalZone = pipelineLow.signalZoneR;
-            pipelineLow.saveLastAutoImage( );
+            pipelineLow.saveSignalAutoImage( );
         }
         // Turn off detecting the signal.
         pipelineLow.signalDetection(false);

@@ -140,11 +140,12 @@ class PowerPlaySuperPipeline extends OpenCvPipeline
     private Mat allianceRL = new Mat();
     private Mat allianceBL = new Mat();
 
-    private Mat analyzedPoleImage = new Mat();
-    private Mat analyzedBlueConeImage = new Mat();
-    private Mat analyzedRedConeImage = new Mat();
-    private Mat analyzedBlueTapeImage = new Mat();
-    private Mat analyzedRedTapeImage = new Mat();
+    private boolean captureNextRedCone = false;
+    private boolean captureNextRedTape = false;
+    private boolean captureNextBlueCone = false;
+    private boolean captureNextBlueTape = false;
+    private boolean captureNextPole = false;
+    private boolean captureNextSignal = false;
 
     private int maxL;
     public int avgRL;
@@ -182,10 +183,6 @@ class PowerPlaySuperPipeline extends OpenCvPipeline
     public int signalZoneL;
     public int signalZoneR;
 
-    public Mat finalAutoImage = new Mat();
-
-    private static String directory;
-
     public Object lockBlueTape = new Object();
     public Object lockRedTape = new Object();
     public Object lockBlueCone = new Object();
@@ -203,12 +200,6 @@ class PowerPlaySuperPipeline extends OpenCvPipeline
         detectPole = poleDetection;
         detectRedCone = redConeDetection;
         detectBlueCone = blueConeDetection;
-
-        thePole.analyzedFrame = new Mat();
-        theRedCone.analyzedFrame = new Mat();
-        theBlueCone.analyzedFrame = new Mat();
-        theRedTape.analyzedFrame = new Mat();
-        theBlueTape.analyzedFrame = new Mat();
 
         CENTERED_OBJECT = new FourPointRect(new Point(center - 24, 0.0), new Point(center + 24, 0.0),
                 new Point(center - 24, 239.0), new Point(center + 24, 239.0));
@@ -261,30 +252,54 @@ class PowerPlaySuperPipeline extends OpenCvPipeline
         detectPole = enabled;
     }
 
+    public void saveBlueConeAutoImage() {
+        captureNextBlueCone = true;
+    }
+    public void saveBlueTapeAutoImage() {
+        captureNextBlueCone = true;
+    }
+    public void saveRedConeAutoImage() {
+        captureNextRedCone = true;
+    }
+    public void saveRedTapeAutoImage() {
+        captureNextRedCone = true;
+    }
+    public void savePoleAutoImage() {
+        captureNextPole = true;
+    }
+    public void saveSignalAutoImage() {
+        captureNextSignal = true;
+    }
+
     // Call these functions to save the image associated with the detected object.
-    public void saveConeAutoImage(AnalyzedCone detectedCone) {
+    protected void saveConeAutoImage(Mat detectedCone) {
         String timeString = new SimpleDateFormat("hh-mm-ss.SSS", Locale.getDefault()).format(new Date());
 
-        createImageStorageFolder( );
-        String filePath = directory + "/" + "ConeImage_" + timeString + ".png";
-        saveImage(filePath, detectedCone.analyzedFrame);
+        String filePath = storageFolder + "/" + "ConeImage_" + timeString + ".png";
+        saveImage(filePath, detectedCone);
     }
-    public void saveTapeAutoImage(AnalyzedTape detectedTape) {
+    protected void saveTapeAutoImage(Mat detectedTape) {
         String timeString = new SimpleDateFormat("hh-mm-ss.SSS", Locale.getDefault()).format(new Date());
 
-        createImageStorageFolder( );
-        String filePath = directory + "/" + "TapeImage_" + timeString + ".png";
-        saveImage(filePath, detectedTape.analyzedFrame);
+        String filePath = storageFolder + "/" + "TapeImage_" + timeString + ".png";
+        saveImage(filePath, detectedTape);
     }
-    public void savePoleAutoImage(AnalyzedPole detectedPole) {
+    protected void savePoleAutoImage(Mat detectedPole) {
         String timeString = new SimpleDateFormat("hh-mm-ss.SSS", Locale.getDefault()).format(new Date());
 
-        createImageStorageFolder( );
-        String filePath = directory + "/" + "PoleImage_" + timeString + ".png";
-        saveImage(filePath, detectedPole.analyzedFrame);
+        String filePath = storageFolder + "/" + "PoleImage_" + timeString + ".png";
+        saveImage(filePath, detectedPole);
     }
+    protected void saveSignalAutoImage(Mat detectedSignal ) {
+        String timeString = new SimpleDateFormat("hh-mm-ss", Locale.getDefault()).format(new Date());
+
+        String filePath = storageFolder + "/" + "AutoImage_" + timeString + ".png";
+        saveImage(filePath, detectedSignal);
+    }
+
 
     protected void saveImage(String filePath, Mat image) {
+        Mat cloneBaby = image.clone();
         new Thread(new Runnable()
         {
             @Override
@@ -292,8 +307,8 @@ class PowerPlaySuperPipeline extends OpenCvPipeline
             {
                 try
                 {
-                    Imgproc.cvtColor(image, image, Imgproc.COLOR_RGB2BGR);
-                    Imgcodecs.imwrite(filePath, image);
+                    Imgproc.cvtColor(cloneBaby, cloneBaby, Imgproc.COLOR_RGB2BGR);
+                    Imgcodecs.imwrite(filePath, cloneBaby);
                 }
                 catch (Exception e)
                 {
@@ -301,48 +316,10 @@ class PowerPlaySuperPipeline extends OpenCvPipeline
                 }
                 finally
                 {
-                    image.release();
+                    cloneBaby.release();
                 }
             }
         }).start();
-    }
-
-    protected void createImageStorageFolder( ) {
-        // Create a subdirectory based on DATE
-        String dateString = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(new Date());
-        directory = Environment.getExternalStorageDirectory().getPath() + "//FIRST//Webcam//" + dateString;
-
-        if(overrideAlliance) {
-            isBlueAlliance = overrideIsBlue;
-        }
-        if(overrideSide) {
-            isLeft = overrideIsLeft;
-        }
-
-        if (isBlueAlliance) {
-            if (isLeft) {
-                directory += "/blue_left";
-            } else {
-                directory += "/blue_right";
-            }
-        } else {
-            if (isLeft) {
-                directory += "/red_left";
-            } else {
-                directory += "/red_right";
-            }
-        }
-        // Create the directory structure to store the autonomous image used to start auto.
-        File baseDir = new File(directory);
-        baseDir.mkdirs();
-    }
-
-    public void saveLastAutoImage( ) {
-        String timeString = new SimpleDateFormat("hh-mm-ss", Locale.getDefault()).format(new Date());
-
-        createImageStorageFolder( );
-        String filePath = directory + "/" + "AutoImage_" + timeString + ".png";
-        saveImage(filePath, finalAutoImage);
     }
 
     /*
@@ -459,7 +436,6 @@ class PowerPlaySuperPipeline extends OpenCvPipeline
             highDistanceOffsetCm = 0;
             aligned = false;
             properDistanceHigh = false;
-            analyzedFrame = null;
         }
 
         public AnalyzedPole clone() {
@@ -485,7 +461,6 @@ class PowerPlaySuperPipeline extends OpenCvPipeline
         double highDistanceOffsetCm;
         boolean aligned;
         boolean properDistanceHigh;
-        Mat analyzedFrame;
     }
 
     static final double MAX_CONE_OFFSET = 1.5;  // 10 +/- pixels
@@ -497,7 +472,6 @@ class PowerPlaySuperPipeline extends OpenCvPipeline
             centralOffset = 0;
             centralOffsetDegrees = 0;
             aligned = false;
-            analyzedFrame = null;
         }
 
         public AnalyzedCone clone() {
@@ -517,7 +491,6 @@ class PowerPlaySuperPipeline extends OpenCvPipeline
         double centralOffset;
         double centralOffsetDegrees;
         boolean aligned;
-        Mat analyzedFrame;
     }
 
     static final double MAX_TAPE_OFFSET = 1.5;
@@ -530,7 +503,6 @@ class PowerPlaySuperPipeline extends OpenCvPipeline
             centralOffsetDegrees = 0;
             aligned = false;
             angle = 0.0;
-            analyzedFrame = null;
         };
         public AnalyzedTape clone() {
             AnalyzedTape cloneBaby = new AnalyzedTape();
@@ -550,7 +522,6 @@ class PowerPlaySuperPipeline extends OpenCvPipeline
         double centralOffsetDegrees;
         boolean aligned;
         double angle;
-        Mat analyzedFrame;
     }
 
     // For detecting poles
@@ -596,7 +567,7 @@ class PowerPlaySuperPipeline extends OpenCvPipeline
         /*
          * Run analysis for signal detection
          */
-        if(detectSignal) {
+        if(detectSignal || captureNextSignal) {
             // Extract the RGB channels from the image frame
             Core.split(input, channels);
 
@@ -689,7 +660,7 @@ class PowerPlaySuperPipeline extends OpenCvPipeline
         /*
          * Run analysis for yellow poles
          */
-        if(detectPole) {
+        if(detectPole || captureNextPole) {
             internalPoleList.clear();
 
             for (MatOfPoint contour : findYellowContours(input)) {
@@ -704,7 +675,7 @@ class PowerPlaySuperPipeline extends OpenCvPipeline
         /*
          * Run analysis for blue cones
          */
-        if(detectBlueCone) {
+        if(detectBlueCone || captureNextBlueCone || captureNextBlueTape) {
             internalBlueTapeList.clear();
             internalBlueConeList.clear();
             findBlueContours(input);
@@ -719,7 +690,7 @@ class PowerPlaySuperPipeline extends OpenCvPipeline
         /*
          * Run analysis for red cones
          */
-        if(detectRedCone) {
+        if(detectRedCone || captureNextRedCone || captureNextRedTape) {
             internalRedTapeList.clear();
             internalRedConeList.clear();
             findRedContours(input);
@@ -733,7 +704,7 @@ class PowerPlaySuperPipeline extends OpenCvPipeline
 
         // Above here, do not draw on input. All the drawing is done below here so it is not part
         // of the processing.
-        if(detectSignal) {
+        if(detectSignal || captureNextSignal) {
             // Draw rectangles around the sample zone
             Imgproc.rectangle(input, beaconDetectLeftTl, beaconDetectLeftBr, new Scalar(0, 0, 255), 1);
             if(maxL == avgRL) {
@@ -817,10 +788,13 @@ class PowerPlaySuperPipeline extends OpenCvPipeline
                     isLeft = true;
                 }
             }
-            input.copyTo(finalAutoImage);
+            if(captureNextSignal) {
+                captureNextSignal = false;
+                saveSignalAutoImage(input);
+            }
         }
 
-        if(detectPole) {
+        if(detectPole || captureNextPole) {
             synchronized(lockPole) {
                 if (thePole.aligned) {
                     thePole.alignedCount++;
@@ -834,10 +808,13 @@ class PowerPlaySuperPipeline extends OpenCvPipeline
                 } else {
                     thePole.properDistanceHighCount = 0;
                 }
-                input.copyTo(analyzedPoleImage);
+                if(captureNextPole) {
+                    captureNextPole = false;
+                    savePoleAutoImage(input);
+                }
             }
         }
-        if(detectBlueCone) {
+        if(detectBlueCone || captureNextBlueCone || captureNextBlueTape) {
             synchronized(lockBlueCone) {
                 if (theBlueCone.aligned) {
                     theBlueCone.alignedCount++;
@@ -846,7 +823,10 @@ class PowerPlaySuperPipeline extends OpenCvPipeline
                     theBlueCone.alignedCount = 0;
                     drawFourPointRect(theBlueCone.corners, input, RED);
                 }
-                input.copyTo(analyzedBlueConeImage);
+                if(captureNextBlueCone) {
+                    captureNextBlueCone = false;
+                    saveTapeAutoImage(input);
+                }
             }
             synchronized(lockBlueTape) {
                 if (theBlueTape.aligned) {
@@ -856,10 +836,13 @@ class PowerPlaySuperPipeline extends OpenCvPipeline
                     theBlueTape.alignedCount = 0;
                     drawFourPointRect(theBlueTape.corners, input, RED);
                 }
-                input.copyTo(analyzedBlueTapeImage);
+                if(captureNextBlueTape) {
+                    captureNextBlueTape = false;
+                    saveTapeAutoImage(input);
+                }
             }
         }
-        if(detectRedCone) {
+        if(detectRedCone || captureNextRedCone || captureNextRedTape) {
             synchronized(lockRedCone) {
                 if (theRedCone.aligned) {
                     theRedCone.alignedCount++;
@@ -868,7 +851,10 @@ class PowerPlaySuperPipeline extends OpenCvPipeline
                     theRedCone.alignedCount = 0;
                     drawFourPointRect(theRedCone.corners, input, RED);
                 }
-                input.copyTo(analyzedRedConeImage);
+                if(captureNextRedCone) {
+                    captureNextRedCone = false;
+                    saveConeAutoImage(input);
+                }
             }
             synchronized(lockRedTape) {
                 if (theRedTape.aligned) {
@@ -878,7 +864,10 @@ class PowerPlaySuperPipeline extends OpenCvPipeline
                     theRedTape.alignedCount = 0;
                     drawFourPointRect(theRedTape.corners, input, RED);
                 }
-                input.copyTo(analyzedRedTapeImage);
+                if(captureNextRedTape) {
+                    captureNextRedTape = false;
+                    saveTapeAutoImage(input);
+                }
             }
         }
         drawFourPointRect(CENTERED_OBJECT, input, BLUE);
@@ -945,9 +934,8 @@ class PowerPlaySuperPipeline extends OpenCvPipeline
     {
         synchronized(lockRedCone) {
             AnalyzedCone cloneBaby = theRedCone.clone();
-            cloneBaby.analyzedFrame = new Mat();
-            analyzedRedConeImage.copyTo(cloneBaby.analyzedFrame);
-            return cloneBaby;
+            captureNextRedCone = true;
+            return theRedCone.clone();
         }
     }
 
@@ -955,8 +943,7 @@ class PowerPlaySuperPipeline extends OpenCvPipeline
     {
         synchronized(lockRedTape) {
             AnalyzedTape cloneBaby = theRedTape.clone();
-            cloneBaby.analyzedFrame = new Mat();
-            analyzedRedTapeImage.copyTo(cloneBaby.analyzedFrame);
+            captureNextRedTape = true;
             return cloneBaby;
         }
     }
@@ -1099,8 +1086,7 @@ class PowerPlaySuperPipeline extends OpenCvPipeline
     {
         synchronized(lockBlueCone) {
             AnalyzedCone cloneBaby = theBlueCone.clone();
-            cloneBaby.analyzedFrame = new Mat();
-            analyzedBlueConeImage.copyTo(cloneBaby.analyzedFrame);
+            captureNextBlueCone = true;
             return cloneBaby;
         }
     }
@@ -1109,8 +1095,7 @@ class PowerPlaySuperPipeline extends OpenCvPipeline
     {
         synchronized(lockBlueTape) {
             AnalyzedTape cloneBaby = theBlueTape.clone();
-            cloneBaby.analyzedFrame = new Mat();
-            analyzedBlueTapeImage.copyTo(cloneBaby.analyzedFrame);
+            captureNextBlueTape = true;
             return cloneBaby;
         }
     }
@@ -1307,8 +1292,7 @@ class PowerPlaySuperPipeline extends OpenCvPipeline
     {
         synchronized(lockPole) {
             AnalyzedPole cloneBaby = thePole.clone();
-            cloneBaby.analyzedFrame = new Mat();
-            analyzedPoleImage.copyTo(cloneBaby.analyzedFrame);
+            captureNextPole = true;
             return cloneBaby;
         }
     }

@@ -270,7 +270,7 @@ public abstract class AutonomousBase extends LinearOpMode {
 
         // Get the image to do our decision making
         theLocalPole = alignmentPipeline.getDetectedPole();
-        alignmentPipeline.savePoleAutoImage(theLocalPole);
+        alignmentPipeline.savePoleAutoImage();
         // This is the angle the pole is in relation to the turret angle
         if(turretFacingFront) {
             targetAngle = robot.turretAngle - theLocalPole.centralOffsetDegrees;
@@ -300,8 +300,38 @@ public abstract class AutonomousBase extends LinearOpMode {
         robot.stopMotion();
         robot.turretMotorSetPower(0.0);
         // Get the image after our adjustments
+        alignmentPipeline.savePoleAutoImage();
+    } // alignToPole
+
+    /*---------------------------------------------------------------------------------*/
+    void rotateTurretToPole(boolean turretFacingFront) {
+        PowerPlaySuperPipeline alignmentPipeline;
+        PowerPlaySuperPipeline.AnalyzedPole theLocalPole;
+
+        alignmentPipeline = turretFacingFront ? pipelineFront : pipelineBack;
+
+        // Store all our images in the blue_left folder for now
+        alignmentPipeline.isBlueAlliance = true;
+        alignmentPipeline.isLeft = true;
+
+        // Get the image to do our decision making
         theLocalPole = alignmentPipeline.getDetectedPole();
-        alignmentPipeline.savePoleAutoImage(theLocalPole);
+        alignmentPipeline.savePoleAutoImage();
+
+        // This is the angle the pole is in relation to the turret angle
+        if(turretFacingFront) {
+            targetAngle = robot.turretAngle - theLocalPole.centralOffsetDegrees;
+        } else {
+            // This is untested
+            targetAngle = robot.turretAngle + theLocalPole.centralOffsetDegrees + 180.0;
+        }
+        robot.turretPIDPosInit(targetAngle);
+        while(opModeIsActive() && robot.turretMotorPIDAuto) {
+            performEveryLoop();
+        }
+        robot.turretMotorSetPower(0.0);
+        // Get the image after our adjustments
+        alignmentPipeline.savePoleAutoImage();
     } // alignToPole
 
     /*---------------------------------------------------------------------------------*/

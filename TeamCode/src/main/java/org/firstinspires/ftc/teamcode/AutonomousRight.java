@@ -196,7 +196,7 @@ public class AutonomousRight extends AutonomousBase {
             }
             signalZone = pipelineLow.signalZoneR;
             pipelineLow.overrideAlliance(blueAlliance);
-            pipelineLow.saveLastAutoImage( );
+            pipelineLow.saveSignalAutoImage( );
         }
         // Turn off detecting the signal.
         pipelineLow.signalDetection(false);

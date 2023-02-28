@@ -167,12 +167,9 @@ public class TurretPIDTester extends AutonomousBase
         // If we add back front camera, use boolean to determine which pipeline to use.
         alignmentPipeline = turretFacingFront ? pipelineFront : pipelineBack;
 
-        alignmentPipeline.isBlueAlliance = true;
-        alignmentPipeline.isLeft = true;
-
         // Get the image to do our decision making
         theLocalPole = alignmentPipeline.getDetectedPole();
-        alignmentPipeline.savePoleAutoImage(theLocalPole);
+        alignmentPipeline.savePoleAutoImage();
         // This is the angle the pole is in relation to the turret angle
         targetAngle = robot.turretAngle - theLocalPole.centralOffsetDegrees;
         robot.turretPIDPosInit(targetAngle);
@@ -196,8 +193,7 @@ public class TurretPIDTester extends AutonomousBase
         robot.stopMotion();
         robot.turretMotorSetPower(0.0);
         // Get the image after our adjustments
-        theLocalPole = alignmentPipeline.getDetectedPole();
-        alignmentPipeline.savePoleAutoImage(theLocalPole);
+        alignmentPipeline.savePoleAutoImage();
     } // alignToPole
 
     @Override
@@ -300,8 +296,19 @@ public class TurretPIDTester extends AutonomousBase
 
         telemetry.addLine("Turret positioned, ready to start.");
         telemetry.update();
-        pipelineFront.overrideAlliance(true);
-        pipelineFront.overrideSide(true);
+        createAutoStorageFolder(true, true);
+        if(alignToFront) {
+            pipelineFront.overrideAlliance(true);
+            pipelineFront.overrideSide(true);
+            pipelineFront.setStorageFolder(storageDir);
+        } else {
+            pipelineBack.overrideAlliance(true);
+            pipelineBack.overrideSide(true);
+            pipelineBack.setStorageFolder(storageDir);
+        }
+        pipelineLow.overrideAlliance(true);
+        pipelineLow.overrideSide(true);
+        pipelineLow.setStorageFolder(storageDir);
 
         waitForStart();
         globalCoordinatePositionReset();
