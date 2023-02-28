@@ -11,17 +11,18 @@ public class BadgerConstants {
     public static int SLIDE_MIDDLE = 480 *537/ 384;
     public static int SLIDE_BOTTOM = 0;
     public static  int SLIDE_HIGH_BACK = 1250;
-    public static int SLIDE_MIDDLE_BACK= 480 *537/ 384;
+    public static int SLIDE_MIDDLE_BACK= 500;
 
     public static  int ARM_BOTTOM = 0;
     public static  int ARM_MID_TOP = 800;
-    public static  int ARM_CONE_STACK=290;
+    public static  int ARM_CONE_STACK=350;
+    public static int STACK_OFFSET = 60;
     public static int ARM_BACK_TOP=1250;
 
     public static  int ARM_BOTTOM_JUNCTION = 600;
     public static int ARM_BACK = -1310;
 
-    public static double CLAW_OPEN = 0.42;
+    public static double CLAW_OPEN = 0.46;
     public static double CLAW_CLOSED = 0.9;
 
     public static final double TIP_CENTER = 0.77;

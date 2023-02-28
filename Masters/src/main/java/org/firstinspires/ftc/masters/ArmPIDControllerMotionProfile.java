@@ -8,14 +8,14 @@ import com.qualcomm.robotcore.hardware.DcMotorEx;
 @Config
 public class ArmPIDControllerMotionProfile {
 
-    public static double kp=6, ki=0, kd=0.09;
+    public static double kp=6.5, ki=0, kd=0;
     TrapezoidProfile.Constraints constraintFast = new TrapezoidProfile.Constraints(2800, 3000);
     TrapezoidProfile.Constraints constraintsSlow = new TrapezoidProfile.Constraints(200, 3000);
     DcMotorEx armMotor;
     ProfiledPIDController pidController;
     int target;
     private final double ticks_in_degree = 2785 / 360;
-    public static double f_arm=0;
+    public static double f_arm=75;
 
     public ArmPIDControllerMotionProfile(DcMotorEx armMotor) {
         this.armMotor = armMotor;

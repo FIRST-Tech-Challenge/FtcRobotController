@@ -11,7 +11,7 @@ import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 @Config
-@TeleOp(name="slide position", group = "competition")
+@TeleOp(name="slide position", group = "test")
 public class armSlidePositioning extends LinearOpMode {
 
 

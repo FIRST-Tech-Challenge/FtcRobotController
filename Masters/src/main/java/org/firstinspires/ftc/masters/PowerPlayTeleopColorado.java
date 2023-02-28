@@ -290,7 +290,7 @@ public class PowerPlayTeleopColorado extends LinearOpMode {
                 armSelection = ARM_BACK_TOP - armOffset;
                 slideSelection= SLIDE_HIGH_BACK - liftOffset;
 
-                if (previousState == STATE.ZERO){
+                if (previousState == STATE.ZERO || previousState == STATE.MANUAL){
                     armTarget= armSelection;
                 } else {
                     slideTarget= slideSelection;
@@ -306,7 +306,7 @@ public class PowerPlayTeleopColorado extends LinearOpMode {
                 armSelection = ARM_MID_TOP - armOffset;
                 slideSelection= SLIDE_HIGH - liftOffset;
 
-                if (previousState == STATE.ZERO){
+                if (previousState == STATE.ZERO || previousState == STATE.MANUAL){
                     armTarget= ARM_MID_TOP - armOffset;
                 } else {
                     slideTarget= slideSelection;
@@ -322,7 +322,7 @@ public class PowerPlayTeleopColorado extends LinearOpMode {
                 currentState = STATE.BACK_MID;
                 slideSelection = SLIDE_MIDDLE_BACK - liftOffset;
                 armSelection = ARM_BACK_TOP - armOffset;
-                if (previousState == STATE.ZERO){
+                if (previousState == STATE.ZERO || previousState == STATE.MANUAL){
                     armTarget = armSelection;
                 } else {
                     armTarget = armSelection;
@@ -336,7 +336,7 @@ public class PowerPlayTeleopColorado extends LinearOpMode {
                 currentState = STATE.MID;
                 slideSelection = SLIDE_MIDDLE - liftOffset;
                 armSelection = ARM_MID_TOP - armOffset;
-                if (previousState == STATE.ZERO){
+                if (previousState == STATE.ZERO || previousState == STATE.MANUAL){
                     armTarget = ARM_MID_TOP -armOffset;
                 } else {
                     armTarget = ARM_MID_TOP - armOffset;
@@ -382,7 +382,7 @@ public class PowerPlayTeleopColorado extends LinearOpMode {
 
             if (currentState == STATE.HIGH || currentState == STATE.MID || currentState == STATE.BACK_HIGH || currentState == STATE.BACK_MID){
                 if (slideTarget!=slideSelection){
-                    if (armMotor.getCurrentPosition()>100){
+                    if (armMotor.getCurrentPosition()>300){
                         slideTarget = slideSelection;
                     }
                 }

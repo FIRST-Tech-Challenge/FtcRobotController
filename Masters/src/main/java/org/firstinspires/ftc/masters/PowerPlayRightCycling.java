@@ -397,7 +397,7 @@ public class PowerPlayRightCycling extends LinearOpMode {
             drive.armMotor.setVelocity(armPIDController.calculateVelocity());
 
             liftPIDController.setTarget(liftTarget);
-          
+
             double power = liftPIDController.calculatePower(drive.linearSlide);
             drive.linearSlide.setPower(power);
             drive.slideOtherer.setPower(liftPIDController.calculatePower(drive.slideOtherer));
