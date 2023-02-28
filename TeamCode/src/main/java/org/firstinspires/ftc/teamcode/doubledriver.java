@@ -188,6 +188,24 @@ public class doubledriver extends LinearOpMode {
                     frontRight.setPower(turn);
                     backLeft.setPower(-turn);
                     backRight.setPower(turn);
+                    
+                    
+                    
+                    if (pickup>0) {
+
+                    Left.setPower(-1);
+                    }
+
+                    if (dropoff>0){
+
+                    Left.setPower(1);
+
+                     }
+                    if (dropoff == 0 && pickup == 0){
+
+                    Left.setPower(0);
+
+                   }
                 }
                 Crain.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
             }
