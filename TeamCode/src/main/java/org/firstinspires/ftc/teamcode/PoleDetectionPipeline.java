@@ -24,6 +24,7 @@ public class PoleDetectionPipeline extends OpenCvPipeline {
     public static double strictLowS = 140;
     public static double strictHighS = 255;
     double poleCenterX = 10;
+    double poleWidth = 0;
 
     public PoleDetectionPipeline() {
         frameList = new ArrayList<>();
@@ -122,6 +123,7 @@ public class PoleDetectionPipeline extends OpenCvPipeline {
 
         Point center = new Point((biggestRect.tl().x + biggestRect.br().x) / 2, (biggestRect.tl().y + biggestRect.br().y) / 2);
         poleCenterX = (biggestRect.tl().x + biggestRect.br().x) / 2;
+        poleWidth = biggestRect.br().x - biggestRect.tl().x;
 
         Scalar color = new Scalar(25, 255, 255);
         Imgproc.circle(drawing, center, 2, color, 2);
@@ -140,11 +142,11 @@ public class PoleDetectionPipeline extends OpenCvPipeline {
 
 
         //release all the data
-        input.release();
-        //drawing.copyTo(input);
+        //input.release();
+        drawing.copyTo(input);
         scaledThresh.release();
         scaledMask.release();
-        //mat.release();
+        mat.release();
         masked.release();
         edges.release();
         thresh.release();
@@ -157,7 +159,7 @@ public class PoleDetectionPipeline extends OpenCvPipeline {
         // return thresh;
         // note that you must not do thresh.release() if you want to return thresh
         // you also need to release the input if you return thresh(release as much as possible)
-        return mat;
+        return input;
     }
 
     public double getCenterX() {
