@@ -46,7 +46,7 @@ public class ArmLiftTest extends LinearOpMode {
 
         liftPIDController = new LiftPIDController(drive.linearSlide, drive.frontSlide, drive.slideOtherer);
         armPIDController = new ArmPIDControllerMotionProfile(drive.armMotor);
-        drive.tipCenter();
+        //drive.tipCenter();
         drive.closeClaw();
 
 
@@ -85,9 +85,15 @@ public class ArmLiftTest extends LinearOpMode {
                 //  telemetry.addData("power ", power);
                // telemetry.addData("power", correction);
 
+            liftPIDController.setTarget(liftTarget);
+            double power = liftPIDController.calculatePower(drive.linearSlide);
+            drive.linearSlide.setPower(power);
+            drive.slideOtherer.setPower(liftPIDController.calculatePower(drive.slideOtherer));
+            drive.frontSlide.setPower(power);
+
             telemetry.addData("arm target", armTarget);
             telemetry.addData("arm position", drive.armMotor.getCurrentPosition());
-
+            telemetry.addData("lift target", liftTarget);
             telemetry.addData(" lift position", drive.linearSlide.getCurrentPosition());
 
             telemetry.update();
