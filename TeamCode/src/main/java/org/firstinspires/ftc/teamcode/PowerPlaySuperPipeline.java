@@ -248,28 +248,14 @@ class PowerPlaySuperPipeline extends OpenCvPipeline
     /*
      * Turn on/off detecting the pole
      */
-    public void poleDetection(boolean enabled) {
-        detectPole = enabled;
-    }
+    public void poleDetection(boolean enabled) { detectPole = enabled; }
 
-    public void saveBlueConeAutoImage() {
-        captureNextBlueCone = true;
-    }
-    public void saveBlueTapeAutoImage() {
-        captureNextBlueCone = true;
-    }
-    public void saveRedConeAutoImage() {
-        captureNextRedCone = true;
-    }
-    public void saveRedTapeAutoImage() {
-        captureNextRedCone = true;
-    }
-    public void savePoleAutoImage() {
-        captureNextPole = true;
-    }
-    public void saveSignalAutoImage() {
-        captureNextSignal = true;
-    }
+    public void saveBlueConeAutoImage() { captureNextBlueCone = true; }
+    public void saveBlueTapeAutoImage() { captureNextBlueTape = true; }
+    public void saveRedConeAutoImage() { captureNextRedCone = true; }
+    public void saveRedTapeAutoImage() { captureNextRedTape = true; }
+    public void savePoleAutoImage() { captureNextPole = true; }
+    public void saveSignalAutoImage() { captureNextSignal = true; }
 
     // Call these functions to save the image associated with the detected object.
     protected void saveConeAutoImage(Mat detectedCone) {
