@@ -66,6 +66,8 @@ import java.util.List;
 @Config
 public class SampleMecanumDrive extends MecanumDrive {
 
+    public static double ALIGN_SPEED = .35;
+
     public static PIDCoefficients TRANSLATIONAL_PID = new PIDCoefficients(8, 0, 1);
     public static PIDCoefficients HEADING_PID = new PIDCoefficients(9, 0, 1);
 
@@ -111,10 +113,10 @@ public class SampleMecanumDrive extends MecanumDrive {
         }
 
         // TODO: adjust the names of the following hardware devices to match your configuration
-        imu = hardwareMap.get(BNO055IMU.class, "imu");
-        BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
-        parameters.angleUnit = BNO055IMU.AngleUnit.RADIANS;
-        imu.initialize(parameters);
+//        imu = hardwareMap.get(BNO055IMU.class, "imu");
+//        BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
+//        parameters.angleUnit = BNO055IMU.AngleUnit.RADIANS;
+//        imu.initialize(parameters);
 
         // TODO: If the hub containing the IMU you are using is mounted so that the "REV" logo does
         // not face up, remap the IMU axes so that the z-axis points upward (normal to the floor.)
@@ -460,10 +462,10 @@ public class SampleMecanumDrive extends MecanumDrive {
             case LEFT6:
             case LEFT7:
             case LEFT8:
-                leftFront.setPower(-.35);
-                leftRear.setPower(-.35);
-                rightFront.setPower(.35);
-                rightRear.setPower(.35);
+                leftFront.setPower(-ALIGN_SPEED);
+                leftRear.setPower(-ALIGN_SPEED);
+                rightFront.setPower(ALIGN_SPEED);
+                rightRear.setPower(ALIGN_SPEED);
                 break;
             case RIGHT2:
             case RIGHT3:
@@ -472,20 +474,20 @@ public class SampleMecanumDrive extends MecanumDrive {
             case RIGHT6:
             case RIGHT7:
             case RIGHT8:
-                leftFront.setPower(.35);
-                leftRear.setPower(.35);
-                rightFront.setPower(-.35);
-                rightRear.setPower(-.35);
+                leftFront.setPower(ALIGN_SPEED);
+                leftRear.setPower(ALIGN_SPEED);
+                rightFront.setPower(-ALIGN_SPEED);
+                rightRear.setPower(-ALIGN_SPEED);
                 break;
             case LEFT1:
             case RIGHT1:
+            case CENTER:
                 leftFront.setPower(0);
                 leftRear.setPower(0);
                 rightFront.setPower(0);
                 rightRear.setPower(0);
                 return true;
-            case CENTER:
-                break;
+
         }
         return false;
     }

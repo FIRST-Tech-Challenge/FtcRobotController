@@ -50,12 +50,13 @@ public class LiftPIDController {
     public double calculatePower(DcMotorEx motor){
 
         int liftPos = motor.getCurrentPosition();
-        double pid = liftController.calculate(liftPos, target);
+
 
 
         if (target == 0 && liftPos<100){
             return 0;
         } else{
+            double pid = liftController.calculate(liftPos, target);
             return (pid +f)*multiplier;
         }
     }

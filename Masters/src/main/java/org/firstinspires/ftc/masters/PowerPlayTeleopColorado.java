@@ -10,7 +10,9 @@ import static org.firstinspires.ftc.masters.BadgerConstants.CLAW_OPEN;
 import static org.firstinspires.ftc.masters.BadgerConstants.SLIDE_BOTTOM;
 import static org.firstinspires.ftc.masters.BadgerConstants.SLIDE_CONE_INCREMENT;
 import static org.firstinspires.ftc.masters.BadgerConstants.SLIDE_HIGH;
+import static org.firstinspires.ftc.masters.BadgerConstants.SLIDE_HIGH_BACK;
 import static org.firstinspires.ftc.masters.BadgerConstants.SLIDE_MIDDLE;
+import static org.firstinspires.ftc.masters.BadgerConstants.SLIDE_MIDDLE_BACK;
 import static org.firstinspires.ftc.masters.BadgerConstants.TIP_BACK;
 import static org.firstinspires.ftc.masters.BadgerConstants.TIP_CENTER;
 import static org.firstinspires.ftc.masters.BadgerConstants.TIP_FRONT;
@@ -282,11 +284,11 @@ public class PowerPlayTeleopColorado extends LinearOpMode {
                 tippingServo.setPosition(TIP_CENTER);
             }
 
-      if (gamepad2.dpad_up && gamepad2.left_trigger>0.1){
+      if (gamepad2.left_trigger>0.1){
                 previousState = currentState;
                 currentState = STATE.BACK_HIGH;
                 armSelection = ARM_BACK_TOP - armOffset;
-                slideSelection= SLIDE_HIGH - liftOffset;
+                slideSelection= SLIDE_HIGH_BACK - liftOffset;
 
                 if (previousState == STATE.ZERO){
                     armTarget= armSelection;
@@ -315,10 +317,10 @@ public class PowerPlayTeleopColorado extends LinearOpMode {
 
             }
 
-            if (gamepad2.dpad_right && gamepad2.left_trigger>0.1){
+            if (gamepad2.left_bumper){
                 previousState = currentState;
                 currentState = STATE.BACK_MID;
-                slideSelection = SLIDE_MIDDLE - liftOffset;
+                slideSelection = SLIDE_MIDDLE_BACK - liftOffset;
                 armSelection = ARM_BACK_TOP - armOffset;
                 if (previousState == STATE.ZERO){
                     armTarget = armSelection;
@@ -431,7 +433,7 @@ public class PowerPlayTeleopColorado extends LinearOpMode {
                     slideTarget -= 12;
                 }
 
-            } else if (gamepad2.right_stick_y<-0/5){
+            } else if (gamepad2.right_stick_y<-0.5){
                 previousState= currentState;
                 currentState = STATE.MANUAL;
                 if (armMotor.getCurrentPosition()>100){
@@ -545,7 +547,6 @@ public class PowerPlayTeleopColorado extends LinearOpMode {
                 rightRearMotor.setPower(-ALIGN_SPEED);
                 break;
             case CENTER:
-                break;
             case LEFT1:
             case RIGHT1:
                 leftFrontMotor.setPower(0);
