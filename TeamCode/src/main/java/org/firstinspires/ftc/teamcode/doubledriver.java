@@ -57,6 +57,8 @@ public class doubledriver extends LinearOpMode {
             boolean strafeLeft;
             boolean strafeRight;
 
+            boolean light;
+
             float pickup;                                   //setting varibles from conteroler imputs  
             float dropoff;
             boolean spinpowerup;
@@ -77,6 +79,8 @@ public class doubledriver extends LinearOpMode {
             turn = gamepad1.right_stick_x;
             strafeLeft = gamepad1.left_bumper;
             strafeRight = gamepad1.right_bumper;
+
+            light = gamepad1.a;
 
             crainpower = gamepad2.right_stick_y;
             spinpowerup = gamepad2.dpad_right;
