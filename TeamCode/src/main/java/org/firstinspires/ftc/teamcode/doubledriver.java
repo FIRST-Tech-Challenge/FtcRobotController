@@ -6,6 +6,8 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.hardware.rev.Rev2mDistanceSensor;
 
+import org.firstinspires.ftc.robotcore.internal.camera.delegating.DelegatingCaptureSequence;
+
 @TeleOp
 public class doubledriver extends LinearOpMode {
 
@@ -93,6 +95,16 @@ public class doubledriver extends LinearOpMode {
             mediumJunction = gamepad2.y;
             tallJunction = gamepad2.b;
 
+
+            if(light){
+                if(lights.isBusy()){
+                    lights.setPower(0);
+                }
+                else {
+                    lights.setPower(.3);
+                }
+
+            }
 
             if (strafeRight) {
                 frontLeft.setPower(-.8);

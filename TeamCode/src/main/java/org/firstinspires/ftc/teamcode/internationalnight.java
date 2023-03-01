@@ -12,11 +12,14 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 @TeleOp
 public class internationalnight extends LinearOpMode {
     public DcMotor spin;
+    public DcMotor lights;
     public void runOpMode() throws InterruptedException{
+        lights =hardwareMap.get(DcMotor.class,"Lights");
         spin= hardwareMap.get(DcMotor.class,"Spin");
         spin.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         waitForStart();
         while(opModeIsActive()){
+            lights.setPower(.1);
             sleep(1000);
             spin.setTargetPosition(-591);
             spin.setMode(DcMotor.RunMode.RUN_TO_POSITION);
