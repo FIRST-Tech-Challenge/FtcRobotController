@@ -920,7 +920,6 @@ class PowerPlaySuperPipeline extends OpenCvPipeline
     {
         synchronized(lockRedCone) {
             AnalyzedCone cloneBaby = theRedCone.clone();
-            captureNextRedCone = true;
             return theRedCone.clone();
         }
     }
@@ -929,7 +928,6 @@ class PowerPlaySuperPipeline extends OpenCvPipeline
     {
         synchronized(lockRedTape) {
             AnalyzedTape cloneBaby = theRedTape.clone();
-            captureNextRedTape = true;
             return cloneBaby;
         }
     }
@@ -1072,7 +1070,6 @@ class PowerPlaySuperPipeline extends OpenCvPipeline
     {
         synchronized(lockBlueCone) {
             AnalyzedCone cloneBaby = theBlueCone.clone();
-            captureNextBlueCone = true;
             return cloneBaby;
         }
     }
@@ -1081,7 +1078,6 @@ class PowerPlaySuperPipeline extends OpenCvPipeline
     {
         synchronized(lockBlueTape) {
             AnalyzedTape cloneBaby = theBlueTape.clone();
-            captureNextBlueTape = true;
             return cloneBaby;
         }
     }
@@ -1278,7 +1274,6 @@ class PowerPlaySuperPipeline extends OpenCvPipeline
     {
         synchronized(lockPole) {
             AnalyzedPole cloneBaby = thePole.clone();
-            captureNextPole = true;
             return cloneBaby;
         }
     }
