@@ -15,7 +15,7 @@ public class doubledriver extends LinearOpMode {
     private DcMotor backRight;
 
 
-
+    private DcMotor lights;
     private CRServo Left;
     private DcMotor Crain;
     private DcMotor Spin;
@@ -38,6 +38,7 @@ public class doubledriver extends LinearOpMode {
         Spin = hardwareMap.get(DcMotor.class, "Spin");
 
        distance = hardwareMap.get(Rev2mDistanceSensor.class,"distance");
+        lights =hardwareMap.get(DcMotor.class,"Lights");
 
         frontLeft.setDirection(DcMotorSimple.Direction.FORWARD);
         frontRight.setDirection(DcMotorSimple.Direction.REVERSE);
@@ -68,6 +69,9 @@ public class doubledriver extends LinearOpMode {
             boolean smallJunction;
             boolean mediumJunction;
             boolean tallJunction;
+
+            lights.setPower(.3);
+
 
             throttle = gamepad1.left_stick_y;
             turn = gamepad1.right_stick_x;
@@ -159,7 +163,7 @@ public class doubledriver extends LinearOpMode {
 
             }
                         //Pole Preset
-            if (smallJunction) {
+           /* if (smallJunction) {
                 Crain.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
                 Crain.setTargetPosition(-3000);
                 Crain.setPower(1);
@@ -225,7 +229,7 @@ public class doubledriver extends LinearOpMode {
             }
 
 
-            /*
+
             while (burst) {
                 Left.setPower(.8);
                 sleep(500);
