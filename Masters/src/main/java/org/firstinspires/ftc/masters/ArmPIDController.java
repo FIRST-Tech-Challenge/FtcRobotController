@@ -21,8 +21,7 @@ public class ArmPIDController {
     public static double multiplier = 0.6;
     public static double multiplierZero = 0.3;
 
-    private final double ticks_per_seconds = 2785 * 117 /60;
-    private final double ticks_in_degree = 2785 / 360;
+    private final double degree_per_ticks = 360/2786.2 ;
 
     DcMotorEx armMotor;
 
@@ -46,7 +45,7 @@ public class ArmPIDController {
         int armPos = armMotor.getCurrentPosition();
         double pid = controller.calculate(armPos, target);
 
-        double ff = Math.cos(Math.toRadians((target+400) / ticks_in_degree)) * f_arm;
+        double ff = Math.sin(Math.toRadians((target+325)/ degree_per_ticks)) * f_arm;
 
         double power = pid + ff;
 

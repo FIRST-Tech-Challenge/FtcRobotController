@@ -40,7 +40,8 @@ public class PowerPlayTeleopColorado extends LinearOpMode {
 
     private final FtcDashboard dashboard = FtcDashboard.getInstance();
 
-    ArmPIDControllerMotionProfile armPIDController;
+   // ArmPIDControllerMotionProfile armPIDController;
+    ArmPIDController armPIDController;
     LiftPIDController liftPIDController;
     /* Declare OpMode members. */
     private final ElapsedTime runtime = new ElapsedTime();
@@ -54,7 +55,7 @@ public class PowerPlayTeleopColorado extends LinearOpMode {
     DcMotorEx slideOtherer = null;
 
 //    private final double MAX_VELOCITY= 435/60*384.5*0.8;
-    ProfiledPIDController m_controller;
+   // ProfiledPIDController m_controller;
 
     public static double ALIGN_SPEED = 0.4;
 
@@ -158,10 +159,10 @@ public class PowerPlayTeleopColorado extends LinearOpMode {
 //        armController = new PIDController(p_arm, i_arm, d_arm);
         TrapezoidProfile.Constraints m_constraints = new TrapezoidProfile.Constraints(2800, 3000);
 
-        m_controller = new ProfiledPIDController(kp, ki, kd, m_constraints);
-        m_controller.setTolerance(3);
+//        m_controller = new ProfiledPIDController(kp, ki, kd, m_constraints);
+//        m_controller.setTolerance(3);
 
-        armPIDController = new ArmPIDControllerMotionProfile(armMotor);
+        armPIDController = new ArmPIDController(armMotor);
         liftPIDController = new LiftPIDController(linearSlideMotor, frontSlide, slideOtherer);
 
         // Wait for the game to start (driver presses PLAY)
@@ -496,7 +497,7 @@ public class PowerPlayTeleopColorado extends LinearOpMode {
 
     protected void moveArm (){
         armPIDController.setTarget(armTarget);
-        armMotor.setVelocity(armPIDController.calculateVelocity());
+    //    armMotor.setVelocity(armPIDController.calculateVelocity());
 
 //        m_controller.setGoal(armTarget);
 //
@@ -509,8 +510,8 @@ public class PowerPlayTeleopColorado extends LinearOpMode {
 //        armMotor.setVelocity(output+ ff);
 //
 //        //armPIDController.setTarget(armTarget);
-//        double velocity = armPIDController.calculateVelocity();
-//        armMotor.setPower(velocity);
+       double velocity = armPIDController.calculateVelocity();
+       armMotor.setPower(velocity);
 
        // telemetry.addData("power", velocity);
     }

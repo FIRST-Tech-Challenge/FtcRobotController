@@ -30,12 +30,19 @@ public class ArmPIDControllerMotionProfile {
     }
 
     public double calculateVelocity(){
+//        pidController.setD(kd);
+//        pidController.setP(kp);
+//        pidController.setI(ki);
         if (armMotor.getCurrentPosition()>800 && target>900){
             pidController.setConstraints(constraintsSlow);
         } else {
             pidController.setConstraints(constraintFast);
         }
-
+        double pos = armMotor.getCurrentPosition();
+   //     double velocity = pidController.calculate(pos)+ Math.sin(Math.toRadians((target+325)/ degree_per_ticks))*f_arm;
+        if (target ==0 && pos <50){
+            return 0;
+        }
         return pidController.calculate(armMotor.getCurrentPosition())+ Math.sin(Math.toRadians((target+325)/ degree_per_ticks))*f_arm;
     }
 }
