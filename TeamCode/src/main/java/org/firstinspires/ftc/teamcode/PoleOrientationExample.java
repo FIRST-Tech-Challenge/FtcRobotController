@@ -251,7 +251,7 @@ public class PoleOrientationExample extends LinearOpMode
         while (opModeIsActive() && ((theLocalPole.alignedCount <= TURRET_CYCLES_AT_POS) ||
                 theLocalPole.properDistanceHighCount <= 3)) {
             performEveryLoop();
-            turretPower = pidController.update(0.0, theLocalPole.centralOffsetDegrees);
+            turretPower = pidController.update(0.0, theLocalPole.centralOffset);
             // Ensure we never exceed a safe power
             if( turretPower > +turretPowerMax ) turretPower = +turretPowerMax;
             if( turretPower < -turretPowerMax ) turretPower = -turretPowerMax;

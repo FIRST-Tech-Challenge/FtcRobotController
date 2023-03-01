@@ -270,10 +270,6 @@ public class AutonomousLeft extends AutonomousBase {
             telemetry.addData("Skill", "alignToPole (%.1f)", timeNow );
             telemetry.update();
             alignToPole(true, false);
-            timeNow = autonomousTimer.milliseconds()/1000.0;
-            telemetry.addData("Skill", "rotateTurretToPole (%.1f)", timeNow );
-            telemetry.update();
-            rotateTurretToPole(true);
         }
 
         // Deposit cone on junction
@@ -359,10 +355,6 @@ public class AutonomousLeft extends AutonomousBase {
                 // (otherwise just drop it and park)
                 if( autonomousTimer.milliseconds() <= poleAlignTimeout ) {
                     alignToPole(true, true);
-                    timeNow = autonomousTimer.milliseconds()/1000.0;
-                    telemetry.addData("Skill", "rotateTurretToPole (%.1f)", timeNow );
-                    telemetry.update();
-                    rotateTurretToPole(true);
                 }
             }
 
@@ -418,7 +410,7 @@ public class AutonomousLeft extends AutonomousBase {
         robot.grabberSetTilt( robot.GRABBER_TILT_FRONT_H_A );
 
         // Drive the final distance to the high junction pole at a slower/controlled speed
-        autoYpos=49.0;  autoXpos=9.0;
+        autoYpos=50.0;  autoXpos=8.2;
         driveToPosition( autoYpos, autoXpos, autoAngle, DRIVE_SPEED_100, TURN_SPEED_100, DRIVE_TO );
 
         // Both mechanisms should be finished, but pause here if they haven't (until they do)
@@ -437,8 +429,8 @@ public class AutonomousLeft extends AutonomousBase {
         // Wait for sensor to indicate it's clear (or we timeout)
         while( opModeIsActive() ) {
             performEveryLoop();
-            // Ensure we eject for at least 250 msec before using sensor (in case sensor fails)
-            boolean bottomSensorClear = robot.bottomConeState && (intakeTimer.milliseconds() > 250);
+            // Ensure we eject for at least 300 msec before using sensor (in case sensor fails)
+            boolean bottomSensorClear = robot.bottomConeState && (intakeTimer.milliseconds() > 300);
             // Also have a max timeout in case sensor fails
             boolean maxEjectTimeReached = (intakeTimer.milliseconds() >= 400);
             // Is cycle complete?
@@ -531,7 +523,7 @@ public class AutonomousLeft extends AutonomousBase {
 
         // Drive back to tall junction (adjusting lift along the way)
         // (stay along Y=51.5 instead of returning to Y=54.0, but rotate turret more (-56.5, not -34.5)
-        autoYpos=46.8;  autoXpos=8.6;  autoAngle=-90.0;    // (inches, inches, degrees)
+        autoYpos=49.0;  autoXpos=8.6;  autoAngle=-90.0;    // (inches, inches, degrees)
         driveToPosition( autoYpos, autoXpos, autoAngle, DRIVE_SPEED_90, TURN_SPEED_80, DRIVE_TO );
 
         // Re-center turret again (if it shifted while driving)

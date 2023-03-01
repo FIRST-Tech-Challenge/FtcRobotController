@@ -4,8 +4,6 @@ import static org.firstinspires.ftc.teamcode.HardwareSlimbot.UltrasonicsInstance
 import static org.firstinspires.ftc.teamcode.HardwareSlimbot.UltrasonicsModes.SONIC_FIRST_PING;
 import static org.firstinspires.ftc.teamcode.HardwareSlimbot.UltrasonicsModes.SONIC_MOST_RECENT;
 import static java.lang.Math.abs;
-import static java.lang.Math.cos;
-import static java.lang.Math.sin;
 import static java.lang.Math.toRadians;
 
 import android.os.Environment;
@@ -256,127 +254,62 @@ public abstract class AutonomousBase extends LinearOpMode {
         robot.turretMotorSetPower(turretPower);
     } // driveAndRotateTurretAngle
 
-    /*---------------------------------------------------------------------------------*/
-    void alignToPole(boolean turretFacingFront, boolean fromStack) {
-        double stackFactor = fromStack ? 2.0 : 0.0;
-        PowerPlaySuperPipeline alignmentPipeline;
-        PowerPlaySuperPipeline.AnalyzedPole theLocalPole;
-
-        alignmentPipeline = turretFacingFront ? pipelineFront : pipelineBack;
-
-        // Store all our images in the blue_left folder for now
-        alignmentPipeline.isBlueAlliance = true;
-        alignmentPipeline.isLeft = true;
-
-        // Get the image to do our decision making
-        theLocalPole = alignmentPipeline.getDetectedPole();
-        alignmentPipeline.savePoleAutoImage();
-        // This is the angle the pole is in relation to the turret angle
-        if(turretFacingFront) {
-            targetAngle = robot.turretAngle - theLocalPole.centralOffsetDegrees;
-        } else {
-            // This is untested
-            targetAngle = robot.turretAngle + theLocalPole.centralOffsetDegrees + 180.0;
-        }
-        robot.turretPIDPosInit(targetAngle);
-        // Where are we right now? (may not have stopped exactly at the commanded location)
-        currentPositionX = (robotGlobalXCoordinatePosition / robot.COUNTS_PER_INCH2);
-        currentPositionY = (robotGlobalYCoordinatePosition / robot.COUNTS_PER_INCH2);
-        currentPositionAngle = Math.toDegrees(robotOrientationRadians);
-        // How many inches do we need to move the robot drivetrain?
-        double targetDistance = theLocalPole.highDistanceOffsetCm + stackFactor;
-        targetDistanceX = (targetDistance * cos(toRadians(targetAngle)))/2.54;
-        targetDistanceY = (targetDistance * sin(toRadians(targetAngle)))/2.54;
-        // Add that offset to our current position to create an absolute X-Y position and angle
-        // (not sure if this needs to be flipped if we are rear facing or not)
-        targetPositionX = currentPositionX + targetDistanceX;
-        targetPositionY = currentPositionY + targetDistanceY;
-        targetPositionAngle = currentPositionAngle;
-        // Drive to that new position, maintaining the current rotation angle of the drivetrain
-        driveToPosition( targetPositionY, targetPositionX, targetPositionAngle, DRIVE_SPEED_50, TURN_SPEED_40, DRIVE_TO );
-        while(opModeIsActive() && robot.turretMotorPIDAuto) {
-            performEveryLoop();
-        }
-        robot.stopMotion();
-        robot.turretMotorSetPower(0.0);
-        // Get the image after our adjustments
-        alignmentPipeline.savePoleAutoImage();
-    } // alignToPole
-
-    /*---------------------------------------------------------------------------------*/
-    void rotateTurretToPole(boolean turretFacingFront) {
-        PowerPlaySuperPipeline alignmentPipeline;
-        PowerPlaySuperPipeline.AnalyzedPole theLocalPole;
-
-        alignmentPipeline = turretFacingFront ? pipelineFront : pipelineBack;
-
-        // Store all our images in the blue_left folder for now
-        alignmentPipeline.isBlueAlliance = true;
-        alignmentPipeline.isLeft = true;
-
-        // Get the image to do our decision making
-        theLocalPole = alignmentPipeline.getDetectedPole();
-        alignmentPipeline.savePoleAutoImage();
-
-        // This is the angle the pole is in relation to the turret angle
-        if(turretFacingFront) {
-            targetAngle = robot.turretAngle - theLocalPole.centralOffsetDegrees;
-        } else {
-            // This is untested
-            targetAngle = robot.turretAngle + theLocalPole.centralOffsetDegrees + 180.0;
-        }
-        robot.turretPIDPosInit(targetAngle);
-        while(opModeIsActive() && robot.turretMotorPIDAuto) {
-            performEveryLoop();
-        }
-        robot.turretMotorSetPower(0.0);
-        // Get the image after our adjustments
-        alignmentPipeline.savePoleAutoImage();
-    } // alignToPole
-
-    /*---------------------------------------------------------------------------------*/
-    void alignToPoleOld(boolean turretFacingFront) {
+    void alignToPole(boolean turretFacingFront, boolean fromStack ) {
         PowerPlaySuperPipeline alignmentPipeline;
         PowerPlaySuperPipeline.AnalyzedPole theLocalPole;
         final double DRIVE_SLOPE  = 0.004187;
         final double DRIVE_OFFSET = 0.04522;
-        final int TURRET_CYCLES_AT_POS = 8;
-        // minPower=0; kp = 0.0027
-        // Converting from pixels to degrees
-        PIDControllerTurret pidController = new PIDControllerTurret(0.00008 / 0.15,0.000,
-                0.00010 / 0.15, 0.085);
+        final int CYCLES_AT_ANGLE    = 4;
+        final int CYCLES_AT_DISTANCE = 3;
+
+        PIDControllerTurret pidController = new PIDControllerTurret(0.00008,0.0, 0.0, 0.070 );
 
         double turretPower;
-        double turretPowerMax = 0.14;  // maximum we don't want the PID to exceed
+        double turretPowerMax = 0.10;  // maximum we don't want the PID to exceed
         double drivePower;
 
         double startTime = autonomousTimer.milliseconds();
         double abortTime = startTime + 3000.0;  // abort after 3 seconds
 
         // If we add back front camera, use boolean to determine which pipeline to use.
-//        alignmentPipeline = turretFacingFront ? pipelineFront : pipelineBack;
-        alignmentPipeline = pipelineBack;
-
+        alignmentPipeline = turretFacingFront ? pipelineFront : pipelineBack;
         theLocalPole = alignmentPipeline.getDetectedPole();
-        while (opModeIsActive() && ((theLocalPole.alignedCount <= TURRET_CYCLES_AT_POS) ||
-                theLocalPole.properDistanceHighCount <= 3)) {
+
+		// Save the starting image we have to correct for
+        alignmentPipeline.savePoleAutoImage();
+
+        int properDistanceCount = (fromStack)? theLocalPole.properDistanceHighStackCount :
+                                               theLocalPole.properDistanceHighCount;
+        boolean properDistance = (fromStack)? theLocalPole.properDistanceStackHigh :
+                                              theLocalPole.properDistanceStackHigh;
+        double highOffset = (fromStack)? theLocalPole.highDistanceStackOffset :
+                                         theLocalPole.highDistanceOffset;
+
+        while (opModeIsActive() && ((theLocalPole.alignedCount <= CYCLES_AT_ANGLE) ||
+                properDistanceCount <= CYCLES_AT_DISTANCE)) {
             performEveryLoop();
-            turretPower = pidController.update(0.0, theLocalPole.centralOffsetDegrees);
+            turretPower = pidController.update(0.0, theLocalPole.centralOffset);
             // Ensure we never exceed a safe power
             if( turretPower > +turretPowerMax ) turretPower = +turretPowerMax;
             if( turretPower < -turretPowerMax ) turretPower = -turretPowerMax;
 
-            if(theLocalPole.properDistanceHigh) {
+            if(properDistance) {
                 drivePower = 0.0;
             } else {
                 // Need to calculate the drive power based on pixel offset
                 // Maximum number of pixels off would be in the order of 30ish.
-                // This is a first guess that will have to be expiremented on.
+                // This is a first guess that will have to be experimented on.
                 // Go 1.0 to 0.08 from 30 pixels to 2.
-                drivePower = (theLocalPole.highDistanceOffset > 0 )?
-                        (theLocalPole.highDistanceOffset * DRIVE_SLOPE + DRIVE_OFFSET) :
-                        (theLocalPole.highDistanceOffset * DRIVE_SLOPE - DRIVE_OFFSET);
+                drivePower = (highOffset > 0 )?
+                        (highOffset * DRIVE_SLOPE + DRIVE_OFFSET) :
+                        (highOffset * DRIVE_SLOPE - DRIVE_OFFSET);
             }
+
+            telemetry.addData("alignToPole", "ang=%d (%.1f) dist=%d (%.1f)",
+                    theLocalPole.alignedCount, theLocalPole.centralOffset,
+                    properDistanceCount, highOffset );
+            telemetry.update();
+
             if(abs(drivePower) < 0.01 && abs(turretPower) < 0.01) {
                 robot.stopMotion();
                 robot.turretMotorSetPower(0);
@@ -384,19 +317,20 @@ public abstract class AutonomousBase extends LinearOpMode {
                 driveAndRotateTurretAngle(drivePower, turretPower, turretFacingFront);
             }
 
-            telemetry.addData("alignToPole", "ang=%d (%.1f) dist=%d (%.1f)",
-              theLocalPole.alignedCount, theLocalPole.centralOffset,
-                    theLocalPole.properDistanceHighCount, theLocalPole.highDistanceOffset );
-            telemetry.update();
-
-            theLocalPole = alignmentPipeline.getDetectedPole();
-
-            // Do we need to abort?
+            // Do we need to abort due to timeout?
             if( autonomousTimer.milliseconds() >= abortTime )
                 break;
+
+            // update the image for the next loop
+            theLocalPole = alignmentPipeline.getDetectedPole();
+            properDistanceCount = fromStack ? theLocalPole.properDistanceHighStackCount : theLocalPole.properDistanceHighCount;
+            properDistance = fromStack ? theLocalPole.properDistanceStackHigh : theLocalPole.properDistanceStackHigh;
+            highOffset = fromStack ? theLocalPole.highDistanceStackOffset : theLocalPole.highDistanceOffset;
         }
         robot.stopMotion();
         robot.turretMotorSetPower(0.0);
+        // Save the final image after our adjustments
+        alignmentPipeline.savePoleAutoImage();
     } // alignToPole
 
     /*
@@ -407,8 +341,7 @@ public abstract class AutonomousBase extends LinearOpMode {
         PowerPlaySuperPipeline.AnalyzedCone theLocalCone;
         final double DRIVE_SLOPE  = 0.004187;
         final double DRIVE_OFFSET = 0.04522;
-        // Convert from pixels to degrees
-        final double TURN_SLOPE   = 0.004187 / 0.15;
+        final double TURN_SLOPE   = 0.004187;
         final double TURN_OFFSET  = 0.04522;
         double drivePower;
         double turnPower;
@@ -439,13 +372,13 @@ public abstract class AutonomousBase extends LinearOpMode {
             }
             drivePower = (distanceError > 0) ? (-distanceError * DRIVE_SLOPE - DRIVE_OFFSET) :
                                                (-distanceError * DRIVE_SLOPE + DRIVE_OFFSET);
-            turnPower = (theLocalCone.centralOffsetDegrees > 0) ?
-                    (theLocalCone.centralOffsetDegrees * TURN_SLOPE + TURN_OFFSET) :
-                    (theLocalCone.centralOffsetDegrees * TURN_SLOPE - TURN_OFFSET);
+            turnPower = (theLocalCone.centralOffset > 0) ?
+                    (theLocalCone.centralOffset * TURN_SLOPE + TURN_OFFSET) :
+                    (theLocalCone.centralOffset * TURN_SLOPE - TURN_OFFSET);
             driveAndRotate(drivePower, turnPower);
             telemetry.addData("Cone Data", "drvPwr %.2f turnPwr %.2f", drivePower, turnPower);
-            telemetry.addData("Cone Data", "sonar %d dstErr %d angle-err %.2f", coneDistance,
-                    distanceError, theLocalCone.centralOffsetDegrees);
+            telemetry.addData("Cone Data", "coneDst %d dstErr %d offset %.2f", coneDistance,
+                    distanceError, theLocalCone.centralOffset);
             telemetry.update();
             // Do we need to abort?
             if( autonomousTimer.milliseconds() >= abortTime )
@@ -1129,10 +1062,8 @@ public abstract class AutonomousBase extends LinearOpMode {
                              double speedMax, int driveType) {
 
         // Convert from cm to inches
-//        double errorMultiplier = 0.014;
         double errorMultiplier = 0.033;
         double speedMin = MIN_DRIVE_MAGNITUDE;
-//        double allowedError = 2;
         double allowedError = (driveType == DRIVE_THRU) ? 2.75 : 0.5;
 
         return (driveToXY(yTarget, xTarget, angleTarget, speedMin, speedMax, errorMultiplier,

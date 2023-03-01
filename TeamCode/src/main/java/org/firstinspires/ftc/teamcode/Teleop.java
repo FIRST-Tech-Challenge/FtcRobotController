@@ -94,9 +94,9 @@ public abstract class Teleop extends LinearOpMode {
     final int TURRET_CYCLECOUNT_DONE   = 0;
     int       turretCycleCount         = TURRET_CYCLECOUNT_DONE;
     double    turretTarget             = 0.0;
-//  boolean   collectingFromStack    = false;
-//  int       conesOnStack           = 2;
-    boolean   fastScoringCycleUpward = false; // Are we on the UPWARD phase of the fast scoring cycle? (false = DOWNWARD)
+    double    collectTimeout           = 1000.0; // default of 1 sec (updated dynamically later)
+    boolean   doPostGrabTilt           = false;  // default of NO TILT (updated dynamically later)
+    boolean   fastScoringCycleUpward   = false;  // Are we on the UPWARD phase of the fast scoring cycle? (false = DOWNWARD)
 
     /* Declare OpMode members. */
     HardwareSlimbot robot = new HardwareSlimbot();
@@ -849,8 +849,6 @@ public abstract class Teleop extends LinearOpMode {
         if( gamepad2_cross_now && !gamepad2_cross_last)
         {   // Lower lift to COLLECT position and adjust collector tilt horizontal
             robot.grabberSpinStop();
-            // Were we previously collecting from the stack?
-//          collectingFromStack = false;
             robot.turretPIDPosInit( robot.TURRET_ANGLE_CENTER );
             needFlip       = false;  // collector upright for grabbing
             grabberTarget1 = robot.GRABBER_TILT_GRAB;
@@ -859,35 +857,23 @@ public abstract class Teleop extends LinearOpMode {
             liftTargetUpward = (liftTarget < robot.liftAngle)? true : false;
             liftCycleCount = LIFT_CYCLECOUNT_START;
             liftFrontToBack = false;  // lowering (BackToFront)
-
+            collectTimeout  = 1000.0; // 1-sec timeout (from 1-cone height)
+            doPostGrabTilt  = false;  // NO TILT (collecting from substation)
         }
         // Check for an OFF-to-ON toggle of the gamepad2 TRIANGLE button
         else if( gamepad2_triangle_now && !gamepad2_triangle_last)
-        {   // Lower lift to COLLECT FROM STACK position and adjust collector tilt angled
-//            robot.grabberSpinStop();
-//            robot.turretPIDPosInit( robot.TURRET_ANGLE_CENTER );
- //           needFlip       = false;  // collector upright for grabbing
- //           grabberTarget1 = robot.GRABBER_TILT_GRAB;
- //           grabberTarget2 = robot.GRABBER_TILT_GRAB2;
-
-            //If we're at the 5th cone height, reset to 2nd cone height
- //           if(conesOnStack == 5)
- //           {
- //               conesOnStack = 2;
- //           }
- //           else
- //           {
- //               conesOnStack++;
- //           }
-
-            // Sets lift position to a height dependent on how many cones are left on the stack
-//           liftTarget = robot.coneStackHeights[conesOnStack -1];
-
-//            liftTargetUpward = (liftTarget < robot.liftAngle)? true : false;
-//            liftCycleCount = LIFT_CYCLECOUNT_START;
-//            liftFrontToBack = false;  // lowering (BackToFront)
-//            collectingFromStack = true;
-
+        {   // Lower lift to COLLECT FROM 5-STACK position and adjust collector tilt angled
+            robot.grabberSpinStop();
+            robot.turretPIDPosInit( robot.TURRET_ANGLE_CENTER );
+            needFlip       = false;  // collector upright for grabbing
+            grabberTarget1 = robot.GRABBER_TILT_GRAB;
+            grabberTarget2 = robot.GRABBER_TILT_GRAB2;        // angled upward        DIFFERENT
+            liftTarget     = robot.LIFT_ANGLE_COLLECT - 11.0; // 11 degrees higher    DIFFERENT
+            liftTargetUpward = (liftTarget < robot.liftAngle)? true : false;
+            liftCycleCount = LIFT_CYCLECOUNT_START;
+            liftFrontToBack = false;  // lowering (BackToFront)
+            collectTimeout  = 2000.0; // 2-sec timeout (longer way to lower down)     DIFFERENT
+            doPostGrabTilt  = true;   // TILT (avoid cone base snag on field wall)    DIFFERENT
         }
         // Check for an OFF-to-ON toggle of the gamepad2 CIRCLE button
         else if( gamepad2_circle_now && !gamepad2_circle_last )
@@ -960,16 +946,7 @@ public abstract class Teleop extends LinearOpMode {
         else if( gamepad2_dpad_up_now && !gamepad2_dpad_up_last)
         {   // Raise lift to HIGH junction
             robot.grabberSpinStop();
-            //Tilts grabber back before raising to prevent knocking stack over
-//            if(collectingFromStack)
-//            {
-//                grabberTarget1 = robot.GRABBER_TILT_GRAB3;
-//                collectingFromStack= false;
-//            }
-//            else
-//            {
             grabberTarget1 = robot.GRABBER_TILT_STORE;
- //           }
             needFlip       = (rearScoring)? true : false;  // collector flipped/REAR or normal/FRONT
             grabberTarget2 = (rearScoring)? robot.GRABBER_TILT_BACK_H : robot.GRABBER_TILT_FRONT_H;
             liftTarget     = (rearScoring)? robot.LIFT_ANGLE_HIGH_B   : robot.LIFT_ANGLE_HIGH;
@@ -981,16 +958,7 @@ public abstract class Teleop extends LinearOpMode {
         else if( gamepad2_dpad_left_now && !gamepad2_dpad_left_last)
         {   // Raise lift to MEDIUM junction
             robot.grabberSpinStop();
-            //Tilts grabber back before raising to prevent knocking stack over
-//          if(collectingFromStack)
-//            {
-//                grabberTarget1 = robot.GRABBER_TILT_GRAB3;
-//                collectingFromStack= false;
-//            }
-//            else
-//            {
             grabberTarget1 = robot.GRABBER_TILT_STORE;
-//            }
             needFlip       = (rearScoring)? true : false;  // collector flipped/REAR or normal/FRONT
             grabberTarget2 = (rearScoring)? robot.GRABBER_TILT_BACK_M : robot.GRABBER_TILT_FRONT_M;
             liftTarget     = (rearScoring)? robot.LIFT_ANGLE_MED_B   : robot.LIFT_ANGLE_MED;
@@ -1002,15 +970,6 @@ public abstract class Teleop extends LinearOpMode {
         else if( gamepad2_dpad_down_now && !gamepad2_dpad_down_last)
         {   // Raise lift to LOW junction
             robot.grabberSpinStop();
-            //Tilts grabber back before raising to prevent knocking stack over
-//            if(collectingFromStack)
-//            {
-//                grabberTarget1 = robot.GRABBER_TILT_GRAB3;
-//            }
-//            else
-//            {
-//           grabberTarget1 = robot.GRABBER_TILT_FRONT_L;
-//            }
             // The settings for grabberTarget1 and grabberTarget2 aren't effective
             // since we never go above the level of the motors to trigger those
             // two states of our lift state machine.  We set them just for clarity.
@@ -1114,7 +1073,7 @@ public abstract class Teleop extends LinearOpMode {
                 boolean detectConeThisCycle = !robot.topConeState;
                 grabberDetectCount += (detectConeThisCycle)? 1 : 0;
                 boolean stopForSensor  = (grabberDetectCount >= 3); // let collector lift cone a bit higher
-                boolean stopForTimeout = (elapsedTime >= 1000)? true : false;
+                boolean stopForTimeout = (elapsedTime >= collectTimeout)? true : false;
                 if( !grabberLifting && (stopForSensor || stopForTimeout) ) {
                     // stop collecting
                     robot.grabberSpinStop();
@@ -1122,9 +1081,11 @@ public abstract class Teleop extends LinearOpMode {
                     robot.liftMotorsSetPower( 0.45 );
                     grabberRunTimer.reset();
                     grabberLifting = true;
+                    if( doPostGrabTilt ) // are we collecting against the wall?
+                       robot.grabberSetTilt( robot.GRABBER_TILT_GRAB3 );
                 }
                 // Is second phase of collecting complete? (lifting cone off floor)
-                else if( grabberLifting && (elapsedTime >= 500) ) {
+                else if( grabberLifting && (elapsedTime >= 750) ) {
                     // halt lift motors
                     robot.liftMotorsSetPower( 0.0 );
                     grabberRunning = false;

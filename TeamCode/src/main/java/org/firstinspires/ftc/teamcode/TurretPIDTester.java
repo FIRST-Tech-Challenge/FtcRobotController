@@ -22,8 +22,6 @@
 package org.firstinspires.ftc.teamcode;
 
 import static java.lang.Math.abs;
-import static java.lang.Math.cos;
-import static java.lang.Math.sin;
 import static java.lang.Math.toRadians;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -163,36 +161,68 @@ public class TurretPIDTester extends AutonomousBase
     void alignToPole(boolean turretFacingFront) {
         PowerPlaySuperPipeline alignmentPipeline;
         PowerPlaySuperPipeline.AnalyzedPole theLocalPole;
+        final double DRIVE_SLOPE  = 0.004187;
+        final double DRIVE_OFFSET = 0.04522;
+        final int TURRET_CYCLES_AT_POS = 8;
+        // minPower=0; kp = 0.0027
+        PIDControllerTurret pidController = new PIDControllerTurret(0.00008,0.000, 0.00010, 0.085 );
+
+        double turretPower;
+        double turretPowerMax = 0.14;  // maximum we don't want the PID to exceed
+        double drivePower;
+
+        double startTime = autonomousTimer.milliseconds();
+        double abortTime = startTime + 3000.0;  // abort after 3 seconds
 
         // If we add back front camera, use boolean to determine which pipeline to use.
         alignmentPipeline = turretFacingFront ? pipelineFront : pipelineBack;
 
-        // Get the image to do our decision making
         theLocalPole = alignmentPipeline.getDetectedPole();
+		// Save the starting image we have to correct for
         alignmentPipeline.savePoleAutoImage();
-        // This is the angle the pole is in relation to the turret angle
-        targetAngle = robot.turretAngle - theLocalPole.centralOffsetDegrees;
-        robot.turretPIDPosInit(targetAngle);
-        // Where are we right now? (may not have stopped exactly at the commanded location)
-        currentPositionX = (robotGlobalXCoordinatePosition / robot.COUNTS_PER_INCH2);
-        currentPositionY = (robotGlobalYCoordinatePosition / robot.COUNTS_PER_INCH2);
-        currentPositionAngle = Math.toDegrees(robotOrientationRadians);
-        // How many inches do we need to move the robot drivetrain?
-        targetDistanceX = (theLocalPole.highDistanceOffsetCm * cos(toRadians(targetAngle)))/2.54;
-        targetDistanceY = (theLocalPole.highDistanceOffsetCm * sin(toRadians(targetAngle)))/2.54;
-        // Add that offset to our current position to create an absolute X-Y position and angle
-        // (not sure if this needs to be flipped if we are rear facing or not)
-        targetPositionX = currentPositionX + targetDistanceX;
-        targetPositionY = currentPositionY + targetDistanceY;
-        targetPositionAngle = currentPositionAngle;
-        // Drive to that new position, maintaining the current rotation angle of the drivetrain
-        driveToPosition( targetPositionY, targetPositionX, targetPositionAngle, DRIVE_SPEED_50, TURN_SPEED_40, DRIVE_TO );
-        while(opModeIsActive() && robot.turretMotorPIDAuto) {
+
+        while (opModeIsActive() && ((theLocalPole.alignedCount <= TURRET_CYCLES_AT_POS) ||
+                theLocalPole.properDistanceHighCount <= 3)) {
             performEveryLoop();
+            turretPower = pidController.update(0.0, theLocalPole.centralOffset);
+            // Ensure we never exceed a safe power
+            if( turretPower > +turretPowerMax ) turretPower = +turretPowerMax;
+            if( turretPower < -turretPowerMax ) turretPower = -turretPowerMax;
+
+            if(theLocalPole.properDistanceHigh) {
+                drivePower = 0.0;
+            } else {
+                // Need to calculate the drive power based on pixel offset
+                // Maximum number of pixels off would be in the order of 30ish.
+                // This is a first guess that will have to be expiremented on.
+                // Go 1.0 to 0.08 from 30 pixels to 2.
+                drivePower = (theLocalPole.highDistanceOffset > 0 )?
+                        (theLocalPole.highDistanceOffset * DRIVE_SLOPE + DRIVE_OFFSET) :
+                        (theLocalPole.highDistanceOffset * DRIVE_SLOPE - DRIVE_OFFSET);
+            }
+
+            telemetry.addData("alignToPole", "ang=%d (%.1f) dist=%d (%.1f)",
+                    theLocalPole.alignedCount, theLocalPole.centralOffset,
+                    theLocalPole.properDistanceHighCount, theLocalPole.highDistanceOffset );
+            telemetry.update();
+
+            if(abs(drivePower) < 0.01 && abs(turretPower) < 0.01) {
+                robot.stopMotion();
+                robot.turretMotorSetPower(0);
+            } else {
+                driveAndRotateTurretAngle(drivePower, turretPower, turretFacingFront);
+            }
+
+            // Do we need to abort due to timeout?
+            if( autonomousTimer.milliseconds() >= abortTime )
+                break;
+
+            // update the image for the next loop
+            theLocalPole = alignmentPipeline.getDetectedPole();
         }
         robot.stopMotion();
         robot.turretMotorSetPower(0.0);
-        // Get the image after our adjustments
+        // Save the final image after our adjustments
         alignmentPipeline.savePoleAutoImage();
     } // alignToPole
 
@@ -233,7 +263,7 @@ public class TurretPIDTester extends AutonomousBase
                 @Override
                 public void onOpened() {
                     pipelineBack = new PowerPlaySuperPipeline(false, true, false, false, 160.0);
-                    webcamBack.setPipeline(pipelineFront);
+                    webcamBack.setPipeline(pipelineBack);
                     webcamBack.startStreaming(320, 240, OpenCvCameraRotation.UPRIGHT);
                     backCameraInitialized = true;
                 }
@@ -268,7 +298,7 @@ public class TurretPIDTester extends AutonomousBase
         });
         webcamLow.showFpsMeterOnViewport(false);
 
-        while(!(lowCameraInitialized && (frontCameraInitialized || backCameraInitialized))) {
+        while(!(lowCameraInitialized && (backCameraInitialized || frontCameraInitialized))) {
             sleep(100);
         }
         telemetry.addLine("Robot initializing, wait for completion.");
@@ -335,7 +365,7 @@ public class TurretPIDTester extends AutonomousBase
 //                          kpMinHistory[index], kpHistory[index], kiHistory[index], kdHistory[index]);
 //              }
                 telemetry.update();
-                sleep(10000);
+                sleep(1000);
             }
         }
     }

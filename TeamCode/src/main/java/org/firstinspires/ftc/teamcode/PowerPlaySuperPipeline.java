@@ -24,8 +24,6 @@ package org.firstinspires.ftc.teamcode;
 import static java.lang.Math.abs;
 import static java.lang.Math.pow;
 import static java.lang.Math.sqrt;
-import static java.lang.Math.tan;
-import static java.lang.Math.toRadians;
 
 import android.os.Environment;
 
@@ -217,7 +215,6 @@ class PowerPlaySuperPipeline extends OpenCvPipeline
 
         allianceDetectRightTl = new Point(263, 89); // 17x39 pixel box for 5-stack
         allianceDetectRightBr = new Point(279, 125);
-        POLE_HIGH_DISTANCE = polePixelWidthToDistance(POLE_HIGH_PIXEL_WIDTH);
     }
 
     public void setStorageFolder(String storageDir) {
@@ -397,15 +394,12 @@ class PowerPlaySuperPipeline extends OpenCvPipeline
     static final int CB_CHAN_IDX = 2;
     static final int CR_CHAN_IDX = 1;
 
-    static final double PIXELS_TO_DEGREES = 0.15;
     // This is the allowable distance from the center of the pole to the "center"
-    // of the image in degrees with 0.15 degrees per pixel.
-    static final double MAX_POLE_OFFSET = 2.7;   // 18 +/- pixels
+    // of the image.  Pole is ~38 pixels wide, so our tolerance is 16% of that.
+    static final int MAX_POLE_OFFSET = 18;   // +/- pixels
     // This  is how wide a pole is at the proper scoring distance on a high pole
-    static final int POLE_HIGH_PIXEL_WIDTH = 40;
-    // Converts the target pixels width to a cm distance of the robot from the pole. The pole is
-    // 1" diameter, which is 1.27 cm radius.
-    protected double POLE_HIGH_DISTANCE;
+    static final int POLE_HIGH_DISTANCE = 40;
+    static final int POLE_HIGH_DISTANCE_STACK = 32;
 
     // This is how many pixels wide the pole can vary at the proper scoring distance
     // on a high pole.
@@ -416,12 +410,13 @@ class PowerPlaySuperPipeline extends OpenCvPipeline
             corners = new FourPointRect();
             alignedCount = 0;
             properDistanceHighCount = 0;
+            properDistanceHighStackCount = 0;
             centralOffset = 0;
-            centralOffsetDegrees = 0;
             highDistanceOffset = 0;
-            highDistanceOffsetCm = 0;
+            highDistanceStackOffset = 0;
             aligned = false;
             properDistanceHigh = false;
+            properDistanceStackHigh = false;
         }
 
         public AnalyzedPole clone() {
@@ -429,34 +424,35 @@ class PowerPlaySuperPipeline extends OpenCvPipeline
             cloneBaby.corners = corners.clone();
             cloneBaby.alignedCount = alignedCount;
             cloneBaby.properDistanceHighCount = properDistanceHighCount;
+            cloneBaby.properDistanceHighStackCount = properDistanceHighStackCount;
             cloneBaby.centralOffset = centralOffset;
-            cloneBaby.centralOffsetDegrees = centralOffsetDegrees;
             cloneBaby.highDistanceOffset = highDistanceOffset;
-            cloneBaby.highDistanceOffsetCm = highDistanceOffsetCm;
+            cloneBaby.highDistanceStackOffset = highDistanceStackOffset;
             cloneBaby.aligned = aligned;
             cloneBaby.properDistanceHigh = properDistanceHigh;
+            cloneBaby.properDistanceStackHigh = properDistanceStackHigh;
 
             return cloneBaby;
         }
         FourPointRect corners;
         int alignedCount;
         int properDistanceHighCount;
+        int properDistanceHighStackCount;
         double centralOffset;
-        double centralOffsetDegrees;
         double highDistanceOffset;
-        double highDistanceOffsetCm;
+        double highDistanceStackOffset;
         boolean aligned;
         boolean properDistanceHigh;
+        boolean properDistanceStackHigh;
     }
 
-    static final double MAX_CONE_OFFSET = 1.5;  // 10 +/- pixels
+    static final int MAX_CONE_OFFSET = 10;  // +/- pixels
     static class AnalyzedCone
     {
         public AnalyzedCone() {
             corners = new FourPointRect();
             alignedCount = 0;
             centralOffset = 0;
-            centralOffsetDegrees = 0;
             aligned = false;
         }
 
@@ -466,7 +462,6 @@ class PowerPlaySuperPipeline extends OpenCvPipeline
             cloneBaby.corners = corners.clone();
             cloneBaby.alignedCount = alignedCount;
             cloneBaby.centralOffset = centralOffset;
-            cloneBaby.centralOffsetDegrees = centralOffsetDegrees;
             cloneBaby.aligned = aligned;
 
             return cloneBaby;
@@ -475,18 +470,16 @@ class PowerPlaySuperPipeline extends OpenCvPipeline
         FourPointRect corners;
         int alignedCount;
         double centralOffset;
-        double centralOffsetDegrees;
         boolean aligned;
     }
 
-    static final double MAX_TAPE_OFFSET = 1.5;
+    static final int MAX_TAPE_OFFSET = 4;
     static class AnalyzedTape
     {
         public AnalyzedTape() {
             corners = new FourPointRect();
             alignedCount = 0;
             centralOffset = 0;
-            centralOffsetDegrees = 0;
             aligned = false;
             angle = 0.0;
         };
@@ -496,7 +489,6 @@ class PowerPlaySuperPipeline extends OpenCvPipeline
             cloneBaby.corners = corners.clone();
             cloneBaby.alignedCount = alignedCount;
             cloneBaby.centralOffset = centralOffset;
-            cloneBaby.centralOffsetDegrees = centralOffsetDegrees;
             cloneBaby.aligned = aligned;
             cloneBaby.angle = angle;
 
@@ -505,7 +497,6 @@ class PowerPlaySuperPipeline extends OpenCvPipeline
         FourPointRect corners;
         int alignedCount;
         double centralOffset;
-        double centralOffsetDegrees;
         boolean aligned;
         double angle;
     }
@@ -794,6 +785,11 @@ class PowerPlaySuperPipeline extends OpenCvPipeline
                 } else {
                     thePole.properDistanceHighCount = 0;
                 }
+                if(thePole.properDistanceStackHigh) {
+                    thePole.properDistanceHighStackCount++;
+                } else {
+                    thePole.properDistanceHighStackCount = 0;
+                }
                 if(captureNextPole) {
                     captureNextPole = false;
                     savePoleAutoImage(input);
@@ -995,8 +991,7 @@ class PowerPlaySuperPipeline extends OpenCvPipeline
             AnalyzedCone analyzedCone = new AnalyzedCone();
             analyzedCone.corners = rectFitToContour.clone();
             analyzedCone.centralOffset = CENTERED_OBJECT.center.x - rectFitToContour.center.x;
-            analyzedCone.centralOffsetDegrees = analyzedCone.centralOffset * PIXELS_TO_DEGREES;
-            analyzedCone.aligned = abs(analyzedCone.centralOffsetDegrees) <= MAX_CONE_OFFSET;
+            analyzedCone.aligned = abs(analyzedCone.centralOffset) <= MAX_CONE_OFFSET;
             internalRedConeList.add(analyzedCone);
         }
     }
@@ -1005,15 +1000,13 @@ class PowerPlaySuperPipeline extends OpenCvPipeline
     {
         boolean foundCone = false;
         synchronized(lockRedCone) {
-            theRedCone.corners = new FourPointRect();
             theRedCone.centralOffset = 0;
-            theRedCone.centralOffsetDegrees = 0.0;
+            theRedCone.corners = new FourPointRect();
             theRedCone.aligned = false;
             for (AnalyzedCone aCone : internalRedConeList) {
-                if (aCone.corners.height > theBlueCone.corners.height) {
+                if (aCone.corners.height > theRedCone.corners.height) {
                     theRedCone.corners = aCone.corners.clone();
                     theRedCone.centralOffset = aCone.centralOffset;
-                    theRedCone.centralOffsetDegrees = aCone.centralOffsetDegrees;
                     theRedCone.aligned = aCone.aligned;
                     foundCone = true;
                 }
@@ -1036,8 +1029,7 @@ class PowerPlaySuperPipeline extends OpenCvPipeline
             AnalyzedTape analyzedTape = new AnalyzedTape();
             analyzedTape.corners = rectFitToContour.clone();
             analyzedTape.centralOffset = CENTERED_OBJECT.center.x - rectFitToContour.center.x;
-            analyzedTape.centralOffsetDegrees = analyzedTape.centralOffset * PIXELS_TO_DEGREES;
-            analyzedTape.aligned = abs(analyzedTape.centralOffsetDegrees) <= MAX_TAPE_OFFSET;
+            analyzedTape.aligned = abs(analyzedTape.centralOffset) <= MAX_TAPE_OFFSET;
             // TODO add angle detection
             internalRedTapeList.add(analyzedTape);
         }
@@ -1047,16 +1039,13 @@ class PowerPlaySuperPipeline extends OpenCvPipeline
     {
         boolean foundTape = false;
         synchronized(lockRedTape) {
-            theRedTape.corners = new FourPointRect();
             theRedTape.centralOffset = 0;
-            theRedTape.centralOffsetDegrees = 0.0;
+            theRedTape.corners = new FourPointRect();
             theRedTape.aligned = false;
-            theRedTape.angle = 0.0;
             for (AnalyzedTape aTape : internalRedTapeList) {
                 if (aTape.corners.height > theRedTape.corners.height) {
                     theRedTape.corners = aTape.corners.clone();
                     theRedTape.centralOffset = aTape.centralOffset;
-                    theRedTape.centralOffsetDegrees = aTape.centralOffsetDegrees;
                     theRedTape.aligned = aTape.aligned;
                     theRedTape.angle = aTape.angle;
                     foundTape = true;
@@ -1180,8 +1169,7 @@ class PowerPlaySuperPipeline extends OpenCvPipeline
             AnalyzedCone analyzedCone = new AnalyzedCone();
             analyzedCone.corners = rectFitToContour.clone();
             analyzedCone.centralOffset = CENTERED_OBJECT.center.x - rectFitToContour.center.x;
-            analyzedCone.centralOffsetDegrees = analyzedCone.centralOffset * PIXELS_TO_DEGREES;
-            analyzedCone.aligned = abs(analyzedCone.centralOffsetDegrees) <= MAX_CONE_OFFSET;
+            analyzedCone.aligned = abs(analyzedCone.centralOffset) <= MAX_CONE_OFFSET;
             internalBlueConeList.add(analyzedCone);
         }
     }
@@ -1190,15 +1178,13 @@ class PowerPlaySuperPipeline extends OpenCvPipeline
     {
         boolean foundCone = false;
         synchronized(lockBlueCone) {
-            theBlueCone.corners = new FourPointRect();
             theBlueCone.centralOffset = 0;
-            theBlueCone.centralOffsetDegrees = 0.0;
+            theBlueCone.corners = new FourPointRect();
             theBlueCone.aligned = false;
             for (AnalyzedCone aCone : internalBlueConeList) {
                 if (aCone.corners.height > theBlueCone.corners.height) {
                     theBlueCone.corners = aCone.corners.clone();
                     theBlueCone.centralOffset = aCone.centralOffset;
-                    theBlueCone.centralOffsetDegrees = aCone.centralOffsetDegrees;
                     theBlueCone.aligned = aCone.aligned;
                     foundCone = true;
                 }
@@ -1228,8 +1214,7 @@ class PowerPlaySuperPipeline extends OpenCvPipeline
             AnalyzedTape analyzedTape = new AnalyzedTape();
             analyzedTape.corners = rectFitToContour.clone();
             analyzedTape.centralOffset = CENTERED_OBJECT.center.x - rectFitToContour.center.x;
-            analyzedTape.centralOffsetDegrees = analyzedTape.centralOffset * PIXELS_TO_DEGREES;
-            analyzedTape.aligned = abs(analyzedTape.centralOffsetDegrees) <= MAX_TAPE_OFFSET;
+            analyzedTape.aligned = abs(analyzedTape.centralOffset) <= MAX_TAPE_OFFSET;
             // TODO add angle detection
             internalBlueTapeList.add(analyzedTape);
         }
@@ -1239,18 +1224,15 @@ class PowerPlaySuperPipeline extends OpenCvPipeline
     {
         boolean foundTape = false;
         synchronized(lockBlueTape) {
-            theBlueTape.corners = new FourPointRect();
             theBlueTape.centralOffset = 0;
-            theBlueTape.centralOffsetDegrees = 0.0;
-            theBlueTape.angle = 0.0;
+            theBlueTape.corners = new FourPointRect();
             theBlueTape.aligned = false;
             for (AnalyzedTape aTape : internalBlueTapeList) {
                 if (aTape.corners.height > theBlueTape.corners.height) {
                     theBlueTape.corners = aTape.corners.clone();
                     theBlueTape.centralOffset = aTape.centralOffset;
-                    theBlueTape.centralOffsetDegrees = aTape.centralOffsetDegrees;
-                    theBlueTape.angle = aTape.angle;
                     theBlueTape.aligned = aTape.aligned;
+                    theBlueTape.angle = aTape.angle;
                     foundTape = true;
                 }
             }
@@ -1263,11 +1245,6 @@ class PowerPlaySuperPipeline extends OpenCvPipeline
         // We can put whatever logic in here we want to determine the coneness
 //        return (rect.size.width > rect.size.height);
         return true;
-    }
-
-    public double polePixelWidthToDistance(double pixels) {
-        // Pole diameter is 1", so 1.27cm radius.
-        return (1.27 / tan(toRadians((pixels / 2) * PIXELS_TO_DEGREES)));
     }
 
     public AnalyzedPole getDetectedPole()
@@ -1315,22 +1292,22 @@ class PowerPlaySuperPipeline extends OpenCvPipeline
         boolean foundPole = false;
         synchronized (lockPole) {
             thePole.centralOffset = 0;
-            thePole.centralOffsetDegrees = 0;
             thePole.highDistanceOffset = 0;
-            thePole.highDistanceOffsetCm = 0;
+            thePole.highDistanceStackOffset = 0;
             thePole.corners = new FourPointRect();
             thePole.aligned = false;
             thePole.properDistanceHigh = false;
+            thePole.properDistanceStackHigh = false;
             for (AnalyzedPole aPole : internalPoleList) {
                 // Find the WIDEST pole
                 if (aPole.corners.width > thePole.corners.width) {
                     thePole.centralOffset = aPole.centralOffset;
-                    thePole.centralOffsetDegrees = aPole.centralOffsetDegrees;
                     thePole.highDistanceOffset = aPole.highDistanceOffset;
-                    thePole.highDistanceOffsetCm = aPole.highDistanceOffsetCm;
+                    thePole.highDistanceStackOffset = aPole.highDistanceStackOffset;
                     thePole.corners = aPole.corners.clone();
                     thePole.aligned = aPole.aligned;
                     thePole.properDistanceHigh = aPole.properDistanceHigh;
+                    thePole.properDistanceStackHigh = aPole.properDistanceStackHigh;
                     foundPole = true;
                 }
             }
@@ -1352,11 +1329,11 @@ class PowerPlaySuperPipeline extends OpenCvPipeline
             AnalyzedPole analyzedPole = new AnalyzedPole();
             analyzedPole.corners = rectFitToContour.clone();
             analyzedPole.centralOffset = CENTERED_OBJECT.center.x - rectFitToContour.center.x;
-            analyzedPole.centralOffsetDegrees = analyzedPole.centralOffset * PIXELS_TO_DEGREES;
-            analyzedPole.highDistanceOffset = POLE_HIGH_PIXEL_WIDTH - rectFitToContour.width;
-            analyzedPole.highDistanceOffsetCm = POLE_HIGH_DISTANCE - polePixelWidthToDistance(rectFitToContour.width);
-            analyzedPole.aligned = abs(analyzedPole.centralOffsetDegrees) <= MAX_POLE_OFFSET;
+            analyzedPole.highDistanceOffset = POLE_HIGH_DISTANCE - rectFitToContour.width;
+            analyzedPole.highDistanceStackOffset = POLE_HIGH_DISTANCE_STACK - rectFitToContour.width;
+            analyzedPole.aligned = abs(analyzedPole.centralOffset) <= MAX_POLE_OFFSET;
             analyzedPole.properDistanceHigh = abs(analyzedPole.highDistanceOffset) <= MAX_HIGH_DISTANCE_OFFSET;
+            analyzedPole.properDistanceStackHigh = abs(analyzedPole.highDistanceStackOffset) <= MAX_HIGH_DISTANCE_OFFSET;
             internalPoleList.add(analyzedPole);
         }
     }
