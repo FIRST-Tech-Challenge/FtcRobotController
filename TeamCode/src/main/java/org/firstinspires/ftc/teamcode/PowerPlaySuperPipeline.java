@@ -40,7 +40,6 @@ import org.opencv.imgcodecs.Imgcodecs;
 import org.opencv.imgproc.Imgproc;
 import org.openftc.easyopencv.OpenCvPipeline;
 
-import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -400,10 +399,12 @@ class PowerPlaySuperPipeline extends OpenCvPipeline
     // This  is how wide a pole is at the proper scoring distance on a high pole
     static final int POLE_HIGH_DISTANCE = 40;
     static final int POLE_HIGH_DISTANCE_STACK = 32;
+    static final int POLE_MED_DISTANCE = 32;
+    static final int POLE_MED_DISTANCE_STACK = 24;
 
     // This is how many pixels wide the pole can vary at the proper scoring distance
     // on a high pole.
-    static final int MAX_HIGH_DISTANCE_OFFSET = 3;
+    static final int MAX_DISTANCE_OFFSET = 3;
     static class AnalyzedPole
     {
         public AnalyzedPole() {
@@ -411,12 +412,18 @@ class PowerPlaySuperPipeline extends OpenCvPipeline
             alignedCount = 0;
             properDistanceHighCount = 0;
             properDistanceHighStackCount = 0;
+            properDistanceMedCount = 0;
+            properDistanceMedStackCount = 0;
             centralOffset = 0;
             highDistanceOffset = 0;
             highDistanceStackOffset = 0;
+            medDistanceOffset = 0;
+            medDistanceStackOffset = 0;
             aligned = false;
             properDistanceHigh = false;
             properDistanceStackHigh = false;
+            properDistanceMed = false;
+            properDistanceStackMed = false;
         }
 
         public AnalyzedPole clone() {
@@ -425,12 +432,18 @@ class PowerPlaySuperPipeline extends OpenCvPipeline
             cloneBaby.alignedCount = alignedCount;
             cloneBaby.properDistanceHighCount = properDistanceHighCount;
             cloneBaby.properDistanceHighStackCount = properDistanceHighStackCount;
+            cloneBaby.properDistanceMedCount = properDistanceMedCount;
+            cloneBaby.properDistanceMedStackCount = properDistanceMedStackCount;
             cloneBaby.centralOffset = centralOffset;
             cloneBaby.highDistanceOffset = highDistanceOffset;
             cloneBaby.highDistanceStackOffset = highDistanceStackOffset;
+            cloneBaby.medDistanceOffset = medDistanceOffset;
+            cloneBaby.medDistanceStackOffset = medDistanceStackOffset;
             cloneBaby.aligned = aligned;
             cloneBaby.properDistanceHigh = properDistanceHigh;
             cloneBaby.properDistanceStackHigh = properDistanceStackHigh;
+            cloneBaby.properDistanceMed = properDistanceMed;
+            cloneBaby.properDistanceStackMed = properDistanceStackMed;
 
             return cloneBaby;
         }
@@ -438,12 +451,18 @@ class PowerPlaySuperPipeline extends OpenCvPipeline
         int alignedCount;
         int properDistanceHighCount;
         int properDistanceHighStackCount;
+        int properDistanceMedCount;
+        int properDistanceMedStackCount;
         double centralOffset;
         double highDistanceOffset;
         double highDistanceStackOffset;
+        double medDistanceOffset;
+        double medDistanceStackOffset;
         boolean aligned;
         boolean properDistanceHigh;
         boolean properDistanceStackHigh;
+        boolean properDistanceMed;
+        boolean properDistanceStackMed;
     }
 
     static final int MAX_CONE_OFFSET = 10;  // +/- pixels
@@ -789,6 +808,16 @@ class PowerPlaySuperPipeline extends OpenCvPipeline
                     thePole.properDistanceHighStackCount++;
                 } else {
                     thePole.properDistanceHighStackCount = 0;
+                }
+                if(thePole.properDistanceMed) {
+                    thePole.properDistanceMedCount++;
+                } else {
+                    thePole.properDistanceMedCount = 0;
+                }
+                if(thePole.properDistanceStackMed) {
+                    thePole.properDistanceMedStackCount++;
+                } else {
+                    thePole.properDistanceMedStackCount = 0;
                 }
                 if(captureNextPole) {
                     captureNextPole = false;
@@ -1294,20 +1323,28 @@ class PowerPlaySuperPipeline extends OpenCvPipeline
             thePole.centralOffset = 0;
             thePole.highDistanceOffset = 0;
             thePole.highDistanceStackOffset = 0;
+            thePole.medDistanceOffset = 0;
+            thePole.medDistanceStackOffset = 0;
             thePole.corners = new FourPointRect();
             thePole.aligned = false;
             thePole.properDistanceHigh = false;
             thePole.properDistanceStackHigh = false;
+            thePole.properDistanceMed = false;
+            thePole.properDistanceStackMed = false;
             for (AnalyzedPole aPole : internalPoleList) {
                 // Find the WIDEST pole
                 if (aPole.corners.width > thePole.corners.width) {
                     thePole.centralOffset = aPole.centralOffset;
                     thePole.highDistanceOffset = aPole.highDistanceOffset;
                     thePole.highDistanceStackOffset = aPole.highDistanceStackOffset;
+                    thePole.medDistanceOffset = aPole.medDistanceOffset;
+                    thePole.medDistanceStackOffset = aPole.medDistanceStackOffset;
                     thePole.corners = aPole.corners.clone();
                     thePole.aligned = aPole.aligned;
                     thePole.properDistanceHigh = aPole.properDistanceHigh;
                     thePole.properDistanceStackHigh = aPole.properDistanceStackHigh;
+                    thePole.properDistanceMed = aPole.properDistanceMed;
+                    thePole.properDistanceStackMed = aPole.properDistanceStackMed;
                     foundPole = true;
                 }
             }
@@ -1331,9 +1368,13 @@ class PowerPlaySuperPipeline extends OpenCvPipeline
             analyzedPole.centralOffset = CENTERED_OBJECT.center.x - rectFitToContour.center.x;
             analyzedPole.highDistanceOffset = POLE_HIGH_DISTANCE - rectFitToContour.width;
             analyzedPole.highDistanceStackOffset = POLE_HIGH_DISTANCE_STACK - rectFitToContour.width;
+            analyzedPole.medDistanceOffset = POLE_MED_DISTANCE - rectFitToContour.width;
+            analyzedPole.medDistanceStackOffset = POLE_MED_DISTANCE_STACK - rectFitToContour.width;
             analyzedPole.aligned = abs(analyzedPole.centralOffset) <= MAX_POLE_OFFSET;
-            analyzedPole.properDistanceHigh = abs(analyzedPole.highDistanceOffset) <= MAX_HIGH_DISTANCE_OFFSET;
-            analyzedPole.properDistanceStackHigh = abs(analyzedPole.highDistanceStackOffset) <= MAX_HIGH_DISTANCE_OFFSET;
+            analyzedPole.properDistanceHigh = abs(analyzedPole.highDistanceOffset) <= MAX_DISTANCE_OFFSET;
+            analyzedPole.properDistanceStackHigh = abs(analyzedPole.highDistanceStackOffset) <= MAX_DISTANCE_OFFSET;
+            analyzedPole.properDistanceMed = abs(analyzedPole.medDistanceOffset) <= MAX_DISTANCE_OFFSET;
+            analyzedPole.properDistanceStackMed = abs(analyzedPole.medDistanceStackOffset) <= MAX_DISTANCE_OFFSET;
             internalPoleList.add(analyzedPole);
         }
     }

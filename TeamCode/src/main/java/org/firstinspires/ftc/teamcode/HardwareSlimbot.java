@@ -173,6 +173,7 @@ public class HardwareSlimbot
     public double       LIFT_ANGLE_LOW     =  86.0;   // lift position for LOW junction
     public double       LIFT_ANGLE_MOTORS  =  91.0;   // lift position for cleaning front turret motor
     public double       LIFT_ANGLE_5STACK  =  87.0;   // lift position for 5-stack ultrasonic reading
+    public double       LIFT_ANGLE_MED_A   =  34.7;   // lift position for MED junction (FRONT Auto)
     public double       LIFT_ANGLE_MED     =  57.5;   // lift position for MEDIUM junction (FRONT Teleop)
     public double       LIFT_ANGLE_HIGH_A  =  34.7;   // lift position for HIGH junction (FRONT Auto)
     public double       LIFT_ANGLE_HIGH    =  24.9;   // lift position for HIGH junction (FRONT Teleop)
@@ -228,8 +229,9 @@ public class HardwareSlimbot
     public double       GRABBER_TILT_SAFE    = -0.12;  // Maximum upward tilt that's safe to raise/lower collector past front lift motor
     public double       GRABBER_TILT_STORE   = -0.14;  // Stored angle for autonomous driving around
     public double       GRABBER_TILT_AUTO_F  = -0.21;  // 45deg tilt for front scoring in autonomous
-    public double       GRABBER_TILT_FRONT_H_A = -0.18;  // Front scoring on the high pole
+    public double       GRABBER_TILT_FRONT_H_A = -0.18;  // Front scoring on the high pole auto
     public double       GRABBER_TILT_FRONT_H = -0.30;  // Front scoring on the high pole
+    public double       GRABBER_TILT_FRONT_M_A = -0.28;  // Front scoring on the mid pole auto
     public double       GRABBER_TILT_FRONT_M = -0.28;  // Front scoring on the mid pole
     public double       GRABBER_TILT_FRONT_L = -0.28;  // Front scoring on the low pole
     public double       GRABBER_TILT_GRAB3   = -0.25;  // Further angled back for 5-stack drive-away (front) NO WALL CONFLICT!

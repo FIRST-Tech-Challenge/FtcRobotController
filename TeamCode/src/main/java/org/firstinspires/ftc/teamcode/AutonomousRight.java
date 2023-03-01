@@ -149,6 +149,14 @@ public class AutonomousRight extends AutonomousBase {
                     pipelineLow.signalZoneR);
             telemetry.addData("5-stack cycles", "%d", fiveStackCycles );
             telemetry.addData("","(use %s bumpers to modify", "LEFT/RIGHT");
+            telemetry.addLine("Set " + (coneNumber == 0 ? "Preload" : "Stack cone " + coneNumber) +
+                    " to " + (scoreHighGoal[coneNumber] == true ? "High" : "Med"));
+            telemetry.addLine("Score Preloaded cone on " + (scoreHighGoal[0] == true ? "High" : "Med"));
+            telemetry.addLine("Score Stack cone 1 on " + (scoreHighGoal[1] == true ? "High" : "Med"));
+            telemetry.addLine("Score Stack cone 2 on " + (scoreHighGoal[2] == true ? "High" : "Med"));
+            telemetry.addLine("Score Stack cone 3 on " + (scoreHighGoal[3] == true ? "High" : "Med"));
+            telemetry.addLine("Score Stack cone 4 on " + (scoreHighGoal[4] == true ? "High" : "Med"));
+            telemetry.addLine("Score Stack cone 5 on " + (scoreHighGoal[5] == true ? "High" : "Med"));
             telemetry.update();
             // Check for operator input that changes Autonomous options
             captureGamepad1Buttons();
@@ -174,7 +182,25 @@ public class AutonomousRight extends AutonomousBase {
             else if( gamepad1_r_bumper_now && !gamepad1_r_bumper_last ) {
               fiveStackCycles += 1;
               if( fiveStackCycles > 2 ) fiveStackCycles=2;
-            }            
+            }
+            if( gamepad1_dpad_right_now && !gamepad1_dpad_right_last ) {
+                scoreHighGoal[coneNumber] = !scoreHighGoal[coneNumber];
+            }
+            if( gamepad1_dpad_left_now && !gamepad1_dpad_left_last ) {
+                scoreHighGoal[coneNumber] = !scoreHighGoal[coneNumber];
+            }
+            if( gamepad1_dpad_up_now && !gamepad1_dpad_up_last ) {
+                coneNumber++;
+                if(coneNumber > 5) {
+                    coneNumber = 0;
+                }
+            }
+            if( gamepad1_dpad_down_now && !gamepad1_dpad_down_last ) {
+                coneNumber--;
+                if(coneNumber < 0) {
+                    coneNumber = 5;
+                }
+            }
             // Pause briefly before looping
             idle();
         } // !isStarted
@@ -187,6 +213,7 @@ public class AutonomousRight extends AutonomousBase {
 
         // Only do these steps if we didn't hit STOP
         if( opModeIsActive() ) {
+            coneNumber = 0;
             createAutoStorageFolder(blueAlliance, false);
             pipelineLow.setStorageFolder(storageDir);
             if(alignToFront) {
@@ -258,7 +285,7 @@ public class AutonomousRight extends AutonomousBase {
             timeNow = autonomousTimer.milliseconds()/1000.0;
             telemetry.addData("Motion", "moveToTallJunction (%.1f)", timeNow );
             telemetry.update();
-            moveToTallJunction();
+            moveToJunction(scoreHighGoal[coneNumber]);
         }
 
         // Center on pole
@@ -269,7 +296,7 @@ public class AutonomousRight extends AutonomousBase {
             telemetry.addData("Drive", "Arrive %.1f sec", timePoleArrive[0] );
             telemetry.addData("Skill", "alignToPole (%.1f)", timeNow );
             telemetry.update();
-            alignToPole(true, false);
+            alignToPole(true, false, scoreHighGoal[coneNumber] );
         }
 
         // Deposit cone on junction
@@ -341,7 +368,7 @@ public class AutonomousRight extends AutonomousBase {
                 timeStackDepart[timeIndex] = timeNow;
                 telemetry.addData("Skill", "moveToTallJunctionFromStack (%.1f)", timeNow );
                 telemetry.update();
-                moveToTallJunctionFromStack();
+                moveToJunctionFromStack( scoreHighGoal[coneNumber] );
             }
 
             if( opModeIsActive()) {
@@ -351,7 +378,7 @@ public class AutonomousRight extends AutonomousBase {
                 // make sure we have time left to alignToPole and then park!
                 // (otherwise just drop it and park)
                 if( autonomousTimer.milliseconds() <= poleAlignTimeout ) {
-                    alignToPole(true, true);
+                    alignToPole(true, true, scoreHighGoal[coneNumber] );
                 }
             }
 
@@ -380,7 +407,7 @@ public class AutonomousRight extends AutonomousBase {
     } // mainAutonomous
 
     /*--------------------------------------------------------------------------------------------*/
-    private void moveToTallJunction() {
+    private void moveToJunction( boolean highJunction ) {
 
         // Tilt grabber down from autonomous starting position (vertical) so we're clear
         // to raise the lift and not hit the front lift motor, but keep it mostly verticle
@@ -394,8 +421,13 @@ public class AutonomousRight extends AutonomousBase {
         // The 2nd movement is to rotate drive train 90deg so we don't entrap the beacon cone
         // Note that while the drive train rotates 90deg one direction, the turret/lift counter-rotates
         // the OPPOSITE direction -- meaning it mostly stays pointing straight forward for this part!
-        robot.liftPIDPosInit( robot.LIFT_ANGLE_HIGH_A);
-        robot.turretPIDPosInit( robot.TURRET_ANGLE_AUTO_L );
+        if( highJunction ) {
+            robot.liftPIDPosInit(robot.LIFT_ANGLE_HIGH_A);
+            robot.turretPIDPosInit(robot.TURRET_ANGLE_AUTO_L);
+        } else {
+            robot.liftPIDPosInit(robot.LIFT_ANGLE_MED_A);
+            robot.turretPIDPosInit(robot.TURRET_ANGLE_AUTO_R);
+        }
         autoYpos=18.0;  autoXpos=-5.5;  autoAngle=+90.0;    // (inches, inches, degrees)
         driveToPosition( autoYpos, autoXpos, autoAngle, DRIVE_SPEED_60, TURN_SPEED_60, DRIVE_THRU );
 
@@ -404,7 +436,11 @@ public class AutonomousRight extends AutonomousBase {
         driveToPosition( autoYpos, autoXpos, autoAngle, DRIVE_SPEED_100, TURN_SPEED_80, DRIVE_THRU );
 
         // We're close, so tilt grabber down to final scoring position
-        robot.grabberSetTilt( robot.GRABBER_TILT_FRONT_H );
+        if( highJunction ) {
+            robot.grabberSetTilt(robot.GRABBER_TILT_FRONT_H_A);
+        } else {
+            robot.grabberSetTilt(robot.GRABBER_TILT_FRONT_M_A);
+        }
 
         // Drive the final distance to the high junction pole at a slower/controlled speed
         autoYpos=54.3;  autoXpos=-7.0;
@@ -437,6 +473,8 @@ public class AutonomousRight extends AutonomousBase {
         robot.grabberSpinStop();
         robot.grabberSetTilt( robot.GRABBER_TILT_STORE );
 
+        // Increment the cone we are on
+        coneNumber++;
     } // scoreCone
 
     /*--------------------------------------------------------------------------------------------*/
@@ -511,12 +549,18 @@ public class AutonomousRight extends AutonomousBase {
     } // collectCone
 
     /*--------------------------------------------------------------------------------------------*/
-    private void moveToTallJunctionFromStack() {
+    private void moveToJunctionFromStack( boolean highJunction ) {
 
         // Perform setup to center turret and raise lift to scoring position
-        robot.turretPIDPosInit( robot.TURRET_ANGLE_5STACK_R );
-        robot.liftPIDPosInit( robot.LIFT_ANGLE_HIGH_A);
-        robot.grabberSetTilt( robot.GRABBER_TILT_FRONT_H );
+        if( highJunction ) {
+            robot.turretPIDPosInit( robot.TURRET_ANGLE_5STACK_R );
+            robot.liftPIDPosInit( robot.LIFT_ANGLE_HIGH_A);
+            robot.grabberSetTilt( robot.GRABBER_TILT_FRONT_H );
+        } else {
+            robot.turretPIDPosInit( robot.TURRET_ANGLE_5STACK_L);
+            robot.liftPIDPosInit( robot.LIFT_ANGLE_MED_A);
+            robot.grabberSetTilt( robot.GRABBER_TILT_FRONT_M_A );
+        }
 
         // Drive back to tall junction (adjusting lift along the way)
         // (stay along Y=51.5 instead of returning to Y=54.0, but rotate turret more (+56.5, not +34.5)

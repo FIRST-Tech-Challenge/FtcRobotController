@@ -112,11 +112,18 @@ public abstract class AutonomousBase extends LinearOpMode {
     boolean gamepad1_cross_last,    gamepad1_cross_now   =false;
     boolean gamepad1_l_bumper_last, gamepad1_l_bumper_now=false;
     boolean gamepad1_r_bumper_last, gamepad1_r_bumper_now=false;
+    boolean gamepad1_dpad_up_last, gamepad1_dpad_up_now = false;
+    boolean gamepad1_dpad_down_last, gamepad1_dpad_down_now = false;
+    boolean gamepad1_dpad_left_last, gamepad1_dpad_left_now = false;
+    boolean gamepad1_dpad_right_last, gamepad1_dpad_right_now = false;
 
     // Vision stuff
     PowerPlaySuperPipeline pipelineLow;
     PowerPlaySuperPipeline pipelineFront;
     PowerPlaySuperPipeline pipelineBack;
+
+    int coneNumber = 0;
+    boolean scoreHighGoal[] = {true, true, true, true, true, true};
 
     /*---------------------------------------------------------------------------------*/
     void captureGamepad1Buttons() {
@@ -124,6 +131,10 @@ public abstract class AutonomousBase extends LinearOpMode {
         gamepad1_cross_last    = gamepad1_cross_now;       gamepad1_cross_now    = gamepad1.cross;
         gamepad1_l_bumper_last = gamepad1_l_bumper_now;    gamepad1_l_bumper_now = gamepad1.left_bumper;
         gamepad1_r_bumper_last = gamepad1_r_bumper_now;    gamepad1_r_bumper_now = gamepad1.right_bumper;
+        gamepad1_dpad_up_last    = gamepad1_dpad_up_now;     gamepad1_dpad_up_now    = gamepad1.dpad_up;
+        gamepad1_dpad_down_last  = gamepad1_dpad_down_now;   gamepad1_dpad_down_now  = gamepad1.dpad_down;
+        gamepad1_dpad_left_last  = gamepad1_dpad_left_now;   gamepad1_dpad_left_now  = gamepad1.dpad_left;
+        gamepad1_dpad_right_last = gamepad1_dpad_right_now;  gamepad1_dpad_right_now = gamepad1.dpad_right;
     } // captureGamepad1Buttons
 
     /*---------------------------------------------------------------------------------*/
@@ -254,7 +265,7 @@ public abstract class AutonomousBase extends LinearOpMode {
         robot.turretMotorSetPower(turretPower);
     } // driveAndRotateTurretAngle
 
-    void alignToPole(boolean turretFacingFront, boolean fromStack ) {
+    void alignToPole(boolean turretFacingFront, boolean fromStack, boolean highJunction ) {
         PowerPlaySuperPipeline alignmentPipeline;
         PowerPlaySuperPipeline.AnalyzedPole theLocalPole;
         final double DRIVE_SLOPE  = 0.004187;
@@ -277,13 +288,31 @@ public abstract class AutonomousBase extends LinearOpMode {
 
 		// Save the starting image we have to correct for
         alignmentPipeline.savePoleAutoImage();
+        int properDistanceCount;
+        boolean properDistance;
+        double offset;
 
-        int properDistanceCount = (fromStack)? theLocalPole.properDistanceHighStackCount :
-                                               theLocalPole.properDistanceHighCount;
-        boolean properDistance = (fromStack)? theLocalPole.properDistanceStackHigh :
-                                              theLocalPole.properDistanceStackHigh;
-        double highOffset = (fromStack)? theLocalPole.highDistanceStackOffset :
-                                         theLocalPole.highDistanceOffset;
+        if( highJunction ) {
+            if( fromStack ) {
+                properDistanceCount = theLocalPole.properDistanceHighStackCount;
+                properDistance = theLocalPole.properDistanceStackHigh;
+                offset = theLocalPole.highDistanceStackOffset;
+            } else {
+                properDistanceCount = theLocalPole.properDistanceHighCount;
+                properDistance = theLocalPole.properDistanceHigh;
+                offset = theLocalPole.highDistanceOffset;
+            }
+        } else {
+            if( fromStack ) {
+                properDistanceCount = theLocalPole.properDistanceMedStackCount;
+                properDistance = theLocalPole.properDistanceStackMed;
+                offset = theLocalPole.medDistanceStackOffset;
+            } else {
+                properDistanceCount = theLocalPole.properDistanceMedCount;
+                properDistance = theLocalPole.properDistanceMed;
+                offset = theLocalPole.medDistanceOffset;
+            }
+        }
 
         while (opModeIsActive() && ((theLocalPole.alignedCount <= CYCLES_AT_ANGLE) ||
                 properDistanceCount <= CYCLES_AT_DISTANCE)) {
@@ -300,14 +329,14 @@ public abstract class AutonomousBase extends LinearOpMode {
                 // Maximum number of pixels off would be in the order of 30ish.
                 // This is a first guess that will have to be experimented on.
                 // Go 1.0 to 0.08 from 30 pixels to 2.
-                drivePower = (highOffset > 0 )?
-                        (highOffset * DRIVE_SLOPE + DRIVE_OFFSET) :
-                        (highOffset * DRIVE_SLOPE - DRIVE_OFFSET);
+                drivePower = (offset > 0 )?
+                        (offset * DRIVE_SLOPE + DRIVE_OFFSET) :
+                        (offset * DRIVE_SLOPE - DRIVE_OFFSET);
             }
 
             telemetry.addData("alignToPole", "ang=%d (%.1f) dist=%d (%.1f)",
                     theLocalPole.alignedCount, theLocalPole.centralOffset,
-                    properDistanceCount, highOffset );
+                    properDistanceCount, offset );
             telemetry.update();
 
             if(abs(drivePower) < 0.01 && abs(turretPower) < 0.01) {
@@ -323,9 +352,27 @@ public abstract class AutonomousBase extends LinearOpMode {
 
             // update the image for the next loop
             theLocalPole = alignmentPipeline.getDetectedPole();
-            properDistanceCount = fromStack ? theLocalPole.properDistanceHighStackCount : theLocalPole.properDistanceHighCount;
-            properDistance = fromStack ? theLocalPole.properDistanceStackHigh : theLocalPole.properDistanceStackHigh;
-            highOffset = fromStack ? theLocalPole.highDistanceStackOffset : theLocalPole.highDistanceOffset;
+            if( highJunction ) {
+                if( fromStack ) {
+                    properDistanceCount = theLocalPole.properDistanceHighStackCount;
+                    properDistance = theLocalPole.properDistanceStackHigh;
+                    offset = theLocalPole.highDistanceStackOffset;
+                } else {
+                    properDistanceCount = theLocalPole.properDistanceHighCount;
+                    properDistance = theLocalPole.properDistanceHigh;
+                    offset = theLocalPole.highDistanceOffset;
+                }
+            } else {
+                if( fromStack ) {
+                    properDistanceCount = theLocalPole.properDistanceMedStackCount;
+                    properDistance = theLocalPole.properDistanceStackMed;
+                    offset = theLocalPole.medDistanceStackOffset;
+                } else {
+                    properDistanceCount = theLocalPole.properDistanceMedCount;
+                    properDistance = theLocalPole.properDistanceMed;
+                    offset = theLocalPole.medDistanceOffset;
+                }
+            }
         }
         robot.stopMotion();
         robot.turretMotorSetPower(0.0);
