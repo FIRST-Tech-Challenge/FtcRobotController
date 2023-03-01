@@ -4,19 +4,15 @@ import android.util.Log;
 
 import com.arcrobotics.ftclib.controller.PIDFController;
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
-import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DigitalChannel;
-import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.IMU;
-import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.hardware.rev.RevTouchSensor;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
-import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
 
 /**
@@ -50,10 +46,48 @@ public class Hardware2022 {
 
 
     //PID control parameter for turning.
-    private double kP = 0.15;
-    private double kI = 0.1;
-    private double kD = 0.005;
-    private double kF = 0.0;
+    private double turnKP = 0.15;
+    private double turnKI = 0.1;
+    private double turnKD = 0.005;
+    private double turnKF = 0.0;
+    private double lnKP = 0.15;
+
+    public double getLnKF() {
+        return lnKF;
+    }
+
+    public void setLnKF(double lnKF) {
+        this.lnKF = lnKF;
+    }
+
+    public double getLnKD() {
+        return lnKD;
+    }
+
+    public void setLnKD(double lnKD) {
+        this.lnKD = lnKD;
+    }
+
+    public double getLnKI() {
+        return lnKI;
+    }
+
+    public void setLnKI(double lnKI) {
+        this.lnKI = lnKI;
+    }
+
+    public double getLnKP() {
+        return lnKP;
+    }
+
+    public void setLnKP(double lnKP) {
+        this.lnKP = lnKP;
+    }
+
+    private double lnKI = 0.1;
+    private double lnKD = 0.005;
+    private double lnKF = 0.0;
+
 
 
     public enum SlideHeight {
@@ -83,9 +117,9 @@ public class Hardware2022 {
     public DcMotorEx wheelFrontLeft = null;
     public DcMotorEx wheelBackRight = null;
     public DcMotorEx wheelBackLeft = null;
-    public DcMotorEx vertEncoder1 = null;
-    public DcMotorEx vertEncoder2 = null;
-    public DcMotorEx hortEncoder = null;
+    public DcMotorEx yEncoder1 = null;
+    public DcMotorEx yEncoder2 = null;
+    public DcMotorEx xEncoder = null;
 
     //Touch sensor
     DigitalChannel clawTouch ;
@@ -111,6 +145,9 @@ public class Hardware2022 {
         wheelBackRight = hwMap.get(DcMotorEx.class, "rrWheel");
         wheelBackLeft = hwMap.get(DcMotorEx.class, "lrWheel");
         vSlide = hwMap.get(DcMotorEx.class, "Vertical");
+        xEncoder = hwMap.get(DcMotorEx.class, "xEncoder");
+        yEncoder1 = hwMap.get(DcMotorEx.class, "yEncoder1");
+        yEncoder2 = hwMap.get(DcMotorEx.class, "yEncoder2");
 
 
         wheelFrontLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -225,48 +262,14 @@ public class Hardware2022 {
     /**
      * This operation move robot lef/right according to the input
      * @param distance  Distance in encoder degree , 360 for a full circle.  Positive for right.
-     * @param power Positive value move right, value from 0-1.
+     * @param power Not used, calculated by PID controller. Kept for backward compatiability
      *
      */
     private void moveXAxisDegree(int distance, double power ) {
-
         wheelFrontLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         wheelBackLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         wheelFrontRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         wheelBackRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-
-        wheelFrontLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        wheelBackLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        wheelFrontRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        wheelBackRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-
-        wheelFrontLeft.setTargetPosition( -distance  );
-        wheelBackLeft.setTargetPosition( distance  );
-        wheelFrontRight.setTargetPosition( distance  );
-        wheelBackRight.setTargetPosition( -distance  );
-
-        telemetry.addLine().addData("[X Position, after setTarget >]  ", getYAxisPosition());
-        telemetry.update();
-
-        //Set velocity slow at beginning and end.
-        while ( wheelFrontLeft.isBusy()) {
-            int currentPosition = getXAxisPosition();
-
-            telemetry.addLine().addData("[X Position , in the while >]  ", getXAxisPosition());
-            telemetry.addLine().addData("[X target Position , in the while >]  ", wheelFrontLeft.getTargetPosition());
-            telemetry.update();
-
-            wheelFrontLeft.setVelocity(-power * Hardware2022.ANGULAR_RATE  );
-            wheelBackLeft.setVelocity(power * Hardware2022.ANGULAR_RATE);
-            wheelFrontRight.setVelocity(power * Hardware2022.ANGULAR_RATE);
-            wheelBackRight.setVelocity(-power * Hardware2022.ANGULAR_RATE);
-
-        }
-
-        wheelFrontRight.setVelocity(0);
-        wheelFrontLeft.setVelocity(0);
-        wheelBackRight.setVelocity(0);
-        wheelBackLeft.setVelocity(0);
 
         //Put motor back into run with encoder mode.
         wheelFrontLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -274,6 +277,73 @@ public class Hardware2022 {
         wheelFrontRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         wheelBackRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
+        //Get current orientation.  Angle is between -180 to 180
+        int currentPosition = xEncoder.getCurrentPosition();
+        int targetPosition = currentPosition + distance;
+
+        double startHeading = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES);
+        Log.d("9010", "Start Heading " + startHeading);
+
+        Log.d("9010", "Start Position: " + currentPosition );
+        Log.d("9010", "End Position: " + targetPosition );
+
+
+        int difference = distance;
+        Log.d("9010", "Difference: " + difference );
+
+
+
+        PIDFController lnPidfCrtler  = new PIDFController(lnKP, lnKI, lnKD, lnKF);
+        Log.d("9010", "lnKp: " + lnKP + "  lnKI: " + lnKI + " lnKD: " + lnKD);
+        PIDFController turnPidfCrtler  = new PIDFController(turnKP, turnKI, turnKD, turnKF);
+        Log.d("9010", "turnKp: " + turnKP + "  lnKI: " + turnKI + " turnKD: " + turnKD);
+
+        lnPidfCrtler.setSetPoint(0);
+        //Set tolerance as 0.5 degrees
+        lnPidfCrtler.setTolerance(10);
+        //set Integration between -0.5 to 0.5 to avoid saturating PID output.
+        lnPidfCrtler.setIntegrationBounds(-0.5 , 0.5 );
+
+        turnPidfCrtler.setSetPoint(0);
+        //Set tolerance as 0.5 degrees
+        turnPidfCrtler.setTolerance(0.5);
+        //set Integration between -0.5 to 0.5 to avoid saturating PID output.
+        turnPidfCrtler.setIntegrationBounds(-0.5 , 0.5 );
+
+        Log.d("9010", "Before entering Loop ");
+        double rx = 0;
+
+
+        while ( !lnPidfCrtler.atSetPoint()  ) {
+            currentPosition = xEncoder.getCurrentPosition();
+            //Calculate new distance
+            difference = currentPosition - targetPosition;
+            double velocityCaculated = lnPidfCrtler.calculate(difference)/10;
+
+            Log.d("9010", "=====================");
+            Log.d("9010", "Difference: " + difference);
+            Log.d("9010", "Current Position: " + currentPosition );
+            Log.d("9010", "Calculated Velocity:  " + velocityCaculated );
+            double turnError = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES)- startHeading;
+            rx = turnPidfCrtler.calculate(turnError);
+            Log.d("9010", "Turn Error: " + turnError );
+            Log.d("9010", "Calculated rx:  " + rx );
+
+            wheelFrontLeft.setVelocity(velocityCaculated + rx );
+            wheelBackLeft.setVelocity(-velocityCaculated + rx);
+            wheelFrontRight.setVelocity(-velocityCaculated - rx);
+            wheelBackRight.setVelocity(velocityCaculated - rx);
+        }
+
+
+        //wheelFrontRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        //wheelFrontLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        //wheelBackRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        //wheelBackLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        wheelFrontRight.setVelocity(0);
+        wheelFrontLeft.setVelocity(0);
+        wheelBackRight.setVelocity(0);
+        wheelBackLeft.setVelocity(0);
     }
 
 
@@ -328,22 +398,22 @@ public class Hardware2022 {
 
 
 
-        PIDFController pidfCrtler  = new PIDFController(kP, kI, kD, kF);
-        Log.d("9010", "Kp: " + kP + "  kI: " + kI + " kD: " + kD );
+        PIDFController turnPidfCrtler  = new PIDFController(turnKP, turnKI, turnKD, turnKF);
+        Log.d("9010", "Kp: " + turnKP + "  turnKI: " + turnKI + " turnKD: " + turnKD);
 
-        pidfCrtler.setSetPoint(0);
+        turnPidfCrtler.setSetPoint(0);
         //Set tolerance as 0.5 degrees
-        pidfCrtler.setTolerance(0.5);
+        turnPidfCrtler.setTolerance(0.5);
         //set Integration between -0.5 to 0.5 to avoid saturating PID output.
-        pidfCrtler.setIntegrationBounds(-0.5 , 0.5 );
+        turnPidfCrtler.setIntegrationBounds(-0.5 , 0.5 );
 
         Log.d("9010", "Before entering Loop ");
 
-        while ( !pidfCrtler.atSetPoint()  ) {
+        while ( !turnPidfCrtler.atSetPoint()  ) {
             currentHeading = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES);
             //Calculate new distance
             difference = regulateDegree(  currentHeading - endHeading );
-            double velocityCaculated = pidfCrtler.calculate(difference)/10;
+            double velocityCaculated = turnPidfCrtler.calculate(difference)/10;
 
             Log.d("9010", "=====================");
             Log.d("9010", "Difference: " + difference);
@@ -469,36 +539,36 @@ public class Hardware2022 {
     }
 
 
-    public double getkP() {
-        return kP;
+    public double getTurnKP() {
+        return turnKP;
     }
 
-    public void setkP(double kP) {
-        this.kP = kP;
+    public void setTurnKP(double turnKP) {
+        this.turnKP = turnKP;
     }
 
-    public double getkI() {
-        return kI;
+    public double getTurnKI() {
+        return turnKI;
     }
 
-    public void setkI(double kI) {
-        this.kI = kI;
+    public void setTurnKI(double turnKI) {
+        this.turnKI = turnKI;
     }
 
-    public double getkD() {
-        return kD;
+    public double getTurnKD() {
+        return turnKD;
     }
 
-    public void setkD(double kD) {
-        this.kD = kD;
+    public void setTurnKD(double turnKD) {
+        this.turnKD = turnKD;
     }
 
-    public double getkF() {
-        return kF;
+    public double getTurnKF() {
+        return turnKF;
     }
 
-    public void setkF(double kF) {
-        this.kF = kF;
+    public void setTurnKF(double turnKF) {
+        this.turnKF = turnKF;
     }
     /*This method will lower slide until touch sensor gets activated
      */
