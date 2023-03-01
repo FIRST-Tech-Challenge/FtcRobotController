@@ -215,6 +215,24 @@ public abstract class BaseOpMode extends LinearOpMode {
     }
 
     /**
+     *dont care lol
+     */
+    public double pixelsToMotorPower(double pixels) {
+        //return -((0.1 * pixels) / (Math.abs(0.25 * pixels)+15));
+        return -0.0003 * pixels;
+    }
+
+    /**
+     * magic numbers, dont vare
+     * @param width, width of the detected stack
+     * @return
+     */
+    public double widthToMotorPower(double width) {
+        //return 0.67*(1-(407/(Math.abs(width-650)+407)));
+        return -0.001 * width + 0.6;
+    }
+
+    /**
      * uses the grabber camera to guide the robot so it can center on the top of the junction
      * @param pipeline the GrabberCameraPipeline being used by the grabber camera
      */
@@ -227,14 +245,16 @@ public abstract class BaseOpMode extends LinearOpMode {
 
             // center the cone on the junction top
             if (pipeline.detected) {
-                driveWithIMU(Constants.JUNCTION_TOP_CENTERING_KP * Math.signum(xOffset), Constants.JUNCTION_TOP_CENTERING_KP * Math.signum(yOffset), 0.0);
+                driveWithIMU(pixelsToMotorPower(xOffset), pixelsToMotorPower(yOffset), 0.0);
+                telemetry.addData("xMotorPower", pixelsToMotorPower(xOffset));
+                telemetry.addData("yMotorPower", pixelsToMotorPower(yOffset));
+                telemetry.update();
             } else {
                 break;
             }
 
         // while the cone isn't centered over the junction
         } while (Math.abs(xOffset) > Constants.JUNCTION_TOP_TOLERANCE || Math.abs(yOffset) > Constants.JUNCTION_TOP_TOLERANCE);
-
         stopDriveMotors();
     }
 
@@ -253,7 +273,10 @@ public abstract class BaseOpMode extends LinearOpMode {
             if (width == 0) {
                 break;
             } else {
-                driveWithIMU(Constants.CONE_CENTERING_KP * Math.signum(xOffset), 0.2, Constants.CONE_CENTERING_KP * Math.signum(xOffset));
+                driveWithIMU(pixelsToMotorPower(xOffset), widthToMotorPower(width), -pixelsToMotorPower(xOffset)*Constants.CONE_CENTERING_TURN_KP);
+                telemetry.addData("xMotorPower", pixelsToMotorPower(xOffset));
+                telemetry.addData("yMotorPower", widthToMotorPower(width));
+                telemetry.update();
             }
 
         // while far enough that the cone stack doesn't fill the entire camera view
