@@ -103,6 +103,8 @@ public class LeftAuto extends LinearOpMode {
         TrajectorySequence ConePickup = drive.trajectorySequenceBuilder(FirstCone.end())
                 .addTemporalMarker(() -> FirstCycle())
 
+                .turn(Math.toRadians(-30))
+
                 .lineToLinearHeading(new Pose2d(56,26,Math.toRadians(90)))
 
 
@@ -134,7 +136,7 @@ public class LeftAuto extends LinearOpMode {
         TrajectorySequence Cyclep2 = drive.trajectorySequenceBuilder(Cycle.end())
                 .back(4.5)
                 .addTemporalMarker(() -> SecondCycle())
-                .addTemporalMarker(() -> ResetSlide())
+                .addTemporalMarker(() -> ResetClaw())
 
                 .turn(Math.toRadians(-130))
                 .forward(6)
@@ -144,7 +146,7 @@ public class LeftAuto extends LinearOpMode {
                 .addTemporalMarker(() -> UpCone())
                 .waitSeconds(0.5)
                 .back(7)
-                .turn(Math.toRadians(110))
+                .turn(Math.toRadians(120))
                 .forward(2)
 
                 .build();
@@ -201,7 +203,7 @@ public class LeftAuto extends LinearOpMode {
         }
     }
     private void FirstCycle() {
-        Slide.setTargetPosition(490);
+        Slide.setTargetPosition(-490);
         Slide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
         while (Slide.isBusy()) {
