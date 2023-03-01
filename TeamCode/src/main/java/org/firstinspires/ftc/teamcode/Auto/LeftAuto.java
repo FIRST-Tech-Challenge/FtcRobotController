@@ -80,18 +80,18 @@ public class LeftAuto extends LinearOpMode {
                 .addTemporalMarker(() -> SetSlideConditions ())
 
 
-                .lineToLinearHeading(new Pose2d(30,0, Math.toRadians(0)))
-
+                .lineToLinearHeading(new Pose2d(55,0, Math.toRadians(0)))
+                .back(8)
                 .waitSeconds(0.2)
 
-                .lineToLinearHeading(new Pose2d(33,-3, Math.toRadians(45)))
-
+                .turn(Math.toRadians(120))
+                .forward(4.5)
 
                 .addTemporalMarker(() -> ClawHold())
                 .waitSeconds(0.1)
 
                 .addTemporalMarker(() -> ClawDrop())
-                .waitSeconds(0.5)
+                .waitSeconds(0.1)
 
 
                 .back(7)
@@ -103,9 +103,8 @@ public class LeftAuto extends LinearOpMode {
         TrajectorySequence ConePickup = drive.trajectorySequenceBuilder(FirstCone.end())
                 .addTemporalMarker(() -> FirstCycle())
 
-                .lineToLinearHeading(new Pose2d(40,-10,Math.toRadians(-35)))
+                .lineToLinearHeading(new Pose2d(56,26,Math.toRadians(90)))
 
-                .forward(20)
 
                 .addTemporalMarker(() -> ReadyClaw())
                 .back(1)
@@ -118,13 +117,11 @@ public class LeftAuto extends LinearOpMode {
         TrajectorySequence  Cycle = drive.trajectorySequenceBuilder(ConePickup.end())
 
 
-                .lineToLinearHeading(new Pose2d(52,0,Math.toRadians(0)))
-                .waitSeconds(0.1)
-                .addTemporalMarker(() -> ClawUp())
-                .lineToLinearHeading(new Pose2d(52,15,Math.toRadians(0)))
-                .addTemporalMarker(() -> SlideTopPole())
-                .waitSeconds(0.75)
-                .forward(2.3)
+                .back(7)
+                .addTemporalMarker(() -> SetSlideConditions())
+                .turn(Math.toRadians(110))
+
+                .forward(4.5)
                 .waitSeconds(0.1)
                 .addTemporalMarker(() -> ClawHold())
                 .waitSeconds(0.1)
@@ -132,20 +129,24 @@ public class LeftAuto extends LinearOpMode {
 
 
 
+
                 .build();
         TrajectorySequence Cyclep2 = drive.trajectorySequenceBuilder(Cycle.end())
-                .back(4.75)
+                .back(4.5)
                 .addTemporalMarker(() -> SecondCycle())
+                .addTemporalMarker(() -> ResetSlide())
 
-                .lineToLinearHeading(new Pose2d(58,-22 ,Math.toRadians(-86)))
+                .turn(Math.toRadians(-130))
+                .forward(6)
 
                 .addTemporalMarker(() -> ReadyClaw())
-                .waitSeconds(0.2)
-                .back(2)
+                .waitSeconds(0.1)
                 .addTemporalMarker(() -> UpCone())
                 .waitSeconds(0.5)
-                .back(27)
-                .addTemporalMarker(() -> ResetSlide())
+                .back(7)
+                .turn(Math.toRadians(110))
+                .forward(2)
+
                 .build();
 
 
@@ -165,6 +166,11 @@ public class LeftAuto extends LinearOpMode {
         telemetry.addData("BackEncoder", frontEncoder.getCurrentPosition());
         telemetry.update();
         drive.followTrajectorySequence(Cycle );
+        telemetry.addData("LeftEncoder:", leftEncoder.getCurrentPosition());
+        telemetry.addData("RightEncoder", rightEncoder.getCurrentPosition());
+        telemetry.addData("BackEncoder", frontEncoder.getCurrentPosition());
+        telemetry.update();
+        drive.followTrajectorySequence(Cyclep2 );
         telemetry.addData("LeftEncoder:", leftEncoder.getCurrentPosition());
         telemetry.addData("RightEncoder", rightEncoder.getCurrentPosition());
         telemetry.addData("BackEncoder", frontEncoder.getCurrentPosition());
@@ -195,7 +201,7 @@ public class LeftAuto extends LinearOpMode {
         }
     }
     private void FirstCycle() {
-        Slide.setTargetPosition(-520);
+        Slide.setTargetPosition(490);
         Slide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
         while (Slide.isBusy()) {
@@ -204,7 +210,7 @@ public class LeftAuto extends LinearOpMode {
         }
 
     } private void SecondCycle(){
-        Slide.setTargetPosition(-450);
+        Slide.setTargetPosition(-400);
         Slide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
         while(Slide.isBusy()){
@@ -213,7 +219,7 @@ public class LeftAuto extends LinearOpMode {
         }
     }
     private void UpCone(){
-        Slide.setTargetPosition(-1400);
+        Slide.setTargetPosition(-1450);
         Slide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
         while(Slide.isBusy())
@@ -245,7 +251,7 @@ public class LeftAuto extends LinearOpMode {
     }
 
     private void SetSlideConditions(){
-        Slide.setTargetPosition(-1000);
+        Slide.setTargetPosition(-1400);
         Slide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         Slide.setPower(-0.75);
         telemetry.addData("Slide", Slide.getCurrentPosition());
