@@ -17,7 +17,6 @@ public class GrabberCameraPipeline extends OpenCvPipeline {
     public double xPosition = Constants.CAMERA_CENTER_X;
     public double yPosition = Constants.CAMERA_CENTER_Y;
     public boolean detected = false;
-    public boolean invert = false;
 
     private Scalar lowerRange;
     private Scalar upperRange;
@@ -26,8 +25,7 @@ public class GrabberCameraPipeline extends OpenCvPipeline {
     Mat hierarchy = new Mat();
     Mat mat = new Mat();
 
-    public void setRanges(Scalar lowerRange, Scalar upperRange)
-    {
+    public void setRanges(Scalar lowerRange, Scalar upperRange) {
         this.lowerRange = lowerRange;
         this.upperRange = upperRange;
     }
