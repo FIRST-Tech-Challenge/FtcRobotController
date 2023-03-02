@@ -64,7 +64,7 @@ public class TourneyDrive extends LinearOpMode {
         CRServo coneFlipper = hardwareMap.get(CRServo.class, "cone_flipper");
 
         liftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        //liftMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        liftMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         liftMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
         leftFrontDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -168,22 +168,18 @@ public class TourneyDrive extends LinearOpMode {
             switch (liftState) {
                 case LIFT_START:
                     if (liftDown) {
-                        liftMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                         autoLift = true;
                         moveLift(1, MIN_LIFT_POS);
                         liftState = LiftState.LIFT_RAISE;
                     } else if (liftLow) {
-                        liftMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                         autoLift = true;
                         moveLift(1, (173 * 15) + MIN_LIFT_POS);
                         liftState = LiftState.LIFT_RAISE;
                     } else if (liftMedium) {
-                        liftMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                         autoLift = true;
                         moveLift(1, (173 * 25) + MIN_LIFT_POS);
                         liftState = LiftState.LIFT_RAISE;
                     } else if (liftHigh) {
-                        liftMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                         autoLift = true;
                         moveLift(1, MAX_LIFT_POS);
                         liftState = LiftState.LIFT_RAISE;
@@ -343,5 +339,6 @@ public class TourneyDrive extends LinearOpMode {
         }
         liftMotor.setTargetPosition((int) (height));
         targetPos = height;
+        liftMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
     }
 }
