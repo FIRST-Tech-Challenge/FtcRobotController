@@ -395,10 +395,10 @@ class PowerPlaySuperPipeline extends OpenCvPipeline
 
     // This is the allowable distance from the center of the pole to the "center"
     // of the image.  Pole is ~38 pixels wide, so our tolerance is 16% of that.
-    static final int MAX_POLE_OFFSET = 18;   // +/- pixels
+    static final int MAX_POLE_OFFSET = 20;   // +/- pixels
     // This  is how wide a pole is at the proper scoring distance on a high pole
-    static final int POLE_HIGH_DISTANCE = 38;
-    static final int POLE_HIGH_DISTANCE_STACK = 32;
+    static final int POLE_HIGH_DISTANCE = 36;
+    static final int POLE_HIGH_DISTANCE_STACK = 28;
     static final int POLE_MED_DISTANCE = 32;
     static final int POLE_MED_DISTANCE_STACK = 26;
 
@@ -836,7 +836,7 @@ class PowerPlaySuperPipeline extends OpenCvPipeline
                 }
                 if(captureNextBlueCone) {
                     captureNextBlueCone = false;
-                    saveTapeAutoImage(input);
+                    saveConeAutoImage(input);
                 }
             }
             synchronized(lockBlueTape) {
@@ -959,17 +959,13 @@ class PowerPlaySuperPipeline extends OpenCvPipeline
 
     List<MatOfPoint> findRedContours(Mat input)
     {
-        // Lets chop off the top 10% of the image.
-        int offset = 24;
-        Mat filteredInput = input.submat(offset, 239, 0, 319);
-
         // A list we'll be using to store the contours we find
         List<MatOfPoint> contoursList = new ArrayList<>();
         List<MatOfPoint> tapeContours = new ArrayList<>();
         List<MatOfPoint> coneContours = new ArrayList<>();
 
         // Convert the input image to YCrCb color space, then extract the Cr channel
-        Imgproc.cvtColor(filteredInput, crMat, Imgproc.COLOR_RGB2YCrCb);
+        Imgproc.cvtColor(input, crMat, Imgproc.COLOR_RGB2YCrCb);
         Core.extractChannel(crMat, crMat, CR_CHAN_IDX);
 
         // Threshold the Cr channel to form a mask, then run some noise reduction
@@ -980,13 +976,12 @@ class PowerPlaySuperPipeline extends OpenCvPipeline
         // the cones in the upper half, tape in the lower half.
         int greatDivide = findConeTapeVortex(morphedRedThreshold);
         Mat coneHalf = morphedRedThreshold.submat(0, greatDivide, 0, 319);
-        Mat tapeHalf = morphedRedThreshold.submat(greatDivide, morphedRedThreshold.height(), 0, 319);
+        Mat tapeHalf = morphedRedThreshold.submat(greatDivide, 239, 0, 319);
 
         // Ok, now actually look for the contours! We only look for external contours.
         Imgproc.findContours(tapeHalf, tapeContours, new Mat(), Imgproc.RETR_EXTERNAL, Imgproc.CHAIN_APPROX_NONE,
-                new Point(0, greatDivide + offset));
-        Imgproc.findContours(coneHalf, coneContours, new Mat(), Imgproc.RETR_EXTERNAL, Imgproc.CHAIN_APPROX_NONE,
-                new Point(0, offset));
+                new Point(0, greatDivide));
+        Imgproc.findContours(coneHalf, coneContours, new Mat(), Imgproc.RETR_EXTERNAL, Imgproc.CHAIN_APPROX_NONE);
 
         contoursList.addAll(tapeContours);
         contoursList.addAll(coneContours);
@@ -1007,7 +1002,6 @@ class PowerPlaySuperPipeline extends OpenCvPipeline
 
         coneHalf.release();
         tapeHalf.release();
-        filteredInput.release();
 
         return contoursList;
     }
@@ -1108,17 +1102,13 @@ class PowerPlaySuperPipeline extends OpenCvPipeline
 
     List<MatOfPoint> findBlueContours(Mat input)
     {
-        // Lets chop off the top 10% of the image.
-        int offset = 24;
-        Mat filteredInput = input.submat(offset, 239, 0, 319);
-
         // A list we'll be using to store the contours we find
         List<MatOfPoint> contoursList = new ArrayList<>();
         List<MatOfPoint> tapeContours = new ArrayList<>();
         List<MatOfPoint> coneContours = new ArrayList<>();
 
         // Convert the input image to YCrCb color space, then extract the Cb channel
-        Imgproc.cvtColor(filteredInput, cbMat, Imgproc.COLOR_RGB2YCrCb);
+        Imgproc.cvtColor(input, cbMat, Imgproc.COLOR_RGB2YCrCb);
         Core.extractChannel(cbMat, cbMat, CB_CHAN_IDX);
 
         // Threshold the Cb channel to form a mask, then run some noise reduction
@@ -1129,13 +1119,12 @@ class PowerPlaySuperPipeline extends OpenCvPipeline
         // the cones in the upper half, tape in the lower half.
         int greatDivide = findConeTapeVortex(morphedBlueThreshold);
         Mat coneHalf = morphedBlueThreshold.submat(0, greatDivide, 0, 319);
-        Mat tapeHalf = morphedBlueThreshold.submat(greatDivide, morphedBlueThreshold.height(), 0, 319);
+        Mat tapeHalf = morphedBlueThreshold.submat(greatDivide, 239, 0, 319);
 
         // Ok, now actually look for the contours! We only look for external contours.
         Imgproc.findContours(tapeHalf, tapeContours, new Mat(), Imgproc.RETR_EXTERNAL, Imgproc.CHAIN_APPROX_NONE,
-                new Point(0, greatDivide + offset));
-        Imgproc.findContours(coneHalf, coneContours, new Mat(), Imgproc.RETR_EXTERNAL, Imgproc.CHAIN_APPROX_NONE,
-                new Point(0, offset));
+                new Point(0, greatDivide));
+        Imgproc.findContours(coneHalf, coneContours, new Mat(), Imgproc.RETR_EXTERNAL, Imgproc.CHAIN_APPROX_NONE);
 
         contoursList.addAll(tapeContours);
         contoursList.addAll(coneContours);
@@ -1156,14 +1145,13 @@ class PowerPlaySuperPipeline extends OpenCvPipeline
 
         coneHalf.release();
         tapeHalf.release();
-        filteredInput.release();
 
         return contoursList;
     }
 
     int findConeTapeVortex(Mat tapeConeImage) {
         boolean startedTape = false;
-        int startingRow = tapeConeImage.height();
+        int startingRow = 239;
         int triggerDelta = 255 * 4;
         int tapeDelta = 255 * 10;
         int vortexRow = 0;

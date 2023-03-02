@@ -398,7 +398,15 @@ public abstract class AutonomousBase extends LinearOpMode {
         // This is in CM
         final int MAX_DISTANCE_ERROR = 1;
 
-        theLocalCone = blueCone ? pipelineLow.getDetectedBlueCone() : pipelineLow.getDetectedRedCone();
+        // Save a STARTING image (what did the camera see for the alignment task?)
+        if( blueCone ) {
+            theLocalCone = pipelineLow.getDetectedBlueCone();
+            pipelineLow.saveBlueConeAutoImage();
+        }
+        else {
+            theLocalCone = pipelineLow.getDetectedRedCone();
+            pipelineLow.saveRedConeAutoImage();
+        }
         // This first reading just triggers the ultrasonic to send out its first ping, need to wait
         // 50 msec for it to get a result.
         robot.fastSonarRange(SONIC_RANGE_FRONT, SONIC_FIRST_PING);
@@ -432,7 +440,15 @@ public abstract class AutonomousBase extends LinearOpMode {
                 break;
         }
         robot.stopMotion();
-    }
+        // Save the ENDING image (now that we've aligned)
+        if( blueCone ) {
+            pipelineLow.saveBlueConeAutoImage();
+        }
+        else {
+            pipelineLow.saveRedConeAutoImage();
+        }
+
+    } // alignToConeStack
 
     void driveAndRotate(double drivePower, double turnPower) {
         double frontRight, frontLeft, rearRight, rearLeft, maxPower;

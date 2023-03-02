@@ -148,9 +148,12 @@ public class AutonomousRight extends AutonomousBase {
                     pipelineLow.avgGR + " B: " + pipelineLow.avgBR + " Zone: " +
                     pipelineLow.signalZoneR);
             telemetry.addData("5-stack cycles", "%d", fiveStackCycles );
-            telemetry.addData("","(use %s bumpers to modify", "LEFT/RIGHT");
+            telemetry.addLine("   use LEFT/RIGHT bumpers to modify");
             telemetry.addLine("Set " + (coneNumber == 0 ? "Preload" : "Stack cone " + coneNumber) +
                     " to " + (scoreHighGoal[coneNumber] == true ? "High" : "Med"));
+            telemetry.addLine("   use dpad UP/DOWN to select which cone");
+            telemetry.addLine("   use dpad RIGHT to toggle current");
+            telemetry.addLine("   use dpad LEFT to toggle ALL");
             telemetry.addLine("Score Preloaded cone on " + (scoreHighGoal[0] == true ? "High" : "Med"));
             telemetry.addLine("Score Stack cone 1 on " + (scoreHighGoal[1] == true ? "High" : "Med"));
             telemetry.addLine("Score Stack cone 2 on " + (scoreHighGoal[2] == true ? "High" : "Med"));
@@ -183,25 +186,24 @@ public class AutonomousRight extends AutonomousBase {
               fiveStackCycles += 1;
               if( fiveStackCycles > 2 ) fiveStackCycles=2;
             }
+            // DPAD RIGHT toggles the CURRENT cone
             if( gamepad1_dpad_right_now && !gamepad1_dpad_right_last ) {
                 scoreHighGoal[coneNumber] = !scoreHighGoal[coneNumber];
             }
+            // DPAD LEFT toggles ALL the cones: preload/1/2/3/4/5
             if( gamepad1_dpad_left_now && !gamepad1_dpad_left_last ) {
                 for( int i = 0; i <= 5; i++ ) {
                     scoreHighGoal[i] = !scoreHighGoal[i];
                 }
             }
+            // DPAD UP/DOWN select the cone number: preload/1/2/3/4/5
             if( gamepad1_dpad_up_now && !gamepad1_dpad_up_last ) {
                 coneNumber++;
-                if(coneNumber > 5) {
-                    coneNumber = 0;
-                }
+                if(coneNumber > 5) { coneNumber=0; }
             }
             if( gamepad1_dpad_down_now && !gamepad1_dpad_down_last ) {
                 coneNumber--;
-                if(coneNumber < 0) {
-                    coneNumber = 5;
-                }
+                if(coneNumber < 0) { coneNumber=5;  }
             }
             // Pause briefly before looping
             idle();
@@ -501,7 +503,7 @@ public class AutonomousRight extends AutonomousBase {
         driveToPosition( autoYpos, autoXpos, autoAngle, DRIVE_SPEED_50, TURN_SPEED_40, DRIVE_THRU );
         robot.rotateServo.setPosition( robot.GRABBER_ROTATE_UP );
 
-        // See if this prevents us from grabbing the pole without incurring time penalty
+        // No longer hovering over pole so it's safe to start lowering (don't hook the pole!)
         robot.liftPIDPosInit( robot.LIFT_ANGLE_5STACK );
 
         // Drive closer to the 5-stack against the wall (same Y and ANGLE, but new X)
