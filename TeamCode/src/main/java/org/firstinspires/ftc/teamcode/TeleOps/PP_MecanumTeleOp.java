@@ -106,6 +106,7 @@ public class PP_MecanumTeleOp extends OpMode
 
 
         slideControl.update(telemetry);
+        armControl.update(telemetry);
         gamepad2_dpad_up.update();
         gamepad2_A.update();
         gamepad2_B.update();
@@ -170,7 +171,7 @@ public class PP_MecanumTeleOp extends OpMode
     }// end of drive()
 
     public void arm(){
-        armControl.update(telemetry);
+
         // BUTTONS \\
         if (gamepad2_Y.isRisingEdge()) {
             armControl.setExtake();

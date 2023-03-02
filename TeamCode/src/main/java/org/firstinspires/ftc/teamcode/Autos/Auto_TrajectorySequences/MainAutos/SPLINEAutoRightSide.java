@@ -49,12 +49,14 @@ public class SPLINEAutoRightSide extends PowerPlay_AprilTagDetectionDeposit{
 	//parking coordinates
 	//public static double zone1X = 51;
 	//public static double zone1Y = 27.5;
-	public static double zone2X = 45.8;
+	public static double zone2X = 43.8;
 	public static double zone2Y = 1;
 	//public static double zone3X = 51;
 	//public static double zone3Y = -23;
-	public static double zone1backwards =22;
-	public static double zone3forwards = 19.5;
+	public static double zone1backwards =23.5;
+	public static double zone3forwards = 22.5;
+
+	public static double parkHeading = 269;
 
 
 	// [CONE STACK]
@@ -297,33 +299,28 @@ public class SPLINEAutoRightSide extends PowerPlay_AprilTagDetectionDeposit{
 				.addTemporalMarker(() -> {
 					if(tagUse == 2) {
 						TrajectorySequence zoneTwo = bot.trajectorySequenceBuilder(new Pose2d(mediumX4,mediumY4,Math.toRadians(mediumHeading4)))
-								.lineToLinearHeading(new Pose2d(zone2X ,zone2Y, Math.toRadians(271)))
+								.lineToLinearHeading(new Pose2d(zone2X ,zone2Y, Math.toRadians(parkHeading)))
 								.build();
 						bot.followTrajectorySequenceAsync(zoneTwo);
 					}else if(tagUse == 1){
 
 						TrajectorySequence zoneOne = bot.trajectorySequenceBuilder(new Pose2d(mediumX4,mediumY4,Math.toRadians(mediumHeading4)))
-								.lineToLinearHeading(new Pose2d(zone2X ,zone2Y, Math.toRadians(271)))
+								.lineToLinearHeading(new Pose2d(zone2X ,zone2Y, Math.toRadians(parkHeading)))
 								.build();
-						Trajectory backward1 = bot.trajectoryBuilder(new Pose2d(zone2X ,zone2Y, Math.toRadians(271)))
+						Trajectory backward1 = bot.trajectoryBuilder(new Pose2d(zone2X ,zone2Y, Math.toRadians(parkHeading)))
 								.back(zone1backwards)
 								.build();
 						bot.followTrajectorySequenceAsync(zoneOne);
 						bot.followTrajectoryAsync(backward1);
-
 					}else{
-
 						Trajectory zoneThree = bot.trajectoryBuilder(new Pose2d(mediumX4,mediumY4,Math.toRadians(mediumHeading4)))
-								.lineToLinearHeading(new Pose2d(zone2X ,zone2Y, Math.toRadians(271)))
+								.lineToLinearHeading(new Pose2d(zone2X ,zone2Y, Math.toRadians(parkHeading)))
 								.build();
-						Trajectory forward3 = bot.trajectoryBuilder(new Pose2d(zone2X ,zone2Y, Math.toRadians(271)))
+						Trajectory forward3 = bot.trajectoryBuilder(new Pose2d(zone2X ,zone2Y, Math.toRadians(parkHeading)))
 								.forward(zone3forwards)
 								.build();
-
 						bot.followTrajectoryAsync(zoneThree);
 						bot.followTrajectoryAsync(forward3);
-
-
 					}
 				})
 
