@@ -9,6 +9,10 @@ body {
 }
 
 .content {
+  margin: auto;
+}
+
+header {
   max-width: 600px;
   margin: auto;
 }
@@ -39,25 +43,27 @@ details, a {
   </head>
   <body>
     <div class="content">
-      <h1>RR Forward Ramp Regression</h1>
-      <details></details>
+      <header>
+        <h1>RR Forward Ramp Regression</h1>
+        <details></details>
 
-      <div id="download"></div>
+        <div id="download"></div>
 
-      <div id="rampChart">
         <p>
           <button id="latest">Latest</button>
           <input id="browse" type="file" accept="application/json">
         </p>
-      </div>
+      </header>
+
+      <div id="rampChart"></div>
     </div>
 
     <script>
 function loadRegression(data) {
   const forwardEncVels = data.forwardEncVels.flatMap((vs, i) => 
-    fixVels(data.encTimes, data.forwardEncPositions[i], vs));
+    fixVels(data.encTimes.slice(0, -1), data.forwardEncPositions[i].slice(0, -1), vs.slice(0, -1)));
   const appliedVoltages = data.forwardEncVels.flatMap(vs => {
-    const voltages = data.voltages.map((v, i) => 
+    const voltages = data.voltages.slice(0, -1).map((v, i) =>
       data.powers.reduce((acc, ps) => Math.max(acc, ps[i]), 0) * v);
 
     return voltages.slice(1, voltages.length - 1);
@@ -66,7 +72,7 @@ function loadRegression(data) {
   newLinearRegressionChart(
     document.getElementById('rampChart'),
     forwardEncVels, appliedVoltages,
-    {title: 'Ramp Regression', slope: 'kV', intercept: 'kS'}
+    {title: 'Ramp Regression', slope: 'kV', intercept: 'kS', noIntercept: false}
   );
 }
 
@@ -82,7 +88,9 @@ latestButton.addEventListener('click', function() {
         a.href = `/tuning/forward-ramp/${filename}`;
         a.download = `forward-ramp-${filename}`;
 
-        document.getElementById('download').appendChild(a);
+        const download = document.getElementById('download');
+        download.innerHTML = '';
+        download.appendChild(a);
 
         return res.json();
       } else {

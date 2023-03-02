@@ -9,6 +9,10 @@ body {
 }
 
 .content {
+  margin: auto;
+}
+
+header {
   max-width: 600px;
   margin: auto;
 }
@@ -44,28 +48,30 @@ details, a {
   </head>
   <body>
     <div class="content">
-      <h1>RR Dead Wheel Angular Ramp Regression</h1>
-      <details></details>
+      <header>
+        <h1>RR Dead Wheel Angular Ramp Regression</h1>
+        <details></details>
 
-      <div id="download"></div>
+        <div id="download"></div>
 
-      <fieldset>
-        <legend>Feedforward Parameters</legend>
-        <div>
-          kV: <input id="kv" type="text" />
-        </div>
-        <div>
-          kS: <input id="ks" type="text" />
-        </div>
-        <input id="update" type="button" value="update" />
-      </fieldset>
+        <fieldset>
+          <legend>Feedforward Parameters</legend>
+          <div>
+            kV: <input id="kv" type="text" />
+          </div>
+          <div>
+            kS: <input id="ks" type="text" />
+          </div>
+          <input id="update" type="button" value="update" />
+        </fieldset>
 
-      <div id="trackWidthChart">
         <p>
           <button id="latest">Latest</button>
           <input id="browse" type="file" accept="application/json">
         </p>
-      </div>
+      </header>
+
+      <div id="trackWidthChart"></div>
     
       <div id="deadWheelCharts"></div>
     </div>
@@ -73,7 +79,7 @@ details, a {
     <script>
 function loadRegression(data) {
   const [_, angVels] = data.angVels.reduce((acc, vsArg) => {
-    const vs = vsArg.map(v => Math.abs(v));
+    const vs = fixAngVels(vsArg.slice(0, -1)).map(v => Math.abs(v));
     const maxV = vs.reduce((acc, v) => Math.max(acc, v), 0);
     const [accMaxV, _] = acc;
     if (maxV >= accMaxV) {
@@ -86,28 +92,29 @@ function loadRegression(data) {
   data.parEncVels.forEach((vs, i) => {
     const div = document.createElement('div');
     newLinearRegressionChart(div, 
-      angVels.slice(1, angVels.length - 1),
-      fixVels(data.encTimes, data.parEncPositions[i], vs),
-      {title: `Parallel Wheel ${i} Regression`, slope: 'y-position'});
+      angVels.slice(1, -1),
+      fixVels(data.encTimes.slice(0, -1), data.parEncPositions[i].slice(0, -1), vs.slice(0, -1)),
+      {title: `Parallel Wheel ${i} Regression`, slope: 'y-position', noIntercept: true});
     deadWheelCharts.appendChild(div);
   });
   data.perpEncVels.forEach((vs, i) => {
     const div = document.createElement('div');
     newLinearRegressionChart(div, 
-      angVels.slice(1, angVels.length - 1),
-      fixVels(data.encTimes, data.perpEncPositions[i], vs),
-      {title: `Perpendicular Wheel ${i} Regression`, slope: 'x-position'});
+      angVels.slice(1, -1),
+      fixVels(data.encTimes.slice(0, -1), data.perpEncPositions[i].slice(0, -1), vs.slice(0, -1)),
+      {title: `Perpendicular Wheel ${i} Regression`, slope: 'x-position', noIntercept: true});
     deadWheelCharts.appendChild(div);
   });
 
   const setParams = (() => {
-    const appliedVoltages = data.voltages.map((v, i) => 
-      [...data.leftPowers, ...data.rightPowers].reduce((acc, ps) => Math.max(acc, ps[i]), 0) * v);
+    const allPowers = [...data.leftPowers, ...data.rightPowers];
+    const appliedVoltages = data.voltages.slice(0, -1).map((v, i) => 
+      allPowers.reduce((acc, ps) => Math.max(acc, ps[i]), 0) * v);
 
     const setTrackWidthData = newLinearRegressionChart(
       document.getElementById('trackWidthChart'),
       [], [],
-      {title: 'Track Width Regression', slope: 'track width'}
+      {title: 'Track Width Regression', slope: 'track width', noIntercept: true}
     );
 
     return (kV, kS) => setTrackWidthData(angVels, appliedVoltages.map((v, i) => 
@@ -119,6 +126,8 @@ function loadRegression(data) {
   document.getElementById('update').addEventListener('click', () => {
     setParams(parseFloat(kvInput.value), parseFloat(ksInput.value));
   });
+
+  setParams(parseFloat(kvInput.value), parseFloat(ksInput.value));
 }
 
 const latestButton = document.getElementById('latest');
@@ -130,10 +139,12 @@ latestButton.addEventListener('click', function() {
 
         const a = document.createElement('a');
         a.innerText = 'Download';
-        a.href = `/tuning/forward-ramp/${filename}`;
-        a.download = `forward-ramp-${filename}`;
+        a.href = `/tuning/angular-ramp/${filename}`;
+        a.download = `angular-ramp-${filename}`;
 
-        document.getElementById('download').appendChild(a);
+        const download = document.getElementById('download');
+        download.innerHTML = '';
+        download.appendChild(a);
 
         return res.json();
       } else {
@@ -142,7 +153,12 @@ latestButton.addEventListener('click', function() {
       }
     })
     .then(loadRegression)
-    .catch(console.log.bind(console));
+    .catch((e) => {
+      const deadWheelCharts = document.getElementById('deadWheelCharts');
+      deadWheelCharts.innerHTML = '';
+  
+      console.log(e);
+    });
 });
 
 const browseInput = document.getElementById('browse');

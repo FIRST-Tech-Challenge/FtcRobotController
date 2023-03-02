@@ -9,6 +9,10 @@ body {
 }
 
 .content {
+  margin: auto;
+}
+
+header {
   max-width: 600px;
   margin: auto;
 }
@@ -39,48 +43,50 @@ details, a {
   </head>
   <body>
     <div class="content">
-      <h1>RR Drive Encoder Angular Ramp Regression</h1>
-      <details></details>
+      <header>
+        <h1>RR Drive Encoder Angular Ramp Regression</h1>
+        <details></details>
 
-      <div id="download"></div>
-      
-      <div id="rampChart">
+        <div id="download"></div>
+
         <p>
           <button id="latest">Latest</button>
           <input id="browse" type="file" accept="application/json">
         </p>
-      </div>
+      </header>
+      
+      <div id="rampChart"></div>
       <div id="trackWidthChart"></div>
     </div>
 
     <script>
 function loadRegression(data) {
   const leftEncVels = data.leftEncVels.map((vs, i) =>
-        fixVels(data.encTimes, data.leftEncPositions[i], vs));
+        fixVels(data.encTimes.slice(0, -1), data.leftEncPositions[i].slice(0, -1), vs.slice(0, -1)));
   const rightEncVels = data.rightEncVels.map((vs, i) =>
-        fixVels(data.encTimes, data.rightEncPositions[i], vs));
+        fixVels(data.encTimes.slice(0, -1), data.rightEncPositions[i].slice(0, -1), vs.slice(0, -1)));
 
   newLinearRegressionChart(
     document.getElementById('rampChart'),
     [
-      ...leftEncVels.flatMap(vs => vs.map(v => -v)), 
-      ...rightEncVels.flatMap(vs => vs),
+      ...leftEncVels.flatMap(vs => vs.slice(0, -1).map(v => -v)), 
+      ...rightEncVels.flatMap(vs => vs.slice(0, -1)),
     ],
     [
       ...data.leftPowers.flatMap(ps => {
-        const psNew = ps.map((p, i) => -p * data.voltages[i]);
-        return psNew.slice(1, psNew.length - 1);
+        const psNew = ps.slice(0, -1).map((p, i) => -p * data.voltages[i]);
+        return psNew.slice(1, -1);
       }),
       ...data.rightPowers.flatMap(ps => {
-        const psNew = ps.map((p, i) => p * data.voltages[i]);
-        return psNew.slice(1, psNew.length - 1);
+        const psNew = ps.slice(0, -1).map((p, i) => p * data.voltages[i]);
+        return psNew.slice(1, -1);
       }),
     ],
     {title: 'Ramp Regression', slope: 'kV', intercept: 'kS'}
   );
 
   const p = data.angVels.reduce((acc, vsArg) => {
-    const vs = vsArg.map(v => Math.abs(v));
+    const vs = fixAngVels(vsArg).map(v => Math.abs(v));
     const maxV = vs.reduce((acc, v) => Math.max(acc, v), 0);
     const [accMaxV, _] = acc;
     if (maxV >= accMaxV) {
@@ -88,7 +94,7 @@ function loadRegression(data) {
     }
     return acc;
   }, [0, []]);
-  const angVels = p[1].slice(1, p[1].length - 1);
+  const angVels = p[1].slice(1, -1);
 
   newLinearRegressionChart(
     document.getElementById('trackWidthChart'),
@@ -98,7 +104,7 @@ function loadRegression(data) {
         + rightEncVels.reduce((acc, vs) => acc + vs[i], 0) / data.rightEncVels.length)
         * (data.type === 'mecanum' ? 0.5 : 1)
     ),
-    {title: 'Track Width Regression', slope: 'track width'}
+    {title: 'Track Width Regression', slope: 'track width', noIntercept: true}
   );
 }
 
@@ -111,10 +117,12 @@ latestButton.addEventListener('click', function() {
 
         const a = document.createElement('a');
         a.innerText = 'Download';
-        a.href = `/tuning/forward-ramp/${filename}`;
-        a.download = `forward-ramp-${filename}`;
+        a.href = `/tuning/angular-ramp/${filename}`;
+        a.download = `angular-ramp-${filename}`;
 
-        document.getElementById('download').appendChild(a);
+        const download = document.getElementById('download');
+        download.innerHTML = '';
+        download.appendChild(a);
 
         return res.json();
       } else {

@@ -79,6 +79,26 @@ function fixVels(ts, xs, vs) {
   return numDerivOffline(ts, xs).map((est, i) => inverseOverflow(vs[i + 1], est));
 }
 
+// see https://github.com/FIRST-Tech-Challenge/FtcRobotController/issues/617
+function fixAngVels(vs) {
+  if (vs.length === 0) {
+    return [];
+  }
+
+  let offset = 0;
+  lastV = vs[0];
+  const vsFixed = [lastV];
+  for (let i = 1; i < vs.length; i++) {
+    if (Math.abs(vs[i] - lastV) > Math.PI) {
+      offset -= Math.sign(vs[i] - lastV) * 2 * Math.PI;
+    }
+    vsFixed.push(offset + vs[i]);
+    lastV = vs[i];
+  }
+
+  return vsFixed;
+}
+
 // data comes in pairs
 function newLinearRegressionChart(container, xs, ys, options, onChange) {
   if (xs.length !== ys.length) {
@@ -103,6 +123,7 @@ function newLinearRegressionChart(container, xs, ys, options, onChange) {
   const maxX = xs.reduce((a, b) => Math.max(a, b), 0);
 
   const chartDiv = document.createElement('div');
+  const width = Math.max(0, window.innerWidth - 50);
   Plotly.newPlot(chartDiv, [{
     type: 'scatter',
     mode: 'markers',
@@ -124,10 +145,11 @@ function newLinearRegressionChart(container, xs, ys, options, onChange) {
     dragmode: 'select',
     showlegend: false,
     hovermode: false,
-    width: 600,
+    width,
+    height: width * 9 / 16,
   }, {
-    // 'select2d' left
-    modeBarButtonsToRemove: ['zoom2d', 'pan2d', 'lasso2d', 'zoomIn2d', 'zoomOut2d', 'autoScale2d', 'resetScale2d'],
+    // 'select2d', 'zoom2d', 'pan2d', 'lasso2d', 'zoomIn2d', 'zoomOut2d', 'autoScale2d', 'resetScale2d' left
+    modeBarButtonsToRemove: [],
   });
 
   const results = document.createElement('p');
@@ -161,6 +183,10 @@ function newLinearRegressionChart(container, xs, ys, options, onChange) {
   let pendingSelection = null;
 
   chartDiv.on('plotly_selected', function(eventData) {
+    if (eventData === undefined) {
+      return;
+    }
+
     pendingSelection = eventData;
   });
 
