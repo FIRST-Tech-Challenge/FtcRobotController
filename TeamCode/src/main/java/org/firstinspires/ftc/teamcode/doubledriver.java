@@ -60,6 +60,7 @@ public class doubledriver extends LinearOpMode {
             boolean strafeRight;
 
             boolean light;
+            boolean lightoff;
 
             float pickup;                                   //setting varibles from conteroler imputs  
             float dropoff;
@@ -74,7 +75,7 @@ public class doubledriver extends LinearOpMode {
             boolean mediumJunction;
             boolean tallJunction;
 
-            lights.setPower(.3);
+
 
 
             throttle = gamepad1.left_stick_y;
@@ -82,6 +83,7 @@ public class doubledriver extends LinearOpMode {
             strafeLeft = gamepad1.left_bumper;
             strafeRight = gamepad1.right_bumper;
 
+            lightoff = gamepad1.b;
             light = gamepad1.a;
 
             crainpower = gamepad2.right_stick_y;
@@ -96,14 +98,11 @@ public class doubledriver extends LinearOpMode {
             tallJunction = gamepad2.b;
 
 
-            if(light){
-                if(lights.isBusy()){
+            if (lightoff){
                     lights.setPower(0);
-                }
-                else {
-                    lights.setPower(.3);
-                }
-
+            }
+            if(light) {
+                lights.setPower(.3);
             }
 
             if (strafeRight) {
