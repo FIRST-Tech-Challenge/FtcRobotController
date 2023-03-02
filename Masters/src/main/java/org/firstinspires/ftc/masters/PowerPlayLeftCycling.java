@@ -80,7 +80,7 @@ public class PowerPlayLeftCycling extends LinearOpMode {
         drive.setPoseEstimate(startPose);
 
         liftPIDController = new LiftPIDController(drive.linearSlide, drive.frontSlide, drive.slideOtherer);
-        liftPIDController.setP(0.015);
+       // liftPIDController.setP(0.015);
         armPIDController = new ArmPIDControllerMotionProfile(drive.armMotor);
         drive.tipCenter();
         drive.closeClaw();
