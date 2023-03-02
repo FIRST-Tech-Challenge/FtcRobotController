@@ -123,35 +123,31 @@ public class RightAuto2 extends LinearOpMode
         ReadyClaw();
 
 
-        Pose2d startPose = new Pose2d(0, 8, 0);
+        Pose2d startPose = new Pose2d(0, 0, 0);
 
         drive.setPoseEstimate(startPose);
 
         TrajectorySequence FirstCone = drive.trajectorySequenceBuilder(startPose)
 
-                .addTemporalMarker(() -> SetSlideConditions ())
+                .addTemporalMarker(() -> SetSlideConditions())
 
 
-                .lineToLinearHeading(new Pose2d(59,0, Math.toRadians(0)))
-
+                .lineToLinearHeading(new Pose2d(55,0, Math.toRadians(0)))
+                .back(8)
                 .waitSeconds(0.2)
 
-                .back(7)
-                .addTemporalMarker(() -> SlideTopPole ())
+                .turn(Math.toRadians(120))
+                .forward(4.5)
 
-
-                .lineToLinearHeading(new Pose2d(59,15, Math.toRadians(0)))
-
-                .forward(2.5)
-
-
+                .addTemporalMarker(() -> ClawHold())
                 .waitSeconds(0.1)
 
                 .addTemporalMarker(() -> ClawDrop())
-                .waitSeconds(0.5)
+                .waitSeconds(0.1)
 
 
-                .back(3)
+                .back(7)
+                .addTemporalMarker(() -> ResetClaw())
 
 
 
@@ -159,14 +155,15 @@ public class RightAuto2 extends LinearOpMode
         TrajectorySequence ConePickup = drive.trajectorySequenceBuilder(FirstCone.end())
                 .addTemporalMarker(() -> FirstCycle())
 
-                .lineToLinearHeading(new Pose2d(51.5,-6,Math.toRadians(-84)))
-                .waitSeconds(0.1)
-                .forward(20)
-                .waitSeconds(0.5)
+                .turn(Math.toRadians(-30))
+
+                .lineToLinearHeading(new Pose2d(56,25,Math.toRadians(90)))
+
+
                 .addTemporalMarker(() -> ReadyClaw())
-                .waitSeconds(0.2)
+                .back(1)
                 .addTemporalMarker(() -> UpCone())
-                .back(2)
+
 
                 .build();
 
@@ -174,74 +171,83 @@ public class RightAuto2 extends LinearOpMode
         TrajectorySequence  Cycle = drive.trajectorySequenceBuilder(ConePickup.end())
 
 
-                .lineToLinearHeading(new Pose2d(52,0,Math.toRadians(0)))
+                .back(7.5)
+                .addTemporalMarker(() -> UpCone())
+                .turn(Math.toRadians(110))
+
+                .forward(5)
                 .waitSeconds(0.1)
-                .lineToLinearHeading(new Pose2d(52,15.5,Math.toRadians(0)))
-                .addTemporalMarker(() -> SlideTopPole())
-                .forward(2.5)
-                .waitSeconds(0.75)
+                .addTemporalMarker(() -> ClawHold())
+                .waitSeconds(0.1)
                 .addTemporalMarker(() -> ClawDrop())
+
 
 
 
                 .build();
         TrajectorySequence Cyclep2 = drive.trajectorySequenceBuilder(Cycle.end())
-                .back(4.75)
-                .addTemporalMarker(() -> SecondCycle())
-
-                .lineToLinearHeading(new Pose2d(58,-22 ,Math.toRadians(-86)))
-
-                .addTemporalMarker(() -> ReadyClaw())
-                .waitSeconds(0.2)
-                .back(2)
-                .addTemporalMarker(() -> UpCone())
-                .waitSeconds(0.5)
-                .back(27)
-                .addTemporalMarker(() -> ResetSlide())
-                .build();
-
-
-
-
-
-        TrajectorySequence Zone2 = drive.trajectorySequenceBuilder(Cycle.end())
-                .back(4.75)
-                .addTemporalMarker(() -> SecondCycle())
-
-                .lineToLinearHeading(new Pose2d(61, 24, Math.toRadians(86)))
-
-                .addTemporalMarker(() -> ReadyClaw())
-                .waitSeconds(0.2)
-                .back(2)
-                .addTemporalMarker(() -> UpCone())
-                .waitSeconds(0.5)
-                .back(27)
-                .addTemporalMarker(() -> ResetSlide())
-                .build();
-
-        TrajectorySequence Zone1 = drive.trajectorySequenceBuilder(Cycle.end())
-                .back(4.75)
-                .addTemporalMarker(() -> SecondCycle())
-
-                .lineToLinearHeading(new Pose2d(59, 24, Math.toRadians(86)))
-
-                .addTemporalMarker(() -> ReadyClaw())
-                .waitSeconds(0.2)
-                .back(2)
-                .addTemporalMarker(() -> UpCone())
-                .waitSeconds(0.5)
                 .back(5)
-                .addTemporalMarker(() -> ResetSlide())
+                .addTemporalMarker(() -> SecondCycle())
+                .addTemporalMarker(() -> ResetClaw())
+
+                .turn(Math.toRadians(-115))
+                .forward(6)//6)
+
+
+                .addTemporalMarker(() -> ReadyClaw())
+                .waitSeconds(0.1)
+                .addTemporalMarker(() -> UpCone())
+                .waitSeconds(0.5)
+                .back(7)
+                .turn(Math.toRadians(110))
+                .forward(4.5)
+                .addTemporalMarker(() -> ClawUp())
+                .waitSeconds(0.1)
+                .addTemporalMarker(() -> ClawDrop())
+
+
                 .build();
 
-        TrajectorySequence Zone3 = drive.trajectorySequenceBuilder(Cycle.end())
+
+
+
+
+
+
+        TrajectorySequence Zone2 = drive.trajectorySequenceBuilder(Cyclep2.end())
                 .back(4.75)
-                .addTemporalMarker(() -> ResetSlide())
-                .strafeRight(10)
+                .turn(Math.toRadians(-30))
+                .strafeLeft(15)
+                .build();
+
+        TrajectorySequence Zone1 = drive.trajectorySequenceBuilder(Cyclep2.end())
+                .addTemporalMarker(() -> SecondCycle())
+                .addTemporalMarker(() -> ResetClaw())
+
+                .turn(Math.toRadians(-115))
+                .forward(6)//6)
+
+
+                .addTemporalMarker(() -> ReadyClaw())
+                .waitSeconds(0.1)
+                .addTemporalMarker(() -> UpCone())
+                .waitSeconds(0.5)
+                .back(7)
+                .turn(Math.toRadians(110))
+                .forward(4.5)
+                .addTemporalMarker(() -> ClawUp())
+                .waitSeconds(0.1)
+                .addTemporalMarker(() -> ClawDrop())
+                .build();
+
+        TrajectorySequence Zone3 = drive.trajectorySequenceBuilder(Cyclep2.end())
+                .back(4.75)
+                .turn(Math.toRadians(-30))
+                .strafeLeft(25)
                 .build();
 
 
-        telemetry.addData("Hello User", "GIannIs Antelope, Online.");
+        telemetry.addData("Hello User", "Bumblebee, Online.");
 
         telemetry.update();
 
@@ -340,17 +346,20 @@ public class RightAuto2 extends LinearOpMode
 
 
             drive.followTrajectorySequence(FirstCone);
-            telemetry.addData("Giant Anteloupe: ", "Finished Cone One");
+            telemetry.addData("BumbleBee: ", "Finished Cone One");
             telemetry.update();
 
             drive.followTrajectorySequence(ConePickup);
 
             drive.followTrajectorySequence(Cycle);
-            telemetry.addData("Giant Anteloupe: ", "Finished Cone Two");
+            telemetry.addData("BumbleBee: ", "Finished Cone Two");
+            telemetry.update();
+            drive.followTrajectorySequence(Cyclep2);
+            telemetry.addData("BumbleBee: ", "Finished Cone 3");
             telemetry.update();
 
-            //drive.followTrajectorySequence(Zone1);
-            telemetry.addData("Giant Anteloupe: ", "Parked");
+            drive.followTrajectorySequence(Zone1);
+            telemetry.addData("BumbleBee: ", "Parked");
             telemetry.update();
 
             //left code
@@ -364,19 +373,21 @@ public class RightAuto2 extends LinearOpMode
 
 
             drive.followTrajectorySequence(FirstCone);
-            telemetry.addData("Giant Anteloupe: ", "Finished Cone One");
+            telemetry.addData("BumbleBee: ", "Finished Cone One");
             telemetry.update();
 
             drive.followTrajectorySequence(ConePickup);
 
             drive.followTrajectorySequence(Cycle);
-            telemetry.addData("Giant Anteloupe: ", "Finished Cone Two");
+            telemetry.addData("BumbleBee: ", "Finished Cone Two");
+            telemetry.update();
+            drive.followTrajectorySequence(Cyclep2);
+            telemetry.addData("BumbleBee: ", "Finished Cone 3");
             telemetry.update();
 
-            //drive.followTrajectorySequence(Zone2);
-            telemetry.addData("Giant Anteloupe: ", "Parked");
+            drive.followTrajectorySequence(Zone2);
+            telemetry.addData("BumbleBee: ", "Parked");
             telemetry.update();
-
 
         } else if (tagOfInterest.id == Right) {
             // SlideTopPole();
@@ -386,18 +397,22 @@ public class RightAuto2 extends LinearOpMode
 
 
 
+
             drive.followTrajectorySequence(FirstCone);
-            telemetry.addData("Giant Anteloupe: ", "Finished Cone One");
+            telemetry.addData("BumbleBee: ", "Finished Cone One");
             telemetry.update();
 
             drive.followTrajectorySequence(ConePickup);
 
             drive.followTrajectorySequence(Cycle);
-            telemetry.addData("Giant Anteloupe: ", "Finished Cone Two");
+            telemetry.addData("BumbleBee: ", "Finished Cone Two");
+            telemetry.update();
+            drive.followTrajectorySequence(Cyclep2);
+            telemetry.addData("BumbleBee: ", "Finished Cone 3");
             telemetry.update();
 
-           // drive.followTrajectorySequence(Zone3);
-            telemetry.addData("Giant Anteloupe: ", "Parked");
+            drive.followTrajectorySequence(Zone3);
+            telemetry.addData("BumblBee: ", "Parked");
             telemetry.update();
 
         }
@@ -418,7 +433,7 @@ public class RightAuto2 extends LinearOpMode
 
     private void SlideTopPole(){
 
-        Slide.setTargetPosition(-3558);
+        Slide.setTargetPosition(-3565);
         Slide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
         while(Slide.isBusy()){
@@ -437,7 +452,7 @@ public class RightAuto2 extends LinearOpMode
         }
     }
     private void FirstCycle() {
-        Slide.setTargetPosition(-550);
+        Slide.setTargetPosition(-490);
         Slide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
         while (Slide.isBusy()) {
@@ -446,7 +461,7 @@ public class RightAuto2 extends LinearOpMode
         }
 
     } private void SecondCycle(){
-    Slide.setTargetPosition(-450);
+    Slide.setTargetPosition(-400);
     Slide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
     while(Slide.isBusy()){
@@ -455,25 +470,36 @@ public class RightAuto2 extends LinearOpMode
     }
 }
     private void UpCone(){
-        Slide.setTargetPosition(-1400);
+        Slide.setTargetPosition(-1480);
         Slide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
-        while(Slide.isBusy())
-            telemetry.addData("Don't let me down","Im talking to you Dhruv" );
+    }
 
+    private void ResetClaw(){
+
+        ClawY.setPosition(0.73);
     }
 
 
     private void ReadyClaw(){
-        ClawX.setPosition(0.8);
+        ClawX.setPosition(0.83);
         ClawY.setPosition(0.73);
     }
+    private void ClawHold(){
+
+        ClawY.setPosition(0.85);
+    }
+
     private void ClawDrop(){
+
         ClawX.setPosition(0.62);
+    }
+    private void ClawUp (){
+        ClawY.setPosition(0.65);
     }
 
     private void SetSlideConditions(){
-        Slide.setTargetPosition(-1000);
+        Slide.setTargetPosition(-1480);
         Slide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         Slide.setPower(-0.75);
         telemetry.addData("Slide", Slide.getCurrentPosition());
