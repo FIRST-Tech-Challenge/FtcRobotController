@@ -168,10 +168,10 @@ public class TeamMarkerDetector {
              int r, g, b;
              double distanceSum = 0;
              int pixels = bitmap.getWidth() * bitmap.getHeight();
-             int startWidth = round(bitmap.getWidth()*2/5);
-             int startHeight = round(bitmap.getHeight()*2/5);
-             int endWidth = round(bitmap.getHeight()*3/5);
-             int endHeight = round(bitmap.getHeight()*3/5);
+             int startWidth = round(bitmap.getWidth()*1/3);
+             int startHeight = round(bitmap.getHeight()*1/5);
+             int endWidth = round(bitmap.getWidth()*2/3);
+             int endHeight = round(bitmap.getHeight()*2/5);
              for (int i = startWidth; i < endWidth; i++) {
                  for (int j = startHeight; j < endHeight; j++) {
                      color = bitmap.getPixel(i, j);
