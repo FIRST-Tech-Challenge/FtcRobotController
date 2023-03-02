@@ -214,7 +214,7 @@ public class AprilTagTestAuto extends LinearOpMode
         moveInchAmount(false, .25);
         turnNinety(true);
         moveLiftAndDrive(true, 38.25, 5);
-        sleep(100);
+        /*sleep(100);
         turnNinety(true);
         for(int i = 0; i < 1; i++) {
             moveToTape();
@@ -229,7 +229,7 @@ public class AprilTagTestAuto extends LinearOpMode
             moveLiftAndDrive(true, 28, 8);
         }
         moveLift(0);
-        turnNinety(true);
+        turnNinety(true);*/
     }
 
     public void setUpHardware() { // Assigns motor names in phone to the objects in code
