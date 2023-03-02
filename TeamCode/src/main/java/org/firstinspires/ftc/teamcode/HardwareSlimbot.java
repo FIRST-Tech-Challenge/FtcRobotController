@@ -109,6 +109,7 @@ public class HardwareSlimbot
     public double       turretAngleTarget  = 0.0;     // Automatic movement target angle (degrees)
 
     public double       TURRET_ANGLE_MAX       =  170.0;  // absolute encoder angles at maximum rotation RIGHT
+    public double       TURRET_ANGLE_AUTO_M_R  =  126.0;  // scoring the autonomous pre-load cone
     public double       TURRET_ANGLE_AUTO_R    =  116.0;  // scoring the autonomous pre-load cone
     public double       TURRET_ANGLE_CYCLE_R   =  133.5;
     public double       TURRET_ANGLE_5STACK_L  =  118.0;

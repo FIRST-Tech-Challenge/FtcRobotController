@@ -75,7 +75,7 @@ public class AutonomousRight extends AutonomousBase {
             webcamFront.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
                 @Override
                 public void onOpened() {
-                    pipelineFront = new PowerPlaySuperPipeline(false, true, false, false, 176.0);
+                    pipelineFront = new PowerPlaySuperPipeline(false, true, false, false, 160.0);
                     webcamFront.setPipeline(pipelineFront);
                     webcamFront.startStreaming(320, 240, OpenCvCameraRotation.UPRIGHT);
                     frontCameraInitialized = true;
@@ -93,7 +93,7 @@ public class AutonomousRight extends AutonomousBase {
             webcamBack.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
                 @Override
                 public void onOpened() {
-                    pipelineBack = new PowerPlaySuperPipeline(false, true, false, false, 144.0);
+                    pipelineBack = new PowerPlaySuperPipeline(false, true, false, false, 160.0);
                     webcamBack.setPipeline(pipelineBack);
                     webcamBack.startStreaming(320, 240, OpenCvCameraRotation.UPRIGHT);
                     backCameraInitialized = true;
@@ -187,7 +187,9 @@ public class AutonomousRight extends AutonomousBase {
                 scoreHighGoal[coneNumber] = !scoreHighGoal[coneNumber];
             }
             if( gamepad1_dpad_left_now && !gamepad1_dpad_left_last ) {
-                scoreHighGoal[coneNumber] = !scoreHighGoal[coneNumber];
+                for( int i = 0; i <= 5; i++ ) {
+                    scoreHighGoal[i] = !scoreHighGoal[i];
+                }
             }
             if( gamepad1_dpad_up_now && !gamepad1_dpad_up_last ) {
                 coneNumber++;
@@ -285,7 +287,7 @@ public class AutonomousRight extends AutonomousBase {
             timeNow = autonomousTimer.milliseconds()/1000.0;
             telemetry.addData("Motion", "moveToJunction (%.1f)", timeNow );
             telemetry.update();
-            moveToJunction(scoreHighGoal[coneNumber]);
+            moveToJunction( scoreHighGoal[coneNumber] );
         }
 
         // Center on pole
@@ -303,6 +305,10 @@ public class AutonomousRight extends AutonomousBase {
         if( opModeIsActive() ) {
             timeNow = autonomousTimer.milliseconds()/1000.0;
             telemetry.addData("Drive", "Arrive %.1f sec", timePoleArrive[0] );
+            telemetry.addData("Current", "X=%.1f, Y=%.1f, Angle=%.1f", currentPositionX, currentPositionY, currentPositionAngle );
+            telemetry.addData(" offsets", "x=%.1f, y=%.1f", targetDistanceX, targetDistanceY );
+            telemetry.addData("Odometry", "X=%.1f, Y=%.1f, Angle=%.1f", targetPositionX, targetPositionY, targetPositionAngle );
+            telemetry.addData("Turret", "%.1f deg", targetAngle );
             telemetry.addData("Skill", "scoreCone (%.1f)", timeNow );
             telemetry.update();
             scoreCone();
@@ -321,19 +327,21 @@ public class AutonomousRight extends AutonomousBase {
         // Step 6. Score cone
         // Step 7. Profit
         int cycleDistance;
-        double newCycleTimeout  = 21500.0;  // 21.5 sec elapsed (don't start another when less than 8.5 sec left)
-        double poleAlignTimeout = 26000.0;  // 26.0 sec elapsed (
+        double newCycleTimeout  = 24000.0;  // 21.5 sec elapsed (don't start another when less than 8.5 sec left)
+        double poleAlignTimeout = 26000.0;  // 26.0 sec elapsed (don't align, just drop cone)
+        double scoreTimeout     = 27000.0;  // 27.0 sec elapsed (don't try and score)
+        boolean noTimeToScore = false;
         while (opModeIsActive() && (autonomousTimer.milliseconds() <= newCycleTimeout) && (fiveStackCycles > 0)) {
-            // TODO do we want to cycle these steps while the collector detection is false? What are the
-            // possible error modes that could cause us issue, like trying to double collect a cone
-            // when we have one, that for some reason isn't detecting?
-
             // Increment to next entry in our timing data
             timeIndex++;
 
             if (opModeIsActive()) {
                 timeNow = autonomousTimer.milliseconds()/1000.0;
                 telemetry.addData("PreLoad", "Drive %.1f (score %.1f)", timePoleArrive[0], timePoleScore[0] );
+                telemetry.addData("Current", "X=%.1f, Y=%.1f, Angle=%.1f", currentPositionX, currentPositionY, currentPositionAngle );
+                telemetry.addData(" offsets", "x=%.1f, y=%.1f", targetDistanceX, targetDistanceY );
+                telemetry.addData("Odometry", "X=%.1f, Y=%.1f, Angle=%.1f", targetPositionX, targetPositionY, targetPositionAngle );
+                telemetry.addData("Turret", "%.1f deg", targetAngle );
                 telemetry.addData("Skill", "moveToConeStack (%.1f)", timeNow );
                 telemetry.update();
                 moveToConeStack();
@@ -347,8 +355,8 @@ public class AutonomousRight extends AutonomousBase {
                     case 4:  cycleDistance = 28; break;
                     case 3:  cycleDistance = 28; break;
                     case 2:  cycleDistance = 27; break;
-                    case 1:  cycleDistance = 27; break;
-                    default: cycleDistance = 27;
+                    case 1:  cycleDistance = 26; break;
+                    default: cycleDistance = 26;
                 }
                 telemetry.addData("Skill", "alignToConeStack (%.1f)", timeNow );
                 telemetry.update();
@@ -361,14 +369,14 @@ public class AutonomousRight extends AutonomousBase {
                 telemetry.update();
                 collectCone();  // decrements fiveStackHeight!
             }
-            // TODO end cycle while intake is false
 
             if (opModeIsActive()) {
                 timeNow = autonomousTimer.milliseconds()/1000.0;
                 timeStackDepart[timeIndex] = timeNow;
                 telemetry.addData("Skill", "moveToJunctionFromStack (%.1f)", timeNow );
                 telemetry.update();
-                moveToJunctionFromStack( scoreHighGoal[coneNumber] );
+                noTimeToScore = autonomousTimer.milliseconds() > scoreTimeout;
+                moveToJunctionFromStack( scoreHighGoal[coneNumber], noTimeToScore );
             }
 
             if( opModeIsActive()) {
@@ -377,7 +385,7 @@ public class AutonomousRight extends AutonomousBase {
                 telemetry.update();
                 // make sure we have time left to alignToPole and then park!
                 // (otherwise just drop it and park)
-                if( autonomousTimer.milliseconds() <= poleAlignTimeout ) {
+                if(( autonomousTimer.milliseconds() <= poleAlignTimeout ) && !noTimeToScore ){
                     alignToPole(true, true, scoreHighGoal[coneNumber] );
                 }
             }
@@ -426,14 +434,14 @@ public class AutonomousRight extends AutonomousBase {
             robot.turretPIDPosInit(robot.TURRET_ANGLE_AUTO_L);
         } else {
             robot.liftPIDPosInit(robot.LIFT_ANGLE_MED_A);
-            robot.turretPIDPosInit(robot.TURRET_ANGLE_AUTO_R);
+            robot.turretPIDPosInit(robot.TURRET_ANGLE_AUTO_M_R);
         }
         autoYpos=18.0;  autoXpos=-5.5;  autoAngle=+90.0;    // (inches, inches, degrees)
-        driveToPosition( autoYpos, autoXpos, autoAngle, DRIVE_SPEED_60, TURN_SPEED_60, DRIVE_THRU );
+        driveToPosition( autoYpos, autoXpos, autoAngle, DRIVE_SPEED_80, TURN_SPEED_80, DRIVE_THRU );
 
         // Drive most of the way there very fast, and centered in the row of tiles
-        autoYpos=34.5;  autoXpos=-4.5;
-        driveToPosition( autoYpos, autoXpos, autoAngle, DRIVE_SPEED_100, TURN_SPEED_80, DRIVE_THRU );
+        autoYpos=37.0;  autoXpos=-4.5;
+        driveToPosition( autoYpos, autoXpos, autoAngle, DRIVE_SPEED_100, TURN_SPEED_100, DRIVE_THRU );
 
         // We're close, so tilt grabber down to final scoring position
         if( highJunction ) {
@@ -443,15 +451,20 @@ public class AutonomousRight extends AutonomousBase {
         }
 
         // Drive the final distance to the high junction pole at a slower/controlled speed
-        autoYpos=54.3;  autoXpos=-7.0;
-        driveToPosition( autoYpos, autoXpos, autoAngle, DRIVE_SPEED_90, TURN_SPEED_70, DRIVE_TO );
+        if( highJunction ) {
+            autoYpos=50.0;  autoXpos=-8.2;
+        } else {
+            autoYpos=50.0;  autoXpos=-2.7;
+        }
+
+        driveToPosition( autoYpos, autoXpos, autoAngle, DRIVE_SPEED_100, TURN_SPEED_100, DRIVE_TO );
 
         // Both mechanisms should be finished, but pause here if they haven't (until they do)
         while( opModeIsActive() && ((robot.turretMotorPIDAuto == true) || (robot.liftMotorPIDAuto == true)) ) {
             performEveryLoop();
         }
 
-    } // moveToTallJunction
+    } // moveToJunction
 
     /*--------------------------------------------------------------------------------------------*/
     private void scoreCone() {
@@ -462,8 +475,8 @@ public class AutonomousRight extends AutonomousBase {
         // Wait for sensor to indicate it's clear (or we timeout)
         while( opModeIsActive() ) {
             performEveryLoop();
-            // Ensure we eject for at least 250 msec before using sensor (in case sensor fails)
-            boolean bottomSensorClear = robot.bottomConeState && (intakeTimer.milliseconds() > 250);
+            // Ensure we eject for at least 300 msec before using sensor (in case sensor fails)
+            boolean bottomSensorClear = robot.bottomConeState && (intakeTimer.milliseconds() > 300);
             // Also have a max timeout in case sensor fails
             boolean maxEjectTimeReached = (intakeTimer.milliseconds() >= 400);
             // Is cycle complete?
@@ -482,15 +495,17 @@ public class AutonomousRight extends AutonomousBase {
 
         // Establish targets for turret angle (centered) and lift height (5-stack)
         robot.turretPIDPosInit( robot.TURRET_ANGLE_CENTER );
-        robot.liftPIDPosInit( robot.LIFT_ANGLE_5STACK );
 
         // Having just scored on the tall poll, turn left (-90deg) to point toward the 5-stack
         autoYpos=51.5;  autoXpos=7.0;  autoAngle=+90.0;    // (inches, inches, degrees)
         driveToPosition( autoYpos, autoXpos, autoAngle, DRIVE_SPEED_50, TURN_SPEED_40, DRIVE_THRU );
         robot.rotateServo.setPosition( robot.GRABBER_ROTATE_UP );
 
+        // See if this prevents us from grabbing the pole without incurring time penalty
+        robot.liftPIDPosInit( robot.LIFT_ANGLE_5STACK );
+
         // Drive closer to the 5-stack against the wall (same Y and ANGLE, but new X)
-        autoXpos=+13.0;
+        autoXpos=+13.3;
         driveToPosition( autoYpos, autoXpos, autoAngle, DRIVE_SPEED_90, TURN_SPEED_80, DRIVE_TO );
         while( opModeIsActive() && ((robot.turretMotorPIDAuto == true) || (robot.liftMotorPIDAuto == true)) ) {
             performEveryLoop();
@@ -509,7 +524,6 @@ public class AutonomousRight extends AutonomousBase {
         // Determine the correct lift-angle height based on how many cones remain
         liftAngle5stack = robot.coneStackHeights[fiveStackHeight -1];
 
-
         // Lower the lift to the desired height (and ensure we're centered)
         robot.liftPIDPosInit( liftAngle5stack );
         robot.turretPIDPosInit( robot.TURRET_ANGLE_CENTER );
@@ -522,7 +536,10 @@ public class AutonomousRight extends AutonomousBase {
         intakeTimer.reset();
         // start to slowly lower onto cone
         robot.liftMotorsSetPower( -0.25 );
-        while(robot.topConeState && intakeTimer.milliseconds() <= 600) {
+        if( fiveStackHeight <= 2) {
+            robot.grabberSetTilt(robot.GRABBER_TILT_GRAB);
+        }
+        while(robot.topConeState && intakeTimer.milliseconds() <= 800) {
             performEveryLoop();
             // Limit DOWNWARD lift movement even if collector is still lifting cone up to sensor
             if( robot.liftAngle >= robot.LIFT_ANGLE_MAX ) {
@@ -549,28 +566,41 @@ public class AutonomousRight extends AutonomousBase {
     } // collectCone
 
     /*--------------------------------------------------------------------------------------------*/
-    private void moveToJunctionFromStack( boolean highJunction ) {
+    private void moveToJunctionFromStack( boolean highJunction, boolean keepCone) {
 
         // Perform setup to center turret and raise lift to scoring position
-        if( highJunction ) {
-            robot.turretPIDPosInit( robot.TURRET_ANGLE_5STACK_R );
-            robot.liftPIDPosInit( robot.LIFT_ANGLE_HIGH_A);
-            robot.grabberSetTilt( robot.GRABBER_TILT_FRONT_H );
-        } else {
-            robot.turretPIDPosInit( robot.TURRET_ANGLE_5STACK_L);
-            robot.liftPIDPosInit( robot.LIFT_ANGLE_MED_A);
-            robot.grabberSetTilt( robot.GRABBER_TILT_FRONT_M_A );
+        if( !keepCone ) {
+            if (highJunction) {
+                autoYpos = 49.0;
+                autoXpos = -8.6;
+                autoAngle = +90.0;    // (inches, inches, degrees)
+                robot.turretPIDPosInit(robot.TURRET_ANGLE_5STACK_R);
+                robot.liftPIDPosInit(robot.LIFT_ANGLE_HIGH_A);
+                robot.grabberSetTilt(robot.GRABBER_TILT_FRONT_H_A);
+            } else {
+                autoYpos = 50.0;
+                autoXpos = -2.7;
+                robot.turretPIDPosInit(robot.TURRET_ANGLE_AUTO_M_R);
+                robot.liftPIDPosInit(robot.LIFT_ANGLE_MED_A);
+                robot.grabberSetTilt(robot.GRABBER_TILT_FRONT_M_A);
+            }
         }
 
         // Drive back to tall junction (adjusting lift along the way)
         // (stay along Y=51.5 instead of returning to Y=54.0, but rotate turret more (+56.5, not +34.5)
-        autoYpos=51.5;  autoXpos=-11.0;  autoAngle=+90.0;    // (inches, inches, degrees)
         driveToPosition( autoYpos, autoXpos, autoAngle, DRIVE_SPEED_90, TURN_SPEED_80, DRIVE_TO );
 
         // Re-center turret again (if it shifted while driving)
         while( opModeIsActive() && (robot.turretMotorPIDAuto == true) ) {
             performEveryLoop();
         }
+
+//========== TEST MODE ========
+//      while( opModeIsActive() && (robot.liftMotorAuto == true) ) {
+//          performEveryLoop();
+//      }
+//      sleep( 30000 );
+//========== TEST MODE ========
 
     } // moveToTallJunctionFromStack
 

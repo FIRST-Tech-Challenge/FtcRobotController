@@ -959,13 +959,17 @@ class PowerPlaySuperPipeline extends OpenCvPipeline
 
     List<MatOfPoint> findRedContours(Mat input)
     {
+        // Lets chop off the top 10% of the image.
+        int offset = 24;
+        Mat filteredInput = input.submat(offset, 239, 0, 319);
+
         // A list we'll be using to store the contours we find
         List<MatOfPoint> contoursList = new ArrayList<>();
         List<MatOfPoint> tapeContours = new ArrayList<>();
         List<MatOfPoint> coneContours = new ArrayList<>();
 
         // Convert the input image to YCrCb color space, then extract the Cr channel
-        Imgproc.cvtColor(input, crMat, Imgproc.COLOR_RGB2YCrCb);
+        Imgproc.cvtColor(filteredInput, crMat, Imgproc.COLOR_RGB2YCrCb);
         Core.extractChannel(crMat, crMat, CR_CHAN_IDX);
 
         // Threshold the Cr channel to form a mask, then run some noise reduction
@@ -976,12 +980,13 @@ class PowerPlaySuperPipeline extends OpenCvPipeline
         // the cones in the upper half, tape in the lower half.
         int greatDivide = findConeTapeVortex(morphedRedThreshold);
         Mat coneHalf = morphedRedThreshold.submat(0, greatDivide, 0, 319);
-        Mat tapeHalf = morphedRedThreshold.submat(greatDivide, 239, 0, 319);
+        Mat tapeHalf = morphedRedThreshold.submat(greatDivide, morphedRedThreshold.height(), 0, 319);
 
         // Ok, now actually look for the contours! We only look for external contours.
         Imgproc.findContours(tapeHalf, tapeContours, new Mat(), Imgproc.RETR_EXTERNAL, Imgproc.CHAIN_APPROX_NONE,
-                new Point(0, greatDivide));
-        Imgproc.findContours(coneHalf, coneContours, new Mat(), Imgproc.RETR_EXTERNAL, Imgproc.CHAIN_APPROX_NONE);
+                new Point(0, greatDivide + offset));
+        Imgproc.findContours(coneHalf, coneContours, new Mat(), Imgproc.RETR_EXTERNAL, Imgproc.CHAIN_APPROX_NONE,
+                new Point(0, offset));
 
         contoursList.addAll(tapeContours);
         contoursList.addAll(coneContours);
@@ -1002,6 +1007,7 @@ class PowerPlaySuperPipeline extends OpenCvPipeline
 
         coneHalf.release();
         tapeHalf.release();
+        filteredInput.release();
 
         return contoursList;
     }
@@ -1102,13 +1108,17 @@ class PowerPlaySuperPipeline extends OpenCvPipeline
 
     List<MatOfPoint> findBlueContours(Mat input)
     {
+        // Lets chop off the top 10% of the image.
+        int offset = 24;
+        Mat filteredInput = input.submat(offset, 239, 0, 319);
+
         // A list we'll be using to store the contours we find
         List<MatOfPoint> contoursList = new ArrayList<>();
         List<MatOfPoint> tapeContours = new ArrayList<>();
         List<MatOfPoint> coneContours = new ArrayList<>();
 
         // Convert the input image to YCrCb color space, then extract the Cb channel
-        Imgproc.cvtColor(input, cbMat, Imgproc.COLOR_RGB2YCrCb);
+        Imgproc.cvtColor(filteredInput, cbMat, Imgproc.COLOR_RGB2YCrCb);
         Core.extractChannel(cbMat, cbMat, CB_CHAN_IDX);
 
         // Threshold the Cb channel to form a mask, then run some noise reduction
@@ -1119,12 +1129,13 @@ class PowerPlaySuperPipeline extends OpenCvPipeline
         // the cones in the upper half, tape in the lower half.
         int greatDivide = findConeTapeVortex(morphedBlueThreshold);
         Mat coneHalf = morphedBlueThreshold.submat(0, greatDivide, 0, 319);
-        Mat tapeHalf = morphedBlueThreshold.submat(greatDivide, 239, 0, 319);
+        Mat tapeHalf = morphedBlueThreshold.submat(greatDivide, morphedBlueThreshold.height(), 0, 319);
 
         // Ok, now actually look for the contours! We only look for external contours.
         Imgproc.findContours(tapeHalf, tapeContours, new Mat(), Imgproc.RETR_EXTERNAL, Imgproc.CHAIN_APPROX_NONE,
-                new Point(0, greatDivide));
-        Imgproc.findContours(coneHalf, coneContours, new Mat(), Imgproc.RETR_EXTERNAL, Imgproc.CHAIN_APPROX_NONE);
+                new Point(0, greatDivide + offset));
+        Imgproc.findContours(coneHalf, coneContours, new Mat(), Imgproc.RETR_EXTERNAL, Imgproc.CHAIN_APPROX_NONE,
+                new Point(0, offset));
 
         contoursList.addAll(tapeContours);
         contoursList.addAll(coneContours);
@@ -1145,13 +1156,14 @@ class PowerPlaySuperPipeline extends OpenCvPipeline
 
         coneHalf.release();
         tapeHalf.release();
+        filteredInput.release();
 
         return contoursList;
     }
 
     int findConeTapeVortex(Mat tapeConeImage) {
         boolean startedTape = false;
-        int startingRow = 239;
+        int startingRow = tapeConeImage.height();
         int triggerDelta = 255 * 4;
         int tapeDelta = 255 * 10;
         int vortexRow = 0;
