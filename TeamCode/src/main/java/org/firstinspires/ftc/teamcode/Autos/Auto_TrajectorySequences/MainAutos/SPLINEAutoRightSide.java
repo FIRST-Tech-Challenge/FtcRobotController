@@ -49,12 +49,12 @@ public class SPLINEAutoRightSide extends PowerPlay_AprilTagDetectionDeposit{
 	//parking coordinates
 	//public static double zone1X = 51;
 	//public static double zone1Y = 27.5;
-	public static double zone2X = 45.8;
+	public static double zone2X = 43.8;
 	public static double zone2Y = 1;
 	//public static double zone3X = 51;
 	//public static double zone3Y = -23;
-	public static double zone1backwards =22;
-	public static double zone3forwards = 21;
+	public static double zone1backwards =23.5;
+	public static double zone3forwards = 22.5;
 
 	public static double parkHeading = 269;
 

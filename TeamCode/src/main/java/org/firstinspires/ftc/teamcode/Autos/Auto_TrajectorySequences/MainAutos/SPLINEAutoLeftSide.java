@@ -49,11 +49,11 @@ public class SPLINEAutoLeftSide extends PowerPlay_AprilTagDetectionDeposit{
 	public static double zone2X = 51;
 	public static double zone2Y = 0;
 	public static double zone1backwards =-22;
-	public static double zone3forwards = -21;
+	public static double zone3forwards = -24.5;
 
 	// [CONE STACK]
 	public static double xConeStack1 = 48.7;
-	public static double yConeStack = 26.85;
+	public static double yConeStack = 27.85;
 	public static double xConeStack2 = 48.45;
 	public static double xConeStack3 = 48.2;
 	public static double xConeStack4 = 48;
@@ -71,7 +71,7 @@ public class SPLINEAutoLeftSide extends PowerPlay_AprilTagDetectionDeposit{
 	// [2] MEDIUM JUNCTION --> CONE STACK
 	public static double coneStackHeading2 = 45;
 	// [2] CONE STACK --> MEDIUM JUNCTION
-	public static double mediumHeading2 = 227;
+	public static double mediumHeading2 = 229;
 
 	// [3] MEDIUM JUNCTION --> CONE STACK
 	public static double coneStackHeading3 = 45;
@@ -81,7 +81,7 @@ public class SPLINEAutoLeftSide extends PowerPlay_AprilTagDetectionDeposit{
 	// [4] MEDIUM JUNCTION --> CONE STACK
 	public static double coneStackHeading4 = 45;
 	// [4] CONE STACK --> MEDIUM JUNCTION
-	public static double mediumHeading4 = 227;//ALL OF THESE USED TO BE 230
+	public static double mediumHeading4 = 229;//ALL OF THESE USED TO BE 230
 
 	public void initialize(){
 		armControl = new Arm(hardwareMap);
@@ -148,7 +148,7 @@ public class SPLINEAutoLeftSide extends PowerPlay_AprilTagDetectionDeposit{
 				.waitSeconds(0.5)
 
 				.UNSTABLE_addTemporalMarkerOffset(0.5,()->{
-					slideControl.setCustom(1000);//950
+					slideControl.setCustom(1050);//950
 					armControl.setAutoExtake();
 					clawControl.toggleWristRotate();
 				})
@@ -191,7 +191,7 @@ public class SPLINEAutoLeftSide extends PowerPlay_AprilTagDetectionDeposit{
 				.waitSeconds(0.5)
 
 				.UNSTABLE_addTemporalMarkerOffset(0.5,()->{
-					slideControl.setCustom(950);//900
+					slideControl.setCustom(1050);//900
 					armControl.setAutoExtake();
 					clawControl.toggleWristRotate();
 				})
@@ -226,7 +226,7 @@ public class SPLINEAutoLeftSide extends PowerPlay_AprilTagDetectionDeposit{
 				.waitSeconds(0.5)
 
 				.UNSTABLE_addTemporalMarkerOffset(0.5,()->{
-					slideControl.setCustom(950);//900
+					slideControl.setCustom(1050);//900
 					armControl.setAutoExtake();
 					clawControl.toggleWristRotate();
 				})
@@ -262,7 +262,7 @@ public class SPLINEAutoLeftSide extends PowerPlay_AprilTagDetectionDeposit{
 				.waitSeconds(0.5)
 
 				.UNSTABLE_addTemporalMarkerOffset(0.5,()->{
-					slideControl.setCustom(950);//900
+					slideControl.setCustom(1050);//900
 					armControl.setAutoExtake();
 					clawControl.toggleWristRotate();
 				})

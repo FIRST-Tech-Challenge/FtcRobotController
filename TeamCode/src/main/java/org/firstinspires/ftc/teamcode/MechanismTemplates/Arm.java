@@ -26,16 +26,16 @@ public class Arm{
     public static double armKi = 0.00001;
     public static double armKd = 0.00002;
     public static double armKf = 0;
-    public static double EXTAKE_POS = 180; // 950 old val
-    public static double INTAKE_POS = 82; // in degrees of absolute encoder
+    public static double EXTAKE_POS = 171; // 180 old val
+    public static double INTAKE_POS = 65; // in degrees of absolute encoder
 
-    public static double AUTOEXTAKE_POS = 179.2;
+    public static double AUTOEXTAKE_POS = 169; //179.2
 
     // Initially set to 0 because we only want the claw to move when given input from the controller
     // initializing the targetPos value to a greater positive value would cause the update() method to
     // immediately start moving the arm since a difference between the current motor encoder position
     // and the target position is created (error).
-    private double targetPos = 85;
+    private double targetPos = 65;
 
     public Arm(HardwareMap hardwareMap){
         armMotor = new Motor(hardwareMap, "ARM", Motor.GoBILDA.RPM_84); // Pin 0 on control hub -> pin 1 control hub
