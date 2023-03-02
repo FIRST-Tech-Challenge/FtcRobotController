@@ -217,7 +217,7 @@ public class LeftAuto extends LinearOpMode
         TrajectorySequence Zone2 = drive.trajectorySequenceBuilder(Cyclep2.end())
                 .back(4.75)
                 .turn(Math.toRadians(-30))
-                .strafeLeft(15)
+                .strafeLeft(12)
                 .build();
 
         TrajectorySequence Zone1 = drive.trajectorySequenceBuilder(Cyclep2.end())
@@ -226,7 +226,7 @@ public class LeftAuto extends LinearOpMode
                 .addTemporalMarker(() -> ResetClaw())
 
                 .turn(Math.toRadians(-115))
-                .forward(6)//6)
+                .forward(6)
 
 
                 .addTemporalMarker(() -> ReadyClaw())
