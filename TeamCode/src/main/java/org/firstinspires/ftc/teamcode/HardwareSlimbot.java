@@ -118,6 +118,7 @@ public class HardwareSlimbot
     public double       TURRET_ANGLE_5STACK_R  = -103.0;
     public double       TURRET_ANGLE_AUTO_L    = -131.0;  // scoring the autonomous pre-load cone
     public double       TURRET_ANGLE_CYCLE_L   = -133.5;
+    public double       TURRET_ANGLE_AUTO_M_L  = -141.0;  // scoring the autonomous pre-load cone
     public double       TURRET_ANGLE_MIN       = -170.0;  // absolute encoder angles at maximum rotation LEFT
 
     // Instrumentation:  writing to input/output is SLOW, so to avoid impacting loop time as we capture
@@ -173,8 +174,8 @@ public class HardwareSlimbot
     public double       LIFT_ANGLE_LOW     =  86.0;   // lift position for LOW junction
     public double       LIFT_ANGLE_MOTORS  =  91.0;   // lift position for cleaning front turret motor
     public double       LIFT_ANGLE_5STACK  =  87.0;   // lift position for 5-stack ultrasonic reading
-    public double       LIFT_ANGLE_MED_A   =  34.7;   // lift position for MED junction (FRONT Auto)
     public double       LIFT_ANGLE_MED     =  57.5;   // lift position for MEDIUM junction (FRONT Teleop)
+    public double       LIFT_ANGLE_MED_A   =  50.5;   // lift position for MED junction (FRONT Auto)
     public double       LIFT_ANGLE_HIGH_A  =  34.7;   // lift position for HIGH junction (FRONT Auto)
     public double       LIFT_ANGLE_HIGH    =  24.9;   // lift position for HIGH junction (FRONT Teleop)
     public double       LIFT_ANGLE_HIGH_BA = -41.0;   // lift position for HIGH junction (BACK Auto)
@@ -231,7 +232,7 @@ public class HardwareSlimbot
     public double       GRABBER_TILT_AUTO_F  = -0.21;  // 45deg tilt for front scoring in autonomous
     public double       GRABBER_TILT_FRONT_H_A = -0.18;  // Front scoring on the high pole auto
     public double       GRABBER_TILT_FRONT_H = -0.30;  // Front scoring on the high pole
-    public double       GRABBER_TILT_FRONT_M_A = -0.28;  // Front scoring on the mid pole auto
+    public double       GRABBER_TILT_FRONT_M_A = -0.34;  // Front scoring on the mid pole auto
     public double       GRABBER_TILT_FRONT_M = -0.28;  // Front scoring on the mid pole
     public double       GRABBER_TILT_FRONT_L = -0.28;  // Front scoring on the low pole
     public double       GRABBER_TILT_GRAB3   = -0.25;  // Further angled back for 5-stack drive-away (front) NO WALL CONFLICT!

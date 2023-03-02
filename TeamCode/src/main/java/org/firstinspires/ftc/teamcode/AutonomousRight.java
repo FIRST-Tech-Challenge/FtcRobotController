@@ -283,7 +283,7 @@ public class AutonomousRight extends AutonomousBase {
         // Drive forward to the center-line tall junction pole
         if( opModeIsActive() ) {
             timeNow = autonomousTimer.milliseconds()/1000.0;
-            telemetry.addData("Motion", "moveToTallJunction (%.1f)", timeNow );
+            telemetry.addData("Motion", "moveToJunction (%.1f)", timeNow );
             telemetry.update();
             moveToJunction(scoreHighGoal[coneNumber]);
         }
@@ -366,7 +366,7 @@ public class AutonomousRight extends AutonomousBase {
             if (opModeIsActive()) {
                 timeNow = autonomousTimer.milliseconds()/1000.0;
                 timeStackDepart[timeIndex] = timeNow;
-                telemetry.addData("Skill", "moveToTallJunctionFromStack (%.1f)", timeNow );
+                telemetry.addData("Skill", "moveToJunctionFromStack (%.1f)", timeNow );
                 telemetry.update();
                 moveToJunctionFromStack( scoreHighGoal[coneNumber] );
             }

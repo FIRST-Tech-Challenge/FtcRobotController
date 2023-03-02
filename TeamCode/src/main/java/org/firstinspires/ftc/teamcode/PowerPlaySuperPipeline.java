@@ -400,7 +400,7 @@ class PowerPlaySuperPipeline extends OpenCvPipeline
     static final int POLE_HIGH_DISTANCE = 40;
     static final int POLE_HIGH_DISTANCE_STACK = 32;
     static final int POLE_MED_DISTANCE = 32;
-    static final int POLE_MED_DISTANCE_STACK = 24;
+    static final int POLE_MED_DISTANCE_STACK = 26;
 
     // This is how many pixels wide the pole can vary at the proper scoring distance
     // on a high pole.
