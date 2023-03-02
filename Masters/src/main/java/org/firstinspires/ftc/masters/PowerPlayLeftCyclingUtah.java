@@ -93,7 +93,7 @@ public class PowerPlayLeftCyclingUtah extends LinearOpMode {
         Trajectory firstDepositPath1 = drive.trajectoryBuilder(startPose)
 
                 .lineTo(new Vector2d(-37, -35))
-                .splineToSplineHeading(new Pose2d(-32, -9, Math.toRadians(45)), Math.toRadians(45))
+                .splineToSplineHeading(new Pose2d(-36, -14, Math.toRadians(45)), Math.toRadians(45))
 
                 .build();
 
@@ -111,7 +111,7 @@ public class PowerPlayLeftCyclingUtah extends LinearOpMode {
 
         Trajectory cycleDepositScoreCone = drive.trajectoryBuilder(cyclePickupPath1.end())
                 .lineTo(new Vector2d(-45, -12))
-                .splineToSplineHeading(new Pose2d(-34, -11, Math.toRadians(45+180)), Math.toRadians(45))
+                .splineToSplineHeading(new Pose2d(-38, -13, Math.toRadians(45+180)), Math.toRadians(45))
 
                 .build();
 
@@ -176,7 +176,7 @@ public class PowerPlayLeftCyclingUtah extends LinearOpMode {
                         telemetry.addData("done aligning", "score cone");
                         currentState = State.FIRST_DEPOSIT_SCORE_CONE;
                         firstDepositScoreCone = drive.trajectoryBuilder(drive.getPoseEstimate())
-                                .forward(2)
+                                .forward(6)
                                 .build();
                         drive.followTrajectoryAsync(firstDepositScoreCone);
                     }

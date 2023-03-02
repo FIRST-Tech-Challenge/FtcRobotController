@@ -9,7 +9,7 @@ import com.qualcomm.robotcore.hardware.DcMotorEx;
 public class ArmPIDControllerMotionProfile {
 
     public static double kp=6.5, ki=0, kd=0;
-    TrapezoidProfile.Constraints constraintFast = new TrapezoidProfile.Constraints(2800, 3000);
+    TrapezoidProfile.Constraints constraintFast = new TrapezoidProfile.Constraints(2800, 5000);
     TrapezoidProfile.Constraints constraintsSlow = new TrapezoidProfile.Constraints(200, 3000);
     DcMotorEx armMotor;
     ProfiledPIDController pidController;
