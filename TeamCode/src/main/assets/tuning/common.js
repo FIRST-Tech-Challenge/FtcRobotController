@@ -1,5 +1,29 @@
 // TODO: time-interpolate data
 
+// https://en.wikipedia.org/wiki/Kahan_summation_algorithm#The_algorithm
+function kahanSum(xs) {
+  let sum = 0;
+  let c = 0;
+
+  for (let i = 0; i < xs.length; i++) {
+    const y = xs[i] - c;
+    const t = sum + y;
+    c = (t - sum) - y;
+    sum = t;
+  }
+
+  return sum;
+}
+
+// https://en.wikipedia.org/wiki/Simple_linear_regression#Simple_linear_regression_without_the_intercept_term_(single_regressor)
+function fitLinearNoIntercept(xs, ys) {
+  return kahanSum(
+    xs.map((x, i) => x * ys[i])
+  ) / kahanSum(
+    xs.map(x => x * x)
+  );
+}
+
 function fitLinearWithScaling(xs, ys) {
   const xOffset = xs.reduce((a, b) => a + b, 0) / xs.length;
   const yOffset = ys.reduce((a, b) => a + b, 0) / ys.length;
@@ -67,7 +91,11 @@ function newLinearRegressionChart(container, xs, ys, options, onChange) {
 
   let mask = xs.map(() => true);
 
-  const [m, b] = fitLinearWithScaling(xs, ys);
+  function fit(xs, ys) {
+    return options.noIntercept ? [fitLinearNoIntercept(xs, ys), 0] : fitLinearWithScaling(xs, ys);
+  }
+
+  const [m, b] = fit(xs, ys);
 
   if (onChange) onChange(m, b);
 
@@ -114,7 +142,7 @@ function newLinearRegressionChart(container, xs, ys, options, onChange) {
       mask.map(b => b ? color : colorLight)
     ], [0]);
 
-    const [m, b] = fitLinearWithScaling(
+    const [m, b] = fit(
       xs.filter((_, i) => mask[i]),
       ys.filter((_, i) => mask[i]),
     );
