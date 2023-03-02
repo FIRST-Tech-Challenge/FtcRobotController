@@ -204,12 +204,18 @@ public final class TankDrive {
     }
 
     public void setDrivePowers(Twist2d powers) {
-        TankKinematics.WheelVelocities<Time> wheelVels = kinematics.inverse(Twist2dDual.constant(powers, 1));
+        TankKinematics.WheelVelocities<Time> wheelVels = new TankKinematics(2).inverse(Twist2dDual.constant(powers, 1));
+
+        double maxPowerMag = 1;
+        for (DualNum<Time> power : wheelVels.all()) {
+            maxPowerMag = Math.max(maxPowerMag, power.value());
+        }
+
         for (DcMotorEx m : leftMotors) {
-            m.setPower(wheelVels.left.get(0));
+            m.setPower(wheelVels.left.get(0) / maxPowerMag);
         }
         for (DcMotorEx m : rightMotors) {
-            m.setPower(wheelVels.right.get(0));
+            m.setPower(wheelVels.right.get(0) / maxPowerMag);
         }
     }
 
