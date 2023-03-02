@@ -6,6 +6,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DigitalChannel;
 import com.qualcomm.robotcore.hardware.DistanceSensor;
+import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
@@ -25,6 +26,8 @@ public class EnergizeV2TeleOp extends LinearOpMode {
     private DcMotor liftMotor1 = null;
     private DcMotor liftMotor2 = null;
     private  DigitalChannel limitSwitch = null;
+
+    public double DeadZone = .05;
 
     double liftPower = 0.0;
     double INCREMENT = 0.01;
@@ -206,6 +209,14 @@ public class EnergizeV2TeleOp extends LinearOpMode {
                 rightServo.setPosition(0.0);
                 leftServo.setPosition(1.0);
             }
+            if(gamepad2.dpad_down){
+                DeadZone = DeadZone - 0.01;
+            }
+            if(gamepad2.dpad_up){
+                DeadZone = DeadZone + 0.01;
+
+            }
+
 
 //            if (gamepad2.y)
 //            {
@@ -235,8 +246,15 @@ public class EnergizeV2TeleOp extends LinearOpMode {
             else if (!limitSwitch.getState() && -gamepad2.left_stick_y > 0.0) {
                 dualLift(0.0);
             }
-            else {
-                dualLift(-gamepad2.left_stick_y);
+
+            else if (Math.abs(gamepad2.left_stick_y) <= DeadZone){
+                dualLift(0.0);
+            }
+            else if(gamepad2.left_stick_y> 0){
+                dualLift(-gamepad2.left_stick_y + Math.abs(DeadZone));
+            }
+            else if(gamepad2.left_stick_y< 0){
+                dualLift(-gamepad2.left_stick_y - Math.abs(DeadZone));
             }
 
             // Shows the elapsed game time and wheel power.
@@ -244,13 +262,17 @@ public class EnergizeV2TeleOp extends LinearOpMode {
             telemetry.addData("Front left/Right", "%4.2f, %4.2f", leftFrontPower, rightFrontPower);
             telemetry.addData("Back  left/Right", "%4.2f, %4.2f", leftBackPower, rightBackPower);
             telemetry.addData("Status", "Run Time: " + runtime.toString());
-            telemetry.addData("Lift Motors", "%5.2f", liftPower);
+            telemetry.addData("Lift Motor1", "%5.2f", liftMotor1.getPower());
+            telemetry.addData("Lift Motor2", "%5.2f", liftMotor2.getPower());
             telemetry.addData("Precision Mode",String.valueOf(toggle));
             telemetry.addData("Limit Switch", String.valueOf(limitSwitch.getState()));
+            telemetry.addData("Left stick Y", String.valueOf(gamepad2.left_stick_y));
+            telemetry.addData("DeadZone Value", String.valueOf(DeadZone));
             telemetry.update();
         }
 
     }
+
 
     public void MoveLift(double targetHeight) {
 
@@ -309,4 +331,5 @@ public class EnergizeV2TeleOp extends LinearOpMode {
         return sensorRange.getDistance(DistanceUnit.CM);
 
     }
+
 }
