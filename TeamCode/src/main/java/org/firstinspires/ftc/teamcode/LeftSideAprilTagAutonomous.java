@@ -263,14 +263,14 @@ public class LeftSideAprilTagAutonomous extends LinearOpMode
         }else{
             moveGrabber(true);
             waitTime(.5);
-            moveLiftAndDrive(true,16.5,17);
+            moveLiftAndDrive(true,16.25,17);
             turnNinety(true);
-            moveInchAmount(true,.15);
+            moveInchAmount(true,2);
             sleep(500);
             moveGrabber(false);
-            moveInchAmount(false,.15);
+            moveInchAmount(false,2);
             turnNinety(false);
-            moveLiftAndDrive(true,11.5,0);
+            moveLiftAndDrive(true,11.75,0);
             if(tagOfInterest.id == ID_TAG_OF_INTEREST_1){
                 sleep(100);
                 turnNinety(false);
