@@ -182,7 +182,6 @@ public class newauto extends LinearOpMode {
         backLeft.setDirection(DcMotorSimple.Direction.FORWARD);
         backRight.setDirection(DcMotorSimple.Direction.FORWARD);
 
-
         if (opModeIsActive()) {//start of queue for autonnums movment
             Spin.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
             Left.setPower(.3);

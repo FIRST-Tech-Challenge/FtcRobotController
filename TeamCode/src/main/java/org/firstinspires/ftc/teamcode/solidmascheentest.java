@@ -1,14 +1,22 @@
 package org.firstinspires.ftc.teamcode;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
-import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;                //imports from FIRST
-import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.eventloop.opmode.OpMode;                //imports from FIRST
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.hardware.rev.Rev2mDistanceSensor;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
 @Disabled
-public class teleforpscontroller extends LinearOpMode {
+public class solidmascheentest extends OpMode {
+
+    public enum LiftState {
+        LIFT_START,
+        LIFT_EXTEND,
+        LIFT_DUMP,
+        LIFT_RETRACT
+    };
+    LiftState liftState= LiftState.LIFT_START;
 
     private DcMotor frontLeft;
     private DcMotor frontRight;                                         //Declaring Motor varibles
@@ -23,10 +31,17 @@ public class teleforpscontroller extends LinearOpMode {
 
     private Rev2mDistanceSensor distance;
 
+    ElapsedTime liftTimer = new ElapsedTime();
 
-    public void runOpMode() throws InterruptedException {
+     final double DUMP_IDLE=0; // the idle position for the dump servo
+     final double DUMP_DEPOSIT=-1; // the dumping position for the dump servo
+     final double DUMP_TIME=500;
 
-
+    final int LIFT_LOW=0; // the low encoder position for the lift
+    final int LIFT_HIGH=-3000; // the high encoder position for the lift
+    public void init()
+    {
+        liftTimer.reset();
 
         frontLeft = hardwareMap.get(DcMotor.class, "frontLeft");                            //mapping motors from control hub
         frontRight = hardwareMap.get(DcMotor.class, "frontRight");
@@ -38,7 +53,7 @@ public class teleforpscontroller extends LinearOpMode {
         Crain = hardwareMap.get(DcMotor.class, "Crane");
         Spin = hardwareMap.get(DcMotor.class, "Spin");
 
-        distance = hardwareMap.get(Rev2mDistanceSensor.class,"distance");
+        distance = hardwareMap.get(Rev2mDistanceSensor.class, "distance");
 
         frontLeft.setDirection(DcMotorSimple.Direction.FORWARD);
         frontRight.setDirection(DcMotorSimple.Direction.REVERSE);
@@ -47,8 +62,13 @@ public class teleforpscontroller extends LinearOpMode {
 
         Spin.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         Spin.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        waitForStart();
-        while (opModeIsActive()) {
+
+        Crain.setTargetPosition(LIFT_LOW);
+        Crain.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+    }
+
+        public void loop(){
+        Crain.setPower(1);
             double turn;
             double throttle;
             boolean strafeLeft;
@@ -75,6 +95,52 @@ public class teleforpscontroller extends LinearOpMode {
             spinpowerdown =gamepad2.dpad_left;
             pickup = gamepad2.left_trigger;
             dropoff = gamepad2.right_trigger;
+
+
+            switch (liftState) {
+                case LIFT_START:
+                    // Waiting for some input
+                    if (gamepad1.x) {
+                        // x is pressed, start extending
+                        Crain.setTargetPosition(LIFT_HIGH);
+                        liftState = LiftState.LIFT_EXTEND;
+                    }
+                    break;
+                case LIFT_EXTEND:
+                    // check if the lift has finished extending,
+                    // otherwise do nothing.
+                    if (Math.abs(Crain.getCurrentPosition() - LIFT_HIGH) < 10) {
+                        // our threshold is within
+                        // 10 encoder ticks of our target.
+                        // this is pretty arbitrary, and would have to be
+                        // tweaked for each robot.
+
+                        // set the lift dump to dump
+                        Left.setPower(DUMP_DEPOSIT);
+
+                        liftTimer.reset();
+                        liftState = LiftState.LIFT_DUMP;
+                    }
+                    break;
+                case LIFT_DUMP:
+                    if (liftTimer.seconds() >= DUMP_TIME) {
+                        // The robot waited long enough, time to start
+                        // retracting the lift
+                       // Left.setTargetPosition(DUMP_IDLE);
+                        Crain.setTargetPosition(LIFT_LOW);
+                        liftState = LiftState.LIFT_RETRACT;
+                    }
+                    break;
+                case LIFT_RETRACT:
+                    if (Math.abs(Crain.getCurrentPosition() - LIFT_LOW) < 10) {
+                        liftState = LiftState.LIFT_START;
+                    }
+                    break;
+                default:
+                    // should never be reached, as liftState should never be null
+                    liftState = LiftState.LIFT_START;
+            }
+
 
 
 
@@ -169,4 +235,4 @@ public class teleforpscontroller extends LinearOpMode {
 
 
     }
-}
+
