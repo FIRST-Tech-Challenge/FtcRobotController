@@ -32,7 +32,7 @@ public class TestTeam2Lift extends TeleOpModeBase { // TODO: Test
 
     @Override
     public void setup() {
-        Motor lift_motor = HardwareMapContainer.motor0;
+        Motor lift_motor = HardwareMapContainer.motor3;
         lift = new Team2LiftComponent(lift_motor, 0.42, (int)((288 / 3) / (Math.PI*2)), 0); // Core Hex Motor has 288 counts/revolution; counts/radian = counts/revn / (radians/revn); 3:1 gear
     }
 
