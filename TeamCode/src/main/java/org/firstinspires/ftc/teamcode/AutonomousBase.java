@@ -77,18 +77,13 @@ public abstract class AutonomousBase extends LinearOpMode {
     double autoYpos                             = 0.0;   // (useful when a given value remains UNCHANGED from one
     double autoAngle                            = 0.0;   // movement to the next, or INCREMENTAL change from current location).
 
-    double currentPositionX                     = 0.0;   // Keeps track of our Autonomous alignToPole() target position
-    double currentPositionY                     = 0.0;
-    double currentPositionAngle                 = 0.0;
+    double beforeXpos                           = 0.0;   // Keeps track of our BEFORE alignToPole() odometry location
+    double beforeYpos                           = 0.0;
+    double beforeAngle                          = 0.0;
 
-    double targetPositionX                      = 0.0;   // Keeps track of our Autonomous alignToPole() target position
-    double targetPositionY                      = 0.0;
-    double targetPositionAngle                  = 0.0;
-
-    double targetDistanceX                      = 0.0;   // How far do we need to move robot base to alignToPole()?
-    double targetDistanceY                      = 0.0;
-
-    double targetAngle                          = 0.0;   // Keeps track of our Autonomous alignToPole() target turret angle
+    double afterXpos                            = 0.0;   // Keeps track of our AFTER alignToPole() odometry location
+    double afterYpos                            = 0.0;
+    double afterAngle                           = 0.0;
 
     String      storageDir;
     boolean     alignToFront    = true;  // Use front facing camera or back facing
@@ -98,14 +93,31 @@ public abstract class AutonomousBase extends LinearOpMode {
     int         fiveStackCycles = 5;     // How many we want to attempt to collect/score? (adjustable during init)
     ElapsedTime autonomousTimer = new ElapsedTime();
 
-    double[] timePoleArrive   = {0,0,0,0,0,0};  // Time to drive to pole
-    double[] timePoleScore    = {0,0,0,0,0,0};  // Time to alignToPole() and scoreCone()
-    double[] timePoleDepart   = {0,0,0,0,0,0};  // Time we depart the pole
-    double[] timeStackArrive  = {0,0,0,0,0,0};  // Time we arrive at 5-stack using moveToConeStack()
-    double[] timeStackCollect = {0,0,0,0,0,0};  // Time to collect the next cone off the 5-stack
-    double[] timeStackDepart  = {0,0,0,0,0,0};  // Time we depart the 5-stack
+    // Instrumentation for optimizing ABORT times
     double   timeNow;
     int      timeIndex = 0;
+    double[] timePoleDrive    = {0,0,0,0,0,0};  // Time to drive to pole
+    double[] timePoleScore    = {0,0,0,0,0,0};  // Time to alignToPole() and scoreCone()
+    double[] timeStackDrive   = {0,0,0,0,0,0};  // Time we arrive at 5-stack using moveToConeStack()
+    double[] timeStackCollect = {0,0,0,0,0,0};  // Time to collect the next cone off the 5-stack
+
+    // Instrumentation for optimizing drive-to positions
+    double[] anglePole0       = {0,0,0,0,0,0};  // Turret angle when we ARRIVE at pole
+    double[] anglePole1       = {0,0,0,0,0,0};  //                      DEPART
+
+    double[] odomPoleX0       = {0,0,0,0,0,0};  // Odometry X position when we ARRIVE at pole
+    double[] odomPoleX1       = {0,0,0,0,0,0};  //                             DEPART
+    double[] odomPoleY0       = {0,0,0,0,0,0};  // Odometry Y position when we ARRIVE at pole
+    double[] odomPoleY1       = {0,0,0,0,0,0};  //                             DEPART
+    double[] odomPoleAng0     = {0,0,0,0,0,0};  // Odometry Angle when we ARRIVE at pole
+    double[] odomPoleAng1     = {0,0,0,0,0,0};  //                        DEPART
+
+    double[] odomStackX0      = {0,0,0,0,0,0};  // Odometry X position when we ARRIVE at 5-stack
+    double[] odomStackX1      = {0,0,0,0,0,0};  //                             DEPART
+    double[] odomStackY0      = {0,0,0,0,0,0};  // Odometry Y position when we ARRIVE at 5-stack
+    double[] odomStackY1      = {0,0,0,0,0,0};  //                             DEPART
+    double[] odomStackAng0    = {0,0,0,0,0,0};  // Odometry Angle when we ARRIVE at 5-stack
+    double[] odomStackAng1    = {0,0,0,0,0,0};  //                        DEPART
 
     // gamepad controls for changing autonomous options
     boolean gamepad1_circle_last,   gamepad1_circle_now  =false;
@@ -280,13 +292,13 @@ public abstract class AutonomousBase extends LinearOpMode {
         double drivePower;
 
         double startTime = autonomousTimer.milliseconds();
-        double abortTime = startTime + 3000.0;  // abort after 3 seconds
+        double abortTime = startTime + 2500.0;  // abort after 2.5 seconds
 
         // If we add back front camera, use boolean to determine which pipeline to use.
         alignmentPipeline = turretFacingFront ? pipelineFront : pipelineBack;
         theLocalPole = alignmentPipeline.getDetectedPole();
 
-		// Save the starting image we have to correct for
+        // Save the starting image we have to correct for
         alignmentPipeline.savePoleAutoImage();
         int properDistanceCount;
         boolean properDistance;
@@ -313,6 +325,11 @@ public abstract class AutonomousBase extends LinearOpMode {
                 offset = theLocalPole.medDistanceOffset;
             }
         }
+
+        // Log our STARTING x/y/angle position
+        beforeXpos = (robotGlobalXCoordinatePosition / robot.COUNTS_PER_INCH2);
+        beforeYpos = (robotGlobalYCoordinatePosition / robot.COUNTS_PER_INCH2);
+        beforeAngle = Math.toDegrees(robotOrientationRadians);
 
         while (opModeIsActive() && ((theLocalPole.alignedCount <= CYCLES_AT_ANGLE) ||
                 properDistanceCount <= CYCLES_AT_DISTANCE)) {
@@ -378,6 +395,12 @@ public abstract class AutonomousBase extends LinearOpMode {
         robot.turretMotorSetPower(0.0);
         // Save the final image after our adjustments
         alignmentPipeline.savePoleAutoImage();
+        
+        // Log our FINAL x/y/angle position
+        afterXpos = (robotGlobalXCoordinatePosition / robot.COUNTS_PER_INCH2);
+        afterYpos = (robotGlobalYCoordinatePosition / robot.COUNTS_PER_INCH2);
+        afterAngle = Math.toDegrees(robotOrientationRadians);
+        
     } // alignToPole
 
     /*
@@ -415,6 +438,11 @@ public abstract class AutonomousBase extends LinearOpMode {
         double startTime = autonomousTimer.milliseconds();
         double abortTime = startTime + 7000.0;  // abort after 7.0 seconds
 
+        // Log our STARTING x/y/angle position
+        beforeXpos = (robotGlobalXCoordinatePosition / robot.COUNTS_PER_INCH2);
+        beforeYpos = (robotGlobalYCoordinatePosition / robot.COUNTS_PER_INCH2);
+        beforeAngle = Math.toDegrees(robotOrientationRadians);
+
         while (opModeIsActive() && ((theLocalCone.alignedCount <= 3) ||
                 properDistanceCount <= 3)) {
             theLocalCone = blueCone ? pipelineLow.getDetectedBlueCone() : pipelineLow.getDetectedRedCone();
@@ -440,6 +468,7 @@ public abstract class AutonomousBase extends LinearOpMode {
                 break;
         }
         robot.stopMotion();
+        
         // Save the ENDING image (now that we've aligned)
         if( blueCone ) {
             pipelineLow.saveBlueConeAutoImage();
@@ -448,8 +477,14 @@ public abstract class AutonomousBase extends LinearOpMode {
             pipelineLow.saveRedConeAutoImage();
         }
 
+        // Log our FINAL x/y/angle position
+        afterXpos = (robotGlobalXCoordinatePosition / robot.COUNTS_PER_INCH2);
+        afterYpos = (robotGlobalYCoordinatePosition / robot.COUNTS_PER_INCH2);
+        afterAngle = Math.toDegrees(robotOrientationRadians);
+
     } // alignToConeStack
 
+    /*---------------------------------------------------------------------------------*/
     void driveAndRotate(double drivePower, double turnPower) {
         double frontRight, frontLeft, rearRight, rearLeft, maxPower;
 
@@ -460,7 +495,7 @@ public abstract class AutonomousBase extends LinearOpMode {
 
         // Normalize the values so none exceed +/- 1.0
         maxPower = Math.max( Math.max( Math.abs(rearLeft),  Math.abs(rearRight)  ),
-                Math.max( Math.abs(frontLeft), Math.abs(frontRight) ) );
+                   Math.max( Math.abs(frontLeft), Math.abs(frontRight) ) );
         if (maxPower > 1.0)
         {
             rearLeft   /= maxPower;
@@ -471,6 +506,7 @@ public abstract class AutonomousBase extends LinearOpMode {
         // Update motor power settings:
         robot.driveTrainMotors( frontLeft, frontRight, rearLeft, rearRight );
     } // driveAndRotate
+
     /*---------------------------------------------------------------------------------*/
     void rotateToCenterPole() {
         PowerPlaySuperPipeline.AnalyzedPole theLocalPole;
