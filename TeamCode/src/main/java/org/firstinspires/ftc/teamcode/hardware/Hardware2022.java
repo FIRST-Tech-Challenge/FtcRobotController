@@ -31,8 +31,8 @@ public class Hardware2022 {
     @Deprecated
     private final double CLAW_OPEN = 0.3 ;
 
-    private final double xAxisCoeff = 35.6 ;  // How many degrees encoder to turn to run an inch in X Axis
-    private final double yAxisCoeff = 22.8 ;  // How many degrees encoder to turn to run an inch in X Axis
+    private final double xAxisCoeff = 160 ;  // How many degrees encoder to turn to run an inch in X Axis
+    private final double yAxisCoeff = 22.8 ;  // How many degrees encoder to turn to run an inch in Y Axis
 
     //Encoder value of VSlide height in Cone mode,
     private final int CONE_SLIDE_LOW = 1600;
@@ -117,8 +117,7 @@ public class Hardware2022 {
     public DcMotorEx wheelFrontLeft = null;
     public DcMotorEx wheelBackRight = null;
     public DcMotorEx wheelBackLeft = null;
-    public DcMotorEx yEncoder1 = null;
-    public DcMotorEx yEncoder2 = null;
+    public DcMotorEx yEncoder = null;
     public DcMotorEx xEncoder = null;
 
     //Touch sensor
@@ -146,8 +145,7 @@ public class Hardware2022 {
         wheelBackLeft = hwMap.get(DcMotorEx.class, "lrWheel");
         vSlide = hwMap.get(DcMotorEx.class, "Vertical");
         xEncoder = hwMap.get(DcMotorEx.class, "xEncoder");
-        yEncoder1 = hwMap.get(DcMotorEx.class, "yEncoder1");
-        yEncoder2 = hwMap.get(DcMotorEx.class, "yEncoder2");
+        yEncoder = hwMap.get(DcMotorEx.class, "yEncoder1");
 
 
         wheelFrontLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -311,28 +309,27 @@ public class Hardware2022 {
         turnPidfCrtler.setIntegrationBounds(-0.5 , 0.5 );
 
         Log.d("9010", "Before entering Loop ");
-        double rx = 0;
-
+        double rx;
 
         while ( !lnPidfCrtler.atSetPoint()  ) {
             currentPosition = xEncoder.getCurrentPosition();
             //Calculate new distance
             difference = currentPosition - targetPosition;
-            double velocityCaculated = lnPidfCrtler.calculate(difference)/10;
+            double velocityCaculated = lnPidfCrtler.calculate(difference)*6;
 
             Log.d("9010", "=====================");
             Log.d("9010", "Difference: " + difference);
             Log.d("9010", "Current Position: " + currentPosition );
             Log.d("9010", "Calculated Velocity:  " + velocityCaculated );
             double turnError = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES)- startHeading;
-            rx = turnPidfCrtler.calculate(turnError);
+            rx = turnPidfCrtler.calculate(turnError)*200;
             Log.d("9010", "Turn Error: " + turnError );
             Log.d("9010", "Calculated rx:  " + rx );
 
-            wheelFrontLeft.setVelocity(velocityCaculated + rx );
-            wheelBackLeft.setVelocity(-velocityCaculated + rx);
-            wheelFrontRight.setVelocity(-velocityCaculated - rx);
-            wheelBackRight.setVelocity(velocityCaculated - rx);
+            wheelFrontLeft.setVelocity(-velocityCaculated + rx );
+            wheelBackLeft.setVelocity(velocityCaculated + rx);
+            wheelFrontRight.setVelocity(velocityCaculated - rx);
+            wheelBackRight.setVelocity(-velocityCaculated - rx);
         }
 
 

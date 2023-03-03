@@ -29,7 +29,7 @@ public class HWTestTele  extends LinearOpMode {
         while (opModeIsActive()) {
 
             if (gamepad1.dpad_left) {
-                hdw.moveXAxis(-1.0, -1);
+                hdw.moveXAxis(-24.0, -1);
             }
             if (gamepad1.dpad_right) {
                 hdw.moveXAxis(1.0, 1);
