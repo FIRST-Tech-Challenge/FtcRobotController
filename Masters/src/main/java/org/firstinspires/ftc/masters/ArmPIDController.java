@@ -63,6 +63,14 @@ public class ArmPIDController {
 
         double power = pid + ff;
 
+        if (target > 1100 && armPos>1000){
+            if (power>0){
+                power = Math.min(power, 0.3);
+            } else {
+                power = Math.max(power, -0.3);
+            }
+        }
+
 
         return power;
 

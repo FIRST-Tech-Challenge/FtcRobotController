@@ -18,7 +18,7 @@ public class LiftPIDController {
         this.slideMotor2 = slideMotor2;
         this.slideMotor3 = slideMotor3;
         liftController = new PIDController(p, i,d);
-        liftController.setTolerance(5);
+        //liftController.setTolerance(10);
     }
 
     public void setP(double p){
@@ -52,6 +52,26 @@ public class LiftPIDController {
         int liftPos = motor.getCurrentPosition();
 
 
+
+        if (target == 0 && liftPos<100){
+            return 0;
+        } else{
+            double pid = liftController.calculate(liftPos, target);
+            return (pid +f)*multiplier;
+        }
+    }
+
+    public double calculatePower(int liftPos){
+
+        if (target == 0 && liftPos<100){
+            return 0;
+        } else{
+            double pid = liftController.calculate(liftPos, target);
+            return (pid +f)*multiplier;
+        }
+    }
+
+    public double calculatePowerSingle(int liftPos){
 
         if (target == 0 && liftPos<100){
             return 0;
