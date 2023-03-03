@@ -37,9 +37,12 @@ public class MeepMeepTesting {
                                 .turn(Math.toRadians(135))
 
                                 .splineToLinearHeading(new Pose2d(new Vector2d(xStack-8, yStack),Math.toRadians(180)),Math.toRadians(180))
-
                                 .lineTo(new Vector2d(-45, -12))
-                                .splineToSplineHeading(new Pose2d(-32, -9, Math.toRadians(45+180)), Math.toRadians(45))
+                                .lineToLinearHeading(new Pose2d(-36,-11, Math.toRadians(45+180)))
+
+//
+//
+//                                .splineToSplineHeading(new Pose2d(-32, -9, Math.toRadians(45+180)), Math.toRadians(45))
 
                                 .splineToLinearHeading(new Pose2d(new Vector2d(-45, -12),Math.toRadians(180)),Math.toRadians(180))
                                 .lineTo(new Vector2d(xStack-8, yStack))

@@ -54,5 +54,19 @@ public class ArmPIDController {
 
     }
 
+    public double calculateVelocity(int armPos) {
+        controller = new PIDController(p_arm, i_arm, d_arm);
+
+        double pid = controller.calculate(armPos, target);
+
+        double ff = Math.sin(Math.toRadians((target+325)/ degree_per_ticks)) * f_arm;
+
+        double power = pid + ff;
+
+
+        return power;
+
+    }
+
 
 }
