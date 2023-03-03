@@ -75,7 +75,7 @@ public class AutonomousLeft extends AutonomousBase {
             webcamFront.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
                 @Override
                 public void onOpened() {
-                    pipelineFront = new PowerPlaySuperPipeline(false, true, false, false, 162.0);
+                    pipelineFront = new PowerPlaySuperPipeline(false, true, false, false, 164.0);
                     webcamFront.setPipeline(pipelineFront);
                     webcamFront.startStreaming(320, 240, OpenCvCameraRotation.UPRIGHT);
                     frontCameraInitialized = true;
@@ -93,7 +93,7 @@ public class AutonomousLeft extends AutonomousBase {
             webcamBack.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
                 @Override
                 public void onOpened() {
-                    pipelineBack = new PowerPlaySuperPipeline(false, true, false, false, 158.0);
+                    pipelineBack = new PowerPlaySuperPipeline(false, true, false, false, 156.0);
                     webcamBack.setPipeline(pipelineBack);
                     webcamBack.startStreaming(320, 240, OpenCvCameraRotation.UPRIGHT);
                     backCameraInitialized = true;
@@ -282,9 +282,46 @@ public class AutonomousLeft extends AutonomousBase {
     } // unitTestOdometryDrive
 
     /*--------------------------------------------------------------------------------------------*/
+    private void updatePoleAlignInstrumentation() {
+        // Collect our instrumentation data
+        anglePole1[timeIndex]   = robot.turretAngle;
+        odomPoleX0[timeIndex]   = beforeXpos;
+        odomPoleY0[timeIndex]   = beforeYpos;
+        odomPoleAng0[timeIndex] = beforeAngle;
+        odomPoleX1[timeIndex]   = afterXpos;
+        odomPoleY1[timeIndex]   = afterYpos;
+        odomPoleAng1[timeIndex] = afterAngle;
+        // Populate the telemetry
+        telemetry.addData("Drive", "Pole Travel %.1f sec", timePoleDrive[timeIndex] );
+        telemetry.addData("Turret", "Before=%.1f, After=%.1f degrees",
+                anglePole0[timeIndex], anglePole1[timeIndex] );
+        telemetry.addData("Odometry", "X=%.1f %.1f, Y=%.1f %.1f, Angle=%.1f %.1f",
+                odomPoleX0[timeIndex],   odomPoleX1[timeIndex],
+                odomPoleY0[timeIndex],   odomPoleY1[timeIndex],
+                odomPoleAng0[timeIndex], odomPoleAng1[timeIndex] );
+    } // updatePoleAlignInstrumentation
+
+    /*--------------------------------------------------------------------------------------------*/
+    private void updateStackAlignInstrumentation() {
+        // Collect our instrumentation data
+        odomStackX0[timeIndex]   = beforeXpos;
+        odomStackY0[timeIndex]   = beforeYpos;
+        odomStackAng0[timeIndex] = beforeAngle;
+        odomStackX1[timeIndex]   = afterXpos;
+        odomStackY1[timeIndex]   = afterYpos;
+        odomStackAng1[timeIndex] = afterAngle;
+        // Populate the telemetry
+        telemetry.addData("Drive", "Stack Travel %.1f sec", timeStackDrive[timeIndex] );
+        telemetry.addData("Odometry", "X=%.1f %.1f, Y=%.1f %.1f, Angle=%.1f %.1f",
+                odomStackX0[timeIndex],   odomStackX1[timeIndex],
+                odomStackY0[timeIndex],   odomStackY1[timeIndex],
+                odomStackAng0[timeIndex], odomStackAng1[timeIndex] );
+    } // updateStackAlignInstrumentation
+
+    /*--------------------------------------------------------------------------------------------*/
     private void mainAutonomous() {
 
-        // Drive forward to score the pre-loaded cone on the center-line high junction pole
+        // Drive forward to score the pre-loaded cone on HIGH or MEDIUM junction pole
         if( opModeIsActive() ) {
             timeNow = autonomousTimer.milliseconds()/1000.0;
             telemetry.addData("Motion", "moveToJunction (%.1f)", timeNow );
@@ -293,7 +330,7 @@ public class AutonomousLeft extends AutonomousBase {
             // Collect our instrumentation data
             timeNow = autonomousTimer.milliseconds()/1000.0;
             timePoleDrive[timeIndex] = timeNow;
-            telemetry.addData("Drive", "Arrive %.1f sec", timePoleDrive[0] );
+            telemetry.addData("Drive", "Pole Travel %.1f sec", timePoleDrive[timeIndex] );
         }
 
         // Center on pole
@@ -303,21 +340,7 @@ public class AutonomousLeft extends AutonomousBase {
             // Perform the pole-alignment task
             anglePole0[timeIndex] = robot.turretAngle;
             alignToPole(true, false, scoreHighGoal[coneNumber] );
-            // Collect our instrumentation data
-            anglePole1[timeIndex]   = robot.turretAngle;
-            odomPoleX0[timeIndex]   = beforeXpos;
-            odomPoleY0[timeIndex]   = beforeYpos;
-            odomPoleAng0[timeIndex] = beforeAngle;
-            odomPoleX1[timeIndex]   = afterXpos;
-            odomPoleY1[timeIndex]   = afterYpos;
-            odomPoleAng1[timeIndex] = afterAngle;
-            telemetry.addData("Drive", "Pole Travel %.1f sec", timePoleDrive[0] );
-            telemetry.addData("Turret", "Before=%.1f, After=%.1f degrees",
-                 anglePole0[timeIndex], anglePole1[timeIndex] );
-            telemetry.addData("Odometry", "X=%.1f %.1f, Y=%.1f %.1f, Angle=%.1f %.1f",
-                 odomPoleX0[timeIndex],   odomPoleX1[timeIndex],
-                 odomPoleY0[timeIndex],   odomPoleY1[timeIndex],
-                 odomPoleAng0[timeIndex], odomPoleAng1[timeIndex] );
+            updatePoleAlignInstrumentation();
         }
 
         // Deposit cone on junction
@@ -328,7 +351,8 @@ public class AutonomousLeft extends AutonomousBase {
             scoreCone();
             // Record time to alignToPole() + scoreCone()
             timeNow = autonomousTimer.milliseconds()/1000.0;
-            timePoleScore[timeIndex] = timeNow - timePoleDrive[0];
+            timePoleScore[timeIndex] = timeNow - timePoleDrive[timeIndex];
+            telemetry.addData("Score", "Pole Align/Score %.1f sec", timePoleScore[timeIndex] );
         }
 
         // Lets cycle:
@@ -339,10 +363,10 @@ public class AutonomousLeft extends AutonomousBase {
         // Step 5. Rotate towards pole and get a decent starting position
         // Step 6. Score cone
         // Step 7. Profit
-        int cycleDistance;
-        double newCycleTimeout  = 24000.0;  // 21.5 sec elapsed (don't start another when less than 8.5 sec left)
-        double poleAlignTimeout = 26000.0;  // 26.0 sec elapsed (don't align, just drop cone)
-        double scoreTimeout     = 27000.0;  // 27.0 sec elapsed (don't try and score)
+        int     cycleDistance;
+        double  newCycleTimeout  = 24000.0;  // 24.0 sec elapsed (don't start another when less than 6 sec left)
+        double  poleAlignTimeout = 26000.0;  // 26.0 sec elapsed (don't align, just drop cone)
+        double  scoreTimeout     = 27000.0;  // 27.0 sec elapsed (don't try to score, hold onto cone)
         boolean noTimeToScore = false;
         while (opModeIsActive() && (autonomousTimer.milliseconds() <= newCycleTimeout) && (fiveStackCycles > 0)) {
             // Increment to next entry in our timing data
@@ -369,18 +393,7 @@ public class AutonomousLeft extends AutonomousBase {
                 telemetry.addData("Skill", "alignToConeStack (%.1f)", timeNow );
                 telemetry.update();
                 alignToConeStack(blueAlliance, cycleDistance);
-                // Collect our instrumentation data
-                odomStackX0[timeIndex]   = beforeXpos;
-                odomStackY0[timeIndex]   = beforeYpos;
-                odomStackAng0[timeIndex] = beforeAngle;
-                odomStackX1[timeIndex]   = afterXpos;
-                odomStackY1[timeIndex]   = afterYpos;
-                odomStackAng1[timeIndex] = afterAngle;
-                telemetry.addData("Drive", "Stack Travel %.1f sec", timeStackDrive[timeIndex] );
-                telemetry.addData("Odometry", "X=%.1f %.1f, Y=%.1f %.1f, Angle=%.1f %.1f",
-                    odomStackX0[timeIndex],   odomStackX1[timeIndex],
-                    odomStackY0[timeIndex],   odomStackY1[timeIndex],
-                    odomStackAng0[timeIndex], odomStackAng1[timeIndex] );
+                updateStackAlignInstrumentation();
             }
 
             if (opModeIsActive()) {
@@ -411,22 +424,7 @@ public class AutonomousLeft extends AutonomousBase {
                 if(( autonomousTimer.milliseconds() <= poleAlignTimeout ) && !noTimeToScore ){
                     anglePole0[timeIndex] = robot.turretAngle;
                     alignToPole(true, true, scoreHighGoal[coneNumber] );
-                    // Collect our instrumentation data
-                    anglePole1[timeIndex]   = robot.turretAngle;
-                    odomPoleX0[timeIndex]   = beforeXpos;
-                    odomPoleY0[timeIndex]   = beforeYpos;
-                    odomPoleAng0[timeIndex] = beforeAngle;
-                    odomPoleX1[timeIndex]   = afterXpos;
-                    odomPoleY1[timeIndex]   = afterYpos;
-                    odomPoleAng1[timeIndex] = afterAngle;
-                    // Collect our instrumentation data
-                    telemetry.addData("Drive", "Pole Travel %.1f sec", timePoleDrive[timeIndex] );
-                    telemetry.addData("Turret", "Before=%.1f, After=%.1f degrees",
-                            anglePole0[timeIndex], anglePole1[timeIndex] );
-                    telemetry.addData("Odometry", "X=%.1f %.1f, Y=%.1f %.1f, Angle=%.1f %.1f",
-                            odomPoleX0[timeIndex],   odomPoleX1[timeIndex],
-                            odomPoleY0[timeIndex],   odomPoleY1[timeIndex],
-                            odomPoleAng0[timeIndex], odomPoleAng1[timeIndex] );
+                    updatePoleAlignInstrumentation();
                 }
             }
 
@@ -434,8 +432,13 @@ public class AutonomousLeft extends AutonomousBase {
                 timeNow = autonomousTimer.milliseconds()/1000.0;
                 telemetry.addData("Skill", "scoreCone (%.1f)", timeNow );
                 telemetry.update();
-                if( !noTimeToScore )
-                  scoreCone();
+                if( !noTimeToScore ) { // Only blind-drop the cone if we actually raised the lift!
+                    scoreCone();
+                    // Record time to alignToPole() + scoreCone()
+                    timeNow = autonomousTimer.milliseconds()/1000.0;
+                    timePoleScore[timeIndex] = timeNow - timePoleDrive[timeIndex];
+                    telemetry.addData("Score", "Pole Align/Score %.1f sec", timePoleScore[timeIndex] );
+                }
             }
 
             fiveStackCycles--;
@@ -446,7 +449,7 @@ public class AutonomousLeft extends AutonomousBase {
             timeNow = autonomousTimer.milliseconds()/1000.0;
             telemetry.addData("Motion", "signalZoneParking (%.1f)", timeNow );
             telemetry.update();
-            signalZoneParking( signalZone );
+            signalZoneParking( signalZone, noTimeToScore );
         }
 
         // Ensure both lift and turret are stopped
@@ -558,7 +561,7 @@ public class AutonomousLeft extends AutonomousBase {
     // rotateToCenterRedCone and distanceFromFront so we're ready to actually collect the cone
     private void collectCone() {
         double liftAngle5stack;
-        double collectTimeout = 1000.0 - (100 * fiveStackHeight);
+        double collectTimeout = 950.0 - (100.0 * fiveStackHeight); // cone5=450msec; cone1=850msec
 
         // Lower the collector to the nearly-horizontal collecting position
         robot.grabberSetTilt( robot.GRABBER_TILT_GRAB2 );
@@ -654,7 +657,7 @@ public class AutonomousLeft extends AutonomousBase {
     /* +---+---+---+                                                                              */
     /* |   | S |   |     S = Starting floor tile                                                  */
     /* +---+---+---/                                                                              */
-    private void signalZoneParking( int signalZoneLocation ) {
+    private void signalZoneParking( int signalZoneLocation, boolean parkWithCone ) {
 
         // TODO: This code assumes autoYpos, autoXpos, autoAngle carry over from
         // scoring on the tall poll.  If that changes (ie, we go for a different pole,
@@ -675,8 +678,8 @@ public class AutonomousLeft extends AutonomousBase {
         }
         driveToPosition( autoYpos, autoXpos, autoAngle, DRIVE_SPEED_90, TURN_SPEED_80, DRIVE_TO );
 
-        // Initialize so that lift lowers to driving position
-        robot.liftPIDPosInit( robot.LIFT_ANGLE_COLLECT );
+        // Initialize so that lift lowers to driving position (or low-scoring positipn)
+        robot.liftPIDPosInit( (parkWithCone)? robot.LIFT_ANGLE_LOW : robot.LIFT_ANGLE_COLLECT );
 
         if( signalZoneLocation == 1 ) {  // RED
             // Drive one tile closer to field wall

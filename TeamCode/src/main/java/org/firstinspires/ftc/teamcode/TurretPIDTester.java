@@ -28,10 +28,10 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
+import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 
 /*
  * This is an advanced sample showcasing detecting and determining the orientation
@@ -244,7 +244,7 @@ public class TurretPIDTester extends AutonomousBase
             webcamFront.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
                 @Override
                 public void onOpened() {
-                    pipelineFront = new PowerPlaySuperPipeline(false, true, false, false, 160.0);
+                    pipelineFront = new PowerPlaySuperPipeline(false, true, false, false, 164.0);
                     webcamFront.setPipeline(pipelineFront);
                     webcamFront.startStreaming(320, 240, OpenCvCameraRotation.UPRIGHT);
                     frontCameraInitialized = true;
@@ -262,7 +262,7 @@ public class TurretPIDTester extends AutonomousBase
             webcamBack.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
                 @Override
                 public void onOpened() {
-                    pipelineBack = new PowerPlaySuperPipeline(false, true, false, false, 160.0);
+                    pipelineBack = new PowerPlaySuperPipeline(false, true, false, false, 156.0);
                     webcamBack.setPipeline(pipelineBack);
                     webcamBack.startStreaming(320, 240, OpenCvCameraRotation.UPRIGHT);
                     backCameraInitialized = true;
@@ -313,13 +313,16 @@ public class TurretPIDTester extends AutonomousBase
         telemetry.addLine("Hardware initialized...");
         telemetry.update();
 
-        robot.grabberSetTilt( robot.GRABBER_TILT_FRONT_H_A );
+        robot.grabberSetTilt( robot.GRABBER_TILT_FRONT_H_A );  // NIGH junction
+//      robot.grabberSetTilt( robot.GRABBER_TILT_FRONT_M_A );  // MEDIUM junction
         sleep(300);
         performEveryLoop();
 
         // Perform setup needed to center turret
-        robot.turretPIDPosInit( robot.TURRET_ANGLE_AUTO_R );
-        robot.liftPIDPosInit( robot.LIFT_ANGLE_HIGH_A );
+        robot.turretPIDPosInit( robot.TURRET_ANGLE_AUTO_R );   // HIGH junction
+//      robot.turretPIDPosInit( robot.TURRET_ANGLE_AUTO_M_L ); // MEDIUM junction
+        robot.liftPIDPosInit( robot.LIFT_ANGLE_HIGH_A );       // HIGH junction
+//      robot.liftPIDPosInit( robot.LIFT_ANGLE_MED_A );        // MEDIUM junction
         while( !isStopRequested() && ( robot.turretMotorPIDAuto == true || robot.liftMotorPIDAuto == true )) {
             performEveryLoop();
         }
