@@ -70,18 +70,26 @@ public class RobotCameraPipeline extends OpenCvPipeline {
                 }
             }
 
-            // get the bounding rectangle around the largest contour
-            Rect boundingRect = Imgproc.boundingRect(contours.get(maxValIdx));
+            // crops contour if the area is below a certain size
+            if (maxVal >= Constants.CONTOUR_MIN_SIZE)
+            {
+                // get the bounding rectangle around the largest contour
+                Rect boundingRect = Imgproc.boundingRect(contours.get(maxValIdx));
 
-            // get moments
-            Moments moments = Imgproc.moments(contours.get(maxValIdx), false);
+                // get moments
+                Moments moments = Imgproc.moments(contours.get(maxValIdx), false);
 
-            // draw the bounding rectangle on the frame
-            Imgproc.rectangle(input, boundingRect, new Scalar(0, 255, 0), 10);
+                // draw the bounding rectangle on the frame
+                Imgproc.rectangle(input, boundingRect, new Scalar(0, 255, 0), 10);
 
-            if (moments.get_m00() > 0) {
-                xPosition = boundingRect.x + (boundingRect.width * 0.5);
-                width = boundingRect.width;
+                if (moments.get_m00() > 0)
+                {
+                    xPosition = boundingRect.x + (boundingRect.width * 0.5);
+                    width = boundingRect.width;
+                }
+            }else{
+                width = 0.0;
+                xPosition = Constants.CAMERA_CENTER_X;
             }
         } else {
             width = 0.0;

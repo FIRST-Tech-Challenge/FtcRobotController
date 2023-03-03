@@ -78,5 +78,7 @@ public class Constants {
 
     public static final Size BLUR_SIZE = new Size(5, 5);
 
-    public static final int DISTANCE_FROM_CENTER = 250;
+    public static final int DISTANCE_FROM_CENTER_JUNCTION_TOP = 250;
+
+    public static final int CONTOUR_MIN_SIZE = 300;
 }
