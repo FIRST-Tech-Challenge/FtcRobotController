@@ -3,6 +3,7 @@ package org.firstinspires.ftc.masters;
 import static org.firstinspires.ftc.masters.BadgerConstants.ARM_BACK_TOP;
 import static org.firstinspires.ftc.masters.BadgerConstants.ARM_CONE_STACK;
 import static org.firstinspires.ftc.masters.BadgerConstants.ARM_MID_TOP;
+import static org.firstinspires.ftc.masters.BadgerConstants.ARM_MID_TOP_AUTO;
 import static org.firstinspires.ftc.masters.BadgerConstants.SLIDE_HIGH_AUTO;
 import static org.firstinspires.ftc.masters.BadgerConstants.SLIDE_HIGH_BACK;
 import static org.firstinspires.ftc.masters.BadgerConstants.SLIDE_MIDDLE;
@@ -28,7 +29,7 @@ import java.util.List;
 @Autonomous(name = "Power Play Left Cycling Utah", group = "competition")
 public class PowerPlayLeftCyclingUtah extends LinearOpMode {
 
-    Trajectory cyclePickupCone2;
+    Trajectory cyclePickupCone2, cycleScoreCone2;
 
     enum State {
         FIRST_DEPOSIT_PATH_1,
@@ -61,7 +62,8 @@ public class PowerPlayLeftCyclingUtah extends LinearOpMode {
     }
 
     LiftPIDController liftPIDController;
-    ArmPIDControllerMotionProfile armPIDController;
+    ArmPIDController armPIDController;
+    ArmPIDControllerMotionProfile armPIDControllerMotionProfile;
 
     int armTarget = 0, liftTarget = 0;
 
@@ -95,7 +97,8 @@ public class PowerPlayLeftCyclingUtah extends LinearOpMode {
 
         liftPIDController = new LiftPIDController(drive.linearSlide, drive.frontSlide, drive.slideOtherer);
         // liftPIDController.setP(0.015);
-        armPIDController = new ArmPIDControllerMotionProfile(drive.armMotor);
+        armPIDController = new ArmPIDController(drive.armMotor);
+        armPIDControllerMotionProfile = new ArmPIDControllerMotionProfile(drive.armMotor);
         drive.tipCenter();
         drive.closeClaw();
 
@@ -105,14 +108,14 @@ public class PowerPlayLeftCyclingUtah extends LinearOpMode {
         Trajectory firstDepositPath1 = drive.trajectoryBuilder(startPose)
 
                 .lineTo(new Vector2d(-37, -35))
-                .splineToSplineHeading(new Pose2d(-36, -13, Math.toRadians(45)), Math.toRadians(45))
+                .splineToSplineHeading(new Pose2d(-36, -11, Math.toRadians(45)), Math.toRadians(45))
 
                 .build();
 
         Trajectory firstDepositScoreCone;
 
         Trajectory backUpFromJunctionFirstDeposit = drive.trajectoryBuilder(firstDepositPath1.end())
-                .back(2)
+                .back(1)
                 .build();
 
 
@@ -123,9 +126,13 @@ public class PowerPlayLeftCyclingUtah extends LinearOpMode {
 
         Trajectory cycleDepositScoreCone = drive.trajectoryBuilder(cyclePickupPath1.end())
                 .lineTo(new Vector2d(-45, -12))
-                .splineToSplineHeading(new Pose2d(-38, -11, Math.toRadians(45+180)), Math.toRadians(45))
+                .addDisplacementMarker(()->drive.followTrajectoryAsync(cycleScoreCone2))
 
                 .build();
+        cycleScoreCone2 = drive.trajectoryBuilder(cycleDepositScoreCone.end())
+                .lineToLinearHeading(new Pose2d(-36,-11, Math.toRadians(45+180)))
+                .build();
+
 
         Trajectory cycleBackUpFromJunction = drive.trajectoryBuilder(cycleDepositScoreCone.end())
                 .back(6)
@@ -138,7 +145,7 @@ public class PowerPlayLeftCyclingUtah extends LinearOpMode {
                 .build();
 
         cyclePickupCone2 = drive.trajectoryBuilder(cyclePickupCone.end())
-                .lineTo(new Vector2d(xStack, yStack))
+                .lineTo(new Vector2d(xStack+3, yStack))
                         .build();
 
         Trajectory parkGray1, parkGray2, parkRed, parkGreen1, parkGreen2;
@@ -166,10 +173,11 @@ public class PowerPlayLeftCyclingUtah extends LinearOpMode {
 
         currentState = State.FIRST_DEPOSIT_PATH_1;
         drive.followTrajectoryAsync(firstDepositPath1);
-        armTarget = ARM_MID_TOP;
+        armTarget = ARM_MID_TOP_AUTO;
 
         while (opModeIsActive() && !isStopRequested()) {
             drive.update();
+            int armPosition = drive.armMotor.getCurrentPosition();
 
             switch (currentState) {
                 case FIRST_DEPOSIT_PATH_1:
@@ -177,7 +185,7 @@ public class PowerPlayLeftCyclingUtah extends LinearOpMode {
                         currentState = State.ALIGN;
                         alignTime = new Date().getTime();
                     } else {
-                        if (drive.armMotor.getCurrentPosition() > 100) {
+                        if (armPosition > 100) {
                             liftTarget = SLIDE_HIGH_AUTO;
                             drive.tipFront();
                         }
@@ -237,6 +245,7 @@ public class PowerPlayLeftCyclingUtah extends LinearOpMode {
                         drive.followTrajectoryAsync(cycleDepositScoreCone);
                         currentState = State.CYCLE_SCORE_PATH1;
                         coneStack = coneStack - STACK_OFFSET;
+                        liftTarget = SLIDE_HIGH_BACK;
 
                     }
                     break;
@@ -244,40 +253,39 @@ public class PowerPlayLeftCyclingUtah extends LinearOpMode {
                     if (!drive.isBusy()) {
                         currentState = State.CYCLE_SCORE_ALIGN;
                         alignTime = new Date().getTime();
-                        tipBack();
+
                     } else {
                         liftTarget = SLIDE_HIGH_BACK;
                         armTarget = ARM_BACK_TOP;
-
-                        if (drive.armMotor.getCurrentPosition() > 1000) {
-                            drive.tipBack();
-                        }
                     }
+                    tipBack(armPosition);
                     break;
 
 
                 case CYCLE_SCORE_ALIGN:
                     if (drive.alignPole(CV.pipeDetectionPipeline.position) || new Date().getTime() - alignTime > 1000) {
                         currentState = State.CYCLE_SCORE_CONE;
-                        cycleDepositScoreCone = drive.trajectoryBuilder(drive.getPoseEstimate())
-                                .back(2)
+                        Trajectory cycleToJunction = drive.trajectoryBuilder(drive.getPoseEstimate())
+                                .back(7)
                                 .build();
-                        drive.followTrajectoryAsync(cycleDepositScoreCone);
-                        if (drive.armMotor.getCurrentPosition() > 1000) {
-                            drive.tipBack();
-                        }
+                        drive.followTrajectoryAsync(cycleToJunction);
+
+                        tipBack(armPosition);
+
                     }
                     break;
                 case CYCLE_SCORE_CONE:
                     if (!drive.isBusy()) {
                         drive.openClaw();
                         cycleBackUpFromJunction = drive.trajectoryBuilder(drive.getPoseEstimate())
-                                .forward(2)
+                                .forward(7)
                                 .build();
                         sleep(300);
                         drive.followTrajectoryAsync(cycleBackUpFromJunction);
                         currentState = State.CYCLE_BACK_UP;
 
+                    } else {
+                        tipBack(armPosition);
                     }
                     break;
                 case CYCLE_BACK_UP:
@@ -285,13 +293,12 @@ public class PowerPlayLeftCyclingUtah extends LinearOpMode {
 
                         time = new Date().getTime() - startTime;
                         if (time >20_000){
-                            setArmToConeStack();
                             drive.turnAsync(Math.toRadians(45));
 
                             switch (sleeveColor){
                                 case GRAY:
                                     parkGray1 = drive.trajectoryBuilder(drive.getPoseEstimate())
-                                            .lineToLinearHeading(new Pose2d(new Vector2d(-60, -12), Math.toRadians(270)))
+                                            .lineToLinearHeading(new Pose2d(new Vector2d(-62, -12), Math.toRadians(270)))
                                             .build();
                                     drive.followTrajectoryAsync(parkGray1);
                                     currentState = State.PARK_GRAY;
@@ -313,10 +320,11 @@ public class PowerPlayLeftCyclingUtah extends LinearOpMode {
                             }
                             //go park
                         } else {
-                            if (drive.linearSlide.getCurrentPosition() < 100) {
-                                drive.openClaw();
-                                drive.tipCenter();
-                            }
+                            cyclePickupCone = drive.trajectoryBuilder(drive.getPoseEstimate())
+                                    .splineToLinearHeading(new Pose2d(new Vector2d(-45, -12),Math.toRadians(180)),Math.toRadians(180))
+                                    .addDisplacementMarker(() -> drive.followTrajectoryAsync(cyclePickupCone2))
+                                    .build();
+
                             drive.followTrajectory(cyclePickupCone);
                             currentState= State.CYCLE_PICKUP_PATH1;
                         }
@@ -324,13 +332,8 @@ public class PowerPlayLeftCyclingUtah extends LinearOpMode {
 
                     } else {
                         drive.closeClaw();
-                        liftTarget = 0;
-                        armTarget = coneStack;
-                        if (drive.linearSlide.getCurrentPosition() < 100) {
-                            drive.openClaw();
-                            drive.tipCenter();
-                        }
                     }
+                    setArmToConeStack();
                     break;
 
                 case PARK_GRAY:
@@ -381,18 +384,21 @@ public class PowerPlayLeftCyclingUtah extends LinearOpMode {
                         if (drive.linearSlide.getCurrentPosition() < 100) {
                             armTarget = 0;
                         }
-                        if (drive.armMotor.getCurrentPosition() < 50) {
+                        if (armPosition < 50) {
                             drive.openClaw();
                             drive.tipCenter();
                         }
 
                     }
-
             }
 
-
-            armPIDController.setTarget(armTarget);
-            drive.armMotor.setVelocity(armPIDController.calculateVelocity());
+            if (armTarget==ARM_BACK_TOP && armPosition>500){
+                armPIDControllerMotionProfile.setTarget(armTarget);
+                drive.armMotor.setVelocity(armPIDControllerMotionProfile.calculateVelocity(armPosition));
+            } else {
+                armPIDController.setTarget(armTarget);
+                drive.armMotor.setPower(armPIDController.calculateVelocity(armPosition));
+            }
 
             liftPIDController.setTarget(liftTarget);
             double power = liftPIDController.calculatePower(drive.linearSlide);
@@ -411,7 +417,7 @@ public class PowerPlayLeftCyclingUtah extends LinearOpMode {
 
             //  telemetry.addData("power ", power);
             telemetry.addData("arm target", armTarget);
-            telemetry.addData("arm position", drive.armMotor.getCurrentPosition());
+            telemetry.addData("arm position", armPosition);
             telemetry.addData("lift target", liftTarget);
              telemetry.addData(" lift position", drive.linearSlide.getCurrentPosition());
 
@@ -430,8 +436,8 @@ public class PowerPlayLeftCyclingUtah extends LinearOpMode {
         }
     }
 
-    protected void tipBack(){
-        if (drive.armMotor.getCurrentPosition() > 1000) {
+    protected void tipBack(int armPosition){
+        if (armPosition > 900) {
             drive.tipBack();
         }
     }
