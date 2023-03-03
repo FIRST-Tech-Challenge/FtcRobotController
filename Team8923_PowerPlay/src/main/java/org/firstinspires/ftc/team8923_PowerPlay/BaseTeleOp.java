@@ -3,14 +3,15 @@ package org.firstinspires.ftc.team8923_PowerPlay;
 import static org.firstinspires.ftc.team8923_PowerPlay.Constants.CLOSED_CLAW;
 import static org.firstinspires.ftc.team8923_PowerPlay.Constants.OPEN_CLAW;
 
+import com.qualcomm.robotcore.util.Range;
+
 abstract public class BaseTeleOp extends BaseOpMode {
 
     private boolean isSlowMode = false;
 
     private Toggle driveSpeedToggle = new Toggle();
 
-    double driveSpeed = 1.0;
-    double mechanismSpeed = 0.5;
+    double mechanismSpeed = 0.9;
 
     public void driveRobot() {
         double y = -gamepad1.left_stick_y;
@@ -40,7 +41,9 @@ abstract public class BaseTeleOp extends BaseOpMode {
         if (gamepad2.dpad_up) {
             motorSlideLeft.setPower(mechanismSpeed);
             motorSlideRight.setPower(mechanismSpeed);
-        } else if (gamepad2.dpad_down) {
+        } else if (gamepad2.dpad_down
+                && motorSlideLeft.getCurrentPosition() > bottomMotorSlideLeft
+                && motorSlideRight.getCurrentPosition() > bottomMotorSlideRight) {
             motorSlideLeft.setPower(-mechanismSpeed);
             motorSlideRight.setPower(-mechanismSpeed);
         } else {

@@ -16,6 +16,7 @@ public class TeleOpCompetition extends BaseTeleOp{
             driveRobotSpeed();
             driveMechanism();
             driveClaw();
+            driveRobotSpeed();
             idle();
         }
     }

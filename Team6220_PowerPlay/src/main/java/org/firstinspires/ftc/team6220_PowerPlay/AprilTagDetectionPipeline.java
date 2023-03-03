@@ -17,36 +17,37 @@ import org.openftc.easyopencv.OpenCvPipeline;
 import java.util.ArrayList;
 
 public class AprilTagDetectionPipeline extends OpenCvPipeline {
-    private long aprilTagPointer;
+    private static final Scalar blue = new Scalar(7, 197, 235, 255);
+    private static final Scalar red = new Scalar(255, 0, 0, 255);
+    private static final Scalar green = new Scalar(0, 255, 0, 255);
+    private static final Scalar white = new Scalar(255, 255, 255, 255);
+
     private final Mat gray = new Mat();
     private final Object detectionsUpdateSync = new Object();
+
+    // units are pixels
+    // calibration is for Logitech C920 webcam at 1920 x 1080
+    private final double fx = 1385.920; // focal length x
+    private final double fy = 1385.920; // focal length y
+    private final double cx = 951.982; // camera principal point x
+    private final double cy = 534.084; // camera principal point y
+
+    // units are meters
+    private final double tagSize = 0.03429;
+    private final Object decimationSync = new Object();
+
+    Mat cameraMatrix;
+
+    private long aprilTagPointer;
+
     private ArrayList<AprilTagDetection> detections = new ArrayList<>();
     private ArrayList<AprilTagDetection> detectionsUpdate = new ArrayList<>();
 
-    Mat cameraMatrix;
-    Scalar blue = new Scalar(7, 197, 235, 255);
-    Scalar red = new Scalar(255, 0, 0, 255);
-    Scalar green = new Scalar(0, 255, 0, 255);
-    Scalar white = new Scalar(255, 255, 255, 255);
-
-    double fx, fy, cx, cy;
-    double tagSize, tagSizeX, tagSizeY;
-
     private float decimation;
     private boolean needToSetDecimation;
-    private final Object decimationSync = new Object();
 
-    public AprilTagDetectionPipeline(double tagSize, double fx, double fy, double cx, double cy) {
-        this.tagSize = tagSize;
-        this.tagSizeX = tagSize;
-        this.tagSizeY = tagSize;
-        this.fx = fx;
-        this.fy = fy;
-        this.cx = cx;
-        this.cy = cy;
-
+    public AprilTagDetectionPipeline() {
         constructMatrix();
-
         aprilTagPointer = AprilTagDetectorJNI.createApriltagDetector(AprilTagDetectorJNI.TagFamily.TAG_36h11.string, 3, 3);
     }
 
@@ -78,9 +79,9 @@ public class AprilTagDetectionPipeline extends OpenCvPipeline {
         }
 
         for (AprilTagDetection detection : detections) {
-            Pose pose = poseFromTrapezoid(detection.corners, cameraMatrix, tagSizeX, tagSizeY);
-            drawAxisMarker(input, tagSizeY / 2.0, 6, pose.rVector, pose.tVector, cameraMatrix);
-            draw3DCubeMarker(input, tagSizeX, tagSizeX, tagSizeY, 5, pose.rVector, pose.tVector, cameraMatrix);
+            Pose pose = poseFromTrapezoid(detection.corners, cameraMatrix, tagSize, tagSize);
+            drawAxisMarker(input, tagSize / 2.0, 6, pose.rVector, pose.tVector, cameraMatrix);
+            draw3DCubeMarker(input, tagSize, tagSize, tagSize, 5, pose.rVector, pose.tVector, cameraMatrix);
         }
 
         return input;
@@ -106,7 +107,7 @@ public class AprilTagDetectionPipeline extends OpenCvPipeline {
     }
 
     public void constructMatrix() {
-        cameraMatrix = new Mat(3,3, CvType.CV_32FC1);
+        cameraMatrix = new Mat(3, 3, CvType.CV_32FC1);
 
         cameraMatrix.put(0, 0, fx);
         cameraMatrix.put(0, 1, 0);
@@ -142,14 +143,14 @@ public class AprilTagDetectionPipeline extends OpenCvPipeline {
 
     public void draw3DCubeMarker(Mat buffer, double length, double tagWidth, double tagHeight, int thickness, Mat rVector, Mat tVector, Mat cameraMatrix) {
         MatOfPoint3f axis = new MatOfPoint3f(
-                new Point3( -tagWidth / 2, tagHeight / 2, 0),
-                new Point3( tagWidth / 2, tagHeight / 2, 0),
-                new Point3( tagWidth / 2, -tagHeight / 2, 0),
-                new Point3( -tagWidth / 2, -tagHeight / 2, 0),
-                new Point3( -tagWidth / 2, tagHeight / 2, -length),
-                new Point3( tagWidth / 2, tagHeight / 2, -length),
-                new Point3( tagWidth / 2, -tagHeight / 2, -length),
-                new Point3( -tagWidth / 2, -tagHeight / 2, -length)
+                new Point3(-tagWidth / 2, tagHeight / 2, 0),
+                new Point3(tagWidth / 2, tagHeight / 2, 0),
+                new Point3(tagWidth / 2, -tagHeight / 2, 0),
+                new Point3(-tagWidth / 2, -tagHeight / 2, 0),
+                new Point3(-tagWidth / 2, tagHeight / 2, -length),
+                new Point3(tagWidth / 2, tagHeight / 2, -length),
+                new Point3(tagWidth / 2, -tagHeight / 2, -length),
+                new Point3(-tagWidth / 2, -tagHeight / 2, -length)
         );
 
         MatOfPoint2f matProjectedPoints = new MatOfPoint2f();

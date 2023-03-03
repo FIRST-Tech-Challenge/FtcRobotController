@@ -1,114 +1,155 @@
 package org.firstinspires.ftc.team6220_PowerPlay;
 
 import com.qualcomm.hardware.bosch.BNO055IMU;
+import com.qualcomm.hardware.lynx.LynxModule;
+import com.qualcomm.hardware.rev.RevBlinkinLedDriver;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
-import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.PwmControl;
+import com.qualcomm.robotcore.hardware.ServoImplEx;
 
+import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
-import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
+import org.openftc.easyopencv.OpenCvCamera;
+import org.openftc.easyopencv.OpenCvCameraFactory;
+
+import java.util.List;
 
 public abstract class BaseOpMode extends LinearOpMode {
-
     // motors
-    public static DcMotor motorFL;
-    public static DcMotor motorFR;
-    public static DcMotor motorBL;
-    public static DcMotor motorBR;
+    public static DcMotorEx motorFL;
+    public static DcMotorEx motorFR;
+    public static DcMotorEx motorBL;
+    public static DcMotorEx motorBR;
 
-    public static DcMotor motorTurntable;
-    public static DcMotor motorLVSlides;
-    public static DcMotor motorRVSlides;
+    public static DcMotorEx motorLeftSlides;
+    public static DcMotorEx motorRightSlides;
 
     // servos
-    public static Servo servoGrabber;
+    public static ServoImplEx servoGrabber;
+    public static RevBlinkinLedDriver blinkinChassis;
+
+    // OpenCV
+    public static OpenCvCamera robotCamera;
+    public static OpenCvCamera grabberCamera;
+    public static AprilTagDetectionPipeline aprilTagDetectionPipeline;
+    public static RobotCameraPipeline robotCameraPipeline;
+    public static GrabberCameraPipeline grabberCameraPipeline;
 
     // IMU
     public BNO055IMU imu;
-    public Orientation IMUOriginalAngles; // original angle reading from imu that will be used to find unwanted angle offset during drive
+    public double originalAngle;
+    public double startAngle;
 
     // flag to say whether we should disable the correction system
     private boolean turnFlag = false;
 
+    // bulk reading
+    private List<LynxModule> hubs;
+
     // initializes the motors, servos, and IMUs
     public void initialize() {
+        hubs = hardwareMap.getAll(LynxModule.class);
+
+        for (LynxModule hub : hubs) {
+            hub.setBulkCachingMode(LynxModule.BulkCachingMode.AUTO);
+        }
 
         // motors
-        motorFL = hardwareMap.dcMotor.get("motorFL");
-        motorFR = hardwareMap.dcMotor.get("motorFR");
-        motorBL = hardwareMap.dcMotor.get("motorBL");
-        motorBR = hardwareMap.dcMotor.get("motorBR");
-        motorTurntable = hardwareMap.dcMotor.get("motorTurntable");
-        motorLVSlides = hardwareMap.dcMotor.get("motorLVSlides");
-        motorRVSlides = hardwareMap.dcMotor.get("motorRVSlides");
+        motorFL = (DcMotorEx) hardwareMap.get(DcMotor.class, "motorFL");
+        motorFR = (DcMotorEx) hardwareMap.get(DcMotor.class, "motorFR");
+        motorBL = (DcMotorEx) hardwareMap.get(DcMotor.class, "motorBL");
+        motorBR = (DcMotorEx) hardwareMap.get(DcMotor.class, "motorBR");
+        motorLeftSlides = (DcMotorEx) hardwareMap.get(DcMotor.class, "motorLeftSlides");
+        motorRightSlides = (DcMotorEx) hardwareMap.get(DcMotor.class, "motorRightSlides");
 
-        motorFL.setDirection(DcMotor.Direction.FORWARD);
-        motorFR.setDirection(DcMotor.Direction.REVERSE);
-        motorBL.setDirection(DcMotor.Direction.FORWARD);
-        motorBR.setDirection(DcMotor.Direction.REVERSE);
-        motorLVSlides.setDirection(DcMotor.Direction.FORWARD);
-        motorRVSlides.setDirection(DcMotor.Direction.FORWARD);
-        motorTurntable.setDirection(DcMotor.Direction.FORWARD);
+        motorFL.setDirection(DcMotorEx.Direction.FORWARD);
+        motorFR.setDirection(DcMotorEx.Direction.REVERSE);
+        motorBL.setDirection(DcMotorEx.Direction.FORWARD);
+        motorBR.setDirection(DcMotorEx.Direction.REVERSE);
 
-        motorFL.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        motorFR.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        motorBL.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        motorBR.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        motorFL.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
+        motorFR.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
+        motorBL.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
+        motorBR.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
 
-        motorTurntable.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        motorLVSlides.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        motorRVSlides.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        motorFL.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
+        motorFR.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
+        motorBL.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
+        motorBR.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
 
-        motorFL.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        motorFR.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        motorBL.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        motorBR.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        motorFL.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
+        motorFR.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
+        motorBL.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
+        motorBR.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
 
-        motorTurntable.setTargetPosition(0);
-        motorTurntable.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        motorLeftSlides.setDirection(DcMotorEx.Direction.FORWARD);
+        motorRightSlides.setDirection(DcMotorEx.Direction.REVERSE);
 
-        motorLVSlides.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        motorRVSlides.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        motorLeftSlides.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
+        motorRightSlides.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
+
+        motorLeftSlides.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
+        motorRightSlides.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
+
+        motorLeftSlides.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
+        motorRightSlides.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
 
         // servos
-        servoGrabber = hardwareMap.servo.get("servoGrabber");
+        PwmControl.PwmRange maxRange = new PwmControl.PwmRange(500, 2500, 20000);
+        servoGrabber = (ServoImplEx) hardwareMap.servo.get("servoGrabber");
+        servoGrabber.setPwmRange(maxRange);
+
+        try {
+            blinkinChassis = (RevBlinkinLedDriver) hardwareMap.get(RevBlinkinLedDriver.class, "blinkinChassis");
+        } catch (Exception e) {}
 
         // initialize IMU
         BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
         parameters.angleUnit = BNO055IMU.AngleUnit.DEGREES;
         parameters.accelUnit = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
-        parameters.calibrationDataFile = "AdafruitIMUCalibration.json";
-        parameters.loggingEnabled = true;
-        parameters.loggingTag = "IMU";
         imu = hardwareMap.get(BNO055IMU.class, "imu");
         imu.initialize(parameters);
 
-        // preset the IMU angles so it doesn't start on null since it will only later be read when turning
-        IMUOriginalAngles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
+        // sleep to allow the IMU to initialize before the absolute angles are measured
+        sleep(3000);
+
+        startAngle = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle;
+        originalAngle = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle;
+
+        robotCamera = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "RobotCamera"));
+        grabberCamera = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "GrabberCamera"));
+
+        aprilTagDetectionPipeline = new AprilTagDetectionPipeline();
+        robotCameraPipeline = new RobotCameraPipeline();
+        grabberCameraPipeline = new GrabberCameraPipeline();
 
         servoGrabber.setPosition(Constants.GRABBER_INITIALIZE_POSITION);
     }
 
-    public void driveWithIMU(double xPower, double yPower, double tPower)  {
-
+    /**
+     * drives the robot with the IMU
+     * when not turning, the robot maintains a constant heading
+     * @param xPower the motor power for moving in the x-direction
+     * @param yPower the motor power for moving in the y-direction
+     * @param tPower the motor power for pivoting
+     */
+    public void driveWithIMU(double xPower, double yPower, double tPower) {
         // read imu when turning (when t != 0)
-        boolean isTurning = (tPower != 0);
+        boolean isTurning = tPower != 0;
 
         if (isTurning || turnFlag) {
-            IMUOriginalAngles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES); // set original angle
-
-            if (!turnFlag) {
-                turnFlag = true;
-            }
+            originalAngle = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle; // set original angle
+            turnFlag = true;
 
         // otherwise read imu for correction
         } else {
             // obtain the current angle's error from the original angle
-            Orientation currentAngle = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
-            double angleError = IMUOriginalAngles.firstAngle - currentAngle.firstAngle;
+            double currentAngle = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle;
+            double angleError = originalAngle - currentAngle;
 
             // flip to inverse of angles above 180 / below -180 (to prevent infinity-rotate bug)
             // to make sure to use the shorter angle
@@ -119,7 +160,7 @@ public abstract class BaseOpMode extends LinearOpMode {
             }
 
             // apply a constant to turn the angle into a turn speed
-            tPower = -Constants.CORRECTION_CONSTANT * angleError;
+            tPower = Math.min(Math.abs(-Constants.HEADING_CORRECTION_KP_TELEOP * angleError), Constants.MAXIMUM_TURN_POWER_TELEOP) * Math.signum(-angleError);
         }
 
         // if the rotation rate is low, then that means all the momentum has left the robot's turning and can therefore turn the correction back on
@@ -128,39 +169,118 @@ public abstract class BaseOpMode extends LinearOpMode {
         }
 
         // calculate speed and direction of each individual motor and set power of motors to speed
-        motorFL.setPower(-yPower + xPower + tPower);
-        motorFR.setPower(-yPower - xPower - tPower);
-        motorBL.setPower(-yPower - xPower + tPower);
-        motorBR.setPower(-yPower + xPower - tPower);
+        motorFL.setPower(yPower + xPower + tPower);
+        motorFR.setPower(yPower - xPower - tPower);
+        motorBL.setPower(yPower - xPower + tPower);
+        motorBR.setPower(yPower + xPower - tPower);
     }
 
     /**
      * this method will allow the grabber to open or close given a boolean input
-     * @param isOpen true for open grabber and false for closed grabber
+     * @param position the position of the grabber
      */
-    public void driveGrabber(boolean isOpen) {
-        if (isOpen) {
-            servoGrabber.setPosition(Constants.GRABBER_OPEN_POSITION);
+    public void driveGrabber(double position) {
+        servoGrabber.setPosition(position);
+    }
+
+    /**
+     * this method will allow the slides to move to a specified target position
+     * @param targetPosition target position for slides motors in ticks
+     */
+    public void driveSlides(int targetPosition) {
+        int error = targetPosition - motorLeftSlides.getCurrentPosition();
+        double motorPower = error * Constants.SLIDE_MOTOR_KP;
+
+        // slides not yet at target position
+        if (Math.abs(error) > Constants.ROBOT_SLIDE_TOLERANCE_TICKS) {
+            // slides going down - joystick
+            if (error < 0 && error > Constants.MIN_SLIDE_ERROR_FULL_POWER) {
+                motorLeftSlides.setPower(-0.3);
+                motorRightSlides.setPower(-0.3);
+            // slides going down - bumpers
+            } else if (error < Constants.MIN_SLIDE_ERROR_FULL_POWER) {
+                motorLeftSlides.setPower(-1.0);
+                motorRightSlides.setPower(-1.0);
+            // slides going up - proportional control
+            } else {
+                motorLeftSlides.setPower(motorPower);
+                motorRightSlides.setPower(motorPower);
+            }
+        // slides at target position
         } else {
-            servoGrabber.setPosition(Constants.GRABBER_CLOSE_POSITION);
+            motorLeftSlides.setPower(Constants.SLIDE_FEEDFORWARD);
+            motorRightSlides.setPower(Constants.SLIDE_FEEDFORWARD);
         }
     }
 
     /**
-     * this method will allow the slides to move upwards, downwards, outwards, and inwards given a specified x target position and y target position
-     * @param yTargetPosition target position for vertical slides motors in ticks
+     * uses the grabber camera to guide the robot so it can center on the top of the junction
+     * @param pipeline the GrabberCameraPipeline being used by the grabber camera
      */
-    public void driveSlides(/*int xTargetPosition,*/ int yTargetPosition) {
+    public void centerJunctionTop(GrabberCameraPipeline pipeline) {
+        double xOffset, yOffset;
 
+        do {
+            xOffset = pipeline.xPosition - Constants.CAMERA_CENTER_X;
+            yOffset = Constants.CAMERA_CENTER_Y - pipeline.yPosition;
+
+            // center the cone on the junction top
+            if (pipeline.detected) {
+                driveWithIMU(Constants.JUNCTION_TOP_CENTERING_KP * Math.signum(xOffset), Constants.JUNCTION_TOP_CENTERING_KP * Math.signum(yOffset), 0.0);
+            } else {
+                break;
+            }
+
+        // while the cone isn't centered over the junction
+        } while (Math.abs(xOffset) > Constants.JUNCTION_TOP_TOLERANCE || Math.abs(yOffset) > Constants.JUNCTION_TOP_TOLERANCE);
+
+        stopDriveMotors();
     }
 
     /**
-     * this method will allow the turntable to turn clockwise or counterclockwise given a specified power and position
-     * @param power power of turntable motor
-     * @param position target position of turntable motor in ticks
+     * uses the robot camera to guide the robot so it can drive forward while centering on the stack
+     * @param pipeline the RobotCameraPipeline being used by the robot camera
      */
-    public void driveTurntable(double power, int position) {
-        motorTurntable.setPower(power);
-        motorTurntable.setTargetPosition(position);
+    public void centerConeStack(RobotCameraPipeline pipeline) {
+        double xOffset, width;
+
+        do {
+            xOffset = pipeline.xPosition - Constants.CAMERA_CENTER_X;
+            width = pipeline.width;
+
+            // drive forward while centering on the cone stack if contour exists
+            if (width == 0) {
+                break;
+            } else {
+                driveWithIMU(Constants.CONE_CENTERING_KP * Math.signum(xOffset), 0.2, Constants.CONE_CENTERING_KP * Math.signum(xOffset));
+            }
+
+        // while far enough that the cone stack doesn't fill the entire camera view
+        } while (width < Constants.CONE_WIDTH);
+
+        stopDriveMotors();
+    }
+
+    /**
+     * sets all drive motor powers to 0
+     */
+    public void stopDriveMotors() {
+        motorFL.setPower(0.0);
+        motorFR.setPower(0.0);
+        motorBL.setPower(0.0);
+        motorBR.setPower(0.0);
+    }
+
+    /**
+     * turns the LEDs green if it detects the top of a junction, otherwise they are rainbow colors
+     */
+    public void driveLEDs() {
+        if (blinkinChassis != null) {
+            if (grabberCameraPipeline.detected) {
+                blinkinChassis.setPattern(RevBlinkinLedDriver.BlinkinPattern.GREEN);
+            } else {
+                blinkinChassis.setPattern(RevBlinkinLedDriver.BlinkinPattern.CP1_2_COLOR_WAVES);
+            }
+        }
     }
 }
