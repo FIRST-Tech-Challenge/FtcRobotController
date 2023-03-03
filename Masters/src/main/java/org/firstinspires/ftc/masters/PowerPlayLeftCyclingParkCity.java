@@ -8,6 +8,7 @@ import static org.firstinspires.ftc.masters.BadgerConstants.SLIDE_HIGH_AUTO;
 import static org.firstinspires.ftc.masters.BadgerConstants.SLIDE_HIGH_BACK;
 import static org.firstinspires.ftc.masters.BadgerConstants.SLIDE_MIDDLE;
 import static org.firstinspires.ftc.masters.BadgerConstants.SLIDE_THROUGH;
+import static org.firstinspires.ftc.masters.BadgerConstants.STACK_OFFSET;
 
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
@@ -119,7 +120,7 @@ public class PowerPlayLeftCyclingParkCity extends LinearOpMode {
                // .lineTo(new Vector2d(xStack, yStack))
                 .build();
         cyclePickupPath2 = drive.trajectoryBuilder(cyclePickupPath1.end())
-                .lineTo(new Vector2d(xStack-8.5, yStack))
+                .lineTo(new Vector2d(xStack-9, yStack))
                 .build();
         ;
 
@@ -245,6 +246,7 @@ public class PowerPlayLeftCyclingParkCity extends LinearOpMode {
                     if (slidePosition>SLIDE_MIDDLE-30){
                         drive.followTrajectoryAsync(cycleScorePath1);
                         currentState= State.CYCLE_SCORE_PATH1;
+                        coneStack = coneStack-STACK_OFFSET;
 
                     }
                     break;
@@ -301,10 +303,19 @@ public class PowerPlayLeftCyclingParkCity extends LinearOpMode {
                     break;
                 case CYCLE_BACK_UP:
                     if (!drive.isBusy()){
-                       liftTarget =0;
-                       armTarget = coneStack;
-                        currentState = State.CYCLE_PICKUP_END;
-                        drive.turnAsync(Math.toRadians(48));
+                        time = new Date().getTime() - startTime;
+                        if (time> 20*1000) {
+
+                            liftTarget = 0;
+                            armTarget = coneStack;
+                            currentState = State.CYCLE_PICKUP_END;
+                            drive.turnAsync(Math.toRadians(48));
+                        } else {
+                            if (!drive.isBusy()) {
+                                currentState = State.CYCLE_PICKUP_TURN;
+                                drive.turnAsync(Math.toRadians(-45));
+                            }
+                        }
 
                     } else {
                         drive.closeClaw();
@@ -314,8 +325,8 @@ public class PowerPlayLeftCyclingParkCity extends LinearOpMode {
                 case CYCLE_PICKUP_END:
                     if (!drive.isBusy()){
 
-                        time = new Date().getTime() - startTime;
-                        if (time>18*1000){
+
+
 
                             if (slidePosition < 100) {
                                 armTarget = 0;
@@ -344,10 +355,7 @@ public class PowerPlayLeftCyclingParkCity extends LinearOpMode {
                                     break;
                             }
                             //time to go park
-                        } else {
-                            currentState = State.CYCLE_PICKUP_PATH1;
-                            drive.followTrajectoryAsync(cyclePickupPath1);
-                        }
+
                     }
                     break;
 
