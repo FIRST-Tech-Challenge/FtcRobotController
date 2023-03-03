@@ -1,13 +1,14 @@
 package org.firstinspires.ftc.teamcode;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;                //imports from FIRST
+import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.hardware.rev.Rev2mDistanceSensor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-@Disabled
+@TeleOp
 public class solidmascheentest extends OpMode {
 
     public enum LiftState {
@@ -68,6 +69,8 @@ public class solidmascheentest extends OpMode {
     }
 
         public void loop(){
+        telemetry.addData("asdf",liftState);
+        telemetry.update();
         Crain.setPower(1);
             double turn;
             double throttle;
@@ -84,14 +87,15 @@ public class solidmascheentest extends OpMode {
             boolean burst;
 
             throttle = gamepad1.left_stick_y;
-            turn = gamepad1.left_stick_x;
+            turn = gamepad1.right_stick_x;
             strafeLeft = gamepad1.left_bumper;
             strafeRight = gamepad1.right_bumper;
 
+
+
             crainpower = gamepad2.right_stick_y;
             spinpowerup = gamepad2.dpad_right;
-            spincenter = gamepad2.triangle;
-            opspincenter = gamepad2.square;
+
             spinpowerdown =gamepad2.dpad_left;
             pickup = gamepad2.left_trigger;
             dropoff = gamepad2.right_trigger;
@@ -180,25 +184,6 @@ public class solidmascheentest extends OpMode {
             if (!spinpowerdown && !spinpowerup ){
                 Spin.setPower(0);
             }
-
-            if (spincenter){
-                Spin.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-                Spin.setTargetPosition(-20);
-                Spin.setPower(1);
-                Spin.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                //sleep(1500);
-                Spin.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-            }
-
-            if (opspincenter){
-                Spin.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-                Spin.setTargetPosition(-589);
-                Spin.setPower(1);
-                Spin.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                //sleep(1500);
-                Spin.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-            }
-
             if (pickup>0) {
 
                 Left.setPower(-1);

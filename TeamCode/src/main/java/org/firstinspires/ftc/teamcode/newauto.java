@@ -214,6 +214,7 @@ public class newauto extends LinearOpMode {
             //strafeLeft(1,300);
             //move(.5,40);
             sleep(100);
+            strafeLeft(.4,250);
             //crane(1,200);//
             sleep(100);
             intake(-1, 1300);
@@ -221,7 +222,7 @@ public class newauto extends LinearOpMode {
 
             //move(.5,180);
             //strafeLeftwithdistanceandcrane(45,1,100);
-            strafeRightwithcrane(1, 300, 1, 620);
+            strafeRightwithcrane(1, 300, 1, 650);
             //gyroTurning(0);
                 /*code with foward
                 //move to stack
@@ -240,7 +241,7 @@ public class newauto extends LinearOpMode {
             sleep(100);
             gyroTurning(0);
             //move(.3,520);
-            movewithdistacne(-.3, .05);
+            movewithdistacne(-.3, 1);
             //pick up cone
             craneinput(600);
             crane(-1, 1000);
