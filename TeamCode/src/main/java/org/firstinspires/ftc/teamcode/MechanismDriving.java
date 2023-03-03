@@ -32,7 +32,7 @@ public class MechanismDriving {
     }};
     public static final double CLAW_CLOSED_POS = 0.83, CLAW_OPEN_POS = 0.63; //These are not final values
 
-    public static final double CLAW_LIMIT_SWITCH_SERVO_LOW = 0.5, CLAW_LIMIT_SWITCH_SERVO_HIGH = 0; //These are not final values
+    public static final double CLAW_LIMIT_SWITCH_SERVO_LOW = 1, CLAW_LIMIT_SWITCH_SERVO_HIGH = 0; //These are not final values
     public static final double SECONDARY_CLAW_CLOSED = 0.4, SECONDARY_CLAW_OPEN = -1.2; //These are not final values
     public static final double SECONDARY_CLAW_ROTATOR_HIGH = 0, SECONDARY_CLAW_ROTATOR_LOW = 0.7; //These are not final values
 
