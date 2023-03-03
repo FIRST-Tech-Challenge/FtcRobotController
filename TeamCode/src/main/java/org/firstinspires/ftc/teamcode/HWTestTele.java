@@ -38,10 +38,10 @@ public class HWTestTele  extends LinearOpMode {
                 telemetry.addLine().addData("[moving y >]  ", " Y ");
                 telemetry.update();
 
-                hdw.moveYAxis(1.0, 1);
+                hdw.moveYAxis(5.0, 1);
             }
             if (gamepad1.dpad_down) {
-                hdw.moveYAxis (-1.0, -1);
+                hdw.moveYAxis (-5.0, -1);
             }
 
             if (gamepad1.a) {

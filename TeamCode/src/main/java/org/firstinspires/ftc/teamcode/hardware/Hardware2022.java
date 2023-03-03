@@ -31,7 +31,7 @@ public class Hardware2022 {
     @Deprecated
     private final double CLAW_OPEN = 0.3 ;
 
-    private final double xAxisCoeff = 160 ;  // How many degrees encoder to turn to run an inch in X Axis
+    private final double xAxisCoeff = 86.5 ;  // How many degrees encoder to turn to run an inch in X Axis
     private final double yAxisCoeff = 22.8 ;  // How many degrees encoder to turn to run an inch in Y Axis
 
     //Encoder value of VSlide height in Cone mode,
@@ -145,7 +145,7 @@ public class Hardware2022 {
         wheelBackLeft = hwMap.get(DcMotorEx.class, "lrWheel");
         vSlide = hwMap.get(DcMotorEx.class, "Vertical");
         xEncoder = hwMap.get(DcMotorEx.class, "xEncoder");
-        yEncoder = hwMap.get(DcMotorEx.class, "yEncoder1");
+        yEncoder = hwMap.get(DcMotorEx.class, "yEncoder");
 
 
         wheelFrontLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -208,67 +208,6 @@ public class Hardware2022 {
         wheelFrontRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         wheelBackRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
-        wheelFrontLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        wheelBackLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        wheelFrontRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        wheelBackRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-
-        wheelFrontLeft.setTargetPosition( distance  );
-        wheelBackLeft.setTargetPosition( distance  );
-        wheelFrontRight.setTargetPosition( distance  );
-        wheelBackRight.setTargetPosition( distance  );
-
-        telemetry.addLine().addData("[Y Position, after setTarget >]  ", getYAxisPosition());
-        telemetry.update();
-
-        while ( wheelFrontLeft.isBusy()) {
-            telemetry.addLine().addData("[Y Position , in the while >]  ", getYAxisPosition());
-            telemetry.addLine().addData("[Y target Position , in the while >]  ", wheelFrontLeft.getTargetPosition());
-            telemetry.update();
-
-            wheelFrontRight.setVelocity(power * Hardware2022.ANGULAR_RATE);
-            wheelFrontLeft.setVelocity(power * Hardware2022.ANGULAR_RATE);
-            wheelBackRight.setVelocity(power * Hardware2022.ANGULAR_RATE);
-            wheelBackLeft.setVelocity(power * Hardware2022.ANGULAR_RATE);
-
-        }
-
-        wheelFrontRight.setVelocity(0);
-        wheelFrontLeft.setVelocity(0);
-        wheelBackRight.setVelocity(0);
-        wheelBackLeft.setVelocity(0);
-
-
-        //Put motor back into run with encoder mode.
-        wheelFrontLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        wheelBackLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        wheelFrontRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        wheelBackRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-
-
-    }
-
-    /**
-     *
-     * @param distance  Distance in inches .  Always positive
-     * @param power Positive value move forward
-     */
-    public void moveYAxis(double distance, double power ) {
-        moveYAxisDegree( -(int) Math.round( (float) distance * this.yAxisCoeff ),  -power ) ;
-    }
-
-    /**
-     * This operation move robot lef/right according to the input
-     * @param distance  Distance in encoder degree , 360 for a full circle.  Positive for right.
-     * @param power Not used, calculated by PID controller. Kept for backward compatiability
-     *
-     */
-    private void moveXAxisDegree(int distance, double power ) {
-        wheelFrontLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        wheelBackLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        wheelFrontRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        wheelBackRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-
         //Put motor back into run with encoder mode.
         wheelFrontLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         wheelBackLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -276,7 +215,7 @@ public class Hardware2022 {
         wheelBackRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         //Get current orientation.  Angle is between -180 to 180
-        int currentPosition = xEncoder.getCurrentPosition();
+        int currentPosition = yEncoder.getCurrentPosition();
         int targetPosition = currentPosition + distance;
 
         double startHeading = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES);
@@ -312,7 +251,7 @@ public class Hardware2022 {
         double rx;
 
         while ( !lnPidfCrtler.atSetPoint()  ) {
-            currentPosition = xEncoder.getCurrentPosition();
+            currentPosition = yEncoder.getCurrentPosition();
             //Calculate new distance
             difference = currentPosition - targetPosition;
             double velocityCaculated = lnPidfCrtler.calculate(difference)*6;
@@ -326,10 +265,123 @@ public class Hardware2022 {
             Log.d("9010", "Turn Error: " + turnError );
             Log.d("9010", "Calculated rx:  " + rx );
 
-            wheelFrontLeft.setVelocity(-velocityCaculated + rx );
+            wheelFrontLeft.setVelocity(velocityCaculated + rx );
             wheelBackLeft.setVelocity(velocityCaculated + rx);
             wheelFrontRight.setVelocity(velocityCaculated - rx);
-            wheelBackRight.setVelocity(-velocityCaculated - rx);
+            wheelBackRight.setVelocity(velocityCaculated - rx);
+        }
+
+
+        //wheelFrontRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        //wheelFrontLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        //wheelBackRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        //wheelBackLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        wheelFrontRight.setVelocity(0);
+        wheelFrontLeft.setVelocity(0);
+        wheelBackRight.setVelocity(0);
+        wheelBackLeft.setVelocity(0);
+    }
+
+    /**
+     *
+     * @param distance  Distance in inches .  Always positive
+     * @param power Positive value move forward
+     */
+    public void moveYAxis(double distance, double power ) {
+        moveYAxisDegree( -(int) Math.round( (float) distance * this.yAxisCoeff ),  -power ) ;
+    }
+
+    /**
+     * This operation move robot lef/right according to the input
+     * @param distance  Distance in encoder degree , 360 for a full circle.  Positive for right.
+     * @param power Not used, calculated by PID controller. Kept for backward compatiability
+     *
+     */
+    private void moveXAxisDegree(int distance, double power ) {
+        wheelFrontLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        wheelBackLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        wheelFrontRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        wheelBackRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
+        //Put motor back into run with encoder mode.
+        wheelFrontLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        wheelBackLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        wheelFrontRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        wheelBackRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+        int currenYPosition = yEncoder.getCurrentPosition();
+        Log.d("9010", "current Y Position " + currenYPosition);
+
+        //Get current orientation.  Angle is between -180 to 180
+        int currentPosition = xEncoder.getCurrentPosition();
+        int targetPosition = currentPosition + distance;
+
+        double startHeading = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES);
+        Log.d("9010", "Start Heading " + startHeading);
+
+        Log.d("9010", "Start Position: " + currentPosition );
+        Log.d("9010", "End Position: " + targetPosition );
+
+
+        int difference = distance;
+        Log.d("9010", "Difference: " + difference );
+
+
+
+        PIDFController lnPidfCrtler  = new PIDFController(lnKP, lnKI, lnKD, lnKF);
+        Log.d("9010", "lnKp: " + lnKP + "  lnKI: " + lnKI + " lnKD: " + lnKD);
+        PIDFController lnYPidfCrtler  = new PIDFController(lnKP, lnKI, lnKD, lnKF);
+        Log.d("9010", "lnYKp: " + lnKP + "  lnYKI: " + lnKI + " lnYKD: " + lnKD);
+        PIDFController turnPidfCrtler  = new PIDFController(turnKP, turnKI, turnKD, turnKF);
+        Log.d("9010", "turnKp: " + turnKP + "  lnKI: " + turnKI + " turnKD: " + turnKD);
+
+
+        lnPidfCrtler.setSetPoint(0);
+        //Set tolerance as 0.5 degrees
+        lnPidfCrtler.setTolerance(10);
+        //set Integration between -0.5 to 0.5 to avoid saturating PID output.
+        lnPidfCrtler.setIntegrationBounds(-0.5 , 0.5 );
+
+        lnYPidfCrtler.setSetPoint(0);
+        //Set tolerance as 0.5 degrees
+        lnYPidfCrtler.setTolerance(10);
+        //set Integration between -0.5 to 0.5 to avoid saturating PID output.
+        lnYPidfCrtler.setIntegrationBounds(-0.5 , 0.5 );
+
+        turnPidfCrtler.setSetPoint(0);
+        //Set tolerance as 0.5 degrees
+        turnPidfCrtler.setTolerance(0.5);
+        //set Integration between -0.5 to 0.5 to avoid saturating PID output.
+        turnPidfCrtler.setIntegrationBounds(-0.5 , 0.5 );
+
+        Log.d("9010", "Before entering Loop ");
+        double rx;
+        double yVelocity;
+
+        while ( !lnPidfCrtler.atSetPoint()  ) {
+            currentPosition = xEncoder.getCurrentPosition();
+            //Calculate new distance
+            difference = currentPosition - targetPosition;
+            double velocityCaculated = lnPidfCrtler.calculate(difference)*4;
+
+            Log.d("9010", "=====================");
+            Log.d("9010", "Difference: " + difference);
+            Log.d("9010", "Current Position: " + currentPosition );
+            Log.d("9010", "Calculated Velocity:  " + velocityCaculated );
+            double turnError = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES)- startHeading;
+            rx = turnPidfCrtler.calculate(turnError)*200;
+            Log.d("9010", "Turn Error: " + turnError );
+            Log.d("9010", "Calculated rx:  " + rx );
+
+            double yError = yEncoder.getCurrentPosition() - currenYPosition;
+            Log.d("9010", "Y Error " + yError);
+            yError = lnYPidfCrtler.calculate(turnError)*3;
+
+
+            wheelFrontLeft.setVelocity(-velocityCaculated + rx + yError);
+            wheelBackLeft.setVelocity(velocityCaculated + rx+ yError);
+            wheelFrontRight.setVelocity(velocityCaculated - rx+ yError);
+            wheelBackRight.setVelocity(-velocityCaculated - rx+ yError);
         }
 
 
