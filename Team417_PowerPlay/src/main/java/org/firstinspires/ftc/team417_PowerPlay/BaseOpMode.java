@@ -16,14 +16,14 @@ abstract public class BaseOpMode extends LinearOpMode {
 
     SampleMecanumDrive drive;
     public static final double GRABBER_OPEN = 0.70;
-    public static final double GRABBER_CLOSED = 0.3;
+    public static final double GRABBER_CLOSED = 0.4;
     public static final double GRABBER_HALF_CLOSED = 0.6;
 
     public static final int MAX_ARM_POSITION = 1700;
     public static final int GROUND_JUNCT_ARM_POSITION = 300;
     public static final int LOW_JUNCT_ARM_POSITION = 800;
     public static final int MID_JUNCT_ARM_POSITION = 1250;
-    public static final int HIGH_JUNCT_ARM_POSITION = 1650;
+    public static final int HIGH_JUNCT_ARM_POSITION = 1550;
     public static final int MIN_ARM_POSITION = 0;
     public static final int ARM_ENCODER_TOLERANCE = 10;
 
