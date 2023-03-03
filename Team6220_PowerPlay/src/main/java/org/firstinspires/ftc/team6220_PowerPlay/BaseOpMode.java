@@ -120,8 +120,7 @@ public abstract class BaseOpMode extends LinearOpMode {
         startAngle = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle;
         originalAngle = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle;
 
-        int robotCameraStream = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
-        robotCamera = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "RobotCamera"),robotCameraStream);
+        robotCamera = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "RobotCamera"));
         grabberCamera = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "GrabberCamera"));
 
         aprilTagDetectionPipeline = new AprilTagDetectionPipeline();
@@ -215,24 +214,6 @@ public abstract class BaseOpMode extends LinearOpMode {
     }
 
     /**
-     *dont care lol
-     */
-    public double pixelsToMotorPower(double pixels) {
-        //return -((0.1 * pixels) / (Math.abs(0.25 * pixels)+15));
-        return -0.0003 * pixels;
-    }
-
-    /**
-     * magic numbers, dont vare
-     * @param width, width of the detected stack
-     * @return
-     */
-    public double widthToMotorPower(double width) {
-        //return 0.67*(1-(407/(Math.abs(width-650)+407)));
-        return -0.001 * width + 0.6;
-    }
-
-    /**
      * uses the grabber camera to guide the robot so it can center on the top of the junction
      * @param pipeline the GrabberCameraPipeline being used by the grabber camera
      */
@@ -245,9 +226,9 @@ public abstract class BaseOpMode extends LinearOpMode {
 
             // center the cone on the junction top
             if (pipeline.detected) {
-                driveWithIMU(pixelsToMotorPower(xOffset), pixelsToMotorPower(yOffset), 0.0);
-                telemetry.addData("xMotorPower", pixelsToMotorPower(xOffset));
-                telemetry.addData("yMotorPower", pixelsToMotorPower(yOffset));
+                driveWithIMU(junctionTopPixelsMotorPower(xOffset), junctionTopPixelsMotorPower(yOffset), 0.0);
+                telemetry.addData("xMotorPower", junctionTopPixelsMotorPower(xOffset));
+                telemetry.addData("yMotorPower", junctionTopPixelsMotorPower(yOffset));
                 telemetry.update();
             } else {
                 break;
@@ -255,6 +236,7 @@ public abstract class BaseOpMode extends LinearOpMode {
 
         // while the cone isn't centered over the junction
         } while (Math.abs(xOffset) > Constants.JUNCTION_TOP_TOLERANCE || Math.abs(yOffset) > Constants.JUNCTION_TOP_TOLERANCE);
+
         stopDriveMotors();
     }
 
@@ -273,9 +255,9 @@ public abstract class BaseOpMode extends LinearOpMode {
             if (width == 0) {
                 break;
             } else {
-                driveWithIMU(pixelsToMotorPower(xOffset), widthToMotorPower(width), -pixelsToMotorPower(xOffset)*Constants.CONE_CENTERING_TURN_KP);
-                telemetry.addData("xMotorPower", pixelsToMotorPower(xOffset));
-                telemetry.addData("yMotorPower", widthToMotorPower(width));
+                driveWithIMU(coneStackPixelsMotorPower(xOffset), coneStackWidthMotorPower(width), 0.0);
+                telemetry.addData("xMotorPower", coneStackPixelsMotorPower(xOffset));
+                telemetry.addData("yMotorPower", coneStackWidthMotorPower(width));
                 telemetry.update();
             }
 
@@ -283,6 +265,33 @@ public abstract class BaseOpMode extends LinearOpMode {
         } while (width < Constants.CONE_WIDTH);
 
         stopDriveMotors();
+    }
+
+    /**
+     * calculates the motor power for the robot drivetrain based on the pixel offset from the junction top
+     * @param pixelOffset how far junction top is from center of camera field of view in pixels
+     * @return motor power for robot drivetrain
+     */
+    public double junctionTopPixelsMotorPower(double pixelOffset) {
+        return Constants.JUNCTION_TOP_CENTERING_KP * pixelOffset;
+    }
+
+    /**
+     * calculates the motor power for the robot drivetrain based on the width of the bounding box of the cone stack
+     * @param coneStackWidth how wide the cone stack bounding box is in pixels
+     * @return motor power for robot drivetrain
+     */
+    public double coneStackWidthMotorPower(double coneStackWidth) {
+        return Constants.CONE_STACK_WIDTH_KP * coneStackWidth + Constants.CONE_STACK_CENTERING_MAX_SPEED;
+    }
+
+    /**
+     * calculates the motor power for the robot drivetrain based on the pixel offset from the cone stack
+     * @param pixelOffset how far cone stack is horizontally from center of camera field of view in pixels
+     * @return motor power for robot drivetrain
+     */
+    public double coneStackPixelsMotorPower(double pixelOffset) {
+        return Constants.CONE_STACK_CENTERING_KP * pixelOffset;
     }
 
     /**

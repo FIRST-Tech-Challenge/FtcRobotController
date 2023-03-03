@@ -14,9 +14,7 @@ import java.util.List;
 
 public class RobotCameraPipeline extends OpenCvPipeline {
     public double xPosition = Constants.CAMERA_CENTER_X;
-    public double yPosition = Constants.CAMERA_CENTER_Y;
     public double width = 0.0;
-    public double height = 0.0;
     public boolean invert = false;
 
     List<MatOfPoint> contours = new ArrayList<>();
@@ -83,15 +81,11 @@ public class RobotCameraPipeline extends OpenCvPipeline {
 
             if (moments.get_m00() > 0) {
                 xPosition = boundingRect.x + (boundingRect.width * 0.5);
-                yPosition = boundingRect.y + (boundingRect.height * 0.5);
                 width = boundingRect.width;
-                height = boundingRect.height;
             }
         } else {
             width = 0.0;
-            height = 0.0;
             xPosition = Constants.CAMERA_CENTER_X;
-            yPosition = Constants.CAMERA_CENTER_Y;
         }
 
         contours.clear();
