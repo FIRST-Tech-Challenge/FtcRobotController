@@ -85,7 +85,7 @@ public class AutoLeftCycle extends LinearOpMode {
                         break;
 
                     case cycleCones:
-                        robot.CycleCone(true);
+                        robot.CycleConeToMedium(true, true);
                         Step = AutoSteps.parkFromMedium;
                         break;
 

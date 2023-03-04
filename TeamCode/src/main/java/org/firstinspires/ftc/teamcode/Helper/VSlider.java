@@ -14,6 +14,10 @@ public class VSlider {
 
     int timeout_ms;
 
+    public int PositionForMedium = 4000;
+    public int PositionForShort = 2000;
+    public int PositionLowered = 0;
+
 
     /* local OpMode members. */
     //Init hardware map
