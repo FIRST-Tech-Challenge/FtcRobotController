@@ -332,14 +332,14 @@ public class UnderArm implements Subsystem {
 //        calculatedShoulderAngle = Math.toDegrees(Math.atan2( calculatedDistance , calculatedHeight ) + (90 - calculatedElbowAngle/2));
 
         //todo: hope and pray that this works
-        calculatedShoulderAngle = Math.toDegrees(Math.acos(
+        calculatedShoulderAngle = 90 - (Math.toDegrees(Math.acos(
                 (Math.pow(UPPER_ARM_LENGTH, 2) + Math.pow(calculatedDistance, 2) + Math.pow(calculatedHeight, 2) - Math.pow(LOWER_ARM_LENGTH, 2))
                                         / (2 * UPPER_ARM_LENGTH * hypotToTarget))
-                                        + Math.acos(calculatedDistance / hypotToTarget));
+                                        + Math.acos(calculatedDistance / hypotToTarget)));
 
-        calculatedElbowAngle = Math.toDegrees(Math.acos(
+        calculatedElbowAngle = 90 - (Math.toDegrees(Math.acos(
                                 (Math.pow(UPPER_ARM_LENGTH, 2) + Math.pow(LOWER_ARM_LENGTH, 2) - Math.pow(calculatedDistance, 2) - Math.pow(calculatedHeight , 2))
-                                                            / (2 * UPPER_ARM_LENGTH * LOWER_ARM_LENGTH)));
+                                                            / (2 * UPPER_ARM_LENGTH * LOWER_ARM_LENGTH))));
 
         return true;
     }
