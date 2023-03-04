@@ -26,7 +26,7 @@ public class mesureOpMode extends OpMode {
     public void loop() {
         robotManager.mechanismDriving.setSlidePosition(robotManager.robot,slidePos);
         robotManager.mechanismDriving.updateSlides(robotManager, robotManager.robot, 1, false);
-        robotManager.mechanismDriving.setSecondarySlidePosition(robotManager.robot,slidePos);
+        robotManager.mechanismDriving.setSecondarySlidePosition(robotManager.robot,secondarySlidePos);
         robotManager.mechanismDriving.updateSecondarySlides(robotManager.robot, 1);
         if(gamepad2.a){
             slidePos+=10;

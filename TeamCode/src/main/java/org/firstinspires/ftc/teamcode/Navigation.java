@@ -60,6 +60,8 @@ public class Navigation {
     // ================
     static final double MOVEMENT_MAX_POWER = 1;
     static final double ROTATION_POWER = 0.5;
+    static final double REDUCED_ROTATION_POWER = 0.2;
+
     static final double SLOW_MOVEMENT_SCALE_FACTOR = 0.3;
     static final double MEDIUM_MOVEMENT_SCALE_FACTOR = 0.6;
 
@@ -206,16 +208,24 @@ public class Navigation {
 
     /** Changes drivetrain motor inputs based off the controller inputs.
      */
-    public void maneuver(AnalogValues analogValues, Robot robot) {
+    public void maneuver(GamepadWrapper gamepads, AnalogValues analogValues, Robot robot) {
         // Uses left stick to go forward, and right stick to turn.
         // NOTE: right-side drivetrain motor inputs don't have to be negated because their directions will be reversed
         //       upon initialization.
 
-        double turn = -analogValues.gamepad1RightStickX;
+        double turn = analogValues.gamepad1RightStickX;
+        double rotation_power = ROTATION_POWER;
         if (Math.abs(turn) < RobotManager.JOYSTICK_DEAD_ZONE_SIZE) {
             turn = 0;
         }
-
+        if (gamepads.getButtonState(GamepadWrapper.DriverAction.REDUCED_CLOCKWISE)) {
+            rotation_power = REDUCED_ROTATION_POWER;
+            turn = -1;
+        }
+        if (gamepads.getButtonState(GamepadWrapper.DriverAction.REDUCED_COUNTER_CLOCKWISE)) {
+            rotation_power = REDUCED_ROTATION_POWER;
+            turn = 1;
+        }
         double moveDirection = Math.atan2(analogValues.gamepad1LeftStickY, analogValues.gamepad1LeftStickX);
         if (Math.abs(moveDirection) < Math.PI / 12) {
             moveDirection = Math.PI;
@@ -229,11 +239,14 @@ public class Navigation {
         else if (Math.abs(moveDirection + Math.PI / 2) < Math.PI / 12) {
             moveDirection = Math.PI / 2;
         }
+        else {
+            moveDirection = -moveDirection;
+        }
 
         // Field-centric navigation
 //        moveDirection -= robot.positionManager.position.getRotation();
 
-        setDriveMotorPowers(moveDirection, strafePower, turn * ROTATION_POWER, robot, false);
+        setDriveMotorPowers(moveDirection, strafePower, turn * rotation_power, robot, false);
     }
 
     /** Rotates the robot a number of degrees.

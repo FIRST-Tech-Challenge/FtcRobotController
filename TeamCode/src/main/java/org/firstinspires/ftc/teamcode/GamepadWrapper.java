@@ -8,7 +8,7 @@ import com.qualcomm.robotcore.hardware.Gamepad;
 public class GamepadWrapper {
     public enum DriverAction {SET_SLIDES_RETRACTED, SET_SLIDES_LOW, SET_SLIDES_MEDIUM, SET_SLIDES_HIGH,
         TOGGLE_WHEEL_SPEED_ADJUSTMENT, MOVE_STRAIGHT_FORWARD, MOVE_STRAIGHT_BACKWARD, MOVE_STRAIGHT_LEFT,
-        MOVE_STRAIGHT_RIGHT, TURN_COUNTER_CLOCKWISE, TURN_CLOCKWISE, POSITION_CLAW_FRONT, POSITION_CLAW_SIDE,
+        MOVE_STRAIGHT_RIGHT, REDUCED_CLOCKWISE, REDUCED_COUNTER_CLOCKWISE, POSITION_CLAW_FRONT, POSITION_CLAW_SIDE,
         POSITION_CLAW_REAR, CLAW_OPEN, CLAW_CLOSE, SECONDARY_CLAW_OPEN, SECONDARY_CLAW_CLOSE,
         POSITION_SECONDARY_CLAW_UP, POSITION_SECONDARY_CLAW_DOWN, SET_SECONDARY_SLIDES_EXTENDED, SET_SECONDARY_SLIDES_RETRACTED,
         RUN_SECONDARY_SYSTEM, STOP_SECONDARY_SYSTEM
@@ -53,7 +53,12 @@ public class GamepadWrapper {
                 return gamepad1.dpad_left;
             case MOVE_STRAIGHT_RIGHT:
                 return gamepad1.dpad_right;
-
+            case STOP_SECONDARY_SYSTEM:
+                return gamepad1.right_bumper;
+            case REDUCED_CLOCKWISE:
+                return gamepad1.x;
+            case REDUCED_COUNTER_CLOCKWISE:
+                return gamepad1.b;
 
             // Gamepad 2 Controls
             case SET_SLIDES_RETRACTED:
@@ -88,8 +93,6 @@ public class GamepadWrapper {
 //                 return gamepad2.right_trigger > 0.5;
              case RUN_SECONDARY_SYSTEM:
                 return gamepad2.left_trigger > 0.5;
-             case STOP_SECONDARY_SYSTEM:
-                return gamepad2.right_trigger > 0.5;
         }
         assert false;
         return false;

@@ -19,7 +19,7 @@ public class MechanismDriving {
        put(Robot.SlidesState.RETRACTED, 0);
        put(Robot.SlidesState.LOW, 1170);
        put(Robot.SlidesState.MEDIUM, 1996);
-       put(Robot.SlidesState.HIGH, 2670);
+       put(Robot.SlidesState.HIGH, 2680);
        put(Robot.SlidesState.UNREADY, 0);
 
        put(Robot.SlidesState.FIRST_STACK_CONE, 500);
@@ -28,8 +28,8 @@ public class MechanismDriving {
     public static Map<Robot.SecondarySlidesState, Integer> secondarySlidePositions = new HashMap<Robot.SecondarySlidesState, Integer>() {{
        put(Robot.SecondarySlidesState.RETRACTED, 0);
         put(Robot.SecondarySlidesState.PLACE_CONE, -440);
-        put(Robot.SecondarySlidesState.EXTENDED, -2690); // TODO: empirically measure this value
-        put(Robot.SecondarySlidesState.SWEEP_EXTENDED, -1800); // TODO: empirically measure this value
+        put(Robot.SecondarySlidesState.EXTENDED, -2670); // TODO: empirically measure this value
+        put(Robot.SecondarySlidesState.SWEEP_EXTENDED, -2100); // TODO: empirically measure this value
     }};
     public static final double CLAW_CLOSED_POS = 0.83, CLAW_OPEN_POS = 0.63; //These are not final values
 
@@ -45,7 +45,7 @@ public class MechanismDriving {
 
 
     //SPEED INFO: Scale from 0-1 in speed.
-    public static final double CLAW_ROTATOR_FRONT_POS = 0, CLAW_ROTATOR_REAR_POS = 0.8, CLAW_ROTATOR_SIDE_POS = 0.4;
+    public static final double CLAW_ROTATOR_FRONT_POS = 0, CLAW_ROTATOR_REAR_POS = 0.82, CLAW_ROTATOR_SIDE_POS = 0.41;
     // How long it takes for the horseshoe wheels to be guaranteed to have pushed the cone into the horseshoe.
     public static final long HORSESHOE_TIME = 500;
     public static final int EPSILON = 150;  // slide encoder position tolerance;
