@@ -337,7 +337,7 @@ public class UnderArm implements Subsystem {
                                         / (2 * UPPER_ARM_LENGTH * hypotToTarget))
                                         + Math.acos(calculatedDistance / hypotToTarget)));
 
-        calculatedElbowAngle = 90 - (Math.toDegrees(Math.acos(
+        calculatedElbowAngle = (Math.toDegrees(Math.acos(
                                 (Math.pow(UPPER_ARM_LENGTH, 2) + Math.pow(LOWER_ARM_LENGTH, 2) - Math.pow(calculatedDistance, 2) - Math.pow(calculatedHeight , 2))
                                                             / (2 * UPPER_ARM_LENGTH * LOWER_ARM_LENGTH))));
 
