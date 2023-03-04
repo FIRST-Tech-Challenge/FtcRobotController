@@ -43,8 +43,8 @@ public class Project1 extends LinearOpMode
         robot.arm.setTargetPosition(80);
         robot.arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         robot.imu.resetYaw();
-        drivetrain.MDrive(0,0,0,0);
-        double target = 100;
+        drivetrain.remote(0,0,0,0);
+        int target = 100;
 
         robot.horz.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         robot.vert.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -65,7 +65,7 @@ public class Project1 extends LinearOpMode
             horizontal = -gamepad1.left_stick_x;
             pivot    =  gamepad1.right_stick_x;
             heading = robot.imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS);
-            drivetrain.MDrive(vertical, horizontal, pivot, heading);
+            drivetrain.remote(vertical, horizontal, pivot, heading);
             if (gamepad1.left_stick_button && gamepad1.right_stick_button) robot.imu.resetYaw();
 
             //if (gamepad1.a) robot.clawAnglePosition += -0.001;
@@ -135,7 +135,9 @@ public class Project1 extends LinearOpMode
             }
 
             ManualControl.control("BUCKET", robot, telemetry, gamepad1);
+            Lift.lift(robot, gamepad1, telemetry);
 
+            /*
             if (gamepad1.dpad_up){
                 robot.vert.setTargetPosition(3000);
                 robot.vert.setMode(DcMotor.RunMode.RUN_TO_POSITION);
@@ -147,16 +149,18 @@ public class Project1 extends LinearOpMode
                 robot.vert.setTargetPosition(vertpos-1);
                 robot.vert.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 robot.vert.setPower(-0.3);
-            }
+            }*/
 
             if (gamepad1.left_bumper){
                 robot.arm.setTargetPosition(0);
             }
 
+
+            /*
             while (gamepad1.dpad_up || gamepad1.dpad_down){
                 if (gamepad1.dpad_up) pidfNew.p = pidfNew.p + 0.1;
                 else if (gamepad1.dpad_down) pidfNew.p = pidfNew.p - 0.1;
-            }
+            }*/
 
             // rev PID with setVelocity() and custom PIDF coefficients
             /*
@@ -166,6 +170,8 @@ public class Project1 extends LinearOpMode
                 robot.arm.setPower(0.5);
             }
             */
+
+            robot.vert.setPower(1);
         }
     }
 }
