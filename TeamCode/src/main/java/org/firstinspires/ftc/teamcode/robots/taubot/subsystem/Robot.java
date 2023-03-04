@@ -440,6 +440,20 @@ public class Robot implements Subsystem {
             articulate(Articulation.MANUAL);
     }
 
+    public boolean checkCollision(double calcShoulder, double calcTurret){
+        if(Math.abs(calcTurret - Math.toDegrees(driveTrain.getRawHeading())) < 20) {
+            double maxHeight = Math.max(UnderArm.UPPER_ARM_LENGTH * Math.sin(Math.toRadians(underarm.getCalculatedShoulderAngle())), underarm.getCalculatedHeight()) - (Crane.shoulderHeight*Constants.INCHES_PER_METER - UnderArm.shoulderHeight);
+            double x = (maxHeight / Math.tan(Math.toRadians(calcShoulder))) - driveTrain.getChassisLength() - Turret.turretOffset;
+
+            if (x > 0) {
+                return true;
+            }
+
+        }
+
+        return false;
+    }
+
     int unfoldStage = 0;
     long unfoldTimer = 0;
 
