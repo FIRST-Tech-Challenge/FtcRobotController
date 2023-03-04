@@ -27,8 +27,10 @@ public class MechanismDriving {
     }};
     public static Map<Robot.SecondarySlidesState, Integer> secondarySlidePositions = new HashMap<Robot.SecondarySlidesState, Integer>() {{
        put(Robot.SecondarySlidesState.RETRACTED, 0);
-        put(Robot.SecondarySlidesState.PLACE_CONE, 80);
-        put(Robot.SecondarySlidesState.EXTENDED, 1080); // TODO: empirically measure this value
+        put(Robot.SecondarySlidesState.PLACE_CONE, -430);
+        put(Robot.SecondarySlidesState.EXTENDED, -2690); // TODO: empirically measure this value
+        put(Robot.SecondarySlidesState.SWEEP_EXTENDED, -1800); // TODO: empirically measure this value
+
     }};
     public static final double CLAW_CLOSED_POS = 0.83, CLAW_OPEN_POS = 0.63; //These are not final values
 
@@ -177,25 +179,27 @@ public class MechanismDriving {
      *
      * @return whether the slides are in the desired position.
      */
-    public boolean updateSlides(RobotManager robotManager, Robot robot, double slidesPower) {
+    public boolean updateSlides(RobotManager robotManager, Robot robot, double slidesPower, boolean changeClawLimit) {
 
        if (Robot.desiredSlidesState != Robot.SlidesState.UNREADY) {
            if(!testing)
                setSlidePosition(robot, getTargetSlidesEncoderCount(robot));
-
-           // Move the claw limit switch servo
            robot.telemetry.addData("desired slides state", robot.desiredSlidesState);
-           if (Robot.desiredSlidesState == Robot.SlidesState.HIGH || Robot.desiredSlidesState == Robot.SlidesState.MEDIUM) {
-               robot.desiredClawLimitSwitchServoState = Robot.ClawLimitSwitchServoState.LOW;
-               updateClawLimitSwitchServo(robot);
-               robot.telemetry.addData("CLAW LIMIT SWITCH SET TO LOW", robot.desiredClawLimitSwitchServoState);
-           }
-           if (Robot.desiredSlidesState == Robot.SlidesState.RETRACTED || Robot.desiredSlidesState == Robot.SlidesState.LOW) {
-               robot.desiredClawLimitSwitchServoState = Robot.ClawLimitSwitchServoState.HIGH;
-               updateClawLimitSwitchServo(robot);
-               robot.telemetry.addData("CLAW LIMIT SWITCH SET TO HIGH", robot.desiredClawLimitSwitchServoState);
-           }
-//           robot.telemetry.update();
+            if (changeClawLimit) {
+                // Move the claw limit switch servo
+                if (Robot.desiredSlidesState == Robot.SlidesState.HIGH || Robot.desiredSlidesState == Robot.SlidesState.MEDIUM) {
+                    robot.desiredClawLimitSwitchServoState = Robot.ClawLimitSwitchServoState.LOW;
+                    updateClawLimitSwitchServo(robot);
+                    robot.telemetry.addData("CLAW LIMIT SWITCH SET TO LOW", robot.desiredClawLimitSwitchServoState);
+                }
+                if (Robot.desiredSlidesState == Robot.SlidesState.RETRACTED || Robot.desiredSlidesState == Robot.SlidesState.LOW) {
+                    robot.desiredClawLimitSwitchServoState = Robot.ClawLimitSwitchServoState.HIGH;
+                    updateClawLimitSwitchServo(robot);
+                    robot.telemetry.addData("CLAW LIMIT SWITCH SET TO HIGH", robot.desiredClawLimitSwitchServoState);
+                }
+            }
+
+           robot.telemetry.update();
 
            robot.telemetry.addData("slide 1 current pos: ", robot.slidesMotor1.getCurrentPosition());
            robot.telemetry.addData("slide 2 current pos: ", robot.slidesMotor2.getCurrentPosition());
@@ -205,7 +209,7 @@ public class MechanismDriving {
            int avgSlideDiff = (slideDiff1 + slideDiff2) / 2;
 
            robot.telemetry.addData("current pos: ", getAverageSlidePosition(robot));
-           robot.telemetry.update();
+//           robot.telemetry.update();
 //           robotManager.readSlidesLimitSwitch();
            // Stop motors if we have reached the desired position
            if (Math.abs(avgSlideDiff) < EPSILON) {
@@ -238,30 +242,34 @@ public class MechanismDriving {
     /** Sets motor power for secondary slides motor
      */
     public boolean updateSecondarySlides(Robot robot, double slidesPower) {
-        if (robot.desiredSecondarySlidePosition == Robot.SecondarySlidesState.EXTENDED) {
-            setSecondarySlidePosition(robot, secondarySlidePositions.get(Robot.SecondarySlidesState.EXTENDED));
-        }
-        if (robot.desiredSecondarySlidePosition == Robot.SecondarySlidesState.PLACE_CONE) {
-            setSecondarySlidePosition(robot, secondarySlidePositions.get(Robot.SecondarySlidesState.PLACE_CONE));
-        }
-        if (robot.desiredSecondarySlidePosition == Robot.SecondarySlidesState.RETRACTED) {
-            setSecondarySlidePosition(robot, secondarySlidePositions.get(Robot.SecondarySlidesState.RETRACTED));
-        }
+        if (!testing) {
+            if (robot.desiredSecondarySlidePosition == Robot.SecondarySlidesState.EXTENDED) {
+                setSecondarySlidePosition(robot, secondarySlidePositions.get(Robot.SecondarySlidesState.EXTENDED));
+            }
+            if (robot.desiredSecondarySlidePosition == Robot.SecondarySlidesState.SWEEP_EXTENDED) {
+                setSecondarySlidePosition(robot, secondarySlidePositions.get(Robot.SecondarySlidesState.SWEEP_EXTENDED));
+            }
+            if (robot.desiredSecondarySlidePosition == Robot.SecondarySlidesState.PLACE_CONE) {
+                setSecondarySlidePosition(robot, secondarySlidePositions.get(Robot.SecondarySlidesState.PLACE_CONE));
+            }
+            if (robot.desiredSecondarySlidePosition == Robot.SecondarySlidesState.RETRACTED) {
+                setSecondarySlidePosition(robot, secondarySlidePositions.get(Robot.SecondarySlidesState.RETRACTED));
+            }
 
+        }
         int slideDiff1 = desiredSecondarySlidePosition - robot.secondarySlidesMotor.getCurrentPosition();
         robot.telemetry.addData("current secondary slides pos: ", getAverageSlidePosition(robot));
-        robot.telemetry.update();
 //           robotManager.readSlidesLimitSwitch();
         // Stop motors if we have reached the desired position
-        if (slidesPower < EPSILON) {
+        if (Math.abs(slideDiff1) < EPSILON) {
             robot.secondarySlidesMotor.setPower(0);
 //            Robot.desiredSecondarySlidesPosition = Robot.SecondarySlidesState.STOPPED;
             return true;
         }
-
         // Slides need to be moved`
         // Speed is proportional to the fraction of the ramp distance that we have left
         double slidesSpeed = slidesPower * clipAbsVal(slideDiff1 / SLIDE_RAMP_DIST, SLIDE_MIN_SPEED, 1);
+        robot.secondarySlidesMotor.setPower(slidesSpeed);
 //        double reducedSlidesSpeed = clipAbsVal(SLIDE_REDUCED_SPEED_COEF * slidesSpeed, SLIDE_MIN_SPEED, 1);
 
 //        if (robot.previousDesiredSecondarySlidePosition != robot.desiredSecondarySlidePosition) {

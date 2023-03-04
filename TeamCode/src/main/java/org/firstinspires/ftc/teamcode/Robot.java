@@ -22,7 +22,7 @@ public class Robot {
     public enum SecondaryClawState {OPEN, CLOSED}
     public enum SecondaryClawRotatorState {DOWN, UP}
     public enum ClawLimitSwitchServoState {HIGH, LOW}
-    public enum SecondarySlidesState {RETRACTED, EXTENDED, PLACE_CONE, INITIAL_EXTENDED, FINAL_RETRACTED}
+    public enum SecondarySlidesState {RETRACTED, EXTENDED, PLACE_CONE, SWEEP_EXTENDED, INITIAL_EXTENDED, FINAL_RETRACTED}
     public enum SecondarySystemStatus {ON, OFF};
     public enum SecondaryConeRetrieved {DONE, NOT_DONE};
 

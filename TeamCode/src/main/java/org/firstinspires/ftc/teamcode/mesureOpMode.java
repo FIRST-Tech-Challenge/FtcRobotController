@@ -21,16 +21,27 @@ public class mesureOpMode extends OpMode {
     }
 
     int slidePos=0;
+    int secondarySlidePos=0;
     @Override
     public void loop() {
         robotManager.mechanismDriving.setSlidePosition(robotManager.robot,slidePos);
-        robotManager.mechanismDriving.updateSlides(robotManager, robotManager.robot, 1);
+        robotManager.mechanismDriving.updateSlides(robotManager, robotManager.robot, 1, false);
+        robotManager.mechanismDriving.setSecondarySlidePosition(robotManager.robot,slidePos);
+        robotManager.mechanismDriving.updateSecondarySlides(robotManager.robot, 1);
         if(gamepad2.a){
             slidePos+=10;
         }
         if (gamepad2.b){
             slidePos-=10;
         }
+        if(gamepad2.left_bumper){
+            secondarySlidePos+=10;
+        }
+        if (gamepad2.right_bumper){
+            secondarySlidePos-=10;
+        }
         telemetry.addData("slide pos: ",slidePos);
+        telemetry.addData("secondary slide pos: ",secondarySlidePos);
+
     }
 }
