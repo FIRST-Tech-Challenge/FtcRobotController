@@ -16,7 +16,10 @@ public class MotorSpeedTest extends OpMode {
         motor2 = this.hardwareMap.get(DcMotorEx.class, "motor2");
         motor1.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         motor2.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        motor1.setPower(1);
+        motor2.setPower(1);
         currTime = System.nanoTime();
+        telemetry.update();
     }
 
     @Override
@@ -25,11 +28,11 @@ public class MotorSpeedTest extends OpMode {
         {
             motor1TicksPerSecond = motor1.getCurrentPosition()-motor1InitTicks;
             motor2TicksPerSecond = motor2.getCurrentPosition()-motor2InitTicks;
-            telemetry.addData("motor1 ticks per second:\t", motor1TicksPerSecond);
-            telemetry.addData("motor1 ticks per second:\t", motor2TicksPerSecond);
             motor1InitTicks = motor1.getCurrentPosition();
             motor2InitTicks = motor2.getCurrentPosition();
         }
         currTime = System.nanoTime();
+        telemetry.addData("motor1 ticks per second:\t", motor1TicksPerSecond);
+        telemetry.addData("motor1 ticks per second:\t", motor2TicksPerSecond);
     }
 }
