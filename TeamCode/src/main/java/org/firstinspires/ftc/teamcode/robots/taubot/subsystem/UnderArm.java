@@ -127,6 +127,7 @@ public class UnderArm implements Subsystem {
         manual,
         noIK,
         fold,
+        safe,
         foldTransfer,
         jointAngles
     }
@@ -188,6 +189,10 @@ public class UnderArm implements Subsystem {
                 break;
             case transfer: //transfer position
                 goToTransfer();
+                break;
+            case safe:
+                jointAngle = JointAngle.SafePos;
+                goToJointAngleAndLength(jointAngle);
                 break;
             case home: //safe position for transiting the field
                 if(goHome()){
@@ -303,6 +308,18 @@ public class UnderArm implements Subsystem {
     public static double UPPER_ARM_LENGTH = 14.06;
     public static double LOWER_ARM_LENGTH = 11.02;
 
+    public double getCalculatedShoulderAngle(){
+        return calculatedShoulderAngle;
+    }
+
+    public double getCalculatedHeight(){
+        return calculatedHeight;
+    }
+
+    public double getCalculatedDistance(){
+        return calculatedDistance;
+    }
+
     public boolean calculateFieldTargeting(double x, double y, double z){ //THIS IS IN INCHES!!!!!!!!
 
         z /= INCHES_PER_METER;
@@ -337,7 +354,7 @@ public class UnderArm implements Subsystem {
                                         / (2 * UPPER_ARM_LENGTH * hypotToTarget))
                                         + Math.acos(calculatedDistance / hypotToTarget)));
 
-        calculatedElbowAngle = 90 - (Math.toDegrees(Math.acos(
+        calculatedElbowAngle = (Math.toDegrees(Math.acos(
                                 (Math.pow(UPPER_ARM_LENGTH, 2) + Math.pow(LOWER_ARM_LENGTH, 2) - Math.pow(calculatedDistance, 2) - Math.pow(calculatedHeight , 2))
                                                             / (2 * UPPER_ARM_LENGTH * LOWER_ARM_LENGTH))));
 
@@ -360,6 +377,14 @@ public class UnderArm implements Subsystem {
 
     public void adjustTurret(double speed){
         turretTargetAngle += ADJUST_TURRET*speed*robot.deltaTime;
+    }
+
+    public double getShoulderAngle(){
+        return shoulderTargetAngle;
+    }
+
+    public double getElbowAngle(){
+        return elbowTargetAngle;
     }
 
     public static double ADJUST_TURRET = 50;

@@ -1033,6 +1033,12 @@ public class Crane implements Subsystem {
         calculatedAngle = Math.toDegrees(Math.atan2(calculatedHeight, calculatedDistance));
         calculatedLength = (Math.sqrt(Math.pow(calculatedHeight, 2) + Math.pow(calculatedDistance, 2)));
 
+        if(robot.checkCollision(calculatedAngle,calculatedTurretAngle)){
+            calculatedAngle = getShoulderAngle();
+            calculatedLength = getExtendMeters();
+            robot.underarm.articulate(UnderArm.Articulation.safe);
+        }
+
         return true;
     }
 
