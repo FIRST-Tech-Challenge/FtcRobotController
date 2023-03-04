@@ -102,7 +102,7 @@ public class doubledriver extends LinearOpMode {
                     lights.setPower(0);
             }
             if(light) {
-                lights.setPower(.3);
+                lights.setPower(.1);
             }
 
             if (strafeRight) {
