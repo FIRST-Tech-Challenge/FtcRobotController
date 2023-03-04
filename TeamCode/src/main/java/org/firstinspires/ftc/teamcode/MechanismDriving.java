@@ -27,10 +27,9 @@ public class MechanismDriving {
     }};
     public static Map<Robot.SecondarySlidesState, Integer> secondarySlidePositions = new HashMap<Robot.SecondarySlidesState, Integer>() {{
        put(Robot.SecondarySlidesState.RETRACTED, 0);
-        put(Robot.SecondarySlidesState.PLACE_CONE, -430);
+        put(Robot.SecondarySlidesState.PLACE_CONE, -440);
         put(Robot.SecondarySlidesState.EXTENDED, -2690); // TODO: empirically measure this value
         put(Robot.SecondarySlidesState.SWEEP_EXTENDED, -1800); // TODO: empirically measure this value
-
     }};
     public static final double CLAW_CLOSED_POS = 0.83, CLAW_OPEN_POS = 0.63; //These are not final values
 

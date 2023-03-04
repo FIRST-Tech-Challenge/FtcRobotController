@@ -49,7 +49,7 @@ public class PowerPlayAuton extends LinearOpMode {
         while (opModeIsActive()) {}
     }
 
-    private void waitMilliseconds(long ms) {
+    public void waitMilliseconds(long ms) {
         double start_time = elapsedTime.time();
         while (opModeIsActive() && elapsedTime.time() - start_time < ms) {}
     }

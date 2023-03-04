@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode;
 
 
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
 
 import java.util.ArrayList;
@@ -44,10 +45,12 @@ public class Navigation {
 
     // Distance between starting locations on the warehouse side and the carousel side.
     static final double DISTANCE_BETWEEN_START_POINTS = 35.25;
-    static final double RED_BARCODE_OFFSET = 0;
+
 
     // Distances between where the robot extends/retracts the linear slides and where it opens the claw.
     static final double HORSESHOE_SIZE = 8.9;
+
+    static final double ROTATION_TIME = 1050;
 
     static final double FLOAT_EPSILON = 0.001;
 
@@ -66,7 +69,7 @@ public class Navigation {
     // Speeds relative to one another. RR is positive on purpose!
 //                                  RL   RR   FL   FR
     // 0.935*0.96 = 0.9024
-    public double[] wheel_speeds = {0.8976, 0.96, -0.935, -1.0};
+    public double[] wheel_speeds = {0.95, 1, -1, -0.97}; //BL, BR, FL, FR Temporary Note: currently FR from -0.90 to -0.92
 //    public double[] wheel_speeds = {0.3, 0.3, -0.3, -0.3};
 
     public double strafePower;  // Tele-Op only
@@ -93,7 +96,7 @@ public class Navigation {
 
     /** Makes the robot travel along the path until it reaches a POI.
      */
-    public Position travelToNextPOI(Robot robot) {
+    public Position travelToNextPOI(RobotManager robotManager, Robot robot) {
 //        while (true) {
         if (path.size() <= pathIndex) {
             robot.telemetry.addData("Path size <= to path index, end of travel. pathIndex:", pathIndex);
@@ -113,7 +116,20 @@ public class Navigation {
                 break;
             case STRAFE:
                 travelLinear(target, target.strafePower, robot);
-                rotate(target.getRotation(), target.rotatePower, robot);
+                double difference;
+//                rotate(target.getRotation().ge, target.rotatePower, robot);
+                if (pathIndex > 0) {
+                    difference = target.getRotation()-path.get(pathIndex-1).getRotation();
+                }
+                else {
+                    difference = target.getRotation();
+                }
+                robot.telemetry.addData("difference:", difference);
+                robot.telemetry.addData("target:", target.getRotation());
+                robot.telemetry.update();
+
+//                difference = target.getRotation()-ro  bot.getPosition().getRotation();
+                deadReckoningRotation(robotManager, robot, difference, target.rotatePower);
                 break;
         }
 
@@ -202,16 +218,16 @@ public class Navigation {
 
         double moveDirection = Math.atan2(analogValues.gamepad1LeftStickY, analogValues.gamepad1LeftStickX);
         if (Math.abs(moveDirection) < Math.PI / 12) {
-            moveDirection = 0.0;
-        }
-        else if (Math.abs(moveDirection - Math.PI / 2) < Math.PI / 12) {
-            moveDirection = Math.PI / 2;
-        }
-        else if (Math.abs(moveDirection - Math.PI) % Math.PI < Math.PI / 12) {
             moveDirection = Math.PI;
         }
-        else if (Math.abs(moveDirection + Math.PI / 2) < Math.PI / 12) {
+        else if (Math.abs(moveDirection - Math.PI / 2) < Math.PI / 12) {
             moveDirection = -Math.PI / 2;
+        }
+        else if (Math.abs(moveDirection - Math.PI) % Math.PI < Math.PI / 12) {
+            moveDirection = 0;
+        }
+        else if (Math.abs(moveDirection + Math.PI / 2) < Math.PI / 12) {
+            moveDirection = Math.PI / 2;
         }
 
         // Field-centric navigation
@@ -307,6 +323,14 @@ public class Navigation {
 
         stopMovement(robot);
     }
+
+    public void deadReckoningRotation(RobotManager robotManager, Robot robot, double time, double power) {
+        setDriveMotorPowers(0.0, 0.0, power, robot, false);
+        robotManager.waitMilliseconds((long) (time*ROTATION_TIME));
+        stopMovement(robot);
+    }
+
+
 
     /** Determines whether the robot has to turn clockwise or counterclockwise to get from theta to target.
      *
@@ -648,21 +672,21 @@ public static class AutonomousPaths {
     //Junctions
     public static Position nearHighJunction = new Position(0.85 * TILE_SIZE, -1.70*TILE_SIZE, "POI nearHighJunction", Action.NONE, 0.5, 0.3, 0);
 //    public static Position nearHighJunction = new Position(1 * TILE_SIZE, -1.5*TILE_SIZE, "POI nearHighJunction", Action.NONE, 1, 1, -9* Math.PI / 20);
-    public static Position nearInHighJunction = new Position(0.7 * TILE_SIZE, -1.70*TILE_SIZE, "POI nearInHighJunction", Action.DELIVER_CONE_HIGH_180, 0.5, 0.3, -47* Math.PI / 100);
+    public static Position nearInHighJunction = new Position(0.7 * TILE_SIZE, -1.70*TILE_SIZE, "POI nearInHighJunction", Action.DELIVER_CONE_HIGH_180, 0.5, 0.3, -Math.PI/2);
     public static Position farHighJunction = new Position(-0.15*TILE_SIZE,
-            -2.75 * TILE_SIZE, "POI farHighJunction", Action.DELIVER_CONE_HIGH_180, 0.5, 0.3, -47* Math.PI / 100);
+            -2.75 * TILE_SIZE, "POI farHighJunction", Action.DELIVER_CONE_HIGH_180, 0.5, 0.3, -Math.PI/2);
 //    public static Position farHighJunction = new Position(0,
 //            -2.75 * TILE_SIZE, "POI farHighJunction", Action.NONE, 1, 1, -9*Math.PI / 20);
     public static Position farInHighJunction = new Position(-0.05*TILE_SIZE,
-        -2.75 * TILE_SIZE, "POI farInHighJunction", Action.DELIVER_CONE_HIGH_180, 0.5, 0.3, -47* Math.PI / 100);
+        -2.75 * TILE_SIZE, "POI farInHighJunction", Action.DELIVER_CONE_HIGH_180, 0.5, 0.3, -Math.PI/2);
     public static Position mediumJunction = new Position(-0.15*TILE_SIZE, -1.75*TILE_SIZE, "POI mediumJunction", Action.DELIVER_CONE_MEDIUM, 0.5, 0.3, 0);
     public static Position nearLowJunction = new Position(0.35*TILE_SIZE, -0.25, "POI nearLowJunction", Action.DELIVER_CONE_LOW, 0.5, 0.3, 0);
     public static Position farLowJunction = new Position(-0.65*TILE_SIZE, -1.25*TILE_SIZE, "POI farLowJunction", Action.DELIVER_CONE_LOW, 0.5, 0.3, 0);
 
     //Cone Stack
-    public static Position coneStack1 = new Position(-1.08 * TILE_SIZE, -2.25 * TILE_SIZE, "POI coneStackFirstCone", Action.PICK_UP_FIRST_STACK_CONE, 0.5, 0.3, -47* Math.PI / 1000);
-//    public static Position coneStack1 = new Position(-0.5 * TILE_SIZE, -2 * TILE_SIZE, "POI coneStackFirstCone", Action.NONE, 1, 1, -47* Math.PI / 100);
-    public static Position coneStack2 = new Position(-1.08 * TILE_SIZE, -2.25 * TILE_SIZE, "POI coneStackSecondCone", Action.PICK_UP_SECOND_STACK_CONE, 0.5, 0.3, -47* Math.PI / 100);
+    public static Position coneStack1 = new Position(-1.08 * TILE_SIZE, -2.25 * TILE_SIZE, "POI coneStackFirstCone", Action.PICK_UP_FIRST_STACK_CONE, 0.5, 0.3, -Math.PI/2);
+//    public static Position coneStack1 = new Position(-0.5 * TILE_SIZE, -2 * TILE_SIZE, "POI coneStackFirstCone", Action.NONE, 1, 1, -Math.PI/2);
+    public static Position coneStack2 = new Position(-1.08 * TILE_SIZE, -2.25 * TILE_SIZE, "POI coneStackSecondCone", Action.PICK_UP_SECOND_STACK_CONE, 0.5, 0.3, -Math.PI/2);
 
     //Intermediate Locations. Since these values could be transformed, inner refers to the middle of the entire field, center
     // to the center of the left or right, and outer refers to the very edges of the field next to either side wall
@@ -673,13 +697,13 @@ public static class AutonomousPaths {
     public static Position intermediateInnerMiddle = new Position(0.85*TILE_SIZE, -1.25*TILE_SIZE, 0, "intermediateInnerMiddle");
     public static Position intermediateCenterMiddle = new Position(-0.15*TILE_SIZE, -1.25*TILE_SIZE, 0, "intermediateCenterMiddle");
     public static Position intermediateOuterMiddle = new Position(-1.15*TILE_SIZE, -1.25*TILE_SIZE, 0, "intermediateOuterMiddle");
-    public static Position intermediateInnerFront = new Position(0.85*TILE_SIZE, -2.25*TILE_SIZE, -47* Math.PI / 100, "intermediateInnerFront");
-    public static Position intermediateCenterFront = new Position(-0.15*TILE_SIZE, -2.25*TILE_SIZE, -47* Math.PI / 100, "intermediateCenterFront");
+    public static Position intermediateInnerFront = new Position(0.85*TILE_SIZE, -2.25*TILE_SIZE, -Math.PI/2, "intermediateInnerFront");
+    public static Position intermediateCenterFront = new Position(-0.15*TILE_SIZE, -2.25*TILE_SIZE, -Math.PI/2, "intermediateCenterFront");
     public static Position intermediateOuterFront = new Position(-1.15*TILE_SIZE,-2.25*TILE_SIZE, 0, "intermediateOuterFront");
 
     //Parking Locations
     //Make sure NOT to transform these in transformPath()
-    public static Position leftBarcode = new Position(-0.95*TILE_SIZE, -2.25 * TILE_SIZE,  "leftBarcodeParkingPosition", Action.RETRACT_SLIDES, 0.5, 0.3, -47* Math.PI / 100);
+    public static Position leftBarcode = new Position(-0.95*TILE_SIZE, -2.25 * TILE_SIZE,  "leftBarcodeParkingPosition", Action.RETRACT_SLIDES, 0.5, 0.3, -Math.PI/2);
 //    public static Position leftBarcode = new Position(-0.9*TILE_SIZE, -2 * TILE_SIZE,  "leftBarcodeParkingPosition", Action.NONE, 1, 1, -Math.PI / 2);
     public static Position centerBarcode = new Position(-0.15*TILE_SIZE, -2.25 * TILE_SIZE,  "centerBarcodeParkingPosition", Action.RETRACT_SLIDES, 0.5, 0.3, -9* Math.PI / 20);
 //    public static Position centerBarcode = new Position(0, -2 * TILE_SIZE,  "centerBarcodeParkingPosition", Action.NONE, 1, 1, -Math.PI / 2);
