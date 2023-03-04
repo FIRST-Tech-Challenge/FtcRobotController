@@ -14,6 +14,8 @@ import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 import com.qualcomm.robotcore.hardware.CRServo;
+import com.qualcomm.robotcore.hardware.Servo;
+
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
@@ -56,6 +58,8 @@ public class newauto extends LinearOpMode {
     DcMotor Spin;
     DcMotor Crane;
     CRServo Left;
+
+    Servo Guide;
 
     Rev2mDistanceSensor distance;
     Rev2mDistanceSensor distance2;
@@ -170,6 +174,7 @@ public class newauto extends LinearOpMode {
         backLeft = hardwareMap.get(DcMotor.class, "backLeft");                      //mapping the motors
         backRight = hardwareMap.get(DcMotor.class, "backRight");
 
+        Guide = hardwareMap.get(Servo.class, "Guide");
         Left = hardwareMap.get(CRServo.class, "Lefts");
         Spin = hardwareMap.get(DcMotor.class, "Spin");
         Crane = hardwareMap.get(DcMotor.class, "Crane");
@@ -222,7 +227,7 @@ public class newauto extends LinearOpMode {
 
             //move(.5,180);
             //strafeLeftwithdistanceandcrane(45,1,100);
-            strafeRightwithcrane(1, 300, 1, 650);
+            strafeRightwithcrane(1, 400, 1, 650);
             //gyroTurning(0);
                 /*code with foward
                 //move to stack
@@ -241,7 +246,7 @@ public class newauto extends LinearOpMode {
             sleep(100);
             gyroTurning(0);
             //move(.3,520);
-            movewithdistacne(-.3, 1);
+            movewithdistacne(-.4, 1);
             //pick up cone
             craneinput(600);
             crane(-1, 1000);
@@ -250,14 +255,14 @@ public class newauto extends LinearOpMode {
             //move to high junction
             move(.4, -400);
             gyroTurning(0);
-            moveandspinandcrane(.8, -950, 1, 315, -1, 2100);//-315
+            moveandspinandcrane(.8, -950, 1, 260, -1, 2100);//-315
             movewithdistance2(.5, 12);
             Crane.setPower(-.2);
-            move(.5, -230);
+            move(.5, -130);
 
             stopMotors();
             //strafe onto it
-            strafeLeft(.2, 200);
+            strafeLeft(.2, 150);
             sleep(100);
             intake(-1, 500);
             strafeRightwithcrane(.2, 200, 1, 1000);

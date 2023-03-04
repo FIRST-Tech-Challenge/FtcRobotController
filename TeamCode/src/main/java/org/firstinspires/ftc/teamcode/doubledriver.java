@@ -5,6 +5,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.hardware.rev.Rev2mDistanceSensor;
+import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.robotcore.internal.camera.delegating.DelegatingCaptureSequence;
 
@@ -21,6 +22,7 @@ public class doubledriver extends LinearOpMode {
     private CRServo Left;
     private DcMotor Crain;
     private DcMotor Spin;
+    private Servo Guide;
 
     private Rev2mDistanceSensor distance;
 
@@ -34,7 +36,7 @@ public class doubledriver extends LinearOpMode {
         backLeft = hardwareMap.get(DcMotor.class, "backLeft");
         backRight = hardwareMap.get(DcMotor.class, "backRight");
 
-
+        Guide = hardwareMap.get(Servo.class, "Guide");
         Left = hardwareMap.get(CRServo.class, "Lefts");
         Crain = hardwareMap.get(DcMotor.class, "Crane");
         Spin = hardwareMap.get(DcMotor.class, "Spin");
@@ -255,8 +257,8 @@ public class doubledriver extends LinearOpMode {
                 }
             }
             */
-            //telemetry.addData("encoder value", Crain.getCurrentPosition());
-            //telemetry.update();
+            telemetry.addData("encoder value", Spin.getCurrentPosition());
+            telemetry.update();
 
 
            //telemetry.addData("distance",distance.getDistance(DistanceUnit.INCH));
