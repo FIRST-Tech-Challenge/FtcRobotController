@@ -13,6 +13,7 @@ import org.firstinspires.ftc.teamcode.MechanismTemplates.Claw;
 import org.firstinspires.ftc.teamcode.MechanismTemplates.OdoPod;
 import org.firstinspires.ftc.teamcode.MechanismTemplates.Slide;
 import org.firstinspires.ftc.teamcode.MechanismTemplates.Arm;
+import org.firstinspires.ftc.teamcode.MechanismTemplates.poleAlignment;
 import org.firstinspires.ftc.teamcode.SignalEdgeDetector;
 
 @Config
@@ -33,10 +34,14 @@ public class PP_MecanumTeleOp extends OpMode
     SignalEdgeDetector gamepad2_X = new SignalEdgeDetector(() -> gamepad2.x);
     SignalEdgeDetector gamepad2_Y = new SignalEdgeDetector(() -> gamepad2.y);
 
+    SignalEdgeDetector gamepad1_X = new SignalEdgeDetector(() -> gamepad1.x);
+
     // Declaring mechanism objects
     private Arm armControl;
     private Slide slideControl;
     private Claw clawControl;
+
+    private poleAlignment alignmentControl;
 
     private GamepadEx driverOp;
 
@@ -90,6 +95,7 @@ public class PP_MecanumTeleOp extends OpMode
         slideControl = new Slide(hardwareMap);
         clawControl = new Claw(hardwareMap, () -> gamepad2.right_bumper, () -> gamepad2.a);
         OdoPod odoControl = new OdoPod(hardwareMap);
+        alignmentControl=new poleAlignment(hardwareMap);
         OdoPod.retract();
     }// INIT()
 
@@ -103,6 +109,7 @@ public class PP_MecanumTeleOp extends OpMode
         arm();
         claw();
         slides();
+        poleAlignment();
 
 
         slideControl.update(telemetry);
@@ -112,6 +119,8 @@ public class PP_MecanumTeleOp extends OpMode
         gamepad2_B.update();
         gamepad2_X.update();
         gamepad2_Y.update();
+        gamepad1_X.update();
+        gamepad2_dpad_down.update();
     }// end of loop()
 
     //        BOT METHODS       \\
@@ -169,10 +178,15 @@ public class PP_MecanumTeleOp extends OpMode
             motorBackRight.setPower(backRightPower);
         }
     }// end of drive()
+    public void poleAlignment()
+    {
+        if(gamepad1_X.isRisingEdge())
+            alignmentControl.toggleAlignmentDevice();
+    }
 
     public void arm(){
 
-        // BUTTONS \\
+        // BUTTONS \\/
         if (gamepad2_Y.isRisingEdge()) {
             armControl.setExtake();
             slideControl.setHighJunction(telemetry);

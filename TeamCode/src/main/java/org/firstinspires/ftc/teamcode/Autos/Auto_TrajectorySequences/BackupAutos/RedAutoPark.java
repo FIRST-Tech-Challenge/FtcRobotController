@@ -17,7 +17,7 @@ public class RedAutoPark extends PowerPlay_AprilTagDetection {
 
     private Claw clawControl;
 
-    public static double forwardDistance=76.7;
+    public static double forwardDistance=86.7;
     public static double sideDistance=26;
     public static double angle=270;
 

@@ -21,7 +21,7 @@ public class Arm{
 //    public static double armKf = 0.0000001;
 
     // New PID values
-    public static double armKpUp = 0.016; // old is 0.012
+    public static double armKpUp = 0.007; // old is 0.012
     public static double armKpDown = 0.0035;
     public static double armKi = 0.00001;
     public static double armKd = 0.00002;

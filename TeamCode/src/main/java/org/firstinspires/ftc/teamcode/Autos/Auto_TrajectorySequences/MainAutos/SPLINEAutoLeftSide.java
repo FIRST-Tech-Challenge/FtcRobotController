@@ -6,6 +6,7 @@ import org.firstinspires.ftc.teamcode.MechanismTemplates.Arm;
 import org.firstinspires.ftc.teamcode.MechanismTemplates.Claw;
 import org.firstinspires.ftc.teamcode.MechanismTemplates.OdoPod;
 import org.firstinspires.ftc.teamcode.MechanismTemplates.Slide;
+import org.firstinspires.ftc.teamcode.MechanismTemplates.poleAlignment;
 import org.firstinspires.ftc.teamcode.TeleOps.AprilTags.PowerPlay_AprilTagDetectionDeposit;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequence;
@@ -28,6 +29,9 @@ public class SPLINEAutoLeftSide extends PowerPlay_AprilTagDetectionDeposit{
 
 	// [CLAW]
 	    private Claw clawControl;
+
+	//[POLEALIGNMENT]
+		private poleAlignment alignmentControl;
 
 	// [OPENING MOVE]
 	public static double openingX = 37.7;
@@ -86,6 +90,7 @@ public class SPLINEAutoLeftSide extends PowerPlay_AprilTagDetectionDeposit{
 	public void initialize(){
 		armControl = new Arm(hardwareMap);
 		slideControl = new Slide(hardwareMap);
+		alignmentControl=new poleAlignment(hardwareMap);
 	}
 
 	public void scan(){
@@ -138,7 +143,9 @@ public class SPLINEAutoLeftSide extends PowerPlay_AprilTagDetectionDeposit{
 
 				.lineToLinearHeading(new Pose2d(xConeStack1,-1,Math.toRadians(coneStackHeading)))
 				.forward(yConeStack)
+
 				.UNSTABLE_addTemporalMarkerOffset(0,()->{
+					alignmentControl.raiseServo();
 					clawControl.toggleAutoOpenClose();
 				})
 				.waitSeconds(0.2)
