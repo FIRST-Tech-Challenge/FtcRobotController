@@ -46,6 +46,9 @@ public class Project1 extends LinearOpMode
         drivetrain.MDrive(0,0,0,0);
         double target = 100;
 
+        robot.horz.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        robot.vert.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
         waitForStart();
         while (opModeIsActive()) {
             double vertical;
@@ -63,27 +66,16 @@ public class Project1 extends LinearOpMode
             pivot    =  gamepad1.right_stick_x;
             heading = robot.imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS);
             drivetrain.MDrive(vertical, horizontal, pivot, heading);
+            if (gamepad1.left_stick_button && gamepad1.right_stick_button) robot.imu.resetYaw();
 
-            //if (gamepad1.x) robot.arm.setPower(0.4);
-            //else if (gamepad1.y) robot.arm.setPower(-1);
-            //else robot.arm.setPower(0);
-
-            //if (gamepad1.dpad_down) robot.bucket.setPosition(0);
-            //if (gamepad1.dpad_up) robot.bucket.setPosition(1);
-            //if (gamepad1.dpad_left) robot.bucketAngle.setPosition(0.5);
-            //if (gamepad1.dpad_right) robot.bucketAngle.setPosition(0);
-
-            if (gamepad1.a) robot.clawAnglePosition += -0.001;
-            if (gamepad1.b) robot.clawAnglePosition += 0.001;
-            robot.clawAngle.setPosition(robot.clawAnglePosition);
+            //if (gamepad1.a) robot.clawAnglePosition += -0.001;
+            //if (gamepad1.b) robot.clawAnglePosition += 0.001;
 
             //if (gamepad1.left_bumper) robot.claw.setPosition(0.1);
             //if (gamepad1.right_bumper) claw.setPosition(-0.5);
 
             if (gamepad1.right_stick_button) robot.horz.setPower(-1);
             if (gamepad1.left_stick_button) robot.horz.setPower(0);
-
-            if (gamepad1.left_stick_button && gamepad1.right_stick_button) robot.imu.resetYaw();
 
             /*
             double Kp, Ki, Kd;
@@ -119,43 +111,44 @@ public class Project1 extends LinearOpMode
             }
             */ // custom PID
 
-
-
-            robot.arm.setPIDFCoefficients(DcMotor.RunMode.RUN_TO_POSITION, pidfNew);
-            telemetry.addData("new", "%.04f, %.04f, %.04f, %.04f", pidfNew.p, pidfNew.i, pidfNew.d, pidfNew.f);
-
-
-
             /*if (gamepad1.right_bumper) {
                 target = (target - 1);
             }
             */
+            /*
             if (gamepad1.left_bumper) {
-                target = (target + 1);
+                //target = (target + 1);
+                robot.horz.setPower(-0.8);
             }
+            else if (gamepad1.right_bumper){
+                robot.horz.setPower(0.1);
+            }
+            else{
+                robot.horz.setPower(0);
+            }*/
+
 
             telemetry.addData("target", target);
 
             if (gamepad1.right_bumper){
-                Pickup.pickup(100, 1000, 20, robot);
+                //Pickup.pickup(100, 2000, 20, robot);
             }
-            /*
-            int arm_pos = robot.arm.getCurrentPosition();
-            if (arm_pos <= 40){
-                robot.arm.setPower(0.5);
-            }
-            else if (arm_pos <= target-10){
-                robot.arm.setPower(0);
-            }
-            else if (arm_pos <= target+10){
-                robot.arm.setPower(-0.3);
-            }
-            else{
-                robot.arm.setPower(-0.8);
-            }
-            */
 
-            /*
+            ManualControl.control("BUCKET", robot, telemetry, gamepad1);
+
+            if (gamepad1.dpad_up){
+                robot.vert.setTargetPosition(3000);
+                robot.vert.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                robot.vert.setPower(1);
+            }
+
+            if (gamepad1.dpad_down){
+                int vertpos = robot.vert.getCurrentPosition();
+                robot.vert.setTargetPosition(vertpos-1);
+                robot.vert.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                robot.vert.setPower(-0.3);
+            }
+
             if (gamepad1.left_bumper){
                 robot.arm.setTargetPosition(0);
             }
@@ -164,8 +157,6 @@ public class Project1 extends LinearOpMode
                 if (gamepad1.dpad_up) pidfNew.p = pidfNew.p + 0.1;
                 else if (gamepad1.dpad_down) pidfNew.p = pidfNew.p - 0.1;
             }
-            */
-
 
             // rev PID with setVelocity() and custom PIDF coefficients
             /*

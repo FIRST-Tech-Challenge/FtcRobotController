@@ -28,9 +28,15 @@ public class Pickup {
             }
 
         */
+
+        robot.horz.setTargetPosition(-horz_t);
+        robot.horz.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        robot.horz.setPower(-0.8);
+
         timer.reset();
+
         while (timer.seconds() < 100){
-            int arm_pos = robot.arm.getCurrentPosition();
+            /*int arm_pos = robot.arm.getCurrentPosition();
             if (arm_pos <= 40 && arm_a > 40){
                 robot.arm.setPower(0.5);
             }
@@ -44,12 +50,14 @@ public class Pickup {
                 robot.arm.setPower(-0.8);
             }
             robot.bucket.setPosition(opened ? 0: 1);
+            */
 
             if (!opened && Math.abs(robot.horz.getCurrentPosition()-horz_t) <= extend_tolerance){
-                robot.bucket.setPosition(0);
+                //robot.bucket.setPosition(0);
                 opened = true;
                 arm_a = 0;
                 robot.horz.setTargetPosition(0);
+                robot.horz.setPower(0.3);
             }
         }
     }
