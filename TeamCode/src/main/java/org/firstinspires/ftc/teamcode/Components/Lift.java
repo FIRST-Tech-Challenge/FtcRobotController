@@ -41,7 +41,7 @@ public class Lift {
     private ArrayList<Double> coefficients = new ArrayList<>();
     private boolean done = true;
     private double lastManualTime = 0.0;
-    double[] coneStack = {440,330,235,100,0};
+    double[] coneStack = {500,410,315,180};
     ;
     private int stackLevel = 0;
     private double lastStackTime =0;

@@ -102,17 +102,17 @@ public class Field {
         coords[1] -=1;
         Pose2d pos = roadrun.getPoseEstimate();
         pos = new Pose2d(pos.getX(),pos.getY(),pos.getHeading()+coords[0]*PI/180+PI);
-        polePos = new Pose2d(pos.getX()+cos(pos.getHeading())*coords[1],pos.getY()+sin(pos.getHeading())*coords[1],pos.getHeading());
+        polePos = new Pose2d(pos.getX()+cos(pos.getHeading())*coords[1]+sin(pos.getHeading()),pos.getY()+sin(pos.getHeading())*coords[1]+cos(pos.getHeading()),pos.getHeading());
         if(abs(coords[1])<5&&abs(coords[1])>0){
             setDoneLookin(true);
         }
-        if(abs(pos.vec().distTo(roadrun.getCurrentTraj().end().vec()))<5){
-            setDoneLookin(true);
-        }
+//        if(abs(pos.vec().distTo(roadrun.getCurrentTraj().end().vec()))<2){
+//            setDoneLookin(true);
+//        }
         logger.log("/RobotLogs/GeneralRobot", "polePos"+polePos);
         logger.log("/RobotLogs/GeneralRobot", "coords"+coords[0]+","+coords[1]);
 
-        if(abs(coords[1])<18&&coords[1]>3&&(roadrun.getCurrentTraj()==null||abs(polePos.vec().distTo(roadrun.getCurrentTraj().end().vec()))<4)){
+        if(abs(pos.vec().distTo(roadrun.getCurrentTraj().end().vec()))<10&&abs(coords[1])<18&&coords[1]>3&&(roadrun.getCurrentTraj()==null||abs(polePos.vec().distTo(roadrun.getCurrentTraj().end().vec()))<3)){
             return true;
         }
         return false;

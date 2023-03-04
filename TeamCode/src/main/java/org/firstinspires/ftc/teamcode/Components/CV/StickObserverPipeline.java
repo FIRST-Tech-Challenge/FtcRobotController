@@ -22,7 +22,7 @@ public class StickObserverPipeline extends OpenCvPipeline {
     public static double  degPerPix = 22.5/320, widTimesDist = 820*12/16.0*14.7/11.5*9.5/9, focalLength = 715;
     double centerOfPole = 0, poleSize = 0;
     ArrayList<double[]> frameList;
-    public static double LowS = 130;
+    public static double LowS = 110;
     public static double HighS = 255;
     public static double LowH = 18;
     public static double HighH = 32;

@@ -12,11 +12,11 @@ import org.openftc.easyopencv.OpenCvPipeline;
 
 import java.util.ArrayList;
 @Config
-public class SleeveObserverPipeline extends OpenCvPipeline {
+public class MidSleeveObserverPipe extends OpenCvPipeline {
     ArrayList<double[]> frameList;
-    public static double p1x = 520, p1y =300, p2x = 640, p2y =450,
+    public static double p1x = 290, p1y =270, p2x = 400, p2y =410,
 
-        h1 = 120,s1 = 0, v1 =0,
+    h1 = 120,s1 = 0, v1 =0,
             h1u = 160,s1u = 255, v1u =255,
             h2 = 0,s2 = 0, v2 =0,
             h2u =10,s2u = 255, v2u =255,
@@ -24,11 +24,11 @@ public class SleeveObserverPipeline extends OpenCvPipeline {
             h3u = 60,s3u = 255, v3u =255,
 
     //h3u and s3u: 71 and 90
-            colour = 1;
+    colour = 1;
 
 
 
-    public SleeveObserverPipeline() {
+    public MidSleeveObserverPipe() {
         frameList=new ArrayList<>();
     }
 
@@ -78,12 +78,12 @@ public class SleeveObserverPipeline extends OpenCvPipeline {
 //        input.release();
 //        mat.release();
         Scalar color = new Scalar(255,0,0);
-            Imgproc.rectangle(input, ROI, color, 5);
+        Imgproc.rectangle(input, ROI, color, 5);
 
         return input;
     }
 
-   public int getPosition(){
+    public int getPosition(){
         double[] sums = {0,0,0};
         for(int i=0;i<frameList.size()-1;i++){
             sums[0]+=frameList.get(i)[0];
@@ -94,12 +94,12 @@ public class SleeveObserverPipeline extends OpenCvPipeline {
 //       op.telemetry.addData("sums1",sums[1]);
 //       op.telemetry.addData("sums2",sums[2]);
 //       op.telemetry.update();
-       if(sums[0]>sums[1]&&sums[0]>sums[2]){
+        if(sums[0]>sums[1]&&sums[0]>sums[2]){
             return 1;
         }else if(sums[1]>sums[2]){
             return 2;
         }else{
             return 3;
         }
-   }
+    }
 }

@@ -9,7 +9,6 @@ import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.acmerobotics.roadrunner.trajectory.Trajectory;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
@@ -37,13 +36,13 @@ public class BlueRightPark extends LinearOpMode {
                 .lineTo(new Vector2d(-36, 62.25))
                 .lineTo(new Vector2d(-36, 34))
                 .build();
-        Trajectory park1trajectory = robot.roadrun.trajectoryBuilder(new Pose2d(-36,34,toRadians(90)))
-                .lineTo(new Vector2d(-12, 34))
+        Trajectory park1trajectory = robot.roadrun.trajectoryBuilder(new Pose2d(-36,34,toRadians(0)))
+                .lineTo(new Vector2d(-6, 34))
                 .build();
 //        Trajectory park2trajectory = robot.roadrun.trajectoryBuilder(new Pose2d(-36,36,toRadians(90)))
 //                .lineToLinearHeading(new Pose2d(-36,36, toRadians(90)))
 //                .build();
-        Trajectory park3trajectory = robot.roadrun.trajectoryBuilder(new Pose2d(-36,34,toRadians(90)))
+        Trajectory park3trajectory = robot.roadrun.trajectoryBuilder(new Pose2d(-36,34,toRadians(180)))
                 .lineTo(new Vector2d(-57, 34))
                 .build();
         while (!isStarted()) {

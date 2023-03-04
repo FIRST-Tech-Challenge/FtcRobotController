@@ -29,7 +29,7 @@ public class BlueLeftAutoMidCycleTuned extends LinearOpMode {
     public static double pickupX1 = -46, pickupY1 = 10, pickupA1 = toRadians(180), pickupET1 = toRadians(180);
     public static double pickupX2 = 65, pickupY2 = 14, pickupA2 = toRadians(0), pickupET2 = toRadians(0);
 
-    double[] stackPos = {440,330,245,100,0};
+    double[] stackPos = {420*1.03,330*1.03,235*1.03,80*1.03,0};
 
     public void runOpMode() {
         PwPRobot robot = new PwPRobot(this, false);
@@ -39,7 +39,7 @@ public class BlueLeftAutoMidCycleTuned extends LinearOpMode {
 
         //detectSignal();
         //store in variable
-        robot.cv.observeSleeve();
+        robot.cv.observeMidSleeve();
 
         TrajectorySequence initialtrajectory = robot.roadrun.trajectorySequenceBuilder(new Pose2d(38, 63.25,
                         Math.toRadians(90)))
@@ -129,13 +129,13 @@ public class BlueLeftAutoMidCycleTuned extends LinearOpMode {
                 .build();
 
         while(!isStarted()){
-            telemetry.addData("pos",robot.cv.getPosition());
+            telemetry.addData("pos",robot.cv.getMidPosition());
             telemetry.addData("CLAW_CLOSED:", CLAW_CLOSED.getStatus());
             telemetry.update();
             robot.updateClawStates();
             robot.updateLiftArmStates();
             if(getRuntime()>3){
-                int color = robot.cv.getPosition();
+                int color = robot.cv.getMidPosition();
 
                 if (color == 1) {
                     robot.heartbeatRed();
@@ -149,7 +149,7 @@ public class BlueLeftAutoMidCycleTuned extends LinearOpMode {
             }
         }
         resetRuntime();
-        dummyP = robot.cv.getPosition();
+        dummyP = robot.cv.getMidPosition();
 
         if (isStopRequested()) return;
 
