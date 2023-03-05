@@ -125,7 +125,7 @@ public class BlueLeftAutoCycleTuned extends LinearOpMode {
 //                .build();
         TrajectorySequence park1trajectory = robot.roadrun.trajectorySequenceBuilder(new Pose2d(30,5, Math.toRadians(40)))
                 .setReversed(false)
-                .splineToSplineHeading(new Pose2d(59, 12, Math.toRadians(0)), Math.toRadians(0))
+                .splineToSplineHeading(new Pose2d(61, 12, Math.toRadians(0)), Math.toRadians(0))
                 .build();
 
         TrajectorySequence park2trajectory = robot.roadrun.trajectorySequenceBuilder(new Pose2d(30,5, Math.toRadians(40)))
@@ -247,7 +247,7 @@ public class BlueLeftAutoCycleTuned extends LinearOpMode {
                 robot.followTrajectorySequenceAsync(park2trajectory);
             }
 
-            robot.delay(0.5);
+            robot.delay(0.3);
 
 //            robot.liftToPosition((int)LIFT_HIGH_JUNCTION.getValue() + 50, true);
 
@@ -255,7 +255,7 @@ public class BlueLeftAutoCycleTuned extends LinearOpMode {
             robot.lowerLiftArmToIntake(true);
             robot.delay(1.6);
             robot.wideClaw();
-            robot.delay(1.5);
+            robot.delay(0.3);
             robot.liftToPosition(0);
 
 

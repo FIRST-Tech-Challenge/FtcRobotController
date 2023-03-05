@@ -239,6 +239,7 @@ public class PwPRobot extends BasicRobot {
                 powera * magnitude - a - angleCorrection + (diffs[0] - diffs[1]) * 2 * kV,
                 powerb * magnitude + a + angleCorrection + (diffs[0] + diffs[1]) * 2 * kV,
                 powera * magnitude + a + angleCorrection+ (diffs[0] - diffs[1]) * 2 * kV);
+
     }
 
     public void followTrajectoryAsync(Trajectory trajectory) {
@@ -556,11 +557,11 @@ public class PwPRobot extends BasicRobot {
             lift.setLiftTarget(0);
         }
 
-        if (op.gamepad1.dpad_left && op.gamepad2.dpad_left) {
+        if (op.gamepad2.dpad_left) {
             lift.resetEncoder();
         }
         //manual lift up/down
-        if (op.gamepad1.dpad_down && op.gamepad2.dpad_down) {
+        if (op.gamepad2.dpad_right) {
             lift.setLiftRawPower((op.gamepad2.right_trigger - op.gamepad2.left_trigger) / 3);
         } else if (op.gamepad2.right_trigger > 0.1 || op.gamepad2.left_trigger > 0.1) {
             if (manualSlides) {
