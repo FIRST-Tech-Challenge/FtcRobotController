@@ -120,7 +120,8 @@ public abstract class BaseOpMode extends LinearOpMode {
         startAngle = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle;
         originalAngle = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle;
 
-        robotCamera = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "RobotCamera"));
+        int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
+        robotCamera = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "RobotCamera"), cameraMonitorViewId);
         grabberCamera = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "GrabberCamera"));
 
         aprilTagDetectionPipeline = new AprilTagDetectionPipeline();
@@ -169,6 +170,13 @@ public abstract class BaseOpMode extends LinearOpMode {
         }
 
         // calculate speed and direction of each individual motor and set power of motors to speed
+        motorFL.setPower(yPower + xPower + tPower);
+        motorFR.setPower(yPower - xPower - tPower);
+        motorBL.setPower(yPower - xPower + tPower);
+        motorBR.setPower(yPower + xPower - tPower);
+    }
+
+    public void driveWithoutIMU(double xPower, double yPower, double tPower){
         motorFL.setPower(yPower + xPower + tPower);
         motorFR.setPower(yPower - xPower - tPower);
         motorBL.setPower(yPower - xPower + tPower);
@@ -248,16 +256,17 @@ public abstract class BaseOpMode extends LinearOpMode {
         double xOffset, width;
 
         do {
-            xOffset = pipeline.xPosition - Constants.CAMERA_CENTER_X;
+            xOffset = 400-pipeline.xPosition;
             width = pipeline.width;
 
             // drive forward while centering on the cone stack if contour exists
             if (width == 0) {
                 break;
             } else {
-                driveWithIMU(coneStackPixelsMotorPower(xOffset), coneStackWidthMotorPower(width), 0.0);
+                driveWithoutIMU(coneStackPixelsMotorPower(xOffset), coneStackWidthMotorPower(width), coneStackPixelsMotorPower(xOffset));
                 telemetry.addData("xMotorPower", coneStackPixelsMotorPower(xOffset));
                 telemetry.addData("yMotorPower", coneStackWidthMotorPower(width));
+                telemetry.addData("width",width);
                 telemetry.update();
             }
 
