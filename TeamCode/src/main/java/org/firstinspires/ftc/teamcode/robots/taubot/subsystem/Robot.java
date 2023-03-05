@@ -139,6 +139,10 @@ public class Robot implements Subsystem {
             module.clearBulkCache();
     }
 
+    public void start(){
+        driveTrain.articulate(DriveTrain.Articulation.runMode);
+    }
+
     public double deltaTime = 0;
     long lastTime = 0;
 
@@ -371,6 +375,7 @@ public class Robot implements Subsystem {
         AUTON,
         ROBOTDRIVE,
         UNFOLD,
+        CALIBRATE,
 
         // misc. articulations
         INIT,
@@ -402,6 +407,11 @@ public class Robot implements Subsystem {
 
         switch (this.articulation){
             case MANUAL:
+                break;
+            case CALIBRATE:
+                if(crane.calibrate()){
+                    articulation = Articulation.INIT;
+                }
                 break;
             case PICKUP:
                 if(pickup()){

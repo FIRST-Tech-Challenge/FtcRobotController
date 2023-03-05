@@ -10,6 +10,7 @@ import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.DigitalChannel;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
@@ -46,6 +47,8 @@ public class Turret implements Subsystem {
 
     private Robot robot;
 
+    DigitalChannel limitSwitch;
+
     public Turret( HardwareMap hardwareMap, Robot robot, boolean simulated) {
         this.robot = robot;
         this.simulated = simulated;
@@ -54,6 +57,8 @@ public class Turret implements Subsystem {
         motor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         motor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         motor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
+        limitSwitch = hardwareMap.get(DigitalChannel.class, "limitSwitch");
 
         turretPID = new PIDController(TURRET_PID);
         turretPID.setInputRange(-360, 360);
@@ -103,10 +108,15 @@ public class Turret implements Subsystem {
     }
 
     public void resetHeading(){
-        offsetHeading = (heading-imuAngles.firstAngle)% 360;
+        zeroHeading(0);
         if(PowerPlay_6832.gameState.equals(PowerPlay_6832.GameState.TELE_OP)) {
             offsetHeading += cacheHeading;
         }
+    }
+
+    public void zeroHeading(double offset){
+        offsetHeading = (heading-imuAngles.firstAngle)% 360;
+        offsetHeading += offset;
     }
 
     Articulation articulation;
@@ -178,6 +188,34 @@ public class Turret implements Subsystem {
     public double getTargetHeading() {
         return targetHeading;
     }
+
+    int calibrateStage = 0;
+    long calibrateTimer = 0;
+
+    public boolean calibrate(){
+        switch (calibrateStage){
+            case 0:
+                turretPID.disable();
+                motor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+                motor.setPower(0.1);
+                calibrateStage++;
+                break;
+            case 1:
+                if(limitSwitch.getState()){
+                    zeroHeading(LIMIT_SWITCH_ANGLE_OFFSET);
+                    motor.setPower(0);
+                    turretPID.enable();
+                    calibrateStage++;
+                }
+                break;
+            case 2:
+                calibrateStage = 0;
+                return true;
+        }
+        return false;
+    }
+
+    public static double LIMIT_SWITCH_ANGLE_OFFSET = 0;
 
     public double getHeading() {
         return heading;

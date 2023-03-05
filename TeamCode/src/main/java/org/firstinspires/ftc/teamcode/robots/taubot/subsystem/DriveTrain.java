@@ -10,6 +10,7 @@ import static org.firstinspires.ftc.teamcode.robots.taubot.util.Utils.wrapAngle;
 import static org.firstinspires.ftc.teamcode.robots.taubot.util.Utils.wrapAngleRad;
 import static org.firstinspires.ftc.teamcode.robots.taubot.util.Constants.diffInchesToEncoderTicks;
 import static org.firstinspires.ftc.teamcode.robots.reachRefactor.util.Constants.swerveInchesToEncoderTicks;
+import static org.firstinspires.ftc.teamcode.util.utilMethods.futureTime;
 
 
 import androidx.annotation.NonNull;
@@ -362,24 +363,6 @@ public class DriveTrain extends DiffyDrive implements Subsystem {
         if(!manualDriveEnabled) {
             driveToNextTarget.execute();
         }
-
-
-        if (useMotorPowers) {
-            leftMotor.setPower(leftPower);
-            rightMotor.setPower(rightPower);
-        } else {
-            leftMotor.setVelocity(diffInchesToEncoderTicks(targetLeftVelocity));
-            rightMotor.setVelocity(diffInchesToEncoderTicks(targetRightVelocity));
-        }
-
-        //set the PID for the chassis length / chariot extension
-        chassisLengthPID.setInputRange(MIN_CHASSIS_LENGTH, MAX_CHASSIS_LENGTH);
-        chassisLengthPID.setPID(CHASSIS_LENGTH_PID);
-        chassisLengthPID.setInput(chassisLength);
-        chassisLengthPID.setSetpoint(targetChassisLength);
-        chassisLengthCorrection = chassisLengthPID.performPID();
-        chariotMotor.setPower(chassisLengthCorrection);
-
     }
     Pose2d currentPoseTiles = new Pose2d(0,0);
 
@@ -958,41 +941,36 @@ public class DriveTrain extends DiffyDrive implements Subsystem {
 
     StateMachine currentStateMachine = Utils.getStateMachine(new Stage()).addState(()->{return true;}).build();
 
-    public Articulation articulate(Articulation target, Position startingPosition){
+
+
+    public Articulation articulate(Articulation target){
         Articulation articulation = target;
         switch(articulation){
-            case  leftAuton:
-                currentStateMachine = Utils.getStateMachine(new Stage())
-                        .addState(() -> driveUntilDegrees(2*Field.INCHES_PER_GRID,0,20))
-                        .addState(() ->
-                                ((startingPosition == Position.START_LEFT )? turnUntilDegrees(-90):turnUntilDegrees(90))
-                        )
-                        .addState(() ->
-                                ((startingPosition == Position.START_LEFT )? driveUntilDegrees(Field.INCHES_PER_GRID,-90,20):driveUntilDegrees(-Field.INCHES_PER_GRID,90,20))
-                        )
-                        .addState(() -> {return true;})
-                        .build();;
+            case runMode:
+                if (useMotorPowers) {
+                    leftMotor.setPower(leftPower);
+                    rightMotor.setPower(rightPower);
+                } else {
+                    leftMotor.setVelocity(diffInchesToEncoderTicks(targetLeftVelocity));
+                    rightMotor.setVelocity(diffInchesToEncoderTicks(targetRightVelocity));
+                }
+
+                //set the PID for the chassis length / chariot extension
+                chassisLengthPID.setInputRange(MIN_CHASSIS_LENGTH, MAX_CHASSIS_LENGTH);
+                chassisLengthPID.setPID(CHASSIS_LENGTH_PID);
+                chassisLengthPID.setInput(chassisLength);
+                chassisLengthPID.setSetpoint(targetChassisLength);
+                chassisLengthCorrection = chassisLengthPID.performPID();
+                chariotMotor.setPower(chassisLengthCorrection);
                 break;
-            case middleAuton:
-                currentStateMachine = Utils.getStateMachine(new Stage())
-                        .addState(() -> driveUntilDegrees(2*Field.INCHES_PER_GRID,0,20))
-                        .addState(() ->
-                            ((startingPosition == Position.START_LEFT )? turnUntilDegrees(-90):turnUntilDegrees(90))
-                        )
-                        .addState(() -> {return true;})
-                        .build();
-                break;
-            case rightAuton:
-                currentStateMachine = Utils.getStateMachine(new Stage())
-                        .addState(() -> driveUntilDegrees(2*Field.INCHES_PER_GRID,0,20))
-                        .addState(() ->
-                                ((startingPosition == Position.START_LEFT )? turnUntilDegrees(-90):turnUntilDegrees(90))
-                        )
-                        .addState(() ->
-                                ((startingPosition == Position.START_LEFT )? driveUntilDegrees(-Field.INCHES_PER_GRID,-90,20):driveUntilDegrees(Field.INCHES_PER_GRID,90,20))
-                        )
-                        .addState(() -> {return true;})
-                        .build();;
+            case squeeze:
+                leftMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+                rightMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+                chariotMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+
+                leftMotor.setPower(SQUEEZE_MODE_DRIVE_POWER);
+                rightMotor.setPower(SQUEEZE_MODE_DRIVE_POWER);
+                chariotMotor.setPower(SQUEEZE_MODE_CHARRIOT_POWER);
                 break;
             default:
                 break;
@@ -1001,10 +979,12 @@ public class DriveTrain extends DiffyDrive implements Subsystem {
         return target;
     }
 
+    public static double SQUEEZE_MODE_DRIVE_POWER = 0.1;
+    public static double SQUEEZE_MODE_CHARRIOT_POWER = -0.1;
+
     public enum Articulation{
-        leftAuton,
-        middleAuton,
-        rightAuton
+        runMode,
+        squeeze
     }
 
     public double getVoltage() {

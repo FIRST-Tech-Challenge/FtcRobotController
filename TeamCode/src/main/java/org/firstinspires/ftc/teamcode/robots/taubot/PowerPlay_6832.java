@@ -45,6 +45,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 import org.firstinspires.ftc.robotcore.internal.system.Misc;
 import org.firstinspires.ftc.teamcode.robots.taubot.subsystem.Crane;
+import org.firstinspires.ftc.teamcode.robots.taubot.subsystem.DriveTrain;
 import org.firstinspires.ftc.teamcode.robots.taubot.subsystem.Robot;
 import org.firstinspires.ftc.teamcode.robots.taubot.subsystem.UnderArm;
 import org.firstinspires.ftc.teamcode.robots.taubot.util.Constants;
@@ -245,9 +246,9 @@ public class PowerPlay_6832 extends OpMode {
         gameState = GameState.TELE_OP;
         gameStateIndex = 1;
 
-        robot.crane.articulate(Crane.Articulation.calibrate);
-
         telemetry.update();
+
+        robot.driveTrain.articulate(DriveTrain.Articulation.runMode);
     }
 
     // Code to run REPEATEDLY after the driver hits INIT, but before they hit PLAY
@@ -300,6 +301,7 @@ public class PowerPlay_6832 extends OpMode {
         teleOpIndex = 0;
 
         robot.articulate(Robot.Articulation.UNFOLD);
+        robot.start();
     }
 
     public void resetGame(){

@@ -10,6 +10,7 @@
             <Servo name="intakeServoBack" port="2" />
             <Servo name="nudgeSwivel" port="3" />
             <Servo name="blinkin" port="4" />
+            <DigitalDevice name="limitSwitch" port="0" />
             <AnalogInput name="gripperLeft" port="0" />
             <AnalogInput name="gripperRight" port="1" />
             <REV_VL53L0X_RANGE_SENSOR name="distTarget" port="0" bus="0" />

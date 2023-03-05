@@ -15,9 +15,11 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.DigitalChannel;
 import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.hardware.TouchSensor;
 
 import org.firstinspires.ftc.robotcore.external.navigation.Acceleration;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
@@ -141,7 +143,7 @@ public class Crane implements Subsystem {
     private Robot robot;
 
 
-    private Articulation articulation = Articulation.calibrate;
+    private Articulation articulation = Articulation.init;
 
     boolean USE_MOTOR_SMOOTHING = true;
 
@@ -158,6 +160,8 @@ public class Crane implements Subsystem {
 
     Orientation turretAngles;
     Acceleration turretGravity;
+
+    DigitalChannel limitSwitch;
 
     StateMachine currentStateMachine = Utils.getStateMachine(new Stage()).addState(()->{return true;}).build();
 
@@ -211,6 +215,7 @@ public class Crane implements Subsystem {
         shoulderPID.setOutputRange(SHOULDER_MIN_PID_OUTPUT,SHOULDER_MAX_PID_OUTPUT);
         shoulderPID.setIntegralCutIn(10);
         shoulderPID.enableIntegralZeroCrossingReset(false);
+        shoulderPID.disable();
 
         articulate(Articulation.start);
 
@@ -241,12 +246,16 @@ public class Crane implements Subsystem {
         // to be fully up at the physical stop as a repeatable starting position
         switch (calibrateStage) {
             case 0:
+                enablePID();
+                articulate(Articulation.noIK);
                 calibrated = false; //allows us to call calibration mid-match in an emergency
                 //operator instruction: physically push arm to about 45 degrees and extend by 1 slide before calibrating
                 //shoulder all the way up and retract arm until they safely stall
                 extenderActivePID = false;
+                robot.driveTrain.extend();
                 extenderMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
                 extenderMotor.setPower(-0.3);
+                setShoulderTargetAngle(SHOULDER_DEG_MAX);
                 futureTime = futureTime(.25);
                 calibrateStage++;
                 break;
@@ -270,7 +279,6 @@ public class Crane implements Subsystem {
                 }
                 break;
             case 3:
-                extendMaxTics = 3075;
                 calibrateStage++;
                 break;
 
@@ -283,7 +291,15 @@ public class Crane implements Subsystem {
                 break;
 
             case 5:
+                if(robot.turret.calibrate()){
+                    calibrateStage++;
+                }
+                break;
+
+            case 6:
                 if (System.nanoTime()>futureTime) {
+                    articulate(Articulation.init);
+                    robot.driveTrain.articulate(DriveTrain.Articulation.squeeze);
                     calibrateStage = 0;
                     calibrated = true;
                     return true;
@@ -371,7 +387,6 @@ public class Crane implements Subsystem {
         shoulderPID.setOutputRange(SHOULDER_MIN_PID_OUTPUT, SHOULDER_MAX_PID_OUTPUT);
         shoulderPID.setPID(Kp, Ki, Kd, (gravityModiferForCraneExtensionAndAngle) -> kF * getExtendMeters()/2 * Math.cos(Math.toRadians(gravityModiferForCraneExtensionAndAngle)));
         shoulderPID.setSetpoint(targetTicks);
-        shoulderPID.enable();
 
         //initialization of the PID calculator's input range and current value
         shoulderPID.setInput(currentTicks);
@@ -423,7 +438,6 @@ public class Crane implements Subsystem {
         coneStackRight,
         coneStackLeft,
         start,
-        calibrate,
         transfer,
         robotDriving,
         postTransfer,
@@ -447,12 +461,6 @@ public class Crane implements Subsystem {
                 robot.turret.articulate(Turret.Articulation.transfer); //turret will not move AT ALL from transfer position no mater what target is given
                 setShoulderTargetAngle(TRANSFER_SHOULDER_ANGLE);
                 setExtendTargetPos(TRANSFER_ARM_LENGTH);
-                break;
-            case calibrate:
-                if(calibrate()){
-                    articulation = Articulation.start;
-                    return Articulation.start;
-                }
                 break;
             case init:
                 robot.turret.articulate(Turret.Articulation.fold);
@@ -1013,6 +1021,10 @@ public class Crane implements Subsystem {
 
     public void setCraneTarget(double x, double y, double z){
         fieldPositionTarget = new Vector3(x,y,z);
+    }
+
+    public void enablePID(){
+        shoulderPID.enable();
     }
 
     public boolean

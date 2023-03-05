@@ -282,7 +282,7 @@ public class DriverControls {
             debugTelemetryEnabled = !debugTelemetryEnabled;
 
         if(stickyGamepad1.dpad_down){
-            robot.crane.articulate(Crane.Articulation.calibrate);
+            robot.articulate(Robot.Articulation.CALIBRATE);
         }
         /*
         if(stickyGamepad1.dpad_down || stickyGamepad2.dpad_down)
