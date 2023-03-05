@@ -49,6 +49,8 @@ public class RobotCameraPipeline extends OpenCvPipeline {
         Core.inRange(mat, lowerRange, upperRange, mat);
 
         // invert ranges if looking for red
+        // this is because red is detected on both ends of the hue spectrum(0-20 & 160-180)
+        // so we are looking for 20-160 and changing it so that it detects anything but that.
         if (invert) {
             Core.bitwise_not(mat, mat);
         }
