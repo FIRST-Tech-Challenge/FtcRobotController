@@ -80,5 +80,5 @@ public class Constants {
 
     public static final int DISTANCE_FROM_CENTER_JUNCTION_TOP = 250;
 
-    public static final int CONTOUR_MIN_SIZE = 300;
+    public static final int CONE_STACK_CONTOUR_MINIMUM_SIZE = 300;
 }
