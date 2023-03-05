@@ -60,21 +60,21 @@ public class MecanumDrive{
         cos = Math.cos(theta - Math.PI/4);
         max = Math.max(Math.abs(sin),Math.abs(cos));
 
-        int FLOrig = robot.frontLeft.getCurrentPosition();
-        int FROrig = robot.frontRight.getCurrentPosition();
-        int BLOrig = robot.backLeft.getCurrentPosition();
-        int BROrig = robot.backRight.getCurrentPosition();
+        int FL = robot.frontLeft.getCurrentPosition();
+        int FR = robot.frontRight.getCurrentPosition();
+        int BL = robot.backLeft.getCurrentPosition();
+        int BR = robot.backRight.getCurrentPosition();
 
-        double orig = FLOrig;
+        double orig = FL;
         double cur = orig;
 
         while (Math.abs(cur-orig) <= distance){
-            FLOrig = robot.frontLeft.getCurrentPosition();
-            FROrig = robot.frontRight.getCurrentPosition();
-            BLOrig = robot.backLeft.getCurrentPosition();
-            BROrig = robot.backRight.getCurrentPosition();
+            FL = robot.frontLeft.getCurrentPosition();
+            FR = robot.frontRight.getCurrentPosition();
+            BL = robot.backLeft.getCurrentPosition();
+            BR = robot.backRight.getCurrentPosition();
 
-            cur = FLOrig;
+            cur = FL;
 
             FLPower = power * -(cos/max) + pivot;
             FRPower = power * sin/max + pivot;
