@@ -6,6 +6,7 @@ import com.qualcomm.hardware.rev.RevBlinkinLedDriver;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.DigitalChannel;
 import com.qualcomm.robotcore.hardware.PwmControl;
 import com.qualcomm.robotcore.hardware.ServoImplEx;
 
@@ -49,6 +50,9 @@ public abstract class BaseOpMode extends LinearOpMode {
 
     // bulk reading
     private List<LynxModule> hubs;
+
+    // limit switch
+    public DigitalChannel limitSwitch;
 
     // initializes the motors, servos, and IMUs
     public void initialize() {
@@ -102,6 +106,10 @@ public abstract class BaseOpMode extends LinearOpMode {
         PwmControl.PwmRange maxRange = new PwmControl.PwmRange(500, 2500, 20000);
         servoGrabber = (ServoImplEx) hardwareMap.servo.get("servoGrabber");
         servoGrabber.setPwmRange(maxRange);
+
+        // limit switch
+        limitSwitch = hardwareMap.get(DigitalChannel.class, "limitSwitch");
+        limitSwitch.setMode(DigitalChannel.Mode.INPUT);
 
         try {
             blinkinChassis = (RevBlinkinLedDriver) hardwareMap.get(RevBlinkinLedDriver.class, "blinkinChassis");
@@ -210,6 +218,11 @@ public abstract class BaseOpMode extends LinearOpMode {
         } else {
             motorLeftSlides.setPower(Constants.SLIDE_FEEDFORWARD);
             motorRightSlides.setPower(Constants.SLIDE_FEEDFORWARD);
+        }
+
+        if (targetPosition == 0 && limitSwitch.getState()) {
+            motorLeftSlides.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
+            motorLeftSlides.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
         }
     }
 
