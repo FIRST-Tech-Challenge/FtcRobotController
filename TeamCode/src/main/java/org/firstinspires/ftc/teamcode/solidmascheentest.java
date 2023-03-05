@@ -36,7 +36,7 @@ public class solidmascheentest extends OpMode {
 
      final double DUMP_IDLE=0; // the idle position for the dump servo
      final double DUMP_DEPOSIT=-1; // the dumping position for the dump servo
-     final double DUMP_TIME=500;
+     final double DUMP_TIME=2;
 
     final int LIFT_LOW=0; // the low encoder position for the lift
     final int LIFT_HIGH=-3000; // the high encoder position for the lift

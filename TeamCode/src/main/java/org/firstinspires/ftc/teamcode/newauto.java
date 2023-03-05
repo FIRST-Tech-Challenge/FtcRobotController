@@ -353,7 +353,7 @@ public class newauto extends LinearOpMode {
                 backLeft.setPower(0);
                 backRight.setPower(0);
                 foundAngle = true;
-                sleep(1000);
+                sleep(500);
                 break;
 
             } else if (angles.firstAngle >= targetAngle + 0.5) {
@@ -568,7 +568,7 @@ public class newauto extends LinearOpMode {
     public void craneinput(int time) {
         crane(1,time);
         intake(1,1000);
-        sleep(500);
+        sleep(100);
     }
 
     public void strafeLeftwithcrane(double power, int position,double powerc, int timec)  {
