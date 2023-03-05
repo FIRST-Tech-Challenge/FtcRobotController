@@ -87,7 +87,7 @@ public class RobotCameraPipeline extends OpenCvPipeline {
                     xPosition = boundingRect.x + (boundingRect.width * 0.5);
                     width = boundingRect.width;
                 }
-            }else{
+            } else {
                 width = 0.0;
                 xPosition = Constants.CAMERA_CENTER_X;
             }
