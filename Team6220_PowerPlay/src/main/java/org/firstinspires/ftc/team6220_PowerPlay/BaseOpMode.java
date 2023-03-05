@@ -99,7 +99,7 @@ public abstract class BaseOpMode extends LinearOpMode {
         motorRightSlides.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
 
         // servos
-        PwmControl.PwmRange maxRange = new PwmControl.PwmRange(500, 2500, 20000);
+        PwmControl.PwmRange maxRange = new PwmControl.PwmRange(505, 2495, 20000);
         servoGrabber = (ServoImplEx) hardwareMap.servo.get("servoGrabber");
         servoGrabber.setPwmRange(maxRange);
 
@@ -226,7 +226,10 @@ public abstract class BaseOpMode extends LinearOpMode {
 
             // center the cone on the junction top
             if (pipeline.detected) {
-                driveWithIMU(Constants.JUNCTION_TOP_CENTERING_KP * Math.signum(xOffset), Constants.JUNCTION_TOP_CENTERING_KP * Math.signum(yOffset), 0.0);
+                driveWithIMU(junctionTopPixelsMotorPower(xOffset), junctionTopPixelsMotorPower(yOffset), 0.0);
+                telemetry.addData("xMotorPower", junctionTopPixelsMotorPower(xOffset));
+                telemetry.addData("yMotorPower", junctionTopPixelsMotorPower(yOffset));
+                telemetry.update();
             } else {
                 break;
             }
@@ -252,13 +255,43 @@ public abstract class BaseOpMode extends LinearOpMode {
             if (width == 0) {
                 break;
             } else {
-                driveWithIMU(Constants.CONE_CENTERING_KP * Math.signum(xOffset), 0.2, Constants.CONE_CENTERING_KP * Math.signum(xOffset));
+                driveWithIMU(coneStackPixelsMotorPower(xOffset), coneStackWidthMotorPower(width), 0.0);
+                telemetry.addData("xMotorPower", coneStackPixelsMotorPower(xOffset));
+                telemetry.addData("yMotorPower", coneStackWidthMotorPower(width));
+                telemetry.update();
             }
 
         // while far enough that the cone stack doesn't fill the entire camera view
         } while (width < Constants.CONE_WIDTH);
 
         stopDriveMotors();
+    }
+
+    /**
+     * calculates the motor power for the robot drivetrain based on the pixel offset from the junction top
+     * @param pixelOffset how far junction top is from center of camera field of view in pixels
+     * @return motor power for robot drivetrain
+     */
+    public double junctionTopPixelsMotorPower(double pixelOffset) {
+        return Constants.JUNCTION_TOP_CENTERING_KP * pixelOffset;
+    }
+
+    /**
+     * calculates the motor power for the robot drivetrain based on the width of the bounding box of the cone stack
+     * @param coneStackWidth how wide the cone stack bounding box is in pixels
+     * @return motor power for robot drivetrain
+     */
+    public double coneStackWidthMotorPower(double coneStackWidth) {
+        return Constants.CONE_STACK_WIDTH_KP * coneStackWidth + Constants.CONE_STACK_CENTERING_MAX_SPEED;
+    }
+
+    /**
+     * calculates the motor power for the robot drivetrain based on the pixel offset from the cone stack
+     * @param pixelOffset how far cone stack is horizontally from center of camera field of view in pixels
+     * @return motor power for robot drivetrain
+     */
+    public double coneStackPixelsMotorPower(double pixelOffset) {
+        return Constants.CONE_STACK_CENTERING_KP * pixelOffset;
     }
 
     /**

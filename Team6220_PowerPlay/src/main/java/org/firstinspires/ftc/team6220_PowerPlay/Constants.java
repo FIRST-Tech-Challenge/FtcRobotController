@@ -43,9 +43,9 @@ public class Constants {
     public static final int SLIDE_STACK_ONE = 170;
     public static final int SLIDE_BOTTOM = 0;
 
-    public static final double GRABBER_INITIALIZE_POSITION = 1.0;
-    public static final double GRABBER_OPEN_POSITION = 0.6;
-    public static final double GRABBER_CLOSE_POSITION = 0.0;
+    public static final double GRABBER_INITIALIZE_POSITION = 0.17;
+    public static final double GRABBER_OPEN_POSITION = 0.46;
+    public static final double GRABBER_CLOSE_POSITION = 1.0;
 
     public static final double WHEEL_CIRCUMFERENCE = 96 / 25.4 * Math.PI;
     public static final double DRIVE_MOTOR_TICKS_TO_INCHES = WHEEL_CIRCUMFERENCE * Math.sqrt(2) / 537.6;
@@ -56,14 +56,16 @@ public class Constants {
     public static final int CAMERA_CENTER_X = CAMERA_X / 2;
     public static final int CAMERA_CENTER_Y = CAMERA_Y / 2;
 
-    public static final int CONE_WIDTH = 300;
-    public static final double CONE_CENTERING_KP = 0.035;
+    public static final int CONE_WIDTH = 550;
+    public static final double CONE_STACK_WIDTH_KP = -0.001;
+    public static final double CONE_STACK_CENTERING_KP = -0.001;
+    public static final double CONE_STACK_CENTERING_MAX_SPEED = 0.6;
 
-    public static final int JUNCTION_TOP_TOLERANCE = 5;
-    public static final double JUNCTION_TOP_CENTERING_KP = 0.1;
+    public static final int JUNCTION_TOP_TOLERANCE = 75;
+    public static final double JUNCTION_TOP_CENTERING_KP = -0.0003;
 
-    public static final Scalar LOWER_RED = new Scalar(170, 125, 50);
-    public static final Scalar UPPER_RED = new Scalar(180, 255, 255);
+    public static final Scalar LOWER_RED = new Scalar(20, 0, 0);
+    public static final Scalar UPPER_RED = new Scalar(160, 255, 252);
 
     public static final Scalar LOWER_BLUE = new Scalar(100, 125, 75);
     public static final Scalar UPPER_BLUE = new Scalar(140, 255, 255);
@@ -71,10 +73,12 @@ public class Constants {
     public static final Scalar LOWER_YELLOW = new Scalar(15, 75, 100);
     public static final Scalar UPPER_YELLOW = new Scalar(35, 255, 255);
 
-    public static final Scalar LOWER_BLACK = new Scalar(50, 0, 0);
-    public static final Scalar UPPER_BLACK = new Scalar(115, 255, 40);
+    public static final Scalar LOWER_BLACK = new Scalar(0, 0, 0);
+    public static final Scalar UPPER_BLACK = new Scalar(180, 255, 40);
 
     public static final Size BLUR_SIZE = new Size(5, 5);
 
-    public static final int DISTANCE_FROM_CENTER = 250;
+    public static final int DISTANCE_FROM_CENTER_JUNCTION_TOP = 250;
+
+    public static final int CONE_STACK_CONTOUR_MINIMUM_SIZE = 300;
 }

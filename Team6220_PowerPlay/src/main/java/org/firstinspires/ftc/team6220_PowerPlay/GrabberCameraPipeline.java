@@ -18,9 +18,17 @@ public class GrabberCameraPipeline extends OpenCvPipeline {
     public double yPosition = Constants.CAMERA_CENTER_Y;
     public boolean detected = false;
 
+    private Scalar lowerRange;
+    private Scalar upperRange;
+
     List<MatOfPoint> contours = new ArrayList<>();
     Mat hierarchy = new Mat();
     Mat mat = new Mat();
+
+    public void setRanges(Scalar lowerRange, Scalar upperRange) {
+        this.lowerRange = lowerRange;
+        this.upperRange = upperRange;
+    }
 
     @Override
     public Mat processFrame(Mat input) {
@@ -31,7 +39,7 @@ public class GrabberCameraPipeline extends OpenCvPipeline {
         Imgproc.GaussianBlur(mat, mat, Constants.BLUR_SIZE, 0);
 
         // masks blurred frame within black ranges to find junction top
-        Core.inRange(mat, Constants.LOWER_BLACK, Constants.UPPER_BLACK, mat);
+        Core.inRange(mat, lowerRange, upperRange, mat);
 
         // single out all areas of black
         Imgproc.findContours(mat, contours, hierarchy, Imgproc.RETR_LIST, Imgproc.CHAIN_APPROX_SIMPLE);
@@ -61,8 +69,7 @@ public class GrabberCameraPipeline extends OpenCvPipeline {
 
             // determine if the detected area is close enough to the center
             // this is done to avoid detecting the wheels which are also black
-            //TODO: add a check to determine that the box is relatively square, to prevent detecting other robots or black objects on the field other than the junctions
-            if (distanceFromCenter < Constants.DISTANCE_FROM_CENTER) {
+            if (distanceFromCenter < Constants.DISTANCE_FROM_CENTER_JUNCTION_TOP) {
                 Moments moments = Imgproc.moments(contours.get(maxValIdx), false);
 
                 Imgproc.rectangle(input, boundingRect, new Scalar(0, 255, 0), 10);
