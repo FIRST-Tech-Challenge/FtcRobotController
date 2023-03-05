@@ -211,10 +211,8 @@ public class newauto extends LinearOpMode {
             strafeLeftwithcrane(1, 2700, -1, 3100);
             Crane.setPower(-.2);
             sleep(100);
-            spin(1, 260);
-
+            moveandspin(.5,-350,1,260);
             //movewithdistance2(.5,12);
-            move(.5, -350);
             //drop cone
             //strafeLeft(1,300);
             //move(.5,40);
@@ -259,7 +257,6 @@ public class newauto extends LinearOpMode {
             movewithdistance2(.5, 12);
             Crane.setPower(-.2);
             move(.5, -130);
-
             stopMotors();
             //strafe onto it
             strafeLeft(.2, 150);
@@ -268,7 +265,7 @@ public class newauto extends LinearOpMode {
             strafeRightwithcrane(.2, 200, 1, 1000);
             gyroTurning(0);
 
-            if (getRuntime() > 22) {
+            if (getRuntime() < 22) {
                 //////////////////////////////////////////////////////////////////not made for side past this
                 //move back to stack
                 moveandspin(.8, 1100, 1, -591);
