@@ -17,8 +17,7 @@ import org.firstinspires.ftc.teamcode.MechanismTemplates.poleAlignment;
 import org.firstinspires.ftc.teamcode.SignalEdgeDetector;
 
 @Config
-@TeleOp(name =
-        "JacobFumbledTheBag")
+@TeleOp(name = "JacobFumbledTheBag")
 public class PP_MecanumTeleOp extends OpMode
 {
     //"MC ABHI IS ON THE REPO!!!"
@@ -27,23 +26,19 @@ public class PP_MecanumTeleOp extends OpMode
     // Declaring drivetrain motors
     private DcMotorEx motorFrontLeft, motorBackLeft, motorFrontRight, motorBackRight;
 
-    SignalEdgeDetector gamepad2_dpad_up = new SignalEdgeDetector(() -> gamepad2.dpad_up);
-    SignalEdgeDetector gamepad2_dpad_down = new SignalEdgeDetector(() -> gamepad2.dpad_down);
     SignalEdgeDetector gamepad2_A = new SignalEdgeDetector(() -> gamepad2.a);
     SignalEdgeDetector gamepad2_B = new SignalEdgeDetector(() -> gamepad2.b);
     SignalEdgeDetector gamepad2_X = new SignalEdgeDetector(() -> gamepad2.x);
     SignalEdgeDetector gamepad2_Y = new SignalEdgeDetector(() -> gamepad2.y);
-
     SignalEdgeDetector gamepad1_X = new SignalEdgeDetector(() -> gamepad1.x);
+    SignalEdgeDetector gamepad2_rightBumper = new SignalEdgeDetector(() -> gamepad2.right_bumper);
 
     // Declaring mechanism objects
     private Arm armControl;
     private Slide slideControl;
     private Claw clawControl;
-
     private poleAlignment alignmentControl;
-
-    private GamepadEx driverOp;
+    //private GamepadEx driverOp;
 
     private final double PRECISIONREDUCTION = 0.39;
     /**
@@ -66,8 +61,8 @@ public class PP_MecanumTeleOp extends OpMode
     @Override
     public void init()
     {
-        driverOp = new GamepadEx(gamepad2);
-        driverOp.wasJustReleased(GamepadKeys.Button.RIGHT_BUMPER);
+        //driverOp = new GamepadEx(gamepad2);
+        //driverOp.wasJustReleased(GamepadKeys.Button.RIGHT_BUMPER);
 
         // Expansion Hub Pins
         motorFrontLeft = (DcMotorEx) hardwareMap.dcMotor.get("FL"); // Pin 2 -> pin 3
@@ -79,13 +74,15 @@ public class PP_MecanumTeleOp extends OpMode
 
         motorFrontLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER); // Running without an encoder allows us to plug in a raw value rather than one that is proportional
         motorBackLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);  // to the motors total power. Ex. motor.setPower(0.5); would equal 50% if you run with encoders.
-        motorFrontRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        motorBackRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER); // Running without an encoder does NOT disable encoder counting
+        motorFrontRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);// Running without an encoder does NOT disable encoder counting
+        motorBackRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
+        /*
         motorFrontLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         motorBackLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         motorFrontRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         motorBackRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+         */
 
         // Reverse motors
         motorFrontRight.setDirection(DcMotorSimple.Direction.REVERSE);
@@ -93,44 +90,40 @@ public class PP_MecanumTeleOp extends OpMode
 
         armControl = new Arm(hardwareMap);
         slideControl = new Slide(hardwareMap);
-        clawControl = new Claw(hardwareMap, () -> gamepad2.right_bumper, () -> gamepad2.a);
+        clawControl = new Claw(hardwareMap);
         OdoPod odoControl = new OdoPod(hardwareMap);
-        alignmentControl=new poleAlignment(hardwareMap);
-        OdoPod.retract();
+        alignmentControl = new poleAlignment(hardwareMap);
+        odoControl.retract();
     }// INIT()
 
     @Override
     public void loop()
     {
-        boolean precisionToggle = gamepad1.right_trigger > 0.1; // we want to check this every time the loop runs
-        //boolean slideUp = gamepad2.right_trigger > 0.1;
-        //boolean slideDown = gamepad2.left_trigger > 0.1;
-        drive(precisionToggle);
+        // we want to check this every time the loop runs
+        drive();
         arm();
         claw();
         slides();
         poleAlignment();
 
-
-        slideControl.update(telemetry);
-        armControl.update(telemetry);
-        gamepad2_dpad_up.update();
         gamepad2_A.update();
         gamepad2_B.update();
         gamepad2_X.update();
         gamepad2_Y.update();
         gamepad1_X.update();
-        gamepad2_dpad_down.update();
+        gamepad2_rightBumper.update();
     }// end of loop()
 
-    //        BOT METHODS       \\
-    public void drive(boolean precisionToggle)
+    // BOT METHODS \\
+    public void drive()
     {
         double y = -gamepad1.left_stick_y; // Remember, this is reversed!
         double x = gamepad1.left_stick_x;
-        double rx = -gamepad1.right_stick_x*0.75;
-        if(precisionToggle)
-            rx *= TURN_PRECESION;
+        boolean precisionToggle = gamepad1.right_trigger > 0.1;
+        double rx = -gamepad1.right_stick_x * 0.75;
+            if(precisionToggle) {
+                rx *= TURN_PRECESION;
+            }
 
         // Denominator is the largest motor power (absolute value) or 1
         // This ensures all the powers maintain the same ratio, but only when
@@ -166,6 +159,12 @@ public class PP_MecanumTeleOp extends OpMode
             backRightPower /= maxValue;
         }
 
+        telemetry.addData("frontLeftPow", frontLeftPower);
+        telemetry.addData("frontRightPow", frontRightPower);
+        telemetry.addData("backLeftPow", backLeftPower);
+        telemetry.addData("backRightPow", backRightPower);
+        telemetry.update();
+
         if (precisionToggle) {
             motorFrontLeft.setPower(frontLeftPower * PRECISIONREDUCTION);
             motorBackLeft.setPower(backLeftPower * PRECISIONREDUCTION);
@@ -180,13 +179,13 @@ public class PP_MecanumTeleOp extends OpMode
     }// end of drive()
     public void poleAlignment()
     {
-        if(gamepad1_X.isRisingEdge())
+        if(gamepad1_X.isRisingEdge()) {
             alignmentControl.toggleAlignmentDevice();
+        }
     }
 
     public void arm(){
-
-        // BUTTONS \\/
+        armControl.update(telemetry);
         if (gamepad2_Y.isRisingEdge()) {
             armControl.setExtake();
             slideControl.setHighJunction(telemetry);
@@ -196,35 +195,33 @@ public class PP_MecanumTeleOp extends OpMode
             armControl.setExtake();
             slideControl.setMidJunction();
             clawControl.toggleWristRotate();
-
         }
         else if (gamepad2_A.isRisingEdge()) {
             slideControl.setLowJunction();
         }
         else if (gamepad2_X.isRisingEdge()){
             clawControl.wristJoint.setPosition(clawControl.WRIST_INTAKE_POSITION);
-            clawControl.wristInExtakePosition = false;
+            clawControl.toggleOpenClose();
             armControl.setIntake();
             slideControl.setIntakeOrGround();
         }
     }
 
-    public void claw() {
-        clawControl.update(); // updates the isOpen and isIntakePosition signal edge detector
-        clawControl.toggleOpenClose();
+    public void claw(){
+        if(gamepad2_rightBumper.isRisingEdge()) {
+         clawControl.toggleOpenClose();
+        }
     }
 
     public void slides(){
-
-        if (gamepad2.right_trigger>0.2){
-            slideControl.setManualSlide(120);
+        slideControl.update(telemetry);
+        if (gamepad2.right_trigger>0.1){
+            slideControl.setManualSlide(165);
         }
 
-        if(gamepad2.left_trigger>0.2){
-            slideControl.setManualSlide(-120);
+        if(gamepad2.left_trigger>0.1){
+            slideControl.setManualSlide(-165);
         }
-
     }
-
 }
 

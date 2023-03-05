@@ -2,11 +2,9 @@ package org.firstinspires.ftc.teamcode.Autos.Auto_TrajectorySequences.MainAutos;
 
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
-import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.acmerobotics.roadrunner.trajectory.Trajectory;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
-import org.firstinspires.ftc.teamcode.Autos.Auto_TrajectorySequences.BackupAutos.BlueTerminalAuto;
 import org.firstinspires.ftc.teamcode.MechanismTemplates.Arm;
 import org.firstinspires.ftc.teamcode.MechanismTemplates.Claw;
 import org.firstinspires.ftc.teamcode.MechanismTemplates.OdoPod;
@@ -86,7 +84,7 @@ public class OfficialAutoTwo extends PowerPlay_AprilTagDetectionDeposit {
                 .waitSeconds(.35)
                 //opens claw
                 .UNSTABLE_addTemporalMarkerOffset(0,()->{
-                    clawControl.toggleAutoOpenClose();
+                    clawControl.toggleOpenClose();
                 })
                 .waitSeconds(0.5)
                 .UNSTABLE_addTemporalMarkerOffset(0, ()->{
@@ -103,7 +101,7 @@ public class OfficialAutoTwo extends PowerPlay_AprilTagDetectionDeposit {
                 .strafeRight(14.5)
                 .forward(28)
                 .UNSTABLE_addTemporalMarkerOffset(0,()->{
-                    clawControl.toggleAutoOpenClose();
+                    clawControl.toggleOpenClose();
                 })
 
 
@@ -129,7 +127,7 @@ public class OfficialAutoTwo extends PowerPlay_AprilTagDetectionDeposit {
                 })
                 .waitSeconds(0.35) // OLD VALUE: 0.25
                 .UNSTABLE_addTemporalMarkerOffset(0,()->{
-                    clawControl.toggleAutoOpenClose();
+                    clawControl.toggleOpenClose();
                 })
 
                 .waitSeconds(0.25) // OLD VALUE: 0.15
@@ -144,7 +142,7 @@ public class OfficialAutoTwo extends PowerPlay_AprilTagDetectionDeposit {
                 .lineToLinearHeading(new Pose2d(48.5 ,0, Math.toRadians(268.55)))
                 .forward(28)
                 .UNSTABLE_addTemporalMarkerOffset(0,()->{
-                    clawControl.toggleAutoOpenClose();
+                    clawControl.toggleOpenClose();
                 })
                 .waitSeconds(.25)
                 .UNSTABLE_addTemporalMarkerOffset(0,()->{
@@ -167,7 +165,7 @@ public class OfficialAutoTwo extends PowerPlay_AprilTagDetectionDeposit {
                 })
                 .waitSeconds(.35)
                 .UNSTABLE_addTemporalMarkerOffset(0,()->{
-                    clawControl.toggleAutoOpenClose();
+                    clawControl.toggleOpenClose();
                 })
 
                 .waitSeconds(0.15)
@@ -182,7 +180,7 @@ public class OfficialAutoTwo extends PowerPlay_AprilTagDetectionDeposit {
                 .lineToLinearHeading(new Pose2d(48.5 ,0, Math.toRadians(268.55)))
                 .forward(28)
                 .UNSTABLE_addTemporalMarkerOffset(0,()->{
-                    clawControl.toggleAutoOpenClose();
+                    clawControl.toggleOpenClose();
                 })
                 .waitSeconds(.25)
                 .UNSTABLE_addTemporalMarkerOffset(0,()->{
@@ -203,7 +201,7 @@ public class OfficialAutoTwo extends PowerPlay_AprilTagDetectionDeposit {
                 })
                 .waitSeconds(.35)
                 .UNSTABLE_addTemporalMarkerOffset(0,()->{
-                    clawControl.toggleAutoOpenClose();
+                    clawControl.toggleOpenClose();
                 })
                 .waitSeconds(0.15)
                 .UNSTABLE_addTemporalMarkerOffset(0,()->{

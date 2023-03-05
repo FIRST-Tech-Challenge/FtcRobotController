@@ -101,7 +101,7 @@ public class FINALAutoLeftSide extends PowerPlay_AprilTagDetectionDeposit {
 				.waitSeconds(.35)
 				//opens claw
 				.UNSTABLE_addTemporalMarkerOffset(0,()->{
-					clawControl.toggleAutoOpenClose();
+					clawControl.toggleOpenClose();
 				})
 				.waitSeconds(0.5)
 				.UNSTABLE_addTemporalMarkerOffset(0, ()->{
@@ -118,7 +118,7 @@ public class FINALAutoLeftSide extends PowerPlay_AprilTagDetectionDeposit {
 				.strafeLeft(firstStrafe)
 				.forward(28)
 				.UNSTABLE_addTemporalMarkerOffset(0,()->{
-					clawControl.toggleAutoOpenClose();
+					clawControl.toggleOpenClose();
 				})
 
 				// GOING TO HIGH JUNCTION FOR THE SECOND TIME
@@ -139,7 +139,7 @@ public class FINALAutoLeftSide extends PowerPlay_AprilTagDetectionDeposit {
 				})
 				.waitSeconds(0.35) // OLD VALUE: 0.25
 				.UNSTABLE_addTemporalMarkerOffset(0,()->{
-					clawControl.toggleAutoOpenClose();
+					clawControl.toggleOpenClose();
 				})
 
 				.waitSeconds(0.25) // OLD VALUE: 0.15
@@ -154,7 +154,7 @@ public class FINALAutoLeftSide extends PowerPlay_AprilTagDetectionDeposit {
 				.lineToLinearHeading(new Pose2d(xConeStack ,0, Math.toRadians(angleConeStack)))
 				.forward(yConeStack)
 				.UNSTABLE_addTemporalMarkerOffset(0,()->{
-					clawControl.toggleAutoOpenClose();
+					clawControl.toggleOpenClose();
 				})
 				.waitSeconds(.25)
 				.UNSTABLE_addTemporalMarkerOffset(0,()->{
@@ -177,7 +177,7 @@ public class FINALAutoLeftSide extends PowerPlay_AprilTagDetectionDeposit {
 				})
 				.waitSeconds(.6)
 				.UNSTABLE_addTemporalMarkerOffset(0,()->{
-					clawControl.toggleAutoOpenClose();
+					clawControl.toggleOpenClose();
 				})
 
 				.waitSeconds(0.15)
@@ -191,7 +191,7 @@ public class FINALAutoLeftSide extends PowerPlay_AprilTagDetectionDeposit {
 				.lineToLinearHeading(new Pose2d(xConeStack ,0, Math.toRadians(angleConeStack)))
 				.forward(yConeStack)
 				.UNSTABLE_addTemporalMarkerOffset(0,()->{
-					clawControl.toggleAutoOpenClose();
+					clawControl.toggleOpenClose();
 				})
 				.waitSeconds(.25)
 				.UNSTABLE_addTemporalMarkerOffset(0,()->{
@@ -212,7 +212,7 @@ public class FINALAutoLeftSide extends PowerPlay_AprilTagDetectionDeposit {
 				})
 				.waitSeconds(.5)
 				.UNSTABLE_addTemporalMarkerOffset(0,()->{
-					clawControl.toggleAutoOpenClose();
+					clawControl.toggleOpenClose();
 				})
 				.waitSeconds(0.15)
 				.UNSTABLE_addTemporalMarkerOffset(0,()->{

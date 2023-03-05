@@ -7,7 +7,6 @@ import org.firstinspires.ftc.teamcode.MechanismTemplates.Claw;
 import org.firstinspires.ftc.teamcode.MechanismTemplates.OdoPod;
 import org.firstinspires.ftc.teamcode.MechanismTemplates.Slide;
 import org.firstinspires.ftc.teamcode.TeleOps.AprilTags.PowerPlay_AprilTagDetectionDeposit;
-import org.firstinspires.ftc.teamcode.drive.DriveConstants;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequence;
 import com.acmerobotics.dashboard.config.Config;
@@ -128,7 +127,7 @@ public class SPLINEAutoRightSide extends PowerPlay_AprilTagDetectionDeposit{
 
 				.waitSeconds(0.25)
 				.UNSTABLE_addTemporalMarkerOffset(0,()->{
-					clawControl.toggleAutoOpenClose();
+					clawControl.toggleOpenClose();
 				})
 				.waitSeconds(0.25)
 
@@ -149,7 +148,7 @@ public class SPLINEAutoRightSide extends PowerPlay_AprilTagDetectionDeposit{
 				.lineToLinearHeading(new Pose2d(xConeStack1,1,Math.toRadians(coneStackHeading)))
 				.forward(yConeStack)
 				.UNSTABLE_addTemporalMarkerOffset(0,()->{
-					clawControl.toggleAutoOpenClose();
+					clawControl.toggleOpenClose();
 				})
 				.waitSeconds(0.2)
 				.UNSTABLE_addTemporalMarkerOffset(0,()->{
@@ -171,7 +170,7 @@ public class SPLINEAutoRightSide extends PowerPlay_AprilTagDetectionDeposit{
 				})
 				.waitSeconds(0.2)
 				.UNSTABLE_addTemporalMarkerOffset(0,()->{
-					clawControl.toggleAutoOpenClose();
+					clawControl.toggleOpenClose();
 				})
 				.waitSeconds(0.2)
 
@@ -192,7 +191,7 @@ public class SPLINEAutoRightSide extends PowerPlay_AprilTagDetectionDeposit{
 				.lineToLinearHeading(new Pose2d(xConeStack2,1,Math.toRadians(coneStackHeading)))
 				.forward(yConeStack)
 				.UNSTABLE_addTemporalMarkerOffset(0,()->{
-					clawControl.toggleAutoOpenClose();
+					clawControl.toggleOpenClose();
 				})
 				.waitSeconds(0.2)
 				.UNSTABLE_addTemporalMarkerOffset(0,()->{
@@ -213,7 +212,7 @@ public class SPLINEAutoRightSide extends PowerPlay_AprilTagDetectionDeposit{
 				})
 				.waitSeconds(0.2)
 				.UNSTABLE_addTemporalMarkerOffset(0,()->{
-					clawControl.toggleAutoOpenClose();
+					clawControl.toggleOpenClose();
 				})
 				.waitSeconds(0.2)
 				.UNSTABLE_addTemporalMarkerOffset(0,()->{
@@ -227,7 +226,7 @@ public class SPLINEAutoRightSide extends PowerPlay_AprilTagDetectionDeposit{
 				.lineToLinearHeading(new Pose2d(xConeStack3,1,Math.toRadians(coneStackHeading)))
 				.forward(yConeStack)
 				.UNSTABLE_addTemporalMarkerOffset(0,()->{
-					clawControl.toggleAutoOpenClose();
+					clawControl.toggleOpenClose();
 				})
 				.waitSeconds(0.2)
 				.UNSTABLE_addTemporalMarkerOffset(0,()->{
@@ -248,7 +247,7 @@ public class SPLINEAutoRightSide extends PowerPlay_AprilTagDetectionDeposit{
 				})
 				.waitSeconds(0.2)
 				.UNSTABLE_addTemporalMarkerOffset(0,()->{
-					clawControl.toggleAutoOpenClose();
+					clawControl.toggleOpenClose();
 				})
 				.waitSeconds(0.2)
 				.UNSTABLE_addTemporalMarkerOffset(0,()->{
@@ -263,7 +262,7 @@ public class SPLINEAutoRightSide extends PowerPlay_AprilTagDetectionDeposit{
 				.lineToLinearHeading(new Pose2d(xConeStack4,1,Math.toRadians(coneStackHeading)))
 				.forward(yConeStack)
 				.UNSTABLE_addTemporalMarkerOffset(0,()->{
-					clawControl.toggleAutoOpenClose();
+					clawControl.toggleOpenClose();
 				})
 				.waitSeconds(0.2)
 				.UNSTABLE_addTemporalMarkerOffset(0,()->{
@@ -284,7 +283,7 @@ public class SPLINEAutoRightSide extends PowerPlay_AprilTagDetectionDeposit{
 				})
 				.waitSeconds(0.2)
 				.UNSTABLE_addTemporalMarkerOffset(0,()->{
-					clawControl.toggleAutoOpenClose();
+					clawControl.toggleOpenClose();
 				})
 				.waitSeconds(0.2)
 				.UNSTABLE_addTemporalMarkerOffset(0,()->{

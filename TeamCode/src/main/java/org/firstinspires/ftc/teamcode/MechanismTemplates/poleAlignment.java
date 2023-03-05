@@ -9,7 +9,7 @@ public class poleAlignment
     public static double raise=.55;
     public static double lower=.13;
     public poleAlignment(HardwareMap hardwareMap) {
-        retractServo=hardwareMap.get(Servo.class, "poleAlignment");//port 5
+        retractServo=hardwareMap.get(Servo.class, "poleAlignment"); //port 5
     }
     public static void lower()
     {
@@ -20,6 +20,7 @@ public class poleAlignment
     {
         retractServo.setPosition(raise);
     }
+
     public static void toggleAlignmentDevice() {
         if (retractServo.getPosition() == raise) {
             retractServo.setPosition(lower);
@@ -27,7 +28,6 @@ public class poleAlignment
         else {
             retractServo.setPosition(raise);
         }
-
     }
 }
 
