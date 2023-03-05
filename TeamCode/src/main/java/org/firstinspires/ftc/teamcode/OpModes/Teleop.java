@@ -56,65 +56,73 @@ public class Teleop extends LinearOpMode {
 
         while (opModeIsActive()) {
 
-            double move_y_axis = gamepad1.left_stick_y;
-            //double move_x_axis = -gamepad1.left_stick_x
-            // double(gamepad1.dpad_right)-double(gamepad1.dpad_left)
-            double move_x_axis = 0;
-            double pivot_turn = -gamepad1.right_stick_x;
+            if(robot.chassis.isRobotStable())
+            {
+                double move_y_axis = gamepad1.left_stick_y;
+                //double move_x_axis = -gamepad1.left_stick_x
+                // double(gamepad1.dpad_right)-double(gamepad1.dpad_left)
+                double move_x_axis = 0;
+                double pivot_turn = -gamepad1.right_stick_x;
 
-            //Sets the target power
-            double target_fl_power = move_y_axis + move_x_axis + pivot_turn;
-            double target_bl_power = move_y_axis - move_x_axis + pivot_turn;
-            double target_fr_power = move_y_axis - move_x_axis - pivot_turn;
-            double target_br_power = move_y_axis + move_x_axis - pivot_turn;
+                //Sets the target power
+                double target_fl_power = move_y_axis + move_x_axis + pivot_turn;
+                double target_bl_power = move_y_axis - move_x_axis + pivot_turn;
+                double target_fr_power = move_y_axis - move_x_axis - pivot_turn;
+                double target_br_power = move_y_axis + move_x_axis - pivot_turn;
 
-            //Adds how far you are from target power, times acceleration to the current power.
-            fl_power += acceleration * (target_fl_power - fl_power);
-            bl_power += acceleration * (target_bl_power - bl_power);
-            fr_power += acceleration * (target_fr_power - fr_power);
-            br_power += acceleration * (target_br_power - br_power);
+                //Adds how far you are from target power, times acceleration to the current power.
+                fl_power += acceleration * (target_fl_power - fl_power);
+                bl_power += acceleration * (target_bl_power - bl_power);
+                fr_power += acceleration * (target_fr_power - fr_power);
+                br_power += acceleration * (target_br_power - br_power);
 
-            /**
-             Joystick controls for Drivetrain
-             */
+                /**
+                 Joystick controls for Drivetrain
+                 */
 
-            robot.chassis.FLMotor.setPower(DRIVETRAIN_SPEED * fl_power);
-            robot.chassis.BLMotor.setPower(DRIVETRAIN_SPEED * bl_power);
-            robot.chassis.FRMotor.setPower(DRIVETRAIN_SPEED * fr_power);
-            robot.chassis.BRMotor.setPower(DRIVETRAIN_SPEED * br_power);
+                robot.chassis.FLMotor.setPower(DRIVETRAIN_SPEED * fl_power);
+                robot.chassis.BLMotor.setPower(DRIVETRAIN_SPEED * bl_power);
+                robot.chassis.FRMotor.setPower(DRIVETRAIN_SPEED * fr_power);
+                robot.chassis.BRMotor.setPower(DRIVETRAIN_SPEED * br_power);
 
-            /**
-             * Joystick controls for slider, arm, and claw.
-             */
+                /**
+                 * Joystick controls for slider, arm, and claw.
+                 */
 
-            double vSliderPower =  -gamepad2.left_stick_y;
-            robot.vSlider.motor.setPower(vSliderPower);
+                double vSliderPower = -gamepad2.left_stick_y;
+                if (vSliderPower < 0 && robot.vSlider.motor.getCurrentPosition() < 0) {
+                    vSliderPower = 0;
+                }
+
+                robot.vSlider.motor.setPower(vSliderPower);
 
 
-            // Claw
-            if(gamepad2.x) {
-                robot.claw.close();
+                // Claw
+                if (gamepad2.x) {
+                    robot.claw.close();
+                }
+                if (gamepad2.y) {
+                    robot.claw.open();
+                }
+
+                // Arm
+                if (gamepad2.right_bumper) {
+                    robot.claw.close();
+                    robot.arm.swingUp();
+                }
+                if (gamepad2.left_bumper) {
+                    robot.claw.close();
+                    robot.arm.swingDown();
+                }
+
             }
-            if(gamepad2.y) {
+
+            else {
+                robot.chassis.stopDriveMotors();
+                robot.vSlider.motor.setPower(0);
+                robot.arm.motor.setPower(0);
                 robot.claw.open();
             }
-
-            // Arm
-            if(gamepad2.right_bumper) {
-                robot.claw.close();
-                robot.arm.swingUp();
-            }
-            if(gamepad2.left_bumper) {
-                robot.claw.close();
-                robot.arm.swingDown();
-            }
-
-            if(robot.chassis.isRobotStable() == false) {
-                while(robot.chassis.isRobotStable() == false) {
-                    robot.chassis.stopDriveMotors();
-                }
-            }
-
 
             telemetry.addData("FL Motor Encoder", robot.chassis.FLMotor.getCurrentPosition());
             telemetry.addData("BL Motor Encoder", robot.chassis.BLMotor.getCurrentPosition());

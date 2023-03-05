@@ -95,6 +95,4 @@ public class AutoRight extends LinearOpMode {
             }
         }
     }
-
-
 }

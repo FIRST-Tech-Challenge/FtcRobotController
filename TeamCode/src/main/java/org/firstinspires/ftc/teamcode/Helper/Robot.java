@@ -192,7 +192,7 @@ public class Robot {
         }
 
         if (LR) {
-            chassis.DriveToPosition(driveSpeed, 0, 64, true);
+            chassis.DriveToPosition(driveSpeed, 0, 75, true);
         } else {
             chassis.DriveToPosition(driveSpeed, -15, 68, true);
         }
