@@ -120,9 +120,11 @@ public abstract class BaseOpMode extends LinearOpMode {
         startAngle = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle;
         originalAngle = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle;
 
-        int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
-        robotCamera = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "RobotCamera"), cameraMonitorViewId);
-        grabberCamera = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "GrabberCamera"));
+        int robotCameraStream = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
+        int grabberCameraStream = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
+
+        robotCamera = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "RobotCamera"), robotCameraStream);
+        grabberCamera = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "GrabberCamera"), grabberCameraStream);
 
         aprilTagDetectionPipeline = new AprilTagDetectionPipeline();
         robotCameraPipeline = new RobotCameraPipeline();
@@ -132,7 +134,7 @@ public abstract class BaseOpMode extends LinearOpMode {
     }
 
     /**
-     * drives the robot with the IMU
+     * drives the robot with the IMU - field centric driving
      * when not turning, the robot maintains a constant heading
      * @param xPower the motor power for moving in the x-direction
      * @param yPower the motor power for moving in the y-direction
@@ -176,6 +178,12 @@ public abstract class BaseOpMode extends LinearOpMode {
         motorBR.setPower(yPower + xPower - tPower);
     }
 
+    /**
+     * drives the robot without the IMU - robot centric driving
+     * @param xPower the motor power for moving in the x-direction
+     * @param yPower the motor power for moving in the y-direction
+     * @param tPower the motor power for pivoting
+     */
     public void driveWithoutIMU(double xPower, double yPower, double tPower){
         motorFL.setPower(yPower + xPower + tPower);
         motorFR.setPower(yPower - xPower - tPower);
@@ -229,15 +237,12 @@ public abstract class BaseOpMode extends LinearOpMode {
         double xOffset, yOffset;
 
         do {
-            xOffset = pipeline.xPosition - Constants.CAMERA_CENTER_X;
-            yOffset = Constants.CAMERA_CENTER_Y - pipeline.yPosition;
+            xOffset = Constants.CAMERA_CENTER_X - pipeline.xPosition;
+            yOffset = pipeline.yPosition - Constants.CAMERA_CENTER_Y;
 
             // center the cone on the junction top
             if (pipeline.detected) {
-                driveWithIMU(junctionTopPixelsMotorPower(xOffset), junctionTopPixelsMotorPower(yOffset), 0.0);
-                telemetry.addData("xMotorPower", junctionTopPixelsMotorPower(xOffset));
-                telemetry.addData("yMotorPower", junctionTopPixelsMotorPower(yOffset));
-                telemetry.update();
+                driveWithoutIMU(Constants.JUNCTION_TOP_CENTERING_KP * xOffset, Constants.JUNCTION_TOP_CENTERING_KP * yOffset, 0.0);
             } else {
                 break;
             }
@@ -256,51 +261,20 @@ public abstract class BaseOpMode extends LinearOpMode {
         double xOffset, width;
 
         do {
-            xOffset = 400-pipeline.xPosition;
+            xOffset = Constants.CAMERA_CENTER_X - pipeline.xPosition;
             width = pipeline.width;
 
             // drive forward while centering on the cone stack if contour exists
-            if (width == 0) {
-                break;
+            if (width != 0) {
+                driveWithoutIMU(Constants.CONE_STACK_CENTERING_KP * xOffset, Constants.CONE_STACK_WIDTH_KP * width + Constants.CONE_STACK_CENTERING_MAX_SPEED, Constants.CONE_STACK_TURNING_KP * xOffset);
             } else {
-                driveWithoutIMU(coneStackPixelsMotorPower(xOffset), coneStackWidthMotorPower(width), coneStackPixelsMotorPower(xOffset));
-                telemetry.addData("xMotorPower", coneStackPixelsMotorPower(xOffset));
-                telemetry.addData("yMotorPower", coneStackWidthMotorPower(width));
-                telemetry.addData("width",width);
-                telemetry.update();
+                break;
             }
 
         // while far enough that the cone stack doesn't fill the entire camera view
         } while (width < Constants.CONE_WIDTH);
 
         stopDriveMotors();
-    }
-
-    /**
-     * calculates the motor power for the robot drivetrain based on the pixel offset from the junction top
-     * @param pixelOffset how far junction top is from center of camera field of view in pixels
-     * @return motor power for robot drivetrain
-     */
-    public double junctionTopPixelsMotorPower(double pixelOffset) {
-        return Constants.JUNCTION_TOP_CENTERING_KP * pixelOffset;
-    }
-
-    /**
-     * calculates the motor power for the robot drivetrain based on the width of the bounding box of the cone stack
-     * @param coneStackWidth how wide the cone stack bounding box is in pixels
-     * @return motor power for robot drivetrain
-     */
-    public double coneStackWidthMotorPower(double coneStackWidth) {
-        return Constants.CONE_STACK_WIDTH_KP * coneStackWidth + Constants.CONE_STACK_CENTERING_MAX_SPEED;
-    }
-
-    /**
-     * calculates the motor power for the robot drivetrain based on the pixel offset from the cone stack
-     * @param pixelOffset how far cone stack is horizontally from center of camera field of view in pixels
-     * @return motor power for robot drivetrain
-     */
-    public double coneStackPixelsMotorPower(double pixelOffset) {
-        return Constants.CONE_STACK_CENTERING_KP * pixelOffset;
     }
 
     /**
