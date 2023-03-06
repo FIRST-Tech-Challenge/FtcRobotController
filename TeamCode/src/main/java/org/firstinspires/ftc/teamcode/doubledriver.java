@@ -133,6 +133,14 @@ public class doubledriver extends LinearOpMode {
 
             Crain.setPower(crainpower);
 
+            if (gamepad2.x){
+                Guide.setPosition(0);
+            }
+
+            if (gamepad2.y){
+                Guide.setPosition(1);
+            }
+
             if (spinpowerup){
                 Spin.setPower(1);
             }

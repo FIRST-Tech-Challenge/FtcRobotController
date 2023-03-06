@@ -210,6 +210,7 @@ public class newauto extends LinearOpMode {
             //move and spin to high junction
             strafeLeftwithcrane(1, 2700, -1, 3100);
             Crane.setPower(-.2);
+            gyroTurning(0);
             sleep(100);
             moveandspin(.5,-350,1,260);
             //movewithdistance2(.5,12);
@@ -221,7 +222,7 @@ public class newauto extends LinearOpMode {
             //crane(1,200);//
             sleep(100);
             intake(-1, 1300);
-            crane(-1, 220);
+            //crane(-1, 220);
 
             //move(.5,180);
             //strafeLeftwithdistanceandcrane(45,1,100);
