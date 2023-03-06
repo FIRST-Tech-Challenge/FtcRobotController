@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.teamUtil.gamepadEX;
+package org.firstinspires.ftc.teamcode.teamUtil.CommandScheduler.gamepadEX;
 
 import com.qualcomm.robotcore.hardware.Gamepad;
 

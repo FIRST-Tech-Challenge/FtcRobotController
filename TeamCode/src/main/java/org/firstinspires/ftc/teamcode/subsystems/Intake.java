@@ -2,12 +2,20 @@ package org.firstinspires.ftc.teamcode.subsystems;
 
 import com.qualcomm.robotcore.hardware.Servo;
 
+import org.firstinspires.ftc.teamcode.teamUtil.CommandScheduler.Subsystem;
 import org.firstinspires.ftc.teamcode.teamUtil.ConfigNames;
 import org.firstinspires.ftc.teamcode.teamUtil.RobotConfig;
 import org.firstinspires.ftc.teamcode.teamUtil.RobotConstants;
 
-public class Intake {
+public class Intake extends Subsystem {
     RobotConfig r;
+
+    public Intake(RobotConfig r) {
+        this.r = r;
+    }
+    public Intake(){
+        r = RobotConfig.getInstance();
+    }
 
     public enum intakePos{
         OPEN(0),
@@ -24,14 +32,8 @@ public class Intake {
         }
     }
 
-    private final Servo intake;
+    private Servo intake;
     private double intakePosition;
-
-    public Intake(RobotConfig r) {
-        this.r = r;
-        intake = r.hardwareMap.get(Servo.class, ConfigNames.intake);
-        intake.scaleRange(RobotConstants.intakeOpen, RobotConstants.intakeClosed);
-    }
 
     public void freeTargetPosition(double targetPos){
         this.intakePosition = targetPos;
@@ -41,7 +43,21 @@ public class Intake {
         this.intakePosition = intakePos.getPosition();
     }
 
+    @Override
+    public void init() {
+        intake = r.opMode.hardwareMap.get(Servo.class, ConfigNames.intake);
+        intake.scaleRange(RobotConstants.intakeOpen, RobotConstants.intakeClosed);
+    }
+
+    @Override
+    public void read() {
+
+    }
+
     public void update(){
         intake.setPosition(intakePosition);
     }
+
+    @Override
+    public void close() {}
 }

@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.subsystems;
+package org.firstinspires.ftc.teamcode.subsystems.swerve;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
@@ -38,17 +38,17 @@ public class SwerveModule {
 
         if (side == RobotConstants.moduleSides.LEFT) {
             this.log = new Log(RobotConstants.configuredSystems.LEFT_MODULE, "Absolute Heading", "Flipping Heading", "Robot Heading Adjusted Target Angle", "Target Heading Adjusted Target Angle", "Error", "Top Power", "Bottom Power");
-            top = r.hardwareMap.get(DcMotorEx.class, ConfigNames.leftTop);
-            bottom = r.hardwareMap.get(DcMotorEx.class, ConfigNames.leftBottom);
+            top = r.opMode.hardwareMap.get(DcMotorEx.class, ConfigNames.leftTop);
+            bottom = r.opMode.hardwareMap.get(DcMotorEx.class, ConfigNames.leftBottom);
         }
         else {
             this.log = new Log(RobotConstants.configuredSystems.RIGHT_MODULE,"Absolute Heading", "Flipping Heading", "Robot Heading Adjusted Target Angle", "Target Heading Adjusted Target Angle", "Error", "Top Power", "Bottom Power");
-            top = r.hardwareMap.get(DcMotorEx.class, ConfigNames.rightTop);
-            bottom = r.hardwareMap.get(DcMotorEx.class, ConfigNames.rightBottom);
+            top = r.opMode.hardwareMap.get(DcMotorEx.class, ConfigNames.rightTop);
+            bottom = r.opMode.hardwareMap.get(DcMotorEx.class, ConfigNames.rightBottom);
         }
 
         top.setDirection(DcMotorEx.Direction.REVERSE);
-        bottom.setDirection(DcMotorEx.Direction.REVERSE);
+        //bottom.setDirection(DcMotorEx.Direction.REVERSE);
 
         top.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         bottom.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -163,9 +163,6 @@ public class SwerveModule {
         else{
             adjustedTargetAngle.update(targetAngle.value);
         }
-
-        adjustedTargetAngle.update(targetAngle.value);
-
     }
 
     private void pDrive(double power, double turnPower, double throttle, double robotHeadingError){

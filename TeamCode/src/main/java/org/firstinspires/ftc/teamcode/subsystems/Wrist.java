@@ -2,11 +2,12 @@ package org.firstinspires.ftc.teamcode.subsystems;
 
 import com.qualcomm.robotcore.hardware.Servo;
 
+import org.firstinspires.ftc.teamcode.teamUtil.CommandScheduler.Subsystem;
 import org.firstinspires.ftc.teamcode.teamUtil.ConfigNames;
 import org.firstinspires.ftc.teamcode.teamUtil.RobotConfig;
 import org.firstinspires.ftc.teamcode.teamUtil.RobotConstants;
 
-public class Wrist {
+public class Wrist extends Subsystem {
 
     RobotConfig r;
 
@@ -30,10 +31,9 @@ public class Wrist {
 
     public Wrist(RobotConfig r) {
         this.r = r;
-
-        wrist = r.hardwareMap.get(Servo.class, ConfigNames.wrist);
-        wrist.scaleRange(RobotConstants.wristFront, RobotConstants.wristBack);
-        freeTargetPosition(0);
+    }
+    public Wrist(){
+        r = RobotConfig.getInstance();
     }
 
     /**
@@ -49,8 +49,25 @@ public class Wrist {
     }
 
 
+    @Override
+    public void init() {
+        wrist = r.opMode.hardwareMap.get(Servo.class, ConfigNames.wrist);
+        wrist.scaleRange(RobotConstants.wristFront, RobotConstants.wristBack);
+        freeTargetPosition(0);
+    }
+
+    @Override
+    public void read() {
+
+    }
+
     public void update(){
         wrist.setPosition(wristPos);
+    }
+
+    @Override
+    public void close() {
+
     }
 
 }

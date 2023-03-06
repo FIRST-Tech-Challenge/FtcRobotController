@@ -21,7 +21,8 @@ public class RobotConstants {
         ARM,
         ENCODER_READ,
         LIMIT_SWITCH,
-        GAMEPADS;
+        GAMEPADEX_1,
+        GAMEPADEX_2;
     }
 
     public enum poleHeights {
@@ -56,10 +57,12 @@ public class RobotConstants {
     public static final double wristFront = 0;
     public static final double wristBack = 0.66;
 
-    public static final double intakeOpen = 0.3;
-    public static final double intakeClosed = 0.49;
+    public static final double intakeOpen = 0;
+    public static final double intakeClosed = 0.3;
 
-    public static final double motorResolution = 134.4; //per revolution
+    //public static final double motorResolution = 134.4; //per revolution //TODO might be wrong
+    public static final double motorResolution = 1120.0; //per revolution
+
     public static final double colsonCircumference = Math.PI*63.50000006477; //mm
 
     public static final double moduleMaxAngularVelocity = 1;
@@ -72,7 +75,9 @@ public class RobotConstants {
     public static final double maxSwerveVelocity = maxSwerveRPS * colsonCircumference; // (mm/s)
     public static final double maxSwerveAcceleration = 900;// (mm/s/s)
 
-    public static double ticksPerDegreeLeftSwerve = 31921.0/3600.0;
+//    public static double ticksPerDegreeLeftSwerve = 31921.0/3600.0;
+//    public static double ticksPerDegreeRightSwerve = 31921.0/3600.0;
+    public static double ticksPerDegreeLeftSwerve = (motorResolution * (95.0/32.0)/(360.0/2.0));
     public static double ticksPerDegreeRightSwerve = 31921.0/3600.0;
 
     public static double ticksPerMMLeftSwerve = 0.4498;

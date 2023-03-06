@@ -3,29 +3,51 @@ package org.firstinspires.ftc.teamcode.teleop;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
-import org.firstinspires.ftc.teamcode.subsystems.Arm;
-import org.firstinspires.ftc.teamcode.subsystems.Intake;
-import org.firstinspires.ftc.teamcode.subsystems.Wrist;
+import org.firstinspires.ftc.teamcode.subsystems.*;
+import org.firstinspires.ftc.teamcode.teamUtil.CommandScheduler.Trigger;
+import org.firstinspires.ftc.teamcode.teamUtil.CommandScheduler.gamepadEX.ButtonEX;
 import org.firstinspires.ftc.teamcode.teamUtil.ConfiguredOpMode;
 import org.firstinspires.ftc.teamcode.teamUtil.RobotConstants;
+import org.firstinspires.ftc.teamcode.teamUtil.CommandScheduler.gamepadEX.GamepadEX;
 
 @TeleOp(name="Configured Servo Arm Test", group="TEST")
 public class ConfiguredOpModeArmTest extends ConfiguredOpMode {
 
-    private boolean armState = true;
+    private Arm arm;
+    private Wrist wrist;
+    private Intake intake;
+    private LimitSwitch limitSwitch;
+    private Lift lift;
 
-    private double intakePosition = 0;
-
-    Telemetry.Item intakePositionData;
+    boolean armstate = true;
 
     @Override
     public void superInit() {
-        r.initSystems(
-                RobotConstants.configuredSystems.ARM,
-                RobotConstants.configuredSystems.WRIST,
-                RobotConstants.configuredSystems.INTAKE,
-                RobotConstants.configuredSystems.LIFT
-        );
+        arm = new Arm();
+        wrist = new Wrist();
+        intake = new Intake();
+        limitSwitch = new LimitSwitch();
+        lift = new Lift();
+    }
+
+    @Override
+    public void registerTriggers() {
+        /*
+        Trigger intakeTrigger = new Trigger(gamepadEX2.right_bumper.isPressed())
+                .onTrue(() -> intake.presetTargetPosition(Intake.intakePos.OPEN))
+                .onFalse(() -> intake.presetTargetPosition(Intake.intakePos.CLOSED));
+        Trigger armWristTrigger = new Trigger(gamepadEX2.left_bumper.onPress())
+                .toggleOnTrue(() -> {
+                    arm.presetTargetPosition(Arm.armPos.FRONT);
+                    wrist.presetTargetPosition(Wrist.wristPos.FRONT);
+                })
+                .toggleOnFalse(() -> {
+                    arm.presetTargetPosition(Arm.armPos.BACK);
+                    wrist.presetTargetPosition(Wrist.wristPos.BACK);
+                });
+
+         */
+
     }
 
     @Override
@@ -35,45 +57,33 @@ public class ConfiguredOpModeArmTest extends ConfiguredOpMode {
 
     @Override
     public void superStart() {
-        intakePositionData = telemetry.addData("intake position", "");
+
     }
 
     @Override
     public void superLoop() {
-        r.commandControl.conditionalAction(() -> r.gamepadEX1.a.onPress(), () -> armState = !armState);
+        lift.liftInputs(gamepadEX2.rightY, limitSwitch.limitSwitchEX, new ButtonEX[]{gamepadEX2.y, gamepadEX2.b, gamepadEX2.x, gamepadEX2.a});
 
-        /*
-        r.commandControl.conditionalAction(() -> r.gamepadEX1.dpad_up.onPress(), () -> intakePosition += 0.1);
-        r.commandControl.conditionalAction(() -> r.gamepadEX1.dpad_down.onPress(), () -> intakePosition -= 0.1);
-         */
-
-        if(r.gamepadEX1.b.isPressed()){
-            r.intake.presetTargetPosition(Intake.intakePos.OPEN);
+        if(gamepadEX2.right_bumper.isPressed()){
+            intake.presetTargetPosition(Intake.intakePos.CLOSED);
         }
         else{
-            r.intake.presetTargetPosition(Intake.intakePos.CLOSED);
+            intake.presetTargetPosition(Intake.intakePos.OPEN);
+        }
+        if(gamepadEX2.left_bumper.onPress()){
+            armstate = ! armstate;
         }
 
-        if(intakePosition > 1){
-            intakePosition = 1;
-        } else if (intakePosition < 0) {
-            intakePosition = 0;
-        }
-
-        if(armState){
-            r.arm.presetTargetPosition(Arm.armPos.FRONT);
-            r.wrist.presetTargetPosition(Wrist.wristPos.FRONT);
+        if(armstate){
+            arm.presetTargetPosition(Arm.armPos.FRONT);
+            wrist.presetTargetPosition(Wrist.wristPos.BACK);
         }
         else{
-            r.arm.presetTargetPosition(Arm.armPos.BACK);
-            r.wrist.presetTargetPosition(Wrist.wristPos.BACK);
+            arm.presetTargetPosition(Arm.armPos.BACK);
+            wrist.presetTargetPosition(Wrist.wristPos.FRONT);
         }
 
-        //r.intake.freeTargetPosition(intakePosition);
 
-        //intakePositionData.setValue(intakePosition);
-
-        intakePositionData.setValue(r.gamepadEX1.b.isPressed());
     }
 
     @Override
