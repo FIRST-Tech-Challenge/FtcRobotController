@@ -375,13 +375,13 @@ public class Hardware2022 {
 
             double yError = yEncoder.getCurrentPosition() - currenYPosition;
             Log.d("9010", "Y Error " + yError);
-            yError = lnYPidfCrtler.calculate(turnError)*3;
+            yVelocity = lnYPidfCrtler.calculate(yError)*3;
 
 
-            wheelFrontLeft.setVelocity(-velocityCaculated + rx + yError);
-            wheelBackLeft.setVelocity(velocityCaculated + rx+ yError);
-            wheelFrontRight.setVelocity(velocityCaculated - rx+ yError);
-            wheelBackRight.setVelocity(-velocityCaculated - rx+ yError);
+            wheelFrontLeft.setVelocity(-velocityCaculated + rx + yVelocity);
+            wheelBackLeft.setVelocity(velocityCaculated + rx+ yVelocity);
+            wheelFrontRight.setVelocity(velocityCaculated - rx+ yVelocity);
+            wheelBackRight.setVelocity(-velocityCaculated - rx+ yVelocity);
         }
 
 
