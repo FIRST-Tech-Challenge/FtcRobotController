@@ -3,11 +3,12 @@ package org.firstinspires.ftc.teamcode.tuning;
 import com.acmerobotics.roadrunner.MotorFeedforward;
 import com.acmerobotics.roadrunner.Pose2d;
 import com.acmerobotics.roadrunner.Twist2d;
-import com.qualcomm.robotcore.hardware.DcMotorController;
+import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.IMU;
 import com.qualcomm.robotcore.hardware.VoltageSensor;
+import com.qualcomm.robotcore.util.SerialNumber;
 
 import org.firstinspires.ftc.teamcode.MecanumDrive;
 import org.firstinspires.ftc.teamcode.TankDrive;
@@ -15,19 +16,24 @@ import org.firstinspires.ftc.teamcode.ThreeDeadWheelLocalizer;
 import org.firstinspires.ftc.teamcode.TwoDeadWheelLocalizer;
 import org.firstinspires.ftc.teamcode.util.Encoder;
 import org.firstinspires.ftc.teamcode.util.Localizer;
+import org.firstinspires.ftc.teamcode.util.MidpointTimer;
 import org.firstinspires.ftc.teamcode.util.OverflowEncoder;
 import org.firstinspires.ftc.teamcode.util.RawEncoder;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 final class DriveView {
     public final String type;
 
     public final double inPerTick;
     public final double maxVel, minAccel, maxAccel;
+
+    public final List<LynxModule> lynxModules;
 
     public final List<DcMotorEx> leftMotors, rightMotors;
     public final List<DcMotorEx> motors;
@@ -55,6 +61,8 @@ final class DriveView {
     }
 
     public DriveView(HardwareMap hardwareMap) {
+        lynxModules = hardwareMap.getAll(LynxModule.class);
+
         final Localizer localizer;
         if (TuningOpModes.DRIVE_CLASS.equals(MecanumDrive.class)) {
             type = "mecanum";
@@ -154,14 +162,6 @@ final class DriveView {
         List<RawEncoder> allEncs = new ArrayList<>();
         allEncs.addAll(forwardEncs);
         allEncs.addAll(perpEncs);
-
-        DcMotorController c1 = allEncs.get(0).getController();
-        for (Encoder e : allEncs) {
-            DcMotorController c2 = e.getController();
-            if (c1 != c2) {
-                throw new IllegalArgumentException("all encoders must be attached to the same hub");
-            }
-        }
     }
 
     public MotorFeedforward feedforward() {
@@ -188,5 +188,23 @@ final class DriveView {
         }
 
         throw new AssertionError();
+    }
+
+    public void setBulkCachingMode(LynxModule.BulkCachingMode mode) {
+        for (LynxModule m : lynxModules) {
+            m.setBulkCachingMode(mode);
+        }
+    }
+
+    public Map<SerialNumber, Double> resetAndBulkRead(MidpointTimer t) {
+        final Map<SerialNumber, Double> times = new HashMap<>();
+        for (LynxModule m : lynxModules) {
+            m.clearBulkCache();
+
+            t.addSplit();
+            m.getBulkData();
+            times.put(m.getSerialNumber(), t.addSplit());
+        }
+        return times;
     }
 }
