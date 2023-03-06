@@ -1,13 +1,13 @@
-package org.firstinspires.ftc.teamcode.teamUtil.gamepadEX;
+package org.firstinspires.ftc.teamcode.teamUtil.CommandScheduler.gamepadEX;
 
 public class ButtonEX {
-    private boolean internalInput;
-    private boolean previousState = false;
+    private Boolean internalInput = false;
+    private Boolean previousState = false;
     private double leadingEdgeDebounce = 0;
     private double trailingEdgeDebounce = 0;
     private long lastCheck = System.nanoTime() - 100;
 
-    private boolean processedInput = false;
+    private Boolean processedInput = false;
 
     public ButtonEX() {}
 
@@ -27,7 +27,7 @@ public class ButtonEX {
      *
      * @return returns the boolean value of the button with debouncing used
      */
-    public boolean isPressed() {
+    public Boolean isPressed() {
         if (internalInput != previousState) {
             lastCheck = System.nanoTime();
         }
@@ -43,24 +43,16 @@ public class ButtonEX {
         return processedInput;
     }
 
-    public boolean raw() {
+    public Boolean raw() {
         return internalInput;
     }
 
-    public boolean onPress() {
+    public Boolean onPress() {
         return isPressed() && isPressed() != previousState;
     }
 
-    public boolean onRelease() {
+    public Boolean onRelease() {
         return !isPressed() && isPressed() != previousState;
-    }
-
-    public interface buttonAction{
-        void buttonAction();
-    }
-
-    public interface buttonCondition{
-        boolean buttonCondition();
     }
 
     public enum debouncingType {

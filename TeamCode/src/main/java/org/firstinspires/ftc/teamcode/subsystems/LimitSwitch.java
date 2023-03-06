@@ -2,28 +2,42 @@ package org.firstinspires.ftc.teamcode.subsystems;
 
 import com.qualcomm.robotcore.hardware.TouchSensor;
 
-import org.firstinspires.ftc.teamcode.teamUtil.gamepadEX.ButtonEX;
+import org.firstinspires.ftc.teamcode.teamUtil.CommandScheduler.Subsystem;
+import org.firstinspires.ftc.teamcode.teamUtil.CommandScheduler.gamepadEX.ButtonEX;
 import org.firstinspires.ftc.teamcode.teamUtil.RobotConfig;
 
-public class LimitSwitch {
+public class LimitSwitch extends Subsystem {
     RobotConfig r;
 
-    private final TouchSensor limitSwitch;
+    private TouchSensor limitSwitch;
 
-    public final ButtonEX limitSwitchEX;
+    public ButtonEX limitSwitchEX;
 
     public LimitSwitch(RobotConfig r) {
         this.r = r;
+    }
+    public LimitSwitch(){
+        r = RobotConfig.getInstance();
+    }
 
-        limitSwitch = r.hardwareMap.get(TouchSensor.class, "limit");
+    @Override
+    public void init() {
+        limitSwitch = r.opMode.hardwareMap.get(TouchSensor.class, "limit");
         limitSwitchEX = new ButtonEX();
     }
 
-    public void startLoopUpdate(){
+    @Override
+    public void read() {
         limitSwitchEX.startLoopUpdate(limitSwitch.isPressed());
     }
 
-    public void endLoopUpdate(){
+    @Override
+    public void update() {
         limitSwitchEX.endLoopUpdate();
+    }
+
+    @Override
+    public void close() {
+
     }
 }

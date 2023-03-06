@@ -11,6 +11,6 @@ public class ContinuousServoExample {
 
     ContinuousServoExample(RobotConfig r){
         this.r = r;
-        continuousServo = r.hardwareMap.get(CRServo.class, "CR SERVO");
+        continuousServo = r.opMode.hardwareMap.get(CRServo.class, "CR SERVO");
     }
 }

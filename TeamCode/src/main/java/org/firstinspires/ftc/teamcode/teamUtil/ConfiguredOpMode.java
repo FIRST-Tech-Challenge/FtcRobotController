@@ -1,6 +1,10 @@
 package org.firstinspires.ftc.teamcode.teamUtil;
 
+import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
+
+import org.firstinspires.ftc.teamcode.teamUtil.CommandScheduler.Subsystem;
+import org.firstinspires.ftc.teamcode.teamUtil.CommandScheduler.gamepadEX.GamepadEX;
 
 /**
  * Assists with update loops and the like for the integration of robotConfig.
@@ -10,42 +14,66 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 public abstract class ConfiguredOpMode extends OpMode {
 
     public RobotConfig r;
+    public GamepadEX
+        gamepadEX1,
+        gamepadEX2;
 
+    public abstract void superInit();
+    public abstract void registerTriggers();
     @Override
     public void init() {
-        r = RobotConfig.getInstance(this);
+        r = RobotConfig.freshInstance(this);
+        gamepadEX1 = new GamepadEX(gamepad1);
+        gamepadEX2 = new GamepadEX(gamepad2);
         superInit();
+        for (Subsystem subsystem : r.subsystems) {
+            subsystem.init();
+        }
+        registerTriggers();
     }
-    public abstract void superInit();
 
     public abstract void superInit_Loop();
     @Override
     public void init_loop() {
-
+        for (LynxModule module : r.allHubs) {
+            module.clearBulkCache();
+        }
         superInit_Loop();
-
     }
 
     public abstract void superStart();
     @Override
     public void start() {
-        r.telemetry.clear();
+        r.opMode.telemetry.clear();
+        RobotConfig.elapsedTime.reset();
         superStart();
     }
 
     public abstract void superLoop();
     @Override
     public void loop() {
-        r.systemsStartLoopUpdate();
+        for (LynxModule module : r.allHubs) {
+            module.clearBulkCache();
+        }
+        for (Subsystem subsystem : r.subsystems) {
+            subsystem.read();
+        }
+        gamepadEX1.startLoopUpdate();
+        gamepadEX2.startLoopUpdate();
         superLoop();
-        r.systemsEndLoopUpdate();
+        for (Subsystem subsystem : r.subsystems) {
+            subsystem.update();
+        }
+        gamepadEX1.endLoopUpdate();
+        gamepadEX2.endLoopUpdate();
     }
 
     public abstract void superStop();
     @Override
     public void stop(){
         superStop();
-        r.closeLogs();
-        r.lockDown();
+        for (Subsystem subsystem : r.subsystems) {
+            subsystem.close();
+        }
     }
 }
