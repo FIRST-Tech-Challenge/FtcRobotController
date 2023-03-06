@@ -189,7 +189,7 @@ public class newFieldLeft extends LinearOpMode {
 
         sleep(2500);
         movement.reset(robot);
-        movement.Left(600, robot, 0.5);
+        movement.Right(600, robot, 0.5);
         movement.move(robot);
         sleep(2000);
         if (sawOrange==true){
