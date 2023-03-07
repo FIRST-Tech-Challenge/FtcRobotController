@@ -32,6 +32,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. */
 package org.firstinspires.ftc.teamcode.android.OpModes;
 
 import com.qualcomm.hardware.kauailabs.NavxMicroNavigationSensor;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -66,7 +67,7 @@ import java.text.DecimalFormat;
  * only the raw or only the processed data.
  */
 @TeleOp(name = "Sensor: navX Raw Data", group = "Sensor")
-// @Disabled Comment this in to remove this from the Driver Station OpMode List
+@Disabled
 public class SensorNavXRawOp extends OpMode {
 
   private String startDate;

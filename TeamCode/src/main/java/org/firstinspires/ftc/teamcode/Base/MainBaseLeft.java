@@ -18,6 +18,8 @@ import com.qualcomm.robotcore.util.Range;
 
 import org.firstinspires.ftc.robotcore.external.navigation.Acceleration;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
+import org.firstinspires.ftc.teamcode.Auto.VisionLeft;
+import org.firstinspires.ftc.teamcode.Auto.VisionRight;
 import org.firstinspires.ftc.teamcode.android.navx_ftc.src.main.java.com.kauailabs.navx.ftc.AHRS;
 import org.firstinspires.ftc.teamcode.android.navx_ftc.src.main.java.com.kauailabs.navx.ftc.navXPIDController;
 
@@ -25,7 +27,7 @@ import java.nio.channels.ScatteringByteChannel;
 import java.text.DecimalFormat;
 
 
-public class MainBase {
+public class MainBaseLeft {
 
     // internal instance of opMode
     public OpMode opMode = null;
@@ -39,6 +41,8 @@ public class MainBase {
     public DcMotor lift = null;
     public DcMotor rightgrabber = null;
     public DcMotor leftgrabber = null;
+
+    public VisionLeft detectorLeft = null;
 
     // Total Sensors: 4
     public ColorSensor color = null;
@@ -93,7 +97,7 @@ public class MainBase {
     public final double TOLERANCE_DEGREES = .2;
     public final double MIN_MOTOR_OUTPUT_VALUE = -1.0;
     public final double MAX_MOTOR_OUTPUT_VALUE = 1.0;
-    public final double YAW_PID_P = 0.08;
+    public final double YAW_PID_P = 0.09;
     public final double YAW_PID_I = 0;
     public final double YAW_PID_D = 0;
 
@@ -129,6 +133,14 @@ public class MainBase {
         navx_device = AHRS.getInstance(hwMap.get(NavxMicroNavigationSensor.class, "navx"),
                 AHRS.DeviceDataType.kProcessedData,
                 NAVX_DEVICE_UPDATE_RATE_HZ);
+
+        opMode.telemetry.addLine("Before Camera");
+        opMode.telemetry.update();
+        detectorLeft = new VisionLeft(opMode);
+        opMode.telemetry.addLine("Camera Left");
+        opMode.telemetry.update();
+
+
 
 
         /* Create a PID Controller which uses the Yaw Angle as input. */
@@ -203,6 +215,81 @@ public class MainBase {
     // Public functions
     // ***************************************************************
 
+    public void encoderDrive(double speed,
+                             double frontLeftInches, double frontRightInches, double backLeftInches,
+                             double backRightInches,
+                             double angle,
+                             LinearOpMode opMode) {
+
+        int newFrontLeftTarget;
+        int newFrontRightTarget;
+        int newBackLeftTarget;
+        int newBackRightTarget;
+
+        double HalfMaxOne;
+        double HalfMaxTwo;
+
+        double max;
+
+        double error;
+        double steer;
+        double frontLeftSpeed;
+        double frontRightSpeed;
+        double backLeftSpeed;
+        double backRightSpeed;
+
+        double ErrorAmount;
+        boolean goodEnough = false;
+
+        // Ensure that the opmode is still active
+
+        if (opMode.opModeIsActive()) {
+
+            // Determine new target position, and pass to motor controller
+            newFrontLeftTarget = frontleft.getCurrentPosition() + (int) (frontLeftInches * cpi);
+            newFrontRightTarget = frontright.getCurrentPosition() + (int) (frontRightInches * cpi);
+            newBackLeftTarget = backleft.getCurrentPosition() + (int) (backLeftInches * cpi);
+            newBackRightTarget = backright.getCurrentPosition() + (int) (backRightInches * cpi);
+
+
+            // Set Target and Turn On RUN_TO_POSITION
+            frontleft.setTargetPosition(newFrontLeftTarget);
+            frontright.setTargetPosition(newFrontRightTarget);
+            backleft.setTargetPosition(newBackLeftTarget);
+            backright.setTargetPosition(newBackRightTarget);
+
+            frontleft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            frontright.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            backleft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            backright.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+            // start motion.
+            speed = Range.clip(Math.abs(speed), 0.0, 1.0);
+            frontleft.setPower(Math.abs(speed));
+            frontright.setPower(Math.abs(speed));
+            backleft.setPower(Math.abs(speed));
+            backright.setPower(Math.abs(speed));
+            // keep looping while we are still active, and BOTH motors are running.
+            while (opMode.opModeIsActive()
+                    && ((frontleft.isBusy() && frontright.isBusy()) && (backleft.isBusy() && backright.isBusy()))) {
+
+            }
+
+            // Stop all motion;
+            frontleft.setPower(0);
+            frontright.setPower(0);
+            backleft.setPower(0);
+            backright.setPower(0);
+
+            // Turn off RUN_TO_POSITION
+
+            frontleft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            frontright.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            backleft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            backright.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        }
+    }
+
 
 
 //    public void navxgyroTurn(double speed,
@@ -260,13 +347,13 @@ public class MainBase {
 
 
 
-        /**
-         * --------------------DOES NOT WORK-------------------------------
-         * this is the ConceptNavxDriveStraightPIDLinearOp from navx example made into a function
-         * used PID which is set above
-         * @param targetDistance
-         * @param opMode
-         */
+    /**
+     * --------------------DOES NOT WORK-------------------------------
+     * this is the ConceptNavxDriveStraightPIDLinearOp from navx example made into a function
+     * used PID which is set above
+     * @param targetDistance
+     * @param opMode
+     */
     public void navxDriveExample(double targetAngle, double targetDistance, LinearOpMode opMode)  {
 
         /* Create a PID Controller which uses the Yaw Angle as input. */
@@ -347,9 +434,9 @@ public class MainBase {
      * @param opMode
      */
     public void navxgyroStrafe(double speed,
-                              double frontLeftInches, double frontRightInches, double backLeftInches,
-                              double backRightInches,
-                              double angle, LinearOpMode opMode) {
+                               double frontLeftInches, double frontRightInches, double backLeftInches,
+                               double backRightInches,
+                               double angle, LinearOpMode opMode) {
 
         int newFrontLeftTarget;
         int newFrontRightTarget;
@@ -663,7 +750,9 @@ public class MainBase {
 
         // keep looping while we have time remaining.
         holdTimer.reset();
-        while (color.blue() <= 270 || (holdTimer.time() < holdTime)) {
+        while (color.blue() <= 270  && color.red() <= 205 && holdTimer.time() < holdTime) {
+            opMode.telemetry.addData("color value", color.blue());
+            opMode.telemetry.update();
             backright.setPower(-.05);
             backleft.setPower(.05);
             frontright.setPower(.05);
@@ -704,10 +793,10 @@ public class MainBase {
     public void getItGirl(LinearOpMode opMode){
         while(lift.isBusy()){
         }
-        leftgrabber.setPower(.7);
-        rightgrabber.setPower(-.7);
+        leftgrabber.setPower(.9);
+        rightgrabber.setPower(-.9);
 
-        opMode.sleep(700);
+        opMode.sleep(600);
 
         rightgrabber.setPower(0);
         leftgrabber.setPower(0);
@@ -725,7 +814,7 @@ public class MainBase {
         leftgrabber.setPower(-1);
         rightgrabber.setPower(1);
 
-        opMode.sleep(600);
+        opMode.sleep(500);
 
         rightgrabber.setPower(0);
         leftgrabber.setPower(0);
@@ -866,10 +955,10 @@ public class MainBase {
      * @param
      */
     public void Arezoo(double speed,
-                          double frontLeftInches, double frontRightInches, double backLeftInches,
-                          double backRightInches,
-                          double targetAngle,
-                            LinearOpMode opMode) {
+                       double frontLeftInches, double frontRightInches, double backLeftInches,
+                       double backRightInches,
+                       double targetAngle,
+                       LinearOpMode opMode) {
 
         yawPIDController = new navXPIDController(navx_device,
                 navXPIDController.navXTimestampedDataSource.YAW);
@@ -953,35 +1042,35 @@ public class MainBase {
 
 
 //            try {
-                while ((opMode.opModeIsActive()
-                        && ((frontleft.isBusy() && frontright.isBusy()) && (backleft.isBusy() && backright.isBusy()))
-                        && !goodEnough)) {
-                    opMode.sleep(20);
+            while ((opMode.opModeIsActive()
+                    && ((frontleft.isBusy() && frontright.isBusy()) && (backleft.isBusy() && backright.isBusy()))
+                    && !goodEnough)) {
+                opMode.sleep(20);
 //                    if (yawPIDController.waitForNewUpdate(yawPIDResult, DEVICE_TIMEOUT_MS)) {
-                    if (yawPIDController.isOnTarget()) {
-                        frontleft.setPower(drive_speed);
-                        frontright.setPower(drive_speed);
-                        backleft.setPower(drive_speed);
-                        backright.setPower(drive_speed);
-                        opMode.telemetry.addLine("NOT FIXING");
-                        opMode.telemetry.addData("Error", yawPIDController.getError());
-                        opMode.telemetry.addData("PIDOutput", df.format(drive_speed) + ", " +
-                                df.format(drive_speed));
-
-                    } else {
-                        double output = yawPIDResult.getOutput();
-                        frontright.setPower(drive_speed + output);
-                        frontleft.setPower(drive_speed - output);
-                        backleft.setPower(drive_speed - output);
-                        backright.setPower(drive_speed + output);
-                        opMode.telemetry.addLine("FIXING");
-                        opMode.telemetry.addData("Error", yawPIDController.getError());
-                        opMode.telemetry.addData("PIDOutput", df.format(limit(drive_speed + output)) + ", " +
-                                df.format(limit(drive_speed - output)));
-                    }
-                    opMode.telemetry.addData("Yaw", df.format(navx_device.getYaw()));
+                if (yawPIDController.isOnTarget()) {
+                    frontleft.setPower(drive_speed);
+                    frontright.setPower(drive_speed);
+                    backleft.setPower(drive_speed);
+                    backright.setPower(drive_speed);
+                    opMode.telemetry.addLine("NOT FIXING");
                     opMode.telemetry.addData("Error", yawPIDController.getError());
-                    opMode.telemetry.update();
+                    opMode.telemetry.addData("PIDOutput", df.format(drive_speed) + ", " +
+                            df.format(drive_speed));
+
+                } else {
+                    double output = yawPIDResult.getOutput();
+                    frontright.setPower(drive_speed + output);
+                    frontleft.setPower(drive_speed - output);
+                    backleft.setPower(drive_speed - output);
+                    backright.setPower(drive_speed + output);
+                    opMode.telemetry.addLine("FIXING");
+                    opMode.telemetry.addData("Error", yawPIDController.getError());
+                    opMode.telemetry.addData("PIDOutput", df.format(limit(drive_speed + output)) + ", " +
+                            df.format(limit(drive_speed - output)));
+                }
+                opMode.telemetry.addData("Yaw", df.format(navx_device.getYaw()));
+                opMode.telemetry.addData("Error", yawPIDController.getError());
+                opMode.telemetry.update();
 //                    }
 //                    else {
 //                        /* A timeout occurred */
@@ -989,32 +1078,32 @@ public class MainBase {
 //                        opMode.telemetry.update();
 //                        Log.w("navXDriveStraightOp", "Yaw PID waitForNewUpdate() TIMEOUT.");
 //                    }
-                    ErrorAmount = ((Math.abs(((newBackLeftTarget) - (backleft.getCurrentPosition())))
-                            + (Math.abs(((newFrontLeftTarget) - (frontleft.getCurrentPosition()))))
-                            + (Math.abs((newBackRightTarget) - (backright.getCurrentPosition())))
-                            + (Math.abs(((newFrontRightTarget) - (frontright.getCurrentPosition()))))) / cpi);
-                    if (ErrorAmount < amountError) {
-                        goodEnough = true;
-                    }
+                ErrorAmount = ((Math.abs(((newBackLeftTarget) - (backleft.getCurrentPosition())))
+                        + (Math.abs(((newFrontLeftTarget) - (frontleft.getCurrentPosition()))))
+                        + (Math.abs((newBackRightTarget) - (backright.getCurrentPosition())))
+                        + (Math.abs(((newFrontRightTarget) - (frontright.getCurrentPosition()))))) / cpi);
+                if (ErrorAmount < amountError) {
+                    goodEnough = true;
                 }
+            }
 //            } catch (InterruptedException ex) {
 //                Thread.currentThread().interrupt();
 //           }
 
-                // Stop all motion;
-                frontleft.setPower(0);
-                frontright.setPower(0);
-                backleft.setPower(0);
-                backright.setPower(0);
+            // Stop all motion;
+            frontleft.setPower(0);
+            frontright.setPower(0);
+            backleft.setPower(0);
+            backright.setPower(0);
 
-                // Turn off RUN_TO_POSITION
+            // Turn off RUN_TO_POSITION
 
-                frontleft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-                frontright.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-                backleft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-                backright.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-            }
+            frontleft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            frontright.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            backleft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            backright.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         }
+    }
 
 
 

@@ -33,6 +33,7 @@ package org.firstinspires.ftc.teamcode.android.OpModes;
 
 import com.qualcomm.hardware.kauailabs.NavxMicroNavigationSensor;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -56,7 +57,7 @@ import java.text.DecimalFormat;
  * http://navx-micro.kauailabs.com/guidance/yaw-drift/
  */
 @TeleOp(name = "Concept: navX Zero Yaw", group = "Concept")
-// @Disabled Comment this in to remove this from the Driver Station OpMode List
+@Disabled
 public class ConceptNavXZeroYawOp extends OpMode {
 
   private String startDate;

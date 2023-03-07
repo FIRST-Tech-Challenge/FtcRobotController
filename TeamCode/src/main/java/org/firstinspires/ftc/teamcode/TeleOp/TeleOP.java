@@ -84,9 +84,6 @@ public class TeleOP extends OpMode {
 
 
 
-//        lift.setTargetPosition(95);
-
-
         backleft.setPower(0);
         frontleft.setPower(0);
         backright.setPower(0);
@@ -109,12 +106,14 @@ public class TeleOP extends OpMode {
         telemetry.addData("Lift", lift.getCurrentPosition());
         telemetry.update();
 
-        //Slow Mode Code for a and b keys
-        if (gamepad1.a) {
+            //Slow Mode Code for a and b keys
+            if (gamepad1.a) {
             speedMode = .4;
-        }
+            }
 
             //Slow Mode Code for a and b keys
+
+//            speedMode = gamepad1.left_trigger;
 
 
             //Turtle Mode code for bumpers
