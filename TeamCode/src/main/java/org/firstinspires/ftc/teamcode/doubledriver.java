@@ -71,15 +71,17 @@ public class doubledriver extends LinearOpMode {
             double crainpower;
             boolean spincenter;
             boolean opspincenter;
-            boolean burst;
+
+            boolean guideUp;
+            boolean guideDown;
+
                     //Pole Preset
             boolean smallJunction;
             boolean mediumJunction;
             boolean tallJunction;
 
 
-
-
+            //setting controls on controller
             throttle = gamepad1.left_stick_y;
             turn = gamepad1.right_stick_x;
             strafeLeft = gamepad1.left_bumper;
@@ -89,8 +91,11 @@ public class doubledriver extends LinearOpMode {
             light = gamepad1.a;
 
             crainpower = gamepad2.right_stick_y;
-            spinpowerup = gamepad2.dpad_right;
 
+            guideDown=gamepad2.x;
+            guideUp=gamepad2.y;
+
+            spinpowerup = gamepad2.dpad_right;
             spinpowerdown =gamepad2.dpad_left;
             pickup = gamepad2.left_trigger;
             dropoff = gamepad2.right_trigger;
@@ -133,11 +138,11 @@ public class doubledriver extends LinearOpMode {
 
             Crain.setPower(crainpower);
 
-            if (gamepad2.x){
+            if (guideUp){
                 Guide.setPosition(0);
             }
 
-            if (gamepad2.y){
+            if (guideDown){
                 Guide.setPosition(1);
             }
 
