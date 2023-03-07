@@ -22,8 +22,8 @@ import org.openftc.easyopencv.OpenCvCameraRotation;
 import org.openftc.easyopencv.OpenCvPipeline;
 import org.openftc.easyopencv.OpenCvWebcam;
 
-@Autonomous(name = "AutoRight")
-public class TwoConeParkingAutoRight extends LinearOpMode {
+@Autonomous(name = "LAutoLeft")
+public class TwoConeParkingAutoLeftLowering extends LinearOpMode {
 
     DeterminationPipeline pipeline;
 
@@ -94,16 +94,16 @@ public class TwoConeParkingAutoRight extends LinearOpMode {
         TrajectorySequence trajSeq = drive.trajectorySequenceBuilder(startPose)
 
                 .forward(53)
-                .turn(Math.toRadians(50))
+                .turn(Math.toRadians(-40))
                 .build();
 
         TrajectorySequence trajSeq2 = drive.trajectorySequenceBuilder(trajSeq.end())
-                .forward(11)
+                .forward(9)
                 .build();
 
         TrajectorySequence trajSeq3 = drive.trajectorySequenceBuilder(trajSeq.end())
-                .back(3)
-                .turn(Math.toRadians(-50))
+                .back(7)
+                .turn(Math.toRadians(40))
                 .back(20)
                 .build();
 
@@ -120,9 +120,13 @@ public class TwoConeParkingAutoRight extends LinearOpMode {
             drive.followTrajectorySequence(trajSeq);
             drive.followTrajectorySequence(trajSeq2);
             drive.pause(50);
+            drive.numberTheArm(4500);
+            drive.pause(50);
             drive.openClaw();
             drive.pause(200);
             drive.closeClaw();
+            drive.pause(50);
+            drive.liftDaBoi();
             drive.followTrajectorySequence(trajSeq3);
             drive.pause(2000);
             if (parking == 1){
@@ -213,8 +217,6 @@ public class TwoConeParkingAutoRight extends LinearOpMode {
                     region1_pointB, // Second point which defines the rectangle
                     RED, // The color the rectangle is drawn in
                     2); // Thickness of the rectangle lines
-
-            Imgproc.rectangle(input, new Point(200,200), new Point(300, 300), GREEN, 2 );
 
             telemetry.update();
 

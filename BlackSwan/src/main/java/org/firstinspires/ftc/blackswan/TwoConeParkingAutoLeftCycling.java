@@ -22,8 +22,8 @@ import org.openftc.easyopencv.OpenCvCameraRotation;
 import org.openftc.easyopencv.OpenCvPipeline;
 import org.openftc.easyopencv.OpenCvWebcam;
 
-@Autonomous(name = "AutoRight")
-public class TwoConeParkingAutoRight extends LinearOpMode {
+@Autonomous(name = "BadBoy")
+public class TwoConeParkingAutoLeftCycling extends LinearOpMode {
 
     DeterminationPipeline pipeline;
 
@@ -94,17 +94,25 @@ public class TwoConeParkingAutoRight extends LinearOpMode {
         TrajectorySequence trajSeq = drive.trajectorySequenceBuilder(startPose)
 
                 .forward(53)
-                .turn(Math.toRadians(50))
+                .turn(Math.toRadians(-40))
                 .build();
 
         TrajectorySequence trajSeq2 = drive.trajectorySequenceBuilder(trajSeq.end())
-                .forward(11)
+                .forward(9)
                 .build();
 
         TrajectorySequence trajSeq3 = drive.trajectorySequenceBuilder(trajSeq.end())
-                .back(3)
-                .turn(Math.toRadians(-50))
-                .back(20)
+                .back(7)
+                .turn(Math.toRadians(130))
+                .forward(13)
+                .build();
+
+        TrajectorySequence trajSeq4 = drive.trajectorySequenceBuilder(trajSeq.end())
+                .forward(7)
+                .build();
+
+        TrajectorySequence trajSeq5 = drive.trajectorySequenceBuilder(trajSeq.end())
+                .back(5)
                 .build();
 
         TrajectorySequence left = drive.trajectorySequenceBuilder(trajSeq3.end())
@@ -116,7 +124,7 @@ public class TwoConeParkingAutoRight extends LinearOpMode {
                 .build();
 
         if (!isStopRequested()) {
-            drive.liftDaBoi();
+            //drive.liftDaBoi();
             drive.followTrajectorySequence(trajSeq);
             drive.followTrajectorySequence(trajSeq2);
             drive.pause(50);
@@ -124,6 +132,12 @@ public class TwoConeParkingAutoRight extends LinearOpMode {
             drive.pause(200);
             drive.closeClaw();
             drive.followTrajectorySequence(trajSeq3);
+            drive.numberTheArm(1000);
+            drive.openClaw();
+            drive.followTrajectorySequence(trajSeq4);
+            drive.closeClaw();
+            drive.numberTheArm(2000);
+            drive.followTrajectorySequence(trajSeq5);
             drive.pause(2000);
             if (parking == 1){
                 drive.followTrajectorySequence(left);
@@ -213,8 +227,6 @@ public class TwoConeParkingAutoRight extends LinearOpMode {
                     region1_pointB, // Second point which defines the rectangle
                     RED, // The color the rectangle is drawn in
                     2); // Thickness of the rectangle lines
-
-            Imgproc.rectangle(input, new Point(200,200), new Point(300, 300), GREEN, 2 );
 
             telemetry.update();
 
