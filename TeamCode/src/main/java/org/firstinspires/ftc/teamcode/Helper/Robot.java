@@ -192,16 +192,16 @@ public class Robot {
         }
 
         if (LR) {
-            chassis.DriveToPosition(driveSpeed, 0, 75, true);
+            chassis.DriveToPosition(driveSpeed, 0, 68, true);
         } else {
             chassis.DriveToPosition(driveSpeed, -15, 68, true);
         }
 
         //Drive to the pole
         if (LR) { // True = Left
-            turnRobotToAngle(335);
+            turnRobotToAngle(330);
         } else {
-            turnRobotToAngle(40);
+            turnRobotToAngle(35);
         }
         chassis.stopDriveMotors();
 
@@ -234,10 +234,15 @@ public class Robot {
 
     }
 
-    public void ParkFromMedium(int location, boolean fromFront) {
+    public void ParkFromMedium(int location, boolean fromFront,  boolean LR) {
 
-        double driveSpeed = 0.8;
-        turnRobotToAngle(180);
+        double driveSpeed = 0.7;
+        if(LR) {
+            turnRobotToAngle(190);
+        }
+        else{
+            turnRobotToAngle(170);
+        }
         chassis.stopDriveMotors();
 
         if (fromFront) {

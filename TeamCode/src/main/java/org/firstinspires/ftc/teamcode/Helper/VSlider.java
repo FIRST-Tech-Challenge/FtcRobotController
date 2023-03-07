@@ -14,7 +14,7 @@ public class VSlider {
 
     int timeout_ms;
 
-    public int PositionForMedium = 2850;
+    public int PositionForMedium = 2500;
     public int PositionForHigh = 4100;
     public int PositionForShort = 1700;
     public int PositionLowered = 0;

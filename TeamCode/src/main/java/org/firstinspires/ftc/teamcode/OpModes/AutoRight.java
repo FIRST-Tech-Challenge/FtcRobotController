@@ -84,7 +84,7 @@ public class AutoRight extends LinearOpMode {
                         break;
 
                     case parkFromMedium:
-                        robot.ParkFromMedium(parkingTarget, true);
+                        robot.ParkFromMedium(parkingTarget, true, false);
                         Step = AutoSteps.endAuto;
 
                     case endAuto:

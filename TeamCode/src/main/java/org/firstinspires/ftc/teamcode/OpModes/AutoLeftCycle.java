@@ -11,7 +11,7 @@ import org.firstinspires.ftc.teamcode.Helper.Robot;
 
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-@Autonomous(name = "LeftCycle", group = "Auto")
+@Autonomous(name = "LeftDontUse", group = "Auto")
 public class AutoLeftCycle extends LinearOpMode {
 
 
@@ -90,7 +90,7 @@ public class AutoLeftCycle extends LinearOpMode {
                         break;
 
                     case parkFromMedium:
-                        robot.ParkFromMedium(parkingTarget, false);
+                        robot.ParkFromMedium(parkingTarget, false, true);
                         Step = AutoSteps.endAuto;
                         break;
 
