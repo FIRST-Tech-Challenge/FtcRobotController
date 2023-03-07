@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.team8923_PowerPlay;
 
 import com.qualcomm.hardware.bosch.BNO055IMU;
+import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
@@ -19,6 +20,8 @@ abstract public class BaseOpMode extends LinearOpMode {
     DcMotor motorSlideLeft;
     DcMotor motorSlideRight;
     Servo servoClaw;
+
+    public double referenceAngle;
 
     public BNO055IMU imu;
     double bottomMotorSlideLeft;
@@ -72,18 +75,26 @@ abstract public class BaseOpMode extends LinearOpMode {
         bottomMotorSlideLeft = motorSlideLeft.getCurrentPosition();
         bottomMotorSlideRight = motorSlideRight.getCurrentPosition();
 
-        //init imu
+        // Set up the parameters with which we will use our IMU. Note that integration
+        // algorithm here just reports accelerations to the logcat log; it doesn't actually
+        // provide positional information.
         BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
-        parameters.angleUnit = BNO055IMU.AngleUnit.DEGREES;
-        parameters.accelUnit = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
-        parameters.calibrationDataFile = "BNO055IMUCalibration.json";
-        parameters.loggingEnabled = true;
-        parameters.loggingTag = "IMU";
+        parameters.angleUnit           = BNO055IMU.AngleUnit.DEGREES;
+        parameters.accelUnit           = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
+        parameters.calibrationDataFile = "BNO055IMUCalibration.json"; // see the calibration sample opmode
+        parameters.loggingEnabled      = true;
+        parameters.loggingTag          = "IMU";
+
+        // Retrieve and initialize the IMU. We expect the IMU to be attached to an I2C port
+        // on a Core Device Interface Module, configured to be a sensor of type "AdaFruit IMU",
+        // and named "imu".
         imu = hardwareMap.get(BNO055IMU.class, "imu");
         imu.initialize(parameters);
+
+        sleep(2000);// a wait, so the imu can process
     }
 
-    public void driveMecanum(double driveAngle, double drivePower, double turnPower){
+    public void driveMecanum(double driveAngle, double drivePower, double turnPower) {
         // Calculate x and y components of drive power, where y is forward (0 degrees) and x is right (-90 degrees)
         double x = drivePower * Math.cos(Math.toRadians(driveAngle));
         double y = drivePower * Math.sin(Math.toRadians(driveAngle));
@@ -107,6 +118,37 @@ abstract public class BaseOpMode extends LinearOpMode {
         powerFR *= driveSpeed;
         powerBL *= driveSpeed;
         powerBR *= driveSpeed;
+
+        motorFL.setPower(powerFL);
+        motorFR.setPower(powerFR);
+        motorBL.setPower(powerBL);
+        motorBR.setPower(powerBR);
+    }
+
+    public void driveMecanumGyro(double driveAngle, double drivePower, double turnPower) {
+        // proportionality constant to correct angle error
+        double kpConstant = 0.01;
+
+        // Calculate x and y components of drive power, where y is forward (0 degrees) and x is right (-90 degrees)
+        double x = drivePower * Math.cos(Math.toRadians(driveAngle));
+        double y = drivePower * Math.sin(Math.toRadians(driveAngle));
+
+        double robotAngle = imu.getAngularOrientation().firstAngle;
+
+        double angleError = robotAngle - referenceAngle;
+
+        if (angleError > 180.0) {
+            angleError -= 360.0;
+        }
+
+        double pivotCorrection = angleError * kpConstant;
+
+        double sumPivotTurning = pivotCorrection + turnPower;
+
+        double powerFL = x + y + sumPivotTurning;
+        double powerFR = y - x - sumPivotTurning;
+        double powerBL = y - x + sumPivotTurning;
+        double powerBR = y + x - sumPivotTurning;
 
         motorFL.setPower(powerFL);
         motorFR.setPower(powerFR);
