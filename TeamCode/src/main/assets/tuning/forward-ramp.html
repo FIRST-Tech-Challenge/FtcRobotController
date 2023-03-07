@@ -61,10 +61,10 @@ details, a {
     <script>
 function loadRegression(data) {
   const forwardEncVels = data.forwardEncVels.flatMap((vs, i) => 
-    fixVels(data.encTimes.slice(0, -1), data.forwardEncPositions[i].slice(0, -1), vs.slice(0, -1)));
-  const appliedVoltages = data.forwardEncVels.flatMap(vs => {
-    const voltages = data.voltages.slice(0, -1).map((v, i) =>
-      data.powers.reduce((acc, ps) => Math.max(acc, ps[i]), 0) * v);
+    fixVels(vs.times.slice(0, -1), data.forwardEncPositions[i].values.slice(0, -1), vs.values.slice(0, -1)));
+  const appliedVoltages = data.forwardEncVels.flatMap(() => {
+    const voltages = data.voltages.values.slice(0, -1).map((v, i) =>
+      data.powers.reduce((acc, ps) => Math.max(acc, ps.values[i]), 0) * v);
 
     return voltages.slice(1, voltages.length - 1);
   });

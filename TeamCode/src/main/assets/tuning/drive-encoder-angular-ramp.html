@@ -62,23 +62,23 @@ details, a {
     <script>
 function loadRegression(data) {
   const leftEncVels = data.leftEncVels.map((vs, i) =>
-        fixVels(data.encTimes.slice(0, -1), data.leftEncPositions[i].slice(0, -1), vs.slice(0, -1)));
+        fixVels(vs.times.slice(0, -1), data.leftEncPositions[i].values.slice(0, -1), vs.values.slice(0, -1)));
   const rightEncVels = data.rightEncVels.map((vs, i) =>
-        fixVels(data.encTimes.slice(0, -1), data.rightEncPositions[i].slice(0, -1), vs.slice(0, -1)));
+        fixVels(vs.times.slice(0, -1), data.rightEncPositions[i].values.slice(0, -1), vs.values.slice(0, -1)));
 
   newLinearRegressionChart(
     document.getElementById('rampChart'),
     [
-      ...leftEncVels.flatMap(vs => vs.slice(0, -1).map(v => -v)), 
-      ...rightEncVels.flatMap(vs => vs.slice(0, -1)),
+      ...leftEncVels.flatMap(vs => vs.values.slice(0, -1).map(v => -v)), 
+      ...rightEncVels.flatMap(vs => vs.values.slice(0, -1)),
     ],
     [
       ...data.leftPowers.flatMap(ps => {
-        const psNew = ps.slice(0, -1).map((p, i) => -p * data.voltages[i]);
+        const psNew = ps.values.slice(0, -1).map((p, i) => -p * data.voltages.values[i]);
         return psNew.slice(1, -1);
       }),
       ...data.rightPowers.flatMap(ps => {
-        const psNew = ps.slice(0, -1).map((p, i) => p * data.voltages[i]);
+        const psNew = ps.values.slice(0, -1).map((p, i) => p * data.voltages.values[i]);
         return psNew.slice(1, -1);
       }),
     ],
@@ -86,7 +86,7 @@ function loadRegression(data) {
   );
 
   const p = data.angVels.reduce((acc, vsArg) => {
-    const vs = fixAngVels(vsArg).map(v => Math.abs(v));
+    const vs = fixAngVels(vsArg.values).map(v => Math.abs(v));
     const maxV = vs.reduce((acc, v) => Math.max(acc, v), 0);
     const [accMaxV, _] = acc;
     if (maxV >= accMaxV) {

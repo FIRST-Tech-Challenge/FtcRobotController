@@ -79,7 +79,7 @@ details, a {
     <script>
 function loadRegression(data) {
   const [_, angVels] = data.angVels.reduce((acc, vsArg) => {
-    const vs = fixAngVels(vsArg.slice(0, -1)).map(v => Math.abs(v));
+    const vs = fixAngVels(vsArg.values.slice(0, -1)).map(v => Math.abs(v));
     const maxV = vs.reduce((acc, v) => Math.max(acc, v), 0);
     const [accMaxV, _] = acc;
     if (maxV >= accMaxV) {
@@ -93,7 +93,11 @@ function loadRegression(data) {
     const div = document.createElement('div');
     newLinearRegressionChart(div, 
       angVels.slice(1, -1),
-      fixVels(data.encTimes.slice(0, -1), data.parEncPositions[i].slice(0, -1), vs.slice(0, -1)),
+      fixVels(
+        vs.times.slice(0, -1), 
+        data.parEncPositions[i].values.slice(0, -1), 
+        vs.values.slice(0, -1)
+      ),
       {title: `Parallel Wheel ${i} Regression`, slope: 'y-position', noIntercept: true});
     deadWheelCharts.appendChild(div);
   });
@@ -101,15 +105,19 @@ function loadRegression(data) {
     const div = document.createElement('div');
     newLinearRegressionChart(div, 
       angVels.slice(1, -1),
-      fixVels(data.encTimes.slice(0, -1), data.perpEncPositions[i].slice(0, -1), vs.slice(0, -1)),
+      fixVels(
+        vs.times.slice(0, -1), 
+        data.perpEncPositions[i].values.slice(0, -1), 
+        vs.values.slice(0, -1)
+      ),
       {title: `Perpendicular Wheel ${i} Regression`, slope: 'x-position', noIntercept: true});
     deadWheelCharts.appendChild(div);
   });
 
   const setParams = (() => {
     const allPowers = [...data.leftPowers, ...data.rightPowers];
-    const appliedVoltages = data.voltages.slice(0, -1).map((v, i) => 
-      allPowers.reduce((acc, ps) => Math.max(acc, ps[i]), 0) * v);
+    const appliedVoltages = data.voltages.values.slice(0, -1).map((v, i) => 
+      allPowers.reduce((acc, ps) => Math.max(acc, ps.values[i]), 0) * v);
 
     const setTrackWidthData = newLinearRegressionChart(
       document.getElementById('trackWidthChart'),
