@@ -41,7 +41,7 @@ public class ArmLiftTestMotionProfile extends LinearOpMode {
         TrapezoidProfile.Constraints m_constraints = new TrapezoidProfile.Constraints(2800, 3000);
 
         ProfiledPIDController m_controller = new ProfiledPIDController(kp, ki, kd, m_constraints);
-        m_controller.setTolerance(3);
+        //m_controller.setTolerance(3);
 
         drive.tipCenter();
         drive.closeClaw();

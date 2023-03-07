@@ -26,7 +26,7 @@ import java.util.Date;
 import java.util.List;
 
 @Config
-@Autonomous(name = "Power Play Left Cycling Utah", group = "competition")
+//@Autonomous(name = "Power Play Left Cycling Utah", group = "competition")
 public class PowerPlayLeftCyclingUtah extends LinearOpMode {
 
     Trajectory cyclePickupCone2, cycleScoreCone2;

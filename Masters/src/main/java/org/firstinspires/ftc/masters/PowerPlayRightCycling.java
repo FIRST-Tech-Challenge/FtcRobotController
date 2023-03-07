@@ -23,7 +23,7 @@ import org.firstinspires.ftc.masters.drive.SampleMecanumDrive;
 import java.util.Date;
 
 @Config
-@Autonomous(name = "Power Play Right Cycling", group = "competition")
+//@Autonomous(name = "Power Play Right Cycling", group = "competition")
 public class PowerPlayRightCycling extends LinearOpMode {
 
     enum State {

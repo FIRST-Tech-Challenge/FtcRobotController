@@ -21,7 +21,7 @@ import org.firstinspires.ftc.masters.trajectorySequence.TrajectorySequence;
 import java.util.Date;
 
 @Config
-@Autonomous(name = "Power Play Left with pause", group="competition")
+//@Autonomous(name = "Power Play Left with pause", group="competition")
 public class PowerPlayLeftWithPause extends LinearOpMode {
 
     enum State {

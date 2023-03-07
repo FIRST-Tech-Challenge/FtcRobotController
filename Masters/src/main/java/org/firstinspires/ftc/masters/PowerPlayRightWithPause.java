@@ -21,7 +21,7 @@ import org.firstinspires.ftc.masters.drive.SampleMecanumDriveCancelable;
 import java.util.Date;
 
 @Config
-@Autonomous(name = "Power Play Right with pause", group = "competition")
+//@Autonomous(name = "Power Play Right with pause", group = "competition")
 public class PowerPlayRightWithPause extends LinearOpMode {
 
     enum State {
