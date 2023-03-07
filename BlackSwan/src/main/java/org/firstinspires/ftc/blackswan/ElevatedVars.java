@@ -1,4 +1,4 @@
 package org.firstinspires.ftc.blackswan;
 
-public class MotorConfigTest {
+public class ElevatedVars {
 }
