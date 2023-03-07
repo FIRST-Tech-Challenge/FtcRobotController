@@ -212,7 +212,7 @@ public class SampleMecanumDrive extends MecanumDrive {
     }
 
     public void liftDaBoi(){
-        linearslide.setTargetPosition(5800);
+        linearslide.setTargetPosition(5000);
         linearslide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         linearslide.setPower(.5);
     }
@@ -234,7 +234,13 @@ public class SampleMecanumDrive extends MecanumDrive {
     }
 
     public void setArm(){
-        arm.setPosition(0);
+        arm.setPosition(0.18);
+    }
+
+    public void numberTheArm(int positon){
+        linearslide.setTargetPosition(positon);
+        linearslide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        linearslide.setPower(.3);
     }
 
 

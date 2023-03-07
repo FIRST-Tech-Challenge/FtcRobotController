@@ -18,15 +18,12 @@ public class MeepMeepMyFirstPath {
                 .followTrajectorySequence(drive ->
                                 drive.trajectorySequenceBuilder(new Pose2d(new Vector2d(-35.3, -58.5), Math.toRadians(90)))
 
-                                        .lineToLinearHeading(new Pose2d(-35.3,-12.1, Math.toRadians(45))) // Moves forward to the first tall pole and turns towards it
-                                        // Deposit Preload Cone
-                                        .turn(Math.toRadians(135)) // Turns towards cone stacks
-                                        .forward(20) // Moves bot towards cones to grab one
-                                        // Pickup a new cone from the stack
-                                        .lineToLinearHeading(new Pose2d(-35.3,-12.1, Math.toRadians(225))) // Moves bot back to pole and faces it for backwards deposit
-                                        // Deposit Pickup Cone
-                                        .turn(Math.toRadians(45)) // Faces bot back towards middle parking position
-                                        .forward(23.2) // Moves bot forwards towards middle parking position
+                                        .forward(53)
+                                        .turn(Math.toRadians(-40))
+                                        .forward(9)
+                                        .back(7)
+                                        .turn(Math.toRadians(40))
+                                        .back(20)
 
                                         .build()
                 );
