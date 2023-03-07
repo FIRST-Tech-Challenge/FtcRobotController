@@ -21,7 +21,7 @@ public class ArmPIDControllerMotionProfile {
         this.armMotor = armMotor;
 
         pidController= new ProfiledPIDController(kp, ki, kd, constraintFast);
-        pidController.setTolerance(3);
+       // pidController.setTolerance(3);
     }
 
     public void setTarget(int target) {

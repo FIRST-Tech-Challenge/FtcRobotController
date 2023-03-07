@@ -65,9 +65,9 @@ public class ArmPIDController {
 
         if (target > 1100 && armPos>1000){
             if (power>0){
-                power = Math.min(power, 0.3);
+                power = Math.min(power, 0.25);
             } else {
-                power = Math.max(power, -0.3);
+                power = Math.max(power, -0.25 );
             }
         }
 
