@@ -209,7 +209,7 @@ public class newauto extends LinearOpMode {
             intake(-1, 500);
 
             //strafe off junction
-            Crane.setPower(-.6);
+            crane(-1,550);
             strafeRightwithcrane(1, 400, 1, 650);
 
             //move to stack
