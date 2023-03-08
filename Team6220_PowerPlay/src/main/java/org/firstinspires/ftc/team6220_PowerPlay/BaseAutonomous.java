@@ -212,7 +212,7 @@ public abstract class BaseAutonomous extends BaseOpMode {
             telemetry.update();
         }
 
-        robotCamera.closeCameraDevice();
+        robotCamera.stopStreaming();
 
         // return default
         if (tagOfInterest == null) {
