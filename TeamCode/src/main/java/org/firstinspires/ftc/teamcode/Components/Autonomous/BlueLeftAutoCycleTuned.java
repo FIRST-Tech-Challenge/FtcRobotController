@@ -54,7 +54,7 @@ public class BlueLeftAutoCycleTuned extends LinearOpMode {
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
         PwPRobot robot = new PwPRobot(this, false);
         robot.roadrun.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        Pose2d startPose = new Pose2d(42, 63.25, Math.toRadians(90));
+        Pose2d startPose = new Pose2d(41, 63.25, Math.toRadians(90));
         robot.roadrun.setPoseEstimate(startPose);
 
 
