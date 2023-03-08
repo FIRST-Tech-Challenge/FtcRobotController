@@ -138,11 +138,11 @@ public class doubledriver extends LinearOpMode {
 
             Crain.setPower(crainpower);
 
-            if (guideUp){
+            if (guideDown){
                 Guide.setPosition(0);
             }
 
-            if (guideDown){
+            if (guideUp){
                 Guide.setPosition(1);
             }
 
