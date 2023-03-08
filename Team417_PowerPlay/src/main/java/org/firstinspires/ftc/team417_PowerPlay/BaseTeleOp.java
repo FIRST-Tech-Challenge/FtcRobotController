@@ -28,7 +28,6 @@ abstract public class BaseTeleOp extends BaseOpMode {
         time.reset();
 
         grabberServo.setPosition(GRABBER_OPEN);
-
     }
 
     public void driveUsingControllers() {

@@ -41,7 +41,6 @@ abstract public class BaseAutonomous extends BaseOpMode {
 
     public void initializeAuto() {
         initializeHardware();
-        //grabberServo.setPosition(GRABBER_HALF_CLOSED);
 
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
         camera = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "Webcam 1"), cameraMonitorViewId);
@@ -95,7 +94,9 @@ abstract public class BaseAutonomous extends BaseOpMode {
         telemetry.update();
         sleep(20);
     }
-
+    /**
+     * Updates telemetry: updates the id if no april tag is sighted
+     */
     public void updateTelemetryAfterStart() {
         if (tagOfInterest != null) {
             telemetry.addLine("Tag snapshot:\n");
@@ -107,7 +108,7 @@ abstract public class BaseAutonomous extends BaseOpMode {
         }
     }
 
-    void tagToTelemetry(AprilTagDetection detection) {
+    public void tagToTelemetry(AprilTagDetection detection) {
         telemetry.addLine(String.format("\nDetected tag ID=%d", detection.id));
         telemetry.addLine(String.format("Translation X: %.2f feet", detection.pose.x*FEET_PER_METER));
         telemetry.addLine(String.format("Translation Y: %.2f feet", detection.pose.y*FEET_PER_METER));
@@ -127,9 +128,8 @@ abstract public class BaseAutonomous extends BaseOpMode {
 
     public void raiseAndHoldArmMiddleJunctionPosition() {
         motorArm.setPower(0);
-        while ((Math.abs(motorArm.getCurrentPosition() - (MID_JUNCT_ARM_POSITION + 50)) > ARM_ENCODER_TOLERANCE) && opModeIsActive()) {
-            motorArm.setPower((MID_JUNCT_ARM_POSITION + 50 - motorArm.getCurrentPosition()) * ARM_RAISE_POWER);
-
+        while ((Math.abs(motorArm.getCurrentPosition() - (MID_JUNCT_ARM_POSITION)) > ARM_ENCODER_TOLERANCE) && opModeIsActive()) {
+            motorArm.setPower((MID_JUNCT_ARM_POSITION - motorArm.getCurrentPosition()) * ARM_RAISE_POWER);
         }
         motorArm.setPower(HOLD_ARM_AT_MID_OR_LOW_POS_POWER);
     }

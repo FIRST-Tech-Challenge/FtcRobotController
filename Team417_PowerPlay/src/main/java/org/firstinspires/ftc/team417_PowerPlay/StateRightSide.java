@@ -38,7 +38,7 @@ public class StateRightSide extends BaseAutonomous {
         while (opModeIsActive() && drive.isBusy()) {
             telemetry.addLine("is busy working");
             telemetry.update();
-            if ((Math.abs(motorArm.getCurrentPosition() - (MID_JUNCT_ARM_POSITION)) > 10)) {
+            if ((Math.abs(motorArm.getCurrentPosition() - (MID_JUNCT_ARM_POSITION)) > ARM_ENCODER_TOLERANCE)) {
                 telemetry.addLine("moving arm");
                 telemetry.update();
                 motorArm.setPower((MID_JUNCT_ARM_POSITION - motorArm.getCurrentPosition()) * 1.0/800.0);
@@ -49,7 +49,7 @@ public class StateRightSide extends BaseAutonomous {
             drive.update();
         }
 
-        while (motorArm.getCurrentPosition() > 10) {
+        while (motorArm.getCurrentPosition() > ARM_ENCODER_TOLERANCE) {
             motorArm.setPower(-0.2);//lower arm manual power
         }
         motorArm.setPower(0);

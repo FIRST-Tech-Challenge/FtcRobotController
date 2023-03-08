@@ -54,8 +54,8 @@ public class MiddleJunctionParkLeftSide extends BaseAutonomous {
         drive.followTrajectory(rightToMidJunction);
         motorArm.setPower(0);
         sleep(2000);
-        // open servo
 
+        // open servo
         grabberServo.setPosition(GRABBER_OPEN);
 
         drive.followTrajectory(clearJunction);

@@ -22,7 +22,7 @@ abstract public class BaseOpMode extends LinearOpMode {
     public static final int MAX_ARM_POSITION = 1700;
     public static final int GROUND_JUNCT_ARM_POSITION = 300;
     public static final int LOW_JUNCT_ARM_POSITION = 800;
-    public static final int MID_JUNCT_ARM_POSITION = 1250;
+    public static final int MID_JUNCT_ARM_POSITION = 1300;
     public static final int HIGH_JUNCT_ARM_POSITION = 1550;
     public static final int MIN_ARM_POSITION = 0;
     public static final int ARM_ENCODER_TOLERANCE = 10;
