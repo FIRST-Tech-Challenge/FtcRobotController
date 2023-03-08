@@ -17,7 +17,6 @@ public class Project1Hardware {
     NormalizedColorSensor colorSensor = null;
     HardwareMap hwmap = null;
     IMU imu;
-    double clawAnglePosition = 1;
 
     public void init(HardwareMap hardwareMap){
         hwmap = hardwareMap;
@@ -26,10 +25,10 @@ public class Project1Hardware {
         backLeft = hardwareMap.get(DcMotor.class,"BLeft");
         backRight = hardwareMap.get(DcMotor.class,"BRight");
         arm = hardwareMap.get(DcMotorEx.class,"ARM");
-        bucket = hardwareMap.get(Servo.class, "BUCKET");
-        claw = hardwareMap.get(Servo.class, "CLAW");
-        bucketAngle = hardwareMap.get(Servo.class, "BUCKET ANGLE");
-        clawAngle = hardwareMap.get(Servo.class, "CLAW ANGLE");
+        bucket = hardwareMap.get(Servo.class, "BUCKET");            // bucket open/close
+        bucketAngle = hardwareMap.get(Servo.class, "BUCKET ANGLE"); // whole bucket
+        claw = hardwareMap.get(Servo.class, "CLAW");                // intake open/close
+        clawAngle = hardwareMap.get(Servo.class, "CLAW ANGLE");     // whole intake
         colorSensor = hardwareMap.get(NormalizedColorSensor.class, "BUCKET COLOR");
         horz = hardwareMap.get(DcMotor.class, "HORZ SLIDE");
         vert = hardwareMap.get(DcMotor.class, "VERT SLIDE");

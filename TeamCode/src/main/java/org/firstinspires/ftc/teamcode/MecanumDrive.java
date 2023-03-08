@@ -54,7 +54,7 @@ public class MecanumDrive{
 
     public void drive (double target, double power, double pivot, double distance){
 
-        theta = Math.PI/2 + (target * (Math.PI)/180);
+        this.theta = Math.PI/2 + (target * (Math.PI)/180);
 
         sin = Math.sin(theta -Math.PI/4);
         cos = Math.cos(theta - Math.PI/4);
