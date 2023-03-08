@@ -39,7 +39,9 @@ abstract public class BaseTeleOp extends BaseOpMode {
         turning *= 1 - (0.5 * gamepad1.right_trigger);
         mecanumDrive(x, y, turning);
     }
-
+    /**
+     * Stick curve provides driver more control over the robot controller.
+     */
     public double stickCurve(double x, double a, double d) {
         x = Math.signum(x) * Math.max(0, Math.min(1, (Math.abs(x) - d) / (1 - d)));
         return a * x + (0.75-a) * Math.pow(x, 3);

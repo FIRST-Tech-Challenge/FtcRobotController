@@ -77,7 +77,7 @@ public class CycleMidJunctionRightSide extends BaseAutonomous {
                             motorArm.setPower((MID_JUNCT_ARM_POSITION - motorArm.getCurrentPosition()) * ARM_RAISE_POWER);
                         }
                     } else {
-                        while (motorArm.getCurrentPosition() > 1000) {
+                        while (motorArm.getCurrentPosition() >MID_JUNCT_ARM_POSITION) {
                             motorArm.setPower(-0.4);
                             telemetry.addLine("lowering arm");
                             telemetry.addData("arm current position", motorArm.getCurrentPosition());
@@ -89,18 +89,6 @@ public class CycleMidJunctionRightSide extends BaseAutonomous {
                         grabberServo.setPosition(GRABBER_OPEN);
                         currentState = State.CLEAR_MID_JUNCTION;
                         drive.followTrajectoryAsync(clearMidJunction);
-
-                        /*if (motorArm.getCurrentPosition() > 1000) {
-                            motorArm.setPower(-0.4);
-                            telemetry.addLine("lowering arm");
-                            telemetry.addData("arm current position", motorArm.getCurrentPosition());
-                            telemetry.update();
-                        } else {
-                            motorArm.setPower(0);
-                            grabberServo.setPosition(GRABBER_OPEN);
-                            currentState = State.CLEAR_MID_JUNCTION;
-                            drive.followTrajectoryAsync(clearMidJunction);
-                        }*/
                     }
 
                 case CLEAR_MID_JUNCTION:
