@@ -39,12 +39,16 @@ public class StandardTrackingWheelLocalizer extends ThreeTrackingWheelLocalizer 
 
     private Encoder leftEncoder, rightEncoder, frontEncoder;
 
-    public StandardTrackingWheelLocalizer(HardwareMap hardwareMap) {
+    private final SampleMecanumDrive drive;
+
+    public StandardTrackingWheelLocalizer(HardwareMap hardwareMap, SampleMecanumDrive drive) {
         super(Arrays.asList(
                 new Pose2d(0, LATERAL_DISTANCE / 2, 0), // left
                 new Pose2d(0, -LATERAL_DISTANCE / 2, 0), // right
                 new Pose2d(FORWARD_OFFSET, 0, Math.toRadians(90)) // front
         ));
+
+        this.drive = drive;
 
         leftEncoder = new Encoder(hardwareMap.get(DcMotorEx.class, "FL")); //leftEncoder
         rightEncoder = new Encoder(hardwareMap.get(DcMotorEx.class, "BR")); //rightEncoder
