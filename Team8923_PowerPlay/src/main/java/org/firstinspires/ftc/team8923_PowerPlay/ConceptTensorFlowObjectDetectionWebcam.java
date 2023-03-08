@@ -132,7 +132,7 @@ public class ConceptTensorFlowObjectDetectionWebcam extends BaseOpMode {
         /**
          * Initialize the TensorFlow Object Detection engine.
          */
-        public void initTfod () {
+        public void initTfod() {
             int tfodMonitorViewId = hardwareMap.appContext.getResources().getIdentifier(
                     "tfodMonitorViewId", "id", hardwareMap.appContext.getPackageName());
             TFObjectDetector.Parameters tfodParameters = new TFObjectDetector.Parameters(tfodMonitorViewId);
