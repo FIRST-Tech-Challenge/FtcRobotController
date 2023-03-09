@@ -26,7 +26,7 @@ import java.util.Date;
 import java.util.List;
 
 @Config
-@Autonomous(name = "Power Play Left Cycling Park City", group ="competition")
+//@Autonomous(name = "Power Play Left Cycling Park City", group ="competition")
 public class PowerPlayLeftCyclingParkCity extends LinearOpMode {
 
     enum State {
