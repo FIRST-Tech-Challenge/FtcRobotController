@@ -161,7 +161,7 @@ public class Crane implements Subsystem {
     Orientation turretAngles;
     Acceleration turretGravity;
 
-    DigitalChannel limitSwitch;
+    DigitalChannel turretIndex;
 
     StateMachine currentStateMachine = Utils.getStateMachine(new Stage()).addState(()->{return true;}).build();
 
@@ -192,6 +192,8 @@ public class Crane implements Subsystem {
             bulbServo = hardwareMap.get(Servo.class, "servoGripper");
             nudgeStickServo = hardwareMap.get(Servo.class, "nudgeSwivel");
             //nudgeDistanceSensor = hardwareMap.get(DistanceSensor.class, "nudgeDist");
+            //turretIndex = hardwareMap.get(DigitalChannel.class, "turretIndex");
+            //turretIndex.setMode(DigitalChannel.Mode.INPUT);
 
         }
         BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
@@ -1044,12 +1046,12 @@ public class Crane implements Subsystem {
 
         calculatedAngle = Math.toDegrees(Math.atan2(calculatedHeight, calculatedDistance));
         calculatedLength = (Math.sqrt(Math.pow(calculatedHeight, 2) + Math.pow(calculatedDistance, 2)));
-
-        if(robot.checkCollision(calculatedAngle,calculatedTurretAngle)){
+//todo Vance? this earns a null object exception
+        //if(robot.checkCollision(calculatedAngle,calculatedTurretAngle)){
             calculatedAngle = getShoulderAngle();
             calculatedLength = getExtendMeters();
-            robot.underarm.articulate(UnderArm.Articulation.safe);
-        }
+            //robot.underarm.articulate(UnderArm.Articulation.safe);
+        //}
 
         return true;
     }

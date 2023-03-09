@@ -10,25 +10,26 @@
             <Servo name="intakeServoBack" port="2" />
             <Servo name="nudgeSwivel" port="3" />
             <Servo name="blinkin" port="4" />
-            <DigitalDevice name="limitSwitch" port="0" />
+            <DigitalDevice name="turretIndex" port="0" />
             <AnalogInput name="gripperLeft" port="0" />
             <AnalogInput name="gripperRight" port="1" />
-            <REV_VL53L0X_RANGE_SENSOR name="distTarget" port="0" bus="0" />
+            <REV_VL53L0X_RANGE_SENSOR name="distTarget" port="0" bus="2" />
             <LynxEmbeddedIMU name="turretIMU" port="0" bus="0" />
-            <AdafruitBNO055IMU name="shoulderIMU" port="0" bus="2" />
+            <AdafruitBNO055IMU name="shoulderIMU" port="0" bus="1" />
         </LynxModule>
         <LynxModule name="Expansion Hub 1" port="1">
-            <Servo name="hook" port="0" />
             <RevRobotics40HDHexMotor name="motorRight" port="0" />
             <RevRobotics40HDHexMotor name="motorLeft" port="1" />
             <RevRobotics40HDHexMotor name="motorChariot" port="2" />
+            <RevRobotics40HDHexMotor name="test" port="3" />
             <LynxEmbeddedIMU name="baseIMU" port="0" bus="0" />
             <Servo name="shoulderJoint" port="0" />
             <Servo name="elbowJoint" port="1" />
-            <Servo name="wristServo" port="5" />
+            <Servo name="wristServo" port="2" />
             <Servo name="lassoJoint" port="3" />
             <Servo name="turretServo" port="4" />
-            <REV_VL53L0X_RANGE_SENSOR name="distChariot" port="0" bus="0" />
+            <Servo name="testServo" port="5" />
+            <REV_VL53L0X_RANGE_SENSOR name="distChariot" port="0" bus="2" />
         </LynxModule>
     </LynxUsbDevice>
     <Webcam name="Webcam 1" serialNumber="D1EE125F" />

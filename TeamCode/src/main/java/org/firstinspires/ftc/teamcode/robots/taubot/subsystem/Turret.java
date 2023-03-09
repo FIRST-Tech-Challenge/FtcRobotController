@@ -47,7 +47,7 @@ public class Turret implements Subsystem {
 
     private Robot robot;
 
-    DigitalChannel limitSwitch;
+    DigitalChannel turretIndex;
 
     public Turret( HardwareMap hardwareMap, Robot robot, boolean simulated) {
         this.robot = robot;
@@ -58,7 +58,8 @@ public class Turret implements Subsystem {
         motor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         motor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
-        limitSwitch = hardwareMap.get(DigitalChannel.class, "limitSwitch");
+        turretIndex = hardwareMap.get(DigitalChannel.class, "turretIndex");
+        turretIndex.setMode(DigitalChannel.Mode.INPUT);
 
         turretPID = new PIDController(TURRET_PID);
         turretPID.setInputRange(-360, 360);
@@ -201,7 +202,7 @@ public class Turret implements Subsystem {
                 calibrateStage++;
                 break;
             case 1:
-                if(limitSwitch.getState()){
+                if(turretIndex.getState()){
                     zeroHeading(LIMIT_SWITCH_ANGLE_OFFSET);
                     motor.setPower(0);
                     turretPID.enable();

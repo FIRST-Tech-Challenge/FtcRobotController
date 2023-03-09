@@ -5,6 +5,7 @@ import static org.firstinspires.ftc.teamcode.robots.taubot.util.Utils.servoNorma
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.PwmControl;
 import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.hardware.ServoImpl;
 import com.qualcomm.robotcore.hardware.ServoImplEx;
 import com.qualcomm.robotcore.util.Range;
 
@@ -19,7 +20,7 @@ public class Joint {
     private double oldTime;
     private boolean targetIsHigher;
     String name;
-    public static double jointSpeed;
+    private double jointSpeed;
 
     //todo: possible issue - servo doesn't reach interimAngle and new setAngle assumes it has
     //todo: add servo feedback functionality
@@ -32,10 +33,11 @@ public class Joint {
         PWM_PER_DEGREE = PER_DEGREE;
         DEG_MIN = MIN;
         DEG_MAX = MAX;
-        //in degrees per ms, parameter in degrees per second
-        jointSpeed = speed / 1000;
+        //parameter in degrees per second
+        jointSpeed = speed;
         interimAngle = startAngle;
         oldTargetAngle = startAngle;
+        targetAngle = startAngle;
         initJoint(simulated, hardwareMap);
     }
 
@@ -54,54 +56,44 @@ public class Joint {
         }
     }
 
+    public void RelaxJoint(){((ServoImplEx) motor).setPwmDisable();}
+    public void ActivateJoint(){((ServoImplEx) motor).setPwmEnable();}
+    public boolean IsActive(){return ((ServoImplEx) motor).isPwmEnabled();}
+
     public void setTargetAngle(double angle){
-        //new starting position is current servo pos
-        oldTargetAngle = interimAngle;
-        targetAngle = angle;
-        if(interimAngle > targetAngle)
-            targetIsHigher = false;
-        else
-            targetIsHigher = true;
-        //starts timer to reach target angle
-        oldTime = System.nanoTime() / 1e6;
+        targetAngle = Range.clip(angle, DEG_MIN, DEG_MAX);
     }
 
     public void setTargetAngle(double angle, double speed){
-        jointSpeed = speed / 1000;
-        targetAngle = angle;
-        oldTime = System.nanoTime() / 1e6;
-        if(interimAngle > targetAngle)
-            targetIsHigher = false;
-        else
-            targetIsHigher = true;
+        jointSpeed = speed;
+        setTargetAngle(angle);
     }
 
     public double getPosition(){
         return motor.getPosition();
     }
 
-    public double getTargetAngle() { return interimAngle; }
+    public double getCurrentAngle() {
+        //this only works if interimAngle always has the most recently commanded angle actually sent to the servo
+        return interimAngle;}
+
+    public double getTargetAngle() { return targetAngle; }
 
     public void setSpeed (double speed){
-        //parameter in degrees per second, jointSpeed in ms for smoothness
-        jointSpeed = speed / 1000;
+        //parameter in degrees per second
+        jointSpeed = speed;
     }
 
     public void update(){
-        double newTime = System.nanoTime() / 1e6;
-        //calculates position based on time passed since angle set and degrees per ms
-        if (targetAngle < interimAngle && !targetIsHigher) {
-            interimAngle -= (newTime - oldTime) * jointSpeed;
-        }
-        else if (targetAngle > interimAngle && targetIsHigher) {
-            interimAngle += (newTime - oldTime) * jointSpeed;
-        }
-        //once target is reached or exceeded, servo is told to go to targetAngle
-        if (targetIsHigher && interimAngle > targetAngle)
-            interimAngle = targetAngle;
-        if(!targetIsHigher && interimAngle < targetAngle)
-            interimAngle = targetAngle;
 
+        double newTime= System.nanoTime() / 1e9;
+        double deltaTime= newTime-oldTime;
+        oldTime = newTime;
+        //assume last deltaTime is predictive of next loop, calc interimAngle
+        double errAngle = targetAngle-interimAngle;
+        if (targetAngle > 30)
+            targetAngle = targetAngle;
+        interimAngle = Range.clip(interimAngle + Math.signum(errAngle)*jointSpeed * deltaTime,Double.min(targetAngle,interimAngle), Double.max(targetAngle,interimAngle));
         motor.setPosition(servoNormalize(calcTargetPosition(interimAngle)));
     }
 

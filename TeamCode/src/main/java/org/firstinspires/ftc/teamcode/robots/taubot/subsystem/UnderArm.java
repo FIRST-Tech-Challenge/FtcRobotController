@@ -41,9 +41,10 @@ public class UnderArm implements Subsystem {
     public static double WRIST_PWM_PER_DEGREE = 750.0 / 180.0; //todo if we need it
     public static double TURRET_PWM_PER_DEGREE = 16; //todo
 
-    public static double ELBOW_SPEED = 150;
-    public static double SHOULDER_SPEED = 150;
-    public static double LASSO_SPEED = 150;
+    public static double ELBOW_SPEED = 120;
+    public static double SHOULDER_SPEED = 120;
+    public static double LASSO_SPEED = 120;
+    public static double WRIST_SPEED = 90;
 
     public static double kF = 0.0;
 
@@ -72,7 +73,7 @@ public class UnderArm implements Subsystem {
 
     public Servo elbowServo, wristServo, lassoServo;
     public Servo shoulderServo, turretServo;
-    public Joint lasso, shoulder, elbow;
+    public Joint lasso, shoulder, elbow, wrist;
 
     private double chariotDistance;
     private double shoulderAngle;
@@ -100,6 +101,7 @@ public class UnderArm implements Subsystem {
             ((ServoImplEx) turretServo).setPwmRange(axonRange);
             elbow = new Joint(hardwareMap, "elbowJoint", simulated, ELBOW_HOME_PWM, ELBOW_PWM_PER_DEGREE, ELBOW_DEG_MIN, ELBOW_DEG_MAX, 0, ELBOW_SPEED);
             shoulder = new Joint(hardwareMap, "shoulderJoint", simulated, SHOULDER_HOME_PWM, SHOULDER_PWM_PER_DEGREE, SHOULDER_DEG_MIN, SHOULDER_DEG_MAX, 0, SHOULDER_SPEED);
+            wrist = new Joint(hardwareMap, "wristServo", simulated, WRIST_HOME_PWM, WRIST_PWM_PER_DEGREE, WRIST_DEG_MIN, WRIST_DEG_MAX, 0, WRIST_SPEED);
             lassoServo = hardwareMap.get(ServoImplEx.class, "lassoJoint");
             ((ServoImplEx) lassoServo).setPwmRange(axonRange);
         }
@@ -109,7 +111,7 @@ public class UnderArm implements Subsystem {
         wristTargetAngle = 0;
         turretTargetAngle = 0;
 
-        articulation = Articulation.fold;
+        articulation = Articulation.init1;
         fieldPositionTarget = new Vector3(0,0,0); //crane default IK starting point is
     }
 
@@ -122,6 +124,7 @@ public class UnderArm implements Subsystem {
     Vector3 fieldPositionTarget;
 
     public enum Articulation {
+        init1,
         transfer,
         home,
         manual,
@@ -135,20 +138,21 @@ public class UnderArm implements Subsystem {
     private JointAngle jointAngle;
 
     public enum JointAngle{
-        Home(0,0,0,MAX_CHASSIS_LENGTH),
+        Home(0,0,0,0,MAX_CHASSIS_LENGTH),
         Test1(90,0,0),
         Test2(90,90,0),
         Test3(0,90,0),
         Test4(90,0,30),
-        SafePos(90,0,0,MAX_CHASSIS_LENGTH),
-        FoldPosition(FOLDPOS_SHOULDER_ANGLE,FOLDPOS_ELBOW_ANGLE,FOLDPOS_TURRET_ANGLE,MIN_CHASSIS_LENGTH),
-        FoldTransferPosition(FOLDPOS_SHOULDER_ANGLE+30,FOLDPOS_ELBOW_ANGLE,FOLDPOS_TURRET_ANGLE,MAX_CHASSIS_LENGTH);
+        SafePos(0,0,0,0,MAX_CHASSIS_LENGTH),
+        FoldPosition(FOLDPOS_SHOULDER_ANGLE,FOLDPOS_ELBOW_ANGLE, 0, FOLDPOS_TURRET_ANGLE,MIN_CHASSIS_LENGTH),
+        FoldTransferPosition(FOLDPOS_SHOULDER_ANGLE+30,FOLDPOS_ELBOW_ANGLE,0,FOLDPOS_TURRET_ANGLE,MAX_CHASSIS_LENGTH);
 
-        public double shoulderAngle, elbowAngle, turretAngle, chassisLength;
+        public double shoulderAngle, elbowAngle, wristAngle, turretAngle, chassisLength;
 
-        JointAngle(double shoulder, double elbow, double turret, double length){
+        JointAngle(double shoulder, double elbow, double wrist, double turret, double length){
             this.shoulderAngle = shoulder;
             this.elbowAngle = elbow;
+            this.wristAngle = wrist;
             this.turretAngle = turret;
             this.chassisLength = length;
         }
@@ -172,7 +176,13 @@ public class UnderArm implements Subsystem {
         articulation = target;
 
         switch(articulation){
-            case fold: //PROB NOT NEEDED but added just in case
+            case init1:
+                setShoulderTargetAngle(0);
+                setElbowTargetAngle(FOLDPOS_ELBOW_ANGLE);
+                setTurretTargetAngle(FOLDPOS_TURRET_ANGLE);
+                setWristTargetAngle(0);
+                break;
+            case fold:
                 /*
                 jointAngle = JointAngle.FoldPosition;
                 goToJointAngleAndLength(jointAngle);
@@ -408,14 +418,13 @@ public class UnderArm implements Subsystem {
     }
     @Override
     public void update(Canvas fieldOverlay) {
-        elbow.update();
-        shoulder.update();
-
         elbow.setSpeed(ELBOW_SPEED);
         shoulder.setSpeed(SHOULDER_SPEED);
+        wrist.setSpeed(WRIST_SPEED);
 
         elbow.setPWM_PER_DEGREE(ELBOW_PWM_PER_DEGREE);
         shoulder.setPWM_PER_DEGREE(SHOULDER_PWM_PER_DEGREE);
+        wrist.setPWM_PER_DEGREE(WRIST_PWM_PER_DEGREE);
 
         Pose2d robotPosInches = robot.driveTrain.getPoseEstimate();
         double headingRad = robot.driveTrain.getRawHeading();
@@ -428,7 +437,6 @@ public class UnderArm implements Subsystem {
         chariotDistance = robot.driveTrain.getChassisLength();
 
         articulate(articulation);
-
 
         if(elbowTargetAngle > 150){
             elbowTargetAngle = 150;
@@ -444,8 +452,13 @@ public class UnderArm implements Subsystem {
 
         shoulder.setTargetAngle(shoulderTargetAngle);
         elbow.setTargetAngle(elbowTargetAngle);
-        wristServo.setPosition(servoNormalizeExtended(wristServoValue(wristTargetAngle)));
+        wrist.setTargetAngle(wristTargetAngle);
+        //wristServo.setPosition(servoNormalizeExtended(wristServoValue(wristTargetAngle)));
         turretServo.setPosition(servoNormalizeExtended(turretServoValue(turretTargetAngle)));
+
+        elbow.update();
+        shoulder.update();
+        wrist.update();
     }
 
     public void grip(){
@@ -468,6 +481,8 @@ public class UnderArm implements Subsystem {
 
     @Override
     public void stop() {
+        shoulder.RelaxJoint();
+        elbow.RelaxJoint();
 
     }
 
