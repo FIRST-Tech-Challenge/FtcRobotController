@@ -13,7 +13,11 @@ public class JunctionCenteringTest extends BaseAutonomous {
     public void runOpMode() throws InterruptedException {
         initialize();
 
-        grabberCameraPipeline.setRanges(Constants.LOWER_YELLOW, Constants.UPPER_YELLOW);
+        driveGrabber(Constants.GRABBER_CLOSE_POSITION);
+
+        sleep(5000);
+
+        grabberCameraPipeline.setRanges(Constants.LOWER_BLACK, Constants.UPPER_BLACK);
 
         grabberCamera.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
             @Override

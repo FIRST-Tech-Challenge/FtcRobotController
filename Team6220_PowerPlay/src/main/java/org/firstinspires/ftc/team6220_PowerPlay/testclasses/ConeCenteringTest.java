@@ -13,6 +13,8 @@ public class ConeCenteringTest extends BaseAutonomous {
     public void runOpMode() throws InterruptedException {
         initialize();
 
+        driveSlidesAutonomous(Constants.SLIDE_TOP);
+
         robotCameraPipeline.setRanges(Constants.LOWER_BLUE, Constants.UPPER_BLUE);
 
         robotCamera.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
