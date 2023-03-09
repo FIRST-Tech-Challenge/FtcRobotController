@@ -1,12 +1,10 @@
 package org.firstinspires.ftc.masters;
 
 import static org.firstinspires.ftc.masters.BadgerConstants.ARM_BACK;
-import static org.firstinspires.ftc.masters.BadgerConstants.ARM_BACK_TOP;
 import static org.firstinspires.ftc.masters.BadgerConstants.ARM_CONE_STACK;
 import static org.firstinspires.ftc.masters.BadgerConstants.ARM_MID_TOP;
 import static org.firstinspires.ftc.masters.BadgerConstants.ARM_MID_TOP_AUTO;
 import static org.firstinspires.ftc.masters.BadgerConstants.SLIDE_HIGH_AUTO;
-import static org.firstinspires.ftc.masters.BadgerConstants.SLIDE_HIGH_BACK;
 import static org.firstinspires.ftc.masters.BadgerConstants.SLIDE_MIDDLE;
 import static org.firstinspires.ftc.masters.BadgerConstants.SLIDE_THROUGH;
 import static org.firstinspires.ftc.masters.BadgerConstants.STACK_OFFSET;
@@ -27,8 +25,8 @@ import java.util.Date;
 import java.util.List;
 
 @Config
-@Autonomous(name = "Power Play Right Cycling Park City TEST", group = "competition")
-public class PowerPlayRightCyclingParkCityTest extends LinearOpMode {
+@Autonomous(name = "Power Play Right Cycling TEST", group = "competition")
+public class PowerPlayRightCyclingUtahTEST extends LinearOpMode {
 
     enum State {
         FIRST_DEPOSIT_PATH_1,
@@ -104,7 +102,7 @@ public class PowerPlayRightCyclingParkCityTest extends LinearOpMode {
         Trajectory firstDepositPath1 = drive.trajectoryBuilder(startPose)
                 //.splineToConstantHeading(new Vector2d(35, -14), Math.toRadians(90))
                 .lineToSplineHeading(new Pose2d(new Vector2d(37, -30), Math.toRadians(90)))
-                .splineToSplineHeading(new Pose2d(36, -12 , Math.toRadians(44)), Math.toRadians(44))
+                .splineToSplineHeading(new Pose2d(36, -12 , Math.toRadians(135)), Math.toRadians(135))
                 .build();
 
 //        Trajectory firstDepositScoreCone = drive.trajectoryBuilder(firstDepositPath1.end().plus(new Pose2d(0, 0, Math.toRadians(turnJunction))))
@@ -117,13 +115,13 @@ public class PowerPlayRightCyclingParkCityTest extends LinearOpMode {
 
 
         Trajectory cyclePickupPath1 = drive.trajectoryBuilder(backUpFromJunction.end().plus(new Pose2d(0,0,Math.toRadians(-turnJunction-90))))
-                .splineToLinearHeading(new Pose2d(new Vector2d(xStack+9, yStack),Math.toRadians(180)),Math.toRadians(180))
+                .splineToLinearHeading(new Pose2d(new Vector2d(xStack+9, yStack),Math.toRadians(0)),Math.toRadians(0))
                // .lineTo(new Vector2d(xStack, yStack))
                 .build();
 
 
         Trajectory cycleScorePath1 = drive.trajectoryBuilder(cyclePickupPath1.end())
-                .lineTo(new Vector2d(41, -9))
+                .lineTo(new Vector2d(41, -10))
                 .build();
 
         Trajectory cycleDepositScoreCone = drive.trajectoryBuilder(cycleScorePath1.end().plus(new Pose2d(0, 0, Math.toRadians(-turnJunction))))
@@ -344,7 +342,7 @@ public class PowerPlayRightCyclingParkCityTest extends LinearOpMode {
                         switch (sleeveColor){
                             case GREEN:
                                 Trajectory parkGreen1 = drive.trajectoryBuilder(drive.getPoseEstimate())
-                                        .lineToLinearHeading(new Pose2d(new Vector2d(63, -12), Math.toRadians(270)))
+                                        .lineToLinearHeading(new Pose2d(new Vector2d(63, -14), Math.toRadians(270)))
                                         .build();
                                 drive.followTrajectoryAsync(parkGreen1);
                                 currentState = State.PARK_GREEN;
@@ -358,7 +356,7 @@ public class PowerPlayRightCyclingParkCityTest extends LinearOpMode {
                                 break;
                             case GRAY:
                                 Trajectory parkGray1 = drive.trajectoryBuilder(drive.getPoseEstimate())
-                                        .lineToLinearHeading(new Pose2d( new Vector2d(12, -12), Math.toRadians(270)))
+                                        .lineToLinearHeading(new Pose2d( new Vector2d(12, -14), Math.toRadians(270)))
                                         .build();
                                 drive.followTrajectoryAsync(parkGray1);
                                 currentState = State.PARK_GRAY;
@@ -464,9 +462,9 @@ public class PowerPlayRightCyclingParkCityTest extends LinearOpMode {
 
             //  telemetry.addData("power ", power);
             telemetry.addData("arm target", armTarget);
-            telemetry.addData("arm position", drive.armMotor.getCurrentPosition());
+            telemetry.addData("arm position", armPosition);
             telemetry.addData("lift target", liftTarget);
-            telemetry.addData(" lift position", drive.linearSlide.getCurrentPosition());
+            telemetry.addData("lift position", slidePosition);
 
           //  telemetry.update();
 
