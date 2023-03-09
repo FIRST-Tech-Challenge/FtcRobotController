@@ -142,7 +142,7 @@ public class doubledriver extends LinearOpMode {
                 Guide.setPosition(0);
             }
 
-            if (guideUp){
+            else{
                 Guide.setPosition(1);
             }
 
