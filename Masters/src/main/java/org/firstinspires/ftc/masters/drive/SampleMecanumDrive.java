@@ -66,7 +66,7 @@ import java.util.List;
 @Config
 public class SampleMecanumDrive extends MecanumDrive {
 
-    public static double ALIGN_SPEED = .35;
+    public static double ALIGN_SPEED = .3;
 
     public static PIDCoefficients TRANSLATIONAL_PID = new PIDCoefficients(8, 0, 1);
     public static PIDCoefficients HEADING_PID = new PIDCoefficients(9, 0, 1);
@@ -455,7 +455,7 @@ public class SampleMecanumDrive extends MecanumDrive {
 
     public boolean alignPole(PowerPlayComputerVisionPipelines.PipePosition pos) {
         switch (pos) {
-
+            case LEFT2:
             case LEFT3:
             case LEFT4:
             case LEFT5:
@@ -469,6 +469,7 @@ public class SampleMecanumDrive extends MecanumDrive {
                 break;
 
             case RIGHT3:
+            case RIGHT2:
             case RIGHT4:
             case RIGHT5:
             case RIGHT6:
@@ -480,9 +481,9 @@ public class SampleMecanumDrive extends MecanumDrive {
                 rightRear.setPower(-ALIGN_SPEED);
                 break;
             case LEFT1:
-            case LEFT2:
+           // case LEFT2:
             case RIGHT1:
-            case RIGHT2:
+          //  case RIGHT2:
             case CENTER:
                 leftFront.setPower(0);
                 leftRear.setPower(0);

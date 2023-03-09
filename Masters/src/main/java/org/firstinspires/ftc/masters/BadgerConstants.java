@@ -16,15 +16,15 @@ public class BadgerConstants {
     public static  int ARM_BOTTOM = 0;
     public static  int ARM_MID_TOP = 800;
     public static int ARM_MID_TOP_AUTO = 785;
-    public static  int ARM_CONE_STACK=310;
-    public static int STACK_OFFSET = 30;
+    public static  int ARM_CONE_STACK=330;
+    public static int STACK_OFFSET = 50;
     public static int ARM_BACK_TOP=1250;
 
     public static  int ARM_BOTTOM_JUNCTION = 600;
     public static int ARM_BACK = -1310;
 
-    public static double CLAW_OPEN = 0.35;
-    public static double CLAW_CLOSED = 0.85;
+    public static double CLAW_OPEN = 0.01;
+    public static double CLAW_CLOSED = 0.35;
 
     public static double TIP_CENTER = 0.77;
     public static double TIP_BACK = 0.58;
