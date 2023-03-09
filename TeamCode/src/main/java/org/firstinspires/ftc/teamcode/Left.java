@@ -1,13 +1,12 @@
-package org.firstinspires.ftc.teamcode;                                         //imports
+package org.firstinspires.ftc.teamcode;                                     //imports
 import static java.lang.Thread.sleep;
 import com.qualcomm.hardware.bosch.BNO055IMU;
-import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
 import com.qualcomm.hardware.rev.Rev2mDistanceSensor;
+import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
-import com.qualcomm.hardware.rev.Rev2mDistanceSensor;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
@@ -20,9 +19,9 @@ import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
 import org.openftc.apriltag.AprilTagDetection;
 import java.util.ArrayList;
-
+//testing
 @Autonomous
-public class Right2 extends LinearOpMode {
+public class Left extends LinearOpMode {
     OpenCvCamera webcam;
     Pipeline aprilTagDetectionPipeline;
 
@@ -48,7 +47,7 @@ public class Right2 extends LinearOpMode {
     int location;
     double distancesnap;
 
-    AprilTagDetection tagOfInterest = null;                         //setting motor varibles
+    AprilTagDetection tagOfInterest = null;                             //setting motor varibles
     DcMotor frontLeft;
     DcMotor frontRight;
     DcMotor backLeft;
@@ -56,8 +55,8 @@ public class Right2 extends LinearOpMode {
     DcMotor Spin;
     DcMotor Crane;
     CRServo Left;
-
     Rev2mDistanceSensor distance;
+
 
     BNO055IMU imu;
     Orientation angles;
@@ -66,8 +65,8 @@ public class Right2 extends LinearOpMode {
 
     @Override
     public void runOpMode() {
-        initGyro();                                                                 //setting up camera
-        int cameraMonitorViewId = hardwareMap.appContext
+        initGyro();
+        int cameraMonitorViewId = hardwareMap.appContext                            //setting up the camera
                 .getResources().getIdentifier("cameraMonitorViewId",
                         "id", hardwareMap.appContext.getPackageName());
         webcam = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "Webcam 1"), cameraMonitorViewId);
@@ -105,9 +104,9 @@ public class Right2 extends LinearOpMode {
                         break;
                     }
                 }
-
+                //telematry for the signal sleave
                 if (tagFound) {
-                    telemetry.addLine("Tag of interest is in sight!\n\nLocation data:");        //telemetry for signal sleave
+                    telemetry.addLine("Tag of interest is in sight!\n\nLocation data:");
                     tagToTelemetry(tagOfInterest);
                 } else {
                     telemetry.addLine("Don't see tag of interest :(");
@@ -152,7 +151,7 @@ public class Right2 extends LinearOpMode {
         }
 
 
-        if (tagOfInterest == null) {                                    //setting up my own varable from the open cv
+        if (tagOfInterest == null) {                                            //takes the camera value and turns it into my own varible
             location=0;
         } else if (tagOfInterest.id == LEFT) {
             location=1;
@@ -163,9 +162,9 @@ public class Right2 extends LinearOpMode {
         }
 
 
-        frontLeft = hardwareMap.get(DcMotor.class, "frontLeft");                                  //mapping the motors
+        frontLeft = hardwareMap.get(DcMotor.class, "frontLeft");
         frontRight = hardwareMap.get(DcMotor.class, "frontRight");
-        backLeft = hardwareMap.get(DcMotor.class, "backLeft");
+        backLeft = hardwareMap.get(DcMotor.class, "backLeft");                      //mapping the motors
         backRight = hardwareMap.get(DcMotor.class, "backRight");
 
         Left = hardwareMap.get(CRServo.class, "Lefts");
@@ -174,61 +173,62 @@ public class Right2 extends LinearOpMode {
 
         distance=hardwareMap.get(Rev2mDistanceSensor.class,"distance");
 
-
         frontLeft.setDirection(DcMotorSimple.Direction.FORWARD);
         frontRight.setDirection(DcMotorSimple.Direction.REVERSE);
         backLeft.setDirection(DcMotorSimple.Direction.FORWARD);
         backRight.setDirection(DcMotorSimple.Direction.FORWARD);
 
 
-        if (opModeIsActive()) {                 //start of the autonmous queue
+        if (opModeIsActive()) {//start of queue for autonnums movment
             Left.setPower(.3);
             sleep(500);
             crane(-1,400);
-            strafeLeftwithdistanceandcrane(1,31  ,-1,2000);//
+            strafeLeftwithcrane2(1,30,-1,2000);
+            //strafeLeftwithcrane(1,1950,-1,2300);
             //crane2(1,-7600);
-            move(.5,-330);
+            move(.5,330);
             sleep(1000);
             move(.5,40);
             sleep(200);
-            crane(1,200);//
+            crane(1,200);
             intake(-1,1300);
             crane(-1,250);
-            move(.5,200);
+            move(.5,-200);
             //new
-            /*
+           /*
             strafeLeftwithcrane(1,600,1,1000);//500
             gyroTurning(0);
             sleep(1000);
-            moveandspin(.5,980,1,1000);///410
+            moveandspin(.5,-980,-1,1000);///410
             stopMotors();
             //spin2(-1,1000);
-            move(.2,250);
+            move(.2,-150);
             craneinput(500);
             Left.setPower(.3);
             crane(-1, 650);
             gyroTurning(0);
-            moveandspin(.8,-1000,-1,1000);
+            moveandspin(.8,1000,1,1000);
             strafeRightwithcrane(1,680,-1,1900);
-            move(.5,-360);
+            move(.5,360);
             intake(-1,1300);
-            move(.5,330);
+            move(.5,-330);
 */
-            switch (location){                  //parking
+
+            switch (location){//determine where to park
                 case 0:
-                    //move(.2,200);
+                    //move(.2,-200);
                     stopMotors();
                     sleep(3000);
                     break;
                 case 1:
                     strafeRight(1,700);
                     gyroTurning(0);
-                    move(.6,-1100);
-                    //strafeLeft(.5,500);
+                    move(.4,-1300);
+                    //strafeLeft(.5,300);
                     sleep(3000);
                     break;
                 case 2:
-                    //move(.2,200);
+                    //move(.2,-200);
                     stopMotors();
                     sleep(3000);
                     break;
@@ -236,15 +236,14 @@ public class Right2 extends LinearOpMode {
                     strafeRight(1,700);
                     gyroTurning(0);
                     move(.6,1000);
-                    //strafeLeft(.5,500);
+                    //strafeLeft(.5,300);
                     sleep(3000);
                     break;
             }
-           resetallmotors();
         }
     }
 
-    //all my methods
+    //methods
     public void initGyro () {
         BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
         parameters.angleUnit = BNO055IMU.AngleUnit.DEGREES;
@@ -328,21 +327,13 @@ public class Right2 extends LinearOpMode {
         backRight.setPower(0);
     }
 
-    public void resetallmotors() {
-        frontLeft.setPower(0);
-        frontRight.setPower(0);
-        backLeft.setPower(0);
-        backRight.setPower(0);
-        frontRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        backLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        frontLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        backRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        Crane.setPower(0);
-        Left.setPower(0);
-
-    }
-
     public void move(double power, int position) {
+        frontLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        frontRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        backLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        backRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
+
         frontRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         backLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         frontLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -425,7 +416,7 @@ public class Right2 extends LinearOpMode {
         }
 
     }
-    public void strafeLeftwithdistanceandcrane(double power, int distances,double powerc, int timec) {
+    public void strafeLeftwithcrane2(double power, int distances,double powerc, int timec) {
 
         distancesnap=distance.getDistance(DistanceUnit.INCH);
 
@@ -567,5 +558,7 @@ public class Right2 extends LinearOpMode {
 
     }
 
+
 }
+
 
