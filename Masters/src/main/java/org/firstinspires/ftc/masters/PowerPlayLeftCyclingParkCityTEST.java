@@ -60,7 +60,6 @@ public class PowerPlayLeftCyclingParkCityTEST extends LinearOpMode {
     }
 
     LiftPIDController liftPIDController;
-    ArmPIDControllerMotionProfile armPIDControllerMotionProfile;
     ArmPIDController armPIDController;
 
     int armTarget = 0, liftTarget = 0;
@@ -73,7 +72,6 @@ public class PowerPlayLeftCyclingParkCityTEST extends LinearOpMode {
 
     int coneStack = ARM_CONE_STACK;
     SampleMecanumDrive drive;
-    Trajectory cyclePickupPath2, parkRed;
 
     int coneCount =0;
 
@@ -95,7 +93,7 @@ public class PowerPlayLeftCyclingParkCityTEST extends LinearOpMode {
 
         liftPIDController = new LiftPIDController(drive.linearSlide, drive.frontSlide, drive.slideOtherer);
         armPIDController = new ArmPIDController(drive.armMotor);
-        armPIDControllerMotionProfile = new ArmPIDControllerMotionProfile(drive.armMotor);
+      //  armPIDControllerMotionProfile = new ArmPIDControllerMotionProfile(drive.armMotor);
         drive.tipCenter();
         drive.closeClaw();
 
@@ -375,7 +373,7 @@ public class PowerPlayLeftCyclingParkCityTEST extends LinearOpMode {
                                     break;
                                 case RED:
                                     Trajectory parkRed = drive.trajectoryBuilder(drive.getPoseEstimate())
-                                            .lineToLinearHeading(new Pose2d(new Vector2d(-34, -24),Math.toRadians(270)))
+                                            .lineToLinearHeading(new Pose2d(new Vector2d(-36, -24),Math.toRadians(270)))
                                             .build();
                                     drive.followTrajectoryAsync(parkRed);
                                     currentState = State.PARK_RED;
@@ -482,7 +480,7 @@ public class PowerPlayLeftCyclingParkCityTEST extends LinearOpMode {
             telemetry.addData("lift target", liftTarget);
            // telemetry.addData(" lift position", slidePosition);
 
-            telemetry.update();
+          //  telemetry.update();
 
         }
 
