@@ -19,8 +19,8 @@ import java.util.ArrayList;
 import org.firstinspires.ftc.teamcode.drive.*;
 
 
-@Autonomous(name = "LeftAuto", group = "Taus2022-23")
-public class RoadRunnerLeft extends LinearOpMode {
+@Autonomous(name = "RightAuto", group = "Taus2022-23")
+public class RoadRunnerRight extends LinearOpMode {
 
     private ElapsedTime timer = new ElapsedTime();
     private Vector2d myVector = new Vector2d(10, -5);
@@ -41,6 +41,7 @@ public class RoadRunnerLeft extends LinearOpMode {
     //CVision
     OpenCvCamera camera;
     AprilTagDetectionPipeline aprilTagDetectionPipeline;
+
     // Lens intrinsics
     // UNITS ARE PIXELS
     // NOTE: this calibration is for the C920 webcam at 800x448.
@@ -71,7 +72,7 @@ public class RoadRunnerLeft extends LinearOpMode {
         telemetry.update();
         timer.reset();
 
-        drive.setPoseEstimate(new Pose2d(-36, -63, Math.toRadians(90)));
+        drive.setPoseEstimate(new Pose2d(36, -63, Math.toRadians(90)));
 
         telemetry.addLine("SetPose");
         telemetry.update();
@@ -160,18 +161,21 @@ public class RoadRunnerLeft extends LinearOpMode {
         }
 
 
-        Trajectory firstMidPole = drive.trajectoryBuilder(new Pose2d(-36, -63, Math.toRadians(90)))
-                .splineToLinearHeading(new Pose2d(-36, -12, Math.toRadians(90)), Math.toRadians(90))
-                .splineToSplineHeading(new Pose2d(-30, -18.5, Math.toRadians(315)), Math.toRadians(315))
+        Trajectory firstMidPole = drive.trajectoryBuilder(new Pose2d(36, -63, Math.toRadians(90)))
+                .splineToLinearHeading(new Pose2d(36, -12, Math.toRadians(90)), Math.toRadians(90))
+                .splineToSplineHeading(new Pose2d(30, -18.5, Math.toRadians(225)), Math.toRadians(225))
                 .build();
 
         Trajectory stackMidPoint = drive.trajectoryBuilder(firstMidPole.end())
                 //.splineToLinearHeading(new Pose2d(-34, -14, Math.toRadians(270)), Math.toRadians(270))
-                .splineToLinearHeading(new Pose2d(-38, -9, Math.toRadians(270)), Math.toRadians(270))
+                .splineToLinearHeading(new Pose2d(38, -9, Math.toRadians(270)), Math.toRadians(270))
+                .build();
+        Trajectory midPoleBack = drive.trajectoryBuilder(firstMidPole.end())
+                .back(9)
                 .build();
 
-        Trajectory stack = drive.trajectoryBuilder(stackMidPoint.end())
-                .lineToLinearHeading(new Pose2d(-61.5, -8, Math.toRadians(180)))
+        Trajectory stack = drive.trajectoryBuilder(midPoleBack.end())
+                .lineToLinearHeading(new Pose2d(61.5, -8, Math.toRadians(0)))
                 .build();
 
         Trajectory stackBack = drive.trajectoryBuilder(stack.end())
@@ -179,7 +183,7 @@ public class RoadRunnerLeft extends LinearOpMode {
                 .build();
 
         Trajectory secMidPole = drive.trajectoryBuilder(stackBack.end())
-                .lineToLinearHeading(new Pose2d(-36, -14.25, Math.toRadians(320)))
+                .lineToLinearHeading(new Pose2d(36, -14.25, Math.toRadians(225)))
                 .build();
 
         Trajectory secMidPoleForward = drive.trajectoryBuilder(secMidPole.end())
@@ -191,19 +195,19 @@ public class RoadRunnerLeft extends LinearOpMode {
                 .build();
 
         Trajectory stack2 = drive.trajectoryBuilder(secMidPoleBack.end())
-                .lineToLinearHeading(new Pose2d(-61.5, -8, Math.toRadians(180)))
+                .lineToLinearHeading(new Pose2d(61.5, -8, Math.toRadians(0)))
                 .build();
 
         Trajectory park1 = drive.trajectoryBuilder(secMidPoleBack.end())
-                .lineToLinearHeading(new Pose2d(-58, -12, Math.toRadians(180)))
+                .lineToLinearHeading(new Pose2d(58, -12, Math.toRadians(0)))
                 .build();
 
         Trajectory park2 = drive.trajectoryBuilder(secMidPoleBack.end())
-                .lineToLinearHeading(new Pose2d(-36, -12, Math.toRadians(180)))
+                .lineToLinearHeading(new Pose2d(36, -12, Math.toRadians(0)))
                 .build();
 
         Trajectory park3 = drive.trajectoryBuilder(secMidPoleBack.end())
-                .lineToLinearHeading(new Pose2d(-12, -12, Math.toRadians(180)))
+                .lineToLinearHeading(new Pose2d(12, -12, Math.toRadians(0)))
                 .build();
 
 
@@ -222,7 +226,7 @@ public class RoadRunnerLeft extends LinearOpMode {
         sleep(1250);
         manipulator.stopIntake();
 
-        drive.followTrajectory(stackMidPoint);
+        drive.followTrajectory(midPoleBack);
         manipulator.moveSlideEncoder(LOW_TICKS, 1);
 
         drive.followTrajectory(stack);
@@ -270,12 +274,11 @@ public class RoadRunnerLeft extends LinearOpMode {
         PoseHolder.slideHeight = INTAKE_TICKS;
 
         if (tagNum == 0) {
-            drive.followTrajectory(park1);
+            drive.followTrajectory(park3);
         } else if (tagNum == 1) {
             drive.followTrajectory(park2);
         } else {
-            drive.followTrajectory(park3);
-
+            drive.followTrajectory(park1);
         }
     }
 
