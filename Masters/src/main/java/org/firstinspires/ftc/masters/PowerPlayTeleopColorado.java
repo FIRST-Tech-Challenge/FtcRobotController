@@ -34,7 +34,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import java.util.List;
 
 @Config
-@TeleOp(name="Power Play TeleOp COLORADO", group = "competition")
+@TeleOp(name="Power Play TeleOp Utah", group = "competition")
 public class PowerPlayTeleopColorado extends LinearOpMode {
 
 
@@ -252,6 +252,11 @@ public class PowerPlayTeleopColorado extends LinearOpMode {
 
             } else {
                 yPushed = false;
+            }
+
+            if (gamepad1.b){
+                armTarget = 100;
+                tippingServo.setPosition(TIP_FRONT);
             }
             if (aligning){
                 if (alignPole()){
