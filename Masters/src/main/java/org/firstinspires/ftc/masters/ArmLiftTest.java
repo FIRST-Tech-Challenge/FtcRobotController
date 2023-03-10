@@ -56,7 +56,7 @@ public class ArmLiftTest extends LinearOpMode {
         waitForStart();
 
         drive.closeClaw();
-        drive.tipBack();
+        drive.tipFront();
 
         long startTime = new Date().getTime();
 
