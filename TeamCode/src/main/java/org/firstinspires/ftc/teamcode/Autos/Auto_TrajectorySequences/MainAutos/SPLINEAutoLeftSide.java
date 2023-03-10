@@ -5,8 +5,8 @@ import com.acmerobotics.roadrunner.geometry.Pose2d;
 import org.firstinspires.ftc.teamcode.MechanismTemplates.Arm;
 import org.firstinspires.ftc.teamcode.MechanismTemplates.Claw;
 import org.firstinspires.ftc.teamcode.MechanismTemplates.OdoPod;
+import org.firstinspires.ftc.teamcode.MechanismTemplates.PoleAlignment;
 import org.firstinspires.ftc.teamcode.MechanismTemplates.Slide;
-import org.firstinspires.ftc.teamcode.MechanismTemplates.poleAlignment;
 import org.firstinspires.ftc.teamcode.TeleOps.AprilTags.PowerPlay_AprilTagDetectionDeposit;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequence;
@@ -31,7 +31,7 @@ public class SPLINEAutoLeftSide extends PowerPlay_AprilTagDetectionDeposit{
 	    private Claw clawControl;
 
 	//[POLEALIGNMENT]
-		private poleAlignment alignmentControl;
+		private PoleAlignment alignmentControl;
 
 	// [OPENING MOVE]
 	public static double openingX = 37.7;
@@ -90,7 +90,7 @@ public class SPLINEAutoLeftSide extends PowerPlay_AprilTagDetectionDeposit{
 	public void initialize(){
 		armControl = new Arm(hardwareMap);
 		slideControl = new Slide(hardwareMap);
-		alignmentControl=new poleAlignment(hardwareMap);
+		alignmentControl=new PoleAlignment(hardwareMap);
 	}
 
 	public void scan(){

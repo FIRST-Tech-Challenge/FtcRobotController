@@ -1,33 +1,37 @@
 package org.firstinspires.ftc.teamcode.MechanismTemplates;
 
+
+import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 
-public class poleAlignment
+@Config
+public class PoleAlignment
 {
-    public static Servo retractServo;
-    public static double raise=.55;
-    public static double lower=.13;
-    public poleAlignment(HardwareMap hardwareMap) {
+    public Servo retractServo;
+    public boolean isUp;
+    public static double raise=.855;
+    public static double lower=.41;
+
+    public PoleAlignment(HardwareMap hardwareMap) {
         retractServo=hardwareMap.get(Servo.class, "poleAlignment"); //port 5
-    }
-    public static void lower()
-    {
+        isUp = false;
         retractServo.setPosition(lower);
     }
 
-    public static void raiseServo()
-    {
+
+    public void raiseServo() {
         retractServo.setPosition(raise);
     }
 
-    public static void toggleAlignmentDevice() {
-        if (retractServo.getPosition() == raise) {
+    public void toggleAlignmentDevice() {
+        if (isUp) {
             retractServo.setPosition(lower);
         }
         else {
             retractServo.setPosition(raise);
         }
+        isUp = !isUp;
     }
 }
 

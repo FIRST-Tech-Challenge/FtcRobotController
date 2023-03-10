@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.function.BooleanSupplier;
 
 public class SignalEdgeDetector {
@@ -7,11 +9,18 @@ public class SignalEdgeDetector {
     private boolean newState;
     private boolean oldState;
 
-    public SignalEdgeDetector(BooleanSupplier condition) {
-        this.condition = condition;
+    private static final List<SignalEdgeDetector> detectors = new ArrayList<>();
+
+    public static void updateAll() {
+        detectors.forEach(SignalEdgeDetector::update);
     }
 
-    public void update() {
+    public SignalEdgeDetector(BooleanSupplier condition) {
+        this.condition = condition;
+        detectors.add(this);
+    }
+
+    private void update() {
         oldState = newState;
         newState = condition.getAsBoolean();
     }

@@ -1,8 +1,6 @@
 package org.firstinspires.ftc.teamcode.TeleOps;
 
 import com.acmerobotics.dashboard.config.Config;
-import com.arcrobotics.ftclib.gamepad.GamepadEx;
-import com.arcrobotics.ftclib.gamepad.GamepadKeys;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -11,9 +9,9 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple; //hello
 
 import org.firstinspires.ftc.teamcode.MechanismTemplates.Claw;
 import org.firstinspires.ftc.teamcode.MechanismTemplates.OdoPod;
+import org.firstinspires.ftc.teamcode.MechanismTemplates.PoleAlignment;
 import org.firstinspires.ftc.teamcode.MechanismTemplates.Slide;
 import org.firstinspires.ftc.teamcode.MechanismTemplates.Arm;
-import org.firstinspires.ftc.teamcode.MechanismTemplates.poleAlignment;
 import org.firstinspires.ftc.teamcode.SignalEdgeDetector;
 
 @Config
@@ -37,7 +35,7 @@ public class PP_MecanumTeleOp extends OpMode
     private Arm armControl;
     private Slide slideControl;
     private Claw clawControl;
-    private poleAlignment alignmentControl;
+    private PoleAlignment alignmentControl;
     //private GamepadEx driverOp;
 
     private final double PRECISIONREDUCTION = 0.39;
@@ -92,7 +90,7 @@ public class PP_MecanumTeleOp extends OpMode
         slideControl = new Slide(hardwareMap);
         clawControl = new Claw(hardwareMap);
         OdoPod odoControl = new OdoPod(hardwareMap);
-        alignmentControl = new poleAlignment(hardwareMap);
+        alignmentControl = new PoleAlignment(hardwareMap);
         odoControl.retract();
     }// INIT()
 
@@ -106,21 +104,16 @@ public class PP_MecanumTeleOp extends OpMode
         slides();
         poleAlignment();
 
-        gamepad2_A.update();
-        gamepad2_B.update();
-        gamepad2_X.update();
-        gamepad2_Y.update();
-        gamepad1_X.update();
-        gamepad2_rightBumper.update();
+        SignalEdgeDetector.updateAll();
     }// end of loop()
 
     // BOT METHODS \\
     public void drive()
     {
-        double y = -gamepad1.left_stick_y; // Remember, this is reversed!
-        double x = gamepad1.left_stick_x;
+        double y = reducingDeadzone(-gamepad1.left_stick_y); // Remember, this is reversed!
+        double x = reducingDeadzone(gamepad1.left_stick_x);
         boolean precisionToggle = gamepad1.right_trigger > 0.1;
-        double rx = -gamepad1.right_stick_x * 0.75;
+        double rx =reducingDeadzone(-gamepad1.right_stick_x * 0.75);
             if(precisionToggle) {
                 rx *= TURN_PRECESION;
             }
@@ -201,6 +194,7 @@ public class PP_MecanumTeleOp extends OpMode
         }
         else if (gamepad2_X.isRisingEdge()){
             clawControl.wristJoint.setPosition(clawControl.WRIST_INTAKE_POSITION);
+            clawControl.wristInExtakePosition = false;
             clawControl.toggleOpenClose();
             armControl.setIntake();
             slideControl.setIntakeOrGround();
@@ -222,6 +216,17 @@ public class PP_MecanumTeleOp extends OpMode
         if(gamepad2.left_trigger>0.1){
             slideControl.setManualSlide(-165);
         }
+    }
+
+    public double reducingDeadzone(double x){
+        if(x==0){
+            return 0;
+        }else if(0<x && 0.25>x){
+            return 0.25;
+        }else if(0>x && x>-0.25){
+            return -0.25;
+        }
+        return x;
     }
 }
 
