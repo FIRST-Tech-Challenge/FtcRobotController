@@ -16,11 +16,12 @@ public class RobotConfig {
 
     private static RobotConfig rInstance;
     public List<LynxModule> allHubs;
+    public Scheduler scheduler;
 
     private RobotConfig(OpMode opMode){
         this.opMode = opMode;
         this.opMode.telemetry.setAutoClear(false);
-        Scheduler.freshInstance(this);
+        this.scheduler = Scheduler.freshInstance(this);
         allHubs = opMode.hardwareMap.getAll(LynxModule.class);
         for (LynxModule module : allHubs) {
             module.setBulkCachingMode(LynxModule.BulkCachingMode.MANUAL);

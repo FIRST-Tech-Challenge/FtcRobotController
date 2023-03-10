@@ -23,12 +23,11 @@ public class LimitSwitch extends Subsystem {
     @Override
     public void init() {
         limitSwitch = r.opMode.hardwareMap.get(TouchSensor.class, "limit");
-        limitSwitchEX = new ButtonEX();
+        limitSwitchEX = new ButtonEX(() -> limitSwitch.isPressed());
     }
 
     @Override
     public void read() {
-        limitSwitchEX.startLoopUpdate(limitSwitch.isPressed());
     }
 
     @Override

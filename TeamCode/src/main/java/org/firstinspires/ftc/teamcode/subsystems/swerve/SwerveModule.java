@@ -15,7 +15,7 @@ public class SwerveModule {
     public final Log log;
 
     private final Angle absoluteAngle;
-    public final Angle continuousAngle;
+    private final Angle continuousAngle;
     /**
      * includes the adjustment for the robot's heading
      */
