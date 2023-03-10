@@ -41,7 +41,7 @@ public class StateRightSide extends BaseAutonomous {
             if ((Math.abs(motorArm.getCurrentPosition() - (MID_JUNCT_ARM_POSITION)) > ARM_ENCODER_TOLERANCE)) {
                 telemetry.addLine("moving arm");
                 telemetry.update();
-                motorArm.setPower((MID_JUNCT_ARM_POSITION - motorArm.getCurrentPosition()) * 1.0/800.0);
+                motorArm.setPower((MID_JUNCT_ARM_POSITION - motorArm.getCurrentPosition()) * ARM_RAISE_POWER);
 
             } else {
                 motorArm.setPower(HOLD_ARM_AT_MID_OR_LOW_POS_POWER);

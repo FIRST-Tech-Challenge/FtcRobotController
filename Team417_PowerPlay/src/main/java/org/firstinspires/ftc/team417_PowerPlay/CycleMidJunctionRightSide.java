@@ -65,7 +65,6 @@ public class CycleMidJunctionRightSide extends BaseAutonomous {
         while (opModeIsActive() && !isStopRequested()) {
             switch (currentState) {
                 case GO_TO_MID_JUNCTION:
-
                     if (!drive.isBusy()) {
                         currentState = State.SIDE_MID_JUNCTION;
                         drive.followTrajectoryAsync(sideMidJunction);
@@ -77,7 +76,7 @@ public class CycleMidJunctionRightSide extends BaseAutonomous {
                             motorArm.setPower((MID_JUNCT_ARM_POSITION - motorArm.getCurrentPosition()) * ARM_RAISE_POWER);
                         }
                     } else {
-                        while (motorArm.getCurrentPosition() >MID_JUNCT_ARM_POSITION) {
+                        while (motorArm.getCurrentPosition() > MID_JUNCT_ARM_POSITION) {
                             motorArm.setPower(-0.4);
                             telemetry.addLine("lowering arm");
                             telemetry.addData("arm current position", motorArm.getCurrentPosition());

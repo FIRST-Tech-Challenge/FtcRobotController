@@ -40,7 +40,10 @@ abstract public class BaseTeleOp extends BaseOpMode {
         mecanumDrive(x, y, turning);
     }
     /**
-     * Stick curve provides driver more control over the robot controller.
+     * Stick curve provides driver more control over the robot controller. This is a cubic function
+     * with a deadzone of a max value of 0.75. The variable a impacts the steepness of the curve.
+     * We graphed it in desmos and tested the deadzone and the a value on the field depending on our
+     * preferences in driving.
      */
     public double stickCurve(double x, double a, double d) {
         x = Math.signum(x) * Math.max(0, Math.min(1, (Math.abs(x) - d) / (1 - d)));
