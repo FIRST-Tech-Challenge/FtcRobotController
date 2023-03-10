@@ -17,11 +17,13 @@ public class JunctionCenteringTest extends BaseAutonomous {
 
         sleep(5000);
 
+        driveSlidesAutonomous(Constants.SLIDE_TOP);
+
+        sleep(1000);
+
         grabberCameraPipeline.setRanges(Constants.LOWER_BLACK, Constants.UPPER_BLACK);
 
         startCameraWithPipeline(grabberCameraPipeline, grabberCamera, Constants.CAMERA_X, Constants.CAMERA_Y);
-
-        grabberCamera.setPipeline(grabberCameraPipeline);
 
         waitForStart();
 
