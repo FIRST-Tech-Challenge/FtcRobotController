@@ -1,15 +1,10 @@
 package org.firstinspires.ftc.masters;
 
-import static org.firstinspires.ftc.masters.BadgerConstants.ARM_BACK;
-
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
-import com.acmerobotics.roadrunner.control.PIDCoefficients;
 import com.acmerobotics.roadrunner.control.PIDFController;
 import com.acmerobotics.roadrunner.profile.MotionProfile;
-import com.acmerobotics.roadrunner.profile.MotionProfileGenerator;
-import com.acmerobotics.roadrunner.profile.MotionState;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
@@ -47,7 +42,7 @@ public class ArmLiftTest extends LinearOpMode {
         liftPIDController = new LiftPIDController(drive.linearSlide, drive.frontSlide, drive.slideOtherer);
         armPIDController = new ArmPIDControllerMotionProfile(drive.armMotor);
         //drive.tipCenter();
-        drive.closeClaw();
+//        drive.closeClaw();
 
 
         MotionProfile motionProfile=null;
@@ -55,8 +50,8 @@ public class ArmLiftTest extends LinearOpMode {
 
         waitForStart();
 
-        drive.closeClaw();
-        drive.tipFront();
+//        drive.closeClaw();
+       drive.tipCenter();
 
         long startTime = new Date().getTime();
 

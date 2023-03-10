@@ -25,10 +25,10 @@ public class CAMShiftTest extends LinearOpMode {
     {
         // OpenCV webcam
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
-        webcam = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "webcam"), cameraMonitorViewId);
+        webcam = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "webcamSleeve"), cameraMonitorViewId);
         //OpenCV Pipeline
-        CAMShiftPipelinePowerPlay myPipeline;
-        webcam.setPipeline(myPipeline = new CAMShiftPipelinePowerPlay(telemetry,packet));
+        CAMShiftPipelineHopefully myPipeline;
+        webcam.setPipeline(myPipeline = new CAMShiftPipelineHopefully(telemetry,packet));
         // Configuration of Pipeline
         // Webcam Streaming
         webcam.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener()
@@ -36,7 +36,7 @@ public class CAMShiftTest extends LinearOpMode {
             @Override
             public void onOpened()
             {
-                webcam.startStreaming(CAMERA_WIDTH, CAMERA_HEIGHT, OpenCvCameraRotation.UPSIDE_DOWN);
+                webcam.startStreaming(CAMERA_WIDTH, CAMERA_HEIGHT, OpenCvCameraRotation.UPRIGHT);
             }
 
             @Override

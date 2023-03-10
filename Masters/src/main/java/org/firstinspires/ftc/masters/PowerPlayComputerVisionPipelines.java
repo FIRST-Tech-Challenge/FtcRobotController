@@ -27,10 +27,15 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.opencv.core.Core;
 import org.opencv.core.Mat;
+import org.opencv.core.MatOfFloat;
+import org.opencv.core.MatOfInt;
 import org.opencv.core.Point;
 import org.opencv.core.Rect;
+import org.opencv.core.RotatedRect;
 import org.opencv.core.Scalar;
+import org.opencv.core.TermCriteria;
 import org.opencv.imgproc.Imgproc;
+import org.opencv.video.Video;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
@@ -38,6 +43,7 @@ import org.openftc.easyopencv.OpenCvPipeline;
 import org.openftc.easyopencv.OpenCvWebcam;
 
 import java.util.ArrayList;
+import java.util.Collections;
 
 
 public class PowerPlayComputerVisionPipelines {
@@ -62,7 +68,14 @@ public class PowerPlayComputerVisionPipelines {
         SHRUG_NOISES
     }
 
-    public enum PipelineType {SLEEVE, PIPE, RED_CONE, BLUE_CONE}
+    public String data;
+
+    //CAMshift Variables
+    private static final Rect trackWindow = new Rect(150, 60, 63, 125);
+
+
+
+    public enum PipelineType {SLEEVE, PIPE, RED_CONE, BLUE_CONE,ARM}
 
     //    Declare webcam
     public OpenCvWebcam webcam;
@@ -149,6 +162,7 @@ public class PowerPlayComputerVisionPipelines {
             }
         });
 
+
     }
 
     public boolean isError() {
@@ -163,6 +177,11 @@ public class PowerPlayComputerVisionPipelines {
 
     public void setPipeDetectionFront() {
         sleeveWebcamPipeline = PipelineType.PIPE;
+        sleevePipeline.setPipelineType(sleeveWebcamPipeline);
+    }
+
+    public void setPipelineProcessArm() {
+        sleeveWebcamPipeline = PipelineType.ARM;
         sleevePipeline.setPipelineType(sleeveWebcamPipeline);
     }
 
@@ -237,7 +256,7 @@ public class PowerPlayComputerVisionPipelines {
          * are done like this.
          */
 
-        Point sleeveTopLeftPoint = new Point(304, 186);
+        Point sleeveTopLeftPoint = new Point(304, 256);
         Point sleeveBottomRightPoint = new Point(sleeveTopLeftPoint.x + SLEEVE_REGION_WIDTH, sleeveTopLeftPoint.y + SLEEVE_REGION_HEIGHT);
 
 
@@ -285,6 +304,11 @@ public class PowerPlayComputerVisionPipelines {
         int pipe_aChannelAvg;
         int pipe_bChannelAvg;
 
+        ArrayList<Mat> region;
+        ArrayList<Integer> regionAvgs;
+
+        public RotatedRect rot_rect;
+
         /*
          * This function takes the RGB frame, converts to LAB,
          * and extracts the A channel to the 'A' variable
@@ -327,8 +351,8 @@ public class PowerPlayComputerVisionPipelines {
             if (this.pipelineType == PipelineType.PIPE) {
                 return processPipe(input);
             }
-            if (this.pipelineType == PipelineType.BLUE_CONE) {
-
+            if (this.pipelineType == PipelineType.ARM) {
+                return processArm(input);
             }
             return input;
 
@@ -391,14 +415,14 @@ public class PowerPlayComputerVisionPipelines {
             inputToLAB(input);
 
 //            Declare list of regions
-            ArrayList<Mat> region = new ArrayList<>();
+            region = new ArrayList<>();
 
 //            Put the necessary data from the frame to each region
             for (int i = 0; i < 17; i++) {
                 region.add(PIPE_B.submat(new Rect(pipeTopLeftPoints.get(i), pipeBottomRightPoints.get(i))));
             }
 
-            ArrayList<Integer> regionAvgs = new ArrayList<>();
+            regionAvgs = new ArrayList<>();
 
             for (int i = 0; i < 17; i++) {
                 regionAvgs.add((int) Core.mean(region.get(i)).val[0]);
@@ -441,6 +465,50 @@ public class PowerPlayComputerVisionPipelines {
 
             telemetry.addData("Position", position);
             telemetry.update();
+
+            return input;
+        }
+
+        public Mat processArm(Mat input) {
+
+            Mat hsv_roi = new Mat();
+            Mat mask = new Mat();
+            Mat roi = input.submat(trackWindow);
+            Imgproc.cvtColor(roi, hsv_roi, Imgproc.COLOR_BGR2HSV);
+            Core.inRange(hsv_roi, new Scalar(0, 60, 32), new Scalar(180, 255, 255), mask);
+
+            MatOfFloat range = new MatOfFloat(0, 256);
+            Mat roi_hist = new Mat();
+            MatOfInt histSize = new MatOfInt(180);
+            MatOfInt channels = new MatOfInt(0);
+            Imgproc.calcHist(Collections.singletonList(hsv_roi), channels, mask, roi_hist, histSize, range);
+            Core.normalize(roi_hist, roi_hist, 0, 255, Core.NORM_MINMAX);
+
+            TermCriteria term_crit = new TermCriteria(TermCriteria.EPS | TermCriteria.COUNT, 100, .1);
+
+
+            Mat hsv = new Mat() , dst = new Mat();
+            Imgproc.cvtColor(input, hsv, Imgproc.COLOR_BGR2HSV);
+            Imgproc.calcBackProject(Collections.singletonList(hsv), channels, roi_hist, dst, range, 1);
+
+
+            rot_rect = Video.CamShift(dst, trackWindow, term_crit);
+
+
+            Point[] points = new Point[4];
+            rot_rect.points(points);
+            for (int i = 0; i < 4 ;i++) {
+                Imgproc.line(input, points[i], points[(i+1)%4], new Scalar(255, 0, 0),2);
+            }
+
+            telemetry.addData("rot_rect: ", rot_rect.toString());
+
+            telemetry.addData("y: ",rot_rect.center.y);
+
+            telemetry.update();
+
+            hsv_roi.release(); mask.release(); roi.release(); range.release();
+            roi_hist.release(); histSize.release(); channels.release(); hsv.release(); dst.release();
 
             return input;
         }

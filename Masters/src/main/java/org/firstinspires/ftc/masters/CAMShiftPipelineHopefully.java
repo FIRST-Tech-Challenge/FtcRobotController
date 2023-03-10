@@ -1,5 +1,8 @@
 package org.firstinspires.ftc.masters;
 
+import com.acmerobotics.dashboard.FtcDashboard;
+import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
+
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.opencv.core.Core;
 import org.opencv.core.Mat;
@@ -20,24 +23,20 @@ public class CAMShiftPipelineHopefully extends OpenCvPipeline {
 
     public String data;
 
-
-    public enum DetectedObject {
-        CONES,
-        POLE,
-        THE_MADNESS_OF_CTHULHU
-    }
-
-
     Mat hsv_roi = new Mat();
     Mat mask = new Mat();
 
     // hardcode the initial location of window
     private final Rect trackWindow = new Rect(150, 60, 63, 125);
     Telemetry telemetry;
+    private final TelemetryPacket packet;
 
-    public CAMShiftPipelineHopefully(Telemetry telemetry) {
+    public CAMShiftPipelineHopefully(Telemetry telemetry, TelemetryPacket packet) {
         this.telemetry = telemetry;
+        this.packet = packet;
     }
+
+    FtcDashboard dashboard = FtcDashboard.getInstance();
 
     @Override
     public Mat processFrame(Mat input) {
@@ -71,23 +70,12 @@ public class CAMShiftPipelineHopefully extends OpenCvPipeline {
         }
         data = rot_rect.toString();
         telemetry.addData("rot_rect: ", rot_rect.toString());
+        packet.put("rot_rect: ", rot_rect.toString());
 
-//        Pattern pattern = Pattern.compile("(\\d*\\.\\d*), (\\d*\\.\\d*)} (\\d*)x(\\d*) \\* (\\d*\\.\\d*) }");
-//        Matcher matcher = pattern.matcher(rot_rect.toString());
-//        boolean matchFound = matcher.find();
-//
-//        float center_x = Float.parseFloat(matcher.group(1));
-//        float center_y = Float.parseFloat(matcher.group(2));
-//        float size_x = Float.parseFloat(matcher.group(3));
-//        float size_y = Float.parseFloat(matcher.group(4));
-//        float angle = Float.parseFloat(matcher.group(5));
-//
-//        telemetry.addData("center_x: ", center_x);
-//        telemetry.addData("center_y: ", center_y);
-//        telemetry.addData("size_x: ", size_x);
-//        telemetry.addData("size_y: ", size_y);
-//        telemetry.addData("angle: ", angle);
-//        telemetry.update();
+        dashboard.sendTelemetryPacket(packet);
+
+
+        telemetry.update();
 
         return input;
     }
