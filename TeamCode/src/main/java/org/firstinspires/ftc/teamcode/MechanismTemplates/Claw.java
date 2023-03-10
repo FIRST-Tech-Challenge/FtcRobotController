@@ -53,14 +53,14 @@ public class Claw {
     private boolean clawToggled;
 
     public void toggleOpenClose() {
-
+        if (isOpen.isRisingEdge()) {
             if (clawToggled) {
                 clawJoint.setPosition(AUTOCLOSE);
             } else {
                 clawJoint.setPosition(OPEN);
             }
             clawToggled = !clawToggled;
-
+        }
     }
 
     public boolean wristInExtakePosition;
@@ -74,10 +74,17 @@ public class Claw {
         wristInExtakePosition = !wristInExtakePosition;
     }
 
-
+    public void toggleAutoOpenClose(){
+        if(clawToggled){ // hello
+            clawJoint.setPosition(AUTOCLOSE);
+        }else {
+            clawJoint.setPosition((OPEN));
+        }
+        clawToggled = !clawToggled;
+    }
 
     public void update() {
-//        isOpen.update();
-//        isIntakePosition.update();
+        isOpen.update();
+        isIntakePosition.update();
     }
 }
