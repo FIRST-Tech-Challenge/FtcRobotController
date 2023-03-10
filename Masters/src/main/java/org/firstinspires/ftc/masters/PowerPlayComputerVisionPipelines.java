@@ -256,7 +256,7 @@ public class PowerPlayComputerVisionPipelines {
          * are done like this.
          */
 
-        Point sleeveTopLeftPoint = new Point(304, 186);
+        Point sleeveTopLeftPoint = new Point(304, 256);
         Point sleeveBottomRightPoint = new Point(sleeveTopLeftPoint.x + SLEEVE_REGION_WIDTH, sleeveTopLeftPoint.y + SLEEVE_REGION_HEIGHT);
 
 
