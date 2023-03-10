@@ -49,6 +49,7 @@ public class Constants {
 
     public static final double WHEEL_CIRCUMFERENCE = 96 / 25.4 * Math.PI;
     public static final double DRIVE_MOTOR_TICKS_TO_INCHES = WHEEL_CIRCUMFERENCE * Math.sqrt(2) / 537.6;
+    public static final int DRIVE_MOTOR_INCHES_TO_TICKS = 379;
 
     public static final int CAMERA_X = 800;
     public static final int CAMERA_Y = 600;
@@ -56,10 +57,10 @@ public class Constants {
     public static final int CAMERA_CENTER_X = CAMERA_X / 2;
     public static final int CAMERA_CENTER_Y = CAMERA_Y / 2;
 
-    public static final int CONE_WIDTH = 500;
+    public static final int CONE_WIDTH = 420;
     public static final double CONE_STACK_WIDTH_KP = -0.00005;
     public static final double CONE_STACK_CENTERING_KP = -0.0005;
-    public static final double CONE_STACK_CENTERING_PROPORTIONAL_KP = 0.0005;
+    public static final double CONE_STACK_CENTERING_PROPORTIONAL_KP = -0.0003;
     public static final double CONE_STACK_CENTERING_MAX_SPEED = 0.25;
 
     public static final int JUNCTION_TOP_TOLERANCE = 75;

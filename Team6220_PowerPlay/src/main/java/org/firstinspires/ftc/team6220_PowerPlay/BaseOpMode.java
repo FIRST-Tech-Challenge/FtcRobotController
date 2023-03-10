@@ -292,7 +292,7 @@ public abstract class BaseOpMode extends LinearOpMode {
             if (width == 0) {
                 break;
             } else {
-                driveWithIMU(coneStackPixelsAndWidthToStrafingPower(xOffset, width), coneStackWidthMotorPower(width), coneStackPixelsAndWidthToTurningPower(xOffset, width));
+                //driveWithIMU(coneStackPixelsAndWidthToStrafingPower(xOffset, width), coneStackWidthMotorPower(width), 1.09*coneStackPixelsAndWidthToTurningPower(xOffset, width));
                 telemetry.addData("xStrafingPower", coneStackPixelsAndWidthToStrafingPower(xOffset, width));
                 telemetry.addData("xTurningPower", coneStackPixelsAndWidthToTurningPower(xOffset, width));
                 telemetry.addData("yMotorPower", coneStackWidthMotorPower(width));
@@ -301,7 +301,7 @@ public abstract class BaseOpMode extends LinearOpMode {
             }
 
             // while far enough that the cone stack doesn't fill the entire camera view
-        } while (width < Constants.CONE_WIDTH);
+        } while (width < 320);
 
         stopDriveMotors();
     }
@@ -341,7 +341,7 @@ public abstract class BaseOpMode extends LinearOpMode {
      * @return turning power for robot drivetrain
      */
     public double coneStackPixelsAndWidthToTurningPower(double pixelOffset, double width) {
-        return (Constants.CONE_STACK_CENTERING_PROPORTIONAL_KP * pixelOffset)/((1/250)*width);
+        return (Constants.CONE_STACK_CENTERING_PROPORTIONAL_KP * pixelOffset)/((1.0/250.0)*width);
     }
 
     /**
@@ -352,7 +352,7 @@ public abstract class BaseOpMode extends LinearOpMode {
      * @return strafing power for robot drivetrain
      */
     public double coneStackPixelsAndWidthToStrafingPower(double pixelOffset, double width) {
-        return (Constants.CONE_STACK_CENTERING_PROPORTIONAL_KP * pixelOffset)*((1/200)*width);
+        return (Constants.CONE_STACK_CENTERING_PROPORTIONAL_KP * pixelOffset)*((1.0/200.0)*width);
     }
 
     /**
