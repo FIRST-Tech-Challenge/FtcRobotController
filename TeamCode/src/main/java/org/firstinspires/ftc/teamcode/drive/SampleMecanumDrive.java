@@ -48,6 +48,8 @@ import static org.firstinspires.ftc.teamcode.drive.DriveConstants.kA;
 import static org.firstinspires.ftc.teamcode.drive.DriveConstants.kStatic;
 import static org.firstinspires.ftc.teamcode.drive.DriveConstants.kV;
 
+import ftc.rogue.blacksmith.util.kalman.KalmanThreeWheelLocalizer;
+
 @Config
 public class SampleMecanumDrive extends MecanumDrive {
     public static PIDCoefficients TRANSLATIONAL_PID = new PIDCoefficients(11, 0, 0.003); //9.5 kp
@@ -71,6 +73,25 @@ public class SampleMecanumDrive extends MecanumDrive {
 
     //private BNO055IMU imu;
     private VoltageSensor batteryVoltageSensor;
+
+    //Kalman Filter Variables
+    //Anywhere from 5-35 for the wheel position and velocity filters is reasonable
+    // 0.10-0.75 is reasonable for the heading filters.
+    // Start with a low number and gradually increase until you notice adverse affects, if any.
+    private double R0 = 0.15;
+    private double Q0 = 0.10;
+    private double R1 = 9.0;
+    private double Q1 = 11.0;
+    private double R2 = 9.0;
+    private double Q2 = 11.0;
+    private double R3 = 0.15;
+    private double Q3 = 0.10;
+    private double R4 = 8.0;
+    private double Q4 = 7.0;
+    private double R5 = 8.0;
+    private double Q5 = 7.0;
+
+
 
     public SampleMecanumDrive(HardwareMap hardwareMap) {
         super(kV, kA, kStatic, TRACK_WIDTH, TRACK_WIDTH, LATERAL_MULTIPLIER);
@@ -152,7 +173,14 @@ public class SampleMecanumDrive extends MecanumDrive {
 
         // TODO: if desired, use setLocalizer() to change the localization method
         // for instance, setLocalizer(new ThreeTrackingWheelLocalizer(...));
-        setLocalizer(new StandardTrackingWheelLocalizer(hardwareMap));
+        //setLocalizer(new StandardTrackingWheelLocalizer(hardwareMap));
+        setLocalizer(new KalmanThreeWheelLocalizer(new StandardTrackingWheelLocalizer(hardwareMap, this))
+                .setHeadingFilterCoeffs(R0, Q0) //These values need to be tuned and put it in the variables above
+                .setWheelPos1FilterCoeffs(R1, Q1) //set R0-R5 and Q0-Q5 to whatever values you have tuned.
+                .setWheelPos2FilterCoeffs(R2, Q2)
+                .setHeadingVelocityFilterCoeffs(R3, Q3)
+                .setWheelPos1VelocityFilterCoeffs(R4, Q4)
+                .setWheelPos2VelocityFilterCoeffs(R5, Q5));
         trajectorySequenceRunner = new TrajectorySequenceRunner(follower, HEADING_PID);
     }
 
@@ -309,8 +337,8 @@ public class SampleMecanumDrive extends MecanumDrive {
     @Override
     public Double getExternalHeadingVelocity() {
         // To work around an SDK bug, use -zRotationRate in place of xRotationRate
-        // and -xRotationRate in place of zRotationRate (yRotationRate behaves as 
-        // expected). This bug does NOT affect orientation. 
+        // and -xRotationRate in place of zRotationRate (yRotationRate behaves as
+        // expected). This bug does NOT affect orientation.
         //
         // See https://github.com/FIRST-Tech-Challenge/FtcRobotController/issues/251 for details.
         //return (double) -imu.getAngularVelocity().xRotationRate;

@@ -45,5 +45,21 @@ public class Claw {
         } else {
             wristJoint.setPosition(WRIST_EXTAKE_POSITION);
         }
+
+        wristInExtakePosition = !wristInExtakePosition;
+    }
+
+    public void toggleAutoOpenClose(){
+        if(clawToggled){ // hello
+            clawJoint.setPosition(AUTOCLOSE);
+        }else {
+            clawJoint.setPosition((OPEN));
+        }
+        clawToggled = !clawToggled;
+    }
+
+    public void update() {
+        isOpen.update();
+        isIntakePosition.update();
     }
 }
