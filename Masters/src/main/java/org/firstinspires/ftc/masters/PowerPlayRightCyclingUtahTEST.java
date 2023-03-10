@@ -60,6 +60,7 @@ public class PowerPlayRightCyclingUtahTEST extends LinearOpMode {
     }
 
     int coneStack = ARM_CONE_STACK;
+    int timesCycled = 0;
     SampleMecanumDrive drive;
 
     LiftPIDController liftPIDController;
@@ -136,6 +137,8 @@ public class PowerPlayRightCyclingUtahTEST extends LinearOpMode {
 //                .lineToLinearHeading(new Pose2d(new Vector2d(59, -14), Math.toRadians(0)))
 //                .build();
 
+        telemetry.addData("Is pressed? ",!drive.digIn.getState());
+        telemetry.update();
 
         waitForStart();
 
@@ -220,6 +223,9 @@ public class PowerPlayRightCyclingUtahTEST extends LinearOpMode {
                             setArmToConeStack(slidePosition);
                         }
 
+                        if (drive.digIn.getState() && timesCycled ==0) {
+                            armTarget = ARM_CONE_STACK+30;
+                        }
                         currentState = State.CYCLE_PICKUP_PATH1;
                         drive.followTrajectoryAsync(cyclePickupPath1);
 
@@ -237,15 +243,20 @@ public class PowerPlayRightCyclingUtahTEST extends LinearOpMode {
                     break;
                 case CYCLE_PICKUP_PATH1:
                     if (!drive.isBusy()){
-
                         drive.closeClaw();
                         sleep(250);
                         liftTarget= SLIDE_MIDDLE;
                         currentState = State.LIFT;
                     } else {
+                        if (drive.digIn.getState() && timesCycled ==0) {
+                            armTarget = ARM_CONE_STACK+30;
+                        } else if (!drive.digIn.getState() && timesCycled ==1) {
+                            armTarget = ARM_CONE_STACK-20;
+                        } else {
+                            armTarget = ARM_CONE_STACK;
+                        }
                         drive.openClaw();
                         drive.tipCenter();
-                        armTarget = ARM_CONE_STACK;
                     }
                     break;
 
@@ -255,6 +266,7 @@ public class PowerPlayRightCyclingUtahTEST extends LinearOpMode {
                         currentState = State.CYCLE_SCORE_PATH1;
 
                         coneStack = coneStack-STACK_OFFSET;
+                        timesCycled++;
 
                     }
                     break;
