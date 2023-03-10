@@ -75,7 +75,7 @@ public class Claw {
     }
 
     public void toggleAutoOpenClose(){
-        if(clawToggled){ // hello
+        if(clawToggled){
             clawJoint.setPosition(AUTOCLOSE);
         }else {
             clawJoint.setPosition((OPEN));
