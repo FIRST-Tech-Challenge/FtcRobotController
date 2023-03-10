@@ -277,7 +277,7 @@ public abstract class BaseOpMode extends LinearOpMode {
             }
 
             // while far enough that the cone stack doesn't fill the entire camera view
-        } while (width < 320);
+        } while (width < Constants.CONE_WIDTH);
 
         stopDriveMotors();
     }

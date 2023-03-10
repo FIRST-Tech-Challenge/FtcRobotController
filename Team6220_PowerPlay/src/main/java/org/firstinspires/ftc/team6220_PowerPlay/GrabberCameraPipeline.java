@@ -65,7 +65,7 @@ public class GrabberCameraPipeline extends OpenCvPipeline {
             yPosition = boundingRect.y + (boundingRect.height * 0.5);
 
             //TODO: add a cutoff point only for the bottom quarter of the frame as to not see the wheels
-            
+
             // calculate distance of the center of the box from the center of the camera
             double distanceFromCenter = Math.sqrt(Math.pow(Math.abs((xPosition - Constants.CAMERA_CENTER_X)), 2) + Math.pow(Math.abs((yPosition - Constants.CAMERA_CENTER_Y)), 2));
 
