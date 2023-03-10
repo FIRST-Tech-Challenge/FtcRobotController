@@ -8,6 +8,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.openftc.apriltag.AprilTagDetection;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraRotation;
+import org.openftc.easyopencv.OpenCvPipeline;
 
 import java.util.ArrayList;
 import java.util.Locale;
@@ -222,5 +223,26 @@ public abstract class BaseAutonomous extends BaseOpMode {
         } else {
             return tagOfInterest.id;
         }
+    }
+
+    /**
+     *EXPERIMENTAL
+     * Starts streaming a camera and sets a pipeline to it, this is a method now because it will have to be called multiple times in any auton class where pipeline switching is used
+     * @param pipeline pipeline that the method inputs, any pipeline-specific methods will have to be called separately
+     * @param camera camera that the method inputs
+     * @param X desired camera width (in pixels)
+     * @param Y desired camera height (in pixels)
+     */
+    public void startCameraWithPipeline(OpenCvPipeline pipeline, OpenCvCamera camera, int X, int Y){
+        camera.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
+            @Override
+            public void onOpened() {
+                camera.startStreaming(X, Y, OpenCvCameraRotation.UPRIGHT);
+            }
+
+            @Override
+            public void onError(int errorCode) {}
+        });
+        camera.setPipeline(pipeline);
     }
 }

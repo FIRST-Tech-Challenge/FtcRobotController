@@ -252,36 +252,12 @@ public abstract class BaseOpMode extends LinearOpMode {
      * uses the robot camera to guide the robot so it can drive forward while centering on the stack
      * @param pipeline the RobotCameraPipeline being used by the robot camera
      */
-    public void centerConeStack(RobotCameraPipeline pipeline) {
-        double xOffset, width;
-
-        do {
-            xOffset = 400-pipeline.xPosition;
-            width = pipeline.width;
-
-            // drive forward while centering on the cone stack if contour exists
-            if (width == 0) {
-                break;
-            } else {
-                driveWithIMU(coneStackPixelsMotorPower(xOffset), coneStackWidthMotorPower(width), coneStackPixelsMotorPower(xOffset));
-                telemetry.addData("xMotorPower", coneStackPixelsMotorPower(xOffset));
-                telemetry.addData("yMotorPower", coneStackWidthMotorPower(width));
-                telemetry.addData("width",width);
-                telemetry.update();
-            }
-
-        // while far enough that the cone stack doesn't fill the entire camera view
-        } while (width < Constants.CONE_WIDTH);
-
-        stopDriveMotors();
-    }
 
     /**
-     * EXPERIMENTAL
      * uses the robot camera to guide the robot so it can drive forward while centering on the stack
      * @param pipeline the RobotCameraPipeline being used by the robot camera
      */
-    public void centerConeStackExperimental(RobotCameraPipeline pipeline) {
+    public void centerConeStack(RobotCameraPipeline pipeline) {
         double xOffset, width;
 
         do {
@@ -325,16 +301,6 @@ public abstract class BaseOpMode extends LinearOpMode {
     }
 
     /**
-     * calculates the motor power for the robot drivetrain based on the pixel offset from the cone stack
-     * @param pixelOffset how far cone stack is horizontally from center of camera field of view in pixels
-     * @return motor power for robot drivetrain
-     */
-    public double coneStackPixelsMotorPower(double pixelOffset) {
-        return Constants.CONE_STACK_CENTERING_KP * pixelOffset;
-    }
-
-    /**
-     * EXPERIMENTAL
      * calculates the turning power for the robot drivetrain based on the pixel offset from the cone stack and the width of the cone stack
      * @param pixelOffset how far cone stack is horizontally from center of camera field of view in pixels
      * @param width how wide the cone stack is in the camera frame in pixels
@@ -345,7 +311,6 @@ public abstract class BaseOpMode extends LinearOpMode {
     }
 
     /**
-     * EXPERIMENTAL
      * calculates the strafing power for the robot drivetrain based on the pixel offset from the cone stack and the width of the cone stack
      * @param pixelOffset how far cone stack is horizontally from center of camera field of view in pixels
      * @param width how wide the cone stack is in the camera frame in pixels
