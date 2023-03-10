@@ -265,7 +265,7 @@ public class Left2 extends LinearOpMode {
 
                 switch (location) {//determine where to park
                     case 0:
-                        move(.2, -300);
+                        move(.2, 600);
                         stopMotors();
                         sleep(3000);
                         break;
@@ -277,7 +277,7 @@ public class Left2 extends LinearOpMode {
                         sleep(3000);
                         break;
                     case 2:
-                        move(.2, -300);
+                        move(.2, 600);
                         stopMotors();
                         sleep(3000);
                         break;
