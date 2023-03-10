@@ -6,7 +6,6 @@ import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.hardware.rev.RevColorSensorV3;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
@@ -24,7 +23,7 @@ import org.openftc.apriltag.AprilTagDetection;
 import java.util.ArrayList;
 //testing
 @Autonomous
-public class newauto extends LinearOpMode {
+public class Right2 extends LinearOpMode {
     OpenCvCamera webcam;
     Pipeline aprilTagDetectionPipeline;
 
@@ -288,6 +287,31 @@ public class newauto extends LinearOpMode {
                         sleep(3000);
                         break;
                 }
+            }
+            switch (location) {//determine where to park
+                case 0:
+                    move(.2, -300);
+                    stopMotors();
+                    sleep(3000);
+                    break;
+                case 1:
+
+                    gyroTurning(0);
+                    move(.4, 800);
+                    stopMotors();
+                    sleep(3000);
+                    break;
+                case 2:
+                    move(.2, -300);
+                    stopMotors();
+                    sleep(3000);
+                    break;
+                case 3:
+                    gyroTurning(0);
+                    move(.4, -2500);
+                    stopMotors();
+                    sleep(3000);
+                    break;
             }
         }
     }
