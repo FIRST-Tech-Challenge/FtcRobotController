@@ -4,76 +4,54 @@ import com.qualcomm.robotcore.hardware.Gamepad;
 
 public class GamepadEX {
 
-    public ButtonEX a;
-    public ButtonEX b;
-    public ButtonEX x;
-    public ButtonEX y;
+    public final ButtonEX
+            a,
+            b,
+            x,
+            y,
 
-    public ButtonEX dpad_up;
-    public ButtonEX dpad_down;
-    public ButtonEX dpad_left;
-    public ButtonEX dpad_right;
+            dpad_up,
+            dpad_down,
+            dpad_left,
+            dpad_right,
 
-    public ButtonEX left_bumper;
-    public ButtonEX right_bumper;
+            left_bumper,
+            right_bumper;
 
-    public ContinuousInput leftX;
-    public ContinuousInput leftY;
-    public ContinuousInput rightX;
-    public ContinuousInput rightY;
+    public ContinuousInput
+            leftX,
+            leftY,
+            rightX,
+            rightY,
 
-    public ContinuousInput left_trigger;
-    public ContinuousInput right_trigger;
+            left_trigger,
+            right_trigger;
 
     Gamepad gamepad;
 
     public GamepadEX(Gamepad gamepad){
         this.gamepad = gamepad;
 
-        a = new ButtonEX();
-        b = new ButtonEX();
-        x = new ButtonEX();
-        y = new ButtonEX();
+        a = new ButtonEX(() -> gamepad.a);
+        b = new ButtonEX(() -> gamepad.b);
+        x = new ButtonEX(() -> gamepad.x);
+        y = new ButtonEX(() -> gamepad.y);
 
-        dpad_up = new ButtonEX();
-        dpad_down = new ButtonEX();
-        dpad_left = new ButtonEX();
-        dpad_right = new ButtonEX();
+        dpad_up = new ButtonEX(() -> gamepad.dpad_up);
+        dpad_down = new ButtonEX(() -> gamepad.dpad_down);
+        dpad_left = new ButtonEX(() -> gamepad.dpad_left);
+        dpad_right = new ButtonEX(() -> gamepad.dpad_right);
 
-        left_bumper = new ButtonEX();
-        right_bumper = new ButtonEX();
+        left_bumper = new ButtonEX(() -> gamepad.left_bumper);
+        right_bumper = new ButtonEX(() -> gamepad.right_bumper);
 
-        leftX = new ContinuousInput(continuousInputs.leftX, gamepad);
-        leftY = new ContinuousInput(continuousInputs.leftY, gamepad);
-        rightX = new ContinuousInput(continuousInputs.rightX, gamepad);
-        rightY = new ContinuousInput(continuousInputs.rightY, gamepad);
+        leftX = new ContinuousInput(() -> gamepad.left_stick_x);
+        leftY = new ContinuousInput(() -> gamepad.left_stick_y);
+        rightX = new ContinuousInput(() -> gamepad.right_stick_x);
+        rightY = new ContinuousInput(() -> gamepad.right_stick_y);
 
-        left_trigger = new ContinuousInput(continuousInputs.left_trigger, gamepad);
-        right_trigger = new ContinuousInput(continuousInputs.right_trigger, gamepad);
-    }
-
-    public enum continuousInputs{
-        leftX,
-        leftY,
-        rightX,
-        rightY,
-        left_trigger,
-        right_trigger
-    }
-
-    public void startLoopUpdate(){
-        a.startLoopUpdate(gamepad.a);
-        b.startLoopUpdate(gamepad.b);
-        x.startLoopUpdate(gamepad.x);
-        y.startLoopUpdate(gamepad.y);
-
-        dpad_up.startLoopUpdate(gamepad.dpad_up);
-        dpad_down.startLoopUpdate(gamepad.dpad_down);
-        dpad_left.startLoopUpdate(gamepad.dpad_left);
-        dpad_right.startLoopUpdate(gamepad.dpad_right);
-
-        left_bumper.startLoopUpdate(gamepad.left_bumper);
-        right_bumper.startLoopUpdate(gamepad.right_bumper);
+        left_trigger = new ContinuousInput(() -> gamepad.left_trigger);
+        right_trigger = new ContinuousInput(() -> gamepad.right_trigger);
     }
 
     public void endLoopUpdate(){

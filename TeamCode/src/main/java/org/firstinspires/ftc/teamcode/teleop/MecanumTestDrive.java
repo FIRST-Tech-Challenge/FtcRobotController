@@ -33,7 +33,7 @@ public class MecanumTestDrive extends ConfiguredOpMode {
 
 	@Override
 	public void superLoop() {
-		mecanum.trueHolonomicDrive(gamepadEX1.leftX.value(), gamepadEX1.leftY.value(), gamepadEX1.rightX.value());
+		mecanum.trueHolonomicDrive(gamepadEX1.leftX.getValue(), gamepadEX1.leftY.getValue(), gamepadEX1.rightX.getValue());
 	}
 
 	@Override

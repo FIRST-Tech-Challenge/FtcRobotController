@@ -1,7 +1,9 @@
 package org.firstinspires.ftc.teamcode.teamUtil.CommandScheduler;
 
+import java.util.function.BooleanSupplier;
+
 public class Trigger {
-	private Boolean triggerCondition;
+	private BooleanSupplier triggerCondition;
 
 	private boolean
 		toggleTrue = false,
@@ -14,7 +16,7 @@ public class Trigger {
 		toggleOnFalse = new TriggerBinding();
 
 
-	public Trigger(Boolean triggerCondition) {
+	public Trigger(BooleanSupplier triggerCondition) {
 		this.triggerCondition = triggerCondition;
 		Scheduler.getInstance().registerTrigger(this);
 	}
@@ -26,8 +28,8 @@ public class Trigger {
 		pollToggleOnFalse();
 	}
 
-	public Trigger or(Boolean triggerCondition){
-		this.triggerCondition = triggerCondition || this.triggerCondition;
+	public Trigger or(BooleanSupplier triggerCondition){
+		this.triggerCondition = () -> triggerCondition.getAsBoolean() || this.triggerCondition.getAsBoolean();
 		return this;
 	}
 
@@ -52,17 +54,17 @@ public class Trigger {
 	}
 
 	private void pollOnTrue(){
-		if(triggerCondition) onTrue.triggerAction.triggerAction();
+		if(triggerCondition.getAsBoolean()) onTrue.triggerAction.triggerAction();
 	}
 	private void pollOnFalse(){
-		if(!triggerCondition) onFalse.triggerAction.triggerAction();
+		if(!triggerCondition.getAsBoolean()) onFalse.triggerAction.triggerAction();
 	}
 	private void pollToggleOnTrue(){
-		if(triggerCondition) toggleTrue = !toggleTrue;
+		if(triggerCondition.getAsBoolean()) toggleTrue = !toggleTrue;
 		if(toggleTrue) toggleOnTrue.triggerAction.triggerAction();
 	}
 	private void pollToggleOnFalse(){
-		if(!triggerCondition) toggleFalse = !toggleFalse;
+		if(!triggerCondition.getAsBoolean()) toggleFalse = !toggleFalse;
 		if(toggleFalse) toggleOnFalse.triggerAction.triggerAction();
 	}
 

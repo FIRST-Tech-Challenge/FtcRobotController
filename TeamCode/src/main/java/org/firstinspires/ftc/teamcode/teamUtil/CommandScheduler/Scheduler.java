@@ -12,7 +12,7 @@ public class Scheduler {
     }
     private static Scheduler schedulerInstance;
 
-    private ArrayList<Trigger> triggers;
+    private final ArrayList<Trigger> triggers;
 
     /**
      * Should be used to initialise the Scheduler, should be called in the RobotConfig Class
@@ -32,25 +32,19 @@ public class Scheduler {
         return schedulerInstance;
     }
 
-    public void run(){
-        pollSubsystems();
-        pollTriggers();
-        updateSubsystems();
-    }
-
-    private void pollSubsystems(){
+    public void pollSubsystems(){
         for (Subsystem subsystem : r.subsystems) {
             subsystem.read();
         }
     }
 
-    private void pollTriggers(){
+    public void pollTriggers(){
         for (Trigger trigger : triggers) {
             trigger.poll();
         }
     }
 
-    private void updateSubsystems(){
+    public void updateSubsystems(){
         for (Subsystem subsystem : r.subsystems) {
             subsystem.update();
         }

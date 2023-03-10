@@ -1,25 +1,25 @@
 package org.firstinspires.ftc.teamcode.teamUtil.CommandScheduler.gamepadEX;
 
+import java.util.function.BooleanSupplier;
+
 public class ButtonEX {
-    private Boolean internalInput = false;
-    private Boolean previousState = false;
+    private final BooleanSupplier internalInput;
+    private boolean previousState = false;
     private double leadingEdgeDebounce = 0;
     private double trailingEdgeDebounce = 0;
     private long lastCheck = System.nanoTime() - 100;
 
-    private Boolean processedInput = false;
+    private boolean processedInput = false;
 
-    public ButtonEX() {}
+    public ButtonEX(BooleanSupplier internalInput) {
+        this.internalInput = internalInput;
+    }
 
     /**
      * must be called at the end of every teleop loop, or other environment in which the {@link GamepadEX} inputs are used, which should be handled by {@link GamepadEX} update method
      */
     public void endLoopUpdate() {
-        previousState = internalInput;
-    }
-
-    public void startLoopUpdate(boolean gamepadInput){
-        internalInput = gamepadInput;
+        previousState = internalInput.getAsBoolean();
     }
 
     /**
@@ -27,15 +27,15 @@ public class ButtonEX {
      *
      * @return returns the boolean value of the button with debouncing used
      */
-    public Boolean isPressed() {
-        if (internalInput != previousState) {
+    public boolean isPressed() {
+        if (internalInput.getAsBoolean() != previousState) {
             lastCheck = System.nanoTime();
         }
-        if (internalInput && System.nanoTime() - lastCheck >= leadingEdgeDebounce) {
+        if (internalInput.getAsBoolean() && System.nanoTime() - lastCheck >= leadingEdgeDebounce) {
             processedInput = true;
             lastCheck = System.nanoTime();
         }
-        if (!internalInput && System.nanoTime() - lastCheck >= trailingEdgeDebounce) {
+        if (!internalInput.getAsBoolean() && System.nanoTime() - lastCheck >= trailingEdgeDebounce) {
             processedInput = false;
             lastCheck = System.nanoTime();
         }
@@ -43,15 +43,15 @@ public class ButtonEX {
         return processedInput;
     }
 
-    public Boolean raw() {
-        return internalInput;
+    public boolean raw() {
+        return internalInput.getAsBoolean();
     }
 
-    public Boolean onPress() {
+    public boolean onPress() {
         return isPressed() && isPressed() != previousState;
     }
 
-    public Boolean onRelease() {
+    public boolean onRelease() {
         return !isPressed() && isPressed() != previousState;
     }
 

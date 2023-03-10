@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.teamUtil;
 import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 
+import org.firstinspires.ftc.teamcode.teamUtil.CommandScheduler.Scheduler;
 import org.firstinspires.ftc.teamcode.teamUtil.CommandScheduler.Subsystem;
 import org.firstinspires.ftc.teamcode.teamUtil.CommandScheduler.gamepadEX.GamepadEX;
 
@@ -55,15 +56,10 @@ public abstract class ConfiguredOpMode extends OpMode {
         for (LynxModule module : r.allHubs) {
             module.clearBulkCache();
         }
-        for (Subsystem subsystem : r.subsystems) {
-            subsystem.read();
-        }
-        gamepadEX1.startLoopUpdate();
-        gamepadEX2.startLoopUpdate();
+        r.scheduler.pollSubsystems();
+        r.scheduler.pollTriggers();
         superLoop();
-        for (Subsystem subsystem : r.subsystems) {
-            subsystem.update();
-        }
+        r.scheduler.updateSubsystems();
         gamepadEX1.endLoopUpdate();
         gamepadEX2.endLoopUpdate();
     }
