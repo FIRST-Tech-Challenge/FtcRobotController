@@ -77,12 +77,12 @@ public class PP_MecanumTeleOp extends OpMode
         motorFrontRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);// Running without an encoder does NOT disable encoder counting
         motorBackRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
-        /*
+
         motorFrontLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         motorBackLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         motorFrontRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         motorBackRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-         */
+
 
         // Reverse motors
         motorFrontRight.setDirection(DcMotorSimple.Direction.REVERSE);
