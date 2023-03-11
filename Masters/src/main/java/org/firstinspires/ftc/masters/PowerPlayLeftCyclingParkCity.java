@@ -236,7 +236,7 @@ public class PowerPlayLeftCyclingParkCity extends LinearOpMode {
                     } else {
                         drive.openClaw();
                         drive.tipCenter();
-                        armTarget = ARM_CONE_STACK;
+                        armTarget = coneStack;
                     }
                     break;
 

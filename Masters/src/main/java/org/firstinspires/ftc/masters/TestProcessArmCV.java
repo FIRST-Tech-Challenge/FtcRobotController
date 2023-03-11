@@ -11,7 +11,7 @@ import org.firstinspires.ftc.masters.drive.SampleMecanumDrive;
 import java.util.Date;
 
 @Config
-@Autonomous(name = "Test Process Arm", group = "competition")
+@Autonomous(name = "Test Process Arm", group = "test")
 public class TestProcessArmCV extends LinearOpMode {
 
     SampleMecanumDrive drive;
@@ -61,7 +61,7 @@ public class TestProcessArmCV extends LinearOpMode {
             rot_rect_y = (int) CV.sleevePipeline.rot_rect.center.y;
 
 
-            if (counter < 1 && time > 5000) {
+            if ( time > 3000) {
                 rot_rect_y = (int) CV.sleevePipeline.rot_rect.center.y;
 
                 int encoderDifference = (int) ((rot_rect_y-targetPixels)*0.65);
@@ -72,18 +72,18 @@ public class TestProcessArmCV extends LinearOpMode {
                 counter++;
                 telemetry.addData("Value changed", yupImTired);
             }
-
-            if (counter < 2 && time > 8000) {
-                rot_rect_y = (int) CV.sleevePipeline.rot_rect.center.y;
-
-                int encoderDifference = (int) ((rot_rect_y-targetPixels)*0.65);
-                yupImTired=encoderDifference;
-
-                armTarget += encoderDifference;
-
-                counter++;
-              //  telemetry.addData("Value changed", yupImTired);
-            }
+//
+//            if (counter < 2 && time > 8000) {
+//                rot_rect_y = (int) CV.sleevePipeline.rot_rect.center.y;
+//
+//                int encoderDifference = (int) ((rot_rect_y-targetPixels)*0.65);
+//                yupImTired=encoderDifference;
+//
+//                armTarget += encoderDifference;
+//
+//                counter++;
+//              //  telemetry.addData("Value changed", yupImTired);
+//            }
 
             telemetry.addData("Value changed", yupImTired);
             telemetry.addData("rot_rect_y: ", rot_rect_y);

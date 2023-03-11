@@ -241,7 +241,7 @@ public class PowerPlayLeftCyclingUtah extends LinearOpMode {
                         if (!retractArm) {
                             liftTarget = 0;
                             if (drive.linearSlide.getCurrentPosition() < 100) {
-                                armTarget = ARM_CONE_STACK;
+                                armTarget = coneStack;
                                 drive.openClaw();
                                 drive.tipCenter();
                             }
@@ -259,7 +259,7 @@ public class PowerPlayLeftCyclingUtah extends LinearOpMode {
                     } else {
                         drive.openClaw();
                         drive.tipCenter();
-                        armTarget = ARM_CONE_STACK;
+                        armTarget = coneStack;
                     }
                     break;
 
@@ -400,6 +400,7 @@ public class PowerPlayLeftCyclingUtah extends LinearOpMode {
                         liftTarget = 0;
                         if (drive.linearSlide.getCurrentPosition() < 100) {
                             armTarget = coneStack;
+                            drive.tipCenter();
                         }
                     }
                     if (!drive.isBusy()) {
@@ -416,6 +417,7 @@ public class PowerPlayLeftCyclingUtah extends LinearOpMode {
                     liftTarget = 0;
                     if (drive.linearSlide.getCurrentPosition() < 100) {
                         armTarget = coneStack;
+                        drive.tipCenter();
                     }
             }
                     if (!drive.isBusy()) {
@@ -429,6 +431,7 @@ public class PowerPlayLeftCyclingUtah extends LinearOpMode {
                         liftTarget = 0;
                         if (drive.linearSlide.getCurrentPosition() < 100) {
                             armTarget = coneStack;
+                            drive.tipCenter();
                         }
                     }
                     if (!drive.isBusy()) {
@@ -445,6 +448,7 @@ public class PowerPlayLeftCyclingUtah extends LinearOpMode {
                     if (!drive.isBusy()) {
                         if (drive.linearSlide.getCurrentPosition() < 100) {
                             armTarget = 0;
+                            drive.tipCenter();
                         }
                         if (armPosition < 50) {
                             drive.openClaw();
@@ -452,12 +456,13 @@ public class PowerPlayLeftCyclingUtah extends LinearOpMode {
                         }
 
                     }
+                    drive.tipCenter();
                     break;
 
             }
 
             if (retractArm){
-                armTarget = ARM_CONE_STACK;
+                armTarget = coneStack;
                 if (armPosition>100){
                     liftTarget=0;
                     retractArm = false;
