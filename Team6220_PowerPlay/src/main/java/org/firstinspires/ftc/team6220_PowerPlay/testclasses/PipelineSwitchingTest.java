@@ -12,11 +12,9 @@ import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
 
 @Autonomous(name = "PipelineSwitchingTest")
-public class PipelineSwitchingTest extends BaseAutonomous
-{
+public class PipelineSwitchingTest extends BaseAutonomous {
     @Override
-    public void runOpMode() throws InterruptedException
-    {
+    public void runOpMode() throws InterruptedException {
         // creates camera streams
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
         // creates cameras
