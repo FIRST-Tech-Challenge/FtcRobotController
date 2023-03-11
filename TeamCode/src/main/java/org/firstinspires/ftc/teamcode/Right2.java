@@ -7,6 +7,8 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
+
+import org.firstinspires.ftc.robotcontroller.external.samples.ConceptRampMotorSpeed;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
@@ -189,27 +191,28 @@ public class Right2 extends LinearOpMode {
         if (opModeIsActive()) {//start of queue for autonnums movment
             Spin.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
             Left.setPower(.3);
-
+            crane(-1,320);
+            Guide.setPosition(0);
             //move and spin to high junction
-            strafeLeftwithcrane(1, 2750, -1, 3500);
+            strafeLeftwithcraneandspin(1, 2750, -1, 3200,1,260);
+            //Guide.setPosition(0);
             Crane.setPower(-.7);
-            spin(1,260);
-            gyroTurning(0);
-            sleep(100);
+            //spin(1,260);
+            //gyroTurning(0);
 
             //drop cone
-            Guide.setPosition(0);
-            sleep(500);
             move(.5,-350);
             stopMotors();
-            sleep(1000);
+            sleep(50);
             crane(1,100);
             Guide.setPosition(1);
             intake(-1, 500);
 
             //strafe off junction
-            crane(-1,550);
-            strafeRightwithcrane(1, 200, 1, 600);
+            crane(-1,650);
+            Crane.setPower(-.8);
+            strafeRight(1,90);
+            strafeRightwithcrane(1, 120, 1, 560);
 
             //move to stack
             stopMotors();
@@ -224,13 +227,13 @@ public class Right2 extends LinearOpMode {
             Left.setPower(.2);
 
             //move to high junction
-            move(.4, -400);
+            moveandcrane(.4, -400, 1,600);
             gyroTurning(0);
-            moveandspinandcrane(.8, -950, 1, 260, 1, 2600);//-315
+            moveandspinandcrane(.8, -950, 1, 260, 1, 2000);//-315
             Crane.setPower(.7);
             strafeLeft(.6,250);
             Guide.setPosition(0);
-            sleep(500);
+            sleep(200);
             movewithdistance2(.5, 12);
             move(.5, -330);
             stopMotors();
@@ -296,7 +299,7 @@ public class Right2 extends LinearOpMode {
                         sleep(3000);
                         break;
                     case 1:
-                        move(.2, -350);
+                        move(.2, -400);
                         stopMotors();
                         sleep(3000);
                         break;
@@ -639,8 +642,10 @@ public class Right2 extends LinearOpMode {
         //frontLeft.setPower(power);
         //backRight.setPower(power);
         //backLeft.setPower(power);
+
         spin(powers,positions);
         crane(powerc,timec);
+        //Guide.setPosition(0);
         while (frontLeft.isBusy() && opModeIsActive()) {
         }
 

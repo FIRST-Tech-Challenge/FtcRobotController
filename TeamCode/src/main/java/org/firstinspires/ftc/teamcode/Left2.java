@@ -199,10 +199,12 @@ public class Left2 extends LinearOpMode {
             sleep(100);
 
             //drop cone
-            Guide.setPosition(0);
+            move(.5,800);
             sleep(1000);
-            move(.5,-350);
+            Guide.setPosition(0);
+            sleep(500);
             stopMotors();
+            move(.5,-150);
             sleep(1000);
             crane(1,100);
             Guide.setPosition(1);
@@ -211,56 +213,7 @@ public class Left2 extends LinearOpMode {
             //strafe off junction
             crane(-1,550);
             strafeRightwithcrane(1, 200, 1, 600);
-
-            //move to stack
-            stopMotors();
             gyroTurning(0);
-            moveandspin(1, 1200, 1, 591);
-            sleep(100);
-            gyroTurning(0);
-            movewithdistance(-.4, 1);
-            //pick up cone
-            craneinput(600);
-            crane(1, 1000);
-            Left.setPower(.2);
-
-            //move to high junction
-            move(.4, -400);
-            gyroTurning(0);
-            moveandspinandcrane(.8, -950, 1, 260, 1, 2600);//-315
-            Crane.setPower(.8);
-            strafeLeft(.6,150);
-            Guide.setPosition(0);
-            sleep(1000);
-            movewithdistance2(.5, 12);
-            move(.5, -130);
-            stopMotors();
-            //dropcone
-            crane(-1,100);
-            Guide.setPosition(1);
-            intake(-1, 500);
-
-            //strafe off
-            Crane.setPower(-.6);
-            strafeRightwithcrane(.2, 200, 1, 1000);
-            gyroTurning(0);
-
-            if (getRuntime() < 22) {
-                //////////////////////////////////////////////////////////////////not made for side past this
-                //move back to stack
-                moveandspin(.8, 1100, 1, -591);
-                move(.2, 400);
-                //pick up another cone
-                craneinput(400);
-                crane(-1, 1000);
-                //move to large junction again
-                moveandspinandcrane(.8, -1500, 1, -315, -1, 1500);
-                Crane.setPower(-.2);
-                stopMotors();
-                strafeLeft(.2, 200);
-                //release cone
-                intake(-1, 1000);
-                strafeRightwithcrane(.2, 200, 1, 1000);
 
 
                 switch (location) {//determine where to park
@@ -270,9 +223,7 @@ public class Left2 extends LinearOpMode {
                         sleep(3000);
                         break;
                     case 1:
-
-                        gyroTurning(0);
-                        move(.4, 800);
+                        move(.6, -1600);
                         stopMotors();
                         sleep(3000);
                         break;
@@ -282,15 +233,14 @@ public class Left2 extends LinearOpMode {
                         sleep(3000);
                         break;
                     case 3:
-                        gyroTurning(0);
-                        move(.4, -2500);
+                        move(.4, 700);
                         stopMotors();
                         sleep(3000);
                         break;
                 }
             }
         }
-    }
+
 
     //methods
     public void initGyro () {
