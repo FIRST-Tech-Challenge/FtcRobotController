@@ -229,7 +229,7 @@ public class PowerPlayRightCyclingUtah extends LinearOpMode {
                         if (!retractArm) {
                             liftTarget = 0;
                             if (drive.linearSlide.getCurrentPosition() < 100) {
-                                armTarget = ARM_CONE_STACK;
+                                armTarget = coneStack;
                                 drive.openClaw();
                                 drive.tipCenter();
                             }
@@ -246,7 +246,7 @@ public class PowerPlayRightCyclingUtah extends LinearOpMode {
                     } else {
                         drive.openClaw();
                         drive.tipCenter();
-                        armTarget = ARM_CONE_STACK;
+                        armTarget = coneStack;
                     }
                     break;
 
@@ -440,11 +440,12 @@ public class PowerPlayRightCyclingUtah extends LinearOpMode {
                         }
 
                     }
+                    drive.tipCenter();
                     break;
             }
 
             if (retractArm){
-                armTarget = ARM_CONE_STACK;
+                armTarget = coneStack;
                 if (drive.armMotor.getCurrentPosition()>100){
                     liftTarget=0;
                     retractArm = false;

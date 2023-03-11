@@ -17,11 +17,11 @@ public class BadgerConstants {
     public static  int ARM_MID_TOP = 800;
     public static int ARM_MID_TOP_AUTO = 785;
     public static  int ARM_CONE_STACK=330;
-    public static int STACK_OFFSET = 50;
+    public static int STACK_OFFSET = 60;
     public static int ARM_BACK_TOP=1250;
 
     public static  int ARM_BOTTOM_JUNCTION = 600;
-    public static int ARM_BACK = -1310;
+    public static int ARM_BACK = -1320;
 
     public static double CLAW_OPEN = 0.01;
     public static double CLAW_CLOSED = 0.35;
