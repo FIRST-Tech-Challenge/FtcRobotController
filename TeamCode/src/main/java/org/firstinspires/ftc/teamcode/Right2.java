@@ -245,53 +245,41 @@ public class Right2 extends LinearOpMode {
             //strafe off
             Crane.setPower(-.6);
             strafeRightwithcrane(.2, 200, 1, 1000);
-            gyroTurning(0);
+
 
             if (getRuntime() < 22) {
                 //////////////////////////////////////////////////////////////////not made for side past this
-                //move back to stack
-                moveandspin(.8, 1100, 1, -591);
-                move(.2, 400);
-                //pick up another cone
-                craneinput(400);
-                crane(-1, 1000);
-                //move to large junction again
-                moveandspinandcrane(.8, -1500, 1, -315, -1, 1500);
-                Crane.setPower(-.2);
                 stopMotors();
-                strafeLeft(.2, 200);
-                //release cone
-                intake(-1, 1000);
+                gyroTurning(0);
+                moveandspin(1, 1200, 1, 591);
+                sleep(100);
+                gyroTurning(0);
+                movewithdistance(-.4, 1);
+                //pick up cone
+                craneinput(600);
+                crane(1, 1000);
+                Left.setPower(.2);
+
+                //move to high junction
+                moveandcrane(.4, -400, 1,600);
+                gyroTurning(0);
+                moveandspinandcrane(.8, -950, 1, 260, 1, 2000);//-315
+                Crane.setPower(.7);
+                strafeLeft(.6,250);
+                Guide.setPosition(0);
+                sleep(200);
+                movewithdistance2(.5, 12);
+                move(.5, -330);
+                stopMotors();
+                //dropcone
+                crane(-1,100);
+                Guide.setPosition(1);
+                intake(-1, 500);
+
+                //strafe off
+                Crane.setPower(-.6);
                 strafeRightwithcrane(.2, 200, 1, 1000);
-
-
-                switch (location) {//determine where to park
-                    case 0:
-                        move(.2, -300);
-                        stopMotors();
-                        sleep(3000);
-                        break;
-                    case 1:
-
-                        gyroTurning(0);
-                        move(.4, 800);
-                        stopMotors();
-                        sleep(3000);
-                        break;
-                    case 2:
-                        move(.2, -300);
-                        stopMotors();
-                        sleep(3000);
-                        break;
-                    case 3:
-                        gyroTurning(0);
-                        move(.4, -2500);
-                        stopMotors();
-                        sleep(3000);
-                        break;
-                }
             }
-            else {
                 switch (location) {//determine where to park
                     case 0:
                         move(.2, 600);
@@ -316,7 +304,7 @@ public class Right2 extends LinearOpMode {
                 }
             }
         }
-    }
+
 
     //methods
     public void initGyro () {
