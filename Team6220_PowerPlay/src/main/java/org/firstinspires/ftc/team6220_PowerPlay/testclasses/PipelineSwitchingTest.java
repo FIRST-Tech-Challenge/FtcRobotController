@@ -30,7 +30,7 @@ public class PipelineSwitchingTest extends BaseAutonomous
         startCameraWithPipeline(grabberCameraPipeline, robotCamera, Constants.CAMERA_X, Constants.CAMERA_Y);
         waitForStart();
         robotCamera.closeCameraDevice();
-        while (opModeIsActive()){
+        while (opModeIsActive()) {
             // creates camera stream again
             cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
             // creates camera again
