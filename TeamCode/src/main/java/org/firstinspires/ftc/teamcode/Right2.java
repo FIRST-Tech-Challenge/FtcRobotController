@@ -191,15 +191,15 @@ public class Right2 extends LinearOpMode {
             Left.setPower(.3);
 
             //move and spin to high junction
-            strafeLeftwithcrane(1, 2700, -1, 3500);
-            Crane.setPower(-.8);
+            strafeLeftwithcrane(1, 2750, -1, 3500);
+            Crane.setPower(-.7);
             spin(1,260);
             gyroTurning(0);
             sleep(100);
 
             //drop cone
             Guide.setPosition(0);
-            sleep(1000);
+            sleep(500);
             move(.5,-350);
             stopMotors();
             sleep(1000);
@@ -227,12 +227,12 @@ public class Right2 extends LinearOpMode {
             move(.4, -400);
             gyroTurning(0);
             moveandspinandcrane(.8, -950, 1, 260, 1, 2600);//-315
-            Crane.setPower(.8);
-            strafeLeft(.6,150);
+            Crane.setPower(.7);
+            strafeLeft(.6,250);
             Guide.setPosition(0);
-            sleep(1000);
+            sleep(500);
             movewithdistance2(.5, 12);
-            move(.5, -130);
+            move(.5, -330);
             stopMotors();
             //dropcone
             crane(-1,100);
@@ -288,30 +288,29 @@ public class Right2 extends LinearOpMode {
                         break;
                 }
             }
-            switch (location) {//determine where to park
-                case 0:
-                    move(.2, -300);
-                    stopMotors();
-                    sleep(3000);
-                    break;
-                case 1:
-
-                    gyroTurning(0);
-                    move(.4, 800);
-                    stopMotors();
-                    sleep(3000);
-                    break;
-                case 2:
-                    move(.2, -300);
-                    stopMotors();
-                    sleep(3000);
-                    break;
-                case 3:
-                    gyroTurning(0);
-                    move(.4, -2500);
-                    stopMotors();
-                    sleep(3000);
-                    break;
+            else {
+                switch (location) {//determine where to park
+                    case 0:
+                        move(.2, 600);
+                        stopMotors();
+                        sleep(3000);
+                        break;
+                    case 1:
+                        move(.2, -350);
+                        stopMotors();
+                        sleep(3000);
+                        break;
+                    case 2:
+                        move(.2, 600);
+                        stopMotors();
+                        sleep(3000);
+                        break;
+                    case 3:
+                        move(1, 1500);
+                        stopMotors();
+                        sleep(3000);
+                        break;
+                }
             }
         }
     }

@@ -201,7 +201,7 @@ public class Left2 extends LinearOpMode {
             //drop cone
             Guide.setPosition(0);
             sleep(1000);
-            move(.5,350);
+            move(.5,-350);
             stopMotors();
             sleep(1000);
             crane(1,100);
@@ -215,7 +215,7 @@ public class Left2 extends LinearOpMode {
             //move to stack
             stopMotors();
             gyroTurning(0);
-            moveandspin(1,-1200, 1, 591);
+            moveandspin(1, 1200, 1, 591);
             sleep(100);
             gyroTurning(0);
             movewithdistance(-.4, 1);
@@ -225,15 +225,15 @@ public class Left2 extends LinearOpMode {
             Left.setPower(.2);
 
             //move to high junction
-            move(.4, 400);
+            move(.4, -400);
             gyroTurning(0);
-            moveandspinandcrane(.8, 950, 1, 260, 1, 2600);//-315
+            moveandspinandcrane(.8, -950, 1, 260, 1, 2600);//-315
             Crane.setPower(.8);
             strafeLeft(.6,150);
             Guide.setPosition(0);
             sleep(1000);
-            movewithdistance2(-.5, 12);
-            move(.5, 130);
+            movewithdistance2(.5, 12);
+            move(.5, -130);
             stopMotors();
             //dropcone
             crane(-1,100);
@@ -265,7 +265,7 @@ public class Left2 extends LinearOpMode {
 
                 switch (location) {//determine where to park
                     case 0:
-                        move(.2, 600);
+                        move(.2, -300);
                         stopMotors();
                         sleep(3000);
                         break;
@@ -277,7 +277,7 @@ public class Left2 extends LinearOpMode {
                         sleep(3000);
                         break;
                     case 2:
-                        move(.2, 600);
+                        move(.2, -300);
                         stopMotors();
                         sleep(3000);
                         break;
