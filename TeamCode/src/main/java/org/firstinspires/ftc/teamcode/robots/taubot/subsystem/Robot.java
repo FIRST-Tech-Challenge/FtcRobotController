@@ -76,8 +76,8 @@ public class Robot implements Subsystem {
         // initializing subsystems
         driveTrain = new DriveTrain(hardwareMap, this, simulated);
         turret = new Turret(hardwareMap, this, simulated);
-        crane = new Crane(hardwareMap, this, simulated);
         underarm = new UnderArm(hardwareMap, this, simulated);
+        crane = new Crane(hardwareMap, this, simulated);
 
         subsystems = new Subsystem[] {driveTrain, turret, crane, underarm}; //{driveTrain, turret, crane};
         subsystemUpdateTimes = new long[subsystems.length];
@@ -97,6 +97,7 @@ public class Robot implements Subsystem {
     public Map<String, Object> getTelemetry(boolean debug) {
         Map<String, Object> telemetryMap = new LinkedHashMap<>();
         telemetryMap.put("Articulation", articulation);
+        telemetryMap.put("Unfolded", unfolded);
         telemetryMap.put("AutonState", autonIndex);
         telemetryMap.put("Time Thing", timeSupervisor);
         telemetryMap.put("Auton Time", (totalAutonTime-System.nanoTime())/1e9);
@@ -141,6 +142,8 @@ public class Robot implements Subsystem {
 
     public void start(){
         driveTrain.articulate(DriveTrain.Articulation.runMode);
+        crane.enableAllPID();
+        turret.articulate(Turret.Articulation.runToAngle);
     }
 
     public double deltaTime = 0;
@@ -402,8 +405,8 @@ public class Robot implements Subsystem {
 
     boolean unfolded = false;
 
-    public Articulation articulate(Articulation articulation) {
-        this.articulation = articulation;
+    public Articulation articulate(Articulation target) {
+        articulation = target;
 
         switch (this.articulation){
             case MANUAL:

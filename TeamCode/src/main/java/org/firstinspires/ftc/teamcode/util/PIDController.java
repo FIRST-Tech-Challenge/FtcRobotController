@@ -74,6 +74,9 @@ public class PIDController {
     private double pwrD = 0.0;
     private double pwrF = 0.0;
 
+    public boolean isEnabled(){
+        return m_enabled;
+    }
 
     /**
      * Allocate a PID object with the given constants for P, I, D

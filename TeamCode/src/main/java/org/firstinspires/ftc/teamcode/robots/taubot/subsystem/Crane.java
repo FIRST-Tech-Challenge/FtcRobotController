@@ -19,7 +19,6 @@ import com.qualcomm.robotcore.hardware.DigitalChannel;
 import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
-import com.qualcomm.robotcore.hardware.TouchSensor;
 
 import org.firstinspires.ftc.robotcore.external.navigation.Acceleration;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
@@ -217,9 +216,10 @@ public class Crane implements Subsystem {
         shoulderPID.setOutputRange(SHOULDER_MIN_PID_OUTPUT,SHOULDER_MAX_PID_OUTPUT);
         shoulderPID.setIntegralCutIn(10);
         shoulderPID.enableIntegralZeroCrossingReset(false);
-        shoulderPID.disable();
-
-        articulate(Articulation.start);
+        shoulderActivePID = false;
+        extenderActivePID = false;
+        fieldPositionTarget = new Vector3(robot.driveTrain.getPoseEstimate().getX()+6,robot.driveTrain.getPoseEstimate().getY(),8);
+        articulate(Articulation.init);
 
         goTargetInd = 0;
         homeInd = 0;
@@ -248,7 +248,7 @@ public class Crane implements Subsystem {
         // to be fully up at the physical stop as a repeatable starting position
         switch (calibrateStage) {
             case 0:
-                enablePID();
+                enableShoulderPID();
                 articulate(Articulation.noIK);
                 calibrated = false; //allows us to call calibration mid-match in an emergency
                 //operator instruction: physically push arm to about 45 degrees and extend by 1 slide before calibrating
@@ -300,9 +300,13 @@ public class Crane implements Subsystem {
 
             case 6:
                 if (System.nanoTime()>futureTime) {
+                    enableAllPID();
+                    setShoulderTargetAngle(FOLD_SHOULDER_POSITION);
                     articulate(Articulation.init);
                     robot.driveTrain.articulate(DriveTrain.Articulation.squeeze);
                     calibrateStage = 0;
+                    extenderActivePID = true;
+                    shoulderActivePID = true;
                     calibrated = true;
                     return true;
                 }
@@ -311,6 +315,8 @@ public class Crane implements Subsystem {
         }
         return false;
     }
+
+    public static double FOLD_SHOULDER_POSITION = 12;
     boolean calibrated = true;
 
     FieldThing targetPole;
@@ -389,6 +395,7 @@ public class Crane implements Subsystem {
         shoulderPID.setOutputRange(SHOULDER_MIN_PID_OUTPUT, SHOULDER_MAX_PID_OUTPUT);
         shoulderPID.setPID(Kp, Ki, Kd, (gravityModiferForCraneExtensionAndAngle) -> kF * getExtendMeters()/2 * Math.cos(Math.toRadians(gravityModiferForCraneExtensionAndAngle)));
         shoulderPID.setSetpoint(targetTicks);
+        shoulderPID.enable();
 
         //initialization of the PID calculator's input range and current value
         shoulderPID.setInput(currentTicks);
@@ -439,7 +446,6 @@ public class Crane implements Subsystem {
         home,
         coneStackRight,
         coneStackLeft,
-        start,
         transfer,
         robotDriving,
         postTransfer,
@@ -473,12 +479,6 @@ public class Crane implements Subsystem {
             case postTransfer:
                 if(postTransfer()){
                     articulation = Articulation.pickupCone;
-                }
-                break;
-            case start:
-                if(craneStart()){
-                    articulation = Articulation.init;
-                    return Articulation.init;
                 }
                 break;
             case manual:
@@ -559,14 +559,6 @@ public class Crane implements Subsystem {
             return true;
         }
         return false;
-    }
-
-    public boolean craneStart(){
-        fieldPositionTarget = new Vector3(robot.driveTrain.getPoseEstimate().getX()+6,robot.driveTrain.getPoseEstimate().getY(),8);
-        calculateFieldTargeting(fieldPositionTarget);
-        setExtendTargetPos(calculatedLength);
-        setShoulderTargetAngle(calculatedAngle);
-        return shoulderOnTarget() && extensionOnTarget();
     }
 
     int coneStackStage = 0;
@@ -1025,12 +1017,33 @@ public class Crane implements Subsystem {
         fieldPositionTarget = new Vector3(x,y,z);
     }
 
-    public void enablePID(){
-        shoulderPID.enable();
+    public void enableShoulderPID(){
+        shoulderActivePID = true;
     }
 
-    public boolean
-    calculateFieldTargeting(Vector3 vec){
+    public void disableShoulderPID(){
+        shoulderActivePID = false;
+    }
+
+    public void enableExtensionPID(){
+        extenderActivePID = true;
+    }
+
+    public void disableExtensionPID(){
+        extenderActivePID = false;
+    }
+
+    public void enableAllPID() {
+        enableShoulderPID();
+        enableExtensionPID();
+    }
+
+    public void disableAllPID(){
+        disableExtensionPID();
+        disableShoulderPID();
+    }
+
+    public boolean calculateFieldTargeting(Vector3 vec){
         return calculateFieldTargeting(vec.x,vec.y,vec.z);
     }
 
@@ -1047,11 +1060,11 @@ public class Crane implements Subsystem {
         calculatedAngle = Math.toDegrees(Math.atan2(calculatedHeight, calculatedDistance));
         calculatedLength = (Math.sqrt(Math.pow(calculatedHeight, 2) + Math.pow(calculatedDistance, 2)));
 //todo Vance? this earns a null object exception
-        //if(robot.checkCollision(calculatedAngle,calculatedTurretAngle)){
+        if(robot.checkCollision(calculatedAngle,calculatedTurretAngle)){
             calculatedAngle = getShoulderAngle();
             calculatedLength = getExtendMeters();
-            //robot.underarm.articulate(UnderArm.Articulation.safe);
-        //}
+            robot.underarm.articulate(UnderArm.Articulation.safe);
+        }
 
         return true;
     }

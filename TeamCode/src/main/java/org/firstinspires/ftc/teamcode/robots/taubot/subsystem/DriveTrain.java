@@ -309,6 +309,8 @@ public class DriveTrain extends DiffyDrive implements Subsystem {
         // sensor reading
         currentStateMachine.execute();
 
+        articulate(articulation);
+
         leftVelocity = diffEncoderTicksToInches(leftMotor.getVelocity());
         rightVelocity = diffEncoderTicksToInches(rightMotor.getVelocity());
 
@@ -941,10 +943,10 @@ public class DriveTrain extends DiffyDrive implements Subsystem {
 
     StateMachine currentStateMachine = Utils.getStateMachine(new Stage()).addState(()->{return true;}).build();
 
-
+    Articulation articulation = Articulation.runMode;
 
     public Articulation articulate(Articulation target){
-        Articulation articulation = target;
+        articulation = target;
         switch(articulation){
             case runMode:
                 if (useMotorPowers) {

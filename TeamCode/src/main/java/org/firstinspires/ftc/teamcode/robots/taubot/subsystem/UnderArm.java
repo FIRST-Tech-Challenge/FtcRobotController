@@ -59,7 +59,7 @@ public class UnderArm implements Subsystem {
     public static double WRIST_DEG_MAX = 180;
     public static double TURRET_DEG_MAX = 360;
 
-    public static double LASSO_CLOSED = 1050;
+    public static double LASSO_CLOSED = 750;
     public static double LASSO_OPEN = 2500;
 
     public static double TRANSFER_SHOULDER_ANGLE = 0;

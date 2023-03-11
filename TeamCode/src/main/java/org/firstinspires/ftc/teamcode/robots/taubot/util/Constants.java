@@ -44,7 +44,7 @@ public class Constants {
     public static final double MAX_VELOCITY = 30.0;
     public static final double MAX_ACCELERATION = 10.0;
 
-    public static double DIFF_TICKS_PER_INCH = 34; //rough measure
+    public static double DIFF_TICKS_PER_INCH = 34 * (5.23*3.61*2.89)/(3.61*2.89*2.89); //semi rough measure
 
     // ratios
 
@@ -53,7 +53,7 @@ public class Constants {
 // UnderArm IK
     public static final double SHOULDER_TO_ELBOW = 14.031496;
     public static final double ELBOW_TO_WRIST = 11.0236;
-    public static final double SHOULDER_AXLE_TO_GROUND_HEIGHT = 13.75; //todo measure - this is from reach
+    public static final double SHOULDER_AXLE_TO_GROUND_HEIGHT = 13.75; //todo measure - this is from halo reach
     public static final double HIGH_TIER_SHIPPING_HUB_HEIGHT = 20.25;
 
     //----------------------------------------------------------------------------------------------

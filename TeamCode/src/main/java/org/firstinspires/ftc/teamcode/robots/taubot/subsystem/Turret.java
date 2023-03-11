@@ -116,7 +116,7 @@ public class Turret implements Subsystem {
     }
 
     public void zeroHeading(double offset){
-        offsetHeading = (heading-imuAngles.firstAngle)% 360;
+        offsetHeading = -(heading)% 360;
         offsetHeading += offset;
     }
 
@@ -169,7 +169,7 @@ public class Turret implements Subsystem {
         //power = turretPID.onTarget() ? 0 : correction; //what was this? artificially stills micro corrections
 
 
-        if(Crane.robotIsNotTipping) {
+        if(Crane.robotIsNotTipping && turretPID.isEnabled()) {
             motor.setPower(correction);
         }
     }
@@ -193,16 +193,18 @@ public class Turret implements Subsystem {
     int calibrateStage = 0;
     long calibrateTimer = 0;
 
+    public static double calibratePower = 0.2;
+
     public boolean calibrate(){
         switch (calibrateStage){
             case 0:
                 turretPID.disable();
-                motor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-                motor.setPower(0.1);
+                motor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
                 calibrateStage++;
                 break;
             case 1:
-                if(turretIndex.getState()){
+                motor.setPower(calibratePower);
+                if(!turretIndex.getState()){
                     zeroHeading(LIMIT_SWITCH_ANGLE_OFFSET);
                     motor.setPower(0);
                     turretPID.enable();
@@ -263,6 +265,8 @@ public class Turret implements Subsystem {
             telemetryMap.put("turret motor amps", motor.getCurrent(CurrentUnit.AMPS));
             telemetryMap.put("turret near target", isTurretNearTarget());
             telemetryMap.put("turret correction", power);
+            telemetryMap.put("turret thing", turretIndex.getState());
+            telemetryMap.put("turret calibrate", calibrateStage);
         }
 
         return telemetryMap;
