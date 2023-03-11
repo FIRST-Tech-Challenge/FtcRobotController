@@ -272,7 +272,7 @@ public abstract class BaseOpMode extends LinearOpMode {
                 telemetry.addData("xStrafingPower", coneStackPixelsAndWidthToStrafingPower(xOffset, width));
                 telemetry.addData("xTurningPower", coneStackPixelsAndWidthToTurningPower(xOffset, width));
                 telemetry.addData("yMotorPower", coneStackWidthMotorPower(width));
-                telemetry.addData("width",width);
+                telemetry.addData("width", width);
                 telemetry.update();
             }
 
