@@ -194,7 +194,7 @@ public class Right2 extends LinearOpMode {
             crane(-1,320);
             Guide.setPosition(0);
             //move and spin to high junction
-            strafeLeftwithcraneandspin(1, 2750, -1, 3200,1,260);
+            strafeLeftwithcraneandspin(1, 2850, -1, 3200,1,260);
             //Guide.setPosition(0);
             Crane.setPower(-.7);
             //spin(1,260);
@@ -247,7 +247,7 @@ public class Right2 extends LinearOpMode {
             strafeRightwithcrane(.2, 200, 1, 1000);
             gyroTurning(0);
 
-            if (getRuntime() < 22) {
+            /*if (getRuntime() < 22) {
                 //////////////////////////////////////////////////////////////////not made for side past this
                 //move back to stack
                 moveandspin(.8, 1100, 1, -591);
@@ -291,32 +291,32 @@ public class Right2 extends LinearOpMode {
                         break;
                 }
             }
-            else {
+            else {*/
                 switch (location) {//determine where to park
                     case 0:
-                        move(.2, 600);
+                        move(.3, 600);
                         stopMotors();
                         sleep(3000);
                         break;
                     case 1:
-                        move(.2, -400);
+                        move(.3, -400);
                         stopMotors();
                         sleep(3000);
                         break;
                     case 2:
-                        move(.2, 600);
+                        move(.3, 600);
                         stopMotors();
                         sleep(3000);
                         break;
                     case 3:
-                        move(1, 1500);
+                        move(.6, 1500);
                         stopMotors();
                         sleep(3000);
                         break;
                 }
             }
         }
-    }
+    //}
 
     //methods
     public void initGyro () {
