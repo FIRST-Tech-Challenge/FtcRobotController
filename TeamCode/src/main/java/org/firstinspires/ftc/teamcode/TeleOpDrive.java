@@ -462,11 +462,13 @@ public class TeleOpDrive extends LinearOpMode{
             //INTAKE
             if (gamepad1.right_trigger > 0.2) {
                 manipulator.intake();
+                gamepad1.rumble(0,1,100);
             } else if (gamepad1.left_trigger > 0.2) {
                 manipulator.outtake();
+                gamepad1.rumble(1,0,100);
             } else {
                 manipulator.stopIntake();
-
+                gamepad1.stopRumble();
             }
 
 
