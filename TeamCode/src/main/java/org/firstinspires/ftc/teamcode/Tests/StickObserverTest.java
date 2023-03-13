@@ -30,7 +30,7 @@ public class StickObserverTest extends LinearOpMode {
 
         while(opModeIsActive()) {
 
-                if(robot.field.lookingAtPole()){
+//                if(robot.field.lookingAtPole()){
                     Pose2d target = robot.field.polePos();
 //                TrajectorySequence trajectory = roadrun.getCurrentTraj();
 //                roadrun.changeTrajectorySequence(roadrun.trajectorySequenceBuilder(trajectory.start())
@@ -46,7 +46,7 @@ public class StickObserverTest extends LinearOpMode {
                     logger.log("/RobotLogs/GeneralRobot", "mr.obama"+target+"im pole"+robot.roadrun.getPoseEstimate());
                     logger.log("/RobotLogs/GeneralRobot", "coords"+robot.cv.rotatedPolarCoord()[0]+","+robot.cv.rotatedPolarCoord()[1]);
 
-                }
+//                }
                 robot.roadrun.update();
 
             robot.setFirstLoop(false);

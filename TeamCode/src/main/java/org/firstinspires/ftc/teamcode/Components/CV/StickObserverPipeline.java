@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.Components.CV;
 import static java.lang.Math.PI;
 import static java.lang.Math.abs;
 import static java.lang.Math.atan;
+import static java.lang.Math.tan;
 
 import com.acmerobotics.dashboard.config.Config;
 
@@ -184,6 +185,6 @@ public class StickObserverPipeline extends OpenCvPipeline {
         if(abs(center)+5 >= 320-(consiz/2.0)||consiz/2>239){
             return new double[]{0,0};
         }
-        return new double[]{-atan(center/focalLength)*180/PI, widTimesDist / consiz};
+        return new double[]{-atan(center/focalLength)*180/PI, abs(1/(2*tan(atan((center+consiz/2)/(focalLength))-atan(center/focalLength))))};
     }
 }

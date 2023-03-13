@@ -24,6 +24,7 @@ import com.acmerobotics.roadrunner.drive.MecanumDrive;
 import com.acmerobotics.roadrunner.followers.RFHolonomicPIDVAFollower;
 import com.acmerobotics.roadrunner.followers.RFTrajectoryFollower;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
+import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.acmerobotics.roadrunner.trajectory.Trajectory;
 import com.acmerobotics.roadrunner.trajectory.TrajectoryBuilder;
 import com.acmerobotics.roadrunner.trajectory.constraints.AngularVelocityConstraint;
@@ -190,6 +191,7 @@ public class SampleMecanumDrive extends MecanumDrive {
         dashboard = FtcDashboard.getInstance();
         dashboard.setTelemetryTransmissionInterval(25);
         logger.createFile("RoadrunLog","Runtime, X, Y, A, error[0], error[1]");
+        trajectorySeq = trajectorySequenceBuilder(getPoseEstimate()).lineTo(new Vector2d(10,0)).build();
     }
 
     public TrajectoryBuilder trajectoryBuilder(Pose2d startPose) {
