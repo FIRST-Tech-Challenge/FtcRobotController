@@ -160,9 +160,9 @@ public class TeleOpDrive extends LinearOpMode{
                     // Standard teleop control
                     // Convert gamepad input into desired pose velocity
                     driveDirection = new Pose2d(
-                            -gamepad1.left_stick_y,
-                            -gamepad1.left_stick_x,
-                            gamepad1.right_stick_x
+                            -gamepad1.left_stick_y * 0.6,
+                            -gamepad1.left_stick_x * 0.6,
+                            gamepad1.right_stick_x * 0.6
                     );
                     break;
                 case ALIGN_RIGHT:
@@ -539,7 +539,10 @@ public class TeleOpDrive extends LinearOpMode{
             //SLIDES
             if(gamepad2.right_stick_button) {
                 manipulator.resetSlides();
+                gamepad2.rumble(500);
             }
+//            if(gamepad2.right_trigger>0.1)
+//                gamepad2.rumble(10000);
             if (gamepad2.dpad_up) {
                 manipulator.moveSlides(0.9);
             } else if (gamepad2.dpad_down) {

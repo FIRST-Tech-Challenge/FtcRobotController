@@ -175,7 +175,6 @@ public class RoadRunnerTest extends LinearOpMode {
         });
 
 
-
         while (!isStarted() && !isStopRequested())
         {
             ArrayList<AprilTagDetection> currentDetections = aprilTagDetectionPipeline.getLatestDetections();
@@ -237,53 +236,25 @@ public class RoadRunnerTest extends LinearOpMode {
             sleep(20);
         }
 
-
         Trajectory firstMidPole = drive.trajectoryBuilder(new Pose2d(-36, -63, Math.toRadians(90)))
                 .splineToLinearHeading(new Pose2d(-36, -12, Math.toRadians(90)), Math.toRadians(90))
                 .splineToSplineHeading(new Pose2d(-30, -18.5, Math.toRadians(315)), Math.toRadians(315))
                 .build();
-
-        Trajectory stackMidPoint = drive.trajectoryBuilder(firstMidPole.end())
-                //.splineToLinearHeading(new Pose2d(-34, -14, Math.toRadians(270)), Math.toRadians(270))
-                .lineToLinearHeading(new Pose2d(-36, -11, Math.toRadians(180)))
+        Trajectory stackMid = drive.trajectoryBuilder(firstMidPole.end())
+                .lineTo(new Vector2d(-36, -12))
                 .build();
-
-        Trajectory stack = drive.trajectoryBuilder(stackMidPoint.end())
-                .lineToLinearHeading(new Pose2d(-63, -12, Math.toRadians(180)))
+        Trajectory stackMid2 = drive.trajectoryBuilder(stackMid.end())
+                .lineToLinearHeading(new Pose2d(-35, -12, Math.toRadians(180)))
                 .build();
-
-        Trajectory stackBack = drive.trajectoryBuilder(stack.end())
-                .back(4)
+        Trajectory stack = drive.trajectoryBuilder(stackMid2.end())
+                .lineTo(new Vector2d(-63, -10))
                 .build();
-
-        Trajectory secMidPole = drive.trajectoryBuilder(stackBack.end())
-                .lineToLinearHeading(new Pose2d(-36, -12, Math.toRadians(320)))
+        Trajectory poleMid = drive.trajectoryBuilder(stack.end())
+                .lineToLinearHeading(new Pose2d(-12, -12, Math.toRadians(225)))
                 .build();
-
-        Trajectory secMidPoleForward = drive.trajectoryBuilder(secMidPole.end())
-                .forward(8)
+        Trajectory pole = drive.trajectoryBuilder(poleMid.end())
+                .lineTo(new Vector2d(-19, -19))
                 .build();
-
-        Trajectory secMidPoleBack = drive.trajectoryBuilder(secMidPoleForward.end())
-                .back(9)
-                .build();
-
-        Trajectory stack2 = drive.trajectoryBuilder(secMidPoleBack.end())
-                .lineToLinearHeading(new Pose2d(-61.5, -12, Math.toRadians(180)))
-                .build();
-
-        Trajectory park1 = drive.trajectoryBuilder(secMidPoleBack.end())
-                .lineToLinearHeading(new Pose2d(-58, -12, Math.toRadians(180)))
-                .build();
-
-        Trajectory park2 = drive.trajectoryBuilder(secMidPoleBack.end())
-                .lineToLinearHeading(new Pose2d(-36, -12, Math.toRadians(180)))
-                .build();
-
-        Trajectory park3 = drive.trajectoryBuilder(secMidPoleBack.end())
-                .lineToLinearHeading(new Pose2d(-12, -12, Math.toRadians(180)))
-                .build();
-
 
         waitForStart();
         telemetry.addLine("Start requested");
@@ -300,61 +271,61 @@ public class RoadRunnerTest extends LinearOpMode {
         sleep(1250);
         manipulator.stopIntake();
 
-        drive.followTrajectory(stackMidPoint);
-        manipulator.moveSlideEncoder(LOW_TICKS, 1);
+        drive.followTrajectory(stackMid);
+        drive.followTrajectory(stackMid2);
+        manipulator.moveSlideEncoder(LOW_TICKS-600, 1);
 
         drive.followTrajectory(stack);
         manipulator.moveSlideEncoder(LOW_TICKS - 850, 1);
         manipulator.intake();
-        sleep(1000);
+        sleep(750);
         manipulator.stopIntake();
         manipulator.moveSlideEncoder(LOW_TICKS, 1);
         sleep(1000);
 
-        drive.followTrajectory(stackBack);
+        drive.followTrajectory(poleMid);
         manipulator.moveSlideEncoder(MID_TICKS, 1);
 
-        drive.followTrajectory(secMidPole);
+        drive.followTrajectory(pole);
 
-        drive.followTrajectory(secMidPoleForward);
         manipulator.outtake();
-        sleep(1250);
+        sleep(1000);
         manipulator.stopIntake();
+//
+//        drive.followTrajectory();
+//        manipulator.moveSlideEncoder(LOW_TICKS - 700, 1);
+//
+//        drive.followTrajectory();
+//        manipulator.moveSlideEncoder(LOW_TICKS - 1050, 1);
+//        manipulator.intake();
+//        sleep(1250);
+//        manipulator.stopIntake();
+//        manipulator.moveSlideEncoder(LOW_TICKS, 1);
+//        sleep(250);
+//
+//        drive.followTrajectory();
+//        manipulator.moveSlideEncoder(MID_TICKS, 1);
+//
+//        drive.followTrajectory();
+//
+//        drive.followTrajectory();
+//        manipulator.outtake();
+//        sleep(1250);
+//        manipulator.stopIntake();
+//
+//        drive.followTrajectory();
+//
+//        manipulator.moveSlideEncoder(INTAKE_TICKS, 1);
+//        PoseHolder.slideHeight = INTAKE_TICKS;
 
-        drive.followTrajectory(secMidPoleBack);
-        manipulator.moveSlideEncoder(LOW_TICKS - 100, 1);
-
-        drive.followTrajectory(stack2);
-        manipulator.moveSlideEncoder(LOW_TICKS - 1050, 1);
-        manipulator.intake();
-        sleep(1250);
-        manipulator.stopIntake();
-        manipulator.moveSlideEncoder(LOW_TICKS, 1);
-        sleep(250);
-
-        drive.followTrajectory(stackBack);
-        manipulator.moveSlideEncoder(MID_TICKS, 1);
-
-        drive.followTrajectory(secMidPole);
-
-        drive.followTrajectory(secMidPoleForward);
-        manipulator.outtake();
-        sleep(1250);
-        manipulator.stopIntake();
-
-        drive.followTrajectory(secMidPoleBack);
-
-        manipulator.moveSlideEncoder(INTAKE_TICKS, 1);
-        PoseHolder.slideHeight = INTAKE_TICKS;
-
-        if (tagNum == 0) {
+        /*if (tagNum == 0) {
             drive.followTrajectory(park1);
         } else if (tagNum == 1) {
             drive.followTrajectory(park2);
         } else {
             drive.followTrajectory(park3);
 
-        }
+        }*/
     }
 
     void tagToTelemetry(AprilTagDetection detection)
