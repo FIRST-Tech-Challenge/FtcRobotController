@@ -132,7 +132,10 @@ public class UnderArm implements Subsystem {
         fold,
         safe,
         foldTransfer,
-        jointAngles
+        jointAngles,
+        substationHover,
+        substationPickup,
+        substationRecover
     }
 
     private JointAngle jointAngle;
@@ -217,6 +220,13 @@ public class UnderArm implements Subsystem {
                 break;
             case jointAngles:
                 goToJointAngle(jointAngle);
+            case substationHover:
+                if (goSubstationHover()) articulation = Articulation.manual;
+                break;
+            case substationPickup:
+                if (SubstationPickup()) articulation = Articulation.manual;
+                break;
+
             default:
 
         }
@@ -263,6 +273,7 @@ public class UnderArm implements Subsystem {
                 setTurretTargetAngle(0);
                 setElbowTargetAngle(0);
                 setShoulderTargetAngle(0);
+                setWristTargetAngle(0);
                 homeTimer = futureTime(0.5);
                 homeStage++;
                 break;
@@ -306,6 +317,134 @@ public class UnderArm implements Subsystem {
     public boolean atTransfer(){
         return atTransfer;
     }
+
+    long substationTimer;
+    int substationStage = 0;
+
+    double ssHoverShoulder = 57 , ssHoverElbow = 108, ssHoverWrist = 68, ssHoverTurret = 0;
+
+    public void SaveHoverPositions(){
+        //only call this when at a good known substation hover position
+        ssHoverElbow = elbowTargetAngle;
+        ssHoverShoulder = shoulderTargetAngle;
+        ssHoverTurret = turretTargetAngle;
+    }
+
+    public void SetDefaultHoverPositions(){
+        ssHoverShoulder = 57; ssHoverElbow = 108; ssHoverWrist = 68; ssHoverTurret = 0;
+    }
+    public boolean goSubstationHover() {
+        switch (substationStage) {
+            case 0:
+                if (goSubstationRecover())
+                    substationTimer = futureTime(0.5);
+                    substationStage++;
+                break;
+            case 1: //give the elbow a head start to clear the camera when a cone is loaded
+                if (substationTimer<System.nanoTime()){
+                    setElbowTargetAngle(ssHoverElbow);
+                    substationTimer = futureTime(0.25);
+                    substationStage++;
+                }
+                break;
+            case 2:
+
+                if (substationTimer<System.nanoTime()){
+                    // these values are meant to be fine tuned by driver positioning between hover and pickup
+                    setElbowTargetAngle(ssHoverElbow);
+                    setShoulderTargetAngle(ssHoverShoulder);
+                    setWristTargetAngle(ssHoverWrist);
+                    setTurretTargetAngle(ssHoverTurret);
+                    substationTimer = futureTime(0.5);
+                    substationStage++;
+                }
+                break;
+            case 3: //open lasso
+                if (substationTimer<System.nanoTime()) {
+                    release();
+                    substationStage = 0;
+                    return true;
+                }
+                break;
+            default:
+            return false;
+        }
+        return false;
+    }
+
+    public boolean SubstationPickup() {
+        switch (substationStage) {
+            case 0: //rotate wrist down to horizontal
+                WRIST_SPEED = 270;
+                setWristTargetAngle(-16);
+                substationTimer = futureTime(0.3);
+                substationStage++;
+
+                break;
+            case 1: //bring lasso to mat with shoulder only
+                if (substationTimer<System.nanoTime()) {
+                    WRIST_SPEED = 90;
+                    setShoulderTargetAngle(70);
+                    substationStage++;
+                    substationTimer = futureTime(0.3);
+                }
+                break;
+
+            case 2: //close lasso
+                if (substationTimer<System.nanoTime()) {
+                    grip();
+                    substationStage++;
+                    substationTimer = futureTime(0.5);
+                }
+                break;
+            case 3: //elevate shoulder to clear mat
+                if (substationTimer<System.nanoTime()) {
+                    setShoulderTargetAngle(ssHoverShoulder);
+                    substationStage++;
+                    substationTimer = futureTime(0.3);
+                }
+                break;
+            case 4: //recover
+                if (substationTimer<System.nanoTime()){
+                    if( goSubstationRecover()) {
+                        substationStage = 0;
+                        return true;
+                    }
+                }
+                break;
+            default:
+                return false;
+        }
+        return false;
+    }
+
+    int recoverStage = 0;
+    long recoverTimer = 0;
+
+    /**
+     *  Recover from picking up a cone to a nearly vertical position
+     *  Not the same as home because it doesn't change the chassis length
+     * @return true means the behavior is complete
+     */
+public boolean goSubstationRecover() {
+            switch (recoverStage) {
+        case 0: //sets home position
+            setElbowTargetAngle(0);
+            setShoulderTargetAngle(0);
+            setWristTargetAngle(0);
+            recoverTimer = futureTime(0.5);
+            recoverStage++;
+            break;
+        case 1:
+            if (System.nanoTime() > recoverTimer) {
+                setTurretTargetAngle(0);
+                recoverStage = 0;
+                return true;
+            }
+            break;
+    }
+        return false;
+}
 
     double calculatedTurretAngle;
     double calculatedHeight;
