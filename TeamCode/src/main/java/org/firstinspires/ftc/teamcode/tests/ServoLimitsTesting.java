@@ -1,7 +1,10 @@
 package org.firstinspires.ftc.teamcode.tests;
 
+import android.view.animation.LinearInterpolator;
+
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
+import com.arcrobotics.ftclib.command.CommandOpMode;
 import com.arcrobotics.ftclib.hardware.SimpleServo;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -10,17 +13,15 @@ import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.CRServoImpl;
 import com.qualcomm.robotcore.hardware.ServoImplEx;
 
+import org.apache.commons.math3.geometry.euclidean.twod.Line;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.teamcode.powerplayV2.subsystems.ClawSubsystem;
 
 @Config
 @TeleOp
-//@Disabled
 public class ServoLimitsTesting extends LinearOpMode {
-    ServoImplEx servo1;
-//    ServoImplEx servo2;
-//    CRServoImpl servocr1;
-//    CRServoImpl servocr2;
+    ClawSubsystem claw;
 
     //Basket 0.01 - 0.48
     //Claw
@@ -29,7 +30,7 @@ public class ServoLimitsTesting extends LinearOpMode {
 
     Telemetry dahsboardTelemetry = FtcDashboard.getInstance().getTelemetry();
 
-    public static double max = 0.34;
+    public static double max = 1;
     public static double min = 0;
 
 //    double last_min=min, last_max=max;
@@ -37,8 +38,7 @@ public class ServoLimitsTesting extends LinearOpMode {
 
     @Override
     public void runOpMode() throws InterruptedException {
-        servo1 = hardwareMap.get(ServoImplEx.class, "claw");
-//        servo2 = hardwareMap.get(ServoImplEx.class, "frontSlL");
+        claw = new ClawSubsystem(hardwareMap);
 
         waitForStart();
 
@@ -47,8 +47,8 @@ public class ServoLimitsTesting extends LinearOpMode {
 //
 //            if(gamepad1.dpad_down && pos > step) pos -= step;
 
-            if(gamepad1.dpad_up) servo1.setPosition(max);
-            else if(gamepad1.dpad_down) servo1.setPosition(min);
+            if(gamepad1.dpad_up) claw.release();
+            if(gamepad1.dpad_down) claw.grab();
 
             dahsboardTelemetry.addData("Smth", "");
 

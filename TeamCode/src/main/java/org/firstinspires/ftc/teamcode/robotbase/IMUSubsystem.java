@@ -98,4 +98,8 @@ public class IMUSubsystem extends SubsystemBase {
         previousRawYaw = rawYaw;
         contYaw = rawYaw + 360 * turns;
     }
+
+    public void resetYawValue() {
+        imu.resetYaw();
+    }
 }

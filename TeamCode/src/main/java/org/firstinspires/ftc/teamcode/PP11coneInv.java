@@ -1,6 +1,12 @@
 package org.firstinspires.ftc.teamcode;
 
+import static org.firstinspires.ftc.teamcode.robotbase.RobotEx.OpModeType.AUTO;
+
 import com.arcrobotics.ftclib.command.CommandOpMode;
+import com.arcrobotics.ftclib.command.InstantCommand;
+import com.arcrobotics.ftclib.command.ParallelCommandGroup;
+import com.arcrobotics.ftclib.command.SequentialCommandGroup;
+import com.arcrobotics.ftclib.command.WaitCommand;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
@@ -9,14 +15,15 @@ import org.firstinspires.ftc.teamcode.opencvpipelines.AprilTagDetectionPipeline;
 import org.firstinspires.ftc.teamcode.powerplayV2.AprilTagDetectionSubsystem;
 import org.firstinspires.ftc.teamcode.powerplayV2.PowerPlayRobotV2;
 import org.firstinspires.ftc.teamcode.powerplayV2.RoadRunnerSubsystem;
+import org.firstinspires.ftc.teamcode.powerplayV2.commands.ElevatorCommand;
 import org.firstinspires.ftc.teamcode.powerplayV2.subsystems.ArmSubsystem;
 import org.firstinspires.ftc.teamcode.powerplayV2.subsystems.BasketSubsystem;
 import org.firstinspires.ftc.teamcode.powerplayV2.subsystems.ClawSubsystem;
 import org.firstinspires.ftc.teamcode.powerplayV2.subsystems.ElevatorSubsystem;
 import org.firstinspires.ftc.teamcode.robotbase.GamepadExEx;
 
-@Autonomous(name = "Season: Inv PP Plan A_NoOtherSide(parking)")
-public class PowerPlayAutonomousPlanA_NoOtherSide_OnlyParking_Inverted extends CommandOpMode {
+@Autonomous(name = "PP Inv (1 + 1 cone)", group = "Final Autonomous")
+public class PP11coneInv extends CommandOpMode {
 
     PowerPlayRobotV2 robot;
     AprilTagDetectionPipeline aprilTagDetectionPipeline;
@@ -24,19 +31,29 @@ public class PowerPlayAutonomousPlanA_NoOtherSide_OnlyParking_Inverted extends C
     protected SampleMecanumDrive drive;
     protected RoadRunnerSubsystem RR;
     protected AprilTagDetectionSubsystem april_tag;
+    protected ClawSubsystem claw;
+    protected ElevatorSubsystem elevator;
+    protected BasketSubsystem basket;
+    protected ArmSubsystem arm;
 
     @Override
     public void initialize() {
         GamepadExEx driverOp = new GamepadExEx(gamepad1);
         GamepadExEx toolOp = new GamepadExEx(gamepad2);
 
-        robot = new PowerPlayRobotV2(hardwareMap, telemetry, driverOp, toolOp);
+        robot = new PowerPlayRobotV2(hardwareMap, telemetry, driverOp, toolOp, AUTO, true,
+                false, false, false, false, false);
 
         drive = new SampleMecanumDrive(hardwareMap);
 
         RR = new RoadRunnerSubsystem(drive, hardwareMap, true);
 
-        april_tag = new AprilTagDetectionSubsystem(robot.camera);
+        april_tag = new AprilTagDetectionSubsystem(robot.camera, telemetry);
+
+        claw = new ClawSubsystem(hardwareMap);
+        elevator = new ElevatorSubsystem(hardwareMap);
+        basket =  new BasketSubsystem(hardwareMap);
+        arm = new ArmSubsystem(hardwareMap, telemetry);
 
         runtime = new ElapsedTime();
     }
@@ -65,6 +82,7 @@ public class PowerPlayAutonomousPlanA_NoOtherSide_OnlyParking_Inverted extends C
     public void runOpMode() throws InterruptedException {
         initialize();
         waitForStart();
+        runtime.reset();
 
         ///////////////////////////////// Running the Trajectories /////////////////////////////////
 
@@ -73,6 +91,18 @@ public class PowerPlayAutonomousPlanA_NoOtherSide_OnlyParking_Inverted extends C
         if (isStopRequested()) return;
 
         RR.runHS();
+
+        schedule(new SequentialCommandGroup(
+                new InstantCommand(arm::setMid, arm),
+                new WaitCommand(300),
+                new ElevatorCommand(elevator, ElevatorSubsystem.Level.HIGH),
+                new InstantCommand(basket::setOuttake, basket),
+                new WaitCommand(1500),
+                new ParallelCommandGroup(
+                        new InstantCommand(basket::setTravel, basket),
+                        new ElevatorCommand(elevator, ElevatorSubsystem.Level.LOW)
+                )
+        ));
 
         if (april_tag.getTagOfInterest().id == april_tag.LEFT) RR.runP1();
         else if (april_tag.getTagOfInterest().id == april_tag.RIGHT|| april_tag.getTagOfInterest() == null) RR.runP3();

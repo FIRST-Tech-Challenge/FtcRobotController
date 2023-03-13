@@ -61,7 +61,7 @@ public class MecanumDriveSubsystem  extends SubsystemBase {
 
     void drive(double strafeSpeed, double forwardSpeed, double turnSpeed, double heading,
                double maxSpeed) {
-        drive.setMaxSpeed(0.5 * (1 + maxSpeed));
+        drive.setMaxSpeed(0.3 * (1 + (7.0/3)*maxSpeed));
         drive.driveFieldCentric(strafeSpeed, forwardSpeed, turnSpeed, heading);
     }
 }

@@ -46,6 +46,8 @@ public class FrontSliderSubsystem extends SubsystemBase {
             stop();
         } else if (state == State.CLOSING) {
             close();
+        } else if (state == State.OPENING) {
+
         }
         telemetry.addData("Right: ", rightSup.getAsBoolean());
         telemetry.addData("Left: ", leftSup.getAsBoolean());

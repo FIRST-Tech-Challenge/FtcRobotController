@@ -13,7 +13,7 @@ public class ArmSubsystem extends SubsystemBase {
     private double pos;
     private double step = 0.01;
 //    private double threshold = 0.02;
-    private double[] autoPos = {0.72, 0.75, 0.78, 0.8, MAX};
+    private double[] autoPos = {0.72, 0.75, 0.92, 0.95, 1};
     private Telemetry telemetry;
 
     enum State {

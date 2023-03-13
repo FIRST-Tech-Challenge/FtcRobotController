@@ -13,12 +13,12 @@ public class ElevatorSubsystem extends SubsystemBase {
     private double KS = 0, KV = 0, KA = 0;
 
     public enum Level {
-        LOW, TRAVEL, MID, HIGH;
+        LOW, TRAVEL, MID, HIGH, AUTO_SCORING;
     }
 
     private Level level;
 
-    private int[] levelPositions = {0, 100, 620, 2000};
+    private int[] levelPositions = {0, 120, 620, 2000, 2220};
 
     public ElevatorSubsystem(HardwareMap hardwareMap) {
         motor = new MotorEx(hardwareMap, "slider");
@@ -57,6 +57,8 @@ public class ElevatorSubsystem extends SubsystemBase {
             levelIdx = 2;
         else if (level == Level.HIGH)
             levelIdx = 3;
+        else if (level == Level.AUTO_SCORING)
+            levelIdx = 4;
 
         motor.setTargetPosition(levelPositions[levelIdx]);
     }

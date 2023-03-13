@@ -29,7 +29,7 @@ public class MyClass {
         int robotFB = 13;
         double dposition = 9.19;
 
-        MeepMeep meepMeep = new MeepMeep(1000);
+        MeepMeep meepMeep = new MeepMeep(800);
 
          Pose2d homePose = new Pose2d(35 ,-64.015 , Math.toRadians(90));
          Pose2d midPose = new Pose2d(35, -20, Math.toRadians( -90));

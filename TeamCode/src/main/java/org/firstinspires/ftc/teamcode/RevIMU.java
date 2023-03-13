@@ -118,6 +118,10 @@ public class RevIMU implements HardwareDevice {
 //        return revIMU.getRobotYawPitchRollAngles().getRoll(AngleUnit.DEGREES) * multiplier;
 //    }
 
+    public void resetYaw() {
+        revIMU.resetYaw();
+    }
+
     public void resetPitch() {
         pitchOffset = revIMU.getRobotYawPitchRollAngles().getPitch(AngleUnit.DEGREES);
     }

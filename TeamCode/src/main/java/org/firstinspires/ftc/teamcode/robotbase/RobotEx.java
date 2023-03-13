@@ -47,8 +47,8 @@ public class RobotEx {
                    GamepadExEx toolOp, OpModeType type, Boolean initCamera, Boolean useCameraFollower,
                    Boolean frontLeftInvert, Boolean frontRightInvert, Boolean rearLeftInvert,
                    Boolean rearRightInvert) {
-        initCommon(hardwareMap, telemetry);
         this.initCamera = initCamera;
+        initCommon(hardwareMap, telemetry);
         if (type == OpModeType.TELEOP) {
             initTele(hardwareMap, telemetry, driverOp, toolOp, useCameraFollower, frontLeftInvert,
                     frontRightInvert, rearLeftInvert, rearRightInvert);
@@ -70,10 +70,10 @@ public class RobotEx {
         CommandScheduler.getInstance().registerSubsystem(gyro);
 
         ////////////////////////////////////////// Camera //////////////////////////////////////////
-//        if (initCamera) {
-//            camera = new Camera(hardwareMap, dashboard, telemetry,
+        if (this.initCamera) {
+            camera = new Camera(hardwareMap, dashboard, telemetry);
 //                    () -> this.driverOp.getButton(GamepadKeys.Button.BACK));
-//        }
+        }
     }
 
     public void initAuto(HardwareMap hardwareMap, Telemetry telemetry) {
@@ -102,6 +102,9 @@ public class RobotEx {
         drive.setDefaultCommand(driveCommand);
 
         /////////////////////////////////////// Gyro Follower //////////////////////////////////////
+        driverOp.getGamepadButton(GamepadKeys.Button.START)
+                .whenPressed(new InstantCommand(gyro::resetYawValue, gyro));
+
         gyroFollow = new HeadingControllerSubsystem(gyro::getYaw,
                 gyro::findClosestOrientationTarget);
         new Trigger(() -> driverOp.getRightY() >= 0.8).whenActive(

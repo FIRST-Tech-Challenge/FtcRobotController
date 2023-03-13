@@ -5,6 +5,7 @@ repositories {
         dirs rootProject.file('libs')
     }
     maven { url = 'https://maven.brott.dev/' }
+    maven { url = 'https://jitpack.io' }
 }
 
 dependencies {
@@ -20,5 +21,6 @@ dependencies {
     implementation 'androidx.appcompat:appcompat:1.2.0'
     implementation 'org.firstinspires.ftc:gameAssets-PowerPlay:1.0.0'
     implementation 'com.acmerobotics.dashboard:dashboard:0.4.8'
+    implementation 'com.github.NoahBres:MeepMeep:2.0.2'
 }
 

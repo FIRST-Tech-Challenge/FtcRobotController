@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.powerplayV2;
 import com.arcrobotics.ftclib.command.CommandScheduler;
 import com.arcrobotics.ftclib.command.InstantCommand;
 import com.arcrobotics.ftclib.command.ParallelCommandGroup;
+import com.arcrobotics.ftclib.command.RunCommand;
 import com.arcrobotics.ftclib.command.SequentialCommandGroup;
 import com.arcrobotics.ftclib.command.WaitCommand;
 import com.arcrobotics.ftclib.command.button.Trigger;
@@ -37,19 +38,30 @@ public class PowerPlayRobotV2 extends RobotEx {
     private BasketSubsystem basket;
     private ConeDetectorSubsystem cone_detector;
     private RumbleCommand rumbleCommand;
+    private SequentialCommandGroup scoringCommand;
 
     private int index = 0;
 
     public PowerPlayRobotV2(HardwareMap hardwareMap, Telemetry telemetry, GamepadExEx driverOp,
                             GamepadExEx toolOp) {
-        super(hardwareMap, telemetry, driverOp, toolOp, OpModeType.TELEOP, true,
+        super(hardwareMap, telemetry, driverOp, toolOp, OpModeType.TELEOP, false,
                 false, true, true, true,
                 true);
+    }
+
+    public PowerPlayRobotV2(HardwareMap hardwareMap, Telemetry telemetry, GamepadExEx driverOp,
+                            GamepadExEx toolOp, OpModeType opModeType, boolean camera,
+                            boolean cameraFollower, boolean frontLeftInvert, boolean fronRightInvert,
+                            boolean rearLeftInvert, boolean rearRightInvert) {
+        super(hardwareMap, telemetry, driverOp, toolOp, opModeType, camera,
+                cameraFollower, frontLeftInvert, fronRightInvert, rearLeftInvert,
+                rearRightInvert);
     }
 
     @Override
     public void initMechanismsAutonomous(HardwareMap hardwareMap) {
         claw = new ClawSubsystem(hardwareMap);
+        elevator = new ElevatorSubsystem(hardwareMap);
         elevator = new ElevatorSubsystem(hardwareMap);
         rightServoLim = new LimitSwitchSubsystem(hardwareMap, "rightSwitch");
         leftServoLim = new LimitSwitchSubsystem(hardwareMap, "leftSwitch");
@@ -57,7 +69,6 @@ public class PowerPlayRobotV2 extends RobotEx {
                 () -> leftServoLim.getState(), telemetry);
         arm = new ArmSubsystem(hardwareMap, telemetry);
         basket = new BasketSubsystem(hardwareMap);
-        cone_detector = new ConeDetectorSubsystem(hardwareMap, 15);
 
         //        PerpetualCommand autoLoop = new PerpetualCommand(new SequentialCommandGroup(
 //                new SlidersGroup(slider, frontSlider, true),
@@ -87,7 +98,7 @@ public class PowerPlayRobotV2 extends RobotEx {
                 () -> leftServoLim.getState(), telemetry);
         arm = new ArmSubsystem(hardwareMap, telemetry);
         basket = new BasketSubsystem(hardwareMap);
-        cone_detector = new ConeDetectorSubsystem(hardwareMap, 20);
+        cone_detector = new ConeDetectorSubsystem(hardwareMap, 30);
 
         //Autonomous Commands
 //        PerpetualCommand autoLoop = new PerpetualCommand(new SequentialCommandGroup(
@@ -208,12 +219,12 @@ public class PowerPlayRobotV2 extends RobotEx {
         new Trigger(() -> cone_detector.isConeDetected())
                 .whenActive(toolOp::rumble);
 //
-        toolOp.getGamepadButton(GamepadKeys.Button.LEFT_BUMPER)
-                        .whenPressed(new SequentialCommandGroup(
-                                new FrontSliderConeCommand(frontSlider,
-                                        cone_detector::isConeDetected, arm),
-                                new RumbleCommand(toolOp)
-                        ));
+//        toolOp.getGamepadButton(GamepadKeys.Button.LEFT_BUMPER)
+//                        .whenPressed(new SequentialCommandGroup(
+//                                new FrontSliderConeCommand(frontSlider,
+//                                        cone_detector::isConeDetected, arm),
+//                                new RumbleCommand(toolOp)
+//                        ));
 
         toolOp.getGamepadButton(GamepadKeys.Button.RIGHT_BUMPER)
                 .whenPressed(
@@ -253,6 +264,8 @@ public class PowerPlayRobotV2 extends RobotEx {
 //
         new Trigger(() -> toolOp.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER) > 0.8)
                 .whenActive(new SequentialCommandGroup(
+                        new InstantCommand(arm::setMid, arm),
+                        new WaitCommand(100),
                         new InstantCommand(basket::setOuttake, basket), //Outtake Cone
                         new WaitCommand(1500), //Wait till the cone drops
                         new ParallelCommandGroup( // Rumble, Reset Slider and Basket to Original Pos
@@ -261,17 +274,46 @@ public class PowerPlayRobotV2 extends RobotEx {
                         )
                 ));
 
-//        toolOp.getGamepadButton(GamepadKeys.Button.LEFT_STICK_BUTTON).whenPressed(
-//                new SequentialCommandGroup(
-//                        new InstantCommand(arm::setMid, arm),
-//                        new WaitCommand(300),
-//                        new ElevatorCommand(elevator, ElevatorSubsystem.Level.HIGH),
-//                        new InstantCommand(basket::setOuttake, basket),
-//                        new WaitCommand(1500),
-//                        new ParallelCommandGroup(
-//                                new InstantCommand(basket::setTravel, basket),
-//                                new ElevatorCommand(elevator, ElevatorSubsystem.Level.LOW)
-//                        )
-//                ));
+        toolOp.getGamepadButton(GamepadKeys.Button.LEFT_STICK_BUTTON).whenPressed(
+                new SequentialCommandGroup(
+                    new InstantCommand(arm::setMid, arm),
+                    new WaitCommand(300),
+                    new ElevatorCommand(elevator, ElevatorSubsystem.Level.AUTO_SCORING),
+                    new InstantCommand(basket::setOuttake, basket),
+                    new WaitCommand(1500),
+                    new ParallelCommandGroup(
+                            new InstantCommand(basket::setTravel, basket),
+                            new ElevatorCommand(elevator, ElevatorSubsystem.Level.LOW),
+                            new InstantCommand(claw::release, claw),
+                            new InstantCommand(() -> arm.setAutonomousPosition(0), arm)
+                    ),
+                    new FrontSliderConeCommand(frontSlider, cone_detector::isConeDetected, arm),
+                    new InstantCommand(claw::grab, claw),
+                    new WaitCommand(200),
+                    new ParallelCommandGroup(
+                            new InstantCommand(arm::setTravel, arm),
+                            new InstantCommand(frontSlider::close, frontSlider)
+                    ),
+                    new WaitCommand(800),
+                    new InstantCommand(claw::release, claw), // Release the cone to tha basket
+                    new WaitCommand(500),
+                    new ElevatorCommand(elevator, ElevatorSubsystem.Level.TRAVEL),
+                    new WaitCommand(100),
+                    new InstantCommand(() -> frontSlider.manual(0.4), frontSlider),
+                    new WaitCommand(400),
+                    new InstantCommand(() -> frontSlider.stop(), frontSlider),
+                    new ParallelCommandGroup(
+                            new InstantCommand(arm::setMid, arm),
+                            new InstantCommand(frontSlider::close, frontSlider)
+                    ),
+                    new WaitCommand(600),
+                    new ElevatorCommand(elevator, ElevatorSubsystem.Level.AUTO_SCORING),
+                    new InstantCommand(basket::setOuttake, basket),
+                    new WaitCommand(1500),
+                    new ParallelCommandGroup(
+                            new InstantCommand(basket::setTravel, basket),
+                            new ElevatorCommand(elevator, ElevatorSubsystem.Level.LOW)
+                    )
+        ));
     }
 }

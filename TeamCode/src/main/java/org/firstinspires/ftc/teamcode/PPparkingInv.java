@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode;
 
+import static org.firstinspires.ftc.teamcode.robotbase.RobotEx.OpModeType.AUTO;
+
 import com.arcrobotics.ftclib.command.CommandOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -9,15 +11,10 @@ import org.firstinspires.ftc.teamcode.opencvpipelines.AprilTagDetectionPipeline;
 import org.firstinspires.ftc.teamcode.powerplayV2.AprilTagDetectionSubsystem;
 import org.firstinspires.ftc.teamcode.powerplayV2.PowerPlayRobotV2;
 import org.firstinspires.ftc.teamcode.powerplayV2.RoadRunnerSubsystem;
-import org.firstinspires.ftc.teamcode.powerplayV2.commands.AutonomousCommandWOPassThrough;
-import org.firstinspires.ftc.teamcode.powerplayV2.subsystems.ArmSubsystem;
-import org.firstinspires.ftc.teamcode.powerplayV2.subsystems.BasketSubsystem;
-import org.firstinspires.ftc.teamcode.powerplayV2.subsystems.ClawSubsystem;
-import org.firstinspires.ftc.teamcode.powerplayV2.subsystems.ElevatorSubsystem;
 import org.firstinspires.ftc.teamcode.robotbase.GamepadExEx;
 
-@Autonomous(name = "Season: PP Plan A_NoOtherSide(parking)")
-public class PowerPlayAutonomousPlanA_NoOtherSide_OnlyParking extends CommandOpMode {
+@Autonomous(name = "PP Inv (parking)", group = "Final Autonomous")
+public class PPparkingInv extends CommandOpMode {
 
     PowerPlayRobotV2 robot;
     AprilTagDetectionPipeline aprilTagDetectionPipeline;
@@ -31,13 +28,14 @@ public class PowerPlayAutonomousPlanA_NoOtherSide_OnlyParking extends CommandOpM
         GamepadExEx driverOp = new GamepadExEx(gamepad1);
         GamepadExEx toolOp = new GamepadExEx(gamepad2);
 
-        robot = new PowerPlayRobotV2(hardwareMap, telemetry, driverOp, toolOp);
+        robot = new PowerPlayRobotV2(hardwareMap, telemetry, driverOp, toolOp, AUTO, true,
+                false, false, false, false, false);
 
         drive = new SampleMecanumDrive(hardwareMap);
 
-        RR = new RoadRunnerSubsystem(drive, hardwareMap, false);
+        RR = new RoadRunnerSubsystem(drive, hardwareMap, true);
 
-        april_tag = new AprilTagDetectionSubsystem(robot.camera);
+        april_tag = new AprilTagDetectionSubsystem(robot.camera, telemetry);
 
         runtime = new ElapsedTime();
     }
@@ -66,6 +64,7 @@ public class PowerPlayAutonomousPlanA_NoOtherSide_OnlyParking extends CommandOpM
     public void runOpMode() throws InterruptedException {
         initialize();
         waitForStart();
+        runtime.reset();
 
         ///////////////////////////////// Running the Trajectories /////////////////////////////////
 
@@ -73,11 +72,13 @@ public class PowerPlayAutonomousPlanA_NoOtherSide_OnlyParking extends CommandOpM
 
         if (isStopRequested()) return;
 
-        RR.runHS();
+        RR.runTEST();
 
-        if (april_tag.getTagOfInterest().id == april_tag.LEFT) RR.runP1();
-        else if (april_tag.getTagOfInterest().id == april_tag.RIGHT|| april_tag.getTagOfInterest() == null) RR.runP3();
-        else RR.runTOMID();
+//        RR.runHS();
+//
+//        if (april_tag.getTagOfInterest().id == april_tag.LEFT) RR.runP1();
+//        else if (april_tag.getTagOfInterest().id == april_tag.RIGHT|| april_tag.getTagOfInterest() == null) RR.runP3();
+//        else RR.runTOMID();
 
         // run the scheduler
         while (!isStopRequested() && opModeIsActive()) {

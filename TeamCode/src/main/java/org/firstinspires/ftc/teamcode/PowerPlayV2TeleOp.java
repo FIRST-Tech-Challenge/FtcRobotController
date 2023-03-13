@@ -8,7 +8,7 @@ import org.firstinspires.ftc.teamcode.powerplayV2.PowerPlayRobotV2;
 import org.firstinspires.ftc.teamcode.robotbase.GamepadExEx;
 
 
-@TeleOp(name = "PowerPlayV2", group = "TeleOP")
+@TeleOp(name = "Power Play Bucharest 2023", group = "Final OpModes")
 public class PowerPlayV2TeleOp extends CommandOpMode {
     private PowerPlayRobotV2 robot;
 
