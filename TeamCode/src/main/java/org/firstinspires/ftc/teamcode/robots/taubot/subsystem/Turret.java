@@ -2,6 +2,8 @@ package org.firstinspires.ftc.teamcode.robots.taubot.subsystem;
 
 import static org.firstinspires.ftc.teamcode.robots.reachRefactor.util.Constants.USE_MOTOR_SMOOTHING;
 import static org.firstinspires.ftc.teamcode.robots.taubot.util.Utils.wrapAngle;
+import static org.firstinspires.ftc.teamcode.util.utilMethods.nearZero;
+import static org.firstinspires.ftc.teamcode.util.utilMethods.wrapAngleMinus;
 
 import com.acmerobotics.dashboard.canvas.Canvas;
 import com.acmerobotics.dashboard.config.Config;
@@ -17,6 +19,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
+import org.firstinspires.ftc.teamcode.robots.UGBot.utils.Constants;
 import org.firstinspires.ftc.teamcode.robots.reachRefactor.simulation.DcMotorExSim;
 import org.firstinspires.ftc.teamcode.robots.taubot.PowerPlay_6832;
 import org.firstinspires.ftc.teamcode.util.PIDController;
@@ -42,6 +45,7 @@ public class Turret implements Subsystem {
     BNO055IMU turretIMU;
 
     Orientation imuAngles;
+    boolean turretInitialized = false;
 
     private static double cacheHeading;
 
@@ -65,8 +69,8 @@ public class Turret implements Subsystem {
         turretPID.setInputRange(-360, 360);
         turretPID.setOutputRange(-1.0, 1.0);
         turretPID.setTolerance(TURRET_TOLERANCE);
-        turretPID.enableIntegralZeroCrossingReset(false);
-        turretPID.setIntegralCutIn(5); //suppress integral until within 5 degrees of target
+        turretPID.enableIntegralZeroCrossingReset(true);
+        turretPID.setIntegralCutIn(4); //suppress integral until within x degrees of target
         turretPID.enable();
 
         BNO055IMU.Parameters parametersIMUTurret = new BNO055IMU.Parameters();
@@ -108,18 +112,6 @@ public class Turret implements Subsystem {
         cacheHeading = heading;
     }
 
-    public void resetHeading(){
-        zeroHeading(0);
-        if(PowerPlay_6832.gameState.equals(PowerPlay_6832.GameState.TELE_OP)) {
-            offsetHeading += cacheHeading;
-        }
-    }
-
-    public void zeroHeading(double offset){
-        offsetHeading = -(heading)% 360;
-        offsetHeading += offset;
-    }
-
     Articulation articulation;
 
     public enum Articulation{
@@ -139,7 +131,7 @@ public class Turret implements Subsystem {
             case home: //home position is facing facing back of robot not towards underarm
                 turretPID.setInput(-distanceBetweenAngles(heading,180 + Math.toDegrees(robot.driveTrain.getRawHeading())));
                 break;
-            case fold: //home position is facing facing back of robot not towards underarm
+            case fold: //fold is facing towards underarm
                 turretPID.setInput(-distanceBetweenAngles(heading,Math.toDegrees(robot.driveTrain.getRawHeading())));
                 break;
             case transfer: //transfer position is facing facing back of robot not towards underarm
@@ -157,9 +149,21 @@ public class Turret implements Subsystem {
         articulate(articulation);
 
         imuAngles= turretIMU.getAngularOrientation().toAxesReference(AxesReference.INTRINSIC).toAxesOrder(AxesOrder.ZYX);
-        //offset = heading - initialHeading
+        if (!turretInitialized) {
+            //first time in - we assume that the robot has not started moving and that orientation values are set to the current absolute orientation
+            //so first set of imu readings are effectively offsets
+            //if (!nearZero(cacheHeading))
+                //we have a cached heading from a prior run, so use that to create the current offset
+                //todo - this has not been tested yet - also might want to do this differently - like cached heading should be stored and retrieved from disk
+                //offsetHeading = wrapAngleMinus(imuAngles.firstAngle, cacheHeading);
+            //else
+                offsetHeading = wrapAngleMinus(imuAngles.firstAngle + Constants.TURRET_OFFSET_HEADING, heading);
+            turretInitialized = true;
+        }
+
         //update current IMU heading before doing any other calculations
         heading = wrapAngle(offsetHeading + imuAngles.firstAngle) ;
+        cacheHeadingForNextRun();
 
         turretPID.setPID(TURRET_PID);
         turretPID.setTolerance(TURRET_TOLERANCE);
@@ -205,7 +209,8 @@ public class Turret implements Subsystem {
             case 1:
                 motor.setPower(calibratePower);
                 if(!turretIndex.getState()){
-                    zeroHeading(LIMIT_SWITCH_ANGLE_OFFSET);
+                    //zeroHeading(LIMIT_SWITCH_ANGLE_OFFSET);
+                    setHeading(LIMIT_SWITCH_ANGLE_OFFSET);
                     motor.setPower(0);
                     turretPID.enable();
                     calibrateStage++;
@@ -230,7 +235,7 @@ public class Turret implements Subsystem {
      */
     public void setHeading(double angle){
         heading = angle;
-        resetHeading();
+        turretInitialized = false; //triggers recalc of heading offset at next IMU update cycle
     }
 
     public static double localX = -5;
@@ -258,9 +263,12 @@ public class Turret implements Subsystem {
     @Override
     public Map<String, Object> getTelemetry(boolean debug) {
         Map<String, Object> telemetryMap = new LinkedHashMap<>();
+        telemetryMap.put("articulation", articulation);
+        telemetryMap.put("turret heading", heading);
+        telemetryMap.put("turret error", turretPID.getError());
+
         if(debug) {
-            telemetryMap.put("turret heading", heading);
-            telemetryMap.put("turret error", turretPID.getError());
+
             telemetryMap.put("target turret heading", targetHeading);
             telemetryMap.put("turret motor amps", motor.getCurrent(CurrentUnit.AMPS));
             telemetryMap.put("turret near target", isTurretNearTarget());

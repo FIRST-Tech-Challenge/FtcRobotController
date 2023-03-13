@@ -106,7 +106,8 @@ public class PowerPlay_6832 extends OpMode {
     double loopAvg = 0;
     private static final double loopWeight = .1;
     private double averageLoopTime;
-    private ExponentialSmoother loopTimeSmoother, averageUpdateTimeSmoother;
+    private double averageVoltage;
+    private ExponentialSmoother loopTimeSmoother, averageUpdateTimeSmoother, voltageSmoother;
     public static double AVERAGE_LOOP_TIME_SMOOTHING_FACTOR = 0.1;
     public static boolean DEFAULT_DEBUG_TELEMETRY_ENABLED = false;
 
@@ -213,6 +214,7 @@ public class PowerPlay_6832 extends OpMode {
         lastLoopClockTime = System.nanoTime();
         loopTimeSmoother = new ExponentialSmoother(AVERAGE_LOOP_TIME_SMOOTHING_FACTOR);
         averageUpdateTimeSmoother = new ExponentialSmoother(AVERAGE_LOOP_TIME_SMOOTHING_FACTOR);
+        voltageSmoother = new ExponentialSmoother(.025);
 
         robot = new Robot(hardwareMap,false);
 
@@ -275,9 +277,6 @@ public class PowerPlay_6832 extends OpMode {
         lastLoopClockTime = System.nanoTime();
         startTime = System.currentTimeMillis();
 
-
-        robot.turret.resetHeading();
-
         resetGame();
 
         if(gameState.equals(GameState.TELE_OP)){
@@ -315,8 +314,7 @@ public class PowerPlay_6832 extends OpMode {
 
         @Override
     public void loop() {
-            robot.driveTrain.cachePositionForNextRun();
-            robot.turret.cacheHeadingForNextRun();
+
             dc.updateStickyGamepads();
             dc.handleStateSwitch();
 
@@ -389,7 +387,6 @@ public class PowerPlay_6832 extends OpMode {
             }
 
             update();
-
         }
 
     private void initialization_initSound() {
@@ -437,6 +434,7 @@ public class PowerPlay_6832 extends OpMode {
         long loopClockTime = System.nanoTime();
         loopTime = loopClockTime - lastLoopClockTime;
         averageLoopTime = loopTimeSmoother.update(loopTime);
+        averageVoltage = voltageSmoother.update(robot.getVoltage());
         lastLoopClockTime = loopClockTime;
     }
 
@@ -444,7 +442,7 @@ public class PowerPlay_6832 extends OpMode {
         telemetry.addLine(telemetryName);
         packet.addLine(telemetryName);
 
-        if(robot.getVoltage() <= LOW_BATTERY_VOLTAGE) {
+        if(averageVoltage <= LOW_BATTERY_VOLTAGE) {
             telemetryMap = new LinkedHashMap<>();
             for(int i = 0; i < 20; i++) {
                 telemetryMap.put(i +
