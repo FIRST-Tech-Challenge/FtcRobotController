@@ -350,6 +350,7 @@ public class DriveTrain extends DiffyDrive implements Subsystem {
         angularVelocity = angularVelocities.xRotationRate;
 
         updatePoseEstimate();
+        cachePositionForNextRun();
         poseEstimate = getPoseEstimate();
         poseVelocity = getPoseVelocity();
 
@@ -886,6 +887,16 @@ public class DriveTrain extends DiffyDrive implements Subsystem {
 
     public double getChassisLength() {
         return chassisLength;
+    }
+
+    public double getTargetChassisLength(){
+        return targetChassisLength;
+    }
+
+    public boolean getChariotDeployed(){
+        if (getTargetChassisLength()> MIN_CHASSIS_LENGTH)
+            return true;
+        else return false;
     }
 
     public static double CHASSIS_ADJUST = 20;

@@ -463,10 +463,10 @@ public class Crane implements Subsystem {
             case robotDriving: //if the robot is driving all cranes should go into a safe position
                 setShoulderTargetAngle(SAFE_SHOULDER_ANGLE);
                 setExtendTargetPos(SAFE_ARM_LENGTH);
-                robot.turret.articulate(Turret.Articulation.home); //turret will not move AT ALL from home position no mater the target
+                robot.turret.articulate(Turret.Articulation.home); //turret will not move AT ALL from home position no matter the target
                 break;
             case transfer: //
-                robot.turret.articulate(Turret.Articulation.transfer); //turret will not move AT ALL from transfer position no mater what target is given
+                robot.turret.articulate(Turret.Articulation.transfer);
                 setShoulderTargetAngle(TRANSFER_SHOULDER_ANGLE);
                 setExtendTargetPos(TRANSFER_ARM_LENGTH);
                 break;
@@ -478,10 +478,12 @@ public class Crane implements Subsystem {
                 break;
             case postTransfer:
                 if(postTransfer()){
+                    //todo: do we need to make sure turret goes back to angle tracking here? though not before the transfer happens
                     articulation = Articulation.pickupCone;
                 }
                 break;
             case manual:
+                robot.turret.articulate(Turret.Articulation.runToAngle);
                 holdTarget(fieldPositionTarget.x,fieldPositionTarget.y,fieldPositionTarget.z);
                 break;
             case dropCone:
@@ -1166,6 +1168,10 @@ public class Crane implements Subsystem {
 
     public void grab(){
         bulbGripped = true;
+    }
+
+    public void pickupSequence(){
+        articulate(Articulation.pickupCone);
     }
 
     public void release(){

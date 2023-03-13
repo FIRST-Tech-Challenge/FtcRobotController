@@ -64,8 +64,13 @@ public class DriverControls {
 
         if(stickyGamepad1.start){
             robot.driveTrain.toggleExtension();
+            if (robot.driveTrain.getChariotDeployed())
+                robot.crane.articulate(Crane.Articulation.manual); //allow the crane and turret to return to manual mode
         }
-
+        if(stickyGamepad1.a) {
+            //maintain the ability to pickup with Crane
+            robot.crane.pickupSequence();
+        }
         if(stickyGamepad1.b){
             robot.articulate(Robot.Articulation.DROP);
         }
@@ -154,10 +159,13 @@ public class DriverControls {
 
         if(stickyGamepad1.start){
             robot.driveTrain.toggleExtension();
+            if (robot.driveTrain.getChariotDeployed())
+                robot.crane.articulate(Crane.Articulation.manual); //allow the crane and turret to return to manual mode
         }
 
         if(stickyGamepad1.a) {
-            robot.articulate(Robot.Articulation.PICKUP);
+            //maintain the ability to pickup with Crane
+            robot.crane.pickupSequence();
         }
 
         if(stickyGamepad1.b){
