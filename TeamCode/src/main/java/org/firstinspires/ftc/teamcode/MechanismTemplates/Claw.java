@@ -82,9 +82,4 @@ public class Claw {
         }
         clawToggled = !clawToggled;
     }
-
-    public void update() {
-        isOpen.update();
-        isIntakePosition.update();
-    }
 }

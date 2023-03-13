@@ -20,7 +20,7 @@ public class SignalEdgeDetector {
         detectors.add(this);
     }
 
-    private void update() {
+    public void update() {
         oldState = newState;
         newState = condition.getAsBoolean();
     }
