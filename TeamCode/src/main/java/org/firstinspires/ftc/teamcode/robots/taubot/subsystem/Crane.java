@@ -104,7 +104,8 @@ public class Crane implements Subsystem {
     public static double BULB_OPEN_POS = 1500;
     public static double BULB_CLOSED_POS = 1750;
 
-    public static double TRANSFER_SHOULDER_ANGLE = 30;
+    public static double TRANSFER_SHOULDER_ANGLE = 50;  //angle at which transfer occurs
+    public static double TRANSFER_SHOULDER_FLIPANGLE = 80; //causes the gripperflipper to flip when the angle is high and the turret turns enough or the robot accellerates
     public static double TRANSFER_ARM_LENGTH = 0.05;
 
     public static double SAFE_SHOULDER_ANGLE = 30;
@@ -466,9 +467,7 @@ public class Crane implements Subsystem {
                 robot.turret.articulate(Turret.Articulation.home); //turret will not move AT ALL from home position no matter the target
                 break;
             case transfer: //
-                robot.turret.articulate(Turret.Articulation.transfer);
-                setShoulderTargetAngle(TRANSFER_SHOULDER_ANGLE);
-                setExtendTargetPos(TRANSFER_ARM_LENGTH);
+                if(Transfer()) target = Articulation.manual;
                 break;
             case init:
                 robot.turret.articulate(Turret.Articulation.fold);
@@ -525,6 +524,31 @@ public class Crane implements Subsystem {
         }
         return target;
     }
+    int transferStage = 0;
+    long transferTimer;
+    public boolean Transfer(){
+        switch (transferStage) {
+            case 0: //conditions for gripper flipper to flip out
+                robot.turret.articulate(Turret.Articulation.transfer);
+                setShoulderTargetAngle(TRANSFER_SHOULDER_FLIPANGLE);
+                setExtendTargetPos(TRANSFER_ARM_LENGTH);
+                transferTimer = futureTime(1.0);
+                transferStage++;
+                break;
+
+            case 1: //lower shoulder to transfer height
+                    if(System.nanoTime() >= transferTimer){
+                        setShoulderTargetAngle(TRANSFER_SHOULDER_ANGLE);
+                        return true;
+                    }
+                break;
+
+
+        }
+        return false;
+
+    }
+
 
     int postTransferStage = 0;
     long postTransferTimer = 0;
@@ -557,7 +581,9 @@ public class Crane implements Subsystem {
 
     public boolean atTransferPosition(){
         //checks if current angle is within error of the transfer angles
-        if(Math.abs(TRANSFER_SHOULDER_ANGLE-getShoulderAngle()) < SHOULDER_ERROR_MAX && Math.abs(TRANSFER_ARM_LENGTH-getExtendMeters()) < EXTENSION_ERROR_MAX && Turret.distanceBetweenAngles(robot.turret.getHeading(),180 + Math.toDegrees(robot.driveTrain.getRawHeading())) < TURRET_ERROR_MAX){
+        if(Math.abs(TRANSFER_SHOULDER_ANGLE-getShoulderAngle()) < SHOULDER_ERROR_MAX &&
+                Math.abs(TRANSFER_ARM_LENGTH-getExtendMeters()) < EXTENSION_ERROR_MAX &&
+                Turret.distanceBetweenAngles(robot.turret.getHeading(),180 + Math.toDegrees(robot.driveTrain.getRawHeading())) < TURRET_ERROR_MAX){
             return true;
         }
         return false;

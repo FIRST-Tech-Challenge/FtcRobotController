@@ -1,8 +1,6 @@
 package org.firstinspires.ftc.teamcode.robots.taubot.subsystem;
 
 import static org.firstinspires.ftc.teamcode.robots.taubot.util.Utils.craneIK;
-import static org.firstinspires.ftc.teamcode.robots.taubot.util.Utils.withinError;
-import static org.firstinspires.ftc.teamcode.robots.taubot.util.Utils.withinErrorPercent;
 import static org.firstinspires.ftc.teamcode.robots.taubot.util.Utils.wrapAngleRad;
 import static org.firstinspires.ftc.teamcode.util.utilMethods.futureTime;
 
@@ -20,7 +18,6 @@ import org.firstinspires.ftc.teamcode.robots.taubot.Field;
 import org.firstinspires.ftc.teamcode.robots.taubot.util.Constants;
 import org.firstinspires.ftc.teamcode.robots.taubot.util.DashboardUtil;
 import org.firstinspires.ftc.teamcode.statemachine.StateMachine;
-import org.firstinspires.ftc.teamcode.util.Vector3;
 import org.opencv.android.Utils;
 import org.opencv.core.CvType;
 import org.opencv.core.Mat;
@@ -387,70 +384,72 @@ public class Robot implements Subsystem {
         START_END_GAME, //use on a timer to automatically deploy carousel spinner 10 seconds before end game
 
         // tele-op articulations
-        PICKUP,
-        DROP,
-        DUMP_AND_SET_CRANE_FOR_TRANSFER,
-        GRAB_AND_TRANSFER,
+        TRANSFER,
+        DROP
 
-        AUTO_HIGH_TIER_RED,
-        AUTO_HIGH_TIER_BLUE,
-        AUTO_MIDDLE_TIER_RED,
-        AUTO_MIDDLE_TIER_BLUE,
-        AUTO_LOW_TIER_RED,
-        AUTO_LOW_TIER_BLUE,
-
-        DOUBLE_DUCK_GRAB_AND_TRANSFER,
-        DOUBLE_DUCK_DUMP_AND_SET_CRANE_FOR_TRANSFER
     }
 
     boolean unfolded = false;
 
     public Articulation articulate(Articulation target) {
         articulation = target;
+        if(isDriverDriving()) { //bypass the normal articulation flow when driving - this could short circuit other articulations leaving them in unknown stages
+            crane.articulate(Crane.Articulation.robotDriving); //keeps crane in safe position
+            underarm.articulate(UnderArm.Articulation.home); //keeps underarm in safe position
 
-        switch (this.articulation){
-            case MANUAL:
-                break;
-            case CALIBRATE:
-                if(crane.calibrate()){
-                    articulation = Articulation.INIT;
-                }
-                break;
-            case PICKUP:
-                if(pickup()){
-                    articulation = Articulation.MANUAL;
-                }
-                break;
-            case DROP:
-                if(drop()){
-                    articulation = Articulation.MANUAL;
-                }
-            case UNFOLD:
-                if(unfold()){
-                    unfolded = true;
-                    articulation = Articulation.MANUAL;
-                }
-                break;
-            case ROBOTDRIVE:
-                crane.articulate(Crane.Articulation.robotDriving); //keeps crane in safe position
-                underarm.articulate(UnderArm.Articulation.home); //keeps underarm in safe position
-                break;
-            case INIT:
-                crane.articulate(Crane.Articulation.init);
-                underarm.articulate(UnderArm.Articulation.fold);
         }
-
+        else{
+            switch (this.articulation) {
+                case MANUAL:
+                    break;
+                case CALIBRATE:
+                    if (crane.calibrate()) {
+                        articulation = Articulation.INIT;
+                    }
+                    break;
+                case TRANSFER:
+                    if (transfer()) {
+                        articulation = Articulation.MANUAL;
+                    }
+                    break;
+                case DROP:
+                    if (drop()) {
+                        articulation = Articulation.MANUAL;
+                    }
+                    break;
+                case UNFOLD:
+                    if (unfold()) {
+                        unfolded = true;
+                        articulation = Articulation.MANUAL;
+                    }
+                    break;
+                case INIT:
+                    crane.articulate(Crane.Articulation.init);
+                    underarm.articulate(UnderArm.Articulation.fold);
+                    break;
+            }
+        }
         return this.articulation;
     }
 
+    public boolean isDriverDriving() {
+        return driverDriving;
+    }
+
+    public void setDriverDriving(boolean driverDriving) {
+        this.driverDriving = driverDriving;
+    }
+
+    private boolean driverDriving = false;
+
     public void driverIsDriving(){
         if(unfolded)
-            articulate(Articulation.ROBOTDRIVE);
+            setDriverDriving(true);
     }
 
     public void driverNotDriving(){
         if(unfolded)
-            articulate(Articulation.MANUAL);
+            setDriverDriving(false);
     }
 
     public boolean checkCollision(double calcShoulder, double calcTurret){
@@ -499,27 +498,6 @@ public class Robot implements Subsystem {
         return false;
     }
 
-    int pickupStage = 0;
-    long pickupTimer = 0;
-
-    public boolean pickup(){
-        switch (pickupStage){
-            case 0:
-                underarm.grip();
-                pickupStage++;
-                break;
-            case 1:
-                if(transfer()){
-                    pickupStage++;
-                }
-                break;
-            case 2:
-                pickupStage = 0;
-                return true;
-        }
-        return false;
-    }
-
     int dropStage = 0;
     long dropTimer = 0;
 
@@ -546,26 +524,44 @@ public class Robot implements Subsystem {
     public boolean transfer(){
 
         switch (transferStage) {
-            case 0:
-                underarm.articulate(UnderArm.Articulation.transfer); //tell underarm to go to transfer angle
+            case 0: //move Crane to transfer position
+                //underarm.articulate((UnderArm.Articulation.manual));
                 crane.articulate(Crane.Articulation.transfer); //tells crane to go to transfer position
                 transferStage++;
+                transferTimer = futureTime(2.0);
                 break;
             case 1:
-                if(crane.atTransferPosition() && underarm.atTransfer()){
-                    crane.grab();
+                //if(crane.atTransferPosition() ){ // this test fails, trying a timer for now
+                if(System.nanoTime() >= transferTimer){
+                    underarm.articulate(UnderArm.Articulation.transfer); //tell underarm to go to transfer angle
+                    transferTimer = futureTime(1.0);
+                    transferStage++;
+                }
+                break;
+            case 2:
+                //if(crane.atTransferPosition()&& underarm.atTransfer()){
+                if(System.nanoTime() >= transferTimer){
+                    //crane.grab();
+                    transferTimer = futureTime(0.3);
+                    transferStage++;
+
+                }
+                break;
+            case 3:
+                if(System.nanoTime() >= transferTimer) {
                     underarm.release();
                     transferTimer = futureTime(0.3);
                     transferStage++;
                 }
                 break;
-            case 2:
+            case 4:
                 if(System.nanoTime() >= transferTimer) {
                     underarm.articulate(UnderArm.Articulation.home);
                     crane.articulate(Crane.Articulation.postTransfer);
                     transferStage = 0;
                     return true;
                 }
+                break;
         }
         return false;
     }

@@ -62,9 +62,13 @@ public class UnderArm implements Subsystem {
     public static double LASSO_CLOSED = 750;
     public static double LASSO_OPEN = 2500;
 
-    public static double TRANSFER_SHOULDER_ANGLE = 0;
-    public static double TRANSFER_ELBOW_ANGLE = 0;
+    public static double TRANSFER_SHOULDER_ANGLE = -19;
+    public static double TRANSFER_SHOULDER_APPROACH_ANGLE = -33;
+    public static double TRANSFER_ELBOW_ANGLE = -101;
 
+    public static double TRANSFER_WRIST_ANGLE = 101;
+
+    public static double TRANSFER_TURRET_ANGLE = -14;
     boolean lassoGripped = false;
 
     public static double UNDERARM_HEIGHT = 7; //height of rotation of shoulder motor   INCHES
@@ -293,17 +297,18 @@ public class UnderArm implements Subsystem {
     boolean atTransfer = false;
     public boolean goToTransfer(){
         switch (transferStage) {
-            case 0: //sets home position
+            case 0: //sets the approach position that gets the cone under the bulb gripper
                 atTransfer = false;
-                robot.driveTrain.tuck();
-                setTurretTargetAngle(0);
+                setTurretTargetAngle(TRANSFER_TURRET_ANGLE);
                 setElbowTargetAngle(TRANSFER_ELBOW_ANGLE);
-                setShoulderTargetAngle(TRANSFER_SHOULDER_ANGLE);
-                transferTimer = futureTime(0.5);
+                setShoulderTargetAngle(TRANSFER_SHOULDER_APPROACH_ANGLE);
+                setWristTargetAngle(TRANSFER_WRIST_ANGLE);
+                transferTimer = futureTime(1.0);
                 transferStage++;
                 break;
-            case 1:
+            case 1: //final lift to engage grippers
                 if (System.nanoTime() > transferTimer) {
+                    setShoulderTargetAngle(TRANSFER_SHOULDER_ANGLE);
                     transferStage = 0;
                     atTransfer = true;
                     return true;

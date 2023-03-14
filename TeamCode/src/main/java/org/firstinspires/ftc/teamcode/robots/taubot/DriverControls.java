@@ -67,6 +67,12 @@ public class DriverControls {
             if (robot.driveTrain.getChariotDeployed())
                 robot.crane.articulate(Crane.Articulation.manual); //allow the crane and turret to return to manual mode
         }
+
+        if (stickyGamepad1.guide){ //this is the Logitech button
+            robot.articulate((Robot.Articulation.TRANSFER));
+
+        }
+
         if(stickyGamepad1.a) {
             //maintain the ability to pickup with Crane
             robot.crane.pickupSequence();
@@ -161,6 +167,11 @@ public class DriverControls {
             robot.driveTrain.toggleExtension();
             if (robot.driveTrain.getChariotDeployed())
                 robot.crane.articulate(Crane.Articulation.manual); //allow the crane and turret to return to manual mode
+        }
+
+        if (stickyGamepad1.guide){ //this is the Logitech button
+            robot.articulate((Robot.Articulation.TRANSFER));
+
         }
 
         if(stickyGamepad1.a) {
