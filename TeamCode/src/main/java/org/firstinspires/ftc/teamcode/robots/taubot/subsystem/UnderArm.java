@@ -423,6 +423,14 @@ public class UnderArm implements Subsystem {
         return false;
     }
 
+    //this is ugly, but a way to cleanup stages in interrupted underarm articulations
+    public void resetArticulations(){
+        articulation = Articulation.manual;
+        recoverStage = 0;
+        substationStage = 0;
+        transferStage = 0;
+        homeStage = 0;
+    }
     int recoverStage = 0;
     long recoverTimer = 0;
 
@@ -433,7 +441,7 @@ public class UnderArm implements Subsystem {
      */
 public boolean goSubstationRecover() {
             switch (recoverStage) {
-        case 0: //sets home position
+        case 0: //sets vertical position
             setElbowTargetAngle(0);
             setShoulderTargetAngle(0);
             setWristTargetAngle(0);

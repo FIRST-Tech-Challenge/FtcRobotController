@@ -62,7 +62,7 @@ public class Crane implements Subsystem {
     // This initial measurement is the range of motion from fully up (7.25 degrees from vertical) to horizontal, divided by that angle range
     // note the arm was moved by hand, not under motor power, and the angle encoder was not properly secured
     public static double SHOULDER_DEG_MIN = -10; // degrees down from horizontal - negative angles are counter clockwise while looking at the left side of the bot
-    public static double SHOULDER_DEG_MAX = 78; //max elevation of shoulder when stalled up - measured by inclinometer
+    public static double SHOULDER_DEG_MAX = 79; //max elevation of shoulder when stalled up - measured by inclinometer
     public static double SHOULDER_DIRECT_TICKS_PER_DEGREE = (1937-88)/(SHOULDER_DEG_MAX); //todo verify/update when sensor secured and robot is more burned in - before tuning precision articulation
 
     public static double SHOULDER_TICK_MAX = 1849;

@@ -349,12 +349,14 @@ public class DriverControls {
 
         if(stickyGamepad2.a){
             //robot.articulate(Robot.Articulation.PICKUP);
+            robot.underarm.resetArticulations();
             robot.underarm.articulate(UnderArm.Articulation.substationHover);
         }
 
         if (stickyGamepad2.b) {
             //underarm driver might have re-positioned the hover, so save the values for next time
             robot.underarm.SaveHoverPositions();
+            robot.underarm.resetArticulations();
             robot.underarm.articulate(UnderArm.Articulation.substationPickup);
         }
 

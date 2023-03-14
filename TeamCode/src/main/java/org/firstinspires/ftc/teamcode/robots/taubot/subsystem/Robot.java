@@ -556,8 +556,9 @@ public class Robot implements Subsystem {
                 break;
             case 4:
                 if(System.nanoTime() >= transferTimer) {
-                    underarm.articulate(UnderArm.Articulation.home);
-                    crane.articulate(Crane.Articulation.postTransfer);
+                    underarm.grip(); //need to retract the loop for pass through
+                    underarm.articulate(UnderArm.Articulation.substationHover);
+                    crane.articulate(Crane.Articulation.postTransfer); //this will actually deliver the cone to the next target pole
                     transferStage = 0;
                     return true;
                 }
