@@ -90,7 +90,6 @@ public class RedTerminalAuto extends PowerPlay_AprilTagDetectionDeposit {
             bot.update();
             armControl.update(telemetry);
             slideControl.update(telemetry);
-            clawControl.update();
         }
     }
 

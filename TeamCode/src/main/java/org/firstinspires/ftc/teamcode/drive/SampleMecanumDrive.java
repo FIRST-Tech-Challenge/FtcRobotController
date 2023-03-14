@@ -48,7 +48,7 @@ import static org.firstinspires.ftc.teamcode.drive.DriveConstants.kA;
 import static org.firstinspires.ftc.teamcode.drive.DriveConstants.kStatic;
 import static org.firstinspires.ftc.teamcode.drive.DriveConstants.kV;
 
-import ftc.rogue.blacksmith.util.kalman.KalmanThreeWheelLocalizer;
+//import ftc.rogue.blacksmith.util.kalman.KalmanThreeWheelLocalizer;
 
 
 @Config
@@ -174,7 +174,8 @@ public class SampleMecanumDrive extends MecanumDrive {
 
         // TODO: if desired, use setLocalizer() to change the localization method
         // for instance, setLocalizer(new ThreeTrackingWheelLocalizer(...));
-        //setLocalizer(new StandardTrackingWheelLocalizer(hardwareMap));
+        setLocalizer(new StandardTrackingWheelLocalizer(hardwareMap));
+        /*
         setLocalizer(new KalmanThreeWheelLocalizer(new StandardTrackingWheelLocalizer(hardwareMap, this))
                 .setHeadingFilterCoeffs(R0, Q0) //These values need to be tuned and put it in the variables above
                 .setWheelPos1FilterCoeffs(R1, Q1) //set R0-R5 and Q0-Q5 to whatever values you have tuned.
@@ -182,6 +183,8 @@ public class SampleMecanumDrive extends MecanumDrive {
                 .setHeadingVelocityFilterCoeffs(R3, Q3)
                 .setWheelPos1VelocityFilterCoeffs(R4, Q4)
                 .setWheelPos2VelocityFilterCoeffs(R5, Q5));
+
+         */
         trajectorySequenceRunner = new TrajectorySequenceRunner(follower, HEADING_PID);
     }
 

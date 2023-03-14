@@ -88,7 +88,7 @@ public class PP_MecanumTeleOp extends OpMode
 
         armControl = new Arm(hardwareMap);
         slideControl = new Slide(hardwareMap);
-        clawControl = new Claw(hardwareMap);
+        clawControl = new Claw(hardwareMap, () -> gamepad2.right_bumper);
         OdoPod odoControl = new OdoPod(hardwareMap);
         alignmentControl = new PoleAlignment(hardwareMap);
         odoControl.retract();

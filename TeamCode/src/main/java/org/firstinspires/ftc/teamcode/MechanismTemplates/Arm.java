@@ -21,14 +21,14 @@ public class Arm{
 //    public static double armKf = 0.0000001;
 
     // New PID values
-    public static double armKpUp = 0.014; // old is 0.012
-    public static double armKpDown = 0.0035;
+    public static double armKpUp = 0.005; // old is 0.012
+    public static double armKpDown = 0.00118;
     public static double armKi = 0.00001;
-    public static double armKd = 0.00002;
+    public static double armKd = 0.00007;
     public static double armKf = 0;
-    public static double EXTAKE_POS = 171; // 180 old val; in degrees of absolute encoder
-    public static double INTAKE_POS = 65;
-    public static double AUTOEXTAKE_POS = 169; //179.2
+    public static double EXTAKE_POS = 270; // 180 old val; in degrees of absolute encoder
+    public static double INTAKE_POS = 55; // 65 old val
+    public static double AUTOEXTAKE_POS = 276; //169
 
     // Initially set to 0 because we only want the claw to move when given input from the controller
     // initializing the targetPos value to a greater positive value would cause the update() method to
@@ -37,7 +37,7 @@ public class Arm{
     private double targetPos = 65;
 
     public Arm(HardwareMap hardwareMap){
-        armMotor = new Motor(hardwareMap, "ARM", Motor.GoBILDA.RPM_84); // Pin 0 on control hub -> pin 1 control hub
+        armMotor = new Motor(hardwareMap, "ARM", Motor.GoBILDA.RPM_84); // pin 1 control hub
         armMotor.setZeroPowerBehavior(Motor.ZeroPowerBehavior.BRAKE);
         armMotor.setRunMode(Motor.RunMode.VelocityControl);
         //armMotor.resetEncoder(); // We want the arm to start at a position of 0
@@ -78,6 +78,7 @@ public class Arm{
     public void setExtake(){
         targetPos = EXTAKE_POS;
     }
+
     public void setAutoExtake(){targetPos = AUTOEXTAKE_POS;}
 
     public void setIntake(){
@@ -87,5 +88,4 @@ public class Arm{
     public void setCustom(int custom){
         targetPos=custom;
     }
-
 }

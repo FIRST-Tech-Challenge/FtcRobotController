@@ -24,9 +24,9 @@ public class Claw {
     public static double WRIST_EXTAKE_POSITION = 0.915; // wrist rotates to extake on junction
 
     SignalEdgeDetector isOpen;
-    SignalEdgeDetector isIntakePosition;
+    //SignalEdgeDetector isIntakePosition;
 
-    public Claw(HardwareMap hardwareMap, BooleanSupplier rightBumper, BooleanSupplier aButton) {
+    public Claw(HardwareMap hardwareMap, BooleanSupplier rightBumper) {
 
         // Control Hub Pins
         wristJoint = hardwareMap.get(Servo.class, "WRIST"); // Pin 0
@@ -37,7 +37,7 @@ public class Claw {
         wristJoint.setPosition(WRIST_INTAKE_POSITION);
 
         isOpen = new SignalEdgeDetector(rightBumper);
-        isIntakePosition = new SignalEdgeDetector(aButton);
+        //isIntakePosition = new SignalEdgeDetector(aButton);
     }
 
     // Overloaded method for autonomous
