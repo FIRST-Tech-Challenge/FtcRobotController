@@ -63,8 +63,8 @@ public class Constants {
     public static final double CONE_STACK_CENTERING_PROPORTIONAL_KP = -0.0003;
     public static final double CONE_STACK_CENTERING_MAX_SPEED = 0.25;
 
-    public static final int JUNCTION_TOP_TOLERANCE = 75;
-    public static final double JUNCTION_TOP_CENTERING_KP = -0.0003;
+    public static final int JUNCTION_TOP_TOLERANCE = 50;
+    public static final double JUNCTION_TOP_CENTERING_KP = 0.0002;
 
     public static final Scalar LOWER_RED = new Scalar(20, 0, 0);
     public static final Scalar UPPER_RED = new Scalar(160, 255, 252);

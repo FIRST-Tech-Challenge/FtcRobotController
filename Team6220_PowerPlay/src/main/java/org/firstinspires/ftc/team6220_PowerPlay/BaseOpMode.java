@@ -121,8 +121,9 @@ public abstract class BaseOpMode extends LinearOpMode {
         originalAngle = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle;
 
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
-        robotCamera = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "RobotCamera"), cameraMonitorViewId);
-        grabberCamera = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "GrabberCamera"));
+
+        robotCamera = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "RobotCamera"));
+        grabberCamera = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "GrabberCamera"), cameraMonitorViewId);
 
         aprilTagDetectionPipeline = new AprilTagDetectionPipeline();
         robotCameraPipeline = new RobotCameraPipeline();
@@ -229,12 +230,14 @@ public abstract class BaseOpMode extends LinearOpMode {
         double xOffset, yOffset;
 
         do {
-            xOffset = pipeline.xPosition - Constants.CAMERA_CENTER_X;
-            yOffset = Constants.CAMERA_CENTER_Y - pipeline.yPosition;
+            xOffset = pipeline.xPosition-Constants.CAMERA_CENTER_X;
+            yOffset = Constants.CAMERA_CENTER_Y-pipeline.yPosition;
 
             // center the cone on the junction top
             if (pipeline.detected) {
                 driveWithIMU(junctionTopPixelsMotorPower(xOffset), junctionTopPixelsMotorPower(yOffset), 0.0);
+                telemetry.addData("x", pipeline.xPosition-Constants.CAMERA_CENTER_X);
+                telemetry.addData("y", Constants.CAMERA_CENTER_Y-pipeline.yPosition);
                 telemetry.addData("xMotorPower", junctionTopPixelsMotorPower(xOffset));
                 telemetry.addData("yMotorPower", junctionTopPixelsMotorPower(yOffset));
                 telemetry.update();
