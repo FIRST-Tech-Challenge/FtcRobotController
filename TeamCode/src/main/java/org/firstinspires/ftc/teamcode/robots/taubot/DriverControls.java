@@ -69,8 +69,10 @@ public class DriverControls {
         }
 
         if (stickyGamepad1.guide){ //this is the Logitech button
+            robot.crane.resetArticulations();
+            robot.underarm.resetArticulations();
+            robot.resetArticulations();
             robot.articulate((Robot.Articulation.TRANSFER));
-
         }
 
         if(stickyGamepad1.a) {
@@ -303,6 +305,7 @@ public class DriverControls {
         if(stickyGamepad1.dpad_down){
             robot.articulate(Robot.Articulation.CALIBRATE);
         }
+
         /*
         if(stickyGamepad1.dpad_down || stickyGamepad2.dpad_down)
             if (robot.crane.shoulderInitialized)

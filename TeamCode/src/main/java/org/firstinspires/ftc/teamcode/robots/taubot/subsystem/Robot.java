@@ -518,7 +518,11 @@ public class Robot implements Subsystem {
         }
         return false;
     }
-
+    public void resetArticulations(){
+        transferStage=0;
+        dropStage=0;
+        unfoldStage = 0;
+    }
     int transferStage = 0;
     long transferTimer = 0;
     public boolean transfer(){
@@ -531,23 +535,27 @@ public class Robot implements Subsystem {
                 transferTimer = futureTime(2.0);
                 break;
             case 1:
-                //if(crane.atTransferPosition() ){ // this test fails, trying a timer for now
+                //if(crane.atTransferPosition() ){ //todo debug - temp switched to a timer because crane.atTransferPosition() not working
                 if(System.nanoTime() >= transferTimer){
                     underarm.articulate(UnderArm.Articulation.transfer); //tell underarm to go to transfer angle
                     transferTimer = futureTime(1.0);
                     transferStage++;
                 }
                 break;
-            case 2:
-                //if(crane.atTransferPosition()&& underarm.atTransfer()){
+            case 2: //this is where we grab the cone with the bulb gripper
+                //if(crane.atTransferPosition()&& underarm.atTransfer()){ //todo debug - temp switched to a timer because crane.atTransferPosition() not working
                 if(System.nanoTime() >= transferTimer){
-                    //crane.grab();
+                    //crane.grab(); //TODO UNCOMMENT TO ALLOW ACTUAL GRAB BY CRANE WHEN POSITIONING IS ALL WORKED OUT
                     transferTimer = futureTime(0.3);
+                    //TODO TRIED VARIOUS THINGS BELOW TO ABORT/STALL SO WE COULD LOOK AT FINAL TRANSFER POSITION BUT THEY HAVE DIFFERENT SIDE EFFECTS FROM THE COMBINATIONS OF ARTICULATIONS
+                    //CAN TEMPORARILY EXIT HERE FOR DEBUGGING
+                    //boolean tuning = true; if (tuning) {transferStage = 0; return true;}
+                    //todo TEMPORARILY STALLING HERE SO WE CAN SEE THE TRANSFER POSITION, UNCOMMENT NEXT LINE WHEN TUNED
                     transferStage++;
 
                 }
                 break;
-            case 3:
+            case 3:  //here we release the underarm's gripper
                 if(System.nanoTime() >= transferTimer) {
                     underarm.release();
                     transferTimer = futureTime(0.3);
@@ -556,9 +564,10 @@ public class Robot implements Subsystem {
                 break;
             case 4:
                 if(System.nanoTime() >= transferTimer) {
-                    underarm.grip(); //need to retract the loop for pass through
+                    underarm.grip(); //need to retract the gripper for pass through
                     underarm.articulate(UnderArm.Articulation.substationHover);
-                    crane.articulate(Crane.Articulation.postTransfer); //this will actually deliver the cone to the next target pole
+                    //TODO UNCOMMENT NEXT LINE WHEN YOU WANT THE CRANE TO ACTUALLY ATTEMPT THE CONE DROP - BE SURE FIELD POSITIONING IS RIGHT
+                    //crane.articulate(Crane.Articulation.postTransfer); //this will actually deliver the cone to the next target pole
                     transferStage = 0;
                     return true;
                 }

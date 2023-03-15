@@ -150,7 +150,7 @@ public class UnderArm implements Subsystem {
         Test2(90,90,0),
         Test3(0,90,0),
         Test4(90,0,30),
-        SafePos(0,0,0,0,MAX_CHASSIS_LENGTH),
+        SafePos(0,0,0,0,MIN_CHASSIS_LENGTH),
         FoldPosition(FOLDPOS_SHOULDER_ANGLE,FOLDPOS_ELBOW_ANGLE, 0, FOLDPOS_TURRET_ANGLE,MIN_CHASSIS_LENGTH),
         FoldTransferPosition(FOLDPOS_SHOULDER_ANGLE+30,FOLDPOS_ELBOW_ANGLE,0,FOLDPOS_TURRET_ANGLE,MAX_CHASSIS_LENGTH);
 
@@ -381,7 +381,7 @@ public class UnderArm implements Subsystem {
         switch (substationStage) {
             case 0: //rotate wrist down to horizontal
                 WRIST_SPEED = 270;
-                setWristTargetAngle(-16);
+                setWristTargetAngle(-15);
                 substationTimer = futureTime(0.3);
                 substationStage++;
 
@@ -391,7 +391,7 @@ public class UnderArm implements Subsystem {
                     WRIST_SPEED = 90;
                     setShoulderTargetAngle(70);
                     substationStage++;
-                    substationTimer = futureTime(0.3);
+                    substationTimer = futureTime(3); //0.3 todo this is set long from manual cone placement in testing
                 }
                 break;
 

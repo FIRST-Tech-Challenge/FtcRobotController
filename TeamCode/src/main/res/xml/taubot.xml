@@ -13,7 +13,7 @@
             <DigitalDevice name="turretIndex" port="0" />
             <AnalogInput name="gripperLeft" port="0" />
             <AnalogInput name="gripperRight" port="1" />
-            <REV_VL53L0X_RANGE_SENSOR name="distTarget" port="0" bus="2" />
+            <REV_VL53L0X_RANGE_SENSOR name="nudgeDist" port="0" bus="2" />
             <LynxEmbeddedIMU name="turretIMU" port="0" bus="0" />
             <AdafruitBNO055IMU name="shoulderIMU" port="0" bus="1" />
         </LynxModule>

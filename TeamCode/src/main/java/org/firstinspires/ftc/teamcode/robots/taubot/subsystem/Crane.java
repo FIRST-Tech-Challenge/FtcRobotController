@@ -25,6 +25,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 import org.firstinspires.ftc.robotcore.external.navigation.Position;
 import org.firstinspires.ftc.robotcore.external.navigation.Velocity;
@@ -104,7 +105,7 @@ public class Crane implements Subsystem {
     public static double BULB_OPEN_POS = 1500;
     public static double BULB_CLOSED_POS = 1750;
 
-    public static double TRANSFER_SHOULDER_ANGLE = 50;  //angle at which transfer occurs
+    public static double TRANSFER_SHOULDER_ANGLE = 55;  //angle at which transfer occurs
     public static double TRANSFER_SHOULDER_FLIPANGLE = 80; //causes the gripperflipper to flip when the angle is high and the turret turns enough or the robot accellerates
     public static double TRANSFER_ARM_LENGTH = 0.05;
 
@@ -191,7 +192,7 @@ public class Crane implements Subsystem {
             shoulderMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
             bulbServo = hardwareMap.get(Servo.class, "servoGripper");
             nudgeStickServo = hardwareMap.get(Servo.class, "nudgeSwivel");
-            //nudgeDistanceSensor = hardwareMap.get(DistanceSensor.class, "nudgeDist");
+            nudgeDistanceSensor = hardwareMap.get(DistanceSensor.class, "nudgeDist");
             //turretIndex = hardwareMap.get(DigitalChannel.class, "turretIndex");
             //turretIndex.setMode(DigitalChannel.Mode.INPUT);
 
@@ -467,7 +468,7 @@ public class Crane implements Subsystem {
                 robot.turret.articulate(Turret.Articulation.home); //turret will not move AT ALL from home position no matter the target
                 break;
             case transfer: //
-                if(Transfer()) target = Articulation.manual;
+                if(Transfer()) articulation = Articulation.manual;
                 break;
             case init:
                 robot.turret.articulate(Turret.Articulation.fold);
@@ -524,11 +525,18 @@ public class Crane implements Subsystem {
         }
         return target;
     }
+
+    public void resetArticulations(){
+        articulation = Articulation.manual;
+        transferStage = 0;
+        postTransferStage = 0;
+    }
     int transferStage = 0;
     long transferTimer;
     public boolean Transfer(){
         switch (transferStage) {
             case 0: //conditions for gripper flipper to flip out
+                nudgeCenter(true);
                 robot.turret.articulate(Turret.Articulation.transfer);
                 setShoulderTargetAngle(TRANSFER_SHOULDER_FLIPANGLE);
                 setExtendTargetPos(TRANSFER_ARM_LENGTH);
@@ -536,19 +544,25 @@ public class Crane implements Subsystem {
                 transferStage++;
                 break;
 
-            case 1: //lower shoulder to transfer height
+            case 1: //nudge flipper
+                if(System.nanoTime() >= transferTimer) {
+                    nudgeLeft();
+                    transferTimer = futureTime(.5);
+                    transferStage++;
+                }
+                break;
+
+            case 2: //lower shoulder to transfer height
                     if(System.nanoTime() >= transferTimer){
                         setShoulderTargetAngle(TRANSFER_SHOULDER_ANGLE);
+                        transferStage = 0;
                         return true;
                     }
                 break;
 
-
         }
         return false;
-
     }
-
 
     int postTransferStage = 0;
     long postTransferTimer = 0;
@@ -910,7 +924,7 @@ public class Crane implements Subsystem {
     public void update(Canvas fieldOverlay) {
 
         calculateFieldTargeting(fieldPositionTarget);
-        //nudgeDistance = nudgeDistanceSensor.getDistance(DistanceUnit.METER);
+        nudgeDistance = nudgeDistanceSensor.getDistance(DistanceUnit.METER);
 
         robotPosition = new Vector3(robot.driveTrain.getPoseEstimate().getX(),robot.driveTrain.getPoseEstimate().getY(),shoulderHeight);
 
