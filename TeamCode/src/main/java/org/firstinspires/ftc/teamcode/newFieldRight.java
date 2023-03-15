@@ -167,7 +167,7 @@ public class newFieldRight extends LinearOpMode {
         sleep(1200);
 
         movement.reset(robot);
-        movement.Forward(950, robot, 0.5);
+        movement.Forward(1050, robot, 0.5);
         movement.move(robot);
 
         sleep(1000);
@@ -189,24 +189,32 @@ public class newFieldRight extends LinearOpMode {
         robot.liftLeft.setPower(0.0);
         robot.liftRight.setPower(0.0);
         sleep(100);
-        robot.claw.setPosition(0.35);
+        robot.claw.setPosition(0.45);
 
         sleep(2500);
-        movement.reset(robot);
-        movement.Left(600, robot, 0.5);
-        movement.move(robot);
-        sleep(2000);
-        if (sawOrange==true){
 
+        if (sawOrange==true){
+            movement.reset(robot);
+            movement.Right(600, robot, 0.5);
+            movement.move(robot);
+            sleep(2000);
         }
         if (sawGreen==true){
             movement.reset(robot);
-            movement.Backward(1100, robot, 0.5);
+            movement.Right(600, robot, 0.5);
+            movement.move(robot);
+            sleep(2000);
+            movement.reset(robot);
+            movement.Backward(1000, robot, 0.5);
             movement.move(robot);
         }
         if (sawPurple==true){
             movement.reset(robot);
-            movement.Backward(2200, robot, 0.5);
+            movement.Left(700, robot, 0.5);
+            movement.move(robot);
+            sleep(2000);
+            movement.reset(robot);
+            movement.Backward(2100, robot, 0.5);
             movement.move(robot);
         }
         sleep(10000);

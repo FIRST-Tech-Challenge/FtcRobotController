@@ -31,7 +31,6 @@ package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.ClassFactory;
@@ -159,6 +158,24 @@ public class redduckspin extends LinearOpMode {
     void dropConeOnPole(HardwarePushbot robot,boolean sawOrange,boolean sawGreen, boolean sawPurple){
         Movement movement = new Movement();
 
+        robot.liftLeft.setPower(0.5);
+        robot.liftRight.setPower(0.5);
+
+        sleep(1000);
+        robot.liftLeft.setPower(0.0);
+        robot.liftRight.setPower(0.0);
+        sleep(1000);
+        robot.liftLeft.setPower(0.5);
+        sleep(1000);
+        robot.liftLeft.setPower(0.0);
+        robot.liftRight.setPower(0.0);
+        sleep(1000);
+        robot.liftRight.setPower(0.5);
+        sleep(1000);
+        robot.liftLeft.setPower(0.0);
+        robot.liftRight.setPower(0.0);
+        sleep(1000);
+        /*
         movement.reset(robot);
         movement.Backward(50, robot, 0.5);
         movement.move(robot);
@@ -168,7 +185,7 @@ public class redduckspin extends LinearOpMode {
         sleep(1000);
 
         movement.reset(robot);
-        movement.Forward(1200, robot, 0.5);
+        movement.Forward(1050, robot, 0.5);
         movement.move(robot);
 
         sleep(1200);
@@ -186,8 +203,7 @@ public class redduckspin extends LinearOpMode {
         robot.liftLeft.setPower(0.0);
         robot.liftRight.setPower(0.0);
         //sleep(100);
-        robot.claw.setPosition(0.35);
-
+        robot.claw.setPosition(0.45);
         sleep(2500);
         movement.reset(robot);
         movement.Left(600, robot, 0.5);
@@ -231,10 +247,7 @@ public class redduckspin extends LinearOpMode {
             movement.reset(robot);
             movement.Right(600, robot, 0.5);
         }
-        sleep(10000);
+        sleep(10000);*/
 
-       /* movement.reset(robot);
-        movement.Rrotate(180, robot, 0.5);
-        movement.move(robot);*/
     }}
 

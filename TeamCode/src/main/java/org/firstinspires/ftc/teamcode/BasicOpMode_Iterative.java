@@ -49,7 +49,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
  * Remove or comment out the @Disabled line to add this opmode to the Driver Station OpMode list
  */
 
-@TeleOp(name="Chaise avec baguette et un lapin", group="Iterative Opmode")
+@TeleOp(name="Bigger Neater", group="Iterative Opmode")
 public class BasicOpMode_Iterative extends OpMode
 {
     // Declare OpMode members.
@@ -71,6 +71,7 @@ public class BasicOpMode_Iterative extends OpMode
      * Code to run ONCE when the driver hits INIT
      */
     @Override
+
     public void init() {
         telemetry.addData("Status", "Initialized");
 
@@ -155,27 +156,39 @@ public class BasicOpMode_Iterative extends OpMode
         liftPower=.5;
 
         if(gamepad1.dpad_up){
-
+            FrontleftPower = +0.25;
+            FrontrightPower =+0.25;
+            BackleftPower =  -0.25;
+            BackrightPower = -0.25;
         }
 
         if(gamepad1.dpad_right){
-
+            FrontleftPower = +0.25;
+            FrontrightPower =-0.25;
+            BackleftPower =  +0.25;
+            BackrightPower = -0.25;
         }
 
         if(gamepad1.dpad_left){
-
+            FrontleftPower = -0.25;
+            FrontrightPower =+0.25;
+            BackleftPower =  -0.25;
+            BackrightPower = +0.25;
         }
 
         if(gamepad1.dpad_down){
-
+            FrontleftPower = -0.25;
+            FrontrightPower =-0.25;
+            BackleftPower =  +0.25;
+            BackrightPower = +0.205;
         }
 
         if(gamepad1.right_bumper){
-            claw.setPosition(buttGex);
-            buttGex = buttGex-0.025;
+            claw.setPosition(0.0);
+            //buttGex = buttGex-0.1;
         }else if (gamepad1.left_bumper){
-            claw.setPosition(0.35);
-            buttGex=0;
+            claw.setPosition(0.45);
+            //buttGex=0.0;
         }
 
         if(gamepad1.left_trigger >= .3){
@@ -193,6 +206,8 @@ public class BasicOpMode_Iterative extends OpMode
         }else if (gamepad1.right_bumper || gamepad1.left_bumper ) {
             liftLeft.setPower(liftPower * 0.35);
             liftRight.setPower(liftPower * 0.35);
+
+
         }else{
             liftLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
             liftRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);

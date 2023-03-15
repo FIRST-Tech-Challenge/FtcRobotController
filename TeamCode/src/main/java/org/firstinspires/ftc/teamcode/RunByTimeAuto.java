@@ -121,20 +121,26 @@ public class RunByTimeAuto extends LinearOpMode {
         telemetry.addData(colorPreset.name(), "");
         telemetry.update();
         sleep(1000);
-        dropConeOnPole(robot);
+        boolean sawOrange=false;
+        boolean sawPurple=false;
+        boolean sawGreen =false;
+
 
         switch (colorPreset) {
             case PURE_ORANGE:
                 telemetry.addData("orange was detected", "");
                 telemetry.update();
+                sawOrange=true;
                 break;
             case PURE_GREEN:
                 telemetry.addData("green was detected", "");
                 telemetry.update();
+                sawGreen=true;
                 break;
             case PURE_PURPLE:
                 telemetry.addData("purple was detected", "");
                 telemetry.update();
+                sawPurple=true;
                 break;
             case PURE_GRAY:
                 telemetry.addData("oh no its gray so sad", "");
@@ -145,52 +151,85 @@ public class RunByTimeAuto extends LinearOpMode {
                 telemetry.update();
                 break;
         }
+        dropConeOnPole(robot, sawOrange,sawGreen,sawPurple);
         sleep(1000);
     }
 
-    void dropConeOnPole(HardwarePushbot robot){
+    void dropConeOnPole(HardwarePushbot robot,boolean sawOrange,boolean sawGreen, boolean sawPurple){
         Movement movement = new Movement();
+
+        movement.reset(robot);
+        movement.Backward(50, robot, 0.5);
+        movement.move(robot);
 
         robot.claw.setPosition(0);
 
-        sleep(1100);
+        sleep(1000);
 
         movement.reset(robot);
-        movement.Backward(1200, robot, 0.5);
+        movement.Forward(1000, robot, 0.5);
         movement.move(robot);
 
-        sleep(2000);
+        sleep(1200);
 
-        robot.liftLeft.setPower(0.7);
-        robot.liftRight.setPower(0.7);
-
-        sleep(500);
+        robot.liftLeft.setPower(0.6);
+        robot.liftRight.setPower(0.6);
 
         movement.reset(robot);
-        movement.Right(2600,robot,0.5);
+        movement.Right(2100, robot, 0.5);
         movement.move(robot);
 
-        sleep(500);
-        robot.liftLeft.setPower(0.8);
-        robot.liftRight.setPower(0.8);
-        sleep(3000);
-
-        movement.reset(robot);
-        movement.Rrotate(45,robot,0.5);
-        movement.move(robot);
-
-        sleep(1500);
-
+        sleep(4000);
         robot.liftLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
         robot.liftRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
         robot.liftLeft.setPower(0.0);
         robot.liftRight.setPower(0.0);
-
+        //sleep(100);
+        robot.claw.setPosition(0.45);
+        sleep(2500);
+        movement.reset(robot);
+        movement.Right(600, robot, 0.5);
+        movement.move(robot);
+        sleep(1500);
+        movement.reset(robot);
+        movement.Rrotate(180, robot, 0.5);
+        movement.move(robot);
+        robot.liftLeft.setPower(0.6);
+        robot.liftRight.setPower(0.6);
+        sleep(1500);
+        robot.liftLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        robot.liftRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        robot.liftLeft.setPower(0.0);
+        robot.liftRight.setPower(0.0);
+        movement.reset(robot);
+        movement.Forward(2100,robot,0.5);
+        movement.move(robot);
+        sleep(2000);
+        robot.claw.setPosition(0.0);
         sleep(500);
+        robot.liftLeft.setPower(0.6);
+        robot.liftRight.setPower(0.6);
+        movement.reset(robot);
+        movement.Lrotate(90,robot,0.5);
+        movement.move(robot);
+        sleep(2000);
+        movement.reset(robot);
+        movement.Right(2100, robot, 0.5);
+        sleep(1000);
 
-        robot.claw.setPosition(0.3);
-
-        sleep(500);
+        if (sawOrange==true){
+            movement.reset(robot);
+            movement.Right(1800,robot,0.5);
+        }
+        if (sawGreen==true){
+            movement.reset(robot);
+            movement.Right(600, robot, 0.5);
+        }
+        if (sawPurple==true){
+            movement.reset(robot);
+            movement.Left(600, robot, 0.5);
+        }
+        sleep(10000);
 /*
         robot.liftLeft.setPower(0.8);
         robot.liftRight.setPower(0.8);
