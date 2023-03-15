@@ -235,7 +235,7 @@ public abstract class BaseOpMode extends LinearOpMode {
 
             // center the cone on the junction top
             if (pipeline.detected) {
-                driveWithIMU(junctionTopPixelsMotorPower(xOffset), junctionTopPixelsMotorPower(yOffset), 0.0);
+                driveWithoutIMU(junctionTopPixelsMotorPower(xOffset), junctionTopPixelsMotorPower(yOffset), 0.0);
                 telemetry.addData("x", pipeline.xPosition-Constants.CAMERA_CENTER_X);
                 telemetry.addData("y", Constants.CAMERA_CENTER_Y-pipeline.yPosition);
                 telemetry.addData("xMotorPower", junctionTopPixelsMotorPower(xOffset));

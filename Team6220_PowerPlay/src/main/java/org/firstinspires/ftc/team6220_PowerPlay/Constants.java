@@ -57,14 +57,14 @@ public class Constants {
     public static final int CAMERA_CENTER_X = CAMERA_X / 2;
     public static final int CAMERA_CENTER_Y = CAMERA_Y / 2;
 
-    public static final int CONE_WIDTH = 320;
+    public static final int CONE_WIDTH = 400;
     public static final double CONE_STACK_WIDTH_KP = -0.00005;
     public static final double CONE_STACK_CENTERING_KP = -0.0005;
     public static final double CONE_STACK_CENTERING_PROPORTIONAL_KP = -0.0003;
     public static final double CONE_STACK_CENTERING_MAX_SPEED = 0.25;
 
     public static final int JUNCTION_TOP_TOLERANCE = 50;
-    public static final double JUNCTION_TOP_CENTERING_KP = 0.0002;
+    public static final double JUNCTION_TOP_CENTERING_KP = 0.0004;
 
     public static final Scalar LOWER_RED = new Scalar(20, 0, 0);
     public static final Scalar UPPER_RED = new Scalar(160, 255, 252);
@@ -82,7 +82,7 @@ public class Constants {
 
     public static final int DISTANCE_FROM_CENTER_JUNCTION_TOP = 250;
 
-    public static final int CONE_STACK_CONTOUR_MINIMUM_SIZE = 300;
+    public static final int CONE_STACK_CONTOUR_MINIMUM_SIZE = 100;
 
     public static final double TURNING_AUTHORITY_CONSTANT = 250.0;
     public static final double STRAFING_AUTHORITY_CONSTANT = 200.0;
