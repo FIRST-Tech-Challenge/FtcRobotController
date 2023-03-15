@@ -21,13 +21,13 @@ public class Arm{
 //    public static double armKf = 0.0000001;
 
     // New PID values
-    public static double armKpUp = 0.005; // old is 0.012
-    public static double armKpDown = 0.00118;
+    public static double armKpUp = 0.006; // old is 0.012
+    public static double armKpDown = 0.00109;
     public static double armKi = 0.00001;
     public static double armKd = 0.00007;
     public static double armKf = 0;
     public static double EXTAKE_POS = 270; // 180 old val; in degrees of absolute encoder
-    public static double INTAKE_POS = 55; // 65 old val
+    public static double INTAKE_POS = 52; // 65 old val
     public static double AUTOEXTAKE_POS = 276; //169
 
     // Initially set to 0 because we only want the claw to move when given input from the controller

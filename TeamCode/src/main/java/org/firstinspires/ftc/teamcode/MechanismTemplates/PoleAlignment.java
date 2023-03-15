@@ -14,7 +14,7 @@ public class PoleAlignment
     public static double lower=.41;
 
     public PoleAlignment(HardwareMap hardwareMap) {
-        retractServo=hardwareMap.get(Servo.class, "poleAlignment"); //port 5
+        retractServo=hardwareMap.get(Servo.class, "poleAlignment"); //port 5 on control hub
         isUp = false;
         retractServo.setPosition(lower);
     }
