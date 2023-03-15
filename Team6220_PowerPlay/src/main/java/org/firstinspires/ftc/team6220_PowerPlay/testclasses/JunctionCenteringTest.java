@@ -32,7 +32,7 @@ public class JunctionCenteringTest extends BaseAutonomous {
 
         centerJunctionTop(grabberCameraPipeline);
 
-        while (opModeIsActive()){
+        while (opModeIsActive()) {
             telemetry.addData("x", grabberCameraPipeline.xPosition-Constants.CAMERA_CENTER_X);
             telemetry.addData("y", Constants.CAMERA_CENTER_Y-grabberCameraPipeline.yPosition);
             telemetry.addData("xPower", junctionTopPixelsMotorPower(grabberCameraPipeline.xPosition-Constants.CAMERA_CENTER_X));

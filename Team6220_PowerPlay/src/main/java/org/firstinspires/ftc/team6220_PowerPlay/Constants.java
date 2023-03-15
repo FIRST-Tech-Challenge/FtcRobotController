@@ -57,7 +57,7 @@ public class Constants {
     public static final int CAMERA_CENTER_X = CAMERA_X / 2;
     public static final int CAMERA_CENTER_Y = CAMERA_Y / 2;
 
-    public static final int CONE_WIDTH = 320;
+    public static final int CONE_WIDTH = 300;
     public static final double CONE_STACK_WIDTH_KP = -0.00005;
     public static final double CONE_STACK_CENTERING_KP = -0.0005;
     public static final double CONE_STACK_CENTERING_PROPORTIONAL_KP = -0.0003;
@@ -86,4 +86,8 @@ public class Constants {
 
     public static final double TURNING_AUTHORITY_CONSTANT = 250.0;
     public static final double STRAFING_AUTHORITY_CONSTANT = 200.0;
+
+    public static final double CONE_STACK_AUTHORITY_SCALER = 1.09;
+
+
 }

@@ -230,14 +230,14 @@ public abstract class BaseOpMode extends LinearOpMode {
         double xOffset, yOffset;
 
         do {
-            xOffset = pipeline.xPosition-Constants.CAMERA_CENTER_X;
-            yOffset = Constants.CAMERA_CENTER_Y-pipeline.yPosition;
+            xOffset = pipeline.xPosition - Constants.CAMERA_CENTER_X;
+            yOffset = Constants.CAMERA_CENTER_Y - pipeline.yPosition;
 
             // center the cone on the junction top
             if (pipeline.detected) {
                 driveWithIMU(junctionTopPixelsMotorPower(xOffset), junctionTopPixelsMotorPower(yOffset), 0.0);
-                telemetry.addData("x", pipeline.xPosition-Constants.CAMERA_CENTER_X);
-                telemetry.addData("y", Constants.CAMERA_CENTER_Y-pipeline.yPosition);
+                telemetry.addData("x", xOffset);
+                telemetry.addData("y", yOffset);
                 telemetry.addData("xMotorPower", junctionTopPixelsMotorPower(xOffset));
                 telemetry.addData("yMotorPower", junctionTopPixelsMotorPower(yOffset));
                 telemetry.update();
@@ -258,7 +258,9 @@ public abstract class BaseOpMode extends LinearOpMode {
     public void centerConeStack(RobotCameraPipeline pipeline) {
         double xOffset, width, strafePower, turnPower;
         do {
-            xOffset = Constants.CAMERA_CENTER_X-pipeline.xPosition;
+
+            //This xOffset is different because it is from a different point of view.
+            xOffset = Constants.CAMERA_CENTER_X - pipeline.xPosition;
             width = pipeline.width;
 
             // drive forward while centering on the cone stack if contour exists
@@ -266,7 +268,7 @@ public abstract class BaseOpMode extends LinearOpMode {
                 break;
             } else {
                 strafePower = coneStackPixelsAndWidthToStrafingPower(xOffset, width);
-                turnPower = 1.09*coneStackPixelsAndWidthToTurningPower(xOffset, width);
+                turnPower = Constants.CONE_STACK_AUTHORITY_SCALER * coneStackPixelsAndWidthToTurningPower(xOffset, width);
                 driveWithIMU(strafePower, coneStackWidthMotorPower(width), turnPower);
                 telemetry.addData("xStrafingPower", strafePower);
                 telemetry.addData("xTurningPower", turnPower);
