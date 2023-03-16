@@ -15,7 +15,7 @@ public class Claw {
     private boolean isAuto;
 
     // claw positions
-    public static double OPEN = 0.7;
+    public static double OPEN = 0.675;
     public static double CLOSE = 0.5;
     public static double AUTOCLOSE = 0.5;
 
