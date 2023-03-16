@@ -58,13 +58,11 @@ public class SPLINEAutoLeftSide extends PowerPlay_AprilTagDetectionDeposit{
 
 	// [CONE STACK]
 	public static double xConeStack1 = 48.7;
-	public static double yConeStack = 27.45;
+	public static double coneStackForward = 26.3;
 	public static double xConeStack2 = 48.75;
 	public static double xConeStack3 = 48.8;
 	public static double xConeStack4 = 48.8;
-	//public static double xConeStack5 = 52.7;
 	public static double coneStackHeading = 89;
-	//public static double coneStackForward = 8.7;
 
 	// [OPENING MOVE --> MEDIUM JUNCTION]
 	public static double openingHeading = 90;
@@ -138,7 +136,7 @@ public class SPLINEAutoLeftSide extends PowerPlay_AprilTagDetectionDeposit{
 				})
 
 				.lineToLinearHeading(new Pose2d(xConeStack1, -1, Math.toRadians(coneStackHeading)))
-				.forward(yConeStack)
+				.forward(coneStackForward)
 
 				.UNSTABLE_addTemporalMarkerOffset(0, () -> {
 					alignmentControl.raiseServo();
@@ -178,7 +176,7 @@ public class SPLINEAutoLeftSide extends PowerPlay_AprilTagDetectionDeposit{
 				})
 
 				.lineToLinearHeading(new Pose2d(xConeStack2, -1, Math.toRadians(coneStackHeading)))
-				.forward(yConeStack)
+				.forward(coneStackForward)
 				.UNSTABLE_addTemporalMarkerOffset(0, () -> {
 					clawControl.toggleAutoOpenClose();
 				})
@@ -213,7 +211,7 @@ public class SPLINEAutoLeftSide extends PowerPlay_AprilTagDetectionDeposit{
 					slideControl.setCustom(320);//350
 				})
 				.lineToLinearHeading(new Pose2d(xConeStack3, -1, Math.toRadians(coneStackHeading)))
-				.forward(yConeStack)
+				.forward(coneStackForward)
 				.UNSTABLE_addTemporalMarkerOffset(0, () -> {
 					clawControl.toggleAutoOpenClose();
 				})
@@ -249,7 +247,7 @@ public class SPLINEAutoLeftSide extends PowerPlay_AprilTagDetectionDeposit{
 
 				})
 				.lineToLinearHeading(new Pose2d(xConeStack4, -1, Math.toRadians(coneStackHeading)))
-				.forward(yConeStack)
+				.forward(coneStackForward)
 				.UNSTABLE_addTemporalMarkerOffset(0, () -> {
 					clawControl.toggleAutoOpenClose();
 				})

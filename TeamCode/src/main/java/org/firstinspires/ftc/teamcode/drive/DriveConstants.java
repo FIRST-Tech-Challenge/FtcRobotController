@@ -87,8 +87,8 @@ public class DriveConstants {
      * You are free to raise this on your own if you would like. It is best determined through experimentation.
      */
 
-    public static double MAX_VEL = 63; //55; // 63 should be roughly 90-95% of dashboard readings
-    public static double MAX_ACCEL = 55; //55; // 63 Only really found through experimentation; you may need to re-tune your PID values if you change this
+    public static double MAX_VEL = 50; //55; // 63 should be roughly 90-95% of dashboard readings
+    public static double MAX_ACCEL = 40; //55; // 63 Only really found through experimentation; you may need to re-tune your PID values if you change this
     public static double MAX_ANG_VEL = 4.5; //5.5 //2.776036713115465; //Math.toRadians(388.23830548721475);
     public static double MAX_ANG_ACCEL = 2.776036713115465; //Math.toRadians(88.19389954947438);
 
