@@ -7,7 +7,7 @@ class MuleRobot() {
     val hardware = MuleHardware()
 
     val arm = MuleArm(hardware.armMotor)
-    val claw = Claw(hardware.clawServo)
+    val claw = Claw(hardware.clawServo, hardware.distanceSensor)
 
     init {
         arm.setPos(-67.7)

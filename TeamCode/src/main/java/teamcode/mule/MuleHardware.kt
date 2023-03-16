@@ -5,6 +5,7 @@ import com.asiankoala.koawalib.control.motor.FFGains
 import com.asiankoala.koawalib.control.profile.MotionConstraints
 import com.asiankoala.koawalib.hardware.motor.EncoderFactory
 import com.asiankoala.koawalib.hardware.motor.MotorFactory
+import com.asiankoala.koawalib.hardware.sensor.KDistanceSensor
 import com.asiankoala.koawalib.hardware.servo.KServo
 import teamcode.v1.constants.ClawConstants
 import teamcode.mule.constants.MuleArmConstants
@@ -25,4 +26,6 @@ class MuleHardware {
 
         val clawServo = KServo("Claw")
                 .startAt(ClawConstants.openPos)
+
+        val distanceSensor = KDistanceSensor("dSensor")
 }

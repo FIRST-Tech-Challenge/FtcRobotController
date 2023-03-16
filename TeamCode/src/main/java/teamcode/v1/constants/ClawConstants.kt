@@ -6,4 +6,5 @@ import com.acmerobotics.dashboard.config.Config
 object ClawConstants {
     @JvmField var closePos = 0.5
     @JvmField var openPos = 0.0
+    @JvmField var distanceThreshold = 65.0
 }

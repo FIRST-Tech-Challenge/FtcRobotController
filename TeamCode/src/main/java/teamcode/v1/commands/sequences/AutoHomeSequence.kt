@@ -21,10 +21,14 @@ class AutoHomeSequence(
     secondArmAngle : Double,
     liftHeight : Double,
     GripPos : Double
-) : ParallelGroup(
-    InstantCmd({arm.setPos(secondArmAngle)}, arm),
-    ClawCmds.ClawOpenCmd(claw, guide, GuideConstants.telePos),
-    InstantCmd({guide.setPos(GripPos)}),
+) : SequentialGroup(
+        ParallelGroup(
+        InstantCmd({arm.setPos(secondArmAngle)}, arm),
+        ClawCmds.ClawCloseCmd(claw),
+        InstantCmd({guide.setPos(GripPos)}),
+        ),
     InstantCmd({lift.setPos(liftHeight)}),
+    WaitCmd(0.5),
+    ClawCmds.ClawOpenCmd(claw, guide, GuideConstants.telePos)
 )
 

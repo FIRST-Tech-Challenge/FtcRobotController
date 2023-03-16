@@ -6,6 +6,7 @@ import com.asiankoala.koawalib.control.motor.FFGains
 import com.asiankoala.koawalib.control.profile.MotionConstraints
 import com.asiankoala.koawalib.hardware.motor.EncoderFactory
 import com.asiankoala.koawalib.hardware.motor.MotorFactory
+import com.asiankoala.koawalib.hardware.sensor.KDistanceSensor
 import com.asiankoala.koawalib.hardware.servo.KServo
 import com.asiankoala.koawalib.math.Pose
 import com.asiankoala.koawalib.subsystem.odometry.KThreeWheelOdometry
@@ -73,6 +74,8 @@ class AutoHardware(startPose: Pose) {
 
     val clawServo = KServo("Claw")
         .startAt(ClawConstants.closePos)
+
+    val distanceSensor = KDistanceSensor("dSensor")
 
     val guideServo = KServo("Guide")
             .startAt(GuideConstants.homePos)

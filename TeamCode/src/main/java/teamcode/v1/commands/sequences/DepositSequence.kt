@@ -4,6 +4,7 @@ import com.asiankoala.koawalib.command.commands.InstantCmd
 import com.asiankoala.koawalib.command.commands.WaitCmd
 import com.asiankoala.koawalib.command.group.SequentialGroup
 import teamcode.v1.commands.subsystems.ClawCmds
+import teamcode.v1.constants.ClawConstants
 import teamcode.v1.subsystems.Arm
 import teamcode.v1.subsystems.Claw
 import teamcode.v1.subsystems.Lift
@@ -18,7 +19,7 @@ class DepositSequence(
     LiftHeight : Double,
     GripPos : Double,
 ) : SequentialGroup(
-    ClawCmds.ClawCloseCmd(claw),
+    ClawCmds.ClawCmd(claw, ClawConstants.closePos),
     InstantCmd({arm.setPos(armAngle)}, arm),
     WaitCmd(0.3),
     InstantCmd({lift.setPos(LiftHeight)}, lift),

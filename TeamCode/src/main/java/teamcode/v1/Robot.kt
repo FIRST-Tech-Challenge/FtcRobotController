@@ -18,7 +18,7 @@ class Robot(startPose: Pose) {
     )
 
     val arm = Arm(hardware.armMotor, hardware.limitSwitch)
-    val claw = Claw(hardware.clawServo)
+    val claw = Claw(hardware.clawServo, hardware.distanceSensor)
     val guide = Guide(hardware.guideServo)
     val whacker = Whacker(hardware.whackerServo)
     val lift = Lift(hardware.liftLeadMotor, hardware.liftSecondMotor)

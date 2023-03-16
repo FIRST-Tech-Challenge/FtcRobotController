@@ -62,21 +62,19 @@ open class KTeleOp : KOpMode(photonEnabled = false) {
     }
 
     private fun scheduleCycling() {
-        driver.rightBumper.onPress(HomeSequence(robot.lift, robot.claw, robot.arm, robot.guide, ArmConstants.intervalPos, ArmConstants.groundPos, 0.0, GuideConstants.telePos))
+        driver.rightBumper.onPress(HomeSequence(robot.lift, robot.claw, robot.arm, robot.guide, ArmConstants.intervalPos, ArmConstants.groundPos, 0.0))
         driver.leftBumper.onPress(DepositSequence(robot.lift, robot.arm, robot.claw, robot.guide, ArmConstants.highPos, LiftConstants.highPos, GuideConstants.depositPos))
         driver.leftTrigger.onPress(ClawCmds.ClawCloseCmd(robot.claw))
         driver.dpadUp.onPress(DepositSequence(robot.lift, robot.arm, robot.claw, robot.guide, ArmConstants.midPos, LiftConstants.midPos, GuideConstants.depositPos))
         driver.y.onPress(DepositSequence(robot.lift, robot.arm, robot.claw, robot.guide, ArmConstants.lowPos, LiftConstants.lowPos, GuideConstants.lowPos))
         driver.rightTrigger.onPress(ClawCmds.ClawOpenCmd(robot.claw, robot.guide, GuideConstants.telePos))
-        driver.x.onPress(InstantCmd({ robot.lift.setPos(3.0)}))
-        driver.b.onPress(InstantCmd({ robot.lift.setPos(5.0)}))
+        driver.x.onPress(InstantCmd({ robot.lift.setPos(3.5)}))
+        driver.b.onPress(InstantCmd({ robot.lift.setPos(5.75)}))
 
         gunner.leftTrigger.onPress(InstantCmd({robot.lift.setPos(-15.5)}))
         gunner.rightTrigger.onPress(InstantCmd({robot.arm.setPos(-270.0)}))
         gunner.leftBumper.onPress(InstantCmd({robot.lift.setPos(11.0)}))
         gunner.rightBumper.onPress(InstantCmd({robot.lift.setPos(0.0)}))
-
-        robot.arm.switch.onPress(ClawCmds.ClawOpenCmd(robot.claw, robot.guide, GuideConstants.telePos))
     }
 
     private fun scheduleTest() {
@@ -94,6 +92,7 @@ open class KTeleOp : KOpMode(photonEnabled = false) {
         Logger.addTelemetryData("arm power", robot.arm.motor.power)
         Logger.addTelemetryData("lift power", robot.hardware.liftLeadMotor.power)
         Logger.addTelemetryData("whacker pos", robot.hardware.whackerServo.position)
-        Logger.addTelemetryData("limit switch", robot.arm.switch.invoke())
+        Logger.addTelemetryData("claw pos", robot.hardware.clawServo.position)
+        Logger.addTelemetryData("dSensor", robot.claw.lastRead)
     }
 }
