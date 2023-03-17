@@ -17,7 +17,6 @@ public class GrabberCameraPipeline extends OpenCvPipeline {
     public double xPosition = Constants.CAMERA_CENTER_X;
     public double yPosition = Constants.CAMERA_CENTER_Y;
     public boolean detected = false;
-
     private Scalar lowerRange;
     private Scalar upperRange;
 
