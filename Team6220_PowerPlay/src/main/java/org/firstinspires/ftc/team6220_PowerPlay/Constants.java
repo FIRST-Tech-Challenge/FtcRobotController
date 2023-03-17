@@ -80,9 +80,9 @@ public class Constants {
 
     public static final Size BLUR_SIZE = new Size(5, 5);
 
-    public static final int DISTANCE_FROM_CENTER_JUNCTION_TOP = 250;
+    public static final int DISTANCE_FROM_CENTER_JUNCTION_TOP = 200;
 
-    public static final int CONE_STACK_CONTOUR_MINIMUM_SIZE = 150;
+    public static final int CONE_STACK_CONTOUR_MINIMUM_SIZE = 100;
 
     public static final double TURNING_AUTHORITY_CONSTANT = 250.0;
     public static final double STRAFING_AUTHORITY_CONSTANT = 200.0;

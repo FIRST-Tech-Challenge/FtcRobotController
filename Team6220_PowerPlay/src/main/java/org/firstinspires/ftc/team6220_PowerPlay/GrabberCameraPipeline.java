@@ -60,13 +60,13 @@ public class GrabberCameraPipeline extends OpenCvPipeline {
             Rect boundingRect = Imgproc.boundingRect(contours.get(maxValIdx));
 
             // get center coordinates of bounding box
-            xPosition = boundingRect.x + (boundingRect.width * 0.5);
-            yPosition = boundingRect.y + (boundingRect.height * 0.5);
+            double x = boundingRect.x + (boundingRect.width * 0.5);
+            double y = boundingRect.y + (boundingRect.height * 0.5);
 
             //TODO: add a cutoff point only for the bottom quarter of the frame as to not see the wheels
 
             // calculate distance of the center of the box from the center of the camera
-            double distanceFromCenter = Math.sqrt(Math.pow(Math.abs((xPosition - Constants.CAMERA_CENTER_X)), 2) + Math.pow(Math.abs((yPosition - Constants.CAMERA_CENTER_Y)), 2));
+            double distanceFromCenter = Math.sqrt(Math.pow(Math.abs((x - Constants.CAMERA_CENTER_X)), 2) + Math.pow(Math.abs((y - Constants.CAMERA_CENTER_Y)), 2));
 
             // determine if the detected area is close enough to the center
             // this is done to avoid detecting the wheels which are also black

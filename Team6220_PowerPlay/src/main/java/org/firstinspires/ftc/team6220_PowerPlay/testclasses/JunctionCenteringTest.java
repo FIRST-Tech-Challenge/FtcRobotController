@@ -24,7 +24,12 @@ public class JunctionCenteringTest extends BaseAutonomous {
 
         waitForStart();
 
+        driveGrabber(Constants.GRABBER_CLOSE_POSITION);
+
+        driveSlides(Constants.SLIDE_TOP);
+
         centerJunctionTop(grabberCameraPipeline);
 
+        driveGrabber(Constants.GRABBER_OPEN_POSITION);
     }
 }
