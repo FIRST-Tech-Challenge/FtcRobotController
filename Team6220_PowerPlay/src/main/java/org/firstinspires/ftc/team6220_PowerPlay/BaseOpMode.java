@@ -267,7 +267,7 @@ public abstract class BaseOpMode extends LinearOpMode {
             } else {
                 strafePower = coneStackPixelsAndWidthToStrafingPower(xOffset, width);
                 turnPower = 1.09*coneStackPixelsAndWidthToTurningPower(xOffset, width);
-                driveWithIMU(strafePower, coneStackWidthMotorPower(width), turnPower);
+                driveWithIMU(strafePower, 1.35*coneStackWidthMotorPower(width), turnPower);
                 telemetry.addData("xStrafingPower", strafePower);
                 telemetry.addData("xTurningPower", turnPower);
                 telemetry.addData("yMotorPower", coneStackWidthMotorPower(width));
