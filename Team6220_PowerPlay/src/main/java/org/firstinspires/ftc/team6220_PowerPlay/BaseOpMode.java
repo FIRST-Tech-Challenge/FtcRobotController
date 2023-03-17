@@ -177,7 +177,7 @@ public abstract class BaseOpMode extends LinearOpMode {
         motorBR.setPower(yPower + xPower - tPower);
     }
 
-    public void driveWithoutIMU(double xPower, double yPower, double tPower){
+    public void driveWithoutIMU(double xPower, double yPower, double tPower) {
         motorFL.setPower(yPower + xPower + tPower);
         motorFR.setPower(yPower - xPower - tPower);
         motorBL.setPower(yPower - xPower + tPower);
