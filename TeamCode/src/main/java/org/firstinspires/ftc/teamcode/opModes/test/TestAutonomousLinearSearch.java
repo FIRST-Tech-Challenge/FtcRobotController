@@ -27,7 +27,6 @@ public class TestAutonomousLinearSearch extends AutonomousLinearModeBase {
         //right wheel
         Motor motor2 = HardwareMapContainer.motor1;
         //Code for autonomous running
-        //Coordinate in meters from start point in terms of x and y
         internal_measurement_unit = new RevIMU(HardwareMapContainer.getMap());
         internal_measurement_unit.init();
         //remember to account for size of robot when inputting coordinates.
