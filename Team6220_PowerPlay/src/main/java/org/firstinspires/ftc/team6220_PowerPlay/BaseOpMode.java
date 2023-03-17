@@ -306,7 +306,7 @@ public abstract class BaseOpMode extends LinearOpMode {
      * @return turning power for robot drivetrain
      */
     public double coneStackPixelsAndWidthToTurningPower(double pixelOffset, double width) {
-        return (Constants.CONE_STACK_CENTERING_PROPORTIONAL_KP * pixelOffset)/((1.0/Constants.TURNING_AUTHORITY_CONSTANT)*width);
+        return (Constants.CONE_STACK_CENTERING_PROPORTIONAL_KP * pixelOffset) / ((1.0 / Constants.TURNING_AUTHORITY_CONSTANT) * width);
     }
 
     /**
