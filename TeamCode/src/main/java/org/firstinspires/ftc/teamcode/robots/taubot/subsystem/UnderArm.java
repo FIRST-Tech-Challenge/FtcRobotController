@@ -59,8 +59,8 @@ public class UnderArm implements Subsystem {
     public static double WRIST_DEG_MAX = 180;
     public static double TURRET_DEG_MAX = 360;
 
-    public static double LASSO_CLOSED = 750;
-    public static double LASSO_OPEN = 2500;
+    public static double LASSO_CLOSED = 1750;
+    public static double LASSO_OPEN = 900;
 
     public static double TRANSFER_SHOULDER_ANGLE = -19;
     public static double TRANSFER_SHOULDER_APPROACH_ANGLE = -33;
@@ -130,6 +130,7 @@ public class UnderArm implements Subsystem {
     public enum Articulation {
         init1,
         transfer,
+        transferRecover, //recover from the transfer position to just outward of the vertical position so gripper clears over the camera
         home,
         manual,
         noIK,
@@ -207,6 +208,9 @@ public class UnderArm implements Subsystem {
             case transfer: //transfer position
                 goToTransfer();
                 break;
+            case transferRecover: //after transfer, go back through to clear the camera
+                    TransferRecover();
+                    break;
             case safe:
                 jointAngle = JointAngle.SafePos;
                 goToJointAngleAndLength(jointAngle);
@@ -311,6 +315,31 @@ public class UnderArm implements Subsystem {
                     setShoulderTargetAngle(TRANSFER_SHOULDER_ANGLE);
                     transferStage = 0;
                     atTransfer = true;
+                    return true;
+                }
+                break;
+        }
+
+        return false;
+    }
+
+    int transferRecoverStage;
+    long transferRecoverTimer;
+    public boolean TransferRecover(){
+        switch (transferRecoverStage) {
+            case 0: //starting from the transfer position, recover the elbow first
+                atTransfer = false;
+                setElbowTargetAngle(0);
+                setShoulderTargetAngle(TRANSFER_SHOULDER_APPROACH_ANGLE);
+                transferRecoverTimer = futureTime(1.0);
+                transferRecoverStage++;
+                break;
+            case 1: //lift shoulder
+                if (System.nanoTime() > transferRecoverTimer) {
+                    setTurretTargetAngle(0); //straighten turret
+                    setShoulderTargetAngle(0); //take the shoulder home
+                    setWristTargetAngle(0); //take wrist home
+                    transferRecoverStage = 0;
                     return true;
                 }
                 break;
@@ -429,6 +458,7 @@ public class UnderArm implements Subsystem {
         recoverStage = 0;
         substationStage = 0;
         transferStage = 0;
+        transferRecoverStage = 0;
         homeStage = 0;
     }
     int recoverStage = 0;

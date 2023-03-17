@@ -546,7 +546,7 @@ public class Robot implements Subsystem {
                 //if(crane.atTransferPosition()&& underarm.atTransfer()){ //todo debug - temp switched to a timer because crane.atTransferPosition() not working
                 if(System.nanoTime() >= transferTimer){
                     //crane.grab(); //TODO UNCOMMENT TO ALLOW ACTUAL GRAB BY CRANE WHEN POSITIONING IS ALL WORKED OUT
-                    transferTimer = futureTime(0.3);
+                    transferTimer = futureTime(5);
                     //TODO TRIED VARIOUS THINGS BELOW TO ABORT/STALL SO WE COULD LOOK AT FINAL TRANSFER POSITION BUT THEY HAVE DIFFERENT SIDE EFFECTS FROM THE COMBINATIONS OF ARTICULATIONS
                     //CAN TEMPORARILY EXIT HERE FOR DEBUGGING
                     //boolean tuning = true; if (tuning) {transferStage = 0; return true;}
@@ -565,7 +565,7 @@ public class Robot implements Subsystem {
             case 4:
                 if(System.nanoTime() >= transferTimer) {
                     underarm.grip(); //need to retract the gripper for pass through
-                    underarm.articulate(UnderArm.Articulation.substationHover);
+                    underarm.articulate(UnderArm.Articulation.transferRecover);
                     //TODO UNCOMMENT NEXT LINE WHEN YOU WANT THE CRANE TO ACTUALLY ATTEMPT THE CONE DROP - BE SURE FIELD POSITIONING IS RIGHT
                     //crane.articulate(Crane.Articulation.postTransfer); //this will actually deliver the cone to the next target pole
                     transferStage = 0;

@@ -65,7 +65,7 @@ public class DriverControls {
         if(stickyGamepad1.start){
             robot.driveTrain.toggleExtension();
             if (robot.driveTrain.getChariotDeployed())
-                robot.crane.articulate(Crane.Articulation.manual); //allow the crane and turret to return to manual mode
+                robot.crane.articulate(Crane.Articulation.manualDrive); //allow the crane and turret to return to manual mode
         }
 
         if (stickyGamepad1.guide){ //this is the Logitech button

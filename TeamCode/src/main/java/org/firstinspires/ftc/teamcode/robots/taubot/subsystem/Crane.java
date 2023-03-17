@@ -442,6 +442,7 @@ public class Crane implements Subsystem {
 
     public enum Articulation {
         manual,
+        manualDrive,
         noIK,
         dropCone,
         pickupCone,
@@ -483,6 +484,9 @@ public class Crane implements Subsystem {
                 }
                 break;
             case manual:
+                //do nothing
+                break;
+            case manualDrive:
                 robot.turret.articulate(Turret.Articulation.runToAngle);
                 holdTarget(fieldPositionTarget.x,fieldPositionTarget.y,fieldPositionTarget.z);
                 break;
