@@ -194,7 +194,7 @@ public class Right2 extends LinearOpMode {
             crane(-1,320);
             Guide.setPosition(0);
             //move and spin to high junction
-            strafeLeftwithcraneandspin(1, 2850, -1, 3200,1,260);
+            strafeLeftwithcraneandspin(.8, 2850, -1, 3200,1,260);
             //Guide.setPosition(0);
             Crane.setPower(-.7);
             //spin(1,260);

@@ -270,8 +270,8 @@ public class doubledriver extends LinearOpMode {
                 }
             }
             */
-            telemetry.addData("encoder value", Spin.getCurrentPosition());
-            telemetry.update();
+            //telemetry.addData("encoder value", Spin.getCurrentPosition());
+            //telemetry.update();
 
 
            //telemetry.addData("distance",distance.getDistance(DistanceUnit.INCH));
