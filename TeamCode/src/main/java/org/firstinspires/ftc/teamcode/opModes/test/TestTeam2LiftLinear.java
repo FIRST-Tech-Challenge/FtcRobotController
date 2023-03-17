@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.opModes.test;
 
 import com.arcrobotics.ftclib.hardware.motors.Motor;
+import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.components.Team2LiftComponent;
@@ -23,30 +24,18 @@ import org.firstinspires.ftc.teamcode.libs.brightonCollege.util.HardwareMapConta
  * Controls:
  *  [Left Joystick] Pull up or down to lift arm from starting position
  */
-@TeleOp(name="Test Team 2 Lift", group="Test")
+@Autonomous(name="Test Team 2 Lift [Linear]", group="Test")
 // @Disabled
-public class TestTeam2Lift extends TeleOpModeBase { // TODO: Test
+public class TestTeam2LiftLinear extends AutonomousLinearModeBase { // TODO: Test
     Team2LiftComponent lift;
 
     double targetPosition;
 
     @Override
-    public void setup() {
+    public void run() {
         Motor lift_motor = HardwareMapContainer.motor0;
         lift = new Team2LiftComponent(lift_motor, 0.42, (int)((288 / 3) / (Math.PI*2)), 0); // Core Hex Motor has 288 counts/revolution; counts/radian = counts/revn / (radians/revn); 3:1 gear
 
         lift.setHeight(1000);
-    }
-
-    @Override
-    public void every_tick() { // TODO: Fix PID shaking bug
-        if(Math.abs(Inputs.gamepad1.getLeftY()) != this.targetPosition) {
-            this.targetPosition = Math.abs(Inputs.gamepad1.getLeftY());
-            lift.setHeight(this.targetPosition);
-        } else {
-            telemetry.addLine("[Lift] BUSY");
-        }
-        telemetry.addData("[Lift] Last set position to", this.targetPosition);
-        telemetry.addData("[Lift] Position of gamepad", Math.abs(Inputs.gamepad1.getLeftY()));
     }
 }
