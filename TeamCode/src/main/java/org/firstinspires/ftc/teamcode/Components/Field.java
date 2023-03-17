@@ -120,7 +120,7 @@ public class Field {
     public boolean lookingAtCone() {
         double[] coords = cv.rotatedConarCoord();
 //        coords[1]+=5;
-        coords[1] -=2;
+//        coords[1] -=2;
         Pose2d pos = roadrun.getPoseEstimate();
         pos = new Pose2d(pos.getX(),pos.getY(),pos.getHeading()+coords[0]*PI/180);
         conePos = new Pose2d(pos.getX()+cos(pos.getHeading())*coords[1],pos.getY()+sin(pos.getHeading())*coords[1]+1,pos.getHeading());
@@ -129,10 +129,9 @@ public class Field {
         }
         logger.log("/RobotLogs/GeneralRobot", "CONePos"+ conePos);
         logger.log("/RobotLogs/GeneralRobot", "coords"+coords[0]+","+coords[1]);
-        if(abs(coords[0])<20&&abs(coords[1])>4&&abs(coords[1])<15&&abs(abs(pos.getHeading()-coords[0]*PI/180)-PI)<20*PI/180){
-            if(roadrun.getCurrentTraj()==null|| abs(conePos.vec().distTo(roadrun.getCurrentTraj().end().vec()))<10&&abs(conePos().getX())>60) {
+        if(abs(coords[1])>4){
+
                 return true;
-            }
         }
         return false;
     }

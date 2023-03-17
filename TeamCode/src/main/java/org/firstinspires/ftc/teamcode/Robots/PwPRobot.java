@@ -171,7 +171,6 @@ public class PwPRobot extends BasicRobot {
 
     public void updateTrajectoryWithCone() {
         if (queuer.queue(true, field.isDoneLookin())) {
-            field.setDoneLookin(false);
             if (field.lookingAtCone()) {
                 Pose2d target = field.conePos();
                 TrajectorySequence trajectory = roadrun.getCurrentTraj();
@@ -184,6 +183,29 @@ public class PwPRobot extends BasicRobot {
 
             }
         }
+    }
+    public void autoTeleCone() {
+            if (field.lookingAtCone()) {
+                logger.log("/RobotLogs/GeneralRobot", "mr.obama");
+                Pose2d target = field.conePos();
+                if(roadrun.isBusy()) {
+                    TrajectorySequence trajectory = roadrun.getCurrentTraj();
+                    roadrun.changeTrajectorySequence(roadrun.trajectorySequenceBuilder(trajectory.start())
+                            .setReversed(false)
+                            .splineToSplineHeading(target, target.getHeading()).build());
+//                field.setDoneLookin(true);
+                    logger.log("/RobotLogs/GeneralRobot", "mr.obama" + target + "im cone" + roadrun.getPoseEstimate());
+                }
+                else{
+                    logger.log("/RobotLogs/GeneralRobot", "mr.brobama");
+
+                    roadrun.followTrajectorySequenceAsync(roadrun.trajectorySequenceBuilder(roadrun.getPoseEstimate())
+                            .setReversed(false)
+                            .splineToSplineHeading(target, target.getHeading()).build());
+                }
+//                logger.log("/RobotLogs/GeneralRobot", "coords"+cv.rotatedConarCoord()[0]+","+cv.rotatedConarCoord()[1]);
+
+            }
     }
 
     public void teleAutoAim(Trajectory trajectory) {
@@ -708,7 +730,9 @@ public class PwPRobot extends BasicRobot {
         if (CLAW_OPEN.getStatus() && ARM_INTAKE.getStatus() && !CLAW_WIDE.getStatus()) {
             claw.teleClaw();
         }
-
+        if(op.gamepad1.a){
+            autoTeleCone();
+        }
 
         //will only close when detect cone
         claw.closeClaw();

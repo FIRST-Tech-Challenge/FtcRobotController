@@ -9,6 +9,7 @@ import com.acmerobotics.dashboard.config.Config;
 
 import org.opencv.core.Core;
 import org.opencv.core.Mat;
+import org.opencv.core.MatOfInt4;
 import org.opencv.core.MatOfPoint;
 import org.opencv.core.MatOfPoint2f;
 import org.opencv.core.Rect;
@@ -25,8 +26,8 @@ public class ConeObserverPipeline extends OpenCvPipeline {
     ArrayList<double[]> frameList;
     public static double LowS = 50;
     public static double HighS = 255;
-    public static double LowH = 100;
-    public static double HighH = 140;
+    public static double LowH = 110;
+    public static double HighH = 125;
     public static double LowV = 0;
     public static double HighV = 255;
     public static double LowS1 = 50;
@@ -93,10 +94,11 @@ public class ConeObserverPipeline extends OpenCvPipeline {
         List<MatOfPoint> contours = new ArrayList<>();
         Mat hierarchy = new Mat();
         //find contours of edges
-        Imgproc.findContours(thresh5, contours, hierarchy, Imgproc.RETR_TREE, Imgproc.CHAIN_APPROX_SIMPLE);
+        Imgproc.findContours(thresh5, contours, hierarchy, Imgproc.RETR_TREE, 1);
         MatOfPoint2f[] contoursPoly = new MatOfPoint2f[contours.size()];
         //rotatedRect because it allows for more accurate bounding rectangles, perfect if pole is slanted
         Rect[] rectangle = new Rect[contours.size()];
+
         //iterate through each contour
         for (int i = 0; i < contours.size(); i++) {
             contoursPoly[i] = new MatOfPoint2f();
@@ -112,18 +114,11 @@ public class ConeObserverPipeline extends OpenCvPipeline {
         //iterate through each rotatedRect find largest
         for (int i = 0; i < rectangle.length; i++) {
 //                if(rectangle[i].size.height > 300 || rectangle[i].size.width >300) {
-                    if (rectangle[i].height < rectangle[i].width) {
-                        if (rectangle[i].height > maxWidth) {
-                            maxAreaIndex = i;
-                            maxWidth = rectangle[i].height;
-                        }
-                    } else {
-                        if (rectangle[i].width > maxWidth) {
+
+                        if ((double)rectangle[i].height/rectangle[i].width>1.18&&rectangle[i].width > maxWidth) {
                             maxAreaIndex = i;
                             maxWidth = rectangle[i].width;
                         }
-//                    }
-                }
         }
 //        //if there is a detected largest contour, record information about it
         if(rectangle.length>0) {
@@ -150,7 +145,6 @@ public class ConeObserverPipeline extends OpenCvPipeline {
         input.release();
 
         mat.release();
-        rectangle=null;
         contoursPoly = null;
 //        masked.release();
         thresh5.copyTo(input);
@@ -160,6 +154,11 @@ public class ConeObserverPipeline extends OpenCvPipeline {
         thresh4.release();
         thresh5.release();
         hierarchy.release();
+        Scalar color = new Scalar(255,0,0);
+        assert rectangle != null;
+        if(rectangle.length>0) {
+            Imgproc.rectangle(input, rectangle[maxAreaIndex], color, 5);
+        }
 
         return input;
     }

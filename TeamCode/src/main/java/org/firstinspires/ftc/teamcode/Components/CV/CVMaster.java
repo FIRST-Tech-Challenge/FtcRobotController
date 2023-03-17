@@ -21,7 +21,7 @@ public class CVMaster {
         int cameraMonitorViewId = op.hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", op.hardwareMap.appContext.getPackageName());
         webcam = /*OpenCvCameraFactory.getInstance().createWebcam(op.hardwareMap.get(WebcamName.class, "webcam"), cameraMonitorViewId);*/
         OpenCvCameraFactory.getInstance().createWebcam(op.hardwareMap.get(WebcamName.class, "webcam"));
-//        clawCam = OpenCvCameraFactory.getInstance().createWebcam(op.hardwareMap.get(WebcamName.class, "ClawCamera"));
+        clawCam = OpenCvCameraFactory.getInstance().createWebcam(op.hardwareMap.get(WebcamName.class, "clawCam"));
 
     }
     public boolean isStreaming(){
@@ -137,7 +137,7 @@ public class CVMaster {
                 clawCam.setPipeline(cone);
                 clawCam.startStreaming(640, 480, OpenCvCameraRotation.UPRIGHT);
 
-//                dashboard.startCameraStream(clawCam, 10);
+                dashboard.startCameraStream(clawCam, 10);
 
             }
 

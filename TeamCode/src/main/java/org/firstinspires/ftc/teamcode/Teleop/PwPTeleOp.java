@@ -20,6 +20,7 @@ public class PwPTeleOp extends LinearOpMode {
         robot = new PwPRobot(this,true);
         Pose2d startPose = new Pose2d(-29.6, 62.25, toRadians(90));
         robot.roadrun.setPoseEstimate(startPose);//        robot.cv.observeStick();
+        robot.cv.observeCone();
         waitForStart();
         resetRuntime();
         robot.roadrun.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
