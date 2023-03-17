@@ -41,6 +41,8 @@ public class SBOTTINGOTASideWheelsManualDriveTrain extends TeleOpModeBase {
     private boolean isSlowMode = false;
     private boolean isForwardOnlyMode = false;
 
+    private final GamepadEx gamepad = Inputs.gamepad1;
+
     @Override
     public void setup() {
         telemetry = TelemetryContainer.getTelemetry();
@@ -50,6 +52,10 @@ public class SBOTTINGOTASideWheelsManualDriveTrain extends TeleOpModeBase {
         rightMotor = HardwareMapContainer.motor1;
 
         sidewaysMotor = HardwareMapContainer.motor2;
+
+        new GamepadButton(gamepad, PSButtons.SQUARE).whenActive(() -> isSlowMode = !isSlowMode);
+
+        new GamepadButton(gamepad, PSButtons.CIRCLE).whenActive(() -> isForwardOnlyMode = !isForwardOnlyMode);
     }
 
     // Changes the -1 to 1 inputs that the gamepad returns into 0 to 1 inputs to be put into the arcadeDrive method
@@ -65,17 +71,11 @@ public class SBOTTINGOTASideWheelsManualDriveTrain extends TeleOpModeBase {
 
     @Override
     public void every_tick() {
-        final GamepadEx gamepad = Inputs.gamepad1;
 
         final double[] inputs = {gamepad.getLeftY(), gamepad.getLeftX(), gamepad.getRightX()}; //forward speed, turn speed, sideways speed
 
         //if joystick pos is less than this amount from in the middle, the robot doesn't move.
         final double DEAD_ZONE_SIZE = 0.2D;
-
-        new GamepadButton(gamepad, PSButtons.SQUARE).whenActive(() -> isSlowMode = !isSlowMode);
-
-        new GamepadButton(gamepad, PSButtons.CIRCLE).whenActive(() -> isForwardOnlyMode = !isForwardOnlyMode);
-
 
         if (isSlowMode) {
             for (int i = 0; i < inputs.length; i++) {
