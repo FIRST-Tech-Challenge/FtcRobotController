@@ -100,6 +100,9 @@ public class PwPRobot extends BasicRobot {
         lift = new Lift();
         leds = new LEDStrip();
         finished = true;
+        if (!isTeleop) {
+            roadrun.setPoseEstimate(logger.readLogPos());
+        }
     }
 //    com.qualcomm.ftcrobotcontroller I/art: Waiting for a blocking GC Alloc
 //2023-01-05 14:19:08.807 9944-10985/com.qualcomm.ftcrobotcontroller I/art: Alloc sticky concurrent mark sweep GC freed 340391(7MB) AllocSpace objects, 0(0B) LOS objects, 20% free, 43MB/54MB, paused 2.675ms total 197.819ms
@@ -108,6 +111,7 @@ public class PwPRobot extends BasicRobot {
 
     public void stop() {
         lift.setLiftPower(0.0);
+        logger.logPos(roadrun.getPoseEstimate());
         logger.log("/RobotLogs/GeneralRobot", "program stoped");
     }
 
@@ -118,6 +122,7 @@ public class PwPRobot extends BasicRobot {
             finished = true;
         }
     }
+
 
     public void delay(double p_delay) {
         queuer.addDelay(p_delay);
@@ -158,8 +163,8 @@ public class PwPRobot extends BasicRobot {
                 roadrun.changeTrajectorySequence(roadrun.trajectorySequenceBuilder(trajectory.start())
                         .setReversed(true)
 //                                .splineTo(target.vec(), target.getHeading())
-                        .splineTo(target.vec(), trajectory.end().getHeading()+PI)
-                                .addTemporalMarker(this::done)
+                        .splineTo(target.vec(), trajectory.end().getHeading() + PI)
+                        .addTemporalMarker(this::done)
                         .build());
 //                field.setDoneLookin(true);
                 logger.log("/RobotLogs/GeneralRobot", "mr.obama" + target + "im pole" + roadrun.getPoseEstimate());
@@ -184,28 +189,51 @@ public class PwPRobot extends BasicRobot {
             }
         }
     }
-    public void autoTeleCone() {
-            if (field.lookingAtCone()) {
-                logger.log("/RobotLogs/GeneralRobot", "mr.obama");
-                Pose2d target = field.conePos();
-                if(roadrun.isBusy()) {
-                    TrajectorySequence trajectory = roadrun.getCurrentTraj();
-                    roadrun.changeTrajectorySequence(roadrun.trajectorySequenceBuilder(trajectory.start())
-                            .setReversed(false)
-                            .splineToSplineHeading(target, target.getHeading()).build());
-//                field.setDoneLookin(true);
-                    logger.log("/RobotLogs/GeneralRobot", "mr.obama" + target + "im cone" + roadrun.getPoseEstimate());
-                }
-                else{
-                    logger.log("/RobotLogs/GeneralRobot", "mr.brobama");
 
-                    roadrun.followTrajectorySequenceAsync(roadrun.trajectorySequenceBuilder(roadrun.getPoseEstimate())
-                            .setReversed(false)
-                            .splineToSplineHeading(target, target.getHeading()).build());
-                }
+    public void autoTeleCone() {
+        if (field.lookingAtCone()) {
+            logger.log("/RobotLogs/GeneralRobot", "mr.obama");
+            Pose2d target = field.conePos();
+            if (roadrun.isBusy()) {
+                TrajectorySequence trajectory = roadrun.getCurrentTraj();
+                roadrun.changeTrajectorySequence(roadrun.trajectorySequenceBuilder(trajectory.start())
+                        .setReversed(false)
+                        .splineToSplineHeading(target, target.getHeading()).build());
+//                field.setDoneLookin(true);
+                logger.log("/RobotLogs/GeneralRobot", "mr.obama" + target + "im cone" + roadrun.getPoseEstimate());
+            } else {
+                logger.log("/RobotLogs/GeneralRobot", "mr.brobama");
+
+                roadrun.followTrajectorySequenceAsync(roadrun.trajectorySequenceBuilder(roadrun.getPoseEstimate())
+                        .setReversed(false)
+                        .splineToSplineHeading(target, target.getHeading()).build());
+            }
 //                logger.log("/RobotLogs/GeneralRobot", "coords"+cv.rotatedConarCoord()[0]+","+cv.rotatedConarCoord()[1]);
 
+        }
+    }
+
+    public void autoTelePole() {
+        if (field.lookingAtPoleTele()) {
+            logger.log("/RobotLogs/GeneralRobot", "mr.obama");
+            Pose2d target = field.polePos();
+            if (roadrun.isBusy()) {
+                TrajectorySequence trajectory = roadrun.getCurrentTraj();
+                roadrun.changeTrajectorySequence(roadrun.trajectorySequenceBuilder(trajectory.start())
+                        .setReversed(true)
+                        .splineToSplineHeading(target, target.getHeading()).build());
+//                field.setDoneLookin(true);
+                logger.log("/RobotLogs/GeneralRobot", "mr.obama" + target + "im cone" + roadrun.getPoseEstimate());
+            } else {
+                logger.log("/RobotLogs/GeneralRobot", "mr.brobama");
+
+                roadrun.followTrajectorySequenceAsync(roadrun.trajectorySequenceBuilder(roadrun.getPoseEstimate())
+                        .setReversed(true)
+                        .splineToSplineHeading(target, target.getHeading()).build());
             }
+//                logger.log("/RobotLogs/GeneralRobot", "coords"+cv.rotatedConarCoord()[0]+","+cv.rotatedConarCoord()[1]);
+
+        }
     }
 
     public void teleAutoAim(Trajectory trajectory) {
@@ -251,16 +279,20 @@ public class PwPRobot extends BasicRobot {
         double[] targetVelocity = {maxes[0] * y, maxes[1] * x, maxes[2] * a};
         Pose2d actualVelocity = roadrun.getPoseVelocity();
         Pose2d pos = roadrun.getPoseEstimate();
-        double[] t = {cos(pos.getHeading()),sin(pos.getHeading())};
-        actualVelocity = new Pose2d((t[0]*actualVelocity.getX()+t[1]*actualVelocity.getY()),-t[0]* actualVelocity.getY()+t[1]* actualVelocity.getX(),actualVelocity.getHeading());
+        double[] t = {cos(pos.getHeading()), sin(pos.getHeading())};
+        actualVelocity = new Pose2d((t[0] * actualVelocity.getX() + t[1] * actualVelocity.getY()), -t[0] * actualVelocity.getY() + t[1] * actualVelocity.getX(), actualVelocity.getHeading());
         double[] diffs = {targetVelocity[0] - actualVelocity.getX(), targetVelocity[1] - actualVelocity.getY(), targetVelocity[2] - actualVelocity.getHeading()};
         double cAngle = atan2(diffs[0], diffs[1]);
         double cMag = sqrt(diffs[1] * diffs[1] + diffs[0] * diffs[0]) * kV * 2;
         double angleCorrection = diffs[2] * TRACK_WIDTH * kV * 0.2;
-        roadrun.setMotorPowers(powerb * magnitude - a - angleCorrection + (diffs[0] + diffs[1]) * 2 * kV,
-                powera * magnitude - a - angleCorrection + (diffs[0] - diffs[1]) * 2 * kV,
-                powerb * magnitude + a + angleCorrection + (diffs[0] + diffs[1]) * 2 * kV,
-                powera * magnitude + a + angleCorrection+ (diffs[0] - diffs[1]) * 2 * kV);
+        op.telemetry.addData("velocity", actualVelocity);
+        op.telemetry.addData("diffsy", diffs[0]);
+        op.telemetry.addData("diffsx", diffs[1]);
+        op.telemetry.addData("diffsa", diffs[2]);
+//        roadrun.setMotorPowers(powerb * magnitude - a - angleCorrection + (diffs[0] + diffs[1]) * 2 * kV,
+//                powera * magnitude - a - angleCorrection + (diffs[0] - diffs[1]) * 2 * kV,
+//                powerb * magnitude + a + angleCorrection + (diffs[0] + diffs[1]) * 2 * kV,
+//                powera * magnitude + a + angleCorrection+ (diffs[0] - diffs[1]) * 2 * kV);
 
     }
 
@@ -460,7 +492,7 @@ public class PwPRobot extends BasicRobot {
 
     public void setPoseEstimate(Pose2d newPose) {
         roadrun.setPoseEstimate(newPose);
-        imu.setAngle(newPose.getHeading());
+        logger.logPos(newPose);
     }
 
     public void iterateConestackUp() {
@@ -551,15 +583,7 @@ public class PwPRobot extends BasicRobot {
             lift.resetEncoder();
         }
 
-        if (CLAW_CLOSED.getStatus()) {
-            partycolorwave();
-        }
-        if (CLAW_OPEN.getStatus()) {
-            darkGreen();
-        }
-        if (op.getRuntime() > 90 && op.getRuntime() < 92) {
-            rainbowRainbow();
-        }
+
         if (op.gamepad1.b) {
             liftArm.flipCone();
         }
@@ -730,9 +754,26 @@ public class PwPRobot extends BasicRobot {
         if (CLAW_OPEN.getStatus() && ARM_INTAKE.getStatus() && !CLAW_WIDE.getStatus()) {
             claw.teleClaw();
         }
-        if(op.gamepad1.a){
-            autoTeleCone();
+        if (op.getRuntime() > 90 && op.getRuntime() < 92) {
+            rainbowRainbow();
+        } else if ((field.lookingAtCone() && CLAW_WIDE.getStatus() && ARM_INTAKE.getStatus())) {
+            leds.pattern29();
+            if (op.gamepad1.a) {
+                autoTeleCone();
+            }
+        } else if ((field.lookingAtPoleTele() && CLAW_CLOSED.getStatus() && ARM_OUTTAKE.getStatus())) {
+            leds.pattern29();
+            if (op.gamepad1.y) {
+                autoTelePole();
+            }
+        } else if (lift.getLiftTarget() == lift.getStackPos()) {
+            setStackLevelColor(lift.getStackLevel());
+        } else if (CLAW_OPEN.getStatus()) {
+            darkGreen();
+        } else {
+            partycolorwave();
         }
+
 
         //will only close when detect cone
         claw.closeClaw();
@@ -740,10 +781,12 @@ public class PwPRobot extends BasicRobot {
         if (gp.updateSequence()) {
             field.autoMovement();
         }
-        field.updateMoves(false);
+
+
         liftArm.updateLiftArmStates();
         claw.updateClawStates();
         lift.updateLiftStates();
+
 //            logger.log("/RobotLogs/GeneralRobot", seq.toString(), false);
         //USE THE RFGAMEPAD FUNCTION CALLED getSequence(), WILL RETURN ARRAYLIST OF INTS:
         //1 = down, 2 = right, 3 = up, 4 = left

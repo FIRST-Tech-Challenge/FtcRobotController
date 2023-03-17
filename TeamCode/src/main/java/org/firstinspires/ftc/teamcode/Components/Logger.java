@@ -4,6 +4,8 @@ import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.op;
 
 import android.annotation.SuppressLint;
 
+import com.acmerobotics.roadrunner.geometry.Pose2d;
+
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileWriter;
@@ -61,6 +63,28 @@ public class Logger {
             e.printStackTrace();
         }
 
+    }
+    @SuppressLint("SdCardPath")
+    public void logPos(Pose2d position){
+        try {
+            FileWriter poser = new FileWriter("/sdcard/tmp/pos.csv");
+            poser.write(position.getX()+"\n"+position.getY()+"\n"+position.getHeading());
+            poser.close();
+
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+    public Pose2d readLogPos(){
+        try {
+            @SuppressLint("SdCardPath") Scanner poser = new Scanner("/sdcard/tmp/pos.csv");
+            return new Pose2d(Double.parseDouble(poser.nextLine()),Double.parseDouble(poser.nextLine()),Double.parseDouble(poser.nextLine()));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return new Pose2d(0,0,0);
     }
 
     @SuppressLint("SdCardPath")

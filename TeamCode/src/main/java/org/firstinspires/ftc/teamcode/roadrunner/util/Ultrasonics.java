@@ -104,7 +104,7 @@ public class Ultrasonics {
         if (time - lastUltraUpdate > 0.1 & high) {
             error[0]=0;
             error[1]=0;
-            getDistance();
+            updateDistance();
             double distance = dist[0] + robotWidth / 2;
             if (distance < 20 + robotWidth/2 && distance > 0) {
                 if (abs(angle) < 5 || abs(angle-360) < 5) {
@@ -204,7 +204,7 @@ public class Ultrasonics {
         }
     }
 
-    private void getDistance() {
+    private void updateDistance() {
         dist = new double[]{90.48337 * ultrasonicRight.getVoltage() - 13.12465, 90.48337 * ultrasonicLeft.getVoltage() - 13.12465
                 , 90.48337 * ultrasonicFront.getVoltage() - 13.12465, - 13.12465};
 //        ultraBack.enable(true);
@@ -213,6 +213,9 @@ public class Ultrasonics {
         ultraLeft.enable(true);
         lastUltraUpdate = time;
         high = false;
+    }
+    public double[] getDistance(){
+        return dist;
     }
     public Pose2d getPose2d() {
         updatedto=5;

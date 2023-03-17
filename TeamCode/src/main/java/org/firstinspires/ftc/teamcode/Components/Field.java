@@ -12,7 +12,6 @@ import static java.lang.Math.sqrt;
 import static java.lang.Math.toRadians;
 
 import com.acmerobotics.roadrunner.geometry.Pose2d;
-import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.acmerobotics.roadrunner.trajectory.Trajectory;
 
 import org.firstinspires.ftc.teamcode.Components.CV.CVMaster;
@@ -45,11 +44,11 @@ public class Field {
     double[] currentPosition = {0, 0, 0};
     Trajectory dropTrajectory;
     private Pose2d nexttrajStartPos;
-    boolean doneLookin =false;
+    boolean doneLookin = false;
     Lock locker;
     Lock needsLocker;
-    Pose2d polePos = new Pose2d(0,0,0);
-    Pose2d conePos = new Pose2d(0,0,0);
+    Pose2d polePos = new Pose2d(0, 0, 0);
+    Pose2d conePos = new Pose2d(0, 0, 0);
 
 
     double[][][] poleCoords = {
@@ -99,53 +98,80 @@ public class Field {
     public boolean lookingAtPole() {
         double[] coords = cv.rotatedPolarCoord();
 //        coords[1]+=5;
-        coords[1] -=1;
+        coords[1] -= 1;
         Pose2d pos = roadrun.getPoseEstimate();
-        pos = new Pose2d(pos.getX(),pos.getY(),pos.getHeading()+coords[0]*PI/180+PI);
-        polePos = new Pose2d(pos.getX()+cos(pos.getHeading())*coords[1]+sin(pos.getHeading()),pos.getY()+sin(pos.getHeading())*coords[1]+cos(pos.getHeading()),pos.getHeading());
-        if(abs(coords[1])<5&&abs(coords[1])>0){
+        pos = new Pose2d(pos.getX(), pos.getY(), pos.getHeading() + coords[0] * PI / 180 + PI);
+        polePos = new Pose2d(pos.getX() + cos(pos.getHeading()) * coords[1] + sin(pos.getHeading()), pos.getY() + sin(pos.getHeading()) * coords[1] + cos(pos.getHeading()), pos.getHeading());
+        if (abs(coords[1]) < 5 && abs(coords[1]) > 0) {
             setDoneLookin(true);
         }
 //        if(abs(pos.vec().distTo(roadrun.getCurrentTraj().end().vec()))<2){
 //            setDoneLookin(true);
 //        }
-        logger.log("/RobotLogs/GeneralRobot", "polePos"+polePos);
-        logger.log("/RobotLogs/GeneralRobot", "coords"+coords[0]+","+coords[1]);
+        logger.log("/RobotLogs/GeneralRobot", "polePos" + polePos);
+        logger.log("/RobotLogs/GeneralRobot", "coords" + coords[0] + "," + coords[1]);
 
-        if(abs(pos.vec().distTo(roadrun.getCurrentTraj().end().vec()))<10&&abs(coords[1])<18&&coords[1]>3&&(roadrun.getCurrentTraj()==null||abs(polePos.vec().distTo(roadrun.getCurrentTraj().end().vec()))<2.8)){
+        if (abs(pos.vec().distTo(roadrun.getCurrentTraj().end().vec())) < 10 && abs(coords[1]) < 18 && coords[1] > 3 && (roadrun.getCurrentTraj() == null || abs(polePos.vec().distTo(roadrun.getCurrentTraj().end().vec())) < 2.8)) {
             return true;
         }
         return false;
     }
+
+    public boolean lookingAtPoleTele() {
+        double[] coords = cv.rotatedPolarCoord();
+//        coords[1]+=5;
+        coords[1] -= 1;
+        Pose2d pos = roadrun.getPoseEstimate();
+        pos = new Pose2d(pos.getX(), pos.getY(), pos.getHeading() + coords[0] * PI / 180 + PI);
+        polePos = new Pose2d(pos.getX() + cos(pos.getHeading()) * coords[1] + sin(pos.getHeading()), pos.getY() + sin(pos.getHeading()) * coords[1] + cos(pos.getHeading()), pos.getHeading());
+        if (abs(coords[1]) < 5 && abs(coords[1]) > 0) {
+            setDoneLookin(true);
+        }
+//        if(abs(pos.vec().distTo(roadrun.getCurrentTraj().end().vec()))<2){
+//            setDoneLookin(true);
+//        }
+        logger.log("/RobotLogs/GeneralRobot", "polePos" + polePos);
+        logger.log("/RobotLogs/GeneralRobot", "coords" + coords[0] + "," + coords[1]);
+
+        if (abs(coords[1]) < 18 && coords[1] > 3) {
+            return true;
+        }
+        return false;
+    }
+
     public boolean lookingAtCone() {
         double[] coords = cv.rotatedConarCoord();
 //        coords[1]+=5;
 //        coords[1] -=2;
         Pose2d pos = roadrun.getPoseEstimate();
-        pos = new Pose2d(pos.getX(),pos.getY(),pos.getHeading()+coords[0]*PI/180);
-        conePos = new Pose2d(pos.getX()+cos(pos.getHeading())*coords[1],pos.getY()+sin(pos.getHeading())*coords[1]+1,pos.getHeading());
-        if(abs(coords[1])<5&&abs(coords[1])>-1){
+        pos = new Pose2d(pos.getX(), pos.getY(), pos.getHeading() + coords[0] * PI / 180);
+        conePos = new Pose2d(pos.getX() + cos(pos.getHeading()) * coords[1], pos.getY() + sin(pos.getHeading()) * coords[1] + 1, pos.getHeading());
+        if (abs(coords[1]) < 5 && abs(coords[1]) > -1) {
             setDoneLookin(true);
         }
-        logger.log("/RobotLogs/GeneralRobot", "CONePos"+ conePos);
-        logger.log("/RobotLogs/GeneralRobot", "coords"+coords[0]+","+coords[1]);
-        if(abs(coords[1])>4){
+        logger.log("/RobotLogs/GeneralRobot", "CONePos" + conePos);
+        logger.log("/RobotLogs/GeneralRobot", "coords" + coords[0] + "," + coords[1]);
+        if (abs(coords[1]) > 4) {
 
-                return true;
+            return true;
         }
         return false;
     }
+
     public Pose2d polePos() {
         return polePos;
     }
+
     public Pose2d conePos() {
         return conePos;
     }
-    public boolean isDoneLookin(){
+
+    public boolean isDoneLookin() {
         return doneLookin;
     }
-    public void setDoneLookin(boolean inpu){
-        doneLookin=inpu;
+
+    public void setDoneLookin(boolean inpu) {
+        doneLookin = inpu;
     }
 
     public void closestDropPosition(boolean correct) {
@@ -426,151 +452,46 @@ public class Field {
                     endTangents[direction] + isReversed * toRadians(180), endTangents[direction]};
             if (shouldMove) {
                 addMove(move, lastReversed);
-                updateMoves(false);
             }
             gp.removeSequenceElement();
         }
     }
 
     public void addMove(double[] move, boolean reverse) {
-        queuedMovement.add(move);
-        queuedReversals.add(reverse);
+        fullMovement.add(move);
+        reversals.add(reverse);
     }
 
-    public void updateMoves(boolean lock) {
-        if (!queuedMovement.isEmpty() && locker.tryLock()) {
-            try {
-                locker.lock();
-                fullMovement.addAll(queuedMovement);
-                reversals.addAll(queuedReversals);
-                logger.log("/RobotLogs/GeneralRobot", "adder");
-                queuedMovement.clear();
-                queuedReversals.clear();
-            } finally {
-                locker.unlock();
+    public void compiledTrajectory() {
+        logger.log("/RobotLogs/GeneralRobot", "aNewCompile");
+        if (!roadrun.isBusy()) {
+            Pose2d startPos = roadrun.getPoseEstimate();
+            TrajectorySequenceBuilder bob = roadrun.trajectorySequenceBuilder(startPos);
+            for (int i = 0; i < fullMovement.size(); i++) {
+                bob.setReversed(reversals.get(i));
+                Pose2d target = new Pose2d(fullMovement.get(0)[0], fullMovement.get(0)[1], fullMovement.get(0)[2]);
+                bob.splineToSplineHeading(target, fullMovement.get(i)[3]);
             }
-        }
-        else if(lock&&!queuedMovement.isEmpty()){
-            fullMovement.addAll(queuedMovement);
-            reversals.addAll(queuedReversals);
-            logger.log("/RobotLogs/GeneralRobot", "adder");
-            queuedMovement.clear();
-            queuedReversals.clear();
-        }
-        if (needsLocker.tryLock()) {
-            try {
-                needsLocker.lockInterruptibly();
-                if (needsCompile[0]) {
-                    needsLocker.unlock();
-                    compiledTrajectory(needsCompile[1]);
-                    System.gc();
-                }
-            } catch (InterruptedException e) {
-
-            } finally {
-                needsLocker.unlock();
-            }
-        }
-    }
-    public void compiledTrajectory(boolean start) {
-        if (locker.tryLock()) {
-            if(needsLocker.tryLock()){
-                try{
-                    needsLocker.lock();
-                    needsCompile[0]=false;
-                }finally{
-                    needsLocker.unlock();
-                }
-            }
-            try {
-                locker.lock();
-                logger.log("/RobotLogs/GeneralRobot", "aNewCompile");
-                updateMoves(true);
-                Pose2d startPos = roadrun.getPoseEstimate();
-                if (!fullMovement.isEmpty()) {
-                    double endTangent = fullMovement.get(0)[3];
-                    int index = directionIndex;
-                    if ((index == 5 || index == 6) && start) {
-                        Pose2d target = new Pose2d(fullMovement.get(0)[0], fullMovement.get(0)[1], fullMovement.get(0)[2]);
-                        autoTele = true;
-                        TrajectorySequenceBuilder traj = roadrun.trajectorySequenceBuilder(startPos)
-                                .setReversed(isReversed)
-                                .splineToLinearHeading(target, endTangent)
-                                .addTemporalMarker(() -> {
-                                    if (locker.tryLock()) {
-                                        try {
-                                            logger.log("/RobotLogs/GeneralRobot", "cleared");
-                                            locker.lock();
-                                            fullMovement.clear();
-                                            reversals.clear();
-                                            autoTele = false;
-                                        } finally {
-                                            locker.unlock();
-                                        }
-                                    }
-                                });
-                        roadrun.followTrajectorySequenceAsync(traj.build());
-                        traj = null;
-                    } else {
-                        if (!start) {
-                            if (fullMovement.size() > 1) {
-                                double[] middle = fullMovement.get(0);
-                                Vector2d target = new Vector2d(fullMovement.get(1)[0], fullMovement.get(1)[1]);
-                                endTangent = fullMovement.get(1)[3];
-                                fullMovement.remove(0);
-                                reversals.remove(0);
-                                autoTele = true;
-                                Pose2d midPos = new Pose2d(middle[0], middle[1], middle[2]);
-                                TrajectorySequenceBuilder traj = roadrun.trajectorySequenceBuilder(midPos)
-                                        .setReversed(isReversed)
-                                        .addDisplacementMarker(target.distTo(midPos.vec()) * 0.6
-                                                , () -> {compiledTrajectory(false); System.gc();})
-                                        .setReversed(reversals.get(0))
-                                        .splineTo(target, endTangent)
-                                        .addTemporalMarker(() -> compiledTrajectory(false));
-                                roadrun.followTrajectorySequenceAsync(traj.build());
-                                traj = null;
-                            } else {
-                                if (locker.tryLock()) {
-                                    try {
-                                        locker.lock();
-                                        logger.log("/RobotLogs/GeneralRobot", "endReached"+ fullMovement.size());
-                                        fullMovement.clear();
-                                        reversals.clear();
-                                        autoTele = false;
-                                    } finally {
-                                        locker.unlock();
-                                    }
-                                }
-                            }
-                        } else {
-                            autoTele = true;
-                            Vector2d target = new Vector2d(fullMovement.get(0)[0], fullMovement.get(0)[1]);
-                            isReversed = reversals.get(0);
-                            TrajectorySequenceBuilder traj = roadrun.trajectorySequenceBuilder(startPos)
-                                    .setReversed(isReversed)
-                                    .addDisplacementMarker(target.distTo(startPos.vec()) * 0.8
-                                            , () -> compiledTrajectory(false))
-                                    .splineTo(target, endTangent)
-                                    .addTemporalMarker(() -> compiledTrajectory(false));
-                            roadrun.followTrajectorySequenceAsync(traj.build());
-                            traj = null;
-                        }
-                    }
-                }
-                startPos = null;
-            } finally {
-                locker.unlock();
-            }
+            bob.addTemporalMarker(() -> {
+                fullMovement.clear();
+                reversals.clear();
+                gp.clearSequence();
+            });
+            roadrun.followTrajectorySequenceAsync(bob.build());
         } else {
-            if (needsLocker.tryLock()) {
-                try {
-                    needsLocker.lock();
-                    needsCompile = new boolean[]{true, start};
-                } finally {
-                    needsLocker.unlock();
-                }
+            Pose2d startPos = roadrun.getCurrentTraj().start();
+            TrajectorySequenceBuilder bob = roadrun.trajectorySequenceBuilder(startPos);
+            for (int i = 0; i < fullMovement.size(); i++) {
+                bob.setReversed(reversals.get(i));
+                Pose2d target = new Pose2d(fullMovement.get(0)[0], fullMovement.get(0)[1], fullMovement.get(0)[2]);
+                bob.splineToSplineHeading(target, fullMovement.get(i)[3]);
             }
+            bob.addTemporalMarker(() -> {
+                fullMovement.clear();
+                reversals.clear();
+                gp.clearSequence();
+            });
+            roadrun.changeTrajectorySequence(bob.build());
         }
 
     }
@@ -588,18 +509,11 @@ public class Field {
         }
         autoLateralTileGenerator();
         tileMovement = null;
-        if (locker.tryLock()) {
-            try {
-                locker.lock();
-                if (!roadrun.isBusy() && !fullMovement.isEmpty()) {
-                    compiledTrajectory(true);
-                    System.gc();
-                }
-            } finally {
-                locker.unlock();
-            }
+        if (!roadrun.isBusy() && !fullMovement.isEmpty()) {
+            compiledTrajectory();
+            System.gc();
         }
-        minDistTile=null;
+        minDistTile = null;
     }
 
     public boolean isAutoTele() {

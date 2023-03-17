@@ -37,7 +37,7 @@ public class BlueLeftAutoMidCycleTuned extends LinearOpMode {
         PwPRobot robot = new PwPRobot(this, false);
         robot.roadrun.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         Pose2d startPose = new Pose2d(38, 63.25, Math.toRadians(90));
-        robot.roadrun.setPoseEstimate(startPose);
+        robot.setPoseEstimate(startPose);
 
         //detectSignal();
         //store in variable
