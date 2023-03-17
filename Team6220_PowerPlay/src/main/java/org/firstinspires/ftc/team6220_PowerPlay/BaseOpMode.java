@@ -316,7 +316,7 @@ public abstract class BaseOpMode extends LinearOpMode {
      * @return strafing power for robot drivetrain
      */
     public double coneStackPixelsAndWidthToStrafingPower(double pixelOffset, double width) {
-        return (Constants.CONE_STACK_CENTERING_PROPORTIONAL_KP * pixelOffset)*((1.0/Constants.STRAFING_AUTHORITY_CONSTANT)*width);
+        return (Constants.CONE_STACK_CENTERING_PROPORTIONAL_KP * pixelOffset) * ((1.0 / Constants.STRAFING_AUTHORITY_CONSTANT) * width);
     }
 
     /**
