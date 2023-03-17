@@ -11,6 +11,7 @@ abstract public class AutoFramework extends BaseAutonomous {
         int driveCourse;
         int targetDistance = 11;
         int[] signalArray;
+
         switch (AutoSelector) {
 
             case LeftAutos:
