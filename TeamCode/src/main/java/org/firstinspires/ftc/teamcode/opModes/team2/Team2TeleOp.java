@@ -105,7 +105,7 @@ public class Team2TeleOp extends TeleOpModeBase {
         telemetry.addData("Normal Drive Train Y", inputs[0]);
         telemetry.addData("Normal Drive Train X", inputs[1]);
         telemetry.addData("Sideways Motor Value", inputs[2]);
-
+        telemetry.addData("Arm motor value", inputs[3]);
         telemetry.addData("Slow Mode", isSlowMode);
         telemetry.addData("Forward Only Mode", isForwardOnlyMode);
         telemetry.addData("Dead Zone Size", DEAD_ZONE_SIZE);
