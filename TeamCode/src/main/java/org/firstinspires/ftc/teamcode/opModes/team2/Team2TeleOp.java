@@ -31,7 +31,7 @@ import org.firstinspires.ftc.teamcode.libs.brightonCollege.modeBases.TeleOpModeB
  *  Circle: Toggle between both directions and forward only.
  */
 
-@Disabled
+
 @TeleOp(name="Team2TeleOp", group="Team 2")
 public class Team2TeleOp extends TeleOpModeBase {
 
@@ -71,61 +71,43 @@ public class Team2TeleOp extends TeleOpModeBase {
 
     @Override
     public void every_tick() {
-        GamepadEx gamepad = Inputs.gamepad1;
+        final GamepadEx gamepad = Inputs.gamepad1;
 
-        double normalDriveXInput = gamepad.getLeftX();
-        double normalDriveYInput = gamepad.getLeftY();
-        double sidewaysDriveInput = gamepad.getRightX();
+        final double[] inputs = {gamepad.getLeftY(), gamepad.getLeftX(), gamepad.getRightX()}; //forward speed, turn speed, sideways speed
 
         //if joystick pos is less than this amount from in the middle, the robot doesn't move.
         final double DEAD_ZONE_SIZE = 0.2D;
 
-        new GamepadButton(gamepad, PSButtons.SQUARE).whenActive(() -> {
-            isSlowMode = !isSlowMode;
-        });
-        {
-        }
+        new GamepadButton(gamepad, PSButtons.SQUARE).whenActive(() -> isSlowMode = !isSlowMode);
 
-        new GamepadButton(gamepad, PSButtons.CIRCLE).whenActive(() -> {
-            isForwardOnlyMode = !isForwardOnlyMode;
-        });
+        new GamepadButton(gamepad, PSButtons.CIRCLE).whenActive(() -> isForwardOnlyMode = !isForwardOnlyMode);
 
 
         if (isSlowMode) {
-            for (double input: new double[]{normalDriveXInput, normalDriveYInput, sidewaysDriveInput}) {
-                input /= 2D;
+            for (int i = 0; i < inputs.length; i++) {
+                inputs[i] /= 2D;
             }
         }
 
         if (isForwardOnlyMode) {
-            normalDriveXInput = 0D;
+            inputs[1] = 0D; //set turn speed to 0
         }
 
         //if the following variables are less than DEAD_ZONE_SIZE from 0, set them to be 0
-        for (double input: new double[]{normalDriveXInput, normalDriveYInput, sidewaysDriveInput}) {
-            input = -DEAD_ZONE_SIZE > input || input > DEAD_ZONE_SIZE ? input : 0D;
+        for (int i = 0; i < inputs.length; i++) {
+            inputs[i] = Math.abs(inputs[i]) < DEAD_ZONE_SIZE ? inputs[i] : 0D;
         }
 
-        arcadeDrive(leftMotor, rightMotor, normalDriveXInput, normalDriveYInput);
+        arcadeDrive(leftMotor, rightMotor, inputs[0], inputs[1]);
 
-        sidewaysMotor.set(sidewaysDriveInput);
+        sidewaysMotor.set(inputs[2]);
 
-        telemetry.addData("Normal Drive Train X", normalDriveXInput);
-        telemetry.addData("Normal Drive Train Y", normalDriveYInput);
-        telemetry.addData("Sideways Motor Value", sidewaysDriveInput);
+        telemetry.addData("Normal Drive Train Y", inputs[0]);
+        telemetry.addData("Normal Drive Train X", inputs[1]);
+        telemetry.addData("Sideways Motor Value", inputs[2]);
 
         telemetry.addData("Slow Mode", isSlowMode);
         telemetry.addData("Forward Only Mode", isForwardOnlyMode);
         telemetry.addData("Dead Zone Size", DEAD_ZONE_SIZE);
-
-        if(Math.abs(Inputs.gamepad1.getRightY()) != this.targetPosition) {
-            this.targetPosition = Math.abs(Inputs.gamepad1.getRightY());
-            lift.setHeight(this.targetPosition);
-        } else {
-            telemetry.addLine("[Lift] BUSY");
-        }
-        telemetry.addData("[Lift] Last set position to", this.targetPosition);
-        telemetry.addData("[Lift] Position of gamepad", Math.abs(Inputs.gamepad1.getRightY()));
-
     }
 }
