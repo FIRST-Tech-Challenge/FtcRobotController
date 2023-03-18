@@ -60,10 +60,10 @@ public class UnderArm implements Subsystem {
     public static double TURRET_DEG_MAX = 360;
 
     public static double LASSO_CLOSED = 1750;
-    public static double LASSO_OPEN = 900;
+    public static double LASSO_OPEN = 1100;
 
-    public static double TRANSFER_SHOULDER_ANGLE = -19;
-    public static double TRANSFER_SHOULDER_APPROACH_ANGLE = -33;
+    public static double TRANSFER_SHOULDER_ANGLE = -15;
+    public static double TRANSFER_SHOULDER_APPROACH_ANGLE = -20;
     public static double TRANSFER_ELBOW_ANGLE = -101;
 
     public static double TRANSFER_WRIST_ANGLE = 101;
@@ -312,7 +312,7 @@ public class UnderArm implements Subsystem {
                 break;
             case 1: //final lift to engage grippers
                 if (System.nanoTime() > transferTimer) {
-                    setShoulderTargetAngle(TRANSFER_SHOULDER_ANGLE);
+                    setShoulderTargetAngle(TRANSFER_SHOULDER_APPROACH_ANGLE);
                     transferStage = 0;
                     atTransfer = true;
                     return true;
@@ -355,17 +355,17 @@ public class UnderArm implements Subsystem {
     long substationTimer;
     int substationStage = 0;
 
-    double ssHoverShoulder = 57 , ssHoverElbow = 108, ssHoverWrist = 68, ssHoverTurret = 0;
+    double SS_HOVER_SHOULDER = 57 , SS_HOVER_ELBOW = 108, SS_HOVER_WRIST = 90, SS_HOVER_TURRET = 0;
 
     public void SaveHoverPositions(){
         //only call this when at a good known substation hover position
-        ssHoverElbow = elbowTargetAngle;
-        ssHoverShoulder = shoulderTargetAngle;
-        ssHoverTurret = turretTargetAngle;
+        SS_HOVER_ELBOW = elbowTargetAngle;
+        SS_HOVER_SHOULDER = shoulderTargetAngle;
+        SS_HOVER_TURRET = turretTargetAngle;
     }
 
     public void SetDefaultHoverPositions(){
-        ssHoverShoulder = 57; ssHoverElbow = 108; ssHoverWrist = 68; ssHoverTurret = 0;
+        SS_HOVER_SHOULDER = 57; SS_HOVER_ELBOW = 108; SS_HOVER_WRIST = 68; SS_HOVER_TURRET = 0;
     }
     public boolean goSubstationHover() {
         switch (substationStage) {
@@ -376,7 +376,7 @@ public class UnderArm implements Subsystem {
                 break;
             case 1: //give the elbow a head start to clear the camera when a cone is loaded
                 if (substationTimer<System.nanoTime()){
-                    setElbowTargetAngle(ssHoverElbow);
+                    setElbowTargetAngle(SS_HOVER_ELBOW);
                     substationTimer = futureTime(0.25);
                     substationStage++;
                 }
@@ -385,10 +385,10 @@ public class UnderArm implements Subsystem {
 
                 if (substationTimer<System.nanoTime()){
                     // these values are meant to be fine tuned by driver positioning between hover and pickup
-                    setElbowTargetAngle(ssHoverElbow);
-                    setShoulderTargetAngle(ssHoverShoulder);
-                    setWristTargetAngle(ssHoverWrist);
-                    setTurretTargetAngle(ssHoverTurret);
+                    setElbowTargetAngle(SS_HOVER_ELBOW);
+                    setShoulderTargetAngle(SS_HOVER_SHOULDER);
+                    setWristTargetAngle(SS_HOVER_WRIST);
+                    setTurretTargetAngle(SS_HOVER_TURRET);
                     substationTimer = futureTime(0.5);
                     substationStage++;
                 }
@@ -433,7 +433,7 @@ public class UnderArm implements Subsystem {
                 break;
             case 3: //elevate shoulder to clear mat
                 if (substationTimer<System.nanoTime()) {
-                    setShoulderTargetAngle(ssHoverShoulder);
+                    setShoulderTargetAngle(SS_HOVER_SHOULDER);
                     substationStage++;
                     substationTimer = futureTime(0.3);
                 }
@@ -699,6 +699,7 @@ public boolean goSubstationRecover() {
             telemetryMap.put("Lasso Position", lassoServo.getPosition());
             telemetryMap.put("Lasso Grip", lassoGripped);
             telemetryMap.put("Home Stage", homeStage);
+            telemetryMap.put("Transfer Stage", transferStage);
 
             telemetryMap.put("chariot distance", getChariotDistance());
 

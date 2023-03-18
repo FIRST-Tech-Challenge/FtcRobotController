@@ -88,6 +88,9 @@ public class DriverControls {
             robot.crane.updateScoringPattern();
         }
 
+        if(stickyGamepad2.start)
+            robot.transferAdvance();
+
         if(stickyGamepad1.y){
             robot.field.decTarget();
             robot.crane.updateScoringPattern();

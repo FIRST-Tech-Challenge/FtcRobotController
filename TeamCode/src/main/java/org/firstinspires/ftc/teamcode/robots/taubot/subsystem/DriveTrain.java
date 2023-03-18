@@ -233,7 +233,7 @@ public class DriveTrain extends DiffyDrive implements Subsystem {
     //end Constructor
 
     public void toggleExtension(){
-        if(chassisLength > 27.5){
+        if(chassisLength > 24.5){
             setChassisLength(MIN_SAFE_CHASSIS_LENGTH);
         }else{
             setChassisLength(MAX_CHASSIS_LENGTH);

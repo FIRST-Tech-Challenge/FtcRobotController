@@ -103,9 +103,9 @@ public class Crane implements Subsystem {
     boolean EXTENDER_CALIBRATE_MAX = false; //keep false except if calibrating EXTENDER_TICS_MAX
 
     public static double BULB_OPEN_POS = 1500;
-    public static double BULB_CLOSED_POS = 1750;
+    public static double BULB_CLOSED_POS = 1800;
 
-    public static double TRANSFER_SHOULDER_ANGLE = 55;  //angle at which transfer occurs
+    public static double TRANSFER_SHOULDER_ANGLE = 50;  //angle at which transfer occurs
     public static double TRANSFER_SHOULDER_FLIPANGLE = 80; //causes the gripperflipper to flip when the angle is high and the turret turns enough or the robot accellerates
     public static double TRANSFER_ARM_LENGTH = 0.05;
 
@@ -450,6 +450,7 @@ public class Crane implements Subsystem {
         coneStackRight,
         coneStackLeft,
         transfer,
+        transferAdjust,
         robotDriving,
         postTransfer,
         init
@@ -463,6 +464,8 @@ public class Crane implements Subsystem {
         articulation = target;
 
         switch(articulation){
+            case transferAdjust:
+                setShoulderTargetAngle(0);
             case robotDriving: //if the robot is driving all cranes should go into a safe position
                 setShoulderTargetAngle(SAFE_SHOULDER_ANGLE);
                 setExtendTargetPos(SAFE_ARM_LENGTH);
