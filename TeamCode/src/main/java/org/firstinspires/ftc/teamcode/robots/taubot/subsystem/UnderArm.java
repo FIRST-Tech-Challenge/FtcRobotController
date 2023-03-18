@@ -68,7 +68,7 @@ public class UnderArm implements Subsystem {
 
     public static double TRANSFER_WRIST_ANGLE = 101;
 
-    public static double TRANSFER_TURRET_ANGLE = -14;
+    public static double TRANSFER_TURRET_ANGLE = 0; //-14
     boolean lassoGripped = false;
 
     public static double UNDERARM_HEIGHT = 7; //height of rotation of shoulder motor   INCHES

@@ -318,7 +318,7 @@ public class Crane implements Subsystem {
         return false;
     }
 
-    public static double FOLD_SHOULDER_POSITION = 12;
+    public static double FOLD_SHOULDER_POSITION = 20;
     boolean calibrated = true;
 
     FieldThing targetPole;
