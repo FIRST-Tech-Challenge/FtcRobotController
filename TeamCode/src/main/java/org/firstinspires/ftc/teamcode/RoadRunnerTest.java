@@ -250,12 +250,17 @@ public class RoadRunnerTest extends LinearOpMode {
                 .lineTo(new Vector2d(-63, -10))
                 .build();
         Trajectory poleMid = drive.trajectoryBuilder(stack.end())
-                .lineToLinearHeading(new Pose2d(-12, -12, Math.toRadians(225)))
+                .lineTo(new Vector2d(-12, -12))
                 .build();
         Trajectory pole = drive.trajectoryBuilder(poleMid.end())
-                .lineTo(new Vector2d(-19, -19))
+                .lineToLinearHeading(new Pose2d(-19, -19, Math.toRadians(225)))
                 .build();
-
+        Trajectory poleBack = drive.trajectoryBuilder(pole.end())
+                .lineToLinearHeading(new Pose2d(-12, -12, Math.toRadians(180)))
+                .build();
+        Trajectory stack2 = drive.trajectoryBuilder(poleBack.end())
+                .lineTo(new Vector2d(-63, -10))
+                .build();
         waitForStart();
         telemetry.addLine("Start requested");
         telemetry.update();
@@ -286,11 +291,15 @@ public class RoadRunnerTest extends LinearOpMode {
         drive.followTrajectory(poleMid);
         manipulator.moveSlideEncoder(MID_TICKS, 1);
 
+
         drive.followTrajectory(pole);
 
         manipulator.outtake();
         sleep(1000);
         manipulator.stopIntake();
+
+        drive.followTrajectory(poleBack);
+        drive.followTrajectory(stack2);
 //
 //        drive.followTrajectory();
 //        manipulator.moveSlideEncoder(LOW_TICKS - 700, 1);

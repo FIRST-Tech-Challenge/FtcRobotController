@@ -153,7 +153,7 @@ public class TeleOpDrive extends LinearOpMode{
                         headingTurnTimer.reset();
                         currentMode = Mode.ALIGN_DOWN;
                     }
-                    if (gamepad1.left_bumper) {
+                    if (gamepad1.right_bumper) {
                         currentMode = Mode.ALIGN_TO_POLE;
                     }
 
@@ -164,6 +164,21 @@ public class TeleOpDrive extends LinearOpMode{
                             -gamepad1.left_stick_x * 0.6,
                             gamepad1.right_stick_x * 0.6
                     );
+
+                    /*Pose2d poseEstimateController = drive.getPoseEstimate();
+
+                    Vector2d input = new Vector2d(
+                            -gamepad1.left_stick_y,
+                            -gamepad1.left_stick_x
+                    ).rotated(-poseEstimateController.getHeading());
+
+                    drive.setWeightedDrivePower(
+                            new Pose2d(
+                                    input.getX(),
+                                    input.getY(),
+                                    -gamepad1.right_stick_x
+                            )
+                    );*/
                     break;
                 case ALIGN_RIGHT:
                     // Create a vector from the gamepad x/y inputs which is the field relative movement
@@ -362,97 +377,37 @@ public class TeleOpDrive extends LinearOpMode{
 
                     break;
                 case ALIGN_TO_POLE:
-                    double PIXELS_PER_DEGREE = 26.70190509190664625235159202721;
+//                    double PIXELS_PER_DEGREE = 26.70190509190664625235159202721;
+                    double PIXELS_PER_DEGREE = 25;
                     double poleX = opencv.poleCenterX;
                     double poleWidth = opencv.poleWidth;
                     double errorX = poleX - 640;
                     double POLE_DISTANCE_CONSTANT = 0.02;
 
-                    //TODO: need to add the actual math for pole detection/alignment
-                    //we know the angle of the pole in relation to the robot
-                    //and we know the width of the pole (in pixels, so need to convert to inches with tuning)
-                    //so that's an angle and an adjacent side to a right triangle
-                    //so then solve the rest of triangle and figure out the position of the pole in x,y inches
+                    if (centerPosX > 750 || centerPosX < 550) {
+                        centerPosX = opencv.poleCenterX;
+                        telemetry.addData("PoleCenterX", centerPosX);
+                        telemetry.addLine("Not Equal");
 
-                    double headingDiff = Math.toDegrees(poseEstimate.getHeading()) - (errorX/PIXELS_PER_DEGREE);
-//                    double headingDiff = (errorX/PIXELS_PER_DEGREE);
-                    double poleDistanceEstimate = poleWidth * POLE_DISTANCE_CONSTANT;
-//                    double otherAngle = 90 - headingDiff;
+                        drive.turn(Math.toRadians((640 - centerPosX) / PIXELS_PER_DEGREE));
 
-
-                    int closestAngle = 0;
-
-                    int temp = (int)(Math.toDegrees(poseEstimate.getHeading()) / 90);
-                    if (temp == 0) {
-                        closestAngle = 0;
-                    } else if (temp == 1) {
-                        closestAngle = 90;
-                    } else if (temp == 2) {
-                        closestAngle = 180;
-                    } else if (temp == 3) {
-                        closestAngle = 270;
+                        telemetry.update();
                     } else {
-                        closestAngle = 360;
+                        centerPosX = opencv.poleCenterX;
+                        telemetry.addData("PoleCenterX", centerPosX);
+                        telemetry.addLine("EQUAL");
+
+                        telemetry.update();
+
+                        drive.leftFront.setPower(0);
+                        drive.rightFront.setPower(0);
+                        drive.leftRear.setPower(0);
+                        drive.rightRear.setPower(0);
                     }
 
-                    double angleToNearest90 = Math.toDegrees(poseEstimate.getHeading()) - closestAngle;
-                    double other90Angle = headingDiff - angleToNearest90;
-
-                    double XDiff = Math.sin(Math.toRadians(other90Angle)) * poleDistanceEstimate;
-                    double YDiff = Math.cos(Math.toRadians(other90Angle)) * poleDistanceEstimate;
-
-                    double test = poseEstimate.getHeading() + headingDiff;
-
-                    Vector2d PoleAlignPosition = new Vector2d(drive.getLocalizer().getPoseEstimate().getX() + XDiff, drive.getLocalizer().getPoseEstimate().getY() + YDiff);
-//                    Vector2d PoleAlignPosition = Vector2d.polar(poleDistanceEstimate, Math.toRadians(headingDiff));
-
-                    // Create a vector from the gamepad x/y inputs which is the field relative movement
-                    // Then, rotate that vector by the inverse of that heading for f
-                    // ield centric control
-                    Vector2d fieldFrameInput5 = new Vector2d(
-                            -gamepad1.left_stick_y,
-                            -gamepad1.left_stick_x
-                    );
-                    Vector2d robotFrameInput5 = fieldFrameInput5.rotated(-poseEstimate.getHeading());
-
-                    // Difference between the target vector and the bot's position
-                    Vector2d difference5 = PoleAlignPosition.minus(poseEstimate.vec());
-                    // Obtain the target angle for feedback and derivative for feedforward
-                    double theta5 = difference5.angle();
-
-                    // Not technically omega because its power. This is the derivative of atan2
-                    double thetaFF5 = -fieldFrameInput5.rotated(-Math.PI / 2).dot(difference5) / (difference5.norm() * difference5.norm());
-
-                    // Set the target heading for the heading controller to our desired angle
-                    headingController.setTargetPosition(theta5);
-
-                    // Set desired angular velocity to the heading controller output + angular
-                    // velocity feedforward
-                    double headingInput5 = (headingController.update(poseEstimate.getHeading())
-                            * DriveConstants.kV + thetaFF5)
-                            * DriveConstants.TRACK_WIDTH;
-
-                    // Combine the field centric x/y velocity with our derived angular velocity
-                    driveDirection = new Pose2d(
-                            robotFrameInput5,
-                            headingInput5
-                    );
-
-                    // Draw the target on the field
-                    fieldOverlay.setStroke("#dd2c00");
-                    fieldOverlay.strokeCircle(PoleAlignPosition.getX(), PoleAlignPosition.getY(), DRAWING_TARGET_RADIUS);
-
-                    // Draw lines to target
-                    fieldOverlay.setStroke("#b89eff");
-                    fieldOverlay.strokeLine(PoleAlignPosition.getX(), PoleAlignPosition.getY(), poseEstimate.getX(), poseEstimate.getY());
-                    fieldOverlay.setStroke("#ffce7a");
-                    fieldOverlay.strokeLine(PoleAlignPosition.getX(), PoleAlignPosition.getY(), PoleAlignPosition.getX(), poseEstimate.getY());
-                    fieldOverlay.strokeLine(PoleAlignPosition.getX(), poseEstimate.getY(), poseEstimate.getX(), poseEstimate.getY());
-
-                    if (gamepad1.right_stick_x > 0.2 || gamepad1.right_stick_x < -0.2) {
+                    if (gamepad1.left_stick_x > 0.2 || gamepad1.left_stick_x < -0.2 || gamepad1.left_stick_y > 0.2 || gamepad1.left_stick_y < -0.2 || gamepad1.right_stick_x > 0.2 || gamepad1.right_stick_x < -0.2) {
                         currentMode = Mode.NORMAL_CONTROL;
                     }
-
 
                     break;
 
@@ -547,18 +502,25 @@ public class TeleOpDrive extends LinearOpMode{
                 manipulator.moveSlides(0.9);
             } else if (gamepad2.dpad_down) {
                 manipulator.moveSlides(-0.9);
+            } else if (gamepad2.right_bumper){
+                manipulator.moveSlideEncoder(manipulator.rightSlides.getCurrentPosition() - 50, 1);
+
             } else {
                 if (gamepad1.y || (gamepad2.left_trigger > 0.2)) {
                     manipulator.moveSlideEncoder(START_TICKS,0.9
                     );
+                    gamepad2.rumble(500);
                 } else if (gamepad1.a) {
                     manipulator.moveSlideEncoder(INTAKE_TICKS,0.9);
                 } else if (gamepad2.a) {
                     manipulator.moveSlideEncoder(LOW_TICKS,0.9);
+                    gamepad2.rumble(0.2, 0, 500);
                 } else if (gamepad2.b) {
                     manipulator.moveSlideEncoder(MID_TICKS,0.9);
+                    gamepad2.rumble(0.5, 0.5, 500);
                 } else if (gamepad2.y) {
                     manipulator.moveSlideEncoder(HIGH_TICKS,0.9);
+                    gamepad2.rumble(500);
                 } else if (manipulator.rightSlides.getMode().equals(DcMotor.RunMode.RUN_WITHOUT_ENCODER)){
                     manipulator.moveSlideEncoder(manipulator.leftSlides.getCurrentPosition(), manipulator.rightSlides.getCurrentPosition(), 0.5);
                 }
