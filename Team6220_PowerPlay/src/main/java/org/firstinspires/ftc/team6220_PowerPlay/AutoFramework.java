@@ -13,7 +13,6 @@ abstract public class AutoFramework extends BaseAutonomous {
         int[] signalArray;
 
         switch (AutoSelector) {
-
             case LeftAutos:
                 signalArray = new int[]{90, 33, 90, 11, -90, 11};
                 driveCourse = -90;
