@@ -233,7 +233,7 @@ public abstract class BaseAutonomous extends BaseOpMode {
      * @param X desired camera width (in pixels)
      * @param Y desired camera height (in pixels)
      */
-    public void startCameraWithPipeline(OpenCvPipeline pipeline, OpenCvCamera camera, int X, int Y){
+    public void startCameraWithPipeline(OpenCvPipeline pipeline, OpenCvCamera camera, int X, int Y) {
         camera.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
             @Override
             public void onOpened() {
