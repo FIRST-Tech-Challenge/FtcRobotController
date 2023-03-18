@@ -43,9 +43,9 @@ public class Turning_Autonomous extends AutonomousLinearModeBase {
             // Code to run in a loop
             //turning right version 1
             telemetry.addData("Time", runtime.toString());
-            motor1.set(1.0);
+            motor1.set(0.5);
             telemetry.addData("leftmotor", motor1.getCorrectedVelocity());
-            motor2.set(-1.0);
+            motor2.set(-0.5);
             telemetry.addData("rightmotor", motor2.getCorrectedVelocity());
             //turning right version 2
             //motor1.set(1.0);
