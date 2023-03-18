@@ -18,7 +18,7 @@ public class StackGrabbingTest extends BaseAutonomous {
         sleep(300);
         driveGrabber(Constants.GRABBER_INITIALIZE_POSITION);
         sleep(300);
-        for(int i = 0; i <= 4; i++) {
+        for (int i = 0; i <= 4; i++) {
             driveSlidesAutonomous((Constants.SLIDE_STACK_FOUR - 150)-(160*i));
             //sleep(500);
             centerConeStack(robotCameraPipeline);
