@@ -18,8 +18,9 @@ public class Intake extends Subsystem {
     }
 
     public enum intakePos{
-        OPEN(0),
-        CLOSED(1);
+        OPEN(RobotConstants.intakeOpen),
+        CLOSED(RobotConstants.intakeClosed),
+        INIT(RobotConstants.intakeOpen);
 
         intakePos(double position){
             this.position = position;
@@ -46,7 +47,8 @@ public class Intake extends Subsystem {
     @Override
     public void init() {
         intake = r.opMode.hardwareMap.get(Servo.class, ConfigNames.intake);
-        intake.scaleRange(RobotConstants.intakeOpen, RobotConstants.intakeClosed);
+        presetTargetPosition(intakePos.INIT);
+        update();
     }
 
     @Override

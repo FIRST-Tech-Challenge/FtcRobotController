@@ -126,11 +126,11 @@ public class SwerveDriveBase extends Subsystem {
             robotFlipped = false;
         }
         if (!robotFlipped) {
-            robotHeadingError = manualTargetHeading.angleShortDifference(new Angle(RobotConfig.robotPose2D.angle.value, Angle.angleType.ABSOLUTE));
+            robotHeadingError = manualTargetHeading.angleShortDifference(new Angle(RobotConfig.robotPose2D.angle.getValue(), Angle.angleType.ABSOLUTE));
 
         }
         else{
-            robotHeadingError = manualTargetHeading.angleShortDifference(new Angle(RobotConfig.robotPose2D.angle.value+180, Angle.angleType.ABSOLUTE));
+            robotHeadingError = manualTargetHeading.angleShortDifference(new Angle(RobotConfig.robotPose2D.angle.getValue() +180, Angle.angleType.ABSOLUTE));
         }
         if(isNaN(robotHeadingError)){
             robotHeadingError=0;
@@ -202,15 +202,15 @@ public class SwerveDriveBase extends Subsystem {
                 break;
         }
         RobotConfig.previousRobotPose2D = RobotConfig.robotPose2D;
-        //the commented out method runs odometry for tracking, the other one does not and is probably doggest of shit maybe maybe maybe, also uses IMU for heading
+        //the commented out method runs odometry for tracking, the other one does not and is probably doggest of shit maybe maybe maybe, also uses IMU for heading (CONFIRMED TO BE GARBAGE)
         //robotConfig.robotPose2D = new pose2D(new coordinate2D(r.odometry.getPoseEstimate().getX(), r.odometry.getPoseEstimate().getY()), new angle(r.odometry.getPoseEstimate().getHeading()));
         RobotConfig.robotPose2D = Pose2D.moduleProcessor(leftPose2D, rightPose2D, new Angle(imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES)), enabledModules);
 
         log.logData(0, targetPose2D.coordinate2D.x);
         log.logData(1, targetPose2D.coordinate2D.y);
-        log.logData(2, targetPose2D.angle.value);
+        log.logData(2, targetPose2D.angle.getValue());
 
-        log.logData(3, RobotConfig.robotPose2D.angle.value);
+        log.logData(3, RobotConfig.robotPose2D.angle.getValue());
         log.logData(4, RobotConfig.robotPose2D.coordinate2D.x);
         log.logData(5, RobotConfig.robotPose2D.coordinate2D.y);
 

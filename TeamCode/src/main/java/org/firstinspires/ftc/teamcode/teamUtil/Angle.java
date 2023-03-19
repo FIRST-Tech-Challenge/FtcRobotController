@@ -3,20 +3,24 @@ package org.firstinspires.ftc.teamcode.teamUtil;
 import static java.lang.Double.NaN;
 
 public class Angle {
-
+    
+    public double getValue() {
+        return value;
+    }
+    
     public enum angleType{
         CONTINUOUS, ABSOLUTE
     }
 
-    public double value;
+    private double value;
     public angleType type;
 
     public Angle(double value, angleType type){
         this.type = type;
         if(type == angleType.ABSOLUTE){
             this.value = value%360;
-            if(this.value<0){
-                this.value += 360;
+            if(this.getValue() <0){
+                this.value = this.getValue() + 360;
             }
         }
         else{
@@ -32,7 +36,7 @@ public class Angle {
     public Angle(double value){
         this.type = angleType.ABSOLUTE;
         this.value = value%360;
-        if(this.value<0){
+        if(this.value <0){
             this.value += 360;
         }
     }
@@ -43,8 +47,8 @@ public class Angle {
     public void update(double value){
         if (type == angleType.ABSOLUTE) {
             this.value = value%360;
-            if(this.value<0){
-                this.value += 360;
+            if(this.getValue() <0){
+                this.value = this.getValue() + 360;
             }
         }
         else{
@@ -57,9 +61,9 @@ public class Angle {
             case ABSOLUTE:
                 break;
             case CONTINUOUS:
-                this.value = value%360;
-                if(this.value<0){
-                    this.value += 360;
+                this.value = getValue() %360;
+                if(this.getValue() <0){
+                    this.value = this.getValue() + 360;
                 }
                 this.type = angleType.ABSOLUTE;
                 break;
@@ -68,7 +72,7 @@ public class Angle {
     }
 
     public double angleShortDifference(Angle comparator){
-        double difference = this.value - comparator.value;
+        double difference = this.getValue() - comparator.getValue();
         if (difference > 180) {
             return (-360) + difference;
         }
@@ -80,18 +84,18 @@ public class Angle {
         }
     }
 
-    public static Angle atanHandler(double planarX, double planarY){
-        double atanMeasurement = Math.abs(Math.toDegrees(Math.atan(planarY / planarX)));
-        if (planarY >= 0 && planarX >= 0) {
+    public static Angle atanHandler(double x, double y){
+        double atanMeasurement = Math.abs(Math.toDegrees(Math.atan(y / x)));
+        if (y >= 0 && x >= 0) {
             return new Angle(atanMeasurement, angleType.ABSOLUTE);
         }
-        else if (planarY >= 0 && planarX <= 0) {
+        else if (y >= 0 && x <= 0) {
             return new Angle(180 - atanMeasurement, angleType.ABSOLUTE);
         }
-        else if (planarY <= 0 && planarX <= 0) {
+        else if (y <= 0 && x <= 0) {
             return new Angle(180 + atanMeasurement, angleType.ABSOLUTE);
         }
-        else if (planarY <= 0 && planarX >= 0) {
+        else if (y <= 0 && x >= 0) {
             return new Angle(360 - atanMeasurement, angleType.ABSOLUTE);
         }
         else return new Angle(NaN, angleType.ABSOLUTE);

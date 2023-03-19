@@ -12,8 +12,9 @@ public class Wrist extends Subsystem {
     RobotConfig r;
 
     public enum wristPos{
-        FRONT(1),
-        BACK(0);
+        FRONT(RobotConstants.wristFront),
+        BACK(RobotConstants.wristBack),
+        HALF((wristPos.FRONT.getPosition() + wristPos.BACK.getPosition())/2);
 
         private wristPos(double position){
             this.position = position;
@@ -27,7 +28,7 @@ public class Wrist extends Subsystem {
     }
 
     Servo wrist;
-    private double wristPos;
+    private double wristPosition;
 
     public Wrist(RobotConfig r) {
         this.r = r;
@@ -41,19 +42,19 @@ public class Wrist extends Subsystem {
      robotConstants.wristFront and robotConstants.wristBack have been set to 0 and 1.0 respectively
      */
     public void freeTargetPosition(double targetPos){
-        wristPos = targetPos;
+        wristPosition = targetPos;
     }
 
     public void presetTargetPosition(wristPos wristPos){
-        this.wristPos = wristPos.getPosition();
+        this.wristPosition = wristPos.getPosition();
     }
 
 
     @Override
     public void init() {
         wrist = r.opMode.hardwareMap.get(Servo.class, ConfigNames.wrist);
-        wrist.scaleRange(RobotConstants.wristFront, RobotConstants.wristBack);
-        freeTargetPosition(0);
+        presetTargetPosition(wristPos.FRONT);
+        update();
     }
 
     @Override
@@ -61,8 +62,9 @@ public class Wrist extends Subsystem {
 
     }
 
+    @Override
     public void update(){
-        wrist.setPosition(wristPos);
+        wrist.setPosition(wristPosition);
     }
 
     @Override

@@ -11,10 +11,13 @@ public class Arm extends Subsystem {
     RobotConfig r;
 
     public enum armPos{
-        FRONT(0),
-        BACK(1);
+        FRONT(RobotConstants.armFront),
+        BACK(RobotConstants.armBack),
+        FRONT_DELIVERY(RobotConstants.armFrontDelivery),
+        BACK_DELIVERY(RobotConstants.armBackDelivery),
+        HALF(RobotConstants.armMiddle);
 
-        private armPos(double position){
+        armPos(double position){
             this.position = position;
         }
 
@@ -26,7 +29,7 @@ public class Arm extends Subsystem {
     }
 
     Servo arm;
-    private double armPos;
+    private double armPosition;
 
     public Arm(RobotConfig r) {
         this.r = r;
@@ -36,18 +39,23 @@ public class Arm extends Subsystem {
     }
 
     public void freeTargetPosition(double targetPos){
-        armPos = targetPos;
+        armPosition = targetPos;
     }
 
-    public void presetTargetPosition(armPos armPos){
-        this.armPos = armPos.getPosition();
+    public void presetTargetPosition(armPos armPosition){
+        if(r.delivery){
+            this.armPosition = armPos.valueOf(armPosition.toString() + "_DELIVERY").getPosition();
+        }
+        else{
+            this.armPosition = armPosition.getPosition();
+        }
     }
 
     @Override
     public void init() {
         arm = r.opMode.hardwareMap.get(Servo.class, ConfigNames.arm);
-        arm.scaleRange(RobotConstants.armBack, RobotConstants.armFront);
-        freeTargetPosition(0);
+        presetTargetPosition(armPos.FRONT);
+        update();
     }
 
     @Override
@@ -55,7 +63,7 @@ public class Arm extends Subsystem {
 
     @Override
     public void update(){
-        arm.setPosition(armPos);
+        arm.setPosition(armPosition);
     }
 
     @Override

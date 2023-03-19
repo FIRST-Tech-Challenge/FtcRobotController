@@ -4,16 +4,17 @@ import java.util.function.BooleanSupplier;
 
 public class Trigger {
 	private BooleanSupplier triggerCondition;
+	
+	public BooleanSupplier getTriggerCondition() {
+		return triggerCondition;
+	}
+	private boolean toggle;
 
-	private boolean
-		toggleTrue = false,
-		toggleFalse = false;
-
-	private TriggerBinding
-		onTrue = new TriggerBinding(),
-        onFalse = new TriggerBinding(),
-		toggleOnTrue = new TriggerBinding(),
-		toggleOnFalse = new TriggerBinding();
+	private TriggerAction
+		onTrue = () -> {},
+        onFalse = () -> {},
+		toggleOnTrue = () -> {},
+		toggleOnFalse = () -> {};
 
 
 	public Trigger(BooleanSupplier triggerCondition) {
@@ -22,6 +23,7 @@ public class Trigger {
 	}
 
 	public void poll() {
+		if(triggerCondition.getAsBoolean()) toggle = !toggle;
 		pollOnTrue();
 		pollOnFalse();
 		pollToggleOnTrue();
@@ -33,41 +35,39 @@ public class Trigger {
 		return this;
 	}
 
-	public Trigger onTrue(TriggerAction triggerAction){
-		this.onTrue = new TriggerBinding(triggerAction);
-		return this;
-	}
-
-	public Trigger onFalse(TriggerAction triggerAction){
-		this.onFalse = new TriggerBinding(triggerAction);
-		return this;
-	}
-
-	public Trigger toggleOnTrue(TriggerAction triggerAction){
-		this.toggleOnTrue = new TriggerBinding(triggerAction);
-		return this;
-	}
-
-	public Trigger toggleOnFalse(TriggerAction triggerAction){
-		this.toggleOnFalse = new TriggerBinding(triggerAction);
-		return this;
-	}
-
 	private void pollOnTrue(){
-		if(triggerCondition.getAsBoolean()) onTrue.triggerAction.triggerAction();
+		if(triggerCondition.getAsBoolean()) onTrue.triggerAction();
 	}
 	private void pollOnFalse(){
-		if(!triggerCondition.getAsBoolean()) onFalse.triggerAction.triggerAction();
+		if(!triggerCondition.getAsBoolean()) onFalse.triggerAction();
 	}
 	private void pollToggleOnTrue(){
-		if(triggerCondition.getAsBoolean()) toggleTrue = !toggleTrue;
-		if(toggleTrue) toggleOnTrue.triggerAction.triggerAction();
+		if(toggle) toggleOnTrue.triggerAction();
 	}
 	private void pollToggleOnFalse(){
-		if(!triggerCondition.getAsBoolean()) toggleFalse = !toggleFalse;
-		if(toggleFalse) toggleOnFalse.triggerAction.triggerAction();
+		if(!toggle) toggleOnFalse.triggerAction();
 	}
-
+	
+	public Trigger onTrue(TriggerAction onTrue) {
+		this.onTrue = onTrue;
+		return this;
+	}
+	
+	public Trigger onFalse(TriggerAction onFalse) {
+		this.onFalse = onFalse;
+		return this;
+	}
+	
+	public Trigger toggleOnTrue(TriggerAction toggleOnTrue) {
+		this.toggleOnTrue = toggleOnTrue;
+		return this;
+	}
+	
+	public Trigger toggleOnFalse(TriggerAction toggleOnFalse) {
+		this.toggleOnFalse = toggleOnFalse;
+		return this;
+	}
+	
 	public interface TriggerAction {
 		void triggerAction();
 	}

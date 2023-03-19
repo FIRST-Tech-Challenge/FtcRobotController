@@ -14,7 +14,7 @@ public class Coordinate2D {
     }
 
     public void vector2DUpdate(double distance, Angle heading){
-        this.x += distance*Math.toDegrees(Math.cos(Math.toRadians(heading.convertToAbsolute().value)));
-        this.y += distance*Math.toDegrees(Math.sin(Math.toRadians(heading.convertToAbsolute().value)));
+        this.x += distance*Math.toDegrees(Math.cos(Math.toRadians(heading.convertToAbsolute().getValue())));
+        this.y += distance*Math.toDegrees(Math.sin(Math.toRadians(heading.convertToAbsolute().getValue())));
     }
 }

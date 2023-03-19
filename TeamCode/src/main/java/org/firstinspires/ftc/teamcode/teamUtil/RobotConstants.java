@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.teamUtil;
 
+import org.firstinspires.ftc.teamcode.subsystems.Arm;
+
 public class RobotConstants {
 
     public enum moduleSides {
@@ -51,14 +53,18 @@ public class RobotConstants {
         }
     }
 
-    public static final double armBack = 0.06;
-    public static final double armFront = 0.87;
-
-    public static final double wristFront = 0;
+    public static final double armBack = 0.84;
+    public static final double armFront = 0.03;
+    public static final double armMiddle = (armFront + armBack)/2;
+    public static final double armFrontDelivery = armFront + (armMiddle/2);
+    public static final double armBackDelivery = armBack - (armMiddle/2);
+    
+    
+    public static final double wristFront = 0.0;
     public static final double wristBack = 0.66;
 
-    public static final double intakeOpen = 0;
-    public static final double intakeClosed = 0.3;
+    public static final double intakeOpen = 0.2;
+    public static final double intakeClosed = 0.53;
 
     //public static final double motorResolution = 134.4; //per revolution //TODO might be wrong
     public static final double motorResolution = 1120.0; //per revolution

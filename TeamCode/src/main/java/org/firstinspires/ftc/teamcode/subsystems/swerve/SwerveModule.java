@@ -30,6 +30,11 @@ public class SwerveModule {
 
     private double previousDistance;
     private double currentDistance;
+    
+    private double topPower;
+    private double cachedTopPower;
+    private double bottomPower;
+    private double cachedBottomPower;
 
 
     public SwerveModule(RobotConfig r, RobotConstants.moduleSides side){
@@ -48,7 +53,7 @@ public class SwerveModule {
         }
 
         top.setDirection(DcMotorEx.Direction.REVERSE);
-        //bottom.setDirection(DcMotorEx.Direction.REVERSE);
+        //bottom.getMotor().setDirection(DcMotorEx.Direction.REVERSE);
 
         top.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         bottom.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -86,7 +91,7 @@ public class SwerveModule {
         else{
             currentDistance = (topPos + bottomPos)* RobotConstants.ticksPerMMRightSwerve;
         }
-        log.logData(0, absoluteAngle.value);
+        log.logData(0, absoluteAngle.getValue());
     }
 
     public void resetEncoders(){
@@ -108,7 +113,7 @@ public class SwerveModule {
             return absoluteAngle;
         }
         else{
-            return new Angle(absoluteAngle.value + 180, Angle.angleType.ABSOLUTE);
+            return new Angle(absoluteAngle.getValue() + 180, Angle.angleType.ABSOLUTE);
         }
     }
 
@@ -141,14 +146,14 @@ public class SwerveModule {
             top.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
             bottom.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
             if (planarY == 0.0 && planarX == 0.0 && !braked) {
-                brakeAngle.update(absoluteAngle.value);
+                brakeAngle.update(absoluteAngle.getValue());
                 braked = true;
             }
-            if (!(targetAngle.value == brakeAngle.value)) {
+            if (!(targetAngle.getValue() == brakeAngle.getValue())) {
                 braked = false;
             }
             if(braked){
-                targetAngle.update(brakeAngle.value);
+                targetAngle.update(brakeAngle.getValue());
             }
         }
         else{
@@ -158,47 +163,47 @@ public class SwerveModule {
 
         // TODO: fix robot position tracking
         if(SwerveDriveBase.enabledModules == RobotConstants.enabledModules.BOTH){
-            adjustedTargetAngle.update((targetAngle.value)- RobotConfig.robotPose2D.angle.value+90);
+            adjustedTargetAngle.update((targetAngle.getValue())- RobotConfig.robotPose2D.angle.getValue() +90);
         }
         else{
-            adjustedTargetAngle.update(targetAngle.value);
+            adjustedTargetAngle.update(targetAngle.getValue());
         }
     }
 
     private void pDrive(double power, double turnPower, double throttle, double robotHeadingError){
         double driveSign;
-        log.logData(2, adjustedTargetAngle.value);
+        log.logData(2, adjustedTargetAngle.getValue());
 
 
         if(SwerveDriveBase.enabledModules == RobotConstants.enabledModules.BOTH){
-            adjustedTargetAngle.update(adjustedTargetAngle.value + ((turnPower+ RobotConstants.minimumHeadingEmphasis)/(1+ RobotConstants.minimumHeadingEmphasis))*robotHeadingError);
+            adjustedTargetAngle.update(adjustedTargetAngle.getValue() + ((turnPower+ RobotConstants.minimumHeadingEmphasis)/(1+ RobotConstants.minimumHeadingEmphasis))*robotHeadingError);
         }
 
 
-        log.logData(3, adjustedTargetAngle.value);
+        log.logData(3, adjustedTargetAngle.getValue());
 
         if (Math.abs(moduleHeadingError)>90){
             moduleFlipped = !moduleFlipped;
         }
         if (!moduleFlipped) {
-            moduleHeadingError = adjustedTargetAngle.angleShortDifference(new Angle(absoluteAngle.value, Angle.angleType.ABSOLUTE));
+            moduleHeadingError = adjustedTargetAngle.angleShortDifference(new Angle(absoluteAngle.getValue(), Angle.angleType.ABSOLUTE));
             if(side == RobotConstants.moduleSides.LEFT){
                 driveSign = 1;
             }
             else {
                 driveSign = -1;
             }
-            log.logData(1, absoluteAngle.value);
+            log.logData(1, absoluteAngle.getValue());
         }
         else{
-            moduleHeadingError = adjustedTargetAngle.angleShortDifference(new Angle(absoluteAngle.value +180, Angle.angleType.ABSOLUTE));
+            moduleHeadingError = adjustedTargetAngle.angleShortDifference(new Angle(absoluteAngle.getValue() +180, Angle.angleType.ABSOLUTE));
             if(side == RobotConstants.moduleSides.LEFT){
                 driveSign = -1;
             }
             else {
                 driveSign = 1;
             }
-            log.logData(1, new Angle(absoluteAngle.value+180, Angle.angleType.ABSOLUTE).value);
+            log.logData(1, new Angle(absoluteAngle.getValue() + 180, Angle.angleType.ABSOLUTE).getValue());
         }
         log.logData(4, moduleHeadingError);
 
@@ -217,20 +222,30 @@ public class SwerveModule {
             headingPower *= 1;
         }
 
-        double topPower = ((power * driveSign) + moduleAnglePower + headingPower);
-        double bottomPower = ((power * driveSign) - moduleAnglePower + headingPower);
+        topPower = ((power * driveSign) + moduleAnglePower + headingPower);
+        bottomPower = ((power * driveSign) - moduleAnglePower + headingPower);
 
         double max = Math.max(Math.abs(topPower), Math.abs(bottomPower));
         if(max >1){
             bottomPower /= max;
             topPower /= max;
         }
+        
+        topPower *= throttle;
+        bottomPower *= throttle;
 
         log.logData(5, topPower);
         log.logData(6, bottomPower);
-
-        top.setPower(topPower * throttle);
-        bottom.setPower(bottomPower * throttle);
+    
+        if(Math.abs(Math.abs(topPower) - Math.abs(cachedTopPower)) >= 0.01) {
+            top.setPower(topPower);
+            cachedTopPower = topPower;
+        }
+        if(Math.abs(Math.abs(bottomPower) - Math.abs(cachedBottomPower)) >= 0.01) {
+            bottom.setPower(bottomPower);
+            cachedBottomPower = bottomPower;
+        }
+        
         log.updateLoop(true);
     }
 
@@ -242,7 +257,7 @@ public class SwerveModule {
             return;
         }
         Angle targetAngle = Angle.atanHandler(xPositionError, yPositionError);
-        adjustedTargetAngle.update((targetAngle.value) - RobotConfig.robotPose2D.angle.value + 90);
+        adjustedTargetAngle.update((targetAngle.getValue()) - RobotConfig.robotPose2D.angle.getValue() + 90);
 
         double previousTime = currentTime;
         currentTime = System.nanoTime();
@@ -264,20 +279,20 @@ public class SwerveModule {
             turnPower *= (robotHeadingError/180);
         }
 
-        log.logData(2, adjustedTargetAngle.value);
+        log.logData(2, adjustedTargetAngle.getValue());
 
         if (Math.abs(moduleHeadingError)>90){
             moduleFlipped = !moduleFlipped;
         }
         if (!moduleFlipped) {
-            moduleHeadingError = adjustedTargetAngle.angleShortDifference(new Angle(absoluteAngle.value, Angle.angleType.ABSOLUTE));
+            moduleHeadingError = adjustedTargetAngle.angleShortDifference(new Angle(absoluteAngle.getValue(), Angle.angleType.ABSOLUTE));
             driveSign = 1;
-            log.logData(1, absoluteAngle.value);
+            log.logData(1, absoluteAngle.getValue());
         }
         else{
-            moduleHeadingError = adjustedTargetAngle.angleShortDifference(new Angle(absoluteAngle.value +180, Angle.angleType.ABSOLUTE));
+            moduleHeadingError = adjustedTargetAngle.angleShortDifference(new Angle(absoluteAngle.getValue() +180, Angle.angleType.ABSOLUTE));
             driveSign = -1;
-            log.logData(1, new Angle(absoluteAngle.value+180, Angle.angleType.ABSOLUTE).value);
+            log.logData(1, new Angle(absoluteAngle.getValue() + 180, Angle.angleType.ABSOLUTE).getValue());
         }
         log.logData(4, moduleHeadingError);
 
@@ -318,12 +333,12 @@ public class SwerveModule {
             turnPower /= powerSum;
         }
 
-        adjustedTargetAngle.update(adjustedTargetAngle.value +((turnPower+ RobotConstants.minimumHeadingEmphasis)/(1+ RobotConstants.minimumHeadingEmphasis))* RobotConfig.robotPose2D.angle.value);
+        adjustedTargetAngle.update(adjustedTargetAngle.getValue() +((turnPower+ RobotConstants.minimumHeadingEmphasis)/(1+ RobotConstants.minimumHeadingEmphasis))* RobotConfig.robotPose2D.angle.getValue());
 
-        log.logData(3, adjustedTargetAngle.value);
+        log.logData(3, adjustedTargetAngle.getValue());
 
-        double topPower = ((power * driveSign) + moduleAnglePower + headingPower);
-        double bottomPower = ((power * driveSign) - moduleAnglePower + headingPower);
+        topPower = ((power * driveSign) + moduleAnglePower + headingPower);
+        bottomPower = ((power * driveSign) - moduleAnglePower + headingPower);
 
         double max = Math.max(Math.abs(topPower), Math.abs(bottomPower));
         if(max >1){
@@ -333,9 +348,16 @@ public class SwerveModule {
 
         log.logData(5, topPower);
         log.logData(6, bottomPower);
-
-        top.setPower(topPower);
-        bottom.setPower(bottomPower);
+    
+        if(Math.abs(Math.abs(topPower) - Math.abs(cachedTopPower)) >= 0.01) {
+            top.setPower(topPower);
+            cachedTopPower = topPower;
+        }
+        if(Math.abs(Math.abs(bottomPower) - Math.abs(cachedBottomPower)) >= 0.01) {
+            bottom.setPower(bottomPower);
+            cachedBottomPower = bottomPower;
+        }
+        
         log.updateLoop(true);
     }
 }

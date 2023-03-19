@@ -17,7 +17,8 @@ public class RobotConfig {
     private static RobotConfig rInstance;
     public List<LynxModule> allHubs;
     public Scheduler scheduler;
-
+    public boolean delivery;
+    
     private RobotConfig(OpMode opMode){
         this.opMode = opMode;
         this.opMode.telemetry.setAutoClear(false);

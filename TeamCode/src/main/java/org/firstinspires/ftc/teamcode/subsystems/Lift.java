@@ -1,14 +1,8 @@
 package org.firstinspires.ftc.teamcode.subsystems;
 
-import static java.lang.Double.isNaN;
-
-import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 
-import org.firstinspires.ftc.teamcode.teamUtil.CommandScheduler.Scheduler;
 import org.firstinspires.ftc.teamcode.teamUtil.CommandScheduler.Subsystem;
-import org.firstinspires.ftc.teamcode.teamUtil.CommandScheduler.gamepadEX.ButtonEX;
-import org.firstinspires.ftc.teamcode.teamUtil.CommandScheduler.gamepadEX.ContinuousInput;
 import org.firstinspires.ftc.teamcode.teamUtil.ConfigNames;
 import org.firstinspires.ftc.teamcode.teamUtil.RobotConfig;
 import org.firstinspires.ftc.teamcode.teamUtil.RobotConstants;
@@ -16,19 +10,22 @@ import org.firstinspires.ftc.teamcode.teamUtil.RobotConstants;
 public class Lift extends Subsystem {
     RobotConfig r;
 
-    private static DcMotor lift0;
-    private static DcMotor lift1;
+    private static DcMotorEx lift0;
+    private static DcMotorEx lift1;
     private static double liftPos;
 
-    private static double previousTime = 0; //needs to be given a value of 0 at the start
-    private static double previousError = 0; //needs to be given a value of 0 at the start
-    private static double I = 0; //needs to be given a value of 0 at the start
-    private static double targetPos = 0; //needs to be set whenever you need it to be changed
-    private static double spoolHoldPosition = 0;
-    private static boolean spoolHold = false;
+    private double previousTime;
+    private double previousError;
+    
+    private double P;
+    private double I; //needs to be given a value of 0 at the start
+    private double D;
+    private double targetPos; //needs to be set whenever you need it to be changed
+    private double spoolHoldPosition = 0;
+    private boolean spoolHold = false;
 
-    ContinuousInput liftPositioner;
-    ButtonEX limitIsPressed;
+    double liftPositioner;
+    boolean limitIsPressed;
     RobotConstants.poleHeights targetHeight;
 
 
@@ -48,8 +45,8 @@ public class Lift extends Subsystem {
 
     @Override
     public void init() {
-        lift0 = r.opMode.hardwareMap.get(DcMotor.class, ConfigNames.lift0);
-        lift1 = r.opMode.hardwareMap.get(DcMotor.class, ConfigNames.lift1);
+        lift0 = r.opMode.hardwareMap.get(DcMotorEx.class, ConfigNames.lift0);
+        lift1 = r.opMode.hardwareMap.get(DcMotorEx.class, ConfigNames.lift1);
         previousTime = 0;
         previousError = 0;
         targetPos = 0;
@@ -62,42 +59,43 @@ public class Lift extends Subsystem {
         double lift0Pos = lift0.getCurrentPosition();
         double lift1Pos = lift1.getCurrentPosition();
 
-        if(((lift0Pos + lift1Pos) / 2)<-1000) liftPos = Math.min(lift0Pos, lift1Pos);
-        else if(((lift0Pos + lift1Pos) / 2)>=-1000) liftPos = Math.max(lift0Pos, lift1Pos);
+        if(((lift0Pos + lift1Pos) / 2) < -1000) liftPos = Math.min(lift0Pos, lift1Pos);
+        else if(((lift0Pos + lift1Pos) / 2) >= -1000) liftPos = Math.max(lift0Pos, lift1Pos);
         else liftPos = 0;
+    
+        r.delivery = liftPos < -500;
     }
 
+    double cachedPower;
+    
     @Override
     public void update(){
-
-        //needs to be set to runtime.time()
         double currentTime = RobotConfig.elapsedTime.time();
-
-        positionControl(liftPositioner.value(), limitIsPressed.isPressed(), targetHeight);
-
-        if(limitIsPressed.onPress()){
+        
+        if(limitIsPressed) {
             resetEncoders();
         }
 
+        positionControl(liftPositioner, limitIsPressed, targetHeight);
+
         double currentError = (targetPos - liftPos);
-        final double kP = 0.003;
-        final double kI = 0.07;
-        final double kD = 0.0003;
+        final double kP = 0.005;
+        final double kI = -0.5;
+        final double kD = 0.0;
 
-        double P = kP*currentError;
-        I = I + (kI*(currentError*(currentTime -previousTime)));
-        if (I < -0.5) {
-            I = -0.5;
+        P = kP*currentError;
+        I = (liftPos/RobotConstants.poleHeights.HIGH.getEncoderValue()) * kI;
+        D = kD*((currentError - previousError) / (currentTime - previousTime));
+        
+        
+        if(Math.abs(Math.abs(PID()) - Math.abs(cachedPower)) >= 0.01) {
+            lift0.setPower(PID());
+            lift1.setPower(PID());
+            cachedPower = PID();
         }
-        else if (I > 0){
-            I = 0;
-        }
-
-        double D = kD*((currentError-previousError)/(currentTime -previousTime));
-
-        double finalPower = (P + I + D);
-        lift0.setPower(finalPower);
-        lift1.setPower(finalPower);
+        
+        r.opMode.telemetry.addData("targetPosition", targetPos);
+        r.opMode.telemetry.addData("position", liftPos);
 
         previousError = currentError;
         previousTime = currentTime;
@@ -109,59 +107,66 @@ public class Lift extends Subsystem {
     }
 
     private void positionControl(double liftPosition, boolean limitIsPressed, RobotConstants.poleHeights poleHeight){
-        Lift.targetPos -= ((int) (liftPosition*100));
-        if (isNaN(liftPosition) && !spoolHold){
+        targetPos -= ((int) (liftPosition*250));
+        if (Double.isNaN(liftPosition) || liftPosition == 0.0 && !spoolHold){
             spoolHoldPosition = Lift.liftPos;
             spoolHold = true;
         }
-        if(isNaN(liftPosition)){
-            Lift.targetPos = spoolHoldPosition;
+        if(liftPosition == 0.0 || Double.isNaN(liftPosition)){
+            targetPos = spoolHoldPosition;
         }
-        if (!isNaN(liftPosition)){
+        else {
             spoolHold = false;
-        }
-        if((Lift.targetPos > Lift.liftPos) && limitIsPressed){
-            Lift.targetPos = Lift.liftPos;
-        }
-        if (Lift.targetPos>0){
-            Lift.targetPos = 0;
-        }
-        if(Lift.targetPos < (RobotConstants.poleHeights.HIGH.getEncoderValue() - 100)) {
-            Lift.targetPos = (RobotConstants.poleHeights.HIGH.getEncoderValue() - 100);
         }
         switch (poleHeight){
             case HIGH:
-                Lift.targetPos = RobotConstants.poleHeights.HIGH.getEncoderValue();
-                spoolHoldPosition = RobotConstants.poleHeights.HIGH_DROP.getEncoderValue();
+                targetPos = RobotConstants.poleHeights.HIGH.getEncoderValue() + 200;
+                spoolHoldPosition = RobotConstants.poleHeights.HIGH_DROP.getEncoderValue() + 200;
                 break;
             case MEDIUM:
-                Lift.targetPos = RobotConstants.poleHeights.MEDIUM.getEncoderValue();
-                spoolHoldPosition = RobotConstants.poleHeights.MEDIUM_DROP.getEncoderValue();
+                targetPos = RobotConstants.poleHeights.MEDIUM.getEncoderValue() + 200;
+                spoolHoldPosition = RobotConstants.poleHeights.MEDIUM_DROP.getEncoderValue() + 200;
                 break;
             case LOW:
-                Lift.targetPos = RobotConstants.poleHeights.LOW.getEncoderValue();
-                spoolHoldPosition = RobotConstants.poleHeights.LOW_DROP.getEncoderValue();
+                targetPos = RobotConstants.poleHeights.LOW.getEncoderValue() + 200;
+                spoolHoldPosition = RobotConstants.poleHeights.LOW_DROP.getEncoderValue() + 200;
                 break;
             case GROUND:
-                Lift.targetPos = RobotConstants.poleHeights.GROUND.getEncoderValue();
+                targetPos = RobotConstants.poleHeights.GROUND.getEncoderValue();
                 spoolHoldPosition = RobotConstants.poleHeights.GROUND.getEncoderValue();
                 break;
             default:
                 break;
         }
+        
+        if((targetPos > Lift.liftPos) && limitIsPressed){
+            targetPos = Lift.liftPos;
+        }
+        if (targetPos > 100){
+            targetPos = 100;
+        }
+        if(targetPos < (RobotConstants.poleHeights.HIGH.getEncoderValue())) {
+            targetPos = (RobotConstants.poleHeights.HIGH.getEncoderValue());
+        }
+        
+        
     }
 
-    private RobotConstants.poleHeights buttonAnalysis(ButtonEX[] top_middle_low_ground){
-        if (top_middle_low_ground[0].isPressed()) return RobotConstants.poleHeights.HIGH;
-        if (top_middle_low_ground[1].isPressed()) return RobotConstants.poleHeights.MEDIUM;
-        if (top_middle_low_ground[2].isPressed()) return RobotConstants.poleHeights.LOW;
-        if (top_middle_low_ground[3].isPressed()) return RobotConstants.poleHeights.GROUND;
+    private RobotConstants.poleHeights buttonAnalysis(boolean top, boolean middle, boolean low, boolean ground){
+        if (top) return RobotConstants.poleHeights.HIGH;
+        if (middle) return RobotConstants.poleHeights.MEDIUM;
+        if (low) return RobotConstants.poleHeights.LOW;
+        if (ground) return RobotConstants.poleHeights.GROUND;
         return RobotConstants.poleHeights.IDLE;
     }
 
-    public void liftInputs(ContinuousInput liftPositionInput, ButtonEX limitSwitch, ButtonEX[] top_middle_low_ground){
+    public void liftInputs(double liftPositionInput, boolean limitSwitch, boolean top, boolean middle, boolean low, boolean ground){
         liftPositioner = liftPositionInput;
         limitIsPressed = limitSwitch;
-        targetHeight = buttonAnalysis(top_middle_low_ground);
+        targetHeight = buttonAnalysis(top, middle, low, ground);
+    }
+    
+    private double PID(){
+        return P+I+D;
     }
 }
