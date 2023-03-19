@@ -9,8 +9,8 @@ import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraRotation;
 
 
-@TeleOp(name = "TeleOpJunctionCenteringTest")
-public class TeleOpJunctionCenteringTest extends BaseTeleOp {
+@TeleOp(name = "LightTest")
+public class LightTest extends BaseTeleOp {
 
     @Override
     public void runOpMode() {
@@ -30,12 +30,7 @@ public class TeleOpJunctionCenteringTest extends BaseTeleOp {
         waitForStart();
 
         while (opModeIsActive()) {
-            driveFieldCentric();
-            driveGrabberWithController();
-            driveSlidesWithController();
-            teleOpJunctionCentering();
             driveLEDs();
-            resetIMU();
         }
     }
 }

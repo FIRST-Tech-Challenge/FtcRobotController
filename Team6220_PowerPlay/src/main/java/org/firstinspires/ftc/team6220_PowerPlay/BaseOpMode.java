@@ -342,12 +342,16 @@ public abstract class BaseOpMode extends LinearOpMode {
      */
     public void driveLEDs() {
         if (blinkinChassis != null) {
-            if (grabberCameraPipeline.detected) {
-                blinkinChassis.setPattern(RevBlinkinLedDriver.BlinkinPattern.GREEN);
+            RevBlinkinLedDriver.BlinkinPattern pattern = RevBlinkinLedDriver.BlinkinPattern.GREEN;
+            if (grabberCameraPipeline.detected == true) {
+                blinkinChassis.setPattern(pattern);
+                telemetry.addData("pattern", pattern);
                 telemetry.addLine("Detected");
+                telemetry.update();
             } else {
                 blinkinChassis.setPattern(RevBlinkinLedDriver.BlinkinPattern.CP1_2_COLOR_WAVES);
                 telemetry.addLine("Not Detected");
+                telemetry.update();
             }
         }
     }
