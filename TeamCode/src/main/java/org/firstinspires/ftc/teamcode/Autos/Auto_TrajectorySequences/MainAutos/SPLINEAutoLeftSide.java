@@ -151,8 +151,8 @@ public class SPLINEAutoLeftSide extends PowerPlay_AprilTagDetectionDeposit{
 				.UNSTABLE_addTemporalMarkerOffset(0, () -> {
 					slideControl.setCustom(1275);
 				})
-				.waitSeconds(0.15) // the thing
-				.UNSTABLE_addTemporalMarkerOffset(0, () -> {
+				.waitSeconds(0.15)
+				.UNSTABLE_addTemporalMarkerOffset(0.5, () -> {
 					slideControl.setCustom(1000); //1050
 					armControl.setAutoExtake();
 					clawControl.toggleWristRotate();
