@@ -258,7 +258,7 @@ public abstract class BaseOpMode extends LinearOpMode {
     public void centerConeStack(RobotCameraPipeline pipeline) {
         double xOffset, width, strafePower, turnPower;
         do {
-            xOffset = Constants.CAMERA_CENTER_X-pipeline.xPosition;
+            xOffset = Constants.CAMERA_CENTER_X - pipeline.xPosition;
             width = pipeline.width;
 
             // drive forward while centering on the cone stack if contour exists
