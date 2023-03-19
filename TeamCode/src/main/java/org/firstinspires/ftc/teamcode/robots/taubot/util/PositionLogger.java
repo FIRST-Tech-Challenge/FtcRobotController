@@ -7,24 +7,29 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.OutputStream;
 import static org.firstinspires.ftc.teamcode.robots.taubot.util.Constants.Position;
+
+import android.os.Environment;
+
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.Scanner;
 
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 
 
 public class PositionLogger {
-    FullObjectOutputStream out;
-    ObjectInputStream in;
-    String filename;
-    String log;
+    private FullObjectOutputStream out;
+    private ObjectInputStream in;
+    private String dir = Environment.getExternalStorageDirectory() + "/FIRST/";
+    private String filename;
+    private String log;
     public PositionLogger(String name) {
-        filename = name + ".txt";
+        filename = dir + name + ".txt";
         try {
-            FileOutputStream temp = new FileOutputStream(filename + ".txt");
+            FileOutputStream temp = new FileOutputStream(filename);
              out = new FullObjectOutputStream(temp);
-             log = "POSITION LOG - " + filename;
-             log += "\n START DATE AND TIME - " + LocalDateTime.now();
+             log = "POSITION LOG - " + name;
+             log += "\n START DATE AND TIME - " + LocalTime.now();
              out.writeObject(log);
              out.flush();
              out.enableReplaceObject(true);
@@ -35,25 +40,27 @@ public class PositionLogger {
 
     }
 
-    public void update(Pose2d pos){
-        log = "DATE AND TIME - " + LocalDateTime.now() + " POSITION - " + pos.toString();
+    public void updateLog(Pose2d pos){
+        log = "DATE AND TIME - " + LocalTime.now() + " POSITION - " + pos.toString();
         out.replaceObject(log);
     }
 
-    public String returnLastDateTime () {
+    public String returnLastTime () {
         if(returnLastLog().contains("POSITION - "))
             return returnLastLog().substring(returnLastLog().indexOf("TIME - " + 7), returnLastLog().indexOf(" POSITION - "));
         return "no positions logged yet";
     }
 
     public Pose2d returnLastPose () {
+        //currently returns empty poses if nothing's in log
         Pose2d pose = new Pose2d();
         Scanner sc = new Scanner(returnLastLog());
+        //todo - not sure if time picks up as a double token
         sc.nextDouble();
         if(returnLastLog().contains("POSITION - ")) {
             pose = new Pose2d(sc.nextDouble(), sc.nextDouble(), sc.nextDouble());
         }
-        return pose;
+           return pose;
     }
 
     public String returnLastLog() {
