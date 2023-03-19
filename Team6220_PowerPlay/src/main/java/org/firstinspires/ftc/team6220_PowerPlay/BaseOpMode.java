@@ -230,14 +230,15 @@ public abstract class BaseOpMode extends LinearOpMode {
         double xOffset, yOffset;
 
         do {
-            xOffset = pipeline.xPosition-Constants.CAMERA_CENTER_X;
-            yOffset = Constants.CAMERA_CENTER_Y-pipeline.yPosition;
+            //xOffset is different from the one in CenterConeStack because the camera perspective is different
+            xOffset = pipeline.xPosition - Constants.CAMERA_CENTER_X;
+            yOffset = Constants.CAMERA_CENTER_Y - pipeline.yPosition;
 
             // center the cone on the junction top
             if (pipeline.detected) {
                 driveWithoutIMU(junctionTopPixelsMotorPower(xOffset), junctionTopPixelsMotorPower(yOffset), 0.0);
-                telemetry.addData("x", pipeline.xPosition-Constants.CAMERA_CENTER_X);
-                telemetry.addData("y", Constants.CAMERA_CENTER_Y-pipeline.yPosition);
+                telemetry.addData("x", xOffset);
+                telemetry.addData("y", yOffset);
                 telemetry.addData("xMotorPower", junctionTopPixelsMotorPower(xOffset));
                 telemetry.addData("yMotorPower", junctionTopPixelsMotorPower(yOffset));
                 telemetry.update();
@@ -266,8 +267,8 @@ public abstract class BaseOpMode extends LinearOpMode {
                 break;
             } else {
                 strafePower = coneStackPixelsAndWidthToStrafingPower(xOffset, width);
-                turnPower = 1.09*coneStackPixelsAndWidthToTurningPower(xOffset, width);
-                driveWithIMU(strafePower, 1.35*coneStackWidthMotorPower(width), turnPower);
+                turnPower = Constants.AUTHORITY_SCALER * coneStackPixelsAndWidthToTurningPower(xOffset, width);
+                driveWithIMU(strafePower, Constants.DRIVE_AUTHORITY_SCALER * coneStackWidthMotorPower(width), turnPower);
                 telemetry.addData("xStrafingPower", strafePower);
                 telemetry.addData("xTurningPower", turnPower);
                 telemetry.addData("yMotorPower", coneStackWidthMotorPower(width));

@@ -86,4 +86,12 @@ public class Constants {
 
     public static final double TURNING_AUTHORITY_CONSTANT = 250.0;
     public static final double STRAFING_AUTHORITY_CONSTANT = 200.0;
+
+    public static final double AUTHORITY_SCALER = 1.09;
+
+    public static final double DRIVE_AUTHORITY_SCALER = 1.35;
+
+    public static final int AUTONOMOUS_STACK_BASE_OFFSET = 150;
+
+    public static final int AUTONOMOUS_STACK_PER_CONE_OFFSET = 160;
 }

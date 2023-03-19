@@ -226,7 +226,6 @@ public abstract class BaseAutonomous extends BaseOpMode {
     }
 
     /**
-     *EXPERIMENTAL
      * Starts streaming a camera and sets a pipeline to it, this is a method now because it will have to be called multiple times in any auton class where pipeline switching is used
      * @param pipeline pipeline that the method inputs, any pipeline-specific methods will have to be called separately
      * @param camera camera that the method inputs

@@ -19,22 +19,17 @@ public class StackGrabbingTest extends BaseAutonomous {
         driveGrabber(Constants.GRABBER_INITIALIZE_POSITION);
         sleep(300);
         for (int i = 0; i <= 4; i++) {
-            driveSlidesAutonomous((Constants.SLIDE_STACK_FOUR - 150)-(160*i));
-            //sleep(500);
+            driveSlidesAutonomous((Constants.SLIDE_STACK_FOUR - Constants.AUTONOMOUS_STACK_BASE_OFFSET)-(Constants.AUTONOMOUS_STACK_PER_CONE_OFFSET * i));
             centerConeStack(robotCameraPipeline);
             sleep(300);
             driveGrabber(Constants.GRABBER_CLOSE_POSITION);
             sleep(300);
             driveSlidesAutonomous(Constants.SLIDE_LOW);
-            //sleep(500);
             driveAutonomous(180, 62);
-            //sleep(300);
             turnToAngle(-90);
-            //sleep(500);
             driveSlides(Constants.SLIDE_TOP);
             sleep(600);
             driveAutonomous(0, 2.3);
-            //sleep(300);
             driveSlides(Constants.SLIDE_HIGH);
             centerJunctionTop(grabberCameraPipeline);
             driveGrabber(Constants.GRABBER_OPEN_POSITION);
@@ -44,9 +39,7 @@ public class StackGrabbingTest extends BaseAutonomous {
             driveAutonomous(180, 4);
             sleep(200);
             driveSlidesAutonomous(Constants.SLIDE_BOTTOM);
-            //sleep(500);
             turnToAngle(0);
-            //sleep(500);
         }
     }
 }

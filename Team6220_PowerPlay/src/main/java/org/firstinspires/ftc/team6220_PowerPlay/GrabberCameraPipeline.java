@@ -71,7 +71,7 @@ public class GrabberCameraPipeline extends OpenCvPipeline {
             // determine if the detected area is close enough to the center
             // this is done to avoid detecting the wheels which are also black
             if (distanceFromCenter < Constants.DISTANCE_FROM_CENTER_JUNCTION_TOP) {
-                    if(maxVal >= Constants.CONE_STACK_CONTOUR_MINIMUM_SIZE){
+                    if (maxVal >= Constants.CONE_STACK_CONTOUR_MINIMUM_SIZE) {
                         Moments moments = Imgproc.moments(contours.get(maxValIdx), false);
 
                         Imgproc.rectangle(input, boundingRect, new Scalar(0, 255, 0), 10);
