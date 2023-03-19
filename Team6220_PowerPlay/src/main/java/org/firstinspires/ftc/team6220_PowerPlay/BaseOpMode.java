@@ -229,10 +229,17 @@ public abstract class BaseOpMode extends LinearOpMode {
     public void centerJunctionTop(GrabberCameraPipeline pipeline) {
         double xOffset, yOffset;
 
+        boolean cancelled = false;
+
         do {
-            //xOffset is different from the one in CenterConeStack because the camera perspective is different
+            // xOffset is different from the one in CenterConeStack because the camera perspective is different
             xOffset = pipeline.xPosition - Constants.CAMERA_CENTER_X;
             yOffset = Constants.CAMERA_CENTER_Y - pipeline.yPosition;
+
+            // check if the action is cancelled
+            if(gamepad1.start){
+                cancelled = true;
+            }
 
             // center the cone on the junction top
             if (pipeline.detected) {
@@ -247,7 +254,7 @@ public abstract class BaseOpMode extends LinearOpMode {
             }
 
         // while the cone isn't centered over the junction
-        } while (Math.abs(xOffset) > Constants.JUNCTION_TOP_TOLERANCE || Math.abs(yOffset) > Constants.JUNCTION_TOP_TOLERANCE);
+        } while (Math.abs(xOffset) > Constants.JUNCTION_TOP_TOLERANCE || Math.abs(yOffset) > Constants.JUNCTION_TOP_TOLERANCE || cancelled == false);
 
         stopDriveMotors();
     }
