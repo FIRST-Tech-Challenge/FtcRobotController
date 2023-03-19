@@ -7,4 +7,9 @@ public class DemoSubsystem {
     public boolean inPosition(){
         return true;
     }
+    
+    public enum demo{
+        OPTION_ONE,
+        OPTION_TWO;
+    }
 }

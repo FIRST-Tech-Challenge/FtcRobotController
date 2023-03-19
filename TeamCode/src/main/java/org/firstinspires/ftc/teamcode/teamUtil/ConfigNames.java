@@ -10,7 +10,7 @@ public class ConfigNames { //contains the string name constants in the config, i
             leftBottom = "leftBottom",
             rightTop = "rightTop",
             rightBottom = "rightBottom",
-            lift0 = "Spool0",
+            lift0 = "Spool1",
             lift1 = "Spool2",
             arm = "arm",
             wrist = "wrist",

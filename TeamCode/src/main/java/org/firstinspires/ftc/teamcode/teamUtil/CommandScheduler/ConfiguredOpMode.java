@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.teamUtil;
+package org.firstinspires.ftc.teamcode.teamUtil.CommandScheduler;
 
 import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
@@ -6,6 +6,7 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import org.firstinspires.ftc.teamcode.teamUtil.CommandScheduler.Scheduler;
 import org.firstinspires.ftc.teamcode.teamUtil.CommandScheduler.Subsystem;
 import org.firstinspires.ftc.teamcode.teamUtil.CommandScheduler.gamepadEX.GamepadEX;
+import org.firstinspires.ftc.teamcode.teamUtil.RobotConfig;
 
 /**
  * Assists with update loops and the like for the integration of robotConfig.
@@ -22,7 +23,7 @@ public abstract class ConfiguredOpMode extends OpMode {
     public abstract void superInit();
     public abstract void registerTriggers();
     @Override
-    public void init() {
+    public final void init() {
         r = RobotConfig.freshInstance(this);
         gamepadEX1 = new GamepadEX(gamepad1);
         gamepadEX2 = new GamepadEX(gamepad2);
@@ -35,7 +36,7 @@ public abstract class ConfiguredOpMode extends OpMode {
 
     public abstract void superInit_Loop();
     @Override
-    public void init_loop() {
+    public final void init_loop() {
         for (LynxModule module : r.allHubs) {
             module.clearBulkCache();
         }
@@ -44,7 +45,7 @@ public abstract class ConfiguredOpMode extends OpMode {
 
     public abstract void superStart();
     @Override
-    public void start() {
+    public final void start() {
         r.opMode.telemetry.clear();
         RobotConfig.elapsedTime.reset();
         superStart();
@@ -52,7 +53,7 @@ public abstract class ConfiguredOpMode extends OpMode {
 
     public abstract void superLoop();
     @Override
-    public void loop() {
+    public final void loop() {
         for (LynxModule module : r.allHubs) {
             module.clearBulkCache();
         }
@@ -66,7 +67,7 @@ public abstract class ConfiguredOpMode extends OpMode {
 
     public abstract void superStop();
     @Override
-    public void stop(){
+    public final void stop(){
         superStop();
         for (Subsystem subsystem : r.subsystems) {
             subsystem.close();

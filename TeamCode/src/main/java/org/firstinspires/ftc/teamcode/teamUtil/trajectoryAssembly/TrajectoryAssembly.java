@@ -104,7 +104,7 @@ public class TrajectoryAssembly {
             else if (!firstSegment) {
                 double angleChange = previousModuleHeading.angleShortDifference(Angle.atanHandler(trajectorySegments.get(i).endPose2D, previousRobotPose2D));
                 double retainedVelocity;
-                if(angleChange < 90 || previousRobotPose2D.angle.value == trajectorySegments.get(i).endPose2D.angle.value){
+                if(angleChange < 90 || previousRobotPose2D.angle.getValue() == trajectorySegments.get(i).endPose2D.angle.getValue()){
                     retainedVelocity = Math.cos(angleChange)* RobotConstants.maxSwerveVelocity;
                 }
                 else {

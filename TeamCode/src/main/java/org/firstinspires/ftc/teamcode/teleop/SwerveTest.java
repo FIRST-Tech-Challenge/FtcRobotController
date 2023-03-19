@@ -3,7 +3,7 @@ package org.firstinspires.ftc.teamcode.teleop;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.subsystems.swerve.SwerveDriveBase;
-import org.firstinspires.ftc.teamcode.teamUtil.ConfiguredOpMode;
+import org.firstinspires.ftc.teamcode.teamUtil.CommandScheduler.ConfiguredOpMode;
 import org.firstinspires.ftc.teamcode.teamUtil.RobotConstants;
 
 @TeleOp(name="Swerve Test", group="Worlds")

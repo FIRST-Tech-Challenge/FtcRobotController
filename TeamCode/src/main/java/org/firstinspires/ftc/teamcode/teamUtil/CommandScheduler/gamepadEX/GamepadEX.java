@@ -2,6 +2,8 @@ package org.firstinspires.ftc.teamcode.teamUtil.CommandScheduler.gamepadEX;
 
 import com.qualcomm.robotcore.hardware.Gamepad;
 
+import org.firstinspires.ftc.teamcode.teamUtil.CommandScheduler.Trigger;
+
 public class GamepadEX {
 
     public final ButtonEX
@@ -46,9 +48,9 @@ public class GamepadEX {
         right_bumper = new ButtonEX(() -> gamepad.right_bumper);
 
         leftX = new ContinuousInput(() -> gamepad.left_stick_x);
-        leftY = new ContinuousInput(() -> gamepad.left_stick_y);
+        leftY = new ContinuousInput(() -> -gamepad.left_stick_y);
         rightX = new ContinuousInput(() -> gamepad.right_stick_x);
-        rightY = new ContinuousInput(() -> gamepad.right_stick_y);
+        rightY = new ContinuousInput(() -> -gamepad.right_stick_y);
 
         left_trigger = new ContinuousInput(() -> gamepad.left_trigger);
         right_trigger = new ContinuousInput(() -> gamepad.right_trigger);
