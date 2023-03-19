@@ -26,8 +26,7 @@ public class PositionLogger {
     public PositionLogger(String name) {
         filename = dir + name + ".txt";
         try {
-            FileOutputStream temp = new FileOutputStream(filename);
-             out = new FullObjectOutputStream(temp);
+             out = new FullObjectOutputStream(new FileOutputStream(filename));
              log = "POSITION LOG - " + name;
              log += "\n START DATE AND TIME - " + LocalTime.now();
              out.writeObject(log);
@@ -49,18 +48,22 @@ public class PositionLogger {
         if(returnLastLog().contains("POSITION - "))
             return returnLastLog().substring(returnLastLog().indexOf("TIME - " + 7), returnLastLog().indexOf(" POSITION - "));
         return "no positions logged yet";
+        //returns as a string, could be annoying but didn't know what else to return
     }
 
     public Pose2d returnLastPose () {
-        //currently returns empty poses if nothing's in log
+        //currently returns empty pose if nothing's in log
         Pose2d pose = new Pose2d();
-        Scanner sc = new Scanner(returnLastLog());
-        //todo - not sure if time picks up as a double token
-        sc.nextDouble();
         if(returnLastLog().contains("POSITION - ")) {
-            pose = new Pose2d(sc.nextDouble(), sc.nextDouble(), sc.nextDouble());
+            Scanner sc = new Scanner(returnLastLog());
+            //todo - not sure if time picks up as a double token
+            sc.nextDouble();
+            if (returnLastLog().contains("POSITION - ")) {
+                pose = new Pose2d(sc.nextDouble(), sc.nextDouble(), sc.nextDouble());
+            }
         }
-           return pose;
+            return pose;
+
     }
 
     public String returnLastLog() {
