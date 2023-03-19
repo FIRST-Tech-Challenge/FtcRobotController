@@ -127,7 +127,7 @@ public class SPLINEAutoRightSide extends PowerPlay_AprilTagDetectionDeposit{
 
 				.waitSeconds(0.25)
 				.UNSTABLE_addTemporalMarkerOffset(0,()->{
-					clawControl.toggleOpenClose();
+					clawControl.toggleAutoOpenClose();
 				})
 				.waitSeconds(0.25)
 
@@ -139,16 +139,11 @@ public class SPLINEAutoRightSide extends PowerPlay_AprilTagDetectionDeposit{
 				.UNSTABLE_addTemporalMarkerOffset(0,()->{
 					slideControl.setCustom(600);
 				})
-				//.splineTo(new Vector2d(xConeStack, yConeStack), Math.toRadians(coneStackHeading1))
-				//.strafeRight(openingStrafe)
-
-				//.splineToLinearHeading(new Pose2d(xConeStack, yConeStack, Math.toRadians(coneStackHeading1)), Math.toRadians(endTangent1))
-				//.forward(coneStackForward)
 
 				.lineToLinearHeading(new Pose2d(xConeStack1,1,Math.toRadians(coneStackHeading)))
 				.forward(yConeStack)
 				.UNSTABLE_addTemporalMarkerOffset(0,()->{
-					clawControl.toggleOpenClose();
+					clawControl.toggleAutoOpenClose();
 				})
 				.waitSeconds(0.2)
 				.UNSTABLE_addTemporalMarkerOffset(0,()->{
@@ -170,7 +165,7 @@ public class SPLINEAutoRightSide extends PowerPlay_AprilTagDetectionDeposit{
 				})
 				.waitSeconds(0.2)
 				.UNSTABLE_addTemporalMarkerOffset(0,()->{
-					clawControl.toggleOpenClose();
+					clawControl.toggleAutoOpenClose();
 				})
 				.waitSeconds(0.2)
 
@@ -182,16 +177,11 @@ public class SPLINEAutoRightSide extends PowerPlay_AprilTagDetectionDeposit{
 				.UNSTABLE_addTemporalMarkerOffset(0,()->{
 					slideControl.setCustom(475);
 				})
-				//.splineTo(new Vector2d(xConeStack, yConeStack), Math.toRadians(coneStackHeading1))
-				//.strafeRight(openingStrafe)
-
-				//.splineToLinearHeading(new Pose2d(xConeStack, yConeStack, Math.toRadians(coneStackHeading1)), Math.toRadians(endTangent1))
-				//.forward(coneStackForward)
 
 				.lineToLinearHeading(new Pose2d(xConeStack2,1,Math.toRadians(coneStackHeading)))
 				.forward(yConeStack)
 				.UNSTABLE_addTemporalMarkerOffset(0,()->{
-					clawControl.toggleOpenClose();
+					clawControl.toggleAutoOpenClose();
 				})
 				.waitSeconds(0.2)
 				.UNSTABLE_addTemporalMarkerOffset(0,()->{
@@ -212,7 +202,7 @@ public class SPLINEAutoRightSide extends PowerPlay_AprilTagDetectionDeposit{
 				})
 				.waitSeconds(0.2)
 				.UNSTABLE_addTemporalMarkerOffset(0,()->{
-					clawControl.toggleOpenClose();
+					clawControl.toggleAutoOpenClose();
 				})
 				.waitSeconds(0.2)
 				.UNSTABLE_addTemporalMarkerOffset(0,()->{
@@ -226,7 +216,7 @@ public class SPLINEAutoRightSide extends PowerPlay_AprilTagDetectionDeposit{
 				.lineToLinearHeading(new Pose2d(xConeStack3,1,Math.toRadians(coneStackHeading)))
 				.forward(yConeStack)
 				.UNSTABLE_addTemporalMarkerOffset(0,()->{
-					clawControl.toggleOpenClose();
+					clawControl.toggleAutoOpenClose();
 				})
 				.waitSeconds(0.2)
 				.UNSTABLE_addTemporalMarkerOffset(0,()->{
@@ -247,7 +237,7 @@ public class SPLINEAutoRightSide extends PowerPlay_AprilTagDetectionDeposit{
 				})
 				.waitSeconds(0.2)
 				.UNSTABLE_addTemporalMarkerOffset(0,()->{
-					clawControl.toggleOpenClose();
+					clawControl.toggleAutoOpenClose();
 				})
 				.waitSeconds(0.2)
 				.UNSTABLE_addTemporalMarkerOffset(0,()->{
@@ -262,7 +252,7 @@ public class SPLINEAutoRightSide extends PowerPlay_AprilTagDetectionDeposit{
 				.lineToLinearHeading(new Pose2d(xConeStack4,1,Math.toRadians(coneStackHeading)))
 				.forward(yConeStack)
 				.UNSTABLE_addTemporalMarkerOffset(0,()->{
-					clawControl.toggleOpenClose();
+					clawControl.toggleAutoOpenClose();
 				})
 				.waitSeconds(0.2)
 				.UNSTABLE_addTemporalMarkerOffset(0,()->{
@@ -283,7 +273,7 @@ public class SPLINEAutoRightSide extends PowerPlay_AprilTagDetectionDeposit{
 				})
 				.waitSeconds(0.2)
 				.UNSTABLE_addTemporalMarkerOffset(0,()->{
-					clawControl.toggleOpenClose();
+					clawControl.toggleAutoOpenClose();
 				})
 				.waitSeconds(0.2)
 				.UNSTABLE_addTemporalMarkerOffset(0,()->{
@@ -323,11 +313,6 @@ public class SPLINEAutoRightSide extends PowerPlay_AprilTagDetectionDeposit{
 					}
 				})
 
-				/*
-
-				//.splineToSplineHeading(new Pose2d(mediumX, mediumY, Math.toRadians(mediumHeading2)), Math.toRadians(mediumEndTangent2))
-				.waitSeconds(1)
-				*/
 				.build();
 		scan();
 		waitForStart();

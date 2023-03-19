@@ -67,7 +67,7 @@ public class SPLINEAutoLeftSide extends PowerPlay_AprilTagDetectionDeposit{
 	public static double xConeStack4 = 49.3;
 	public static double xConeStack5 = 49.3;
 	public static double coneStackHeading = 89;
-	public static double coneStackEndTangent = 89;
+	public static double coneStackEndTangent = 91;
 
 	// [OPENING MOVE --> MEDIUM JUNCTION]
 	public static double openingHeading = 90;
@@ -147,11 +147,11 @@ public class SPLINEAutoLeftSide extends PowerPlay_AprilTagDetectionDeposit{
 					alignmentControl.raiseServo();
 					clawControl.toggleAutoOpenClose();
 				})
-				.waitSeconds(0.3) // claw
+				.waitSeconds(0.05) // claw
 				.UNSTABLE_addTemporalMarkerOffset(0, () -> {
-					slideControl.setCustom(1285);
+					slideControl.setCustom(1275);
 				})
-				.waitSeconds(0.4) // the thing
+				.waitSeconds(0.15) // the thing
 				.UNSTABLE_addTemporalMarkerOffset(0, () -> {
 					slideControl.setCustom(1000); //1050
 					armControl.setAutoExtake();

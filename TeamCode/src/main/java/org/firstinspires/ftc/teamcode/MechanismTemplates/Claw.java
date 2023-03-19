@@ -15,7 +15,7 @@ public class Claw {
     private boolean isAuto;
 
     // claw positions
-    public static double OPEN = 0.675;
+    public static double OPEN = 0.665;
     public static double CLOSE = 0.5;
     public static double AUTOCLOSE = 0.5;
 
@@ -53,7 +53,7 @@ public class Claw {
     private boolean clawToggled;
 
     public void toggleOpenClose() {
-        if (isOpen.isRisingEdge()) {
+        if (isOpen.isRisingEdge()) { // null object reference for right side auto
             if (clawToggled) {
                 clawJoint.setPosition(AUTOCLOSE);
             } else {

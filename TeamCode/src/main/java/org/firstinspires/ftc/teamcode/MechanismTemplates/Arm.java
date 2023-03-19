@@ -40,7 +40,6 @@ public class Arm{
         armMotor = new Motor(hardwareMap, "ARM", Motor.GoBILDA.RPM_84); // pin 1 control hub
         armMotor.setZeroPowerBehavior(Motor.ZeroPowerBehavior.BRAKE);
         armMotor.setRunMode(Motor.RunMode.VelocityControl);
-        //armMotor.resetEncoder(); // We want the arm to start at a position of 0
         armPIDF = new PIDFController(armKpUp, armKi, armKd, armKf);
         sensor = hardwareMap.analogInput.get("ARM_ENC"); // encoder port 1 on control hub
     }
@@ -53,39 +52,31 @@ public class Arm{
     }
 
     public void update(Telemetry telemetry){
-        if(getArmPosition() < targetPos){
-            armPIDF.setPIDF(armKpUp, armKi, armKd, armKf);
-            telemetry.addData("Kp being used: ", armKpUp);
-        }
-
-        else if(getArmPosition() > targetPos){
-            armPIDF.setPIDF(armKpDown, armKi, armKd, armKf);
-            telemetry.addData("Kp being used: ", armKpDown);
-        }
-
-        // Correction represents the error term of the PIDF loop
         double correction = armPIDF.calculate(getArmPosition(), targetPos);
-
         telemetry.addData("Correction: ", correction);
         telemetry.addData("Target Position: ", targetPos);
         telemetry.addData("Motor Position: ", getArmPosition());
-
         telemetry.update();
-
         armMotor.set(correction); // sets a PID-tuned voltage for the arm motor
     }
 
     public void setExtake(){
+        armPIDF.setPIDF(armKpUp, armKi, armKd, armKf);
         targetPos = EXTAKE_POS;
     }
 
-    public void setAutoExtake(){targetPos = AUTOEXTAKE_POS;}
+    public void setAutoExtake(){
+       armPIDF.setPIDF(armKpUp, armKi, armKd, armKf);
+       targetPos = AUTOEXTAKE_POS;
+       }
 
     public void setIntake(){
+        armPIDF.setPIDF(armKpDown, armKi, armKd, armKf);
         targetPos = INTAKE_POS;
     }
 
     public void setCustom(int custom){
+        armPIDF.setPIDF(armKpUp, armKi, armKd, armKf);
         targetPos=custom;
     }
 }
