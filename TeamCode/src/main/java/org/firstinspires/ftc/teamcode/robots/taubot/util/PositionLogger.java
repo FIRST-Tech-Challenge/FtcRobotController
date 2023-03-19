@@ -57,7 +57,7 @@ public class PositionLogger {
         if(returnLastLog().contains("POSITION - ")) {
             Scanner sc = new Scanner(returnLastLog());
             //todo - not sure if time picks up as a double token
-            sc.nextDouble();
+            //currently assuming it doesn't
             if (returnLastLog().contains("POSITION - ")) {
                 pose = new Pose2d(sc.nextDouble(), sc.nextDouble(), sc.nextDouble());
             }
