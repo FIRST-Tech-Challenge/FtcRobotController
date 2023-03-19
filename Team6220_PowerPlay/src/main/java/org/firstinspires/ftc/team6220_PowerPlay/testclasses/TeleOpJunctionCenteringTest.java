@@ -14,8 +14,8 @@ public class TeleOpJunctionCenteringTest extends BaseTeleOp {
     public void runOpMode() {
         initialize();
 
-        robotCameraPipeline.setRanges(Constants.LOWER_BLACK, Constants.UPPER_BLACK);
-        
+        grabberCameraPipeline.setRanges(Constants.LOWER_BLACK, Constants.UPPER_BLACK);
+
         waitForStart();
 
         while (opModeIsActive()) {
@@ -23,6 +23,7 @@ public class TeleOpJunctionCenteringTest extends BaseTeleOp {
             driveGrabberWithController();
             driveSlidesWithController();
             teleOpJunctionCentering();
+            driveLEDs();
             resetIMU();
         }
     }

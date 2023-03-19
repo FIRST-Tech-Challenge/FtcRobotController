@@ -231,9 +231,7 @@ public abstract class BaseTeleOp extends BaseOpMode {
     public void teleOpJunctionCentering() {
         if (gamepad1.start) {
             centerJunctionTop(grabberCameraPipeline);
-            telemetry.addData("x", grabberCameraPipeline.xPosition);
-            telemetry.addData("y", grabberCameraPipeline.yPosition);
-            telemetry.update();
+            driveLEDs();
         }
     }
 }
