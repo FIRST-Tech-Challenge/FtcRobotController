@@ -503,7 +503,7 @@ public class TeleOpDrive extends LinearOpMode{
             } else if (gamepad2.dpad_down) {
                 manipulator.moveSlides(-0.9);
             } else if (gamepad2.right_bumper){
-                manipulator.moveSlideEncoder(manipulator.rightSlides.getCurrentPosition() - 50, 1);
+                manipulator.moveSlideEncoder(manipulator.rightSlides.getCurrentPosition() - 100, 1);
 
             } else {
                 if (gamepad1.y || (gamepad2.left_trigger > 0.2)) {

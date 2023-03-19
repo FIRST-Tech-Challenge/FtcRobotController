@@ -12,7 +12,7 @@ import org.firstinspires.ftc.teamcode.SampleMecanumDrive;
 /*
  * This is an example of a more complex path to really test the tuning.
  */
-//@Disabled
+@Disabled
 @Autonomous(group = "drive")
 public class SplineTest extends LinearOpMode {
     @Override
