@@ -384,6 +384,10 @@ public class DriveTrain extends DiffyDrive implements Subsystem {
         cachePosition = new Vector2(getPoseEstimate().getX(),getPoseEstimate().getY());
         lastRunHeading = getRawHeading();
     }
+    public void cachePositionForNextRun(Pose2d cache){
+        cachePosition = new Vector2(cache.getX(), cache.getY());
+        lastRunHeading = getRawHeading();
+    }
 
     @Override
     public void stop() {
@@ -396,6 +400,7 @@ public class DriveTrain extends DiffyDrive implements Subsystem {
         telemetryMap.put("turnStuff", turnAngle - poseEstimate.getHeading());
 
         if (debug) {
+            telemetryMap.put("Current Drive Mode", getArticulation());
             telemetryMap.put("Grid Drive Index", gridDriveIndex);
             telemetryMap.put("Target Heading", targetHeading);
             telemetryMap.put("Heading", heading);
@@ -954,12 +959,21 @@ public class DriveTrain extends DiffyDrive implements Subsystem {
 
     StateMachine currentStateMachine = Utils.getStateMachine(new Stage()).addState(()->{return true;}).build();
 
-    Articulation articulation = Articulation.runMode;
+    Articulation articulation = Articulation.unlock;
+
+    public Articulation getArticulation() {
+        return articulation;
+    }
 
     public Articulation articulate(Articulation target){
         articulation = target;
         switch(articulation){
-            case runMode:
+            case unlock:
+                if(leftMotor.getMode().equals(DcMotor.RunMode.RUN_TO_POSITION)) {
+                    leftMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+                    rightMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+                    chariotMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+                }
                 if (useMotorPowers) {
                     leftMotor.setPower(leftPower);
                     rightMotor.setPower(rightPower);
@@ -976,14 +990,17 @@ public class DriveTrain extends DiffyDrive implements Subsystem {
                 chassisLengthCorrection = chassisLengthPID.performPID();
                 chariotMotor.setPower(chassisLengthCorrection);
                 break;
-            case squeeze:
-                leftMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-                rightMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-                chariotMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+            case lock:
+                leftMotor.setTargetPosition(leftMotor.getCurrentPosition());
+                rightMotor.setTargetPosition(rightMotor.getCurrentPosition());
+                chariotMotor.setTargetPosition(chariotMotor.getCurrentPosition());
+                leftMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                rightMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                chariotMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
-                leftMotor.setPower(SQUEEZE_MODE_DRIVE_POWER);
-                rightMotor.setPower(SQUEEZE_MODE_DRIVE_POWER);
-                chariotMotor.setPower(SQUEEZE_MODE_CHARRIOT_POWER);
+                leftMotor.setPower(1);
+                rightMotor.setPower(1);
+                chariotMotor.setPower(1);
                 break;
             default:
                 break;
@@ -996,8 +1013,8 @@ public class DriveTrain extends DiffyDrive implements Subsystem {
     public static double SQUEEZE_MODE_CHARRIOT_POWER = -0.1;
 
     public enum Articulation{
-        runMode,
-        squeeze
+        unlock,
+        lock
     }
 
     public double getVoltage() {

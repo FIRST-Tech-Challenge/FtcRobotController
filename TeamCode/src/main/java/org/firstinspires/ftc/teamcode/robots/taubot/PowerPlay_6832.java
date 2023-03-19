@@ -44,7 +44,6 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 import org.firstinspires.ftc.robotcore.internal.system.Misc;
-import org.firstinspires.ftc.teamcode.robots.taubot.subsystem.Crane;
 import org.firstinspires.ftc.teamcode.robots.taubot.subsystem.DriveTrain;
 import org.firstinspires.ftc.teamcode.robots.taubot.subsystem.Robot;
 import org.firstinspires.ftc.teamcode.robots.taubot.subsystem.UnderArm;
@@ -250,7 +249,7 @@ public class PowerPlay_6832 extends OpMode {
 
         telemetry.update();
 
-        robot.driveTrain.articulate(DriveTrain.Articulation.runMode);
+        robot.driveTrain.articulate(DriveTrain.Articulation.unlock);
     }
 
     // Code to run REPEATEDLY after the driver hits INIT, but before they hit PLAY
@@ -278,7 +277,7 @@ public class PowerPlay_6832 extends OpMode {
         startTime = System.currentTimeMillis();
 
         resetGame();
-
+        robot.driveTrain.articulate(DriveTrain.Articulation.unlock);
         if(gameState.equals(GameState.TELE_OP)){
             robot.crane.resetCrane(startingPosition);
             robot.underarm.setJointAngle(UnderArm.JointAngle.SafePos);
@@ -292,7 +291,7 @@ public class PowerPlay_6832 extends OpMode {
             robot.underarm.articulate(UnderArm.Articulation.jointAngles);
         }
         robot.crane.updateScoringPattern();
-
+        robot.driveTrain.articulate(DriveTrain.Articulation.unlock);
         robot.driveTrain.enableChassisLength();
 
         rumble();
@@ -335,14 +334,14 @@ public class PowerPlay_6832 extends OpMode {
                         }
                         break;
                     case TELE_OP:
-                        switch(teleOpIndex){
+                        switch(teleOpIndex) {
                             case 0:
                                 teleOpIndex++;
                                 break;
                             case 1:
-                                if(robot.driveTrain.runToTeleOpPosition(startingPosition.equals(Constants.Position.START_RIGHT))){
-                                    teleOpIndex++;
-                                }
+//                                if(robot.driveTrain.runToTeleOpPosition(startingPosition.equals(Constants.Position.START_RIGHT))){
+                                teleOpIndex++;
+                        //}
                                 break;
                             case 2:
                                 dc.joystickDrive();

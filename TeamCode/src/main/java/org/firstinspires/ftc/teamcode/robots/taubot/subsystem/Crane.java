@@ -305,7 +305,7 @@ public class Crane implements Subsystem {
                     enableAllPID();
                     setShoulderTargetAngle(FOLD_SHOULDER_POSITION);
                     articulate(Articulation.init);
-                    robot.driveTrain.articulate(DriveTrain.Articulation.squeeze);
+                    robot.driveTrain.articulate(DriveTrain.Articulation.lock);
                     calibrateStage = 0;
                     extenderActivePID = true;
                     shoulderActivePID = true;
@@ -743,7 +743,7 @@ public class Crane implements Subsystem {
                 goTargetInd++;
                 break;
             case 1: //waits for shoulder and turret to finish moving to target then sets the extension to go to its target
-                if(shoulderOnTarget() && extensionOnTarget() && turretOnTarget()){
+                if(shoulderOnTarget() && turretOnTarget()){
                     setExtendTargetPos(calculatedLength);
                     setShoulderTargetAngle(calculatedAngle);
                     setTargetTurretAngle(calculatedTurretAngle);
@@ -1108,12 +1108,12 @@ public class Crane implements Subsystem {
 
         calculatedAngle = Math.toDegrees(Math.atan2(calculatedHeight, calculatedDistance));
         calculatedLength = (Math.sqrt(Math.pow(calculatedHeight, 2) + Math.pow(calculatedDistance, 2)));
-//todo Vance? this earns a null object exception
-        if(robot.checkCollision(calculatedAngle,calculatedTurretAngle)){
-            calculatedAngle = getShoulderAngle();
-            calculatedLength = getExtendMeters();
-            robot.underarm.articulate(UnderArm.Articulation.safe);
-        }
+////todo Vance? this earns a null object exception
+//        if(robot.checkCollision(calculatedAngle,calculatedTurretAngle)){
+//            calculatedAngle = getShoulderAngle();
+//            calculatedLength = getExtendMeters();
+//            robot.underarm.articulate(UnderArm.Articulation.safe);
+//        }
 
         return true;
     }

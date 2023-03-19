@@ -63,10 +63,11 @@ public class UnderArm implements Subsystem {
     public static double LASSO_OPEN = 1100;
 
     public static double TRANSFER_SHOULDER_ANGLE = -15;
-    public static double TRANSFER_SHOULDER_APPROACH_ANGLE = -20;
+    public static double TRANSFER_SHOULDER_APPROACH_ANGLE = -18;
     public static double TRANSFER_ELBOW_ANGLE = -101;
 
     public static double TRANSFER_WRIST_ANGLE = 101;
+
 
     public static double TRANSFER_TURRET_ANGLE = 0; //-14
     boolean lassoGripped = false;
@@ -200,6 +201,7 @@ public class UnderArm implements Subsystem {
                 setElbowTargetAngle(FOLDPOS_ELBOW_ANGLE);
                 setTurretTargetAngle(FOLDPOS_TURRET_ANGLE);
                 robot.driveTrain.setChassisLength(MIN_SAFE_CHASSIS_LENGTH);
+                robot.driveTrain.articulate(DriveTrain.Articulation.lock);
                 break;
             case foldTransfer: //PROB NOT NEEDED but added just in case
                 jointAngle = JointAngle.FoldTransferPosition;
@@ -209,7 +211,8 @@ public class UnderArm implements Subsystem {
                 goToTransfer();
                 break;
             case transferRecover: //after transfer, go back through to clear the camera
-                    TransferRecover();
+                if(TransferRecover())
+                    articulation = Articulation.manual;
                     break;
             case safe:
                 jointAngle = JointAngle.SafePos;
@@ -278,6 +281,7 @@ public class UnderArm implements Subsystem {
         switch (homeStage) {
             case 0: //sets home position
                 robot.driveTrain.tuck();
+                robot.driveTrain.articulate(DriveTrain.Articulation.unlock);
                 setTurretTargetAngle(0);
                 setElbowTargetAngle(0);
                 setShoulderTargetAngle(0);
@@ -306,6 +310,7 @@ public class UnderArm implements Subsystem {
                 setTurretTargetAngle(TRANSFER_TURRET_ANGLE);
                 setElbowTargetAngle(TRANSFER_ELBOW_ANGLE);
                 setShoulderTargetAngle(TRANSFER_SHOULDER_APPROACH_ANGLE);
+                WRIST_SPEED = 270;
                 setWristTargetAngle(TRANSFER_WRIST_ANGLE);
                 transferTimer = futureTime(1.0);
                 transferStage++;
@@ -329,7 +334,8 @@ public class UnderArm implements Subsystem {
         switch (transferRecoverStage) {
             case 0: //starting from the transfer position, recover the elbow first
                 atTransfer = false;
-                setElbowTargetAngle(0);
+                WRIST_SPEED = 90;
+                setElbowTargetAngle(5);
                 setShoulderTargetAngle(TRANSFER_SHOULDER_APPROACH_ANGLE);
                 transferRecoverTimer = futureTime(1.0);
                 transferRecoverStage++;
@@ -340,6 +346,7 @@ public class UnderArm implements Subsystem {
                     setShoulderTargetAngle(0); //take the shoulder home
                     setWristTargetAngle(0); //take wrist home
                     transferRecoverStage = 0;
+
                     return true;
                 }
                 break;

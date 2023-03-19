@@ -140,7 +140,7 @@ public class Robot implements Subsystem {
     }
 
     public void start(){
-        driveTrain.articulate(DriveTrain.Articulation.runMode);
+        driveTrain.articulate(DriveTrain.Articulation.unlock);
         crane.enableAllPID();
         turret.articulate(Turret.Articulation.runToAngle);
     }
@@ -226,6 +226,7 @@ public class Robot implements Subsystem {
 
         switch (timeSupervisor) {
             case 0:
+                driveTrain.articulate(DriveTrain.Articulation.unlock);
                 totalAutonTime = futureTime(28);
                 autonIndex = 0;
                 timeSupervisor++;
@@ -260,7 +261,8 @@ public class Robot implements Subsystem {
                                 autonTime = futureTime(0.8);
                                 autonIndex++;
                             }
-                        } else {
+                        }
+                        else {
                             if (!turnDone && driveTrain.turnUntilDegrees(-90)) {
                                 turnDone = true;
                             }
@@ -396,6 +398,7 @@ public class Robot implements Subsystem {
     public Articulation articulate(Articulation target) {
         articulation = target;
         if(isDriverDriving()) { //bypass the normal articulation flow when driving - this could short circuit other articulations leaving them in unknown stages
+            driveTrain.articulate(DriveTrain.Articulation.unlock);
             crane.articulate(Crane.Articulation.robotDriving); //keeps crane in safe position
             underarm.articulate(UnderArm.Articulation.home); //keeps underarm in safe position
 
@@ -474,6 +477,7 @@ public class Robot implements Subsystem {
     public boolean unfold(){
         switch (unfoldStage){
             case 0:
+                driveTrain.articulate(DriveTrain.Articulation.unlock);
                 crane.articulate(Crane.Articulation.noIK);
                 crane.setShoulderTargetAngle(70);
                 unfoldTimer = futureTime(0.7);
@@ -536,6 +540,7 @@ public class Robot implements Subsystem {
         switch (transferStage) {
             case 0: //move Crane to transfer position
                 //underarm.articulate((UnderArm.Articulation.manual));
+                driveTrain.articulate(DriveTrain.Articulation.lock);
                 crane.release();
                 crane.articulate(Crane.Articulation.transfer); //tells crane to go to transfer position
 //                transferStage++;
@@ -553,7 +558,7 @@ public class Robot implements Subsystem {
                 //if(crane.atTransferPosition()&& underarm.atTransfer()){ //todo debug - temp switched to a timer because crane.atTransferPosition() not working
 //                if(System.nanoTime() >= transferTimer){
                     crane.grab(); //TODO UNCOMMENT TO ALLOW ACTUAL GRAB BY CRANE WHEN POSITIONING IS ALL WORKED OUT
-                    transferTimer = futureTime(3);
+                    transferTimer = futureTime(1.5);
                     //TODO TRIED VARIOUS THINGS BELOW TO ABORT/STALL SO WE COULD LOOK AT FINAL TRANSFER POSITION BUT THEY HAVE DIFFERENT SIDE EFFECTS FROM THE COMBINATIONS OF ARTICULATIONS
                     //CAN TEMPORARILY EXIT HERE FOR DEBUGGING
                     //boolean tuning = true; if (tuning) {transferStage = 0; return true;}
@@ -571,6 +576,7 @@ public class Robot implements Subsystem {
                 break;
             case 4:
 //                if(System.nanoTime() >= transferTimer) {
+                    driveTrain.articulate(DriveTrain.Articulation.unlock);
                     driveTrain.setChassisLength(Constants.MAX_CHASSIS_LENGTH - 5);
                     crane.articulate(Crane.Articulation.transferAdjust);
 //                }

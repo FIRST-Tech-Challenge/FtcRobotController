@@ -301,7 +301,7 @@ public class DriverControls {
             robot.driveTrain.setPoseEstimate(startingPosition.getPose());
             auto.build(startingPosition);
         }
-
+        robot.driveTrain.cachePositionForNextRun(startingPosition.getPose());
         if(stickyGamepad1.dpad_up || stickyGamepad2.dpad_up)
             debugTelemetryEnabled = !debugTelemetryEnabled;
 
