@@ -66,35 +66,35 @@ public class ConeObserverPipeline extends OpenCvPipeline {
         // Get a black and white image of yellow objects
         Core.inRange(mat, lowHSV, highHSV, thresh);
 
-        Scalar lowHSV1 = new Scalar(LowH1, LowS1, LowV1); // lenient lower bound HSV for yellow
-        Scalar highHSV1 = new Scalar(HighH1, HighS1, HighV1); // lenient higher bound HSV for yellow
-
-        Mat thresh2 = new Mat();
-
-        // Get a black and white image of yellow objects
-        Core.inRange(mat, lowHSV1, highHSV1, thresh2);
-        Scalar lowHSV2 = new Scalar(LowH2, LowS2, LowV2); // lenient lower bound HSV for yellow
-        Scalar highHSV2 = new Scalar(HighH2, HighS2, HighV2); // lenient higher bound HSV for yellow
-
-        Mat thresh3 = new Mat();
-
-        // Get a black and white image of yellow objects
-        Core.inRange(mat, lowHSV2, highHSV2, thresh3);
-
-        Mat thresh4 = new Mat();
-
-        Core.bitwise_and(thresh, thresh2, thresh4);
-        Core.add(thresh,thresh2,thresh4);
-
-        Mat thresh5 = new Mat();
-
-        Core.add(thresh4, thresh3, thresh5);
+//        Scalar lowHSV1 = new Scalar(LowH1, LowS1, LowV1); // lenient lower bound HSV for yellow
+//        Scalar highHSV1 = new Scalar(HighH1, HighS1, HighV1); // lenient higher bound HSV for yellow
+//
+//        Mat thresh2 = new Mat();
+//
+//        // Get a black and white image of yellow objects
+//        Core.inRange(mat, lowHSV1, highHSV1, thresh2);
+//        Scalar lowHSV2 = new Scalar(LowH2, LowS2, LowV2); // lenient lower bound HSV for yellow
+//        Scalar highHSV2 = new Scalar(HighH2, HighS2, HighV2); // lenient higher bound HSV for yellow
+//
+//        Mat thresh3 = new Mat();
+//
+//        // Get a black and white image of yellow objects
+//        Core.inRange(mat, lowHSV2, highHSV2, thresh3);
+//
+//        Mat thresh4 = new Mat();
+//
+//        Core.bitwise_and(thresh, thresh2, thresh4);
+//        Core.add(thresh,thresh2,thresh4);
+//
+//        Mat thresh5 = new Mat();
+//
+//        Core.add(thresh4, thresh3, thresh5);
 
 
         List<MatOfPoint> contours = new ArrayList<>();
         Mat hierarchy = new Mat();
         //find contours of edges
-        Imgproc.findContours(thresh5, contours, hierarchy, Imgproc.RETR_TREE, 1);
+        Imgproc.findContours(thresh, contours, hierarchy, Imgproc.RETR_TREE, Imgproc.CHAIN_APPROX_SIMPLE);
         MatOfPoint2f[] contoursPoly = new MatOfPoint2f[contours.size()];
         //rotatedRect because it allows for more accurate bounding rectangles, perfect if pole is slanted
         Rect[] rectangle = new Rect[contours.size()];
@@ -146,19 +146,20 @@ public class ConeObserverPipeline extends OpenCvPipeline {
 
         mat.release();
         contoursPoly = null;
-//        masked.release();
-        thresh5.copyTo(input);
+//        thresh5.copyTo(input);
+        thresh.copyTo(input);
         thresh.release();
-        thresh2.release();
-        thresh3.release();
-        thresh4.release();
-        thresh5.release();
+//        thresh2.release();
+//        thresh3.release();
+//        thresh4.release();
+//        thresh5.release();
         hierarchy.release();
         Scalar color = new Scalar(255,0,0);
         assert rectangle != null;
         if(rectangle.length>0) {
             Imgproc.rectangle(input, rectangle[maxAreaIndex], color, 5);
         }
+        rectangle=null;
 
         return input;
     }

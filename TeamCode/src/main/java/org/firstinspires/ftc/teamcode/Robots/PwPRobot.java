@@ -23,6 +23,7 @@ import static java.lang.Math.sqrt;
 import static java.lang.Math.toRadians;
 
 import com.acmerobotics.roadrunner.geometry.Pose2d;
+import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.acmerobotics.roadrunner.trajectory.Trajectory;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.VoltageSensor;
@@ -163,7 +164,7 @@ public class PwPRobot extends BasicRobot {
                 roadrun.changeTrajectorySequence(roadrun.trajectorySequenceBuilder(trajectory.start())
                         .setReversed(true)
 //                                .splineTo(target.vec(), target.getHeading())
-                        .splineTo(target.vec(), trajectory.end().getHeading() + PI)
+                        .splineTo(target.vec(), target.getHeading())
                         .addTemporalMarker(this::done)
                         .build());
 //                field.setDoneLookin(true);
@@ -279,9 +280,9 @@ public class PwPRobot extends BasicRobot {
         double[] targetVelocity = {maxes[0] * y, maxes[1] * x, maxes[2] * a};
         Pose2d actualVelocity = roadrun.getPoseVelocity();
         Pose2d pos = roadrun.getPoseEstimate();
-        double[] t = {cos(pos.getHeading()), sin(pos.getHeading())};
-        actualVelocity = new Pose2d((t[0] * actualVelocity.getX() + t[1] * actualVelocity.getY()), -t[0] * actualVelocity.getY() + t[1] * actualVelocity.getX(), actualVelocity.getHeading());
-        double[] diffs = {targetVelocity[0] - actualVelocity.getX(), targetVelocity[1] - actualVelocity.getY(), targetVelocity[2] - actualVelocity.getHeading()};
+        double[] t = {cos(-pos.getHeading()), sin(-pos.getHeading())};
+        Vector2d rotVelocity = actualVelocity.vec().rotated(0);
+        double[] diffs = {targetVelocity[0] - rotVelocity.getX(), targetVelocity[1] - rotVelocity.getY(), targetVelocity[2] - actualVelocity.getHeading()};
         double cAngle = atan2(diffs[0], diffs[1]);
         double cMag = sqrt(diffs[1] * diffs[1] + diffs[0] * diffs[0]) * kV * 2;
         double angleCorrection = diffs[2] * TRACK_WIDTH * kV * 0.2;
@@ -289,10 +290,10 @@ public class PwPRobot extends BasicRobot {
         op.telemetry.addData("diffsy", diffs[0]);
         op.telemetry.addData("diffsx", diffs[1]);
         op.telemetry.addData("diffsa", diffs[2]);
-//        roadrun.setMotorPowers(powerb * magnitude - a - angleCorrection + (diffs[0] + diffs[1]) * 2 * kV,
-//                powera * magnitude - a - angleCorrection + (diffs[0] - diffs[1]) * 2 * kV,
-//                powerb * magnitude + a + angleCorrection + (diffs[0] + diffs[1]) * 2 * kV,
-//                powera * magnitude + a + angleCorrection+ (diffs[0] - diffs[1]) * 2 * kV);
+        roadrun.setMotorPowers(powerb * magnitude - a - angleCorrection + (diffs[0] - diffs[1]) * 2 * kV,
+                powera * magnitude - a - angleCorrection+ (diffs[0] + diffs[1]) * 2 * kV,
+                powerb * magnitude + a + angleCorrection + (diffs[0] - diffs[1]) * 2 * kV,
+                powera * magnitude + a + angleCorrection+ (diffs[0] + diffs[1]) * 2 * kV);
 
     }
 
@@ -690,7 +691,7 @@ public class PwPRobot extends BasicRobot {
 
                         abs(vals[1] - 0.0001) / -vals[1] * (minBoost[1] + 0.65 * abs(vals[1]) + 0.15 * pow(abs(vals[1]), 2.4)),
                         abs(vals[0] - 0.0001) / -vals[0] * (minBoost[0] + 0.65 * abs(vals[0]) + 0.15 * pow(abs(vals[0]), 2.4)),
-                        abs(vals[2] - 0.0001) / -vals[2] * (minBoost[2] + 0.8 * abs(vals[2])))
+                        abs(vals[2] - 0.0001) / -vals[2] * (minBoost[2] + 0.7 * abs(vals[2])))
                 );
             } else {
 //                Vector2d input = new Vector2d(abs(vals[1] - 0.0001) / -vals[1] * (minBoost[1] + 0.5 * abs(vals[1]) + 0.15 * pow(abs(vals[1]), 3)),
@@ -761,11 +762,11 @@ public class PwPRobot extends BasicRobot {
             if (op.gamepad1.a) {
                 autoTeleCone();
             }
-        } else if ((field.lookingAtPoleTele() && CLAW_CLOSED.getStatus() && ARM_OUTTAKE.getStatus())) {
-            leds.pattern29();
-            if (op.gamepad1.y) {
-                autoTelePole();
-            }
+//        } else if ((field.lookingAtPoleTele() && CLAW_CLOSED.getStatus() && ARM_OUTTAKE.getStatus())) {
+//            leds.pattern29();
+//            if (op.gamepad1.y) {
+//                autoTelePole();
+//            }
         } else if (lift.getLiftTarget() == lift.getStackPos()) {
             setStackLevelColor(lift.getStackLevel());
         } else if (CLAW_OPEN.getStatus()) {

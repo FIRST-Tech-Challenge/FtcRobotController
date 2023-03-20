@@ -95,7 +95,7 @@ public class CVMaster {
                 webcam.setPipeline(midSle);
                 webcam.startStreaming(640, 480, OpenCvCameraRotation.UPRIGHT);
 
-                dashboard.startCameraStream(webcam, 10);
+//                dashboard.startCameraStream(webcam, 10);
 
             }
 
@@ -137,7 +137,7 @@ public class CVMaster {
                 clawCam.setPipeline(cone);
                 clawCam.startStreaming(640, 480, OpenCvCameraRotation.UPRIGHT);
 
-//                dashboard.startCameraStream(clawCam, 10);
+                dashboard.startCameraStream(clawCam, 10);
 
             }
 
