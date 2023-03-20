@@ -102,8 +102,8 @@ public class Crane implements Subsystem {
     public static double EXTENDER_TICS_MAX = 3700; // of the robot
     boolean EXTENDER_CALIBRATE_MAX = false; //keep false except if calibrating EXTENDER_TICS_MAX
 
-    public static double BULB_OPEN_POS = 1500;
-    public static double BULB_CLOSED_POS = 1800;
+    public static double BULB_OPEN_POS = 1500; //old value: 1500
+    public static double BULB_CLOSED_POS = 1900; //old value: 1900
 
     public static double TRANSFER_SHOULDER_ANGLE = 50;  //angle at which transfer occurs
     public static double TRANSFER_SHOULDER_FLIPANGLE = 80; //causes the gripperflipper to flip when the angle is high and the turret turns enough or the robot accellerates
@@ -251,7 +251,7 @@ public class Crane implements Subsystem {
         switch (calibrateStage) {
             case 0:
                 enableShoulderPID();
-                articulate(Articulation.noIK);
+                articulate(Articulation.manual);
                 calibrated = false; //allows us to call calibration mid-match in an emergency
                 //operator instruction: physically push arm to about 45 degrees and extend by 1 slide before calibrating
                 //shoulder all the way up and retract arm until they safely stall
@@ -443,7 +443,6 @@ public class Crane implements Subsystem {
     public enum Articulation {
         manual,
         manualDrive,
-        noIK,
         dropCone,
         pickupCone,
         home,
@@ -466,6 +465,7 @@ public class Crane implements Subsystem {
         switch(articulation){
             case transferAdjust:
                 setShoulderTargetAngle(0);
+                break;
             case robotDriving: //if the robot is driving all cranes should go into a safe position
                 setShoulderTargetAngle(SAFE_SHOULDER_ANGLE);
                 setExtendTargetPos(SAFE_ARM_LENGTH);
@@ -476,9 +476,6 @@ public class Crane implements Subsystem {
                 break;
             case init:
                 robot.turret.articulate(Turret.Articulation.fold);
-                break;
-            case noIK:
-
                 break;
             case postTransfer:
                 if(postTransfer()){
@@ -505,7 +502,7 @@ public class Crane implements Subsystem {
                 pickupConeStage = 0;
                 dropConeStage = 0;
                 if(goHome()){
-                    articulation = Articulation.manual;
+                    articulation = Articulation.manualDrive;
                 }
                 break;
 
@@ -513,18 +510,18 @@ public class Crane implements Subsystem {
                 dropConeStage = 0;
                 updateScoringPattern();
                 if(pickupCone(targetPole)){
-                    articulation = Articulation.manual;
+                    articulation = Articulation.manualDrive;
                 }
 
                 break;
             case coneStackRight:
                 if(coneStack(true)){
-                    articulation = Articulation.manual;
+                    articulation = Articulation.manualDrive;
                 }
                 break;
             case coneStackLeft:
                 if(coneStack(false)){
-                    articulation = Articulation.manual;
+                    articulation = Articulation.manualDrive;
                 }
                 break;
             default:
@@ -791,7 +788,6 @@ public class Crane implements Subsystem {
             case 2:
                 if(shoulderOnTarget() && extensionOnTarget()){
                     robot.articulate(Robot.Articulation.MANUAL);
-                    robot.underarm.articulate(UnderArm.Articulation.manual);
                     robot.turret.articulate(Turret.Articulation.runToAngle);
                     homeInd = 0;
                     return true;

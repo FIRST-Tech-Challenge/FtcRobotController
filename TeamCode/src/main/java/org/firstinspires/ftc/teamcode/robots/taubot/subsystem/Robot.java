@@ -238,7 +238,7 @@ public class Robot implements Subsystem {
                 switch (autonIndex) {
                     case 0:
                         //drive to general parking location
-                        crane.articulate(Crane.Articulation.noIK);
+                        crane.articulate(Crane.Articulation.manual);
                         driverIsDriving();
                         turnDone = false;
                         onPole = false;
@@ -314,8 +314,8 @@ public class Robot implements Subsystem {
             case 2:
                 autonIndex = 0;
                 crane.articulate(Crane.Articulation.home);
-                if (crane.getArticulation() == Crane.Articulation.manual) {
-                    crane.articulate(Crane.Articulation.noIK);
+                if (crane.getArticulation() == Crane.Articulation.manualDrive) {
+                    crane.articulate(Crane.Articulation.manual);
                 }
                 if (autonTarget == 1 || Objects.isNull(autonTarget)) {
                     if(startingPosition.equals(Constants.Position.START_LEFT)){
@@ -478,7 +478,7 @@ public class Robot implements Subsystem {
         switch (unfoldStage){
             case 0:
                 driveTrain.articulate(DriveTrain.Articulation.unlock);
-                crane.articulate(Crane.Articulation.noIK);
+                crane.articulate(Crane.Articulation.manual);
                 crane.setShoulderTargetAngle(70);
                 unfoldTimer = futureTime(0.7);
                 unfoldStage++;
@@ -496,7 +496,7 @@ public class Robot implements Subsystem {
                 }
                 break;
             case 3:
-                crane.articulate(Crane.Articulation.manual);
+                crane.articulate(Crane.Articulation.manualDrive);
                 underarm.articulate(UnderArm.Articulation.home);
                 unfoldStage = 0;
                 return true;
@@ -540,67 +540,66 @@ public class Robot implements Subsystem {
         switch (transferStage) {
             case 0: //move Crane to transfer position
                 //underarm.articulate((UnderArm.Articulation.manual));
-                driveTrain.articulate(DriveTrain.Articulation.lock);
+                driveTrain.setChassisLength(Constants.MAX_CHASSIS_LENGTH);
                 crane.release();
                 crane.articulate(Crane.Articulation.transfer); //tells crane to go to transfer position
-//                transferStage++;
-                transferTimer = futureTime(2.0);
+                transferStage++;
+                transferTimer = futureTime(3.0);
                 break;
             case 1:
                 //if(crane.atTransferPosition() ){ //todo debug - temp switched to a timer because crane.atTransferPosition() not working
                 if(System.nanoTime() >= transferTimer){
+                    driveTrain.articulate(DriveTrain.Articulation.lock);
                     underarm.articulate(UnderArm.Articulation.transfer); //tell underarm to go to transfer angle
                     transferTimer = futureTime(1.0);
-//                    transferStage++;
+                    transferStage++;
                 }
                 break;
             case 2: //this is where we grab the cone with the bulb gripper
                 //if(crane.atTransferPosition()&& underarm.atTransfer()){ //todo debug - temp switched to a timer because crane.atTransferPosition() not working
-//                if(System.nanoTime() >= transferTimer){
-                    crane.grab(); //TODO UNCOMMENT TO ALLOW ACTUAL GRAB BY CRANE WHEN POSITIONING IS ALL WORKED OUT
+                if(System.nanoTime() >= transferTimer){
+                    crane.grab();
                     transferTimer = futureTime(1.5);
                     //TODO TRIED VARIOUS THINGS BELOW TO ABORT/STALL SO WE COULD LOOK AT FINAL TRANSFER POSITION BUT THEY HAVE DIFFERENT SIDE EFFECTS FROM THE COMBINATIONS OF ARTICULATIONS
                     //CAN TEMPORARILY EXIT HERE FOR DEBUGGING
                     //boolean tuning = true; if (tuning) {transferStage = 0; return true;}
                     //todo TEMPORARILY STALLING HERE SO WE CAN SEE THE TRANSFER POSITION, UNCOMMENT NEXT LINE WHEN TUNED
-//                    transferStage++;
-
-//                }
+                    transferStage++;
+                }
                 break;
             case 3:  //here we release the underarm's gripper
                 if(System.nanoTime() >= transferTimer) {
                     underarm.release();
                     transferTimer = futureTime(0.3);
-//                    transferStage++;
+                    transferStage++;
                 }
                 break;
             case 4:
-//                if(System.nanoTime() >= transferTimer) {
+                if(System.nanoTime() >= transferTimer) {
                     driveTrain.articulate(DriveTrain.Articulation.unlock);
                     driveTrain.setChassisLength(Constants.MAX_CHASSIS_LENGTH - 5);
                     crane.articulate(Crane.Articulation.transferAdjust);
-//                }
-                transferTimer = futureTime(1.0);
-//                transferStage++;
+                    transferTimer = futureTime(1.0);
+                    transferStage++;
+                }
 
                 break;
             case 5:
-//                if(System.nanoTime() >= transferTimer) {
+                if(System.nanoTime() >= transferTimer) {
                     underarm.grip(); //need to retract the gripper for pass through
                     underarm.articulate(UnderArm.Articulation.transferRecover);
                     //TODO UNCOMMENT NEXT LINE WHEN YOU WANT THE CRANE TO ACTUALLY ATTEMPT THE CONE DROP - BE SURE FIELD POSITIONING IS RIGHT
-                    //crane.articulate(Crane.Articulation.postTransfer); //this will actually deliver the cone to the next target pole
-//                    transferStage++;
+                    transferStage++;
                     transferTimer = futureTime(1.0);
-//                }
+                }
                 break;
             case 6:
-//                if(System.nanoTime() >= transferTimer) {
+                if(System.nanoTime() >= transferTimer) {
                     driveTrain.setChassisLength(Constants.MAX_CHASSIS_LENGTH);
+                    crane.articulate(Crane.Articulation.home); //allows crane to do crane things after transfer
                     transferStage = 0;
                     return true;
-
-//                }
+                }
         }
         return false;
     }

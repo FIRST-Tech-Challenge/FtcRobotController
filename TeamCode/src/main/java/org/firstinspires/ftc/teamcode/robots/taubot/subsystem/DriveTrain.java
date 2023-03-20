@@ -50,6 +50,7 @@ import org.firstinspires.ftc.teamcode.robots.taubot.PowerPlay_6832;
 import org.firstinspires.ftc.teamcode.robots.taubot.trajectorysequence.TrajectorySequence;
 import org.firstinspires.ftc.teamcode.robots.taubot.trajectorysequence.TrajectorySequenceBuilder;
 import org.firstinspires.ftc.teamcode.robots.taubot.util.DiffyKinematics;
+import org.firstinspires.ftc.teamcode.robots.taubot.util.ExponentialSmoother;
 import org.firstinspires.ftc.teamcode.robots.taubot.util.PathLine;
 import org.firstinspires.ftc.teamcode.robots.taubot.util.Utils;
 import org.firstinspires.ftc.teamcode.robots.taubot.simulation.DcMotorExSim;
@@ -136,6 +137,7 @@ public class DriveTrain extends DiffyDrive implements Subsystem {
     private PathLine gridPathLine;
     private Robot robot;
 
+
     public DriveTrain (HardwareMap hardwareMap, Robot robot, boolean simulated){
         super(simulated);
         this.robot = robot;
@@ -216,6 +218,7 @@ public class DriveTrain extends DiffyDrive implements Subsystem {
         chassisLengthPID.setOutputRange(-1, 1);
         chassisLengthPID.setTolerance(CHASSIS_LENGTH_TOLERANCE);
         chassisLengthPID.disable();
+
 
         if(Objects.isNull(cachePosition)) {
             cachePosition = new Vector2(0, 0);
@@ -326,7 +329,6 @@ public class DriveTrain extends DiffyDrive implements Subsystem {
             rightPosition = diffEncoderTicksToInches(rightMotor.getCurrentPosition() - rightRelOffset);
             //todo - add chassis length distance sensor
             chassisLength = chassisLengthDistanceSensor.getDistance(DistanceUnit.INCH) + Distance_HUB_TO_UNDERARM_MIN;
-
         }
 
         Orientation orientation = imu.getAngularOrientation().toAxesReference(AxesReference.INTRINSIC).toAxesOrder(AxesOrder.ZYX);
@@ -902,6 +904,14 @@ public class DriveTrain extends DiffyDrive implements Subsystem {
         if (getTargetChassisLength()> MIN_CHASSIS_LENGTH)
             return true;
         else return false;
+    }
+
+    public boolean isExtended(){
+        if(targetChassisLength < MAX_CHASSIS_LENGTH){
+            return false;
+        }else{
+            return true;
+        }
     }
 
     public static double CHASSIS_ADJUST = 20;

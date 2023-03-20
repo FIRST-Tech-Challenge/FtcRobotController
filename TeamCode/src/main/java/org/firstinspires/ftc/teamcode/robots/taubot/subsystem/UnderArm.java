@@ -48,6 +48,8 @@ public class UnderArm implements Subsystem {
 
     public static double kF = 0.0;
 
+    public static double WRIST_HOME_POSITION = 31;
+
     public static double SHOULDER_DEG_MIN = -110; // negative angles are counter clockwise while looking at the left side
     public static double SHOULDER_DEG_MAX = 110; // of the robot
 
@@ -59,14 +61,18 @@ public class UnderArm implements Subsystem {
     public static double WRIST_DEG_MAX = 180;
     public static double TURRET_DEG_MAX = 360;
 
-    public static double LASSO_CLOSED = 1750;
-    public static double LASSO_OPEN = 1100;
+    public static double LASSO_CLOSED = 1700; //1750 for Leo's gripper
 
-    public static double TRANSFER_SHOULDER_ANGLE = -15;
-    public static double TRANSFER_SHOULDER_APPROACH_ANGLE = -18;
-    public static double TRANSFER_ELBOW_ANGLE = -101;
+    public static double LASSO_RELEASE = 1000;
+    public static double LASSO_OPEN = 1000; //1100 for Leo's gripper
 
-    public static double TRANSFER_WRIST_ANGLE = 101;
+    public static double TRANSFER_SHOULDER_ANGLE = -20;
+    public static double TRANSFER_SHOULDER_APPROACH_ANGLE = -25;
+    public static double TRANSFER_ELBOW_ANGLE = -130;
+
+    public static double TRANSFER_WRIST_ANGLE = 130;
+
+    public static double PICKUP_WRIST_ANGLE = -4;
 
 
     public static double TRANSFER_TURRET_ANGLE = 0; //-14
@@ -134,7 +140,6 @@ public class UnderArm implements Subsystem {
         transferRecover, //recover from the transfer position to just outward of the vertical position so gripper clears over the camera
         home,
         manual,
-        noIK,
         fold,
         safe,
         foldTransfer,
@@ -208,7 +213,9 @@ public class UnderArm implements Subsystem {
                 goToJointAngleAndLength(jointAngle);
                 break;
             case transfer: //transfer position
-                goToTransfer();
+                if(goToTransfer()){
+                    articulation = Articulation.manual;
+                }
                 break;
             case transferRecover: //after transfer, go back through to clear the camera
                 if(TransferRecover())
@@ -225,9 +232,6 @@ public class UnderArm implements Subsystem {
                 break;
             case manual: //normal IK intake mode
                 //holdTarget(fieldPositionTarget.x,fieldPositionTarget.y,fieldPositionTarget.z);
-                break;
-            case noIK: //no targets are set
-
                 break;
             case jointAngles:
                 goToJointAngle(jointAngle);
@@ -285,7 +289,7 @@ public class UnderArm implements Subsystem {
                 setTurretTargetAngle(0);
                 setElbowTargetAngle(0);
                 setShoulderTargetAngle(0);
-                setWristTargetAngle(0);
+                setWristTargetAngle(WRIST_HOME_POSITION);
                 homeTimer = futureTime(0.5);
                 homeStage++;
                 break;
@@ -310,14 +314,13 @@ public class UnderArm implements Subsystem {
                 setTurretTargetAngle(TRANSFER_TURRET_ANGLE);
                 setElbowTargetAngle(TRANSFER_ELBOW_ANGLE);
                 setShoulderTargetAngle(TRANSFER_SHOULDER_APPROACH_ANGLE);
-                WRIST_SPEED = 270;
                 setWristTargetAngle(TRANSFER_WRIST_ANGLE);
                 transferTimer = futureTime(1.0);
                 transferStage++;
                 break;
             case 1: //final lift to engage grippers
                 if (System.nanoTime() > transferTimer) {
-                    setShoulderTargetAngle(TRANSFER_SHOULDER_APPROACH_ANGLE);
+                    setShoulderTargetAngle(TRANSFER_SHOULDER_ANGLE);
                     transferStage = 0;
                     atTransfer = true;
                     return true;
@@ -328,15 +331,19 @@ public class UnderArm implements Subsystem {
         return false;
     }
 
+    public static double POSTTRANSFER_SHOULDER = -40;
+    public static double POSTTRANSFER_ELBOW = 0;
+
     int transferRecoverStage;
     long transferRecoverTimer;
     public boolean TransferRecover(){
         switch (transferRecoverStage) {
             case 0: //starting from the transfer position, recover the elbow first
                 atTransfer = false;
-                WRIST_SPEED = 90;
-                setElbowTargetAngle(5);
-                setShoulderTargetAngle(TRANSFER_SHOULDER_APPROACH_ANGLE);
+                WRIST_SPEED = 270;
+                setWristTargetAngle(40); //take wrist homeish
+                setElbowTargetAngle(POSTTRANSFER_ELBOW);
+                setShoulderTargetAngle(POSTTRANSFER_SHOULDER);
                 transferRecoverTimer = futureTime(1.0);
                 transferRecoverStage++;
                 break;
@@ -344,7 +351,7 @@ public class UnderArm implements Subsystem {
                 if (System.nanoTime() > transferRecoverTimer) {
                     setTurretTargetAngle(0); //straighten turret
                     setShoulderTargetAngle(0); //take the shoulder home
-                    setWristTargetAngle(0); //take wrist home
+
                     transferRecoverStage = 0;
 
                     return true;
@@ -359,10 +366,10 @@ public class UnderArm implements Subsystem {
         return atTransfer;
     }
 
-    long substationTimer;
-    int substationStage = 0;
+    long substationHoverTimer;
+    int substationHoverStage = 0;
 
-    double SS_HOVER_SHOULDER = 57 , SS_HOVER_ELBOW = 108, SS_HOVER_WRIST = 90, SS_HOVER_TURRET = 0;
+    public double SS_HOVER_SHOULDER = 57 , SS_HOVER_ELBOW = 108, SS_HOVER_WRIST = 60, SS_HOVER_TURRET = 0;
 
     public void SaveHoverPositions(){
         //only call this when at a good known substation hover position
@@ -375,35 +382,36 @@ public class UnderArm implements Subsystem {
         SS_HOVER_SHOULDER = 57; SS_HOVER_ELBOW = 108; SS_HOVER_WRIST = 68; SS_HOVER_TURRET = 0;
     }
     public boolean goSubstationHover() {
-        switch (substationStage) {
+        switch (substationHoverStage) {
             case 0:
-                if (goSubstationRecover())
-                    substationTimer = futureTime(0.5);
-                    substationStage++;
+                if (goSubstationRecover()) {
+                    substationHoverTimer = futureTime(0.5);
+                    substationHoverStage++;
+                }
                 break;
             case 1: //give the elbow a head start to clear the camera when a cone is loaded
-                if (substationTimer<System.nanoTime()){
+                if (substationHoverTimer<System.nanoTime()){
                     setElbowTargetAngle(SS_HOVER_ELBOW);
-                    substationTimer = futureTime(0.25);
-                    substationStage++;
+                    substationHoverTimer = futureTime(0.25);
+                    substationHoverStage++;
                 }
                 break;
             case 2:
 
-                if (substationTimer<System.nanoTime()){
+                if (substationHoverTimer<System.nanoTime()){
                     // these values are meant to be fine tuned by driver positioning between hover and pickup
                     setElbowTargetAngle(SS_HOVER_ELBOW);
                     setShoulderTargetAngle(SS_HOVER_SHOULDER);
                     setWristTargetAngle(SS_HOVER_WRIST);
                     setTurretTargetAngle(SS_HOVER_TURRET);
-                    substationTimer = futureTime(0.5);
-                    substationStage++;
+                    substationHoverTimer = futureTime(0.5);
+                    substationHoverStage++;
                 }
                 break;
             case 3: //open lasso
-                if (substationTimer<System.nanoTime()) {
-                    release();
-                    substationStage = 0;
+                if (substationHoverTimer<System.nanoTime()) {
+                    open();
+                    substationHoverStage = 0;
                     return true;
                 }
                 break;
@@ -413,42 +421,45 @@ public class UnderArm implements Subsystem {
         return false;
     }
 
+    int substationPickupStage = 0;
+    long substationPickupTimer = 0;
+
     public boolean SubstationPickup() {
-        switch (substationStage) {
+        switch (substationPickupStage) {
             case 0: //rotate wrist down to horizontal
                 WRIST_SPEED = 270;
-                setWristTargetAngle(-15);
-                substationTimer = futureTime(0.3);
-                substationStage++;
+                setWristTargetAngle(PICKUP_WRIST_ANGLE);
+                substationPickupTimer = futureTime(0.3);
+                substationPickupStage++;
 
                 break;
             case 1: //bring lasso to mat with shoulder only
-                if (substationTimer<System.nanoTime()) {
+                if (substationPickupTimer<System.nanoTime()) {
                     WRIST_SPEED = 90;
                     setShoulderTargetAngle(70);
-                    substationStage++;
-                    substationTimer = futureTime(3); //0.3 todo this is set long from manual cone placement in testing
+                    substationPickupStage++;
+                    substationPickupTimer = futureTime(3); //0.3 todo this is set long from manual cone placement in testing
                 }
                 break;
 
             case 2: //close lasso
-                if (substationTimer<System.nanoTime()) {
+                if (substationPickupTimer<System.nanoTime()) {
                     grip();
-                    substationStage++;
-                    substationTimer = futureTime(0.5);
+                    substationPickupStage++;
+                    substationPickupTimer = futureTime(0.5);
                 }
                 break;
             case 3: //elevate shoulder to clear mat
-                if (substationTimer<System.nanoTime()) {
+                if (substationPickupTimer<System.nanoTime()) {
                     setShoulderTargetAngle(SS_HOVER_SHOULDER);
-                    substationStage++;
-                    substationTimer = futureTime(0.3);
+                    substationPickupStage++;
+                    substationPickupTimer = futureTime(0.3);
                 }
                 break;
             case 4: //recover
-                if (substationTimer<System.nanoTime()){
+                if (substationPickupTimer<System.nanoTime()){
                     if( goSubstationRecover()) {
-                        substationStage = 0;
+                        substationPickupStage = 0;
                         return true;
                     }
                 }
@@ -463,13 +474,16 @@ public class UnderArm implements Subsystem {
     public void resetArticulations(){
         articulation = Articulation.manual;
         recoverStage = 0;
-        substationStage = 0;
+        substationHoverStage = 0;
+        substationPickupStage = 0;
         transferStage = 0;
         transferRecoverStage = 0;
         homeStage = 0;
     }
     int recoverStage = 0;
     long recoverTimer = 0;
+
+
 
     /**
      *  Recover from picking up a cone to a nearly vertical position
@@ -481,7 +495,7 @@ public boolean goSubstationRecover() {
         case 0: //sets vertical position
             setElbowTargetAngle(0);
             setShoulderTargetAngle(0);
-            setWristTargetAngle(0);
+            setWristTargetAngle(WRIST_HOME_POSITION);
             recoverTimer = futureTime(0.5);
             recoverStage++;
             break;
@@ -655,14 +669,18 @@ public boolean goSubstationRecover() {
         lassoServo.setPosition(servoNormalize(LASSO_CLOSED));
     }
 
-    public void release(){
+    public void open(){
         lassoGripped = false;
         lassoServo.setPosition(servoNormalize(LASSO_OPEN));
+    }
+    public void release(){ //open wide enough to release the cone but not stress the underarm
+        lassoGripped = false;
+        lassoServo.setPosition(servoNormalize(LASSO_RELEASE));
     }
 
     public void toggleLasso(){
         if(lassoGripped){
-            release();
+            open();
         }else{
             grip();
         }

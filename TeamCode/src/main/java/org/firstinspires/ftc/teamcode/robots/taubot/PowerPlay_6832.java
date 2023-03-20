@@ -302,6 +302,11 @@ public class PowerPlay_6832 extends OpMode {
         robot.start();
     }
 
+    @Override
+    public void stop(){
+        robot.stop();
+    }
+
     public void resetGame(){
         robot.driveTrain.resetGridDrive(startingPosition);
     }

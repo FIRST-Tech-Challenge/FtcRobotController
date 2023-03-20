@@ -54,25 +54,25 @@ public class DriverControls {
             robot.crane.articulate(Crane.Articulation.home);
         }
 
-        if(gamepad1.left_bumper){
+        if(gamepad1.left_bumper || gamepad2.left_bumper){
             robot.driveTrain.adjustChassisLength(-1);
         }
 
-        if(gamepad1.right_bumper){
+        if(gamepad1.right_bumper || gamepad2.right_bumper){
             robot.driveTrain.adjustChassisLength(1);
         }
 
-        if(stickyGamepad1.start){
+        if(stickyGamepad1.start || stickyGamepad2.start){
             robot.driveTrain.toggleExtension();
-            if (robot.driveTrain.getChariotDeployed())
-                robot.crane.articulate(Crane.Articulation.manualDrive); //allow the crane and turret to return to manual mode
+            //if (robot.driveTrain.getChariotDeployed())
+                //robot.crane.articulate(Crane.Articulation.manualDrive); //allow the crane and turret to return to manual mode
         }
 
-        if (stickyGamepad1.guide){ //this is the Logitech button
-            robot.crane.resetArticulations();
-            robot.underarm.resetArticulations();
-            robot.resetArticulations();
-            robot.articulate((Robot.Articulation.TRANSFER));
+        if (stickyGamepad1.guide || stickyGamepad2.guide){ //this is the Logitech button
+                robot.crane.resetArticulations();
+                robot.underarm.resetArticulations();
+                robot.resetArticulations();
+                robot.articulate((Robot.Articulation.TRANSFER));
         }
 
         if(stickyGamepad1.a) {
@@ -87,9 +87,6 @@ public class DriverControls {
             robot.field.incTarget();
             robot.crane.updateScoringPattern();
         }
-
-        if(stickyGamepad2.start)
-            robot.transferAdvance();
 
         if(stickyGamepad1.y){
             robot.field.decTarget();
@@ -170,8 +167,8 @@ public class DriverControls {
 
         if(stickyGamepad1.start){
             robot.driveTrain.toggleExtension();
-            if (robot.driveTrain.getChariotDeployed())
-                robot.crane.articulate(Crane.Articulation.manual); //allow the crane and turret to return to manual mode
+            //if (robot.driveTrain.getChariotDeployed())
+                //robot.crane.articulate(Crane.Articulation.manual); //allow the crane and turret to return to manual mode
         }
 
         if (stickyGamepad1.guide){ //this is the Logitech button

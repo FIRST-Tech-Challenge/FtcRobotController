@@ -20,9 +20,9 @@ public class Constants {
 
     // driveTrain
 
-    public static double MIN_CHASSIS_LENGTH = 8.5;
+    public static double MIN_CHASSIS_LENGTH = 7;
     public static double MIN_SAFE_CHASSIS_LENGTH = 10;
-    public static double MAX_CHASSIS_LENGTH = 30.5;
+    public static double MAX_CHASSIS_LENGTH = 30;
 
     public static final double DISTANCE_SENSOR_TO_FRONT_AXLE = 2.755906;
     public static final double Distance_HUB_TO_UNDERARM_MIN = 5.7;
