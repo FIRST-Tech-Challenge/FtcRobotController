@@ -17,7 +17,6 @@ public class RobotConfig {
     private static RobotConfig rInstance;
     public List<LynxModule> allHubs;
     public Scheduler scheduler;
-    public boolean delivery;
     
     private RobotConfig(OpMode opMode){
         this.opMode = opMode;
@@ -27,6 +26,8 @@ public class RobotConfig {
         for (LynxModule module : allHubs) {
             module.setBulkCachingMode(LynxModule.BulkCachingMode.MANUAL);
         }
+        delivery = false;
+        pickup = true;
     }
 
     public static RobotConfig freshInstance(OpMode opMode){
@@ -44,4 +45,22 @@ public class RobotConfig {
             previousRobotPose2D;
     public static TrajectoryAssembly currentTrajectoryAssembly;
     public static final ElapsedTime elapsedTime = new ElapsedTime();
+    
+    private boolean delivery;
+    public boolean isDelivery() {
+        return delivery;
+    }
+    
+    public void setDelivery(boolean delivery) {
+        this.delivery = delivery;
+    }
+    
+    private boolean pickup;
+    public boolean isPickup() {
+        return pickup;
+    }
+    
+    public void setPickup(boolean pickup) {
+        this.pickup = pickup;
+    }
 }

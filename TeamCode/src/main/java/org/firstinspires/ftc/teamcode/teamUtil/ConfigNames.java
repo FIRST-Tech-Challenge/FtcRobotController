@@ -16,8 +16,8 @@ public class ConfigNames { //contains the string name constants in the config, i
             wrist = "wrist",
             intake = "Grab",
             imu = "imu",
-            leftDeadWheelEncoder = "e1",
-            rightDeadWheelEncoder = "e2",
-            frontDeadWheelEncoder = "e3";
+            leftDeadWheelEncoder = "leftEncoder",
+            rightDeadWheelEncoder = "Leftfront",
+            frontDeadWheelEncoder = "middleEncoder";
 
 }

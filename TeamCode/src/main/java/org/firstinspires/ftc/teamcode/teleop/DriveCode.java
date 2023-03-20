@@ -9,6 +9,7 @@ import org.firstinspires.ftc.teamcode.subsystems.LimitSwitch;
 import org.firstinspires.ftc.teamcode.subsystems.MecanumDriveBase;
 import org.firstinspires.ftc.teamcode.subsystems.Wrist;
 import org.firstinspires.ftc.teamcode.teamUtil.CommandScheduler.ConfiguredOpMode;
+import org.firstinspires.ftc.teamcode.teamUtil.CommandScheduler.Trigger;
 
 @TeleOp(name = "FULL WORLDS DRIVECODE, ft. CRACKER BARREL \n\n\n\n BIIIIIG", group = ".CRACKER BARREL")
 public class DriveCode extends ConfiguredOpMode {
@@ -18,7 +19,10 @@ public class DriveCode extends ConfiguredOpMode {
 	private Intake intake;
 	private LimitSwitch limitSwitch;
 	private Lift lift;
-
+	
+	Trigger bothBumpers;
+	
+	
 	@Override
 	public void superInit() {
 		mecanum = new MecanumDriveBase(true);
@@ -36,25 +40,45 @@ public class DriveCode extends ConfiguredOpMode {
 		gamepadEX2.rightY.applyDeadZone(0.2);
 		
 		gamepadEX2.right_trigger.thresholdTrigger(0.05)
-				.onTrue(() -> intake.presetTargetPosition(Intake.intakePos.OPEN))
-				.onFalse(() -> intake.presetTargetPosition(Intake.intakePos.CLOSED)
-				);
-		
-		gamepadEX1.right_bumper
-				.onPress()
 				.onTrue(() -> {
-					mecanum.flipDriveBase();
+					intake.presetTargetPosition(Intake.intakePos.CLOSED);
 				})
-				.toggleOnTrue(() -> {
-					arm.presetTargetPosition(Arm.armPos.BACK);
-					wrist.presetTargetPosition(Wrist.wristPos.BACK);
-				})
-				.toggleOnFalse(() -> {
-					arm.presetTargetPosition(Arm.armPos.FRONT);
-					wrist.presetTargetPosition(Wrist.wristPos.FRONT);
+				.onFalse(() -> {
+					intake.presetTargetPosition(Intake.intakePos.OPEN);
 				});
 		
 		gamepadEX1.left_bumper
+				.onPress()
+				.onTrue(() -> {
+					mecanum.setDriveBaseFlip(true);
+				});
+		gamepadEX1.right_bumper
+				.onPress()
+				.onTrue(() -> {
+					mecanum.setDriveBaseFlip(false);
+				});
+		
+		gamepadEX1.left_bumper
+				.isPressed()
+				.onTrue(() -> {
+					r.setPickup(false);
+					arm.presetTargetPosition(Arm.ArmPos.BACK);
+					wrist.presetTargetPosition(Wrist.wristPos.BACK);
+				});
+		gamepadEX1.right_bumper
+				.isPressed()
+				.onTrue(() -> {
+					r.setPickup(false);
+					arm.presetTargetPosition(Arm.ArmPos.FRONT);
+					wrist.presetTargetPosition(Wrist.wristPos.FRONT);
+				});
+		
+		bothBumpers = new Trigger(() -> (gamepadEX1.right_bumper.buttonState() || gamepadEX1.left_bumper.buttonState()))
+				.onFalse(() -> {
+					r.setPickup(true);
+				});
+		
+		gamepadEX1.right_stick_button
 				.onPress()
 				.toggleOnTrue(() -> {
 					mecanum.POVmode(true);
@@ -62,6 +86,7 @@ public class DriveCode extends ConfiguredOpMode {
 				.toggleOnFalse(() -> {
 					mecanum.POVmode(false);
 				});
+		
 	}
 
 	@Override
@@ -92,6 +117,9 @@ public class DriveCode extends ConfiguredOpMode {
 				gamepadEX2.x.buttonState(),
 				gamepadEX2.a.buttonState()
 		);
+		
+		telemetry.addData("delivery", r.isDelivery());
+		telemetry.addData("pickup", r.isPickup());
 	}
 
 	@Override
