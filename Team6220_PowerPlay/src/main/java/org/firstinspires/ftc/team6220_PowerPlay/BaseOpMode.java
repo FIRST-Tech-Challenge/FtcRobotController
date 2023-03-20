@@ -343,7 +343,7 @@ public abstract class BaseOpMode extends LinearOpMode {
     public void driveLEDs() {
         if (blinkinChassis != null) {
             RevBlinkinLedDriver.BlinkinPattern pattern = RevBlinkinLedDriver.BlinkinPattern.GREEN;
-            if (grabberCameraPipeline.detected == true) {
+            if (grabberCameraPipeline.detected) {
                 blinkinChassis.setPattern(pattern);
                 telemetry.addData("pattern", pattern);
                 telemetry.addLine("Detected");

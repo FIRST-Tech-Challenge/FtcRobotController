@@ -71,12 +71,12 @@ public class GrabberCameraPipeline extends OpenCvPipeline {
             // this is done to avoid detecting the wheels which are also black
             if (distanceFromCenter < Constants.DISTANCE_FROM_CENTER_JUNCTION_TOP) {
                     if (maxVal >= Constants.CONE_STACK_CONTOUR_MINIMUM_SIZE) {
-                        detected = true;
                         Moments moments = Imgproc.moments(contours.get(maxValIdx), false);
 
                         Imgproc.rectangle(input, boundingRect, new Scalar(0, 255, 0), 10);
 
                         if (moments.get_m00() > 0) {
+                            detected = true;
                             xPosition = boundingRect.x + (boundingRect.width * 0.5);
                             yPosition = boundingRect.y + (boundingRect.height * 0.5);
                         }
@@ -85,8 +85,11 @@ public class GrabberCameraPipeline extends OpenCvPipeline {
                         xPosition = Constants.CAMERA_CENTER_X;
                         yPosition = Constants.CAMERA_CENTER_Y;
                 }
+            } else {
+                detected = false;
+                xPosition = Constants.CAMERA_CENTER_X;
+                yPosition = Constants.CAMERA_CENTER_Y;
             }
-
         // if not detected set back to defaults
         } else {
             detected = false;
