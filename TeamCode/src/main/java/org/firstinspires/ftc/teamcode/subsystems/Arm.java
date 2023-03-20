@@ -10,14 +10,14 @@ import org.firstinspires.ftc.teamcode.teamUtil.RobotConstants;
 public class Arm extends Subsystem {
     RobotConfig r;
 
-    public enum armPos{
+    public enum ArmPos {
         FRONT(RobotConstants.armFront),
         BACK(RobotConstants.armBack),
         FRONT_DELIVERY(RobotConstants.armFrontDelivery),
         BACK_DELIVERY(RobotConstants.armBackDelivery),
         HALF(RobotConstants.armMiddle);
 
-        armPos(double position){
+        ArmPos(double position){
             this.position = position;
         }
 
@@ -30,6 +30,7 @@ public class Arm extends Subsystem {
 
     Servo arm;
     private double armPosition;
+    private ArmPos armPositionConstant;
 
     public Arm(RobotConfig r) {
         this.r = r;
@@ -42,19 +43,14 @@ public class Arm extends Subsystem {
         armPosition = targetPos;
     }
 
-    public void presetTargetPosition(armPos armPosition){
-        if(r.delivery){
-            this.armPosition = armPos.valueOf(armPosition.toString() + "_DELIVERY").getPosition();
-        }
-        else{
-            this.armPosition = armPosition.getPosition();
-        }
+    public void presetTargetPosition(ArmPos armPosition){
+        armPositionConstant = armPosition;
     }
 
     @Override
     public void init() {
         arm = r.opMode.hardwareMap.get(Servo.class, ConfigNames.arm);
-        presetTargetPosition(armPos.FRONT);
+        presetTargetPosition(ArmPos.FRONT);
         update();
     }
 
@@ -63,6 +59,35 @@ public class Arm extends Subsystem {
 
     @Override
     public void update(){
+        switch (armPositionConstant){
+            case FRONT_DELIVERY:
+            case FRONT:
+                if(r.isDelivery()){
+                    this.armPosition = ArmPos.FRONT_DELIVERY.getPosition();
+                }
+                else if (r.isPickup()) {
+                    this.armPosition = ArmPos.FRONT.getPosition();
+                }
+                else {
+                    this.armPosition = ArmPos.HALF.getPosition();
+                }
+                break;
+            case BACK_DELIVERY:
+            case BACK:
+                if(r.isDelivery()){
+                    this.armPosition = ArmPos.BACK_DELIVERY.getPosition();
+                }
+                else if (r.isPickup()) {
+                    this.armPosition = ArmPos.BACK.getPosition();
+                }
+                else {
+                    this.armPosition = ArmPos.HALF.getPosition();
+                }
+                break;
+            default:
+                this.armPosition = ArmPos.HALF.getPosition();
+                break;
+        }
         arm.setPosition(armPosition);
     }
 

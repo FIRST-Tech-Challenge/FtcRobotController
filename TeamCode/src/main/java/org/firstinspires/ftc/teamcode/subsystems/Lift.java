@@ -10,8 +10,8 @@ import org.firstinspires.ftc.teamcode.teamUtil.RobotConstants;
 public class Lift extends Subsystem {
     RobotConfig r;
 
-    private static DcMotorEx lift0;
-    private static DcMotorEx lift1;
+    private DcMotorEx lift0;
+    private DcMotorEx lift1;
     private static double liftPos;
 
     private double previousTime;
@@ -26,7 +26,7 @@ public class Lift extends Subsystem {
 
     double liftPositioner;
     boolean limitIsPressed;
-    RobotConstants.poleHeights targetHeight;
+    RobotConstants.poleHeights targetHeight = RobotConstants.poleHeights.GROUND;
 
 
     public Lift(RobotConfig r) {
@@ -63,7 +63,7 @@ public class Lift extends Subsystem {
         else if(((lift0Pos + lift1Pos) / 2) >= -1000) liftPos = Math.max(lift0Pos, lift1Pos);
         else liftPos = 0;
     
-        r.delivery = liftPos < -500;
+        r.setDelivery(liftPos < -500);
     }
 
     double cachedPower;
@@ -120,16 +120,16 @@ public class Lift extends Subsystem {
         }
         switch (poleHeight){
             case HIGH:
-                targetPos = RobotConstants.poleHeights.HIGH.getEncoderValue() + 200;
-                spoolHoldPosition = RobotConstants.poleHeights.HIGH_DROP.getEncoderValue() + 200;
+                targetPos = RobotConstants.poleHeights.HIGH.getEncoderValue() + 450;
+                spoolHoldPosition = RobotConstants.poleHeights.HIGH_DROP.getEncoderValue() + 300;
                 break;
             case MEDIUM:
-                targetPos = RobotConstants.poleHeights.MEDIUM.getEncoderValue() + 200;
-                spoolHoldPosition = RobotConstants.poleHeights.MEDIUM_DROP.getEncoderValue() + 200;
+                targetPos = RobotConstants.poleHeights.MEDIUM.getEncoderValue() + 450;
+                spoolHoldPosition = RobotConstants.poleHeights.MEDIUM_DROP.getEncoderValue() + 300;
                 break;
             case LOW:
-                targetPos = RobotConstants.poleHeights.LOW.getEncoderValue() + 200;
-                spoolHoldPosition = RobotConstants.poleHeights.LOW_DROP.getEncoderValue() + 200;
+                targetPos = RobotConstants.poleHeights.LOW.getEncoderValue() + 450;
+                spoolHoldPosition = RobotConstants.poleHeights.LOW_DROP.getEncoderValue() + 300;
                 break;
             case GROUND:
                 targetPos = RobotConstants.poleHeights.GROUND.getEncoderValue();
@@ -148,8 +148,6 @@ public class Lift extends Subsystem {
         if(targetPos < (RobotConstants.poleHeights.HIGH.getEncoderValue())) {
             targetPos = (RobotConstants.poleHeights.HIGH.getEncoderValue());
         }
-        
-        
     }
 
     private RobotConstants.poleHeights buttonAnalysis(boolean top, boolean middle, boolean low, boolean ground){
@@ -164,6 +162,10 @@ public class Lift extends Subsystem {
         liftPositioner = liftPositionInput;
         limitIsPressed = limitSwitch;
         targetHeight = buttonAnalysis(top, middle, low, ground);
+    }
+    
+    public void presetLiftPosition(RobotConstants.poleHeights poleHeight){
+        targetHeight = poleHeight;
     }
     
     private double PID(){

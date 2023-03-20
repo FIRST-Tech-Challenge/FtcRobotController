@@ -40,7 +40,9 @@ public abstract class ConfiguredOpMode extends OpMode {
         for (LynxModule module : r.allHubs) {
             module.clearBulkCache();
         }
+        r.scheduler.pollSubsystems();
         superInit_Loop();
+        r.scheduler.updateSubsystems();
     }
 
     public abstract void superStart();

@@ -56,8 +56,8 @@ public class RobotConstants {
     public static final double armBack = 0.84;
     public static final double armFront = 0.03;
     public static final double armMiddle = (armFront + armBack)/2;
-    public static final double armFrontDelivery = armFront + (armMiddle/2);
-    public static final double armBackDelivery = armBack - (armMiddle/2);
+    public static final double armFrontDelivery = armFront + (armMiddle/2) - 0.1;
+    public static final double armBackDelivery = armBack - (armMiddle/2) + 0.1;
     
     
     public static final double wristFront = 0.0;

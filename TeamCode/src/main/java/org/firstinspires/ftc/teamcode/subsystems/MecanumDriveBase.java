@@ -174,6 +174,10 @@ public class MecanumDriveBase extends Subsystem {
         flipped = !flipped;
     }
     
+    public void setDriveBaseFlip(boolean flipped){
+        this.flipped = flipped;
+    }
+    
     public void POVmode(boolean POVmode){
         this.POVmode = POVmode;
     }
