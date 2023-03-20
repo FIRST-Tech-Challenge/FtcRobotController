@@ -353,6 +353,9 @@ public abstract class BaseOpMode extends LinearOpMode {
                 telemetry.addLine("Not Detected");
                 telemetry.update();
             }
+        }else{
+            telemetry.addLine("blinkin chassis null smh");
+            telemetry.update();
         }
     }
 }

@@ -45,7 +45,6 @@ public class GrabberCameraPipeline extends OpenCvPipeline {
 
         // determine largest area of black
         if (contours.size() > 0) {
-            detected = true;
             double maxVal = 0.0;
             int maxValIdx = 0;
 
