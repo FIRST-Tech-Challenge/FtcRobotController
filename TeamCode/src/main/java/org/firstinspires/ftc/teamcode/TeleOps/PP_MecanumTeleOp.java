@@ -182,19 +182,21 @@ public class PP_MecanumTeleOp extends OpMode
         if (gamepad2_Y.isRisingEdge()) {
             armControl.setExtake();
             slideControl.setHighJunction(telemetry);
-            clawControl.toggleWristRotate();
+            //clawControl.toggleWristRotate();
+            clawControl.wristJoint.setPosition(0.915);
         }
         else if (gamepad2_B.isRisingEdge()) {
             armControl.setExtake();
             slideControl.setMidJunction();
-            clawControl.toggleWristRotate();
+            clawControl.wristJoint.setPosition(0.915);
         }
         else if (gamepad2_A.isRisingEdge()) {
             slideControl.setLowJunction();
         }
         else if (gamepad2_X.isRisingEdge()){
             clawControl.wristJoint.setPosition(clawControl.WRIST_INTAKE_POSITION);
-            clawControl.wristInExtakePosition = false;
+            //clawControl.wristInExtakePosition = false;
+            clawControl.wristJoint.setPosition(0.255);
             clawControl.toggleOpenClose();
             armControl.setIntake();
             slideControl.setIntakeOrGround();
