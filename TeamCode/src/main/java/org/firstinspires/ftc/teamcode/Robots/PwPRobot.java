@@ -39,6 +39,7 @@ import org.firstinspires.ftc.teamcode.Components.LiftArm;
 import org.firstinspires.ftc.teamcode.Components.RFModules.Devices.RFGamepad;
 import org.firstinspires.ftc.teamcode.Components.RFModules.Devices.RFMotor;
 import org.firstinspires.ftc.teamcode.roadrunner.drive.DriveConstants;
+import org.firstinspires.ftc.teamcode.roadrunner.drive.PoseStorage;
 import org.firstinspires.ftc.teamcode.roadrunner.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.roadrunner.trajectorysequence.TrajectorySequence;
 import org.firstinspires.ftc.teamcode.roadrunner.util.IMU;
@@ -101,8 +102,8 @@ public class PwPRobot extends BasicRobot {
         lift = new Lift();
         leds = new LEDStrip();
         finished = true;
-        if (!isTeleop) {
-            roadrun.setPoseEstimate(logger.readLogPos());
+        if (isTeleop) {
+            roadrun.setPoseEstimate(PoseStorage.currentPose);
         }
     }
 //    com.qualcomm.ftcrobotcontroller I/art: Waiting for a blocking GC Alloc
@@ -277,7 +278,7 @@ public class PwPRobot extends BasicRobot {
         double magnitude = sqrt(x * x + y * y);
         //wheel : y , x
         double[] maxes = {75, 50, 7};
-        double[] targetVelocity = {maxes[0] * y, maxes[1] * x, maxes[2] * a};
+        double[] targetVelocity = {y/kV, x/kV, a/kV/TRACK_WIDTH};
         Pose2d actualVelocity = roadrun.getPoseVelocity();
         Pose2d pos = roadrun.getPoseEstimate();
         double[] t = {cos(-pos.getHeading()), sin(-pos.getHeading())};
@@ -285,15 +286,15 @@ public class PwPRobot extends BasicRobot {
         double[] diffs = {targetVelocity[0] - rotVelocity.getX(), targetVelocity[1] - rotVelocity.getY(), targetVelocity[2] - actualVelocity.getHeading()};
         double cAngle = atan2(diffs[0], diffs[1]);
         double cMag = sqrt(diffs[1] * diffs[1] + diffs[0] * diffs[0]) * kV * 2;
-        double angleCorrection = diffs[2] * TRACK_WIDTH * kV * 0.2;
+        double angleCorrection = diffs[2] * TRACK_WIDTH * kV * 0.5;
         op.telemetry.addData("velocity", actualVelocity);
         op.telemetry.addData("diffsy", diffs[0]);
         op.telemetry.addData("diffsx", diffs[1]);
         op.telemetry.addData("diffsa", diffs[2]);
-        roadrun.setMotorPowers(powerb * magnitude - a - angleCorrection + (diffs[0] - diffs[1]) * 2 * kV,
-                powera * magnitude - a - angleCorrection+ (diffs[0] + diffs[1]) * 2 * kV,
-                powerb * magnitude + a + angleCorrection + (diffs[0] - diffs[1]) * 2 * kV,
-                powera * magnitude + a + angleCorrection+ (diffs[0] + diffs[1]) * 2 * kV);
+        roadrun.setMotorPowers(powerb * magnitude - a - angleCorrection + (diffs[0] - diffs[1]) * 0.5 * kV,
+                powera * magnitude - a - angleCorrection+ (diffs[0] + diffs[1]) * 0.5 * kV,
+                powerb * magnitude + a + angleCorrection + (diffs[0] - diffs[1]) * 0.5 * kV,
+                powera * magnitude + a + angleCorrection+ (diffs[0] + diffs[1]) * 0.5 * kV);
 
     }
 
@@ -493,7 +494,7 @@ public class PwPRobot extends BasicRobot {
 
     public void setPoseEstimate(Pose2d newPose) {
         roadrun.setPoseEstimate(newPose);
-        logger.logPos(newPose);
+        PoseStorage.currentPose=newPose;
     }
 
     public void iterateConestackUp() {

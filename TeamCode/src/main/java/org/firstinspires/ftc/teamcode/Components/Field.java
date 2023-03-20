@@ -452,6 +452,7 @@ public class Field {
                     endTangents[direction] + isReversed * toRadians(180), endTangents[direction]};
             if (shouldMove) {
                 addMove(move, lastReversed);
+                compiledTrajectory();
             }
             gp.removeSequenceElement();
         }
@@ -482,8 +483,10 @@ public class Field {
             Pose2d startPos = roadrun.getCurrentTraj().start();
             TrajectorySequenceBuilder bob = roadrun.trajectorySequenceBuilder(startPos);
             for (int i = 0; i < fullMovement.size(); i++) {
-                bob.setReversed(reversals.get(i));
-                Pose2d target = new Pose2d(fullMovement.get(0)[0], fullMovement.get(0)[1], fullMovement.get(0)[2]);
+                if(i==0||reversals.get(i)!=reversals.get(i-1)) {
+                    bob.setReversed(reversals.get(i));
+                }
+                Pose2d target = new Pose2d(fullMovement.get(i)[0], fullMovement.get(i)[1], fullMovement.get(i)[2]);
                 bob.splineToSplineHeading(target, fullMovement.get(i)[3]);
             }
             bob.addTemporalMarker(() -> {

@@ -289,6 +289,7 @@ public class SampleMecanumDrive extends MecanumDrive {
                 op.telemetry.addData("touch-updated", false);
             }
         }
+        PoseStorage.currentPose = getPoseEstimate();
         DriveSignal signal = trajectorySequenceRunner.update(getPoseEstimate(), getPoseVelocity());
         if (signal != null) setDriveSignal(signal);
     }

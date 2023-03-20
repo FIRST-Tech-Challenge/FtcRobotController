@@ -78,13 +78,21 @@ public class Logger {
         }
     }
     public Pose2d readLogPos(){
+        Pose2d returner = new Pose2d(0,0,0);
         try {
-            @SuppressLint("SdCardPath") Scanner poser = new Scanner("/sdcard/tmp/pos.csv");
-            return new Pose2d(Double.parseDouble(poser.nextLine()),Double.parseDouble(poser.nextLine()),Double.parseDouble(poser.nextLine()));
+            Scanner poser = new Scanner("/storage/emulated/0/tmp/pos.csv");
+            double[] come = {0,0,0};
+            for(int i=0;i<3;i++){
+                if(poser.hasNextLine()){
+                    come[i]=Double.parseDouble(poser.nextLine());
+                }
+            }
+            poser.close();
+            returner = new Pose2d(come[0],come[1],come[2]);
         } catch (Exception e) {
             e.printStackTrace();
         }
-        return new Pose2d(0,0,0);
+        return returner;
     }
 
     @SuppressLint("SdCardPath")
