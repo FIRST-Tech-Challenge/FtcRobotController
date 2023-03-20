@@ -55,7 +55,7 @@ public class PositionLogger {
         //currently returns empty pose if nothing's in log
         Pose2d pose = new Pose2d();
         String easyLog = returnLastLog().substring(returnLastLog().indexOf("N - ") + 5);
-        easyLog = easyLog.replaceAll("[^\\d.]", " ");
+        easyLog = easyLog.replaceAll("[^\\d.-]", " ");
         System.out.println(easyLog);
         if(returnLastLog().contains("POSITION - ")) {
             Scanner sc = new Scanner(easyLog);
