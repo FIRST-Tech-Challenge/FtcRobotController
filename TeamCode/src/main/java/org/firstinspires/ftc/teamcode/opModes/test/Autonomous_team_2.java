@@ -10,7 +10,7 @@ import org.firstinspires.ftc.teamcode.libs.brightonCollege.modeBases.AutonomousM
 import org.firstinspires.ftc.teamcode.libs.brightonCollege.util.HardwareMapContainer;
 
 
-@Autonomous(name="<Autonomous>", group="<OpMode group name>")
+@Autonomous(name="<Team_2_autonomous>", group="<OpMode group name>")
 public class Autonomous_team_2 extends AutonomousLinearModeBase {
 
 
@@ -29,11 +29,11 @@ public class Autonomous_team_2 extends AutonomousLinearModeBase {
         //remember to account for size of robot when inputting coordinates.
         //Can we standardise placing these coordinates on the bottom left corner of the station
         //test data:
-        // {{0.5,0},{0.5,0.5}}
+        // {{500,0},{500,500}}
 
 
-        double[][] junction_Coordinates = {{0.5,0},{0.5,0.5}};
-        int num_junctions = 3;
+        double[][] junction_Coordinates = {{500,0},{0.5,500}};
+        int num_junctions = 2;
         int junction_number = 0;
         double[] next = {junction_Coordinates[junction_number][0],junction_Coordinates[junction_number][1]};
         //Is it possible to use the terminals as a way to check coordinates?
@@ -41,13 +41,13 @@ public class Autonomous_team_2 extends AutonomousLinearModeBase {
         //remember to account for size of robot when inputting coordinates.
         //Can we standardise placing these coordinates at the center of the terminal
         //test data:
-        // {{0,0},{2,2}}
-        double[][] terminal = {{0,0},{1,1}};
+        // {{0,0},{1000,1000}}
+        double[][] terminal = {{0,0},{1000,1000}};
         //remember to account for size of robot when inputting coordinates.
         //Can we standardise placing these coordinates at the center of the terminal
         //test data:
-        //{0,2}
-        double[][] cone_coordinates={{0,1}};
+        //{0,1000}
+        double[][] cone_coordinates={{0,1000}};
 
         //used later for finding closest cone stack
         double[] closest_coordinate= {cone_coordinates[0][0], cone_coordinates[0][1]};
@@ -89,7 +89,8 @@ public class Autonomous_team_2 extends AutonomousLinearModeBase {
                 current[1]=current[1]+ speed2*elapsed;
                 //Distance from target in terms of x distance and y distance
                 if (has_cone == false) {
-                    telemetry.addData("Entered cone pick up",current);
+                    telemetry.addData("Entered cone pick up", "x_coordinate" +current[0]);
+                    telemetry.addData("Entered cone pick up", "y_coordinate" +current[1]);
                     //Run code to return to nearest loading station
                     //finding distance from each robot to cones using pythagoras
                     //assuming that the first coordinate is the closest
@@ -109,11 +110,8 @@ public class Autonomous_team_2 extends AutonomousLinearModeBase {
                         }
                     }
                     //getting the robot to drive towards the cones
-                    //allowance of 5cm from pole, though subject to change as necessary
-                    while (Math.abs(current[0]-closest_coordinate[0])>0.05 && Math.abs(current[1]-closest_coordinate[1])>0.05) {
-
-                        //insert code for proximity sensor
-
+                    //allowance of 1cm from pole, though subject to change as necessary
+                    while (Math.abs(current[0]-closest_coordinate[0])>10 && Math.abs(current[1]-closest_coordinate[1])>10) {
                         speed1 = motor1.getCorrectedVelocity();
                         speed2 = motor3.getCorrectedVelocity();
                         time = runtime.seconds();
@@ -126,24 +124,60 @@ public class Autonomous_team_2 extends AutonomousLinearModeBase {
                         current[0]=current[0]+ speed1*elapsed;
                         //updating current y coordinate
                         current[1]=current[1]+ speed2*elapsed;
-                        if (current[0]-closest_coordinate[0]>0.05){
+                        //allowing an error of 1cm
+                        if (current[0]-closest_coordinate[0]>10){
+                            //making sure that if motor 3 was running, it would stop
+                            motor3.set(0);
                             //getting the robot to decrease the x coordinate
-                            motor1.set(-1.0);
-                            motor2.set(-1.0);
-                        } else if (closest_coordinate[0]-current[0]>0.05){
+                            //reduce speed if within 20cm of target
+                            if (current[0]-closest_coordinate[0]<200) {
+                                motor1.set(-0.3);
+                                motor2.set(-0.3);
+                            } else{
+                                motor1.set(-0.8);
+                                motor2.set(-0.8);
+                            }
+                        } else if (closest_coordinate[0]-current[0]>10){
+                            //making sure that if motor 3 was running, it would stop
+                            motor3.set(0);
                             //getting the robot to increase the y coordinate
-                            motor1.set(1.0);
-                            motor2.set(1.0);
-                        } else if (current[1]-closest_coordinate[1]>0.05){
+                            //reduce speed if within 20cm of target
+                            if (closest_coordinate[0]-current[0]<200) {
+                                motor1.set(0.3);
+                                motor2.set(0.3);
+                            } else{
+                                motor1.set(0.8);
+                                motor2.set(0.8);
+                            }
+                        } else if (current[1]-closest_coordinate[1]>10){
+                            //making sure that if motor1 and motor2 was running, it would stop
+                            motor1.set(0);
+                            motor2.set(0);
                             //getting the robot to decrease the y coordinate
-                            motor3.set(-1.0);
-                        } else if (closest_coordinate[1]-current[1]>0.05){
+                            //reduce speed if within 20cm of target
+                            if (current[1]-closest_coordinate[1]<200) {
+                                motor3.set(-0.3);
+                            } else{
+                                motor3.set(-0.8);
+                            }
+                        } else if (closest_coordinate[1]-current[1]>10){
+                            //making sure that if motor1 and motor2 was running, it would stop
+                            motor1.set(0);
+                            motor2.set(0);
                             //getting the robot to increase the y coordinate
-                            motor3.set(1.0);
+                            //reduce speed if within 20cm of target
+                            if (closest_coordinate[1]-current[1]<200) {
+                                motor3.set(0.5);
+                            } else{
+                                motor3.set(1.0);
+                            }
                         }
                         telemetry.update();
                     }
-
+                    //getting the robot to stop
+                    motor1.set(0);
+                    motor2.set(0);
+                    motor3.set(0);
                     //code for picking up cone
 
                     has_cone=true;
@@ -151,26 +185,63 @@ public class Autonomous_team_2 extends AutonomousLinearModeBase {
                     //should we enter code for the robot to drive to the nearest picture in order
                     //to reconfirm coordinates
                 } else {
-                    telemetry.addData("Entered cone deliver", current);
-                    //allowance of 5cm from pole, though subject to change as necessary
-                    if (Math.abs(current[0]-next[0])>0.05 && Math.abs(current[1]-next[1])>0.05){
-                        if (current[0]-next[0]>0.05){
+                    telemetry.addData("Entered cone deliver", "x_coordinate" +current[0]);
+                    telemetry.addData("Entered cone deliver", "y_coordinate" +current[1]);
+                    //allowance of 1cm from pole, though subject to change as necessary
+                    if (Math.abs(current[0]-next[0])>10 && Math.abs(current[1]-next[1])>10){
+                        if (current[0]-next[0]>10){
+                            //making sure that if motor 3 was running, it would stop
+                            motor3.set(0);
                             //getting the robot to decrease the x coordinate
-                            motor1.set(-1.0);
-                            motor2.set(-1.0);
-                        } else if (next[0]-current[0]>0.05){
+                            //reduce speed if within 20cm of target
+                            if (current[0]-next[0]<200) {
+                                motor1.set(-0.3);
+                                motor2.set(-0.3);
+                            } else{
+                                motor1.set(-0.8);
+                                motor2.set(-0.8);
+                            }
+                        } else if (next[0]-current[0]>10){
+                            //making sure that if motor 3 was running, it would stop
+                            motor3.set(0);
                             //getting the robot to increase the y coordinate
-                            motor1.set(1.0);
-                            motor2.set(1.0);
-                        } else if (current[1]-next[1]>0.05){
+                            //reduce speed if within 20cm of target
+                            if (next[0]-current[0]<200) {
+                                motor1.set(0.3);
+                                motor2.set(0.3);
+                            } else{
+                                motor1.set(0.8);
+                                motor2.set(0.8);
+                            }
+                        } else if (current[1]-next[1]>10){
+                            //making sure that if motor1 and motor2 was running, it would stop
+                            motor1.set(0);
+                            motor2.set(0);
                             //getting the robot to decrease the y coordinate
-                            motor3.set(-1.0);
-                        } else if (next[1]-current[1]>0.05){
+                            //reduce speed if within 20cm of target
+                            if (current[1]-next[1]<200) {
+                                motor3.set(-0.3);
+                            } else{
+                                motor3.set(-0.8);
+                            }
+                        } else if (next[1]-current[1]>10){
+                            //making sure that if motor1 and motor2 was running, it would stop
+                            motor1.set(0);
+                            motor2.set(0);
                             //getting the robot to increase the y coordinate
-                            motor3.set(1.0);
+                            //reduce speed if within 20cm of target
+                            if (next[1]-current[1]<200) {
+                                motor3.set(0.3);
+                            } else{
+                                motor3.set(0.8);
+                            }
                         }
                         telemetry.addData("next junction", next);
                     } else{
+                        //getting the robot to stop
+                        motor1.set(0);
+                        motor2.set(0);
+                        motor3.set(0);
                         //insert code to put down cone
 
                         if (junction_number>=num_junctions){
@@ -183,11 +254,11 @@ public class Autonomous_team_2 extends AutonomousLinearModeBase {
                 telemetry.update();
             }
             while (20 < time && time < 30) {
-                telemetry.addData("returning to terminal", current);
+                telemetry.addData("returning to terminal", "x_coordinate" +current[0]);
+                telemetry.addData("returning to terminal", "y_coordinate"+ current[1]);
                 //write code for returning to terminals for the last 10s of the autonomous phase
                 speed1= motor1.getCorrectedVelocity();
                 speed2= motor3.getCorrectedVelocity();
-
                 //finding total time that has elapsed
                 time = runtime.seconds();
                 //finding time elapsed for previous tick
@@ -218,28 +289,61 @@ public class Autonomous_team_2 extends AutonomousLinearModeBase {
                         closest_coordinate=cone_coordinates[index];
                     }
                 }
-                //allowance of 5cm from terminal, but is subject to change.
-                while (Math.abs(current[0]-closest_coordinate[0])<0.05 && Math.abs(current[1]-closest_coordinate[1])<0.05){
-
-                    //insert code for proximity sensor
-                    if (current[0]-closest_coordinate[0]>0.05){
+                //allowance of 1cm from terminal, but is subject to change.
+                while (Math.abs(current[0]-closest_coordinate[0])<10 && Math.abs(current[1]-closest_coordinate[1])<10){
+                    if (current[0]-closest_coordinate[0]>10){
+                        //making sure that if motor3 was running, it would stop
+                        motor3.set(0);
                         //getting the robot to decrease the x coordinate
-                        motor1.set(-1.0);
-                        motor2.set(-1.0);
-                    } else if (closest_coordinate[0]-current[0]>0.05){
+                        //reduce speed if within 50cm of target
+                        if (current[0]-closest_coordinate[0]<200) {
+                            motor1.set(-0.3);
+                            motor2.set(-0.3);
+                        } else{
+                            motor1.set(-0.8);
+                            motor2.set(-0.8);
+                        }
+                    } else if (closest_coordinate[0]-current[0]>10){
+                        //making sure that if motor 3 was running, it would stop
+                        motor3.set(0);
                         //getting the robot to increase the y coordinate
-                        motor1.set(1.0);
-                        motor2.set(1.0);
-                    } else if (current[1]-closest_coordinate[1]>0.05){
+                        //reduce speed if within 20cm of target
+                        if (closest_coordinate[0]-current[0]<200) {
+                            motor1.set(0.3);
+                            motor2.set(0.3);
+                        } else{
+                            motor1.set(0.8);
+                            motor2.set(0.8);
+                        }
+                    } else if (current[1]-closest_coordinate[1]>10){
+                        //making sure that if motor1 and motor2 was running, it would stop
+                        motor1.set(0);
+                        motor2.set(0);
                         //getting the robot to decrease the y coordinate
-                        motor3.set(-1.0);
-                    } else if (closest_coordinate[1]-current[1]>0.05){
+                        //reduce speed if within 20cm of target
+                        if (current[1]-closest_coordinate[1]<200) {
+                            motor3.set(-0.3);
+                        } else{
+                            motor3.set(-0.8);
+                        }
+                    } else if (closest_coordinate[1]-current[1]>10){
+                        //making sure that if motor1 and motor2 was running, it would stop
+                        motor1.set(0);
+                        motor2.set(0);
                         //getting the robot to increase the y coordinate
-                        motor3.set(1.0);
+                        //reduce speed if within 20cm of target
+                        if (closest_coordinate[1]-current[1]<200) {
+                            motor3.set(0.3);
+                        } else{
+                            motor3.set(0.8);
+                        }
                     }
-
+                    telemetry.update();
                 }
-                telemetry.update();
+                //getting the robot to stop
+                motor1.set(0);
+                motor2.set(0);
+                motor3.set(0);
             }
         }
     }
