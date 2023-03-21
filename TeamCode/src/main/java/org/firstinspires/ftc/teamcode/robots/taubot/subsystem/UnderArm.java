@@ -124,6 +124,8 @@ public class UnderArm implements Subsystem {
 
         articulation = Articulation.init1;
         fieldPositionTarget = new Vector3(0,0,0); //crane default IK starting point is
+
+        setWristTargetAngle(WRIST_HOME_POSITION);
     }
 
     Vector3 underArmPosition;
@@ -451,12 +453,19 @@ public class UnderArm implements Subsystem {
                 break;
             case 3: //elevate shoulder to clear mat
                 if (substationPickupTimer<System.nanoTime()) {
+                    setWristTargetAngle(WRIST_HOME_POSITION);
+                    substationPickupStage++;
+                    substationPickupTimer = futureTime(0.3);
+                }
+                break;
+            case 4:
+                if(substationPickupTimer<System.nanoTime()){
                     setShoulderTargetAngle(SS_HOVER_SHOULDER);
                     substationPickupStage++;
                     substationPickupTimer = futureTime(0.3);
                 }
                 break;
-            case 4: //recover
+            case 5: //recover
                 if (substationPickupTimer<System.nanoTime()){
                     if( goSubstationRecover()) {
                         substationPickupStage = 0;
@@ -655,7 +664,7 @@ public boolean goSubstationRecover() {
 
         shoulder.setTargetAngle(shoulderTargetAngle);
         elbow.setTargetAngle(elbowTargetAngle);
-        wrist.setTargetAngle(wristTargetAngle);
+        wrist.setTargetAngle(wristTargetAngle -17.5 ); //the -17.5 is a kludgy way to account for the 35 degree mechanical range shifter - prolly still need to retune each wrist angle
         //wristServo.setPosition(servoNormalizeExtended(wristServoValue(wristTargetAngle)));
         turretServo.setPosition(servoNormalizeExtended(turretServoValue(turretTargetAngle)));
 

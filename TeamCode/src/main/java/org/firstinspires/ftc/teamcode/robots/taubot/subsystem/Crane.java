@@ -79,6 +79,8 @@ public class Crane implements Subsystem {
     public static double kF = 0.2;
     public static PIDCoefficients SHOULDER_PID = new PIDCoefficients(0.05, 0.005, 0.0);
     public static double SHOULDER_MAX_PID_OUTPUT = 1;
+
+    public static double FOLD_SHOULDER_POSITION = 11;
     public static double SHOULDER_MIN_PID_OUTPUT = -1;
     public static double SHOULDER_TOLERANCE = 1;
     public static double SHOULDER_POWER = 1.0;
@@ -318,7 +320,7 @@ public class Crane implements Subsystem {
         return false;
     }
 
-    public static double FOLD_SHOULDER_POSITION = 20;
+
     boolean calibrated = true;
 
     FieldThing targetPole;
@@ -494,7 +496,7 @@ public class Crane implements Subsystem {
                 pickupConeStage = 0;
                 updateScoringPattern();
                 if(dropCone(source)){
-                    articulation = Articulation.transfer;
+                    articulation = Articulation.manualDrive;
                 }
                 break;
 
@@ -766,7 +768,7 @@ public class Crane implements Subsystem {
         return false;
     }
 
-    public static Vector3 home = new Vector3(2, 0 ,18);
+    public static Vector3 home = new Vector3(2, 0 ,5);
 
     int homeInd;
 
@@ -1092,6 +1094,8 @@ public class Crane implements Subsystem {
         return calculateFieldTargeting(vec.x,vec.y,vec.z);
     }
 
+    public static double SHOULDER_BEND_CORRECTION = 0.1;
+
     public boolean calculateFieldTargeting(double x, double y, double z){ //THIS IS IN INCHES!!!!!!!!
 
         z /= INCHES_PER_METER;
@@ -1101,6 +1105,8 @@ public class Crane implements Subsystem {
         calculatedHeight = z-shoulderHeight;
 
         calculatedDistance = (Math.sqrt(Math.pow(y - axlePos.getY(),2) + Math.pow(x - axlePos.getX(),2)))/INCHES_PER_METER;
+
+        calculatedHeight += SHOULDER_BEND_CORRECTION*calculatedDistance;
 
         calculatedAngle = Math.toDegrees(Math.atan2(calculatedHeight, calculatedDistance));
         calculatedLength = (Math.sqrt(Math.pow(calculatedHeight, 2) + Math.pow(calculatedDistance, 2)));
@@ -1311,6 +1317,7 @@ public class Crane implements Subsystem {
             telemetryMap.put("Extend Meters", extendMeters);
             telemetryMap.put("Extend Tics", extendPosition);
             telemetryMap.put("Extend Amps", extenderAmps);
+            telemetryMap.put("Extend Power", extenderMotor.getPower());
             telemetryMap.put("Extend Active PID", extenderActivePID);
             telemetryMap.put("Extend Target", extenderTargetPos);
             telemetryMap.put("Extend PID", extendCorrection);

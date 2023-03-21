@@ -239,7 +239,10 @@ public class Robot implements Subsystem {
                     case 0:
                         //drive to general parking location
                         crane.articulate(Crane.Articulation.manual);
+                        turret.articulate(Turret.Articulation.home);
                         driverIsDriving();
+                        turret.articulate(Turret.Articulation.home);
+                        
                         turnDone = false;
                         onPole = false;
                         if (driveTrain.driveUntilDegrees(2 * Field.INCHES_PER_GRID-4, 0, 20)) {
@@ -448,13 +451,11 @@ public class Robot implements Subsystem {
     private boolean driverDriving = false;
 
     public void driverIsDriving(){
-        if(unfolded)
-            setDriverDriving(true);
+        setDriverDriving(true);
     }
 
     public void driverNotDriving(){
-        if(unfolded)
-            setDriverDriving(false);
+        setDriverDriving(false);
     }
 
     public boolean checkCollision(double calcShoulder, double calcTurret){
