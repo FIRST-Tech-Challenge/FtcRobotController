@@ -98,10 +98,10 @@ public class ConeQRProcessor  extends OpenCvPipeline {
 
         Mat origin = input.clone();
         Rect cropRect = new Rect();
-        cropRect.x = 640;
+        cropRect.x = 427;
         cropRect.y = 0;
-        cropRect.width = 640;
-        cropRect.height=1080;
+        cropRect.width = 427;
+        cropRect.height=720;
         input = origin.submat(cropRect);
 
         if ( !decoded) {

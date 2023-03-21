@@ -64,6 +64,8 @@ public abstract class BaseAuto extends LinearOpMode {
         //hdw.moveYAxis(6, 0.3);
         //sleep(100);
 
+        hdw.moveYAxis(10, 1);
+
         webCam.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener()
         {
             @Override
@@ -75,7 +77,7 @@ public abstract class BaseAuto extends LinearOpMode {
                 Log.d("9010", "max zoom" + myPtzControl.getMaxZoom());
 
 
-                webCam.startStreaming(1920,1080, OpenCvCameraRotation.UPRIGHT);
+                webCam.startStreaming(1280, 720, OpenCvCameraRotation.UPRIGHT);
             }
 
             @Override
@@ -140,15 +142,16 @@ public abstract class BaseAuto extends LinearOpMode {
         telemetry.addData("Park zone 1 ", this.currentSide);
         telemetry.update();
         //Move Left
-        hdw.moveXAxis( -25.0, 0.3);
-        hdw.moveYAxis(34.0, -0.3);
+        hdw.moveYAxis(17.0, -0.3);
+        hdw.moveXAxis( -24.0, 0.3);
+
     }
 
     void parkZone2( ) {
         telemetry.addData("Park zone 2 ", this.currentSide);
         telemetry.update();
         //Move forward
-        hdw.moveYAxis( 34.0, 0.3);
+        hdw.moveYAxis( 17.0, 0.3);
 
     }
 
@@ -156,8 +159,8 @@ public abstract class BaseAuto extends LinearOpMode {
         telemetry.addData("Park zone 3 ", this.currentSide);
         telemetry.update();
         //Move right
-        hdw.moveXAxis( 25.0, 0.3);
-        hdw.moveYAxis(34, 0.3);
+        hdw.moveYAxis(17, 0.3);
+        hdw.moveXAxis( 24.0, 0.3);
 
     }
 

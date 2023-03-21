@@ -22,7 +22,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
 public class Hardware2022 {
 
     //This is max wheel and slide motor velocity.
-    static public double ANGULAR_RATE = 2300.0;
+    static public double ANGULAR_RATE = 1500.0;
     private final double MIN_VELOCITY = 0.1;
 
     //Adjustable parameters  here.
@@ -31,8 +31,8 @@ public class Hardware2022 {
     @Deprecated
     private final double CLAW_OPEN = 0.3 ;
 
-    private final double xAxisCoeff = 86.5 ;  // How many degrees encoder to turn to run an inch in X Axis
-    private final double yAxisCoeff = 22.8 ;  // How many degrees encoder to turn to run an inch in Y Axis
+    private final double xAxisCoeff = 216.5 ;  // How many degrees encoder to turn to run an inch in X Axis
+    private final double yAxisCoeff = 216.5 ;  // How many degrees encoder to turn to run an inch in Y Axis
 
     //Encoder value of VSlide height in Cone mode,
     private final int CONE_SLIDE_LOW = 1600;
@@ -214,6 +214,9 @@ public class Hardware2022 {
         wheelFrontRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         wheelBackRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
+        int currenXPosition = xEncoder.getCurrentPosition();
+        Log.d("9010", "current X Position " + currenXPosition);
+
         //Get current orientation.  Angle is between -180 to 180
         int currentPosition = yEncoder.getCurrentPosition();
         int targetPosition = currentPosition + distance;
@@ -228,18 +231,25 @@ public class Hardware2022 {
         int difference = distance;
         Log.d("9010", "Difference: " + difference );
 
-
-
         PIDFController lnPidfCrtler  = new PIDFController(lnKP, lnKI, lnKD, lnKF);
         Log.d("9010", "lnKp: " + lnKP + "  lnKI: " + lnKI + " lnKD: " + lnKD);
+        PIDFController lnXPidfCrtler  = new PIDFController(lnKP, lnKI, lnKD, lnKF);
+        Log.d("9010", "lnXKp: " + lnKP + "  lnXKI: " + lnKI + " lnXKD: " + lnKD);
         PIDFController turnPidfCrtler  = new PIDFController(turnKP, turnKI, turnKD, turnKF);
         Log.d("9010", "turnKp: " + turnKP + "  lnKI: " + turnKI + " turnKD: " + turnKD);
 
+
         lnPidfCrtler.setSetPoint(0);
         //Set tolerance as 0.5 degrees
-        lnPidfCrtler.setTolerance(10);
+        lnPidfCrtler.setTolerance(15);
         //set Integration between -0.5 to 0.5 to avoid saturating PID output.
         lnPidfCrtler.setIntegrationBounds(-0.5 , 0.5 );
+
+        lnXPidfCrtler.setSetPoint(0);
+        //Set tolerance as 0.5 degrees
+        lnXPidfCrtler.setTolerance(15);
+        //set Integration between -0.5 to 0.5 to avoid saturating PID output.
+        lnXPidfCrtler.setIntegrationBounds(-0.5 , 0.5 );
 
         turnPidfCrtler.setSetPoint(0);
         //Set tolerance as 0.5 degrees
@@ -249,12 +259,22 @@ public class Hardware2022 {
 
         Log.d("9010", "Before entering Loop ");
         double rx;
+        double xVelocity;
 
-        while ( !lnPidfCrtler.atSetPoint()  ) {
+        long initMill = System.currentTimeMillis();
+
+        while ( !lnPidfCrtler.atSetPoint()
+                && ( (System.currentTimeMillis() -initMill  )<5000)  ) {
             currentPosition = yEncoder.getCurrentPosition();
             //Calculate new distance
             difference = currentPosition - targetPosition;
-            double velocityCaculated = lnPidfCrtler.calculate(difference)*6;
+            double velocityCaculated = lnPidfCrtler.calculate(difference)*4;
+            if (velocityCaculated > ANGULAR_RATE ) {
+                velocityCaculated = ANGULAR_RATE;
+            }
+            if ( velocityCaculated < -ANGULAR_RATE) {
+                velocityCaculated = -ANGULAR_RATE;
+            }
 
             Log.d("9010", "=====================");
             Log.d("9010", "Difference: " + difference);
@@ -265,10 +285,16 @@ public class Hardware2022 {
             Log.d("9010", "Turn Error: " + turnError );
             Log.d("9010", "Calculated rx:  " + rx );
 
-            wheelFrontLeft.setVelocity(velocityCaculated + rx );
-            wheelBackLeft.setVelocity(velocityCaculated + rx);
-            wheelFrontRight.setVelocity(velocityCaculated - rx);
-            wheelBackRight.setVelocity(velocityCaculated - rx);
+            double xError = xEncoder.getCurrentPosition() - currenXPosition;
+            Log.d("9010", "X Error " + xError);
+            xVelocity = lnXPidfCrtler.calculate(xError)*3;
+            Log.d("9010", "X Vel:  " + xVelocity);
+
+
+            wheelFrontLeft.setVelocity(velocityCaculated + rx - xVelocity);
+            wheelBackLeft.setVelocity(velocityCaculated + rx+ xVelocity);
+            wheelFrontRight.setVelocity(velocityCaculated - rx + xVelocity);
+            wheelBackRight.setVelocity(velocityCaculated - rx - xVelocity);
         }
 
 
@@ -280,6 +306,7 @@ public class Hardware2022 {
         wheelFrontLeft.setVelocity(0);
         wheelBackRight.setVelocity(0);
         wheelBackLeft.setVelocity(0);
+
     }
 
     /**
@@ -338,13 +365,13 @@ public class Hardware2022 {
 
         lnPidfCrtler.setSetPoint(0);
         //Set tolerance as 0.5 degrees
-        lnPidfCrtler.setTolerance(10);
+        lnPidfCrtler.setTolerance(15);
         //set Integration between -0.5 to 0.5 to avoid saturating PID output.
         lnPidfCrtler.setIntegrationBounds(-0.5 , 0.5 );
 
         lnYPidfCrtler.setSetPoint(0);
         //Set tolerance as 0.5 degrees
-        lnYPidfCrtler.setTolerance(10);
+        lnYPidfCrtler.setTolerance(15);
         //set Integration between -0.5 to 0.5 to avoid saturating PID output.
         lnYPidfCrtler.setIntegrationBounds(-0.5 , 0.5 );
 
@@ -358,11 +385,20 @@ public class Hardware2022 {
         double rx;
         double yVelocity;
 
-        while ( !lnPidfCrtler.atSetPoint()  ) {
+        long initMill = System.currentTimeMillis();
+
+        while ( !lnPidfCrtler.atSetPoint()
+                && ( (System.currentTimeMillis() -initMill  )<5000) ) {
             currentPosition = xEncoder.getCurrentPosition();
             //Calculate new distance
             difference = currentPosition - targetPosition;
             double velocityCaculated = lnPidfCrtler.calculate(difference)*4;
+            if (velocityCaculated > ANGULAR_RATE ) {
+                velocityCaculated = ANGULAR_RATE;
+            }
+            if ( velocityCaculated < -ANGULAR_RATE) {
+                velocityCaculated = -ANGULAR_RATE;
+            }
 
             Log.d("9010", "=====================");
             Log.d("9010", "Difference: " + difference);
@@ -376,6 +412,7 @@ public class Hardware2022 {
             double yError = yEncoder.getCurrentPosition() - currenYPosition;
             Log.d("9010", "Y Error " + yError);
             yVelocity = lnYPidfCrtler.calculate(yError)*3;
+            Log.d("9010", "Y Veol:  " + yVelocity);
 
 
             wheelFrontLeft.setVelocity(-velocityCaculated + rx + yVelocity);
