@@ -67,7 +67,7 @@ public class SPLINEAutoLeftSide extends PowerPlay_AprilTagDetectionDeposit{
 	public static double xConeStack4 = 49.3;
 	public static double xConeStack5 = 49.3;
 	public static double coneStackHeading = 89;
-	public static double coneStackEndTangent = 91;
+	public static double coneStackEndTangent = 80;
 
 	// [OPENING MOVE --> MEDIUM JUNCTION]
 	public static double openingHeading = 90;
