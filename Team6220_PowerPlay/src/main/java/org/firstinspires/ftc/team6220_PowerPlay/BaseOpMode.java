@@ -103,9 +103,7 @@ public abstract class BaseOpMode extends LinearOpMode {
         servoGrabber = (ServoImplEx) hardwareMap.servo.get("servoGrabber");
         servoGrabber.setPwmRange(maxRange);
 
-        try {
-            blinkinChassis = (RevBlinkinLedDriver) hardwareMap.get(RevBlinkinLedDriver.class, "blinkinChassis");
-        } catch (Exception e) {}
+        blinkinChassis = (RevBlinkinLedDriver) hardwareMap.get(RevBlinkinLedDriver.class, "blinkinChassis");
 
         // initialize IMU
         BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
