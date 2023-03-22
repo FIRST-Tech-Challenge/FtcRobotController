@@ -20,9 +20,10 @@ public class StackGrabbingTest extends BaseAutonomous {
         driveGrabber(Constants.GRABBER_INITIALIZE_POSITION);
         sleep(300);
         for (int i = 0; i <= 4; i++) {
+            //turn LED's off (for testing purposes)
             blinkinChassis.setPattern(RevBlinkinLedDriver.BlinkinPattern.BLACK);
             //drive slides to stack position
-            driveSlidesAutonomous((Constants.SLIDE_STACK_FOUR)-(Constants.AUTONOMOUS_STACK_PER_CONE_OFFSET * i));
+            driveSlides((Constants.SLIDE_STACK_FOUR)-(Constants.AUTONOMOUS_STACK_PER_CONE_OFFSET * i));
             //center on cone stack
             centerConeStack(robotCameraPipeline);
             sleep(300);
@@ -30,8 +31,8 @@ public class StackGrabbingTest extends BaseAutonomous {
             driveGrabber(Constants.GRABBER_CLOSE_POSITION);
             sleep(600);
             //drive slides to stow position
-            driveSlidesAutonomous(Constants.SLIDE_LOW);
-            //drive backwards 35 inches
+            driveSlides(Constants.SLIDE_LOW);
+            //drive backwards 34.5 inches
             driveAutonomous(180, 34.5);
             //turn towards junction
             turnToAngle(90);
@@ -43,8 +44,8 @@ public class StackGrabbingTest extends BaseAutonomous {
             driveAutonomous(0, 2);
             //center on junction
             centerJunctionTop(grabberCameraPipeline);
-            //lower slides onto junction
             sleep(100);
+            //lower slides onto junction
             driveSlides(Constants.SLIDE_HIGH-100);
             sleep(100);
             //open the grabber
