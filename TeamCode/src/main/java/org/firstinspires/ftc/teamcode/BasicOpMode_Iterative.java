@@ -144,15 +144,6 @@ public class BasicOpMode_Iterative extends OpMode
             BackleftPower = gamepad1.left_stick_y + gamepad1.left_stick_x;
             BackrightPower = gamepad1.right_stick_y - gamepad1.right_stick_x;
 
-        if(gamepad1.left_trigger >= 0.3){
-            FrontleftPower = -gamepad1.left_stick_y + gamepad1.left_stick_x +  FrontleftPower;
-            FrontrightPower = -gamepad1.right_stick_y - gamepad1.right_stick_x + FrontrightPower;
-            BackleftPower = gamepad1.left_stick_y + gamepad1.left_stick_x + BackleftPower;
-            BackrightPower = gamepad1.right_stick_y - gamepad1.right_stick_x +BackrightPower;
-
-        }
-
-
         liftPower=.5;
 
         if(gamepad1.dpad_up){
