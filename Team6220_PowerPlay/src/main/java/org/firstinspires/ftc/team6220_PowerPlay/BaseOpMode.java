@@ -231,6 +231,8 @@ public abstract class BaseOpMode extends LinearOpMode {
 
         boolean cancelled = false;
 
+        driveLEDs();
+
         do {
             // xOffset is different from the one in CenterConeStack because the camera perspective is different
             xOffset = pipeline.xPosition - Constants.CAMERA_CENTER_X;
@@ -349,7 +351,7 @@ public abstract class BaseOpMode extends LinearOpMode {
                 telemetry.addLine("Detected");
                 telemetry.update();
             } else {
-                blinkinChassis.setPattern(RevBlinkinLedDriver.BlinkinPattern.CP1_2_COLOR_WAVES);
+                blinkinChassis.setPattern(RevBlinkinLedDriver.BlinkinPattern.RAINBOW_LAVA_PALETTE);
                 telemetry.addLine("Not Detected");
                 telemetry.update();
             }

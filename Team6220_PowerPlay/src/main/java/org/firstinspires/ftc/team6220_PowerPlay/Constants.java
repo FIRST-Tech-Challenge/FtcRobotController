@@ -19,7 +19,7 @@ public class Constants {
     public static final double MINIMUM_DRIVE_POWER = 0.05;
 
     public static final double MAXIMUM_TURN_POWER_AUTONOMOUS = 0.3;
-    public static final double MAXIMUM_DRIVE_POWER_AUTONOMOUS = 0.4;
+    public static final double MAXIMUM_DRIVE_POWER_AUTONOMOUS = 0.3;
 
     public static final double MAXIMUM_TURN_POWER_TELEOP = 0.5;
     public static final double MAXIMUM_DRIVE_POWER_TELEOP = 0.5;
@@ -82,7 +82,7 @@ public class Constants {
 
     public static final int DISTANCE_FROM_CENTER_JUNCTION_TOP = 200;
 
-    public static final int CONE_STACK_CONTOUR_MINIMUM_SIZE = 100;
+    public static final int CONE_STACK_CONTOUR_MINIMUM_SIZE = 200;
 
     public static final double TURNING_AUTHORITY_CONSTANT = 250.0;
     public static final double STRAFING_AUTHORITY_CONSTANT = 200.0;
@@ -91,7 +91,7 @@ public class Constants {
 
     public static final double DRIVE_AUTHORITY_SCALER = 1.35;
 
-    public static final int AUTONOMOUS_STACK_BASE_OFFSET = 150;
+    public static final int AUTONOMOUS_STACK_BASE_OFFSET = 0;
 
     public static final int AUTONOMOUS_STACK_PER_CONE_OFFSET = 160;
 }
