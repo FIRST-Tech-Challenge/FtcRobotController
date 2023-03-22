@@ -33,20 +33,20 @@ public class TestTeam2LiftLinear extends AutonomousLinearModeBase { // TODO: Tes
 
     @Override
     public void run() {
-        Motor lift_motor = HardwareMapContainer.motor0;
+        Motor lift_motor = HardwareMapContainer.motor3;
         lift = new Team2LiftComponent(lift_motor, 0.42, (int)(288 / (Math.PI*2) * 4.8), 0); // Core Hex Motor has 288 counts/revolution; counts/radian = counts/revn / (radians/revn); 3:1 gear
 
         waitForStart();
 
         try {
-//            lift.setPosition(100);
-//            sleep(1000);
-//            lift.setPosition(-100);
-//            sleep(1000);
-//            lift.setPosition(200);
-//            sleep(1000);
-//            lift.setPosition(-200);
-            lift.setHeight(0.5);
+            lift.setPosition(1000);
+            sleep(1000);
+            lift.setPosition(-1000);
+            sleep(1000);
+            lift.setPosition(2000);
+            sleep(1000);
+            lift.setPosition(-2000);
+//            lift.setHeight(0.5);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }

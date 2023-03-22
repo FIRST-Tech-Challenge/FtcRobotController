@@ -70,7 +70,7 @@ public class Team2LiftComponent {
         this.motor.setPositionTolerance(13.6);   // allowed maximum error
 
         while (!this.motor.atTargetPosition()) {
-            this.motor.set(0.75);
+            this.motor.set(0.25);
             Thread.sleep(10);
         }
 
