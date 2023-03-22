@@ -11,8 +11,8 @@ import org.firstinspires.ftc.teamcode.subsystems.webcam.Webcam;
 import org.firstinspires.ftc.teamcode.teamUtil.CommandScheduler.ConfiguredOpMode;
 import org.firstinspires.ftc.teamcode.teamUtil.odometry.roadrunner.drive.SampleMecanumDrive;
 
-@Autonomous(name="first spine test HELLO!", group="smellink")
-public class LeftHigh5Auto extends ConfiguredOpMode {
+@Autonomous(name="RightMedium5Auto", group="smellink")
+public class RightMedium5Auto extends ConfiguredOpMode {
 	private SampleMecanumDrive mecanum;
 	private Arm arm;
 	private Wrist wrist;
@@ -31,7 +31,7 @@ public class LeftHigh5Auto extends ConfiguredOpMode {
 		intake = new Intake();
 		limitSwitch = new LimitSwitch();
 		lift = new Lift();
-		sequence = new TrajectorySequenceStorage().leftHigh5(
+		sequence = new TrajectorySequenceStorage().rightMedium5(
 				r,
 				mecanum,
 				lift,
