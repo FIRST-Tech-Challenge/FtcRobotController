@@ -90,7 +90,6 @@ public class TrajectorySequenceStorage {
 		this.sequenceIndex = 0;
 		
 		trajectorySequences = new TrajectorySequence[]{
-				//leftStart(),
 				rileyRightSection(0,0)
 		};
 		
