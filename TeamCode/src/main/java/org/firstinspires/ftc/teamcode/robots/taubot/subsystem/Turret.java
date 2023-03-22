@@ -2,7 +2,6 @@ package org.firstinspires.ftc.teamcode.robots.taubot.subsystem;
 
 import static org.firstinspires.ftc.teamcode.robots.reachRefactor.util.Constants.USE_MOTOR_SMOOTHING;
 import static org.firstinspires.ftc.teamcode.robots.taubot.util.Utils.wrapAngle;
-import static org.firstinspires.ftc.teamcode.util.utilMethods.nearZero;
 import static org.firstinspires.ftc.teamcode.util.utilMethods.wrapAngleMinus;
 
 import com.acmerobotics.dashboard.canvas.Canvas;
@@ -21,7 +20,6 @@ import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 import org.firstinspires.ftc.teamcode.robots.UGBot.utils.Constants;
 import org.firstinspires.ftc.teamcode.robots.reachRefactor.simulation.DcMotorExSim;
-import org.firstinspires.ftc.teamcode.robots.taubot.PowerPlay_6832;
 import org.firstinspires.ftc.teamcode.util.PIDController;
 
 import java.util.LinkedHashMap;
@@ -41,6 +39,9 @@ public class Turret implements Subsystem {
     private PIDController turretPID;
 
     private double heading, targetHeading, power;
+
+    private int targetTics; //when not in IMU mode, this is the current target
+    private int TRANSFER_TICS = 1786;
 
     BNO055IMU turretIMU;
 
@@ -116,26 +117,38 @@ public class Turret implements Subsystem {
 
     public enum Articulation{
         runToAngle,
-        home,
+        lockToOneHundredAndEighty,
         transfer,
-        fold
+        lockToZero,
+        calibrate
     }
 
     public Articulation articulate(Articulation target){
         articulation = target;
 
         switch (articulation){
+            case calibrate:
+
+                break;
             case runToAngle: //normal run to a target angle mode
+                setControlMethodIMU(true);
                 turretPID.setInput(-distanceBetweenAngles(heading,targetHeading));
                 break;
-            case home: //home position is facing facing back of robot not towards underarm
-                turretPID.setInput(-distanceBetweenAngles(heading,180 + Math.toDegrees(robot.driveTrain.getRawHeading())));
+            case lockToOneHundredAndEighty: //home position is facing facing back of robot not towards underarm
+                targetTics = TRANSFER_TICS;
+                setControlMethodIMU(false);
+                //turretPID.setInput(-distanceBetweenAngles(heading,180 + Math.toDegrees(robot.driveTrain.getRawHeading())));
                 break;
-            case fold: //fold is facing towards underarm
+            case lockToZero: //fold is facing towards underarm
+                targetTics = 0;
+                setControlMethodIMU(false);
                 turretPID.setInput(-distanceBetweenAngles(heading,Math.toDegrees(robot.driveTrain.getRawHeading())));
                 break;
             case transfer: //transfer position is facing facing back of robot not towards underarm
-                turretPID.setInput(-distanceBetweenAngles(heading,180 + Math.toDegrees(robot.driveTrain.getRawHeading())));
+                targetTics = TRANSFER_TICS;
+                setControlMethodIMU(false);
+                //turretPID.setInput(-distanceBetweenAngles(heading,180 + Math.toDegrees(robot.driveTrain.getRawHeading())));
+                break;
         }
 
         return articulation;
@@ -165,15 +178,21 @@ public class Turret implements Subsystem {
         heading = wrapAngle(offsetHeading + imuAngles.firstAngle) ;
         cacheHeadingForNextRun();
 
-        turretPID.setPID(TURRET_PID);
-        turretPID.setTolerance(TURRET_TOLERANCE);
-        turretPID.setSetpoint(0);
-        correction = turretPID.performPID();
-        error = turretPID.getError();
-        //power = turretPID.onTarget() ? 0 : correction; //what was this? artificially stills micro corrections
+        if (controlMethodIMU) {
+            turretPID.setPID(TURRET_PID);
+            turretPID.setTolerance(TURRET_TOLERANCE);
+            turretPID.setSetpoint(0);
+            correction = turretPID.performPID();
+            error = turretPID.getError();
+            //power = turretPID.onTarget() ? 0 : correction; //what was this? artificially stills micro corrections
+        }
+        else {
 
+            motor.setTargetPosition(targetTics);
+        }
 
-        if(Crane.robotIsNotTipping && turretPID.isEnabled()) {
+        //not sure if this is still workable given the changes to using RunToPosition for
+        if(Crane.robotIsNotTipping && turretPID.isEnabled() && controlMethodIMU) {
             motor.setPower(correction);
         }
     }
@@ -197,30 +216,67 @@ public class Turret implements Subsystem {
     int calibrateStage = 0;
     long calibrateTimer = 0;
 
-    public static double calibratePower = 0.2;
+    public static double calibratePower = 250;
 
     public boolean calibrate(){
         switch (calibrateStage){
             case 0:
                 turretPID.disable();
-                motor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+                articulate(Articulation.calibrate);
+                motor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
                 calibrateStage++;
                 break;
             case 1:
-                motor.setPower(calibratePower);
-                if(!turretIndex.getState()){
+                motor.setVelocity(calibratePower);
+                if(!turretIndex.getState()){ //is magnet detectect?
                     //zeroHeading(LIMIT_SWITCH_ANGLE_OFFSET);
                     setHeading(LIMIT_SWITCH_ANGLE_OFFSET);
-                    motor.setPower(0);
+                    motor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+                    motor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
                     turretPID.enable();
                     calibrateStage++;
                 }
                 break;
             case 2:
+                articulate(Articulation.lockToZero);
                 calibrateStage = 0;
                 return true;
         }
         return false;
+    }
+
+
+    private boolean controlMethodIMU = true;
+
+    public void setControlMethodIMU(boolean imu){
+        if (imu) {
+            //we are going to set IMU mode
+            motor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+            controlMethodIMU = true;
+        }
+        else {
+
+            //we are going to set run-to-position mode
+            motor.setTargetPosition(motor.getCurrentPosition()); //encoder should have be reset at the end of calibration - here we set it to it's current position so it doesn't jerk
+            motor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            motor.setPower(1); //full power available
+            motor.setVelocity(750); //ticks per second max velocity todo tune for moderate speed
+            controlMethodIMU = false;
+        }
+
+    }
+
+    //transfer in the turret subsystem means to rotate the turret to the transfer position and leave it there
+    //we will turn off heading-based PID and instead use RunToPosition
+    public boolean transfer(){
+        return false;
+    }
+    boolean transferInit = false;
+    int transferStage = 0;
+
+    public void transferExit(){
+        transferStage = 0;
+        transferInit = false;
     }
 
     public static double LIMIT_SWITCH_ANGLE_OFFSET = 0;
@@ -266,6 +322,8 @@ public class Turret implements Subsystem {
         telemetryMap.put("articulation", articulation);
         telemetryMap.put("turret heading", heading);
         telemetryMap.put("turret error", turretPID.getError());
+        telemetryMap.put("turret tics", motor.getCurrentPosition());
+        telemetryMap.put("turret power", motor.getPower());
 
         if(debug) {
 

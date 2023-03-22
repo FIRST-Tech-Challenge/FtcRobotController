@@ -471,13 +471,13 @@ public class Crane implements Subsystem {
             case robotDriving: //if the robot is driving all cranes should go into a safe position
                 setShoulderTargetAngle(SAFE_SHOULDER_ANGLE);
                 setExtendTargetPos(SAFE_ARM_LENGTH);
-                robot.turret.articulate(Turret.Articulation.home); //turret will not move AT ALL from home position no matter the target
+                robot.turret.articulate(Turret.Articulation.lockToOneHundredAndEighty); //turret will not move AT ALL from home position no matter the target
                 break;
             case transfer: //
                 if(Transfer()) articulation = Articulation.manual;
                 break;
             case init:
-                robot.turret.articulate(Turret.Articulation.fold);
+                robot.turret.articulate(Turret.Articulation.lockToZero);
                 break;
             case postTransfer:
                 if(postTransfer()){
@@ -778,6 +778,7 @@ public class Crane implements Subsystem {
         switch (homeInd){
             case 0:
                 setExtendTargetPos(craneLengthOffset+0.1);
+                robot.underarm.articulate(UnderArm.Articulation.home);
                 homeInd++;
                 break;
             case 1:
@@ -791,6 +792,7 @@ public class Crane implements Subsystem {
                 if(shoulderOnTarget() && extensionOnTarget()){
                     robot.articulate(Robot.Articulation.MANUAL);
                     robot.turret.articulate(Turret.Articulation.runToAngle);
+                    robot.underarm.articulate(UnderArm.Articulation.manual);
                     homeInd = 0;
                     return true;
                 }

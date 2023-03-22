@@ -664,7 +664,7 @@ public boolean goSubstationRecover() {
 
         shoulder.setTargetAngle(shoulderTargetAngle);
         elbow.setTargetAngle(elbowTargetAngle);
-        wrist.setTargetAngle(wristTargetAngle -17.5 ); //the -17.5 is a kludgy way to account for the 35 degree mechanical range shifter - prolly still need to retune each wrist angle
+        wrist.setTargetAngle(wristTargetAngle -13 ); //the -17.5 is a kludgy way to account for the 35 degree mechanical range shifter - prolly still need to retune each wrist angle
         //wristServo.setPosition(servoNormalizeExtended(wristServoValue(wristTargetAngle)));
         turretServo.setPosition(servoNormalizeExtended(turretServoValue(turretTargetAngle)));
 

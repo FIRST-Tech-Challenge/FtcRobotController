@@ -18,6 +18,7 @@ import org.firstinspires.ftc.teamcode.robots.taubot.Field;
 import org.firstinspires.ftc.teamcode.robots.taubot.util.Constants;
 import org.firstinspires.ftc.teamcode.robots.taubot.util.DashboardUtil;
 import org.firstinspires.ftc.teamcode.statemachine.StateMachine;
+import org.firstinspires.ftc.teamcode.util.Vector3;
 import org.opencv.android.Utils;
 import org.opencv.core.CvType;
 import org.opencv.core.Mat;
@@ -217,6 +218,7 @@ public class Robot implements Subsystem {
     boolean autonRunWithinTime = true;
     long totalAutonTime;
 
+
     boolean turnDone = false;
     boolean onPole = false;
 
@@ -227,6 +229,7 @@ public class Robot implements Subsystem {
         switch (timeSupervisor) {
             case 0:
                 driveTrain.articulate(DriveTrain.Articulation.unlock);
+                crane.setCraneTarget(driveTrain.getPoseEstimate().getX()+6,driveTrain.getPoseEstimate().getY(),8);
                 totalAutonTime = futureTime(28);
                 autonIndex = 0;
                 timeSupervisor++;
@@ -237,22 +240,29 @@ public class Robot implements Subsystem {
                 }
                 switch (autonIndex) {
                     case 0:
-                        //drive to general parking location
-                        crane.articulate(Crane.Articulation.manual);
-                        turret.articulate(Turret.Articulation.home);
-                        driverIsDriving();
-                        turret.articulate(Turret.Articulation.home);
-                        
-                        turnDone = false;
-                        onPole = false;
-                        if (driveTrain.driveUntilDegrees(2 * Field.INCHES_PER_GRID-4, 0, 20)) {
-                            driveTrain.tuck();
-                            autonIndex++;
-                        }
+                        driveTrain.articulate(DriveTrain.Articulation.unlock);
+                        turret.articulate(Turret.Articulation.lockToZero);
+                        autonTime = futureTime(3);
+                        autonIndex++;
                         break;
                     case 1:
+                        //drive to general parking location
+                        if(System.nanoTime() > autonTime) {
+                            crane.articulate(Crane.Articulation.manual);
+                            driverIsDriving();
+
+                            turnDone = false;
+                            onPole = false;
+                            if (driveTrain.driveUntilDegrees(2 * Field.INCHES_PER_GRID - 4, 0, 20)) {
+                                driveTrain.tuck();
+                                autonIndex++;
+                            }
+                        }
+                        break;
+                    case 2:
                         //drop cone at nearest high pole
                         driverNotDriving();
+                        turret.articulate(Turret.Articulation.runToAngle);
                         if (startingPosition.equals(Constants.Position.START_LEFT)) {
                             if (!turnDone && driveTrain.turnUntilDegrees(90)) {
                                 turnDone = true;
@@ -278,7 +288,7 @@ public class Robot implements Subsystem {
                             }
                         }
                         break;
-                    case 2:
+                    case 3:
                         if(startingPosition.equals(Constants.Position.START_LEFT)){
                             crane.goToFieldCoordinate(3 * Field.INCHES_PER_GRID - 2 , Field.INCHES_PER_GRID - 2.5, 39);
                         }else{
@@ -290,12 +300,12 @@ public class Robot implements Subsystem {
                             autonIndex++;
                         }
                         break;
-                    case 3:
+                    case 4:
                         if(System.nanoTime() >= autonTime && crane.goHome()) {
                             autonIndex++;
                         }
                         break;
-                    case 4:
+                    case 5:
                         if (System.nanoTime() >= autonTime) {
                             //if we r on left side run cone stack left, if right run right cone stack
                             if (startingPosition.equals(Constants.Position.START_LEFT)) {
@@ -308,7 +318,7 @@ public class Robot implements Subsystem {
                             }
                         }
                         break;
-                    case 5:
+                    case 6:
                         autonIndex = 0;
                         timeSupervisor++;
                         break;
@@ -403,12 +413,15 @@ public class Robot implements Subsystem {
         if(isDriverDriving()) { //bypass the normal articulation flow when driving - this could short circuit other articulations leaving them in unknown stages
             driveTrain.articulate(DriveTrain.Articulation.unlock);
             crane.articulate(Crane.Articulation.robotDriving); //keeps crane in safe position
-            underarm.articulate(UnderArm.Articulation.home); //keeps underarm in safe position
-
+            underarm.articulate(UnderArm.Articulation.home);
         }
         else{
+            if(crane.getArticulation().equals(Crane.Articulation.robotDriving)){
+                crane.articulate(Crane.Articulation.manualDrive);
+            }
             switch (this.articulation) {
                 case MANUAL:
+
                     break;
                 case CALIBRATE:
                     if (crane.calibrate()) {
