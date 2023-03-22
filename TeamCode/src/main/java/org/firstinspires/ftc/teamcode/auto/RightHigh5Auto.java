@@ -11,8 +11,8 @@ import org.firstinspires.ftc.teamcode.subsystems.webcam.Webcam;
 import org.firstinspires.ftc.teamcode.teamUtil.CommandScheduler.ConfiguredOpMode;
 import org.firstinspires.ftc.teamcode.teamUtil.odometry.roadrunner.drive.SampleMecanumDrive;
 
-@Autonomous(name="first spine test HELLO!", group="smellink")
-public class LeftHigh5Auto extends ConfiguredOpMode {
+@Autonomous(name="first spine test HELLO!", group="")
+public class RightHigh5Auto extends ConfiguredOpMode {
 	private SampleMecanumDrive mecanum;
 	private Arm arm;
 	private Wrist wrist;
@@ -24,13 +24,13 @@ public class LeftHigh5Auto extends ConfiguredOpMode {
 	
 	@Override
 	public void superInit() {
-		telemetry.addData("status", "init");
 		mecanum = new SampleMecanumDrive(hardwareMap);
 		arm = new Arm();
 		wrist = new Wrist();
 		intake = new Intake();
 		limitSwitch = new LimitSwitch();
 		lift = new Lift();
+//		webcam = new Webcam();
 		sequence = new TrajectorySequenceStorage().leftHigh5(
 				r,
 				mecanum,
@@ -42,7 +42,6 @@ public class LeftHigh5Auto extends ConfiguredOpMode {
 		);
 		
 		telemetry.setAutoClear(true);
-		telemetry.addData("status", "fin");
 	}
 	
 	@Override

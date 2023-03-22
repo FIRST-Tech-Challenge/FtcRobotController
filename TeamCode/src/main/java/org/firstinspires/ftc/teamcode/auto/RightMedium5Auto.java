@@ -24,13 +24,13 @@ public class RightMedium5Auto extends ConfiguredOpMode {
 	
 	@Override
 	public void superInit() {
-		telemetry.addData("status", "init");
 		mecanum = new SampleMecanumDrive(hardwareMap);
 		arm = new Arm();
 		wrist = new Wrist();
 		intake = new Intake();
 		limitSwitch = new LimitSwitch();
 		lift = new Lift();
+//		webcam = new Webcam();
 		sequence = new TrajectorySequenceStorage().rightMedium5(
 				r,
 				mecanum,
@@ -42,7 +42,6 @@ public class RightMedium5Auto extends ConfiguredOpMode {
 		);
 		
 		telemetry.setAutoClear(true);
-		telemetry.addData("status", "fin");
 	}
 	
 	@Override
