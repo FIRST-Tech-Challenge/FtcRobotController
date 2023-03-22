@@ -25,11 +25,14 @@ public class TrajectorySequenceStorage {
 	private Wrist wrist;
 	private Webcam webcam;
 	
-	public static final Pose2d startPoseLeft = new Pose2d (34, -65, Math.toRadians(90));
-	
-	private TrajectorySequence leftStart(){
-		drive.setPoseEstimate(startPoseLeft);
-		return drive.trajectorySequenceBuilder(startPoseLeft)
+	public static final Pose2d startPoseRight = new Pose2d (34, -65, Math.toRadians(90));
+
+	public static final Pose2d startPoseLeft = new Pose2d (-34, -65, Math.toRadians(90));
+
+
+	private TrajectorySequence rightStart(){
+		drive.setPoseEstimate(startPoseRight);
+		return drive.trajectorySequenceBuilder(startPoseRight)
 				.UNSTABLE_addTemporalMarkerOffset(0, () -> {
 					arm.presetTargetPosition(Arm.ArmPos.FRONT);
 					wrist.presetTargetPosition(Wrist.wristPos.FRONT);
@@ -60,6 +63,13 @@ public class TrajectorySequenceStorage {
 				.lineToSplineHeading(new Pose2d(12, -12, Math.toRadians(30)))
 				.build();
 	}
+
+	private TrajectorySequence rileyRightSection(double xOffset, double yOffset){
+		drive.setPoseEstimate(startPoseRight);
+		return drive.trajectorySequenceBuilder(startPoseRight)
+				.splineTo(new Vector2d(12 + xOffset, -24 + yOffset), Math.toRadians(90))
+				.build();
+	}
 	
 	public TrajectorySequenceStorage leftHigh5(
 			RobotConfig r,
@@ -80,9 +90,35 @@ public class TrajectorySequenceStorage {
 		this.sequenceIndex = 0;
 		
 		trajectorySequences = new TrajectorySequence[]{
-				leftStart()
+				//leftStart(),
+				rileyRightSection(0,0)
 		};
 		
+		return this;
+	}
+
+	public TrajectorySequenceStorage rightMedium5(
+			RobotConfig r,
+			SampleMecanumDrive drive,
+			Lift lift,
+			Intake intake,
+			Arm arm,
+			Wrist wrist,
+			Webcam webcam
+	){
+		this.r = r;
+		this.drive = drive;
+		this.lift = lift;
+		this.intake = intake;
+		this.arm = arm;
+		this.wrist = wrist;
+		this.webcam = webcam;
+		this.sequenceIndex = 0;
+
+		trajectorySequences = new TrajectorySequence[]{
+
+		};
+
 		return this;
 	}
 	
