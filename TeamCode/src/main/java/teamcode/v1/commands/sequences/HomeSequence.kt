@@ -2,14 +2,13 @@ package teamcode.v1.commands.sequences
 
 import com.asiankoala.koawalib.command.commands.InstantCmd
 import com.asiankoala.koawalib.command.commands.WaitCmd
-import com.asiankoala.koawalib.command.commands.WaitUntilCmd
 import com.asiankoala.koawalib.command.group.ParallelGroup
 import com.asiankoala.koawalib.command.group.SequentialGroup
 import teamcode.v1.commands.subsystems.ClawCmds
-import teamcode.v1.constants.ClawConstants
 import teamcode.v1.subsystems.Arm
 import teamcode.v1.subsystems.Claw
 import teamcode.v1.subsystems.Lift
+import teamcode.v1.commands.subsystems.GuideCmds
 import teamcode.v1.constants.GuideConstants
 import teamcode.v1.subsystems.Guide
 
@@ -20,19 +19,15 @@ class HomeSequence(
     guide : Guide,
     firstArmAngle : Double,
     secondArmAngle : Double,
-    liftHeight : Double
+    liftHeight : Double,
+    GripPos : Double
 ) : ParallelGroup(
-    InstantCmd({lift.setPos(liftHeight)}),
-    ClawCmds.ClawCmd(claw, ClawConstants.closePos),
     SequentialGroup(
         InstantCmd({arm.setPos(firstArmAngle)}, arm),
         WaitCmd(1.0),
-        InstantCmd({arm.setPos(secondArmAngle)}, arm),
         ClawCmds.ClawOpenCmd(claw, guide, GuideConstants.telePos),
-        ClawCmds.ClawStartReadingCmd(claw),
-        WaitUntilCmd { claw.lastRead < ClawConstants.distanceThreshold },
-        ClawCmds.ClawStopReadingCmd(claw),
-        ClawCmds.ClawCmd(claw, ClawConstants.closePos)
-    )
+        InstantCmd({arm.setPos(secondArmAngle)}, arm)),
+    InstantCmd({guide.setPos(GripPos)}),
+    InstantCmd({lift.setPos(liftHeight)}),
+    ClawCmds.ClawCloseCmd(claw),
 )
-

@@ -8,7 +8,7 @@ object LiftConstants {
     @JvmField var homePos = 0.0
     @JvmField var groundPos = 0.0
     @JvmField var lowPos = 0.0
-    @JvmField var midPos = 5.0
+    @JvmField var midPos = 5.5
     @JvmField var highPos = 15.5
     @JvmField var kP = 0.65
     @JvmField var kI = 0.0

@@ -32,7 +32,7 @@ class HighLeft : KOpMode() {
     private val path1 = HermitePath(
         FLIPPED_HEADING_CONTROLLER,
         Pose(startPose.x, startPose.y, 0.0),
-        Pose(-10.0, 32.5, 310.0.radians)
+        Pose(-10.0, 32.0, 310.0.radians)
     )
 
     private val intakePath1 = HermitePath(
@@ -44,20 +44,27 @@ class HighLeft : KOpMode() {
     private val intakePath2 = HermitePath(
         DEFAULT_HEADING_CONTROLLER,
         Pose(-11.5, 32.5, 120.0.radians),
-        Pose(-13.75, 61.0, 90.0.radians)
+        Pose(-14.0, 61.0, 90.0.radians)
     )
 
     private val intakePath3 = HermitePath(
         DEFAULT_HEADING_CONTROLLER,
         Pose(-11.5, 32.5, 120.0.radians),
-        Pose(-14.0, 60.5, 90.0.radians)
+        Pose(-14.5, 60.5, 90.0.radians)
     )
 
     private val depositPath = HermitePath(
         FLIPPED_HEADING_CONTROLLER,
         Pose(-14.0, 59.0, 270.0.radians),
         Pose(-14.0, 53.0, 270.0.radians),
-        Pose(-4.0, 32.0, 325.0.radians)
+        Pose(-4.5, 31.0, 325.0.radians)
+    )
+
+    private val depositPath1 = HermitePath(
+        FLIPPED_HEADING_CONTROLLER,
+        Pose(-14.0, 59.0, 270.0.radians),
+        Pose(-14.0, 53.0, 270.0.radians),
+        Pose(-5.0, 30.5, 325.0.radians)
     )
 
     private val leftPath = HermitePath(
@@ -166,7 +173,7 @@ class HighLeft : KOpMode() {
             WaitCmd(0.1),
             GVFCmd(
                 robot.drive,
-                SimpleGVFController(depositPath, 0.4, 30.0, 22.0, 0.5, 5.0, 5.0),
+                SimpleGVFController(depositPath1, 0.4, 30.0, 22.0, 0.5, 5.0, 5.0),
                 Pair(
                     DepositSequence(robot.lift, robot.arm, robot.claw, robot.guide, 142.0, LiftConstants.highPos, GuideConstants.depositPos), ProjQuery(
                         Vector(-11.0, 59.0)
@@ -190,7 +197,7 @@ class HighLeft : KOpMode() {
             WaitCmd(0.1),
             GVFCmd(
                 robot.drive,
-                SimpleGVFController(depositPath, 0.4, 30.0, 22.0, 0.5, 5.0, 5.0),
+                SimpleGVFController(depositPath1, 0.4, 30.0, 22.0, 0.5, 5.0, 5.0),
                 Pair(
                     DepositSequence(robot.lift, robot.arm, robot.claw, robot.guide, 142.0, LiftConstants.highPos, GuideConstants.depositPos), ProjQuery(
                         Vector(-11.0, 59.0)
@@ -214,7 +221,7 @@ class HighLeft : KOpMode() {
             WaitCmd(0.1),
             GVFCmd(
                 robot.drive,
-                SimpleGVFController(depositPath, 0.4, 30.0, 22.0, 0.5, 5.0, 5.0),
+                SimpleGVFController(depositPath1, 0.4, 30.0, 22.0, 0.5, 5.0, 5.0),
                 Pair(
                     DepositSequence(robot.lift, robot.arm, robot.claw, robot.guide, 142.0, LiftConstants.highPos, GuideConstants.depositPos), ProjQuery(
                         Vector(-11.0, 59.0)
