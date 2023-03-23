@@ -16,8 +16,7 @@ import org.firstinspires.ftc.teamcode.SignalEdgeDetector;
 
 @Config
 @TeleOp(name = "JacobFumbledTheBag")
-public class PP_MecanumTeleOp extends OpMode
-{
+public class PP_MecanumTeleOp extends OpMode {
     //"MC ABHI IS ON THE REPO!!!"
     public final double TURN_PRECESION = 0.65;
 
@@ -39,14 +38,14 @@ public class PP_MecanumTeleOp extends OpMode
     //private GamepadEx driverOp;
 
     private final double PRECISIONREDUCTION = 0.39;
+
     /**
      * Get the maximum absolute value from a static array of doubles
      *
      * @param input the input array of double values
      * @return the maximum value from the input array
      */
-    private double getMax(double[] input)
-    {
+    private double getMax(double[] input) {
         double max = Integer.MIN_VALUE;
         for (double value : input) {
             if (Math.abs(value) > max) {
@@ -57,8 +56,7 @@ public class PP_MecanumTeleOp extends OpMode
     }
 
     @Override
-    public void init()
-    {
+    public void init() {
         //driverOp = new GamepadEx(gamepad2);
         //driverOp.wasJustReleased(GamepadKeys.Button.RIGHT_BUMPER);
 
@@ -95,8 +93,7 @@ public class PP_MecanumTeleOp extends OpMode
     }// INIT()
 
     @Override
-    public void loop()
-    {
+    public void loop() {
         // we want to check this every time the loop runs
         drive();
         arm();
@@ -108,15 +105,14 @@ public class PP_MecanumTeleOp extends OpMode
     }// end of loop()
 
     // BOT METHODS \\
-    public void drive()
-    {
+    public void drive() {
         double y = reducingDeadzone(-gamepad1.left_stick_y); // Remember, this is reversed!
         double x = reducingDeadzone(gamepad1.left_stick_x);
         boolean precisionToggle = gamepad1.right_trigger > 0.1;
-        double rx =reducingDeadzone(-gamepad1.right_stick_x * 0.75);
-            if(precisionToggle) {
-                rx *= TURN_PRECESION;
-            }
+        double rx = reducingDeadzone(-gamepad1.right_stick_x * 0.75);
+        if (precisionToggle) {
+            rx *= TURN_PRECESION;
+        }
 
         // Denominator is the largest motor power (absolute value) or 1
         // This ensures all the powers maintain the same ratio, but only when
@@ -170,30 +166,27 @@ public class PP_MecanumTeleOp extends OpMode
             motorBackRight.setPower(backRightPower);
         }
     }// end of drive()
-    public void poleAlignment()
-    {
-        if(gamepad1_X.isRisingEdge()) {
+
+    public void poleAlignment() {
+        if (gamepad1_X.isRisingEdge()) {
             alignmentControl.toggleAlignmentDevice();
         }
     }
 
-    public void arm(){
+    public void arm() {
         armControl.update(telemetry);
         if (gamepad2_Y.isRisingEdge()) {
             armControl.setExtake();
             slideControl.setHighJunction(telemetry);
             //clawControl.toggleWristRotate();
             clawControl.wristJoint.setPosition(0.915);
-        }
-        else if (gamepad2_B.isRisingEdge()) {
+        } else if (gamepad2_B.isRisingEdge()) {
             armControl.setExtake();
             slideControl.setMidJunction();
             clawControl.wristJoint.setPosition(0.915);
-        }
-        else if (gamepad2_A.isRisingEdge()) {
+        } else if (gamepad2_A.isRisingEdge()) {
             slideControl.setLowJunction();
-        }
-        else if (gamepad2_X.isRisingEdge()){
+        } else if (gamepad2_X.isRisingEdge()) {
             clawControl.wristJoint.setPosition(clawControl.WRIST_INTAKE_POSITION);
             //clawControl.wristInExtakePosition = false;
             clawControl.wristJoint.setPosition(0.255);
@@ -203,29 +196,29 @@ public class PP_MecanumTeleOp extends OpMode
         }
     }
 
-    public void claw(){
-        if(gamepad2_rightBumper.isRisingEdge()) {
-         clawControl.toggleOpenClose();
+    public void claw() {
+        if (gamepad2_rightBumper.isRisingEdge()) {
+            clawControl.toggleOpenClose();
         }
     }
 
-    public void slides(){
+    public void slides() {
         slideControl.update(telemetry);
-        if (gamepad2.right_trigger>0.1){
+        if (gamepad2.right_trigger > 0.1) {
             slideControl.setManualSlide(165); //165 old val
         }
 
-        if(gamepad2.left_trigger>0.1){
+        if (gamepad2.left_trigger > 0.1) {
             slideControl.setManualSlide(-165);
         }
     }
 
-    public double reducingDeadzone(double x){
-        if(x==0){
+    public double reducingDeadzone(double x) {
+        if (x == 0) {
             return 0;
-        }else if(0<x && 0.25>x){
+        } else if (0 < x && 0.25 > x) {
             return 0.25;
-        }else if(0>x && x>-0.25){
+        } else if (0 > x && x > -0.25) {
             return -0.25;
         }
         return x;
