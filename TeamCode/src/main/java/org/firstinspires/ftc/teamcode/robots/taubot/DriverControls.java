@@ -62,7 +62,9 @@ public class DriverControls {
             robot.driveTrain.adjustChassisLength(1);
         }
 
-        if(stickyGamepad1.start || stickyGamepad2.start){
+        if(stickyGamepad2.start)
+            robot.transferAdvance();
+        if(stickyGamepad1.start){
             robot.driveTrain.toggleExtension();
             //if (robot.driveTrain.getChariotDeployed())
                 //robot.crane.articulate(Crane.Articulation.manualDrive); //allow the crane and turret to return to manual mode

@@ -67,10 +67,10 @@ public class UnderArm implements Subsystem {
     public static double LASSO_OPEN = 1000; //1100 for Leo's gripper
 
     public static double TRANSFER_SHOULDER_ANGLE = -20;
-    public static double TRANSFER_SHOULDER_APPROACH_ANGLE = -25;
-    public static double TRANSFER_ELBOW_ANGLE = -130;
+    public static double TRANSFER_SHOULDER_APPROACH_ANGLE = -30;
+    public static double TRANSFER_ELBOW_ANGLE = -116;
 
-    public static double TRANSFER_WRIST_ANGLE = 130;
+    public static double TRANSFER_WRIST_ANGLE = 105;
 
     public static double PICKUP_WRIST_ANGLE = -4;
 
@@ -371,13 +371,17 @@ public class UnderArm implements Subsystem {
     long substationHoverTimer;
     int substationHoverStage = 0;
 
-    public double SS_HOVER_SHOULDER = 57 , SS_HOVER_ELBOW = 108, SS_HOVER_WRIST = 60, SS_HOVER_TURRET = 0;
+    public double SS_HOVER_SHOULDER = 64 , SS_HOVER_ELBOW = 108, SS_HOVER_WRIST = 60, SS_HOVER_TURRET = 0;
 
+    boolean canSaveHoverPositions = false;
     public void SaveHoverPositions(){
-        //only call this when at a good known substation hover position
-        SS_HOVER_ELBOW = elbowTargetAngle;
-        SS_HOVER_SHOULDER = shoulderTargetAngle;
-        SS_HOVER_TURRET = turretTargetAngle;
+        if(canSaveHoverPositions) {
+            //only call this when at a good known substation hover position
+            SS_HOVER_ELBOW = elbowTargetAngle;
+            SS_HOVER_SHOULDER = shoulderTargetAngle;
+            SS_HOVER_TURRET = turretTargetAngle;
+            canSaveHoverPositions = false;
+        }
     }
 
     public void SetDefaultHoverPositions(){
@@ -414,6 +418,7 @@ public class UnderArm implements Subsystem {
                 if (substationHoverTimer<System.nanoTime()) {
                     open();
                     substationHoverStage = 0;
+                    canSaveHoverPositions = true;
                     return true;
                 }
                 break;

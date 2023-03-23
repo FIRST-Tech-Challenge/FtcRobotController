@@ -563,10 +563,10 @@ public class Robot implements Subsystem {
             case 1:
                 //if(crane.atTransferPosition() ){ //todo debug - temp switched to a timer because crane.atTransferPosition() not working
                 if(System.nanoTime() >= transferTimer){
-                    driveTrain.articulate(DriveTrain.Articulation.lock);
+                    //driveTrain.articulate(DriveTrain.Articulation.lock);
                     underarm.articulate(UnderArm.Articulation.transfer); //tell underarm to go to transfer angle
                     transferTimer = futureTime(1.0);
-                    transferStage++;
+//                    transferStage++;
                 }
                 break;
             case 2: //this is where we grab the cone with the bulb gripper
@@ -610,7 +610,7 @@ public class Robot implements Subsystem {
             case 6:
                 if(System.nanoTime() >= transferTimer) {
                     driveTrain.setChassisLength(Constants.MAX_CHASSIS_LENGTH);
-                    crane.articulate(Crane.Articulation.home); //allows crane to do crane things after transfer
+                    crane.articulate(Crane.Articulation.manual); //allows crane to do crane things after transfer
                     transferStage = 0;
                     return true;
                 }

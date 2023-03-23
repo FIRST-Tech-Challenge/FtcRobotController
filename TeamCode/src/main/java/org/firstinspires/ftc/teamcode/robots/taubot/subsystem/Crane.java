@@ -778,7 +778,7 @@ public class Crane implements Subsystem {
         switch (homeInd){
             case 0:
                 setExtendTargetPos(craneLengthOffset+0.1);
-                robot.underarm.articulate(UnderArm.Articulation.home);
+//                robot.underarm.articulate(UnderArm.Articulation.home);
                 homeInd++;
                 break;
             case 1:
