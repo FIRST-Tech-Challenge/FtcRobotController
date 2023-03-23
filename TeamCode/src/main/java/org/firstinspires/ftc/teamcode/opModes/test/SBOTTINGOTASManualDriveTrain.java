@@ -47,7 +47,6 @@ public class SBOTTINGOTASManualDriveTrain extends TeleOpModeBase {
         rightMotor = HardwareMapContainer.motor1;
 
         new GamepadButton(gamepad, PSButtons.SQUARE).whenActive(() -> isSlowMode = !isSlowMode);
-
         new GamepadButton(gamepad, PSButtons.CIRCLE).whenActive(() -> isForwardOnlyMode = !isForwardOnlyMode);
     }
 
