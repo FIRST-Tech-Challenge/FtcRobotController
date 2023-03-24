@@ -181,18 +181,18 @@ public class RightCompCode extends LinearOpMode {
                 .lineToLinearHeading(new Pose2d(12, -12, Math.toRadians(0)))
                 .build();
         Trajectory stack2 = drive.trajectoryBuilder(poleBack.end())
-                .lineTo(new Vector2d(63, -10))
+                .lineTo(new Vector2d(63, -10.5))
                 .build();
         Trajectory poleMid2 = drive.trajectoryBuilder(stack2.end())
                 .lineTo(new Vector2d(12, -12))
                 .build();
-        Trajectory park1 = drive.trajectoryBuilder(stack2.end())
+        Trajectory park3 = drive.trajectoryBuilder(stack2.end())
                 .lineToLinearHeading(new Pose2d(58, -12, Math.toRadians(0)))
                 .build();
         Trajectory park2 = drive.trajectoryBuilder(stack2.end())
                 .lineToLinearHeading(new Pose2d(36, -11, Math.toRadians(0)))
                 .build();
-        Trajectory park3 = drive.trajectoryBuilder(stack2.end())
+        Trajectory park1 = drive.trajectoryBuilder(stack2.end())
                 .lineToLinearHeading(new Pose2d(12, -12, Math.toRadians(0)))
                 .build();
         waitForStart();

@@ -177,7 +177,7 @@ public class LeftCompCode extends LinearOpMode {
                 .lineToLinearHeading(new Pose2d(-12, -12, Math.toRadians(180)))
                 .build();
         Trajectory stack2 = drive.trajectoryBuilder(poleBack.end())
-                .lineTo(new Vector2d(-63, -10))
+                .lineTo(new Vector2d(-63, -10.15))
                 .build();
         Trajectory poleMid2 = drive.trajectoryBuilder(stack2.end())
                 .lineTo(new Vector2d(-12, -12))
