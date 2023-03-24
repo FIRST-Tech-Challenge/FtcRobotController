@@ -35,19 +35,19 @@ public class SPLINEAutoRightSide extends PowerPlay_AprilTagDetectionDeposit {
     public static double openingY = 3;
 
     // [MEDIUM JUNCTION]
-    public static double mediumX1 = 43.75; // 44.3
+    public static double mediumX1 = 38; // 44.3
     public static double mediumY1 = 5;
 
-    public static double mediumX2 = 43.75;
+    public static double mediumX2 = 36;
     public static double mediumY2 = 5;
 
-    public static double mediumX3 = 43.75;
+    public static double mediumX3 = 34;
     public static double mediumY3 = 5;
 
-    public static double mediumX4 = 43.75;
+    public static double mediumX4 = 33;
     public static double mediumY4 = 5; // -4.8
 
-    public static double mediumX5 = 43.75;
+    public static double mediumX5 = 33;
     public static double mediumY5 = 5;
 
     // [PARKING]
@@ -58,11 +58,11 @@ public class SPLINEAutoRightSide extends PowerPlay_AprilTagDetectionDeposit {
 
     // [CONE STACK]
     public static double coneStackForward = 24.25;
-    public static double xConeStack1 = 48.8; // 49.8
-    public static double xConeStack2 = 48.7; // 50.3
-    public static double xConeStack3 = 48.6;
-    public static double xConeStack4 = 48.5;
-    public static double xConeStack5 = 48.4;
+    public static double xConeStack1 = 48; // 49.8
+    public static double xConeStack2 = 47.5; // 50.3
+    public static double xConeStack3 = 47.5;
+    public static double xConeStack4 = 47.4;
+    public static double xConeStack5 = 47.3;
     public static double coneStackHeading = 89;
     public static double coneStackEndTangent = -80;
 

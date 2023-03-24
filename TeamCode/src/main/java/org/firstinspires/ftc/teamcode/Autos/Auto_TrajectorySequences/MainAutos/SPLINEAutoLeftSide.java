@@ -23,7 +23,7 @@ public class SPLINEAutoLeftSide extends PowerPlay_AprilTagDetectionDeposit {
     public static double openingStrafe = 8;
     // [MECHANISMS]
     private Arm armControl;
-    public static int armPosition = 280;
+    public static int armPosition = 287;
     private Slide slideControl;
     private Claw clawControl;
 

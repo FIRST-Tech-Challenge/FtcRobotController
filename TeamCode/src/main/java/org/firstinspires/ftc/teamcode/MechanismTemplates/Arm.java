@@ -21,14 +21,14 @@ public class Arm{
 //    public static double armKf = 0.0000001;
 
     // New PID values
-    public static double armKpUp = 0.006; // old is 0.012
-    public static double armKpDown = 0.00109;
+    public static double armKpUp = 0.008; // old is 0.012
+    public static double armKpDown = 0.0015;
     public static double armKi = 0.00001;
     public static double armKd = 0.00007;
     public static double armKf = 0;
-    public static double EXTAKE_POS = 280; // 180 old val; in degrees of absolute encoder
-    public static double INTAKE_POS = 45; // 65 old val
-    public static double AUTOEXTAKE_POS = 284; //169
+    public static double EXTAKE_POS = 287; // 180 old val; in degrees of absolute encoder
+    public static double INTAKE_POS = 42; // 65 old val
+    public static double AUTOEXTAKE_POS = 288; //169
 
     // Initially set to 0 because we only want the claw to move when given input from the controller
     // initializing the targetPos value to a greater positive value would cause the update() method to
