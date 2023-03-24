@@ -67,8 +67,8 @@ public class UnderArm implements Subsystem {
     public static double LASSO_OPEN = 1000; //1100 for Leo's gripper
 
     public static double TRANSFER_SHOULDER_ANGLE = -20;
-    public static double TRANSFER_SHOULDER_APPROACH_ANGLE = -30;
-    public static double TRANSFER_ELBOW_ANGLE = -116;
+    public static double TRANSFER_SHOULDER_APPROACH_ANGLE = -25;
+    public static double TRANSFER_ELBOW_ANGLE = -120;
 
     public static double TRANSFER_WRIST_ANGLE = 105;
 
@@ -139,6 +139,7 @@ public class UnderArm implements Subsystem {
     public enum Articulation {
         init1,
         transfer,
+        driving,
         transferRecover, //recover from the transfer position to just outward of the vertical position so gripper clears over the camera
         home,
         manual,
@@ -232,6 +233,11 @@ public class UnderArm implements Subsystem {
                     articulation = Articulation.manual;
                 }
                 break;
+            case driving:
+                setShoulderTargetAngle(20);
+                setElbowTargetAngle(0);
+                setTurretTargetAngle(0);
+                robot.driveTrain.setChassisLength(MIN_CHASSIS_LENGTH);
             case manual: //normal IK intake mode
                 //holdTarget(fieldPositionTarget.x,fieldPositionTarget.y,fieldPositionTarget.z);
                 break;

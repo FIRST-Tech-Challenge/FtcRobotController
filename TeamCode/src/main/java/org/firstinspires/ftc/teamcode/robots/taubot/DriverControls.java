@@ -374,15 +374,15 @@ public class DriverControls {
         }
 
         if(notJoystickDeadZone(gamepad2.left_stick_y)){
-            robot.underarm.adjustShoulder(gamepad2.left_stick_y);
+            //robot.underarm.adjustShoulder(gamepad2.left_stick_y);
         }
 
         if(notJoystickDeadZone(gamepad2.right_stick_y)){
-            robot.underarm.adjustElbow(-gamepad2.right_stick_y);
+            //robot.underarm.adjustElbow(-gamepad2.right_stick_y);
         }
 
         if(notJoystickDeadZone(gamepad2.right_stick_x)){
-            robot.underarm.adjustWrist(-gamepad2.right_stick_x);
+            //robot.underarm.adjustWrist(-gamepad2.right_stick_x);
         }
 
         if(notJoystickDeadZone(gamepad2.left_stick_x)){

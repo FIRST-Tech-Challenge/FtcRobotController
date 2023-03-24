@@ -225,12 +225,14 @@ public class Robot implements Subsystem {
     int timeSupervisor = 0;
 
     public boolean AutonRun(int autonTarget, Constants.Position startingPosition){
-
+        if(Objects.isNull(autonTarget)){
+            autonTarget = 1;
+        }
         switch (timeSupervisor) {
             case 0:
                 driveTrain.articulate(DriveTrain.Articulation.unlock);
                 crane.setCraneTarget(driveTrain.getPoseEstimate().getX()+6,driveTrain.getPoseEstimate().getY(),8);
-                totalAutonTime = futureTime(28);
+                totalAutonTime = futureTime(300);
                 autonIndex = 0;
                 timeSupervisor++;
                 break;
@@ -413,11 +415,12 @@ public class Robot implements Subsystem {
         if(isDriverDriving()) { //bypass the normal articulation flow when driving - this could short circuit other articulations leaving them in unknown stages
             driveTrain.articulate(DriveTrain.Articulation.unlock);
             crane.articulate(Crane.Articulation.robotDriving); //keeps crane in safe position
-            underarm.articulate(UnderArm.Articulation.home);
+            underarm.articulate(UnderArm.Articulation.driving);
         }
         else{
             if(crane.getArticulation().equals(Crane.Articulation.robotDriving)){
                 crane.articulate(Crane.Articulation.manualDrive);
+                underarm.articulate(UnderArm.Articulation.manual);
             }
             switch (this.articulation) {
                 case MANUAL:
@@ -557,23 +560,26 @@ public class Robot implements Subsystem {
                 driveTrain.setChassisLength(Constants.MAX_CHASSIS_LENGTH);
                 crane.release();
                 crane.articulate(Crane.Articulation.transfer); //tells crane to go to transfer position
+//                if(driveTrain.getChassisLength() >= Constants.MAX_CHASSIS_LENGTH - 1) {
+//                    driveTrain.articulate(DriveTrain.Articulation.lock);
+//                }
+                transferTimer = futureTime(3.5);
                 transferStage++;
-                transferTimer = futureTime(3.0);
                 break;
             case 1:
                 //if(crane.atTransferPosition() ){ //todo debug - temp switched to a timer because crane.atTransferPosition() not working
                 if(System.nanoTime() >= transferTimer){
                     //driveTrain.articulate(DriveTrain.Articulation.lock);
                     underarm.articulate(UnderArm.Articulation.transfer); //tell underarm to go to transfer angle
-                    transferTimer = futureTime(1.0);
-//                    transferStage++;
+                    transferTimer = futureTime(2.0);
+                    transferStage++;
                 }
                 break;
             case 2: //this is where we grab the cone with the bulb gripper
                 //if(crane.atTransferPosition()&& underarm.atTransfer()){ //todo debug - temp switched to a timer because crane.atTransferPosition() not working
                 if(System.nanoTime() >= transferTimer){
                     crane.grab();
-                    transferTimer = futureTime(1.5);
+                    transferTimer = futureTime(0.8);
                     //TODO TRIED VARIOUS THINGS BELOW TO ABORT/STALL SO WE COULD LOOK AT FINAL TRANSFER POSITION BUT THEY HAVE DIFFERENT SIDE EFFECTS FROM THE COMBINATIONS OF ARTICULATIONS
                     //CAN TEMPORARILY EXIT HERE FOR DEBUGGING
                     //boolean tuning = true; if (tuning) {transferStage = 0; return true;}
@@ -604,7 +610,7 @@ public class Robot implements Subsystem {
                     underarm.articulate(UnderArm.Articulation.transferRecover);
                     //TODO UNCOMMENT NEXT LINE WHEN YOU WANT THE CRANE TO ACTUALLY ATTEMPT THE CONE DROP - BE SURE FIELD POSITIONING IS RIGHT
                     transferStage++;
-                    transferTimer = futureTime(1.0);
+                    transferTimer = futureTime(0.6);
                 }
                 break;
             case 6:

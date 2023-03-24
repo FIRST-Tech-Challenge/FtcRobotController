@@ -104,14 +104,14 @@ public class Crane implements Subsystem {
     public static double EXTENDER_TICS_MAX = 3700; // of the robot
     boolean EXTENDER_CALIBRATE_MAX = false; //keep false except if calibrating EXTENDER_TICS_MAX
 
-    public static double BULB_OPEN_POS = 1500; //old value: 1500
-    public static double BULB_CLOSED_POS = 1900; //old value: 1900
+    public static double BULB_OPEN_POS = 1300; //old value: 1500
+    public static double BULB_CLOSED_POS = 2100; //old value: 1900
 
     public static double TRANSFER_SHOULDER_ANGLE = 50;  //angle at which transfer occurs
     public static double TRANSFER_SHOULDER_FLIPANGLE = 80; //causes the gripperflipper to flip when the angle is high and the turret turns enough or the robot accellerates
     public static double TRANSFER_ARM_LENGTH = 0.05;
 
-    public static double SAFE_SHOULDER_ANGLE = 30;
+    public static double SAFE_SHOULDER_ANGLE = 40;
     public static double SAFE_ARM_LENGTH = 0.05;
 
     public static double NUDGE_CENTER_LEFT = 1950;
@@ -469,6 +469,7 @@ public class Crane implements Subsystem {
                 setShoulderTargetAngle(0);
                 break;
             case robotDriving: //if the robot is driving all cranes should go into a safe position
+                fieldPositionTarget = deltaGripperPosition.add(robotPosition);
                 setShoulderTargetAngle(SAFE_SHOULDER_ANGLE);
                 setExtendTargetPos(SAFE_ARM_LENGTH);
                 robot.turret.articulate(Turret.Articulation.lockToOneHundredAndEighty); //turret will not move AT ALL from home position no matter the target
@@ -553,7 +554,7 @@ public class Crane implements Subsystem {
             case 1: //nudge flipper
                 if(System.nanoTime() >= transferTimer) {
                     nudgeLeft();
-                    transferTimer = futureTime(.5);
+                    transferTimer = futureTime(1.0);
                     transferStage++;
                 }
                 break;
@@ -995,7 +996,7 @@ public class Crane implements Subsystem {
         }
     }
 
-    Vector3 deltaGripperPosition = new Vector3(7,0,8);
+    Vector3 deltaGripperPosition = new Vector3(0,0,10);
 
     public void adjustTurretAngle(double speed){
         if(robotIsNotTipping)targetTurretAngle = robot.turret.getHeading() + (TURRET_ADJUST * speed);
