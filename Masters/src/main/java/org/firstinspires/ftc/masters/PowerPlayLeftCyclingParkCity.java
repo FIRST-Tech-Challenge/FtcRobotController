@@ -26,7 +26,7 @@ import java.util.Date;
 import java.util.List;
 
 @Config
-@Autonomous(name = "Power Play Left Cycling Park City", group ="competition")
+//@Autonomous(name = "Power Play Left Cycling Park City", group ="competition")
 public class PowerPlayLeftCyclingParkCity extends LinearOpMode {
 
     enum State {
@@ -236,7 +236,7 @@ public class PowerPlayLeftCyclingParkCity extends LinearOpMode {
                     } else {
                         drive.openClaw();
                         drive.tipCenter();
-                        armTarget = ARM_CONE_STACK;
+                        armTarget = coneStack;
                     }
                     break;
 

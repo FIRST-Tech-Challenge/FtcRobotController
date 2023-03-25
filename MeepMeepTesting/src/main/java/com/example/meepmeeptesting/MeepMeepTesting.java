@@ -13,12 +13,12 @@ public class MeepMeepTesting {
     public static double xIntermediateStack =20;
     public static double yIntermediateStack = -12;
     public static double angleIntermediateStack = 270;
-    public static double xStack =-59;
+    public static double xStack =59;
     public static double yStack = -12;
     public static void main(String[] args) {
         MeepMeep meepMeep = new MeepMeep(800);
 
-        Pose2d startPose = new Pose2d(new Vector2d(-37, -64.25), Math.toRadians(90));
+        Pose2d startPose = new Pose2d(new Vector2d(xStack, yStack), Math.toRadians(0));
 
 
 
@@ -30,12 +30,12 @@ public class MeepMeepTesting {
                 .followTrajectorySequence(drive ->
                         drive.trajectorySequenceBuilder(startPose)
 
-                                //.splineToLinearHeading( new Vector2d(-36, -14), Math.toRadians(45))
-                                .lineToSplineHeading(new Pose2d(new Vector2d(-37, -30), Math.toRadians(90)))
-                                .splineToSplineHeading(new Pose2d(-31, -8, Math.toRadians(45)), Math.toRadians(45))
-                                .back (3)
-                                .turn(Math.toRadians(135))
-
+//                                //.splineToLinearHeading( new Vector2d(-36, -14), Math.toRadians(45))
+//                                .lineToSplineHeading(new Pose2d(new Vector2d(-37, -30), Math.toRadians(90)))
+//                                .splineToSplineHeading(new Pose2d(-36, -12, Math.toRadians(45)), Math.toRadians(45))
+//                                .back (3)
+//                                .turn(Math.toRadians(135))
+//
 //                                .splineToLinearHeading(new Pose2d(new Vector2d(xStack-8, yStack),Math.toRadians(180)),Math.toRadians(180))
 //                                .lineTo(new Vector2d(-45, -12))
 //                                .lineToLinearHeading(new Pose2d(-36,-11, Math.toRadians(45+180)))
@@ -46,9 +46,12 @@ public class MeepMeepTesting {
 //
 //                                .splineToLinearHeading(new Pose2d(new Vector2d(-45, -12),Math.toRadians(180)),Math.toRadians(180))
 //                                .lineTo(new Vector2d(xStack-8, yStack))
-//
-//                                .lineTo(new Vector2d(-45, -12))
+
+//                                .lineToSplineHeading(new Pose2d(new Vector2d(-45, -12),Math.toRadians(180)))
 //                                .splineToSplineHeading(new Pose2d(-32, -9, Math.toRadians(45+180)), Math.toRadians(45))
+
+                                .lineToSplineHeading(new Pose2d(new Vector2d(45, -14), Math.toRadians(0)))
+                                .splineToSplineHeading(new Pose2d(39, -12, Math.toRadians(135+180)), Math.toRadians(135))
 //                                .forward (5)
 //                                .turn(Math.toRadians(45))
 //                                //middle
