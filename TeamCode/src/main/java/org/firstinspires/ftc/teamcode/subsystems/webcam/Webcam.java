@@ -39,8 +39,7 @@ public class Webcam extends Subsystem {
 		aprilTagDetectionPipeline = new AprilTagDetectionPipeline(0.166, 578.272, 578.272, 402.145, 221.506);
 		
 		camera.setPipeline(aprilTagDetectionPipeline);
-		camera.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener()
-		{
+		camera.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
 			@Override
 			public void onOpened()
 			{
@@ -111,5 +110,9 @@ public class Webcam extends Subsystem {
 				dataOutput.setValue(tag.id);
 			}
 		}
+	}
+	
+	public void closeStream(){
+		camera.stopStreaming();
 	}
 }

@@ -71,6 +71,8 @@ public class TrajectorySequenceStorage {
 				.build();
 	}
 	
+	
+	
 	public TrajectorySequenceStorage leftHigh5(
 			RobotConfig r,
 			SampleMecanumDrive drive,
@@ -90,8 +92,11 @@ public class TrajectorySequenceStorage {
 		this.sequenceIndex = 0;
 		
 		trajectorySequences = new TrajectorySequence[]{
-				rightStart()
+				rileyRightSection(0,0),
+				parkingPlaceholder(rileyRightSection(0,0).end())
 		};
+		
+		
 		
 		return this;
 	}
@@ -115,7 +120,8 @@ public class TrajectorySequenceStorage {
 		this.sequenceIndex = 0;
 
 		trajectorySequences = new TrajectorySequence[]{
-
+			rightStart(),
+			parkingPlaceholder(rightStart().end())
 		};
 
 		return this;
@@ -139,11 +145,101 @@ public class TrajectorySequenceStorage {
 		drive.followTrajectorySequenceAsync(trajectorySequences[sequenceIndex]);
 	}
 	
-	public void printSequence(){
-		r.opMode.telemetry.addData("length", trajectorySequences.length);
-		for (int i = 0, trajectorySequencesLength = trajectorySequences.length; i < trajectorySequencesLength; i++) {
-			TrajectorySequence trajectorySequenced = trajectorySequences[i];
-			r.opMode.telemetry.addData(String.valueOf(i), trajectorySequenced);
+	public void addRightParkSequence(int tagid){
+		switch (tagid){
+			case 1:
+				trajectorySequences[trajectorySequences.length-1] = rightPark1(trajectorySequences[trajectorySequences.length-2].end());
+				break;
+			case 2:
+				trajectorySequences[trajectorySequences.length-1] = rightPark2(trajectorySequences[trajectorySequences.length-2].end());
+				break;
+			case 3:
+				trajectorySequences[trajectorySequences.length-1] = rightPark3(trajectorySequences[trajectorySequences.length-2].end());
+				break;
 		}
+	}
+	
+	public void addLeftParkSequence(int tagid){
+		switch (tagid){
+			case 1:
+				trajectorySequences[trajectorySequences.length-1] = leftPark1(trajectorySequences[trajectorySequences.length-2].end());
+				break;
+			case 2:
+				trajectorySequences[trajectorySequences.length-1] = leftPark2(trajectorySequences[trajectorySequences.length-2].end());
+				break;
+			case 3:
+				trajectorySequences[trajectorySequences.length-1] = leftPark3(trajectorySequences[trajectorySequences.length-2].end());
+				break;
+		}
+	}
+	
+	private TrajectorySequence parkingPlaceholder(Pose2d startPose){
+		return drive.trajectorySequenceBuilder(startPose)
+				.build();
+	}
+	private TrajectorySequence rightPark1(Pose2d startPose){
+		return drive.trajectorySequenceBuilder(startPose)
+				.splineTo(new Vector2d(12, -24), Math.toRadians(90)) //TODO fix up values
+				.UNSTABLE_addTemporalMarkerOffset(0, () -> {
+					arm.presetTargetPosition(Arm.ArmPos.HALF);
+					lift.presetLiftPosition(RobotConstants.poleHeights.GROUND);
+				})
+				.splineTo(new Vector2d(), Math.toRadians(90))
+				.build();
+	}
+	
+	private TrajectorySequence rightPark2(Pose2d startPose){
+		return drive.trajectorySequenceBuilder(startPose)
+				.splineTo(new Vector2d(12, -24), Math.toRadians(90)) //TODO fix up values
+				.UNSTABLE_addTemporalMarkerOffset(0, () -> {
+					arm.presetTargetPosition(Arm.ArmPos.HALF);
+					lift.presetLiftPosition(RobotConstants.poleHeights.GROUND);
+				})
+				.splineTo(new Vector2d(), Math.toRadians(90))
+				.build();
+	}
+	
+	private TrajectorySequence rightPark3(Pose2d startPose){
+		return drive.trajectorySequenceBuilder(startPose)
+				.splineTo(new Vector2d(12, -24), Math.toRadians(90)) //TODO fix up values
+				.UNSTABLE_addTemporalMarkerOffset(0, () -> {
+					arm.presetTargetPosition(Arm.ArmPos.HALF);
+					lift.presetLiftPosition(RobotConstants.poleHeights.GROUND);
+				})
+				.splineTo(new Vector2d(), Math.toRadians(90))
+				.build();
+	}
+	
+	private TrajectorySequence leftPark1(Pose2d startPose){
+		return drive.trajectorySequenceBuilder(startPose)
+				.splineTo(new Vector2d(12, -24), Math.toRadians(90)) //TODO fix up values
+				.UNSTABLE_addTemporalMarkerOffset(0, () -> {
+					arm.presetTargetPosition(Arm.ArmPos.HALF);
+					lift.presetLiftPosition(RobotConstants.poleHeights.GROUND);
+				})
+				.splineTo(new Vector2d(), Math.toRadians(90))
+				.build();
+	}
+	
+	private TrajectorySequence leftPark2(Pose2d startPose){
+		return drive.trajectorySequenceBuilder(startPose)
+				.splineTo(new Vector2d(12, -24), Math.toRadians(90)) //TODO fix up values
+				.UNSTABLE_addTemporalMarkerOffset(0, () -> {
+					arm.presetTargetPosition(Arm.ArmPos.HALF);
+					lift.presetLiftPosition(RobotConstants.poleHeights.GROUND);
+				})
+				.splineTo(new Vector2d(), Math.toRadians(90))
+				.build();
+	}
+	
+	private TrajectorySequence leftPark3(Pose2d startPose){
+		return drive.trajectorySequenceBuilder(startPose)
+				.splineTo(new Vector2d(12, -24), Math.toRadians(90)) //TODO fix up values
+				.UNSTABLE_addTemporalMarkerOffset(0, () -> {
+					arm.presetTargetPosition(Arm.ArmPos.HALF);
+					lift.presetLiftPosition(RobotConstants.poleHeights.GROUND);
+				})
+				.splineTo(new Vector2d(), Math.toRadians(90))
+				.build();
 	}
 }
