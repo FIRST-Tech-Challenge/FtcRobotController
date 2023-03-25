@@ -1,6 +1,8 @@
 package org.firstinspires.ftc.teamcode.MechanismTemplates;
 
 
+import android.icu.text.CaseMap;
+
 import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
@@ -22,6 +24,8 @@ public class PoleAlignment {
     public void raiseServo() {
         retractServo.setPosition(raise);
     }
+
+    public void lowerServo(){retractServo.setPosition(lower);}
 
     public void toggleAlignmentDevice() {
         if (isUp) {

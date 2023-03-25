@@ -21,7 +21,7 @@ public class Slide {
     private final double MAX = 2500;
 
     public static double slideKp = 0.0015; //0.00326; //0.0039;
-    public static double slideKpDown = 0.007;
+    public static double slideKpManualDown = 0.027; // 0.007 old val
     public static double slideKi = 0.000000325; //0.00000325;
     public static double slideKd = 0.000000062; //0.000001;
     public static double slideKf = 0.000069; //0.000069;
@@ -44,7 +44,6 @@ public class Slide {
 
         slideLeft.setInverted(true);
 
-
         slidePIDF = new PIDFController(PIDF_COFFECIENTS[0], PIDF_COFFECIENTS[1], PIDF_COFFECIENTS[2], PIDF_COFFECIENTS[3]);
 
         targetPos = ZERO_POSITION; // target position is 0 by default
@@ -53,18 +52,12 @@ public class Slide {
     }
 
     public void update(Telemetry telemetry) {
-
-
-
       /*  if(targetPos == ZERO_POSITION && ){
         slidePIDF.setPIDF(slideKpDown, slideKi, slideKd, slideKf);
         }else {*/
         slidePIDF.setPIDF(slideKp, slideKi, slideKd, slideKf);
-
-
         correctionLeft = slidePIDF.calculate(slideLeft.getCurrentPosition(), targetPos);
         correctionRight = slidePIDF.calculate(slideRight.getCurrentPosition(), targetPos);
-
         /*
        telemetry.addData("targetPosition: ", targetPos);
         telemetry.addData("Right motor position: ", slideRight.getCurrentPosition());
@@ -78,12 +71,6 @@ public class Slide {
         // sets the output power of the motor
         slideLeft.set(correctionLeft);
         slideRight.set(correctionRight);
-    }
-
-    public void manualSlides(int slideIncrement) {
-        if ((targetPos + slideIncrement) <= 100 && (targetPos - slideIncrement) >= 0) {
-            targetPos += slideIncrement;
-        }
     }
 
     public void setIntakeOrGround() {
@@ -104,16 +91,17 @@ public class Slide {
         telemetry.update();
     }
 
-    public void setManualSlide(int increment) {
+    public void setManualSlide(int increment){
         double targetManual = (slideRight.getCurrentPosition() + slideLeft.getCurrentPosition()) / 2 + increment;
+
         if (targetManual <= MAX && targetManual >= ZERO_POSITION)
             targetPos = targetManual;
-
+            if(increment < 0){
+                slidePIDF.setPIDF(slideKpManualDown, slideKi, slideKd, slideKf);
+            }
     }
 
     public void setCustom(int custom) {
         targetPos = custom;
     }
-
-
 }

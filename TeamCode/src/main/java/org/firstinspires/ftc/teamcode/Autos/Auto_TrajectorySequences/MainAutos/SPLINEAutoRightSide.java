@@ -20,7 +20,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 @Autonomous(name = "STATES_splineAutoRightSide")
 public class SPLINEAutoRightSide extends PowerPlay_AprilTagDetectionDeposit {
     public static double endTangent1 = 40;
-    public static double openingStrafe = 8;
+    public static double openingStrafe = 9.25;
     // [MECHANISMS]
     private Arm armControl;
     public static int armPosition = 280;
@@ -31,18 +31,18 @@ public class SPLINEAutoRightSide extends PowerPlay_AprilTagDetectionDeposit {
     private PoleAlignment alignmentControl;
 
     // [OPENING MOVE]
-    public static double openingX = 37.25;
+    public static double openingX = 36;
     public static double openingY = 3;
 
     // [MEDIUM JUNCTION]
-    public static double mediumX1 = 38; // 44.3
-    public static double mediumY1 = 5;
+    public static double mediumX1 = 38; // 43.5
+    public static double mediumY1 = 6.75;
 
-    public static double mediumX2 = 36;
-    public static double mediumY2 = 5;
+    public static double mediumX2 = 37.5;
+    public static double mediumY2 = 6.5;
 
-    public static double mediumX3 = 34;
-    public static double mediumY3 = 5;
+    public static double mediumX3 = 36.5;
+    public static double mediumY3 = 6.5;
 
     public static double mediumX4 = 33;
     public static double mediumY4 = 5; // -4.8
@@ -51,16 +51,17 @@ public class SPLINEAutoRightSide extends PowerPlay_AprilTagDetectionDeposit {
     public static double mediumY5 = 5;
 
     // [PARKING]
-    public static double zone2X = 51;
+    public static double zone2X = 49;
     public static double zone2Y = 0;
-    public static double zone1backwards = 22;
-    public static double zone3forwards = 24; //-24.5
+    public static double headingZone2 = 270;
+    public static double zone1backwards = 25;
+    public static double zone3forwards = -26; //-24.5
 
     // [CONE STACK]
-    public static double coneStackForward = 24.25;
+    public static double coneStackForward = 25;
     public static double xConeStack1 = 48; // 49.8
-    public static double xConeStack2 = 47.5; // 50.3
-    public static double xConeStack3 = 47.5;
+    public static double xConeStack2 = 46.5; // 47.5
+    public static double xConeStack3 = 45;
     public static double xConeStack4 = 47.4;
     public static double xConeStack5 = 47.3;
     public static double coneStackHeading = 89;
@@ -81,12 +82,13 @@ public class SPLINEAutoRightSide extends PowerPlay_AprilTagDetectionDeposit {
     // [3] MEDIUM JUNCTION --> CONE STACK
     public static double coneStackHeading3 = 45;
     // [3] CONE STACK --> MEDIUM JUNCTION
-    public static double mediumHeading3 = 133;
+    public static double mediumHeading3 = 128;
 
     // [4] MEDIUM JUNCTION --> CONE STACK
     public static double coneStackHeading4 = 45;
     // [4] CONE STACK --> MEDIUM JUNCTION
     public static double mediumHeading4 = 131; // 230 old val for all
+
 
     public void initialize() {
         armControl = new Arm(hardwareMap);
@@ -131,9 +133,8 @@ public class SPLINEAutoRightSide extends PowerPlay_AprilTagDetectionDeposit {
                 })
                 .waitSeconds(0.25)
                 .UNSTABLE_addTemporalMarkerOffset(0, () -> {
-                    slideControl.setCustom(620);//620
+                    slideControl.setCustom(635);//620
                 })
-
 
                 // GOING BACK TO CONE STACK
                 .lineToLinearHeading(new Pose2d(xConeStack1, -1, Math.toRadians(270)))
@@ -153,8 +154,6 @@ public class SPLINEAutoRightSide extends PowerPlay_AprilTagDetectionDeposit {
                     armControl.setAutoExtake();
                     clawControl.toggleWristRotate();
                 })
-
-
                 .setReversed(true)
                 .splineTo(new Vector2d(mediumX1, mediumY1), Math.toRadians(mediumHeading1))
                 .setReversed(false)
@@ -166,6 +165,7 @@ public class SPLINEAutoRightSide extends PowerPlay_AprilTagDetectionDeposit {
                     clawControl.toggleAutoOpenClose();
                 })
                 .waitSeconds(0.1) // 0.15 old val
+
                 .UNSTABLE_addTemporalMarkerOffset(0, () -> {
                     armControl.setIntake();
                     clawControl.toggleWristRotate();
@@ -174,7 +174,7 @@ public class SPLINEAutoRightSide extends PowerPlay_AprilTagDetectionDeposit {
 
 
                 .UNSTABLE_addTemporalMarkerOffset(0, () -> {
-                    slideControl.setCustom(445);//475
+                    slideControl.setCustom(455);//475
                 })
                 .splineTo(new Vector2d(xConeStack2, -coneStackForward), Math.toRadians(coneStackEndTangent))
                 .UNSTABLE_addTemporalMarkerOffset(0, () -> {
@@ -185,7 +185,6 @@ public class SPLINEAutoRightSide extends PowerPlay_AprilTagDetectionDeposit {
                     slideControl.setCustom(1275);
                 })
                 .waitSeconds(0.1)
-
 
                 .UNSTABLE_addTemporalMarkerOffset(0.5, () -> {
                     slideControl.setCustom(880); //1050 for medium
@@ -203,6 +202,7 @@ public class SPLINEAutoRightSide extends PowerPlay_AprilTagDetectionDeposit {
                     clawControl.toggleAutoOpenClose();
                 })
                 .waitSeconds(0.1)
+
                 .UNSTABLE_addTemporalMarkerOffset(0, () -> {
                     armControl.setIntake();
                     clawControl.toggleWristRotate();
@@ -211,7 +211,7 @@ public class SPLINEAutoRightSide extends PowerPlay_AprilTagDetectionDeposit {
 
                 //.waitSeconds(0.25)
                 .UNSTABLE_addTemporalMarkerOffset(0, () -> {
-                    slideControl.setCustom(330);//350
+                    slideControl.setCustom(340);//350
                 })
                 .splineTo(new Vector2d(xConeStack3, -coneStackForward), Math.toRadians(coneStackEndTangent))
                 .UNSTABLE_addTemporalMarkerOffset(0, () -> {
@@ -236,6 +236,7 @@ public class SPLINEAutoRightSide extends PowerPlay_AprilTagDetectionDeposit {
                     slideControl.setIntakeOrGround();
                 })
                 .waitSeconds(0.1)
+
                 .UNSTABLE_addTemporalMarkerOffset(0, () -> {
                     clawControl.toggleAutoOpenClose();
                 })
@@ -246,7 +247,8 @@ public class SPLINEAutoRightSide extends PowerPlay_AprilTagDetectionDeposit {
                 })
 
 
-                //.waitSeconds(0.25)
+                .waitSeconds(0.25)
+                /*
                 .UNSTABLE_addTemporalMarkerOffset(0, () -> {
                     slideControl.setCustom(195);//225
                 })
@@ -287,7 +289,6 @@ public class SPLINEAutoRightSide extends PowerPlay_AprilTagDetectionDeposit {
                     slideControl.setIntakeOrGround();
                 })
 
-
                 .waitSeconds(0.1)
                 .UNSTABLE_addTemporalMarkerOffset(0, () -> {
                     slideControl.setIntakeOrGround();//225
@@ -324,11 +325,13 @@ public class SPLINEAutoRightSide extends PowerPlay_AprilTagDetectionDeposit {
                     clawControl.toggleWristRotate();
                 })
                 //.waitSeconds(0.25)
+
+                 */
                 .UNSTABLE_addTemporalMarkerOffset(0, () -> {
-                    alignmentControl.toggleAlignmentDevice();
-                    slideControl.setIntakeOrGround();
+                    alignmentControl.lowerServo();
                 })
-                .waitSeconds(0.1)
+                .waitSeconds(1)
+                .lineToLinearHeading(new Pose2d(zone2X,zone2Y,Math.toRadians(headingZone2)))
 
                 .addTemporalMarker(() -> {
 				/*
@@ -349,31 +352,22 @@ public class SPLINEAutoRightSide extends PowerPlay_AprilTagDetectionDeposit {
 						bot.followTrajectoryAsync(zoneThree);
 					}
 					*/
-                    if (tagUse == 2) {
-                        TrajectorySequence zoneTwo = bot.trajectorySequenceBuilder(new Pose2d(mediumX4, mediumY4, Math.toRadians(mediumHeading4)))
-                                .lineToLinearHeading(new Pose2d(zone2X, zone2Y, Math.toRadians(89)))
-                                .build();
-                        bot.followTrajectorySequenceAsync(zoneTwo);
-                    } else if (tagUse == 1) {
-                        TrajectorySequence zoneOne = bot.trajectorySequenceBuilder(new Pose2d(mediumX4, mediumY4, Math.toRadians(mediumHeading4)))
-                                .lineToLinearHeading(new Pose2d(zone2X, zone2Y, Math.toRadians(89)))
-                                .build();
-                        Trajectory backward1 = bot.trajectoryBuilder(new Pose2d(zone2X, zone2Y, Math.toRadians(89)))
+
+                  if (tagUse == 1) {
+                        Trajectory backward1 = bot.trajectoryBuilder(new Pose2d(zone2X, zone2Y, Math.toRadians(headingZone2)))
                                 .back(zone1backwards)
                                 .build();
-                        bot.followTrajectorySequenceAsync(zoneOne);
                         bot.followTrajectoryAsync(backward1);
-                    } else {
-                        Trajectory zoneThree = bot.trajectoryBuilder(new Pose2d(mediumX4, mediumY4, Math.toRadians(mediumHeading4)))
-                                .lineToLinearHeading(new Pose2d(zone2X, zone2Y, Math.toRadians(89)))
-                                .build();
-                        Trajectory forward3 = bot.trajectoryBuilder(new Pose2d(zone2X, zone2Y, Math.toRadians(89)))
+                    } else if(tagUse == 3){
+                        Trajectory forward3 = bot.trajectoryBuilder(new Pose2d(zone2X, zone2Y, Math.toRadians(headingZone2)))
                                 .forward(zone3forwards)
                                 .build();
-                        bot.followTrajectoryAsync(zoneThree);
+
                         bot.followTrajectoryAsync(forward3);
                     }
+
                 })
+
                 .build();
         scan();
         waitForStart();
