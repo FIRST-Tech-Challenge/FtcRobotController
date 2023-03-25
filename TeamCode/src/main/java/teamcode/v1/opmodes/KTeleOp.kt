@@ -67,14 +67,15 @@ open class KTeleOp : KOpMode(photonEnabled = false) {
         driver.leftTrigger.onPress(ClawCmds.ClawCloseCmd(robot.claw))
         driver.dpadUp.onPress(DepositSequence(robot.lift, robot.arm, robot.claw, robot.guide, ArmConstants.midPos, LiftConstants.midPos, GuideConstants.depositPos))
         driver.y.onPress(DepositSequence(robot.lift, robot.arm, robot.claw, robot.guide, ArmConstants.lowPos, LiftConstants.lowPos, GuideConstants.lowPos))
+        driver.x.onPress(DepositSequence(robot.lift, robot.arm, robot.claw, robot.guide, 200.0, LiftConstants.lowPos, GuideConstants.telePos))
         driver.rightTrigger.onPress(ClawCmds.ClawOpenCmd(robot.claw, robot.guide, GuideConstants.telePos))
 
         gunner.leftTrigger.onPress(InstantCmd({robot.lift.setPos(-15.5)}))
         gunner.rightTrigger.onPress(InstantCmd({robot.arm.setPos(-270.0)}))
         gunner.leftBumper.onPress(InstantCmd({robot.lift.setPos(11.0)}))
         gunner.rightBumper.onPress(InstantCmd({robot.lift.setPos(0.0)}))
-        gunner.b.onPress(InstantCmd({ robot.lift.setPos(1.5)}))
-        gunner.a.onPress(InstantCmd({ robot.lift.setPos(2.75)}))
+        gunner.b.onPress(InstantCmd({ robot.lift.setPos(2.25)}))
+        gunner.a.onPress(InstantCmd({ robot.lift.setPos(3.25)}))
         gunner.x.onPress(InstantCmd({ robot.lift.setPos(4.5)}))
         gunner.y.onPress(InstantCmd({ robot.lift.setPos(5.75)}))
     }

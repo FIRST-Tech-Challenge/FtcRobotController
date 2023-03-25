@@ -32,56 +32,56 @@ class HighLeft : KOpMode() {
     private val path1 = HermitePath(
         FLIPPED_HEADING_CONTROLLER,
         Pose(startPose.x, startPose.y, 0.0),
-        Pose(-10.0, 32.0, 310.0.radians)
+        Pose(-10.0, 31.5, 310.0.radians)
     )
 
     private val intakePath1 = HermitePath(
         DEFAULT_HEADING_CONTROLLER,
-        Pose(-11.5, 32.5, 120.0.radians),
-        Pose(-13.5, 60.5, 90.0.radians)
+        Pose(-10.0, 32.0, 120.0.radians),
+        Pose(-13.5, 61.0, 90.0.radians)
     )
 
     private val intakePath2 = HermitePath(
         DEFAULT_HEADING_CONTROLLER,
-        Pose(-11.5, 32.5, 120.0.radians),
+        Pose(-10.0, 30.75, 120.0.radians),
         Pose(-14.0, 61.0, 90.0.radians)
     )
 
     private val intakePath3 = HermitePath(
         DEFAULT_HEADING_CONTROLLER,
-        Pose(-11.5, 32.5, 120.0.radians),
-        Pose(-14.5, 60.5, 90.0.radians)
+        Pose(-10.5, 30.75, 120.0.radians),
+        Pose(-14.5, 61.0, 90.0.radians)
     )
 
     private val depositPath = HermitePath(
         FLIPPED_HEADING_CONTROLLER,
-        Pose(-14.0, 59.0, 270.0.radians),
+        Pose(-14.5, 61.0, 270.0.radians),
         Pose(-14.0, 53.0, 270.0.radians),
-        Pose(-4.5, 31.0, 325.0.radians)
+        Pose(-4.0, 31.0, 325.0.radians)
     )
 
     private val depositPath1 = HermitePath(
         FLIPPED_HEADING_CONTROLLER,
-        Pose(-14.0, 59.0, 270.0.radians),
+        Pose(-14.5, 61.0, 270.0.radians),
         Pose(-14.0, 53.0, 270.0.radians),
-        Pose(-5.0, 30.5, 325.0.radians)
+        Pose(-4.5, 30.0, 325.0.radians)
     )
 
     private val leftPath = HermitePath(
         DEFAULT_HEADING_CONTROLLER,
-        Pose(-15.0, 31.5, 90.0.radians),
+        Pose(-12.0, 32.0, 90.0.radians),
         Pose(-14.5, 58.0, 90.0.radians)
     )
 
     private val middlePath = HermitePath(
         FLIPPED_HEADING_CONTROLLER,
-        Pose(-14.5, 58.5, 270.0.radians),
+        Pose(-14.5, 58.0, 270.0.radians),
         Pose(-15.0, 37.0, 270.0.radians),
     )
 
     private val rightPath = HermitePath(
         FLIPPED_HEADING_CONTROLLER,
-        Pose(-14.5, 58.5, 270.0.radians),
+        Pose(-14.5, 58.0, 270.0.radians),
         Pose(-15.0, 14.5, 270.0.radians)
 
     )
@@ -110,7 +110,7 @@ class HighLeft : KOpMode() {
                 )
             ),
             ClawCmds.ClawOpenCmd(robot.claw, robot.guide, GuideConstants.telePos),
-            WaitCmd(0.1),
+            WaitCmd(0.3),
             ParallelGroup(
                 AutoHomeSequence(robot.lift, robot.claw, robot.arm, robot.guide, ArmConstants.autoIntervalPos, ArmConstants.groundPos, 5.0, GuideConstants.telePos),
                 GVFCmd(
@@ -134,7 +134,7 @@ class HighLeft : KOpMode() {
             ),
             WaitCmd(0.1),
             ClawCmds.ClawOpenCmd(robot.claw, robot.guide, GuideConstants.telePos),
-            WaitCmd(0.1),
+            WaitCmd(0.3),
             ParallelGroup(
                 AutoHomeSequence(robot.lift, robot.claw, robot.arm, robot.guide, ArmConstants.autoIntervalPos, ArmConstants.groundPos, 4.0, GuideConstants.telePos),
                 GVFCmd(
@@ -158,7 +158,7 @@ class HighLeft : KOpMode() {
             ),
             WaitCmd(0.1),
             ClawCmds.ClawOpenCmd(robot.claw, robot.guide, GuideConstants.telePos),
-            WaitCmd(0.1),
+            WaitCmd(0.3),
             ParallelGroup(
                 AutoHomeSequence(robot.lift, robot.claw, robot.arm, robot.guide, ArmConstants.autoIntervalPos, ArmConstants.groundPos, 2.5, GuideConstants.telePos),
                 GVFCmd(
@@ -182,7 +182,7 @@ class HighLeft : KOpMode() {
             ),
             WaitCmd(0.1),
             ClawCmds.ClawOpenCmd(robot.claw, robot.guide, GuideConstants.telePos),
-            WaitCmd(0.1),
+            WaitCmd(0.3),
             ParallelGroup(
                 AutoHomeSequence(robot.lift, robot.claw, robot.arm, robot.guide, ArmConstants.autoIntervalPos, ArmConstants.groundPos, 1.0, GuideConstants.telePos),
                 GVFCmd(
@@ -206,7 +206,7 @@ class HighLeft : KOpMode() {
             ),
             WaitCmd(0.1),
             ClawCmds.ClawOpenCmd(robot.claw, robot.guide, GuideConstants.telePos),
-            WaitCmd(0.1),
+            WaitCmd(0.3),
             ParallelGroup(
                 AutoHomeSequence(robot.lift, robot.claw, robot.arm, robot.guide, -75.0, -75.0, 0.0, GuideConstants.telePos),
                 GVFCmd(
@@ -230,7 +230,7 @@ class HighLeft : KOpMode() {
             ),
             WaitCmd(0.1),
             ClawCmds.ClawOpenCmd(robot.claw, robot.guide, GuideConstants.telePos),
-            WaitCmd(0.1),
+            WaitCmd(0.3),
             ParallelGroup(
                 AutoHomeSequence(robot.lift, robot.claw, robot.arm, robot.guide, ArmConstants.autoIntervalPos, -80.0, -1.0, GuideConstants.telePos),
                 GVFCmd(robot.drive,
