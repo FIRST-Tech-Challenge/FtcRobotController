@@ -178,7 +178,7 @@ public class CVMaster {
                 webcam.setPipeline(openSleevi);
                 webcam.startStreaming(640, 480, OpenCvCameraRotation.UPRIGHT);
 
-                dashboard.startCameraStream(webcam, 10);
+//                dashboard.startCameraStream(webcam, 10);
 
             }
 

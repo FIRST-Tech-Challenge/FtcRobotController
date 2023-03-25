@@ -19,81 +19,81 @@ import java.util.ArrayList;
 public class RFMotorkPTuner extends LinearOpMode {
     public void runOpMode() {
         BasicRobot robot = new BasicRobot(this, false);
-        double maxTick = 1690, minTick = 0, avg1 = 0, avg2 = 0, loopNums = 0;
+        double maxTick = 1000, minTick = 0, avg1 = 0, avg2 = 0, loopNums = 0;
         RFMotor rfMotor = new RFMotor("liftMotor", DcMotor.RunMode.RUN_WITHOUT_ENCODER, true, maxTick, minTick);
         rfMotor.setDirection(DcMotorSimple.Direction.REVERSE);
         waitForStart();
-//        while (rfMotor.getCurrentPosition() < maxTick) {
-//            rfMotor.setPower(0.5);
-//            avg1 = (avg1 * loopNums + rfMotor.getVelocity()) / (loopNums + 1);
-//            loopNums++;
-//        }
-//        telemetry.addData("avg1", avg1);
-//        telemetry.update();
-//        logger.log("/RobotLogs/GeneralRobot", "avg1" + avg1);
-//        while (rfMotor.getCurrentPosition() > minTick) {
-//            rfMotor.setPower(-0.3);
-//        }
-//        loopNums = 0;
-//        sleep(1000);
-//        rfMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-//        while (rfMotor.getCurrentPosition() < maxTick) {
-//            rfMotor.setPower(0.6);
-//            avg2 = (avg2 * loopNums + rfMotor.getVelocity()) / (loopNums + 1);
-//            loopNums++;
-//        }
-//        while (rfMotor.getCurrentPosition() > minTick) {
-//            rfMotor.setPower(-0.3);
-//        }
-//        telemetry.addData("avg1", avg1);
-//        telemetry.addData("avg2", avg2);
-//        logger.log("/RobotLogs/GeneralRobot", "avg2" + avg2);
-//        double kP = 0.1 / (avg2 - avg1);
-//        telemetry.addData("kP", kP);
-//        logger.log("/RobotLogs/GeneralRobot", "kP" + kP);
-//        telemetry.update();
-        double kP = 3.94E-4;
-        rfMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        ArrayList<double[]> v1 = new ArrayList<>();
         while (rfMotor.getCurrentPosition() < maxTick) {
-            rfMotor.setPower(1.0);
-            double position = rfMotor.getCurrentPosition();
-            double velocity = rfMotor.getVelocity();
-            logger.logNoTime("/RobotLogs/GeneralRobot", "" + position + "," + (1.0 / kP - velocity)/velocity+1);
-            double[] data = {position,velocity+1};
-            v1.add(data);
+            rfMotor.setPower(0.9);
+            avg1 = (avg1 * loopNums + rfMotor.getVelocity()) / (loopNums + 1);
+            loopNums++;
         }
-//        g(x) + v(1.0)*f(x)
-        while (rfMotor.getCurrentPosition() > minTick) {
-            rfMotor.setPower(-0.7);
-            double position = rfMotor.getCurrentPosition();
-            double velocity = rfMotor.getVelocity();
-            logger.logNoTime("/RobotLogs/GeneralRobot", "" + position + "," + (-0.7 / kP - velocity)/velocity+1);
-        }
-        ArrayList<double[]> v2 = new ArrayList<>();
-        rfMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        while (rfMotor.getCurrentPosition() < maxTick) {
-            rfMotor.setPower(0.5);
-            double position = rfMotor.getCurrentPosition();
-            double velocity = rfMotor.getVelocity();
-            logger.logNoTime("/RobotLogs/GeneralRobot", "" + position + "," + (0.5 / kP - velocity)/velocity+1);
-            double[] data = {position,velocity+1};
-            v2.add(data);
-        }
-        for(int i=0;i<v1.size();i++){
-            logger.logNoTime("/RobotLogs/GeneralRobot", "" + v1.get(i)[0] + "," + v1.get(i)[1]);
-        }
-        for(int i=0;i<v2.size();i++){
-            logger.logNoTime("/RobotLogs/GeneralRobot", "" + v2.get(i)[0] + "," + v2.get(i)[1]);
-        }
-//        g(x) + v(0.5)(x)*f(x) og data
-//        g(x)/v(0.5)(x) + f(x) data divide by velocity
-//        repeat process for v(1.0)
-//        g(x)*(1/v(0.5)(x) - 1/v(1.0)(x)) subtract the two
-//        g(x) divide by that thing
+        telemetry.addData("avg1", avg1);
+        telemetry.update();
+        logger.log("/RobotLogs/GeneralRobot", "avg1" + avg1);
         while (rfMotor.getCurrentPosition() > minTick) {
             rfMotor.setPower(-0.3);
         }
+        loopNums = 0;
+        sleep(1000);
+        rfMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        while (rfMotor.getCurrentPosition() < maxTick) {
+            rfMotor.setPower(1.0);
+            avg2 = (avg2 * loopNums + rfMotor.getVelocity()) / (loopNums + 1);
+            loopNums++;
+        }
+        while (rfMotor.getCurrentPosition() > minTick) {
+            rfMotor.setPower(-0.3);
+        }
+        telemetry.addData("avg1", avg1);
+        telemetry.addData("avg2", avg2);
+        logger.log("/RobotLogs/GeneralRobot", "avg2" + avg2);
+        double kP = 0.1 / (avg2 - avg1);
+        telemetry.addData("kP", kP);
+        logger.log("/RobotLogs/GeneralRobot", "kP" + kP);
+        telemetry.update();
+//        double kP = 3.94E-4;
+//        rfMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+//        ArrayList<double[]> v1 = new ArrayList<>();
+//        while (rfMotor.getCurrentPosition() < maxTick) {
+//            rfMotor.setPower(1.0);
+//            double position = rfMotor.getCurrentPosition();
+//            double velocity = rfMotor.getVelocity();
+//            logger.logNoTime("/RobotLogs/GeneralRobot", "" + position + "," + (1.0 / kP - velocity)/velocity+1);
+//            double[] data = {position,velocity+1};
+//            v1.add(data);
+//        }
+////        g(x) + v(1.0)*f(x)
+//        while (rfMotor.getCurrentPosition() > minTick) {
+//            rfMotor.setPower(-0.7);
+//            double position = rfMotor.getCurrentPosition();
+//            double velocity = rfMotor.getVelocity();
+//            logger.logNoTime("/RobotLogs/GeneralRobot", "" + position + "," + (-0.7 / kP - velocity)/velocity+1);
+//        }
+//        ArrayList<double[]> v2 = new ArrayList<>();
+//        rfMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+//        while (rfMotor.getCurrentPosition() < maxTick) {
+//            rfMotor.setPower(0.5);
+//            double position = rfMotor.getCurrentPosition();
+//            double velocity = rfMotor.getVelocity();
+//            logger.logNoTime("/RobotLogs/GeneralRobot", "" + position + "," + (0.5 / kP - velocity)/velocity+1);
+//            double[] data = {position,velocity+1};
+//            v2.add(data);
+//        }
+//        for(int i=0;i<v1.size();i++){
+//            logger.logNoTime("/RobotLogs/GeneralRobot", "" + v1.get(i)[0] + "," + v1.get(i)[1]);
+//        }
+//        for(int i=0;i<v2.size();i++){
+//            logger.logNoTime("/RobotLogs/GeneralRobot", "" + v2.get(i)[0] + "," + v2.get(i)[1]);
+//        }
+////        g(x) + v(0.5)(x)*f(x) og data
+////        g(x)/v(0.5)(x) + f(x) data divide by velocity
+////        repeat process for v(1.0)
+////        g(x)*(1/v(0.5)(x) - 1/v(1.0)(x)) subtract the two
+////        g(x) divide by that thing
+//        while (rfMotor.getCurrentPosition() > minTick) {
+//            rfMotor.setPower(-0.3);
+//        }
     }
 
 }

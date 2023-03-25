@@ -142,7 +142,7 @@ public class Field {
     public boolean lookingAtCone() {
         double[] coords = cv.rotatedConarCoord();
 //        coords[1]+=5;
-        coords[1] +=0;
+        coords[1] -=1;
         Pose2d pos = roadrun.getPoseEstimate();
         pos = new Pose2d(pos.getX(), pos.getY(), pos.getHeading() + coords[0] * PI / 180);
         conePos = new Pose2d(pos.getX() + cos(pos.getHeading()) * coords[1], pos.getY() + sin(pos.getHeading()) * coords[1] + 1, pos.getHeading());

@@ -198,6 +198,9 @@ public class PwPRobot extends BasicRobot {
             Pose2d target = field.conePos();
             if (roadrun.isBusy()) {
                 TrajectorySequence trajectory = roadrun.getCurrentTraj();
+                if(roadrun.getPoseEstimate().vec().distTo(trajectory.end().vec())<5){
+                    return;
+                }
                 roadrun.changeTrajectorySequence(roadrun.trajectorySequenceBuilder(trajectory.start())
                         .setReversed(false)
                         .splineToSplineHeading(target, target.getHeading()).build());
@@ -286,7 +289,10 @@ public class PwPRobot extends BasicRobot {
         double[] diffs = {targetVelocity[0] - rotVelocity.getX(), targetVelocity[1] - rotVelocity.getY(), targetVelocity[2] - actualVelocity.getHeading()};
         double cAngle = atan2(diffs[0], diffs[1]);
         double cMag = sqrt(diffs[1] * diffs[1] + diffs[0] * diffs[0]) * kV * 2;
-        double angleCorrection = diffs[2] * TRACK_WIDTH * kV * 0.5;
+        double angleCorrection = diffs[2] * TRACK_WIDTH * kV * 0.3;
+        if(abs(diffs[2])<toRadians(15)){
+            angleCorrection=0;
+        }
         op.telemetry.addData("velocity", actualVelocity);
         op.telemetry.addData("diffsy", diffs[0]);
         op.telemetry.addData("diffsx", diffs[1]);

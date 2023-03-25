@@ -25,8 +25,8 @@ public class RFMotor extends Motor {
     private ArrayList<Double> coefs = null;
     private ArrayList<Double> coefs2 = null;
     private ArrayList<String> inputlogs = new ArrayList<>();
-    public static double D = 0.00000, D2 = 0, kP = 4E-4, kA = 0.0002*1.2, R = 0,
-            MAX_VELOCITY = 2200, MAX_ACCELERATION = 2120 / 0.2, DECEL_DIST = 60, VOLTAGE_CONST=0;
+    public static double D = 0.00000, D2 = 0, kP = 4E-4, kA = 0.0001*1.2, R = 0,
+            MAX_VELOCITY = 15000, MAX_ACCELERATION = 2120 / 0.25, DECEL_DIST = 60, VOLTAGE_CONST=0, RESISTANCE=400;
     private double maxtickcount = 0;
     private double mintickcount = 0;
     private double DEFAULTCOEF1 = 0.0001, DEFAULTCOEF2 = 0.01;
@@ -156,17 +156,17 @@ public class RFMotor extends Motor {
 
     public double getResistance() {
         double resistance = 0;
-        resistance -= 150 + 0.4 * position - 0.00012 * position * position;
+        resistance -= 200 + 0.4 * position - 0.00012 * position * position;
         resistance -= velocity * 0.3 * pow(abs(position) + 1, -.12);
         return resistance;
     }
 
     public void getAvgResistance() {
         double resistances = 0;
-        resistances -= 220 + 0.6 * position/* - 0.000135* position * position*/;
-        resistances -= velocity * 0.2 * pow(abs(position) + 1, -.13);
+        resistances -= RESISTANCE /* - 0.000135* position * position*/;
+//        resistances -= velocity * 0.2 * pow(abs(position) + 1, -.13);
         resistance = resistances* VOLTAGE_CONST;
-        resistances -= 220 + 0.6 * targetPos/* - 0.000135 * targetPos * targetPos*/;
+        resistances -= RESISTANCE/* - 0.000135 * targetPos * targetPos*/;
         avgResistance = resistances / 2 * VOLTAGE_CONST;
     }
 
