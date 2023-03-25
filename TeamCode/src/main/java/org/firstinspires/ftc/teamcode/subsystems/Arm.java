@@ -61,7 +61,6 @@ public class Arm extends Subsystem {
     public void update(){
         switch (armPositionConstant){
             case FRONT_DELIVERY:
-            case FRONT:
                 if(r.isDelivery()){
                     this.armPosition = ArmPos.FRONT_DELIVERY.getPosition();
                 }
@@ -72,12 +71,27 @@ public class Arm extends Subsystem {
                     this.armPosition = ArmPos.HALF.getPosition();
                 }
                 break;
+            case FRONT:
+                if (r.isPickup()) {
+                    this.armPosition = ArmPos.FRONT.getPosition();
+                }
+                else {
+                    this.armPosition = ArmPos.HALF.getPosition();
+                }
+                break;
             case BACK_DELIVERY:
-            case BACK:
                 if(r.isDelivery()){
                     this.armPosition = ArmPos.BACK_DELIVERY.getPosition();
                 }
                 else if (r.isPickup()) {
+                    this.armPosition = ArmPos.BACK.getPosition();
+                }
+                else {
+                    this.armPosition = ArmPos.HALF.getPosition();
+                }
+                break;
+            case BACK:
+                if (r.isPickup()) {
                     this.armPosition = ArmPos.BACK.getPosition();
                 }
                 else {

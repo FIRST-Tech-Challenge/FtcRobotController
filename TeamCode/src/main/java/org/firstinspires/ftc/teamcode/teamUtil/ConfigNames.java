@@ -18,6 +18,7 @@ public class ConfigNames { //contains the string name constants in the config, i
             imu = "imu",
             leftDeadWheelEncoder = "leftEncoder",
             rightDeadWheelEncoder = "Leftfront",
-            frontDeadWheelEncoder = "middleEncoder";
+            frontDeadWheelEncoder = "middleEncoder",
+            tensioner = "Tensioner";
 
 }

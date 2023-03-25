@@ -26,19 +26,13 @@ public class SplineTest extends LinearOpMode {
 
         drive.setPoseEstimate(startPose);
         TrajectorySequence trajSeq = drive.trajectorySequenceBuilder(startPose)
-                .splineTo(new Vector2d(36, -12),  Math.toRadians(90))//drive forward
-                .turn(Math.toRadians(-90))//turn
-                .setReversed(true)
-                .splineTo(new Vector2d(9, -12), Math.toRadians(210))//drive to pole
+                
+                
+                
                 .setReversed(false)
                 .splineTo(new Vector2d(36, -12), Math.toRadians(0))//drive back to centre
                 .splineTo(new Vector2d(59, -7), 0)//drive to stack
-                .setReversed(true)
-                .splineTo(new Vector2d(36, -12), Math.toRadians(180))//drive back to centre
-                .splineTo(new Vector2d(9, -12), Math.toRadians(207))//drive to pole
-                .setReversed(false)
-                .splineTo(new Vector2d(36, -12), Math.toRadians(0))//drive back to centre
-                .splineTo(new Vector2d(59, -7), 0)//drive to stack
+                /*
                 .setReversed(true)
                 .splineTo(new Vector2d(36, -12), Math.toRadians(180))//drive back to centre
                 .splineTo(new Vector2d(9, -12), Math.toRadians(207))//drive to pole
@@ -48,6 +42,8 @@ public class SplineTest extends LinearOpMode {
                 .setReversed(true)
                 .splineTo(new Vector2d(36, -12), Math.toRadians(180))//drive back to centre
                 .splineTo(new Vector2d(9, -12), Math.toRadians(207))//drive to poleSplineTest
+                
+                 */
 
 
                 //.splineToLinearHeading(new Pose2d(24, -12, Math.toRadians(90)), Math.toRadians(180))

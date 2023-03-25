@@ -5,7 +5,6 @@ import com.qualcomm.robotcore.hardware.DcMotorEx;
 import org.firstinspires.ftc.teamcode.teamUtil.CommandScheduler.Subsystem;
 import org.firstinspires.ftc.teamcode.teamUtil.ConfigNames;
 import org.firstinspires.ftc.teamcode.teamUtil.RobotConfig;
-import org.firstinspires.ftc.teamcode.teamUtil.RobotConstants;
 
 public class Lift extends Subsystem {
     RobotConfig r;
@@ -26,7 +25,7 @@ public class Lift extends Subsystem {
 
     double liftPositioner;
     boolean limitIsPressed;
-    RobotConstants.poleHeights targetHeight = RobotConstants.poleHeights.GROUND;
+    PoleHeights targetHeight = PoleHeights.GROUND;
 
 
     public Lift(RobotConfig r) {
@@ -84,7 +83,7 @@ public class Lift extends Subsystem {
         final double kD = 0.0;
 
         P = kP*currentError;
-        I = (liftPos/RobotConstants.poleHeights.HIGH.getEncoderValue()) * kI;
+        I = (liftPos/ PoleHeights.HIGH.getEncoderValue()) * kI;
         D = kD*((currentError - previousError) / (currentTime - previousTime));
         
         
@@ -94,9 +93,6 @@ public class Lift extends Subsystem {
             cachedPower = PID();
         }
         
-        r.opMode.telemetry.addData("targetPosition", targetPos);
-        r.opMode.telemetry.addData("position", liftPos);
-
         previousError = currentError;
         previousTime = currentTime;
     }
@@ -106,7 +102,7 @@ public class Lift extends Subsystem {
 
     }
 
-    private void positionControl(double liftPosition, boolean limitIsPressed, RobotConstants.poleHeights poleHeight){
+    private void positionControl(double liftPosition, boolean limitIsPressed, PoleHeights poleHeight){
         targetPos -= ((int) (liftPosition*250));
         if (Double.isNaN(liftPosition) || liftPosition == 0.0 && !spoolHold){
             spoolHoldPosition = Lift.liftPos;
@@ -120,20 +116,42 @@ public class Lift extends Subsystem {
         }
         switch (poleHeight){
             case HIGH:
-                targetPos = RobotConstants.poleHeights.HIGH.getEncoderValue() + 450;
-                spoolHoldPosition = RobotConstants.poleHeights.HIGH_DROP.getEncoderValue() + 300;
+                targetPos = PoleHeights.HIGH.getEncoderValue() + 450;
+                spoolHoldPosition = PoleHeights.HIGH_DROP.getEncoderValue() + 300;
                 break;
             case MEDIUM:
-                targetPos = RobotConstants.poleHeights.MEDIUM.getEncoderValue() + 450;
-                spoolHoldPosition = RobotConstants.poleHeights.MEDIUM_DROP.getEncoderValue() + 300;
+                targetPos = PoleHeights.MEDIUM.getEncoderValue() + 450;
+                spoolHoldPosition = PoleHeights.MEDIUM_DROP.getEncoderValue() + 300;
                 break;
             case LOW:
-                targetPos = RobotConstants.poleHeights.LOW.getEncoderValue() + 450;
-                spoolHoldPosition = RobotConstants.poleHeights.LOW_DROP.getEncoderValue() + 300;
+                targetPos = PoleHeights.LOW.getEncoderValue() + 450;
+                spoolHoldPosition = PoleHeights.LOW_DROP.getEncoderValue() + 300;
                 break;
             case GROUND:
-                targetPos = RobotConstants.poleHeights.GROUND.getEncoderValue();
-                spoolHoldPosition = RobotConstants.poleHeights.GROUND.getEncoderValue();
+                targetPos = PoleHeights.GROUND.getEncoderValue();
+                spoolHoldPosition = PoleHeights.GROUND.getEncoderValue();
+                break;
+            case STACK4:
+                targetPos = PoleHeights.STACK4.getEncoderValue();
+                spoolHoldPosition = PoleHeights.STACK4.getEncoderValue();
+                break;
+            case STACK3:
+                targetPos = PoleHeights.STACK3.getEncoderValue();
+                spoolHoldPosition = PoleHeights.STACK3.getEncoderValue();
+                break;
+            case STACK2:
+                targetPos = PoleHeights.STACK2.getEncoderValue();
+                spoolHoldPosition = PoleHeights.STACK2.getEncoderValue();
+                break;
+            case STACK1:
+                targetPos = PoleHeights.STACK1.getEncoderValue();
+                spoolHoldPosition = PoleHeights.STACK1.getEncoderValue();
+                break;
+            case STACK0:
+                targetPos = PoleHeights.STACK0.getEncoderValue();
+                spoolHoldPosition = PoleHeights.STACK0.getEncoderValue();
+                break;
+            case IDLE:
                 break;
             default:
                 break;
@@ -145,17 +163,17 @@ public class Lift extends Subsystem {
         if (targetPos > 100){
             targetPos = 100;
         }
-        if(targetPos < (RobotConstants.poleHeights.HIGH.getEncoderValue())) {
-            targetPos = (RobotConstants.poleHeights.HIGH.getEncoderValue());
+        if(targetPos < (PoleHeights.HIGH.getEncoderValue())) {
+            targetPos = (PoleHeights.HIGH.getEncoderValue());
         }
     }
 
-    private RobotConstants.poleHeights buttonAnalysis(boolean top, boolean middle, boolean low, boolean ground){
-        if (top) return RobotConstants.poleHeights.HIGH;
-        if (middle) return RobotConstants.poleHeights.MEDIUM;
-        if (low) return RobotConstants.poleHeights.LOW;
-        if (ground) return RobotConstants.poleHeights.GROUND;
-        return RobotConstants.poleHeights.IDLE;
+    private PoleHeights buttonAnalysis(boolean top, boolean middle, boolean low, boolean ground){
+        if (top) return PoleHeights.HIGH;
+        if (middle) return PoleHeights.MEDIUM;
+        if (low) return PoleHeights.LOW;
+        if (ground) return PoleHeights.GROUND;
+        return PoleHeights.IDLE;
     }
 
     public void liftInputs(double liftPositionInput, boolean limitSwitch, boolean top, boolean middle, boolean low, boolean ground){
@@ -164,11 +182,42 @@ public class Lift extends Subsystem {
         targetHeight = buttonAnalysis(top, middle, low, ground);
     }
     
-    public void presetLiftPosition(RobotConstants.poleHeights poleHeight){
+    public void presetLiftPosition(PoleHeights poleHeight){
         targetHeight = poleHeight;
+        liftPositioner = 0;
+    }
+    
+    public void limitSwitchInput(boolean limitIsPressed){
+        this.limitIsPressed = limitIsPressed;
     }
     
     private double PID(){
         return P+I+D;
+    }
+    
+    public enum PoleHeights {
+        HIGH(-2750),
+        MEDIUM(-1950),
+        LOW(-1250),
+        GROUND(0),
+        HIGH_DROP(-2350),
+        MEDIUM_DROP(-1750),
+        LOW_DROP(-1000),
+        STACK4(-410),
+        STACK3(-320),
+        STACK2(-230),
+        STACK1(-70),
+        STACK0(0),
+        IDLE(0);
+
+        PoleHeights(int encoderValue){
+            this.encoderValue = encoderValue;
+        }
+
+        private final int encoderValue;
+
+        public int getEncoderValue() {
+            return encoderValue;
+        }
     }
 }

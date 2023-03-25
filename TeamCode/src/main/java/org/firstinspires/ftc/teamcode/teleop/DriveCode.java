@@ -31,8 +31,6 @@ public class DriveCode extends ConfiguredOpMode {
 		intake = new Intake();
 		limitSwitch = new LimitSwitch();
 		lift = new Lift();
-		telemetry.setAutoClear(true);
-		mecanum.resetIMU();
 	}
 
 	@Override
@@ -41,10 +39,10 @@ public class DriveCode extends ConfiguredOpMode {
 		
 		gamepadEX2.right_trigger.thresholdTrigger(0.05)
 				.onTrue(() -> {
-					intake.presetTargetPosition(Intake.intakePos.CLOSED);
+					intake.presetTargetPosition(Intake.IntakePos.CLOSED);
 				})
 				.onFalse(() -> {
-					intake.presetTargetPosition(Intake.intakePos.OPEN);
+					intake.presetTargetPosition(Intake.IntakePos.OPEN);
 				});
 		
 		gamepadEX1.left_bumper
@@ -62,15 +60,15 @@ public class DriveCode extends ConfiguredOpMode {
 				.isPressed()
 				.onTrue(() -> {
 					r.setPickup(false);
-					arm.presetTargetPosition(Arm.ArmPos.BACK);
-					wrist.presetTargetPosition(Wrist.wristPos.BACK);
+					arm.presetTargetPosition(Arm.ArmPos.BACK_DELIVERY);
+					wrist.presetTargetPosition(Wrist.WristPos.BACK);
 				});
 		gamepadEX1.right_bumper
 				.isPressed()
 				.onTrue(() -> {
 					r.setPickup(false);
-					arm.presetTargetPosition(Arm.ArmPos.FRONT);
-					wrist.presetTargetPosition(Wrist.wristPos.FRONT);
+					arm.presetTargetPosition(Arm.ArmPos.FRONT_DELIVERY);
+					wrist.presetTargetPosition(Wrist.WristPos.FRONT);
 				});
 		
 		bothBumpers = new Trigger(() -> (gamepadEX1.right_bumper.buttonState() || gamepadEX1.left_bumper.buttonState()))
@@ -91,7 +89,6 @@ public class DriveCode extends ConfiguredOpMode {
 
 	@Override
 	public void superInit_Loop() {
-		mecanum.resetIMU();
 	}
 
 	@Override

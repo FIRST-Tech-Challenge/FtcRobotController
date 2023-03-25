@@ -6,6 +6,7 @@ import org.firstinspires.ftc.teamcode.subsystems.Arm;
 import org.firstinspires.ftc.teamcode.subsystems.Intake;
 import org.firstinspires.ftc.teamcode.subsystems.Lift;
 import org.firstinspires.ftc.teamcode.subsystems.LimitSwitch;
+import org.firstinspires.ftc.teamcode.subsystems.Tensioner;
 import org.firstinspires.ftc.teamcode.subsystems.Wrist;
 import org.firstinspires.ftc.teamcode.subsystems.webcam.Webcam;
 import org.firstinspires.ftc.teamcode.teamUtil.CommandScheduler.ConfiguredOpMode;
@@ -20,6 +21,7 @@ public class RightMedium5Auto extends ConfiguredOpMode {
 	private LimitSwitch limitSwitch;
 	private Lift lift;
 	private Webcam webcam;
+	private Tensioner tensioner;
 	TrajectorySequenceStorage sequence;
 	
 	@Override
@@ -30,7 +32,8 @@ public class RightMedium5Auto extends ConfiguredOpMode {
 		intake = new Intake();
 		limitSwitch = new LimitSwitch();
 		lift = new Lift();
-//		webcam = new Webcam();
+		webcam = new Webcam();
+		tensioner = new Tensioner(Tensioner.RunMode.DEPLOY);
 		sequence = new TrajectorySequenceStorage().rightMedium5(
 				r,
 				mecanum,
@@ -41,7 +44,6 @@ public class RightMedium5Auto extends ConfiguredOpMode {
 				webcam
 		);
 		
-		telemetry.setAutoClear(true);
 	}
 	
 	@Override
@@ -51,17 +53,22 @@ public class RightMedium5Auto extends ConfiguredOpMode {
 	
 	@Override
 	public void superInit_Loop() {
-	
+		webcam.readStream();
 	}
 	
 	@Override
 	public void superStart() {
+		if (webcam.isTagFound()) {
+			sequence.addRightParkSequence(webcam.getTag().id);
+		}
+		webcam.closeStream();
 		sequence.startFollowSetSequenceAsync();
 	}
 	
 	@Override
 	public void superLoop() {
 		sequence.followSetSequenceAsync();
+		lift.limitSwitchInput(limitSwitch.limitSwitchEX.buttonState());
 	}
 	
 	@Override

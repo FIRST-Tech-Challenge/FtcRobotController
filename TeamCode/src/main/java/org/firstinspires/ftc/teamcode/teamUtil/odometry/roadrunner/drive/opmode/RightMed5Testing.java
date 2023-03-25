@@ -28,9 +28,14 @@ public class RightMed5Testing extends LinearOpMode {
                 .splineTo(new Vector2d(36, -12),  Math.toRadians(90))//drive forward
                 .turn(Math.toRadians(-70))//turn
                 .setReversed(false)
-                .splineTo(new Vector2d(59, -7), 0)//drive to stack
-                .setReversed(true)
-                .splineTo(new Vector2d(36, -12), Math.toRadians(210))//drive back to centre
+                .lineToLinearHeading(new Pose2d(59, -10, 0))//drive to stack
+                .lineToLinearHeading(new Pose2d(12, -12, Math.toRadians(20)))
+                .lineToLinearHeading(new Pose2d(59, -10, 0))//drive to stack
+                .lineToLinearHeading(new Pose2d(12, -12, Math.toRadians(20)))
+                .lineToLinearHeading(new Pose2d(59, -10, 0))//drive to stack
+                .lineToLinearHeading(new Pose2d(12, -12, Math.toRadians(20)))
+                
+                /*.splineTo(new Vector2d(36, -12), Math.toRadians(210))//drive back to centre
                 .setReversed(false)
                 .splineTo(new Vector2d(59, -7), 0)//drive to stack
                 .setReversed(true)
@@ -39,6 +44,8 @@ public class RightMed5Testing extends LinearOpMode {
                 .splineTo(new Vector2d(59, -7), 0)//drive to stack
                 .setReversed(true)
                 .splineTo(new Vector2d(36, -12), Math.toRadians(210))//drive back to centre
+                
+                 */
 
 
                 //.splineToLinearHeading(new Pose2d(24, -12, Math.toRadians(90)), Math.toRadians(180))

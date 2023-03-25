@@ -32,19 +32,19 @@ public class ConfiguredOpModeArmTest extends ConfiguredOpMode {
         
         gamepadEX1.right_bumper
                 .isPressed()
-                    .onTrue(() -> intake.presetTargetPosition(Intake.intakePos.OPEN))
-                    .onFalse(() -> intake.presetTargetPosition(Intake.intakePos.CLOSED));
+                    .onTrue(() -> intake.presetTargetPosition(Intake.IntakePos.OPEN))
+                    .onFalse(() -> intake.presetTargetPosition(Intake.IntakePos.CLOSED));
     
     
         gamepadEX1.left_bumper
                 .onPress()
                     .toggleOnTrue(() -> {
                         arm.presetTargetPosition(Arm.ArmPos.BACK);
-                        wrist.presetTargetPosition(Wrist.wristPos.BACK);
+                        wrist.presetTargetPosition(Wrist.WristPos.BACK);
                     })
                     .toggleOnFalse(() -> {
                         arm.presetTargetPosition(Arm.ArmPos.FRONT);
-                        wrist.presetTargetPosition(Wrist.wristPos.FRONT);
+                        wrist.presetTargetPosition(Wrist.WristPos.FRONT);
                     });
     
     }

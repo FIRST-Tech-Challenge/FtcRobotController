@@ -1,7 +1,5 @@
 package org.firstinspires.ftc.teamcode.subsystems.webcam;
 
-import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.hardwareMap;
-
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.teamcode.teamUtil.CommandScheduler.Subsystem;
@@ -19,9 +17,19 @@ public class Webcam extends Subsystem {
 	private OpenCvCamera camera;
 	private AprilTagDetectionPipeline aprilTagDetectionPipeline;
 	
-	AprilTagDetection tag = null;
+	public AprilTagDetection getTag() {
+		return tag;
+	}
 	
-	Telemetry.Item dataOutput;
+	private AprilTagDetection tag = null;
+	
+	public boolean isTagFound() {
+		return tagFound;
+	}
+	
+	private boolean tagFound;
+	
+	private Telemetry.Item dataOutput;
 	
 	
 	public Webcam (RobotConfig r){
@@ -34,9 +42,11 @@ public class Webcam extends Subsystem {
 	
 	@Override
 	public void init() {
-		int cameraMonitorViewId = r.opMode.hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
+		int cameraMonitorViewId = r.opMode.hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", r.opMode.hardwareMap.appContext.getPackageName());
 		camera = OpenCvCameraFactory.getInstance().createWebcam(r.opMode.hardwareMap.get(WebcamName.class, "Webcam 1"), cameraMonitorViewId);
 		aprilTagDetectionPipeline = new AprilTagDetectionPipeline(0.166, 578.272, 578.272, 402.145, 221.506);
+		
+		dataOutput = r.opMode.telemetry.addData("", "");
 		
 		camera.setPipeline(aprilTagDetectionPipeline);
 		camera.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
@@ -73,7 +83,7 @@ public class Webcam extends Subsystem {
 		ArrayList<AprilTagDetection> currentDetections = aprilTagDetectionPipeline.getLatestDetections();
 		
 		if(currentDetections.size() != 0) {
-			boolean tagFound = false;
+			tagFound = false;
 			
 			for(AprilTagDetection tag : currentDetections)
 			{

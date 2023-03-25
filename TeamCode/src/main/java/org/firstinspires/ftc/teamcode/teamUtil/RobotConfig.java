@@ -2,8 +2,10 @@ package org.firstinspires.ftc.teamcode.teamUtil;
 
 import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
+import com.qualcomm.robotcore.hardware.IMU;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.teamcode.teamUtil.CommandScheduler.Scheduler;
 import org.firstinspires.ftc.teamcode.teamUtil.CommandScheduler.Subsystem;
 import org.firstinspires.ftc.teamcode.teamUtil.trajectoryAssembly.TrajectoryAssembly;
@@ -17,6 +19,26 @@ public class RobotConfig {
     private static RobotConfig rInstance;
     public List<LynxModule> allHubs;
     public Scheduler scheduler;
+    
+    public IMU getImu() {
+        return imu;
+    }
+    
+    public void setImu(IMU imu) {
+        this.imu = imu;
+    }
+    
+    private double imuOffset;
+    
+    public void resetIMU(){
+        imuOffset = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES);
+    }
+    
+    public double getImuOffset(){
+        return imuOffset;
+    }
+    
+    private IMU imu;
     
     private RobotConfig(OpMode opMode){
         this.opMode = opMode;

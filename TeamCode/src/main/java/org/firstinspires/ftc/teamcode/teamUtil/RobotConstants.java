@@ -1,7 +1,5 @@
 package org.firstinspires.ftc.teamcode.teamUtil;
 
-import org.firstinspires.ftc.teamcode.subsystems.Arm;
-
 public class RobotConstants {
 
     public enum moduleSides {
@@ -26,33 +24,7 @@ public class RobotConstants {
         GAMEPADEX_1,
         GAMEPADEX_2;
     }
-
-    public enum poleHeights {
-        HIGH(-2750),
-        MEDIUM(-1950),
-        LOW(-1250),
-        GROUND(0),
-        HIGH_DROP(-2350),
-        MEDIUM_DROP(-1750),
-        LOW_DROP(-1000),
-        STACK4(-350),
-        STACK3(-260),
-        STACK2(-170),
-        STACK1(-110),
-        STACK0(0),
-        IDLE(0);
-
-        poleHeights(int encoderValue){
-            this.encoderValue = encoderValue;
-        }
-
-        private final int encoderValue;
-
-        public int getEncoderValue() {
-            return encoderValue;
-        }
-    }
-
+    
     public static final double armBack = 0.84;
     public static final double armFront = 0.03;
     public static final double armMiddle = (armFront + armBack)/2;

@@ -17,12 +17,12 @@ public class Intake extends Subsystem {
         r = RobotConfig.getInstance();
     }
 
-    public enum intakePos{
+    public enum IntakePos {
         OPEN(RobotConstants.intakeOpen),
         CLOSED(RobotConstants.intakeClosed),
         INIT(RobotConstants.intakeOpen);
 
-        intakePos(double position){
+        IntakePos(double position){
             this.position = position;
         }
 
@@ -40,14 +40,14 @@ public class Intake extends Subsystem {
         this.intakePosition = targetPos;
     }
 
-    public void presetTargetPosition(intakePos intakePos){
+    public void presetTargetPosition(IntakePos intakePos){
         this.intakePosition = intakePos.getPosition();
     }
 
     @Override
     public void init() {
         intake = r.opMode.hardwareMap.get(Servo.class, ConfigNames.intake);
-        presetTargetPosition(intakePos.INIT);
+        presetTargetPosition(IntakePos.INIT);
         update();
     }
 
