@@ -20,6 +20,8 @@ public class SBOTTINGOTATestGrabber extends TeleOpModeBase {
     public final double SERVO_OPEN_ANGLE = 0D;
     public final double SERVO_CLOSE_ANGLE = 90D;
 
+    private double grabberAngle = SERVO_OPEN_ANGLE;
+
     private ServoEx grabberServo;
 
     private Telemetry telemetry;
@@ -34,17 +36,20 @@ public class SBOTTINGOTATestGrabber extends TeleOpModeBase {
         grabberServo = new SimpleServo(HardwareMapContainer.getMap(), "grabberServo",
                 SERVO_OPEN_ANGLE, SERVO_CLOSE_ANGLE);
 
-        new GamepadButton(Inputs.gamepad1, PSButtons.CIRCLE).whenActive(() ->
-            grabberServo.setPosition(SERVO_CLOSE_ANGLE)
-        );
-
-        new GamepadButton(Inputs.gamepad1, PSButtons.SQUARE).whenActive(() ->
-                grabberServo.setPosition(SERVO_OPEN_ANGLE)
-        );
+        new GamepadButton(Inputs.gamepad1, PSButtons.CIRCLE).whenActive(() -> {
+            if (grabberAngle == SERVO_OPEN_ANGLE) {
+                grabberServo.setPosition(SERVO_OPEN_ANGLE);
+                grabberAngle = SERVO_OPEN_ANGLE;
+            } else {
+                grabberServo.setPosition(SERVO_CLOSE_ANGLE);
+                grabberAngle = SERVO_CLOSE_ANGLE;
+            }
+        });
     }
 
     @Override
     public void every_tick() {
         telemetry.addData("Current Servo Angle: ", grabberServo.getAngle());
     }
+
 }
