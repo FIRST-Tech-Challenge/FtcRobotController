@@ -49,6 +49,8 @@ public class DriverControls {
     public static double TURRET_DEADZONE = 0.03;
 
     void joystickDrive() {
+        if(stickyGamepad2.dpad_right)
+            robot.transferAdvance();
 
         if(gamepad1.dpad_up){
             robot.crane.articulate(Crane.Articulation.home);
@@ -62,8 +64,6 @@ public class DriverControls {
             robot.driveTrain.adjustChassisLength(1);
         }
 
-        if(stickyGamepad2.start)
-            robot.transferAdvance();
         if(stickyGamepad1.start){
             robot.driveTrain.toggleExtension();
             //if (robot.driveTrain.getChariotDeployed())
@@ -160,14 +160,14 @@ public class DriverControls {
         }
 
         if(gamepad1.left_bumper){
-            robot.driveTrain.adjustChassisLength(-1);
+            robot.driveTrain.adjustChassisLength(-0.7);
         }
 
         if(gamepad1.right_bumper){
-            robot.driveTrain.adjustChassisLength(1);
+            robot.driveTrain.adjustChassisLength(0.7);
         }
 
-        if(stickyGamepad1.start){
+        if(stickyGamepad1.start || stickyGamepad2.start){
             robot.driveTrain.toggleExtension();
             //if (robot.driveTrain.getChariotDeployed())
                 //robot.crane.articulate(Crane.Articulation.manual); //allow the crane and turret to return to manual mode
@@ -365,6 +365,12 @@ public class DriverControls {
             robot.underarm.articulate(UnderArm.Articulation.substationPickup);
         }
 
+        if (stickyGamepad2.x)// cancel transfer position reset and drop cone
+        {
+            robot.underarm.resetArticulations();
+            robot.underarm.articulate(UnderArm.Articulation.cancelTransferPosition);
+        }
+
         if(stickyGamepad2.y){
             robot.underarm.toggleLasso();
         }
@@ -374,15 +380,18 @@ public class DriverControls {
         }
 
         if(notJoystickDeadZone(gamepad2.left_stick_y)){
-            //robot.underarm.adjustShoulder(gamepad2.left_stick_y);
+            robot.underarm.adjustShoulder(gamepad2.left_stick_y);
         }
 
+        if(robot.getArticulation().equals(Robot.Articulation.TRANSFER) && (notJoystickDeadZone(gamepad2.left_trigger) || notJoystickDeadZone(gamepad2.right_trigger)))
+            robot.articulate(Robot.Articulation.CANCEL_TRANSFER);
+
         if(notJoystickDeadZone(gamepad2.right_stick_y)){
-            //robot.underarm.adjustElbow(-gamepad2.right_stick_y);
+            robot.underarm.adjustElbow(-gamepad2.right_stick_y);
         }
 
         if(notJoystickDeadZone(gamepad2.right_stick_x)){
-            //robot.underarm.adjustWrist(-gamepad2.right_stick_x);
+            robot.underarm.adjustWrist(-gamepad2.right_stick_x);
         }
 
         if(notJoystickDeadZone(gamepad2.left_stick_x)){

@@ -108,13 +108,13 @@ public class Crane implements Subsystem {
     public static double BULB_CLOSED_POS = 2100; //old value: 1900
 
     public static double TRANSFER_SHOULDER_ANGLE = 50;  //angle at which transfer occurs
-    public static double TRANSFER_SHOULDER_FLIPANGLE = 80; //causes the gripperflipper to flip when the angle is high and the turret turns enough or the robot accellerates
+    public static double TRANSFER_SHOULDER_FLIPANGLE = 85; //causes the gripperflipper to flip when the angle is high and the turret turns enough or the robot accellerates
     public static double TRANSFER_ARM_LENGTH = 0.05;
 
     public static double SAFE_SHOULDER_ANGLE = 40;
     public static double SAFE_ARM_LENGTH = 0.05;
 
-    public static double NUDGE_CENTER_LEFT = 1950;
+    public static double NUDGE_CENTER_LEFT = 1200;
     public static double NUDGE_CENTER_RIGHT = 2020;
     public static double NUDGE_LEFT_POS = 1000;  //home position - stowed up
     public static double NUDGE_RIGHT_POS = 2400;
@@ -454,17 +454,57 @@ public class Crane implements Subsystem {
         transferAdjust,
         robotDriving,
         postTransfer,
-        init
+        init,
+        dropConeNoSub
     }
 
     public Articulation getArticulation() {
         return articulation;
     }
 
+
+    int dropNoSubStage = 0;
+    long dropNoSubTimer = 0;
+    public boolean dropNoSubstation(){
+        switch (dropNoSubStage){
+            case 0:
+                release();
+                dropNoSubTimer = futureTime(0.5);
+                dropNoSubStage++;
+                break;
+            case 1:
+                if(System.nanoTime() > dropNoSubTimer) {
+                    robot.turret.articulate(Turret.Articulation.transfer);
+                    dropNoSubTimer = futureTime(1);
+                    dropNoSubStage++;
+                }
+                break;
+            case 2:
+                if(System.nanoTime() > dropNoSubStage){
+                    setShoulderTargetAngle(TRANSFER_SHOULDER_FLIPANGLE);
+                    setExtendTargetPos(TRANSFER_ARM_LENGTH);
+                    dropNoSubTimer = futureTime(0.7);
+                    dropNoSubStage++;
+                    fieldPositionTarget = new Vector3(-4,0,10).add(robotPosition);
+                }
+                break;
+            case 3:
+                dropNoSubStage = 0;
+                return true;
+        }
+        return false;
+    }
+
     public Articulation articulate(Articulation target){
         articulation = target;
 
         switch(articulation){
+            case dropConeNoSub:
+                if(dropNoSubstation()){
+                    robot.turret.articulate(Turret.Articulation.runToAngle);
+                    articulation = Articulation.manualDrive;
+                }
+                break;
             case transferAdjust:
                 setShoulderTargetAngle(0);
                 break;
@@ -547,20 +587,21 @@ public class Crane implements Subsystem {
                 robot.turret.articulate(Turret.Articulation.transfer);
                 setShoulderTargetAngle(TRANSFER_SHOULDER_FLIPANGLE);
                 setExtendTargetPos(TRANSFER_ARM_LENGTH);
-                transferTimer = futureTime(1.0);
+                transferTimer = futureTime(2);
                 transferStage++;
                 break;
 
             case 1: //nudge flipper
                 if(System.nanoTime() >= transferTimer) {
                     nudgeLeft();
-                    transferTimer = futureTime(1.0);
+                    transferTimer = futureTime(1);
                     transferStage++;
                 }
                 break;
 
             case 2: //lower shoulder to transfer height
                     if(System.nanoTime() >= transferTimer){
+                        nudgeCenter(true);
                         setShoulderTargetAngle(TRANSFER_SHOULDER_ANGLE);
                         transferStage = 0;
                         return true;
@@ -632,7 +673,7 @@ public class Crane implements Subsystem {
             case 1:
                 if (goToFieldCoordinate(pos.getX()-1, pos.getY(), obj.z())) {
                     coneCycleStage++;
-                    nudgeLeft();
+                    //nudgeLeft();
                     cycleTimer = futureTime(0.2);
                 }
                 break;
@@ -837,7 +878,7 @@ public class Crane implements Subsystem {
                 }
                 break;
             case 2:
-                nudgeLeft();
+                //nudgeLeft();
                 if(shoulderOnTarget() && goHome()){
                     pickupConeStage++;
                 }
@@ -858,6 +899,7 @@ public class Crane implements Subsystem {
                 //}
                 break;
             case 6:
+                nudgeCenter(true);
                 pickupConeStage = 0;
                 return true;
         }
@@ -879,7 +921,7 @@ public class Crane implements Subsystem {
                 break;
             case 1:
                 if(System.nanoTime() >= dropTimer) {
-                    nudgeLeft();
+                    //nudgeLeft();
                     setShoulderTargetAngle(getShoulderAngle() + 8);
                     dropConeStage++;
                 }
@@ -895,6 +937,7 @@ public class Crane implements Subsystem {
                 }
                 break;
             case 4:
+                nudgeCenter(true);
                 dropConeStage = 0;
                 return true;
         }
@@ -1338,6 +1381,7 @@ public class Crane implements Subsystem {
             telemetryMap.put("Shoulder PID Output", shoulderCorrection);
             telemetryMap.put("Running Amp", runShoulderAmp);
             telemetryMap.put("Nudge Distance Sensor", nudgeDistance);
+            telemetryMap.put("Nudge Target", nudgeStickServo.getPosition());
 
         }else{
 

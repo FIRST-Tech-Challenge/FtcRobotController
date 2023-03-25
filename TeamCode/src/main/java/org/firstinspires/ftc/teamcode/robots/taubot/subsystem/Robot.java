@@ -4,7 +4,9 @@ import static org.firstinspires.ftc.teamcode.robots.taubot.util.Utils.craneIK;
 import static org.firstinspires.ftc.teamcode.robots.taubot.util.Utils.wrapAngleRad;
 import static org.firstinspires.ftc.teamcode.util.utilMethods.futureTime;
 
+import android.database.CrossProcessCursor;
 import android.graphics.Bitmap;
+import android.util.Log;
 
 import com.acmerobotics.dashboard.canvas.Canvas;
 import com.acmerobotics.dashboard.config.Config;
@@ -13,6 +15,7 @@ import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.VoltageSensor;
 
+import org.checkerframework.checker.units.qual.C;
 import org.firstinspires.ftc.robotcore.internal.system.Misc;
 import org.firstinspires.ftc.teamcode.robots.taubot.Field;
 import org.firstinspires.ftc.teamcode.robots.taubot.util.Constants;
@@ -48,6 +51,7 @@ public class Robot implements Subsystem {
 
     private long[] subsystemUpdateTimes;
     private boolean autoDumpEnabled, doubleDuckEnabled;
+    private boolean autonTurnDoneTelemetry, autonOnPoleTelemetry;
 
     private final List<LynxModule> hubs;
 
@@ -98,11 +102,14 @@ public class Robot implements Subsystem {
         telemetryMap.put("Articulation", articulation);
         telemetryMap.put("Unfolded", unfolded);
         telemetryMap.put("AutonState", autonIndex);
+        telemetryMap.put("AutonTurnStatus", autonTurnDoneTelemetry);
+        telemetryMap.put("AutonOnPoleStatus", autonOnPoleTelemetry);
         telemetryMap.put("TransferState", transferStage);
         telemetryMap.put("Time Thing", timeSupervisor);
         telemetryMap.put("Auton Time", (totalAutonTime-System.nanoTime())/1e9);
         telemetryMap.put("Unfold Stage", unfoldStage);
         telemetryMap.put("auto-dump enabled", autoDumpEnabled);
+        telemetryMap.put("Cancel Transfer Stage", cancelTransferIndex);
 
         for (int i = 0; i < subsystems.length; i++) {
             String name = subsystems[i].getClass().getSimpleName();
@@ -228,8 +235,10 @@ public class Robot implements Subsystem {
         if(Objects.isNull(autonTarget)){
             autonTarget = 1;
         }
+
         switch (timeSupervisor) {
             case 0:
+                //works - jai 5:41 3/24
                 driveTrain.articulate(DriveTrain.Articulation.unlock);
                 crane.setCraneTarget(driveTrain.getPoseEstimate().getX()+6,driveTrain.getPoseEstimate().getY(),8);
                 totalAutonTime = futureTime(300);
@@ -242,6 +251,7 @@ public class Robot implements Subsystem {
                 }
                 switch (autonIndex) {
                     case 0:
+                        //works - jai 5:41 3/24
                         driveTrain.articulate(DriveTrain.Articulation.unlock);
                         turret.articulate(Turret.Articulation.lockToZero);
                         autonTime = futureTime(3);
@@ -249,12 +259,14 @@ public class Robot implements Subsystem {
                         break;
                     case 1:
                         //drive to general parking location
+                        //worked last night 3/24
                         if(System.nanoTime() > autonTime) {
                             crane.articulate(Crane.Articulation.manual);
                             driverIsDriving();
-
                             turnDone = false;
+                            autonTurnDoneTelemetry = false;
                             onPole = false;
+                            autonOnPoleTelemetry = false;
                             if (driveTrain.driveUntilDegrees(2 * Field.INCHES_PER_GRID - 4, 0, 20)) {
                                 driveTrain.tuck();
                                 autonIndex++;
@@ -263,14 +275,28 @@ public class Robot implements Subsystem {
                         break;
                     case 2:
                         //drop cone at nearest high pole
+                        //debug this using telemetry - one isn't returning true - either turndone or onpole
+                        //freezes it until timesupervisor takes over
                         driverNotDriving();
                         turret.articulate(Turret.Articulation.runToAngle);
                         if (startingPosition.equals(Constants.Position.START_LEFT)) {
-                            if (!turnDone && driveTrain.turnUntilDegrees(90)) {
+//                            if (!turnDone && driveTrain.turnUntilDegrees(90)) {
+//                            if (driveTrain.getRawHeading() > 90) {
+//                                autonTurnDoneTelemetry = true;
+//                                turnDone = true;
+//                            }
+//                            else if(!turnDone)
+//                                driveTrain.turnUntilDegrees(90);
+//
+//                            }
+                            if(driveTrain.driveUntilDegrees(0, 90, 15)) {
                                 turnDone = true;
+                                autonTurnDoneTelemetry = true;
+
                             }
                             if(!onPole && crane.goToFieldCoordinate(3 * Field.INCHES_PER_GRID - 2 , Field.INCHES_PER_GRID - 2.5, 39)){
                                 onPole = true;
+                                autonOnPoleTelemetry = true;
                             }
                             if(turnDone && onPole){
                                 autonTime = futureTime(0.8);
@@ -280,9 +306,13 @@ public class Robot implements Subsystem {
                         else {
                             if (!turnDone && driveTrain.turnUntilDegrees(-90)) {
                                 turnDone = true;
+                                autonTurnDoneTelemetry = true;
+
                             }
                             if(!onPole && crane.goToFieldCoordinate(3 * Field.INCHES_PER_GRID + 1, -Field.INCHES_PER_GRID - 1.2, 39)){
                                 onPole = true;
+                                autonOnPoleTelemetry = true;
+
                             }
                             if(turnDone && onPole){
                                 autonTime = futureTime(0.8);
@@ -327,8 +357,11 @@ public class Robot implements Subsystem {
                 }
                 break;
             case 2:
+                //crane just drops, hits underarm (last night, 3/23)
+                //untested
                 autonIndex = 0;
                 crane.articulate(Crane.Articulation.home);
+
                 if (crane.getArticulation() == Crane.Articulation.manualDrive) {
                     crane.articulate(Crane.Articulation.manual);
                 }
@@ -399,6 +432,7 @@ public class Robot implements Subsystem {
         // misc. articulations
         INIT,
         START,
+        CANCEL_TRANSFER,
         START_DOWN, // use to prep for start - stows the crane
         START_END_GAME, //use on a timer to automatically deploy carousel spinner 10 seconds before end game
 
@@ -426,6 +460,11 @@ public class Robot implements Subsystem {
                 case MANUAL:
 
                     break;
+                case CANCEL_TRANSFER:
+                    if(cancelTransfer()) {
+                        articulation = Articulation.MANUAL;
+                    }
+
                 case CALIBRATE:
                     if (crane.calibrate()) {
                         articulation = Articulation.INIT;
@@ -455,6 +494,11 @@ public class Robot implements Subsystem {
         }
         return this.articulation;
     }
+
+    public Articulation getArticulation(){
+        return articulation;
+    }
+
 
     public boolean isDriverDriving() {
         return driverDriving;
@@ -515,6 +559,7 @@ public class Robot implements Subsystem {
             case 3:
                 crane.articulate(Crane.Articulation.manualDrive);
                 underarm.articulate(UnderArm.Articulation.home);
+                crane.nudgeCenter(true);
                 unfoldStage = 0;
                 return true;
         }
@@ -532,7 +577,7 @@ public class Robot implements Subsystem {
                 dropStage++;
                 break;
             case 1:
-                crane.articulate(Crane.Articulation.dropCone);
+                crane.articulate(Crane.Articulation.dropConeNoSub);
                 dropStage++;
                 break;
             case 2:
@@ -552,6 +597,7 @@ public class Robot implements Subsystem {
     public void transferAdvance() {
         transferStage ++;
     }
+
     public boolean transfer(){
 
         switch (transferStage) {
@@ -571,7 +617,7 @@ public class Robot implements Subsystem {
                 if(System.nanoTime() >= transferTimer){
                     //driveTrain.articulate(DriveTrain.Articulation.lock);
                     underarm.articulate(UnderArm.Articulation.transfer); //tell underarm to go to transfer angle
-                    transferTimer = futureTime(2.0);
+                    transferTimer = futureTime(2.5);
                     transferStage++;
                 }
                 break;
@@ -616,10 +662,46 @@ public class Robot implements Subsystem {
             case 6:
                 if(System.nanoTime() >= transferTimer) {
                     driveTrain.setChassisLength(Constants.MAX_CHASSIS_LENGTH);
-                    crane.articulate(Crane.Articulation.manual); //allows crane to do crane things after transfer
-                    transferStage = 0;
-                    return true;
+                    crane.articulate(Crane.Articulation.postTransfer); //allows crane to do crane things after transfer
+                    transferStage++;
+                    break;
                 }
+            case 7:
+                transferStage = 0;
+                return true;
+        }
+        return false;
+    }
+
+    long cancelTransferTimer;
+    int cancelTransferIndex = 0;
+    public boolean cancelTransfer() {
+        switch (cancelTransferIndex) {
+            case (0):
+            {
+                transferStage = 0;
+                crane.articulate(Crane.Articulation.manual);
+                crane.setShoulderTargetAngle(Crane.SAFE_SHOULDER_ANGLE);
+                cancelTransferTimer = futureTime(.5);
+                cancelTransferIndex++;
+                break;
+            }
+            case (1):
+            {
+                if(System.nanoTime() > cancelTransferTimer) {
+                    crane.articulate(Crane.Articulation.home);
+                    turret.articulate(Turret.Articulation.runToAngle);
+                    underarm.articulate(UnderArm.Articulation.homeNoTuck);
+                    cancelTransferTimer = futureTime(0.7);
+                    cancelTransferIndex++;
+                }
+                break;
+            }
+            case 2:
+                cancelTransferIndex = 0;
+                return  true;
+
+
         }
         return false;
     }

@@ -28,7 +28,7 @@ import java.util.Map;
 @Config(value = "PPTurret")
 public class Turret implements Subsystem {
 
-    public static PIDCoefficients TURRET_PID = new PIDCoefficients(0.01, 0.02, 0.002); //0.02, 0.01, 0.05)
+    public static PIDCoefficients TURRET_PID = new PIDCoefficients(0.01, 0.02, 0.0002); //0.02, 0.01, 0.05), changed from (0.01, 0.02, 0.0002)
     public static final double TICKS_PER_DEGREE = 36;
     public static double TURRET_TOLERANCE = 1;
 
@@ -42,6 +42,7 @@ public class Turret implements Subsystem {
 
     private int targetTics; //when not in IMU mode, this is the current target
     private int TRANSFER_TICS = 1786;
+    private boolean currIsLower = true;
 
     BNO055IMU turretIMU;
 
@@ -135,23 +136,30 @@ public class Turret implements Subsystem {
                 turretPID.setInput(-distanceBetweenAngles(heading,targetHeading));
                 break;
             case lockToOneHundredAndEighty: //home position is facing facing back of robot not towards underarm
-                targetTics = TRANSFER_TICS;
                 setControlMethodIMU(false);
+                targetTics = calcClosest(TRANSFER_TICS);
                 //turretPID.setInput(-distanceBetweenAngles(heading,180 + Math.toDegrees(robot.driveTrain.getRawHeading())));
                 break;
             case lockToZero: //fold is facing towards underarm
-                targetTics = 0;
                 setControlMethodIMU(false);
-                turretPID.setInput(-distanceBetweenAngles(heading,Math.toDegrees(robot.driveTrain.getRawHeading())));
+                targetTics = calcClosest(0);
                 break;
             case transfer: //transfer position is facing facing back of robot not towards underarm
-                targetTics = TRANSFER_TICS;
                 setControlMethodIMU(false);
+                targetTics = calcClosest(TRANSFER_TICS);
                 //turretPID.setInput(-distanceBetweenAngles(heading,180 + Math.toDegrees(robot.driveTrain.getRawHeading())));
                 break;
         }
 
         return articulation;
+    }
+
+    private int calcClosest(int ticks){
+        double fullRot = 3572;
+
+        int error = (int)(ticks - motor.getCurrentPosition()%fullRot);
+        int targetTicks = error + motor.getCurrentPosition();
+        return targetTicks;
     }
 
     public double getError(){
@@ -187,7 +195,6 @@ public class Turret implements Subsystem {
             //power = turretPID.onTarget() ? 0 : correction; //what was this? artificially stills micro corrections
         }
         else {
-
             motor.setTargetPosition(targetTics);
         }
 
@@ -333,6 +340,8 @@ public class Turret implements Subsystem {
             telemetryMap.put("turret correction", power);
             telemetryMap.put("turret thing", turretIndex.getState());
             telemetryMap.put("turret calibrate", calibrateStage);
+            telemetryMap.put("turret Target Heading", targetHeading);
+            telemetryMap.put("turret Target Ticks", targetTics);
         }
 
         return telemetryMap;

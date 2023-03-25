@@ -112,12 +112,12 @@ public class DriveTrain extends DiffyDrive implements Subsystem {
 
     //PID LOOPS_______________________________________________________________________
 
-    public static PIDCoefficients HEADING_PID = new PIDCoefficients(1.5, 0, 0);
+    public static PIDCoefficients HEADING_PID = new PIDCoefficients(0, 0, 0);
     public static double HEADING_PID_TOLERANCE = 1;
     public static PIDCoefficients DIST_TRAVELLED_PID = new PIDCoefficients(5, 0.0, 0); //todo tune this - copied from Reach
     public static PIDCoefficients VELOCITY_PID = new PIDCoefficients(4, 0, 0);
     //todo the following PID needs initial settings
-    public static PIDCoefficients CHASSIS_LENGTH_PID = new PIDCoefficients(0.15, 0, 0.3);
+    public static PIDCoefficients CHASSIS_LENGTH_PID = new PIDCoefficients(0.1, 0, 0.1);
     public static double CHASSIS_LENGTH_TOLERANCE = 0.1;
     public static PIDCoefficients AXIAL_PID = new PIDCoefficients(4, 0, 0);
     public static PIDCoefficients CROSS_AXIAL_PID = new PIDCoefficients(0.001, 0, 0);
@@ -331,7 +331,7 @@ public class DriveTrain extends DiffyDrive implements Subsystem {
         } else {
             leftPosition = diffEncoderTicksToInches(leftMotor.getCurrentPosition() - leftRelOffset);
             rightPosition = diffEncoderTicksToInches(rightMotor.getCurrentPosition() - rightRelOffset);
-            //todo - add chassis length distance sensor
+//            todo - add chassis length distance sensor
             chassisLength = chassisLengthDistanceSensor.getDistance(DistanceUnit.INCH) + Distance_HUB_TO_UNDERARM_MIN;
         }
 
@@ -410,6 +410,9 @@ public class DriveTrain extends DiffyDrive implements Subsystem {
             telemetryMap.put("Grid Drive Index", gridDriveIndex);
             telemetryMap.put("Target Heading", targetHeading);
             telemetryMap.put("Heading", heading);
+            telemetryMap.put("Heading PID Enabled", headingPID.isEnabled());
+            telemetryMap.put("Heading Error", headingPID.getError());
+            telemetryMap.put("Heading Error Magnitude", headingErrorMagnitude);
             telemetryMap.put("x", poseEstimate.getX());
             telemetryMap.put("y", poseEstimate.getY());
             telemetryMap.put("x tiles", currentPoseTiles.getX());
@@ -715,16 +718,22 @@ public class DriveTrain extends DiffyDrive implements Subsystem {
 
     public static double HEADING_DEGREE_TOLERANCE = 4;
 
+    double headingErrorMagnitude = 0;
     //request a turn in degrees units
     public boolean turnUntilDegrees(double turnAngle) {
         setTargetHeadingDeg(turnAngle);
-        headingPID.enable();
         headingPID.setPID(HEADING_PID);
         headingPID.setInput(heading);
-        headingPID.setSetpoint(targetHeading);
+        headingErrorMagnitude = Math.abs(Utils.distanceBetweenAngles(Math.toDegrees(heading),turnAngle));
         double correction = headingPID.performPID();
-        setMotorVelocities(-correction,correction);
-        return Math.abs(Utils.distanceBetweenAngles(Math.toDegrees(heading),turnAngle)) < HEADING_PID_TOLERANCE;
+        if(headingErrorMagnitude < HEADING_PID_TOLERANCE){
+            headingPID.disable();
+            return true;
+        }else{
+            headingPID.enable();
+            setMotorPowers(-correction,correction);
+            return false;
+        }
     }
 
     //see isDriving();

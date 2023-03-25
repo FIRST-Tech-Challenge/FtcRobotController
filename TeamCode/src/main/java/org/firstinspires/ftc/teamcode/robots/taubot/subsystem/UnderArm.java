@@ -74,7 +74,9 @@ public class UnderArm implements Subsystem {
 
     public static double PICKUP_WRIST_ANGLE = -4;
 
+    public static double CANCEL_TRANSFER_TURRET_DEGREES = 30;//todo not any real number can be calibrated if necessary
 
+    public static double CANCEL_TRANSFER_SHOULDER = 64 , CANCEL_TRANSFER_ELBOW = 108, CANCEL_TRANSFER_WRIST = 60;
     public static double TRANSFER_TURRET_ANGLE = 0; //-14
     boolean lassoGripped = false;
 
@@ -148,6 +150,8 @@ public class UnderArm implements Subsystem {
         foldTransfer,
         jointAngles,
         substationHover,
+        homeNoTuck,
+        cancelTransferPosition,
         substationPickup,
         substationRecover
     }
@@ -223,7 +227,17 @@ public class UnderArm implements Subsystem {
             case transferRecover: //after transfer, go back through to clear the camera
                 if(TransferRecover())
                     articulation = Articulation.manual;
-                    break;
+                break;
+
+            case homeNoTuck:
+                if(HomeNoTuck())
+                    articulation = Articulation.manual;
+                break;
+            case cancelTransferPosition: {
+                if(cancelTransferPosition())
+                    articulation = Articulation.manual;
+                break;
+            }
             case safe:
                 jointAngle = JointAngle.SafePos;
                 goToJointAngleAndLength(jointAngle);
@@ -244,6 +258,7 @@ public class UnderArm implements Subsystem {
             case jointAngles:
                 goToJointAngle(jointAngle);
             case substationHover:
+//                robot.driveTrain.articulate(DriveTrain.Articulation.lock);
                 if (goSubstationHover()) articulation = Articulation.manual;
                 break;
             case substationPickup:
@@ -283,6 +298,72 @@ public class UnderArm implements Subsystem {
         targetDistance = calculatedDistance;
         setShoulderTargetAngle(calculatedShoulderAngle);
         setElbowTargetAngle(calculatedElbowAngle);
+    }
+
+    long homeNoTuckTimer = 0;
+    int homeNoTuckStage = 0;
+    public boolean HomeNoTuck () {
+        switch (homeNoTuckStage) {
+            case 0: //sets home position
+                setTurretTargetAngle(0);
+                setElbowTargetAngle(0);
+                setShoulderTargetAngle(0);
+                grip();
+                setWristTargetAngle(WRIST_HOME_POSITION);
+                homeNoTuckTimer= futureTime(0.5);
+                homeNoTuckStage++;
+                break;
+            case 1:
+                if (System.nanoTime() > homeNoTuckTimer) {
+                    homeNoTuckStage = 0;
+                    return true;
+                }
+                break;
+        }
+
+        return false;
+
+    }
+
+    long cancelTransferPositionTimer = 0;
+    int cancelTransferPositionStage = 0;
+
+    public boolean cancelTransferPosition() {
+        switch (cancelTransferPositionStage) {
+            case 0: //sets home position
+                setTurretTargetAngle(0);
+                setElbowTargetAngle(0);
+                setShoulderTargetAngle(0);
+                cancelTransferPositionTimer = futureTime(0.5);
+                cancelTransferPositionStage++;
+                break;
+            case 1: //give the elbow a head start to clear the camera when a cone is loaded
+                if (cancelTransferPositionTimer<System.nanoTime()){
+                    setElbowTargetAngle(CANCEL_TRANSFER_ELBOW);
+                    cancelTransferPositionTimer = futureTime(0.25);
+                    cancelTransferPositionStage++;
+                }
+                break;
+            case 2:
+                if (cancelTransferPositionTimer < System.nanoTime()) {
+                    setElbowTargetAngle(CANCEL_TRANSFER_ELBOW);
+                    setShoulderTargetAngle(CANCEL_TRANSFER_SHOULDER);
+                    setWristTargetAngle(CANCEL_TRANSFER_WRIST);
+                    setTurretTargetAngle(CANCEL_TRANSFER_TURRET_DEGREES);
+                    cancelTransferPositionTimer = futureTime(0.5);
+                    cancelTransferPositionStage++;
+                }
+                break;
+            case 3:
+                if (System.nanoTime() > cancelTransferPositionTimer) {
+                    cancelTransferPositionStage = 0;
+                    return true;
+                }
+                break;
+        }
+
+        return false;
+
     }
 
     long homeTimer;
@@ -377,7 +458,7 @@ public class UnderArm implements Subsystem {
     long substationHoverTimer;
     int substationHoverStage = 0;
 
-    public double SS_HOVER_SHOULDER = 64 , SS_HOVER_ELBOW = 108, SS_HOVER_WRIST = 60, SS_HOVER_TURRET = 0;
+    public double SS_HOVER_SHOULDER = 64 , SS_HOVER_ELBOW = 108, SS_HOVER_WRIST = 60, SS_HOVER_TURRET = 0, SS_HOVER_EXTEND = MIN_SAFE_CHASSIS_LENGTH;
 
     boolean canSaveHoverPositions = false;
     public void SaveHoverPositions(){
@@ -386,6 +467,7 @@ public class UnderArm implements Subsystem {
             SS_HOVER_ELBOW = elbowTargetAngle;
             SS_HOVER_SHOULDER = shoulderTargetAngle;
             SS_HOVER_TURRET = turretTargetAngle;
+            SS_HOVER_EXTEND = robot.driveTrain.getTargetChassisLength();
             canSaveHoverPositions = false;
         }
     }
@@ -404,6 +486,7 @@ public class UnderArm implements Subsystem {
             case 1: //give the elbow a head start to clear the camera when a cone is loaded
                 if (substationHoverTimer<System.nanoTime()){
                     setElbowTargetAngle(SS_HOVER_ELBOW);
+                    robot.driveTrain.setChassisLength(SS_HOVER_EXTEND-3);
                     substationHoverTimer = futureTime(0.25);
                     substationHoverStage++;
                 }
@@ -416,6 +499,7 @@ public class UnderArm implements Subsystem {
                     setShoulderTargetAngle(SS_HOVER_SHOULDER);
                     setWristTargetAngle(SS_HOVER_WRIST);
                     setTurretTargetAngle(SS_HOVER_TURRET);
+                    robot.driveTrain.setChassisLength(SS_HOVER_EXTEND);
                     substationHoverTimer = futureTime(0.5);
                     substationHoverStage++;
                 }
@@ -451,7 +535,7 @@ public class UnderArm implements Subsystem {
                     WRIST_SPEED = 90;
                     setShoulderTargetAngle(70);
                     substationPickupStage++;
-                    substationPickupTimer = futureTime(3); //0.3 todo this is set long from manual cone placement in testing
+                    substationPickupTimer = futureTime(1); //0.3 todo this is set long from manual cone placement in testing
                 }
                 break;
 
@@ -513,6 +597,7 @@ public class UnderArm implements Subsystem {
 public boolean goSubstationRecover() {
             switch (recoverStage) {
         case 0: //sets vertical position
+            robot.driveTrain.articulate(DriveTrain.Articulation.unlock);
             setElbowTargetAngle(0);
             setShoulderTargetAngle(0);
             setWristTargetAngle(WRIST_HOME_POSITION);
