@@ -121,6 +121,9 @@ public class TwoConeParkingAutoLeftLowering extends LinearOpMode {
             drive.followTrajectorySequence(trajSeq2);
             drive.pause(50);
             drive.numberTheArm(4500);
+            while(opModeIsActive() && drive.linearslide.isBusy()){
+
+            }
             drive.pause(50);
             drive.openClaw();
             drive.pause(200);
