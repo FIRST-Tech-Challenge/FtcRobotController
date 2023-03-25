@@ -24,6 +24,7 @@ public class BadgerConstants {
     public static int ARM_BACK = -1320;
 
     public static double CLAW_OPEN = 0.01;
+    public static double CLAW_CLOSED_AUTO = 0.33;
     public static double CLAW_CLOSED = 0.35;
 
     public static double TIP_CENTER = 0.77;
