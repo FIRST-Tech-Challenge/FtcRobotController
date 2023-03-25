@@ -120,9 +120,9 @@ public class Field {
     public boolean lookingAtPoleTele() {
         double[] coords = cv.rotatedPolarCoord();
 //        coords[1]+=5;
-        coords[1] -= 1.0;
+        coords[1] -= 0;
         Pose2d pos = roadrun.getPoseEstimate();
-        pos = new Pose2d(pos.getX(), pos.getY(), pos.getHeading() + coords[0] * PI / 180 + PI);
+        pos = new Pose2d(pos.getX(), pos.getY(), pos.getHeading() - coords[0] * PI / 180 + PI);
         polePos = new Pose2d(pos.getX() + cos(pos.getHeading()) * coords[1] + sin(pos.getHeading()), pos.getY() + sin(pos.getHeading()) * coords[1] + cos(pos.getHeading()), pos.getHeading());
         if (abs(coords[1]) < 5 && abs(coords[1]) > 0) {
             setDoneLookin(true);
@@ -133,7 +133,7 @@ public class Field {
         logger.log("/RobotLogs/GeneralRobot", "polePos" + polePos);
         logger.log("/RobotLogs/GeneralRobot", "coords" + coords[0] + "," + coords[1]);
 
-        if (abs(coords[1]) < 18 && coords[1] > 3) {
+        if (abs(coords[1]) < 30 && coords[1] > 2) {
             return true;
         }
         return false;
@@ -142,17 +142,16 @@ public class Field {
     public boolean lookingAtCone() {
         double[] coords = cv.rotatedConarCoord();
 //        coords[1]+=5;
-        coords[1] -=1;
+        coords[1] -=0.5;
         Pose2d pos = roadrun.getPoseEstimate();
         pos = new Pose2d(pos.getX(), pos.getY(), pos.getHeading() + coords[0] * PI / 180);
-        conePos = new Pose2d(pos.getX() + cos(pos.getHeading()) * coords[1], pos.getY() + sin(pos.getHeading()) * coords[1] + 1, pos.getHeading());
+        conePos = new Pose2d(pos.getX() + cos(pos.getHeading()) * coords[1] + 3.*sin(pos.getHeading()), pos.getY() + sin(pos.getHeading()) * coords[1]-3.*cos(pos.getHeading()) , pos.getHeading());
         if (abs(coords[1]) < 5 && abs(coords[1]) > -1) {
             setDoneLookin(true);
         }
         logger.log("/RobotLogs/GeneralRobot", "CONePos" + conePos);
         logger.log("/RobotLogs/GeneralRobot", "coords" + coords[0] + "," + coords[1]);
-        if (abs(coords[1]) > 4&&coords[1]<30) {
-
+        if (abs(coords[1]) > 2&&coords[1]<50) {
             return true;
         }
         return false;
@@ -469,8 +468,10 @@ public class Field {
             Pose2d startPos = roadrun.getPoseEstimate();
             TrajectorySequenceBuilder bob = roadrun.trajectorySequenceBuilder(startPos);
             for (int i = 0; i < fullMovement.size(); i++) {
-                bob.setReversed(reversals.get(i));
-                Pose2d target = new Pose2d(fullMovement.get(0)[0], fullMovement.get(0)[1], fullMovement.get(0)[2]);
+                if(i==0||reversals.get(i)!=reversals.get(i-1)) {
+                    bob.setReversed(reversals.get(i));
+                }
+                Pose2d target = new Pose2d(fullMovement.get(i)[0], fullMovement.get(i)[1], fullMovement.get(i)[2]);
                 bob.splineToSplineHeading(target, fullMovement.get(i)[3]);
             }
             bob.addTemporalMarker(() -> {

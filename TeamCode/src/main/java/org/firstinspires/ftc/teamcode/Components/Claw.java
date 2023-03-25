@@ -94,7 +94,7 @@ public class Claw {
         //init RFServo & Distance sensor
         claw = new RFServo("clawServo", CLAW_SERVO_MAX_TICK);
 
-        coneObserver = op.hardwareMap.get(Rev2mDistanceSensor.class, "coneObserver");
+//        coneObserver = op.hardwareMap.get(Rev2mDistanceSensor.class, "coneObserver");
 
         if(!isTeleop){
             claw.setPosition(CLAW_CLOSED_POS);
@@ -263,14 +263,14 @@ public class Claw {
         //execute algorithm for observing
         //no setting state
         //log to general robot log that the cone has been observed through function closeClaw()
-        double distance = coneObserver.getDistance(INCH);
-                logger.log("/RobotLogs/GeneralRobot", claw.getDeviceName() + ",getConeDistance(),"
-                + coneObserver.getDistance(INCH) + " inches", true);
-        op.telemetry.addData("coneDist",distance);
-        if(distance>2000){
-            shouldUseClawSensor = false;
-        }
-        return coneObserver.getDistance(INCH) < CLAW_CONE_DISTANCE && shouldUseClawSensor;
+//        double distance = coneObserver.getDistance(INCH);
+//                logger.log("/RobotLogs/GeneralRobot", claw.getDeviceName() + ",getConeDistance(),"
+//                + coneObserver.getDistance(INCH) + " inches", true);
+//        op.telemetry.addData("coneDist",distance);
+//        if(distance>2000){
+//            shouldUseClawSensor = false;
+//        }
+        return 1000 < CLAW_CONE_DISTANCE && shouldUseClawSensor;
     }
     public double coneDistance(){
         return coneObserver.getDistance(INCH);

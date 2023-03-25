@@ -41,7 +41,7 @@ public class Lift {
     private ArrayList<Double> coefficients = new ArrayList<>();
     private boolean done = true;
     private double lastManualTime = 0.0;
-    double[] coneStack = {500,410,315,180};
+    double[] coneStack = {500*0.8,410*0.8,315*0.8,180*0.8};
     ;
     private int stackLevel = 0;
     private double lastStackTime =0;
@@ -104,8 +104,8 @@ public class Lift {
     }
 
     public enum LiftConstants {
-        LIFT_HIGH_JUNCTION(1690*.75, false),
-        LIFT_MED_JUNCTION(860*.75, false),
+        LIFT_HIGH_JUNCTION(1690*.8, false),
+        LIFT_MED_JUNCTION(860*.8, false),
         LIFT_LOW_JUNCTION(15*.75, false),
         LIFT_GROUND_JUNCTION(0, false),
         LIFT_GROUND(0, true);

@@ -23,8 +23,8 @@ public class PwPTeleOp extends LinearOpMode {
             module.setBulkCachingMode(LynxModule.BulkCachingMode.AUTO);
         }
         robot.cv.observeSleeve();
-//        Pose2d startPose = new Pose2d(-29.6, 62.25, toRadians(90));
-//        robot.roadrun.setPoseEstimate(startPose);//        robot.cv.observeStick();
+        Pose2d startPose = new Pose2d(41, 62.25, toRadians(90));
+        robot.roadrun.setPoseEstimate(startPose);//        robot.cv.observeStick();
         robot.cv.observeCone();
         waitForStart();
         robot.cv.observeStick();

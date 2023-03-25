@@ -211,9 +211,9 @@ public class PwPRobot extends BasicRobot {
 
                 roadrun.followTrajectorySequenceAsync(roadrun.trajectorySequenceBuilder(roadrun.getPoseEstimate())
                         .setReversed(false)
-                        .splineToSplineHeading(target, target.getHeading()).build());
+                        .splineTo(target.vec(), target.getHeading()).build());
             }
-//                logger.log("/RobotLogs/GeneralRobot", "coords"+cv.rotatedConarCoord()[0]+","+cv.rotatedConarCoord()[1]);
+                logger.log("/RobotLogs/GeneralRobot", "coords"+cv.rotatedConarCoord()[0]+","+cv.rotatedConarCoord()[1]);
 
         }
     }
@@ -226,7 +226,7 @@ public class PwPRobot extends BasicRobot {
                 TrajectorySequence trajectory = roadrun.getCurrentTraj();
                 roadrun.changeTrajectorySequence(roadrun.trajectorySequenceBuilder(trajectory.start())
                         .setReversed(true)
-                        .splineToSplineHeading(target, target.getHeading()).build());
+                        .splineTo(target.vec(), target.getHeading()).build());
 //                field.setDoneLookin(true);
                 logger.log("/RobotLogs/GeneralRobot", "mr.obama" + target + "im cone" + roadrun.getPoseEstimate());
             } else {
@@ -234,7 +234,7 @@ public class PwPRobot extends BasicRobot {
 
                 roadrun.followTrajectorySequenceAsync(roadrun.trajectorySequenceBuilder(roadrun.getPoseEstimate())
                         .setReversed(true)
-                        .splineToSplineHeading(target, target.getHeading()).build());
+                        .splineTo(target.vec(), target.getHeading()).build());
             }
 //                logger.log("/RobotLogs/GeneralRobot", "coords"+cv.rotatedConarCoord()[0]+","+cv.rotatedConarCoord()[1]);
 
@@ -764,19 +764,19 @@ public class PwPRobot extends BasicRobot {
         }
         if (op.getRuntime() > 90 && op.getRuntime() < 92) {
             rainbowRainbow();
-        } else if ((field.lookingAtCone() && CLAW_WIDE.getStatus() && ARM_INTAKE.getStatus())) {
+        } else if ((field.lookingAtCone() && !CLAW_CLOSED.getStatus() && ARM_INTAKE.getStatus())) {
             leds.pattern29();
             if (op.gamepad1.a) {
                 autoTeleCone();
             }
-//        } else if ((field.lookingAtPoleTele() && CLAW_CLOSED.getStatus() && ARM_OUTTAKE.getStatus())) {
-//            leds.pattern29();
-//            if (op.gamepad1.y) {
-//                autoTelePole();
-//            }
+        } else if ((field.lookingAtPoleTele() && CLAW_CLOSED.getStatus() && ARM_OUTTAKE.getStatus())) {
+            leds.pattern29();
+            if (op.gamepad1.a) {
+                autoTelePole();
+            }
         } else if (lift.getLiftTarget() == lift.getStackPos()) {
             setStackLevelColor(lift.getStackLevel());
-        } else if (CLAW_OPEN.getStatus()) {
+        } else if (CLAW_OPEN.getStatus()|| CLAW_WIDE.getStatus()) {
             darkGreen();
         } else {
             partycolorwave();
