@@ -56,7 +56,7 @@ public class LeftAutoComplex extends BaseAuto {
         telemetry.addData("Park zone 1 ", this.currentSide);
         telemetry.update();
         //Move Left
-        hdw.moveYAxis(-2, -0.3);
+        //hdw.moveYAxis(-2, -0.3);
         hdw.moveXAxis( -22.0, 0.3);
         hdw.goToHeight(Hardware2022.SlideHeight.Ground);
     }
@@ -75,7 +75,7 @@ public class LeftAutoComplex extends BaseAuto {
         telemetry.addData("Park zone 3 ", this.currentSide);
         telemetry.update();
         //Move right
-        hdw.moveYAxis(-2.0, -0.3);
+        //hdw.moveYAxis(-2.0, -0.3);
         hdw.moveXAxis( 22.0, 0.3);
         hdw.goToHeight(Hardware2022.SlideHeight.Ground);
 

@@ -50,7 +50,11 @@ public class Hardware2022 {
     private double turnKI = 0.1;
     private double turnKD = 0.005;
     private double turnKF = 0.0;
+
     private double lnKP = 0.15;
+    private double lnKI = 0.1;
+    private double lnKD = 0.005;
+    private double lnKF = 0.0;
 
     public double getLnKF() {
         return lnKF;
@@ -84,9 +88,6 @@ public class Hardware2022 {
         this.lnKP = lnKP;
     }
 
-    private double lnKI = 0.1;
-    private double lnKD = 0.005;
-    private double lnKF = 0.0;
 
 
 
@@ -233,7 +234,8 @@ public class Hardware2022 {
 
         PIDFController lnPidfCrtler  = new PIDFController(lnKP, lnKI, lnKD, lnKF);
         Log.d("9010", "lnKp: " + lnKP + "  lnKI: " + lnKI + " lnKD: " + lnKD);
-        PIDFController lnXPidfCrtler  = new PIDFController(lnKP, lnKI, lnKD, lnKF);
+        //Give X compansation more KP
+        PIDFController lnXPidfCrtler  = new PIDFController(0.2, lnKI, lnKD, lnKF);
         Log.d("9010", "lnXKp: " + lnKP + "  lnXKI: " + lnKI + " lnXKD: " + lnKD);
         PIDFController turnPidfCrtler  = new PIDFController(turnKP, turnKI, turnKD, turnKF);
         Log.d("9010", "turnKp: " + turnKP + "  lnKI: " + turnKI + " turnKD: " + turnKD);
@@ -287,7 +289,7 @@ public class Hardware2022 {
 
             double xError = xEncoder.getCurrentPosition() - currenXPosition;
             Log.d("9010", "X Error " + xError);
-            xVelocity = lnXPidfCrtler.calculate(xError)*3;
+            xVelocity = lnXPidfCrtler.calculate(xError)*7;
             Log.d("9010", "X Vel:  " + xVelocity);
 
 
@@ -357,7 +359,7 @@ public class Hardware2022 {
 
         PIDFController lnPidfCrtler  = new PIDFController(lnKP, lnKI, lnKD, lnKF);
         Log.d("9010", "lnKp: " + lnKP + "  lnKI: " + lnKI + " lnKD: " + lnKD);
-        PIDFController lnYPidfCrtler  = new PIDFController(lnKP, lnKI, lnKD, lnKF);
+        PIDFController lnYPidfCrtler  = new PIDFController(0.3, lnKI, lnKD, lnKF);
         Log.d("9010", "lnYKp: " + lnKP + "  lnYKI: " + lnKI + " lnYKD: " + lnKD);
         PIDFController turnPidfCrtler  = new PIDFController(turnKP, turnKI, turnKD, turnKF);
         Log.d("9010", "turnKp: " + turnKP + "  lnKI: " + turnKI + " turnKD: " + turnKD);
@@ -411,7 +413,7 @@ public class Hardware2022 {
 
             double yError = yEncoder.getCurrentPosition() - currenYPosition;
             Log.d("9010", "Y Error " + yError);
-            yVelocity = lnYPidfCrtler.calculate(yError)*3;
+            yVelocity = lnYPidfCrtler.calculate(yError)*7;
             Log.d("9010", "Y Veol:  " + yVelocity);
 
 
