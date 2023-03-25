@@ -52,10 +52,10 @@ public class SPLINEAutoRightSide extends PowerPlay_AprilTagDetectionDeposit {
 
     // [PARKING]
     public static double zone2X = 49;
-    public static double zone2Y = 0;
+    public static double zone2Y = 2;
     public static double headingZone2 = 270;
     public static double zone1backwards = 25;
-    public static double zone3forwards = -26; //-24.5
+    public static double zone3forwards = 26; //24.5
 
     // [CONE STACK]
     public static double coneStackForward = 25;
@@ -133,7 +133,7 @@ public class SPLINEAutoRightSide extends PowerPlay_AprilTagDetectionDeposit {
                 })
                 .waitSeconds(0.25)
                 .UNSTABLE_addTemporalMarkerOffset(0, () -> {
-                    slideControl.setCustom(635);//620
+                    slideControl.setCustom(735);//635
                 })
 
                 // GOING BACK TO CONE STACK
@@ -174,7 +174,7 @@ public class SPLINEAutoRightSide extends PowerPlay_AprilTagDetectionDeposit {
 
 
                 .UNSTABLE_addTemporalMarkerOffset(0, () -> {
-                    slideControl.setCustom(455);//475
+                    slideControl.setCustom(575);//475
                 })
                 .splineTo(new Vector2d(xConeStack2, -coneStackForward), Math.toRadians(coneStackEndTangent))
                 .UNSTABLE_addTemporalMarkerOffset(0, () -> {
@@ -211,7 +211,7 @@ public class SPLINEAutoRightSide extends PowerPlay_AprilTagDetectionDeposit {
 
                 //.waitSeconds(0.25)
                 .UNSTABLE_addTemporalMarkerOffset(0, () -> {
-                    slideControl.setCustom(340);//350
+                    slideControl.setCustom(440);//340
                 })
                 .splineTo(new Vector2d(xConeStack3, -coneStackForward), Math.toRadians(coneStackEndTangent))
                 .UNSTABLE_addTemporalMarkerOffset(0, () -> {
