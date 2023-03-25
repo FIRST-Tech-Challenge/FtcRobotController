@@ -39,7 +39,7 @@ public class TrajectorySequenceRunner {
 
     public static int POSE_HISTORY_LIMIT = 100;
 
-    private final TrajectoryFollower follower;
+    private TrajectoryFollower follower;
 
     private final PIDFController turnController;
 
@@ -273,5 +273,9 @@ public class TrajectorySequenceRunner {
 
     public void breakFollowing() {
 
+    }
+
+    public void setFollower(TrajectoryFollower follower){
+        this.follower = follower;
     }
 }

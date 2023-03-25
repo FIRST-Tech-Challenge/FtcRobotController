@@ -3,6 +3,7 @@ package org.firstinspires.ftc.masters.drive;
 import static org.firstinspires.ftc.masters.BadgerConstants.ARM_BOTTOM;
 import static org.firstinspires.ftc.masters.BadgerConstants.ARM_MID_TOP;
 import static org.firstinspires.ftc.masters.BadgerConstants.CLAW_CLOSED;
+import static org.firstinspires.ftc.masters.BadgerConstants.CLAW_CLOSED_AUTO;
 import static org.firstinspires.ftc.masters.BadgerConstants.CLAW_OPEN;
 import static org.firstinspires.ftc.masters.BadgerConstants.SLIDE_BOTTOM;
 import static org.firstinspires.ftc.masters.BadgerConstants.SLIDE_HIGH;
@@ -104,7 +105,7 @@ public class SampleMecanumDrive extends MecanumDrive {
         super(kV, kA, kStatic, TRACK_WIDTH, TRACK_WIDTH, LATERAL_MULTIPLIER);
 
         follower = new HolonomicPIDVAFollower(TRANSLATIONAL_PID, TRANSLATIONAL_PID, HEADING_PID,
-                new Pose2d(0.5, 0.5, Math.toRadians(5.0)), 0.5);
+                new Pose2d(0.5, 0.5, Math.toRadians(5.0)), 0.3);
 
 
         LynxModuleUtil.ensureMinimumFirmwareVersion(hardwareMap);
@@ -213,6 +214,10 @@ public class SampleMecanumDrive extends MecanumDrive {
 
     public void closeClaw(){
         claw.setPosition(CLAW_CLOSED);
+    }
+
+    public void closeAutoClaw(){
+        claw.setPosition(CLAW_CLOSED_AUTO);
     }
 
     public void tipCenter(){
@@ -497,6 +502,18 @@ public class SampleMecanumDrive extends MecanumDrive {
 
         }
         return false;
+    }
+
+    public void switchFollower(){
+        follower = new HolonomicPIDVAFollower(TRANSLATIONAL_PID, TRANSLATIONAL_PID, HEADING_PID,
+                new Pose2d(0.5, 0.5, Math.toRadians(5.0)), 0.1);
+        trajectorySequenceRunner.setFollower(follower);
+    }
+
+    public void switchOriginalFollower(){
+        follower = new HolonomicPIDVAFollower(TRANSLATIONAL_PID, TRANSLATIONAL_PID, HEADING_PID,
+                new Pose2d(0.5, 0.5, Math.toRadians(5.0)), 0.3);
+        trajectorySequenceRunner.setFollower(follower);
     }
 
 }
