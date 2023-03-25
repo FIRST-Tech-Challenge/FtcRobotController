@@ -80,7 +80,7 @@ public class SampleMecanumDrive extends MecanumDrive {
 
     private final Servo clawservo;
 
-    private final DcMotorEx linearslide;
+    public final DcMotorEx linearslide;
 
     private final Servo arm;
 
