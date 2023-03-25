@@ -455,7 +455,8 @@ public class Crane implements Subsystem {
         robotDriving,
         postTransfer,
         init,
-        dropConeNoSub
+        dropConeNoSub,
+        autonDrive
     }
 
     public Articulation getArticulation() {
@@ -513,6 +514,11 @@ public class Crane implements Subsystem {
                 setShoulderTargetAngle(SAFE_SHOULDER_ANGLE);
                 setExtendTargetPos(SAFE_ARM_LENGTH);
                 robot.turret.articulate(Turret.Articulation.lockToOneHundredAndEighty); //turret will not move AT ALL from home position no matter the target
+                break;
+            case autonDrive:
+                fieldPositionTarget = deltaGripperPosition.add(robotPosition);
+                setShoulderTargetAngle(SAFE_SHOULDER_ANGLE);
+                setExtendTargetPos(SAFE_ARM_LENGTH);
                 break;
             case transfer: //
                 if(Transfer()) articulation = Articulation.manual;

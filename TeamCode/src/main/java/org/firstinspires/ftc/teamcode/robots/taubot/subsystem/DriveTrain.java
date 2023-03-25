@@ -112,12 +112,12 @@ public class DriveTrain extends DiffyDrive implements Subsystem {
 
     //PID LOOPS_______________________________________________________________________
 
-    public static PIDCoefficients HEADING_PID = new PIDCoefficients(0, 0, 0);
+    public static PIDCoefficients HEADING_PID = new PIDCoefficients(0.1, 0, 0);
     public static double HEADING_PID_TOLERANCE = 1;
     public static PIDCoefficients DIST_TRAVELLED_PID = new PIDCoefficients(5, 0.0, 0); //todo tune this - copied from Reach
     public static PIDCoefficients VELOCITY_PID = new PIDCoefficients(4, 0, 0);
     //todo the following PID needs initial settings
-    public static PIDCoefficients CHASSIS_LENGTH_PID = new PIDCoefficients(0.1, 0, 0.1);
+    public static PIDCoefficients CHASSIS_LENGTH_PID = new PIDCoefficients(0.05, 0, 0.1);
     public static double CHASSIS_LENGTH_TOLERANCE = 0.1;
     public static PIDCoefficients AXIAL_PID = new PIDCoefficients(4, 0, 0);
     public static PIDCoefficients CROSS_AXIAL_PID = new PIDCoefficients(0.001, 0, 0);
@@ -721,9 +721,11 @@ public class DriveTrain extends DiffyDrive implements Subsystem {
     double headingErrorMagnitude = 0;
     //request a turn in degrees units
     public boolean turnUntilDegrees(double turnAngle) {
-        setTargetHeadingDeg(turnAngle);
+        turnAngle = (turnAngle+360)%360;
+        targetHeading = Math.toRadians(turnAngle);
         headingPID.setPID(HEADING_PID);
         headingPID.setInput(heading);
+        headingPID.setSetpoint(targetHeading);
         headingErrorMagnitude = Math.abs(Utils.distanceBetweenAngles(Math.toDegrees(heading),turnAngle));
         double correction = headingPID.performPID();
         if(headingErrorMagnitude < HEADING_PID_TOLERANCE){

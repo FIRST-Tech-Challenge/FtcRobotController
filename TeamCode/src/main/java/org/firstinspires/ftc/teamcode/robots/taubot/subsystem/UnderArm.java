@@ -87,6 +87,7 @@ public class UnderArm implements Subsystem {
     public Servo elbowServo, wristServo, lassoServo;
     public Servo shoulderServo, turretServo;
     public Joint lasso, shoulder, elbow, wrist;
+    public boolean enableLasso;
 
     private double chariotDistance;
     private double shoulderAngle;
@@ -769,6 +770,9 @@ public boolean goSubstationRecover() {
         wrist.update();
     }
 
+    public void setEnableLasso(boolean yayornay) {
+        enableLasso = yayornay;
+    }
     public void grip(){
         lassoGripped = true;
         lassoServo.setPosition(servoNormalize(LASSO_CLOSED));
@@ -784,9 +788,9 @@ public boolean goSubstationRecover() {
     }
 
     public void toggleLasso(){
-        if(lassoGripped){
+        if (lassoGripped) {
             open();
-        }else{
+        } else {
             grip();
         }
     }

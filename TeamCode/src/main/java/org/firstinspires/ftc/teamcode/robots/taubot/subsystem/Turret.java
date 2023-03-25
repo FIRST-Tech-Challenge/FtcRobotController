@@ -235,7 +235,7 @@ public class Turret implements Subsystem {
                 break;
             case 1:
                 motor.setVelocity(calibratePower);
-                if(!turretIndex.getState()){ //is magnet detectect?
+                if(!turretIndex.getState()){ //is magnet detetect?
                     //zeroHeading(LIMIT_SWITCH_ANGLE_OFFSET);
                     setHeading(LIMIT_SWITCH_ANGLE_OFFSET);
                     motor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);

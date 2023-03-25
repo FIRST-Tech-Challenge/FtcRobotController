@@ -46,6 +46,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 import org.firstinspires.ftc.robotcore.internal.system.Misc;
 import org.firstinspires.ftc.teamcode.robots.taubot.subsystem.DriveTrain;
 import org.firstinspires.ftc.teamcode.robots.taubot.subsystem.Robot;
+import org.firstinspires.ftc.teamcode.robots.taubot.subsystem.Turret;
 import org.firstinspires.ftc.teamcode.robots.taubot.subsystem.UnderArm;
 import org.firstinspires.ftc.teamcode.robots.taubot.util.Constants;
 import org.firstinspires.ftc.teamcode.robots.taubot.util.ExponentialSmoother;
@@ -299,6 +300,7 @@ public class PowerPlay_6832 extends OpMode {
         teleOpIndex = 0;
 
         robot.articulate(Robot.Articulation.UNFOLD);
+        robot.turret.articulate(Turret.Articulation.lockToZero);
         robot.start();
     }
 

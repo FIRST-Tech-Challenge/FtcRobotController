@@ -254,15 +254,18 @@ public class Robot implements Subsystem {
                         //works - jai 5:41 3/24
                         driveTrain.articulate(DriveTrain.Articulation.unlock);
                         turret.articulate(Turret.Articulation.lockToZero);
+                        crane.articulate(Crane.Articulation.manual);
                         autonTime = futureTime(3);
-                        autonIndex++;
+                        if(driveTrain.driveUntilDegrees(7, 0, 20))
+                        {
+                            autonIndex++;
+                        }
                         break;
                     case 1:
                         //drive to general parking location
                         //worked last night 3/24
                         if(System.nanoTime() > autonTime) {
-                            crane.articulate(Crane.Articulation.manual);
-                            driverIsDriving();
+                            autonIsDriving();
                             turnDone = false;
                             autonTurnDoneTelemetry = false;
                             onPole = false;
@@ -277,8 +280,9 @@ public class Robot implements Subsystem {
                         //drop cone at nearest high pole
                         //debug this using telemetry - one isn't returning true - either turndone or onpole
                         //freezes it until timesupervisor takes over
-                        driverNotDriving();
+                        autonNotDriving();
                         turret.articulate(Turret.Articulation.runToAngle);
+                        crane.articulate(Crane.Articulation.manual);
                         if (startingPosition.equals(Constants.Position.START_LEFT)) {
 //                            if (!turnDone && driveTrain.turnUntilDegrees(90)) {
 //                            if (driveTrain.getRawHeading() > 90) {
@@ -339,7 +343,10 @@ public class Robot implements Subsystem {
                         break;
                     case 5:
                         if (System.nanoTime() >= autonTime) {
+                            autonIndex++;
+                            //runs cone stack articulation but no longer works with underarm in the way
                             //if we r on left side run cone stack left, if right run right cone stack
+                            /*
                             if (startingPosition.equals(Constants.Position.START_LEFT)) {
                                 crane.articulate(Crane.Articulation.coneStackLeft);
                             } else {
@@ -348,6 +355,8 @@ public class Robot implements Subsystem {
                             if (crane.getArticulation() == Crane.Articulation.manual) {
                                 autonIndex++;
                             }
+
+                             */
                         }
                         break;
                     case 6:
@@ -361,6 +370,7 @@ public class Robot implements Subsystem {
                 //untested
                 autonIndex = 0;
                 crane.articulate(Crane.Articulation.home);
+                autonIsDriving();
 
                 if (crane.getArticulation() == Crane.Articulation.manualDrive) {
                     crane.articulate(Crane.Articulation.manual);
@@ -412,10 +422,20 @@ public class Robot implements Subsystem {
                 crane.setCraneTarget(turret.getTurretPosition().getX() - 2, turret.getTurretPosition().getY()-2, 26);
                 crane.articulate(Crane.Articulation.manual);
                 driveTrain.maxTuck();
+                autonNotDriving();
                 timeSupervisor = 0;
                 return true;
         }
         return false;
+    }
+
+
+    public void autonIsDriving(){
+        crane.articulate(Crane.Articulation.autonDrive);
+    }
+
+    public void autonNotDriving(){
+        crane.articulate(Crane.Articulation.manual);
     }
 
     //----------------------------------------------------------------------------------------------
@@ -648,7 +668,6 @@ public class Robot implements Subsystem {
                     transferTimer = futureTime(1.0);
                     transferStage++;
                 }
-
                 break;
             case 5:
                 if(System.nanoTime() >= transferTimer) {
@@ -664,8 +683,8 @@ public class Robot implements Subsystem {
                     driveTrain.setChassisLength(Constants.MAX_CHASSIS_LENGTH);
                     crane.articulate(Crane.Articulation.postTransfer); //allows crane to do crane things after transfer
                     transferStage++;
-                    break;
                 }
+                break;
             case 7:
                 transferStage = 0;
                 return true;
@@ -679,7 +698,8 @@ public class Robot implements Subsystem {
         switch (cancelTransferIndex) {
             case (0):
             {
-                transferStage = 0;
+                underarm.setEnableLasso(false);
+                transferStage = 7;
                 crane.articulate(Crane.Articulation.manual);
                 crane.setShoulderTargetAngle(Crane.SAFE_SHOULDER_ANGLE);
                 cancelTransferTimer = futureTime(.5);
@@ -698,8 +718,9 @@ public class Robot implements Subsystem {
                 break;
             }
             case 2:
+                underarm.setEnableLasso(true);
                 cancelTransferIndex = 0;
-                return  true;
+                return true;
 
 
         }
