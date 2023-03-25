@@ -26,9 +26,9 @@ import org.openftc.easyopencv.OpenCvPipeline;
 public class ConeImageProcessor extends OpenCvPipeline {
 
 	//Adjustable parameters here.
-	double sleev1Peak = 115.0;
+	double sleev1Peak = 25;
 	double sleev2Peak = 100.0;
-	double sleev3Peak = 107.0;
+	double sleev3Peak = 150;
 
 	File fileProcessing;
 

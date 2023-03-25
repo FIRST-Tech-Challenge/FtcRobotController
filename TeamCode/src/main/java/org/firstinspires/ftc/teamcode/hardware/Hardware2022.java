@@ -22,7 +22,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
 public class Hardware2022 {
 
     //This is max wheel and slide motor velocity.
-    static public double ANGULAR_RATE = 1500.0;
+    static public double ANGULAR_RATE = 2000.0;
     private final double MIN_VELOCITY = 0.1;
 
     //Adjustable parameters  here.
@@ -38,7 +38,7 @@ public class Hardware2022 {
     private final int CONE_SLIDE_LOW = 1600;
     //Get accurate reading for auto
     private final int CONE_SLIDE_MID = 3000;
-    private final int CONE_SLIDE_HIGH = 4030;
+    private final int CONE_SLIDE_HIGH = 4130;
 
     private boolean debug = true;
     private Telemetry telemetry;
@@ -666,7 +666,7 @@ public class Hardware2022 {
         Log.d("9010", "slideStartPostion:  " + slideStartPostion);
         Log.d("9010", "Travel:  " + travel);
 
-        while (clawTouch.getState()==true && ( travel < 900 )) {
+        while (clawTouch.getState()==true && ( travel < 960 )) {
             vSlide.setVelocity(power * ANGULAR_RATE);
             travel = slideStartPostion - vSlide.getCurrentPosition();
             //Log.d("9010", "postion:  " + vSlide.getCurrentPosition());
