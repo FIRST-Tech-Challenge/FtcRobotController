@@ -1,13 +1,10 @@
 package org.firstinspires.ftc.teamcode.opModes.team2;
 
 import com.arcrobotics.ftclib.command.button.GamepadButton;
-import com.arcrobotics.ftclib.drivebase.DifferentialDrive;
 import com.arcrobotics.ftclib.gamepad.GamepadEx;
-import com.arcrobotics.ftclib.hardware.ServoEx;
-import com.arcrobotics.ftclib.hardware.SimpleServo;
 import com.arcrobotics.ftclib.hardware.motors.Motor;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.libs.brightonCollege.inputs.PSButtons;
@@ -17,9 +14,6 @@ import org.firstinspires.ftc.teamcode.libs.brightonCollege.modeBases.TeleOpModeB
 import org.firstinspires.ftc.teamcode.libs.brightonCollege.util.HardwareMapContainer;
 
 import org.firstinspires.ftc.teamcode.components.Team2LiftComponent;
-import org.firstinspires.ftc.teamcode.libs.brightonCollege.inputs.Inputs;
-import org.firstinspires.ftc.teamcode.libs.brightonCollege.modeBases.AutonomousLinearModeBase;
-import org.firstinspires.ftc.teamcode.libs.brightonCollege.modeBases.TeleOpModeBase;
 
 
 /**
@@ -34,12 +28,18 @@ import org.firstinspires.ftc.teamcode.libs.brightonCollege.modeBases.TeleOpModeB
  *  Lift:
  *      Right Joystick Y: Move the Lift.
  *
+ *  Grabber:
+ *      Triangle: Toggle between open and closed.
+ *
  * Hardware:
  *  Drive Train:
  *      Motor 0 and 1 for driving (left and right respectively)
  *
  *  Lift:
  *      Motor 3 for moving lift
+ *
+ *   Grabber:
+ *      Servo 0 for closing/opening grabber
  */
 
 
@@ -60,10 +60,13 @@ public class Team2TeleOp extends TeleOpModeBase {
     private double targetPosition;
 
     // GRABBER
+    // 0 to 1
     public final double SERVO_OPEN_ANGLE = 0D;
-    public final double SERVO_CLOSE_ANGLE = 90D;
+    public final double SERVO_CLOSE_ANGLE = 0.25D;
 
-    private ServoEx grabberServo;
+    private double grabberAngle = SERVO_OPEN_ANGLE;
+
+    private Servo grabberServo;
 
     @Override
     public void setup() {
@@ -85,22 +88,24 @@ public class Team2TeleOp extends TeleOpModeBase {
         telemetry.addData("[GRABBER] Open Angle: ", SERVO_OPEN_ANGLE);
         telemetry.addData("[GRABBER] Close Angle: ", SERVO_CLOSE_ANGLE);
 
-        grabberServo = new SimpleServo(HardwareMapContainer.getMap(), "grabberServo",
-                SERVO_OPEN_ANGLE, SERVO_CLOSE_ANGLE);
+        grabberServo = HardwareMapContainer.getServo(0);
 
-        new GamepadButton(Inputs.gamepad1, PSButtons.CIRCLE).whenActive(() ->
-                grabberServo.setPosition(SERVO_CLOSE_ANGLE)
-        );
-
-        new GamepadButton(Inputs.gamepad1, PSButtons.SQUARE).whenActive(() ->
-                grabberServo.setPosition(SERVO_OPEN_ANGLE)
-        );
+        new GamepadButton(Inputs.gamepad1, PSButtons.TRIANGLE).whenActive(() -> {
+            if (grabberAngle == SERVO_OPEN_ANGLE) {
+                grabberServo.setPosition(SERVO_OPEN_ANGLE);
+                grabberAngle = SERVO_OPEN_ANGLE;
+            } else {
+                grabberServo.setPosition(SERVO_CLOSE_ANGLE);
+                grabberAngle = SERVO_CLOSE_ANGLE;
+            }
+        });
     }
 
     @Override
     public void every_tick() {
         runDriveTrain(Inputs.gamepad1.getLeftY(), Inputs.gamepad1.getRightY());
         runLift(Inputs.gamepad1.getRightY());
+        runGrabber();
     }
 
     private void runDriveTrain(double yInput, double xInput) {
@@ -159,7 +164,7 @@ public class Team2TeleOp extends TeleOpModeBase {
     }
 
     private void runGrabber() {
-        telemetry.addData("[GRABBER] Current Servo Angle: ", grabberServo.getAngle());
+        telemetry.addData("[GRABBER] Current Servo Angle: ", grabberServo.getPosition());
     }
 
     private void arcadeDrive(Motor leftMotor, Motor rightMotor, double forwardSpeed, double turnSpeed) {
