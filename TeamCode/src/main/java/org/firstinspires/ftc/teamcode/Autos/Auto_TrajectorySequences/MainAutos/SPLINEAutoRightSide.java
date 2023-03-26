@@ -23,7 +23,7 @@ public class SPLINEAutoRightSide extends PowerPlay_AprilTagDetectionDeposit {
     public static double openingStrafe = 9.25;
     // [MECHANISMS]
     private Arm armControl;
-    public static int armPosition = 280;
+    public static int armPosition = 278;
     private Slide slideControl;
     private Claw clawControl;
 
@@ -31,38 +31,38 @@ public class SPLINEAutoRightSide extends PowerPlay_AprilTagDetectionDeposit {
     private PoleAlignment alignmentControl;
 
     // [OPENING MOVE]
-    public static double openingX = 36;
-    public static double openingY = 3;
+    public static double openingX = 36.5;
+    public static double openingY = 3.5;
 
     // [MEDIUM JUNCTION]
-    public static double mediumX1 = 38; // 43.5
-    public static double mediumY1 = 6.75;
+    public static double mediumX1 = 37.5; // 43.5
+    public static double mediumY1 = 6.5;
 
     public static double mediumX2 = 37.5;
     public static double mediumY2 = 6.5;
 
-    public static double mediumX3 = 36.5;
-    public static double mediumY3 = 6.5;
+    public static double mediumX3 = 34.75;
+    public static double mediumY3 = 5.75;
 
-    public static double mediumX4 = 33;
-    public static double mediumY4 = 5; // -4.8
+    public static double mediumX4 = 34.75;
+    public static double mediumY4 = 5.75; // -4.8
 
     public static double mediumX5 = 33;
     public static double mediumY5 = 5;
 
     // [PARKING]
-    public static double zone2X = 49;
+    public static double zone2X = 46;
     public static double zone2Y = 2;
     public static double headingZone2 = 270;
     public static double zone1backwards = 25;
     public static double zone3forwards = 26; //24.5
 
     // [CONE STACK]
-    public static double coneStackForward = 25;
+    public static double coneStackForward = 25.65;
     public static double xConeStack1 = 48; // 49.8
-    public static double xConeStack2 = 46.5; // 47.5
+    public static double xConeStack2 = 46; // 47.5
     public static double xConeStack3 = 45;
-    public static double xConeStack4 = 47.4;
+    public static double xConeStack4 = 45;
     public static double xConeStack5 = 47.3;
     public static double coneStackHeading = 89;
     public static double coneStackEndTangent = -80;
@@ -144,13 +144,13 @@ public class SPLINEAutoRightSide extends PowerPlay_AprilTagDetectionDeposit {
                     alignmentControl.raiseServo();
                     clawControl.toggleAutoOpenClose();
                 })
-                .waitSeconds(0.05) // claw
+                .waitSeconds(0.12) // claw
                 .UNSTABLE_addTemporalMarkerOffset(0, () -> {
-                    slideControl.setCustom(1275);
+                    slideControl.setCustom(1370);
                 })
                 .waitSeconds(0.15)
                 .UNSTABLE_addTemporalMarkerOffset(0.5, () -> {
-                    slideControl.setCustom(880); //1050
+                    slideControl.setCustom(950); //1050
                     armControl.setAutoExtake();
                     clawControl.toggleWristRotate();
                 })
@@ -174,7 +174,7 @@ public class SPLINEAutoRightSide extends PowerPlay_AprilTagDetectionDeposit {
 
 
                 .UNSTABLE_addTemporalMarkerOffset(0, () -> {
-                    slideControl.setCustom(575);//475
+                    slideControl.setCustom(530);//475
                 })
                 .splineTo(new Vector2d(xConeStack2, -coneStackForward), Math.toRadians(coneStackEndTangent))
                 .UNSTABLE_addTemporalMarkerOffset(0, () -> {
@@ -187,7 +187,7 @@ public class SPLINEAutoRightSide extends PowerPlay_AprilTagDetectionDeposit {
                 .waitSeconds(0.1)
 
                 .UNSTABLE_addTemporalMarkerOffset(0.5, () -> {
-                    slideControl.setCustom(880); //1050 for medium
+                    slideControl.setCustom(950); //1050 for medium
                     armControl.setAutoExtake();
                     clawControl.toggleWristRotate();
                 })
@@ -225,7 +225,7 @@ public class SPLINEAutoRightSide extends PowerPlay_AprilTagDetectionDeposit {
 
 
                 .UNSTABLE_addTemporalMarkerOffset(0.5, () -> {
-                    slideControl.setCustom(880);//1050
+                    slideControl.setCustom(950);//1050
                     armControl.setAutoExtake();
                     clawControl.toggleWristRotate();
                 })
@@ -248,9 +248,9 @@ public class SPLINEAutoRightSide extends PowerPlay_AprilTagDetectionDeposit {
 
 
                 .waitSeconds(0.25)
-                /*
+
                 .UNSTABLE_addTemporalMarkerOffset(0, () -> {
-                    slideControl.setCustom(195);//225
+                    slideControl.setCustom(225);
                 })
                 .splineTo(new Vector2d(xConeStack4, -coneStackForward), Math.toRadians(coneStackEndTangent))
                 .UNSTABLE_addTemporalMarkerOffset(0, () -> {
@@ -261,7 +261,6 @@ public class SPLINEAutoRightSide extends PowerPlay_AprilTagDetectionDeposit {
                     slideControl.setCustom(1275);//1275
                 })
                 .waitSeconds(0.1)
-
 
                 .UNSTABLE_addTemporalMarkerOffset(0.5, () -> {
                     slideControl.setCustom(880);//1050
@@ -280,9 +279,10 @@ public class SPLINEAutoRightSide extends PowerPlay_AprilTagDetectionDeposit {
                 })
                 .waitSeconds(0.02)
                 .UNSTABLE_addTemporalMarkerOffset(0, () -> {
+                    alignmentControl.lowerServo();
                     armControl.setIntake();
-                    clawControl.toggleWristRotate();
                 })
+                /*
                 //.waitSeconds(0.25)
                 .UNSTABLE_addTemporalMarkerOffset(0, () -> {
                     alignmentControl.toggleAlignmentDevice();
@@ -325,14 +325,14 @@ public class SPLINEAutoRightSide extends PowerPlay_AprilTagDetectionDeposit {
                     clawControl.toggleWristRotate();
                 })
                 //.waitSeconds(0.25)
-
                  */
+
                 .UNSTABLE_addTemporalMarkerOffset(0, () -> {
                     alignmentControl.lowerServo();
                 })
                 .waitSeconds(1)
+                .back(-3)
                 .lineToLinearHeading(new Pose2d(zone2X,zone2Y,Math.toRadians(headingZone2)))
-
                 .addTemporalMarker(() -> {
 				/*
 					if(tagUse == 1){

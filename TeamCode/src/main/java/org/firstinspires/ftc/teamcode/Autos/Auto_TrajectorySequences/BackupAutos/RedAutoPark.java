@@ -17,9 +17,9 @@ public class RedAutoPark extends PowerPlay_AprilTagDetection {
 
     private Claw clawControl;
 
-    public static double forwardDistance=86.7;
+    public static double forwardDistance=54;
     public static double sideDistance=26;
-    public static double angle=270;
+    public static double angle=90;
 
     public void initialize()
     {
@@ -34,14 +34,14 @@ public class RedAutoPark extends PowerPlay_AprilTagDetection {
     public void runOpMode() {
         initialize();
         scan();
-        Pose2d startPose = new Pose2d(-35, 62, Math.toRadians(angle));
+        Pose2d startPose = new Pose2d(0,0,Math.toRadians(0));
         SampleMecanumDrive bot = new SampleMecanumDrive(hardwareMap);
         bot.setPoseEstimate(startPose);
         //clawControl.toggleAutoOpenClose();
         if (aprilTag_ID == 3) {
             TrajectorySequence sussyBaka = bot.trajectorySequenceBuilder(startPose)
                     //.waitSeconds(2)
-                    .lineToLinearHeading(new Pose2d(-35,forwardDistance,Math.toRadians(angle)))
+                    .lineToLinearHeading(new Pose2d(forwardDistance,0,Math.toRadians(angle)))
                     .strafeLeft(sideDistance)
                     .build();
 
@@ -50,7 +50,7 @@ public class RedAutoPark extends PowerPlay_AprilTagDetection {
         } else if (aprilTag_ID == 2) {
             TrajectorySequence JuicyJay = bot.trajectorySequenceBuilder(startPose)
                     .waitSeconds(0.5)
-                    .lineToLinearHeading(new Pose2d(-35,forwardDistance,Math.toRadians(angle)))
+                    .lineToLinearHeading(new Pose2d(forwardDistance,0,Math.toRadians(angle)))
                     .build();
 
             bot.followTrajectorySequence(JuicyJay);
@@ -58,7 +58,7 @@ public class RedAutoPark extends PowerPlay_AprilTagDetection {
         } else {
             TrajectorySequence jacobIsCute = bot.trajectorySequenceBuilder(startPose)
                     .waitSeconds(0.5)
-                    .lineToLinearHeading(new Pose2d(-35,forwardDistance,Math.toRadians(angle)))
+                    .lineToLinearHeading(new Pose2d(forwardDistance,0,Math.toRadians(angle)))
                     .strafeRight(sideDistance)
                     .build();
 
