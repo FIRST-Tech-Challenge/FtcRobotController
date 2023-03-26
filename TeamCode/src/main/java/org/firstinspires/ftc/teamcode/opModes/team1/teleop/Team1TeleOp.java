@@ -1,7 +1,10 @@
-package org.firstinspires.ftc.teamcode.opModes.team2;
 
+package org.firstinspires.ftc.teamcode.opModes.team1.teleop;
+
+import com.arcrobotics.ftclib.command.InstantCommand;
 import com.arcrobotics.ftclib.command.button.GamepadButton;
 import com.arcrobotics.ftclib.gamepad.GamepadEx;
+import com.arcrobotics.ftclib.gamepad.GamepadKeys;
 import com.arcrobotics.ftclib.hardware.motors.Motor;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.Servo;
@@ -26,14 +29,14 @@ import org.firstinspires.ftc.teamcode.components.Team2LiftComponent;
  *      Circle: Toggle between normal drive and forward only (no turning).
  *
  *  Lift:
- *      Right Joystick Y: Move the Lift.
+ *      Cross: Toggle between extended and not.
  *
  *  Grabber:
  *      Triangle: Toggle between open and closed.
  *
  * Hardware:
  *  Drive Train:
- *      Motor 0 and 1 for driving (left and right respectively).
+ *      Motor 0 and 1 for driving (left and right respectively)
  *
  *  Lift:
  *      Motor 2 for moving lift.
@@ -43,8 +46,8 @@ import org.firstinspires.ftc.teamcode.components.Team2LiftComponent;
  */
 
 
-@TeleOp(name="Team 2 TeleOp", group="Team 2")
-public class Team2TeleOp extends TeleOpModeBase {
+@TeleOp(name="Team 1 TeleOp", group="Team 1")
+public class Team1TeleOp extends TeleOpModeBase {
 
     private Telemetry telemetry;
 
@@ -56,8 +59,8 @@ public class Team2TeleOp extends TeleOpModeBase {
     private boolean isForwardOnlyMode = false;
 
     // LIFT
-    private Team2LiftComponent lift;
-    private double targetPosition;
+    private Motor liftMotor;
+    private boolean motorPosition; // true if going to 120 or on 120, false if going to 240 or in 240
 
     // GRABBER
     // 0 to 1
@@ -78,9 +81,20 @@ public class Team2TeleOp extends TeleOpModeBase {
 
 
         // LIFT
-        Motor lift_motor = HardwareMapContainer.motor2;
-        // Core Hex Motor has 288 counts/revolution; counts/radian = counts/revn / (radians/revn); 3:1 gear
-        lift = new Team2LiftComponent(lift_motor, 0.42, (int)((288 / 3) / (Math.PI*2)), 0);
+        liftMotor = HardwareMapContainer.motor2;
+        liftMotor.setRunMode(Motor.RunMode.PositionControl);
+        liftMotor.setDistancePerPulse(0.015);
+        new GamepadButton(
+                Inputs.gamepad1, PSButtons.CROSS)
+                .whenPressed(new InstantCommand(() -> {
+            if (motorPosition){
+                liftMotor.setTargetDistance(18.0);
+            }
+            else{
+                liftMotor.setTargetDistance(0);
+            }
+            motorPosition = !motorPosition;
+        }));
 
         // GRABBER
         telemetry = TelemetryContainer.getTelemetry();
@@ -104,7 +118,7 @@ public class Team2TeleOp extends TeleOpModeBase {
     @Override
     public void every_tick() {
         runDriveTrain(Inputs.gamepad1.getLeftY(), Inputs.gamepad1.getRightY());
-        runLift(Inputs.gamepad1.getRightY());
+        runLift();
         runGrabber();
     }
 
@@ -152,15 +166,14 @@ public class Team2TeleOp extends TeleOpModeBase {
         }
     }
 
-    private void runLift(double inputPos) {
-        if(Math.abs(inputPos) != this.targetPosition) {
-            this.targetPosition = Math.abs(inputPos);
-            lift.setHeight(this.targetPosition);
+    private void runLift() {
+        liftMotor.set(0.5);
+
+        if (motorPosition) {
+            telemetry.addLine("[Lift] Motor at/going to 120");
         } else {
-            telemetry.addLine("[Lift] BUSY");
+            telemetry.addLine("[Lift] Motor at/going to 240");
         }
-        telemetry.addData("[Lift] Last set position to", this.targetPosition);
-        telemetry.addData("[Lift] Position of gamepad", Math.abs(inputPos));
     }
 
     private void runGrabber() {
