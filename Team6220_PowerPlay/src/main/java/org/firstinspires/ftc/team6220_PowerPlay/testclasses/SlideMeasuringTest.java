@@ -6,7 +6,6 @@ import org.firstinspires.ftc.team6220_PowerPlay.BaseTeleOp;
 
 @TeleOp(name = "SlideMeasuringTest")
 public class SlideMeasuringTest extends BaseTeleOp {
-
     @Override
     public void runOpMode() {
         initialize();
@@ -14,8 +13,10 @@ public class SlideMeasuringTest extends BaseTeleOp {
 
         while (opModeIsActive()) {
             driveSlidesWithController();
+            driveGrabberWithController();
             // :)
             driveLEDs();
+
             telemetry.addData("slide position (ticks)", motorLeftSlides.getCurrentPosition());
             telemetry.update();
         }
