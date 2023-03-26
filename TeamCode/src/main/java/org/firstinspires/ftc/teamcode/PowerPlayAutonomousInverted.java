@@ -27,11 +27,9 @@ import org.firstinspires.ftc.teamcode.robotbase.GamepadExEx;
 
 import java.util.HashMap;
 
-@Autonomous(name = "PP1coneInv", group = "Final Autonomous")
-public class PP1coneInv extends CommandOpMode {
-
+@Autonomous(name = "PowerPlay Inverted", group = "Final Autonomous")
+public class PowerPlayAutonomousInverted extends CommandOpMode {
     PowerPlayRobotV2 robot;
-    AprilTagDetectionPipeline aprilTagDetectionPipeline;
     protected ElapsedTime runtime;
     protected SampleMecanumDrive drive;
     protected RoadRunnerSubsystem RR;
@@ -40,9 +38,8 @@ public class PP1coneInv extends CommandOpMode {
     protected ElevatorSubsystem elevator;
     protected BasketSubsystem basket;
     protected ArmSubsystem arm;
-
+    protected boolean april_tag_found = false;
     protected SequentialCommandGroup scoringCommand;
-
     @Override
     public void initialize() {
         GamepadExEx driverOp = new GamepadExEx(gamepad1);
@@ -53,7 +50,7 @@ public class PP1coneInv extends CommandOpMode {
 
         drive = new SampleMecanumDrive(hardwareMap);
 
-        RR = new RoadRunnerSubsystem(drive, hardwareMap, true);
+        RR = new RoadRunnerSubsystem(drive, true);
 
         april_tag = new AprilTagDetectionSubsystem(robot.camera, telemetry);
 
@@ -73,10 +70,8 @@ public class PP1coneInv extends CommandOpMode {
                         new ElevatorCommand(elevator, ElevatorSubsystem.Level.LOW)
                 ));
 
-
         runtime = new ElapsedTime();
     }
-
     public void waitForStart() {
         /////////////////////////////////// Recognizing the Tag ///////////////////////////////////
         /*
@@ -88,7 +83,6 @@ public class PP1coneInv extends CommandOpMode {
             sleep(20);
         }
     }
-
     @Override
     public void run() {
         super.run();
@@ -96,7 +90,6 @@ public class PP1coneInv extends CommandOpMode {
         robot.telemetryUpdate();
         robot.dashboardTelemetryUpdate();
     }
-
     @Override
     public void runOpMode() throws InterruptedException {
         initialize();
@@ -105,14 +98,59 @@ public class PP1coneInv extends CommandOpMode {
 
         ///////////////////////////////// Running the Trajectories /////////////////////////////////
 
-        int i = 0;
-
         if (isStopRequested()) return;
 
         schedule(new SequentialCommandGroup(
-                new InstantCommand(RR::runHS, RR),
+                new InstantCommand(RR::runHS2, RR),
                 scoringCommand
         ));
+
+        /*
+
+        schedule(new SequentialCommandGroup(
+                        new InstantCommand(RR::runHS2, RR),
+                        new InstantCommand(arm::setMid, arm),
+                        new WaitCommand(300),
+                        new ElevatorCommand(elevator, ElevatorSubsystem.Level.AUTO_SCORING),
+                        new InstantCommand(basket::setOuttake, basket),
+                        new WaitCommand(1500),
+                        new ParallelCommandGroup(
+                                new InstantCommand(basket::setTravel, basket),
+                                new ElevatorCommand(elevator, ElevatorSubsystem.Level.LOW),
+                                new InstantCommand(claw::release, claw),
+                                new InstantCommand(() -> arm.setAutonomousPosition(0), arm)
+                        ),
+                        new FrontSliderConeCommand(frontSlider, cone_detector::isConeDetected, arm),
+                        new InstantCommand(claw::grab, claw),
+                        new WaitCommand(200),
+                        new ParallelCommandGroup(
+                                new InstantCommand(arm::setTravel, arm),
+                                new InstantCommand(frontSlider::close, frontSlider)
+                        ),
+                        new WaitCommand(800),
+                        new InstantCommand(claw::release, claw), // Release the cone to tha basket
+                        new WaitCommand(500),
+                        new ElevatorCommand(elevator, ElevatorSubsystem.Level.TRAVEL),
+                        new WaitCommand(100),
+                        new InstantCommand(() -> frontSlider.manual(0.4), frontSlider),
+                        new WaitCommand(400),
+                        new InstantCommand(() -> frontSlider.stop(), frontSlider),
+                        new ParallelCommandGroup(
+                                new InstantCommand(arm::setMid, arm),
+                                new InstantCommand(frontSlider::close, frontSlider)
+                        ),
+                        new WaitCommand(600),
+                        new ElevatorCommand(elevator, ElevatorSubsystem.Level.AUTO_SCORING),
+                        new InstantCommand(basket::setOuttake, basket),
+                        new WaitCommand(1500),
+                        new ParallelCommandGroup(
+                                new InstantCommand(basket::setTravel, basket),
+                                new ElevatorCommand(elevator, ElevatorSubsystem.Level.LOW)
+                        )
+                )
+        );
+
+         */
 
         //Select Command Auto
         new Trigger(() -> runtime.seconds() >= 20).whenActive(
@@ -121,17 +159,11 @@ public class PP1coneInv extends CommandOpMode {
                             put(april_tag.LEFT, new InstantCommand(RR::runP1, RR));
                             put(april_tag.MIDDLE, new InstantCommand(RR::runTOMID, RR));
                             put(april_tag.RIGHT, new InstantCommand(RR::runP3, RR));
+                            put(-1, new InstantCommand(RR::runTOMID, RR));
                         }},
-                        () -> april_tag.getTagOfInterest().id
+                        () -> april_tag_found ? april_tag.getTagOfInterest().id : -1
                 )
         );
-
-//        if (runtime.seconds() >= 20) {
-//            if (april_tag.getTagOfInterest().id == april_tag.LEFT) RR.runP1();
-//            else if (april_tag.getTagOfInterest().id == april_tag.RIGHT || april_tag.getTagOfInterest() == null)
-//                RR.runP3();
-//            else RR.runTOMID();
-//        }
 
         // run the scheduler
         while (!isStopRequested() && opModeIsActive()) {

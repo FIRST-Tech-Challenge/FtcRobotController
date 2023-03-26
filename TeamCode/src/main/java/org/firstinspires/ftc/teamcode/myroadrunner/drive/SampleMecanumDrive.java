@@ -17,6 +17,7 @@ import com.acmerobotics.roadrunner.trajectory.constraints.MinVelocityConstraint;
 import com.acmerobotics.roadrunner.trajectory.constraints.ProfileAccelerationConstraint;
 import com.acmerobotics.roadrunner.trajectory.constraints.TrajectoryAccelerationConstraint;
 import com.acmerobotics.roadrunner.trajectory.constraints.TrajectoryVelocityConstraint;
+import com.arcrobotics.ftclib.hardware.motors.Motor;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
@@ -36,6 +37,7 @@ import org.firstinspires.ftc.teamcode.myroadrunner.trajectorysequence.Trajectory
 import org.firstinspires.ftc.teamcode.myroadrunner.util.AxisDirection;
 import org.firstinspires.ftc.teamcode.myroadrunner.util.BNO055IMUUtil;
 import org.firstinspires.ftc.teamcode.myroadrunner.util.LynxModuleUtil;
+import org.firstinspires.ftc.teamcode.robotbase.MotorExEx;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -52,6 +54,7 @@ import static org.firstinspires.ftc.teamcode.myroadrunner.drive.DriveConstants.e
 import static org.firstinspires.ftc.teamcode.myroadrunner.drive.DriveConstants.kA;
 import static org.firstinspires.ftc.teamcode.myroadrunner.drive.DriveConstants.kStatic;
 import static org.firstinspires.ftc.teamcode.myroadrunner.drive.DriveConstants.kV;
+import static org.firstinspires.ftc.teamcode.myroadrunner.drive.DriveConstants.COMMON_FEED_FORWARD;
 
 /*
  * Simple mecanum drive hardware implementation for REV hardware.
@@ -60,6 +63,16 @@ import static org.firstinspires.ftc.teamcode.myroadrunner.drive.DriveConstants.k
 public class SampleMecanumDrive extends MecanumDrive {
     public static PIDCoefficients TRANSLATIONAL_PID = new PIDCoefficients(6, 0, 0);
     public static PIDCoefficients HEADING_PID = new PIDCoefficients(7.5, 0, 0.05);
+
+    public static double KP = 1.1;
+    public static double KI = 2.7;
+    public static double KD = 0;
+
+    public static double A = 0.3;
+
+    public int motor = 0;
+    public static double minIntegralBound = -400;
+    public static double maxIntegralBound = 400;
 
     public static double LATERAL_MULTIPLIER = 1.17602326;
 
@@ -74,9 +87,8 @@ public class SampleMecanumDrive extends MecanumDrive {
 
     private TrajectoryFollower follower;
 
-    private DcMotorEx leftFront, leftRear, rightRear, rightFront;
-    private List<DcMotorEx> motors;
-
+    private MotorExEx leftFront, leftRear, rightRear, rightFront;
+    private MotorExEx[] motors = {leftFront, leftRear, rightRear, rightFront};
     private IMU imu;
     private VoltageSensor batteryVoltageSensor;
 
@@ -134,39 +146,59 @@ public class SampleMecanumDrive extends MecanumDrive {
         //
         // For example, if +Y in this diagram faces downwards, you would use AxisDirection.NEG_Y.
 
-        leftFront = hardwareMap.get(DcMotorEx.class, "frontLeft");
-        leftRear = hardwareMap.get(DcMotorEx.class, "rearLeft");
-        rightRear = hardwareMap.get(DcMotorEx.class, "rearRight");
-        rightFront = hardwareMap.get(DcMotorEx.class, "frontRight");
+        leftFront = new MotorExEx(hardwareMap, "frontLeft", Motor.GoBILDA.RPM_312);
+        rightFront = new MotorExEx(hardwareMap, "frontRight", Motor.GoBILDA.RPM_312);
+        rightRear = new MotorExEx(hardwareMap, "rearRight", Motor.GoBILDA.RPM_312);
+        leftRear = new MotorExEx(hardwareMap, "rearLeft", Motor.GoBILDA.RPM_312);
 
-        motors = Arrays.asList(leftFront, leftRear, rightRear, rightFront);
+        setMotorsInverted(false, false, true, true);
 
-        for (DcMotorEx motor : motors) {
-            MotorConfigurationType motorConfigurationType = motor.getMotorType().clone();
-            motorConfigurationType.setAchieveableMaxRPMFraction(1.0);
-            motor.setMotorType(motorConfigurationType);
-        }
+//        for (MotorExEx motor : motors) {
+//            MotorConfigurationType motorConfigurationType = motor.getMotorType().clone();
+//            motorConfigurationType.setAchieveableMaxRPMFraction(1.0);
+//            motor.setMotorType(motorConfigurationType);
+//        }
 
         if (RUN_USING_ENCODER) {
-            setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            leftFront.setRunMode(MotorExEx.RunMode.VelocityControl);
+            rightFront.setRunMode(MotorExEx.RunMode.VelocityControl);
+            rightRear.setRunMode(MotorExEx.RunMode.VelocityControl);
+            leftRear.setRunMode(MotorExEx.RunMode.VelocityControl);
         }
 
-        setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        setZeroPowerBehavior(MotorExEx.ZeroPowerBehavior.BRAKE);
 
         if (RUN_USING_ENCODER && MOTOR_VELO_PID != null) {
-            setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER, MOTOR_VELO_PID);
-        }
+//            setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER, MOTOR_VELO_PID);
 
-        // TODO: reverse any motors using DcMotor.setDirection()
-        leftFront.setDirection(DcMotorSimple.Direction.REVERSE);
-        leftRear.setDirection(DcMotorSimple.Direction.REVERSE);
-//        rightFront.setDirection(DcMotorSimple.Direction.REVERSE);
-//        rightRear.setDirection(DcMotorSimple.Direction.REVERSE);
+            for (motor = 0; motor <= 3; ++motor){
+                setCommonPIDControllerParameters(120, 1,0);
+            }
+
+            if (!COMMON_FEED_FORWARD) {
+                leftFront.setFeedforwardCoefficients(150, 1.1, 0);//2795
+                rightFront.setFeedforwardCoefficients(120, 0.97, 0);//2795
+                leftRear.setFeedforwardCoefficients(120, 1, 0);//2795
+                rightRear.setFeedforwardCoefficients(220, 1.07, 0);//2795
+            }
+        }
 
         // TODO: if desired, use setLocalizer() to change the localization method
         // for instance, setLocalizer(new ThreeTrackingWheelLocalizer(...));
 
         trajectorySequenceRunner = new TrajectorySequenceRunner(follower, HEADING_PID);
+    }
+
+    public void setCommonPIDControllerParameters(double feedForwardCofficients1, double feedForwardCofficients2, double feedForwardCofficients3){
+        motors[motor].setIntegralBounds(minIntegralBound, maxIntegralBound);
+        motors[motor].setVeloCoefficients(KP, KI, KD);
+        motors[motor].setFeedforwardCoefficients(feedForwardCofficients1, feedForwardCofficients2, feedForwardCofficients3);
+    }
+    public void setMotorsInverted(boolean leftFrontInverted, boolean rightFrontInverted, boolean rightRearInverted, boolean leftRearInverted){
+        leftFront.setInverted(leftFrontInverted);
+        leftRear.setInverted(leftRearInverted);
+        rightFront.setInverted(rightFrontInverted);
+        rightRear.setInverted(rightRearInverted);
     }
 
     public TrajectoryBuilder trajectoryBuilder(Pose2d startPose) {
@@ -243,26 +275,44 @@ public class SampleMecanumDrive extends MecanumDrive {
         return trajectorySequenceRunner.isBusy();
     }
 
-    public void setMode(DcMotor.RunMode runMode) {
-        for (DcMotorEx motor : motors) {
-            motor.setMode(runMode);
+    public void setMode() {
+        for (MotorExEx motor : motors) {
+            motor.setRunMode(Motor.RunMode.RawPower);
         }
     }
 
-    public void setZeroPowerBehavior(DcMotor.ZeroPowerBehavior zeroPowerBehavior) {
-        for (DcMotorEx motor : motors) {
+    public void setZeroPowerBehavior(MotorExEx.ZeroPowerBehavior zeroPowerBehavior) {
+        for (MotorExEx motor : motors) {
             motor.setZeroPowerBehavior(zeroPowerBehavior);
         }
     }
 
-    public void setPIDFCoefficients(DcMotor.RunMode runMode, PIDFCoefficients coefficients) {
-        PIDFCoefficients compensatedCoefficients = new PIDFCoefficients(
-                coefficients.p, coefficients.i, coefficients.d,
-                coefficients.f * 12 / batteryVoltageSensor.getVoltage()
-        );
+    public void setPIDCoefficients(PIDFCoefficients coefficients) {
+//        PIDFCoefficients compensatedCoefficients = new PIDFCoefficients(
+//                coefficients.p, coefficients.i, coefficients.d,
+//                coefficients.f * 12 / batteryVoltageSensor.getVoltage()
+//        );
 
-        for (DcMotorEx motor : motors) {
-            motor.setPIDFCoefficients(runMode, compensatedCoefficients);
+        for (MotorExEx motor : motors) {
+            motor.setVeloCoefficients(coefficients.p, coefficients.i, coefficients.d);
+        }
+    }
+
+    public void setFeedForward(PIDFCoefficients coefficients) {
+        for (MotorExEx motor : motors) {
+            motor.setFeedforwardCoefficients(
+                    coefficients.f * 12 / batteryVoltageSensor.getVoltage(),
+                    0
+            );
+        }
+    }
+
+    public void setFeedForwardFL(PIDFCoefficients coefficients) {
+        for (MotorExEx motor : motors) {
+            motor.setFeedforwardCoefficients(
+                    coefficients.f * 12 / batteryVoltageSensor.getVoltage(),
+                    0
+            );
         }
     }
 
@@ -290,7 +340,7 @@ public class SampleMecanumDrive extends MecanumDrive {
     @Override
     public List<Double> getWheelPositions() {
         List<Double> wheelPositions = new ArrayList<>();
-        for (DcMotorEx motor : motors) {
+        for (MotorExEx motor : motors) {
             wheelPositions.add(encoderTicksToInches(motor.getCurrentPosition()));
         }
         return wheelPositions;
@@ -299,7 +349,7 @@ public class SampleMecanumDrive extends MecanumDrive {
     @Override
     public List<Double> getWheelVelocities() {
         List<Double> wheelVelocities = new ArrayList<>();
-        for (DcMotorEx motor : motors) {
+        for (MotorExEx motor : motors) {
             wheelVelocities.add(encoderTicksToInches(motor.getVelocity()));
         }
         return wheelVelocities;
@@ -307,10 +357,7 @@ public class SampleMecanumDrive extends MecanumDrive {
 
     @Override
     public void setMotorPowers(double v, double v1, double v2, double v3) {
-        leftFront.setPower(v);
-        leftRear.setPower(v1);
-        rightRear.setPower(v2);
-        rightFront.setPower(v3);
+
     }
 
     @Override

@@ -58,6 +58,8 @@ public class DriveConstants {
     public static double kA = 0;
     public static double kStatic = 0;
 
+    public static boolean COMMON_FEED_FORWARD = false;
+
     /*
      * These values are used to generate the trajectories for you robot. To ensure proper operation,
      * the constraints should never exceed ~80% of the robot's actual capabilities. While Road
