@@ -20,6 +20,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 import org.firstinspires.ftc.teamcode.robots.UGBot.utils.Constants;
 import org.firstinspires.ftc.teamcode.robots.reachRefactor.simulation.DcMotorExSim;
+import org.firstinspires.ftc.teamcode.robots.taubot.util.Utils;
 import org.firstinspires.ftc.teamcode.util.PIDController;
 
 import java.util.LinkedHashMap;
@@ -39,6 +40,8 @@ public class Turret implements Subsystem {
     private PIDController turretPID;
 
     private double heading, targetHeading, power;
+
+    private int absTicks;
 
     private int targetTics; //when not in IMU mode, this is the current target
     private int TRANSFER_TICS = 1786;
@@ -137,16 +140,16 @@ public class Turret implements Subsystem {
                 break;
             case lockToOneHundredAndEighty: //home position is facing facing back of robot not towards underarm
                 setControlMethodIMU(false);
-                targetTics = calcClosest(TRANSFER_TICS);
+                targetTics = TRANSFER_TICS;
                 //turretPID.setInput(-distanceBetweenAngles(heading,180 + Math.toDegrees(robot.driveTrain.getRawHeading())));
                 break;
             case lockToZero: //fold is facing towards underarm
                 setControlMethodIMU(false);
-                targetTics = calcClosest(0);
+                targetTics = 0;
                 break;
             case transfer: //transfer position is facing facing back of robot not towards underarm
                 setControlMethodIMU(false);
-                targetTics = calcClosest(TRANSFER_TICS);
+                targetTics = TRANSFER_TICS;
                 //turretPID.setInput(-distanceBetweenAngles(heading,180 + Math.toDegrees(robot.driveTrain.getRawHeading())));
                 break;
         }
@@ -154,12 +157,15 @@ public class Turret implements Subsystem {
         return articulation;
     }
 
-    private int calcClosest(int ticks){
-        double fullRot = 3572;
+    public boolean atPosition(){
+        return !motor.isBusy();
+    }
 
-        int error = (int)(ticks - motor.getCurrentPosition()%fullRot);
-        int targetTicks = error + motor.getCurrentPosition();
-        return targetTicks;
+    private int calcClosest(int ticks){
+        int fullRot = 3572;
+        int position = motor.getCurrentPosition();
+
+        return (int)Utils.distanceBetweenAngles(position%fullRot,ticks) + position;
     }
 
     public double getError(){
@@ -187,6 +193,7 @@ public class Turret implements Subsystem {
         cacheHeadingForNextRun();
 
         if (controlMethodIMU) {
+            turretPID.enable();
             turretPID.setPID(TURRET_PID);
             turretPID.setTolerance(TURRET_TOLERANCE);
             turretPID.setSetpoint(0);
@@ -260,9 +267,10 @@ public class Turret implements Subsystem {
             //we are going to set IMU mode
             motor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
             controlMethodIMU = true;
+            turretPID.enable();
         }
         else {
-
+            turretPID.disable();
             //we are going to set run-to-position mode
             motor.setTargetPosition(motor.getCurrentPosition()); //encoder should have be reset at the end of calibration - here we set it to it's current position so it doesn't jerk
             motor.setMode(DcMotor.RunMode.RUN_TO_POSITION);

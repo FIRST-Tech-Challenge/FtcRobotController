@@ -66,8 +66,8 @@ public class UnderArm implements Subsystem {
     public static double LASSO_RELEASE = 1000;
     public static double LASSO_OPEN = 1000; //1100 for Leo's gripper
 
-    public static double TRANSFER_SHOULDER_ANGLE = -20;
-    public static double TRANSFER_SHOULDER_APPROACH_ANGLE = -25;
+    public static double TRANSFER_SHOULDER_ANGLE = -24;
+    public static double TRANSFER_SHOULDER_APPROACH_ANGLE = -24;
     public static double TRANSFER_ELBOW_ANGLE = -120;
 
     public static double TRANSFER_WRIST_ANGLE = 105;
@@ -76,7 +76,7 @@ public class UnderArm implements Subsystem {
 
     public static double CANCEL_TRANSFER_TURRET_DEGREES = 30;//todo not any real number can be calibrated if necessary
 
-    public static double CANCEL_TRANSFER_SHOULDER = 64 , CANCEL_TRANSFER_ELBOW = 108, CANCEL_TRANSFER_WRIST = 60;
+    public static double CANCEL_TRANSFER_SHOULDER = 64 , CANCEL_TRANSFER_ELBOW = 108, CANCEL_TRANSFER_WRIST = -4;
     public static double TRANSFER_TURRET_ANGLE = 0; //-14
     boolean lassoGripped = false;
 
@@ -351,6 +351,7 @@ public class UnderArm implements Subsystem {
                     setShoulderTargetAngle(CANCEL_TRANSFER_SHOULDER);
                     setWristTargetAngle(CANCEL_TRANSFER_WRIST);
                     setTurretTargetAngle(CANCEL_TRANSFER_TURRET_DEGREES);
+                    release();
                     cancelTransferPositionTimer = futureTime(0.5);
                     cancelTransferPositionStage++;
                 }
@@ -431,16 +432,22 @@ public class UnderArm implements Subsystem {
             case 0: //starting from the transfer position, recover the elbow first
                 atTransfer = false;
                 WRIST_SPEED = 270;
-                setWristTargetAngle(40); //take wrist homeish
                 setElbowTargetAngle(POSTTRANSFER_ELBOW);
                 setShoulderTargetAngle(POSTTRANSFER_SHOULDER);
                 transferRecoverTimer = futureTime(1.0);
                 transferRecoverStage++;
                 break;
-            case 1: //lift shoulder
+            case 1:
+                if(System.nanoTime() > transferRecoverTimer) {
+                    transferRecoverTimer = futureTime(0.3);
+                    setWristTargetAngle(40); //take wrist homeish
+                }
+                break;
+            case 2: //lift shoulder
                 if (System.nanoTime() > transferRecoverTimer) {
                     setTurretTargetAngle(0); //straighten turret
                     setShoulderTargetAngle(0); //take the shoulder home
+                    setWristTargetAngle(40); //take wrist homeish
 
                     transferRecoverStage = 0;
 
@@ -487,7 +494,7 @@ public class UnderArm implements Subsystem {
             case 1: //give the elbow a head start to clear the camera when a cone is loaded
                 if (substationHoverTimer<System.nanoTime()){
                     setElbowTargetAngle(SS_HOVER_ELBOW);
-                    robot.driveTrain.setChassisLength(SS_HOVER_EXTEND-3);
+                    //robot.driveTrain.setChassisLength(SS_HOVER_EXTEND-3);
                     substationHoverTimer = futureTime(0.25);
                     substationHoverStage++;
                 }
@@ -500,7 +507,7 @@ public class UnderArm implements Subsystem {
                     setShoulderTargetAngle(SS_HOVER_SHOULDER);
                     setWristTargetAngle(SS_HOVER_WRIST);
                     setTurretTargetAngle(SS_HOVER_TURRET);
-                    robot.driveTrain.setChassisLength(SS_HOVER_EXTEND);
+                    //robot.driveTrain.setChassisLength(SS_HOVER_EXTEND);
                     substationHoverTimer = futureTime(0.5);
                     substationHoverStage++;
                 }

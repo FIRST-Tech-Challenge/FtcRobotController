@@ -167,7 +167,7 @@ public class DriverControls {
             robot.driveTrain.adjustChassisLength(0.7);
         }
 
-        if(stickyGamepad1.start || stickyGamepad2.start){
+        if(stickyGamepad1.start){
             robot.driveTrain.toggleExtension();
             //if (robot.driveTrain.getChariotDeployed())
                 //robot.crane.articulate(Crane.Articulation.manual); //allow the crane and turret to return to manual mode
@@ -367,12 +367,15 @@ public class DriverControls {
 
         if (stickyGamepad2.x)// cancel transfer position reset and drop cone
         {
-            robot.underarm.resetArticulations();
-            robot.underarm.articulate(UnderArm.Articulation.cancelTransferPosition);
+            robot.transferAdvance();
         }
 
         if(stickyGamepad2.y){
             robot.underarm.toggleLasso();
+        }
+
+        if(stickyGamepad2.start){
+            robot.driveTrain.toggleExtension();
         }
 
         if(stickyGamepad2.dpad_up){

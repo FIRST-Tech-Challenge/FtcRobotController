@@ -105,7 +105,7 @@ public class Crane implements Subsystem {
     boolean EXTENDER_CALIBRATE_MAX = false; //keep false except if calibrating EXTENDER_TICS_MAX
 
     public static double BULB_OPEN_POS = 1300; //old value: 1500
-    public static double BULB_CLOSED_POS = 2100; //old value: 1900
+    public static double BULB_CLOSED_POS = 1700; //old value: 1900
 
     public static double TRANSFER_SHOULDER_ANGLE = 50;  //angle at which transfer occurs
     public static double TRANSFER_SHOULDER_FLIPANGLE = 85; //causes the gripperflipper to flip when the angle is high and the turret turns enough or the robot accellerates
@@ -194,7 +194,7 @@ public class Crane implements Subsystem {
             shoulderMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
             bulbServo = hardwareMap.get(Servo.class, "servoGripper");
             nudgeStickServo = hardwareMap.get(Servo.class, "nudgeSwivel");
-            nudgeDistanceSensor = hardwareMap.get(DistanceSensor.class, "nudgeDist");
+            //nudgeDistanceSensor = hardwareMap.get(DistanceSensor.class, "nudgeDist");
             //turretIndex = hardwareMap.get(DigitalChannel.class, "turretIndex");
             //turretIndex.setMode(DigitalChannel.Mode.INPUT);
 
@@ -586,30 +586,44 @@ public class Crane implements Subsystem {
     }
     int transferStage = 0;
     long transferTimer;
+
+    boolean craneTransferReady = false;
+
+    public boolean getCraneTransferReady(){
+        return craneTransferReady;
+    }
     public boolean Transfer(){
         switch (transferStage) {
             case 0: //conditions for gripper flipper to flip out
+                craneTransferReady = false;
                 nudgeCenter(true);
                 robot.turret.articulate(Turret.Articulation.transfer);
-                setShoulderTargetAngle(TRANSFER_SHOULDER_FLIPANGLE);
+                setShoulderTargetAngle(TRANSFER_SHOULDER_ANGLE);
                 setExtendTargetPos(TRANSFER_ARM_LENGTH);
-                transferTimer = futureTime(2);
+                transferTimer = futureTime(0.2);
                 transferStage++;
                 break;
-
-            case 1: //nudge flipper
+            case 1:
+                if(System.nanoTime() > transferTimer && robot.turret.atPosition()){
+                    setShoulderTargetAngle(TRANSFER_SHOULDER_FLIPANGLE);
+                    transferTimer = futureTime(0.4);
+                    transferStage++;
+                }
+                break;
+            case 2: //nudge flipper
                 if(System.nanoTime() >= transferTimer) {
                     nudgeLeft();
-                    transferTimer = futureTime(1);
+                    transferTimer = futureTime(1.5);
                     transferStage++;
                 }
                 break;
 
-            case 2: //lower shoulder to transfer height
+            case 3: //lower shoulder to transfer height
                     if(System.nanoTime() >= transferTimer){
                         nudgeCenter(true);
                         setShoulderTargetAngle(TRANSFER_SHOULDER_ANGLE);
                         transferStage = 0;
+                        craneTransferReady = true;
                         return true;
                     }
                 break;
@@ -629,8 +643,8 @@ public class Crane implements Subsystem {
                 break;
             case 1:
                 if(shoulderOnTarget()){
-                    setExtendTargetPos(1); //makes arm go fast forward
-                    postTransferTimer = futureTime(0.4);
+                    setExtendTargetPos(0.2); //makes arm go fast forward
+                    postTransferTimer = futureTime(0.2);
                     postTransferStage++;
                 }
                 break;
@@ -816,7 +830,7 @@ public class Crane implements Subsystem {
         return false;
     }
 
-    public static Vector3 home = new Vector3(2, 0 ,5);
+    public static Vector3 home = new Vector3(2, 0 ,8);
 
     int homeInd;
 
@@ -957,7 +971,7 @@ public class Crane implements Subsystem {
     double extendMeters = 0;
     double shoulderAmps, extenderAmps;
 
-    public final double craneLengthOffset =  0.432;
+    public final double craneLengthOffset =  0.33;
 
     boolean inverseKinematic = false;
     double targetHeight = 0.0 ;
@@ -981,7 +995,7 @@ public class Crane implements Subsystem {
     public void update(Canvas fieldOverlay) {
 
         calculateFieldTargeting(fieldPositionTarget);
-        nudgeDistance = nudgeDistanceSensor.getDistance(DistanceUnit.METER);
+        //nudgeDistance = nudgeDistanceSensor.getDistance(DistanceUnit.METER);
 
         robotPosition = new Vector3(robot.driveTrain.getPoseEstimate().getX(),robot.driveTrain.getPoseEstimate().getY(),shoulderHeight);
 

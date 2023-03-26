@@ -117,7 +117,7 @@ public class DriveTrain extends DiffyDrive implements Subsystem {
     public static PIDCoefficients DIST_TRAVELLED_PID = new PIDCoefficients(5, 0.0, 0); //todo tune this - copied from Reach
     public static PIDCoefficients VELOCITY_PID = new PIDCoefficients(4, 0, 0);
     //todo the following PID needs initial settings
-    public static PIDCoefficients CHASSIS_LENGTH_PID = new PIDCoefficients(0.05, 0, 0.1);
+    public static PIDCoefficients CHASSIS_LENGTH_PID = new PIDCoefficients(0.1, 0, 0.1);
     public static double CHASSIS_LENGTH_TOLERANCE = 0.1;
     public static PIDCoefficients AXIAL_PID = new PIDCoefficients(4, 0, 0);
     public static PIDCoefficients CROSS_AXIAL_PID = new PIDCoefficients(0.001, 0, 0);
@@ -1014,12 +1014,7 @@ public class DriveTrain extends DiffyDrive implements Subsystem {
                 }
 
                 //set the PID for the chassis length / chariot extension
-                chassisLengthPID.setInputRange(MIN_CHASSIS_LENGTH, MAX_CHASSIS_LENGTH);
-                chassisLengthPID.setPID(CHASSIS_LENGTH_PID);
-                chassisLengthPID.setInput(chassisLength);
-                chassisLengthPID.setSetpoint(targetChassisLength);
-                chassisLengthCorrection = chassisLengthPID.performPID();
-                chariotMotor.setPower(chassisLengthCorrection);
+                runChariotPID();
                 break;
             case lock:
                 leftMotor.setTargetPosition(leftMotor.getCurrentPosition());
@@ -1033,6 +1028,17 @@ public class DriveTrain extends DiffyDrive implements Subsystem {
                 rightMotor.setPower(1);
                 chariotMotor.setPower(1);
                 break;
+            case lockWheels:
+                leftMotor.setTargetPosition(leftMotor.getCurrentPosition());
+                rightMotor.setTargetPosition(rightMotor.getCurrentPosition());
+                leftMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                rightMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                chariotMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+
+                runChariotPID();
+                leftMotor.setPower(1);
+                rightMotor.setPower(1);
+                break;
             default:
                 break;
 
@@ -1040,12 +1046,22 @@ public class DriveTrain extends DiffyDrive implements Subsystem {
         return target;
     }
 
+    public void runChariotPID(){
+        chassisLengthPID.setInputRange(MIN_CHASSIS_LENGTH, MAX_CHASSIS_LENGTH);
+        chassisLengthPID.setPID(CHASSIS_LENGTH_PID);
+        chassisLengthPID.setInput(chassisLength);
+        chassisLengthPID.setSetpoint(targetChassisLength);
+        chassisLengthCorrection = chassisLengthPID.performPID();
+        chariotMotor.setPower(chassisLengthCorrection);
+    }
+
     public static double SQUEEZE_MODE_DRIVE_POWER = 0.1;
     public static double SQUEEZE_MODE_CHARRIOT_POWER = -0.1;
 
     public enum Articulation{
         unlock,
-        lock
+        lock,
+        lockWheels
     }
 
     public double getVoltage() {

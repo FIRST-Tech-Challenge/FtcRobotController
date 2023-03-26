@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.robots.taubot.subsystem;
 
 import static org.firstinspires.ftc.teamcode.robots.taubot.util.Utils.craneIK;
+import static org.firstinspires.ftc.teamcode.robots.taubot.util.Utils.distanceBetweenAngles;
 import static org.firstinspires.ftc.teamcode.robots.taubot.util.Utils.wrapAngleRad;
 import static org.firstinspires.ftc.teamcode.util.utilMethods.futureTime;
 
@@ -270,7 +271,7 @@ public class Robot implements Subsystem {
                             autonTurnDoneTelemetry = false;
                             onPole = false;
                             autonOnPoleTelemetry = false;
-                            if (driveTrain.driveUntilDegrees(2 * Field.INCHES_PER_GRID - 4, 0, 20)) {
+                            if (driveTrain.driveUntilDegrees(2 * Field.INCHES_PER_GRID - 11, 0, 20)) {
                                 driveTrain.tuck();
                                 autonIndex++;
                             }
@@ -473,6 +474,7 @@ public class Robot implements Subsystem {
         }
         else{
             if(crane.getArticulation().equals(Crane.Articulation.robotDriving)){
+                driveTrain.articulate(DriveTrain.Articulation.lockWheels);
                 crane.articulate(Crane.Articulation.manualDrive);
                 underarm.articulate(UnderArm.Articulation.manual);
             }
@@ -623,22 +625,23 @@ public class Robot implements Subsystem {
         switch (transferStage) {
             case 0: //move Crane to transfer position
                 //underarm.articulate((UnderArm.Articulation.manual));
+                driveTrain.articulate(DriveTrain.Articulation.lockWheels);
                 driveTrain.setChassisLength(Constants.MAX_CHASSIS_LENGTH);
                 crane.release();
                 crane.articulate(Crane.Articulation.transfer); //tells crane to go to transfer position
 //                if(driveTrain.getChassisLength() >= Constants.MAX_CHASSIS_LENGTH - 1) {
 //                    driveTrain.articulate(DriveTrain.Articulation.lock);
 //                }
-                transferTimer = futureTime(3.5);
+                transferTimer = futureTime(0.5);
                 transferStage++;
                 break;
             case 1:
                 //if(crane.atTransferPosition() ){ //todo debug - temp switched to a timer because crane.atTransferPosition() not working
-                if(System.nanoTime() >= transferTimer){
+                if(System.nanoTime() > transferTimer && crane.getCraneTransferReady()){
                     //driveTrain.articulate(DriveTrain.Articulation.lock);
                     underarm.articulate(UnderArm.Articulation.transfer); //tell underarm to go to transfer angle
-                    transferTimer = futureTime(2.5);
-                    transferStage++;
+                    transferTimer = futureTime(1.5);
+                    //transferStage++;
                 }
                 break;
             case 2: //this is where we grab the cone with the bulb gripper
@@ -663,7 +666,7 @@ public class Robot implements Subsystem {
             case 4:
                 if(System.nanoTime() >= transferTimer) {
                     driveTrain.articulate(DriveTrain.Articulation.unlock);
-                    driveTrain.setChassisLength(Constants.MAX_CHASSIS_LENGTH - 5);
+                    driveTrain.setChassisLength(Constants.MAX_CHASSIS_LENGTH - 8);
                     crane.articulate(Crane.Articulation.transferAdjust);
                     transferTimer = futureTime(1.0);
                     transferStage++;
@@ -681,7 +684,8 @@ public class Robot implements Subsystem {
             case 6:
                 if(System.nanoTime() >= transferTimer) {
                     driveTrain.setChassisLength(Constants.MAX_CHASSIS_LENGTH);
-                    crane.articulate(Crane.Articulation.postTransfer); //allows crane to do crane things after transfer
+                    driveTrain.articulate(DriveTrain.Articulation.unlock);
+                    crane.articulate(Crane.Articulation.pickupCone); //allows crane to do crane things after transfer
                     transferStage++;
                 }
                 break;
@@ -700,9 +704,10 @@ public class Robot implements Subsystem {
             {
                 underarm.setEnableLasso(false);
                 transferStage = 7;
+                turret.articulate(Turret.Articulation.transfer);
                 crane.articulate(Crane.Articulation.manual);
                 crane.setShoulderTargetAngle(Crane.SAFE_SHOULDER_ANGLE);
-                cancelTransferTimer = futureTime(.5);
+                cancelTransferTimer = futureTime(1);
                 cancelTransferIndex++;
                 break;
             }
