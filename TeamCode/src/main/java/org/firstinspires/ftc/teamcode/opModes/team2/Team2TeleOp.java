@@ -36,7 +36,7 @@ import org.firstinspires.ftc.teamcode.components.Team2LiftComponent;
  *      Motor 0 and 1 for driving (left and right respectively)
  *
  *  Lift:
- *      Motor 3 for moving lift
+ *      Motor 2 for moving lift
  *
  *   Grabber:
  *      Servo 0 for closing/opening grabber
@@ -78,7 +78,7 @@ public class Team2TeleOp extends TeleOpModeBase {
 
 
         // LIFT
-        Motor lift_motor = HardwareMapContainer.motor3;
+        Motor lift_motor = HardwareMapContainer.motor2;
         // Core Hex Motor has 288 counts/revolution; counts/radian = counts/revn / (radians/revn); 3:1 gear
         lift = new Team2LiftComponent(lift_motor, 0.42, (int)((288 / 3) / (Math.PI*2)), 0);
 
