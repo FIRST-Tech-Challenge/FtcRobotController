@@ -26,7 +26,7 @@ public class Arm{
     public static double armKi = 0.00001;
     public static double armKd = 0.00007;
     public static double armKf = 0;
-    public static double EXTAKE_POS = 287; // 180 old val; in degrees of absolute encoder
+    public static double EXTAKE_POS = 285; // 180 old val; in degrees of absolute encoder
     public static double INTAKE_POS = 42; // 65 old val
     public static double AUTOEXTAKE_POS = 288; //169
 
