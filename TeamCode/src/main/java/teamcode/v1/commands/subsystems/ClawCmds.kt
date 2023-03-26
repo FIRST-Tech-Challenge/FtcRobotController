@@ -12,16 +12,16 @@ class ClawCmds {
 
     class ClawCloseCmd(claw: Claw) : ClawCmd(claw, ClawConstants.closePos)
 
-    class ClawSmartCmd(claw: Claw) : SequentialGroup(
-        ClawStartReadingCmd(claw),
-        WaitUntilCmd { claw.lastRead < ClawConstants.distanceThreshold },
-        ClawStopReadingCmd(claw),
-        ClawCmd(claw, ClawConstants.closePos),
-    )
+//    class ClawSmartCmd(claw: Claw) : SequentialGroup(
+//        ClawStartReadingCmd(claw),
+//        WaitUntilCmd { claw.lastRead < ClawConstants.distanceThreshold },
+//        ClawStopReadingCmd(claw),
+//        ClawCmd(claw, ClawConstants.closePos),
+//    )
     class ClawOpenCmd(claw: Claw, guide : Guide, GripPos: Double) : SequentialGroup(
         ClawCmd(claw, ClawConstants.openPos),
         InstantCmd({guide.setPos(GripPos)})
     )
-    class ClawStartReadingCmd(claw: Claw) : InstantCmd(claw::startReading)
-    class ClawStopReadingCmd(claw: Claw) : InstantCmd(claw::stopReading)
+//    class ClawStartReadingCmd(claw: Claw) : InstantCmd(claw::startReading)
+//    class ClawStopReadingCmd(claw: Claw) : InstantCmd(claw::stopReading)
 }

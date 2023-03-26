@@ -96,6 +96,6 @@ open class KTeleOp : KOpMode(photonEnabled = false) {
         Logger.addTelemetryData("lift power", robot.hardware.liftLeadMotor.power)
         Logger.addTelemetryData("whacker pos", robot.hardware.whackerServo.position)
         Logger.addTelemetryData("claw pos", robot.hardware.clawServo.position)
-        Logger.addTelemetryData("dSensor", robot.claw.lastRead)
+        Logger.addTelemetryData("dSensor", robot.guide.lastRead)
     }
 }

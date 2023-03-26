@@ -3,9 +3,12 @@ package teamcode.v1
 import com.asiankoala.koawalib.math.Pose
 import com.asiankoala.koawalib.subsystem.drive.KMecanumOdoDrive
 import teamcode.v1.constants.ArmConstants
+import teamcode.v1.constants.Strategy
 import teamcode.v1.subsystems.*
 
 class Robot(startPose: Pose) {
+    var strat = Strategy.HIGH
+
     val hardware = Hardware(startPose)
 
     val drive = KMecanumOdoDrive(
@@ -18,8 +21,8 @@ class Robot(startPose: Pose) {
     )
 
     val arm = Arm(hardware.armMotor, hardware.limitSwitch)
-    val claw = Claw(hardware.clawServo, hardware.distanceSensor)
-    val guide = Guide(hardware.guideServo)
+    val claw = Claw(hardware.clawServo)
+    val guide = Guide(hardware.guideServo, hardware.distanceSensor)
     val whacker = Whacker(hardware.whackerServo)
     val lift = Lift(hardware.liftLeadMotor, hardware.liftSecondMotor)
 
