@@ -5,6 +5,8 @@ import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import org.opencv.core.Mat;
 import org.openftc.easyopencv.OpenCvPipeline;
 
+// never ended up being used
+
 @Disabled
 class TestCustomSleevePipeline extends OpenCvPipeline
 {

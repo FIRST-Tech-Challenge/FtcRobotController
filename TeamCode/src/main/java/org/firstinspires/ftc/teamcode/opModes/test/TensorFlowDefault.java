@@ -48,8 +48,11 @@ import org.firstinspires.ftc.robotcore.external.tfod.Recognition;
  * IMPORTANT: In order to use this OpMode, you need to obtain your own Vuforia license key as
  * is explained below.
  */
+
+// Just use this default code for the image recognition
+
 @TeleOp(name = "Default TensorFlow as Test", group = "Test")
-public class TensorFlowDefault extends LinearOpMode {
+public class TensorFlowDefault extends LinearOpMode {  //TODO: Test
 
     /*
      * Specify the source for the Tensor Flow Model.

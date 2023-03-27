@@ -28,6 +28,8 @@ public class TestCustomSleeveCamera extends AutonomousLinearModeBase {
 // Declare class members here
 private ElapsedTime runtime = new ElapsedTime();
 
+// EasyOpenCV stuff, shouldn't be used
+
     int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
     OpenCvCamera camera = OpenCvCameraFactory.getInstance().createInternalCamera(OpenCvInternalCamera.CameraDirection.BACK, cameraMonitorViewId);
 
