@@ -16,7 +16,6 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous
 import teamcode.v1.auto.AutoRobot
 import teamcode.v1.commands.sequences.AutoDepositSequence
 import teamcode.v1.commands.sequences.AutoHomeSequence
-import teamcode.v1.commands.sequences.DepositSequence
 import teamcode.v1.commands.subsystems.ClawCmds
 import teamcode.v1.constants.*
 import teamcode.v1.vision.Enums
@@ -99,12 +98,11 @@ class HighLeft : KOpMode() {
         mainCommand = SequentialGroup(
             WaitUntilCmd {opModeState == OpModeState.START},
             InstantCmd({robot.whacker.setPos(WhackerConstants.leftPos)}),
-            InstantCmd({robot.lift.setPos(7.0)}),
             GVFCmd(
                 robot.drive,
                 SimpleGVFController(path1, 0.4, 20.0, 12.0, 0.6, 3.0, 3.0),
                 Pair(
-                    AutoDepositSequence(robot.lift, robot.arm, robot.claw, robot.guide, robot.whacker, 133.0, LiftConstants.highPos, GuideConstants.depositPos, WhackerConstants.rightPos), ProjQuery(
+                    AutoDepositSequence(robot.lift, robot.arm, robot.claw, robot.guide, 133.0, LiftConstants.highPos, GuideConstants.depositPos), ProjQuery(
                         Vector(-60.0, 40.0)
                     )
                 )
@@ -127,7 +125,7 @@ class HighLeft : KOpMode() {
                 robot.drive,
                 SimpleGVFController(depositPath, 0.4, 30.0, 22.0, 0.5, 5.0, 5.0),
                 Pair(
-                    DepositSequence(robot.lift, robot.arm, robot.claw, robot.guide, 142.0, LiftConstants.highPos, GuideConstants.depositPos), ProjQuery(
+                    AutoDepositSequence(robot.lift, robot.arm, robot.claw, robot.guide, 142.0, LiftConstants.highPos, GuideConstants.depositPos), ProjQuery(
                         Vector(-11.0, 59.0)
                     )
                 )
@@ -151,7 +149,7 @@ class HighLeft : KOpMode() {
                 robot.drive,
                 SimpleGVFController(depositPath, 0.4, 30.0, 22.0, 0.5, 5.0, 5.0),
                 Pair(
-                    DepositSequence(robot.lift, robot.arm, robot.claw, robot.guide, 142.0, LiftConstants.highPos, GuideConstants.depositPos), ProjQuery(
+                    AutoDepositSequence(robot.lift, robot.arm, robot.claw, robot.guide, 142.0, LiftConstants.highPos, GuideConstants.depositPos), ProjQuery(
                         Vector(-11.0, 59.0)
                     )
                 )
@@ -175,7 +173,7 @@ class HighLeft : KOpMode() {
                 robot.drive,
                 SimpleGVFController(depositPath1, 0.4, 30.0, 22.0, 0.5, 5.0, 5.0),
                 Pair(
-                    DepositSequence(robot.lift, robot.arm, robot.claw, robot.guide, 142.0, LiftConstants.highPos, GuideConstants.depositPos), ProjQuery(
+                    AutoDepositSequence(robot.lift, robot.arm, robot.claw, robot.guide, 142.0, LiftConstants.highPos, GuideConstants.depositPos), ProjQuery(
                         Vector(-11.0, 59.0)
                     )
                 )
@@ -199,7 +197,7 @@ class HighLeft : KOpMode() {
                 robot.drive,
                 SimpleGVFController(depositPath1, 0.4, 30.0, 22.0, 0.5, 5.0, 5.0),
                 Pair(
-                    DepositSequence(robot.lift, robot.arm, robot.claw, robot.guide, 142.0, LiftConstants.highPos, GuideConstants.depositPos), ProjQuery(
+                    AutoDepositSequence(robot.lift, robot.arm, robot.claw, robot.guide, 142.0, LiftConstants.highPos, GuideConstants.depositPos), ProjQuery(
                         Vector(-11.0, 59.0)
                     )
                 )
@@ -223,7 +221,7 @@ class HighLeft : KOpMode() {
                 robot.drive,
                 SimpleGVFController(depositPath1, 0.4, 30.0, 22.0, 0.5, 5.0, 5.0),
                 Pair(
-                    DepositSequence(robot.lift, robot.arm, robot.claw, robot.guide, 142.0, LiftConstants.highPos, GuideConstants.depositPos), ProjQuery(
+                    AutoDepositSequence(robot.lift, robot.arm, robot.claw, robot.guide, 142.0, LiftConstants.highPos, GuideConstants.depositPos), ProjQuery(
                         Vector(-11.0, 59.0)
                     )
                 )

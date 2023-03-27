@@ -8,7 +8,6 @@ import teamcode.v1.commands.subsystems.ClawCmds
 import teamcode.v1.subsystems.Arm
 import teamcode.v1.subsystems.Claw
 import teamcode.v1.subsystems.Lift
-import teamcode.v1.commands.subsystems.GuideCmds
 import teamcode.v1.constants.GuideConstants
 import teamcode.v1.subsystems.Guide
 
@@ -17,17 +16,17 @@ class HomeSequence(
     claw : Claw,
     arm : Arm,
     guide : Guide,
-    firstArmAngle : Double,
     secondArmAngle : Double,
     liftHeight : Double,
     GripPos : Double
-) : ParallelGroup(
-    SequentialGroup(
-        InstantCmd({arm.setPos(firstArmAngle)}, arm),
-        WaitCmd(1.0),
-        ClawCmds.ClawOpenCmd(claw, guide, GuideConstants.telePos),
-        InstantCmd({arm.setPos(secondArmAngle)}, arm)),
-    InstantCmd({guide.setPos(GripPos)}),
+) : SequentialGroup(
+    ParallelGroup(
+        InstantCmd({arm.setPos(secondArmAngle)}, arm),
+        ClawCmds.ClawCloseCmd(claw),
+        InstantCmd({guide.setPos(GripPos)}),
+    ),
     InstantCmd({lift.setPos(liftHeight)}),
-    ClawCmds.ClawCloseCmd(claw),
+    WaitCmd(0.5),
+    ClawCmds.ClawOpenCmd(claw, guide, GuideConstants.telePos)
 )
+

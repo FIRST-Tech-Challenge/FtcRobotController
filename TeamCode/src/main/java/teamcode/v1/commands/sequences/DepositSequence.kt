@@ -29,7 +29,7 @@ class DepositSequence(
     WaitCmd(0.1),
     InstantCmd({guide.startReading()}),
     InstantCmd({guide.setPos(GripPos)}),
-    WaitUntilCmd{ guide.lastRead < 30 },
-    ChooseCmd(InstantCmd({lift.setPos(LiftHeight-2)}), WaitCmd(0.0), {LiftHeight-2 > 0}),
+    WaitUntilCmd{ guide.lastRead < 60.0 },
+    ChooseCmd(InstantCmd({lift.setPos(LiftHeight - 3.0)}), WaitCmd(0.0)) { LiftHeight - 3.0 > 0.0 },
     InstantCmd({guide.stopReading()})
 )

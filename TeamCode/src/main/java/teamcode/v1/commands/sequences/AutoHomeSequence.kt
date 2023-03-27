@@ -8,7 +8,6 @@ import teamcode.v1.commands.subsystems.ClawCmds
 import teamcode.v1.subsystems.Arm
 import teamcode.v1.subsystems.Claw
 import teamcode.v1.subsystems.Lift
-import teamcode.v1.commands.subsystems.GuideCmds
 import teamcode.v1.constants.GuideConstants
 import teamcode.v1.subsystems.Guide
 
