@@ -668,7 +668,7 @@ public class Hardware2022 {
         Log.d("9010", "slideStartPostion:  " + slideStartPostion);
         Log.d("9010", "Travel:  " + travel);
 
-        while (clawTouch.getState()==true && ( travel < 960 )) {
+        while (clawTouch.getState()==true && ( travel < 1000 )) {
             vSlide.setVelocity(power * ANGULAR_RATE);
             travel = slideStartPostion - vSlide.getCurrentPosition();
             //Log.d("9010", "postion:  " + vSlide.getCurrentPosition());

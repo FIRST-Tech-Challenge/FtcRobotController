@@ -14,7 +14,8 @@ public class RightAutoComplex extends BaseAuto {
 
     @Override
     void parkTerminal() {
-        hdw.moveXAxis(-30, 0.5);
+        hdw.moveYAxis(-6, -0.3);
+        hdw.moveXAxis(24, -0.5);
     }
 
     @Override
