@@ -12,6 +12,7 @@ import static java.lang.Math.sqrt;
 import static java.lang.Math.toRadians;
 
 import com.acmerobotics.roadrunner.geometry.Pose2d;
+import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.acmerobotics.roadrunner.trajectory.Trajectory;
 
 import org.firstinspires.ftc.teamcode.Components.CV.CVMaster;
@@ -378,7 +379,7 @@ public class Field {
         int direction = tileMovement.get(tileMovement.size() - 1);
         directionIndex = direction;
         boolean shouldMove = true;
-        double notTooDeep = 9;
+        double notTooDeep = 7;
         double[] derection = {0, 0};
         double[] endTangents = {0, Math.toRadians(270), Math.toRadians(180), Math.toRadians(90), Math.toRadians(0)};
         int[] curTile = currentTile;
@@ -440,13 +441,17 @@ public class Field {
             }
             double[] target = tileCoords[currentTile[0]][currentTile[1]];
             logger.log("/RobotLogs/GeneralRobot", "currentTile:" + currentTile[0] + "," + currentTile[1]);
-            shouldReverse(direction);
+//            shouldReverse(direction);
             int isReversed = 0;
-            if (lastReversed) {
+            double[] front = new double[]{currentPosition[0] + cos(currentPosition[2])*7.25, currentPosition[1] +
+                    sin(currentPosition[2] * 6.75)};
+            double[] back = new double[]{currentPosition[0] - cos(currentPosition[2])*7.25, currentPosition[1] -
+                    sin(currentPosition[2] * 6.75)};
+            if ((pow(target[0] - front[0], 2) + pow(target[1] - front[1], 2)) > (pow(target[0] - back[0], 2) +
+                    pow(target[1] - back[1], 2))) {
                 isReversed++;
-            } else {
-
             }
+
             double[] move = new double[]{target[0] - derection[0] * notTooDeep, target[1] - derection[1] * notTooDeep,
                     endTangents[direction] + isReversed * toRadians(180), endTangents[direction]};
             if (shouldMove) {
@@ -471,13 +476,12 @@ public class Field {
                 if(i==0||reversals.get(i)!=reversals.get(i-1)) {
                     bob.setReversed(reversals.get(i));
                 }
-                Pose2d target = new Pose2d(fullMovement.get(i)[0], fullMovement.get(i)[1], fullMovement.get(i)[2]);
-                bob.splineToSplineHeading(target, fullMovement.get(i)[3]);
+                Vector2d target = new Vector2d(fullMovement.get(i)[0], fullMovement.get(i)[1]);
+                bob.splineTo(target, fullMovement.get(i)[3]);
             }
             bob.addTemporalMarker(() -> {
                 fullMovement.clear();
                 reversals.clear();
-                gp.clearSequence();
             });
             roadrun.followTrajectorySequenceAsync(bob.build());
         } else {
@@ -487,13 +491,12 @@ public class Field {
                 if(i==0||reversals.get(i)!=reversals.get(i-1)) {
                     bob.setReversed(reversals.get(i));
                 }
-                Pose2d target = new Pose2d(fullMovement.get(i)[0], fullMovement.get(i)[1], fullMovement.get(i)[2]);
-                bob.splineToSplineHeading(target, fullMovement.get(i)[3]);
+                Vector2d target = new Vector2d(fullMovement.get(i)[0], fullMovement.get(i)[1]);
+                bob.splineTo(target, fullMovement.get(i)[3]);
             }
             bob.addTemporalMarker(() -> {
                 fullMovement.clear();
                 reversals.clear();
-                gp.clearSequence();
             });
             roadrun.changeTrajectorySequence(bob.build());
         }
@@ -511,11 +514,8 @@ public class Field {
             currentTile = new int[]{(int) minDistTile[0], (int) minDistTile[1]};
             extra = new int[]{0, 0};
         }
-        autoLateralTileGenerator();
-        tileMovement = null;
-        if (!roadrun.isBusy() && !fullMovement.isEmpty()) {
-            compiledTrajectory();
-            System.gc();
+        if(!tileMovement.isEmpty()){
+            autoLateralTileGenerator();
         }
         minDistTile = null;
     }
@@ -525,9 +525,9 @@ public class Field {
     }
 
     public void breakAutoTele() {
-        if (locker.tryLock()) {
-            try {
-                locker.lock();
+//        if (locker.tryLock()) {
+//            try {
+//                locker.lock();
                 fullMovement.clear();
                 reversals.clear();
                 gp.clearSequence();
@@ -535,10 +535,10 @@ public class Field {
                 roadrun.breakFollowing();
                 autoTele = false;
                 System.gc();
-            } finally {
-                locker.unlock();
-            }
-        }
+//        gc    } finally {
+//                locker.unlock();
+//            }
+//        }
     }
 
     public Pose2d getCurPos() {
