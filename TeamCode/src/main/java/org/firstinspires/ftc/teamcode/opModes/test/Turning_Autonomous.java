@@ -74,6 +74,7 @@ public class Turning_Autonomous extends AutonomousLinearModeBase {
             //99.5 units = 145mm
             //150 units = 190mm
             //204 units = 291mm
+            //no pattern? probably measurement error on my part
             telemetry.addData("ycoordinate", current[1]);
             //Distance from target in terms of x distance and y distance
             motor1.set(-0.1);

@@ -17,8 +17,8 @@ import org.firstinspires.ftc.teamcode.libs.brightonCollege.util.HardwareMapConta
 // Test og 19/3/23:
 //fixed the robot turning issue, now resolve why the robot decides to turn left and right in a constant loop
 //Theory 1, make the robot turn at extremely reduced speeds
-@Autonomous(name="<Team_1_autonomous_blue>", group="<OpMode group name>")
-public class TestAutonomousLinearSearch extends AutonomousLinearModeBase {
+@Autonomous(name="<Team_1_autonomous_red>", group="<OpMode group name>")
+public class Autonomous_team1_red extends AutonomousLinearModeBase {
 
 
     @Override
@@ -54,7 +54,7 @@ public class TestAutonomousLinearSearch extends AutonomousLinearModeBase {
         //Can we standardise placing these coordinates at the center of the terminal
         //test data:
         // {{0,0},{2,2}}
-        double[][] terminal = {{50, 1778.8}, {50, 3607.6}};
+        double[][] terminal = {{50, 1778.8}, {50, 50}};
         //remember to account for size of robot when inputting coordinates. (assuming robot is 50mm in
         //length)
         //test data:

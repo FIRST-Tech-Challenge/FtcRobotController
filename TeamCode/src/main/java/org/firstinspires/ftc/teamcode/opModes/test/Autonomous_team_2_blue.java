@@ -10,15 +10,9 @@ import org.firstinspires.ftc.teamcode.libs.brightonCollege.modeBases.AutonomousL
 import org.firstinspires.ftc.teamcode.libs.brightonCollege.modeBases.AutonomousModeBase;
 import org.firstinspires.ftc.teamcode.libs.brightonCollege.util.HardwareMapContainer;
 
-// Test log 15/3/23:
-//Figure out why robot can only drive straight when it the velocity reads that both motors are going
-//in the opposite direction based on their velocities, implying that the robot cannot turn.
-//Perhaphs shift to a turning mechanism where only 1 of the robot's wheels are turning
-// Test og 19/3/23:
-//fixed the robot turning issue, now resolve why the robot decides to turn left and right in a constant loop
-//Theory 1, make the robot turn at extremely reduced speeds
-@Autonomous(name="<Team_1_autonomous_blue>", group="<OpMode group name>")
-public class TestAutonomousLinearSearch extends AutonomousLinearModeBase {
+
+@Autonomous(name="<Team_2_autonomous_blue>", group="<OpMode group name>")
+public class Autonomous_team_2_blue extends AutonomousLinearModeBase {
 
 
     @Override
@@ -34,8 +28,8 @@ public class TestAutonomousLinearSearch extends AutonomousLinearModeBase {
         Motor left_arm = HardwareMapContainer.motor2;
         //right arm
         Motor right_arm = HardwareMapContainer.motor3;
-        Servo left_intake=HardwareMapContainer.getServo(0);
-        Servo right_intake=HardwareMapContainer.getServo(1);
+        Servo left_intake = HardwareMapContainer.getServo(0);
+        Servo right_intake = HardwareMapContainer.getServo(1);
         //Code for autonomous running
         internal_measurement_unit = new RevIMU(HardwareMapContainer.getMap());
         internal_measurement_unit.init();
@@ -45,7 +39,7 @@ public class TestAutonomousLinearSearch extends AutonomousLinearModeBase {
         // {{0.5,0},{0.5,0.5}}
 
 
-        double[][] junction_Coordinates = {{304.8, 254.8}, {1828.8, 254.8},{1828.8,1778.8}};
+        double[][] junction_Coordinates = {{304.8, 2998}, {1828.8, 2998}, {1828.8, 1878.8}};
         int num_junctions = 2;
 
         //Is it possible to use the terminals as a way to check coordinates?
@@ -54,19 +48,19 @@ public class TestAutonomousLinearSearch extends AutonomousLinearModeBase {
         //Can we standardise placing these coordinates at the center of the terminal
         //test data:
         // {{0,0},{2,2}}
-        double[][] terminal = {{50, 1778.8}, {50, 3607.6}};
+        double[][] terminal = {{50, 1878.8}, {50, 3607.6}};
         //remember to account for size of robot when inputting coordinates. (assuming robot is 50mm in
         //length)
         //test data:
         //{0,2}
-        double[][] cone_coordinates = {{1474, 3607.6}, {1474,25}};
+        double[][] cone_coordinates = {{1474, 3607.6}, {1474, 25}};
 
         //used later for finding closest cone stack
         double[] closest_coordinate = {cone_coordinates[0][0], cone_coordinates[0][1]};
         double distance = 0.0;
         double smallest_distance = 0.0;
-        //assuming team 1's robot is placed on the left
-        double[] current = {0, 914.4};
+        //assuming team 2's robot is placed on the right
+        double[] current = {0, 2743.2};
         int junction_number = 0;
         double[] next = {junction_Coordinates[junction_number][0], junction_Coordinates[junction_number][1]};
         waitForStart();
@@ -86,10 +80,10 @@ public class TestAutonomousLinearSearch extends AutonomousLinearModeBase {
         double startheading = 0;
         motor1.resetEncoder();
         motor2.resetEncoder();
-        boolean is_turning=false;
+        boolean is_turning = false;
         // Run until the driver presses STOP
-        double start_time =0.0;
-        int i=0;
+        double start_time = 0.0;
+        int i = 0;
         while (opModeIsActive()) {
             // Code to run in a loop
             telemetry.addData("Status", "Run Time: " + runtime.toString());
@@ -101,8 +95,8 @@ public class TestAutonomousLinearSearch extends AutonomousLinearModeBase {
                 speed1 = motor1.getCorrectedVelocity();
                 speed2 = motor2.getCorrectedVelocity();
                 //checking if the robot is turning except that motor 1 goes in reverse so the sum should be around 0 if it is going straight
-                if (is_turning=false) {
-                    speed = Math.abs(speed2)*0.75*1.4167;
+                if (is_turning = false) {
+                    speed = Math.abs(speed2) * 0.75 * 1.4167;
                 } else {
                     speed = 0;
                 }
@@ -121,8 +115,8 @@ public class TestAutonomousLinearSearch extends AutonomousLinearModeBase {
                 current[1] = current[1] + travelled * Math.sin(idealheading);
                 //Distance from target in terms of x distance and y distance
                 if (has_cone == false) {
-                    telemetry.addData("Entered cone pick up", "x_coordinate" +current[0]);
-                    telemetry.addData("Entered cone pick up", "y_coordinate" +current[1]);
+                    telemetry.addData("Entered cone pick up", "x_coordinate" + current[0]);
+                    telemetry.addData("Entered cone pick up", "y_coordinate" + current[1]);
                     //Run code to return to nearest loading station
                     //finding distance from each robot to cones using pythagoras
                     //assuming that the first coordinate is the closest
@@ -139,7 +133,7 @@ public class TestAutonomousLinearSearch extends AutonomousLinearModeBase {
                             //closest coordinate
                             smallest_distance = distance;
                             closest_coordinate = cone_coordinates[index];
-                            i= index;
+                            i = index;
                         }
                     }
                     //getting the robot to drive towards the cones
@@ -149,9 +143,9 @@ public class TestAutonomousLinearSearch extends AutonomousLinearModeBase {
                         speed1 = motor1.getCorrectedVelocity();
                         speed2 = motor2.getCorrectedVelocity();
                         //checking if the robot is turning except that motor 1 goes in reverse so the sum should be around 0 if it is going straight
-                        if (is_turning==false) {
+                        if (is_turning == false) {
                             // I just want velocity
-                            speed = Math.abs(speed2)*0.75*1.4167;
+                            speed = Math.abs(speed2) * 0.75 * 1.4167;
                         } else {
                             speed = 0;
                         }
@@ -186,15 +180,15 @@ public class TestAutonomousLinearSearch extends AutonomousLinearModeBase {
                             is_turning = false;
                             telemetry.addData("Driving forwards", motor2.getCorrectedVelocity());
                             //drive at reduced speeds if within 20cm of terminal
-                            if(Math.abs(current[0]-closest_coordinate[0])<200 && Math.abs(current[1]-closest_coordinate[1])<200) {
+                            if (Math.abs(current[0] - closest_coordinate[0]) < 200 && Math.abs(current[1] - closest_coordinate[1]) < 200) {
                                 motor1.set(-0.3);
                                 motor2.set(0.3);
-                            } else{
+                            } else {
                                 motor1.set(-0.8);
                                 motor2.set(0.8);
                             }
-                        } else if ((idealheading <startheading && startheading - idealheading<180) || (startheading <idealheading && 360-idealheading+startheading<180)) {
-                            is_turning=true;
+                        } else if ((idealheading < startheading && startheading - idealheading < 180) || (startheading < idealheading && 360 - idealheading + startheading < 180)) {
+                            is_turning = true;
                             //Cause the motor to turn left
                             //10 degree error allowance for reducing speed is stopgap, need to input degree
                             //change generated by 1 tick of maximum turning
@@ -207,7 +201,7 @@ public class TestAutonomousLinearSearch extends AutonomousLinearModeBase {
                                 motor2.set(0.3);
                             }
                         } else {
-                            is_turning=true;
+                            is_turning = true;
                             //Cause the motor to turn right
                             //10 degree error allowance for reducing speed is stopgap, need to input degree
                             //change generated by 1 tick of maximum turning
@@ -228,12 +222,12 @@ public class TestAutonomousLinearSearch extends AutonomousLinearModeBase {
                     motor1.set(0);
                     motor2.set(0);
                     //code for picking up cone
-                    if (i == 0){
+                    if (i == 0) {
                         //the cones on the right of the field
-                        idealheading=45;
-                    }else{
+                        idealheading = 45;
+                    } else {
                         //the cones on the left of the field
-                        idealheading=315;
+                        idealheading = 315;
                     }
                     //turning to face the junction
                     while (startheading < idealheading + 0.05 && startheading > idealheading - 0.05) {
@@ -262,12 +256,12 @@ public class TestAutonomousLinearSearch extends AutonomousLinearModeBase {
                             }
                         }
                     }
-                    start_time=runtime.seconds();
+                    start_time = runtime.seconds();
                     //get the robot to close the servo
                     left_intake.close();
                     right_intake.close();
                     //get the robot to lift the cone for 1s
-                    while (runtime.seconds()-start_time<1) {
+                    while (runtime.seconds() - start_time < 1) {
                         left_arm.set(-1);
                         right_arm.set(-1);
                     }
@@ -276,8 +270,8 @@ public class TestAutonomousLinearSearch extends AutonomousLinearModeBase {
                     //should we enter code for the robot to drive to the nearest picture in order
                     //to reconfirm coordinates
                 } else {
-                    telemetry.addData("Entered cone deliver", "x_coordinate" +current[0]);
-                    telemetry.addData("Entered cone deliver", "y_coordinate" +current[1]);
+                    telemetry.addData("Entered cone deliver", "x_coordinate" + current[0]);
+                    telemetry.addData("Entered cone deliver", "y_coordinate" + current[1]);
                     //allowance of 1cm from pole, though subject to change as necessary
                     if (Math.abs(current[0] - next[0]) > 10 && Math.abs(current[1] - next[1]) > 10) {
                         //Calculating heading necessary to go in correct direction
@@ -297,18 +291,18 @@ public class TestAutonomousLinearSearch extends AutonomousLinearModeBase {
                         startheading = internal_measurement_unit.getHeading();
                         //allowing an error of 0.5 degree as long as it is constantly updated.
                         if (startheading < idealheading + 0.5 && startheading > idealheading - 0.5) {
-                            is_turning=false;
+                            is_turning = false;
                             telemetry.addData("driving", motor2.getCorrectedVelocity());
                             //reduce speed if within 20cm of junction
-                            if(Math.abs(current[0]-next[0])<200 && Math.abs(current[1]-next[1])<200) {
+                            if (Math.abs(current[0] - next[0]) < 200 && Math.abs(current[1] - next[1]) < 200) {
                                 motor1.set(-0.3);
                                 motor2.set(0.3);
-                            } else{
+                            } else {
                                 motor1.set(-0.8);
                                 motor2.set(0.8);
                             }
-                        } else if ((idealheading <startheading && startheading - idealheading<180) || (startheading <idealheading && 360-idealheading+startheading<180)) {
-                            is_turning=true;
+                        } else if ((idealheading < startheading && startheading - idealheading < 180) || (startheading < idealheading && 360 - idealheading + startheading < 180)) {
+                            is_turning = true;
                             //Cause the motor to turn left
                             //10 degree error allowance for reducing speed is stopgap
                             if (startheading - idealheading < 10 && startheading - idealheading > -10) {
@@ -321,7 +315,7 @@ public class TestAutonomousLinearSearch extends AutonomousLinearModeBase {
                             }
 
                         } else {
-                            is_turning=true;
+                            is_turning = true;
                             //Cause the motor to turn right
                             //10 degree error allowance for reducing speed is stopgap
                             if (startheading - idealheading < 10 && startheading - idealheading > -10) {
@@ -337,9 +331,9 @@ public class TestAutonomousLinearSearch extends AutonomousLinearModeBase {
                         //getting the robot to stop
                         motor1.set(0.0);
                         motor2.set(0.0);
-                        startheading=internal_measurement_unit.getHeading();
+                        startheading = internal_measurement_unit.getHeading();
                         //code to put down cone on Junction
-                        idealheading=180;
+                        idealheading = 180;
                         while (startheading < idealheading + 0.05 && startheading > idealheading - 0.05) {
                             is_turning = true;
                             if ((idealheading < startheading && startheading - idealheading < 180) || (startheading < idealheading && 360 - idealheading + startheading < 180)) {
@@ -366,9 +360,9 @@ public class TestAutonomousLinearSearch extends AutonomousLinearModeBase {
                                 }
                             }
                         }
-                        start_time=runtime.seconds();
+                        start_time = runtime.seconds();
                         //get the robot to drop the cone for 1s
-                        while (runtime.seconds()-start_time<1) {
+                        while (runtime.seconds() - start_time < 1) {
                             left_arm.set(1);
                             right_arm.set(1);
                         }
@@ -389,14 +383,14 @@ public class TestAutonomousLinearSearch extends AutonomousLinearModeBase {
                 telemetry.update();
             }
             while (time < 30) {
-                telemetry.addData("returning to terminal", "x_coordinate" +current[0]);
-                telemetry.addData("returning to terminal", "y_coordinate"+ current[1]);
+                telemetry.addData("returning to terminal", "x_coordinate" + current[0]);
+                telemetry.addData("returning to terminal", "y_coordinate" + current[1]);
                 //write code for returning to terminals
                 speed1 = motor1.getCorrectedVelocity();
                 speed2 = motor2.getCorrectedVelocity();
                 //checking if the robot is turning, but since motor1 goes in reverse, the sum should be around 0
-                if (is_turning==false) {
-                    speed = Math.abs(speed2)*1.4167;
+                if (is_turning == false) {
+                    speed = Math.abs(speed2) * 1.4167;
                 } else {
                     //if the robot is turning, then it technically has not changed position
                     speed = 0;
@@ -451,17 +445,17 @@ public class TestAutonomousLinearSearch extends AutonomousLinearModeBase {
                     }
                     //allowing an error of 0.5 degree as long as it is constantly updated.
                     if (startheading < idealheading + 0.05 && startheading > idealheading - 0.05) {
-                        is_turning=false;
+                        is_turning = false;
                         //drive at reduced speeds if within 20cm of terminal
-                        if(Math.abs(current[0]-closest_coordinate[0])<200 && Math.abs(current[1]-closest_coordinate[1])<200) {
+                        if (Math.abs(current[0] - closest_coordinate[0]) < 200 && Math.abs(current[1] - closest_coordinate[1]) < 200) {
                             motor1.set(-0.3);
                             motor2.set(0.3);
-                        } else{
+                        } else {
                             motor1.set(-0.8);
                             motor2.set(0.8);
                         }
-                    } else if ((idealheading <startheading && startheading - idealheading<180) || (startheading <idealheading && 360-idealheading+startheading<180)) {
-                        is_turning=true;
+                    } else if ((idealheading < startheading && startheading - idealheading < 180) || (startheading < idealheading && 360 - idealheading + startheading < 180)) {
+                        is_turning = true;
                         //Cause the motor to turn left
                         //10 degree error allowance for reducing speed is stopgap
                         if (startheading - idealheading < 10 && startheading - idealheading > -10) {
@@ -474,7 +468,7 @@ public class TestAutonomousLinearSearch extends AutonomousLinearModeBase {
                         }
 
                     } else {
-                        is_turning=true;
+                        is_turning = true;
                         //Cause the motor to turn right
                         //10 degree error allowance for reducing speed is stopgap
                         if (startheading - idealheading < 0 && startheading - idealheading > -10) {
@@ -494,3 +488,4 @@ public class TestAutonomousLinearSearch extends AutonomousLinearModeBase {
         }
     }
 }
+
