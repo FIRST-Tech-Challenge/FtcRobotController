@@ -2,7 +2,6 @@ package org.firstinspires.ftc.teamcode.opModes.team2;
 
 import com.arcrobotics.ftclib.command.button.GamepadButton;
 import com.arcrobotics.ftclib.gamepad.GamepadEx;
-import com.arcrobotics.ftclib.gamepad.GamepadKeys;
 import com.arcrobotics.ftclib.hardware.motors.Motor;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.Servo;
@@ -78,7 +77,7 @@ public class Team2TeleOp extends TeleOpLinearModeBase {
         // DRIVE TRAIN
         telemetry = TelemetryContainer.getTelemetry();
 
-        lleftMotor = HardwareMapContainer.motor0;
+        leftMotor = HardwareMapContainer.motor0;
         rightMotor = HardwareMapContainer.motor1;
 
 
