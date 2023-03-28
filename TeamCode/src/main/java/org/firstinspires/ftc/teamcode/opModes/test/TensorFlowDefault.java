@@ -145,8 +145,6 @@ public class TensorFlowDefault extends LinearOpMode {  //TODO: Test
                             if (recognition.getLabel().equals("1 Bolt" ) | recognition.getLabel().equals("2 Bulb" ) | recognition.getLabel().equals("3 Panel" )) {
                                 isConeDetected = true;
                                 telemetry.addData("Object Detected", "CONE");
-                            } else {
-                                isConeDetected = false;
                             }
 
                             telemetry.addData(""," ");
