@@ -95,7 +95,7 @@ public class Autonomous_team_2 extends AutonomousLinearModeBase {
                 speed2 = motor2.getCorrectedVelocity();
                 //checking if the robot is turning except that motor 1 goes in reverse so the speed is
                 //counted using speed 2.
-                if (is_turning=false) {
+                if (!is_turning) {
                     // I just want speed so i will get the absolute value
                     speed = Math.abs(speed2)*0.75*1.4167;
                 } else {
@@ -115,7 +115,7 @@ public class Autonomous_team_2 extends AutonomousLinearModeBase {
                 //updating current y coordinate
                 current[1] = current[1] + travelled * Math.sin(idealheading);
                 //Distance from target in terms of x distance and y distance
-                if (has_cone == false) {
+                if (!has_cone) {
                     telemetry.addData("Entered cone pick up", "x_coordinate" +current[0]);
                     telemetry.addData("Entered cone pick up", "y_coordinate" +current[1]);
                     //Run code to return to nearest loading station
@@ -145,7 +145,7 @@ public class Autonomous_team_2 extends AutonomousLinearModeBase {
                         speed2 = motor2.getCorrectedVelocity();
                         //checking if the robot is turning except that motor 1 goes in reverse so the speed is
                         //counted using speed 2.
-                        if (is_turning==false) {
+                        if (!is_turning) {
                             // I just want speed so i will get the absolute value
                             speed = Math.abs(speed2)*0.75*1.4167;
                         } else {
