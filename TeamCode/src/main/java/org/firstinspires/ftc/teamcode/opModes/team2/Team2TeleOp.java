@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.opModes.team2;
 
 import com.arcrobotics.ftclib.command.button.GamepadButton;
 import com.arcrobotics.ftclib.gamepad.GamepadEx;
+import com.arcrobotics.ftclib.gamepad.GamepadKeys;
 import com.arcrobotics.ftclib.hardware.motors.Motor;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.Servo;
@@ -62,8 +63,8 @@ public class Team2TeleOp extends TeleOpLinearModeBase {
     // GRABBER
     // 0 to 1
     public final double SERVO1_OPEN_ANGLE = 0D;
-    public double SERVO1_CLOSE_ANGLE = 0.3D;
-    public double SERVO2_CLOSE_ANGLE = 0.65D;
+    public double SERVO1_CLOSE_ANGLE = 0.35D;
+    public double SERVO2_CLOSE_ANGLE = 0.6D;
     public final double SERVO2_OPEN_ANGLE = 1D;
 
     private Servo grabberServo1;
@@ -84,7 +85,7 @@ public class Team2TeleOp extends TeleOpLinearModeBase {
         // LIFT // TODO: Test
         Motor lift_motor = HardwareMapContainer.motor2;
         // Core Hex Motor has 288 counts/revolution; counts/radian = counts/revn / (radians/revn); 3:1 gear
-        lift = new Team2LiftComponent(lift_motor, 0.42, (int)((288 / 3) / (Math.PI*2)), 0);
+//        lift = new Team2LiftComponent(lift_motor, 0.42, (int)((288 / 3) / (Math.PI*2)), 0);
 
         // GRABBER // TODO: Test
         telemetry = TelemetryContainer.getTelemetry();
@@ -130,18 +131,20 @@ public class Team2TeleOp extends TeleOpLinearModeBase {
 //            // TEST grabber
 //
 //            telemetry.addData("GRABBER LEFT CLOSED", SERVO1_CLOSE_ANGLE);
-//            telemetry.addData("GRABBER RIGHT CLOSED", SERVO2_CLOSE_ANGLE);
-            if(Inputs.gamepad1.getButton(GamepadKeys.Button.LEFT_BUMPER)) {
-                lift_motor.set(1.0);
-                telemetry.addData("Lift", "Up");
+//            telemetry.addData("GRABBER RIGHT CLOSED", SERVO2_CLOSE_ANGLE);`
 
-            } else if(Inputs.gamepad1.getButton(GamepadKeys.Button.RIGHT_BUMPER)) {
-                lift_motor.set(-1.0);
-                telemetry.addData("Lift", "Down");
-            } else {
-                lift_motor.set(0.0);
-                telemetry.addData("Lift", "Stopped");
-            }
+            double power = 0;
+
+            double leftTriggerVal = Inputs.gamepad1.getTrigger(GamepadKeys.Trigger.LEFT_TRIGGER);
+            if(leftTriggerVal != 0) power = leftTriggerVal;
+            double rightTriggerVal = Inputs.gamepad1.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER);
+            if(rightTriggerVal != 0) power = -rightTriggerVal;
+
+            telemetry.addData("[LIFT] Left trigger", Inputs.gamepad1.getTrigger(GamepadKeys.Trigger.LEFT_TRIGGER));
+            telemetry.addData("[LIFT] Right trigger", Inputs.gamepad1.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER));
+            telemetry.addData("[LIFT] Power", power);
+
+            lift_motor.set(power);
 
             telemetry.update();
         }
