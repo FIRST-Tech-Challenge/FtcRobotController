@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.opModes.team2;
 
 import com.arcrobotics.ftclib.command.button.GamepadButton;
 import com.arcrobotics.ftclib.gamepad.GamepadEx;
+import com.arcrobotics.ftclib.gamepad.GamepadKeys;
 import com.arcrobotics.ftclib.hardware.motors.Motor;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.Servo;
@@ -11,7 +12,6 @@ import org.firstinspires.ftc.teamcode.libs.brightonCollege.inputs.PSButtons;
 import org.firstinspires.ftc.teamcode.libs.brightonCollege.modeBases.TeleOpLinearModeBase;
 import org.firstinspires.ftc.teamcode.libs.brightonCollege.util.TelemetryContainer;
 import org.firstinspires.ftc.teamcode.libs.brightonCollege.inputs.Inputs;
-import org.firstinspires.ftc.teamcode.libs.brightonCollege.modeBases.TeleOpModeBase;
 import org.firstinspires.ftc.teamcode.libs.brightonCollege.util.HardwareMapContainer;
 
 import org.firstinspires.ftc.teamcode.components.Team2LiftComponent;
@@ -62,12 +62,13 @@ public class Team2TeleOp extends TeleOpLinearModeBase {
 
     // GRABBER
     // 0 to 1
-    public final double SERVO_OPEN_ANGLE = 0D;
-    public final double SERVO_CLOSE_ANGLE = 1.0D;
+    public final double SERVO1_OPEN_ANGLE = 0D;
+    public double SERVO1_CLOSE_ANGLE = 0.3D;
+    public double SERVO2_CLOSE_ANGLE = 0.65D;
+    public final double SERVO2_OPEN_ANGLE = 1D;
 
-    private double grabberAngle = SERVO_OPEN_ANGLE;
-
-    private Servo grabberServo;
+    private Servo grabberServo1;
+    private Servo grabberServo2;
     private boolean grabberOpen = false;
 
     @Override
@@ -89,17 +90,17 @@ public class Team2TeleOp extends TeleOpLinearModeBase {
         // GRABBER // TODO: Test
         telemetry = TelemetryContainer.getTelemetry();
 
-        telemetry.addData("[GRABBER] Open Angle: ", SERVO_OPEN_ANGLE);
-        telemetry.addData("[GRABBER] Close Angle: ", SERVO_CLOSE_ANGLE);
-
-        grabberServo = HardwareMapContainer.getServo(0);
+        grabberServo1 = HardwareMapContainer.getServo(0);
+        grabberServo2 = HardwareMapContainer.getServo(1);
 
         new GamepadButton(Inputs.gamepad1, PSButtons.TRIANGLE).whenPressed(() -> {
             if (grabberOpen) {
-                grabberServo.setPosition(SERVO_CLOSE_ANGLE);
+                grabberServo1.setPosition(SERVO1_CLOSE_ANGLE);
+                grabberServo2.setPosition(SERVO2_CLOSE_ANGLE);
                 grabberOpen = false;
             } else {
-                grabberServo.setPosition(SERVO_OPEN_ANGLE);
+                grabberServo1.setPosition(SERVO1_OPEN_ANGLE);
+                grabberServo2.setPosition(SERVO2_OPEN_ANGLE);
                 grabberOpen = true;
             }
         });
@@ -108,17 +109,29 @@ public class Team2TeleOp extends TeleOpLinearModeBase {
             runLift(Inputs.gamepad1.getRightY());
         });
 
+//        new GamepadButton(Inputs.gamepad1, GamepadKeys.Button.LEFT_BUMPER).whenPressed(() -> {
+//           SERVO1_CLOSE_ANGLE -= 0.05;
+//        });
+//        new GamepadButton(Inputs.gamepad1, GamepadKeys.Button.RIGHT_BUMPER).whenPressed(() -> {
+//            SERVO2_CLOSE_ANGLE += 0.05;
+//        });
+
         waitForStart();
         /* START */
 
         while(opModeIsActive()) {
             super.tick();
             /* TICK */
-            runDriveTrain(Inputs.gamepad1.getLeftY(), Inputs.gamepad1.getLeftX());
+            runDriveTrain(-Inputs.gamepad1.getLeftY(), Inputs.gamepad1.getLeftX());
             runGrabber();
 
             // Lift telemetry
             telemetry.addData("[Lift] Last set position to", this.targetPosition);
+
+//            // TEST grabber
+//
+//            telemetry.addData("GRABBER LEFT CLOSED", SERVO1_CLOSE_ANGLE);
+//            telemetry.addData("GRABBER RIGHT CLOSED", SERVO2_CLOSE_ANGLE);
 
             telemetry.update();
         }
@@ -182,7 +195,7 @@ public class Team2TeleOp extends TeleOpLinearModeBase {
     }
 
     private void runGrabber() {
-        telemetry.addData("[GRABBER] Current Servo Angle: ", grabberServo.getPosition());
+        telemetry.addData("[GRABBER] Current Servo Angle: ", grabberServo1.getPosition());
     }
 
     private void arcadeDrive(Motor leftMotor, Motor rightMotor, double forwardSpeed, double turnSpeed) {
