@@ -78,7 +78,7 @@ public class Team2TeleOp extends TeleOpLinearModeBase {
         // DRIVE TRAIN
         telemetry = TelemetryContainer.getTelemetry();
 
-        lleftMotor = HardwareMapContainer.motor0;
+        leftMotor = HardwareMapContainer.motor0;
         rightMotor = HardwareMapContainer.motor1;
 
 
@@ -105,9 +105,9 @@ public class Team2TeleOp extends TeleOpLinearModeBase {
             }
         });
 
-        new GamepadButton(Inputs.gamepad1, PSButtons.CROSS).whenPressed(() -> {
-            runLift(Inputs.gamepad1.getRightY());
-        });
+//        new GamepadButton(Inputs.gamepad1, PSButtons.CROSS).whenPressed(() -> {
+//            runLift(Inputs.gamepad1.getRightY());
+//        });
 
 //        new GamepadButton(Inputs.gamepad1, GamepadKeys.Button.LEFT_BUMPER).whenPressed(() -> {
 //           SERVO1_CLOSE_ANGLE -= 0.05;
@@ -132,6 +132,17 @@ public class Team2TeleOp extends TeleOpLinearModeBase {
 //
 //            telemetry.addData("GRABBER LEFT CLOSED", SERVO1_CLOSE_ANGLE);
 //            telemetry.addData("GRABBER RIGHT CLOSED", SERVO2_CLOSE_ANGLE);
+            if(Inputs.gamepad1.getButton(GamepadKeys.Button.LEFT_BUMPER)) {
+                lift_motor.set(1.0);
+                telemetry.addData("Lift", "Up");
+
+            } else if(Inputs.gamepad1.getButton(GamepadKeys.Button.RIGHT_BUMPER)) {
+                lift_motor.set(-1.0);
+                telemetry.addData("Lift", "Down");
+            } else {
+                lift_motor.set(0.0);
+                telemetry.addData("Lift", "Stopped");
+            }
 
             telemetry.update();
         }
