@@ -1,7 +1,6 @@
 package org.firstinspires.ftc.teamcode.opModes.test;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.libs.brightonCollege.modeBases.AutonomousLinearModeBase;
@@ -18,7 +17,7 @@ import org.firstinspires.ftc.teamcode.libs.brightonCollege.modeBases.AutonomousL
  *  [servo2] Unused
  *  [servo3] Unused
  */
-@Disabled // REMEMBER TO REMOVE THIS WHEN RUNNING.
+// @Disabled // REMEMBER TO REMOVE THIS WHEN RUNNING.
 @Autonomous(name="Example Linear Auto Op Mode", group="Example")
 public class ExampleLinearAutoOpMode extends AutonomousLinearModeBase {
     // Declare class members here
