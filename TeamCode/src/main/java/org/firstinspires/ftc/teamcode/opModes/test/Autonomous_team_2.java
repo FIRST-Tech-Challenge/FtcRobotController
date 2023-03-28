@@ -491,4 +491,47 @@ public class Autonomous_team_2 extends AutonomousLinearModeBase {
             }
         }
     }
+
+    private void driveToSignalZone(int zone, Motor leftMotor, Motor rightMotor) {
+        switch (zone) {
+            case 1: {
+                driveStraight(5, leftMotor, rightMotor);
+                break;
+            }
+
+            case 2: {
+                driveStraight(5, leftMotor, rightMotor);
+                rightAngleTurn(leftMotor, rightMotor, true);
+                driveStraight(5, leftMotor, rightMotor);
+                break;
+            }
+
+            case 3: {
+                driveStraight(5, leftMotor, rightMotor);
+                rightAngleTurn(leftMotor, rightMotor, true);
+                driveStraight(10, leftMotor, rightMotor);
+                break;
+            }
+
+            /*
+            default: {
+
+            }
+
+             */
+        }
+    }
+
+    private void driveStraight(double time, Motor leftMotor, Motor rightMotor) {
+        
+    }
+
+    private void rightAngleTurn(Motor leftMotor, Motor rightMotor, boolean isClockwise) {
+        double[] motorValues = new double[2];
+        motorValues[0] = isClockwise ? 1D : -1D;
+        motorValues[1] = -motorValues[0];
+
+        leftMotor.set(motorValues[0]);
+        leftMotor.set(motorValues[1]);
+    }
 }
