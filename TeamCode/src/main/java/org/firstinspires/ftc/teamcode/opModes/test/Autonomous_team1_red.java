@@ -46,7 +46,7 @@ public class Autonomous_team1_red extends AutonomousLinearModeBase {
 
 
         double[][] junction_Coordinates = {{304.8, 254.8}, {1828.8, 254.8},{1828.8,1778.8}};
-        int num_junctions = 2;
+        int num_junctions = 3;
 
         //Is it possible to use the terminals as a way to check coordinates?
 
@@ -100,8 +100,10 @@ public class Autonomous_team1_red extends AutonomousLinearModeBase {
                 //3:4 gear ratio and the wheel is 85mm in diameter, which should equate to 1.4167 mm per turn
                 speed1 = motor1.getCorrectedVelocity();
                 speed2 = motor2.getCorrectedVelocity();
-                //checking if the robot is turning except that motor 1 goes in reverse so the sum should be around 0 if it is going straight
+                //checking if the robot is turning except that motor 1 goes in reverse so the speed is
+                //counted using speed 2.
                 if (is_turning=false) {
+                    // I just want speed so i will get the absolute value
                     speed = Math.abs(speed2)*0.75*1.4167;
                 } else {
                     speed = 0;
@@ -148,9 +150,10 @@ public class Autonomous_team1_red extends AutonomousLinearModeBase {
                         //insert code for proximity sensor
                         speed1 = motor1.getCorrectedVelocity();
                         speed2 = motor2.getCorrectedVelocity();
-                        //checking if the robot is turning except that motor 1 goes in reverse so the sum should be around 0 if it is going straight
+                        //checking if the robot is turning except that motor 1 goes in reverse so the speed is
+                        //counted using speed 2.
                         if (is_turning==false) {
-                            // I just want velocity
+                            // I just want speed so i will get the absolute value
                             speed = Math.abs(speed2)*0.75*1.4167;
                         } else {
                             speed = 0;
@@ -394,8 +397,10 @@ public class Autonomous_team1_red extends AutonomousLinearModeBase {
                 //write code for returning to terminals
                 speed1 = motor1.getCorrectedVelocity();
                 speed2 = motor2.getCorrectedVelocity();
-                //checking if the robot is turning, but since motor1 goes in reverse, the sum should be around 0
+                //checking if the robot is turning except that motor 1 goes in reverse so the speed is
+                //counted using speed 2.
                 if (is_turning==false) {
+                    // I just want speed so i will get the absolute value
                     speed = Math.abs(speed2)*1.4167;
                 } else {
                     //if the robot is turning, then it technically has not changed position
