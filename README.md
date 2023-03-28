@@ -1,3 +1,7 @@
+# Road Runner Quickstart 2
+
+Check out the [new docs](https://rr.brott.dev/docs/v1-0/tuning/).
+
 ## NOTICE
 
 This repository contains the public FTC SDK for the POWERPLAY (2022-2023) competition season.
