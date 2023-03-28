@@ -8,6 +8,7 @@ import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.libs.brightonCollege.inputs.PSButtons;
+import org.firstinspires.ftc.teamcode.libs.brightonCollege.modeBases.TeleOpLinearModeBase;
 import org.firstinspires.ftc.teamcode.libs.brightonCollege.util.TelemetryContainer;
 import org.firstinspires.ftc.teamcode.libs.brightonCollege.inputs.Inputs;
 import org.firstinspires.ftc.teamcode.libs.brightonCollege.modeBases.TeleOpModeBase;
@@ -44,7 +45,7 @@ import org.firstinspires.ftc.teamcode.components.Team2LiftComponent;
 
 
 @TeleOp(name="USE THIS ONE - Team 2 TeleOp", group="Team 2")
-public class Team2TeleOp extends TeleOpModeBase {
+public class Team2TeleOp extends TeleOpLinearModeBase {
 
     private Telemetry telemetry;
 
@@ -62,14 +63,17 @@ public class Team2TeleOp extends TeleOpModeBase {
     // GRABBER
     // 0 to 1
     public final double SERVO_OPEN_ANGLE = 0D;
-    public final double SERVO_CLOSE_ANGLE = 0.25D;
+    public final double SERVO_CLOSE_ANGLE = 1.0D;
 
     private double grabberAngle = SERVO_OPEN_ANGLE;
 
     private Servo grabberServo;
+    private boolean grabberOpen = false;
 
     @Override
-    public void setup() {
+    public void run() {
+        /* INIT */
+
         // DRIVE TRAIN
         telemetry = TelemetryContainer.getTelemetry();
 
@@ -77,12 +81,12 @@ public class Team2TeleOp extends TeleOpModeBase {
         rightMotor = HardwareMapContainer.motor1;
 
 
-        // LIFT
+        // LIFT // TODO: Test
         Motor lift_motor = HardwareMapContainer.motor2;
         // Core Hex Motor has 288 counts/revolution; counts/radian = counts/revn / (radians/revn); 3:1 gear
         lift = new Team2LiftComponent(lift_motor, 0.42, (int)((288 / 3) / (Math.PI*2)), 0);
 
-        // GRABBER
+        // GRABBER // TODO: Test
         telemetry = TelemetryContainer.getTelemetry();
 
         telemetry.addData("[GRABBER] Open Angle: ", SERVO_OPEN_ANGLE);
@@ -90,22 +94,34 @@ public class Team2TeleOp extends TeleOpModeBase {
 
         grabberServo = HardwareMapContainer.getServo(0);
 
-        new GamepadButton(Inputs.gamepad1, PSButtons.TRIANGLE).whenActive(() -> {
-            if (grabberAngle == SERVO_OPEN_ANGLE) {
-                grabberServo.setPosition(SERVO_OPEN_ANGLE);
-                grabberAngle = SERVO_OPEN_ANGLE;
-            } else {
+        new GamepadButton(Inputs.gamepad1, PSButtons.TRIANGLE).whenPressed(() -> {
+            if (grabberOpen) {
                 grabberServo.setPosition(SERVO_CLOSE_ANGLE);
-                grabberAngle = SERVO_CLOSE_ANGLE;
+                grabberOpen = false;
+            } else {
+                grabberServo.setPosition(SERVO_OPEN_ANGLE);
+                grabberOpen = true;
             }
         });
-    }
 
-    @Override
-    public void every_tick() {
-        runDriveTrain(Inputs.gamepad1.getLeftY(), Inputs.gamepad1.getRightY());
-        runLift(Inputs.gamepad1.getRightY());
-        runGrabber();
+        new GamepadButton(Inputs.gamepad1, PSButtons.CROSS).whenPressed(() -> {
+            runLift(Inputs.gamepad1.getRightY());
+        });
+
+        waitForStart();
+        /* START */
+
+        while(opModeIsActive()) {
+            super.tick();
+            /* TICK */
+            runDriveTrain(Inputs.gamepad1.getLeftY(), Inputs.gamepad1.getLeftX());
+            runGrabber();
+
+            // Lift telemetry
+            telemetry.addData("[Lift] Last set position to", this.targetPosition);
+
+            telemetry.update();
+        }
     }
 
     private void runDriveTrain(double yInput, double xInput) {
@@ -116,9 +132,9 @@ public class Team2TeleOp extends TeleOpModeBase {
         //if joystick pos is less than this amount from in the middle, the robot doesn't move.
         final double DEAD_ZONE_SIZE = 0.2D;
 
-        new GamepadButton(gamepad, PSButtons.SQUARE).whenActive(() -> isSlowMode = !isSlowMode);
+        new GamepadButton(gamepad, PSButtons.SQUARE).whenPressed(() -> isSlowMode = !isSlowMode);
 
-        new GamepadButton(gamepad, PSButtons.CIRCLE).whenActive(() -> isForwardOnlyMode = !isForwardOnlyMode);
+        new GamepadButton(gamepad, PSButtons.CIRCLE).whenPressed(() -> isForwardOnlyMode = !isForwardOnlyMode);
 
 
         if (isSlowMode) {
@@ -133,7 +149,7 @@ public class Team2TeleOp extends TeleOpModeBase {
 
         //if the following variables are less than DEAD_ZONE_SIZE from 0, set them to be 0
         for (int i = 0; i < inputs.length; i++) {
-            inputs[i] = Math.abs(inputs[i]) < DEAD_ZONE_SIZE ? inputs[i] : 0D;
+            inputs[i] = Math.abs(inputs[i]) >= DEAD_ZONE_SIZE ? inputs[i] : 0D;
         }
 
         arcadeDrive(leftMotor, rightMotor, inputs[0], inputs[1]);
@@ -163,8 +179,6 @@ public class Team2TeleOp extends TeleOpModeBase {
         } else {
             telemetry.addLine("[Lift] BUSY");
         }
-        telemetry.addData("[Lift] Last set position to", this.targetPosition);
-        telemetry.addData("[Lift] Position of gamepad", Math.abs(inputPos));
     }
 
     private void runGrabber() {

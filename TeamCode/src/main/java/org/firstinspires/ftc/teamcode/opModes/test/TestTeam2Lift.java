@@ -40,7 +40,11 @@ public class TestTeam2Lift extends TeleOpModeBase { // TODO: Test
     public void every_tick() {
         if(Math.abs(Inputs.gamepad1.getLeftY()) != this.targetPosition) {
             this.targetPosition = Math.abs(Inputs.gamepad1.getLeftY());
-            lift.setHeight(this.targetPosition);
+            try {
+                lift.setHeight(this.targetPosition);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
         } else {
             telemetry.addLine("[Lift] BUSY");
         }
