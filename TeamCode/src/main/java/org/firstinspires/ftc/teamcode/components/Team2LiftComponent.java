@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.components;
 
 import com.arcrobotics.ftclib.hardware.motors.Motor;
+import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 
 // TODO: 21/01/2023 Test
 /**
@@ -33,6 +34,7 @@ public class Team2LiftComponent {
      */
     public Team2LiftComponent(Motor motor, double barLength, int countsPerRadian, double initialHeightOffset) {
         motor.setRunMode(Motor.RunMode.PositionControl); // So setTargetPosition works
+        motor.setPositionCoefficient(0.05);
 
         this.motor = motor;
         this.barLength = barLength;
@@ -44,13 +46,34 @@ public class Team2LiftComponent {
      * Set the height of the hand
      * @param height The height of the hand relative to the floor (m)
      */
-    public void setHeight(double height) {
+    public void setHeight(double height) throws InterruptedException {
         height -= initialHeightOffset; // Get height relative to starting position
-        double angle = Math.asin(height/(2*this.barLength));
-        this.motor.setTargetPosition((int)(countsPerRadian*angle));
+        double angle = Math.asin(height/(2*this.barLength)); // arcsin(Opposite Length/Hypot Length )
+
+        this.motor.setTargetPosition(motor.getCurrentPosition() + (int)(countsPerRadian*angle));
+
+        // set the tolerance
+        this.motor.setPositionTolerance(13.6);   // allowed maximum error
 
         while (!this.motor.atTargetPosition()) {
             this.motor.set(0.75);
+            Thread.sleep(10);
         }
+
+        this.motor.stopMotor(); // stop the motor
+    }
+
+    public void setPosition(int counts) throws InterruptedException {
+        this.motor.setTargetPosition(motor.getCurrentPosition() + counts);
+
+        // set the tolerance
+        this.motor.setPositionTolerance(13.6);   // allowed maximum error
+
+        while (!this.motor.atTargetPosition()) {
+            this.motor.set(0.25);
+            Thread.sleep(10);
+        }
+
+        this.motor.stopMotor(); // stop the motor
     }
 }
