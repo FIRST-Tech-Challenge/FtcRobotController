@@ -21,7 +21,7 @@ public class SBOTTINGOTATestGrabber extends TeleOpModeBase {
     public final double SERVO_OPEN_ANGLE = 0D;
     public final double SERVO_CLOSE_ANGLE = 0.25D;
 
-    private double grabberAngle = SERVO_OPEN_ANGLE;
+    public boolean grabberOpen = false;
 
     private Servo grabberServo;
 
@@ -37,12 +37,12 @@ public class SBOTTINGOTATestGrabber extends TeleOpModeBase {
         grabberServo = HardwareMapContainer.getServo(0);
 
         new GamepadButton(Inputs.gamepad1, PSButtons.CIRCLE).whenActive(() -> {
-            if (grabberAngle == SERVO_OPEN_ANGLE) {
-                grabberServo.setPosition(SERVO_OPEN_ANGLE);
-                grabberAngle = SERVO_OPEN_ANGLE;
-            } else {
+            if (grabberOpen) {
                 grabberServo.setPosition(SERVO_CLOSE_ANGLE);
-                grabberAngle = SERVO_CLOSE_ANGLE;
+                grabberOpen = false;
+            } else {
+                grabberServo.setPosition(SERVO_OPEN_ANGLE);
+                grabberOpen = true;
             }
         });
     }

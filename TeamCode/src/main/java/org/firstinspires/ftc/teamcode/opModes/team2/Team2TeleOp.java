@@ -43,7 +43,7 @@ import org.firstinspires.ftc.teamcode.components.Team2LiftComponent;
  */
 
 
-@TeleOp(name="Team 2 TeleOp", group="Team 2")
+@TeleOp(name="USE THIS ONE - Team 2 TeleOp", group="Team 2")
 public class Team2TeleOp extends TeleOpModeBase {
 
     private Telemetry telemetry;
@@ -155,7 +155,11 @@ public class Team2TeleOp extends TeleOpModeBase {
     private void runLift(double inputPos) {
         if(Math.abs(inputPos) != this.targetPosition) {
             this.targetPosition = Math.abs(inputPos);
-            lift.setHeight(this.targetPosition);
+            try {
+                lift.setHeight(this.targetPosition);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
         } else {
             telemetry.addLine("[Lift] BUSY");
         }
