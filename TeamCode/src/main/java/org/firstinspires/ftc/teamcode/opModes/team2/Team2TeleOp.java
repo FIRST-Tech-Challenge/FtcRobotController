@@ -77,7 +77,7 @@ public class Team2TeleOp extends TeleOpLinearModeBase {
         // DRIVE TRAIN
         telemetry = TelemetryContainer.getTelemetry();
 
-        leftMotor = HardwareMapContainer.motor0;
+        lleftMotor = HardwareMapContainer.motor0;
         rightMotor = HardwareMapContainer.motor1;
 
 
@@ -127,7 +127,7 @@ public class Team2TeleOp extends TeleOpLinearModeBase {
     private void runDriveTrain(double yInput, double xInput) {
         final GamepadEx gamepad = Inputs.gamepad1;
 
-        final double[] inputs = {-yInput, -xInput}; //forward speed, turn speed, sideways speed
+        final double[] inputs = {yInput, -xInput}; //forward speed, turn speed, sideways speed
 
         //if joystick pos is less than this amount from in the middle, the robot doesn't move.
         final double DEAD_ZONE_SIZE = 0.2D;
