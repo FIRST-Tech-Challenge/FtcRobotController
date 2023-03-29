@@ -237,7 +237,7 @@ public abstract class BaseOpMode extends LinearOpMode {
             yOffset = Constants.CAMERA_CENTER_Y - pipeline.yPosition;
 
             // check if the action is cancelled
-            if(gamepad1.start){
+            if (gamepad1.start) {
                 cancelled = true;
             }
 
