@@ -46,7 +46,7 @@ public class StackGrabbingTest extends BaseAutonomous {
             centerJunctionTop(grabberCameraPipeline);
             sleep(100);
             //lower slides onto junction
-            driveSlides(Constants.SLIDE_HIGH-100);
+            driveSlides(Constants.SLIDE_HIGH - 100);
             sleep(100);
             //open the grabber
             driveGrabber(Constants.GRABBER_OPEN_POSITION);
