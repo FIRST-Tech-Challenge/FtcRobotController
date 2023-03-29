@@ -237,7 +237,7 @@ public class PowerPlay_6832 extends OpMode {
         forwardSmoother = new ExponentialSmoother(FORWARD_SMOOTHING_FACTOR);
         rotateSmoother = new ExponentialSmoother(ROTATE_SMOOTHING_FACTOR);
 
-        robot.crane.nudgeCenter(true);
+        robot.crane.nudgeLeft();
 
         debugTelemetry = true;
         if (debugTelemetry)
@@ -351,6 +351,8 @@ public class PowerPlay_6832 extends OpMode {
                         //}
                                 break;
                             case 2:
+                                //doesn't matter what i pass in, should grab from cachepostion
+                                robot.driveTrain.resetGridDrive(Constants.Position.START_LEFT);
                                 dc.joystickDrive();
                                 dc.UnderarmControls();
                                 break;

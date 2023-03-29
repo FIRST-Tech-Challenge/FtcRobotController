@@ -413,6 +413,7 @@ public class DriveTrain extends DiffyDrive implements Subsystem {
             telemetryMap.put("Heading PID Enabled", headingPID.isEnabled());
             telemetryMap.put("Heading Error", headingPID.getError());
             telemetryMap.put("Heading Error Magnitude", headingErrorMagnitude);
+            telemetryMap.put("Cache Position", cachePosition);
             telemetryMap.put("x", poseEstimate.getX());
             telemetryMap.put("y", poseEstimate.getY());
             telemetryMap.put("x tiles", currentPoseTiles.getX());

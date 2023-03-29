@@ -32,6 +32,7 @@ public class Turret implements Subsystem {
     public static PIDCoefficients TURRET_PID = new PIDCoefficients(0.01, 0.02, 0.0002); //0.02, 0.01, 0.05), changed from (0.01, 0.02, 0.0002)
     public static final double TICKS_PER_DEGREE = 36;
     public static double TURRET_TOLERANCE = 1;
+    public static double TURRET_TICKS_ROTATION_SPEED = 1500;
 
     private final boolean simulated;
 
@@ -275,7 +276,7 @@ public class Turret implements Subsystem {
             motor.setTargetPosition(motor.getCurrentPosition()); //encoder should have be reset at the end of calibration - here we set it to it's current position so it doesn't jerk
             motor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             motor.setPower(1); //full power available
-            motor.setVelocity(750); //ticks per second max velocity todo tune for moderate speed
+            motor.setVelocity(TURRET_TICKS_ROTATION_SPEED); //ticks per second max velocity todo tune for moderate speed
             controlMethodIMU = false;
         }
 

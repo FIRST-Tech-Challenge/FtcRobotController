@@ -242,7 +242,7 @@ public class Robot implements Subsystem {
                 //works - jai 5:41 3/24
                 driveTrain.articulate(DriveTrain.Articulation.unlock);
                 crane.setCraneTarget(driveTrain.getPoseEstimate().getX()+6,driveTrain.getPoseEstimate().getY(),8);
-                totalAutonTime = futureTime(300);
+                totalAutonTime = futureTime(28);
                 autonIndex = 0;
                 timeSupervisor++;
                 break;
@@ -640,8 +640,8 @@ public class Robot implements Subsystem {
                 if(System.nanoTime() > transferTimer && crane.getCraneTransferReady()){
                     //driveTrain.articulate(DriveTrain.Articulation.lock);
                     underarm.articulate(UnderArm.Articulation.transfer); //tell underarm to go to transfer angle
-                    transferTimer = futureTime(1.5);
-                    //transferStage++;
+                    transferTimer = futureTime(1.0);
+                    transferStage++;
                 }
                 break;
             case 2: //this is where we grab the cone with the bulb gripper
