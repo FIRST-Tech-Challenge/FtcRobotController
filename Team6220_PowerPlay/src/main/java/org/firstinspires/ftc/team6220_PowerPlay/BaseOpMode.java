@@ -254,7 +254,7 @@ public abstract class BaseOpMode extends LinearOpMode {
             }
 
         // while the cone isn't centered over the junction
-        } while (Math.abs(xOffset) > Constants.JUNCTION_TOP_TOLERANCE || Math.abs(yOffset) > Constants.JUNCTION_TOP_TOLERANCE || cancelled == false);
+        } while (Math.abs(xOffset) > Constants.JUNCTION_TOP_TOLERANCE || Math.abs(yOffset) > Constants.JUNCTION_TOP_TOLERANCE || !cancelled);
 
         stopDriveMotors();
     }
