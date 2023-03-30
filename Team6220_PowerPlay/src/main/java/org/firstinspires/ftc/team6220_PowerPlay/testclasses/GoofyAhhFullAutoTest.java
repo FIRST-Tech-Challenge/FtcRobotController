@@ -1,17 +1,24 @@
 package org.firstinspires.ftc.team6220_PowerPlay.testclasses;
 
+import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+
 import org.firstinspires.ftc.team6220_PowerPlay.BaseAutonomous;
 import org.firstinspires.ftc.team6220_PowerPlay.Constants;
 import org.firstinspires.ftc.team6220_PowerPlay.GrabberCameraPipeline;
 import org.firstinspires.ftc.team6220_PowerPlay.RobotCameraPipeline;
 
-public class GoofyAhhFullAuto extends BaseAutonomous {
+@Autonomous(name="beebloofygobberslaybelenyengkeed")
+public class GoofyAhhFullAutoTest extends BaseAutonomous {
     @Override
     public void runOpMode() throws InterruptedException {
         initialize();
 
-        //detect signal
+        //detect signal and init signalArray
         int signal = 1 + detectSignal();
+        int[] signalArray = new int[]{90, 33, 90, 11, -90, 11};
+
+        //EXPERIMENTAL FOR TESTING PURPOSES
+        int LEFT_ANGLE_OFFSET = 90;
 
         //reinit cameras to switch pipelines
         RobotCameraPipeline robotCameraPipeline = new RobotCameraPipeline();
@@ -47,9 +54,33 @@ public class GoofyAhhFullAuto extends BaseAutonomous {
         sleep(100);
         // drive backward so robot is in center of junctions
         driveAutonomous(180, 3);
-        turnToAngle(0);
-        grabFromStackAndDepositOnJunction(4);
+        //turn to face stack
+        turnToAngle(LEFT_ANGLE_OFFSET);
+        //grab from stack
+        grabFromStackAndDepositOnJunction(4 ,LEFT_ANGLE_OFFSET);
+        //turn to face stack
+        turnToAngle(LEFT_ANGLE_OFFSET);
+        //drive to park position
+        driveAutonomous(180, 34.5);
 
-        //TODO: Implement park
+        //drive slides down
+        driveSlides(Constants.SLIDE_BOTTOM);
+
+        switch (signal) {
+            // strafe to park in zone 1
+            case 1:
+                driveAutonomous(signalArray[0], signalArray[1]);
+                break;
+
+            // strafe to park in zone 2
+            case 2:
+                driveAutonomous(signalArray[2], signalArray[3]);
+                break;
+
+            // strafe to park in zone 3
+            case 3:
+                driveAutonomous(signalArray[4], signalArray[5]);
+                break;
+        }
     }
 }

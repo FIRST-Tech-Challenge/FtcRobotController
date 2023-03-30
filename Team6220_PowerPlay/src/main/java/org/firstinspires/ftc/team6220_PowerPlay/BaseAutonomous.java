@@ -247,7 +247,7 @@ public abstract class BaseAutonomous extends BaseOpMode {
         camera.setPipeline(pipeline);
     }
 
-    public void grabFromStackAndDepositOnJunction(int loopNumber){
+    public void grabFromStackAndDepositOnJunction(int loopNumber, int angleOffset){
         for (int i = 0; i <= loopNumber-1; i++) {
             //drive slides to stack position
             driveSlides((Constants.SLIDE_STACK_FOUR)-(Constants.AUTONOMOUS_STACK_PER_CONE_OFFSET * i));
@@ -262,7 +262,7 @@ public abstract class BaseAutonomous extends BaseOpMode {
             //drive backwards 34.5 inches
             driveAutonomous(180, 34.5);
             //turn towards junction
-            turnToAngle(90);
+            turnToAngle(90 + angleOffset);
             //drive slides up
             driveSlides(Constants.SLIDE_TOP);
             //wait for slides to go all the way up
@@ -286,7 +286,7 @@ public abstract class BaseAutonomous extends BaseOpMode {
             driveAutonomous(180, 3);
             sleep(200);
             //turn back to 0 heading
-            turnToAngle(0);
+            turnToAngle(0 + angleOffset);
         }
     }
 }
