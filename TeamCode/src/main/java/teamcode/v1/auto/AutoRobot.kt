@@ -21,7 +21,7 @@ class AutoRobot(startPose: Pose) {
 
     val arm = Arm(hardware.armMotor, hardware.limitSwitch)
     val claw = Claw(hardware.clawServo)
-    val guide = Guide(hardware.guideServo, hardware.distanceSensor)
+    val guide = Guide(hardware.guideServo, hardware.distanceSensor, hardware.distanceSensor2)
     val whacker = Whacker(hardware.whackerServo)
     val vision = Vision()
     val lift = Lift(

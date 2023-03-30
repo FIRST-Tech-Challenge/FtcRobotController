@@ -3,7 +3,7 @@ package teamcode.v1.subsystems
 import com.asiankoala.koawalib.hardware.motor.KMotor
 import com.asiankoala.koawalib.subsystem.Subsystem
 
-class Lift( private val leadMotor: KMotor,
+class Lift( val leadMotor: KMotor,
             private val secondMotor: KMotor
             ) : Subsystem() {
 

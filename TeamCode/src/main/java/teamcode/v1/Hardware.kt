@@ -74,6 +74,7 @@ class Hardware(startPose: Pose) {
         .startAt(ClawConstants.closePos)
 
     val distanceSensor = KDistanceSensor("dSensor")
+    val distanceSensor2 = KDistanceSensor("dSensor2")
 
     val guideServo = KServo("Guide")
         .startAt(GuideConstants.telePos)

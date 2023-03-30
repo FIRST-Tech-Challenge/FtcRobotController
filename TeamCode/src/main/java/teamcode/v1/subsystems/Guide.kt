@@ -4,9 +4,10 @@ import com.asiankoala.koawalib.hardware.sensor.KDistanceSensor
 import com.asiankoala.koawalib.hardware.servo.KServo
 import com.asiankoala.koawalib.subsystem.Subsystem
 
-class Guide(private val servo : KServo, private val sensor: KDistanceSensor) : Subsystem() {
+class Guide(private val servo : KServo, private val sensorMain: KDistanceSensor, private val sensorTwo: KDistanceSensor ) : Subsystem() {
     private var isReading = false
-    val lastRead get() = sensor.lastRead
+    val lastRead get() = sensorMain.lastRead
+    val lastReadTwo get() = sensorTwo.lastRead
 
     fun startReading() {
         isReading = true
@@ -22,7 +23,8 @@ class Guide(private val servo : KServo, private val sensor: KDistanceSensor) : S
 
     override fun periodic() {
         if(isReading) {
-            sensor.periodic()
+            sensorMain.periodic()
+            sensorTwo.periodic()
         }
     }
 }

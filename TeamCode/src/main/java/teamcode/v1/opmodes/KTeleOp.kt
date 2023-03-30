@@ -62,12 +62,12 @@ open class KTeleOp : KOpMode(photonEnabled = false) {
     }
 
     private fun scheduleCycling() {
-        driver.rightBumper.onPress(HomeSequence(robot.lift, robot.claw, robot.arm, robot.guide, ArmConstants.groundPos, 0.0, 0.19))
-        driver.leftBumper.onPress(DepositSequence(robot.lift, robot.arm, robot.claw, robot.guide, ArmConstants.highPos, LiftConstants.highPos, GuideConstants.depositPos))
+        driver.rightBumper.onPress(HomeSequence(robot, ArmConstants.groundPos, 0.0, 0.13))
+        driver.leftBumper.onPress(DepositSequence(robot, ArmConstants.highPos, LiftConstants.highPos, GuideConstants.depositPos))
         driver.leftTrigger.onPress(ClawCmds.ClawCloseCmd(robot.claw))
-        driver.dpadUp.onPress(DepositSequence(robot.lift, robot.arm, robot.claw, robot.guide, ArmConstants.midPos, LiftConstants.midPos, GuideConstants.depositPos))
-        driver.y.onPress(DepositSequence(robot.lift, robot.arm, robot.claw, robot.guide, ArmConstants.lowPos, LiftConstants.lowPos, GuideConstants.lowPos))
-        driver.x.onPress(DepositSequence(robot.lift, robot.arm, robot.claw, robot.guide, 200.0, LiftConstants.lowPos, GuideConstants.telePos))
+        driver.dpadUp.onPress(DepositSequence(robot, ArmConstants.midPos, LiftConstants.midPos, GuideConstants.depositPos))
+        driver.y.onPress(DepositSequence(robot, ArmConstants.lowPos, LiftConstants.lowPos, GuideConstants.lowPos))
+        driver.x.onPress(DepositSequence(robot, 200.0, LiftConstants.lowPos, 0.3))
         driver.rightTrigger.onPress(ClawCmds.ClawOpenCmd(robot.claw, robot.guide, GuideConstants.telePos))
 
         gunner.leftTrigger.onPress(InstantCmd({robot.lift.setPos(-15.5)}))

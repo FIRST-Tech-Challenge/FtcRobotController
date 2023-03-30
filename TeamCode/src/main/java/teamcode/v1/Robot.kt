@@ -22,9 +22,11 @@ class Robot(startPose: Pose) {
 
     val arm = Arm(hardware.armMotor, hardware.limitSwitch)
     val claw = Claw(hardware.clawServo)
-    val guide = Guide(hardware.guideServo, hardware.distanceSensor)
+    val guide = Guide(hardware.guideServo, hardware.distanceSensor, hardware.distanceSensor2)
     val whacker = Whacker(hardware.whackerServo)
     val lift = Lift(hardware.liftLeadMotor, hardware.liftSecondMotor)
+
+    var isLifted = false
 
     var isStacking = false
     var stack = 5
