@@ -18,7 +18,7 @@ public class MeepMeepTesting {
     public static void main(String[] args) {
         MeepMeep meepMeep = new MeepMeep(800);
 
-        Pose2d startPose = new Pose2d(new Vector2d(xStack, yStack), Math.toRadians(0));
+        Pose2d startPose = new Pose2d(new Vector2d(36, -64.25), Math.toRadians(90));
 
 
 
@@ -50,8 +50,8 @@ public class MeepMeepTesting {
 //                                .lineToSplineHeading(new Pose2d(new Vector2d(-45, -12),Math.toRadians(180)))
 //                                .splineToSplineHeading(new Pose2d(-32, -9, Math.toRadians(45+180)), Math.toRadians(45))
 
-                                .lineToSplineHeading(new Pose2d(new Vector2d(45, -14), Math.toRadians(0)))
-                                .splineToSplineHeading(new Pose2d(39, -12, Math.toRadians(135+180)), Math.toRadians(135))
+                                .lineToSplineHeading(new Pose2d(new Vector2d(35, -35), Math.toRadians(90)))
+                .splineToSplineHeading(new Pose2d(33, -9 , Math.toRadians(135)), Math.toRadians(135))
 //                                .forward (5)
 //                                .turn(Math.toRadians(45))
 //                                //middle

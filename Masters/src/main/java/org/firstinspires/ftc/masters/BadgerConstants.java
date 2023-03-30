@@ -7,8 +7,9 @@ public class BadgerConstants {
 
     public static int SLIDE_THROUGH = 1200 *537/ 384;
     public static int SLIDE_HIGH = 1250;
-    public  static int SLIDE_HIGH_AUTO= 970 *537/ 384;
-    public static int SLIDE_MIDDLE = 480 *537/ 384;
+    public  static int SLIDE_HIGH_AUTO= 1356;
+    public static int SLIDE_HIGH_AUTO_TOP = 1450;
+    public static int SLIDE_MIDDLE = 671;
     public static int SLIDE_BOTTOM = 0;
     public static  int SLIDE_HIGH_BACK = 1320;
     public static int SLIDE_MIDDLE_BACK= 500;
