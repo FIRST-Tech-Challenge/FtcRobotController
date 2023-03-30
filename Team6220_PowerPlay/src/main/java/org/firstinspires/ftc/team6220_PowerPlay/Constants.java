@@ -82,7 +82,7 @@ public class Constants {
 
     public static final int DISTANCE_FROM_CENTER_JUNCTION_TOP = 200;
 
-    public static final int CONE_STACK_CONTOUR_MINIMUM_SIZE = 200;
+    public static final int CONTOUR_MINIMUM_SIZE = 200;
 
     public static final double TURNING_AUTHORITY_CONSTANT = 250.0;
     public static final double STRAFING_AUTHORITY_CONSTANT = 200.0;
@@ -94,4 +94,6 @@ public class Constants {
     public static final int AUTONOMOUS_STACK_BASE_OFFSET = 0;
 
     public static final int AUTONOMOUS_STACK_PER_CONE_OFFSET = 160;
+
+    public static final int JUNCTION_TOP_MAX_SIZE = 40000;
 }

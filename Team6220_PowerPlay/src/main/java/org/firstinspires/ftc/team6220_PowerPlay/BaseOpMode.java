@@ -338,17 +338,16 @@ public abstract class BaseOpMode extends LinearOpMode {
     }
 
     /**
-     * turns the LEDs green if it detects the top of a junction, otherwise they are rainbow colors
+     * turns the LEDs green if it detects the top of a junction, otherwise, turn the lights pink
+     *
      */
     public void driveLEDs() {
         if (blinkinChassis != null) {
-            RevBlinkinLedDriver.BlinkinPattern pattern = RevBlinkinLedDriver.BlinkinPattern.GREEN;
             if (grabberCameraPipeline.detected) {
-                blinkinChassis.setPattern(pattern);
-                telemetry.addData("pattern", pattern);
+                blinkinChassis.setPattern(RevBlinkinLedDriver.BlinkinPattern.GREEN);
                 telemetry.addLine("Detected");
             } else {
-                blinkinChassis.setPattern(RevBlinkinLedDriver.BlinkinPattern.RAINBOW_LAVA_PALETTE);
+                blinkinChassis.setPattern(RevBlinkinLedDriver.BlinkinPattern.HOT_PINK);
                 telemetry.addLine("Not Detected");
             }
         }else{
