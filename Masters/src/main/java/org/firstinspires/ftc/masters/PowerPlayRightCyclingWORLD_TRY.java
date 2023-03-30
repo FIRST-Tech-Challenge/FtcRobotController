@@ -4,7 +4,7 @@ import static org.firstinspires.ftc.masters.BadgerConstants.ARM_BACK;
 import static org.firstinspires.ftc.masters.BadgerConstants.ARM_CONE_STACK;
 import static org.firstinspires.ftc.masters.BadgerConstants.ARM_MID_TOP;
 import static org.firstinspires.ftc.masters.BadgerConstants.ARM_MID_TOP_AUTO;
-import static org.firstinspires.ftc.masters.BadgerConstants.SLIDE_HIGH_AUTO;
+import static org.firstinspires.ftc.masters.BadgerConstants.SLIDE_HIGH_AUTO_TOP;
 import static org.firstinspires.ftc.masters.BadgerConstants.SLIDE_MIDDLE;
 import static org.firstinspires.ftc.masters.BadgerConstants.SLIDE_THROUGH;
 import static org.firstinspires.ftc.masters.BadgerConstants.STACK_OFFSET;
@@ -25,8 +25,8 @@ import java.util.Date;
 import java.util.List;
 
 @Config
-@Autonomous(name = "Power Play Right Cycling World", group = "competition")
-public class PowerPlayRightCyclingWORLD extends LinearOpMode {
+@Autonomous(name = "Power Play Right Cycling World try", group = "competition")
+public class PowerPlayRightCyclingWORLD_TRY extends LinearOpMode {
 
     enum State {
         FIRST_DEPOSIT_PATH_1,
@@ -101,8 +101,8 @@ public class PowerPlayRightCyclingWORLD extends LinearOpMode {
         // Trajectory from start to nearest tall pole
         Trajectory firstDepositPath1 = drive.trajectoryBuilder(startPose)
                 //.splineToConstantHeading(new Vector2d(35, -14), Math.toRadians(90))
-                .lineToSplineHeading(new Pose2d(new Vector2d(34, -45), Math.toRadians(90)))
-                .splineTo(new Vector2d(34, -12 ), Math.toRadians(135))
+                .lineToSplineHeading(new Pose2d(new Vector2d(35, -35), Math.toRadians(90)))
+                .splineToSplineHeading(new Pose2d(33, -9 , Math.toRadians(135)), Math.toRadians(135))
 //                .lineToSplineHeading(new Pose2d(new Vector2d(37, -30), Math.toRadians(90)))
 //                .splineToSplineHeading(new Pose2d(36, -12 , Math.toRadians(135)), Math.toRadians(135))
                 .build();
@@ -116,7 +116,7 @@ public class PowerPlayRightCyclingWORLD extends LinearOpMode {
 //                .build();
 
         Trajectory backUpFromJunction = drive.trajectoryBuilder(firstDepositPath1.end())
-                .back(8)
+                .back(4)
                 .build();
 
 
@@ -203,8 +203,8 @@ public class PowerPlayRightCyclingWORLD extends LinearOpMode {
                     } else {
                         armTarget = ARM_MID_TOP_AUTO;
                         if (armPosition > 100) {
-                            liftTarget = SLIDE_HIGH_AUTO;
-                            drive.tipFront();
+                            liftTarget = SLIDE_HIGH_AUTO_TOP;
+                            drive.tipCenter();
                             drive.closeAutoClaw();
                         }
                     }
@@ -214,19 +214,17 @@ public class PowerPlayRightCyclingWORLD extends LinearOpMode {
                     if (drive.alignPole(CV.sleevePipeline.position) || new Date().getTime()- alignTime >500){
                         telemetry.addData("done aligning", "score cone");
                         currentState = State.FIRST_DEPOSIT_SCORE_CONE;
-                        Trajectory trajForward = drive.trajectoryBuilder(drive.getPoseEstimate())
-                                .forward(5)
-                                .build();
-                        drive.followTrajectoryAsync(trajForward);
+                        liftTarget = SLIDE_HIGH_AUTO_TOP -100;
                     }
                     break;
                 case FIRST_DEPOSIT_SCORE_CONE:
-                    if (!drive.isBusy()) {
+                    if (slidePosition< SLIDE_HIGH_AUTO_TOP-70) {
                         drive.openClaw();
                         sleep(250);
                         drive.closeAutoClaw();
-                        drive.followTrajectoryAsync(backUpFromJunction);
-                        currentState = State.BACK_UP_FROM_JUNCTION;
+                        //drive.followTrajectoryAsync(backUpFromJunction);
+                        currentState = State.DONE;
+                      //  currentState = State.BACK_UP_FROM_JUNCTION;
                         CV.sleeveWebcam.stopStreaming();
                     }
                     break;
@@ -454,18 +452,18 @@ public class PowerPlayRightCyclingWORLD extends LinearOpMode {
 
                     break;
                 case DONE:
-                    if (!drive.isBusy()) {
-                        if (drive.linearSlide.getCurrentPosition() < 100) {
-                            armTarget = 0;
-                            drive.tipCenter();
-                        }
-                        if (armPosition < 50) {
-                            drive.openClaw();
-                            drive.tipCenter();
-                        }
-
-                    }
-                    drive.tipCenter();
+//                    if (!drive.isBusy()) {
+//                        if (drive.linearSlide.getCurrentPosition() < 100) {
+//                            armTarget = 0;
+//                            drive.tipCenter();
+//                        }
+//                        if (armPosition < 50) {
+//                            drive.openClaw();
+//                            drive.tipCenter();
+//                        }
+//
+//                    }
+//                    drive.tipCenter();
                     break;
             }
 
