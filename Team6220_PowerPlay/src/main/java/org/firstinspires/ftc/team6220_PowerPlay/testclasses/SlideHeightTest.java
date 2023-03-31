@@ -3,11 +3,12 @@ package org.firstinspires.ftc.team6220_PowerPlay.testclasses;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.team6220_PowerPlay.BaseTeleOp;
+import org.firstinspires.ftc.team6220_PowerPlay.Constants;
 
 @TeleOp(name = "SlideHeightTest")
 public class SlideHeightTest extends BaseTeleOp {
 
-    int[] heights = new int[] {0, 117, 238, 383, 537};
+    int[] heights = new int[] {0, 117, 238, 383, 537, Constants.SLIDE_LOW, Constants.SLIDE_MEDIUM, Constants.SLIDE_HIGH, Constants.SLIDE_TOP};
     int selectedHeight = 0;
     boolean newButtonPressed = true;
 

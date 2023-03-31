@@ -246,11 +246,10 @@ public abstract class BaseAutonomous extends BaseOpMode {
         });
         camera.setPipeline(pipeline);
     }
-
     public void grabFromStackAndDepositOnJunction(int loopNumber, int angleOffset){
         for (int i = 0; i <= loopNumber-1; i++) {
             //drive slides to stack position
-            driveSlides((Constants.SLIDE_STACK_FOUR)-(Constants.AUTONOMOUS_STACK_PER_CONE_OFFSET * i));
+            driveSlides(Constants.STACK_HEIGHTS[i]);
             //center on cone stack
             centerConeStack(robotCameraPipeline);
             sleep(300);
