@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.robots.taubot.subsystem;
 
+import static org.firstinspires.ftc.teamcode.robots.taubot.util.Utils.servoDenormalize;
 import static org.firstinspires.ftc.teamcode.robots.taubot.util.Utils.servoNormalize;
 import static org.firstinspires.ftc.teamcode.robots.taubot.util.Constants.INCHES_PER_METER;
 import static org.firstinspires.ftc.teamcode.robots.taubot.util.Utils.withinError;
@@ -45,6 +46,7 @@ import org.firstinspires.ftc.teamcode.statemachine.Stage;
 import org.firstinspires.ftc.teamcode.statemachine.StateMachine;
 import org.firstinspires.ftc.teamcode.util.PIDController;
 import org.firstinspires.ftc.teamcode.util.Vector3;
+import org.firstinspires.ftc.teamcode.util.utilMethods;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -114,10 +116,10 @@ public class Crane implements Subsystem {
     public static double SAFE_SHOULDER_ANGLE = 40;
     public static double SAFE_ARM_LENGTH = 0.05;
 
-    public static double NUDGE_CENTER_LEFT = 1200;
-    public static double NUDGE_CENTER_RIGHT = 2020;
-    public static double NUDGE_LEFT_POS = 1000;  //home position - stowed up
-    public static double NUDGE_RIGHT_POS = 2400;
+    public static double NUDGE_CENTER_LEFT = 1400; //1200
+    public static double NUDGE_CENTER_RIGHT = 2020; //2020
+    public static double NUDGE_LEFT_POS = 1200;  //home position - stowed up
+    public static double NUDGE_RIGHT_POS = 2400; //2400
 
     public static final double DISTANCE_SENSOR_TO_ELBOW = 0.33;
     public static final double GRIPPER_HEIGHT = 0.23;
@@ -341,19 +343,15 @@ public class Crane implements Subsystem {
 
     public void nudgeCenter(boolean approachingClockwise){
         if (approachingClockwise) {
-            nudgeStickServo.setPosition(servoNormalize(NUDGE_CENTER_LEFT));
             nudgeIndex = 1;
         }else {
-            nudgeStickServo.setPosition(servoNormalize(NUDGE_CENTER_RIGHT));
             nudgeIndex = 2;
         }
     }
     public void nudgeLeft(){
-        nudgeStickServo.setPosition(servoNormalize(NUDGE_LEFT_POS));
         nudgeIndex = 0;
     }
     public void nudgeRight(){
-        nudgeStickServo.setPosition(servoNormalize(NUDGE_RIGHT_POS));
         nudgeIndex = 3;
     }
 
@@ -373,16 +371,16 @@ public class Crane implements Subsystem {
     public void updateNudgeStick(){
         switch (nudgeIndex){
             case 0:
-                nudgeLeft();
+                nudgeStickServo.setPosition(servoNormalize(NUDGE_LEFT_POS));
                 break;
             case 1:
-                nudgeCenter(true);
+                nudgeStickServo.setPosition(servoNormalize(NUDGE_CENTER_LEFT));
                 break;
             case 2:
-                nudgeCenter(false);
+                nudgeStickServo.setPosition(servoNormalize(NUDGE_CENTER_RIGHT));
                 break;
             case 3:
-                nudgeRight();
+                nudgeStickServo.setPosition(servoNormalize(NUDGE_RIGHT_POS));
                 break;
             default:
                 nudgeCenter(true);
@@ -1057,6 +1055,8 @@ public class Crane implements Subsystem {
         }else {
             bulbServo.setPosition(servoNormalize(BULB_OPEN_POS));
         }
+
+        updateNudgeStick();
     }
 
     Vector3 deltaGripperPosition = new Vector3(0,0,10);
@@ -1402,6 +1402,8 @@ public class Crane implements Subsystem {
             telemetryMap.put("Running Amp", runShoulderAmp);
             telemetryMap.put("Nudge Distance Sensor", nudgeDistance);
             telemetryMap.put("Nudge Target", nudgeStickServo.getPosition());
+            telemetryMap.put("Nudge Target", nudgeIndex);
+            telemetryMap.put("Nudge Target Ticks?", servoDenormalize(nudgeStickServo.getPosition()));
 
         }else{
 

@@ -70,9 +70,9 @@ public class UnderArm implements Subsystem {
     public static double TRANSFER_SHOULDER_APPROACH_ANGLE = -24;
     public static double TRANSFER_ELBOW_ANGLE = -120;
 
-    public static double TRANSFER_WRIST_ANGLE = 105;
+    public static double TRANSFER_WRIST_ANGLE = 115;
 
-    public static double PICKUP_WRIST_ANGLE = -4;
+    public static double PICKUP_WRIST_ANGLE = -5;
 
     public static double CANCEL_TRANSFER_TURRET_DEGREES = 30;//todo not any real number can be calibrated if necessary
 
@@ -505,7 +505,8 @@ public class UnderArm implements Subsystem {
                     // these values are meant to be fine tuned by driver positioning between hover and pickup
                     setElbowTargetAngle(SS_HOVER_ELBOW);
                     setShoulderTargetAngle(SS_HOVER_SHOULDER);
-                    setWristTargetAngle(SS_HOVER_WRIST);
+                    setWristTargetAngle(PICKUP_WRIST_ANGLE);
+                    //setWristTargetAngle(SS_HOVER_WRIST);
                     setTurretTargetAngle(SS_HOVER_TURRET);
                     //robot.driveTrain.setChassisLength(SS_HOVER_EXTEND);
                     substationHoverTimer = futureTime(0.5);
