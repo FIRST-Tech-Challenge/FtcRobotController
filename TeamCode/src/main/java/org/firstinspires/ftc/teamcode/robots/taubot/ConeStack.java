@@ -21,5 +21,9 @@ public class ConeStack extends FieldThing{
     public double z(){
         return 11 - 1.5*(5 - coneNum);
     }
+
+    public int getConeNum () {
+        return coneNum;
+    }
 //duck
 }

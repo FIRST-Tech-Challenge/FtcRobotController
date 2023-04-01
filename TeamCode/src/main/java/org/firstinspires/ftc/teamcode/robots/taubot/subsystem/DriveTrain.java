@@ -939,14 +939,20 @@ public class DriveTrain extends DiffyDrive implements Subsystem {
     public static double CHASSIS_ADJUST = 20;
 
     public void adjustChassisLength(double speed){
-        targetChassisLength += robot.deltaTime*(CHASSIS_ADJUST * speed);
-        if(targetChassisLength < MIN_CHASSIS_LENGTH){
-            targetChassisLength = MIN_CHASSIS_LENGTH;
-        }
-        if(targetChassisLength> MAX_CHASSIS_LENGTH){
-            targetChassisLength = MAX_CHASSIS_LENGTH;
-        }
+//        if(robot.driveTrain.getArticulation().equals(Articulation.unlock)) {
+            targetChassisLength += robot.deltaTime * (CHASSIS_ADJUST * speed);
+            if (targetChassisLength < MIN_CHASSIS_LENGTH) {
+                targetChassisLength = MIN_CHASSIS_LENGTH;
+            }
+            if (targetChassisLength > MAX_CHASSIS_LENGTH) {
+                targetChassisLength = MAX_CHASSIS_LENGTH;
+            }
+//        }
+//        else {
+//
+//        }
     }
+
 
     public void setChassisLength(double targetChassisLength) {
         this.targetChassisLength = targetChassisLength;

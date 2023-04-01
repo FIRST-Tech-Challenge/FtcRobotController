@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.robots.taubot.subsystem;
 
 
 import static org.firstinspires.ftc.teamcode.robots.reachRefactor.util.Constants.ELBOW_TO_WRIST;
+//import static org.firstinspires.ftc.teamcode.robots.taubot.PowerPlay_6832.robot;
 import static org.firstinspires.ftc.teamcode.robots.taubot.util.Constants.INCHES_PER_METER;
 import static org.firstinspires.ftc.teamcode.robots.taubot.util.Constants.MAX_CHASSIS_LENGTH;
 import static org.firstinspires.ftc.teamcode.robots.taubot.util.Constants.MIN_CHASSIS_LENGTH;
@@ -20,7 +21,9 @@ import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.ServoImplEx;
 import com.qualcomm.robotcore.util.Range;
 
+import org.firstinspires.ftc.robotcore.external.Const;
 import org.firstinspires.ftc.teamcode.robots.taubot.simulation.ServoSim;
+import org.firstinspires.ftc.teamcode.robots.taubot.util.Constants;
 import org.firstinspires.ftc.teamcode.robots.taubot.util.Joint;
 import org.firstinspires.ftc.teamcode.util.Vector3;
 
@@ -48,6 +51,9 @@ public class UnderArm implements Subsystem {
 
     public static double kF = 0.0;
 
+    //TODO - FIND THESE TWO
+    public static double coneStackShoulderAngle = 0;
+    public static double coneStackWristAngle = 13;
     public static double WRIST_HOME_POSITION = 31;
 
     public static double SHOULDER_DEG_MIN = -110; // negative angles are counter clockwise while looking at the left side
@@ -73,6 +79,8 @@ public class UnderArm implements Subsystem {
     public static double TRANSFER_WRIST_ANGLE = 105;
 
     public static double PICKUP_WRIST_ANGLE = -4;
+
+    public static double PICKUP_SHOULDER_ANGLE  = 70;
 
     public static double CANCEL_TRANSFER_TURRET_DEGREES = 30;//todo not any real number can be calibrated if necessary
 
@@ -152,6 +160,7 @@ public class UnderArm implements Subsystem {
         jointAngles,
         substationHover,
         homeNoTuck,
+        coneStackHover,
         cancelTransferPosition,
         substationPickup,
         substationRecover
@@ -199,10 +208,19 @@ public class UnderArm implements Subsystem {
 
         switch(articulation){
             case init1:
+                //TODO - FIND TOP CONE WRIST AND SHOULDER
+                coneStackWristAngle = 31;
+                coneStackShoulderAngle = 0;
                 setShoulderTargetAngle(0);
                 setElbowTargetAngle(FOLDPOS_ELBOW_ANGLE);
                 setTurretTargetAngle(FOLDPOS_TURRET_ANGLE);
                 setWristTargetAngle(0);
+                break;
+            case coneStackHover:
+                //tune angles to reach cone stack height
+                if(coneStackHover()) {
+                    articulation = Articulation.manual;
+                }
                 break;
             case fold:
                 /*
@@ -301,8 +319,16 @@ public class UnderArm implements Subsystem {
         setElbowTargetAngle(calculatedElbowAngle);
     }
 
+    public boolean coneStackHover () {
+        boolean coneStack = robot.getAutonConeStack();
+        setShoulderTargetAngle(coneStackShoulderAngle);
+        setWristTargetAngle(coneStackWristAngle);
+        setElbowTargetAngle(SS_HOVER_ELBOW);
+        return false;
+    }
     long homeNoTuckTimer = 0;
     int homeNoTuckStage = 0;
+
     public boolean HomeNoTuck () {
         switch (homeNoTuckStage) {
             case 0: //sets home position
@@ -487,6 +513,7 @@ public class UnderArm implements Subsystem {
         switch (substationHoverStage) {
             case 0:
                 if (goSubstationRecover()) {
+                    robot.driveTrain.setChassisLength(SS_HOVER_EXTEND);
                     substationHoverTimer = futureTime(0.5);
                     substationHoverStage++;
                 }
@@ -504,7 +531,9 @@ public class UnderArm implements Subsystem {
                 if (substationHoverTimer<System.nanoTime()){
                     // these values are meant to be fine tuned by driver positioning between hover and pickup
                     setElbowTargetAngle(SS_HOVER_ELBOW);
-                    setShoulderTargetAngle(SS_HOVER_SHOULDER);
+//                    setShoulderTargetAngle(SS_HOVER_SHOULDER);
+                    //todo - REVERT THIS TO ABOVE - FOR TESTING
+                    setShoulderTargetAngle(PICKUP_SHOULDER_ANGLE);
                     setWristTargetAngle(SS_HOVER_WRIST);
                     setTurretTargetAngle(SS_HOVER_TURRET);
                     //robot.driveTrain.setChassisLength(SS_HOVER_EXTEND);
@@ -532,6 +561,7 @@ public class UnderArm implements Subsystem {
     public boolean SubstationPickup() {
         switch (substationPickupStage) {
             case 0: //rotate wrist down to horizontal
+                robot.underarm.SaveHoverPositions();
                 WRIST_SPEED = 270;
                 setWristTargetAngle(PICKUP_WRIST_ANGLE);
                 substationPickupTimer = futureTime(0.3);
@@ -541,7 +571,7 @@ public class UnderArm implements Subsystem {
             case 1: //bring lasso to mat with shoulder only
                 if (substationPickupTimer<System.nanoTime()) {
                     WRIST_SPEED = 90;
-                    setShoulderTargetAngle(70);
+                    setShoulderTargetAngle(PICKUP_SHOULDER_ANGLE);
                     substationPickupStage++;
                     substationPickupTimer = futureTime(1); //0.3 todo this is set long from manual cone placement in testing
                 }
@@ -800,6 +830,12 @@ public boolean goSubstationRecover() {
         } else {
             grip();
         }
+    }
+
+    //MAKE IT RESET ON INIT
+    public void updateConeStackAngles() {
+        coneStackShoulderAngle -= Constants.CONESTACK_SHOULDER_ADJ_PER_CONE * robot.field.getConeStack(robot.getAutonConeStack()).getConeNum();
+        coneStackWristAngle += Constants.CONESTACK_WRIST_ADJ_PER_CONE * robot.field.getConeStack(robot.getAutonConeStack()).getConeNum();
     }
 
     @Override

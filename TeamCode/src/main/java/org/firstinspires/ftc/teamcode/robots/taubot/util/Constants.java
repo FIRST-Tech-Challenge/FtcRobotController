@@ -24,6 +24,10 @@ public class Constants {
     public static double MIN_SAFE_CHASSIS_LENGTH = 10;
     public static double MAX_CHASSIS_LENGTH = 34;
 
+    public static double CONESTACK_SHOULDER_ADJ_PER_CONE = 5;
+    public static double CONESTACK_WRIST_ADJ_PER_CONE = 5;
+
+
     public static final double DISTANCE_SENSOR_TO_FRONT_AXLE = 2.755906;
     public static final double Distance_HUB_TO_UNDERARM_MIN = 5.7;
 

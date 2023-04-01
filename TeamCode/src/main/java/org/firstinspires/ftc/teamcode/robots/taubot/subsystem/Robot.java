@@ -18,6 +18,7 @@ import com.qualcomm.robotcore.hardware.VoltageSensor;
 
 import org.checkerframework.checker.units.qual.C;
 import org.firstinspires.ftc.robotcore.internal.system.Misc;
+import org.firstinspires.ftc.teamcode.robots.taubot.ConeStack;
 import org.firstinspires.ftc.teamcode.robots.taubot.Field;
 import org.firstinspires.ftc.teamcode.robots.taubot.util.Constants;
 import org.firstinspires.ftc.teamcode.robots.taubot.util.DashboardUtil;
@@ -52,6 +53,8 @@ public class Robot implements Subsystem {
 
     private long[] subsystemUpdateTimes;
     private boolean autoDumpEnabled, doubleDuckEnabled;
+
+    private boolean rightConeStack;
     private boolean autonTurnDoneTelemetry, autonOnPoleTelemetry;
 
     private final List<LynxModule> hubs;
@@ -65,6 +68,7 @@ public class Robot implements Subsystem {
     private Mat craneMat;
     public static int CB_WIDTH = 320;
     public static int CB_HEIGHT = 240;
+    public static int numConesToCycle = 1;
     boolean updatePoseHappens = false;
 
     double current_dx = 0;
@@ -233,13 +237,18 @@ public class Robot implements Subsystem {
     int timeSupervisor = 0;
 
     public boolean AutonRun(int autonTarget, Constants.Position startingPosition){
+        //TODO - make sure we aren't controlling conestack when supervisor takes over (multiple control risk)
         if(Objects.isNull(autonTarget)){
             autonTarget = 1;
         }
+        if(startingPosition.equals(Constants.Position.START_LEFT))
+            rightConeStack = false;
+        else
+            rightConeStack = true;
+
 
         switch (timeSupervisor) {
             case 0:
-                //works - jai 5:41 3/24
                 driveTrain.articulate(DriveTrain.Articulation.unlock);
                 crane.setCraneTarget(driveTrain.getPoseEstimate().getX()+6,driveTrain.getPoseEstimate().getY(),8);
                 totalAutonTime = futureTime(28);
@@ -252,7 +261,6 @@ public class Robot implements Subsystem {
                 }
                 switch (autonIndex) {
                     case 0:
-                        //works - jai 5:41 3/24
                         driveTrain.articulate(DriveTrain.Articulation.unlock);
                         turret.articulate(Turret.Articulation.lockToZero);
                         crane.articulate(Crane.Articulation.manual);
@@ -264,7 +272,6 @@ public class Robot implements Subsystem {
                         break;
                     case 1:
                         //drive to general parking location
-                        //worked last night 3/24
                         if(System.nanoTime() > autonTime) {
                             autonIsDriving();
                             turnDone = false;
@@ -449,6 +456,7 @@ public class Robot implements Subsystem {
         ROBOTDRIVE,
         UNFOLD,
         CALIBRATE,
+        UNDERARM_CONESTACK,
 
         // misc. articulations
         INIT,
@@ -497,6 +505,11 @@ public class Robot implements Subsystem {
                         articulation = Articulation.MANUAL;
                     }
                     break;
+                case UNDERARM_CONESTACK:
+                    if(underarmConeStack()) {
+                        articulation = Articulation.MANUAL;
+                    }
+                    break;
                 case DROP:
                     if (drop()) {
                         articulation = Articulation.MANUAL;
@@ -517,6 +530,9 @@ public class Robot implements Subsystem {
         return this.articulation;
     }
 
+    public boolean getAutonConeStack() {
+        return rightConeStack;
+    }
     public Articulation getArticulation(){
         return articulation;
     }
@@ -612,6 +628,65 @@ public class Robot implements Subsystem {
         transferStage=0;
         dropStage=0;
         unfoldStage = 0;
+    }
+    int coneStackStage = 0;
+    public boolean underarmConeStack () {
+        //from after the robot drives forward in auton to the end of cycling cones from conestack
+        //will still have to handle park from within runAuton
+        ConeStack obj = field.getConeStack(rightConeStack);
+        Pose2d pos = Field.convertToInches(obj.getPosition());
+        if(numConesToCycle > 0) {
+            switch (coneStackStage) {
+                case 0:
+                    //so that underarm is facing conestack (don't know the actual angle)
+                    if(rightConeStack)
+                        if (driveTrain.turnUntilDegrees(90))
+                            coneStackStage++;
+                    if(!rightConeStack)
+                        if(driveTrain.turnUntilDegrees(-90));
+                            coneStackStage ++;
+                    break;
+                case 1:
+                    //turn on vision pipeline and set chassis length and heading accordingly
+                    if (/* SOME KIND OF CHECK, PLEASE NO TIMER */ false)
+                        coneStackStage++;
+                    break;
+                case 2:
+                    underarm.articulate(UnderArm.Articulation.coneStackHover);
+                    if (/* SOME KIND OF CHECK, PLEASE NO TIMER */ false)
+                        coneStackStage++;
+                    break;
+                case 3:
+                    underarm.grip();
+                    if (/* SOME KIND OF CHECK, PLEASE NO TIMER */ false)
+                        coneStackStage++;
+                    break;
+                case 4:
+                    underarm.articulate(UnderArm.Articulation.homeNoTuck);
+                    underarm.updateConeStackAngles();
+                    if (/* SOME KIND OF CHECK, PLEASE NO TIMER */ false)
+                        coneStackStage++;
+                    break;
+                case 5:
+                    if (transfer())
+                    coneStackStage++;
+                    break;
+                case 6:
+                    //make crane score idk
+                    if (/* SOME KIND OF CHECK, PLEASE NO TIMER */ false)
+                        coneStackStage++;
+                    break;
+                case 7:
+                    numConesToCycle --;
+                    coneStackStage = 0;
+
+            }
+        }
+        else
+            return true;
+
+        return false;
+
     }
 
     long transferTimer = 0;
