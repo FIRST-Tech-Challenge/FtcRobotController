@@ -38,6 +38,7 @@ public class Field {
     private ArrayList<Boolean> queuedReversals = new ArrayList<>();
     int[] currentTile = {0, 0}, extra = {0, 0};
     int directionIndex = 1;
+    Pose2d lastVelocity;
     boolean isReversed = true, lastReversed = true, autoTele = false;
     boolean[] needsCompile = {false, false};
     double lookingDistance = 20.0, dropDistance = 12;
@@ -85,6 +86,7 @@ public class Field {
         imu = p_imu;
         locker = new ReentrantLock();
         needsLocker = new ReentrantLock();
+        lastVelocity = new Pose2d(0,0,0);
     }
 
     //which tile bot at
@@ -122,9 +124,14 @@ public class Field {
         double[] coords = cv.rotatedPolarCoord();
 //        coords[1]+=5;
         coords[1] -= 0;
+        double rad =8;
         Pose2d pos = roadrun.getPoseEstimate();
-        pos = new Pose2d(pos.getX(), pos.getY(), pos.getHeading() - coords[0] * PI / 180 + PI);
-        polePos = new Pose2d(pos.getX() + cos(pos.getHeading()) * coords[1] + sin(pos.getHeading()), pos.getY() + sin(pos.getHeading()) * coords[1] + cos(pos.getHeading()), pos.getHeading());
+        double oldHead = pos.getHeading()+PI;
+        double newHead = pos.getHeading()+PI+ coords[0] * PI / 180 ;
+
+        pos = new Pose2d(pos.getX(), pos.getY(), pos.getHeading()+ coords[0] * PI / 180 + PI);
+        polePos = new Pose2d(pos.getX() + cos(pos.getHeading()) * coords[1] + 0*sin(pos.getHeading()), pos.getY() + sin(pos.getHeading()) * coords[1] - 0*cos(pos.getHeading()), pos.getHeading());
+        polePos = new Pose2d(polePos.getX()+(cos(oldHead)-cos(newHead))*rad, polePos.getY()+(sin(oldHead)-sin(newHead))*rad,pos.getHeading());
         if (abs(coords[1]) < 5 && abs(coords[1]) > 0) {
             setDoneLookin(true);
         }
@@ -139,14 +146,32 @@ public class Field {
         }
         return false;
     }
+    public Pose2d filteredVelocity(Pose2d newVelocity){
+        double[] filteredVelocity = {newVelocity.getX(),newVelocity.getY(),newVelocity.getHeading()};
+        if(abs(newVelocity.getX()-lastVelocity.getX())>14){
+            filteredVelocity[0] = 100;
+        }
+        if(abs(newVelocity.getY()-lastVelocity.getY())>14){
+            filteredVelocity[1] = 100;
+        }
+        if(abs(newVelocity.getHeading()-lastVelocity.getHeading())>0.6){
+            filteredVelocity[2] = 69;
+        }
+        lastVelocity = newVelocity;
+        return new Pose2d(filteredVelocity[0],filteredVelocity[1],filteredVelocity[2]);
+    }
 
     public boolean lookingAtCone() {
         double[] coords = cv.rotatedConarCoord();
 //        coords[1]+=5;
         coords[1] -=0.5;
         Pose2d pos = roadrun.getPoseEstimate();
+        double rad=3;
+        double oldHead = pos.getHeading();
+        double newHead = pos.getHeading()+ coords[0] * PI / 180 ;
         pos = new Pose2d(pos.getX(), pos.getY(), pos.getHeading() + coords[0] * PI / 180);
         conePos = new Pose2d(pos.getX() + cos(pos.getHeading()) * coords[1] + 3.*sin(pos.getHeading()), pos.getY() + sin(pos.getHeading()) * coords[1]-3.*cos(pos.getHeading()) , pos.getHeading());
+        polePos = new Pose2d(polePos.getX()+(cos(oldHead)-cos(newHead))*rad, polePos.getY()+(sin(oldHead)-sin(newHead))*rad,pos.getHeading());
         if (abs(coords[1]) < 5 && abs(coords[1]) > -1) {
             setDoneLookin(true);
         }

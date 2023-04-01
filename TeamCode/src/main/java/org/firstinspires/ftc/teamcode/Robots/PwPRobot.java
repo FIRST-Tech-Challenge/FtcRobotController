@@ -38,6 +38,7 @@ import org.firstinspires.ftc.teamcode.Components.Lift;
 import org.firstinspires.ftc.teamcode.Components.LiftArm;
 import org.firstinspires.ftc.teamcode.Components.RFModules.Devices.RFGamepad;
 import org.firstinspires.ftc.teamcode.Components.RFModules.Devices.RFMotor;
+import org.firstinspires.ftc.teamcode.Components.Switch;
 import org.firstinspires.ftc.teamcode.roadrunner.drive.DriveConstants;
 import org.firstinspires.ftc.teamcode.roadrunner.drive.PoseStorage;
 import org.firstinspires.ftc.teamcode.roadrunner.drive.SampleMecanumDrive;
@@ -53,6 +54,7 @@ public class PwPRobot extends BasicRobot {
     private ClawExtension clawExtension = null;
     private Lift lift = null;
     private RFGamepad gp = null;
+    private Switch clawSwitch = null;
     public Field field = null;
     public CVMaster cv = null;
     public SampleMecanumDrive roadrun = null;
@@ -101,6 +103,7 @@ public class PwPRobot extends BasicRobot {
 //        clawExtension = new ClawExtension();
         lift = new Lift();
         leds = new LEDStrip();
+        clawSwitch = new Switch();
         finished = true;
         if (isTeleop) {
             roadrun.setPoseEstimate(PoseStorage.currentPose);
@@ -283,24 +286,34 @@ public class PwPRobot extends BasicRobot {
         double[] maxes = {75, 50, 7};
         double[] targetVelocity = {y/kV, x/kV, a/kV/TRACK_WIDTH};
         Pose2d actualVelocity = roadrun.getPoseVelocity();
+        actualVelocity = field.filteredVelocity(actualVelocity);
         Pose2d pos = roadrun.getPoseEstimate();
         double[] t = {cos(-pos.getHeading()), sin(-pos.getHeading())};
         Vector2d rotVelocity = actualVelocity.vec().rotated(0);
         double[] diffs = {targetVelocity[0] - rotVelocity.getX(), targetVelocity[1] - rotVelocity.getY(), targetVelocity[2] - actualVelocity.getHeading()};
+        if(actualVelocity.getX()==100){
+            diffs[0]=0;
+        }
+        if(actualVelocity.getY()==100){
+            diffs[1]=0;
+        }
+        if(actualVelocity.getHeading()==69){
+            diffs[2]=0;
+        }
         double cAngle = atan2(diffs[0], diffs[1]);
         double cMag = sqrt(diffs[1] * diffs[1] + diffs[0] * diffs[0]) * kV * 2;
         double angleCorrection = diffs[2] * TRACK_WIDTH * kV * 0.3;
-        if(abs(diffs[2])<toRadians(15)){
+        if(abs(diffs[2])<toRadians(50)&&a==0){
             angleCorrection=0;
         }
         op.telemetry.addData("velocity", actualVelocity);
         op.telemetry.addData("diffsy", diffs[0]);
         op.telemetry.addData("diffsx", diffs[1]);
         op.telemetry.addData("diffsa", diffs[2]);
-        roadrun.setMotorPowers(powerb * magnitude - a - angleCorrection + (diffs[0] - diffs[1]) * 0.5 * kV,
-                powera * magnitude - a - angleCorrection+ (diffs[0] + diffs[1]) * 0.5 * kV,
-                powerb * magnitude + a + angleCorrection + (diffs[0] - diffs[1]) * 0.5 * kV,
-                powera * magnitude + a + angleCorrection+ (diffs[0] + diffs[1]) * 0.5 * kV);
+        roadrun.setMotorPowers(powerb * magnitude - a - angleCorrection + (diffs[0] - diffs[1]) * 1 * kV,
+                powera * magnitude - a - angleCorrection+ (diffs[0] + diffs[1]) * 1. * kV,
+                powerb * magnitude + a + angleCorrection + (diffs[0] - diffs[1]) * 1. * kV,
+                powera * magnitude + a + angleCorrection+ (diffs[0] + diffs[1]) * 1 * kV);
 
     }
 
@@ -557,22 +570,22 @@ public class PwPRobot extends BasicRobot {
 //            logger.log("/RobotLogs/GeneralRobot", "PROGRAM RUN: PwPTeleOp", false);
 //            progNameLogged = true;
 //        }
-        gp.readGamepad(op.gamepad2.y, "gamepad2_y", "Status");
+//        gp.readGamepad(op.gamepad2.y, "gamepad2_y", "Status");
 //        gp.readGamepad(op.gamepad1.x, "gamepad1_x", "Status");
         boolean isY = gp.readGamepad(op.gamepad1.y, "gamepad1_y", "Status");
-        gp.readGamepad(op.gamepad2.a, "gamepad1_a", "Status");
+//        gp.readGamepad(op.gamepad2.a, "gamepad1_a", "Status");
         boolean isX2 = gp.readGamepad(op.gamepad2.x, "gamepad2_x", "Status");
         boolean isA = gp.readGamepad(op.gamepad1.x, "gamepad1_a", "Status");
-        gp.readGamepad(op.gamepad2.a, "gamepad1_a", "Status");
-        gp.readGamepad(op.gamepad2.b, "gamepad1_b", "Status");
-        gp.readGamepad(op.gamepad1.left_stick_y, "gamepad1_left_stick_y", "Value");
-        gp.readGamepad(op.gamepad1.left_stick_x, "gamepad1_left_stick_x", "Value");
-        gp.readGamepad(op.gamepad1.right_stick_x, "gamepad1_right_stick_x", "Value");
-        gp.readGamepad(op.gamepad2.left_trigger, "gamepad2_left_trigger", "Value");
-        gp.readGamepad(op.gamepad2.right_trigger, "gamepad2_right_trigger", "Value");
-        gp.readGamepad(op.gamepad2.right_bumper, "gamepad2_right_bumper", "Status");
+//        gp.readGamepad(op.gamepad2.a, "gamepad1_a", "Status");
+//        gp.readGamepad(op.gamepad2.b, "gamepad1_b", "Status");
+//        gp.readGamepad(op.gamepad1.left_stick_y, "gamepad1_left_stick_y", "Value");
+//        gp.readGamepad(op.gamepad1.left_stick_x, "gamepad1_left_stick_x", "Value");
+//        gp.readGamepad(op.gamepad1.right_stick_x, "gamepad1_right_stick_x", "Value");
+//        gp.readGamepad(op.gamepad2.left_trigger, "gamepad2_left_trigger", "Value");
+//        gp.readGamepad(op.gamepad2.right_trigger, "gamepad2_right_trigger", "Value");
+//        gp.readGamepad(op.gamepad2.right_bumper, "gamepad2_right_bumper", "Status");
         boolean isBumper2 = gp.readGamepad(op.gamepad2.left_bumper, "gamepad2_left_bumper", "Status");
-
+        op.telemetry.addData("switched:",clawSwitch.isSwitched());
 
         if (isA) {
             if (liftArm.ableArmed()) {
@@ -752,7 +765,7 @@ public class PwPRobot extends BasicRobot {
                 claw.closeClawRaw();
             }
         }
-        claw.closeClaw();
+//        claw.closeClaw();
         if (op.getRuntime() - claw.getLastTime() > .4 && op.getRuntime() - claw.getLastTime() < .7 && CLAW_CLOSED.getStatus()) {
             liftArm.raiseLiftArmToOuttake();
         }
@@ -764,12 +777,12 @@ public class PwPRobot extends BasicRobot {
         }
         if (op.getRuntime() > 90 && op.getRuntime() < 92) {
             rainbowRainbow();
-        } else if ((field.lookingAtCone() && !CLAW_CLOSED.getStatus() && ARM_INTAKE.getStatus())) {
+        } else if (( !CLAW_CLOSED.getStatus() && !ARM_OUTTAKE.getStatus())&&field.lookingAtCone()) {
             leds.pattern29();
             if (op.gamepad1.a) {
                 autoTeleCone();
             }
-        } else if ((field.lookingAtPoleTele() && CLAW_CLOSED.getStatus() && ARM_OUTTAKE.getStatus())) {
+        } else if ((CLAW_CLOSED.getStatus() && ARM_OUTTAKE.getStatus()&&field.lookingAtPoleTele())) {
             leds.pattern29();
             if (op.gamepad1.a) {
                 autoTelePole();
@@ -784,7 +797,7 @@ public class PwPRobot extends BasicRobot {
 
 
         //will only close when detect cone
-        claw.closeClaw();
+//        claw.closeClaw();
         op.telemetry.addData("stacklevel", lift.getStackLevel());
         if (gp.updateSequence()) {
             field.autoMovement();

@@ -22,10 +22,10 @@ import java.util.ArrayList;
 //@Disabled
 
 @Config
-@Autonomous(name = "BlueLeftAutoCycleTuned")
+@Autonomous(name = "BlueLeftCenterCycleTuned")
 
 
-public class BlueLeftAutoCycleTuned extends LinearOpMode {
+public class BlueLeftCenterCycleTuned extends LinearOpMode {
     private SampleMecanumDrive roadrun;
 
     public static double dummyP = 3;
@@ -47,7 +47,7 @@ public class BlueLeftAutoCycleTuned extends LinearOpMode {
     public static double dummyX2 = 35, dummyY2 = 11, dummyA2 = 0;
 
     public static double dummyX3 = 53, dummyY3 = 11, dummyA3 = 0;
-    public static double dropX=28.4, dropY=5.3;
+    public static double dropX=10.4, dropY=18.3;
     double[] stackPos = {420*1.03,330*1.03,235*1.03,80*1.03,0};
 
     public void runOpMode() {
@@ -102,12 +102,12 @@ public class BlueLeftAutoCycleTuned extends LinearOpMode {
         for(int i=0;i<5;i++){
             dropTrajectory.add(robot.roadrun.trajectorySequenceBuilder(new Pose2d(64,11.75,Math.toRadians(0)))
                     .setReversed(true)
-                    .splineToSplineHeading(new Pose2d(dropX, dropY+0.1*i, Math.toRadians(30)), Math.toRadians(210))
+                    .splineToSplineHeading(new Pose2d(dropX, dropY, Math.toRadians(335)), Math.toRadians(155))
                     .addTemporalMarker(robot::done)
                     .build());
         }
         for(int i=0;i<5;i++){
-            pick.add(robot.roadrun.trajectorySequenceBuilder(new Pose2d(dropX,dropY,Math.toRadians(30)))
+            pick.add(robot.roadrun.trajectorySequenceBuilder(new Pose2d(dropX,dropY,Math.toRadians(335)))
                     .setReversed(false)
 //                    .splineToSplineHeading(new Pose2d(48, 11.75, Math.toRadians(0)), Math.toRadians(0))
                     .splineTo(new Vector2d(62.7, 11.5+0.1*i), Math.toRadians(0))
@@ -241,15 +241,15 @@ public class BlueLeftAutoCycleTuned extends LinearOpMode {
 //            robot.wideClaw(false);
 //            robot.delay(0.1);
 
-            if (dummyP == 1) {
-                robot.followTrajectorySequenceAsync(park1trajectory);
-            } else if (dummyP == 3) {
-                robot.followTrajectorySequenceAsync(park3trajectory);
-            } else {
-                robot.followTrajectorySequenceAsync(park2trajectory);
-            }
-
-            robot.delay(0.3);
+//            if (dummyP == 1) {
+//                robot.followTrajectorySequenceAsync(park1trajectory);
+//            } else if (dummyP == 3) {
+//                robot.followTrajectorySequenceAsync(park3trajectory);
+//            } else {
+//                robot.followTrajectorySequenceAsync(park2trajectory);
+//            }
+//
+//            robot.delay(0.3);
 
 //            robot.liftToPosition((int)LIFT_HIGH_JUNCTION.getValue() + 50, true);
 

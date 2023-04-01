@@ -12,7 +12,7 @@ import com.noahbres.meepmeep.roadrunner.entity.RoadRunnerBotEntity;
 
 
 public class MeepMeepTesting {
-    public static double dropX = -29, dropY = 2.4, dropA = toRadians(140), dropET = toRadians(310);
+    public static double dropX = 10.4, dropY = 18.3, dropA = toRadians(140), dropET = toRadians(310);
 
     public static double pickupX1 = -46, pickupY1 = 10, pickupA1 = toRadians(180), pickupET1 = toRadians(180);
     public static double pickupX2 = 64.75, pickupY2 = 11.75, pickupA2 = toRadians(0), pickupET2 = toRadians(180);
@@ -27,11 +27,9 @@ public class MeepMeepTesting {
                 .setConstraints(50, 40, 4 * PI, 2 * PI, 11)
                 .setConstraints(60, 60, toRadians(180), toRadians(180), 15)
                 .followTrajectorySequence(drive ->
-                                drive.trajectorySequenceBuilder(new Pose2d(40.9, 62.25, Math.toRadians(90)))
+                                drive.trajectorySequenceBuilder(new Pose2d(62.7, 11.5, Math.toRadians(0)))
                                         .setReversed(true)
-                                        .splineToSplineHeading(new Pose2d(33.7, 40.25, toRadians(90)), toRadians(270))
-                                        .splineTo(new Vector2d(33, 22), toRadians(275))
-                                        .splineToSplineHeading(new Pose2d(26, 7.2, toRadians(50)), toRadians(230))
+                                        .splineToSplineHeading(new Pose2d(dropX, dropY, Math.toRadians(335)), Math.toRadians(155))
 
                 .build()
                 );

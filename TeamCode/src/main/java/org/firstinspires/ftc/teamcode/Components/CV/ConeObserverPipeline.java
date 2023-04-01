@@ -24,7 +24,7 @@ public class ConeObserverPipeline extends OpenCvPipeline {
     public static double  degPerPix = 22.5/320, widTimesDist = 820*4*24/31.0*12/8.7*13.5/14.9, focalLength = 715;
     double centerOfPole = 0, poleSize = 0;
     ArrayList<double[]> frameList;
-    public static double LowS = 50;
+    public static double LowS = 90;
     public static double HighS = 255;
     public static double LowH = 110;
     public static double HighH = 125;
@@ -155,12 +155,9 @@ public class ConeObserverPipeline extends OpenCvPipeline {
 //        thresh5.release();
         hierarchy.release();
         Scalar color = new Scalar(255,0,0);
-        assert rectangle != null;
         if(rectangle.length>0) {
             Imgproc.rectangle(input, rectangle[maxAreaIndex], color, 5);
         }
-        rectangle=null;
-
         return input;
     }
 
@@ -189,6 +186,6 @@ public class ConeObserverPipeline extends OpenCvPipeline {
         if(abs(center)+3 >= 320-(consiz/2.0)){
             return new double[]{0,0};
         }
-        return new double[]{-atan(center/focalLength)*180/PI,abs(4.3/(2*tan(atan((center+consiz/2)/(focalLength))-atan(center/focalLength))))};
+        return new double[]{-atan(center/focalLength)*180/PI,abs(4.15/(2*tan(atan((center+consiz/2)/(focalLength))-atan(center/focalLength))))};
     }
 }
