@@ -26,6 +26,10 @@ public class Utils {
         return (pulse - 750.0) / 1500.0;
     }
 
+    public static double servoDenormalize(double thing){
+        return thing*1500+750;
+    }
+
     /**
      * convert servo controller pulse width to double on 0 - 1 scale
      * @param pulse pwm signal to be converted
