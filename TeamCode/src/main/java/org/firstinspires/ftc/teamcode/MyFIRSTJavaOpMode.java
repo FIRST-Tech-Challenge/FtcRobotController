@@ -119,6 +119,7 @@ public class MyFIRSTJavaOpMode extends LinearOpMode {
             // Show the elapsed game time and wheel power.
             telemetry.addData("Status", "Run Time: " + runtime.toString());
             telemetry.addData("Navigation Args", "drive (%2f), turn (%2f)", drive, turn);
+            telemetry.addData("Speed Multiplier", "%f", multiplier);
             telemetry.addData("Target Power", "left (%.2f), right (%.2f)", leftPower, rightPower);
             telemetry.addData("Actual Power", "left (%.2f), right (%.2f)", leftDrive.getPower(), rightDrive.getPower());
             telemetry.update();
