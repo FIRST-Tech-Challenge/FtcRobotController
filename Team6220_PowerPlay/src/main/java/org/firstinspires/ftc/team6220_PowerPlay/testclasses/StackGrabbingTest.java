@@ -16,14 +16,12 @@ public class StackGrabbingTest extends BaseAutonomous {
         robotCameraPipeline.setRanges(Constants.LOWER_BLUE, Constants.UPPER_BLUE);
         startCameraWithPipeline(robotCameraPipeline, robotCamera, Constants.CAMERA_X, Constants.CAMERA_Y);
         waitForStart();
-        sleep(300);
         driveGrabber(Constants.GRABBER_INITIALIZE_POSITION);
-        sleep(300);
-        for (int i = 0; i <= 4; i++) {
+        for (int i = 4; i >= 0; i--) {
             //turn LED's off (for testing purposes)
             blinkinChassis.setPattern(RevBlinkinLedDriver.BlinkinPattern.BLACK);
             //drive slides to stack position
-            driveSlidesAutonomous((Constants.SLIDE_STACK_FOUR)-(Constants.AUTONOMOUS_STACK_PER_CONE_OFFSET * i));
+            driveSlidesAutonomous(Constants.STACK_HEIGHTS[i]);
             //center on cone stack
             centerConeStack(robotCameraPipeline);
             sleep(300);
