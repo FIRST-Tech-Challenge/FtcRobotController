@@ -219,11 +219,6 @@ public abstract class BaseOpMode extends LinearOpMode {
             motorLeftSlides.setPower(Constants.SLIDE_FEEDFORWARD);
             motorRightSlides.setPower(Constants.SLIDE_FEEDFORWARD);
         }
-
-        if (targetPosition == 0 && limitSwitch.getState()) {
-            motorLeftSlides.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
-            motorLeftSlides.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
-        }
     }
 
     /**

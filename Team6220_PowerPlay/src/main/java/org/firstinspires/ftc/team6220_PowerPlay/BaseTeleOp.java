@@ -196,7 +196,7 @@ public abstract class BaseTeleOp extends BaseOpMode {
         }
 
         // don't let target position go below slide bottom position
-        if (slideTargetPosition <= Constants.SLIDE_BOTTOM && limitSwitch.getState()) {
+        if (slideTargetPosition <= Constants.SLIDE_BOTTOM) {
             slideTargetPosition = Constants.SLIDE_BOTTOM;
 
         // don't let target position go above slide top position

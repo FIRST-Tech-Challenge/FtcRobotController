@@ -5,7 +5,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.team6220_PowerPlay.BaseTeleOp;
 
-//@Disabled
+@Disabled
 @TeleOp(name = "TeleOpTest")
 public class TeleOpTest extends BaseTeleOp {
 
@@ -15,8 +15,7 @@ public class TeleOpTest extends BaseTeleOp {
         waitForStart();
 
         while (opModeIsActive()) {
-            driveSlidesWithController();
-            telemetry.addData("limit switch", limitSwitch.getState());
+            telemetry.update();
         }
     }
 }
