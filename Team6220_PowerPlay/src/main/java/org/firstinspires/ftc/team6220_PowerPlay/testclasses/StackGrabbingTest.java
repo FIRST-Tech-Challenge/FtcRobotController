@@ -27,7 +27,7 @@ public class StackGrabbingTest extends BaseAutonomous {
             sleep(300);
             //wait for grabber to close
             driveGrabber(Constants.GRABBER_CLOSE_POSITION);
-            sleep(600);
+            sleep(300);
             //drive slides to stow position
             driveSlidesAutonomous(Constants.SLIDE_LOW);
             //drive backwards 34.5 inches
