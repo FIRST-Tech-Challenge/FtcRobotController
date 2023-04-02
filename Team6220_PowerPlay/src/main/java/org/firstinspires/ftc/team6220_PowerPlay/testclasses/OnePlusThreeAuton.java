@@ -8,14 +8,16 @@ import org.firstinspires.ftc.team6220_PowerPlay.GrabberCameraPipeline;
 import org.firstinspires.ftc.team6220_PowerPlay.RobotCameraPipeline;
 
 @Autonomous(name="beebloofygobberslaybelenyengkeed")
-public class GoofyAhhFullAutoTest extends BaseAutonomous {
+public class OnePlusThreeAuton extends BaseAutonomous {
     @Override
     public void runOpMode() throws InterruptedException {
         initialize();
 
+        //TODO: Get this to work :(
+
         //detect signal and init signalArray
         int signal = 1 + detectSignal();
-        int[] signalArray = new int[]{90, 33, 90, 11, -90, 11};
+        int[] signalArray = new int[]{90, 11, -90, 11, -90, 33};
 
         //EXPERIMENTAL FOR TESTING PURPOSES
         int LEFT_ANGLE_OFFSET = 90;
@@ -41,7 +43,7 @@ public class GoofyAhhFullAutoTest extends BaseAutonomous {
         // raise slides to high junction height
         driveSlidesAutonomous(Constants.SLIDE_HIGH);
         // strafe right to face high junction
-        driveAutonomous(-90, 11);
+        driveAutonomous(90, 11);
         // sleep to make sure robot has stopped moving
         sleep(100);
         // lower cone on to junction
@@ -54,13 +56,13 @@ public class GoofyAhhFullAutoTest extends BaseAutonomous {
         sleep(100);
         // drive backward so robot is in center of junctions
         driveAutonomous(180, 3);
-        //turn to face stack
+        //  turn to face stack
         turnToAngle(LEFT_ANGLE_OFFSET);
-        //grab from stack
-        grabFromStackAndDepositOnJunction(4 ,LEFT_ANGLE_OFFSET);
-        //turn to face stack
-        turnToAngle(LEFT_ANGLE_OFFSET);
-        //drive to park position
+        //  grab from stack
+        grabFromStackAndDepositOnJunction(2 ,LEFT_ANGLE_OFFSET);
+        //  prepare to park
+        turnToAngle(0);
+        //  drive to park position
         driveAutonomous(180, 34.5);
 
         //drive slides down
