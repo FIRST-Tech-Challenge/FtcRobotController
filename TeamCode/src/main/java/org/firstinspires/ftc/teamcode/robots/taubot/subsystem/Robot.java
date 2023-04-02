@@ -484,7 +484,7 @@ public class Robot implements Subsystem {
         }
         else{
             if(crane.getArticulation().equals(Crane.Articulation.robotDriving)){
-//                driveTrain.articulate(DriveTrain.Articulation.lockWheels);
+                driveTrain.articulate(DriveTrain.Articulation.lockWheels);
                 crane.articulate(Crane.Articulation.manualDrive);
                 underarm.articulate(UnderArm.Articulation.manual);
             }
@@ -542,35 +542,17 @@ public class Robot implements Subsystem {
 
     public boolean isDriverDriving() {
         return driverDriving;
-        //return true;
     }
 
     long driveAllowedSwitchTimer = 0;
-    boolean allowedSwitch;
     public void setDriverDriving(boolean driverDriving) {
-        if(driverDriving != this.driverDriving && !driveSwitchInited) {
-            initDriveSwtich();
+        if(driverDriving == true){
+            driveAllowedSwitchTimer = futureTime(0.3);
+            this.driverDriving = true;
         }
-        if(driverDriving == this.driverDriving){
-            driveSwitchInited = false;
-            allowedSwitch = false;
+        if(System.nanoTime() > driveAllowedSwitchTimer || driverDriving == false){
+            this.driverDriving = false;
         }
-        if(driveSwitchInited && System.nanoTime() > driveAllowedSwitchTimer){
-            allowedSwitch = true;
-            driveSwitchInited = false;
-        }else{
-            allowedSwitch = false;
-        }
-        if(allowedSwitch) {
-            this.driverDriving = driverDriving;
-            allowedSwitch = false;
-        }
-    }
-
-    boolean driveSwitchInited = false;
-    public void initDriveSwtich(){
-        driveAllowedSwitchTimer = futureTime(0.1);
-        driveSwitchInited = true;
     }
 
     private boolean driverDriving = false;

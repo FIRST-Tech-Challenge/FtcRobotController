@@ -125,7 +125,7 @@ public class DriveTrain extends DiffyDrive implements Subsystem {
     public static PIDController headingPID, distTravelledPID;
     public static PIDController velocityPID, chassisLengthPID;
 
-    public static double DRIVE_SPEED = 100;
+    public static double DRIVE_SPEED = 2;
 
     private final boolean simulated;
 
@@ -600,7 +600,7 @@ public class DriveTrain extends DiffyDrive implements Subsystem {
             right /= max;
         }
 
-        setMotorVelocities(DRIVE_SPEED*left,DRIVE_SPEED*right);
+        setMotorPowers(DRIVE_SPEED*left,DRIVE_SPEED*right);
     }
 
     // ----------------------------------------------------------------------------------------------
