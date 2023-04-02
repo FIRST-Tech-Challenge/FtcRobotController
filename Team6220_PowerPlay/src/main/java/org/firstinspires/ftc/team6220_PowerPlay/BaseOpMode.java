@@ -350,7 +350,7 @@ public abstract class BaseOpMode extends LinearOpMode {
                 blinkinChassis.setPattern(RevBlinkinLedDriver.BlinkinPattern.HOT_PINK);
                 telemetry.addLine("Not Detected");
             }
-        }else{
+        } else {
             telemetry.addLine("blinkin chassis null smh");
         }
     }
