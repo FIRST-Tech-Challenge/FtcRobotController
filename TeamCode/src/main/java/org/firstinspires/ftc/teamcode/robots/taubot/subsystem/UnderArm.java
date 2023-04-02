@@ -403,6 +403,7 @@ public class UnderArm implements Subsystem {
             case 0: //sets home position
                 robot.driveTrain.tuck();
                 robot.driveTrain.articulate(DriveTrain.Articulation.unlock);
+                grip();
                 setTurretTargetAngle(0);
                 setElbowTargetAngle(0);
                 setShoulderTargetAngle(0);

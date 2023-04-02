@@ -508,7 +508,9 @@ public class Crane implements Subsystem {
                 setShoulderTargetAngle(0);
                 break;
             case robotDriving: //if the robot is driving all cranes should go into a safe position
-                fieldPositionTarget = deltaGripperPosition.add(robotPosition);
+                if(deltaGripperPosition != null && robotPosition != null) {
+                    fieldPositionTarget = deltaGripperPosition.add(robotPosition);
+                }
                 setShoulderTargetAngle(SAFE_SHOULDER_ANGLE);
                 setExtendTargetPos(SAFE_ARM_LENGTH);
                 robot.turret.articulate(Turret.Articulation.lockToOneHundredAndEighty); //turret will not move AT ALL from home position no matter the target

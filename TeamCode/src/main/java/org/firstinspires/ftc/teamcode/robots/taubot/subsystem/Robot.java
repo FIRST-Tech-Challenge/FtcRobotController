@@ -345,8 +345,10 @@ public class Robot implements Subsystem {
                         }
                         break;
                     case 4:
-                        if(System.nanoTime() >= autonTime && crane.goHome()) {
-                            autonIndex++;
+                        if(System.nanoTime() >= autonTime) {
+                            if(crane.goHome()) {
+                                autonIndex++;
+                            }
                         }
                         break;
                     case 5:
@@ -482,7 +484,7 @@ public class Robot implements Subsystem {
         }
         else{
             if(crane.getArticulation().equals(Crane.Articulation.robotDriving)){
-                driveTrain.articulate(DriveTrain.Articulation.lockWheels);
+//                driveTrain.articulate(DriveTrain.Articulation.lockWheels);
                 crane.articulate(Crane.Articulation.manualDrive);
                 underarm.articulate(UnderArm.Articulation.manual);
             }
@@ -540,10 +542,35 @@ public class Robot implements Subsystem {
 
     public boolean isDriverDriving() {
         return driverDriving;
+        //return true;
     }
 
+    long driveAllowedSwitchTimer = 0;
+    boolean allowedSwitch;
     public void setDriverDriving(boolean driverDriving) {
-        this.driverDriving = driverDriving;
+        if(driverDriving != this.driverDriving && !driveSwitchInited) {
+            initDriveSwtich();
+        }
+        if(driverDriving == this.driverDriving){
+            driveSwitchInited = false;
+            allowedSwitch = false;
+        }
+        if(driveSwitchInited && System.nanoTime() > driveAllowedSwitchTimer){
+            allowedSwitch = true;
+            driveSwitchInited = false;
+        }else{
+            allowedSwitch = false;
+        }
+        if(allowedSwitch) {
+            this.driverDriving = driverDriving;
+            allowedSwitch = false;
+        }
+    }
+
+    boolean driveSwitchInited = false;
+    public void initDriveSwtich(){
+        driveAllowedSwitchTimer = futureTime(0.1);
+        driveSwitchInited = true;
     }
 
     private boolean driverDriving = false;
