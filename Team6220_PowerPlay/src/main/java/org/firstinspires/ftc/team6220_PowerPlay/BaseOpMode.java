@@ -1,11 +1,15 @@
 package org.firstinspires.ftc.team6220_PowerPlay;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.hardware.rev.RevBlinkinLedDriver;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.DigitalChannel;
 import com.qualcomm.robotcore.hardware.PwmControl;
 import com.qualcomm.robotcore.hardware.ServoImplEx;
 
@@ -16,7 +20,11 @@ import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Iterator;
 import java.util.List;
+import java.util.ListIterator;
 
 public abstract class BaseOpMode extends LinearOpMode {
     // motors
@@ -44,11 +52,17 @@ public abstract class BaseOpMode extends LinearOpMode {
     public double originalAngle;
     public double startAngle;
 
+    // Limit switch
+    public DigitalChannel limitSwitch;
+
     // flag to say whether we should disable the correction system
     private boolean turnFlag = false;
 
     // bulk reading
     private List<LynxModule> hubs;
+
+    // stored telemetry
+    protected List<Object> telemetrySave;
 
     // initializes the motors, servos, and IMUs
     public void initialize() {
@@ -106,6 +120,11 @@ public abstract class BaseOpMode extends LinearOpMode {
         try {
             blinkinChassis = (RevBlinkinLedDriver) hardwareMap.get(RevBlinkinLedDriver.class, "blinkinChassis");
         } catch (Exception e) {}
+
+        limitSwitch = (DigitalChannel) hardwareMap.get(DigitalChannel.class, "limitSwitch");
+        limitSwitch.setMode(DigitalChannel.Mode.INPUT);
+
+        telemetrySave = new ArrayList<Object>();
 
         // initialize IMU
         BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
@@ -188,6 +207,17 @@ public abstract class BaseOpMode extends LinearOpMode {
      * @param targetPosition target position for slides motors in ticks
      */
     public void driveSlides(int targetPosition) {
+        if(targetPosition == 0) {
+            if(limitSwitch.getState()) {
+                motorLeftSlides.setPower(-1);
+                motorRightSlides.setPower(-1);
+            }
+            else {
+                telemetrySave.add(motorLeftSlides.getCurrentPosition());
+                motorLeftSlides.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+                motorRightSlides.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            }
+        }
         int error = targetPosition - motorLeftSlides.getCurrentPosition();
         double motorPower = error * Constants.SLIDE_MOTOR_KP;
 
