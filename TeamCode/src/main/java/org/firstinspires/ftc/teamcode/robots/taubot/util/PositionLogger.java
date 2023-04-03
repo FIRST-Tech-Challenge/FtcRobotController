@@ -1,8 +1,11 @@
 package org.firstinspires.ftc.teamcode.robots.taubot.util;
 import android.os.Environment;
+
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.OutputStream;
@@ -12,31 +15,59 @@ import java.util.Scanner;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 
 
-public class PositionLogger {
+public class PositionLogger{
     private FullObjectOutputStream out;
     private ObjectInputStream in;
     private String dir;
     private String filename;
-    private String log;
-    public PositionLogger(String name) {
+    //private String log;
+    public PositionLogger(String name, TauPosition log){
         dir = Environment.getExternalStorageDirectory() + "/FIRST/";
         filename = dir + name + ".txt";
+        File file = new File(filename);
         System.out.println(filename);
+        if(!file.exists()) {
+            try {
+                out = new FullObjectOutputStream(new FileOutputStream(filename));
+                out.writeObject(log);
+                out.flush();
+                out.close();
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
+        }
+    }
+
+    public void writePose(TauPosition log) {
         try {
+            log.updateTime();
             out = new FullObjectOutputStream(new FileOutputStream(filename));
-            log = "START OF POSITION LOG - " + name;
-            log += "\n START TIME - " + LocalTime.now();
-            out.writeObject(log);
+            out.enableReplaceObject(true);
             out.flush();
             out.close();
         }
         catch (Exception ex) {
             ex.printStackTrace();
         }
-
+    }
+    public TauPosition returnPose () {
+        File file = new File(filename);
+        if(file.exists()) {
+            try {
+                in = new ObjectInputStream(new FileInputStream(filename));
+                TauPosition pose = (TauPosition) in.readObject();
+                in.close();
+                return pose;
+            }
+            catch (Exception ex) {
+                ex.printStackTrace();
+            }
+        }
+        return new TauPosition();
+        //returns as a string, could be annoying but didn't know what else to return
     }
 
-    public void updateLog(Pose2d pos) throws IOException{
+    /*public void updateLog(Pose2d pos) throws IOException{
         log = "TIME - " + LocalTime.now() + " POSITION - " + pos.toString();
         out = new FullObjectOutputStream(new FileOutputStream(filename));
         out.writeObject(log);
@@ -78,7 +109,7 @@ public class PositionLogger {
             ex.printStackTrace();
         }
         return "file could not be read";
-    }
+    }*/
 
 }
 
