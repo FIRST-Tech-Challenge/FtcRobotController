@@ -68,7 +68,7 @@ open class KTeleOp : KOpMode(photonEnabled = false) {
         driver.dpadUp.onPress(DepositSequence(robot, ArmConstants.midPos, LiftConstants.midPos, GuideConstants.depositPos))
         driver.y.onPress(DepositSequence(robot, ArmConstants.lowPos, LiftConstants.lowPos, GuideConstants.lowPos))
         driver.x.onPress(DepositSequence(robot, 200.0, LiftConstants.lowPos, 0.3))
-        driver.rightTrigger.onPress(ClawCmds.ClawOpenCmd(robot.claw, robot.guide, GuideConstants.telePos))
+        driver.rightTrigger.onPress(ClawCmds.AutoOpenCmd(robot.claw, robot.guide, GuideConstants.telePos))
 
         gunner.leftTrigger.onPress(InstantCmd({robot.lift.setPos(-15.5)}))
         gunner.rightTrigger.onPress(InstantCmd({robot.arm.setPos(-270.0)}))

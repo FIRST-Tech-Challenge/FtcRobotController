@@ -16,18 +16,12 @@ class HomeSequence(
 ) : SequentialGroup(
     ParallelGroup(
         InstantCmd({robot.guide.stopReading()}),
-        ChooseCmd(
-            InstantCmd({ robot.lift.setPos(robot.lift.leadMotor.pos + 3.0) }),
-            InstantCmd({robot.lift.setPos(robot.lift.leadMotor.pos)})
-        ) { robot.isLifted },
-        InstantCmd({robot.isLifted = false}),
         InstantCmd({robot.guide.setPos(GripPos)}),
     ),
-    WaitCmd(0.25),
     InstantCmd({robot.arm.setPos(secondArmAngle)}, robot.arm),
     ClawCmds.ClawCloseCmd(robot.claw),
     InstantCmd({robot.lift.setPos(liftHeight)}),
     WaitCmd(0.5),
-    ClawCmds.ClawOpenCmd(robot.claw, robot.guide, GuideConstants.telePos)
+    ClawCmds.AutoOpenCmd(robot.claw, robot.guide, GuideConstants.telePos)
 )
 

@@ -28,6 +28,6 @@ class AutoHomeSequence(
         ),
     InstantCmd({lift.setPos(liftHeight)}),
     WaitCmd(0.5),
-    ClawCmds.ClawOpenCmd(claw, guide, GuideConstants.telePos)
+    ClawCmds.AutoOpenCmd(claw, guide, GuideConstants.telePos)
 )
 

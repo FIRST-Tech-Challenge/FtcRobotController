@@ -20,10 +20,10 @@ class DepositSequence(
     WaitCmd(0.3),
     InstantCmd({robot.lift.setPos(LiftHeight)}, robot.lift),
     WaitCmd(0.1),
-    InstantCmd({robot.guide.startReading()}),
+//    InstantCmd({robot.guide.startReading()}),
     InstantCmd({robot.guide.setPos(GripPos)}),
-    WaitUntilCmd{ robot.guide.lastRead < 60.0 || robot.guide.lastReadTwo < 60.0 },
-    ChooseCmd(InstantCmd({robot.lift.setPos(LiftHeight - 3.0)}), WaitCmd(0.0)) { LiftHeight - 3.0 > 0.0 },
-    InstantCmd({robot.isLifted = true}),
-    InstantCmd({robot.guide.stopReading()})
+//    WaitUntilCmd{ robot.guide.lastRead < 60.0 || robot.guide.lastReadTwo < 30.0 },
+//    ChooseCmd(InstantCmd({robot.lift.setPos(LiftHeight - 3.0)}), WaitCmd(0.0)) { LiftHeight - 3.0 > 0.0 },
+//    InstantCmd({robot.isLifted = true}),
+//    InstantCmd({robot.guide.stopReading()})
 )
