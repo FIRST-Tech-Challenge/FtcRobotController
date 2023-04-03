@@ -126,7 +126,7 @@ public class PowerPlayAutonomous extends CommandOpMode {
                 new InstantCommand(RR::runHS2, RR),
                 scoringCommand
         ));
-
+/*
         schedule(new SequentialCommandGroup(
                         new InstantCommand(RR::runHS2, RR),
                         new InstantCommand(arm::setMid, arm),
@@ -169,6 +169,8 @@ public class PowerPlayAutonomous extends CommandOpMode {
                         )
                 )
         );
+
+ */
 
         //Select Command Auto
         new Trigger(() -> runtime.seconds() >= 20).whenActive(

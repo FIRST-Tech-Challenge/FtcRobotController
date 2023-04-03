@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.myroadrunner.drive;
 
 import com.acmerobotics.dashboard.config.Config;
+import com.acmerobotics.roadrunner.control.PIDCoefficients;
 import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 
 /*
@@ -92,6 +93,16 @@ public class DriveConstants {
     public static double MAX_ACCEL = 35;
     public static double MAX_ANG_VEL = 2.3416948318481445;
     public static double MAX_ANG_ACCEL = Math.toRadians(279.98601117318435);
+
+    public static PIDCoefficients TRANSLATIONAL_PID = new PIDCoefficients(6, 0, 0);
+    public static PIDCoefficients HEADING_PID = new PIDCoefficients(7.5, 0, 0.05);
+    public static double KP = 1.1;
+    public static double KI = 2.7;
+    public static double KD = 0;
+    public static double minIntegralBound = -400;
+    public static double maxIntegralBound = 400;
+
+    public static double LATERAL_MULTIPLIER = 1.17602326;
 
 
     public static double encoderTicksToInches(double ticks) {
