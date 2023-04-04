@@ -61,21 +61,50 @@ import static org.firstinspires.ftc.teamcode.myroadrunner.drive.DriveConstants.L
  */
 @Config
 public class MecanumDrivePPV2 extends MecanumDrive implements Subsystem {
+
+    //COMMON_Variables
+
     protected String m_name = this.getClass().getSimpleName();
     public static double VX_WEIGHT = 1;
     public static double VY_WEIGHT = 1;
     public static double OMEGA_WEIGHT = 1;
+    private MotorExEx frontLeft, frontRight, rearRight, rearLeft;
+    private com.arcrobotics.ftclib.drivebase.MecanumDrive drive;
+    private IMU imu;
+
+    //AUTONOMOUS_Variables
+
     private TrajectorySequenceRunner trajectorySequenceRunner;
     private static final TrajectoryVelocityConstraint VEL_CONSTRAINT = getVelocityConstraint(MAX_VEL, MAX_ANG_VEL, TRACK_WIDTH);
     private static final TrajectoryAccelerationConstraint ACCEL_CONSTRAINT = getAccelerationConstraint(MAX_ACCEL);
     private TrajectoryFollower follower;
-    private MotorExEx frontLeft, frontRight, rearRight, rearLeft;
-    private final com.arcrobotics.ftclib.drivebase.MecanumDrive drive;
     private List<MotorExEx> motors;
-    private IMU imu;
     private VoltageSensor batteryVoltageSensor;
     private List<Integer> lastEncPositions = new ArrayList<>();
     private List<Integer> lastEncVels = new ArrayList<>();
+
+    public void TeleOpMechanumDrive(HardwareMap hardwareMap){
+        CommandScheduler.getInstance().registerSubsystem(this);
+
+        frontLeft = new MotorExEx(hardwareMap, "frontLeft", Motor.GoBILDA.RPM_312);
+        frontRight = new MotorExEx(hardwareMap, "frontRight", Motor.GoBILDA.RPM_312);
+        rearRight = new MotorExEx(hardwareMap, "rearRight", Motor.GoBILDA.RPM_312);
+        rearLeft = new MotorExEx(hardwareMap, "rearLeft", Motor.GoBILDA.RPM_312);
+
+        setMotorsInverted(true, false, false, true);
+
+        setPIDFCoefficients(KP, KI, KD, kStatic, kV, kA);
+
+        if (!COMMON_FEED_FORWARD) {
+            frontLeft.setFeedforwardCoefficients(150, 1.1, 0);//2795
+            frontRight.setFeedforwardCoefficients(120, 0.97, 0);//2795
+            rearLeft.setFeedforwardCoefficients(120, 1, 0);//2795
+            rearRight.setFeedforwardCoefficients(220, 1.07, 0);//2795
+        }
+
+        drive = new com.arcrobotics.ftclib.drivebase.MecanumDrive(frontLeft, frontRight, rearLeft, rearRight);
+    }
+
 
     public MecanumDrivePPV2(HardwareMap hardwareMap) {
         super(kV, kA, kStatic, TRACK_WIDTH, TRACK_WIDTH, LATERAL_MULTIPLIER);
