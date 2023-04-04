@@ -32,6 +32,8 @@ package org.firstinspires.ftc.teamcode.samples;
 import android.content.SharedPreferences;
 import android.os.Environment;
 
+import com.acmerobotics.dashboard.FtcDashboard;
+import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.google.gson.Gson;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
@@ -42,7 +44,9 @@ import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
 
+import org.firstinspires.ftc.robotcore.internal.system.Misc;
 import org.firstinspires.ftc.teamcode.RC;
+import org.firstinspires.ftc.teamcode.robots.taubot.util.ExponentialSmoother;
 import org.firstinspires.ftc.teamcode.robots.taubot.util.PositionLogger;
 import org.firstinspires.ftc.teamcode.robots.taubot.util.TauPosition;
 import org.firstinspires.ftc.teamcode.robots.taubot.vision.Position;
@@ -50,6 +54,10 @@ import org.firstinspires.ftc.teamcode.robots.taubot.vision.Position;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.PrintStream;
+import java.util.LinkedHashMap;
+import java.util.Map;
+
+import static org.firstinspires.ftc.teamcode.robots.taubot.util.Constants.LOW_BATTERY_VOLTAGE;
 
 /**
  * This file contains an example of an iterative (Non-Linear) "OpMode".
@@ -65,12 +73,21 @@ import java.io.PrintStream;
  * Remove or comment out the @Disabled line to add this opmode to the Driver Station OpMode list
  */
 
-@TeleOp(name="PositionLogger test", group="Iterative Opmode")
+@TeleOp(name="9 PositionLogger test", group="Iterative Opmode")
 public class PositionLoggerTest extends OpMode
 {
     // Declare OpMode members.
     private ElapsedTime runtime = new ElapsedTime();
+    private FtcDashboard dashboard;
+    TelemetryPacket packet = new TelemetryPacket();
+    int n;
+    TauPosition testpos;
     private PositionLogger logger = new PositionLogger(5);
+    long lastLoopClockTime, loopTime;
+    double loopAvg = 0;
+    private static final double loopWeight = .1;
+    private double averageLoopTime;
+    private ExponentialSmoother loopTimeSmoother;
 
     /*
      * Code to run ONCE when the driver hits INIT
@@ -78,7 +95,11 @@ public class PositionLoggerTest extends OpMode
     @Override
     public void init() {
         telemetry.addData("Status", "Initialized");
-
+        dashboard = FtcDashboard.getInstance();
+        dashboard.setTelemetryTransmissionInterval(25);
+        loopTimeSmoother = new ExponentialSmoother(0.1);
+        TauPosition testread = logger.readPose();
+        System.out.println("Timestamp: " + testread.getTimestamp() + ", Turret Heading: " +testread.getTurretHeading());
     }
 
     /*
@@ -93,48 +114,14 @@ public class PositionLoggerTest extends OpMode
      */
     @Override
     public void start() {
-        /*
-        SharedPreferences sharedPref = RC.a().getPreferences(RC.c().MODE_PRIVATE);
-        SharedPreferences.Editor editor = sharedPref.edit();
 
-        Gson gson = new Gson();
-        TauPosition testpos = new TauPosition();
-        testpos.setPose(new Pose2d(1, 1, 1));
-        testpos.setTurretHeading(1);
-        String json = gson.toJson(testpos);
-        editor.putString("TauPosition", json);
-        editor.apply();
-        testpos.setPose(new Pose2d(1, 2, 3));
-        testpos.setTurretHeading(4);
-        testpos.updateTime();
-        json = gson.toJson(testpos);
-        editor.putString("TauPosition", json);
-        editor.apply();
-        String prefIn = sharedPref.getString("TauPosition", "get failed");
-        System.out.println("Shared Preference: "+prefIn);
-
-        File file = new File(Environment.getExternalStorageDirectory() + "/FIRST/gsontest.txt");
-        try {
-            FileOutputStream out = new FileOutputStream(file, false);
-            PrintStream author = new PrintStream(out);
-            author.println(json);
-            testpos.setPose(new Pose2d(1, 2, 3));
-            testpos.setTurretHeading(4);
-            testpos.updateTime();
-            json = gson.toJson(testpos);
-            author.println(json);
-            out.close();
-            author.close();
-        } catch (Exception ex) {
-            ex.printStackTrace();
-        }*/
-        TauPosition testpos = new TauPosition();
+        testpos = new TauPosition();
         testpos.setPose(new Pose2d(5, 6, 7));
         logger.writePose(testpos);
         telemetry.addData("Status", "Initialized");
 
-        TauPosition testRead = logger.readPose();
-        System.out.println(testRead.getPose());
+
+        //System.out.println(testRead.getPose());
     }
 
     /*
@@ -142,8 +129,22 @@ public class PositionLoggerTest extends OpMode
      */
     @Override
     public void loop() {
-        // Setup a variable for each drive wheel to save power level for telemetry
 
+        packet = new TelemetryPacket();
+
+        testpos.setTurretHeading(n);
+        n = logger.update(testpos, false);
+
+        Map<String, Object> opModeTelemetryMap = new LinkedHashMap<>();
+
+        opModeTelemetryMap.put("Average Loop Time", Misc.formatInvariant("%d ms (%d hz)", (int) (averageLoopTime * 1e-6), (int) (1 / (averageLoopTime * 1e-9))));
+        opModeTelemetryMap.put("Last Loop Time", Misc.formatInvariant("%d ms (%d hz)", (int) (loopTime * 1e-6), (int) (1 / (loopTime * 1e-9))));
+        opModeTelemetryMap.put("cycles", n);
+        opModeTelemetryMap.put("last read timestamp", testpos.getTimestamp());
+        handleTelemetry(opModeTelemetryMap, "stuff", packet);
+        dashboard.sendTelemetryPacket(packet);
+        telemetry.update();
+        updateTiming();
     }
 
     /*
@@ -151,6 +152,28 @@ public class PositionLoggerTest extends OpMode
      */
     @Override
     public void stop() {
+        TauPosition testread = logger.readPose();
+        System.out.println("Timestamp: " + testread.getTimestamp() + ", Turret Heading: " +testread.getTurretHeading());
     }
 
+    private void updateTiming() {
+        long loopClockTime = System.nanoTime();
+        loopTime = loopClockTime - lastLoopClockTime;
+        averageLoopTime = loopTimeSmoother.update(loopTime);
+        lastLoopClockTime = loopClockTime;
+    }
+
+    private void handleTelemetry(Map<String, Object> telemetryMap, String telemetryName, TelemetryPacket packet) {
+        telemetry.addLine(telemetryName);
+        packet.addLine(telemetryName);
+
+        for (Map.Entry<String, Object> entry : telemetryMap.entrySet()) {
+            String line = Misc.formatInvariant("%s: %s", entry.getKey(), entry.getValue());
+            packet.addLine(line);
+            telemetry.addLine(line);
+        }
+
+        telemetry.addLine();
+        packet.addLine("");
+    }
 }

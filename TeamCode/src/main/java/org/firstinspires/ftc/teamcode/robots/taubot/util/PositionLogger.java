@@ -25,26 +25,13 @@ public class PositionLogger{
     SharedPreferences.Editor editor = sharedPref.edit();
     Gson gson = new Gson();
     private int cyclesSinceUpdate = 0;
-    private FullObjectOutputStream out;
-    private ObjectInputStream in;
-    private String dir;
-    private String filename;
-    //private String log;
+
     public PositionLogger(int updateInterval){
         this.updateInterval = updateInterval;
     }
 
-    /*public void openOutput(){
-        try{
-            out = new FullObjectOutputStream(new FileOutputStream(filename));
-            out.enableReplaceObject(true);
-            out.writeObject(new TauPosition());
-            out.flush();
-        } catch (Exception ex) {
-            ex.printStackTrace();
-        }
-    }*/
     public void writePose(TauPosition pos) {
+        pos.updateTime();
         String json = gson.toJson(pos);
         editor.putString("TauPosition", json);
         editor.apply();
@@ -52,90 +39,32 @@ public class PositionLogger{
 
     public TauPosition readPose () {
         String json = sharedPref.getString("TauPosition", "get failed");
+        if(json.equals("get failed")) return new TauPosition();
         return gson.fromJson(json, TauPosition.class);
     }
 
-    public void update(TauPosition log, boolean forceUpdate){
+    public int update(TauPosition log, boolean forceUpdate){
         if(!forceUpdate){
-            if(cyclesSinceUpdate==updateInterval){
-                cyclesSinceUpdate=0;
+            if(cyclesSinceUpdate%updateInterval==0){
                 writePose(log);
             }
-            else cyclesSinceUpdate++;
         }
         else{
             writePose(log);
-            cyclesSinceUpdate = 0;
         }
+        cyclesSinceUpdate++;
+        return cyclesSinceUpdate;
     }
 
     public void closeLog(){
         try{
-            out.close();
+            //out.close();
         }
         catch (Exception ex) {
             ex.printStackTrace();
         }
     }
 
-    /*public void updateLog(Pose2d pos) throws IOException{
-        log = "TIME - " + LocalTime.now() + " POSITION - " + pos.toString();
-        out = new FullObjectOutputStream(new FileOutputStream(filename));
-        out.writeObject(log);
-        out.close();
-        out.flush();
-    }
-
-    public String returnLastTime () {
-        if(returnLastLog().contains("POSITION - "))
-            return returnLastLog().substring(7, returnLastLog().indexOf(" POSITION - "));
-        return "no positions logged yet";
-        //returns as a string, could be annoying but didn't know what else to return
-    }
-
-    public Pose2d returnLastPose () {
-        //currently returns empty pose if nothing's in log
-        Pose2d pose = new Pose2d();
-        String easyLog = returnLastLog().substring(returnLastLog().indexOf("N - ") + 5);
-        easyLog = easyLog.replaceAll("[^\\d.-]", " ");
-        System.out.println(easyLog);
-        if(returnLastLog().contains("POSITION - ")) {
-            Scanner sc = new Scanner(easyLog);
-            pose = new Pose2d(sc.nextDouble(), sc.nextDouble(), Math.toRadians(sc.nextDouble()));
-        }
-        return pose;
-
-    }
-
-    public String getFilename() {
-        return filename;
-    }
-
-    public String returnLastLog() {
-        try {
-            ObjectInputStream in = new ObjectInputStream(new FileInputStream(filename));
-            return (String)in.readObject();
-        }
-        catch (Exception ex) {
-            ex.printStackTrace();
-        }
-        return "file could not be read";
-    }*/
 
 }
 
-class FullObjectOutputStream extends ObjectOutputStream{
-    public FullObjectOutputStream(OutputStream out) throws IOException {
-        super(out);
-    }
-
-    public boolean enableReplaceObject(boolean allowed) {
-        super.enableReplaceObject(allowed);
-        return allowed;
-    }
-
-    public Object replaceObject(Object obj) throws IOException {
-        super.replaceObject(obj);
-        return obj;
-    }
-}
