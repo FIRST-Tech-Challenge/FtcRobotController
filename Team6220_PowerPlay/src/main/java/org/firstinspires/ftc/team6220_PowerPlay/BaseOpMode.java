@@ -207,12 +207,11 @@ public abstract class BaseOpMode extends LinearOpMode {
      * @param targetPosition target position for slides motors in ticks
      */
     public void driveSlides(int targetPosition) {
-        if(targetPosition == 0) {
-            if(limitSwitch.getState()) {
+        if (targetPosition == 0) {
+            if (limitSwitch.getState()) {
                 motorLeftSlides.setPower(-1);
                 motorRightSlides.setPower(-1);
-            }
-            else {
+            } else {
                 telemetrySave.add(motorLeftSlides.getCurrentPosition());
                 motorLeftSlides.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
                 motorRightSlides.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
