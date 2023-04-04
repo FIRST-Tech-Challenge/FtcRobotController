@@ -7,7 +7,7 @@ import org.firstinspires.ftc.team6220_PowerPlay.Constants;
 import org.firstinspires.ftc.team6220_PowerPlay.GrabberCameraPipeline;
 import org.firstinspires.ftc.team6220_PowerPlay.RobotCameraPipeline;
 
-@Autonomous(name="beebloofygobberslaybelenyengkeed")
+@Autonomous(name="1+3Auto")
 public class OnePlusThreeAuton extends BaseAutonomous {
     @Override
     public void runOpMode() throws InterruptedException {
@@ -46,7 +46,7 @@ public class OnePlusThreeAuton extends BaseAutonomous {
         driveAutonomous(90, 11);
         // sleep to make sure robot has stopped moving
         sleep(100);
-        // lower cone on to junction
+        // lower cone onto junction
         driveSlidesAutonomous(Constants.SLIDE_HIGH - 200);
         // sleep to make sure robot has stopped moving
         sleep(100);
@@ -59,7 +59,7 @@ public class OnePlusThreeAuton extends BaseAutonomous {
         //  turn to face stack
         turnToAngle(LEFT_ANGLE_OFFSET);
         //  grab from stack
-        grabFromStackAndDepositOnJunction(2 ,LEFT_ANGLE_OFFSET);
+        grabFromStackAndDepositOnJunction(2, LEFT_ANGLE_OFFSET);
         //  prepare to park
         turnToAngle(0);
         //  drive to park position

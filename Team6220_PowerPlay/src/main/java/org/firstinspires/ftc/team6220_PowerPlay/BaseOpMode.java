@@ -252,7 +252,7 @@ public abstract class BaseOpMode extends LinearOpMode {
             }
 
         // while the cone isn't centered over the junction
-        } while (Math.abs(xOffset) > Constants.JUNCTION_TOP_TOLERANCE || Math.abs(yOffset) > Constants.JUNCTION_TOP_TOLERANCE || !cancelled);
+        } while (Math.abs(xOffset) > Constants.JUNCTION_TOP_TOLERANCE || Math.abs(yOffset) > Constants.JUNCTION_TOP_TOLERANCE && !cancelled);
 
         stopDriveMotors();
     }
@@ -348,7 +348,7 @@ public abstract class BaseOpMode extends LinearOpMode {
                 blinkinChassis.setPattern(RevBlinkinLedDriver.BlinkinPattern.HOT_PINK);
                 telemetry.addLine("Not Detected");
             }
-        }else{
+        } else {
             telemetry.addLine("blinkin chassis null smh");
         }
     }

@@ -91,11 +91,9 @@ public class Constants {
 
     public static final double DRIVE_AUTHORITY_SCALER = 1.35;
 
-    public static final int AUTONOMOUS_STACK_BASE_OFFSET = 0;
-
-    public static final int AUTONOMOUS_STACK_PER_CONE_OFFSET = 160;
-
     public static final int JUNCTION_TOP_MAX_SIZE = 40000;
 
     public static final int[] STACK_HEIGHTS = new int[] {0, 117, 238, 383, 537};
+
+    public static final int SLIDE_TUNING_MODIFIER = 10;
 }

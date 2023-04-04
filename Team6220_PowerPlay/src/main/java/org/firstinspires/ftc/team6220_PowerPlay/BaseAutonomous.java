@@ -246,6 +246,7 @@ public abstract class BaseAutonomous extends BaseOpMode {
         });
         camera.setPipeline(pipeline);
     }
+
     public void grabFromStackAndDepositOnJunction(int loopNumber, int angleOffset){
         for (int i = 0; i <= loopNumber-1; i++) {
             //drive slides to stack position

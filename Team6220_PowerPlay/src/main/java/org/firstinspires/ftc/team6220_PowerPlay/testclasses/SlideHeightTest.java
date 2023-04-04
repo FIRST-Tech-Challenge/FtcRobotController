@@ -23,16 +23,15 @@ public class SlideHeightTest extends BaseTeleOp {
             // :)
             driveLEDs();
 
-            if(gamepad2.dpad_up & newButtonPressed & selectedHeight < heights.length-1) {
+            if (gamepad2.dpad_up & newButtonPressed & selectedHeight < heights.length-1) {
                 newButtonPressed = false;
                 selectedHeight++;
-            }
-            else if(gamepad2.dpad_down & newButtonPressed & selectedHeight > 0) {
+            } else if(gamepad2.dpad_down & newButtonPressed & selectedHeight > 0) {
                 newButtonPressed = false;
                 selectedHeight--;
             }
 
-            if(!(gamepad2.dpad_up | gamepad2.dpad_down)) {
+            if (!(gamepad2.dpad_up | gamepad2.dpad_down)) {
                 newButtonPressed = true;
             }
 

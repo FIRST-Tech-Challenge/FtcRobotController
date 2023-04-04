@@ -20,7 +20,7 @@ public class LightTest extends BaseTeleOp {
         grabberCamera.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
             @Override
             public void onOpened() {
-                grabberCamera.startStreaming(800,600, OpenCvCameraRotation.UPRIGHT);
+                grabberCamera.startStreaming(800, 600, OpenCvCameraRotation.UPRIGHT);
             }
 
             @Override
