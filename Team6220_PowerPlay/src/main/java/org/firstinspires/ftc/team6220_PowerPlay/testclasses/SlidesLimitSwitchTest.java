@@ -26,7 +26,7 @@ public class SlidesLimitSwitchTest extends BaseTeleOp {
                     driveSlides(rng.nextInt(Constants.SLIDE_TOP - 50) + 50);
                 }
                 // Wait for a to be pressed
-                while (gamepad1.a);
+                while (!gamepad1.a);
                 driveSlides(0);
             }
 
@@ -36,7 +36,7 @@ public class SlidesLimitSwitchTest extends BaseTeleOp {
             }
             telemetry.update();
             // Wait for a to be pressed
-            while (gamepad1.a);
+            while (!gamepad1.a);
         }
     }
 }
