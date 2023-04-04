@@ -1,4 +1,5 @@
 package org.firstinspires.ftc.teamcode.robots.taubot.util;
+import android.content.SharedPreferences;
 import android.os.Environment;
 
 import java.io.File;
@@ -13,58 +14,68 @@ import java.time.LocalTime;
 import java.util.Scanner;
 
 import com.acmerobotics.roadrunner.geometry.Pose2d;
+import com.google.gson.Gson;
+
+import org.firstinspires.ftc.teamcode.RC;
 
 
 public class PositionLogger{
+    private int updateInterval;
+    SharedPreferences sharedPref = RC.a().getPreferences(RC.c().MODE_PRIVATE);
+    SharedPreferences.Editor editor = sharedPref.edit();
+    Gson gson = new Gson();
+    private int cyclesSinceUpdate = 0;
     private FullObjectOutputStream out;
     private ObjectInputStream in;
     private String dir;
     private String filename;
     //private String log;
-    public PositionLogger(String name, TauPosition log){
-        dir = Environment.getExternalStorageDirectory() + "/FIRST/";
-        filename = dir + name + ".txt";
-        File file = new File(filename);
-        System.out.println(filename);
-        if(!file.exists()) {
-            try {
-                out = new FullObjectOutputStream(new FileOutputStream(filename));
-                out.writeObject(log);
-                out.flush();
-                out.close();
-            } catch (Exception ex) {
-                ex.printStackTrace();
+    public PositionLogger(int updateInterval){
+        this.updateInterval = updateInterval;
+    }
+
+    /*public void openOutput(){
+        try{
+            out = new FullObjectOutputStream(new FileOutputStream(filename));
+            out.enableReplaceObject(true);
+            out.writeObject(new TauPosition());
+            out.flush();
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+    }*/
+    public void writePose(TauPosition pos) {
+        String json = gson.toJson(pos);
+        editor.putString("TauPosition", json);
+        editor.apply();
+    }
+
+    public TauPosition readPose () {
+        String json = sharedPref.getString("TauPosition", "get failed");
+        return gson.fromJson(json, TauPosition.class);
+    }
+
+    public void update(TauPosition log, boolean forceUpdate){
+        if(!forceUpdate){
+            if(cyclesSinceUpdate==updateInterval){
+                cyclesSinceUpdate=0;
+                writePose(log);
             }
+            else cyclesSinceUpdate++;
+        }
+        else{
+            writePose(log);
+            cyclesSinceUpdate = 0;
         }
     }
 
-    public void writePose(TauPosition log) {
-        try {
-            log.updateTime();
-            out = new FullObjectOutputStream(new FileOutputStream(filename));
-            out.enableReplaceObject(true);
-            out.flush();
+    public void closeLog(){
+        try{
             out.close();
         }
         catch (Exception ex) {
             ex.printStackTrace();
         }
-    }
-    public TauPosition returnPose () {
-        File file = new File(filename);
-        if(file.exists()) {
-            try {
-                in = new ObjectInputStream(new FileInputStream(filename));
-                TauPosition pose = (TauPosition) in.readObject();
-                in.close();
-                return pose;
-            }
-            catch (Exception ex) {
-                ex.printStackTrace();
-            }
-        }
-        return new TauPosition();
-        //returns as a string, could be annoying but didn't know what else to return
     }
 
     /*public void updateLog(Pose2d pos) throws IOException{

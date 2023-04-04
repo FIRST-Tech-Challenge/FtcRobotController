@@ -22,6 +22,8 @@ import org.firstinspires.ftc.teamcode.robots.taubot.ConeStack;
 import org.firstinspires.ftc.teamcode.robots.taubot.Field;
 import org.firstinspires.ftc.teamcode.robots.taubot.util.Constants;
 import org.firstinspires.ftc.teamcode.robots.taubot.util.DashboardUtil;
+import org.firstinspires.ftc.teamcode.robots.taubot.util.PositionLogger;
+import org.firstinspires.ftc.teamcode.robots.taubot.util.TauPosition;
 import org.firstinspires.ftc.teamcode.statemachine.StateMachine;
 import org.firstinspires.ftc.teamcode.util.Vector3;
 import org.opencv.android.Utils;
@@ -50,6 +52,10 @@ public class Robot implements Subsystem {
     public UnderArm underarm;
     public Subsystem[] subsystems;
     public Field field;
+
+    public PositionLogger positionLog;
+    public TauPosition currentPos;
+    public boolean updatePositionLog = false;
 
     private long[] subsystemUpdateTimes;
     private boolean autoDumpEnabled, doubleDuckEnabled;
@@ -86,6 +92,8 @@ public class Robot implements Subsystem {
         turret = new Turret(hardwareMap, this, simulated);
         underarm = new UnderArm(hardwareMap, this, simulated);
         crane = new Crane(hardwareMap, this, simulated);
+
+        positionLog = new PositionLogger( 5);
 
         subsystems = new Subsystem[] {driveTrain, turret, crane, underarm}; //{driveTrain, turret, crane};
         subsystemUpdateTimes = new long[subsystems.length];
@@ -147,6 +155,12 @@ public class Robot implements Subsystem {
         return "Robot";
     }
 
+    public void resetRobotPosFromLog(Constants.Position start, double loggerTimeoutMinutes){
+        TauPosition pos = positionLog.readPose();
+        driveTrain.resetDrivetrainPos(start, pos, loggerTimeoutMinutes);
+        turret.resetTurretHeading(pos, loggerTimeoutMinutes);
+    }
+
     public void clearBulkCaches(){
         for (LynxModule module : hubs)
             module.clearBulkCache();
@@ -178,7 +192,10 @@ public class Robot implements Subsystem {
             subsystem.update(fieldOverlay);
             subsystemUpdateTimes[i] = System.nanoTime() - updateStartTime;
         }
-
+        if(updatePositionLog) {
+            currentPos = new TauPosition(driveTrain.getPoseEstimate(), turret.getHeading());
+            positionLog.update(currentPos, false);
+        }
         //paint the robot's current pose for dashboard
         //todo - update this Reach code to show the arm for the Tombot style crane
         double theta1 = wrapAngleRad(Math.toRadians(90 - crane.getShoulderAngle()));
@@ -216,6 +233,9 @@ public class Robot implements Subsystem {
 
     @Override
     public void stop() {
+        currentPos = new TauPosition(driveTrain.getPoseEstimate(), turret.getHeading());
+        positionLog.update(currentPos, true);
+        positionLog.closeLog();
         for(Subsystem subsystem: subsystems)
             subsystem.stop();
     }

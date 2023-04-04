@@ -310,7 +310,9 @@ public class PowerPlay_6832 extends OpMode {
     }
 
     public void resetGame(){
-        robot.driveTrain.resetGridDrive(startingPosition);
+        //robot.driveTrain.resetGridDrive(startingPosition);
+        robot.resetRobotPosFromLog(startingPosition, 5);
+        robot.updatePositionLog = true;
     }
 
     private static Vector2 position;
@@ -343,16 +345,17 @@ public class PowerPlay_6832 extends OpMode {
                     case TELE_OP:
                         switch(teleOpIndex) {
                             case 0:
+                                //robot.driveTrain.resetGridDrive(Constants.Position.START_LEFT);
+                                robot.resetRobotPosFromLog(startingPosition, 5);
                                 teleOpIndex++;
                                 break;
                             case 1:
 //                                if(robot.driveTrain.runToTeleOpPosition(startingPosition.equals(Constants.Position.START_RIGHT))){
+
                                 teleOpIndex++;
                         //}
                                 break;
                             case 2:
-                                //doesn't matter what i pass in, should grab from cachepostion
-                                robot.driveTrain.resetGridDrive(Constants.Position.START_LEFT);
                                 dc.joystickDrive();
                                 dc.UnderarmControls();
                                 break;

@@ -52,6 +52,8 @@ import org.firstinspires.ftc.teamcode.robots.taubot.trajectorysequence.Trajector
 import org.firstinspires.ftc.teamcode.robots.taubot.util.DiffyKinematics;
 import org.firstinspires.ftc.teamcode.robots.taubot.util.ExponentialSmoother;
 import org.firstinspires.ftc.teamcode.robots.taubot.util.PathLine;
+import org.firstinspires.ftc.teamcode.robots.taubot.util.PositionLogger;
+import org.firstinspires.ftc.teamcode.robots.taubot.util.TauPosition;
 import org.firstinspires.ftc.teamcode.robots.taubot.util.Utils;
 import org.firstinspires.ftc.teamcode.robots.taubot.simulation.DcMotorExSim;
 import org.firstinspires.ftc.teamcode.robots.taubot.trajectorysequence.TrajectorySequenceRunner;
@@ -507,6 +509,21 @@ public class DriveTrain extends DiffyDrive implements Subsystem {
             setPoseEstimate(new Pose2d(start.getPose().getX(), start.getPose().getY()));
         }else if(PowerPlay_6832.gameState.equals(PowerPlay_6832.GameState.TELE_OP)){
             setPoseEstimate(new Pose2d(cachePosition.x, cachePosition.y,lastRunHeading));
+        }
+    }
+
+    public void resetDrivetrainPos(Position start, TauPosition pos, double loggerTimeoutM){
+        resetEncoders();
+        if(PowerPlay_6832.gameState.equals(PowerPlay_6832.GameState.AUTONOMOUS)) {
+            setPoseEstimate(new Pose2d(start.getPose().getX(), start.getPose().getY()));
+        }else if (PowerPlay_6832.gameState.equals(PowerPlay_6832.GameState.TEST)){
+            setPoseEstimate(new Pose2d(start.getPose().getX(), start.getPose().getY()));
+        }else if(PowerPlay_6832.gameState.equals(PowerPlay_6832.GameState.TELE_OP)){
+            int loggerTimeout = (int)(loggerTimeoutM*60000);
+            if(System.currentTimeMillis()-pos.getTimestamp()>loggerTimeout)
+                setPoseEstimate(new Pose2d(start.getPose().getX(), start.getPose().getY()));
+            else
+                setPoseEstimate(pos.getPose());
         }
     }
 

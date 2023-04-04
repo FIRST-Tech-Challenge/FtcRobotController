@@ -20,6 +20,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 import org.firstinspires.ftc.teamcode.robots.UGBot.utils.Constants;
 import org.firstinspires.ftc.teamcode.robots.reachRefactor.simulation.DcMotorExSim;
+import org.firstinspires.ftc.teamcode.robots.taubot.util.TauPosition;
 import org.firstinspires.ftc.teamcode.robots.taubot.util.Utils;
 import org.firstinspires.ftc.teamcode.util.PIDController;
 
@@ -308,6 +309,14 @@ public class Turret implements Subsystem {
     public void setHeading(double angle){
         heading = angle;
         turretInitialized = false; //triggers recalc of heading offset at next IMU update cycle
+    }
+
+    public void resetTurretHeading(TauPosition pos, double loggerTimeoutM){
+        int loggerTimeout = (int)(loggerTimeoutM*60000);
+        if(System.currentTimeMillis()-pos.getTimestamp()>loggerTimeout)
+            setHeading(0);
+        else
+            setHeading(pos.getTurretHeading());
     }
 
     public static double localX = -5;

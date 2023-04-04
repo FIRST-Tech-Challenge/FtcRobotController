@@ -29,7 +29,11 @@
 
 package org.firstinspires.ftc.teamcode.samples;
 
+import android.content.SharedPreferences;
+import android.os.Environment;
+
 import com.acmerobotics.roadrunner.geometry.Pose2d;
+import com.google.gson.Gson;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
@@ -38,9 +42,14 @@ import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
 
+import org.firstinspires.ftc.teamcode.RC;
 import org.firstinspires.ftc.teamcode.robots.taubot.util.PositionLogger;
 import org.firstinspires.ftc.teamcode.robots.taubot.util.TauPosition;
 import org.firstinspires.ftc.teamcode.robots.taubot.vision.Position;
+
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.PrintStream;
 
 /**
  * This file contains an example of an iterative (Non-Linear) "OpMode".
@@ -56,12 +65,12 @@ import org.firstinspires.ftc.teamcode.robots.taubot.vision.Position;
  * Remove or comment out the @Disabled line to add this opmode to the Driver Station OpMode list
  */
 
-@TeleOp(name="Basic: Iterative OpMode", group="Iterative Opmode")
+@TeleOp(name="PositionLogger test", group="Iterative Opmode")
 public class PositionLoggerTest extends OpMode
 {
     // Declare OpMode members.
     private ElapsedTime runtime = new ElapsedTime();
-    private PositionLogger logger = new PositionLogger("log", new TauPosition());
+    private PositionLogger logger = new PositionLogger(5);
 
     /*
      * Code to run ONCE when the driver hits INIT
@@ -69,12 +78,7 @@ public class PositionLoggerTest extends OpMode
     @Override
     public void init() {
         telemetry.addData("Status", "Initialized");
-        TauPosition testWrite = new TauPosition();
-        testWrite.setPose(new Pose2d(1, 1, 1));
-        testWrite.setTurretHeading(1);
-        logger.writePose(testWrite);
 
-        telemetry.addData("Status", "Initialized");
     }
 
     /*
@@ -89,8 +93,48 @@ public class PositionLoggerTest extends OpMode
      */
     @Override
     public void start() {
-        TauPosition testRead = logger.returnPose();
-        System.out.println(testRead.getTimestamp());
+        /*
+        SharedPreferences sharedPref = RC.a().getPreferences(RC.c().MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPref.edit();
+
+        Gson gson = new Gson();
+        TauPosition testpos = new TauPosition();
+        testpos.setPose(new Pose2d(1, 1, 1));
+        testpos.setTurretHeading(1);
+        String json = gson.toJson(testpos);
+        editor.putString("TauPosition", json);
+        editor.apply();
+        testpos.setPose(new Pose2d(1, 2, 3));
+        testpos.setTurretHeading(4);
+        testpos.updateTime();
+        json = gson.toJson(testpos);
+        editor.putString("TauPosition", json);
+        editor.apply();
+        String prefIn = sharedPref.getString("TauPosition", "get failed");
+        System.out.println("Shared Preference: "+prefIn);
+
+        File file = new File(Environment.getExternalStorageDirectory() + "/FIRST/gsontest.txt");
+        try {
+            FileOutputStream out = new FileOutputStream(file, false);
+            PrintStream author = new PrintStream(out);
+            author.println(json);
+            testpos.setPose(new Pose2d(1, 2, 3));
+            testpos.setTurretHeading(4);
+            testpos.updateTime();
+            json = gson.toJson(testpos);
+            author.println(json);
+            out.close();
+            author.close();
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }*/
+        TauPosition testpos = new TauPosition();
+        testpos.setPose(new Pose2d(5, 6, 7));
+        logger.writePose(testpos);
+        telemetry.addData("Status", "Initialized");
+
+        TauPosition testRead = logger.readPose();
+        System.out.println(testRead.getPose());
     }
 
     /*
