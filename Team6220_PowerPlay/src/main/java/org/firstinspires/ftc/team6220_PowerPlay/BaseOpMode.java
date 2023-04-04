@@ -229,8 +229,6 @@ public abstract class BaseOpMode extends LinearOpMode {
 
         boolean cancelled = false;
 
-        driveLEDs();
-
         do {
             // xOffset is different from the one in CenterConeStack because the camera perspective is different
             xOffset = pipeline.xPosition - Constants.CAMERA_CENTER_X;
