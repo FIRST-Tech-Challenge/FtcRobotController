@@ -7,33 +7,36 @@ import org.firstinspires.ftc.team6220_PowerPlay.Constants;
 
 import java.util.Random;
 
+// Automated testing for limit switch homing
 @TeleOp(name = "SlidesLimitSwitchTest")
 public class SlidesLimitSwitchTest extends BaseTeleOp {
-        Random rng = new Random();
-        @Override
-        public void runOpMode() {
-            initialize();
-            driveSlides(0);
-            waitForStart();
+    Random rng = new Random();
 
-            while (opModeIsActive()) {
-                for(int i = 0; i <= 20; i++) {
-                    for(int j = 0; j <= 5; j++) {
-                        driveSlides(rng.nextInt(Constants.SLIDE_TOP-50)+50);
-                    }
-                    while(gamepad1.a) {
+    @Override
+    public void runOpMode() {
+        initialize();
+        driveSlides(0);
+        waitForStart();
 
-                    }
-                    driveSlides(0);
+        while (opModeIsActive()) {
+            // Repeat moving to 5 random slide heights then homing 20 times.
+            for (int i = 0; i <= 20; i++) {
+                for (int j = 0; j <= 5; j++) {
+                    // Drive slides to random position between ticks 50 and Constants.SLIDE_TOP
+                    driveSlides(rng.nextInt(Constants.SLIDE_TOP - 50) + 50);
                 }
-
-                for(Object o : telemetrySave) {
-                    telemetry.addData("test", o);
-                }
-                telemetry.update();
-                while(gamepad1.a && opModeIsActive()) {
-
-                }
+                // Wait for a to be pressed
+                while (gamepad1.a);
+                driveSlides(0);
             }
+
+            // driveSlides() adds the encoder offset to telemetrySave so it can be printed here
+            for (Object o : telemetrySave) {
+                telemetry.addData("test", o);
+            }
+            telemetry.update();
+            // Wait for a to be pressed
+            while (gamepad1.a);
         }
+    }
 }

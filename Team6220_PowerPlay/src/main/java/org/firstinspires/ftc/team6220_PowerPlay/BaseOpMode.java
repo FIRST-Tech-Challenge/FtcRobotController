@@ -207,38 +207,44 @@ public abstract class BaseOpMode extends LinearOpMode {
      * @param targetPosition target position for slides motors in ticks
      */
     public void driveSlides(int targetPosition) {
+        // 0 is home position, so instead of going off of encoder counts go until the limit switch is pressed
         if (targetPosition == 0) {
+            // DigitalChannel.getState() returns whether the input is high or low, in this case, whether the switch is pressed. True when switch is pressed
             if (limitSwitch.getState()) {
-                motorLeftSlides.setPower(-1);
-                motorRightSlides.setPower(-1);
-            } else {
+                // Add what the encoders report before resetting them so we know how much they drift by
                 telemetrySave.add(motorLeftSlides.getCurrentPosition());
+                // Stop and reset both slide motors
                 motorLeftSlides.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
                 motorRightSlides.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-            }
-        }
-        int error = targetPosition - motorLeftSlides.getCurrentPosition();
-        double motorPower = error * Constants.SLIDE_MOTOR_KP;
-
-        // slides not yet at target position
-        if (Math.abs(error) > Constants.ROBOT_SLIDE_TOLERANCE_TICKS) {
-            // slides going down - joystick
-            if (error < 0 && error > Constants.MIN_SLIDE_ERROR_FULL_POWER) {
-                motorLeftSlides.setPower(-0.3);
-                motorRightSlides.setPower(-0.3);
-            // slides going down - bumpers
-            } else if (error < Constants.MIN_SLIDE_ERROR_FULL_POWER) {
-                motorLeftSlides.setPower(-1.0);
-                motorRightSlides.setPower(-1.0);
-            // slides going up - proportional control
             } else {
-                motorLeftSlides.setPower(motorPower);
-                motorRightSlides.setPower(motorPower);
+                // Drive slides down
+                motorLeftSlides.setPower(-1);
+                motorRightSlides.setPower(-1);
             }
-        // slides at target position
         } else {
-            motorLeftSlides.setPower(Constants.SLIDE_FEEDFORWARD);
-            motorRightSlides.setPower(Constants.SLIDE_FEEDFORWARD);
+            int error = targetPosition - motorLeftSlides.getCurrentPosition();
+            double motorPower = error * Constants.SLIDE_MOTOR_KP;
+
+            // slides not yet at target position
+            if (Math.abs(error) > Constants.ROBOT_SLIDE_TOLERANCE_TICKS) {
+                // slides going down - joystick
+                if (error < 0 && error > Constants.MIN_SLIDE_ERROR_FULL_POWER) {
+                    motorLeftSlides.setPower(-0.3);
+                    motorRightSlides.setPower(-0.3);
+                    // slides going down - bumpers
+                } else if (error < Constants.MIN_SLIDE_ERROR_FULL_POWER) {
+                    motorLeftSlides.setPower(-1.0);
+                    motorRightSlides.setPower(-1.0);
+                    // slides going up - proportional control
+                } else {
+                    motorLeftSlides.setPower(motorPower);
+                    motorRightSlides.setPower(motorPower);
+                }
+                // slides at target position
+            } else {
+                motorLeftSlides.setPower(Constants.SLIDE_FEEDFORWARD);
+                motorRightSlides.setPower(Constants.SLIDE_FEEDFORWARD);
+            }
         }
     }
 
