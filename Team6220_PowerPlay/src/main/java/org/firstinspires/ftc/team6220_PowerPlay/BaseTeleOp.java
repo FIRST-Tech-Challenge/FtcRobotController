@@ -97,7 +97,7 @@ public abstract class BaseTeleOp extends BaseOpMode {
      */
     public void driveSlidesWithController() {
         // joystick control
-        slideTargetPosition += (int) (-gamepad2.left_stick_y * 25);
+        slideTargetPosition += (int) (-gamepad2.left_stick_y * Constants.SLIDE_TUNING_MODIFIER);
 
         // cone stack positions - increase position by one if dpad up is just pressed
         if (gamepad2.dpad_up && previousConeStack == currentConeStack) {
@@ -225,6 +225,14 @@ public abstract class BaseTeleOp extends BaseOpMode {
         if (gamepad1.left_bumper && gamepad1.right_bumper) {
             startAngle = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle;
             originalAngle = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle;
+        }
+    }
+
+    public void teleOpJunctionCentering() {
+        if (gamepad1.back) {
+            if (grabberCameraPipeline.detected == true) {
+                centerJunctionTop(grabberCameraPipeline);
+            }
         }
     }
 }

@@ -73,7 +73,7 @@ public class RobotCameraPipeline extends OpenCvPipeline {
             }
 
             // crops contour if the area is below a certain size
-            if (maxVal >= Constants.CONE_STACK_CONTOUR_MINIMUM_SIZE) {
+            if (maxVal >= Constants.CONTOUR_MINIMUM_SIZE) {
                 // get the bounding rectangle around the largest contour
                 Rect boundingRect = Imgproc.boundingRect(contours.get(maxValIdx));
 

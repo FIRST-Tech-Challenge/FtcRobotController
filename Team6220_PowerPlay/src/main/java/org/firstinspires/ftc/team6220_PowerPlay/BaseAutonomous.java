@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.team6220_PowerPlay;
 
+import com.qualcomm.hardware.rev.RevBlinkinLedDriver;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
@@ -8,6 +9,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.openftc.apriltag.AprilTagDetection;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraRotation;
+import org.openftc.easyopencv.OpenCvPipeline;
 
 import java.util.ArrayList;
 import java.util.Locale;
@@ -213,6 +215,7 @@ public abstract class BaseAutonomous extends BaseOpMode {
         }
 
         robotCamera.stopStreaming();
+        robotCamera.closeCameraDevice();
 
         // return default
         if (tagOfInterest == null) {
@@ -221,6 +224,69 @@ public abstract class BaseAutonomous extends BaseOpMode {
         // return detected tag
         } else {
             return tagOfInterest.id;
+        }
+    }
+
+    /**
+     * Starts streaming a camera and sets a pipeline to it, this is a method now because it will have to be called multiple times in any auton class where pipeline switching is used
+     * @param pipeline pipeline that the method inputs, any pipeline-specific methods will have to be called separately
+     * @param camera camera that the method inputs
+     * @param X desired camera width (in pixels)
+     * @param Y desired camera height (in pixels)
+     */
+    public void startCameraWithPipeline(OpenCvPipeline pipeline, OpenCvCamera camera, int X, int Y) {
+        camera.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
+            @Override
+            public void onOpened() {
+                camera.startStreaming(X, Y, OpenCvCameraRotation.UPRIGHT);
+            }
+
+            @Override
+            public void onError(int errorCode) {}
+        });
+        camera.setPipeline(pipeline);
+    }
+
+    public void grabFromStackAndDepositOnJunction(int loopNumber, int angleOffset){
+        for (int i = 0; i <= loopNumber-1; i++) {
+            //drive slides to stack position
+            driveSlides(Constants.STACK_HEIGHTS[i]);
+            //center on cone stack
+            centerConeStack(robotCameraPipeline);
+            sleep(300);
+            //wait for grabber to close
+            driveGrabber(Constants.GRABBER_CLOSE_POSITION);
+            sleep(600);
+            //drive slides to stow position
+            driveSlides(Constants.SLIDE_LOW);
+            //drive backwards 34.5 inches
+            driveAutonomous(180, 34.5);
+            //turn towards junction
+            turnToAngle(90 + angleOffset);
+            //drive slides up
+            driveSlides(Constants.SLIDE_TOP);
+            //wait for slides to go all the way up
+            sleep(600);
+            //drive forward
+            driveAutonomous(0, 2);
+            //center on junction
+            centerJunctionTop(grabberCameraPipeline);
+            sleep(100);
+            //lower slides onto junction
+            driveSlides(Constants.SLIDE_HIGH - 100);
+            sleep(100);
+            //open the grabber
+            driveGrabber(Constants.GRABBER_OPEN_POSITION);
+            //wait for cone to drop
+            sleep(100);
+            //drive slides back up
+            driveSlides(Constants.SLIDE_TOP);
+            sleep(200);
+            //drive backwards
+            driveAutonomous(180, 3);
+            sleep(200);
+            //turn back to 0 heading
+            turnToAngle(0 + angleOffset);
         }
     }
 }
