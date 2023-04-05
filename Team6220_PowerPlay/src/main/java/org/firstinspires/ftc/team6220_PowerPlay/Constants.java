@@ -19,7 +19,7 @@ public class Constants {
     public static final double MINIMUM_DRIVE_POWER = 0.05;
 
     public static final double MAXIMUM_TURN_POWER_AUTONOMOUS = 0.3;
-    public static final double MAXIMUM_DRIVE_POWER_AUTONOMOUS = 0.3;
+    public static final double MAXIMUM_DRIVE_POWER_AUTONOMOUS = 0.5;
 
     public static final double MAXIMUM_TURN_POWER_TELEOP = 0.5;
     public static final double MAXIMUM_DRIVE_POWER_TELEOP = 0.5;
@@ -76,7 +76,7 @@ public class Constants {
     public static final Scalar UPPER_YELLOW = new Scalar(35, 255, 255);
 
     public static final Scalar LOWER_BLACK = new Scalar(0, 0, 0);
-    public static final Scalar UPPER_BLACK = new Scalar(180, 255, 35);
+    public static final Scalar UPPER_BLACK = new Scalar(180, 255, 42);
 
     public static final Size BLUR_SIZE = new Size(5, 5);
 
@@ -91,7 +91,7 @@ public class Constants {
 
     public static final double DRIVE_AUTHORITY_SCALER = 1.35;
 
-    public static final int JUNCTION_TOP_MAX_SIZE = 40000;
+    public static final int JUNCTION_TOP_MAX_SIZE = 100000;
 
     public static final int[] STACK_HEIGHTS = new int[] {0, 117, 238, 383, 537};
 

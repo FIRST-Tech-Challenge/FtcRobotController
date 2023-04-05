@@ -235,7 +235,7 @@ public abstract class BaseOpMode extends LinearOpMode {
             yOffset = Constants.CAMERA_CENTER_Y - pipeline.yPosition;
 
             // check if the action is cancelled
-            if (gamepad1.start) {
+            if (gamepad1.start || pipeline.detected) {
                 cancelled = true;
             }
 
@@ -273,7 +273,7 @@ public abstract class BaseOpMode extends LinearOpMode {
             } else {
                 strafePower = coneStackPixelsAndWidthToStrafingPower(xOffset, width);
                 turnPower = Constants.AUTHORITY_SCALER * coneStackPixelsAndWidthToTurningPower(xOffset, width);
-                driveWithIMU(strafePower, Constants.DRIVE_AUTHORITY_SCALER * coneStackWidthMotorPower(width), turnPower);
+                driveWithoutIMU(strafePower, Constants.DRIVE_AUTHORITY_SCALER * coneStackWidthMotorPower(width), turnPower);
                 telemetry.addData("xStrafingPower", strafePower);
                 telemetry.addData("xTurningPower", turnPower);
                 telemetry.addData("yMotorPower", coneStackWidthMotorPower(width));

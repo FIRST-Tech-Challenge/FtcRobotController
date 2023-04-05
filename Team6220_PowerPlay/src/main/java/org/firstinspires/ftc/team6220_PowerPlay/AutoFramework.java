@@ -53,13 +53,11 @@ abstract public class AutoFramework extends BaseAutonomous {
         // raise slides to high junction height
         driveSlidesAutonomous(Constants.SLIDE_HIGH);
 
-        while(!grabberCameraPipeline.detected) {
-            // strafe right to face high junction
-            driveWithoutIMU(-0.01,0,0);
-        }
+        driveAutonomous(driveCourse, 10.5);
 
         // center on junction top
         centerJunctionTop(grabberCameraPipeline);
+
         sleep(100);
 
         // lower cone on to junction

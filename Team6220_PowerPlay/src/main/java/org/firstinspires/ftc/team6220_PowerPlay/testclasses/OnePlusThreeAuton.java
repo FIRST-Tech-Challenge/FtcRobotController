@@ -20,7 +20,7 @@ public class OnePlusThreeAuton extends BaseAutonomous {
         int[] signalArray = new int[]{90, 11, -90, 11, -90, 33};
 
         //EXPERIMENTAL FOR TESTING PURPOSES
-        int LEFT_ANGLE_OFFSET = 90;
+        int LEFT_ANGLE_OFFSET = -90;
 
         //reinit cameras to switch pipelines
         RobotCameraPipeline robotCameraPipeline = new RobotCameraPipeline();
