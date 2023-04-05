@@ -18,7 +18,6 @@ import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
-import org.firstinspires.ftc.teamcode.robots.UGBot.utils.Constants;
 import org.firstinspires.ftc.teamcode.robots.reachRefactor.simulation.DcMotorExSim;
 import org.firstinspires.ftc.teamcode.robots.taubot.util.TauPosition;
 import org.firstinspires.ftc.teamcode.robots.taubot.util.Utils;
@@ -115,10 +114,6 @@ public class Turret implements Subsystem {
         return  correction;
     }
 
-    public void cacheHeadingForNextRun(){
-        cacheHeading = heading;
-    }
-
     Articulation articulation;
 
     public enum Articulation{
@@ -186,13 +181,13 @@ public class Turret implements Subsystem {
                 //todo - this has not been tested yet - also might want to do this differently - like cached heading should be stored and retrieved from disk
                 //offsetHeading = wrapAngleMinus(imuAngles.firstAngle, cacheHeading);
             //else
-                offsetHeading = wrapAngleMinus(imuAngles.firstAngle + Constants.TURRET_OFFSET_HEADING, heading);
+            offsetHeading = wrapAngleMinus(imuAngles.firstAngle, heading);
             turretInitialized = true;
         }
 
         //update current IMU heading before doing any other calculations
         heading = wrapAngle(offsetHeading + imuAngles.firstAngle) ;
-        cacheHeadingForNextRun();
+
 
         if (controlMethodIMU) {
             turretPID.enable();
@@ -307,8 +302,8 @@ public class Turret implements Subsystem {
      * @param angle the value that the current heading will be assigned to
      */
     public void setHeading(double angle){
-        heading = angle;
-        turretInitialized = false; //triggers recalc of heading offset at next IMU update cycle
+        offsetHeading = wrapAngle(imuAngles.firstAngle + angle);
+        //turretInitialized = false; //triggers recalc of heading offset at next IMU update cycle
     }
 
     public void resetTurretHeading(TauPosition pos, double loggerTimeoutM){

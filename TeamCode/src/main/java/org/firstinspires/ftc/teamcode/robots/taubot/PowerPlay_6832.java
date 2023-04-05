@@ -280,14 +280,14 @@ public class PowerPlay_6832 extends OpMode {
         resetGame();
         robot.driveTrain.articulate(DriveTrain.Articulation.unlock);
         if(gameState.equals(GameState.TELE_OP)){
-            robot.crane.resetCrane(startingPosition);
+            //robot.crane.resetCrane(startingPosition);
             robot.underarm.setJointAngle(UnderArm.JointAngle.SafePos);
             robot.underarm.articulate(UnderArm.Articulation.jointAngles);
         }
 
         if(gameState.equals(GameState.TEST)){
             robot.driveTrain.setPoseEstimate(startingPosition.getPose());
-            robot.crane.resetCrane(startingPosition);
+            //robot.crane.resetCrane(startingPosition);
             robot.underarm.setJointAngle(UnderArm.JointAngle.SafePos);
             robot.underarm.articulate(UnderArm.Articulation.jointAngles);
         }

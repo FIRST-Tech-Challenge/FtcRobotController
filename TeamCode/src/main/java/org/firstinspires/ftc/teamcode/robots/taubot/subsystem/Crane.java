@@ -249,6 +249,8 @@ public class Crane implements Subsystem {
     double runExtendAmp;
     int extendMaxTics;
 
+    public static double CALIBRATE_STALL_AMP = 3.25;
+
     public boolean calibrate(){
         // to calibrate we want the arm to be fully retracted and the shoulder
         // to be fully up at the physical stop as a repeatable starting position
@@ -262,7 +264,7 @@ public class Crane implements Subsystem {
                 extenderActivePID = false;
                 robot.driveTrain.extend();
                 extenderMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-                extenderMotor.setPower(-0.3);
+                extenderMotor.setPower(-0.4);
                 setShoulderTargetAngle(SHOULDER_DEG_MAX);
                 futureTime = futureTime(.25);
                 calibrateStage++;
@@ -278,7 +280,7 @@ public class Crane implements Subsystem {
 
             case 2:
                 // both motors are stalled
-                if(extenderMotor.getCurrent(CurrentUnit.AMPS) > 2.5){
+                if(extenderMotor.getCurrent(CurrentUnit.AMPS) > CALIBRATE_STALL_AMP){
                     extenderMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
                     extenderMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
                     extenderMotor.setPower(-0.1); //barely stop it from extending
@@ -513,7 +515,6 @@ public class Crane implements Subsystem {
                 }
                 setShoulderTargetAngle(SAFE_SHOULDER_ANGLE);
                 setExtendTargetPos(SAFE_ARM_LENGTH);
-                robot.turret.articulate(Turret.Articulation.lockToOneHundredAndEighty); //turret will not move AT ALL from home position no matter the target
                 break;
             case autonDrive:
                 fieldPositionTarget = deltaGripperPosition.add(robotPosition);
@@ -524,7 +525,7 @@ public class Crane implements Subsystem {
                 if(Transfer()) articulation = Articulation.manual;
                 break;
             case init:
-                robot.turret.articulate(Turret.Articulation.lockToZero);
+                //robot.turret.articulate(Turret.Articulation.lockToZero);
                 break;
             case postTransfer:
                 if(postTransfer()){

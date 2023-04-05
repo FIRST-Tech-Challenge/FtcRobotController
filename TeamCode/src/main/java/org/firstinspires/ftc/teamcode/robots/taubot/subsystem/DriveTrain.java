@@ -6,11 +6,9 @@ import static org.firstinspires.ftc.teamcode.robots.taubot.util.Constants.Distan
 import static org.firstinspires.ftc.teamcode.robots.taubot.util.Constants.MAX_CHASSIS_LENGTH;
 import static org.firstinspires.ftc.teamcode.robots.taubot.util.Constants.MIN_CHASSIS_LENGTH;
 import static org.firstinspires.ftc.teamcode.robots.taubot.util.Constants.*;
-import static org.firstinspires.ftc.teamcode.robots.taubot.util.Utils.wrapAngle;
-import static org.firstinspires.ftc.teamcode.robots.taubot.util.Utils.wrapAngleRad;
+import static org.firstinspires.ftc.teamcode.robots.taubot.util.Utils.*;
 import static org.firstinspires.ftc.teamcode.robots.taubot.util.Constants.diffInchesToEncoderTicks;
 import static org.firstinspires.ftc.teamcode.robots.reachRefactor.util.Constants.swerveInchesToEncoderTicks;
-import static org.firstinspires.ftc.teamcode.util.utilMethods.futureTime;
 
 
 import androidx.annotation.NonNull;
@@ -312,6 +310,8 @@ public class DriveTrain extends DiffyDrive implements Subsystem {
 
     double rawHeading;
 
+    Orientation orientation;
+
     @Override
     public void update(Canvas fieldOverlay) {
 
@@ -337,7 +337,7 @@ public class DriveTrain extends DiffyDrive implements Subsystem {
             chassisLength = chassisLengthDistanceSensor.getDistance(DistanceUnit.INCH) + Distance_HUB_TO_UNDERARM_MIN;
         }
 
-        Orientation orientation = imu.getAngularOrientation().toAxesReference(AxesReference.INTRINSIC).toAxesOrder(AxesOrder.ZYX);
+        orientation = imu.getAngularOrientation().toAxesReference(AxesReference.INTRINSIC).toAxesOrder(AxesOrder.ZYX);
         if (!imuOffsetsInitialized && imu.isGyroCalibrated()) {
             headingOffset = orientation.firstAngle;
             rollOffset = wrapAngleRad(orientation.secondAngle);
@@ -348,7 +348,7 @@ public class DriveTrain extends DiffyDrive implements Subsystem {
 
         rawHeading = orientation.firstAngle;
 
-        heading = orientation.firstAngle - headingOffset;
+        heading = wrapAngleRad(orientation.firstAngle - headingOffset);
 
         roll = orientation.secondAngle - rollOffset;
         pitch = orientation.thirdAngle - pitchOffset;
@@ -405,8 +405,8 @@ public class DriveTrain extends DiffyDrive implements Subsystem {
     @Override
     public Map<String, Object> getTelemetry(boolean debug) {
         Map<String, Object> telemetryMap = new LinkedHashMap<>();
-        telemetryMap.put("turnStuff", turnAngle - poseEstimate.getHeading());
-
+        telemetryMap.put("turnStuff", poseEstimate.getHeading());
+        telemetryMap.put("Heading", heading);
         if (debug) {
             telemetryMap.put("Current Drive Mode", getArticulation());
             telemetryMap.put("Grid Drive Index", gridDriveIndex);
@@ -501,7 +501,7 @@ public class DriveTrain extends DiffyDrive implements Subsystem {
         rightPosition=0;
     }
 
-    public void resetGridDrive(Position start){
+    /*public void resetGridDrive(Position start){
         resetEncoders();
         if(PowerPlay_6832.gameState.equals(PowerPlay_6832.GameState.AUTONOMOUS)) {
             setPoseEstimate(new Pose2d(start.getPose().getX(), start.getPose().getY()));
@@ -510,9 +510,9 @@ public class DriveTrain extends DiffyDrive implements Subsystem {
         }else if(PowerPlay_6832.gameState.equals(PowerPlay_6832.GameState.TELE_OP)){
             setPoseEstimate(new Pose2d(cachePosition.x, cachePosition.y,lastRunHeading));
         }
-    }
+    }*/
 
-    public void resetDrivetrainPos(Position start, TauPosition pos, double loggerTimeoutM){
+    /*public void resetDrivetrainPos(Position start, TauPosition pos, double loggerTimeoutM){
         resetEncoders();
         if(PowerPlay_6832.gameState.equals(PowerPlay_6832.GameState.AUTONOMOUS)) {
             setPoseEstimate(new Pose2d(start.getPose().getX(), start.getPose().getY()));
@@ -520,12 +520,13 @@ public class DriveTrain extends DiffyDrive implements Subsystem {
             setPoseEstimate(new Pose2d(start.getPose().getX(), start.getPose().getY()));
         }else if(PowerPlay_6832.gameState.equals(PowerPlay_6832.GameState.TELE_OP)){
             int loggerTimeout = (int)(loggerTimeoutM*60000);
-            if(System.currentTimeMillis()-pos.getTimestamp()>loggerTimeout)
+            if(System.currentTimeMillis()-pos.getTimestamp()>loggerTimeout) {
                 setPoseEstimate(new Pose2d(start.getPose().getX(), start.getPose().getY()));
+            }
             else
                 setPoseEstimate(pos.getPose());
         }
-    }
+    }*/
 
     @Override
     public String getTelemetryName() {
@@ -758,6 +759,14 @@ public class DriveTrain extends DiffyDrive implements Subsystem {
 
     //see isDriving();
     boolean isTurning(){return turnInit;}
+
+    public void setHeadingOffset(double offset){
+        headingOffset=offset;
+    }
+
+    public void setHeading(double angle){
+        headingOffset = wrapAngleMinusRad(orientation.firstAngle + angle);
+    }
 
     @Override
     public void setDriveSignal(@NonNull DriveSignal driveSignal) {

@@ -20,6 +20,7 @@ import org.checkerframework.checker.units.qual.C;
 import org.firstinspires.ftc.robotcore.internal.system.Misc;
 import org.firstinspires.ftc.teamcode.robots.taubot.ConeStack;
 import org.firstinspires.ftc.teamcode.robots.taubot.Field;
+import org.firstinspires.ftc.teamcode.robots.taubot.PowerPlay_6832;
 import org.firstinspires.ftc.teamcode.robots.taubot.util.Constants;
 import org.firstinspires.ftc.teamcode.robots.taubot.util.DashboardUtil;
 import org.firstinspires.ftc.teamcode.robots.taubot.util.PositionLogger;
@@ -59,6 +60,8 @@ public class Robot implements Subsystem {
 
     private long[] subsystemUpdateTimes;
     private boolean autoDumpEnabled, doubleDuckEnabled;
+
+    private TauPosition pos;
 
     private boolean rightConeStack;
     private boolean autonTurnDoneTelemetry, autonOnPoleTelemetry;
@@ -130,7 +133,10 @@ public class Robot implements Subsystem {
         }
 
         if(debug) {
-
+            telemetryMap.put("Memory Pose X", pos.getPose().getX());
+            telemetryMap.put("Memory Pose Y", pos.getPose().getY());
+            telemetryMap.put("Memory Pose Heading", pos.getPose().getHeading());
+            telemetryMap.put("Memory Turret Heading", pos.getTurretHeading());
         }
         telemetryMap.put("Update Pose happens " ,updatePoseHappens);
 
@@ -155,10 +161,33 @@ public class Robot implements Subsystem {
         return "Robot";
     }
 
+
     public void resetRobotPosFromLog(Constants.Position start, double loggerTimeoutMinutes){
-        TauPosition pos = positionLog.readPose();
-        driveTrain.resetDrivetrainPos(start, pos, loggerTimeoutMinutes);
-        turret.resetTurretHeading(pos, loggerTimeoutMinutes);
+        pos = positionLog.readPose();
+        //driveTrain.resetDrivetrainPos(start, pos, loggerTimeoutMinutes);
+        //turret.resetTurretHeading(pos, loggerTimeoutMinutes);
+        driveTrain.resetEncoders();
+        if(PowerPlay_6832.gameState.equals(PowerPlay_6832.GameState.AUTONOMOUS)) {
+            driveTrain.setPoseEstimate(new Pose2d(start.getPose().getX(), start.getPose().getY()));
+        }else if (PowerPlay_6832.gameState.equals(PowerPlay_6832.GameState.TEST)){
+            driveTrain.setPoseEstimate(new Pose2d(start.getPose().getX(), start.getPose().getY()));
+        }else if(PowerPlay_6832.gameState.equals(PowerPlay_6832.GameState.TELE_OP)){
+            int loggerTimeout = (int)(loggerTimeoutMinutes*60000);
+            if(System.currentTimeMillis()-pos.getTimestamp()>loggerTimeout) {
+                driveTrain.setPoseEstimate(new Pose2d(start.getPose().getX(), start.getPose().getY()));
+                turret.setHeading(0);
+
+            }
+            else {
+                //driveTrain.setHeadingOffset(pos.getPose().getHeading());
+                //Pose2d posein = new Pose2d(pos.getPose().getX(),pos.getPose().getY(),0);
+                Pose2d tempPos = new Pose2d(pos.getPose().getX(), pos.getPose().getY(), 0);
+                driveTrain.setPoseEstimate(tempPos);
+                driveTrain.setHeading(pos.getPose().getHeading());
+                //
+                turret.setHeading(pos.getTurretHeading());
+            }
+        }
     }
 
     public void clearBulkCaches(){

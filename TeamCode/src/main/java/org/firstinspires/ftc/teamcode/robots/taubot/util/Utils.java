@@ -69,9 +69,18 @@ public class Utils {
         return ((angle % 360) + 360) % 360;
     }
 
+    public static double wrapAngleMinus(double angle){
+        return 360 - wrapAngleRad(angle);
+    }
+
     public static double wrapAngleRad(double angle){
         return ((angle % (2 * Math.PI)) + (2 * Math.PI)) % (2 * Math.PI);
     }
+
+    public static double wrapAngleMinusRad(double angle){
+        return 2*Math.PI - wrapAngleRad(angle);
+    }
+
 
     public static double closestAngle(double a, double b)
     {
