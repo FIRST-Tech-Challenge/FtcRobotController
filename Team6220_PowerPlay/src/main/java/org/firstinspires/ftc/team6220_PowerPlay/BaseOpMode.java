@@ -216,10 +216,12 @@ public abstract class BaseOpMode extends LinearOpMode {
                 // Stop and reset both slide motors
                 motorLeftSlides.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
                 motorRightSlides.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+                motorLeftSlides.setPower(0);
+                motorRightSlides.setPower(0);
             } else {
                 // Drive slides down
-                motorLeftSlides.setPower(-1);
-                motorRightSlides.setPower(-1);
+                motorLeftSlides.setPower(-0.5);
+                motorRightSlides.setPower(-0.5);
             }
         } else {
             int error = targetPosition - motorLeftSlides.getCurrentPosition();
@@ -244,6 +246,20 @@ public abstract class BaseOpMode extends LinearOpMode {
             } else {
                 motorLeftSlides.setPower(Constants.SLIDE_FEEDFORWARD);
                 motorRightSlides.setPower(Constants.SLIDE_FEEDFORWARD);
+            }
+        }
+    }
+
+    public void driveSlidesLoop(int targetPosition) {
+        if (targetPosition == 0) {
+            while (!limitSwitch.getState()) {
+                driveSlides(0);
+            }
+            motorLeftSlides.setPower(0);
+            motorRightSlides.setPower(0);
+        } else {
+            while (Math.abs(targetPosition - motorLeftSlides.getCurrentPosition()) > Constants.ROBOT_SLIDE_TOLERANCE_TICKS) {
+                driveSlides(targetPosition);
             }
         }
     }

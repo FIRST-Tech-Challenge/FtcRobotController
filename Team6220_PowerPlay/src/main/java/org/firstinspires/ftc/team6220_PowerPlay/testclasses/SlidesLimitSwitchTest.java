@@ -15,7 +15,9 @@ public class SlidesLimitSwitchTest extends BaseTeleOp {
     @Override
     public void runOpMode() {
         initialize();
-        driveSlides(0);
+        driveSlidesLoop(0);
+        telemetry.addData("DONE", "DONE");
+        telemetry.update();
         waitForStart();
 
         while (opModeIsActive()) {
@@ -23,11 +25,12 @@ public class SlidesLimitSwitchTest extends BaseTeleOp {
             for (int i = 0; i <= 20; i++) {
                 for (int j = 0; j <= 5; j++) {
                     // Drive slides to random position between ticks 50 and Constants.SLIDE_TOP
-                    driveSlides(rng.nextInt(Constants.SLIDE_TOP - 50) + 50);
+                    driveSlidesLoop(rng.nextInt(Constants.SLIDE_TOP - 50) + 50);
                 }
-                // Wait for a to be pressed
-                while (!gamepad1.a);
-                driveSlides(0);
+
+                sleep(500);
+                driveSlidesLoop(0);
+                sleep(1000);
             }
 
             // driveSlides() adds the encoder offset to telemetrySave so it can be printed here
@@ -35,8 +38,7 @@ public class SlidesLimitSwitchTest extends BaseTeleOp {
                 telemetry.addData("test", o);
             }
             telemetry.update();
-            // Wait for a to be pressed
-            while (!gamepad1.a);
+            sleep(100000);
         }
     }
 }
