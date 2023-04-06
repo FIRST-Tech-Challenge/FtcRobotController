@@ -38,7 +38,7 @@ public class Field {
     private ArrayList<Boolean> queuedReversals = new ArrayList<>();
     int[] currentTile = {0, 0}, extra = {0, 0};
     int directionIndex = 1;
-    Pose2d lastVelocity;
+    ArrayList<Pose2d> lastVelocity;
     boolean isReversed = true, lastReversed = true, autoTele = false;
     boolean[] needsCompile = {false, false};
     double lookingDistance = 20.0, dropDistance = 12;
@@ -86,7 +86,10 @@ public class Field {
         imu = p_imu;
         locker = new ReentrantLock();
         needsLocker = new ReentrantLock();
-        lastVelocity = new Pose2d(0,0,0);
+        lastVelocity = new ArrayList();
+        for(int i=0;i<5;i++) {
+            lastVelocity.add(new Pose2d(0,0,0));
+        }
     }
 
     //which tile bot at
@@ -146,19 +149,58 @@ public class Field {
         }
         return false;
     }
+    private Pose2d velocityLog(Pose2d newVelocity){
+        double[] poses = {0,0,0};
+        for(int i=0;i<5;i++){
+            poses[0]+=lastVelocity.get(i).getX()*(i/2.0+3);
+            poses[1]+=lastVelocity.get(i).getY()*(i/2.0+3);
+            poses[2]+=lastVelocity.get(i).getHeading()*(i/2.0+3);
+        }
+//        if(xya[0]==false) {
+            poses[0] += newVelocity.getX() * 5;
+//        }
+//        else{
+//            poses[0]*=1.5;
+//        }
+//        if(xya[1]==false) {
+            poses[1] += newVelocity.getY() * 5;
+//        }
+//        else{
+//            poses[1]*=1.5;
+//        }
+//        if(xya[2]==false) {
+            poses[2] += newVelocity.getHeading() * 5;
+//        }
+//        else{
+//            poses[2]*=1.5;
+//        }
+//        if(xya[0]&&xya[1]&&xya[2]) {
+            lastVelocity.remove(0);
+            lastVelocity.add(newVelocity);
+//        }
+
+        return new Pose2d(poses[0]/25,poses[1]/25,poses[2]/25);
+    }
+
     public Pose2d filteredVelocity(Pose2d newVelocity){
-        double[] filteredVelocity = {newVelocity.getX(),newVelocity.getY(),newVelocity.getHeading()};
-        if(abs(newVelocity.getX()-lastVelocity.getX())>14){
-            filteredVelocity[0] = 100;
+        boolean[] xya = {true,true,true};
+        double[] fildered = {newVelocity.getX(), newVelocity.getY(),newVelocity.getHeading()};
+        if(abs(newVelocity.getX()-lastVelocity.get(4).getX())>14){
+            xya[0] = false;
+            fildered[0] += lastVelocity.get(4).getX();
+            fildered[0]/=2;
         }
-        if(abs(newVelocity.getY()-lastVelocity.getY())>14){
-            filteredVelocity[1] = 100;
+        if(abs(newVelocity.getY()-lastVelocity.get(4).getY())>14){
+            xya[1] = false;
+            fildered[1] += lastVelocity.get(4).getY();
+            fildered[1]/=2;
         }
-        if(abs(newVelocity.getHeading()-lastVelocity.getHeading())>0.6){
-            filteredVelocity[2] = 69;
+        if(abs(newVelocity.getHeading()-lastVelocity.get(4).getHeading())>0.6){
+            xya[2] = false;
+            fildered[2] += lastVelocity.get(4).getHeading();
+            fildered[2]/=2;
         }
-        lastVelocity = newVelocity;
-        return new Pose2d(filteredVelocity[0],filteredVelocity[1],filteredVelocity[2]);
+        return velocityLog(newVelocity);
     }
 
     public boolean lookingAtCone() {

@@ -86,6 +86,13 @@ public class Queuer {
 
     public void reset() {
         queueElements.clear();
+        firstLoop = true;
+        mustFinish = false;
+        currentlyQueueing = 0;
+        currentEvent = -1;
+        mustStartCondition = -1;
+        completeCurrentEvent = 0;
+        delay = 0;
     }
 
     /**
