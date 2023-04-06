@@ -24,9 +24,10 @@ public class StackGrabbingTest extends BaseAutonomous {
             driveSlidesAutonomous(Constants.STACK_HEIGHTS[i]);
             //center on cone stack
             centerConeStack(robotCameraPipeline);
-            sleep(300);
-            //wait for grabber to close
+            sleep(100);
+            //close grabber
             driveGrabber(Constants.GRABBER_CLOSE_POSITION);
+            //wait for grabber to close
             sleep(300);
             //drive slides to stow position
             driveSlidesAutonomous(Constants.SLIDE_LOW);
