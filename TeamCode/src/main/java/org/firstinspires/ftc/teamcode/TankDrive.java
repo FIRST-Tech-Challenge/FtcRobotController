@@ -56,7 +56,7 @@ public final class TankDrive {
     public static double IN_PER_TICK = 0;
     public static double TRACK_WIDTH_TICKS = 0;
 
-    // feedforward parameters
+    // feedforward parameters in tick units
     public static double kS = 0;
     public static double kV = 0;
     public static double kA = 0;
@@ -80,7 +80,7 @@ public final class TankDrive {
 
     public final TankKinematics kinematics = new TankKinematics(IN_PER_TICK * TRACK_WIDTH_TICKS);
 
-    public final MotorFeedforward feedforward = new MotorFeedforward(kS, kV, kA);
+    public final MotorFeedforward feedforward = new MotorFeedforward(kS, kV / IN_PER_TICK, kA / IN_PER_TICK);
 
     public final TurnConstraints defaultTurnConstraints = new TurnConstraints(
             MAX_ANG_VEL, -MAX_ANG_ACCEL, MAX_ANG_ACCEL);
