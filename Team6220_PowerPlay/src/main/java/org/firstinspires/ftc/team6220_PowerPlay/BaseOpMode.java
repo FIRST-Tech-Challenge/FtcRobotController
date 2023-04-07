@@ -12,6 +12,7 @@ import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DigitalChannel;
 import com.qualcomm.robotcore.hardware.PwmControl;
 import com.qualcomm.robotcore.hardware.ServoImplEx;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
@@ -25,6 +26,7 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
+import java.util.Timer;
 
 public abstract class BaseOpMode extends LinearOpMode {
     // motors
@@ -206,7 +208,8 @@ public abstract class BaseOpMode extends LinearOpMode {
      * this method will allow the slides to move to a specified target position
      * @param targetPosition target position for slides motors in ticks
      */
-    public void driveSlides(int targetPosition) {
+    public boolean driveSlides(int targetPosition) {
+        boolean canExit = false;
         // 0 is home position, so instead of going off of encoder counts go until the limit switch is pressed
         if (targetPosition == 0) {
             // DigitalChannel.getState() returns whether the input is high or low, in this case, whether the switch is pressed. True when switch is pressed
@@ -218,6 +221,7 @@ public abstract class BaseOpMode extends LinearOpMode {
                 motorRightSlides.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
                 motorLeftSlides.setPower(0);
                 motorRightSlides.setPower(0);
+                canExit = true;
             } else {
                 // Drive slides down
                 motorLeftSlides.setPower(-0.5);
@@ -246,22 +250,15 @@ public abstract class BaseOpMode extends LinearOpMode {
             } else {
                 motorLeftSlides.setPower(Constants.SLIDE_FEEDFORWARD);
                 motorRightSlides.setPower(Constants.SLIDE_FEEDFORWARD);
+                canExit = true;
             }
         }
+        return canExit;
     }
 
     public void driveSlidesLoop(int targetPosition) {
-        if (targetPosition == 0) {
-            while (!limitSwitch.getState()) {
-                driveSlides(0);
-            }
-            motorLeftSlides.setPower(0);
-            motorRightSlides.setPower(0);
-        } else {
-            while (Math.abs(targetPosition - motorLeftSlides.getCurrentPosition()) > Constants.ROBOT_SLIDE_TOLERANCE_TICKS) {
-                driveSlides(targetPosition);
-            }
-        }
+        ElapsedTime elapsedTime = new ElapsedTime(System.nanoTime());
+        while(!driveSlides(targetPosition) && elapsedTime.seconds() < 5);
     }
 
     /**

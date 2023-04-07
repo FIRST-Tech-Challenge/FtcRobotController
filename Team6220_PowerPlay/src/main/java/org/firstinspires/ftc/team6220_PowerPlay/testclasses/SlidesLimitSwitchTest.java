@@ -22,14 +22,24 @@ public class SlidesLimitSwitchTest extends BaseTeleOp {
 
         while (opModeIsActive()) {
             // Repeat moving to 5 random slide heights then homing 20 times.
-            for (int i = 0; i <= 20; i++) {
-                for (int j = 0; j <= 5; j++) {
+            for (int i = 0; i < 5; i++) {
+                for (int j = 0; j < 5; j++) {
                     // Drive slides to random position between ticks 50 and Constants.SLIDE_TOP
-                    driveSlidesLoop(rng.nextInt(Constants.SLIDE_TOP - 50) + 50);
+                    int targetPosition = rng.nextInt(Constants.SLIDE_TOP - 200) + 50;
+                    telemetry.addData("homing count", i+1);
+                    telemetry.addData("random position count", j+1);
+                    telemetry.addData("target position", targetPosition);
+                    telemetry.addData("encoder Position", motorLeftSlides.getCurrentPosition());
+                    telemetry.update();
+                    driveSlidesLoop(targetPosition);
                 }
 
                 sleep(500);
+                telemetry.addLine("homing");
+                telemetry.update();
                 driveSlidesLoop(0);
+                telemetry.addLine("done");
+                telemetry.update();
                 sleep(1000);
             }
 
