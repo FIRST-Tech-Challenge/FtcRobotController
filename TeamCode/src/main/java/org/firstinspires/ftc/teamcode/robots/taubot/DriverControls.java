@@ -7,10 +7,12 @@ import static org.firstinspires.ftc.teamcode.robots.taubot.PowerPlay_6832.starti
 import static org.firstinspires.ftc.teamcode.robots.taubot.PowerPlay_6832.alliance;
 import static org.firstinspires.ftc.teamcode.robots.taubot.PowerPlay_6832.active;
 import static org.firstinspires.ftc.teamcode.robots.taubot.PowerPlay_6832.debugTelemetryEnabled;
+import static org.firstinspires.ftc.teamcode.robots.taubot.PowerPlay_6832.useCachePos;
 import static org.firstinspires.ftc.teamcode.robots.taubot.PowerPlay_6832.visionProviderFinalized;
 import static org.firstinspires.ftc.teamcode.robots.taubot.PowerPlay_6832.visionProviderIndex;
 import static org.firstinspires.ftc.teamcode.robots.taubot.util.Utils.notJoystickDeadZone;
 
+import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.qualcomm.robotcore.hardware.Gamepad;
 
 import org.firstinspires.ftc.teamcode.robots.taubot.subsystem.Crane;
@@ -124,11 +126,11 @@ public class DriverControls {
             //manual override of drivetrain
             if (notJoystickDeadZone(gamepad1.left_stick_y) || notJoystickDeadZone(gamepad1.left_stick_x)) {
                 robot.driveTrain.ManualArcadeDrive(-0.7 * gamepad1.left_stick_y, 0.7 * gamepad1.left_stick_x);
-                robot.driverIsDriving();
+                robot.driverIsNowDriving();
             }
             else {
                 robot.driveTrain.ManualDriveOff();
-                robot.driverNotDriving();
+                robot.driverHasStoppedDriving();
             }
         }else{
             if (notJoystickDeadZone(gamepad1.right_stick_x)){
@@ -145,11 +147,11 @@ public class DriverControls {
             //manual override of drivetrain
             if (notJoystickDeadZone(gamepad1.left_stick_y) || notJoystickDeadZone(gamepad1.left_stick_x)) {
                 robot.driveTrain.ManualArcadeDrive(-gamepad1.left_stick_y, gamepad1.left_stick_x);
-                robot.driverIsDriving();
+                robot.driverIsNowDriving();
             }
             else {
                 robot.driveTrain.ManualDriveOff();
-                robot.driverNotDriving();
+                robot.driverHasStoppedDriving();
             }
         }
     }
@@ -228,11 +230,11 @@ public class DriverControls {
             //manual override of drivetrain
             robot.driveTrain.gridMove(-0.7 * gamepad1.left_stick_y, -0.7 * gamepad1.left_stick_x);
             if (notJoystickDeadZone(gamepad1.left_stick_y) || notJoystickDeadZone(gamepad1.left_stick_x)) {
-                robot.driverIsDriving();
+                robot.driverIsNowDriving();
             }
             else {
                 robot.driveTrain.ManualDriveOff();
-                robot.driverNotDriving();
+                robot.driverHasStoppedDriving();
             }
         }else{
             if (notJoystickDeadZone(gamepad1.right_stick_x)){
@@ -249,11 +251,11 @@ public class DriverControls {
             //manual override of drivetrain
             robot.driveTrain.gridMove(-gamepad1.left_stick_y, -gamepad1.left_stick_x);
             if (notJoystickDeadZone(gamepad1.left_stick_y) || notJoystickDeadZone(gamepad1.left_stick_x)) {
-                robot.driverIsDriving();
+                robot.driverIsNowDriving();
             }
             else {
                 robot.driveTrain.ManualDriveOff();
-                robot.driverNotDriving();
+                robot.driverHasStoppedDriving();
             }
         }
     }
@@ -285,12 +287,43 @@ public class DriverControls {
             active = !active;
     }
 
+    int testindex=0;
+    void testSetPoseEstimate(){
+        switch (testindex){
+            case 0:
+                robot.driveTrain.setPoseEstimate(new Pose2d(0, 0, Math.PI));
+                robot.driveTrain.setHeading(Math.PI);
+                break;
+            case 1:
+                robot.driveTrain.setPoseEstimate(new Pose2d(0, 0, Math.PI/2));
+                robot.driveTrain.setHeading(Math.PI/2);
+                break;
+            case 2:
+                robot.driveTrain.setPoseEstimate(new Pose2d(0, 0, Math.PI/4));
+                robot.driveTrain.setHeading(Math.PI/4);
+                break;
+            case 3:
+                robot.driveTrain.setPoseEstimate(new Pose2d(0, 0, 0));
+                robot.driveTrain.setHeading(0);
+                break;
+
+        }
+        if(stickyGamepad1.a){
+            testindex++;
+            if(testindex>3) testindex=0;
+        }
+
+    }
+
     void handlePregameControls() {
         Constants.Position previousStartingPosition = startingPosition;
         if(stickyGamepad1.x || stickyGamepad2.x) {
             alliance = Constants.Alliance.BLUE;        }
         if(stickyGamepad1.b || stickyGamepad2.b) {
             alliance = Constants.Alliance.RED;
+        }
+        if(stickyGamepad1.guide) {
+            useCachePos=!useCachePos;
         }
 
         if(stickyGamepad1.dpad_left || stickyGamepad2.dpad_left)startingPosition = Constants.Position.START_LEFT;

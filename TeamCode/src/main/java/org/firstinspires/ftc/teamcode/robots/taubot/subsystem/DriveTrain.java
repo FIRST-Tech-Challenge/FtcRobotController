@@ -405,8 +405,8 @@ public class DriveTrain extends DiffyDrive implements Subsystem {
     @Override
     public Map<String, Object> getTelemetry(boolean debug) {
         Map<String, Object> telemetryMap = new LinkedHashMap<>();
-        telemetryMap.put("turnStuff", poseEstimate.getHeading());
-        telemetryMap.put("Heading", heading);
+        telemetryMap.put("Roadrunner Heading", poseEstimate.getHeading());
+        telemetryMap.put("Drivetrain Heading", heading);
         if (debug) {
             telemetryMap.put("Current Drive Mode", getArticulation());
             telemetryMap.put("Grid Drive Index", gridDriveIndex);
@@ -749,6 +749,7 @@ public class DriveTrain extends DiffyDrive implements Subsystem {
         double correction = headingPID.performPID();
         if(headingErrorMagnitude < HEADING_PID_TOLERANCE){
             headingPID.disable();
+            setMotorPowers(0,0);
             return true;
         }else{
             headingPID.enable();

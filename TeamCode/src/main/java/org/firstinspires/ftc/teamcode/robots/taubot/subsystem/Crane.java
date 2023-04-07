@@ -525,7 +525,7 @@ public class Crane implements Subsystem {
                 if(Transfer()) articulation = Articulation.manual;
                 break;
             case init:
-                //robot.turret.articulate(Turret.Articulation.lockToZero);
+                robot.turret.articulate(Turret.Articulation.lockToZero);
                 break;
             case postTransfer:
                 if(postTransfer()){
@@ -1063,6 +1063,10 @@ public class Crane implements Subsystem {
     }
 
     Vector3 deltaGripperPosition = new Vector3(0,0,10);
+
+    public void recenterFieldTarget(){
+        fieldPositionTarget = new Vector3(robot.driveTrain.getPoseEstimate().getX()+6,robot.driveTrain.getPoseEstimate().getY(),8);
+    }
 
     public void adjustTurretAngle(double speed){
         if(robotIsNotTipping)targetTurretAngle = robot.turret.getHeading() + (TURRET_ADJUST * speed);

@@ -1,13 +1,10 @@
 package org.firstinspires.ftc.teamcode.robots.taubot.subsystem;
 
 import static org.firstinspires.ftc.teamcode.robots.taubot.util.Utils.craneIK;
-import static org.firstinspires.ftc.teamcode.robots.taubot.util.Utils.distanceBetweenAngles;
 import static org.firstinspires.ftc.teamcode.robots.taubot.util.Utils.wrapAngleRad;
 import static org.firstinspires.ftc.teamcode.util.utilMethods.futureTime;
 
-import android.database.CrossProcessCursor;
 import android.graphics.Bitmap;
-import android.util.Log;
 
 import com.acmerobotics.dashboard.canvas.Canvas;
 import com.acmerobotics.dashboard.config.Config;
@@ -16,7 +13,6 @@ import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.VoltageSensor;
 
-import org.checkerframework.checker.units.qual.C;
 import org.firstinspires.ftc.robotcore.internal.system.Misc;
 import org.firstinspires.ftc.teamcode.robots.taubot.ConeStack;
 import org.firstinspires.ftc.teamcode.robots.taubot.Field;
@@ -26,7 +22,6 @@ import org.firstinspires.ftc.teamcode.robots.taubot.util.DashboardUtil;
 import org.firstinspires.ftc.teamcode.robots.taubot.util.PositionLogger;
 import org.firstinspires.ftc.teamcode.robots.taubot.util.TauPosition;
 import org.firstinspires.ftc.teamcode.statemachine.StateMachine;
-import org.firstinspires.ftc.teamcode.util.Vector3;
 import org.opencv.android.Utils;
 import org.opencv.core.CvType;
 import org.opencv.core.Mat;
@@ -118,7 +113,7 @@ public class Robot implements Subsystem {
         telemetryMap.put("Articulation", articulation);
         telemetryMap.put("Unfolded", unfolded);
         telemetryMap.put("AutonState", autonIndex);
-        telemetryMap.put("AutonTurnStatus", autonTurnDoneTelemetry);
+        telemetryMap.put("AutonTurnSt atus", autonTurnDoneTelemetry);
         telemetryMap.put("AutonOnPoleStatus", autonOnPoleTelemetry);
         telemetryMap.put("TransferState", transferStage);
         telemetryMap.put("Time Thing", timeSupervisor);
@@ -162,29 +157,33 @@ public class Robot implements Subsystem {
     }
 
 
-    public void resetRobotPosFromLog(Constants.Position start, double loggerTimeoutMinutes){
+    public void readLog(){
+        pos = positionLog.readPose();
+    }
+    public void resetRobotPosFromLog(Constants.Position start, double loggerTimeoutMinutes, boolean loadSaved){
         pos = positionLog.readPose();
         //driveTrain.resetDrivetrainPos(start, pos, loggerTimeoutMinutes);
         //turret.resetTurretHeading(pos, loggerTimeoutMinutes);
         driveTrain.resetEncoders();
         if(PowerPlay_6832.gameState.equals(PowerPlay_6832.GameState.AUTONOMOUS)) {
             driveTrain.setPoseEstimate(new Pose2d(start.getPose().getX(), start.getPose().getY()));
+            articulate(Robot.Articulation.UNFOLD);
+            turret.articulate(Turret.Articulation.lockToZero);
         }else if (PowerPlay_6832.gameState.equals(PowerPlay_6832.GameState.TEST)){
             driveTrain.setPoseEstimate(new Pose2d(start.getPose().getX(), start.getPose().getY()));
+            articulate(Robot.Articulation.UNFOLD);
+            turret.articulate(Turret.Articulation.lockToZero);
         }else if(PowerPlay_6832.gameState.equals(PowerPlay_6832.GameState.TELE_OP)){
             int loggerTimeout = (int)(loggerTimeoutMinutes*60000);
-            if(System.currentTimeMillis()-pos.getTimestamp()>loggerTimeout) {
+            if(System.currentTimeMillis()-pos.getTimestamp()>loggerTimeout||!loadSaved) { //dont use cached position
                 driveTrain.setPoseEstimate(new Pose2d(start.getPose().getX(), start.getPose().getY()));
-                turret.setHeading(0);
-
+                articulate(Robot.Articulation.UNFOLD);
+                turret.articulate(Turret.Articulation.lockToZero);
+                //turret.setHeading(0);
             }
-            else {
-                //driveTrain.setHeadingOffset(pos.getPose().getHeading());
-                //Pose2d posein = new Pose2d(pos.getPose().getX(),pos.getPose().getY(),0);
-                Pose2d tempPos = new Pose2d(pos.getPose().getX(), pos.getPose().getY(), 0);
-                driveTrain.setPoseEstimate(tempPos);
+            else { //apply cached position
+                driveTrain.setPoseEstimate(pos.getPose());
                 driveTrain.setHeading(pos.getPose().getHeading());
-                //
                 turret.setHeading(pos.getTurretHeading());
             }
         }
@@ -198,7 +197,7 @@ public class Robot implements Subsystem {
     public void start(){
         driveTrain.articulate(DriveTrain.Articulation.unlock);
         crane.enableAllPID();
-        turret.articulate(Turret.Articulation.runToAngle);
+        //turret.articulate(Turret.Articulation.runToAngle);
     }
 
     public double deltaTime = 0;
@@ -253,7 +252,7 @@ public class Robot implements Subsystem {
 
         Utils.matToBitmap(craneMat, craneBitmap);
 
-        DashboardUtil.drawRobot(fieldOverlay, driveTrain.getPoseEstimate(), driveTrain.getWheelVelocities(), turret.getTargetHeading(), crane.getShoulderAngle(), crane.getExtendInches());
+        DashboardUtil.drawRobot(fieldOverlay, driveTrain.getPoseEstimate(), driveTrain.getWheelVelocities(), turret.getHeading(), crane.getShoulderAngle(), crane.getExtendInches(), crane.fieldPositionTarget);
     }
 
     public Bitmap getBitmap() {
@@ -606,11 +605,11 @@ public class Robot implements Subsystem {
 
     private boolean driverDriving = false;
 
-    public void driverIsDriving(){
+    public void driverIsNowDriving(){
         setDriverDriving(true);
     }
 
-    public void driverNotDriving(){
+    public void driverHasStoppedDriving(){
         setDriverDriving(false);
     }
 

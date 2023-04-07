@@ -533,10 +533,10 @@ public class UnderArm implements Subsystem {
                     // these values are meant to be fine tuned by driver positioning between hover and pickup
                     setElbowTargetAngle(SS_HOVER_ELBOW);
 //<<<<<<< HEAD
-//                    setShoulderTargetAngle(SS_HOVER_SHOULDER);
+                    setShoulderTargetAngle(SS_HOVER_SHOULDER);
                     //todo - REVERT THIS TO ABOVE - FOR TESTING
-                    setShoulderTargetAngle(PICKUP_SHOULDER_ANGLE);
-                    setWristTargetAngle(SS_HOVER_WRIST);
+//                    setShoulderTargetAngle(PICKUP_SHOULDER_ANGLE);
+                    setWristTargetAngle(PICKUP_WRIST_ANGLE);
 //=======
 //                    setShoulderTargetAngle(SS_HOVER_SHOULDER);
 //                    setWristTargetAngle(PICKUP_WRIST_ANGLE);

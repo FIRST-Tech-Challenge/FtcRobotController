@@ -1,8 +1,7 @@
 package org.firstinspires.ftc.teamcode.robots.taubot.subsystem;
 
-import static org.firstinspires.ftc.teamcode.robots.reachRefactor.util.Constants.USE_MOTOR_SMOOTHING;
-import static org.firstinspires.ftc.teamcode.robots.taubot.util.Utils.wrapAngle;
-import static org.firstinspires.ftc.teamcode.util.utilMethods.wrapAngleMinus;
+import static org.firstinspires.ftc.teamcode.robots.taubot.util.Constants.USE_MOTOR_SMOOTHING;
+import static org.firstinspires.ftc.teamcode.robots.taubot.util.Utils.*;
 
 import com.acmerobotics.dashboard.canvas.Canvas;
 import com.acmerobotics.dashboard.config.Config;
@@ -18,7 +17,8 @@ import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
-import org.firstinspires.ftc.teamcode.robots.reachRefactor.simulation.DcMotorExSim;
+import org.firstinspires.ftc.teamcode.robots.taubot.util.Constants;
+import org.firstinspires.ftc.teamcode.robots.taubot.simulation.DcMotorExSim;
 import org.firstinspires.ftc.teamcode.robots.taubot.util.TauPosition;
 import org.firstinspires.ftc.teamcode.robots.taubot.util.Utils;
 import org.firstinspires.ftc.teamcode.util.PIDController;
@@ -31,6 +31,7 @@ public class Turret implements Subsystem {
 
     public static PIDCoefficients TURRET_PID = new PIDCoefficients(0.01, 0.02, 0.0002); //0.02, 0.01, 0.05), changed from (0.01, 0.02, 0.0002)
     public static final double TICKS_PER_DEGREE = 36;
+    static double TURRET_OFFSET_HEADING = 0;
     public static double TURRET_TOLERANCE = 1;
     public static double TURRET_TICKS_ROTATION_SPEED = 1500;
 
@@ -91,16 +92,7 @@ public class Turret implements Subsystem {
 
     double offsetHeading;
 
-    void customWrapHeading(){
-        if(heading > 180){
-            heading -= 360;
-            targetHeading -= 360;
-        }
-        if(heading < -180){
-            heading += 360;
-            targetHeading += 360;
-        }
-    }
+
     public static double distanceBetweenAngles(double currentAngle, double targetAngle){
         double result = wrapAngle(targetAngle - currentAngle);
         if(result >180) return result - 360;
@@ -118,7 +110,7 @@ public class Turret implements Subsystem {
 
     public enum Articulation{
         runToAngle,
-        lockToOneHundredAndEighty,
+        lockTo180,
         transfer,
         lockToZero,
         calibrate
@@ -135,7 +127,7 @@ public class Turret implements Subsystem {
                 setControlMethodIMU(true);
                 turretPID.setInput(-distanceBetweenAngles(heading,targetHeading));
                 break;
-            case lockToOneHundredAndEighty: //home position is facing facing back of robot not towards underarm
+            case lockTo180: //home position is facing facing back of robot not towards underarm
                 setControlMethodIMU(false);
                 targetTics = TRANSFER_TICS;
                 //turretPID.setInput(-distanceBetweenAngles(heading,180 + Math.toDegrees(robot.driveTrain.getRawHeading())));
@@ -181,12 +173,12 @@ public class Turret implements Subsystem {
                 //todo - this has not been tested yet - also might want to do this differently - like cached heading should be stored and retrieved from disk
                 //offsetHeading = wrapAngleMinus(imuAngles.firstAngle, cacheHeading);
             //else
-            offsetHeading = wrapAngleMinus(imuAngles.firstAngle, heading);
+            offsetHeading = wrapAngleMinus(imuAngles.firstAngle + TURRET_OFFSET_HEADING, heading);
             turretInitialized = true;
         }
 
         //update current IMU heading before doing any other calculations
-        heading = wrapAngle(offsetHeading + imuAngles.firstAngle) ;
+        heading = wrapAngle(imuAngles.firstAngle - offsetHeading) ;
 
 
         if (controlMethodIMU) {
@@ -302,7 +294,7 @@ public class Turret implements Subsystem {
      * @param angle the value that the current heading will be assigned to
      */
     public void setHeading(double angle){
-        offsetHeading = wrapAngle(imuAngles.firstAngle + angle);
+        offsetHeading = wrapAngleMinus(imuAngles.firstAngle + TURRET_OFFSET_HEADING, angle);
         //turretInitialized = false; //triggers recalc of heading offset at next IMU update cycle
     }
 
@@ -348,6 +340,8 @@ public class Turret implements Subsystem {
         if(debug) {
 
             telemetryMap.put("target turret heading", targetHeading);
+            telemetryMap.put("heading offset", offsetHeading);
+            telemetryMap.put("raw IMU heading", imuAngles.firstAngle);
             telemetryMap.put("turret motor amps", motor.getCurrent(CurrentUnit.AMPS));
             telemetryMap.put("turret near target", isTurretNearTarget());
             telemetryMap.put("turret correction", power);

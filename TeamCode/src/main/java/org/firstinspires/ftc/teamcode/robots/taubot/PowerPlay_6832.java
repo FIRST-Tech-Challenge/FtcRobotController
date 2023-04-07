@@ -44,6 +44,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 import org.firstinspires.ftc.robotcore.internal.system.Misc;
+import org.firstinspires.ftc.teamcode.robots.taubot.subsystem.Crane;
 import org.firstinspires.ftc.teamcode.robots.taubot.subsystem.DriveTrain;
 import org.firstinspires.ftc.teamcode.robots.taubot.subsystem.Robot;
 import org.firstinspires.ftc.teamcode.robots.taubot.subsystem.Turret;
@@ -86,6 +87,7 @@ public class PowerPlay_6832 extends OpMode {
 
     // global state
     public static boolean active;
+    public static boolean useCachePos=true;
     public static boolean debugTelemetryEnabled;
     static boolean gridDriveActive = false;
     private boolean initializing, smoothingEnabled;
@@ -217,6 +219,7 @@ public class PowerPlay_6832 extends OpMode {
         voltageSmoother = new ExponentialSmoother(.025);
 
         robot = new Robot(hardwareMap,false);
+        robot.readLog();
 
         // gamepads
         dc = new DriverControls(gamepad1,gamepad2);
@@ -299,8 +302,7 @@ public class PowerPlay_6832 extends OpMode {
 
         teleOpIndex = 0;
 
-        robot.articulate(Robot.Articulation.UNFOLD);
-        robot.turret.articulate(Turret.Articulation.lockToZero);
+
         robot.start();
     }
 
@@ -311,7 +313,8 @@ public class PowerPlay_6832 extends OpMode {
 
     public void resetGame(){
         //robot.driveTrain.resetGridDrive(startingPosition);
-        robot.resetRobotPosFromLog(startingPosition, 5);
+        robot.resetRobotPosFromLog(startingPosition, 5, useCachePos);
+        robot.crane.recenterFieldTarget();
         robot.updatePositionLog = true;
     }
 
@@ -338,6 +341,9 @@ public class PowerPlay_6832 extends OpMode {
                         if(robot.AutonRun(auto.visionProvider.getMostFrequentPosition().getIndex(),startingPosition)) {
                             gameState = GameState.TELE_OP;
                             gameStateIndex = 1;
+                            robot.underarm.resetArticulations();
+                            robot.underarm.articulate(UnderArm.Articulation.substationHover);
+                            robot.driveTrain.tuck();
                             active = false;
                             //super.stop();
                         }
@@ -346,7 +352,7 @@ public class PowerPlay_6832 extends OpMode {
                         switch(teleOpIndex) {
                             case 0:
                                 //robot.driveTrain.resetGridDrive(Constants.Position.START_LEFT);
-                                robot.resetRobotPosFromLog(startingPosition, 5);
+                                //robot.resetRobotPosFromLog(startingPosition, 5);
                                 teleOpIndex++;
                                 break;
                             case 1:
@@ -356,8 +362,11 @@ public class PowerPlay_6832 extends OpMode {
                         //}
                                 break;
                             case 2:
-                                dc.joystickDrive();
-                                dc.UnderarmControls();
+                                //dc.joystickDrive();
+                                //dc.UnderarmControls();
+                                //todo uncomment above 2 lines and delete below 2 lines to go back to normal teleop
+                                robot.driverIsNowDriving(); //force crane to safe locked position
+                                dc.testSetPoseEstimate();
                                 break;
 
                         }

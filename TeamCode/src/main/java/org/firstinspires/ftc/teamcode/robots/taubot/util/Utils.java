@@ -69,8 +69,9 @@ public class Utils {
         return ((angle % 360) + 360) % 360;
     }
 
-    public static double wrapAngleMinus(double angle){
-        return 360 - wrapAngleRad(angle);
+    public static double wrapAngleMinus(double angle1, double angle2){
+        //return 360-((angle1 + angle2) % 360);
+        return wrapAngle(wrapAngle(angle1) - wrapAngle(angle2));
     }
 
     public static double wrapAngleRad(double angle){

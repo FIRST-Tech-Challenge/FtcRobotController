@@ -8,6 +8,8 @@ import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.acmerobotics.roadrunner.path.Path;
 
+import org.firstinspires.ftc.teamcode.util.Vector3;
+
 import java.util.List;
 
 @Config
@@ -20,13 +22,16 @@ public class DashboardUtil {
 
     private static final String ROBOT_COLOR = "Black";
     private static final String WHEEL_COLOR = "Red";
-    private static final String TURRET_COLOR = "#00ff44";
+    private static final String TURRET_COLOR = "#00ff44"; //bright green
+
+    private static final String TARGET_COLOR = "Red";
+
 
     private static final String EXTEND_COLOR = "Purple";
     private static final String SHOULDER_TO_ELBOW_COLOR = "Purple";
     private static final String ELBOW_TO_WRIST_COLOR = "Orange";
 
-    private static double TRACK_WIDTH = 0.5;
+    private static double TRACK_WIDTH = 14;
 
     public static void drawLine(Canvas canvas, Vector2d p1, Vector2d p2) {
         canvas.strokeLine(
@@ -76,7 +81,7 @@ public class DashboardUtil {
         canvas.strokeLine(x1, y1, x2, y2);
     }
 
-    public static void drawRobot(Canvas canvas, Pose2d pose, List<Double> wheelVelocities, double turretHeading, double shoulderAngle, double extendInches) {
+    public static void drawRobot(Canvas canvas, Pose2d pose, List<Double> wheelVelocities, double turretHeading, double shoulderAngle, double extendInches, Vector3 fieldPositionTarget) {
         // calculating wheel positions
         Vector2d position = pose.vec();
         Vector2d leftWheel = new Vector2d(0, TRACK_WIDTH / 2);
@@ -94,9 +99,18 @@ public class DashboardUtil {
         leftWheelEnd = position.plus(leftWheelEnd.rotated(heading));
         rightWheelEnd = position.plus(rightWheelEnd.rotated(heading));
 
+        //draw current field target
+        canvas.setStroke(TARGET_COLOR);
+        canvas.strokeCircle(fieldPositionTarget.x, fieldPositionTarget.y, 1);
+        canvas.strokeCircle(fieldPositionTarget.x, fieldPositionTarget.y, 3);
+
         // drawing axles
         canvas.setStroke(ROBOT_COLOR);
         drawLine(canvas, leftWheel, rightWheel); // front axle
+
+        //draw chassis
+        canvas.setStroke(ROBOT_COLOR);
+        drawPose(canvas,pose);
 
         // drawing wheels
         canvas.setStroke(WHEEL_COLOR);
@@ -113,7 +127,7 @@ public class DashboardUtil {
         );
 
         canvas.strokeCircle(turretPose.getX(), turretPose.getY(), TURRET_RADIUS);
-        turretHeading = Math.toRadians(180 + -turretHeading) + heading;
+        turretHeading = Math.toRadians(turretHeading);
         Vector2d u = new Vector2d(Math.cos(turretHeading), Math.sin(turretHeading));
         Vector2d v = u.times(TURRET_RADIUS);
         double x1 = turretPose.getX() + v.getX() / 2, y1 = turretPose.getY() + v.getY() / 2;
@@ -141,5 +155,7 @@ public class DashboardUtil {
         canvas.setStroke(wristColor);
         canvas.strokeCircle(etw_x2, etw_y2, WRIST_RADIUS);
   */
+
+
     }
 }
