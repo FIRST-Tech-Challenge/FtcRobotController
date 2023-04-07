@@ -44,10 +44,8 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 import org.firstinspires.ftc.robotcore.internal.system.Misc;
-import org.firstinspires.ftc.teamcode.robots.taubot.subsystem.Crane;
 import org.firstinspires.ftc.teamcode.robots.taubot.subsystem.DriveTrain;
 import org.firstinspires.ftc.teamcode.robots.taubot.subsystem.Robot;
-import org.firstinspires.ftc.teamcode.robots.taubot.subsystem.Turret;
 import org.firstinspires.ftc.teamcode.robots.taubot.subsystem.UnderArm;
 import org.firstinspires.ftc.teamcode.robots.taubot.util.Constants;
 import org.firstinspires.ftc.teamcode.robots.taubot.util.ExponentialSmoother;
@@ -87,7 +85,7 @@ public class PowerPlay_6832 extends OpMode {
 
     // global state
     public static boolean active;
-    public static boolean useCachePos=true;
+    public static boolean ignoreCachePosition = false;
     public static boolean debugTelemetryEnabled;
     static boolean gridDriveActive = false;
     private boolean initializing, smoothingEnabled;
@@ -312,10 +310,9 @@ public class PowerPlay_6832 extends OpMode {
     }
 
     public void resetGame(){
-        //robot.driveTrain.resetGridDrive(startingPosition);
-        robot.resetRobotPosFromLog(startingPosition, 5, useCachePos);
-        robot.crane.recenterFieldTarget();
-        robot.updatePositionLog = true;
+        robot.resetRobotPosFromCache(startingPosition, 5, ignoreCachePosition);
+        robot.crane.setSafeFieldTarget(); //if crane is in any automatic targeting mode (not locked relative to chassis), this sets it to a short relative position
+        robot.updatePositionCache = true; //start updating the cache
     }
 
     private static Vector2 position;

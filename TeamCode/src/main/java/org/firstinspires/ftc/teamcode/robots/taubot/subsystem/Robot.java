@@ -19,7 +19,7 @@ import org.firstinspires.ftc.teamcode.robots.taubot.Field;
 import org.firstinspires.ftc.teamcode.robots.taubot.PowerPlay_6832;
 import org.firstinspires.ftc.teamcode.robots.taubot.util.Constants;
 import org.firstinspires.ftc.teamcode.robots.taubot.util.DashboardUtil;
-import org.firstinspires.ftc.teamcode.robots.taubot.util.PositionLogger;
+import org.firstinspires.ftc.teamcode.robots.taubot.util.PositionCache;
 import org.firstinspires.ftc.teamcode.robots.taubot.util.TauPosition;
 import org.firstinspires.ftc.teamcode.statemachine.StateMachine;
 import org.opencv.android.Utils;
@@ -49,9 +49,9 @@ public class Robot implements Subsystem {
     public Subsystem[] subsystems;
     public Field field;
 
-    public PositionLogger positionLog;
-    public TauPosition currentPos;
-    public boolean updatePositionLog = false;
+    public PositionCache positionCache;
+    public TauPosition currentTauPos;
+    public boolean updatePositionCache = false;
 
     private long[] subsystemUpdateTimes;
     private boolean autoDumpEnabled, doubleDuckEnabled;
@@ -91,7 +91,7 @@ public class Robot implements Subsystem {
         underarm = new UnderArm(hardwareMap, this, simulated);
         crane = new Crane(hardwareMap, this, simulated);
 
-        positionLog = new PositionLogger( 5);
+        positionCache = new PositionCache( 5);
 
         subsystems = new Subsystem[] {driveTrain, turret, crane, underarm}; //{driveTrain, turret, crane};
         subsystemUpdateTimes = new long[subsystems.length];
@@ -158,10 +158,10 @@ public class Robot implements Subsystem {
 
 
     public void readLog(){
-        pos = positionLog.readPose();
+        pos = positionCache.readPose();
     }
-    public void resetRobotPosFromLog(Constants.Position start, double loggerTimeoutMinutes, boolean loadSaved){
-        pos = positionLog.readPose();
+    public void resetRobotPosFromCache(Constants.Position start, double loggerTimeoutMinutes, boolean ignoreCache){
+        pos = positionCache.readPose();
         //driveTrain.resetDrivetrainPos(start, pos, loggerTimeoutMinutes);
         //turret.resetTurretHeading(pos, loggerTimeoutMinutes);
         driveTrain.resetEncoders();
@@ -175,7 +175,7 @@ public class Robot implements Subsystem {
             turret.articulate(Turret.Articulation.lockToZero);
         }else if(PowerPlay_6832.gameState.equals(PowerPlay_6832.GameState.TELE_OP)){
             int loggerTimeout = (int)(loggerTimeoutMinutes*60000);
-            if(System.currentTimeMillis()-pos.getTimestamp()>loggerTimeout||!loadSaved) { //dont use cached position
+            if(System.currentTimeMillis()-pos.getTimestamp()>loggerTimeout||ignoreCache) { //dont use cached position
                 driveTrain.setPoseEstimate(new Pose2d(start.getPose().getX(), start.getPose().getY()));
                 articulate(Robot.Articulation.UNFOLD);
                 turret.articulate(Turret.Articulation.lockToZero);
@@ -220,9 +220,9 @@ public class Robot implements Subsystem {
             subsystem.update(fieldOverlay);
             subsystemUpdateTimes[i] = System.nanoTime() - updateStartTime;
         }
-        if(updatePositionLog) {
-            currentPos = new TauPosition(driveTrain.getPoseEstimate(), turret.getHeading());
-            positionLog.update(currentPos, false);
+        if(updatePositionCache) {
+            currentTauPos = new TauPosition(driveTrain.getPoseEstimate(), turret.getHeading());
+            positionCache.update(currentTauPos, false);
         }
         //paint the robot's current pose for dashboard
         //todo - update this Reach code to show the arm for the Tombot style crane
@@ -261,11 +261,12 @@ public class Robot implements Subsystem {
 
     @Override
     public void stop() {
-        currentPos = new TauPosition(driveTrain.getPoseEstimate(), turret.getHeading());
-        positionLog.update(currentPos, true);
-        positionLog.closeLog();
+
         for(Subsystem subsystem: subsystems)
             subsystem.stop();
+
+        currentTauPos = new TauPosition(driveTrain.getPoseEstimate(), turret.getHeading());
+        positionCache.update(currentTauPos, true);
     }
 
     public double getVoltage(){return batteryVoltageSensor.getVoltage();}

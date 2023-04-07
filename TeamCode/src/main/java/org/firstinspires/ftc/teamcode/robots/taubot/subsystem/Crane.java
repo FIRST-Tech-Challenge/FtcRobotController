@@ -26,7 +26,6 @@ import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
-import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 import org.firstinspires.ftc.robotcore.external.navigation.Position;
 import org.firstinspires.ftc.robotcore.external.navigation.Velocity;
@@ -46,7 +45,6 @@ import org.firstinspires.ftc.teamcode.statemachine.Stage;
 import org.firstinspires.ftc.teamcode.statemachine.StateMachine;
 import org.firstinspires.ftc.teamcode.util.PIDController;
 import org.firstinspires.ftc.teamcode.util.Vector3;
-import org.firstinspires.ftc.teamcode.util.utilMethods;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -1064,7 +1062,7 @@ public class Crane implements Subsystem {
 
     Vector3 deltaGripperPosition = new Vector3(0,0,10);
 
-    public void recenterFieldTarget(){
+    public void setSafeFieldTarget(){
         fieldPositionTarget = new Vector3(robot.driveTrain.getPoseEstimate().getX()+6,robot.driveTrain.getPoseEstimate().getY(),8);
     }
 

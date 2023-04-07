@@ -7,7 +7,7 @@ import static org.firstinspires.ftc.teamcode.robots.taubot.PowerPlay_6832.starti
 import static org.firstinspires.ftc.teamcode.robots.taubot.PowerPlay_6832.alliance;
 import static org.firstinspires.ftc.teamcode.robots.taubot.PowerPlay_6832.active;
 import static org.firstinspires.ftc.teamcode.robots.taubot.PowerPlay_6832.debugTelemetryEnabled;
-import static org.firstinspires.ftc.teamcode.robots.taubot.PowerPlay_6832.useCachePos;
+import static org.firstinspires.ftc.teamcode.robots.taubot.PowerPlay_6832.ignoreCachePosition;
 import static org.firstinspires.ftc.teamcode.robots.taubot.PowerPlay_6832.visionProviderFinalized;
 import static org.firstinspires.ftc.teamcode.robots.taubot.PowerPlay_6832.visionProviderIndex;
 import static org.firstinspires.ftc.teamcode.robots.taubot.util.Utils.notJoystickDeadZone;
@@ -323,7 +323,7 @@ public class DriverControls {
             alliance = Constants.Alliance.RED;
         }
         if(stickyGamepad1.guide) {
-            useCachePos=!useCachePos;
+            ignoreCachePosition =!ignoreCachePosition;
         }
 
         if(stickyGamepad1.dpad_left || stickyGamepad2.dpad_left)startingPosition = Constants.Position.START_LEFT;

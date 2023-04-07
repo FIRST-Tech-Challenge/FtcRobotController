@@ -29,35 +29,20 @@
 
 package org.firstinspires.ftc.teamcode.samples;
 
-import android.content.SharedPreferences;
-import android.os.Environment;
-
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
-import com.google.gson.Gson;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.util.ElapsedTime;
-import com.qualcomm.robotcore.util.Range;
 
 import org.firstinspires.ftc.robotcore.internal.system.Misc;
-import org.firstinspires.ftc.teamcode.RC;
 import org.firstinspires.ftc.teamcode.robots.taubot.util.ExponentialSmoother;
-import org.firstinspires.ftc.teamcode.robots.taubot.util.PositionLogger;
+import org.firstinspires.ftc.teamcode.robots.taubot.util.PositionCache;
 import org.firstinspires.ftc.teamcode.robots.taubot.util.TauPosition;
-import org.firstinspires.ftc.teamcode.robots.taubot.vision.Position;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.PrintStream;
 import java.util.LinkedHashMap;
 import java.util.Map;
-
-import static org.firstinspires.ftc.teamcode.robots.taubot.util.Constants.LOW_BATTERY_VOLTAGE;
 
 /**
  * This file contains an example of an iterative (Non-Linear) "OpMode".
@@ -82,7 +67,7 @@ public class PositionLoggerTest extends OpMode
     TelemetryPacket packet = new TelemetryPacket();
     int n;
     TauPosition testpos;
-    private PositionLogger logger = new PositionLogger(5);
+    private PositionCache positionCache = new PositionCache(5);
     long lastLoopClockTime, loopTime;
     double loopAvg = 0;
     private static final double loopWeight = .1;
@@ -98,7 +83,7 @@ public class PositionLoggerTest extends OpMode
         dashboard = FtcDashboard.getInstance();
         dashboard.setTelemetryTransmissionInterval(25);
         loopTimeSmoother = new ExponentialSmoother(0.1);
-        TauPosition testread = logger.readPose();
+        TauPosition testread = positionCache.readPose();
         System.out.println("Timestamp: " + testread.getTimestamp() + ", Turret Heading: " +testread.getTurretHeading());
     }
 
@@ -117,7 +102,7 @@ public class PositionLoggerTest extends OpMode
 
         testpos = new TauPosition();
         testpos.setPose(new Pose2d(5, 6, 7));
-        logger.writePose(testpos);
+        positionCache.writePose(testpos, false);
         telemetry.addData("Status", "Initialized");
 
 
@@ -133,7 +118,7 @@ public class PositionLoggerTest extends OpMode
         packet = new TelemetryPacket();
 
         testpos.setTurretHeading(n);
-        n = logger.update(testpos, false);
+        n = positionCache.update(testpos, false);
 
         Map<String, Object> opModeTelemetryMap = new LinkedHashMap<>();
 
@@ -152,7 +137,7 @@ public class PositionLoggerTest extends OpMode
      */
     @Override
     public void stop() {
-        TauPosition testread = logger.readPose();
+        TauPosition testread = positionCache.readPose();
         System.out.println("Timestamp: " + testread.getTimestamp() + ", Turret Heading: " +testread.getTurretHeading());
     }
 
