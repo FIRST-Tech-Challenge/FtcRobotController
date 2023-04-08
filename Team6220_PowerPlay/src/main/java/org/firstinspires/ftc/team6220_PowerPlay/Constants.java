@@ -21,8 +21,8 @@ public class Constants {
     public static final double MAXIMUM_TURN_POWER_AUTONOMOUS = 0.3;
     public static final double MAXIMUM_DRIVE_POWER_AUTONOMOUS = 0.3;
 
-    public static final double MAXIMUM_TURN_POWER_TELEOP = 0.6;
-    public static final double MAXIMUM_DRIVE_POWER_TELEOP = 0.6;
+    public static final double MAXIMUM_TURN_POWER_TELEOP = 0.7;
+    public static final double MAXIMUM_DRIVE_POWER_TELEOP = 0.7;
 
     public static final double SLIDE_FEEDFORWARD = 0.05;
     public static final double SLIDE_MOTOR_KP = 0.01;
@@ -43,9 +43,9 @@ public class Constants {
     public static final int SLIDE_STACK_ONE = 150;
     public static final int SLIDE_BOTTOM = 0;
 
-    public static final double GRABBER_INITIALIZE_POSITION = 1.0;
-    public static final double GRABBER_OPEN_POSITION = 0.6;
-    public static final double GRABBER_CLOSE_POSITION = 0.0;
+    public static final double GRABBER_INITIALIZE_POSITION = 0.17;
+    public static final double GRABBER_OPEN_POSITION = 0.46;
+    public static final double GRABBER_CLOSE_POSITION = 1.0;
 
     public static final double WHEEL_CIRCUMFERENCE = 96 / 25.4 * Math.PI;
     public static final double DRIVE_MOTOR_TICKS_TO_INCHES = WHEEL_CIRCUMFERENCE * Math.sqrt(2) / 537.6;
