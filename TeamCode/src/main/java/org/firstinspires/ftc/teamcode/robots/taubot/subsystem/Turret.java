@@ -113,6 +113,7 @@ public class Turret implements Subsystem {
         lockTo180,
         transfer,
         lockToZero,
+        manual,
         calibrate
     }
 
@@ -123,6 +124,9 @@ public class Turret implements Subsystem {
             case calibrate:
 
                 break;
+            case manual: //default articulation
+
+                break;
             case runToAngle: //normal run to a target angle mode
                 setControlMethodIMU(true);
                 turretPID.setInput(-distanceBetweenAngles(heading,targetHeading));
@@ -130,16 +134,17 @@ public class Turret implements Subsystem {
             case lockTo180: //home position is facing facing back of robot not towards underarm
                 setControlMethodIMU(false);
                 targetTics = TRANSFER_TICS;
-                //turretPID.setInput(-distanceBetweenAngles(heading,180 + Math.toDegrees(robot.driveTrain.getRawHeading())));
+                articulation = Articulation.manual;
                 break;
             case lockToZero: //fold is facing towards underarm
                 setControlMethodIMU(false);
                 targetTics = 0;
+                articulation = Articulation.manual;
                 break;
             case transfer: //transfer position is facing facing back of robot not towards underarm
                 setControlMethodIMU(false);
                 targetTics = TRANSFER_TICS;
-                //turretPID.setInput(-distanceBetweenAngles(heading,180 + Math.toDegrees(robot.driveTrain.getRawHeading())));
+                articulation = Articulation.manual;
                 break;
         }
 

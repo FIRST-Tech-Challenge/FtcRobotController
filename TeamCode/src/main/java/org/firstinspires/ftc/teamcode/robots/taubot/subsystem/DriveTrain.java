@@ -92,7 +92,6 @@ public class DriveTrain extends DiffyDrive implements Subsystem {
     private long lastLoopTime, loopTime;
 
     private static Vector2 cachePosition;
-    private static double headingOffsetForTeleOp;
 
     //devices ---------------------------------------------------------
     List<DcMotorEx> motors;
@@ -354,7 +353,6 @@ public class DriveTrain extends DiffyDrive implements Subsystem {
         angularVelocity = angularVelocities.xRotationRate;
 
         updatePoseEstimate();
-        cachePositionForNextRun();
         poseEstimate = getPoseEstimate();
         poseVelocity = getPoseVelocity();
 
@@ -403,6 +401,7 @@ public class DriveTrain extends DiffyDrive implements Subsystem {
         Map<String, Object> telemetryMap = new LinkedHashMap<>();
         telemetryMap.put("Roadrunner Heading", poseEstimate.getHeading());
         telemetryMap.put("Drivetrain Heading", heading);
+        telemetryMap.put("Heading Offset", headingOffset);
         if (debug) {
             telemetryMap.put("Current Drive Mode", getArticulation());
             telemetryMap.put("Grid Drive Index", gridDriveIndex);
@@ -739,7 +738,7 @@ public class DriveTrain extends DiffyDrive implements Subsystem {
         turnAngle = (turnAngle+360)%360;
         targetHeading = Math.toRadians(turnAngle);
         headingPID.setPID(HEADING_PID);
-        headingPID.setInput(heading);
+        headingPID.setInput(poseEstimate.getHeading());
         headingPID.setSetpoint(targetHeading);
         headingErrorMagnitude = Math.abs(Utils.distanceBetweenAngles(Math.toDegrees(heading),turnAngle));
         double correction = headingPID.performPID();
@@ -993,9 +992,7 @@ public class DriveTrain extends DiffyDrive implements Subsystem {
         return chassisLengthOnTarget;
     }
 
-    public void driveIMU(double heading, double velocity){
 
-    }
 
 
 
@@ -1114,10 +1111,10 @@ public class DriveTrain extends DiffyDrive implements Subsystem {
         return maintainHeading;
     }
 
-
+//roadrunner gets headi ng from IMU here
     @Override
     protected double getRawExternalHeading() {
-        return heading-headingOffset;
+        return heading;
     }
 
     public double getRawHeading(){

@@ -51,8 +51,6 @@ public class DriverControls {
     public static double TURRET_DEADZONE = 0.03;
 
     void joystickDrive() {
-        if(stickyGamepad2.dpad_right)
-            robot.transferAdvance();
 
         if(gamepad1.dpad_up){
             robot.crane.articulate(Crane.Articulation.home);

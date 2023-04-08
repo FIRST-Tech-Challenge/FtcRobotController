@@ -282,15 +282,12 @@ public class PowerPlay_6832 extends OpMode {
         robot.driveTrain.articulate(DriveTrain.Articulation.unlock);
         if(gameState.equals(GameState.TELE_OP)){
             //robot.crane.resetCrane(startingPosition);
-            robot.underarm.setJointAngle(UnderArm.JointAngle.SafePos);
-            robot.underarm.articulate(UnderArm.Articulation.jointAngles);
+            robot.underarm.articulate(UnderArm.Articulation.home);
         }
 
         if(gameState.equals(GameState.TEST)){
-            robot.driveTrain.setPoseEstimate(startingPosition.getPose());
             //robot.crane.resetCrane(startingPosition);
-            robot.underarm.setJointAngle(UnderArm.JointAngle.SafePos);
-            robot.underarm.articulate(UnderArm.Articulation.jointAngles);
+            robot.underarm.articulate(UnderArm.Articulation.home);
         }
         robot.crane.updateScoringPattern();
         robot.driveTrain.articulate(DriveTrain.Articulation.unlock);
@@ -359,11 +356,11 @@ public class PowerPlay_6832 extends OpMode {
                         //}
                                 break;
                             case 2:
-                                //dc.joystickDrive();
-                                //dc.UnderarmControls();
+                                dc.joystickDrive();
+                                dc.UnderarmControls();
                                 //todo uncomment above 2 lines and delete below 2 lines to go back to normal teleop
-                                robot.driverIsNowDriving(); //force crane to safe locked position
-                                dc.testSetPoseEstimate();
+                                //robot.driverIsNowDriving(); //force crane to safe locked position
+                                //dc.testSetPoseEstimate();
                                 break;
 
                         }

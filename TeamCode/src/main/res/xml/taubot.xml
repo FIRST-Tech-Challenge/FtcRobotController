@@ -6,7 +6,8 @@
             <RevRobotics40HDHexMotor name="extender" port="2" />
             <RevRobotics40HDHexMotor name="turret" port="3" />
             <RevRobotics40HDHexMotor name="shoulderAngleEncoder" port="0" />
-            <Servo name="nudgeSwivel" port="0" />
+            <Servo name="flipperServo" port="0" />
+            <Servo name="nudgeSwivel" port="1" />
             <Servo name="servoGripper" port="2" />
             <Servo name="intakeServoBack" port="3" />
             <Servo name="blinkin" port="4" />
