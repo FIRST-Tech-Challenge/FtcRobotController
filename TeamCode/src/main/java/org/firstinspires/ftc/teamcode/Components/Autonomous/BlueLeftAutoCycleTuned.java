@@ -63,7 +63,7 @@ public class BlueLeftAutoCycleTuned extends LinearOpMode {
 //        Trajectory initialtrajectory2 = robot.roadrun.trajectoryBuilder(startPose)
 //                .lineToConstantHeading(new Vector2d(36, 57))
 //                .build();
-        TrajectorySequence preloadtrajectory = robot.roadrun.trajectorySequenceBuilder(new Pose2d(42,63.25, Math.toRadians(90)))
+        TrajectorySequence preloadtrajectory = robot.roadrun.trajectorySequenceBuilder(new Pose2d(41,63.25, Math.toRadians(90)))
                 .setReversed(true)
                 .splineToSplineHeading(new Pose2d(37, 40.25, toRadians(90)), toRadians(270))
                 .splineTo(new Vector2d(36, 22), toRadians(275))

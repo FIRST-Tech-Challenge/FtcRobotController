@@ -405,11 +405,65 @@ public class Field {
         directionIndex = direction;
         boolean shouldMove = true;
         double notTooDeep = 7;
+        double directionindicator = 0;
         double[] derection = {0, 0};
+        double[] move;
         double[] endTangents = {0, Math.toRadians(270), Math.toRadians(180), Math.toRadians(90), Math.toRadians(0)};
         int[] curTile = currentTile;
         if (direction == 5 || direction == 6) {
-            //pole
+            double[] target = new double[2];
+            double halfangle = 0;
+            if ((fullMovement.get(fullMovement.size() - 1)[3] == Math.toRadians(0) && !reversals.get(fullMovement.size() - 1))
+                    || (fullMovement.get(fullMovement.size() - 1)[3] == Math.toRadians(180) && reversals.get(fullMovement.size() - 1)) && curTile[0] != 5) {
+                directionindicator = 4;
+            }
+            else if ((fullMovement.get(fullMovement.size() - 1)[3] == Math.toRadians(90) && !reversals.get(fullMovement.size() - 1))
+                    || (fullMovement.get(fullMovement.size() - 1)[3] == Math.toRadians(270)) && reversals.get(fullMovement.size() - 1)) {
+                directionindicator = 3;
+            }
+            else if ((fullMovement.get(fullMovement.size() - 1)[3] == Math.toRadians(180) && !reversals.get(fullMovement.size() - 1))
+                    || (fullMovement.get(fullMovement.size() - 1)[3] == Math.toRadians(0)) && reversals.get(fullMovement.size() - 1)) {
+                directionindicator = 2;
+            }
+            else if ((fullMovement.get(fullMovement.size() - 1)[3] == Math.toRadians(270) && !reversals.get(fullMovement.size() - 1))
+                    || (fullMovement.get(fullMovement.size() - 1)[3] == Math.toRadians(90)) && reversals.get(fullMovement.size() - 1)) {
+                directionindicator = 1;
+            }
+
+            if (direction == 5) {
+                if (directionindicator == 4 && curTile[0] != 1 && curTile[1] != 5) {
+                    target = poleCoords[currentTile[0] - 1][currentTile[1]];
+                }
+                if (directionindicator == 3 && curTile[0] != 1 && curTile[1] != 1) {
+                    target = poleCoords[currentTile[0] - 1][currentTile[1] - 1];
+                }
+                if (directionindicator == 2 && curTile[0] != 5 && curTile[1] != 1) {
+                    target = poleCoords[currentTile[0]][currentTile[1] - 1];
+                }
+                if (directionindicator == 1 && curTile[0] != 5 && curTile[1] != 5) {
+                    target = poleCoords[currentTile[0]][currentTile[1]];
+                }
+                halfangle = toRadians(endTangents[(int) directionindicator] + 225);
+            }
+
+            if (direction == 6) {
+                if (directionindicator == 4 && curTile[0] != 5 && curTile[1] != 5) {
+                    target = poleCoords[currentTile[0]][currentTile[1]];
+                }
+                if (directionindicator == 3 && curTile[0] != 1 && curTile[1] != 5) {
+                    target = poleCoords[currentTile[0] - 1][currentTile[1]];
+                }
+                if (directionindicator == 2 && curTile[0] != 1 && curTile[1] != 1) {
+                    target = poleCoords[currentTile[0] - 1][currentTile[1] - 1];
+                }
+                if (directionindicator == 1 && curTile[0] != 5 && curTile[1] != 1) {
+                    target = poleCoords[currentTile[0]][currentTile[1] - 1];
+                }
+                halfangle = toRadians(endTangents[(int) directionindicator] + 135);
+            }
+
+            move = new double[]{target[0], target[1], halfangle, halfangle};
+
         } else {
             if (direction == 1) {
                 if (curTile[1] != 5) {
@@ -477,14 +531,14 @@ public class Field {
                 isReversed++;
             }
 
-            double[] move = new double[]{target[0] - derection[0] * notTooDeep, target[1] - derection[1] * notTooDeep,
+            move = new double[]{target[0] - derection[0] * notTooDeep, target[1] - derection[1] * notTooDeep,
                     endTangents[direction] + isReversed * toRadians(180), endTangents[direction]};
-            if (shouldMove) {
-                addMove(move, lastReversed);
-                compiledTrajectory();
-            }
-            gp.removeSequenceElement();
         }
+        if (shouldMove) {
+            addMove(move, lastReversed);
+            compiledTrajectory();
+        }
+        gp.removeSequenceElement();
     }
 
     public void addMove(double[] move, boolean reverse) {
