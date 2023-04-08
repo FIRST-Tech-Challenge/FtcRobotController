@@ -21,6 +21,13 @@ android {
         targetCompatibility JavaVersion.VERSION_1_7
     }
     namespace = 'com.qualcomm.ftcrobotcontroller'
+    buildFeatures {
+        mlModelBinding true
+    }
+}
+
+dependencies {
+    implementation 'org.tensorflow:tensorflow-lite-metadata:0.1.0'
 }
 
 apply from: '../build.dependencies.gradle'
