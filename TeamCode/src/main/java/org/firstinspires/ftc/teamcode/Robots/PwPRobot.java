@@ -186,12 +186,15 @@ public class PwPRobot extends BasicRobot {
                 TrajectorySequence trajectory = roadrun.getCurrentTraj();
                 roadrun.changeTrajectorySequence(roadrun.trajectorySequenceBuilder(trajectory.start())
                         .setReversed(false)
-                        .splineToSplineHeading(new Pose2d(target.vec(), toRadians(180)), toRadians(180)).build());
+                        .splineToSplineHeading(new Pose2d(target.vec(), trajectory.end().getHeading()), trajectory.end().getHeading())
+                        .addTemporalMarker(this::done)
+                        .build());
 //                field.setDoneLookin(true);
                 logger.log("/RobotLogs/GeneralRobot", "mr.obama" + target + "im cone" + roadrun.getPoseEstimate());
 //                logger.log("/RobotLogs/GeneralRobot", "coords"+cv.rotatedConarCoord()[0]+","+cv.rotatedConarCoord()[1]);
 
             }
+            field.setDoneLookin(false);
         }
     }
 

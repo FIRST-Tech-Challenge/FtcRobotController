@@ -94,6 +94,12 @@ public class Queuer {
         completeCurrentEvent = 0;
         delay = 0;
     }
+    public boolean isFullfilled(){
+        return !queueElements.isEmpty() && currentEvent == queueElements.size() - 1;
+    }
+    public boolean isFirstLoop(){
+        return firstLoop;
+    }
 
     /**
      * create new queueElement

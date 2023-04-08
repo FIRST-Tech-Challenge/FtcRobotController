@@ -35,8 +35,8 @@ public class SleeveObserverPipeline extends OpenCvPipeline {
     @Override
     public Mat processFrame(Mat input) {
         Rect ROI = new Rect( //130 x 210, 60 x 120
-                new Point(p1x,p1y),
-                new Point(p2x,p2y));
+                new Point(p1y,p1x),
+                new Point(p2y,p2x));
 //        Mat mat = new Mat();
 //
 //        //mat turns into HSV value

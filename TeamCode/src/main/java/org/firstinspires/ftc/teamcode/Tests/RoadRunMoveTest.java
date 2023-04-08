@@ -61,10 +61,10 @@ public class RoadRunMoveTest extends LinearOpMode {
             robot.followTrajectorySequenceAsync(trajSeq2);
             robot.followTrajectorySequenceAsync(trajSeq2);
             robot.followTrajectorySequenceAsync(trajSeq2);
-//            robot.followTrajectorySequenceAsync(trajSeq2);
-//            robot.followTrajectorySequenceAsync(trajSeq2);
-//            robot.followTrajectorySequenceAsync(trajSeq2);
-//            robot.followTrajectorySequenceAsync(trajSeq2);
+            robot.followTrajectorySequenceAsync(trajSeq2);
+            robot.followTrajectorySequenceAsync(trajSeq2);
+            robot.followTrajectorySequenceAsync(trajSeq2);
+            robot.followTrajectorySequenceAsync(trajSeq2);
 
 //            //func
             robot.setFirstLoop(false);
