@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.Components.Autonomous;
+package org.firstinspires.ftc.teamcode.Autonomous;
 
 import static org.firstinspires.ftc.teamcode.Components.Claw.ClawStates.CLAW_CLOSED;
 import static org.firstinspires.ftc.teamcode.Components.Lift.LiftConstants.LIFT_GROUND;
@@ -17,16 +17,17 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import org.firstinspires.ftc.teamcode.Robots.PwPRobot;
 import org.firstinspires.ftc.teamcode.roadrunner.drive.SampleMecanumDrive;
 @Disabled
+
 @Config
-@Autonomous(name = "RedRightAutoHighTuned")
+@Autonomous(name = "BlueRightAutoHighTuned")
 
 
-public class RedRightAutoHighTuned extends LinearOpMode {
+public class BlueRightAutoHighTuned extends LinearOpMode {
     private SampleMecanumDrive roadrun;
 
     public static double dummyP = 3;
 
-    public static double dummyx = 0.0, dummyy =28, dummya = 270;
+    public static double dummyx = -0.5, dummyy =28, dummya = 270;
     public static double dummyx2 = 0.0, dummyy2 =34, dummya2 = 280;
 
     public static double dummyX = -12, dummyY =36, dummyA = 90;
@@ -37,8 +38,8 @@ public class RedRightAutoHighTuned extends LinearOpMode {
 
     public void runOpMode() {
         PwPRobot robot = new PwPRobot(this, false);
-        robot.roadrun.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        Pose2d startPose = new Pose2d(40.35, 62.25, Math.toRadians(270));
+                robot.roadrun.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        Pose2d startPose = new Pose2d(-29.6, 62.25, Math.toRadians(270));
         robot.roadrun.setPoseEstimate(startPose);
 
         //detectSignal();

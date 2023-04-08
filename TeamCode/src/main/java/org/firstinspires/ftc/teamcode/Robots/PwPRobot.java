@@ -54,7 +54,7 @@ public class PwPRobot extends BasicRobot {
     private ClawExtension clawExtension = null;
     private Lift lift = null;
     private RFGamepad gp = null;
-    private Switch clawSwitch = null;
+    public Switch clawSwitch = null;
     public Field field = null;
     public CVMaster cv = null;
     public SampleMecanumDrive roadrun = null;
@@ -303,17 +303,18 @@ public class PwPRobot extends BasicRobot {
         double cAngle = atan2(diffs[0], diffs[1]);
         double cMag = sqrt(diffs[1] * diffs[1] + diffs[0] * diffs[0]) * kV * 2;
         double angleCorrection = diffs[2] * TRACK_WIDTH * kV * 0.3;
-        if(abs(diffs[2])<toRadians(50)&&a==0){
+        if(a==0&&diffs[0]*diffs[0]+diffs[1]*diffs[1]>25){
             angleCorrection=0;
         }
         op.telemetry.addData("velocity", actualVelocity);
         op.telemetry.addData("diffsy", diffs[0]);
         op.telemetry.addData("diffsx", diffs[1]);
         op.telemetry.addData("diffsa", diffs[2]);
-        roadrun.setMotorPowers(powerb * magnitude - a - angleCorrection + (diffs[0] - diffs[1]) * 1 * kV,
-                powera * magnitude - a - angleCorrection+ (diffs[0] + diffs[1]) * 1. * kV,
-                powerb * magnitude + a + angleCorrection + (diffs[0] - diffs[1]) * 1. * kV,
-                powera * magnitude + a + angleCorrection+ (diffs[0] + diffs[1]) * 1 * kV);
+        double slidesConst = 1-lift.getLiftPosition()/1500.0;
+        roadrun.setMotorPowers(powerb * magnitude - a - angleCorrection + (diffs[0] - diffs[1]) * 1 * kV * slidesConst,
+                powera * magnitude - a - angleCorrection+ (diffs[0] + diffs[1]) * 1. * kV * slidesConst,
+                powerb * magnitude + a + angleCorrection + (diffs[0] - diffs[1]) * 1. * kV * slidesConst,
+                powera * magnitude + a + angleCorrection+ (diffs[0] + diffs[1]) * 1 * kV * slidesConst);
 
     }
 

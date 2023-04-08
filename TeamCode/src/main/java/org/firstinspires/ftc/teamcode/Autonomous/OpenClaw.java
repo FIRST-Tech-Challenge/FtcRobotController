@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.Components.Autonomous;
+package org.firstinspires.ftc.teamcode.Autonomous;
 
 import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
