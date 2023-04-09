@@ -33,6 +33,9 @@ import java.util.Map;
 @Config(value = "PPUnderArm")
 public class UnderArm implements Subsystem {
     private Robot robot;
+
+    public static double _TuneableTimer = 1;
+
     public static int SHOULDER_START_ANGLE = 110;
     public static int SHOULDER_HOME_PWM = 1540;
     public static int ELBOW_HOME_PWM = 1520;
@@ -44,8 +47,8 @@ public class UnderArm implements Subsystem {
     public static double WRIST_PWM_PER_DEGREE = 750.0 / 180.0; //todo if we need it
     public static double TURRET_PWM_PER_DEGREE = 16; //todo
 
-    public static double ELBOW_SPEED = 120;
-    public static double SHOULDER_SPEED = 120;
+    public static double ELBOW_SPEED = 220;
+    public static double SHOULDER_SPEED = 220;
     public static double LASSO_SPEED = 120;
     public static double WRIST_SPEED = 90;
 
@@ -71,12 +74,13 @@ public class UnderArm implements Subsystem {
 
     public static double LASSO_RELEASE = 1000;
     public static double LASSO_OPEN = 1000; //1100 for Leo's gripper
-
+    public static double TRANSFER_CHASSIS_SHORTEN_BY = 6.5;
     public static double TRANSFER_SHOULDER_ANGLE = -15;
     public static double TRANSFER_SHOULDER_APPROACH_ANGLE = 10;
 
     public static double TRANSFER_SHOULDER_OUTOFWAY_ANGLE = 10;
-    public static double TRANSFER_ELBOW_ANGLE = -120;
+    public static double TRANSFER_ELBOW_ANGLE = -115;
+    public static double TRANSFER_ELBOW_ANGLE_OUTOFWAY_ANGLE = -135;
 
     public static double TRANSFER_WRIST_ANGLE = 115;
 
@@ -312,6 +316,17 @@ public class UnderArm implements Subsystem {
         goToCalculatedTarget();
     }
 
+    public static double speedBoost = 1.5;
+    public void speedMode(){
+        elbow.setSpeed(ELBOW_SPEED*speedBoost);
+        shoulder.setSpeed(SHOULDER_SPEED*speedBoost);
+    }
+
+    public void regularMode(){
+        elbow.setSpeed(ELBOW_SPEED);
+        shoulder.setSpeed(SHOULDER_SPEED);
+    }
+
     double targetHeight;
     double targetDistance;
 
@@ -430,24 +445,24 @@ public class UnderArm implements Subsystem {
     boolean atTransfer = false;
     public boolean goToTransfer(){
         switch (transferStage) {
-            case 0: //sets the approach position that gets the cone under the bulb gripper
+            case 0: //sets the approach position that gets the cone over the transfer plate
                 atTransfer = false;
                 setTurretTargetAngle(TRANSFER_TURRET_ANGLE);
                 setElbowTargetAngle(TRANSFER_ELBOW_ANGLE);
                 setShoulderTargetAngle(TRANSFER_SHOULDER_APPROACH_ANGLE);
                 setWristTargetAngle(TRANSFER_WRIST_ANGLE);
-                transferTimer = futureTime(1.0);
+                transferTimer = futureTime(0.5);
                 transferStage++;
                 break;
-            case 1:
+            case 1: //get closer to Crane so we are over the transfer plate and then drop shoulder
                 if(System.nanoTime() > transferTimer){
-                    robot.driveTrain.setChassisLength(MAX_CHASSIS_LENGTH-10);
+                    robot.driveTrain.setChassisLength(MAX_CHASSIS_LENGTH-TRANSFER_CHASSIS_SHORTEN_BY);
                     setShoulderTargetAngle(TRANSFER_SHOULDER_ANGLE);
-                    transferTimer = futureTime(3);
+                    transferTimer = futureTime(_TuneableTimer); //todo set real
                     transferStage++;
                 }
                 break;
-            case 2:
+            case 2: //release the cone
                 if(System.nanoTime() > transferTimer){
                     release();
                     transferTimer = futureTime(0.3);
@@ -456,18 +471,25 @@ public class UnderArm implements Subsystem {
                 break;
             case 3:
                 if(System.nanoTime() > transferTimer){
+                    setElbowTargetAngle(TRANSFER_ELBOW_ANGLE_OUTOFWAY_ANGLE);
+                    transferTimer = futureTime(0.3);
+                    transferStage++;
+                }
+                break;
+            case 4: //raise underarm out of the way
+                if(System.nanoTime() > transferTimer){
                     setShoulderTargetAngle(TRANSFER_SHOULDER_OUTOFWAY_ANGLE);
                     transferTimer = futureTime(0.3);
                     transferStage++;
                 }
                 break;
-            case 4:
+            case 5: //close gripper for return to home
                 if(System.nanoTime() > transferTimer){
                     grip();
                     transferStage++;
                 }
                 break;
-            case 5:
+            case 6:
                 transferStage = 0;
                 atTransfer = true;
                 return true;
@@ -501,7 +523,7 @@ public class UnderArm implements Subsystem {
         return false;
     }
 
-    public static double POSTTRANSFER_SHOULDER = 40;
+    public static double POSTTRANSFER_SHOULDER = 50;
     public static double POSTTRANSFER_ELBOW = 0;
 
     int transferRecoverStage;
@@ -513,7 +535,7 @@ public class UnderArm implements Subsystem {
                 WRIST_SPEED = 270;
                 setElbowTargetAngle(POSTTRANSFER_ELBOW);
                 setShoulderTargetAngle(POSTTRANSFER_SHOULDER);
-                transferRecoverTimer = futureTime(1.0);
+                transferRecoverTimer = futureTime(0.7);
                 transferRecoverStage++;
                 break;
             case 1:
@@ -566,16 +588,18 @@ public class UnderArm implements Subsystem {
     public boolean goSubstationHover() {
         switch (substationHoverStage) {
             case 0:
-                if (goSubstationRecover()) {
+                if (goSubstationRecover()) { //give the elbow a head start to clear the camera when a cone is loaded
                     robot.driveTrain.setChassisLength(SS_HOVER_EXTEND);
-                    substationHoverTimer = futureTime(0.5);
+                    setElbowTargetAngle(SS_HOVER_ELBOW);
+                    grip(); //make sure the gripper is closed in case we are returning from negative angles
+                    substationHoverTimer = futureTime(0.1);
                     substationHoverStage++;
                 }
                 break;
-            case 1: //give the elbow a head start to clear the camera when a cone is loaded
+            case 1:
                 if (substationHoverTimer<System.nanoTime()){
-                    setElbowTargetAngle(SS_HOVER_ELBOW);
-                    substationHoverTimer = futureTime(0.25);
+                    setShoulderTargetAngle(SS_HOVER_SHOULDER/1.5);
+                    substationHoverTimer = futureTime(0.4);
                     substationHoverStage++;
                 }
                 break;
@@ -592,7 +616,7 @@ public class UnderArm implements Subsystem {
                     substationHoverStage++;
                 }
                 break;
-            case 3: //open lasso
+            case 3: //open gripper
                 if (substationHoverTimer<System.nanoTime()) {
                     open();
                     substationHoverStage = 0;
@@ -620,9 +644,10 @@ public class UnderArm implements Subsystem {
             case 1: //bring lasso to mat with shoulder only
                 if (substationPickupTimer<System.nanoTime()) {
                     WRIST_SPEED = 90;
+                    robot.driveTrain.setChassisLength(SS_HOVER_EXTEND+7);
                     setShoulderTargetAngle(PICKUP_SHOULDER_ANGLE);
                     substationPickupStage++;
-                    substationPickupTimer = futureTime(1); //0.3 todo this is set long from manual cone placement in testing
+                    substationPickupTimer = futureTime(0.3); //0.3 todo this is set long from manual cone placement in testing
                 }
                 break;
 
@@ -630,14 +655,14 @@ public class UnderArm implements Subsystem {
                 if (substationPickupTimer<System.nanoTime()) {
                     grip();
                     substationPickupStage++;
-                    substationPickupTimer = futureTime(0.5);
+                    substationPickupTimer = futureTime(0.2);
                 }
                 break;
             case 3: //elevate shoulder to clear mat
                 if (substationPickupTimer<System.nanoTime()) {
                     setWristTargetAngle(WRIST_HOME_POSITION);
                     substationPickupStage++;
-                    substationPickupTimer = futureTime(0.3);
+                    substationPickupTimer = futureTime(0.1);
                 }
                 break;
             case 4:
@@ -663,7 +688,6 @@ public class UnderArm implements Subsystem {
 
     //this is ugly, but a way to cleanup stages in interrupted underarm articulations
     public void resetArticulations(){
-        articulation = Articulation.manual;
         recoverStage = 0;
         substationHoverStage = 0;
         substationPickupStage = 0;
@@ -770,18 +794,24 @@ public boolean goSubstationRecover() {
 
     public void adjustShoulder(double speed){
         shoulderTargetAngle -= ADJUST_SHOULDER*speed*robot.deltaTime;
+        shoulderTargetAngle = Range.clip(shoulderTargetAngle, SHOULDER_DEG_MIN, SHOULDER_DEG_MAX);
     }
 
     public void adjustElbow(double speed){
         elbowTargetAngle += ADJUST_ELBOW*speed*robot.deltaTime;
+        elbowTargetAngle = Range.clip(elbowTargetAngle, ELBOW_DEG_MIN, ELBOW_DEG_MAX);
+
     }
 
     public void adjustWrist(double speed){
         wristTargetAngle += ADJUST_WRIST*speed*robot.deltaTime;
+        wristTargetAngle = Range.clip(wristTargetAngle, WRIST_DEG_MIN, WRIST_DEG_MAX);
     }
 
     public void adjustTurret(double speed){
         turretTargetAngle += ADJUST_TURRET*speed*robot.deltaTime;
+        turretTargetAngle = Range.clip(turretTargetAngle, TURRET_DEG_MIN, TURRET_DEG_MAX);
+
     }
 
     public double getShoulderAngle(){
@@ -813,9 +843,6 @@ public boolean goSubstationRecover() {
     }
     @Override
     public void update(Canvas fieldOverlay) {
-        elbow.setSpeed(ELBOW_SPEED);
-        shoulder.setSpeed(SHOULDER_SPEED);
-        wrist.setSpeed(WRIST_SPEED);
 
         elbow.setPWM_PER_DEGREE(ELBOW_PWM_PER_DEGREE);
         shoulder.setPWM_PER_DEGREE(SHOULDER_PWM_PER_DEGREE);

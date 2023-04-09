@@ -197,6 +197,7 @@ public class Robot implements Subsystem {
 
     public void start(){
         driveTrain.articulate(DriveTrain.Articulation.unlock);
+        underarm.articulate(UnderArm.Articulation.manual);
         crane.enableAllPID();
         //turret.articulate(Turret.Articulation.runToAngle);
     }
@@ -525,10 +526,12 @@ public class Robot implements Subsystem {
 
     boolean unfolded = false;
     boolean driveInit = false;
+    boolean notDriveInit = false;
 
     public Articulation articulate(Articulation target) {
         articulation = target;
         if(isDriverDriving()) { //bypass the normal articulation flow when driving - this could short circuit other articulations leaving them in unknown stages
+            resetArticulations();
             driveTrain.articulate(DriveTrain.Articulation.unlock);
             crane.articulate(Crane.Articulation.lock); //keeps crane in safe position
             underarm.articulate(UnderArm.Articulation.driving);
@@ -536,12 +539,14 @@ public class Robot implements Subsystem {
                 turret.articulate(Turret.Articulation.lockTo180);
                 driveInit = true;
             }
+            notDriveInit = false;
         }
         else{
             driveInit = false;
-            if(crane.getArticulation().equals(Crane.Articulation.lock)){
+            if(!notDriveInit){
                 driveTrain.articulate(DriveTrain.Articulation.lockWheels);
                 underarm.articulate(UnderArm.Articulation.manual);
+                notDriveInit = true;
             }
             switch (this.articulation) {
                 case MANUAL:
@@ -643,6 +648,7 @@ public class Robot implements Subsystem {
                 driveTrain.articulate(DriveTrain.Articulation.unlock);
                 crane.articulate(Crane.Articulation.manual);
                 crane.setShoulderTargetAngle(70);
+                crane.flipToFlip();
                 unfoldTimer = futureTime(0.7);
                 unfoldStage++;
                 break;
@@ -655,11 +661,12 @@ public class Robot implements Subsystem {
                 break;
             case 2:
                 if(System.nanoTime() > unfoldTimer){
+                    crane.flipToHome();
                     unfoldStage++;
                 }
                 break;
             case 3:
-                crane.articulate(Crane.Articulation.manualDrive);
+                crane.articulate(Crane.Articulation.home);
                 underarm.articulate(UnderArm.Articulation.home);
                 crane.nudgeCenter(true);
                 unfoldStage = 0;
@@ -692,6 +699,11 @@ public class Robot implements Subsystem {
         transferStage=0;
         dropStage=0;
         unfoldStage = 0;
+        coneStackStage = 0;
+        dropStage = 0;
+        cancelTransferIndex = 0;
+        underarm.resetArticulations();
+        crane.resetArticulations();
     }
     int coneStackStage = 0;
     public boolean underarmConeStack () {
@@ -768,6 +780,7 @@ public class Robot implements Subsystem {
                 crane.release();
                 crane.articulate(Crane.Articulation.transfer); //tells crane to go to transfer position
                 transferTimer = futureTime(0.5);
+                underarm.speedMode();
                 transferStage++;
                 break;
             case 1:
@@ -788,16 +801,13 @@ public class Robot implements Subsystem {
                 if(System.nanoTime() >= transferTimer && crane.atPostTransfer()) {
                     driveTrain.articulate(DriveTrain.Articulation.unlock);
                     driveTrain.setChassisLength(Constants.MAX_CHASSIS_LENGTH); //gets out of way of holder
-                    transferTimer = futureTime(2.0);
                     transferStage++;
                 }
                 break;
             case 4:
-                if(System.nanoTime() >= transferTimer) {
-                    underarm.articulate(UnderArm.Articulation.transferRecover); //go back to home position
-                    transferStage++;
-                    transferTimer = futureTime(0.6);
-                }
+                underarm.articulate(UnderArm.Articulation.transferRecover); //go back to home position
+                transferStage++;
+                transferTimer = futureTime(0.3);
                 break;
             case 5:
                 if(System.nanoTime() >= transferTimer) {
@@ -805,6 +815,7 @@ public class Robot implements Subsystem {
                     driveTrain.articulate(DriveTrain.Articulation.unlock);
                     crane.articulate(Crane.Articulation.manual);
                     turret.articulate(Turret.Articulation.lockTo180);
+                    underarm.regularMode();
                     transferStage++;
                 }
                 break;

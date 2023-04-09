@@ -125,7 +125,7 @@ public class Crane implements Subsystem {
 
     public static int FLIPPER_HOME = 900;
     public static int FLIPPER_FLIP = 1716;
-    public static int FLIPPER_TENSION = 950;
+    public static int FLIPPER_TENSION = 1900;
     public static int FLIPPER_REST = 1300;
 
     public static final double DISTANCE_SENSOR_TO_ELBOW = 0.33;
@@ -260,7 +260,7 @@ public class Crane implements Subsystem {
     double runExtendAmp;
     int extendMaxTics;
 
-    public static double CALIBRATE_STALL_AMP = 3.25;
+    public static double CALIBRATE_STALL_AMP = 3.75;
 
     public boolean calibrate(){
         // to calibrate we want the arm to be fully retracted and the shoulder
@@ -358,7 +358,7 @@ public class Crane implements Subsystem {
     }
 
     public void flipToTension(){
-        flipperPos = 4;
+        flipperPos = 3;
     }
     int flipperPos = 0;
     private void updateFlipperPosition(){
@@ -630,6 +630,12 @@ public class Crane implements Subsystem {
     public void resetArticulations(){
         articulation = Articulation.manual;
         transferStage = 0;
+        dropNoSubStage = 0;
+        pickupConeStage = 0;
+        dropConeStage = 0;
+        homeInd = 0;
+        calibrateStage = 0;
+        coneCycleStage = 0;
         postTransferStage = 0;
     }
     int transferStage = 0;
@@ -709,45 +715,38 @@ public class Crane implements Subsystem {
     long postTransferTimer = 0;
     boolean atPostTransfer = false;
 
+    public static double tuneableTimer = 0.6;
     public boolean postTransfer(){ //flips the flipper gripper to the correct flipper gripper flipped position
         switch (postTransferStage){
             case 0:
+                setShoulderTargetAngle(TRANSFER_SHOULDER_ANGLE);
                 atPostTransfer = false;
                 flipToFlip();
-                postTransferTimer = futureTime(9);
+                postTransferTimer = futureTime(tuneableTimer);
                 postTransferStage++;
                 break;
             case 1:
                 if(System.nanoTime() > postTransferTimer){
-                    grab();
-                    postTransferTimer = futureTime(9);
+                    flipToTension();
+                    postTransferTimer = futureTime(0.32);
                     postTransferStage++;
                 }
                 break;
             case 2:
                 if(System.nanoTime() > postTransferTimer){
-                    flipToHome();
-                    postTransferStage++;
-                }
-                break;
-            case 3:
-                setShoulderTargetAngle(0);
-                postTransferStage++;
-                break;
-            case 4:
-                if(shoulderOnTarget()){
-                    setExtendTargetPos(0.2); //makes arm go fast forward
+                    grab();
                     postTransferTimer = futureTime(0.2);
                     postTransferStage++;
                 }
                 break;
-            case 5:
-                if(System.nanoTime() >= postTransferTimer){
-                    setExtendTargetPos(0.05); //snaps crane back making the flipper gripper flip to downwards flipper gripper flipping position
+            case 3:
+                if(System.nanoTime() > postTransferTimer){
+                    flipToHome();
                     postTransferStage++;
                 }
                 break;
-            case 6:
+            case 4:
+                setShoulderTargetAngle(SAFE_SHOULDER_ANGLE);
                 atPostTransfer = true;
                 postTransferStage = 0;
                 return true;
@@ -1529,6 +1528,9 @@ public class Crane implements Subsystem {
             telemetryMap.put("Nudge Target", nudgeStickServo.getPosition());
             telemetryMap.put("Nudge Target", nudgeIndex);
             telemetryMap.put("Nudge Target Ticks?", servoDenormalize(nudgeStickServo.getPosition()));
+            telemetryMap.put("Flipper Target", flipperPos);
+            telemetryMap.put("Flipper Target Ticks", servoDenormalize(flipperServo.getPosition()));
+
 
         }else{
 

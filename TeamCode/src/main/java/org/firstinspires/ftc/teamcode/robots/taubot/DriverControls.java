@@ -53,6 +53,7 @@ public class DriverControls {
     void joystickDrive() {
 
         if(gamepad1.dpad_up){
+            robot.crane.resetArticulations();
             robot.crane.articulate(Crane.Articulation.home);
         }
 
@@ -82,6 +83,7 @@ public class DriverControls {
             robot.crane.pickupSequence();
         }
         if(stickyGamepad1.b){
+            robot.resetArticulations();
             robot.articulate(Robot.Articulation.DROP);
         }
 
@@ -156,6 +158,7 @@ public class DriverControls {
 
     void joystickDriveDemoMode(){
         if(gamepad1.dpad_up){
+            robot.crane.resetArticulations();
             robot.crane.articulate(Crane.Articulation.home);
         }
 
@@ -174,16 +177,19 @@ public class DriverControls {
         }
 
         if (stickyGamepad1.guide){ //this is the Logitech button
+            robot.resetArticulations();
             robot.articulate((Robot.Articulation.TRANSFER));
 
         }
 
         if(stickyGamepad1.a) {
             //maintain the ability to pickup with Crane
+            robot.crane.resetArticulations();
             robot.crane.pickupSequence();
         }
 
         if(stickyGamepad1.b){
+            robot.crane.resetArticulations();
             robot.crane.dropSequence();
             robot.field.incTarget();
             robot.crane.updateScoringPattern();
@@ -336,6 +342,7 @@ public class DriverControls {
             debugTelemetryEnabled = !debugTelemetryEnabled;
 
         if(stickyGamepad1.dpad_down){
+            robot.resetArticulations();
             robot.articulate(Robot.Articulation.CALIBRATE);
         }
 
@@ -381,9 +388,9 @@ public class DriverControls {
             auto.visionProvider.update();
     }
 
-    public void UnderarmControls(){
+    public void UnderarmControls() {
 
-        if(stickyGamepad2.a){
+        if (stickyGamepad2.a) {
             //robot.articulate(Robot.Articulation.PICKUP);
             robot.underarm.resetArticulations();
             robot.underarm.articulate(UnderArm.Articulation.substationHover);
@@ -400,25 +407,27 @@ public class DriverControls {
             robot.transferAdvance();
         }
 
-        if(stickyGamepad2.y){
+        if (stickyGamepad2.y) {
             robot.underarm.toggleLasso();
         }
 
-        if(stickyGamepad2.start){
+        if (stickyGamepad2.start) {
             robot.driveTrain.toggleExtension();
         }
 
-        if(stickyGamepad2.dpad_up){
+        if (stickyGamepad2.dpad_up) {
+            robot.underarm.resetArticulations();
             robot.underarm.articulate(UnderArm.Articulation.home);
         }
 
-        if(notJoystickDeadZone(gamepad2.left_stick_y)){
+        if (notJoystickDeadZone(gamepad2.left_stick_y)) {
             robot.underarm.adjustShoulder(gamepad2.left_stick_y);
         }
 
-        if(robot.getArticulation().equals(Robot.Articulation.TRANSFER) && (notJoystickDeadZone(gamepad2.left_trigger) || notJoystickDeadZone(gamepad2.right_trigger)))
+        if (robot.getArticulation().equals(Robot.Articulation.TRANSFER) && (notJoystickDeadZone(gamepad2.left_trigger) || notJoystickDeadZone(gamepad2.right_trigger))) {
+            robot.resetArticulations();
             robot.articulate(Robot.Articulation.CANCEL_TRANSFER);
-
+        }
         if(notJoystickDeadZone(gamepad2.right_stick_y)){
             robot.underarm.adjustElbow(-gamepad2.right_stick_y);
         }

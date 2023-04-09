@@ -253,6 +253,10 @@ public class Turret implements Subsystem {
         return false;
     }
 
+    public void resetArticulations () {
+        articulation = Articulation.manual;
+    }
+
 
     private boolean controlMethodIMU = true;
 
