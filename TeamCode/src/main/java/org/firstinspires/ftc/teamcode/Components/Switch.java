@@ -20,7 +20,8 @@ public class Switch {
 
     public boolean isSwitched() {
 //        touchSensor.
-        return touchSensor.getState();
+//        return touchSensor.getState();
+        return false;
     }
 
 }

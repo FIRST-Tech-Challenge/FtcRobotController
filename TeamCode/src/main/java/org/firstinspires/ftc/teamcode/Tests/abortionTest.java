@@ -42,6 +42,7 @@ public class abortionTest extends LinearOpMode {
         while (opModeIsActive() && !isStopRequested() && getRuntime()<29.8&&(!robot.queuer.isFullfilled()||robot.queuer.isFirstLoop())) {
             logger.loopcounter++;
             if(!mainSequence()){
+                robot.roadrun.breakFollowing();
                 robot.roadrun.setMotorPowers(0,0,0,0);
                 break;
             }
@@ -71,7 +72,7 @@ public class abortionTest extends LinearOpMode {
                 return false;
             }
         }
-        robot.splineTo(new Pose2d(41, 63.25, Math.toRadians(270)),Math.toRadians(90),180);
+        robot.splineTo(new Pose2d(41, 63.25, Math.toRadians(270)),Math.toRadians(90),toRadians(180));
         robot.splineTo(new Pose2d(41,40,Math.toRadians(270)),Math.toRadians(270),0);
         return true;
     }

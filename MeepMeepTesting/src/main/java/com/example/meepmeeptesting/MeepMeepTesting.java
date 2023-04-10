@@ -12,7 +12,7 @@ import com.noahbres.meepmeep.roadrunner.entity.RoadRunnerBotEntity;
 
 
 public class MeepMeepTesting {
-    public static double dropX = 9, dropY = 24, dropA = toRadians(140), dropET = toRadians(310);
+    public static double dropX = 6, dropY = 24, dropA = toRadians(140), dropET = toRadians(310);
 
     public static double pickupX1 = -46, pickupY1 = 10, pickupA1 = toRadians(180), pickupET1 = toRadians(180);
     public static double pickupX2 = 64.75, pickupY2 = 11.75, pickupA2 = toRadians(0), pickupET2 = toRadians(180);
@@ -30,15 +30,15 @@ public class MeepMeepTesting {
                                 drive.trajectorySequenceBuilder(new Pose2d(41, 63.25, Math.toRadians(90)))
                                         .setReversed(true)
                                         .splineToSplineHeading(new Pose2d(37, 38, toRadians(90)), toRadians(270))
-                                        .splineTo(new Vector2d(36, 22), toRadians(275))
-                                        .splineToSplineHeading(new Pose2d(26, 4.5, toRadians(50)), toRadians(230))
+//                                        .splineTo(new Vector2d(36, 22), toRadians(275))
+                                        .splineToSplineHeading(new Pose2d(26, 6, toRadians(50)), toRadians(230))
                                         .setReversed(false)
-                                        .splineTo(new Vector2d(64, 11.25), Math.toRadians(0))
+                                        .splineTo(new Vector2d(62, 11), Math.toRadians(0))
                                         .setReversed(true)
-                                        .splineToSplineHeading(new Pose2d(dropX, dropY, Math.toRadians(335)), Math.toRadians(155))
+                                        .splineToSplineHeading(new Pose2d(dropX, dropY, Math.toRadians(320)), Math.toRadians(140))
                                         .setReversed(false)
-//                    .splineToSplineHeading(new Pose2d(48, 11.75, Math.toRadians(0)), Math.toRadians(0))
-                                        .splineTo(new Vector2d(62.7, 11.5), Math.toRadians(0))
+                                        .splineToSplineHeading(new Pose2d(48, 11, Math.toRadians(0)), Math.toRadians(0))
+                                        .splineTo(new Vector2d(62, 11), Math.toRadians(0))
 
                 .build()
                 );
