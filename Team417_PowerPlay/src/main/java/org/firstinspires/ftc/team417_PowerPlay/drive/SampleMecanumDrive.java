@@ -21,7 +21,6 @@ import com.acmerobotics.roadrunner.drive.MecanumDrive;
 import com.acmerobotics.roadrunner.followers.HolonomicPIDVAFollower;
 import com.acmerobotics.roadrunner.followers.TrajectoryFollower;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
-import com.acmerobotics.roadrunner.localization.ThreeTrackingWheelLocalizer;
 import com.acmerobotics.roadrunner.trajectory.Trajectory;
 import com.acmerobotics.roadrunner.trajectory.TrajectoryBuilder;
 import com.acmerobotics.roadrunner.trajectory.constraints.AngularVelocityConstraint;
@@ -34,7 +33,6 @@ import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 import com.qualcomm.robotcore.hardware.VoltageSensor;
@@ -56,8 +54,8 @@ import java.util.List;
 public class SampleMecanumDrive extends MecanumDrive {
     private static final double MAX_VOLTAGE = 12.0;
 
-    public static PIDCoefficients TRANSLATIONAL_PID = new PIDCoefficients(0.7, 0, 0);
-    public static PIDCoefficients HEADING_PID = new PIDCoefficients(2, 0, 0);
+    public static PIDCoefficients TRANSLATIONAL_PID = new PIDCoefficients(2.2, 0, 0);
+    public static PIDCoefficients HEADING_PID = new PIDCoefficients(2.2, 0, 0);
     // Lateral multiplier to make up for energy deficiency while strafing
     public static double LATERAL_MULTIPLIER = 60.0 / 46.319;
 
@@ -72,7 +70,7 @@ public class SampleMecanumDrive extends MecanumDrive {
 
     private TrajectoryFollower follower;
 
-    private DcMotorEx leftFront, leftRear, rightRear, rightFront;
+    private DcMotorEx motorFL, motorBL, motorBR, motorFR;
     private List<DcMotorEx> motors;
 
     private BNO055IMU imu;
@@ -92,12 +90,12 @@ public class SampleMecanumDrive extends MecanumDrive {
             module.setBulkCachingMode(LynxModule.BulkCachingMode.AUTO);
         }
 
-        leftFront = hardwareMap.get(DcMotorEx.class, "motorFL");
-        leftRear = hardwareMap.get(DcMotorEx.class, "motorBL");
-        rightRear = hardwareMap.get(DcMotorEx.class, "motorBR");
-        rightFront = hardwareMap.get(DcMotorEx.class, "motorFR");
+        motorFL = hardwareMap.get(DcMotorEx.class, "motorFL");
+        motorBL = hardwareMap.get(DcMotorEx.class, "motorBL");
+        motorBR = hardwareMap.get(DcMotorEx.class, "motorBR");
+        motorFR = hardwareMap.get(DcMotorEx.class, "motorFR");
 
-        motors = Arrays.asList(leftFront, leftRear, rightRear, rightFront);
+        motors = Arrays.asList(motorFL, motorBL, motorBR, motorFR);
 
         for (DcMotorEx motor : motors) {
             MotorConfigurationType motorConfigurationType = motor.getMotorType().clone();
@@ -115,10 +113,10 @@ public class SampleMecanumDrive extends MecanumDrive {
             setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER, MOTOR_VELO_PID);
         }
 
-        leftFront.setDirection(DcMotor.Direction.REVERSE);
-        leftRear.setDirection(DcMotor.Direction.REVERSE);
-        rightFront.setDirection(DcMotor.Direction.FORWARD);
-        rightRear.setDirection(DcMotor.Direction.FORWARD);
+        motorFL.setDirection(DcMotor.Direction.REVERSE);
+        motorBL.setDirection(DcMotor.Direction.REVERSE);
+        motorFR.setDirection(DcMotor.Direction.FORWARD);
+        motorBR.setDirection(DcMotor.Direction.FORWARD);
 
         // for instance, setLocalizer(new ThreeTrackingWheelLocalizer(...));
         setLocalizer(new StandardTrackingWheelLocalizer(hardwareMap));
@@ -263,11 +261,11 @@ public class SampleMecanumDrive extends MecanumDrive {
     }
 
     @Override
-    public void setMotorPowers(double v, double v1, double v2, double v3) {
-        leftFront.setPower(v);
-        leftRear.setPower(v1);
-        rightRear.setPower(v2);
-        rightFront.setPower(v3);
+    public void setMotorPowers(double powerFL, double powerBL, double powerBR, double powerFR) {
+        motorFL.setPower(powerFL);
+        motorBL.setPower(powerBL);
+        motorBR.setPower(powerBR);
+        motorFR.setPower(powerFR);
     }
 
     @Override

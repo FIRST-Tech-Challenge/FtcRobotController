@@ -27,4 +27,8 @@ public class Constants {
     // Servo positions
     public static final double OPEN_CLAW = 1.0;
     public static final double CLOSED_CLAW = 0.0;
+
+    // Drive speed
+    public static final double DRIVE_SPEED = 0.8;
+    public static final double SLOW_DRIVE_SPEED = 0.3;
 }

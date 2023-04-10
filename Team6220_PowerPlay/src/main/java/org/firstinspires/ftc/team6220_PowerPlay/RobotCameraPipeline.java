@@ -14,8 +14,8 @@ import java.util.List;
 
 public class RobotCameraPipeline extends OpenCvPipeline {
     public double xPosition = Constants.CAMERA_CENTER_X;
-    public double yPosition = Constants.CAMERA_CENTER_Y;
     public double width = 0.0;
+    public boolean invert = false;
 
     List<MatOfPoint> contours = new ArrayList<>();
 
@@ -33,6 +33,10 @@ public class RobotCameraPipeline extends OpenCvPipeline {
         this.upperRange = upperRange;
     }
 
+    public void invertRange(boolean b) {
+        invert = b;
+    }
+
     @Override
     public Mat processFrame(Mat input) {
         // transform the RGB frame into a HSV frame
@@ -43,6 +47,13 @@ public class RobotCameraPipeline extends OpenCvPipeline {
 
         // mask the blurred frame
         Core.inRange(mat, lowerRange, upperRange, mat);
+
+        // invert ranges if looking for red
+        // this is because red is detected on both ends of the hue spectrum(0-20 & 160-180)
+        // so we are looking for 20-160 and changing it so that it detects anything but that.
+        if (invert) {
+            Core.bitwise_not(mat, mat);
+        }
 
         // find the contours in the masked frame
         Imgproc.findContours(mat, contours, hierarchy, Imgproc.RETR_LIST, Imgproc.CHAIN_APPROX_SIMPLE);
@@ -61,24 +72,28 @@ public class RobotCameraPipeline extends OpenCvPipeline {
                 }
             }
 
-            // get the bounding rectangle around the largest contour
-            Rect boundingRect = Imgproc.boundingRect(contours.get(maxValIdx));
+            // crops contour if the area is below a certain size
+            if (maxVal >= Constants.CONTOUR_MINIMUM_SIZE) {
+                // get the bounding rectangle around the largest contour
+                Rect boundingRect = Imgproc.boundingRect(contours.get(maxValIdx));
 
-            // get moments
-            Moments moments = Imgproc.moments(contours.get(maxValIdx), false);
+                // get moments
+                Moments moments = Imgproc.moments(contours.get(maxValIdx), false);
 
-            // draw the bounding rectangle on the frame
-            Imgproc.rectangle(input, boundingRect, new Scalar(0, 255, 0), 10);
+                // draw the bounding rectangle on the frame
+                Imgproc.rectangle(input, boundingRect, new Scalar(0, 255, 0), 10);
 
-            if (moments.get_m00() > 0) {
-                xPosition = boundingRect.x + (boundingRect.width * 0.5);
-                yPosition = boundingRect.y + (boundingRect.height * 0.5);
-                width = boundingRect.width;
+                if (moments.get_m00() > 0) {
+                    xPosition = boundingRect.x + (boundingRect.width * 0.5);
+                    width = boundingRect.width;
+                }
+            } else {
+                width = 0.0;
+                xPosition = Constants.CAMERA_CENTER_X;
             }
         } else {
             width = 0.0;
             xPosition = Constants.CAMERA_CENTER_X;
-            yPosition = Constants.CAMERA_CENTER_Y;
         }
 
         contours.clear();
