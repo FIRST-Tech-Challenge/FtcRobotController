@@ -5,10 +5,10 @@ import com.arcrobotics.ftclib.command.CommandBase;
 import java.util.function.DoubleSupplier;
 
 public class MecanumDriveCommand extends CommandBase {
-    private final MecanumDriveSubsystem drivetrain;
+    private final MecanumDrivePPV2 drivetrain;
     private final DoubleSupplier forwardSpeed, strafeSpeed, turnSpeed, heading, maxSpeed;
 
-    public MecanumDriveCommand(MecanumDriveSubsystem drivetrain, DoubleSupplier forwardSpeed,
+    public MecanumDriveCommand(MecanumDrivePPV2 drivetrain, DoubleSupplier forwardSpeed,
                                 DoubleSupplier strafeSpeed, DoubleSupplier turnSpeed,
                                 DoubleSupplier heading, DoubleSupplier maxSpeed) {
         this.drivetrain = drivetrain;

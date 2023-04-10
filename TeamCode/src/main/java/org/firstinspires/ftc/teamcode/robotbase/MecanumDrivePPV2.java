@@ -56,6 +56,12 @@ import static org.firstinspires.ftc.teamcode.myroadrunner.drive.DriveConstants.K
 import static org.firstinspires.ftc.teamcode.myroadrunner.drive.DriveConstants.minIntegralBound;
 import static org.firstinspires.ftc.teamcode.myroadrunner.drive.DriveConstants.maxIntegralBound;
 import static org.firstinspires.ftc.teamcode.myroadrunner.drive.DriveConstants.LATERAL_MULTIPLIER;
+import static org.firstinspires.ftc.teamcode.myroadrunner.drive.DriveConstants.frontLeftInverted;
+import static org.firstinspires.ftc.teamcode.myroadrunner.drive.DriveConstants.frontRightInverted;
+import static org.firstinspires.ftc.teamcode.myroadrunner.drive.DriveConstants.rearLeftInverted;
+import static org.firstinspires.ftc.teamcode.myroadrunner.drive.DriveConstants.rearRightInverted;
+import static org.firstinspires.ftc.teamcode.robotbase.RobotEx.OpModeType.AUTO;
+import static org.firstinspires.ftc.teamcode.robotbase.RobotEx.OpModeType.TELEOP;
 /*
  * Simple mecanum drive hardware implementation for REV hardware.
  */
@@ -84,7 +90,7 @@ public class MecanumDrivePPV2 extends MecanumDrive implements Subsystem {
     private List<Integer> lastEncPositions = new ArrayList<>();
     private List<Integer> lastEncVels = new ArrayList<>();
 
-    public MecanumDrivePPV2(HardwareMap hardwareMap) {
+    public MecanumDrivePPV2(HardwareMap hardwareMap, RobotEx.OpModeType type) {
         super(kV, kA, kStatic, TRACK_WIDTH, TRACK_WIDTH, LATERAL_MULTIPLIER);
 
         /* --------------------------------------- COMMON --------------------------------------- */
@@ -111,7 +117,7 @@ public class MecanumDrivePPV2 extends MecanumDrive implements Subsystem {
 
         motors = Arrays.asList(frontLeft, frontRight, rearLeft, rearRight);
 
-        setMotorsInverted(true, false, false, true);
+        setMotorsInverted(frontLeftInverted, frontRightInverted, rearRightInverted, rearLeftInverted);
 
         if (RUN_USING_ENCODER) setMode(MotorExEx.RunMode.VelocityControl);
 
@@ -128,23 +134,26 @@ public class MecanumDrivePPV2 extends MecanumDrive implements Subsystem {
             }
         }
 
-        /* --------------------------------------- TELEOP --------------------------------------- */
-        CommandScheduler.getInstance().registerSubsystem(this);
-        drive = new com.arcrobotics.ftclib.drivebase.MecanumDrive(
-                frontLeft, frontRight, rearLeft, rearRight
-        );
+        if (type == AUTO){
+            /* ------------------------------------- AUTONOMOUS ------------------------------------- */
+            follower = new HolonomicPIDVAFollower(TRANSLATIONAL_PID, TRANSLATIONAL_PID, HEADING_PID,
+                    new Pose2d(0.5, 0.5, Math.toRadians(5.0)), 0.5);
 
-        /* ------------------------------------- AUTONOMOUS ------------------------------------- */
-        follower = new HolonomicPIDVAFollower(TRANSLATIONAL_PID, TRANSLATIONAL_PID, HEADING_PID,
-                new Pose2d(0.5, 0.5, Math.toRadians(5.0)), 0.5);
+            List<Integer> lastTrackingEncPositions = new ArrayList<>();
+            List<Integer> lastTrackingEncVels = new ArrayList<>();
 
-        List<Integer> lastTrackingEncPositions = new ArrayList<>();
-        List<Integer> lastTrackingEncVels = new ArrayList<>();
-
-        // TODO: if desired, use setLocalizer() to change the localization method
-        trajectorySequenceRunner = new TrajectorySequenceRunner(
-                follower, HEADING_PID
-        );
+            // TODO: if desired, use setLocalizer() to change the localization method
+            trajectorySequenceRunner = new TrajectorySequenceRunner(
+                    follower, HEADING_PID
+            );
+        }
+        if (type == TELEOP){
+            /* --------------------------------------- TELEOP --------------------------------------- */
+            CommandScheduler.getInstance().registerSubsystem(this);
+            drive = new com.arcrobotics.ftclib.drivebase.MecanumDrive(
+                    frontLeft, frontRight, rearLeft, rearRight
+            );
+        }
     }
 
     public String getName()
