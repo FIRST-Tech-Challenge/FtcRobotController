@@ -11,5 +11,5 @@ public class RedLeft extends AutoFramework {
     public void runOpMode() throws InterruptedException {
         runAuto(AutoState.LeftAutos);
     }
-
+    // If you want to add anything to this autonomous method, make the changes in the AutoFramework method please!
 }

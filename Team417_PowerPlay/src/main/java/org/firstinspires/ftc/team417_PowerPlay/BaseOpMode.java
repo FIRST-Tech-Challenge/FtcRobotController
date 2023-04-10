@@ -2,81 +2,49 @@ package org.firstinspires.ftc.team417_PowerPlay;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.team417_PowerPlay.drive.SampleMecanumDrive;
 
 abstract public class BaseOpMode extends LinearOpMode {
 
-    DcMotor motorFL;
-    DcMotor motorFR;
-    DcMotor motorBL;
-    DcMotor motorBR;
-    DcMotor leftEncoder;
-    DcMotor rightEncoder;
-    DcMotor frontEncoder;
     DcMotor motorArm;
 
     Servo grabberServo;
+
     Toggler grabberToggle;
 
-    public static final double GRABBER_OPEN = 0.8;
-    public static final double GRABBER_CLOSED = 0.0;
+    SampleMecanumDrive drive;
+    public static final double GRABBER_OPEN = 0.70;
+    public static final double GRABBER_CLOSED = 0.4;
+    public static final double GRABBER_HALF_CLOSED = 0.6;
 
-    public static final double MAX_ARM_POSITION = -1500;
-    public static final double MIN_ARM_POSITION = 0;
+    public static final int MAX_ARM_POSITION = 1700;
+    public static final int GROUND_JUNCT_ARM_POSITION = 300;
+    public static final int LOW_JUNCT_ARM_POSITION = 800;
+    public static final int MID_JUNCT_ARM_POSITION = 1300;
+    public static final int HIGH_JUNCT_ARM_POSITION = 1550;
+    public static final int MIN_ARM_POSITION = 0;
+    public static final int ARM_ENCODER_TOLERANCE = 10;
 
+    public static final int FIRST_CONE_STACK_ARM_POSITION = 350;
+    public static final int SECOND_CONE_STACK_ARM_POSITION = 400;
     public void initializeHardware() {
-        motorFL = hardwareMap.dcMotor.get("motorFL");
-        motorFR = hardwareMap.dcMotor.get("motorFR");
-        motorBL = hardwareMap.dcMotor.get("motorBL");
-        motorBR = hardwareMap.dcMotor.get("motorBR");
+        drive = new SampleMecanumDrive(hardwareMap);
+
         motorArm = hardwareMap.dcMotor.get("motorArm");
 
-        leftEncoder = hardwareMap.dcMotor.get("leftEncoder");
-        rightEncoder = hardwareMap.dcMotor.get("rightEncoder");
-        frontEncoder = hardwareMap.dcMotor.get("frontEncoder");
-
-        motorFL.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        motorFR.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        motorBL.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        motorBR.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         motorArm.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
-        leftEncoder.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        rightEncoder.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        frontEncoder.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-
-        motorFL.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        motorFR.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        motorBL.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        motorBR.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         motorArm.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
-        leftEncoder.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        rightEncoder.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        frontEncoder.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-
-        motorFR.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        motorFL.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        motorBL.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        motorBR.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         motorArm.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
-        motorFL.setDirection(DcMotor.Direction.REVERSE);
-        motorBL.setDirection(DcMotor.Direction.REVERSE);
-        motorBR.setDirection(DcMotor.Direction.FORWARD);
-        motorFR.setDirection(DcMotor.Direction.FORWARD);
+        grabberServo = hardwareMap.servo.get("leftGrabberServo");
 
-        grabberServo = hardwareMap.servo.get("grabberServo");
-        grabberServo.setPosition(GRABBER_CLOSED);
         grabberToggle = new Toggler();
 
-        motorFL.setPower(0);
-        motorFR.setPower(0);
-        motorBL.setPower(0);
-        motorBR.setPower(0);
+        drive.setMotorPowers(0, 0, 0, 0);
         motorArm.setPower(0);
     }
 
@@ -91,9 +59,6 @@ abstract public class BaseOpMode extends LinearOpMode {
         powerBL = y - x + turning;
         powerBR = y + x - turning;
 
-        motorFL.setPower(powerFL);
-        motorFR.setPower(powerFR);
-        motorBL.setPower(powerBL);
-        motorBR.setPower(powerBR);
+        drive.setMotorPowers(powerFL, powerBL, powerBR, powerFR);
     }
 }

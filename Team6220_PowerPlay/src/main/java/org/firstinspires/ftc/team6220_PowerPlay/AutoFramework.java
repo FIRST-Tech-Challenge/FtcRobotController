@@ -1,6 +1,8 @@
 package org.firstinspires.ftc.team6220_PowerPlay;
 
 
+import org.checkerframework.checker.units.qual.C;
+
 abstract public class AutoFramework extends BaseAutonomous {
     /**
      * @param AutoSelector, controls left or right
@@ -11,8 +13,8 @@ abstract public class AutoFramework extends BaseAutonomous {
         int driveCourse;
         int targetDistance = 11;
         int[] signalArray;
-        switch (AutoSelector) {
 
+        switch (AutoSelector) {
             case LeftAutos:
                 signalArray = new int[]{90, 33, 90, 11, -90, 11};
                 driveCourse = -90;
@@ -28,6 +30,10 @@ abstract public class AutoFramework extends BaseAutonomous {
 
         // initialize motors, servos, imu, cameras, etc.
         initialize();
+
+        grabberCameraPipeline.setRanges(Constants.LOWER_BLACK, Constants.UPPER_BLACK);
+
+        startCameraWithPipeline(grabberCameraPipeline, grabberCamera, Constants.CAMERA_X, Constants.CAMERA_Y);
 
         // detect april tag in initialize //i added one because it looks more cooler
         int signal = 1 + detectSignal();
@@ -47,11 +53,12 @@ abstract public class AutoFramework extends BaseAutonomous {
         // raise slides to high junction height
         driveSlidesAutonomous(Constants.SLIDE_HIGH);
 
-        // strafe right to face high junction
-        driveAutonomous(driveCourse, targetDistance);
+        driveAutonomous(driveCourse, 10.5);
 
-        // sleep to make sure robot has stopped moving
-        sleep(500);
+        // center on junction top
+        centerJunctionTop(grabberCameraPipeline);
+
+        sleep(100);
 
         // lower cone on to junction
         driveSlidesAutonomous(Constants.SLIDE_HIGH - 200);

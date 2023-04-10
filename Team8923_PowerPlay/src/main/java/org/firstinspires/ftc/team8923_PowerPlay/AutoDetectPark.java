@@ -9,7 +9,7 @@ public class AutoDetectPark extends BaseAutonomous {
     public void runOpMode() {
         initAuto();
         waitForStart();
-        driveInches(0, 2);
+        driveInches(0, 6);
         switch (detectSignalSleeve()) {
             case ONE:
                 // Strafe left one tile.
@@ -26,3 +26,4 @@ public class AutoDetectPark extends BaseAutonomous {
         driveInches(0, 30);
     }
 }
+

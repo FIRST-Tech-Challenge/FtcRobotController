@@ -17,10 +17,17 @@ public class GrabberCameraPipeline extends OpenCvPipeline {
     public double xPosition = Constants.CAMERA_CENTER_X;
     public double yPosition = Constants.CAMERA_CENTER_Y;
     public boolean detected = false;
+    private Scalar lowerRange;
+    private Scalar upperRange;
 
     List<MatOfPoint> contours = new ArrayList<>();
     Mat hierarchy = new Mat();
     Mat mat = new Mat();
+
+    public void setRanges(Scalar lowerRange, Scalar upperRange) {
+        this.lowerRange = lowerRange;
+        this.upperRange = upperRange;
+    }
 
     @Override
     public Mat processFrame(Mat input) {
@@ -31,14 +38,13 @@ public class GrabberCameraPipeline extends OpenCvPipeline {
         Imgproc.GaussianBlur(mat, mat, Constants.BLUR_SIZE, 0);
 
         // masks blurred frame within black ranges to find junction top
-        Core.inRange(mat, Constants.LOWER_BLACK, Constants.UPPER_BLACK, mat);
+        Core.inRange(mat, lowerRange, upperRange, mat);
 
         // single out all areas of black
         Imgproc.findContours(mat, contours, hierarchy, Imgproc.RETR_LIST, Imgproc.CHAIN_APPROX_SIMPLE);
 
         // determine largest area of black
         if (contours.size() > 0) {
-            detected = true;
             double maxVal = 0.0;
             int maxValIdx = 0;
 
@@ -53,26 +59,37 @@ public class GrabberCameraPipeline extends OpenCvPipeline {
             Rect boundingRect = Imgproc.boundingRect(contours.get(maxValIdx));
 
             // get center coordinates of bounding box
-            xPosition = boundingRect.x + (boundingRect.width * 0.5);
-            yPosition = boundingRect.y + (boundingRect.height * 0.5);
+            double x = boundingRect.x + (boundingRect.width * 0.5);
+            double y = boundingRect.y + (boundingRect.height * 0.5);
+
+            //TODO: add a cutoff point only for the bottom quarter of the frame as to not see the wheels
 
             // calculate distance of the center of the box from the center of the camera
-            double distanceFromCenter = Math.sqrt(Math.pow(Math.abs((xPosition - Constants.CAMERA_CENTER_X)), 2) + Math.pow(Math.abs((yPosition - Constants.CAMERA_CENTER_Y)), 2));
+            double distanceFromCenter = Math.sqrt(Math.pow(Math.abs((x - Constants.CAMERA_CENTER_X)), 2) + Math.pow(Math.abs((y - Constants.CAMERA_CENTER_Y)), 2));
 
             // determine if the detected area is close enough to the center
             // this is done to avoid detecting the wheels which are also black
-            //TODO: add a check to determine that the box is relatively square, to prevent detecting other robots or black objects on the field other than the junctions
-            if (distanceFromCenter < Constants.DISTANCE_FROM_CENTER) {
-                Moments moments = Imgproc.moments(contours.get(maxValIdx), false);
+            if (distanceFromCenter < Constants.DISTANCE_FROM_CENTER_JUNCTION_TOP) {
+                    if (maxVal >= Constants.CONTOUR_MINIMUM_SIZE && maxVal <= Constants.JUNCTION_TOP_MAX_SIZE) {
+                        Moments moments = Imgproc.moments(contours.get(maxValIdx), false);
 
-                Imgproc.rectangle(input, boundingRect, new Scalar(0, 255, 0), 10);
+                        Imgproc.rectangle(input, boundingRect, new Scalar(0, 255, 0), 10);
 
-                if (moments.get_m00() > 0) {
-                    xPosition = boundingRect.x + (boundingRect.width * 0.5);
-                    yPosition = boundingRect.y + (boundingRect.height * 0.5);
+                        if (moments.get_m00() > 0) {
+                            detected = true;
+                            xPosition = boundingRect.x + (boundingRect.width * 0.5);
+                            yPosition = boundingRect.y + (boundingRect.height * 0.5);
+                        }
+                    } else {
+                        detected = false;
+                        xPosition = Constants.CAMERA_CENTER_X;
+                        yPosition = Constants.CAMERA_CENTER_Y;
                 }
+            } else {
+                detected = false;
+                xPosition = Constants.CAMERA_CENTER_X;
+                yPosition = Constants.CAMERA_CENTER_Y;
             }
-
         // if not detected set back to defaults
         } else {
             detected = false;
