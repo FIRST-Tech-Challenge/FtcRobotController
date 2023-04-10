@@ -21,8 +21,8 @@ public class Constants {
     public static final double MAXIMUM_TURN_POWER_AUTONOMOUS = 0.3;
     public static final double MAXIMUM_DRIVE_POWER_AUTONOMOUS = 0.3;
 
-    public static final double MAXIMUM_TURN_POWER_TELEOP = 0.7;
-    public static final double MAXIMUM_DRIVE_POWER_TELEOP = 0.7;
+    public static final double MAXIMUM_TURN_POWER_TELEOP = 0.6;
+    public static final double MAXIMUM_DRIVE_POWER_TELEOP = 0.6;
 
     public static final double SLIDE_FEEDFORWARD = 0.05;
     public static final double SLIDE_MOTOR_KP = 0.01;
