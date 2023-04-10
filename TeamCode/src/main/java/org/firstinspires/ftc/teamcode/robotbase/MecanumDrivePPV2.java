@@ -60,6 +60,10 @@ import static org.firstinspires.ftc.teamcode.myroadrunner.drive.DriveConstants.f
 import static org.firstinspires.ftc.teamcode.myroadrunner.drive.DriveConstants.frontRightInverted;
 import static org.firstinspires.ftc.teamcode.myroadrunner.drive.DriveConstants.rearLeftInverted;
 import static org.firstinspires.ftc.teamcode.myroadrunner.drive.DriveConstants.rearRightInverted;
+import static org.firstinspires.ftc.teamcode.myroadrunner.drive.DriveConstants.frontLeftAutonomousInverted;
+import static org.firstinspires.ftc.teamcode.myroadrunner.drive.DriveConstants.frontRightAutonomousInverted;
+import static org.firstinspires.ftc.teamcode.myroadrunner.drive.DriveConstants.rearLeftAutonomousInverted;
+import static org.firstinspires.ftc.teamcode.myroadrunner.drive.DriveConstants.rearRightAutonomousInverted;
 import static org.firstinspires.ftc.teamcode.robotbase.RobotEx.OpModeType.AUTO;
 import static org.firstinspires.ftc.teamcode.robotbase.RobotEx.OpModeType.TELEOP;
 /*
@@ -86,6 +90,7 @@ public class MecanumDrivePPV2 extends MecanumDrive implements Subsystem {
             MAX_VEL, MAX_ANG_VEL, TRACK_WIDTH
     );
     private static final TrajectoryAccelerationConstraint ACCEL_CONSTRAINT = getAccelerationConstraint(MAX_ACCEL);
+    private MotorExEx frontLeftAutonomous, frontRightAutonomous, rearRightAutonomous, rearLeftAutonomous;
     private TrajectoryFollower follower;
     private List<Integer> lastEncPositions = new ArrayList<>();
     private List<Integer> lastEncVels = new ArrayList<>();
@@ -115,9 +120,10 @@ public class MecanumDrivePPV2 extends MecanumDrive implements Subsystem {
         rearRight = new MotorExEx(hardwareMap, "rearRight", Motor.GoBILDA.RPM_312);
         rearLeft = new MotorExEx(hardwareMap, "rearLeft", Motor.GoBILDA.RPM_312);
 
-        motors = Arrays.asList(frontLeft, frontRight, rearLeft, rearRight);
+        motors = Arrays.asList(frontLeftAutonomous, frontRightAutonomous, rearLeftAutonomous, rearRightAutonomous);
 
         setMotorsInverted(frontLeftInverted, frontRightInverted, rearRightInverted, rearLeftInverted);
+        setMotorsAutonomousInverted(frontLeftAutonomousInverted, frontRightAutonomousInverted, rearRightAutonomousInverted, rearLeftAutonomousInverted);
 
         if (RUN_USING_ENCODER) setMode(MotorExEx.RunMode.VelocityControl);
 
@@ -138,9 +144,6 @@ public class MecanumDrivePPV2 extends MecanumDrive implements Subsystem {
             /* ------------------------------------- AUTONOMOUS ------------------------------------- */
             follower = new HolonomicPIDVAFollower(TRANSLATIONAL_PID, TRANSLATIONAL_PID, HEADING_PID,
                     new Pose2d(0.5, 0.5, Math.toRadians(5.0)), 0.5);
-
-            List<Integer> lastTrackingEncPositions = new ArrayList<>();
-            List<Integer> lastTrackingEncVels = new ArrayList<>();
 
             // TODO: if desired, use setLocalizer() to change the localization method
             trajectorySequenceRunner = new TrajectorySequenceRunner(
@@ -187,6 +190,16 @@ public class MecanumDrivePPV2 extends MecanumDrive implements Subsystem {
         rearLeft.setInverted(leftRearInverted);
         frontRight.setInverted(rightFrontInverted);
         rearRight.setInverted(rightRearInverted);
+    }
+    public void setMotorsAutonomousInverted(
+            boolean leftFrontAutonomousInverted, boolean rightFrontAutonomousInverted,
+            boolean rightRearAutonomousInverted, boolean leftRearAutonomousInverted
+    )
+    {
+        frontLeftAutonomous.setInverted(leftFrontAutonomousInverted);
+        rearLeftAutonomous.setInverted(leftRearAutonomousInverted);
+        frontRightAutonomous.setInverted(rightFrontAutonomousInverted);
+        rearRightAutonomous.setInverted(rightRearAutonomousInverted);
     }
     public TrajectoryBuilder trajectoryBuilder(Pose2d startPose)
     {

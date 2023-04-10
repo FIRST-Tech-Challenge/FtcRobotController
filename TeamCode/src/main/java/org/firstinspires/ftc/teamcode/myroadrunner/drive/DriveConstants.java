@@ -104,7 +104,8 @@ public class DriveConstants {
 
     public static double LATERAL_MULTIPLIER = 1.17602326;
 
-    public static boolean frontLeftInverted = true, frontRightInverted = false, rearRightInverted = false, rearLeftInverted = true;
+    public static boolean frontLeftInverted = true, frontRightInverted = true, rearRightInverted = true, rearLeftInverted = true;
+    public static boolean frontLeftAutonomousInverted = true, frontRightAutonomousInverted = false, rearRightAutonomousInverted = false, rearLeftAutonomousInverted = true;
 
     public static double encoderTicksToInches(double ticks) {
         return WHEEL_RADIUS * 2 * Math.PI * GEAR_RATIO * ticks / TICKS_PER_REV;

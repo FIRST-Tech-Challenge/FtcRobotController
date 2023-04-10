@@ -56,7 +56,7 @@ public class PowerPlayAutonomous extends CommandOpMode {
         GamepadExEx toolOp = new GamepadExEx(gamepad2);
 
         robot = new PowerPlayRobotV2(hardwareMap, telemetry, driverOp, toolOp, AUTO, true,
-                false, false, false, false, false);
+                false);
 
         drive = new SampleMecanumDrive(hardwareMap);
 
