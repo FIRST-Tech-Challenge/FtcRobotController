@@ -186,6 +186,7 @@ public class Robot implements Subsystem {
                 driveTrain.setHeading(pos.getPose().getHeading());
                 articulate(Articulation.MANUAL);
                 turret.setHeading(pos.getTurretHeading());
+                turret.setTicks(pos.getTurretTicks());
             }
         }
     }
@@ -223,7 +224,7 @@ public class Robot implements Subsystem {
             subsystemUpdateTimes[i] = System.nanoTime() - updateStartTime;
         }
         if(updatePositionCache) {
-            currentTauPos = new TauPosition(driveTrain.getPoseEstimate(), turret.getHeading());
+            currentTauPos = new TauPosition(driveTrain.getPoseEstimate(), turret.getHeading(), turret.getTicks());
             positionCache.update(currentTauPos, false);
         }
         //paint the robot's current pose for dashboard
@@ -267,7 +268,7 @@ public class Robot implements Subsystem {
         for(Subsystem subsystem: subsystems)
             subsystem.stop();
 
-        currentTauPos = new TauPosition(driveTrain.getPoseEstimate(), turret.getHeading());
+        currentTauPos = new TauPosition(driveTrain.getPoseEstimate(), turret.getHeading(), turret.getTicks());
         positionCache.update(currentTauPos, true);
     }
 
@@ -686,7 +687,7 @@ public class Robot implements Subsystem {
                 dropStage++;
                 break;
             case 1:
-                crane.articulate(Crane.Articulation.dropConeNoSub);
+                crane.articulate(Crane.Articulation.dropConeReturnToTransfer);
                 dropStage++;
                 break;
             case 2:

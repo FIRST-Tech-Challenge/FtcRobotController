@@ -91,6 +91,7 @@ public class Turret implements Subsystem {
     }
 
     double offsetHeading;
+    int offsetTicks;
 
 
     public static double distanceBetweenAngles(double currentAngle, double targetAngle){
@@ -157,7 +158,7 @@ public class Turret implements Subsystem {
 
     private int calcClosest(int ticks){
         int fullRot = 3572;
-        int position = motor.getCurrentPosition();
+        int position = getTicks();
 
         return (int)Utils.distanceBetweenAngles(position%fullRot,ticks) + position;
     }
@@ -196,7 +197,7 @@ public class Turret implements Subsystem {
             //power = turretPID.onTarget() ? 0 : correction; //what was this? artificially stills micro corrections
         }
         else {
-            motor.setTargetPosition(targetTics);
+            motor.setTargetPosition(targetTics+offsetTicks);
         }
 
         //not sure if this is still workable given the changes to using RunToPosition for
@@ -270,7 +271,7 @@ public class Turret implements Subsystem {
         else {
             turretPID.disable();
             //we are going to set run-to-position mode
-            motor.setTargetPosition(motor.getCurrentPosition()); //encoder should have be reset at the end of calibration - here we set it to it's current position so it doesn't jerk
+            motor.setTargetPosition(targetTics+offsetTicks); //encoder should have be reset at the end of calibration - here we set it to it's current position so it doesn't jerk
             motor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             motor.setPower(1); //full power available
             motor.setVelocity(TURRET_TICKS_ROTATION_SPEED); //ticks per second max velocity todo tune for moderate speed
@@ -297,6 +298,7 @@ public class Turret implements Subsystem {
     public double getHeading() {
         return heading;
     }
+    public int getTicks() {return motor.getCurrentPosition()+offsetTicks;}
 
     /**
      * assign the current heading of the robot to a specific angle
@@ -305,6 +307,13 @@ public class Turret implements Subsystem {
     public void setHeading(double angle){
         offsetHeading = wrapAngleMinus(imuAngles.firstAngle + TURRET_OFFSET_HEADING, angle);
         //turretInitialized = false; //triggers recalc of heading offset at next IMU update cycle
+    }
+
+    public void setTicks(int ticks){
+        offsetTicks = ticks;
+        motor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        motor.setTargetPosition(0);
+        motor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
     }
 
     public void resetTurretHeading(TauPosition pos, double loggerTimeoutM){
@@ -358,6 +367,7 @@ public class Turret implements Subsystem {
             telemetryMap.put("turret calibrate", calibrateStage);
             telemetryMap.put("turret Target Heading", targetHeading);
             telemetryMap.put("turret Target Ticks", targetTics);
+            System.out.println("Target ticks: " + targetTics + ", Current ticks: " + getTicks() + ", Offset ticks: " + offsetTicks);
         }
 
         return telemetryMap;

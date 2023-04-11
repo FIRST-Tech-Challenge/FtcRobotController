@@ -78,21 +78,14 @@ public class UnderArm implements Subsystem {
     public static double TRANSFER_SHOULDER_ANGLE = -15;
     public static double TRANSFER_SHOULDER_APPROACH_ANGLE = 10;
 
-    public static double TRANSFER_SHOULDER_OUTOFWAY_ANGLE = 10;
+    public static double TRANSFER_SHOULDER_OUTOFWAY_ANGLE = 20;
     public static double TRANSFER_ELBOW_ANGLE = -115;
     public static double TRANSFER_ELBOW_ANGLE_OUTOFWAY_ANGLE = -135;
 
     public static double TRANSFER_WRIST_ANGLE = 115;
 
-    public static double TRANSFER_TURRET_ANGLE = 0; //-14
+    public static double TRANSFER_TURRET_ANGLE = 5; //-14
 
-    public static double OLD_TRANSFER_TURRET_ANGLE = 0; //-14
-
-    public static double OLD_TRANSFER_SHOULDER_ANGLE = -24;
-    public static double OLD_TRANSFER_SHOULDER_APPROACH_ANGLE = -24;
-    public static double OLD_TRANSFER_ELBOW_ANGLE = -120;
-
-    public static double OLD_TRANSFER_WRIST_ANGLE = 115;
 
     public static double PICKUP_WRIST_ANGLE = -5;
 
@@ -469,23 +462,25 @@ public class UnderArm implements Subsystem {
                     transferStage++;
                 }
                 break;
-            case 3:
+            case 3: //lift elbow and gripper away from cone
                 if(System.nanoTime() > transferTimer){
                     setElbowTargetAngle(TRANSFER_ELBOW_ANGLE_OUTOFWAY_ANGLE);
                     transferTimer = futureTime(0.3);
                     transferStage++;
                 }
                 break;
-            case 4: //raise underarm out of the way
+            case 4: //raise underarm further out of the way && close gripper
                 if(System.nanoTime() > transferTimer){
                     setShoulderTargetAngle(TRANSFER_SHOULDER_OUTOFWAY_ANGLE);
+                    grip();
                     transferTimer = futureTime(0.3);
                     transferStage++;
                 }
                 break;
-            case 5: //close gripper for return to home
+            case 5: //set wrist angle for passthrough
                 if(System.nanoTime() > transferTimer){
-                    grip();
+                    grip(); //redundant grip, just to be sure
+                    setWristTargetAngle(WRIST_HOME_POSITION);
                     transferStage++;
                 }
                 break;
@@ -499,38 +494,15 @@ public class UnderArm implements Subsystem {
         return false;
     }
 
-    public boolean goToOldTransfer(){
-        switch (transferStage) {
-            case 0: //sets the approach position that gets the cone under the bulb gripper
-                atTransfer = false;
-                setTurretTargetAngle(OLD_TRANSFER_TURRET_ANGLE);
-                setElbowTargetAngle(OLD_TRANSFER_ELBOW_ANGLE);
-                setShoulderTargetAngle(OLD_TRANSFER_SHOULDER_APPROACH_ANGLE);
-                setWristTargetAngle(OLD_TRANSFER_WRIST_ANGLE);
-                transferTimer = futureTime(1.0);
-                transferStage++;
-                break;
-            case 1: //final lift to engage grippers
-                if (System.nanoTime() > transferTimer) {
-                    setShoulderTargetAngle(OLD_TRANSFER_SHOULDER_ANGLE);
-                    transferStage = 0;
-                    atTransfer = true;
-                    return true;
-                }
-                break;
-        }
-
-        return false;
-    }
 
     public static double POSTTRANSFER_SHOULDER = 50;
-    public static double POSTTRANSFER_ELBOW = 0;
+    public static double POSTTRANSFER_ELBOW = -15;
 
     int transferRecoverStage;
     long transferRecoverTimer;
     public boolean TransferRecover(){
         switch (transferRecoverStage) {
-            case 0: //starting from the transfer position, recover the elbow first
+            case 0: //starting from the way up transfer cleared position, recover the elbow first
                 atTransfer = false;
                 WRIST_SPEED = 270;
                 setElbowTargetAngle(POSTTRANSFER_ELBOW);
@@ -598,7 +570,8 @@ public class UnderArm implements Subsystem {
                 break;
             case 1:
                 if (substationHoverTimer<System.nanoTime()){
-                    setShoulderTargetAngle(SS_HOVER_SHOULDER/1.5);
+                    setShoulderTargetAngle(SS_HOVER_SHOULDER/1.6); //mostly go there but stop early to not slam the ground
+                    open();
                     substationHoverTimer = futureTime(0.4);
                     substationHoverStage++;
                 }
@@ -609,7 +582,6 @@ public class UnderArm implements Subsystem {
                     // these values are meant to be fine tuned by driver positioning between hover and pickup
                     setElbowTargetAngle(SS_HOVER_ELBOW);
                     setShoulderTargetAngle(SS_HOVER_SHOULDER);
-                    //todo - REVERT THIS TO ABOVE - FOR TESTING
                     setWristTargetAngle(PICKUP_WRIST_ANGLE);
                     setTurretTargetAngle(SS_HOVER_TURRET);
                     substationHoverTimer = futureTime(0.5);
@@ -618,7 +590,7 @@ public class UnderArm implements Subsystem {
                 break;
             case 3: //open gripper
                 if (substationHoverTimer<System.nanoTime()) {
-                    open();
+                    open(); //purposefully redundant open
                     substationHoverStage = 0;
                     canSaveHoverPositions = true;
                     return true;
