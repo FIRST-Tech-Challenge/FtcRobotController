@@ -1,2 +1,11 @@
-package org.firstinspires.ftc.team6220_PowerPlay.testclasses;public class OnePlusOne {
+package org.firstinspires.ftc.team6220_PowerPlay.testclasses;
+
+import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+
+@Autonomous(name = "less hopium", group = "Worlds Autos")
+public class OnePlusOne extends OnePlusNAutonFramework{
+    @Override
+    public void runOpMode() throws InterruptedException {
+        runAuto(AutoState.RightAutos, 1);
+    }
 }

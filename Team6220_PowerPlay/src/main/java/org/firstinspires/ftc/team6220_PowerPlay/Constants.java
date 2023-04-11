@@ -19,7 +19,7 @@ public class Constants {
     public static final double MINIMUM_DRIVE_POWER = 0.05;
 
     public static final double MAXIMUM_TURN_POWER_AUTONOMOUS = 0.3;
-    public static final double MAXIMUM_DRIVE_POWER_AUTONOMOUS = 0.5;
+    public static final double MAXIMUM_DRIVE_POWER_AUTONOMOUS = 0.4;
 
     public static final double MAXIMUM_TURN_POWER_TELEOP = 0.5;
     public static final double MAXIMUM_DRIVE_POWER_TELEOP = 0.5;
@@ -57,7 +57,7 @@ public class Constants {
     public static final int CAMERA_CENTER_X = CAMERA_X / 2;
     public static final int CAMERA_CENTER_Y = CAMERA_Y / 2;
 
-    public static final int CONE_WIDTH = 350;
+    public static final int CONE_WIDTH = 400;
     public static final double CONE_STACK_WIDTH_KP = -0.00005;
     public static final double CONE_STACK_CENTERING_KP = -0.0005;
     public static final double CONE_STACK_CENTERING_PROPORTIONAL_KP = -0.0003;

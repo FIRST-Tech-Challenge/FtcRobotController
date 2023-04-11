@@ -248,9 +248,10 @@ public abstract class BaseAutonomous extends BaseOpMode {
     }
 
     public void grabFromStackAndDepositOnJunction(int loopNumber, int angleOffset){
-        for (int i = 0; i <= loopNumber-1; i++) {
+        for (int i = loopNumber-1; i >= 0; i--) {
+            telemetry.addData("loop", i + 1);
             //drive slides to stack position
-            driveSlides(Constants.STACK_HEIGHTS[i]);
+            driveSlidesAutonomous(Constants.STACK_HEIGHTS[i]);
             //center on cone stack
             centerConeStack(robotCameraPipeline);
             sleep(300);
@@ -258,15 +259,15 @@ public abstract class BaseAutonomous extends BaseOpMode {
             driveGrabber(Constants.GRABBER_CLOSE_POSITION);
             sleep(600);
             //drive slides to stow position
-            driveSlides(Constants.SLIDE_LOW);
+            driveSlidesAutonomous(Constants.SLIDE_LOW);
             //drive backwards 34.5 inches
             driveAutonomous(180, 34.5);
             //turn towards junction
             turnToAngle(90 + angleOffset);
             //drive slides up
-            driveSlides(Constants.SLIDE_TOP);
+            driveSlidesAutonomous(Constants.SLIDE_TOP);
             //wait for slides to go all the way up
-            sleep(600);
+            sleep(400);
             //drive forward
             driveAutonomous(0, 2);
             //center on junction
@@ -280,7 +281,7 @@ public abstract class BaseAutonomous extends BaseOpMode {
             //wait for cone to drop
             sleep(100);
             //drive slides back up
-            driveSlides(Constants.SLIDE_TOP);
+            driveSlidesAutonomous(Constants.SLIDE_TOP);
             sleep(200);
             //drive backwards
             driveAutonomous(180, 3);

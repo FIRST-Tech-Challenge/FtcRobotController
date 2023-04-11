@@ -6,6 +6,6 @@ import org.firstinspires.ftc.team6220_PowerPlay.BaseAutonomous;
 public class OnePlusFiveTest extends OnePlusNAutonFramework {
     @Override
     public void runOpMode() throws InterruptedException {
-        runAuto(AutoState.LeftAutos, 5);
+        runAuto(AutoState.RightAutos, 5);
     }
 }

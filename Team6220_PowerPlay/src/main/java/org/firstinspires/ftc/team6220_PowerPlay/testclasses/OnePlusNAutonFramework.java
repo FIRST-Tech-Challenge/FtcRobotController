@@ -2,10 +2,12 @@ package org.firstinspires.ftc.team6220_PowerPlay.testclasses;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
+import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.team6220_PowerPlay.BaseAutonomous;
 import org.firstinspires.ftc.team6220_PowerPlay.Constants;
 import org.firstinspires.ftc.team6220_PowerPlay.GrabberCameraPipeline;
 import org.firstinspires.ftc.team6220_PowerPlay.RobotCameraPipeline;
+import org.openftc.easyopencv.OpenCvCameraFactory;
 
 abstract public class OnePlusNAutonFramework extends BaseAutonomous {
     /**
@@ -41,43 +43,65 @@ abstract public class OnePlusNAutonFramework extends BaseAutonomous {
             int signal = 1 + detectSignal();
 
             //reinit cameras to switch pipelines
+            int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
+            robotCamera = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "RobotCamera"), cameraMonitorViewId);
+            // creates pipelines
+            GrabberCameraPipeline grabberCameraPipeline = new GrabberCameraPipeline();
             RobotCameraPipeline robotCameraPipeline = new RobotCameraPipeline();
             grabberCameraPipeline.setRanges(Constants.LOWER_YELLOW, Constants.UPPER_YELLOW);
             robotCameraPipeline.setRanges(Constants.LOWER_BLUE, Constants.UPPER_BLUE);
-            startCameraWithPipeline(grabberCameraPipeline, grabberCamera, Constants.CAMERA_X, Constants.CAMERA_Y);
+            // starts streaming cameras
             startCameraWithPipeline(robotCameraPipeline, robotCamera, Constants.CAMERA_X, Constants.CAMERA_Y);
+            startCameraWithPipeline(grabberCameraPipeline, grabberCamera, Constants.CAMERA_X, Constants.CAMERA_Y);
 
             //waits for the auto to start
             waitForStart();
 
-            //close grabber on pre-loaded cone
             driveGrabber(Constants.GRABBER_CLOSE_POSITION);
+
             // sleep so grabber has time to grip cone
-            sleep(300);
+            sleep(1000);
+
             // raise slides so cone doesn't drag on tiles
             driveSlidesAutonomous(Constants.SLIDE_STOW);
+
             // drive forward to high junction
             driveAutonomous(0, 56);
+
             // raise slides to high junction height
             driveSlidesAutonomous(Constants.SLIDE_HIGH);
-            // strafe right to face high junction
-            driveAutonomous(driveCourse, targetDistance);
-            // sleep to make sure robot has stopped moving
+
+            driveAutonomous(driveCourse, 10.5);
+            telemetry.addData("motorFLEncoderCount", motorFL.getCurrentPosition());
+            telemetry.addData("motorFREncoderCount", motorFR.getCurrentPosition());
+            telemetry.addData("motorBREncoderCount", motorBR.getCurrentPosition());
+            telemetry.addData("motorBLEncoderCount", motorBL.getCurrentPosition());
+            telemetry.update();
+
+
+            // center on junction top
+            centerJunctionTop(grabberCameraPipeline);
+
             sleep(100);
-            // lower cone onto junction
+
+            // lower cone on to junction
             driveSlidesAutonomous(Constants.SLIDE_HIGH - 200);
+
             // sleep to make sure robot has stopped moving
-            sleep(100);
+            sleep(500);
+
             // drop cone on junction
             driveGrabber(Constants.GRABBER_OPEN_POSITION);
+
             // sleep to make sure cone has fallen
-            sleep(100);
+            sleep(500);
+
             // drive backward so robot is in center of junctions
             driveAutonomous(180, 3);
             //  turn to face stack
             turnToAngle(angleOffset);
             //  grab from stack
-            grabFromStackAndDepositOnJunction(loops - 1, angleOffset);
+            grabFromStackAndDepositOnJunction(loops, angleOffset);
             //drive slides down
             driveSlides(Constants.SLIDE_BOTTOM);
             //  prepare to park
