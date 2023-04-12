@@ -12,6 +12,9 @@ import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.isTeleop;
 import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.logger;
 import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.op;
 
+import static java.lang.Math.sqrt;
+
+import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.qualcomm.hardware.rev.Rev2mDistanceSensor;
 
 import org.firstinspires.ftc.teamcode.Components.RFModules.Devices.RFServo;
@@ -20,7 +23,9 @@ public class Claw {
 
     private RFServo claw;
 
-    private Rev2mDistanceSensor coneObserver;
+    private Rev2mDistanceSensor leftDist;
+    private Rev2mDistanceSensor rightDist;
+
 
     //temporary
     private final double CLAW_CONE_DISTANCE = 2;
@@ -94,7 +99,9 @@ public class Claw {
         //init RFServo & Distance sensor
         claw = new RFServo("clawServo", CLAW_SERVO_MAX_TICK);
 
-//        coneObserver = op.hardwareMap.get(Rev2mDistanceSensor.class, "coneObserver");
+        leftDist = op.hardwareMap.get(Rev2mDistanceSensor.class, "leftDist");
+        rightDist = op.hardwareMap.get(Rev2mDistanceSensor.class, "rightDist");
+
 
         if(!isTeleop){
             claw.setPosition(CLAW_CLOSED_POS);
@@ -163,7 +170,7 @@ public class Claw {
     public void teleClaw(){
         if(ARM_INTAKE.getStatus()&&!CLAW_WIDE.status){
             claw.setPosition(CLAW_Tele_POS);
-            ClawStates.CLAW_WIDE.setStatus(true);
+            CLAW_WIDING.setStatus(true);
             clawPos = CLAW_WIDE_POS;
         }
     }
@@ -176,14 +183,14 @@ public class Claw {
         }
     }
     //close the claw
-    public void closeClaw() {
+    public void closeClaw(Vector2d velo) {
         //no input
-
-
+        double velocity = velo.getY()* velo.getY() + velo.getX() * velo.getX();
+        velocity = sqrt(velocity);
         //the state of claw opened has to be true
-        if (op.getRuntime()-lastCheckTime>0.2 && op.getRuntime()-lastOpenTime>3) {
+        if (op.getRuntime()-lastCheckTime>0.2) {
             lastCheckTime = op.getRuntime();
-            if((CLAW_OPEN.status|| CLAW_WIDE.status) && isConeReady()&& ARM_INTAKE.getStatus()) {
+            if((CLAW_OPEN.status|| CLAW_WIDE.status) && isConeReady(velocity)&& ARM_INTAKE.getStatus()) {
                 //set servo position
                 claw.setPosition(CLAW_CLOSED_POS);
 
@@ -257,7 +264,7 @@ public class Claw {
 
 
     //look at and return distance to the nearest cone
-    public boolean isConeReady() {
+    public boolean isConeReady(double velocity) {
         //no input
         //no state conditions
         //execute algorithm for observing
@@ -270,10 +277,11 @@ public class Claw {
 //        if(distance>2000){
 //            shouldUseClawSensor = false;
 //        }
-        return 1000 < CLAW_CONE_DISTANCE && shouldUseClawSensor;
+        double dist = coneDistance();
+        return dist<5||velocity>10&&dist<13;
     }
     public double coneDistance(){
-        return coneObserver.getDistance(INCH);
+        return leftDist.getDistance(INCH)+rightDist.getDistance(INCH);
     }
 
     //look at and return distance to the top of the stick

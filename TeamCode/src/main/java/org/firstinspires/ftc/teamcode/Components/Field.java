@@ -152,9 +152,9 @@ public class Field {
     private Pose2d velocityLog(Pose2d newVelocity){
         double[] poses = {0,0,0};
         for(int i=0;i<5;i++){
-            poses[0]+=lastVelocity.get(i).getX()*(i/2.0+3);
-            poses[1]+=lastVelocity.get(i).getY()*(i/2.0+3);
-            poses[2]+=lastVelocity.get(i).getHeading()*(i/2.0+3);
+            poses[0]+=lastVelocity.get(i).getX()*(i+3)/3.0;
+            poses[1]+=lastVelocity.get(i).getY()*(i+3)/3.0;
+            poses[2]+=lastVelocity.get(i).getHeading()*(i+3)/3.0;
         }
 //        if(xya[0]==false) {
             poses[0] += newVelocity.getX() * 5;
@@ -179,18 +179,18 @@ public class Field {
             lastVelocity.add(newVelocity);
 //        }
 
-        return new Pose2d(poses[0]/25,poses[1]/25,poses[2]/25);
+        return new Pose2d(poses[0]/15,poses[1]/15,poses[2]/15);
     }
 
     public Pose2d filteredVelocity(Pose2d newVelocity){
         boolean[] xya = {true,true,true};
         double[] fildered = {newVelocity.getX(), newVelocity.getY(),newVelocity.getHeading()};
-        if(abs(newVelocity.getX()-lastVelocity.get(4).getX())>14){
+        if(abs(newVelocity.getX()-lastVelocity.get(4).getX())>10){
             xya[0] = false;
             fildered[0] += lastVelocity.get(4).getX();
             fildered[0]/=2;
         }
-        if(abs(newVelocity.getY()-lastVelocity.get(4).getY())>14){
+        if(abs(newVelocity.getY()-lastVelocity.get(4).getY())>10){
             xya[1] = false;
             fildered[1] += lastVelocity.get(4).getY();
             fildered[1]/=2;
@@ -447,64 +447,58 @@ public class Field {
         directionIndex = direction;
         boolean shouldMove = true;
         double notTooDeep = 7;
-        double directionindicator = 0;
+        double[] directionindicator = {0,0};
         double[] derection = {0, 0};
-        double[] move;
+        double[] move = new double[0];
         double[] endTangents = {0, Math.toRadians(270), Math.toRadians(180), Math.toRadians(90), Math.toRadians(0)};
         int[] curTile = currentTile;
         if (direction == 5 || direction == 6) {
-            double[] target = new double[2];
+            double depth = 5;
+            double sidpth = 5;
+            double endTangent = 0;
             double halfangle = 0;
+            double[] target = tileCoords[currentTile[0]][currentTile[1]];
+            if(fullMovement.isEmpty()){
+                return;
+            }
             if ((fullMovement.get(fullMovement.size() - 1)[3] == Math.toRadians(0) && !reversals.get(fullMovement.size() - 1))
                     || (fullMovement.get(fullMovement.size() - 1)[3] == Math.toRadians(180) && reversals.get(fullMovement.size() - 1)) && curTile[0] != 5) {
-                directionindicator = 4;
+                directionindicator = new double[]{1,0};
+                endTangent = endTangents[4];
             }
             else if ((fullMovement.get(fullMovement.size() - 1)[3] == Math.toRadians(90) && !reversals.get(fullMovement.size() - 1))
                     || (fullMovement.get(fullMovement.size() - 1)[3] == Math.toRadians(270)) && reversals.get(fullMovement.size() - 1)) {
-                directionindicator = 3;
+                directionindicator = new double[]{0,1};
+                endTangent = endTangents[3];
+
             }
             else if ((fullMovement.get(fullMovement.size() - 1)[3] == Math.toRadians(180) && !reversals.get(fullMovement.size() - 1))
                     || (fullMovement.get(fullMovement.size() - 1)[3] == Math.toRadians(0)) && reversals.get(fullMovement.size() - 1)) {
-                directionindicator = 2;
+                directionindicator = new double[]{-1,0};
+                endTangent = endTangents[2];
+
             }
             else if ((fullMovement.get(fullMovement.size() - 1)[3] == Math.toRadians(270) && !reversals.get(fullMovement.size() - 1))
                     || (fullMovement.get(fullMovement.size() - 1)[3] == Math.toRadians(90)) && reversals.get(fullMovement.size() - 1)) {
-                directionindicator = 1;
+                directionindicator = new double[]{0,-1};
+                endTangent = endTangents[1];
+
             }
 
             if (direction == 5) {
-                if (directionindicator == 4 && curTile[0] != 1 && curTile[1] != 5) {
-                    target = poleCoords[currentTile[0] - 1][currentTile[1]];
-                }
-                if (directionindicator == 3 && curTile[0] != 1 && curTile[1] != 1) {
-                    target = poleCoords[currentTile[0] - 1][currentTile[1] - 1];
-                }
-                if (directionindicator == 2 && curTile[0] != 5 && curTile[1] != 1) {
-                    target = poleCoords[currentTile[0]][currentTile[1] - 1];
-                }
-                if (directionindicator == 1 && curTile[0] != 5 && curTile[1] != 5) {
-                    target = poleCoords[currentTile[0]][currentTile[1]];
-                }
-                halfangle = toRadians(endTangents[(int) directionindicator] + 225);
+                move = new double[]{target[0] + directionindicator[0] * depth + directionindicator[1]*sidpth,
+                        target[1] + directionindicator[1] * depth + directionindicator[0]*sidpth,
+                        halfangle, halfangle};
+
+                halfangle = toRadians(endTangent + 225);
             }
 
             if (direction == 6) {
-                if (directionindicator == 4 && curTile[0] != 5 && curTile[1] != 5) {
-                    target = poleCoords[currentTile[0]][currentTile[1]];
-                }
-                if (directionindicator == 3 && curTile[0] != 1 && curTile[1] != 5) {
-                    target = poleCoords[currentTile[0] - 1][currentTile[1]];
-                }
-                if (directionindicator == 2 && curTile[0] != 1 && curTile[1] != 1) {
-                    target = poleCoords[currentTile[0] - 1][currentTile[1] - 1];
-                }
-                if (directionindicator == 1 && curTile[0] != 5 && curTile[1] != 1) {
-                    target = poleCoords[currentTile[0]][currentTile[1] - 1];
-                }
-                halfangle = toRadians(endTangents[(int) directionindicator] + 135);
+                move = new double[]{target[0] + directionindicator[0] * depth - directionindicator[1]*sidpth,
+                        target[1] + directionindicator[1] * depth - directionindicator[0]*sidpth,
+                        halfangle, halfangle};
+                halfangle = toRadians(endTangent + 135);
             }
-
-            move = new double[]{target[0], target[1], halfangle, halfangle};
 
         } else {
             if (direction == 1) {

@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.Robots;
 
 import com.acmerobotics.dashboard.FtcDashboard;
+import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import org.firstinspires.ftc.teamcode.Components.Logger;
 import org.firstinspires.ftc.teamcode.Components.Queuer;
@@ -18,9 +19,9 @@ public class BasicRobot{
                 "Function                        Action");
         logger.createFile("gamepad", "Value Name Time");
         dashboard = FtcDashboard.getInstance();
-        dashboard.setTelemetryTransmissionInterval(25);
         queuer = new Queuer();
         isTeleop = p_isTeleop;
+        op.telemetry = new MultipleTelemetry(op.telemetry, FtcDashboard.getInstance().getTelemetry());
 
     }
     public void resetQueuer() {

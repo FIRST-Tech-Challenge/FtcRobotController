@@ -11,6 +11,8 @@ import static org.firstinspires.ftc.teamcode.Components.Lift.LiftConstants.LIFT_
 import static org.firstinspires.ftc.teamcode.Components.LiftArm.liftArmStates.ARM_INTAKE;
 import static org.firstinspires.ftc.teamcode.Components.LiftArm.liftArmStates.ARM_OUTTAKE;
 import static org.firstinspires.ftc.teamcode.Components.RFModules.Devices.RFMotor.VOLTAGE_CONST;
+import static org.firstinspires.ftc.teamcode.Components.Switch.SwitchStates.PRESSED;
+import static org.firstinspires.ftc.teamcode.Components.Switch.SwitchStates.UNPRESSED;
 import static org.firstinspires.ftc.teamcode.roadrunner.drive.DriveConstants.TRACK_WIDTH;
 import static org.firstinspires.ftc.teamcode.roadrunner.drive.DriveConstants.kV;
 import static java.lang.Math.PI;
@@ -64,7 +66,7 @@ public class PwPRobot extends BasicRobot {
     private LEDStrip leds = null;
     private VoltageSensor voltageSensor = null;
     boolean finished = false;
-    double voltage;
+    double voltage, thisTime=0, lastTiem=0;
     boolean manualSlides = false;
 
 
@@ -105,9 +107,9 @@ public class PwPRobot extends BasicRobot {
         leds = new LEDStrip();
         clawSwitch = new Switch();
         finished = true;
-        if (isTeleop) {
-            roadrun.setPoseEstimate(PoseStorage.currentPose);
-        }
+//        if (isTeleop) {
+//            roadrun.setPoseEstimate(PoseStorage.currentPose);
+//        }
     }
 //    com.qualcomm.ftcrobotcontroller I/art: Waiting for a blocking GC Alloc
 //2023-01-05 14:19:08.807 9944-10985/com.qualcomm.ftcrobotcontroller I/art: Alloc sticky concurrent mark sweep GC freed 340391(7MB) AllocSpace objects, 0(0B) LOS objects, 20% free, 43MB/54MB, paused 2.675ms total 197.819ms
@@ -289,10 +291,14 @@ public class PwPRobot extends BasicRobot {
         double[] maxes = {75, 50, 7};
         double[] targetVelocity = {y/kV, x/kV, a/kV/TRACK_WIDTH};
         Pose2d actualVelocity = roadrun.getPoseVelocity();
+        op.telemetry.addData("velocity", actualVelocity);
+
         actualVelocity = field.filteredVelocity(actualVelocity);
+        op.telemetry.addData("velocity", actualVelocity);
+
         Pose2d pos = roadrun.getPoseEstimate();
         double[] t = {cos(-pos.getHeading()), sin(-pos.getHeading())};
-        Vector2d rotVelocity = actualVelocity.vec().rotated(0);
+        Vector2d rotVelocity = actualVelocity.vec();
         double[] diffs = {targetVelocity[0] - rotVelocity.getX(), targetVelocity[1] - rotVelocity.getY(), targetVelocity[2] - actualVelocity.getHeading()};
         if(actualVelocity.getX()==100){
             diffs[0]=0;
@@ -309,7 +315,6 @@ public class PwPRobot extends BasicRobot {
         if(a==0&&diffs[0]*diffs[0]+diffs[1]*diffs[1]>25){
             angleCorrection=0;
         }
-        op.telemetry.addData("velocity", actualVelocity);
         op.telemetry.addData("diffsy", diffs[0]);
         op.telemetry.addData("diffsx", diffs[1]);
         op.telemetry.addData("diffsa", diffs[2]);
@@ -379,8 +384,8 @@ public class PwPRobot extends BasicRobot {
         }
     }
 
-    public boolean isConeReady() {
-        return claw.isConeReady();
+    public boolean isConeReady(double velocity) {
+        return claw.isConeReady(velocity);
     }
 
     public void updateClawStates() {
@@ -570,6 +575,10 @@ public class PwPRobot extends BasicRobot {
 
     public void teleOp() {
         roadrun.update();
+        liftArm.updateLiftArmStates();
+        claw.updateClawStates();
+        lift.updateLiftStates();
+        clawSwitch.isSwitched();
 //        if (progNameLogged == false) {
 //            logger.log("/RobotLogs/GeneralRobot", "PROGRAM RUN: PwPTeleOp", false);
 //            progNameLogged = true;
@@ -589,15 +598,16 @@ public class PwPRobot extends BasicRobot {
 //        gp.readGamepad(op.gamepad2.right_trigger, "gamepad2_right_trigger", "Value");
 //        gp.readGamepad(op.gamepad2.right_bumper, "gamepad2_right_bumper", "Status");
         boolean isBumper2 = gp.readGamepad(op.gamepad2.left_bumper, "gamepad2_left_bumper", "Status");
-        op.telemetry.addData("switched:",clawSwitch.isSwitched());
+        op.telemetry.addData("switched:",PRESSED.getStatus());
+        op.telemetry.addData("coneDistance", claw.coneDistance());
 
-        if (isA) {
-            if (liftArm.ableArmed()) {
-                liftArm.disableArm();
-            } else {
-                liftArm.enableArm();
-            }
-        }
+//        if (isA) {
+//            if (liftArm.ableArmed()) {
+//                liftArm.disableArm();
+//            } else {
+//                liftArm.enableArm();
+//            }
+//        }
         if (isY) {
             regularDrive = !regularDrive;
         }
@@ -607,11 +617,14 @@ public class PwPRobot extends BasicRobot {
         if (isBumper2) {
             lift.resetEncoder();
         }
+        thisTime = op.getRuntime();
+        op.telemetry.addData("loopTime", thisTime-lastTiem);
+        lastTiem = thisTime;
 
 
-        if (op.gamepad1.b) {
-            liftArm.flipCone();
-        }
+//        if (op.gamepad1.b) {
+//            liftArm.flipCone();
+//        }
 
         //omnidirectional movement + turning
 
@@ -754,7 +767,7 @@ public class PwPRobot extends BasicRobot {
                 liftArm.lowerLiftArmToIntake();
 
             } else {
-                if (CLAW_WIDE.getStatus()) {
+                if (CLAW_WIDE.getStatus()&& PRESSED.getStatus()) {
                     claw.openClaw();
                 }
                 liftArm.raiseLiftArmToOuttake();
@@ -769,9 +782,12 @@ public class PwPRobot extends BasicRobot {
                 claw.closeClawRaw();
             }
         }
-//        claw.closeClaw();
+        claw.closeClaw(roadrun.getPoseVelocity().vec());
+        if(CLAW_CLOSED.getStatus()&& UNPRESSED.getStatus()){
+            claw.openClaw();
+        }
         if (op.getRuntime() - claw.getLastTime() > .4 && op.getRuntime() - claw.getLastTime() < .7 && CLAW_CLOSED.getStatus()) {
-            liftArm.raiseLiftArmToOuttake();
+//            liftArm.raiseLiftArmToOuttake();
         }
         if (op.getRuntime() - claw.getLastTime() > 1 && op.getRuntime() - claw.getLastTime() < 1.3 && CLAW_CLOSED.getStatus() && lift.getStackPos() == lift.getLiftTarget()) {
             lift.setLiftTarget(0);
@@ -807,10 +823,6 @@ public class PwPRobot extends BasicRobot {
             field.autoMovement();
         }
 
-
-        liftArm.updateLiftArmStates();
-        claw.updateClawStates();
-        lift.updateLiftStates();
 
 //            logger.log("/RobotLogs/GeneralRobot", seq.toString(), false);
         //USE THE RFGAMEPAD FUNCTION CALLED getSequence(), WILL RETURN ARRAYLIST OF INTS:

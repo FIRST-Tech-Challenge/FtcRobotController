@@ -1,10 +1,12 @@
 package org.firstinspires.ftc.teamcode.Components;
 
+import static org.firstinspires.ftc.teamcode.Components.Claw.ClawStates.CLAW_CLOSED;
 import static org.firstinspires.ftc.teamcode.Components.Claw.ClawStates.CLAW_WIDE;
 import static org.firstinspires.ftc.teamcode.Components.LiftArm.liftArmStates.ARM_INTAKE;
 import static org.firstinspires.ftc.teamcode.Components.LiftArm.liftArmStates.ARM_LOWERING;
 import static org.firstinspires.ftc.teamcode.Components.LiftArm.liftArmStates.ARM_OUTTAKE;
 import static org.firstinspires.ftc.teamcode.Components.LiftArm.liftArmStates.ARM_RAISING;
+import static org.firstinspires.ftc.teamcode.Components.Switch.SwitchStates.PRESSED;
 import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.logger;
 import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.op;
 
@@ -19,7 +21,7 @@ public class LiftArm {
     private final double LIFT_ARM_INTAKE_POS = 0.98;
     private final double LIFT_ARM_CYCLE_POS = 0.955;
 
-    private final double LIFT_ARM_OUTTAKE_POS = 0.3;
+    private final double LIFT_ARM_OUTTAKE_POS = 0.28;
     public static double LIFT_ARM_FLIP_POS = 0.925;
 
     public double liftArmServoLastSwitchTime = 0;
@@ -147,7 +149,7 @@ public class LiftArm {
 
         //the state of claw closed has to be true (cone has already been grabbed)
         // && (LIFT_GROUND_JUNCTION.status || LIFT_LOW.status || LIFT_MID.status || LIFT_HIGH.status)
-        if ( !CLAW_WIDE.getStatus()&&ARM_INTAKE.status && op.getRuntime()-liftArmServo.getLastTime()>0.2) {
+        if ( CLAW_CLOSED.getStatus()&&PRESSED.getStatus() &&ARM_INTAKE.status && op.getRuntime()-liftArmServo.getLastTime()>0.2) {
 
             //set servo position
             liftArmServo.setPositions(LIFT_ARM_OUTTAKE_POS);
