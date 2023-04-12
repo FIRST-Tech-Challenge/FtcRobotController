@@ -11,5 +11,5 @@ public class BlueRight extends AutoFramework {
     public void runOpMode() throws InterruptedException {
         runAuto(AutoState.RightAutos);
     }
-
+    // If you want to add anything to this autonomous method, make the changes in the AutoFramework method please!
 }

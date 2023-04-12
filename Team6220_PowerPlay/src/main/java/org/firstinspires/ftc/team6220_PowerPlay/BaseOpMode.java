@@ -65,6 +65,10 @@ public abstract class BaseOpMode extends LinearOpMode {
 
     // stored telemetry
     protected List<Object> telemetrySave;
+  
+    // limit switch
+    public DigitalChannel limitSwitch;
+
 
     // initializes the motors, servos, and IMUs
     public void initialize() {
@@ -119,14 +123,13 @@ public abstract class BaseOpMode extends LinearOpMode {
         servoGrabber = (ServoImplEx) hardwareMap.servo.get("servoGrabber");
         servoGrabber.setPwmRange(maxRange);
 
-        try {
-            blinkinChassis = (RevBlinkinLedDriver) hardwareMap.get(RevBlinkinLedDriver.class, "blinkinChassis");
-        } catch (Exception e) {}
-
-        limitSwitch = (DigitalChannel) hardwareMap.get(DigitalChannel.class, "limitSwitch");
+        // limit switch
+        limitSwitch = hardwareMap.get(DigitalChannel.class, "limitSwitch");
         limitSwitch.setMode(DigitalChannel.Mode.INPUT);
 
         telemetrySave = new ArrayList<Object>();
+
+        blinkinChassis = (RevBlinkinLedDriver) hardwareMap.get(RevBlinkinLedDriver.class, "blinkinChassis");
 
         // initialize IMU
         BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
@@ -141,8 +144,10 @@ public abstract class BaseOpMode extends LinearOpMode {
         startAngle = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle;
         originalAngle = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle;
 
+        int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
+
         robotCamera = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "RobotCamera"));
-        grabberCamera = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "GrabberCamera"));
+        grabberCamera = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "GrabberCamera"), cameraMonitorViewId);
 
         aprilTagDetectionPipeline = new AprilTagDetectionPipeline();
         robotCameraPipeline = new RobotCameraPipeline();
@@ -190,6 +195,13 @@ public abstract class BaseOpMode extends LinearOpMode {
         }
 
         // calculate speed and direction of each individual motor and set power of motors to speed
+        motorFL.setPower(yPower + xPower + tPower);
+        motorFR.setPower(yPower - xPower - tPower);
+        motorBL.setPower(yPower - xPower + tPower);
+        motorBR.setPower(yPower + xPower - tPower);
+    }
+
+    public void driveWithoutIMU(double xPower, double yPower, double tPower) {
         motorFL.setPower(yPower + xPower + tPower);
         motorFR.setPower(yPower - xPower - tPower);
         motorBL.setPower(yPower - xPower + tPower);
@@ -268,13 +280,23 @@ public abstract class BaseOpMode extends LinearOpMode {
     public void centerJunctionTop(GrabberCameraPipeline pipeline) {
         double xOffset, yOffset;
 
+        boolean cancelled = false;
+
         do {
+            // xOffset is different from the one in CenterConeStack because the camera perspective is different
             xOffset = pipeline.xPosition - Constants.CAMERA_CENTER_X;
             yOffset = Constants.CAMERA_CENTER_Y - pipeline.yPosition;
 
+            // check if the action is cancelled
+            if (gamepad1.start || pipeline.detected) {
+                cancelled = true;
+            }
+
             // center the cone on the junction top
             if (pipeline.detected) {
-                driveWithIMU(junctionTopPixelsMotorPower(xOffset), junctionTopPixelsMotorPower(yOffset), 0.0);
+                driveWithoutIMU(junctionTopPixelsMotorPower(xOffset), junctionTopPixelsMotorPower(yOffset), 0.0);
+                telemetry.addData("x", xOffset);
+                telemetry.addData("y", yOffset);
                 telemetry.addData("xMotorPower", junctionTopPixelsMotorPower(xOffset));
                 telemetry.addData("yMotorPower", junctionTopPixelsMotorPower(yOffset));
                 telemetry.update();
@@ -283,7 +305,7 @@ public abstract class BaseOpMode extends LinearOpMode {
             }
 
         // while the cone isn't centered over the junction
-        } while (Math.abs(xOffset) > Constants.JUNCTION_TOP_TOLERANCE || Math.abs(yOffset) > Constants.JUNCTION_TOP_TOLERANCE);
+        } while (Math.abs(xOffset) > Constants.JUNCTION_TOP_TOLERANCE || Math.abs(yOffset) > Constants.JUNCTION_TOP_TOLERANCE && !cancelled);
 
         stopDriveMotors();
     }
@@ -293,23 +315,26 @@ public abstract class BaseOpMode extends LinearOpMode {
      * @param pipeline the RobotCameraPipeline being used by the robot camera
      */
     public void centerConeStack(RobotCameraPipeline pipeline) {
-        double xOffset, width;
-
+        double xOffset, width, strafePower, turnPower;
         do {
-            xOffset = pipeline.xPosition - Constants.CAMERA_CENTER_X;
+            xOffset = Constants.CAMERA_CENTER_X - pipeline.xPosition;
             width = pipeline.width;
 
             // drive forward while centering on the cone stack if contour exists
             if (width == 0) {
                 break;
             } else {
-                driveWithIMU(coneStackPixelsMotorPower(xOffset), coneStackWidthMotorPower(width), 0.0);
-                telemetry.addData("xMotorPower", coneStackPixelsMotorPower(xOffset));
+                strafePower = coneStackPixelsAndWidthToStrafingPower(xOffset, width);
+                turnPower = Constants.AUTHORITY_SCALER * coneStackPixelsAndWidthToTurningPower(xOffset, width);
+                driveWithoutIMU(strafePower, Constants.DRIVE_AUTHORITY_SCALER * coneStackWidthMotorPower(width), turnPower);
+                telemetry.addData("xStrafingPower", strafePower);
+                telemetry.addData("xTurningPower", turnPower);
                 telemetry.addData("yMotorPower", coneStackWidthMotorPower(width));
+                telemetry.addData("width", width);
                 telemetry.update();
             }
 
-        // while far enough that the cone stack doesn't fill the entire camera view
+            // while far enough that the cone stack doesn't fill the entire camera view
         } while (width < Constants.CONE_WIDTH);
 
         stopDriveMotors();
@@ -334,12 +359,23 @@ public abstract class BaseOpMode extends LinearOpMode {
     }
 
     /**
-     * calculates the motor power for the robot drivetrain based on the pixel offset from the cone stack
+     * calculates the turning power for the robot drivetrain based on the pixel offset from the cone stack and the width of the cone stack
      * @param pixelOffset how far cone stack is horizontally from center of camera field of view in pixels
-     * @return motor power for robot drivetrain
+     * @param width how wide the cone stack is in the camera frame in pixels
+     * @return turning power for robot drivetrain
      */
-    public double coneStackPixelsMotorPower(double pixelOffset) {
-        return Constants.CONE_STACK_CENTERING_KP * pixelOffset;
+    public double coneStackPixelsAndWidthToTurningPower(double pixelOffset, double width) {
+        return (Constants.CONE_STACK_CENTERING_PROPORTIONAL_KP * pixelOffset) / ((1.0 / Constants.TURNING_AUTHORITY_CONSTANT) * width);
+    }
+
+    /**
+     * calculates the strafing power for the robot drivetrain based on the pixel offset from the cone stack and the width of the cone stack
+     * @param pixelOffset how far cone stack is horizontally from center of camera field of view in pixels
+     * @param width how wide the cone stack is in the camera frame in pixels
+     * @return strafing power for robot drivetrain
+     */
+    public double coneStackPixelsAndWidthToStrafingPower(double pixelOffset, double width) {
+        return (Constants.CONE_STACK_CENTERING_PROPORTIONAL_KP * pixelOffset) * ((1.0 / Constants.STRAFING_AUTHORITY_CONSTANT) * width);
     }
 
     /**
@@ -353,15 +389,20 @@ public abstract class BaseOpMode extends LinearOpMode {
     }
 
     /**
-     * turns the LEDs green if it detects the top of a junction, otherwise they are rainbow colors
+     * turns the LEDs green if it detects the top of a junction, otherwise, turn the lights pink
+     *
      */
     public void driveLEDs() {
         if (blinkinChassis != null) {
             if (grabberCameraPipeline.detected) {
                 blinkinChassis.setPattern(RevBlinkinLedDriver.BlinkinPattern.GREEN);
+                telemetry.addLine("Detected");
             } else {
-                blinkinChassis.setPattern(RevBlinkinLedDriver.BlinkinPattern.CP1_2_COLOR_WAVES);
+                blinkinChassis.setPattern(RevBlinkinLedDriver.BlinkinPattern.HOT_PINK);
+                telemetry.addLine("Not Detected");
             }
+        } else {
+            telemetry.addLine("blinkin chassis null smh");
         }
     }
 }
