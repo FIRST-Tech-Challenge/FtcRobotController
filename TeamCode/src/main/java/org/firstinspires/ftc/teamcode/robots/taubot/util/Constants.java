@@ -24,6 +24,7 @@ public class Constants {
     public static double MIN_SAFE_CHASSIS_LENGTH = 10;
     public static double MAX_CHASSIS_LENGTH = 32;
 
+    //both in degrees
     public static double CONESTACK_SHOULDER_ADJ_PER_CONE = 5;
     public static double CONESTACK_WRIST_ADJ_PER_CONE = 5;
 

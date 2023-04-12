@@ -65,7 +65,6 @@ public class Turret implements Subsystem {
         this.simulated = simulated;
         motor = simulated ? new DcMotorExSim(USE_MOTOR_SMOOTHING) : hardwareMap.get(DcMotorEx.class, "turret");
         turretIMU = hardwareMap.get(BNO055IMU.class, "turretIMU");
-        motor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         motor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         motor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 

@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.robots.taubot.subsystem;
 
+import static org.firstinspires.ftc.teamcode.robots.taubot.util.Constants.MAX_CHASSIS_LENGTH;
 import static org.firstinspires.ftc.teamcode.robots.taubot.util.Utils.servoDenormalize;
 import static org.firstinspires.ftc.teamcode.robots.taubot.util.Utils.servoNormalize;
 import static org.firstinspires.ftc.teamcode.robots.taubot.util.Constants.INCHES_PER_METER;
@@ -145,7 +146,7 @@ public class Crane implements Subsystem {
     public Servo bulbServo;
     public DcMotorEx extenderMotor;public DcMotorEx shoulderMotor;
     public DcMotorEx turretMotor;
-    public DcMotor shoulderAngleEncoder;
+//    public DcMotor shoulderAngleEncoder;
 
     private PIDController shoulderPID;
     private PIDController extendPID;
@@ -188,13 +189,13 @@ public class Crane implements Subsystem {
             shoulderMotor = new DcMotorExSim(USE_MOTOR_SMOOTHING);
             extenderMotor = new DcMotorExSim(USE_MOTOR_SMOOTHING);
             turretMotor = new DcMotorExSim(USE_MOTOR_SMOOTHING);
-            shoulderAngleEncoder = new DcMotorExSim(USE_MOTOR_SMOOTHING);
+//            shoulderAngleEncoder = new DcMotorExSim(USE_MOTOR_SMOOTHING);
             nudgeDistanceSensor = new DistanceSensorSim(0);
             bulbServo = new ServoSim();
             nudgeStickServo = new ServoSim();
         } else {
             shoulderMotor = hardwareMap.get(DcMotorEx.class, "shoulder");
-            shoulderAngleEncoder = hardwareMap.get(DcMotorEx.class, "shoulderAngleEncoder"); //just a REV shaft encoder - no actual motor
+//            shoulderAngleEncoder = hardwareMap.get(DcMotorEx.class, "shoulderAngleEncoder"); //just a REV shaft encoder - no actual motor
             extenderMotor = hardwareMap.get(DcMotorEx.class, "extender");
             turretMotor = hardwareMap.get(DcMotorEx.class, "turret");
             shoulderMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -269,6 +270,8 @@ public class Crane implements Subsystem {
             case 0:
                 enableShoulderPID();
                 articulate(Articulation.manual);
+                robot.driveTrain.articulate(DriveTrain.Articulation.lockWheels);
+                robot.driveTrain.setChassisLength(MAX_CHASSIS_LENGTH);
                 calibrated = false; //allows us to call calibration mid-match in an emergency
                 //operator instruction: physically push arm to about 45 degrees and extend by 1 slide before calibrating
                 //shoulder all the way up and retract arm until they safely stall
@@ -1141,7 +1144,7 @@ public class Crane implements Subsystem {
 
         //todo - switch shoulderPosition to read the dedicated angle encoder
         shoulderPosition = shoulderMotor.getCurrentPosition();
-        shoulderDirectTickPos = shoulderAngleEncoder.getCurrentPosition();
+//        shoulderDirectTickPos = shoulderAngleEncoder.getCurrentPosition();
         extendPosition = extenderMotor.getCurrentPosition();
 
         //shoulderAngle = shoulderDirectTickPos / SHOULDER_DIRECT_TICKS_PER_DEGREE;

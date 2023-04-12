@@ -157,6 +157,177 @@ public class DriverControls {
     }
 
     void joystickDriveDemoMode(){
+//        if(gamepad2.a)
+//            robot.articulate(Robot.Articulation.UNDERARM_CONESTACK);
+//        if(gamepad2.b)
+//            robot.underarmConeStackAdvance();
+
+        if(gamepad2.y)
+            robot.underarm.coneStackHoverStageAdvance();
+        if(gamepad2.x)
+            robot.underarm.coneStackPickupStageAdvance();
+        if(gamepad2.left_bumper)
+            robot.underarm.articulate(UnderArm.Articulation.coneStackHover);
+        if(gamepad2.right_bumper)
+            robot.underarm.articulate(UnderArm.Articulation.coneStackPickup);
+
+        if(gamepad1.dpad_up){
+            robot.crane.resetArticulations();
+            robot.crane.articulate(Crane.Articulation.home);
+        }
+
+        if(gamepad1.left_bumper){
+            robot.driveTrain.adjustChassisLength(-1);
+        }
+
+        if(gamepad1.right_bumper ){
+            robot.driveTrain.adjustChassisLength(1);
+        }
+
+        if(stickyGamepad1.start){
+            robot.driveTrain.toggleExtension();
+            //if (robot.driveTrain.getChariotDeployed())
+            //robot.crane.articulate(Crane.Articulation.manualDrive); //allow the crane and turret to return to manual mode
+        }
+
+        if (stickyGamepad1.guide || stickyGamepad2.guide){ //this is the Logitech button
+            robot.crane.resetArticulations();
+            robot.underarm.resetArticulations();
+            robot.resetArticulations();
+            robot.articulate((Robot.Articulation.TRANSFER));
+        }
+
+        if(stickyGamepad1.a) {
+            //maintain the ability to pickup with Crane
+            robot.crane.pickupSequence();
+        }
+        if(stickyGamepad1.b){
+            robot.resetArticulations();
+            robot.articulate(Robot.Articulation.DROP);
+        }
+
+        if(stickyGamepad1.x){
+            robot.field.incTarget();
+            robot.crane.updateScoringPattern();
+        }
+
+        if(stickyGamepad1.y){
+            robot.field.decTarget();
+            robot.crane.updateScoringPattern();
+        }
+
+        if(stickyGamepad1.dpad_right){
+            robot.field.incScoringPattern();
+            robot.crane.updateScoringPattern();
+        }
+
+        if(stickyGamepad1.dpad_left){
+            robot.field.decScoringPattern();
+            robot.crane.updateScoringPattern();
+        }
+
+        if(notJoystickDeadZone(gamepad1.left_stick_x)){
+            robot.driveTrain.maxTuck();
+        }
+
+        if(!gamepad1.dpad_down) {
+            if (notJoystickDeadZone(gamepad1.right_stick_x)){
+                robot.crane.adjustY(-0.4*gamepad1.right_stick_x);
+            }
+
+            if (notJoystickDeadZone(gamepad1.right_stick_y)) {
+                robot.crane.adjustX(-0.4*gamepad1.right_stick_y);
+            }
+
+            if (gamepad1.right_trigger>.05) robot.crane.adjustZ(0.7*gamepad1.right_trigger);
+            if (gamepad1.left_trigger>.05) robot.crane.adjustZ(-0.7*gamepad1.left_trigger);
+
+            //manual override of drivetrain
+            if (notJoystickDeadZone(gamepad1.left_stick_y) || notJoystickDeadZone(gamepad1.left_stick_x)) {
+                robot.driveTrain.ManualArcadeDrive(-0.7 * gamepad1.left_stick_y, 0.7 * gamepad1.left_stick_x);
+                robot.driverIsNowDriving();
+            }
+            else {
+                robot.driveTrain.ManualDriveOff();
+                robot.driverHasStoppedDriving();
+            }
+        }else{
+            if (notJoystickDeadZone(gamepad1.right_stick_x)){
+                robot.crane.adjustY(-gamepad1.right_stick_x);
+            }
+
+            if (notJoystickDeadZone(gamepad1.right_stick_y)) {
+                robot.crane.adjustX(-gamepad1.right_stick_y);
+            }
+
+            if (gamepad1.right_trigger>.05) robot.crane.adjustZ(gamepad1.right_trigger);
+            if (gamepad1.left_trigger>.05) robot.crane.adjustZ(-gamepad1.left_trigger);
+
+            //manual override of drivetrain
+            if (notJoystickDeadZone(gamepad1.left_stick_y) || notJoystickDeadZone(gamepad1.left_stick_x)) {
+                robot.driveTrain.ManualArcadeDrive(-gamepad1.left_stick_y, gamepad1.left_stick_x);
+                robot.driverIsNowDriving();
+            }
+            else {
+                robot.driveTrain.ManualDriveOff();
+                robot.driverHasStoppedDriving();
+            }
+        }
+
+//        if (stickyGamepad2.a) {
+//            //robot.articulate(Robot.Articulation.PICKUP);
+//            robot.underarm.resetArticulations();
+//            robot.underarm.articulate(UnderArm.Articulation.substationHover);
+//        }
+//
+//        if (stickyGamepad2.b) {
+//            //underarm driver might have re-positioned the hover, so save the values for next time
+//            robot.underarm.resetArticulations();
+//            robot.underarm.articulate(UnderArm.Articulation.substationPickup);
+//        }
+
+        if (stickyGamepad2.x)// cancel transfer position reset and drop cone
+        {
+            robot.transferAdvance();
+        }
+
+        if (stickyGamepad2.y) {
+            robot.underarm.toggleLasso();
+        }
+
+        if (stickyGamepad2.start) {
+            robot.driveTrain.toggleExtension();
+        }
+
+        if (stickyGamepad2.dpad_up) {
+            robot.underarm.resetArticulations();
+            robot.underarm.articulate(UnderArm.Articulation.home);
+        }
+
+        if (notJoystickDeadZone(gamepad2.left_stick_y)) {
+            robot.underarm.adjustShoulder(gamepad2.left_stick_y);
+        }
+
+        if (robot.getArticulation().equals(Robot.Articulation.TRANSFER) && (notJoystickDeadZone(gamepad2.left_trigger) || notJoystickDeadZone(gamepad2.right_trigger))) {
+            robot.resetArticulations();
+            robot.articulate(Robot.Articulation.CANCEL_TRANSFER);
+        }
+        if(notJoystickDeadZone(gamepad2.right_stick_y)){
+            robot.underarm.adjustElbow(-gamepad2.right_stick_y);
+        }
+
+        if(notJoystickDeadZone(gamepad2.right_stick_x)){
+            robot.underarm.adjustWrist(-gamepad2.right_stick_x);
+        }
+
+        if(notJoystickDeadZone(gamepad2.left_stick_x)){
+            robot.underarm.adjustTurret(gamepad2.left_stick_x);
+        }
+
+        if (gamepad1.right_trigger>.05) robot.underarm.adjustZ(gamepad1.right_trigger);
+        if (gamepad1.left_trigger>.05) robot.underarm.adjustZ(-gamepad1.left_trigger);
+
+        /*
         if(gamepad1.dpad_up){
             robot.crane.resetArticulations();
             robot.crane.articulate(Crane.Articulation.home);
@@ -261,7 +432,7 @@ public class DriverControls {
                 robot.driveTrain.ManualDriveOff();
                 robot.driverHasStoppedDriving();
             }
-        }
+        } */
     }
 
     void joystickDrivePregameMode() {

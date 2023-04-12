@@ -285,7 +285,7 @@ public class PowerPlay_6832 extends OpMode {
             robot.underarm.articulate(UnderArm.Articulation.home);
         }
 
-        if(gameState.equals(GameState.TEST)){
+        if(gameState.equals(GameState.TEST) ||  gameState.equals(GameState.DEMO)){
             //robot.crane.resetCrane(startingPosition);
             robot.underarm.articulate(UnderArm.Articulation.home);
         }

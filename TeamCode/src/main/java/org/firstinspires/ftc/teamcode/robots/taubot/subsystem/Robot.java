@@ -169,7 +169,7 @@ public class Robot implements Subsystem {
             driveTrain.setPoseEstimate(new Pose2d(start.getPose().getX(), start.getPose().getY()));
             articulate(Robot.Articulation.UNFOLD);
             turret.articulate(Turret.Articulation.lockToZero);
-        }else if (PowerPlay_6832.gameState.equals(PowerPlay_6832.GameState.TEST)){
+        }else if (PowerPlay_6832.gameState.equals(PowerPlay_6832.GameState.TEST) || PowerPlay_6832.gameState.equals(PowerPlay_6832.GameState.DEMO)){
             driveTrain.setPoseEstimate(new Pose2d(start.getPose().getX(), start.getPose().getY()));
             articulate(Robot.Articulation.UNFOLD);
             turret.articulate(Turret.Articulation.lockToZero);
@@ -706,54 +706,65 @@ public class Robot implements Subsystem {
         underarm.resetArticulations();
         crane.resetArticulations();
     }
+    public void underarmConeStackAdvance() {
+        coneStackStage ++;
+    }
     int coneStackStage = 0;
+    long coneStackTimer = 0;
     public boolean underarmConeStack () {
         //from after the robot drives forward in auton to the end of cycling cones from conestack
         //will still have to handle park from within runAuton
-        ConeStack obj = field.getConeStack(rightConeStack);
-        Pose2d pos = Field.convertToInches(obj.getPosition());
+//        ConeStack obj = field.getConeStack(rightConeStack);
+//        Pose2d pos = Field.convertToInches(obj.getPosition());
         if(numConesToCycle > 0) {
             switch (coneStackStage) {
                 case 0:
                     //so that underarm is facing conestack (don't know the actual angle)
-                    if(rightConeStack)
-                        if (driveTrain.turnUntilDegrees(90))
-                            coneStackStage++;
-                    if(!rightConeStack)
-                        if(driveTrain.turnUntilDegrees(-90));
-                            coneStackStage ++;
+//                    if(rightConeStack)
+//                        if (driveTrain.turnUntilDegrees(90))
+//                            coneStackStage++;
+//                    if(!rightConeStack)
+//                        if(driveTrain.turnUntilDegrees(-90));
+                    underarm.release();
+                    //coneStackStage++;
                     break;
                 case 1:
                     //turn on vision pipeline and set chassis length and heading accordingly
-                    if (/* SOME KIND OF CHECK, PLEASE NO TIMER */ false)
-                        coneStackStage++;
+//                    if (/* SOME KIND OF CHECK, PLEASE NO TIMER */ false
+                    underarm.articulate(UnderArm.Articulation.coneStackHover);
+                    //coneStackStage++;
                     break;
                 case 2:
-                    underarm.articulate(UnderArm.Articulation.coneStackHover);
-                    if (/* SOME KIND OF CHECK, PLEASE NO TIMER */ false)
-                        coneStackStage++;
+                    if (underarm.atConeStack()) {
+                        //coneStackStage++;
+                    }
                     break;
                 case 3:
                     underarm.grip();
-                    if (/* SOME KIND OF CHECK, PLEASE NO TIMER */ false)
-                        coneStackStage++;
+                    if (/* SOME KIND OF CHECK, PLEASE NO TIMER */ false) {
+                        //coneStackStage++;
+                    }
                     break;
                 case 4:
-                    underarm.articulate(UnderArm.Articulation.home);
-                    underarm.updateConeStackAngles();
-                    if (/* SOME KIND OF CHECK, PLEASE NO TIMER */ false)
-                        coneStackStage++;
+                    if(transfer()) {
+                        //coneStackStage++;
+                    }
+//                    if (/* SOME KIND OF CHECK, PLEASE NO TIMER */ false)
+//                        coneStackStage++;
                     break;
                 case 5:
-                    if (transfer())
-                    coneStackStage++;
+                    underarm.updateConeStackAngles();
+                    field.getConeStack(rightConeStack).takeCone();
+                    if (crane.goToFieldthing(field.objects[34])) {
+                        //coneStackStage++;
+                    }
                     break;
                 case 6:
-                    //make crane score idk
-                    if (/* SOME KIND OF CHECK, PLEASE NO TIMER */ false)
-                        coneStackStage++;
+                    crane.release();
+                    //coneStackStage++;
                     break;
                 case 7:
+                    crane.articulate(Crane.Articulation.transfer);
                     numConesToCycle --;
                     coneStackStage = 0;
 

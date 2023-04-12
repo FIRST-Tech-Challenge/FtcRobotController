@@ -57,6 +57,8 @@ public class UnderArm implements Subsystem {
     //TODO - FIND THESE TWO
     public static double coneStackShoulderAngle = 0;
     public static double coneStackWristAngle = 13;
+
+    public static double coneStackChassisLength = MAX_CHASSIS_LENGTH- 20;
     public static double WRIST_HOME_POSITION = 31;
 
     public static double SHOULDER_DEG_MIN = -110; // negative angles are counter clockwise while looking at the left side
@@ -74,7 +76,7 @@ public class UnderArm implements Subsystem {
 
     public static double LASSO_RELEASE = 1000;
     public static double LASSO_OPEN = 1000; //1100 for Leo's gripper
-    public static double TRANSFER_CHASSIS_SHORTEN_BY = 6.5;
+    public static double TRANSFER_CHASSIS_SHORTEN_BY = 4.5;
     public static double TRANSFER_SHOULDER_ANGLE = -15;
     public static double TRANSFER_SHOULDER_APPROACH_ANGLE = 10;
 
@@ -168,6 +170,8 @@ public class UnderArm implements Subsystem {
         jointAngles,
         substationHover,
         coneStackHover,
+        coneStackPickup,
+
         cancelTransferPosition,
         substationPickup,
         substationRecover
@@ -225,9 +229,7 @@ public class UnderArm implements Subsystem {
                 break;
             case coneStackHover:
                 //tune angles to reach cone stack height
-                if(coneStackHover()) {
-                    articulation = Articulation.manual;
-                }
+                coneStackHover();
                 break;
             case fold:
                 /*
@@ -274,6 +276,10 @@ public class UnderArm implements Subsystem {
                 robot.driveTrain.setChassisLength(MIN_CHASSIS_LENGTH);
             case manual: //normal IK intake mode
                 //holdTarget(fieldPositionTarget.x,fieldPositionTarget.y,fieldPositionTarget.z);
+                break;
+            case coneStackPickup:
+                if(coneStackPickup())
+                    articulation = Articulation.manual;
                 break;
             case jointAngles:
                 goToJointAngle(jointAngle);
@@ -331,11 +337,69 @@ public class UnderArm implements Subsystem {
         setElbowTargetAngle(calculatedElbowAngle);
     }
 
-    public boolean coneStackHover () {
-        boolean coneStack = robot.getAutonConeStack();
-        setShoulderTargetAngle(coneStackShoulderAngle);
-        setWristTargetAngle(coneStackWristAngle);
-        setElbowTargetAngle(SS_HOVER_ELBOW);
+    public boolean atConeStack(){
+        return atConeStack;
+    }
+    public void coneStackHoverStageAdvance() {
+        coneStackHoverStage  ++;
+    }
+
+    int coneStackHoverStage = 0;
+    long coneStackHoverTimer = 0;
+    boolean atConeStack = false;
+
+    public boolean coneStackHover() {
+        switch (coneStackHoverStage) {
+            case 0:
+                atConeStack = false;
+                robot.driveTrain.setChassisLength(coneStackChassisLength-7);
+                coneStackHoverTimer = futureTime(0.5);
+//                coneStackHoverStage++;
+                break;
+            case 1:
+                if(System.nanoTime() > coneStackHoverTimer) {
+                    setShoulderTargetAngle(coneStackShoulderAngle);
+                    setWristTargetAngle(coneStackWristAngle);
+                    setElbowTargetAngle(SS_HOVER_ELBOW);
+                    coneStackHoverTimer = futureTime(0.5);
+//                    coneStackHoverStage++;
+                }
+            case 2:
+                if(System.nanoTime() > coneStackHoverTimer) {
+                    robot.driveTrain.setChassisLength(coneStackChassisLength);
+//                    coneStackHoverStage++;
+                }
+                break;
+            case 3:
+                atConeStack = true;
+                coneStackHoverStage = 0;
+                return true;
+        }
+        return false;
+    }
+
+    int coneStackPickupStage = 0;
+    long coneStackPickupTimer = 0;
+
+    public void coneStackPickupStageAdvance() {
+        coneStackPickupStage ++;
+    }
+    public boolean coneStackPickup() {
+        switch (coneStackPickupStage) {
+            case 0:
+                wrist.setTargetAngle(coneStackWristAngle - 20);
+                shoulder.setTargetAngle(coneStackShoulderAngle - 10);
+                coneStackPickupTimer = futureTime(.5);
+//                coneStackPickupStage ++;
+                break;
+            case 1:
+                robot.driveTrain.setChassisLength(coneStackChassisLength - 7);
+//                coneStackPickupStage ++;
+                break;
+            case 2:
+                coneStackPickupStage = 0;
+                return true;
+        }
         return false;
     }
     long homeNoTuckTimer = 0;
@@ -523,8 +587,13 @@ public class UnderArm implements Subsystem {
                     setShoulderTargetAngle(0); //take the shoulder home
                     setWristTargetAngle(40); //take wrist homeish
                     robot.driveTrain.setChassisLength(MAX_CHASSIS_LENGTH-10);
+                    transferTimer = futureTime(0.3);
+                    transferRecoverStage++;
+                }
+                break;
+            case 3:
+                if(System.nanoTime() > transferRecoverTimer) {
                     transferRecoverStage = 0;
-
                     return true;
                 }
                 break;
@@ -881,6 +950,7 @@ public boolean goSubstationRecover() {
     }
 
     //MAKE IT RESET ON INIT
+    //angles are in degrees
     public void updateConeStackAngles() {
         coneStackShoulderAngle -= Constants.CONESTACK_SHOULDER_ADJ_PER_CONE * robot.field.getConeStack(robot.getAutonConeStack()).getConeNum();
         coneStackWristAngle += Constants.CONESTACK_WRIST_ADJ_PER_CONE * robot.field.getConeStack(robot.getAutonConeStack()).getConeNum();
