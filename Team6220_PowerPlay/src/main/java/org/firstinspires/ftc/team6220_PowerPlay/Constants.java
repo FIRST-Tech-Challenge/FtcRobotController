@@ -93,7 +93,7 @@ public class Constants {
 
     public static final int JUNCTION_TOP_MAX_SIZE = 100000;
 
-    public static final int[] STACK_HEIGHTS = new int[] {0, 117, 238, 383, 537};
+    public static final int[] STACK_HEIGHTS = new int[] {0, 147, 288, 430, 537};
 
     public static final int SLIDE_TUNING_MODIFIER = 10;
 }

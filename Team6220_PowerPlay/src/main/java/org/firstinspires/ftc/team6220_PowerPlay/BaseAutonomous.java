@@ -271,7 +271,7 @@ public abstract class BaseAutonomous extends BaseOpMode {
             //drive forward
             driveAutonomous(0, 2);
             //center on junction
-            centerJunctionTop(grabberCameraPipeline);
+            //centerJunctionTop(grabberCameraPipeline);
             sleep(100);
             //lower slides onto junction
             driveSlides(Constants.SLIDE_HIGH - 100);

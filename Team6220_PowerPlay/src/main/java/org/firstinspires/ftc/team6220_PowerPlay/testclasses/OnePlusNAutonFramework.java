@@ -46,8 +46,8 @@ abstract public class OnePlusNAutonFramework extends BaseAutonomous {
             int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
             robotCamera = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "RobotCamera"), cameraMonitorViewId);
             // creates pipelines
-            GrabberCameraPipeline grabberCameraPipeline = new GrabberCameraPipeline();
-            RobotCameraPipeline robotCameraPipeline = new RobotCameraPipeline();
+            grabberCameraPipeline = new GrabberCameraPipeline();
+            robotCameraPipeline = new RobotCameraPipeline();
             grabberCameraPipeline.setRanges(Constants.LOWER_YELLOW, Constants.UPPER_YELLOW);
             robotCameraPipeline.setRanges(Constants.LOWER_BLUE, Constants.UPPER_BLUE);
             // starts streaming cameras
@@ -77,10 +77,6 @@ abstract public class OnePlusNAutonFramework extends BaseAutonomous {
             telemetry.addData("motorBREncoderCount", motorBR.getCurrentPosition());
             telemetry.addData("motorBLEncoderCount", motorBL.getCurrentPosition());
             telemetry.update();
-
-
-            // center on junction top
-            centerJunctionTop(grabberCameraPipeline);
 
             sleep(100);
 
