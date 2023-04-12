@@ -248,46 +248,86 @@ public abstract class BaseAutonomous extends BaseOpMode {
     }
 
     public void grabFromStackAndDepositOnJunction(int loopNumber, int angleOffset){
+        blinkinChassis.setPattern(RevBlinkinLedDriver.BlinkinPattern.BLACK);
         for (int i = loopNumber-1; i >= 0; i--) {
             telemetry.addData("loop", i + 1);
             //drive slides to stack position
             driveSlidesAutonomous(Constants.STACK_HEIGHTS[i]);
             //center on cone stack
             centerConeStack(robotCameraPipeline);
-            sleep(300);
-            //wait for grabber to close
+            //close grabber
             driveGrabber(Constants.GRABBER_CLOSE_POSITION);
-            sleep(600);
+            //wait for grabber to close
+            sleep(500);
+            driveAutonomous(180, 0.1);
             //drive slides to stow position
+            sleep(100);
             driveSlidesAutonomous(Constants.SLIDE_LOW);
             //drive backwards 34.5 inches
-            driveAutonomous(180, 34.5);
+            driveAutonomous(180, 34.7);
+            sleep(100);
             //turn towards junction
-            turnToAngle(90 + angleOffset);
+            turnToAngle(90+angleOffset);
             //drive slides up
-            driveSlidesAutonomous(Constants.SLIDE_TOP);
+            driveSlidesAutonomous(Constants.SLIDE_HIGH-10);
+            sleep(100);
             //wait for slides to go all the way up
-            sleep(400);
             //drive forward
             driveAutonomous(0, 2);
-            //center on junction
-            //centerJunctionTop(grabberCameraPipeline);
             sleep(100);
             //lower slides onto junction
-            driveSlides(Constants.SLIDE_HIGH - 100);
-            sleep(100);
+            driveSlidesAutonomous(Constants.SLIDE_HIGH-300);
             //open the grabber
             driveGrabber(Constants.GRABBER_OPEN_POSITION);
             //wait for cone to drop
             sleep(100);
             //drive slides back up
-            driveSlidesAutonomous(Constants.SLIDE_TOP);
-            sleep(200);
+            driveSlidesAutonomous(Constants.SLIDE_HIGH);
             //drive backwards
-            driveAutonomous(180, 3);
-            sleep(200);
+            driveAutonomous(180, 2);
             //turn back to 0 heading
-            turnToAngle(0 + angleOffset);
+            turnToAngle(0+angleOffset);
+        }
+    }
+    public void grabFromStackAndDepositOnJunctionPlusConeCentering(int loopNumber, int angleOffset){
+        blinkinChassis.setPattern(RevBlinkinLedDriver.BlinkinPattern.BLACK);
+        for (int i = loopNumber-1; i >= 0; i--) {
+            telemetry.addData("loop", i + 1);
+            //drive slides to stack position
+            driveSlidesAutonomous(Constants.STACK_HEIGHTS[i]);
+            //center on cone stack
+            centerConeStack(robotCameraPipeline);
+            //close grabber
+            driveGrabber(Constants.GRABBER_CLOSE_POSITION);
+            //wait for grabber to close
+            sleep(500);
+            driveAutonomous(180, 0.1);
+            //drive slides to stow position
+            sleep(100);
+            driveSlidesAutonomous(Constants.SLIDE_LOW);
+            //drive backwards 34.5 inches
+            driveAutonomous(180, 34.7);
+            sleep(100);
+            //turn towards junction
+            turnToAngle(90+angleOffset);
+            //drive slides up
+            driveSlidesAutonomous(Constants.SLIDE_HIGH-10);
+            //:TODO EXPERIMENTAL
+            //drive forward with cone centering
+            centerConeStack(robotCameraPipeline);
+            sleep(100);
+            //lower slides onto junction
+            driveSlidesAutonomous(Constants.SLIDE_HIGH-300);
+            //open the grabber
+            driveGrabber(Constants.GRABBER_OPEN_POSITION);
+            //wait for cone to drop
+            sleep(100);
+            //drive slides back up
+            driveSlidesAutonomous(Constants.SLIDE_HIGH);
+            //drive backwards
+            driveAutonomous(180, 2);
+            //turn back to 0 heading
+            turnToAngle(0+angleOffset);
         }
     }
 }
