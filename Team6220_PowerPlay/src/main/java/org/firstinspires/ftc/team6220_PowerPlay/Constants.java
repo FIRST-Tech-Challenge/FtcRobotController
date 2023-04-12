@@ -21,8 +21,8 @@ public class Constants {
     public static final double MAXIMUM_TURN_POWER_AUTONOMOUS = 0.3;
     public static final double MAXIMUM_DRIVE_POWER_AUTONOMOUS = 0.5;
 
-    public static final double MAXIMUM_TURN_POWER_TELEOP = 0.5;
-    public static final double MAXIMUM_DRIVE_POWER_TELEOP = 0.5;
+    public static final double MAXIMUM_TURN_POWER_TELEOP = 0.6;
+    public static final double MAXIMUM_DRIVE_POWER_TELEOP = 0.6;
 
     public static final double SLIDE_FEEDFORWARD = 0.05;
     public static final double SLIDE_MOTOR_KP = 0.01;
@@ -33,14 +33,14 @@ public class Constants {
     public static final int ROBOT_SLIDE_TOLERANCE_TICKS = 20;
 
     public static final int SLIDE_TOP = 3900;
-    public static final int SLIDE_HIGH = 3800;
-    public static final int SLIDE_MEDIUM = 2750;
-    public static final int SLIDE_LOW = 1650;
+    public static final int SLIDE_HIGH = 3700;
+    public static final int SLIDE_MEDIUM = 2650;
+    public static final int SLIDE_LOW = 1600;
     public static final int SLIDE_STOW = 500;
-    public static final int SLIDE_STACK_FOUR = 650;
-    public static final int SLIDE_STACK_THREE = 490;
-    public static final int SLIDE_STACK_TWO = 330;
-    public static final int SLIDE_STACK_ONE = 170;
+    public static final int SLIDE_STACK_FOUR = 600;
+    public static final int SLIDE_STACK_THREE = 450;
+    public static final int SLIDE_STACK_TWO = 300;
+    public static final int SLIDE_STACK_ONE = 150;
     public static final int SLIDE_BOTTOM = 0;
 
     public static final double GRABBER_INITIALIZE_POSITION = 0.17;

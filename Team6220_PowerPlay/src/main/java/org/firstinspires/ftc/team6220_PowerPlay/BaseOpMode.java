@@ -6,6 +6,7 @@ import com.qualcomm.hardware.rev.RevBlinkinLedDriver;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.DigitalChannel;
 import com.qualcomm.robotcore.hardware.PwmControl;
 import com.qualcomm.robotcore.hardware.ServoImplEx;
 
@@ -49,6 +50,9 @@ public abstract class BaseOpMode extends LinearOpMode {
 
     // bulk reading
     private List<LynxModule> hubs;
+
+    // limit switch
+    public DigitalChannel limitSwitch;
 
     // initializes the motors, servos, and IMUs
     public void initialize() {
@@ -103,8 +107,12 @@ public abstract class BaseOpMode extends LinearOpMode {
         servoGrabber = (ServoImplEx) hardwareMap.servo.get("servoGrabber");
         servoGrabber.setPwmRange(maxRange);
 
-        blinkinChassis = (RevBlinkinLedDriver) hardwareMap.get(RevBlinkinLedDriver.class, "blinkinChassis");
+        // limit switch
+        limitSwitch = hardwareMap.get(DigitalChannel.class, "limitSwitch");
+        limitSwitch.setMode(DigitalChannel.Mode.INPUT);
 
+        blinkinChassis = (RevBlinkinLedDriver) hardwareMap.get(RevBlinkinLedDriver.class, "blinkinChassis");
+        
         // initialize IMU
         BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
         parameters.angleUnit = BNO055IMU.AngleUnit.DEGREES;
