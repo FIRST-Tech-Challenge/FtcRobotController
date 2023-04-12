@@ -19,6 +19,7 @@ import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
+import org.firstinspires.ftc.masters.drive.DriveConstants;
 import org.firstinspires.ftc.masters.drive.SampleMecanumDrive;
 
 import java.util.Date;
@@ -371,21 +372,21 @@ public class PowerPlayRightCyclingWORLD extends LinearOpMode {
                         switch (sleeveColor){
                             case GREEN:
                                 Trajectory parkGreen1 = drive.trajectoryBuilder(drive.getPoseEstimate())
-                                        .lineToLinearHeading(new Pose2d(new Vector2d(63, -14), Math.toRadians(270)))
+                                        .lineToLinearHeading(new Pose2d(new Vector2d(63, -14), Math.toRadians(270)),SampleMecanumDrive.getVelocityConstraint(60, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH), SampleMecanumDrive.getAccelerationConstraint(60))
                                         .build();
                                 drive.followTrajectoryAsync(parkGreen1);
                                 currentState = State.PARK_GREEN;
                                 break;
                             case RED:
                                 Trajectory parkRed = drive.trajectoryBuilder(drive.getPoseEstimate())
-                                        .lineToLinearHeading(new Pose2d(new Vector2d(36, -24),Math.toRadians(270)))
+                                        .lineToLinearHeading(new Pose2d(new Vector2d(36, -24),Math.toRadians(270)),SampleMecanumDrive.getVelocityConstraint(60, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH), SampleMecanumDrive.getAccelerationConstraint(60))
                                         .build();
                                 drive.followTrajectoryAsync(parkRed);
                                 currentState = State.PARK_RED;
                                 break;
                             case GRAY:
                                 Trajectory parkGray1 = drive.trajectoryBuilder(drive.getPoseEstimate())
-                                        .lineToLinearHeading(new Pose2d( new Vector2d(12, -14), Math.toRadians(270)))
+                                        .lineToLinearHeading(new Pose2d( new Vector2d(12, -14), Math.toRadians(270)),SampleMecanumDrive.getVelocityConstraint(60, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH), SampleMecanumDrive.getAccelerationConstraint(60))
                                         .build();
                                 drive.followTrajectoryAsync(parkGray1);
                                 currentState = State.PARK_GRAY;
@@ -440,7 +441,7 @@ public class PowerPlayRightCyclingWORLD extends LinearOpMode {
                         }
                         if (!drive.isBusy()) {
                             Trajectory parkGray2 = drive.trajectoryBuilder(drive.getPoseEstimate())
-                                    .lineToLinearHeading(new Pose2d( new Vector2d(12, -24), Math.toRadians(270)))
+                                    .lineToLinearHeading(new Pose2d( new Vector2d(12, -24), Math.toRadians(270)),SampleMecanumDrive.getVelocityConstraint(60, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH), SampleMecanumDrive.getAccelerationConstraint(60))
                                     .build();
                             drive.followTrajectoryAsync(parkGray2);
                             if (drive.armMotor.getCurrentPosition() < 50) {
