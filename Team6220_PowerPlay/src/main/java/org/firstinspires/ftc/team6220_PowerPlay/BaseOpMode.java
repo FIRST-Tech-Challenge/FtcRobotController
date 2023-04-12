@@ -112,9 +112,7 @@ public abstract class BaseOpMode extends LinearOpMode {
         limitSwitch.setMode(DigitalChannel.Mode.INPUT);
 
         blinkinChassis = (RevBlinkinLedDriver) hardwareMap.get(RevBlinkinLedDriver.class, "blinkinChassis");
-
-        blinkinChassis = (RevBlinkinLedDriver) hardwareMap.get(RevBlinkinLedDriver.class, "blinkinChassis");
-
+        
         // initialize IMU
         BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
         parameters.angleUnit = BNO055IMU.AngleUnit.DEGREES;
