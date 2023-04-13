@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.team6220_PowerPlay.testclasses;
+/*package org.firstinspires.ftc.team6220_PowerPlay.testclasses;
 
 import com.qualcomm.hardware.rev.RevBlinkinLedDriver;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
@@ -18,16 +18,17 @@ public class StackGrabbingTest extends BaseAutonomous {
         waitForStart();
         driveGrabber(Constants.GRABBER_INITIALIZE_POSITION);
         for (int i = 4; i >= 0; i--) {
+            turnToAngle(0);
             //turn LED's off (for testing purposes)
             blinkinChassis.setPattern(RevBlinkinLedDriver.BlinkinPattern.BLACK);
             //drive slides to stack position
             driveSlidesAutonomous(Constants.STACK_HEIGHTS[i]);
             //center on cone stack
-            centerConeStack(robotCameraPipeline);
+            centerConeStack(robotCameraPipeline, 300);
             //close grabber
             driveGrabber(Constants.GRABBER_CLOSE_POSITION);
             //wait for grabber to close
-            sleep(500);
+            sleep(300);
             driveAutonomous(180, 0.1);
             //drive slides to stow position
             sleep(100);
@@ -42,7 +43,7 @@ public class StackGrabbingTest extends BaseAutonomous {
             sleep(100);
             //wait for slides to go all the way up
             //drive forward
-            driveAutonomous(0, 2);
+            driveAutonomous(0, 1.5);
             sleep(100);
             //lower slides onto junction
             driveSlidesAutonomous(Constants.SLIDE_HIGH-300);
@@ -55,7 +56,8 @@ public class StackGrabbingTest extends BaseAutonomous {
             //drive backwards
             driveAutonomous(180, 2);
             //turn back to 0 heading
-            turnToAngle(0);
         }
     }
 }
+
+ */

@@ -19,10 +19,6 @@ public class StackGrabbingWithConeCentering extends BaseAutonomous {
         //turn LED's off (for testing purposes)
         blinkinChassis.setPattern(RevBlinkinLedDriver.BlinkinPattern.BLACK);
         waitForStart();
-        driveGrabber(Constants.GRABBER_INITIALIZE_POSITION);
-        //drop first cone on junction
-        grabFromStackAndDepositOnJunction(1,0);
-        //loop after first cone has been dropped
-        grabFromStackAndDepositOnJunctionPlusConeCentering(4,0);
+        grabFromStackAndDepositOnJunctionPlusConeCentering(5,-90);
     }
 }
