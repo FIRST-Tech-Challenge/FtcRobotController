@@ -287,6 +287,33 @@ public abstract class BaseOpMode extends LinearOpMode {
         stopDriveMotors();
     }
 
+    public void centerConeStackAndDriveSlides(RobotCameraPipeline pipeline, int stackWidth, int targetPosition) {
+        double xOffset, width, strafePower, turnPower;
+        do {
+            xOffset = Constants.CAMERA_CENTER_X - pipeline.xPosition;
+            width = pipeline.width;
+
+            // drive forward while centering on the cone stack if contour exists
+            if (width == 0) {
+                break;
+            } else {
+                if(motorLeftSlides.getCurrentPosition() < targetPosition){
+                    driveSlides(targetPosition);
+                }
+                strafePower = coneStackPixelsAndWidthToStrafingPower(xOffset, width);
+                turnPower = Constants.AUTHORITY_SCALER * coneStackPixelsAndWidthToTurningPower(xOffset, width);
+                driveWithoutIMU(strafePower, Constants.DRIVE_AUTHORITY_SCALER * coneStackWidthMotorPower(width), turnPower);
+                telemetry.addData("xStrafingPower", strafePower);
+                telemetry.addData("xTurningPower", turnPower);
+                telemetry.addData("yMotorPower", coneStackWidthMotorPower(width));
+                telemetry.addData("width", width);
+                telemetry.update();
+            }
+            // while far enough that the cone stack doesn't fill the entire camera view
+        } while (width < stackWidth);
+        stopDriveMotors();
+    }
+
     /**
      * calculates the motor power for the robot drivetrain based on the pixel offset from the junction top
      * @param pixelOffset how far junction top is from center of camera field of view in pixels
