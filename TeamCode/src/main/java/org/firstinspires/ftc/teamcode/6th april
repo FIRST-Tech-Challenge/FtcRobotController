@@ -1,0 +1,228 @@
+package org.firstinspires.ftc.teamcode;
+
+import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.eventloop.opmode.OpMode.LinearOpMode;
+import com.qualcomm.robotcore.hardware.DcMotor;
+
+
+@TeleOp(name="Control")
+
+public class Control extends LinearOpMode{
+
+ 
+static void arm(int arm_target){
+   robot.vert.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+   robot.vert.setTargetPosition(arm_target);
+   robot.vert.setPower(1);
+}
+ 
+@Override
+public void runOpMode() throws InterruptedException{
+       
+        DcMotor flip1;
+        DcMotor flip2;
+        Servo claw1;
+        Servo claw2;
+        Servo yaw1;
+        Servo yaw2;
+       
+        int height = 4;
+        /*   0 cone collection/ ground
+                1 low
+                2 medium
+                3 high
+        */
+        int toggleTimer = 0;
+        int toggleOrig1;
+        int toggleInterval;
+       
+        double scoringEnd = 1;
+       
+        // 1 forward, -1 behind
+       
+        boolean clawOpen = true;
+        boolean aligning = false;
+
+        waitForStart();
+        //Below is while OpMode active
+        toggleTimer += 1; //count time between toggle
+       
+        //setting height
+        servoflip1 = hardwareMap.get(DcMotor.class, "flip1");
+        if (clawOpen) {
+                claw1.setPosition();
+                if()
+                //make the claw open!111!!
+        } else {
+                if (gamepad1.triangle) {
+                        height = 3;
+                }
+       
+                if (gamepad1.circle) {
+                        height = 2;
+                }
+       
+                if (gamepad1.cross) {
+                        height = 1;
+                }
+       
+                if (gamepad1.square) {
+                        height = 0;
+                }
+        }
+       
+        if (height == 0) {
+               
+        }
+        else if (height == 1) {
+                if (scoringEnd == 0) {
+                         flip1.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                         flip1.setTargetPosition(270);
+                         flip1.setPower(0.8);
+
+                         flip2.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                         flip2.setTargetPosition(-270);
+                         flip2.setPower(-0.8);
+
+                         servoyaw1.setPosition(0.8);
+                         servoyaw2.setPosition(-0.8);  
+                } else {
+                        flip1.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                        flip1.setTargetPosition(100);
+                        flip1.setPower(0.8);
+       
+                        flip2.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                        flip2.setTargetPosition(-100);
+                        flip2.setPower(-0.8);
+                }
+               
+        }
+        else if (height == 2) {
+                arm(1000);
+                if (scoringEnd == 0) {
+                         flip1.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                         flip1.setTargetPosition(270);
+                         flip1.setPower(0.8);
+
+                         flip2.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                         flip2.setTargetPosition(-270);
+                         flip2.setPower(-0.8);
+
+                         servoyaw1.setPosition(0.8);
+                         servoyaw2.setPosition(-0.8);  
+                } else {
+                        flip1.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                        flip1.setTargetPosition(100);
+                        flip1.setPower(0.8);
+       
+                        flip2.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                        flip2.setTargetPosition(-100);
+                        flip2.setPower(-0.8);
+                }
+               
+        }
+        else if (height == 3) {
+                arm(2000);
+                if (scoringEnd == 0) {
+                         flip1.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                         flip1.setTargetPosition(270);
+                         flip1.setPower(0.8);
+
+                         flip2.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                         flip2.setTargetPosition(-270);
+                         flip2.setPower(-0.8);
+
+                         servoyaw1.setPosition(0.8);
+                         servoyaw2.setPosition(-0.8);  
+                } else {
+                        flip1.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                        flip1.setTargetPosition(100);
+                        flip1.setPower(0.8);
+       
+                        flip2.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                        flip2.setTargetPosition(-100);
+                        flip2.setPower(-0.8);
+                }
+               
+        }
+       
+        if ((toggleTimer-toggleOrig1) > toggleInterval) {
+                if (gamepad1.right_bumper) {
+                        clawOpen = !clawOpen;
+                        toggleOrig1 = toggleTimer;
+                }
+        }
+       
+
+        if (clawOpen) {
+                //place code to prove you know how to code;
+        } else {
+                if(gamepad.left_bumper){
+                    servoclaw1.setPosition(0.5);
+                    servoclaw2.setPosition(-0.5);
+                    clawOpen = true;
+                  //Last edit here 6/4 3:58pm
+                }
+        }
+       
+       
+       
+       
+       
+        //Below is for Car control
+       
+        if (gamepad.left_bumper) {  //Brakes/slow down car
+                direction_x = direction_x/2;
+                direction_y = direction_y/2;
+                pivot = pivot/2;
+        }
+       
+        if ((gamepad.left_trigger == 0) || (gamepad.right_trigger == 0)){  
+                drivetrain.remote(direction_y, direction_x, pivot, heading);
+        } else {      
+                drivetrain.remote(0, ((gamepad.right_trigger- gamepad.left_trigger)*0.7), pivot, 0);  // horizontal movement
+        }
+}
+}
+
+
+
+
+    public void remote2(Project1Hardware robot, double vertical, double horizontal, double pivot, double heading){
+        robot.frontLeft.setDirection(DcMotor.Direction.FORWARD);
+        robot.frontRight.setDirection(DcMotor.Direction.REVERSE);
+        robot.backLeft.setDirection(DcMotor.Direction.FORWARD);
+        robot.backRight.setDirection(DcMotor.Direction.REVERSE);
+
+        this.vertical = vertical;
+        this.horizontal = horizontal;
+        this.pivot = pivot;
+        this.heading = heading;
+
+        if (horizontal < 0 && vertical < 0) theta += Math.PI * 3/2;
+        else theta -= Math.PI / 2;
+        theta = 2 * Math.PI + theta - heading;
+        power = Math.hypot(horizontal,vertical);
+
+        sin = Math.sin(theta - Math.PI/4);
+        cos = Math.cos(theta - Math.PI/4);
+        max = Math.max(Math.abs(sin),Math.abs(cos));
+
+        FLPower = power * (cos/max) + pivot;
+        FRPower = power * (sin/max) - pivot;
+        BLPower = power * (sin/max) + pivot;
+        BRPower = power * (cos/max) - pivot;
+
+        robot.frontLeft.setPower(FLPower);
+        robot.frontRight.setPower(FRPower);
+        robot.backLeft.setPower(BLPower);
+        robot.backRight.setPower(BRPower);
+
+        robot.frontLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        robot.frontRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        robot.backLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        robot.backRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+    }
+    //drivetrain.remote2(robot, -direction_y, -direction_X, pivot, heading);

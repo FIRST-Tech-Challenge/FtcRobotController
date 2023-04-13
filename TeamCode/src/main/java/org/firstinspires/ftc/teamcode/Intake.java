@@ -13,10 +13,20 @@ public class Intake {
         else if (robot.arm.getCurrentPosition() <= arm_target + 10) robot.arm.setPower(-0.3);
         else robot.arm.setPower(-0.2);
     }
-    static void lift(int lift_target, Project1Hardware robot, Gamepad gamepad1){
-        robot.vert.setTargetPosition(lift_target);
+    static void lift(String mode, Project1Hardware robot) {
+        switch (mode) {
+            case "OFF": robot.vert.setTargetPosition(0);
+            case "LOW": robot.vert.setTargetPosition(1000);
+            case "MID": robot.vert.setTargetPosition(2000);
+            case "HIGH": robot.vert.setTargetPosition(3000);
+        }
         robot.vert.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        robot.vert.setPower(1);
+        robot.vert.setPower(0.8);
+    }
+    static void horz(int horz_target, Project1Hardware robot, Gamepad gamepad1){
+        robot.horz.setTargetPosition(horz_target);
+        robot.horz.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        robot.horz.setPower(0.8);
     }
 }
 

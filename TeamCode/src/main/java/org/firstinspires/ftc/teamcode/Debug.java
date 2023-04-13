@@ -77,5 +77,10 @@ public class Debug {
                 telemetry.addData("claw big angle", clawAPos);
                 break;
         }
+
+
+        //if (gamepad1.dpad_left) dModesIndex = (dModesIndex + 1) % debugModes.length;
+        //else dModesIndex = (dModesIndex + 1) % debugModes.length;
+        //Debug.control(debugModes[dModesIndex], robot, telemetry, gamepad1);
     }
 }
