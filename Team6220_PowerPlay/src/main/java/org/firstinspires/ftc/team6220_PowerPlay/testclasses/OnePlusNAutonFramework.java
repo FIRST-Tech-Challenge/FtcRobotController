@@ -97,9 +97,9 @@ abstract public class OnePlusNAutonFramework extends BaseAutonomous {
             //  turn to face stack
             turnToAngle(angleOffset);
             //  grab from stack
-            grabFromStackAndDepositOnJunction(loops, angleOffset);
+            grabFromStackAndDepositOnJunctionPlusConeCentering(loops, angleOffset);
             //drive slides down
-            driveSlides(Constants.SLIDE_BOTTOM);
+            driveSlidesAutonomous(Constants.SLIDE_BOTTOM);
             //  prepare to park
             turnToAngle(0);
 

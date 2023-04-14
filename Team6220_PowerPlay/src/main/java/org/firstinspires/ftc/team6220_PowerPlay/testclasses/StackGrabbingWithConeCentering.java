@@ -20,5 +20,6 @@ public class StackGrabbingWithConeCentering extends BaseAutonomous {
         blinkinChassis.setPattern(RevBlinkinLedDriver.BlinkinPattern.BLACK);
         waitForStart();
         grabFromStackAndDepositOnJunctionPlusConeCentering(5,-90);
+        driveSlidesAutonomous(0);
     }
 }

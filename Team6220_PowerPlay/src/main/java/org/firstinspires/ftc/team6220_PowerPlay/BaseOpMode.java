@@ -297,9 +297,6 @@ public abstract class BaseOpMode extends LinearOpMode {
             if (width == 0) {
                 break;
             } else {
-                if(motorLeftSlides.getCurrentPosition() < targetPosition){
-                    driveSlides(targetPosition);
-                }
                 strafePower = coneStackPixelsAndWidthToStrafingPower(xOffset, width);
                 turnPower = Constants.AUTHORITY_SCALER * coneStackPixelsAndWidthToTurningPower(xOffset, width);
                 driveWithoutIMU(strafePower, Constants.DRIVE_AUTHORITY_SCALER * coneStackWidthMotorPower(width), turnPower);
@@ -308,10 +305,12 @@ public abstract class BaseOpMode extends LinearOpMode {
                 telemetry.addData("yMotorPower", coneStackWidthMotorPower(width));
                 telemetry.addData("width", width);
                 telemetry.update();
+                driveSlides(targetPosition);
             }
             // while far enough that the cone stack doesn't fill the entire camera view
         } while (width < stackWidth);
         stopDriveMotors();
+        motorLeftSlides.setPower(0);
     }
 
     /**

@@ -149,10 +149,7 @@ public abstract class BaseAutonomous extends BaseOpMode {
             eFR = motorFR.getCurrentPosition();
             eBL = motorBL.getCurrentPosition();
             eBR = motorBR.getCurrentPosition();
-
-            if(motorLeftSlides.getCurrentPosition() <= targetSlidePosition){
-                driveSlides(targetSlidePosition);
-            }
+            driveSlides(targetSlidePosition);
             // robot turns slightly to correct for small changes in heading
             currentAngle = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle;
             tPower = (currentAngle - startAngle) * Constants.HEADING_CORRECTION_KP_AUTONOMOUS;
@@ -166,7 +163,6 @@ public abstract class BaseAutonomous extends BaseOpMode {
             motorFR.setPower(yPower - xPower - tPower);
             motorBL.setPower(yPower - xPower + tPower);
             motorBR.setPower(yPower + xPower - tPower);
-
             // calculates x-position and y-position based on drive encoder ticks
             xPosition = (eFL - eFR - eBL + eBR) * Constants.DRIVE_MOTOR_TICKS_TO_INCHES * 0.25;
             yPosition = (eFL + eFR + eBL + eBR) * Constants.DRIVE_MOTOR_TICKS_TO_INCHES * 0.25;
@@ -175,8 +171,8 @@ public abstract class BaseAutonomous extends BaseOpMode {
             traveledDistance = Math.sqrt(Math.pow(xPosition, 2) + Math.pow(yPosition, 2));
             remainingDistance = targetDistance - traveledDistance;
         }
-
         stopDriveMotors();
+        motorLeftSlides.setPower(0);
     }
 
     /**
@@ -435,14 +431,17 @@ public abstract class BaseAutonomous extends BaseOpMode {
         for (int i = 4; i > 5 - loopNumber; i--) {
             telemetry.addData("loop", i + 1);
             turnToAngle(0 + angleOffset);
+            driveSlidesAutonomous(Constants.STACK_HEIGHTS[i]);
             //drive slides to stack position
-            centerConeStackAndDriveSlides(robotCameraPipeline, 380, Constants.STACK_HEIGHTS[i]);
+            centerConeStack(robotCameraPipeline, 380);
+            sleep(100);
             //close grabber
             driveGrabber(Constants.GRABBER_CLOSE_POSITION);
             //wait for grabber to close
             sleep(300);
             //drive forward towards junction and raise slides
-            driveAutonomousPlusSlides(180, 34.8, Constants.SLIDE_HIGH - 10);
+            driveAutonomousPlusSlides(180, 34.6, Constants.SLIDE_HIGH - 100);
+            sleep(300);
             //turn towards junction
             turnToAngle(90 + angleOffset);
             //:TODO EXPERIMENTAL
@@ -463,6 +462,7 @@ public abstract class BaseAutonomous extends BaseOpMode {
         }
         turnToAngle(0+angleOffset);
         centerConeStackAndDriveSlides(robotCameraPipeline, 380, Constants.STACK_HEIGHTS[0]);
+        sleep(100);
         //close grabber
         driveGrabber(Constants.GRABBER_CLOSE_POSITION);
         //wait for grabber to close
@@ -472,7 +472,9 @@ public abstract class BaseAutonomous extends BaseOpMode {
         sleep(100);
         driveSlidesAutonomous(Constants.SLIDE_LOW);
         //drive backwards 34.5 inches
-        driveAutonomousPlusSlides(180, 33.8, Constants.SLIDE_HIGH);
+        driveAutonomousPlusSlides(180, 33.5, Constants.SLIDE_HIGH - 100);
+        sleep(300);
+        sleep(100);
         //turn towards junction
         turnToAngle(90+angleOffset);
         //drive slides up

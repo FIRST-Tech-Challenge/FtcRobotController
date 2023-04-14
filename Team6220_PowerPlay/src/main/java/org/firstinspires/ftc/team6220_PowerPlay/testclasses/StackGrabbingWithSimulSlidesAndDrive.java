@@ -19,6 +19,7 @@ public class StackGrabbingWithSimulSlidesAndDrive extends BaseAutonomous {
         //turn LED's off (for testing purposes)
         blinkinChassis.setPattern(RevBlinkinLedDriver.BlinkinPattern.BLACK);
         waitForStart();
-        grabFromStackAndDepositOnJunctionPlusConeCentering(5,-90);
+        grabFromStackAndDepositOnJunctionPlusConeCenteringPlusSimulSlides(5,-90);
+        driveSlidesAutonomous(0);
     }
 }
