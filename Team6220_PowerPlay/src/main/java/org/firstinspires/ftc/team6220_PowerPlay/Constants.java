@@ -66,8 +66,8 @@ public class Constants {
     public static final int JUNCTION_TOP_TOLERANCE = 100;
     public static final double JUNCTION_TOP_CENTERING_KP = 0.0004;
 
-    public static final Scalar LOWER_RED = new Scalar(20, 0, 0);
-    public static final Scalar UPPER_RED = new Scalar(160, 255, 252);
+    public static final Scalar LOWER_RED = new Scalar(17, 0, 0);
+    public static final Scalar UPPER_RED = new Scalar(165, 150, 30);
 
     public static final Scalar LOWER_BLUE = new Scalar(100, 125, 75);
     public static final Scalar UPPER_BLUE = new Scalar(140, 255, 255);
@@ -96,6 +96,8 @@ public class Constants {
     public static final int[] STACK_HEIGHTS = new int[] {0, 190, 390, 490, 537};
 
     public static final int[] BREAK_HEIGHTS = new int[] {500, 500, 450, 350, 350};
+
+    public static final int[] GRAB_HEIGHTS = new int[] {350, 350, 380, 380, 380};
 
     public static final int SLIDE_TUNING_MODIFIER = 10;
 }

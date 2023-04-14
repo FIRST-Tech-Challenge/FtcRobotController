@@ -426,14 +426,14 @@ public abstract class BaseAutonomous extends BaseOpMode {
         driveAutonomous(180, 2);
         //turn back to 0 heading
     }
+
+    //TODO: INCLUDES DIFFERENT GRABBING BREAK WIDTHS -- IF THE ROBOT DOES NOT SLAM INTO THE WALL, KEEP THESE
     public void grabFromStackAndDepositOnJunctionPlusConeCenteringPlusSimulSlides(int loopNumber, int angleOffset){
         blinkinChassis.setPattern(RevBlinkinLedDriver.BlinkinPattern.BLACK);
         for (int i = 4; i > 5 - loopNumber; i--) {
             telemetry.addData("loop", i + 1);
             turnToAngle(0 + angleOffset);
-            driveSlidesAutonomous(Constants.STACK_HEIGHTS[i]);
-            //drive slides to stack position
-            centerConeStack(robotCameraPipeline, 380);
+            centerConeStackAndDriveSlides(robotCameraPipeline, Constants.GRAB_HEIGHTS[i], Constants.STACK_HEIGHTS[i]);
             sleep(100);
             //close grabber
             driveGrabber(Constants.GRABBER_CLOSE_POSITION);
@@ -441,7 +441,7 @@ public abstract class BaseAutonomous extends BaseOpMode {
             sleep(300);
             //drive forward towards junction and raise slides
             driveAutonomousPlusSlides(180, 34.6, Constants.SLIDE_HIGH - 100);
-            sleep(300);
+            sleep(100);
             //turn towards junction
             turnToAngle(90 + angleOffset);
             //:TODO EXPERIMENTAL
@@ -461,7 +461,7 @@ public abstract class BaseAutonomous extends BaseOpMode {
             //turn back to 0 heading
         }
         turnToAngle(0+angleOffset);
-        centerConeStackAndDriveSlides(robotCameraPipeline, 380, Constants.STACK_HEIGHTS[0]);
+        centerConeStackAndDriveSlides(robotCameraPipeline, 350, Constants.STACK_HEIGHTS[0]);
         sleep(100);
         //close grabber
         driveGrabber(Constants.GRABBER_CLOSE_POSITION);
@@ -473,7 +473,6 @@ public abstract class BaseAutonomous extends BaseOpMode {
         driveSlidesAutonomous(Constants.SLIDE_LOW);
         //drive backwards 34.5 inches
         driveAutonomousPlusSlides(180, 33.5, Constants.SLIDE_HIGH - 100);
-        sleep(300);
         sleep(100);
         //turn towards junction
         turnToAngle(90+angleOffset);
