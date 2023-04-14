@@ -10,7 +10,7 @@ public class LiftPIDController {
     PIDController liftController;
     int target =0;
     public static double multiplier = 1;
-    public static double p=0.02, i=0, d=0.00001;
+    public static double p=0.03, i=0, d=0.00001;
     public static double f=0.03;
 
     public LiftPIDController (DcMotorEx mainSlideMotor, DcMotorEx slideMotor2, DcMotorEx slideMotor3){

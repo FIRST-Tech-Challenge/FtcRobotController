@@ -8,6 +8,8 @@ import static org.firstinspires.ftc.masters.BadgerConstants.SLIDE_HIGH_AUTO;
 import static org.firstinspires.ftc.masters.BadgerConstants.SLIDE_MIDDLE;
 import static org.firstinspires.ftc.masters.BadgerConstants.SLIDE_THROUGH;
 import static org.firstinspires.ftc.masters.BadgerConstants.STACK_OFFSET;
+import static org.firstinspires.ftc.masters.PowerPlayComputerVisionPipelines.SleevePipeline.SleeveColor.GREEN;
+import static org.firstinspires.ftc.masters.PowerPlayComputerVisionPipelines.SleevePipeline.SleeveColor.RED;
 
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
@@ -103,7 +105,7 @@ public class PowerPlayRightCyclingWORLD extends LinearOpMode {
         Trajectory firstDepositPath1 = drive.trajectoryBuilder(startPose)
                 //.splineToConstantHeading(new Vector2d(35, -14), Math.toRadians(90))
                 .lineToSplineHeading(new Pose2d(new Vector2d(34, -45), Math.toRadians(90)))
-                .splineTo(new Vector2d(34, -12 ), Math.toRadians(135))
+                .splineTo(new Vector2d(34.5, -12.5 ), Math.toRadians(135))
 //                .lineToSplineHeading(new Pose2d(new Vector2d(37, -30), Math.toRadians(90)))
 //                .splineToSplineHeading(new Pose2d(36, -12 , Math.toRadians(135)), Math.toRadians(135))
                 .build();
@@ -216,7 +218,7 @@ public class PowerPlayRightCyclingWORLD extends LinearOpMode {
                         telemetry.addData("done aligning", "score cone");
                         currentState = State.FIRST_DEPOSIT_SCORE_CONE;
                         Trajectory trajForward = drive.trajectoryBuilder(drive.getPoseEstimate())
-                                .forward(5)
+                                .forward(4)
                                 .build();
                         drive.followTrajectoryAsync(trajForward);
                     }
@@ -322,7 +324,7 @@ public class PowerPlayRightCyclingWORLD extends LinearOpMode {
                     if (drive.alignPole(CV.pipeDetectionPipeline.position) || new Date().getTime()- alignTime >500){
                         currentState = State.CYCLE_SCORE_CONE;
                         cycleDepositScoreCone = drive.trajectoryBuilder(drive.getPoseEstimate())
-                                .back(9)
+                                .back(7)
                                 .build();
                         drive.followTrajectoryAsync(cycleDepositScoreCone);
                         drive.tipBack();
@@ -335,7 +337,7 @@ public class PowerPlayRightCyclingWORLD extends LinearOpMode {
                         //sleep(100);
                         drive.openClaw();
                         cycleBackUpFromJunction=drive.trajectoryBuilder(drive.getPoseEstimate())
-                                .forward(8)
+                                .forward(7)
                                 .build();
                         sleep(250);
                         drive.followTrajectoryAsync(cycleBackUpFromJunction);
@@ -347,7 +349,7 @@ public class PowerPlayRightCyclingWORLD extends LinearOpMode {
                     if (!drive.isBusy()){
                         retractArm= true;
                         time = new Date().getTime() - startTime;
-                        if (time> 22*1000) {
+                        if ((time> 21*1000 && (sleeveColor==RED ||sleeveColor==GREEN)) || time>20*1000) {
 
                             currentState = State.CYCLE_PICKUP_END;
                             drive.switchOriginalFollower();
