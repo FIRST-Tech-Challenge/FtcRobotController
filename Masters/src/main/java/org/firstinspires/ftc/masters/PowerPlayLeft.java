@@ -22,22 +22,19 @@ import java.util.Date;
 import java.util.List;
 
 @Config
-@Autonomous(name = "Power Play Left", group="competition")
+@Autonomous(name = "LEFT preload only WORLD", group="competition")
 public class PowerPlayLeft extends LinearOpMode {
 
     enum State {
         SCORE_1,
+        SCORE_2,
+        TURN_1,
         FORWARD,
         ALIGN,
         BACK_UP_FROM_JUNCTION,
         TURN,
-        SCORE_2,
-        CONE_STACK1,
         PICKUP,
         BACK_UP,
-        NEW_CONE_FROM_SCORE_1,
-        SCORE_CONE,
-        NEW_CONE,
         PARK_GRAY,
         PARK_RED,
         PARK_GREEN,
@@ -46,7 +43,7 @@ public class PowerPlayLeft extends LinearOpMode {
     }
 
     LiftPIDController liftPIDController;
-    ArmPIDControllerMotionProfile armPIDController;
+    ArmPIDController armPIDController;
 
     int armTarget = 0, liftTarget = 0;
 
@@ -72,7 +69,7 @@ public class PowerPlayLeft extends LinearOpMode {
         drive.setPoseEstimate(startPose);
 
         liftPIDController = new LiftPIDController(drive.linearSlide, drive.frontSlide, drive.slideOtherer);
-        armPIDController = new ArmPIDControllerMotionProfile(drive.armMotor);
+        armPIDController = new ArmPIDController(drive.armMotor);
         drive.tipCenter();
         drive.closeClaw();
 
@@ -128,6 +125,9 @@ public class PowerPlayLeft extends LinearOpMode {
         currentState = State.SCORE_1;
         drive.followTrajectoryAsync(startToFirstDeposit);
 
+        int slidePosition = drive.linearSlide.getCurrentPosition();
+        int armPosition = drive.armMotor.getCurrentPosition();
+
         while (opModeIsActive() && !isStopRequested()) {
             drive.update();
             switch (currentState) {
@@ -157,7 +157,7 @@ public class PowerPlayLeft extends LinearOpMode {
                         backUpFromJunction = drive.trajectoryBuilder(drive.getPoseEstimate())
                                 .back(10)
                                 .build();
-                        sleep(100);
+                      //  sleep(100);
                         drive.openClaw();
                         sleep(300);
                         drive.closeClaw();
@@ -191,55 +191,6 @@ public class PowerPlayLeft extends LinearOpMode {
 //                        drive.followTrajectoryAsync(firstDepositToConeStack1);
                     }
                     break;
-                case NEW_CONE_FROM_SCORE_1:
-                    telemetry.addData("Set up to grab new cone", "");
-                    telemetry.update();
-                    if (!drive.isBusy()) {
-
-
-                        currentState = State.CONE_STACK1;
-//                        drive.closeClaw();
-//
-//                        currentState = State.SCORE_CONE;
-                        //     drive.followTrajectoryAsync(toConeStack2);
-                    } else {
-                        //liftTarget = 75;
-
-                        armTarget = 110;
-                        drive.openClaw();
-                        drive.tipCenter();
-
-                    }
-                    break;
-                case CONE_STACK1:
-                    if (!drive.isBusy()) {
-                        drive.closeClaw();
-                        sleep(300);
-                        currentState = State.PICKUP;
-                        liftTarget = 300;
-                    }
-                    break;
-                case PICKUP:
-                    drive.closeClaw();
-                    //liftTarget = 200;
-                    if (drive.linearSlide.getCurrentPosition() > 250) {
-                        currentState = State.SCORE_CONE;
-                        armTarget = ARM_BACK;
-                        liftTarget = SLIDE_HIGH;
-                        // drive.followTrajectoryAsync(scoreNewCone);
-                    }
-                    break;
-
-
-                case SCORE_CONE:
-
-                    if (!drive.isBusy()) {
-                        drive.openClaw();
-                        sleep(500);
-                        currentState = State.PARK_GREEN;
-                    }
-
-                    break;
 
                 case PARK_GRAY:
                 case PARK_RED:
@@ -262,14 +213,18 @@ public class PowerPlayLeft extends LinearOpMode {
             }
 
 
+            armPosition = drive.armMotor.getCurrentPosition();
+
             armPIDController.setTarget(armTarget);
-            drive.armMotor.setVelocity(armPIDController.calculateVelocity());
+            drive.armMotor.setPower(armPIDController.calculateVelocity(armPosition));
 
             liftPIDController.setTarget(liftTarget);
-            drive.linearSlide.setPower(liftPIDController.calculatePower(drive.linearSlide));
-            drive.slideOtherer.setPower(liftPIDController.calculatePower(drive.slideOtherer));
-            drive.frontSlide.setPower(liftPIDController.calculatePower(drive.frontSlide));
-
+            slidePosition = drive.linearSlide.getCurrentPosition();
+            double power = liftPIDController.calculatePower(slidePosition);
+            drive.linearSlide.setPower(power);
+            drive.slideOtherer.setPower(liftPIDController.calculatePowerSingle(drive.slideOtherer.getCurrentPosition()));
+            //drive.slideOtherer.setPower(power);
+            drive.frontSlide.setPower(power);
             //  telemetry.addData("power ", power);
             telemetry.addData("arm target", armTarget);
             telemetry.addData("arm position", drive.armMotor.getCurrentPosition());
