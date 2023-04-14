@@ -4,6 +4,8 @@ import static org.firstinspires.ftc.masters.BadgerConstants.ARM_BACK;
 import static org.firstinspires.ftc.masters.BadgerConstants.ARM_MID_TOP;
 import static org.firstinspires.ftc.masters.BadgerConstants.SLIDE_HIGH;
 import static org.firstinspires.ftc.masters.BadgerConstants.SLIDE_HIGH_AUTO;
+import static org.firstinspires.ftc.masters.PowerPlayLeft.State.ALIGN;
+import static org.firstinspires.ftc.masters.PowerPlayLeft.State.FORWARD;
 
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
@@ -75,12 +77,16 @@ public class PowerPlayLeft extends LinearOpMode {
 
         State currentState;
 
-        Trajectory startToFirstDeposit = drive.trajectoryBuilder(startPose)
-                .splineToConstantHeading(new Vector2d(-12, -62), Math.toRadians(90))
-                .splineTo(new Vector2d(xCenterJunction, yCenterJunction), Math.toRadians(45))
+        Trajectory start = drive.trajectoryBuilder(startPose)
+                .splineToConstantHeading(new Vector2d(-10, -62), Math.toRadians(90))
+
                 .build();
 
-        Trajectory forward = drive.trajectoryBuilder(startToFirstDeposit.end())
+        Trajectory straight = drive.trajectoryBuilder(start.end())
+                .lineTo(new Vector2d(xCenterJunction, yCenterJunction))
+                .build();
+
+        Trajectory forward = drive.trajectoryBuilder(start.end())
                 .forward(2.5)
                 .build();
 
@@ -123,35 +129,64 @@ public class PowerPlayLeft extends LinearOpMode {
         CV.stopSleeveCamera();
 
         currentState = State.SCORE_1;
-        drive.followTrajectoryAsync(startToFirstDeposit);
+        drive.followTrajectoryAsync(start);
 
         int slidePosition = drive.linearSlide.getCurrentPosition();
         int armPosition = drive.armMotor.getCurrentPosition();
+        long alignTime = new Date().getTime();
 
         while (opModeIsActive() && !isStopRequested()) {
             drive.update();
             switch (currentState) {
                 case SCORE_1:
-                    if (!drive.isBusy()) {
-                        currentState= State.ALIGN;
-                        drive.alignPole(CV.sleevePipeline.position);
+                if (!drive.isBusy()) {
+                    drive.followTrajectoryAsync(straight);
+                    currentState = State.SCORE_2;
+                } else {
+                    armTarget = ARM_MID_TOP;
+                    if (drive.armMotor.getCurrentPosition() > 100) {
+                        liftTarget = SLIDE_HIGH_AUTO;
+                        drive.tipFront();
+                        drive.closeClaw();
+                    }
+                }
+
+                break;
+                case SCORE_2:
+                    if (!drive.isBusy()){
+                        drive.turnAsync(Math.toRadians(turnJunction));
+                        currentState= State.TURN_1;
                     } else {
                         armTarget = ARM_MID_TOP;
-                        if (drive.armMotor.getCurrentPosition() > 100) {
-                            liftTarget = SLIDE_HIGH_AUTO;
+                        if (drive.armMotor.getCurrentPosition()>100){
+                            liftTarget= SLIDE_HIGH_AUTO;
                             drive.tipFront();
                             drive.closeClaw();
                         }
                     }
                     break;
+                case TURN_1:if (!drive.isBusy()) {
+                    currentState= State.ALIGN;
+                    alignTime = new Date().getTime();
+                    drive.alignPole(CV.sleevePipeline.position);
+                } else {
+                    armTarget = ARM_MID_TOP;
+                    if (drive.armMotor.getCurrentPosition()>100){
+                        liftTarget= SLIDE_HIGH_AUTO;
+                        drive.tipFront();
+                        drive.closeClaw();
+                    }
+                }
+                    break;
                 case ALIGN:
                     if (drive.alignPole(CV.sleevePipeline.position)){
-                        currentState = State.FORWARD;
+                        currentState = FORWARD;
                         forward = drive.trajectoryBuilder(drive.getPoseEstimate())
                                 .forward(8)
                                 .build();
                         drive.followTrajectoryAsync(forward);
                     }
+                    break;
                 case FORWARD:
                     if (!drive.isBusy()){
                         backUpFromJunction = drive.trajectoryBuilder(drive.getPoseEstimate())
@@ -226,17 +261,17 @@ public class PowerPlayLeft extends LinearOpMode {
             //drive.slideOtherer.setPower(power);
             drive.frontSlide.setPower(power);
             //  telemetry.addData("power ", power);
-            telemetry.addData("arm target", armTarget);
-            telemetry.addData("arm position", drive.armMotor.getCurrentPosition());
-            telemetry.addData("lift target", liftTarget);
-            telemetry.addData(" lift position", drive.linearSlide.getCurrentPosition());
-
-            PositionStorage.armPosition = drive.armMotor.getCurrentPosition();
-            PositionStorage.liftPosition = drive.linearSlide.getCurrentPosition();
-            PositionStorage.currentPose = drive.getPoseEstimate();
-
-
-            telemetry.update();
+//            telemetry.addData("arm target", armTarget);
+//            telemetry.addData("arm position", drive.armMotor.getCurrentPosition());
+//            telemetry.addData("lift target", liftTarget);
+//            telemetry.addData(" lift position", drive.linearSlide.getCurrentPosition());
+//
+//            PositionStorage.armPosition = drive.armMotor.getCurrentPosition();
+//            PositionStorage.liftPosition = drive.linearSlide.getCurrentPosition();
+//            PositionStorage.currentPose = drive.getPoseEstimate();
+//
+//
+//            telemetry.update();
 
 
 

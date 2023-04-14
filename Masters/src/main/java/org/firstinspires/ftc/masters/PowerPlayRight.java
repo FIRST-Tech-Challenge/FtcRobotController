@@ -146,6 +146,7 @@ public class PowerPlayRight extends LinearOpMode {
                         drive.closeClaw();
                     }
                 }
+                break;
                 case TURN_1:if (!drive.isBusy()) {
                     currentState= State.ALIGN;
                     alignTime = new Date().getTime();
