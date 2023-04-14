@@ -126,10 +126,8 @@ public abstract class BaseOpMode extends LinearOpMode {
         startAngle = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle;
         originalAngle = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle;
 
-        int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
-
         robotCamera = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "RobotCamera"));
-        grabberCamera = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "GrabberCamera"), cameraMonitorViewId);
+        grabberCamera = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "GrabberCamera"));
 
         aprilTagDetectionPipeline = new AprilTagDetectionPipeline();
         robotCameraPipeline = new RobotCameraPipeline();
@@ -344,20 +342,15 @@ public abstract class BaseOpMode extends LinearOpMode {
     }
 
     /**
-     * turns the LEDs green if it detects the top of a junction, otherwise, turn the lights pink
-     *
+     * turns the LEDs green if the grabber camera detects the top of a junction
+     * otherwise the LEDs stay pink
+     * with both colors, the LEDs are in the "shot" pattern
      */
     public void driveLEDs() {
-        if (blinkinChassis != null) {
-            if (grabberCameraPipeline.detected) {
-                blinkinChassis.setPattern(RevBlinkinLedDriver.BlinkinPattern.GREEN);
-                telemetry.addLine("Detected");
-            } else {
-                blinkinChassis.setPattern(RevBlinkinLedDriver.BlinkinPattern.HOT_PINK);
-                telemetry.addLine("Not Detected");
-            }
+        if (grabberCameraPipeline.detected) {
+            blinkinChassis.setPattern(RevBlinkinLedDriver.BlinkinPattern.CP2_SHOT);
         } else {
-            telemetry.addLine("blinkin chassis null smh");
+            blinkinChassis.setPattern(RevBlinkinLedDriver.BlinkinPattern.CP1_SHOT);
         }
     }
 }
