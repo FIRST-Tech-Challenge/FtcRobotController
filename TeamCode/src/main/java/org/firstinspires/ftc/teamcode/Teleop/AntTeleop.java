@@ -42,7 +42,6 @@ public class AntTeleop extends LinearOpMode {
             telemetry.update();
         }
 
-        boolean closed = false;
         double lastpressed = 0;
 
         while (!isStopRequested()) {
@@ -50,26 +49,27 @@ public class AntTeleop extends LinearOpMode {
             double left_stick_y = -gamepad1.left_stick_y;
             double left_stick_x = gamepad1.left_stick_x;
             double right_stick_x = -gamepad1.right_stick_x * 0.5;
-            double max = abs(left_stick_x) + abs(left_stick_y) + abs(right_stick_x);
 
-            motorLeftBack.setPower((left_stick_y - left_stick_x - right_stick_x)/max);
-            motorLeftFront.setPower((left_stick_y + left_stick_x - right_stick_x)/max);
-            motorRightBack.setPower((left_stick_y + left_stick_x + right_stick_x)/max);
-            motorRightFront.setPower((left_stick_y - left_stick_x + right_stick_x)/max);
+            move(left_stick_y, left_stick_x, right_stick_x);
 
             if (gamepad1.right_bumper && getRuntime() - lastpressed > 1) {
-                if (!closed) {
-                    clawServo.setPosition(0.3);
-                    closed = true;
-                }
-                else {
-                    clawServo.setPosition(0.1);
-                    closed = false;
-                }
+                grabrelease();
                 lastpressed = getRuntime();
             }
-
         }
         idle();
+    }
+
+    private void move(double left_stick_y, double left_stick_x, double right_stick_x) {
+        double max = abs(left_stick_x) + abs(left_stick_y) + abs(right_stick_x);
+
+        motorLeftBack.setPower((left_stick_y - left_stick_x - right_stick_x)/max);
+        motorLeftFront.setPower((left_stick_y + left_stick_x - right_stick_x)/max);
+        motorRightBack.setPower((left_stick_y + left_stick_x + right_stick_x)/max);
+        motorRightFront.setPower((left_stick_y - left_stick_x + right_stick_x)/max);
+    }
+
+    private void grabrelease() {
+        clawServo.setPosition(0.4 - clawServo.getPosition());
     }
 }
