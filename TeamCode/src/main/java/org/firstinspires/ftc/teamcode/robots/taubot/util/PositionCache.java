@@ -28,9 +28,9 @@ public class PositionCache {
     }
 
     public TauPosition readPose () {
-        String json = sharedPref.getString("TauPosition", "get failed");
-        if(json.equals("get failed")) return new TauPosition();
-        return gson.fromJson(json, TauPosition.class);
+        String json = sharedPref.getString("TauPosition", "get failed"); //retrieves the shared preference
+        if(json.equals("get failed")) return new TauPosition(); //return a default zeroed TauPos if there's nothing in shared preferences
+        return gson.fromJson(json, TauPosition.class); //load the saved JSON into the cached class
     }
 
     public int update(TauPosition pos, boolean forceUpdate){

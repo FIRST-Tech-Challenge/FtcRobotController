@@ -21,7 +21,7 @@ public class Constants {
     // driveTrain
 
     public static double MIN_CHASSIS_LENGTH = 8;
-    public static double MIN_SAFE_CHASSIS_LENGTH = 10;
+    public static double MIN_SAFE_CHASSIS_LENGTH = 12;
     public static double MAX_CHASSIS_LENGTH = 32;
 
     //both in degrees
@@ -49,9 +49,7 @@ public class Constants {
     public static final double MAX_VELOCITY = 30.0;
     public static final double MAX_ACCELERATION = 10.0;
 
-    public static double DIFF_TICKS_PER_INCH = 34 * (5.23*3.61*2.89)/(3.61*2.89*2.89); //semi rough measure
-
-    // ratios
+    public static double DIFF_TICKS_PER_INCH = 34 * (5.23*3.61*2.89)/(3.61*2.89*2.89); //34 was a semi rough measure before we changed the motors to a higher gear ratio, the math here documents the before/after ratios of 3 stages
 
     public static double DIFF_TICKS_PER_REV = 768; //dummy - update to estimate and then validated
 

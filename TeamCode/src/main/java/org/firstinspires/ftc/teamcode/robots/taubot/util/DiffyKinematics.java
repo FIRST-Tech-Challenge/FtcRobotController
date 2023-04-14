@@ -19,7 +19,7 @@ public class DiffyKinematics {
      * @param trackWidth lateral distance between the differential wheel pair
      */
     public static List<Double> robotToWheelVelocities(Pose2d robotVel, double trackWidth) {
-        assert Utils.approxEquals(robotVel.getY(), 0) : "Lateral (robot y) velocity must be zero for trike drives";
+        assert Utils.approxEquals(robotVel.getY(), 0) : "Lateral (robot y) velocity must be zero for differential drives";
 
         return Arrays.asList(
                 robotVel.getX() - trackWidth / 2 * robotVel.getHeading(),

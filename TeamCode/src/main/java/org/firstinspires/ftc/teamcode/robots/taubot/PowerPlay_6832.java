@@ -217,7 +217,7 @@ public class PowerPlay_6832 extends OpMode {
         voltageSmoother = new ExponentialSmoother(.025);
 
         robot = new Robot(hardwareMap,false);
-        robot.readLog();
+        robot.fetchCachedTauPosition();
 
         // gamepads
         dc = new DriverControls(gamepad1,gamepad2);
@@ -278,8 +278,12 @@ public class PowerPlay_6832 extends OpMode {
         lastLoopClockTime = System.nanoTime();
         startTime = System.currentTimeMillis();
 
+        //load saved position if teleop and recent enough/preset otherwise
         resetGame();
+
         robot.driveTrain.articulate(DriveTrain.Articulation.unlock);
+
+
         if(gameState.equals(GameState.TELE_OP)){
             //robot.crane.resetCrane(startingPosition);
             robot.underarm.articulate(UnderArm.Articulation.home);
@@ -358,6 +362,7 @@ public class PowerPlay_6832 extends OpMode {
                             case 2:
                                 dc.joystickDrive();
                                 dc.UnderarmControls();
+                                //dc.turnTest();
                                 //todo uncomment above 2 lines and delete below 2 lines to go back to normal teleop
                                 //robot.driverIsNowDriving(); //force crane to safe locked position
                                 //dc.testSetPoseEstimate();
@@ -486,6 +491,7 @@ public class PowerPlay_6832 extends OpMode {
        Pose2d target = robot.field.targetCoordinate;
        Pose2d current = robot.field.poseToCoordinates(robot.driveTrain.getPoseEstimate());
        Pose2d current2 = robot.driveTrain.getPoseEstimate();
+        telemetry.addLine("State (" + gameStateIndex + "): " + gameState.getName());
         telemetry.addLine("target X" + target.getX());
         telemetry.addLine("target Y" + target.getY());
 
@@ -508,6 +514,7 @@ public class PowerPlay_6832 extends OpMode {
             opModeTelemetryMap.put("Starting Position", startingPosition);
             opModeTelemetryMap.put("Smoothing Enabled", smoothingEnabled);
         }
+
         opModeTelemetryMap.put("Average Loop Time", Misc.formatInvariant("%d ms (%d hz)", (int) (averageLoopTime * 1e-6), (int) (1 / (averageLoopTime * 1e-9))));
         opModeTelemetryMap.put("Last Loop Time", Misc.formatInvariant("%d ms (%d hz)", (int) (loopTime * 1e-6), (int) (1 / (loopTime * 1e-9))));
         opModeTelemetryMap.put("Average Robot Update Time", Misc.formatInvariant("%d ms (%d hz)", (int) (averageUpdateTime * 1e-6), (int) (1 / (averageUpdateTime * 1e-9))));

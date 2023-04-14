@@ -21,7 +21,6 @@ import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.ServoImplEx;
 import com.qualcomm.robotcore.util.Range;
 
-import org.firstinspires.ftc.robotcore.external.Const;
 import org.firstinspires.ftc.teamcode.robots.taubot.simulation.ServoSim;
 import org.firstinspires.ftc.teamcode.robots.taubot.util.Constants;
 import org.firstinspires.ftc.teamcode.robots.taubot.util.Joint;
@@ -166,7 +165,7 @@ public class UnderArm implements Subsystem {
         manual,
         fold,
         safe,
-        foldTransfer,
+        unfold,
         jointAngles,
         substationHover,
         coneStackHover,
@@ -187,7 +186,7 @@ public class UnderArm implements Subsystem {
         Test4(90,0,30),
         SafePos(0,0,0,0,MIN_CHASSIS_LENGTH),
         FoldPosition(FOLDPOS_SHOULDER_ANGLE,FOLDPOS_ELBOW_ANGLE, 0, FOLDPOS_TURRET_ANGLE,MIN_CHASSIS_LENGTH),
-        FoldTransferPosition(FOLDPOS_SHOULDER_ANGLE+30,FOLDPOS_ELBOW_ANGLE,0,FOLDPOS_TURRET_ANGLE,MAX_CHASSIS_LENGTH);
+        UnfoldPosition(20,0,0,0,MAX_CHASSIS_LENGTH);
 
         public double shoulderAngle, elbowAngle, wristAngle, turretAngle, chassisLength;
 
@@ -242,9 +241,10 @@ public class UnderArm implements Subsystem {
                 setTurretTargetAngle(FOLDPOS_TURRET_ANGLE);
                 robot.driveTrain.articulate(DriveTrain.Articulation.lock);
                 break;
-            case foldTransfer: //PROB NOT NEEDED but added just in case
-                jointAngle = JointAngle.FoldTransferPosition;
+            case unfold: //PROB NOT NEEDED but added just in case
+                jointAngle = JointAngle.UnfoldPosition;
                 goToJointAngle(jointAngle);
+                articulation = Articulation.manual;
                 break;
             case transfer: //transfer position
                 if(goToTransfer()){

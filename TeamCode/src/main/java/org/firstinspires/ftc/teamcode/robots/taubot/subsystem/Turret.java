@@ -64,6 +64,7 @@ public class Turret implements Subsystem {
         this.robot = robot;
         this.simulated = simulated;
         motor = simulated ? new DcMotorExSim(USE_MOTOR_SMOOTHING) : hardwareMap.get(DcMotorEx.class, "turret");
+        motor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         turretIMU = hardwareMap.get(BNO055IMU.class, "turretIMU");
         motor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         motor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -196,7 +197,7 @@ public class Turret implements Subsystem {
             //power = turretPID.onTarget() ? 0 : correction; //what was this? artificially stills micro corrections
         }
         else {
-            motor.setTargetPosition(targetTics+offsetTicks);
+            motor.setTargetPosition(targetTics-offsetTicks);
         }
 
         //not sure if this is still workable given the changes to using RunToPosition for
@@ -270,7 +271,7 @@ public class Turret implements Subsystem {
         else {
             turretPID.disable();
             //we are going to set run-to-position mode
-            motor.setTargetPosition(targetTics+offsetTicks); //encoder should have be reset at the end of calibration - here we set it to it's current position so it doesn't jerk
+            motor.setTargetPosition(targetTics-offsetTicks); //encoder should have be reset at the end of calibration - here we set it to it's current position so it doesn't jerk
             motor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             motor.setPower(1); //full power available
             motor.setVelocity(TURRET_TICKS_ROTATION_SPEED); //ticks per second max velocity todo tune for moderate speed

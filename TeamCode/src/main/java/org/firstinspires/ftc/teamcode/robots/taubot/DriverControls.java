@@ -11,11 +11,14 @@ import static org.firstinspires.ftc.teamcode.robots.taubot.PowerPlay_6832.ignore
 import static org.firstinspires.ftc.teamcode.robots.taubot.PowerPlay_6832.visionProviderFinalized;
 import static org.firstinspires.ftc.teamcode.robots.taubot.PowerPlay_6832.visionProviderIndex;
 import static org.firstinspires.ftc.teamcode.robots.taubot.util.Utils.notJoystickDeadZone;
+import static org.firstinspires.ftc.teamcode.robots.taubot.util.Utils.wrapAngle;
+import static org.firstinspires.ftc.teamcode.robots.taubot.util.Utils.wrapAngleRad;
 
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.qualcomm.robotcore.hardware.Gamepad;
 
 import org.firstinspires.ftc.teamcode.robots.taubot.subsystem.Crane;
+import org.firstinspires.ftc.teamcode.robots.taubot.subsystem.DriveTrain;
 import org.firstinspires.ftc.teamcode.robots.taubot.subsystem.Robot;
 import org.firstinspires.ftc.teamcode.robots.taubot.subsystem.UnderArm;
 import org.firstinspires.ftc.teamcode.robots.taubot.util.Constants;
@@ -153,6 +156,15 @@ public class DriverControls {
                 robot.driveTrain.ManualDriveOff();
                 robot.driverHasStoppedDriving();
             }
+        }
+    }
+
+    double turnTestAngle = 0;
+    void turnTest(){
+        robot.driveTrain.turnUntilDegrees(turnTestAngle);
+        if(stickyGamepad1.a) {
+            turnTestAngle = wrapAngle(turnTestAngle+90);
+            robot.driveTrain.articulate(DriveTrain.Articulation.unlock);
         }
     }
 

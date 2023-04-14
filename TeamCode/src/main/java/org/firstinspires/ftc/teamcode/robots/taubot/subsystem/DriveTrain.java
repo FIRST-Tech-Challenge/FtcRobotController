@@ -107,7 +107,8 @@ public class DriveTrain extends DiffyDrive implements Subsystem {
 
     //PID LOOPS_______________________________________________________________________
 
-    public static PIDCoefficients HEADING_PID = new PIDCoefficients(0.1, 0, 0);
+    public static PIDCoefficients HEADING_PID_PWR = new PIDCoefficients(0.25, .5, 5);
+    public static PIDCoefficients HEADING_PID_VEL = new PIDCoefficients(4.5, 0, 20);
     public static double HEADING_PID_TOLERANCE = 1;
     public static PIDCoefficients DIST_TRAVELLED_PID = new PIDCoefficients(5, 0.0, 0); //todo tune this - copied from Reach
     public static PIDCoefficients VELOCITY_PID = new PIDCoefficients(4, 0, 0);
@@ -117,7 +118,7 @@ public class DriveTrain extends DiffyDrive implements Subsystem {
     public static PIDCoefficients AXIAL_PID = new PIDCoefficients(4, 0, 0);
     public static PIDCoefficients CROSS_AXIAL_PID = new PIDCoefficients(0.001, 0, 0);
 
-    public static PIDController headingPID, distTravelledPID;
+    public static PIDController headingPID_pwr, headingPID_vel, distTravelledPID;
     public static PIDController velocityPID, chassisLengthPID;
 
     public static double DRIVE_SPEED = 2;
@@ -143,10 +144,9 @@ public class DriveTrain extends DiffyDrive implements Subsystem {
         this.simulated = simulated;
         TrajectoryFollower follower = new CloneFollower(AXIAL_PID, CROSS_AXIAL_PID,
                 new Pose2d(0.5, 0.5, Math.toRadians(5)), 1.5);
-        trajectorySequenceRunner = new TrajectorySequenceRunner(follower, HEADING_PID);
+        trajectorySequenceRunner = new TrajectorySequenceRunner(follower, HEADING_PID_PWR);
             batteryVoltageSensor = hardwareMap.voltageSensor.iterator().next();
         if (simulated) {
-            //todo uncomment distance sensor lines when it's added
             chassisLengthDistanceSensor = new DistanceSensorSim(
                             MIN_CHASSIS_LENGTH - (DISTANCE_SENSOR_TO_FRONT_AXLE + Distance_HUB_TO_UNDERARM_MIN));
             leftMotor = new DcMotorExSim(USE_MOTOR_SMOOTHING);
@@ -154,7 +154,6 @@ public class DriveTrain extends DiffyDrive implements Subsystem {
             chariotMotor = new DcMotorExSim(USE_MOTOR_SMOOTHING);
             motors = Arrays.asList(leftMotor, rightMotor, chariotMotor);
         } else {
-            //todo uncomment next line when the sensor is added
             chassisLengthDistanceSensor = hardwareMap.get(DistanceSensor.class, "distChariot");
             batteryVoltageSensor = hardwareMap.voltageSensor.iterator().next();
             leftMotor = hardwareMap.get(DcMotorEx.class, "motorLeft");
@@ -187,12 +186,21 @@ public class DriveTrain extends DiffyDrive implements Subsystem {
             chariotMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
             chariotMotor.setDirection(DcMotor.Direction.REVERSE);
 
-        headingPID = new PIDController(HEADING_PID);
-        headingPID.setInputRange(0, Math.toRadians(360));
-        headingPID.setOutputRange(-100, 100);
-        headingPID.setContinuous(true);
-        headingPID.setTolerance(HEADING_PID_TOLERANCE);
-        headingPID.enable();
+        headingPID_pwr = new PIDController(HEADING_PID_PWR);
+        headingPID_pwr.setInputRange(0, Math.toRadians(360));
+        headingPID_pwr.setOutputRange(-100, 100);
+        headingPID_pwr.setIntegralCutIn(Math.toRadians(4));
+        headingPID_pwr.setContinuous(true);
+        headingPID_pwr.setTolerance(HEADING_PID_TOLERANCE);
+        headingPID_pwr.enable();
+
+        headingPID_vel = new PIDController(HEADING_PID_VEL);
+        headingPID_vel.setInputRange(0, Math.toRadians(360));
+        headingPID_vel.setOutputRange(-30, 30);
+        headingPID_vel.setIntegralCutIn(Math.toRadians(4));
+        headingPID_vel.setContinuous(true);
+        headingPID_vel.setTolerance(1);
+        headingPID_vel.enable();
 
         //oof currently this will be in inches units
         //input is in inches, output is drive speed
@@ -259,7 +267,7 @@ public class DriveTrain extends DiffyDrive implements Subsystem {
     }
 
     public void setTargetHeading(double vel){
-        headingPID.setSetpoint(vel);
+        headingPID_pwr.setSetpoint(vel);
         targetHeading = vel;
     }
 
@@ -279,15 +287,15 @@ public class DriveTrain extends DiffyDrive implements Subsystem {
 
         setTargetHeading(gridHeading);
 
-        headingPID.enable();
-        headingPID.setInput(heading);
-        headingPID.setPID(HEADING_PID);
-        double correctionHeading = headingPID.performPID();
+        headingPID_pwr.enable();
+        headingPID_pwr.setInput(heading);
+        headingPID_pwr.setPID(HEADING_PID_PWR);
+        double correctionHeading = headingPID_pwr.performPID();
 
         double left = -correctionHeading;
         double right = correctionHeading;
 
-        if(Math.abs(headingPID.getError()) < 0.05) {
+        if(Math.abs(headingPID_pwr.getError()) < 0.05) {
             left += gridMagnitude;
             right += gridMagnitude;
         }
@@ -407,8 +415,8 @@ public class DriveTrain extends DiffyDrive implements Subsystem {
             telemetryMap.put("Grid Drive Index", gridDriveIndex);
             telemetryMap.put("Target Heading", targetHeading);
             telemetryMap.put("Heading", heading);
-            telemetryMap.put("Heading PID Enabled", headingPID.isEnabled());
-            telemetryMap.put("Heading Error", headingPID.getError());
+            telemetryMap.put("Heading PID Enabled", headingPID_pwr.isEnabled());
+            telemetryMap.put("Heading Error", headingPID_pwr.getError());
             telemetryMap.put("Heading Error Magnitude", headingErrorMagnitude);
             telemetryMap.put("Cache Position", cachePosition);
             telemetryMap.put("x", poseEstimate.getX());
@@ -421,7 +429,7 @@ public class DriveTrain extends DiffyDrive implements Subsystem {
             telemetryMap.put("heading", Math.toDegrees(heading));
             telemetryMap.put("grid heading", gridHeading);
             telemetryMap.put("magnitude", gridMagnitude);
-            telemetryMap.put("errrorr", headingPID.getError());
+            telemetryMap.put("errrorr", headingPID_pwr.getError());
 
             telemetryMap.put("x vel", poseVelocity.getX());
             telemetryMap.put("y vel", poseVelocity.getY());
@@ -563,9 +571,9 @@ public class DriveTrain extends DiffyDrive implements Subsystem {
         double sign = Math.signum(dx * ( Math.cos(heading)) - dy * (Math.sin(heading)));
         double newHeading = wrapAngleRad(Math.atan2(dy,dx) + (sign>=0 ? 0:(Math.PI)));
 
-        headingPID.setSetpoint(newHeading);
-        headingPID.setInput(heading);
-        double correction = headingPID.performPID();
+        headingPID_pwr.setSetpoint(newHeading);
+        headingPID_pwr.setInput(heading);
+        double correction = headingPID_pwr.performPID();
 
         //check if the correction is in the right direction
         //todo
@@ -646,9 +654,9 @@ public class DriveTrain extends DiffyDrive implements Subsystem {
     private Stage driveStage = new Stage();
     private StateMachine drive = Utils.getStateMachine(driveStage)
             .addState(() -> {
-                headingPID.setSetpoint(driveHeading);
-                headingPID.setInput(poseEstimate.getHeading());
-                double correction = headingPID.performPID();
+                headingPID_vel.setSetpoint(driveHeading);
+                headingPID_vel.setInput(poseEstimate.getHeading());
+                double correction = headingPID_vel.performPID();
                 //driveDistErr=Math.abs(driveTarget - getAveragePos());
                 distTravelledPID.setSetpoint(driveTarget);
                 distTravelledPID.setInput(getAveragePos());
@@ -697,11 +705,11 @@ public class DriveTrain extends DiffyDrive implements Subsystem {
     private Stage turnStage = new Stage();
     private StateMachine turn = Utils.getStateMachine(turnStage)
             .addState(() -> {
-                headingPID.setSetpoint(turnAngle);
-                headingPID.setInput(poseEstimate.getHeading());
-                double correction = headingPID.performPID();
+                headingPID_pwr.setSetpoint(turnAngle);
+                headingPID_pwr.setInput(poseEstimate.getHeading());
+                double correction = headingPID_pwr.performPID();
                 setDriveSignal(new DriveSignal(new Pose2d(0, 0, correction), new Pose2d(0, 0, 0)));
-                return headingPID.onTarget();
+                return headingPID_pwr.onTarget();
             })
             .build();
 
@@ -737,17 +745,17 @@ public class DriveTrain extends DiffyDrive implements Subsystem {
     public boolean turnUntilDegrees(double turnAngle) {
         turnAngle = (turnAngle+360)%360;
         targetHeading = Math.toRadians(turnAngle);
-        headingPID.setPID(HEADING_PID);
-        headingPID.setInput(poseEstimate.getHeading());
-        headingPID.setSetpoint(targetHeading);
+        headingPID_pwr.setPID(HEADING_PID_PWR);
+        headingPID_pwr.setInput(poseEstimate.getHeading());
+        headingPID_pwr.setSetpoint(targetHeading);
         headingErrorMagnitude = Math.abs(Utils.distanceBetweenAngles(Math.toDegrees(heading),turnAngle));
-        double correction = headingPID.performPID();
+        double correction = headingPID_pwr.performPID();
         if(headingErrorMagnitude < HEADING_PID_TOLERANCE){
-            headingPID.disable();
+            headingPID_pwr.disable();
             setMotorPowers(0,0);
             return true;
         }else{
-            headingPID.enable();
+            headingPID_pwr.enable();
             setMotorPowers(-correction,correction);
             return false;
         }
