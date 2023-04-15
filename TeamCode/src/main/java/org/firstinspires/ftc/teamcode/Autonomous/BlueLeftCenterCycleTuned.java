@@ -173,7 +173,7 @@ public class BlueLeftCenterCycleTuned extends LinearOpMode {
 //            robot.raiseLiftArmToOuttake(true);
 //            robot.delay(0.5);
 //            robot.liftToPosition(LIFT_HIGH_JUNCTION);
-//            robot.openClaw(  false);
+//            robot.openClaw(false);
 //            robot.delay(0.4);
 //            robot.cycleLiftArmToCycle(true);
 //            robot.delay(0.5);
