@@ -24,7 +24,7 @@ import java.util.Date;
 import java.util.List;
 
 @Config
-@Autonomous(name = "LEFT preload only WORLD", group="competition")
+@Autonomous(name = "LEFT preload only - world", group="competition")
 public class PowerPlayLeft extends LinearOpMode {
 
     enum State {
