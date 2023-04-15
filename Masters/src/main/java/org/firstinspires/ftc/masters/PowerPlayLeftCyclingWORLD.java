@@ -28,7 +28,7 @@ import java.util.Date;
 import java.util.List;
 
 @Config
-@Autonomous(name = "Power Play Left Cycling WORLD", group ="competition")
+@Autonomous(name = "LEFT Cycling - World", group ="competition")
 public class PowerPlayLeftCyclingWORLD extends LinearOpMode {
 
     enum State {
@@ -100,25 +100,25 @@ public class PowerPlayLeftCyclingWORLD extends LinearOpMode {
         State currentState;
 
         Trajectory firstDepositPath1 = drive.trajectoryBuilder(startPose)
-                .lineToSplineHeading(new Pose2d(new Vector2d(-34, -45), Math.toRadians(90)))
-                .splineTo(new Vector2d(-34.5, -12.5 ), Math.toRadians(135))
+                .lineToSplineHeading(new Pose2d(new Vector2d(-32.5, -38), Math.toRadians(90)))
+                .splineTo(new Vector2d(-34.5, -14.5 ), Math.toRadians(45))
 //                .lineToSplineHeading(new Pose2d(new Vector2d(-37, -30), Math.toRadians(90)))
 //                .splineToSplineHeading(new Pose2d(-36, -12 , Math.toRadians(44)), Math.toRadians(44))
                 .build();
 
         Trajectory backUpFromJunction = drive.trajectoryBuilder(firstDepositPath1.end())
-                .back(8)
+                .back(-1)
                 .build();
 
 
         Trajectory cyclePickupPath1 = drive.trajectoryBuilder(backUpFromJunction.end().plus(new Pose2d(0,0,Math.toRadians(turnJunction+90))))
-                .splineToLinearHeading(new Pose2d(new Vector2d(xStack-9, yStack),Math.toRadians(180)),Math.toRadians(180))
+                .splineToLinearHeading(new Pose2d(new Vector2d(xStack-7, yStack+2),Math.toRadians(180)),Math.toRadians(180))
                 .build();
 
 
         Trajectory cycleScorePath1 = drive.trajectoryBuilder(cyclePickupPath1.end())
                 .lineToSplineHeading(new Pose2d(new Vector2d(-45, -14), Math.toRadians(180)))
-                .splineToSplineHeading(new Pose2d(-39, -12, Math.toRadians(45+180)), Math.toRadians(45))
+                .splineToSplineHeading(new Pose2d(-39, -13, Math.toRadians(45+180)), Math.toRadians(45))
                 .build();
 
         Trajectory cycleDepositScoreCone = drive.trajectoryBuilder(cycleScorePath1.end().plus(new Pose2d(0, 0, Math.toRadians(turnJunction))))
@@ -176,7 +176,7 @@ public class PowerPlayLeftCyclingWORLD extends LinearOpMode {
                         telemetry.addData("done aligning", "score cone");
                         currentState = State.FIRST_DEPOSIT_SCORE_CONE;
                         Trajectory trajForward = drive.trajectoryBuilder(drive.getPoseEstimate())
-                                .forward(4)
+                                .forward(9)
                                 .build();
                         drive.followTrajectoryAsync(trajForward);
                     }
