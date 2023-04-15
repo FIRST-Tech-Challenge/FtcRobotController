@@ -6,7 +6,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import org.firstinspires.ftc.team6220_PowerPlay.BaseAutonomous;
 import org.firstinspires.ftc.team6220_PowerPlay.Constants;
 
-@Autonomous(name = "untested garbage ??? nice :)", group = "Worlds Auto Tests")
+@Autonomous(name = "0+5 with cone centering", group = "Worlds Auto Tests")
 public class StackGrabbingWithConeCentering extends BaseAutonomous {
     @Override
     public void runOpMode() throws InterruptedException {

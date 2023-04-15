@@ -78,6 +78,10 @@ public class Constants {
     public static final Scalar LOWER_BLACK = new Scalar(0, 0, 0);
     public static final Scalar UPPER_BLACK = new Scalar(180, 255, 42);
 
+    public static final Scalar[] BLUE_SCALAR_ARRAY = new Scalar[] {LOWER_BLUE, UPPER_BLUE};
+
+    public static final Scalar[] RED_SCALAR_ARRAY = new Scalar[] {LOWER_RED, UPPER_RED};
+
     public static final Size BLUR_SIZE = new Size(5, 5);
 
     public static final int DISTANCE_FROM_CENTER_JUNCTION_TOP = 200;

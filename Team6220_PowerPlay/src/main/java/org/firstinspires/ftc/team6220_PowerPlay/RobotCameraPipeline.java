@@ -16,6 +16,7 @@ public class RobotCameraPipeline extends OpenCvPipeline {
     public double xPosition = Constants.CAMERA_CENTER_X;
     public double width = 0.0;
     public boolean invert = false;
+    public boolean combine = false;
 
     List<MatOfPoint> contours = new ArrayList<>();
 
@@ -37,6 +38,20 @@ public class RobotCameraPipeline extends OpenCvPipeline {
         invert = b;
     }
 
+    public void changeCombine(boolean b){
+        combine = b;
+    }
+
+    public void combineRanges(Scalar[] range1, Scalar[] range2, Mat mat){
+        Mat mat1 = new Mat();
+        Mat mat2 = new Mat();
+        Core.inRange(mat, range1[0], range1[1], mat1);
+        Core.inRange(mat, range1[0], range1[1], mat2);
+        Core.bitwise_and(mat1, mat2, mat);
+        mat1.release();
+        mat2.release();
+    }
+
     @Override
     public Mat processFrame(Mat input) {
         // transform the RGB frame into a HSV frame
@@ -45,9 +60,12 @@ public class RobotCameraPipeline extends OpenCvPipeline {
         // blur the HSV frame
         Imgproc.GaussianBlur(mat, mat, Constants.BLUR_SIZE, 0);
 
-        // mask the blurred frame
-        Core.inRange(mat, lowerRange, upperRange, mat);
-
+        // mask the blurred frame for either ranges or a red + blue mask
+        if(!combine) {
+            Core.inRange(mat, lowerRange, upperRange, mat);
+        }else{
+            combineRanges(Constants.BLUE_SCALAR_ARRAY, Constants.RED_SCALAR_ARRAY, mat);
+        }
         // invert ranges if looking for red
         // this is because red is detected on both ends of the hue spectrum(0-20 & 160-180)
         // so we are looking for 20-160 and changing it so that it detects anything but that.

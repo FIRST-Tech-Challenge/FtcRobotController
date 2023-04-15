@@ -6,7 +6,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import org.firstinspires.ftc.team6220_PowerPlay.BaseAutonomous;
 import org.firstinspires.ftc.team6220_PowerPlay.Constants;
 
-@Autonomous(name = "more untested garbage ??? very nice :)", group = "Worlds Auto Tests")
+@Autonomous(name = "0+5 with simul slides", group = "Worlds Auto Tests")
 public class StackGrabbingWithSimulSlidesAndDrive extends BaseAutonomous {
     @Override
     public void runOpMode() throws InterruptedException {
