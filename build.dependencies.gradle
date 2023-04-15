@@ -4,6 +4,9 @@ repositories {
     flatDir {
         dirs rootProject.file('libs')
     }
+
+    maven { url = 'https://jitpack.io' }
+    maven { url = 'https://maven.brott.dev/' }
 }
 
 dependencies {
@@ -18,5 +21,9 @@ dependencies {
     implementation 'org.tensorflow:tensorflow-lite-task-vision:0.2.0'
     implementation 'androidx.appcompat:appcompat:1.2.0'
     implementation 'org.firstinspires.ftc:gameAssets-PowerPlay:1.0.0'
+    implementation 'com.github.RR-9527:robot-code-v2:1.0.0'
+    implementation 'org.ftclib.ftclib:vision:2.0.1' // vision
+    implementation 'org.ftclib.ftclib:core:2.0.1' // core
+    implementation 'com.acmerobotics.dashboard:dashboard:0.4.9'
+    implementation 'com.github.Thermal-Equilibrium:homeostasis-FTC:1.0.8'
 }
-
