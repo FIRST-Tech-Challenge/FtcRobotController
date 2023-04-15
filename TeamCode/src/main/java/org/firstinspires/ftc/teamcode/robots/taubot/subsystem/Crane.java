@@ -119,10 +119,13 @@ public class Crane implements Subsystem {
     public static double SAFE_SHOULDER_ANGLE = 30;
     public static double SAFE_ARM_LENGTH = 0.05;
 
-    public static double NUDGE_CENTER_LEFT = 1400; //1200
-    public static double NUDGE_CENTER_RIGHT = 2020; //2020
-    public static double NUDGE_LEFT_POS = 1200;  //home position - stowed up
-    public static double NUDGE_RIGHT_POS = 2400; //2400
+    public static double nudgeStickProportion= 0;
+    public static double nudgeStickModifierOffset = 1500;
+
+    public static double nudgeTuckValue = 850; //maximum tuckage
+    public static double nudgeMaxValue = 1400; //maximum extension
+    public double nudgeRange = nudgeMaxValue - nudgeTuckValue;
+    public double nudgeCenter = nudgeRange + nudgeTuckValue;
 
     public static int FLIPPER_HOME = 900;
     public static int FLIPPER_FLIP = 1716;
@@ -391,53 +394,21 @@ public class Crane implements Subsystem {
     double shoulderTargetAngle = 0;
 
     //keeps track of current nudge position
-    public static int nudgeIndex = 1;
 
-    public void nudgeCenter(boolean approachingClockwise){
-        if (approachingClockwise) {
-            nudgeIndex = 1;
-        }else {
-            nudgeIndex = 2;
-        }
-    }
-    public void nudgeLeft(){
-        nudgeIndex = 0;
-    }
-    public void nudgeRight(){
-        nudgeIndex = 3;
-    }
-
-    public void incNudgeIndex(){
-        if(nudgeIndex < 3){
-            nudgeIndex++;
-        }
-        updateNudgeStick();
-    }
-    public void decNudgeIndex(){
-        if(nudgeIndex > 0){
-            nudgeIndex--;
-        }
-        updateNudgeStick();
-    }
-
+    boolean nudgeTuck = true;
     public void updateNudgeStick(){
-        switch (nudgeIndex){
-            case 0:
-                nudgeStickServo.setPosition(servoNormalize(NUDGE_LEFT_POS));
-                break;
-            case 1:
-                nudgeStickServo.setPosition(servoNormalize(NUDGE_CENTER_LEFT));
-                break;
-            case 2:
-                nudgeStickServo.setPosition(servoNormalize(NUDGE_CENTER_RIGHT));
-                break;
-            case 3:
-                nudgeStickServo.setPosition(servoNormalize(NUDGE_RIGHT_POS));
-                break;
-            default:
-                nudgeCenter(true);
-                break;
-        }
+        if(!nudgeTuck)
+            nudgeStickServo.setPosition(servoNormalize(nudgeStickProportion*getShoulderAngle()+nudgeStickModifierOffset));
+        else
+            nudgeStickServo.setPosition(servoNormalize(nudgeTuckValue));
+    }
+
+    public void tuckNudgeStick(){
+        nudgeTuck = true;
+    }
+
+    public void extendNudgeStick(){
+        nudgeTuck = false;
     }
 
     public boolean isBulbGripped(){
@@ -684,7 +655,6 @@ public class Crane implements Subsystem {
         switch (transferStage) {
             case 0: //conditions for gripper flipper to flip out
                 craneTransferReady = false;
-                nudgeCenter(true);
                 robot.turret.articulate(Turret.Articulation.transfer);
                 setShoulderTargetAngle(OLD_TRANSFER_SHOULDER_ANGLE);
                 setExtendTargetPos(OLD_TRANSFER_ARM_LENGTH);
@@ -700,7 +670,6 @@ public class Crane implements Subsystem {
                 break;
             case 2: //nudge flipper
                 if(System.nanoTime() >= transferTimer) {
-                    nudgeLeft();
                     transferTimer = futureTime(1.5);
                     transferStage++;
                 }
@@ -708,7 +677,6 @@ public class Crane implements Subsystem {
 
             case 3: //lower shoulder to transfer height
                 if(System.nanoTime() >= transferTimer){
-                    nudgeCenter(true);
                     setShoulderTargetAngle(OLD_TRANSFER_SHOULDER_ANGLE);
                     transferStage = 0;
                     craneTransferReady = true;
@@ -1045,7 +1013,6 @@ public class Crane implements Subsystem {
                 //}
                 break;
             case 6:
-                nudgeCenter(true);
                 pickupConeStage = 0;
                 return true;
         }
@@ -1100,7 +1067,6 @@ public class Crane implements Subsystem {
                 }
                 break;
             case 4:
-                nudgeCenter(true);
                 dropConeStage = 0;
                 return true;
         }
@@ -1554,8 +1520,8 @@ public class Crane implements Subsystem {
             telemetryMap.put("Running Amp", runShoulderAmp);
             telemetryMap.put("Nudge Distance Sensor", nudgeDistance);
             telemetryMap.put("Nudge Target", nudgeStickServo.getPosition());
-            telemetryMap.put("Nudge Target", nudgeIndex);
             telemetryMap.put("Nudge Target Ticks?", servoDenormalize(nudgeStickServo.getPosition()));
+            telemetryMap.put("Nudge Tucked?", nudgeTuck);
             telemetryMap.put("Flipper Target", flipperPos);
             telemetryMap.put("Flipper Target Ticks", servoDenormalize(flipperServo.getPosition()));
 

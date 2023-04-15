@@ -8,11 +8,11 @@ import static org.firstinspires.ftc.teamcode.robots.taubot.PowerPlay_6832.allian
 import static org.firstinspires.ftc.teamcode.robots.taubot.PowerPlay_6832.active;
 import static org.firstinspires.ftc.teamcode.robots.taubot.PowerPlay_6832.debugTelemetryEnabled;
 import static org.firstinspires.ftc.teamcode.robots.taubot.PowerPlay_6832.ignoreCachePosition;
+import static org.firstinspires.ftc.teamcode.robots.taubot.PowerPlay_6832.targetAltPole;
 import static org.firstinspires.ftc.teamcode.robots.taubot.PowerPlay_6832.visionProviderFinalized;
 import static org.firstinspires.ftc.teamcode.robots.taubot.PowerPlay_6832.visionProviderIndex;
 import static org.firstinspires.ftc.teamcode.robots.taubot.util.Utils.notJoystickDeadZone;
 import static org.firstinspires.ftc.teamcode.robots.taubot.util.Utils.wrapAngle;
-import static org.firstinspires.ftc.teamcode.robots.taubot.util.Utils.wrapAngleRad;
 
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.qualcomm.robotcore.hardware.Gamepad;
@@ -472,6 +472,7 @@ public class DriverControls {
 
         if (stickyGamepad1.back || stickyGamepad2.back)
             active = !active;
+
     }
 
     int testindex=0;
@@ -509,6 +510,8 @@ public class DriverControls {
         if(stickyGamepad1.b || stickyGamepad2.b) {
             alliance = Constants.Alliance.RED;
         }
+        if(stickyGamepad1.a || stickyGamepad2.a)
+            targetAltPole = !targetAltPole;
         if(stickyGamepad1.guide) {
             ignoreCachePosition =!ignoreCachePosition;
         }

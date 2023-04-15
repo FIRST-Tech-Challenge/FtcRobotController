@@ -254,6 +254,10 @@ public class DriveTrain extends DiffyDrive implements Subsystem {
         setChassisLength(MIN_SAFE_CHASSIS_LENGTH);
     }
 
+    public void hardTuck() {
+        setChassisLength(MIN_CHASSIS_LENGTH);
+    }
+
     public void maxTuck(){
         setChassisLength(MIN_CHASSIS_LENGTH);
     }
@@ -670,14 +674,14 @@ public class DriveTrain extends DiffyDrive implements Subsystem {
 
     //call this version if we just want to continue in the direction the robot is currently pointing
     public boolean driveUntil(double driveDistance, double driveSpeed) {
-        return(driveUntil(driveDistance, poseEstimate.getHeading(), driveSpeed));
+        return(driveUntilRads(driveDistance, poseEstimate.getHeading(), driveSpeed));
     }
 
-    public boolean driveUntil(double driveDistance, double driveHeading, double driveSpeed) {
+    public boolean driveUntilRads(double driveDistance, double driveHeading, double driveSpeed) {
         if(!driveUntilInitialized) {
             //resetRelPos();
             this.driveTarget = driveDistance + getAveragePos();
-            this.driveHeading = driveHeading;
+            this.driveHeading = wrapAngleRad(driveHeading);
             this.driveSpeed = driveSpeed;
             distTravelledPID.setOutputRange(-driveSpeed,driveSpeed); //max speed
             distTravelledPID.setSetpoint(driveTarget);
@@ -694,7 +698,7 @@ public class DriveTrain extends DiffyDrive implements Subsystem {
     }
     //version using a heading requested in degrees
     public boolean driveUntilDegrees(double driveDistance, double driveHeading, double driveSpeed) {
-        return driveUntil(driveDistance, Math.toRadians(wrapAngle(driveHeading)), driveSpeed);
+        return driveUntilRads(driveDistance, Math.toRadians(wrapAngle(driveHeading)), driveSpeed);
     }
 
     //driveAsyncInitialized is only true when its currently driving
@@ -724,7 +728,7 @@ public class DriveTrain extends DiffyDrive implements Subsystem {
         }
     }
 
-    public boolean turnUntil(double turnAngle) {
+    public boolean turnUntilRads(double turnAngle) {
         if(!turnInit){
             this.turnAngle = turnAngle; // this is in Radians relative to the starting angle as set by auton alliance
             turnInit = true;

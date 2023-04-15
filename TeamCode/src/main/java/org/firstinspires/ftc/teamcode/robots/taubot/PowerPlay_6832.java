@@ -92,6 +92,7 @@ public class PowerPlay_6832 extends OpMode {
     public static boolean numericalDashboardEnabled = false;
     static Constants.Alliance alliance;
     static Constants.Position startingPosition;
+    static boolean targetAltPole = false;
     public static GameState gameState = GameState.AUTONOMOUS;
     static int gameStateIndex;
 
@@ -238,8 +239,6 @@ public class PowerPlay_6832 extends OpMode {
         forwardSmoother = new ExponentialSmoother(FORWARD_SMOOTHING_FACTOR);
         rotateSmoother = new ExponentialSmoother(ROTATE_SMOOTHING_FACTOR);
 
-        robot.crane.nudgeLeft();
-
         debugTelemetry = true;
         if (debugTelemetry)
             configureDashboardDebug();
@@ -336,7 +335,7 @@ public class PowerPlay_6832 extends OpMode {
                 }
                 switch(gameState) {
                     case AUTONOMOUS:
-                        if(robot.AutonRun(auto.visionProvider.getMostFrequentPosition().getIndex(),startingPosition)) {
+                        if(robot.AutonRun(auto.visionProvider.getMostFrequentPosition().getIndex(),startingPosition, targetAltPole)) {
                             gameState = GameState.TELE_OP;
                             gameStateIndex = 1;
                             robot.underarm.resetArticulations();
@@ -436,6 +435,7 @@ public class PowerPlay_6832 extends OpMode {
 
         telemetry.addLine().addData("active", () -> active);
         telemetry.addLine().addData("state", () -> state);
+        telemetry.addLine().addData("alt auton target?", targetAltPole);
     }
 
     private void configureDashboardMatch() {

@@ -541,7 +541,7 @@ public class Field {
                     .addState(() ->
                             driveTrain.followPath()
                     )
-                    .addState(()-> driveTrain.turnUntil(newHeading))
+                    .addState(()-> driveTrain.turnUntilRads(newHeading))
                     .addState(() ->
                             driveTrain.setPath(new PathLine(
                                     intermediatePose,
