@@ -1,11 +1,15 @@
 package org.firstinspires.ftc.team6220_PowerPlay;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.hardware.rev.RevBlinkinLedDriver;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.DigitalChannel;
 import com.qualcomm.robotcore.hardware.PwmControl;
 import com.qualcomm.robotcore.hardware.ServoImplEx;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -17,7 +21,12 @@ import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Iterator;
 import java.util.List;
+import java.util.ListIterator;
+import java.util.Timer;
 
 public abstract class BaseOpMode extends LinearOpMode {
     // motors
@@ -45,11 +54,18 @@ public abstract class BaseOpMode extends LinearOpMode {
     public double originalAngle;
     public double startAngle;
 
+    // Limit switch
+    public DigitalChannel limitSwitch;
+
     // flag to say whether we should disable the correction system
     private boolean turnFlag = false;
 
     // bulk reading
     private List<LynxModule> hubs;
+
+    // stored telemetry
+    protected List<Object> telemetrySave;
+
 
     // initializes the motors, servos, and IMUs
     public void initialize() {
@@ -103,6 +119,12 @@ public abstract class BaseOpMode extends LinearOpMode {
         PwmControl.PwmRange maxRange = new PwmControl.PwmRange(505, 2495, 20000);
         servoGrabber = (ServoImplEx) hardwareMap.servo.get("servoGrabber");
         servoGrabber.setPwmRange(maxRange);
+
+        // limit switch
+        limitSwitch = hardwareMap.get(DigitalChannel.class, "limitSwitch");
+        limitSwitch.setMode(DigitalChannel.Mode.INPUT);
+
+        telemetrySave = new ArrayList<Object>();
 
         blinkinChassis = (RevBlinkinLedDriver) hardwareMap.get(RevBlinkinLedDriver.class, "blinkinChassis");
 
@@ -195,30 +217,57 @@ public abstract class BaseOpMode extends LinearOpMode {
      * this method will allow the slides to move to a specified target position
      * @param targetPosition target position for slides motors in ticks
      */
-    public void driveSlides(int targetPosition) {
-        int error = targetPosition - motorLeftSlides.getCurrentPosition();
-        double motorPower = error * Constants.SLIDE_MOTOR_KP;
-
-        // slides not yet at target position
-        if (Math.abs(error) > Constants.ROBOT_SLIDE_TOLERANCE_TICKS) {
-            // slides going down - joystick
-            if (error < 0 && error > Constants.MIN_SLIDE_ERROR_FULL_POWER) {
-                motorLeftSlides.setPower(-0.3);
-                motorRightSlides.setPower(-0.3);
-            // slides going down - bumpers
-            } else if (error < Constants.MIN_SLIDE_ERROR_FULL_POWER) {
-                motorLeftSlides.setPower(-1.0);
-                motorRightSlides.setPower(-1.0);
-            // slides going up - proportional control
+    public boolean driveSlides(int targetPosition) {
+        boolean canExit = false;
+        // 0 is home position, so instead of going off of encoder counts go until the limit switch is pressed
+        if (targetPosition == 0) {
+            // DigitalChannel.getState() returns whether the input is high or low, in this case, whether the switch is pressed. True when switch is pressed
+            if (limitSwitch.getState()) {
+                // Add what the encoders report before resetting them so we know how much they drift by
+                telemetrySave.add(motorLeftSlides.getCurrentPosition());
+                // Stop and reset both slide motors
+                motorLeftSlides.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+                motorRightSlides.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+                motorLeftSlides.setPower(0);
+                motorRightSlides.setPower(0);
+                canExit = true;
             } else {
-                motorLeftSlides.setPower(motorPower);
-                motorRightSlides.setPower(motorPower);
+                // Drive slides down
+                motorLeftSlides.setPower(-0.5);
+                motorRightSlides.setPower(-0.5);
             }
-        // slides at target position
         } else {
-            motorLeftSlides.setPower(Constants.SLIDE_FEEDFORWARD);
-            motorRightSlides.setPower(Constants.SLIDE_FEEDFORWARD);
+            int error = targetPosition - motorLeftSlides.getCurrentPosition();
+            double motorPower = error * Constants.SLIDE_MOTOR_KP;
+
+            // slides not yet at target position
+            if (Math.abs(error) > Constants.ROBOT_SLIDE_TOLERANCE_TICKS) {
+                // slides going down - joystick
+                if (error < 0 && error > Constants.MIN_SLIDE_ERROR_FULL_POWER) {
+                    motorLeftSlides.setPower(-0.3);
+                    motorRightSlides.setPower(-0.3);
+                    // slides going down - bumpers
+                } else if (error < Constants.MIN_SLIDE_ERROR_FULL_POWER) {
+                    motorLeftSlides.setPower(-1.0);
+                    motorRightSlides.setPower(-1.0);
+                    // slides going up - proportional control
+                } else {
+                    motorLeftSlides.setPower(motorPower);
+                    motorRightSlides.setPower(motorPower);
+                }
+                // slides at target position
+            } else {
+                motorLeftSlides.setPower(Constants.SLIDE_FEEDFORWARD);
+                motorRightSlides.setPower(Constants.SLIDE_FEEDFORWARD);
+                canExit = true;
+            }
         }
+        return canExit;
+    }
+
+    public void driveSlidesLoop(int targetPosition) {
+        ElapsedTime elapsedTime = new ElapsedTime(System.nanoTime());
+        while(!driveSlides(targetPosition) && elapsedTime.seconds() < 5);
     }
 
     /**
@@ -366,20 +415,15 @@ public abstract class BaseOpMode extends LinearOpMode {
     }
 
     /**
-     * turns the LEDs green if it detects the top of a junction, otherwise, turn the lights pink
-     *
+     * turns the LEDs green if the grabber camera detects the top of a junction
+     * otherwise the LEDs stay pink
+     * with both colors, the LEDs are in the "shot" pattern
      */
     public void driveLEDs() {
-        if (blinkinChassis != null) {
-            if (grabberCameraPipeline.detected) {
-                blinkinChassis.setPattern(RevBlinkinLedDriver.BlinkinPattern.GREEN);
-                telemetry.addLine("Detected");
-            } else {
-                blinkinChassis.setPattern(RevBlinkinLedDriver.BlinkinPattern.HOT_PINK);
-                telemetry.addLine("Not Detected");
-            }
+        if (grabberCameraPipeline.detected) {
+            blinkinChassis.setPattern(RevBlinkinLedDriver.BlinkinPattern.CP2_SHOT);
         } else {
-            telemetry.addLine("blinkin chassis null smh");
+            blinkinChassis.setPattern(RevBlinkinLedDriver.BlinkinPattern.CP1_SHOT);
         }
     }
 }

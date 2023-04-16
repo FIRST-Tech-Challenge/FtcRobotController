@@ -8,7 +8,7 @@ import org.firstinspires.ftc.team6220_PowerPlay.Constants;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraRotation;
 
-
+@Disabled
 @TeleOp(name = "LightTest")
 public class LightTest extends BaseTeleOp {
 

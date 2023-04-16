@@ -2,10 +2,12 @@
 
 import com.qualcomm.hardware.rev.RevBlinkinLedDriver;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 
 import org.firstinspires.ftc.team6220_PowerPlay.BaseAutonomous;
 import org.firstinspires.ftc.team6220_PowerPlay.Constants;
 
+@Disabled
 @Autonomous(name = "StackGrabbingTest")
 public class StackGrabbingTest extends BaseAutonomous {
     @Override

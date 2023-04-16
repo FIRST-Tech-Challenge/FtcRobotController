@@ -17,6 +17,9 @@ public class TeleOpCompetition extends BaseTeleOp {
             driveGrabberWithController();
             driveSlidesWithController();
             resetIMU();
+            slideOverride();
+            telemetry.addData("isLimitSwitchPressed", limitSwitch.getState());
+            telemetry.update();
         }
     }
 }

@@ -13,7 +13,7 @@ public class Constants {
 
     public static final int UNIT_CIRCLE_OFFSET_DEGREES = 90;
 
-    public static final double DRIVE_CURVE_FACTOR = 0.7;
+    public static final double DRIVE_CURVE_FACTOR = 0.5;
 
     public static final double MINIMUM_TURN_POWER = 0.05;
     public static final double MINIMUM_DRIVE_POWER = 0.05;
@@ -33,14 +33,14 @@ public class Constants {
     public static final int ROBOT_SLIDE_TOLERANCE_TICKS = 20;
 
     public static final int SLIDE_TOP = 3900;
-    public static final int SLIDE_HIGH = 3800;
-    public static final int SLIDE_MEDIUM = 2750;
-    public static final int SLIDE_LOW = 1650;
+    public static final int SLIDE_HIGH = 3700;
+    public static final int SLIDE_MEDIUM = 2650;
+    public static final int SLIDE_LOW = 1600;
     public static final int SLIDE_STOW = 500;
-    public static final int SLIDE_STACK_FOUR = 650;
-    public static final int SLIDE_STACK_THREE = 490;
-    public static final int SLIDE_STACK_TWO = 330;
-    public static final int SLIDE_STACK_ONE = 170;
+    public static final int SLIDE_STACK_FOUR = 600;
+    public static final int SLIDE_STACK_THREE = 450;
+    public static final int SLIDE_STACK_TWO = 300;
+    public static final int SLIDE_STACK_ONE = 150;
     public static final int SLIDE_BOTTOM = 0;
 
     public static final double GRABBER_INITIALIZE_POSITION = 0.17;
@@ -78,9 +78,9 @@ public class Constants {
     public static final Scalar LOWER_BLACK = new Scalar(0, 0, 0);
     public static final Scalar UPPER_BLACK = new Scalar(180, 255, 42);
 
-    public static final Scalar[] BLUE_SCALAR_ARRAY = new Scalar[] {LOWER_BLUE, UPPER_BLUE};
+    public static final Scalar[] BLUE_SCALAR_ARRAY = new Scalar[]{LOWER_BLUE, UPPER_BLUE};
 
-    public static final Scalar[] RED_SCALAR_ARRAY = new Scalar[] {LOWER_RED, UPPER_RED};
+    public static final Scalar[] RED_SCALAR_ARRAY = new Scalar[]{LOWER_RED, UPPER_RED};
 
     public static final Size BLUR_SIZE = new Size(5, 5);
 
@@ -97,11 +97,11 @@ public class Constants {
 
     public static final int JUNCTION_TOP_MAX_SIZE = 100000;
 
-    public static final int[] STACK_HEIGHTS = new int[] {0, 170, 330, 490, 650};
+    public static final int[] STACK_HEIGHTS = new int[]{0, 170, 330, 490, 650};
 
-    public static final int[] BREAK_HEIGHTS = new int[] {500, 450, 430, 350, 350};
+    public static final int[] BREAK_HEIGHTS = new int[]{500, 450, 430, 350, 350};
 
-    public static final int[] GRAB_HEIGHTS = new int[] {350, 350, 380, 380, 380};
+    public static final int[] GRAB_HEIGHTS = new int[]{350, 350, 380, 380, 380};
 
     public static final int SLIDE_TUNING_MODIFIER = 10;
 }
