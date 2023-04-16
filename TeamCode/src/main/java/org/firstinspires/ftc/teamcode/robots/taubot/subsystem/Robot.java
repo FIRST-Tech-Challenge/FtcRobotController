@@ -427,7 +427,7 @@ public class Robot implements Subsystem {
                         }
                         autonTime = futureTime(.3);
                         break;
-                    cabe 4:
+                    case 4:
                         driveTrain.setChassisLength(Constants.CONESTACK_CHASSIS_LENGTH);
                         if(System.nanoTime() > autonTime)
                             autonIndex ++;
@@ -539,13 +539,12 @@ public class Robot implements Subsystem {
                 }
                 break;
             case 4:
-                if(driveTrain.driveUntilDegrees(0.5*Field.INCHES_PER_GRID,180,20)){
+                if(driveTrain.driveUntilDegrees(0.4*Field.INCHES_PER_GRID,180,20)){
                     timeSupervisor++;
                 }
                 break;
             case 5:
-                crane.setCraneTarget(turret.getTurretPosition().getX() - 2, turret.getTurretPosition().getY()-2, 26);
-                crane.articulate(Crane.Articulation.manual);
+                crane.articulate(Crane.Articulation.lock);
                 driveTrain.maxTuck();
                 autonNotDriving();
                 timeSupervisor = 0;

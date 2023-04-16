@@ -538,6 +538,7 @@ public class Crane implements Subsystem {
                 if(deltaGripperPosition != null && robotPosition != null) {
                     fieldPositionTarget = deltaGripperPosition.add(robotPosition);
                 }
+                robot.turret.articulate(Turret.Articulation.transfer);
                 setShoulderTargetAngle(SAFE_SHOULDER_ANGLE);
                 setExtendTargetPos(SAFE_ARM_LENGTH);
                 break;
