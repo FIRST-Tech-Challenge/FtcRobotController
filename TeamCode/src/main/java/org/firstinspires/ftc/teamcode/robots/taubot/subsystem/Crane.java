@@ -21,6 +21,7 @@ import com.qualcomm.robotcore.hardware.DigitalChannel;
 import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.util.Range;
 
 import org.firstinspires.ftc.robotcore.external.navigation.Acceleration;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
@@ -119,7 +120,7 @@ public class Crane implements Subsystem {
     public static double SAFE_SHOULDER_ANGLE = 30;
     public static double SAFE_ARM_LENGTH = 0.05;
 
-    public static double nudgeStickProportion= 0;
+    public static double nudgeStickProportion= -11;
     public static double nudgeStickModifierOffset = 1500;
 
     public static double nudgeTuckValue = 850; //maximum tuckage
@@ -394,11 +395,13 @@ public class Crane implements Subsystem {
     double shoulderTargetAngle = 0;
 
     //keeps track of current nudge position
+    double nudgeTarget;
 
     boolean nudgeTuck = true;
     public void updateNudgeStick(){
+        nudgeTarget = servoNormalize(Range.clip(nudgeStickProportion*getShoulderAngle() + nudgeStickModifierOffset, nudgeTuckValue, nudgeMaxValue));
         if(!nudgeTuck)
-            nudgeStickServo.setPosition(servoNormalize(nudgeStickProportion*getShoulderAngle()+nudgeStickModifierOffset));
+            nudgeStickServo.setPosition(nudgeTarget);
         else
             nudgeStickServo.setPosition(servoNormalize(nudgeTuckValue));
     }
@@ -1498,6 +1501,7 @@ public class Crane implements Subsystem {
             telemetryMap.put("Height", getHeight());
             telemetryMap.put("Calibrate Stage", calibrateStage);
             telemetryMap.put("Bulb Pos", bulbGripped);
+            telemetryMap.put("Bulb Pos Ticks", servoDenormalize(bulbServo.getPosition()));
             telemetryMap.put("Extend Meters", extendMeters);
             telemetryMap.put("Extend Tics", extendPosition);
             telemetryMap.put("Extend Amps", extenderAmps);
@@ -1520,6 +1524,7 @@ public class Crane implements Subsystem {
             telemetryMap.put("Running Amp", runShoulderAmp);
             telemetryMap.put("Nudge Distance Sensor", nudgeDistance);
             telemetryMap.put("Nudge Target", nudgeStickServo.getPosition());
+            telemetryMap.put("Nudge Target Calc", nudgeTarget);
             telemetryMap.put("Nudge Target Ticks?", servoDenormalize(nudgeStickServo.getPosition()));
             telemetryMap.put("Nudge Tucked?", nudgeTuck);
             telemetryMap.put("Flipper Target", flipperPos);

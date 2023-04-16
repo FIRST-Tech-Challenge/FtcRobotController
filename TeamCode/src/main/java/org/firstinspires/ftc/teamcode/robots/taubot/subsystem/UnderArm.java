@@ -71,10 +71,10 @@ public class UnderArm implements Subsystem {
     public static double WRIST_DEG_MAX = 180;
     public static double TURRET_DEG_MAX = 360;
 
-    public static double LASSO_CLOSED = 1700; //1750 for Leo's gripper
+    public static double GRIPPER_CLOSED = 1700; //1750 for Leo's gripper
 
-    public static double LASSO_RELEASE = 1000;
-    public static double LASSO_OPEN = 1000; //1100 for Leo's gripper
+    public static double GRIPPER_RELEASE = 1000;
+    public static double GRIPPER_OPEN = 1000; //1100 for Leo's gripper
     public static double TRANSFER_CHASSIS_SHORTEN_BY = 4.5;
     public static double TRANSFER_SHOULDER_ANGLE = -15;
     public static double TRANSFER_SHOULDER_APPROACH_ANGLE = 10;
@@ -248,7 +248,7 @@ public class UnderArm implements Subsystem {
                 break;
             case transfer: //transfer position
                 if(goToTransfer()){
-                    articulation = Articulation.manual;
+                    articulation = Articulation.transferRecover;
                 }
                 break;
             case transferRecover: //after transfer, go back through to clear the camera
@@ -571,12 +571,12 @@ public class UnderArm implements Subsystem {
                 WRIST_SPEED = 270;
                 setElbowTargetAngle(POSTTRANSFER_ELBOW);
                 setShoulderTargetAngle(POSTTRANSFER_SHOULDER);
-                transferRecoverTimer = futureTime(0.7);
+                transferRecoverTimer = futureTime(0.5);
                 transferRecoverStage++;
                 break;
             case 1:
                 if(System.nanoTime() > transferRecoverTimer) {
-                    transferRecoverTimer = futureTime(0.3);
+                    transferRecoverTimer = futureTime(0.2);
                     setWristTargetAngle(40); //take wrist homeish
                     transferRecoverStage++;
                 }
@@ -929,16 +929,16 @@ public boolean goSubstationRecover() {
     }
     public void grip(){
         lassoGripped = true;
-        lassoServo.setPosition(servoNormalize(LASSO_CLOSED));
+        lassoServo.setPosition(servoNormalize(GRIPPER_CLOSED));
     }
 
     public void open(){
         lassoGripped = false;
-        lassoServo.setPosition(servoNormalize(LASSO_OPEN));
+        lassoServo.setPosition(servoNormalize(GRIPPER_OPEN));
     }
     public void release(){ //open wide enough to release the cone but not stress the underarm
         lassoGripped = false;
-        lassoServo.setPosition(servoNormalize(LASSO_RELEASE));
+        lassoServo.setPosition(servoNormalize(GRIPPER_RELEASE));
     }
 
     public void toggleLasso(){

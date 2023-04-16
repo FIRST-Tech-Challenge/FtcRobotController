@@ -209,6 +209,7 @@ public class PowerPlay_6832 extends OpMode {
         active = true;
         initializing = true;
         debugTelemetryEnabled = DEFAULT_DEBUG_TELEMETRY_ENABLED;
+        targetAltPole = false;
         //gameState = PowerPlay_6832.GameState.TELE_OP;
 
         // timing
@@ -339,7 +340,6 @@ public class PowerPlay_6832 extends OpMode {
                             gameState = GameState.TELE_OP;
                             gameStateIndex = 1;
                             robot.underarm.resetArticulations();
-                            robot.underarm.articulate(UnderArm.Articulation.substationHover);
                             robot.driveTrain.tuck();
                             active = false;
                             //super.stop();
@@ -386,7 +386,8 @@ public class PowerPlay_6832 extends OpMode {
                         break;
 
                     case CRANE_DEBUG:
-                        //handleCraneDebug();
+                        robot.crane.updateNudgeStick();
+                        robot.crane.extendNudgeStick();
                         break;
                     case BACK_AND_FORTH:
                         auto.backAndForth.execute();
@@ -435,7 +436,7 @@ public class PowerPlay_6832 extends OpMode {
 
         telemetry.addLine().addData("active", () -> active);
         telemetry.addLine().addData("state", () -> state);
-        telemetry.addLine().addData("alt auton target?", targetAltPole);
+        telemetry.addLine().addData("alt auton target?", () -> targetAltPole);
     }
 
     private void configureDashboardMatch() {

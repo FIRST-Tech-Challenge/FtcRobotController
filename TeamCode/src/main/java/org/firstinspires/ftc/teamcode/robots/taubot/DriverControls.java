@@ -8,11 +8,11 @@ import static org.firstinspires.ftc.teamcode.robots.taubot.PowerPlay_6832.allian
 import static org.firstinspires.ftc.teamcode.robots.taubot.PowerPlay_6832.active;
 import static org.firstinspires.ftc.teamcode.robots.taubot.PowerPlay_6832.debugTelemetryEnabled;
 import static org.firstinspires.ftc.teamcode.robots.taubot.PowerPlay_6832.ignoreCachePosition;
-import static org.firstinspires.ftc.teamcode.robots.taubot.PowerPlay_6832.targetAltPole;
 import static org.firstinspires.ftc.teamcode.robots.taubot.PowerPlay_6832.visionProviderFinalized;
 import static org.firstinspires.ftc.teamcode.robots.taubot.PowerPlay_6832.visionProviderIndex;
 import static org.firstinspires.ftc.teamcode.robots.taubot.util.Utils.notJoystickDeadZone;
 import static org.firstinspires.ftc.teamcode.robots.taubot.util.Utils.wrapAngle;
+import static org.firstinspires.ftc.teamcode.robots.taubot.PowerPlay_6832.targetAltPole;
 
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.qualcomm.robotcore.hardware.Gamepad;
