@@ -60,8 +60,8 @@ public class Constants {
     public static final int CONE_WIDTH = 400;
     public static final double CONE_STACK_WIDTH_KP = -0.00005;
     public static final double CONE_STACK_CENTERING_KP = -0.0005;
-    public static final double CONE_STACK_CENTERING_PROPORTIONAL_KP = -0.00043;
-    public static final double CONE_STACK_CENTERING_MAX_SPEED = 0.28;
+    public static final double CONE_STACK_CENTERING_PROPORTIONAL_KP = -0.00047;
+    public static final double CONE_STACK_CENTERING_MAX_SPEED = 0.35;
 
     public static final int JUNCTION_TOP_TOLERANCE = 100;
     public static final double JUNCTION_TOP_CENTERING_KP = 0.0004;

@@ -75,18 +75,13 @@ abstract public class OnePlusNAutonFramework extends BaseAutonomous {
             driveSlidesAutonomous(Constants.SLIDE_HIGH);
 
             driveAutonomous(driveCourse, 10.5);
-            telemetry.addData("motorFLEncoderCount", motorFL.getCurrentPosition());
-            telemetry.addData("motorFREncoderCount", motorFR.getCurrentPosition());
-            telemetry.addData("motorBREncoderCount", motorBR.getCurrentPosition());
-            telemetry.addData("motorBLEncoderCount", motorBL.getCurrentPosition());
-            telemetry.update();
-            driveLEDs();
+
             telemetry.addData("width", robotCameraPipeline.width);
 
             driveAutonomous(0, 3);
             //if grabber camera detects, then drop. If it does not detect, then center using robot camera
             if(!grabberCameraPipeline.detected){
-                centerConeStack(robotCameraPipeline, 60);
+                centerConeStack(robotCameraPipeline, 300);
             }
 
             // lower cone on to junction
