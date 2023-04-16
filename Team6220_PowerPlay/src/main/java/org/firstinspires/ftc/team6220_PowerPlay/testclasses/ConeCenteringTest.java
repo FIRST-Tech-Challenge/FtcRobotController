@@ -15,13 +15,19 @@ public class ConeCenteringTest extends BaseAutonomous {
 
         driveSlidesAutonomous(Constants.SLIDE_TOP);
 
-        robotCameraPipeline.setRanges(Constants.LOWER_BLUE, Constants.UPPER_BLUE);
+        robotCameraPipeline.setRanges(Constants.LOWER_YELLOW, Constants.UPPER_YELLOW);
 
         startCameraWithPipeline(robotCameraPipeline, robotCamera, Constants.CAMERA_X, Constants.CAMERA_Y);
 
         waitForStart();
 
-        centerConeStack(robotCameraPipeline, Constants.CONE_WIDTH);
+        centerConeStack(robotCameraPipeline, 300);
+
+        telemetry.addData("width", robotCameraPipeline.width);
+
+        telemetry.update();
+
+        sleep(3000);
 
         robotCamera.closeCameraDevice();
     }

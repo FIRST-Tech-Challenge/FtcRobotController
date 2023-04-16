@@ -7,7 +7,10 @@ import org.firstinspires.ftc.team6220_PowerPlay.BaseAutonomous;
 import org.firstinspires.ftc.team6220_PowerPlay.Constants;
 import org.firstinspires.ftc.team6220_PowerPlay.GrabberCameraPipeline;
 import org.firstinspires.ftc.team6220_PowerPlay.RobotCameraPipeline;
+import org.opencv.core.Scalar;
 import org.openftc.easyopencv.OpenCvCameraFactory;
+
+import java.util.Scanner;
 
 abstract public class OnePlusNAutonFramework extends BaseAutonomous {
     /**
@@ -16,7 +19,7 @@ abstract public class OnePlusNAutonFramework extends BaseAutonomous {
      * @param loops is how many times the robot grabs from the stack before parking.
      * @throws InterruptedException
      */
-        public void runAuto(AutoState AutoSelector, int loops) throws InterruptedException{
+        public void runAuto(AutoState AutoSelector, int loops, Scalar[] ranges) throws InterruptedException{
             int driveCourse;
             int angleOffset;
             int targetDistance = 11;
@@ -49,7 +52,7 @@ abstract public class OnePlusNAutonFramework extends BaseAutonomous {
             grabberCameraPipeline = new GrabberCameraPipeline();
             robotCameraPipeline = new RobotCameraPipeline();
             grabberCameraPipeline.setRanges(Constants.LOWER_YELLOW, Constants.UPPER_YELLOW);
-            robotCameraPipeline.setRanges(Constants.LOWER_BLUE, Constants.UPPER_BLUE);
+            robotCameraPipeline.setRanges(Constants.LOWER_YELLOW,Constants.UPPER_YELLOW);
             // starts streaming cameras
             startCameraWithPipeline(robotCameraPipeline, robotCamera, Constants.CAMERA_X, Constants.CAMERA_Y);
             startCameraWithPipeline(grabberCameraPipeline, grabberCamera, Constants.CAMERA_X, Constants.CAMERA_Y);
@@ -60,7 +63,7 @@ abstract public class OnePlusNAutonFramework extends BaseAutonomous {
             driveGrabber(Constants.GRABBER_CLOSE_POSITION);
 
             // sleep so grabber has time to grip cone
-            sleep(1000);
+            sleep(500);
 
             // raise slides so cone doesn't drag on tiles
             driveSlidesAutonomous(Constants.SLIDE_STOW);
@@ -77,26 +80,33 @@ abstract public class OnePlusNAutonFramework extends BaseAutonomous {
             telemetry.addData("motorBREncoderCount", motorBR.getCurrentPosition());
             telemetry.addData("motorBLEncoderCount", motorBL.getCurrentPosition());
             telemetry.update();
+            driveLEDs();
+            telemetry.addData("width", robotCameraPipeline.width);
 
-            sleep(100);
+            driveAutonomous(0, 3);
+            //if grabber camera detects, then drop. If it does not detect, then center using robot camera
+            if(!grabberCameraPipeline.detected){
+                centerConeStack(robotCameraPipeline, 60);
+            }
 
             // lower cone on to junction
             driveSlidesAutonomous(Constants.SLIDE_HIGH - 200);
 
             // sleep to make sure robot has stopped moving
-            sleep(500);
+            sleep(100);
 
             // drop cone on junction
             driveGrabber(Constants.GRABBER_OPEN_POSITION);
 
             // sleep to make sure cone has fallen
-            sleep(500);
+            sleep(100);
 
             // drive backward so robot is in center of junctions
             driveAutonomous(180, 3);
             //  turn to face stack
             turnToAngle(angleOffset);
             //  grab from stack
+            robotCameraPipeline.setRanges(Constants.LOWER_BLUE, Constants.UPPER_BLUE);
             grabFromStackAndDepositOnJunctionPlusConeCentering(loops, angleOffset);
             //drive slides down
             driveSlidesAutonomous(Constants.SLIDE_BOTTOM);

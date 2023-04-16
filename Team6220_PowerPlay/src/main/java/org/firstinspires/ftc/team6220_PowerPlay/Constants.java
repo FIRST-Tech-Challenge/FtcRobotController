@@ -22,7 +22,7 @@ public class Constants {
     public static final double MAXIMUM_DRIVE_POWER_AUTONOMOUS = 0.5;
 
     public static final double MAXIMUM_TURN_POWER_TELEOP = 0.5;
-    public static final double MAXIMUM_DRIVE_POWER_TELEOP = 0.5;
+    public static final double MAXIMUM_DRIVE_POWER_TELEOP = 0.7;
 
     public static final double SLIDE_FEEDFORWARD = 0.05;
     public static final double SLIDE_MOTOR_KP = 0.01;
@@ -60,8 +60,8 @@ public class Constants {
     public static final int CONE_WIDTH = 400;
     public static final double CONE_STACK_WIDTH_KP = -0.00005;
     public static final double CONE_STACK_CENTERING_KP = -0.0005;
-    public static final double CONE_STACK_CENTERING_PROPORTIONAL_KP = -0.00042;
-    public static final double CONE_STACK_CENTERING_MAX_SPEED = 0.27;
+    public static final double CONE_STACK_CENTERING_PROPORTIONAL_KP = -0.00043;
+    public static final double CONE_STACK_CENTERING_MAX_SPEED = 0.28;
 
     public static final int JUNCTION_TOP_TOLERANCE = 100;
     public static final double JUNCTION_TOP_CENTERING_KP = 0.0004;
@@ -91,15 +91,15 @@ public class Constants {
     public static final double TURNING_AUTHORITY_CONSTANT = 250.0;
     public static final double STRAFING_AUTHORITY_CONSTANT = 200.0;
 
-    public static final double AUTHORITY_SCALER = 1.09;
+    public static final double AUTHORITY_SCALER = 0.8;
 
-    public static final double DRIVE_AUTHORITY_SCALER = 1.35;
+    public static final double DRIVE_AUTHORITY_SCALER = 1.1;
 
     public static final int JUNCTION_TOP_MAX_SIZE = 100000;
 
-    public static final int[] STACK_HEIGHTS = new int[] {0, 190, 390, 490, 537};
+    public static final int[] STACK_HEIGHTS = new int[] {0, 170, 330, 490, 650};
 
-    public static final int[] BREAK_HEIGHTS = new int[] {500, 500, 450, 350, 350};
+    public static final int[] BREAK_HEIGHTS = new int[] {500, 450, 400, 350, 350};
 
     public static final int[] GRAB_HEIGHTS = new int[] {350, 350, 380, 380, 380};
 

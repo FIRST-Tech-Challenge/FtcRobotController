@@ -8,6 +8,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.PwmControl;
 import com.qualcomm.robotcore.hardware.ServoImplEx;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
@@ -263,6 +264,8 @@ public abstract class BaseOpMode extends LinearOpMode {
      */
     public void centerConeStack(RobotCameraPipeline pipeline, int stackWidth) {
         double xOffset, width, strafePower, turnPower;
+        ElapsedTime timer = new ElapsedTime();
+        timer.reset();
         do {
             xOffset = Constants.CAMERA_CENTER_X - pipeline.xPosition;
             width = pipeline.width;
@@ -282,7 +285,7 @@ public abstract class BaseOpMode extends LinearOpMode {
             }
 
             // while far enough that the cone stack doesn't fill the entire camera view
-        } while (width < stackWidth);
+        } while (width < stackWidth && timer.seconds() < 4);
 
         stopDriveMotors();
     }
@@ -311,6 +314,7 @@ public abstract class BaseOpMode extends LinearOpMode {
         } while (width < stackWidth);
         stopDriveMotors();
         motorLeftSlides.setPower(0);
+        motorRightSlides.setPower(0);
     }
 
     /**

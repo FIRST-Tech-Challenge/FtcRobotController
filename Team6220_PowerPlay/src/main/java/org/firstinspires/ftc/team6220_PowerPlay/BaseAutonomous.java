@@ -150,7 +150,9 @@ public abstract class BaseAutonomous extends BaseOpMode {
             eFR = motorFR.getCurrentPosition();
             eBL = motorBL.getCurrentPosition();
             eBR = motorBR.getCurrentPosition();
-            driveSlides(targetSlidePosition);
+            if(motorLeftSlides.getCurrentPosition() < targetSlidePosition) {
+                driveSlides(targetSlidePosition);
+            }
             // robot turns slightly to correct for small changes in heading
             currentAngle = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle;
             tPower = (currentAngle - startAngle) * Constants.HEADING_CORRECTION_KP_AUTONOMOUS;
@@ -173,7 +175,11 @@ public abstract class BaseAutonomous extends BaseOpMode {
             remainingDistance = targetDistance - traveledDistance;
         }
         stopDriveMotors();
+        if(motorLeftSlides.getCurrentPosition() < targetSlidePosition) {
+            driveSlidesAutonomous(targetSlidePosition);
+        }
         motorLeftSlides.setPower(0);
+        motorRightSlides.setPower(0);
     }
 
     /**
@@ -347,6 +353,7 @@ public abstract class BaseAutonomous extends BaseOpMode {
             driveAutonomous(180, 2);
             //turn back to 0 heading
         }
+        if(loopNumber == 5){
         turnToAngle(0+angleOffset);
         driveSlidesAutonomous(Constants.STACK_HEIGHTS[0]);
         //center on cone stack
@@ -380,6 +387,7 @@ public abstract class BaseAutonomous extends BaseOpMode {
         //drive backwards
         driveAutonomous(180, 2);
         //turn back to 0 heading
+        }
     }
 
     //TODO: EXPERIMENTAL
@@ -489,7 +497,7 @@ public abstract class BaseAutonomous extends BaseOpMode {
             //wait for grabber to close
             sleep(300);
             //drive forward towards junction and raise slides
-            driveAutonomousPlusSlides(180, 34.6, Constants.SLIDE_HIGH - 100);
+            driveAutonomousPlusSlides(180, 34.6, Constants.SLIDE_HIGH);
             sleep(100);
             //turn towards junction
             turnToAngle(90 + angleOffset);
@@ -517,12 +525,9 @@ public abstract class BaseAutonomous extends BaseOpMode {
         //wait for grabber to close
         sleep(300);
         driveAutonomous(180, 1);
-        //drive slides to stow position
-        sleep(100);
         driveSlidesAutonomous(Constants.SLIDE_LOW);
         //drive backwards 34.5 inches
-        driveAutonomousPlusSlides(180, 33.5, Constants.SLIDE_HIGH - 100);
-        sleep(100);
+        driveAutonomousPlusSlides(180, 33.5, Constants.SLIDE_HIGH);
         //turn towards junction
         turnToAngle(90+angleOffset);
         //drive slides up
