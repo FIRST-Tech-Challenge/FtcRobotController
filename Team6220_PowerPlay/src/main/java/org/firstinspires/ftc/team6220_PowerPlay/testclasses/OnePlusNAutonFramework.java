@@ -76,7 +76,7 @@ abstract public class OnePlusNAutonFramework extends BaseAutonomous {
 
             driveAutonomous(driveCourse, 10.7);
 
-            sleep(100);
+            sleep(300);
 
             driveAutonomous(0, 4);
             //if grabber camera detects, then drop. If it does not detect, then center using robot camera

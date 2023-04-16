@@ -497,7 +497,7 @@ public abstract class BaseAutonomous extends BaseOpMode {
             //wait for grabber to close
             sleep(300);
             //drive forward towards junction and raise slides
-            driveAutonomousPlusSlides(180, 34.6, Constants.SLIDE_HIGH);
+            driveAutonomousPlusSlides(180, 34.6, Constants.SLIDE_TOP);
             sleep(100);
             //turn towards junction
             turnToAngle(90 + angleOffset);
@@ -527,7 +527,7 @@ public abstract class BaseAutonomous extends BaseOpMode {
         driveAutonomous(180, 1);
         driveSlidesAutonomous(Constants.SLIDE_LOW);
         //drive backwards 34.5 inches
-        driveAutonomousPlusSlides(180, 33.5, Constants.SLIDE_HIGH);
+        driveAutonomousPlusSlides(180, 33.5, Constants.SLIDE_TOP);
         //turn towards junction
         turnToAngle(90+angleOffset);
         //drive slides up
