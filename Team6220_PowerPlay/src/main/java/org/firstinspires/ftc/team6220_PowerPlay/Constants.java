@@ -61,7 +61,7 @@ public class Constants {
     public static final double CONE_STACK_WIDTH_KP = -0.00005;
     public static final double CONE_STACK_CENTERING_KP = -0.0005;
     public static final double CONE_STACK_CENTERING_PROPORTIONAL_KP = -0.00047;
-    public static final double CONE_STACK_CENTERING_MAX_SPEED = 0.35;
+    public static final double CONE_STACK_CENTERING_MAX_SPEED = 0.32;
 
     public static final int JUNCTION_TOP_TOLERANCE = 100;
     public static final double JUNCTION_TOP_CENTERING_KP = 0.0004;
@@ -99,7 +99,7 @@ public class Constants {
 
     public static final int[] STACK_HEIGHTS = new int[] {0, 170, 330, 490, 650};
 
-    public static final int[] BREAK_HEIGHTS = new int[] {500, 450, 400, 350, 350};
+    public static final int[] BREAK_HEIGHTS = new int[] {500, 450, 430, 350, 350};
 
     public static final int[] GRAB_HEIGHTS = new int[] {350, 350, 380, 380, 380};
 

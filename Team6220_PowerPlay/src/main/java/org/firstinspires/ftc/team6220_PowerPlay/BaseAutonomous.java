@@ -321,7 +321,7 @@ public abstract class BaseAutonomous extends BaseOpMode {
             //drive slides to stack position
             driveSlidesAutonomous(Constants.STACK_HEIGHTS[i]);
             //center on cone stack
-            centerConeStack(robotCameraPipeline, 380);
+            centerConeStack(robotCameraPipeline, 380,1);
             //close grabber
             driveGrabber(Constants.GRABBER_CLOSE_POSITION);
             //wait for grabber to close
@@ -339,10 +339,10 @@ public abstract class BaseAutonomous extends BaseOpMode {
             driveSlidesAutonomous(Constants.SLIDE_HIGH - 10);
             //:TODO EXPERIMENTAL
             //drive forward with cone centering
-            centerConeStack(robotCameraPipeline, Constants.BREAK_HEIGHTS[i]);
+            centerConeStack(robotCameraPipeline, Constants.BREAK_HEIGHTS[i],1);
             telemetry.addData("width", robotCameraPipeline.width);
             telemetry.update();
-            sleep(100);
+            sleep(200);
             //lower slides onto junction
             driveSlidesAutonomous(Constants.SLIDE_HIGH - 300);
             //open the grabber
@@ -357,7 +357,7 @@ public abstract class BaseAutonomous extends BaseOpMode {
         turnToAngle(0+angleOffset);
         driveSlidesAutonomous(Constants.STACK_HEIGHTS[0]);
         //center on cone stack
-        centerConeStack(robotCameraPipeline, 380);
+        centerConeStack(robotCameraPipeline, 380,1);
         //close grabber
         driveGrabber(Constants.GRABBER_CLOSE_POSITION);
         //wait for grabber to close
@@ -374,7 +374,7 @@ public abstract class BaseAutonomous extends BaseOpMode {
         //drive slides up
         driveSlidesAutonomous(Constants.SLIDE_HIGH-10);
         //drive forward with cone centering
-        centerConeStack(robotCameraPipeline, Constants.BREAK_HEIGHTS[0]);
+        centerConeStack(robotCameraPipeline, Constants.BREAK_HEIGHTS[0],1);
         telemetry.addData("width", robotCameraPipeline.width);
         telemetry.update();
         sleep(100);
@@ -399,7 +399,7 @@ public abstract class BaseAutonomous extends BaseOpMode {
             //drive slides to stack position
             driveSlidesAutonomous(Constants.STACK_HEIGHTS[i]);
             //center on cone stack
-            centerConeStack(robotCameraPipeline, 380);
+            centerConeStack(robotCameraPipeline, 380,1);
             //Change combine ranges to true to let the pipeline switch
             robotCameraPipeline.changeCombine(true);
             //close grabber
@@ -419,7 +419,7 @@ public abstract class BaseAutonomous extends BaseOpMode {
             driveSlidesAutonomous(Constants.SLIDE_HIGH - 10);
             //:TODO EXPERIMENTAL
             //drive forward with cone centering
-            centerConeStack(robotCameraPipeline, Constants.BREAK_HEIGHTS[i]);
+            centerConeStack(robotCameraPipeline, Constants.BREAK_HEIGHTS[i],1);
             telemetry.addData("width", robotCameraPipeline.width);
             telemetry.update();
             sleep(100);
@@ -440,7 +440,7 @@ public abstract class BaseAutonomous extends BaseOpMode {
         turnToAngle(0+angleOffset);
         driveSlidesAutonomous(Constants.STACK_HEIGHTS[0]);
         //center on cone stack
-        centerConeStack(robotCameraPipeline, 380);
+        centerConeStack(robotCameraPipeline, 380,1);
         //Change combine ranges to true to let the pipeline switch
         robotCameraPipeline.changeCombine(true);
         //close grabber
@@ -459,7 +459,7 @@ public abstract class BaseAutonomous extends BaseOpMode {
         //drive slides up
         driveSlidesAutonomous(Constants.SLIDE_HIGH-10);
         //drive forward with cone centering
-        centerConeStack(robotCameraPipeline, Constants.BREAK_HEIGHTS[0]);
+        centerConeStack(robotCameraPipeline, Constants.BREAK_HEIGHTS[0],1);
         telemetry.addData("width", robotCameraPipeline.width);
         telemetry.update();
         sleep(100);
@@ -503,7 +503,7 @@ public abstract class BaseAutonomous extends BaseOpMode {
             turnToAngle(90 + angleOffset);
             //:TODO EXPERIMENTAL
             //drive forward with cone centering
-            centerConeStack(robotCameraPipeline, Constants.BREAK_HEIGHTS[i]);
+            centerConeStack(robotCameraPipeline, Constants.BREAK_HEIGHTS[i],1);
             telemetry.addData("width", robotCameraPipeline.width);
             telemetry.update();
             sleep(100);
@@ -533,7 +533,7 @@ public abstract class BaseAutonomous extends BaseOpMode {
         //drive slides up
         driveSlidesAutonomous(Constants.SLIDE_HIGH-10);
         //drive forward with cone centering
-        centerConeStack(robotCameraPipeline, Constants.BREAK_HEIGHTS[0]);
+        centerConeStack(robotCameraPipeline, Constants.BREAK_HEIGHTS[0],1);
         telemetry.addData("width", robotCameraPipeline.width);
         telemetry.update();
         sleep(100);

@@ -74,21 +74,21 @@ abstract public class OnePlusNAutonFramework extends BaseAutonomous {
             // raise slides to high junction height
             driveSlidesAutonomous(Constants.SLIDE_HIGH);
 
-            driveAutonomous(driveCourse, 10.5);
+            driveAutonomous(driveCourse, 10.7);
 
-            telemetry.addData("width", robotCameraPipeline.width);
+            sleep(100);
 
-            driveAutonomous(0, 3);
+            driveAutonomous(0, 4);
             //if grabber camera detects, then drop. If it does not detect, then center using robot camera
-            if(!grabberCameraPipeline.detected){
-                centerConeStack(robotCameraPipeline, 300);
-            }
+            /*if(!grabberCameraPipeline.detected){
+                centerConeStack(robotCameraPipeline, 270, 0);
+            }*/
 
             // lower cone on to junction
-            driveSlidesAutonomous(Constants.SLIDE_HIGH - 200);
+            driveSlidesAutonomous(Constants.SLIDE_HIGH - 250);
 
             // sleep to make sure robot has stopped moving
-            sleep(100);
+            sleep(200);
 
             // drop cone on junction
             driveGrabber(Constants.GRABBER_OPEN_POSITION);
@@ -111,16 +111,19 @@ abstract public class OnePlusNAutonFramework extends BaseAutonomous {
             switch (signal) {
                 // strafe to park in zone 1
                 case 1:
+                    driveGrabber(Constants.GRABBER_OPEN_POSITION);
                     driveAutonomous(signalArray[0], signalArray[1]);
                     break;
 
                 // strafe to park in zone 2
                 case 2:
+                    driveGrabber(Constants.GRABBER_OPEN_POSITION);
                     driveAutonomous(signalArray[2], signalArray[3]);
                     break;
 
                 // strafe to park in zone 3
                 case 3:
+                    driveGrabber(Constants.GRABBER_OPEN_POSITION);
                     driveAutonomous(signalArray[4], signalArray[5]);
                     break;
             }

@@ -21,7 +21,7 @@ public class ConeCenteringTest extends BaseAutonomous {
 
         waitForStart();
 
-        centerConeStack(robotCameraPipeline, 300);
+        centerConeStack(robotCameraPipeline, 300, 1);
 
         telemetry.addData("width", robotCameraPipeline.width);
 
