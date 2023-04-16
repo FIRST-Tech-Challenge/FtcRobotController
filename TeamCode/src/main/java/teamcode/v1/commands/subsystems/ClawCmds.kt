@@ -13,7 +13,7 @@ import teamcode.v1.subsystems.Guide
 
 class ClawCmds {
     open class ClawCmd(claw: Claw, pos: Double) : InstantCmd({ claw.setPos(pos) }, claw)
-
+//bruh
     class ClawCloseCmd(claw: Claw) : ClawCmd(claw, ClawConstants.closePos)
 
 //    class ClawSmartCmd(claw: Claw) : SequentialGroup(
