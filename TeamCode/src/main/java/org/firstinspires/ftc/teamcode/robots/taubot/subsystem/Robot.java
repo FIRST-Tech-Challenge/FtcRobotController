@@ -309,7 +309,7 @@ public class Robot implements Subsystem {
 
     public boolean AutonRun(int autonTarget, Constants.Position startingPosition, boolean targetAltCone){
         //TODO - make sure we aren't controlling conestack when supervisor takes over (multiple control risk)
-        if(Objects.isNull(autonTarget)){
+        if(autonTarget == -1){
             autonTarget = 1;
         }
         if(startingPosition.equals(Constants.Position.START_LEFT))
