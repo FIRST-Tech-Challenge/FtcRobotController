@@ -33,8 +33,8 @@ public class Constants {
     public static final int ROBOT_SLIDE_TOLERANCE_TICKS = 20;
 
     public static final int SLIDE_TOP = 3900;
-    public static final int SLIDE_HIGH = 3700;
-    public static final int SLIDE_MEDIUM = 2650;
+    public static final int SLIDE_HIGH = 3800;
+    public static final int SLIDE_MEDIUM = 2750;
     public static final int SLIDE_LOW = 1600;
     public static final int SLIDE_STOW = 500;
     public static final int SLIDE_STACK_FOUR = 600;
@@ -86,7 +86,7 @@ public class Constants {
 
     public static final int DISTANCE_FROM_CENTER_JUNCTION_TOP = 200;
 
-    public static final int CONTOUR_MINIMUM_SIZE = 200;
+    public static final int CONTOUR_MINIMUM_SIZE = 2000;
 
     public static final double TURNING_AUTHORITY_CONSTANT = 250.0;
     public static final double STRAFING_AUTHORITY_CONSTANT = 200.0;

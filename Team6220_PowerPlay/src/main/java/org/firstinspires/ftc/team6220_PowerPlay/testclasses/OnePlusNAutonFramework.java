@@ -74,7 +74,7 @@ abstract public class OnePlusNAutonFramework extends BaseAutonomous {
             // raise slides to high junction height
             driveSlidesAutonomous(Constants.SLIDE_HIGH);
 
-            driveAutonomous(driveCourse, 10.7);
+            driveAutonomous(driveCourse, 11);
 
             sleep(300);
 

@@ -101,7 +101,7 @@ public class RobotCameraPipeline extends OpenCvPipeline {
                 // draw the bounding rectangle on the frame
                 Imgproc.rectangle(input, boundingRect, new Scalar(0, 255, 0), 10);
 
-                if (moments.get_m00() > 0) {
+                if (moments.get_m00() > 0 & boundingRect.height / boundingRect.width < 0.7) {
                     xPosition = boundingRect.x + (boundingRect.width * 0.5);
                     width = boundingRect.width;
                 }
