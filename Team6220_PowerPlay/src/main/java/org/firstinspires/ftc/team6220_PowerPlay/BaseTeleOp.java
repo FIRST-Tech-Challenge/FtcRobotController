@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.team6220_PowerPlay;
 
+import com.qualcomm.robotcore.hardware.DcMotorEx;
+
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
@@ -8,6 +10,10 @@ public abstract class BaseTeleOp extends BaseOpMode {
     double currentAngle;
     double headingDegrees;
     double negativeHeadingRadians;
+
+    double slowModeFactor;
+    double turboModeFactor;
+    double speedMultiplier;
 
     double x;
     double y;
@@ -53,10 +59,15 @@ public abstract class BaseTeleOp extends BaseOpMode {
             originalAngle = startAngle + 180;
         }
 
+        // slow and turbo mode factor calculated based on left and right trigger inputs
+        slowModeFactor = 1 - (gamepad1.left_trigger * 0.5);
+        turboModeFactor = 1 + (gamepad1.right_trigger * 0.5);
+        speedMultiplier = slowModeFactor * turboModeFactor;
+
         // stick curve applied on the joystick input
-        x = (Constants.DRIVE_CURVE_FACTOR * gamepad1.left_stick_x + (1 - Constants.DRIVE_CURVE_FACTOR) * Math.pow(gamepad1.left_stick_x, 3)) * Constants.MAXIMUM_DRIVE_POWER_TELEOP;
-        y = (Constants.DRIVE_CURVE_FACTOR * -gamepad1.left_stick_y + (1 - Constants.DRIVE_CURVE_FACTOR) * Math.pow(-gamepad1.left_stick_y, 3)) * Constants.MAXIMUM_DRIVE_POWER_TELEOP;
-        t = (Constants.DRIVE_CURVE_FACTOR * gamepad1.right_stick_x + (1 - Constants.DRIVE_CURVE_FACTOR) * Math.pow(gamepad1.right_stick_x, 3)) * Constants.MAXIMUM_TURN_POWER_TELEOP;
+        x = (Constants.DRIVE_CURVE_FACTOR * gamepad1.left_stick_x + (1 - Constants.DRIVE_CURVE_FACTOR) * Math.pow(gamepad1.left_stick_x, 3)) * Constants.MAXIMUM_DRIVE_POWER_TELEOP * speedMultiplier;
+        y = (Constants.DRIVE_CURVE_FACTOR * -gamepad1.left_stick_y + (1 - Constants.DRIVE_CURVE_FACTOR) * Math.pow(-gamepad1.left_stick_y, 3)) * Constants.MAXIMUM_DRIVE_POWER_TELEOP * speedMultiplier;
+        t = (Constants.DRIVE_CURVE_FACTOR * gamepad1.right_stick_x + (1 - Constants.DRIVE_CURVE_FACTOR) * Math.pow(gamepad1.right_stick_x, 3)) * Constants.MAXIMUM_TURN_POWER_TELEOP * speedMultiplier;
 
         // vector rotation - main field centric code
         xRotatedVector = x * Math.cos(negativeHeadingRadians) - y * Math.sin(negativeHeadingRadians);
@@ -97,7 +108,7 @@ public abstract class BaseTeleOp extends BaseOpMode {
      */
     public void driveSlidesWithController() {
         // joystick control
-        slideTargetPosition += (int) (-gamepad2.left_stick_y * Constants.SLIDE_TUNING_MODIFIER);
+        slideTargetPosition += (int) (-gamepad2.left_stick_y * 25);
 
         // cone stack positions - increase position by one if dpad up is just pressed
         if (gamepad2.dpad_up && previousConeStack == currentConeStack) {
@@ -225,6 +236,31 @@ public abstract class BaseTeleOp extends BaseOpMode {
         if (gamepad1.left_bumper && gamepad1.right_bumper) {
             startAngle = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle;
             originalAngle = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle;
+        }
+    }
+
+    /**
+     * allows the driver to manually lower or raise the slides by pressing the y button in case the slides don't initialize at the right height
+     * pressing the back and start button will reset the slide motor encoders so the driver only has to perform the slide override once
+     */
+    public void slideOverride() {
+        if (gamepad2.y) {
+            motorLeftSlides.setPower(-gamepad2.left_stick_y * 0.5);
+            motorRightSlides.setPower(-gamepad2.left_stick_y * 0.5);
+        }
+
+        if (gamepad2.back && gamepad2.start) {
+            motorLeftSlides.setDirection(DcMotorEx.Direction.FORWARD);
+            motorRightSlides.setDirection(DcMotorEx.Direction.REVERSE);
+
+            motorLeftSlides.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
+            motorRightSlides.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
+
+            motorLeftSlides.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
+            motorRightSlides.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
+
+            motorLeftSlides.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
+            motorRightSlides.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
         }
     }
 

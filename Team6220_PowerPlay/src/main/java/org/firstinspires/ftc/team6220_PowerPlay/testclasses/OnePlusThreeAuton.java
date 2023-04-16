@@ -1,12 +1,14 @@
 package org.firstinspires.ftc.team6220_PowerPlay.testclasses;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 
 import org.firstinspires.ftc.team6220_PowerPlay.BaseAutonomous;
 import org.firstinspires.ftc.team6220_PowerPlay.Constants;
 import org.firstinspires.ftc.team6220_PowerPlay.GrabberCameraPipeline;
 import org.firstinspires.ftc.team6220_PowerPlay.RobotCameraPipeline;
 
+@Disabled
 @Autonomous(name="1+3Auto")
 public class OnePlusThreeAuton extends BaseAutonomous {
     @Override
