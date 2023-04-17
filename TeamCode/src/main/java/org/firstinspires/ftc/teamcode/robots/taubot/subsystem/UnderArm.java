@@ -253,7 +253,7 @@ public class UnderArm implements Subsystem {
                 break;
             case transferRecover: //after transfer, go back through to clear the camera
                 if(TransferRecover())
-                    articulation = Articulation.home;
+                    articulation = Articulation.substationHover;
                 break;
             case cancelTransferPosition: {
                 if(cancelTransferPosition())
@@ -477,7 +477,6 @@ public class UnderArm implements Subsystem {
 
         switch (homeStage) {
             case 0: //sets home position
-                robot.driveTrain.articulate(DriveTrain.Articulation.unlock);
                 grip();
                 setTurretTargetAngle(0);
                 setElbowTargetAngle(0);
@@ -587,7 +586,7 @@ public class UnderArm implements Subsystem {
                     setShoulderTargetAngle(0); //take the shoulder home
                     setWristTargetAngle(40); //take wrist homeish
                     robot.driveTrain.setChassisLength(MAX_CHASSIS_LENGTH-10);
-                    transferTimer = futureTime(0.3);
+                    transferTimer = futureTime(0.6);
                     transferRecoverStage++;
                 }
                 break;
@@ -639,13 +638,21 @@ public class UnderArm implements Subsystem {
                 break;
             case 1:
                 if (substationHoverTimer<System.nanoTime()){
-                    setShoulderTargetAngle(SS_HOVER_SHOULDER/1.6); //mostly go there but stop early to not slam the ground
+                    setShoulderTargetAngle(SS_HOVER_SHOULDER/2); //mostly go there but stop early to not slam the ground
                     open();
-                    substationHoverTimer = futureTime(0.4);
+                    substationHoverTimer = futureTime(0.3);
                     substationHoverStage++;
                 }
                 break;
             case 2:
+                if (substationHoverTimer<System.nanoTime()){
+                    setShoulderTargetAngle(SS_HOVER_SHOULDER/1.3); //mostly go there but stop early to not slam the ground
+                    open();
+                    substationHoverTimer = futureTime(0.2);
+                    substationHoverStage++;
+                }
+                break;
+            case 3:
 
                 if (substationHoverTimer<System.nanoTime()){
                     // these values are meant to be fine tuned by driver positioning between hover and pickup
@@ -657,7 +664,7 @@ public class UnderArm implements Subsystem {
                     substationHoverStage++;
                 }
                 break;
-            case 3: //open gripper
+            case 4: //open gripper
                 if (substationHoverTimer<System.nanoTime()) {
                     open(); //purposefully redundant open
                     substationHoverStage = 0;
@@ -749,7 +756,6 @@ public class UnderArm implements Subsystem {
 public boolean goSubstationRecover() {
             switch (recoverStage) {
         case 0: //sets vertical position
-            robot.driveTrain.articulate(DriveTrain.Articulation.unlock);
             setElbowTargetAngle(0);
             setShoulderTargetAngle(0);
             setWristTargetAngle(WRIST_HOME_POSITION);

@@ -92,7 +92,7 @@ public class Crane implements Subsystem {
     public static double HEIGHT_ADJUST = 13;
     public static double DISTANCE_ADJUST = 30;
 
-    public static double SHOULDER_ERROR_MAX = 4;
+    public static double SHOULDER_ERROR_MAX = 6;
     public static double EXTENSION_ERROR_MAX = 0.05;
     public static double TURRET_ERROR_MAX = 4;
 
@@ -106,8 +106,8 @@ public class Crane implements Subsystem {
     public static double EXTENDER_TICS_MAX = 3700; // of the robot
     boolean EXTENDER_CALIBRATE_MAX = false; //keep false except if calibrating EXTENDER_TICS_MAX
 
-    public static double BULB_OPEN_POS = 1300; //old value: 1500
-    public static double BULB_CLOSED_POS = 1700; //old value: 1900
+    public static double BULB_OPEN_POS = 1300;
+    public static double BULB_CLOSED_POS = 1500;
 
     public static double TRANSFER_SHOULDER_ANGLE = 50;  //angle at which transfer occurs
     public static double TRANSFER_SHOULDER_FLIPANGLE = 60; //angle that puts transfer plate at best angle to receive bulb gripper
@@ -120,13 +120,15 @@ public class Crane implements Subsystem {
     public static double SAFE_SHOULDER_ANGLE = 30;
     public static double SAFE_ARM_LENGTH = 0.05;
 
-    public static double nudgeStickProportion= -11;
-    public static double nudgeStickModifierOffset = 1500;
+    public static double HOME_SAFE_SHOULDER_ANGLE = 15;
 
-    public static double nudgeTuckValue = 850; //maximum tuckage
-    public static double nudgeMaxValue = 1400; //maximum extension
+    public static double nudgeStickProportion= -12;
+    public static double nudgeStickModifierOffset = 1800;
+
+    public static double nudgeTuckValue = 1080; //maximum tuckage
+    public static double nudgeMaxValue = 1600; //maximum extension
     public double nudgeRange = nudgeMaxValue - nudgeTuckValue;
-    public double nudgeCenter = nudgeRange + nudgeTuckValue;
+    public double nudgeCenter = nudgeRange/2 + nudgeTuckValue;
 
     public static int FLIPPER_HOME = 900;
     public static int FLIPPER_FLIP = 1716;
@@ -480,7 +482,8 @@ public class Crane implements Subsystem {
         postTransfer,
         init,
         dropConeReturnToTransfer,
-        autonDrive
+        autonDrive,
+        lockToHome
     }
 
     public Articulation getArticulation() {
@@ -495,14 +498,12 @@ public class Crane implements Subsystem {
             case 0:
                 release();
                 dropThenTransferTimer = futureTime(0.5);
+                flipToFlip();
                 dropThenTransferStage++;
                 break;
             case 1:
-                if(System.nanoTime() > dropThenTransferTimer) {
-                    dropThenTransferStage++;
-                }
- /*                   robot.turret.articulate(Turret.Articulation.transfer);
-                    dropThenTransferTimer = futureTime(1);
+                if(System.nanoTime() > dropThenTransferTimer && goHome()) {
+                    dropThenTransferTimer = futureTime(0.4);
                     dropThenTransferStage++;
                 }
                 break;
@@ -511,11 +512,12 @@ public class Crane implements Subsystem {
                     setShoulderTargetAngle(TRANSFER_SHOULDER_FLIPANGLE);
                     setExtendTargetPos(TRANSFER_ARM_LENGTH);
                     dropThenTransferTimer = futureTime(0.7);
+                    flipToHome();
                     dropThenTransferStage++;
                     fieldPositionTarget = new Vector3(-4,0,10).add(robotPosition);
-                }*/
+                }
                 break;
-            case 2:
+            case 3:
                 dropThenTransferStage = 0;
                 return true;
         }
@@ -526,6 +528,11 @@ public class Crane implements Subsystem {
         articulation = target;
 
         switch(articulation){
+            case lockToHome:
+                if(goLock()){
+                    articulation = Articulation.lock;
+                }
+                break;
             case dropConeReturnToTransfer:
                 if(dropThenTransfer()){
                     articulation = Articulation.transfer;
@@ -584,8 +591,8 @@ public class Crane implements Subsystem {
             case scoreCone:
                 dropConeStage = 0;
                 updateScoringPattern();
-                //if(pickupCone(targetPole)){
-                if(goToFieldthing(targetPole)){
+                //if(goToFieldthing(targetPole)){
+                if(pickupCone(targetPole)){
                     articulation = Articulation.manualDrive;
                 }
 
@@ -895,6 +902,7 @@ public class Crane implements Subsystem {
         calculateFieldTargeting(fieldPositionTarget);
         switch(goTargetInd){
             case 0:
+                extendNudgeStick();
                 robot.turret.articulate(Turret.Articulation.runToAngle);
                 setShoulderTargetAngle(calculatedAngle);
                 setTargetTurretAngle(calculatedTurretAngle);
@@ -927,9 +935,30 @@ public class Crane implements Subsystem {
         return false;
     }
 
-    public static Vector3 home = new Vector3(2, 0 ,6);
+    public static Vector3 home = new Vector3(2, 0 ,12);
 
-    int homeInd;
+    int lock = 0;
+
+    public boolean goLock(){
+        switch (lock){
+            case 0:
+                setExtendTargetPos(SAFE_ARM_LENGTH);
+                lock++;
+                break;
+            case 1:
+                if(extensionOnTarget()){
+                    setShoulderTargetAngle(HOME_SAFE_SHOULDER_ANGLE);
+                    robot.turret.articulate(Turret.Articulation.lockTo180);
+                    lock++;
+                }
+                break;
+            case 2:
+                lock = 0;
+                return true;
+        }
+        return false;
+    }
+    int homeInd = 0;
 
     public boolean goHome(){
         fieldPositionTarget = new Vector3(home.x+robot.turret.getTurretPosition().getX(),home.y+robot.turret.getTurretPosition().getY(),home.z);
@@ -937,6 +966,7 @@ public class Crane implements Subsystem {
         switch (homeInd){
             case 0:
                 setExtendTargetPos(craneLengthOffset+0.1);
+                tuckNudgeStick();
 //                robot.underarm.articulate(UnderArm.Articulation.home);
                 homeInd++;
                 break;
@@ -991,13 +1021,13 @@ public class Crane implements Subsystem {
             case 1:
                 if(System.nanoTime() >= pickupTimer) {
                     setShoulderTargetAngle(getShoulderAngle() + 15);
+                    pickupTimer = futureTime(.3);
                     pickupConeStage++;
                 }
                 break;
             case 2:
-                //nudgeLeft();
-                //if(shoulderOnTarget() && goHome()){
-                if(shoulderOnTarget()){
+                //if(shoulderOnTarget()){
+                if(System.nanoTime() >= pickupTimer && goHome()){
                     pickupConeStage++;
                 }
                 break;
@@ -1007,16 +1037,6 @@ public class Crane implements Subsystem {
                 }
                 break;
             case 4:
-                //nudgeCenter(true);
-                //tempThing = calcTurnPosition(obj, 3);
-                pickupConeStage++;
-                break;
-            case 5:
-                //if(goToFieldthing(tempThing)){
-                    pickupConeStage++;
-                //}
-                break;
-            case 6:
                 pickupConeStage = 0;
                 return true;
         }
@@ -1238,7 +1258,7 @@ public class Crane implements Subsystem {
     Pose2d turretPos = new Pose2d();
     Pose2d axlePos = new Pose2d();
 
-    public static double shoulderHeight = 0.14;
+    public static double shoulderHeight = 0.265;
 
     double calculatedTurretAngle;
     double calculatedHeight;

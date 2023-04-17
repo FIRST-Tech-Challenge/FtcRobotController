@@ -83,10 +83,11 @@ public class DriverControls {
 
         if(stickyGamepad1.a) {
             //maintain the ability to pickup with Crane
+            robot.crane.resetArticulations();
             robot.crane.pickupSequence();
         }
         if(stickyGamepad1.b){
-            robot.resetArticulations();
+            robot.crane.resetArticulations();
             robot.articulate(Robot.Articulation.DROP);
         }
 
@@ -211,10 +212,11 @@ public class DriverControls {
 
         if(stickyGamepad1.a) {
             //maintain the ability to pickup with Crane
+            robot.crane.resetArticulations();
             robot.crane.pickupSequence();
         }
         if(stickyGamepad1.b){
-            robot.resetArticulations();
+            robot.crane.resetArticulations();
             robot.articulate(Robot.Articulation.DROP);
         }
 

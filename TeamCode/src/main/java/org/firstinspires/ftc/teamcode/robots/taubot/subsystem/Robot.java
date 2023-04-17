@@ -1,7 +1,6 @@
 package org.firstinspires.ftc.teamcode.robots.taubot.subsystem;
 
 import static org.firstinspires.ftc.teamcode.robots.taubot.util.Constants.MAX_CHASSIS_LENGTH;
-import static org.firstinspires.ftc.teamcode.robots.taubot.util.Constants.MIN_CHASSIS_LENGTH;
 import static org.firstinspires.ftc.teamcode.robots.taubot.util.Constants.MIN_SAFE_CHASSIS_LENGTH;
 import static org.firstinspires.ftc.teamcode.robots.taubot.util.Utils.craneIK;
 import static org.firstinspires.ftc.teamcode.robots.taubot.util.Utils.wrapAngleRad;
@@ -16,7 +15,6 @@ import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.VoltageSensor;
 
-import org.firstinspires.ftc.robotcore.internal.camera.delegating.DelegatingCaptureSequence;
 import org.firstinspires.ftc.robotcore.internal.system.Misc;
 import org.firstinspires.ftc.teamcode.robots.taubot.Field;
 import org.firstinspires.ftc.teamcode.robots.taubot.PowerPlay_6832;
@@ -596,10 +594,9 @@ public class Robot implements Subsystem {
         if(isDriverDriving()) { //bypass the normal articulation flow when driving - this could short circuit other articulations leaving them in unknown stages
             resetArticulations();
             driveTrain.articulate(DriveTrain.Articulation.unlock);
-            crane.articulate(Crane.Articulation.lock); //keeps crane in safe position
             underarm.articulate(UnderArm.Articulation.driving);
             if(!driveInit){
-                turret.articulate(Turret.Articulation.lockTo180);
+                crane.articulate(Crane.Articulation.lockToHome); //keeps crane in safe position
                 driveInit = true;
             }
             notDriveInit = false;
@@ -627,6 +624,9 @@ public class Robot implements Subsystem {
                     break;
                 case TRANSFER:
                     if (transfer()) {
+                        turret.articulate(Turret.Articulation.runToAngle);
+                        crane.articulate(Crane.Articulation.scoreCone);
+                        //underarm.articulate(UnderArm.Articulation.substationHover);
                         articulation = Articulation.MANUAL;
                     }
                     break;
@@ -898,7 +898,6 @@ public class Robot implements Subsystem {
                 break;
             case 3:
                 if(System.nanoTime() >= transferTimer && crane.atPostTransfer()) {
-                    driveTrain.articulate(DriveTrain.Articulation.unlock);
                     driveTrain.setChassisLength(Constants.MAX_CHASSIS_LENGTH); //gets out of way of holder
                     transferStage++;
                 }
@@ -909,8 +908,7 @@ public class Robot implements Subsystem {
                 break;
             case 5:
                 if(System.nanoTime() >= transferTimer) {
-                    driveTrain.setChassisLength(Constants.MAX_CHASSIS_LENGTH);
-                    driveTrain.articulate(DriveTrain.Articulation.unlock);
+                    //driveTrain.setChassisLength(Constants.MAX_CHASSIS_LENGTH);
                     crane.articulate(Crane.Articulation.manual);
                     turret.articulate(Turret.Articulation.lockTo180);
                     underarm.regularMode();
