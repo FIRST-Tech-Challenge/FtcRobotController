@@ -19,7 +19,7 @@ public class Constants {
     public static final double MINIMUM_DRIVE_POWER = 0.05;
 
     public static final double MAXIMUM_TURN_POWER_AUTONOMOUS = 0.7;
-    public static final double MAXIMUM_DRIVE_POWER_AUTONOMOUS = 0.5;
+    public static final double MAXIMUM_DRIVE_POWER_AUTONOMOUS = 0.35;
 
     public static final double MAXIMUM_TURN_POWER_TELEOP = 0.5;
     public static final double MAXIMUM_DRIVE_POWER_TELEOP = 0.7;
