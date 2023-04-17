@@ -1,5 +1,8 @@
 package org.firstinspires.ftc.team6220_PowerPlay;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.hardware.rev.RevBlinkinLedDriver;
@@ -9,6 +12,7 @@ import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DigitalChannel;
 import com.qualcomm.robotcore.hardware.PwmControl;
 import com.qualcomm.robotcore.hardware.ServoImplEx;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
@@ -17,7 +21,12 @@ import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Iterator;
 import java.util.List;
+import java.util.ListIterator;
+import java.util.Timer;
 
 public abstract class BaseOpMode extends LinearOpMode {
     // motors
@@ -45,14 +54,18 @@ public abstract class BaseOpMode extends LinearOpMode {
     public double originalAngle;
     public double startAngle;
 
+    // Limit switch
+    public DigitalChannel limitSwitch;
+
     // flag to say whether we should disable the correction system
     private boolean turnFlag = false;
 
     // bulk reading
     private List<LynxModule> hubs;
 
-    // limit switch
-    public DigitalChannel limitSwitch;
+    // stored telemetry
+    protected List<Object> telemetrySave;
+
 
     // initializes the motors, servos, and IMUs
     public void initialize() {
@@ -111,8 +124,10 @@ public abstract class BaseOpMode extends LinearOpMode {
         limitSwitch = hardwareMap.get(DigitalChannel.class, "limitSwitch");
         limitSwitch.setMode(DigitalChannel.Mode.INPUT);
 
+        telemetrySave = new ArrayList<Object>();
+
         blinkinChassis = (RevBlinkinLedDriver) hardwareMap.get(RevBlinkinLedDriver.class, "blinkinChassis");
-        
+
         // initialize IMU
         BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
         parameters.angleUnit = BNO055IMU.AngleUnit.DEGREES;
@@ -126,7 +141,9 @@ public abstract class BaseOpMode extends LinearOpMode {
         startAngle = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle;
         originalAngle = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle;
 
-        robotCamera = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "RobotCamera"));
+        int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
+
+        robotCamera = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "RobotCamera"), cameraMonitorViewId);
         grabberCamera = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "GrabberCamera"));
 
         aprilTagDetectionPipeline = new AprilTagDetectionPipeline();
@@ -195,6 +212,7 @@ public abstract class BaseOpMode extends LinearOpMode {
     public void driveGrabber(double position) {
         servoGrabber.setPosition(position);
     }
+
 
     /**
      * this method will allow the slides to move to a specified target position
@@ -267,7 +285,35 @@ public abstract class BaseOpMode extends LinearOpMode {
      * uses the robot camera to guide the robot so it can drive forward while centering on the stack
      * @param pipeline the RobotCameraPipeline being used by the robot camera
      */
-    public void centerConeStack(RobotCameraPipeline pipeline) {
+    public void centerConeStack(RobotCameraPipeline pipeline, int stackWidth, int turningScalar) {
+        double xOffset, width, strafePower, turnPower;
+        ElapsedTime timer = new ElapsedTime();
+        timer.reset();
+        do {
+            xOffset = Constants.CAMERA_CENTER_X - pipeline.xPosition;
+            width = pipeline.width;
+
+            // drive forward while centering on the cone stack if contour exists
+            if (width == 0) {
+                break;
+            } else {
+                strafePower = coneStackPixelsAndWidthToStrafingPower(xOffset, width);
+                turnPower = turningScalar* Constants.AUTHORITY_SCALER * coneStackPixelsAndWidthToTurningPower(xOffset, width);
+                driveWithoutIMU(strafePower, Constants.DRIVE_AUTHORITY_SCALER * coneStackWidthMotorPower(width), turnPower);
+                telemetry.addData("xStrafingPower", strafePower);
+                telemetry.addData("xTurningPower", turnPower);
+                telemetry.addData("yMotorPower", coneStackWidthMotorPower(width));
+                telemetry.addData("width", width);
+                telemetry.update();
+            }
+
+            // while far enough that the cone stack doesn't fill the entire camera view
+        } while (width < stackWidth && timer.seconds() < 3);
+
+        stopDriveMotors();
+    }
+
+    public void centerConeStackAndDriveSlides(RobotCameraPipeline pipeline, int stackWidth, int targetPosition) {
         double xOffset, width, strafePower, turnPower;
         do {
             xOffset = Constants.CAMERA_CENTER_X - pipeline.xPosition;
@@ -285,12 +331,13 @@ public abstract class BaseOpMode extends LinearOpMode {
                 telemetry.addData("yMotorPower", coneStackWidthMotorPower(width));
                 telemetry.addData("width", width);
                 telemetry.update();
+                driveSlides(targetPosition);
             }
-
             // while far enough that the cone stack doesn't fill the entire camera view
-        } while (width < Constants.CONE_WIDTH);
-
+        } while (width < stackWidth);
         stopDriveMotors();
+        motorLeftSlides.setPower(0);
+        motorRightSlides.setPower(0);
     }
 
     /**

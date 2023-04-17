@@ -6,6 +6,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
+import org.opencv.core.Scalar;
 import org.openftc.apriltag.AprilTagDetection;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraRotation;
@@ -114,6 +115,71 @@ public abstract class BaseAutonomous extends BaseOpMode {
         }
 
         stopDriveMotors();
+    }
+
+    public void driveAutonomousPlusSlides(double driveCourse, double targetDistance, int targetSlidePosition) {
+        // encoder values of the drive motors
+        int eFL, eFR, eBL, eBR;
+
+        double startAngle = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle;
+        double currentAngle;
+        double tPower;
+
+        // looking at robot from the back, x is left/right and y is forwards/backwards
+        double xPosition, yPosition;
+
+        // power for any heading
+        double xPower;
+        double yPower;
+
+        double traveledDistance;
+        double remainingDistance = targetDistance;
+
+        motorFL.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        motorFR.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        motorBL.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        motorBR.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
+        motorFL.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        motorFR.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        motorBL.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        motorBR.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+        while (remainingDistance > 0 && opModeIsActive()) {
+            eFL = motorFL.getCurrentPosition();
+            eFR = motorFR.getCurrentPosition();
+            eBL = motorBL.getCurrentPosition();
+            eBR = motorBR.getCurrentPosition();
+            if(motorLeftSlides.getCurrentPosition() < targetSlidePosition) {
+                driveSlides(targetSlidePosition);
+            }
+            // robot turns slightly to correct for small changes in heading
+            currentAngle = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle;
+            tPower = (currentAngle - startAngle) * Constants.HEADING_CORRECTION_KP_AUTONOMOUS;
+
+            // vector rotation to make robot capable of moving in any direction while maintaining heading
+            xPower = Math.cos(Math.toRadians(driveCourse + Constants.UNIT_CIRCLE_OFFSET_DEGREES)) * Constants.MAXIMUM_DRIVE_POWER_AUTONOMOUS;
+            yPower = Math.sin(Math.toRadians(driveCourse + Constants.UNIT_CIRCLE_OFFSET_DEGREES)) * Constants.MAXIMUM_DRIVE_POWER_AUTONOMOUS;
+
+            // gives a power to each motor to make the robot move in the specified direction
+            motorFL.setPower(yPower + xPower + tPower);
+            motorFR.setPower(yPower - xPower - tPower);
+            motorBL.setPower(yPower - xPower + tPower);
+            motorBR.setPower(yPower + xPower - tPower);
+            // calculates x-position and y-position based on drive encoder ticks
+            xPosition = (eFL - eFR - eBL + eBR) * Constants.DRIVE_MOTOR_TICKS_TO_INCHES * 0.25;
+            yPosition = (eFL + eFR + eBL + eBR) * Constants.DRIVE_MOTOR_TICKS_TO_INCHES * 0.25;
+
+            // calculates traveled and remaining distance using the pythagorean theorem
+            traveledDistance = Math.sqrt(Math.pow(xPosition, 2) + Math.pow(yPosition, 2));
+            remainingDistance = targetDistance - traveledDistance;
+        }
+        stopDriveMotors();
+        if(motorLeftSlides.getCurrentPosition() < targetSlidePosition) {
+            driveSlidesAutonomous(targetSlidePosition);
+        }
+        motorLeftSlides.setPower(0);
+        motorRightSlides.setPower(0);
     }
 
     /**
@@ -247,46 +313,240 @@ public abstract class BaseAutonomous extends BaseOpMode {
         camera.setPipeline(pipeline);
     }
 
-    public void grabFromStackAndDepositOnJunction(int loopNumber, int angleOffset){
-        for (int i = 0; i <= loopNumber-1; i++) {
+    public void grabFromStackAndDepositOnJunctionPlusConeCentering(int loopNumber, int angleOffset){
+        blinkinChassis.setPattern(RevBlinkinLedDriver.BlinkinPattern.BLACK);
+        for (int i = 4; i >= 5 - loopNumber; i--) {
+            telemetry.addData("loop", i + 1);
+            turnToAngle(0 + angleOffset);
             //drive slides to stack position
-            driveSlides(Constants.STACK_HEIGHTS[i]);
+            driveSlidesAutonomous(Constants.STACK_HEIGHTS[i]);
             //center on cone stack
-            centerConeStack(robotCameraPipeline);
-            sleep(300);
-            //wait for grabber to close
+            centerConeStack(robotCameraPipeline, 380,1);
+            //close grabber
             driveGrabber(Constants.GRABBER_CLOSE_POSITION);
-            sleep(600);
+            //wait for grabber to close
+            sleep(300);
+            driveAutonomous(180, 0.1);
             //drive slides to stow position
-            driveSlides(Constants.SLIDE_LOW);
+            sleep(50);
+            driveSlidesAutonomous(Constants.SLIDE_LOW);
             //drive backwards 34.5 inches
-            driveAutonomous(180, 34.5);
+            driveAutonomous(180, 34.7);
+            sleep(100);
             //turn towards junction
             turnToAngle(90 + angleOffset);
             //drive slides up
-            driveSlides(Constants.SLIDE_TOP);
-            //wait for slides to go all the way up
-            sleep(600);
-            //drive forward
-            driveAutonomous(0, 2);
-            //center on junction
-            centerJunctionTop(grabberCameraPipeline);
-            sleep(100);
+            driveSlidesAutonomous(Constants.SLIDE_HIGH - 10);
+            //:TODO EXPERIMENTAL
+            //drive forward with cone centering
+            centerConeStack(robotCameraPipeline, Constants.BREAK_HEIGHTS[i],1);
+            telemetry.addData("width", robotCameraPipeline.width);
+            telemetry.update();
+            sleep(200);
             //lower slides onto junction
-            driveSlides(Constants.SLIDE_HIGH - 100);
+            driveSlidesAutonomous(Constants.SLIDE_HIGH - 300);
+            //open the grabber
+            driveGrabber(Constants.GRABBER_OPEN_POSITION);
+            //drive slides back up
+            driveSlidesAutonomous(Constants.SLIDE_HIGH);
+            //drive backwards
+            driveAutonomous(180, 2);
+            //turn back to 0 heading
+        }
+        if(loopNumber == 5){
+        turnToAngle(0+angleOffset);
+        driveSlidesAutonomous(Constants.STACK_HEIGHTS[0]);
+        //center on cone stack
+        centerConeStack(robotCameraPipeline, 380,1);
+        //close grabber
+        driveGrabber(Constants.GRABBER_CLOSE_POSITION);
+        //wait for grabber to close
+        sleep(300);
+        driveAutonomous(180, 1);
+        //drive slides to stow position
+        sleep(100);
+        driveSlidesAutonomous(Constants.SLIDE_LOW);
+        //drive backwards 34.5 inches
+        driveAutonomous(180, 33.8);
+        sleep(100);
+        //turn towards junction
+        turnToAngle(90+angleOffset);
+        //drive slides up
+        driveSlidesAutonomous(Constants.SLIDE_HIGH-10);
+        //drive forward with cone centering
+        centerConeStack(robotCameraPipeline, Constants.BREAK_HEIGHTS[0],1);
+        telemetry.addData("width", robotCameraPipeline.width);
+        telemetry.update();
+        sleep(100);
+        //lower slides onto junction
+        driveSlidesAutonomous(Constants.SLIDE_HIGH-300);
+        //open the grabber
+        driveGrabber(Constants.GRABBER_OPEN_POSITION);
+        //drive slides back up
+        driveSlidesAutonomous(Constants.SLIDE_HIGH);
+        //drive backwards
+        driveAutonomous(180, 2);
+        //turn back to 0 heading
+        }
+    }
+
+    //TODO: EXPERIMENTAL
+    public void grabFromStackAndDepositOnJunctionPlusConeCenteringBluePlusRed(int loopNumber, int angleOffset, Scalar[] range){
+        blinkinChassis.setPattern(RevBlinkinLedDriver.BlinkinPattern.BLACK);
+        for (int i = 4; i >= 5 - loopNumber; i--) {
+            telemetry.addData("loop", i + 1);
+            turnToAngle(0 + angleOffset);
+            //drive slides to stack position
+            driveSlidesAutonomous(Constants.STACK_HEIGHTS[i]);
+            //center on cone stack
+            centerConeStack(robotCameraPipeline, 380,1);
+            //Change combine ranges to true to let the pipeline switch
+            robotCameraPipeline.changeCombine(true);
+            //close grabber
+            driveGrabber(Constants.GRABBER_CLOSE_POSITION);
+            //wait for grabber to close
+            sleep(500);
+            driveAutonomous(180, 0.1);
+            //drive slides to stow position
             sleep(100);
+            driveSlidesAutonomous(Constants.SLIDE_LOW);
+            //drive backwards 34.5 inches
+            driveAutonomous(180, 34.7);
+            sleep(100);
+            //turn towards junction
+            turnToAngle(90 + angleOffset);
+            //drive slides up
+            driveSlidesAutonomous(Constants.SLIDE_HIGH - 10);
+            //:TODO EXPERIMENTAL
+            //drive forward with cone centering
+            centerConeStack(robotCameraPipeline, Constants.BREAK_HEIGHTS[i],1);
+            telemetry.addData("width", robotCameraPipeline.width);
+            telemetry.update();
+            sleep(100);
+            //change combine to false to let pipelines update
+            robotCameraPipeline.changeCombine(false);
+            //lower slides onto junction
+            driveSlidesAutonomous(Constants.SLIDE_HIGH - 300);
             //open the grabber
             driveGrabber(Constants.GRABBER_OPEN_POSITION);
             //wait for cone to drop
             sleep(100);
             //drive slides back up
-            driveSlides(Constants.SLIDE_TOP);
-            sleep(200);
+            driveSlidesAutonomous(Constants.SLIDE_HIGH);
             //drive backwards
-            driveAutonomous(180, 3);
-            sleep(200);
+            driveAutonomous(180, 2);
             //turn back to 0 heading
-            turnToAngle(0 + angleOffset);
         }
+        turnToAngle(0+angleOffset);
+        driveSlidesAutonomous(Constants.STACK_HEIGHTS[0]);
+        //center on cone stack
+        centerConeStack(robotCameraPipeline, 380,1);
+        //Change combine ranges to true to let the pipeline switch
+        robotCameraPipeline.changeCombine(true);
+        //close grabber
+        driveGrabber(Constants.GRABBER_CLOSE_POSITION);
+        //wait for grabber to close
+        sleep(300);
+        driveAutonomous(180, 1);
+        //drive slides to stow position
+        sleep(100);
+        driveSlidesAutonomous(Constants.SLIDE_LOW);
+        //drive backwards 34.5 inches
+        driveAutonomous(180, 33.8);
+        sleep(100);
+        //turn towards junction
+        turnToAngle(90+angleOffset);
+        //drive slides up
+        driveSlidesAutonomous(Constants.SLIDE_HIGH-10);
+        //drive forward with cone centering
+        centerConeStack(robotCameraPipeline, Constants.BREAK_HEIGHTS[0],1);
+        telemetry.addData("width", robotCameraPipeline.width);
+        telemetry.update();
+        sleep(100);
+        //change combine to false to let pipelines update
+        robotCameraPipeline.changeCombine(false);
+        //lower slides onto junction
+        driveSlidesAutonomous(Constants.SLIDE_HIGH-300);
+        //open the grabber
+        driveGrabber(Constants.GRABBER_OPEN_POSITION);
+        //wait for cone to drop
+        sleep(100);
+        //drive slides back up
+        driveSlidesAutonomous(Constants.SLIDE_HIGH);
+        //drive backwards
+        driveAutonomous(180, 2);
+        //turn back to 0 heading
+    }
+
+    //TODO: INCLUDES DIFFERENT GRABBING BREAK WIDTHS -- IF THE ROBOT DOES NOT SLAM INTO THE WALL, KEEP THESE
+
+    /**
+     * Loop that allows the robot to grab from the stack and deposit on a junction a preset amount of times.
+     * @param loopNumber How many cones to grab
+     * @param angleOffset is difference between the angle the robot was booted up at and the angle this loop is run at
+     */
+    public void grabFromStackAndDepositOnJunctionPlusConeCenteringPlusSimulSlides(int loopNumber, int angleOffset){
+        blinkinChassis.setPattern(RevBlinkinLedDriver.BlinkinPattern.BLACK);
+        for (int i = 4; i > 5 - loopNumber; i--) {
+            telemetry.addData("loop", i + 1);
+            turnToAngle(0 + angleOffset);
+            //Center on cone stack
+            centerConeStackAndDriveSlides(robotCameraPipeline, Constants.GRAB_HEIGHTS[i], Constants.STACK_HEIGHTS[i]);
+            //close grabber
+            driveGrabber(Constants.GRABBER_CLOSE_POSITION);
+            //wait for grabber to close
+            sleep(300);
+            //drive forward towards junction and raise slides
+            driveAutonomousPlusSlides(180, 34.6, Constants.SLIDE_TOP);
+            sleep(100);
+            //turn towards junction
+            turnToAngle(90 + angleOffset);
+            //:TODO EXPERIMENTAL
+            //drive forward with cone centering
+            centerConeStack(robotCameraPipeline, Constants.BREAK_HEIGHTS[i],1);
+            telemetry.addData("width", robotCameraPipeline.width);
+            telemetry.update();
+            sleep(100);
+            //lower slides onto junction
+            driveSlidesAutonomous(Constants.SLIDE_HIGH - 300);
+            //open the grabber
+            driveGrabber(Constants.GRABBER_OPEN_POSITION);
+            //drive slides back up
+            driveSlidesAutonomous(Constants.SLIDE_HIGH);
+            //drive backwards
+            driveAutonomous(180, 2);
+            //turn back to 0 heading
+        }
+        turnToAngle(0+angleOffset);
+        //center on cone stack
+        centerConeStackAndDriveSlides(robotCameraPipeline, 350, Constants.STACK_HEIGHTS[0]);
+        //close grabber
+        driveGrabber(Constants.GRABBER_CLOSE_POSITION);
+        //wait for grabber to close
+        sleep(300);
+        driveAutonomous(180, 1);
+        driveSlidesAutonomous(Constants.SLIDE_LOW);
+        //drive backwards 34.5 inches
+        driveAutonomousPlusSlides(180, 33.5, Constants.SLIDE_TOP);
+        //turn towards junction
+        turnToAngle(90+angleOffset);
+        //drive slides up
+        driveSlidesAutonomous(Constants.SLIDE_HIGH-10);
+        //drive forward with cone centering
+        centerConeStack(robotCameraPipeline, Constants.BREAK_HEIGHTS[0],1);
+        telemetry.addData("width", robotCameraPipeline.width);
+        telemetry.update();
+        sleep(100);
+        //lower slides onto junction
+        driveSlidesAutonomous(Constants.SLIDE_HIGH-300);
+        //open the grabber
+        driveGrabber(Constants.GRABBER_OPEN_POSITION);
+        //wait for cone to drop
+        sleep(100);
+        //drive slides back up
+        driveSlidesAutonomous(Constants.SLIDE_HIGH);
+        //drive backwards
+        driveAutonomous(180, 2);
+        //turn back to 0 heading
     }
 }
