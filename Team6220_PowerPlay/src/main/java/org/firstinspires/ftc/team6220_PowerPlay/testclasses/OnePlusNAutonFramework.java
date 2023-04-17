@@ -19,7 +19,7 @@ abstract public class OnePlusNAutonFramework extends BaseAutonomous {
      * @param loops is how many times the robot grabs from the stack before parking.
      * @throws InterruptedException
      */
-        public void runAuto(AutoState AutoSelector, int loops, Scalar[] ranges) throws InterruptedException{
+        public void runAuto(AutoState AutoSelector, int loops, Scalar[] ranges, boolean invert) throws InterruptedException{
             int driveCourse;
             int angleOffset;
             int targetDistance = 11;
@@ -56,6 +56,7 @@ abstract public class OnePlusNAutonFramework extends BaseAutonomous {
             // starts streaming cameras
             startCameraWithPipeline(robotCameraPipeline, robotCamera, Constants.CAMERA_X, Constants.CAMERA_Y);
             startCameraWithPipeline(grabberCameraPipeline, grabberCamera, Constants.CAMERA_X, Constants.CAMERA_Y);
+            robotCameraPipeline.invert(invert);
 
             //waits for the auto to start
             waitForStart();
