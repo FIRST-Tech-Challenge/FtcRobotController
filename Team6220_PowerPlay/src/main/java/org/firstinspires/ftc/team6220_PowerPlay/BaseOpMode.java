@@ -65,9 +65,6 @@ public abstract class BaseOpMode extends LinearOpMode {
 
     // stored telemetry
     protected List<Object> telemetrySave;
-  
-    // limit switch
-    public DigitalChannel limitSwitch;
 
 
     // initializes the motors, servos, and IMUs
@@ -144,7 +141,9 @@ public abstract class BaseOpMode extends LinearOpMode {
         startAngle = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle;
         originalAngle = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle;
 
-        robotCamera = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "RobotCamera"));
+        int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
+
+        robotCamera = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "RobotCamera"), cameraMonitorViewId);
         grabberCamera = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "GrabberCamera"));
 
         aprilTagDetectionPipeline = new AprilTagDetectionPipeline();
@@ -312,7 +311,35 @@ public abstract class BaseOpMode extends LinearOpMode {
      * uses the robot camera to guide the robot so it can drive forward while centering on the stack
      * @param pipeline the RobotCameraPipeline being used by the robot camera
      */
-    public void centerConeStack(RobotCameraPipeline pipeline) {
+    public void centerConeStack(RobotCameraPipeline pipeline, int stackWidth, int turningScalar) {
+        double xOffset, width, strafePower, turnPower;
+        ElapsedTime timer = new ElapsedTime();
+        timer.reset();
+        do {
+            xOffset = Constants.CAMERA_CENTER_X - pipeline.xPosition;
+            width = pipeline.width;
+
+            // drive forward while centering on the cone stack if contour exists
+            if (width == 0) {
+                break;
+            } else {
+                strafePower = coneStackPixelsAndWidthToStrafingPower(xOffset, width);
+                turnPower = turningScalar* Constants.AUTHORITY_SCALER * coneStackPixelsAndWidthToTurningPower(xOffset, width);
+                driveWithoutIMU(strafePower, Constants.DRIVE_AUTHORITY_SCALER * coneStackWidthMotorPower(width), turnPower);
+                telemetry.addData("xStrafingPower", strafePower);
+                telemetry.addData("xTurningPower", turnPower);
+                telemetry.addData("yMotorPower", coneStackWidthMotorPower(width));
+                telemetry.addData("width", width);
+                telemetry.update();
+            }
+
+            // while far enough that the cone stack doesn't fill the entire camera view
+        } while (width < stackWidth && timer.seconds() < 3);
+
+        stopDriveMotors();
+    }
+
+    public void centerConeStackAndDriveSlides(RobotCameraPipeline pipeline, int stackWidth, int targetPosition) {
         double xOffset, width, strafePower, turnPower;
         do {
             xOffset = Constants.CAMERA_CENTER_X - pipeline.xPosition;
@@ -330,12 +357,13 @@ public abstract class BaseOpMode extends LinearOpMode {
                 telemetry.addData("yMotorPower", coneStackWidthMotorPower(width));
                 telemetry.addData("width", width);
                 telemetry.update();
+                driveSlides(targetPosition);
             }
-
             // while far enough that the cone stack doesn't fill the entire camera view
-        } while (width < Constants.CONE_WIDTH);
-
+        } while (width < stackWidth);
         stopDriveMotors();
+        motorLeftSlides.setPower(0);
+        motorRightSlides.setPower(0);
     }
 
     /**

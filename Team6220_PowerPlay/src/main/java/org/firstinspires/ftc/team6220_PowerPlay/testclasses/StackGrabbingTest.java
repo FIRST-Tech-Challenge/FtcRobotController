@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.team6220_PowerPlay.testclasses;
+/*package org.firstinspires.ftc.team6220_PowerPlay.testclasses;
 
 import com.qualcomm.hardware.rev.RevBlinkinLedDriver;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
@@ -20,45 +20,46 @@ public class StackGrabbingTest extends BaseAutonomous {
         waitForStart();
         driveGrabber(Constants.GRABBER_INITIALIZE_POSITION);
         for (int i = 4; i >= 0; i--) {
+            turnToAngle(0);
             //turn LED's off (for testing purposes)
             blinkinChassis.setPattern(RevBlinkinLedDriver.BlinkinPattern.BLACK);
             //drive slides to stack position
             driveSlidesAutonomous(Constants.STACK_HEIGHTS[i]);
             //center on cone stack
-            centerConeStack(robotCameraPipeline);
-            sleep(300);
-            //wait for grabber to close
+            centerConeStack(robotCameraPipeline, 300);
+            //close grabber
             driveGrabber(Constants.GRABBER_CLOSE_POSITION);
+            //wait for grabber to close
             sleep(300);
+            driveAutonomous(180, 0.1);
             //drive slides to stow position
+            sleep(100);
             driveSlidesAutonomous(Constants.SLIDE_LOW);
             //drive backwards 34.5 inches
-            driveAutonomous(180, 34.5);
+            driveAutonomous(180, 34.7);
+            sleep(100);
             //turn towards junction
             turnToAngle(90);
             //drive slides up
-            driveSlidesAutonomous(Constants.SLIDE_TOP);
+            driveSlidesAutonomous(Constants.SLIDE_HIGH-10);
+            sleep(100);
             //wait for slides to go all the way up
-            sleep(600);
             //drive forward
-            driveAutonomous(0, 2);
-            //center on junction
-            centerJunctionTop(grabberCameraPipeline);
+            driveAutonomous(0, 1.5);
             sleep(100);
             //lower slides onto junction
-            driveSlidesAutonomous(Constants.SLIDE_HIGH - 100);
-            sleep(100);
+            driveSlidesAutonomous(Constants.SLIDE_HIGH-300);
             //open the grabber
             driveGrabber(Constants.GRABBER_OPEN_POSITION);
             //wait for cone to drop
             sleep(100);
             //drive slides back up
-            driveSlidesAutonomous(Constants.SLIDE_TOP);
-            sleep(200);
+            driveSlidesAutonomous(Constants.SLIDE_HIGH);
             //drive backwards
-            driveAutonomous(180, 3);
+            driveAutonomous(180, 2);
             //turn back to 0 heading
-            turnToAngle(0);
         }
     }
 }
+
+ */

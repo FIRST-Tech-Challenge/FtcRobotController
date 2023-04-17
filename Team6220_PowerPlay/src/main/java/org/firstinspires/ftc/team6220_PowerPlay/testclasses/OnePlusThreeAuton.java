@@ -61,7 +61,7 @@ public class OnePlusThreeAuton extends BaseAutonomous {
         //  turn to face stack
         turnToAngle(LEFT_ANGLE_OFFSET);
         //  grab from stack
-        grabFromStackAndDepositOnJunction(2, LEFT_ANGLE_OFFSET);
+        grabFromStackAndDepositOnJunctionPlusConeCentering(2, LEFT_ANGLE_OFFSET);
         //  prepare to park
         turnToAngle(0);
         //  drive to park position

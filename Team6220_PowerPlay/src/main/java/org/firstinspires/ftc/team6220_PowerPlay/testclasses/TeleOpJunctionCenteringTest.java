@@ -36,6 +36,8 @@ public class TeleOpJunctionCenteringTest extends BaseTeleOp {
             teleOpJunctionCentering();
             driveLEDs();
             resetIMU();
+            telemetry.addData("stack height", motorLeftSlides.getCurrentPosition());
+            telemetry.update();
         }
     }
 }
