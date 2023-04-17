@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.team6220_PowerPlay.testclasses;
+/*package org.firstinspires.ftc.team6220_PowerPlay.testclasses;
 
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
@@ -52,3 +52,4 @@ public class SlidesLimitSwitchTest extends BaseTeleOp {
         }
     }
 }
+*/
