@@ -208,8 +208,8 @@ public abstract class BaseOpMode extends LinearOpMode {
         if (Math.abs(error) > Constants.ROBOT_SLIDE_TOLERANCE_TICKS) {
             // slides going down - joystick
             if (error < 0 && error > Constants.MIN_SLIDE_ERROR_FULL_POWER) {
-                motorLeftSlides.setPower(-0.3);
-                motorRightSlides.setPower(-0.3);
+                motorLeftSlides.setPower(-0.4);
+                motorRightSlides.setPower(-0.4);
             // slides going down - bumpers
             } else if (error < Constants.MIN_SLIDE_ERROR_FULL_POWER) {
                 motorLeftSlides.setPower(-1.0);
