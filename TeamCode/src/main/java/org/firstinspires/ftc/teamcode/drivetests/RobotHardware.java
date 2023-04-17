@@ -32,6 +32,7 @@ package org.firstinspires.ftc.teamcode.drivetests;
 import com.ThermalEquilibrium.homeostasis.Controllers.Feedback.AngleController;
 import com.ThermalEquilibrium.homeostasis.Controllers.Feedback.PIDEx;
 import com.ThermalEquilibrium.homeostasis.Parameters.PIDCoefficientsEx;
+import com.acmerobotics.dashboard.config.Config;
 import com.arcrobotics.ftclib.drivebase.MecanumDrive;
 import com.arcrobotics.ftclib.hardware.RevIMU;
 import com.arcrobotics.ftclib.hardware.motors.Motor;
@@ -40,11 +41,11 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
-import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.teamcode.classes.PIDOpenClosed;
 
-
+@Config
 public class RobotHardware {
 
     //DRIVE
@@ -59,18 +60,24 @@ public class RobotHardware {
 
     private boolean fieldCentric = false;
     private double totalSpeed = 0.5;
-    private double deadzone = 0.4;
-    private double angleTarget = 0;
+    private double deadzone = 0.1;
+    private PIDCoefficientsEx turningCoeffs = null;
     private PIDEx turningPID = null;
     private AngleController turningController = null;
+    private PIDOpenClosed turnPID = null;
+
+    public static double angleTarget = 0;
+    public static boolean turnLeftTog = false;
+    public static boolean turnRightTog = false;
+    public static double veloDeadzone = 5;
+    public static double finalStick = 0;
+    public static double pastHeading = 0;
 
     //ELEVATOR
     private Motor eleL = null;
     private Motor eleR = null;
     private DcMotor m_eleL = null;
     private DcMotor m_eleR = null;
-
-
 
     private HardwareMap hardwareMap = null;
     private Telemetry telemetry = null;
@@ -84,6 +91,7 @@ public class RobotHardware {
 
         this.hardwareMap = opmode.hardwareMap;
         this.telemetry = opmode.telemetry;
+
 
         //GYRO
         imu = new RevIMU(hardwareMap);
@@ -119,9 +127,10 @@ public class RobotHardware {
 
         //TURNING PID
 
-        PIDCoefficientsEx turningCoeffs = new PIDCoefficientsEx(1, 0, 0, 0.5, 0, 0);
+        turningCoeffs = new PIDCoefficientsEx(1, 0, 0, 0.5, 0.5, 0.5);
         turningPID = new PIDEx(turningCoeffs);
         turningController = new AngleController(turningPID);
+        turnPID = new PIDOpenClosed(turningController, 0.2);
 
 
         //ELEVATOR
@@ -155,12 +164,15 @@ public class RobotHardware {
         return imu.getRotation2d().getDegrees();
     }
 
+    public void debug() {
+        telemetry.addLine();
+    }
+
 
     public void robotGoSkrtSkrt( double strafeSpeed, double forwardSpeed, double turnSpeed) {
-
         strafeSpeed *= totalSpeed;
-        forwardSpeed *= forwardSpeed;
-        turnSpeed *= turnSpeed;
+        forwardSpeed *= totalSpeed;
+        turnSpeed *= totalSpeed;
         if (fieldCentric) {
             drive.driveFieldCentric(
                     strafeSpeed,
@@ -178,25 +190,65 @@ public class RobotHardware {
     }
 
     public double getTurnAmount(double stick) {
-        double finalStick = 0;
-        angleTarget = getHeading();
-        if (Math.abs(stick) > deadzone) {
-            finalStick = stick;
-        } else if ( Math.abs(stick) <= deadzone) {
-            finalStick = turningController.calculate(angleTarget, getHeading());
-            telemetry.addData("Angle Target:", angleTarget);
-        }
-        return finalStick;
+        return turnPID.calculate(stick, Math.toRadians(getHeading()));
     }
 
-    public double angleWrap(double radians) {
-        while (radians > Math.PI) {
-            radians -= 2 * Math.PI;
-        }
-        while (radians < -Math.PI) {
-            radians += 2 * Math.PI;
-        }
-        return radians;
+//    public double getTurnAmount(double stick) {
+//        if (Math.abs(stick) > deadzone) {
+//            finalStick = stick;
+//            pastHeading = getHeading();
+//            angleTarget = getHeading();
+//            if (stick < 0) {
+//                turnLeftTog = true;
+//            } else if (stick > 0) {
+//                turnRightTog = true;
+//            }
+//        } else if (turnLeftTog) {
+//            if (pastHeading > getHeading()) {
+//                angleTarget = getHeading();
+//                turnLeftTog = false;
+//            }
+//            pastHeading = getHeading();
+//            finalStick = -turningController.calculate(Math.toRadians(angleTarget), Math.toRadians(getHeading()));
+//        } else if (turnRightTog) {
+//            if (pastHeading < getHeading()) {
+//                angleTarget = getHeading();
+//                turnRightTog = false;
+//                }
+//            pastHeading = getHeading();
+//            finalStick = -turningController.calculate(Math.toRadians(angleTarget), Math.toRadians(getHeading()));
+//        } else {
+//            finalStick = -turningController.calculate(Math.toRadians(angleTarget), Math.toRadians(getHeading()));
+//        }
+//        return finalStick;
+//    }
+
+    public void turningPIDSetter(double Kp, double Ki, double Kd, double maximumIntegralSum, double stabilityThreshold, double lowPassGain) {
+        turningCoeffs = new PIDCoefficientsEx(Kp, Ki, Kd, maximumIntegralSum, stabilityThreshold, lowPassGain);
+        turningPID = new PIDEx(turningCoeffs);
+        turningController = new AngleController(turningPID);
+    }
+
+
+
+    public double getAngleTarget() {
+        return turnPID.getTarget();
+    }
+
+    public void setAngleTarget(double angle) {
+        angleTarget = angle;
+    }
+
+    public MecanumDrive getDrive() {
+        return drive;
+    }
+
+    public boolean isTurnLeftTog() {
+        return turnLeftTog;
+    }
+
+    public boolean isTurnRightTog() {
+        return turnRightTog;
     }
 
     public void setTotalSpeed(double speed) {
