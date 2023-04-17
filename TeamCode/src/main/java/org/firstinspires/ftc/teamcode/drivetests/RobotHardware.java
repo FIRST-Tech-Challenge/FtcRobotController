@@ -33,6 +33,8 @@ import com.ThermalEquilibrium.homeostasis.Controllers.Feedback.AngleController;
 import com.ThermalEquilibrium.homeostasis.Controllers.Feedback.PIDEx;
 import com.ThermalEquilibrium.homeostasis.Parameters.PIDCoefficientsEx;
 import com.acmerobotics.dashboard.config.Config;
+import com.acmerobotics.roadrunner.profile.MotionProfile;
+import com.acmerobotics.roadrunner.profile.MotionProfileGenerator;
 import com.arcrobotics.ftclib.drivebase.MecanumDrive;
 import com.arcrobotics.ftclib.hardware.RevIMU;
 import com.arcrobotics.ftclib.hardware.motors.Motor;
@@ -48,7 +50,7 @@ import org.firstinspires.ftc.teamcode.classes.PIDOpenClosed;
 @Config
 public class RobotHardware {
 
-    //DRIVE
+    //DRIVE MOTORS
     private Motor fL = null;
     private Motor fR = null;
     private Motor rL = null;
@@ -58,27 +60,34 @@ public class RobotHardware {
     private DcMotor m_rL = null;
     private DcMotor m_rR = null;
 
+    //DRIVE VARIABLES
     private boolean fieldCentric = false;
     private double totalSpeed = 0.5;
-    private double deadzone = 0.1;
+    public static double angleTarget = 0;
+    public static boolean turnLeftTog = false;
+    public static boolean turnRightTog = false;
+    public static double idle = 0.1;
+
+    //TURNING VARIABLES
     private PIDCoefficientsEx turningCoeffs = null;
     private PIDEx turningPID = null;
     private AngleController turningController = null;
     private PIDOpenClosed turnPID = null;
 
-    public static double angleTarget = 0;
-    public static boolean turnLeftTog = false;
-    public static boolean turnRightTog = false;
-    public static double veloDeadzone = 5;
-    public static double finalStick = 0;
-    public static double pastHeading = 0;
+    //ELEVATOR VARIABLES
+    private PIDCoefficientsEx elevatorCoeffs = null;
+    private PIDEx elevatorPID = null;
+    private double eleTarget = 0;
+    private int elePower = 0;
 
     //ELEVATOR
     private Motor eleL = null;
     private Motor eleR = null;
     private DcMotor m_eleL = null;
     private DcMotor m_eleR = null;
+    private MotorGroup ele = null;
 
+    //MISC
     private HardwareMap hardwareMap = null;
     private Telemetry telemetry = null;
     private MecanumDrive drive = null;
@@ -126,8 +135,7 @@ public class RobotHardware {
 
 
         //TURNING PID
-
-        turningCoeffs = new PIDCoefficientsEx(1, 0, 0, 0.5, 0.5, 0.5);
+        turningCoeffs = new PIDCoefficientsEx(2.5, 0.4, .4, 0.25, 2, 0.5);
         turningPID = new PIDEx(turningCoeffs);
         turningController = new AngleController(turningPID);
         turnPID = new PIDOpenClosed(turningController, 0.2);
@@ -148,8 +156,22 @@ public class RobotHardware {
         m_eleL.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         m_eleR.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
-        MotorGroup ele = new MotorGroup(eleL, eleR);
+        ele = new MotorGroup(eleL, eleR);
 
+
+        //ELEVATOR PID
+        elevatorCoeffs = new PIDCoefficientsEx(5, 0, 0, 0.25, 2, 0.5);
+        elevatorPID = new PIDEx(elevatorCoeffs);
+
+    }
+
+    public void setElevatorPosition(double target) {
+       elePower = (int) elevatorPID.calculate(target, eleTarget);
+       ele.setTargetPosition(elePower);
+    }
+
+    public int getElePower() {
+        return elePower;
     }
 
     public boolean isFieldCentric() {
@@ -193,44 +215,6 @@ public class RobotHardware {
         return turnPID.calculate(stick, Math.toRadians(getHeading()));
     }
 
-//    public double getTurnAmount(double stick) {
-//        if (Math.abs(stick) > deadzone) {
-//            finalStick = stick;
-//            pastHeading = getHeading();
-//            angleTarget = getHeading();
-//            if (stick < 0) {
-//                turnLeftTog = true;
-//            } else if (stick > 0) {
-//                turnRightTog = true;
-//            }
-//        } else if (turnLeftTog) {
-//            if (pastHeading > getHeading()) {
-//                angleTarget = getHeading();
-//                turnLeftTog = false;
-//            }
-//            pastHeading = getHeading();
-//            finalStick = -turningController.calculate(Math.toRadians(angleTarget), Math.toRadians(getHeading()));
-//        } else if (turnRightTog) {
-//            if (pastHeading < getHeading()) {
-//                angleTarget = getHeading();
-//                turnRightTog = false;
-//                }
-//            pastHeading = getHeading();
-//            finalStick = -turningController.calculate(Math.toRadians(angleTarget), Math.toRadians(getHeading()));
-//        } else {
-//            finalStick = -turningController.calculate(Math.toRadians(angleTarget), Math.toRadians(getHeading()));
-//        }
-//        return finalStick;
-//    }
-
-    public void turningPIDSetter(double Kp, double Ki, double Kd, double maximumIntegralSum, double stabilityThreshold, double lowPassGain) {
-        turningCoeffs = new PIDCoefficientsEx(Kp, Ki, Kd, maximumIntegralSum, stabilityThreshold, lowPassGain);
-        turningPID = new PIDEx(turningCoeffs);
-        turningController = new AngleController(turningPID);
-    }
-
-
-
     public double getAngleTarget() {
         return turnPID.getTarget();
     }
@@ -243,12 +227,25 @@ public class RobotHardware {
         return drive;
     }
 
+    public double isInComingToRest() {
+        if (turnPID.isComingToRest()) {
+            return 10;
+        } else {
+            return 0;
+        }
+
+    }
+
     public boolean isTurnLeftTog() {
         return turnLeftTog;
     }
 
     public boolean isTurnRightTog() {
         return turnRightTog;
+    }
+
+    public void setIdle(double idle) {
+        this.idle = idle;
     }
 
     public void setTotalSpeed(double speed) {

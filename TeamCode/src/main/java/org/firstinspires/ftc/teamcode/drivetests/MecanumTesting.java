@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.drivetests;
 
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
+import com.acmerobotics.roadrunner.profile.MotionProfile;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.classes.PIDOpenClosed;
@@ -18,7 +19,9 @@ public class MecanumTesting extends BlackOp {
     double strafeSpeed = 1;
     double forwardSpeed = 1;
     double turnSpeed = 1;
+    double turnIdle = 0.1;
 
+    //TURN PID
     public static double Kp = 2.5;
     public static double Ki = 0.4;
     public static double Kd = 0.4;
@@ -27,8 +30,8 @@ public class MecanumTesting extends BlackOp {
     public static double lowPassGain = 0.5;
 
     public static double turnStick = 0;
-    FtcDashboard dashboard = null;
 
+    FtcDashboard dashboard = null;
     RobotHardware robot = new RobotHardware();
 
     @Override
@@ -37,9 +40,9 @@ public class MecanumTesting extends BlackOp {
         dashboard = FtcDashboard.getInstance();
         telemetry = dashboard.getTelemetry();
 
-
         ReforgedGamepad driver = new ReforgedGamepad(gamepad1);
-        ReforgedGamepad operator = new ReforgedGamepad(gamepad2);
+
+        robot.setIdle(turnIdle);
 
         robot.init(this);
 
@@ -49,12 +52,13 @@ public class MecanumTesting extends BlackOp {
 
             robot.robotGoSkrtSkrt(driver.left_stick_x.get() * strafeSpeed, driver.left_stick_y.get() * forwardSpeed, robot.getTurnAmount(driver.right_stick_x.get() * turnSpeed));
 
-            robot.turningPIDSetter(Kp, Ki, Kd, integralSumMax, stabilityThresh, lowPassGain);
-
             driver.a.onRise(() -> robot.setFieldCentric(true));
             driver.b.onRise(() -> robot.setFieldCentric(false));
             driver.x.onRise(() -> robot.setAngleTarget(90));
             driver.y.onRise(() -> robot.setAngleTarget(0));
+
+            driver.dpad_up.onRise(() -> robot.setElevatorPosition(100));
+            driver.dpad_down.onRise(() -> robot.setElevatorPosition(0));
 
             turnStick = driver.right_stick_x.get();
 
@@ -66,6 +70,9 @@ public class MecanumTesting extends BlackOp {
             telemetry.addData("Right Stick X", turnStick * 180);
             telemetry.addData("LeftTog", robot.isTurnLeftTog());
             telemetry.addData("RightTog", robot.isTurnRightTog());
+            telemetry.addData("Coming To Rest", robot.isInComingToRest());
+
+            telemetry.addData("Ele Power", robot.getElePower());
             telemetry.update();
 
         });
