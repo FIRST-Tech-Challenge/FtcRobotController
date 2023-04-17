@@ -56,7 +56,7 @@ abstract public class OnePlusNAutonFramework extends BaseAutonomous {
             // starts streaming cameras
             startCameraWithPipeline(robotCameraPipeline, robotCamera, Constants.CAMERA_X, Constants.CAMERA_Y);
             startCameraWithPipeline(grabberCameraPipeline, grabberCamera, Constants.CAMERA_X, Constants.CAMERA_Y);
-            robotCameraPipeline.invert(invert);
+            robotCameraPipeline.invertRange(invert);
 
             //waits for the auto to start
             waitForStart();
