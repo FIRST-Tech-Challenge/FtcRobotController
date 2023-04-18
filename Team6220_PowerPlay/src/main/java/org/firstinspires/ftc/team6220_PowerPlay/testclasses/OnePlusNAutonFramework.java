@@ -75,15 +75,8 @@ abstract public class OnePlusNAutonFramework extends BaseAutonomous {
             // raise slides to high junction height
             driveSlidesAutonomous(Constants.SLIDE_HIGH);
 
-            driveAutonomous(driveCourse, 11);
-
-            sleep(300);
-
-            driveAutonomous(0, 4);
-            //if grabber camera detects, then drop. If it does not detect, then center using robot camera
-            /*if(!grabberCameraPipeline.detected){
-                centerConeStack(robotCameraPipeline, 270, 0);
-            }*/
+            // drive to junction
+            driveAutonomous(driveCourse, 10.5);
 
             // lower cone on to junction
             driveSlidesAutonomous(Constants.SLIDE_HIGH - 250);
