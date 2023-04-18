@@ -5,10 +5,11 @@ import com.acmerobotics.dashboard.config.Config;
 @Config
 public class BadgerConstants {
 
-    public static int SLIDE_THROUGH = 1200 *537/ 384;
+    public static int SLIDE_THROUGH = 1620;//1678
     public static int SLIDE_HIGH = 1250;
-    public  static int SLIDE_HIGH_AUTO= 970 *537/ 384;
-    public static int SLIDE_MIDDLE = 480 *537/ 384;
+    public  static int SLIDE_HIGH_AUTO= 1356;
+    public static int SLIDE_HIGH_AUTO_TOP = 1670;
+    public static int SLIDE_MIDDLE = 671;
     public static int SLIDE_BOTTOM = 0;
     public static  int SLIDE_HIGH_BACK = 1320;
     public static int SLIDE_MIDDLE_BACK= 500;
@@ -16,6 +17,7 @@ public class BadgerConstants {
     public static  int ARM_BOTTOM = 0;
     public static  int ARM_MID_TOP = 800;
     public static int ARM_MID_TOP_AUTO = 785;
+    public static int ARM_MID_TOP_TRY = 850;
     public static  int ARM_CONE_STACK=330;
     public static int STACK_OFFSET = 60;
     public static int ARM_BACK_TOP=1250;

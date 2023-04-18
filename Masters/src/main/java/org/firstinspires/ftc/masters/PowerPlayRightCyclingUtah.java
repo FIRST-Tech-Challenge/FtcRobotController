@@ -168,7 +168,6 @@ public class PowerPlayRightCyclingUtah extends LinearOpMode {
             switch (currentState) {
                 case FIRST_DEPOSIT_PATH_1:
                     if (!drive.isBusy()) {
-
                         currentState = State.ALIGN;
                         alignTime = new Date().getTime();
                     } else {
