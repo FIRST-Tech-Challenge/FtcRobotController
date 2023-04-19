@@ -106,10 +106,10 @@ public class Crane implements Subsystem {
     public static double EXTENDER_TICS_MAX = 3700; // of the robot
     boolean EXTENDER_CALIBRATE_MAX = false; //keep false except if calibrating EXTENDER_TICS_MAX
 
-    public static double BULB_OPEN_POS = 1300;
+    public static double BULB_OPEN_POS = 1210;
     public static double BULB_CLOSED_POS = 1500;
 
-    public static double TRANSFER_SHOULDER_ANGLE = 50;  //angle at which transfer occurs
+    public static double TRANSFER_SHOULDER_ANGLE = 60;  //angle at which transfer occurs
     public static double TRANSFER_SHOULDER_FLIPANGLE = 60; //angle that puts transfer plate at best angle to receive bulb gripper
     public static double TRANSFER_ARM_LENGTH = 0.05;
 
@@ -118,6 +118,7 @@ public class Crane implements Subsystem {
     public static double OLD_TRANSFER_ARM_LENGTH = 0.05;
 
     public static double SAFE_SHOULDER_ANGLE = 30;
+    public static double CALIBRATE_SHOULDER_ANGLE = 50;
     public static double SAFE_ARM_LENGTH = 0.05;
 
     public static double HOME_SAFE_SHOULDER_ANGLE = 15;
@@ -285,7 +286,7 @@ public class Crane implements Subsystem {
                 robot.driveTrain.extend();
                 extenderMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
                 extenderMotor.setPower(-0.4);
-                setShoulderTargetAngle(SAFE_SHOULDER_ANGLE);
+                setShoulderTargetAngle(CALIBRATE_SHOULDER_ANGLE);
                 futureTime = futureTime(.25);
                 calibrateStage++;
                 break;
