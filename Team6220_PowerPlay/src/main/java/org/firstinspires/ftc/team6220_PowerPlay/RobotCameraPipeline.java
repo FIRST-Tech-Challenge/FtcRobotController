@@ -61,11 +61,8 @@ public class RobotCameraPipeline extends OpenCvPipeline {
         Imgproc.GaussianBlur(mat, mat, Constants.BLUR_SIZE, 0);
 
         // mask the blurred frame for either ranges or a red + blue mask
-        if(!combine) {
-            Core.inRange(mat, lowerRange, upperRange, mat);
-        }else{
-            combineRanges(Constants.BLUE_SCALAR_ARRAY, Constants.RED_SCALAR_ARRAY, mat);
-        }
+        Core.inRange(mat, lowerRange, upperRange, mat);
+
         // invert ranges if looking for red
         // this is because red is detected on both ends of the hue spectrum(0-20 & 160-180)
         // so we are looking for 20-160 and changing it so that it detects anything but that.
@@ -101,7 +98,7 @@ public class RobotCameraPipeline extends OpenCvPipeline {
                 // draw the bounding rectangle on the frame
                 Imgproc.rectangle(input, boundingRect, new Scalar(0, 255, 0), 10);
 
-                if (moments.get_m00() > 0 & boundingRect.height / boundingRect.width < 0.7) {
+                if (moments.get_m00() > 0) {
                     xPosition = boundingRect.x + (boundingRect.width * 0.5);
                     width = boundingRect.width;
                 }

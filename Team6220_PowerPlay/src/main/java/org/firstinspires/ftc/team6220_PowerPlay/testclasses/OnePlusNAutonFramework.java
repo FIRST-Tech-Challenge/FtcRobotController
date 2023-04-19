@@ -45,18 +45,19 @@ abstract public class OnePlusNAutonFramework extends BaseAutonomous {
 
             int signal = 1 + detectSignal();
 
+
+
+            robotCameraPipeline = new RobotCameraPipeline();
+
             //reinit cameras to switch pipelines
             int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
             robotCamera = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "RobotCamera"), cameraMonitorViewId);
-            // creates pipelines
-            grabberCameraPipeline = new GrabberCameraPipeline();
-            robotCameraPipeline = new RobotCameraPipeline();
-            grabberCameraPipeline.setRanges(Constants.LOWER_YELLOW, Constants.UPPER_YELLOW);
-            robotCameraPipeline.setRanges(Constants.LOWER_YELLOW,Constants.UPPER_YELLOW);
             // starts streaming cameras
             startCameraWithPipeline(robotCameraPipeline, robotCamera, Constants.CAMERA_X, Constants.CAMERA_Y);
-            startCameraWithPipeline(grabberCameraPipeline, grabberCamera, Constants.CAMERA_X, Constants.CAMERA_Y);
+            robotCameraPipeline.invertRange(false);
+            //startCameraWithPipeline(grabberCameraPipeline, grabberCamera, Constants.CAMERA_X, Constants.CAMERA_Y);
             robotCameraPipeline.invertRange(invert);
+            robotCameraPipeline.setRanges(ranges[0],ranges[1]);
 
             //waits for the auto to start
             waitForStart();
@@ -94,8 +95,6 @@ abstract public class OnePlusNAutonFramework extends BaseAutonomous {
             driveAutonomous(180, 3);
             //  turn to face stack
             turnToAngle(angleOffset);
-            //  grab from stack
-            robotCameraPipeline.setRanges(Constants.LOWER_BLUE, Constants.UPPER_BLUE);
             grabFromStackAndDepositOnJunctionPlusConeCentering(loops, angleOffset);
             //drive slides down
             driveSlidesAutonomous(Constants.SLIDE_BOTTOM);

@@ -8,7 +8,7 @@ import org.firstinspires.ftc.team6220_PowerPlay.Constants;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraRotation;
 
-@Disabled
+//@Disabled
 @Autonomous(name = "ConeCenteringTest")
 public class ConeCenteringTest extends BaseAutonomous {
 
@@ -16,22 +16,11 @@ public class ConeCenteringTest extends BaseAutonomous {
     public void runOpMode() throws InterruptedException {
         initialize();
 
-        driveSlidesAutonomous(Constants.SLIDE_TOP);
-
-        robotCameraPipeline.setRanges(Constants.LOWER_YELLOW, Constants.UPPER_YELLOW);
+        robotCameraPipeline.setRanges(Constants.BLUE_SCALAR_ARRAY[0], Constants.BLUE_SCALAR_ARRAY[1]);
 
         startCameraWithPipeline(robotCameraPipeline, robotCamera, Constants.CAMERA_X, Constants.CAMERA_Y);
 
         waitForStart();
-
-        centerConeStack(robotCameraPipeline, 300, 1);
-
-        telemetry.addData("width", robotCameraPipeline.width);
-
-        telemetry.update();
-
-        sleep(3000);
-
-        robotCamera.closeCameraDevice();
+        centerConeStack(robotCameraPipeline,450,1);
     }
 }
