@@ -11,18 +11,18 @@ public class Constants {
 
     public static final double TURNING_KP = 0.008;
 
-    public static final int UNIT_CIRCLE_OFFSET_DEGREES = 90;
+    public static final int UNIT_CIRCLE_OFFSET_DEGREES = 95;
 
     public static final double DRIVE_CURVE_FACTOR = 0.5;
 
     public static final double MINIMUM_TURN_POWER = 0.05;
     public static final double MINIMUM_DRIVE_POWER = 0.05;
 
-    public static final double MAXIMUM_TURN_POWER_AUTONOMOUS = 0.7;
-    public static final double MAXIMUM_DRIVE_POWER_AUTONOMOUS = 0.35;
+    public static final double MAXIMUM_TURN_POWER_AUTONOMOUS = 0.5;
+    public static final double MAXIMUM_DRIVE_POWER_AUTONOMOUS = 0.5;
 
-    public static final double MAXIMUM_TURN_POWER_TELEOP = 0.5;
-    public static final double MAXIMUM_DRIVE_POWER_TELEOP = 0.5;
+    public static final double MAXIMUM_TURN_POWER_TELEOP = 0.6;
+    public static final double MAXIMUM_DRIVE_POWER_TELEOP = 0.6;
 
     public static final double SLIDE_FEEDFORWARD = 0.05;
     public static final double SLIDE_MOTOR_KP = 0.01;
