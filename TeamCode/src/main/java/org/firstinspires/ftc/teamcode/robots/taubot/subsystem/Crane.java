@@ -116,8 +116,8 @@ public class Crane implements Subsystem {
     public static double OLD_TRANSFER_SHOULDER_ANGLE = 50;  //angle at which transfer occurs
     public static double OLD_TRANSFER_SHOULDER_FLIPANGLE = 85; //causes the gripperflipper to flip when the angle is high and the turret turns enough or the robot accellerates
     public static double OLD_TRANSFER_ARM_LENGTH = 0.05;
-    
-    public static double SAFE_SHOULDER_ANGLE = 30;
+
+    public static double SAFE_SHOULDER_ANGLE = 15;
     public static double CALIBRATE_SHOULDER_ANGLE = 50;
     public static double SAFE_ARM_LENGTH = 0.05;
 
