@@ -109,7 +109,7 @@ public class Crane implements Subsystem {
     public static double BULB_OPEN_POS = 1210;
     public static double BULB_CLOSED_POS = 1500;
 
-    public static double TRANSFER_SHOULDER_ANGLE = 60;  //angle at which transfer occurs
+    public static double TRANSFER_SHOULDER_ANGLE = 50;  //angle at which transfer occurs
     public static double TRANSFER_SHOULDER_FLIPANGLE = 60; //angle that puts transfer plate at best angle to receive bulb gripper
     public static double TRANSFER_ARM_LENGTH = 0.05;
 
