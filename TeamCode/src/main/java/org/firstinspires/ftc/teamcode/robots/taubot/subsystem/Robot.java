@@ -171,10 +171,12 @@ public class Robot implements Subsystem {
             //articulate(Robot.Articulation.UNFOLD);
             articulate(Robot.Articulation.MANUAL);
             turret.articulate(Turret.Articulation.lockToZero);
+            turret.setHeading((turret.TUNEABLE_SIZING_OFFSET/turret.TRANSFER_TICS)*Math.PI);
         }else if (PowerPlay_6832.gameState.equals(PowerPlay_6832.GameState.TEST) || PowerPlay_6832.gameState.equals(PowerPlay_6832.GameState.DEMO)){
             driveTrain.setPoseEstimate(new Pose2d(start.getPose().getX(), start.getPose().getY()));
-            articulate(Robot.Articulation.UNFOLD);
+            articulate(Robot.Articulation.UNFOLD_WITH_PLATE);
             turret.articulate(Turret.Articulation.lockToZero);
+            turret.setHeading((turret.TUNEABLE_SIZING_OFFSET/turret.TRANSFER_TICS)*Math.PI);
         }else if(PowerPlay_6832.gameState.equals(PowerPlay_6832.GameState.TELE_OP)){
             int loggerTimeout = (int)(loggerTimeoutMinutes*60000);
             if(System.currentTimeMillis()-pos.getTimestamp()>loggerTimeout||ignoreCache) { //dont use cached position
@@ -361,7 +363,6 @@ public class Robot implements Subsystem {
                         //turret.articulate(Turret.Articulation.lockToZero);
                         //crane.articulate(Crane.Articulation.manual);
                         //autonTime = futureTime(3);
-                        driveTrain.turnUntilDegrees(0);
                         if(unfold())
                         {
                             autonTime = futureTime(1.0);
@@ -370,7 +371,7 @@ public class Robot implements Subsystem {
                         break;
                     case 1:
 
-                        if(driveTrain.turnUntilDegrees(0) && System.nanoTime() > autonTime){
+                        if(System.nanoTime() > autonTime){
                             autonIndex++;
                         }
                         break;
@@ -382,7 +383,7 @@ public class Robot implements Subsystem {
                             autonTurnDoneTelemetry = false;
                             autonOnPoleTelemetry = false;
                             if (driveTrain.driveUntilDegrees( 45.5, 0, 20)) {
-                                driveTrain.hardTuck();
+                                driveTrain.maxTuck();
                                 autonIndex++;
 //                                autonIndex = 0;
 //                                return true;
@@ -426,7 +427,6 @@ public class Robot implements Subsystem {
                         autonTime = futureTime(.3);
                         break;
                     case 4:
-                        driveTrain.setChassisLength(Constants.CONESTACK_CHASSIS_LENGTH);
                         if(System.nanoTime() > autonTime)
                             autonIndex ++;
                         break;
@@ -436,7 +436,6 @@ public class Robot implements Subsystem {
                         if(crane.goToFieldCoordinate(targetPoleX, targetPoleY, targetPoleZ)){
                             autonTime = futureTime(0.8);
                             autonIndex++;
-
                         }
                         break;
                     case 6:
@@ -508,7 +507,7 @@ public class Robot implements Subsystem {
                         if (driveTrain.driveUntilDegrees(2 * Field.INCHES_PER_GRID-4, 90, 20))
                             timeSupervisor++;
                     } else if (autonTarget == 2 || Objects.isNull(autonTarget)){
-                        driveTrain.hardTuck();
+                        driveTrain.maxTuck();
                             timeSupervisor++;
                     }
                 } else {
@@ -516,7 +515,7 @@ public class Robot implements Subsystem {
                         if (driveTrain.driveUntilDegrees(2 * Field.INCHES_PER_GRID, -90, 20))
                             timeSupervisor++;
                     } else if (autonTarget == 0 || Objects.isNull(autonTarget)) {
-                        driveTrain.hardTuck();
+                        driveTrain.maxTuck();
                             timeSupervisor++;
                     }
                 }
@@ -538,13 +537,19 @@ public class Robot implements Subsystem {
                 break;
             case 4:
                 if(driveTrain.driveUntilDegrees(0.4*Field.INCHES_PER_GRID,180,20)){
+                    autonNotDriving();
+                    crane.articulate(Crane.Articulation.manual);
                     timeSupervisor++;
                 }
                 break;
             case 5:
-                crane.articulate(Crane.Articulation.lock);
+                if(crane.unfoldTransferPlate()){
+                    crane.articulate(Crane.Articulation.lockToHome);
+                    timeSupervisor++;
+                }
+                break;
+            case 6:
                 driveTrain.maxTuck();
-                autonNotDriving();
                 timeSupervisor = 0;
                 return true;
         }
@@ -581,7 +586,8 @@ public class Robot implements Subsystem {
 
         // tele-op articulations
         TRANSFER,
-        DROP
+        DROP,
+        UNFOLD_WITH_PLATE
 
     }
 
@@ -596,7 +602,7 @@ public class Robot implements Subsystem {
             driveTrain.articulate(DriveTrain.Articulation.unlock);
             underarm.articulate(UnderArm.Articulation.driving);
             if(!driveInit){
-                crane.articulate(Crane.Articulation.lockToHome); //keeps crane in safe position
+                crane.articulate(Crane.Articulation.lockToTransfer); //keeps crane in safe position
                 driveInit = true;
             }
             notDriveInit = false;
@@ -616,7 +622,12 @@ public class Robot implements Subsystem {
                     if(cancelTransfer()) {
                         articulation = Articulation.MANUAL;
                     }
-
+                case UNFOLD_WITH_PLATE:
+                    if(unfoldWithPlate()){
+                        unfolded = true;
+                        articulation = Articulation.MANUAL;
+                    }
+                    break;
                 case CALIBRATE:
                     if (crane.calibrate()) {
                         articulation = Articulation.INIT;
@@ -655,6 +666,26 @@ public class Robot implements Subsystem {
         return this.articulation;
     }
 
+    int plateUnfoldStage = 0;
+    public boolean unfoldWithPlate(){
+        switch (plateUnfoldStage){
+            case 0:
+                if(unfold()){
+                    plateUnfoldStage++;
+                    crane.articulate(Crane.Articulation.manual);
+                }
+                break;
+            case 1:
+                if(crane.unfoldTransferPlate()){
+                    plateUnfoldStage++;
+                }
+                break;
+            case 2:
+                plateUnfoldStage = 0;
+                return true;
+        }
+        return false;
+    }
     public boolean getAutonConeStack() {
         return rightConeStack;
     }
@@ -755,7 +786,7 @@ public class Robot implements Subsystem {
                 break;
             case 5:
                 //crane.articulate(Crane.Articulation.home);
-                underarm.articulate(UnderArm.Articulation.home);
+                underarm.articulate(UnderArm.Articulation.unfold);
                 crane.tuckNudgeStick(); //changed from extended to tucked (redundant, should already be tucked) - keep nudgestick tucked always, except for when approaching a pole
                 unfoldStage = 0;
                 return true;
@@ -796,6 +827,7 @@ public class Robot implements Subsystem {
     public void underarmConeStackAdvance() {
         coneStackStage ++;
     }
+
     int coneStackStage = 0;
     long coneStackTimer = 0;
     public boolean underarmConeStack () {
@@ -812,13 +844,14 @@ public class Robot implements Subsystem {
 //                            coneStackStage++;
 //                    if(!rightConeStack)
 //                        if(driveTrain.turnUntilDegrees(-90));
+                    driveTrain.setChassisLength(Constants.CONESTACK_CHASSIS_LENGTH);
                     underarm.release();
                     //coneStackStage++;
                     break;
                 case 1:
                     //turn on vision pipeline and set chassis length and heading accordingly
 //                    if (/* SOME KIND OF CHECK, PLEASE NO TIMER */ false
-                    underarm.articulate(UnderArm.Articulation.coneStackHover);
+
                     //coneStackStage++;
                     break;
                 case 2:

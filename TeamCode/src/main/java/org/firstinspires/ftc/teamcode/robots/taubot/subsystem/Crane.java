@@ -82,7 +82,7 @@ public class Crane implements Subsystem {
     public static PIDCoefficients SHOULDER_PID = new PIDCoefficients(0.05, 0.005, 0.0);
     public static double SHOULDER_MAX_PID_OUTPUT = 1;
 
-    public static double FOLD_SHOULDER_POSITION = 11;
+    public static double FOLD_SHOULDER_POSITION = 10;
     public static double SHOULDER_MIN_PID_OUTPUT = -1;
     public static double SHOULDER_TOLERANCE = 1;
     public static double SHOULDER_POWER = 1.0;
@@ -117,7 +117,7 @@ public class Crane implements Subsystem {
     public static double OLD_TRANSFER_SHOULDER_FLIPANGLE = 85; //causes the gripperflipper to flip when the angle is high and the turret turns enough or the robot accellerates
     public static double OLD_TRANSFER_ARM_LENGTH = 0.05;
 
-    public static double SAFE_SHOULDER_ANGLE = 15;
+    public static double SAFE_SHOULDER_ANGLE = 30;
     public static double CALIBRATE_SHOULDER_ANGLE = 50;
     public static double SAFE_ARM_LENGTH = 0.05;
 
@@ -132,8 +132,8 @@ public class Crane implements Subsystem {
     public double nudgeCenter = nudgeRange/2 + nudgeTuckValue;
 
     public static int FLIPPER_HOME = 900;
-    public static int FLIPPER_FLIP = 1900;
-    public static int FLIPPER_TENSION = 1700;
+    public static int FLIPPER_FLIP = 1716;
+    public static int FLIPPER_TENSION = 1900;
     public static int FLIPPER_REST = 1300;
 
     public static final double DISTANCE_SENSOR_TO_ELBOW = 0.33;
@@ -331,7 +331,7 @@ public class Crane implements Subsystem {
                 if (System.nanoTime()>futureTime) {
                     enableAllPID();
                     setShoulderTargetAngle(FOLD_SHOULDER_POSITION);
-                    articulate(Articulation.init);
+                    articulate(Articulation.manual);
                     robot.driveTrain.articulate(DriveTrain.Articulation.lock);
                     calibrateStage = 0;
                     extenderActivePID = true;
@@ -484,6 +484,7 @@ public class Crane implements Subsystem {
         init,
         dropConeReturnToTransfer,
         autonDrive,
+        lockToTransfer,
         lockToHome
     }
 
@@ -491,6 +492,25 @@ public class Crane implements Subsystem {
         return articulation;
     }
 
+    int plateStage = 0;
+    long plateTimer = 0;
+    public boolean unfoldTransferPlate(){
+        switch (plateStage){
+            case 0:
+                flipToFlip();
+                plateTimer = futureTime(1);
+                plateStage++;
+                break;
+            case 1:
+                if(System.nanoTime() > plateTimer){
+                    flipToHome();
+                    plateStage = 0;
+                    return true;
+                }
+                break;
+        }
+        return false;
+    }
 
     int dropThenTransferStage = 0;
     long dropThenTransferTimer = 0;
@@ -525,12 +545,23 @@ public class Crane implements Subsystem {
         return false;
     }
 
+    boolean sizeMode = false;
+
+    public void toggleSizeMode(){
+        sizeMode = !sizeMode;
+    }
+
     public Articulation articulate(Articulation target){
         articulation = target;
 
         switch(articulation){
+            case lockToTransfer:
+                if(goLockTransfer()){
+                    articulation = Articulation.lock;
+                }
+                break;
             case lockToHome:
-                if(goLock()){
+                if(goLockHome()){
                     articulation = Articulation.lock;
                 }
                 break;
@@ -559,7 +590,11 @@ public class Crane implements Subsystem {
                 if(Transfer()) articulation = Articulation.manual;
                 break;
             case init:
-                robot.turret.articulate(Turret.Articulation.lockToZero);
+                if(sizeMode){
+                    robot.turret.articulate(Turret.Articulation.lockToSizing);
+                }else {
+                    robot.turret.articulate(Turret.Articulation.lockToZero);
+                }
                 break;
             case postTransfer:
                 if(postTransfer()){
@@ -940,9 +975,32 @@ public class Crane implements Subsystem {
 
     public static Vector3 home = new Vector3(2, 0 ,12);
 
+    int lockHome = 0;
+
+    public boolean goLockHome(){
+        switch (lockHome){
+            case 0:
+                flipToHome();  //gabriel is a motherfucker
+                setExtendTargetPos(SAFE_ARM_LENGTH);
+                lockHome++;
+                break;
+            case 1:
+                if(extensionOnTarget()){
+                    setShoulderTargetAngle(HOME_SAFE_SHOULDER_ANGLE);
+                    robot.turret.articulate(Turret.Articulation.lockToZero);
+                    lockHome++;
+                }
+                break;
+            case 2:
+                lockHome = 0;
+                return true;
+        }
+        return false;
+    }
+
     int lock = 0;
 
-    public boolean goLock(){
+    public boolean goLockTransfer(){
         switch (lock){
             case 0:
                 flipToHome();  //gabriel is a motherfucker

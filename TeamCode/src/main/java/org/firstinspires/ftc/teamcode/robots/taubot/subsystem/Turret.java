@@ -32,6 +32,7 @@ public class Turret implements Subsystem {
     public static PIDCoefficients TURRET_PID = new PIDCoefficients(0.01, 0.02, 0.0002); //0.02, 0.01, 0.05), changed from (0.01, 0.02, 0.0002)
     public static final double TICKS_PER_DEGREE = 36;
     static double TURRET_OFFSET_HEADING = 0;
+    public static double TUNEABLE_SIZING_OFFSET = 170;
     public static double TURRET_TOLERANCE = 1;
     public static double TURRET_TICKS_ROTATION_SPEED = 1500;
 
@@ -46,7 +47,7 @@ public class Turret implements Subsystem {
     private int absTicks;
 
     private int targetTics; //when not in IMU mode, this is the current target
-    private int TRANSFER_TICS = 1786;
+    public int TRANSFER_TICS = 1786;
     private boolean currIsLower = true;
 
     BNO055IMU turretIMU;
@@ -115,7 +116,9 @@ public class Turret implements Subsystem {
         transfer,
         lockToZero,
         manual,
-        calibrate
+        calibrate,
+        lockToSizing,
+        unfold
     }
 
     public Articulation articulate(Articulation target){
@@ -146,6 +149,11 @@ public class Turret implements Subsystem {
                 setControlMethodIMU(false);
                 targetTics = TRANSFER_TICS;
                 articulation = Articulation.manual;
+                break;
+            case lockToSizing:
+                setControlMethodIMU(false);
+                //todo - set actual sizing target ticks
+                targetTics = (int)TUNEABLE_SIZING_OFFSET;
                 break;
         }
 
@@ -247,7 +255,7 @@ public class Turret implements Subsystem {
                 }
                 break;
             case 2:
-                articulate(Articulation.lockToZero);
+                articulate(Articulation.lockToSizing);
                 calibrateStage = 0;
                 return true;
         }

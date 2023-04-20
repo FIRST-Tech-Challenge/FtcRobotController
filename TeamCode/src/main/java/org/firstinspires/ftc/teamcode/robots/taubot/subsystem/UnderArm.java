@@ -184,9 +184,14 @@ public class UnderArm implements Subsystem {
         Test2(90,90,0),
         Test3(0,90,0),
         Test4(90,0,30),
+        Cone1(90,150,0),
+        Cone2(90,150,0),
+        Cone3(90,150,0),
+        Cone4(90,150,0),
+        Cone5(90,150,0),
         SafePos(0,0,0,0,MIN_CHASSIS_LENGTH),
         FoldPosition(FOLDPOS_SHOULDER_ANGLE,FOLDPOS_ELBOW_ANGLE, 0, FOLDPOS_TURRET_ANGLE,MIN_CHASSIS_LENGTH),
-        UnfoldPosition(20,0,0,0,MAX_CHASSIS_LENGTH);
+        UnfoldPosition(0,0,0,-45,MAX_CHASSIS_LENGTH);
 
         public double shoulderAngle, elbowAngle, wristAngle, turretAngle, chassisLength;
 
@@ -242,9 +247,9 @@ public class UnderArm implements Subsystem {
                 robot.driveTrain.articulate(DriveTrain.Articulation.lock);
                 break;
             case unfold: //PROB NOT NEEDED but added just in case
-                jointAngle = JointAngle.UnfoldPosition;
-                goToJointAngle(jointAngle);
-                articulation = Articulation.manual;
+                if(unfold()){
+                    articulation = Articulation.home;
+                }
                 break;
             case transfer: //transfer position
                 if(goToTransfer()){
@@ -295,6 +300,27 @@ public class UnderArm implements Subsystem {
 
         }
         return target;
+    }
+
+    int unfoldStage = 0;
+    long unfoldTimer = 0;
+
+    public boolean unfold(){
+        switch (unfoldStage){
+            case 0:
+                jointAngle = JointAngle.UnfoldPosition;
+                goToJointAngle(jointAngle);
+                unfoldTimer = futureTime(0.1);
+                unfoldStage++;
+                break;
+            case 1:
+                if(System.nanoTime() > unfoldTimer){
+                    unfoldStage = 0;
+                    return true;
+                }
+                break;
+        }
+        return false;
     }
 
     public void goToJointAngle(JointAngle joint){
@@ -887,6 +913,18 @@ public boolean goSubstationRecover() {
 
     public void adjustZ(double speed){
         fieldPositionTarget.z += ADJUST_HEIGHT_SPEED*speed;
+    }
+
+    JointAngle[] coneStackAngles = {
+            JointAngle.Cone1,
+            JointAngle.Cone2,
+            JointAngle.Cone3,
+            JointAngle.Cone4,
+            JointAngle.Cone5
+    };
+
+    public boolean cycleConeStack(){
+        return false;
     }
     @Override
     public void update(Canvas fieldOverlay) {
