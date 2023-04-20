@@ -16,11 +16,12 @@ public class ConeCenteringTest extends BaseAutonomous {
     public void runOpMode() throws InterruptedException {
         initialize();
 
-        robotCameraPipeline.setRanges(Constants.BLUE_SCALAR_ARRAY[0], Constants.BLUE_SCALAR_ARRAY[1]);
-
+        robotCameraPipeline.invertRange(true);
         startCameraWithPipeline(robotCameraPipeline, robotCamera, Constants.CAMERA_X, Constants.CAMERA_Y);
 
         waitForStart();
-        centerConeStack(robotCameraPipeline,450,1);
+        while(opModeIsActive()){
+
+        }
     }
 }

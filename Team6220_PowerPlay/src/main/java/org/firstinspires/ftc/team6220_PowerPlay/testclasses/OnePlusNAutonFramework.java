@@ -54,7 +54,7 @@ abstract public class OnePlusNAutonFramework extends BaseAutonomous {
             robotCamera = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "RobotCamera"), cameraMonitorViewId);
             // starts streaming cameras
             startCameraWithPipeline(robotCameraPipeline, robotCamera, Constants.CAMERA_X, Constants.CAMERA_Y);
-            robotCameraPipeline.invertRange(false);
+            //robotCameraPipeline.invertRange(false);
             //startCameraWithPipeline(grabberCameraPipeline, grabberCamera, Constants.CAMERA_X, Constants.CAMERA_Y);
             robotCameraPipeline.invertRange(invert);
             robotCameraPipeline.setRanges(ranges[0],ranges[1]);
@@ -86,7 +86,7 @@ abstract public class OnePlusNAutonFramework extends BaseAutonomous {
             sleep(200);
 
             // drop cone on junction
-            driveGrabber(Constants.GRABBER_OPEN_POSITION);
+            driveGrabber(Constants.GRABBER_INITIALIZE_POSITION);
 
             // sleep to make sure cone has fallen
             sleep(100);
@@ -100,23 +100,23 @@ abstract public class OnePlusNAutonFramework extends BaseAutonomous {
             driveSlidesAutonomous(Constants.SLIDE_BOTTOM);
             //  prepare to park
             turnToAngle(0);
-
+            driveGrabber(Constants.GRABBER_OPEN_POSITION);
             switch (signal) {
                 // strafe to park in zone 1
                 case 1:
-                    driveGrabber(Constants.GRABBER_OPEN_POSITION);
+                    //driveGrabber(Constants.GRABBER_OPEN_POSITION);
                     driveAutonomous(signalArray[0], signalArray[1]);
                     break;
 
                 // strafe to park in zone 2
                 case 2:
-                    driveGrabber(Constants.GRABBER_OPEN_POSITION);
+                    //driveGrabber(Constants.GRABBER_OPEN_POSITION);
                     driveAutonomous(signalArray[2], signalArray[3]);
                     break;
 
                 // strafe to park in zone 3
                 case 3:
-                    driveGrabber(Constants.GRABBER_OPEN_POSITION);
+                    // driveGrabber(Constants.GRABBER_OPEN_POSITION);
                     driveAutonomous(signalArray[4], signalArray[5]);
                     break;
             }

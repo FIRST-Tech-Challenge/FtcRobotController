@@ -9,6 +9,6 @@ import org.firstinspires.ftc.team6220_PowerPlay.Constants;
 public class OnePlusTwoPlusParkRedRight extends OnePlusNAutonFramework{
     @Override
     public void runOpMode() throws InterruptedException {
-        runAuto(AutoState.RightAutos, 2, Constants.RED_SCALAR_ARRAY, true);
+        runAuto(AutoState.RightAutos, 2, Constants.BLUE_SCALAR_ARRAY, true);
     }
 }
