@@ -100,7 +100,7 @@ abstract public class OnePlusNAutonFramework extends BaseAutonomous {
             driveSlidesAutonomous(Constants.SLIDE_BOTTOM);
             //  prepare to park
             turnToAngle(0);
-            driveGrabber(Constants.GRABBER_OPEN_POSITION);
+            driveGrabber(Constants.GRABBER_INITIALIZE_POSITION);
             switch (signal) {
                 // strafe to park in zone 1
                 case 1:
