@@ -434,12 +434,12 @@ public class Robot implements Subsystem {
                         //targets middle pole
                         driveTrain.setMaintainHeadingEnabled(true);
                         if(startingPosition.equals(Constants.Position.START_LEFT)) {
-                            if (crane.goToFieldCoordinate(targetPoleX-7, targetPoleY-7, targetPoleZ)) {
+                            if (crane.goToFieldCoordinate(targetPoleX-7, targetPoleY-7, targetPoleZ-3)) {
                                 autonTime = futureTime(0.8);
                                 autonIndex++;
                             }
                         }else{
-                            if (crane.goToFieldCoordinate(targetPoleX-7, targetPoleY+7, targetPoleZ)) {
+                            if (crane.goToFieldCoordinate(targetPoleX-7, targetPoleY+7, targetPoleZ-3)) {
                                 autonTime = futureTime(0.8);
                                 autonIndex++;
                             }
@@ -447,12 +447,12 @@ public class Robot implements Subsystem {
                         break;
                     case 6:
                         if(startingPosition.equals(Constants.Position.START_LEFT)){
-                            if (crane.goToFieldCoordinate(targetPoleX-7, targetPoleY-7, targetPoleZ)) {
+                            if (crane.goToFieldCoordinate(targetPoleX-7, targetPoleY-7, targetPoleZ-3)) {
                                 autonTime = futureTime(0.8);
                                 autonIndex++;
                             }
                         }else{
-                            if (crane.goToFieldCoordinate(targetPoleX-7, targetPoleY+7, targetPoleZ)) {
+                            if (crane.goToFieldCoordinate(targetPoleX-7, targetPoleY+7, targetPoleZ-3)) {
                                 autonTime = futureTime(0.8);
                                 autonIndex++;
                             }
