@@ -7,7 +7,7 @@ public class Constants {
     public static final double INCHES_PER_METER = 100 / 2.54;
 
     public static final double HEADING_CORRECTION_KP_TELEOP = 0.03;
-    public static final double HEADING_CORRECTION_KP_AUTONOMOUS = 0.001;
+    public static final double HEADING_CORRECTION_KP_AUTONOMOUS = 0.05;
 
     public static final double TURNING_KP = 0.008;
 
@@ -19,7 +19,7 @@ public class Constants {
     public static final double MINIMUM_DRIVE_POWER = 0.05;
 
     public static final double MAXIMUM_TURN_POWER_AUTONOMOUS = 0.7;
-    public static final double MAXIMUM_DRIVE_POWER_AUTONOMOUS = 0.35;
+    public static final double MAXIMUM_DRIVE_POWER_AUTONOMOUS = 0.4;
 
     public static final double MAXIMUM_TURN_POWER_TELEOP = 0.5;
     public static final double MAXIMUM_DRIVE_POWER_TELEOP = 0.7;
@@ -58,16 +58,19 @@ public class Constants {
     public static final int CAMERA_CENTER_Y = CAMERA_Y / 2;
 
     public static final int CONE_WIDTH = 400;
-    public static final double CONE_STACK_WIDTH_KP = -0.00005;
+    public static final double CONE_STACK_WIDTH_KP = -0.00004;
     public static final double CONE_STACK_CENTERING_KP = -0.0005;
-    public static final double CONE_STACK_CENTERING_PROPORTIONAL_KP = -0.00047;
-    public static final double CONE_STACK_CENTERING_MAX_SPEED = 0.32;
+    public static final double CONE_STACK_CENTERING_PROPORTIONAL_KP = -0.0004;
+    public static final double CONE_STACK_CENTERING_MAX_SPEED = 0.35;
 
     public static final int JUNCTION_TOP_TOLERANCE = 100;
     public static final double JUNCTION_TOP_CENTERING_KP = 0.0004;
 
-    public static final Scalar LOWER_RED = new Scalar(17, 0, 0);
-    public static final Scalar UPPER_RED = new Scalar(165, 150, 30);
+    public static final Scalar LOWER_RED_B = new Scalar(0, 150, 30);
+    public static final Scalar UPPER_RED_B = new Scalar(17, 255, 255);
+
+    public static final Scalar LOWER_RED_U = new Scalar(165, 150, 30);
+    public static final Scalar UPPER_RED_U = new Scalar(180, 255, 255);
 
     public static final Scalar LOWER_BLUE = new Scalar(100, 125, 75);
     public static final Scalar UPPER_BLUE = new Scalar(140, 255, 255);
@@ -77,21 +80,18 @@ public class Constants {
 
     public static final Scalar LOWER_BLACK = new Scalar(0, 0, 0);
     public static final Scalar UPPER_BLACK = new Scalar(180, 255, 42);
-
-    public static final Scalar[] BLUE_SCALAR_ARRAY = new Scalar[]{LOWER_BLUE, UPPER_BLUE};
-
-    public static final Scalar[] RED_SCALAR_ARRAY = new Scalar[]{LOWER_RED, UPPER_RED};
+    public static final Scalar[] BLUE_SCALAR_ARRAY = new Scalar[] {new Scalar(100, 125, 75), new Scalar(140, 255, 255)};
 
     public static final Size BLUR_SIZE = new Size(5, 5);
 
     public static final int DISTANCE_FROM_CENTER_JUNCTION_TOP = 200;
 
-    public static final int CONTOUR_MINIMUM_SIZE = 2000;
+    public static final int CONTOUR_MINIMUM_SIZE = 200;
 
     public static final double TURNING_AUTHORITY_CONSTANT = 250.0;
     public static final double STRAFING_AUTHORITY_CONSTANT = 200.0;
 
-    public static final double AUTHORITY_SCALER = 0.8;
+    public static final double AUTHORITY_SCALER = 1;
 
     public static final double DRIVE_AUTHORITY_SCALER = 1.1;
 
@@ -99,7 +99,7 @@ public class Constants {
 
     public static final int[] STACK_HEIGHTS = new int[]{0, 170, 330, 490, 650};
 
-    public static final int[] BREAK_HEIGHTS = new int[]{500, 450, 430, 350, 350};
+    public static final int[] BREAK_HEIGHTS = new int[]{500, 450, 430, 320, 300};
 
     public static final int[] GRAB_HEIGHTS = new int[]{350, 350, 380, 380, 380};
 

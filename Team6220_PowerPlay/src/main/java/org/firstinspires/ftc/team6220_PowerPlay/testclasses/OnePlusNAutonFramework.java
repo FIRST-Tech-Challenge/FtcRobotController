@@ -19,7 +19,7 @@ abstract public class OnePlusNAutonFramework extends BaseAutonomous {
      * @param loops is how many times the robot grabs from the stack before parking.
      * @throws InterruptedException
      */
-        public void runAuto(AutoState AutoSelector, int loops, Scalar[] ranges) throws InterruptedException{
+        public void runAuto(AutoState AutoSelector, int loops, Scalar[] ranges, boolean invert) throws InterruptedException{
             int driveCourse;
             int angleOffset;
             int targetDistance = 11;
@@ -45,17 +45,19 @@ abstract public class OnePlusNAutonFramework extends BaseAutonomous {
 
             int signal = 1 + detectSignal();
 
+
+
+            robotCameraPipeline = new RobotCameraPipeline();
+
             //reinit cameras to switch pipelines
             int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
             robotCamera = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "RobotCamera"), cameraMonitorViewId);
-            // creates pipelines
-            grabberCameraPipeline = new GrabberCameraPipeline();
-            robotCameraPipeline = new RobotCameraPipeline();
-            grabberCameraPipeline.setRanges(Constants.LOWER_YELLOW, Constants.UPPER_YELLOW);
-            robotCameraPipeline.setRanges(Constants.LOWER_YELLOW,Constants.UPPER_YELLOW);
             // starts streaming cameras
             startCameraWithPipeline(robotCameraPipeline, robotCamera, Constants.CAMERA_X, Constants.CAMERA_Y);
-            startCameraWithPipeline(grabberCameraPipeline, grabberCamera, Constants.CAMERA_X, Constants.CAMERA_Y);
+            //robotCameraPipeline.invertRange(false);
+            //startCameraWithPipeline(grabberCameraPipeline, grabberCamera, Constants.CAMERA_X, Constants.CAMERA_Y);
+            robotCameraPipeline.invertRange(invert);
+            robotCameraPipeline.setRanges(ranges[0],ranges[1]);
 
             //waits for the auto to start
             waitForStart();
@@ -74,15 +76,8 @@ abstract public class OnePlusNAutonFramework extends BaseAutonomous {
             // raise slides to high junction height
             driveSlidesAutonomous(Constants.SLIDE_HIGH);
 
-            driveAutonomous(driveCourse, 11);
-
-            sleep(300);
-
-            driveAutonomous(0, 4);
-            //if grabber camera detects, then drop. If it does not detect, then center using robot camera
-            /*if(!grabberCameraPipeline.detected){
-                centerConeStack(robotCameraPipeline, 270, 0);
-            }*/
+            // drive to junction
+            driveAutonomous(driveCourse, 10.5);
 
             // lower cone on to junction
             driveSlidesAutonomous(Constants.SLIDE_HIGH - 250);
@@ -91,7 +86,7 @@ abstract public class OnePlusNAutonFramework extends BaseAutonomous {
             sleep(200);
 
             // drop cone on junction
-            driveGrabber(Constants.GRABBER_OPEN_POSITION);
+            driveGrabber(Constants.GRABBER_INITIALIZE_POSITION);
 
             // sleep to make sure cone has fallen
             sleep(100);
@@ -100,30 +95,28 @@ abstract public class OnePlusNAutonFramework extends BaseAutonomous {
             driveAutonomous(180, 3);
             //  turn to face stack
             turnToAngle(angleOffset);
-            //  grab from stack
-            robotCameraPipeline.setRanges(Constants.LOWER_BLUE, Constants.UPPER_BLUE);
             grabFromStackAndDepositOnJunctionPlusConeCentering(loops, angleOffset);
             //drive slides down
             driveSlidesAutonomous(Constants.SLIDE_BOTTOM);
             //  prepare to park
             turnToAngle(0);
-
+            driveGrabber(Constants.GRABBER_INITIALIZE_POSITION);
             switch (signal) {
                 // strafe to park in zone 1
                 case 1:
-                    driveGrabber(Constants.GRABBER_OPEN_POSITION);
+                    //driveGrabber(Constants.GRABBER_OPEN_POSITION);
                     driveAutonomous(signalArray[0], signalArray[1]);
                     break;
 
                 // strafe to park in zone 2
                 case 2:
-                    driveGrabber(Constants.GRABBER_OPEN_POSITION);
+                    //driveGrabber(Constants.GRABBER_OPEN_POSITION);
                     driveAutonomous(signalArray[2], signalArray[3]);
                     break;
 
                 // strafe to park in zone 3
                 case 3:
-                    driveGrabber(Constants.GRABBER_OPEN_POSITION);
+                    // driveGrabber(Constants.GRABBER_OPEN_POSITION);
                     driveAutonomous(signalArray[4], signalArray[5]);
                     break;
             }

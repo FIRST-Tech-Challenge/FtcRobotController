@@ -16,17 +16,17 @@ public class TeleOpJunctionCenteringTest extends BaseTeleOp {
     public void runOpMode() {
         initialize();
 
-        grabberCameraPipeline.setRanges(Constants.LOWER_BLACK, Constants.UPPER_BLACK);
-        grabberCamera.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
+        robotCameraPipeline.setRanges(Constants.LOWER_BLACK, Constants.UPPER_BLACK);
+        robotCamera.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
             @Override
             public void onOpened() {
-                grabberCamera.startStreaming(800,600, OpenCvCameraRotation.UPRIGHT);
+                robotCamera.startStreaming(800,600, OpenCvCameraRotation.UPRIGHT);
             }
 
             @Override
             public void onError(int errorCode) {}
         });
-        grabberCamera.setPipeline(grabberCameraPipeline);
+        robotCamera.setPipeline(robotCameraPipeline);
         waitForStart();
 
         while (opModeIsActive()) {
