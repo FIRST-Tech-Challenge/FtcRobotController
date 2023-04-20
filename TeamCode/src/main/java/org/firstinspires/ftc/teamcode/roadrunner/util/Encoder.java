@@ -14,7 +14,7 @@ public class Encoder {
     private static double inverseOverflow(double input, double estimate) {
         double real = input;
         while (Math.abs(estimate - real) > CPS_STEP / 2.0) {
-            real = estimate;
+            real += Math.signum(estimate-real)*CPS_STEP;
         }
         return real;
     }
