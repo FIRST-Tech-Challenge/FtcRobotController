@@ -340,7 +340,6 @@ public class PowerPlay_6832 extends OpMode {
                             gameState = GameState.TELE_OP;
                             gameStateIndex = 1;
                             robot.underarm.resetArticulations();
-                            robot.driveTrain.tuck();
                             active = false;
                             //super.stop();
                         }
