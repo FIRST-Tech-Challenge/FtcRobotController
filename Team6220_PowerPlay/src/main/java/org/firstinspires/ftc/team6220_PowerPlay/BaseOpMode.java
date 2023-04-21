@@ -287,7 +287,7 @@ public abstract class BaseOpMode extends LinearOpMode {
                 telemetry.addData("xStrafingPower", strafePower);
                 telemetry.addData("xTurningPower", turnPower);
                 telemetry.addData("yMotorPower", coneStackWidthMotorPower(width));
-                telemetry.addData("width", width);
+                telemetry.addData("xPos", xOffset);
                 telemetry.update();
             }
 
@@ -300,6 +300,7 @@ public abstract class BaseOpMode extends LinearOpMode {
     public void centerConeStackAndDriveSlides(RobotCameraPipeline pipeline, int stackWidth, int targetPosition) {
         double xOffset, width, strafePower, turnPower;
         do {
+            //TODO: what the fuck, why did we do this
             xOffset = Constants.CAMERA_CENTER_X - pipeline.xPosition;
             width = pipeline.width;
 

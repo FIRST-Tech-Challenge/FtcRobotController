@@ -17,6 +17,8 @@ public class RobotCameraPipeline extends OpenCvPipeline {
     public double width = 0.0;
     public boolean invert = false;
     public boolean combine = false;
+    Mat mat1 = new Mat();
+    Mat mat2 = new Mat();
 
     List<MatOfPoint> contours = new ArrayList<>();
 
@@ -42,14 +44,11 @@ public class RobotCameraPipeline extends OpenCvPipeline {
         combine = b;
     }
 
-    public void combineRanges(Scalar[] range1, Scalar[] range2, Mat mat){
-        Mat mat1 = new Mat();
-        Mat mat2 = new Mat();
-        Core.inRange(mat, range1[0], range1[1], mat1);
-        Core.inRange(mat, range1[0], range1[1], mat2);
+    public void combineRanges(Scalar bottomBottom, Scalar bottomTop, Scalar topBottom, Scalar topTop){
+        Core.inRange(mat1, bottomBottom, bottomTop, mat);
+        Core.inRange(mat2, topBottom, topTop, mat);
         Core.bitwise_and(mat1, mat2, mat);
-        mat1.release();
-        mat2.release();
+
     }
 
     @Override
@@ -61,16 +60,13 @@ public class RobotCameraPipeline extends OpenCvPipeline {
         Imgproc.GaussianBlur(mat, mat, Constants.BLUR_SIZE, 0);
 
         // mask the blurred frame for either ranges or a red + blue mask
-        if(!combine) {
-            Core.inRange(mat, lowerRange, upperRange, mat);
-        }else{
-            combineRanges(Constants.BLUE_SCALAR_ARRAY, Constants.RED_SCALAR_ARRAY, mat);
-        }
         // invert ranges if looking for red
         // this is because red is detected on both ends of the hue spectrum(0-20 & 160-180)
         // so we are looking for 20-160 and changing it so that it detects anything but that.
         if (invert) {
-            Core.bitwise_not(mat, mat);
+            combineRanges(Constants.LOWER_RED_B, Constants.UPPER_RED_B, Constants.LOWER_RED_U, Constants.UPPER_RED_U);
+        }else{
+            Core.inRange(mat, lowerRange, upperRange, mat);
         }
 
         // find the contours in the masked frame
@@ -101,7 +97,7 @@ public class RobotCameraPipeline extends OpenCvPipeline {
                 // draw the bounding rectangle on the frame
                 Imgproc.rectangle(input, boundingRect, new Scalar(0, 255, 0), 10);
 
-                if (moments.get_m00() > 0 & boundingRect.height / boundingRect.width < 0.7) {
+                if (moments.get_m00() > 0) {
                     xPosition = boundingRect.x + (boundingRect.width * 0.5);
                     width = boundingRect.width;
                 }
@@ -113,8 +109,10 @@ public class RobotCameraPipeline extends OpenCvPipeline {
             width = 0.0;
             xPosition = Constants.CAMERA_CENTER_X;
         }
-
+        mat1.release();
+        mat2.release();
         contours.clear();
-        return input;
+        return mat;
     }
 }
+

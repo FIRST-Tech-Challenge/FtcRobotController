@@ -10,6 +10,6 @@ import org.firstinspires.ftc.team6220_PowerPlay.Constants;
 public class OnePlusFiveTest extends OnePlusNAutonFramework {
     @Override
     public void runOpMode() throws InterruptedException {
-        runAuto(AutoState.RightAutos, 5, Constants.BLUE_SCALAR_ARRAY);
+        runAuto(AutoState.RightAutos, 5, Constants.BLUE_SCALAR_ARRAY, false);
     }
 }
