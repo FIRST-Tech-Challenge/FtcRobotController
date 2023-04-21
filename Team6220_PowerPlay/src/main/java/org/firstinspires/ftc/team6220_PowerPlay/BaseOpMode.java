@@ -342,7 +342,6 @@ public abstract class BaseOpMode extends LinearOpMode {
     public void centerConeStackAndDriveSlides(RobotCameraPipeline pipeline, int stackWidth, int targetPosition) {
         double xOffset, width, strafePower, turnPower;
         do {
-            //TODO: what the fuck, why did we do this
             xOffset = Constants.CAMERA_CENTER_X - pipeline.xPosition;
             width = pipeline.width;
 
@@ -353,18 +352,14 @@ public abstract class BaseOpMode extends LinearOpMode {
                 strafePower = coneStackPixelsAndWidthToStrafingPower(xOffset, width);
                 turnPower = Constants.AUTHORITY_SCALER * coneStackPixelsAndWidthToTurningPower(xOffset, width);
                 driveWithoutIMU(strafePower, Constants.DRIVE_AUTHORITY_SCALER * coneStackWidthMotorPower(width), turnPower);
-                telemetry.addData("xStrafingPower", strafePower);
-                telemetry.addData("xTurningPower", turnPower);
-                telemetry.addData("yMotorPower", coneStackWidthMotorPower(width));
-                telemetry.addData("width", width);
-                telemetry.update();
                 driveSlides(targetPosition);
             }
-            // while far enough that the cone stack doesn't fill the entire camera view
+        // while far enough that the cone stack doesn't fill the entire camera view
         } while (width < stackWidth);
+
         stopDriveMotors();
-        motorLeftSlides.setPower(0);
-        motorRightSlides.setPower(0);
+        motorLeftSlides.setPower(Constants.SLIDE_FEEDFORWARD);
+        motorRightSlides.setPower(Constants.SLIDE_FEEDFORWARD);
     }
 
     /**

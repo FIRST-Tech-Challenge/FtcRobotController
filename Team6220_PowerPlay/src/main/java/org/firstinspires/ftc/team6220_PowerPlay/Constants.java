@@ -99,7 +99,7 @@ public class Constants {
 
     public static final int[] STACK_HEIGHTS = new int[]{0, 170, 330, 490, 650};
 
-    public static final int[] BREAK_HEIGHTS = new int[]{500, 450, 430, 320, 300};
+    public static final int[] BREAK_HEIGHTS = new int[]{500, 450, 430, 350, 330};
 
     public static final int[] GRAB_HEIGHTS = new int[]{350, 350, 380, 380, 380};
 

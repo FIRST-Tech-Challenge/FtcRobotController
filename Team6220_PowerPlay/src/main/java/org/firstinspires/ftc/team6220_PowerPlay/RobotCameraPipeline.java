@@ -44,10 +44,10 @@ public class RobotCameraPipeline extends OpenCvPipeline {
         combine = b;
     }
 
-    public void combineRanges(Scalar bottomBottom, Scalar bottomTop, Scalar topBottom, Scalar topTop){
-        Core.inRange(mat1, bottomBottom, bottomTop, mat);
-        Core.inRange(mat2, topBottom, topTop, mat);
-        Core.bitwise_and(mat1, mat2, mat);
+    public void combineRanges(Scalar bottomBottom, Scalar bottomTop, Scalar topBottom, Scalar topTop, Mat input, Mat dst){
+        Core.inRange(input, bottomBottom, bottomTop, mat1);
+        Core.inRange(input, topBottom, topTop, mat2);
+        Core.bitwise_or(mat1, mat2, dst);
 
     }
 
@@ -64,7 +64,7 @@ public class RobotCameraPipeline extends OpenCvPipeline {
         // this is because red is detected on both ends of the hue spectrum(0-20 & 160-180)
         // so we are looking for 20-160 and changing it so that it detects anything but that.
         if (invert) {
-            combineRanges(Constants.LOWER_RED_B, Constants.UPPER_RED_B, Constants.LOWER_RED_U, Constants.UPPER_RED_U);
+            combineRanges(Constants.LOWER_RED_B, Constants.UPPER_RED_B, Constants.LOWER_RED_U, Constants.UPPER_RED_U, mat, mat);
         }else{
             Core.inRange(mat, lowerRange, upperRange, mat);
         }

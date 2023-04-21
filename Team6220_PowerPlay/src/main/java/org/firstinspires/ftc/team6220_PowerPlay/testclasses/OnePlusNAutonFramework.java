@@ -23,6 +23,7 @@ abstract public class OnePlusNAutonFramework extends BaseAutonomous {
             int driveCourse;
             int angleOffset;
             int targetDistance = 11;
+            boolean Lstuff = false;
             int[] signalArray;
 
             switch (AutoSelector) {
@@ -30,12 +31,14 @@ abstract public class OnePlusNAutonFramework extends BaseAutonomous {
                     signalArray = new int[]{90, 33, 90, 11, -90, 11};
                     driveCourse = -90;
                     angleOffset = 90;
+                    Lstuff = true;
                     break;
 
                 case RightAutos:
                     signalArray = new int[]{90, 11, -90, 11, -90, 33};
                     driveCourse = 90;
                     angleOffset = -90;
+                    Lstuff = false;
                     break;
                 default:
                     throw new IllegalArgumentException("You need to add a new case to AutoFramework in order to run that");
@@ -95,7 +98,11 @@ abstract public class OnePlusNAutonFramework extends BaseAutonomous {
             driveAutonomous(180, 3);
             //  turn to face stack
             turnToAngle(angleOffset);
-            grabFromStackAndDepositOnJunctionPlusConeCentering(loops, angleOffset);
+            if(Lstuff){
+                grabFromStackAndDepositOnJunctionPlusConeCenteringLeft(loops, angleOffset);
+            }else {
+                grabFromStackAndDepositOnJunctionPlusConeCentering(loops, angleOffset);
+            }
             //drive slides down
             driveSlidesAutonomous(Constants.SLIDE_BOTTOM);
             //  prepare to park
@@ -121,6 +128,8 @@ abstract public class OnePlusNAutonFramework extends BaseAutonomous {
                     break;
             }
         }
+
+
     public enum AutoState {
         LeftAutos,
         RightAutos,
