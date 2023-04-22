@@ -31,8 +31,6 @@ public class SPAMTACTICSExampleDriveTrain extends TeleOpModeBase {
     Motor motor1 = HardwareMapContainer.motor0;
     //right wheel
     Motor motor2 = HardwareMapContainer.motor1;
-    //Motor motor3 = HardwareMapContainer.motor2;
-    //Motor motor4 = HardwareMapContainer.motor3;
     RevIMU internal_measurement_unit;
 
     @Override
@@ -54,21 +52,28 @@ public class SPAMTACTICSExampleDriveTrain extends TeleOpModeBase {
         if(startheading==nextheading){
             //The necessary speed
             double rightX= Inputs.gamepad1.getRightX();
-            motor1.set(rightX);
-        } else if ((startheading-nextheading>0)|| (startheading-nextheading<-180)) {
+            motor1.set(-rightX);
+            motor2.set(rightX);
+        } else if ((startheading>nextheading&& startheading-nextheading<180) || (startheading<nextheading && 360-nextheading+startheading<180)) {
             //Cause the motor to turn left
-            motor1.set(-1);
-            motor2.set(1);
+            if (Math.abs(startheading - nextheading) < 10 ) {
+                //0.1 is a stopgap
+                motor1.set(-0.05);
+                motor2.set(0.05);
+            } else {
+                motor1.set(-0.3);
+                motor2.set(0.3);
+            }
 
         } else{
             //Cause the motor to turn right
-            motor1.set(1);
-            motor2.set(-1);
+            if (Math.abs(startheading - nextheading)<10) {
+                motor1.set(0.05);
+                motor2.set(-0.05);
+            } else {
+                motor1.set(0.3);
+                motor2.set(-0.3);
+            }
         }
-
-
-
-
-
     }
 }
