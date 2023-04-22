@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.opModes.test;
 import com.arcrobotics.ftclib.command.InstantCommand;
 import com.arcrobotics.ftclib.command.button.GamepadButton;
 import com.arcrobotics.ftclib.drivebase.DifferentialDrive;
+import com.arcrobotics.ftclib.gamepad.GamepadEx;
 import com.arcrobotics.ftclib.gamepad.GamepadKeys;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
@@ -40,20 +41,22 @@ public class LAREINECExampleDriveTrain2 extends TeleOpModeBase { // TODO: Resear
 
         speed = 1.0;
 
+        GamepadEx driverOp = new GamepadEx(gamepad1);
+
         // Add button events
-        new GamepadButton(Inputs.gamepad1, PSButtons.TRIANGLE).whenPressed(new InstantCommand(() -> {
+        new GamepadButton(driverOp, GamepadKeys.Button.Y).whenPressed(new InstantCommand(() -> {
             TelemetryContainer.getTelemetry().addLine("Triangle pressed");
             this.isDrive = !this.isDrive;
         }));
 
-        new GamepadButton(Inputs.gamepad1, GamepadKeys.Button.LEFT_BUMPER).whenPressed(new InstantCommand(() -> {
+        new GamepadButton(driverOp, GamepadKeys.Button.LEFT_BUMPER).whenPressed(new InstantCommand(() -> {
                 this.speed /= 2;
         }));
-        new GamepadButton(Inputs.gamepad1, GamepadKeys.Button.RIGHT_BUMPER).whenPressed(new InstantCommand(() -> {
+        new GamepadButton(driverOp, GamepadKeys.Button.RIGHT_BUMPER).whenPressed(new InstantCommand(() -> {
             this.speed *= 2;
         }));
     }
-    public void driveMode(driveVersions mode) {
+    public void driveMode(driveVersions mode) { // TODO: Test
         // Get Joystick Positions
         leftJoystick = new LAREINECJoystick(Inputs.gamepad1.getLeftX(), Inputs.gamepad1.getLeftY());
         rightJoystick =  new LAREINECJoystick(Inputs.gamepad1.getLeftX(), Inputs.gamepad1.getLeftY());

@@ -95,7 +95,7 @@ public class Autonomous_team_2 extends AutonomousLinearModeBase {
                 speed2 = motor2.getCorrectedVelocity();
                 //checking if the robot is turning except that motor 1 goes in reverse so the speed is
                 //counted using speed 2.
-                if (is_turning=false) {
+                if (!is_turning) {
                     // I just want speed so i will get the absolute value
                     speed = Math.abs(speed2)*0.75*1.4167;
                 } else {
@@ -115,7 +115,7 @@ public class Autonomous_team_2 extends AutonomousLinearModeBase {
                 //updating current y coordinate
                 current[1] = current[1] + travelled * Math.sin(idealheading);
                 //Distance from target in terms of x distance and y distance
-                if (has_cone == false) {
+                if (!has_cone) {
                     telemetry.addData("Entered cone pick up", "x_coordinate" +current[0]);
                     telemetry.addData("Entered cone pick up", "y_coordinate" +current[1]);
                     //Run code to return to nearest loading station
@@ -145,7 +145,7 @@ public class Autonomous_team_2 extends AutonomousLinearModeBase {
                         speed2 = motor2.getCorrectedVelocity();
                         //checking if the robot is turning except that motor 1 goes in reverse so the speed is
                         //counted using speed 2.
-                        if (is_turning==false) {
+                        if (!is_turning) {
                             // I just want speed so i will get the absolute value
                             speed = Math.abs(speed2)*0.75*1.4167;
                         } else {
@@ -490,5 +490,48 @@ public class Autonomous_team_2 extends AutonomousLinearModeBase {
                 motor2.set(0.0);
             }
         }
+    }
+
+    private void driveToSignalZone(int zone, Motor leftMotor, Motor rightMotor) {
+        switch (zone) {
+            case 1: {
+                driveStraight(5, leftMotor, rightMotor);
+                break;
+            }
+
+            case 2: {
+                driveStraight(5, leftMotor, rightMotor);
+                rightAngleTurn(leftMotor, rightMotor, true);
+                driveStraight(5, leftMotor, rightMotor);
+                break;
+            }
+
+            case 3: {
+                driveStraight(5, leftMotor, rightMotor);
+                rightAngleTurn(leftMotor, rightMotor, true);
+                driveStraight(10, leftMotor, rightMotor);
+                break;
+            }
+
+            /*
+            default: {
+
+            }
+
+             */
+        }
+    }
+
+    private void driveStraight(double time, Motor leftMotor, Motor rightMotor) {
+        
+    }
+
+    private void rightAngleTurn(Motor leftMotor, Motor rightMotor, boolean isClockwise) {
+        double[] motorValues = new double[2];
+        motorValues[0] = isClockwise ? 1D : -1D;
+        motorValues[1] = -motorValues[0];
+
+        leftMotor.set(motorValues[0]);
+        leftMotor.set(motorValues[1]);
     }
 }
