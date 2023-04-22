@@ -34,8 +34,8 @@ public class TestAutonomousLinearSearch extends AutonomousLinearModeBase {
         Motor left_arm = HardwareMapContainer.motor2;
         //right arm
         Motor right_arm = HardwareMapContainer.motor3;
-        Servo left_intake=HardwareMapContainer.getServo(0);
-        Servo right_intake=HardwareMapContainer.getServo(1);
+        Servo left_intake=null;//HardwareMapContainer.getServo(0);
+        Servo right_intake=null;//HardwareMapContainer.getServo(1);
         //Code for autonomous running
         internal_measurement_unit = new RevIMU(HardwareMapContainer.getMap());
         internal_measurement_unit.init();
