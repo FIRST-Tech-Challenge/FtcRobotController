@@ -97,14 +97,15 @@ public class Autonomous_team1_red extends AutonomousLinearModeBase {
             while (time < 20) {
                 telemetry.addData("entered first loop", runtime.toString());
                 //remember that the speed is in rpm, and the gear ratio of motor to the wheel is 15:20
-                //3:4 gear ratio and the wheel is 85mm in diameter, which should equate to 1.4167 mm per turn
+                //3:4 gear ratio and the wheel is 85mm in diameter, which should equate to 267.04
+                //how did I get 1.4167 mm per turn?
                 speed1 = motor1.getCorrectedVelocity();
                 speed2 = motor2.getCorrectedVelocity();
                 //checking if the robot is turning except that motor 1 goes in reverse so the speed is
                 //counted using speed 2.
                 if (is_turning=false) {
                     // I just want speed so i will get the absolute value
-                    speed = Math.abs(speed2)*0.75*1.4167;
+                    speed = Math.abs(speed2)*0.75*267.04/60;
                 } else {
                     speed = 0;
                 }
