@@ -37,6 +37,8 @@ public class Team1GenericTeleOp {
         Vector2d turn_joystick_vector = new Vector2d(y_joystick_turn, -x_joystick_turn);
 
         double desired_heading = turn_joystick_vector.angle();
+        // Convert to degrees
+        desired_heading *= 180 / Math.PI;
 
         double heading = imu.getAbsoluteHeading();
         double turn_strength = turn_joystick_vector.magnitude();
@@ -49,8 +51,6 @@ public class Team1GenericTeleOp {
         t.addData("desired heading", desired_heading);
 
         double heading_error = heading - desired_heading;
-        // Convert to degrees
-        heading_error *= 180 / Math.PI;
 
         t.addData("heading error", heading_error);
 
