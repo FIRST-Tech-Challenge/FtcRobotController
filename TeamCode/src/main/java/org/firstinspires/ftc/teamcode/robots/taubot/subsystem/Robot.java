@@ -323,7 +323,7 @@ public class Robot implements Subsystem {
                 //init stuff
                 driveTrain.articulate(DriveTrain.Articulation.unlock);
                 crane.setCraneTarget(driveTrain.getPoseEstimate().getX()+6,driveTrain.getPoseEstimate().getY(),8);
-                totalAutonTime = futureTime(28);
+                totalAutonTime = futureTime(25);
                 autonIndex = 0;
 
                 if(targetAltCone){
@@ -405,7 +405,7 @@ public class Robot implements Subsystem {
 
                             }
                             if(turnDone) {
-                                if (driveTrain.driveUntilDegrees(-Field.INCHES_PER_GRID, 90, 20)) {
+                                if (driveTrain.driveUntilDegrees(-Field.INCHES_PER_GRID + 6, 90, 20)) {
                                     autonIndex++;
                                 }
                             }
@@ -418,7 +418,7 @@ public class Robot implements Subsystem {
 
                             }
                             if(turnDone) {
-                                if (driveTrain.driveUntilDegrees(-Field.INCHES_PER_GRID, -90, 20)) {
+                                if (driveTrain.driveUntilDegrees(-Field.INCHES_PER_GRID + 6, -90, 20)) {
                                     autonIndex++;
                                 }
                             }
@@ -434,29 +434,18 @@ public class Robot implements Subsystem {
                         //targets middle pole
                         driveTrain.setMaintainHeadingEnabled(true);
                         if(startingPosition.equals(Constants.Position.START_LEFT)) {
-                            if (crane.goToFieldCoordinate(targetPoleX-7, targetPoleY-7, targetPoleZ-3)) {
+                            if (crane.goToFieldCoordinate(targetPoleX-7, targetPoleY-4, targetPoleZ-3)) {
                                 autonTime = futureTime(0.8);
                                 autonIndex++;
                             }
                         }else{
-                            if (crane.goToFieldCoordinate(targetPoleX-7, targetPoleY+7, targetPoleZ-3)) {
+                            if (crane.goToFieldCoordinate(targetPoleX-7, targetPoleY+4, targetPoleZ-3)) {
                                 autonTime = futureTime(0.8);
                                 autonIndex++;
                             }
                         }
                         break;
                     case 6:
-                        if(startingPosition.equals(Constants.Position.START_LEFT)){
-                            if (crane.goToFieldCoordinate(targetPoleX-7, targetPoleY-7, targetPoleZ-3)) {
-                                autonTime = futureTime(0.8);
-                                autonIndex++;
-                            }
-                        }else{
-                            if (crane.goToFieldCoordinate(targetPoleX-7, targetPoleY+7, targetPoleZ-3)) {
-                                autonTime = futureTime(0.8);
-                                autonIndex++;
-                            }
-                        }
                         if (System.nanoTime() >= autonTime) {
                             crane.setGripper(false);
                             autonTime = futureTime(0.3);
@@ -489,14 +478,18 @@ public class Robot implements Subsystem {
                         }
                         break;
                     case 9:
-                        autonIndex = 0;
-                        //TODO - REMOVE RETURN
 //                        if(true) return true;
+                        autonIndex = 0;
                         timeSupervisor++;
                         break;
                 }
                 break;
             case 2:
+                if(autonIndex < 3 && autonIndex != 0){
+                    timeSupervisor = 6;
+                    break;
+                }
+
                 autonIndex = 0;
                 driveTrain.setMaintainHeadingEnabled(false);
                 crane.articulate(Crane.Articulation.home);

@@ -132,8 +132,8 @@ public class Crane implements Subsystem {
     public double nudgeCenter = nudgeRange/2 + nudgeTuckValue;
 
     public static int FLIPPER_HOME = 900;
-    public static int FLIPPER_FLIP = 1716;
-    public static int FLIPPER_TENSION = 1900;
+    public static int FLIPPER_FLIP = 1756;
+    public static int FLIPPER_TENSION = 1600;
     public static int FLIPPER_REST = 1300;
 
     public static final double DISTANCE_SENSOR_TO_ELBOW = 0.33;
@@ -401,12 +401,22 @@ public class Crane implements Subsystem {
     double nudgeTarget;
 
     boolean nudgeTuck = true;
+    final boolean nudgeManualControl = true;
     public void updateNudgeStick(){
-        nudgeTarget = servoNormalize(Range.clip(nudgeStickProportion*getShoulderAngle() + nudgeStickModifierOffset, nudgeTuckValue, nudgeMaxValue));
+        if(!nudgeManualControl)
+            nudgeTarget = servoNormalize(Range.clip(nudgeStickProportion*getShoulderAngle() + nudgeStickModifierOffset, nudgeTuckValue, nudgeMaxValue));
+
         if(!nudgeTuck)
             nudgeStickServo.setPosition(nudgeTarget);
         else
             nudgeStickServo.setPosition(servoNormalize(nudgeTuckValue));
+    }
+
+    public static double ADJUST_NUDGESTICK = 10;
+    public void adjustNudge(double speed){
+        nudgeTarget += ADJUST_NUDGESTICK*speed;
+
+        nudgeTarget = servoNormalize(Range.clip(nudgeTarget, nudgeTuckValue, nudgeMaxValue));
     }
 
     public void tuckNudgeStick(){
@@ -748,7 +758,7 @@ public class Crane implements Subsystem {
                 setShoulderTargetAngle(TRANSFER_SHOULDER_FLIPANGLE);
                 atPostTransfer = false;
                 flipToFlip();
-                postTransferTimer = futureTime(tuneableTimer);
+                postTransferTimer = futureTime(0.6);
                 postTransferStage++;
                 break;
             case 1:

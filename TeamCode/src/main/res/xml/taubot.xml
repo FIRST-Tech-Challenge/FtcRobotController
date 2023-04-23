@@ -31,5 +31,5 @@
             <REV_VL53L0X_RANGE_SENSOR name="distChariot" port="0" bus="2" />
         </LynxModule>
     </LynxUsbDevice>
-    <Webcam name="Webcam 1" serialNumber="D1EE125F" />
+    <Webcam name="Webcam 1" serialNumber="91C8282F" />
 </Robot>

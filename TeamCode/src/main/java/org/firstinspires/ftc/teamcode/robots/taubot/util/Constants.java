@@ -22,7 +22,7 @@ public class Constants {
 
     public static double MIN_CHASSIS_LENGTH = 8;
     public static double MIN_SAFE_CHASSIS_LENGTH = 12;
-    public static double MAX_CHASSIS_LENGTH = 32;
+    public static double MAX_CHASSIS_LENGTH = 31.5;
     public static double CONESTACK_CHASSIS_LENGTH = 24;
 
     //both in degrees

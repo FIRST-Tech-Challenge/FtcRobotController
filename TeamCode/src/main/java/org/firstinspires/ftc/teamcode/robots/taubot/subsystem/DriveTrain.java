@@ -109,7 +109,7 @@ public class DriveTrain extends DiffyDrive implements Subsystem {
 
     public static PIDCoefficients HEADING_PID_PWR = new PIDCoefficients(0.25, .5, 5);
     public static PIDCoefficients HEADING_PID_VEL = new PIDCoefficients(3.0, 0, 0);
-    public static double HEADING_PID_TOLERANCE = 1;
+    public static double HEADING_PID_TOLERANCE = 2;
     public static PIDCoefficients DIST_TRAVELLED_PID = new PIDCoefficients(5, 0.0, 0); //todo tune this - copied from Reach
     public static PIDCoefficients VELOCITY_PID = new PIDCoefficients(4, 0, 0);
     //todo the following PID needs initial settings

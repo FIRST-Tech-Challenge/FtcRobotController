@@ -60,12 +60,20 @@ public class DriverControls {
             robot.crane.articulate(Crane.Articulation.home);
         }
 
-        if(gamepad1.left_bumper || gamepad2.left_bumper){
+        if(gamepad2.left_bumper){
             robot.driveTrain.adjustChassisLength(-1);
         }
 
-        if(gamepad1.right_bumper || gamepad2.right_bumper){
+        if(gamepad2.right_bumper){
             robot.driveTrain.adjustChassisLength(1);
+        }
+
+        if(gamepad1.left_bumper){
+            robot.crane.adjustNudge(-1);
+        }
+
+        if(gamepad1.right_bumper){
+            robot.crane.adjustNudge(1);
         }
 
         if(stickyGamepad1.start){

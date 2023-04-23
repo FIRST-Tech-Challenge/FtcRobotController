@@ -75,7 +75,7 @@ public class UnderArm implements Subsystem {
 
     public static double GRIPPER_RELEASE = 1000;
     public static double GRIPPER_OPEN = 1000; //1100 for Leo's gripper
-    public static double TRANSFER_CHASSIS_SHORTEN_BY = 4.5;
+    public static double TRANSFER_CHASSIS_SHORTEN_BY = 5.0;
     public static double TRANSFER_SHOULDER_ANGLE = -15;
     public static double TRANSFER_SHOULDER_APPROACH_ANGLE = 10;
 
@@ -85,12 +85,12 @@ public class UnderArm implements Subsystem {
 
     public static double TRANSFER_WRIST_ANGLE = 115;
 
-    public static double TRANSFER_TURRET_ANGLE = 5; //-14
+    public static double TRANSFER_TURRET_ANGLE = -2; //-14
 
 
     public static double PICKUP_WRIST_ANGLE = -5;
 
-    public static double PICKUP_SHOULDER_ANGLE  = 70;
+    public static double PICKUP_SHOULDER_ANGLE  = 75;
 
     public static double CANCEL_TRANSFER_TURRET_DEGREES = 30;//todo not any real number can be calibrated if necessary
 
@@ -634,7 +634,7 @@ public class UnderArm implements Subsystem {
     long substationHoverTimer;
     int substationHoverStage = 0;
 
-    public double SS_HOVER_SHOULDER = 64 , SS_HOVER_ELBOW = 108, SS_HOVER_WRIST = 60, SS_HOVER_TURRET = 0, SS_HOVER_EXTEND = MIN_SAFE_CHASSIS_LENGTH;
+    public double SS_HOVER_SHOULDER = 71, SS_HOVER_ELBOW = 108, SS_HOVER_WRIST = 60, SS_HOVER_TURRET = 0, SS_HOVER_EXTEND = MIN_SAFE_CHASSIS_LENGTH;
 
     boolean canSaveHoverPositions = false;
     public void SaveHoverPositions(){
@@ -649,7 +649,7 @@ public class UnderArm implements Subsystem {
     }
 
     public void SetDefaultHoverPositions(){
-        SS_HOVER_SHOULDER = 57; SS_HOVER_ELBOW = 108; SS_HOVER_WRIST = 68; SS_HOVER_TURRET = 0;
+        SS_HOVER_SHOULDER = 62; SS_HOVER_ELBOW = 108; SS_HOVER_WRIST = 68; SS_HOVER_TURRET = 0;
     }
     public boolean goSubstationHover() {
         switch (substationHoverStage) {
@@ -884,7 +884,6 @@ public boolean goSubstationRecover() {
     public void adjustTurret(double speed){
         turretTargetAngle += ADJUST_TURRET*speed*robot.deltaTime;
         turretTargetAngle = Range.clip(turretTargetAngle, TURRET_DEG_MIN, TURRET_DEG_MAX);
-
     }
 
     public double getShoulderAngle(){
