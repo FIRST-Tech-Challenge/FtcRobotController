@@ -34,7 +34,7 @@ public class SBOTTINGOTATestGrabber extends TeleOpModeBase {
         telemetry.addData("Open Angle: ", SERVO_OPEN_ANGLE);
         telemetry.addData("Close Angle: ", SERVO_CLOSE_ANGLE);
 
-        grabberServo = HardwareMapContainer.getServo(0);
+        grabberServo = null;//HardwareMapContainer.getServo(0);
 
         new GamepadButton(Inputs.gamepad1, PSButtons.CIRCLE).whenActive(() -> {
             if (grabberOpen) {
