@@ -90,8 +90,8 @@ public class Team2TeleOp extends TeleOpLinearModeBase {
         // GRABBER // TODO: Test
         telemetry = TelemetryContainer.getTelemetry();
 
-        grabberServo1 = HardwareMapContainer.getServo(0);
-        grabberServo2 = HardwareMapContainer.getServo(1);
+        grabberServo1 = null;//HardwareMapContainer.getServo(0);
+        grabberServo2 = null;//HardwareMapContainer.getServo(1);
 
         new GamepadButton(Inputs.gamepad1, PSButtons.TRIANGLE).whenPressed(() -> {
             if (grabberOpen) {
