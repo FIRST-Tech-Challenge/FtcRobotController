@@ -28,17 +28,16 @@ public class Team1GenericTeleOp {
     }
 
     public void every_tick(){
-        // Note: x and y on joystick different to field
+        // Note: directions of x and y on joystick different to directions on the field
         double x_movement =  Inputs.gamepad1.getRightY();
         double y_movement =  Inputs.gamepad1.getRightX();
         // The direction of the left joystick is the desired direction of heading
         double x_joystick_turn = Inputs.gamepad1.getLeftX();
         double y_joystick_turn = Inputs.gamepad1.getLeftY();
         Vector2d turn_joystick_vector = new Vector2d(y_joystick_turn, -x_joystick_turn);
-
-        double desired_heading = turn_joystick_vector.angle();
+        double desired_heading_deg = turn_joystick_vector.angle();
         // Convert to degrees
-        desired_heading *= 180 / Math.PI;
+        desired_heading_deg *= 180 / Math.PI;
 
         double heading = imu.getAbsoluteHeading();
         double turn_strength = turn_joystick_vector.magnitude();
@@ -48,9 +47,9 @@ public class Team1GenericTeleOp {
         t.addData("y", y_movement);
 
         t.addData("heading", heading);
-        t.addData("desired heading", desired_heading);
+        t.addData("desired heading", desired_heading_deg);
 
-        double heading_error = heading - desired_heading;
+        double heading_error = heading - desired_heading_deg;
 
         t.addData("heading error", heading_error);
 
