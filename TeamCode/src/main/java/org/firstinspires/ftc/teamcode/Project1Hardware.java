@@ -8,8 +8,6 @@ import com.qualcomm.robotcore.hardware.NormalizedColorSensor;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 
-import javax.xml.datatype.DatatypeConfigurationException;
-
 public class Project1Hardware {
     DcMotor frontLeft = null, frontRight = null, backLeft = null, backRight = null;
     DcMotorEx arm = null;
@@ -38,10 +36,11 @@ public class Project1Hardware {
         vert = hardwareMap.get(DcMotor.class, "VERT SLIDE");
         imu = hardwareMap.get(IMU.class, "imu");
 
-        flip1 = hardwareMap.get(DcMotor.class, "FLIP1");
-        flip2 = hardwareMap.get(DcMotor.class, "FLIP2");
+
+        //flip1 = hardwareMap.get(DcMotor.class, "FLIP1");
+        //flip2 = hardwareMap.get(DcMotor.class, "FLIP2");
         claw1 = hardwareMap.get(Servo.class, "CLAW1");
-        claw1 = hardwareMap.get(Servo.class, "CLAW1");
+        claw2 = hardwareMap.get(Servo.class, "CLAW2");
         yaw1 = hardwareMap.get(Servo.class, "YAW1");
         yaw2 = hardwareMap.get(Servo.class, "YAW2");
 
@@ -56,14 +55,98 @@ public class Project1Hardware {
         backRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         vert.setDirection(DcMotor.Direction.REVERSE);
 
-
         imu.initialize(
                 new IMU.Parameters(
                         new RevHubOrientationOnRobot(
-                                RevHubOrientationOnRobot.LogoFacingDirection.FORWARD,
+                                RevHubOrientationOnRobot.LogoFacingDirection.BACKWARD,
                                 RevHubOrientationOnRobot.UsbFacingDirection.UP
                         )
                 )
         );
+    }
+
+    public void setMotorPositions (int FL, int FR, int BL, int BR){
+        frontLeft.setTargetPosition(FL);
+        frontRight.setTargetPosition(FR);
+        backLeft.setTargetPosition(BL);
+        backRight.setTargetPosition(BR);
+    }
+
+    public void setMotorPowers (double FL, double FR, double BL, double BR){
+        frontLeft.setPower(FL);
+        frontRight.setPower(FR);
+        backLeft.setPower(BL);
+        backRight.setPower(BR);
+    }
+
+    public void setMotorPowers (double power){
+        frontLeft.setPower(power);
+        frontRight.setPower(power);
+        backLeft.setPower(power);
+        backRight.setPower(power);
+    }
+
+
+    public void setMode(String mode){
+        if (mode == "reset encoder"){
+            frontLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            frontRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            backLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            backRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        }
+        else if (mode == "run to pos"){
+            frontLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            frontRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            backLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            backRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        }
+    }
+
+    public void walkForward(int ticks, double power){
+        setMode("reset encoder");
+        int FLpos = ticks;
+        int FRpos = ticks;
+        int BLpos = ticks;
+        int BRpos = ticks;
+        setMotorPowers(power);
+        setMotorPositions(FLpos, FRpos, BLpos, BRpos);
+    }
+
+    public void rotateRight(int ticks, double power) {
+        setMode("reset encoder");
+        int FLpos = ticks;
+        int FRpos = -ticks;
+        int BLpos = -ticks;
+        int BRpos = ticks;
+        setMotorPowers(power);
+        setMotorPositions(FLpos, FRpos, BLpos, BRpos);
+    }
+
+    public void rotateLeft(int ticks, double power) {
+        setMode("reset encoder");
+        int FLpos = -ticks;
+        int FRpos = ticks;
+        int BLpos = ticks;
+        int BRpos = -ticks;
+        setMotorPowers(power);
+        setMotorPositions(FLpos, FRpos, BLpos, BRpos);
+    }
+
+    public void IntakeAndReady() {
+        claw1.setPosition(0.8);
+        claw2.setPosition(1);
+        yaw2.setPosition(0.24);
+        vert.setTargetPosition(150);
+    }
+
+    public void raiseLift(int pos) {
+        vert.setTargetPosition(pos);
+    }
+
+    public void release(){
+        yaw2.setPosition(-0.1);
+        claw1.setPosition(0.95);
+        claw2.setPosition(0.75);
+        vert.setTargetPosition(150);
     }
 }
