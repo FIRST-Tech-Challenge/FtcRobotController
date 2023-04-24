@@ -801,7 +801,9 @@ public class PwPRobot extends BasicRobot {
 
 
         //will only close when detect cone
-        claw.closeClaw(roadrun.getPoseVelocity().vec());
+        if(op.getRuntime()-claw.getLastOpenTime()>0.5) {
+            claw.closeClaw(roadrun.getPoseVelocity().vec());
+        }
         op.telemetry.addData("stacklevel", lift.getStackLevel());
         if (gp.updateSequence()) {
             field.autoMovement();
