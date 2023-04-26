@@ -50,15 +50,23 @@ public class MecanumTesting extends BlackOp {
 
         Scheduler.launchOnStart(this, () -> {
 
-            robot.robotGoSkrtSkrt(driver.left_stick_x.get() * strafeSpeed, driver.left_stick_y.get() * forwardSpeed, robot.getTurnAmount(driver.right_stick_x.get() * turnSpeed));
+            robot.robotGoSkrtSkrt(driver.left_stick_x.get() * strafeSpeed, -driver.left_stick_y.get() * forwardSpeed, robot.getTurnAmount(driver.right_stick_x.get() * turnSpeed));
 
             driver.a.onRise(() -> robot.setFieldCentric(true));
             driver.b.onRise(() -> robot.setFieldCentric(false));
             driver.x.onRise(() -> robot.setAngleTarget(90));
             driver.y.onRise(() -> robot.setAngleTarget(0));
 
+            driver.left_bumper.onRise(() -> robot.setTotalSpeed(0.25))
+                              .onFall(() -> robot.setTotalSpeed(0.5));
+
+            driver.right_bumper.onRise(() -> robot.setTotalSpeed(1))
+                               .onFall(() -> robot.setTotalSpeed(0.5));
+
             driver.dpad_up.onRise(() -> robot.setElevatorPosition(100));
             driver.dpad_down.onRise(() -> robot.setElevatorPosition(0));
+
+            robot.updateElevatorPosition();
 
             turnStick = driver.right_stick_x.get();
 

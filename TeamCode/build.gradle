@@ -31,4 +31,5 @@ dependencies {
     implementation 'com.fasterxml.jackson.core:jackson-databind:2.12.7'
     implementation 'com.acmerobotics.roadrunner:core:0.5.6'
     implementation 'org.openftc:easyopencv:1.6.2'
+    implementation 'com.android.support:multidex:2.0.1'
 }

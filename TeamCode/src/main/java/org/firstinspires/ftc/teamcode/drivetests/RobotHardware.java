@@ -33,8 +33,6 @@ import com.ThermalEquilibrium.homeostasis.Controllers.Feedback.AngleController;
 import com.ThermalEquilibrium.homeostasis.Controllers.Feedback.PIDEx;
 import com.ThermalEquilibrium.homeostasis.Parameters.PIDCoefficientsEx;
 import com.acmerobotics.dashboard.config.Config;
-import com.acmerobotics.roadrunner.profile.MotionProfile;
-import com.acmerobotics.roadrunner.profile.MotionProfileGenerator;
 import com.arcrobotics.ftclib.drivebase.MecanumDrive;
 import com.arcrobotics.ftclib.hardware.RevIMU;
 import com.arcrobotics.ftclib.hardware.motors.Motor;
@@ -77,7 +75,7 @@ public class RobotHardware {
     //ELEVATOR VARIABLES
     private PIDCoefficientsEx elevatorCoeffs = null;
     private PIDEx elevatorPID = null;
-    private double eleTarget = 0;
+    private double elePos = 0;
     private int elePower = 0;
 
     //ELEVATOR
@@ -156,18 +154,29 @@ public class RobotHardware {
         m_eleL.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         m_eleR.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
+        m_eleL.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        m_eleR.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
         ele = new MotorGroup(eleL, eleR);
+        ele.setRunMode(Motor.RunMode.RawPower);
+
 
 
         //ELEVATOR PID
-        elevatorCoeffs = new PIDCoefficientsEx(5, 0, 0, 0.25, 2, 0.5);
+        elevatorCoeffs = new PIDCoefficientsEx(1, 0, 0, 0.25, 2, 0.5);
         elevatorPID = new PIDEx(elevatorCoeffs);
 
     }
 
     public void setElevatorPosition(double target) {
-       elePower = (int) elevatorPID.calculate(target, eleTarget);
-       ele.setTargetPosition(elePower);
+       elePower = (int) elevatorPID.calculate(target, elePos);
+       ele.set(elePower);
+    }
+
+    public void updateElevatorPosition() {
+        double elePos1 = m_eleL.getCurrentPosition();
+        double elePos2 = m_eleR.getCurrentPosition();
+        elePos = (elePos1 + elePos2) / 2;
     }
 
     public int getElePower() {
