@@ -278,7 +278,7 @@ public class Claw {
 //            shouldUseClawSensor = false;
 //        }
         double dist = coneDistance();
-        return dist<5||velocity>10&&dist<13;
+        return dist<5||velocity>10&&dist<12;
     }
     public double coneDistance(){
         return leftDist.getDistance(INCH)+rightDist.getDistance(INCH);

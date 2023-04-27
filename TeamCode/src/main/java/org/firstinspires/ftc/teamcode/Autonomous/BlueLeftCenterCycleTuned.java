@@ -106,10 +106,11 @@ public class BlueLeftCenterCycleTuned extends LinearOpMode {
                     .build());
         }
         for(int i=0;i<5;i++){
-            pick.add(robot.roadrun.trajectorySequenceBuilder(new Pose2d(dropX,dropY,Math.toRadians(320)))
+            pick.add(robot.roadrun.trajectorySequenceBuilder(new Pose2d(dropX,dropY,Math.toRadians(330)))
                     .setReversed(false)
-                    .splineToSplineHeading(new Pose2d(48, 11 + 0.1*i, Math.toRadians(0)), Math.toRadians(0))
-                    .splineTo(new Vector2d(62, 11+0.1*i), Math.toRadians(0))
+//                    .splineToSplineHeading(new Pose2d(48, 11 + 0.1*i, Math.toRadians(0)), Math.toRadians(0))
+                    .splineTo(new Vector2d(29, 11+0.1*i), Math.toRadians(0))
+                    .splineTo(new Vector2d(60, 11+0.1*i), Math.toRadians(0))
                     .addTemporalMarker(robot::done)
                     .build());
         }
@@ -190,8 +191,7 @@ public class BlueLeftCenterCycleTuned extends LinearOpMode {
 //            robot.delay(0.2);
 //            robot.wideClaw(false);
 //            robot.delay(0.25);
-            robot.followTrajectorySequenceAsync(pick.get(0));
-//            robot.liftToPosition((int)LIFT_HIGH_JUNCTION.getValue() + 50, true);
+robot.followTrajectorySequenceAsync(pick.get(0));//            robot.liftToPosition((int)LIFT_HIGH_JUNCTION.getValue() + 50, true);
 //            for (int i = 0; i < 3; i++) {
 //                robot.delay(0.15);
 //                robot.cycleLiftArmToCycle(true);

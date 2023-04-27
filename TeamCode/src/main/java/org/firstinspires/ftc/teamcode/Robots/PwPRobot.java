@@ -590,6 +590,7 @@ public class PwPRobot extends BasicRobot {
 //        gp.readGamepad(op.gamepad2.right_bumper, "gamepad2_right_bumper", "Status");
         boolean isBumper2 = gp.readGamepad(op.gamepad2.left_bumper, "gamepad2_left_bumper", "Status");
         op.telemetry.addData("switched:", clawSwitch.isSwitched());
+        op.telemetry.addData("coneDist", claw.coneDistance());
 
         if (isA) {
             if (liftArm.ableArmed()) {
@@ -675,6 +676,11 @@ public class PwPRobot extends BasicRobot {
 //        } else if (roadrun.isBusy()) {
 //            //nothin
 //        } else {
+        op.telemetry.addData("closestDropPosition", field.closestDropPosition());
+        op.telemetry.addData("closestDropPositionValue", field.getDropPosition());
+        op.telemetry.addData("closePole", field.getClosePole());
+        op.telemetry.addData("seenPolePose", field.calcPolePose(roadrun.getPoseEstimate()));
+        op.telemetry.addData("currentDropPosition",field.getDropPose());
         double[] vals = {op.gamepad1.left_stick_x, op.gamepad1.left_stick_y, op.gamepad1.right_stick_x};
         double[] minBoost = {0.1, 0.1, 0.05};
         boolean boosted = false;
@@ -765,6 +771,9 @@ public class PwPRobot extends BasicRobot {
             if (CLAW_CLOSED.getStatus()) {
                 claw.setLastOpenTime(op.getRuntime());
                 claw.openClaw();
+                if(ARM_OUTTAKE.getStatus()&& field.closestDropPosition()){
+                    roadrun.setPoseEstimate(field.getDropPosition());
+                }
             } else {
                 claw.closeClawRaw();
             }

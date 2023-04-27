@@ -33,6 +33,7 @@ public class Field {
     private ArrayList<Integer> tileMovement = new ArrayList<>();
     private ArrayList<double[]> fullMovement = new ArrayList<>();
     private ArrayList<double[]> queuedMovement = new ArrayList<>();
+    private double[] prevRotCoord = {0,0};
 
     private ArrayList<Boolean> reversals = new ArrayList<>();
     private ArrayList<Boolean> queuedReversals = new ArrayList<>();
@@ -51,6 +52,9 @@ public class Field {
     Lock needsLocker;
     Pose2d polePos = new Pose2d(0, 0, 0);
     Pose2d conePos = new Pose2d(0, 0, 0);
+    Vector2d polePose = new Vector2d(0,0);
+    Vector2d closePole = new Vector2d(0,0);
+    Pose2d closDropPos = new Pose2d(0,0,0);
 
 
     double[][][] poleCoords = {
@@ -202,7 +206,11 @@ public class Field {
         }
         return velocityLog(newVelocity);
     }
-
+    public Pose2d getDropPose(){
+        double dropRad = 9;
+        Pose2d pos = roadrun.getPoseEstimate();
+        return new Pose2d(pos.getX()+cos(pos.getHeading()+PI)*dropRad, pos.getY()+sin(pos.getHeading()+PI)*dropRad,pos.getHeading());
+    }
     public boolean lookingAtCone() {
         double[] coords = cv.rotatedConarCoord();
 //        coords[1]+=5;
@@ -213,7 +221,7 @@ public class Field {
         double newHead = pos.getHeading()+ coords[0] * PI / 180 ;
         pos = new Pose2d(pos.getX(), pos.getY(), pos.getHeading() + coords[0] * PI / 180);
         conePos = new Pose2d(pos.getX() + cos(pos.getHeading()) * coords[1] + 3.*sin(pos.getHeading()), pos.getY() + sin(pos.getHeading()) * coords[1]-3.*cos(pos.getHeading()) , pos.getHeading());
-        polePos = new Pose2d(polePos.getX()+(cos(oldHead)-cos(newHead))*rad, polePos.getY()+(sin(oldHead)-sin(newHead))*rad,pos.getHeading());
+        conePos = new Pose2d(conePos.getX()+(cos(oldHead)-cos(newHead))*rad, conePos.getY()+(sin(oldHead)-sin(newHead))*rad,pos.getHeading());
         if (abs(coords[1]) < 5 && abs(coords[1]) > -1) {
             setDoneLookin(true);
         }
@@ -223,6 +231,18 @@ public class Field {
             return true;
         }
         return false;
+    }
+
+    public Vector2d calcPolePose(Pose2d curPos){
+        double camRad = 7;
+        double[] rotCoord = cv.rotatedPolarCoord();
+        if(abs(rotCoord[1]) < 18 && rotCoord[1] > 3&&rotCoord!=prevRotCoord){
+            double t = -rotCoord[0]*PI/180+PI+curPos.getHeading();
+            polePose = new Vector2d(curPos.getX()+cos(t)*rotCoord[1]+cos(curPos.getHeading()+PI)*camRad,
+                    curPos.getY()+sin(t)*rotCoord[1]+sin(curPos.getHeading()+PI)*camRad);
+        }
+        prevRotCoord=rotCoord;
+        return polePose;
     }
 
     public Pose2d polePos() {
@@ -241,34 +261,41 @@ public class Field {
         doneLookin = inpu;
     }
 
-    public void closestDropPosition(boolean correct) {
-        Pose2d curntPose = roadrun.getPoseEstimate();
-        curntPose = new Pose2d(curntPose.getX(), curntPose.getY(), imu.updateAngle());
-        currentPosition = new double[]{curntPose.getX(), curntPose.getY(), curntPose.getHeading()};
-        minDistPole();
-        op.telemetry.addData("poleValues", poleValues[0] + "," + poleValues[1]);
-        if (poleValues[0] != 0 || poleValues[1] != 0) {
-            double[] idealDropPos = {poleCoords[(int) poleValues[0]][(int) poleValues[1]][0] + cos(currentPosition[2]) * dropDistance,
-                    poleCoords[(int) poleValues[0]][(int) poleValues[1]][1] + sin(currentPosition[2]) * dropDistance};
-            double dist = sqrt(pow(currentPosition[0] - idealDropPos[0], 2) + pow(currentPosition[1] - idealDropPos[1], 2));
-            Pose2d correctedPose = curntPose;
-            double[] error = toPolar(new double[]{currentPosition[0] - idealDropPos[0], currentPosition[1] - idealDropPos[1]});
-            if (dist > 1.5) {
-                correctedPose = new Pose2d(idealDropPos[0] + cos(error[1]) * 1.5, idealDropPos[1] + sin(error[1]) * 1.5, currentPosition[2]);
-                if (correct) {
-                    roadrun.setPoseEstimate(correctedPose);
+    public boolean closestDropPosition() {
+        Pose2d curntPose = getDropPose();
+        Pose2d rnPose = roadrun.getPoseEstimate();
+//        Vector2d closePole = rnPose.vec();
+        Vector2d minDist = new Vector2d(100,100);
+        for(int i=0;i<5;i++){
+            for(int j=0;j<5;j++){
+                if(curntPose.vec().distTo(new Vector2d(poleCoords[i][j][0],poleCoords[i][j][1]))<minDist.norm()){
+                    minDist = new Vector2d(curntPose.getX()-poleCoords[i][j][0],curntPose.getY()-poleCoords[i][j][1]);
+                    closePole = new Vector2d(poleCoords[i][j][0],poleCoords[i][j][1]);
                 }
             }
-            op.telemetry.addData("idealDropPos:" + idealDropPos[0] + "," + idealDropPos[1] + ":", false);
-            op.telemetry.addData("dist:", dist);
-            op.telemetry.addData("correctedDropPos:" + correctedPose.getX() + "," + correctedPose.getY() + ":", false);
         }
-
+        if(minDist.norm()<1){
+            minDist = new Vector2d(0,0);
+        }
+        else{
+            double reduxFactor = (minDist.norm()-1)/minDist.norm();
+            minDist = new Vector2d(minDist.getX()*reduxFactor,minDist.getY()*reduxFactor);
+        }
+        closDropPos = new Pose2d(rnPose.getX()-minDist.getX(),rnPose.getY()-minDist.getY(),rnPose.getHeading());
+        if(closePole.distTo(polePose)<5){
+            return true;
+        }
+        else{
+            return false;
+        }
     }
 
     public void updateTrajectory() {
         dropTrajectory = roadrun.trajectoryBuilder(roadrun.getPoseEstimate()).lineToLinearHeading(
                 getDropPosition()).build();
+    }
+    public Vector2d getClosePole(){
+        return closePole;
     }
 
     public Trajectory getTrajectory() {
@@ -276,7 +303,7 @@ public class Field {
     }
 
     public Pose2d getDropPosition() {
-        return new Pose2d(dropPosition[0], dropPosition[1], dropPosition[2]);
+        return closDropPos;
     }
 
     //which pole bot looking at
