@@ -6,6 +6,7 @@ import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.PIDFCoefficients;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 
@@ -32,9 +33,9 @@ public class Auton extends LinearOpMode {
         telemetry.addData("Status", "Initialized");
         telemetry.update();
 
-        robot.imu.resetYaw();
+        robot.imu1.resetYaw();
 
-
+        robot.vert.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
         ElapsedTime timer = new ElapsedTime();
         timer.reset();
@@ -45,35 +46,346 @@ public class Auton extends LinearOpMode {
 
         DcMotor FL = robot.frontLeft, FR = robot.frontRight, BL = robot.backLeft, BR = robot.backRight;
         int FLpos = 0, FRpos = 0, BLpos = 0, BRpos = 0;
+        robot.vert.setPower(0);
+        robot.raiseLift(0);
+        robot.vert.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
+        robot.IntakeClose();
+        robot.yaw1.setPosition(0.65);
+        robot.yaw2.setPosition(0.05);
+        robot.setMode(1);
         waitForStart();
         while (opModeIsActive()){
-            double Move1=2.4; // Need TUNE
-            X=1000;
+            robot.setMode(1);
+            robot.imu1.resetYaw();
+            sleep(500);
+            robot.vert.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            robot.raiseLift(650);
 
-            robot.walkForward((int)(Move1 * X), 0.5);
+            double Move1=1.65; // Need TUNE
+            X=1300;
+
+
+            robot.moveRight((int)(Move1 * X), 0.5, 0.5, 0.5, 0.5);
+            robot.IntakeClose();
             // walk to centre
-            while (FL.isBusy() || FR.isBusy() || BL.isBusy() || BR.isBusy()){}
+            while (BR.getCurrentPosition() < (Move1 * X-200)){
+                telemetry.addData("FL", FL.getCurrentPosition());
+                telemetry.addData("FR", FR.getCurrentPosition());
+                telemetry.addData("BL", BL.getCurrentPosition());
+                telemetry.addData("BR", BR.getCurrentPosition());
+                telemetry.update();
+            }
+            robot.setMotorPowers(0);
+            sleep(200);
+            robot.setMode(1);
+            robot.walkForward(180, 0.3);
 
-            double Move2 = 0.25;
-            robot.rotateRight((int)(0.25*X), 0.5);
-            while (robot.imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES) > -40){}
+            //robot.IntakeClose();
 
-            double Move3 = 0.25;
-            robot.walkForward((int)(Move3*X), 0.5);
+            int lastpos = FL.getCurrentPosition();
 
-            robot.IntakeAndReady();
+            while (FL.getCurrentPosition() < (lastpos + 180 -30)){
+
+                telemetry.addData("FL", FL.getCurrentPosition());
+                telemetry.addData("FR", FR.getCurrentPosition());
+                telemetry.addData("BL", BL.getCurrentPosition());
+                telemetry.addData("BR", BR.getCurrentPosition());
+                telemetry.update();
+            }
+
+            robot.setMotorPowers(0);
+            /*
+            sleep(1000);
+            robot.yaw1.setPosition(0.4);
+            robot.yaw2.setPosition(0.3);
+            sleep(500);
+            robot.claw1.setPosition(0.8);
+            robot.claw2.setPosition(1);
+            sleep(500);
+            */
+            robot.IntakeOpen();
+            sleep(1000);
+            robot.setMode(2);
+
+            robot.moveRight(900, 0.5, 0.5, 0.5, 0.5);
+
+            lastpos = FL.getCurrentPosition();
+
+            // walk to centre
+            while (FL.getCurrentPosition() < (lastpos + 720)){
+                telemetry.addData("FL", FL.getCurrentPosition());
+                telemetry.addData("FR", FR.getCurrentPosition());
+                telemetry.addData("BL", BL.getCurrentPosition());
+                telemetry.addData("BR", BR.getCurrentPosition());
+                telemetry.update();
+            }
+            robot.setMotorPowers(0);
+            telemetry.addData("imu", robot.imu1.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES));
+            telemetry.update();
+
+            sleep(2000);
+
+            if (robot.imu1.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES) < -1){
+                robot.rotateLeft(300, 0.1);
+                while (robot.imu1.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES) < 0){
+                    telemetry.addData("imu", robot.imu1.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES));
+                    telemetry.update();
+                }
+            }
+            else{
+                robot.rotateRight(300, 0.1);
+                while (Math.abs(robot.imu1.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES)) > 1){
+                    telemetry.addData("imu", robot.imu1.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES));
+                    telemetry.update();
+                }
+            }
+            robot.setMotorPowers(0);
+            robot.setMode(1);
+
+            sleep(1000);
+
+            // walk to centre
+            robot.setMotorPowers(0);
+            robot.raiseLift(400);
+            robot.setMode(2);
+            robot.walkForward(1200, 0.3);
+
+            //robot.IntakeClose();
+            lastpos = FL.getCurrentPosition();
+
+            while (FL.getCurrentPosition() < (lastpos + 950)){
+                if (lastpos - FL.getCurrentPosition() < 400) robot.setMotorPowers(0.3);
+            }
+
+            robot.setMotorPowers(0);
+            sleep(500);
+            robot.IntakeClose();
+            sleep(500);
+            robot.yaw1.setPosition(0.65);
+            robot.yaw2.setPosition(0.05);
+
+            robot.setMotorPowers(0);
+            robot.setMode(2);
+            sleep(1000);
+            robot.walkBackward(2500, 0.5);
+
+            robot.raiseLift(2400);
+
+            lastpos = FL.getCurrentPosition();
+
+            while (FL.getCurrentPosition() > (lastpos - 2300)){
+                if (FL.getCurrentPosition() < (lastpos-1600)) robot.setMotorPowers(0.4);
+                else if (FL.getCurrentPosition() < (lastpos-2000)) robot.setMotorPowers(0.3);
+                telemetry.addData("FL", FL.getCurrentPosition());
+                telemetry.addData("FR", FR.getCurrentPosition());
+                telemetry.addData("BL", BL.getCurrentPosition());
+                telemetry.addData("BR", BR.getCurrentPosition());
+                telemetry.update();
+            }
+
+            robot.setMotorPowers(0);
+            robot.setMode(1);
+            sleep(1000);
+
+            robot.moveRight(1000, 0.3, 0.3, 0.3, 0.3);
+            robot.IntakeClose();
+            robot.yaw1.setPosition(0.7);
+            robot.yaw2.setPosition(0.0);
+            // walk to centre
+            lastpos = BR.getCurrentPosition();
+
+            while (BR.getCurrentPosition() < (lastpos+600)){}
+            robot.setMotorPowers(0);
+            sleep(500);
+
+            robot.walkForward(250, 0.3);
+
+            //robot.IntakeClose();
+
+            lastpos = FL.getCurrentPosition();
+
+            while (FL.getCurrentPosition() < (lastpos + 220)){}
+
+            robot.setMotorPowers(0);
+            robot.yaw1.setPosition(0.4);
+            robot.yaw2.setPosition(0.3);
+            robot.IntakeOpen();
+            robot.raiseLift(300);
+
+            sleep(5000);
+
+            robot.walkBackward(180, 0.3);
+
+            lastpos = FL.getCurrentPosition();
+
+            while (FL.getCurrentPosition() < (lastpos + 180 - 30)){
+                telemetry.addData("FL", FL.getCurrentPosition());
+                telemetry.addData("FR", FR.getCurrentPosition());
+                telemetry.addData("BL", BL.getCurrentPosition());
+                telemetry.addData("BR", BR.getCurrentPosition());
+                telemetry.update();
+            }
+            robot.setMotorPowers(0);
+            sleep(800);
+
+            robot.moveLeft(600, 0.5, 0.5, 0.5, 0.5);
+            // walk to centre
+            lastpos = FL.getCurrentPosition();
+
+            while (BR.getCurrentPosition() < (lastpos-20)){
+                telemetry.addData("FL", FL.getCurrentPosition());
+                telemetry.addData("FR", FR.getCurrentPosition());
+                telemetry.addData("BL", BL.getCurrentPosition());
+                telemetry.addData("BR", BR.getCurrentPosition());
+                telemetry.update();
+            }
+            robot.setMotorPowers(0);
+            sleep(800);
+
+            /*
+            robot.walkBackward(180, 0.3);
+
+            lastpos = FL.getCurrentPosition();
+
+            while (FL.getCurrentPosition() < (lastpos + 180 - 30)){
+                telemetry.addData("FL", FL.getCurrentPosition());
+                telemetry.addData("FR", FR.getCurrentPosition());
+                telemetry.addData("BL", BL.getCurrentPosition());
+                telemetry.addData("BR", BR.getCurrentPosition());
+                telemetry.update();
+            }
+            robot.setMotorPowers(0);
+            sleep(800);
+
+            robot.moveLeft(600, 0.5, 0.5, 0.5, 0.5);
+            // walk to centre
+            lastpos = FL.getCurrentPosition();
+
+            while (BR.getCurrentPosition() < (lastpos-20)){
+                telemetry.addData("FL", FL.getCurrentPosition());
+                telemetry.addData("FR", FR.getCurrentPosition());
+                telemetry.addData("BL", BL.getCurrentPosition());
+                telemetry.addData("BR", BR.getCurrentPosition());
+                telemetry.update();
+            }
+            robot.setMotorPowers(0);
+            sleep(800);
+
+            robot.moveForward(2680, 0.5, 0.5, 0.5, 0.5);
+            // walk to centre
+            lastpos = FL.getCurrentPosition();
+
+            while (BR.getCurrentPosition() < (lastpos-20)){
+                telemetry.addData("FL", FL.getCurrentPosition());
+                telemetry.addData("FR", FR.getCurrentPosition());
+                telemetry.addData("BL", BL.getCurrentPosition());
+                telemetry.addData("BR", BR.getCurrentPosition());
+                telemetry.update();
+            }
+            robot.setMotorPowers(0);
+            sleep(1600);
+
+            robot.IntakeClose();
+            sleep(500);
+            robot.yaw1.setPosition(0.65);
+            robot.yaw2.setPosition(0.05);
+            robot.raiseLift(2400);
+
+            robot.setMotorPowers(0);
+            robot.setMode(2);
+            sleep(1000);
+            robot.walkBackward(2700, 0.5);
+
+            lastpos = FL.getCurrentPosition();
+
+            while (FL.getCurrentPosition() > (lastpos - 2400)){
+                telemetry.addData("FL", FL.getCurrentPosition());
+                telemetry.addData("FR", FR.getCurrentPosition());
+                telemetry.addData("BL", BL.getCurrentPosition());
+                telemetry.addData("BR", BR.getCurrentPosition());
+                telemetry.update();
+            }
+            robot.setMotorPowers(0);
+            robot.setMode(1);
+            sleep(1000);
+
+            robot.moveRight(700, 0.3, 0.3, 0.3, 0.3);
+            robot.IntakeClose();
+            // walk to centre
+            lastpos = BR.getCurrentPosition();
+
+            while (BR.getCurrentPosition() < lastpos-100){}
+            robot.setMotorPowers(0);
+            sleep(500);
+
+            robot.walkForward(180, 0.3);
+
+            //robot.IntakeClose();
+
+            lastpos = FL.getCurrentPosition();
+
+            while (FL.getCurrentPosition() < (lastpos + 180 - 30)){}
+
+            robot.setMotorPowers(0);
+            robot.IntakeOpen();
+            robot.raiseLift(450);
+
+
+            double Move2 = 0.45;
+            robot.moveLeft((int)(Move2 * X), 0.5, 0.5, 0.5, 0.5);
+            robot.setMode(2);
+            //robot.IntakeClose();
+            /*
+            while (FL.getCurrentPosition() < (Move2 * X-200)){
+                telemetry.addData("FL", FL.getCurrentPosition());
+                telemetry.addData("FR", FR.getCurrentPosition());
+                telemetry.addData("BL", BL.getCurrentPosition());
+                telemetry.addData("BR", BR.getCurrentPosition());
+                telemetry.update();
+            }
+            robot.moveLeft(2700, 0.5);
+
+            lastpos = FL.getCurrentPosition();
+
+            while (FL.getCurrentPosition() > (lastpos - 2400)){
+                telemetry.addData("FL", FL.getCurrentPosition());
+                telemetry.addData("FR", FR.getCurrentPosition());
+                telemetry.addData("BL", BL.getCurrentPosition());
+                telemetry.addData("BR", BR.getCurrentPosition());
+                telemetry.update();
+            }
+            robot.setMotorPowers(0);
+            robot.setMode(1);
+            sleep(1000);
+
+
+            sleep(100000000);
+
+           /* double Move2 = 1;
+            robot.rotateLeft((int)(1*X), 0.5);
+            while (robot.imu1.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES) < 15){}
+
+            robot.setMotorPowers(0);
+            sleep(1000);
+
+            double Move3 = 0.1;
+            robot.walkForward((int)(Move3*X), 0.3);
+
+            /*
+            robot.IntakeClose();
             sleep(1000);
             robot.raiseLift(2300);
             sleep(1000);
             robot.release();
             while(robot.vert.isBusy()){}
+            */
 
-            robot.setMode("reset encoder");
+            /*
             double Move4 = 2;
             robot.rotateLeft((int)(Move4*X), 0.5);
 
-            while (robot.imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES) < 90){}
+            while (robot.imu1.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES) < 180){}
             //rotate ~120 degrees to face the refill substation
 
             robot.setMotorPowers(0,0,0,0);

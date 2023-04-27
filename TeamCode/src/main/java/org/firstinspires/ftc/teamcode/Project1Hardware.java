@@ -7,6 +7,16 @@ import com.qualcomm.robotcore.hardware.IMU;
 import com.qualcomm.robotcore.hardware.NormalizedColorSensor;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.util.ElapsedTime;
+import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.util.ElapsedTime;
+import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.PIDFCoefficients;
+import com.qualcomm.robotcore.util.ElapsedTime;
+
+import javax.xml.datatype.DatatypeConfigurationException;
 
 public class Project1Hardware {
     DcMotor frontLeft = null, frontRight = null, backLeft = null, backRight = null;
@@ -18,7 +28,7 @@ public class Project1Hardware {
     Servo claw = null, clawAngle = null;
     NormalizedColorSensor colorSensor = null;
     HardwareMap hwmap = null;
-    IMU imu;
+    IMU imu1;
 
     public void init(HardwareMap hardwareMap){
         hwmap = hardwareMap;
@@ -34,7 +44,7 @@ public class Project1Hardware {
         //colorSensor = hardwareMap.get(NormalizedColorSensor.class, "BUCKET COLOR");
         //horz = hardwareMap.get(DcMotor.class, "HORZ SLIDE");
         vert = hardwareMap.get(DcMotor.class, "VERT SLIDE");
-        imu = hardwareMap.get(IMU.class, "imu");
+        imu1 = hardwareMap.get(IMU.class, "imu");
 
 
         //flip1 = hardwareMap.get(DcMotor.class, "FLIP1");
@@ -55,7 +65,7 @@ public class Project1Hardware {
         backRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         vert.setDirection(DcMotor.Direction.REVERSE);
 
-        imu.initialize(
+        imu1.initialize(
                 new IMU.Parameters(
                         new RevHubOrientationOnRobot(
                                 RevHubOrientationOnRobot.LogoFacingDirection.BACKWARD,
@@ -86,15 +96,14 @@ public class Project1Hardware {
         backRight.setPower(power);
     }
 
-
-    public void setMode(String mode){
-        if (mode == "reset encoder"){
+    public void setMode(int mode){
+        if (mode == 1){
             frontLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
             frontRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
             backLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
             backRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         }
-        else if (mode == "run to pos"){
+        else if (mode == 2){
             frontLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             frontRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             backLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
@@ -103,50 +112,95 @@ public class Project1Hardware {
     }
 
     public void walkForward(int ticks, double power){
-        setMode("reset encoder");
-        int FLpos = ticks;
-        int FRpos = ticks;
-        int BLpos = ticks;
-        int BRpos = ticks;
+        //setMode(1);
+        int FLpos = frontLeft.getCurrentPosition()+ticks;
+        int FRpos = frontRight.getCurrentPosition()+ticks;
+        int BLpos = backLeft.getCurrentPosition()+ticks;
+        int BRpos = backRight.getCurrentPosition()+ticks;
         setMotorPowers(power);
         setMotorPositions(FLpos, FRpos, BLpos, BRpos);
+        setMode(2);
+    }
+
+    public void walkBackward(int ticks, double power){
+        //setMode(1);
+        int FLpos = frontLeft.getCurrentPosition()-ticks;
+        int FRpos = frontRight.getCurrentPosition()-ticks;
+        int BLpos = backLeft.getCurrentPosition()-ticks;
+        int BRpos = backRight.getCurrentPosition()-ticks;
+        setMotorPowers(power);
+        setMotorPositions(FLpos, FRpos, BLpos, BRpos);
+        setMode(2);
     }
 
     public void rotateRight(int ticks, double power) {
-        setMode("reset encoder");
-        int FLpos = ticks;
-        int FRpos = -ticks;
-        int BLpos = -ticks;
-        int BRpos = ticks;
+        //setMode(1);
+        int FLpos = frontLeft.getCurrentPosition()+ticks;
+        int FRpos = frontRight.getCurrentPosition()-ticks;
+        int BLpos = backLeft.getCurrentPosition()+ticks;
+        int BRpos = backRight.getCurrentPosition()-ticks;
         setMotorPowers(power);
         setMotorPositions(FLpos, FRpos, BLpos, BRpos);
+        setMode(2);
     }
 
     public void rotateLeft(int ticks, double power) {
-        setMode("reset encoder");
-        int FLpos = -ticks;
-        int FRpos = ticks;
-        int BLpos = ticks;
-        int BRpos = -ticks;
+        //setMode(1);
+        int FLpos = frontLeft.getCurrentPosition()+ticks;
+        int FRpos = frontRight.getCurrentPosition()-ticks;
+        int BLpos = backLeft.getCurrentPosition()+ticks;
+        int BRpos = backRight.getCurrentPosition()-ticks;
         setMotorPowers(power);
         setMotorPositions(FLpos, FRpos, BLpos, BRpos);
+        setMode(2);
     }
 
-    public void IntakeAndReady() {
+    public void moveLeft(int ticks, double power1, double power2, double power3, double power4) {
+        //setMode(1);
+        int FLpos = frontLeft.getCurrentPosition()-ticks;
+        int FRpos = frontRight.getCurrentPosition()+ticks;
+        int BLpos = backLeft.getCurrentPosition()-ticks;
+        int BRpos = backRight.getCurrentPosition()+ticks;
+        setMotorPowers(power1, power2, power3, power4);
+        setMotorPositions(FLpos, FRpos, BLpos, BRpos);
+        setMode(2);
+    }
+
+    public void moveRight(int ticks, double power1, double power2, double power3, double power4) {
+        //setMode(1);
+        int FLpos = frontLeft.getCurrentPosition()+ticks;
+        int FRpos = frontRight.getCurrentPosition()-ticks;
+        int BLpos = backLeft.getCurrentPosition()-ticks;
+        int BRpos = backRight.getCurrentPosition()+ticks;
+        setMotorPowers(power1, power2, power3, power4);
+        setMotorPositions(FLpos, FRpos, BLpos, BRpos);
+        setMode(2);
+    }
+
+    public void IntakeClose(){
+        claw1.setPosition(0.95);
+        claw2.setPosition(0.75);
+
+    }
+    public void IntakeOpen() {
+        yaw1.setPosition(0.4);
+        yaw2.setPosition(0.3);
+
         claw1.setPosition(0.8);
         claw2.setPosition(1);
-        yaw2.setPosition(0.24);
-        vert.setTargetPosition(150);
+
+
     }
 
     public void raiseLift(int pos) {
         vert.setTargetPosition(pos);
+        vert.setPower(0.8);
     }
 
     public void release(){
         yaw2.setPosition(-0.1);
         claw1.setPosition(0.95);
         claw2.setPosition(0.75);
-        vert.setTargetPosition(150);
+
     }
 }

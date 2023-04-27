@@ -34,7 +34,7 @@ public class Project1 extends LinearOpMode
         telemetry.addData("Status", "Initialized");
         telemetry.update();
 
-        robot.imu.resetYaw();
+        robot.imu1.resetYaw();
 
         //variables
         double direction_y, direction_x, pivot, heading;
@@ -56,7 +56,7 @@ public class Project1 extends LinearOpMode
             direction_y   = gamepad1.left_stick_y *0.6;
             direction_x = -gamepad1.left_stick_x *0.6;
             pivot    =  gamepad1.right_stick_x * 0.7;
-            heading = robot.imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS);
+            heading = robot.imu1.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS);
 
             toggleTimer +=1 ;
             vertPos = robot.vert.getCurrentPosition();
@@ -187,7 +187,7 @@ public class Project1 extends LinearOpMode
             } // horizontal strafe
 
             if (gamepad1.touchpad) {
-                robot.imu.resetYaw();
+                robot.imu1.resetYaw();
             }
 
             //if (gamepad1.square || gamepad1.circle || gamepad1.triangle || gamepad1.cross){
