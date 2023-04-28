@@ -164,8 +164,8 @@ public class Project1Hardware {
         //setMode(1);
         int FLpos = frontLeft.getCurrentPosition()-ticks;
         int FRpos = frontRight.getCurrentPosition()+ticks;
-        int BLpos = backLeft.getCurrentPosition()-ticks;
-        int BRpos = backRight.getCurrentPosition()+ticks;
+        int BLpos = backLeft.getCurrentPosition()+ticks;
+        int BRpos = backRight.getCurrentPosition()-ticks;
         setMotorPowers(power1, power2, power3, power4);
         setMotorPositions(FLpos, FRpos, BLpos, BRpos);
         setMode(2);

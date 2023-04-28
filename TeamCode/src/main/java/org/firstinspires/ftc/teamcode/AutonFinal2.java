@@ -242,9 +242,9 @@ public class AutonFinal extends LinearOpMode
 
 
 
-        while (BL.getCurrentPosition() > (-1100)){
+        while (BL.getCurrentPosition() < 1100){
             gyrocal = robot.imu1.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES)*4/90;
-            robot.setMotorPowers((0.3-gyrocal),(-0.3+gyrocal),(-0.3-gyrocal),(0.3+gyrocal));
+            robot.setMotorPowers((-0.3-gyrocal),(0.3+gyrocal),(0.3-gyrocal),(-0.3+gyrocal));
             telemetry.addData("gyro",robot.imu1.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES));
             telemetry.update();
             telemetry.addData("BL1",BL.getCurrentPosition());
@@ -344,9 +344,9 @@ public class AutonFinal extends LinearOpMode
         robot.setMode(3);
 
 
-        while (BL.getCurrentPosition() > (-800)){
+        while (BL.getCurrentPosition() < 800){
             gyrocal = robot.imu1.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES)*4/90;
-            robot.setMotorPowers((0.3-gyrocal),(-0.3+gyrocal),(-0.3-gyrocal),(0.3+gyrocal));
+            robot.setMotorPowers((-0.3-gyrocal),(0.3+gyrocal),(0.3-gyrocal),(-0.3+gyrocal));
             telemetry.addData("gyro",robot.imu1.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES));
             telemetry.update();
             telemetry.addData("BL1",BL.getCurrentPosition());
@@ -380,10 +380,10 @@ public class AutonFinal extends LinearOpMode
             telemetry.update();
         }
         robot.setMode(1);
-        while (BL.getCurrentPosition() < 700){
+        while (BL.getCurrentPosition() > (-700)){
             robot.setMode(3);
             gyrocal = robot.imu1.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES)*4/90;
-            robot.setMotorPowers((-0.3-gyrocal),(0.3+gyrocal),(0.3-gyrocal),(-0.3+gyrocal));
+            robot.setMotorPowers((0.3-gyrocal),(-0.3+gyrocal),(-0.3-gyrocal),(0.3+gyrocal));
             telemetry.addData("gyro",robot.imu1.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES));
             telemetry.update();
             telemetry.addData("BL1",BL.getCurrentPosition());
@@ -432,9 +432,9 @@ public class AutonFinal extends LinearOpMode
         robot.setMode(3);
 
 
-        while (BL.getCurrentPosition() > (-800)){
+        while (BL.getCurrentPosition() < 800){
             gyrocal = robot.imu1.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES)*4/90;
-            robot.setMotorPowers((0.3-gyrocal),(-0.3+gyrocal),(-0.3-gyrocal),(0.3+gyrocal));
+            robot.setMotorPowers((-0.3-gyrocal),(0.3+gyrocal),(0.3-gyrocal),(-0.3+gyrocal));
             telemetry.addData("gyro",robot.imu1.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES));
             telemetry.update();
             telemetry.addData("BL1",BL.getCurrentPosition());
@@ -468,10 +468,10 @@ public class AutonFinal extends LinearOpMode
             telemetry.update();
         }
         robot.setMode(1);
-        while (BL.getCurrentPosition() < 700){
+        while (BL.getCurrentPosition() > (-700)){
             robot.setMode(3);
             gyrocal = robot.imu1.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES)*4/90;
-            robot.setMotorPowers((-0.3-gyrocal),(0.3+gyrocal),(0.3-gyrocal),(-0.3+gyrocal));
+            robot.setMotorPowers((0.3-gyrocal),(-0.3+gyrocal),(-0.3-gyrocal),(0.3+gyrocal));
             telemetry.addData("gyro",robot.imu1.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES));
             telemetry.update();
             telemetry.addData("BL1",BL.getCurrentPosition());
@@ -510,9 +510,9 @@ public class AutonFinal extends LinearOpMode
         robot.setMode(3);
 
 
-        while (BL.getCurrentPosition() > (-800)){
+        while (BL.getCurrentPosition() < 800){
             gyrocal = robot.imu1.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES)*4/90;
-            robot.setMotorPowers((0.3-gyrocal),(-0.3+gyrocal),(-0.3-gyrocal),(0.3+gyrocal));
+            robot.setMotorPowers((-0.3-gyrocal),(0.3+gyrocal),(0.3-gyrocal),(-0.3+gyrocal));
             telemetry.addData("gyro",robot.imu1.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES));
             telemetry.update();
             telemetry.addData("BL1",BL.getCurrentPosition());
@@ -546,10 +546,10 @@ public class AutonFinal extends LinearOpMode
             telemetry.update();
         }
         robot.setMode(1);
-        while (BL.getCurrentPosition() < 1600){
+        while (BL.getCurrentPosition() > (-1600)){
             robot.setMode(3);
             gyrocal = robot.imu1.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES)*4/90;
-            robot.setMotorPowers((-0.3-gyrocal),(0.3+gyrocal),(0.3-gyrocal),(-0.3+gyrocal));
+            robot.setMotorPowers((0.3-gyrocal),(-0.3+gyrocal),(-0.3-gyrocal),(0.3+gyrocal));
             telemetry.addData("gyro",robot.imu1.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES));
             telemetry.update();
             telemetry.addData("BL1",BL.getCurrentPosition());
@@ -587,7 +587,7 @@ public class AutonFinal extends LinearOpMode
                     }
                     robot.setMotorPowers(0);
                 case 3:
-                    break;
+                    robot.setMotorPowers(0);
             }
             sleep(50000);
         }

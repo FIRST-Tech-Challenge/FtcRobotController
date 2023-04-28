@@ -587,7 +587,7 @@ public class AutonFinal extends LinearOpMode
                     }
                     robot.setMotorPowers(0);
                 case 3:
-                    break;
+                    robot.setMotorPowers(0);
             }
             sleep(50000);
         }
