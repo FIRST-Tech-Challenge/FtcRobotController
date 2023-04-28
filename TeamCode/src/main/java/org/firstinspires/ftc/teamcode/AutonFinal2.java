@@ -38,7 +38,7 @@ import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 
 import java.util.ArrayList;
 
-@Autonomous(name="jerry_final")
+@Autonomous(name="jerry_left")
 public class AutonFinal extends LinearOpMode
 {
     final static double ARM_HOME = 0.0;
