@@ -56,14 +56,17 @@ public class Auton extends LinearOpMode {
         robot.setMode(1);
         waitForStart();
         while (opModeIsActive()){
-            robot.setMode(1);
+            double gyrocal = robot.imu1.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES)*1;
+            double lastpos = FL.getCurrentPosition();
             robot.imu1.resetYaw();
+
             sleep(500);
             robot.vert.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            robot.raiseLift(650);
+            robot.raiseLift(600);
 
-            double Move1=1.65; // Need TUNE
+            double Move1=1.7; // Need TUNE
             X=1300;
+
 
 
             robot.moveRight((int)(Move1 * X), 0.5, 0.5, 0.5, 0.5);
@@ -78,19 +81,20 @@ public class Auton extends LinearOpMode {
             }
             robot.setMotorPowers(0);
             sleep(200);
+
+
+
+
             robot.setMode(1);
-            robot.walkForward(180, 0.3);
+            robot.setMode(3);
 
-            //robot.IntakeClose();
+            while (BL.getCurrentPosition() < 150){
+                gyrocal = robot.imu1.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES)*4/90;
 
-            int lastpos = FL.getCurrentPosition();
+                robot.setMotorPowers((0.3-gyrocal),(0.3+gyrocal),(0.3-gyrocal),(0.3+gyrocal));
+                telemetry.addData("gyro",robot.imu1.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES));
+                telemetry.addData("BL1",BL.getCurrentPosition());
 
-            while (FL.getCurrentPosition() < (lastpos + 180 -30)){
-
-                telemetry.addData("FL", FL.getCurrentPosition());
-                telemetry.addData("FR", FR.getCurrentPosition());
-                telemetry.addData("BL", BL.getCurrentPosition());
-                telemetry.addData("BR", BR.getCurrentPosition());
                 telemetry.update();
             }
 
@@ -105,15 +109,16 @@ public class Auton extends LinearOpMode {
             sleep(500);
             */
             robot.IntakeOpen();
-            sleep(1000);
+            sleep(500);
+            robot.raiseLift(1200);
             robot.setMode(2);
 
-            robot.moveRight(900, 0.5, 0.5, 0.5, 0.5);
+            robot.moveRight(850, 0.5, 0.5, 0.5, 0.5);
 
             lastpos = FL.getCurrentPosition();
 
             // walk to centre
-            while (FL.getCurrentPosition() < (lastpos + 720)){
+            while (FL.getCurrentPosition() < (lastpos + 650)){
                 telemetry.addData("FL", FL.getCurrentPosition());
                 telemetry.addData("FR", FR.getCurrentPosition());
                 telemetry.addData("BL", BL.getCurrentPosition());
@@ -124,8 +129,8 @@ public class Auton extends LinearOpMode {
             telemetry.addData("imu", robot.imu1.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES));
             telemetry.update();
 
-            sleep(2000);
-
+            sleep(200);
+            /*
             if (robot.imu1.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES) < -1){
                 robot.rotateLeft(300, 0.1);
                 while (robot.imu1.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES) < 0){
@@ -139,10 +144,258 @@ public class Auton extends LinearOpMode {
                     telemetry.addData("imu", robot.imu1.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES));
                     telemetry.update();
                 }
+            }*/
+            //double gyrocal = robot.imu1.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES)/ 360;
+
+
+            robot.setMode(1);
+            robot.setMode(3);
+            robot.raiseLift(430);
+
+
+            while (BL.getCurrentPosition() < 1100){
+                gyrocal = robot.imu1.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES)*4/90;
+
+                robot.setMotorPowers((0.5-gyrocal),(0.5+gyrocal),(0.5-gyrocal),(0.5+gyrocal));
+                telemetry.addData("gyro",robot.imu1.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES));
+                telemetry.update();
+            }
+
+            robot.setMotorPowers(0);
+
+
+
+            robot.IntakeClose();
+            sleep(500);
+            robot.raiseLift(1000);
+            sleep(800);
+            robot.setMode(2);
+            robot.setMode(1);
+            robot.walkBackward(2500, 0.5);
+
+
+
+            while (FL.getCurrentPosition() > -2300){
+                //if (FL.getCurrentPosition() < (lastpos-1600)) robot.setMotorPowers(0.4);
+                //else if (FL.getCurrentPosition() < (lastpos-2000)) robot.setMotorPowers(0.3);
+                telemetry.addData("FL2", FL.getCurrentPosition());
+                telemetry.addData("FR", FR.getCurrentPosition());
+                telemetry.addData("BL", BL.getCurrentPosition());
+                telemetry.addData("BR", BR.getCurrentPosition());
+                telemetry.update();
+            }
+            robot.yaw1.setPosition(0.65);
+            robot.yaw2.setPosition(0.05);
+            robot.setMotorPowers(0);
+            robot.raiseLift(4000);
+            robot.setMode(1);
+            robot.setMode(3);
+
+
+            while (BL.getCurrentPosition() > (-800)){
+                gyrocal = robot.imu1.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES)*4/90;
+                robot.setMotorPowers((0.3-gyrocal),(-0.3+gyrocal),(-0.3-gyrocal),(0.3+gyrocal));
+                telemetry.addData("gyro",robot.imu1.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES));
+                telemetry.update();
+                telemetry.addData("BL1",BL.getCurrentPosition());
             }
             robot.setMotorPowers(0);
             robot.setMode(1);
+            robot.setMode(3);
+            while (BL.getCurrentPosition() < 220){
+                gyrocal = robot.imu1.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES)*4/90;
+                robot.setMotorPowers((0.3-gyrocal),(0.3+gyrocal),(0.3-gyrocal),(0.3+gyrocal));
+                telemetry.addData("gyro",robot.imu1.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES));
+                telemetry.addData("BLfw",BL.getCurrentPosition());
 
+                telemetry.update();
+            }
+
+            robot.setMotorPowers(0);
+            while (robot.vert.getCurrentPosition() < 2000){}
+            sleep(300);
+            robot.IntakeOpen();
+            sleep(300);
+
+            robot.setMode(1);
+            robot.setMode(3);
+            while (BL.getCurrentPosition() > -220){
+                gyrocal = robot.imu1.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES)*4/90;
+                robot.setMotorPowers((-0.3-gyrocal),(-0.3+gyrocal),(-0.3-gyrocal),(-0.3+gyrocal));
+                telemetry.addData("gyro",robot.imu1.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES));
+                telemetry.addData("BLfw",BL.getCurrentPosition());
+
+                telemetry.update();
+            }
+            robot.setMode(1);
+            while (BL.getCurrentPosition() < 700){
+                robot.setMode(3);
+                gyrocal = robot.imu1.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES)*4/90;
+                robot.setMotorPowers((-0.3-gyrocal),(0.3+gyrocal),(0.3-gyrocal),(-0.3+gyrocal));
+                telemetry.addData("gyro",robot.imu1.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES));
+                telemetry.update();
+                telemetry.addData("BL1",BL.getCurrentPosition());
+            }
+
+            robot.setMotorPowers(0);
+            robot.setMode(1);
+            robot.setMode(3);
+            robot.raiseLift(300);
+            while (BL.getCurrentPosition() < 2600){
+                gyrocal = robot.imu1.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES)*4/90;
+                robot.setMotorPowers((0.5-gyrocal),(0.5+gyrocal),(0.5-gyrocal),(0.5+gyrocal));
+                telemetry.addData("gyro",robot.imu1.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES));
+                telemetry.addData("BLfw",BL.getCurrentPosition());
+
+                telemetry.update();
+            }
+            robot.setMotorPowers(0);
+
+            //second cycle
+
+            robot.IntakeClose();
+            sleep(500);
+            robot.raiseLift(1000);
+            sleep(800);
+            robot.setMode(2);
+            robot.setMode(1);
+            robot.walkBackward(2500, 0.5);
+
+
+
+            while (FL.getCurrentPosition() > -2300){
+                //if (FL.getCurrentPosition() < (lastpos-1600)) robot.setMotorPowers(0.4);
+                //else if (FL.getCurrentPosition() < (lastpos-2000)) robot.setMotorPowers(0.3);
+                telemetry.addData("FL2", FL.getCurrentPosition());
+                telemetry.addData("FR", FR.getCurrentPosition());
+                telemetry.addData("BL", BL.getCurrentPosition());
+                telemetry.addData("BR", BR.getCurrentPosition());
+                telemetry.update();
+            }
+            robot.yaw1.setPosition(0.65);
+            robot.yaw2.setPosition(0.05);
+            robot.setMotorPowers(0);
+            robot.raiseLift(4000);
+            robot.setMode(1);
+            robot.setMode(3);
+
+
+            while (BL.getCurrentPosition() > (-800)){
+                gyrocal = robot.imu1.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES)*4/90;
+                robot.setMotorPowers((0.3-gyrocal),(-0.3+gyrocal),(-0.3-gyrocal),(0.3+gyrocal));
+                telemetry.addData("gyro",robot.imu1.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES));
+                telemetry.update();
+                telemetry.addData("BL1",BL.getCurrentPosition());
+            }
+            robot.setMotorPowers(0);
+            robot.setMode(1);
+            robot.setMode(3);
+            while (BL.getCurrentPosition() < 220){
+                gyrocal = robot.imu1.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES)*4/90;
+                robot.setMotorPowers((0.3-gyrocal),(0.3+gyrocal),(0.3-gyrocal),(0.3+gyrocal));
+                telemetry.addData("gyro",robot.imu1.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES));
+                telemetry.addData("BLfw",BL.getCurrentPosition());
+
+                telemetry.update();
+            }
+
+            robot.setMotorPowers(0);
+            while (robot.vert.getCurrentPosition() < 2000){}
+            sleep(300);
+            robot.IntakeOpen();
+            sleep(300);
+
+            robot.setMode(1);
+            robot.setMode(3);
+            while (BL.getCurrentPosition() > -220){
+                gyrocal = robot.imu1.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES)*4/90;
+                robot.setMotorPowers((-0.3-gyrocal),(-0.3+gyrocal),(-0.3-gyrocal),(-0.3+gyrocal));
+                telemetry.addData("gyro",robot.imu1.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES));
+                telemetry.addData("BLfw",BL.getCurrentPosition());
+
+                telemetry.update();
+            }
+            robot.setMode(1);
+            while (BL.getCurrentPosition() < 700){
+                robot.setMode(3);
+                gyrocal = robot.imu1.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES)*4/90;
+                robot.setMotorPowers((-0.3-gyrocal),(0.3+gyrocal),(0.3-gyrocal),(-0.3+gyrocal));
+                telemetry.addData("gyro",robot.imu1.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES));
+                telemetry.update();
+                telemetry.addData("BL1",BL.getCurrentPosition());
+            }
+
+            robot.setMotorPowers(0);
+            robot.setMode(1);
+            robot.setMode(3);
+            robot.raiseLift(300);
+            while (BL.getCurrentPosition() < 2600){
+                gyrocal = robot.imu1.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES)*4/90;
+                robot.setMotorPowers((0.5-gyrocal),(0.5+gyrocal),(0.5-gyrocal),(0.5+gyrocal));
+                telemetry.addData("gyro",robot.imu1.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES));
+                telemetry.addData("BLfw",BL.getCurrentPosition());
+
+                telemetry.update();
+            }
+            robot.setMotorPowers(0);
+
+            robot.walkBackward(2500, 0.5);
+
+            while (FL.getCurrentPosition() > -2300){
+                //if (FL.getCurrentPosition() < (lastpos-1600)) robot.setMotorPowers(0.4);
+                //else if (FL.getCurrentPosition() < (lastpos-2000)) robot.setMotorPowers(0.3);
+                telemetry.addData("FL2", FL.getCurrentPosition());
+                telemetry.addData("FR", FR.getCurrentPosition());
+                telemetry.addData("BL", BL.getCurrentPosition());
+                telemetry.addData("BR", BR.getCurrentPosition());
+                telemetry.update();
+            }
+            robot.yaw1.setPosition(0.65);
+            robot.yaw2.setPosition(0.05);
+            robot.setMotorPowers(0);
+            robot.raiseLift(4000);
+            robot.setMode(1);
+            robot.setMode(3);
+
+
+            while (BL.getCurrentPosition() > (-800)){
+                gyrocal = robot.imu1.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES)*4/90;
+                robot.setMotorPowers((0.3-gyrocal),(-0.3+gyrocal),(-0.3-gyrocal),(0.3+gyrocal));
+                telemetry.addData("gyro",robot.imu1.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES));
+                telemetry.update();
+                telemetry.addData("BL1",BL.getCurrentPosition());
+            }
+            robot.setMotorPowers(0);
+            robot.setMode(1);
+            robot.setMode(3);
+            while (BL.getCurrentPosition() < 220){
+                gyrocal = robot.imu1.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES)*4/90;
+                robot.setMotorPowers((0.3-gyrocal),(0.3+gyrocal),(0.3-gyrocal),(0.3+gyrocal));
+                telemetry.addData("gyro",robot.imu1.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES));
+                telemetry.addData("BLfw",BL.getCurrentPosition());
+
+                telemetry.update();
+            }
+
+            robot.setMotorPowers(0);
+            while (robot.vert.getCurrentPosition() < 2000){}
+            sleep(300);
+            robot.IntakeOpen();
+            sleep(300);
+
+            robot.setMode(1);
+            robot.setMode(3);
+            while (BL.getCurrentPosition() > -220){
+                gyrocal = robot.imu1.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES)*4/90;
+                robot.setMotorPowers((-0.3-gyrocal),(-0.3+gyrocal),(-0.3-gyrocal),(-0.3+gyrocal));
+                telemetry.addData("gyro",robot.imu1.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES));
+                telemetry.addData("BLfw",BL.getCurrentPosition());
+
+                telemetry.update();
+            }
+            robot.setMode(1);
+
+            /*
             sleep(1000);
 
             // walk to centre
@@ -524,6 +777,7 @@ public class Auton extends LinearOpMode {
             //move left
 
              */
+            sleep(1000000);
 
         }
     }
