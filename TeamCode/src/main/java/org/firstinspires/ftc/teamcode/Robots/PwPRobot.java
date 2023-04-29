@@ -288,6 +288,11 @@ public class PwPRobot extends BasicRobot {
         //wheel : y , x
         double[] maxes = {75, 50, 7};
         double[] targetVelocity = {y / kV, x / kV, a / kV / TRACK_WIDTH};
+        Pose2d avoidVelo = field.correctionVelo();
+        targetVelocity[0] +=avoidVelo.getX();
+        targetVelocity[1] +=avoidVelo.getY();
+        targetVelocity[2] +=avoidVelo.getHeading();
+
         Pose2d actualVelocity = roadrun.getPoseVelocity();
         actualVelocity = field.filteredVelocity(actualVelocity);
         Pose2d pos = roadrun.getPoseEstimate();
@@ -681,6 +686,7 @@ public class PwPRobot extends BasicRobot {
         op.telemetry.addData("closePole", field.getClosePole());
         op.telemetry.addData("seenPolePose", field.calcPolePose(roadrun.getPoseEstimate()));
         op.telemetry.addData("currentDropPosition",field.getDropPose());
+        op.telemetry.addData("avoid velo", field.correctionVelo());
         double[] vals = {op.gamepad1.left_stick_x, op.gamepad1.left_stick_y, op.gamepad1.right_stick_x};
         double[] minBoost = {0.1, 0.1, 0.05};
         boolean boosted = false;

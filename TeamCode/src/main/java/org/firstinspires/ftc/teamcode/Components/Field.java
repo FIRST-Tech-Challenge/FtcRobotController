@@ -4,6 +4,7 @@ import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.logger;
 import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.op;
 import static java.lang.Math.PI;
 import static java.lang.Math.abs;
+import static java.lang.Math.atan;
 import static java.lang.Math.atan2;
 import static java.lang.Math.cos;
 import static java.lang.Math.pow;
@@ -106,21 +107,19 @@ public class Field {
 
     //is robot looking at a pole
     public boolean lookingAtPole() {
-        double[] coords = cv.rotatedPolarCoord();
-//        coords[1]+=5;
-        coords[1] -= 1;
-        Pose2d pos = roadrun.getPoseEstimate();
-        pos = new Pose2d(pos.getX(), pos.getY(), pos.getHeading() + coords[0] * PI / 180 + PI);
-        polePos = new Pose2d(pos.getX() + cos(pos.getHeading()) * coords[1] + sin(pos.getHeading()), pos.getY() + sin(pos.getHeading()) * coords[1] + cos(pos.getHeading()), pos.getHeading());
+        Pose2d curPos = roadrun.getPoseEstimate();
+
+        calcPolePose(curPos);
+        double dropRad = 10;
+        //        coords[1]+=5;
+        polePos = new Pose2d(polePose.getX()-cos(curPos.getHeading())*dropRad, polePose.getY()-sin(curPos.getHeading())*dropRad, polePose.minus(curPos.vec()).angle()+PI);
+        double [] coords = {polePose.angle()-curPos.getHeading(), polePose.distTo(curPos.vec())-dropRad};
         if (abs(coords[1]) < 5 && abs(coords[1]) > 0) {
             setDoneLookin(true);
         }
-//        if(abs(pos.vec().distTo(roadrun.getCurrentTraj().end().vec()))<2){
-//            setDoneLookin(true);
-//        }
+        Pose2d pos = polePos;
         logger.log("/RobotLogs/GeneralRobot", "polePos" + polePos);
         logger.log("/RobotLogs/GeneralRobot", "coords" + coords[0] + "," + coords[1]);
-
         if (abs(pos.vec().distTo(roadrun.getCurrentTraj().end().vec())) < 10 && abs(coords[1]) < 18 && coords[1] > 3 && (roadrun.getCurrentTraj() == null || abs(polePos.vec().distTo(roadrun.getCurrentTraj().end().vec())) < 5)) {
             return true;
         }
@@ -282,11 +281,35 @@ public class Field {
             minDist = new Vector2d(minDist.getX()*reduxFactor,minDist.getY()*reduxFactor);
         }
         closDropPos = new Pose2d(rnPose.getX()-minDist.getX(),rnPose.getY()-minDist.getY(),rnPose.getHeading());
-        if(closePole.distTo(polePose)<5){
+        if(curntPose.vec().distTo(polePose)<5){
             return true;
         }
         else{
             return false;
+        }
+    }
+    public Pose2d correctionVelo() {
+        Pose2d curntPose = roadrun.getPoseEstimate();
+        Vector2d closestPole = curntPose.vec();
+        Vector2d minDist = new Vector2d(100,100);
+        for(int i=0;i<5;i++){
+            for(int j=0;j<5;j++){
+                if(curntPose.vec().distTo(new Vector2d(poleCoords[i][j][0],poleCoords[i][j][1]))<minDist.norm()){
+                    minDist = new Vector2d(curntPose.getX()-poleCoords[i][j][0],curntPose.getY()-poleCoords[i][j][1]);
+                    closestPole = new Vector2d(poleCoords[i][j][0],poleCoords[i][j][1]);
+                }
+            }
+        }
+
+        if(closestPole.distTo(curntPose.vec())<13){
+            Pose2d vel = roadrun.getPoseVelocity();
+            double angle = vel.vec().angle()-minDist.angle()+curntPose.getHeading();
+            double mag = abs(vel.vec().norm()*cos(angle));
+            Vector2d towardsVelo = new Vector2d(mag/minDist.norm() * minDist.getX(),mag/minDist.norm() * minDist.getY());
+            return new Pose2d(towardsVelo, atan(PI/2/angle));
+        }
+        else{
+            return new Pose2d(0,0,0);
         }
     }
 
