@@ -42,8 +42,7 @@ public class UltraTele extends LinearOpMode {
         SampleMecanumDrive roadrun = new SampleMecanumDrive(this.hardwareMap);
         roadrun.setPoseEstimate(new Pose2d(-36,12, Math.toRadians(270)));
         ElapsedTime op = new ElapsedTime();
-        logger.createFile("/RobotLogs/sanicM", "0 degrees,5 degrees,10 degrees,15 degrees,20 degrees,25 degrees,30 degrees");
-        logger.createFile("/RobotLogs/sanicD", "0 degrees,5 degrees,10 degrees,15 degrees,20 degrees,25 degrees,30 degrees");
+        logger.createFile("/RobotLogs/sanic", " RAHHH");
 
         ultrasonicLeft = hardwareMap.get(AnalogInput.class, "ultrasonicLeft");
         ultrasonicRight = hardwareMap.get(AnalogInput.class, "ultrasonicRight");
@@ -73,36 +72,36 @@ public class UltraTele extends LinearOpMode {
                 ultraLeft.enable(true);
             }
             if(gamepad1.dpad_right){
-                tempdata.add(90.48337 * ultrasonicRight.getVoltage());
+                tempdata.add(90.48337 * ultrasonicRight.getVoltage()- 13.12465);
                 rightbool = true;
             }
-            if(!gamepad1.dpad_right && rightbool == true){
+            if(!gamepad1.dpad_right && rightbool){
                 outputMean.add(getMean(tempdata));
                 outputDeviation.add(getDev(tempdata));
                 tempdata.clear();
                 rightbool = false;
             }
             if(gamepad1.dpad_left){
-                tempdata.add(90.48337 * ultrasonicRight.getVoltage());
+                tempdata.add(90.48337 * ultrasonicRight.getVoltage()- 13.12465);
                 leftbool = true;
             }
-            if(!gamepad1.dpad_left && leftbool == true){
+            if(!gamepad1.dpad_left && leftbool){
                 outputMean.add(getMean(tempdata));
                 outputDeviation.add(getDev(tempdata));
                 tempdata.clear();
                 leftbool = false;
             }
-            if(gamepad1.right_bumper && press == false){
+            if(gamepad1.right_bumper && !press){
                 press = true;
                 for(int i=0;i<outputMean.size();i++){
-                    logger.logNoTime("/RobotLogs/sanicM", outputMean.get(i) + "," + outputDeviation.get(i));
+                    logger.logNoTime("/RobotLogs/sanic", outputMean.get(i) + "," + outputDeviation.get(i));
                 }
+            }
+            if(!gamepad1.right_bumper && press){
+                press = false;
             }
             angle = Math.asin((Math.abs((90.48337 * ultrasonicRight.getVoltage() - 13.12465) - (90.48337 * ultrasonicLeft.getVoltage() - 13.12465)))/5);
             double goofy = (((90.48337 * ultrasonicRight.getVoltage() - 13.12465) + (90.48337 * ultrasonicLeft.getVoltage() - 13.12465))/2);
-            if(!gamepad1.right_bumper && press == true){
-                press = false;
-            }
             if(roadrun.getPoseEstimate().getHeading() < Math.toRadians(315) && roadrun.getPoseEstimate().getHeading() > Math.toRadians(225)){ // up, -Y
                 globaly = (0+goofy) + (7*sin(angle));
                 globalx = 0;
@@ -160,7 +159,7 @@ public class UltraTele extends LinearOpMode {
         for(int i=0;i<data.size();i++){
             n+= data.get(i);
         }
-        return n/data.size();
+        return n/(data.size());
     }
     public double getDev(ArrayList<Double> data){
         double n = 0;

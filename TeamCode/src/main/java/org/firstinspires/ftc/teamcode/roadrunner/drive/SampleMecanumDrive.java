@@ -138,12 +138,12 @@ public class SampleMecanumDrive extends MecanumDrive {
         leftRear = hardwareMap.get(DcMotorEx.class, "motorLeftBack");
         rightRear = hardwareMap.get(DcMotorEx.class, "motorRightBack");
         rightFront = hardwareMap.get(DcMotorEx.class, "motorRightFront");
-        DcMotorEx backEncoder= hardwareMap.get(DcMotorEx.class, "backEncoder");
-        DcMotorEx leftEncoder = hardwareMap.get(DcMotorEx.class, "leftEncoder");
-        DcMotorEx rightEncoder = hardwareMap.get(DcMotorEx.class, "rightEncoder");
-        leftEncoder.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        rightEncoder.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        backEncoder.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+//        DcMotorEx backEncoder= hardwareMap.get(DcMotorEx.class, "backEncoder");
+//        DcMotorEx leftEncoder = hardwareMap.get(DcMotorEx.class, "leftEncoder");
+//        DcMotorEx rightEncoder = hardwareMap.get(DcMotorEx.class, "rightEncoder");
+//        leftEncoder.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+//        rightEncoder.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+//        backEncoder.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 //        leftFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 //        leftRear.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 //        rightFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -177,7 +177,7 @@ public class SampleMecanumDrive extends MecanumDrive {
         // TODO: if desired, use setLocalizer() to change the localization method
         // for instance, setLocalizer(new ThreeTrackingWheelLocalizer(...));
 //        setLocalizer(new StandardTrackingWheelLocalizer(hardwareMap));
-        setLocalizer(new TwoWheelTrackingLocalizer(hardwareMap, this));
+//        setLocalizer(new TwoWheelTrackingLocalizer(hardwareMap, this));
         trajectorySequenceRunner = new TrajectorySequenceRunner(follower, HEADING_PID);
 //        if(ultrasonics) {
 //            ultras = new Ultrasonics();
