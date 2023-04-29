@@ -13,8 +13,10 @@ import com.qualcomm.robotcore.hardware.LED;
 import java.util.ArrayList;
 
 public class Ultrasonics {
-    private AnalogInput ultrasonicFront, ultrasonicBack, ultrasonicRight, ultrasonicLeft;
-    private LED ultraFront, ultraBack, ultraRight, ultraLeft;
+    //private AnalogInput ultrasonicFront, ultrasonicBack, ultrasonicRight, ultrasonicLeft;
+    //private LED ultraFront, ultraBack, ultraRight, ultraLeft;
+    private AnalogInput ultrasonicLeft, ultrasonicRight;
+    private LED ultraLeft, ultraRight;
     public double ultraRange = 35, lastUltraUpdate = -10, lastSetPos = -10, time = 0.0, robotWidth = 13, robotLength = 15;
     //x,y,a
     private double[] pos = {0, 0, 0}, error = {0, 0};
@@ -22,20 +24,20 @@ public class Ultrasonics {
     private boolean high = false;
     public int updated = 0, updatedto = 0;
 
-    public double[] dist = {0, 0, 0, 0};
+    public double[] dist = {0, 0};
 
     public Ultrasonics() {
-        ultrasonicFront = op.hardwareMap.get(AnalogInput.class, "ultrasonicFront");
+//        ultrasonicFront = op.hardwareMap.get(AnalogInput.class, "ultrasonicFront");
 //        ultrasonicBack = op.hardwareMap.get(AnalogInput.class, "ultrasonicBack");
         ultrasonicLeft = op.hardwareMap.get(AnalogInput.class, "ultrasonicLeft");
         ultrasonicRight = op.hardwareMap.get(AnalogInput.class, "ultrasonicRight");
-        ultraFront = op.hardwareMap.get(LED.class, "ultraFront");
+//        ultraFront = op.hardwareMap.get(LED.class, "ultraFront");
 //        ultraBack = op.hardwareMap.get(LED.class, "ultraBack");
         ultraRight = op.hardwareMap.get(LED.class, "ultraRight");
         ultraLeft = op.hardwareMap.get(LED.class, "ultraLeft");
 //        ultraBack.enable(true);
         ultraRight.enable(true);
-        ultraFront.enable(true);
+//        ultraFront.enable(true);
         ultraLeft.enable(true);
         logger.createFile("Ultrasonics","error0, error1");
     }
@@ -97,7 +99,7 @@ public class Ultrasonics {
         if (time - lastUltraUpdate > 0.05 && !high) {
 //            ultraBack.enable(false);
             ultraRight.enable(false);
-            ultraFront.enable(false);
+//            ultraFront.enable(false);
             ultraLeft.enable(false);
             high = true;
         }
@@ -205,11 +207,11 @@ public class Ultrasonics {
     }
 
     private void updateDistance() {
-        dist = new double[]{90.48337 * ultrasonicRight.getVoltage() - 13.12465, 90.48337 * ultrasonicLeft.getVoltage() - 13.12465
-                , 90.48337 * ultrasonicFront.getVoltage() - 13.12465, - 13.12465};
+        dist = new double[]{90.48337 * ultrasonicRight.getVoltage() - 13.12465, 90.48337 * ultrasonicLeft.getVoltage() - 13.12465};
+//                , 90.48337 * ultrasonicFront.getVoltage() - 13.12465, - 13.12465};
 //        ultraBack.enable(true);
         ultraRight.enable(true);
-        ultraFront.enable(true);
+//        ultraFront.enable(true);
         ultraLeft.enable(true);
         lastUltraUpdate = time;
         high = false;
@@ -220,8 +222,46 @@ public class Ultrasonics {
     public Pose2d getPose2d() {
         updatedto=5;
         double[] errors = averageError();
-        clearError();
+
         logger.log("Ultrasonics", errors[0]+","+errors[1]);
         return new Pose2d(pos[0] + errors[0], pos[1] + errors[1]);
+    }
+    double[] output = new double[3];
+    double robitleng = 14.5;
+    double robitwid = 13.5;
+    double u1dist, u2dist;
+    double wallpos = 70.5;
+    double theta;
+    double temp1, temp2;
+    public double[] ultraLocalize(double heading){
+        if(heading < 315 && heading > 225){ // up, -Y
+            temp1 = -wallpos+u1dist; temp2 = -wallpos+u2dist;
+            theta = Math.asin((abs(temp1-temp2))/robitwid);
+            output[0] = 1;
+            output[1] = ((temp1+temp2)/2) + ((robitleng/2)*Math.sin(theta));
+            output[2] = theta;
+        }
+        if(heading < 225 && heading > 135){ //right, -X
+            temp1 = -wallpos+u1dist; temp2 = -wallpos+u2dist;
+            theta = Math.asin((abs(temp1-temp2))/robitwid);
+            output[0] = 0;
+            output[1] = ((temp1+temp2)/2) + ((robitleng/2)*Math.sin(theta));
+            output[2] = theta;
+        }
+        if(heading < 135 && heading > 45){ //down, +Y
+            temp1 = wallpos-u1dist; temp2 = wallpos-u2dist;
+            theta = Math.asin((abs(temp1-temp2))/robitwid);
+            output[0] = 1;
+            output[1] = ((temp1+temp2)/2) - ((robitleng/2)*Math.sin(theta));
+            output[2] = theta;
+        }
+        if(heading < 45 || heading < 360 && heading > 315){ //left, +X
+            temp1 = wallpos-u1dist; temp2 = wallpos-u2dist;
+            theta = Math.asin((abs(temp1-temp2))/robitwid);
+            output[0] = 1;
+            output[1] = ((temp1+temp2)/2) - ((robitleng/2)*Math.sin(theta));
+            output[2] = theta;
+        }
+        return output;
     }
 }

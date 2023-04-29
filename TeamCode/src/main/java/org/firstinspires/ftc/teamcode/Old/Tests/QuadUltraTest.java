@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.Old.Tests;
 
+import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.logger;
 import static java.lang.Math.abs;
 import static java.lang.Math.floor;
 
@@ -12,13 +13,15 @@ import com.qualcomm.robotcore.hardware.LED;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 
-@Autonomous(name= "UltraTest")
+@Autonomous(name= "RAHHH")
 public class QuadUltraTest extends LinearOpMode {
     private AnalogInput ultrasonicFront, ultrasonicBack, ultrasonicRight, ultrasonicLeft;
     private LED ultraFront, ultraBack, ultraRight, ultraLeft;
     @Override
     public void runOpMode(){
         ElapsedTime op = new ElapsedTime();
+        logger.createFile("/RobotLogs/GeneralRobot", "Runtime    Component               " +
+                "Function                        Action");
 
         ultrasonicLeft = hardwareMap.get(AnalogInput.class, "ultrasonicLeft");
         ultrasonicRight = hardwareMap.get(AnalogInput.class, "ultrasonicRight");
