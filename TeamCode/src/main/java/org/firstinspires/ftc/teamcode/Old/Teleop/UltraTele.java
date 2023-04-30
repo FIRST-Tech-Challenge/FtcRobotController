@@ -72,7 +72,8 @@ public class UltraTele extends LinearOpMode {
                 ultraLeft.enable(true);
             }
             if(gamepad1.dpad_right){
-                tempdata.add(90.48337 * ultrasonicRight.getVoltage()- 13.12465);
+                tempdata.add(90.48337 * ultrasonicRight.getVoltage()- 12.62465
+                );
                 rightbool = true;
             }
             if(!gamepad1.dpad_right && rightbool){
@@ -82,7 +83,8 @@ public class UltraTele extends LinearOpMode {
                 rightbool = false;
             }
             if(gamepad1.dpad_left){
-                tempdata.add(90.48337 * ultrasonicRight.getVoltage()- 13.12465);
+                tempdata.add(90.48337 * ultrasonicRight.getVoltage()- 12.62465
+                );
                 leftbool = true;
             }
             if(!gamepad1.dpad_left && leftbool){
@@ -100,52 +102,78 @@ public class UltraTele extends LinearOpMode {
             if(!gamepad1.right_bumper && press){
                 press = false;
             }
-            angle = Math.asin((Math.abs((90.48337 * ultrasonicRight.getVoltage() - 13.12465) - (90.48337 * ultrasonicLeft.getVoltage() - 13.12465)))/5);
-            double goofy = (((90.48337 * ultrasonicRight.getVoltage() - 13.12465) + (90.48337 * ultrasonicLeft.getVoltage() - 13.12465))/2);
+            angle = Math.asin((Math.abs((90.48337 * ultrasonicRight.getVoltage() - 12.62465
+            ) - (90.48337 * ultrasonicLeft.getVoltage() - 12.62465
+            )))/5);
+            double goofy = (((90.48337 * ultrasonicRight.getVoltage() - 12.62465
+            ) + (90.48337 * ultrasonicLeft.getVoltage() - 12.62465
+            ))/2);
             if(roadrun.getPoseEstimate().getHeading() < Math.toRadians(315) && roadrun.getPoseEstimate().getHeading() > Math.toRadians(225)){ // up, -Y
                 globaly = (0+goofy) + (7*sin(angle));
                 globalx = 0;
-                if(((90.48337 * ultrasonicRight.getVoltage() - 13.12465) < ((90.48337 * ultrasonicLeft.getVoltage() - 13.12465)))){
+                if(((90.48337 * ultrasonicRight.getVoltage() - 12.62465
+                ) < ((90.48337 * ultrasonicLeft.getVoltage() - 12.62465
+                )))){
                     globalAngle = Math.toRadians(270) + angle;
                 }
-                if(((90.48337 * ultrasonicRight.getVoltage() - 13.12465) > ((90.48337 * ultrasonicLeft.getVoltage() - 13.12465)))){
+                if(((90.48337 * ultrasonicRight.getVoltage() - 12.62465
+                ) > ((90.48337 * ultrasonicLeft.getVoltage() - 12.62465
+                )))){
                     globalAngle = Math.toRadians(270) - angle;
                 }
             }
             if(roadrun.getPoseEstimate().getHeading() < Math.toRadians(225) && roadrun.getPoseEstimate().getHeading() > Math.toRadians(135)){ //right, -X
                 globalx = (-70.5+goofy) + (7*sin(angle));
                 globaly = 0;
-                if(((90.48337 * ultrasonicRight.getVoltage() - 13.12465) < ((90.48337 * ultrasonicLeft.getVoltage() - 13.12465)))){
+                if(((90.48337 * ultrasonicRight.getVoltage() - 12.62465
+                ) < ((90.48337 * ultrasonicLeft.getVoltage() - 12.62465
+                )))){
                     globalAngle = Math.toRadians(180) + angle;
                 }
-                if(((90.48337 * ultrasonicRight.getVoltage() - 13.12465) > ((90.48337 * ultrasonicLeft.getVoltage() - 13.12465)))){
+                if(((90.48337 * ultrasonicRight.getVoltage() - 12.62465
+                ) > ((90.48337 * ultrasonicLeft.getVoltage() - 12.62465
+                )))){
                     globalAngle = Math.toRadians(180) - angle;
                 }
             }
             if(roadrun.getPoseEstimate().getHeading() < Math.toRadians(135) && roadrun.getPoseEstimate().getHeading() > Math.toRadians(45)){ //down, +Y
                 globaly = (70.5-goofy) - (7*sin(angle));
                 globalx = 0;
-                if(((90.48337 * ultrasonicRight.getVoltage() - 13.12465) < ((90.48337 * ultrasonicLeft.getVoltage() - 13.12465)))){
+                if(((90.48337 * ultrasonicRight.getVoltage() - 12.62465
+                ) < ((90.48337 * ultrasonicLeft.getVoltage() - 12.62465
+                )))){
                     globalAngle = Math.toRadians(90) + angle;
                 }
-                if(((90.48337 * ultrasonicRight.getVoltage() - 13.12465) > ((90.48337 * ultrasonicLeft.getVoltage() - 13.12465)))){
+                if(((90.48337 * ultrasonicRight.getVoltage() - 12.62465
+                ) > ((90.48337 * ultrasonicLeft.getVoltage() - 12.62465
+                )))){
                     globalAngle = Math.toRadians(90) - angle;
                 }
             }
             if(roadrun.getPoseEstimate().getHeading() < Math.toRadians(45) || roadrun.getPoseEstimate().getHeading() < Math.toRadians(360) && roadrun.getPoseEstimate().getHeading() > Math.toRadians(315)){ //left, +X
                 globalx = (70.5-goofy) - (7*sin(angle));
                 globaly = 0;
-                if(((90.48337 * ultrasonicRight.getVoltage() - 13.12465) < ((90.48337 * ultrasonicLeft.getVoltage() - 13.12465)))){
+                if(((90.48337 * ultrasonicRight.getVoltage() - 12.62465
+                ) < ((90.48337 * ultrasonicLeft.getVoltage() - 12.62465
+                )))){
                     globalAngle = Math.toRadians(0) + angle;
                 }
-                if(((90.48337 * ultrasonicRight.getVoltage() - 13.12465) > ((90.48337 * ultrasonicLeft.getVoltage() - 13.12465)))){
+                if(((90.48337 * ultrasonicRight.getVoltage() - 12.62465
+                ) > ((90.48337 * ultrasonicLeft.getVoltage() - 12.62465
+                )))){
                     globalAngle = Math.toRadians(0) - angle;
                 }
             }
-            telemetry.addData("right", 90.48337 * ultrasonicRight.getVoltage() - 13.12465);
-            telemetry.addData("left", 90.48337 * ultrasonicLeft.getVoltage() - 13.12465);
-            telemetry.addData("goofy", ((90.48337 * ultrasonicRight.getVoltage() - 13.12465) + (90.48337 * ultrasonicLeft.getVoltage() - 13.12465))/2);
-            telemetry.addData("angle", Math.asin((Math.abs((90.48337 * ultrasonicRight.getVoltage() - 13.12465) - (90.48337 * ultrasonicLeft.getVoltage() - 13.12465)))/5));
+            telemetry.addData("right", 90.48337 * ultrasonicRight.getVoltage() - 12.62465
+            );
+            telemetry.addData("left", 90.48337 * ultrasonicLeft.getVoltage() - 12.62465
+            );
+            telemetry.addData("goofy", ((90.48337 * ultrasonicRight.getVoltage() - 12.62465
+            ) + (90.48337 * ultrasonicLeft.getVoltage() - 12.62465
+            ))/2);
+            telemetry.addData("angle", Math.asin((Math.abs((90.48337 * ultrasonicRight.getVoltage() - 12.62465
+            ) - (90.48337 * ultrasonicLeft.getVoltage() - 12.62465
+            )))/5));
             telemetry.addData("global", "(" + globalx + "," + globaly + ")");
 //            telemetry.addData("right", ultraRight.isLightOn());
             telemetry.addData("global angle", globalAngle);
