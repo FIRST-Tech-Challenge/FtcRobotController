@@ -25,7 +25,7 @@ import java.util.ArrayList;
 
 
 public class BlueLeftAutoCycleTuned extends LinearOpMode {
-    private SampleMecanumDrive roadrun;
+//    private SampleMecanumDrive roadrun;
 
     public static double dummyP = 3;
 
@@ -53,7 +53,7 @@ public class BlueLeftAutoCycleTuned extends LinearOpMode {
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
         PwPRobot robot = new PwPRobot(this, false);
         robot.roadrun.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        Pose2d startPose = new Pose2d(41, 63.25, Math.toRadians(90));
+        Pose2d startPose = new Pose2d(36, 63.25, Math.toRadians(90));
         robot.setPoseEstimate(startPose);
 
 
@@ -62,10 +62,10 @@ public class BlueLeftAutoCycleTuned extends LinearOpMode {
 //        Trajectory initialtrajectory2 = robot.roadrun.trajectoryBuilder(startPose)
 //                .lineToConstantHeading(new Vector2d(36, 57))
 //                .build();
-        TrajectorySequence preloadtrajectory = robot.roadrun.trajectorySequenceBuilder(new Pose2d(41,63.25, Math.toRadians(90)))
+        TrajectorySequence preloadtrajectory = robot.roadrun.trajectorySequenceBuilder(new Pose2d(36,63.25, Math.toRadians(90)))
                 .setReversed(true)
-                .splineToSplineHeading(new Pose2d(37, 40.25, toRadians(90)), toRadians(270))
-                .splineTo(new Vector2d(36, 22), toRadians(275))
+                .splineToSplineHeading(new Pose2d(35, 40.25, toRadians(90)), toRadians(270))
+                .splineTo(new Vector2d(34, 22), toRadians(275))
                 .splineToSplineHeading(new Pose2d(26, 4.5, toRadians(50)), toRadians(230))
                 .build();
 //        Trajectory preloadtrajectory2 = robot.roadrun.trajectoryBuilder(new Pose2d(37,50, Math.toRadians(70)))
@@ -164,6 +164,8 @@ public class BlueLeftAutoCycleTuned extends LinearOpMode {
         robot.cv.observeStick();
         waitForStart();
         if (isStopRequested()) return;
+
+        logger.log("/RobotLogs/GeneralRobot", "POSITION:" + robot.roadrun.getPoseEstimate(), false);
         while (opModeIsActive() && !isStopRequested() && getRuntime()<29.8) {
             logger.loopcounter++;
             robot.followTrajectorySequenceAsync(preloadtrajectory);

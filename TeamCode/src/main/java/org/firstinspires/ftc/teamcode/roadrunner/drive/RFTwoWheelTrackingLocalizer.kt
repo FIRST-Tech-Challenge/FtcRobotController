@@ -20,7 +20,7 @@ abstract class RFTwoTrackingWheelLocalizer(
     override var poseEstimate: Pose2d
         get() = _poseEstimate
         set(value) {
-            lastHeading = (lastHeading + value.heading)/2
+            lastHeading = value.heading
             _poseEstimate = value
         }
     override var poseVelocity: Pose2d? = null
