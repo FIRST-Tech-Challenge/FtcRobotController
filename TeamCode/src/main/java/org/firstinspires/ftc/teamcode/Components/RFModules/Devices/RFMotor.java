@@ -173,9 +173,9 @@ public class RFMotor extends Motor {
     public double getDecelDist() {
         double decelDist = 0;
         if (velocity > 0) {
-            decelDist = 0.8 * pow(abs(velocity), 2) / (MAX_ACCELERATION - avgResistance);
+            decelDist = 0.5 * pow(abs(velocity), 2) / (MAX_ACCELERATION - avgResistance);
         } else {
-            decelDist = 0.8 * pow(abs(velocity), 2) / (MAX_ACCELERATION + avgResistance);
+            decelDist = 0.5 * pow(abs(velocity), 2) / (MAX_ACCELERATION + avgResistance);
         }
         return decelDist;
     }
@@ -225,7 +225,7 @@ public class RFMotor extends Motor {
         rfMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         getAvgResistance();
 //        logger.log("/RobotLogs/GeneralRobot", rfMotorName + ",setPower():,Setting Power: " + power, false, false);
-        rfMotor.setPower(power - kP * resistance);
+        rfMotor.setPower(power/* - kP * resistance*/);
         logger.log("/MotorLogs/RFMotor" + rfMotorName, "Setting Power," + (power - kP * getResistance()), false, false);
 
     }

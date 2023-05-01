@@ -17,7 +17,7 @@ import java.util.ArrayList;
 
 @Config
 public class Lift {
-    private final int MAX_LIFT_TICKS = 1300;
+    public static int MAX_LIFT_TICKS = 1340;
     private final double LIFT_GRAVITY_CONSTANT = 0.075;
     //    public enum LiftFunctionStates {
 //        LIFT_HIGH_JUNCTION(false),
@@ -104,7 +104,7 @@ public class Lift {
     }
 
     public enum LiftConstants {
-        LIFT_HIGH_JUNCTION(1690*.8, false),
+        LIFT_HIGH_JUNCTION(MAX_LIFT_TICKS, false),
         LIFT_MED_JUNCTION(860*.8, false),
         LIFT_LOW_JUNCTION(15*.75, false),
         LIFT_GROUND_JUNCTION(0, false),
