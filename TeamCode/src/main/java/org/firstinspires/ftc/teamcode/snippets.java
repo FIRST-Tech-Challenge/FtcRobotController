@@ -2,6 +2,10 @@ package org.firstinspires.ftc.teamcode;
 
 public class snippets {
 
+
+    // sleeve 1 output 3
+    // sleeve 2 output 1
+    // sleeve 3 output 2
     /*
 
             PIDFCoefficients pidfNew = new PIDFCoefficients(3,0,0,0);
