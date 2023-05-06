@@ -346,6 +346,7 @@ public class Field {
         double[] closestTile = {0, 0, 100000000};
         for (int columnnum = 0; columnnum < 6; columnnum++) {
             for (int rownum = 0; rownum < 6; rownum++) {
+                //x^2 + y^2 = radius^2
                 double dist = Math.pow(tileCoords[columnnum][rownum][0] - currentx, 2) + Math.pow(tileCoords[columnnum][rownum][1] - currenty, 2);
                 if (dist < closestTile[2]) {
                     closestTile[0] = columnnum;

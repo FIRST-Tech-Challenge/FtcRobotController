@@ -12,10 +12,12 @@ import com.noahbres.meepmeep.roadrunner.entity.RoadRunnerBotEntity;
 
 
 public class MeepMeepTesting {
-    public static double dropX = 6, dropY = 24, dropA = toRadians(140), dropET = toRadians(310);
+    public static double dummyP = 3;
+
+    public static double dropX = -29, dropY = 17.5, dropA = toRadians(210), dropET = toRadians(30);
 
     public static double pickupX1 = -46, pickupY1 = 10, pickupA1 = toRadians(180), pickupET1 = toRadians(180);
-    public static double pickupX2 = 64.75, pickupY2 = 11.75, pickupA2 = toRadians(0), pickupET2 = toRadians(180);
+    public static double pickupX2 = -63, pickupY2 = 13, pickupA2 = toRadians(180), pickupET2 = toRadians(180);
 
     public static void main(String[] args) {
 
@@ -27,12 +29,12 @@ public class MeepMeepTesting {
                 .setConstraints(50, 40, 4 * PI, 2 * PI, 11)
                 .setConstraints(60, 60, toRadians(180), toRadians(180), 15)
                 .followTrajectorySequence(drive ->
-                                drive.trajectorySequenceBuilder(new Pose2d(41, 63.25, Math.toRadians(90)))
+                                drive.trajectorySequenceBuilder(new Pose2d(-35.1 , 62.25, toRadians(90)))
                                         .setReversed(true)
-                                        .splineToSplineHeading(new Pose2d(37, 40.25, toRadians(90)), toRadians(270))
-                                        .splineTo(new Vector2d(36, 22), toRadians(275))
-                                        .splineToSplineHeading(new Pose2d(26, 4.5, toRadians(50)), toRadians(230))
-
+//                                        .splineToSplineHeading(new Pose2d(-32, 52, toRadians(70)), toRadians(0))
+                                        .lineToLinearHeading(new Pose2d(-34, 46, toRadians(90)))
+                                        .splineToSplineHeading(new Pose2d(-34, 9, toRadians(225)), toRadians(270))
+                                        .lineToLinearHeading(new Pose2d(-29, 18.5, toRadians(225)))
 
                 .build()
                 );
