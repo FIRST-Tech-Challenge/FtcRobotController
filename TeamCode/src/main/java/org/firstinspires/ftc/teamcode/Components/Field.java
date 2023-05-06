@@ -292,16 +292,19 @@ public class Field {
         Pose2d curntPose = roadrun.getPoseEstimate();
         Vector2d closestPole = curntPose.vec();
         Vector2d minDist = new Vector2d(100,100);
+        double outRad=16, inRad=11;
         for(int i=0;i<5;i++){
             for(int j=0;j<5;j++){
                 if(curntPose.vec().distTo(new Vector2d(poleCoords[i][j][0],poleCoords[i][j][1]))<minDist.norm()){
                     minDist = new Vector2d(curntPose.getX()-poleCoords[i][j][0],curntPose.getY()-poleCoords[i][j][1]);
                     closestPole = new Vector2d(poleCoords[i][j][0],poleCoords[i][j][1]);
                 }
+                if(curntPose.vec().distTo(new Vector2d(poleCoords[i][j][0],poleCoords[i][j][1]))<outRad){
+                    
+                }
             }
         }
-
-        if(closestPole.distTo(curntPose.vec())<13){
+        if(closestPole.distTo(curntPose.vec())<inRad){
             Pose2d vel = roadrun.getPoseVelocity();
             double angle = vel.vec().angle()-minDist.angle()+curntPose.getHeading();
             double mag = abs(vel.vec().norm()*cos(angle));
