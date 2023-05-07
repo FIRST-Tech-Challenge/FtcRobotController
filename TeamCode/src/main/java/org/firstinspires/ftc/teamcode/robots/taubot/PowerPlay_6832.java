@@ -228,7 +228,11 @@ public class PowerPlay_6832 extends OpMode {
         alliance = Constants.Alliance.RED;
         startingPosition = Constants.Position.START_RIGHT;
         auto = new Autonomous(robot);
-        auto.createVisionProvider(VisionProviders.DEFAULT_PROVIDER_INDEX);
+
+        //todo this is really hinky - finalizing the vision provider in init() is way to soon - prevents selecting alternates during init_loop()
+        //todo uncomment next line and comment the following one to return to AprilTag provider for Powerplay
+        //auto.createVisionProvider(VisionProviders.DEFAULT_PROVIDER_INDEX);
+        auto.createVisionProvider(1); //selects the DPRG Can Detector
         auto.visionProvider.initializeVision(hardwareMap);
         visionProviderFinalized = true;
         auto.build(startingPosition);
