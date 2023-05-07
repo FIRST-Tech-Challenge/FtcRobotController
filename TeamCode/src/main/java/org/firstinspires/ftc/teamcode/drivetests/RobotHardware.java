@@ -61,10 +61,6 @@ public class RobotHardware {
     //DRIVE VARIABLES
     private boolean fieldCentric = false;
     private double totalSpeed = 0.5;
-    public static double angleTarget = 0;
-    public static boolean turnLeftTog = false;
-    public static boolean turnRightTog = false;
-    public static double idle = 0.1;
 
     //TURNING VARIABLES
     private PIDCoefficientsEx turningCoeffs = null;
@@ -228,10 +224,6 @@ public class RobotHardware {
         return turnPID.getTarget();
     }
 
-    public void setAngleTarget(double angle) {
-        angleTarget = angle;
-    }
-
     public MecanumDrive getDrive() {
         return drive;
     }
@@ -242,19 +234,6 @@ public class RobotHardware {
         } else {
             return 0;
         }
-
-    }
-
-    public boolean isTurnLeftTog() {
-        return turnLeftTog;
-    }
-
-    public boolean isTurnRightTog() {
-        return turnRightTog;
-    }
-
-    public void setIdle(double idle) {
-        this.idle = idle;
     }
 
     public void setTotalSpeed(double speed) {
