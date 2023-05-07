@@ -72,6 +72,7 @@ public class UnderArm implements Subsystem {
     public static double TURRET_DEG_MAX = 360;
 
     public static double GRIPPER_CLOSED = 1700; //1750 for Leo's gripper
+    public static double SixCanGripperClosed = 1500;
 
     public static double GRIPPER_RELEASE = 1000;
     public static double GRIPPER_OPEN = 1000; //1100 for Leo's gripper
@@ -110,7 +111,7 @@ public class UnderArm implements Subsystem {
     private double shoulderAngle;
     private double shoulderTargetAngle, elbowTargetAngle, wristTargetAngle, turretTargetAngle;
 
-    private Articulation articulation;
+    public static Articulation articulation;
 
     public UnderArm(HardwareMap hardwareMap, Robot robot, boolean simulated) {
         this.robot = robot;
@@ -173,7 +174,8 @@ public class UnderArm implements Subsystem {
 
         cancelTransferPosition,
         substationPickup,
-        substationRecover
+        substationRecover,
+        sixCanPickup
     }
 
     private JointAngle jointAngle;
@@ -294,6 +296,9 @@ public class UnderArm implements Subsystem {
                 break;
             case substationPickup:
                 if (SubstationPickup()) articulation = Articulation.manual;
+                break;
+            case sixCanPickup:
+                if (SixCanPickup()) articulation = Articulation.substationRecover;
                 break;
 
             default:
@@ -635,7 +640,7 @@ public class UnderArm implements Subsystem {
     int substationHoverStage = 0;
 
     public double SS_HOVER_SHOULDER = 71, SS_HOVER_ELBOW = 108, SS_HOVER_WRIST = 60, SS_HOVER_TURRET = 0, SS_HOVER_EXTEND = MIN_SAFE_CHASSIS_LENGTH;
-
+    public static double SixCanHoverShoulder = 68, SixCanHoverElbow = 38, SixCanHoverWrist = 48, SixCanHoverExtend=MIN_SAFE_CHASSIS_LENGTH;
     boolean canSaveHoverPositions = false;
     public void SaveHoverPositions(){
         if(canSaveHoverPositions) {
@@ -759,6 +764,70 @@ public class UnderArm implements Subsystem {
         }
         return false;
     }
+    int sixCanPickupStage=0;
+    public boolean SixCanPickup() {
+        switch (sixCanPickupStage) {
+            case 0:
+                if (goSubstationRecover()) { //give the elbow a head start to clear the camera when a cone is loaded
+                    robot.driveTrain.setChassisLength(SixCanHoverExtend);
+                    setElbowTargetAngle(SixCanHoverElbow);
+                    grip(); //make sure the gripper is closed in case we are returning from negative angles and need to pass through
+                    substationHoverTimer = futureTime(0.1);
+                    sixCanPickupStage++;
+                }
+                break;
+            case 1:
+                if (substationHoverTimer<System.nanoTime()){
+                    setShoulderTargetAngle(SixCanHoverShoulder/2); //mostly go there but stop early to not slam the ground
+                    open();
+                    substationHoverTimer = futureTime(0.3);
+                    sixCanPickupStage++;
+                }
+                break;
+            case 2:
+                if (substationHoverTimer<System.nanoTime()){
+                    setShoulderTargetAngle(SixCanHoverShoulder/1.3); //mostly go there but stop early to not slam the ground
+                    open();
+                    substationHoverTimer = futureTime(0.2);
+                    sixCanPickupStage++;
+                }
+                break;
+            case 3:
+
+                if (substationHoverTimer<System.nanoTime()){
+                    // these values are meant to be fine tuned by driver positioning between hover and pickup
+                    setElbowTargetAngle(SixCanHoverElbow);
+                    setShoulderTargetAngle(SixCanHoverShoulder);
+                    setWristTargetAngle(SixCanHoverWrist);
+                    //setTurretTargetAngle(SS_HOVER_TURRET); //we assume turret is aimed by camera centering on target can
+                    substationHoverTimer = futureTime(2.5); //.5 - increased rn for testing
+                    sixCanPickupStage++;
+                }
+                break;
+
+            case 4: //close gripper
+                if (substationHoverTimer<System.nanoTime()) {
+                    gripCan();
+                    substationHoverTimer = futureTime(0.5);
+                    sixCanPickupStage++;
+                }
+            case 5: //return to recover position
+                if (substationHoverTimer<System.nanoTime()) {
+                    gripCan(); //purposefully redundant open
+                    if (goSubstationRecover()) {
+                        sixCanPickupStage = 0;
+                        canSaveHoverPositions = true;
+                        return true;
+                    }
+                }
+                break;
+
+
+            default:
+                sixCanPickupStage=0; //something out of bounds, force a reset of the stages - warning, may cause a repeat loop
+        }
+        return false;
+    }
 
     //this is ugly, but a way to cleanup stages in interrupted underarm articulations
     public void resetArticulations(){
@@ -768,6 +837,7 @@ public class UnderArm implements Subsystem {
         transferStage = 0;
         transferRecoverStage = 0;
         homeStage = 0;
+        sixCanPickupStage = 0;
     }
     int recoverStage = 0;
     long recoverTimer = 0;
@@ -974,6 +1044,11 @@ public boolean goSubstationRecover() {
         lassoGripped = true;
         lassoServo.setPosition(servoNormalize(GRIPPER_CLOSED));
     }
+    public void gripCan(){
+        lassoGripped = true;
+        lassoServo.setPosition(servoNormalize(SixCanGripperClosed));
+    }
+
 
     public void open(){
         lassoGripped = false;
@@ -1017,6 +1092,7 @@ public boolean goSubstationRecover() {
 
         telemetryMap.put("Current Articulation", articulation);
         telemetryMap.put("Transfer Stage", transferStage);
+        telemetryMap.put("Can Stage", sixCanPickupStage);
 
         if (debug) {
             telemetryMap.put("Shoulder Target Angle", shoulderTargetAngle);
