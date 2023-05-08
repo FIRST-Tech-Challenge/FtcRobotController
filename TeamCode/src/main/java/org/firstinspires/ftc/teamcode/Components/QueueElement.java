@@ -21,6 +21,8 @@ public class QueueElement {
 
     private boolean shouldFinish = false;
 
+    private boolean isOptional = false;
+
     public QueueElement(int queueNum, boolean p_asynchronous, int p_startCondition, boolean p_mustFinish) {
         queuePos = queueNum;
         asynchronous = p_asynchronous;
@@ -28,12 +30,13 @@ public class QueueElement {
         mustFinish = p_mustFinish;
     }
 
-    public QueueElement(int queueNum, boolean p_asynchronous, int p_startCondition, boolean p_mustFinish, boolean p_shouldFinish) {
+    public QueueElement(int queueNum, boolean p_asynchronous, int p_startCondition, boolean p_mustFinish, boolean p_shouldFinish, boolean p_isOptional) {
         queuePos = queueNum;
         asynchronous = p_asynchronous;
         startCondition = p_startCondition;
         mustFinish = p_mustFinish;
         shouldFinish = p_shouldFinish;
+        isOptional = p_isOptional;
     }
 
     public boolean isReady(int currentEvent, boolean extraCondition) {
@@ -78,6 +81,8 @@ public class QueueElement {
     public boolean isAsynchronous() {
         return asynchronous;
     }
+
+    public boolean isOptional(){return isOptional;}
 
     public double getReadyTime() {
         return readyTime;
