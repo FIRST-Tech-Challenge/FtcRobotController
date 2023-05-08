@@ -22,7 +22,8 @@ import java.util.List;
 @Config
 public class ConeObserverPipeline extends OpenCvPipeline {
     public static double  degPerPix = 22.5/320, widTimesDist = 820*4*24/31.0*12/8.7*13.5/14.9, focalLength = 715;
-    double centerOfPole = 0, poleSize = 0;
+    double centerOfPole = 0, poleSize = 0, centerOfNock=0, nockSize = 0;
+    boolean isObstacle = false;
     ArrayList<double[]> frameList;
     public static double LowS = 90;
     public static double HighS = 255;
@@ -127,8 +128,15 @@ public class ConeObserverPipeline extends OpenCvPipeline {
                 poleSize = rectangle[maxAreaIndex].width;
                 centerOfPole = rectangle[maxAreaIndex].x - 320;
                 frameList.add(new double[]{centerOfPole, poleSize});
+                isObstacle=false;
+            }
+            else if(ratio<1.0/1.1){
+                nockSize = rectangle[maxAreaIndex].width;
+                centerOfNock = rectangle[maxAreaIndex].x - 320;
+                isObstacle=true;
             }
             else{
+                isObstacle=false;
                 frameList.add(new double[] {0, 0});
             }
         }
@@ -178,6 +186,12 @@ public class ConeObserverPipeline extends OpenCvPipeline {
             }
         }
         return average/(frameList.size()-1);
+    }
+    public boolean isObstacle(){
+        return isObstacle;
+    }
+    public double[] coneNockedPolarCoord(){
+        return new double[]{-atan(centerOfNock/focalLength)*180/PI,abs(5.15/(2*tan(atan((centerOfNock+nockSize/2)/(focalLength))-atan(centerOfNock/focalLength))))};
     }
 
     public double[] coneRotatedPolarCoord() {

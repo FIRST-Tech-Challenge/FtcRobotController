@@ -151,6 +151,7 @@ public class CVMaster {
         });
         isStreaming = true;
     }
+
     public void observeSleeve(){
         openSleevi = new SleeveObserverPipeline();
 
@@ -206,7 +207,8 @@ public class CVMaster {
         return opencv.poleRotatedPolarCoord();
     }
     public double[] rotatedConarCoord(){return cone.coneRotatedPolarCoord();}
-
+    public boolean isObstacle(){return cone.isObstacle();}
+    public double[] knockedConarCoord(){return cone.coneNockedPolarCoord();}
     public void stopCamera(){
         webcam.stopRecordingPipeline();
         webcam.stopStreaming();

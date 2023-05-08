@@ -470,6 +470,12 @@ public class TrajectorySequenceBuilder {
         sequenceSegments.add(new TrajectorySegment(trajectory));
         return this;
     }
+    public TrajectorySequenceBuilder addSequenceSegment(SequenceSegment segment){
+        pushPath();
+
+        sequenceSegments.add(segment);
+        return this;
+    }
 
     private void pushPath() {
         if (currentTrajectoryBuilder != null) {

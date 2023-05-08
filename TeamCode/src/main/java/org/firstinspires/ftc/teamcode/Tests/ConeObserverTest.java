@@ -37,8 +37,8 @@ public class ConeObserverTest extends LinearOpMode {
 ////                field.setDoneLookin(true);
                 telemetry.addData("polePos", target);
                 telemetry.addData("curPos",robot.roadrun.getPoseEstimate());
-                telemetry.addData("coords0",robot.cv.rotatedConarCoord()[0]);
-                telemetry.addData("coords1",robot.cv.rotatedConarCoord()[1]);
+                telemetry.addData("coords0",robot.cv.knockedConarCoord()[0]);
+                telemetry.addData("coords1",robot.cv.knockedConarCoord()[1]);
 
                 telemetry.update();
                 logger.log("/RobotLogs/GeneralRobot", "mr.obama"+target+"im pole"+robot.roadrun.getPoseEstimate());

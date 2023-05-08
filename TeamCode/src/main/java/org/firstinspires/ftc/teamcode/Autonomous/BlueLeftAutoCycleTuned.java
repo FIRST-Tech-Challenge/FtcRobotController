@@ -68,7 +68,6 @@ public class BlueLeftAutoCycleTuned extends LinearOpMode {
                 .splineToSplineHeading(new Pose2d(36, 40.25, toRadians(90)), toRadians(270))
                 .splineTo(new Vector2d(35, 22), toRadians(265))
                 .splineToSplineHeading(new Pose2d(27, 4.5, toRadians(40)), toRadians(230))
-
                 .build();
 //        Trajectory preloadtrajectory2 = robot.roadrun.trajectoryBuilder(new Pose2d(37,50, Math.toRadians(70)))
 //                .lineToConstantHeading(new Vector2d(36, 12))
@@ -269,7 +268,6 @@ public class BlueLeftAutoCycleTuned extends LinearOpMode {
             robot.roadrun.update();
             robot.updateClawStates();
             robot.updateLiftArmStates();
-
         }
         robot.stop();
         if (getRuntime() > 29.8) {

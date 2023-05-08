@@ -50,6 +50,9 @@ public class Queuer {
     /**
      * same as regular queue, but will wait for extra_condition to be true before running
      */
+    public void setCheckOptionals(boolean p_checkOptional){
+        checkOptional = p_checkOptional;
+    }
     public void done() {
         int inde = 908;
         for (int i = currentEvent + 1; i < queueElements.size(); i++) {

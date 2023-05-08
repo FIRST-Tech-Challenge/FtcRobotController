@@ -71,8 +71,8 @@ public class QuadUltraTest extends LinearOpMode {
                 telemetry.update();
                 lastReadTime = getRuntime();
 
-                rawHist.add(asin((rightFilter-leftFilter)/8.5)*180/PI);
-                filHist.add(afilter.regressedDist(asin((rightFilter-leftFilter)/8.5)*180/PI));
+                rawHist.add(leftRaw);
+                filHist.add(afilter.regressedDist(rightRaw));
             }
             else{
 //                ultraRight.enable(true);

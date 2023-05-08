@@ -43,6 +43,7 @@ import org.firstinspires.ftc.teamcode.roadrunner.drive.DriveConstants;
 import org.firstinspires.ftc.teamcode.roadrunner.drive.PoseStorage;
 import org.firstinspires.ftc.teamcode.roadrunner.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.roadrunner.trajectorysequence.TrajectorySequence;
+import org.firstinspires.ftc.teamcode.roadrunner.trajectorysequence.TrajectorySequenceBuilder;
 import org.firstinspires.ftc.teamcode.roadrunner.util.IMU;
 
 import java.util.ArrayList;
@@ -254,7 +255,11 @@ public class PwPRobot extends BasicRobot {
     public void followTrajectorySequenceAsync(TrajectorySequence trajectorySequence) {
         if (queuer.queue(false, !roadrun.isBusy() && roadrun.getPoseEstimate().vec().distTo(trajectorySequence.end().vec()) < 3)) {
             if (!roadrun.isBusy()) {
-                roadrun.followTrajectorySequenceAsync(trajectorySequence);
+                TrajectorySequenceBuilder builder = roadrun.trajectorySequenceBuilder(roadrun.getPoseEstimate());
+                for(int i=0;i< trajectorySequence.size();i++){
+                        builder.addSequenceSegment(trajectorySequence.get(i));
+                }
+                roadrun.followTrajectorySequenceAsync(builder.build());
             }
         }
     }
