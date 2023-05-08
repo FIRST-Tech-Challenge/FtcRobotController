@@ -81,7 +81,7 @@ public class BlueLeftAutoCycleTuned extends LinearOpMode {
 //                .build();
         TrajectorySequence pickupTrajectory = robot.roadrun.trajectorySequenceBuilder(new Pose2d(26.5,7.2,Math.toRadians(50)))
                 .setReversed(false)
-                .splineTo(new Vector2d(63.5, 11.25), Math.toRadians(0))
+                .splineTo(new Vector2d(63.5, 11.5), Math.toRadians(0))
                 .addTemporalMarker(robot::done)
                 .build();
 
@@ -103,7 +103,7 @@ public class BlueLeftAutoCycleTuned extends LinearOpMode {
         for(int i=0;i<5;i++){
             dropTrajectory.add(robot.roadrun.trajectorySequenceBuilder(new Pose2d(64,11.75,Math.toRadians(0)))
                     .setReversed(true)
-                    .splineToSplineHeading(new Pose2d(dropX, dropY+0.35*i, Math.toRadians(30)), Math.toRadians(210))
+                    .splineToSplineHeading(new Pose2d(dropX, dropY+0.35*i, Math.toRadians(35)), Math.toRadians(215))
                     .addTemporalMarker(robot::done)
                     .build());
         }
@@ -260,7 +260,7 @@ public class BlueLeftAutoCycleTuned extends LinearOpMode {
             robot.lowerLiftArmToIntake(true);
             robot.delay(1.6);
             robot.wideClaw();
-            robot.delay(0.3);
+            robot.delay(0.8);
             robot.liftToPosition(0);
 
 

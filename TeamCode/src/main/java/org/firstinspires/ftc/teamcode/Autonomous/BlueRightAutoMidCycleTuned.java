@@ -29,17 +29,17 @@ public class BlueRightAutoMidCycleTuned extends LinearOpMode {
 
     public static double dummyP = 1;
 
-    public static double dropX = -28, dropY = 18, dropA = toRadians(215), dropET = toRadians(30);
+    public static double dropX = -29.5, dropY = 18.5, dropA = toRadians(215), dropET = toRadians(30);
 
     public static double pickupX1 = -46, pickupY1 = 10, pickupA1 = toRadians(180), pickupET1 = toRadians(180);
-    public static double pickupX2 = -65  , pickupY2 = 11, pickupA2 = toRadians(180), pickupET2 = toRadians(180);
+    public static double pickupX2 = -64.69  , pickupY2 = 11, pickupA2 = toRadians(180), pickupET2 = toRadians(180);
 
     double[] stackPos = {440, 330, 245, 100, 0};
 
     public void runOpMode() {
         PwPRobot robot = new PwPRobot(this, false);
         robot.roadrun.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        Pose2d startPose = new Pose2d(-35.1 , 62.25, toRadians(90));
+        Pose2d startPose = new Pose2d(-35.9 , 62.25, toRadians(90));
         robot.setPoseEstimate(startPose);
 
         //detectSignal();
@@ -49,7 +49,7 @@ public class BlueRightAutoMidCycleTuned extends LinearOpMode {
                 .setReversed(true)
                 .lineToLinearHeading(new Pose2d(-34, 46, toRadians(90)))
                 .splineToSplineHeading(new Pose2d(-35, 9, toRadians(225)), toRadians(270))
-                .lineToLinearHeading(new Pose2d(-28, 18, toRadians(225)))
+                .lineToLinearHeading(new Pose2d(-28, 19, toRadians(225)))
                 .addTemporalMarker(robot::done)
                 .build();
 //        TrajectorySequence pickupTrajectory = robot.roadrun.trajectorySequenceBuilder(new Pose2d(-29, 18.5, toRadians(225)))
@@ -205,7 +205,7 @@ public class BlueRightAutoMidCycleTuned extends LinearOpMode {
             robot.lowerLiftArmToIntake(true);
             robot.delay(1.0);
             robot.wideClaw();
-            robot.delay(1.0);
+            robot.delay(1.5);
             robot.liftToPosition(0);
 
 
