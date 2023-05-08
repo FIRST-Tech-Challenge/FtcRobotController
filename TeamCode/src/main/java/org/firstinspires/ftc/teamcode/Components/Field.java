@@ -292,6 +292,9 @@ public class Field {
         Pose2d curntPose = roadrun.getPoseEstimate();
         Vector2d closestPole = curntPose.vec();
         Vector2d minDist = new Vector2d(100,100);
+        Pose2d totaltraj = new Pose2d(0, 0);
+        double OUTER_PENETRATION_CONSTANT = 16;
+        double ROBOT_SPED_CONSTANT = 0;
         double outRad=16, inRad=11;
         for(int i=0;i<5;i++){
             for(int j=0;j<5;j++){
@@ -300,7 +303,8 @@ public class Field {
                     closestPole = new Vector2d(poleCoords[i][j][0],poleCoords[i][j][1]);
                 }
                 if(curntPose.vec().distTo(new Vector2d(poleCoords[i][j][0],poleCoords[i][j][1]))<outRad){
-                    
+                    double multiplier = (OUTER_PENETRATION_CONSTANT/minDist.norm()) * (ROBOT_SPED_CONSTANT*roadrun.getExternalHeadingVelocity());
+                    totaltraj = new Pose2d(minDist.norm() * multiplier);
                 }
             }
         }

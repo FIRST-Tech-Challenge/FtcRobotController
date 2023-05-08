@@ -14,7 +14,7 @@ import java.util.ArrayList;
 @Config
 public class SleeveObserverPipeline extends OpenCvPipeline {
     ArrayList<double[]> frameList;
-    public static double p1x = 420, p1y =320, p2x = 550, p2y =470,
+    public static double p1x = 230, p1y =300, p2x = 320, p2y =430,
 
         h1 = 120,s1 = 0, v1 =0,
             h1u = 160,s1u = 255, v1u =255,
