@@ -2,19 +2,18 @@ package org.firstinspires.ftc.teamcode.commandBased.commands.drive;
 
 import com.arcrobotics.ftclib.command.CommandBase;
 
-import org.firstinspires.ftc.teamcode.commandBased.Robot;
 import org.firstinspires.ftc.teamcode.commandBased.subsystems.DrivetrainSubsystem;
 
 import java.util.function.DoubleSupplier;
 
-public class FieldCentric extends CommandBase {
+public class AlignCentric extends CommandBase {
 
     private final DoubleSupplier strafeSpeed;
     private final DoubleSupplier forwardSpeed;
     private final DoubleSupplier turnSpeed;
     private final DrivetrainSubsystem m_drivetrainSubsystem;
 
-    public FieldCentric(DrivetrainSubsystem drivetrainSubsystem,
+    public AlignCentric(DrivetrainSubsystem drivetrainSubsystem,
                         DoubleSupplier strafeSpeed,
                         DoubleSupplier forwardSpeed,
                         DoubleSupplier turnSpeed)
@@ -27,9 +26,12 @@ public class FieldCentric extends CommandBase {
     }
 
     @Override
+    public void initialize() {
+
+    }
+
+    @Override
     public void execute() {
-        double turn = m_drivetrainSubsystem.getTurnAmount(turnSpeed.getAsDouble());
-        m_drivetrainSubsystem.fieldCentric(strafeSpeed.getAsDouble(), forwardSpeed.getAsDouble(), turn);
-        Robot.mTelemetry().addData("Field", 0);
+
     }
 }

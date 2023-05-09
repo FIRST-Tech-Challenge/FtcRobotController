@@ -98,11 +98,11 @@ public class DrivetrainSubsystem extends SubsystemBase {
         );
     }
 
-    public void robotCentric() {
+    public void robotCentric(double strafeSpeed, double forwardSpeed, double turnSpeed) {
         drive.driveRobotCentric(
-                strafeMultiplier,
-                forwardMultiplier,
-                turnMultiplier
+                strafeSpeed * strafeMultiplier,
+                forwardSpeed * forwardMultiplier,
+                turnSpeed * turnMultiplier
         );
     }
 

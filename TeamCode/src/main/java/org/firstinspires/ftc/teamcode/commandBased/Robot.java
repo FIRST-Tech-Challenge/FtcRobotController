@@ -4,8 +4,11 @@ import com.acmerobotics.dashboard.config.Config;
 import com.arcrobotics.ftclib.command.CommandScheduler;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
+import org.checkerframework.checker.units.qual.A;
 import org.firstinspires.ftc.teamcode.commandBased.commands.MoveElevator;
+import org.firstinspires.ftc.teamcode.commandBased.commands.drive.AlignCentric;
 import org.firstinspires.ftc.teamcode.commandBased.commands.drive.FieldCentric;
+import org.firstinspires.ftc.teamcode.commandBased.commands.drive.RobotCentric;
 import org.firstinspires.ftc.teamcode.commandBased.subsystems.DrivetrainSubsystem;
 import org.firstinspires.ftc.teamcode.commandBased.subsystems.ElevatorSubsystem;
 
@@ -39,9 +42,20 @@ public class Robot extends BlackOp {
                 driver.right_stick_x::get
         );
 
-        drivetrainSS.setSpeedMultipliers(1, 1, 1);
+        RobotCentric robotCentric = new RobotCentric(
+                drivetrainSS,
+                driver.left_stick_x::get,
+                () -> -driver.left_stick_y.get(),
+                driver.right_stick_x::get
+        );
 
-        drivetrainSS.setDefaultCommand(fieldCentric);
+        AlignCentric alignCentric = new AlignCentric(
+                drivetrainSS,
+                driver.left_stick_x::get,
+                () -> -driver.left_stick_y.get(),
+                driver.right_stick_x::get);
+
+        fieldCentric.schedule();
 
         waitForStart();
 
@@ -53,9 +67,26 @@ public class Robot extends BlackOp {
             driver.left_bumper.onRise(() -> drivetrainSS.setSpeedMultipliers(0.5, 0.5, 0.5))
                               .onFall(() -> drivetrainSS.setSpeedMultipliers(1, 1, 1));
 
+            driver.a.onRise(() -> {
+                alignCentric.cancel();
+                fieldCentric.cancel();
+                robotCentric.schedule();
+            });
+            driver.b.onRise(() -> {
+                alignCentric.cancel();
+                robotCentric.cancel();
+                fieldCentric.schedule();
+            });
+            driver.x.onRise(() -> {
+                fieldCentric.cancel();
+                robotCentric.cancel();
+                alignCentric.schedule();
+            });
+
             mTelemetry().addData("LX", driver.left_stick_x.get());
             mTelemetry().addData("LY", driver.left_stick_y.get());
             mTelemetry().addData("RX", driver.right_stick_x.get());
+            mTelemetry().addData("cmd", CommandScheduler.getInstance().isScheduled(robotCentric));
             mTelemetry().update();
 
             CommandScheduler.getInstance().run();
