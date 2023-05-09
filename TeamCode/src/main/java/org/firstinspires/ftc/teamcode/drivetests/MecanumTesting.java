@@ -4,8 +4,8 @@ import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
-import org.firstinspires.ftc.teamcode.commands.MoveElevator;
-import org.firstinspires.ftc.teamcode.subsystems.Drivetrain;
+import org.firstinspires.ftc.teamcode.commandBased.commands.MoveElevator;
+import org.firstinspires.ftc.teamcode.commandBased.subsystems.DrivetrainSubsystem;
 
 import ftc.rogue.blacksmith.BlackOp;
 import ftc.rogue.blacksmith.Scheduler;
@@ -25,13 +25,13 @@ public class MecanumTesting extends BlackOp {
 
     FtcDashboard dashboard = null;
     RobotHardware robot = new RobotHardware();
-    Drivetrain drivetrain = null;
+    DrivetrainSubsystem drivetrainSubsystem = null;
     MoveElevator elevator = null;
 
     @Override
     public void go() {
 
-        Drivetrain drivetrain = new Drivetrain(hardwareMap);
+        DrivetrainSubsystem drivetrainSubsystem = new DrivetrainSubsystem(hardwareMap);
         //MoveElevator moveElevator = new MoveElevator();
 
         dashboard = FtcDashboard.getInstance();
@@ -45,7 +45,7 @@ public class MecanumTesting extends BlackOp {
 
         Scheduler.launchOnStart(this, () -> {
 
-            drivetrain.robotGoSkrtSkrt(driver.left_stick_x.get() * strafeSpeed, -driver.left_stick_y.get() * forwardSpeed, robot.getTurnAmount(driver.right_stick_x.get() * turnSpeed));
+            //drivetrainSubsystem.robotDrive(driver.left_stick_x.get() * strafeSpeed, -driver.left_stick_y.get() * forwardSpeed, robot.getTurnAmount(driver.right_stick_x.get() * turnSpeed));
 
             driver.a.onRise(() -> robot.setFieldCentric(true));
             driver.b.onRise(() -> robot.setFieldCentric(false));

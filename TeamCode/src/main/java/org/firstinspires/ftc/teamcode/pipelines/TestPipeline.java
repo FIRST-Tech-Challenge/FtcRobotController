@@ -31,20 +31,20 @@ public class TestPipeline extends OpenCvPipeline {
         Imgproc.cvtColor(input, HSVMat, Imgproc.COLOR_RGB2HSV);
 
         //apply lenient HSV filter
-        Scalar lowHSV = new Scalar(86, 44, 96);
+        Scalar lowHSV = new Scalar(86, 44, 23);
         Scalar highHSV = new Scalar(128, 255, 249);
         Core.inRange(HSVMat, lowHSV, highHSV, threshMat);
 
         //return blue values
-        Core.bitwise_and(inputMat, HSVMat, maskedMat);
+        Core.bitwise_and(inputMat, inputMat, maskedMat, threshMat);
 
         //scale avg saturation to 150
         Scalar average = Core.mean(maskedMat, threshMat);
         maskedMat.convertTo(scaledMat, -1, 150/average.val[1], 0);
 
         //stricter HSV
-        Scalar strictLowHSV = new Scalar(83, 103, 135);
-        Scalar strictHigherHSV = new Scalar(255, 255, 255);
+        Scalar strictLowHSV = new Scalar(0, 25, 100);
+        Scalar strictHigherHSV = new Scalar(100, 175, 255);
 
         Core.inRange(scaledMat, strictLowHSV, strictHigherHSV, scaledThreshMat);
 
@@ -52,7 +52,7 @@ public class TestPipeline extends OpenCvPipeline {
 
         Imgproc.Canny(outputMat, edgesMat, 100, 200);
 
-        return edgesMat;
+        return scaledThreshMat;
     }
 
     @Override

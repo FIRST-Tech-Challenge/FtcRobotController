@@ -1,13 +1,10 @@
-package org.firstinspires.ftc.teamcode.subsystems;
-
-import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.hardwareMap;
+package org.firstinspires.ftc.teamcode.commandBased.subsystems;
 
 import com.ThermalEquilibrium.homeostasis.Controllers.Feedback.AngleController;
 import com.ThermalEquilibrium.homeostasis.Controllers.Feedback.PIDEx;
 import com.ThermalEquilibrium.homeostasis.Parameters.PIDCoefficientsEx;
 import com.arcrobotics.ftclib.command.SubsystemBase;
 import com.arcrobotics.ftclib.drivebase.MecanumDrive;
-import com.arcrobotics.ftclib.hardware.RevIMU;
 import com.arcrobotics.ftclib.hardware.motors.Motor;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
@@ -15,7 +12,9 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.teamcode.classes.PIDOpenClosed;
 
-public class Drivetrain extends SubsystemBase {
+import java.util.function.DoubleSupplier;
+
+public class DrivetrainSubsystem extends SubsystemBase {
 
     //DRIVE MOTORS
     private DcMotor m_fL;
@@ -26,6 +25,10 @@ public class Drivetrain extends SubsystemBase {
     //DRIVE VARIABLES
     private boolean fieldCentric = false;
     private double totalSpeed = 0.5;
+    private double strafeMultiplier = 1;
+    private double turnMultiplier = 1;
+    private double forwardMultiplier = 1;
+    private double heading;
 
     //TURNING VARIABLES
     private PIDCoefficientsEx turningCoeffs;
@@ -34,9 +37,9 @@ public class Drivetrain extends SubsystemBase {
     private PIDOpenClosed turnPID;
 
     private MecanumDrive drive = null;
-    private RevIMU imu = null;
+    private LocalizerSubsystem localizerSubsystem;
 
-    public Drivetrain(final HardwareMap hwMap) {
+    public DrivetrainSubsystem(final HardwareMap hwMap) {
         Motor fL = new Motor(hwMap, "fL", Motor.GoBILDA.RPM_312);
         Motor fR = new Motor(hwMap, "fR", Motor.GoBILDA.RPM_312);
         Motor rL = new Motor(hwMap, "rL", Motor.GoBILDA.RPM_312);
@@ -68,28 +71,62 @@ public class Drivetrain extends SubsystemBase {
         turningController = new AngleController(turningPID);
         turnPID = new PIDOpenClosed(turningController, 0.2);
 
-        //GYRO
-        imu = new RevIMU(hwMap);
-        imu.init();
+        localizerSubsystem = new LocalizerSubsystem(hwMap);
     }
 
-    public void robotGoSkrtSkrt(double strafeSpeed, double forwardSpeed, double turnSpeed) {
-        strafeSpeed *= totalSpeed;
-        forwardSpeed *= totalSpeed;
-        turnSpeed *= totalSpeed;
-        if (fieldCentric) {
-            drive.driveFieldCentric(
-                    strafeSpeed,
-                    forwardSpeed,
-                    turnSpeed,
-                    imu.getRotation2d().getDegrees()
-            );
-        } else {
-            drive.driveRobotCentric(
-                    strafeSpeed,
-                    forwardSpeed,
-                    turnSpeed
-            );
-        }
+    public void periodic() {
+        heading = localizerSubsystem.getHeading();
+    }
+
+//    public void robotDrive(double strafeSpeed, double forwardSpeed, double turnSpeed) {
+//        strafeSpeed *= totalSpeed;
+//        forwardSpeed *= totalSpeed;
+//        turnSpeed *= totalSpeed;
+//        if (fieldCentric) {
+//            drive.driveFieldCentric(
+//                    strafeSpeed,
+//                    forwardSpeed,
+//                    turnSpeed,
+//                    heading
+//            );
+//        } else {
+//            drive.driveRobotCentric(
+//                    strafeSpeed,
+//                    forwardSpeed,
+//                    turnSpeed
+//            );
+//        }
+//    }
+
+    public void setSpeedMultipliers(double strafeMultiplier, double forwardMultiplier, double turnMultiplier) {
+        this.strafeMultiplier = strafeMultiplier;
+        this.forwardMultiplier = forwardMultiplier;
+        this.turnMultiplier = turnMultiplier;
+    }
+
+    public void fieldCentric(double leftStickX, double leftStickY, double rightStickX) {
+
+        drive.driveFieldCentric(
+                leftStickX,
+                leftStickY,
+                rightStickX,
+                heading
+        );
+    }
+
+    public void robotCentric() {
+        drive.driveRobotCentric(
+                strafeMultiplier,
+                forwardMultiplier,
+                turnMultiplier
+        );
+    }
+
+    public void pointCentric() {
+
+    }
+
+    public double getTurnAmount(double stick) {
+        return turnPID.calculate(stick, Math.toRadians(localizerSubsystem.getHeading()));
     }
 }

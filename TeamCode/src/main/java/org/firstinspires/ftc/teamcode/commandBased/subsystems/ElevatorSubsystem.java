@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.subsystems;
+package org.firstinspires.ftc.teamcode.commandBased.subsystems;
 
 import com.ThermalEquilibrium.homeostasis.Controllers.Feedback.PIDEx;
 import com.ThermalEquilibrium.homeostasis.Parameters.PIDCoefficientsEx;
@@ -9,6 +9,8 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
+import org.firstinspires.ftc.teamcode.commandBased.Robot;
+
 public class ElevatorSubsystem extends SubsystemBase {
 
     private Motor eleL;
@@ -18,7 +20,7 @@ public class ElevatorSubsystem extends SubsystemBase {
     private MotorGroup ele;
 
     //ELEVATOR VARIABLES
-    private PIDCoefficientsEx elevatorCoeffs = null;
+    private PIDCoefficientsEx elevatorCoeffs;
     private PIDEx elevatorPID = null;
     private double eleTarget= 0;
     private double elePos = 0;
@@ -52,10 +54,6 @@ public class ElevatorSubsystem extends SubsystemBase {
 
     @Override
     public void periodic() {
-        update();
-    }
-
-    public void update() {
         elePos = (m_eleL.getCurrentPosition() + m_eleR.getCurrentPosition()) / 2.0;
         elePower = elevatorPID.calculate(eleTarget, elePos);
         ele.set(elePower);
@@ -73,11 +71,4 @@ public class ElevatorSubsystem extends SubsystemBase {
         return elePos;
     }
 
-    public double getLeftDcMotorElePos() {
-        return m_eleL.getCurrentPosition();
-    }
-
-    public double getElePower() {
-        return m_eleL.getPower();
-    }
 }
