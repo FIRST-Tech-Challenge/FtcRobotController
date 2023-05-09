@@ -18,13 +18,13 @@ import ftc.rogue.blacksmith.listeners.ReforgedGamepad;
 @TeleOp(name="Command Based", group="Linear Opmode")
 public class Robot extends BlackOp {
 
-    public static DrivetrainSubsystem drivetrainSubsystem;
+    public static DrivetrainSubsystem drivetrainSS;
     public static ElevatorSubsystem elevatorSubsystem;
 
     @Override
     public void go() {
 
-        drivetrainSubsystem = new DrivetrainSubsystem(hardwareMap);
+        drivetrainSS = new DrivetrainSubsystem(hardwareMap);
         elevatorSubsystem = new ElevatorSubsystem(hardwareMap);
 
         ReforgedGamepad driver = new ReforgedGamepad(gamepad1);
@@ -33,13 +33,15 @@ public class Robot extends BlackOp {
         MoveElevator eleLow = new MoveElevator(elevatorSubsystem, 0);
 
         FieldCentric fieldCentric = new FieldCentric(
-                drivetrainSubsystem,
-                driver.left_stick_x.get(),
-                driver.left_stick_y.get(),
-                driver.right_stick_x.get()
+                drivetrainSS,
+                driver.left_stick_x::get,
+                () -> -driver.left_stick_y.get(),
+                driver.right_stick_x::get
         );
 
-        drivetrainSubsystem.setDefaultCommand(fieldCentric);
+        drivetrainSS.setSpeedMultipliers(1, 1, 1);
+
+        drivetrainSS.setDefaultCommand(fieldCentric);
 
         waitForStart();
 
@@ -48,10 +50,12 @@ public class Robot extends BlackOp {
             driver.dpad_up.onRise(eleHigh::schedule);
             driver.dpad_down.onRise(eleLow::schedule);
 
-            fieldCentric.schedule();
+            driver.left_bumper.onRise(() -> drivetrainSS.setSpeedMultipliers(0.5, 0.5, 0.5))
+                              .onFall(() -> drivetrainSS.setSpeedMultipliers(1, 1, 1));
 
-            mTelemetry().addData("eleTarget", elevatorSubsystem.getEleTarget());
-            mTelemetry().addData("elePos", elevatorSubsystem.getElePos());
+            mTelemetry().addData("LX", driver.left_stick_x.get());
+            mTelemetry().addData("LY", driver.left_stick_y.get());
+            mTelemetry().addData("RX", driver.right_stick_x.get());
             mTelemetry().update();
 
             CommandScheduler.getInstance().run();

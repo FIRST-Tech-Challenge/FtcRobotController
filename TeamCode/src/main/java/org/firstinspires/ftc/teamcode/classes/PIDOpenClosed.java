@@ -34,10 +34,8 @@ public class PIDOpenClosed {
                 inputChange = InputChange.INCREASING;
             }
         } else if (comingToRest) {
-            if (inputChange == InputChange.INCREASING && pastState < state) {
-                    target = state;
-                    comingToRest = false;
-            } else if (inputChange == InputChange.DECREASING && pastState > state) {
+            if ((inputChange == InputChange.INCREASING && pastState < state) ||
+                    (inputChange == InputChange.DECREASING && pastState > state)) {
                     target = state;
                     comingToRest = false;
             }

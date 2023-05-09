@@ -10,6 +10,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
+import org.firstinspires.ftc.teamcode.classes.DeadzonePID;
 import org.firstinspires.ftc.teamcode.classes.PIDOpenClosed;
 
 import java.util.function.DoubleSupplier;
@@ -32,9 +33,10 @@ public class DrivetrainSubsystem extends SubsystemBase {
 
     //TURNING VARIABLES
     private PIDCoefficientsEx turningCoeffs;
-    private PIDEx turningPID;
+    private DeadzonePID turningPID;
     private AngleController turningController;
     private PIDOpenClosed turnPID;
+    private double turningPIDDeadzone = 0.25;
 
     private MecanumDrive drive = null;
     private LocalizerSubsystem localizerSubsystem;
@@ -52,6 +54,8 @@ public class DrivetrainSubsystem extends SubsystemBase {
 
         m_fL.setDirection(DcMotorSimple.Direction.REVERSE);
         m_rL.setDirection(DcMotorSimple.Direction.REVERSE);
+        m_fR.setDirection(DcMotorSimple.Direction.REVERSE);
+        m_rR.setDirection(DcMotorSimple.Direction.REVERSE);
 
         m_fL.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         m_fR.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
@@ -66,8 +70,8 @@ public class DrivetrainSubsystem extends SubsystemBase {
         drive = new MecanumDrive(fL, fR, rL, rR);
 
         //TURNING PID
-        turningCoeffs = new PIDCoefficientsEx(2.5, 0.4, .4, 0.25, 2, 0.5);
-        turningPID = new PIDEx(turningCoeffs);
+        turningCoeffs = new PIDCoefficientsEx(2.5, 0.4, 0.4, 0.25, 2, 0.5);
+        turningPID = new DeadzonePID(turningCoeffs, Math.toRadians(turningPIDDeadzone));
         turningController = new AngleController(turningPID);
         turnPID = new PIDOpenClosed(turningController, 0.2);
 
@@ -78,25 +82,6 @@ public class DrivetrainSubsystem extends SubsystemBase {
         heading = localizerSubsystem.getHeading();
     }
 
-//    public void robotDrive(double strafeSpeed, double forwardSpeed, double turnSpeed) {
-//        strafeSpeed *= totalSpeed;
-//        forwardSpeed *= totalSpeed;
-//        turnSpeed *= totalSpeed;
-//        if (fieldCentric) {
-//            drive.driveFieldCentric(
-//                    strafeSpeed,
-//                    forwardSpeed,
-//                    turnSpeed,
-//                    heading
-//            );
-//        } else {
-//            drive.driveRobotCentric(
-//                    strafeSpeed,
-//                    forwardSpeed,
-//                    turnSpeed
-//            );
-//        }
-//    }
 
     public void setSpeedMultipliers(double strafeMultiplier, double forwardMultiplier, double turnMultiplier) {
         this.strafeMultiplier = strafeMultiplier;
@@ -104,12 +89,11 @@ public class DrivetrainSubsystem extends SubsystemBase {
         this.turnMultiplier = turnMultiplier;
     }
 
-    public void fieldCentric(double leftStickX, double leftStickY, double rightStickX) {
-
+    public void fieldCentric(double strafeSpeed, double forwardSpeed, double turnSpeed) {
         drive.driveFieldCentric(
-                leftStickX,
-                leftStickY,
-                rightStickX,
+                strafeSpeed * strafeMultiplier,
+                forwardSpeed * forwardMultiplier,
+                turnSpeed * turnMultiplier,
                 heading
         );
     }
@@ -128,5 +112,9 @@ public class DrivetrainSubsystem extends SubsystemBase {
 
     public double getTurnAmount(double stick) {
         return turnPID.calculate(stick, Math.toRadians(localizerSubsystem.getHeading()));
+    }
+
+    public double getHeading() {
+        return heading;
     }
 }

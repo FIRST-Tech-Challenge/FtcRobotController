@@ -2,21 +2,31 @@ package org.firstinspires.ftc.teamcode.commandBased.commands.drive;
 
 import com.arcrobotics.ftclib.command.CommandBase;
 
+import org.firstinspires.ftc.teamcode.commandBased.Robot;
 import org.firstinspires.ftc.teamcode.commandBased.subsystems.DrivetrainSubsystem;
+
+import java.util.function.DoubleSupplier;
 
 public class FieldCentric extends CommandBase {
 
-    private double leftStickX, leftStickY, rightStickX, turn;
-    private DrivetrainSubsystem m_drivetrainSubsystem;
-    //private LocalizerSubsystem m_localizerSubsystem;
+    private final DoubleSupplier strafeSpeed;
+    private final DoubleSupplier forwardSpeed;
+    private final DoubleSupplier turnSpeed;
+    private final DrivetrainSubsystem m_drivetrainSubsystem;
 
-    public FieldCentric(DrivetrainSubsystem drivetrainSubsystem, double leftStickX, double leftStickY, double rightStickX) {
+    public FieldCentric(DrivetrainSubsystem drivetrainSubsystem,
+                        DoubleSupplier strafeSpeed,
+                        DoubleSupplier forwardSpeed,
+                        DoubleSupplier turnSpeed)
+    {
         m_drivetrainSubsystem = drivetrainSubsystem;
         addRequirements(m_drivetrainSubsystem);
-        this.leftStickX = leftStickX;
-        this.leftStickY = leftStickY;
-        this.rightStickX = rightStickX;
+        this.strafeSpeed = strafeSpeed;
+        this.forwardSpeed = forwardSpeed;
+        this.turnSpeed = turnSpeed;
     }
+
+//    public void setSpeedMultipliers(double strafeMultiplier, )
 
     @Override
     public void initialize() {
@@ -25,7 +35,9 @@ public class FieldCentric extends CommandBase {
 
     @Override
     public void execute() {
-        this.turn = m_drivetrainSubsystem.getTurnAmount(rightStickX);
-        m_drivetrainSubsystem.fieldCentric(leftStickX, leftStickY, rightStickX);
+
+        double turn = m_drivetrainSubsystem.getTurnAmount(turnSpeed.getAsDouble());
+        m_drivetrainSubsystem.fieldCentric(strafeSpeed.getAsDouble(), forwardSpeed.getAsDouble(), turn);
+        Robot.mTelemetry().addData("Turning", turn);
     }
 }
