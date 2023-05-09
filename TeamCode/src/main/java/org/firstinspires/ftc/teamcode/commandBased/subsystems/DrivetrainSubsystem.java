@@ -1,8 +1,8 @@
 package org.firstinspires.ftc.teamcode.commandBased.subsystems;
 
 import com.ThermalEquilibrium.homeostasis.Controllers.Feedback.AngleController;
-import com.ThermalEquilibrium.homeostasis.Controllers.Feedback.PIDEx;
 import com.ThermalEquilibrium.homeostasis.Parameters.PIDCoefficientsEx;
+import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.arcrobotics.ftclib.command.SubsystemBase;
 import com.arcrobotics.ftclib.drivebase.MecanumDrive;
 import com.arcrobotics.ftclib.hardware.motors.Motor;
@@ -12,8 +12,6 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.teamcode.classes.DeadzonePID;
 import org.firstinspires.ftc.teamcode.classes.PIDOpenClosed;
-
-import java.util.function.DoubleSupplier;
 
 public class DrivetrainSubsystem extends SubsystemBase {
 
@@ -38,8 +36,8 @@ public class DrivetrainSubsystem extends SubsystemBase {
     private PIDOpenClosed turnPID;
     private double turningPIDDeadzone = 0.25;
 
-    private MecanumDrive drive = null;
-    private LocalizerSubsystem localizerSubsystem;
+    private final MecanumDrive drive;
+    private final LocalizerSubsystem localizerSubsystem;
 
     public DrivetrainSubsystem(final HardwareMap hwMap) {
         Motor fL = new Motor(hwMap, "fL", Motor.GoBILDA.RPM_312);
@@ -107,7 +105,8 @@ public class DrivetrainSubsystem extends SubsystemBase {
     }
 
     public void pointCentric() {
-
+        Vector2d vector = new Vector2d();
+        vector.rotated(10);
     }
 
     public double getTurnAmount(double stick) {
@@ -116,5 +115,13 @@ public class DrivetrainSubsystem extends SubsystemBase {
 
     public double getHeading() {
         return heading;
+    }
+
+    public double getParallelEncoder() {
+        return localizerSubsystem.getParallelEncoder();
+    }
+
+    public double getPerpendicularEncoder() {
+        return localizerSubsystem.getPerpendicularEncoder();
     }
 }

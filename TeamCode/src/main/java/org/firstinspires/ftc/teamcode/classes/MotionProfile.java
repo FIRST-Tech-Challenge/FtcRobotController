@@ -16,11 +16,6 @@ public class MotionProfile {
 
     Motor motor = null;
 
-    double max_acceleration = 0;
-    double max_velocity = 0;
-    double distance = 0;
-    double current_dt = 0;
-
     public MotionProfile(Motor motor) {
         this.motor = motor;
     }
@@ -37,7 +32,7 @@ public class MotionProfile {
             acceleration = Math.sqrt(halfDistance / (0.5 * max_acceleration));
         }
 
-        accelerationDistance = 0.5 * max_acceleration * acceleration *  acceleration;
+        accelerationDistance = 0.5 * max_acceleration * acceleration * acceleration;
 
         // recalculate max velocity based on the time we have to accelerate and decelerate
         max_velocity = max_acceleration * acceleration;

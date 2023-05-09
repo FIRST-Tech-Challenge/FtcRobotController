@@ -1,7 +1,12 @@
 package org.firstinspires.ftc.teamcode.commandBased.subsystems;
 
+import com.ThermalEquilibrium.homeostasis.Controllers.Feedback.FullStateFeedback;
 import com.ThermalEquilibrium.homeostasis.Controllers.Feedback.PIDEx;
 import com.ThermalEquilibrium.homeostasis.Parameters.PIDCoefficientsEx;
+import com.ThermalEquilibrium.homeostasis.Utils.Vector;
+import com.acmerobotics.roadrunner.profile.MotionProfile;
+import com.acmerobotics.roadrunner.profile.MotionProfileGenerator;
+import com.acmerobotics.roadrunner.profile.MotionState;
 import com.arcrobotics.ftclib.command.SubsystemBase;
 import com.arcrobotics.ftclib.hardware.motors.Motor;
 import com.arcrobotics.ftclib.hardware.motors.MotorGroup;
@@ -9,15 +14,14 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
-import org.firstinspires.ftc.teamcode.commandBased.Robot;
 
 public class ElevatorSubsystem extends SubsystemBase {
 
     private Motor eleL;
     private Motor eleR;
-    private DcMotor m_eleL;
-    private DcMotor m_eleR;
-    private MotorGroup ele;
+    private final DcMotor m_eleL;
+    private final DcMotor m_eleR;
+    private final MotorGroup ele;
 
     //ELEVATOR VARIABLES
     private PIDCoefficientsEx elevatorCoeffs;
@@ -50,13 +54,34 @@ public class ElevatorSubsystem extends SubsystemBase {
 
         elevatorCoeffs = new PIDCoefficientsEx(0.01, 0, 0, 0.25, 2, 0.5);
         elevatorPID = new PIDEx(elevatorCoeffs);
+
+        Vector K = new Vector(new double[] {1.1, 0.3});
+        FullStateFeedback controller = new FullStateFeedback(K);
+
+        MotionProfile motionProfile = MotionProfileGenerator.generateSimpleMotionProfile(
+                new MotionState(0, 0, 0),
+                new MotionState(60, 0, 0),
+                25,
+                40,
+                100
+        );
+
+        //MotionState state = motionProfile.get(elapsedTime);
     }
 
     @Override
     public void periodic() {
         elePos = (m_eleL.getCurrentPosition() + m_eleR.getCurrentPosition()) / 2.0;
+        pidEX();
+    }
+
+    public void pidEX() {
         elePower = elevatorPID.calculate(eleTarget, elePos);
         ele.set(elePower);
+    }
+
+    public void fullStateFeedback() {
+
     }
 
     public void setHeight(double target) {
