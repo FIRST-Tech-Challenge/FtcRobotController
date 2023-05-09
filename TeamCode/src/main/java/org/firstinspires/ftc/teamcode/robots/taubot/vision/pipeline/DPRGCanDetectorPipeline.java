@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.robots.taubot.vision.pipeline;
 import android.graphics.Bitmap;
 
 import com.acmerobotics.dashboard.config.Config;
+import com.acmerobotics.roadrunner.geometry.Vector2d;
 
 import org.firstinspires.ftc.teamcode.robots.taubot.vision.Position;
 import org.opencv.android.Utils;
@@ -69,6 +70,25 @@ public class DPRGCanDetectorPipeline extends OpenCvPipeline {
         largestY = -1;
         largestArea = -1;
         lastPosition = Position.HOLD;
+    }
+
+    static class Target {
+        long frameCounter; //the frame on which the target was detected
+        int targetNumber; //the order of the target in the frame
+        Vector2d centroid; //this is the position of the centroid of the target in the frame it was detected
+        double areaPixels; //this is the area in pixels of the target
+        double heightPixels; //the height of the ellipse fitted to the blob in the frame - subtract half of this value from the centroid to get the base position of the target
+        double widthPixels; //the wide of the ellipse fitted to the target blob
+        double orientation; //the angular orientation of the blob in the frame
+        boolean upright; //an assessment of the vertical orientation of the can
+        double cameraHeading; //this is the heading of the camera when the target was last detected. it is only relevant for the frame where the target was detected
+        Vector2d position; //this is the estimated position of the target/can on the field
+        boolean isCan; //do we think this is a can?
+
+        public Target(Vector2d position, double cameraHeading) {
+            this.position = position;
+            this.cameraHeading = cameraHeading;
+        }
     }
 
     @Override
