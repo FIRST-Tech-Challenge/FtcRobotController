@@ -6,6 +6,10 @@ import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.arcrobotics.ftclib.command.SubsystemBase;
 import com.arcrobotics.ftclib.drivebase.MecanumDrive;
 import com.arcrobotics.ftclib.hardware.motors.Motor;
+import com.qualcomm.hardware.lynx.LynxModule;
+import com.qualcomm.hardware.lynx.LynxNackException;
+import com.qualcomm.hardware.lynx.commands.core.LynxGetADCCommand;
+import com.qualcomm.hardware.lynx.commands.core.LynxGetADCResponse;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
@@ -38,6 +42,7 @@ public class DrivetrainSubsystem extends SubsystemBase {
 
     private final MecanumDrive drive;
     private final LocalizerSubsystem localizerSubsystem;
+    private LynxModule chub;
 
     public DrivetrainSubsystem(final HardwareMap hwMap) {
         Motor fL = new Motor(hwMap, "fL", Motor.GoBILDA.RPM_312);
@@ -74,6 +79,8 @@ public class DrivetrainSubsystem extends SubsystemBase {
         turnPID = new PIDOpenClosed(turningController, 0.2);
 
         localizerSubsystem = new LocalizerSubsystem(hwMap);
+
+        chub = hwMap.getAll(LynxModule.class).get(0); //better ways to do this
     }
 
     public void periodic() {
@@ -123,5 +130,15 @@ public class DrivetrainSubsystem extends SubsystemBase {
 
     public double getPerpendicularEncoder() {
         return localizerSubsystem.getPerpendicularEncoder();
+    }
+
+    public double servoCurrent() {
+        LynxGetADCCommand command = new LynxGetADCCommand(chub, LynxGetADCCommand.Channel.SERVO_CURRENT, LynxGetADCCommand.Mode.ENGINEERING);
+        try {
+            LynxGetADCResponse response = command.sendReceive();
+            return response.getValue();
+        } catch (InterruptedException|RuntimeException|LynxNackException e) {
+            return 0;
+        }
     }
 }

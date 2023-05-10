@@ -2,7 +2,6 @@ package org.firstinspires.ftc.teamcode.commandBased.commands;
 
 import com.arcrobotics.ftclib.command.CommandBase;
 
-import org.firstinspires.ftc.teamcode.commandBased.Robot;
 import org.firstinspires.ftc.teamcode.commandBased.subsystems.ElevatorSubsystem;
 
 public class MoveElevator extends CommandBase {
@@ -18,7 +17,7 @@ public class MoveElevator extends CommandBase {
 
     @Override
     public void initialize() {
-        Robot.elevatorSS.setHeight(target);
+        m_elevatorSubsystem.setHeight(target);
     }
 
     @Override

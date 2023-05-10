@@ -4,11 +4,13 @@ import com.acmerobotics.dashboard.config.Config;
 import com.arcrobotics.ftclib.command.CommandScheduler;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
-import org.firstinspires.ftc.teamcode.R;
+import org.firstinspires.ftc.teamcode.commandBased.commands.MoveArmIncrementally;
+import org.firstinspires.ftc.teamcode.commandBased.commands.MoveArmToAngle;
 import org.firstinspires.ftc.teamcode.commandBased.commands.MoveElevator;
 import org.firstinspires.ftc.teamcode.commandBased.commands.drive.AlignCentric;
 import org.firstinspires.ftc.teamcode.commandBased.commands.drive.FieldCentric;
 import org.firstinspires.ftc.teamcode.commandBased.commands.drive.RobotCentric;
+import org.firstinspires.ftc.teamcode.commandBased.subsystems.ArmSubsystem;
 import org.firstinspires.ftc.teamcode.commandBased.subsystems.DrivetrainSubsystem;
 import org.firstinspires.ftc.teamcode.commandBased.subsystems.ElevatorSubsystem;
 
@@ -24,6 +26,7 @@ public class Robot extends BlackOp {
     //declare subsystem variables
     public static DrivetrainSubsystem drivetrainSS;
     public static ElevatorSubsystem elevatorSS;
+    public static ArmSubsystem armSS;
 
     @Override
     public void go() {
@@ -34,6 +37,7 @@ public class Robot extends BlackOp {
         //create subsystem objects
         drivetrainSS = new DrivetrainSubsystem(hardwareMap);
         elevatorSS = new ElevatorSubsystem(hardwareMap);
+        armSS = new ArmSubsystem(hardwareMap);
 
         //create gamepads
         ReforgedGamepad driver = new ReforgedGamepad(gamepad1);
@@ -60,8 +64,13 @@ public class Robot extends BlackOp {
         );
 
         //create elevator commands
-        MoveElevator eleHigh = new MoveElevator(elevatorSS, 1000);
         MoveElevator eleLow = new MoveElevator(elevatorSS, 0);
+        MoveElevator eleHigh = new MoveElevator(elevatorSS, 1000);
+
+        //create arm commands
+        MoveArmIncrementally armForward = new MoveArmIncrementally(armSS, 10);
+        MoveArmIncrementally armBackward = new MoveArmIncrementally(armSS, -10);
+        MoveArmToAngle armIdle = new MoveArmToAngle(armSS, 0);
 
         //start robot in field-centric mode
         fieldCentric.schedule();
@@ -95,9 +104,16 @@ public class Robot extends BlackOp {
             driver.dpad_up.onRise(eleHigh::schedule);
             driver.dpad_down.onRise(eleLow::schedule);
 
+            //arm controls
+            driver.dpad_right.onRise(armForward::schedule);
+            driver.dpad_left.onRise(armBackward::schedule);
+            driver.y.onRise(armIdle::schedule);
+
+
             //telemetry
             mTelemetry().addData("Parallel Encoder", drivetrainSS.getParallelEncoder());
             mTelemetry().addData("Perpendicular Encoder", drivetrainSS.getPerpendicularEncoder());
+            mTelemetry().addData("Servo Current:", drivetrainSS.servoCurrent());
             mTelemetry().update();
 
             //activate scheduler
