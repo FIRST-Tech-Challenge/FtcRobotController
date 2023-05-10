@@ -1,10 +1,14 @@
 package org.firstinspires.ftc.teamcode.commandBased.subsystems;
 
+//import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.arcrobotics.ftclib.command.SubsystemBase;
 import com.arcrobotics.ftclib.hardware.RevIMU;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
+import org.firstinspires.ftc.teamcode.classes.Vector2d;
+
+import org.firstinspires.ftc.teamcode.commandBased.Robot;
 import org.firstinspires.ftc.teamcode.rr.util.Encoder;
 
 public class LocalizerSubsystem extends SubsystemBase {
@@ -19,11 +23,21 @@ public class LocalizerSubsystem extends SubsystemBase {
     public static double PERPENDICULAR_X = 0;
     public static double PERPENDICULAR_Y = 0;
 
+    public static double parallelInches;
+    public static double perpendicularInches;
+
+    public static double pastParallelInches;
+    public static double pastPerpendicularInches;
+
     private final RevIMU imu;
 
     private double heading;
 
-    private Encoder parallelEncoder, perpendicularEncoder;
+    private final Encoder parallelEncoder;
+    private final Encoder perpendicularEncoder;
+
+    private final Vector2d relativePosition;
+    private Vector2d positionChange;
 
     public LocalizerSubsystem(final HardwareMap hwMap){
         imu = new RevIMU(hwMap);
@@ -31,11 +45,26 @@ public class LocalizerSubsystem extends SubsystemBase {
 
         parallelEncoder = new Encoder(hwMap.get(DcMotorEx.class, "parallelEncoder"));
         perpendicularEncoder = new Encoder(hwMap.get(DcMotorEx.class, "perpendicularEncoder"));
+
+        relativePosition = new Vector2d(0, 0);
+        positionChange = new Vector2d(0, 0);
     }
 
     @Override
     public void periodic() {
+        parallelInches = encoderTicksToInches(parallelEncoder.getCurrentPosition());
+        perpendicularInches = encoderTicksToInches(perpendicularEncoder.getCurrentPosition());
 
+        Robot.mTelemetry().addData("test", positionChange.getX());
+
+        positionChange = new Vector2d(parallelInches - pastParallelInches, perpendicularInches - pastPerpendicularInches);
+
+        relativePosition.rotateBy(-getHeading());
+
+        relativePosition.add(positionChange);
+
+        pastParallelInches = parallelInches;
+        pastPerpendicularInches = perpendicularInches;
     }
 
     public double getHeading() {
@@ -48,10 +77,22 @@ public class LocalizerSubsystem extends SubsystemBase {
     }
 
     public double getParallelEncoder() {
-        return encoderTicksToInches(parallelEncoder.getCurrentPosition());
+        return parallelInches;
     }
 
     public double getPerpendicularEncoder() {
-        return encoderTicksToInches(perpendicularEncoder.getCurrentPosition());
+        return perpendicularInches;
+    }
+
+    public Vector2d getPosition() {
+        return relativePosition;
+    }
+
+    public double getPositionX() {
+        return relativePosition.getX();
+    }
+
+    public double getPositionY() {
+        return relativePosition.getY();
     }
 }

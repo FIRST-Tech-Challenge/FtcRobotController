@@ -13,6 +13,7 @@ import org.firstinspires.ftc.teamcode.commandBased.commands.drive.RobotCentric;
 import org.firstinspires.ftc.teamcode.commandBased.subsystems.ArmSubsystem;
 import org.firstinspires.ftc.teamcode.commandBased.subsystems.DrivetrainSubsystem;
 import org.firstinspires.ftc.teamcode.commandBased.subsystems.ElevatorSubsystem;
+import org.firstinspires.ftc.teamcode.commandBased.subsystems.LocalizerSubsystem;
 
 
 import ftc.rogue.blacksmith.BlackOp;
@@ -25,6 +26,7 @@ public class Robot extends BlackOp {
 
     //declare subsystem variables
     public static DrivetrainSubsystem drivetrainSS;
+    public static LocalizerSubsystem localizerSS;
     public static ElevatorSubsystem elevatorSS;
     public static ArmSubsystem armSS;
 
@@ -36,6 +38,7 @@ public class Robot extends BlackOp {
 
         //create subsystem objects
         drivetrainSS = new DrivetrainSubsystem(hardwareMap);
+        localizerSS = new LocalizerSubsystem(hardwareMap);
         elevatorSS = new ElevatorSubsystem(hardwareMap);
         armSS = new ArmSubsystem(hardwareMap);
 
@@ -111,9 +114,8 @@ public class Robot extends BlackOp {
 
 
             //telemetry
-            mTelemetry().addData("Parallel Encoder", drivetrainSS.getParallelEncoder());
-            mTelemetry().addData("Perpendicular Encoder", drivetrainSS.getPerpendicularEncoder());
-            mTelemetry().addData("Servo Current:", drivetrainSS.servoCurrent());
+            mTelemetry().addData("Position X", localizerSS.getPositionX());
+            mTelemetry().addData("Position Y", localizerSS.getPositionY());
             mTelemetry().update();
 
             //activate scheduler
