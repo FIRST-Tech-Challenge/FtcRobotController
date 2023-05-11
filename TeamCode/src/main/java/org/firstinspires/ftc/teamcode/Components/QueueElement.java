@@ -45,7 +45,7 @@ public class QueueElement {
             // update when start for delay logic
             if (readyTime > op.getRuntime()) {
                 readyTime = op.getRuntime();
-                logger.log("/RobotLogs/GeneralRobot", queuePos + "readyTime =" + readyTime);
+                logger.log("/RobotLogs/GeneralRobot", queuePos + "readyTime =" + readyTime +"optional"+isOptional);
             }
             if (extraCondition) {
                 return true;
@@ -80,6 +80,11 @@ public class QueueElement {
 
     public boolean isAsynchronous() {
         return asynchronous;
+    }
+
+    public void setAsynchronous(boolean p_asynchronous){asynchronous = p_asynchronous;}
+    public void setStartCondition(int p_condition){
+        startCondition=p_condition;
     }
 
     public boolean isOptional(){return isOptional;}

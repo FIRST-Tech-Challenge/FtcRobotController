@@ -53,8 +53,7 @@ public class Claw {
     private double clawPos = 0.45;
     //temporary
     public final double CLAW_SERVO_SWITCH_TIME = 0.35;
-    boolean shouldUseClawSensor = true;
-
+    boolean shouldUseClawSensor = true,isObR = false;
     //States:
     //CLAW_CLOSED
     //CLAW_CLOSING
@@ -279,6 +278,26 @@ public class Claw {
 //        }
         double dist = coneDistance();
         return dist<5||velocity>10&&dist<12;
+    }
+    public boolean isObL(){
+        double leftD = leftDist.getDistance(INCH);
+        double rightD = rightDist.getDistance(INCH);
+        if(leftD+rightD<12){
+            if(leftD<rightD){
+                isObR = false;
+                return true;
+            }
+            else{
+                isObR = true;
+                return false;
+            }
+        }else{
+            isObR = false;
+            return false;
+        }
+    }
+    public boolean isObR(){
+        return isObR;
     }
     public double coneDistance(){
         return leftDist.getDistance(INCH)+rightDist.getDistance(INCH);

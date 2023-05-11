@@ -128,7 +128,16 @@ public class PwPRobot extends BasicRobot {
             finished = true;
         }
     }
-
+    public void setToNow(boolean p_Optional) {
+        if(queuer.isFirstLoop()){
+            queuer.queue(false, true, true);
+        }
+        else {
+            if (queuer.queue(false, true, p_Optional)) {
+                queuer.setToNow();
+            }
+        }
+    }
 
     public void delay(double p_delay) {
         queuer.addDelay(p_delay);
@@ -251,6 +260,16 @@ public class PwPRobot extends BasicRobot {
     public void teleAutoAim(Trajectory trajectory) {
         roadrun.followTrajectoryAsync(trajectory);
     }
+    public boolean isObL(){
+        if(roadrun.getPoseEstimate().vec().distTo(roadrun.getCurrentTraj().end().vec())>3) {
+return false;        }
+        return false;
+    }
+    public boolean isObR(){
+        if(roadrun.getPoseEstimate().vec().distTo(roadrun.getCurrentTraj().end().vec())>3) {
+return false;        }
+        return false;
+    }
 
     public void followTrajectorySequenceAsync(TrajectorySequence trajectorySequence) {
         if (queuer.queue(false, !roadrun.isBusy() && roadrun.getPoseEstimate().vec().distTo(trajectorySequence.end().vec()) < 3)) {
@@ -260,6 +279,23 @@ public class PwPRobot extends BasicRobot {
                         builder.addSequenceSegment(trajectorySequence.get(i));
                 }
                 roadrun.followTrajectorySequenceAsync(builder.build());
+            }
+        }
+    }
+
+    public void followTrajectorySequenceAsync(TrajectorySequence trajectorySequence, boolean isOptional) {
+        if(queuer.isFirstLoop()){
+            queuer.queue(false, false, true);
+        }
+        else {
+            if (queuer.queue(false, !roadrun.isBusy() && roadrun.getPoseEstimate().vec().distTo(trajectorySequence.end().vec()) < 3,isOptional)) {
+                if (!roadrun.isBusy()) {
+                    TrajectorySequenceBuilder builder = roadrun.trajectorySequenceBuilder(roadrun.getPoseEstimate());
+                    for (int i = 0; i < trajectorySequence.size(); i++) {
+                        builder.addSequenceSegment(trajectorySequence.get(i));
+                    }
+                    roadrun.followTrajectorySequenceAsync(builder.build());
+                }
             }
         }
     }
@@ -339,13 +375,6 @@ public class PwPRobot extends BasicRobot {
         }
     }
 
-    public void followTrajectorySequenceAsync(TrajectorySequence trajectory, boolean clawClosed) {
-        if (queuer.queue(false, !roadrun.isBusy() || CLAW_CLOSING.getStatus())) {
-            if (!roadrun.isBusy()) {
-                roadrun.followTrajectorySequenceAsync(trajectory);
-            }
-        }
-    }
 
     public void setFirstLoop(boolean value) {
         queuer.setFirstLoop(value);
