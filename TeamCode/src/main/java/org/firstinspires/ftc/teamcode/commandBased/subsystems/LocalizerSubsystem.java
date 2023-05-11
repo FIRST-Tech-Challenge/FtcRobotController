@@ -19,11 +19,14 @@ public class LocalizerSubsystem extends SubsystemBase {
     public static double WHEEL_RADIUS = 0.74803; // in
     public static double GEAR_RATIO = 1; // output (wheel) speed / input (encoder) speed
 
-    public static double PARALLEL_X = 0; // X is the up and down direction
-    public static double PARALLEL_Y = 0; // Y is the strafe direction
+    public static double PARALLEL_X = 1.37795; // X is the up and down direction
+    public static double PARALLEL_Y = -5.029438; // Y is the strafe direction
 
-    public static double PERPENDICULAR_X = 0;
-    public static double PERPENDICULAR_Y = 0;
+    public static double PERPENDICULAR_X = 1.39764;
+    public static double PERPENDICULAR_Y = 5.24311;
+
+    public static double X_90_DEGREES = 0.319111944;
+    public static double Y_90_DEGREES = -0.168413344;
 
     public static double parallelInches;
     public static double perpendicularInches;
@@ -38,8 +41,9 @@ public class LocalizerSubsystem extends SubsystemBase {
     private final Encoder parallelEncoder;
     private final Encoder perpendicularEncoder;
 
-    private final Vector2d relativePosition;
+    private Vector2d relativePosition;
     private Vector2d positionChange;
+    private Vector2d absolutePosition;
 
     public LocalizerSubsystem(final HardwareMap hwMap){
         imu = new RevIMU(hwMap);
@@ -50,6 +54,7 @@ public class LocalizerSubsystem extends SubsystemBase {
 
         relativePosition = new Vector2d(0, 0);
         positionChange = new Vector2d(0, 0);
+        absolutePosition = new Vector2d(0, 0);
     }
 
     @Override
@@ -59,16 +64,12 @@ public class LocalizerSubsystem extends SubsystemBase {
 
         positionChange = new Vector2d(parallelInches - pastParallelInches, perpendicularInches - pastPerpendicularInches);
 
-        relativePosition.rotateBy(-getHeading());
+        //positionChange = positionChange.rotateBy(-getHeading());
 
-        relativePosition.add(positionChange);
+        relativePosition = relativePosition.add(positionChange);
 
         pastParallelInches = parallelInches;
         pastPerpendicularInches = perpendicularInches;
-
-        com.acmerobotics.roadrunner.geometry.Vector2d roadrunner = new com.acmerobotics.roadrunner.geometry.Vector2d(0, 0);
-        com.arcrobotics.ftclib.geometry.Vector2d ftcLib = new com.arcrobotics.ftclib.geometry.Vector2d(0, 0);
-        Vector2D homeostasis = new Vector2D(0, 0);
     }
 
     public double getHeading() {
@@ -88,6 +89,14 @@ public class LocalizerSubsystem extends SubsystemBase {
         return perpendicularInches;
     }
 
+    public double getPastParallelEncoder() {
+        return pastParallelInches;
+    }
+
+    public double getPastPerpendicularEncoder() {
+        return pastPerpendicularInches;
+    }
+
     public Vector2d getPosition() {
         return relativePosition;
     }
@@ -98,5 +107,13 @@ public class LocalizerSubsystem extends SubsystemBase {
 
     public double getPositionY() {
         return relativePosition.getY();
+    }
+
+    public double getChangeX() {
+        return positionChange.getX();
+    }
+
+    public double getChangeY() {
+        return positionChange.getY();
     }
 }

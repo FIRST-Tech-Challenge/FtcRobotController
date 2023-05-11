@@ -6,7 +6,6 @@ import com.acmerobotics.roadrunner.control.PIDCoefficients;
 
 @Config
 public class Constants {
-
     //ELEVATOR CONSTANTS
     public static PIDCoefficientsEx elevatorCoeffsEx = new PIDCoefficientsEx(0.01, 0, 0, 0.25, 2, 0.5);;
 
@@ -23,4 +22,5 @@ public class Constants {
 
     public static double eleLow = 0;
     public static double eleHigh = 15;
+
 }

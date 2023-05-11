@@ -29,6 +29,6 @@ public class FieldCentric extends CommandBase {
     @Override
     public void execute() {
         double turn = m_drivetrainSubsystem.getTurnAmount(turnSpeed.getAsDouble());
-        m_drivetrainSubsystem.fieldCentric(strafeSpeed.getAsDouble(), forwardSpeed.getAsDouble(), turn);
+        m_drivetrainSubsystem.fieldCentric(strafeSpeed.getAsDouble(), forwardSpeed.getAsDouble(), turnSpeed.getAsDouble());
     }
 }

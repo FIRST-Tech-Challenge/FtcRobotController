@@ -1,7 +1,11 @@
 package org.firstinspires.ftc.teamcode.commandBased;
 
+import com.acmerobotics.dashboard.FtcDashboard;
+import com.acmerobotics.dashboard.canvas.Canvas;
 import com.acmerobotics.dashboard.config.Config;
+import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.acmerobotics.roadrunner.control.PIDCoefficients;
+import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.arcrobotics.ftclib.command.CommandScheduler;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
@@ -16,6 +20,7 @@ import org.firstinspires.ftc.teamcode.commandBased.subsystems.ArmSubsystem;
 import org.firstinspires.ftc.teamcode.commandBased.subsystems.DrivetrainSubsystem;
 import org.firstinspires.ftc.teamcode.commandBased.subsystems.ElevatorSubsystem;
 import org.firstinspires.ftc.teamcode.commandBased.subsystems.LocalizerSubsystem;
+import org.firstinspires.ftc.teamcode.rr.util.DashboardUtil;
 
 
 import ftc.rogue.blacksmith.BlackOp;
@@ -39,7 +44,9 @@ public class Robot extends BlackOp {
     @Override
     public void go() {
 
-
+        //declare telemetry packet for dashboard field drawing
+        TelemetryPacket packet = new TelemetryPacket();
+        Canvas fieldOverlay = packet.fieldOverlay();
 
         //cancel all previous commands
         CommandScheduler.getInstance().reset();
@@ -90,6 +97,8 @@ public class Robot extends BlackOp {
 
         Scheduler.launchOnStart(this, () -> {
 
+            Pose2d poseEstimate = new Pose2d(localizerSS.getPositionX(), localizerSS.getPositionY(), Math.toRadians(localizerSS.getHeading()));
+
             //drivetrain speed controls
             driver.left_bumper.onRise(() -> drivetrainSS.setSpeedMultipliers(0.5, 0.5, 0.5))
                               .onFall(() -> drivetrainSS.setSpeedMultipliers(1, 1, 1));
@@ -120,9 +129,22 @@ public class Robot extends BlackOp {
             driver.dpad_left.onRise(armBackward::schedule);
             driver.y.onRise(armIdle::schedule);
 
-            mTelemetry().addData("target pos", elevatorSS.getEleTarget());
-            mTelemetry().addData("ele pos", elevatorSS.getElePos());
-            mTelemetry().addData("ele power", elevatorSS.getElePower());
+//            mTelemetry().addData("target pos", elevatorSS.getEleTarget());
+//            mTelemetry().addData("ele pos", elevatorSS.getElePos());
+//            mTelemetry().addData("ele power", elevatorSS.getElePower());
+
+            mTelemetry().addData("X", localizerSS.getParallelEncoder());
+            mTelemetry().addData("Y", localizerSS.getPastParallelEncoder());
+            mTelemetry().addData("X change", localizerSS.getPerpendicularEncoder());
+            mTelemetry().addData("Y change", localizerSS.getPastPerpendicularEncoder());
+            mTelemetry().addData("Heading", localizerSS.getHeading());
+
+
+            //draw bot on field
+            fieldOverlay.setStroke("#3F51B5");
+            DashboardUtil.drawRobot(fieldOverlay, poseEstimate);
+            FtcDashboard.getInstance().sendTelemetryPacket(packet);
+
             mTelemetry().update();
 
             //activate scheduler

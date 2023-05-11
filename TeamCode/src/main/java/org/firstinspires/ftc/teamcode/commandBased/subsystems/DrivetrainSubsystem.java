@@ -76,7 +76,7 @@ public class DrivetrainSubsystem extends SubsystemBase {
         drive = new MecanumDrive(fL, fR, rL, rR);
 
         //TURNING PID
-        turningCoeffs = new PIDCoefficientsEx(2.5, 0.4, 0.4, 0.25, 2, 0.5);
+        turningCoeffs = new PIDCoefficientsEx(1.5, 0.4, 0.4, 0.25, 2, 0.5);
         turningPID = new DeadzonePID(turningCoeffs, Math.toRadians(turningPIDDeadzone));
         turningController = new AngleController(turningPID);
         turnPID = new PIDOpenClosed(turningController, 0.2);
