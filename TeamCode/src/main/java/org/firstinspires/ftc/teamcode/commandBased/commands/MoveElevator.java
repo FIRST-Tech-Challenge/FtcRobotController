@@ -17,7 +17,7 @@ public class MoveElevator extends CommandBase {
 
     @Override
     public void initialize() {
-        m_elevatorSubsystem.setHeight(target);
+        m_elevatorSubsystem.setProfileTarget(target);
     }
 
     @Override

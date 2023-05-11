@@ -1,9 +1,11 @@
 package org.firstinspires.ftc.teamcode.commandBased;
 
 import com.acmerobotics.dashboard.config.Config;
+import com.acmerobotics.roadrunner.control.PIDCoefficients;
 import com.arcrobotics.ftclib.command.CommandScheduler;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
+import org.checkerframework.checker.units.qual.C;
 import org.firstinspires.ftc.teamcode.commandBased.commands.MoveArmIncrementally;
 import org.firstinspires.ftc.teamcode.commandBased.commands.MoveArmToAngle;
 import org.firstinspires.ftc.teamcode.commandBased.commands.MoveElevator;
@@ -30,8 +32,14 @@ public class Robot extends BlackOp {
     public static ElevatorSubsystem elevatorSS;
     public static ArmSubsystem armSS;
 
+    public static double eleKg = 0.1;
+
+    public static PIDCoefficients coeffs = new PIDCoefficients(0, 0, 0);
+
     @Override
     public void go() {
+
+
 
         //cancel all previous commands
         CommandScheduler.getInstance().reset();
@@ -67,8 +75,8 @@ public class Robot extends BlackOp {
         );
 
         //create elevator commands
-        MoveElevator eleLow = new MoveElevator(elevatorSS, 0);
-        MoveElevator eleHigh = new MoveElevator(elevatorSS, 1000);
+        MoveElevator eleLow = new MoveElevator(elevatorSS, Constants.eleLow);
+        MoveElevator eleHigh = new MoveElevator(elevatorSS, Constants.eleHigh);
 
         //create arm commands
         MoveArmIncrementally armForward = new MoveArmIncrementally(armSS, 10);
@@ -112,14 +120,17 @@ public class Robot extends BlackOp {
             driver.dpad_left.onRise(armBackward::schedule);
             driver.y.onRise(armIdle::schedule);
 
-
-            //telemetry
-            mTelemetry().addData("Position X", localizerSS.getPositionX());
-            mTelemetry().addData("Position Y", localizerSS.getPositionY());
+            mTelemetry().addData("target pos", elevatorSS.getEleTarget());
+            mTelemetry().addData("ele pos", elevatorSS.getElePos());
+            mTelemetry().addData("ele power", elevatorSS.getElePower());
             mTelemetry().update();
 
             //activate scheduler
             CommandScheduler.getInstance().run();
         });
     }
+//    public void setEleKg(double Kg) {
+//        Constants constants = new Constants();
+//        constants.setEleKg(Kg);
+//    }
 }

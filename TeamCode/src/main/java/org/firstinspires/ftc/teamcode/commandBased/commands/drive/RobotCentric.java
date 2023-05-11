@@ -30,6 +30,5 @@ public class RobotCentric extends CommandBase {
     public void execute() {
         double turn = m_drivetrainSubsystem.getTurnAmount(turnSpeed.getAsDouble());
         m_drivetrainSubsystem.robotCentric(strafeSpeed.getAsDouble(), forwardSpeed.getAsDouble(), turnSpeed.getAsDouble());
-        Robot.mTelemetry().addData("robot", 0);
     }
 }

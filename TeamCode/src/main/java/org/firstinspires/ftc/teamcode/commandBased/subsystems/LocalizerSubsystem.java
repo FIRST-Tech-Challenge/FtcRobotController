@@ -1,11 +1,13 @@
 package org.firstinspires.ftc.teamcode.commandBased.subsystems;
 
 //import com.acmerobotics.roadrunner.geometry.Vector2d;
+import com.ThermalEquilibrium.homeostasis.Utils.Vector;
 import com.arcrobotics.ftclib.command.SubsystemBase;
 import com.arcrobotics.ftclib.hardware.RevIMU;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
+import org.apache.commons.math3.geometry.euclidean.twod.Vector2D;
 import org.firstinspires.ftc.teamcode.classes.Vector2d;
 
 import org.firstinspires.ftc.teamcode.commandBased.Robot;
@@ -55,8 +57,6 @@ public class LocalizerSubsystem extends SubsystemBase {
         parallelInches = encoderTicksToInches(parallelEncoder.getCurrentPosition());
         perpendicularInches = encoderTicksToInches(perpendicularEncoder.getCurrentPosition());
 
-        Robot.mTelemetry().addData("test", positionChange.getX());
-
         positionChange = new Vector2d(parallelInches - pastParallelInches, perpendicularInches - pastPerpendicularInches);
 
         relativePosition.rotateBy(-getHeading());
@@ -65,6 +65,10 @@ public class LocalizerSubsystem extends SubsystemBase {
 
         pastParallelInches = parallelInches;
         pastPerpendicularInches = perpendicularInches;
+
+        com.acmerobotics.roadrunner.geometry.Vector2d roadrunner = new com.acmerobotics.roadrunner.geometry.Vector2d(0, 0);
+        com.arcrobotics.ftclib.geometry.Vector2d ftcLib = new com.arcrobotics.ftclib.geometry.Vector2d(0, 0);
+        Vector2D homeostasis = new Vector2D(0, 0);
     }
 
     public double getHeading() {

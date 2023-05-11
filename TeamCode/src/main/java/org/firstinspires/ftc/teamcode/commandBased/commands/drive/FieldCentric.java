@@ -30,6 +30,5 @@ public class FieldCentric extends CommandBase {
     public void execute() {
         double turn = m_drivetrainSubsystem.getTurnAmount(turnSpeed.getAsDouble());
         m_drivetrainSubsystem.fieldCentric(strafeSpeed.getAsDouble(), forwardSpeed.getAsDouble(), turn);
-        Robot.mTelemetry().addData("Field", 0);
     }
 }
