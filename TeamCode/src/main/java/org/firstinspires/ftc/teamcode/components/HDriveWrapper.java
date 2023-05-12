@@ -7,9 +7,11 @@ import com.arcrobotics.ftclib.controller.PIDController;
 import com.arcrobotics.ftclib.drivebase.HDrive;
 import com.arcrobotics.ftclib.geometry.Vector2d;
 import com.arcrobotics.ftclib.hardware.RevIMU;
+import com.qualcomm.robotcore.hardware.IMU;
 import com.qualcomm.robotcore.hardware.PIDCoefficients;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.teamcode.libs.brightonCollege.util.Maths;
 import org.firstinspires.ftc.teamcode.libs.brightonCollege.util.TelemetryContainer;
 
@@ -22,12 +24,12 @@ public class HDriveWrapper {
     // degrees
     public double desiredDirection;
     private final HDrive drive;
-    private final RevIMU imu;
+    private final IMU imu;
 
     public static PIDCoefficients TURNING_PID = new PIDCoefficients(0.012, 0, 0.0008);
     private static PIDController turningController;
 
-    public HDriveWrapper(HDrive drive, RevIMU imu) {
+    public HDriveWrapper(HDrive drive, IMU imu) {
         this.drive = drive;
         this.imu = imu;
         desiredDirection = 0;
@@ -105,7 +107,7 @@ public class HDriveWrapper {
     }
 
     public void fieldOrientedDriveAbsoluteRotation(double strafe, double forward){
-        double heading = imu.getHeading();
+        double heading = getAngleDeg();
 
         Telemetry t = TelemetryContainer.getTelemetry();
         t.addData("desired", desiredDirection);
@@ -127,10 +129,14 @@ public class HDriveWrapper {
     }
 
     public void fieldOrientedDriveRelativeRotation(double strafe, double forward, double turn){
-        double heading = imu.getHeading();
+        double heading = getAngleDeg();
         Telemetry t = TelemetryContainer.getTelemetry();
         t.addData("heading", heading);
 
         drive.driveFieldCentric(strafe, forward, turn, heading);
+    }
+
+    public double getAngleDeg(){
+        return imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES);
     }
 }

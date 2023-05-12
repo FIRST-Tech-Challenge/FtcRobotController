@@ -7,9 +7,13 @@ import com.arcrobotics.ftclib.command.button.GamepadButton;
 import com.arcrobotics.ftclib.drivebase.HDrive;
 import com.arcrobotics.ftclib.gamepad.GamepadKeys;
 import com.arcrobotics.ftclib.hardware.RevIMU;
+import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
+import com.qualcomm.robotcore.hardware.IMU;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.teamcode.components.HDriveWrapper;
+import org.firstinspires.ftc.teamcode.drive.DriveConstants;
 import org.firstinspires.ftc.teamcode.libs.brightonCollege.inputs.Inputs;
 import org.firstinspires.ftc.teamcode.libs.brightonCollege.util.HardwareMapContainer;
 import org.firstinspires.ftc.teamcode.libs.brightonCollege.util.TeamColour;
@@ -21,7 +25,7 @@ import org.firstinspires.ftc.teamcode.libs.brightonCollege.util.TelemetryContain
 @Config
 public class Team1GenericTeleOp {
     TeamColour teamColour;
-    RevIMU imu;
+    IMU imu;
     HDriveWrapper drive;
 
     // If pushed down, the robot can freely turn; the turn is relative to the current direction
@@ -31,8 +35,11 @@ public class Team1GenericTeleOp {
 
     public void setup(TeamColour teamColor){
         this.teamColour = teamColor;
-        imu = new RevIMU(HardwareMapContainer.getMap());
-        imu.init();
+        imu = HardwareMapContainer.getMap().get(IMU.class, "imu");
+        IMU.Parameters parameters = new IMU.Parameters(new RevHubOrientationOnRobot(
+                DriveConstants.LOGO_FACING_DIR, DriveConstants.USB_FACING_DIR));
+        imu.initialize(parameters);
+
         // Get the third motor as a spinner motor
         drive = new HDriveWrapper(new HDrive(
                 HardwareMapContainer.motor0,
@@ -47,7 +54,7 @@ public class Team1GenericTeleOp {
         // This can also be activated by the button on the back of the joystick
         // That makes the robot consider the direction it was facing the front (pointing to the right from driver's point of view)
         Inputs.gamepad1.getGamepadButton(GamepadKeys.Button.RIGHT_STICK_BUTTON).whenPressed(new InstantCommand(() -> {
-            imu.reset();
+            imu.resetYaw();
         }));
 
         turnModeSwitch = Inputs.gamepad1.getGamepadButton(GamepadKeys.Button.LEFT_STICK_BUTTON);
@@ -55,7 +62,7 @@ public class Team1GenericTeleOp {
             // Snap the desired angle to nearest cardinal direction and rotate 180 deg
             // this is because we usually use relative turning to aim at a pole, and will need to turn around to
             // get another cone
-            drive.desiredDirection = HDriveWrapper.snapAngle(imu.getHeading());
+            drive.desiredDirection = HDriveWrapper.snapAngle(drive.getAngleDeg());
         }));
     }
 
