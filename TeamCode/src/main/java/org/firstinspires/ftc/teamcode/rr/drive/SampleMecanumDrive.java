@@ -37,6 +37,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import ftc.rogue.blacksmith.util.kalman.KalmanTwoWheelLocalizer;
+
 /*
  * Simple mecanum drive hardware implementation for REV hardware.
  */
@@ -115,8 +117,14 @@ public class SampleMecanumDrive extends MecanumDrive {
         List<Integer> lastTrackingEncPositions = new ArrayList<>();
         List<Integer> lastTrackingEncVels = new ArrayList<>();
 
-        // TODO: if desired, use setLocalizer() to change the localization method
-        setLocalizer(new StandardTrackingWheelLocalizer(hardwareMap, lastTrackingEncPositions, lastTrackingEncVels));
+//        // TODO: if desired, use setLocalizer() to change the localization method
+//        setLocalizer(new KalmanTwoWheelLocalizer(new TwoWheelTrackingLocalizer(hardwareMap, this))
+//                .setHeadingFilterCoeffs(R0, Q0)
+//                .setWheelPos1FilterCoeffs(R1, Q1)
+//                .setWheelPos2FilterCoeffs(R2, Q2)
+//                .setHeadingVelocityFilterCoeffs(R3, Q3)
+//                .setWheelPos1VelocityFilterCoeffs(R4, Q4)
+//                .setWheelPos2VelocityFilterCoeffs(R5, Q5));
 
         trajectorySequenceRunner = new TrajectorySequenceRunner(
                 follower, HEADING_PID, batteryVoltageSensor,

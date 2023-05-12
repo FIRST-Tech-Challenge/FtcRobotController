@@ -4,22 +4,20 @@ import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.canvas.Canvas;
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
-import com.acmerobotics.roadrunner.control.PIDCoefficients;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.arcrobotics.ftclib.command.CommandScheduler;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
-import org.checkerframework.checker.units.qual.C;
 import org.firstinspires.ftc.teamcode.commandBased.commands.MoveArmIncrementally;
 import org.firstinspires.ftc.teamcode.commandBased.commands.MoveArmToAngle;
 import org.firstinspires.ftc.teamcode.commandBased.commands.MoveElevator;
-import org.firstinspires.ftc.teamcode.commandBased.commands.drive.AlignCentric;
+import org.firstinspires.ftc.teamcode.commandBased.commands.drive.PointCentric;
 import org.firstinspires.ftc.teamcode.commandBased.commands.drive.FieldCentric;
 import org.firstinspires.ftc.teamcode.commandBased.commands.drive.RobotCentric;
 import org.firstinspires.ftc.teamcode.commandBased.subsystems.ArmSubsystem;
 import org.firstinspires.ftc.teamcode.commandBased.subsystems.DrivetrainSubsystem;
 import org.firstinspires.ftc.teamcode.commandBased.subsystems.ElevatorSubsystem;
-import org.firstinspires.ftc.teamcode.commandBased.subsystems.LocalizerSubsystem;
+import org.firstinspires.ftc.teamcode.rr.drive.TwoWheelTrackingLocalizer;
 import org.firstinspires.ftc.teamcode.rr.util.DashboardUtil;
 
 
@@ -33,29 +31,25 @@ public class Robot extends BlackOp {
 
     //declare subsystem variables
     public static DrivetrainSubsystem drivetrainSS;
-    public static LocalizerSubsystem localizerSS;
     public static ElevatorSubsystem elevatorSS;
     public static ArmSubsystem armSS;
 
-    public static double eleKg = 0.1;
+    TwoWheelTrackingLocalizer localizer;
 
-    public static PIDCoefficients coeffs = new PIDCoefficients(0, 0, 0);
 
     @Override
     public void go() {
-
-        //declare telemetry packet for dashboard field drawing
-        TelemetryPacket packet = new TelemetryPacket();
-        Canvas fieldOverlay = packet.fieldOverlay();
 
         //cancel all previous commands
         CommandScheduler.getInstance().reset();
 
         //create subsystem objects
         drivetrainSS = new DrivetrainSubsystem(hardwareMap);
-        localizerSS = new LocalizerSubsystem(hardwareMap);
         elevatorSS = new ElevatorSubsystem(hardwareMap);
         armSS = new ArmSubsystem(hardwareMap);
+
+        localizer = new TwoWheelTrackingLocalizer(hardwareMap, drivetrainSS);
+        localizer.setPoseEstimate(new Pose2d(10, 10, Math.toRadians(90)));
 
         //create gamepads
         ReforgedGamepad driver = new ReforgedGamepad(gamepad1);
@@ -74,11 +68,12 @@ public class Robot extends BlackOp {
                 () -> -driver.left_stick_y.get(),
                 driver.right_stick_x::get
         );
-        AlignCentric alignCentric = new AlignCentric(
+        PointCentric pointCentric = new PointCentric(
                 drivetrainSS,
                 driver.left_stick_x::get,
                 () -> -driver.left_stick_y.get(),
-                driver.right_stick_x::get
+                Constants.TARGET,
+                drivetrainSS.convertRRPose(localizer.getPoseEstimate())
         );
 
         //create elevator commands
@@ -91,13 +86,23 @@ public class Robot extends BlackOp {
         MoveArmToAngle armIdle = new MoveArmToAngle(armSS, 0);
 
         //start robot in field-centric mode
-        fieldCentric.schedule();
+        robotCentric.schedule();
 
         waitForStart();
 
+
+
         Scheduler.launchOnStart(this, () -> {
 
-            Pose2d poseEstimate = new Pose2d(localizerSS.getPositionX(), localizerSS.getPositionY(), Math.toRadians(localizerSS.getHeading()));
+            // Declare telemetry packet for dashboard field drawing
+            TelemetryPacket packet = new TelemetryPacket();
+            Canvas fieldOverlay = packet.fieldOverlay();
+
+            //activate scheduler
+            CommandScheduler.getInstance().run();
+
+            localizer.update();
+            Pose2d pose = localizer.getPoseEstimate();
 
             //drivetrain speed controls
             driver.left_bumper.onRise(() -> drivetrainSS.setSpeedMultipliers(0.5, 0.5, 0.5))
@@ -105,19 +110,19 @@ public class Robot extends BlackOp {
 
             //drivetrain mode controls
             driver.a.onRise(() -> {
-                alignCentric.cancel();
+                pointCentric.cancel();
                 fieldCentric.cancel();
                 robotCentric.schedule();
             });
             driver.b.onRise(() -> {
-                alignCentric.cancel();
+                pointCentric.cancel();
                 robotCentric.cancel();
                 fieldCentric.schedule();
             });
             driver.x.onRise(() -> {
                 fieldCentric.cancel();
                 robotCentric.cancel();
-                alignCentric.schedule();
+                pointCentric.schedule();
             });
 
             //elevator controls
@@ -129,30 +134,21 @@ public class Robot extends BlackOp {
             driver.dpad_left.onRise(armBackward::schedule);
             driver.y.onRise(armIdle::schedule);
 
-//            mTelemetry().addData("target pos", elevatorSS.getEleTarget());
-//            mTelemetry().addData("ele pos", elevatorSS.getElePos());
-//            mTelemetry().addData("ele power", elevatorSS.getElePower());
-
-            mTelemetry().addData("X", localizerSS.getParallelEncoder());
-            mTelemetry().addData("Y", localizerSS.getPastParallelEncoder());
-            mTelemetry().addData("X change", localizerSS.getPerpendicularEncoder());
-            mTelemetry().addData("Y change", localizerSS.getPastPerpendicularEncoder());
-            mTelemetry().addData("Heading", localizerSS.getHeading());
-
-
-            //draw bot on field
+            // Draw bot on canvas
             fieldOverlay.setStroke("#3F51B5");
-            DashboardUtil.drawRobot(fieldOverlay, poseEstimate);
+            DashboardUtil.drawRobot(fieldOverlay, pose);
+
+            // Send telemetry packet off to dashboard
             FtcDashboard.getInstance().sendTelemetryPacket(packet);
 
+            mTelemetry().addData("X", pose.getX());
+            mTelemetry().addData("Y", pose.getY());
+            mTelemetry().addData("Heading", Math.toDegrees(pose.getHeading()));
+            mTelemetry().addData("Raw Gyro", Math.toDegrees(drivetrainSS.getRawExternalHeading()));
+            mTelemetry().addData("heading gyro", Math.toDegrees(drivetrainSS.getHeading()));
+            mTelemetry().addData("turn speed", drivetrainSS.getTurnSpeed());
+            mTelemetry().addData("turn target", drivetrainSS.getTurnTarget());
             mTelemetry().update();
-
-            //activate scheduler
-            CommandScheduler.getInstance().run();
         });
     }
-//    public void setEleKg(double Kg) {
-//        Constants constants = new Constants();
-//        constants.setEleKg(Kg);
-//    }
 }

@@ -1,23 +1,24 @@
 package org.firstinspires.ftc.teamcode.commandBased.subsystems;
 
 import com.ThermalEquilibrium.homeostasis.Controllers.Feedback.AngleController;
-import com.ThermalEquilibrium.homeostasis.Filters.FilterAlgorithms.KalmanFilter;
 import com.ThermalEquilibrium.homeostasis.Parameters.PIDCoefficientsEx;
 import com.acmerobotics.dashboard.config.Config;
-import com.acmerobotics.roadrunner.geometry.Vector2d;
+import org.firstinspires.ftc.teamcode.classes.Pose2d;
 import com.arcrobotics.ftclib.command.SubsystemBase;
-import com.arcrobotics.ftclib.drivebase.MecanumDrive;
 import com.arcrobotics.ftclib.hardware.motors.Motor;
 import com.qualcomm.hardware.lynx.LynxModule;
-import com.qualcomm.hardware.lynx.LynxNackException;
-import com.qualcomm.hardware.lynx.commands.core.LynxGetADCCommand;
-import com.qualcomm.hardware.lynx.commands.core.LynxGetADCResponse;
+import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.hardware.IMU;
 
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.teamcode.classes.DeadzonePID;
+import org.firstinspires.ftc.teamcode.classes.Drive;
 import org.firstinspires.ftc.teamcode.classes.PIDOpenClosed;
+import org.firstinspires.ftc.teamcode.classes.Vector2d;
+import org.firstinspires.ftc.teamcode.commandBased.Constants;
 
 @Config
 public class DrivetrainSubsystem extends SubsystemBase {
@@ -43,9 +44,11 @@ public class DrivetrainSubsystem extends SubsystemBase {
     private PIDOpenClosed turnPID;
     private double turningPIDDeadzone = 0.25;
 
-    private final MecanumDrive drive;
-    private final LocalizerSubsystem localizerSubsystem;
+    private Pose2d pointCentricDrive;
+
+    private final Drive drive;
     private LynxModule chub;
+    private IMU imu;
 
     public DrivetrainSubsystem(final HardwareMap hwMap) {
         Motor fL = new Motor(hwMap, "fL", Motor.GoBILDA.RPM_312);
@@ -60,8 +63,6 @@ public class DrivetrainSubsystem extends SubsystemBase {
 
         m_fL.setDirection(DcMotorSimple.Direction.REVERSE);
         m_rL.setDirection(DcMotorSimple.Direction.REVERSE);
-        m_fR.setDirection(DcMotorSimple.Direction.REVERSE);
-        m_rR.setDirection(DcMotorSimple.Direction.REVERSE);
 
         m_fL.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         m_fR.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
@@ -73,7 +74,7 @@ public class DrivetrainSubsystem extends SubsystemBase {
         m_rL.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         m_rR.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
-        drive = new MecanumDrive(fL, fR, rL, rR);
+        drive = new Drive(fL, fR, rL, rR, Constants.TURN_COEFFS);
 
         //TURNING PID
         turningCoeffs = new PIDCoefficientsEx(1.5, 0.4, 0.4, 0.25, 2, 0.5);
@@ -81,13 +82,16 @@ public class DrivetrainSubsystem extends SubsystemBase {
         turningController = new AngleController(turningPID);
         turnPID = new PIDOpenClosed(turningController, 0.2);
 
-        localizerSubsystem = new LocalizerSubsystem(hwMap);
-
         chub = hwMap.getAll(LynxModule.class).get(0); //better ways to do this
+
+        imu = hwMap.get(IMU.class, "imu");
+        IMU.Parameters parameters = new IMU.Parameters(new RevHubOrientationOnRobot(
+                RevHubOrientationOnRobot.LogoFacingDirection.FORWARD, RevHubOrientationOnRobot.UsbFacingDirection.UP));
+        imu.initialize(parameters);
     }
 
     public void periodic() {
-        heading = localizerSubsystem.getHeading();
+        heading = getRawExternalHeading();
     }
 
 
@@ -114,34 +118,41 @@ public class DrivetrainSubsystem extends SubsystemBase {
         );
     }
 
-    public void pointCentric() {
-        Vector2d vector = new Vector2d();
-        vector.rotated(10);
+    public void pointCentric(double strafeSpeed, double forwardSpeed, Vector2d target, Pose2d pose) {
+        drive.drivePointCentric(
+                strafeSpeed * strafeMultiplier,
+                forwardSpeed * forwardMultiplier,
+                heading,
+                target,
+                pose
+        );
+    }
+
+    public double getTurnSpeed() {
+        return drive.getTurnSpeed();
+    }
+
+    public double getTurnTarget() {
+        return drive.getTurnTarget();
     }
 
     public double getTurnAmount(double stick) {
-        return turnPID.calculate(stick, Math.toRadians(localizerSubsystem.getHeading()));
+        return turnPID.calculate(stick, Math.toRadians(getRawExternalHeading()));
     }
 
     public double getHeading() {
         return heading;
     }
 
-    public double getParallelEncoder() {
-        return localizerSubsystem.getParallelEncoder();
+    public double getRawExternalHeading() {
+        return imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS);
     }
 
-    public double getPerpendicularEncoder() {
-        return localizerSubsystem.getPerpendicularEncoder();
+    public Double getExternalHeadingVelocity() {
+        return (double) imu.getRobotAngularVelocity(AngleUnit.RADIANS).zRotationRate;
     }
 
-    public double servoCurrent() {
-        LynxGetADCCommand command = new LynxGetADCCommand(chub, LynxGetADCCommand.Channel.SERVO_CURRENT, LynxGetADCCommand.Mode.ENGINEERING);
-        try {
-            LynxGetADCResponse response = command.sendReceive();
-            return response.getValue();
-        } catch (InterruptedException|RuntimeException|LynxNackException e) {
-            return 0;
-        }
+    public Pose2d convertRRPose(com.acmerobotics.roadrunner.geometry.Pose2d pose) {
+        return new Pose2d(pose.getX(), pose.getY(), pose.getHeading());
     }
 }

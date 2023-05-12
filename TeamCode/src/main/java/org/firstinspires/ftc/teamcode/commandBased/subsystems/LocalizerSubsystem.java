@@ -4,6 +4,7 @@ package org.firstinspires.ftc.teamcode.commandBased.subsystems;
 import com.ThermalEquilibrium.homeostasis.Utils.Vector;
 import com.arcrobotics.ftclib.command.SubsystemBase;
 import com.arcrobotics.ftclib.hardware.RevIMU;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
@@ -13,6 +14,7 @@ import org.firstinspires.ftc.teamcode.classes.Vector2d;
 import org.firstinspires.ftc.teamcode.commandBased.Robot;
 import org.firstinspires.ftc.teamcode.rr.util.Encoder;
 
+@Disabled
 public class LocalizerSubsystem extends SubsystemBase {
 
     public static double TICKS_PER_REV = 8192;
@@ -34,7 +36,7 @@ public class LocalizerSubsystem extends SubsystemBase {
     public static double pastParallelInches;
     public static double pastPerpendicularInches;
 
-    private final RevIMU imu;
+    //private final RevIMU imu;
 
     private double heading;
 
@@ -46,8 +48,8 @@ public class LocalizerSubsystem extends SubsystemBase {
     private Vector2d absolutePosition;
 
     public LocalizerSubsystem(final HardwareMap hwMap){
-        imu = new RevIMU(hwMap);
-        imu.init();
+//        imu = new RevIMU(hwMap);
+//        imu.init();
 
         parallelEncoder = new Encoder(hwMap.get(DcMotorEx.class, "parallelEncoder"));
         perpendicularEncoder = new Encoder(hwMap.get(DcMotorEx.class, "perpendicularEncoder"));
@@ -72,10 +74,10 @@ public class LocalizerSubsystem extends SubsystemBase {
         pastPerpendicularInches = perpendicularInches;
     }
 
-    public double getHeading() {
-        heading = imu.getRotation2d().getDegrees();
-        return heading;
-    }
+//    public double getHeading() {
+//        heading = imu.getRotation2d().getDegrees();
+//        return heading;
+//    }
 
     public static double encoderTicksToInches(double ticks) {
         return WHEEL_RADIUS * 2 * Math.PI * GEAR_RATIO * ticks / TICKS_PER_REV;

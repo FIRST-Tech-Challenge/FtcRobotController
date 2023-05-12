@@ -23,6 +23,10 @@ public class Pose2d {
         return theta;
     }
 
+    public Vector2d getVector() {
+        return new Vector2d(x, y);
+    }
+
     public Vector2d headingVec() {
         return new Vector2d(Math.cos(theta), Math.sin(theta));
     }

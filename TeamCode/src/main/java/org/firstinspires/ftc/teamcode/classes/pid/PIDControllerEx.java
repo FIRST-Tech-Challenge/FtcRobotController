@@ -2,7 +2,7 @@ package org.firstinspires.ftc.teamcode.classes.pid;
 
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-public class PIDController {
+public class PIDControllerEx {
 
     PIDCoeffs pidCoeffs;
 
@@ -16,7 +16,7 @@ public class PIDController {
 
     double derivative;
 
-    public PIDController(PIDCoeffs coefficients) {
+    public PIDControllerEx(PIDCoeffs coefficients) {
         this.pidCoeffs = coefficients;
     }
 
