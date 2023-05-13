@@ -64,7 +64,7 @@ import java.util.Map;
 
 @com.qualcomm.robotcore.eventloop.opmode.Autonomous(name = "0 PowerPlay_6832", group = "Challenge") // @Autonomous(...) is the other common choice
 // @Autonomous
-@Config(value = "PP_6832")
+@Config(value = "AA_PP_6832")
 public class PowerPlay_6832 extends OpMode {
 
     /* Declare OpMode members. */
@@ -80,6 +80,7 @@ public class PowerPlay_6832 extends OpMode {
     public static double ROTATE_SMOOTHING_FACTOR = 0.25;
     DriverControls dc;
     boolean joystickDriveStarted = false;
+    public static boolean RunSixCan = false;
 
     static public int state = 0;
 
@@ -264,9 +265,14 @@ public class PowerPlay_6832 extends OpMode {
 
         //run all driver controls needed in init_loop
         dc.init_loop();
-
+        if (RunSixCan) {
+            if (auto.SixCan()) {
+                RunSixCan = false; //thinks it completed
+                robot.driveTrain.stop();
+            }
+        }
+        else auto.sixcanStage = 0;
         update();
-
     }
     private void rumble() {
         gamepad1.rumble((int) (RUMBLE_DURATION * 1000));

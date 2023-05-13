@@ -15,7 +15,7 @@ public class Target {
     double widthPixels; //the wide of the ellipse fitted to the target blob
     double orientation; //the angular orientation of the blob in the frame
     boolean upright; //an assessment of the vertical orientation of the can
-    double cameraHeading; //this is the heading of the camera when the target was last detected. it is only relevant for the frame where the target was detected
+    double cameraHeading; //this is the heading of the target in the camera's fov when the target was last detected. it is only relevant for the frame where the target was detected
     Vector2d fieldPosition; //this is the estimated position of the target/can on the field
     boolean isCan; //do we think this is a can?
 
@@ -123,10 +123,26 @@ public class Target {
         isCan = can;
     }
 
-    public Target(long frameCounter, int targetNumber, Vector2d centroid, double cameraHeading) {
-        this.timeStamp = frameCounter;
+    //constructors
+    public Target(){}
+    public Target(long timeStamp, int targetNumber) {
+        this.timeStamp = timeStamp;
+        this.targetNumber = targetNumber;
+    }
+    public Target(long timeStamp, int targetNumber, Vector2d centroid, double cameraHeading) {
+        this.timeStamp = timeStamp;
         this.targetNumber = targetNumber;
         this.centroid = centroid;
         this.cameraHeading = cameraHeading;
+    }
+
+    public double HeadingTo(Vector2d location){
+        return this.getFieldPosition().angleBetween(location);
+    }
+    public double HeadingFrom(Vector2d location){
+        return location.angleBetween(this.getFieldPosition());
+    }
+    public double Distance(Vector2d location){
+        return location.distTo(this.getFieldPosition());
     }
 }

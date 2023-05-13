@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.robots.taubot.vision.provider;
 import android.graphics.Bitmap;
 
 import com.acmerobotics.dashboard.config.Config;
+import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
@@ -52,7 +53,7 @@ public class DPRGCanDetectorProvider extends VisionProvider {
     private static final String TELEMETRY_NAME = "DPRG 6Can Vision Provider";
     public static int WEBCAM_WIDTH = 320;
     public static int WEBCAM_HEIGHT = 180;
-    public static double distanceThreshold = 10; //this is in inches - detections closer than this threshold are considered duplicates
+    public static double distanceThreshold = 6; //this is in inches - detections closer than this threshold are considered duplicates
 
     @Override
     public void initializeVision(HardwareMap hardwareMap) {
@@ -212,6 +213,8 @@ public class DPRGCanDetectorProvider extends VisionProvider {
 
                     if (distance < distanceThreshold) {
                         isDuplicate = true;
+                        //replace the target with the newer version
+                        uniqueCans.set(uniqueCans.indexOf(existingCan), newCan);
                         break;
                     }
                 }
@@ -222,7 +225,7 @@ public class DPRGCanDetectorProvider extends VisionProvider {
 
             }
             //send the targets for visualization
-            robot.setTargets(frameDetections);
+            robot.setTargets(uniqueCans);
 
             //cache the timestamp
             lastFrameTimestamp = timestamp;
@@ -236,4 +239,51 @@ public class DPRGCanDetectorProvider extends VisionProvider {
         return a * Math.pow(pixelHeight, b);
     }
 
+    public Target getStartingCan(){
+        //find the nearest can that is close to the centerline
+        // can where abs of the x coordinate < 12
+        // and y is smallest (closest to start)
+        // if that doesn't find a target, get keep increasing the zone until a can is found
+        double smallestY = 10*12;
+        Target returnableCan = null;
+
+        List<Target> shortlist = new ArrayList<>();
+
+        for (Target can: uniqueCans){
+            if (Math.abs(can.getFieldPosition().getX())<12){
+                shortlist.add(can);
+            }
+        }
+        for (Target can: shortlist){
+            if (can.getFieldPosition().getY() < smallestY)
+            {
+                smallestY = can.getFieldPosition().getY();
+                returnableCan = can; //this is the smallest one so far
+            }
+        }
+        return returnableCan; //could be null
+    }
+
+    public Target GetNearest(List<Target> targets, Vector2d location){
+        Target closest = null;
+        double smallest = Double.MAX_VALUE;
+        for (Target target: targets){
+            double dist = location.distTo(target.getFieldPosition());
+            if (dist<smallest) {
+                smallest = dist;
+                closest = target;
+            }
+
+        }
+        return closest; //could be a null Target
+    }
+
+    public Target GetNearest(List<Target> targets, Target target){
+        return GetNearest(targets, target.getFieldPosition());
+    }
+
+    public Target GetNearest(List<Target> targets, Pose2d pose){
+        return GetNearest(targets, new Vector2d(pose.getX(), pose.getY()));
+    }
 }
+

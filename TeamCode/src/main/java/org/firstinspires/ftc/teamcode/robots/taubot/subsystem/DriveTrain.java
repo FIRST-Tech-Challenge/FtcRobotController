@@ -401,7 +401,8 @@ public class DriveTrain extends DiffyDrive implements Subsystem {
 
     @Override
     public void stop() {
-
+        articulation = Articulation.lock;
+        StopMotors();
     }
 
     @Override
@@ -937,6 +938,10 @@ public class DriveTrain extends DiffyDrive implements Subsystem {
         useMotorPowers = true;
         this.leftPower = left;
         this.rightPower = right;
+    }
+
+    public void StopMotors(){
+        setMotorPowers(0,0);
     }
 
     public void setMode(DcMotor.RunMode runMode) {

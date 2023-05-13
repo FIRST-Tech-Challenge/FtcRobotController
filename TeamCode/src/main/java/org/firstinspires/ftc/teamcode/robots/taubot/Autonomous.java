@@ -3,6 +3,9 @@ package org.firstinspires.ftc.teamcode.robots.taubot;
 import static org.firstinspires.ftc.teamcode.robots.taubot.util.Constants.Position;
 import static org.firstinspires.ftc.teamcode.robots.taubot.util.Utils.wrapAngle;
 
+import com.acmerobotics.roadrunner.geometry.Pose2d;
+import com.acmerobotics.roadrunner.geometry.Vector2d;
+
 import org.firstinspires.ftc.teamcode.robots.taubot.subsystem.DriveTrain;
 import org.firstinspires.ftc.teamcode.robots.taubot.subsystem.Robot;
 import org.firstinspires.ftc.teamcode.robots.taubot.trajectorysequence.TrajectorySequence;
@@ -10,6 +13,7 @@ import org.firstinspires.ftc.teamcode.robots.taubot.util.Utils;
 import org.firstinspires.ftc.teamcode.robots.taubot.vision.Target;
 import org.firstinspires.ftc.teamcode.robots.taubot.vision.VisionProvider;
 import org.firstinspires.ftc.teamcode.robots.taubot.vision.VisionProviders;
+import org.firstinspires.ftc.teamcode.robots.taubot.vision.provider.DPRGCanDetectorProvider;
 import org.firstinspires.ftc.teamcode.statemachine.Stage;
 import org.firstinspires.ftc.teamcode.statemachine.StateMachine;
 
@@ -598,6 +602,59 @@ public class Autonomous {
             }
         }
 
+        return false;
+    }
+
+    public int sixcanStage = 0;
+    public boolean SixCan(){
+        DPRGCanDetectorProvider sixVision;
+        List<Target> uniqueCans = new ArrayList<>();
+        sixVision = (DPRGCanDetectorProvider) visionProvider;
+        Target currentTarget;
+        Pose2d robotLocation;
+
+        switch (sixcanStage) {
+            case 0: //initialize stuff
+                robot.driveTrain.articulate(DriveTrain.Articulation.unlock);
+                robot.driveTrain.enableChassisLength();
+                uniqueCans = sixVision.getUniqueCans();
+                uniqueCans.clear(); //starting a fresh set of unique cans
+                //todo make sure we've setup the pipeline?
+                sixcanStage++;
+                break;
+            case 1: //start facing right and turn left until pointing down the field
+                uniqueCans = sixVision.getUniqueCans(); //get updated list
+                robotLocation=robot.driveTrain.poseEstimate;
+                currentTarget = ((DPRGCanDetectorProvider) visionProvider).GetNearest(uniqueCans,robotLocation);
+                if (currentTarget != null)
+                    robot.driveTrain.turnUntilDegrees(Math.toDegrees(currentTarget.HeadingFrom(robotLocation.vec())));
+                /*
+                if (robot.driveTrain.turnUntilDegrees(-90)) {
+                    //return true; //done rotating/scanning
+                    uniqueCans = sixVision.getUniqueCans(); //get updated list
+                    sixcanStage++; //progress to next stage
+                }
+                 */
+                break;
+            case 2: //find the first can that is close to the centerline
+                // can where abs of the y coordinate < 12 and x is smallest (closest to start)
+                // if that doesn't find a target, get keep increasing the zone until a can is found
+                currentTarget = sixVision.getStartingCan();
+                // turn robot to that target and drive to within 24" of that target
+                // engage automatic can pickup routine in underarm.
+                // drive to scoring location
+                // deposit can
+                // remove current target from uniqueCans
+                // get nearest can, repeat
+                break;
+        }
+
+        return false;
+    }
+    public boolean SeekTarget(Target target, double stoppingDistanceInches){
+        //seek Target has two stages - first turn in place toward the target, second drive toward the target but stop short
+        Vector2d robotLocation = new Vector2d(robot.driveTrain.poseEstimate.getX(), robot.driveTrain.poseEstimate.getY());
+        double targetHeadingRad = robotLocation.angleBetween(target.getFieldPosition());
         return false;
     }
 }
