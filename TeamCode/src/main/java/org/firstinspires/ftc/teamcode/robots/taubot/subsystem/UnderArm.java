@@ -109,7 +109,15 @@ public class UnderArm implements Subsystem {
 
     private double chariotDistance;
     private double shoulderAngle;
-    private double shoulderTargetAngle, elbowTargetAngle, wristTargetAngle, turretTargetAngle;
+    private double shoulderTargetAngle;
+    private double elbowTargetAngle;
+    private double wristTargetAngle;
+
+    public double getTurretTargetAngle() {
+        return turretTargetAngle;
+    }
+
+    private double turretTargetAngle;
 
     public static Articulation articulation;
 

@@ -71,7 +71,6 @@ public class DriveTrain extends DiffyDrive implements Subsystem {
     private static final TrajectoryAccelerationConstraint ACCEL_CONSTRAINT = getAccelerationConstraint(MAX_ACCELERATION);
     private double targetHeading, targetVelocity = 0;
 
-    public Pose2d currentPose;
     private Pose2d driveVelocity, lastDriveVelocity;
 
     private double leftPosition, rightPosition, leftRelOffset, rightRelOffset, swervePosition, swivelPosition;
@@ -88,7 +87,8 @@ public class DriveTrain extends DiffyDrive implements Subsystem {
     private double heading, roll, pitch, pitchVelocity, angularVelocity;
     private double headingOffset, rollOffset, pitchOffset;
     public final TrajectorySequenceRunner trajectorySequenceRunner;
-    private Pose2d poseEstimate, poseError, poseVelocity;
+    public Pose2d poseEstimate;
+    private Pose2d poseError, poseVelocity;
     private long lastLoopTime, loopTime;
 
     private static Vector2 cachePosition;
@@ -336,7 +336,7 @@ public class DriveTrain extends DiffyDrive implements Subsystem {
         } else {
             leftPosition = diffEncoderTicksToInches(leftMotor.getCurrentPosition() - leftRelOffset);
             rightPosition = diffEncoderTicksToInches(rightMotor.getCurrentPosition() - rightRelOffset);
-//            todo - add chassis length distance sensor
+
             chassisLength = chassisLengthDistanceSensor.getDistance(DistanceUnit.INCH) + Distance_HUB_TO_UNDERARM_MIN;
         }
 

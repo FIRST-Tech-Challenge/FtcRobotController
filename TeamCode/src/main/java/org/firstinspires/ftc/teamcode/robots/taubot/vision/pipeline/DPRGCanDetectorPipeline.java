@@ -6,6 +6,7 @@ import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
 
 import org.firstinspires.ftc.teamcode.robots.taubot.vision.Position;
+import org.firstinspires.ftc.teamcode.robots.taubot.vision.Target;
 import org.opencv.android.Utils;
 import org.opencv.core.Core;
 import org.opencv.core.Mat;
@@ -19,6 +20,7 @@ import org.opencv.core.Size;
 import org.opencv.imgproc.Imgproc;
 import org.opencv.imgproc.Moments;
 import org.openftc.easyopencv.OpenCvPipeline;
+import org.openftc.easyopencv.TimestampedOpenCvPipeline;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -27,8 +29,8 @@ import java.util.List;
  * @author Iron Reign Coding Team
  */
 
-@Config (value = "AA_PP_6CanVisionPipeline")
-public class DPRGCanDetectorPipeline extends OpenCvPipeline {
+@Config(value = "AA_PP_6CanVisionPipeline")
+public class DPRGCanDetectorPipeline extends TimestampedOpenCvPipeline {
     private Mat cropOutput = new Mat();
     private Mat normalizeInput = new Mat();
     private Mat normalizeOutput = new Mat();
@@ -58,7 +60,7 @@ public class DPRGCanDetectorPipeline extends OpenCvPipeline {
     public static double HUE_MIN = 105, HUE_MAX = 120;
     public static double SATURATION_MIN = 80, SATURATION_MAX = 255;
     public static double VALUE_MIN = 120, VALUE_MAX = 255;
-    public static double MIN_CONTOUR_AREA = 700;
+    public static double MIN_CONTOUR_AREA = 50;
     public static String BLUR = "Box Blur";
 
     public static int LEFT_THRESHOLD = 142;
@@ -72,142 +74,161 @@ public class DPRGCanDetectorPipeline extends OpenCvPipeline {
         lastPosition = Position.HOLD;
     }
 
-    static class Target {
-        long frameCounter; //the frame on which the target was detected
-        int targetNumber; //the order of the target in the frame
-        Vector2d centroid; //this is the position of the centroid of the target in the frame it was detected
-        double areaPixels; //this is the area in pixels of the target
-        double heightPixels; //the height of the ellipse fitted to the blob in the frame - subtract half of this value from the centroid to get the base position of the target
-        double widthPixels; //the wide of the ellipse fitted to the target blob
-        double orientation; //the angular orientation of the blob in the frame
-        boolean upright; //an assessment of the vertical orientation of the can
-        double cameraHeading; //this is the heading of the camera when the target was last detected. it is only relevant for the frame where the target was detected
-        Vector2d position; //this is the estimated position of the target/can on the field
-        boolean isCan; //do we think this is a can?
-
-        public Target(Vector2d position, double cameraHeading) {
-            this.position = position;
-            this.cameraHeading = cameraHeading;
-        }
-    }
+    volatile List<Target> detectedCans = new ArrayList<>(); //persist the most recent targets for access outside this thread
+    List<Target> frameCans = new ArrayList<>(); //building the targets inside processFrame
 
     @Override
-    public Mat processFrame(Mat input) {
-            // Step crop (stage 1):
-            cropOutput = input.submat(new Rect(new Point(TOP_LEFT_X, TOP_LEFT_Y), new Point(BOTTOM_RIGHT_X, BOTTOM_RIGHT_Y)));
+    public Mat processFrame(Mat input, long timestamp) {
 
-            // Step Normalize0 (stage 2):
-            normalizeInput = cropOutput;
-            int normalizeType = Core.NORM_MINMAX;
-            double normalizeAlpha = NORMALIZE_ALPHA;
-            double normalizeBeta = NORMALIZE_BETA;
-            normalize(normalizeInput, normalizeType, normalizeAlpha, normalizeBeta, normalizeOutput);
+        //initialize
+        frameCans.clear();
 
-            // Step Blur0 (stage 3):
-            blurInput = normalizeOutput;
-            BlurType blurType = BlurType.get(BLUR);
-            double blurRadius = BLUR_RADIUS;
-            blur(blurInput, blurType, blurRadius, blurOutput);
+        // Step crop (stage 1):
+        cropOutput = input.submat(new Rect(new Point(TOP_LEFT_X, TOP_LEFT_Y), new Point(BOTTOM_RIGHT_X, BOTTOM_RIGHT_Y)));
 
-            // Step HSV_Threshold0  (stage 4):
-            hsvThresholdInput = blurOutput;
-            double[] hsvThresholdHue = {HUE_MIN, HUE_MAX};
-            double[] hsvThresholdSaturation = {SATURATION_MIN, SATURATION_MAX};
-            double[] hsvThresholdValue = {VALUE_MIN, VALUE_MAX};
-            hsvThreshold(hsvThresholdInput, hsvThresholdHue, hsvThresholdSaturation, hsvThresholdValue, hsvThresholdOutput);
+        // Step Normalize0 (stage 2):
+        normalizeInput = cropOutput;
+        int normalizeType = Core.NORM_MINMAX;
+        double normalizeAlpha = NORMALIZE_ALPHA;
+        double normalizeBeta = NORMALIZE_BETA;
+        normalize(normalizeInput, normalizeType, normalizeAlpha, normalizeBeta, normalizeOutput);
 
-            // Step Find_Contours0 (stage 5):
-            findContoursInput = hsvThresholdOutput;
-            findContours(findContoursInput, findContoursOutput);
-            findContoursOutputMat = cropOutput;
-            for (int i = 0; i < findContoursOutput.size(); i++) {
-                Imgproc.drawContours(findContoursOutputMat, findContoursOutput, i, new Scalar(255, 255, 255), 2);
-            }
+        // Step Blur0 (stage 3):
+        blurInput = normalizeOutput;
+        BlurType blurType = BlurType.get(BLUR);
+        double blurRadius = BLUR_RADIUS;
+        blur(blurInput, blurType, blurRadius, blurOutput);
 
-            // Finding largest contour (stage 6):
-            finalContourOutputMat = cropOutput;
-            largestArea = -1;
-            largestX = -1;
-            largestY = -1;
-            int largestContourIndex = -1;
-            RotatedRect[] minEllipse = new RotatedRect[findContoursOutput.size()];
-            for (int i = 0; i < findContoursOutput.size(); i++) {
-                MatOfPoint contour = findContoursOutput.get(i);
-                double contourArea = Imgproc.contourArea(contour);
-                if (contourArea > MIN_CONTOUR_AREA && contourArea > largestArea) {
-                    Moments p = Imgproc.moments(contour, false);
+        // Step HSV_Threshold0  (stage 4):
+        hsvThresholdInput = blurOutput;
+        double[] hsvThresholdHue = {HUE_MIN, HUE_MAX};
+        double[] hsvThresholdSaturation = {SATURATION_MIN, SATURATION_MAX};
+        double[] hsvThresholdValue = {VALUE_MIN, VALUE_MAX};
+        hsvThreshold(hsvThresholdInput, hsvThresholdHue, hsvThresholdSaturation, hsvThresholdValue, hsvThresholdOutput);
 
-                    int x = (int) (p.get_m10() / p.get_m00());
-                    int y = (int) (p.get_m01() / p.get_m00());
+        // Step Find_Contours0 (stage 5):
+        findContoursInput = hsvThresholdOutput;
+        findContours(findContoursInput, findContoursOutput);
+        findContoursOutputMat = cropOutput;
+        for (int i = 0; i < findContoursOutput.size(); i++) {
+            Imgproc.drawContours(findContoursOutputMat, findContoursOutput, i, new Scalar(255, 255, 255), 2);
+        }
 
+        // process contours (stage 6):
+        finalContourOutputMat = cropOutput;
+        largestArea = -1;
+        largestX = -1;
+        largestY = -1;
+        int largestContourIndex = -1;
+        RotatedRect[] minEllipse = new RotatedRect[findContoursOutput.size()];
+
+        for (int i = 0; i < findContoursOutput.size(); i++) {
+
+            MatOfPoint contour = findContoursOutput.get(i);
+            double contourArea = Imgproc.contourArea(contour);
+            if (contourArea > MIN_CONTOUR_AREA) {
+                Moments p = Imgproc.moments(contour, false);
+
+                int x = (int) (p.get_m10() / p.get_m00());
+                int y = (int) (p.get_m01() / p.get_m00());
+
+                if (contourArea > largestArea) {
                     largestContourIndex = i;
                     largestX = x;
                     largestY = y;
                     largestArea = contourArea;
-
-                    //by fitting a minimal ellipse to a contour, we get its angle, length and width
-                    minEllipse[i] = new RotatedRect();
-                    if (findContoursOutput.get(i).rows() > 5) { //this test was from an example - prolly means fitEllipse will fail on a too-small contour
-                        minEllipse[i] = Imgproc.fitEllipse(new MatOfPoint2f(findContoursOutput.get(i).toArray()));
-                    }
                 }
-            }
-            if (largestContourIndex != -1) {
-                Imgproc.drawContours(finalContourOutputMat, findContoursOutput, largestContourIndex, new Scalar(255, 255, 255), 2);
-                Imgproc.drawMarker(finalContourOutputMat, new Point(largestX, largestY), new Scalar(0, 255, 0));
-            }
 
-            //drawing a midline to compare against heading
-            Imgproc.line(finalContourOutputMat, new Point(CENTER_LINE, 0), new Point(CENTER_LINE, finalContourOutputMat.height()), new Scalar(255, 0, 0), 1);
-            //Imgproc.line(finalContourOutputMat, new Point(RIGHT_THRESHOLD, 0), new Point(RIGHT_THRESHOLD, finalContourOutputMat.height()), new Scalar(255, 255, 255), 2);
-            //Imgproc.line(finalContourOutputMat, new Point(LEFT_THRESHOLD, 0), new Point(LEFT_THRESHOLD, finalContourOutputMat.height()), new Scalar(255, 255, 255), 2);
+                //by fitting a minimal ellipse to a contour, we get its angle, length and width
+                if (findContoursOutput.get(i).rows() > 5) { //this test was from an example - prolly means fitEllipse will fail on a too-small contour
+                    minEllipse[i] = Imgproc.fitEllipse(new MatOfPoint2f(findContoursOutput.get(i).toArray()));
+                } else minEllipse[i] = new RotatedRect();
 
-            //This is the typical FTC position based test - not really useful for 6can
-            if (largestX > 0 && largestX < LEFT_THRESHOLD) {
-                lastPosition = Position.LEFT;
-            } else if (largestX > LEFT_THRESHOLD && largestX < RIGHT_THRESHOLD) {
-                lastPosition = Position.MIDDLE;
-            } else if (largestX > RIGHT_THRESHOLD && largestX < cropOutput.width()) {
-                lastPosition = Position.RIGHT;
-            } else
-                lastPosition = Position.NONE_FOUND;
-
-            switch (VIEW_OPEN_CV_PIPELINE_STAGE) {
-                case 0:
-                    dashboardMat = cropOutput;
-                    break;
-                case 1:
-                    dashboardMat = normalizeOutput;
-                    break;
-                case 2:
-                    dashboardMat = blurInput;
-                    break;
-                case 3:
-                    dashboardMat = blurOutput;
-                    break;
-                case 4:
-                    dashboardMat = hsvThresholdOutput;
-                    break;
-                case 5:
-                    dashboardMat = findContoursOutputMat;
-                    break;
-                case 6:
-                    dashboardMat = finalContourOutputMat;
-                    break;
-                default:
-                    dashboardMat = input;
-                    break;
+                Target newTarget = new Target(timestamp, i, new Vector2d(x, y), 0);
+                newTarget.setAreaPixels(contourArea);
+                newTarget.setFittedRect(minEllipse[i]);
+                newTarget.setOrientation(minEllipse[i].angle);
+                newTarget.setHeightPixels(minEllipse[i].size.height);
+                newTarget.setWidthPixels(minEllipse[i].size.width);
+                newTarget.setAspectRatio(newTarget.getWidthPixels() / newTarget.getHeightPixels());
+                //an upright can will almost always have an aspect ratio hovering around .6
+                //a can on it's side will be a little higher even when lying orthogonal to the camera
+                //even though the width is still the smaller value because it is perpendicular to the major axis
+                //todo a better test of uprightness would be to look a the orientation of the can
+                //an upright can seems to have an orientation that is +/- 15 degrees from 0 or 180 (flipped orientation)
+                //a can on its side will have an orientation that is closer to 90 degrees or probably 270 (not witnessed yet)
+                if (newTarget.getAspectRatio()<.75) newTarget.setUpright(true);
+                else newTarget.setUpright(true);
+                //add to the list of targets
+                frameCans.add(newTarget);
             }
-            if (dashboardMat != null && !dashboardMat.empty()) {
-                dashboardBitmap = Bitmap.createBitmap(dashboardMat.width(), dashboardMat.height(), Bitmap.Config.RGB_565);
-                Utils.matToBitmap(dashboardMat, dashboardBitmap);
-            }
+        }
+        //we are done building the local list of targets - copy to the list that the robot can access
+        detectedCans = new ArrayList<>(frameCans);
 
-            return input;
+        if (largestContourIndex != -1) {
+            Imgproc.drawContours(finalContourOutputMat, findContoursOutput, largestContourIndex, new Scalar(255, 255, 255), 2);
+            Imgproc.drawMarker(finalContourOutputMat, new Point(largestX, largestY), new Scalar(0, 255, 0));
+            for (Target can : frameCans) {
+                Imgproc.ellipse(finalContourOutputMat, can.getFittedRect(), new Scalar(0, 255, 0));
+            }
+        }
+
+        //drawing a midline to compare against heading
+        Imgproc.line(finalContourOutputMat, new Point(CENTER_LINE, 0), new Point(CENTER_LINE, finalContourOutputMat.height()), new Scalar(255, 0, 0), 1);
+        //Imgproc.line(finalContourOutputMat, new Point(RIGHT_THRESHOLD, 0), new Point(RIGHT_THRESHOLD, finalContourOutputMat.height()), new Scalar(255, 255, 255), 2);
+        //Imgproc.line(finalContourOutputMat, new Point(LEFT_THRESHOLD, 0), new Point(LEFT_THRESHOLD, finalContourOutputMat.height()), new Scalar(255, 255, 255), 2);
+
+        //This is the typical FTC position based test - not really useful for 6can
+        if (largestX > 0 && largestX < LEFT_THRESHOLD) {
+            lastPosition = Position.LEFT;
+        } else if (largestX > LEFT_THRESHOLD && largestX < RIGHT_THRESHOLD) {
+            lastPosition = Position.MIDDLE;
+        } else if (largestX > RIGHT_THRESHOLD && largestX < cropOutput.width()) {
+            lastPosition = Position.RIGHT;
+        } else
+            lastPosition = Position.NONE_FOUND;
+
+        switch (VIEW_OPEN_CV_PIPELINE_STAGE) {
+            case 0:
+                dashboardMat = cropOutput;
+                break;
+            case 1:
+                dashboardMat = normalizeOutput;
+                break;
+            case 2:
+                dashboardMat = blurInput;
+                break;
+            case 3:
+                dashboardMat = blurOutput;
+                break;
+            case 4:
+                dashboardMat = hsvThresholdOutput;
+                break;
+            case 5:
+                dashboardMat = findContoursOutputMat;
+                break;
+            case 6:
+                dashboardMat = finalContourOutputMat;
+                break;
+            default:
+                dashboardMat = input;
+                break;
+        }
+        if (dashboardMat != null && !dashboardMat.empty()) {
+            dashboardBitmap = Bitmap.createBitmap(dashboardMat.width(), dashboardMat.height(), Bitmap.Config.RGB_565);
+            Utils.matToBitmap(dashboardMat, dashboardBitmap);
+        }
+
+        return input;
     }
 
     public int[] getPosition() {
-        return new int[] {largestX, largestY};
+        return new int[]{largestX, largestY};
+    }
+
+    public synchronized List<Target> getDetectedCans() {
+        return detectedCans;
     }
 
     public Bitmap getDashboardImage() {
@@ -216,17 +237,18 @@ public class DPRGCanDetectorPipeline extends OpenCvPipeline {
 
     /**
      * Normalizes or remaps the values of pixels in an image.
-     * @param input The image on which to perform the Normalize.
-     * @param type The type of normalization.
-     * @param a The minimum value.
-     * @param b The maximum value.
+     *
+     * @param input  The image on which to perform the Normalize.
+     * @param type   The type of normalization.
+     * @param a      The minimum value.
+     * @param b      The maximum value.
      * @param output The image in which to store the output.
      */
     private void normalize(Mat input, int type, double a, double b, Mat output) {
         Core.normalize(input, output, a, b, type);
     }
 
-    enum BlurType{
+    enum BlurType {
         BOX("Box Blur"), GAUSSIAN("Gaussian Blur"), MEDIAN("Median Filter"),
         BILATERAL("Bilateral Filter");
 
@@ -239,14 +261,11 @@ public class DPRGCanDetectorPipeline extends OpenCvPipeline {
         public static BlurType get(String type) {
             if (BILATERAL.label.equals(type)) {
                 return BILATERAL;
-            }
-            else if (GAUSSIAN.label.equals(type)) {
+            } else if (GAUSSIAN.label.equals(type)) {
                 return GAUSSIAN;
-            }
-            else if (MEDIAN.label.equals(type)) {
+            } else if (MEDIAN.label.equals(type)) {
                 return MEDIAN;
-            }
-            else {
+            } else {
                 return BOX;
             }
         }
@@ -259,16 +278,16 @@ public class DPRGCanDetectorPipeline extends OpenCvPipeline {
 
     private void blur(Mat input, BlurType type, double doubleRadius,
                       Mat output) {
-        int radius = (int)(doubleRadius + 0.5);
+        int radius = (int) (doubleRadius + 0.5);
         int kernelSize;
-        switch(type){
+        switch (type) {
             case BOX:
                 kernelSize = 2 * radius + 1;
                 Imgproc.blur(input, output, new Size(kernelSize, kernelSize));
                 break;
             case GAUSSIAN:
                 kernelSize = 6 * radius + 1;
-                Imgproc.GaussianBlur(input,output, new Size(kernelSize, kernelSize), radius);
+                Imgproc.GaussianBlur(input, output, new Size(kernelSize, kernelSize), radius);
                 break;
             case MEDIAN:
                 kernelSize = 2 * radius + 1;
@@ -295,7 +314,7 @@ public class DPRGCanDetectorPipeline extends OpenCvPipeline {
         Imgproc.findContours(input, contours, hierarchy, mode, method);
     }
 
-    private RotatedRect getOrientation(List<MatOfPoint> contour){
+    private RotatedRect getOrientation(List<MatOfPoint> contour) {
         RotatedRect rotatedRect;
         rotatedRect = Imgproc.fitEllipse((MatOfPoint2f) contour);
         return rotatedRect;
@@ -305,6 +324,11 @@ public class DPRGCanDetectorPipeline extends OpenCvPipeline {
         return lastPosition;
     }
 
-    public double[] getLargestCoordinate() { return new double[] {largestX, largestY}; }
-    public double getLargestAreaPixels(){return largestArea;}
+    public double[] getLargestCoordinate() {
+        return new double[]{largestX, largestY};
+    }
+
+    public double getLargestAreaPixels() {
+        return largestArea;
+    }
 }

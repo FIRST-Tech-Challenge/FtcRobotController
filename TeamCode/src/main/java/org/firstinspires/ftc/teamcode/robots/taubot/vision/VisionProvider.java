@@ -7,6 +7,7 @@ import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
+import org.firstinspires.ftc.teamcode.robots.taubot.subsystem.Robot;
 import org.firstinspires.ftc.teamcode.robots.taubot.util.TelemetryProvider;
 
 import java.io.File;
@@ -28,6 +29,7 @@ public abstract class VisionProvider implements TelemetryProvider {
     private Bitmap dashboardImage;
     private FtcDashboard dashboard;
     private boolean saveDashboard;
+    public Robot robot;
 
     public VisionProvider() {
         mostFrequentPosition = Position.HOLD;
@@ -39,6 +41,11 @@ public abstract class VisionProvider implements TelemetryProvider {
     }
 
     abstract public void initializeVision(HardwareMap hardwareMap);
+
+    public void initializeVision(HardwareMap hardwareMap, Robot robot){
+        this.robot = robot;
+        initializeVision(hardwareMap);
+    }
 
     abstract public void shutdownVision();
 

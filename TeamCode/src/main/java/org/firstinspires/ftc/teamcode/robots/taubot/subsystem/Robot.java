@@ -16,12 +16,14 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.VoltageSensor;
 
 import org.firstinspires.ftc.robotcore.internal.system.Misc;
+import org.firstinspires.ftc.teamcode.robots.taubot.Autonomous;
 import org.firstinspires.ftc.teamcode.robots.taubot.Field;
 import org.firstinspires.ftc.teamcode.robots.taubot.PowerPlay_6832;
 import org.firstinspires.ftc.teamcode.robots.taubot.util.Constants;
 import org.firstinspires.ftc.teamcode.robots.taubot.util.DashboardUtil;
 import org.firstinspires.ftc.teamcode.robots.taubot.util.PositionCache;
 import org.firstinspires.ftc.teamcode.robots.taubot.util.TauPosition;
+import org.firstinspires.ftc.teamcode.robots.taubot.vision.Target;
 import org.firstinspires.ftc.teamcode.statemachine.StateMachine;
 import org.opencv.android.Utils;
 import org.opencv.core.CvType;
@@ -30,6 +32,7 @@ import org.opencv.core.Point;
 import org.opencv.core.Scalar;
 import org.opencv.imgproc.Imgproc;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -79,6 +82,12 @@ public class Robot implements Subsystem {
     double current_dx = 0;
     double current_dy = 0;
     int transferStage = 0;
+
+    public void setTargets(List<Target> targets) {
+        this.targets = targets;
+    }
+
+    List<Target> targets = new ArrayList<>();
 
     public Robot(HardwareMap hardwareMap, boolean simulated) {
         hubs = hardwareMap.getAll(LynxModule.class);
@@ -262,7 +271,7 @@ public class Robot implements Subsystem {
 
         Utils.matToBitmap(craneMat, craneBitmap);
 
-        DashboardUtil.drawRobot(fieldOverlay, driveTrain.getPoseEstimate(), driveTrain.getWheelVelocities(), turret.getHeading(), crane.getShoulderAngle(), crane.getExtendInches(), crane.fieldPositionTarget);
+        DashboardUtil.drawRobot(fieldOverlay, driveTrain.getPoseEstimate(), driveTrain.getWheelVelocities(), turret.getHeading(), crane.getShoulderAngle(), crane.getExtendInches(), crane.fieldPositionTarget, targets);
     }
 
     public Bitmap getBitmap() {

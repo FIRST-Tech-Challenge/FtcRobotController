@@ -7,10 +7,14 @@ import org.firstinspires.ftc.teamcode.robots.taubot.subsystem.DriveTrain;
 import org.firstinspires.ftc.teamcode.robots.taubot.subsystem.Robot;
 import org.firstinspires.ftc.teamcode.robots.taubot.trajectorysequence.TrajectorySequence;
 import org.firstinspires.ftc.teamcode.robots.taubot.util.Utils;
+import org.firstinspires.ftc.teamcode.robots.taubot.vision.Target;
 import org.firstinspires.ftc.teamcode.robots.taubot.vision.VisionProvider;
 import org.firstinspires.ftc.teamcode.robots.taubot.vision.VisionProviders;
 import org.firstinspires.ftc.teamcode.statemachine.Stage;
 import org.firstinspires.ftc.teamcode.statemachine.StateMachine;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class Autonomous {
     public VisionProvider visionProvider;
@@ -572,5 +576,28 @@ public class Autonomous {
         } catch(IllegalAccessException | InstantiationException e) {
             throw new RuntimeException("Error while instantiating vision provider");
         }
+    }
+    int canScannerStage = 0;
+
+    List<Target> uniqueTargets = new ArrayList<>();
+
+    public boolean CanScanner(){
+        switch (canScannerStage) {
+            case 0: //initialize stuff
+                uniqueTargets.clear(); //starting a new scan
+                //todo make sure we've setup the pipeline?
+                canScannerStage++;
+                break;
+            case 1:
+            if (robot.driveTrain.turnUntilDegrees(-90)) {
+                return true; //done rotating/scanning
+            }
+            else {
+
+
+            }
+        }
+
+        return false;
     }
 }

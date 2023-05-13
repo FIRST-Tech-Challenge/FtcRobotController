@@ -8,6 +8,7 @@ import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.acmerobotics.roadrunner.path.Path;
 
+import org.firstinspires.ftc.teamcode.robots.taubot.vision.Target;
 import org.firstinspires.ftc.teamcode.util.Vector3;
 
 import java.util.List;
@@ -24,7 +25,7 @@ public class DashboardUtil {
     private static final String WHEEL_COLOR = "Red";
     private static final String TURRET_COLOR = "#00ff44"; //bright green
 
-    private static final String TARGET_COLOR = "Red";
+    private static final String TARGET_COLOR = "Orange";
 
 
     private static final String EXTEND_COLOR = "Purple";
@@ -81,7 +82,7 @@ public class DashboardUtil {
         canvas.strokeLine(x1, y1, x2, y2);
     }
 
-    public static void drawRobot(Canvas canvas, Pose2d pose, List<Double> wheelVelocities, double turretHeading, double shoulderAngle, double extendInches, Vector3 fieldPositionTarget) {
+    public static void drawRobot(Canvas canvas, Pose2d pose, List<Double> wheelVelocities, double turretHeading, double shoulderAngle, double extendInches, Vector3 fieldPositionTarget, List<Target> targets) {
         // calculating wheel positions
         Vector2d position = pose.vec();
         Vector2d leftWheel = new Vector2d(0, TRACK_WIDTH / 2);
@@ -144,6 +145,13 @@ public class DashboardUtil {
         double ste_x1 = turretPose.getX(), ste_y1 = turretPose.getY();
         double ste_x2 = turretPose.getX() + extension.getX(), ste_y2 = turretPose.getY() + extension.getY();
         canvas.strokeLine(ste_x1, ste_y1, ste_x2, ste_y2);
+
+        //draw targets
+        canvas.setStroke(TARGET_COLOR);
+        for (Target can: targets) {
+            canvas.strokeCircle(can.getFieldPosition().getX(), can.getFieldPosition().getY(), 1.8);
+        }
+
 /*
         canvas.setStroke(ELBOW_TO_WRIST_COLOR);
         Vector2d elbowToWrist = u.times(ELBOW_TO_WRIST * Math.cos(elbowAngle));
