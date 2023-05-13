@@ -676,7 +676,7 @@ public class DriveTrain extends DiffyDrive implements Subsystem {
 
     public boolean driveUntilRads(double driveDistance, double driveHeading, double driveSpeed) {
         if(!driveUntilInitialized) {
-            //resetRelPos();
+            resetRelPos();
             this.driveTarget = driveDistance + getAveragePos();
             this.driveHeading = wrapAngleRad(driveHeading);
             this.driveSpeed = driveSpeed;
@@ -750,6 +750,7 @@ public class DriveTrain extends DiffyDrive implements Subsystem {
         headingPID_pwr.setPID(HEADING_PID_PWR);
         headingPID_pwr.setInput(poseEstimate.getHeading());
         headingPID_pwr.setSetpoint(targetHeading);
+        headingPID_pwr.setOutputRange(-.4, .4);
         headingErrorMagnitude = Math.abs(Utils.distanceBetweenAngles(Math.toDegrees(heading),turnAngle));
         double correction = headingPID_pwr.performPID();
         if(headingErrorMagnitude < HEADING_PID_TOLERANCE){

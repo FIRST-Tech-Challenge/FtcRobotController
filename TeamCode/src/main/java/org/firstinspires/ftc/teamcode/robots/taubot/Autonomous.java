@@ -623,11 +623,16 @@ public class Autonomous {
                 sixcanStage++;
                 break;
             case 1: //start facing right and turn left until pointing down the field
-                uniqueCans = sixVision.getUniqueCans(); //get updated list
+                //uniqueCans = sixVision.getUniqueCans(); //get updated list
+                uniqueCans = sixVision.getFrameDetections(); //get updated list
                 robotLocation=robot.driveTrain.poseEstimate;
                 currentTarget = ((DPRGCanDetectorProvider) visionProvider).GetNearest(uniqueCans,robotLocation);
                 if (currentTarget != null)
-                    robot.driveTrain.turnUntilDegrees(Math.toDegrees(currentTarget.HeadingFrom(robotLocation.vec())));
+                    //robot.driveTrain.turnUntilDegrees(Math.toDegrees(currentTarget.HeadingFrom(robotLocation.vec())));
+                    if (robot.driveTrain.turnUntilDegrees(Math.toDegrees( robotLocation.getHeading())+currentTarget.getCameraHeading()))
+                    {
+                        sixcanStage++;
+                    }
                 /*
                 if (robot.driveTrain.turnUntilDegrees(-90)) {
                     //return true; //done rotating/scanning
@@ -639,13 +644,21 @@ public class Autonomous {
             case 2: //find the first can that is close to the centerline
                 // can where abs of the y coordinate < 12 and x is smallest (closest to start)
                 // if that doesn't find a target, get keep increasing the zone until a can is found
-                currentTarget = sixVision.getStartingCan();
+                //currentTarget = sixVision.getStartingCan();
                 // turn robot to that target and drive to within 24" of that target
                 // engage automatic can pickup routine in underarm.
                 // drive to scoring location
                 // deposit can
                 // remove current target from uniqueCans
                 // get nearest can, repeat
+                uniqueCans = sixVision.getFrameDetections(); //get updated list
+                robotLocation=robot.driveTrain.poseEstimate;
+                currentTarget = ((DPRGCanDetectorProvider) visionProvider).GetNearest(uniqueCans,robotLocation);
+                double requestedDistance = currentTarget.Distance(new Vector2d(robotLocation.getX(),robotLocation.getY()))-26;
+                double requestHeading = Math.toDegrees( robotLocation.getHeading())+currentTarget.getCameraHeading();
+                if (currentTarget != null)
+                    if (robot.driveTrain.driveUntilDegrees(requestedDistance, requestHeading, 15))
+                        sixcanStage--;
                 break;
         }
 

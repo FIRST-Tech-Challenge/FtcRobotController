@@ -225,7 +225,8 @@ public class DPRGCanDetectorProvider extends VisionProvider {
 
             }
             //send the targets for visualization
-            robot.setTargets(uniqueCans);
+            //robot.setTargets(uniqueCans);
+            robot.setTargets(frameDetections);
 
             //cache the timestamp
             lastFrameTimestamp = timestamp;
