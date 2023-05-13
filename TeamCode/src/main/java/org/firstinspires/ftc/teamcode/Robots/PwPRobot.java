@@ -128,12 +128,12 @@ public class PwPRobot extends BasicRobot {
             finished = true;
         }
     }
+
     public void setToNow(boolean p_Optional) {
-        if(queuer.isFirstLoop()){
-            queuer.queue(false, true, true);
-        }
-        else {
-            if (queuer.queue(false, true, p_Optional)) {
+        if (queuer.isFirstLoop()) {
+            queuer.queue(false, false, true);
+        } else {
+            if (queuer.queue(false, false, p_Optional)) {
                 queuer.setToNow();
             }
         }
@@ -260,14 +260,18 @@ public class PwPRobot extends BasicRobot {
     public void teleAutoAim(Trajectory trajectory) {
         roadrun.followTrajectoryAsync(trajectory);
     }
-    public boolean isObL(){
-        if(roadrun.getPoseEstimate().vec().distTo(roadrun.getCurrentTraj().end().vec())>3) {
-return false;        }
+
+    public boolean isObL() {
+        if (roadrun.getPoseEstimate().vec().distTo(roadrun.getCurrentTraj().end().vec()) > 3) {
+            return claw.isObL();
+        }
         return false;
     }
-    public boolean isObR(){
-        if(roadrun.getPoseEstimate().vec().distTo(roadrun.getCurrentTraj().end().vec())>3) {
-return false;        }
+
+    public boolean isObR() {
+        if (roadrun.getPoseEstimate().vec().distTo(roadrun.getCurrentTraj().end().vec()) > 3) {
+            return claw.isObR();
+        }
         return false;
     }
 
@@ -275,8 +279,8 @@ return false;        }
         if (queuer.queue(false, !roadrun.isBusy() && roadrun.getPoseEstimate().vec().distTo(trajectorySequence.end().vec()) < 3)) {
             if (!roadrun.isBusy()) {
                 TrajectorySequenceBuilder builder = roadrun.trajectorySequenceBuilder(roadrun.getPoseEstimate());
-                for(int i=0;i< trajectorySequence.size();i++){
-                        builder.addSequenceSegment(trajectorySequence.get(i));
+                for (int i = 0; i < trajectorySequence.size(); i++) {
+                    builder.addSequenceSegment(trajectorySequence.get(i));
                 }
                 roadrun.followTrajectorySequenceAsync(builder.build());
             }
@@ -284,17 +288,23 @@ return false;        }
     }
 
     public void followTrajectorySequenceAsync(TrajectorySequence trajectorySequence, boolean isOptional) {
-        if(queuer.isFirstLoop()){
+        if (queuer.isFirstLoop()) {
             queuer.queue(false, false, true);
-        }
-        else {
-            if (queuer.queue(false, !roadrun.isBusy() && roadrun.getPoseEstimate().vec().distTo(trajectorySequence.end().vec()) < 3,isOptional)) {
+        } else {
+            if (queuer.queue(false, !roadrun.isBusy() && roadrun.getPoseEstimate().vec().distTo(trajectorySequence.end().vec()) < 3, isOptional)) {
                 if (!roadrun.isBusy()) {
                     TrajectorySequenceBuilder builder = roadrun.trajectorySequenceBuilder(roadrun.getPoseEstimate());
                     for (int i = 0; i < trajectorySequence.size(); i++) {
                         builder.addSequenceSegment(trajectorySequence.get(i));
                     }
                     roadrun.followTrajectorySequenceAsync(builder.build());
+                }
+                else if(roadrun.getCurrentTraj().end()!= trajectorySequence.end()){
+                    TrajectorySequenceBuilder builder = roadrun.trajectorySequenceBuilder(roadrun.getPoseEstimate());
+                    for (int i = 0; i < trajectorySequence.size(); i++) {
+                        builder.addSequenceSegment(trajectorySequence.get(i));
+                    }
+                    roadrun.changeTrajectorySequence(builder.build());
                 }
             }
         }
@@ -330,9 +340,9 @@ return false;        }
         double[] maxes = {75, 50, 7};
         double[] targetVelocity = {y / kV, x / kV, a / kV / TRACK_WIDTH};
         Pose2d avoidVelo = field.correctionVelo();
-        targetVelocity[0] +=avoidVelo.getX();
-        targetVelocity[1] +=avoidVelo.getY();
-        targetVelocity[2] +=avoidVelo.getHeading();
+        targetVelocity[0] += avoidVelo.getX();
+        targetVelocity[1] += avoidVelo.getY();
+        targetVelocity[2] += avoidVelo.getHeading();
 
         Pose2d actualVelocity = roadrun.getPoseVelocity();
         actualVelocity = field.filteredVelocity(actualVelocity);
@@ -719,7 +729,7 @@ return false;        }
         op.telemetry.addData("closestDropPositionValue", field.getDropPosition());
         op.telemetry.addData("closePole", field.getClosePole());
         op.telemetry.addData("seenPolePose", field.calcPolePose(roadrun.getPoseEstimate()));
-        op.telemetry.addData("currentDropPosition",field.getDropPose());
+        op.telemetry.addData("currentDropPosition", field.getDropPose());
         op.telemetry.addData("avoid velo", field.correctionVelo());
         double[] vals = {op.gamepad1.left_stick_x, op.gamepad1.left_stick_y, op.gamepad1.right_stick_x};
         double[] minBoost = {0.1, 0.1, 0.05};
@@ -811,7 +821,7 @@ return false;        }
             if (CLAW_CLOSED.getStatus()) {
                 claw.setLastOpenTime(op.getRuntime());
                 claw.openClaw();
-                if(ARM_OUTTAKE.getStatus()&& field.closestDropPosition()){
+                if (ARM_OUTTAKE.getStatus() && field.closestDropPosition()) {
                     roadrun.setPoseEstimate(field.getDropPosition());
                 }
             } else {
@@ -850,7 +860,7 @@ return false;        }
 
 
         //will only close when detect cone
-        if(op.getRuntime()-claw.getLastOpenTime()>0.5) {
+        if (op.getRuntime() - claw.getLastOpenTime() > 0.5) {
             claw.closeClaw(roadrun.getPoseVelocity().vec());
         }
         op.telemetry.addData("stacklevel", lift.getStackLevel());

@@ -69,6 +69,15 @@ public class Queuer {
         }
     }
 
+    public void updateStartConditions(int ind){
+        if(ind<queueElements.size()) {
+            if (queueElements.get(ind).startCondition != recalcStartPosSkipOptional(ind, false, queueElements.get(ind).isAsynchronous(), queueElements.get(ind).isOptional())) {
+                queueElements.get(ind).setStartCondition(recalcStartPosSkipOptional(ind, false, queueElements.get(ind).isAsynchronous(), queueElements.get(ind).isOptional()));
+                logger.log("/RobotLogs/GeneralRobot", ind + "StartCondition" + queueElements.get(ind).startCondition);
+                updateStartConditions(ind + 1);
+            }
+        }
+    }
     public boolean queue(boolean p_asynchronous, boolean done_condition, boolean extra_condition, boolean p_isOptional) {
         //create new queue element if it is first loop
         if (firstLoop) {
@@ -79,8 +88,8 @@ public class Queuer {
         updateQueuer(done_condition,p_isOptional);
         boolean isReady = false;
         //determine if currently queued element should be executed with extra_condition(probably position threshold)
-        if(queueElements.get(currentlyQueueing).isOptional()&&!p_isOptional){
-            queueElements.get(currentlyQueueing).setStartCondition(recalcStartPosAsAsync(currentlyQueueing));
+        if(queueElements.get(currentlyQueueing).isOptional()&&p_isOptional&&!firstLoop){
+            updateStartConditions(currentlyQueueing);
             isReady = queueElements.get(currentlyQueueing).isReady(currentEvent, extra_condition);
             logger.log("/RobotLogs/GeneralRobot","isReady"+isReady+"extracon"+extra_condition+"isStarted"+queueElements.get(currentlyQueueing).isStarted()+"startCon"+queueElements.get(currentlyQueueing).startCondition);
         }
@@ -88,18 +97,13 @@ public class Queuer {
             isReady = queueElements.get(currentlyQueueing).isReady(currentEvent, extra_condition);
         } else {
             isReady = queueElements.get(currentlyQueueing).isReady(completeCurrentEvent, extra_condition);
-
         }
 
         //set queueElement internal value
         if (isReady) {
             if (queueElements.get(currentlyQueueing).isOptional() && !p_isOptional) {
                 if(currentlyQueueing>currentEvent) {
-                    if(!queueElements.get(currentlyQueueing).isAsynchronous()&&!queueElements.get(queueElements.get(currentlyQueueing).startCondition).isDone()) {
-
-                    }else {
-                        currentEvent = currentlyQueueing;
-                    }
+                    //do nothing
                 }
                 isReady=false;
             } else {
@@ -114,6 +118,8 @@ public class Queuer {
             queueElements.get(i).setStarted(false);
         }
         currentEvent = queueElements.get(currentlyQueueing).startCondition;
+        logger.log("/RobotLogs/GeneralRobot", "setToNOW"+currentlyQueueing);
+        done();
     }
 
     public void reset() {
@@ -157,25 +163,34 @@ public class Queuer {
         }
         return startCondition;
     }
+    private int recalcStartPosSkipOptional(int ind, boolean skipOptional,boolean p_asynchronous, boolean p_Optional){
+        int startCondition = -1;
+        boolean shouldFinish = false;
+        if(p_Optional&&skipOptional){
+            p_asynchronous=true;
+        }
+        for (int i = 0; i < queueElements.size(); i++) {
+            if ((!queueElements.get(queueElements.size() - i - 1).isAsynchronous() || queueElements.get(queueElements.size() - i - 1).isMustFinish())
+                    &&(!queueElements.get(queueElements.size() - i - 1).isOptional()|| !skipOptional)) {
+                startCondition = queueElements.size() - i - 1;
+                if (p_asynchronous) {
+                    if (i + 1 >= queueElements.size()) {
+                        startCondition = -1;
+                        break;
+                    }
+                    startCondition = queueElements.get(queueElements.size() - i - 1).startCondition;
+                    shouldFinish = queueElements.get(queueElements.size() - i - 1).isMustFinish();
+                }
+                break;
+            }
+        }
+        return startCondition;
+    }
     private void createQueueElement(boolean p_asynchrnous, boolean p_isOptional) {
         int startCondition = -1;
         if (!mustFinish) {
-            boolean shouldFinish = false;
-            for (int i = 0; i < queueElements.size(); i++) {
-                if (!queueElements.get(queueElements.size() - i - 1).isAsynchronous() || queueElements.get(queueElements.size() - i - 1).isMustFinish()) {
-                    startCondition = queueElements.size() - i - 1;
-                    if (p_asynchrnous) {
-                        if (i + 1 >= queueElements.size()) {
-                            startCondition = -1;
-                            break;
-                        }
-                        startCondition = queueElements.get(queueElements.size() - i - 1).startCondition;
-                        shouldFinish = queueElements.get(queueElements.size() - i - 1).isMustFinish();
-                    }
-                    break;
-                }
-            }
-            queueElements.add(new QueueElement(queueElements.size(), p_asynchrnous, startCondition, mustFinish, shouldFinish, p_isOptional));
+            startCondition = recalcStartPosSkipOptional(queueElements.size(), true, p_asynchrnous, p_isOptional);
+            queueElements.add(new QueueElement(queueElements.size(), p_asynchrnous, startCondition, mustFinish, false, p_isOptional));
             logger.log("/RobotLogs/GeneralRobot", queueElements.size() - 1 + "StartCondition" + startCondition);
         } else {
             mustFinish = false;
@@ -209,12 +224,6 @@ public class Queuer {
                 }
             }
             logger.log("/RobotLogs/GeneralRobot",""+currentEvent);
-            if((currentEvent==currentlyQueueing-1&&queueElements.get(currentlyQueueing).isOptional()&&!p_isOptional)){
-                calculateCompleteCurrentEvent();
-                logger.log("/RobotLogs/GeneralRobot", "event" + currentlyQueueing + "Done" + "completeEvents" + completeCurrentEvent);
-                    currentEvent = currentlyQueueing;
-                    logger.log("/RobotLogs/GeneralRobot", "currentEventOptional" + currentEvent);
-            }
         }
     }
 
@@ -222,10 +231,6 @@ public class Queuer {
         for (int i = 0; i < queueElements.size(); i++) {
             if (queueElements.get(i).isDone()) {
                 completeCurrentEvent = i;
-            } else if (queueElements.get(i).isOptional()) {
-                if(completeCurrentEvent<i){
-                    completeCurrentEvent =i;
-                }
                 //do nothing
             } else {
                 break;

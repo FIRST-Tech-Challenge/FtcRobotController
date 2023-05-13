@@ -48,7 +48,7 @@ public class BlueLeftHigh {
                 .build();
         pickupTrajectory = robot.roadrun.trajectorySequenceBuilder(new Pose2d(26.5, 7.2, Math.toRadians(50)))
                 .setReversed(false)
-                .splineTo(new Vector2d(63.5, 11.5), Math.toRadians(0))
+                .splineTo(new Vector2d(60.5, 11.5), Math.toRadians(0))
                 .addTemporalMarker(robot::done)
                 .build();
 
@@ -56,7 +56,7 @@ public class BlueLeftHigh {
         pick = new ArrayList<>();
         clObL = new ArrayList<>();
         clObR = new ArrayList<>();
-        for(int i=0;i<5;i++){
+        for(int i=0;i<6;i++){
             clObL.add(false);
             clObR.add(false);
         }
@@ -72,7 +72,7 @@ public class BlueLeftHigh {
             pick.add(robot.roadrun.trajectorySequenceBuilder(new Pose2d(dropX, dropY, Math.toRadians(30)))
                     .setReversed(false)
 //                    .splineToSplineHeading(new Pose2d(48, 11.75, Math.toRadians(0)), Math.toRadians(0))
-                    .splineTo(new Vector2d(63.5, 11.5), Math.toRadians(0))
+                    .splineTo(new Vector2d(60.5, 11.5), Math.toRadians(0))
                     .addTemporalMarker(robot::done)
                     .build());
         }
@@ -137,22 +137,23 @@ public class BlueLeftHigh {
     }
 
     public boolean pick(int i) {
+        int temp = i;
         if (i == 0) {
             robot.followTrajectorySequenceAsync(pickupTrajectory);
         } else {
-            i--;
-            robot.followTrajectorySequenceAsync(pick.get(i));
+            temp = i-1;
+            robot.followTrajectorySequenceAsync(pick.get(temp));
         }
         if (boosted) {
-//            if(robot.queuer.queue(true,!robot.roadrun.isBusy() && robot.roadrun.getCurrentTraj().end().vec().equals(pick.get(i).end().vec()))) {
-////                if (robot.isObL() && !clObL.get(i) && !clObR.get(i)) {
-////                    clObL.set(i, true);
-////                }
-////                if(robot.isObR()&&!clObR.get(i)&&!clObL.get(i)){
-////                    clObR.set(i,true);
-////                }
-//            }
-//            clearObstacleL(i);
+            if(robot.queuer.queue(true,!robot.roadrun.isBusy() && robot.roadrun.getCurrentTraj().end().vec().equals(pick.get(temp).end().vec()))) {
+                if (robot.isObL() && !clObL.get(i) && !clObR.get(i)) {
+                    clObL.set(i, true);
+                }
+                if(robot.isObR()&&!clObR.get(i)&&!clObL.get(i)){
+                    clObR.set(i,true);
+                }
+            }
+            clearObstacleL(i);
             clearObstacleR(i);
         }
         robot.delay(0.15);
@@ -186,7 +187,7 @@ public class BlueLeftHigh {
     }
 
     public void clearObstacleL(int i) {
-//        robot.setToNow(clObL.get(i));
+        robot.setToNow(clObL.get(i));
         robot.followTrajectorySequenceAsync(clearLTrajectory,clObL.get(i));
         if (i == 0) {
             robot.followTrajectorySequenceAsync(pickupTrajectory,clObL.get(i));
@@ -197,7 +198,7 @@ public class BlueLeftHigh {
     }
 
     public void clearObstacleR(int i) {
-//        robot.setToNow(clObR.get(i));
+        robot.setToNow(clObR.get(i));
         robot.followTrajectorySequenceAsync(clearRTrajectory,clObR.get(i));
         if (i == 0) {
             robot.followTrajectorySequenceAsync(pickupTrajectory,clObR.get(i));
