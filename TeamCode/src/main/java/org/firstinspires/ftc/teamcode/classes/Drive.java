@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.classes;
 
 import com.ThermalEquilibrium.homeostasis.Controllers.Feedback.AngleController;
+import com.ThermalEquilibrium.homeostasis.Filters.FilterAlgorithms.KalmanFilter;
 import com.ThermalEquilibrium.homeostasis.Parameters.PIDCoefficientsEx;
 import com.acmerobotics.roadrunner.control.PIDCoefficients;
 import com.arcrobotics.ftclib.controller.PIDController;
@@ -16,6 +17,10 @@ public class Drive {
     private double turnSpeed;
     private double theta;
 
+    private Pose2d currentPose;
+
+    private KalmanFilter
+
     public Drive(Motor frontLeft, Motor frontRight, Motor backLeft, Motor backRight) {
         this.frontLeft = frontLeft;
         this.frontRight = frontRight;
@@ -30,8 +35,9 @@ public class Drive {
         this.frontRight = frontRight;
         this.backLeft = backLeft;
         this.backRight = backRight;
-        headingDeadzone = new DeadzonePID(turningCoeffs, 2);
+        headingDeadzone = new DeadzonePID(turningCoeffs, Math.toRadians(2));
         headingController = new AngleController(headingDeadzone);
+        currentPose = new Pose2d(0, 0, 0);
     }
 
     public void setMaxSpeed(double maxOutput) {
@@ -69,6 +75,8 @@ public class Drive {
                                   double gyroAngle,
                                   Vector2d target, Pose2d currentPose) {
 
+        this.currentPose = currentPose;
+
         Vector2d difference = target.subtract(currentPose.getVector());
 
         theta = difference.getAngle();
@@ -78,9 +86,15 @@ public class Drive {
         driveFieldCentric(
                 strafeSpeed,
                 forwardSpeed,
-                turnSpeed,
+                -turnSpeed,
                 gyroAngle
         );
+    }
+
+
+
+    public Pose2d getCurrentPose() {
+        return currentPose;
     }
 
     public double getTurnSpeed() {
@@ -90,6 +104,8 @@ public class Drive {
     public double getTurnTarget() {
         return theta;
     }
+
+
 
     public void driveWithMotorPowers(double frontLeftSpeed, double frontRightSpeed,
                                      double backLeftSpeed, double backRightSpeed) {

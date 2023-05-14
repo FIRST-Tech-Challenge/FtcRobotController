@@ -3,33 +3,33 @@ package org.firstinspires.ftc.teamcode.commandBased;
 import com.ThermalEquilibrium.homeostasis.Parameters.PIDCoefficientsEx;
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.roadrunner.control.PIDCoefficients;
+import com.acmerobotics.roadrunner.geometry.Pose2d;
 
 import org.firstinspires.ftc.teamcode.classes.Vector2d;
 
 @Config
 public class Constants {
 
-    //DRIVE CONSTANTS
+    //drivetrain constants
     public static double TRACK_WIDTH = 13;
     public static double DRIVE_KV = 0;
-    public static PIDCoefficientsEx TURN_COEFFS = new PIDCoefficientsEx(1, 0.2, 0.2, 1, 1, 0);
-    public static Vector2d TARGET= new Vector2d(5, 5);
+    public static PIDCoefficientsEx TURN_COEFFS = new PIDCoefficientsEx(0.25, 0.2, 0.2, 1, 0, 0);
+    public static Vector2d TARGET = new Vector2d(5, 5);
+    public static Pose2d STARTING_POINT = new Pose2d(15, 15, Math.toRadians(90));
 
-    //ELEVATOR CONSTANTS
-    public static PIDCoefficientsEx elevatorCoeffsEx = new PIDCoefficientsEx(0.01, 0, 0, 0.25, 2, 0.5);;
+    //elevator pid
+    public static PIDCoefficients ELE_COEFFS = new PIDCoefficients(0.0075, 0, 0.00005);
+    public static double ELE_KG = 0.05;
+    public static double ELE_KV = 0;
+    public static double ELE_KA = 0;
+    public static double ELE_KS = 0;
 
-    public static PIDCoefficients pidCoefficients = new PIDCoefficients(0.0075, 0, 0.00005);
+    //elevator motion profile
+    public static double ELE_MAX_VEL = 200;
+    public static double ELE_MAX_ACCEL = 250;
 
-    public static double eleKg = 0.05;
-    public static double elekV = 0;
-    public static double elekA = 0;
-    public static double elekStatic = 0;
-
-    public static double eleMaxVel = 200;
-    public static double eleMaxAccel = 250;
-    public static double eleMaxJerk = 300;
-
-    public static double eleLow = 0;
-    public static double eleHigh = 15;
+    //elevator positions
+    public static double ELE_LOW = 0;
+    public static double ELE_HIGH = 15;
 
 }

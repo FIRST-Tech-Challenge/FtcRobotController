@@ -1,7 +1,5 @@
 package org.firstinspires.ftc.teamcode.commandBased.subsystems;
 
-import com.ThermalEquilibrium.homeostasis.Controllers.Feedback.PIDEx;
-import com.ThermalEquilibrium.homeostasis.Parameters.PIDCoefficientsEx;
 import com.acmerobotics.roadrunner.control.PIDFController;
 import com.acmerobotics.roadrunner.profile.MotionProfile;
 import com.acmerobotics.roadrunner.profile.MotionProfileGenerator;
@@ -26,11 +24,7 @@ public class ElevatorSubsystem extends SubsystemBase {
     private final MotorGroup ele;
 
     //ELEVATOR VARIABLES
-    private PIDCoefficientsEx elevatorCoeffs;
-    private PIDEx elevatorPID = null;
-    private double eleTarget= 0;
     private double elePos = 0;
-    private double elePower = 0;
 
     private final PIDFController controller;
     private MotionProfile profile;
@@ -40,26 +34,7 @@ public class ElevatorSubsystem extends SubsystemBase {
 
     public ElevatorSubsystem(final HardwareMap hwmap){
 
-        controller = new PIDFController(
-                Constants.pidCoefficients,
-                Constants.elekV,
-                Constants.elekA,
-                Constants.elekStatic
-        );
-
-        timer = new ElapsedTime();
-
-        profile = MotionProfileGenerator.generateSimpleMotionProfile(
-                new MotionState(0, 0, 0),
-                new MotionState(0, 0, 0),
-                inchesToTicks(Constants.eleMaxVel),
-                inchesToTicks(Constants.eleMaxAccel),
-                inchesToTicks(Constants.eleMaxJerk)
-        );
-
-        state = profile.get(timer.seconds());
-
-        //ELEVATOR
+        //motor setup
         eleL = new Motor(hwmap, "eleL", Motor.GoBILDA.RPM_312);
         eleR = new Motor(hwmap, "eleR", Motor.GoBILDA.RPM_312);
 
@@ -80,29 +55,28 @@ public class ElevatorSubsystem extends SubsystemBase {
         ele = new MotorGroup(eleL, eleR);
         ele.setRunMode(Motor.RunMode.RawPower);
 
-        elevatorPID = new PIDEx(Constants.elevatorCoeffsEx);
+        //pid controller and motion profile setup
+        controller = new PIDFController(
+                Constants.ELE_COEFFS,
+                Constants.ELE_KV,
+                Constants.ELE_KA,
+                Constants.ELE_KS
+        );
+        timer = new ElapsedTime();
+        profile = MotionProfileGenerator.generateSimpleMotionProfile(
+                new MotionState(0, 0, 0),
+                new MotionState(0, 0, 0),
+                inchesToTicks(Constants.ELE_MAX_VEL),
+                inchesToTicks(Constants.ELE_MAX_ACCEL)
+        );
+        state = profile.get(timer.seconds());
     }
 
     @Override
     public void periodic() {
         elePos = (m_eleL.getCurrentPosition() + m_eleR.getCurrentPosition()) / 2.0;
-        motionProfiler();
-    }
 
-    public void pidEX() {
-        elePower = elevatorPID.calculate(eleTarget, elePos);
-        ele.set(elePower + Constants.eleKg);
-    }
-
-    public double getElePower() {
-        return (correction + Constants.eleKg);
-    }
-
-    public void setHeight(double target) {
-        this.eleTarget = target;
-    }
-
-    public void motionProfiler() {
+        //motion profiling
         state = profile.get(timer.seconds());
 
         controller.setTargetPosition(state.getX());
@@ -110,7 +84,7 @@ public class ElevatorSubsystem extends SubsystemBase {
         controller.setTargetAcceleration(state.getA());
 
         correction = controller.update(elePos);
-        ele.set(correction + Constants.eleKg);
+        ele.set(correction + Constants.ELE_KG);
     }
 
     public void setProfileTarget(double target) {
@@ -118,11 +92,14 @@ public class ElevatorSubsystem extends SubsystemBase {
         profile = MotionProfileGenerator.generateSimpleMotionProfile(
                 new MotionState(state.getX(), 0, 0),
                 new MotionState(target, 0, 0),
-                inchesToTicks(Constants.eleMaxVel),
-                inchesToTicks(Constants.eleMaxAccel),
-                inchesToTicks(Constants.eleMaxJerk)
+                inchesToTicks(Constants.ELE_MAX_VEL),
+                inchesToTicks(Constants.ELE_MAX_ACCEL)
         );
         timer.reset();
+    }
+
+    public double getElePower() {
+        return (correction + Constants.ELE_KG);
     }
 
     public double getEleTarget() {

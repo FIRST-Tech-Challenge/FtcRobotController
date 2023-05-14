@@ -19,6 +19,7 @@ import org.firstinspires.ftc.teamcode.classes.Drive;
 import org.firstinspires.ftc.teamcode.classes.PIDOpenClosed;
 import org.firstinspires.ftc.teamcode.classes.Vector2d;
 import org.firstinspires.ftc.teamcode.commandBased.Constants;
+import org.firstinspires.ftc.teamcode.rr.drive.TwoWheelTrackingLocalizer;
 
 @Config
 public class DrivetrainSubsystem extends SubsystemBase {
@@ -44,13 +45,16 @@ public class DrivetrainSubsystem extends SubsystemBase {
     private PIDOpenClosed turnPID;
     private double turningPIDDeadzone = 0.25;
 
-    private Pose2d pointCentricDrive;
+    private TwoWheelTrackingLocalizer localizer;
+    private com.acmerobotics.roadrunner.geometry.Pose2d pose;
 
     private final Drive drive;
     private LynxModule chub;
     private IMU imu;
 
     public DrivetrainSubsystem(final HardwareMap hwMap) {
+
+        //motor setup
         Motor fL = new Motor(hwMap, "fL", Motor.GoBILDA.RPM_312);
         Motor fR = new Motor(hwMap, "fR", Motor.GoBILDA.RPM_312);
         Motor rL = new Motor(hwMap, "rL", Motor.GoBILDA.RPM_312);
@@ -76,7 +80,7 @@ public class DrivetrainSubsystem extends SubsystemBase {
 
         drive = new Drive(fL, fR, rL, rR, Constants.TURN_COEFFS);
 
-        //TURNING PID
+        //turning pid
         turningCoeffs = new PIDCoefficientsEx(1.5, 0.4, 0.4, 0.25, 2, 0.5);
         turningPID = new DeadzonePID(turningCoeffs, Math.toRadians(turningPIDDeadzone));
         turningController = new AngleController(turningPID);
@@ -88,10 +92,15 @@ public class DrivetrainSubsystem extends SubsystemBase {
         IMU.Parameters parameters = new IMU.Parameters(new RevHubOrientationOnRobot(
                 RevHubOrientationOnRobot.LogoFacingDirection.FORWARD, RevHubOrientationOnRobot.UsbFacingDirection.UP));
         imu.initialize(parameters);
+
+        localizer = new TwoWheelTrackingLocalizer(hwMap, this);
+        localizer.setPoseEstimate(Constants.STARTING_POINT);
     }
 
     public void periodic() {
         heading = getRawExternalHeading();
+        localizer.update();
+        pose = localizer.getPoseEstimate();
     }
 
 
@@ -128,12 +137,20 @@ public class DrivetrainSubsystem extends SubsystemBase {
         );
     }
 
+    public com.acmerobotics.roadrunner.geometry.Pose2d getPose() {
+        return pose;
+    }
+
     public double getTurnSpeed() {
         return drive.getTurnSpeed();
     }
 
     public double getTurnTarget() {
         return drive.getTurnTarget();
+    }
+
+    public Pose2d getPointPose() {
+        return drive.getCurrentPose();
     }
 
     public double getTurnAmount(double stick) {
