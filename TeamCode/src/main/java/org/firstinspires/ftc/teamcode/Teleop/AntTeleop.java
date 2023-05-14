@@ -18,7 +18,6 @@ public class AntTeleop extends LinearOpMode {
     public RFMotor motorLeftFront;
     public RFMotor motorRightFront;
     public RFServo clawServo;
-    public RFServo flipperServo;
 
     public void runOpMode() {
         FWDRobot robot = new FWDRobot(this, true);
@@ -28,7 +27,6 @@ public class AntTeleop extends LinearOpMode {
         motorLeftFront = new RFMotor("motorLeftFront", DcMotor.RunMode.RUN_WITHOUT_ENCODER, false);
         motorRightFront = new RFMotor("motorRightFront", DcMotor.RunMode.RUN_WITHOUT_ENCODER, false);
         clawServo = new RFServo("clawServo", 1.0);
-        flipperServo = new RFServo("flipperServo", 1.0);
 
         telemetry.addData("Status", "Before new Robot");
         telemetry.update();
@@ -45,7 +43,6 @@ public class AntTeleop extends LinearOpMode {
         }
 
         double lastpressed = 0;
-        double lastpressed2 = 0;
 
         clawServo.setPosition(0.3);
 
@@ -62,11 +59,6 @@ public class AntTeleop extends LinearOpMode {
                 lastpressed = getRuntime();
             }
 
-            if (gamepad1.left_bumper && getRuntime() - lastpressed2 > 1) {
-                flip();
-                lastpressed2 = getRuntime();
-            }
-
         }
         idle();
     }
@@ -81,10 +73,6 @@ public class AntTeleop extends LinearOpMode {
     }
 
     private void grabrelease() {
-        clawServo.setPosition(0.4 - clawServo.getPosition());
-    }
-
-    private void flip() {
-        flipperServo.setPosition(0.3 - flipperServo.getPosition());
+        clawServo.setPosition(0.3 - clawServo.getPosition());
     }
 }
