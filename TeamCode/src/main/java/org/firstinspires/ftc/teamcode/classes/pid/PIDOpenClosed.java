@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.classes;
+package org.firstinspires.ftc.teamcode.classes.pid;
 
 import com.ThermalEquilibrium.homeostasis.Controllers.Feedback.FeedbackController;
 import com.qualcomm.robotcore.util.ElapsedTime;

@@ -3,9 +3,9 @@ package org.firstinspires.ftc.teamcode.classes;
 import com.ThermalEquilibrium.homeostasis.Controllers.Feedback.AngleController;
 import com.ThermalEquilibrium.homeostasis.Filters.FilterAlgorithms.KalmanFilter;
 import com.ThermalEquilibrium.homeostasis.Parameters.PIDCoefficientsEx;
-import com.acmerobotics.roadrunner.control.PIDCoefficients;
-import com.arcrobotics.ftclib.controller.PIDController;
 import com.arcrobotics.ftclib.hardware.motors.Motor;
+
+import org.firstinspires.ftc.teamcode.classes.pid.DeadzonePID;
 
 public class Drive {
 

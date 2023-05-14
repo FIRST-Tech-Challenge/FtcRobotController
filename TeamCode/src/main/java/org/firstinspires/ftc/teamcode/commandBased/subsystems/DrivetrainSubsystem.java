@@ -14,9 +14,9 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.IMU;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
-import org.firstinspires.ftc.teamcode.classes.DeadzonePID;
+import org.firstinspires.ftc.teamcode.classes.pid.DeadzonePID;
 import org.firstinspires.ftc.teamcode.classes.Drive;
-import org.firstinspires.ftc.teamcode.classes.PIDOpenClosed;
+import org.firstinspires.ftc.teamcode.classes.pid.PIDOpenClosed;
 import org.firstinspires.ftc.teamcode.classes.Vector2d;
 import org.firstinspires.ftc.teamcode.commandBased.Constants;
 import org.firstinspires.ftc.teamcode.rr.drive.TwoWheelTrackingLocalizer;
