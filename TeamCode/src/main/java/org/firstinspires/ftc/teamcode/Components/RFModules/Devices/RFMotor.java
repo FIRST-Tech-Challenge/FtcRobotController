@@ -26,12 +26,12 @@ public class RFMotor extends Motor {
     private ArrayList<Double> coefs2 = null;
     private ArrayList<String> inputlogs = new ArrayList<>();
     public static double D = 0.00000, D2 = 0, kP = 4.2E-4, kA = 0.0001*1.2, R = 0,
-            MAX_VELOCITY = 15000, MAX_ACCELERATION = 15000, DECEL_DIST = 60, VOLTAGE_CONST=0, RESISTANCE=400;
+            MAX_VELOCITY = 15000, MAX_ACCELERATION = 15000, DECEL_DIST = 60, VOLTAGE_CONST=0, RESISTANCE=-400;
     private double maxtickcount = 0;
     private double mintickcount = 0;
     private double DEFAULTCOEF1 = 0.0001, DEFAULTCOEF2 = 0.01;
     private double lastError = 0, lastTime = 0;
-    private double TICK_BOUNDARY_PADDING = 25, TICK_STOP_PADDING = 25;
+    private double TICK_BOUNDARY_PADDING = 10, TICK_STOP_PADDING = 10;
     private double power = 0, position = 0, velocity = 0, targetPos = 0, resistance = 0, acceleration = 0, avgResistance, time = op.getRuntime();
     private String rfMotorName;
 
@@ -158,7 +158,7 @@ public class RFMotor extends Motor {
         double resistance = 0;
         resistance -= 200 + 0.4 * position - 0.00012 * position * position;
         resistance -= velocity * 0.3 * pow(abs(position) + 1, -.12);
-        return resistance;
+        return RESISTANCE;
     }
 
     public void getAvgResistance() {
@@ -173,9 +173,9 @@ public class RFMotor extends Motor {
     public double getDecelDist() {
         double decelDist = 0;
         if (velocity > 0) {
-            decelDist = 0.5 * pow(abs(velocity), 2) / (MAX_ACCELERATION - avgResistance);
+            decelDist = 1.0 * pow(abs(velocity), 2) / (MAX_ACCELERATION - avgResistance);
         } else {
-            decelDist = 0.5 * pow(abs(velocity), 2) / (MAX_ACCELERATION + avgResistance);
+            decelDist = 0.8 * pow(abs(velocity), 2) / (MAX_ACCELERATION + avgResistance);
         }
         return decelDist;
     }
@@ -202,10 +202,10 @@ public class RFMotor extends Motor {
             }
         } else {
             if (distance < 0) {
-                targets[0] = min(-pow((abs(distance)+5) * (MAX_ACCELERATION + avgResistance) * (1 - 1 / (abs(distance) / 200 + 1)), 0.5), 0);
+                targets[0] = 0.5*min(-pow((abs(distance)+5) * (MAX_ACCELERATION + avgResistance) * (1 - 1 / (abs(distance) / 200 + 1)), 0.5), 0);
                 targets[1] = velocity - targets[0];
             } else {
-                targets[0] = max(pow((abs(distance)+5) * (MAX_ACCELERATION - avgResistance) * (1 - 1 / (abs(distance) / 300 + 1)), 0.5), 0);
+                targets[0] = max(pow((abs(distance)+5) * (MAX_ACCELERATION - avgResistance) * (1 - 1 / (abs(distance) / 200 + 1)), 0.5), 0);
                 targets[1] = velocity - targets[0];
 
             }
@@ -225,7 +225,7 @@ public class RFMotor extends Motor {
         rfMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         getAvgResistance();
 //        logger.log("/RobotLogs/GeneralRobot", rfMotorName + ",setPower():,Setting Power: " + power, false, false);
-        rfMotor.setPower(power/* - kP * resistance*/);
+        rfMotor.setPower(power - kP * resistance);
         logger.log("/MotorLogs/RFMotor" + rfMotorName, "Setting Power," + (power - kP * getResistance()), false, false);
 
     }
@@ -235,7 +235,7 @@ public class RFMotor extends Motor {
     }
 
     public double getGRAVITY_CONSTANT() {
-        return 0;
+        return getResistance();
     }
 
     public void setVelocity(double velocity) {

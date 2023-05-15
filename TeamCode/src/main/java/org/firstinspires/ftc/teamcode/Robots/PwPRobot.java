@@ -12,6 +12,8 @@ import static org.firstinspires.ftc.teamcode.Components.LiftArm.liftArmStates.AR
 import static org.firstinspires.ftc.teamcode.Components.LiftArm.liftArmStates.ARM_OUTTAKE;
 import static org.firstinspires.ftc.teamcode.Components.RFModules.Devices.RFMotor.VOLTAGE_CONST;
 import static org.firstinspires.ftc.teamcode.Components.Switch.prezzed;
+import static org.firstinspires.ftc.teamcode.Components.flippas.flippaStates.FLIP_INTAKE;
+import static org.firstinspires.ftc.teamcode.Components.flippas.flippaStates.FLIP_OUTTAKE;
 import static org.firstinspires.ftc.teamcode.roadrunner.drive.DriveConstants.TRACK_WIDTH;
 import static org.firstinspires.ftc.teamcode.roadrunner.drive.DriveConstants.kV;
 import static java.lang.Math.PI;
@@ -39,6 +41,7 @@ import org.firstinspires.ftc.teamcode.Components.LiftArm;
 import org.firstinspires.ftc.teamcode.Components.RFModules.Devices.RFGamepad;
 import org.firstinspires.ftc.teamcode.Components.RFModules.Devices.RFMotor;
 import org.firstinspires.ftc.teamcode.Components.Switch;
+import org.firstinspires.ftc.teamcode.Components.flippas;
 import org.firstinspires.ftc.teamcode.roadrunner.drive.DriveConstants;
 import org.firstinspires.ftc.teamcode.roadrunner.drive.PoseStorage;
 import org.firstinspires.ftc.teamcode.roadrunner.drive.SampleMecanumDrive;
@@ -64,6 +67,7 @@ public class PwPRobot extends BasicRobot {
     private boolean regularDrive = true;
     private LEDStrip leds = null;
     private VoltageSensor voltageSensor = null;
+    private flippas flipper = null;
     boolean finished = false;
     double voltage;
     boolean manualSlides = false;
@@ -105,6 +109,7 @@ public class PwPRobot extends BasicRobot {
         lift = new Lift();
         leds = new LEDStrip();
         clawSwitch = new Switch();
+        flipper = new flippas();
         finished = true;
         if (isTeleop) {
             roadrun.setPoseEstimate(PoseStorage.currentPose);
@@ -129,6 +134,15 @@ public class PwPRobot extends BasicRobot {
         }
     }
 
+    public void setToNow(boolean p_Optional) {
+        if (queuer.isFirstLoop()) {
+            queuer.queue(false, false, true);
+        } else {
+            if (queuer.queue(false, false, p_Optional)) {
+                queuer.setToNow();
+            }
+        }
+    }
 
     public void delay(double p_delay) {
         queuer.addDelay(p_delay);
@@ -252,14 +266,51 @@ public class PwPRobot extends BasicRobot {
         roadrun.followTrajectoryAsync(trajectory);
     }
 
+    public boolean isObL() {
+        if (roadrun.getPoseEstimate().vec().distTo(roadrun.getCurrentTraj().end().vec()) > 3) {
+            return claw.isObL();
+        }
+        return false;
+    }
+
+    public boolean isObR() {
+        if (roadrun.getPoseEstimate().vec().distTo(roadrun.getCurrentTraj().end().vec()) > 3) {
+            return claw.isObR();
+        }
+        return false;
+    }
+
     public void followTrajectorySequenceAsync(TrajectorySequence trajectorySequence) {
         if (queuer.queue(false, !roadrun.isBusy() && roadrun.getPoseEstimate().vec().distTo(trajectorySequence.end().vec()) < 3)) {
             if (!roadrun.isBusy()) {
                 TrajectorySequenceBuilder builder = roadrun.trajectorySequenceBuilder(roadrun.getPoseEstimate());
-                for(int i=0;i< trajectorySequence.size();i++){
-                        builder.addSequenceSegment(trajectorySequence.get(i));
+                for (int i = 0; i < trajectorySequence.size(); i++) {
+                    builder.addSequenceSegment(trajectorySequence.get(i));
                 }
                 roadrun.followTrajectorySequenceAsync(builder.build());
+            }
+        }
+    }
+
+    public void followTrajectorySequenceAsync(TrajectorySequence trajectorySequence, boolean isOptional) {
+        if (queuer.isFirstLoop()) {
+            queuer.queue(false, false, true);
+        } else {
+            if (queuer.queue(false, !roadrun.isBusy() && roadrun.getPoseEstimate().vec().distTo(trajectorySequence.end().vec()) < 3, isOptional)) {
+                if (!roadrun.isBusy()) {
+                    TrajectorySequenceBuilder builder = roadrun.trajectorySequenceBuilder(roadrun.getPoseEstimate());
+                    for (int i = 0; i < trajectorySequence.size(); i++) {
+                        builder.addSequenceSegment(trajectorySequence.get(i));
+                    }
+                    roadrun.followTrajectorySequenceAsync(builder.build());
+                }
+                else if(roadrun.getCurrentTraj().end()!= trajectorySequence.end()){
+                    TrajectorySequenceBuilder builder = roadrun.trajectorySequenceBuilder(roadrun.getPoseEstimate());
+                    for (int i = 0; i < trajectorySequence.size(); i++) {
+                        builder.addSequenceSegment(trajectorySequence.get(i));
+                    }
+                    roadrun.changeTrajectorySequence(builder.build());
+                }
             }
         }
     }
@@ -294,9 +345,9 @@ public class PwPRobot extends BasicRobot {
         double[] maxes = {75, 50, 7};
         double[] targetVelocity = {y / kV, x / kV, a / kV / TRACK_WIDTH};
         Pose2d avoidVelo = field.correctionVelo();
-        targetVelocity[0] +=avoidVelo.getX();
-        targetVelocity[1] +=avoidVelo.getY();
-        targetVelocity[2] +=avoidVelo.getHeading();
+        targetVelocity[0] += avoidVelo.getX();
+        targetVelocity[1] += avoidVelo.getY();
+        targetVelocity[2] += avoidVelo.getHeading();
 
         Pose2d actualVelocity = roadrun.getPoseVelocity();
         actualVelocity = field.filteredVelocity(actualVelocity);
@@ -339,13 +390,6 @@ public class PwPRobot extends BasicRobot {
         }
     }
 
-    public void followTrajectorySequenceAsync(TrajectorySequence trajectory, boolean clawClosed) {
-        if (queuer.queue(false, !roadrun.isBusy() || CLAW_CLOSING.getStatus())) {
-            if (!roadrun.isBusy()) {
-                roadrun.followTrajectorySequenceAsync(trajectory);
-            }
-        }
-    }
 
     public void setFirstLoop(boolean value) {
         queuer.setFirstLoop(value);
@@ -590,6 +634,7 @@ public class PwPRobot extends BasicRobot {
 //        gp.readGamepad(op.gamepad2.a, "gamepad1_a", "Status");
         boolean isX2 = gp.readGamepad(op.gamepad2.x, "gamepad2_x", "Status");
         boolean isA = gp.readGamepad(op.gamepad1.x, "gamepad1_a", "Status");
+        boolean isFlipper = gp.readGamepad(op.gamepad1.left_bumper,"gamepad1_left_bumper","Status");
 //        gp.readGamepad(op.gamepad2.a, "gamepad1_a", "Status");
 //        gp.readGamepad(op.gamepad2.b, "gamepad1_b", "Status");
 //        gp.readGamepad(op.gamepad1.left_stick_y, "gamepad1_left_stick_y", "Value");
@@ -601,6 +646,7 @@ public class PwPRobot extends BasicRobot {
         boolean isBumper2 = gp.readGamepad(op.gamepad2.left_bumper, "gamepad2_left_bumper", "Status");
         op.telemetry.addData("switched:", clawSwitch.isSwitched());
         op.telemetry.addData("coneDist", claw.coneDistance());
+        flipper.update();
 
         if (isA) {
             if (liftArm.ableArmed()) {
@@ -622,6 +668,14 @@ public class PwPRobot extends BasicRobot {
 
         if (op.gamepad1.b) {
             liftArm.flipCone();
+        }
+        if(isFlipper){
+            if(FLIP_INTAKE.getStatus()) {
+                flipper.raiseLiftArmToOuttake();
+            }
+            if(FLIP_OUTTAKE.getStatus()){
+                flipper.lowerFlippas();
+            }
         }
 
         //omnidirectional movement + turning
@@ -690,7 +744,7 @@ public class PwPRobot extends BasicRobot {
         op.telemetry.addData("closestDropPositionValue", field.getDropPosition());
         op.telemetry.addData("closePole", field.getClosePole());
         op.telemetry.addData("seenPolePose", field.calcPolePose(roadrun.getPoseEstimate()));
-        op.telemetry.addData("currentDropPosition",field.getDropPose());
+        op.telemetry.addData("currentDropPosition", field.getDropPose());
         op.telemetry.addData("avoid velo", field.correctionVelo());
         double[] vals = {op.gamepad1.left_stick_x, op.gamepad1.left_stick_y, op.gamepad1.right_stick_x};
         double[] minBoost = {0.1, 0.1, 0.05};
@@ -782,7 +836,7 @@ public class PwPRobot extends BasicRobot {
             if (CLAW_CLOSED.getStatus()) {
                 claw.setLastOpenTime(op.getRuntime());
                 claw.openClaw();
-                if(ARM_OUTTAKE.getStatus()&& field.closestDropPosition()){
+                if (ARM_OUTTAKE.getStatus() && field.closestDropPosition()) {
                     roadrun.setPoseEstimate(field.getDropPosition());
                 }
             } else {
@@ -821,7 +875,7 @@ public class PwPRobot extends BasicRobot {
 
 
         //will only close when detect cone
-        if(op.getRuntime()-claw.getLastOpenTime()>0.5) {
+        if (op.getRuntime() - claw.getLastOpenTime() > 0.5) {
             claw.closeClaw(roadrun.getPoseVelocity().vec());
         }
         op.telemetry.addData("stacklevel", lift.getStackLevel());
