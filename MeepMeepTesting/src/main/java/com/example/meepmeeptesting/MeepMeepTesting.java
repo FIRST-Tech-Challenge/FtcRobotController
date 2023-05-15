@@ -13,7 +13,7 @@ import com.noahbres.meepmeep.roadrunner.entity.RoadRunnerBotEntity;
 
 public class MeepMeepTesting {
 
-    public static double dropX = 28.4, dropY = 4.3;
+    public static double dropX = -28.4, dropY = 4.3;
 
     public static void main(String[] args) {
 
@@ -26,10 +26,25 @@ public class MeepMeepTesting {
                 .setConstraints(60, 60, toRadians(180), toRadians(180), 15)
                 .followTrajectorySequence(drive ->
 
-                                drive.trajectorySequenceBuilder(new Pose2d(40, 9, Math.toRadians(0)))
+                                drive.trajectorySequenceBuilder(new Pose2d(-34.5, 63.25, Math.toRadians(90)))
+                                        .setReversed(true)
+                                        .splineToSplineHeading(new Pose2d(-34.5, 40.25, toRadians(90)), toRadians(270))
+                                        .splineTo(new Vector2d(-33.5, 22), toRadians(275))
+                                        .splineToSplineHeading(new Pose2d(-27, 4.5, toRadians(140)), toRadians(320))
+
                                         .setReversed(false)
-                                        .splineToLinearHeading(new Pose2d(58, 2.5,Math.toRadians(-70)), Math.toRadians(-70))
-                .build()
+                                        .splineTo(new Vector2d(-63.5, 12), Math.toRadians(180))
+
+                                        .setReversed(true)
+                                        .splineToSplineHeading(new Pose2d(dropX, dropY+0.35, Math.toRadians(135)), Math.toRadians(315))
+
+                                        .setReversed(false)
+                                        .splineTo(new Vector2d(-63.5, 12), Math.toRadians(180))
+
+                                        .setReversed(true)
+                                        .splineToSplineHeading(new Pose2d(dropX, dropY+0.35, Math.toRadians(135)), Math.toRadians(315))
+
+                                        .build()
                 );
 
         meepMeep.setBackground(MeepMeep.Background.FIELD_POWERPLAY_OFFICIAL)
