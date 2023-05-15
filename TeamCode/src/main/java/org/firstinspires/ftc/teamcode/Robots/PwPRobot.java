@@ -12,6 +12,8 @@ import static org.firstinspires.ftc.teamcode.Components.LiftArm.liftArmStates.AR
 import static org.firstinspires.ftc.teamcode.Components.LiftArm.liftArmStates.ARM_OUTTAKE;
 import static org.firstinspires.ftc.teamcode.Components.RFModules.Devices.RFMotor.VOLTAGE_CONST;
 import static org.firstinspires.ftc.teamcode.Components.Switch.prezzed;
+import static org.firstinspires.ftc.teamcode.Components.flippas.flippaStates.FLIP_INTAKE;
+import static org.firstinspires.ftc.teamcode.Components.flippas.flippaStates.FLIP_OUTTAKE;
 import static org.firstinspires.ftc.teamcode.roadrunner.drive.DriveConstants.TRACK_WIDTH;
 import static org.firstinspires.ftc.teamcode.roadrunner.drive.DriveConstants.kV;
 import static java.lang.Math.PI;
@@ -39,6 +41,7 @@ import org.firstinspires.ftc.teamcode.Components.LiftArm;
 import org.firstinspires.ftc.teamcode.Components.RFModules.Devices.RFGamepad;
 import org.firstinspires.ftc.teamcode.Components.RFModules.Devices.RFMotor;
 import org.firstinspires.ftc.teamcode.Components.Switch;
+import org.firstinspires.ftc.teamcode.Components.flippas;
 import org.firstinspires.ftc.teamcode.roadrunner.drive.DriveConstants;
 import org.firstinspires.ftc.teamcode.roadrunner.drive.PoseStorage;
 import org.firstinspires.ftc.teamcode.roadrunner.drive.SampleMecanumDrive;
@@ -64,6 +67,7 @@ public class PwPRobot extends BasicRobot {
     private boolean regularDrive = true;
     private LEDStrip leds = null;
     private VoltageSensor voltageSensor = null;
+    private flippas flipper = null;
     boolean finished = false;
     double voltage;
     boolean manualSlides = false;
@@ -105,6 +109,7 @@ public class PwPRobot extends BasicRobot {
         lift = new Lift();
         leds = new LEDStrip();
         clawSwitch = new Switch();
+        flipper = new flippas();
         finished = true;
         if (isTeleop) {
             roadrun.setPoseEstimate(PoseStorage.currentPose);
@@ -629,6 +634,7 @@ public class PwPRobot extends BasicRobot {
 //        gp.readGamepad(op.gamepad2.a, "gamepad1_a", "Status");
         boolean isX2 = gp.readGamepad(op.gamepad2.x, "gamepad2_x", "Status");
         boolean isA = gp.readGamepad(op.gamepad1.x, "gamepad1_a", "Status");
+        boolean isFlipper = gp.readGamepad(op.gamepad1.left_bumper,"gamepad1_left_bumper","Status");
 //        gp.readGamepad(op.gamepad2.a, "gamepad1_a", "Status");
 //        gp.readGamepad(op.gamepad2.b, "gamepad1_b", "Status");
 //        gp.readGamepad(op.gamepad1.left_stick_y, "gamepad1_left_stick_y", "Value");
@@ -640,6 +646,7 @@ public class PwPRobot extends BasicRobot {
         boolean isBumper2 = gp.readGamepad(op.gamepad2.left_bumper, "gamepad2_left_bumper", "Status");
         op.telemetry.addData("switched:", clawSwitch.isSwitched());
         op.telemetry.addData("coneDist", claw.coneDistance());
+        flipper.update();
 
         if (isA) {
             if (liftArm.ableArmed()) {
@@ -661,6 +668,14 @@ public class PwPRobot extends BasicRobot {
 
         if (op.gamepad1.b) {
             liftArm.flipCone();
+        }
+        if(isFlipper){
+            if(FLIP_INTAKE.getStatus()) {
+                flipper.raiseLiftArmToOuttake();
+            }
+            if(FLIP_OUTTAKE.getStatus()){
+                flipper.lowerFlippas();
+            }
         }
 
         //omnidirectional movement + turning
