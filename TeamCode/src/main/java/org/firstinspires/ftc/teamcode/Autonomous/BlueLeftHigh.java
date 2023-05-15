@@ -188,7 +188,7 @@ public class BlueLeftHigh {
 
     public void clearObstacleL(int i) {
         robot.setToNow(clObL.get(i));
-        robot.followTrajectorySequenceAsync(clearLTrajectory,clObL.get(i));
+        robot.changeTrajectorySequence(clearLTrajectory,clObL.get(i));
         if (i == 0) {
             robot.followTrajectorySequenceAsync(pickupTrajectory,clObL.get(i));
         } else {
@@ -199,7 +199,7 @@ public class BlueLeftHigh {
 
     public void clearObstacleR(int i) {
         robot.setToNow(clObR.get(i));
-        robot.followTrajectorySequenceAsync(clearRTrajectory,clObR.get(i));
+        robot.changeTrajectorySequence(clearRTrajectory,clObR.get(i));
         if (i == 0) {
             robot.followTrajectorySequenceAsync(pickupTrajectory,clObR.get(i));
         } else {

@@ -25,13 +25,13 @@ public class RFMotor extends Motor {
     private ArrayList<Double> coefs = null;
     private ArrayList<Double> coefs2 = null;
     private ArrayList<String> inputlogs = new ArrayList<>();
-    public static double D = 0.00000, D2 = 0, kP = 4.2E-4, kA = 0.0001*1.2, R = 0,
-            MAX_VELOCITY = 15000, MAX_ACCELERATION = 15000, DECEL_DIST = 60, VOLTAGE_CONST=0, RESISTANCE=-400;
+    public static double D = 0.00000, D2 = 0, kP = 5.0E-4, kA = 0.0005, R = 0,
+            MAX_VELOCITY = 1/kP, MAX_ACCELERATION = 12000, DECEL_DIST = 60, VOLTAGE_CONST=0, RESISTANCE=400;
     private double maxtickcount = 0;
     private double mintickcount = 0;
     private double DEFAULTCOEF1 = 0.0001, DEFAULTCOEF2 = 0.01;
     private double lastError = 0, lastTime = 0;
-    private double TICK_BOUNDARY_PADDING = 10, TICK_STOP_PADDING = 10;
+    private double TICK_BOUNDARY_PADDING = 10, TICK_STOP_PADDING = 30;
     private double power = 0, position = 0, velocity = 0, targetPos = 0, resistance = 0, acceleration = 0, avgResistance, time = op.getRuntime();
     private String rfMotorName;
 
@@ -150,6 +150,7 @@ public class RFMotor extends Motor {
         data.put("targetAcceleration", targetMotion[1]);
         data.put("trueAcceleration", acceleration);
         data.put("resistance", resistance);
+        data.put("power", kP * (targetMotion[0] - resistance) - kA * targetMotion[1]);
         BasicRobot.dashboard.sendTelemetryPacket(data);
         lastTime = op.getRuntime();
     }
@@ -158,16 +159,17 @@ public class RFMotor extends Motor {
         double resistance = 0;
         resistance -= 200 + 0.4 * position - 0.00012 * position * position;
         resistance -= velocity * 0.3 * pow(abs(position) + 1, -.12);
-        return RESISTANCE;
+        return -RESISTANCE;
     }
 
     public void getAvgResistance() {
         double resistances = 0;
         resistances -= RESISTANCE /* - 0.000135* position * position*/;
 //        resistances -= velocity * 0.2 * pow(abs(position) + 1, -.13);
-        resistance = resistances* VOLTAGE_CONST;
+//        resistance = resistances* VOLTAGE_CONST;
         resistances -= RESISTANCE/* - 0.000135 * targetPos * targetPos*/;
-        avgResistance = resistances / 2 * VOLTAGE_CONST;
+        resistance = -RESISTANCE;
+        avgResistance = -RESISTANCE;
     }
 
     public double getDecelDist() {
@@ -175,7 +177,7 @@ public class RFMotor extends Motor {
         if (velocity > 0) {
             decelDist = 1.0 * pow(abs(velocity), 2) / (MAX_ACCELERATION - avgResistance);
         } else {
-            decelDist = 0.8 * pow(abs(velocity), 2) / (MAX_ACCELERATION + avgResistance);
+            decelDist = 1.0 * pow(abs(velocity), 2) / (MAX_ACCELERATION + avgResistance);
         }
         return decelDist;
     }
@@ -183,7 +185,8 @@ public class RFMotor extends Motor {
     public double[] getTargetMotion() {
         double[] targets = {0, 0};
         double DECEL_DIST = getDecelDist(), distance = targetPos - position;
-        if (abs(distance) > DECEL_DIST && abs(velocity) < MAX_VELOCITY - 0.1 * MAX_ACCELERATION) {
+        double direction = abs(distance)/distance;
+        if (abs(distance) > DECEL_DIST && abs(velocity) < MAX_VELOCITY - RESISTANCE*direction - 0.1 * MAX_ACCELERATION) {
             if (distance > 0) {
                 targets[0] = velocity + .1 * MAX_ACCELERATION * (1 - 1 / (abs(distance - DECEL_DIST) / 100 + 1));
                 targets[1] = velocity - targets[0];
@@ -193,21 +196,21 @@ public class RFMotor extends Motor {
             }
         } else if (abs(distance) > DECEL_DIST && abs(distance) > 20) {
             if (distance > 0) {
-                targets[0] = MAX_VELOCITY;
+                targets[0] = MAX_VELOCITY - RESISTANCE*direction;
                 targets[1] = velocity - targets[0];
             } else {
-                targets[0] = -MAX_VELOCITY;
+                targets[0] = -MAX_VELOCITY - RESISTANCE*direction;
                 targets[1] = velocity - targets[0];
 
             }
         } else {
             if (distance < 0) {
-                targets[0] = 0.5*min(-pow((abs(distance)+5) * (MAX_ACCELERATION + avgResistance) * (1 - 1 / (abs(distance) / 200 + 1)), 0.5), 0);
+
+                targets[0] = 0.5*min(-pow((abs(distance)) * (MAX_ACCELERATION - RESISTANCE*direction) * (1 - 1 / (abs(distance) / 200 + 1)), 0.5), 0);
                 targets[1] = velocity - targets[0];
             } else {
-                targets[0] = max(pow((abs(distance)+5) * (MAX_ACCELERATION - avgResistance) * (1 - 1 / (abs(distance) / 200 + 1)), 0.5), 0);
+                targets[0] = 0.5*max(pow((abs(distance)) * (MAX_ACCELERATION - RESISTANCE*direction) * (1 - 1 / (abs(distance) / 200 + 1)), 0.5), 0);
                 targets[1] = velocity - targets[0];
-
             }
         }
         return targets;

@@ -169,17 +169,17 @@ public class Queuer {
         if(p_Optional&&skipOptional){
             p_asynchronous=true;
         }
-        for (int i = 0; i < queueElements.size(); i++) {
-            if ((!queueElements.get(queueElements.size() - i - 1).isAsynchronous() || queueElements.get(queueElements.size() - i - 1).isMustFinish())
-                    &&(!queueElements.get(queueElements.size() - i - 1).isOptional()|| !skipOptional)) {
-                startCondition = queueElements.size() - i - 1;
+        for (int i = 0; i < ind; i++) {
+            if ((!queueElements.get(ind - i - 1).isAsynchronous() || queueElements.get(ind - i - 1).isMustFinish())
+                    &&(!queueElements.get(ind - i - 1).isOptional()|| !skipOptional)) {
+                startCondition = ind - i - 1;
                 if (p_asynchronous) {
                     if (i + 1 >= queueElements.size()) {
                         startCondition = -1;
                         break;
                     }
-                    startCondition = queueElements.get(queueElements.size() - i - 1).startCondition;
-                    shouldFinish = queueElements.get(queueElements.size() - i - 1).isMustFinish();
+                    startCondition = queueElements.get(ind - i - 1).startCondition;
+                    shouldFinish = queueElements.get(ind - i - 1).isMustFinish();
                 }
                 break;
             }

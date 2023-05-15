@@ -15,7 +15,7 @@ import org.firstinspires.ftc.teamcode.Robots.BasicRobot;
 public class RFMotorkATuner extends LinearOpMode {
     public void runOpMode(){
         BasicRobot robot = new BasicRobot(this,false);
-        double maxTick = 1640, minTick=0,avg1 = 0, avg2 =0, loopNums=0;
+        double maxTick = 1200, minTick=0,avg1 = 0, avg2 =0, loopNums=0;
         RFMotor rfMotor = new RFMotor("liftMotor", DcMotor.RunMode.RUN_WITHOUT_ENCODER,true, maxTick,minTick);
         rfMotor.setDirection(DcMotorSimple.Direction.REVERSE);
         waitForStart();

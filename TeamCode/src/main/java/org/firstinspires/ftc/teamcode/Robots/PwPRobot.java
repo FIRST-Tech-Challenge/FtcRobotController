@@ -304,13 +304,6 @@ public class PwPRobot extends BasicRobot {
                     }
                     roadrun.followTrajectorySequenceAsync(builder.build());
                 }
-                else if(roadrun.getCurrentTraj().end()!= trajectorySequence.end()){
-                    TrajectorySequenceBuilder builder = roadrun.trajectorySequenceBuilder(roadrun.getPoseEstimate());
-                    for (int i = 0; i < trajectorySequence.size(); i++) {
-                        builder.addSequenceSegment(trajectorySequence.get(i));
-                    }
-                    roadrun.changeTrajectorySequence(builder.build());
-                }
             }
         }
     }
@@ -471,6 +464,28 @@ public class PwPRobot extends BasicRobot {
 
     public void changeTrajectorySequence(TrajectorySequence trajectorySequence) {
         roadrun.changeTrajectorySequence(trajectorySequence);
+    }
+
+    public void changeTrajectorySequence(TrajectorySequence trajectorySequence, boolean isOptional) {
+        if (queuer.isFirstLoop()) {
+            queuer.queue(false, false, true);
+        } else {
+            if (queuer.queue(true, !roadrun.isBusy() && roadrun.getPoseEstimate().vec().distTo(trajectorySequence.end().vec()) < 3, isOptional)) {
+                if (!roadrun.isBusy()) {
+                    TrajectorySequenceBuilder builder = roadrun.trajectorySequenceBuilder(roadrun.getPoseEstimate());
+                    for (int i = 0; i < trajectorySequence.size(); i++) {
+                        builder.addSequenceSegment(trajectorySequence.get(i));
+                    }
+                    roadrun.followTrajectorySequenceAsync(builder.build());
+                } else if (roadrun.getCurrentTraj().end() != trajectorySequence.end()) {
+                    TrajectorySequenceBuilder builder = roadrun.trajectorySequenceBuilder(roadrun.getPoseEstimate().plus(roadrun.getCurrentTraj().start()).div(2));
+                    for (int i = 0; i < trajectorySequence.size(); i++) {
+                        builder.addSequenceSegment(trajectorySequence.get(i));
+                    }
+                    roadrun.changeTrajectorySequence(builder.build());
+                }
+            }
+        }
     }
 
     public void liftToPosition(int tickTarget, boolean p_asynchronous) {
@@ -634,7 +649,7 @@ public class PwPRobot extends BasicRobot {
 //        gp.readGamepad(op.gamepad2.a, "gamepad1_a", "Status");
         boolean isX2 = gp.readGamepad(op.gamepad2.x, "gamepad2_x", "Status");
         boolean isA = gp.readGamepad(op.gamepad1.x, "gamepad1_a", "Status");
-        boolean isFlipper = gp.readGamepad(op.gamepad1.left_bumper,"gamepad1_left_bumper","Status");
+        boolean isFlipper = gp.readGamepad(op.gamepad1.left_bumper, "gamepad1_left_bumper", "Status");
 //        gp.readGamepad(op.gamepad2.a, "gamepad1_a", "Status");
 //        gp.readGamepad(op.gamepad2.b, "gamepad1_b", "Status");
 //        gp.readGamepad(op.gamepad1.left_stick_y, "gamepad1_left_stick_y", "Value");
@@ -669,11 +684,11 @@ public class PwPRobot extends BasicRobot {
         if (op.gamepad1.b) {
             liftArm.flipCone();
         }
-        if(isFlipper){
-            if(FLIP_INTAKE.getStatus()) {
+        if (isFlipper) {
+            if (FLIP_INTAKE.getStatus()) {
                 flipper.raiseLiftArmToOuttake();
             }
-            if(FLIP_OUTTAKE.getStatus()){
+            if (FLIP_OUTTAKE.getStatus()) {
                 flipper.lowerFlippas();
             }
         }
