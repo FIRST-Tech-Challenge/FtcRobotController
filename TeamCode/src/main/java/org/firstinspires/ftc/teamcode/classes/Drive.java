@@ -4,6 +4,7 @@ import com.ThermalEquilibrium.homeostasis.Controllers.Feedback.AngleController;
 import com.ThermalEquilibrium.homeostasis.Filters.FilterAlgorithms.KalmanFilter;
 import com.ThermalEquilibrium.homeostasis.Parameters.PIDCoefficientsEx;
 import com.arcrobotics.ftclib.hardware.motors.Motor;
+import com.qualcomm.robotcore.util.Range;
 
 import org.firstinspires.ftc.teamcode.classes.pid.DeadzonePID;
 
@@ -18,8 +19,6 @@ public class Drive {
     private double theta;
 
     private Pose2d currentPose;
-
-    private KalmanFilter
 
     public Drive(Motor frontLeft, Motor frontRight, Motor backLeft, Motor backRight) {
         this.frontLeft = frontLeft;
@@ -82,6 +81,11 @@ public class Drive {
         theta = difference.getAngle();
 
         turnSpeed = headingController.calculate(theta, currentPose.getTheta());
+
+        double turnError = Math.abs(theta = currentPose.getTheta());
+
+//        strafeSpeed *= Math.cos(Range.clip(turnError, -Math.PI/2, Math.PI/2));
+//        forwardSpeed *= Math.cos(Range.clip(turnError, -Math.PI/2, Math.PI/2));
 
         driveFieldCentric(
                 strafeSpeed,

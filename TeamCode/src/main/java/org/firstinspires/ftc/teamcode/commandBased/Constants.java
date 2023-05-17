@@ -14,8 +14,8 @@ public class Constants {
     public static double TRACK_WIDTH = 13;
     public static double DRIVE_KV = 0;
     public static PIDCoefficientsEx TURN_COEFFS = new PIDCoefficientsEx(0.25, 0.2, 0.2, 1, 0, 0);
-    public static Vector2d TARGET = new Vector2d(5, 5);
-    public static Pose2d STARTING_POINT = new Pose2d(15, 15, Math.toRadians(90));
+    public static Vector2d TARGET = new Vector2d(-5, -5);
+    public static Pose2d STARTING_POINT = new Pose2d(0, 0, Math.toRadians(0));
 
     //elevator pid
     public static PIDCoefficients ELE_COEFFS = new PIDCoefficients(0.0075, 0, 0.00005);
