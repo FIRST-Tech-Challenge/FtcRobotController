@@ -72,18 +72,18 @@ public class Drive {
 
     public void drivePointCentric(double strafeSpeed, double forwardSpeed,
                                   double gyroAngle,
-                                  Vector2d target, Pose2d currentPose) {
+                                  Vector2d target, Pose2d currentPose, double angleOffset) {
 
         this.currentPose = currentPose;
 
         Vector2d difference = target.subtract(currentPose.getVector());
 
-        theta = difference.getAngle();
+        theta = difference.getAngle() + Math.toRadians(angleOffset);
 
         turnSpeed = headingController.calculate(theta, currentPose.getTheta());
 
         double turnError = Math.abs(theta = currentPose.getTheta());
-
+//
 //        strafeSpeed *= Math.cos(Range.clip(turnError, -Math.PI/2, Math.PI/2));
 //        forwardSpeed *= Math.cos(Range.clip(turnError, -Math.PI/2, Math.PI/2));
 

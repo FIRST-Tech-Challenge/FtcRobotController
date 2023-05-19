@@ -4,6 +4,7 @@ import androidx.annotation.NonNull;
 
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.localization.TwoTrackingWheelLocalizer;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
@@ -19,7 +20,8 @@ import java.util.List;
  *
  *    ^
  *    |
- *    | ( x direction)
+ *    |
+ *  ( x direction)
  *    |
  *    v
  *    <----( y direction )---->
@@ -34,6 +36,7 @@ import java.util.List;
  *    \--------------/
  *
  */
+@Disabled
 public class TwoWheelTrackingLocalizer extends TwoTrackingWheelLocalizer {
     public static double TICKS_PER_REV = 8192;
     public static double WHEEL_RADIUS = 0.7480315; // in

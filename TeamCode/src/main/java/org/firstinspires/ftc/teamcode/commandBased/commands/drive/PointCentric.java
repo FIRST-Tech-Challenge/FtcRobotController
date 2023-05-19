@@ -14,16 +14,19 @@ public class PointCentric extends CommandBase {
     private final DoubleSupplier forwardSpeed;
     private final DrivetrainSubsystem m_drivetrainSubsystem;
     private final Vector2d target;
+    private final double angleOffset;
 
     public PointCentric(DrivetrainSubsystem drivetrainSubsystem,
                         DoubleSupplier strafeSpeed,
                         DoubleSupplier forwardSpeed,
-                        Vector2d target) {
+                        Vector2d target,
+                        double angleOffset) {
         m_drivetrainSubsystem = drivetrainSubsystem;
         addRequirements(m_drivetrainSubsystem);
         this.strafeSpeed = strafeSpeed;
         this.forwardSpeed = forwardSpeed;
         this.target = target;
+        this.angleOffset = angleOffset;
     }
 
     @Override
@@ -32,7 +35,8 @@ public class PointCentric extends CommandBase {
                 strafeSpeed.getAsDouble(),
                 forwardSpeed.getAsDouble(),
                 target,
-                m_drivetrainSubsystem.convertRRPose(m_drivetrainSubsystem.getPose())
+                m_drivetrainSubsystem.convertRRPose(m_drivetrainSubsystem.getPose()),
+                angleOffset
         );
     }
 }

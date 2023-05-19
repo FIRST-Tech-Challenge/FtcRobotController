@@ -127,14 +127,19 @@ public class DrivetrainSubsystem extends SubsystemBase {
         );
     }
 
-    public void pointCentric(double strafeSpeed, double forwardSpeed, Vector2d target, Pose2d pose) {
+    public void pointCentric(double strafeSpeed, double forwardSpeed, Vector2d target, Pose2d pose, double angleOffset) {
         drive.drivePointCentric(
                 strafeSpeed * strafeMultiplier,
                 forwardSpeed * forwardMultiplier,
                 heading,
                 target,
-                pose
+                pose,
+                angleOffset
         );
+    }
+
+    public void resetGyro() {
+        imu.resetYaw();
     }
 
     public com.acmerobotics.roadrunner.geometry.Pose2d getPose() {

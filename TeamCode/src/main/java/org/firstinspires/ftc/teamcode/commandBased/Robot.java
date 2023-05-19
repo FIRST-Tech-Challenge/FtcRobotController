@@ -64,11 +64,14 @@ public class Robot extends BlackOp {
                 drivetrainSS,
                 driver.left_stick_x::get,
                 () -> -driver.left_stick_y.get(),
-                Constants.TARGET
+                Constants.TARGET,
+                Constants.ANGLE_OFFSET
         );
 
         //create elevator commands
         MoveElevator eleLow = new MoveElevator(elevatorSS, Constants.ELE_LOW);
+        MoveElevator eleMidLow = new MoveElevator(elevatorSS, Constants.ELE_MID_LOW);
+        MoveElevator eleMidHigh = new MoveElevator(elevatorSS, Constants.ELE_MID_HIGH);
         MoveElevator eleHigh = new MoveElevator(elevatorSS, Constants.ELE_HIGH);
 
         //create arm commands
@@ -113,14 +116,20 @@ public class Robot extends BlackOp {
                 pointCentric.schedule();
             });
 
+            driver.y.onRise(() -> {
+                drivetrainSS.resetGyro();
+            });
+
             //elevator controls
-            driver.dpad_up.onRise(eleHigh::schedule);
             driver.dpad_down.onRise(eleLow::schedule);
+            driver.dpad_left.onRise(eleMidLow::schedule);
+            driver.dpad_right.onRise(eleMidHigh::schedule);
+            driver.dpad_up.onRise(eleHigh::schedule);
 
             //arm controls
-            driver.dpad_right.onRise(armForward::schedule);
-            driver.dpad_left.onRise(armBackward::schedule);
-            driver.y.onRise(armIdle::schedule);
+//            driver.dpad_right.onRise(armForward::schedule);
+//            driver.dpad_left.onRise(armBackward::schedule);
+            //driver.y.onRise(armIdle::schedule);
 
             // Draw the target on the field
             fieldOverlay.setStroke("#dd2c00");
@@ -133,15 +142,9 @@ public class Robot extends BlackOp {
             // Send telemetry packet off to dashboard
             FtcDashboard.getInstance().sendTelemetryPacket(packet);
 
-            mTelemetry().addData("X", drivetrainSS.getPose().getX());
-            mTelemetry().addData("Y", drivetrainSS.getPose().getY());
-            mTelemetry().addData("Heading", Math.toDegrees(drivetrainSS.getPose().getHeading()));
-            mTelemetry().addData("Raw Gyro", Math.toDegrees(drivetrainSS.getRawExternalHeading()));
-            mTelemetry().addData("heading gyro", Math.toDegrees(drivetrainSS.getHeading()));
-            mTelemetry().addData("turn speed", drivetrainSS.getTurnSpeed());
-            mTelemetry().addData("point pose x", drivetrainSS.getPointPose().getX());
-            mTelemetry().addData("point pose y", drivetrainSS.getPointPose().getY());
-            mTelemetry().addData("point pose heading", Math.toRadians(drivetrainSS.getPointPose().getTheta()));
+            mTelemetry().addData("elevator target", elevatorSS.getEleTarget());
+            mTelemetry().addData("elevator pos", elevatorSS.getElePos());
+
             mTelemetry().update();
         });
     }
