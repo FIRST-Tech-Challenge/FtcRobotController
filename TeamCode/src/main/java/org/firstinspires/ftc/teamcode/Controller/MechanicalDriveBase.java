@@ -5,7 +5,7 @@ import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 
-public class MecanumDriveBase
+public class MechanicalDriveBase
 {
     private static final DcMotor.RunMode runMode = DcMotor.RunMode.RUN_WITHOUT_ENCODER;
 
@@ -20,11 +20,11 @@ public class MecanumDriveBase
     public double speedFactor     = 0;
 
     /**
-     * Constructor for MecanumDriveBase from the hardware map
+     * Constructor for MechanicalDriveBase from the hardware map
      *
      * @param hardwareMap the hardware map
      */
-    public MecanumDriveBase(HardwareMap hardwareMap)
+    public MechanicalDriveBase(HardwareMap hardwareMap)
     {
         rb = hardwareMap.get(DcMotor.class, "rb");
         rf = hardwareMap.get(DcMotor.class, "rf");

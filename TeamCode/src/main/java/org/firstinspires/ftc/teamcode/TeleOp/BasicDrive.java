@@ -2,16 +2,17 @@ package org.firstinspires.ftc.teamcode.TeleOp;
 
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 
-import org.firstinspires.ftc.teamcode.Controller.MecanumDriveBase;
+import org.firstinspires.ftc.teamcode.Controller.MechanicalDriveBase;
 
-@com.qualcomm.robotcore.eventloop.opmode.TeleOp(name = "basic drive", group = "drive")
+@com.qualcomm.robotcore.eventloop.opmode.TeleOp(name = "Basic drive", group = "drive")
 public class BasicDrive extends OpMode
 {
-    MecanumDriveBase mecanumDriveBase;
+    MechanicalDriveBase mecanumDriveBase;
+
     @Override
     public void init()
     {
-        mecanumDriveBase = new MecanumDriveBase(hardwareMap);
+        mecanumDriveBase = new MechanicalDriveBase(hardwareMap);
     }
 
     @Override
