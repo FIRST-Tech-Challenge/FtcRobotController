@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.Components;
 
+import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.telemetry;
 import static org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit.INCH;
 import static org.firstinspires.ftc.teamcode.Components.Claw.ClawStates.CLAW_CLOSED;
 import static org.firstinspires.ftc.teamcode.Components.Claw.ClawStates.CLAW_CLOSING;
@@ -14,11 +15,12 @@ import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.op;
 
 import static java.lang.Math.sqrt;
 
+import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.qualcomm.hardware.rev.Rev2mDistanceSensor;
 
 import org.firstinspires.ftc.teamcode.Components.RFModules.Devices.RFServo;
-
+@Config
 public class Claw {
 
     private RFServo claw;
@@ -34,7 +36,7 @@ public class Claw {
     private final double CLAW_SERVO_MAX_TICK = 1.0;
 
     //temporary
-    private final double CLAW_CLOSED_POS = 0.47;
+    public static double CLAW_CLOSED_POS = 0.44;
 
     //temporary
     private final double CLAW_OPEN_POS = 0.865;
@@ -301,6 +303,11 @@ public class Claw {
     }
     public double coneDistance(){
         return leftDist.getDistance(INCH)+rightDist.getDistance(INCH);
+    }
+    public void printLR(){
+        telemetry.addData("leftDist", leftDist.getDistance(INCH));
+        telemetry.addData("rightDist", rightDist.getDistance(INCH));
+        telemetry.update();
     }
 
     //look at and return distance to the top of the stick

@@ -25,8 +25,8 @@ public class RFMotor extends Motor {
     private ArrayList<Double> coefs = null;
     private ArrayList<Double> coefs2 = null;
     private ArrayList<String> inputlogs = new ArrayList<>();
-    public static double D = 0.00000, D2 = 0, kP = 5.0E-4, kA = 0.0005, R = 0,
-            MAX_VELOCITY = 1/kP, MAX_ACCELERATION = 12000, DECEL_DIST = 60, VOLTAGE_CONST=0, RESISTANCE=400;
+    public static double D = 0.00000, D2 = 0, kP = 5.0E-4, kA = 0.00008, R = 0,
+            MAX_VELOCITY = 1/kP, MAX_ACCELERATION = 12000, DECEL_DIST = 60, RESISTANCE=300;
     private double maxtickcount = 0;
     private double mintickcount = 0;
     private double DEFAULTCOEF1 = 0.0001, DEFAULTCOEF2 = 0.01;
@@ -175,9 +175,9 @@ public class RFMotor extends Motor {
     public double getDecelDist() {
         double decelDist = 0;
         if (velocity > 0) {
-            decelDist = 1.0 * pow(abs(velocity), 2) / (MAX_ACCELERATION - avgResistance);
+            decelDist = 0.7 * pow(abs(velocity), 2) / (MAX_ACCELERATION - avgResistance);
         } else {
-            decelDist = 1.0 * pow(abs(velocity), 2) / (MAX_ACCELERATION + avgResistance);
+            decelDist = 0.7 * pow(abs(velocity), 2) / (MAX_ACCELERATION + avgResistance);
         }
         return decelDist;
     }
@@ -205,11 +205,10 @@ public class RFMotor extends Motor {
             }
         } else {
             if (distance < 0) {
-
-                targets[0] = 0.5*min(-pow((abs(distance)) * (MAX_ACCELERATION - RESISTANCE*direction) * (1 - 1 / (abs(distance) / 200 + 1)), 0.5), 0);
+                targets[0] = min(-pow((abs(distance)) * (MAX_ACCELERATION - RESISTANCE*direction), 0.5), 0);
                 targets[1] = velocity - targets[0];
             } else {
-                targets[0] = 0.5*max(pow((abs(distance)) * (MAX_ACCELERATION - RESISTANCE*direction) * (1 - 1 / (abs(distance) / 200 + 1)), 0.5), 0);
+                targets[0] = max(pow((abs(distance)) * (MAX_ACCELERATION - RESISTANCE*direction), 0.5), 0);
                 targets[1] = velocity - targets[0];
             }
         }

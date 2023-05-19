@@ -91,7 +91,7 @@ public class Queuer {
         if(queueElements.get(currentlyQueueing).isOptional()&&p_isOptional&&!firstLoop){
             updateStartConditions(currentlyQueueing);
             isReady = queueElements.get(currentlyQueueing).isReady(currentEvent, extra_condition);
-            logger.log("/RobotLogs/GeneralRobot","isReady"+isReady+"extracon"+extra_condition+"isStarted"+queueElements.get(currentlyQueueing).isStarted()+"startCon"+queueElements.get(currentlyQueueing).startCondition);
+            logger.log("/RobotLogs/GeneralRobot","isReady"+isReady+"extracon"+extra_condition+"isStarted"+queueElements.get(currentlyQueueing).isStarted()+"startCon"+queueElements.get(currentlyQueueing).startCondition+"curEvent"+currentEvent);
         }
         else if (!queueElements.get(currentlyQueueing).isMustFinish() && !queueElements.get(currentlyQueueing).isShouldFinish()) {
             isReady = queueElements.get(currentlyQueueing).isReady(currentEvent, extra_condition);
@@ -113,6 +113,7 @@ public class Queuer {
         return isReady || queueElements.get(currentlyQueueing).isStarted() && !queueElements.get(currentlyQueueing).isDone();
     }
     public void setToNow(){
+        done();
         for(int i=currentlyQueueing;i<queueElements.size();i++){
             queueElements.get(i).setDone(false);
             queueElements.get(i).setStarted(false);
@@ -223,7 +224,6 @@ public class Queuer {
                     }
                 }
             }
-            logger.log("/RobotLogs/GeneralRobot",""+currentEvent);
         }
     }
 

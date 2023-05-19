@@ -142,13 +142,20 @@ public class BlueLeftAutoCycleTuned extends LinearOpMode {
             robot.delay(0.25);
             for (int i = 0; i < 4; i++) {
                 robot.followTrajectorySequenceAsync(pick.get(i));
-                robot.delay(0.15);
+                robot.delay(0.1);
                 robot.cycleLiftArmToCycle(true);
-                robot.delay(0.15);
+                robot.delay(0.1);
                 robot.wideClaw();
-                robot.delay(0.35);
+                if(i<3) {
+                    robot.delay(0.35);
 
-                robot.iterateConestackDown();
+                    robot.iterateConestackDown();
+                }
+                if(i==3){
+                    robot.delay(0.3);
+
+                    robot.liftToPosition(0);
+                }
 
                 robot.closeClaw(false);
                 robot.followTrajectorySequenceAsync(dropTrajectory.get(i));

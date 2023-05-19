@@ -10,7 +10,8 @@ import static org.firstinspires.ftc.teamcode.Components.Lift.LiftConstants.LIFT_
 import static org.firstinspires.ftc.teamcode.Components.Lift.LiftConstants.LIFT_MED_JUNCTION;
 import static org.firstinspires.ftc.teamcode.Components.LiftArm.liftArmStates.ARM_INTAKE;
 import static org.firstinspires.ftc.teamcode.Components.LiftArm.liftArmStates.ARM_OUTTAKE;
-import static org.firstinspires.ftc.teamcode.Components.RFModules.Devices.RFMotor.VOLTAGE_CONST;
+import static org.firstinspires.ftc.teamcode.Components.RFModules.Devices.RFMotor.RESISTANCE;
+import static org.firstinspires.ftc.teamcode.Components.RFModules.Devices.RFMotor.kA;
 import static org.firstinspires.ftc.teamcode.Components.Switch.prezzed;
 import static org.firstinspires.ftc.teamcode.Components.flippas.flippaStates.FLIP_INTAKE;
 import static org.firstinspires.ftc.teamcode.Components.flippas.flippaStates.FLIP_OUTTAKE;
@@ -75,16 +76,6 @@ public class PwPRobot extends BasicRobot {
 
     public PwPRobot(LinearOpMode opMode, boolean p_isTeleop) {
         super(opMode, p_isTeleop);
-        voltageSensor = op.hardwareMap.voltageSensor.iterator().next();
-        voltage = voltageSensor.getVoltage();
-        RFMotor.kP *= 13 / voltageSensor.getVoltage();
-        VOLTAGE_CONST *= 13.8 / voltageSensor.getVoltage();
-        RFMotor.kA *= 13 / voltageSensor.getVoltage();
-        DriveConstants.TRACK_WIDTH *= 12.7 / voltageSensor.getVoltage();
-        kV *= 12.7 / voltageSensor.getVoltage();
-        DriveConstants.kA *= 12.7 / voltageSensor.getVoltage();
-        DriveConstants.kStatic *= 12.7 / voltageSensor.getVoltage();
-
 
 //        DriveConstants.MAX_ANG_ACCEL *= 12.8/voltageSensor.getVoltage();
 //        DriveConstants.MAX_ANG_VEL *= 12.8/voltageSensor.getVoltage();
@@ -113,7 +104,17 @@ public class PwPRobot extends BasicRobot {
         finished = true;
         if (isTeleop) {
             roadrun.setPoseEstimate(PoseStorage.currentPose);
+            kA*=0.25;
         }
+        voltageSensor = op.hardwareMap.voltageSensor.iterator().next();
+        voltage = voltageSensor.getVoltage();
+        RFMotor.kP *= 13 / voltageSensor.getVoltage();
+        RESISTANCE *= 12.5/ voltageSensor.getVoltage();
+        RFMotor.kA *= 13 / voltageSensor.getVoltage();
+        DriveConstants.TRACK_WIDTH *= 12.7 / voltageSensor.getVoltage();
+        kV *= 12.7 / voltageSensor.getVoltage();
+        DriveConstants.kA *= 12.7 / voltageSensor.getVoltage();
+        DriveConstants.kStatic *= 12.7 / voltageSensor.getVoltage();
     }
 //    com.qualcomm.ftcrobotcontroller I/art: Waiting for a blocking GC Alloc
 //2023-01-05 14:19:08.807 9944-10985/com.qualcomm.ftcrobotcontroller I/art: Alloc sticky concurrent mark sweep GC freed 340391(7MB) AllocSpace objects, 0(0B) LOS objects, 20% free, 43MB/54MB, paused 2.675ms total 197.819ms
@@ -139,6 +140,7 @@ public class PwPRobot extends BasicRobot {
             queuer.queue(false, false, true);
         } else {
             if (queuer.queue(false, false, p_Optional)) {
+                done();
                 queuer.setToNow();
             }
         }
@@ -265,16 +267,30 @@ public class PwPRobot extends BasicRobot {
     public void teleAutoAim(Trajectory trajectory) {
         roadrun.followTrajectoryAsync(trajectory);
     }
-
+    public boolean[] checkIsOb(boolean l, boolean r){
+        boolean[] vals = {l,r};
+        if(queuer.queue(true, !roadrun.isBusy()||l||r)) {
+            if (isObL() && !l && !r) {
+                vals[0]=true;
+            }
+            if(isObR()&&!r&&!l){
+                vals[1]=true;
+            }
+        }
+        return vals;
+    }
     public boolean isObL() {
-        if (roadrun.getPoseEstimate().vec().distTo(roadrun.getCurrentTraj().end().vec()) > 3) {
+        if (roadrun.getPoseEstimate().vec().distTo(roadrun.getCurrentTraj().end().vec()) > 4) {
+            logger.log("/RobotLogs/GeneralRobot", ""+roadrun.getPoseEstimate().vec().distTo(roadrun.getCurrentTraj().end().vec()));
+
             return claw.isObL();
         }
         return false;
     }
 
     public boolean isObR() {
-        if (roadrun.getPoseEstimate().vec().distTo(roadrun.getCurrentTraj().end().vec()) > 3) {
+        if (roadrun.getPoseEstimate().vec().distTo(roadrun.getCurrentTraj().end().vec()) > 4) {
+            logger.log("/RobotLogs/GeneralRobot", ""+roadrun.getPoseEstimate().vec().distTo(roadrun.getCurrentTraj().end().vec()));
             return claw.isObR();
         }
         return false;
@@ -322,7 +338,8 @@ public class PwPRobot extends BasicRobot {
     }
 
     public void setTRUEMAXDrivingExperience(double y, double x, double a) {
-        double angle = atan2(y, x);
+        a*=0.65;
+        double angle = atan2(y, x*1.2);
         double powera = sin(angle + PI / 4);
         double powerb = sin(angle - PI / 4);
         if (abs(powera) > abs(powerb)
@@ -337,10 +354,10 @@ public class PwPRobot extends BasicRobot {
         //wheel : y , x
         double[] maxes = {75, 50, 7};
         double[] targetVelocity = {y / kV, x / kV, a / kV / TRACK_WIDTH};
-        Pose2d avoidVelo = field.correctionVelo();
-        targetVelocity[0] += avoidVelo.getX();
-        targetVelocity[1] += avoidVelo.getY();
-        targetVelocity[2] += avoidVelo.getHeading();
+//        Pose2d avoidVelo = field.correctionVelo();
+//        targetVelocity[0] += avoidVelo.getX();
+//        targetVelocity[1] += avoidVelo.getY();
+//        targetVelocity[2] += avoidVelo.getHeading();
 
         Pose2d actualVelocity = roadrun.getPoseVelocity();
         actualVelocity = field.filteredVelocity(actualVelocity);
@@ -359,7 +376,7 @@ public class PwPRobot extends BasicRobot {
         }
         double cAngle = atan2(diffs[0], diffs[1]);
         double cMag = sqrt(diffs[1] * diffs[1] + diffs[0] * diffs[0]) * kV * 2;
-        double angleCorrection = diffs[2] * TRACK_WIDTH * kV * 0.3;
+        double angleCorrection = diffs[2] * TRACK_WIDTH * kV * 0.1;
         if (a == 0 && diffs[0] * diffs[0] + diffs[1] * diffs[1] > 25) {
             angleCorrection = 0;
         }
@@ -368,10 +385,31 @@ public class PwPRobot extends BasicRobot {
         op.telemetry.addData("diffsx", diffs[1]);
         op.telemetry.addData("diffsa", diffs[2]);
         double slidesConst = 1 - lift.getLiftPosition() / 1500.0;
-        roadrun.setMotorPowers(powerb * magnitude - a - angleCorrection + (diffs[0] - diffs[1]) * 1 * kV * slidesConst,
-                powera * magnitude - a - angleCorrection + (diffs[0] + diffs[1]) * 1. * kV * slidesConst,
-                powerb * magnitude + a + angleCorrection + (diffs[0] - diffs[1]) * 1. * kV * slidesConst,
-                powera * magnitude + a + angleCorrection + (diffs[0] + diffs[1]) * 1 * kV * slidesConst);
+        double[] powers = {powerb * magnitude - a - angleCorrection + (diffs[0] - diffs[1]) * .5 * kV * slidesConst,
+                powera * magnitude - a - angleCorrection + (diffs[0] + diffs[1]) * .5 * kV * slidesConst,
+                powerb * magnitude + a + angleCorrection + (diffs[0] - diffs[1]) * .5 * kV * slidesConst,
+                powera * magnitude + a + angleCorrection + (diffs[0] + diffs[1]) * .5 * kV * slidesConst
+        };
+        if(abs(powers[0]-a)>1){
+            powers[2]+=a/2;
+            powers[3]+=a/2;
+        }
+        if(abs(powers[1]-a)>1){
+            powers[2]+=a/2;
+            powers[3]+=a/2;
+        }
+        if(abs(powers[2]+a)>1){
+            powers[1]-=a/2;
+            powers[0]-=a/2;
+        }
+        if(abs(powers[3]+a)>1){
+            powers[1]-=a/2;
+            powers[0]-=a/2;
+        }
+        roadrun.setMotorPowers(powers[0]-a-angleCorrection,
+                powers[1]-a-angleCorrection,
+                powers[2]+a+ angleCorrection ,
+                powers[3]+a+ angleCorrection );
 
     }
 
@@ -468,7 +506,7 @@ public class PwPRobot extends BasicRobot {
 
     public void changeTrajectorySequence(TrajectorySequence trajectorySequence, boolean isOptional) {
         if (queuer.isFirstLoop()) {
-            queuer.queue(false, false, true);
+            queuer.queue(true, false, true);
         } else {
             if (queuer.queue(true, !roadrun.isBusy() && roadrun.getPoseEstimate().vec().distTo(trajectorySequence.end().vec()) < 3, isOptional)) {
                 if (!roadrun.isBusy()) {
@@ -812,9 +850,9 @@ public class PwPRobot extends BasicRobot {
 //                                -vals[0],
 //                                -vals[2])
 //                );
-                setTRUEMAXDrivingExperience(abs(vals[1] - 0.0001) / -vals[1] * (minBoost[1] + 0.65 * abs(vals[1]) + 0.15 * pow(abs(vals[1]), 2.4)),
-                        abs(vals[0] - 0.0001) / -vals[0] * (minBoost[0] + 0.65 * abs(vals[0]) + 0.15 * pow(abs(vals[0]), 2.4)),
-                        abs(vals[2] - 0.0001) / -vals[2] * (minBoost[2] + 0.8 * abs(vals[2])));
+                setTRUEMAXDrivingExperience(abs(vals[1] - 0.0001) / -vals[1] * (  abs(vals[1])),
+                        abs(vals[0] - 0.0001) / -vals[0] * (abs(vals[0])),
+                        abs(vals[2] - 0.0001) / -vals[2] * (0.7 * abs(vals[2])));
             }
         }
         if ((-op.gamepad1.left_stick_y * 0.7 == -0) && (-op.gamepad1.left_stick_x == -0) && (-op.gamepad1.right_stick_x * 0.8 == -0) && (mecZeroLogged == false)) {
