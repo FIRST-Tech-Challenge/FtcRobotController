@@ -2,13 +2,16 @@ package org.firstinspires.ftc.teamcode.robots.taubot;
 
 import static org.firstinspires.ftc.teamcode.robots.taubot.util.Constants.Position;
 import static org.firstinspires.ftc.teamcode.robots.taubot.util.Utils.wrapAngle;
+import static org.firstinspires.ftc.teamcode.util.utilMethods.futureTime;
 
+import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
 
 import org.firstinspires.ftc.teamcode.robots.taubot.subsystem.DriveTrain;
 import org.firstinspires.ftc.teamcode.robots.taubot.subsystem.Robot;
 import org.firstinspires.ftc.teamcode.robots.taubot.trajectorysequence.TrajectorySequence;
+import org.firstinspires.ftc.teamcode.robots.taubot.util.TelemetryProvider;
 import org.firstinspires.ftc.teamcode.robots.taubot.util.Utils;
 import org.firstinspires.ftc.teamcode.robots.taubot.vision.Target;
 import org.firstinspires.ftc.teamcode.robots.taubot.vision.VisionProvider;
@@ -18,11 +21,28 @@ import org.firstinspires.ftc.teamcode.statemachine.Stage;
 import org.firstinspires.ftc.teamcode.statemachine.StateMachine;
 
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
-public class Autonomous {
+@Config (value = "AA_PP_Auton")
+public class Autonomous implements TelemetryProvider {
     public VisionProvider visionProvider;
     private Robot robot;
+
+    @Override
+    public Map<String, Object> getTelemetry(boolean debug) {
+        Map<String, Object> telemetryMap = new LinkedHashMap<>();
+
+        //telemetryMap.put("Current Articulation", mode );
+        telemetryMap.put("Can Stage", sixCanStage);
+        return telemetryMap;
+    }
+
+    @Override
+    public String getTelemetryName() {
+        return "Autonomous";
+    }
 
     enum Mode {
         LINEAR, SPLINE, NO_RR, SIMPLE;
@@ -605,69 +625,129 @@ public class Autonomous {
         return false;
     }
 
-    public int sixcanStage = 0;
+    public int sixCanStage = 0;
+    long sixCanTimer;
+
     public boolean SixCan(){
         DPRGCanDetectorProvider sixVision;
-        List<Target> uniqueCans = new ArrayList<>();
+        List<Target> uniqueCans = null;
+        List<Target> frameCans = null;
         sixVision = (DPRGCanDetectorProvider) visionProvider;
         Target currentTarget;
         Pose2d robotLocation;
 
-        switch (sixcanStage) {
+        switch (sixCanStage) {
             case 0: //initialize stuff
                 robot.driveTrain.articulate(DriveTrain.Articulation.unlock);
                 robot.driveTrain.enableChassisLength();
+                robot.driveTrain.maxTuck();
                 uniqueCans = sixVision.getUniqueCans();
                 uniqueCans.clear(); //starting a fresh set of unique cans
                 //todo make sure we've setup the pipeline?
-                sixcanStage++;
+                sixCanStage++;
                 break;
-            case 1: //start facing right and turn left until pointing down the field
-                //uniqueCans = sixVision.getUniqueCans(); //get updated list
-                uniqueCans = sixVision.getFrameDetections(); //get updated list
-                robotLocation=robot.driveTrain.poseEstimate;
-                currentTarget = ((DPRGCanDetectorProvider) visionProvider).GetNearest(uniqueCans,robotLocation);
-                if (currentTarget != null)
-                    //robot.driveTrain.turnUntilDegrees(Math.toDegrees(currentTarget.HeadingFrom(robotLocation.vec())));
-                    if (robot.driveTrain.turnUntilDegrees(Math.toDegrees( robotLocation.getHeading())+currentTarget.getCameraHeading()))
-                    {
-                        sixcanStage++;
-                    }
-                /*
-                if (robot.driveTrain.turnUntilDegrees(-90)) {
-                    //return true; //done rotating/scanning
-                    uniqueCans = sixVision.getUniqueCans(); //get updated list
-                    sixcanStage++; //progress to next stage
+            case 1:
+                //start facing right and turn left until pointing down the field
+                if (robot.driveTrain.turnUntilDegrees(90)) {
+                    sixCanStage++; //progress to next stage
                 }
-                 */
                 break;
-            case 2: //find the first can that is close to the centerline
+            case 2: //find starting can
+                //find the first can that is close to the centerline
                 // can where abs of the y coordinate < 12 and x is smallest (closest to start)
                 // if that doesn't find a target, get keep increasing the zone until a can is found
-                //currentTarget = sixVision.getStartingCan();
-                // turn robot to that target and drive to within 24" of that target
-                // engage automatic can pickup routine in underarm.
-                // drive to scoring location
-                // deposit can
+                sixCanStage++;
+                break;
+            case 3: //select target and approach it
+
+                frameCans = sixVision.getFrameDetections(); //get updated list
+                robotLocation=robot.driveTrain.poseEstimate;
+                currentTarget = ((DPRGCanDetectorProvider) visionProvider).GetNearest(frameCans,robotLocation);
+
+                //during the turn portion it's possible a closer can comes into view and that one becomes the new target
+                if (ApproachTarget(currentTarget, 26))
+                    sixCanTimer = futureTime(1); //some settling time
+                    sixCanStage++;
+                break;
+            case 4: //fine tune the distance to the can
+                if (System.nanoTime()>sixCanTimer)
+                    //if ()
+                    sixCanStage++;
+                break;
+
+            case 5: //deploy  the underarm.
+                if (robot.underarm.SixCanPickupPrep())
+                    sixCanStage++;
+                break;
+            case 6: //fine tune the distance to the can
+                sixCanStage++;
+                break;
+
+            case 7: //extend chariot to the fine-tuned distance to trigger the gripper
+                sixCanStage++;
+                break;
+            case 8: //pick up the can
+                if (robot.underarm.SixCanPickup())
+                    sixCanStage++;
+                break;
+            case 9: // drive to scoring location
+                sixCanStage++;
+                break;
+            case 10: // score can
+                sixCanStage++;
+                break;
                 // remove current target from uniqueCans
                 // get nearest can, repeat
-                uniqueCans = sixVision.getFrameDetections(); //get updated list
-                robotLocation=robot.driveTrain.poseEstimate;
-                currentTarget = ((DPRGCanDetectorProvider) visionProvider).GetNearest(uniqueCans,robotLocation);
-                double requestedDistance = currentTarget.Distance(new Vector2d(robotLocation.getX(),robotLocation.getY()))-26;
-                double requestHeading = Math.toDegrees( robotLocation.getHeading())+currentTarget.getCameraHeading();
-                if (currentTarget != null)
-                    if (robot.driveTrain.driveUntilDegrees(requestedDistance, requestHeading, 15))
-                        sixcanStage--;
+            case 11: // starting orientation
+                //resume facing right and turn left until pointing down the field
+                if (robot.driveTrain.turnUntilDegrees(0)) {
+                    sixCanStage++; //progress to next stage
+                }
                 break;
+            default:
+                sixCanStage = 0;
+                return true;
+
         }
 
         return false;
     }
-    public boolean SeekTarget(Target target, double stoppingDistanceInches){
+    int approachTargetStage = 0;
+
+    public boolean ApproachTarget(Target target, double stoppingDistanceInches){
         //seek Target has two stages - first turn in place toward the target, second drive toward the target but stop short
-        Vector2d robotLocation = new Vector2d(robot.driveTrain.poseEstimate.getX(), robot.driveTrain.poseEstimate.getY());
-        double targetHeadingRad = robotLocation.angleBetween(target.getFieldPosition());
+        Pose2d robotLocation=robot.driveTrain.poseEstimate;
+        Vector2d robotVec = new Vector2d(robot.driveTrain.poseEstimate.getX(), robot.driveTrain.poseEstimate.getY());
+        double approachHeadingDegrees = Math.toDegrees( robotLocation.getHeading())+target.getCameraHeading();
+        double approachDistance = target.Distance(new Vector2d(robotLocation.getX(),robotLocation.getY()))-stoppingDistanceInches;
+        switch (approachTargetStage) {
+            case 0: //turn until facing the target
+                if (target != null) {
+
+                    if (robot.driveTrain.turnUntilDegrees(approachHeadingDegrees)) {
+                        approachTargetStage++;
+                    }
+                }
+                else approachTargetStage++; //target was invalid - skip over
+                break;
+            case 1:  //drive until we get to the right distance to deploy the gripper
+                    //this can include backing up if we are too close to the target
+                    //so it's best to approach a target from the center of the field
+                if (target != null) {
+                    if (robot.driveTrain.driveUntilDegrees(approachDistance, approachHeadingDegrees, 15))
+                        approachTargetStage++;
+                }
+                else approachTargetStage++; //target was invalid - skip over
+                break;
+
+            case 2:
+                approachTargetStage =0;
+                return true;
+
+            default:
+                approachTargetStage = 0;
+
+        }
         return false;
     }
 }

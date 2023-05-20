@@ -271,7 +271,7 @@ public class PowerPlay_6832 extends OpMode {
                 robot.driveTrain.stop();
             }
         }
-        else auto.sixcanStage = 0;
+        else auto.sixCanStage = 0;
         update();
     }
     private void rumble() {

@@ -58,7 +58,7 @@ public class DPRGCanDetectorPipeline extends TimestampedOpenCvPipeline {
     public static double NORMALIZE_ALPHA = 51.0, NORMALIZE_BETA = 261.0;
     public static double BLUR_RADIUS = 7;
     public static double HUE_MIN = 105, HUE_MAX = 120;
-    public static double SATURATION_MIN = 80, SATURATION_MAX = 255;
+    public static double SATURATION_MIN = 120, SATURATION_MAX = 255;
     public static double VALUE_MIN = 120, VALUE_MAX = 255;
     public static double MIN_CONTOUR_AREA = 50;
     public static String BLUR = "Box Blur";
