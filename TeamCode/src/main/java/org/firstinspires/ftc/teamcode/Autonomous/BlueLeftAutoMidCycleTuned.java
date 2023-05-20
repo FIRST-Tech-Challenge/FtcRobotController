@@ -30,7 +30,7 @@ public class BlueLeftAutoMidCycleTuned extends LinearOpMode {
     public static double dropX = 28.5, dropY = 21, dropA = toRadians(320), dropET = toRadians(150);
 
 //    public static double pickupX1 = -46, pickupY1 = 10, pickupA1 = toRadians(180), pickupET1 = toRadians(180);
-public static double pickupX2 = 63, pickupY2 = 11, pickupA2 = toRadians(0), pickupET2 = toRadians(0);
+public static double pickupX2 = 63, pickupY2 = 12, pickupA2 = toRadians(0), pickupET2 = toRadians(0);
 
     double[] stackPos = {440, 330, 245, 100, 0};
 
@@ -47,8 +47,8 @@ public static double pickupX2 = 63, pickupY2 = 11, pickupA2 = toRadians(0), pick
         TrajectorySequence initialtrajectory = robot.roadrun.trajectorySequenceBuilder(new Pose2d(33.9, 62.25,
                         Math.toRadians(90)))
                 .setReversed(true)
-                .lineToLinearHeading(new Pose2d(34, 45, toRadians(90)))
-                .splineToSplineHeading(new Pose2d(34, 9, toRadians(315)), toRadians(270))
+                .lineToLinearHeading(new Pose2d(34, 48, toRadians(90)))
+                .splineToSplineHeading(new Pose2d(34.5, 12, toRadians(315)), toRadians(270))
                 .lineToLinearHeading(new Pose2d(dropX, dropY, toRadians(315)))
 
 //                .addTemporalMarker(robot::done)
@@ -58,7 +58,7 @@ public static double pickupX2 = 63, pickupY2 = 11, pickupA2 = toRadians(0), pick
         for (int i = 0; i < 5; i++) {
             dropTrajectory.add(robot.roadrun.trajectorySequenceBuilder(new Pose2d(pickupX2, pickupY2+0.2*i, pickupA2))
                     .setReversed(true)
-                    .splineTo(new Vector2d(dropX,dropY), dropET)
+                    .splineTo(new Vector2d(dropX,dropY+0*i), dropET)
 //                    .splineTo(new Vector2d(dropX,dropY + 0.2*i), dropET, robot.roadrun.getVelocityConstraint(80, 9, 14) , robot.roadrun.getAccelerationConstraint(50))
 //                    .splineToSplineHeading(new Pose2d(dropX, dropY, dropA), dropET, robot.roadrun.getVelocityConstraint(70, 9, 14) , robot.roadrun.getAccelerationConstraint(45))
                     .addTemporalMarker(robot::done)
@@ -67,7 +67,7 @@ public static double pickupX2 = 63, pickupY2 = 11, pickupA2 = toRadians(0), pick
 
         ArrayList<TrajectorySequence> pickupTrajectory2 = new ArrayList<>();
         for (int i = 0; i < 5; i++) {
-            pickupTrajectory2.add(robot.roadrun.trajectorySequenceBuilder(new Pose2d(dropX , dropY+0.2*i, dropA))
+            pickupTrajectory2.add(robot.roadrun.trajectorySequenceBuilder(new Pose2d(dropX , dropY+0*i, dropA))
                     .setReversed(false)
 //                    .splineTo(new Vector2d(pickupX2,pickupY2), pickupET2)
                     .splineTo(new Vector2d(pickupX2,pickupY2+0.2*i), pickupET2, robot.roadrun.getVelocityConstraint(50, 9, 14) , robot.roadrun.getAccelerationConstraint(60))
@@ -122,51 +122,47 @@ public static double pickupX2 = 63, pickupY2 = 11, pickupA2 = toRadians(0), pick
         while (opModeIsActive() && !isStopRequested() && getRuntime() < 29.8) {
             logger.loopcounter++;
             robot.followTrajectorySequenceAsync(initialtrajectory);
-            robot.delay(0.3);
-            robot.raiseLiftArmToOuttake(true);
+//            robot.delay(0.3);
+//            robot.raiseLiftArmToOuttake(true);
             robot.delay(0.5);
-            robot.liftToPosition(LIFT_MED_JUNCTION);
+//            robot.liftToPosition(LIFT_MED_JUNCTION);
             robot.openClaw(false);
-            robot.delay(0.4);
-            robot.cycleLiftArmToCycle(true);
+//            robot.delay(0.4);
+//            robot.cycleLiftArmToCycle(true);
             robot.delay(0.5);
             robot.wideClaw();
             robot.delay(0.5);
-            robot.iterateConestackUp();
+//            robot.iterateConestackUp();
             robot.followTrajectorySequenceAsync(pickupTrajectory2.get(0));
-            robot.closeClaw(false);
+//            robot.closeClaw(false);
             robot.followTrajectorySequenceAsync(dropTrajectory.get(0));
-//            robot.delay(0.3);
-//            robot.updateTrajectoryWithCam();
-            robot.liftToPosition((int) LIFT_MED_JUNCTION.getValue(), true);
-            robot.delay(0.55);
-            robot.raiseLiftArmToOuttake(true);
+//            robot.liftToPosition((int) LIFT_MED_JUNCTION.getValue(), true);
+//            robot.delay(0.55);
+//            robot.raiseLiftArmToOuttake(true);
             robot.delay(0.25);
             robot.openClaw(false);
             for (int i = 0; i < 4; i++) {
                 robot.followTrajectorySequenceAsync(pickupTrajectory2.get(i));
-                if (i != 3) {
-                    robot.cycleLiftArmToCycle(true);
-                } else {
-                    robot.lowerLiftArmToIntake(true);
-                }
+//                if (i != 3) {
+//                    robot.cycleLiftArmToCycle(true);
+//                } else {
+//                    robot.lowerLiftArmToIntake(true);
+//                }
                 robot.delay(0.5);
                 robot.wideClaw();
                 robot.delay(0.5);
-                if(i!=3) {
-                    robot.iterateConestackDown();
-                }
-                else{
-                    robot.liftToPosition(0);
-                }
-                robot.closeClaw(false);
+//                if(i!=3) {
+//                    robot.iterateConestackDown();
+//                }
+//                else{
+//                    robot.liftToPosition(0);
+//                }
+//                robot.closeClaw(false);
                 robot.followTrajectorySequenceAsync(dropTrajectory.get(i));
-//                robot.delay(0.3);
-//                robot.updateTrajectoryWithCam();
-                robot.delay(0.0 + 0.002 * (3 - i));
-                robot.liftToPosition(LIFT_MED_JUNCTION);
-                robot.delay(0.42 + 0.02 * (3 - i));
-                robot.raiseLiftArmToOuttake(true);
+//                robot.delay(0.0 + 0.002 * (3 - i));
+//                robot.liftToPosition(LIFT_MED_JUNCTION);
+//                robot.delay(0.42 + 0.02 * (3 - i));
+//                robot.raiseLiftArmToOuttake(true);
                 robot.delay(0.15);
                 robot.openClaw(false);
             }
@@ -192,8 +188,8 @@ public static double pickupX2 = 63, pickupY2 = 11, pickupA2 = toRadians(0), pick
 //            robot.liftToPosition(0);
 //            robot.delay(0.7);
 
-            robot.delay(0.5);
-            robot.lowerLiftArmToIntake(true);
+//            robot.delay(0.5);
+//            robot.lowerLiftArmToIntake(true);
             robot.delay(1.0);
             robot.wideClaw();
             robot.delay(1.5);
