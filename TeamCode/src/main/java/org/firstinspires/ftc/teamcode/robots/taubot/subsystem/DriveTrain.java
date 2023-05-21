@@ -109,7 +109,7 @@ public class DriveTrain extends DiffyDrive implements Subsystem {
 
     public static PIDCoefficients HEADING_PID_PWR = new PIDCoefficients(0.25, .5, 5);
     public static PIDCoefficients HEADING_PID_VEL = new PIDCoefficients(3.0, 0, 0);
-    public static double HEADING_PID_TOLERANCE = 2;
+    public static double HEADING_PID_TOLERANCE = Math.toRadians(2);
     public static PIDCoefficients DIST_TRAVELLED_PID = new PIDCoefficients(5, 0.0, 0); //todo tune this - copied from Reach
     public static PIDCoefficients VELOCITY_PID = new PIDCoefficients(4, 0, 0);
     //todo the following PID needs initial settings
@@ -188,7 +188,7 @@ public class DriveTrain extends DiffyDrive implements Subsystem {
 
         headingPID_pwr = new PIDController(HEADING_PID_PWR);
         headingPID_pwr.setInputRange(0, Math.toRadians(360));
-        headingPID_pwr.setOutputRange(-100, 100);
+        headingPID_pwr.setOutputRange(-100, 100); //todo check on this - weird range - why isn't it -1,1?
         headingPID_pwr.setIntegralCutIn(Math.toRadians(4));
         headingPID_pwr.setContinuous(true);
         headingPID_pwr.setTolerance(HEADING_PID_TOLERANCE);
@@ -418,7 +418,6 @@ public class DriveTrain extends DiffyDrive implements Subsystem {
             telemetryMap.put("Heading", heading);
             telemetryMap.put("Heading PID Enabled", headingPID_pwr.isEnabled());
             telemetryMap.put("Heading Error", headingPID_pwr.getError());
-            telemetryMap.put("Heading Error Magnitude", headingErrorMagnitude);
             telemetryMap.put("Cache Position", cachePosition);
             telemetryMap.put("x", poseEstimate.getX());
             telemetryMap.put("y", poseEstimate.getY());
@@ -741,19 +740,16 @@ public class DriveTrain extends DiffyDrive implements Subsystem {
 
     public static double HEADING_DEGREE_TOLERANCE = 4;
 
-    double headingErrorMagnitude = 0;
     //request a turn in degrees units
     public boolean turnUntilDegrees(double turnAngle) {
-        turnAngle = (turnAngle+360)%360;
         maxTuck();
-        targetHeading = Math.toRadians(turnAngle);
+        targetHeading = Math.toRadians(wrapAngle( turnAngle));
         headingPID_pwr.setPID(HEADING_PID_PWR);
         headingPID_pwr.setInput(poseEstimate.getHeading());
         headingPID_pwr.setSetpoint(targetHeading);
         headingPID_pwr.setOutputRange(-.4, .4);
-        headingErrorMagnitude = Math.abs(Utils.distanceBetweenAngles(Math.toDegrees(heading),turnAngle));
         double correction = headingPID_pwr.performPID();
-        if(headingErrorMagnitude < HEADING_PID_TOLERANCE){
+        if(headingPID_pwr.onTarget()){
             headingPID_pwr.disable();
             setMotorPowers(0,0);
             return true;

@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.robots.taubot;
 
+import static org.firstinspires.ftc.teamcode.robots.taubot.PowerPlay_6832.robot;
+import static org.firstinspires.ftc.teamcode.robots.taubot.PowerPlay_6832.startingPosition;
 import static org.firstinspires.ftc.teamcode.robots.taubot.util.Constants.Position;
 import static org.firstinspires.ftc.teamcode.robots.taubot.util.Utils.wrapAngle;
 import static org.firstinspires.ftc.teamcode.util.utilMethods.futureTime;
@@ -638,6 +640,7 @@ public class Autonomous implements TelemetryProvider {
 
         switch (sixCanStage) {
             case 0: //initialize stuff
+                robot.driveTrain.setPoseEstimate(Position.START_SIXCAN.getPose());
                 robot.driveTrain.articulate(DriveTrain.Articulation.unlock);
                 robot.driveTrain.enableChassisLength();
                 robot.driveTrain.maxTuck();

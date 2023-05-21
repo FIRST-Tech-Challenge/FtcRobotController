@@ -543,12 +543,14 @@ public class PowerPlay_6832 extends OpMode {
 
         handleTelemetry(opModeTelemetryMap,  Misc.formatInvariant("(%d): %s", gameStateIndex, gameState.getName()), packet);
 
+        handleTelemetry(auto.getTelemetry(debugTelemetryEnabled),  auto.getTelemetryName(), packet);
+
+        handleTelemetry(robot.getTelemetry(debugTelemetryEnabled), robot.getTelemetryName(), packet);
 
         // handling subsystem telemetry
         for(TelemetryProvider telemetryProvider: robot.subsystems)
             handleTelemetry(telemetryProvider.getTelemetry(debugTelemetryEnabled), telemetryProvider.getTelemetryName(), packet);
 
-        handleTelemetry(robot.getTelemetry(debugTelemetryEnabled), robot.getTelemetryName(), packet);
 
         // handling vision telemetry
         Map<String, Object> visionTelemetryMap = auto.visionProvider.getTelemetry(debugTelemetryEnabled);

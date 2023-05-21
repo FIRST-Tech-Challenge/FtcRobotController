@@ -819,7 +819,7 @@ public class UnderArm implements Subsystem {
 
                 if (substationHoverTimer < System.nanoTime()) {
                     setElbowTargetAngle(SixCanHoverElbow);
-                    setShoulderTargetAngle(SixCanHoverShoulder);
+                    setShoulderTargetAngle(SixCanHoverShoulder * .9);
                     setWristTargetAngle(SixCanHoverWrist);
                     //setTurretTargetAngle(SS_HOVER_TURRET); //we assume turret is aimed by camera centering on target can
                     substationHoverTimer = futureTime(2.5); //.5 - increased rn for testing
