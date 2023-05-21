@@ -126,7 +126,7 @@ public final class MecanumDrive {
         }
 
         @Override
-        public Twist2dIncrDual<Time> updateAndGetIncr() {
+        public Twist2dIncrDual<Time> update() {
             Encoder.PositionVelocityPair leftFrontPosVel = leftFront.getPositionAndVelocity();
             Encoder.PositionVelocityPair leftRearPosVel = leftRear.getPositionAndVelocity();
             Encoder.PositionVelocityPair rightRearPosVel = rightRear.getPositionAndVelocity();
@@ -255,7 +255,7 @@ public final class MecanumDrive {
 
             Pose2dDual<Time> txWorldTarget = timeTrajectory.get(t);
 
-            Twist2d robotVelRobot = updatePoseEstimateAndGetActualVel();
+            Twist2d robotVelRobot = updatePoseEstimate();
 
             Twist2dDual<Time> command = new HolonomicController(
                     AXIAL_GAIN, LATERAL_GAIN, HEADING_GAIN,
@@ -336,7 +336,7 @@ public final class MecanumDrive {
 
             Pose2dDual<Time> txWorldTarget = turn.get(t);
 
-            Twist2d robotVelRobot = updatePoseEstimateAndGetActualVel();
+            Twist2d robotVelRobot = updatePoseEstimate();
 
             Twist2dDual<Time> command = new HolonomicController(
                     AXIAL_GAIN, LATERAL_GAIN, HEADING_GAIN,
@@ -375,8 +375,8 @@ public final class MecanumDrive {
         }
     }
 
-    private Twist2d updatePoseEstimateAndGetActualVel() {
-        Twist2dIncrDual<Time> incr = localizer.updateAndGetIncr();
+    public Twist2d updatePoseEstimate() {
+        Twist2dIncrDual<Time> incr = localizer.update();
         pose = pose.plus(incr.value());
 
         poseHistory.add(pose);

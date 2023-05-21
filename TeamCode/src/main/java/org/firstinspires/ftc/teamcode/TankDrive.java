@@ -135,7 +135,7 @@ public final class TankDrive {
         }
 
         @Override
-        public Twist2dIncrDual<Time> updateAndGetIncr() {
+        public Twist2dIncrDual<Time> update() {
             double meanLeftPos = 0.0, meanLeftVel = 0.0;
             for (Encoder e : leftEncs) {
                 Encoder.PositionVelocityPair p = e.getPositionAndVelocity();
@@ -265,7 +265,7 @@ public final class TankDrive {
 
             Pose2dDual<Arclength> txWorldTarget = timeTrajectory.path.get(x.value(), 3);
 
-            updatePoseEstimateAndGetActualVel();
+            updatePoseEstimate();
 
             Twist2dDual<Time> command = new RamseteController(kinematics.trackWidth, RAMSETE_ZETA, RAMSETE_BBAR)
                     .compute(x, txWorldTarget, pose);
@@ -347,7 +347,7 @@ public final class TankDrive {
 
             Pose2dDual<Time> txWorldTarget = turn.get(t);
 
-            Twist2d robotVelRobot = updatePoseEstimateAndGetActualVel();
+            Twist2d robotVelRobot = updatePoseEstimate();
 
             Twist2dDual<Time> command = new Twist2dDual<>(
                     Vector2dDual.constant(new Vector2d(0, 0), 3),
@@ -390,8 +390,8 @@ public final class TankDrive {
         }
     }
 
-    public Twist2d updatePoseEstimateAndGetActualVel() {
-        Twist2dIncrDual<Time> incr = localizer.updateAndGetIncr();
+    public Twist2d updatePoseEstimate() {
+        Twist2dIncrDual<Time> incr = localizer.update();
         pose = pose.plus(incr.value());
 
         poseHistory.add(pose);

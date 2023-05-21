@@ -40,7 +40,7 @@ public final class TwoDeadWheelLocalizer implements Localizer {
         this.inPerTick = inPerTick;
     }
 
-    public Twist2dIncrDual<Time> updateAndGetIncr() {
+    public Twist2dIncrDual<Time> update() {
         Encoder.PositionVelocityPair parPosVel = par.getPositionAndVelocity();
         Encoder.PositionVelocityPair perpPosVel = perp.getPositionAndVelocity();
         Rotation2d heading = Rotation2d.exp(imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS));

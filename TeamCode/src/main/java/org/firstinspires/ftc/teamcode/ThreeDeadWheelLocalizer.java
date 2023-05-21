@@ -36,7 +36,7 @@ public final class ThreeDeadWheelLocalizer implements Localizer {
         this.inPerTick = inPerTick;
     }
 
-    public Twist2dIncrDual<Time> updateAndGetIncr() {
+    public Twist2dIncrDual<Time> update() {
         Encoder.PositionVelocityPair par0PosVel = par0.getPositionAndVelocity();
         Encoder.PositionVelocityPair par1PosVel = par1.getPositionAndVelocity();
         Encoder.PositionVelocityPair perpPosVel = perp.getPositionAndVelocity();

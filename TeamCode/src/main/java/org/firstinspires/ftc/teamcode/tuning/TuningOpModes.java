@@ -32,7 +32,8 @@ public final class TuningOpModes {
                 ManualFeedbackTuner.class,
                 ManualFeedforwardTuner.class,
                 SplineTest.class,
-                MecanumMotorDirectionDebugger.class
+                MecanumMotorDirectionDebugger.class,
+                LocalizationTest.class
         );
 
         for (Class<? extends OpMode> o : opModes) {
