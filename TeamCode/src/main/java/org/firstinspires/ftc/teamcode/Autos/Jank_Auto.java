@@ -49,11 +49,9 @@ public class Jank_Auto extends LinearOpMode {
         ElapsedTime timer = new ElapsedTime();
         int time = 1000;
         while(timer.milliseconds() <= time) {
-            // Expansion Hub Pins
-
             motorFrontLeft.setPower(frontLeftPower);
             motorBackLeft.setPower(backLeftPower);
-            motorFrontRight.setPower(frontRightPower); //mommy
+            motorFrontRight.setPower(frontRightPower);
             motorBackRight.setPower(backRightPower);
         }
     }
