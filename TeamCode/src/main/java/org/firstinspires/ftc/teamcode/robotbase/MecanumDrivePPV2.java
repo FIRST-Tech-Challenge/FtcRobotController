@@ -80,7 +80,7 @@ public class MecanumDrivePPV2 extends MecanumDrive implements Subsystem {
     private List<MotorExEx> motors;
     private VoltageSensor batteryVoltageSensor;
 
-    /* ----------------------------------------- COMMON ----------------------------------------- */
+    /* ----------------------------------------- TELEOP ----------------------------------------- */
     protected String m_name = this.getClass().getSimpleName();
     private com.arcrobotics.ftclib.drivebase.MecanumDrive drive;
 
@@ -90,7 +90,6 @@ public class MecanumDrivePPV2 extends MecanumDrive implements Subsystem {
             MAX_VEL, MAX_ANG_VEL, TRACK_WIDTH
     );
     private static final TrajectoryAccelerationConstraint ACCEL_CONSTRAINT = getAccelerationConstraint(MAX_ACCEL);
-    private MotorExEx frontLeftAutonomous, frontRightAutonomous, rearRightAutonomous, rearLeftAutonomous;
     private TrajectoryFollower follower;
     private List<Integer> lastEncPositions = new ArrayList<>();
     private List<Integer> lastEncVels = new ArrayList<>();
@@ -120,12 +119,10 @@ public class MecanumDrivePPV2 extends MecanumDrive implements Subsystem {
         rearRight = new MotorExEx(hardwareMap, "rearRight", Motor.GoBILDA.RPM_312);
         rearLeft = new MotorExEx(hardwareMap, "rearLeft", Motor.GoBILDA.RPM_312);
 
-        motors = Arrays.asList(frontLeftAutonomous, frontRightAutonomous, rearLeftAutonomous, rearRightAutonomous);
-
-        setMotorsInverted(frontLeftInverted, frontRightInverted, rearRightInverted, rearLeftInverted);
-        setMotorsAutonomousInverted(frontLeftAutonomousInverted, frontRightAutonomousInverted, rearRightAutonomousInverted, rearLeftAutonomousInverted);
+        motors = Arrays.asList(frontLeft, frontRight, rearLeft, rearRight);
 
         if (RUN_USING_ENCODER) setMode(MotorExEx.RunMode.VelocityControl);
+
 
         setZeroPowerBehavior(MotorExEx.ZeroPowerBehavior.BRAKE);
 
@@ -140,8 +137,9 @@ public class MecanumDrivePPV2 extends MecanumDrive implements Subsystem {
             }
         }
 
-        if (type == AUTO){
-            /* ------------------------------------- AUTONOMOUS ------------------------------------- */
+        if (type == AUTO) {
+            /* ----------------------------------- AUTONOMOUS ----------------------------------- */
+            setMotorsInverted(frontLeftAutonomousInverted, frontRightAutonomousInverted, rearRightAutonomousInverted, rearLeftAutonomousInverted);
             follower = new HolonomicPIDVAFollower(TRANSLATIONAL_PID, TRANSLATIONAL_PID, HEADING_PID,
                     new Pose2d(0.5, 0.5, Math.toRadians(5.0)), 0.5);
 
@@ -149,10 +147,10 @@ public class MecanumDrivePPV2 extends MecanumDrive implements Subsystem {
             trajectorySequenceRunner = new TrajectorySequenceRunner(
                     follower, HEADING_PID
             );
-        }
-        if (type == TELEOP){
-            /* --------------------------------------- TELEOP --------------------------------------- */
+        } else if (type == TELEOP) {
+            /* ------------------------------------- TELEOP ------------------------------------- */
             CommandScheduler.getInstance().registerSubsystem(this);
+            setMotorsInverted(frontLeftInverted, frontRightInverted, rearRightInverted, rearLeftInverted);
             drive = new com.arcrobotics.ftclib.drivebase.MecanumDrive(
                     frontLeft, frontRight, rearLeft, rearRight
             );
@@ -190,16 +188,6 @@ public class MecanumDrivePPV2 extends MecanumDrive implements Subsystem {
         rearLeft.setInverted(leftRearInverted);
         frontRight.setInverted(rightFrontInverted);
         rearRight.setInverted(rightRearInverted);
-    }
-    public void setMotorsAutonomousInverted(
-            boolean leftFrontAutonomousInverted, boolean rightFrontAutonomousInverted,
-            boolean rightRearAutonomousInverted, boolean leftRearAutonomousInverted
-    )
-    {
-        frontLeftAutonomous.setInverted(leftFrontAutonomousInverted);
-        rearLeftAutonomous.setInverted(leftRearAutonomousInverted);
-        frontRightAutonomous.setInverted(rightFrontAutonomousInverted);
-        rearRightAutonomous.setInverted(rightRearAutonomousInverted);
     }
     public TrajectoryBuilder trajectoryBuilder(Pose2d startPose)
     {
