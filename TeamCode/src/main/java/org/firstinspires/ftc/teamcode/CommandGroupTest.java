@@ -3,22 +3,23 @@ package org.firstinspires.ftc.teamcode;
 import static org.firstinspires.ftc.teamcode.robotbase.RobotEx.OpModeType.AUTO;
 
 import com.acmerobotics.dashboard.FtcDashboard;
+import com.arcrobotics.ftclib.command.Command;
 import com.arcrobotics.ftclib.command.CommandOpMode;
 import com.arcrobotics.ftclib.command.InstantCommand;
 import com.arcrobotics.ftclib.command.ParallelCommandGroup;
+import com.arcrobotics.ftclib.command.SelectCommand;
 import com.arcrobotics.ftclib.command.SequentialCommandGroup;
 import com.arcrobotics.ftclib.command.WaitCommand;
+import com.arcrobotics.ftclib.command.button.Trigger;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.myroadrunner.drive.SampleMecanumDrive;
-import org.firstinspires.ftc.teamcode.opencvpipelines.AprilTagDetectionPipeline;
 import org.firstinspires.ftc.teamcode.powerplayV2.AprilTagDetectionSubsystem;
 import org.firstinspires.ftc.teamcode.powerplayV2.PowerPlayRobotV2;
 import org.firstinspires.ftc.teamcode.powerplayV2.RoadRunnerSubsystem;
 import org.firstinspires.ftc.teamcode.powerplayV2.commands.ElevatorCommand;
-import org.firstinspires.ftc.teamcode.powerplayV2.commands.FrontSliderConeCommand;
 import org.firstinspires.ftc.teamcode.powerplayV2.subsystems.ArmSubsystem;
 import org.firstinspires.ftc.teamcode.powerplayV2.subsystems.BasketSubsystem;
 import org.firstinspires.ftc.teamcode.powerplayV2.subsystems.ClawSubsystem;
@@ -28,11 +29,11 @@ import org.firstinspires.ftc.teamcode.powerplayV2.subsystems.FrontSliderSubsyste
 import org.firstinspires.ftc.teamcode.powerplayV2.subsystems.LimitSwitchSubsystem;
 import org.firstinspires.ftc.teamcode.robotbase.GamepadExEx;
 
-@Autonomous(name = "PP (1 + 1 cone)", group = "Final Autonomous")
-public class PP11cone extends CommandOpMode {
+import java.util.HashMap;
 
+@Autonomous(name = "TestAutonomous", group = "Final Autonomous")
+public class CommandGroupTest extends CommandOpMode {
     PowerPlayRobotV2 robot;
-    AprilTagDetectionPipeline aprilTagDetectionPipeline;
     protected ElapsedTime runtime;
     protected SampleMecanumDrive drive;
     protected RoadRunnerSubsystem RR;
@@ -46,24 +47,20 @@ public class PP11cone extends CommandOpMode {
     protected ConeDetectorSubsystem cone_detector;
     protected boolean april_tag_found = false;
     Telemetry dashboardTelemetry;
-
-    protected SequentialCommandGroup scoringCommand;
-
+    protected SequentialCommandGroup scoringCommand, test;
     @Override
     public void initialize() {
         GamepadExEx driverOp = new GamepadExEx(gamepad1);
         GamepadExEx toolOp = new GamepadExEx(gamepad2);
 
         robot = new PowerPlayRobotV2(hardwareMap, telemetry, driverOp, toolOp, AUTO, true,
-                false, false, false, false, false);
+                false);
 
         drive = new SampleMecanumDrive(hardwareMap);
 
-        RR = new RoadRunnerSubsystem(drive, hardwareMap, false);
+        RR = new RoadRunnerSubsystem(drive, false);
 
         dashboardTelemetry = FtcDashboard.getInstance().getTelemetry();
-
-        april_tag = new AprilTagDetectionSubsystem(robot.camera, dashboardTelemetry);
 
         claw = new ClawSubsystem(hardwareMap);
         elevator = new ElevatorSubsystem(hardwareMap);
@@ -73,8 +70,19 @@ public class PP11cone extends CommandOpMode {
         leftSwitch = new LimitSwitchSubsystem(hardwareMap, "leftSwitch");
         frontSlider = new FrontSliderSubsystem(hardwareMap, () -> rightSwitch.getState(),
                 () -> leftSwitch.getState(), telemetry);
-        cone_detector = new ConeDetectorSubsystem(hardwareMap, 30);
 
+        scoringCommand = new SequentialCommandGroup(
+                new InstantCommand(arm::setMid, arm),
+                new WaitCommand(300),
+                new ElevatorCommand(elevator, ElevatorSubsystem.Level.AUTO_SCORING),
+                new InstantCommand(basket::setOuttake, basket),
+                new WaitCommand(1500),
+                new ParallelCommandGroup(
+                        new InstantCommand(basket::setTravel, basket),
+                        new InstantCommand(arm::setMid, arm)
+                ),
+                new ElevatorCommand(elevator, ElevatorSubsystem.Level.LOW)
+        );
         runtime = new ElapsedTime();
     }
 
@@ -85,9 +93,6 @@ public class PP11cone extends CommandOpMode {
          * This REPLACES waitForStart!
          */
         while (!isStarted() && !isStopRequested()) {
-            april_tag_found = april_tag.aprilTagCheck();
-//            if (april_tag.getTagOfInterest() == null)
-//                april_tag_not_found = true;
             sleep(20);
         }
     }
@@ -107,11 +112,28 @@ public class PP11cone extends CommandOpMode {
         runtime.reset();
 
         ///////////////////////////////// Running the Trajectories /////////////////////////////////
-
-        int i = 0;
-
         if (isStopRequested()) return;
 
+        test = new SequentialCommandGroup(
+                new InstantCommand(arm::setIntake, arm),
+                new WaitCommand(1500),
+                new InstantCommand(arm::setTravel, arm),
+                scoringCommand,
+                new WaitCommand(1500),
+                new InstantCommand(arm::setIntake, arm)
+        );
+
+        schedule(test);
+
+/*        schedule(new SequentialCommandGroup(
+                new InstantCommand(arm::setIntake, arm),
+                new WaitCommand(1500),
+                new InstantCommand(arm::setTravel, arm),
+                scoringCommand,
+                new WaitCommand(1500),
+                new InstantCommand(arm::setIntake, arm)
+        ));*/
+/*
         schedule(new SequentialCommandGroup(
                         new InstantCommand(RR::runHS2, RR),
                         new InstantCommand(arm::setMid, arm),
@@ -155,25 +177,7 @@ public class PP11cone extends CommandOpMode {
                 )
         );
 
-        //Select Command Auto
-//        new Trigger(() -> runtime.seconds() >= 20).whenActive(
-//                new SelectCommand(
-//                        new HashMap<Object, Command>() {{
-//                            put(april_tag.LEFT, new InstantCommand(RR::runP1, RR));
-//                            put(april_tag.MIDDLE, new InstantCommand(RR::runTOMID, RR));
-//                            put(april_tag.RIGHT, new InstantCommand(RR::runP3, RR));
-//                            put(-1, new InstantCommand(RR::runTOMID, RR));
-//                        }},
-//                        () -> april_tag_found ? april_tag.getTagOfInterest().id : -1
-//                )
-//        );
-
-//        if (runtime.seconds() >= 20) {
-//            if (april_tag.getTagOfInterest().id == april_tag.LEFT) RR.runP1();
-//            else if (april_tag.getTagOfInterest().id == april_tag.RIGHT || april_tag.getTagOfInterest() == null)
-//                RR.runP3();
-//            else RR.runTOMID();
-//        }
+ */
 
         // run the scheduler
         while (!isStopRequested() && opModeIsActive()) {

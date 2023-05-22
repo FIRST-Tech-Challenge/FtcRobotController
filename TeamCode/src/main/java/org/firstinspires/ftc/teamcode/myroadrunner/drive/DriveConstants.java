@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.myroadrunner.drive;
 
 import com.acmerobotics.dashboard.config.Config;
+import com.acmerobotics.roadrunner.control.PIDCoefficients;
 import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 
 /*
@@ -58,6 +59,8 @@ public class DriveConstants {
     public static double kA = 0;
     public static double kStatic = 0;
 
+    public static boolean COMMON_FEED_FORWARD = false;
+
     /*
      * These values are used to generate the trajectories for you robot. To ensure proper operation,
      * the constraints should never exceed ~80% of the robot's actual capabilities. While Road
@@ -91,6 +94,18 @@ public class DriveConstants {
     public static double MAX_ANG_VEL = 2.3416948318481445;
     public static double MAX_ANG_ACCEL = Math.toRadians(279.98601117318435);
 
+    public static PIDCoefficients TRANSLATIONAL_PID = new PIDCoefficients(6, 0, 0);
+    public static PIDCoefficients HEADING_PID = new PIDCoefficients(7.5, 0, 0.05);
+    public static double KP = 1.1;
+    public static double KI = 2.7;
+    public static double KD = 0;
+    public static double minIntegralBound = -400;
+    public static double maxIntegralBound = 400;
+
+    public static double LATERAL_MULTIPLIER = 1.17602326;
+
+    public static boolean frontLeftInverted = true, frontRightInverted = true, rearRightInverted = true, rearLeftInverted = true;
+    public static boolean frontLeftAutonomousInverted = true, frontRightAutonomousInverted = false, rearRightAutonomousInverted = false, rearLeftAutonomousInverted = true;
 
     public static double encoderTicksToInches(double ticks) {
         return WHEEL_RADIUS * 2 * Math.PI * GEAR_RATIO * ticks / TICKS_PER_REV;

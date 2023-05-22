@@ -45,17 +45,14 @@ public class PowerPlayRobotV2 extends RobotEx {
     public PowerPlayRobotV2(HardwareMap hardwareMap, Telemetry telemetry, GamepadExEx driverOp,
                             GamepadExEx toolOp) {
         super(hardwareMap, telemetry, driverOp, toolOp, OpModeType.TELEOP, false,
-                false, true, true, true,
-                true);
+                false);
     }
 
     public PowerPlayRobotV2(HardwareMap hardwareMap, Telemetry telemetry, GamepadExEx driverOp,
                             GamepadExEx toolOp, OpModeType opModeType, boolean camera,
-                            boolean cameraFollower, boolean frontLeftInvert, boolean fronRightInvert,
-                            boolean rearLeftInvert, boolean rearRightInvert) {
+                            boolean cameraFollower) {
         super(hardwareMap, telemetry, driverOp, toolOp, opModeType, camera,
-                cameraFollower, frontLeftInvert, fronRightInvert, rearLeftInvert,
-                rearRightInvert);
+                cameraFollower);
     }
 
     @Override

@@ -1,9 +1,9 @@
-package org.firstinspires.ftc.teamcode.myroadrunner.drive;
+package org.firstinspires.ftc.teamcode.robotbase;
 
 import androidx.annotation.NonNull;
 
 import com.acmerobotics.dashboard.config.Config;
-import com.acmerobotics.roadrunner.control.PIDCoefficients;
+
 import com.acmerobotics.roadrunner.drive.DriveSignal;
 import com.acmerobotics.roadrunner.drive.MecanumDrive;
 import com.acmerobotics.roadrunner.followers.HolonomicPIDVAFollower;
@@ -17,24 +17,20 @@ import com.acmerobotics.roadrunner.trajectory.constraints.MinVelocityConstraint;
 import com.acmerobotics.roadrunner.trajectory.constraints.ProfileAccelerationConstraint;
 import com.acmerobotics.roadrunner.trajectory.constraints.TrajectoryAccelerationConstraint;
 import com.acmerobotics.roadrunner.trajectory.constraints.TrajectoryVelocityConstraint;
+import com.arcrobotics.ftclib.command.CommandScheduler;
+import com.arcrobotics.ftclib.command.Subsystem;
 import com.arcrobotics.ftclib.hardware.motors.Motor;
-import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.IMU;
-import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 import com.qualcomm.robotcore.hardware.VoltageSensor;
-import com.qualcomm.robotcore.hardware.configuration.typecontainers.MotorConfigurationType;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.teamcode.myroadrunner.trajectorysequence.TrajectorySequence;
 import org.firstinspires.ftc.teamcode.myroadrunner.trajectorysequence.TrajectorySequenceBuilder;
 import org.firstinspires.ftc.teamcode.myroadrunner.trajectorysequence.TrajectorySequenceRunner;
-import org.firstinspires.ftc.teamcode.myroadrunner.util.AxisDirection;
-import org.firstinspires.ftc.teamcode.myroadrunner.util.BNO055IMUUtil;
 import org.firstinspires.ftc.teamcode.myroadrunner.util.LynxModuleUtil;
-import org.firstinspires.ftc.teamcode.robotbase.MotorExEx;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -51,56 +47,64 @@ import static org.firstinspires.ftc.teamcode.myroadrunner.drive.DriveConstants.e
 import static org.firstinspires.ftc.teamcode.myroadrunner.drive.DriveConstants.kA;
 import static org.firstinspires.ftc.teamcode.myroadrunner.drive.DriveConstants.kStatic;
 import static org.firstinspires.ftc.teamcode.myroadrunner.drive.DriveConstants.kV;
-
+import static org.firstinspires.ftc.teamcode.myroadrunner.drive.DriveConstants.COMMON_FEED_FORWARD;
+import static org.firstinspires.ftc.teamcode.myroadrunner.drive.DriveConstants.TRANSLATIONAL_PID;
+import static org.firstinspires.ftc.teamcode.myroadrunner.drive.DriveConstants.HEADING_PID;
+import static org.firstinspires.ftc.teamcode.myroadrunner.drive.DriveConstants.KP;
+import static org.firstinspires.ftc.teamcode.myroadrunner.drive.DriveConstants.KI;
+import static org.firstinspires.ftc.teamcode.myroadrunner.drive.DriveConstants.KD;
+import static org.firstinspires.ftc.teamcode.myroadrunner.drive.DriveConstants.minIntegralBound;
+import static org.firstinspires.ftc.teamcode.myroadrunner.drive.DriveConstants.maxIntegralBound;
+import static org.firstinspires.ftc.teamcode.myroadrunner.drive.DriveConstants.LATERAL_MULTIPLIER;
+import static org.firstinspires.ftc.teamcode.myroadrunner.drive.DriveConstants.frontLeftInverted;
+import static org.firstinspires.ftc.teamcode.myroadrunner.drive.DriveConstants.frontRightInverted;
+import static org.firstinspires.ftc.teamcode.myroadrunner.drive.DriveConstants.rearLeftInverted;
+import static org.firstinspires.ftc.teamcode.myroadrunner.drive.DriveConstants.rearRightInverted;
+import static org.firstinspires.ftc.teamcode.myroadrunner.drive.DriveConstants.frontLeftAutonomousInverted;
+import static org.firstinspires.ftc.teamcode.myroadrunner.drive.DriveConstants.frontRightAutonomousInverted;
+import static org.firstinspires.ftc.teamcode.myroadrunner.drive.DriveConstants.rearLeftAutonomousInverted;
+import static org.firstinspires.ftc.teamcode.myroadrunner.drive.DriveConstants.rearRightAutonomousInverted;
+import static org.firstinspires.ftc.teamcode.robotbase.RobotEx.OpModeType.AUTO;
+import static org.firstinspires.ftc.teamcode.robotbase.RobotEx.OpModeType.TELEOP;
 /*
  * Simple mecanum drive hardware implementation for REV hardware.
  */
 @Config
-public class SampleMecanumDrive extends MecanumDrive {
-    public static PIDCoefficients TRANSLATIONAL_PID = new PIDCoefficients(6, 0, 0);
-    public static PIDCoefficients HEADING_PID = new PIDCoefficients(7.5, 0, 0.05);
-
-    public static boolean COMMON_FEED_FORWARD = false;
-    public static double KP = 1.1;
-    public static double KI = 2.7;
-    public static double KD = 0;
-    public static double minIntegralBound = -400;
-    public static double maxIntegralBound = 400;
-
-    public static double LATERAL_MULTIPLIER = 1.17602326;
-
+public class MecanumDrivePPV2 extends MecanumDrive implements Subsystem {
+    /* ----------------------------------------- COMMON ----------------------------------------- */
     public static double VX_WEIGHT = 1;
     public static double VY_WEIGHT = 1;
     public static double OMEGA_WEIGHT = 1;
-
-    private TrajectorySequenceRunner trajectorySequenceRunner;
-
-    private static final TrajectoryVelocityConstraint VEL_CONSTRAINT = getVelocityConstraint(MAX_VEL, MAX_ANG_VEL, TRACK_WIDTH);
-    private static final TrajectoryAccelerationConstraint ACCEL_CONSTRAINT = getAccelerationConstraint(MAX_ACCEL);
-
-    private TrajectoryFollower follower;
-
-    private MotorExEx leftFront, leftRear, rightRear, rightFront;
-    private List<MotorExEx> motors;
+    private MotorExEx frontLeft, frontRight, rearRight, rearLeft;
     private IMU imu;
+    private List<MotorExEx> motors;
     private VoltageSensor batteryVoltageSensor;
 
+    /* ----------------------------------------- TELEOP ----------------------------------------- */
+    protected String m_name = this.getClass().getSimpleName();
+    private com.arcrobotics.ftclib.drivebase.MecanumDrive drive;
+
+    /* --------------------------------------- AUTONOMOUS --------------------------------------- */
+    private TrajectorySequenceRunner trajectorySequenceRunner;
+    private static final TrajectoryVelocityConstraint VEL_CONSTRAINT = getVelocityConstraint(
+            MAX_VEL, MAX_ANG_VEL, TRACK_WIDTH
+    );
+    private static final TrajectoryAccelerationConstraint ACCEL_CONSTRAINT = getAccelerationConstraint(MAX_ACCEL);
+    private TrajectoryFollower follower;
     private List<Integer> lastEncPositions = new ArrayList<>();
     private List<Integer> lastEncVels = new ArrayList<>();
 
-    public SampleMecanumDrive(HardwareMap hardwareMap) {
+    public MecanumDrivePPV2(HardwareMap hardwareMap, RobotEx.OpModeType type) {
         super(kV, kA, kStatic, TRACK_WIDTH, TRACK_WIDTH, LATERAL_MULTIPLIER);
 
-        follower = new HolonomicPIDVAFollower(TRANSLATIONAL_PID, TRANSLATIONAL_PID, HEADING_PID,
-                new Pose2d(0.5, 0.5, Math.toRadians(5.0)), 0.5);
-
+        /* --------------------------------------- COMMON --------------------------------------- */
         LynxModuleUtil.ensureMinimumFirmwareVersion(hardwareMap);
-
-        batteryVoltageSensor = hardwareMap.voltageSensor.iterator().next();
 
         for (LynxModule module : hardwareMap.getAll(LynxModule.class)) {
             module.setBulkCachingMode(LynxModule.BulkCachingMode.AUTO);
         }
+
+        batteryVoltageSensor = hardwareMap.voltageSensor.iterator().next();
 
         // TODO: adjust the names of the following hardware devices to match your configuration
         imu = hardwareMap.get(IMU.class, "imu");
@@ -110,22 +114,15 @@ public class SampleMecanumDrive extends MecanumDrive {
         ));
         imu.initialize(parameters);
 
-        leftFront = new MotorExEx(hardwareMap, "frontLeft", Motor.GoBILDA.RPM_312);
-        rightFront = new MotorExEx(hardwareMap, "frontRight", Motor.GoBILDA.RPM_312);
-        rightRear = new MotorExEx(hardwareMap, "rearRight", Motor.GoBILDA.RPM_312);
-        leftRear = new MotorExEx(hardwareMap, "rearLeft", Motor.GoBILDA.RPM_312);
+        frontLeft = new MotorExEx(hardwareMap, "frontLeft", Motor.GoBILDA.RPM_312);
+        frontRight = new MotorExEx(hardwareMap, "frontRight", Motor.GoBILDA.RPM_312);
+        rearRight = new MotorExEx(hardwareMap, "rearRight", Motor.GoBILDA.RPM_312);
+        rearLeft = new MotorExEx(hardwareMap, "rearLeft", Motor.GoBILDA.RPM_312);
 
-        motors = Arrays.asList(leftFront, leftRear, rightRear, rightFront);
-
-        setMotorsInverted(true, false, false, true);
-
-//        for (MotorExEx motor : motors) {
-//            MotorConfigurationType motorConfigurationType = motor.getMotorType().clone();
-//            motorConfigurationType.setAchieveableMaxRPMFraction(1.0);
-//            motor.setMotorType(motorConfigurationType);
-//        }
+        motors = Arrays.asList(frontLeft, frontRight, rearLeft, rearRight);
 
         if (RUN_USING_ENCODER) setMode(MotorExEx.RunMode.VelocityControl);
+
 
         setZeroPowerBehavior(MotorExEx.ZeroPowerBehavior.BRAKE);
 
@@ -133,125 +130,151 @@ public class SampleMecanumDrive extends MecanumDrive {
             setPIDFCoefficients(KP, KI, KD, kStatic, kV, kA);
 
             if (!COMMON_FEED_FORWARD) {
-                leftFront.setFeedforwardCoefficients(150, 1.1, 0);//2795
-                rightFront.setFeedforwardCoefficients(120, 0.97, 0);//2795
-                leftRear.setFeedforwardCoefficients(120, 1, 0);//2795
-                rightRear.setFeedforwardCoefficients(220, 1.07, 0);//2795
+                frontLeft.setFeedforwardCoefficients(150, 1.1, 0);//2795
+                frontRight.setFeedforwardCoefficients(120, 0.97, 0);//2795
+                rearLeft.setFeedforwardCoefficients(120, 1, 0);//2795
+                rearRight.setFeedforwardCoefficients(220, 1.07, 0);//2795
             }
         }
 
-        // TODO: reverse any motors using DcMotor.setDirection()
+        if (type == AUTO) {
+            /* ----------------------------------- AUTONOMOUS ----------------------------------- */
+            setMotorsInverted(frontLeftAutonomousInverted, frontRightAutonomousInverted, rearRightAutonomousInverted, rearLeftAutonomousInverted);
+            follower = new HolonomicPIDVAFollower(TRANSLATIONAL_PID, TRANSLATIONAL_PID, HEADING_PID,
+                    new Pose2d(0.5, 0.5, Math.toRadians(5.0)), 0.5);
 
-        List<Integer> lastTrackingEncPositions = new ArrayList<>();
-        List<Integer> lastTrackingEncVels = new ArrayList<>();
-
-        // TODO: if desired, use setLocalizer() to change the localization method
-        // setLocalizer(new StandardTrackingWheelLocalizer(hardwareMap, lastTrackingEncPositions, lastTrackingEncVels));
-
-//        trajectorySequenceRunner = new TrajectorySequenceRunner(
-//                follower, HEADING_PID, batteryVoltageSensor,
-//                lastEncPositions, lastEncVels, lastTrackingEncPositions, lastTrackingEncVels
-//        );
-        trajectorySequenceRunner = new TrajectorySequenceRunner(
-                follower, HEADING_PID
-        );
+            // TODO: if desired, use setLocalizer() to change the localization method
+            trajectorySequenceRunner = new TrajectorySequenceRunner(
+                    follower, HEADING_PID
+            );
+        } else if (type == TELEOP) {
+            /* ------------------------------------- TELEOP ------------------------------------- */
+            CommandScheduler.getInstance().registerSubsystem(this);
+            setMotorsInverted(frontLeftInverted, frontRightInverted, rearRightInverted, rearLeftInverted);
+            drive = new com.arcrobotics.ftclib.drivebase.MecanumDrive(
+                    frontLeft, frontRight, rearLeft, rearRight
+            );
+        }
     }
 
+    public String getName()
+    {
+        return m_name;
+    }
+    public void setName(String name)
+    {
+        m_name = name;
+    }
+    public String getSubsystem()
+    {
+        return getName();
+    }
+    public void setSubsystem(String subsystem)
+    {
+        setName(subsystem);
+    }
+    void drive(double strafeSpeed, double forwardSpeed, double turnSpeed, double heading,
+               double maxSpeed)
+    {
+        drive.setMaxSpeed(0.3 * (1 + (7.0/3)*maxSpeed));
+        drive.driveFieldCentric(strafeSpeed, forwardSpeed, turnSpeed, heading);
+    }
     public void setMotorsInverted(
             boolean leftFrontInverted, boolean rightFrontInverted,
             boolean rightRearInverted, boolean leftRearInverted
-    ) {
-        leftFront.setInverted(leftFrontInverted);
-        leftRear.setInverted(leftRearInverted);
-        rightFront.setInverted(rightFrontInverted);
-        rightRear.setInverted(rightRearInverted);
+    )
+    {
+        frontLeft.setInverted(leftFrontInverted);
+        rearLeft.setInverted(leftRearInverted);
+        frontRight.setInverted(rightFrontInverted);
+        rearRight.setInverted(rightRearInverted);
     }
-
-    public TrajectoryBuilder trajectoryBuilder(Pose2d startPose) {
+    public TrajectoryBuilder trajectoryBuilder(Pose2d startPose)
+    {
         return new TrajectoryBuilder(startPose, VEL_CONSTRAINT, ACCEL_CONSTRAINT);
     }
-
-    public TrajectoryBuilder trajectoryBuilder(Pose2d startPose, boolean reversed) {
+    public TrajectoryBuilder trajectoryBuilder(Pose2d startPose, boolean reversed)
+    {
         return new TrajectoryBuilder(startPose, reversed, VEL_CONSTRAINT, ACCEL_CONSTRAINT);
     }
-
-    public TrajectoryBuilder trajectoryBuilder(Pose2d startPose, double startHeading) {
+    public TrajectoryBuilder trajectoryBuilder(Pose2d startPose, double startHeading)
+    {
         return new TrajectoryBuilder(startPose, startHeading, VEL_CONSTRAINT, ACCEL_CONSTRAINT);
     }
-
-    public TrajectorySequenceBuilder trajectorySequenceBuilder(Pose2d startPose) {
+    public TrajectorySequenceBuilder trajectorySequenceBuilder(Pose2d startPose)
+    {
         return new TrajectorySequenceBuilder(
                 startPose,
                 VEL_CONSTRAINT, ACCEL_CONSTRAINT,
                 MAX_ANG_VEL, MAX_ANG_ACCEL
         );
     }
-
-    public void turnAsync(double angle) {
+    public void turnAsync(double angle)
+    {
         trajectorySequenceRunner.followTrajectorySequenceAsync(
                 trajectorySequenceBuilder(getPoseEstimate())
                         .turn(angle)
                         .build()
         );
     }
-
-    public void turn(double angle) {
+    public void turn(double angle)
+    {
         turnAsync(angle);
         waitForIdle();
     }
-
-    public void followTrajectoryAsync(Trajectory trajectory) {
+    public void followTrajectoryAsync(Trajectory trajectory)
+    {
         trajectorySequenceRunner.followTrajectorySequenceAsync(
                 trajectorySequenceBuilder(trajectory.start())
                         .addTrajectory(trajectory)
                         .build()
         );
     }
-
-    public void followTrajectory(Trajectory trajectory) {
+        public void followTrajectory(Trajectory trajectory)
+    {
         followTrajectoryAsync(trajectory);
         waitForIdle();
     }
-
-    public void followTrajectorySequenceAsync(TrajectorySequence trajectorySequence) {
+    public void followTrajectorySequenceAsync(TrajectorySequence trajectorySequence)
+    {
         trajectorySequenceRunner.followTrajectorySequenceAsync(trajectorySequence);
     }
-
-    public void followTrajectorySequence(TrajectorySequence trajectorySequence) {
+    public void followTrajectorySequence(TrajectorySequence trajectorySequence)
+    {
         followTrajectorySequenceAsync(trajectorySequence);
         waitForIdle();
     }
-
-    public Pose2d getLastError() {
+    public Pose2d getLastError()
+    {
         return trajectorySequenceRunner.getLastPoseError();
     }
-
-    public void update() {
+    public void update()
+    {
         updatePoseEstimate();
         DriveSignal signal = trajectorySequenceRunner.update(getPoseEstimate(), getPoseVelocity());
         if (signal != null) setDriveSignal(signal);
     }
-
-    public void waitForIdle() {
+    public void waitForIdle()
+    {
         while (!Thread.currentThread().isInterrupted() && isBusy())
             update();
     }
-
-    public boolean isBusy() {
+    public boolean isBusy()
+    {
         return trajectorySequenceRunner.isBusy();
     }
-
-    public void setMode(Motor.RunMode mode) {
+    public void setMode(Motor.RunMode mode)
+    {
         for (MotorExEx motor : motors)
             motor.setRunMode(mode);
     }
-
-    public void setZeroPowerBehavior(MotorExEx.ZeroPowerBehavior zeroPowerBehavior) {
+    public void setZeroPowerBehavior(MotorExEx.ZeroPowerBehavior zeroPowerBehavior)
+    {
         for (MotorExEx motor : motors)
             motor.setZeroPowerBehavior(zeroPowerBehavior);
     }
-
-    public void setPIDFCoefficients(double kP, double kI, double kD, double kF, double kV, double kA) {
+    public void setPIDFCoefficients(double kP, double kI, double kD, double kF, double kV, double kA)
+    {
         double batteryPercentage = 12 / batteryVoltageSensor.getVoltage();
 
         for (MotorExEx motor : motors) {
@@ -260,8 +283,8 @@ public class SampleMecanumDrive extends MecanumDrive {
             motor.setVeloCoefficients(kP, kI, kD);
         }
     }
-
-    public void setWeightedDrivePower(Pose2d drivePower) {
+    public void setWeightedDrivePower(Pose2d drivePower)
+    {
         Pose2d vel = drivePower;
 
         if (Math.abs(drivePower.getX()) + Math.abs(drivePower.getY())
@@ -280,10 +303,10 @@ public class SampleMecanumDrive extends MecanumDrive {
 
         setDrivePower(vel);
     }
-
     @NonNull
     @Override
-    public List<Double> getWheelPositions() {
+    public List<Double> getWheelPositions()
+    {
         lastEncPositions.clear();
 
         List<Double> wheelPositions = new ArrayList<>();
@@ -294,9 +317,9 @@ public class SampleMecanumDrive extends MecanumDrive {
         }
         return wheelPositions;
     }
-
     @Override
-    public List<Double> getWheelVelocities() {
+    public List<Double> getWheelVelocities()
+    {
         lastEncVels.clear();
 
         List<Double> wheelVelocities = new ArrayList<>();
@@ -307,33 +330,33 @@ public class SampleMecanumDrive extends MecanumDrive {
         }
         return wheelVelocities;
     }
-
     @Override
-    public void setMotorPowers(double v, double v1, double v2, double v3) {
-        leftFront.set(v);
-        leftRear.set(v1);
-        rightRear.set(v2);
-        rightFront.set(v3);
+    public void setMotorPowers(double v, double v1, double v2, double v3)
+    {
+        frontLeft.set(v);
+        rearLeft.set(v1);
+        rearRight.set(v2);
+        frontRight.set(v3);
     }
-
     @Override
-    public double getRawExternalHeading() {
+    public double getRawExternalHeading()
+    {
         return imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS);
     }
-
     @Override
-    public Double getExternalHeadingVelocity() {
+    public Double getExternalHeadingVelocity()
+    {
         return (double) imu.getRobotAngularVelocity(AngleUnit.RADIANS).zRotationRate;
     }
-
-    public static TrajectoryVelocityConstraint getVelocityConstraint(double maxVel, double maxAngularVel, double trackWidth) {
+    public static TrajectoryVelocityConstraint getVelocityConstraint(double maxVel, double maxAngularVel, double trackWidth)
+    {
         return new MinVelocityConstraint(Arrays.asList(
                 new AngularVelocityConstraint(maxAngularVel),
                 new MecanumVelocityConstraint(maxVel, trackWidth)
         ));
     }
-
-    public static TrajectoryAccelerationConstraint getAccelerationConstraint(double maxAccel) {
+    public static TrajectoryAccelerationConstraint getAccelerationConstraint(double maxAccel)
+    {
         return new ProfileAccelerationConstraint(maxAccel);
     }
 }
