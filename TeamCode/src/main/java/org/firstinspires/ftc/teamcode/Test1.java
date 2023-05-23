@@ -7,24 +7,29 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 
 @Autonomous
-public class LOL extends LinearOpMode {
+public class Test1 extends LinearOpMode {
 
     @Override
     public void runOpMode() {
         SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
 
-        Trajectory myTrajectory = drive.trajectoryBuilder(new Pose2d())
-                .splineToConstantHeading(new Vector2d(30, 30), Math.toRadians(0))
+        Pose2d startPose = new Pose2d(-70, -35, Math.toRadians(0));
+        drive.setPoseEstimate(startPose);
+        Trajectory myTrajectory = drive.trajectoryBuilder(startPose)
+                .splineTo(new Vector2d(-40, -32), Math.toRadians(35))
                 .build();
         Trajectory myTrajectory2 = drive.trajectoryBuilder(myTrajectory.end())
-                .splineToConstantHeading(new Vector2d(0, 0), Math.toRadians(0))
+                .splineTo(new Vector2d(-37, -16), Math.toRadians(90))
                 .build();
-
+        Trajectory myTrajectory3 = drive.trajectoryBuilder(myTrajectory2.end(),true)
+                .splineTo(new Vector2d(-40, -32), Math.toRadians(0))
+                .build();
         waitForStart();
 
         if(isStopRequested()) return;
 
         drive.followTrajectory(myTrajectory);
         drive.followTrajectory(myTrajectory2);
+        drive.followTrajectory(myTrajectory3);
     }
 }
