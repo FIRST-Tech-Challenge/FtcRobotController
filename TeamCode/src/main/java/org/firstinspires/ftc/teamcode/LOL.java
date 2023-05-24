@@ -14,17 +14,12 @@ public class LOL extends LinearOpMode {
         SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
 
         Trajectory myTrajectory = drive.trajectoryBuilder(new Pose2d())
-                .splineToConstantHeading(new Vector2d(30, 30), Math.toRadians(0))
+                .lineToConstantHeading(new Vector2d(72, 48))
                 .build();
-        Trajectory myTrajectory2 = drive.trajectoryBuilder(myTrajectory.end())
-                .splineToConstantHeading(new Vector2d(0, 0), Math.toRadians(0))
-                .build();
-
         waitForStart();
 
         if(isStopRequested()) return;
 
         drive.followTrajectory(myTrajectory);
-        drive.followTrajectory(myTrajectory2);
     }
 }

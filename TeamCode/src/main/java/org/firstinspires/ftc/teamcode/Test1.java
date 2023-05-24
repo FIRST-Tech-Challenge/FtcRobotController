@@ -21,15 +21,10 @@ public class Test1 extends LinearOpMode {
         Trajectory myTrajectory2 = drive.trajectoryBuilder(myTrajectory.end())
                 .splineTo(new Vector2d(-37, -16), Math.toRadians(90))
                 .build();
-        Trajectory myTrajectory3 = drive.trajectoryBuilder(myTrajectory2.end(),true)
-                .splineTo(new Vector2d(-40, -32), Math.toRadians(0))
-                .build();
         waitForStart();
 
         if(isStopRequested()) return;
 
         drive.followTrajectory(myTrajectory);
-        drive.followTrajectory(myTrajectory2);
-        drive.followTrajectory(myTrajectory3);
-    }
+        drive.followTrajectory(myTrajectory2);}
 }
