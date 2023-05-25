@@ -7,6 +7,8 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.hardware.TouchSensor;
+
 @Config
 @TeleOp(name = "Teleop 1 controllers")
 public class Teleop1Controller extends LinearOpMode {
@@ -41,6 +43,7 @@ public class Teleop1Controller extends LinearOpMode {
 
         // Idk it just feels wrong not to comment this
         linearSlide.setDirection(DcMotorSimple.Direction.REVERSE);
+        TouchSensor touch = hardwareMap.get(TouchSensor.class, "Touch");
 
         boolean move = false;
 
@@ -105,6 +108,12 @@ public class Teleop1Controller extends LinearOpMode {
             if (gamepad1.right_bumper && linearSlide.getCurrentPosition() > 1000){
                 armRotationServo.setPosition(armForwardsValue);
                 //manualClawRotation-=0.0035;
+            }
+
+            if (touch.isPressed()){
+                telemetry.addData("Silly", 1);
+            } else {
+                telemetry.addData("Silly", 0);
             }
 
             // Apply's the variable set in above if statements
