@@ -15,8 +15,8 @@ import org.openftc.easyopencv.OpenCvCameraRotation;
 public class CAMShiftTest extends LinearOpMode {
     private OpenCvCamera webcam;
 
-    private static final int CAMERA_WIDTH  = 640; // width  of wanted camera resolution
-    private static final int CAMERA_HEIGHT = 360; // height of wanted camera resolution
+    private static final int CAMERA_WIDTH  = 1280; // width  of wanted camera resolution
+    private static final int CAMERA_HEIGHT = 720; // height of wanted camera resolution
 
     TelemetryPacket packet = new TelemetryPacket();
 
@@ -27,8 +27,8 @@ public class CAMShiftTest extends LinearOpMode {
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
         webcam = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "webcamSleeve"), cameraMonitorViewId);
         //OpenCV Pipeline
-        CAMShiftPipelineHopefully myPipeline;
-        webcam.setPipeline(myPipeline = new CAMShiftPipelineHopefully(telemetry,packet));
+        CAMShiftPipelineWMI myPipeline;
+        webcam.setPipeline(myPipeline = new CAMShiftPipelineWMI(telemetry,packet));
         // Configuration of Pipeline
         // Webcam Streaming
         webcam.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener()
@@ -54,23 +54,13 @@ public class CAMShiftTest extends LinearOpMode {
 
         telemetry.update();
 
-        packet.put("Position", 3);
         dashboard.sendTelemetryPacket(packet);
 
         waitForStart();
 
         while (opModeIsActive())
         {
-            try {
-                telemetry.addData("Center of rotated rectangle ", myPipeline.data);
-            }
-            catch (NullPointerException e)
-            {
-                telemetry.addData("Rot rect not yet initialized. ", e);
-            }
-
             telemetry.update();
-
         }
     }
 }
