@@ -87,7 +87,6 @@ public class CAMShiftPipelinePowerPlay extends OpenCvPipeline {
 
     Mat roi, roi_hist, hsv, dst;
     MatOfFloat range = new MatOfFloat(0, 256);
-
     MatOfInt histSize = new MatOfInt(180);
     MatOfInt channels = new MatOfInt(0);
 
