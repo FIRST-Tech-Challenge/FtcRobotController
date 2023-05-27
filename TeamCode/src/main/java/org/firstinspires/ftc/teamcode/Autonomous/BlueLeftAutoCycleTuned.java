@@ -29,7 +29,7 @@ public class BlueLeftAutoCycleTuned extends LinearOpMode {
 
     public static double dummyP = 2;
 
-    public static double dropX=28.4, dropY=5.2;
+    public static double dropX=28.4, dropY=4.2;
 
     public void runOpMode() {
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
