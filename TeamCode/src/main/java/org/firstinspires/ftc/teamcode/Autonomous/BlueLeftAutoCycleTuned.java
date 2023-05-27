@@ -29,7 +29,7 @@ public class BlueLeftAutoCycleTuned extends LinearOpMode {
 
     public static double dummyP = 2;
 
-    public static double dropX=28.4, dropY=4.3;
+    public static double dropX=28.4, dropY=5.2;
 
     public void runOpMode() {
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
@@ -44,13 +44,13 @@ public class BlueLeftAutoCycleTuned extends LinearOpMode {
         TrajectorySequence preloadtrajectory = robot.roadrun.trajectorySequenceBuilder(new Pose2d(36,63.25, Math.toRadians(90)))
                 .setReversed(true)
                 .splineToSplineHeading(new Pose2d(36, 40.25, toRadians(90)), toRadians(270))
-                .splineTo(new Vector2d(35, 22), toRadians(265))
+                .splineTo(new Vector2d(35, 22), toRadians(255))
                 .splineToSplineHeading(new Pose2d(27, 4.5, toRadians(40)), toRadians(230))
                 .build();
 
         TrajectorySequence pickupTrajectory = robot.roadrun.trajectorySequenceBuilder(new Pose2d(27,4.5,Math.toRadians(40)))
                 .setReversed(false)
-                .splineTo(new Vector2d(63.5, 11.5), Math.toRadians(0))
+                .splineTo(new Vector2d(63.5, 10.5), Math.toRadians(0))
                 .addTemporalMarker(robot::done)
                 .build();
 
@@ -161,9 +161,9 @@ public class BlueLeftAutoCycleTuned extends LinearOpMode {
                 robot.followTrajectorySequenceAsync(dropTrajectory.get(i));
                 robot.delay(0.3);
 //                robot.updateTrajectoryWithCam();
-                robot.delay(0.03+0.005*(3-i));
+                robot.delay(0.023+0.005*(3-i));
                 robot.liftToPosition(LIFT_HIGH_JUNCTION);
-                robot.delay(0.36+0.005*(3-i));
+                robot.delay(0.29+0.005*(3-i));
                 robot.raiseLiftArmToOuttake(true);
                 robot.delay(0.2);
                 robot.wideClaw(false);

@@ -284,7 +284,7 @@ public class Claw {
     public boolean isObL(){
         double leftD = leftDist.getDistance(INCH);
         double rightD = rightDist.getDistance(INCH);
-        if(leftD+rightD<10){
+        if(leftD+rightD<12){
             if(leftD<rightD){
                 isObR = false;
                 return true;

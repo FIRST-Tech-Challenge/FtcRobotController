@@ -23,6 +23,8 @@ public class QueueElement {
 
     private boolean isOptional = false;
 
+    private boolean option = true;
+
     public QueueElement(int queueNum, boolean p_asynchronous, int p_startCondition, boolean p_mustFinish) {
         queuePos = queueNum;
         asynchronous = p_asynchronous;
@@ -88,6 +90,10 @@ public class QueueElement {
     }
 
     public boolean isOptional(){return isOptional;}
+
+    public boolean getSkipOption(){return option;}
+
+    public void setSkipOption(boolean p_option){option = p_option;}
 
     public double getReadyTime() {
         return readyTime;

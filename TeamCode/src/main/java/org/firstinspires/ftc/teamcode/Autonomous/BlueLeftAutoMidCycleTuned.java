@@ -30,7 +30,7 @@ public class BlueLeftAutoMidCycleTuned extends LinearOpMode {
     public static double dropX = 28.5, dropY = 21, dropA = toRadians(320), dropET = toRadians(150);
 
 //    public static double pickupX1 = -46, pickupY1 = 10, pickupA1 = toRadians(180), pickupET1 = toRadians(180);
-public static double pickupX2 = 63, pickupY2 = 12, pickupA2 = toRadians(0), pickupET2 = toRadians(0);
+public static double pickupX2 = 63, pickupY2 = 11.5, pickupA2 = toRadians(0), pickupET2 = toRadians(0);
 
     double[] stackPos = {440, 330, 245, 100, 0};
 
@@ -48,7 +48,7 @@ public static double pickupX2 = 63, pickupY2 = 12, pickupA2 = toRadians(0), pick
                         Math.toRadians(90)))
                 .setReversed(true)
                 .lineToLinearHeading(new Pose2d(34, 48, toRadians(90)))
-                .splineToSplineHeading(new Pose2d(34.5, 12, toRadians(315)), toRadians(270))
+                .splineToSplineHeading(new Pose2d(32, 14, toRadians(315)), toRadians(270))
                 .lineToLinearHeading(new Pose2d(dropX, dropY, toRadians(315)))
 
 //                .addTemporalMarker(robot::done)
@@ -78,7 +78,7 @@ public static double pickupX2 = 63, pickupY2 = 12, pickupA2 = toRadians(0), pick
         }
         TrajectorySequence park1trajectory = robot.roadrun.trajectorySequenceBuilder(new Pose2d(dropX,dropY, dropA))
                 .setReversed(false)
-                .splineToLinearHeading(new Pose2d(60,16, toRadians(0)),toRadians(90))
+                .splineToSplineHeading(new Pose2d(60,16, toRadians(0)),toRadians(90))
 //                .splineToLinearHeading(new Pose2d(60,20, toRadians(90)),toRadians(90))
                 .build();
 
@@ -90,7 +90,7 @@ public static double pickupX2 = 63, pickupY2 = 12, pickupA2 = toRadians(0), pick
                 .setReversed(false)
                 .splineToLinearHeading(new Pose2d(dropX+4,dropY-9, toRadians(-5)),toRadians(dropA))
                 .setReversed(true)
-                .lineToLinearHeading(new Pose2d(13,12, toRadians(0)))
+                .lineToLinearHeading(new Pose2d(11,12, toRadians(0)))
                 .build();
 
         while (!isStarted()) {
@@ -112,8 +112,8 @@ public static double pickupX2 = 63, pickupY2 = 12, pickupA2 = toRadians(0), pick
             robot.updateLiftArmStates();
         }
         resetRuntime();
-//        dummyP = robot.cv.getPosition();
-        robot.cv.observeStick();
+        dummyP = robot.cv.getPosition();
+//        robot.cv.observeStick();
 
         if (isStopRequested()) return;
 

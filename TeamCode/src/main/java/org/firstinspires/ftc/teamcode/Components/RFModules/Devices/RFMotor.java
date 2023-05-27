@@ -25,12 +25,13 @@ public class RFMotor extends Motor {
     private ArrayList<Double> coefs = null;
     private ArrayList<Double> coefs2 = null;
     private ArrayList<String> inputlogs = new ArrayList<>();
-    public static double D = 0.00000, D2 = 0, kP = 5.0E-4, kA = 0.00008, R = 0,
-            MAX_VELOCITY = 1/kP, MAX_ACCELERATION = 12000, DECEL_DIST = 60, RESISTANCE=300;
+    public static double D = 0.00000, D2 = 0, kP = 5.0E-4, kA = 0.0001, R = 0,
+            MAX_VELOCITY = 1/kP, MAX_ACCELERATION = 11000, DECEL_DIST = 60, RESISTANCE=490;
     private double maxtickcount = 0;
     private double mintickcount = 0;
     private double DEFAULTCOEF1 = 0.0001, DEFAULTCOEF2 = 0.01;
     private double lastError = 0, lastTime = 0;
+    private double additionalTicks = 0;
     private double TICK_BOUNDARY_PADDING = 10, TICK_STOP_PADDING = 30;
     private double power = 0, position = 0, velocity = 0, targetPos = 0, resistance = 0, acceleration = 0, avgResistance, time = op.getRuntime();
     private String rfMotorName;
@@ -82,6 +83,7 @@ public class RFMotor extends Motor {
 
     }
 
+
     //same as above but using default coefficients
     public RFMotor(String motorName, DcMotor.RunMode runMode, boolean resetPos,
                    double maxtick, double mintick) {
@@ -125,6 +127,10 @@ public class RFMotor extends Motor {
         kP = velToAnalog;
     }
 
+    public void setCurrentPosition(double position){
+        additionalTicks = position-rfMotor.getCurrentPosition();
+    }
+
     public void setPosition(double targetpos) {
         power = 0;
         if (targetpos > maxtickcount) {
@@ -133,7 +139,7 @@ public class RFMotor extends Motor {
         if (targetpos < mintickcount) {
             targetpos = mintickcount;
         }
-        position = rfMotor.getCurrentPosition();
+        position = rfMotor.getCurrentPosition()+additionalTicks;
         targetPos = targetpos;
         acceleration = getVelocity() - velocity;
         velocity += acceleration;
@@ -262,7 +268,7 @@ public class RFMotor extends Motor {
 
 //        logger.log("/RobotLogs/GeneralRobot", inputlogs);
 //        logger.log("/MotorLogs/RFMotor" + rfMotorName, "Current Tick Count," + rfMotor.getCurrentPosition());
-        return rfMotor.getCurrentPosition();
+        return rfMotor.getCurrentPosition()+(int)additionalTicks;
     }
 
     public void setMode(DcMotor.RunMode runMode) {

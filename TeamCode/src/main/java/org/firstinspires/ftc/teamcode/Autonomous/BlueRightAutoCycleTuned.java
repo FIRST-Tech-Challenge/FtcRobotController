@@ -47,7 +47,7 @@ public class BlueRightAutoCycleTuned extends LinearOpMode {
 
         TrajectorySequence pickupTrajectory = robot.roadrun.trajectorySequenceBuilder(new Pose2d(-27,4.5,Math.toRadians(140)))
                 .setReversed(false)
-                .splineTo(new Vector2d(-62, 12), Math.toRadians(180))
+                .splineTo(new Vector2d(-64, 12), Math.toRadians(180))
                 .addTemporalMarker(robot::done)
                 .build();
 
@@ -64,7 +64,7 @@ public class BlueRightAutoCycleTuned extends LinearOpMode {
         for(int i=0;i<5;i++){
             pick.add(robot.roadrun.trajectorySequenceBuilder(new Pose2d(dropX,dropY + 0.35*i,Math.toRadians(135)))
                     .setReversed(false)
-                    .splineTo(new Vector2d(-62, 12+0.35*i), Math.toRadians(180))
+                    .splineTo(new Vector2d(-64, 11.5-0.3*i), Math.toRadians(180))
                     .addTemporalMarker(robot::done)
                     .build());
         }

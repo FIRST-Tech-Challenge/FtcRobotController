@@ -22,13 +22,17 @@ import java.util.List;
 public class StickObserverPipeline extends OpenCvPipeline {
     public static double  degPerPix = 22.5/320, widTimesDist = 820*12/16.0*14.7/11.5*9.5/9, focalLength = 715;
     double centerOfPole = 0, poleSize = 0;
+    boolean poleInView = false;
+    double[] contourDimensions = {0,0};
     ArrayList<double[]> frameList;
-    public static double LowS = 110;
+    public static double LowS = 150;
     public static double HighS = 255;
     public static double LowH = 18;
     public static double HighH = 32;
     public static double LowV = 50;
     public static double HighV = 255;
+    public static double minWidth = 220;
+    public static double minAreaThresh = 0.33;
 
 
 
@@ -118,11 +122,25 @@ public class StickObserverPipeline extends OpenCvPipeline {
             if(rectangle[maxAreaIndex].size.height<rectangle[maxAreaIndex].size.width) {
                 poleSize = rectangle[maxAreaIndex].size.height;
                 centerOfPole = rectangle[maxAreaIndex].center.x - 320;
+                if(rectangle[maxAreaIndex].size.width>480.0*0.8&&poleSize>minWidth){
+                    poleInView = true;
+                }
+                else{
+                    poleInView = false;
+                }
+                contourDimensions = new double[]{poleSize, rectangle[maxAreaIndex].size.width};
+
             }
             else{
                 poleSize = rectangle[maxAreaIndex].size.width;
                 centerOfPole = rectangle[maxAreaIndex].center.x - 320;
-
+                if(rectangle[maxAreaIndex].size.height>480.0*0.8&&poleSize>minWidth){
+                    poleInView = true;
+                }
+                else{
+                    poleInView = false;
+                }
+                contourDimensions = new double[]{poleSize, rectangle[maxAreaIndex].size.height};
             }
             frameList.add(new double[]{centerOfPole, poleSize});
         }
@@ -132,6 +150,12 @@ public class StickObserverPipeline extends OpenCvPipeline {
 //        //list of frames to reduce inconsistency, not too many so that it is still real-time
         if(frameList.size()>2) {
             frameList.remove(0);
+        }
+        if(Core.sumElems(thresh).val[0]/(480*640)/255>minAreaThresh){
+            poleInView=true;
+        }
+        else if (contourDimensions[0]==0&&contourDimensions[1]==0 && Core.sumElems(thresh).val[0]/(480*640)/255<minAreaThresh){
+            poleInView= false;
         }
 
         //release all the data
@@ -153,6 +177,10 @@ public class StickObserverPipeline extends OpenCvPipeline {
 //            Imgproc.rectangle(input, Imgproc.boundingRect(contoursPoly[maxAreaIndex]), lineColor, 5);
 //        }
         return input;
+    }
+
+    public double[] getContourDimensions(){
+        return contourDimensions;
     }
 
    public double centerOfPole() {

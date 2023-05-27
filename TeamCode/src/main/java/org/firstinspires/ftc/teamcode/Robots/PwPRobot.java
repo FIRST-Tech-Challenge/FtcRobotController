@@ -51,6 +51,7 @@ import org.firstinspires.ftc.teamcode.roadrunner.trajectorysequence.TrajectorySe
 import org.firstinspires.ftc.teamcode.roadrunner.util.IMU;
 
 import java.util.ArrayList;
+import java.util.Objects;
 
 public class PwPRobot extends BasicRobot {
     private Aligner aligner = null;
@@ -267,30 +268,43 @@ public class PwPRobot extends BasicRobot {
     public void teleAutoAim(Trajectory trajectory) {
         roadrun.followTrajectoryAsync(trajectory);
     }
-    public boolean[] checkIsOb(boolean l, boolean r){
+    public boolean[] checkIsOb(boolean l, boolean r, Pose2d endPose){
         boolean[] vals = {l,r};
-        if(queuer.queue(true, !roadrun.isBusy()||l||r)) {
-            if (isObL() && !l && !r) {
+        if(queuer.queue(true, !roadrun.isBusy()||l||r|| clawSwitch.isSwitched()|| CLAW_CLOSING.getStatus())) {
+            if (isObL(endPose) && !l && !r) {
                 vals[0]=true;
+                done();
+                roadrun.breakFollowing();
+                roadrun.setMotorPowers(0,0,0,0);
             }
-            if(isObR()&&!r&&!l){
+            if(isObR(endPose)&&!r&&!l){
+                done();
                 vals[1]=true;
+                roadrun.breakFollowing();
+                roadrun.setMotorPowers(0,0,0,0);
             }
         }
         return vals;
     }
-    public boolean isObL() {
-        if (roadrun.getPoseEstimate().vec().distTo(roadrun.getCurrentTraj().end().vec()) > 4) {
-            logger.log("/RobotLogs/GeneralRobot", ""+roadrun.getPoseEstimate().vec().distTo(roadrun.getCurrentTraj().end().vec()));
-
+    public boolean isObL(Pose2d endPos) {
+        if (roadrun.getCurrentTraj()==null||roadrun.getPoseEstimate().vec().distTo(endPos.vec()) > 10) {
+            if(roadrun.getCurrentTraj()!=null&&claw.isObL()) {
+                logger.log("/RobotLogs/GeneralRobot", "obstacle"+roadrun.getPoseEstimate()+"|" + roadrun.getCurrentTraj().end()+"|" + roadrun.getPoseEstimate().vec().distTo(roadrun.getCurrentTraj().end().vec()));
+            }else{
+                return false;
+            }
             return claw.isObL();
         }
         return false;
     }
 
-    public boolean isObR() {
-        if (roadrun.getPoseEstimate().vec().distTo(roadrun.getCurrentTraj().end().vec()) > 4) {
-            logger.log("/RobotLogs/GeneralRobot", ""+roadrun.getPoseEstimate().vec().distTo(roadrun.getCurrentTraj().end().vec()));
+    public boolean isObR(Pose2d endPos) {
+        if (roadrun.getCurrentTraj()==null||roadrun.getPoseEstimate().vec().distTo(endPos.vec()) > 10) {
+            if(roadrun.getCurrentTraj()!=null&&claw.isObR()) {
+                logger.log("/RobotLogs/GeneralRobot", "obstacle"+roadrun.getPoseEstimate()+"|" + roadrun.getCurrentTraj().end()+"|" + roadrun.getPoseEstimate().vec().distTo(roadrun.getCurrentTraj().end().vec()));
+            }else{
+                return false;
+            }
             return claw.isObR();
         }
         return false;
@@ -298,12 +312,13 @@ public class PwPRobot extends BasicRobot {
 
     public void followTrajectorySequenceAsync(TrajectorySequence trajectorySequence) {
         if (queuer.queue(false, !roadrun.isBusy() && roadrun.getPoseEstimate().vec().distTo(trajectorySequence.end().vec()) < 3)) {
-            if (!roadrun.isBusy()) {
+            if (!roadrun.isBusy()||roadrun.getCurrentTraj().end()!= trajectorySequence.end()) {
                 TrajectorySequenceBuilder builder = roadrun.trajectorySequenceBuilder(roadrun.getPoseEstimate());
                 for (int i = 0; i < trajectorySequence.size(); i++) {
                     builder.addSequenceSegment(trajectorySequence.get(i));
                 }
-                roadrun.followTrajectorySequenceAsync(builder.build());
+//                builder.addTemporalMarker(this::done);
+                roadrun.followTrajectorySequenceAsync(trajectorySequence);
             }
         }
     }
@@ -313,11 +328,12 @@ public class PwPRobot extends BasicRobot {
             queuer.queue(false, false, true);
         } else {
             if (queuer.queue(false, !roadrun.isBusy() && roadrun.getPoseEstimate().vec().distTo(trajectorySequence.end().vec()) < 3, isOptional)) {
-                if (!roadrun.isBusy()) {
+                if (!roadrun.isBusy()||roadrun.getCurrentTraj().end()!= trajectorySequence.end()) {
                     TrajectorySequenceBuilder builder = roadrun.trajectorySequenceBuilder(roadrun.getPoseEstimate());
                     for (int i = 0; i < trajectorySequence.size(); i++) {
                         builder.addSequenceSegment(trajectorySequence.get(i));
                     }
+//                    builder.addTemporalMarker(this::done);
                     roadrun.followTrajectorySequenceAsync(builder.build());
                 }
             }
@@ -384,11 +400,11 @@ public class PwPRobot extends BasicRobot {
         op.telemetry.addData("diffsy", diffs[0]);
         op.telemetry.addData("diffsx", diffs[1]);
         op.telemetry.addData("diffsa", diffs[2]);
-        double slidesConst = 1 - lift.getLiftPosition() / 1500.0;
-        double[] powers = {powerb * magnitude - a - angleCorrection + (diffs[0] - diffs[1]) * .5 * kV * slidesConst,
-                powera * magnitude - a - angleCorrection + (diffs[0] + diffs[1]) * .5 * kV * slidesConst,
-                powerb * magnitude + a + angleCorrection + (diffs[0] - diffs[1]) * .5 * kV * slidesConst,
-                powera * magnitude + a + angleCorrection + (diffs[0] + diffs[1]) * .5 * kV * slidesConst
+        double slidesConst = 1 - lift.getLiftPosition() / 1200.0;
+        double[] powers = {powerb * magnitude - a - angleCorrection + (diffs[0] - diffs[1]) * .3 * kV * slidesConst,
+                powera * magnitude - a - angleCorrection + (diffs[0] + diffs[1]) * .3 * kV * slidesConst,
+                powerb * magnitude + a + angleCorrection + (diffs[0] - diffs[1]) * .3 * kV * slidesConst,
+                powera * magnitude + a + angleCorrection + (diffs[0] + diffs[1]) * .3 * kV * slidesConst
         };
         if(abs(powers[0]-a)>1){
             powers[2]+=a/2;
@@ -510,17 +526,39 @@ public class PwPRobot extends BasicRobot {
         } else {
             if (queuer.queue(true, !roadrun.isBusy() && roadrun.getPoseEstimate().vec().distTo(trajectorySequence.end().vec()) < 3, isOptional)) {
                 if (!roadrun.isBusy()) {
-                    TrajectorySequenceBuilder builder = roadrun.trajectorySequenceBuilder(roadrun.getPoseEstimate());
-                    for (int i = 0; i < trajectorySequence.size(); i++) {
-                        builder.addSequenceSegment(trajectorySequence.get(i));
-                    }
-                    roadrun.followTrajectorySequenceAsync(builder.build());
-                } else if (roadrun.getCurrentTraj().end() != trajectorySequence.end()) {
-                    TrajectorySequenceBuilder builder = roadrun.trajectorySequenceBuilder(roadrun.getPoseEstimate().plus(roadrun.getCurrentTraj().start()).div(2));
-                    for (int i = 0; i < trajectorySequence.size(); i++) {
-                        builder.addSequenceSegment(trajectorySequence.get(i));
-                    }
-                    roadrun.changeTrajectorySequence(builder.build());
+                    roadrun.changeTrajectorySequence(trajectorySequence);
+
+                } else if (roadrun.isBusy()&&roadrun.getCurrentTraj()!= trajectorySequence) {
+                    roadrun.changeTrajectorySequence(trajectorySequence);
+                }
+            }
+        }
+    }
+    public void clearObstacle(Pose2d clearPos, boolean isOptional){
+//        if (queuer.isFirstLoop()) {
+//            queuer.queue(true, false, true);
+//        } else {
+//            if (queuer.queue(true, Objects.equals(roadrun.getCurrentTraj().end(), new Pose2d(65, 11.51, 0)), isOptional)) {
+//                done();
+//            }
+//        }
+        if (queuer.isFirstLoop()) {
+            queuer.queue(false, false, true);
+        } else {
+            if (queuer.queue(false, !roadrun.isBusy() , isOptional)) {
+                TrajectorySequence traj = roadrun.trajectorySequenceBuilder(roadrun.getPoseEstimate())
+                        .setReversed(false)
+                        .splineToLinearHeading(clearPos, clearPos.getHeading())
+                        .setReversed(true)
+                        .splineToSplineHeading(new Pose2d(51, 11.5, Math.toRadians(0)), Math.toRadians(180))
+                        .setReversed(false)
+                        .splineTo(new Vector2d(65, 11.51), Math.toRadians(0))
+                        .build();
+                if (!roadrun.isBusy()) {
+                    roadrun.followTrajectorySequence(traj);
+
+                } else if (roadrun.isBusy()&&roadrun.getCurrentTraj()!= traj) {
+                    roadrun.followTrajectorySequence(traj);
                 }
             }
         }
@@ -674,6 +712,18 @@ public class PwPRobot extends BasicRobot {
     public void partycolorwave() {
         leds.red();
     }
+    public boolean poleInView(boolean isInView){
+        boolean val = isInView;
+        if(queuer.queue(false, !roadrun.isBusy())) {
+            if (cv.poleInView() && isInView) {
+                val=false;
+            }
+            else if(!cv.poleInView()&&!isInView){
+                val=true;
+            }
+        }
+        return val;
+    }
 
     public void teleOp() {
         roadrun.update();
@@ -687,6 +737,8 @@ public class PwPRobot extends BasicRobot {
 //        gp.readGamepad(op.gamepad2.a, "gamepad1_a", "Status");
         boolean isX2 = gp.readGamepad(op.gamepad2.x, "gamepad2_x", "Status");
         boolean isA = gp.readGamepad(op.gamepad1.x, "gamepad1_a", "Status");
+        boolean isX = gp.readGamepad(op.gamepad2.x, "gamepad2_x", "Status");
+
         boolean isFlipper = gp.readGamepad(op.gamepad1.left_bumper, "gamepad1_left_bumper", "Status");
 //        gp.readGamepad(op.gamepad2.a, "gamepad1_a", "Status");
 //        gp.readGamepad(op.gamepad2.b, "gamepad1_b", "Status");
@@ -729,6 +781,9 @@ public class PwPRobot extends BasicRobot {
             if (FLIP_OUTTAKE.getStatus()) {
                 flipper.lowerFlippas();
             }
+        }
+        if(isX2){
+            lift.setPeak();
         }
 
         //omnidirectional movement + turning
@@ -798,7 +853,9 @@ public class PwPRobot extends BasicRobot {
         op.telemetry.addData("closePole", field.getClosePole());
         op.telemetry.addData("seenPolePose", field.calcPolePose(roadrun.getPoseEstimate()));
         op.telemetry.addData("currentDropPosition", field.getDropPose());
+        op.telemetry.addData("contourDimensions",cv.getContourDimensions()[0]+","+cv.getContourDimensions()[1]);
         op.telemetry.addData("avoid velo", field.correctionVelo());
+        op.telemetry.addData("poleInView", cv.poleInView());
         double[] vals = {op.gamepad1.left_stick_x, op.gamepad1.left_stick_y, op.gamepad1.right_stick_x};
         double[] minBoost = {0.1, 0.1, 0.05};
         boolean boosted = false;
@@ -902,6 +959,9 @@ public class PwPRobot extends BasicRobot {
         }
         if (op.getRuntime() - claw.getLastTime() > 1 && op.getRuntime() - claw.getLastTime() < 1.3 && CLAW_CLOSED.getStatus() && lift.getStackPos() == lift.getLiftTarget()) {
             lift.setLiftTarget(0);
+        }
+        if (op.getRuntime() - claw.getLastTime() > 0.3 && op.getRuntime() - claw.getLastTime() < 0.7 && CLAW_CLOSED.getStatus()&& clawSwitch.isSwitched() && lift.getStackPos() == lift.getLiftTarget()) {
+liftArm.raiseLiftArmToOuttake();
         }
         if (CLAW_OPEN.getStatus() && ARM_INTAKE.getStatus() && !CLAW_WIDE.getStatus()) {
             claw.teleClaw();

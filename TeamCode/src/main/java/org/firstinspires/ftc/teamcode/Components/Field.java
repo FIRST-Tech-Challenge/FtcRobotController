@@ -110,12 +110,14 @@ public class Field {
         Pose2d curPos = roadrun.getPoseEstimate();
 
         calcPolePose(curPos);
-        double dropRad = 9;
+        double dropRad = 8;
         //        coords[1]+=5;
         polePos = new Pose2d(polePose.getX()-cos(curPos.getHeading())*dropRad, polePose.getY()-sin(curPos.getHeading())*dropRad, polePose.minus(curPos.vec()).angle()+PI);
         Pose2d pos = polePos;
         logger.log("/RobotLogs/GeneralRobot", "polePos" + polePos);
         logger.log("/RobotLogs/GeneralRobot", "dist" + polePos.vec().distTo(roadrun.getCurrentTraj().end().vec()));
+        logger.log("/RobotLogs/GeneralRobot", "polePos" + roadrun.getCurrentTraj().end());
+
         if (abs(pos.vec().distTo(roadrun.getCurrentTraj().end().vec())) < 10 && (roadrun.getCurrentTraj() == null || abs(polePos.vec().distTo(roadrun.getCurrentTraj().end().vec())) < 5)) {
             return true;
         }

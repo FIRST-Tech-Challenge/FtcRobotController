@@ -59,6 +59,9 @@ public class Queuer {
                 inde = i;
                 break;
             }
+            else{
+                queueElements.get(i).setDone(true);
+            }
         }
         if (inde != 908) {
             queueElements.get(inde).setDone(true);
@@ -71,8 +74,8 @@ public class Queuer {
 
     public void updateStartConditions(int ind){
         if(ind<queueElements.size()) {
-            if (queueElements.get(ind).startCondition != recalcStartPosSkipOptional(ind, false, queueElements.get(ind).isAsynchronous(), queueElements.get(ind).isOptional())) {
-                queueElements.get(ind).setStartCondition(recalcStartPosSkipOptional(ind, false, queueElements.get(ind).isAsynchronous(), queueElements.get(ind).isOptional()));
+            if (queueElements.get(ind).startCondition != recalcStartPosSkipOptional(ind,  queueElements.get(ind).isAsynchronous(), queueElements.get(ind).isOptional())) {
+                queueElements.get(ind).setStartCondition(recalcStartPosSkipOptional(ind,  queueElements.get(ind).isAsynchronous(), queueElements.get(ind).isOptional()));
                 logger.log("/RobotLogs/GeneralRobot", ind + "StartCondition" + queueElements.get(ind).startCondition);
                 updateStartConditions(ind + 1);
             }
@@ -88,9 +91,11 @@ public class Queuer {
         updateQueuer(done_condition,p_isOptional);
         boolean isReady = false;
         //determine if currently queued element should be executed with extra_condition(probably position threshold)
-        if(queueElements.get(currentlyQueueing).isOptional()&&p_isOptional&&!firstLoop){
+        if(queueElements.get(currentlyQueueing).isOptional()&&p_isOptional&&!queueElements.get(currentlyQueueing).isDone()&&!firstLoop){
+            queueElements.get(currentlyQueueing).setSkipOption(p_isOptional);
             updateStartConditions(currentlyQueueing);
             isReady = queueElements.get(currentlyQueueing).isReady(currentEvent, extra_condition);
+
             logger.log("/RobotLogs/GeneralRobot","isReady"+isReady+"extracon"+extra_condition+"isStarted"+queueElements.get(currentlyQueueing).isStarted()+"startCon"+queueElements.get(currentlyQueueing).startCondition+"curEvent"+currentEvent);
         }
         else if (!queueElements.get(currentlyQueueing).isMustFinish() && !queueElements.get(currentlyQueueing).isShouldFinish()) {
@@ -164,15 +169,15 @@ public class Queuer {
         }
         return startCondition;
     }
-    private int recalcStartPosSkipOptional(int ind, boolean skipOptional,boolean p_asynchronous, boolean p_Optional){
+    private int recalcStartPosSkipOptional(int ind,boolean p_asynchronous, boolean p_Optional){
         int startCondition = -1;
         boolean shouldFinish = false;
-        if(p_Optional&&skipOptional){
+        if(ind<queueElements.size()&&p_Optional&&queueElements.get(ind).getSkipOption()){
             p_asynchronous=true;
         }
         for (int i = 0; i < ind; i++) {
             if ((!queueElements.get(ind - i - 1).isAsynchronous() || queueElements.get(ind - i - 1).isMustFinish())
-                    &&(!queueElements.get(ind - i - 1).isOptional()|| !skipOptional)) {
+                    &&(!queueElements.get(ind - i - 1).isOptional()|| !queueElements.get(ind-i-1).getSkipOption())) {
                 startCondition = ind - i - 1;
                 if (p_asynchronous) {
                     if (i + 1 >= queueElements.size()) {
@@ -190,7 +195,7 @@ public class Queuer {
     private void createQueueElement(boolean p_asynchrnous, boolean p_isOptional) {
         int startCondition = -1;
         if (!mustFinish) {
-            startCondition = recalcStartPosSkipOptional(queueElements.size(), true, p_asynchrnous, p_isOptional);
+            startCondition = recalcStartPosSkipOptional(queueElements.size(),p_asynchrnous, p_isOptional);
             queueElements.add(new QueueElement(queueElements.size(), p_asynchrnous, startCondition, mustFinish, false, p_isOptional));
             logger.log("/RobotLogs/GeneralRobot", queueElements.size() - 1 + "StartCondition" + startCondition);
         } else {

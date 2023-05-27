@@ -209,6 +209,8 @@ public class CVMaster {
     public double[] rotatedConarCoord(){return cone.coneRotatedPolarCoord();}
     public boolean isObstacle(){return cone.isObstacle();}
     public double[] knockedConarCoord(){return cone.coneNockedPolarCoord();}
+    public boolean poleInView(){return opencv.poleInView;}
+    public double[] getContourDimensions(){return opencv.getContourDimensions();}
     public void stopCamera(){
         webcam.stopRecordingPipeline();
         webcam.stopStreaming();
