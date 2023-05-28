@@ -30,10 +30,11 @@ public class SampleTeleOp extends CommandOpMode {
         m_drive = new DriveSubsystem(m_frontLeft, m_frontRight, m_backLeft, m_backRight, WHEEL_DIAMETER);
 
         m_driverOp = new GamepadEx(gamepad1);
-        m_driveCommand = new DefaultDrive(m_drive, () -> m_driverOp.getLeftY(), () -> m_driverOp.getLeftX(), () -> m_driverOp.getLeftX());
+        m_driveCommand = new DefaultDrive(m_drive, () -> -m_driverOp.getLeftY(), () -> -m_driverOp.getRightX(), () -> -m_driverOp.getLeftX());
 
         register(m_drive);
         m_drive.setDefaultCommand(m_driveCommand);
+
     }
 
 }
