@@ -26,7 +26,12 @@ public class DriveDistance extends CommandBase {
     @Override
     public void initialize() {
         m_drive.resetEncoders();
-        m_drive.drive(0, m_speed, 0);
+        m_drive.drive(0, 1, 0);
+    }
+
+    @Override
+    public void execute() {
+        m_drive.drive(0, 1, 0);
     }
 
     @Override
@@ -37,7 +42,7 @@ public class DriveDistance extends CommandBase {
 
     @Override
     public boolean isFinished() {
-        return Math.abs(m_drive.getAverageEncoderDistance()) >= m_distance;
+        return false;
     }
 
 }
