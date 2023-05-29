@@ -83,6 +83,8 @@ public class Queuer {
     }
     public boolean queue(boolean p_asynchronous, boolean done_condition, boolean extra_condition, boolean p_isOptional) {
         //create new queue element if it is first loop
+        logger.log("/RobotLogs/GeneralRobot","");
+
         if (firstLoop) {
             createQueueElement(p_asynchronous, p_isOptional);
         }
@@ -118,14 +120,14 @@ public class Queuer {
         return isReady || queueElements.get(currentlyQueueing).isStarted() && !queueElements.get(currentlyQueueing).isDone();
     }
     public void setToNow(){
-        done();
-        for(int i=currentlyQueueing;i<queueElements.size();i++){
-            queueElements.get(i).setDone(false);
-            queueElements.get(i).setStarted(false);
-        }
-        currentEvent = queueElements.get(currentlyQueueing).startCondition;
-        logger.log("/RobotLogs/GeneralRobot", "setToNOW"+currentlyQueueing);
-        done();
+//        done();
+//        for(int i=currentlyQueueing;i<queueElements.size();i++){
+//            queueElements.get(i).setDone(false);
+//            queueElements.get(i).setStarted(false);
+//        }
+//        currentEvent = queueElements.get(currentlyQueueing).startCondition;
+//        logger.log("/RobotLogs/GeneralRobot", "setToNOW"+currentlyQueueing);
+//        done();
     }
 
     public void reset() {

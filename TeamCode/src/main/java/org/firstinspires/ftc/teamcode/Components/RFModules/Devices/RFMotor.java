@@ -25,8 +25,8 @@ public class RFMotor extends Motor {
     private ArrayList<Double> coefs = null;
     private ArrayList<Double> coefs2 = null;
     private ArrayList<String> inputlogs = new ArrayList<>();
-    public static double D = 0.00000, D2 = 0, kP = 5.0E-4, kA = 0.0001, R = 0,
-            MAX_VELOCITY = 1/kP, MAX_ACCELERATION = 11000, DECEL_DIST = 60, RESISTANCE=490;
+    public static double D = 0.00000, D2 = 0, kP = 5.0E-4, kA = 0.00013, R = 0,
+            MAX_VELOCITY = 1/kP, MAX_ACCELERATION = 1/kA, DECEL_DIST = 60, RESISTANCE=610;
     private double maxtickcount = 0;
     private double mintickcount = 0;
     private double DEFAULTCOEF1 = 0.0001, DEFAULTCOEF2 = 0.01;
@@ -62,6 +62,7 @@ public class RFMotor extends Motor {
         logger.createFile("/MotorLogs/RFMotor" + motorName, "Runtime    Component               " +
                 "Function               Action");
         rfMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        additionalTicks =0;
     }
 
     //same as above but assuming motor direction is foward
@@ -139,7 +140,7 @@ public class RFMotor extends Motor {
         if (targetpos < mintickcount) {
             targetpos = mintickcount;
         }
-        position = rfMotor.getCurrentPosition()+additionalTicks;
+        position = getCurrentPosition();
         targetPos = targetpos;
         acceleration = getVelocity() - velocity;
         velocity += acceleration;

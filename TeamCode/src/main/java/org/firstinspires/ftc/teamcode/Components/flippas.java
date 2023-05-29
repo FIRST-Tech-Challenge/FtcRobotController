@@ -21,12 +21,12 @@ public class flippas {
     private final double LIFT_ARM_INTAKE_POS = 0.3;
     private final double LIFT_ARM_CYCLE_POS = 0.955;
 
-    private final double LIFT_ARM_OUTTAKE_POS = 0.8;
+    private final double LIFT_ARM_OUTTAKE_POS = 0.76;
     public static double LIFT_ARM_FLIP_POS = 0.5;
 
     public double liftArmServoLastSwitchTime = 0;
     //temporary
-    public final double LIFT_ARM_SERVO_SWITCH_TIME = 0.2;
+    public final double LIFT_ARM_SERVO_SWITCH_TIME = 0.5;
     double liftPos =0.0;
 
     //States:
@@ -83,10 +83,14 @@ public class flippas {
     public void update() {
         if (flippaStates.FLIP_LOWERING.status && op.getRuntime() - flippaServo.getLastTime() > LIFT_ARM_SERVO_SWITCH_TIME) {
             flippaStates.FLIP_INTAKE.setStatus(true);
+
         }
         if (flippaStates.FLIP_RAISING.status && op.getRuntime() - flippaServo.getLastTime() > LIFT_ARM_SERVO_SWITCH_TIME) {
             flippaStates.FLIP_OUTTAKE.setStatus(true);
+//            flippaServo.disableServos();
+//            flippaServo.disableServos();
         }
+
     }
 
     public void toggleArmPosition() {
@@ -110,6 +114,7 @@ public class flippas {
             //set state of claw open to true
             flippaStates.FLIP_LOWERING.setStatus(true);
             liftPos = LIFT_ARM_INTAKE_POS;
+            liftArmServoLastSwitchTime = op.getRuntime();
 
             //log to general robot log that the claw has been opened through function openClaw()
             logger.log("/RobotLogs/GeneralRobot", flippaServo.getDeviceName() + ",lowerFlippas()"

@@ -21,7 +21,7 @@ import java.util.List;
 @Config
 public class StickObserverPipeline extends OpenCvPipeline {
     public static double  degPerPix = 22.5/320, widTimesDist = 820*12/16.0*14.7/11.5*9.5/9, focalLength = 715;
-    double centerOfPole = 0, poleSize = 0;
+    double centerOfPole = 0, poleSize = 0, contourSize = 0.0;
     boolean poleInView = false;
     double[] contourDimensions = {0,0};
     ArrayList<double[]> frameList;
@@ -31,8 +31,8 @@ public class StickObserverPipeline extends OpenCvPipeline {
     public static double HighH = 32;
     public static double LowV = 50;
     public static double HighV = 255;
-    public static double minWidth = 220;
-    public static double minAreaThresh = 0.33;
+    public static double minWidth = 120;
+    public static double minAreaThresh = 0.18;
 
 
 
@@ -151,7 +151,8 @@ public class StickObserverPipeline extends OpenCvPipeline {
         if(frameList.size()>2) {
             frameList.remove(0);
         }
-        if(Core.sumElems(thresh).val[0]/(480*640)/255>minAreaThresh){
+        contourSize = Core.sumElems(thresh).val[0]/(480*640)/255;
+        if(contourSize>minAreaThresh){
             poleInView=true;
         }
         else if (contourDimensions[0]==0&&contourDimensions[1]==0 && Core.sumElems(thresh).val[0]/(480*640)/255<minAreaThresh){
@@ -205,6 +206,9 @@ public class StickObserverPipeline extends OpenCvPipeline {
             }
         }
         return average/(frameList.size()-1);
+    }
+    public double getContourSize(){
+        return contourSize;
     }
 
     public double[] poleRotatedPolarCoord() {

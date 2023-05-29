@@ -28,6 +28,7 @@ import java.util.ArrayList;
 public class BlueLeftAutoCycleBoost extends LinearOpMode {
     public void runOpMode() {
         BlueLeftHigh autoRunner = new BlueLeftHigh(true,this);
+        sleep(500);
         autoRunner.theWholeProgram();
     }
 }

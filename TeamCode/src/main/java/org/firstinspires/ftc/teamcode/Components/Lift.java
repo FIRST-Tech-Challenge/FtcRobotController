@@ -41,7 +41,7 @@ public class Lift {
     private ArrayList<Double> coefficients = new ArrayList<>();
     private boolean done = true;
     private double lastManualTime = 0.0;
-    double[] coneStack = {500*0.6+0,410*0.6-30,315*0.6-60,180*0.6 - 100};
+    double[] coneStack = {500*0.6+10,410*0.6-10,315*0.6-40,180*0.6 - 80};
     ;
     private int stackLevel = 0;
     private double lastStackTime =0;
@@ -104,7 +104,7 @@ public class Lift {
     }
 
     public enum LiftConstants {
-        LIFT_HIGH_JUNCTION(MAX_LIFT_TICKS - 70, false),
+        LIFT_HIGH_JUNCTION(MAX_LIFT_TICKS - 90, false),
         LIFT_MED_JUNCTION(860*.8-100, false),
         LIFT_LOW_JUNCTION(15*.75, false),
         LIFT_GROUND_JUNCTION(0, false),
@@ -149,6 +149,10 @@ public class Lift {
 
     public void setPeak(){
         liftMotor.setCurrentPosition(1286);
+    }
+
+    public double getStackLevelHeight(int i){
+        return coneStack[i];
     }
 
     public void updateLiftStates() {
@@ -312,6 +316,9 @@ public class Lift {
             setLiftPower(0);
         }
 
+    }
+    public void setStacklevel(int i){
+        setLiftTarget(coneStack[i]);
     }
 
     public void iterateConeStackDown() {
