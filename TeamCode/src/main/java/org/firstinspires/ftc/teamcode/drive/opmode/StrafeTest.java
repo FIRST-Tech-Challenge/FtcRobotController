@@ -17,6 +17,7 @@ import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
  */
 @Config
 @Autonomous(group = "drive")
+@Disabled
 public class StrafeTest extends LinearOpMode {
     public static double DISTANCE = 60; // in
 

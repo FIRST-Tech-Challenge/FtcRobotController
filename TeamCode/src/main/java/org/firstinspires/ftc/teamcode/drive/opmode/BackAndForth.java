@@ -27,6 +27,7 @@ import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
  */
 @Config
 @Autonomous(group = "drive")
+@Disabled
 public class BackAndForth extends LinearOpMode {
 
     public static double DISTANCE = 50;
