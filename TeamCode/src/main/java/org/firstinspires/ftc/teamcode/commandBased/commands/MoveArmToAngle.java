@@ -17,7 +17,7 @@ public class MoveArmToAngle extends CommandBase {
 
     @Override
     public void initialize() {
-        m_armSubsystem.setAngle(angle);
+        m_armSubsystem.setArmAngle(angle);
     }
 
     @Override

@@ -4,11 +4,18 @@ import com.ThermalEquilibrium.homeostasis.Parameters.PIDCoefficientsEx;
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.roadrunner.control.PIDCoefficients;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
+import com.arcrobotics.ftclib.hardware.motors.Motor;
+import com.arcrobotics.ftclib.util.InterpLUT;
 
 import org.firstinspires.ftc.teamcode.classes.Vector2d;
 
 @Config
 public class Constants {
+
+    //motor types
+    public static Motor.GoBILDA DRIVE_MOTOR = Motor.GoBILDA.RPM_312;
+    public static Motor.GoBILDA ELEVATOR_MOTOR = Motor.GoBILDA.RPM_312;
+    public static Motor.GoBILDA ARM_MOTOR = Motor.GoBILDA.RPM_117;
 
     //drivetrain constants
     public static double TRACK_WIDTH = 13;
@@ -35,4 +42,24 @@ public class Constants {
     public static double ELE_MID_HIGH = 10;
     public static double ELE_HIGH = 15;
 
+    //arm pid
+    public static double ARM_KP = 0;
+    public static double ARM_KI = 0;
+    public static double ARM_KD = 0;
+    public static double ARM_KCOS = 0.1;
+
+    public static double ARM_KP_0 = 0;
+    public static double ARM_KP_90 = 0;
+    public static double ARM_KI_0 = 0;
+    public static double ARM_KI_90 = 0;
+    public static double ARM_KD_0 = 0;
+    public static double ARM_KD_90 = 0;
+
+    //arm positions
+    public static double ARM_FRONT = -100;
+    public static double ARM_IDLE = 20;
+    public static double ARM_BACK = 100;
+    public static double ARM_MAX = 120;
+
+    public static InterpLUT ARM_LUT = new InterpLUT();
 }

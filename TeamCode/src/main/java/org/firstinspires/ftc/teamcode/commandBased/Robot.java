@@ -75,9 +75,9 @@ public class Robot extends BlackOp {
         MoveElevator eleHigh = new MoveElevator(elevatorSS, Constants.ELE_HIGH);
 
         //create arm commands
-        MoveArmIncrementally armForward = new MoveArmIncrementally(armSS, 10);
-        MoveArmIncrementally armBackward = new MoveArmIncrementally(armSS, -10);
-        MoveArmToAngle armIdle = new MoveArmToAngle(armSS, 0);
+        MoveArmToAngle armBackward = new MoveArmToAngle(armSS, -90);
+        MoveArmToAngle armIdle = new MoveArmToAngle(armSS, 30);
+        MoveArmToAngle armForward = new MoveArmToAngle(armSS, 90);
 
         //start robot in field-centric mode
         robotCentric.schedule();
@@ -127,9 +127,9 @@ public class Robot extends BlackOp {
             driver.dpad_up.onRise(eleHigh::schedule);
 
             //arm controls
-//            driver.dpad_right.onRise(armForward::schedule);
-//            driver.dpad_left.onRise(armBackward::schedule);
-            //driver.y.onRise(armIdle::schedule);
+            driver.dpad_right.onRise(armForward::schedule);
+            driver.dpad_left.onRise(armBackward::schedule);
+            driver.y.onRise(armIdle::schedule);
 
             // Draw the target on the field
             fieldOverlay.setStroke("#dd2c00");
