@@ -50,7 +50,7 @@ public class presets extends OpMode {
 
 
         Crain.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        Crain.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+       // Crain.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         Spin.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         Spin.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
     }
@@ -89,10 +89,9 @@ public class presets extends OpMode {
             lightoff = gamepad1.b;
             light = gamepad1.a;
 
-            crainpower = gamepad2.right_stick_y;
+              crainpower = gamepad2.right_stick_y;
 
-            guideDown=gamepad2.x;
-            guideUp=gamepad2.y;
+            guideDown=gamepad1.x;
 
             spinpowerup = gamepad2.dpad_right;
             spinpowerdown =gamepad2.dpad_left;
@@ -174,28 +173,29 @@ public class presets extends OpMode {
             }
             //Pole Preset
             if (smallJunction) {
-                Crain.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+                //Crain.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
                 Crain.setTargetPosition(-3000);
                 Crain.setPower(1);
                 Crain.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
-                Crain.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+                //Crain.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
             }
             if (mediumJunction) {
-                Crain.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-                Crain.setTargetPosition(-4500);
+                //Crain.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+                Crain.setTargetPosition(-3600);
                 Crain.setPower(1);
                 Crain.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                Crain.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+                //Crain.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
             }
             if (tallJunction) {
-                Crain.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-                Crain.setTargetPosition(-6500);
+               // Crain.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+                Crain.setTargetPosition(-2000);
                 Crain.setPower(1);
                 Crain.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                Crain.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+                //Crain.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
             }
-
+            telemetry.addData("encoder val",Crain.getCurrentPosition());
+            telemetry.update();
         }
 
 
