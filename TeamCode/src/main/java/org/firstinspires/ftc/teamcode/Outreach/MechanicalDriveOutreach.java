@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.Outreach;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
@@ -33,10 +34,10 @@ public class MechanicalDriveOutreach
         lb = hardwareMap.get(DcMotor.class, "lb");
         lf = hardwareMap.get(DcMotor.class, "lf");
 
-        lf.setDirection(DcMotor.Direction.FORWARD);
-        rf.setDirection(DcMotor.Direction.REVERSE);
-        lb.setDirection(DcMotor.Direction.FORWARD);
-        rb.setDirection(DcMotor.Direction.REVERSE);
+        lf.setDirection(DcMotor.Direction.REVERSE);
+        rf.setDirection(DcMotor.Direction.FORWARD);
+        lb.setDirection(DcMotor.Direction.REVERSE);
+        rb.setDirection(DcMotor.Direction.FORWARD);
 
         // reset encoders
         setMotorMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -77,7 +78,7 @@ public class MechanicalDriveOutreach
         double drive = -gamepad.left_stick_y;
         double turn = gamepad.right_stick_x;
         double strafe = gamepad.left_stick_x;
-        speedFactor = 0.5;
+        speedFactor = 0.3;
         driveMotors(drive, turn, strafe, speedFactor);
     }
 
@@ -141,6 +142,26 @@ public class MechanicalDriveOutreach
     {
         telemetry.addData("Motors", "lf(%.2f), rf(%.2f), lb(%.2f), rb(%.2f)", leftPowerFront, rightPowerFront, leftPowerBack, rightPowerBack);
         telemetry.addData("Speed control", speedFactor);
+    }
+
+    public void stop()
+    {
+        lf.setPower(0);
+        rf.setPower(0);
+        lb.setPower(0);
+        rb.setPower(0);
+        lf.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        rf.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        lb.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        rb.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+    }
+
+    public void inch()
+    {
+        lf.setPower(0.2);
+        rf.setPower(0.2);
+        lb.setPower(0.2);
+        rb.setPower(0.2);
     }
 }
 

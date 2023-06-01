@@ -6,8 +6,11 @@ import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 
+import java.awt.font.NumericShaper;
+
 public class Shooter
 {
+    MechanicalDriveOutreach mechanicalDriveOutreach;
     private DcMotor intakeWheels;
     private DcMotor intakeMill;
     private DcMotor shooter;
@@ -28,6 +31,8 @@ public class Shooter
         intakeWheels.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         intakeMill.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         shooter.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
+        mechanicalDriveOutreach = new MechanicalDriveOutreach(hardwareMap);
     }
 
     public void controlMethod(Gamepad gamepad)
@@ -40,8 +45,21 @@ public class Shooter
     {
         if (gamepad.a)
         {
+            mechanicalDriveOutreach.stop();
+            mechanicalDriveOutreach.inch();
             intakeWheels.setPower(1);
             intakeMill.setPower(1);
+            try
+            {
+                Thread.sleep(250);
+            }
+            catch (InterruptedException e) {e.printStackTrace();}
+            mechanicalDriveOutreach.stop();
+            try
+            {
+                Thread.sleep(2250);
+            }
+            catch (InterruptedException e) {e.printStackTrace();}
         }
         else if (gamepad.right_bumper)
         {
@@ -62,10 +80,18 @@ public class Shooter
     {
         if (gamepad.y)
         {
+            mechanicalDriveOutreach.stop();
             shooter.setPower(1);
             trigger.setPosition(1);
-            while (trigger.getPosition() != 0) {}
+            try
+            {
+                Thread.sleep(1000);
+            } catch (InterruptedException e) {e.printStackTrace();}
             trigger.setPosition(0);
+            try
+            {
+                Thread.sleep(1000);
+            } catch (InterruptedException e) {e.printStackTrace();}
             shooter.setPower(0);
             shooter.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         }

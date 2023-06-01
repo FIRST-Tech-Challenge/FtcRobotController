@@ -13,6 +13,8 @@ public class BasicDrive extends OpMode
     public void init()
     {
         mecanumDriveBase = new MechanicalDriveBase(hardwareMap);
+        telemetry.addData("Initialized", " Press start");
+        telemetry.update();
     }
 
     @Override

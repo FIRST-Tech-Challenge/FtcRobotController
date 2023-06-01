@@ -14,6 +14,8 @@ public class OutreachCommandClass extends OpMode
     {
         mechanicalDriveOutreach = new MechanicalDriveOutreach(hardwareMap);
         shooter = new Shooter(hardwareMap);
+        telemetry.addData("Initialized", " Press start");
+        telemetry.update();
     }
 
     @Override
@@ -28,10 +30,10 @@ public class OutreachCommandClass extends OpMode
 /** Below is config and code notes **/
 
 /** Drive base expansion hub**/
-// lf = 3
-// rf = 2
-// lb = 1
-// rb = 0
+// lf = 3, REVERSE
+// rf = 2, FORWARD
+// lb = 1, REVERSE
+// rb = 0, FORWARD
 
 /** Firing and intake control hub**/
 //  intakeWheel =  0  |||  direction forward
