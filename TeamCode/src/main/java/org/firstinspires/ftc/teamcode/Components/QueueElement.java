@@ -23,7 +23,7 @@ public class QueueElement {
 
     private boolean isOptional = false;
 
-    private boolean option = true;
+    private boolean option = false;
 
     public QueueElement(int queueNum, boolean p_asynchronous, int p_startCondition, boolean p_mustFinish) {
         queuePos = queueNum;

@@ -123,7 +123,6 @@ public class PwPRobot extends BasicRobot {
 //2023-01-05 14:19:08.807 9944-12811/com.qualcomm.ftcrobotcontroller I/art: Starting a blocking GC Alloc
 
     public void stop() {
-        lift.setLiftPower(0.0);
         logger.logPos(roadrun.getPoseEstimate());
         cv.stopCamera();
         logger.log("/RobotLogs/GeneralRobot", "program stoped");
@@ -276,13 +275,13 @@ public class PwPRobot extends BasicRobot {
                 vals[0]=true;
                 done();
                 roadrun.breakFollowing();
-                roadrun.setMotorPowers(-1.0,-1.0,-1.0,-1.0);
+                roadrun.setMotorPowers(-1.0,-1.0,-0.95,-0.95);
             }
             if(isObR(endPose)&&!r&&!l){
                 done();
                 vals[1]=true;
                 roadrun.breakFollowing();
-                roadrun.setMotorPowers(-1.0,-1.0,-1.0,-1.0);
+                roadrun.setMotorPowers(-1.0,-1.0,-0.95,-0.95);
             }
         }
         return vals;
@@ -313,8 +312,15 @@ public class PwPRobot extends BasicRobot {
 
     public void followTrajectorySequenceAsync(TrajectorySequence trajectorySequence) {
         if (queuer.queue(false, !roadrun.isBusy() && roadrun.getPoseEstimate().vec().distTo(trajectorySequence.end().vec()) < 3)) {
-            if (!roadrun.isBusy()||roadrun.getCurrentTraj().end()!= trajectorySequence.end()) {
+            if (!roadrun.isBusy()) {
                 roadrun.followTrajectorySequenceAsync(trajectorySequence);
+            }
+            if(roadrun.getCurrentTraj().end()!= trajectorySequence.end()){
+                TrajectorySequenceBuilder bob = roadrun.trajectorySequenceBuilder(roadrun.getPoseEstimate());
+                for(int i=0;i< trajectorySequence.size();i++){
+                    bob.addSequenceSegment(trajectorySequence.get(i));
+                }
+                roadrun.followTrajectorySequenceAsync(bob.build());
             }
             roadrun.update();
         }
@@ -532,20 +538,20 @@ public class PwPRobot extends BasicRobot {
                 traj = roadrun.trajectorySequenceBuilder(roadrun.getPoseEstimate())
                         .setReversed(false)
                         .splineTo(new Vector2d(48, 11.5), Math.toRadians(0))
-                        .splineToLinearHeading(clearPos, clearPos.getHeading())
+                        .lineToLinearHeading(clearPos)
                         .setReversed(true)
                         .splineToSplineHeading(new Pose2d(51, 11.5, Math.toRadians(0)), Math.toRadians(180))
                         .setReversed(false)
-                        .splineTo(new Vector2d(63.5, 11.01), Math.toRadians(0))
+                        .splineTo(new Vector2d(65, 11.01), Math.toRadians(0))
                         .build();
             } else {
                 traj = roadrun.trajectorySequenceBuilder(roadrun.getPoseEstimate())
                         .setReversed(false)
-                        .splineToLinearHeading(clearPos, clearPos.getHeading())
+                        .lineToLinearHeading(clearPos)
                         .setReversed(true)
                         .splineToSplineHeading(new Pose2d(51, 11.5, Math.toRadians(0)), Math.toRadians(180))
                         .setReversed(false)
-                        .splineTo(new Vector2d(63.5, 11.01), Math.toRadians(0))
+                        .splineTo(new Vector2d(65, 11.01), Math.toRadians(0))
                         .build();
             }
             return traj;
@@ -583,13 +589,11 @@ public class PwPRobot extends BasicRobot {
         } else {
             if (queuer.queue(false, !roadrun.isBusy() , isOptional)) {
 //                queuer.setToNow();
-
-
                 if (!roadrun.isBusy()) {
-                    roadrun.followTrajectorySequence(buildClearTraj(clearPos));
+                    roadrun.followTrajectorySequenceAsync(buildClearTraj(clearPos));
 
-                } else if (roadrun.isBusy()&&!roadrun.getCurrentTraj().end().vec().equals(new Vector2d(63.5,11.01))) {
-                    roadrun.followTrajectorySequence(buildClearTraj(clearPos));
+                } else if (roadrun.isBusy()&&!roadrun.getCurrentTraj().end().vec().equals(new Vector2d(65,11.01))) {
+                    roadrun.followTrajectorySequenceAsync(buildClearTraj(clearPos));
                 }
             }
         }
@@ -713,48 +717,48 @@ public class PwPRobot extends BasicRobot {
     }
 
     public void heartbeatRed() {
-        leds.heartbeatred();
+//        leds.heartbeatred();
     }
 
     public void darkGreen() {
-        leds.darkgreen();
+//        leds.darkgreen();
     }
 
     public void violet() {
-        leds.violet();
+//        leds.violet();
     }
 
     public void blue() {
-        leds.blue();
+//        leds.blue();
     }
 
     public void rainbowRainbow() {
-        leds.rainbowrainbow();
+//        leds.rainbowrainbow();
     }
 
     public void cp1shot() {
-        leds.cp1shot();
+//        leds.cp1shot();
     }
 
     public void setStackLevelColor(int level) {
-        leds.setStackLevelColor(level);
+//        leds.setStackLevelColor(level);
     }
 
     public void partycolorwave() {
-        leds.red();
+//        leds.red();
     }
     public boolean poleInView(boolean isInView){
         boolean val = isInView;
         if(queuer.queue(false, !roadrun.isBusy())) {
-            if (cv.poleInView() && isInView) {
-                val=false;
-            }
-            else if(!cv.poleInView()&&!isInView){
-                logger.log("/RobotLogs/GeneralRobot","contourDimensions"+cv.getContourDimensions()[0]+","+cv.getContourDimensions()[1]);
-                logger.log("/RobotLogs/GeneralRobot","contourSize"+cv.getContourSize());
-
-                val=true;
-            }
+//            if (cv.poleInView() && isInView) {
+//                val=false;
+//            }
+//            else if(!cv.poleInView()&&!isInView){
+//                logger.log("/RobotLogs/GeneralRobot","contourDimensions"+cv.getContourDimensions()[0]+","+cv.getContourDimensions()[1]);
+//                logger.log("/RobotLogs/GeneralRobot","contourSize"+cv.getContourSize());
+//
+//                val=true;
+//            }
         }
         return val;
     }

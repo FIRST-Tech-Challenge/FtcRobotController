@@ -78,12 +78,15 @@ public class Queuer {
                 queueElements.get(ind).setStartCondition(recalcStartPosSkipOptional(ind,  queueElements.get(ind).isAsynchronous(), queueElements.get(ind).isOptional()));
                 logger.log("/RobotLogs/GeneralRobot", ind + "StartCondition" + queueElements.get(ind).startCondition);
                 updateStartConditions(ind + 1);
+                updateStartConditions(ind + 2);
+                updateStartConditions(ind + 3);
+
             }
         }
     }
     public boolean queue(boolean p_asynchronous, boolean done_condition, boolean extra_condition, boolean p_isOptional) {
         //create new queue element if it is first loop
-        logger.log("/RobotLogs/GeneralRobot","");
+//        logger.log("/RobotLogs/GeneralRobot","");
 
         if (firstLoop) {
             createQueueElement(p_asynchronous, p_isOptional);
@@ -98,7 +101,7 @@ public class Queuer {
             updateStartConditions(currentlyQueueing);
             isReady = queueElements.get(currentlyQueueing).isReady(currentEvent, extra_condition);
 
-            logger.log("/RobotLogs/GeneralRobot","isReady"+isReady+"extracon"+extra_condition+"isStarted"+queueElements.get(currentlyQueueing).isStarted()+"startCon"+queueElements.get(currentlyQueueing).startCondition+"curEvent"+currentEvent);
+//            logger.log("/RobotLogs/GeneralRobot","isReady"+isReady+"extracon"+extra_condition+"isStarted"+queueElements.get(currentlyQueueing).isStarted()+"startCon"+queueElements.get(currentlyQueueing).startCondition+"curEvent"+currentEvent);
         }
         else if (!queueElements.get(currentlyQueueing).isMustFinish() && !queueElements.get(currentlyQueueing).isShouldFinish()) {
             isReady = queueElements.get(currentlyQueueing).isReady(currentEvent, extra_condition);
@@ -174,12 +177,15 @@ public class Queuer {
     private int recalcStartPosSkipOptional(int ind,boolean p_asynchronous, boolean p_Optional){
         int startCondition = -1;
         boolean shouldFinish = false;
-        if(ind<queueElements.size()&&p_Optional&&queueElements.get(ind).getSkipOption()){
+        if(ind<queueElements.size()&&p_Optional&&!queueElements.get(ind).getSkipOption()){
             p_asynchronous=true;
+        }
+        else if(ind>=queueElements.size()&&p_Optional){
+            p_asynchronous = true;
         }
         for (int i = 0; i < ind; i++) {
             if ((!queueElements.get(ind - i - 1).isAsynchronous() || queueElements.get(ind - i - 1).isMustFinish())
-                    &&(!queueElements.get(ind - i - 1).isOptional()|| !queueElements.get(ind-i-1).getSkipOption())) {
+                    &&(!queueElements.get(ind - i - 1).isOptional()|| queueElements.get(ind-i-1).getSkipOption())) {
                 startCondition = ind - i - 1;
                 if (p_asynchronous) {
                     if (i + 1 >= queueElements.size()) {
@@ -238,6 +244,9 @@ public class Queuer {
         for (int i = 0; i < queueElements.size(); i++) {
             if (queueElements.get(i).isDone()) {
                 completeCurrentEvent = i;
+                if(currentEvent<completeCurrentEvent){
+                    currentEvent = completeCurrentEvent;
+                }
                 //do nothing
             } else {
                 break;
