@@ -211,7 +211,7 @@ public class BlueRightHigh {
     public void clearObstacleL(int i) {
 //        robot.setToNow(clObL.get(i));
         robot.delay(0.3);
-        robot.clearObstacle(new Pose2d(56, 20, Math.toRadians(90)),clObL.get(i)||clObR.get(i));
+        robot.clearObstacleRight(new Pose2d(-56, 20, Math.toRadians(90)),clObL.get(i)||clObR.get(i));
 //            robot.setStackHeight(i, clObL.get(i)||clObR.get(i));
 
 //        if (robot.roadrun.getPoseEstimate().vec().distTo(pickupTrajectory.end().vec()) < 10) {

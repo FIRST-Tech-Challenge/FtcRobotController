@@ -25,8 +25,8 @@ public class RFMotor extends Motor {
     private ArrayList<Double> coefs = null;
     private ArrayList<Double> coefs2 = null;
     private ArrayList<String> inputlogs = new ArrayList<>();
-    public static double D = 0.00000, D2 = 0, kP = 5.0E-4, kA = 0.00014, R = 0,
-            MAX_VELOCITY = 1/kP, MAX_ACCELERATION = 1/kA, DECEL_DIST = 60, RESISTANCE=610;
+    public static double D = 0.00000, D2 = 0, kP = 5.0E-4, kA = 0.00015, R = 0,
+            MAX_VELOCITY = 1/kP, MAX_ACCELERATION = 1/(kA*0.8), DECEL_DIST = 60, RESISTANCE=500;
     private double maxtickcount = 0;
     private double mintickcount = 0;
     private double DEFAULTCOEF1 = 0.0001, DEFAULTCOEF2 = 0.01;

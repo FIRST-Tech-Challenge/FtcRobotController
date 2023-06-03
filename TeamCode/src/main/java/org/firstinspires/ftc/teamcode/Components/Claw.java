@@ -305,9 +305,8 @@ public class Claw {
         return leftDist.getDistance(INCH)+rightDist.getDistance(INCH);
     }
     public void printLR(){
-        telemetry.addData("leftDist", leftDist.getDistance(INCH));
-        telemetry.addData("rightDist", rightDist.getDistance(INCH));
-        telemetry.update();
+        op.telemetry.addData("leftDist", leftDist.getDistance(INCH));
+        op.telemetry.addData("rightDist", rightDist.getDistance(INCH));
     }
 
     //look at and return distance to the top of the stick

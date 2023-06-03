@@ -74,7 +74,7 @@ public class flippas {
         flippaServo.setPositions(LIFT_ARM_INTAKE_POS);
 
         //set state of claw open to true
-        flippaStates.FLIP_INTAKE.setStatus(true);
+        flippaStates.FLIP_OUTTAKE.setStatus(true);
 
         flippaServo.setLasttime(-0.5);
 
