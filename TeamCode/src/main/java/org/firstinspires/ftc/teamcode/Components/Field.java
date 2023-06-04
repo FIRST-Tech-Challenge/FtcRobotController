@@ -110,7 +110,7 @@ public class Field {
         Pose2d curPos = roadrun.getPoseEstimate();
 
         calcPolePose(curPos);
-        double dropRad = 8;
+        double dropRad = -8;
         //        coords[1]+=5;
         polePos = new Pose2d(polePose.getX()-cos(curPos.getHeading())*dropRad, polePose.getY()-sin(curPos.getHeading())*dropRad, polePose.minus(curPos.vec()).angle()+PI);
         Pose2d pos = polePos;
@@ -118,7 +118,7 @@ public class Field {
         logger.log("/RobotLogs/GeneralRobot", "dist" + polePos.vec().distTo(roadrun.getCurrentTraj().end().vec()));
         logger.log("/RobotLogs/GeneralRobot", "polePos" + roadrun.getCurrentTraj().end());
 
-        if (abs(pos.vec().distTo(roadrun.getCurrentTraj().end().vec())) < 10 && (roadrun.getCurrentTraj() == null || abs(polePos.vec().distTo(roadrun.getCurrentTraj().end().vec())) < 5)) {
+        if (abs(pos.vec().distTo(roadrun.getCurrentTraj().end().vec())) < 10 && !(roadrun.getCurrentTraj() == null || abs(polePos.vec().distTo(roadrun.getCurrentTraj().end().vec())) >= 5)) {
             return true;
         }
         return false;
@@ -212,7 +212,7 @@ public class Field {
         Pose2d curPos = roadrun.getPoseEstimate();
 
         calcConePose(curPos);
-        double pickRad = 4;
+        double pickRad = -4;
         //        coords[1]+=5;
         conePos = new Pose2d(conePose.getX()+cos(curPos.getHeading())*pickRad, conePose.getY()+sin(curPos.getHeading())*pickRad, conePose.minus(curPos.vec()).angle());
         double [] coords = {conePose.angle()-curPos.getHeading(), conePose.distTo(curPos.vec())-pickRad};
@@ -240,12 +240,16 @@ public class Field {
         return polePose;
     }
     public Vector2d calcConePose(Pose2d curPos){
-        double camRad = 2;
+        double camRad = 1.5;
         double[] rotCoord = cv.rotatedConarCoord();
+        rotCoord[1]*=0.9;
         if(abs(rotCoord[1]) < 18 && rotCoord[1] > 3&&rotCoord!=prevRotCoord){
             double t = -rotCoord[0]*PI/180+curPos.getHeading();
-            conePose = new Vector2d(curPos.getX()+cos(t)*rotCoord[1]+cos(curPos.getHeading())*camRad,
-                    curPos.getY()+sin(t)*rotCoord[1]+sin(curPos.getHeading())*camRad);
+            op.telemetry.addData("t",t);
+            op.telemetry.addData("y[1]",sin(t)*rotCoord[1]);
+            op.telemetry.addData("y[2]",sin(curPos.getHeading())*camRad);
+            conePose = new Vector2d(curPos.getX()+cos(t)*rotCoord[1]+cos(curPos.getHeading())*camRad+sin(curPos.getHeading()),
+                    curPos.getY()+sin(t)*rotCoord[1]+sin(curPos.getHeading())*camRad+cos(curPos.getHeading()));
         }
         prevRotCoord=rotCoord;
         return conePose;
