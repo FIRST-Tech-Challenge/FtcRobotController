@@ -64,7 +64,7 @@ public class PowerPlayLeftCyclingUtah extends LinearOpMode {
     int armTarget = 0, liftTarget = 0;
 
     public static double xStack = -54;
-    public static double yStack = -14;
+    public static double yStack = -12;
 
     public static int turnJunction = 45;
     boolean retractArm=false;
@@ -108,7 +108,7 @@ public class PowerPlayLeftCyclingUtah extends LinearOpMode {
 
 
         Trajectory cyclePickupPath1 = drive.trajectoryBuilder(backUpFromJunction.end().plus(new Pose2d(0,0,Math.toRadians(turnJunction+90))))
-                .splineToLinearHeading(new Pose2d(new Vector2d(xStack-9, yStack),Math.toRadians(180)),Math.toRadians(180))
+                .splineToLinearHeading(new Pose2d(new Vector2d(xStack-8, yStack),Math.toRadians(180)),Math.toRadians(180))
                 .build();
 
 
@@ -309,7 +309,7 @@ public class PowerPlayLeftCyclingUtah extends LinearOpMode {
                                 .build();
                         //sleep(100);
                         drive.openClaw();
-                        sleep(300);
+                        sleep(500);
 
 
                         drive.followTrajectoryAsync(cycleBackUpFromJunction);

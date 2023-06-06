@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.masters;
 
+import static org.firstinspires.ftc.masters.BadgerConstants.ALIGNER_IN;
+import static org.firstinspires.ftc.masters.BadgerConstants.ALIGNER_OUT;
 import static org.firstinspires.ftc.masters.BadgerConstants.ARM_BACK_TOP;
 import static org.firstinspires.ftc.masters.BadgerConstants.ARM_BOTTOM;
 import static org.firstinspires.ftc.masters.BadgerConstants.ARM_BOTTOM_JUNCTION;
@@ -62,6 +64,7 @@ public class PowerPlayTeleopColorado extends LinearOpMode {
     Servo clawServo = null;
     DcMotorEx armMotor = null;
     Servo tippingServo = null;
+    Servo alignerServo = null;
 
     double maxPowerConstraint = 1;
 
@@ -124,6 +127,7 @@ public class PowerPlayTeleopColorado extends LinearOpMode {
         clawServo = hardwareMap.servo.get("clawServo");
         armMotor = hardwareMap.get(DcMotorEx.class,"armServo");
         tippingServo = hardwareMap.servo.get("tippingServo");
+        alignerServo = hardwareMap.servo.get("alignerServo");
 
         // Set the drive motor direction:
         leftFrontMotor.setDirection(DcMotor.Direction.REVERSE);
@@ -168,6 +172,7 @@ public class PowerPlayTeleopColorado extends LinearOpMode {
         // Wait for the game to start (driver presses PLAY)
 
         clawServo.setPosition(CLAW_OPEN);
+        alignerServo.setPosition(ALIGNER_IN);
         tippingServo.setPosition(TIP_CENTER);
         boolean moveArm = false;
         boolean openClaw = true;
@@ -276,6 +281,7 @@ public class PowerPlayTeleopColorado extends LinearOpMode {
 
             } else if (gamepad2.b) {
                // tippingServo.setPosition(TIP_CENTER);
+                alignerServo.setPosition(ALIGNER_IN);
                 clawServo.setPosition(CLAW_OPEN);
 
             }
@@ -324,20 +330,22 @@ public class PowerPlayTeleopColorado extends LinearOpMode {
             }
 
             if (gamepad2.left_bumper){
-                previousState = currentState;
-                currentState = STATE.BACK_MID;
-                slideSelection = SLIDE_MIDDLE_BACK - liftOffset;
-                armSelection = ARM_BACK_TOP - armOffset;
-                if (previousState == STATE.ZERO || previousState == STATE.MANUAL){
-                    armTarget = armSelection;
-                } else {
-                    armTarget = armSelection;
-                    slideTarget = slideSelection;
-                }
-                set=false;
-                clawServo.setPosition(CLAW_CLOSED);
+//                previousState = currentState;
+//                currentState = STATE.BACK_MID;
+//                slideSelection = SLIDE_MIDDLE_BACK - liftOffset;
+//                armSelection = ARM_BACK_TOP - armOffset;
+//                if (previousState == STATE.ZERO || previousState == STATE.MANUAL){
+//                    armTarget = armSelection;
+//                } else {
+//                    armTarget = armSelection;
+//                    slideTarget = slideSelection;
+//                }
+//                set=false;
+//                clawServo.setPosition(CLAW_CLOSED);
+                alignerServo.setPosition(ALIGNER_OUT);
+
             }
-            else if (gamepad2.dpad_right) {
+            if (gamepad2.dpad_right) {
                 previousState = currentState;
                 currentState = STATE.MID;
                 slideSelection = SLIDE_MIDDLE - liftOffset;
@@ -353,6 +361,8 @@ public class PowerPlayTeleopColorado extends LinearOpMode {
             }
 
             if (gamepad2.dpad_down) {
+
+                alignerServo.setPosition(ALIGNER_IN);
 
                 previousState = currentState;
                 currentState = STATE.BOTTOM;
@@ -370,6 +380,7 @@ public class PowerPlayTeleopColorado extends LinearOpMode {
             }
 
             if (gamepad2.dpad_left) {
+                alignerServo.setPosition(ALIGNER_IN);
                 if (currentState!=STATE.ZERO) {
                     previousState = currentState;
                     currentState = STATE.ZERO;

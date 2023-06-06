@@ -154,7 +154,7 @@ public class PowerPlayLeft extends LinearOpMode {
                 break;
                 case SCORE_2:
                     if (!drive.isBusy()){
-                        drive.turnAsync(Math.toRadians(turnJunction));
+                        drive.turnAsync(Math.toRadians(-turnJunction-3));
                         currentState= State.TURN_1;
                     } else {
                         armTarget = ARM_MID_TOP;
@@ -179,7 +179,7 @@ public class PowerPlayLeft extends LinearOpMode {
                 }
                     break;
                 case ALIGN:
-                    if (drive.alignPole(CV.sleevePipeline.position)){
+                    if (drive.alignPole(CV.sleevePipeline.position) || new Date().getTime()- alignTime >500){
                         currentState = FORWARD;
                         forward = drive.trajectoryBuilder(drive.getPoseEstimate())
                                 .forward(8)
