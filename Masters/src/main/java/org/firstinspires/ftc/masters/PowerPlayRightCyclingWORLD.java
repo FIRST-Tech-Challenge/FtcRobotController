@@ -106,7 +106,7 @@ public class PowerPlayRightCyclingWORLD extends LinearOpMode {
         Trajectory firstDepositPath1 = drive.trajectoryBuilder(startPose)
                 //.splineToConstantHeading(new Vector2d(35, -14), Math.toRadians(90))
                 .lineToSplineHeading(new Pose2d(new Vector2d(34, -45), Math.toRadians(90)))
-                .splineTo(new Vector2d(34.5, -12.5 ), Math.toRadians(135))
+                .splineTo(new Vector2d(34.5, -13.5 ), Math.toRadians(135))
 //                .lineToSplineHeading(new Pose2d(new Vector2d(37, -30), Math.toRadians(90)))
 //                .splineToSplineHeading(new Pose2d(36, -12 , Math.toRadians(135)), Math.toRadians(135))
                 .build();
@@ -120,7 +120,7 @@ public class PowerPlayRightCyclingWORLD extends LinearOpMode {
 //                .build();
 
         Trajectory backUpFromJunction = drive.trajectoryBuilder(firstDepositPath1.end())
-                .back(8)
+                .back(6)
                 .build();
 
 
@@ -214,7 +214,7 @@ public class PowerPlayRightCyclingWORLD extends LinearOpMode {
                         telemetry.addData("done aligning", "score cone");
                         currentState = State.FIRST_DEPOSIT_SCORE_CONE;
                         Trajectory trajForward = drive.trajectoryBuilder(drive.getPoseEstimate())
-                                .forward(4)
+                                .forward(6)
                                 .build();
                         drive.followTrajectoryAsync(trajForward);
                     }
@@ -222,7 +222,7 @@ public class PowerPlayRightCyclingWORLD extends LinearOpMode {
                 case FIRST_DEPOSIT_SCORE_CONE:
                     if (!drive.isBusy()) {
                         drive.openClaw();
-                        sleep(250);
+                        sleep(350);
                         drive.closeAutoClaw();
                         drive.followTrajectoryAsync(backUpFromJunction);
                         currentState = State.BACK_UP_FROM_JUNCTION;
@@ -334,7 +334,7 @@ public class PowerPlayRightCyclingWORLD extends LinearOpMode {
                         cycleBackUpFromJunction=drive.trajectoryBuilder(drive.getPoseEstimate())
                                 .forward(8)
                                 .build();
-                        sleep(220);
+                        sleep(350);
                         drive.followTrajectoryAsync(cycleBackUpFromJunction);
                         currentState = State.CYCLE_BACK_UP;
                     }
