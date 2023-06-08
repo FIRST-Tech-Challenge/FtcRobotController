@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.Autonomous;
 
 import static org.firstinspires.ftc.teamcode.Components.Claw.ClawStates.CLAW_CLOSED;
 import static org.firstinspires.ftc.teamcode.Components.Lift.LiftConstants.LIFT_HIGH_JUNCTION;
+import static org.firstinspires.ftc.teamcode.Components.Lift.LiftConstants.LIFT_MED_JUNCTION;
 import static org.firstinspires.ftc.teamcode.roadrunner.drive.SampleMecanumDrive.getAccelerationConstraint;
 import static org.firstinspires.ftc.teamcode.roadrunner.drive.SampleMecanumDrive.getVelocityConstraint;
 import static java.lang.Math.toRadians;
@@ -25,7 +26,7 @@ public class BlueLeftMid {
     private boolean boosted;
     PwPRobot robot=null;
     LinearOpMode op;
-    double dummyP = 0, dropX=28.5, dropY=21, dropA = toRadians(320);
+    double dummyP = 0, dropX=29.5, dropY=20, dropA = toRadians(320);
     ;
     TrajectorySequence preloadtrajectory=null, pickupTrajectory=null, park1trajectory=null,
             park2trajectory=null, park3trajectory=null, clearLTrajectory=null, clearRTrajectory=null,
@@ -51,7 +52,7 @@ public class BlueLeftMid {
                 .setReversed(true)
                 .lineToLinearHeading(new Pose2d(34, 48, toRadians(90)))
                 .splineToSplineHeading(new Pose2d(32, 14, toRadians(315)), toRadians(270))
-                .lineToLinearHeading(new Pose2d(dropX, dropY, toRadians(315)))
+                .lineToLinearHeading(new Pose2d(dropX+0.8, dropY-0.5, toRadians(315)))
                 .build();
 
 //        pickupTrajectory = robot.roadrun.trajectorySequenceBuilder(new Pose2d(dropX,dropY,Math.toRadians(315)))
@@ -74,14 +75,14 @@ public class BlueLeftMid {
         for (int i = 0; i < 5; i++) {
             dropTrajectory.add(robot.roadrun.trajectorySequenceBuilder(new Pose2d(63.5,11.5,Math.toRadians(0)))
                     .setReversed(true)
-                    .splineTo(new Vector2d(dropX,dropY+0.25*i), toRadians(315))
+                    .splineTo(new Vector2d(dropX,dropY+0.7*i), toRadians(150))
                     .addTemporalMarker(robot::done)
                     .build());
         }
         for (int i = 0; i < 5; i++) {
             pick.add(robot.roadrun.trajectorySequenceBuilder(new Pose2d(dropX,dropY,dropA))
                     .setReversed(false)
-                    .splineTo(new Vector2d(63,11.5+0.25*i), 0, robot.roadrun.getVelocityConstraint(50, 9, 14) , robot.roadrun.getAccelerationConstraint(60))
+                    .splineTo(new Vector2d(65,11+0.6*i), 0, robot.roadrun.getVelocityConstraint(50, 9, 14) , robot.roadrun.getAccelerationConstraint(60))
                     .addTemporalMarker(robot::done)
                     .build());
         }
@@ -144,14 +145,14 @@ public class BlueLeftMid {
         robot.delay(0.3);
         robot.raiseLiftArmToOuttake(true);
         robot.delay(0.5);
-        robot.liftToPosition(LIFT_HIGH_JUNCTION);
+        robot.liftToPosition(LIFT_MED_JUNCTION);
         robot.wideClaw(false);
     }
 
     public boolean pick(int i) {
         int temp = i-1;
         if (i == 0) {
-            robot.followTrajectorySequenceAsync(pickupTrajectory);
+            robot.followTrajectorySequenceAsync(pick.get(0));
         } else {
             robot.followTrajectorySequenceAsync(pick.get(temp));
         }
@@ -171,7 +172,10 @@ public class BlueLeftMid {
         robot.delay(0.1);
         robot.wideClaw();
         robot.delay(0.3);
-        if (i != 4) {
+        if(i==0){
+            robot.iterateConestackUp();
+        }
+        else if (i != 4) {
             robot.iterateConestackDown();
         } else {
             robot.liftToPosition(0);
@@ -194,7 +198,7 @@ public class BlueLeftMid {
 //            robot.updateTrajectoryWithCam();
         }
 //        robot.delay(0.023 + 0.005 * (3 - i));
-        robot.liftToPosition(LIFT_HIGH_JUNCTION);
+        robot.liftToPosition(LIFT_MED_JUNCTION);
         robot.delay(0.1 + 0.005 * (3 - i));
         robot.raiseLiftArmToOuttake(true);
         if (boosted) {

@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.Autonomous;
 
 import static org.firstinspires.ftc.teamcode.Components.Claw.ClawStates.CLAW_CLOSED;
 import static org.firstinspires.ftc.teamcode.Components.Lift.LiftConstants.LIFT_HIGH_JUNCTION;
+import static org.firstinspires.ftc.teamcode.Components.Lift.LiftConstants.LIFT_MED_JUNCTION;
 import static org.firstinspires.ftc.teamcode.roadrunner.drive.SampleMecanumDrive.getAccelerationConstraint;
 import static org.firstinspires.ftc.teamcode.roadrunner.drive.SampleMecanumDrive.getVelocityConstraint;
 import static java.lang.Math.toRadians;
@@ -25,7 +26,7 @@ public class BlueRightMid {
     private boolean boosted;
     PwPRobot robot=null;
     LinearOpMode op;
-    double dummyP = 0, dropX=-29.5, dropY=18.5, dropA = toRadians(215);
+    double dummyP = 0, dropX=-29.5, dropY=19.5, dropA = toRadians(215);
 
     TrajectorySequence preloadtrajectory=null, pickupTrajectory=null, park1trajectory=null,
             park2trajectory=null, park3trajectory=null, clearLTrajectory=null, clearRTrajectory=null,
@@ -42,14 +43,14 @@ public class BlueRightMid {
     }
 
     public void init() {
-        Pose2d startPose = new Pose2d(-35.9, 62.25, Math.toRadians(90));
+        Pose2d startPose = new Pose2d(-35.9, 63.25, Math.toRadians(90));
         robot.setPoseEstimate(startPose);
         robot.cv.observeSleeve();
         op.resetRuntime();
         robot.cp1shot();
         preloadtrajectory = robot.roadrun.trajectorySequenceBuilder(new Pose2d(-34.5,63.25, Math.toRadians(90)))
                 .setReversed(true)
-                .lineToLinearHeading(new Pose2d(-34, 46, toRadians(90)))
+                .lineToLinearHeading(new Pose2d(-33, 46, toRadians(90)))
                 .splineToSplineHeading(new Pose2d(-35, 9, toRadians(225)), toRadians(270))
                 .lineToLinearHeading(new Pose2d(-28, 19, toRadians(225)))
                 .addTemporalMarker(robot::done)
@@ -82,7 +83,7 @@ public class BlueRightMid {
         for (int i = 0; i < 5; i++) {
             pick.add(robot.roadrun.trajectorySequenceBuilder(new Pose2d(dropX,dropY,dropA))
                     .setReversed(false)
-                    .splineTo(new Vector2d(-64.69, 11), toRadians(180))
+                    .splineTo(new Vector2d(-64, 11.8+0.8*i), toRadians(180))
                     .addTemporalMarker(robot::done)
                     .build());
         }
@@ -97,7 +98,7 @@ public class BlueRightMid {
         park1trajectory = robot.roadrun.trajectorySequenceBuilder(new Pose2d(dropX, dropY, dropA))
                 .setReversed(false)
                 .lineToConstantHeading(new Vector2d(dropX-2,dropY-2))
-                .splineToLinearHeading(new Pose2d(-12, 12, toRadians(270)), toRadians(135))
+                .splineToLinearHeading(new Pose2d(-9, 12, toRadians(270)), toRadians(135))
                 .build();
         park2trajectory = robot.roadrun.trajectorySequenceBuilder(new Pose2d(dropX, dropY, dropA))
                 .lineToConstantHeading(new Vector2d(dropX-5,dropY-5))
@@ -144,14 +145,14 @@ public class BlueRightMid {
         robot.delay(0.3);
         robot.raiseLiftArmToOuttake(true);
         robot.delay(0.5);
-        robot.liftToPosition(LIFT_HIGH_JUNCTION);
+        robot.liftToPosition(LIFT_MED_JUNCTION);
         robot.wideClaw(false);
     }
 
     public boolean pick(int i) {
         int temp = i-1;
         if (i == 0) {
-            robot.followTrajectorySequenceAsync(pickupTrajectory);
+            robot.followTrajectorySequenceAsync(pick.get(0));
         } else {
             robot.followTrajectorySequenceAsync(pick.get(temp));
         }
@@ -171,7 +172,10 @@ public class BlueRightMid {
         robot.delay(0.1);
         robot.wideClaw();
         robot.delay(0.3);
-        if (i != 4) {
+        if(i==0){
+            robot.iterateConestackUp();
+        }
+        else if (i != 4) {
             robot.iterateConestackDown();
         } else {
             robot.liftToPosition(0);
@@ -194,7 +198,7 @@ public class BlueRightMid {
 //            robot.updateTrajectoryWithCam();
         }
 //        robot.delay(0.023 + 0.005 * (3 - i));
-        robot.liftToPosition(LIFT_HIGH_JUNCTION);
+        robot.liftToPosition(LIFT_MED_JUNCTION);
         robot.delay(0.1 + 0.005 * (3 - i));
         robot.raiseLiftArmToOuttake(true);
         if (boosted) {

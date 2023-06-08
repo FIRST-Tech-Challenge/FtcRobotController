@@ -26,13 +26,13 @@ public class RFMotor extends Motor {
     private ArrayList<Double> coefs2 = null;
     private ArrayList<String> inputlogs = new ArrayList<>();
     public static double D = 0.00000, D2 = 0, kP = 5.0E-4, kA = 0.00015, R = 0,
-            MAX_VELOCITY = 1/kP, MAX_ACCELERATION = 1/(kA*0.8), DECEL_DIST = 60, RESISTANCE=500;
+            MAX_VELOCITY = 1/kP, MAX_ACCELERATION = 1/(kA*0.8), DECEL_DIST = 60, RESISTANCE=560;
     private double maxtickcount = 0;
     private double mintickcount = 0;
     private double DEFAULTCOEF1 = 0.0001, DEFAULTCOEF2 = 0.01;
     private double lastError = 0, lastTime = 0;
     private double additionalTicks = 0;
-    private double TICK_BOUNDARY_PADDING = 10, TICK_STOP_PADDING = 30;
+    private double TICK_BOUNDARY_PADDING = 10, TICK_STOP_PADDING = 10;
     private double power = 0, position = 0, velocity = 0, targetPos = 0, resistance = 0, acceleration = 0, avgResistance, time = op.getRuntime();
     private String rfMotorName;
 

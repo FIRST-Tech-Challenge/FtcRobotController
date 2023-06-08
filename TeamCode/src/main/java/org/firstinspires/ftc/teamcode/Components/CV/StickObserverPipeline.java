@@ -32,7 +32,7 @@ public class StickObserverPipeline extends OpenCvPipeline {
     public static double LowV = 50;
     public static double HighV = 255;
     public static double minWidth = 120;
-    public static double minAreaThresh = 0.18;
+    public static double minAreaThresh = 0.16;
 
 
 

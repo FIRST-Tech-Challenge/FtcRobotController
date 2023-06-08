@@ -25,9 +25,9 @@ public class ConeObserverPipeline extends OpenCvPipeline {
     double centerOfPole = 0, poleSize = 0, centerOfNock=0, nockSize = 0;
     boolean isObstacle = false;
     ArrayList<double[]> frameList;
-    public static double LowS = 90;
+    public static double LowS = 80;
     public static double HighS = 255;
-    public static double LowH = 110;
+    public static double LowH = 106;
     public static double HighH = 125;
     public static double LowV = 0;
     public static double HighV = 255;
@@ -200,6 +200,6 @@ public class ConeObserverPipeline extends OpenCvPipeline {
         if(abs(center)+3 >= 320-(consiz/2.0)){
             return new double[]{0,0};
         }
-        return new double[]{-atan(center/focalLength)*180/PI,abs(4.15/(2*tan(atan((center+consiz/2)/(focalLength))-atan(center/focalLength))))};
+        return new double[]{-atan(center/focalLength)*180/PI,abs(3.8/(2*tan(atan((center+consiz/2)/(focalLength))-atan(center/focalLength))))};
     }
 }

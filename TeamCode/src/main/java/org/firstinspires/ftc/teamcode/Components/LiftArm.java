@@ -102,7 +102,7 @@ public class LiftArm {
 
         //the state of claw open has to be true (cone has already been dropped)
         //&& LIFT_GROUND.status
-        if (/*CLAW_OPEN.status && */!ARM_INTAKE.getStatus()&&!ARM_LOWERING.getStatus()) {
+        if (/*CLAW_OPEN.status && */liftPos != LIFT_ARM_INTAKE_POS) {
 
             //set servo position
             liftArmServo.setPositions(LIFT_ARM_INTAKE_POS);

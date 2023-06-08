@@ -7,13 +7,13 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import org.firstinspires.ftc.teamcode.Robots.PwPRobot;
 
 @Config
-@Autonomous(name = "BlueRightAutoCycleTuned")
+@Autonomous(name = "BlueRightAutoCycleBoost")
 
 
-public class BlueRightAutoCycleTuned extends LinearOpMode {
+public class BlueRightAutoCycleBoost extends LinearOpMode {
     public void runOpMode() {
         PwPRobot robot = new PwPRobot(this,false);
-        BlueRightHigh autoRunner = new BlueRightHigh(false,this, robot);
+        BlueRightHigh autoRunner = new BlueRightHigh(true,this, robot);
         sleep(500);
         autoRunner.init();
         abort:

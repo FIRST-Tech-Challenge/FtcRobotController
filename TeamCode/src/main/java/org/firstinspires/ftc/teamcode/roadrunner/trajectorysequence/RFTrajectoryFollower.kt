@@ -61,6 +61,7 @@ abstract class RFTrajectoryFollower @JvmOverloads constructor(
         this.trajectory = trajectory
     }
 
+
     /**
      * Returns true if the current trajectory is currently executing.
      */

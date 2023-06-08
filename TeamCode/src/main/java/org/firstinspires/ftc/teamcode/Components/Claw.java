@@ -210,7 +210,7 @@ public class Claw {
 
 
         //the state of claw opened has to be true
-        if (CLAW_OPEN.status|| CLAW_WIDE.status) {
+        if (!CLAW_CLOSING.status&&!CLAW_CLOSED.status) {
             //set servo position
             claw.setPosition(CLAW_CLOSED_POS);
             clawPos=CLAW_CLOSED_POS;

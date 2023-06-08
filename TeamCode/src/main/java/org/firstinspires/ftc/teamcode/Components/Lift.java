@@ -41,7 +41,7 @@ public class Lift {
     private ArrayList<Double> coefficients = new ArrayList<>();
     private boolean done = true;
     private double lastManualTime = 0.0;
-    double[] coneStack = {500*0.6+10,410*0.6+10,315*0.6-10,180*0.6 - 80};
+    double[] coneStack = {500*0.6-50,410*0.6-50,315*0.6-50,180*0.6 - 70};
     ;
     private int stackLevel = 0;
     private double lastStackTime =0;
@@ -148,7 +148,7 @@ public class Lift {
     }
 
     public void setPeak(){
-        liftMotor.setCurrentPosition(1286);
+        liftMotor.setCurrentPosition(1260);
     }
 
     public double getStackLevelHeight(int i){
@@ -289,6 +289,7 @@ public class Lift {
         op.sleep(200);
         liftMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         liftTarget = 0;
+        liftMotor.setCurrentPosition(0);
     }
     public double getLiftTarget(){
         return liftTarget;

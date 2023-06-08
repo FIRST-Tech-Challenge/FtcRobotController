@@ -55,7 +55,7 @@ public class DriveConstants {
      * empirically tuned.
      */
     public static double kV = 0.01545;
-    public static double kA = 0.005 ;
+    public static double kA = 0.006;
     public static double kStatic = 0.11861;
 
     /*

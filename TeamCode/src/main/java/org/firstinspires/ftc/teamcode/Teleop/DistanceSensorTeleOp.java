@@ -12,8 +12,8 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 
 import org.firstinspires.ftc.teamcode.Robots.PwPRobot;
 
-@TeleOp(name = "PwPTeleOp")
-public class PwPTeleOp extends LinearOpMode {
+@TeleOp(name="DistSensTele")
+public class DistanceSensorTeleOp extends LinearOpMode {
     PwPRobot robot;
 
     @Override
@@ -25,15 +25,13 @@ public class PwPTeleOp extends LinearOpMode {
         robot.cv.observeSleeve();
         Pose2d startPose = new Pose2d(41, 62.25, toRadians(90));
         robot.roadrun.setPoseEstimate(startPose);//        robot.cv.observeStick();
-//        robot.cv.observeCone();
         waitForStart();
-//        robot.cv.observeStick();
         resetRuntime();
         robot.roadrun.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         robot.roadrun.update();
         while(!isStopRequested()){
             logger.loopcounter++;
-            robot.teleOp();
+            robot.printLR();
             telemetry.update();
         }
         robot.stop();

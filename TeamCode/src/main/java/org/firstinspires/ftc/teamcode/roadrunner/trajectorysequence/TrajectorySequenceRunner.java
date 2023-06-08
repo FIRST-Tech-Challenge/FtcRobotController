@@ -276,6 +276,9 @@ public class TrajectorySequenceRunner {
         currentTrajectorySequence = null;
         remainingMarkers.clear();
     }
+    public int getCurrentSegmentIndex(){
+        return currentSegmentIndex;
+    }
     public void changeTrajectorySequence(TrajectorySequence trajectorySequence) {
         currentTrajectorySequence = trajectorySequence;
     }

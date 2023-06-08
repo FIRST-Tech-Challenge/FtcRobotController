@@ -88,6 +88,7 @@ public class SampleMecanumDrive extends MecanumDrive {
     private FtcDashboard dashboard= null;
     private Ultrasonics ultras = null;
     private LimitSwitches touch = null;
+    private Pose2d endPose = new Pose2d(0,0,0);
 
     public SampleMecanumDrive(HardwareMap hardwareMap) {
         super(kV,
@@ -245,8 +246,10 @@ public class SampleMecanumDrive extends MecanumDrive {
     }
 
     public void followTrajectorySequenceAsync(TrajectorySequence trajectorySequence) {
+        logger.log("/RobotLogs/GeneralRobot","followingTrajectory");
         trajectorySequenceRunner.followTrajectorySequenceAsync(trajectorySequence);
         trajectorySeq = trajectorySequence;
+        endPose = trajectorySequence.end();
     }
 
     public void followTrajectorySequence(TrajectorySequence trajectorySequence) {
@@ -258,6 +261,7 @@ public class SampleMecanumDrive extends MecanumDrive {
     public void changeTrajectorySequence(TrajectorySequence trajectorySequence) {
         trajectorySequenceRunner.changeTrajectorySequence(trajectorySequence);
         trajectorySeq = trajectorySequence;
+        endPose = trajectorySequence.end();
         Trajectory tragedy = ((TrajectorySegment)trajectorySequence.get(0)).getTrajectory();
         follower.changeTrajectory(tragedy);
     }
@@ -328,7 +332,7 @@ public class SampleMecanumDrive extends MecanumDrive {
         }
     }
     public TrajectorySequence getCurrentTraj(){
-        return trajectorySeq;
+        return trajectorySequenceRunner.getTrajectorySequence();
     }
 
     public void setWeightedDrivePower(Pose2d drivePower) {
@@ -376,6 +380,10 @@ public class SampleMecanumDrive extends MecanumDrive {
         leftRear.setPower(v1);
         rightRear.setPower(v2);
         rightFront.setPower(v3);
+    }
+
+    public Pose2d getEndPose() {
+        return endPose;
     }
 
     @Override
