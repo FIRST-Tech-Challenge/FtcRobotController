@@ -27,8 +27,8 @@ public class CAMShiftPipelineWMI extends OpenCvPipeline {
     Mat input2 = new Mat();
 
     // hardcode the initial location of window
-    private final Rect trackWindow = new Rect(18, 40, 36, 80);
-    private final Rect interest = new Rect(658, 534, 72, 160);
+    private final Rect trackWindow = new Rect(18, 15, 36, 30);
+    private final Rect interest = new Rect(658, 574, 72, 60);
     Telemetry telemetry;
     private final TelemetryPacket packet;
 
@@ -44,6 +44,9 @@ public class CAMShiftPipelineWMI extends OpenCvPipeline {
 
     RotatedRect rot_rect;
 
+    Mat region_a;
+    Mat region_b;
+
     Mat roi, roi_hist, hsv, dst;
     MatOfFloat range = new MatOfFloat(0, 256);
     MatOfInt histSize = new MatOfInt(180);
@@ -51,7 +54,22 @@ public class CAMShiftPipelineWMI extends OpenCvPipeline {
 
     Point[] points;
 
+    Mat LAB = new Mat();
+    Mat A = new Mat();
+    Mat B = new Mat();
+
+
+    int avg_a = 0;
+    int avg_b = 0;
+
     FtcDashboard dashboard = FtcDashboard.getInstance();
+
+    void inputToLAB(Mat input) {
+
+        Imgproc.cvtColor(input, LAB, Imgproc.COLOR_RGB2HSV);
+        Core.extractChannel(LAB, A, 1);
+        Core.extractChannel(LAB, B, 2);
+    }
 
     @Override
     public Mat processFrame(Mat input) {
@@ -77,7 +95,7 @@ public class CAMShiftPipelineWMI extends OpenCvPipeline {
         points = new Point[4];
         rot_rect.points(points);
         for (int i = 0; i < 4 ;i++) {
-            Imgproc.line(input, new Point(points[i].x+658,points[i].y+534), new Point(points[(i+1)%4].x+658,points[(i+1)%4].y+534), new Scalar(0, 255, 0),1);
+            Imgproc.line(input, new Point(points[i].x+interest.x,points[i].y+interest.y), new Point(points[(i+1)%4].x+interest.x,points[(i+1)%4].y+interest.y), new Scalar(0, 255, 0),1);
         }
 
         Imgproc.rectangle(input, new Point(interest.x, interest.y), new Point(interest.x + interest.width, interest.y+ interest.height), new Scalar(255,255,255),1 );
@@ -87,6 +105,17 @@ public class CAMShiftPipelineWMI extends OpenCvPipeline {
 
         center = rot_rect.center;
         size = rot_rect.size;
+
+        inputToLAB(input);
+
+        region_a = A.submat(interest);
+        region_b = B.submat(interest);
+
+        avg_a = (int) Core.mean(region_a).val[0];
+        avg_b = (int) Core.mean(region_b).val[0];
+
+        packet.put("avg a ", avg_a);
+        packet.put("avg b ", avg_b);
 
         dashboard.sendTelemetryPacket(packet);
 
