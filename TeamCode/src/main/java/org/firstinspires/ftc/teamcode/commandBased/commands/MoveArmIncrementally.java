@@ -17,7 +17,7 @@ public class MoveArmIncrementally extends CommandBase {
 
     @Override
     public void initialize() {
-        m_armSubsystem.rotate(amount);
+        m_armSubsystem.setArmAngle(amount);
     }
 
     @Override

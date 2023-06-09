@@ -98,18 +98,6 @@ public class ElevatorSubsystem extends SubsystemBase {
         timer.reset();
     }
 
-    public double getElePower() {
-        return (correction + Constants.ELE_KG);
-    }
-
-    public double getEleTarget() {
-        return ticksToInches(state.getX());
-    }
-
-    public double getElePos() {
-        return ticksToInches(elePos);
-    }
-
     public double inchesToTicks(double inches) {
         return inches * 79.0426072601;
     }

@@ -75,9 +75,9 @@ public class Robot extends BlackOp {
         MoveElevator eleHigh = new MoveElevator(elevatorSS, Constants.ELE_HIGH);
 
         //create arm commands
-        MoveArmToAngle armBackward = new MoveArmToAngle(armSS, -90);
-        MoveArmToAngle armIdle = new MoveArmToAngle(armSS, 30);
-        MoveArmToAngle armForward = new MoveArmToAngle(armSS, 90);
+        MoveArmToAngle armBackward = new MoveArmToAngle(armSS, Constants.ARM_ANGLE_BACK);
+        MoveArmToAngle armIdle = new MoveArmToAngle(armSS, Constants.ARM_ANGLE_IDLE);
+        MoveArmToAngle armForward = new MoveArmToAngle(armSS, Constants.ARM_ANGLE_FRONT);
 
         //start robot in field-centric mode
         robotCentric.schedule();
@@ -127,9 +127,9 @@ public class Robot extends BlackOp {
             driver.dpad_up.onRise(eleHigh::schedule);
 
             //arm controls
-            driver.dpad_right.onRise(armForward::schedule);
-            driver.dpad_left.onRise(armBackward::schedule);
-            driver.y.onRise(armIdle::schedule);
+            driver.b.onRise(armForward::schedule);
+            driver.x.onRise(armBackward::schedule);
+            driver.a.onRise(armIdle::schedule);
 
             // Draw the target on the field
             fieldOverlay.setStroke("#dd2c00");
@@ -142,8 +142,14 @@ public class Robot extends BlackOp {
             // Send telemetry packet off to dashboard
             FtcDashboard.getInstance().sendTelemetryPacket(packet);
 
-            mTelemetry().addData("elevator target", elevatorSS.getEleTarget());
-            mTelemetry().addData("elevator pos", elevatorSS.getElePos());
+            mTelemetry().addData("arm target", armSS.getArmTarget());
+            mTelemetry().addData("arm pos", armSS.getArmPos());
+            mTelemetry().addData("arm power", armSS.getArmPower());
+            mTelemetry().addData("arm angle", armSS.getArmAngle());
+            mTelemetry().addData("KP", armSS.getCoeffs()[0]);
+            mTelemetry().addData("KI", armSS.getCoeffs()[1]);
+            mTelemetry().addData("KD", armSS.getCoeffs()[2]);
+            mTelemetry().addData("KF", armSS.getCoeffs()[3]);
 
             mTelemetry().update();
         });

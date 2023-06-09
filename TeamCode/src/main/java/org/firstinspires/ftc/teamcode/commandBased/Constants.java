@@ -3,9 +3,9 @@ package org.firstinspires.ftc.teamcode.commandBased;
 import com.ThermalEquilibrium.homeostasis.Parameters.PIDCoefficientsEx;
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.roadrunner.control.PIDCoefficients;
+import com.acmerobotics.roadrunner.control.PIDFController;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.arcrobotics.ftclib.hardware.motors.Motor;
-import com.arcrobotics.ftclib.util.InterpLUT;
 
 import org.firstinspires.ftc.teamcode.classes.Vector2d;
 
@@ -43,23 +43,40 @@ public class Constants {
     public static double ELE_HIGH = 15;
 
     //arm pid
-    public static double ARM_KP = 0;
-    public static double ARM_KI = 0;
-    public static double ARM_KD = 0;
-    public static double ARM_KCOS = 0.1;
+    public static double ARM_KP_0 = 0; //0.003;
+    public static double ARM_KP_90 = 0; //0.03;
+    public static double ARM_KP_MAX = 0; //0.005;
 
-    public static double ARM_KP_0 = 0;
-    public static double ARM_KP_90 = 0;
     public static double ARM_KI_0 = 0;
-    public static double ARM_KI_90 = 0;
-    public static double ARM_KD_0 = 0;
-    public static double ARM_KD_90 = 0;
+    public static double ARM_KI_90 = 0; //0.01;
+    public static double ARM_KI_MAX = 0;
 
-    //arm positions
-    public static double ARM_FRONT = -100;
-    public static double ARM_IDLE = 20;
-    public static double ARM_BACK = 100;
-    public static double ARM_MAX = 120;
+    public static double ARM_KD_0 = 0; //0.01;
+    public static double ARM_KD_90 = 0; //0.03;
+    public static double ARM_KD_MAX = 0;
 
-    public static InterpLUT ARM_LUT = new InterpLUT();
+    public static PIDCoefficients ARM_COEFFS = new PIDCoefficients(.015, 0, 0);
+    public static double ARM_KV = 0;
+    public static double ARM_KA = 0;
+    public static double ARM_KS = 0;
+
+    public static double ARM_MAX_VEL = 10;
+    public static double ARM_MAX_ACCEL = 1;
+
+    public static double ARM_KSIN = .15;
+
+    //arm angle positions
+    public static double ARM_ANGLE_BACK = -90;
+    public static double ARM_ANGLE_IDLE = 40;
+    public static double ARM_ANGLE_FRONT = 90;
+    public static double ARM_ANGLE_MAX = 120;
+
+    //arm encoder positions
+    public static double ARM_ENC_SAFETY = 100;
+    public static double ARM_ENC_BACK_MAX = -630;
+    public static double ARM_ENC_BACK_PARALLEL = -520;
+    public static double ARM_ENC_FRONT_PARALLEL = 200;
+    public static double ARM_ENC_FRONT_MAX = 265;
+    public static double ARM_ENC_CENTER = -145;
+
 }
