@@ -48,6 +48,9 @@ public class BlueRightAutoMidCycleTuned extends LinearOpMode {
                 if (!autoRunner.pick(i)) {
                     break abort;
                 }
+                if(i==3){
+                    robot.roadrun.update();
+                }
                 autoRunner.drop(i);
             }
             autoRunner.update();
