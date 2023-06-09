@@ -38,7 +38,7 @@ public class BlueRightAutoMidCycleTuned extends LinearOpMode {
 
     public void runOpMode() {
         PwPRobot robot = new PwPRobot(this,false);
-        BlueRightMid autoRunner = new BlueRightMid(false,this, robot);
+        BlueRightMid autoRunner = new BlueRightMid(true,this, robot);
         sleep(500);
         autoRunner.init();
         abort:
@@ -47,6 +47,9 @@ public class BlueRightAutoMidCycleTuned extends LinearOpMode {
             for (int i = 0; i < 5; i++) {
                 if (!autoRunner.pick(i)) {
                     break abort;
+                }
+                if(i==3){
+                    robot.roadrun.update();
                 }
                 autoRunner.drop(i);
             }

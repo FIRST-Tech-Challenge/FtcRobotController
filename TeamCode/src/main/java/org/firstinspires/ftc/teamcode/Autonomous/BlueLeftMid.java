@@ -132,8 +132,8 @@ public class BlueLeftMid {
             robot.stop();
         }
         op.resetRuntime();
-//        robot.cv.observeStick();
-//        robot.cv.observeCone();
+        robot.cv.observeStick();
+        robot.cv.observeCone();
     }
 
     public void preload() {
