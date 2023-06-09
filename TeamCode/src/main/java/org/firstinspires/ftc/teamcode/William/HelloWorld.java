@@ -8,7 +8,7 @@ public class HelloWorld extends OpMode
 {
     @Override
     public void init() {
-        telemetry.addData("Hello", "William");
+        telemetry.addData("Hello", "CART Team");
     }
 
     @Override
