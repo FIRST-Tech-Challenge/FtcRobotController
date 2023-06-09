@@ -112,10 +112,10 @@ public class PwPRobot extends BasicRobot {
         voltage = voltageSensor.getVoltage();
         RFMotor.kP *= 13 / voltageSensor.getVoltage();
         RESISTANCE *= 13 / voltageSensor.getVoltage();
-        RFMotor.kA *= 13 / voltageSensor.getVoltage()* 13/voltageSensor.getVoltage();
+        RFMotor.kA *= 13 / voltageSensor.getVoltage();
         DriveConstants.TRACK_WIDTH *= 12.7 / voltageSensor.getVoltage();
         kV *= 12.7 / voltageSensor.getVoltage();
-        DriveConstants.kA *= 12.7 / voltageSensor.getVoltage() * 12.7/voltageSensor.getVoltage();
+        /*DriveConstants.kA *= 12.7 / voltageSensor.getVoltage(*/ /* 12.7/voltageSensor.getVoltage()*/;
         DriveConstants.kStatic *= 12.7 / voltageSensor.getVoltage();
     }
 //    com.qualcomm.ftcrobotcontroller I/art: Waiting for a blocking GC Alloc
@@ -373,7 +373,7 @@ public class PwPRobot extends BasicRobot {
         }
     }
 
-    public void splineTo(Pose2d position, double endHeading, double tangentOffset) {
+    public void  splineTo(Pose2d position, double endHeading, double tangentOffset) {
         if (queuer.queue(false, !roadrun.isBusy() && roadrun.getPoseEstimate().vec().distTo(position.vec()) < 3)) {
             if (!roadrun.isBusy()) {
                 TrajectorySequence trajectorySequence = roadrun.trajectorySequenceBuilder(roadrun.getPoseEstimate())
@@ -603,14 +603,14 @@ public class PwPRobot extends BasicRobot {
 
     public TrajectorySequence buildClearTrajRight(Pose2d clearPos) {
         TrajectorySequence traj;
-        if (roadrun.getPoseEstimate().getX() < 45) {
+        if (roadrun.getPoseEstimate().getX() > -45) {
             traj = roadrun.trajectorySequenceBuilder(roadrun.getPoseEstimate())
                     .addTemporalMarker(() -> setConing(true))
                     .setReversed(false)
-                    .splineTo(new Vector2d(48, 12), Math.toRadians(0))
+                    .splineTo(new Vector2d(-48, 12), Math.toRadians(0))
                     .lineToLinearHeading(clearPos)
                     .setReversed(true)
-                    .splineToSplineHeading(new Pose2d(51, 12, Math.toRadians(0)), Math.toRadians(180))
+                    .splineToSplineHeading(new Pose2d(-51, 12, Math.toRadians(0)), Math.toRadians(180))
                     .setReversed(false)
                     .splineTo(new Vector2d(-65, 11.51), Math.toRadians(0))
                     .addTemporalMarker(this::done)
@@ -621,7 +621,7 @@ public class PwPRobot extends BasicRobot {
                     .setReversed(false)
                     .lineToLinearHeading(clearPos)
                     .setReversed(true)
-                    .splineToSplineHeading(new Pose2d(51, 12.0, Math.toRadians(0)), Math.toRadians(180))
+                    .splineToSplineHeading(new Pose2d(-51, 12.0, Math.toRadians(0)), Math.toRadians(180))
                     .setReversed(false)
                     .splineTo(new Vector2d(-65, 11.51), Math.toRadians(0))
                     .addTemporalMarker(this::done)
@@ -629,6 +629,7 @@ public class PwPRobot extends BasicRobot {
         }
         return traj;
     }
+
 
     public void setStackHeight(int i) {
         if (queuer.queue(true, lift.isDone())) {
@@ -937,7 +938,7 @@ public class PwPRobot extends BasicRobot {
         }
         if (op.gamepad2.a) {
             liftArm.lowerLiftArmToIntake();
-            lift.setLiftTarget(0);
+            lift.setLiftTarget(-20);
         }
 
         if (op.gamepad2.dpad_left) {
@@ -989,11 +990,12 @@ public class PwPRobot extends BasicRobot {
 //        } else if (roadrun.isBusy()) {
 //            //nothin
 //        } else {
+        field.lookingAtPole();
 //        op.telemetry.addData("closestDropPosition", field.closestDropPosition());
 //        op.telemetry.addData("closestDropPositionValue", field.getDropPosition());
 //        op.telemetry.addData("closePole", field.getClosePole());
-//        op.telemetry.addData("seencONePose", field.calcConePose(roadrun.getPoseEstimate()));
-//        op.telemetry.addData("currentDropPosition", field.getDropPose());
+        op.telemetry.addData("seencONePose", field.calcConePose(roadrun.getPoseEstimate()));
+        op.telemetry.addData("currentDropPosition", field.calcPolePose(roadrun.getPoseEstimate()));
 //        op.telemetry.addData("contourDimensions",cv.getContourDimensions()[0]+","+cv.getContourDimensions()[1]);
 //        op.telemetry.addData("avoid velo", field.correctionVelo());
 //        op.telemetry.addData("poleInView", cv.poleInView());
@@ -1033,8 +1035,8 @@ public class PwPRobot extends BasicRobot {
                 field.breakAutoTele();
             }
             if (regularDrive) {
-                setTRUEMAXDrivingExperience(abs(vals[1] - 0.0001) / -vals[1] * (1.0 * abs(vals[1])),
-                        abs(vals[0] - 0.0001) / -vals[0] * (1.0 * abs(vals[0])),
+                setTRUEMAXDrivingExperience(abs(vals[1] - 0.0001) / -vals[1] * (0.55 * sqrt(abs(vals[1])) + 0.45 * vals[1] * vals[1]),
+                        abs(vals[0] - 0.0001) / -vals[0] * (0.55 * sqrt(abs(vals[0])) + 0.45 * vals[0] * vals[0]),
                         abs(vals[2] - 0.0001) / -vals[2] * (0.45 * sqrt(abs(vals[2])) + 0.4 * vals[2] * vals[2]), 0.001);
             } else {
 //                Vector2d input = new Vector2d(abs(vals[1] - 0.0001) / -vals[1] * (minBoost[1] + 0.5 * abs(vals[1]) + 0.15 * pow(abs(vals[1]), 3)),

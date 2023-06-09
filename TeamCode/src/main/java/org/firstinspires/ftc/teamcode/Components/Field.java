@@ -122,7 +122,7 @@ public class Field {
         logger.log("/RobotLogs/GeneralRobot", "dist" + dist);
         logger.log("/RobotLogs/GeneralRobot", "distToTarget" + distToTarget);
         logger.log("/RobotLogs/GeneralRobot", "cvVals" + vals[0]+","+vals[1]);
-        if (dist < 5 && distToTarget > 6 && distToTarget<30) {
+        if (dist < 7 && distToTarget > 6 && distToTarget<30) {
             return true;
         }
         return false;
@@ -235,9 +235,9 @@ public class Field {
     }
 
     public Vector2d calcPolePose(Pose2d curPos){
-        double camRad = 6;
+        double camRad = 6.5;
         double[] rotCoord = cv.rotatedPolarCoord();
-        if(abs(rotCoord[1]) < 23 && rotCoord[1] > 3&&rotCoord!=prevRotCoord){
+        if(abs(rotCoord[1]) < 30 && rotCoord[1] > 3&&rotCoord!=prevRotCoord){
             double t = rotCoord[0]*PI/180+PI+curPos.getHeading();
             polePose = new Vector2d(curPos.getX()+cos(t)*rotCoord[1]+cos(curPos.getHeading()+PI)*camRad,
                     curPos.getY()+sin(t)*rotCoord[1]+sin(curPos.getHeading()+PI)*camRad);
@@ -250,10 +250,11 @@ public class Field {
     public Vector2d calcConePose(Pose2d curPos){
         double camRad = 2;
         double[] rotCoord = cv.rotatedConarCoord();
-        if(abs(rotCoord[1]) < 26 && rotCoord[1] > 3&&rotCoord!=prevConCoord){
+//        rotCoord[1]*=0.8;
+        if(abs(rotCoord[1]) < 30 && rotCoord[1] > 12&&rotCoord!=prevConCoord){
             double t = rotCoord[0]*PI/180+curPos.getHeading();
             conePose = new Vector2d(curPos.getX()+cos(t)*rotCoord[1]+cos(curPos.getHeading())*camRad+sin(curPos.getHeading()),
-                    curPos.getY()+sin(t)*rotCoord[1]+sin(curPos.getHeading())*camRad+cos(curPos.getHeading()));
+                    curPos.getY()+sin(t)*rotCoord[1]+sin(curPos.getHeading())*camRad+cos(curPos.getHeading())-1);
             if(abs(conePose.getX())>72){
                 conePose = new Vector2d(72*conePose.getX()/abs(conePose.getX()),conePose.getY());
             }

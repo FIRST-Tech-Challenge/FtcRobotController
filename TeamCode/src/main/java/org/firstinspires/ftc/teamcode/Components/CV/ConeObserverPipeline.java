@@ -200,6 +200,6 @@ public class ConeObserverPipeline extends OpenCvPipeline {
         if(abs(center)+3 >= 320-(consiz/2.0)){
             return new double[]{0,0};
         }
-        return new double[]{-atan(center/focalLength)*180/PI,abs(3.8/(2*tan(atan((center+consiz/2)/(focalLength))-atan(center/focalLength))))};
+        return new double[]{-atan(center/focalLength)*180/PI,abs(4.0/(2*tan(atan((center+consiz/2)/(focalLength))-atan(center/focalLength))))};
     }
 }

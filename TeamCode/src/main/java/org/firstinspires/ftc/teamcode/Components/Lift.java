@@ -41,7 +41,7 @@ public class Lift {
     private ArrayList<Double> coefficients = new ArrayList<>();
     private boolean done = true;
     private double lastManualTime = 0.0;
-    double[] coneStack = {500*0.6-50,410*0.6-50,315*0.6-50,180*0.6 - 70};
+    double[] coneStack = {500*0.6-20,410*0.6-10,315*0.6-20,180*0.6 - 30};
     ;
     private int stackLevel = 0;
     private double lastStackTime =0;
@@ -57,7 +57,8 @@ public class Lift {
         }
         coefficients.add(dfco2);
         coefficients.add(dfco3);
-        liftMotor = new RFMotor("liftMotor", DcMotorSimple.Direction.REVERSE, DcMotorEx.RunMode.RUN_WITHOUT_ENCODER, false, coefficients, MAX_LIFT_TICKS, 0);
+        liftMotor = new RFMotor("liftMotor", DcMotorSimple.Direction.REVERSE, DcMotorEx.RunMode.RUN_WITHOUT_ENCODER,
+                false, coefficients, MAX_LIFT_TICKS, -30);
         if (!isTeleop) {
             liftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
             liftMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
@@ -104,11 +105,11 @@ public class Lift {
     }
 
     public enum LiftConstants {
-        LIFT_HIGH_JUNCTION(MAX_LIFT_TICKS - 90, false),
+        LIFT_HIGH_JUNCTION(MAX_LIFT_TICKS - 110, false),
         LIFT_MED_JUNCTION(860*.8-100, false),
         LIFT_LOW_JUNCTION(15*.75, false),
         LIFT_GROUND_JUNCTION(0, false),
-        LIFT_GROUND(0, true);
+        LIFT_GROUND(-10, true);
 
         double value;
         boolean lfcValue;

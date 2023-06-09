@@ -24,9 +24,11 @@ public class RFMotorkPTuner extends LinearOpMode {
         rfMotor.setDirection(DcMotorSimple.Direction.REVERSE);
         waitForStart();
         while (rfMotor.getCurrentPosition() < maxTick) {
-            rfMotor.setPower(0.9);
+            rfMotor.setRawPower(0.9);
             avg1 = (avg1 * loopNums + rfMotor.getVelocity()) / (loopNums + 1);
             loopNums++;
+            logger.log("/RobotLogs/GeneralRobot", "vel" + rfMotor.getVelocity());
+
         }
         telemetry.addData("avg1", avg1);
         telemetry.update();
@@ -38,7 +40,9 @@ public class RFMotorkPTuner extends LinearOpMode {
         sleep(1000);
         rfMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         while (rfMotor.getCurrentPosition() < maxTick) {
-            rfMotor.setPower(1.0);
+            rfMotor.setRawPower(1.0);
+            logger.log("/RobotLogs/GeneralRobot", "vel" + rfMotor.getVelocity());
+
             avg2 = (avg2 * loopNums + rfMotor.getVelocity()) / (loopNums + 1);
             loopNums++;
         }

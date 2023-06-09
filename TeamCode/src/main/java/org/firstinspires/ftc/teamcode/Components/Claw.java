@@ -124,13 +124,13 @@ public class Claw {
     }
 
     public void updateClawStates() {
-        if (CLAW_CLOSING.status && op.getRuntime() - claw.getLastTime() > CLAW_SERVO_SWITCH_TIME) {
+        if (CLAW_CLOSING.status && op.getRuntime() - claw.getLastTime() > 0.05) {
             CLAW_CLOSED.setStatus(true);
         }
         if (CLAW_OPENING.status && op.getRuntime() - claw.getLastTime() > CLAW_SERVO_SWITCH_TIME) {
             CLAW_OPEN.setStatus(true);
         }
-        if (CLAW_WIDING.status && op.getRuntime() - claw.getLastTime() > CLAW_SERVO_SWITCH_TIME) {
+        if (CLAW_WIDING.status && op.getRuntime() - claw.getLastTime() > 0.1) {
             CLAW_WIDE.setStatus(true);
         }
 
@@ -283,16 +283,10 @@ public class Claw {
     }
     public boolean isObL(){
         double leftD = leftDist.getDistance(INCH);
-        double rightD = rightDist.getDistance(INCH);
-        if(leftD+rightD<12){
-            if(leftD<rightD){
+        if(leftD<4.5){
                 isObR = false;
                 return true;
-            }
-            else{
-                isObR = true;
-                return false;
-            }
+
         }else{
             isObR = false;
             return false;

@@ -32,7 +32,7 @@ public class BlueLeftAutoCycleBoost extends LinearOpMode {
         sleep(500);
         autoRunner.init();
         abort:
-        while ((getRuntime() < 27 && (!robot.queuer.isFullfilled() || robot.queuer.isFirstLoop()))&&!isStopRequested()) {
+        while ((getRuntime() < 27.2 && (!robot.queuer.isFullfilled() || robot.queuer.isFirstLoop()))&&!isStopRequested()) {
             autoRunner.preload();
             for (int i = 0; i < 5; i++) {
                 if (!autoRunner.pick(i)) {

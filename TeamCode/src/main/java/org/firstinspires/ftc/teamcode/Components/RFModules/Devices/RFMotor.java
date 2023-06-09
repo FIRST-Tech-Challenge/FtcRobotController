@@ -25,8 +25,8 @@ public class RFMotor extends Motor {
     private ArrayList<Double> coefs = null;
     private ArrayList<Double> coefs2 = null;
     private ArrayList<String> inputlogs = new ArrayList<>();
-    public static double D = 0.00000, D2 = 0, kP = 5.0E-4, kA = 0.00015, R = 0,
-            MAX_VELOCITY = 1/kP, MAX_ACCELERATION = 1/(kA*0.8), DECEL_DIST = 60, RESISTANCE=560;
+    public static double D = 0.00000, D2 = 0, kP = 4.37E-4, kA = 0.0002, R = 0,
+            MAX_VELOCITY = 1/kP, MAX_ACCELERATION = 10000, DECEL_DIST = 60, RESISTANCE=300;
     private double maxtickcount = 0;
     private double mintickcount = 0;
     private double DEFAULTCOEF1 = 0.0001, DEFAULTCOEF2 = 0.01;
@@ -239,6 +239,14 @@ public class RFMotor extends Motor {
 
     }
 
+    public void setRawPower(double power) {
+        rfMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        getAvgResistance();
+//        logger.log("/RobotLogs/GeneralRobot", rfMotorName + ",setPower():,Setting Power: " + power, false, false);
+        rfMotor.setPower(power);
+        logger.log("/MotorLogs/RFMotor" + rfMotorName, "Setting Power," + (power), false, false);
+
+    }
     public double getPower() {
         return rfMotor.getPower();
     }
