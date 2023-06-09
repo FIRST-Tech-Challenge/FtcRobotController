@@ -129,8 +129,8 @@ public class BlueRightHigh {
             robot.stop();
         }
         op.resetRuntime();
-//        robot.cv.observeStick();
-//        robot.cv.observeCone();
+        robot.cv.observeStick();
+        robot.cv.observeCone();
     }
 
     public void preload() {
@@ -208,7 +208,7 @@ public class BlueRightHigh {
         robot.wideClaw(false);
     }
     public void reDrop(int i){
-//        robot.followTrajectorySequenceAsync(reDropTrajectory,pInView.get(i));
+        robot.followTrajectorySequenceAsync(reDropTrajectory,pInView.get(i));
     }
 
     public void clearObstacleL(int i) {

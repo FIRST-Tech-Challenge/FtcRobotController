@@ -28,48 +28,60 @@ public class BlueRightPark extends LinearOpMode {
     public void runOpMode() {
         PwPRobot robot = new PwPRobot(this, false);
         robot.roadrun.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        Pose2d startPose = new Pose2d(-29.6, 62.25, toRadians(90));
+        Pose2d startPose = new Pose2d(-35.9, 63.25, Math.toRadians(90));
         robot.roadrun.setPoseEstimate(startPose);
         robot.cv.observeSleeve();
+        resetRuntime();
+        robot.cp1shot();
         TrajectorySequence parkTrajectory = robot.roadrun.trajectorySequenceBuilder(startPose)
                 .setReversed(true)
                 .lineTo(new Vector2d(-36, 62.25))
                 .lineTo(new Vector2d(-36, 34))
                 .build();
-        Trajectory park1trajectory = robot.roadrun.trajectoryBuilder(new Pose2d(-36,34,toRadians(0)))
-                .lineTo(new Vector2d(-6, 34))
+        Trajectory park1trajectory = robot.roadrun.trajectoryBuilder(new Pose2d(-36,34,toRadians(90)))
+                .lineTo(new Vector2d(-12, 34))
                 .build();
 //        Trajectory park2trajectory = robot.roadrun.trajectoryBuilder(new Pose2d(-36,36,toRadians(90)))
 //                .lineToLinearHeading(new Pose2d(-36,36, toRadians(90)))
 //                .build();
-        Trajectory park3trajectory = robot.roadrun.trajectoryBuilder(new Pose2d(-36,34,toRadians(180)))
-                .lineTo(new Vector2d(-57, 34))
+        Trajectory park3trajectory = robot.roadrun.trajectoryBuilder(new Pose2d(-36,34,toRadians(90)))
+                .lineTo(new Vector2d(-60, 34))
                 .build();
-        while (!isStarted()) {
+
+        while (!isStarted()&&!isStopRequested()) {
             telemetry.addData("pos", robot.cv.getPosition());
             telemetry.addData("CLAW_CLOSED:", CLAW_CLOSED.getStatus());
+//            telemetry.addData("ANGLE:", robot.getAngleToConeStack());
             telemetry.update();
+            robot.updateClawStates();
             robot.updateLiftArmStates();
-            //robot.leds.rainbowforest();
+            if (getRuntime() > 3) {
+                dummyP = robot.cv.getPosition();
 
+                if (dummyP == 1) {
+                    robot.heartbeatRed();
+                } else if (dummyP == 2) {
+                    robot.darkGreen();
+                } else {
+                    robot.blue();
+                }
+            }
+        }
+        if(isStopRequested()){
+            robot.stop();
         }
         resetRuntime();
-        dummyP = robot.cv.getPosition();
 
-        if (isStopRequested()) return;
 
 
         while (opModeIsActive() && !isStopRequested() && getRuntime() < 28) {
             logger.loopcounter++;
             robot.followTrajectorySequenceAsync(parkTrajectory);
             if (dummyP == 1) {
-                //robot.leds.red();
                 robot.followTrajectoryAsync(park1trajectory);
             } else if (dummyP == 3) {
-                //robot.leds.green();
                 robot.followTrajectoryAsync(park3trajectory);
             } else {
-                //robot.leds.yellow();
 //            robot.followTrajectoryAsync(park2trajectory);
             }
             robot.setFirstLoop(false);
