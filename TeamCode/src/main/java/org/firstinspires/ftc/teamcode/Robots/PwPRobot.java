@@ -607,12 +607,12 @@ public class PwPRobot extends BasicRobot {
             traj = roadrun.trajectorySequenceBuilder(roadrun.getPoseEstimate())
                     .addTemporalMarker(() -> setConing(true))
                     .setReversed(false)
-                    .splineTo(new Vector2d(-48, 12), Math.toRadians(0))
+                    .splineTo(new Vector2d(-48, 12), Math.toRadians(180))
                     .lineToLinearHeading(clearPos)
                     .setReversed(true)
                     .splineToSplineHeading(new Pose2d(-51, 12, Math.toRadians(0)), Math.toRadians(180))
                     .setReversed(false)
-                    .splineTo(new Vector2d(-65, 11.51), Math.toRadians(0))
+                    .splineTo(new Vector2d(-65, 11.51), Math.toRadians(180))
                     .addTemporalMarker(this::done)
                     .build();
         } else {
@@ -623,7 +623,7 @@ public class PwPRobot extends BasicRobot {
                     .setReversed(true)
                     .splineToSplineHeading(new Pose2d(-51, 12.0, Math.toRadians(0)), Math.toRadians(180))
                     .setReversed(false)
-                    .splineTo(new Vector2d(-65, 11.51), Math.toRadians(0))
+                    .splineTo(new Vector2d(-65, 11.51), Math.toRadians(180))
                     .addTemporalMarker(this::done)
                     .build();
         }
