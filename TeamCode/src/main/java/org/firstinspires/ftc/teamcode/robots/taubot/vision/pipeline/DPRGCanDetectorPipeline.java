@@ -58,7 +58,7 @@ public class DPRGCanDetectorPipeline extends TimestampedOpenCvPipeline {
     public static double NORMALIZE_ALPHA = 51.0, NORMALIZE_BETA = 261.0;
     public static double BLUR_RADIUS = 7;
     public static double HUE_MIN = 105, HUE_MAX = 120;
-    public static double SATURATION_MIN = 120, SATURATION_MAX = 255;
+    public static double SATURATION_MIN = 80, SATURATION_MAX = 255;
     public static double VALUE_MIN = 120, VALUE_MAX = 255;
     public static double MIN_CONTOUR_AREA = 50;
     public static String BLUR = "Box Blur";
@@ -121,6 +121,7 @@ public class DPRGCanDetectorPipeline extends TimestampedOpenCvPipeline {
         largestY = -1;
         int largestContourIndex = -1;
         RotatedRect[] minEllipse = new RotatedRect[findContoursOutput.size()];
+        Rect[] boundingBox = new Rect[findContoursOutput.size()];
 
         for (int i = 0; i < findContoursOutput.size(); i++) {
 
@@ -144,6 +145,8 @@ public class DPRGCanDetectorPipeline extends TimestampedOpenCvPipeline {
                     minEllipse[i] = Imgproc.fitEllipse(new MatOfPoint2f(findContoursOutput.get(i).toArray()));
                 } else minEllipse[i] = new RotatedRect();
 
+                boundingBox[i] = Imgproc.boundingRect(new MatOfPoint2f(findContoursOutput.get(i).toArray()));
+
                 Target newTarget = new Target(timestamp, i, new Vector2d(x, y), 0);
                 newTarget.setAreaPixels(contourArea);
                 newTarget.setFittedRect(minEllipse[i]);
@@ -152,13 +155,15 @@ public class DPRGCanDetectorPipeline extends TimestampedOpenCvPipeline {
                 newTarget.setWidthPixels(minEllipse[i].size.width);
                 newTarget.setAspectRatio(newTarget.getWidthPixels() / newTarget.getHeightPixels());
                 //an upright can will almost always have an aspect ratio hovering around .6
-                //a can on it's side will be a little higher even when lying orthogonal to the camera
+                //a can on its side will be a little higher even when lying orthogonal to the camera
                 //even though the width is still the smaller value because it is perpendicular to the major axis
-                //todo a better test of uprightness would be to look a the orientation of the can
+                //todo a better test of uprightness would be to look at the orientation of the can
                 //an upright can seems to have an orientation that is +/- 15 degrees from 0 or 180 (flipped orientation)
                 //a can on its side will have an orientation that is closer to 90 degrees or probably 270 (not witnessed yet)
                 if (newTarget.getAspectRatio()<.75) newTarget.setUpright(true);
-                else newTarget.setUpright(true);
+                else newTarget.setUpright(false);
+                if (newTarget.isUpright()) //if it is upright, the height of the contour's bounding box is more stable than the fitted ellipse - so switch over to that
+                    newTarget.setHeightPixels(boundingBox[i].height);
                 //add to the list of targets
                 frameCans.add(newTarget);
             }

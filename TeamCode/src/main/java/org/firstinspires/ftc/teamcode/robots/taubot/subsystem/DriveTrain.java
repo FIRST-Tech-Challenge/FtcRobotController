@@ -65,7 +65,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
-@Config(value = "PPDriveTrain")
+@Config(value = "AA_PPDriveTrain")
 public class DriveTrain extends DiffyDrive implements Subsystem {
     private static final TrajectoryVelocityConstraint VEL_CONSTRAINT = getVelocityConstraint(MAX_VELOCITY, MAX_ANG_VEL);
     private static final TrajectoryAccelerationConstraint ACCEL_CONSTRAINT = getAccelerationConstraint(MAX_ACCELERATION);
@@ -109,7 +109,7 @@ public class DriveTrain extends DiffyDrive implements Subsystem {
 
     public static PIDCoefficients HEADING_PID_PWR = new PIDCoefficients(0.25, .5, 5);
     public static PIDCoefficients HEADING_PID_VEL = new PIDCoefficients(3.0, 0, 0);
-    public static double HEADING_PID_TOLERANCE = Math.toRadians(2);
+    public static double HEADING_PID_TOLERANCE = .55555; //this is a percentage of the input range .0055 of 360 is 2 degrees
     public static PIDCoefficients DIST_TRAVELLED_PID = new PIDCoefficients(5, 0.0, 0); //todo tune this - copied from Reach
     public static PIDCoefficients VELOCITY_PID = new PIDCoefficients(4, 0, 0);
     //todo the following PID needs initial settings
@@ -205,7 +205,7 @@ public class DriveTrain extends DiffyDrive implements Subsystem {
         //oof currently this will be in inches units
         //input is in inches, output is drive speed
         distTravelledPID = new PIDController(DIST_TRAVELLED_PID);
-        distTravelledPID.setInputRange(-144, 144);
+        distTravelledPID.setInputRange(-144, 144); //12ft
         distTravelledPID.setOutputRange(-30, 30); //todo - what is the Max speed for taubot?
         distTravelledPID.setContinuous(false);
         distTravelledPID.setTolerance(1);
@@ -667,14 +667,18 @@ public class DriveTrain extends DiffyDrive implements Subsystem {
             .build();
 
     boolean driveUntilInitialized = false;
+    double driveDistTargetLast = 0;
 
     //call this version if we just want to continue in the direction the robot is currently pointing
     public boolean driveUntil(double driveDistance, double driveSpeed) {
         return(driveUntilRads(driveDistance, poseEstimate.getHeading(), driveSpeed));
     }
 
+    //drive in a given absolute direction for a given relative distance
+    //if this is being called repeatedly with a distance that isn't changing it will drive until the requested distance is completed from the original position
+    //if the distance is changing between calls (usually diminishing), that causes recalculation of the relative target
     public boolean driveUntilRads(double driveDistance, double driveHeading, double driveSpeed) {
-        if(!driveUntilInitialized) {
+        if(!driveUntilInitialized || !approxEquals(driveDistance, driveDistTargetLast)) {
             resetRelPos();
             this.driveTarget = driveDistance + getAveragePos();
             this.driveHeading = wrapAngleRad(driveHeading);
@@ -682,11 +686,12 @@ public class DriveTrain extends DiffyDrive implements Subsystem {
             distTravelledPID.setOutputRange(-driveSpeed,driveSpeed); //max speed
             distTravelledPID.setSetpoint(driveTarget);
             driveUntilInitialized = true;
+            driveDistTargetLast = driveDistance;
         }
 
         if(drive.execute()){
             setDriveSignal(new DriveSignal(new Pose2d(0, 0, 0), new Pose2d(0, 0, 0)));
-
+            driveDistTargetLast = 0;
             driveUntilInitialized = false;
             return true;
         }
@@ -723,7 +728,7 @@ public class DriveTrain extends DiffyDrive implements Subsystem {
             return false;
         }
     }
-
+    //relative turn in radians
     public boolean turnUntilRads(double turnAngle) {
         if(!turnInit){
             this.turnAngle = turnAngle; // this is in Radians relative to the starting angle as set by auton alliance
@@ -738,9 +743,10 @@ public class DriveTrain extends DiffyDrive implements Subsystem {
         return false;
     }
 
-    public static double HEADING_DEGREE_TOLERANCE = 4;
-
     //request a turn in degrees units
+    //this is an absolute (non-relative) implementation.
+    //it's not relative to where you started.
+    //the direction of the turn will favor the shortest approach
     public boolean turnUntilDegrees(double turnAngle) {
         maxTuck();
         targetHeading = Math.toRadians(wrapAngle( turnAngle));
@@ -750,7 +756,6 @@ public class DriveTrain extends DiffyDrive implements Subsystem {
         headingPID_pwr.setOutputRange(-.4, .4);
         double correction = headingPID_pwr.performPID();
         if(headingPID_pwr.onTarget()){
-            headingPID_pwr.disable();
             setMotorPowers(0,0);
             return true;
         }else{
@@ -769,6 +774,7 @@ public class DriveTrain extends DiffyDrive implements Subsystem {
 
     public void setHeading(double angle){
         headingOffset = wrapAngleMinusRad(orientation.firstAngle + angle);
+        heading = wrapAngleRad(orientation.firstAngle - headingOffset); //update immediately because we don't know if update() will be called before the heading is used
     }
 
     @Override
@@ -1066,7 +1072,7 @@ public class DriveTrain extends DiffyDrive implements Subsystem {
                 rightMotor.setPower(1);
                 chariotMotor.setPower(1);
                 break;
-            case lockWheels:
+            case lockWheels: //just locks the diffy wheels
                 leftMotor.setTargetPosition(leftMotor.getCurrentPosition());
                 rightMotor.setTargetPosition(rightMotor.getCurrentPosition());
                 leftMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
@@ -1122,7 +1128,7 @@ public class DriveTrain extends DiffyDrive implements Subsystem {
         return maintainHeading;
     }
 
-//roadrunner gets headi ng from IMU here
+//roadrunner gets heading from IMU here
     @Override
     protected double getRawExternalHeading() {
         return heading;

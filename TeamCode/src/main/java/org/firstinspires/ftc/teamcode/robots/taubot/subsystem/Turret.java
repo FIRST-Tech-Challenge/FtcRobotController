@@ -26,7 +26,7 @@ import org.firstinspires.ftc.teamcode.util.PIDController;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-@Config(value = "PPTurret")
+@Config(value = "AA_PPTurret")
 public class Turret implements Subsystem {
 
     public static PIDCoefficients TURRET_PID = new PIDCoefficients(0.01, 0.02, 0.0002); //0.02, 0.01, 0.05), changed from (0.01, 0.02, 0.0002)

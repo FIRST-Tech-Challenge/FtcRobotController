@@ -15,7 +15,8 @@ public class Target {
     double widthPixels; //the wide of the ellipse fitted to the target blob
     double orientation; //the angular orientation of the blob in the frame
     boolean upright; //an assessment of the vertical orientation of the can
-    double cameraHeading; //this is the heading of the target in the camera's fov when the target was last detected. it is only relevant for the frame where the target was detected
+    double cameraHeading; //this is the heading (in degrees) of the target in the camera's fov when the target was last detected. it is only relevant for the frame where the target was detected
+    double cameraDistance; //this is the distance from the camera to the target. it is only relevant for the frame where the target was detected
     Vector2d fieldPosition; //this is the estimated position of the target/can on the field
     boolean isCan; //do we think this is a can?
 
@@ -106,7 +107,13 @@ public class Target {
     public void setCameraHeading(double cameraHeading) {
         this.cameraHeading = cameraHeading;
     }
+    public double getCameraDistance() {
+        return cameraDistance;
+    }
 
+    public void setCameraDistance(double cameraDistance) {
+        this.cameraDistance = cameraDistance;
+    }
     public Vector2d getFieldPosition() {
         return fieldPosition;
     }

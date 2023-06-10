@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.robots.taubot;
 
 import static org.firstinspires.ftc.teamcode.robots.taubot.PowerPlay_6832.robot;
 import static org.firstinspires.ftc.teamcode.robots.taubot.PowerPlay_6832.startingPosition;
+import static org.firstinspires.ftc.teamcode.robots.taubot.util.Constants.MIN_CHASSIS_LENGTH;
 import static org.firstinspires.ftc.teamcode.robots.taubot.util.Constants.Position;
 import static org.firstinspires.ftc.teamcode.robots.taubot.util.Utils.wrapAngle;
 import static org.firstinspires.ftc.teamcode.util.utilMethods.futureTime;
@@ -629,6 +630,8 @@ public class Autonomous implements TelemetryProvider {
 
     public int sixCanStage = 0;
     long sixCanTimer;
+    public Target scoreFrom = new Target();
+
 
     public boolean SixCan(){
         DPRGCanDetectorProvider sixVision;
@@ -640,7 +643,11 @@ public class Autonomous implements TelemetryProvider {
 
         switch (sixCanStage) {
             case 0: //initialize stuff
+                //todo, these calls to setHeading and setPoseEstimate should be combined into a utility method to keep them in sync
+                //todo should never call setPoseEstimate if the heading is nonzero without also setting the Heading
+                robot.driveTrain.setHeading(Position.START_SIXCAN.getPose().getHeading());
                 robot.driveTrain.setPoseEstimate(Position.START_SIXCAN.getPose());
+
                 robot.driveTrain.articulate(DriveTrain.Articulation.unlock);
                 robot.driveTrain.enableChassisLength();
                 robot.driveTrain.maxTuck();
@@ -667,10 +674,17 @@ public class Autonomous implements TelemetryProvider {
                 robotLocation=robot.driveTrain.poseEstimate;
                 currentTarget = ((DPRGCanDetectorProvider) visionProvider).GetNearest(frameCans,robotLocation);
 
-                //during the turn portion it's possible a closer can comes into view and that one becomes the new target
-                if (ApproachTarget(currentTarget, 26))
-                    sixCanTimer = futureTime(1); //some settling time
-                    sixCanStage++;
+                if (currentTarget == null){ //don't see a target - let's turn in place
+                    robot.driveTrain.turnUntilDegrees(Math.toDegrees(robotLocation.getHeading()) + 10);
+                    //todo how do we terminate if there are no cans and we've scanned more than a full turn?
+                }
+                else { //let's go get the can
+                    //during the turn portion it's possible a closer can comes into view and that one becomes the new target
+                    if (ApproachTarget(currentTarget, 30)) {
+                        sixCanTimer = futureTime(1); //some settling time
+                        sixCanStage++;
+                    }
+                }
                 break;
             case 4: //fine tune the distance to the can
                 if (System.nanoTime()>sixCanTimer)
@@ -679,19 +693,24 @@ public class Autonomous implements TelemetryProvider {
                 break;
 
             case 5: //deploy  the underarm.
-                if (robot.underarm.SixCanPickupPrep())
+                if (robot.underarm.SixCanPickupPrep()) {
+                    sixCanTimer = futureTime(1);
                     sixCanStage++;
+                }
                 break;
-            case 6: //fine tune the distance to the can
-                sixCanStage++;
+            case 6: //extend to engage gripper
+                robot.driveTrain.setChassisLength(MIN_CHASSIS_LENGTH + 10);
+                if (System.nanoTime()>sixCanTimer) {sixCanStage++;}
                 break;
 
             case 7: //extend chariot to the fine-tuned distance to trigger the gripper
                 sixCanStage++;
                 break;
             case 8: //pick up the can
-                if (robot.underarm.SixCanPickup())
+                if (robot.underarm.SixCanPickup()) {
+                    robot.driveTrain.maxTuck();
                     sixCanStage++;
+                }
                 break;
             case 9: // drive to scoring location
                 sixCanStage++;
@@ -710,7 +729,6 @@ public class Autonomous implements TelemetryProvider {
             default:
                 sixCanStage = 0;
                 return true;
-
         }
 
         return false;
@@ -718,38 +736,61 @@ public class Autonomous implements TelemetryProvider {
     int approachTargetStage = 0;
 
     public boolean ApproachTarget(Target target, double stoppingDistanceInches){
-        //seek Target has two stages - first turn in place toward the target, second drive toward the target but stop short
+        if (target == null) return false; //this helps if ApproachTarget was called before a target was ready - could be a problem because it becomes an endless loop if a Target is never supplied
         Pose2d robotLocation=robot.driveTrain.poseEstimate;
         Vector2d robotVec = new Vector2d(robot.driveTrain.poseEstimate.getX(), robot.driveTrain.poseEstimate.getY());
         double approachHeadingDegrees = Math.toDegrees( robotLocation.getHeading())+target.getCameraHeading();
         double approachDistance = target.Distance(new Vector2d(robotLocation.getX(),robotLocation.getY()))-stoppingDistanceInches;
+        //Approach Target has two stages - first turn in place toward the target, second drive toward the target but stop short
         switch (approachTargetStage) {
             case 0: //turn until facing the target
-                if (target != null) {
-
                     if (robot.driveTrain.turnUntilDegrees(approachHeadingDegrees)) {
                         approachTargetStage++;
                     }
-                }
-                else approachTargetStage++; //target was invalid - skip over
                 break;
             case 1:  //drive until we get to the right distance to deploy the gripper
                     //this can include backing up if we are too close to the target
                     //so it's best to approach a target from the center of the field
-                if (target != null) {
                     if (robot.driveTrain.driveUntilDegrees(approachDistance, approachHeadingDegrees, 15))
                         approachTargetStage++;
-                }
-                else approachTargetStage++; //target was invalid - skip over
                 break;
-
             case 2:
-                approachTargetStage =0;
+                approachTargetStage = 0;
                 return true;
-
             default:
                 approachTargetStage = 0;
+        }
+        return false;
+    }
 
+    int approachLocationStage = 0;
+    public boolean ApproachLocation(Pose2d targetLocation, double stoppingDistanceInches){
+        if (targetLocation == null) return false; //this helps if ApproachLocation was called before a location was ready - could be a problem because it becomes an endless loop if a Target is never supplied
+        Pose2d robotLocation=robot.driveTrain.poseEstimate;
+        Vector2d robotVec = new Vector2d(robot.driveTrain.poseEstimate.getX(), robot.driveTrain.poseEstimate.getY());
+        Vector2d targetVec = new Vector2d(targetLocation.getX(), targetLocation.getY());
+        //double approachHeadingDegrees = Math.toDegrees( robotLocation.getHeading())+targetLocation.getCameraHeading();
+        double approachHeadingDegrees = robotVec.angleBetween(targetVec);
+        //double approachDistance = targetLocation.Distance(new Vector2d(robotLocation.getX(),robotLocation.getY()))-stoppingDistanceInches;
+        double approachDistance = robotVec.distTo(targetVec) - stoppingDistanceInches;
+                //ApproachLocation has two stages - first turn in place toward the location, second drive toward the location but stop short
+        switch (approachLocationStage) {
+            case 0: //turn until facing the location
+                if (robot.driveTrain.turnUntilDegrees(approachHeadingDegrees)) {
+                    approachLocationStage++;
+                }
+                break;
+            case 1:  //drive until we get to the right distance to deploy the gripper
+                //this can include backing up if we are too close to the location
+                //so it's best to approach a location from the center of the field
+                if (robot.driveTrain.driveUntilDegrees(approachDistance, approachHeadingDegrees, 15))
+                    approachLocationStage++;
+                break;
+            case 2:
+                approachLocationStage = 0;
+                return true;
+            default:
+                approachLocationStage = 0;
         }
         return false;
     }

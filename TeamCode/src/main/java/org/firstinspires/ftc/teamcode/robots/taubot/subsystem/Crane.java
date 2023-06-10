@@ -51,7 +51,7 @@ import org.firstinspires.ftc.teamcode.util.Vector3;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-@Config(value = "PPCrane")
+@Config(value = "AA_PPCrane")
 public class Crane implements Subsystem {
 
     //control constants

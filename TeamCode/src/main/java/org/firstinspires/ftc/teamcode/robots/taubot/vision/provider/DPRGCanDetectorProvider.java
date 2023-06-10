@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.robots.taubot.vision.provider;
 
+import static org.firstinspires.ftc.teamcode.robots.taubot.util.Utils.wrapAngle;
+
 import android.graphics.Bitmap;
 
 import com.acmerobotics.dashboard.config.Config;
@@ -33,7 +35,7 @@ import java.util.Map;
  * @author Iron Reign Coding Team
  */
 
-@Config
+@Config  (value = "AA_PP_6CAN_VISION_PROVIDER")
 public class DPRGCanDetectorProvider extends VisionProvider {
     private Bitmap noCameraBitmap;
     private OpenCvCamera camera;
@@ -137,6 +139,8 @@ public class DPRGCanDetectorProvider extends VisionProvider {
                 telemetryMap.put(Integer.toString(can.getTargetNumber())+"Width", can.getWidthPixels());
                 telemetryMap.put(Integer.toString(can.getTargetNumber())+"Height", can.getHeightPixels());
                 telemetryMap.put(Integer.toString(can.getTargetNumber())+"Aspect Ratio", can.getAspectRatio());
+                telemetryMap.put(Integer.toString(can.getTargetNumber())+"Camera Heading", can.getCameraHeading());
+                telemetryMap.put(Integer.toString(can.getTargetNumber())+"Camera Distance", can.getCameraDistance());
                 telemetryMap.put(Integer.toString(can.getTargetNumber())+"X", can.getFieldPosition().getX());
                 telemetryMap.put(Integer.toString(can.getTargetNumber())+"Y", can.getFieldPosition().getY());
             }
@@ -153,7 +157,9 @@ public class DPRGCanDetectorProvider extends VisionProvider {
     @Override
     public void updateVision() {
         long timestamp = 0;
+
         //get fresh frame detections
+        frameDetections.clear();
         try {
             frameDetections = pipeline.getDetectedCans();
             if (frameDetections.size()>0) timestamp = frameDetections.get(0).getTimeStamp();
@@ -177,7 +183,7 @@ public class DPRGCanDetectorProvider extends VisionProvider {
                 //4ft = 27 pixels high
                 //1ft = 81 pixels high
                 //8" = 105 pixels - closest reliable
-                double cameraDistance = estimateDistance(newCan.getHeightPixels()); //distance from camera based on measurements
+                double cameraDistance = estimateSodacanDistance(newCan.getHeightPixels()); //distance from camera based on measurements
                 //will need to add the distance to the center of the robot
                 double canDistance = cameraDistance + robot.driveTrain.getChassisLength(); //from robot chassis' center of rotation
                 canDistance += 4.25; //to account for the camera sitting forward of the distance sensor target
@@ -196,8 +202,9 @@ public class DPRGCanDetectorProvider extends VisionProvider {
                 double y = newCan.getCentroid().getY();
                 double heightFactor = (180.0-y)/180.0;
                 double deltaThirty = (58.0 * heightFactor + 237.0)/2; //pixel width at a given height equivalent to 30 degrees from center
-                double frameDegrees =  -(x-160.0) / deltaThirty * 30;
+                double frameDegrees =  wrapAngle(-(x-160.0) / deltaThirty * 30);
                 newCan.setCameraHeading(frameDegrees);
+                newCan.setCameraDistance(cameraDistance);
                 double targetHeadingRad = robot.driveTrain.poseEstimate.getHeading() +
                         Math.toRadians(robot.underarm.getTurretTargetAngle()) + Math.toRadians(frameDegrees);
 
@@ -234,9 +241,10 @@ public class DPRGCanDetectorProvider extends VisionProvider {
     }
 
     //this estimator is based on fitting a power series trendline to the sample data in a spreadsheet as suggested by GPT-4
-    public static double estimateDistance(double pixelHeight) {
-        double a = 3535;
-        double b = -1.3;
+    //https://docs.google.com/spreadsheets/d/1-Ge_xL1NMW1dekoahnYKda2tjjA1VF73Qep7wM35otg/edit?usp=sharing
+    public static double estimateSodacanDistance(double pixelHeight) {
+        double a = 2274;
+        double b = -1.18;
         return a * Math.pow(pixelHeight, b);
     }
 

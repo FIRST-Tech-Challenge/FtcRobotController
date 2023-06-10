@@ -1,10 +1,10 @@
 package org.firstinspires.ftc.teamcode.robots.taubot.util;
 
-import static org.firstinspires.ftc.teamcode.robots.reachRefactor.util.Constants.ELBOW_TO_WRIST;
-import static org.firstinspires.ftc.teamcode.robots.reachRefactor.util.Constants.EPSILON;
-import static org.firstinspires.ftc.teamcode.robots.reachRefactor.util.Constants.JOYSTICK_DEADZONE;
-import static org.firstinspires.ftc.teamcode.robots.reachRefactor.util.Constants.SHOULDER_TO_ELBOW;
-import static org.firstinspires.ftc.teamcode.robots.reachRefactor.util.Constants.TRIGGER_DEADZONE;
+import static org.firstinspires.ftc.teamcode.robots.taubot.util.Constants.ELBOW_TO_WRIST;
+import static org.firstinspires.ftc.teamcode.robots.taubot.util.Constants.EPSILON;
+import static org.firstinspires.ftc.teamcode.robots.taubot.util.Constants.JOYSTICK_DEADZONE;
+import static org.firstinspires.ftc.teamcode.robots.taubot.util.Constants.SHOULDER_TO_ELBOW;
+import static org.firstinspires.ftc.teamcode.robots.taubot.util.Constants.TRIGGER_DEADZONE;
 
 import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.util.Range;

@@ -31,7 +31,7 @@ TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
 THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 package org.firstinspires.ftc.teamcode.robots.taubot;
-//not a fruit
+
 import static org.firstinspires.ftc.teamcode.robots.taubot.util.Constants.LOW_BATTERY_VOLTAGE;
 
 import com.acmerobotics.dashboard.FtcDashboard;
@@ -231,6 +231,7 @@ public class PowerPlay_6832 extends OpMode {
         auto = new Autonomous(robot);
 
         //todo this is really hinky - finalizing the vision provider in init() is way too soon - prevents selecting alternates during init_loop()
+        //todo but that's the way Vance had it so not messing with it right now - dprg currently running in init_loop anyway
         //todo uncomment next line and comment the following one to return to AprilTag provider for Powerplay
         //auto.createVisionProvider(VisionProviders.DEFAULT_PROVIDER_INDEX);
         auto.createVisionProvider(1); //selects the DPRG Can Detector
@@ -524,7 +525,7 @@ public class PowerPlay_6832 extends OpMode {
             opModeTelemetryMap.put("Starting Position", startingPosition);
             opModeTelemetryMap.put("Smoothing Enabled", smoothingEnabled);
         }
-
+        opModeTelemetryMap.put("Battery Voltage", averageVoltage);
         opModeTelemetryMap.put("Average Loop Time", Misc.formatInvariant("%d ms (%d hz)", (int) (averageLoopTime * 1e-6), (int) (1 / (averageLoopTime * 1e-9))));
         opModeTelemetryMap.put("Last Loop Time", Misc.formatInvariant("%d ms (%d hz)", (int) (loopTime * 1e-6), (int) (1 / (loopTime * 1e-9))));
         opModeTelemetryMap.put("Average Robot Update Time", Misc.formatInvariant("%d ms (%d hz)", (int) (averageUpdateTime * 1e-6), (int) (1 / (averageUpdateTime * 1e-9))));

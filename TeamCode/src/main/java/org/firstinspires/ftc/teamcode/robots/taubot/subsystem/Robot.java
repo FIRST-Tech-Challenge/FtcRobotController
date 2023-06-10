@@ -43,7 +43,7 @@ import java.util.Objects;
  * @author Mahesh Natamai
  */
 
-@Config(value = "PPRobot")
+@Config(value = "AA_PPRobot")
 public class Robot implements Subsystem {
 
     public DriveTrain driveTrain;

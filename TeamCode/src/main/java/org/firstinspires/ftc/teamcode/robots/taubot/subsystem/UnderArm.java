@@ -28,7 +28,7 @@ import org.firstinspires.ftc.teamcode.util.Vector3;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-@Config(value = "PPUnderArm")
+@Config(value = "AA_PPUnderArm")
 public class UnderArm implements Subsystem {
     private Robot robot;
 

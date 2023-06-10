@@ -197,7 +197,16 @@ public class DriverControls {
 
     void joystickDrivePregameMode() {
         // drive joysticks
-        robot.driveTrain.ManualTankDrive(-gamepad1.left_stick_y, -gamepad1.right_stick_y);
+        //robot.driveTrain.ManualTankDrive(-gamepad1.left_stick_y, -gamepad1.right_stick_y);
+        //manual arcade drive
+        if (notJoystickDeadZone(gamepad1.left_stick_y) || notJoystickDeadZone(gamepad1.left_stick_x)) {
+            robot.driveTrain.ManualArcadeDrive(-0.7 * gamepad1.left_stick_y, 0.7 * gamepad1.left_stick_x);
+            robot.driverIsNowDriving();
+        }
+        else {
+            robot.driveTrain.ManualDriveOff();
+            robot.driverHasStoppedDriving();
+        }
 
         if(stickyGamepad1.y) {
             robot.crane.toggleGripper();
