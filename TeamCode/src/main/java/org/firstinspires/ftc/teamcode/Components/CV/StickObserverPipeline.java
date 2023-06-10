@@ -25,14 +25,14 @@ public class StickObserverPipeline extends OpenCvPipeline {
     boolean poleInView = false;
     double[] contourDimensions = {0,0};
     ArrayList<double[]> frameList;
-    public static double LowS = 150;
+    public static double LowS = 160;
     public static double HighS = 255;
     public static double LowH = 18;
     public static double HighH = 32;
-    public static double LowV = 50;
+    public static double LowV = 120;
     public static double HighV = 255;
-    public static double minWidth = 120;
-    public static double minAreaThresh = 0.1;
+    public static double minWidth = 20;
+    public static double minAreaThresh = 0.12;
 
 
 
@@ -155,7 +155,7 @@ public class StickObserverPipeline extends OpenCvPipeline {
         if(contourSize>minAreaThresh){
             poleInView=true;
         }
-        else if (contourDimensions[0]==0&&contourDimensions[1]==0 && Core.sumElems(thresh).val[0]/(480*640)/255<minAreaThresh){
+        else if (!poleInView&&contourDimensions[0]==0&&contourDimensions[1]==0 && Core.sumElems(thresh).val[0]/(480*640)/255<minAreaThresh){
             poleInView= false;
         }
 
@@ -217,6 +217,6 @@ public class StickObserverPipeline extends OpenCvPipeline {
         if(abs(center)+5 >= 320-(consiz/2.0)||consiz/2>239){
             return new double[]{0,0};
         }
-        return new double[]{-atan(center/focalLength)*180/PI, abs(1/(2*tan(atan((center+consiz/2)/(focalLength))-atan(center/focalLength))))};
+        return new double[]{-atan(center/focalLength)*180/PI, abs(1.15/(2*tan(atan((center+consiz/2)/(focalLength))-atan(center/focalLength))))};
     }
 }

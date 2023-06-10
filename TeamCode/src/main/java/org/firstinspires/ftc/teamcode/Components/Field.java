@@ -237,7 +237,7 @@ public class Field {
     public Vector2d calcPolePose(Pose2d curPos){
         double camRad = 6.5;
         double[] rotCoord = cv.rotatedPolarCoord();
-        if(abs(rotCoord[1]) < 30 && rotCoord[1] > 3&&rotCoord!=prevRotCoord){
+        if(abs(rotCoord[1]) < 23 && rotCoord[1] > 12&&rotCoord!=prevRotCoord){
             double t = rotCoord[0]*PI/180+PI+curPos.getHeading();
             polePose = new Vector2d(curPos.getX()+cos(t)*rotCoord[1]+cos(curPos.getHeading()+PI)*camRad,
                     curPos.getY()+sin(t)*rotCoord[1]+sin(curPos.getHeading()+PI)*camRad);

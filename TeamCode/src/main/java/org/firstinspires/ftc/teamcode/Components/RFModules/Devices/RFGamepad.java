@@ -17,6 +17,8 @@ public class RFGamepad {
         booleanMap.put("gamepad1_a", false);
         booleanMap.put("gamepad1_b", false);
         booleanMap.put("gamepad1_left_bumper", false);
+        booleanMap.put("gamepad1_left_trigger", false);
+
         booleanMap.put("gamepad1_right_bumper", false);
         booleanMap.put("gamepad1_dpad_left", false);
         booleanMap.put("gamepad1_dpad_right", false);

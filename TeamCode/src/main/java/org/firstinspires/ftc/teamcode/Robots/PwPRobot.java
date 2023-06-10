@@ -73,7 +73,8 @@ public class PwPRobot extends BasicRobot {
     boolean finished = false, coning = false, poling = false;
     double voltage;
     boolean manualSlides = false;
-    double thisTime = 0, lastTime = 0, loopTime = 0;
+    double thisTime = 0, lastTime = 0, loopTime = 0, lastDistTime = 0;
+    boolean distBroke = false;
 
 
     public PwPRobot(LinearOpMode opMode, boolean p_isTeleop) {
@@ -104,6 +105,7 @@ public class PwPRobot extends BasicRobot {
         clawSwitch = new Switch();
         flipper = new flippas();
         finished = true;
+        distBroke = false;
         if (isTeleop) {
             roadrun.setPoseEstimate(PoseStorage.currentPose);
             kA *= 0.25;
@@ -287,17 +289,19 @@ public class PwPRobot extends BasicRobot {
     public boolean[] checkIsOb(boolean l, boolean r, Pose2d endPose) {
         boolean[] vals = {l, r};
         if (queuer.queue(true, !roadrun.isBusy() || l || r || clawSwitch.isSwitched() || CLAW_CLOSING.getStatus())) {
-            if (isObL(endPose) && !l && !r) {
-                vals[0] = true;
-                done();
-                roadrun.breakFollowing();
-                roadrun.setMotorPowers(-1.0, -1.0, -0.95, -0.95);
-            }
-            if (isObR(endPose) && !r && !l) {
-                done();
-                vals[1] = true;
-                roadrun.breakFollowing();
-                roadrun.setMotorPowers(-1.0, -1.0, -0.95, -0.95);
+            if(!distBroke) {
+                if (isObL(endPose) && !l && !r) {
+                    vals[0] = true;
+                    done();
+                    roadrun.breakFollowing();
+                    roadrun.setMotorPowers(-1.0, -1.0, -0.95, -0.95);
+                }
+                if (isObR(endPose) && !r && !l) {
+                    done();
+                    vals[1] = true;
+                    roadrun.breakFollowing();
+                    roadrun.setMotorPowers(-1.0, -1.0, -0.95, -0.95);
+                }
             }
         }
         return vals;
@@ -861,12 +865,18 @@ public class PwPRobot extends BasicRobot {
         }
         return val;
     }
+    public void setDistBroke(boolean value){
+       distBroke = value;
+    }
 
     public void teleOp() {
         roadrun.update();
         thisTime = op.getRuntime();
         loopTime = thisTime - lastTime;
         lastTime = thisTime;
+        if(loopTime>0.1){
+            distBroke = true;
+        }
 //        if (progNameLogged == false) {
 //            logger.log("/RobotLogs/GeneralRobot", "PROGRAM RUN: PwPTeleOp", false);
 //            progNameLogged = true;
@@ -878,6 +888,8 @@ public class PwPRobot extends BasicRobot {
         boolean isX2 = gp.readGamepad(op.gamepad2.x, "gamepad2_x", "Status");
         boolean isA = gp.readGamepad(op.gamepad1.x, "gamepad1_a", "Status");
 //        boolean isX = gp.readGamepad(op.gamepad2.x, "gamepad2_x", "Status");
+        boolean isTriggered = gp.readGamepad(abs(op.gamepad1.left_trigger)!=0, "gamepad1_left_trigger"
+                ,"Status");
 
         boolean isFlipper = gp.readGamepad(op.gamepad1.left_bumper, "gamepad1_left_bumper", "Status");
 //        gp.readGamepad(op.gamepad2.a, "gamepad1_a", "Status");
@@ -888,11 +900,16 @@ public class PwPRobot extends BasicRobot {
 //        gp.readGamepad(op.gamepad2.left_trigger, "gamepad2_left_trigger", "Value");
 //        gp.readGamepad(op.gamepad2.right_trigger, "gamepad2_right_trigger", "Value");
 //        gp.readGamepad(op.gamepad2.right_bumper, "gamepad2_right_bumper", "Status");
-        boolean isBumper2 = gp.readGamepad(op.gamepad2.left_bumper, "gamepad2_left_bumper", "Status");
+        boolean isBumper2 = gp.readGamepad(op.gamepad2.left_bumper, "gamepad1_left_trigger", "Status");
         op.telemetry.addData("switched:", clawSwitch.isSwitched());
+        op.telemetry.addData("distborke", distBroke);
+        op.telemetry.addData("trigger",abs(op.gamepad1.left_trigger)!=0);
 //        op.telemetry.addData("coneDist", claw.coneDistance());
         flipper.update();
-
+        if(thisTime - lastDistTime>0.4&&isTriggered){
+            lastDistTime = op.getRuntime();
+            distBroke = !distBroke;
+        }
         if (isA) {
             if (liftArm.ableArmed()) {
                 liftArm.disableArm();
@@ -1129,7 +1146,7 @@ public class PwPRobot extends BasicRobot {
 
 
         //will only close when detect cone
-        if (op.getRuntime() - claw.getLastOpenTime() > 0.5 && loopTime < 0.1) {
+        if (!distBroke&&(op.getRuntime() - claw.getLastOpenTime() > 0.5 && loopTime < 0.1)) {
             claw.closeClaw(roadrun.getPoseVelocity().vec());
         }
         op.telemetry.addData("stacklevel", lift.getStackLevel());
