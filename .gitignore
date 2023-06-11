@@ -85,3 +85,7 @@ lint/generated/
 lint/outputs/
 lint/tmp/
 # lint/reports/
+/.idea/.gitignore
+/.idea/misc.xml
+/.idea/jarRepositories.xml
+/.idea/compiler.xml
