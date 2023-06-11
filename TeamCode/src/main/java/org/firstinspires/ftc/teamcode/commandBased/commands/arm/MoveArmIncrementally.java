@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.commandBased.commands;
+package org.firstinspires.ftc.teamcode.commandBased.commands.arm;
 
 import com.arcrobotics.ftclib.command.CommandBase;
 
@@ -17,7 +17,7 @@ public class MoveArmIncrementally extends CommandBase {
 
     @Override
     public void initialize() {
-        m_armSubsystem.rotate(amount);
+        //m_armSubsystem.setArmAngle(amount);
     }
 
     @Override

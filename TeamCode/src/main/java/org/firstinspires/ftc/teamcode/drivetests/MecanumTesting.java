@@ -4,7 +4,7 @@ import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
-import org.firstinspires.ftc.teamcode.commandBased.commands.MoveElevator;
+import org.firstinspires.ftc.teamcode.commandBased.commands.elevator.MoveElevatorToPosition;
 import org.firstinspires.ftc.teamcode.commandBased.subsystems.DrivetrainSubsystem;
 
 import ftc.rogue.blacksmith.BlackOp;
@@ -26,7 +26,7 @@ public class MecanumTesting extends BlackOp {
     FtcDashboard dashboard = null;
     RobotHardware robot = new RobotHardware();
     DrivetrainSubsystem drivetrainSubsystem = null;
-    MoveElevator elevator = null;
+    MoveElevatorToPosition elevator = null;
 
     @Override
     public void go() {

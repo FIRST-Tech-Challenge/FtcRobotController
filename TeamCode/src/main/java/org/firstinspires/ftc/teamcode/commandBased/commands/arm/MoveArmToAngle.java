@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.commandBased.commands;
+package org.firstinspires.ftc.teamcode.commandBased.commands.arm;
 
 import com.arcrobotics.ftclib.command.CommandBase;
 
@@ -6,8 +6,8 @@ import org.firstinspires.ftc.teamcode.commandBased.subsystems.ArmSubsystem;
 
 public class MoveArmToAngle extends CommandBase {
 
-    private double angle;
-    private ArmSubsystem m_armSubsystem;
+    private final double angle;
+    private final ArmSubsystem m_armSubsystem;
 
     public MoveArmToAngle(ArmSubsystem armSubsystem, double angle) {
         m_armSubsystem = armSubsystem;

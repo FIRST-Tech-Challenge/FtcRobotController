@@ -7,15 +7,19 @@ import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.arcrobotics.ftclib.command.CommandScheduler;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
-import org.firstinspires.ftc.teamcode.commandBased.commands.MoveArmIncrementally;
-import org.firstinspires.ftc.teamcode.commandBased.commands.MoveArmToAngle;
-import org.firstinspires.ftc.teamcode.commandBased.commands.MoveElevator;
+import org.firstinspires.ftc.teamcode.commandBased.commands.intake.SetIntakePower;
+import org.firstinspires.ftc.teamcode.commandBased.commands.rotator.MoveRotatorToAngle;
+import org.firstinspires.ftc.teamcode.commandBased.commands.arm.MoveArmToAngle;
+import org.firstinspires.ftc.teamcode.commandBased.commands.drive.SetDriveSpeeds;
+import org.firstinspires.ftc.teamcode.commandBased.commands.elevator.MoveElevatorToPosition;
 import org.firstinspires.ftc.teamcode.commandBased.commands.drive.PointCentric;
 import org.firstinspires.ftc.teamcode.commandBased.commands.drive.FieldCentric;
 import org.firstinspires.ftc.teamcode.commandBased.commands.drive.RobotCentric;
 import org.firstinspires.ftc.teamcode.commandBased.subsystems.ArmSubsystem;
 import org.firstinspires.ftc.teamcode.commandBased.subsystems.DrivetrainSubsystem;
 import org.firstinspires.ftc.teamcode.commandBased.subsystems.ElevatorSubsystem;
+import org.firstinspires.ftc.teamcode.commandBased.subsystems.IntakeSubsystem;
+import org.firstinspires.ftc.teamcode.commandBased.subsystems.RotatorSubsystem;
 import org.firstinspires.ftc.teamcode.rr.util.DashboardUtil;
 
 
@@ -31,6 +35,8 @@ public class Robot extends BlackOp {
     public static DrivetrainSubsystem drivetrainSS;
     public static ElevatorSubsystem elevatorSS;
     public static ArmSubsystem armSS;
+    public static RotatorSubsystem rotatorSS;
+    public static IntakeSubsystem intakeSS;
 
     @Override
     public void go() {
@@ -42,6 +48,8 @@ public class Robot extends BlackOp {
         drivetrainSS = new DrivetrainSubsystem(hardwareMap);
         elevatorSS = new ElevatorSubsystem(hardwareMap);
         armSS = new ArmSubsystem(hardwareMap);
+        rotatorSS = new RotatorSubsystem(hardwareMap);
+        intakeSS = new IntakeSubsystem(hardwareMap);
 
         //create gamepads
         ReforgedGamepad driver = new ReforgedGamepad(gamepad1);
@@ -68,16 +76,39 @@ public class Robot extends BlackOp {
                 Constants.ANGLE_OFFSET
         );
 
+        //create drivetrain speed commands
+        SetDriveSpeeds slowMode = new SetDriveSpeeds(
+                drivetrainSS,
+                Constants.DRIVE_SLOW_STRAFE,
+                Constants.DRIVE_SLOW_FORWARD,
+                Constants.DRIVE_SLOW_TURN
+        );
+
+        SetDriveSpeeds fastMode = new SetDriveSpeeds(
+                drivetrainSS,
+                Constants.DRIVE_FAST_STRAFE,
+                Constants.DRIVE_FAST_FORWARD,
+                Constants.DRIVE_FAST_TURN
+        );
+
         //create elevator commands
-        MoveElevator eleLow = new MoveElevator(elevatorSS, Constants.ELE_LOW);
-        MoveElevator eleMidLow = new MoveElevator(elevatorSS, Constants.ELE_MID_LOW);
-        MoveElevator eleMidHigh = new MoveElevator(elevatorSS, Constants.ELE_MID_HIGH);
-        MoveElevator eleHigh = new MoveElevator(elevatorSS, Constants.ELE_HIGH);
+        MoveElevatorToPosition eleLow = new MoveElevatorToPosition(elevatorSS, Constants.ELE_LOW);
+        MoveElevatorToPosition eleMidLow = new MoveElevatorToPosition(elevatorSS, Constants.ELE_MID_LOW);
+        MoveElevatorToPosition eleMidHigh = new MoveElevatorToPosition(elevatorSS, Constants.ELE_MID_HIGH);
+        MoveElevatorToPosition eleHigh = new MoveElevatorToPosition(elevatorSS, Constants.ELE_HIGH);
 
         //create arm commands
         MoveArmToAngle armBackward = new MoveArmToAngle(armSS, -90);
         MoveArmToAngle armIdle = new MoveArmToAngle(armSS, 30);
         MoveArmToAngle armForward = new MoveArmToAngle(armSS, 90);
+
+        //create rotator commands
+        MoveRotatorToAngle rotatorBack = new MoveRotatorToAngle(rotatorSS, Constants.ROTATOR_MIN);
+        MoveRotatorToAngle rotatorFront = new MoveRotatorToAngle(rotatorSS, Constants.ROTATOR_MAX);
+
+        //create intake commands
+        SetIntakePower intakeIntake = new SetIntakePower(intakeSS, 1);
+        
 
         //start robot in field-centric mode
         robotCentric.schedule();
@@ -96,8 +127,10 @@ public class Robot extends BlackOp {
             CommandScheduler.getInstance().run();
 
             //drivetrain speed controls
-            driver.left_bumper.onRise(() -> drivetrainSS.setSpeedMultipliers(0.5, 0.5, 0.5))
-                              .onFall(() -> drivetrainSS.setSpeedMultipliers(1, 1, 1));
+//            driver.left_bumper.onRise(() -> drivetrainSS.setSpeedMultipliers(0.5, 0.5, 0.5))
+//                              .onFall(() -> drivetrainSS.setSpeedMultipliers(1, 1, 1));
+            driver.left_bumper.onRise(slowMode::schedule)
+                              .onFall(fastMode::schedule);
 
             //drivetrain mode controls
             driver.a.onRise(() -> {

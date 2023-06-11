@@ -1,15 +1,15 @@
-package org.firstinspires.ftc.teamcode.commandBased.commands;
+package org.firstinspires.ftc.teamcode.commandBased.commands.elevator;
 
 import com.arcrobotics.ftclib.command.CommandBase;
 
 import org.firstinspires.ftc.teamcode.commandBased.subsystems.ElevatorSubsystem;
 
-public class MoveElevator extends CommandBase {
+public class MoveElevatorToPosition extends CommandBase {
 
-    private double target;
-    private ElevatorSubsystem m_elevatorSubsystem;
+    private final double target;
+    private final ElevatorSubsystem m_elevatorSubsystem;
 
-    public MoveElevator(ElevatorSubsystem elevatorSubsystem, double target) {
+    public MoveElevatorToPosition(ElevatorSubsystem elevatorSubsystem, double target) {
         m_elevatorSubsystem = elevatorSubsystem;
         addRequirements(m_elevatorSubsystem);
         this.target = target;
@@ -22,6 +22,6 @@ public class MoveElevator extends CommandBase {
 
     @Override
     public boolean isFinished() {
-        return true;
+        return m_elevatorSubsystem.isFinished();
     }
 }

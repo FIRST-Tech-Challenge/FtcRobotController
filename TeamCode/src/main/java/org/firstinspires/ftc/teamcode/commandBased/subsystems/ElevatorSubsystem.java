@@ -24,7 +24,8 @@ public class ElevatorSubsystem extends SubsystemBase {
     private final MotorGroup ele;
 
     //ELEVATOR VARIABLES
-    private double elePos = 0;
+    private double elePos;
+    private double eleTarget;
 
     private final PIDFController controller;
     private MotionProfile profile;
@@ -88,6 +89,7 @@ public class ElevatorSubsystem extends SubsystemBase {
     }
 
     public void setProfileTarget(double target) {
+        eleTarget = target;
         target = inchesToTicks(target);
         profile = MotionProfileGenerator.generateSimpleMotionProfile(
                 new MotionState(state.getX(), 0, 0),
@@ -96,6 +98,11 @@ public class ElevatorSubsystem extends SubsystemBase {
                 inchesToTicks(Constants.ELE_MAX_ACCEL)
         );
         timer.reset();
+    }
+
+    public boolean isFinished() {
+        return eleTarget >= state.getX() - Constants.ELE_DONE_DEADZONE
+            && eleTarget <= state.getX() + Constants.ELE_DONE_DEADZONE;
     }
 
     public double getElePower() {
