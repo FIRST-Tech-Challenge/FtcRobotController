@@ -17,23 +17,14 @@ import org.firstinspires.ftc.teamcode.commandBased.Constants;
 
 public class ArmSubsystem extends SubsystemBase {
 
-    private Motor arm;
+    private final Motor arm;
     private final DcMotor m_arm;
 
     private double armPos;
     private double armTarget = 0;
-    private double armPower;
     private double armAngle;
 
-
-    private static double KP;
-    private static double KI;
-    private static double KD;
-
     private double KF;
-    private double KCOS;
-
-    //private final PIDController pid;
 
     private final PIDFController controller;
     private MotionProfile profile;
@@ -43,10 +34,6 @@ public class ArmSubsystem extends SubsystemBase {
 
     private final InterpLUT angleEncLUT;
     private final InterpLUT encAngleLUT;
-    private final InterpLUT pCoefficients;
-    private final InterpLUT iCoefficients;
-    private final InterpLUT dCoefficients;
-
 
     public ArmSubsystem(final HardwareMap hwMap) {
 
@@ -80,32 +67,6 @@ public class ArmSubsystem extends SubsystemBase {
         encAngleLUT.createLUT();
 
 
-        //interplut pid setup
-        pCoefficients = new InterpLUT();
-        iCoefficients = new InterpLUT();
-        dCoefficients = new InterpLUT();
-
-        pCoefficients.add(Constants.ARM_ENC_BACK_MAX - Constants.ARM_ENC_SAFETY, Constants.ARM_KP_MAX);
-        pCoefficients.add(Constants.ARM_ENC_BACK_PARALLEL, Constants.ARM_KP_90);
-        pCoefficients.add(Constants.ARM_ENC_CENTER, Constants.ARM_KP_0);
-        pCoefficients.add(Constants.ARM_ENC_FRONT_PARALLEL, Constants.ARM_KP_90);
-        pCoefficients.add(Constants.ARM_ENC_FRONT_MAX + Constants.ARM_ENC_SAFETY, Constants.ARM_KP_MAX);
-        pCoefficients.createLUT();
-
-        iCoefficients.add(Constants.ARM_ENC_BACK_MAX - Constants.ARM_ENC_SAFETY, Constants.ARM_KI_MAX);
-        iCoefficients.add(Constants.ARM_ENC_BACK_PARALLEL, Constants.ARM_KI_90);
-        iCoefficients.add(Constants.ARM_ENC_CENTER, Constants.ARM_KI_0);
-        iCoefficients.add(Constants.ARM_ENC_FRONT_PARALLEL, Constants.ARM_KI_90);
-        iCoefficients.add(Constants.ARM_ENC_FRONT_MAX + Constants.ARM_ENC_SAFETY, Constants.ARM_KI_MAX);
-        iCoefficients.createLUT();
-
-        dCoefficients.add(Constants.ARM_ENC_BACK_MAX - Constants.ARM_ENC_SAFETY, Constants.ARM_KD_MAX);
-        dCoefficients.add(Constants.ARM_ENC_BACK_PARALLEL, Constants.ARM_KD_90);
-        dCoefficients.add(Constants.ARM_ENC_CENTER, Constants.ARM_KD_0);
-        dCoefficients.add(Constants.ARM_ENC_FRONT_PARALLEL, Constants.ARM_KD_90);
-        dCoefficients.add(Constants.ARM_ENC_FRONT_MAX + Constants.ARM_ENC_SAFETY, Constants.ARM_KD_MAX);
-        dCoefficients.createLUT();
-
         //motion profile setup
         controller = new PIDFController(
                 Constants.ARM_COEFFS,
@@ -124,8 +85,6 @@ public class ArmSubsystem extends SubsystemBase {
         );
 
         state = profile.get(timer.seconds());
-
-        //pid = new PIDController(KP, KI, KD);
     }
 
     @Override
@@ -136,26 +95,19 @@ public class ArmSubsystem extends SubsystemBase {
         PIDF();
     }
 
-//    public void calculatePID() {
-//        KP = pCoefficients.get(armPos);
-//        KI = iCoefficients.get(armPos);
-//        KD = dCoefficients.get(armPos);
-//        pid.setPID(KP, KI, KD);
-//    }
-
-    public void motionProfiling() {
+    private void motionProfiling() {
         state = profile.get(timer.seconds());
         controller.setTargetPosition(state.getX());
         controller.setTargetVelocity(state.getV());
         controller.setTargetAcceleration(state.getA());
     }
 
-    public void calculateKF() {
+    private void calculateKF() {
         armAngle = encAngleLUT.get(armPos);
         KF = getSIN(armAngle) * Constants.ARM_KSIN;
     }
 
-    public void PIDF() {
+    private void PIDF() {
         correction = -controller.update(armPos);
         arm.set(correction - KF);
     }
@@ -180,17 +132,18 @@ public class ArmSubsystem extends SubsystemBase {
         timer.reset();
     }
 
+    public void setArmPos() {
+        armPos = m_arm.getCurrentPosition();
+        armPos = -armPos;
+    }
+
+    //getters
     public double getArmAngle() {
         return armAngle;
     }
 
     public double getArmTarget() {
         return state.getX();
-    }
-
-    public void setArmPos() {
-        armPos = m_arm.getCurrentPosition();
-        armPos = -armPos;
     }
 
     public double getArmPos() {
@@ -202,6 +155,14 @@ public class ArmSubsystem extends SubsystemBase {
     }
 
     public double[] getCoeffs() {
-        return new double[]{KP, KI, KD, KF};
+        return new double[]{
+                Constants.ARM_COEFFS.kP,
+                Constants.ARM_COEFFS.kI,
+                Constants.ARM_COEFFS.kD,
+                Constants.ARM_KV,
+                Constants.ARM_KA,
+                Constants.ARM_KS,
+                Constants.ARM_KSIN
+        };
     }
 }

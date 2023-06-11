@@ -149,8 +149,10 @@ public class Robot extends BlackOp {
             mTelemetry().addData("KP", armSS.getCoeffs()[0]);
             mTelemetry().addData("KI", armSS.getCoeffs()[1]);
             mTelemetry().addData("KD", armSS.getCoeffs()[2]);
-            mTelemetry().addData("KF", armSS.getCoeffs()[3]);
-
+            mTelemetry().addData("KV", armSS.getCoeffs()[3]);
+            mTelemetry().addData("KA", armSS.getCoeffs()[4]);
+            mTelemetry().addData("KS", armSS.getCoeffs()[5]);
+            mTelemetry().addData("KF", armSS.getCoeffs()[6]);
             mTelemetry().update();
         });
     }
