@@ -1,14 +1,14 @@
-package org.firstinspires.ftc.teamcode.CART_team;
+package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 @TeleOp
-public class HelloWorld extends OpMode
+public class HelloWorldWilliam extends OpMode
 {
     @Override
     public void init() {
-        telemetry.addData("Hello", "CART Team");
+        telemetry.addData("Hello", "World William");
     }
 
     @Override
