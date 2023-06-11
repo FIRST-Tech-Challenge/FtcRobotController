@@ -18,6 +18,13 @@ public class Constants {
     public static Motor.GoBILDA ARM_MOTOR = Motor.GoBILDA.RPM_117;
 
     //drivetrain constants
+    public static double DRIVE_FAST_STRAFE = 1;
+    public static double DRIVE_FAST_FORWARD = 1;
+    public static double DRIVE_FAST_TURN = 1;
+
+    public static double DRIVE_SLOW_STRAFE = 0.5;
+    public static double DRIVE_SLOW_FORWARD = 0.5;
+    public static double DRIVE_SLOW_TURN = 0.5;
     public static double TRACK_WIDTH = 13;
     public static double DRIVE_KV = 0;
     public static PIDCoefficientsEx TURN_COEFFS = new PIDCoefficientsEx(1, 0.2, 0.2, 1, 0, 0);
@@ -41,6 +48,9 @@ public class Constants {
     public static double ELE_MID_LOW = 4;
     public static double ELE_MID_HIGH = 10;
     public static double ELE_HIGH = 15;
+
+    //command-ending deadzones
+    public static double ELE_DONE_DEADZONE = 5;
 
     //arm pid
     public static PIDCoefficients ARM_COEFFS = new PIDCoefficients(.03, 0, 0);

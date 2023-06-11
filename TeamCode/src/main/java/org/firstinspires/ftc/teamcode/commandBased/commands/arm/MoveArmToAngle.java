@@ -1,23 +1,23 @@
-package org.firstinspires.ftc.teamcode.commandBased.commands;
+package org.firstinspires.ftc.teamcode.commandBased.commands.arm;
 
 import com.arcrobotics.ftclib.command.CommandBase;
 
 import org.firstinspires.ftc.teamcode.commandBased.subsystems.ArmSubsystem;
 
-public class MoveArmIncrementally extends CommandBase {
+public class MoveArmToAngle extends CommandBase {
 
-    private double amount;
-    private ArmSubsystem m_armSubsystem;
+    private final double angle;
+    private final ArmSubsystem m_armSubsystem;
 
-    public MoveArmIncrementally(ArmSubsystem armSubsystem, double amount) {
+    public MoveArmToAngle(ArmSubsystem armSubsystem, double angle) {
         m_armSubsystem = armSubsystem;
         addRequirements(m_armSubsystem);
-        this.amount = amount;
+        this.angle = angle;
     }
 
     @Override
     public void initialize() {
-        m_armSubsystem.setArmAngle(amount);
+        m_armSubsystem.setArmAngle(angle);
     }
 
     @Override
