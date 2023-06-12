@@ -31,13 +31,6 @@ import ftc.rogue.blacksmith.listeners.ReforgedGamepad;
 @TeleOp(name="Command Based", group="Linear Opmode")
 public class Robot extends BlackOp {
 
-    //declare subsystem variables
-    public static DrivetrainSubsystem drivetrainSS;
-    public static ElevatorSubsystem elevatorSS;
-    public static ArmSubsystem armSS;
-    public static RotatorSubsystem rotatorSS;
-    public static IntakeSubsystem intakeSS;
-
     @Override
     public void go() {
 
@@ -45,11 +38,11 @@ public class Robot extends BlackOp {
         CommandScheduler.getInstance().reset();
 
         //create subsystem objects
-        drivetrainSS = new DrivetrainSubsystem(hardwareMap);
-        elevatorSS = new ElevatorSubsystem(hardwareMap);
-        armSS = new ArmSubsystem(hardwareMap);
-        rotatorSS = new RotatorSubsystem(hardwareMap);
-        intakeSS = new IntakeSubsystem(hardwareMap);
+        DrivetrainSubsystem drivetrainSS = new DrivetrainSubsystem(hardwareMap);
+        ElevatorSubsystem elevatorSS = new ElevatorSubsystem(hardwareMap);
+        ArmSubsystem armSS = new ArmSubsystem(hardwareMap);
+        RotatorSubsystem rotatorSS = new RotatorSubsystem(hardwareMap);
+        IntakeSubsystem intakeSS = new IntakeSubsystem(hardwareMap);
 
         //create gamepads
         ReforgedGamepad driver = new ReforgedGamepad(gamepad1);
@@ -102,12 +95,14 @@ public class Robot extends BlackOp {
         MoveArmToAngle armIdle = new MoveArmToAngle(armSS, Constants.ARM_ANGLE_IDLE);
         MoveArmToAngle armForward = new MoveArmToAngle(armSS, Constants.ARM_ANGLE_FRONT);
 
-        //create rotator commands
-        MoveRotatorToAngle rotatorBack = new MoveRotatorToAngle(rotatorSS, Constants.ROTATOR_MIN);
-        MoveRotatorToAngle rotatorFront = new MoveRotatorToAngle(rotatorSS, Constants.ROTATOR_MAX);
-
-        //create intake commands
-        SetIntakePower intakeIntake = new SetIntakePower(intakeSS, 1);
+//        //create rotator commands
+//        MoveRotatorToAngle rotatorBack = new MoveRotatorToAngle(rotatorSS, Constants.ROTATOR_MIN);
+//        MoveRotatorToAngle rotatorFront = new MoveRotatorToAngle(rotatorSS, Constants.ROTATOR_MAX);
+//
+//        //create intake commands
+//        SetIntakePower intakeIntake = new SetIntakePower(intakeSS, 1);
+        SetIntakePower intakeIdle = new SetIntakePower(intakeSS, 0);
+        SetIntakePower intakeOuttake = new SetIntakePower(intakeSS, -1);
         
 
         //start robot in field-centric mode
@@ -149,9 +144,7 @@ public class Robot extends BlackOp {
                 pointCentric.schedule();
             });
 
-            driver.y.onRise(() -> {
-                drivetrainSS.resetGyro();
-            });
+            driver.y.onRise(drivetrainSS::resetGyro);
 
             //elevator controls
             driver.dpad_down.onRise(eleLow::schedule);

@@ -25,6 +25,7 @@ public class Constants {
     public static double DRIVE_SLOW_STRAFE = 0.5;
     public static double DRIVE_SLOW_FORWARD = 0.5;
     public static double DRIVE_SLOW_TURN = 0.5;
+
     public static double TRACK_WIDTH = 13;
     public static double DRIVE_KV = 0;
     public static PIDCoefficientsEx TURN_COEFFS = new PIDCoefficientsEx(1, 0.2, 0.2, 1, 0, 0);
@@ -76,4 +77,7 @@ public class Constants {
     public static double ARM_ENC_FRONT_MAX = 265;
     public static double ARM_ENC_CENTER = -145;
 
+    //rotator limits
+    public static double ROTATOR_MIN = 0;
+    public static double ROTATOR_MAX = 10;
 }
