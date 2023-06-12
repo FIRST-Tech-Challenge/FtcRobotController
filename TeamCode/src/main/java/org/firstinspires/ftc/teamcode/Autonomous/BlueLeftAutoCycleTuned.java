@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.Autonomous;
 import static org.firstinspires.ftc.teamcode.Components.Claw.ClawStates.CLAW_CLOSED;
 import static org.firstinspires.ftc.teamcode.Components.Lift.LiftConstants.LIFT_HIGH_JUNCTION;
 import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.logger;
+import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.time;
 import static java.lang.Math.toRadians;
 
 import com.acmerobotics.dashboard.FtcDashboard;
@@ -34,7 +35,7 @@ public class BlueLeftAutoCycleTuned extends LinearOpMode {
         sleep(500);
         autoRunner.init();
         abort:
-        while ((getRuntime() < 27 && (!robot.queuer.isFullfilled() || robot.queuer.isFirstLoop()))&&!isStopRequested()) {
+        while ((time < 27 && (!robot.queuer.isFullfilled() || robot.queuer.isFirstLoop()))&&!isStopRequested()) {
             autoRunner.preload();
             for (int i = 0; i < 5; i++) {
                 if (!autoRunner.pick(i)) {
@@ -50,7 +51,7 @@ public class BlueLeftAutoCycleTuned extends LinearOpMode {
         robot.done();
         robot.queuer.reset();
         robot.done();
-        while ((getRuntime() < 29.9 && (!robot.queuer.isFullfilled() || robot.queuer.isFirstLoop()))&&!isStopRequested()) {
+        while ((time < 29.9 && (!robot.queuer.isFullfilled() || robot.queuer.isFirstLoop()))&&!isStopRequested()) {
             autoRunner.park();
             autoRunner.update();
         }

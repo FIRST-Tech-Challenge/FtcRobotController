@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.Autonomous;
 import static org.firstinspires.ftc.teamcode.Components.Claw.ClawStates.CLAW_CLOSED;
 import static org.firstinspires.ftc.teamcode.Components.Lift.LiftConstants.LIFT_HIGH_JUNCTION;
 import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.logger;
+import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.time;
 
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
@@ -115,7 +116,7 @@ public class BlueLeftAutoCycle extends LinearOpMode {
         if (isStopRequested()) return;
 
 
-        while (opModeIsActive() && !isStopRequested() && getRuntime()<28) {
+        while (opModeIsActive() && !isStopRequested() && time<28) {
             logger.loopcounter++;
             robot.followTrajectoryAsync(initialtrajectory);
             robot.delay(0.4);

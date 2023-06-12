@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.Components;
 
 import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.logger;
 import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.op;
+import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.time;
 
 public class QueueElement {
     //place in line
@@ -45,8 +46,8 @@ public class QueueElement {
         //is it this elements turn to run
         if (currentEvent >= startCondition && !isDone) {
             // update when start for delay logic
-            if (readyTime > op.getRuntime()) {
-                readyTime = op.getRuntime();
+            if (readyTime > time) {
+                readyTime = time;
                 logger.log("/RobotLogs/GeneralRobot", queuePos + "readyTime =" + readyTime +"optional"+isOptional);
             }
             if (extraCondition) {

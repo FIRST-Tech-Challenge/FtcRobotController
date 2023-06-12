@@ -12,6 +12,7 @@ public class BasicRobot{
     public Queuer queuer = null;
     public static boolean isTeleop;
     public static FtcDashboard dashboard;
+    public static double time= 0.0;
     public BasicRobot(LinearOpMode opMode, boolean p_isTeleop){
         op = opMode;
         logger = new Logger();
@@ -24,6 +25,7 @@ public class BasicRobot{
         op.telemetry = new MultipleTelemetry(op.telemetry, FtcDashboard.getInstance().getTelemetry());
 
     }
+    public void updateTime(){time=op.getRuntime();}
     public void resetQueuer() {
         queuer.reset();
     }

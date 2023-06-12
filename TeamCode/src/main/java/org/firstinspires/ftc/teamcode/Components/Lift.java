@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.Components;
 import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.isTeleop;
 import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.logger;
 import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.op;
+import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.time;
 import static java.lang.Double.min;
 import static java.lang.Math.abs;
 
@@ -17,7 +18,7 @@ import java.util.ArrayList;
 
 @Config
 public class Lift {
-    public static int MAX_LIFT_TICKS = 1340;
+    public static int MAX_LIFT_TICKS = 1370;
     private final double LIFT_GRAVITY_CONSTANT = 0.075;
     //    public enum LiftFunctionStates {
 //        LIFT_HIGH_JUNCTION(false),
@@ -41,7 +42,7 @@ public class Lift {
     private ArrayList<Double> coefficients = new ArrayList<>();
     private boolean done = true;
     private double lastManualTime = 0.0;
-    double[] coneStack = {500*0.6-10,410*0.6-0,315*0.6-10,180*0.6 - 20};
+    double[] coneStack = {500*0.6,410*0.6-0,315*0.6-10,180*0.6 - 20};
     ;
     private int stackLevel = 0;
     private double lastStackTime =0;
@@ -105,7 +106,7 @@ public class Lift {
     }
 
     public enum LiftConstants {
-        LIFT_HIGH_JUNCTION(MAX_LIFT_TICKS - 110, false),
+        LIFT_HIGH_JUNCTION(MAX_LIFT_TICKS - 80, false),
         LIFT_MED_JUNCTION(860*.8-100, false),
         LIFT_LOW_JUNCTION(15*.75, false),
         LIFT_GROUND_JUNCTION(0, false),
@@ -209,19 +210,12 @@ public class Lift {
         //if(targetHeight != LiftConstants.LIFT_LOW_JUNCTION && targetHeight != LiftConstants.LIFT_GROUND_JUNCTION && Claw.ClawStates.CLAW_CLOSED.status == true){
         //liftMotor.setPosition(targetHeight.value);
         //}
-
-        double distance = targetHeight.value - liftMotor.getCurrentPosition();
-
-        done = (abs(distance) < liftMotor.getTICK_BOUNDARY_PADDING());
-        setLiftTarget(targetHeight.getValue());
-        if (!done) {
-            targetHeight.setLfc(true);
-        } else {
-            targetHeight.setLfc(false);
+        if(targetHeight.value!=liftMotor.getTarget()) {
+            logger.log("/RobotLogs/GeneralRobot", "Lift," + "liftToPosition(LiftConstants)," + "Lifting to " + targetHeight.value /*+ " ticks" + liftMotor.getCurrentPosition()*/);
         }
+        setLiftTarget(targetHeight.getValue());
         // no conditions
         // log when movement starts & when reach target position
-        logger.log("/RobotLogs/GeneralRobot", "Lift," + "liftToPosition(LiftConstants)," + "Lifting to " + targetHeight.value + " ticks" + liftMotor.getCurrentPosition());
         //async, no use sleep/wait with time, can use multiple processes
     }
 
@@ -230,14 +224,14 @@ public class Lift {
     }
 
     public void liftToPosition(int targetTickCount) {
-        double distance = targetTickCount - liftMotor.getCurrentPosition();
-
-        done = (abs(distance) < liftMotor.getTICK_BOUNDARY_PADDING());
+        if(targetTickCount!=liftMotor.getTarget()) {
+            logger.log("/RobotLogs/GeneralRobot", "Lift," + "liftToPosition(LiftConstants)," + "Lifting to " + targetTickCount /*+ " ticks" + liftMotor.getCurrentPosition()*/);
+        }
         setLiftTarget(min(targetTickCount,MAX_LIFT_TICKS));
 
         // no conditions
         // log when movement starts & when reach target position
-        logger.log("/RobotLogs/GeneralRobot", "Lift," + "liftToPosition(LiftConstants)," + "Lifting to " + liftTarget + " ticks" + liftMotor.getCurrentPosition());
+//        logger.log("/RobotLogs/GeneralRobot", "Lift," + "liftToPosition(LiftConstants)," + "Lifting to " + liftTarget /*+ " ticks" + liftMotor.getCurrentPosition()*/);
         //async, no use sleep/wait with time, can use multiple processes
     }
 
@@ -260,7 +254,7 @@ public class Lift {
     }
 
     public void updateLastManualTime() {
-        lastManualTime = op.getRuntime();
+        lastManualTime = time;
     }
 
     public void setLiftRawPower(double rawPower) {
@@ -303,12 +297,12 @@ public class Lift {
     private boolean LTTZeroLogged = false;
 
     public void liftToTarget() {
-        if (op.getRuntime() - lastManualTime > 0.2) {
+        if (time- lastManualTime > 0.2) {
             liftMotor.setPosition(liftTarget);
             //logger.log("/RobotLogs/GeneralRobot", "Lift," + "liftToTarget()," + "Lifting to Target of:" + liftTarget + " ticks" + logger.loopcounter, true);
             //logger.log("/RobotLogs/GeneralRobot", "Lift," + "liftToTarget()," + "Target: " + liftTarget + " ticks | Current Position: " + liftMotor.getCurrentPosition() + " | Velocity: " + liftMotor.getVelocity(), true);
             LTTZeroLogged = false;
-        } else if (op.getRuntime() - lastManualTime < .2 && liftMotor.getPower() == liftMotor.getGRAVITY_CONSTANT()) {
+        } else if (time- lastManualTime < .2 && liftMotor.getPower() == liftMotor.getGRAVITY_CONSTANT()) {
             setLiftTarget(liftMotor.getCurrentPosition());
         } else {
             //if (LTTZeroLogged == false) {
@@ -324,25 +318,25 @@ public class Lift {
     }
 
     public void iterateConeStackDown() {
-        if(op.getRuntime()-lastStackTime>0.3) {
+        if(time-lastStackTime>0.3) {
             if (stackLevel != 3) {
                 stackLevel++;
             }
-            op.telemetry.addData("stackLevel", stackLevel);
+//            op.telemetry.addData("stackLevel", stackLevel);
             setLiftTarget(coneStack[stackLevel]);
-            lastStackTime=op.getRuntime();
+            lastStackTime=time;
         }
     }
 
     public void iterateConeStackUp() {
-        if(op.getRuntime()-lastStackTime>0.2) {
+        if(time-lastStackTime>0.2) {
             if (stackLevel != 0) {
                 stackLevel--;
             }
-            op.telemetry.addData("stackLevel", stackLevel);
+//            op.telemetry.addData("stackLevel", stackLevel);
             setLiftTarget(coneStack[stackLevel]);
 //            setLiftTarget(coneStack[stackLevel]);
-            lastStackTime=op.getRuntime();
+            lastStackTime=time;
         }
     }
     public int getStackLevel(){
@@ -358,7 +352,7 @@ public class Lift {
 
     public void setLiftTarget(double p_liftTarget) {
         liftTarget = min(MAX_LIFT_TICKS,p_liftTarget);
-        logger.log("/RobotLogs/GeneralRobot", "Lift," + "setLiftTarget()," + "Lift target set to:" + p_liftTarget + " ticks", true);
+//        logger.log("/RobotLogs/GeneralRobot", "Lift," + "setLiftTarget()," + "Lift target set to:" + p_liftTarget + " ticks", true);
     }
 
     //1 up, -1 down

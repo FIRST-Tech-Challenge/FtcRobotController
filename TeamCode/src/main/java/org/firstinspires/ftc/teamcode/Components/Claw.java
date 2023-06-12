@@ -12,6 +12,7 @@ import static org.firstinspires.ftc.teamcode.Components.LiftArm.liftArmStates.AR
 import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.isTeleop;
 import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.logger;
 import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.op;
+import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.time;
 
 import static java.lang.Math.sqrt;
 
@@ -36,14 +37,14 @@ public class Claw {
     private final double CLAW_SERVO_MAX_TICK = 1.0;
 
     //temporary
-    public static double CLAW_CLOSED_POS = 0.44;
+    public static double CLAW_CLOSED_POS = 0.1;
 
     //temporary
-    private final double CLAW_OPEN_POS = 0.865;
+    private final double CLAW_OPEN_POS = 0.47;
 
-    private final double CLAW_WIDE_POS = 1.0;
+    private final double CLAW_WIDE_POS = 0.61;
 
-    private final double CLAW_Tele_POS = 1.0;
+    private final double CLAW_Tele_POS = 0.61;
 
 
     //temporary
@@ -124,13 +125,13 @@ public class Claw {
     }
 
     public void updateClawStates() {
-        if (CLAW_CLOSING.status && op.getRuntime() - claw.getLastTime() > 0.05) {
+        if (CLAW_CLOSING.status && time - claw.getLastTime() > 0.1) {
             CLAW_CLOSED.setStatus(true);
         }
-        if (CLAW_OPENING.status && op.getRuntime() - claw.getLastTime() > CLAW_SERVO_SWITCH_TIME) {
+        if (CLAW_OPENING.status && time - claw.getLastTime() > CLAW_SERVO_SWITCH_TIME) {
             CLAW_OPEN.setStatus(true);
         }
-        if (CLAW_WIDING.status && op.getRuntime() - claw.getLastTime() > 0.1) {
+        if (CLAW_WIDING.status && time - claw.getLastTime() > 0.1) {
             CLAW_WIDE.setStatus(true);
         }
 
@@ -160,7 +161,7 @@ public class Claw {
         logger.log("/RobotLogs/GeneralRobot", claw.getDeviceName() + ",toggleClawPosition()"
                 + ",Claw Toggled", true);
         logger.log("/RobotLogs/GeneralRobot", clawServoLastSwitchTime + " " +
-                CLAW_SERVO_SWITCH_TIME + " " + op.getRuntime());
+                CLAW_SERVO_SWITCH_TIME + " " + time);
     }
     public void wideClaw(){
         if((CLAW_OPEN.status|| CLAW_CLOSED.status)){
@@ -189,8 +190,8 @@ public class Claw {
         double velocity = velo.getY()* velo.getY() + velo.getX() * velo.getX();
         velocity = sqrt(velocity);
         //the state of claw opened has to be true
-        if (op.getRuntime()-lastCheckTime>0.2) {
-            lastCheckTime = op.getRuntime();
+        if (time-lastCheckTime>0.2) {
+            lastCheckTime = time;
             if((CLAW_OPEN.status|| CLAW_WIDE.status) && isConeReady(velocity)&& ARM_INTAKE.getStatus()) {
                 //set servo position
                 claw.setPosition(CLAW_CLOSED_POS);
@@ -252,7 +253,7 @@ public class Claw {
         if (CLAW_CLOSED.status) {
             //set servo position
             claw.setPosition(CLAW_OPEN_POS);
-            claw.setFlipTime(op.getRuntime()+delay);
+            claw.setFlipTime(time+delay);
             //TODO: need separate CLAW_OPEN_POS constant?
 
             //set state of claw open to true
@@ -279,7 +280,7 @@ public class Claw {
 //            shouldUseClawSensor = false;
 //        }
         double dist = coneDistance();
-        return dist<5||velocity>10&&dist<12;
+        return dist<5||velocity>10&&dist<8;
     }
     public boolean isObL(){
         double leftD = leftDist.getDistance(INCH);

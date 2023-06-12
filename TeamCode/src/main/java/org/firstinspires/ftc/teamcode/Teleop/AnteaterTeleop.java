@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.Teleop;
 import static java.lang.Math.abs;
 import static java.lang.Math.cos;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -10,7 +11,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import org.firstinspires.ftc.teamcode.Components.RFModules.Devices.RFMotor;
 import org.firstinspires.ftc.teamcode.Components.RFModules.Devices.RFServo;
 import org.firstinspires.ftc.teamcode.Old.Robots.TWDRobot;
-
+@Disabled
 @TeleOp(name = "AnteaterTeleop")
 public class AnteaterTeleop extends LinearOpMode {
 

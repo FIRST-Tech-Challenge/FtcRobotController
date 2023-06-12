@@ -46,9 +46,9 @@ public static double pickupX2 = 63, pickupY2 = 11.5, pickupA2 = toRadians(0), pi
                 if (!autoRunner.pick(i)) {
                     break abort;
                 }
-                if(i==3){
-                    robot.roadrun.update();
-                }
+//                if(i==3){
+//                    robot.roadrun.update();
+//                }
                 autoRunner.drop(i);
             }
             autoRunner.update();

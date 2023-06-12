@@ -40,7 +40,7 @@ repositories {
 }
 
 dependencies {
-    doc 'org.firstinspires.ftc:Hardware:8.0.0'
+    doc 'org.firstinspires.ftc:Hardware:8.1.1'
     doc 'org.firstinspires.ftc:RobotCore:8.0.0'
     doc 'org.firstinspires.ftc:FtcCommon:8.0.0'
     doc 'org.firstinspires.ftc:OnBotJava:8.0.0'

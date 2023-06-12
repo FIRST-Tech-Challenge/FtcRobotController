@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.Autonomous;
 
+import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.time;
+
 import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -17,7 +19,7 @@ public class BlueRightAutoCycleTuned extends LinearOpMode {
         sleep(500);
         autoRunner.init();
         abort:
-        while ((getRuntime() < 27 && (!robot.queuer.isFullfilled() || robot.queuer.isFirstLoop()))&&!isStopRequested()) {
+        while ((time < 27 && (!robot.queuer.isFullfilled() || robot.queuer.isFirstLoop()))&&!isStopRequested()) {
             autoRunner.preload();
             for (int i = 0; i < 5; i++) {
                 if (!autoRunner.pick(i)) {
@@ -33,7 +35,7 @@ public class BlueRightAutoCycleTuned extends LinearOpMode {
         robot.done();
         robot.queuer.reset();
         robot.done();
-        while ((getRuntime() < 29.8 && (!robot.queuer.isFullfilled() || robot.queuer.isFirstLoop()))&&!isStopRequested()) {
+        while ((time< 29.8 && (!robot.queuer.isFullfilled() || robot.queuer.isFirstLoop()))&&!isStopRequested()) {
             autoRunner.park();
             autoRunner.update();
         }

@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.Components;
 
 import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.logger;
 import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.op;
+import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.time;
 
 import java.util.ArrayList;
 
@@ -44,7 +45,7 @@ public class Queuer {
         if (!firstLoop && currentlyQueueing >= queueElements.size() - 1) {
             currentlyQueueing = -1;
         }
-        return queue(p_asyncrhonous, done_condition, !firstLoop && op.getRuntime() - queueElements.get(currentlyQueueing + 1).getReadyTime() > p_delay, false);
+        return queue(p_asyncrhonous, done_condition, !firstLoop && time - queueElements.get(currentlyQueueing + 1).getReadyTime() > p_delay, false);
     }
 
     /**
@@ -84,6 +85,15 @@ public class Queuer {
             }
         }
     }
+    public boolean isStarted(){
+        if(currentlyQueueing+1<queueElements.size()) {
+            return queueElements.get(currentlyQueueing+1).isStarted()||queueElements.get(currentlyQueueing+1).isDone();
+        }
+        else if(currentlyQueueing+1==queueElements.size()&&queueElements.size()!=0){
+            return queueElements.get(0).isStarted()||queueElements.get(0).isDone();
+        }
+        return false;
+    }
     public boolean queue(boolean p_asynchronous, boolean done_condition, boolean extra_condition, boolean p_isOptional) {
         //create new queue element if it is first loop
 //        logger.log("/RobotLogs/GeneralRobot","");
@@ -94,6 +104,12 @@ public class Queuer {
 
         //update which element is currently being queued & which event is currently being executed
         updateQueuer(done_condition,p_isOptional);
+        if(queueElements.get(currentlyQueueing).isDone()){
+            return false;
+        }
+        if(currentEvent<queueElements.get(currentlyQueueing).startCondition-2){
+            return false;
+        }
         boolean isReady = false;
         //determine if currently queued element should be executed with extra_condition(probably position threshold)
         if(queueElements.get(currentlyQueueing).isOptional()&&p_isOptional&&!queueElements.get(currentlyQueueing).isDone()&&!firstLoop){

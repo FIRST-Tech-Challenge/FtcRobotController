@@ -9,6 +9,7 @@ import static org.firstinspires.ftc.teamcode.Components.LiftArm.liftArmStates.AR
 //import static org.firstinspires.ftc.teamcode.Components.Switch.SwitchStates.PRESSED;
 import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.logger;
 import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.op;
+import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.time;
 
 import com.acmerobotics.dashboard.config.Config;
 
@@ -21,7 +22,7 @@ public class flippas {
     private final double LIFT_ARM_INTAKE_POS = 0.3;
     private final double LIFT_ARM_CYCLE_POS = 0.955;
 
-    private final double LIFT_ARM_OUTTAKE_POS = 0.76;
+    private final double LIFT_ARM_OUTTAKE_POS = 0.78;
     public static double LIFT_ARM_FLIP_POS = 0.5;
 
     public double liftArmServoLastSwitchTime = 0;
@@ -81,11 +82,11 @@ public class flippas {
     }
 
     public void update() {
-        if (flippaStates.FLIP_LOWERING.status && op.getRuntime() - flippaServo.getLastTime() > LIFT_ARM_SERVO_SWITCH_TIME) {
+        if (flippaStates.FLIP_LOWERING.status && time - flippaServo.getLastTime() > LIFT_ARM_SERVO_SWITCH_TIME) {
             flippaStates.FLIP_INTAKE.setStatus(true);
 
         }
-        if (flippaStates.FLIP_RAISING.status && op.getRuntime() - flippaServo.getLastTime() > LIFT_ARM_SERVO_SWITCH_TIME) {
+        if (flippaStates.FLIP_RAISING.status && time- flippaServo.getLastTime() > LIFT_ARM_SERVO_SWITCH_TIME) {
             flippaStates.FLIP_OUTTAKE.setStatus(true);
 //            flippaServo.disableServos();
 //            flippaServo.disableServos();
@@ -114,7 +115,7 @@ public class flippas {
             //set state of claw open to true
             flippaStates.FLIP_LOWERING.setStatus(true);
             liftPos = LIFT_ARM_INTAKE_POS;
-            liftArmServoLastSwitchTime = op.getRuntime();
+            liftArmServoLastSwitchTime = time;
 
             //log to general robot log that the claw has been opened through function openClaw()
             logger.log("/RobotLogs/GeneralRobot", flippaServo.getDeviceName() + ",lowerFlippas()"
@@ -129,7 +130,7 @@ public class flippas {
         }
     }
     public void flipCone(){
-        if(op.getRuntime()>liftArmServoLastSwitchTime+LIFT_ARM_SERVO_SWITCH_TIME) {
+        if(time>liftArmServoLastSwitchTime+LIFT_ARM_SERVO_SWITCH_TIME) {
             flippaServo.setPositions(LIFT_ARM_FLIP_POS);
         }
     }
@@ -154,7 +155,7 @@ public class flippas {
 
         //the state of claw closed has to be true (cone has already been grabbed)
         // && (LIFT_GROUND_JUNCTION.status || LIFT_LOW.status || LIFT_MID.status || LIFT_HIGH.status)
-        if ( /*&&PRESSED.getStatus()*/  flippaStates.FLIP_INTAKE.status && op.getRuntime()-flippaServo.getLastTime()>0.2) {
+        if ( /*&&PRESSED.getStatus()*/  flippaStates.FLIP_INTAKE.status && time-flippaServo.getLastTime()>0.2) {
 
             //set servo position
             flippaServo.setPositions(LIFT_ARM_OUTTAKE_POS);

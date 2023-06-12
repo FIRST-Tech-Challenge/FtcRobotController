@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.roadrunner.drive;
 
 import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.logger;
 import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.op;
+import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.time;
 import static org.firstinspires.ftc.teamcode.roadrunner.drive.DriveConstants.MAX_ACCEL;
 import static org.firstinspires.ftc.teamcode.roadrunner.drive.DriveConstants.MAX_ANG_ACCEL;
 import static org.firstinspires.ftc.teamcode.roadrunner.drive.DriveConstants.MAX_ANG_VEL;
@@ -276,6 +277,7 @@ public class SampleMecanumDrive extends MecanumDrive {
 
     public void update() {
         updatePoseEstimate();
+        time=op.getRuntime();
         if(ultrasonics){
             Pose2d pos = getPoseEstimate();
             if(ultras.updateUltra(pos.getX(),pos.getY(),pos.getHeading())){

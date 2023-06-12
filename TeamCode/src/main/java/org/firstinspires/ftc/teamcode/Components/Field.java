@@ -111,17 +111,17 @@ public class Field {
         Pose2d curPos = roadrun.getPoseEstimate(),endPose = roadrun.getEndPose();
         double[] vals = cv.rotatedPolarCoord();
         calcPolePose(curPos);
-        double dropRad = -9;
+        double dropRad = -6.5;
         //        coords[1]+=5;
         polePos = new Pose2d(polePose.getX()-cos(endPose.getHeading())*dropRad, polePose.getY()-sin(endPose.getHeading())*dropRad, endPose.getHeading());
         Pose2d pos = polePos;
         double dist = abs(pos.vec().distTo(endPose.vec())), distToTarget = abs(curPos.vec().distTo(endPose.vec()));
-        logger.log("/RobotLogs/GeneralRobot", "polePos" + polePose);
-        logger.log("/RobotLogs/GeneralRobot", "dropPos" + polePos);
-        logger.log("/RobotLogs/GeneralRobot", "endPose" + endPose);
-        logger.log("/RobotLogs/GeneralRobot", "dist" + dist);
-        logger.log("/RobotLogs/GeneralRobot", "distToTarget" + distToTarget);
-        logger.log("/RobotLogs/GeneralRobot", "cvVals" + vals[0]+","+vals[1]);
+//        logger.log("/RobotLogs/GeneralRobot", "polePos" + polePose);
+//        logger.log("/RobotLogs/GeneralRobot", "dropPos" + polePos);
+//        logger.log("/RobotLogs/GeneralRobot", "endPose" + endPose);
+//        logger.log("/RobotLogs/GeneralRobot", "dist" + dist);
+//        logger.log("/RobotLogs/GeneralRobot", "distToTarget" + distToTarget);
+//        logger.log("/RobotLogs/GeneralRobot", "cvVals" + vals[0]+","+vals[1]);
         if (dist < 7 && distToTarget > 6 && distToTarget<30) {
             return true;
         }
@@ -221,12 +221,12 @@ public class Field {
         conePos = new Pose2d(conePose.getX()-cos(endPose.getHeading())*pickRad, conePose.getY()-sin(endPose.getHeading())*pickRad, endPose.getHeading());
         Pose2d pos = conePos;
         double dist = abs(pos.vec().distTo(endPose.vec())),distToTarget = abs(curPos.vec().distTo(endPose.vec()));
-        logger.log("/RobotLogs/GeneralRobot", "conePos" + conePose);
-        logger.log("/RobotLogs/GeneralRobot", "pickPos" + conePos);
-        logger.log("/RobotLogs/GeneralRobot", "endPose" + endPose);
-        logger.log("/RobotLogs/GeneralRobot", "dist" + dist);
-        logger.log("/RobotLogs/GeneralRobot", "distToTarget" + distToTarget);
-        op.telemetry.addData("target", conePos);
+//        logger.log("/RobotLogs/GeneralRobot", "conePos" + conePose);
+//        logger.log("/RobotLogs/GeneralRobot", "pickPos" + conePos);
+//        logger.log("/RobotLogs/GeneralRobot", "endPose" + endPose);
+//        logger.log("/RobotLogs/GeneralRobot", "dist" + dist);
+//        logger.log("/RobotLogs/GeneralRobot", "distToTarget" + distToTarget);
+//        op.telemetry.addData("target", conePos);
 
         if (dist < 5 && distToTarget > 10&&distToTarget<32) {
             return true;
@@ -235,9 +235,9 @@ public class Field {
     }
 
     public Vector2d calcPolePose(Pose2d curPos){
-        double camRad = 6.5;
+        double camRad = 4.5;
         double[] rotCoord = cv.rotatedPolarCoord();
-        if(abs(rotCoord[1]) < 23 && rotCoord[1] > 12&&rotCoord!=prevRotCoord){
+        if(abs(rotCoord[1]) < 23 && rotCoord[1] > 5&&rotCoord!=prevRotCoord){
             double t = rotCoord[0]*PI/180+PI+curPos.getHeading();
             polePose = new Vector2d(curPos.getX()+cos(t)*rotCoord[1]+cos(curPos.getHeading()+PI)*camRad,
                     curPos.getY()+sin(t)*rotCoord[1]+sin(curPos.getHeading()+PI)*camRad);
@@ -251,7 +251,7 @@ public class Field {
         double camRad = 2;
         double[] rotCoord = cv.rotatedConarCoord();
 //        rotCoord[1]*=0.8;
-        if(abs(rotCoord[1]) < 30 && rotCoord[1] > 12&&rotCoord!=prevConCoord){
+        if(abs(rotCoord[1]) < 30 && rotCoord[1] > 5&&rotCoord!=prevConCoord){
             double t = rotCoord[0]*PI/180+curPos.getHeading();
             conePose = new Vector2d(curPos.getX()+cos(t)*rotCoord[1]+cos(curPos.getHeading())*camRad+sin(curPos.getHeading()),
                     curPos.getY()+sin(t)*rotCoord[1]+sin(curPos.getHeading())*camRad+cos(curPos.getHeading())-1);

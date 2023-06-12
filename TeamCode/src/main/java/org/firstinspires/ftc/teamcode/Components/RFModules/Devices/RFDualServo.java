@@ -4,6 +4,7 @@ import static com.qualcomm.robotcore.hardware.Servo.Direction.FORWARD;
 import static com.qualcomm.robotcore.hardware.Servo.Direction.REVERSE;
 import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.logger;
 import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.op;
+import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.time;
 
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.ServoController;
@@ -112,14 +113,14 @@ public class RFDualServo implements Servo {
 //                logger.log("/DualServoLogs/RFDualServo", " Setting Positions: " + position + ", " + servolimit + position);
 //                logger.log("/RobotLogs/GeneralRobot", rfDualServoName + "\nsetPositions():\nSetting Positions:\nservo 1: " + position + "\nservo 2: " + (servolimit - position));
 
-                if (op.getRuntime() - lasttime > 0.2) {
+//                if (time - lasttime > 0.2) {
                     dualServo1.setPosition(position);
                     dualServo2.setPosition(servolimit - position);
                     logger.log("/DualServoLogs/RFDualServo", rfDualServoName +
                             ",setPositions(),Setting Positions: " + df.format(position) + " " +
                             df.format(servolimit - position), true);
                     lasttime = op.getRuntime();
-                }
+//                }
             }
         }
 

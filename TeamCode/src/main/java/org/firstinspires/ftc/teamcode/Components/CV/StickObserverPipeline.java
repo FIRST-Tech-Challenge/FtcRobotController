@@ -20,19 +20,19 @@ import java.util.ArrayList;
 import java.util.List;
 @Config
 public class StickObserverPipeline extends OpenCvPipeline {
-    public static double  degPerPix = 22.5/320, widTimesDist = 820*12/16.0*14.7/11.5*9.5/9, focalLength = 715;
+//    public static double  degPerPix = 22.5/320, widTimesDist = 820*12/16.0*14.7/11.5*9.5/9, focalLength = 715;
     double centerOfPole = 0, poleSize = 0, contourSize = 0.0;
     boolean poleInView = false;
     double[] contourDimensions = {0,0};
     ArrayList<double[]> frameList;
-    public static double LowS = 160;
+    public static double LowS = 120;
     public static double HighS = 255;
-    public static double LowH = 18;
-    public static double HighH = 32;
-    public static double LowV = 120;
+    public static double LowH = 20;
+    public static double HighH = 30;
+    public static double LowV = 100;
     public static double HighV = 255;
     public static double minWidth = 20;
-    public static double minAreaThresh = 0.12;
+    public static double minAreaThresh = 0.05;
 
 
 
@@ -85,7 +85,7 @@ public class StickObserverPipeline extends OpenCvPipeline {
         //find contours of edges
         Imgproc.findContours(thresh, contours, hierarchy, Imgproc.RETR_TREE, Imgproc.CHAIN_APPROX_SIMPLE);
         MatOfPoint2f[] contoursPoly = new MatOfPoint2f[contours.size()];
-        //rotatedRect because it allows for more accurate bounding rectangles, perfect if pole is slanted
+        //rotatedRect because it allows for more accurate bounding rectangles, good if pole is slanted
         RotatedRect[] rectangle = new RotatedRect[contours.size()];
         //iterate through each contour
         for (int i = 0; i < contours.size(); i++) {
@@ -101,7 +101,7 @@ public class StickObserverPipeline extends OpenCvPipeline {
         double maxWidth = 0;
         //iterate through each rotatedRect find largest
         for (int i = 0; i < rectangle.length; i++) {
-            if(rectangle[i].size.height/rectangle[i].size.width>2 ||rectangle[i].size.width/rectangle[i].size.height>2) {
+//            if(rectangle[i].size.height/rectangle[i].size.width>2 ||rectangle[i].size.width/rectangle[i].size.height>2) {
                 if(rectangle[i].size.height > 200 || rectangle[i].size.width >200) {
                     if (rectangle[i].size.height < rectangle[i].size.width) {
                         if (rectangle[i].size.height > maxWidth) {
@@ -115,14 +115,14 @@ public class StickObserverPipeline extends OpenCvPipeline {
                         }
                     }
                 }
-            }
+//            }
         }
 //        //if there is a detected largest contour, record information about it
         if(rectangle.length>0) {
             if(rectangle[maxAreaIndex].size.height<rectangle[maxAreaIndex].size.width) {
                 poleSize = rectangle[maxAreaIndex].size.height;
                 centerOfPole = rectangle[maxAreaIndex].center.x - 320;
-                if(rectangle[maxAreaIndex].size.width>480.0*0.8&&poleSize>minWidth){
+                if(rectangle[maxAreaIndex].size.width>480.0*0.8/*&&poleSize>minWidth*/){
                     poleInView = true;
                 }
                 else{
@@ -134,7 +134,7 @@ public class StickObserverPipeline extends OpenCvPipeline {
             else{
                 poleSize = rectangle[maxAreaIndex].size.width;
                 centerOfPole = rectangle[maxAreaIndex].center.x - 320;
-                if(rectangle[maxAreaIndex].size.height>480.0*0.8&&poleSize>minWidth){
+                if(rectangle[maxAreaIndex].size.height>480.0*0.8/*&&poleSize>minWidth*/){
                     poleInView = true;
                 }
                 else{
@@ -147,17 +147,18 @@ public class StickObserverPipeline extends OpenCvPipeline {
         else{
             frameList.add(new double[] {0, 0});
         }
+
 //        //list of frames to reduce inconsistency, not too many so that it is still real-time
         if(frameList.size()>2) {
             frameList.remove(0);
         }
-        contourSize = Core.sumElems(thresh).val[0]/(480*640)/255;
+        contourSize = Core.sumElems(thresh).val[0]*0.00083;
         if(contourSize>minAreaThresh){
             poleInView=true;
         }
-        else if (!poleInView&&contourDimensions[0]==0&&contourDimensions[1]==0 && Core.sumElems(thresh).val[0]/(480*640)/255<minAreaThresh){
-            poleInView= false;
-        }
+//        else if (!poleInView&&contourDimensions[0]==0&&contourDimensions[1]==0 && contourSize<minAreaThresh){
+//            poleInView= false;
+//        }
 
         //release all the data
 
@@ -212,11 +213,11 @@ public class StickObserverPipeline extends OpenCvPipeline {
     }
 
     public double[] poleRotatedPolarCoord() {
-        double consiz = poleSize();
-        double center = centerOfPole();
-        if(abs(center)+5 >= 320-(consiz/2.0)||consiz/2>239){
+        double consiz = poleSize;
+        double center = centerOfPole;
+        if(abs(center)+5 >= 320-(consiz*0.5)||consiz*0.5>239){
             return new double[]{0,0};
         }
-        return new double[]{-atan(center/focalLength)*180/PI, abs(1.15/(2*tan(atan((center+consiz/2)/(focalLength))-atan(center/focalLength))))};
+        return new double[]{-atan(center*.0014)*57.296, abs(1.15/(2*tan(atan((center+consiz*0.5)*.0014)-atan(center*.0014))))};
     }
 }

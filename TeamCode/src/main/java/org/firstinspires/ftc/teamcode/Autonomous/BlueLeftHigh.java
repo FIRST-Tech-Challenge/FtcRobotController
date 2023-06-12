@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.Autonomous;
 
 import static org.firstinspires.ftc.teamcode.Components.Claw.ClawStates.CLAW_CLOSED;
 import static org.firstinspires.ftc.teamcode.Components.Lift.LiftConstants.LIFT_HIGH_JUNCTION;
+import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.time;
 import static org.firstinspires.ftc.teamcode.roadrunner.drive.SampleMecanumDrive.getAccelerationConstraint;
 import static org.firstinspires.ftc.teamcode.roadrunner.drive.SampleMecanumDrive.getVelocityConstraint;
 import static java.lang.Math.toRadians;
@@ -22,10 +23,10 @@ import org.firstinspires.ftc.teamcode.roadrunner.trajectorysequence.TrajectorySe
 import java.util.ArrayList;
 
 public class BlueLeftHigh {
-    private boolean boosted;
+    private boolean boosted, tooHot=false, lowBattery = false;
     PwPRobot robot=null;
     LinearOpMode op;
-    double dummyP = 0, dropX=30, dropY= 0.7, lastTime=0, thisTime=0;
+    double dummyP = 0, dropX=30.9, dropY= 0.7, lastTime=0, thisTime=0,startTime=0;
     ;
     TrajectorySequence preloadtrajectory=null, pickupTrajectory=null, park1trajectory=null,
             park2trajectory=null, park3trajectory=null, clearLTrajectory=null, clearRTrajectory=null,
@@ -60,7 +61,7 @@ public class BlueLeftHigh {
                 .addTemporalMarker(()->robot.setConing(true))
                 .setReversed(false)
 //                .splineTo(new Vector2d(51,11.5),Math.toRadians(0))
-                .splineTo(new Vector2d(66, 12.0), Math.toRadians(0))
+                .splineTo(new Vector2d(66, 12.2), Math.toRadians(0))
                 .addTemporalMarker(robot::done)
                 .build();
 
@@ -68,6 +69,7 @@ public class BlueLeftHigh {
         pick = new ArrayList<>();
         clObL = new ArrayList<>();
         clObR = new ArrayList<>();
+
         pInView = new ArrayList<>();
         for (int i = 0; i < 6; i++) {
             clObL.add(false);
@@ -76,30 +78,29 @@ public class BlueLeftHigh {
         }
 
         for (int i = 0; i < 5; i++) {
-            dropTrajectory.add(robot.roadrun.trajectorySequenceBuilder(new Pose2d(66,12.0,Math.toRadians(0)))
-                    .setReversed(true)
-                    .splineToSplineHeading(new Pose2d(dropX, dropY+0.2*i, Math.toRadians(37)), Math.toRadians(217))
+            dropTrajectory.add(robot.roadrun.trajectorySequenceBuilder(new Pose2d(66,11.75,Math.toRadians(0)))
                     .addTemporalMarker(0,()->robot.setPoling(true))
-
+                    .setReversed(true)
+                    .splineToSplineHeading(new Pose2d(dropX, dropY-0.3*i, Math.toRadians(37)), Math.toRadians(217))
 //                            getVelocityConstraint(110,9,14), getAccelerationConstraint(51))
                     .addTemporalMarker(robot::done)
                     .build());
         }
         for (int i = 0; i < 5; i++) {
-            pick.add(robot.roadrun.trajectorySequenceBuilder(new Pose2d(dropX,dropY,Math.toRadians(40)))
+            pick.add(robot.roadrun.trajectorySequenceBuilder(new Pose2d(dropX,dropY,Math.toRadians(37)))
                     .addTemporalMarker(()->robot.setConing(true))
                     .setReversed(false)
 //                    .splineTo(new Vector2d(51,11.5),Math.toRadians(0))
-                    .splineTo(new Vector2d(66.5, 12.0+0.2*i), Math.toRadians(0))
+                    .splineTo(new Vector2d(66, 12.2), Math.toRadians(0))
                     .addTemporalMarker(robot::done)
                     .build());
         }
-        reDropTrajectory = robot.roadrun.trajectorySequenceBuilder(new Pose2d(dropX,dropY,Math.toRadians(40)))
+        reDropTrajectory = robot.roadrun.trajectorySequenceBuilder(new Pose2d(dropX,dropY,Math.toRadians(37)))
                 .addTemporalMarker(()->robot.setPoling(true))
                 .setReversed(false)
-                .lineToLinearHeading(new Pose2d(dropX+7.3,dropY+4.2,Math.toRadians(40)))
+                .lineToLinearHeading(new Pose2d(dropX+6.3,dropY+3.2,Math.toRadians(37)))
                 .setReversed(true)
-                .lineToLinearHeading(new Pose2d(dropX+1,dropY+1,Math.toRadians(40)))
+                .lineToLinearHeading(new Pose2d(dropX+1,dropY+1,Math.toRadians(37)))
                 .addTemporalMarker(robot::done)
                 .build();
 
@@ -116,31 +117,64 @@ public class BlueLeftHigh {
                 .setReversed(true)
                 .splineToLinearHeading(new Pose2d(14,13,toRadians(0)), toRadians(0))
                 .build();
+        double maxLoopTime = 2.0;
         while (!op.isStarted()&&!op.isStopRequested()) {
-            op.telemetry.addData("pos", robot.cv.getPosition());
-            op.telemetry.addData("CLAW_CLOSED:", CLAW_CLOSED.getStatus());
+            if(!tooHot && !lowBattery) {
+                op.telemetry.addData("pos", robot.cv.getPosition());
+                op.telemetry.addData("CLAW_CLOSED:", CLAW_CLOSED.getStatus());
 //            telemetry.addData("ANGLE:", robot.getAngleToConeStack());
-            op.telemetry.update();
-            robot.updateClawStates();
-            robot.updateLiftArmStates();
-            if (op.getRuntime() > 3) {
-                dummyP = robot.cv.getPosition();
+                op.telemetry.update();
+                robot.updateClawStates();
+                robot.updateLiftArmStates();
+                if (time > 3) {
+                    dummyP = robot.cv.getPosition();
 
-                if (dummyP == 1) {
-                    robot.heartbeatRed();
-                } else if (dummyP == 2) {
-                    robot.darkGreen();
-                } else {
-                    robot.blue();
+                    if (dummyP == 1) {
+                        robot.heartbeatRed();
+                    } else if (dummyP == 2) {
+                        robot.darkGreen();
+                    } else {
+                        robot.blue();
+                    }
                 }
+                robot.updateTime();
+                if (time > 5 && startTime == 0) {
+                    startTime = time;
+                    for (int i = 0; i < 100; i++) {
+                        update();
+                    }
+                    startTime = time - startTime;
+                    if(startTime>maxLoopTime){
+                        tooHot=true;
+                    }
+                }
+                double voltage = robot.getVoltage();
+                if(voltage<12.4){
+                    lowBattery=true;
+                }
+                op.telemetry.addData("voltage", voltage);
+                op.telemetry.addData("startTime", startTime);
+            }
+            else if (tooHot){
+                robot.partycolorwave();
+                op.telemetry.addData("TOO HOT", startTime);
+                op.telemetry.update();
+            }
+            else{
+                robot.rainbowRainbow();
+                op.telemetry.addData("BATTERY LOW", robot.getVoltage());
+                op.telemetry.update();
             }
         }
         if(op.isStopRequested()){
             robot.stop();
         }
         op.resetRuntime();
+        robot.updateTime();
         robot.cv.observeStick();
-        robot.cv.observeCone();
+        robot.setFirstLoop(true);
+        lastTime = 1;
+//        robot.cv.observeCone();
     }
 
     public void preload() {
@@ -163,13 +197,12 @@ public class BlueLeftHigh {
         } else {
             robot.followTrajectorySequenceAsync(pick.get(temp));
         }
-
         if (boosted) {
             boolean[] vals = robot.checkIsOb(clObL.get(i), clObR.get(i),pick.get(0).end());
             clObL.set(i, vals[0]);
             clObR.set(i, vals[1]);
-            robot.delay(0.4);
-            robot.updateTrajectoryWithCone();
+//            robot.delay(0.2);
+//            robot.updateTrajectoryWithCone();
             robot.delay(0.4);
             clearObstacleL(i);
 //            clearObstacleR(i);
@@ -201,22 +234,21 @@ public class BlueLeftHigh {
     public void drop(int i) {
         robot.followTrajectorySequenceAsync(dropTrajectory.get(i));
         if (boosted) {
-            robot.delay(0.4);
+            robot.delay(0.2);
             robot.updateTrajectoryWithCam();
         }
 //        robot.delay(0.023 + 0.005 * (3 - i));
         robot.liftToPosition(LIFT_HIGH_JUNCTION);
-        robot.delay(0.37*(1+0.1*i));
+        robot.delay(0.5);
         robot.raiseLiftArmToOuttake(true);
 //        robot.delay(0.4);
 //        robot.closeClaw(true);
         if (boosted) {
-            robot.delay(0.3);
+            robot.delay(0.2);
             boolean val = robot.poleInView(pInView.get(i+1));
             pInView.set(i+1, val);
             reDrop(i+1);
         }
-        robot.delay(0.1);
         robot.wideClaw(false);
     }
     public void reDrop(int i){
@@ -225,8 +257,8 @@ public class BlueLeftHigh {
 
     public void clearObstacleL(int i) {
 //        robot.setToNow(clObL.get(i));
-        robot.delay(0.3);
-        robot.clearObstacle(new Pose2d(56, 20, Math.toRadians(90)),clObL.get(i)||clObR.get(i));
+        robot.delay(0.2);
+        robot.clearObstacle(new Pose2d(59, 20, Math.toRadians(90)),clObL.get(i)||clObR.get(i));
 //            robot.setStackHeight(i, clObL.get(i)||clObR.get(i));
 
 //        if (robot.roadrun.getPoseEstimate().vec().distTo(pickupTrajectory.end().vec()) < 10) {
@@ -260,7 +292,7 @@ public class BlueLeftHigh {
 //    }
 
     public boolean rePick() {
-        return /*robot.clawSwitch.isSwitched()*/true;
+        return robot.clawSwitch.isSwitched();
     }
 
     public void reDrop() {
@@ -275,32 +307,31 @@ public class BlueLeftHigh {
         } else {
             robot.followTrajectorySequenceAsync(park2trajectory,1);
         }
+        robot.lowerLiftArmToIntake(true);
         robot.delay(2.5);
         robot.wideClaw(true);
         robot.delay(0.3);
         robot.liftToPosition(-10,true);
-        robot.delay(0.0);
-        robot.lowerLiftArmToIntake(true);
     }
 
     public void update() {
-        thisTime = op.getRuntime();
-        double loopTime = thisTime - lastTime;
-        if(!robot.queuer.isFirstLoop()&&loopTime>0.1){
+        double loopTime = time - lastTime;
+        if(time>4&&!robot.queuer.isFirstLoop()&&loopTime>0.4){
             robot.setDistBroke(true);
         }
-        lastTime = thisTime;
+        lastTime = time;
         robot.setFirstLoop(false);
         robot.liftToTargetAuto();
         robot.roadrun.update();
         robot.updateClawStates();
         robot.updateLiftArmStates();
+        robot.updateCV();
     }
 
     public void theWholeProgram() {
         init();
         abort:
-        while ((op.getRuntime() < 26.5 && (!robot.queuer.isFullfilled() || robot.queuer.isFirstLoop()))&&!op.isStopRequested()) {
+        while ((time < 26.5 && (!robot.queuer.isFullfilled() || robot.queuer.isFirstLoop()))&&!op.isStopRequested()) {
             preload();
             for (int i = 0; i < 5; i++) {
                 if (!pick(i)) {
@@ -313,10 +344,6 @@ public class BlueLeftHigh {
         robot.done();
         robot.queuer.reset();
         robot.done();
-        while ((op.getRuntime() < 29.8 && (!robot.queuer.isFullfilled() || robot.queuer.isFirstLoop()))&&!op.isStopRequested()) {
-            park();
-            update();
-        }
         robot.stop();
     }
 }

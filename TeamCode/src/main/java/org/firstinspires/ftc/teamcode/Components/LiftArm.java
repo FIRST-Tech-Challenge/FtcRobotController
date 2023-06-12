@@ -9,6 +9,7 @@ import static org.firstinspires.ftc.teamcode.Components.LiftArm.liftArmStates.AR
 //import static org.firstinspires.ftc.teamcode.Components.Switch.SwitchStates.PRESSED;
 import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.logger;
 import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.op;
+import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.time;
 
 import com.acmerobotics.dashboard.config.Config;
 
@@ -18,7 +19,7 @@ public class LiftArm {
 
     private RFDualServo liftArmServo;
 
-    private final double LIFT_ARM_INTAKE_POS = 0.96;
+    private final double LIFT_ARM_INTAKE_POS = 0.99;
     private final double LIFT_ARM_CYCLE_POS = 0.955;
 
     private final double LIFT_ARM_OUTTAKE_POS = 0.28;
@@ -81,10 +82,10 @@ public class LiftArm {
     }
 
     public void updateLiftArmStates() {
-        if (ARM_LOWERING.status && op.getRuntime() - liftArmServo.getLastTime() > LIFT_ARM_SERVO_SWITCH_TIME) {
+        if (ARM_LOWERING.status && time - liftArmServo.getLastTime() > LIFT_ARM_SERVO_SWITCH_TIME) {
             ARM_INTAKE.setStatus(true);
         }
-        if (ARM_RAISING.status && op.getRuntime() - liftArmServo.getLastTime() > LIFT_ARM_SERVO_SWITCH_TIME) {
+        if (ARM_RAISING.status && time - liftArmServo.getLastTime() > LIFT_ARM_SERVO_SWITCH_TIME) {
             ARM_OUTTAKE.setStatus(true);
         }
     }
@@ -124,7 +125,7 @@ public class LiftArm {
         }
     }
     public void flipCone(){
-        if(op.getRuntime()>liftArmServoLastSwitchTime+LIFT_ARM_SERVO_SWITCH_TIME) {
+        if(time>liftArmServoLastSwitchTime+LIFT_ARM_SERVO_SWITCH_TIME) {
             liftArmServo.setPositions(LIFT_ARM_FLIP_POS);
         }
     }
@@ -149,7 +150,7 @@ public class LiftArm {
 
         //the state of claw closed has to be true (cone has already been grabbed)
         // && (LIFT_GROUND_JUNCTION.status || LIFT_LOW.status || LIFT_MID.status || LIFT_HIGH.status)
-        if ( /*CLAW_CLOSED.getStatus()*//*&&PRESSED.getStatus()*/ ARM_INTAKE.status && op.getRuntime()-liftArmServo.getLastTime()>0.2) {
+        if ( /*CLAW_CLOSED.getStatus()*//*&&PRESSED.getStatus()*/ ARM_INTAKE.status && time-liftArmServo.getLastTime()>0.2) {
 
             //set servo position
             liftArmServo.setPositions(LIFT_ARM_OUTTAKE_POS);

@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.Autonomous;
 import static org.firstinspires.ftc.teamcode.Components.Claw.ClawStates.CLAW_CLOSED;
 import static org.firstinspires.ftc.teamcode.Components.Lift.LiftConstants.LIFT_HIGH_JUNCTION;
 import static org.firstinspires.ftc.teamcode.Components.Lift.LiftConstants.LIFT_MED_JUNCTION;
+import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.time;
 import static org.firstinspires.ftc.teamcode.roadrunner.drive.SampleMecanumDrive.getAccelerationConstraint;
 import static org.firstinspires.ftc.teamcode.roadrunner.drive.SampleMecanumDrive.getVelocityConstraint;
 import static java.lang.Math.toRadians;
@@ -23,10 +24,10 @@ import org.firstinspires.ftc.teamcode.roadrunner.trajectorysequence.TrajectorySe
 import java.util.ArrayList;
 
 public class BlueRightMid {
-    private boolean boosted;
+    private boolean boosted,tooHot=false;
     PwPRobot robot=null;
     LinearOpMode op;
-    double dummyP = 0, dropX=-29.5, dropY=19.5, dropA = toRadians(215);
+    double dummyP = 0, dropX=-29.5, dropY=19.5, dropA = toRadians(215),lastTime = 0.0,startTime=0.0;
 
     TrajectorySequence preloadtrajectory=null, pickupTrajectory=null, park1trajectory=null,
             park2trajectory=null, park3trajectory=null, clearLTrajectory=null, clearRTrajectory=null,
@@ -109,23 +110,43 @@ public class BlueRightMid {
                 .splineTo(new Vector2d(-59, 14), toRadians(180))
                 .build();
 
+        double maxLoopTime = 2.0;
         while (!op.isStarted()&&!op.isStopRequested()) {
-            op.telemetry.addData("pos", robot.cv.getPosition());
-            op.telemetry.addData("CLAW_CLOSED:", CLAW_CLOSED.getStatus());
+            if(!tooHot) {
+                op.telemetry.addData("pos", robot.cv.getPosition());
+                op.telemetry.addData("CLAW_CLOSED:", CLAW_CLOSED.getStatus());
 //            telemetry.addData("ANGLE:", robot.getAngleToConeStack());
-            op.telemetry.update();
-            robot.updateClawStates();
-            robot.updateLiftArmStates();
-            if (op.getRuntime() > 3) {
-                dummyP = robot.cv.getPosition();
+                op.telemetry.update();
+                robot.updateClawStates();
+                robot.updateLiftArmStates();
+                if (time > 3) {
+                    dummyP = robot.cv.getPosition();
 
-                if (dummyP == 1) {
-                    robot.heartbeatRed();
-                } else if (dummyP == 2) {
-                    robot.darkGreen();
-                } else {
-                    robot.blue();
+                    if (dummyP == 1) {
+                        robot.heartbeatRed();
+                    } else if (dummyP == 2) {
+                        robot.darkGreen();
+                    } else {
+                        robot.blue();
+                    }
                 }
+                robot.updateTime();
+                if (time > 5 && startTime == 0) {
+                    startTime = time;
+                    for (int i = 0; i < 100; i++) {
+                        update();
+                    }
+                    startTime = time - startTime;
+                    if(startTime>maxLoopTime){
+                        tooHot=true;
+                    }
+                }
+                op.telemetry.addData("startTime", startTime);
+            }
+            else{
+                robot.partycolorwave();
+                op.telemetry.addData("TOO HOT", startTime);
+                op.telemetry.update();
             }
         }
         if(op.isStopRequested()){
@@ -272,20 +293,27 @@ public class BlueRightMid {
         robot.liftToPosition(0,true);
         robot.delay(0.3);
         robot.lowerLiftArmToIntake(true);
+
     }
 
     public void update() {
+        double loopTime = time - lastTime;
+        if(!robot.queuer.isFirstLoop()&&loopTime>0.1){
+            robot.setDistBroke(true);
+        }
+        lastTime = time;
         robot.setFirstLoop(false);
         robot.liftToTargetAuto();
         robot.roadrun.update();
         robot.updateClawStates();
         robot.updateLiftArmStates();
+        robot.updateCV();
     }
 
     public void theWholeProgram() {
         init();
         abort:
-        while ((op.getRuntime() < 26.5 && (!robot.queuer.isFullfilled() || robot.queuer.isFirstLoop()))&&!op.isStopRequested()) {
+        while ((time< 26.5 && (!robot.queuer.isFullfilled() || robot.queuer.isFirstLoop()))&&!op.isStopRequested()) {
             preload();
             for (int i = 0; i < 5; i++) {
                 if (!pick(i)) {
@@ -298,7 +326,7 @@ public class BlueRightMid {
         robot.done();
         robot.queuer.reset();
         robot.done();
-        while ((op.getRuntime() < 29.8 && (!robot.queuer.isFullfilled() || robot.queuer.isFirstLoop()))&&!op.isStopRequested()) {
+        while ((time < 29.8 && (!robot.queuer.isFullfilled() || robot.queuer.isFirstLoop()))&&!op.isStopRequested()) {
             park();
             update();
         }

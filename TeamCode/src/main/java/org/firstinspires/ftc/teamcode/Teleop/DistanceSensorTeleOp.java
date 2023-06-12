@@ -6,12 +6,13 @@ import static java.lang.Math.toRadians;
 
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.qualcomm.hardware.lynx.LynxModule;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
 import org.firstinspires.ftc.teamcode.Robots.PwPRobot;
-
+@Disabled
 @TeleOp(name="DistSensTele")
 public class DistanceSensorTeleOp extends LinearOpMode {
     PwPRobot robot;
