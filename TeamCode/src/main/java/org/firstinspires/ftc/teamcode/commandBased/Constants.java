@@ -48,33 +48,33 @@ public class Constants {
     public static double ELE_LOW = 0;
     public static double ELE_MID_LOW = 4;
     public static double ELE_MID_HIGH = 10;
-    public static double ELE_HIGH = 15;
+    public static double ELE_HIGH = 12;
 
     //command-ending deadzones
     public static double ELE_DONE_DEADZONE = 5;
 
     //arm pid
-    public static PIDCoefficients ARM_COEFFS = new PIDCoefficients(.03, 0, 0);
+    public static PIDCoefficients ARM_COEFFS = new PIDCoefficients(.004, 0.00075, 0);
     public static double ARM_KV = 0;
     public static double ARM_KA = 0;
-    public static double ARM_KS = 0;
+    public static double ARM_KS = 0.05;
     public static double ARM_KSIN = .15;
 
-    public static double ARM_MAX_VEL = 800;
-    public static double ARM_MAX_ACCEL = 1600;
+    public static double ARM_MAX_VEL = 1600;
+    public static double ARM_MAX_ACCEL = 4000;
 
     //arm angle positions
-    public static double ARM_ANGLE_BACK = -90;
-    public static double ARM_ANGLE_IDLE = 40;
-    public static double ARM_ANGLE_FRONT = 90;
+    public static double ARM_ANGLE_BACK = -110;
+    public static double ARM_ANGLE_IDLE = 45;
+    public static double ARM_ANGLE_FRONT = 110;
     public static double ARM_ANGLE_MAX = 120;
 
     //arm encoder positions
     public static double ARM_ENC_SAFETY = 100;
-    public static double ARM_ENC_BACK_MAX = -630;
+    public static double ARM_ENC_BACK_MAX = -670;
     public static double ARM_ENC_BACK_PARALLEL = -520;
     public static double ARM_ENC_FRONT_PARALLEL = 220;
-    public static double ARM_ENC_FRONT_MAX = 265;
+    public static double ARM_ENC_FRONT_MAX = 350;
     public static double ARM_ENC_CENTER = -145;
 
     //rotator limits

@@ -113,9 +113,9 @@ public class ArmSubsystem extends SubsystemBase {
 
     private double getSIN(double angle) {
         if (angle >= 90) {
-            angle -= 90;
+            angle = 180 - angle;
         } else if (angle <= -90) {
-            angle += 90;
+            angle = -180 - angle;
         }
         return Math.sin(Math.toRadians(angle));
     }
@@ -151,6 +151,14 @@ public class ArmSubsystem extends SubsystemBase {
 
     public double getArmPower() {
         return correction - KF;
+    }
+
+    public double getArmVelocity() {
+        return state.getV();
+    }
+
+    public double getArmAcceleration() {
+        return state.getA();
     }
 
     public double[] getCoeffs() {

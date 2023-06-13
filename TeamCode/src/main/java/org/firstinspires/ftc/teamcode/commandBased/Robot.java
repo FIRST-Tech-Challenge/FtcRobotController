@@ -101,8 +101,8 @@ public class Robot extends BlackOp {
 //
 //        //create intake commands
 //        SetIntakePower intakeIntake = new SetIntakePower(intakeSS, 1);
-        SetIntakePower intakeIdle = new SetIntakePower(intakeSS, 0);
-        SetIntakePower intakeOuttake = new SetIntakePower(intakeSS, -1);
+//        SetIntakePower intakeIdle = new SetIntakePower(intakeSS, 0);
+//        SetIntakePower intakeOuttake = new SetIntakePower(intakeSS, -1);
         
 
         //start robot in field-centric mode
@@ -168,16 +168,13 @@ public class Robot extends BlackOp {
             // Send telemetry packet off to dashboard
             FtcDashboard.getInstance().sendTelemetryPacket(packet);
 
+
             mTelemetry().addData("arm target", armSS.getArmTarget());
             mTelemetry().addData("arm pos", armSS.getArmPos());
             mTelemetry().addData("arm power", armSS.getArmPower());
             mTelemetry().addData("arm angle", armSS.getArmAngle());
-            mTelemetry().addData("KP", armSS.getCoeffs()[0]);
-            mTelemetry().addData("KI", armSS.getCoeffs()[1]);
-            mTelemetry().addData("KD", armSS.getCoeffs()[2]);
-            mTelemetry().addData("KV", armSS.getCoeffs()[3]);
-            mTelemetry().addData("KA", armSS.getCoeffs()[4]);
-            mTelemetry().addData("KS", armSS.getCoeffs()[5]);
+            mTelemetry().addData("arm velocity", armSS.getArmVelocity());
+            mTelemetry().addData("arm acceleration", armSS.getArmAcceleration());
             mTelemetry().addData("KF", armSS.getCoeffs()[6]);
             mTelemetry().update();
         });
