@@ -10,6 +10,7 @@ import static org.firstinspires.ftc.teamcode.Components.Lift.LiftConstants.LIFT_
 import static org.firstinspires.ftc.teamcode.Components.Lift.LiftConstants.LIFT_MED_JUNCTION;
 import static org.firstinspires.ftc.teamcode.Components.LiftArm.liftArmStates.ARM_INTAKE;
 import static org.firstinspires.ftc.teamcode.Components.LiftArm.liftArmStates.ARM_OUTTAKE;
+import static org.firstinspires.ftc.teamcode.Components.LiftArm.liftArmStates.ARM_RAISING;
 import static org.firstinspires.ftc.teamcode.Components.RFModules.Devices.RFMotor.RESISTANCE;
 import static org.firstinspires.ftc.teamcode.Components.RFModules.Devices.RFMotor.kA;
 import static org.firstinspires.ftc.teamcode.Components.Switch.prezzed;
@@ -713,8 +714,8 @@ public class PwPRobot extends BasicRobot {
         }
     }
     public void updateCV(){
-        cv.setObservingPole(poling||CLAW_CLOSED.getStatus());
-        cv.setObservinCone(coning);
+//        cv.setObservingPole(poling||CLAW_CLOSED.getStatus());
+//        cv.setObservinCone(coning);
     }
 
     public void setLiftPower(double p_power) {
@@ -1061,7 +1062,7 @@ public class PwPRobot extends BasicRobot {
             if (regularDrive) {
                 setTRUEMAXDrivingExperience(abs(vals[1] - 0.0001) / -vals[1] * (0.55 * sqrt(abs(vals[1])) + 0.45 * vals[1] * vals[1]),
                         abs(vals[0] - 0.0001) / -vals[0] * (0.55 * sqrt(abs(vals[0])) + 0.45 * vals[0] * vals[0]),
-                        abs(vals[2] - 0.0001) / -vals[2] * (0.45 * sqrt(abs(vals[2])) + 0.4 * vals[2] * vals[2]), 0.001);
+                        abs(vals[2] - 0.0001) / -vals[2] * (0.45 * sqrt(abs(vals[2])) + 0.15 * vals[2] * vals[2]), 0.001);
             } else {
 //                Vector2d input = new Vector2d(abs(vals[1] - 0.0001) / -vals[1] * (minBoost[1] + 0.5 * abs(vals[1]) + 0.15 * pow(abs(vals[1]), 3)),
 //                        abs(vals[0] - 0.0001) / -vals[0] * (minBoost[0] + 0.5 * abs(vals[0]) + 0.15 * pow(abs(vals[0]), 3)));
@@ -1110,7 +1111,7 @@ public class PwPRobot extends BasicRobot {
         if (op.gamepad1.right_bumper) {
             if (CLAW_CLOSED.getStatus()) {
                 claw.setLastOpenTime(time);
-                claw.openClaw();
+                claw.wideClaw();
                 if (ARM_OUTTAKE.getStatus() && field.closestDropPosition()) {
                     roadrun.setPoseEstimate(field.getDropPosition());
                 }
@@ -1119,8 +1120,8 @@ public class PwPRobot extends BasicRobot {
             }
         }
 //        claw.closeClaw();
-        if (!prezzed&&(time - claw.getLastTime() > .4 && time - claw.getLastTime() < .6 && CLAW_CLOSED.getStatus())) {
-            claw.openClaw();
+        if (!prezzed&&(time - claw.getLastTime() > .4 && time - claw.getLastTime() < .7 && CLAW_CLOSED.getStatus())) {
+            claw.wideClaw();
         }
         if (time- claw.getLastTime() > 1 && time - claw.getLastTime() < 1.3 && CLAW_CLOSED.getStatus() && lift.getStackPos() == lift.getLiftTarget()) {
             lift.setLiftTarget(0);
@@ -1128,8 +1129,8 @@ public class PwPRobot extends BasicRobot {
         if (time - claw.getLastTime() > 0.3 && time - claw.getLastTime() < 0.7 && CLAW_CLOSED.getStatus() && clawSwitch.isSwitched() && lift.getStackPos() == lift.getLiftTarget()) {
             liftArm.raiseLiftArmToOuttake();
         }
-        if (CLAW_OPEN.getStatus() && ARM_INTAKE.getStatus() && !CLAW_WIDE.getStatus()) {
-            claw.teleClaw();
+        if (!CLAW_CLOSED.getStatus()&&!CLAW_CLOSING.getStatus()&&!CLAW_WIDE.getStatus() && !ARM_OUTTAKE.getStatus()&&!ARM_RAISING.getStatus()) {
+            claw.wideClaw();
         }
         if (time > 90 && time < 92) {
             rainbowRainbow();
@@ -1164,6 +1165,7 @@ public class PwPRobot extends BasicRobot {
 
         liftArm.updateLiftArmStates();
         claw.updateClawStates();
+        updateTime();
         lift.updateLiftStates();
 
 //            logger.log("/RobotLogs/GeneralRobot", seq.toString(), false);

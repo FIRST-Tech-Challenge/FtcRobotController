@@ -27,7 +27,7 @@ public class PwPTeleOp extends LinearOpMode {
         robot.roadrun.setPoseEstimate(startPose);//        robot.cv.observeStick();
 //        robot.cv.observeCone();
         waitForStart();
-//        robot.cv.observeStick();
+        robot.cv.observeStick();
         resetRuntime();
         robot.roadrun.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         robot.roadrun.update();

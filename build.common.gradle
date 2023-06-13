@@ -125,7 +125,7 @@ android {
 repositories {
     flatDir {
         dirs rootProject.file('libs')
-        maven { url = "https://maven.0x778.tk" }
+//        maven { url = "https://maven.0x778.tk" }
     }
 }
 

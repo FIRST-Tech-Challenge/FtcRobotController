@@ -128,7 +128,7 @@ public class Claw {
         if (CLAW_CLOSING.status && time - claw.getLastTime() > 0.1) {
             CLAW_CLOSED.setStatus(true);
         }
-        if (CLAW_OPENING.status && time - claw.getLastTime() > CLAW_SERVO_SWITCH_TIME) {
+        if (CLAW_OPENING.status && time - claw.getLastTime() > 0.1) {
             CLAW_OPEN.setStatus(true);
         }
         if (CLAW_WIDING.status && time - claw.getLastTime() > 0.1) {

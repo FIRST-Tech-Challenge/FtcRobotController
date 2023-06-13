@@ -53,7 +53,7 @@ public class BlueLeftHigh {
                 .setReversed(true)
                 .splineToSplineHeading(new Pose2d(36, 40.25, toRadians(90)), toRadians(270))
 //                .splineTo(new Vector2d(34, 28), toRadians(245))
-                .splineToSplineHeading(new Pose2d(31.5, 2.5, Math.toRadians(40)), toRadians(220),
+                .splineToSplineHeading(new Pose2d(31.2, 3.0, Math.toRadians(40)), toRadians(220),
                         getVelocityConstraint(110,9,14), getAccelerationConstraint(60))
                 .build();
 
@@ -61,7 +61,7 @@ public class BlueLeftHigh {
                 .addTemporalMarker(()->robot.setConing(true))
                 .setReversed(false)
 //                .splineTo(new Vector2d(51,11.5),Math.toRadians(0))
-                .splineTo(new Vector2d(66, 12.2), Math.toRadians(0))
+                .splineTo(new Vector2d(67, 12), Math.toRadians(0))
                 .addTemporalMarker(robot::done)
                 .build();
 
@@ -81,7 +81,7 @@ public class BlueLeftHigh {
             dropTrajectory.add(robot.roadrun.trajectorySequenceBuilder(new Pose2d(66,11.75,Math.toRadians(0)))
                     .addTemporalMarker(0,()->robot.setPoling(true))
                     .setReversed(true)
-                    .splineToSplineHeading(new Pose2d(dropX, dropY-0.3*i, Math.toRadians(37)), Math.toRadians(217))
+                    .splineToSplineHeading(new Pose2d(dropX, dropY-0.1*i, Math.toRadians(37)), Math.toRadians(217))
 //                            getVelocityConstraint(110,9,14), getAccelerationConstraint(51))
                     .addTemporalMarker(robot::done)
                     .build());
@@ -91,7 +91,7 @@ public class BlueLeftHigh {
                     .addTemporalMarker(()->robot.setConing(true))
                     .setReversed(false)
 //                    .splineTo(new Vector2d(51,11.5),Math.toRadians(0))
-                    .splineTo(new Vector2d(66, 12.2), Math.toRadians(0))
+                    .splineTo(new Vector2d(67, 12.2-0.3*i), Math.toRadians(0))
                     .addTemporalMarker(robot::done)
                     .build());
         }
@@ -166,9 +166,9 @@ public class BlueLeftHigh {
                 op.telemetry.update();
             }
         }
-        if(op.isStopRequested()){
-            robot.stop();
-        }
+//        if(op.isStopRequested()){
+//            robot.stop();
+//        }
         op.resetRuntime();
         robot.updateTime();
         robot.cv.observeStick();
@@ -249,6 +249,7 @@ public class BlueLeftHigh {
             pInView.set(i+1, val);
             reDrop(i+1);
         }
+        robot.delay(0.2);
         robot.wideClaw(false);
     }
     public void reDrop(int i){

@@ -32,7 +32,7 @@ public class StickObserverPipeline extends OpenCvPipeline {
     public static double LowV = 100;
     public static double HighV = 255;
     public static double minWidth = 20;
-    public static double minAreaThresh = 0.05;
+    public static double minAreaThresh = 0.1;
 
 
 
@@ -218,6 +218,6 @@ public class StickObserverPipeline extends OpenCvPipeline {
         if(abs(center)+5 >= 320-(consiz*0.5)||consiz*0.5>239){
             return new double[]{0,0};
         }
-        return new double[]{-atan(center*.0014)*57.296, abs(1.15/(2*tan(atan((center+consiz*0.5)*.0014)-atan(center*.0014))))};
+        return new double[]{-atan(center*.0014)*57.296, abs(1.25/(2*tan(atan((center+consiz*0.5)*.0014)-atan(center*.0014))))};
     }
 }
