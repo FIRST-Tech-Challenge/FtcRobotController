@@ -6,7 +6,7 @@ import org.firstinspires.ftc.teamcode.commandBased.subsystems.IntakeSubsystem;
 
 public class SetIntakePower extends CommandBase {
 
-    private IntakeSubsystem m_intakeSubsystem;
+    private final IntakeSubsystem m_intakeSubsystem;
     private final double power;
 
     public SetIntakePower(IntakeSubsystem intakeSubsystem, double power) {

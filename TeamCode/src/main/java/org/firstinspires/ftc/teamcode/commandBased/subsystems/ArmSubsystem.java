@@ -79,7 +79,7 @@ public class ArmSubsystem extends SubsystemBase {
         profile = MotionProfileGenerator.generateSimpleMotionProfile(
                 new MotionState(0, 0, 0),
                 new MotionState(0, 0, 0),
-                Constants.ARM_MAX_VEL,
+                Constants.ARM_MAX_VELO,
                 Constants.ARM_MAX_ACCEL
         );
 
@@ -120,13 +120,13 @@ public class ArmSubsystem extends SubsystemBase {
         return Math.sin(Math.toRadians(angle));
     }
 
-    public void setArmAngle(double target) {
+    public void setArmAngle(double target, double velo, double accel) {
         armTarget = angleEncLUT.get(target);
         profile = MotionProfileGenerator.generateSimpleMotionProfile(
                 new MotionState(state.getX(), 0, 0),
                 new MotionState(armTarget, 0, 0),
-                Constants.ARM_MAX_VEL,
-                Constants.ARM_MAX_ACCEL
+                velo,
+                accel
         );
         timer.reset();
     }
@@ -141,8 +141,12 @@ public class ArmSubsystem extends SubsystemBase {
         return armAngle;
     }
 
-    public double getArmTarget() {
+    public double getArmProfileTarget() {
         return state.getX();
+    }
+
+    public double getArmTarget() {
+        return armTarget;
     }
 
     public double getArmPos() {

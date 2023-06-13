@@ -3,14 +3,19 @@ package org.firstinspires.ftc.teamcode.commandBased;
 import com.ThermalEquilibrium.homeostasis.Parameters.PIDCoefficientsEx;
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.roadrunner.control.PIDCoefficients;
-import com.acmerobotics.roadrunner.control.PIDFController;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.arcrobotics.ftclib.hardware.motors.Motor;
 
 import org.firstinspires.ftc.teamcode.classes.Vector2d;
 
+@SuppressWarnings("SpellCheckingInspection")
 @Config
 public class Constants {
+
+    //debug toggles
+    public static boolean DEBUG_DRIVE = false;
+    public static boolean DEBUG_ELE = false;
+    public static boolean DEBUG_ARM = true;
 
     //motor types
     public static Motor.GoBILDA DRIVE_MOTOR = Motor.GoBILDA.RPM_312;
@@ -55,12 +60,15 @@ public class Constants {
 
     //arm pid
     public static PIDCoefficients ARM_COEFFS = new PIDCoefficients(.004, 0.00075, 0);
+
     public static double ARM_KV = 0;
     public static double ARM_KA = 0;
     public static double ARM_KS = 0.05;
     public static double ARM_KSIN = .15;
 
-    public static double ARM_MAX_VEL = 1600;
+    public static double ARM_IDLE_VELO = 800;
+    public static double ARM_IDLE_ACCEL = 1600;
+    public static double ARM_MAX_VELO = 1600;
     public static double ARM_MAX_ACCEL = 4000;
 
     //arm angle positions
@@ -70,7 +78,6 @@ public class Constants {
     public static double ARM_ANGLE_MAX = 120;
 
     //arm encoder positions
-    public static double ARM_ENC_SAFETY = 100;
     public static double ARM_ENC_BACK_MAX = -670;
     public static double ARM_ENC_BACK_PARALLEL = -520;
     public static double ARM_ENC_FRONT_PARALLEL = 220;

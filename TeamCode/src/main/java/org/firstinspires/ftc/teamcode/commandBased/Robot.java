@@ -7,14 +7,13 @@ import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.arcrobotics.ftclib.command.CommandScheduler;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
-import org.firstinspires.ftc.teamcode.commandBased.commands.intake.SetIntakePower;
-import org.firstinspires.ftc.teamcode.commandBased.commands.rotator.MoveRotatorToAngle;
 import org.firstinspires.ftc.teamcode.commandBased.commands.arm.MoveArmToAngle;
 import org.firstinspires.ftc.teamcode.commandBased.commands.drive.SetDriveSpeeds;
 import org.firstinspires.ftc.teamcode.commandBased.commands.elevator.MoveElevatorToPosition;
 import org.firstinspires.ftc.teamcode.commandBased.commands.drive.PointCentric;
 import org.firstinspires.ftc.teamcode.commandBased.commands.drive.FieldCentric;
 import org.firstinspires.ftc.teamcode.commandBased.commands.drive.RobotCentric;
+import org.firstinspires.ftc.teamcode.commandBased.commands.intake.SetIntakePower;
 import org.firstinspires.ftc.teamcode.commandBased.subsystems.ArmSubsystem;
 import org.firstinspires.ftc.teamcode.commandBased.subsystems.DrivetrainSubsystem;
 import org.firstinspires.ftc.teamcode.commandBased.subsystems.ElevatorSubsystem;
@@ -76,7 +75,6 @@ public class Robot extends BlackOp {
                 Constants.DRIVE_SLOW_FORWARD,
                 Constants.DRIVE_SLOW_TURN
         );
-
         SetDriveSpeeds fastMode = new SetDriveSpeeds(
                 drivetrainSS,
                 Constants.DRIVE_FAST_STRAFE,
@@ -91,18 +89,33 @@ public class Robot extends BlackOp {
         MoveElevatorToPosition eleHigh = new MoveElevatorToPosition(elevatorSS, Constants.ELE_HIGH);
 
         //create arm commands
-        MoveArmToAngle armBackward = new MoveArmToAngle(armSS, Constants.ARM_ANGLE_BACK);
-        MoveArmToAngle armIdle = new MoveArmToAngle(armSS, Constants.ARM_ANGLE_IDLE);
-        MoveArmToAngle armForward = new MoveArmToAngle(armSS, Constants.ARM_ANGLE_FRONT);
+        MoveArmToAngle armBackward = new MoveArmToAngle(
+                armSS,
+                Constants.ARM_ANGLE_BACK,
+                Constants.ARM_MAX_VELO,
+                Constants.ARM_MAX_ACCEL
+        );
+        MoveArmToAngle armIdle = new MoveArmToAngle(
+                armSS,
+                Constants.ARM_ANGLE_IDLE,
+                Constants.ARM_IDLE_VELO,
+                Constants.ARM_IDLE_ACCEL
+        );
+        MoveArmToAngle armForward = new MoveArmToAngle(
+                armSS,
+                Constants.ARM_ANGLE_FRONT,
+                Constants.ARM_MAX_VELO,
+                Constants.ARM_MAX_ACCEL
+        );
 
 //        //create rotator commands
 //        MoveRotatorToAngle rotatorBack = new MoveRotatorToAngle(rotatorSS, Constants.ROTATOR_MIN);
 //        MoveRotatorToAngle rotatorFront = new MoveRotatorToAngle(rotatorSS, Constants.ROTATOR_MAX);
-//
-//        //create intake commands
-//        SetIntakePower intakeIntake = new SetIntakePower(intakeSS, 1);
-//        SetIntakePower intakeIdle = new SetIntakePower(intakeSS, 0);
-//        SetIntakePower intakeOuttake = new SetIntakePower(intakeSS, -1);
+
+        //create intake commands
+        SetIntakePower intakeIntake = new SetIntakePower(intakeSS, 1);
+        SetIntakePower intakeIdle = new SetIntakePower(intakeSS, 0);
+        SetIntakePower intakeOuttake = new SetIntakePower(intakeSS, -1);
         
 
         //start robot in field-centric mode
@@ -122,8 +135,6 @@ public class Robot extends BlackOp {
             CommandScheduler.getInstance().run();
 
             //drivetrain speed controls
-//            driver.left_bumper.onRise(() -> drivetrainSS.setSpeedMultipliers(0.5, 0.5, 0.5))
-//                              .onFall(() -> drivetrainSS.setSpeedMultipliers(1, 1, 1));
             driver.left_bumper.onRise(slowMode::schedule)
                               .onFall(fastMode::schedule);
 
@@ -157,6 +168,12 @@ public class Robot extends BlackOp {
             driver.x.onRise(armBackward::schedule);
             driver.a.onRise(armIdle::schedule);
 
+            //intake controls
+            driver.left_bumper.onRise(intakeOuttake::schedule)
+                              .onFall(intakeIdle::schedule);
+            driver.right_bumper.onRise(intakeIntake::schedule)
+                               .onFall(intakeIdle::schedule);
+
             // Draw the target on the field
             fieldOverlay.setStroke("#dd2c00");
             fieldOverlay.strokeCircle(Constants.TARGET.getX(), Constants.TARGET.getY(), 3);
@@ -168,14 +185,22 @@ public class Robot extends BlackOp {
             // Send telemetry packet off to dashboard
             FtcDashboard.getInstance().sendTelemetryPacket(packet);
 
+            if (Constants.DEBUG_ELE) {
+                mTelemetry().addData("ele target", elevatorSS.getEleTarget());
+            }
 
-            mTelemetry().addData("arm target", armSS.getArmTarget());
-            mTelemetry().addData("arm pos", armSS.getArmPos());
-            mTelemetry().addData("arm power", armSS.getArmPower());
-            mTelemetry().addData("arm angle", armSS.getArmAngle());
-            mTelemetry().addData("arm velocity", armSS.getArmVelocity());
-            mTelemetry().addData("arm acceleration", armSS.getArmAcceleration());
-            mTelemetry().addData("KF", armSS.getCoeffs()[6]);
+            if (Constants.DEBUG_ARM) {
+                mTelemetry().addData("arm final target", armSS.getArmTarget());
+                mTelemetry().addData("arm profile target", armSS.getArmProfileTarget());
+                mTelemetry().addData("arm target", armSS.getArmTarget());
+                mTelemetry().addData("arm pos", armSS.getArmPos());
+                mTelemetry().addData("arm power", armSS.getArmPower());
+                mTelemetry().addData("arm angle", armSS.getArmAngle());
+                mTelemetry().addData("arm velocity", armSS.getArmVelocity());
+                mTelemetry().addData("arm acceleration", armSS.getArmAcceleration());
+                mTelemetry().addData("arm KF", armSS.getCoeffs()[6]);
+            }
+
             mTelemetry().update();
         });
     }
