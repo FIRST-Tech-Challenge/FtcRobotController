@@ -27,7 +27,7 @@ public class BlueLeftHigh {
     private boolean boosted, tooHot = false, lowBattery = false;
     PwPRobot robot = null;
     LinearOpMode op;
-    double dummyP = 0, dropX = 31.4, dropY = 0.7, lastTime = 0, thisTime = 0, startTime = 0, voltage = 0;
+    double dummyP = 0, dropX = 31.4, dropY = 1.6, lastTime = 0, thisTime = 0, startTime = 0, voltage = 0;
     ;
     TrajectorySequence preloadtrajectory = null, pickupTrajectory = null, park1trajectory = null,
             park2trajectory = null, park3trajectory = null, clearLTrajectory = null, clearRTrajectory = null,
@@ -54,7 +54,7 @@ public class BlueLeftHigh {
                 .setReversed(true)
                 .splineToSplineHeading(new Pose2d(36, 40.25, toRadians(90)), toRadians(270))
 //                .splineTo(new Vector2d(34, 28), toRadians(245))
-                .splineToSplineHeading(new Pose2d(31.2, 3.0, Math.toRadians(40)), toRadians(220),
+                .splineToSplineHeading(new Pose2d(31.2, 4.2, Math.toRadians(40)), toRadians(220),
                         getVelocityConstraint(110, 9, 14), getAccelerationConstraint(60))
                 .build();
 
@@ -62,7 +62,7 @@ public class BlueLeftHigh {
                 .addTemporalMarker(() -> robot.setConing(true))
                 .setReversed(false)
 //                .splineTo(new Vector2d(51,11.5),Math.toRadians(0))
-                .splineTo(new Vector2d(67, 11.5), Math.toRadians(0))
+                .splineTo(new Vector2d(66, 10.75), Math.toRadians(0))
                 .addTemporalMarker(robot::done)
                 .build();
 
@@ -79,11 +79,11 @@ public class BlueLeftHigh {
         }
 
         for (int i = 0; i < 5; i++) {
-            pick.add(robot.roadrun.trajectorySequenceBuilder(new Pose2d(dropX, dropY, Math.toRadians(37)))
+            pick.add(robot.roadrun.trajectorySequenceBuilder(new Pose2d(dropX, dropY-0.4*i, Math.toRadians(37)))
                     .addTemporalMarker(() -> robot.setConing(true))
                     .setReversed(false)
 //                    .splineTo(new Vector2d(51,11.5),Math.toRadians(0))
-                    .splineTo(new Vector2d(67, 11.5), Math.toRadians(0))
+                    .splineTo(new Vector2d(66.3, 10.75), Math.toRadians(0))
                     .addTemporalMarker(robot::done)
                     .build());
         }
@@ -91,7 +91,7 @@ public class BlueLeftHigh {
             dropTrajectory.add(robot.roadrun.trajectorySequenceBuilder(pick.get(i).end())
                     .addTemporalMarker(0, () -> robot.setPoling(true))
                     .setReversed(true)
-                    .splineToSplineHeading(new Pose2d(dropX, dropY - 0.1 * i, Math.toRadians(37)), Math.toRadians(217))
+                    .splineToSplineHeading(new Pose2d(dropX-0.3*i, dropY-0.1*i, Math.toRadians(37)), Math.toRadians(217))
 //                            getVelocityConstraint(110,9,14), getAccelerationConstraint(51))
                     .addTemporalMarker(robot::done)
                     .build());

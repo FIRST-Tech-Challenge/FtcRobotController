@@ -26,7 +26,7 @@ public class BlueRightHigh {
     private boolean boosted,tooHot=false;
     PwPRobot robot=null;
     LinearOpMode op;
-    double dummyP = 0, dropX=-25.8, dropY=1.8, dropA = toRadians(140),lastTime = 0.0,startTime=0.0;
+    double dummyP = 0, dropX=-27.8, dropY=1.8, dropA = toRadians(140),lastTime = 0.0,startTime=0.0;
 
     TrajectorySequence preloadtrajectory=null, pickupTrajectory=null, park1trajectory=null,
             park2trajectory=null, park3trajectory=null, clearLTrajectory=null, clearRTrajectory=null,
@@ -59,7 +59,7 @@ public class BlueRightHigh {
 //                .addTemporalMarker(()->robot.setConing(true))
 
                 .setReversed(false)
-                .splineTo(new Vector2d(-62.5, 8.2), Math.toRadians(180))
+                .splineTo(new Vector2d(-60.5, 11.75), Math.toRadians(180))
                 .addTemporalMarker(robot::done)
                 .build();
 
@@ -79,7 +79,7 @@ public class BlueRightHigh {
 //                    .addTemporalMarker(()->robot.setConing(true))
 
                     .setReversed(false)
-                    .splineTo(new Vector2d(-62.5, 8.2-1.0*i), Math.toRadians(180))
+                    .splineTo(new Vector2d(-60.5, 11.75), Math.toRadians(180))
                     .addTemporalMarker(robot::done)
                     .build());
         }

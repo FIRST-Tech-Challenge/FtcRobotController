@@ -63,8 +63,8 @@ import java.util.List;
  */
 @Config
 public class SampleMecanumDrive extends MecanumDrive {
-    public static PIDCoefficients TRANSLATIONAL_PID = new PIDCoefficients(10, 0.0, 0.5);
-    public static PIDCoefficients HEADING_PID = new PIDCoefficients(6, 0.0, 0.1  );
+    public static PIDCoefficients TRANSLATIONAL_PID = new PIDCoefficients(12, 0.0, 0.5);
+    public static PIDCoefficients HEADING_PID = new PIDCoefficients(7, 0.0, 0.1  );
 
     public static double LATERAL_MULTIPLIER = 1;
 
@@ -140,12 +140,12 @@ public class SampleMecanumDrive extends MecanumDrive {
         leftRear = hardwareMap.get(DcMotorEx.class, "motorLeftBack");
         rightRear = hardwareMap.get(DcMotorEx.class, "motorRightBack");
         rightFront = hardwareMap.get(DcMotorEx.class, "motorRightFront");
-//        DcMotorEx backEncoder= hardwareMap.get(DcMotorEx.class, "backEncoder");
-//        DcMotorEx leftEncoder = hardwareMap.get(DcMotorEx.class, "leftEncoder");
-//        DcMotorEx rightEncoder = hardwareMap.get(DcMotorEx.class, "rightEncoder");
-//        leftEncoder.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-//        rightEncoder.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-//        backEncoder.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        DcMotorEx backEncoder= hardwareMap.get(DcMotorEx.class, "backEncoder");
+        DcMotorEx leftEncoder = hardwareMap.get(DcMotorEx.class, "leftEncoder");
+        DcMotorEx rightEncoder = hardwareMap.get(DcMotorEx.class, "rightEncoder");
+        leftEncoder.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        rightEncoder.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        backEncoder.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 //        leftFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 //        leftRear.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 //        rightFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -187,11 +187,11 @@ public class SampleMecanumDrive extends MecanumDrive {
 //        if(touches) {
 //            touch = new LimitSwitches();
 //        }
-        imu = hardwareMap.get(BNO055IMU.class, "imu");
-        BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
-        parameters.angleUnit = BNO055IMU.AngleUnit.RADIANS;
-        imu.initialize(parameters);
-        BNO055IMUUtil.remapZAxis(imu, AxisDirection.POS_Y);
+//        imu = hardwareMap.get(BNO055IMU.class, "imu");
+//        BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
+//        parameters.angleUnit = BNO055IMU.AngleUnit.RADIANS;
+//        imu.initialize(parameters);
+//        BNO055IMUUtil.remapZAxis(imu, AxisDirection.POS_Y);
         dashboard = FtcDashboard.getInstance();
         dashboard.setTelemetryTransmissionInterval(25);
         logger.createFile("RoadrunLog","Runtime, X, Y, A, error[0], error[1]");
@@ -297,7 +297,8 @@ public class SampleMecanumDrive extends MecanumDrive {
                 op.telemetry.addData("touch-updated", false);
             }
         }
-        PoseStorage.currentPose = getPoseEstimate();
+        logger.log("RoadrunLog","pos"+getPoseEstimate());
+//        PoseStorage.currentPose = getPoseEstimate();
         DriveSignal signal = trajectorySequenceRunner.update(getPoseEstimate(), getPoseVelocity());
         if (signal != null) setDriveSignal(signal);
     }
