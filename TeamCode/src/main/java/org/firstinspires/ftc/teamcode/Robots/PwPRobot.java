@@ -72,10 +72,10 @@ public class PwPRobot extends BasicRobot {
     private VoltageSensor voltageSensor = null;
     private flippas flipper = null;
     boolean finished = false, coning = false, poling = false;
-    double voltage;
+    double voltage,startTime;
     boolean manualSlides = false;
     double thisTime = 0, lastTime = 0, loopTime = 0, lastDistTime = 0;
-    boolean distBroke = false;
+    boolean distBroke = false,tooHot=false,lowBattery=false;
 
 
     public PwPRobot(LinearOpMode opMode, boolean p_isTeleop) {
@@ -232,6 +232,74 @@ public class PwPRobot extends BasicRobot {
             }
             field.setDoneLookin(false);
         }
+    }
+
+    public int checkRobotReadiness(){
+        int dummyP = 0;
+        double maxLoopTime = 1.9;
+//        while (!op.isStarted()&&!op.isStopRequested()) {
+            if(!tooHot && !lowBattery) {
+                op.telemetry.addData("pos", cv.getPosition());
+                op.telemetry.addData("CLAW_CLOSED:", CLAW_CLOSED.getStatus());
+//            telemetry.addData("ANGLE:", robot.getAngleToConeStack());
+                op.telemetry.update();
+                updateClawStates();
+                updateLiftArmStates();
+                if (time > 3) {
+                    dummyP = cv.getPosition();
+
+                    if (dummyP == 1) {
+                        heartbeatRed();
+                    } else if (dummyP == 2) {
+                        darkGreen();
+                    } else {
+                        blue();
+                    }
+                }
+                updateTime();
+                if (time > 3 && startTime == 0) {
+                    startTime = time;
+                    for (int i = 0; i < 100; i++) {
+                        double loopTime = time - lastTime;
+                        if(time>4&&!queuer.isFirstLoop()&&loopTime>0.4){
+                            setDistBroke(true);
+                        }
+                        lastTime = time;
+//                        robot.setFirstLoop(false);
+                        liftToTargetAuto();
+                        roadrun.update();
+                        updateClawStates();
+                        updateLiftArmStates();
+                        updateCV();
+
+                    }
+                    startTime = time - startTime;
+                    if(startTime>maxLoopTime){
+                        tooHot=true;
+                    }
+                    logger.log("/RobotLogs/GeneralRobot", "loopTime"+startTime);
+                    if(voltage<12.4){
+                        lowBattery=true;
+                    }
+                    logger.log("/RobotLogs/GeneralRobot", "voltage"+voltage);
+
+                }
+
+                op.telemetry.addData("voltage", voltage);
+                op.telemetry.addData("startTime", startTime);
+            }
+            else if (tooHot){
+                partycolorwave();
+                op.telemetry.addData("TOO HOT", startTime);
+                op.telemetry.update();
+            }
+            else{
+                rainbowRainbow();
+                op.telemetry.addData("BATTERY LOW", voltage);
+                op.telemetry.update();
+            }
+//        }
+        return dummyP;
     }
 
     public void autoTeleCone() {
@@ -864,6 +932,8 @@ public class PwPRobot extends BasicRobot {
         if (queuer.queue(false, !poling)) {
             if (cv.poleInView() && isInView) {
                 val = false;
+                logger.log("/RobotLogs/GeneralRobot", "contourDimensions" + cv.getContourDimensions()[0] + "," + cv.getContourDimensions()[1]);
+                logger.log("/RobotLogs/GeneralRobot", "contourSize" + cv.getContourSize());
             } else if (!cv.poleInView() && !isInView) {
                 logger.log("/RobotLogs/GeneralRobot", "contourDimensions" + cv.getContourDimensions()[0] + "," + cv.getContourDimensions()[1]);
                 logger.log("/RobotLogs/GeneralRobot", "contourSize" + cv.getContourSize());
@@ -967,8 +1037,9 @@ public class PwPRobot extends BasicRobot {
         }
 
         if (op.gamepad2.dpad_left) {
-            lift.resetEncoder();
+            clawSwitch.setMode(!clawSwitch.getMode());
         }
+        op.telemetry.addData("switchMode", clawSwitch.getMode());
         //manual lift up/down
         if (op.gamepad2.dpad_right) {
             lift.setLiftRawPower((op.gamepad2.right_trigger - op.gamepad2.left_trigger) / 3);
@@ -1109,7 +1180,7 @@ public class PwPRobot extends BasicRobot {
 //        claw.printLR();
 //        field.closestDropPosition(false);
         if (op.gamepad1.right_bumper) {
-            if (CLAW_CLOSED.getStatus()) {
+            if (!claw.isClawWide()) {
                 claw.setLastOpenTime(time);
                 claw.wideClaw();
                 if (ARM_OUTTAKE.getStatus() && field.closestDropPosition()) {
@@ -1120,7 +1191,7 @@ public class PwPRobot extends BasicRobot {
             }
         }
 //        claw.closeClaw();
-        if (!prezzed&&(time - claw.getLastTime() > .4 && time - claw.getLastTime() < .7 && CLAW_CLOSED.getStatus())) {
+        if (!prezzed && CLAW_CLOSED.getStatus()) {
             claw.wideClaw();
         }
         if (time- claw.getLastTime() > 1 && time - claw.getLastTime() < 1.3 && CLAW_CLOSED.getStatus() && lift.getStackPos() == lift.getLiftTarget()) {

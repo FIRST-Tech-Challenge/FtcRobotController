@@ -110,51 +110,15 @@ public class  BlueLeftMid {
                 .setReversed(true)
                 .lineToLinearHeading(new Pose2d(11,12, toRadians(0)))
                 .build();
-        double maxLoopTime = 2.0;
-        while (!op.isStarted()&&!op.isStopRequested()) {
-            if(!tooHot) {
-                op.telemetry.addData("pos", robot.cv.getPosition());
-                op.telemetry.addData("CLAW_CLOSED:", CLAW_CLOSED.getStatus());
-//            telemetry.addData("ANGLE:", robot.getAngleToConeStack());
-                op.telemetry.update();
-                robot.updateClawStates();
-                robot.updateLiftArmStates();
-                if (time > 3) {
-                    dummyP = robot.cv.getPosition();
-
-                    if (dummyP == 1) {
-                        robot.heartbeatRed();
-                    } else if (dummyP == 2) {
-                        robot.darkGreen();
-                    } else {
-                        robot.blue();
-                    }
-                }
-                robot.updateTime();
-                if (time > 5 && startTime == 0) {
-                    startTime = time;
-                    for (int i = 0; i < 100; i++) {
-                        update();
-                    }
-                    startTime = time - startTime;
-                    if(startTime>maxLoopTime){
-                        tooHot=true;
-                    }
-                }
-                op.telemetry.addData("startTime", startTime);
-            }
-            else{
-                robot.partycolorwave();
-                op.telemetry.addData("TOO HOT", startTime);
-                op.telemetry.update();
-            }
-        }
-        if(op.isStopRequested()){
-            robot.stop();
+        while (!op.isStarted() && !op.isStopRequested()) {
+            dummyP = robot.checkRobotReadiness();
         }
         op.resetRuntime();
+        robot.updateTime();
         robot.cv.observeStick();
-        robot.cv.observeCone();
+        robot.setFirstLoop(true);
+        lastTime = 1;
+//        robot.cv.observeCone();
     }
 
     public void preload() {

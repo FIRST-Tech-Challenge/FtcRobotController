@@ -218,6 +218,6 @@ public class StickObserverPipeline extends OpenCvPipeline {
         if(abs(center)+5 >= 320-(consiz*0.5)||consiz*0.5>239){
             return new double[]{0,0};
         }
-        return new double[]{-atan(center*.0014)*57.296, abs(1.25/(2*tan(atan((center+consiz*0.5)*.0014)-atan(center*.0014))))};
+        return new double[]{1.1*-atan(center*.0014)*57.296, abs(1.3/(2*tan(atan((center+consiz*0.5)*.0014)-atan(center*.0014))))};
     }
 }

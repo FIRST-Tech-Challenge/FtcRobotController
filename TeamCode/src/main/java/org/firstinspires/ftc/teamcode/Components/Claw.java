@@ -107,6 +107,7 @@ public class Claw {
 
         if(!isTeleop){
             claw.setPosition(CLAW_CLOSED_POS);
+            clawPos= CLAW_CLOSED_POS;
             CLAW_CLOSED.setStatus(true);
             clawServoLastSwitchTime=0;
             claw.setFlipTime(-2);
@@ -114,6 +115,8 @@ public class Claw {
         else{
             claw.setPosition(CLAW_OPEN_POS);
             CLAW_OPEN.setStatus(true);
+            clawPos= CLAW_OPEN_POS;
+
             clawServoLastSwitchTime=0;
             claw.setFlipTime(-2);
 
@@ -125,13 +128,13 @@ public class Claw {
     }
 
     public void updateClawStates() {
-        if (CLAW_CLOSING.status && time - claw.getLastTime() > 0.1) {
+        if (clawPos==CLAW_CLOSED_POS && time - claw.getLastTime() > 0.21) {
             CLAW_CLOSED.setStatus(true);
         }
-        if (CLAW_OPENING.status && time - claw.getLastTime() > 0.1) {
+        else if (clawPos==CLAW_OPEN_POS && time - claw.getLastTime() > 0.21) {
             CLAW_OPEN.setStatus(true);
         }
-        if (CLAW_WIDING.status && time - claw.getLastTime() > 0.1) {
+        if (clawPos==CLAW_WIDE_POS && time - claw.getLastTime() > 0.21) {
             CLAW_WIDE.setStatus(true);
         }
 
@@ -164,9 +167,10 @@ public class Claw {
                 CLAW_SERVO_SWITCH_TIME + " " + time);
     }
     public void wideClaw(){
-        if((CLAW_OPEN.status|| CLAW_CLOSED.status)){
+        if(clawPos!=CLAW_WIDE_POS&&time-claw.getLastTime()>0.25){
             claw.setPosition(CLAW_WIDE_POS+0.04);
             CLAW_WIDING.setStatus(true);
+            clawPos=CLAW_WIDE_POS;
         }
     }
     public void teleClaw(){
@@ -177,7 +181,7 @@ public class Claw {
         }
     }
     public boolean isClawWide(){
-        if(CLAW_WIDE.getStatus()){
+        if(clawPos==CLAW_WIDE_POS){
             return true;
         }
         else {
@@ -198,6 +202,7 @@ public class Claw {
 
                 //set state of claw closed to true
                 CLAW_CLOSING.setStatus(true);
+                clawPos=CLAW_CLOSED_POS;
 
                 //log to general robot log that the claw has been closed through function closeClaw()
                 logger.log("/RobotLogs/GeneralRobot", claw.getDeviceName() + ",closeClaw()"
@@ -211,7 +216,7 @@ public class Claw {
 
 
         //the state of claw opened has to be true
-        if (!CLAW_CLOSING.status&&!CLAW_CLOSED.status) {
+        if (clawPos!=CLAW_CLOSED_POS&&time-claw.getLastTime()>0.25) {
             //set servo position
             claw.setPosition(CLAW_CLOSED_POS);
             clawPos=CLAW_CLOSED_POS;
@@ -231,7 +236,7 @@ public class Claw {
 
 
         //the state of claw closed has to be true
-        if (CLAW_CLOSED.status|| CLAW_WIDE.status) {
+        if (clawPos!=CLAW_OPEN_POS) {
             logger.log("/RobotLogs/GeneralRobot", claw.getDeviceName() + ",openClaw()"
                     + CLAW_OPENING.status +"clawClosed" + CLAW_CLOSED.getStatus() + "clawWide" + CLAW_WIDE.getStatus(), true);
             //set servo position
@@ -239,6 +244,7 @@ public class Claw {
 
             //set state of claw open to true
             CLAW_OPENING.setStatus(true);
+            clawPos=CLAW_OPEN_POS;
 
             //log to general robot log that the claw has been opened through function openClaw()
             logger.log("/RobotLogs/GeneralRobot", claw.getDeviceName() + ",openClaw()"
@@ -258,6 +264,8 @@ public class Claw {
 
             //set state of claw open to true
             CLAW_OPENING.setStatus(true);
+            clawPos=CLAW_OPEN_POS;
+
             //log to general robot log that the claw has been opened through function openClaw()
             logger.log("/RobotLogs/GeneralRobot", claw.getDeviceName() + ",openClaw()"
                     + ",Claw Opened", true);

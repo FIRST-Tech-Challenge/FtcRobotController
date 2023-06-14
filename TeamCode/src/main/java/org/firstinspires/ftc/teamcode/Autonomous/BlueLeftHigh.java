@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.Autonomous;
 
 import static org.firstinspires.ftc.teamcode.Components.Claw.ClawStates.CLAW_CLOSED;
 import static org.firstinspires.ftc.teamcode.Components.Lift.LiftConstants.LIFT_HIGH_JUNCTION;
+import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.logger;
 import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.time;
 import static org.firstinspires.ftc.teamcode.roadrunner.drive.SampleMecanumDrive.getAccelerationConstraint;
 import static org.firstinspires.ftc.teamcode.roadrunner.drive.SampleMecanumDrive.getVelocityConstraint;
@@ -23,16 +24,16 @@ import org.firstinspires.ftc.teamcode.roadrunner.trajectorysequence.TrajectorySe
 import java.util.ArrayList;
 
 public class BlueLeftHigh {
-    private boolean boosted, tooHot=false, lowBattery = false;
-    PwPRobot robot=null;
+    private boolean boosted, tooHot = false, lowBattery = false;
+    PwPRobot robot = null;
     LinearOpMode op;
-    double dummyP = 0, dropX=30.9, dropY= 0.7, lastTime=0, thisTime=0,startTime=0;
+    double dummyP = 0, dropX = 31.4, dropY = 0.7, lastTime = 0, thisTime = 0, startTime = 0, voltage = 0;
     ;
-    TrajectorySequence preloadtrajectory=null, pickupTrajectory=null, park1trajectory=null,
-            park2trajectory=null, park3trajectory=null, clearLTrajectory=null, clearRTrajectory=null,
-            closeLTrajectory=null, closeRTrajectory=null, reDropTrajectory=null;
-    ArrayList<TrajectorySequence> dropTrajectory=null, pick=null;
-    ArrayList<Boolean> clObL=null, clObR=null,pInView=null;
+    TrajectorySequence preloadtrajectory = null, pickupTrajectory = null, park1trajectory = null,
+            park2trajectory = null, park3trajectory = null, clearLTrajectory = null, clearRTrajectory = null,
+            closeLTrajectory = null, closeRTrajectory = null, reDropTrajectory = null;
+    ArrayList<TrajectorySequence> dropTrajectory = null, pick = null;
+    ArrayList<Boolean> clObL = null, clObR = null, pInView = null;
 
     public BlueLeftHigh(boolean boost, LinearOpMode p_op, PwPRobot p_robot) {
         boosted = boost;
@@ -48,20 +49,20 @@ public class BlueLeftHigh {
         robot.cv.observeSleeve();
         op.resetRuntime();
         robot.cp1shot();
-        preloadtrajectory = robot.roadrun.trajectorySequenceBuilder(new Pose2d(36,63.25, Math.toRadians(90)))
-                .addTemporalMarker(()->robot.setPoling(true))
+        preloadtrajectory = robot.roadrun.trajectorySequenceBuilder(new Pose2d(36, 63.25, Math.toRadians(90)))
+                .addTemporalMarker(() -> robot.setPoling(true))
                 .setReversed(true)
                 .splineToSplineHeading(new Pose2d(36, 40.25, toRadians(90)), toRadians(270))
 //                .splineTo(new Vector2d(34, 28), toRadians(245))
                 .splineToSplineHeading(new Pose2d(31.2, 3.0, Math.toRadians(40)), toRadians(220),
-                        getVelocityConstraint(110,9,14), getAccelerationConstraint(60))
+                        getVelocityConstraint(110, 9, 14), getAccelerationConstraint(60))
                 .build();
 
-        pickupTrajectory = robot.roadrun.trajectorySequenceBuilder(new Pose2d(31.5,2.5,Math.toRadians(40)))
-                .addTemporalMarker(()->robot.setConing(true))
+        pickupTrajectory = robot.roadrun.trajectorySequenceBuilder(new Pose2d(31.5, 2.5, Math.toRadians(40)))
+                .addTemporalMarker(() -> robot.setConing(true))
                 .setReversed(false)
 //                .splineTo(new Vector2d(51,11.5),Math.toRadians(0))
-                .splineTo(new Vector2d(67, 12), Math.toRadians(0))
+                .splineTo(new Vector2d(67, 11.5), Math.toRadians(0))
                 .addTemporalMarker(robot::done)
                 .build();
 
@@ -78,29 +79,29 @@ public class BlueLeftHigh {
         }
 
         for (int i = 0; i < 5; i++) {
-            dropTrajectory.add(robot.roadrun.trajectorySequenceBuilder(new Pose2d(66,11.75,Math.toRadians(0)))
-                    .addTemporalMarker(0,()->robot.setPoling(true))
-                    .setReversed(true)
-                    .splineToSplineHeading(new Pose2d(dropX, dropY-0.1*i, Math.toRadians(37)), Math.toRadians(217))
-//                            getVelocityConstraint(110,9,14), getAccelerationConstraint(51))
+            pick.add(robot.roadrun.trajectorySequenceBuilder(new Pose2d(dropX, dropY, Math.toRadians(37)))
+                    .addTemporalMarker(() -> robot.setConing(true))
+                    .setReversed(false)
+//                    .splineTo(new Vector2d(51,11.5),Math.toRadians(0))
+                    .splineTo(new Vector2d(67, 11.5), Math.toRadians(0))
                     .addTemporalMarker(robot::done)
                     .build());
         }
         for (int i = 0; i < 5; i++) {
-            pick.add(robot.roadrun.trajectorySequenceBuilder(new Pose2d(dropX,dropY,Math.toRadians(37)))
-                    .addTemporalMarker(()->robot.setConing(true))
-                    .setReversed(false)
-//                    .splineTo(new Vector2d(51,11.5),Math.toRadians(0))
-                    .splineTo(new Vector2d(67, 12.2-0.3*i), Math.toRadians(0))
+            dropTrajectory.add(robot.roadrun.trajectorySequenceBuilder(pick.get(i).end())
+                    .addTemporalMarker(0, () -> robot.setPoling(true))
+                    .setReversed(true)
+                    .splineToSplineHeading(new Pose2d(dropX, dropY - 0.1 * i, Math.toRadians(37)), Math.toRadians(217))
+//                            getVelocityConstraint(110,9,14), getAccelerationConstraint(51))
                     .addTemporalMarker(robot::done)
                     .build());
         }
-        reDropTrajectory = robot.roadrun.trajectorySequenceBuilder(new Pose2d(dropX,dropY,Math.toRadians(37)))
-                .addTemporalMarker(()->robot.setPoling(true))
+        reDropTrajectory = robot.roadrun.trajectorySequenceBuilder(new Pose2d(dropX, dropY, Math.toRadians(37)))
+                .addTemporalMarker(() -> robot.setPoling(true))
                 .setReversed(false)
-                .lineToLinearHeading(new Pose2d(dropX+6.3,dropY+3.2,Math.toRadians(37)))
+                .lineToLinearHeading(new Pose2d(dropX + 6.3, dropY + 3.2, Math.toRadians(37)))
                 .setReversed(true)
-                .lineToLinearHeading(new Pose2d(dropX+1,dropY+1,Math.toRadians(37)))
+                .lineToLinearHeading(new Pose2d(dropX + 1, dropY + 1, Math.toRadians(37)))
                 .addTemporalMarker(robot::done)
                 .build();
 
@@ -113,62 +114,13 @@ public class BlueLeftHigh {
                 .splineToSplineHeading(new Pose2d(36, 17, Math.toRadians(90)), Math.toRadians(90))
                 .build();
         park3trajectory = robot.roadrun.trajectorySequenceBuilder(new Pose2d(30, 5, Math.toRadians(40)))
-                .splineTo(new Vector2d(dropX+6,dropY+9),toRadians(5))
+                .splineTo(new Vector2d(dropX + 6, dropY + 9), toRadians(5))
                 .setReversed(true)
-                .splineToLinearHeading(new Pose2d(14,13,toRadians(0)), toRadians(0))
+                .splineToLinearHeading(new Pose2d(14, 13, toRadians(0)), toRadians(0))
                 .build();
-        double maxLoopTime = 2.0;
-        while (!op.isStarted()&&!op.isStopRequested()) {
-            if(!tooHot && !lowBattery) {
-                op.telemetry.addData("pos", robot.cv.getPosition());
-                op.telemetry.addData("CLAW_CLOSED:", CLAW_CLOSED.getStatus());
-//            telemetry.addData("ANGLE:", robot.getAngleToConeStack());
-                op.telemetry.update();
-                robot.updateClawStates();
-                robot.updateLiftArmStates();
-                if (time > 3) {
-                    dummyP = robot.cv.getPosition();
-
-                    if (dummyP == 1) {
-                        robot.heartbeatRed();
-                    } else if (dummyP == 2) {
-                        robot.darkGreen();
-                    } else {
-                        robot.blue();
-                    }
-                }
-                robot.updateTime();
-                if (time > 5 && startTime == 0) {
-                    startTime = time;
-                    for (int i = 0; i < 100; i++) {
-                        update();
-                    }
-                    startTime = time - startTime;
-                    if(startTime>maxLoopTime){
-                        tooHot=true;
-                    }
-                }
-                double voltage = robot.getVoltage();
-                if(voltage<12.4){
-                    lowBattery=true;
-                }
-                op.telemetry.addData("voltage", voltage);
-                op.telemetry.addData("startTime", startTime);
-            }
-            else if (tooHot){
-                robot.partycolorwave();
-                op.telemetry.addData("TOO HOT", startTime);
-                op.telemetry.update();
-            }
-            else{
-                robot.rainbowRainbow();
-                op.telemetry.addData("BATTERY LOW", robot.getVoltage());
-                op.telemetry.update();
-            }
+        while (!op.isStarted() && !op.isStopRequested()) {
+            dummyP = robot.checkRobotReadiness();
         }
-//        if(op.isStopRequested()){
-//            robot.stop();
-//        }
         op.resetRuntime();
         robot.updateTime();
         robot.cv.observeStick();
@@ -191,19 +143,19 @@ public class BlueLeftHigh {
     }
 
     public boolean pick(int i) {
-        int temp = i-1;
+        int temp = i - 1;
         if (i == 0) {
             robot.followTrajectorySequenceAsync(pickupTrajectory);
         } else {
             robot.followTrajectorySequenceAsync(pick.get(temp));
         }
         if (boosted) {
-            boolean[] vals = robot.checkIsOb(clObL.get(i), clObR.get(i),pick.get(0).end());
+            boolean[] vals = robot.checkIsOb(clObL.get(i), clObR.get(i), pick.get(0).end());
             clObL.set(i, vals[0]);
             clObR.set(i, vals[1]);
 //            robot.delay(0.2);
 //            robot.updateTrajectoryWithCone();
-            robot.delay(0.4);
+            robot.delay(0.2);
             clearObstacleL(i);
 //            clearObstacleR(i);
         }
@@ -212,17 +164,16 @@ public class BlueLeftHigh {
         robot.delay(0.1);
         robot.wideClaw();
         robot.delay(0.3);
-        if(i==0){
+        if (i == 0) {
             robot.iterateConestackUp();
-        }
-        else if (i != 4) {
+        } else if (i != 4) {
             robot.iterateConestackDown();
         } else {
             robot.liftToPosition(-40);
             robot.lowerLiftArmToIntake();
         }
         robot.closeClaw(false);
-        if(boosted) {
+        if (boosted) {
             robot.delay(0.7);
         }
         if (boosted && robot.queuer.queue(true, true) && !robot.clawSwitch.isSwitched()) {
@@ -238,28 +189,29 @@ public class BlueLeftHigh {
             robot.updateTrajectoryWithCam();
         }
 //        robot.delay(0.023 + 0.005 * (3 - i));
-        robot.liftToPosition(LIFT_HIGH_JUNCTION);
+        robot.liftToPosition((int)LIFT_HIGH_JUNCTION.getValue()-20);
         robot.delay(0.5);
         robot.raiseLiftArmToOuttake(true);
 //        robot.delay(0.4);
 //        robot.closeClaw(true);
         if (boosted) {
             robot.delay(0.2);
-            boolean val = robot.poleInView(pInView.get(i+1));
-            pInView.set(i+1, val);
-            reDrop(i+1);
+            boolean val = robot.poleInView(pInView.get(i + 1));
+            pInView.set(i + 1, val);
+            reDrop(i + 1);
         }
         robot.delay(0.2);
         robot.wideClaw(false);
     }
-    public void reDrop(int i){
-        robot.followTrajectorySequenceAsync(reDropTrajectory,pInView.get(i));
+
+    public void reDrop(int i) {
+        robot.followTrajectorySequenceAsync(reDropTrajectory, pInView.get(i));
     }
 
     public void clearObstacleL(int i) {
 //        robot.setToNow(clObL.get(i));
         robot.delay(0.2);
-        robot.clearObstacle(new Pose2d(59, 20, Math.toRadians(90)),clObL.get(i)||clObR.get(i));
+        robot.clearObstacle(new Pose2d(59, 20, Math.toRadians(90)), clObL.get(i) || clObR.get(i));
 //            robot.setStackHeight(i, clObL.get(i)||clObR.get(i));
 
 //        if (robot.roadrun.getPoseEstimate().vec().distTo(pickupTrajectory.end().vec()) < 10) {
@@ -302,22 +254,22 @@ public class BlueLeftHigh {
 
     public void park() {
         if (dummyP == 1) {
-            robot.followTrajectorySequenceAsync(park1trajectory,1);
+            robot.followTrajectorySequenceAsync(park1trajectory, 1);
         } else if (dummyP == 3) {
-            robot.followTrajectorySequenceAsync(park3trajectory,1);
+            robot.followTrajectorySequenceAsync(park3trajectory, 1);
         } else {
-            robot.followTrajectorySequenceAsync(park2trajectory,1);
+            robot.followTrajectorySequenceAsync(park2trajectory, 1);
         }
         robot.lowerLiftArmToIntake(true);
         robot.delay(2.5);
         robot.wideClaw(true);
         robot.delay(0.3);
-        robot.liftToPosition(-10,true);
+        robot.liftToPosition(-10, true);
     }
 
     public void update() {
         double loopTime = time - lastTime;
-        if(time>4&&!robot.queuer.isFirstLoop()&&loopTime>0.4){
+        if (time > 4 && !robot.queuer.isFirstLoop() && loopTime > 0.4) {
             robot.setDistBroke(true);
         }
         lastTime = time;
@@ -332,7 +284,7 @@ public class BlueLeftHigh {
     public void theWholeProgram() {
         init();
         abort:
-        while ((time < 26.5 && (!robot.queuer.isFullfilled() || robot.queuer.isFirstLoop()))&&!op.isStopRequested()) {
+        while ((time < 26.5 && (!robot.queuer.isFullfilled() || robot.queuer.isFirstLoop())) && !op.isStopRequested()) {
             preload();
             for (int i = 0; i < 5; i++) {
                 if (!pick(i)) {

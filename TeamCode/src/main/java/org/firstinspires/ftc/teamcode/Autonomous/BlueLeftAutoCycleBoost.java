@@ -29,9 +29,10 @@ import java.util.ArrayList;
 public class BlueLeftAutoCycleBoost extends LinearOpMode {
     public void runOpMode() {
         PwPRobot robot = new PwPRobot(this,false);
+//        sleep(500);
         BlueLeftHigh autoRunner = new BlueLeftHigh(true,this, robot);
-        sleep(500);
         autoRunner.init();
+        time=0;
         abort:
         while ((time < 27.2 && (!robot.queuer.isFullfilled() || robot.queuer.isFirstLoop()))&&!isStopRequested()) {
             autoRunner.preload();
@@ -40,7 +41,7 @@ public class BlueLeftAutoCycleBoost extends LinearOpMode {
                     break abort;
                 }
                 if(i==3){
-//                    robot.roadrun.update();
+                    robot.roadrun.update();
                 }
                 autoRunner.drop(i);
             }

@@ -17,7 +17,7 @@ public class RFServo implements Servo {
 
     private final Servo rfServo;
 
-    private double lasttime = 0;
+    private double lasttime = -100;
 
     double servolimit = 0;
 
