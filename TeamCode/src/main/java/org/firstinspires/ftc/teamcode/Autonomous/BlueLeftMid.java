@@ -23,11 +23,11 @@ import org.firstinspires.ftc.teamcode.roadrunner.trajectorysequence.TrajectorySe
 
 import java.util.ArrayList;
 
-public class BlueLeftMid {
+public class  BlueLeftMid {
     private boolean boosted, tooHot=false;
     PwPRobot robot=null;
     LinearOpMode op;
-    double dummyP = 0, dropX=29.5, dropY=19, dropA = toRadians(320),lastTime = 0.0;
+    double dummyP = 0, dropX=29.5, dropY=19.25, dropA = toRadians(320),lastTime = 0.0;
     ;
     TrajectorySequence preloadtrajectory=null, pickupTrajectory=null, park1trajectory=null,
             park2trajectory=null, park3trajectory=null, clearLTrajectory=null, clearRTrajectory=null,
@@ -75,16 +75,16 @@ public class BlueLeftMid {
         }
 
         for (int i = 0; i < 5; i++) {
-            dropTrajectory.add(robot.roadrun.trajectorySequenceBuilder(new Pose2d(63.5,11.5,Math.toRadians(0)))
+            dropTrajectory.add(robot.roadrun.trajectorySequenceBuilder(new Pose2d(65,11+0.6*i,Math.toRadians(0)))
                     .setReversed(true)
-                    .splineTo(new Vector2d(dropX,dropY+0.4*i), toRadians(150))
+                    .splineTo(new Vector2d(dropX,dropY+0.75*i), toRadians(150))
                     .addTemporalMarker(robot::done)
                     .build());
         }
         for (int i = 0; i < 5; i++) {
-            pick.add(robot.roadrun.trajectorySequenceBuilder(new Pose2d(dropX,dropY,dropA))
+            pick.add(robot.roadrun.trajectorySequenceBuilder(new Pose2d(dropX,dropY+0.75*i,dropA))
                     .setReversed(false)
-                    .splineTo(new Vector2d(65,11+0.6*i), 0, robot.roadrun.getVelocityConstraint(50, 9, 14) , robot.roadrun.getAccelerationConstraint(60))
+                    .splineTo(new Vector2d(65,11.5+0.6*i), 0, robot.roadrun.getVelocityConstraint(50, 9, 14) , robot.roadrun.getAccelerationConstraint(60))
                     .addTemporalMarker(robot::done)
                     .build());
         }
@@ -281,11 +281,11 @@ public class BlueLeftMid {
 
     public void park() {
         if (dummyP == 1) {
-            robot.followTrajectorySequenceAsync(park1trajectory);
+            robot.followTrajectorySequenceAsync(park1trajectory,1);
         } else if (dummyP == 3) {
-            robot.followTrajectorySequenceAsync(park3trajectory);
+            robot.followTrajectorySequenceAsync(park3trajectory,1);
         } else {
-            robot.followTrajectorySequenceAsync(park2trajectory);
+            robot.followTrajectorySequenceAsync(park2trajectory,1);
         }
         robot.delay(2.0);
         robot.wideClaw(true);

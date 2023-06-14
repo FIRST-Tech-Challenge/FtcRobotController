@@ -20,18 +20,17 @@ import java.util.ArrayList;
 
 
 @Config
-@Autonomous(name = "BlueLeftAutoMidCycleTuned")
-//temp auto logs
-//13.24 E NOBOOST NOROTATED
+@Autonomous(name = "BlueLeftAutoMidCycleBoost")
 
-public class BlueLeftAutoMidCycleTuned extends LinearOpMode {
+
+public class BlueLeftAutoMidCycleBoost extends LinearOpMode {
 
     public static double dummyP = 3;
 
     public static double dropX = 28.5, dropY = 21, dropA = toRadians(320), dropET = toRadians(150);
 
-//    public static double pickupX1 = -46, pickupY1 = 10, pickupA1 = toRadians(180), pickupET1 = toRadians(180);
-public static double pickupX2 = 63, pickupY2 = 11.5, pickupA2 = toRadians(0), pickupET2 = toRadians(0);
+    //    public static double pickupX1 = -46, pickupY1 = 10, pickupA1 = toRadians(180), pickupET1 = toRadians(180);
+    public static double pickupX2 = 63, pickupY2 = 11.5, pickupA2 = toRadians(0), pickupET2 = toRadians(0);
 
     double[] stackPos = {440, 330, 245, 100, 0};
 
@@ -47,9 +46,9 @@ public static double pickupX2 = 63, pickupY2 = 11.5, pickupA2 = toRadians(0), pi
                 if (!autoRunner.pick(i)) {
                     break abort;
                 }
-//                if(i==3){
-//                    robot.roadrun.update();
-//                }
+                if(i==3){
+                    robot.roadrun.update();
+                }
                 autoRunner.drop(i);
             }
             autoRunner.update();
