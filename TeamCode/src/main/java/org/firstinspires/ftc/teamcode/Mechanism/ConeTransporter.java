@@ -79,8 +79,8 @@ public class ConeTransporter extends HWMap {
     public String stackTelemetry;
 
     // Servos on encoder wheels for retracting and unretracting them
-    public double LEFT_RETRACT_POS = 0.5;
-    public double LEFT_UNRETRACT_POS = 0.0;
+    public double LEFT_RETRACT_POS = 0.6;
+    public double LEFT_UNRETRACT_POS = 0.25;
     public double RIGHT_RETRACT_POS = 0.0;
     public double RIGHT_UNRETRACT_POS = 0.5;
     public double FRONT_RETRACT_POS = 0.5;
@@ -99,7 +99,7 @@ public class ConeTransporter extends HWMap {
 
     private ElapsedTime timer = new ElapsedTime();
 
-    public RevBlinkinLedDriver blinkin;
+    //public RevBlinkinLedDriver blinkin;
 
     public boolean slideDisplay = false;
 
@@ -195,7 +195,7 @@ public class ConeTransporter extends HWMap {
         if (!zeroMode) {
             linearSlides.setPower(power);
         }
-        if (gripper.getPosition() == 0.75 && !slideDisplay) {
+/*        if (gripper.getPosition() == 0.75 && !slideDisplay) {
             blinkin.setPattern(RevBlinkinLedDriver.BlinkinPattern.AQUA);
         } else if (!slideDisplay){
             blinkin.setPattern(RevBlinkinLedDriver.BlinkinPattern.SHOT_WHITE);
@@ -211,7 +211,7 @@ public class ConeTransporter extends HWMap {
             } else if (!automation){
                 blinkin.setPattern(RevBlinkinLedDriver.BlinkinPattern.SHOT_RED);
             }
-        }
+        }*/
 
 //        telemetry.addData("pos ", slidePos);
 //        telemetry.addData("target ", target);

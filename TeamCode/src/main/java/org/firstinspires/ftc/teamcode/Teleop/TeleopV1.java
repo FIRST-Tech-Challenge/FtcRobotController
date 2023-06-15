@@ -1,4 +1,3 @@
-/*
 package org.firstinspires.ftc.teamcode.Teleop;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -7,27 +6,29 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import org.firstinspires.ftc.teamcode.Core.HWMap;
 import org.firstinspires.ftc.teamcode.Core.Controller;
 import org.firstinspires.ftc.teamcode.Mechanism.ConeTransporter;
-import org.firstinspires.ftc.teamcode.Mechanism.TipAngle;
-import static org.firstinspires.ftc.teamcode.Mechanism.TipAngle.TIP;
-
 
 import java.util.Objects;
 
 @TeleOp(name = "Tele-op")
-public class Teleop extends LinearOpMode {
+public class TeleopV1 extends LinearOpMode {
 
     // declare class variables here
     private Controller controller;
     private FieldCentricDrive fieldCentricDrive;
     private ConeTransporter coneTransporter;
-    private TipAngle tipAngle;
     // Check if B is pressed
     private boolean b_Press = false;
     public int triggerPressCount = 0;
     private boolean stackState = false;
 
+    public enum TIP {
+        TIPPING, NOT_TIPPING, ON_STACKS
+    }
+
     public void runOpMode() {
         telemetry.clear();
+
+
         try {
             // setup
             controller = new Controller(gamepad1, gamepad2);
@@ -46,9 +47,9 @@ public class Teleop extends LinearOpMode {
 
         }
 
-        telemetry.addData("Test", "The code has uploaded");
         telemetry.update();
         coneTransporter.init();
+        TIP tip = TIP.NOT_TIPPING;
         waitForStart();
         while (opModeIsActive()) {
             try {
@@ -59,7 +60,7 @@ public class Teleop extends LinearOpMode {
                 double gamepadRot;
                 boolean rotationToggle = false;
                 boolean strafeToggle = false;
-                if (tipAngle.getTIP() == TIP.NOT_TIPPING || tipAngle.getTIP() == TIP.ON_STACKS) {
+                if (tip == TIP.NOT_TIPPING || tip == TIP.ON_STACKS) {
                     if (Math.abs(controller.gamepad1X) > 0.01) {
                         gamepadX = controller.gamepad1X;
                     } else if (Math.abs(controller.gamepad2X) > 0.01) {
@@ -82,6 +83,9 @@ public class Teleop extends LinearOpMode {
                         gamepadRot = 0;
                     }
                     fieldCentricDrive.drive(gamepadX, gamepadY, gamepadRot, rotationToggle, strafeToggle);
+
+
+
                 }
 
                 if (controller.dpadDown){
@@ -143,11 +147,12 @@ public class Teleop extends LinearOpMode {
                         coneTransporter.coneSense();
                         stackState = false;
                     }
-                    tipAngle.setTIP(TIP.ON_STACKS);
+                    tip = TIP.ON_STACKS;
                 }
                 coneTransporter.coneSense();
 
                 //GRIPPER__________________________________________________________________________________
+
                 if (controller.leftBumper && !(controller.rightBumper)) {
                     triggerPressCount = 0;
                     coneTransporter.setGripperPosition(.75);
@@ -158,10 +163,25 @@ public class Teleop extends LinearOpMode {
                     coneTransporter.setGripperPosition(1.0);
                 }
 
-                //tipAngle.activateTip();
-                //telemetry.addData("-", "tip is activated");
-                //telemetry.addData("Pitch:", tipAngle.getPitch());
+                telemetry.addData("-", "tip is activated");
 
+                float pitch = fieldCentricDrive.getPitch();
+                telemetry.addData("Pitch:", pitch);
+                /*if (tip != TIP.ON_STACKS) {
+                    if (pitch <= 75) {
+                        tip = TIP.TIPPING;
+                        fieldCentricDrive.checkifrobotnottipping();
+                    } else if (pitch >= 100) {
+                        tip = TIP.TIPPING;
+                        fieldCentricDrive.checkifrobotnottipping();
+                    } else {
+                        tip = TIP.NOT_TIPPING;
+                        fieldCentricDrive.rightBackMotor.setDirection(DcMotor.Direction.FORWARD);
+                        fieldCentricDrive.rightFrontMotor.setDirection(DcMotor.Direction.FORWARD);
+                        fieldCentricDrive.leftFrontMotor.setDirection(DcMotor.Direction.REVERSE);
+                        fieldCentricDrive.leftBackMotor.setDirection(DcMotor.Direction.REVERSE);
+                    }
+                }*/
                 fieldCentricDrive.addTelemetry();
                 coneTransporter.loop();
                 coneTransporter.zeroSlides();
@@ -174,4 +194,3 @@ public class Teleop extends LinearOpMode {
         }
     }
 }
-*/

@@ -11,7 +11,6 @@ import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 import org.firstinspires.ftc.teamcode.Core.HWMap;
-import org.firstinspires.ftc.teamcode.Core.Mathematics;
 
 public class FieldCentricDrive extends HWMap {
 
@@ -103,7 +102,7 @@ public class FieldCentricDrive extends HWMap {
 
         imuMeasure = readFromIMU();
 
-        double[] rotatedVector = Mathematics.rotate(controllerVector, imuMeasure);
+        double[] rotatedVector = rotate(controllerVector, imuMeasure);
         double rotatedX = rotatedVector[0];
         double rotatedY = rotatedVector[1];
 //        telemetry.addData("rotatedX: ", rotatedX);
@@ -144,5 +143,12 @@ public class FieldCentricDrive extends HWMap {
         rightBackMotor.setPower(rightBackPower);
         rightFrontMotor.setPower(rightFrontPower);
         loopTimer.reset();
+    }
+
+    public static double[] rotate(double[] vector, double angle) {
+        final double[] newVector = {0, 0};
+        newVector[0] = Math.cos(angle) * vector[0] + (-Math.sin(angle)) * vector[1];
+        newVector[1] = Math.sin(angle) * vector[0] + Math.cos(angle) * vector[1];
+        return newVector;
     }
 }

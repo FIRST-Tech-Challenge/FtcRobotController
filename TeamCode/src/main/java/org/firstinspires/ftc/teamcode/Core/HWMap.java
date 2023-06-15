@@ -25,7 +25,7 @@ public class HWMap {
     public DcMotorEx linearSlides;
 
     //IMU
-    public static BNO055IMU imu;
+    public BNO055IMU imu;
     public static double imuAngle;
 
     //Servos
@@ -92,6 +92,8 @@ public class HWMap {
         rightBackMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         leftFrontMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         rightFrontMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+
+        linearSlides.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
     }
 
     public double readFromIMU() {
@@ -99,7 +101,7 @@ public class HWMap {
         return imuAngle;
     }
 
-    public static void initializeIMU() {
+    public void initializeIMU() {
         // don't touch please
         BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
         parameters.angleUnit = BNO055IMU.AngleUnit.RADIANS;

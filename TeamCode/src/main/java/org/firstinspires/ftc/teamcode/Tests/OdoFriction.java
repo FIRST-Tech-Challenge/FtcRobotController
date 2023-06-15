@@ -3,13 +3,15 @@ package org.firstinspires.ftc.teamcode.Tests;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
-import org.firstinspires.ftc.teamcode.Core.HWMap;
-import org.firstinspires.ftc.teamcode.util.Encoder;
+import org.firstinspires.ftc.teamcode.Auto.RR.util.Encoder;
 
-public class OdoFriction extends HWMap {
+public class OdoFriction {
+    Telemetry telemetry;
+    HardwareMap hardwareMap;
     public Encoder encoder;
     public OdoFriction(Telemetry telemetry, HardwareMap hardwareMap){
-        super(telemetry, hardwareMap);
+        this.telemetry = telemetry;
+        this.hardwareMap = hardwareMap;
         encoder = hardwareMap.get(Encoder.class, "encoder");
     }
 
