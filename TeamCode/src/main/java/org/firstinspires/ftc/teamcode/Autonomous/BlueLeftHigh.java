@@ -91,7 +91,7 @@ public class BlueLeftHigh {
             dropTrajectory.add(robot.roadrun.trajectorySequenceBuilder(pick.get(i).end())
                     .addTemporalMarker(0, () -> robot.setPoling(true))
                     .setReversed(true)
-                    .splineToSplineHeading(new Pose2d(dropX-0.3*i, dropY-0.1*i, Math.toRadians(37)), Math.toRadians(217))
+                    .splineToSplineHeading(new Pose2d(dropX, dropY, Math.toRadians(37)), Math.toRadians(217))
 //                            getVelocityConstraint(110,9,14), getAccelerationConstraint(51))
                     .addTemporalMarker(robot::done)
                     .build());

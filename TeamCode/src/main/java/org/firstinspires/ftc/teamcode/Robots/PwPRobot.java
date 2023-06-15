@@ -23,6 +23,7 @@ import static org.firstinspires.ftc.teamcode.roadrunner.drive.SampleMecanumDrive
 import static java.lang.Math.PI;
 import static java.lang.Math.abs;
 import static java.lang.Math.atan2;
+import static java.lang.Math.cbrt;
 import static java.lang.Math.cos;
 import static java.lang.Math.sin;
 import static java.lang.Math.sqrt;
@@ -118,7 +119,12 @@ public class PwPRobot extends BasicRobot {
         RFMotor.kA *= 13 / voltageSensor.getVoltage();
 //        DriveConstants.TRACK_WIDTH *= 12.7 / voltageSensor.getVoltage();
         kV *= 12.8 / voltageSensor.getVoltage();
-        kA *= sqrt(12.5 / voltage);
+//        if(voltage > 12.9){
+            kA *= cbrt(12.5/voltage);
+//        }
+//        else{
+//            kA *= sqrt(12.5 / voltage);
+//        }
         DriveConstants.kStatic *= 12.8 / voltageSensor.getVoltage();
     }
 //    com.qualcomm.ftcrobotcontroller I/art: Waiting for a blocking GC Alloc
