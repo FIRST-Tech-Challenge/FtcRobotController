@@ -1,22 +1,24 @@
 package org.firstinspires.ftc.teamcode.commandBased.commands.rotator;
 
+import com.qualcomm.robotcore.hardware.PwmControl;
+
 import org.firstinspires.ftc.teamcode.classes.triggers.TriggerCommandBase;
 import org.firstinspires.ftc.teamcode.commandBased.subsystems.RotatorSubsystem;
 
-public class MoveRotatorToAngle extends TriggerCommandBase {
+public class SetRotatorRange extends TriggerCommandBase {
 
-    private final double pos;
+    private final PwmControl.PwmRange range;
     private final RotatorSubsystem m_rotatorSubsystem;
 
-    public MoveRotatorToAngle(RotatorSubsystem rotatorSubsystem, double pos) {
+    public SetRotatorRange(RotatorSubsystem rotatorSubsystem, PwmControl.PwmRange range) {
         m_rotatorSubsystem = rotatorSubsystem;
         addRequirements(m_rotatorSubsystem);
-        this.pos = pos;
+        this.range = range;
     }
 
     @Override
     public void initialize() {
-        m_rotatorSubsystem.setPosition(pos);
+        m_rotatorSubsystem.setPWMRange(range);
     }
 
     @Override

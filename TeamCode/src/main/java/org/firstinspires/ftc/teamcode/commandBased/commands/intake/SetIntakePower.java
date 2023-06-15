@@ -2,9 +2,10 @@ package org.firstinspires.ftc.teamcode.commandBased.commands.intake;
 
 import com.arcrobotics.ftclib.command.CommandBase;
 
+import org.firstinspires.ftc.teamcode.classes.triggers.TriggerCommandBase;
 import org.firstinspires.ftc.teamcode.commandBased.subsystems.IntakeSubsystem;
 
-public class SetIntakePower extends CommandBase {
+public class SetIntakePower extends TriggerCommandBase {
 
     private final IntakeSubsystem m_intakeSubsystem;
     private final double power;
@@ -22,6 +23,11 @@ public class SetIntakePower extends CommandBase {
 
     @Override
     public boolean isFinished() {
+        return true;
+    }
+
+    @Override
+    public boolean isTriggered() {
         return true;
     }
 }

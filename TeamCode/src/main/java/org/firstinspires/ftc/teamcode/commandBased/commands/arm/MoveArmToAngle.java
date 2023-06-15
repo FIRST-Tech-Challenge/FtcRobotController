@@ -2,9 +2,10 @@ package org.firstinspires.ftc.teamcode.commandBased.commands.arm;
 
 import com.arcrobotics.ftclib.command.CommandBase;
 
+import org.firstinspires.ftc.teamcode.classes.triggers.TriggerCommandBase;
 import org.firstinspires.ftc.teamcode.commandBased.subsystems.ArmSubsystem;
 
-public class MoveArmToAngle extends CommandBase {
+public class MoveArmToAngle extends TriggerCommandBase {
 
     private final double angle;
     private final double velo;
@@ -27,5 +28,10 @@ public class MoveArmToAngle extends CommandBase {
     @Override
     public boolean isFinished() {
         return true;
+    }
+
+    @Override
+    public boolean isTriggered() {
+        return false;
     }
 }

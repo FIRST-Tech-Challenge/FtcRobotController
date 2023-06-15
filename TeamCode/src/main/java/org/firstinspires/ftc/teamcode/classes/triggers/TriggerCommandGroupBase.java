@@ -1,8 +1,7 @@
-package org.firstinspires.ftc.teamcode.classes.command.triggers;
+package org.firstinspires.ftc.teamcode.classes.triggers;
 
 import com.arcrobotics.ftclib.command.Command;
 import com.arcrobotics.ftclib.command.CommandBase;
-import com.arcrobotics.ftclib.command.CommandGroupBase;
 
 import java.util.Arrays;
 import java.util.Collection;

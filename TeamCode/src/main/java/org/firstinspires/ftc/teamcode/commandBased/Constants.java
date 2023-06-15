@@ -5,6 +5,7 @@ import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.roadrunner.control.PIDCoefficients;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.arcrobotics.ftclib.hardware.motors.Motor;
+import com.qualcomm.robotcore.hardware.PwmControl;
 
 import org.firstinspires.ftc.teamcode.classes.Vector2d;
 
@@ -15,9 +16,9 @@ public class Constants {
     //debug toggles
     public static boolean DEBUG_DRIVE = false;
     public static boolean DEBUG_ELE = false;
-    public static boolean DEBUG_ARM = true;
-    public static boolean DEBUG_ROTATOR = false;
-    public static boolean DEBUG_INTAKE = true;
+    public static boolean DEBUG_ARM = false;
+    public static boolean DEBUG_ROTATOR = true;
+    public static boolean DEBUG_INTAKE = false;
 
     //motor types
     public static Motor.GoBILDA DRIVE_MOTOR = Motor.GoBILDA.RPM_312;
@@ -59,6 +60,7 @@ public class Constants {
 
     //command-ending deadzones
     public static double ELE_DONE_DEADZONE = 5;
+    public static double ELE_TRIGGER = 8;
 
     //arm pid
     //public static PIDCoefficients ARM_COEFFS = new PIDCoefficients(.004, 0.00075, 0);
@@ -88,6 +90,12 @@ public class Constants {
     public static double ARM_ENC_CENTER = -145;
 
     //rotator limits
-    public static double ROTATOR_MIN = 0;
-    public static double ROTATOR_MAX = 10;
+    public static double ROTATOR_FORWARD = 0;
+    public static double ROTATOR_BACK = 1;
+    public static PwmControl.PwmRange CURRENT_RANGE = new PwmControl.PwmRange(600, 2400);
+    public static PwmControl.PwmRange TEST_RANGE = new PwmControl.PwmRange(500, 2000);
+
+    public static double ROTATOR_SMALL_INCREMENT = 10;
+    public static double ROTATOR_LARGE_INCREMENT = 100;
+
 }

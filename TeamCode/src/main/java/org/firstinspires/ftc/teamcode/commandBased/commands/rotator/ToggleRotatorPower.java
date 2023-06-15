@@ -3,27 +3,30 @@ package org.firstinspires.ftc.teamcode.commandBased.commands.rotator;
 import org.firstinspires.ftc.teamcode.classes.triggers.TriggerCommandBase;
 import org.firstinspires.ftc.teamcode.commandBased.subsystems.RotatorSubsystem;
 
-public class MoveRotatorToAngle extends TriggerCommandBase {
+public class ToggleRotatorPower extends TriggerCommandBase {
 
-    private final double pos;
+    private final boolean enabled;
     private final RotatorSubsystem m_rotatorSubsystem;
 
-    public MoveRotatorToAngle(RotatorSubsystem rotatorSubsystem, double pos) {
+    public ToggleRotatorPower(RotatorSubsystem rotatorSubsystem, boolean enabled) {
         m_rotatorSubsystem = rotatorSubsystem;
-        addRequirements(m_rotatorSubsystem);
-        this.pos = pos;
+        addRequirements(rotatorSubsystem);
+        this.enabled = enabled;
     }
 
     @Override
     public void initialize() {
-        m_rotatorSubsystem.setPosition(pos);
+        if (enabled) {
+            m_rotatorSubsystem.enable();
+        } else {
+            m_rotatorSubsystem.disable();
+        }
     }
 
     @Override
     public boolean isFinished() {
         return true;
     }
-
     @Override
     public boolean isTriggered() {
         return true;

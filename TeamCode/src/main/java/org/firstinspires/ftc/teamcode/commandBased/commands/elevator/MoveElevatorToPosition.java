@@ -1,8 +1,7 @@
 package org.firstinspires.ftc.teamcode.commandBased.commands.elevator;
 
-import com.arcrobotics.ftclib.command.CommandBase;
-
-import org.firstinspires.ftc.teamcode.classes.command.triggers.TriggerCommandBase;
+import org.firstinspires.ftc.teamcode.classes.triggers.TriggerCommandBase;
+import org.firstinspires.ftc.teamcode.commandBased.Constants;
 import org.firstinspires.ftc.teamcode.commandBased.subsystems.ElevatorSubsystem;
 
 public class MoveElevatorToPosition extends TriggerCommandBase {
@@ -28,6 +27,6 @@ public class MoveElevatorToPosition extends TriggerCommandBase {
 
     @Override
     public boolean isTriggered() {
-        return false;
+        return (m_elevatorSubsystem.getElePos() > Constants.ELE_TRIGGER);
     }
 }

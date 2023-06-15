@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.classes.command.triggers;
+package org.firstinspires.ftc.teamcode.classes.triggers;
 
 import com.arcrobotics.ftclib.command.Command;
 

@@ -14,6 +14,8 @@ import org.firstinspires.ftc.teamcode.commandBased.commands.drive.PointCentric;
 import org.firstinspires.ftc.teamcode.commandBased.commands.drive.FieldCentric;
 import org.firstinspires.ftc.teamcode.commandBased.commands.drive.RobotCentric;
 import org.firstinspires.ftc.teamcode.commandBased.commands.intake.SetIntakePower;
+import org.firstinspires.ftc.teamcode.commandBased.commands.rotator.MoveRotatorToAngle;
+import org.firstinspires.ftc.teamcode.commandBased.commands.rotator.SetRotatorRange;
 import org.firstinspires.ftc.teamcode.commandBased.subsystems.ArmSubsystem;
 import org.firstinspires.ftc.teamcode.commandBased.subsystems.DrivetrainSubsystem;
 import org.firstinspires.ftc.teamcode.commandBased.subsystems.ElevatorSubsystem;
@@ -108,18 +110,34 @@ public class Robot extends BlackOp {
                 Constants.ARM_MAX_ACCEL
         );
 
-//        //create rotator commands
-//        MoveRotatorToAngle rotatorBack = new MoveRotatorToAngle(rotatorSS, Constants.ROTATOR_MIN);
-//        MoveRotatorToAngle rotatorFront = new MoveRotatorToAngle(rotatorSS, Constants.ROTATOR_MAX);
+        //create rotator commands
+        MoveRotatorToAngle rotatorBack = new MoveRotatorToAngle(rotatorSS, Constants.ROTATOR_FORWARD);
+        MoveRotatorToAngle rotatorFront = new MoveRotatorToAngle(rotatorSS, Constants.ROTATOR_BACK);
+
+        SetRotatorRange rotatorNewRange = new SetRotatorRange(rotatorSS, Constants.TEST_RANGE);
+        SetRotatorRange rotatorCurrentRange = new SetRotatorRange(rotatorSS, Constants.CURRENT_RANGE);
 
         //create intake commands
         SetIntakePower intakeIntake = new SetIntakePower(intakeSS, 1);
         SetIntakePower intakeIdle = new SetIntakePower(intakeSS, 0);
         SetIntakePower intakeOuttake = new SetIntakePower(intakeSS, -1);
+
+//        //create group commands
+//        LiftMoveRotateArm armBackHigh = new LiftMoveRotateArm(
+//                elevatorSS,
+//                armSS,
+//                rotatorSS,
+//                Constants.ARM_ANGLE_BACK,
+//                Constants.ARM_MAX_VELO,
+//                Constants.ARM_MAX_ACCEL,
+//                Constants.ELE_HIGH,
+//                Constants.ROTATOR_MAX
+//        );
         
 
         //start robot in field-centric mode
         robotCentric.schedule();
+        rotatorFront.schedule();
 
         waitForStart();
 
@@ -168,6 +186,13 @@ public class Robot extends BlackOp {
             driver.x.onRise(armBackward::schedule);
             driver.a.onRise(armIdle::schedule);
 
+            //rotator controls
+            driver.back.onRise(rotatorBack::schedule);
+            driver.start.onRise(rotatorFront::schedule);
+
+            driver.left_stick_button.onRise(rotatorNewRange::schedule);
+            driver.right_stick_button.onRise(rotatorCurrentRange::schedule);
+
             //intake controls
             driver.left_bumper.onRise(intakeOuttake::schedule)
                               .onFall(intakeIdle::schedule);
@@ -206,6 +231,10 @@ public class Robot extends BlackOp {
             }
 
             if (Constants.DEBUG_ROTATOR) {
+                mTelemetry().addData("rotator pos", rotatorSS.getPosition());
+                mTelemetry().addData("rotator usFrame", rotatorSS.getPWMRange()[0]);        //20000
+                mTelemetry().addData("rotator usPulseLower", rotatorSS.getPWMRange()[1]);   //600
+                mTelemetry().addData("rotator usPulseUpper", rotatorSS.getPWMRange()[2]);   //2400
 
             }
 

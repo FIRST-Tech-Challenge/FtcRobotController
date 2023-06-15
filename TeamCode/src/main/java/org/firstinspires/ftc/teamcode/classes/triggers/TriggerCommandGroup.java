@@ -1,13 +1,9 @@
-package org.firstinspires.ftc.teamcode.classes.command.triggers;
-
-import com.arcrobotics.ftclib.command.Command;
-import com.arcrobotics.ftclib.command.CommandGroupBase;
-import com.arcrobotics.ftclib.command.SequentialCommandGroup;
+package org.firstinspires.ftc.teamcode.classes.triggers;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class TriggeredCommandGroup extends TriggerCommandGroupBase {
+public class TriggerCommandGroup extends TriggerCommandGroupBase {
 
     private final List<TriggerCommand> m_commands = new ArrayList<>();
     private final List<TriggerCommand> m_executingCommands = new ArrayList<>();
@@ -21,7 +17,7 @@ public class TriggeredCommandGroup extends TriggerCommandGroupBase {
      *
      * @param commands the commands to include in this group.
      */
-    public TriggeredCommandGroup(TriggerCommand... commands) {
+    public TriggerCommandGroup(TriggerCommand... commands) {
         addCommands(commands);
     }
 
