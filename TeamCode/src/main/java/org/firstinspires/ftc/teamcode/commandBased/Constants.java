@@ -16,6 +16,8 @@ public class Constants {
     public static boolean DEBUG_DRIVE = false;
     public static boolean DEBUG_ELE = false;
     public static boolean DEBUG_ARM = true;
+    public static boolean DEBUG_ROTATOR = false;
+    public static boolean DEBUG_INTAKE = true;
 
     //motor types
     public static Motor.GoBILDA DRIVE_MOTOR = Motor.GoBILDA.RPM_312;
@@ -59,7 +61,8 @@ public class Constants {
     public static double ELE_DONE_DEADZONE = 5;
 
     //arm pid
-    public static PIDCoefficients ARM_COEFFS = new PIDCoefficients(.004, 0.00075, 0);
+    //public static PIDCoefficients ARM_COEFFS = new PIDCoefficients(.004, 0.00075, 0);
+    public static PIDCoefficients ARM_COEFFS = new PIDCoefficients(0, 0, 0);
 
     public static double ARM_KV = 0;
     public static double ARM_KA = 0;

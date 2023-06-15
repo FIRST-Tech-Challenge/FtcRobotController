@@ -185,6 +185,10 @@ public class Robot extends BlackOp {
             // Send telemetry packet off to dashboard
             FtcDashboard.getInstance().sendTelemetryPacket(packet);
 
+            if (Constants.DEBUG_DRIVE) {
+
+            }
+
             if (Constants.DEBUG_ELE) {
                 mTelemetry().addData("ele target", elevatorSS.getEleTarget());
             }
@@ -199,6 +203,15 @@ public class Robot extends BlackOp {
                 mTelemetry().addData("arm velocity", armSS.getArmVelocity());
                 mTelemetry().addData("arm acceleration", armSS.getArmAcceleration());
                 mTelemetry().addData("arm KF", armSS.getCoeffs()[6]);
+            }
+
+            if (Constants.DEBUG_ROTATOR) {
+
+            }
+
+            if (Constants.DEBUG_INTAKE) {
+                mTelemetry().addData("intake power", intakeSS.getPower());
+                mTelemetry().addData("intake current", intakeSS.getServoBusCurrent());
             }
 
             mTelemetry().update();

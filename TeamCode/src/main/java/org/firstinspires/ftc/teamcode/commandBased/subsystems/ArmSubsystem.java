@@ -20,7 +20,7 @@ public class ArmSubsystem extends SubsystemBase {
     private final DcMotor m_arm;
 
     private double armPos;
-    private double armTarget = 0;
+    private double armTarget = 20;
     private double armAngle;
 
     private double KF;
@@ -78,7 +78,7 @@ public class ArmSubsystem extends SubsystemBase {
 
         profile = MotionProfileGenerator.generateSimpleMotionProfile(
                 new MotionState(0, 0, 0),
-                new MotionState(0, 0, 0),
+                new MotionState(armTarget, 0, 0),
                 Constants.ARM_MAX_VELO,
                 Constants.ARM_MAX_ACCEL
         );

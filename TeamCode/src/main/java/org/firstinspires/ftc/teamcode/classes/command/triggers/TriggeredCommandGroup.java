@@ -1,27 +1,19 @@
-/*----------------------------------------------------------------------------*/
-/* Copyright (c) 2018-2019 FIRST. All Rights Reserved.                        */
-/* Open Source Software - may be modified and shared by FRC teams. The code   */
-/* must be accompanied by the FIRST BSD license file in the root directory of */
-/* the project.                                                               */
-/*----------------------------------------------------------------------------*/
+package org.firstinspires.ftc.teamcode.classes.command.triggers;
 
-package com.arcrobotics.ftclib.command;
+import com.arcrobotics.ftclib.command.Command;
+import com.arcrobotics.ftclib.command.CommandGroupBase;
+import com.arcrobotics.ftclib.command.SequentialCommandGroup;
 
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * A CommandGroups that runs a list of commands in sequence.
- *
- * <p>As a rule, CommandGroups require the union of the requirements of their component commands.
- *
- * @author Jackson
- */
-public class TriggerCommandGroup extends CommandGroupBase {
+public class TriggeredCommandGroup extends TriggerCommandGroupBase {
 
-    private final List<Command> m_commands = new ArrayList<>();
+    private final List<TriggerCommand> m_commands = new ArrayList<>();
+    private final List<TriggerCommand> m_executingCommands = new ArrayList<>();
     private int m_currentCommandIndex = -1;
     private boolean m_runWhenDisabled = true;
+    private TriggerCommand currentCommand;
 
     /**
      * Creates a new SequentialCommandGroup.  The given commands will be run sequentially, with
@@ -29,13 +21,12 @@ public class TriggerCommandGroup extends CommandGroupBase {
      *
      * @param commands the commands to include in this group.
      */
-    public TriggerCommandGroup(Command... commands) {
+    public TriggeredCommandGroup(TriggerCommand... commands) {
         addCommands(commands);
     }
 
 
-    @Override
-    public void addCommands(Command... commands) {
+    public void addCommands(TriggerCommand... commands) {
         requireUngrouped(commands);
 
         if (m_currentCommandIndex != -1) {
@@ -45,7 +36,7 @@ public class TriggerCommandGroup extends CommandGroupBase {
 
         registerGroupedCommands(commands);
 
-        for (Command command : commands) {
+        for (TriggerCommand command : commands) {
             m_commands.add(command);
             m_requirements.addAll(command.getRequirements());
             m_runWhenDisabled &= command.runsWhenDisabled();
@@ -57,7 +48,9 @@ public class TriggerCommandGroup extends CommandGroupBase {
         m_currentCommandIndex = 0;
 
         if (!m_commands.isEmpty()) {
-            m_commands.get(0).initialize();
+            currentCommand = m_commands.get(0);
+            currentCommand.initialize();
+            m_executingCommands.add(currentCommand);
         }
     }
 
@@ -67,14 +60,20 @@ public class TriggerCommandGroup extends CommandGroupBase {
             return;
         }
 
-        Command currentCommand = m_commands.get(m_currentCommandIndex);
+        for (TriggerCommand triggerCommand: m_executingCommands) {
+            triggerCommand.execute();
+            if (triggerCommand.isFinished()) {
+                triggerCommand.end(false);
+                m_executingCommands.remove(triggerCommand);
+            }
+        }
 
-        currentCommand.execute();
-        if (currentCommand.isTriggered()) {
-            currentCommand.end(false);
+        if (currentCommand.isTriggered() || currentCommand.isFinished()) {
             m_currentCommandIndex++;
             if (m_currentCommandIndex < m_commands.size()) {
                 m_commands.get(m_currentCommandIndex).initialize();
+                m_executingCommands.add(currentCommand);
+                currentCommand = m_commands.get(m_currentCommandIndex);
             }
         }
     }
@@ -82,14 +81,16 @@ public class TriggerCommandGroup extends CommandGroupBase {
     @Override
     public void end(boolean interrupted) {
         if (interrupted && !m_commands.isEmpty()) {
-            m_commands.get(m_currentCommandIndex).end(true);
+            for (TriggerCommand triggerCommand: m_executingCommands) {
+                triggerCommand.end(true);
+            }
         }
         m_currentCommandIndex = -1;
     }
 
     @Override
     public boolean isFinished() {
-        return m_currentCommandIndex == m_commands.size();
+        return m_executingCommands.isEmpty();
     }
 
     @Override
