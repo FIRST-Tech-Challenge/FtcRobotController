@@ -92,8 +92,7 @@ public class Constants {
     //rotator limits
     public static double ROTATOR_FORWARD = 0;
     public static double ROTATOR_BACK = 1;
-    public static PwmControl.PwmRange CURRENT_RANGE = new PwmControl.PwmRange(600, 2400);
-    public static PwmControl.PwmRange TEST_RANGE = new PwmControl.PwmRange(500, 2000);
+    public static PwmControl.PwmRange TUNED_RANGE = new PwmControl.PwmRange(530, 2340);
 
     public static double ROTATOR_SMALL_INCREMENT = 10;
     public static double ROTATOR_LARGE_INCREMENT = 100;

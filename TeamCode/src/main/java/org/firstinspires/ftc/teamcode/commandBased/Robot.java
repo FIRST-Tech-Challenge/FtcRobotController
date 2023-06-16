@@ -115,7 +115,7 @@ public class Robot extends BlackOp {
         MoveRotatorToAngle rotatorFront = new MoveRotatorToAngle(rotatorSS, Constants.ROTATOR_BACK);
 
         SetRotatorRange rotatorNewRange = new SetRotatorRange(rotatorSS, Constants.TEST_RANGE);
-        SetRotatorRange rotatorCurrentRange = new SetRotatorRange(rotatorSS, Constants.CURRENT_RANGE);
+        SetRotatorRange rotatorCurrentRange = new SetRotatorRange(rotatorSS, Constants.TUNED_RANGE);
 
         //create intake commands
         SetIntakePower intakeIntake = new SetIntakePower(intakeSS, 1);

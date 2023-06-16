@@ -29,20 +29,20 @@ public class RotatorTuningProgram extends BlackOp {
         MoveRotatorToAngle rotatorBack = new MoveRotatorToAngle(rotatorSS, Constants.ROTATOR_FORWARD);
         MoveRotatorToAngle rotatorFront = new MoveRotatorToAngle(rotatorSS, Constants.ROTATOR_BACK);
 
-        IncrementRotatorPulse lowerSmallUpIncrement = new IncrementRotatorPulse(rotatorSS, Constants.ROTATOR_SMALL_INCREMENT, true, true);
-        IncrementRotatorPulse lowerSmallDownIncrement = new IncrementRotatorPulse(rotatorSS, -Constants.ROTATOR_SMALL_INCREMENT, true, false);
-        IncrementRotatorPulse lowerLargeUpIncrement = new IncrementRotatorPulse(rotatorSS, Constants.ROTATOR_LARGE_INCREMENT, true, true);
-        IncrementRotatorPulse lowerLargeDownIncrement = new IncrementRotatorPulse(rotatorSS, -Constants.ROTATOR_LARGE_INCREMENT, true, false);
+        IncrementRotatorPulse lowerSmallUpIncrement = new IncrementRotatorPulse(rotatorSS, Constants.ROTATOR_SMALL_INCREMENT, true);
+        IncrementRotatorPulse lowerSmallDownIncrement = new IncrementRotatorPulse(rotatorSS, -Constants.ROTATOR_SMALL_INCREMENT, true);
+        IncrementRotatorPulse lowerLargeUpIncrement = new IncrementRotatorPulse(rotatorSS, Constants.ROTATOR_LARGE_INCREMENT, true);
+        IncrementRotatorPulse lowerLargeDownIncrement = new IncrementRotatorPulse(rotatorSS, -Constants.ROTATOR_LARGE_INCREMENT, true);
 
-        IncrementRotatorPulse upperSmallUpIncrement = new IncrementRotatorPulse(rotatorSS, Constants.ROTATOR_SMALL_INCREMENT, false, true);
-        IncrementRotatorPulse upperSmallDownIncrement = new IncrementRotatorPulse(rotatorSS, -Constants.ROTATOR_SMALL_INCREMENT, false, false);
-        IncrementRotatorPulse upperLargeUpIncrement = new IncrementRotatorPulse(rotatorSS, Constants.ROTATOR_LARGE_INCREMENT, false, true);
-        IncrementRotatorPulse upperLargeDownIncrement = new IncrementRotatorPulse(rotatorSS, -Constants.ROTATOR_LARGE_INCREMENT, false, false);
+        IncrementRotatorPulse upperSmallUpIncrement = new IncrementRotatorPulse(rotatorSS, Constants.ROTATOR_SMALL_INCREMENT, false);
+        IncrementRotatorPulse upperSmallDownIncrement = new IncrementRotatorPulse(rotatorSS, -Constants.ROTATOR_SMALL_INCREMENT, false);
+        IncrementRotatorPulse upperLargeUpIncrement = new IncrementRotatorPulse(rotatorSS, Constants.ROTATOR_LARGE_INCREMENT, false);
+        IncrementRotatorPulse upperLargeDownIncrement = new IncrementRotatorPulse(rotatorSS, -Constants.ROTATOR_LARGE_INCREMENT, false);
 
         ToggleRotatorPower enable = new ToggleRotatorPower(rotatorSS, true);
         ToggleRotatorPower disable = new ToggleRotatorPower(rotatorSS, false);
 
-        SetRotatorRange defaultRange = new SetRotatorRange(rotatorSS, Constants.CURRENT_RANGE);
+        SetRotatorRange defaultRange = new SetRotatorRange(rotatorSS, Constants.TUNED_RANGE);
 
 
         defaultRange.schedule();
@@ -72,6 +72,8 @@ public class RotatorTuningProgram extends BlackOp {
             mTelemetry().addData("usLower", rotatorSS.getPWMRange()[1]);
             mTelemetry().addData("usUpper", rotatorSS.getPWMRange()[2]);
             mTelemetry().addData("pos", rotatorSS.getPosition());
+
+            mTelemetry().update();
         });
     }
 }
