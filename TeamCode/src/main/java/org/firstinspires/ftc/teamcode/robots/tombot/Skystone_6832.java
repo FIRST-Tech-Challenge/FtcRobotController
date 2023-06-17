@@ -34,6 +34,7 @@ package org.firstinspires.ftc.teamcode.robots.tombot;
 
 import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.ftccommon.SoundPlayer;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -55,6 +56,7 @@ import static org.firstinspires.ftc.teamcode.util.utilMethods.servoNormalize;
  * TeleOp and Autonomous.
  */
 
+@Disabled
 @TeleOp(name = "Skystone_6832", group = "Challenge") // @Autonomous(...) is the other common choice
 // @Autonomous
 @Config
