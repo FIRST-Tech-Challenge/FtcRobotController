@@ -17,8 +17,15 @@ apply from: '../build.dependencies.gradle'
 
 android {
     namespace = 'org.firstinspires.ftc.teamcode'
+    androidResources {
+        noCompress 'tflite'
+        additionalParameters '--keep-raw-values'
+    }
 
     packagingOptions {
+        jniLibs {
+            pickFirsts += ['**/*.so']
+        }
         jniLibs.useLegacyPackaging true
     }
 }

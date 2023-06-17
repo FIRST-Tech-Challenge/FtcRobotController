@@ -47,10 +47,6 @@ android {
         }
     }
 
-    aaptOptions {
-        noCompress "tflite"
-        additionalParameters "--keep-raw-values"
-    }
 
     defaultConfig {
         signingConfig signingConfigs.debug
@@ -112,9 +108,6 @@ android {
         targetCompatibility JavaVersion.VERSION_1_8
     }
 
-    packagingOptions {
-        pickFirst '**/*.so'
-    }
     sourceSets.main {
         jni.srcDirs = []
         jniLibs.srcDir rootProject.file('libs')
