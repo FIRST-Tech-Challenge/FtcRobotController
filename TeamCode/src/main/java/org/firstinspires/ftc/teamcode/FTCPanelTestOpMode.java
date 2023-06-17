@@ -11,7 +11,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.teamcode.util.FTCPanels;
 
 @TeleOp()
-// @Disabled
+ @Disabled
 public class FTCPanelTestOpMode extends OpMode {
     public byte RedAlliance = 0x00;
     public byte BlueAlliance = 0x01;

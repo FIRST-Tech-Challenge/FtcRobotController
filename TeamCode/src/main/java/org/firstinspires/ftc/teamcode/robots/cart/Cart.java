@@ -66,7 +66,6 @@ import java.util.Locale;
  */
 
 @TeleOp(name="Cart", group="Linear Opmode")  // @Autonomous(...) is the other common choice
-//  @Autonomous
 
 public class Cart extends OpMode {
 

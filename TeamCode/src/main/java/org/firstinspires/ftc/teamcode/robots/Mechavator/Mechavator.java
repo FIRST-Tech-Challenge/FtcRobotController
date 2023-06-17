@@ -5,6 +5,7 @@ import static org.firstinspires.ftc.teamcode.util.utilMethods.futureTime;
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.AnalogInput;
@@ -18,6 +19,7 @@ import org.firstinspires.ftc.teamcode.robots.reachRefactor.util.StickyGamepad;
 import org.firstinspires.ftc.teamcode.util.PIDController;
 
 @Config
+@Disabled
 @TeleOp(name="Mechavator", group="AAA")
 
 // ****** STOP - This version of Mechavator is retired - use version built on OpenRC

@@ -8,6 +8,7 @@ import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
@@ -82,6 +83,7 @@ import static org.firstinspires.ftc.teamcode.robots.reachRefactor.util.Utils.*;
  */
 @Config
 @TeleOp(name = "AAAA FF_6832")
+@Disabled
 public class FF_6832 extends OpMode {
     // constants
     public static double TANK_DRIVE_JOYSTICK_DIFF_DEADZONE = 0.2;

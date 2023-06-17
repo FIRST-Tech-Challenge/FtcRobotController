@@ -50,7 +50,7 @@ import static org.firstinspires.ftc.teamcode.util.utilMethods.*;
  * This file contains the code for Iron Reign's main OpMode, used for both
  * TeleOp and Autonomous.
  */
-
+@Disabled
 @TeleOp(name = "_Reach_6832", group = "Challenge")
 
 public class FF_6832 extends OpMode {

@@ -26,6 +26,7 @@ THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 package org.firstinspires.ftc.teamcode.robots.cart;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -67,6 +68,7 @@ import static org.firstinspires.ftc.robotcontroller.internal.GamepadRC.gamepadRC
 
 @TeleOp(name="CartHack", group="Linear Opmode")  // @Autonomous(...) is the other common choice
 //  @Autonomous
+@Disabled
 
 public class CartHack extends OpMode {
 
