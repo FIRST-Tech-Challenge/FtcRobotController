@@ -7,6 +7,8 @@ import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.arcrobotics.ftclib.command.CommandScheduler;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
+import org.firstinspires.ftc.teamcode.classes.triggers.TriggerCommandGroup;
+import org.firstinspires.ftc.teamcode.commandBased.commands._groups.LiftMoveRotateArm;
 import org.firstinspires.ftc.teamcode.commandBased.commands.arm.MoveArmToAngle;
 import org.firstinspires.ftc.teamcode.commandBased.commands.drive.SetDriveSpeeds;
 import org.firstinspires.ftc.teamcode.commandBased.commands.elevator.MoveElevatorToPosition;
@@ -14,7 +16,7 @@ import org.firstinspires.ftc.teamcode.commandBased.commands.drive.PointCentric;
 import org.firstinspires.ftc.teamcode.commandBased.commands.drive.FieldCentric;
 import org.firstinspires.ftc.teamcode.commandBased.commands.drive.RobotCentric;
 import org.firstinspires.ftc.teamcode.commandBased.commands.intake.SetIntakePower;
-import org.firstinspires.ftc.teamcode.commandBased.commands.rotator.MoveRotatorToAngle;
+import org.firstinspires.ftc.teamcode.commandBased.commands.rotator.MoveRotatorToPosition;
 import org.firstinspires.ftc.teamcode.commandBased.commands.rotator.SetRotatorRange;
 import org.firstinspires.ftc.teamcode.commandBased.subsystems.ArmSubsystem;
 import org.firstinspires.ftc.teamcode.commandBased.subsystems.DrivetrainSubsystem;
@@ -111,33 +113,33 @@ public class Robot extends BlackOp {
         );
 
         //create rotator commands
-        MoveRotatorToAngle rotatorBack = new MoveRotatorToAngle(rotatorSS, Constants.ROTATOR_FORWARD);
-        MoveRotatorToAngle rotatorFront = new MoveRotatorToAngle(rotatorSS, Constants.ROTATOR_BACK);
+        MoveRotatorToPosition rotatorBack = new MoveRotatorToPosition(rotatorSS, Constants.ROTATOR_FORWARD);
+        MoveRotatorToPosition rotatorFront = new MoveRotatorToPosition(rotatorSS, Constants.ROTATOR_BACK);
 
-        SetRotatorRange rotatorNewRange = new SetRotatorRange(rotatorSS, Constants.TEST_RANGE);
-        SetRotatorRange rotatorCurrentRange = new SetRotatorRange(rotatorSS, Constants.TUNED_RANGE);
+        SetRotatorRange rotatorRange = new SetRotatorRange(rotatorSS, Constants.TUNED_RANGE);
 
         //create intake commands
         SetIntakePower intakeIntake = new SetIntakePower(intakeSS, 1);
         SetIntakePower intakeIdle = new SetIntakePower(intakeSS, 0);
         SetIntakePower intakeOuttake = new SetIntakePower(intakeSS, -1);
 
-//        //create group commands
-//        LiftMoveRotateArm armBackHigh = new LiftMoveRotateArm(
-//                elevatorSS,
-//                armSS,
-//                rotatorSS,
-//                Constants.ARM_ANGLE_BACK,
-//                Constants.ARM_MAX_VELO,
-//                Constants.ARM_MAX_ACCEL,
-//                Constants.ELE_HIGH,
-//                Constants.ROTATOR_MAX
-//        );
+        //create group commands
+        LiftMoveRotateArm armBackHigh = new LiftMoveRotateArm(
+                elevatorSS,
+                armSS,
+                rotatorSS,
+                Constants.ARM_ANGLE_BACK,
+                Constants.ARM_MAX_VELO,
+                Constants.ARM_MAX_ACCEL,
+                Constants.ELE_HIGH,
+                Constants.ROTATOR_BACK
+        );
         
 
         //start robot in field-centric mode
         robotCentric.schedule();
-        rotatorFront.schedule();
+        //rotatorRange.schedule();
+        //rotatorFront.schedule();
 
         waitForStart();
 
@@ -190,14 +192,13 @@ public class Robot extends BlackOp {
             driver.back.onRise(rotatorBack::schedule);
             driver.start.onRise(rotatorFront::schedule);
 
-            driver.left_stick_button.onRise(rotatorNewRange::schedule);
-            driver.right_stick_button.onRise(rotatorCurrentRange::schedule);
-
             //intake controls
             driver.left_bumper.onRise(intakeOuttake::schedule)
                               .onFall(intakeIdle::schedule);
             driver.right_bumper.onRise(intakeIntake::schedule)
                                .onFall(intakeIdle::schedule);
+
+            driver.right_stick_button.onRise(armBackHigh::schedule);
 
             // Draw the target on the field
             fieldOverlay.setStroke("#dd2c00");
@@ -215,13 +216,17 @@ public class Robot extends BlackOp {
             }
 
             if (Constants.DEBUG_ELE) {
-                mTelemetry().addData("ele target", elevatorSS.getEleTarget());
+                mTelemetry().addData("ele pos", elevatorSS.getElePos());
+                mTelemetry().addData("ele profile target", elevatorSS.getEleProfileTarget());
+                mTelemetry().addData("ele final target", elevatorSS.getEleTarget());
+                mTelemetry().addData("ele power", elevatorSS.getElePower());
             }
 
             if (Constants.DEBUG_ARM) {
-                mTelemetry().addData("arm final target", armSS.getArmTarget());
+                mTelemetry().addData("arm final encoder target", armSS.getArmTargetEnc());
+                mTelemetry().addData("arm final angle target", armSS.getArmTargetAngle());
                 mTelemetry().addData("arm profile target", armSS.getArmProfileTarget());
-                mTelemetry().addData("arm target", armSS.getArmTarget());
+                mTelemetry().addData("arm target", armSS.getArmTargetEnc());
                 mTelemetry().addData("arm pos", armSS.getArmPos());
                 mTelemetry().addData("arm power", armSS.getArmPower());
                 mTelemetry().addData("arm angle", armSS.getArmAngle());
@@ -232,16 +237,32 @@ public class Robot extends BlackOp {
 
             if (Constants.DEBUG_ROTATOR) {
                 mTelemetry().addData("rotator pos", rotatorSS.getPosition());
-                mTelemetry().addData("rotator usFrame", rotatorSS.getPWMRange()[0]);        //20000
-                mTelemetry().addData("rotator usPulseLower", rotatorSS.getPWMRange()[1]);   //600
-                mTelemetry().addData("rotator usPulseUpper", rotatorSS.getPWMRange()[2]);   //2400
-
+                mTelemetry().addData("rotator usFrame", rotatorSS.getPWMRange()[0]);
+                mTelemetry().addData("rotator usPulseLower", rotatorSS.getPWMRange()[1]);
+                mTelemetry().addData("rotator usPulseUpper", rotatorSS.getPWMRange()[2]);
+                //mTelemetry().addData("rotator current", rotatorSS.getCurrent());
             }
 
             if (Constants.DEBUG_INTAKE) {
                 mTelemetry().addData("intake power", intakeSS.getPower());
                 mTelemetry().addData("intake current", intakeSS.getServoBusCurrent());
             }
+
+            mTelemetry().addData("group scheduled", armBackHigh.isScheduled());
+
+//            mTelemetry().addData("ele scheduled", armBackHigh.moveEle.isScheduled());
+//            mTelemetry().addData("ele triggered", armBackHigh.moveEle.isTriggered());
+//            mTelemetry().addData("ele finished", armBackHigh.moveEle.isFinished());
+//
+//            mTelemetry().addData("arm scheduled", armBackHigh.moveArm.isScheduled());
+//            mTelemetry().addData("arm triggered", armBackHigh.moveArm.isTriggered());
+//            mTelemetry().addData("arm finished", armBackHigh.moveArm.isFinished());
+//
+//            mTelemetry().addData("rotator scheduled", armBackHigh.moveRot.isScheduled());
+//            mTelemetry().addData("rotator triggered", armBackHigh.moveRot.isTriggered());
+//            mTelemetry().addData("rotator finished", armBackHigh.moveRot.isFinished());
+
+            mTelemetry().addData("cmdIndex", armBackHigh.getCmdIndex());
 
             mTelemetry().update();
         });

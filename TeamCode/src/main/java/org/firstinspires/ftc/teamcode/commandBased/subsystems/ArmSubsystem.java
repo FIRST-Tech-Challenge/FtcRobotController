@@ -20,7 +20,8 @@ public class ArmSubsystem extends SubsystemBase {
     private final DcMotor m_arm;
 
     private double armPos;
-    private double armTarget = 20;
+    private double armTargetEnc = 20;
+    private double armTargetAngle = Constants.ARM_ANGLE_IDLE;
     private double armAngle;
 
     private double KF;
@@ -78,12 +79,17 @@ public class ArmSubsystem extends SubsystemBase {
 
         profile = MotionProfileGenerator.generateSimpleMotionProfile(
                 new MotionState(0, 0, 0),
-                new MotionState(armTarget, 0, 0),
+                new MotionState(armTargetEnc, 0, 0),
                 Constants.ARM_MAX_VELO,
                 Constants.ARM_MAX_ACCEL
         );
 
         state = profile.get(timer.seconds());
+    }
+
+    public boolean isFinished() {
+        return (armTargetAngle >= armAngle - Constants.ARM_ANGLE_DEADZONE &&
+                armTargetAngle <= armAngle + Constants.ARM_ANGLE_DEADZONE);
     }
 
     @Override
@@ -107,7 +113,7 @@ public class ArmSubsystem extends SubsystemBase {
     }
 
     private void PIDF() {
-        correction = -controller.update(armPos);
+        correction = controller.update(armPos);
         arm.set(correction - KF);
     }
 
@@ -121,10 +127,11 @@ public class ArmSubsystem extends SubsystemBase {
     }
 
     public void setArmAngle(double target, double velo, double accel) {
-        armTarget = angleEncLUT.get(target);
+        armTargetEnc = angleEncLUT.get(target);
+        armTargetAngle = target;
         profile = MotionProfileGenerator.generateSimpleMotionProfile(
                 new MotionState(state.getX(), 0, 0),
-                new MotionState(armTarget, 0, 0),
+                new MotionState(armTargetEnc, 0, 0),
                 velo,
                 accel
         );
@@ -145,8 +152,12 @@ public class ArmSubsystem extends SubsystemBase {
         return state.getX();
     }
 
-    public double getArmTarget() {
-        return armTarget;
+    public double getArmTargetEnc() {
+        return armTargetEnc;
+    }
+
+    public double getArmTargetAngle() {
+        return armTargetAngle;
     }
 
     public double getArmPos() {

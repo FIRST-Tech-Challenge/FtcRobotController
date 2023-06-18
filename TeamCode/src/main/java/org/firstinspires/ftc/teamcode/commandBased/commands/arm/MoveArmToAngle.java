@@ -1,8 +1,7 @@
 package org.firstinspires.ftc.teamcode.commandBased.commands.arm;
 
-import com.arcrobotics.ftclib.command.CommandBase;
-
 import org.firstinspires.ftc.teamcode.classes.triggers.TriggerCommandBase;
+import org.firstinspires.ftc.teamcode.commandBased.Constants;
 import org.firstinspires.ftc.teamcode.commandBased.subsystems.ArmSubsystem;
 
 public class MoveArmToAngle extends TriggerCommandBase {
@@ -27,11 +26,12 @@ public class MoveArmToAngle extends TriggerCommandBase {
 
     @Override
     public boolean isFinished() {
-        return true;
+        return m_armSubsystem.isFinished();
     }
 
     @Override
     public boolean isTriggered() {
-        return false;
+        return (m_armSubsystem.getArmAngle() >= Constants.ARM_ANGLE_TRIGGER ||
+                m_armSubsystem.getArmAngle() <= -Constants.ARM_ANGLE_TRIGGER);
     }
 }

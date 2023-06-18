@@ -15,14 +15,14 @@ public class Constants {
 
     //debug toggles
     public static boolean DEBUG_DRIVE = false;
-    public static boolean DEBUG_ELE = false;
-    public static boolean DEBUG_ARM = false;
-    public static boolean DEBUG_ROTATOR = true;
-    public static boolean DEBUG_INTAKE = false;
+    public static boolean DEBUG_ELE = true;
+    public static boolean DEBUG_ARM = true;
+    public static boolean DEBUG_ROTATOR = false;
+    public static boolean DEBUG_INTAKE = true;
 
     //motor types
     public static Motor.GoBILDA DRIVE_MOTOR = Motor.GoBILDA.RPM_312;
-    public static Motor.GoBILDA ELEVATOR_MOTOR = Motor.GoBILDA.RPM_312;
+    public static Motor.GoBILDA ELE_MOTOR = Motor.GoBILDA.RPM_312;
     public static Motor.GoBILDA ARM_MOTOR = Motor.GoBILDA.RPM_117;
 
     //drivetrain constants
@@ -59,12 +59,11 @@ public class Constants {
     public static double ELE_HIGH = 12;
 
     //command-ending deadzones
-    public static double ELE_DONE_DEADZONE = 5;
-    public static double ELE_TRIGGER = 8;
+    public static double ELE_DONE_DEADZONE = 1;
+    public static double ELE_TRIGGER = 4;
 
     //arm pid
-    //public static PIDCoefficients ARM_COEFFS = new PIDCoefficients(.004, 0.00075, 0);
-    public static PIDCoefficients ARM_COEFFS = new PIDCoefficients(0, 0, 0);
+    public static PIDCoefficients ARM_COEFFS = new PIDCoefficients(.004, 0.00075, 0);
 
     public static double ARM_KV = 0;
     public static double ARM_KA = 0;
@@ -81,6 +80,9 @@ public class Constants {
     public static double ARM_ANGLE_IDLE = 45;
     public static double ARM_ANGLE_FRONT = 110;
     public static double ARM_ANGLE_MAX = 120;
+
+    public static double ARM_ANGLE_TRIGGER = 75;
+    public static double ARM_ANGLE_DEADZONE = 10;
 
     //arm encoder positions
     public static double ARM_ENC_BACK_MAX = -670;

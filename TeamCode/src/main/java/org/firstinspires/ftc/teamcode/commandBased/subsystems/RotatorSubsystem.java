@@ -8,7 +8,7 @@ import com.qualcomm.robotcore.hardware.ServoImplEx;
 
 public class RotatorSubsystem extends SubsystemBase {
 
-    private ServoImplEx rotator;
+    private final ServoImplEx rotator;
 
     public RotatorSubsystem(final HardwareMap hwMap) {
 

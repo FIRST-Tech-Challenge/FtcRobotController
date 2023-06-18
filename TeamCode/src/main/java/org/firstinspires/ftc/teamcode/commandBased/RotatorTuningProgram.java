@@ -3,10 +3,12 @@ package org.firstinspires.ftc.teamcode.commandBased;
 import com.arcrobotics.ftclib.command.CommandScheduler;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
+import org.firstinspires.ftc.teamcode.commandBased.commands.arm.MoveArmToAngle;
 import org.firstinspires.ftc.teamcode.commandBased.commands.rotator.IncrementRotatorPulse;
-import org.firstinspires.ftc.teamcode.commandBased.commands.rotator.MoveRotatorToAngle;
+import org.firstinspires.ftc.teamcode.commandBased.commands.rotator.MoveRotatorToPosition;
 import org.firstinspires.ftc.teamcode.commandBased.commands.rotator.SetRotatorRange;
 import org.firstinspires.ftc.teamcode.commandBased.commands.rotator.ToggleRotatorPower;
+import org.firstinspires.ftc.teamcode.commandBased.subsystems.ArmSubsystem;
 import org.firstinspires.ftc.teamcode.commandBased.subsystems.RotatorSubsystem;
 
 import ftc.rogue.blacksmith.BlackOp;
@@ -22,12 +24,15 @@ public class RotatorTuningProgram extends BlackOp {
         //cancel all previous commands
         CommandScheduler.getInstance().reset();
 
+        ArmSubsystem armSS = new ArmSubsystem(hardwareMap);
         RotatorSubsystem rotatorSS = new RotatorSubsystem(hardwareMap);
 
         ReforgedGamepad driver = new ReforgedGamepad(gamepad1);
 
-        MoveRotatorToAngle rotatorBack = new MoveRotatorToAngle(rotatorSS, Constants.ROTATOR_FORWARD);
-        MoveRotatorToAngle rotatorFront = new MoveRotatorToAngle(rotatorSS, Constants.ROTATOR_BACK);
+        MoveArmToAngle positionArm = new MoveArmToAngle(armSS, 90, Constants.ARM_MAX_VELO, Constants.ARM_MAX_ACCEL);
+
+        MoveRotatorToPosition rotatorBack = new MoveRotatorToPosition(rotatorSS, Constants.ROTATOR_FORWARD);
+        MoveRotatorToPosition rotatorFront = new MoveRotatorToPosition(rotatorSS, Constants.ROTATOR_BACK);
 
         IncrementRotatorPulse lowerSmallUpIncrement = new IncrementRotatorPulse(rotatorSS, Constants.ROTATOR_SMALL_INCREMENT, true);
         IncrementRotatorPulse lowerSmallDownIncrement = new IncrementRotatorPulse(rotatorSS, -Constants.ROTATOR_SMALL_INCREMENT, true);
@@ -45,6 +50,7 @@ public class RotatorTuningProgram extends BlackOp {
         SetRotatorRange defaultRange = new SetRotatorRange(rotatorSS, Constants.TUNED_RANGE);
 
 
+        positionArm.schedule();
         defaultRange.schedule();
         rotatorFront.schedule();
 

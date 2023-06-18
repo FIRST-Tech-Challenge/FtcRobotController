@@ -55,10 +55,10 @@ public class DrivetrainSubsystem extends SubsystemBase {
     public DrivetrainSubsystem(final HardwareMap hwMap) {
 
         //motor setup
-        Motor fL = new Motor(hwMap, "fL", Motor.GoBILDA.RPM_312);
-        Motor fR = new Motor(hwMap, "fR", Motor.GoBILDA.RPM_312);
-        Motor rL = new Motor(hwMap, "rL", Motor.GoBILDA.RPM_312);
-        Motor rR = new Motor(hwMap, "rR", Motor.GoBILDA.RPM_312);
+        Motor fL = new Motor(hwMap, "fL", Constants.DRIVE_MOTOR);
+        Motor fR = new Motor(hwMap, "fR", Constants.DRIVE_MOTOR);
+        Motor rL = new Motor(hwMap, "rL", Constants.DRIVE_MOTOR);
+        Motor rR = new Motor(hwMap, "rR", Constants.DRIVE_MOTOR);
 
         m_fL = fL.motor;
         m_fR = fR.motor;

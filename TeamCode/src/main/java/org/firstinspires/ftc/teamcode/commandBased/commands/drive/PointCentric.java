@@ -2,7 +2,6 @@ package org.firstinspires.ftc.teamcode.commandBased.commands.drive;
 
 import com.arcrobotics.ftclib.command.CommandBase;
 
-import org.firstinspires.ftc.teamcode.classes.Pose2d;
 import org.firstinspires.ftc.teamcode.classes.Vector2d;
 import org.firstinspires.ftc.teamcode.commandBased.subsystems.DrivetrainSubsystem;
 

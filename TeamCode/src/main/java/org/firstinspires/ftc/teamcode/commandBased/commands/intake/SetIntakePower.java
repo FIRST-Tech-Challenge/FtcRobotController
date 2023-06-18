@@ -1,7 +1,5 @@
 package org.firstinspires.ftc.teamcode.commandBased.commands.intake;
 
-import com.arcrobotics.ftclib.command.CommandBase;
-
 import org.firstinspires.ftc.teamcode.classes.triggers.TriggerCommandBase;
 import org.firstinspires.ftc.teamcode.commandBased.subsystems.IntakeSubsystem;
 

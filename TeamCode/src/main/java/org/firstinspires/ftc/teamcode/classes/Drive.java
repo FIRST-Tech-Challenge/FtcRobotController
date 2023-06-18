@@ -10,10 +10,10 @@ import org.firstinspires.ftc.teamcode.classes.pid.DeadzonePID;
 
 public class Drive {
 
-    private Motor frontLeft, frontRight, backLeft, backRight;
+    private final Motor frontLeft, frontRight, backLeft, backRight;
     private double maxOutput = 1;
-    private DeadzonePID headingDeadzone;
-    private AngleController headingController;
+    private final DeadzonePID headingDeadzone;
+    private final AngleController headingController;
 
     private double turnSpeed;
     private double theta;

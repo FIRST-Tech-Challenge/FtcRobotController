@@ -17,8 +17,8 @@ import org.firstinspires.ftc.teamcode.commandBased.Constants;
 
 public class ElevatorSubsystem extends SubsystemBase {
 
-    private Motor eleL;
-    private Motor eleR;
+    private final Motor eleL;
+    private final Motor eleR;
     private final DcMotor m_eleL;
     private final DcMotor m_eleR;
     private final MotorGroup ele;
@@ -36,8 +36,8 @@ public class ElevatorSubsystem extends SubsystemBase {
     public ElevatorSubsystem(final HardwareMap hwmap){
 
         //motor setup
-        eleL = new Motor(hwmap, "eleL", Motor.GoBILDA.RPM_312);
-        eleR = new Motor(hwmap, "eleR", Motor.GoBILDA.RPM_312);
+        eleL = new Motor(hwmap, "eleL", Constants.ELE_MOTOR);
+        eleR = new Motor(hwmap, "eleR", Constants.ELE_MOTOR);
 
         m_eleL = eleL.motor;
         m_eleR = eleR.motor;
@@ -89,8 +89,8 @@ public class ElevatorSubsystem extends SubsystemBase {
     }
 
     public void setProfileTarget(double target) {
-        eleTarget = target;
-        target = inchesToTicks(target);
+        eleTarget = inchesToTicks(target);
+        target = eleTarget;
         profile = MotionProfileGenerator.generateSimpleMotionProfile(
                 new MotionState(state.getX(), 0, 0),
                 new MotionState(target, 0, 0),
@@ -101,8 +101,8 @@ public class ElevatorSubsystem extends SubsystemBase {
     }
 
     public boolean isFinished() {
-        return eleTarget >= state.getX() - Constants.ELE_DONE_DEADZONE
-            && eleTarget <= state.getX() + Constants.ELE_DONE_DEADZONE;
+        return eleTarget >= elePos - inchesToTicks(Constants.ELE_DONE_DEADZONE)
+            && eleTarget <= elePos + inchesToTicks(Constants.ELE_DONE_DEADZONE);
     }
 
     public double getElePower() {
@@ -110,6 +110,10 @@ public class ElevatorSubsystem extends SubsystemBase {
     }
 
     public double getEleTarget() {
+        return ticksToInches(eleTarget);
+    }
+
+    public double getEleProfileTarget() {
         return ticksToInches(state.getX());
     }
 

@@ -27,6 +27,6 @@ public class MoveElevatorToPosition extends TriggerCommandBase {
 
     @Override
     public boolean isTriggered() {
-        return (m_elevatorSubsystem.getElePos() > Constants.ELE_TRIGGER);
+        return m_elevatorSubsystem.getElePos() > Constants.ELE_TRIGGER;
     }
 }
