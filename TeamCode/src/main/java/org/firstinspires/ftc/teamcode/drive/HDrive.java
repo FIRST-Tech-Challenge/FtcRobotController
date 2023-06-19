@@ -284,12 +284,12 @@ public class HDrive extends TankDrive {
 
     @Override
     public double getRawExternalHeading() {
-        return imu.getRobotAngularVelocity(AngleUnit.RADIANS).yRotationRate;
+        return -imu.getRobotYawPitchRollAngles().getRoll(AngleUnit.RADIANS);
     }
 
     @Override
     public Double getExternalHeadingVelocity() {
-        return (double) imu.getRobotAngularVelocity(AngleUnit.RADIANS).yRotationRate;
+        return -(double) imu.getRobotAngularVelocity(AngleUnit.RADIANS).yRotationRate;
     }
 
     public static TrajectoryVelocityConstraint getVelocityConstraint(double maxVel, double maxAngularVel, double trackWidth) {
