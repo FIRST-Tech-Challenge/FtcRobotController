@@ -8,8 +8,10 @@ public class TriggerCommandGroup extends TriggerCommandGroupBase {
     private final List<TriggerCommand> m_commands = new ArrayList<>();
     private final List<TriggerCommand> m_executingCommands = new ArrayList<>();
     public int m_currentCommandIndex = -1;
+    public int test = 0;
     private boolean m_runWhenDisabled = true;
-    private TriggerCommand currentCommand;
+    private boolean finalCommand = false;
+    public TriggerCommand currentCommand;
 
     /**
      * Creates a new SequentialCommandGroup.  The given commands will be run sequentially, with
@@ -56,7 +58,8 @@ public class TriggerCommandGroup extends TriggerCommandGroupBase {
             return;
         }
 
-        for (TriggerCommand triggerCommand: m_executingCommands) {
+        for (int i = 0; i < m_executingCommands.size(); i++) {
+            TriggerCommand triggerCommand = m_executingCommands.get(i);
             triggerCommand.execute();
             if (triggerCommand.isFinished()) {
                 triggerCommand.end(false);
@@ -64,12 +67,17 @@ public class TriggerCommandGroup extends TriggerCommandGroupBase {
             }
         }
 
-        if (currentCommand.isTriggered() || currentCommand.isFinished()) {
-            m_currentCommandIndex++;
-            if (m_currentCommandIndex < m_commands.size()) {
-                currentCommand = m_commands.get(m_currentCommandIndex);
-                currentCommand.initialize();
-                m_executingCommands.add(currentCommand);
+        if (!finalCommand) {
+            if (currentCommand.isTriggered() || currentCommand.isFinished()) {
+                m_currentCommandIndex++;
+                if (m_currentCommandIndex < m_commands.size()) {
+                    currentCommand = m_commands.get(m_currentCommandIndex);
+                    currentCommand.initialize();
+                    m_executingCommands.add(currentCommand);
+                    test += 1;
+                } else {
+                    finalCommand = true;
+                }
             }
         }
     }
@@ -86,17 +94,13 @@ public class TriggerCommandGroup extends TriggerCommandGroupBase {
 
     @Override
     public boolean isFinished() {
-        return m_currentCommandIndex == m_commands.size() &&
+        return m_currentCommandIndex >= m_commands.size() &&
                 m_executingCommands.isEmpty();
     }
 
     @Override
     public boolean runsWhenDisabled() {
         return m_runWhenDisabled;
-    }
-
-    public int getM_currentCommandIndex() {
-        return  m_currentCommandIndex;
     }
 
 }

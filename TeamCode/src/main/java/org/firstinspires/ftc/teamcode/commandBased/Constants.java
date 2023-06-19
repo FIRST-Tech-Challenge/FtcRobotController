@@ -92,8 +92,8 @@ public class Constants {
     public static double ARM_ENC_CENTER = -145;
 
     //rotator limits
-    public static double ROTATOR_FORWARD = 0;
-    public static double ROTATOR_BACK = 1;
+    public static double ROTATOR_FORWARD = 1;
+    public static double ROTATOR_BACK = 0;
     public static PwmControl.PwmRange TUNED_RANGE = new PwmControl.PwmRange(530, 2340);
 
     public static double ROTATOR_SMALL_INCREMENT = 10;

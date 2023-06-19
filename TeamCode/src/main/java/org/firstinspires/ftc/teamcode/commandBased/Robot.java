@@ -113,8 +113,8 @@ public class Robot extends BlackOp {
         );
 
         //create rotator commands
-        MoveRotatorToPosition rotatorBack = new MoveRotatorToPosition(rotatorSS, Constants.ROTATOR_FORWARD);
-        MoveRotatorToPosition rotatorFront = new MoveRotatorToPosition(rotatorSS, Constants.ROTATOR_BACK);
+        MoveRotatorToPosition rotatorBack = new MoveRotatorToPosition(rotatorSS, Constants.ROTATOR_BACK);
+        MoveRotatorToPosition rotatorFront = new MoveRotatorToPosition(rotatorSS, Constants.ROTATOR_FORWARD);
 
         SetRotatorRange rotatorRange = new SetRotatorRange(rotatorSS, Constants.TUNED_RANGE);
 
@@ -134,12 +134,14 @@ public class Robot extends BlackOp {
                 Constants.ELE_HIGH,
                 Constants.ROTATOR_BACK
         );
+
+        
         
 
         //start robot in field-centric mode
         robotCentric.schedule();
-        //rotatorRange.schedule();
-        //rotatorFront.schedule();
+        rotatorRange.schedule();
+        rotatorFront.schedule();
 
         waitForStart();
 
@@ -250,19 +252,21 @@ public class Robot extends BlackOp {
 
             mTelemetry().addData("group scheduled", armBackHigh.isScheduled());
 
-//            mTelemetry().addData("ele scheduled", armBackHigh.moveEle.isScheduled());
-//            mTelemetry().addData("ele triggered", armBackHigh.moveEle.isTriggered());
-//            mTelemetry().addData("ele finished", armBackHigh.moveEle.isFinished());
-//
-//            mTelemetry().addData("arm scheduled", armBackHigh.moveArm.isScheduled());
-//            mTelemetry().addData("arm triggered", armBackHigh.moveArm.isTriggered());
-//            mTelemetry().addData("arm finished", armBackHigh.moveArm.isFinished());
-//
-//            mTelemetry().addData("rotator scheduled", armBackHigh.moveRot.isScheduled());
-//            mTelemetry().addData("rotator triggered", armBackHigh.moveRot.isTriggered());
-//            mTelemetry().addData("rotator finished", armBackHigh.moveRot.isFinished());
+            mTelemetry().addData("ele scheduled", armBackHigh.moveEle.isScheduled());
+            mTelemetry().addData("ele triggered", armBackHigh.moveEle.isTriggered());
+            mTelemetry().addData("ele finished", armBackHigh.moveEle.isFinished());
+
+            mTelemetry().addData("arm scheduled", armBackHigh.moveArm.isScheduled());
+            mTelemetry().addData("arm triggered", armBackHigh.moveArm.isTriggered());
+            mTelemetry().addData("arm finished", armBackHigh.moveArm.isFinished());
+
+            mTelemetry().addData("rotator scheduled", armBackHigh.moveRot.isScheduled());
+            mTelemetry().addData("rotator triggered", armBackHigh.moveRot.isTriggered());
+            mTelemetry().addData("rotator finished", armBackHigh.moveRot.isFinished());
 
             mTelemetry().addData("cmdIndex", armBackHigh.getCmdIndex());
+            mTelemetry().addData("test", armBackHigh.getTest());
+            mTelemetry().addData("name", armBackHigh.getCommandName());
 
             mTelemetry().update();
         });

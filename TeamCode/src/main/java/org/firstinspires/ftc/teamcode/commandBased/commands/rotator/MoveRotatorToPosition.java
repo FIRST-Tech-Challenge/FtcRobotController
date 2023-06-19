@@ -20,8 +20,13 @@ public class MoveRotatorToPosition extends TriggerCommandBase {
     }
 
     @Override
+    public void execute() {
+        m_rotatorSubsystem.setPosition(pos);
+    }
+
+    @Override
     public boolean isFinished() {
-        return true;
+        return false;
     }
 
     @Override
