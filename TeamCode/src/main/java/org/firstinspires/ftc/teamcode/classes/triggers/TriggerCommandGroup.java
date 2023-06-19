@@ -11,7 +11,7 @@ public class TriggerCommandGroup extends TriggerCommandGroupBase {
     public int test = 0;
     private boolean m_runWhenDisabled = true;
     private boolean finalCommand = false;
-    public TriggerCommand currentCommand;
+    public  TriggerCommand currentCommand;
 
     /**
      * Creates a new SequentialCommandGroup.  The given commands will be run sequentially, with

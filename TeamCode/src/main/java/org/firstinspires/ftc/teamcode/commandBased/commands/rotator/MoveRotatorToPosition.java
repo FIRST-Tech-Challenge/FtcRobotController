@@ -26,11 +26,11 @@ public class MoveRotatorToPosition extends TriggerCommandBase {
 
     @Override
     public boolean isFinished() {
-        return false;
+        return true;
     }
 
     @Override
     public boolean isTriggered() {
-        return false;
+        return true;
     }
 }

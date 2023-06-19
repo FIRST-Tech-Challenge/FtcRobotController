@@ -8,9 +8,9 @@ import org.firstinspires.ftc.teamcode.commandBased.subsystems.ArmSubsystem;
 import org.firstinspires.ftc.teamcode.commandBased.subsystems.ElevatorSubsystem;
 import org.firstinspires.ftc.teamcode.commandBased.subsystems.RotatorSubsystem;
 
-public class LiftMoveRotateArm extends TriggerCommandGroup {
+public class MoveRotateLiftArm extends TriggerCommandGroup {
 
-    public LiftMoveRotateArm(
+    public MoveRotateLiftArm(
             ElevatorSubsystem ele,
             ArmSubsystem arm,
             RotatorSubsystem rot,
@@ -21,9 +21,9 @@ public class LiftMoveRotateArm extends TriggerCommandGroup {
             double rotAngle
     ) {
         addCommands(
-                new MoveElevatorToPosition(ele, eleTarget),
                 new MoveArmToAngle(arm, armAngle, armVelo, armAccel),
-                new MoveRotatorToPosition(rot, rotAngle)
+                new MoveRotatorToPosition(rot, rotAngle),
+                new MoveElevatorToPosition(ele, eleTarget)
         );
         addRequirements(ele, arm, rot);
     }

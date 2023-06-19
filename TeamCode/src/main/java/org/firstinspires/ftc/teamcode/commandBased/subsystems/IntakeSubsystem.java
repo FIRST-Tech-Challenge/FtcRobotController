@@ -8,26 +8,34 @@ import com.qualcomm.hardware.lynx.commands.core.LynxGetADCCommand;
 import com.qualcomm.hardware.lynx.commands.core.LynxGetADCResponse;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
+import org.firstinspires.ftc.teamcode.R;
+import com.qualcomm.robotcore.util.RollingAverage;
+import org.firstinspires.ftc.teamcode.commandBased.Constants;
+
 public class IntakeSubsystem extends SubsystemBase {
 
     private final CRServo intake;
+    private RollingAverage averageCurrent;
+
 
     //servo bus current
     private final LynxModule exHub;
     private LynxGetADCCommand.Channel servoChannel;
     private LynxGetADCCommand servoCommand;
     private LynxGetADCResponse servoResponse;
-    double servoBusCurrent;
+    double servoBusCurrent = 0;
 
     public IntakeSubsystem(HardwareMap hwMap) {
         intake = new CRServo(hwMap, "intake");
         intake.setInverted(true);
         exHub = hwMap.get(LynxModule.class, "Expansion Hub 2");
+        averageCurrent = new RollingAverage(Constants.INTAKE_AVG_LENGTH);
     }
 
     @Override
     public void periodic() {
         servoBusCurrent = calculateServoBusCurrent();
+        averageCurrent.addNumber((int) servoBusCurrent);
     }
 
     private double calculateServoBusCurrent() {
@@ -35,7 +43,7 @@ public class IntakeSubsystem extends SubsystemBase {
         servoCommand = new LynxGetADCCommand(exHub, servoChannel, LynxGetADCCommand.Mode.ENGINEERING);
         try {
             servoResponse = servoCommand.sendReceive();
-            return servoResponse.getValue() / 1000.0;
+            return servoResponse.getValue();
         } catch (InterruptedException | RuntimeException | LynxNackException ignored) {
         }
         return 999;
@@ -51,5 +59,9 @@ public class IntakeSubsystem extends SubsystemBase {
 
     public double getServoBusCurrent() {
         return servoBusCurrent;
+    }
+
+    public double getAverageCurrent() {
+        return averageCurrent.getAverage();
     }
 }

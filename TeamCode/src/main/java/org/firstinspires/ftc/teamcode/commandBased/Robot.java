@@ -7,8 +7,9 @@ import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.arcrobotics.ftclib.command.CommandScheduler;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
-import org.firstinspires.ftc.teamcode.classes.triggers.TriggerCommandGroup;
+import org.firstinspires.ftc.teamcode.commandBased.commands._groups.GrabCone;
 import org.firstinspires.ftc.teamcode.commandBased.commands._groups.LiftMoveRotateArm;
+import org.firstinspires.ftc.teamcode.commandBased.commands._groups.ScoreCone;
 import org.firstinspires.ftc.teamcode.commandBased.commands.arm.MoveArmToAngle;
 import org.firstinspires.ftc.teamcode.commandBased.commands.drive.SetDriveSpeeds;
 import org.firstinspires.ftc.teamcode.commandBased.commands.elevator.MoveElevatorToPosition;
@@ -124,6 +125,20 @@ public class Robot extends BlackOp {
         SetIntakePower intakeOuttake = new SetIntakePower(intakeSS, -1);
 
         //create group commands
+        ScoreCone scoreToIdle = new ScoreCone(
+                elevatorSS,
+                armSS,
+                rotatorSS,
+                intakeSS
+        );
+
+        GrabCone grabCone = new GrabCone(
+                elevatorSS,
+                armSS,
+                rotatorSS,
+                intakeSS
+        );
+
         LiftMoveRotateArm armBackHigh = new LiftMoveRotateArm(
                 elevatorSS,
                 armSS,
@@ -135,8 +150,6 @@ public class Robot extends BlackOp {
                 Constants.ROTATOR_BACK
         );
 
-        
-        
 
         //start robot in field-centric mode
         robotCentric.schedule();
@@ -200,7 +213,11 @@ public class Robot extends BlackOp {
             driver.right_bumper.onRise(intakeIntake::schedule)
                                .onFall(intakeIdle::schedule);
 
-            driver.right_stick_button.onRise(armBackHigh::schedule);
+            driver.left_trigger(0.5).and(driver.a).onRise(scoreToIdle::schedule);
+            driver.left_trigger(0.5).and(driver.right_trigger(0.5)).onRise(grabCone::schedule);
+
+            driver.left_trigger(0.5).and(driver.y).onRise(armBackHigh::schedule);
+
 
             // Draw the target on the field
             fieldOverlay.setStroke("#dd2c00");
@@ -248,25 +265,26 @@ public class Robot extends BlackOp {
             if (Constants.DEBUG_INTAKE) {
                 mTelemetry().addData("intake power", intakeSS.getPower());
                 mTelemetry().addData("intake current", intakeSS.getServoBusCurrent());
+                mTelemetry().addData("intake avg current", intakeSS.getAverageCurrent());
             }
 
             mTelemetry().addData("group scheduled", armBackHigh.isScheduled());
-
-            mTelemetry().addData("ele scheduled", armBackHigh.moveEle.isScheduled());
-            mTelemetry().addData("ele triggered", armBackHigh.moveEle.isTriggered());
-            mTelemetry().addData("ele finished", armBackHigh.moveEle.isFinished());
-
-            mTelemetry().addData("arm scheduled", armBackHigh.moveArm.isScheduled());
-            mTelemetry().addData("arm triggered", armBackHigh.moveArm.isTriggered());
-            mTelemetry().addData("arm finished", armBackHigh.moveArm.isFinished());
-
-            mTelemetry().addData("rotator scheduled", armBackHigh.moveRot.isScheduled());
-            mTelemetry().addData("rotator triggered", armBackHigh.moveRot.isTriggered());
-            mTelemetry().addData("rotator finished", armBackHigh.moveRot.isFinished());
-
-            mTelemetry().addData("cmdIndex", armBackHigh.getCmdIndex());
-            mTelemetry().addData("test", armBackHigh.getTest());
-            mTelemetry().addData("name", armBackHigh.getCommandName());
+//
+//            mTelemetry().addData("ele scheduled", armBackHigh.moveEle.isScheduled());
+//            mTelemetry().addData("ele triggered", armBackHigh.moveEle.isTriggered());
+//            mTelemetry().addData("ele finished", armBackHigh.moveEle.isFinished());
+//
+//            mTelemetry().addData("arm scheduled", armBackHigh.moveArm.isScheduled());
+//            mTelemetry().addData("arm triggered", armBackHigh.moveArm.isTriggered());
+//            mTelemetry().addData("arm finished", armBackHigh.moveArm.isFinished());
+//
+//            mTelemetry().addData("rotator scheduled", armBackHigh.moveRot.isScheduled());
+//            mTelemetry().addData("rotator triggered", armBackHigh.moveRot.isTriggered());
+//            mTelemetry().addData("rotator finished", armBackHigh.moveRot.isFinished());
+//
+//            mTelemetry().addData("cmdIndex", armBackHigh.getCmdIndex());
+//            mTelemetry().addData("test", armBackHigh.getTest());
+//            mTelemetry().addData("name", armBackHigh.getCommandName());
 
             mTelemetry().update();
         });

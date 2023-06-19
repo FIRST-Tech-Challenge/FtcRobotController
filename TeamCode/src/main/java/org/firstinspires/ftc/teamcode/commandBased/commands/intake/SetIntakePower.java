@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.commandBased.commands.intake;
 
 import org.firstinspires.ftc.teamcode.classes.triggers.TriggerCommandBase;
+import org.firstinspires.ftc.teamcode.commandBased.Constants;
 import org.firstinspires.ftc.teamcode.commandBased.subsystems.IntakeSubsystem;
 
 public class SetIntakePower extends TriggerCommandBase {
@@ -21,7 +22,13 @@ public class SetIntakePower extends TriggerCommandBase {
 
     @Override
     public boolean isFinished() {
-        return true;
+        if (power == Constants.INTAKE_IN) {
+            return (m_intakeSubsystem.getAverageCurrent() > 1000);
+        } else if (power == Constants.INTAKE_OUT){
+            return (m_intakeSubsystem.getAverageCurrent() > 200);
+        } else {
+            return true;
+        }
     }
 
     @Override

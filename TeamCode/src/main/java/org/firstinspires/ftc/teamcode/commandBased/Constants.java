@@ -99,4 +99,10 @@ public class Constants {
     public static double ROTATOR_SMALL_INCREMENT = 10;
     public static double ROTATOR_LARGE_INCREMENT = 100;
 
+    //iintake powers
+    public static double INTAKE_IN = 1;
+    public static double INTAKE_IDLE = 0;
+    public static double INTAKE_OUT = -1;
+    public static int INTAKE_AVG_LENGTH = 10;
+
 }
