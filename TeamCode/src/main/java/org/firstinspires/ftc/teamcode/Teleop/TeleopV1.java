@@ -163,10 +163,10 @@ public class TeleopV1 extends LinearOpMode {
                     coneTransporter.setGripperPosition(1.0);
                 }
 
-                telemetry.addData("-", "tip is activated");
+                //telemetry.addData("-", "tip is activated");
 
-                float pitch = fieldCentricDrive.getPitch();
-                telemetry.addData("Pitch:", pitch);
+                //float pitch = fieldCentricDrive.getPitch();
+                //telemetry.addData("Pitch:", pitch);
                 /*if (tip != TIP.ON_STACKS) {
                     if (pitch <= 75) {
                         tip = TIP.TIPPING;

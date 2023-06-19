@@ -24,7 +24,7 @@ public class HWMap {
 
     public DcMotorEx linearSlides;
 
-    //IMU
+    //IMU?
     public BNO055IMU imu;
     public static double imuAngle;
 
@@ -61,7 +61,6 @@ public class HWMap {
 
         //IMU
         imu = this.hardwareMap.get(BNO055IMU.class, "imu");
-        initializeIMU();
 
         //Mapping Servos
         gripper = hardwareMap.get(Servo.class, "gripper");

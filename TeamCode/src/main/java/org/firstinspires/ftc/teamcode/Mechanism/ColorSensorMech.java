@@ -1,47 +1,58 @@
-/*
 package org.firstinspires.ftc.teamcode.Mechanism;
 
-import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
-import org.firstinspires.ftc.teamcode.Mechanism;
+import org.firstinspires.ftc.teamcode.Core.HWMap;
 
 import java.util.ArrayList;
 
 
-public class ColorSensorMechanism extends Mechanism {
+public class ColorSensorMech extends HWMap {
 
-    public ColorSensor colorSensorLeft;
-    public ColorSensor colorSensorMiddle;
-    public ColorSensor colorSensorRight;
     public double leftBlue;
-    public double middleBlue;
     public double rightBlue;
+    public double middleBlue;
+    public double rightRed;
     public double leftRed;
     public double middleRed;
-    public double rightRed;
 
-    public double colorValue;
+    /*
+    Color Values:
+    V3: 550
+    V2: 100
+     */
+    private double V3colorValue;
+    private double V2colorValue;
 
-    public ColorSensorMechanism(Telemetry telemetry, HardwareMap hardwareMap) {
-
+    public ColorSensorMech(Telemetry telemetry, HardwareMap hardwareMap) {
         super(telemetry, hardwareMap);
-
-        colorSensorLeft = this.hardwareMap.colorSensor.get("left");
-        colorSensorMiddle = this.hardwareMap.colorSensor.get("middle");
-        colorSensorRight = this.hardwareMap.colorSensor.get("right");
-
-        colorValue = 3000;
+        V3colorValue = 550;
+        V2colorValue = 150;
     }
 
-    public boolean isDetectingBlueLine() {
 
-        leftBlue = colorSensorLeft.blue();
-        middleBlue = colorSensorMiddle.blue();
-        rightBlue = colorSensorRight.blue();
+    public double isDetectingBlueLine() {
 
-        if (leftBlue < colorValue && middleBlue >= colorValue && rightBlue < colorValue) {
+        leftBlue = leftCS.blue();
+        middleBlue = middleCS.blue();
+        rightBlue = rightCS.blue();
+
+        if(middleBlue > V3colorValue && rightBlue > V3colorValue && leftBlue < V3colorValue){
+            return 1;
+        } else if(middleBlue > V3colorValue && rightBlue < V2colorValue && leftBlue > V3colorValue) {
+            return 0.001; //center because of gripper
+        } else if (middleBlue < V3colorValue && rightBlue < V2colorValue && leftBlue > V3colorValue){
+            return -1;
+        } else if(middleBlue < V3colorValue && rightBlue > V2colorValue && leftBlue < V3colorValue){
+            return 1;
+        }else if(middleBlue > V3colorValue && rightBlue < V2colorValue && leftBlue < V3colorValue){
+            return 1;
+        } else{
+            return -0.001;
+        }
+
+/*        if (leftBlue < colorValue && middleBlue >= colorValue && rightBlue < colorValue) {
 
             telemetry.addLine("The robot is currently on the path of the blue tape");
 
@@ -63,15 +74,15 @@ public class ColorSensorMechanism extends Mechanism {
 
         telemetry.update();
 
-        return false;
+        return false;*/
 
     }
 
-    public boolean isDetectingRedLine() {
+/*    public boolean isDetectingRedLine() {
 
-        leftRed = colorSensorLeft.red();
-        middleRed = colorSensorMiddle.red();
-        rightRed = colorSensorRight.red();
+        leftRed = leftCS.red();
+        middleRed = middleCS.red();
+        rightRed = rightCS.red();
 
         if (leftRed < colorValue && middleRed >= colorValue && rightRed < colorValue) {
 
@@ -117,6 +128,5 @@ public class ColorSensorMechanism extends Mechanism {
         }
 
         return colorArray;
-    }
+    }*/
 }
-*/

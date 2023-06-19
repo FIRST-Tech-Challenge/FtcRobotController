@@ -9,6 +9,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
+import org.firstinspires.ftc.teamcode.Mechanism.ColorSensorMech;
 import org.firstinspires.ftc.teamcode.Mechanism.ConeTransporter;
 import org.firstinspires.ftc.teamcode.Auto.RR.drive.DriveConstants;
 import org.firstinspires.ftc.teamcode.Auto.RR.drive.SampleMecanumDrive;
@@ -21,7 +22,7 @@ import org.openftc.easyopencv.OpenCvCameraRotation;
 import java.util.ArrayList;
 
 @Autonomous
-public class Left1_3 extends LinearOpMode {
+public class Left1_3CS extends LinearOpMode {
     private OpenCvCamera camera;
     private Detection detection;
     private BNO055IMU imu;
@@ -44,6 +45,7 @@ public class Left1_3 extends LinearOpMode {
     AprilTagDetection tagOfInterest = null;
     private SampleMecanumDrive drive;
     private ConeTransporter coneTransporter;
+    private ColorSensorMech colorSensorMech;
     private ElapsedTime timer;
     public boolean coneTransportedSetup = false;
     public double startHeading;
@@ -53,56 +55,57 @@ public class Left1_3 extends LinearOpMode {
     private ElapsedTime imuTimer = new ElapsedTime();
     private double lastIMUCall = 0.0;
 
-     /* Auto Constant Variables: **/
-     private double startX = 36.0; // Start pos X
-     private double startY = 65.0; // Start pos Y
-     private double preJCTX = 48.0; // Preload junction deposit X value
-     private double preJCTY = 12.0; // Preload junction deposit Y value
-     private double stackX = 58.0; // Stack X value
-     private double stackY = 12.0; // Stack Y value
-     private double cycleJCTX = 48.0; // Cycle junction deposit X value
-     private double cycleJCTY = 12.0; // Cycle junction deposit XY value
+    /* Auto Constant Variables: **/
+    private double startX = 36.0; // Start pos X
+    private double startY = 65.0; // Start pos Y
+    private double preJCTX = 48.0; // Preload junction deposit X value
+    private double preJCTY = 12.0; // Preload junction deposit Y value
+    private double stackX = 56.0; // Stack X value
+    private double stackY = 12.0; // Stack Y value
+    private double cycleJCTX = 48.0; // Cycle junction deposit X value
+    private double cycleJCTY = 12.0; // Cycle junction deposit XY value
 
-     /** Robot Tuning Variables: **/
-     private double startXOff = -0.5; // Start pos X offset
-     private double startYOff = 0.0; // Start pos Y offset
-     private double preXOff = -.75; // Preload junction X offset
-     private double preYOff = 3.0; // Preload junction Y offset
-     private double stackXOff = 1.75; // Stack X offset
-     private double stackYOff = 0.0; // Stack Y offset
-     private double cycleXOff = 0.5; // Cycle junction X offset
-     private double cycleYOff = 4.0; // Cycle junction X offset
+    /** Robot Tuning Variables: **/
+    private double startXOff = -0.5; // Start pos X offset
+    private double startYOff = 0.0; // Start pos Y offset
+    private double preXOff = -.75; // Preload junction X offset
+    private double preYOff = 3.0; // Preload junction Y offset
+    private double stackXOff = 1.75; // Stack X offset
+    private double stackYOff = 0.0; // Stack Y offset
+    private double cycleXOff = 0.5; // Cycle junction X offset
+    private double cycleYOff = 4.0; // Cycle junction X offset
 
-     //TODO: Field Tuning Variables:
-     private double autoDelay = 	0.0	; //TODO: Delay before auto starts
-    private double F_preXOff = 	-0.5	; //TODO: Field Preload junction X offset
+    //TODO: Field Tuning Variables:
+    private double autoDelay = 	0.0	; //TODO: Delay before auto starts
+    private double F_preXOff = 	-0.0	; //TODO: Field Preload junction X offset
     private double F_preYOff =	0.0	; //TODO: Field Preload junction Y offset
 
-    private double F_stackXOff1 = 	0.55	; //TODO: Stack X offset Cycle 1
+    private double F_stackXOff1 = 	0.0	; //TODO: Stack X offset Cycle 1
     private double F_stackYOff1 = 	0.0	; //TODO: Stack Y offset Cycle 1
     private double F_stackAngOff1 = 	0.0	; //TODO: Stack Angle offset Cycle 1
     private double F_cycleXOff1 = 	-0.0	; //TODO: Field cycle junction X offset Cycle 1
-    private double F_cycleYOff1 = 	-0.5	; //TODO: Field cycle junction Y offset Cycle 1
+    private double F_cycleYOff1 = 	-0.0	; //TODO: Field cycle junction Y offset Cycle 1
     private double F_cycleAngOff1 = 	0.0	; //TODO: cycle Angle offset Cycle 1
 
-    private double F_stackXOff2 = 	0.55	; //TODO: Stack X offset Cycle 2
+    private double F_stackXOff2 = 	0.0	; //TODO: Stack X offset Cycle 2
     private double F_stackYOff2 = 	0.0	; //TODO: Stack Y offset Cycle 2
     private double F_stackAngOff2 = 	0.0	; //TODO: Stack Angle offset Cycle 2
     private double F_cycleXOff2 = 	-0.0	; //TODO: Field cycle junction X offset Cycle 2
-    private double F_cycleYOff2 = 	-0.5	; //TODO: Field cycle junction Y offset Cycle 2
+    private double F_cycleYOff2 = 	-0.0	; //TODO: Field cycle junction Y offset Cycle 2
     private double F_cycleAngOff2 = 	0.0	; //TODO: cycle Angle offset Cycle 2
 
-    private double F_stackXOff3 = 	0.55	; //TODO: Stack X offset Cycle 3
+    private double F_stackXOff3 = 	0.0	; //TODO: Stack X offset Cycle 3
     private double F_stackYOff3 = 	0.0	; //TODO: Stack Y offset Cycle 3
     private double F_stackAngOff3 = 	0.0	; //TODO: Stack Angle offset Cycle 3
     private double F_cycleXOff3 = 	0.0	; //TODO: Field cycle junction X offset Cycle 3
-    private double F_cycleYOff3 = 	-0.5	; //TODO: Field cycle junction Y offset Cycle 3
+    private double F_cycleYOff3 = 	-0.0	; //TODO: Field cycle junction Y offset Cycle 3
     private double F_cycleAngOff3 = 	0.0	; //TODO: cycle Angle offset Cycle 3
 
     @Override
     public void runOpMode() {
         drive = new SampleMecanumDrive(hardwareMap);
         coneTransporter = new ConeTransporter(telemetry, hardwareMap);
+        colorSensorMech = new ColorSensorMech(telemetry, hardwareMap);
         timer = new ElapsedTime();
         imu = this.hardwareMap.get(BNO055IMU.class, "imu");
 
@@ -215,6 +218,7 @@ public class Left1_3 extends LinearOpMode {
                 .lineToLinearHeading(new Pose2d(preJCTX+preXOff+F_preXOff, preJCTY+preYOff+F_preYOff, Math.toRadians(90)), SampleMecanumDrive.getVelocityConstraint(35.0, 2.5, DriveConstants.TRACK_WIDTH), SampleMecanumDrive.getAccelerationConstraint(35))
                 .UNSTABLE_addTemporalMarkerOffset(0, () -> {
                     coneTransporter.setGripperPosition(1.0);
+                    drive.setPoseEstimate(new Pose2d(drive.getPoseEstimate().getX(), drive.getPoseEstimate().getY(), (readFromIMU() + Math.toRadians(90)) % Math.toRadians(360)));
                 })
                 .waitSeconds(0.15)
                 //TODO: CYCLE #1________________________________________________________________________________________
@@ -224,7 +228,15 @@ public class Left1_3 extends LinearOpMode {
                 })
                 // Go to Stack
                 .setTangent(Math.toRadians(300))
-                .splineToLinearHeading(new Pose2d((stackX + stackXOff + F_stackXOff1), (stackY + stackYOff + F_stackYOff1), Math.toRadians(0 + F_stackAngOff1)), Math.toRadians(45))
+                .splineToLinearHeading(new Pose2d((stackX + F_stackXOff1), (stackY + stackYOff + F_stackYOff1), Math.toRadians(0 + F_stackAngOff1)), Math.toRadians(45))
+                .waitSeconds(.5)
+                .UNSTABLE_addTemporalMarkerOffset(0, () -> {
+                    telemetry.addData("Status", colorSensorMech.isDetectingBlueLine());
+                    drive.setPoseEstimate(new Pose2d(drive.getPoseEstimate().getX(), drive.getPoseEstimate().getY()+colorSensorMech.isDetectingBlueLine(), drive.getExternalHeading()));
+
+                })
+                .waitSeconds(2)
+                .lineToLinearHeading(new Pose2d(stackX + stackXOff + 3, stackY + stackYOff, Math.toRadians(0)))
                 // Go into Cone -> Grab -> Slides low Junction
                 .UNSTABLE_addTemporalMarkerOffset(0.2, () -> {
                     coneTransporter.setHeight(ConeTransporter.equate(ConeTransporter.AUTO_LINEAR_SLIDES_15_IN_CONE));
@@ -329,9 +341,9 @@ public class Left1_3 extends LinearOpMode {
             //telemetry.update();
             drive.update();
             //if(imuTimer.time() - lastIMUCall >= .1 && drive.getPoseVelocity().vec().norm() < 5.0) {
-                //telemetry.addData("IMU Angle", IMUHeading.imuAngle);
-                //lastIMUCall = imuTimer.time();
-                //drive.setPoseEstimate(new Pose2d(drive.getPoseEstimate().getX(), drive.getPoseEstimate().getY(), drive.getExternalHeading()));
+            //telemetry.addData("IMU Angle", IMUHeading.imuAngle);
+            //lastIMUCall = imuTimer.time();
+            //drive.setPoseEstimate(new Pose2d(drive.getPoseEstimate().getX(), drive.getPoseEstimate().getY(), drive.getExternalHeading()));
             //}
         }
     }

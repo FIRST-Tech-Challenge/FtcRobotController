@@ -79,10 +79,10 @@ public class ConeTransporter extends HWMap {
     public String stackTelemetry;
 
     // Servos on encoder wheels for retracting and unretracting them
-    public double LEFT_RETRACT_POS = 0.6;
+    public double LEFT_RETRACT_POS = 0.7;
     public double LEFT_UNRETRACT_POS = 0.25;
     public double RIGHT_RETRACT_POS = 0.0;
-    public double RIGHT_UNRETRACT_POS = 0.5;
+    public double RIGHT_UNRETRACT_POS = 0.6;
     public double FRONT_RETRACT_POS = 0.5;
     public double FRONT_UNRETRACT_POS = 1.0;
 
@@ -160,7 +160,7 @@ public class ConeTransporter extends HWMap {
 
             if((gripperCS.red() >= 3000 || gripperCS.blue() >= 3000) && automation){
                 linearSlides.setPower(0);
-                setGripperPosition(0.75 );
+                setGripperPosition(0.75);
                 sleep(75);
                 target = equate(AUTO_LINEAR_SLIDES_15);
                 automation = false;
@@ -171,13 +171,13 @@ public class ConeTransporter extends HWMap {
     public void retractOdometryServos() {
         leftServo.setPosition(LEFT_RETRACT_POS);
         rightServo.setPosition(RIGHT_RETRACT_POS);
-        frontServo.setPosition(FRONT_RETRACT_POS);
+        //frontServo.setPosition(FRONT_RETRACT_POS);
     }
 
     public void unretractOdometryServos() {
         leftServo.setPosition(LEFT_UNRETRACT_POS);
         rightServo.setPosition(RIGHT_UNRETRACT_POS);
-        frontServo.setPosition(FRONT_UNRETRACT_POS);
+        //frontServo.setPosition(FRONT_UNRETRACT_POS);
     }
     public void loop(){
         if (ledTimer.time(TimeUnit.MILLISECONDS) < 450){
