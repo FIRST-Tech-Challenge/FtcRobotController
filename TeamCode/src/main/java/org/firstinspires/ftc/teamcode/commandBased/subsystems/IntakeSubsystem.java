@@ -15,14 +15,10 @@ import org.firstinspires.ftc.teamcode.commandBased.Constants;
 public class IntakeSubsystem extends SubsystemBase {
 
     private final CRServo intake;
-    private RollingAverage averageCurrent;
-
 
     //servo bus current
     private final LynxModule exHub;
-    private LynxGetADCCommand.Channel servoChannel;
-    private LynxGetADCCommand servoCommand;
-    private LynxGetADCResponse servoResponse;
+    private final RollingAverage averageCurrent;
     double servoBusCurrent = 0;
 
     public IntakeSubsystem(HardwareMap hwMap) {
@@ -39,10 +35,10 @@ public class IntakeSubsystem extends SubsystemBase {
     }
 
     private double calculateServoBusCurrent() {
-        servoChannel = LynxGetADCCommand.Channel.SERVO_CURRENT;
-        servoCommand = new LynxGetADCCommand(exHub, servoChannel, LynxGetADCCommand.Mode.ENGINEERING);
+        LynxGetADCCommand.Channel servoChannel = LynxGetADCCommand.Channel.SERVO_CURRENT;
+        LynxGetADCCommand servoCommand = new LynxGetADCCommand(exHub, servoChannel, LynxGetADCCommand.Mode.ENGINEERING);
         try {
-            servoResponse = servoCommand.sendReceive();
+            LynxGetADCResponse servoResponse = servoCommand.sendReceive();
             return servoResponse.getValue();
         } catch (InterruptedException | RuntimeException | LynxNackException ignored) {
         }

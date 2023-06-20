@@ -29,10 +29,10 @@ public class RotatorTuningProgram extends BlackOp {
 
         ReforgedGamepad driver = new ReforgedGamepad(gamepad1);
 
-        MoveArmToAngle positionArm = new MoveArmToAngle(armSS, 90, Constants.ARM_MAX_VELO, Constants.ARM_MAX_ACCEL);
+        MoveArmToAngle positionArm = new MoveArmToAngle(armSS, Constants.ARM_ANGLE_FRONT);
 
-        MoveRotatorToPosition rotatorBack = new MoveRotatorToPosition(rotatorSS, Constants.ROTATOR_FORWARD);
-        MoveRotatorToPosition rotatorFront = new MoveRotatorToPosition(rotatorSS, Constants.ROTATOR_BACK);
+        MoveRotatorToPosition rotatorBack = new MoveRotatorToPosition(rotatorSS, Constants.ROTATOR_BACK);
+        MoveRotatorToPosition rotatorFront = new MoveRotatorToPosition(rotatorSS, Constants.ROTATOR_FRONT);
 
         IncrementRotatorPulse lowerSmallUpIncrement = new IncrementRotatorPulse(rotatorSS, Constants.ROTATOR_SMALL_INCREMENT, true);
         IncrementRotatorPulse lowerSmallDownIncrement = new IncrementRotatorPulse(rotatorSS, -Constants.ROTATOR_SMALL_INCREMENT, true);
@@ -58,6 +58,8 @@ public class RotatorTuningProgram extends BlackOp {
 
         Scheduler.launchOnStart(this, () -> {
             CommandScheduler.getInstance().run();
+
+            driver.left_bumper.onRise(defaultRange::schedule);
 
             driver.dpad_up.onRise(lowerLargeUpIncrement::schedule);
             driver.dpad_down.onRise(lowerLargeDownIncrement::schedule);

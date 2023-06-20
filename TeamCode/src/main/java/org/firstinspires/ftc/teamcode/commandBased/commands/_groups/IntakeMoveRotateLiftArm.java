@@ -20,15 +20,13 @@ public class IntakeMoveRotateLiftArm extends TriggerCommandGroup {
             RotatorSubsystem rot,
             IntakeSubsystem intake,
             double armAngle,
-            double armVelo,
-            double armAccel,
             double eleTarget,
             double rotAngle,
             double intakePower
     ) {
         addCommands(
                 new SetIntakePower(intake, intakePower),
-                new MoveArmToAngle(arm, armAngle, armVelo, armAccel),
+                new MoveArmToAngle(arm, armAngle),
                 new MoveRotatorToPosition(rot, rotAngle),
                 new MoveElevatorToPosition(ele, eleTarget)
         );

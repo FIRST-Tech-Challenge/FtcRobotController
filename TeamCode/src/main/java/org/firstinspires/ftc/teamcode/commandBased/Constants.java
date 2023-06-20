@@ -15,10 +15,10 @@ public class Constants {
 
     //debug toggles
     public static boolean DEBUG_DRIVE = false;
-    public static boolean DEBUG_ELE = true;
+    public static boolean DEBUG_ELE = false;
     public static boolean DEBUG_ARM = true;
     public static boolean DEBUG_ROTATOR = false;
-    public static boolean DEBUG_INTAKE = true;
+    public static boolean DEBUG_INTAKE = false;
 
     //motor types
     public static Motor.GoBILDA DRIVE_MOTOR = Motor.GoBILDA.RPM_312;
@@ -63,17 +63,42 @@ public class Constants {
     public static double ELE_TRIGGER = 4;
 
     //arm pid
-    public static PIDCoefficients ARM_COEFFS = new PIDCoefficients(.004, 0.00075, 0);
+    // 0.007, 0, 0, .0007, 0, 0, .125
+    public static PIDCoefficients ARM_COEFFS = new PIDCoefficients(.007, 0, 0);
 
-    public static double ARM_KV = 0;
+//    public static PIDCoefficients ARM_COEFFS_FRONT_BACK = new PIDCoefficients(.004, 0.00075, 0);
+//    public static PIDCoefficients ARM_COEFFS_IDLE_FRONT = new PIDCoefficients(.004, 0.00075, 0);
+//    public static PIDCoefficients ARM_COEFFS_IDLE_BACK = new PIDCoefficients(.004, 0.00075, 0);
+//    public static PIDCoefficients ARM_COEFFS_FRONT_IDLE = new PIDCoefficients(.004, 0.00075, 0);
+//    public static PIDCoefficients ARM_COEFFS_BACK_IDLE = new PIDCoefficients(.004, 0.00075, 0);
+
+    public static double ARM_KV = 0.0007;
     public static double ARM_KA = 0;
+
     public static double ARM_KS = 0.05;
-    public static double ARM_KSIN = .15;
+    public static double ARM_KSIN = .125;
 
     public static double ARM_IDLE_VELO = 800;
     public static double ARM_IDLE_ACCEL = 1600;
+
     public static double ARM_MAX_VELO = 1600;
     public static double ARM_MAX_ACCEL = 4000;
+
+    public static double ARM_VELO_FRONT_BACK = 1600;
+    public static double ARM_ACCEL_FRONT_BACK = 4000;
+
+    public static double ARM_VELO_IDLE_FRONT = 1600;
+    public static double ARM_ACCEL_IDLE_FRONT = 4000;
+
+    public static double ARM_VELO_IDLE_BACK = 1600;
+    public static double ARM_ACCEL_IDLE_BACK = 4000;
+
+    public static double ARM_VELO_FRONT_IDLE = 1600;
+    public static double ARM_ACCEL_FRONT_IDLE = 4000;
+
+    public static double ARM_VELO_BACK_IDLE = 1600;
+    public static double ARM_ACCEL_BACK_IDLE = 4000;
+
 
     //arm angle positions
     public static double ARM_ANGLE_BACK = -110;
@@ -92,14 +117,16 @@ public class Constants {
     public static double ARM_ENC_CENTER = -145;
 
     //rotator limits
-    public static double ROTATOR_FORWARD = 1;
+    public static double ROTATOR_FRONT = 1;
     public static double ROTATOR_BACK = 0;
-    public static PwmControl.PwmRange TUNED_RANGE = new PwmControl.PwmRange(530, 2340);
+    public static PwmControl.PwmRange TUNED_RANGE = new PwmControl.PwmRange(590, 2400);
 
     public static double ROTATOR_SMALL_INCREMENT = 10;
     public static double ROTATOR_LARGE_INCREMENT = 100;
 
-    //iintake powers
+    public static int ROTATOR_AVG_LENGTH = 10;
+
+    //intake powers
     public static double INTAKE_IN = 1;
     public static double INTAKE_IDLE = 0;
     public static double INTAKE_OUT = -1;

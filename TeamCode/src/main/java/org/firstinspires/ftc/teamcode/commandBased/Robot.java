@@ -11,6 +11,7 @@ import org.firstinspires.ftc.teamcode.commandBased.commands._groups.GrabCone;
 import org.firstinspires.ftc.teamcode.commandBased.commands._groups.LiftMoveRotateArm;
 import org.firstinspires.ftc.teamcode.commandBased.commands._groups.ScoreCone;
 import org.firstinspires.ftc.teamcode.commandBased.commands.arm.MoveArmToAngle;
+import org.firstinspires.ftc.teamcode.commandBased.commands.arm.UpdatePID;
 import org.firstinspires.ftc.teamcode.commandBased.commands.drive.SetDriveSpeeds;
 import org.firstinspires.ftc.teamcode.commandBased.commands.elevator.MoveElevatorToPosition;
 import org.firstinspires.ftc.teamcode.commandBased.commands.drive.PointCentric;
@@ -96,26 +97,22 @@ public class Robot extends BlackOp {
         //create arm commands
         MoveArmToAngle armBackward = new MoveArmToAngle(
                 armSS,
-                Constants.ARM_ANGLE_BACK,
-                Constants.ARM_MAX_VELO,
-                Constants.ARM_MAX_ACCEL
+                Constants.ARM_ANGLE_BACK
         );
         MoveArmToAngle armIdle = new MoveArmToAngle(
                 armSS,
-                Constants.ARM_ANGLE_IDLE,
-                Constants.ARM_IDLE_VELO,
-                Constants.ARM_IDLE_ACCEL
+                Constants.ARM_ANGLE_IDLE
         );
         MoveArmToAngle armForward = new MoveArmToAngle(
                 armSS,
-                Constants.ARM_ANGLE_FRONT,
-                Constants.ARM_MAX_VELO,
-                Constants.ARM_MAX_ACCEL
+                Constants.ARM_ANGLE_FRONT
         );
+
+        UpdatePID updatePID = new UpdatePID(armSS);
 
         //create rotator commands
         MoveRotatorToPosition rotatorBack = new MoveRotatorToPosition(rotatorSS, Constants.ROTATOR_BACK);
-        MoveRotatorToPosition rotatorFront = new MoveRotatorToPosition(rotatorSS, Constants.ROTATOR_FORWARD);
+        MoveRotatorToPosition rotatorFront = new MoveRotatorToPosition(rotatorSS, Constants.ROTATOR_FRONT);
 
         SetRotatorRange rotatorRange = new SetRotatorRange(rotatorSS, Constants.TUNED_RANGE);
 
@@ -125,7 +122,7 @@ public class Robot extends BlackOp {
         SetIntakePower intakeOuttake = new SetIntakePower(intakeSS, -1);
 
         //create group commands
-        ScoreCone scoreToIdle = new ScoreCone(
+        ScoreCone scoreCone = new ScoreCone(
                 elevatorSS,
                 armSS,
                 rotatorSS,
@@ -139,13 +136,38 @@ public class Robot extends BlackOp {
                 intakeSS
         );
 
+        LiftMoveRotateArm armFrontMid = new LiftMoveRotateArm(
+                elevatorSS,
+                armSS,
+                rotatorSS,
+                Constants.ARM_ANGLE_FRONT,
+                Constants.ELE_MID_HIGH,
+                Constants.ROTATOR_FRONT
+        );
+
+        LiftMoveRotateArm armBackMid = new LiftMoveRotateArm(
+                elevatorSS,
+                armSS,
+                rotatorSS,
+                Constants.ARM_ANGLE_BACK,
+                Constants.ELE_MID_HIGH,
+                Constants.ROTATOR_BACK
+        );
+
+        LiftMoveRotateArm armFrontHigh = new LiftMoveRotateArm(
+                elevatorSS,
+                armSS,
+                rotatorSS,
+                Constants.ARM_ANGLE_FRONT,
+                Constants.ELE_HIGH,
+                Constants.ROTATOR_FRONT
+        );
+
         LiftMoveRotateArm armBackHigh = new LiftMoveRotateArm(
                 elevatorSS,
                 armSS,
                 rotatorSS,
                 Constants.ARM_ANGLE_BACK,
-                Constants.ARM_MAX_VELO,
-                Constants.ARM_MAX_ACCEL,
                 Constants.ELE_HIGH,
                 Constants.ROTATOR_BACK
         );
@@ -207,13 +229,15 @@ public class Robot extends BlackOp {
             driver.back.onRise(rotatorBack::schedule);
             driver.start.onRise(rotatorFront::schedule);
 
+            driver.right_stick_button.onRise(updatePID::schedule);
+
             //intake controls
             driver.left_bumper.onRise(intakeOuttake::schedule)
                               .onFall(intakeIdle::schedule);
             driver.right_bumper.onRise(intakeIntake::schedule)
                                .onFall(intakeIdle::schedule);
 
-            driver.left_trigger(0.5).and(driver.a).onRise(scoreToIdle::schedule);
+            driver.left_trigger(0.5).and(driver.a).onRise(scoreCone::schedule);
             driver.left_trigger(0.5).and(driver.right_trigger(0.5)).onRise(grabCone::schedule);
 
             driver.left_trigger(0.5).and(driver.y).onRise(armBackHigh::schedule);
@@ -259,7 +283,7 @@ public class Robot extends BlackOp {
                 mTelemetry().addData("rotator usFrame", rotatorSS.getPWMRange()[0]);
                 mTelemetry().addData("rotator usPulseLower", rotatorSS.getPWMRange()[1]);
                 mTelemetry().addData("rotator usPulseUpper", rotatorSS.getPWMRange()[2]);
-                //mTelemetry().addData("rotator current", rotatorSS.getCurrent());
+                mTelemetry().addData("rotator current", rotatorSS.getAverageCurrent());
             }
 
             if (Constants.DEBUG_INTAKE) {

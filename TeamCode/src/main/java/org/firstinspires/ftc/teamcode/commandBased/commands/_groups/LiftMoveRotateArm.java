@@ -15,14 +15,12 @@ public class LiftMoveRotateArm extends TriggerCommandGroup {
             ArmSubsystem arm,
             RotatorSubsystem rot,
             double armAngle,
-            double armVelo,
-            double armAccel,
             double eleTarget,
             double rotAngle
     ) {
         addCommands(
                 new MoveElevatorToPosition(ele, eleTarget),
-                new MoveArmToAngle(arm, armAngle, armVelo, armAccel),
+                new MoveArmToAngle(arm, armAngle),
                 new MoveRotatorToPosition(rot, rotAngle)
         );
         addRequirements(ele, arm, rot);

@@ -7,20 +7,45 @@ import org.firstinspires.ftc.teamcode.commandBased.subsystems.ArmSubsystem;
 public class MoveArmToAngle extends TriggerCommandBase {
 
     private final double angle;
-    private final double velo;
-    private final double accel;
     private final ArmSubsystem m_armSubsystem;
 
-    public MoveArmToAngle(ArmSubsystem armSubsystem, double angle, double velo, double accel) {
+    public MoveArmToAngle(ArmSubsystem armSubsystem, double angle) {
         m_armSubsystem = armSubsystem;
         addRequirements(m_armSubsystem);
         this.angle = angle;
-        this.velo = velo;
-        this.accel = accel;
     }
 
     @Override
     public void initialize() {
+        double velo = 0;
+        double accel = 0;
+
+        if (m_armSubsystem.getArmTargetAngle() == Constants.ARM_ANGLE_FRONT) {
+            if (angle == Constants.ARM_ANGLE_IDLE) {
+                velo = Constants.ARM_VELO_FRONT_IDLE;
+                accel = Constants.ARM_ACCEL_FRONT_IDLE;
+            } else if (angle == Constants.ARM_ANGLE_BACK) {
+                velo = Constants.ARM_VELO_FRONT_BACK;
+                accel = Constants.ARM_ACCEL_FRONT_BACK;
+            }
+        } else if (m_armSubsystem.getArmTargetAngle() == Constants.ARM_ANGLE_IDLE) {
+            if (angle == Constants.ARM_ANGLE_FRONT) {
+                velo = Constants.ARM_VELO_IDLE_FRONT;
+                accel = Constants.ARM_ACCEL_IDLE_FRONT;
+            } else if (angle == Constants.ARM_ANGLE_BACK) {
+                velo = Constants.ARM_VELO_IDLE_BACK;
+                accel = Constants.ARM_ACCEL_IDLE_BACK;
+            }
+        } else if (m_armSubsystem.getArmTargetAngle() == Constants.ARM_ANGLE_BACK) {
+            if (angle == Constants.ARM_ANGLE_FRONT) {
+                velo = Constants.ARM_VELO_FRONT_BACK;
+                accel = Constants.ARM_ACCEL_FRONT_BACK;
+            } else if (angle == Constants.ARM_ANGLE_IDLE) {
+                velo = Constants.ARM_VELO_BACK_IDLE;
+                accel = Constants.ARM_ACCEL_BACK_IDLE;
+            }
+        }
+
         m_armSubsystem.setArmAngle(angle, velo, accel);
     }
 

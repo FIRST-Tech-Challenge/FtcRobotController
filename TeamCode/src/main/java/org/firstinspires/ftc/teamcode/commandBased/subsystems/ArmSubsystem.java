@@ -26,7 +26,7 @@ public class ArmSubsystem extends SubsystemBase {
 
     private double KF;
 
-    private final PIDFController controller;
+    private PIDFController controller;
     private MotionProfile profile;
     private final ElapsedTime timer;
     private MotionState state;
@@ -124,6 +124,18 @@ public class ArmSubsystem extends SubsystemBase {
             angle = -180 - angle;
         }
         return Math.sin(Math.toRadians(angle));
+    }
+
+    public void createNewController() {
+        controller = new PIDFController(
+                Constants.ARM_COEFFS,
+                Constants.ARM_KV,
+                Constants.ARM_KA,
+                Constants.ARM_KS
+        );
+        controller.setTargetPosition(state.getX());
+        controller.setTargetVelocity(state.getV());
+        controller.setTargetAcceleration(state.getA());
     }
 
     public void setArmAngle(double target, double velo, double accel) {
