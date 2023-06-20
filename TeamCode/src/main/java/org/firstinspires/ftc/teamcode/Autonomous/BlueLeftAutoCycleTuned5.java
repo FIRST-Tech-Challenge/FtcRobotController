@@ -23,17 +23,21 @@ import java.util.ArrayList;
 //@Disabled
 
 @Config
-@Autonomous(name = "BlueLeftAutoCycleTuned")
+@Autonomous(name = "BlueLeftAutoCycleBoost5")
 
 
-public class BlueLeftAutoCycleTuned extends LinearOpMode {
+public class BlueLeftAutoCycleTuned5 extends LinearOpMode {
 
 
     public void runOpMode() {
         PwPRobot robot = new PwPRobot(this,false);
-        BlueLeftHigh autoRunner = new BlueLeftHigh(false,this, robot);
+        BlueLeftHigh autoRunner = new BlueLeftHigh(true,this, robot);
         sleep(500);
         autoRunner.init();
+        time=0;
+        while(time<3){
+            robot.updateTime();
+        }
         abort:
         while ((time < 27.5 && (!robot.queuer.isFullfilled() || robot.queuer.isFirstLoop()))&&!isStopRequested()) {
             autoRunner.preload();
@@ -55,6 +59,7 @@ public class BlueLeftAutoCycleTuned extends LinearOpMode {
             autoRunner.park();
             autoRunner.update();
         }
+        robot.stop();
         stop();
     }
 }

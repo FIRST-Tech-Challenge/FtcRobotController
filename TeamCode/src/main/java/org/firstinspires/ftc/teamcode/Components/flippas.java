@@ -19,7 +19,7 @@ public class flippas {
 
     private RFDualServo flippaServo;
 
-    private final double LIFT_ARM_INTAKE_POS = 0.3;
+    private final double LIFT_ARM_INTAKE_POS = 0.27;
     private final double LIFT_ARM_CYCLE_POS = 0.955;
 
     private final double LIFT_ARM_OUTTAKE_POS = 0.78;
@@ -72,12 +72,13 @@ public class flippas {
         //init RFServo
         flippaServo = new RFDualServo("rightFlipper", "leftFlipper", 1);
         //set servo position
+        flippaServo.setPositions(LIFT_ARM_OUTTAKE_POS);
+
         flippaServo.setPositions(LIFT_ARM_INTAKE_POS);
 
         //set state of claw open to true
         flippaStates.FLIP_OUTTAKE.setStatus(true);
 
-        flippaServo.setLasttime(-0.5);
 
     }
 

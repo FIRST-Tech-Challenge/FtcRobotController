@@ -21,7 +21,7 @@ public class RFDualServo implements Servo {
     private Servo dualServo1;
     private Servo dualServo2;
 
-    private double lasttime = 0;
+    private double lasttime = -100;
 
     private static final DecimalFormat df = new DecimalFormat("0.00");
 

@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.Autonomous;
 import static org.firstinspires.ftc.teamcode.Components.Claw.ClawStates.CLAW_CLOSED;
 import static org.firstinspires.ftc.teamcode.Components.Lift.LiftConstants.LIFT_HIGH_JUNCTION;
 import static org.firstinspires.ftc.teamcode.Components.Lift.LiftConstants.LIFT_MED_JUNCTION;
+import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.logger;
 import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.time;
 import static org.firstinspires.ftc.teamcode.roadrunner.drive.SampleMecanumDrive.getAccelerationConstraint;
 import static org.firstinspires.ftc.teamcode.roadrunner.drive.SampleMecanumDrive.getVelocityConstraint;
@@ -27,7 +28,7 @@ public class  BlueLeftMid {
     private boolean boosted, tooHot=false;
     PwPRobot robot=null;
     LinearOpMode op;
-    double dummyP = 0, dropX=29.5, dropY=19.25, dropA = toRadians(320),lastTime = 0.0;
+    double dummyP = 0, dropX=28.5, dropY=19.24, dropA = toRadians(320),lastTime = 0.0;
     ;
     TrajectorySequence preloadtrajectory=null, pickupTrajectory=null, park1trajectory=null,
             park2trajectory=null, park3trajectory=null, clearLTrajectory=null, clearRTrajectory=null,
@@ -54,7 +55,8 @@ public class  BlueLeftMid {
                 .setReversed(true)
                 .lineToLinearHeading(new Pose2d(34, 48, toRadians(90)))
                 .splineToSplineHeading(new Pose2d(32, 14, toRadians(315)), toRadians(270))
-                .lineToLinearHeading(new Pose2d(dropX+0.8, dropY-0.5, toRadians(315)))
+                .lineToLinearHeading(new Pose2d(dropX, dropY, toRadians(310)))
+                .addTemporalMarker(robot::done)
                 .build();
 
 //        pickupTrajectory = robot.roadrun.trajectorySequenceBuilder(new Pose2d(dropX,dropY,Math.toRadians(315)))
@@ -75,36 +77,38 @@ public class  BlueLeftMid {
         }
 
         for (int i = 0; i < 5; i++) {
-            dropTrajectory.add(robot.roadrun.trajectorySequenceBuilder(new Pose2d(65,11+0.6*i,Math.toRadians(0)))
+            dropTrajectory.add(robot.roadrun.trajectorySequenceBuilder(new Pose2d(62,11.5+0.4*i,Math.toRadians(0)))
+                            .addTemporalMarker(()->robot.setPoling(true))
                     .setReversed(true)
-                    .splineTo(new Vector2d(dropX,dropY+0.75*i), toRadians(150))
+                    .splineTo(new Vector2d(dropX-0.5*i,dropY+0.5*i), toRadians(143))
                     .addTemporalMarker(robot::done)
                     .build());
         }
         for (int i = 0; i < 5; i++) {
-            pick.add(robot.roadrun.trajectorySequenceBuilder(new Pose2d(dropX,dropY+0.75*i,dropA))
+            pick.add(robot.roadrun.trajectorySequenceBuilder(dropTrajectory.get(i).end())
+                    .addTemporalMarker(()->robot.setConing(true))
                     .setReversed(false)
-                    .splineTo(new Vector2d(65,11.5+0.6*i), 0, robot.roadrun.getVelocityConstraint(50, 9, 14) , robot.roadrun.getAccelerationConstraint(60))
+                    .splineTo(new Vector2d(64,11.5+0.4*i), 0)
                     .addTemporalMarker(robot::done)
                     .build());
         }
-        reDropTrajectory = robot.roadrun.trajectorySequenceBuilder(new Pose2d(dropX,dropY,Math.toRadians(31)))
+        reDropTrajectory = robot.roadrun.trajectorySequenceBuilder(new Pose2d(dropX,dropY+1.4,Math.toRadians(-37)))
                 .setReversed(false)
-                .lineToLinearHeading(new Pose2d(dropX+3.3,dropY+1.2,Math.toRadians(35)))
+                .lineToLinearHeading(new Pose2d(dropX+5.3,dropY-4.2+1.4,Math.toRadians(-37)))
                 .setReversed(true)
-                .lineToLinearHeading(new Pose2d(dropX,dropY,Math.toRadians(31)))
+                .lineToLinearHeading(new Pose2d(dropX-1.0,dropY+1.4,Math.toRadians(-37)))
                 .addTemporalMarker(robot::done)
                 .build();
 
-        park1trajectory = robot.roadrun.trajectorySequenceBuilder(new Pose2d(30, 5, Math.toRadians(40)))
+        park1trajectory = robot.roadrun.trajectorySequenceBuilder(dropTrajectory.get(4).end())
                 .setReversed(false)
-                .splineToSplineHeading(new Pose2d(60, 16, Math.toRadians(0)), Math.toRadians(0))
+                .splineToSplineHeading(new Pose2d(56.5, 16, Math.toRadians(0)), Math.toRadians(0))
                 .build();
-        park2trajectory = robot.roadrun.trajectorySequenceBuilder(new Pose2d(dropX,dropY, dropA))
-                .lineToLinearHeading(new Pose2d(38, 10,dropA))
-                .lineToLinearHeading(new Pose2d(38, 18,toRadians(90)))
+        park2trajectory = robot.roadrun.trajectorySequenceBuilder(dropTrajectory.get(4).end())
+//                .lineToLinearHeading(new Pose2d(38, 10,dropA))
+                .splineToLinearHeading(new Pose2d(36, 18,toRadians(270)), toRadians(270))
                 .build();
-        park3trajectory = robot.roadrun.trajectorySequenceBuilder(new Pose2d(dropX,dropY, dropA))
+        park3trajectory = robot.roadrun.trajectorySequenceBuilder(dropTrajectory.get(4).end())
                 .setReversed(false)
                 .splineToLinearHeading(new Pose2d(dropX+4,dropY-9, toRadians(-5)),toRadians(dropA))
                 .setReversed(true)
@@ -135,12 +139,8 @@ public class  BlueLeftMid {
     }
 
     public boolean pick(int i) {
-        int temp = i-1;
-        if (i == 0) {
-            robot.followTrajectorySequenceAsync(pick.get(0));
-        } else {
-            robot.followTrajectorySequenceAsync(pick.get(temp));
-        }
+
+            robot.followTrajectorySequenceAsync(pick.get(i));
 
         if (boosted) {
             boolean[] vals = robot.checkIsOb(clObL.get(i), clObR.get(i),pick.get(0).end());
@@ -168,9 +168,10 @@ public class  BlueLeftMid {
         }
         robot.closeClaw(false);
         if(boosted) {
-            robot.delay(0.5);
+            robot.delay(0.8);
         }
-        if (boosted && robot.queuer.queue(true, true) && !robot.clawSwitch.isSwitched()) {
+        if (boosted&& robot.queuer.queue(true, robot.queuer.isStarted()&&robot.clawSwitch.isSwitched())) {
+            logger.log("/RobotLogs/GeneralRobot", "checking");
             return robot.clawSwitch.isSwitched();
         }
         return true;
@@ -179,24 +180,24 @@ public class  BlueLeftMid {
     public void drop(int i) {
         robot.followTrajectorySequenceAsync(dropTrajectory.get(i));
         if (boosted) {
-//            robot.delay(0.4);
+//            robot.delay(0.1);
 //            robot.updateTrajectoryWithCam();
         }
 //        robot.delay(0.023 + 0.005 * (3 - i));
         robot.liftToPosition(LIFT_MED_JUNCTION);
-        robot.delay(0.1 + 0.005 * (3 - i));
+        robot.delay(0.15);
         robot.raiseLiftArmToOuttake(true);
         if (boosted) {
-//            robot.delay(0.1);
-//            boolean val = robot.poleInView(pInView.get(i+1));
-//            pInView.set(i+1, val);
-//            reDrop(i+1);
+            robot.delay(0.00);
+            boolean val = robot.poleInView(pInView.get(i+1));
+            pInView.set(i+1, val);
+            reDrop(i+1);
         }
-        robot.delay(0.1);
+        robot.delay(0.0);
         robot.wideClaw(false);
     }
     public void reDrop(int i){
-//        robot.followTrajectorySequenceAsync(reDropTrajectory,pInView.get(i));
+        robot.followTrajectorySequenceAsync(reDropTrajectory,pInView.get(i));
     }
 
     public void clearObstacleL(int i) {

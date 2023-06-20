@@ -12,6 +12,7 @@ import static java.lang.Math.sin;
 import static java.lang.Math.sqrt;
 import static java.lang.Math.toRadians;
 
+import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.acmerobotics.roadrunner.trajectory.Trajectory;
@@ -26,7 +27,7 @@ import org.firstinspires.ftc.teamcode.roadrunner.util.IMU;
 import java.util.ArrayList;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
-
+@Config
 public class Field {
     private SampleMecanumDrive roadrun;
     private CVMaster cv;
@@ -36,6 +37,7 @@ public class Field {
     private ArrayList<double[]> fullMovement = new ArrayList<>();
     private ArrayList<double[]> queuedMovement = new ArrayList<>();
     private double[] prevRotCoord = {0,0}, prevConCoord = {0,0};
+    public static double multiplier = 1.0, power=1.0;
 
     private ArrayList<Boolean> reversals = new ArrayList<>();
     private ArrayList<Boolean> queuedReversals = new ArrayList<>();
@@ -111,18 +113,18 @@ public class Field {
         Pose2d curPos = roadrun.getPoseEstimate(),endPose = roadrun.getEndPose();
         double[] vals = cv.rotatedPolarCoord();
         calcPolePose(curPos);
-        double dropRad = -6.5;
+        double dropRad = -6.53;
         //        coords[1]+=5;
         polePos = new Pose2d(polePose.getX()-cos(endPose.getHeading())*dropRad, polePose.getY()-sin(endPose.getHeading())*dropRad, endPose.getHeading());
         Pose2d pos = polePos;
         double dist = abs(pos.vec().distTo(endPose.vec())), distToTarget = abs(curPos.vec().distTo(endPose.vec()));
-//        logger.log("/RobotLogs/GeneralRobot", "polePos" + polePose);
-//        logger.log("/RobotLogs/GeneralRobot", "dropPos" + polePos);
-//        logger.log("/RobotLogs/GeneralRobot", "endPose" + endPose);
-//        logger.log("/RobotLogs/GeneralRobot", "dist" + dist);
-//        logger.log("/RobotLogs/GeneralRobot", "distToTarget" + distToTarget);
-//        logger.log("/RobotLogs/GeneralRobot", "cvVals" + vals[0]+","+vals[1]);
-        if (dist < 7 && distToTarget > 6 && distToTarget<30) {
+        logger.log("/RobotLogs/GeneralRobot", "polePos" + polePose);
+        logger.log("/RobotLogs/GeneralRobot", "dropPos" + polePos);
+        logger.log("/RobotLogs/GeneralRobot", "endPose" + endPose);
+        logger.log("/RobotLogs/GeneralRobot", "dist" + dist);
+        logger.log("/RobotLogs/GeneralRobot", "distToTarget" + distToTarget);
+        logger.log("/RobotLogs/GeneralRobot", "cvVals" + vals[0]+","+vals[1]);
+        if (dist < 7 && distToTarget > 6 && distToTarget<30&&vals[1]>distToTarget-1) {
             return true;
         }
         return false;
@@ -235,9 +237,11 @@ public class Field {
     }
 
     public Vector2d calcPolePose(Pose2d curPos){
-        double camRad = 4.5;
+        double camRad = 5;
         double[] rotCoord = cv.rotatedPolarCoord();
-        if(abs(rotCoord[1]) < 23 && rotCoord[1] > 5&&rotCoord!=prevRotCoord){
+        rotCoord[1]=pow(rotCoord[1],power);
+        rotCoord[1]*=multiplier;
+        if(abs(rotCoord[1]) < 30 && rotCoord[1] > 4&&rotCoord!=prevRotCoord){
             double t = rotCoord[0]*PI/180+PI+curPos.getHeading();
             polePose = new Vector2d(curPos.getX()+cos(t)*rotCoord[1]+cos(curPos.getHeading()+PI)*camRad,
                     curPos.getY()+sin(t)*rotCoord[1]+sin(curPos.getHeading()+PI)*camRad);

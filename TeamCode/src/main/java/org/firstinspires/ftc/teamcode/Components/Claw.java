@@ -42,9 +42,9 @@ public class Claw {
     //temporary
     private final double CLAW_OPEN_POS = 0.47;
 
-    private final double CLAW_WIDE_POS = 0.61;
+    private final double CLAW_WIDE_POS = 0.605;
 
-    private final double CLAW_Tele_POS = 0.61;
+    private final double CLAW_Tele_POS = 0.605;
 
 
     //temporary

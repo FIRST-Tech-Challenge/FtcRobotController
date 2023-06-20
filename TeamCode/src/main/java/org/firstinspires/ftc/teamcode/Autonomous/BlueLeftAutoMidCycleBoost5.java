@@ -23,26 +23,28 @@ import java.util.ArrayList;
 //@Disabled
 
 @Config
-@Autonomous(name = "BlueLeftAutoCycleTuned")
+@Autonomous(name = "BlueLeftAutoMidCycleboost5")
 
 
-public class BlueLeftAutoCycleTuned extends LinearOpMode {
-
-
+public class BlueLeftAutoMidCycleBoost5 extends LinearOpMode {
     public void runOpMode() {
         PwPRobot robot = new PwPRobot(this,false);
-        BlueLeftHigh autoRunner = new BlueLeftHigh(false,this, robot);
-        sleep(500);
+//        sleep(500);
+        BlueLeftMid autoRunner = new BlueLeftMid(true,this, robot);
         autoRunner.init();
+        time=0;
+        while(time<3){
+            robot.updateTime();
+        }
         abort:
-        while ((time < 27.5 && (!robot.queuer.isFullfilled() || robot.queuer.isFirstLoop()))&&!isStopRequested()) {
+        while ((time < 27.4 && (!robot.queuer.isFullfilled() || robot.queuer.isFirstLoop()))&&!isStopRequested()) {
             autoRunner.preload();
             for (int i = 0; i < 5; i++) {
                 if (!autoRunner.pick(i)) {
                     break abort;
                 }
                 if(i==3){
-//                    robot.roadrun.update();
+                    robot.roadrun.update();
                 }
                 autoRunner.drop(i);
             }
@@ -51,10 +53,12 @@ public class BlueLeftAutoCycleTuned extends LinearOpMode {
         robot.done();
         robot.queuer.reset();
         robot.done();
-        while ((time < 29.9 && (!robot.queuer.isFullfilled() || robot.queuer.isFirstLoop()))&&!isStopRequested()) {
+        while ((time < 29.8 && (!robot.queuer.isFullfilled() || robot.queuer.isFirstLoop()))&&!isStopRequested()) {
             autoRunner.park();
             autoRunner.update();
         }
+        robot.stop();
+
         stop();
     }
 }

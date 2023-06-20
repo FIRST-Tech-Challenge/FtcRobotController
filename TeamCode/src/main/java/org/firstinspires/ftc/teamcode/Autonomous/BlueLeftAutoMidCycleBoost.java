@@ -40,7 +40,7 @@ public class BlueLeftAutoMidCycleBoost extends LinearOpMode {
         sleep(500);
         autoRunner.init();
         abort:
-        while ((getRuntime() < 27 && (!robot.queuer.isFullfilled() || robot.queuer.isFirstLoop()))&&!isStopRequested()) {
+        while ((time < 27.7 && (!robot.queuer.isFullfilled() || robot.queuer.isFirstLoop()))&&!isStopRequested()) {
             autoRunner.preload();
             for (int i = 0; i < 5; i++) {
                 if (!autoRunner.pick(i)) {
@@ -56,10 +56,12 @@ public class BlueLeftAutoMidCycleBoost extends LinearOpMode {
         robot.done();
         robot.queuer.reset();
         robot.done();
-        while ((getRuntime() < 29.8 && (!robot.queuer.isFullfilled() || robot.queuer.isFirstLoop()))&&!isStopRequested()) {
+        while ((time < 29.8 && (!robot.queuer.isFullfilled() || robot.queuer.isFirstLoop()))&&!isStopRequested()) {
             autoRunner.park();
             autoRunner.update();
         }
+        robot.stop();
+
         stop();
     }
 }

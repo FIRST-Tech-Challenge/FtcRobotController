@@ -25,14 +25,15 @@ public class StickObserverPipeline extends OpenCvPipeline {
     boolean poleInView = false;
     double[] contourDimensions = {0,0};
     ArrayList<double[]> frameList;
-    public static double LowS = 120;
+    public static double LowS = 145;
+
     public static double HighS = 255;
-    public static double LowH = 20;
-    public static double HighH = 30;
-    public static double LowV = 100;
+    public static double LowH = 22;
+    public static double HighH = 32;
+    public static double LowV = 120;
     public static double HighV = 255;
     public static double minWidth = 20;
-    public static double minAreaThresh = 0.1;
+    public static double minAreaThresh = 0.05;
 
 
 
@@ -67,6 +68,7 @@ public class StickObserverPipeline extends OpenCvPipeline {
 //
 //        Mat scaledMask = new Mat();
 //        //scale the average saturation to 150
+
 //        masked.convertTo(scaledMask,-1,150/average.val[1],0);
 //
 //
@@ -91,7 +93,7 @@ public class StickObserverPipeline extends OpenCvPipeline {
         for (int i = 0; i < contours.size(); i++) {
             contoursPoly[i] = new MatOfPoint2f();
             //convert contour to approximate polygon
-            Imgproc.approxPolyDP(new MatOfPoint2f(contours.get(i).toArray()), contoursPoly[i], 10, true);
+            Imgproc.approxPolyDP(new MatOfPoint2f(contours.get(i).toArray()), contoursPoly[i], 5     , true);
             //find rotatedRect for polygon
             rectangle[i] = Imgproc.minAreaRect(contoursPoly[i]);
         }
@@ -122,7 +124,7 @@ public class StickObserverPipeline extends OpenCvPipeline {
             if(rectangle[maxAreaIndex].size.height<rectangle[maxAreaIndex].size.width) {
                 poleSize = rectangle[maxAreaIndex].size.height;
                 centerOfPole = rectangle[maxAreaIndex].center.x - 320;
-                if(rectangle[maxAreaIndex].size.width>480.0*0.8/*&&poleSize>minWidth*/){
+                if(rectangle[maxAreaIndex].size.width>480.0*0.8&&poleSize>minWidth){
                     poleInView = true;
                 }
                 else{
@@ -134,7 +136,7 @@ public class StickObserverPipeline extends OpenCvPipeline {
             else{
                 poleSize = rectangle[maxAreaIndex].size.width;
                 centerOfPole = rectangle[maxAreaIndex].center.x - 320;
-                if(rectangle[maxAreaIndex].size.height>480.0*0.8/*&&poleSize>minWidth*/){
+                if(rectangle[maxAreaIndex].size.height>480.0*0.8&&poleSize>minWidth){
                     poleInView = true;
                 }
                 else{
@@ -152,7 +154,7 @@ public class StickObserverPipeline extends OpenCvPipeline {
         if(frameList.size()>2) {
             frameList.remove(0);
         }
-        contourSize = Core.sumElems(thresh).val[0]*0.00083;
+        contourSize = Core.sumElems(thresh).val[0]/255/480/640;
         if(contourSize>minAreaThresh){
             poleInView=true;
         }
@@ -218,6 +220,6 @@ public class StickObserverPipeline extends OpenCvPipeline {
         if(abs(center)+5 >= 320-(consiz*0.5)||consiz*0.5>239){
             return new double[]{0,0};
         }
-        return new double[]{1.1*-atan(center*.0014)*57.296, abs(1.3/(2*tan(atan((center+consiz*0.5)*.0014)-atan(center*.0014))))};
+        return new double[]{-atan((center-320)/715)*180/PI, abs(1.0/(2*tan(atan((center+consiz*0.5-320)/715)-atan((center-consiz*0.5-320)/715))))};
     }
 }

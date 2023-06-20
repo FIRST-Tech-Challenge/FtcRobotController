@@ -1,8 +1,8 @@
 dependencies {
     implementation project(':FtcRobotController')
-    implementation 'org.firstinspires.ftc:RobotCore:8.0.0'
-    implementation 'org.firstinspires.ftc:Hardware:8.0.0'
-    implementation 'org.firstinspires.ftc:FtcCommon:8.0.0'
+    implementation 'org.firstinspires.ftc:RobotCore:8.1.1'
+    implementation 'org.firstinspires.ftc:Hardware:8.1.1'
+    implementation 'org.firstinspires.ftc:FtcCommon:8.1.1'
     implementation (name: 'tfod-release', ext:'aar')
     implementation (name: 'tensorflow-lite-0.0.0-nightly', ext:'aar')
 }

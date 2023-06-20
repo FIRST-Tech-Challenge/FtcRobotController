@@ -25,6 +25,7 @@ import static java.lang.Math.abs;
 import static java.lang.Math.atan2;
 import static java.lang.Math.cbrt;
 import static java.lang.Math.cos;
+import static java.lang.Math.pow;
 import static java.lang.Math.sin;
 import static java.lang.Math.sqrt;
 
@@ -118,14 +119,16 @@ public class PwPRobot extends BasicRobot {
         RESISTANCE *= 13 / voltageSensor.getVoltage();
         RFMotor.kA *= 13 / voltageSensor.getVoltage();
 //        DriveConstants.TRACK_WIDTH *= 12.7 / voltageSensor.getVoltage();
-        kV *= 12.8 / voltageSensor.getVoltage();
+        DriveConstants.MAX_ACCEL*=13/voltageSensor.getVoltage();
+        DriveConstants.MAX_VEL*=13/voltageSensor.getVoltage();
+//        kV *= 12.8 / voltageSensor.getVoltage();
 //        if(voltage > 12.9){
-            kA *= cbrt(12.5/voltage);
+//            kA *= pow(12.0/voltage,1.2);
 //        }
 //        else{
 //            kA *= sqrt(12.5 / voltage);
 //        }
-        DriveConstants.kStatic *= 12.8 / voltageSensor.getVoltage();
+//        DriveConstants.kStatic *= 12.8 / voltageSensor.getVoltage();
     }
 //    com.qualcomm.ftcrobotcontroller I/art: Waiting for a blocking GC Alloc
 //2023-01-05 14:19:08.807 9944-10985/com.qualcomm.ftcrobotcontroller I/art: Alloc sticky concurrent mark sweep GC freed 340391(7MB) AllocSpace objects, 0(0B) LOS objects, 20% free, 43MB/54MB, paused 2.675ms total 197.819ms
@@ -134,7 +137,9 @@ public class PwPRobot extends BasicRobot {
 
     public void stop() {
         logger.logPos(roadrun.getPoseEstimate());
-        cv.stopCamera();
+        roadrun.breakFollowing();
+        roadrun.setMotorPowers(0,0,0,0);
+//        cv.stopCamera();
         logger.log("/RobotLogs/GeneralRobot", "program stoped");
     }
 
@@ -616,7 +621,7 @@ public class PwPRobot extends BasicRobot {
     }
 
     public void wideClaw(boolean asyn) {
-        if (queuer.queue(asyn, !CLAW_WIDING.getStatus())) {
+        if (queuer.queue(asyn, !CLAW_WIDING.getStatus()&&claw.isClawWide())) {
             claw.wideClaw();
         }
     }
@@ -934,15 +939,16 @@ public class PwPRobot extends BasicRobot {
 
     public boolean poleInView(boolean isInView) {
         boolean val = isInView;
-        if (queuer.queue(false, !poling)) {
-            if (cv.poleInView() && isInView) {
+        if (queuer.queue(false, coning)) {
+            if (cv.poleInView() && !isInView) {
+                setConing(true);
                 val = false;
                 logger.log("/RobotLogs/GeneralRobot", "contourDimensions" + cv.getContourDimensions()[0] + "," + cv.getContourDimensions()[1]);
                 logger.log("/RobotLogs/GeneralRobot", "contourSize" + cv.getContourSize());
             } else if (!cv.poleInView() && !isInView) {
                 logger.log("/RobotLogs/GeneralRobot", "contourDimensions" + cv.getContourDimensions()[0] + "," + cv.getContourDimensions()[1]);
                 logger.log("/RobotLogs/GeneralRobot", "contourSize" + cv.getContourSize());
-
+                setConing(true);
                 val = true;
             }
         }
@@ -1139,7 +1145,7 @@ public class PwPRobot extends BasicRobot {
             if (regularDrive) {
                 setTRUEMAXDrivingExperience(abs(vals[1] - 0.0001) / -vals[1] * (0.55 * sqrt(abs(vals[1])) + 0.45 * vals[1] * vals[1]),
                         abs(vals[0] - 0.0001) / -vals[0] * (0.55 * sqrt(abs(vals[0])) + 0.45 * vals[0] * vals[0]),
-                        abs(vals[2] - 0.0001) / -vals[2] * (0.45 * sqrt(abs(vals[2])) + 0.15 * vals[2] * vals[2]), 0.001);
+                        abs(vals[2] - 0.0001) / -vals[2] * (0.53 * sqrt(abs(vals[2])) + 0.23 * vals[2] * vals[2]), 0.001);
             } else {
 //                Vector2d input = new Vector2d(abs(vals[1] - 0.0001) / -vals[1] * (minBoost[1] + 0.5 * abs(vals[1]) + 0.15 * pow(abs(vals[1]), 3)),
 //                        abs(vals[0] - 0.0001) / -vals[0] * (minBoost[0] + 0.5 * abs(vals[0]) + 0.15 * pow(abs(vals[0]), 3)));
@@ -1197,7 +1203,7 @@ public class PwPRobot extends BasicRobot {
             }
         }
 //        claw.closeClaw();
-        if (!prezzed && CLAW_CLOSED.getStatus()) {
+        if (!prezzed && CLAW_CLOSED.getStatus()&& ARM_INTAKE.getStatus()) {
             claw.wideClaw();
         }
         if (time - claw.getLastTime() > 1 && time - claw.getLastTime() < 1.3 && CLAW_CLOSED.getStatus() && lift.getStackPos() == lift.getLiftTarget()) {
@@ -1224,9 +1230,13 @@ public class PwPRobot extends BasicRobot {
         }*/ else if (lift.getLiftTarget() == lift.getStackPos()) {
             setStackLevelColor(lift.getStackLevel());
         } else if (CLAW_OPEN.getStatus() || CLAW_WIDE.getStatus()) {
-            darkGreen();
+            if (distBroke) {
+partycolorwave();
+            } else{
+                darkGreen();
+        }
         } else {
-            partycolorwave();
+            heartbeatRed();
         }
 
 

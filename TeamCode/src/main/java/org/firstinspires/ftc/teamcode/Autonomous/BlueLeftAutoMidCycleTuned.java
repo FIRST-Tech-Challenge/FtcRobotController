@@ -37,7 +37,7 @@ public static double pickupX2 = 63, pickupY2 = 11.5, pickupA2 = toRadians(0), pi
 
     public void runOpMode() {
         PwPRobot robot = new PwPRobot(this,false);
-        BlueLeftMid autoRunner = new BlueLeftMid(true,this, robot);
+        BlueLeftMid autoRunner = new BlueLeftMid(false,this, robot);
         sleep(500);
         autoRunner.init();
         abort:

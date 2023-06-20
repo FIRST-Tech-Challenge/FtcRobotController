@@ -62,6 +62,8 @@ public class BlueRightAutoMidCycleBoost extends LinearOpMode {
             autoRunner.park();
             autoRunner.update();
         }
+        robot.stop();
+
         stop();
     }
 }

@@ -26,8 +26,8 @@ public class RFMotor extends Motor {
     private ArrayList<Double> coefs = null;
     private ArrayList<Double> coefs2 = null;
     private ArrayList<String> inputlogs = new ArrayList<>();
-    public static double D = 0.00000, D2 = 0, kP = 5E-4, kA = 0.00014, R = 0,kS=0.15,
-            MAX_VELOCITY = 1/kP, MAX_ACCELERATION = 11500, DECEL_DIST = 60, RESISTANCE=400;
+    public static double D = 0.00000, D2 = 0, kP = 5E-4, kA = 0.0001, R = 0,kS=0.15,
+            MAX_VELOCITY = 1/kP, MAX_ACCELERATION = 11000, DECEL_DIST = 60, RESISTANCE=400;
     private double maxtickcount = 0;
     private double mintickcount = 0;
     private double DEFAULTCOEF1 = 0.0001, DEFAULTCOEF2 = 0.01;
@@ -250,14 +250,14 @@ public class RFMotor extends Motor {
         getAvgResistance();
 //        logger.log("/RobotLogs/GeneralRobot", rfMotorName + ",setPower():,Setting Power: " + power, false, false);
         rfMotor.setPower(power - kP * resistance);
-        logger.log("/MotorLogs/RFMotor" + rfMotorName, "Setting Power," + (power - kP * getResistance()), false, false);
+//        logger.log("/MotorLogs/RFMotor" + rfMotorName, "Setting Power," + (power - kP * getResistance()), false, false);
 
     }
 
     public void setRawPower(double power) {
         rfMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 //        getAvgResistance();
-        logger.log("/RobotLogs/GeneralRobot", rfMotorName + ",setPower():,Setting Power: " + power, false, false);
+//        logger.log("/RobotLogs/GeneralRobot", rfMotorName + ",setPower():,Setting Power: " + power, false, false);
         rfMotor.setPower(power);
 //        logger.log("/MotorLogs/RFMotor" + rfMotorName, "Setting Power," + (power), false, false);
 

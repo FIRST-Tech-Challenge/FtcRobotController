@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.Components;
 
 import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.opMode;
+import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.logger;
 import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.op;
 import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.time;
 
@@ -23,6 +24,7 @@ public class Switch {
         public boolean isSwitched() {
 //        touchSensor.
             prezzed = touchSensor.getState()||mode;
+//            logger.log("/RobotLogs/GeneralRobot", "isPressed?" + prezzed);
         return prezzed;
 //            return false;
         }
