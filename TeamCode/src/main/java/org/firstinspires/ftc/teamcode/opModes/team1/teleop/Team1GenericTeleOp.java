@@ -12,6 +12,7 @@ import com.qualcomm.robotcore.hardware.IMU;
 
 import org.firstinspires.ftc.teamcode.components.HDriveWrapper;
 import org.firstinspires.ftc.teamcode.components.GrabberComponent;
+import org.firstinspires.ftc.teamcode.components.LiftComponent;
 import org.firstinspires.ftc.teamcode.drive.DriveConstants;
 import org.firstinspires.ftc.teamcode.libs.brightonCollege.inputs.Inputs;
 import org.firstinspires.ftc.teamcode.libs.brightonCollege.util.HardwareMapContainer;
@@ -25,9 +26,14 @@ import org.firstinspires.ftc.teamcode.libs.brightonCollege.util.TelemetryContain
 public class Team1GenericTeleOp {
     public static final GamepadKeys.Button TOGGLE_TURN_MODE_BUTTON = GamepadKeys.Button.LEFT_STICK_BUTTON;
     public static final GamepadKeys.Button RESET_IMU_BUTTON = GamepadKeys.Button.RIGHT_STICK_BUTTON;
+    public static final GamepadKeys.Button SET_LIFT_TO_GROUND_BUTTON = GamepadKeys.Button.A; // Cross
+    public static final GamepadKeys.Button SET_LIFT_TO_MIDDLE_BUTTON = GamepadKeys.Button.B; // Circle
+    public static final GamepadKeys.Button SET_LIFT_TO_HIGH_BUTTON = GamepadKeys.Button.Y; // Circle
+
     TeamColour teamColour;
     IMU imu;
     HDriveWrapper drive;
+    LiftComponent lift;
 
     GrabberComponent grabber;
 
@@ -53,6 +59,7 @@ public class Team1GenericTeleOp {
                 Math.PI,
                 Math.PI/2
         ), imu);
+        lift = new LiftComponent(HardwareMapContainer.motor2, LiftComponent.LiftPosition.GROUND);
 
         // Reset IMU heading on button press
         // This can also be activated by the button on the back of the joystick
@@ -68,6 +75,18 @@ public class Team1GenericTeleOp {
             // get another cone
             drive.desiredDirection = HDriveWrapper.snapAngle(drive.getAngleDeg());
         }));
+
+
+        // Lift
+        Inputs.gamepad1.getGamepadButton(SET_LIFT_TO_GROUND_BUTTON).whenPressed(new InstantCommand(() -> {
+            lift.setTargetPosition(LiftComponent.LiftPosition.GROUND);
+        }));
+        Inputs.gamepad1.getGamepadButton(SET_LIFT_TO_MIDDLE_BUTTON).whenPressed(new InstantCommand(() -> {
+            lift.setTargetPosition(LiftComponent.LiftPosition.MIDDLE);
+        }));
+        Inputs.gamepad1.getGamepadButton(SET_LIFT_TO_HIGH_BUTTON).whenPressed(new InstantCommand(() -> {
+            lift.setTargetPosition(LiftComponent.LiftPosition.HIGH);
+        }));
     }
 
     public void every_tick(){
@@ -78,6 +97,8 @@ public class Team1GenericTeleOp {
         // Grabber
         double grabberPosition = Inputs.gamepad1.getTrigger(GamepadKeys.Trigger.LEFT_TRIGGER);
         grabber.setFractionOpened(grabberPosition);
+        t.addData("Grabber position", grabberPosition);
+
         // Drivetrain
         // Note: directions of x and y on joystick different to directions on the field
         double strafe =  -Inputs.gamepad1.getRightY();
@@ -97,6 +118,10 @@ public class Team1GenericTeleOp {
         t.addData("x", strafe);
         t.addData("y", forward);
         t.addData("Angle", new Vector2d(y_joystick_turn, -x_joystick_turn).angle());
-        t.addData("Grabber position", grabberPosition);
+
+        // Lift
+        lift.set(0.5);
+
+        t.addData("Lift position", lift.motor.getCurrentPosition());
     }
 }

@@ -7,67 +7,72 @@ import com.arcrobotics.ftclib.hardware.motors.Motor;
  */
 public class LiftComponent {
     /**
+     * An enum that contains the possible lift positions
+     */
+    public enum LiftPosition {
+        GROUND(0),
+        MIDDLE(300),
+        HIGH(1500);
+
+        private final int counts;
+        LiftPosition(int counts) {
+            this.counts = counts;
+        }
+
+        public double getCounts(){
+            return this.counts;
+        }
+    }
+    /**
      * The Core Hex Motor used to move the lift from the bottom
      */
     public Motor motor;
-    /**
-     * Counts of the motor per m
-     */
-    int countsPerMeter;
-    /**
-     * Initial height of the hand above ground (m)
-     */
-    double initialHeightOffset;
 
-    private final boolean showTelemetry = true;
+
+    /**
+     * The number of counts needed to reach the initial position
+     */
+    private final int initialPositionCounts;
 
     /**
      * Create a {@code LiftComponent}
-     * @param motor The Core Hex Motor used to move the lift from the bottom
-     * @param barLength The length of the bar the motor is attached to (m)
-     * @param countsPerMeter Encoder counts per radian of motor
-     * @param initialHeightOffset Initial height of the hand above ground (when bar is horizontal) (m)
+     * @param motor The Motor used to move the lift
      */
-    public LiftComponent(Motor motor, double barLength, int countsPerMeter, double initialHeightOffset) {
-        motor.setRunMode(Motor.RunMode.PositionControl); // So setTargetPosition works
+    public LiftComponent(Motor motor, LiftPosition initialPosition) {
+        // Reset the encoder counts to start from the initial position
+        motor.resetEncoder();
+        initialPositionCounts = initialPosition.counts;
 
         this.motor = motor;
-        this.countsPerMeter = countsPerMeter;
-        this.initialHeightOffset = initialHeightOffset;
+        setTargetPosition(initialPosition);
     }
 
     /**
-     * Set the height of the hand
-     * @param height The height of the hand relative to the floor (m)
+     * Start moving the motor to a given position
+     * @param position The desired final position of the arm
      */
-    public void setHeight(double height) throws InterruptedException {
-        height -= initialHeightOffset; // Get height relative to starting position
-        Double angle = null; // arcsin(Opposite Length/Hypot Length )
+    public void setTargetPosition(LiftPosition position) {
+        this.motor.setRunMode(Motor.RunMode.PositionControl); // So setTargetPosition works
+        this.motor.setPositionTolerance(15);
+        this.motor.setPositionCoefficient(0.01);
 
-        this.motor.setTargetPosition(motor.getCurrentPosition() + (int)(countsPerMeter *angle));
+        int countsFromInitialPosition = position.counts - initialPositionCounts;
 
-        // set the tolerance
-        this.motor.setPositionTolerance(13.6);   // allowed maximum error
-
-        while (!this.motor.atTargetPosition()) {
-            this.motor.set(0.75);
-            Thread.sleep(10);
-        }
-
-        this.motor.stopMotor(); // stop the motor
+        this.motor.setTargetPosition(countsFromInitialPosition);
     }
 
-    public void setPosition(int counts) throws InterruptedException {
-        this.motor.setTargetPosition(motor.getCurrentPosition() + counts);
+    /**
+     * Runs the motor at the given speed in an appropriate mode. Needs to be called every tick
+     */
+    public void set(double speed){
+        this.motor.set(speed);
+    }
 
-        // set the tolerance
-        this.motor.setPositionTolerance(13.6);   // allowed maximum error
 
-        while (!this.motor.atTargetPosition()) {
-            this.motor.set(0.25);
-            Thread.sleep(10);
-        }
-
-        this.motor.stopMotor(); // stop the motor
+    /**
+     * Sets motor run mode
+     */
+    public void setRunMode(Motor.RunMode runMode) {
+        motor.setRunMode(runMode); // So setTargetPosition works
     }
 }
