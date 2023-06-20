@@ -1,44 +1,38 @@
 package org.firstinspires.ftc.teamcode.components;
 
 import com.arcrobotics.ftclib.hardware.motors.Motor;
-import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 
-// TODO: 21/01/2023 Test
 /**
- * Team 2's lift which lifts to a certain height
+ * Lift with pulleys which lifts to a certain height
  */
-public class Team2LiftComponent {
+public class LiftComponent {
     /**
      * The Core Hex Motor used to move the lift from the bottom
      */
     public Motor motor;
     /**
-     * The length of the bar the motor is attached to (m)
+     * Counts of the motor per m
      */
-    double barLength;
+    int countsPerMeter;
     /**
-     * Encoder counts per radian rotation of motor
-     */
-    int countsPerRadian;
-    /**
-     * Initial height of the hand above ground (when bar is horizontal) (m)
+     * Initial height of the hand above ground (m)
      */
     double initialHeightOffset;
+
+    private final boolean showTelemetry = true;
 
     /**
      * Create a {@code LiftComponent}
      * @param motor The Core Hex Motor used to move the lift from the bottom
      * @param barLength The length of the bar the motor is attached to (m)
-     * @param countsPerRadian Encoder counts per radian of motor
+     * @param countsPerMeter Encoder counts per radian of motor
      * @param initialHeightOffset Initial height of the hand above ground (when bar is horizontal) (m)
      */
-    public Team2LiftComponent(Motor motor, double barLength, int countsPerRadian, double initialHeightOffset) {
+    public LiftComponent(Motor motor, double barLength, int countsPerMeter, double initialHeightOffset) {
         motor.setRunMode(Motor.RunMode.PositionControl); // So setTargetPosition works
-        motor.setPositionCoefficient(0.05);
 
         this.motor = motor;
-        this.barLength = barLength;
-        this.countsPerRadian = countsPerRadian;
+        this.countsPerMeter = countsPerMeter;
         this.initialHeightOffset = initialHeightOffset;
     }
 
@@ -48,9 +42,9 @@ public class Team2LiftComponent {
      */
     public void setHeight(double height) throws InterruptedException {
         height -= initialHeightOffset; // Get height relative to starting position
-        double angle = Math.asin(height/(2*this.barLength)); // arcsin(Opposite Length/Hypot Length )
+        Double angle = null; // arcsin(Opposite Length/Hypot Length )
 
-        this.motor.setTargetPosition(motor.getCurrentPosition() + (int)(countsPerRadian*angle));
+        this.motor.setTargetPosition(motor.getCurrentPosition() + (int)(countsPerMeter *angle));
 
         // set the tolerance
         this.motor.setPositionTolerance(13.6);   // allowed maximum error

@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.components;
 
 // TODO: 21/01/2023 Test
 
+import com.arcrobotics.ftclib.hardware.ServoEx;
 import com.arcrobotics.ftclib.hardware.SimpleServo;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
@@ -10,20 +11,21 @@ import org.firstinspires.ftc.teamcode.libs.brightonCollege.util.HardwareMapConta
 /**
  * Team 2's lift which lifts to a certain height
  */
-public class IntakeComponent {
+public class GrabberComponent {
 
     // Degrees
     private static double MAX_SERVO_ANGLE = 40;
     private static double MIN_SERVO_ANGLE = 0;
 
-    SimpleServo left_intake;
+    ServoEx left_intake;
     SimpleServo right_intake;
+
     /**
      * Create a {@code LiftComponent}
      */
-    public IntakeComponent(int servo1_id, int servo2_id) {
-        left_intake = HardwareMapContainer.getServo(0, MIN_SERVO_ANGLE, MAX_SERVO_ANGLE, false, AngleUnit.DEGREES);
-        right_intake = HardwareMapContainer.getServo(0, MIN_SERVO_ANGLE, MAX_SERVO_ANGLE, true, AngleUnit.DEGREES);
+    public GrabberComponent(int servo1_id, int servo2_id) {
+        left_intake = HardwareMapContainer.getServo(servo1_id, MIN_SERVO_ANGLE, MAX_SERVO_ANGLE, false, AngleUnit.DEGREES);
+        right_intake = HardwareMapContainer.getServo(servo2_id, MIN_SERVO_ANGLE, MAX_SERVO_ANGLE, true, AngleUnit.DEGREES);
     }
 
     /**

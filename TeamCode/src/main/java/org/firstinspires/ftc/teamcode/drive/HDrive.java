@@ -96,8 +96,8 @@ public class HDrive extends TankDrive {
         imu.initialize(parameters);
 
         // add/remove motors depending on your robot (e.g., 6WD)
-        DcMotorEx left = (DcMotorEx) HardwareMapContainer.motor0;
-        DcMotorEx right = (DcMotorEx) HardwareMapContainer.motor1;
+        DcMotorEx left = (DcMotorEx) HardwareMapContainer.motor0.motor;
+        DcMotorEx right = (DcMotorEx) HardwareMapContainer.motor1.motor;
 
         motors = Arrays.asList(left, right);
         leftMotors = Arrays.asList(left);
