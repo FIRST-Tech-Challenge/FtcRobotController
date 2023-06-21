@@ -1,10 +1,16 @@
 package org.firstinspires.ftc.teamcode.components;
 
+import com.acmerobotics.dashboard.config.Config;
 import com.arcrobotics.ftclib.hardware.motors.Motor;
+
+import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.teamcode.control.TrapezoidalProfileMotor;
+import org.firstinspires.ftc.teamcode.libs.brightonCollege.util.TelemetryContainer;
 
 /**
  * Lift with pulleys which lifts to a certain height
  */
+@Config
 public class LiftComponent {
     /**
      * An enum that contains the possible lift positions
@@ -25,9 +31,12 @@ public class LiftComponent {
     }
     /**
      * The Core Hex Motor used to move the lift from the bottom
+     * Static to allow it being read from the dashboard
      */
     public Motor motor;
 
+
+    public TrapezoidalProfileMotor trapezoidalProfileMotor;
 
     /**
      * The number of counts needed to reach the initial position
@@ -39,6 +48,7 @@ public class LiftComponent {
      * @param motor The Motor used to move the lift
      */
     public LiftComponent(Motor motor, LiftPosition initialPosition) {
+        trapezoidalProfileMotor = new TrapezoidalProfileMotor(motor, new TrapezoidalProfileMotor.TrapezoidalProfile(30, 30));
         // Reset the encoder counts to start from the initial position
         motor.resetEncoder();
         initialPositionCounts = initialPosition.counts;
@@ -52,27 +62,15 @@ public class LiftComponent {
      * @param position The desired final position of the arm
      */
     public void setTargetPosition(LiftPosition position) {
-        this.motor.setRunMode(Motor.RunMode.PositionControl); // So setTargetPosition works
-        this.motor.setPositionTolerance(15);
-        this.motor.setPositionCoefficient(0.01);
-
-        int countsFromInitialPosition = position.counts - initialPositionCounts;
-
-        this.motor.setTargetPosition(countsFromInitialPosition);
+        trapezoidalProfileMotor.setTargetPosition(position.counts);
     }
 
     /**
      * Runs the motor at the given speed in an appropriate mode. Needs to be called every tick
      */
     public void set(double speed){
-        this.motor.set(speed);
-    }
-
-
-    /**
-     * Sets motor run mode
-     */
-    public void setRunMode(Motor.RunMode runMode) {
-        motor.setRunMode(runMode); // So setTargetPosition works
+        Telemetry t = TelemetryContainer.getTelemetry();
+        t.addData("Lift motor speed", motor.getCorrectedVelocity());
+        trapezoidalProfileMotor.run();
     }
 }

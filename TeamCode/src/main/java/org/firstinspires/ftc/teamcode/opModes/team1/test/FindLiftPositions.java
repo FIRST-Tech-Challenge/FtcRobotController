@@ -24,8 +24,8 @@ public class FindLiftPositions extends TeleOpModeBase {
     @Override
     public void every_tick() {
         double speed = SPEED_MULTIPLIER * Inputs.gamepad1.getLeftY();
-        lift.setRunMode(Motor.RunMode.RawPower);
-        lift.set(speed);
+        lift.motor.setRunMode(Motor.RunMode.RawPower);
+        lift.motor.set(speed);
         telemetry.addData("Input speed", speed);
         telemetry.addData("Lift counts", liftMotor.getCurrentPosition());
     }

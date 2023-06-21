@@ -92,8 +92,6 @@ public class Team1GenericTeleOp {
     public void every_tick(){
         MultipleTelemetry t = TelemetryContainer.getTelemetry();
 
-
-
         // Grabber
         double grabberPosition = Inputs.gamepad1.getTrigger(GamepadKeys.Trigger.LEFT_TRIGGER);
         grabber.setFractionOpened(grabberPosition);
@@ -109,10 +107,10 @@ public class Team1GenericTeleOp {
 
         // If not pressed, snap to the nearest cardinal direction
         if (turnModeSwitch.get()) {
-            drive.fieldOrientedDriveRelativeRotation(strafe, forward, -RELATIVE_TURN_SPEED_MULTIPLIER * x_joystick_turn);
+//            drive.fieldOrientedDriveRelativeRotation(strafe, forward, -RELATIVE_TURN_SPEED_MULTIPLIER * x_joystick_turn);
         } else {
-            drive.setTurnDirectionSnap(x_joystick_turn, y_joystick_turn);
-            drive.fieldOrientedDriveAbsoluteRotation(strafe, forward);
+//            drive.setTurnDirectionSnap(x_joystick_turn, y_joystick_turn);
+//            drive.fieldOrientedDriveAbsoluteRotation(strafe, forward);
         }
 
         t.addData("x", strafe);
