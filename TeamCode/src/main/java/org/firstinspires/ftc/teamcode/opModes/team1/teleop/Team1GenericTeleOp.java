@@ -26,6 +26,8 @@ import org.firstinspires.ftc.teamcode.libs.brightonCollege.util.TelemetryContain
 public class Team1GenericTeleOp {
     public static final GamepadKeys.Button TOGGLE_TURN_MODE_BUTTON = GamepadKeys.Button.LEFT_STICK_BUTTON;
     public static final GamepadKeys.Button RESET_IMU_BUTTON = GamepadKeys.Button.RIGHT_STICK_BUTTON;
+    public static final GamepadKeys.Button CLOSE_GRABBER_BUTTON = GamepadKeys.Button.LEFT_BUMPER;
+    public static final GamepadKeys.Button OPEN_GRABBER_BUTTON = GamepadKeys.Button.RIGHT_BUMPER;
     public static final GamepadKeys.Button SET_LIFT_TO_GROUND_BUTTON = GamepadKeys.Button.A; // Cross
     public static final GamepadKeys.Button SET_LIFT_TO_MIDDLE_BUTTON = GamepadKeys.Button.B; // Circle
     public static final GamepadKeys.Button SET_LIFT_TO_HIGH_BUTTON = GamepadKeys.Button.Y; // Circle
@@ -52,8 +54,8 @@ public class Team1GenericTeleOp {
 
         // Get the third motor as a spinner motor
         drive = new HDriveWrapper(new HDrive(
-                HardwareMapContainer.motor1,
                 HardwareMapContainer.motor0,
+                HardwareMapContainer.motor1,
                 HardwareMapContainer.motor3,
                 0,
                 Math.PI,
@@ -66,6 +68,14 @@ public class Team1GenericTeleOp {
         // That makes the robot consider the direction it was facing the front (pointing to the right from driver's point of view)
         Inputs.gamepad1.getGamepadButton(RESET_IMU_BUTTON).whenPressed(new InstantCommand(() -> {
             imu.resetYaw();
+        }));
+
+        Inputs.gamepad1.getGamepadButton(CLOSE_GRABBER_BUTTON).whenPressed(new InstantCommand(() -> {
+            grabber.setPosition(GrabberComponent.GrabberPosition.CLOSED);
+        }));
+
+        Inputs.gamepad1.getGamepadButton(OPEN_GRABBER_BUTTON).whenPressed(new InstantCommand(() -> {
+            grabber.setPosition(GrabberComponent.GrabberPosition.OPEN);
         }));
 
         turnModeSwitch = Inputs.gamepad1.getGamepadButton(TOGGLE_TURN_MODE_BUTTON);
@@ -92,11 +102,6 @@ public class Team1GenericTeleOp {
     public void every_tick(){
         MultipleTelemetry t = TelemetryContainer.getTelemetry();
 
-        // Grabber
-        double grabberPosition = Inputs.gamepad1.getTrigger(GamepadKeys.Trigger.LEFT_TRIGGER);
-        grabber.setFractionOpened(grabberPosition);
-        t.addData("Grabber position", grabberPosition);
-
         // Drivetrain
         // Note: directions of x and y on joystick different to directions on the field
         double strafe =  -Inputs.gamepad1.getRightY();
@@ -113,8 +118,6 @@ public class Team1GenericTeleOp {
             drive.fieldOrientedDriveAbsoluteRotation(strafe, forward);
         }
 
-        t.addData("x", strafe);
-        t.addData("y", forward);
         t.addData("Angle", new Vector2d(y_joystick_turn, -x_joystick_turn).angle());
 
         // Lift

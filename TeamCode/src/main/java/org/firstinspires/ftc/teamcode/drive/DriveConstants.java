@@ -18,7 +18,8 @@ import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 @Config
 public class DriveConstants {
 
-    public static double INCHES_PER_MILLIMETER = 1 / 25.4;
+    public static double MILLIMETERS_PER_INCH = 25.4;
+    public static double INCHES_PER_MILLIMETER = 1 / MILLIMETERS_PER_INCH;
 
     /*
      * These are motor constants that should be listed online for your motors.
@@ -46,9 +47,8 @@ public class DriveConstants {
      * angular distances although most angular parameters are wrapped in Math.toRadians() for
      * convenience. Make sure to exclude any gear ratio included in MOTOR_CONFIG from GEAR_RATIO.
      */
-    public static double WHEEL_RADIUS = 90 * INCHES_PER_MILLIMETER; // in
+    public static double WHEEL_RADIUS = 90.0 / 2.0 * INCHES_PER_MILLIMETER; // in
     public static double GEAR_RATIO = 1; // output (wheel) speed / input (motor) speed
-    // TODO: calculate this
     public static double TRACK_WIDTH = 9.2; // in
 
     /*
@@ -57,9 +57,9 @@ public class DriveConstants {
      * motor encoders or have elected not to use them for velocity control, these values should be
      * empirically tuned.
      */
-    public static double kV = 1.0 / rpmToVelocity(MAX_RPM);
-    public static double kA = 0;
-    public static double kStatic = 0;
+    public static double kV = 0.0225;
+    public static double kA = 0.001;
+    public static double kStatic = 0.07;
 
     /*
      * These values are used to generate the trajectories for you robot. To ensure proper operation,

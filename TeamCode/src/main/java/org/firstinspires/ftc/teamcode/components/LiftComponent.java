@@ -60,7 +60,7 @@ public class LiftComponent {
                 new SimpleMotorFeedforward(120, 0.6, 0),
                 (counts) -> 170
         );
-        trapezoidalProfileMotor = new TrapezoidalProfileMotor(motorVelocityController, new TrapezoidalProfileMotor.TrapezoidalProfile(1500, 1200));
+        trapezoidalProfileMotor = new TrapezoidalProfileMotor(motorVelocityController, new TrapezoidalProfileMotor.TrapezoidalProfile(MAX_TICKS_PER_SECOND, 2500));
         // Reset the encoder counts to start from the initial position
         motor.resetEncoder();
         initialPositionCounts = initialPosition.counts;

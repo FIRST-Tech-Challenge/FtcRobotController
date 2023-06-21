@@ -28,8 +28,10 @@ import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 import com.qualcomm.robotcore.hardware.VoltageSensor;
 import com.qualcomm.robotcore.hardware.configuration.typecontainers.MotorConfigurationType;
 
+import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.teamcode.libs.brightonCollege.util.HardwareMapContainer;
+import org.firstinspires.ftc.teamcode.libs.brightonCollege.util.TelemetryContainer;
 import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequence;
 import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequenceBuilder;
 import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequenceRunner;
@@ -37,6 +39,7 @@ import org.firstinspires.ftc.teamcode.util.LynxModuleUtil;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import static org.firstinspires.ftc.teamcode.drive.DriveConstants.MAX_ACCEL;
@@ -55,7 +58,7 @@ import static org.firstinspires.ftc.teamcode.drive.DriveConstants.kV;
  * Simple tank drive hardware implementation for REV hardware.
  */
 @Config
-public class HDrive extends TankDrive {
+public class RoadRunnerTankDrive extends TankDrive {
     public static PIDCoefficients AXIAL_PID = new PIDCoefficients(0, 0, 0);
     public static PIDCoefficients CROSS_TRACK_PID = new PIDCoefficients(0, 0, 0);
     public static PIDCoefficients HEADING_PID = new PIDCoefficients(0, 0, 0);
@@ -75,7 +78,9 @@ public class HDrive extends TankDrive {
 
     private VoltageSensor batteryVoltageSensor;
 
-    public HDrive(HardwareMap hardwareMap) {
+    private Telemetry telemetry;
+
+    public RoadRunnerTankDrive(HardwareMap hardwareMap) {
         super(kV, kA, kStatic, TRACK_WIDTH);
 
         follower = new TankPIDVAFollower(AXIAL_PID, CROSS_TRACK_PID,
@@ -95,13 +100,18 @@ public class HDrive extends TankDrive {
                 DriveConstants.LOGO_FACING_DIR, DriveConstants.USB_FACING_DIR));
         imu.initialize(parameters);
 
+        // Initialise the hardware map
+        HardwareMapContainer.initialiseIfNeeded(hardwareMap);
+
         // add/remove motors depending on your robot (e.g., 6WD)
         DcMotorEx left = (DcMotorEx) HardwareMapContainer.motor0.motor;
         DcMotorEx right = (DcMotorEx) HardwareMapContainer.motor1.motor;
 
+        left.setDirection(DcMotorSimple.Direction.REVERSE);
+
         motors = Arrays.asList(left, right);
-        leftMotors = Arrays.asList(left);
-        rightMotors = Arrays.asList(right);
+        leftMotors = Collections.singletonList(left);
+        rightMotors = Collections.singletonList(right);
 
         for (DcMotorEx motor : motors) {
             MotorConfigurationType motorConfigurationType = motor.getMotorType().clone();
@@ -119,8 +129,6 @@ public class HDrive extends TankDrive {
             setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER, MOTOR_VELO_PID);
         }
 
-        right.setDirection(DcMotorSimple.Direction.REVERSE);
-
         // TODO: if desired, use setLocalizer() to change the localization method
         // for instance, setLocalizer(new ThreeTrackingWheelLocalizer(...));
 
@@ -128,6 +136,11 @@ public class HDrive extends TankDrive {
                 follower, HEADING_PID, batteryVoltageSensor,
                 new ArrayList<>(), new ArrayList<>(), new ArrayList<>(), new ArrayList<>()
         );
+    }
+
+    public void setTelemetry(Telemetry telemetry){
+        TelemetryContainer.initialiseIfNeeded(telemetry);
+        this.telemetry = telemetry;
     }
 
     public TrajectoryBuilder trajectoryBuilder(Pose2d startPose) {
@@ -194,6 +207,7 @@ public class HDrive extends TankDrive {
         updatePoseEstimate();
         DriveSignal signal = trajectorySequenceRunner.update(getPoseEstimate(), getPoseVelocity());
         if (signal != null) setDriveSignal(signal);
+        telemetry.update();
     }
 
     public void waitForIdle() {

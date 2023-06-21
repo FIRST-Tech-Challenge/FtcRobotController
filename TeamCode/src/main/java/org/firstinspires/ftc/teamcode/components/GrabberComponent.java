@@ -12,13 +12,31 @@ import org.firstinspires.ftc.teamcode.libs.brightonCollege.util.HardwareMapConta
  * Team 2's lift which lifts to a certain height
  */
 public class GrabberComponent {
+    public enum GrabberPosition {
+        CLOSED(0.55),
+        OPEN(0.0);
+        private final double position;
+
+        GrabberPosition(double position) {
+            this.position = position;
+        }
+
+        @Override
+        public String toString() {
+            return "GrabberPosition{" +
+                    "position=" + position +
+                    '}';
+        }
+    }
 
     // Degrees
-    private static double MAX_SERVO_ANGLE = 40;
-    private static double MIN_SERVO_ANGLE = 0;
+    private static final double MAX_SERVO_ANGLE = 40;
+    private static final double MIN_SERVO_ANGLE = 0;
 
     ServoEx left_intake;
     SimpleServo right_intake;
+
+    public GrabberPosition position;
 
     /**
      * Create a {@code LiftComponent}
@@ -31,8 +49,15 @@ public class GrabberComponent {
     /**
      * Sets the fraction of how much the intake is opened, from 0 to 1
      */
-    public void setFractionOpened(double f) {
-        left_intake.setPosition(f);
-        right_intake.setPosition(f);
+    public void setPosition(GrabberPosition position) {
+        this.position = position;
+        double numericalPosition = position.position;
+        left_intake.setPosition(numericalPosition);
+        right_intake.setPosition(numericalPosition);
+    }
+
+    public void togglePosition(){
+        GrabberPosition newPosition = this.position == GrabberPosition.CLOSED ? GrabberPosition.OPEN : GrabberPosition.CLOSED;
+        setPosition(newPosition);
     }
 }
