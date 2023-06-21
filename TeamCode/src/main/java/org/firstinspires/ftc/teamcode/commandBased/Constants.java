@@ -15,8 +15,8 @@ public class Constants {
 
     //debug toggles
     public static boolean DEBUG_DRIVE = false;
-    public static boolean DEBUG_ELE = false;
-    public static boolean DEBUG_ARM = true;
+    public static boolean DEBUG_ELE = true;
+    public static boolean DEBUG_ARM = false;
     public static boolean DEBUG_ROTATOR = false;
     public static boolean DEBUG_INTAKE = false;
 
@@ -113,7 +113,7 @@ public class Constants {
     public static double ARM_ENC_BACK_MAX = -670;
     public static double ARM_ENC_BACK_PARALLEL = -520;
     public static double ARM_ENC_FRONT_PARALLEL = 220;
-    public static double ARM_ENC_FRONT_MAX = 350;
+    public static double ARM_ENC_FRONT_MAX = 370;
     public static double ARM_ENC_CENTER = -145;
 
     //rotator limits

@@ -23,9 +23,9 @@ public class SetIntakePower extends TriggerCommandBase {
     @Override
     public boolean isFinished() {
         if (power == Constants.INTAKE_IN) {
-            return (m_intakeSubsystem.getAverageCurrent() > 1000);
+            return (m_intakeSubsystem.getAverageCurrent() > 750);
         } else if (power == Constants.INTAKE_OUT){
-            return (m_intakeSubsystem.getAverageCurrent() > 250);
+            return (m_intakeSubsystem.getAverageCurrent() > 150);
         } else {
             return true;
         }

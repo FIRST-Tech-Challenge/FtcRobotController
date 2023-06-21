@@ -191,22 +191,22 @@ public class Robot extends BlackOp {
             //activate scheduler
             CommandScheduler.getInstance().run();
 
-            //drivetrain speed controls
-            driver.left_bumper.onRise(slowMode::schedule)
-                              .onFall(fastMode::schedule);
+//            //drivetrain speed controls
+//            driver.left_bumper.onRise(slowMode::schedule)
+//                              .onFall(fastMode::schedule);
 
             //drivetrain mode controls
-            driver.a.onRise(() -> {
+            driver.left_trigger.and(driver.a).onRise(() -> {
                 pointCentric.cancel();
                 fieldCentric.cancel();
                 robotCentric.schedule();
             });
-            driver.b.onRise(() -> {
+            driver.left_trigger.and(driver.b).onRise(() -> {
                 pointCentric.cancel();
                 robotCentric.cancel();
                 fieldCentric.schedule();
             });
-            driver.x.onRise(() -> {
+            driver.left_trigger.and(driver.x).onRise(() -> {
                 fieldCentric.cancel();
                 robotCentric.cancel();
                 pointCentric.schedule();
@@ -226,9 +226,11 @@ public class Robot extends BlackOp {
             driver.a.onRise(armIdle::schedule);
 
             //rotator controls
+            driver.back.onRise(() -> rotatorBack.schedule(true));
             driver.back.onRise(rotatorBack::schedule);
             driver.start.onRise(rotatorFront::schedule);
 
+            driver.left_stick_button.onRise(() -> CommandScheduler.getInstance().cancelAll());
             driver.right_stick_button.onRise(updatePID::schedule);
 
             //intake controls
@@ -292,23 +294,21 @@ public class Robot extends BlackOp {
                 mTelemetry().addData("intake avg current", intakeSS.getAverageCurrent());
             }
 
-            mTelemetry().addData("group scheduled", armBackHigh.isScheduled());
+//            mTelemetry().addData("back high scheduled", armBackHigh.isScheduled());
+//            mTelemetry().addData("grab cone scheduled", grabCone.isScheduled());
+//            mTelemetry().addData("score cone scheduled", scoreCone.isScheduled());
 //
-//            mTelemetry().addData("ele scheduled", armBackHigh.moveEle.isScheduled());
-//            mTelemetry().addData("ele triggered", armBackHigh.moveEle.isTriggered());
-//            mTelemetry().addData("ele finished", armBackHigh.moveEle.isFinished());
+//            mTelemetry().addData("ele scheduled", eleHigh.isScheduled());
+//            mTelemetry().addData("ele triggered", eleHigh.isTriggered());
+//            mTelemetry().addData("ele finished", eleHigh.isFinished());
 //
-//            mTelemetry().addData("arm scheduled", armBackHigh.moveArm.isScheduled());
-//            mTelemetry().addData("arm triggered", armBackHigh.moveArm.isTriggered());
-//            mTelemetry().addData("arm finished", armBackHigh.moveArm.isFinished());
+//            mTelemetry().addData("arm scheduled", armIdle.isScheduled());
+//            mTelemetry().addData("arm triggered", armIdle.isTriggered());
+//            mTelemetry().addData("arm finished", armIdle.isFinished());
 //
-//            mTelemetry().addData("rotator scheduled", armBackHigh.moveRot.isScheduled());
-//            mTelemetry().addData("rotator triggered", armBackHigh.moveRot.isTriggered());
-//            mTelemetry().addData("rotator finished", armBackHigh.moveRot.isFinished());
-//
-//            mTelemetry().addData("cmdIndex", armBackHigh.getCmdIndex());
-//            mTelemetry().addData("test", armBackHigh.getTest());
-//            mTelemetry().addData("name", armBackHigh.getCommandName());
+//            mTelemetry().addData("rotator scheduled", rotatorBack.isScheduled());
+//            mTelemetry().addData("rotator triggered", rotatorBack.isTriggered());
+//            mTelemetry().addData("rotator finished", rotatorBack.isFinished());
 
             mTelemetry().update();
         });
