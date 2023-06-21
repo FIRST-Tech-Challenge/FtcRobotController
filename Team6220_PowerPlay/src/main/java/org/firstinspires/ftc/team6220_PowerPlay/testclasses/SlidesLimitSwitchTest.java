@@ -1,5 +1,6 @@
-/*package org.firstinspires.ftc.team6220_PowerPlay.testclasses;
+package org.firstinspires.ftc.team6220_PowerPlay.testclasses;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.team6220_PowerPlay.BaseTeleOp;
@@ -7,6 +8,7 @@ import org.firstinspires.ftc.team6220_PowerPlay.Constants;
 
 import java.util.Random;
 
+@Disabled
 // Automated testing for limit switch homing
 @TeleOp(name = "SlidesLimitSwitchTest")
 public class SlidesLimitSwitchTest extends BaseTeleOp {
@@ -52,4 +54,3 @@ public class SlidesLimitSwitchTest extends BaseTeleOp {
         }
     }
 }
-*/
