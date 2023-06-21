@@ -29,8 +29,9 @@ public class Team1GenericTeleOp {
     public static final GamepadKeys.Button CLOSE_GRABBER_BUTTON = GamepadKeys.Button.LEFT_BUMPER;
     public static final GamepadKeys.Button OPEN_GRABBER_BUTTON = GamepadKeys.Button.RIGHT_BUMPER;
     public static final GamepadKeys.Button SET_LIFT_TO_GROUND_BUTTON = GamepadKeys.Button.A; // Cross
-    public static final GamepadKeys.Button SET_LIFT_TO_MIDDLE_BUTTON = GamepadKeys.Button.B; // Circle
+    public static final GamepadKeys.Button SET_LIFT_TO_LOW_BUTTON = GamepadKeys.Button.B; // Circle
     public static final GamepadKeys.Button SET_LIFT_TO_HIGH_BUTTON = GamepadKeys.Button.Y; // Circle
+    public static final GamepadKeys.Button SET_LIFT_TO_MIDDLE_BUTTON = GamepadKeys.Button.X; // Circle
 
     TeamColour teamColour;
     IMU imu;
@@ -90,6 +91,9 @@ public class Team1GenericTeleOp {
         // Lift
         Inputs.gamepad1.getGamepadButton(SET_LIFT_TO_GROUND_BUTTON).whenPressed(new InstantCommand(() -> {
             lift.setTargetPosition(LiftComponent.LiftPosition.GROUND);
+        }));
+        Inputs.gamepad1.getGamepadButton(SET_LIFT_TO_LOW_BUTTON).whenPressed(new InstantCommand(() -> {
+            lift.setTargetPosition(LiftComponent.LiftPosition.LOW);
         }));
         Inputs.gamepad1.getGamepadButton(SET_LIFT_TO_MIDDLE_BUTTON).whenPressed(new InstantCommand(() -> {
             lift.setTargetPosition(LiftComponent.LiftPosition.MIDDLE);

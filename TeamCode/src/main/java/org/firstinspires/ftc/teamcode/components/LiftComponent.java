@@ -21,8 +21,9 @@ public class LiftComponent {
      */
     public enum LiftPosition {
         GROUND(0),
-        MIDDLE(300),
-        HIGH(1500);
+        LOW(1200),
+        MIDDLE(2050),
+        HIGH(2500);
 
         private final int counts;
         LiftPosition(int counts) {
@@ -39,7 +40,7 @@ public class LiftComponent {
      */
     public Motor motor;
 
-    public final static double MAX_TICKS_PER_SECOND = 1750;
+    public final static double MAX_TICKS_PER_SECOND = 2000;
 
 
     public TrapezoidalProfileMotor trapezoidalProfileMotor;
@@ -60,7 +61,7 @@ public class LiftComponent {
                 new SimpleMotorFeedforward(120, 0.6, 0),
                 (counts) -> 170
         );
-        trapezoidalProfileMotor = new TrapezoidalProfileMotor(motorVelocityController, new TrapezoidalProfileMotor.TrapezoidalProfile(MAX_TICKS_PER_SECOND, 2500));
+        trapezoidalProfileMotor = new TrapezoidalProfileMotor(motorVelocityController, new TrapezoidalProfileMotor.TrapezoidalProfile(MAX_TICKS_PER_SECOND, 3000));
         // Reset the encoder counts to start from the initial position
         motor.resetEncoder();
         initialPositionCounts = initialPosition.counts;
