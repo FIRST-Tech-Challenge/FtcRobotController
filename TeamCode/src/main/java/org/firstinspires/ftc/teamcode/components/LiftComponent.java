@@ -54,8 +54,13 @@ public class LiftComponent {
      * @param motor The Motor used to move the lift
      */
     public LiftComponent(BCLibMotor motor, LiftPosition initialPosition) {
-        MotorVelocityController motorVelocityController = new MotorVelocityController(motor, MAX_TICKS_PER_SECOND, new PIDController(0, 0, 0), new SimpleMotorFeedforward(120, 0.6, 0), (counts) -> 170);
-        trapezoidalProfileMotor = new TrapezoidalProfileMotor(motorVelocityController, new TrapezoidalProfileMotor.TrapezoidalProfile(30, 30));
+        MotorVelocityController motorVelocityController = new MotorVelocityController(motor,
+                MAX_TICKS_PER_SECOND,
+                new PIDController(0, 0, 0),
+                new SimpleMotorFeedforward(120, 0.6, 0),
+                (counts) -> 170
+        );
+        trapezoidalProfileMotor = new TrapezoidalProfileMotor(motorVelocityController, new TrapezoidalProfileMotor.TrapezoidalProfile(1500, 1200));
         // Reset the encoder counts to start from the initial position
         motor.resetEncoder();
         initialPositionCounts = initialPosition.counts;
@@ -69,15 +74,13 @@ public class LiftComponent {
      * @param position The desired final position of the arm
      */
     public void setTargetPosition(LiftPosition position) {
-        trapezoidalProfileMotor.setTargetPosition(position.counts);
+        trapezoidalProfileMotor.setTargetPosition(position.counts - initialPositionCounts);
     }
 
     /**
      * Runs the motor at the given speed in an appropriate mode. Needs to be called every tick
      */
-    public void set(double speed){
-        Telemetry t = TelemetryContainer.getTelemetry();
-        t.addData("Lift motor speed", motor.getCorrectedVelocity());
+    public void run(){
         trapezoidalProfileMotor.run();
     }
 }

@@ -107,10 +107,10 @@ public class Team1GenericTeleOp {
 
         // If not pressed, snap to the nearest cardinal direction
         if (turnModeSwitch.get()) {
-//            drive.fieldOrientedDriveRelativeRotation(strafe, forward, -RELATIVE_TURN_SPEED_MULTIPLIER * x_joystick_turn);
+            drive.fieldOrientedDriveRelativeRotation(strafe, forward, -RELATIVE_TURN_SPEED_MULTIPLIER * x_joystick_turn);
         } else {
-//            drive.setTurnDirectionSnap(x_joystick_turn, y_joystick_turn);
-//            drive.fieldOrientedDriveAbsoluteRotation(strafe, forward);
+            drive.setTurnDirectionSnap(x_joystick_turn, y_joystick_turn);
+            drive.fieldOrientedDriveAbsoluteRotation(strafe, forward);
         }
 
         t.addData("x", strafe);
@@ -118,8 +118,6 @@ public class Team1GenericTeleOp {
         t.addData("Angle", new Vector2d(y_joystick_turn, -x_joystick_turn).angle());
 
         // Lift
-        lift.set(0.5);
-
-        t.addData("Lift position", lift.motor.getCurrentPosition());
+        lift.run();
     }
 }
