@@ -2,10 +2,12 @@ package org.firstinspires.ftc.team6220_PowerPlay.testclasses;
 
 import com.qualcomm.hardware.rev.RevBlinkinLedDriver;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 
 import org.firstinspires.ftc.team6220_PowerPlay.BaseAutonomous;
 import org.firstinspires.ftc.team6220_PowerPlay.Constants;
 
+@Disabled
 @Autonomous(name = "0+5 with cone centering", group = "Worlds Auto Tests")
 public class StackGrabbingWithConeCentering extends BaseAutonomous {
     @Override

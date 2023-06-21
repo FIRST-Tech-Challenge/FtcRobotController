@@ -21,11 +21,13 @@ public class Constants {
     public static final double MAXIMUM_TURN_POWER_AUTONOMOUS = 0.7;
     public static final double MAXIMUM_DRIVE_POWER_AUTONOMOUS = 0.4;
 
-    public static final double MAXIMUM_TURN_POWER_TELEOP = 0.5;
-    public static final double MAXIMUM_DRIVE_POWER_TELEOP = 0.7;
+    public static final double MAXIMUM_TURN_POWER_TELEOP = 0.6;
+    public static final double MAXIMUM_DRIVE_POWER_TELEOP = 0.6;
 
     public static final double SLIDE_FEEDFORWARD = 0.05;
     public static final double SLIDE_MOTOR_KP = 0.01;
+
+    public static final int SLIDE_MANUAL_CONTROL_SPEED_TICKS = 35;
 
     public static final int MIN_SLIDE_ERROR_FULL_POWER = -200;
 
@@ -49,7 +51,6 @@ public class Constants {
 
     public static final double WHEEL_CIRCUMFERENCE = 96 / 25.4 * Math.PI;
     public static final double DRIVE_MOTOR_TICKS_TO_INCHES = WHEEL_CIRCUMFERENCE * Math.sqrt(2) / 537.6;
-    public static final int DRIVE_MOTOR_INCHES_TO_TICKS = 379;
 
     public static final int CAMERA_X = 800;
     public static final int CAMERA_Y = 600;
@@ -102,6 +103,4 @@ public class Constants {
     public static final int[] BREAK_HEIGHTS = new int[]{500, 450, 430, 320, 300};
 
     public static final int[] GRAB_HEIGHTS = new int[]{350, 350, 380, 380, 380};
-
-    public static final int SLIDE_TUNING_MODIFIER = 10;
 }

@@ -105,10 +105,10 @@ public abstract class BaseTeleOp extends BaseOpMode {
      * left joystick - fine control
      * dpad - raising and lowering the slides to cone stack heights
      * bumpers - raising and lowering the slides to junction heights
-++++     */
+     */
     public void driveSlidesWithController() {
         // joystick control
-        slideTargetPosition += (int) (-gamepad2.left_stick_y * 25);
+        slideTargetPosition += (int) (-gamepad2.left_stick_y * Constants.SLIDE_MANUAL_CONTROL_SPEED_TICKS);
 
         // cone stack positions - increase position by one if dpad up is just pressed
         if (gamepad2.dpad_up && previousConeStack == currentConeStack) {
@@ -245,8 +245,8 @@ public abstract class BaseTeleOp extends BaseOpMode {
      */
     public void slideOverride() {
         if (gamepad2.y) {
-            motorLeftSlides.setPower(-gamepad2.left_stick_y * 0.5);
-            motorRightSlides.setPower(-gamepad2.left_stick_y * 0.5);
+            motorLeftSlides.setPower(-gamepad2.left_stick_y * 0.4);
+            motorRightSlides.setPower(-gamepad2.left_stick_y * 0.4);
         }
 
         if (gamepad2.back && gamepad2.start) {
