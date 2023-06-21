@@ -1,10 +1,14 @@
 package org.firstinspires.ftc.teamcode.components;
 
 import com.acmerobotics.dashboard.config.Config;
+import com.arcrobotics.ftclib.controller.PIDController;
+import com.arcrobotics.ftclib.controller.wpilibcontroller.SimpleMotorFeedforward;
 import com.arcrobotics.ftclib.hardware.motors.Motor;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
-import org.firstinspires.ftc.teamcode.control.TrapezoidalProfileMotor;
+import org.firstinspires.ftc.teamcode.libs.brightonCollege.motors.BCLibMotor;
+import org.firstinspires.ftc.teamcode.libs.brightonCollege.motors.MotorVelocityController;
+import org.firstinspires.ftc.teamcode.libs.brightonCollege.motors.TrapezoidalProfileMotor;
 import org.firstinspires.ftc.teamcode.libs.brightonCollege.util.TelemetryContainer;
 
 /**
@@ -35,6 +39,8 @@ public class LiftComponent {
      */
     public Motor motor;
 
+    public final static double MAX_TICKS_PER_SECOND = 1750;
+
 
     public TrapezoidalProfileMotor trapezoidalProfileMotor;
 
@@ -47,8 +53,9 @@ public class LiftComponent {
      * Create a {@code LiftComponent}
      * @param motor The Motor used to move the lift
      */
-    public LiftComponent(Motor motor, LiftPosition initialPosition) {
-        trapezoidalProfileMotor = new TrapezoidalProfileMotor(motor, new TrapezoidalProfileMotor.TrapezoidalProfile(30, 30));
+    public LiftComponent(BCLibMotor motor, LiftPosition initialPosition) {
+        MotorVelocityController motorVelocityController = new MotorVelocityController(motor, MAX_TICKS_PER_SECOND, new PIDController(0, 0, 0), new SimpleMotorFeedforward(120, 0.6, 0), (counts) -> 170);
+        trapezoidalProfileMotor = new TrapezoidalProfileMotor(motorVelocityController, new TrapezoidalProfileMotor.TrapezoidalProfile(30, 30));
         // Reset the encoder counts to start from the initial position
         motor.resetEncoder();
         initialPositionCounts = initialPosition.counts;

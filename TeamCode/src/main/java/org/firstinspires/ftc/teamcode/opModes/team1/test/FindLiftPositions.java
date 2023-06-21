@@ -7,12 +7,13 @@ import org.firstinspires.ftc.teamcode.libs.brightonCollege.inputs.Inputs;
 import org.firstinspires.ftc.teamcode.libs.brightonCollege.modeBases.TeleOpModeBase;
 
 import org.firstinspires.ftc.teamcode.components.LiftComponent;
+import org.firstinspires.ftc.teamcode.libs.brightonCollege.motors.BCLibMotor;
 import org.firstinspires.ftc.teamcode.libs.brightonCollege.util.HardwareMapContainer;
 
 @TeleOp(name="Find lift positions", group="Test")
 public class FindLiftPositions extends TeleOpModeBase {
     LiftComponent lift;
-    Motor liftMotor;
+    BCLibMotor liftMotor;
 
     private final double SPEED_MULTIPLIER = 0.3;
     @Override
