@@ -11,7 +11,7 @@ import org.firstinspires.ftc.teamcode.commandBased.commands._groups.GrabCone;
 import org.firstinspires.ftc.teamcode.commandBased.commands._groups.LiftMoveRotateArm;
 import org.firstinspires.ftc.teamcode.commandBased.commands._groups.ScoreCone;
 import org.firstinspires.ftc.teamcode.commandBased.commands.arm.MoveArmToAngle;
-import org.firstinspires.ftc.teamcode.commandBased.commands.arm.UpdatePID;
+import org.firstinspires.ftc.teamcode.commandBased.commands.arm.UpdateArmPID;
 import org.firstinspires.ftc.teamcode.commandBased.commands.drive.SetDriveSpeeds;
 import org.firstinspires.ftc.teamcode.commandBased.commands.elevator.MoveElevatorToPosition;
 import org.firstinspires.ftc.teamcode.commandBased.commands.drive.PointCentric;
@@ -108,7 +108,7 @@ public class Robot extends BlackOp {
                 Constants.ARM_ANGLE_FRONT
         );
 
-        UpdatePID updatePID = new UpdatePID(armSS);
+        UpdateArmPID updateArmPID = new UpdateArmPID(armSS);
 
         //create rotator commands
         MoveRotatorToPosition rotatorBack = new MoveRotatorToPosition(rotatorSS, Constants.ROTATOR_BACK);
@@ -172,6 +172,9 @@ public class Robot extends BlackOp {
                 Constants.ROTATOR_BACK
         );
 
+        // Declare telemetry packet for dashboard field drawing
+        TelemetryPacket packet = new TelemetryPacket();
+        Canvas fieldOverlay = packet.fieldOverlay();
 
         //start robot in field-centric mode
         robotCentric.schedule();
@@ -183,10 +186,6 @@ public class Robot extends BlackOp {
 
 
         Scheduler.launchOnStart(this, () -> {
-
-            // Declare telemetry packet for dashboard field drawing
-            TelemetryPacket packet = new TelemetryPacket();
-            Canvas fieldOverlay = packet.fieldOverlay();
 
             //activate scheduler
             CommandScheduler.getInstance().run();
@@ -231,7 +230,7 @@ public class Robot extends BlackOp {
             driver.start.onRise(rotatorFront::schedule);
 
             driver.left_stick_button.onRise(() -> CommandScheduler.getInstance().cancelAll());
-            driver.right_stick_button.onRise(updatePID::schedule);
+            driver.right_stick_button.onRise(updateArmPID::schedule);
 
             //intake controls
             driver.left_bumper.onRise(intakeOuttake::schedule)

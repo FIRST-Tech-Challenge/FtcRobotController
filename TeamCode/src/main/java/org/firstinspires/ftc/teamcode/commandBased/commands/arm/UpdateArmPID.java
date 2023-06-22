@@ -3,11 +3,11 @@ package org.firstinspires.ftc.teamcode.commandBased.commands.arm;
 import org.firstinspires.ftc.teamcode.classes.triggers.TriggerCommandBase;
 import org.firstinspires.ftc.teamcode.commandBased.subsystems.ArmSubsystem;
 
-public class UpdatePID extends TriggerCommandBase {
+public class UpdateArmPID extends TriggerCommandBase {
 
     private final ArmSubsystem m_armSubsystem;
 
-    public UpdatePID(ArmSubsystem armSubsystem) {
+    public UpdateArmPID(ArmSubsystem armSubsystem) {
         m_armSubsystem = armSubsystem;
         addRequirements(m_armSubsystem);
     }
