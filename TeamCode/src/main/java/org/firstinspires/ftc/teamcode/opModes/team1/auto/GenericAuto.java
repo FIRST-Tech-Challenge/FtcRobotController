@@ -35,13 +35,10 @@ public class GenericAuto
 
     // Lens intrinsics
     // UNITS ARE PIXELS
-    // NOTE: this calibration is for the C920 webcam at 800x448.
-    // You will need to do your own calibration for other configurations!
-    //c920 webcam values - fx 578.272 fy 578.272 cx 402.145 cy 221.506
     double fx = 678.154;
     double fy = 678.17;
-    double cx = 318.135;
-    double cy = 228.374;
+    double cx = 400.898;
+    double cy = 300.79;
 
     // UNITS ARE METERS
     double tagsize = 0.03;
@@ -91,7 +88,7 @@ public class GenericAuto
             @Override
             public void onOpened()
             {
-                camera.startStreaming(640,480, OpenCvCameraRotation.UPRIGHT);
+                camera.startStreaming(800,600, OpenCvCameraRotation.UPRIGHT);
             }
 
             @Override
@@ -183,9 +180,21 @@ public class GenericAuto
             telemetry.update();
         }
 
+        final double AWAYFROMWALL_TIME = 1.0; // To travel away from the wall at the start so don't scrape on it
+        final double ONETILE_TIME = 2.0; // To travel 2'
+        final double INTOZONE_TIME = 3.2; // To travel ~3'
+
         /* Drive to zone based on tag seen */
-        driveByTime(3.0, false, opMode, telemetry);
-//        driveByTime(5.0, true, opMode, telemetry);
+        // Start facing right when looking at wall from pitch, with left side touching wall - allowed in Traditional Game Manual 2, Top of Page 15
+        // Move off wall
+        driveByTime(AWAYFROMWALL_TIME, true, true, opMode, telemetry);
+        // Move to correct zone by wall
+        if(tagOfInterest.id == 1) {
+            driveByTime(ONETILE_TIME, false, false, opMode, telemetry);
+        } else if(tagOfInterest.id == 3) {
+            driveByTime(ONETILE_TIME, false, true, opMode, telemetry);
+        } // Else 2; don't move to different zone
+        driveByTime(INTOZONE_TIME, true, true, opMode, telemetry);
     }
 
     void tagToTelemetry(AprilTagDetection detection, MultipleTelemetry telemetry)
@@ -199,22 +208,25 @@ public class GenericAuto
         telemetry.addLine(String.format("Rotation Roll: %.2f degrees", Math.toDegrees(detection.pose.roll)));
     }
 
-    void driveByTime(double timeSeconds, boolean moveSideways, LinearOpMode opMode, MultipleTelemetry telemetry) {
+    void driveByTime(double timeSeconds, boolean moveSideways, boolean moveBackwards, LinearOpMode opMode, MultipleTelemetry telemetry) {
         runtime.reset();
         int initialCounts = HDriveWrapper.getTotalEncoderCounts(HardwareMapContainer.motor0, HardwareMapContainer.motor1, HardwareMapContainer.motor3);
 
         TrapezoidalProfileByTime profile = new TrapezoidalProfileByTime(timeSeconds, new TrapezoidalProfile(0.7, 1));
+
+        double speedMultiplier = moveBackwards ? -1 : 1;
 
         while(!opMode.isStopRequested() && opMode.opModeIsActive() && (runtime.seconds() < timeSeconds)) {
             telemetry.addData("Driving Time", runtime.seconds());
             telemetry.addData("Driving Counts", HDriveWrapper.getTotalEncoderCounts(HardwareMapContainer.motor0, HardwareMapContainer.motor1, HardwareMapContainer.motor3));
             telemetry.addData("Driving Distance (inches)", DriveConstants.encoderTicksToInches((double)(HDriveWrapper.getTotalEncoderCounts(HardwareMapContainer.motor0, HardwareMapContainer.motor1, HardwareMapContainer.motor3) - initialCounts) / 2)); // /2 as 2 motors
             if(moveSideways) { // Relative to original heading
-                drive.fieldOrientedDriveRelativeRotation(0, profile.predict(runtime.seconds()), 0); // So /\ in velocity (limit acceleration)
+                drive.fieldOrientedDriveAbsoluteRotation(0, speedMultiplier * profile.predict(runtime.seconds())); // So /``\ in velocity (limit acceleration)
             } else {
-                drive.fieldOrientedDriveRelativeRotation(profile.predict(runtime.seconds()), 0, 0); // So /\ in velocity (limit acceleration)
+                drive.fieldOrientedDriveAbsoluteRotation(speedMultiplier * profile.predict(runtime.seconds()), 0); // So /``\ in velocity (limit acceleration)
             }
             telemetry.update();
+            opMode.sleep(50);
         }
         HardwareMapContainer.motor0.set(0);
         HardwareMapContainer.motor1.set(0);
