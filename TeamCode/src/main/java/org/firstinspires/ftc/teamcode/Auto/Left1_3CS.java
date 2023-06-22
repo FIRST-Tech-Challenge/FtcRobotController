@@ -218,7 +218,8 @@ public class Left1_3CS extends LinearOpMode {
                 .lineToLinearHeading(new Pose2d(preJCTX+preXOff+F_preXOff, preJCTY+preYOff+F_preYOff, Math.toRadians(90)), SampleMecanumDrive.getVelocityConstraint(35.0, 2.5, DriveConstants.TRACK_WIDTH), SampleMecanumDrive.getAccelerationConstraint(35))
                 .UNSTABLE_addTemporalMarkerOffset(0, () -> {
                     coneTransporter.setGripperPosition(1.0);
-                    drive.setPoseEstimate(new Pose2d(drive.getPoseEstimate().getX(), drive.getPoseEstimate().getY(), (readFromIMU() + Math.toRadians(90)) % Math.toRadians(360)));
+                    telemetry.addData("IMUAngle", drive.getExternalHeading());
+                    drive.setPoseEstimate(new Pose2d(drive.getPoseEstimate().getX(), drive.getPoseEstimate().getY(), drive.getPoseEstimate().getHeading())); //(readFromIMU() + Math.toRadians(90)) % Math.toRadians(360))
                 })
                 .waitSeconds(0.15)
                 //TODO: CYCLE #1________________________________________________________________________________________
@@ -228,11 +229,11 @@ public class Left1_3CS extends LinearOpMode {
                 })
                 // Go to Stack
                 .setTangent(Math.toRadians(300))
-                .splineToLinearHeading(new Pose2d((stackX + F_stackXOff1), (stackY + stackYOff + F_stackYOff1), Math.toRadians(0 + F_stackAngOff1)), Math.toRadians(45))
+                .splineToLinearHeading(new Pose2d((stackX + F_stackXOff1), (stackY + stackYOff + F_stackYOff1), Math.toRadians(0 + F_stackAngOff1)), Math.toRadians(35))
                 .waitSeconds(.5)
                 .UNSTABLE_addTemporalMarkerOffset(0, () -> {
                     telemetry.addData("Status", colorSensorMech.isDetectingBlueLine());
-                    drive.setPoseEstimate(new Pose2d(drive.getPoseEstimate().getX(), drive.getPoseEstimate().getY()+colorSensorMech.isDetectingBlueLine(), drive.getExternalHeading()));
+                    drive.setPoseEstimate(new Pose2d(drive.getPoseEstimate().getX(), drive.getPoseEstimate().getY()+colorSensorMech.isDetectingBlueLine(), drive.getPoseEstimate().getHeading()));
 
                 })
                 .waitSeconds(2)
@@ -265,7 +266,15 @@ public class Left1_3CS extends LinearOpMode {
                 })
                 // Go to Stack
                 .setTangent(Math.toRadians(300))
-                .splineToLinearHeading(new Pose2d((stackX + stackXOff + F_stackXOff2), (stackY + stackYOff + F_stackYOff2), Math.toRadians(0 + F_stackAngOff2)), Math.toRadians(45))
+                .splineToLinearHeading(new Pose2d((stackX + F_stackXOff1), (stackY + stackYOff + F_stackYOff1), Math.toRadians(0 + F_stackAngOff1)), Math.toRadians(35))
+                .waitSeconds(.5)
+                .UNSTABLE_addTemporalMarkerOffset(0, () -> {
+                    telemetry.addData("Status", colorSensorMech.isDetectingBlueLine());
+                    drive.setPoseEstimate(new Pose2d(drive.getPoseEstimate().getX(), drive.getPoseEstimate().getY()+colorSensorMech.isDetectingBlueLine(), drive.getPoseEstimate().getHeading()));
+
+                })
+                .waitSeconds(2)
+                .lineToLinearHeading(new Pose2d(stackX + stackXOff + 3, stackY + stackYOff, Math.toRadians(0)))
                 // Go into Cone -> Grab -> Slides low Junction
                 .UNSTABLE_addTemporalMarkerOffset(0.2, () -> {
                     coneTransporter.setHeight(ConeTransporter.equate(ConeTransporter.AUTO_LINEAR_SLIDES_14_IN_CONE));
@@ -293,8 +302,15 @@ public class Left1_3CS extends LinearOpMode {
                     coneTransporter.setHeight(ConeTransporter.equate(ConeTransporter.AUTO_LINEAR_SLIDES_15));
                 })
                 // Go to Stack
-                .setTangent(Math.toRadians(300))
-                .splineToLinearHeading(new Pose2d((stackX + stackXOff + F_stackXOff3), (stackY + stackYOff + F_stackYOff3), Math.toRadians(0 + F_stackAngOff3)), Math.toRadians(45))
+                .splineToLinearHeading(new Pose2d((stackX + F_stackXOff1), (stackY + stackYOff + F_stackYOff1), Math.toRadians(0 + F_stackAngOff1)), Math.toRadians(35))
+                .waitSeconds(.5)
+                .UNSTABLE_addTemporalMarkerOffset(0, () -> {
+                    telemetry.addData("Status", colorSensorMech.isDetectingBlueLine());
+                    drive.setPoseEstimate(new Pose2d(drive.getPoseEstimate().getX(), drive.getPoseEstimate().getY()+colorSensorMech.isDetectingBlueLine(), drive.getPoseEstimate().getHeading()));
+
+                })
+                .waitSeconds(2)
+                .lineToLinearHeading(new Pose2d(stackX + stackXOff + 3, stackY + stackYOff, Math.toRadians(0)))
                 // Go into Cone -> Grab -> Slides low Junction
                 .UNSTABLE_addTemporalMarkerOffset(0.2, () -> {
                     coneTransporter.setHeight(ConeTransporter.equate(ConeTransporter.AUTO_LINEAR_SLIDES_13_IN_CONE));
