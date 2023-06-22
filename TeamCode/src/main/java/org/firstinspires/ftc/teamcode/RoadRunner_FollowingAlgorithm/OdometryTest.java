@@ -1,6 +1,5 @@
 package org.firstinspires.ftc.teamcode.RoadRunner_FollowingAlgorithm;
 
-import com.acmerobotics.roadrunner.control.PIDFController;
 import com.arcrobotics.ftclib.controller.PIDController;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
