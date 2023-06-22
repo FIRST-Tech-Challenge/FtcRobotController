@@ -23,7 +23,6 @@ import org.openftc.easyopencv.OpenCvCameraRotation;
 
 import java.util.ArrayList;
 
-@Autonomous
 public class CSTest extends LinearOpMode {
     private OpenCvCamera camera;
     private Detection detection;

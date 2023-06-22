@@ -52,10 +52,12 @@ public class ConeTransporter extends HWMap {
     private static final double inFactor_MM = 125;
     public  boolean automation = false;
 
+    public static double AUTO_LINEAR_SLIDES_11 = 133.35;// 5.25 inches converted to mm(1 stack) + 10 mm to be above the cone
     public static double AUTO_LINEAR_SLIDES_12 = 165.1;// 6.5 inches converted to mm(2 stack) + 10 mm to be above the cone
     public static double AUTO_LINEAR_SLIDES_13 = 196.85;// 7.75 inches converted to mm(3 stack) + 10 mm to be above the cone
     public static double AUTO_LINEAR_SLIDES_14 = 228.6;// 9 inches converted to mm(4 stack) + 10 mm to be above the cone
     public static double AUTO_LINEAR_SLIDES_15 = 248;// 10.25 inches converted to mm(5 stack) + 10 mm to be above the cone
+    public static double AUTO_LINEAR_SLIDES_11_IN_CONE = AUTO_LINEAR_SLIDES_11 - inFactor_MM;
     public static double AUTO_LINEAR_SLIDES_12_IN_CONE = AUTO_LINEAR_SLIDES_12 - inFactor_MM;
     public static double AUTO_LINEAR_SLIDES_13_IN_CONE = AUTO_LINEAR_SLIDES_13 - inFactor_MM;
     public static double AUTO_LINEAR_SLIDES_14_IN_CONE = AUTO_LINEAR_SLIDES_14 - inFactor_MM;

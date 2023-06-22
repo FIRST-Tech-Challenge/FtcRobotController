@@ -78,26 +78,33 @@ public class Left1_5 extends LinearOpMode {
     private double F_preXOff = 	-0.5	; //TODO: Field Preload junction X offset
     private double F_preYOff =	0.0	; //TODO: Field Preload junction Y offset
 
-    private double F_stackXOff1 = 	0.55	; //TODO: Stack X offset Cycle 1
+    private double F_stackXOff1 = 	.75	; //TODO: Stack X offset Cycle 1
     private double F_stackYOff1 = 	0.0	; //TODO: Stack Y offset Cycle 1
     private double F_stackAngOff1 = 	0.0	; //TODO: Stack Angle offset Cycle 1
     private double F_cycleXOff1 = 	-0.0	; //TODO: Field cycle junction X offset Cycle 1
     private double F_cycleYOff1 = 	-0.5	; //TODO: Field cycle junction Y offset Cycle 1
     private double F_cycleAngOff1 = 	0.0	; //TODO: cycle Angle offset Cycle 1
 
-    private double F_stackXOff2 = 	0.55	; //TODO: Stack X offset Cycle 2
+    private double F_stackXOff2 = 	.75	; //TODO: Stack X offset Cycle 2
     private double F_stackYOff2 = 	0.0	; //TODO: Stack Y offset Cycle 2
     private double F_stackAngOff2 = 	0.0	; //TODO: Stack Angle offset Cycle 2
     private double F_cycleXOff2 = 	-0.0	; //TODO: Field cycle junction X offset Cycle 2
     private double F_cycleYOff2 = 	-0.5	; //TODO: Field cycle junction Y offset Cycle 2
     private double F_cycleAngOff2 = 	0.0	; //TODO: cycle Angle offset Cycle 2
 
-    private double F_stackXOff3 = 	0.55	; //TODO: Stack X offset Cycle 3
+    private double F_stackXOff3 = 	.75	; //TODO: Stack X offset Cycle 3
     private double F_stackYOff3 = 	0.0	; //TODO: Stack Y offset Cycle 3
     private double F_stackAngOff3 = 	0.0	; //TODO: Stack Angle offset Cycle 3
     private double F_cycleXOff3 = 	0.0	; //TODO: Field cycle junction X offset Cycle 3
-    private double F_cycleYOff3 = 	-0.5	; //TODO: Field cycle junction Y offset Cycle 3
+    private double F_cycleYOff3 = 	-1	; //TODO: Field cycle junction Y offset Cycle 3
     private double F_cycleAngOff3 = 	0.0	; //TODO: cycle Angle offset Cycle 3
+
+    private double F_stackXOff4 = 	.75	; //TODO: Stack X offset Cycle 3
+    private double F_stackYOff4 = 	0.0	; //TODO: Stack Y offset Cycle 3
+    private double F_stackAngOff4 = 	0.0	; //TODO: Stack Angle offset Cycle 3
+    private double F_cycleXOff4 = 	0.0	; //TODO: Field cycle junction X offset Cycle 3
+    private double F_cycleYOff4 = 	-1	; //TODO: Field cycle junction Y offset Cycle 3
+    private double F_cycleAngOff4 = 	0.0	; //TODO: cycle Angle offset Cycle 3
 
     @Override
     public void runOpMode() {
@@ -311,7 +318,7 @@ public class Left1_5 extends LinearOpMode {
                 })
                 // Go to Stack
                 .setTangent(Math.toRadians(300))
-                .splineToLinearHeading(new Pose2d((stackX + stackXOff + F_stackXOff3), (stackY + stackYOff + F_stackYOff3), Math.toRadians(0 + F_stackAngOff3)), Math.toRadians(45))
+                .splineToLinearHeading(new Pose2d((stackX + stackXOff + F_stackXOff4), (stackY + stackYOff + F_stackYOff4), Math.toRadians(0 + F_stackAngOff4)), Math.toRadians(45))
                 // Go into Cone -> Grab -> Slides low Junction
                 .UNSTABLE_addTemporalMarkerOffset(0.2, () -> {
                     coneTransporter.setHeight(ConeTransporter.equate(ConeTransporter.AUTO_LINEAR_SLIDES_12_IN_CONE));
@@ -327,7 +334,7 @@ public class Left1_5 extends LinearOpMode {
                 .waitSeconds(.2)
                 // Stack -> Junction
                 .setTangent(Math.toRadians(225))
-                .splineToLinearHeading(new Pose2d((cycleJCTX + cycleXOff + F_cycleXOff3), (cycleJCTY + cycleYOff + F_cycleYOff3), Math.toRadians(90 + F_cycleAngOff3)), Math.toRadians(90))
+                .splineToLinearHeading(new Pose2d((cycleJCTX + cycleXOff + F_cycleXOff4), (cycleJCTY + cycleYOff + F_cycleYOff4), Math.toRadians(90 + F_cycleAngOff4)), Math.toRadians(90))
                 // Dropping Cone
                 .UNSTABLE_addTemporalMarkerOffset(0, () -> {
                     coneTransporter.setGripperPosition(1.0);
