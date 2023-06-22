@@ -15,7 +15,7 @@ public class OdometryTest extends LinearOpMode {
 
     private static final double    Track_Width = 1,  //cm
                             Forward_Offset = 1;  //cm
-    private static final int       WHEEL_RADIUS = 1; //cm
+    private static final double       WHEEL_RADIUS = 1; //cm
     private static final double    TICKS_PER_REV = 8192;
 
     //Variabile
@@ -81,10 +81,6 @@ public class OdometryTest extends LinearOpMode {
         RFM.setDirection(DcMotor.Direction.REVERSE);
         RBM.setDirection(DcMotor.Direction.REVERSE);
 
-        //TODO dati si voi cv P sa porneasca
-        PIDController   x_control = new PIDController(0,0,0),
-                        y_control = new PIDController(0,0,0),
-                        alfa_control = new PIDController(0,0,0);
         //START
         waitForStart();
 
@@ -93,30 +89,14 @@ public class OdometryTest extends LinearOpMode {
         {
             updateOdometryPos();
             if(gamepad1.a)
-            {
-                Target_PosX = 200;
-            }
+                Target_PosX+=10;
             else if(gamepad1.b)
-                {
-                    Target_PosY = 200;
-                }
-            else if (gamepad1.x) {
-                    Target_PosAlfa = 90;
-                }
-            else
-                if(gamepad1.y)
-                {
-                    Target_PosX = 0;
-                    Target_PosY = 0;
-                    Target_PosAlfa = 0;
-                }
-            double x = x_control.calculate(Target_PosX, Pos_X);
-            double y = y_control.calculate(Target_PosY, Pos_Y);
-            double t = alfa_control.calculate(Target_PosAlfa, heading);
-            LFM.setPower(x + y + t);
-            LBM.setPower(x - y + t);
-            RFM.setPower(x - y - t);
-            RBM.setPower(x + y - t);
+                Target_PosY+=10;
+            else if(gamepad1.x)
+                Target_PosX-=10;
+            else if(gamepad1.y)
+                Target_PosY-=10;
+            setMotorPower(0.3);
             telemetry.addData("Pozitie pe OX fata de start:",Pos_X);
             telemetry.addData("Pozitie pe OY fata de start:",Pos_Y);
             telemetry.addData("Unghi rotire:",heading);
@@ -161,7 +141,18 @@ public class OdometryTest extends LinearOpMode {
         prev_RightEncPos = curr_RightEncPos;
         prev_MidEncPos = curr_MidEncPos;
     }
-    public static double encoderTicksToCms(double ticks) {
+    private static double encoderTicksToCms(double ticks) {
         return WHEEL_RADIUS * 2 * Math.PI * ticks / TICKS_PER_REV;
+    }
+    private void setMotorPower(double pow)
+    {
+        if(Pos_Y<Target_PosY+5||Target_PosY-5<Pos_Y) {
+            if(Pos_Y<Target_PosY)
+                pow=-pow;
+            LFM.setPower(pow);
+            LBM.setPower(pow);
+            RBM.setPower(pow);
+            RFM.setPower(pow);
+        }
     }
 }
