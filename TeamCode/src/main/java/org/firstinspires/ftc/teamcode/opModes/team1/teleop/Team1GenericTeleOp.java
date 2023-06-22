@@ -70,6 +70,7 @@ public class Team1GenericTeleOp {
         Inputs.gamepad1.getGamepadButton(RESET_IMU_BUTTON).whenPressed(new InstantCommand(() -> {
             imu.resetYaw();
         }));
+        imu.resetYaw(); // At the start so no sudden turn
 
         Inputs.gamepad1.getGamepadButton(CLOSE_GRABBER_BUTTON).whenPressed(new InstantCommand(() -> {
             grabber.setPosition(GrabberComponent.GrabberPosition.CLOSED);
@@ -123,6 +124,7 @@ public class Team1GenericTeleOp {
         }
 
         t.addData("Angle", new Vector2d(y_joystick_turn, -x_joystick_turn).angle());
+        t.addData("Test", "Wireless Debugging");
 
         // Lift
         lift.run();

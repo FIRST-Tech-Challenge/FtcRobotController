@@ -8,6 +8,7 @@ import com.arcrobotics.ftclib.hardware.motors.Motor;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.libs.brightonCollege.motors.BCLibMotor;
 import org.firstinspires.ftc.teamcode.libs.brightonCollege.motors.MotorVelocityController;
+import org.firstinspires.ftc.teamcode.libs.brightonCollege.motors.TrapezoidalProfile;
 import org.firstinspires.ftc.teamcode.libs.brightonCollege.motors.TrapezoidalProfileMotor;
 import org.firstinspires.ftc.teamcode.libs.brightonCollege.util.TelemetryContainer;
 
@@ -61,7 +62,7 @@ public class LiftComponent {
                 new SimpleMotorFeedforward(120, 0.6, 0),
                 (counts) -> 170
         );
-        trapezoidalProfileMotor = new TrapezoidalProfileMotor(motorVelocityController, new TrapezoidalProfileMotor.TrapezoidalProfile(MAX_TICKS_PER_SECOND, 3000));
+        trapezoidalProfileMotor = new TrapezoidalProfileMotor(motorVelocityController, new TrapezoidalProfile(MAX_TICKS_PER_SECOND, 3000));
         // Reset the encoder counts to start from the initial position
         motor.resetEncoder();
         initialPositionCounts = initialPosition.counts;

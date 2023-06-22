@@ -5,7 +5,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import org.firstinspires.ftc.teamcode.libs.brightonCollege.modeBases.AutonomousLinearModeBase;
 import org.firstinspires.ftc.teamcode.libs.brightonCollege.util.TeamColour;
 
-@Autonomous(name = "Red auto", group = "Autos")
+@Autonomous(name = "Blue auto", group = "Autos")
 public class BlueAuto extends AutonomousLinearModeBase {
     @Override
     public void run() {

@@ -7,6 +7,7 @@ import com.arcrobotics.ftclib.controller.PIDController;
 import com.arcrobotics.ftclib.drivebase.HDrive;
 import com.arcrobotics.ftclib.geometry.Vector2d;
 import com.arcrobotics.ftclib.hardware.RevIMU;
+import com.arcrobotics.ftclib.hardware.motors.Motor;
 import com.qualcomm.robotcore.hardware.IMU;
 import com.qualcomm.robotcore.hardware.PIDCoefficients;
 
@@ -126,6 +127,14 @@ public class HDriveWrapper {
         double turn = turningController.calculate(headingToDesired);
 
         fieldOrientedDriveRelativeRotation(strafe, forward, turn);
+    }
+
+    /**
+     * Return the total number of encoder counts of all of the motors, to be compared and estimate distance moved.
+     * @return Encoder counts (left) + Encoder counts (right) + Encoder counts (slide)
+     */
+    public static int getTotalEncoderCounts(Motor mLeft, Motor mRight, Motor slide) {
+        return mLeft.getCurrentPosition() + mRight.getCurrentPosition() + slide.getCurrentPosition();
     }
 
     public void fieldOrientedDriveRelativeRotation(double strafe, double forward, double turn){
