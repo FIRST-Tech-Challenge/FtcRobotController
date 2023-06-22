@@ -100,11 +100,13 @@ public class GenericAuto
 
         telemetry.setMsTransmissionInterval(50);
 
+        runtime.reset();
+
         /*
          * The INIT-loop:
          * This REPLACES waitForStart!
          */
-        while (!opMode.isStarted() && !opMode.isStopRequested())
+        while ((!opMode.isStarted() && !opMode.isStopRequested()) || (tagOfInterest == null && runtime.seconds() < 15.0 && !opMode.isStopRequested()))
         {
             ArrayList<AprilTagDetection> currentDetections = aprilTagDetectionPipeline.getLatestDetections();
 
@@ -189,11 +191,14 @@ public class GenericAuto
         // Move off wall
         driveByTime(AWAYFROMWALL_TIME, true, true, opMode, telemetry);
         // Move to correct zone by wall
-        if(tagOfInterest.id == 1) {
-            driveByTime(ONETILE_TIME, false, false, opMode, telemetry);
-        } else if(tagOfInterest.id == 3) {
-            driveByTime(ONETILE_TIME, false, true, opMode, telemetry);
-        } // Else 2; don't move to different zone
+        if (tagOfInterest != null) {
+            if (tagOfInterest.id == 1) {
+                driveByTime(ONETILE_TIME, false, false, opMode, telemetry);
+            } else if (tagOfInterest.id == 3) {
+                driveByTime(ONETILE_TIME, false, true, opMode, telemetry);
+            }
+        }
+        // Else 2; don't move to different zone
         driveByTime(INTOZONE_TIME, true, true, opMode, telemetry);
     }
 
