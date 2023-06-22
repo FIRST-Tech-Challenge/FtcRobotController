@@ -30,7 +30,15 @@ dependencies {
     // For FTCLib
     implementation 'org.ftclib.ftclib:core:2.0.1'
 
+    // FTC dashboard
+    implementation 'com.acmerobotics.dashboard:dashboard:0.4.9'
+
     // for computer vision
-    implementation 'org.openftc:easyopencv:1.5.3'
+    implementation 'org.openftc:easyopencv:1.6.2'
     implementation 'org.openftc:apriltag:1.1.1'
+
+    // roadrunner
+    implementation 'org.apache.commons:commons-math3:3.6.1'
+    implementation 'com.acmerobotics.roadrunner:core:0.5.6'
+    implementation 'com.fasterxml.jackson.core:jackson-databind:2.12.7'
 }
