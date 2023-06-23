@@ -3,7 +3,7 @@ package org.firstinspires.ftc.teamcode.commandBased.subsystems;
 import com.ThermalEquilibrium.homeostasis.Controllers.Feedback.AngleController;
 import com.ThermalEquilibrium.homeostasis.Parameters.PIDCoefficientsEx;
 import com.acmerobotics.dashboard.config.Config;
-import org.firstinspires.ftc.teamcode.classes.Pose2d;
+import org.firstinspires.ftc.teamcode.commandBased.classes.Pose2d;
 import com.arcrobotics.ftclib.command.SubsystemBase;
 import com.arcrobotics.ftclib.hardware.motors.Motor;
 import com.qualcomm.hardware.lynx.LynxModule;
@@ -14,10 +14,11 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.IMU;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
-import org.firstinspires.ftc.teamcode.classes.pid.DeadzonePID;
-import org.firstinspires.ftc.teamcode.classes.Drive;
-import org.firstinspires.ftc.teamcode.classes.pid.PIDOpenClosed;
-import org.firstinspires.ftc.teamcode.classes.Vector2d;
+import org.firstinspires.ftc.teamcode.commandBased.classes.enums.DriveMode;
+import org.firstinspires.ftc.teamcode.commandBased.classes.pid.DeadzonePID;
+import org.firstinspires.ftc.teamcode.commandBased.classes.Drive;
+import org.firstinspires.ftc.teamcode.commandBased.classes.pid.PIDOpenClosed;
+import org.firstinspires.ftc.teamcode.commandBased.classes.Vector2d;
 import org.firstinspires.ftc.teamcode.commandBased.Constants;
 import org.firstinspires.ftc.teamcode.rr.drive.TwoWheelTrackingLocalizer;
 
@@ -31,8 +32,8 @@ public class DrivetrainSubsystem extends SubsystemBase {
     private DcMotor m_rR;
 
     //DRIVE VARIABLES
-    private boolean fieldCentric = false;
-    private double totalSpeed = 0.5;
+    private DriveMode.Mode mode;
+    private final double totalSpeed = 0.5;
     private double strafeMultiplier = 1;
     private double turnMultiplier = 1;
     private double forwardMultiplier = 1;
@@ -117,6 +118,7 @@ public class DrivetrainSubsystem extends SubsystemBase {
                 turnSpeed * turnMultiplier,
                 heading
         );
+        mode = DriveMode.Mode.FIELD_CENTRIC;
     }
 
     public void robotCentric(double strafeSpeed, double forwardSpeed, double turnSpeed) {
@@ -125,6 +127,7 @@ public class DrivetrainSubsystem extends SubsystemBase {
                 forwardSpeed * forwardMultiplier,
                 turnSpeed * turnMultiplier
         );
+        mode = DriveMode.Mode.ROBOT_CENTRIC;
     }
 
     public void pointCentric(double strafeSpeed, double forwardSpeed, Vector2d target, Pose2d pose, double angleOffset) {
@@ -136,6 +139,7 @@ public class DrivetrainSubsystem extends SubsystemBase {
                 pose,
                 angleOffset
         );
+        mode = DriveMode.Mode.POINT_CENTRIC;
     }
 
     public void resetGyro() {
@@ -172,6 +176,10 @@ public class DrivetrainSubsystem extends SubsystemBase {
 
     public Double getExternalHeadingVelocity() {
         return (double) imu.getRobotAngularVelocity(AngleUnit.RADIANS).zRotationRate;
+    }
+
+    public DriveMode.Mode getMode() {
+        return mode;
     }
 
     public Pose2d convertRRPose(com.acmerobotics.roadrunner.geometry.Pose2d pose) {

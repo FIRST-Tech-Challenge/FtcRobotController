@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.commandBased;
+package org.firstinspires.ftc.teamcode.commandBased.opmodes.teleop;
 
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.canvas.Canvas;
@@ -7,6 +7,7 @@ import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.arcrobotics.ftclib.command.CommandScheduler;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
+import org.firstinspires.ftc.teamcode.commandBased.Constants;
 import org.firstinspires.ftc.teamcode.commandBased.commands._groups.GrabCone;
 import org.firstinspires.ftc.teamcode.commandBased.commands._groups.LiftMoveRotateArm;
 import org.firstinspires.ftc.teamcode.commandBased.commands._groups.ScoreCone;
@@ -32,7 +33,6 @@ import ftc.rogue.blacksmith.BlackOp;
 import ftc.rogue.blacksmith.Scheduler;
 import ftc.rogue.blacksmith.listeners.ReforgedGamepad;
 
-@Config
 @TeleOp(name="Command Based", group="Linear Opmode")
 public class Robot extends BlackOp {
 
@@ -193,6 +193,7 @@ public class Robot extends BlackOp {
 //            //drivetrain speed controls
 //            driver.left_bumper.onRise(slowMode::schedule)
 //                              .onFall(fastMode::schedule);
+
 
             //drivetrain mode controls
             driver.left_trigger.and(driver.a).onRise(() -> {

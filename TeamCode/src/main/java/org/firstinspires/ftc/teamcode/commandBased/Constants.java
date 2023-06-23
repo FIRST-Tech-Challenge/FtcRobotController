@@ -4,10 +4,11 @@ import com.ThermalEquilibrium.homeostasis.Parameters.PIDCoefficientsEx;
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.roadrunner.control.PIDCoefficients;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
+import com.arcrobotics.ftclib.gamepad.GamepadKeys;
 import com.arcrobotics.ftclib.hardware.motors.Motor;
 import com.qualcomm.robotcore.hardware.PwmControl;
 
-import org.firstinspires.ftc.teamcode.classes.Vector2d;
+import org.firstinspires.ftc.teamcode.commandBased.classes.Vector2d;
 
 @SuppressWarnings("SpellCheckingInspection")
 @Config
@@ -16,12 +17,17 @@ public class Constants {
     //debug toggles
     public static boolean DEBUG_DRIVE = false;
     public static boolean DEBUG_ELE = true;
-    public static boolean DEBUG_ARM = false;
+    public static boolean DEBUG_ARM = true;
     public static boolean DEBUG_ROTATOR = false;
     public static boolean DEBUG_INTAKE = false;
+    public static boolean DEBUG_COMMANDS = true;
 
     //display toggle
     public static boolean DISPLAY = true;
+
+    //control layers
+    public static GamepadKeys.Trigger CONTROL_LAYER_2 = GamepadKeys.Trigger.LEFT_TRIGGER;
+    public static GamepadKeys.Trigger CONTROL_LAYER_3 = GamepadKeys.Trigger.RIGHT_TRIGGER;
 
     //motor types
     public static Motor.GoBILDA DRIVE_MOTOR = Motor.GoBILDA.RPM_312;
@@ -75,11 +81,11 @@ public class Constants {
 //    public static PIDCoefficients ARM_COEFFS_FRONT_IDLE = new PIDCoefficients(.004, 0.00075, 0);
 //    public static PIDCoefficients ARM_COEFFS_BACK_IDLE = new PIDCoefficients(.004, 0.00075, 0);
 
-    public static double ARM_KV = 0.0007;
+    public static double ARM_KV = 0.0009;
     public static double ARM_KA = 0;
 
     public static double ARM_KS = 0.05;
-    public static double ARM_KSIN = .125;
+    public static double ARM_KSIN = 0.2;
 
     public static double ARM_IDLE_VELO = 800;
     public static double ARM_IDLE_ACCEL = 1600;

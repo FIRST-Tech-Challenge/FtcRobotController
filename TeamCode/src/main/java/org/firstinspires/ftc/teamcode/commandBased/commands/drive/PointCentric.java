@@ -2,7 +2,7 @@ package org.firstinspires.ftc.teamcode.commandBased.commands.drive;
 
 import com.arcrobotics.ftclib.command.CommandBase;
 
-import org.firstinspires.ftc.teamcode.classes.Vector2d;
+import org.firstinspires.ftc.teamcode.commandBased.classes.Vector2d;
 import org.firstinspires.ftc.teamcode.commandBased.subsystems.DrivetrainSubsystem;
 
 import java.util.function.DoubleSupplier;

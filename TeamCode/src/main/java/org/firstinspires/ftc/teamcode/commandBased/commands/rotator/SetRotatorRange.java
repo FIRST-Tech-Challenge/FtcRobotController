@@ -2,7 +2,7 @@ package org.firstinspires.ftc.teamcode.commandBased.commands.rotator;
 
 import com.qualcomm.robotcore.hardware.PwmControl;
 
-import org.firstinspires.ftc.teamcode.classes.triggers.TriggerCommandBase;
+import org.firstinspires.ftc.teamcode.commandBased.classes.triggers.TriggerCommandBase;
 import org.firstinspires.ftc.teamcode.commandBased.subsystems.RotatorSubsystem;
 
 public class SetRotatorRange extends TriggerCommandBase {

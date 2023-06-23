@@ -27,7 +27,7 @@ public class ElevatorSubsystem extends SubsystemBase {
     private double elePos;
     private double eleTarget;
 
-    private final PIDFController controller;
+    private PIDFController controller;
     private MotionProfile profile;
     private final ElapsedTime timer;
     private MotionState state;
@@ -86,6 +86,18 @@ public class ElevatorSubsystem extends SubsystemBase {
 
         correction = controller.update(elePos);
         ele.set(correction + Constants.ELE_KG);
+    }
+
+    public void createNewController() {
+        controller = new PIDFController(
+                Constants.ELE_COEFFS,
+                Constants.ELE_KV,
+                Constants.ELE_KA,
+                Constants.ELE_KS
+        );
+        controller.setTargetPosition(state.getX());
+        controller.setTargetVelocity(state.getV());
+        controller.setTargetAcceleration(state.getA());
     }
 
     public void setProfileTarget(double target) {

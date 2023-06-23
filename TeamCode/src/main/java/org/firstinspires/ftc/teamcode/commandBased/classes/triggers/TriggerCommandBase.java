@@ -1,6 +1,8 @@
-package org.firstinspires.ftc.teamcode.classes.triggers;
+package org.firstinspires.ftc.teamcode.commandBased.classes.triggers;
 
 import com.arcrobotics.ftclib.command.Subsystem;
+
+import org.firstinspires.ftc.teamcode.commandBased.classes.CommandSchedulerEx;
 
 import java.util.Arrays;
 import java.util.HashSet;

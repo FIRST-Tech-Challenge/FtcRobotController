@@ -1,6 +1,8 @@
 package org.firstinspires.ftc.teamcode.commandBased.commands._groups;
 
-import org.firstinspires.ftc.teamcode.classes.triggers.TriggerCommandGroup;
+import com.arcrobotics.ftclib.command.SequentialCommandGroup;
+
+import org.firstinspires.ftc.teamcode.commandBased.classes.triggers.TriggerCommandGroup;
 import org.firstinspires.ftc.teamcode.commandBased.commands.arm.MoveArmToAngle;
 import org.firstinspires.ftc.teamcode.commandBased.commands.elevator.MoveElevatorToPosition;
 import org.firstinspires.ftc.teamcode.commandBased.commands.rotator.MoveRotatorToPosition;
@@ -8,7 +10,7 @@ import org.firstinspires.ftc.teamcode.commandBased.subsystems.ArmSubsystem;
 import org.firstinspires.ftc.teamcode.commandBased.subsystems.ElevatorSubsystem;
 import org.firstinspires.ftc.teamcode.commandBased.subsystems.RotatorSubsystem;
 
-public class LiftMoveRotateArm extends TriggerCommandGroup {
+public class LiftMoveRotateArm extends SequentialCommandGroup {
 
     public LiftMoveRotateArm(
             ElevatorSubsystem ele,

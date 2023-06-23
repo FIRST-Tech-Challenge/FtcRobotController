@@ -1,17 +1,13 @@
 package org.firstinspires.ftc.teamcode.commandBased.subsystems;
 
 //import com.acmerobotics.roadrunner.geometry.Vector2d;
-import com.ThermalEquilibrium.homeostasis.Utils.Vector;
 import com.arcrobotics.ftclib.command.SubsystemBase;
-import com.arcrobotics.ftclib.hardware.RevIMU;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
-import org.apache.commons.math3.geometry.euclidean.twod.Vector2D;
-import org.firstinspires.ftc.teamcode.classes.Vector2d;
+import org.firstinspires.ftc.teamcode.commandBased.classes.Vector2d;
 
-import org.firstinspires.ftc.teamcode.commandBased.Robot;
 import org.firstinspires.ftc.teamcode.rr.util.Encoder;
 
 @Disabled

@@ -1,6 +1,6 @@
 package org.firstinspires.ftc.teamcode.commandBased.commands.rotator;
 
-import org.firstinspires.ftc.teamcode.classes.triggers.TriggerCommandBase;
+import org.firstinspires.ftc.teamcode.commandBased.classes.triggers.TriggerCommandBase;
 import org.firstinspires.ftc.teamcode.commandBased.subsystems.RotatorSubsystem;
 
 public class ToggleRotatorPower extends TriggerCommandBase {

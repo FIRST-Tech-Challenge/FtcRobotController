@@ -1,8 +1,9 @@
-package org.firstinspires.ftc.teamcode.commandBased;
+package org.firstinspires.ftc.teamcode.commandBased.opmodes.teleop;
 
-import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
+import org.firstinspires.ftc.teamcode.commandBased.Constants;
+import org.firstinspires.ftc.teamcode.commandBased.classes.CommandSchedulerEx;
 import org.firstinspires.ftc.teamcode.commandBased.commands._groups.GrabCone;
 import org.firstinspires.ftc.teamcode.commandBased.commands._groups.LiftMoveRotateArm;
 import org.firstinspires.ftc.teamcode.commandBased.commands._groups.ScoreCone;
@@ -14,13 +15,19 @@ import org.firstinspires.ftc.teamcode.commandBased.commands.drive.ResetGyro;
 import org.firstinspires.ftc.teamcode.commandBased.commands.drive.RobotCentric;
 import org.firstinspires.ftc.teamcode.commandBased.commands.drive.SetDriveSpeeds;
 import org.firstinspires.ftc.teamcode.commandBased.commands.elevator.MoveElevatorToPosition;
+import org.firstinspires.ftc.teamcode.commandBased.commands.elevator.UpdateElevatorPID;
 import org.firstinspires.ftc.teamcode.commandBased.commands.intake.SetIntakePower;
 import org.firstinspires.ftc.teamcode.commandBased.commands.rotator.MoveRotatorToPosition;
 import org.firstinspires.ftc.teamcode.commandBased.commands.rotator.SetRotatorRange;
+import org.firstinspires.ftc.teamcode.commandBased.opmodes.BaseOpMode;
 
-@TeleOp(name="Cmd Op Mode", group="Linear Opmode")
-public class TestOpMode extends BaseOpMode{
+import static com.arcrobotics.ftclib.gamepad.GamepadKeys.Button.*;
+import static com.arcrobotics.ftclib.gamepad.GamepadKeys.Trigger.LEFT_TRIGGER;
 
+@TeleOp
+public class Test extends BaseOpMode {
+
+    //drive commands
     protected FieldCentric fieldCentric;
     protected RobotCentric robotCentric;
     protected PointCentric pointCentric;
@@ -30,26 +37,33 @@ public class TestOpMode extends BaseOpMode{
 
     protected ResetGyro resetGyro;
 
+    //elevator commands
     protected MoveElevatorToPosition eleLow;
     protected MoveElevatorToPosition eleIdle;
     protected MoveElevatorToPosition eleMid;
     protected MoveElevatorToPosition eleHigh;
 
+    protected UpdateElevatorPID updateElevatorPID;
+
+    //arm commands
     protected MoveArmToAngle armBack;
     protected MoveArmToAngle armIdle;
     protected MoveArmToAngle armFront;
 
     protected UpdateArmPID updateArmPID;
 
+    //rotator commands
     protected MoveRotatorToPosition rotatorBack;
     protected MoveRotatorToPosition rotatorFront;
 
     protected SetRotatorRange rotatorRange;
 
+    //intake commands
     protected SetIntakePower intakeIntake;
     protected SetIntakePower intakeIdle;
     protected SetIntakePower intakeOuttake;
 
+    //macro commands
     protected ScoreCone scoreCone;
     protected GrabCone grabCone;
 
@@ -63,6 +77,41 @@ public class TestOpMode extends BaseOpMode{
         super.initialize();
         initializeAllCommands();
 
+        //speed commands
+//        gp1(LEFT_BUMPER, 0).whenActive(slowMode);
+//        gp1(RIGHT_BUMPER, 0).whenActive(fastMode);
+
+        //elevator controls
+        gp1(DPAD_DOWN, 1).whenActive(eleLow);
+        gp1(DPAD_LEFT, 1).whenActive(eleIdle);
+        gp1(DPAD_RIGHT, 1).whenActive(eleMid);
+        gp1(DPAD_UP, 1).whenActive(eleHigh);
+
+        //arm controls
+        gp1(B, 1).whenActive(armFront);
+        gp1(A, 1).whenActive(armIdle);
+        gp1(X, 1).whenActive(armBack);
+
+        //pid controls
+        gp1(LEFT_STICK_BUTTON, 1).whenActive(updateElevatorPID);
+        gp1(RIGHT_STICK_BUTTON, 1).whenActive(updateArmPID);
+
+        //rotator controls
+        gp1(BACK, 1).whenActive(rotatorBack);
+        gp1(START, 1).whenActive(rotatorFront);
+
+        //intake controls
+        gp1(LEFT_BUMPER, 1).whenActive(intakeOuttake).whenInactive(intakeIdle);
+        gp1(RIGHT_BUMPER, 1).whenActive(intakeIntake).whenInactive(intakeIdle);
+
+        //macro controls
+        gp1(Y, 2).whenActive(armBackHigh);
+        gp1(A, 2).whenActive(grabCone);
+
+        //drive controls
+        gp1(A, 3).toggleWhenActive(robotCentric, fieldCentric);
+        gp1(Y, 3).whenActive(resetGyro);
+
         fieldCentric.schedule();
         rotatorRange.schedule();
         rotatorFront.schedule();
@@ -71,48 +120,6 @@ public class TestOpMode extends BaseOpMode{
     @Override
     public void run() {
         super.run();
-
-        //drivetrain mode controls
-        driver.left_trigger.and(driver.a).onRise(() -> {
-            pointCentric.cancel();
-            fieldCentric.cancel();
-            robotCentric.schedule();
-        });
-        driver.left_trigger.and(driver.b).onRise(() -> {
-            pointCentric.cancel();
-            robotCentric.cancel();
-            fieldCentric.schedule();
-        });
-        driver.left_trigger.and(driver.x).onRise(() -> {
-            fieldCentric.cancel();
-            robotCentric.cancel();
-            pointCentric.schedule();
-        });
-
-        driver.left_trigger.and(driver.y).onRise(resetGyro::schedule);
-
-        //elevator controls
-        driver.dpad_down.onRise(eleLow::schedule);
-        driver.dpad_left.onRise(eleIdle::schedule);
-        driver.dpad_right.onRise(eleMid::schedule);
-        driver.dpad_up.onRise(eleHigh::schedule);
-
-        //arm controls
-        driver.b.onRise(armFront::schedule);
-        driver.x.onRise(armBack::schedule);
-        driver.a.onRise(armIdle::schedule);
-
-        //rotator controls
-        driver.back.onRise(() -> rotatorBack.schedule(true));
-        driver.back.onRise(rotatorBack::schedule);
-        driver.start.onRise(rotatorFront::schedule);
-
-        //intake controls
-        driver.left_bumper.onRise(intakeOuttake::schedule)
-                .onFall(intakeIdle::schedule);
-        driver.right_bumper.onRise(intakeIntake::schedule)
-                .onFall(intakeIdle::schedule);
-
     }
 
 
@@ -128,20 +135,20 @@ public class TestOpMode extends BaseOpMode{
     protected void initializeDriveCommands() {
         fieldCentric = new FieldCentric(
                 drivetrainSS,
-                driver.left_stick_x::get,
-                () -> -driver.left_stick_y.get(),
-                driver.right_stick_x::get
+                () -> driver.getLeftX(),
+                () -> -driver.getLeftY(),
+                () -> driver.getRightX()
         );
         robotCentric = new RobotCentric(
                 drivetrainSS,
-                driver.left_stick_x::get,
-                () -> -driver.left_stick_y.get(),
-                driver.right_stick_x::get
+                () -> driver.getLeftX(),
+                () -> -driver.getLeftY(),
+                () -> driver.getRightX()
         );
         pointCentric = new PointCentric(
                 drivetrainSS,
-                driver.left_stick_x::get,
-                () -> -driver.left_stick_y.get(),
+                () -> driver.getLeftX(),
+                () -> -driver.getLeftY(),
                 Constants.TARGET,
                 Constants.ANGLE_OFFSET
         );
@@ -164,9 +171,12 @@ public class TestOpMode extends BaseOpMode{
 
     protected void initializeElevatorCommands() {
         eleLow = new MoveElevatorToPosition(elevatorSS, Constants.ELE_LOW);
+//        CommandSchedulerEx.getInstance().add(eleLow);
         eleIdle = new MoveElevatorToPosition(elevatorSS, Constants.ELE_MID_LOW);
         eleMid = new MoveElevatorToPosition(elevatorSS, Constants.ELE_MID_HIGH);
         eleHigh = new MoveElevatorToPosition(elevatorSS, Constants.ELE_HIGH);
+
+        updateElevatorPID = new UpdateElevatorPID(elevatorSS);
     }
 
     protected void initializeArmCommands() {

@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.classes.triggers;
+package org.firstinspires.ftc.teamcode.commandBased.classes.triggers;
 
 import java.util.ArrayList;
 import java.util.List;

@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.classes.pid;
+package org.firstinspires.ftc.teamcode.commandBased.classes.pid;
 
 import com.ThermalEquilibrium.homeostasis.Controllers.Feedback.PIDEx;
 import com.ThermalEquilibrium.homeostasis.Parameters.PIDCoefficientsEx;

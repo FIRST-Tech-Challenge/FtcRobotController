@@ -1,6 +1,6 @@
 package org.firstinspires.ftc.teamcode.commandBased.commands._auto;
 
-import org.firstinspires.ftc.teamcode.classes.triggers.TriggerCommandBase;
+import org.firstinspires.ftc.teamcode.commandBased.classes.triggers.TriggerCommandBase;
 import org.firstinspires.ftc.teamcode.rr.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.rr.trajectorysequence.TrajectorySequence;
 

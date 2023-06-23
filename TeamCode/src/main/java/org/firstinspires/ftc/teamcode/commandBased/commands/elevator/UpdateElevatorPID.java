@@ -1,32 +1,30 @@
 package org.firstinspires.ftc.teamcode.commandBased.commands.elevator;
 
 import org.firstinspires.ftc.teamcode.commandBased.classes.triggers.TriggerCommandBase;
-import org.firstinspires.ftc.teamcode.commandBased.Constants;
 import org.firstinspires.ftc.teamcode.commandBased.subsystems.ElevatorSubsystem;
 
-public class MoveElevatorToPosition extends TriggerCommandBase {
+public class UpdateElevatorPID extends TriggerCommandBase {
 
-    private final double target;
     private final ElevatorSubsystem m_elevatorSubsystem;
 
-    public MoveElevatorToPosition(ElevatorSubsystem elevatorSubsystem, double target) {
+    public UpdateElevatorPID(ElevatorSubsystem elevatorSubsystem) {
         m_elevatorSubsystem = elevatorSubsystem;
         addRequirements(m_elevatorSubsystem);
-        this.target = target;
     }
 
     @Override
     public void initialize() {
-        m_elevatorSubsystem.setProfileTarget(target);
+        m_elevatorSubsystem.createNewController();
     }
 
     @Override
     public boolean isFinished() {
-        return m_elevatorSubsystem.isFinished();
+        return true;
     }
 
     @Override
     public boolean isTriggered() {
-        return m_elevatorSubsystem.getElePos() > Constants.ELE_TRIGGER;
+        return false;
     }
+
 }

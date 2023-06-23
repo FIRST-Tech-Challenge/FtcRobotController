@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.classes.pid;
+package org.firstinspires.ftc.teamcode.commandBased.classes.pid;
 
 public class PIDCoeffs {
     public double Kp;

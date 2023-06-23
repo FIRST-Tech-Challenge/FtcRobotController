@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.classes;
+package org.firstinspires.ftc.teamcode.commandBased.classes;
 
 public class Pose2d {
     public double x;
