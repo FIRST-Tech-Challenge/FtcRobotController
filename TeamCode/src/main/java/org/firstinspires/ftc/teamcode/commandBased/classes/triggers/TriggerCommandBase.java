@@ -14,6 +14,10 @@ public abstract class TriggerCommandBase implements TriggerCommand {
     protected String m_subsystem = "Ungrouped";
     protected Set<Subsystem> m_requirements = new HashSet<>();
 
+    public TriggerCommandBase() {
+        CommandSchedulerEx.getInstance().add(this);
+    }
+
     /**
      * Adds the specified requirements to the command.
      *

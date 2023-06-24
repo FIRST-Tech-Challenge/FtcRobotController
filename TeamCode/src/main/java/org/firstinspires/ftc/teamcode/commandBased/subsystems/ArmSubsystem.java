@@ -10,6 +10,7 @@ import com.arcrobotics.ftclib.util.InterpLUT;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.hardware.VoltageSensor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.commandBased.Constants;
@@ -36,6 +37,8 @@ public class ArmSubsystem extends SubsystemBase {
     private final InterpLUT encAngleLUT;
 
     public ArmSubsystem(final HardwareMap hwMap) {
+
+        VoltageSensor batteryVoltageSensor = hwMap.voltageSensor.iterator().next();
 
         //motor setup
         arm = new Motor(hwMap, "arm", Constants.ARM_MOTOR);
@@ -79,9 +82,9 @@ public class ArmSubsystem extends SubsystemBase {
 
         profile = MotionProfileGenerator.generateSimpleMotionProfile(
                 new MotionState(0, 0, 0),
-                new MotionState(armTargetEnc, 0, 0),
-                Constants.ARM_MAX_VELO,
-                Constants.ARM_MAX_ACCEL
+                new MotionState(angleEncLUT.get(Constants.ARM_ANGLE_IDLE), 0, 0),
+                100,
+                200
         );
 
         state = profile.get(timer.seconds());
@@ -114,7 +117,7 @@ public class ArmSubsystem extends SubsystemBase {
 
     private void PIDF() {
         correction = controller.update(armPos);
-        arm.set(correction - KF);
+        arm.set(correction + KF);
     }
 
     private double getSIN(double angle) {

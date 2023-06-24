@@ -6,8 +6,6 @@ import org.firstinspires.ftc.teamcode.commandBased.classes.CommandSchedulerEx;
 
 public interface TriggerCommand extends Command {
 
-//    CommandSchedulerEx.getInstance().add(this);
-
     boolean isTriggered();
 
 }

@@ -69,6 +69,7 @@ public class BaseOpMode extends CommandOpMode {
     @Override
     public void run() {
         CommandScheduler.getInstance().run();
+        CommandSchedulerEx.getInstance().run();
 
         if (Constants.DISPLAY) {
             // Draw the target on the field
@@ -124,26 +125,22 @@ public class BaseOpMode extends CommandOpMode {
 
         if (Constants.DEBUG_COMMANDS) {
             for (TriggerCommand command : CommandSchedulerEx.getCommands()) {
-                tad("Command", command.getName());
-//                if (command.isScheduled()) {
-//                    tad("Scheduled", command.getName());
-//                } else if (command.isFinished()) {
+                if (command.isScheduled()) {
+                    tad("Scheduled", command.getName());
+                } else if (command.isFinished()) {
 //                    tad("Finished", command.getName());
 //                } else if (command.isTriggered()) {
 //                    tad("Triggered", command.getName());
-//                }
+                }
             }
             tad("test", 1);
         }
 
         tele.update();
-        telemetry.update();
-        FtcDashboard.getInstance().getTelemetry().update();
     }
 
     protected void tad(String caption, Object value) {
-        telemetry.addData(caption, value);
-        FtcDashboard.getInstance().getTelemetry().addData(caption, value);
+        tele.addData(caption, value);
     }
 
     protected GamepadButton gp1(GamepadKeys.Button button) {

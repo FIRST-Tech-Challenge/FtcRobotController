@@ -16,11 +16,6 @@ public class CommandSchedulerEx {
 
     private static CommandSchedulerEx instance;
 
-    /**
-     * Returns the Scheduler instance.
-     *
-     * @return the instance
-     */
     public static synchronized CommandSchedulerEx getInstance() {
         if (instance == null) {
             instance = new CommandSchedulerEx();

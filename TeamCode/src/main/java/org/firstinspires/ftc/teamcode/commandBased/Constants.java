@@ -51,20 +51,21 @@ public class Constants {
     public static double ANGLE_OFFSET = 180;
 
     //elevator pid
-    public static PIDCoefficients ELE_COEFFS = new PIDCoefficients(0.0075, 0, 0.00005);
-    public static double ELE_KG = 0.05;
+    //public static PIDCoefficients ELE_COEFFS = new PIDCoefficients(0.0075, 0, 0.00005);
+    public static PIDCoefficients ELE_COEFFS = new PIDCoefficients(0.005, 00.0002, 0.0004);
+    public static double ELE_KG = 0.175;
     public static double ELE_KV = 0;
     public static double ELE_KA = 0;
     public static double ELE_KS = 0;
 
     //elevator motion profile
     public static double ELE_MAX_VEL = 200;
-    public static double ELE_MAX_ACCEL = 250;
+    public static double ELE_MAX_ACCEL = 50;
 
     //elevator positions
     public static double ELE_LOW = 0;
-    public static double ELE_MID_LOW = 4;
-    public static double ELE_MID_HIGH = 10;
+    public static double ELE_IDLE = 2;
+    public static double ELE_MID = 8;
     public static double ELE_HIGH = 12;
 
     //command-ending deadzones
@@ -72,57 +73,42 @@ public class Constants {
     public static double ELE_TRIGGER = 4;
 
     //arm pid
-    // 0.007, 0, 0, .0007, 0, 0, .125
-    public static PIDCoefficients ARM_COEFFS = new PIDCoefficients(.007, 0, 0);
+    public static PIDCoefficients ARM_COEFFS = new PIDCoefficients(0.01, 0.0001, 0.0001);
 
-//    public static PIDCoefficients ARM_COEFFS_FRONT_BACK = new PIDCoefficients(.004, 0.00075, 0);
-//    public static PIDCoefficients ARM_COEFFS_IDLE_FRONT = new PIDCoefficients(.004, 0.00075, 0);
-//    public static PIDCoefficients ARM_COEFFS_IDLE_BACK = new PIDCoefficients(.004, 0.00075, 0);
-//    public static PIDCoefficients ARM_COEFFS_FRONT_IDLE = new PIDCoefficients(.004, 0.00075, 0);
-//    public static PIDCoefficients ARM_COEFFS_BACK_IDLE = new PIDCoefficients(.004, 0.00075, 0);
-
-    public static double ARM_KV = 0.0009;
+    public static double ARM_KV = 0.001;
     public static double ARM_KA = 0;
-
-    public static double ARM_KS = 0.05;
-    public static double ARM_KSIN = 0.2;
-
-    public static double ARM_IDLE_VELO = 800;
-    public static double ARM_IDLE_ACCEL = 1600;
-
-    public static double ARM_MAX_VELO = 1600;
-    public static double ARM_MAX_ACCEL = 4000;
+    public static double ARM_KS = 0.075;
+    public static double ARM_KSIN = 0.125;
 
     public static double ARM_VELO_FRONT_BACK = 1600;
     public static double ARM_ACCEL_FRONT_BACK = 4000;
 
     public static double ARM_VELO_IDLE_FRONT = 1600;
-    public static double ARM_ACCEL_IDLE_FRONT = 4000;
+    public static double ARM_ACCEL_IDLE_FRONT = 3000;
 
     public static double ARM_VELO_IDLE_BACK = 1600;
-    public static double ARM_ACCEL_IDLE_BACK = 4000;
+    public static double ARM_ACCEL_IDLE_BACK = 3200;
 
     public static double ARM_VELO_FRONT_IDLE = 1600;
-    public static double ARM_ACCEL_FRONT_IDLE = 4000;
+    public static double ARM_ACCEL_FRONT_IDLE = 3200;
 
     public static double ARM_VELO_BACK_IDLE = 1600;
-    public static double ARM_ACCEL_BACK_IDLE = 4000;
-
+    public static double ARM_ACCEL_BACK_IDLE = 3500;
 
     //arm angle positions
     public static double ARM_ANGLE_BACK = -110;
     public static double ARM_ANGLE_IDLE = 45;
     public static double ARM_ANGLE_FRONT = 110;
-    public static double ARM_ANGLE_MAX = 120;
+    public static double ARM_ANGLE_MAX = 130;
 
     public static double ARM_ANGLE_TRIGGER = 75;
     public static double ARM_ANGLE_DEADZONE = 10;
 
     //arm encoder positions
-    public static double ARM_ENC_BACK_MAX = -670;
+    public static double ARM_ENC_BACK_MAX = -720;
     public static double ARM_ENC_BACK_PARALLEL = -520;
     public static double ARM_ENC_FRONT_PARALLEL = 220;
-    public static double ARM_ENC_FRONT_MAX = 370;
+    public static double ARM_ENC_FRONT_MAX = 410;
     public static double ARM_ENC_CENTER = -145;
 
     //rotator limits

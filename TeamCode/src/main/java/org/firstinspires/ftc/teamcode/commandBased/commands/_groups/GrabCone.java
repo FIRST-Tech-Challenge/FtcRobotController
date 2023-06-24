@@ -24,11 +24,9 @@ public class GrabCone extends SequentialCommandGroup {
                 new MoveArmToAngle(arm, Constants.ARM_ANGLE_IDLE),
                 new MoveRotatorToPosition(rot, Constants.ROTATOR_FRONT),
                 new MoveElevatorToPosition(ele, Constants.ELE_LOW),
-                new SetIntakePower(intake, Constants.INTAKE_IN),
+                new SetIntakePower(intake, Constants.INTAKE_IN).withTimeout(4000),
                 new SetIntakePower(intake, Constants.INTAKE_IDLE),
-                new MoveElevatorToPosition(ele, Constants.ELE_MID_LOW)
-
-
+                new MoveElevatorToPosition(ele, Constants.ELE_IDLE)
         );
     }
 }

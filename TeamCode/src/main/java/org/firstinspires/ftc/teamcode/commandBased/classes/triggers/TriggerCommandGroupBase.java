@@ -3,6 +3,8 @@ package org.firstinspires.ftc.teamcode.commandBased.classes.triggers;
 import com.arcrobotics.ftclib.command.Command;
 import com.arcrobotics.ftclib.command.CommandBase;
 
+import org.firstinspires.ftc.teamcode.commandBased.classes.CommandSchedulerEx;
+
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
@@ -10,6 +12,10 @@ import java.util.Set;
 import java.util.WeakHashMap;
 
 public abstract class TriggerCommandGroupBase extends CommandBase implements Command {
+
+    public TriggerCommandGroupBase() {
+        CommandSchedulerEx.getInstance().run();
+    }
 
     private static final Set<Command> m_groupedCommands =
             Collections.newSetFromMap(new WeakHashMap<>());

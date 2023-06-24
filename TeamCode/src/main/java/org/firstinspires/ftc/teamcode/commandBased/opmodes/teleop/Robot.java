@@ -2,7 +2,6 @@ package org.firstinspires.ftc.teamcode.commandBased.opmodes.teleop;
 
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.canvas.Canvas;
-import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.arcrobotics.ftclib.command.CommandScheduler;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
@@ -90,8 +89,8 @@ public class Robot extends BlackOp {
 
         //create elevator commands
         MoveElevatorToPosition eleLow = new MoveElevatorToPosition(elevatorSS, Constants.ELE_LOW);
-        MoveElevatorToPosition eleMidLow = new MoveElevatorToPosition(elevatorSS, Constants.ELE_MID_LOW);
-        MoveElevatorToPosition eleMidHigh = new MoveElevatorToPosition(elevatorSS, Constants.ELE_MID_HIGH);
+        MoveElevatorToPosition eleMidLow = new MoveElevatorToPosition(elevatorSS, Constants.ELE_IDLE);
+        MoveElevatorToPosition eleMidHigh = new MoveElevatorToPosition(elevatorSS, Constants.ELE_MID);
         MoveElevatorToPosition eleHigh = new MoveElevatorToPosition(elevatorSS, Constants.ELE_HIGH);
 
         //create arm commands
@@ -141,7 +140,7 @@ public class Robot extends BlackOp {
                 armSS,
                 rotatorSS,
                 Constants.ARM_ANGLE_FRONT,
-                Constants.ELE_MID_HIGH,
+                Constants.ELE_MID,
                 Constants.ROTATOR_FRONT
         );
 
@@ -150,7 +149,7 @@ public class Robot extends BlackOp {
                 armSS,
                 rotatorSS,
                 Constants.ARM_ANGLE_BACK,
-                Constants.ELE_MID_HIGH,
+                Constants.ELE_MID,
                 Constants.ROTATOR_BACK
         );
 

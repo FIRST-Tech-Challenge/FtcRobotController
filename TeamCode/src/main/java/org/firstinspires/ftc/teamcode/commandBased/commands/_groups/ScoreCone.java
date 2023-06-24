@@ -25,7 +25,7 @@ public class ScoreCone extends SequentialCommandGroup {
                 new MoveArmToAngle(arm, Constants.ARM_ANGLE_IDLE),
                 new MoveRotatorToPosition(rot, Constants.ROTATOR_FRONT),
                 new SetIntakePower(intake, Constants.INTAKE_IDLE),
-                new MoveElevatorToPosition(ele, Constants.ELE_MID_LOW)
+                new MoveElevatorToPosition(ele, Constants.ELE_IDLE)
         );
         addRequirements(ele, arm, rot, intake);
     }

@@ -3,7 +3,6 @@ package org.firstinspires.ftc.teamcode.commandBased.opmodes.teleop;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.commandBased.Constants;
-import org.firstinspires.ftc.teamcode.commandBased.classes.CommandSchedulerEx;
 import org.firstinspires.ftc.teamcode.commandBased.commands._groups.GrabCone;
 import org.firstinspires.ftc.teamcode.commandBased.commands._groups.LiftMoveRotateArm;
 import org.firstinspires.ftc.teamcode.commandBased.commands._groups.ScoreCone;
@@ -22,7 +21,6 @@ import org.firstinspires.ftc.teamcode.commandBased.commands.rotator.SetRotatorRa
 import org.firstinspires.ftc.teamcode.commandBased.opmodes.BaseOpMode;
 
 import static com.arcrobotics.ftclib.gamepad.GamepadKeys.Button.*;
-import static com.arcrobotics.ftclib.gamepad.GamepadKeys.Trigger.LEFT_TRIGGER;
 
 @TeleOp
 public class Test extends BaseOpMode {
@@ -106,7 +104,12 @@ public class Test extends BaseOpMode {
 
         //macro controls
         gp1(Y, 2).whenActive(armBackHigh);
-        gp1(A, 2).whenActive(grabCone);
+        gp1(X, 2).whenActive(armFrontHigh);
+        gp1(B, 2).whenActive(armBackMid);
+        gp1(A, 2).whenActive(armFrontMid);
+
+        gp1(DPAD_UP, 2).whenActive(scoreCone);
+        gp1(DPAD_DOWN, 2).whenActive(grabCone);
 
         //drive controls
         gp1(A, 3).toggleWhenActive(robotCentric, fieldCentric);
@@ -121,6 +124,7 @@ public class Test extends BaseOpMode {
     public void run() {
         super.run();
     }
+
 
 
     protected void initializeAllCommands() {
@@ -172,8 +176,8 @@ public class Test extends BaseOpMode {
     protected void initializeElevatorCommands() {
         eleLow = new MoveElevatorToPosition(elevatorSS, Constants.ELE_LOW);
 //        CommandSchedulerEx.getInstance().add(eleLow);
-        eleIdle = new MoveElevatorToPosition(elevatorSS, Constants.ELE_MID_LOW);
-        eleMid = new MoveElevatorToPosition(elevatorSS, Constants.ELE_MID_HIGH);
+        eleIdle = new MoveElevatorToPosition(elevatorSS, Constants.ELE_IDLE);
+        eleMid = new MoveElevatorToPosition(elevatorSS, Constants.ELE_MID);
         eleHigh = new MoveElevatorToPosition(elevatorSS, Constants.ELE_HIGH);
 
         updateElevatorPID = new UpdateElevatorPID(elevatorSS);
@@ -208,7 +212,7 @@ public class Test extends BaseOpMode {
                 armSS,
                 rotatorSS,
                 Constants.ARM_ANGLE_FRONT,
-                Constants.ELE_MID_HIGH,
+                Constants.ELE_MID,
                 Constants.ROTATOR_FRONT
         );
         armBackMid = new LiftMoveRotateArm(
@@ -216,7 +220,7 @@ public class Test extends BaseOpMode {
                 armSS,
                 rotatorSS,
                 Constants.ARM_ANGLE_BACK,
-                Constants.ELE_MID_HIGH,
+                Constants.ELE_MID,
                 Constants.ROTATOR_BACK
         );
         armFrontHigh = new LiftMoveRotateArm(
