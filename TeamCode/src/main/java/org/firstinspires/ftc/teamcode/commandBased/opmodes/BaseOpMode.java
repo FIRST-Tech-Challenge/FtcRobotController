@@ -18,6 +18,7 @@ import org.firstinspires.ftc.teamcode.commandBased.classes.triggers.TriggerComma
 import org.firstinspires.ftc.teamcode.commandBased.classes.util.GamepadTrigger;
 import org.firstinspires.ftc.teamcode.commandBased.classes.util.TriggerGamepadEx;
 import org.firstinspires.ftc.teamcode.commandBased.subsystems.ArmSubsystem;
+import org.firstinspires.ftc.teamcode.commandBased.subsystems.AutoDrivetrainSubsystem;
 import org.firstinspires.ftc.teamcode.commandBased.subsystems.DrivetrainSubsystem;
 import org.firstinspires.ftc.teamcode.commandBased.subsystems.ElevatorSubsystem;
 import org.firstinspires.ftc.teamcode.commandBased.subsystems.IntakeSubsystem;

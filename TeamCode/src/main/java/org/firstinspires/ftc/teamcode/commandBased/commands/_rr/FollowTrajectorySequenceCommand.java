@@ -1,22 +1,22 @@
-package org.firstinspires.ftc.teamcode.commandBased.commands._auto;
+package org.firstinspires.ftc.teamcode.commandBased.commands._rr;
 
 import org.firstinspires.ftc.teamcode.commandBased.classes.triggers.TriggerCommandBase;
-import org.firstinspires.ftc.teamcode.rr.drive.SampleMecanumDrive;
+import org.firstinspires.ftc.teamcode.commandBased.subsystems.AutoDrivetrainSubsystem;
 import org.firstinspires.ftc.teamcode.rr.trajectorysequence.TrajectorySequence;
 
 public class FollowTrajectorySequenceCommand extends TriggerCommandBase {
 
-    private final SampleMecanumDrive drive;
+    private final AutoDrivetrainSubsystem drive;
     private final TrajectorySequence traj;
 
-    public FollowTrajectorySequenceCommand(SampleMecanumDrive drive, TrajectorySequence traj) {
+    public FollowTrajectorySequenceCommand(AutoDrivetrainSubsystem drive, TrajectorySequence traj) {
         this.drive = drive;
         this.traj = traj;
     }
 
     @Override
     public void initialize() {
-        drive.followTrajectorySequenceAsync(traj);
+        drive.followTrajectorySequence(traj);
     }
 
     @Override

@@ -19,7 +19,6 @@ import com.acmerobotics.roadrunner.trajectory.constraints.TrajectoryAcceleration
 import com.acmerobotics.roadrunner.trajectory.constraints.TrajectoryVelocityConstraint;
 import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
@@ -29,21 +28,31 @@ import com.qualcomm.robotcore.hardware.VoltageSensor;
 import com.qualcomm.robotcore.hardware.configuration.typecontainers.MotorConfigurationType;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
-import org.firstinspires.ftc.teamcode.rr.util.LynxModuleUtil;
 import org.firstinspires.ftc.teamcode.rr.trajectorysequence.TrajectorySequence;
 import org.firstinspires.ftc.teamcode.rr.trajectorysequence.TrajectorySequenceBuilder;
 import org.firstinspires.ftc.teamcode.rr.trajectorysequence.TrajectorySequenceRunner;
+import org.firstinspires.ftc.teamcode.rr.util.LynxModuleUtil;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import ftc.rogue.blacksmith.util.kalman.KalmanTwoWheelLocalizer;
+import static org.firstinspires.ftc.teamcode.rr.drive.DriveConstants.MAX_ACCEL;
+import static org.firstinspires.ftc.teamcode.rr.drive.DriveConstants.MAX_ANG_ACCEL;
+import static org.firstinspires.ftc.teamcode.rr.drive.DriveConstants.MAX_ANG_VEL;
+import static org.firstinspires.ftc.teamcode.rr.drive.DriveConstants.MAX_VEL;
+import static org.firstinspires.ftc.teamcode.rr.drive.DriveConstants.MOTOR_VELO_PID;
+import static org.firstinspires.ftc.teamcode.rr.drive.DriveConstants.RUN_USING_ENCODER;
+import static org.firstinspires.ftc.teamcode.rr.drive.DriveConstants.TRACK_WIDTH;
+import static org.firstinspires.ftc.teamcode.rr.drive.DriveConstants.encoderTicksToInches;
+import static org.firstinspires.ftc.teamcode.rr.drive.DriveConstants.kA;
+import static org.firstinspires.ftc.teamcode.rr.drive.DriveConstants.kStatic;
+import static org.firstinspires.ftc.teamcode.rr.drive.DriveConstants.kV;
 
 /*
  * Simple mecanum drive hardware implementation for REV hardware.
  */
-@Disabled
+@Config
 public class SampleMecanumDrive extends MecanumDrive {
     public static PIDCoefficients TRANSLATIONAL_PID = new PIDCoefficients(0, 0, 0);
     public static PIDCoefficients HEADING_PID = new PIDCoefficients(0, 0, 0);
@@ -56,8 +65,8 @@ public class SampleMecanumDrive extends MecanumDrive {
 
     private TrajectorySequenceRunner trajectorySequenceRunner;
 
-    private static final TrajectoryVelocityConstraint VEL_CONSTRAINT = getVelocityConstraint(DriveConstants.MAX_VEL, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH);
-    private static final TrajectoryAccelerationConstraint ACCEL_CONSTRAINT = getAccelerationConstraint(DriveConstants.MAX_ACCEL);
+    private static final TrajectoryVelocityConstraint VEL_CONSTRAINT = getVelocityConstraint(MAX_VEL, MAX_ANG_VEL, TRACK_WIDTH);
+    private static final TrajectoryAccelerationConstraint ACCEL_CONSTRAINT = getAccelerationConstraint(MAX_ACCEL);
 
     private TrajectoryFollower follower;
 
@@ -71,7 +80,7 @@ public class SampleMecanumDrive extends MecanumDrive {
     private List<Integer> lastEncVels = new ArrayList<>();
 
     public SampleMecanumDrive(HardwareMap hardwareMap) {
-        super(DriveConstants.kV, DriveConstants.kA, DriveConstants.kStatic, DriveConstants.TRACK_WIDTH, DriveConstants.TRACK_WIDTH, LATERAL_MULTIPLIER);
+        super(kV, kA, kStatic, TRACK_WIDTH, TRACK_WIDTH, LATERAL_MULTIPLIER);
 
         follower = new HolonomicPIDVAFollower(TRANSLATIONAL_PID, TRANSLATIONAL_PID, HEADING_PID,
                 new Pose2d(0.5, 0.5, Math.toRadians(5.0)), 0.5);
@@ -103,14 +112,14 @@ public class SampleMecanumDrive extends MecanumDrive {
             motor.setMotorType(motorConfigurationType);
         }
 
-        if (DriveConstants.RUN_USING_ENCODER) {
+        if (RUN_USING_ENCODER) {
             setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         }
 
         setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
-        if (DriveConstants.RUN_USING_ENCODER && DriveConstants.MOTOR_VELO_PID != null) {
-            setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER, DriveConstants.MOTOR_VELO_PID);
+        if (RUN_USING_ENCODER && MOTOR_VELO_PID != null) {
+            setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER, MOTOR_VELO_PID);
         }
 
         // TODO: reverse any motors using DcMotor.setDirection()
@@ -118,14 +127,8 @@ public class SampleMecanumDrive extends MecanumDrive {
         List<Integer> lastTrackingEncPositions = new ArrayList<>();
         List<Integer> lastTrackingEncVels = new ArrayList<>();
 
-//        // TODO: if desired, use setLocalizer() to change the localization method
-//        setLocalizer(new KalmanTwoWheelLocalizer(new TwoWheelTrackingLocalizer(hardwareMap, this))
-//                .setHeadingFilterCoeffs(R0, Q0)
-//                .setWheelPos1FilterCoeffs(R1, Q1)
-//                .setWheelPos2FilterCoeffs(R2, Q2)
-//                .setHeadingVelocityFilterCoeffs(R3, Q3)
-//                .setWheelPos1VelocityFilterCoeffs(R4, Q4)
-//                .setWheelPos2VelocityFilterCoeffs(R5, Q5));
+        // TODO: if desired, use setLocalizer() to change the localization method
+        // setLocalizer(new StandardTrackingWheelLocalizer(hardwareMap, lastTrackingEncPositions, lastTrackingEncVels));
 
         trajectorySequenceRunner = new TrajectorySequenceRunner(
                 follower, HEADING_PID, batteryVoltageSensor,
@@ -149,7 +152,7 @@ public class SampleMecanumDrive extends MecanumDrive {
         return new TrajectorySequenceBuilder(
                 startPose,
                 VEL_CONSTRAINT, ACCEL_CONSTRAINT,
-                DriveConstants.MAX_ANG_VEL, DriveConstants.MAX_ANG_ACCEL
+                MAX_ANG_VEL, MAX_ANG_ACCEL
         );
     }
 
@@ -259,7 +262,7 @@ public class SampleMecanumDrive extends MecanumDrive {
         for (DcMotorEx motor : motors) {
             int position = motor.getCurrentPosition();
             lastEncPositions.add(position);
-            wheelPositions.add(DriveConstants.encoderTicksToInches(position));
+            wheelPositions.add(encoderTicksToInches(position));
         }
         return wheelPositions;
     }
@@ -272,7 +275,7 @@ public class SampleMecanumDrive extends MecanumDrive {
         for (DcMotorEx motor : motors) {
             int vel = (int) motor.getVelocity();
             lastEncVels.add(vel);
-            wheelVelocities.add(DriveConstants.encoderTicksToInches(vel));
+            wheelVelocities.add(encoderTicksToInches(vel));
         }
         return wheelVelocities;
     }
