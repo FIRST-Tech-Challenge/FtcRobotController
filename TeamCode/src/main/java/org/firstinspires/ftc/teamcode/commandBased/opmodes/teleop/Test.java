@@ -3,9 +3,10 @@ package org.firstinspires.ftc.teamcode.commandBased.opmodes.teleop;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.commandBased.Constants;
+import org.firstinspires.ftc.teamcode.commandBased.classes.enums.Stack;
 import org.firstinspires.ftc.teamcode.commandBased.commands._groups.GrabCone;
 import org.firstinspires.ftc.teamcode.commandBased.commands._groups.LiftMoveRotateArm;
-import org.firstinspires.ftc.teamcode.commandBased.commands._groups.ScoreCone;
+import org.firstinspires.ftc.teamcode.commandBased.commands._groups.ScoreToIdle;
 import org.firstinspires.ftc.teamcode.commandBased.commands.arm.MoveArmToAngle;
 import org.firstinspires.ftc.teamcode.commandBased.commands.arm.UpdateArmPID;
 import org.firstinspires.ftc.teamcode.commandBased.commands.drive.FieldCentric;
@@ -62,7 +63,7 @@ public class Test extends BaseOpMode {
     protected SetIntakePower intakeOuttake;
 
     //macro commands
-    protected ScoreCone scoreCone;
+    protected ScoreToIdle scoreToIdle;
     protected GrabCone grabCone;
 
     protected LiftMoveRotateArm armFrontMid;
@@ -108,7 +109,7 @@ public class Test extends BaseOpMode {
         gp1(B, 2).whenActive(armBackMid);
         gp1(A, 2).whenActive(armFrontMid);
 
-        gp1(DPAD_UP, 2).whenActive(scoreCone);
+        gp1(DPAD_UP, 2).whenActive(scoreToIdle);
         gp1(DPAD_DOWN, 2).whenActive(grabCone);
 
         //drive controls
@@ -205,7 +206,7 @@ public class Test extends BaseOpMode {
     }
 
     protected void initializeMacroCommands() {
-        scoreCone = new ScoreCone(elevatorSS, armSS, rotatorSS, intakeSS);
+        scoreToIdle = new ScoreToIdle(elevatorSS, armSS, rotatorSS, intakeSS);
         grabCone = new GrabCone(elevatorSS, armSS, rotatorSS, intakeSS);
         armFrontMid = new LiftMoveRotateArm(
                 elevatorSS,

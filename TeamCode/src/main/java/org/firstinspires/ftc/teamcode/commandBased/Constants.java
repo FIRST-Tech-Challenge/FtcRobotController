@@ -65,6 +65,7 @@ public class Constants {
     //elevator positions
     public static double ELE_LOW = 0;
     public static double ELE_IDLE = 2;
+    public static double ELE_STACK = 5;
     public static double ELE_MID = 8;
     public static double ELE_HIGH = 12;
 
@@ -126,5 +127,9 @@ public class Constants {
     public static double INTAKE_IDLE = 0;
     public static double INTAKE_OUT = -1;
     public static int INTAKE_AVG_LENGTH = 10;
+
+
+    //AUTO
+    public static double STACK_INCREMENT = 1;
 
 }

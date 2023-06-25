@@ -9,7 +9,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import org.firstinspires.ftc.teamcode.commandBased.Constants;
 import org.firstinspires.ftc.teamcode.commandBased.commands._groups.GrabCone;
 import org.firstinspires.ftc.teamcode.commandBased.commands._groups.LiftMoveRotateArm;
-import org.firstinspires.ftc.teamcode.commandBased.commands._groups.ScoreCone;
+import org.firstinspires.ftc.teamcode.commandBased.commands._groups.ScoreToIdle;
 import org.firstinspires.ftc.teamcode.commandBased.commands.arm.MoveArmToAngle;
 import org.firstinspires.ftc.teamcode.commandBased.commands.arm.UpdateArmPID;
 import org.firstinspires.ftc.teamcode.commandBased.commands.drive.SetDriveSpeeds;
@@ -121,7 +121,7 @@ public class Robot extends BlackOp {
         SetIntakePower intakeOuttake = new SetIntakePower(intakeSS, -1);
 
         //create group commands
-        ScoreCone scoreCone = new ScoreCone(
+        ScoreToIdle scoreToIdle = new ScoreToIdle(
                 elevatorSS,
                 armSS,
                 rotatorSS,
@@ -238,7 +238,7 @@ public class Robot extends BlackOp {
             driver.right_bumper.onRise(intakeIntake::schedule)
                                .onFall(intakeIdle::schedule);
 
-            driver.left_trigger(0.5).and(driver.a).onRise(scoreCone::schedule);
+            driver.left_trigger(0.5).and(driver.a).onRise(scoreToIdle::schedule);
             driver.left_trigger(0.5).and(driver.right_trigger(0.5)).onRise(grabCone::schedule);
 
             driver.left_trigger(0.5).and(driver.y).onRise(armBackHigh::schedule);
