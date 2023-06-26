@@ -19,6 +19,7 @@ import com.acmerobotics.roadrunner.trajectory.constraints.TrajectoryAcceleration
 import com.acmerobotics.roadrunner.trajectory.constraints.TrajectoryVelocityConstraint;
 import com.acmerobotics.roadrunner.util.Angle;
 
+import org.firstinspires.ftc.teamcode.commandBased.classes.Pose2dSpline;
 import org.firstinspires.ftc.teamcode.rr.trajectorysequence.sequencesegment.SequenceSegment;
 import org.firstinspires.ftc.teamcode.rr.trajectorysequence.sequencesegment.TrajectorySegment;
 import org.firstinspires.ftc.teamcode.rr.trajectorysequence.sequencesegment.TurnSegment;
@@ -258,6 +259,10 @@ public class TrajectorySequenceBuilder {
         return addPath(() -> currentTrajectoryBuilder.splineToLinearHeading(endPose, endHeading, currentVelConstraint, currentAccelConstraint));
     }
 
+    public TrajectorySequenceBuilder splineToLinearHeading(Pose2dSpline endPoseTheta) {
+        return addPath(() -> currentTrajectoryBuilder.splineToLinearHeading(endPoseTheta.getPose(), endPoseTheta.getRadians(), currentVelConstraint, currentAccelConstraint));
+    }
+
     public TrajectorySequenceBuilder splineToLinearHeading(
             Pose2d endPose,
             double endHeading,
@@ -267,8 +272,20 @@ public class TrajectorySequenceBuilder {
         return addPath(() -> currentTrajectoryBuilder.splineToLinearHeading(endPose, endHeading, velConstraint, accelConstraint));
     }
 
+    public TrajectorySequenceBuilder splineToLinearHeading(
+            Pose2dSpline endPoseTheta,
+            TrajectoryVelocityConstraint velConstraint,
+            TrajectoryAccelerationConstraint accelConstraint
+    ) {
+        return addPath(() -> currentTrajectoryBuilder.splineToLinearHeading(endPoseTheta.getPose(), endPoseTheta.getRadians(), velConstraint, accelConstraint));
+    }
+
     public TrajectorySequenceBuilder splineToSplineHeading(Pose2d endPose, double endHeading) {
         return addPath(() -> currentTrajectoryBuilder.splineToSplineHeading(endPose, endHeading, currentVelConstraint, currentAccelConstraint));
+    }
+
+    public TrajectorySequenceBuilder splineToSplineHeading(Pose2dSpline endPoseTheta) {
+        return addPath(() -> currentTrajectoryBuilder.splineToSplineHeading(endPoseTheta.getPose(), endPoseTheta.getRadians(), currentVelConstraint, currentAccelConstraint));
     }
 
     public TrajectorySequenceBuilder splineToSplineHeading(
@@ -278,6 +295,14 @@ public class TrajectorySequenceBuilder {
             TrajectoryAccelerationConstraint accelConstraint
     ) {
         return addPath(() -> currentTrajectoryBuilder.splineToSplineHeading(endPose, endHeading, velConstraint, accelConstraint));
+    }
+
+    public TrajectorySequenceBuilder splineToSplineHeading(
+            Pose2dSpline endPoseTheta,
+            TrajectoryVelocityConstraint velConstraint,
+            TrajectoryAccelerationConstraint accelConstraint
+    ) {
+        return addPath(() -> currentTrajectoryBuilder.splineToSplineHeading(endPoseTheta.getPose(), endPoseTheta.getRadians(), velConstraint, accelConstraint));
     }
 
     private TrajectorySequenceBuilder addPath(AddPathCallback callback) {

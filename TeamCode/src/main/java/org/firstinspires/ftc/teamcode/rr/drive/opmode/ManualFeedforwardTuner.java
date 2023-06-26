@@ -8,7 +8,6 @@ import static org.firstinspires.ftc.teamcode.rr.drive.DriveConstants.kStatic;
 import static org.firstinspires.ftc.teamcode.rr.drive.DriveConstants.kV;
 
 import com.acmerobotics.dashboard.FtcDashboard;
-import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.kinematics.Kinematics;

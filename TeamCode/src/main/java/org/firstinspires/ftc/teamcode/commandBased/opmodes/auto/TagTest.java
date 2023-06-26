@@ -13,6 +13,7 @@ public class TagTest extends AutoOpMode {
     @Override
     public void run() {
         super.run();
+        tad("tagPos", tagPos);
     }
 
 }

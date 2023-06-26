@@ -9,6 +9,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 import org.firstinspires.ftc.teamcode.commandBased.pipelines.AprilTagDetectionPipeline;
 import org.firstinspires.ftc.teamcode.commandBased.subsystems.AutoDrivetrainSubsystem;
+import org.firstinspires.ftc.teamcode.rr.drive.SampleMecanumDrive;
 import org.openftc.apriltag.AprilTagDetection;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
@@ -18,7 +19,8 @@ import java.util.ArrayList;
 
 public class AutoOpMode extends BaseOpMode {
 
-    protected AutoDrivetrainSubsystem autoDrivetrainSS;
+    protected AutoDrivetrainSubsystem drive;
+    protected SampleMecanumDrive rrDrive;
 
     protected OpenCvCamera camera;
     protected AprilTagDetectionPipeline aprilTagPipeline;
@@ -52,6 +54,10 @@ public class AutoOpMode extends BaseOpMode {
     @Override
     public void initialize() {
         super.initialize();
+
+        rrDrive = new SampleMecanumDrive(hardwareMap);
+
+        drive = new AutoDrivetrainSubsystem(rrDrive, false);
 
         aprilTagInitialization();
         telemetry.update();
