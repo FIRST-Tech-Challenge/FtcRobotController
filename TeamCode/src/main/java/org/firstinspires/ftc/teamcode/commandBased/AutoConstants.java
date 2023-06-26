@@ -4,21 +4,22 @@ import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 
 import org.firstinspires.ftc.teamcode.commandBased.classes.Pose2dSpline;
-import org.firstinspires.ftc.teamcode.rr.trajectorysequence.TrajectorySequence;
 
 @Config
 public class AutoConstants {
 
-    public static Pose2d START_POSE_LEFT = new Pose2d(35, 65, Math.toRadians(-90));
+    public static Pose2d START_POSE_LEFT = new Pose2d(35, 65, toRad(-90));
+    public static Pose2d STACK_POSE_LEFT = new Pose2d(63.5, 14.5, toRad(0));
+    public static Pose2d MED_POSE_LEFT = new Pose2d(36.5, 28.5, toRad(0));
 
 
-    public static Pose2dSpline INITIAL_FIRST_MED_LEFT = new Pose2dSpline(new Pose2d(36, 46, toRad(-90)), toRad(-90));
-    public static Pose2dSpline INITIAL_SECOND_MED_LEFT = new Pose2dSpline(new Pose2d(36, 23, toRad(0)), toRad(-90));
-    public static Pose2d       INITIAL_THIRD_MED_LEFT = new Pose2d(35, 18, toRad(0));
-    public static Pose2dSpline INITIAL_FOURTH_MED_LEFT = new Pose2dSpline(new Pose2d(63.5, 14.5, toRad(0)), toRad(0));
+    public static Pose2dSpline INITIAL_SCORE_FIRST_MED_LEFT = new Pose2dSpline(new Pose2d(36, 46, toRad(-90)), toRad(-90));
+    public static Pose2dSpline INITIAL_SCORE_SECOND_MED_LEFT = new Pose2dSpline(new Pose2d(36, 23, toRad(0)), toRad(-90));
+    public static Pose2d       INITIAL_STACK_FIRST_MED_LEFT = new Pose2d(35, 18, toRad(0));
+    public static Pose2dSpline INITIAL_STACK_SECOND_MED_LEFT = new Pose2dSpline(new Pose2d(63.5, 14.5, toRad(0)), toRad(0));
 
     public static Pose2d       STACK_FIRST = new Pose2d(35, 18, toRad(0));
-    public static Pose2dSpline STACK_SECOND = new Pose2dSpline(new Pose2d(35, 18, toRad(0)), toRad(0));
+    public static Pose2dSpline STACK_SECOND = new Pose2dSpline(new Pose2d(63.5, 14.5, toRad(0)), toRad(0));
 
     public static Pose2d       MED_FIRST = new Pose2d(48, 13, toRad(0));
     public static Pose2dSpline MED_SECOND = new Pose2dSpline(new Pose2d(36.5, 28.5, toRad(0)), toRad(90));

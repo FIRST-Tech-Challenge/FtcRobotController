@@ -2,6 +2,9 @@ package org.firstinspires.ftc.teamcode.commandBased.opmodes;
 
 import android.annotation.SuppressLint;
 
+import com.qualcomm.hardware.rev.RevBlinkinLedDriver;
+
+import org.checkerframework.checker.units.qual.A;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
@@ -9,6 +12,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 import org.firstinspires.ftc.teamcode.commandBased.pipelines.AprilTagDetectionPipeline;
 import org.firstinspires.ftc.teamcode.commandBased.subsystems.AutoDrivetrainSubsystem;
+import org.firstinspires.ftc.teamcode.commandBased.subsystems.AutoSubsystems;
 import org.firstinspires.ftc.teamcode.rr.drive.SampleMecanumDrive;
 import org.openftc.apriltag.AprilTagDetection;
 import org.openftc.easyopencv.OpenCvCamera;
@@ -21,6 +25,8 @@ public class AutoOpMode extends BaseOpMode {
 
     protected AutoDrivetrainSubsystem drive;
     protected SampleMecanumDrive rrDrive;
+
+    protected AutoSubsystems subsystems;
 
     protected OpenCvCamera camera;
     protected AprilTagDetectionPipeline aprilTagPipeline;
@@ -60,6 +66,8 @@ public class AutoOpMode extends BaseOpMode {
         rrDrive = new SampleMecanumDrive(hardwareMap);
 
         drive = new AutoDrivetrainSubsystem(rrDrive, false);
+
+        subsystems = new AutoSubsystems(drive, elevatorSS, armSS, rotatorSS, intakeSS);
 
         aprilTagInitialization();
     }
@@ -149,12 +157,16 @@ public class AutoOpMode extends BaseOpMode {
         camera.closeCameraDevice();
         if (tagOfInterest == null) {
             tagPos = TagPos.NULL;
+            blinkin.setPattern(RevBlinkinLedDriver.BlinkinPattern.BLACK);
         } else if (tagOfInterest.id == TagPos.LEFT.value) {
             tagPos = TagPos.LEFT;
+            blinkin.setPattern(RevBlinkinLedDriver.BlinkinPattern.RED);
         } else if (tagOfInterest.id == TagPos.MIDDLE.value) {
             tagPos = TagPos.MIDDLE;
+            blinkin.setPattern(RevBlinkinLedDriver.BlinkinPattern.GREEN);
         } else if (tagOfInterest.id == TagPos.RIGHT.value) {
             tagPos = TagPos.RIGHT;
+            blinkin.setPattern(RevBlinkinLedDriver.BlinkinPattern.BLUE);
         }
     }
 

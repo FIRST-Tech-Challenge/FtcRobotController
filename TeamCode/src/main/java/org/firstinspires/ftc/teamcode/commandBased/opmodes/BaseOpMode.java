@@ -48,7 +48,6 @@ public class BaseOpMode extends CommandOpMode {
     protected MultipleTelemetry tele;
 
     protected RevBlinkinLedDriver blinkin;
-    protected RevBlinkinLedDriver.BlinkinPattern pattern;
 
     @Override
     public void initialize() {
@@ -69,6 +68,7 @@ public class BaseOpMode extends CommandOpMode {
         tele = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
 
         blinkin = hardwareMap.get(RevBlinkinLedDriver.class, "blinkin");
+        blinkin.setPattern(RevBlinkinLedDriver.BlinkinPattern.AQUA);
     }
 
     @Override

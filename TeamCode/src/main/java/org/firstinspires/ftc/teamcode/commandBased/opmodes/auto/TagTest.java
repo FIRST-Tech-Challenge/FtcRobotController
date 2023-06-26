@@ -1,10 +1,11 @@
 package org.firstinspires.ftc.teamcode.commandBased.opmodes.auto;
 
+import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.commandBased.opmodes.AutoOpMode;
 
-@TeleOp
+@Autonomous
 public class TagTest extends AutoOpMode {
 
     @Override

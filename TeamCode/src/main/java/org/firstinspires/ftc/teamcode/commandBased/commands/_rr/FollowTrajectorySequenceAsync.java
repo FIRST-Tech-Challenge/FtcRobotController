@@ -4,12 +4,12 @@ import org.firstinspires.ftc.teamcode.commandBased.classes.triggers.TriggerComma
 import org.firstinspires.ftc.teamcode.commandBased.subsystems.AutoDrivetrainSubsystem;
 import org.firstinspires.ftc.teamcode.rr.trajectorysequence.TrajectorySequence;
 
-public class FollowTrajectorySequenceAsyncCommand extends TriggerCommandBase {
+public class FollowTrajectorySequenceAsync extends TriggerCommandBase {
 
     private final AutoDrivetrainSubsystem drive;
     private final TrajectorySequence traj;
 
-    public FollowTrajectorySequenceAsyncCommand(AutoDrivetrainSubsystem drive, TrajectorySequence traj) {
+    public FollowTrajectorySequenceAsync(AutoDrivetrainSubsystem drive, TrajectorySequence traj) {
         this.drive = drive;
         this.traj = traj;
     }

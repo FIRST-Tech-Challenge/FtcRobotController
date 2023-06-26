@@ -28,7 +28,7 @@ public class GrabConeStack extends SequentialCommandGroup {
                 new MoveElevatorToPosition(ele, height.getValue()),
                 new SetIntakePower(intake, Constants.INTAKE_IN).withTimeout(4000),
                 new SetIntakePower(intake, Constants.INTAKE_IDLE),
-                new MoveElevatorToPosition(ele, Constants.ELE_IDLE)
+                new MoveElevatorToPosition(ele, Constants.ELE_STACK)
         );
     }
 }

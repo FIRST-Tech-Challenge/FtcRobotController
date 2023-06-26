@@ -10,9 +10,9 @@ import org.firstinspires.ftc.teamcode.commandBased.subsystems.ArmSubsystem;
 import org.firstinspires.ftc.teamcode.commandBased.subsystems.ElevatorSubsystem;
 import org.firstinspires.ftc.teamcode.commandBased.subsystems.RotatorSubsystem;
 
-public class ComeIdle extends SequentialCommandGroup {
+public class ComeFinished extends SequentialCommandGroup {
 
-    public ComeIdle(
+    public ComeFinished(
             ElevatorSubsystem ele,
             ArmSubsystem arm,
             RotatorSubsystem rot
