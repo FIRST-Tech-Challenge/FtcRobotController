@@ -11,6 +11,7 @@ import com.arcrobotics.ftclib.command.button.GamepadButton;
 import com.arcrobotics.ftclib.command.button.Trigger;
 import com.arcrobotics.ftclib.gamepad.GamepadEx;
 import com.arcrobotics.ftclib.gamepad.GamepadKeys;
+import com.qualcomm.hardware.rev.RevBlinkinLedDriver;
 
 import org.firstinspires.ftc.teamcode.commandBased.Constants;
 import org.firstinspires.ftc.teamcode.commandBased.classes.CommandSchedulerEx;
@@ -46,7 +47,8 @@ public class BaseOpMode extends CommandOpMode {
 
     protected MultipleTelemetry tele;
 
-    protected List<Command> m_commands = new ArrayList<>();
+    protected RevBlinkinLedDriver blinkin;
+    protected RevBlinkinLedDriver.BlinkinPattern pattern;
 
     @Override
     public void initialize() {
@@ -65,6 +67,8 @@ public class BaseOpMode extends CommandOpMode {
         fieldOverlay = packet.fieldOverlay();
 
         tele = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
+
+        blinkin = hardwareMap.get(RevBlinkinLedDriver.class, "blinkin");
     }
 
     @Override

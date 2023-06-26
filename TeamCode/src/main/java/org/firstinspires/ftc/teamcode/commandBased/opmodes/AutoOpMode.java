@@ -28,9 +28,11 @@ public class AutoOpMode extends BaseOpMode {
     protected double fy = 578.272;
     protected double cx = 402.145;
     protected double cy = 221.506;
-    protected double tagsize = .166;
+    protected double tagsize = 0.166;
 
     protected AprilTagDetection tagOfInterest = null;
+
+    protected double rollingSum = 0;
 
     protected enum TagPos {
         LEFT(0),
@@ -60,7 +62,6 @@ public class AutoOpMode extends BaseOpMode {
         drive = new AutoDrivetrainSubsystem(rrDrive, false);
 
         aprilTagInitialization();
-        telemetry.update();
     }
 
     @Override
@@ -129,7 +130,7 @@ public class AutoOpMode extends BaseOpMode {
                     }
                 }
             } else {
-                telemetry.addLine("Don't see tag of interest :(");
+                telemetry.addLine("Don't see tag of interest");
 
                 if(tagOfInterest == null) {
                     telemetry.addLine("(The tag has never been seen)");
@@ -139,11 +140,13 @@ public class AutoOpMode extends BaseOpMode {
                 }
 
             }
+            telemetry.update();
         }
         sleep(20);
     }
     
     protected void determinePathFromTag() {
+        camera.closeCameraDevice();
         if (tagOfInterest == null) {
             tagPos = TagPos.NULL;
         } else if (tagOfInterest.id == TagPos.LEFT.value) {

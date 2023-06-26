@@ -35,6 +35,7 @@ public class AutoConstants {
     public static double xIncrement = 0.25;
     public static double yIncrement = 1;
 
+
     private static double toRad(double deg) {
         return Math.toRadians(deg);
     }
