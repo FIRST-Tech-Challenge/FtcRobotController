@@ -6,7 +6,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
-import org.inventors.robotbase.MotorExEx;
+import org.inventors.ftc.robotbase.MotorExEx;
 
 @TeleOp
 @Disabled

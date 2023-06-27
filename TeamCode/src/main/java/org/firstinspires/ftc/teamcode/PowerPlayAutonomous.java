@@ -1,6 +1,6 @@
 package org.firstinspires.ftc.teamcode;
 
-import static org.inventors.robotbase.RobotEx.OpModeType.AUTO;
+import static org.inventors.ftc.robotbase.RobotEx.OpModeType.AUTO;
 
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.arcrobotics.ftclib.command.Command;
@@ -15,13 +15,11 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
-import org.inventors.robotbase.MecanumDrivePPV2;
-import org.inventors.opencvpipelines.AprilTagDetectionPipeline;
+import org.inventors.ftc.robotbase.MecanumDrivePPV2;
 import org.firstinspires.ftc.teamcode.powerplayV2.AprilTagDetectionSubsystem;
 import org.firstinspires.ftc.teamcode.powerplayV2.PowerPlayRobotV2;
 import org.firstinspires.ftc.teamcode.powerplayV2.RoadRunnerSubsystem;
 import org.firstinspires.ftc.teamcode.powerplayV2.commands.ElevatorCommand;
-import org.firstinspires.ftc.teamcode.powerplayV2.commands.FrontSliderConeCommand;
 import org.firstinspires.ftc.teamcode.powerplayV2.subsystems.ArmSubsystem;
 import org.firstinspires.ftc.teamcode.powerplayV2.subsystems.BasketSubsystem;
 import org.firstinspires.ftc.teamcode.powerplayV2.subsystems.ClawSubsystem;
@@ -29,8 +27,7 @@ import org.firstinspires.ftc.teamcode.powerplayV2.subsystems.ConeDetectorSubsyst
 import org.firstinspires.ftc.teamcode.powerplayV2.subsystems.ElevatorSubsystem;
 import org.firstinspires.ftc.teamcode.powerplayV2.subsystems.FrontSliderSubsystem;
 import org.firstinspires.ftc.teamcode.powerplayV2.subsystems.LimitSwitchSubsystem;
-import org.inventors.robotbase.GamepadExEx;
-import org.inventors.robotbase.MecanumDrivePPV2;
+import org.inventors.ftc.robotbase.GamepadExEx;
 
 import java.util.HashMap;
 

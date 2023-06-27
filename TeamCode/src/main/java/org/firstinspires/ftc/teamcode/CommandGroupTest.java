@@ -1,21 +1,18 @@
 package org.firstinspires.ftc.teamcode;
 
-import static org.inventors.robotbase.RobotEx.OpModeType.AUTO;
+import static org.inventors.ftc.robotbase.RobotEx.OpModeType.AUTO;
 
 import com.acmerobotics.dashboard.FtcDashboard;
-import com.arcrobotics.ftclib.command.Command;
 import com.arcrobotics.ftclib.command.CommandOpMode;
 import com.arcrobotics.ftclib.command.InstantCommand;
 import com.arcrobotics.ftclib.command.ParallelCommandGroup;
-import com.arcrobotics.ftclib.command.SelectCommand;
 import com.arcrobotics.ftclib.command.SequentialCommandGroup;
 import com.arcrobotics.ftclib.command.WaitCommand;
-import com.arcrobotics.ftclib.command.button.Trigger;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
-import org.inventors.robotbase.MecanumDrivePPV2;
+import org.inventors.ftc.robotbase.MecanumDrivePPV2;
 import org.firstinspires.ftc.teamcode.powerplayV2.AprilTagDetectionSubsystem;
 import org.firstinspires.ftc.teamcode.powerplayV2.PowerPlayRobotV2;
 import org.firstinspires.ftc.teamcode.powerplayV2.RoadRunnerSubsystem;
@@ -27,9 +24,7 @@ import org.firstinspires.ftc.teamcode.powerplayV2.subsystems.ConeDetectorSubsyst
 import org.firstinspires.ftc.teamcode.powerplayV2.subsystems.ElevatorSubsystem;
 import org.firstinspires.ftc.teamcode.powerplayV2.subsystems.FrontSliderSubsystem;
 import org.firstinspires.ftc.teamcode.powerplayV2.subsystems.LimitSwitchSubsystem;
-import org.inventors.robotbase.GamepadExEx;
-
-import java.util.HashMap;
+import org.inventors.ftc.robotbase.GamepadExEx;
 
 @Autonomous(name = "TestAutonomous", group = "Final Autonomous")
 public class CommandGroupTest extends CommandOpMode {

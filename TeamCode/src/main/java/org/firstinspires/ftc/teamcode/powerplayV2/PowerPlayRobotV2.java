@@ -3,7 +3,6 @@ package org.firstinspires.ftc.teamcode.powerplayV2;
 import com.arcrobotics.ftclib.command.CommandScheduler;
 import com.arcrobotics.ftclib.command.InstantCommand;
 import com.arcrobotics.ftclib.command.ParallelCommandGroup;
-import com.arcrobotics.ftclib.command.RunCommand;
 import com.arcrobotics.ftclib.command.SequentialCommandGroup;
 import com.arcrobotics.ftclib.command.WaitCommand;
 import com.arcrobotics.ftclib.command.button.Trigger;
@@ -17,7 +16,6 @@ import org.firstinspires.ftc.teamcode.powerplayV2.commands.FrontSliderConeComman
 import org.firstinspires.ftc.teamcode.powerplayV2.commands.FrontSliderManualCommand;
 import org.firstinspires.ftc.teamcode.powerplayV2.commands.ResetSliderBasket;
 import org.firstinspires.ftc.teamcode.powerplayV2.commands.RumbleCommand;
-import org.firstinspires.ftc.teamcode.powerplayV2.commands.SimpleAuto;
 import org.firstinspires.ftc.teamcode.powerplayV2.subsystems.ArmSubsystem;
 import org.firstinspires.ftc.teamcode.powerplayV2.subsystems.BasketSubsystem;
 import org.firstinspires.ftc.teamcode.powerplayV2.subsystems.ClawSubsystem;
@@ -25,9 +23,8 @@ import org.firstinspires.ftc.teamcode.powerplayV2.subsystems.ConeDetectorSubsyst
 import org.firstinspires.ftc.teamcode.powerplayV2.subsystems.ElevatorSubsystem;
 import org.firstinspires.ftc.teamcode.powerplayV2.subsystems.FrontSliderSubsystem;
 import org.firstinspires.ftc.teamcode.powerplayV2.subsystems.LimitSwitchSubsystem;
-import org.inventors.robotbase.GamepadExEx;
-import org.inventors.robotbase.MecanumDriveCommand;
-import org.inventors.robotbase.RobotEx;
+import org.inventors.ftc.robotbase.GamepadExEx;
+import org.inventors.ftc.robotbase.RobotEx;
 
 public class PowerPlayRobotV2 extends RobotEx {
     private ClawSubsystem claw;
