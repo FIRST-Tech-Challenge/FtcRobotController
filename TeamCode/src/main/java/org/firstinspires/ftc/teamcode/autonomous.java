@@ -65,9 +65,10 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 @Autonomous(name="Basic: Omni Linear OpMode", group="Linear Opmode")
 @Disabled
+
 public class autonomous extends LinearOpMode
 {
-
+    public int direction = 1;
     // Declare OpMode members for each of the 4 motors.
     private ElapsedTime runtime = new ElapsedTime();
     private DcMotor leftFrontDrive = null;
@@ -75,7 +76,14 @@ public class autonomous extends LinearOpMode
     private DcMotor rightFrontDrive = null;
     private DcMotor rightBackDrive = null;
     //@Override
-    public void driveStraight(double power, int miliseconds, int direction){
+    public void stopM() {
+        leftFrontDrive.setPower(0);
+        rightFrontDrive.setPower(0);
+        leftBackDrive.setPower(0);
+        rightBackDrive.setPower(0);
+    }
+    public void driveForward(double power, int miliseconds){
+        direction = 1;
         leftFrontDrive.setPower(power * direction);
         rightFrontDrive.setPower(power * direction);
         leftBackDrive.setPower(power * direction);
@@ -83,14 +91,18 @@ public class autonomous extends LinearOpMode
         sleep(miliseconds);
         stopM();
     }
-    public void stopM() {
-        leftFrontDrive.setPower(0);
-        rightFrontDrive.setPower(0);
-        leftBackDrive.setPower(0);
-        rightBackDrive.setPower(0);
+    public void driveBackward(double power, int miliseconds){
+        direction = -1;
+        leftFrontDrive.setPower(power * direction);
+        rightFrontDrive.setPower(power * direction);
+        leftBackDrive.setPower(power * direction);
+        rightBackDrive.setPower(power * direction);
+        sleep(miliseconds);
+        stopM();
     }
-    public void rotate(double power, int miliseconds, int direction){
 
+    public void rotateRight(double power, int miliseconds){
+        direction = 1;
         leftFrontDrive.setPower(power * direction);
         rightFrontDrive.setPower(power * direction * -1);
         leftBackDrive.setPower(power * direction);
@@ -98,16 +110,34 @@ public class autonomous extends LinearOpMode
         sleep(miliseconds);
         stopM();
     }
-    public void straif(double power, int miliseconds, int direction){
+    public void rotateLeft(double power, int miliseconds){
+        direction = -1;
+        leftFrontDrive.setPower(power * direction);
+        rightFrontDrive.setPower(power * direction * -1);
+        leftBackDrive.setPower(power * direction);
+        rightBackDrive.setPower(power * direction * -1);
+        sleep(miliseconds);
+        stopM();
+    }
 
-    leftFrontDrive.setPower(power * direction * -1);
-    rightFrontDrive.setPower(power * direction * -1);
-    leftBackDrive.setPower(power * direction);
-    rightBackDrive.setPower(power * direction);
-    sleep(miliseconds);
-    stopM();
-}
-
+    public void straifRight(double power, int miliseconds){
+        direction = 1;
+        leftFrontDrive.setPower(power * direction * -1);
+        rightFrontDrive.setPower(power * direction * -1);
+        leftBackDrive.setPower(power * direction);
+        rightBackDrive.setPower(power * direction);
+        sleep(miliseconds);
+        stopM();
+    }
+    public void straifLeft(double power, int miliseconds){
+        direction = -1;
+        leftFrontDrive.setPower(power * direction * -1);
+        rightFrontDrive.setPower(power * direction * -1);
+        leftBackDrive.setPower(power * direction);
+        rightBackDrive.setPower(power * direction);
+        sleep(miliseconds);
+        stopM();
+    }
     public void returnToLocaiton(double power, int miliseconds, int direction){
 
         leftFrontDrive.setPower(power * direction);
@@ -157,7 +187,6 @@ public class autonomous extends LinearOpMode
         runtime.reset();
 
         // run until the end of the match (driver presses STOP)
-
 
     }
 }
