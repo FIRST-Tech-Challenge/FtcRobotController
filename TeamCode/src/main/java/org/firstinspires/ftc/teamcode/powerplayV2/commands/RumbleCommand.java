@@ -2,7 +2,7 @@ package org.firstinspires.ftc.teamcode.powerplayV2.commands;
 
 import com.arcrobotics.ftclib.command.CommandBase;
 
-import org.firstinspires.ftc.teamcode.robotbase.GamepadExEx;
+import org.inventors.robotbase.GamepadExEx;
 
 public class RumbleCommand extends CommandBase {
     private GamepadExEx gp;

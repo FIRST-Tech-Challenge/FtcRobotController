@@ -1,6 +1,6 @@
 package org.firstinspires.ftc.teamcode;
 
-import static org.firstinspires.ftc.teamcode.robotbase.RobotEx.OpModeType.AUTO;
+import static org.inventors.robotbase.RobotEx.OpModeType.AUTO;
 
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.arcrobotics.ftclib.command.Command;
@@ -15,7 +15,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
-import org.firstinspires.ftc.teamcode.myroadrunner.drive.SampleMecanumDrive;
+import org.inventors.robotbase.MecanumDrivePPV2;
 import org.firstinspires.ftc.teamcode.powerplayV2.AprilTagDetectionSubsystem;
 import org.firstinspires.ftc.teamcode.powerplayV2.PowerPlayRobotV2;
 import org.firstinspires.ftc.teamcode.powerplayV2.RoadRunnerSubsystem;
@@ -27,14 +27,14 @@ import org.firstinspires.ftc.teamcode.powerplayV2.subsystems.ConeDetectorSubsyst
 import org.firstinspires.ftc.teamcode.powerplayV2.subsystems.ElevatorSubsystem;
 import org.firstinspires.ftc.teamcode.powerplayV2.subsystems.FrontSliderSubsystem;
 import org.firstinspires.ftc.teamcode.powerplayV2.subsystems.LimitSwitchSubsystem;
-import org.firstinspires.ftc.teamcode.robotbase.GamepadExEx;
+import org.inventors.robotbase.GamepadExEx;
 
 import java.util.HashMap;
 
 @Autonomous(name = "TestAuto", group = "TestDeAutonomi")
 public class AutonomousTests extends CommandOpMode {
     PowerPlayRobotV2 robot;
-    protected SampleMecanumDrive drive;
+    protected MecanumDrivePPV2 drive;
     protected RoadRunnerSubsystem RR;
     protected AprilTagDetectionSubsystem april_tag;
     protected ElevatorSubsystem elevator;
@@ -51,7 +51,7 @@ public class AutonomousTests extends CommandOpMode {
         robot = new PowerPlayRobotV2(hardwareMap, telemetry, driverOp, toolOp, AUTO, true,
                 false);
 
-        drive = new SampleMecanumDrive(hardwareMap);
+        drive = new MecanumDrivePPV2(hardwareMap, AUTO);
 
         RR = new RoadRunnerSubsystem(drive, false);
 

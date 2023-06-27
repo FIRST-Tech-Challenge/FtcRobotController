@@ -1,17 +1,17 @@
 package org.firstinspires.ftc.teamcode;
 
-import static org.firstinspires.ftc.teamcode.robotbase.RobotEx.OpModeType.AUTO;
+import static org.inventors.robotbase.RobotEx.OpModeType.AUTO;
 
 import com.arcrobotics.ftclib.command.CommandOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.firstinspires.ftc.teamcode.myroadrunner.drive.SampleMecanumDrive;
-import org.firstinspires.ftc.teamcode.opencvpipelines.AprilTagDetectionPipeline;
+import org.inventors.robotbase.MecanumDrivePPV2;
+import org.inventors.opencvpipelines.AprilTagDetectionPipeline;
 import org.firstinspires.ftc.teamcode.powerplayV2.AprilTagDetectionSubsystem;
 import org.firstinspires.ftc.teamcode.powerplayV2.PowerPlayRobotV2;
 import org.firstinspires.ftc.teamcode.powerplayV2.RoadRunnerSubsystem;
-import org.firstinspires.ftc.teamcode.robotbase.GamepadExEx;
+import org.inventors.robotbase.GamepadExEx;
 
 @Autonomous(name = "PP Inv (parking)", group = "Final Autonomous")
 public class PPparkingInv extends CommandOpMode {
@@ -19,7 +19,7 @@ public class PPparkingInv extends CommandOpMode {
     PowerPlayRobotV2 robot;
     AprilTagDetectionPipeline aprilTagDetectionPipeline;
     protected ElapsedTime runtime;
-    protected SampleMecanumDrive drive;
+    protected MecanumDrivePPV2 drive;
     protected RoadRunnerSubsystem RR;
     protected AprilTagDetectionSubsystem april_tag;
 
@@ -29,11 +29,11 @@ public class PPparkingInv extends CommandOpMode {
         GamepadExEx toolOp = new GamepadExEx(gamepad2);
 
         robot = new PowerPlayRobotV2(hardwareMap, telemetry, driverOp, toolOp, AUTO, true,
-                false, false, false, false, false);
+                false);
 
-        drive = new SampleMecanumDrive(hardwareMap);
+        drive = new MecanumDrivePPV2(hardwareMap, AUTO);
 
-        RR = new RoadRunnerSubsystem(drive, hardwareMap, true);
+        RR = new RoadRunnerSubsystem(drive, true);
 
         april_tag = new AprilTagDetectionSubsystem(robot.camera, telemetry);
 

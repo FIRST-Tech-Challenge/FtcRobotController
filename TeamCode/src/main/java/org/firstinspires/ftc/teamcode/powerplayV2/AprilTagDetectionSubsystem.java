@@ -1,7 +1,7 @@
 package org.firstinspires.ftc.teamcode.powerplayV2;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
-import org.firstinspires.ftc.teamcode.robotbase.Camera;
+import org.inventors.robotbase.Camera;
 import org.openftc.apriltag.AprilTagDetection;
 
 import java.util.ArrayList;

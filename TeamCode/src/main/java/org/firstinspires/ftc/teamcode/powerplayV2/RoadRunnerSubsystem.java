@@ -7,12 +7,12 @@ import com.arcrobotics.ftclib.command.SubsystemBase;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
-import org.firstinspires.ftc.teamcode.myroadrunner.drive.DriveConstants;
-import org.firstinspires.ftc.teamcode.myroadrunner.drive.SampleMecanumDrive;
-import org.firstinspires.ftc.teamcode.myroadrunner.trajectorysequence.TrajectorySequence;
+import org.inventors.robotbase.SampleDriveConstants;
+import org.inventors.robotbase.MecanumDrivePPV2;
+import org.inventors.trajectorysequence.TrajectorySequence;
 
 public class RoadRunnerSubsystem extends SubsystemBase {
-    protected SampleMecanumDrive driveR;
+    protected MecanumDrivePPV2 driveR;
     protected Trajectory sm, smPlanB, smPlanC;
     protected Trajectory test, Scoring;
     protected Trajectory hs, hsPlanB, hsPlanC;
@@ -31,7 +31,7 @@ public class RoadRunnerSubsystem extends SubsystemBase {
     protected Pose2d scoringPose = new Pose2d(inverted *24 + 21.80769231, 0 - 5.538461538, Math.toRadians(inverted *-17.0));
     protected Pose2d parking1 = new Pose2d(12, -12, Math.toRadians(inverted * 90));
     protected Pose2d parking3 = new Pose2d(60, -12, Math.toRadians(inverted * 90));
-    public RoadRunnerSubsystem(SampleMecanumDrive drive, boolean Inverted)
+    public RoadRunnerSubsystem(MecanumDrivePPV2 drive, boolean Inverted)
     {
         if (Inverted) inverted = -1;
 
@@ -47,8 +47,8 @@ public class RoadRunnerSubsystem extends SubsystemBase {
                 .splineToConstantHeading(midPose2.vec(), Math.toRadians(90))
                 .splineToSplineHeading(planAMidPose, Math.toRadians(90))
                 .splineToConstantHeading(scoringPose.vec(), Math.toRadians(90),
-                        SampleMecanumDrive.getVelocityConstraint(10, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
-                        SampleMecanumDrive.getAccelerationConstraint(DriveConstants.MAX_ACCEL))
+                        MecanumDrivePPV2.getVelocityConstraint(10, SampleDriveConstants.MAX_ANG_VEL, SampleDriveConstants.TRACK_WIDTH),
+                        MecanumDrivePPV2.getAccelerationConstraint(SampleDriveConstants.MAX_ACCEL))
                 .build();
 
         hs2 = driveR.trajectorySequenceBuilder(homePose)
@@ -57,8 +57,8 @@ public class RoadRunnerSubsystem extends SubsystemBase {
                 .turn(Math.toRadians(-107))
                 .strafeLeft(3)
                 .splineToConstantHeading(scoringPose.vec(), Math.toRadians(90),
-                        SampleMecanumDrive.getVelocityConstraint(30, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
-                        SampleMecanumDrive.getAccelerationConstraint(DriveConstants.MAX_ACCEL))
+                        MecanumDrivePPV2.getVelocityConstraint(30, SampleDriveConstants.MAX_ANG_VEL, SampleDriveConstants.TRACK_WIDTH),
+                        MecanumDrivePPV2.getAccelerationConstraint(SampleDriveConstants.MAX_ACCEL))
                 .build();
 
         sm = driveR.trajectoryBuilder(scoringPose)
