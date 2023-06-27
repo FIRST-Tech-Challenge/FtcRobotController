@@ -11,6 +11,7 @@ import org.firstinspires.ftc.teamcode.commandBased.commands._auto.InitialMoveSta
 import org.firstinspires.ftc.teamcode.commandBased.commands._auto.ParkIdle;
 import org.firstinspires.ftc.teamcode.commandBased.opmodes.AutoOpMode;
 import org.firstinspires.ftc.teamcode.rr.trajectorysequence.TrajectorySequence;
+import org.firstinspires.ftc.teamcode.rr.util.DashboardUtil;
 
 @Autonomous
 public class LeftTest extends AutoOpMode {
@@ -42,6 +43,8 @@ public class LeftTest extends AutoOpMode {
     @Override
     public void run() {
         super.run();
+
+        DashboardUtil.drawRobot(fieldOverlay, rrDrive.getPoseEstimate());
 
         if (!playInit) {
             determinePathFromTag();

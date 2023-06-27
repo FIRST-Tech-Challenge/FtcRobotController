@@ -83,7 +83,7 @@ public class BaseOpMode extends CommandOpMode {
 
             // Draw bot on canvas
             fieldOverlay.setStroke("#3F51B5");
-            DashboardUtil.drawRobot(fieldOverlay, drivetrainSS.getPose());
+            //DashboardUtil.drawRobot(fieldOverlay, drivetrainSS.getPose());
 
             //send telemetry packet off to dashboard
             FtcDashboard.getInstance().sendTelemetryPacket(packet);
@@ -199,6 +199,43 @@ public class BaseOpMode extends CommandOpMode {
     protected GamepadTrigger gp2(GamepadKeys.Trigger trigger) {
         return operatorEx.getGamepadTrigger(trigger);
     }
+
+    protected Trigger gp2(GamepadKeys.Button button, int layer) {
+        if (layer == 1) {
+            return operator.getGamepadButton(button)
+                    .and(gp1(Constants.CONTROL_LAYER_2).negate())
+                    .and(gp1(Constants.CONTROL_LAYER_3).negate());
+        } else if (layer == 2) {
+            return operator.getGamepadButton(button)
+                    .and(gp1(Constants.CONTROL_LAYER_2))
+                    .and(gp1(Constants.CONTROL_LAYER_3).negate());
+        } else if (layer == 3) {
+            return operator.getGamepadButton(button)
+                    .and(gp1(Constants.CONTROL_LAYER_2).negate())
+                    .and(gp1(Constants.CONTROL_LAYER_3));
+        } else {
+            return operator.getGamepadButton(button);
+        }
+    }
+
+    protected Trigger gp2(GamepadKeys.Trigger trigger, int layer) {
+        if (layer == 1) {
+            return operatorEx.getGamepadTrigger(trigger)
+                    .and(gp1(Constants.CONTROL_LAYER_2).negate())
+                    .and(gp1(Constants.CONTROL_LAYER_3).negate());
+        } else if (layer == 2) {
+            return operatorEx.getGamepadTrigger(trigger)
+                    .and(gp1(Constants.CONTROL_LAYER_2))
+                    .and(gp1(Constants.CONTROL_LAYER_3).negate());
+        } else if (layer == 3) {
+            return operatorEx.getGamepadTrigger(trigger)
+                    .and(gp1(Constants.CONTROL_LAYER_2).negate())
+                    .and(gp1(Constants.CONTROL_LAYER_3));
+        } else {
+            return operatorEx.getGamepadTrigger(trigger);
+        }
+    }
+
 
     protected Trigger gp2l1(GamepadKeys.Button button) {
         return operator.getGamepadButton(button).and(gp1(Constants.CONTROL_LAYER_2));

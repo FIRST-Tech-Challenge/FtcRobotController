@@ -24,6 +24,7 @@ public class LiftMoveRotateArm extends SequentialCommandGroup {
                 new MoveElevatorToPosition(ele, eleTarget),
                 new MoveArmToAngle(arm, armAngle),
                 new MoveRotatorToPosition(rot, rotAngle)
+
         );
         addRequirements(ele, arm, rot);
     }
