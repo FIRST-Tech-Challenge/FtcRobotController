@@ -23,15 +23,17 @@ android {
     }
 }
 
+repositories {
+    maven { url = 'https://jitpack.io' }
+}
+
 dependencies {
     implementation project(':FtcRobotController')
     annotationProcessor files('lib/OpModeAnnotationProcessor.jar')
     implementation 'org.openftc:easyopencv:1.5.2'
     implementation 'org.ftclib.ftclib:vision:2.0.1' // vision
     implementation 'org.ftclib.ftclib:core:2.0.1' // core
-    implementation 'org.apache.commons:commons-math3:3.6.1'
     implementation 'com.acmerobotics.roadrunner:core:0.5.5'
     implementation 'org.openftc:apriltag:1.1.0'
-    implementation project(':InventorsFtcLib')
+    implementation 'com.github.theinventors-ftc:InventorsFtcLib:7063986367'
 }
-
