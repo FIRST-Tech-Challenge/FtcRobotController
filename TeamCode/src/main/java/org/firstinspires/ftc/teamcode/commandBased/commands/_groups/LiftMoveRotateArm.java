@@ -5,6 +5,7 @@ import com.arcrobotics.ftclib.command.SequentialCommandGroup;
 import com.arcrobotics.ftclib.command.WaitCommand;
 import com.arcrobotics.ftclib.command.WaitUntilCommand;
 
+import org.firstinspires.ftc.teamcode.commandBased.Constants;
 import org.firstinspires.ftc.teamcode.commandBased.classes.triggers.TriggerCommandGroup;
 import org.firstinspires.ftc.teamcode.commandBased.commands.arm.MoveArmToAngle;
 import org.firstinspires.ftc.teamcode.commandBased.commands.elevator.MoveElevatorToPosition;
@@ -28,11 +29,13 @@ public class LiftMoveRotateArm extends ParallelCommandGroup {
 
         addCommands(
                 new MoveElevatorToPosition(ele, eleTarget),
-                new WaitUntilCommand(() -> ele.getEleProfileTarget() > 6),
                 new SequentialCommandGroup(
-                        new MoveRotatorToPosition(rot, rotAngle),
-                        new WaitCommand(100),
-                        new MoveArmToAngle(arm, armAngle)
+                        new WaitUntilCommand(() -> ele.getEleProfileTarget() > Constants.ELE_TRIGGER),
+                        new SequentialCommandGroup(
+                                new MoveRotatorToPosition(rot, rotAngle),
+                                new WaitCommand(100),
+                                new MoveArmToAngle(arm, armAngle)
+                        )
                 )
         );
         addRequirements(ele, arm, rot);

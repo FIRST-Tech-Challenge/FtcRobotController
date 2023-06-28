@@ -1,29 +1,29 @@
 package org.firstinspires.ftc.teamcode.commandBased.subsystems;
 
-public class AutoSubsystems {
+public class Subsystems {
 
-    private final AutoDrivetrainSubsystem drive;
+    private final AutoDrivetrainSubsystem rrDrive;
     private final ElevatorSubsystem ele;
     private final ArmSubsystem arm;
     private final RotatorSubsystem rot;
     private final IntakeSubsystem intake;
 
-    public AutoSubsystems(
+    public Subsystems(
             AutoDrivetrainSubsystem drive,
             ElevatorSubsystem ele,
             ArmSubsystem arm,
             RotatorSubsystem rot,
             IntakeSubsystem intake
     ) {
-        this.drive = drive;
+        this.rrDrive = drive;
         this.ele = ele;
         this.arm = arm;
         this.rot = rot;
         this.intake = intake;
     }
 
-    public AutoDrivetrainSubsystem getDrive() {
-        return drive;
+    public AutoDrivetrainSubsystem rrDrive() {
+        return rrDrive;
     }
 
     public ElevatorSubsystem getEle() {

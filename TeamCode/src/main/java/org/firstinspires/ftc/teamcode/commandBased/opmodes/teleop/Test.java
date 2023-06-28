@@ -20,12 +20,14 @@ import org.firstinspires.ftc.teamcode.commandBased.commands.elevator.UpdateEleva
 import org.firstinspires.ftc.teamcode.commandBased.commands.intake.SetIntakePower;
 import org.firstinspires.ftc.teamcode.commandBased.commands.rotator.MoveRotatorToPosition;
 import org.firstinspires.ftc.teamcode.commandBased.commands.rotator.SetRotatorRange;
-import org.firstinspires.ftc.teamcode.commandBased.opmodes.BaseOpMode;
+import org.firstinspires.ftc.teamcode.commandBased.opmodes.TeleOpMode;
 
 import static com.arcrobotics.ftclib.gamepad.GamepadKeys.Button.*;
+import static com.arcrobotics.ftclib.gamepad.GamepadKeys.Trigger.*;
+import static org.firstinspires.ftc.teamcode.commandBased.Constants.*;
 
 @TeleOp
-public class Test extends BaseOpMode {
+public class Test extends TeleOpMode {
 
     //drive commands
     protected FieldCentric fieldCentric;
@@ -92,7 +94,7 @@ public class Test extends BaseOpMode {
 
         gp2(LEFT_BUMPER, 1).whenActive(armBackHigh);
         gp2(RIGHT_BUMPER, 1).whenActive(scoreToIdle);
-        gp2(GamepadKeys.Trigger.LEFT_TRIGGER, 1).whenActive(grabCone);
+        gp2(LEFT_TRIGGER, 1).whenActive(grabCone);
 
         //arm controls
         gp1(B, 1).whenActive(armFront);

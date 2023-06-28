@@ -31,7 +31,6 @@ import java.util.List;
 
 public class BaseOpMode extends CommandOpMode {
 
-    protected DrivetrainSubsystem drivetrainSS;
     protected ElevatorSubsystem elevatorSS;
     protected ArmSubsystem armSS;
     protected RotatorSubsystem rotatorSS;
@@ -51,7 +50,6 @@ public class BaseOpMode extends CommandOpMode {
 
     @Override
     public void initialize() {
-        drivetrainSS = new DrivetrainSubsystem(hardwareMap);
         elevatorSS = new ElevatorSubsystem(hardwareMap);
         armSS = new ArmSubsystem(hardwareMap);
         rotatorSS = new RotatorSubsystem(hardwareMap);
@@ -88,10 +86,6 @@ public class BaseOpMode extends CommandOpMode {
             //send telemetry packet off to dashboard
             FtcDashboard.getInstance().sendTelemetryPacket(packet);
 
-        }
-
-        if (Constants.DEBUG_DRIVE) {
-            tad("drive mode", drivetrainSS.getMode());
         }
 
         if (Constants.DEBUG_ELE) {

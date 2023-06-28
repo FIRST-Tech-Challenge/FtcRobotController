@@ -71,7 +71,7 @@ public class Constants {
 
     //command-ending deadzones
     public static double ELE_DONE_DEADZONE = 1;
-    public static double ELE_TRIGGER = 4;
+    public static double ELE_TRIGGER = 8;
 
     //arm pid
     public static PIDCoefficients ARM_COEFFS = new PIDCoefficients(0.01, 0.0001, 0.0001);

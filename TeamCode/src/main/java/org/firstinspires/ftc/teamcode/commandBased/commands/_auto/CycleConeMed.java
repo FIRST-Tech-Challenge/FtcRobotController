@@ -10,13 +10,13 @@ import org.firstinspires.ftc.teamcode.commandBased.commands._groups.LiftMoveRota
 import org.firstinspires.ftc.teamcode.commandBased.commands._groups.ScoreCone;
 import org.firstinspires.ftc.teamcode.commandBased.commands._rr.FollowTrajectorySequenceAsync;
 import org.firstinspires.ftc.teamcode.commandBased.commands.elevator.MoveElevatorToPosition;
-import org.firstinspires.ftc.teamcode.commandBased.subsystems.AutoSubsystems;
+import org.firstinspires.ftc.teamcode.commandBased.subsystems.Subsystems;
 import org.firstinspires.ftc.teamcode.rr.trajectorysequence.TrajectorySequence;
 
 public class CycleConeMed extends SequentialCommandGroup {
 
     public CycleConeMed(
-            AutoSubsystems subsystems,
+            Subsystems subsystems,
             TrajectorySequence medTraj,
             TrajectorySequence stackTraj,
             Stack.Cone coneNumber
@@ -31,12 +31,12 @@ public class CycleConeMed extends SequentialCommandGroup {
                                 Constants.ELE_MID,
                                 Constants.ROTATOR_BACK
                         ),
-                        new FollowTrajectorySequenceAsync(subsystems.getDrive(), medTraj)
+                        new FollowTrajectorySequenceAsync(subsystems.rrDrive(), medTraj)
                 ),
                 new ScoreCone(subsystems.getArm(), subsystems.getRot(), subsystems.getIntake()),
                 new ParallelCommandGroup(
                         new MoveElevatorToPosition(subsystems.getEle(), Constants.ELE_STACK),
-                        new FollowTrajectorySequenceAsync(subsystems.getDrive(), stackTraj)
+                        new FollowTrajectorySequenceAsync(subsystems.rrDrive(), stackTraj)
                 ),
                 new GrabConeStack(
                         subsystems.getEle(),

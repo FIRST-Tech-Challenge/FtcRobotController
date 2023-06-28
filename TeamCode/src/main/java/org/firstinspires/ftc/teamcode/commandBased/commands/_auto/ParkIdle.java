@@ -5,13 +5,13 @@ import com.arcrobotics.ftclib.command.SequentialCommandGroup;
 
 import org.firstinspires.ftc.teamcode.commandBased.commands._groups.ComeFinished;
 import org.firstinspires.ftc.teamcode.commandBased.commands._rr.FollowTrajectorySequenceAsync;
-import org.firstinspires.ftc.teamcode.commandBased.subsystems.AutoSubsystems;
+import org.firstinspires.ftc.teamcode.commandBased.subsystems.Subsystems;
 import org.firstinspires.ftc.teamcode.rr.trajectorysequence.TrajectorySequence;
 
 public class ParkIdle extends SequentialCommandGroup {
 
     public ParkIdle(
-            AutoSubsystems subsystems,
+            Subsystems subsystems,
             TrajectorySequence parkTraj
     ) {
         addCommands(
@@ -21,7 +21,7 @@ public class ParkIdle extends SequentialCommandGroup {
                                 subsystems.getArm(),
                                 subsystems.getRot()
                         ),
-                        new FollowTrajectorySequenceAsync(subsystems.getDrive(), parkTraj)
+                        new FollowTrajectorySequenceAsync(subsystems.rrDrive(), parkTraj)
                 )
         );
     }

@@ -1,15 +1,20 @@
 package org.firstinspires.ftc.teamcode.commandBased.opmodes.auto;
 
+import com.arcrobotics.ftclib.command.CommandScheduler;
 import com.arcrobotics.ftclib.command.SequentialCommandGroup;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
 import org.firstinspires.ftc.teamcode.commandBased.AutoConstants;
+import org.firstinspires.ftc.teamcode.commandBased.Constants;
 import org.firstinspires.ftc.teamcode.commandBased.classes.enums.Stack;
 import org.firstinspires.ftc.teamcode.commandBased.commands._auto.CycleConeMed;
 import org.firstinspires.ftc.teamcode.commandBased.commands._auto.InitialMoveMed;
 import org.firstinspires.ftc.teamcode.commandBased.commands._auto.InitialMoveStack;
 import org.firstinspires.ftc.teamcode.commandBased.commands._auto.ParkIdle;
+import org.firstinspires.ftc.teamcode.commandBased.commands.arm.MoveArmToAngle;
+import org.firstinspires.ftc.teamcode.commandBased.commands.rotator.MoveRotatorToPosition;
 import org.firstinspires.ftc.teamcode.commandBased.opmodes.AutoOpMode;
+import org.firstinspires.ftc.teamcode.commandBased.subsystems.RotatorSubsystem;
 import org.firstinspires.ftc.teamcode.rr.trajectorysequence.TrajectorySequence;
 import org.firstinspires.ftc.teamcode.rr.util.DashboardUtil;
 
@@ -37,6 +42,13 @@ public class LeftTest extends AutoOpMode {
 
         instantiateTrajectories();
 
+        CommandScheduler.getInstance().cancelAll();
+
+        schedule(
+                new MoveRotatorToPosition(rotatorSS, Constants.ROTATOR_FRONT)
+                //new MoveArmToAngle(armSS, Constants.ARM_ANGLE_IDLE)
+        );
+
         updateCurrentTag();
     }
 
@@ -47,6 +59,7 @@ public class LeftTest extends AutoOpMode {
         DashboardUtil.drawRobot(fieldOverlay, rrDrive.getPoseEstimate());
 
         if (!playInit) {
+            rrDrive.setPoseEstimate(AutoConstants.START_POSE_LEFT);
             determinePathFromTag();
             switch (tagPos) {
                 case LEFT:
