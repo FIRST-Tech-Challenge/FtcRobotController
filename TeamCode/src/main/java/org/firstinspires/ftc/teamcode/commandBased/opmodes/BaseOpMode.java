@@ -74,20 +74,6 @@ public class BaseOpMode extends CommandOpMode {
         CommandScheduler.getInstance().run();
         CommandSchedulerEx.getInstance().run();
 
-        if (Constants.DISPLAY) {
-            // Draw the target on the field
-            fieldOverlay.setStroke("#dd2c00");
-            fieldOverlay.strokeCircle(Constants.TARGET.getX(), Constants.TARGET.getY(), 3);
-
-            // Draw bot on canvas
-            fieldOverlay.setStroke("#3F51B5");
-            //DashboardUtil.drawRobot(fieldOverlay, drivetrainSS.getPose());
-
-            //send telemetry packet off to dashboard
-            FtcDashboard.getInstance().sendTelemetryPacket(packet);
-
-        }
-
         if (Constants.DEBUG_ELE) {
             tad("ele pos", elevatorSS.getElePos());
             tad("ele profile target", elevatorSS.getEleProfileTarget());

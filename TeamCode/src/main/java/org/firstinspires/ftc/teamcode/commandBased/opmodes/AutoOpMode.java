@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.commandBased.opmodes;
 
 import android.annotation.SuppressLint;
 
+import com.acmerobotics.dashboard.FtcDashboard;
 import com.qualcomm.hardware.rev.RevBlinkinLedDriver;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
@@ -13,6 +14,7 @@ import org.firstinspires.ftc.teamcode.commandBased.pipelines.AprilTagDetectionPi
 import org.firstinspires.ftc.teamcode.commandBased.subsystems.AutoDrivetrainSubsystem;
 import org.firstinspires.ftc.teamcode.commandBased.subsystems.Subsystems;
 import org.firstinspires.ftc.teamcode.rr.drive.SampleMecanumDrive;
+import org.firstinspires.ftc.teamcode.rr.util.DashboardUtil;
 import org.openftc.apriltag.AprilTagDetection;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
@@ -37,7 +39,6 @@ public class AutoOpMode extends BaseOpMode {
 
     protected AprilTagDetection tagOfInterest = null;
 
-    protected double rollingSum = 0;
 
     protected enum TagPos {
         LEFT(0),
@@ -75,6 +76,9 @@ public class AutoOpMode extends BaseOpMode {
     public void run() {
         super.run();
     }
+
+
+
 
     protected void aprilTagInitialization() {
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier(
@@ -167,6 +171,15 @@ public class AutoOpMode extends BaseOpMode {
             tagPos = TagPos.RIGHT;
             blinkin.setPattern(RevBlinkinLedDriver.BlinkinPattern.BLUE);
         }
+    }
+
+    protected void drawRobot() {
+        // Draw bot on canvas
+        fieldOverlay.setStroke("#3F51B5");
+        DashboardUtil.drawRobot(fieldOverlay, drive.getPoseEstimate());
+
+        //send telemetry packet off to dashboard
+        FtcDashboard.getInstance().sendTelemetryPacket(packet);
     }
 
     @SuppressLint("DefaultLocale")
