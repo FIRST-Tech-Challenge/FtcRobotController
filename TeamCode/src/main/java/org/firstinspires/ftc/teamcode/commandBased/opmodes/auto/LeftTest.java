@@ -44,6 +44,8 @@ public class LeftTest extends AutoOpMode {
 
         CommandScheduler.getInstance().cancelAll();
 
+        rrDrive.setPoseEstimate(AutoConstants.START_POSE_LEFT);
+
         schedule(
                 new MoveRotatorToPosition(rotatorSS, Constants.ROTATOR_FRONT)
                 //new MoveArmToAngle(armSS, Constants.ARM_ANGLE_IDLE)
@@ -56,10 +58,9 @@ public class LeftTest extends AutoOpMode {
     public void run() {
         super.run();
 
-        DashboardUtil.drawRobot(fieldOverlay, rrDrive.getPoseEstimate());
+        drawRobot();
 
         if (!playInit) {
-            rrDrive.setPoseEstimate(AutoConstants.START_POSE_LEFT);
             determinePathFromTag();
             switch (tagPos) {
                 case LEFT:

@@ -152,6 +152,7 @@ public class AutoOpMode extends BaseOpMode {
 
             }
             telemetry.update();
+            drawRobot();
         }
         sleep(20);
     }
