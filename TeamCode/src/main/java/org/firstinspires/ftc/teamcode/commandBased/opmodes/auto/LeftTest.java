@@ -42,14 +42,20 @@ public class LeftTest extends AutoOpMode {
 
         instantiateTrajectories();
 
-        CommandScheduler.getInstance().cancelAll();
-
-        rrDrive.setPoseEstimate(AutoConstants.START_POSE_LEFT);
+        drive.setPoseEstimate(AutoConstants.START_POSE_LEFT);
 
         schedule(
                 new MoveRotatorToPosition(rotatorSS, Constants.ROTATOR_FRONT)
                 //new MoveArmToAngle(armSS, Constants.ARM_ANGLE_IDLE)
         );
+
+        schedule(new SequentialCommandGroup(
+                new InitialMoveMed(subsystems, firstMoveToPole),
+                new InitialMoveStack(subsystems, firstMoveToStack),
+
+                new CycleConeMed(subsystems, medFromStack, stackFromMed, Stack.Cone.FOURTH),
+                new CycleConeMed(subsystems, medFromStack, stackFromMed, Stack.Cone.THIRD)
+        ));
 
         updateCurrentTag();
     }
@@ -74,16 +80,6 @@ public class LeftTest extends AutoOpMode {
                     parkIdle = new ParkIdle(subsystems, parkRight);
                     break;
             }
-
-            schedule(new SequentialCommandGroup(
-                    new InitialMoveMed(subsystems, firstMoveToPole),
-                    new InitialMoveStack(subsystems, firstMoveToStack),
-
-                    new CycleConeMed(subsystems, medFromStack, stackFromMed, Stack.Cone.FOURTH),
-                    new CycleConeMed(subsystems, medFromStack, stackFromMed, Stack.Cone.THIRD),
-
-                    parkIdle
-            ));
 
             playInit = true;
         }
@@ -112,7 +108,7 @@ public class LeftTest extends AutoOpMode {
     protected void instantiateCyclingTrajectories() {
         medFromStack = drive.trajectorySequenceBuilder(AutoConstants.STACK_POSE_LEFT)
                 .lineToLinearHeading(AutoConstants.MED_FIRST)
-                .splineToSplineHeading(AutoConstants.MED_SECOND)
+                .splineToLinearHeading(AutoConstants.MED_SECOND)
                 .build();
 
         stackFromMed = drive.trajectorySequenceBuilder(AutoConstants.MED_POSE_LEFT)

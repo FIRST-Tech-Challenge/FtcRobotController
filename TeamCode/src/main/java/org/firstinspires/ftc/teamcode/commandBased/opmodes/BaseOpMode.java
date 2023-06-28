@@ -41,15 +41,14 @@ public class BaseOpMode extends CommandOpMode {
     protected TriggerGamepadEx driverEx;
     protected TriggerGamepadEx operatorEx;
 
-    protected TelemetryPacket packet;
-    protected Canvas fieldOverlay;
-
     protected MultipleTelemetry tele;
 
     protected RevBlinkinLedDriver blinkin;
 
     @Override
     public void initialize() {
+        CommandScheduler.getInstance().reset();
+
         elevatorSS = new ElevatorSubsystem(hardwareMap);
         armSS = new ArmSubsystem(hardwareMap);
         rotatorSS = new RotatorSubsystem(hardwareMap);
@@ -59,9 +58,6 @@ public class BaseOpMode extends CommandOpMode {
         operator = new GamepadEx(gamepad2);
         driverEx = new TriggerGamepadEx(gamepad1, driver);
         operatorEx = new TriggerGamepadEx(gamepad2, operator);
-
-        packet = new TelemetryPacket();
-        fieldOverlay = packet.fieldOverlay();
 
         tele = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
 
@@ -110,14 +106,16 @@ public class BaseOpMode extends CommandOpMode {
 
         if (Constants.DEBUG_COMMANDS) {
             for (TriggerCommand command : CommandSchedulerEx.getCommands()) {
-                if (command.isScheduled()) {
-                    tad("Scheduled", command.getName());
-                } else if (command.isFinished()) {
-//                    tad("Finished", command.getName());
-//                } else if (command.isTriggered()) {
+//                if (command.isScheduled()) {
+//                    tad("Scheduled", command.getName());
+//                } else
+                if (command.isFinished()) {
+                    tad("Finished", command.getName());
+                }
+//                else if (command.isTriggered()) {
 //                    tad("Triggered", command.getName());
                 }
-            }
+
             tad("test", 1);
         }
 

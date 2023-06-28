@@ -28,7 +28,7 @@ public class CycleConeMed extends SequentialCommandGroup {
                                 subsystems.getArm(),
                                 subsystems.getRot(),
                                 Constants.ARM_ANGLE_BACK,
-                                Constants.ELE_MID,
+                                Constants.ELE_HIGH,
                                 Constants.ROTATOR_BACK
                         ),
                         new FollowTrajectorySequenceAsync(subsystems.rrDrive(), medTraj)

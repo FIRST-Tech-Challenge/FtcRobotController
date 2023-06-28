@@ -1,6 +1,8 @@
 package org.firstinspires.ftc.teamcode.commandBased.opmodes;
 
 import com.acmerobotics.dashboard.FtcDashboard;
+import com.acmerobotics.dashboard.canvas.Canvas;
+import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 
 import org.firstinspires.ftc.teamcode.commandBased.Constants;
 import org.firstinspires.ftc.teamcode.commandBased.subsystems.DrivetrainSubsystem;
@@ -10,9 +12,14 @@ public class TeleOpMode extends BaseOpMode {
 
     protected DrivetrainSubsystem drivetrainSS;
 
+    protected TelemetryPacket packet;
+    protected Canvas fieldOverlay;
+
     @Override
     public void initialize() {
         drivetrainSS = new DrivetrainSubsystem(hardwareMap);
+        packet = new TelemetryPacket();
+        fieldOverlay = packet.fieldOverlay();
         super.initialize();
 
     }

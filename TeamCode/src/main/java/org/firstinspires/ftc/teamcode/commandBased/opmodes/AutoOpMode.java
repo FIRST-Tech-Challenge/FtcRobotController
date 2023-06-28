@@ -3,6 +3,9 @@ package org.firstinspires.ftc.teamcode.commandBased.opmodes;
 import android.annotation.SuppressLint;
 
 import com.acmerobotics.dashboard.FtcDashboard;
+import com.acmerobotics.dashboard.canvas.Canvas;
+import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
+import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.qualcomm.hardware.rev.RevBlinkinLedDriver;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
@@ -39,6 +42,8 @@ public class AutoOpMode extends BaseOpMode {
 
     protected AprilTagDetection tagOfInterest = null;
 
+//    protected TelemetryPacket packet;
+//    protected Canvas fieldOverlay;
 
     protected enum TagPos {
         LEFT(0),
@@ -63,11 +68,16 @@ public class AutoOpMode extends BaseOpMode {
     public void initialize() {
         super.initialize();
 
+//        packet = new TelemetryPacket();
+//        fieldOverlay = packet.fieldOverlay();
+
         rrDrive = new SampleMecanumDrive(hardwareMap);
 
         drive = new AutoDrivetrainSubsystem(rrDrive, false);
 
         subsystems = new Subsystems(drive, elevatorSS, armSS, rotatorSS, intakeSS);
+
+        drawRobot();
 
         aprilTagInitialization();
     }
@@ -75,6 +85,7 @@ public class AutoOpMode extends BaseOpMode {
     @Override
     public void run() {
         super.run();
+        drawRobot();
     }
 
 
@@ -151,8 +162,9 @@ public class AutoOpMode extends BaseOpMode {
                 }
 
             }
-            telemetry.update();
             drawRobot();
+            telemetry.update();
+
         }
         sleep(20);
     }
@@ -175,12 +187,12 @@ public class AutoOpMode extends BaseOpMode {
     }
 
     protected void drawRobot() {
-        // Draw bot on canvas
-        fieldOverlay.setStroke("#3F51B5");
-        DashboardUtil.drawRobot(fieldOverlay, drive.getPoseEstimate());
-
-        //send telemetry packet off to dashboard
-        FtcDashboard.getInstance().sendTelemetryPacket(packet);
+//        // Draw bot on canvas
+//        fieldOverlay.setStroke("#3F51B5");
+//        DashboardUtil.drawRobot(fieldOverlay, drive.getPoseEstimate());
+//
+//        //send telemetry packet off to dashboard
+//        FtcDashboard.getInstance().sendTelemetryPacket(packet);
     }
 
     @SuppressLint("DefaultLocale")

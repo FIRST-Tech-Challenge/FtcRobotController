@@ -28,7 +28,7 @@ public class LiftMoveRotateArm extends ParallelCommandGroup {
     ) {
 
         addCommands(
-                new MoveElevatorToPosition(ele, eleTarget),
+                new MoveElevatorToPosition(ele, eleTarget).withTimeout(1250),
                 new SequentialCommandGroup(
                         new WaitUntilCommand(() -> ele.getEleProfileTarget() > Constants.ELE_TRIGGER),
                         new SequentialCommandGroup(

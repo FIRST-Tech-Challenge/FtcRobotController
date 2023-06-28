@@ -49,7 +49,7 @@ public class DrivetrainSubsystem extends SubsystemBase {
     private double turningPIDDeadzone = 0.25;
 
     private TwoWheelTrackingLocalizer localizer;
-    private com.acmerobotics.roadrunner.geometry.Pose2d pose;
+    private com.acmerobotics.roadrunner.geometry.Pose2d pose = new com.acmerobotics.roadrunner.geometry.Pose2d(0, 0, 0);
 
     private final Drive drive;
     private LynxModule chub;
@@ -96,14 +96,14 @@ public class DrivetrainSubsystem extends SubsystemBase {
                 RevHubOrientationOnRobot.LogoFacingDirection.FORWARD, RevHubOrientationOnRobot.UsbFacingDirection.UP));
         imu.initialize(parameters);
 
-        //localizer = new TwoWheelTrackingLocalizer(hwMap, this);
-        //localizer.setPoseEstimate(Constants.STARTING_POINT);
+//        localizer = new TwoWheelTrackingLocalizer(hwMap, this);
+//        localizer.setPoseEstimate(Constants.STARTING_POINT);
     }
 
     public void periodic() {
         heading = getRawExternalHeading();
-        //localizer.update();
-        //pose = localizer.getPoseEstimate();
+//        localizer.update();
+//        pose = localizer.getPoseEstimate();
     }
 
 
