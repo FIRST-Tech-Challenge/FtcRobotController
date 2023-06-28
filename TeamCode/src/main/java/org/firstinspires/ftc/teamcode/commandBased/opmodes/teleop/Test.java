@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.commandBased.opmodes.teleop;
 
+import com.arcrobotics.ftclib.gamepad.GamepadKeys;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.commandBased.Constants;
@@ -76,15 +77,22 @@ public class Test extends BaseOpMode {
         super.initialize();
         initializeAllCommands();
 
-        //speed commands
-//        gp1(LEFT_BUMPER, 0).whenActive(slowMode);
-//        gp1(RIGHT_BUMPER, 0).whenActive(fastMode);
 
         //elevator controls
-        gp1(DPAD_DOWN, 1).whenActive(eleLow);
-        gp1(DPAD_LEFT, 1).whenActive(eleIdle);
-        gp1(DPAD_RIGHT, 1).whenActive(eleMid);
-        gp1(DPAD_UP, 1).whenActive(eleHigh);
+        gp2(DPAD_DOWN, 1).whenActive(eleLow);
+        gp2(DPAD_LEFT, 1).whenActive(eleIdle);
+        gp2(DPAD_RIGHT, 1).whenActive(eleMid);
+        gp2(DPAD_UP, 1).whenActive(eleHigh);
+
+        gp2(X, 1).whenActive(armFront);
+        gp2(A, 1).whenActive(armIdle);
+        gp2(B, 1).whenActive(armBack);
+
+        gp2(Y, 1).toggleWhenActive(rotatorBack, rotatorFront);
+
+        gp2(LEFT_BUMPER, 1).whenActive(armBackHigh);
+        gp2(RIGHT_BUMPER, 1).whenActive(scoreToIdle);
+        gp2(GamepadKeys.Trigger.LEFT_TRIGGER, 1).whenActive(grabCone);
 
         //arm controls
         gp1(B, 1).whenActive(armFront);
@@ -116,7 +124,7 @@ public class Test extends BaseOpMode {
         gp1(A, 3).toggleWhenActive(robotCentric, fieldCentric);
         gp1(Y, 3).whenActive(resetGyro);
 
-        fieldCentric.schedule();
+        robotCentric.schedule();
         rotatorRange.schedule();
         rotatorFront.schedule();
     }
@@ -141,13 +149,13 @@ public class Test extends BaseOpMode {
         fieldCentric = new FieldCentric(
                 drivetrainSS,
                 () -> driver.getLeftX(),
-                () -> -driver.getLeftY(),
+                () -> driver.getLeftY(),
                 () -> driver.getRightX()
         );
         robotCentric = new RobotCentric(
                 drivetrainSS,
                 () -> driver.getLeftX(),
-                () -> -driver.getLeftY(),
+                () -> driver.getLeftY(),
                 () -> driver.getRightX()
         );
         pointCentric = new PointCentric(

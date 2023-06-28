@@ -211,7 +211,7 @@ public class Robot extends BlackOp {
                 pointCentric.schedule();
             });
 
-            driver.y.onRise(drivetrainSS::resetGyro);
+            //driver.y.onRise(drivetrainSS::resetGyro);
 
             //elevator controls
             driver.dpad_down.onRise(eleLow::schedule);
