@@ -28,9 +28,12 @@ public class LiftMoveRotateArm extends ParallelCommandGroup {
 
         addCommands(
                 new MoveElevatorToPosition(ele, eleTarget),
-                new MoveArmToAngle(arm, armAngle),
-                new MoveRotatorToPosition(rot, rotAngle)
-
+                new WaitUntilCommand(() -> ele.getEleProfileTarget() > 6),
+                new SequentialCommandGroup(
+                        new MoveRotatorToPosition(rot, rotAngle),
+                        new WaitCommand(100),
+                        new MoveArmToAngle(arm, armAngle)
+                )
         );
         addRequirements(ele, arm, rot);
     }
