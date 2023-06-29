@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.commandBased.opmodes.auto;
 
+import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.arcrobotics.ftclib.command.InstantCommand;
 import com.arcrobotics.ftclib.command.SequentialCommandGroup;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
@@ -14,6 +15,8 @@ import org.firstinspires.ftc.teamcode.commandBased.commands._auto.ParkIdle;
 import org.firstinspires.ftc.teamcode.commandBased.commands.rotator.MoveRotatorToPosition;
 import org.firstinspires.ftc.teamcode.commandBased.opmodes.AutoOpMode;
 import org.firstinspires.ftc.teamcode.rr.trajectorysequence.TrajectorySequence;
+
+import static org.firstinspires.ftc.teamcode.commandBased.AutoConstants.*;
 
 @Autonomous
 public class LeftTest extends AutoOpMode {
@@ -31,6 +34,8 @@ public class LeftTest extends AutoOpMode {
     public static TrajectorySequence parkRight;
 
     public static boolean playInit;
+    public static double voltageOffset;
+    public static double voltage = 0;
 
 
     @Override
@@ -43,12 +48,16 @@ public class LeftTest extends AutoOpMode {
 
         initSchedule();
 
+        voltage = getVoltage();
+
         updateCurrentTag();
     }
 
     @Override
     public void run() {
         super.run();
+
+        tad("voltage offset", voltageOffset);
 
         if (!playInit) {
             determinePathFromTag();
@@ -85,11 +94,43 @@ public class LeftTest extends AutoOpMode {
                         new InitialMoveMed(subsystems, firstMoveToPole),
                         new InitialMoveStack(subsystems, firstMoveToStack),
 
+                        new InstantCommand(this::drift),
                         new CycleConeMed(subsystems, medFromStack, stackFromMed, Stack.Cone.FOURTH),
+
+                        new InstantCommand(this::drift),
                         new CycleConeMed(subsystems, medFromStack, stackFromMed, Stack.Cone.THIRD),
+
+                        new InstantCommand(this::drift),
+                        new CycleConeMed(subsystems, medFromStack, stackFromMed, Stack.Cone.SECOND),
+
+                        new InstantCommand(this::drift),
+                        new CycleConeMed(subsystems, medFromStack, stackFromMed, Stack.Cone.FIRST),
 
                         parkIdle
                 ));
+    }
+
+    protected void drift() {
+        Pose2d current = drive.getPoseEstimate();
+
+        if (voltage > 13.5) {
+            current.plus(new Pose2d(X_DRIFT_14, Y_DRIFT_14, 0));
+            voltageOffset = 14;
+        } else if (voltage > 13) {
+            current.plus(new Pose2d(X_DRIFT_13_5, Y_DRIFT_13_5, 0));
+            voltageOffset = 13.5;
+        } else if (voltage > 12.75) {
+            current.plus(new Pose2d(X_DRIFT_13, Y_DRIFT_13, 0));
+            voltageOffset = 13;
+        } else if (voltage > 12.5) {
+            current.plus(new Pose2d(X_DRIFT_12_75, Y_DRIFT_12_75, 0));
+            voltageOffset = 12.75;
+        } else {
+            current.plus(new Pose2d(X_DRIFT_12_5, Y_DRIFT_12_5, 0));
+            voltageOffset = 12.5;
+        }
+
+        drive.setPoseEstimate(current);
     }
 
     protected void instantiateTrajectories() {

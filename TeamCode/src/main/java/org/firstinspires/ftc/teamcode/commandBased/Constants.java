@@ -15,7 +15,7 @@ import org.firstinspires.ftc.teamcode.commandBased.classes.Vector2d;
 public class Constants {
 
     //debug toggles
-    public static boolean DEBUG_DRIVE = true;
+    public static boolean DEBUG_DRIVE = false;
     public static boolean DEBUG_ELE = false;
     public static boolean DEBUG_ARM = false;
     public static boolean DEBUG_ROTATOR = false;
@@ -66,12 +66,12 @@ public class Constants {
     public static double ELE_LOW = 0;
     public static double ELE_IDLE = 2;
     public static double ELE_STACK = 5;
-    public static double ELE_MID = 8;
+    public static double ELE_MID = 9;
     public static double ELE_HIGH = 12;
 
     //command-ending deadzones
     public static double ELE_DONE_DEADZONE = 1;
-    public static double ELE_TRIGGER = 8;
+    public static double ELE_TRIGGER = 6;
 
     //arm pid
     public static PIDCoefficients ARM_COEFFS = new PIDCoefficients(0.01, 0.0001, 0.0001);
@@ -130,6 +130,6 @@ public class Constants {
 
 
     //AUTO
-    public static double STACK_INCREMENT = 1;
+    public static double STACK_INCREMENT = .5;
 
 }

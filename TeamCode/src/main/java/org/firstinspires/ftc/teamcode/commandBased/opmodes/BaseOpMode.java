@@ -12,6 +12,7 @@ import com.arcrobotics.ftclib.command.button.Trigger;
 import com.arcrobotics.ftclib.gamepad.GamepadEx;
 import com.arcrobotics.ftclib.gamepad.GamepadKeys;
 import com.qualcomm.hardware.rev.RevBlinkinLedDriver;
+import com.qualcomm.robotcore.hardware.VoltageSensor;
 
 import org.firstinspires.ftc.teamcode.commandBased.Constants;
 import org.firstinspires.ftc.teamcode.commandBased.classes.CommandSchedulerEx;
@@ -45,6 +46,8 @@ public class BaseOpMode extends CommandOpMode {
 
     protected RevBlinkinLedDriver blinkin;
 
+    private VoltageSensor batteryVoltageSensor;
+
     @Override
     public void initialize() {
         CommandScheduler.getInstance().reset();
@@ -63,6 +66,8 @@ public class BaseOpMode extends CommandOpMode {
 
         blinkin = hardwareMap.get(RevBlinkinLedDriver.class, "blinkin");
         blinkin.setPattern(RevBlinkinLedDriver.BlinkinPattern.AQUA);
+
+        batteryVoltageSensor = hardwareMap.voltageSensor.iterator().next();
     }
 
     @Override
@@ -120,6 +125,10 @@ public class BaseOpMode extends CommandOpMode {
         }
 
         tele.update();
+    }
+
+    protected double getVoltage() {
+        return batteryVoltageSensor.getVoltage();
     }
 
     protected void tad(String caption, Object value) {

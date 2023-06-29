@@ -22,6 +22,8 @@ public class TeleOpMode extends BaseOpMode {
         fieldOverlay = packet.fieldOverlay();
         super.initialize();
 
+        tele.addLine("Ready to start:");
+        tele.update();
     }
 
     @Override

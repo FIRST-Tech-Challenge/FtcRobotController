@@ -23,7 +23,7 @@ public class InitialMoveMed extends SequentialCommandGroup {
                                 subsystems.getArm(),
                                 subsystems.getRot(),
                                 Constants.ARM_ANGLE_BACK,
-                                Constants.ELE_HIGH,
+                                Constants.ELE_MID,
                                 Constants.ROTATOR_BACK
                         ),
                         new FollowTrajectorySequenceAsync(subsystems.rrDrive(), traj)
