@@ -91,6 +91,8 @@ public class autonomous extends LinearOpMode
         sleep(miliseconds);
         stopM();
     }
+
+
     public void driveBackward(double power, int miliseconds){
         direction = -1;
         leftFrontDrive.setPower(power * direction);
@@ -123,8 +125,8 @@ public class autonomous extends LinearOpMode
     public void straifRight(double power, int miliseconds){
         direction = 1;
         leftFrontDrive.setPower(power * direction * -1);
-        rightFrontDrive.setPower(power * direction * -1);
-        leftBackDrive.setPower(power * direction);
+        rightFrontDrive.setPower(power * direction);
+        leftBackDrive.setPower(power * direction * -1);
         rightBackDrive.setPower(power * direction);
         sleep(miliseconds);
         stopM();
@@ -132,8 +134,8 @@ public class autonomous extends LinearOpMode
     public void straifLeft(double power, int miliseconds){
         direction = -1;
         leftFrontDrive.setPower(power * direction * -1);
-        rightFrontDrive.setPower(power * direction * -1);
-        leftBackDrive.setPower(power * direction);
+        rightFrontDrive.setPower(power * direction);
+        leftBackDrive.setPower(power * direction * -1));
         rightBackDrive.setPower(power * direction);
         sleep(miliseconds);
         stopM();
