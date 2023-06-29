@@ -1,6 +1,6 @@
 package org.firstinspires.ftc.teamcode.commandBased.opmodes.auto;
 
-import com.arcrobotics.ftclib.command.CommandScheduler;
+import com.arcrobotics.ftclib.command.InstantCommand;
 import com.arcrobotics.ftclib.command.SequentialCommandGroup;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
@@ -11,12 +11,9 @@ import org.firstinspires.ftc.teamcode.commandBased.commands._auto.CycleConeMed;
 import org.firstinspires.ftc.teamcode.commandBased.commands._auto.InitialMoveMed;
 import org.firstinspires.ftc.teamcode.commandBased.commands._auto.InitialMoveStack;
 import org.firstinspires.ftc.teamcode.commandBased.commands._auto.ParkIdle;
-import org.firstinspires.ftc.teamcode.commandBased.commands.arm.MoveArmToAngle;
 import org.firstinspires.ftc.teamcode.commandBased.commands.rotator.MoveRotatorToPosition;
 import org.firstinspires.ftc.teamcode.commandBased.opmodes.AutoOpMode;
-import org.firstinspires.ftc.teamcode.commandBased.subsystems.RotatorSubsystem;
 import org.firstinspires.ftc.teamcode.rr.trajectorysequence.TrajectorySequence;
-import org.firstinspires.ftc.teamcode.rr.util.DashboardUtil;
 
 @Autonomous
 public class LeftTest extends AutoOpMode {
@@ -44,18 +41,7 @@ public class LeftTest extends AutoOpMode {
 
         drive.setPoseEstimate(AutoConstants.START_POSE_LEFT);
 
-        schedule(
-                new MoveRotatorToPosition(rotatorSS, Constants.ROTATOR_FRONT)
-                //new MoveArmToAngle(armSS, Constants.ARM_ANGLE_IDLE)
-        );
-
-        schedule(new SequentialCommandGroup(
-                new InitialMoveMed(subsystems, firstMoveToPole),
-                new InitialMoveStack(subsystems, firstMoveToStack),
-
-                new CycleConeMed(subsystems, medFromStack, stackFromMed, Stack.Cone.FOURTH),
-                new CycleConeMed(subsystems, medFromStack, stackFromMed, Stack.Cone.THIRD)
-        ));
+        initSchedule();
 
         updateCurrentTag();
     }
@@ -63,8 +49,6 @@ public class LeftTest extends AutoOpMode {
     @Override
     public void run() {
         super.run();
-
-        drawRobot();
 
         if (!playInit) {
             determinePathFromTag();
@@ -81,11 +65,32 @@ public class LeftTest extends AutoOpMode {
                     break;
             }
 
+            pathSchedule();
+
             playInit = true;
         }
     }
 
 
+
+    protected void initSchedule() {
+        schedule(
+                new MoveRotatorToPosition(rotatorSS, Constants.ROTATOR_FRONT)
+        );
+    }
+
+    protected void pathSchedule() {
+        schedule(
+                new SequentialCommandGroup(
+                        new InitialMoveMed(subsystems, firstMoveToPole),
+                        new InitialMoveStack(subsystems, firstMoveToStack),
+
+                        new CycleConeMed(subsystems, medFromStack, stackFromMed, Stack.Cone.FOURTH),
+                        new CycleConeMed(subsystems, medFromStack, stackFromMed, Stack.Cone.THIRD),
+
+                        parkIdle
+                ));
+    }
 
     protected void instantiateTrajectories() {
         instantiateFirstTrajectories();

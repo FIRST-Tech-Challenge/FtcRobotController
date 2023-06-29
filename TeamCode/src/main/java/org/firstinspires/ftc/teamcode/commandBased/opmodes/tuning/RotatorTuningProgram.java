@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.commandBased.opmodes.misc;
+package org.firstinspires.ftc.teamcode.commandBased.opmodes.tuning;
 
 import com.arcrobotics.ftclib.command.CommandScheduler;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;

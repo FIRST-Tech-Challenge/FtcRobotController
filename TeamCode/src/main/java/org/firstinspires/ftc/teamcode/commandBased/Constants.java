@@ -20,7 +20,7 @@ public class Constants {
     public static boolean DEBUG_ARM = false;
     public static boolean DEBUG_ROTATOR = false;
     public static boolean DEBUG_INTAKE = true;
-    public static boolean DEBUG_COMMANDS = true;
+    public static boolean DEBUG_COMMANDS = false;
 
     //display toggle
     public static boolean DISPLAY = true;
