@@ -8,6 +8,7 @@ import org.firstinspires.ftc.teamcode.commandBased.classes.enums.Stack;
 import org.firstinspires.ftc.teamcode.commandBased.commands._groups.GrabConeStack;
 import org.firstinspires.ftc.teamcode.commandBased.commands._groups.LiftMoveRotateArm;
 import org.firstinspires.ftc.teamcode.commandBased.commands._groups.ScoreCone;
+import org.firstinspires.ftc.teamcode.commandBased.commands._groups.ScoreConeStack;
 import org.firstinspires.ftc.teamcode.commandBased.commands._rr.FollowTrajectorySequenceAsync;
 import org.firstinspires.ftc.teamcode.commandBased.commands.elevator.MoveElevatorToPosition;
 import org.firstinspires.ftc.teamcode.commandBased.subsystems.Subsystems;
@@ -33,7 +34,7 @@ public class CycleConeMed extends SequentialCommandGroup {
                         ),
                         new FollowTrajectorySequenceAsync(subsystems.rrDrive(), medTraj)
                 ),
-                new ScoreCone(subsystems.getArm(), subsystems.getRot(), subsystems.getIntake()),
+                new ScoreConeStack(subsystems.getArm(), subsystems.getRot(), subsystems.getIntake()),
                 new ParallelCommandGroup(
                         new MoveElevatorToPosition(subsystems.getEle(), Constants.ELE_STACK),
                         new FollowTrajectorySequenceAsync(subsystems.rrDrive(), stackTraj)

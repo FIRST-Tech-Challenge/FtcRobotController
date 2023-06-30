@@ -17,7 +17,7 @@ public class Constants {
     //debug toggles
     public static boolean DEBUG_DRIVE = false;
     public static boolean DEBUG_ELE = false;
-    public static boolean DEBUG_ARM = false;
+    public static boolean DEBUG_ARM = true;
     public static boolean DEBUG_ROTATOR = false;
     public static boolean DEBUG_INTAKE = true;
     public static boolean DEBUG_COMMANDS = false;
@@ -99,11 +99,12 @@ public class Constants {
     //arm angle positions
     public static double ARM_ANGLE_BACK = -110;
     public static double ARM_ANGLE_IDLE = 42.5;
+    public static double ARM_ANGLE_STACK = 35;
     public static double ARM_ANGLE_FRONT = 110;
     public static double ARM_ANGLE_MAX = 130;
 
     public static double ARM_ANGLE_TRIGGER = 75;
-    public static double ARM_ANGLE_DEADZONE = 10;
+    public static double ARM_ANGLE_DEADZONE = 15;
 
     //arm encoder positions
     public static double ARM_ENC_BACK_MAX = -720;

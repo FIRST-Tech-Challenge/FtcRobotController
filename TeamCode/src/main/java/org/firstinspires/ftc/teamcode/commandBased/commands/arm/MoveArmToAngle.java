@@ -21,14 +21,14 @@ public class MoveArmToAngle extends TriggerCommandBase {
         double accel = 10;
 
         if (m_armSubsystem.getArmTargetAngle() == Constants.ARM_ANGLE_FRONT) {
-            if (angle == Constants.ARM_ANGLE_IDLE) {
+            if (angle == Constants.ARM_ANGLE_IDLE || angle == Constants.ARM_ANGLE_STACK) {
                 velo = Constants.ARM_VELO_FRONT_IDLE;
                 accel = Constants.ARM_ACCEL_FRONT_IDLE;
             } else if (angle == Constants.ARM_ANGLE_BACK) {
                 velo = Constants.ARM_VELO_FRONT_BACK;
                 accel = Constants.ARM_ACCEL_FRONT_BACK;
             }
-        } else if (m_armSubsystem.getArmTargetAngle() == Constants.ARM_ANGLE_IDLE) {
+        } else if (m_armSubsystem.getArmTargetAngle() == Constants.ARM_ANGLE_IDLE || m_armSubsystem.getArmTargetAngle() == Constants.ARM_ANGLE_STACK) {
             if (angle == Constants.ARM_ANGLE_FRONT) {
                 velo = Constants.ARM_VELO_IDLE_FRONT;
                 accel = Constants.ARM_ACCEL_IDLE_FRONT;
@@ -40,7 +40,7 @@ public class MoveArmToAngle extends TriggerCommandBase {
             if (angle == Constants.ARM_ANGLE_FRONT) {
                 velo = Constants.ARM_VELO_FRONT_BACK;
                 accel = Constants.ARM_ACCEL_FRONT_BACK;
-            } else if (angle == Constants.ARM_ANGLE_IDLE) {
+            } else if (angle == Constants.ARM_ANGLE_IDLE || angle == Constants.ARM_ANGLE_STACK) {
                 velo = Constants.ARM_VELO_BACK_IDLE;
                 accel = Constants.ARM_ACCEL_BACK_IDLE;
             }

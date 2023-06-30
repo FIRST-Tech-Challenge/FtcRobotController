@@ -7,6 +7,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
 import org.firstinspires.ftc.teamcode.commandBased.AutoConstants;
 import org.firstinspires.ftc.teamcode.commandBased.Constants;
+import org.firstinspires.ftc.teamcode.commandBased.classes.Pose2dSpline;
 import org.firstinspires.ftc.teamcode.commandBased.classes.enums.Stack;
 import org.firstinspires.ftc.teamcode.commandBased.commands._auto.CycleConeMed;
 import org.firstinspires.ftc.teamcode.commandBased.commands._auto.InitialMoveMed;
@@ -112,25 +113,25 @@ public class LeftTest extends AutoOpMode {
 
     protected void drift() {
         Pose2d current = drive.getPoseEstimate();
-
+        Pose2d newPose;
         if (voltage > 13.5) {
-            current.plus(new Pose2d(X_DRIFT_14, Y_DRIFT_14, 0));
+            newPose = current.plus(new Pose2d(X_DRIFT_14, Y_DRIFT_14, 0));
             voltageOffset = 14;
         } else if (voltage > 13) {
-            current.plus(new Pose2d(X_DRIFT_13_5, Y_DRIFT_13_5, 0));
+            newPose = current.plus(new Pose2d(X_DRIFT_13_5, Y_DRIFT_13_5, 0));
             voltageOffset = 13.5;
         } else if (voltage > 12.75) {
-            current.plus(new Pose2d(X_DRIFT_13, Y_DRIFT_13, 0));
+            newPose = current.plus(new Pose2d(X_DRIFT_13, Y_DRIFT_13, 0));
             voltageOffset = 13;
         } else if (voltage > 12.5) {
-            current.plus(new Pose2d(X_DRIFT_12_75, Y_DRIFT_12_75, 0));
+            newPose = current.plus(new Pose2d(X_DRIFT_12_75, Y_DRIFT_12_75, 0));
             voltageOffset = 12.75;
         } else {
-            current.plus(new Pose2d(X_DRIFT_12_5, Y_DRIFT_12_5, 0));
+            newPose = current.plus(new Pose2d(X_DRIFT_12_5, Y_DRIFT_12_5, 0));
             voltageOffset = 12.5;
         }
 
-        drive.setPoseEstimate(current);
+        drive.setPoseEstimate(newPose);
     }
 
     protected void instantiateTrajectories() {
