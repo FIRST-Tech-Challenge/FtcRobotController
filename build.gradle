@@ -5,6 +5,8 @@
  */
 
 buildscript {
+    ext.dashboard_version = '0.4.9'
+    ext.checkstyle_version = '8.18'
     repositories {
         mavenCentral()
         google()
@@ -25,7 +27,6 @@ allprojects {
 
 repositories {
     mavenCentral()
-
     flatDir {
         dirs '../libs'
     }

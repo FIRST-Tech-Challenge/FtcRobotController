@@ -18,7 +18,8 @@ dependencies {
     implementation 'org.firstinspires.ftc:FtcCommon:8.1.1'
     implementation 'org.tensorflow:tensorflow-lite-task-vision:0.2.0'
     implementation 'androidx.appcompat:appcompat:1.2.0'
-    implementation 'com.acmerobotics.dashboard:dashboard:0.4.8'
+    //implementation 'com.acmerobotics.dashboard:dashboard:0.4.9' //todo uncomment and update when returning to rbrott's published version
+    implementation project (':FtcDashboard') //todo comment out when returning to rbrott's published version instead of local dev version
     implementation 'org.firstinspires.ftc:gameAssets-PowerPlay:1.0.0'
 }
 

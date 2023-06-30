@@ -1,3 +1,7 @@
 include ':FtcRobotController'
 include ':TeamCode'
 include ':MeepMeep'
+include ':DashboardCore' //todo these 4 lines will come out when returning to rbrott's official maven distribution
+include ':FtcDashboard'
+project(':DashboardCore').projectDir = new File('../ftc-dashboard/DashboardCore')
+project(':FtcDashboard').projectDir = new File('../ftc-dashboard/FtcDashboard')
