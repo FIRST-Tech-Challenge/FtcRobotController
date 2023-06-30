@@ -5,23 +5,18 @@ import com.arcrobotics.ftclib.command.SequentialCommandGroup;
 import com.arcrobotics.ftclib.command.WaitCommand;
 
 import org.firstinspires.ftc.teamcode.commandBased.Constants;
-import org.firstinspires.ftc.teamcode.commandBased.classes.enums.Stack;
-import org.firstinspires.ftc.teamcode.commandBased.commands._groups.GrabConeStack;
 import org.firstinspires.ftc.teamcode.commandBased.commands._groups.LiftMoveRotateArm;
 import org.firstinspires.ftc.teamcode.commandBased.commands._groups.ScoreCone;
-import org.firstinspires.ftc.teamcode.commandBased.commands._groups.ScoreConeStack;
 import org.firstinspires.ftc.teamcode.commandBased.commands._rr.FollowTrajectorySequenceAsync;
-import org.firstinspires.ftc.teamcode.commandBased.commands.elevator.MoveElevatorToPosition;
 import org.firstinspires.ftc.teamcode.commandBased.subsystems.Subsystems;
 import org.firstinspires.ftc.teamcode.rr.trajectorysequence.TrajectorySequence;
 
-public class CycleConeMed extends SequentialCommandGroup {
+public class CycleFinalCone extends SequentialCommandGroup {
 
-    public CycleConeMed(
+
+    public CycleFinalCone(
             Subsystems subsystems,
-            TrajectorySequence medTraj,
-            TrajectorySequence stackTraj,
-            Stack.Cone coneNumber
+            TrajectorySequence medTraj
     ) {
         addCommands(
                 new ParallelCommandGroup(
@@ -38,18 +33,10 @@ public class CycleConeMed extends SequentialCommandGroup {
                                 new FollowTrajectorySequenceAsync(subsystems.rrDrive(), medTraj)
                         )
                 ),
-                new ScoreConeStack(subsystems.getArm(), subsystems.getRot(), subsystems.getIntake()),
-                new ParallelCommandGroup(
-                        new MoveElevatorToPosition(subsystems.getEle(), Constants.ELE_STACK),
-                        new FollowTrajectorySequenceAsync(subsystems.rrDrive(), stackTraj)
-                ),
-                new GrabConeStack(
-                        subsystems.getEle(),
-                        subsystems.getArm(),
-                        subsystems.getRot(),
-                        subsystems.getIntake(),
-                        coneNumber
-                )
+                new ScoreCone(subsystems.getArm(), subsystems.getRot(), subsystems.getIntake()),
+                new WaitCommand(30)
         );
     }
+
+
 }

@@ -23,12 +23,11 @@ public class GrabConeStack extends SequentialCommandGroup {
             Stack.Cone height
     ) {
         addCommands(
-                new MoveArmToAngle(arm, Constants.ARM_ANGLE_IDLE),
+                new MoveArmToAngle(arm, Constants.ARM_ANGLE_STACK),
                 new MoveRotatorToPosition(rot, Constants.ROTATOR_FRONT),
                 new MoveElevatorToPosition(ele, height.getValue()),
                 new SetIntakePower(intake, Constants.INTAKE_IN).withTimeout(4000),
-                new SetIntakePower(intake, Constants.INTAKE_IDLE),
-                new MoveElevatorToPosition(ele, Constants.ELE_STACK)
+                new SetIntakePower(intake, Constants.INTAKE_IDLE)
         );
     }
 }

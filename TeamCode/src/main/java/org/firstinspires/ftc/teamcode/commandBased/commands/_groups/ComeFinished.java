@@ -18,9 +18,9 @@ public class ComeFinished extends SequentialCommandGroup {
             RotatorSubsystem rot
     ) {
         addCommands(
-                new MoveArmToAngle(arm, Constants.ARM_ANGLE_IDLE),
+                new MoveArmToAngle(arm, 55),
                 new MoveRotatorToPosition(rot, Constants.ROTATOR_FRONT),
-                new MoveElevatorToPosition(ele, Constants.ELE_IDLE)
+                new MoveElevatorToPosition(ele, Constants.ELE_LOW)
         );
     }
 }

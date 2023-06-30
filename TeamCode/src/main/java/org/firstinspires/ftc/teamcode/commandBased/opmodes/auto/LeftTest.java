@@ -7,9 +7,9 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
 import org.firstinspires.ftc.teamcode.commandBased.AutoConstants;
 import org.firstinspires.ftc.teamcode.commandBased.Constants;
-import org.firstinspires.ftc.teamcode.commandBased.classes.Pose2dSpline;
 import org.firstinspires.ftc.teamcode.commandBased.classes.enums.Stack;
 import org.firstinspires.ftc.teamcode.commandBased.commands._auto.CycleConeMed;
+import org.firstinspires.ftc.teamcode.commandBased.commands._auto.CycleFinalCone;
 import org.firstinspires.ftc.teamcode.commandBased.commands._auto.InitialMoveMed;
 import org.firstinspires.ftc.teamcode.commandBased.commands._auto.InitialMoveStack;
 import org.firstinspires.ftc.teamcode.commandBased.commands._auto.ParkIdle;
@@ -102,10 +102,7 @@ public class LeftTest extends AutoOpMode {
                         new CycleConeMed(subsystems, medFromStack, stackFromMed, Stack.Cone.THIRD),
 
                         new InstantCommand(this::drift),
-                        new CycleConeMed(subsystems, medFromStack, stackFromMed, Stack.Cone.SECOND),
-
-                        new InstantCommand(this::drift),
-                        new CycleConeMed(subsystems, medFromStack, stackFromMed, Stack.Cone.FIRST),
+                        new CycleFinalCone(subsystems, medFromStack),
 
                         parkIdle
                 ));

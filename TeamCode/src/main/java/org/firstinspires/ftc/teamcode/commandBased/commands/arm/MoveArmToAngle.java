@@ -17,8 +17,8 @@ public class MoveArmToAngle extends TriggerCommandBase {
 
     @Override
     public void initialize() {
-        double velo = 10;
-        double accel = 10;
+        double velo = 1500;
+        double accel = 3000;
 
         if (m_armSubsystem.getArmTargetAngle() == Constants.ARM_ANGLE_FRONT) {
             if (angle == Constants.ARM_ANGLE_IDLE || angle == Constants.ARM_ANGLE_STACK) {

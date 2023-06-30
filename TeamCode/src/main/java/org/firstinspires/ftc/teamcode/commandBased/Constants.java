@@ -99,7 +99,7 @@ public class Constants {
     //arm angle positions
     public static double ARM_ANGLE_BACK = -110;
     public static double ARM_ANGLE_IDLE = 42.5;
-    public static double ARM_ANGLE_STACK = 35;
+    public static double ARM_ANGLE_STACK = 32.5;
     public static double ARM_ANGLE_FRONT = 110;
     public static double ARM_ANGLE_MAX = 130;
 

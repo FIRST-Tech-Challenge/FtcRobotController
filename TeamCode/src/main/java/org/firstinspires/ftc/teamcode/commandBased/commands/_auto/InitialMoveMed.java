@@ -6,6 +6,7 @@ import com.arcrobotics.ftclib.command.SequentialCommandGroup;
 import org.firstinspires.ftc.teamcode.commandBased.Constants;
 import org.firstinspires.ftc.teamcode.commandBased.commands._groups.LiftMoveRotateArm;
 import org.firstinspires.ftc.teamcode.commandBased.commands._groups.ScoreCone;
+import org.firstinspires.ftc.teamcode.commandBased.commands._groups.ScoreConeStack;
 import org.firstinspires.ftc.teamcode.commandBased.commands._rr.FollowTrajectorySequenceAsync;
 import org.firstinspires.ftc.teamcode.commandBased.subsystems.Subsystems;
 import org.firstinspires.ftc.teamcode.rr.trajectorysequence.TrajectorySequence;
@@ -28,7 +29,7 @@ public class InitialMoveMed extends SequentialCommandGroup {
                         ),
                         new FollowTrajectorySequenceAsync(subsystems.rrDrive(), traj)
                 ),
-                new ScoreCone(subsystems.getArm(), subsystems.getRot(), subsystems.getIntake())
+                new ScoreConeStack(subsystems.getArm(), subsystems.getRot(), subsystems.getIntake())
         );
     }
 }

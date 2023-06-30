@@ -9,8 +9,8 @@ import org.firstinspires.ftc.teamcode.commandBased.classes.Pose2dSpline;
 public class AutoConstants {
 
     public static Pose2d START_POSE_LEFT = new Pose2d(35, 65, toRad(-90));
-    public static Pose2d STACK_POSE_LEFT = new Pose2d(62.5, 12.25, toRad(0));
-    public static Pose2d MED_POSE_LEFT = new Pose2d(37, 27.75, toRad(0));
+    public static Pose2d STACK_POSE_LEFT = new Pose2d(62.75, 12.5, toRad(0));
+    public static Pose2d MED_POSE_LEFT = new Pose2d(36.5, 27.75, toRad(0));
 
 
     public static Pose2dSpline INITIAL_SCORE_FIRST_MED_LEFT = new Pose2dSpline(new Pose2d(36, 46, toRad(-90)), toRad(-90));
@@ -30,31 +30,31 @@ public class AutoConstants {
     public static Pose2d       PARK_M_FIRST_LEFT = new Pose2d(34.5, 10, toRad(0));
 
     public static Pose2d       PARK_R_FIRST_LEFT = new Pose2d(35, 18, toRad(0));
-    public static Pose2dSpline PARK_R_SECOND_LEFT = new Pose2dSpline(new Pose2d(9, 14, toRad(0)), toRad(0));
+    public static Pose2dSpline PARK_R_SECOND_LEFT = new Pose2dSpline(new Pose2d(13, 14, toRad(0)), toRad(0));
 
 
     public static double X_DRIFT = 0;
     public static double Y_DRIFT = 1;
 
     //13.5+
-    public static double X_DRIFT_14 = 0;
-    public static double Y_DRIFT_14 = 0.5;
+    public static double X_DRIFT_14 = 0.25;
+    public static double Y_DRIFT_14 = 1.125;
 
     //13-13.5
     public static double X_DRIFT_13_5 = 0;
-    public static double Y_DRIFT_13_5 = 0.5;
+    public static double Y_DRIFT_13_5 = 1;
 
     //12.75-13
     public static double X_DRIFT_13 = 0;
-    public static double Y_DRIFT_13 = 0;
+    public static double Y_DRIFT_13 = 0.875;
 
     //12.5-12.75
-    public static double X_DRIFT_12_75 = 0.25;
-    public static double Y_DRIFT_12_75 = 0.875;
+    public static double X_DRIFT_12_75 = 0;
+    public static double Y_DRIFT_12_75 = 0.75;
 
     //x-12.5
-    public static double X_DRIFT_12_5 = 0.25;
-    public static double Y_DRIFT_12_5 = 0.75;
+    public static double X_DRIFT_12_5 = 0.125;
+    public static double Y_DRIFT_12_5 = 0.875;
 
 
     private static double toRad(double deg) {
