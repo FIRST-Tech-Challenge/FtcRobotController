@@ -10,7 +10,7 @@ public class AutoConstants {
 
     public static Pose2d START_POSE_LEFT = new Pose2d(35, 65, toRad(-90));
     public static Pose2d STACK_POSE_LEFT = new Pose2d(62.5, 12, toRad(0));
-    public static Pose2d MED_POSE_LEFT = new Pose2d(36.5, 27.5, toRad(0));
+    public static Pose2d MED_POSE_LEFT = new Pose2d(36.5, 27.75, toRad(0));
 
 
     public static Pose2dSpline INITIAL_SCORE_FIRST_MED_LEFT = new Pose2dSpline(new Pose2d(36, 46, toRad(-90)), toRad(-90));
@@ -38,15 +38,15 @@ public class AutoConstants {
 
     //13.5+
     public static double X_DRIFT_14 = -0.25;
-    public static double Y_DRIFT_14 = 2;
+    public static double Y_DRIFT_14 = 2.75;
 
     //13-13.5
     public static double X_DRIFT_13_5 = -0.25;
-    public static double Y_DRIFT_13_5 = 1.5;
+    public static double Y_DRIFT_13_5 = 2.125;
 
     //12.75-13
     public static double X_DRIFT_13 = -0.25;
-    public static double Y_DRIFT_13 = 1.5;
+    public static double Y_DRIFT_13 = -0.75;
 
     //12.5-12.75
     public static double X_DRIFT_12_75 = -0.25;
