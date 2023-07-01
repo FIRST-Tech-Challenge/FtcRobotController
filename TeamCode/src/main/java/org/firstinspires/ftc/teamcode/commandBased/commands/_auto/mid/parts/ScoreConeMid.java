@@ -1,22 +1,24 @@
-package org.firstinspires.ftc.teamcode.commandBased.commands._auto;
+package org.firstinspires.ftc.teamcode.commandBased.commands._auto.mid.parts;
+
+import static org.firstinspires.ftc.teamcode.commandBased.Constants.ARM_ANGLE_BACK;
+import static org.firstinspires.ftc.teamcode.commandBased.Constants.ELE_MID;
+import static org.firstinspires.ftc.teamcode.commandBased.Constants.ROTATOR_BACK;
 
 import com.arcrobotics.ftclib.command.ParallelCommandGroup;
 import com.arcrobotics.ftclib.command.SequentialCommandGroup;
 import com.arcrobotics.ftclib.command.WaitCommand;
 
-import org.firstinspires.ftc.teamcode.commandBased.Constants;
 import org.firstinspires.ftc.teamcode.commandBased.commands._groups.LiftMoveRotateArm;
-import org.firstinspires.ftc.teamcode.commandBased.commands._groups.ScoreCone;
+import org.firstinspires.ftc.teamcode.commandBased.commands._groups.ScoreConeStack;
 import org.firstinspires.ftc.teamcode.commandBased.commands._rr.FollowTrajectorySequenceAsync;
 import org.firstinspires.ftc.teamcode.commandBased.subsystems.Subsystems;
 import org.firstinspires.ftc.teamcode.rr.trajectorysequence.TrajectorySequence;
 
-public class CycleFinalCone extends SequentialCommandGroup {
+public class ScoreConeMid extends SequentialCommandGroup {
 
-
-    public CycleFinalCone(
+    public ScoreConeMid(
             Subsystems subsystems,
-            TrajectorySequence medTraj
+            TrajectorySequence traj
     ) {
         addCommands(
                 new ParallelCommandGroup(
@@ -24,19 +26,16 @@ public class CycleFinalCone extends SequentialCommandGroup {
                                 subsystems.getEle(),
                                 subsystems.getArm(),
                                 subsystems.getRot(),
-                                Constants.ARM_ANGLE_BACK,
-                                Constants.ELE_MID,
-                                Constants.ROTATOR_BACK
+                                ARM_ANGLE_BACK,
+                                ELE_MID,
+                                ROTATOR_BACK
                         ),
                         new SequentialCommandGroup(
                                 new WaitCommand(75),
-                                new FollowTrajectorySequenceAsync(subsystems.rrDrive(), medTraj)
+                                new FollowTrajectorySequenceAsync(subsystems.rrDrive(), traj)
                         )
                 ),
-                new ScoreCone(subsystems.getArm(), subsystems.getRot(), subsystems.getIntake()),
-                new WaitCommand(30)
+                new ScoreConeStack(subsystems.getArm(), subsystems.getRot(), subsystems.getIntake())
         );
     }
-
-
 }

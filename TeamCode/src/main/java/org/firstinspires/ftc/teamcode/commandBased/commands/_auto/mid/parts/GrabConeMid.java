@@ -1,33 +1,35 @@
-package org.firstinspires.ftc.teamcode.commandBased.commands._auto;
+package org.firstinspires.ftc.teamcode.commandBased.commands._auto.mid.parts;
+
+import static org.firstinspires.ftc.teamcode.commandBased.Constants.ELE_STACK;
 
 import com.arcrobotics.ftclib.command.ParallelCommandGroup;
 import com.arcrobotics.ftclib.command.SequentialCommandGroup;
 
-import org.firstinspires.ftc.teamcode.commandBased.Constants;
 import org.firstinspires.ftc.teamcode.commandBased.classes.enums.Stack;
-import org.firstinspires.ftc.teamcode.commandBased.commands._groups.GrabConeStack;
+import org.firstinspires.ftc.teamcode.commandBased.commands._auto.general.GrabConeStackAuto;
 import org.firstinspires.ftc.teamcode.commandBased.commands._rr.FollowTrajectorySequenceAsync;
 import org.firstinspires.ftc.teamcode.commandBased.commands.elevator.MoveElevatorToPosition;
 import org.firstinspires.ftc.teamcode.commandBased.subsystems.Subsystems;
 import org.firstinspires.ftc.teamcode.rr.trajectorysequence.TrajectorySequence;
 
-public class InitialMoveStack extends SequentialCommandGroup {
+public class GrabConeMid extends SequentialCommandGroup {
 
-    public InitialMoveStack(
+    public GrabConeMid(
             Subsystems subsystems,
-            TrajectorySequence traj
+            TrajectorySequence traj,
+            Stack.Cone coneNumber
     ) {
         addCommands(
                 new ParallelCommandGroup(
-                        new MoveElevatorToPosition(subsystems.getEle(), Constants.ELE_STACK),
+                        new MoveElevatorToPosition(subsystems.getEle(), ELE_STACK),
                         new FollowTrajectorySequenceAsync(subsystems.rrDrive(), traj)
                 ),
-                new GrabConeStack(
+                new GrabConeStackAuto(
                         subsystems.getEle(),
                         subsystems.getArm(),
                         subsystems.getRot(),
                         subsystems.getIntake(),
-                        Stack.Cone.FIFTH
+                        coneNumber
                 )
         );
     }

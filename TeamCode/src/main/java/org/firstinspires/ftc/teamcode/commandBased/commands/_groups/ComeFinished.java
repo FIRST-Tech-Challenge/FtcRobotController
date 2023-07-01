@@ -10,6 +10,8 @@ import org.firstinspires.ftc.teamcode.commandBased.subsystems.ArmSubsystem;
 import org.firstinspires.ftc.teamcode.commandBased.subsystems.ElevatorSubsystem;
 import org.firstinspires.ftc.teamcode.commandBased.subsystems.RotatorSubsystem;
 
+import static org.firstinspires.ftc.teamcode.commandBased.Constants.*;
+
 public class ComeFinished extends SequentialCommandGroup {
 
     public ComeFinished(
@@ -18,9 +20,9 @@ public class ComeFinished extends SequentialCommandGroup {
             RotatorSubsystem rot
     ) {
         addCommands(
-                new MoveArmToAngle(arm, 55),
-                new MoveRotatorToPosition(rot, Constants.ROTATOR_FRONT),
-                new MoveElevatorToPosition(ele, Constants.ELE_LOW)
+                new MoveArmToAngle(arm, ARM_ANGLE_IDLE),
+                new MoveRotatorToPosition(rot, ROTATOR_FRONT),
+                new MoveElevatorToPosition(ele, ELE_LOW)
         );
     }
 }

@@ -5,22 +5,20 @@ import com.arcrobotics.ftclib.command.InstantCommand;
 import com.arcrobotics.ftclib.command.SequentialCommandGroup;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
-import org.firstinspires.ftc.teamcode.commandBased.AutoConstants;
-import org.firstinspires.ftc.teamcode.commandBased.Constants;
 import org.firstinspires.ftc.teamcode.commandBased.classes.enums.Stack;
-import org.firstinspires.ftc.teamcode.commandBased.commands._auto.CycleConeMed;
-import org.firstinspires.ftc.teamcode.commandBased.commands._auto.CycleFinalCone;
-import org.firstinspires.ftc.teamcode.commandBased.commands._auto.InitialMoveMed;
-import org.firstinspires.ftc.teamcode.commandBased.commands._auto.InitialMoveStack;
-import org.firstinspires.ftc.teamcode.commandBased.commands._auto.ParkIdle;
+import org.firstinspires.ftc.teamcode.commandBased.commands._auto.mid.CycleConeMid;
+import org.firstinspires.ftc.teamcode.commandBased.commands._auto.mid.InitialMoveMid;
+import org.firstinspires.ftc.teamcode.commandBased.commands._auto.general.ParkIdle;
+import org.firstinspires.ftc.teamcode.commandBased.commands._auto.mid.parts.ScoreConeMid;
 import org.firstinspires.ftc.teamcode.commandBased.commands.rotator.MoveRotatorToPosition;
 import org.firstinspires.ftc.teamcode.commandBased.opmodes.AutoOpMode;
 import org.firstinspires.ftc.teamcode.rr.trajectorysequence.TrajectorySequence;
 
-import static org.firstinspires.ftc.teamcode.commandBased.AutoConstants.*;
+import static org.firstinspires.ftc.teamcode.commandBased.Constants.*;
+import static org.firstinspires.ftc.teamcode.commandBased.AutoLConstants.*;
 
 @Autonomous
-public class LeftTest extends AutoOpMode {
+public class LeftMid extends AutoOpMode {
 
     public static ParkIdle parkIdle;
 
@@ -45,11 +43,11 @@ public class LeftTest extends AutoOpMode {
 
         instantiateTrajectories();
 
-        drive.setPoseEstimate(AutoConstants.START_POSE_LEFT);
-
-        initSchedule();
+        drive.setPoseEstimate(START_POSE);
 
         voltage = getVoltage();
+
+        initSchedule();
 
         updateCurrentTag();
     }
@@ -85,30 +83,28 @@ public class LeftTest extends AutoOpMode {
 
     protected void initSchedule() {
         schedule(
-                new MoveRotatorToPosition(rotatorSS, Constants.ROTATOR_FRONT)
+                new MoveRotatorToPosition(rotatorSS, ROTATOR_FRONT)
         );
     }
 
     protected void pathSchedule() {
         schedule(
                 new SequentialCommandGroup(
-                        new InitialMoveMed(subsystems, firstMoveToPole),
-                        new InitialMoveStack(subsystems, firstMoveToStack),
+                        new InitialMoveMid(subsystems, firstMoveToPole, firstMoveToStack),
 
-                        new InstantCommand(this::drift),
-                        new CycleConeMed(subsystems, medFromStack, stackFromMed, Stack.Cone.FOURTH),
+                        new InstantCommand(this::driftAccommodation),
+                        new CycleConeMid(subsystems, medFromStack, stackFromMed, Stack.Cone.FOURTH),
 
-                        new InstantCommand(this::drift),
-                        new CycleConeMed(subsystems, medFromStack, stackFromMed, Stack.Cone.THIRD),
+                        new InstantCommand(this::driftAccommodation),
+                        new CycleConeMid(subsystems, medFromStack, stackFromMed, Stack.Cone.THIRD),
 
-                        new InstantCommand(this::drift),
-                        new CycleFinalCone(subsystems, medFromStack),
-
+                        new InstantCommand(this::driftAccommodation),
+                        new ScoreConeMid(subsystems, medFromStack),
                         parkIdle
                 ));
     }
 
-    protected void drift() {
+    protected void driftAccommodation() {
         Pose2d current = drive.getPoseEstimate();
         Pose2d newPose;
         if (voltage > 13.5) {
@@ -138,42 +134,42 @@ public class LeftTest extends AutoOpMode {
     }
 
     protected void instantiateFirstTrajectories() {
-        firstMoveToPole = drive.trajectorySequenceBuilder(AutoConstants.START_POSE_LEFT)
-                .splineToSplineHeading(AutoConstants.INITIAL_SCORE_FIRST_MED_LEFT)
-                .splineToSplineHeading(AutoConstants.INITIAL_SCORE_SECOND_MED_LEFT)
+        firstMoveToPole = drive.trajectorySequenceBuilder(START_POSE)
+                .splineToSplineHeading(INITIAL_SCORE_FIRST_MED)
+                .splineToSplineHeading(INITIAL_SCORE_SECOND_MED)
                 .build();
 
         firstMoveToStack = drive.trajectorySequenceBuilder(firstMoveToPole.end())
-                .lineToLinearHeading(AutoConstants.INITIAL_STACK_FIRST_MED_LEFT)
-                .splineToLinearHeading(AutoConstants.INITIAL_STACK_SECOND_MED_LEFT)
+                .lineToLinearHeading(INITIAL_STACK_FIRST_MED)
+                .splineToLinearHeading(INITIAL_STACK_SECOND_MED)
                 .build();
     }
 
     protected void instantiateCyclingTrajectories() {
-        medFromStack = drive.trajectorySequenceBuilder(AutoConstants.STACK_POSE_LEFT)
-                .lineToLinearHeading(AutoConstants.MED_FIRST)
-                .splineToLinearHeading(AutoConstants.MED_SECOND)
+        medFromStack = drive.trajectorySequenceBuilder(STACK_POSE)
+                .lineToLinearHeading(MED_FIRST)
+                .splineToLinearHeading(MED_SECOND)
                 .build();
 
-        stackFromMed = drive.trajectorySequenceBuilder(AutoConstants.MED_POSE_LEFT)
-                .lineToLinearHeading(AutoConstants.STACK_FIRST)
-                .splineToLinearHeading(AutoConstants.STACK_SECOND)
+        stackFromMed = drive.trajectorySequenceBuilder(MED_POSE)
+                .lineToLinearHeading(STACK_MED_FIRST)
+                .splineToLinearHeading(STACK_MED_SECOND)
                 .build();
     }
 
     protected void instantiateParkingTrajectories() {
-        parkLeft = drive.trajectorySequenceBuilder(AutoConstants.MED_POSE_LEFT)
-                .lineToLinearHeading(AutoConstants.PARK_L_FIRST_LEFT)
-                .splineToLinearHeading(AutoConstants.PARK_L_SECOND_LEFT)
+        parkLeft = drive.trajectorySequenceBuilder(MED_POSE)
+                .lineToLinearHeading(PARK_L_FIRST)
+                .splineToLinearHeading(PARK_L_SECOND)
                 .build();
 
-        parkMid = drive.trajectorySequenceBuilder(AutoConstants.MED_POSE_LEFT)
-                .lineToLinearHeading(AutoConstants.PARK_M_FIRST_LEFT)
+        parkMid = drive.trajectorySequenceBuilder(MED_POSE)
+                .lineToLinearHeading(PARK_M_FIRST)
                 .build();
 
-        parkRight = drive.trajectorySequenceBuilder(AutoConstants.MED_POSE_LEFT)
-                .lineToLinearHeading(AutoConstants.PARK_R_FIRST_LEFT)
-                .splineToLinearHeading(AutoConstants.PARK_R_SECOND_LEFT)
+        parkRight = drive.trajectorySequenceBuilder(MED_POSE)
+                .lineToLinearHeading(PARK_R_FIRST)
+                .splineToLinearHeading(PARK_R_SECOND)
                 .build();
     }
 }

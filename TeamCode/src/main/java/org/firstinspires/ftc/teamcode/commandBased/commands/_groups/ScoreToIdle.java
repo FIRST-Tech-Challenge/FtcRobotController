@@ -12,6 +12,8 @@ import org.firstinspires.ftc.teamcode.commandBased.subsystems.ElevatorSubsystem;
 import org.firstinspires.ftc.teamcode.commandBased.subsystems.IntakeSubsystem;
 import org.firstinspires.ftc.teamcode.commandBased.subsystems.RotatorSubsystem;
 
+import static org.firstinspires.ftc.teamcode.commandBased.Constants.*;
+
 public class ScoreToIdle extends SequentialCommandGroup {
 
     public ScoreToIdle(
@@ -22,7 +24,7 @@ public class ScoreToIdle extends SequentialCommandGroup {
     ) {
         addCommands(
                 new ScoreCone(arm, rot, intake),
-                new MoveElevatorToPosition(ele, Constants.ELE_IDLE)
+                new MoveElevatorToPosition(ele, ELE_IDLE)
         );
         addRequirements(ele, arm, rot, intake);
     }

@@ -1,6 +1,9 @@
-package org.firstinspires.ftc.teamcode.commandBased.commands._groups;
+package org.firstinspires.ftc.teamcode.commandBased.commands._auto.general;
 
-import org.firstinspires.ftc.teamcode.commandBased.classes.triggers.TriggerCommandGroup;
+import com.arcrobotics.ftclib.command.SequentialCommandGroup;
+
+import org.firstinspires.ftc.teamcode.commandBased.Constants;
+import org.firstinspires.ftc.teamcode.commandBased.classes.enums.Stack;
 import org.firstinspires.ftc.teamcode.commandBased.commands.arm.MoveArmToAngle;
 import org.firstinspires.ftc.teamcode.commandBased.commands.elevator.MoveElevatorToPosition;
 import org.firstinspires.ftc.teamcode.commandBased.commands.intake.SetIntakePower;
@@ -10,23 +13,23 @@ import org.firstinspires.ftc.teamcode.commandBased.subsystems.ElevatorSubsystem;
 import org.firstinspires.ftc.teamcode.commandBased.subsystems.IntakeSubsystem;
 import org.firstinspires.ftc.teamcode.commandBased.subsystems.RotatorSubsystem;
 
-public class IntakeMoveRotateLiftArm extends TriggerCommandGroup {
+import static org.firstinspires.ftc.teamcode.commandBased.Constants.*;
 
-    public IntakeMoveRotateLiftArm(
+public class GrabConeStackAuto extends SequentialCommandGroup {
+
+    public GrabConeStackAuto(
             ElevatorSubsystem ele,
             ArmSubsystem arm,
             RotatorSubsystem rot,
             IntakeSubsystem intake,
-            double armAngle,
-            double eleTarget,
-            double rotAngle,
-            double intakePower
+            Stack.Cone height
     ) {
         addCommands(
-                new SetIntakePower(intake, intakePower),
-                new MoveArmToAngle(arm, armAngle),
-                new MoveRotatorToPosition(rot, rotAngle),
-                new MoveElevatorToPosition(ele, eleTarget)
+                new MoveArmToAngle(arm, ARM_ANGLE_STACK),
+                new MoveRotatorToPosition(rot, ROTATOR_FRONT),
+                new MoveElevatorToPosition(ele, height.getValue()),
+                new SetIntakePower(intake, INTAKE_IN).withTimeout(2000),
+                new SetIntakePower(intake, INTAKE_IDLE)
         );
     }
 }

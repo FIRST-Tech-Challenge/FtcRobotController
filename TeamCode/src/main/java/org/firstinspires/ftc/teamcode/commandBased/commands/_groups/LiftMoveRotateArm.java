@@ -6,7 +6,6 @@ import com.arcrobotics.ftclib.command.WaitCommand;
 import com.arcrobotics.ftclib.command.WaitUntilCommand;
 
 import org.firstinspires.ftc.teamcode.commandBased.Constants;
-import org.firstinspires.ftc.teamcode.commandBased.classes.triggers.TriggerCommandGroup;
 import org.firstinspires.ftc.teamcode.commandBased.commands.arm.MoveArmToAngle;
 import org.firstinspires.ftc.teamcode.commandBased.commands.elevator.MoveElevatorToPosition;
 import org.firstinspires.ftc.teamcode.commandBased.commands.rotator.MoveRotatorToPosition;
@@ -14,7 +13,7 @@ import org.firstinspires.ftc.teamcode.commandBased.subsystems.ArmSubsystem;
 import org.firstinspires.ftc.teamcode.commandBased.subsystems.ElevatorSubsystem;
 import org.firstinspires.ftc.teamcode.commandBased.subsystems.RotatorSubsystem;
 
-import java.util.function.BooleanSupplier;
+import static org.firstinspires.ftc.teamcode.commandBased.Constants.*;
 
 public class LiftMoveRotateArm extends ParallelCommandGroup {
 
@@ -30,7 +29,7 @@ public class LiftMoveRotateArm extends ParallelCommandGroup {
         addCommands(
                 new MoveElevatorToPosition(ele, eleTarget).withTimeout(1250),
                 new SequentialCommandGroup(
-                        new WaitUntilCommand(() -> ele.getEleProfileTarget() > Constants.ELE_TRIGGER),
+                        new WaitUntilCommand(() -> ele.getEleProfileTarget() > ELE_TRIGGER),
                         new SequentialCommandGroup(
                                 new MoveRotatorToPosition(rot, rotAngle),
                                 new WaitCommand(100),

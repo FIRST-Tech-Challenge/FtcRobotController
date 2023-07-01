@@ -13,6 +13,8 @@ import org.firstinspires.ftc.teamcode.commandBased.subsystems.ElevatorSubsystem;
 import org.firstinspires.ftc.teamcode.commandBased.subsystems.IntakeSubsystem;
 import org.firstinspires.ftc.teamcode.commandBased.subsystems.RotatorSubsystem;
 
+import static org.firstinspires.ftc.teamcode.commandBased.Constants.*;
+
 public class GrabCone extends SequentialCommandGroup {
 
     public GrabCone(
@@ -22,11 +24,12 @@ public class GrabCone extends SequentialCommandGroup {
             IntakeSubsystem intake
     ) {
         addCommands(
-                new MoveArmToAngle(arm, Constants.ARM_ANGLE_STACK),
-                new MoveRotatorToPosition(rot, Constants.ROTATOR_FRONT),
-                new MoveElevatorToPosition(ele, Constants.ELE_LOW),
-                new SetIntakePower(intake, Constants.INTAKE_IN).withTimeout(2000),
-                new SetIntakePower(intake, Constants.INTAKE_IDLE)
+                new MoveArmToAngle(arm, ARM_ANGLE_STACK),
+                new MoveRotatorToPosition(rot, ROTATOR_FRONT),
+                new MoveElevatorToPosition(ele, ELE_LOW),
+                new SetIntakePower(intake, INTAKE_IN).withTimeout(2000),
+                new SetIntakePower(intake, INTAKE_IDLE),
+                new MoveElevatorToPosition(ele, ELE_MID)
         );
     }
 }
