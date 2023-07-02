@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.commandBased.commands._auto.mid.parts;
+package org.firstinspires.ftc.teamcode.commandBased.commands._groups.auto.mid.parts;
 
 import static org.firstinspires.ftc.teamcode.commandBased.Constants.ELE_STACK;
 
@@ -6,7 +6,7 @@ import com.arcrobotics.ftclib.command.ParallelCommandGroup;
 import com.arcrobotics.ftclib.command.SequentialCommandGroup;
 
 import org.firstinspires.ftc.teamcode.commandBased.classes.enums.Stack;
-import org.firstinspires.ftc.teamcode.commandBased.commands._auto.general.GrabConeStackAuto;
+import org.firstinspires.ftc.teamcode.commandBased.commands._groups.auto.general.GrabConeStackAuto;
 import org.firstinspires.ftc.teamcode.commandBased.commands._rr.FollowTrajectorySequenceAsync;
 import org.firstinspires.ftc.teamcode.commandBased.commands.elevator.MoveElevatorToPosition;
 import org.firstinspires.ftc.teamcode.commandBased.subsystems.Subsystems;

@@ -14,6 +14,7 @@ import com.qualcomm.robotcore.hardware.VoltageSensor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.commandBased.Constants;
+import org.firstinspires.ftc.teamcode.commandBased.opmodes.Positions;
 
 public class ArmSubsystem extends SubsystemBase {
 
@@ -24,6 +25,7 @@ public class ArmSubsystem extends SubsystemBase {
     private double armTargetEnc = 20;
     private double armTargetAngle = Constants.ARM_ANGLE_IDLE;
     private double armAngle;
+    private double armEncOffset;
 
     private double KF;
 
@@ -51,6 +53,8 @@ public class ArmSubsystem extends SubsystemBase {
         m_arm.setDirection(DcMotorSimple.Direction.REVERSE);
 
         arm.setRunMode(Motor.RunMode.RawPower);
+
+        armEncOffset = Positions.armPosition;
 
         //angle setup
         angleEncLUT = new InterpLUT();
@@ -154,8 +158,11 @@ public class ArmSubsystem extends SubsystemBase {
     }
 
     public void setArmPos() {
-        armPos = m_arm.getCurrentPosition();
-        armPos = -armPos;
+        armPos = getOffsetPos(-m_arm.getCurrentPosition());
+    }
+
+    private double getOffsetPos(double pos) {
+        return pos + armEncOffset;
     }
 
     //getters

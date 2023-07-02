@@ -7,9 +7,9 @@ import com.arcrobotics.ftclib.command.CommandScheduler;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.commandBased.Constants;
-import org.firstinspires.ftc.teamcode.commandBased.commands._groups.GrabCone;
-import org.firstinspires.ftc.teamcode.commandBased.commands._groups.LiftMoveRotateArm;
-import org.firstinspires.ftc.teamcode.commandBased.commands._groups.ScoreToIdle;
+import org.firstinspires.ftc.teamcode.commandBased.commands._groups.tele.GrabCone;
+import org.firstinspires.ftc.teamcode.commandBased.commands._groups.tele.LiftMoveRotateArm;
+import org.firstinspires.ftc.teamcode.commandBased.commands._groups.tele.ScoreToIdle;
 import org.firstinspires.ftc.teamcode.commandBased.commands.arm.MoveArmToAngle;
 import org.firstinspires.ftc.teamcode.commandBased.commands.arm.UpdateArmPID;
 import org.firstinspires.ftc.teamcode.commandBased.commands.drive.SetDriveSpeeds;
@@ -33,7 +33,7 @@ import ftc.rogue.blacksmith.Scheduler;
 import ftc.rogue.blacksmith.listeners.ReforgedGamepad;
 
 @TeleOp(name="Command Based", group="Linear Opmode")
-public class Robot extends BlackOp {
+public class RobotExperiment extends BlackOp {
 
     @Override
     public void go() {

@@ -1,9 +1,9 @@
-package org.firstinspires.ftc.teamcode.commandBased.commands._auto.mid;
+package org.firstinspires.ftc.teamcode.commandBased.commands._groups.auto.mid;
 
 import com.arcrobotics.ftclib.command.SequentialCommandGroup;
 
-import org.firstinspires.ftc.teamcode.commandBased.commands._auto.mid.parts.InitialMoveMidMid;
-import org.firstinspires.ftc.teamcode.commandBased.commands._auto.mid.parts.InitialMoveStackMid;
+import org.firstinspires.ftc.teamcode.commandBased.commands._groups.auto.mid.parts.InitialMoveMidMid;
+import org.firstinspires.ftc.teamcode.commandBased.commands._groups.auto.mid.parts.InitialMoveStackMid;
 import org.firstinspires.ftc.teamcode.commandBased.subsystems.Subsystems;
 import org.firstinspires.ftc.teamcode.rr.trajectorysequence.TrajectorySequence;
 

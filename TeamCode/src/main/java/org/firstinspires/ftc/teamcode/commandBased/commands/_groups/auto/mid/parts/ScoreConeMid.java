@@ -1,23 +1,24 @@
-package org.firstinspires.ftc.teamcode.commandBased.commands._auto.mid;
+package org.firstinspires.ftc.teamcode.commandBased.commands._groups.auto.mid.parts;
+
+import static org.firstinspires.ftc.teamcode.commandBased.Constants.ARM_ANGLE_BACK;
+import static org.firstinspires.ftc.teamcode.commandBased.Constants.ELE_MID;
+import static org.firstinspires.ftc.teamcode.commandBased.Constants.ROTATOR_BACK;
 
 import com.arcrobotics.ftclib.command.ParallelCommandGroup;
 import com.arcrobotics.ftclib.command.SequentialCommandGroup;
 import com.arcrobotics.ftclib.command.WaitCommand;
 
-import org.firstinspires.ftc.teamcode.commandBased.commands._groups.LiftMoveRotateArm;
-import org.firstinspires.ftc.teamcode.commandBased.commands._groups.ScoreCone;
+import org.firstinspires.ftc.teamcode.commandBased.commands._groups.tele.LiftMoveRotateArm;
+import org.firstinspires.ftc.teamcode.commandBased.commands._groups.tele.ScoreConeStack;
 import org.firstinspires.ftc.teamcode.commandBased.commands._rr.FollowTrajectorySequenceAsync;
 import org.firstinspires.ftc.teamcode.commandBased.subsystems.Subsystems;
 import org.firstinspires.ftc.teamcode.rr.trajectorysequence.TrajectorySequence;
 
-import static org.firstinspires.ftc.teamcode.commandBased.Constants.*;
+public class ScoreConeMid extends SequentialCommandGroup {
 
-public class CycleFinalConeMid extends SequentialCommandGroup {
-
-
-    public CycleFinalConeMid(
+    public ScoreConeMid(
             Subsystems subsystems,
-            TrajectorySequence medTraj
+            TrajectorySequence traj
     ) {
         addCommands(
                 new ParallelCommandGroup(
@@ -31,13 +32,10 @@ public class CycleFinalConeMid extends SequentialCommandGroup {
                         ),
                         new SequentialCommandGroup(
                                 new WaitCommand(75),
-                                new FollowTrajectorySequenceAsync(subsystems.rrDrive(), medTraj)
+                                new FollowTrajectorySequenceAsync(subsystems.rrDrive(), traj)
                         )
                 ),
-                new ScoreCone(subsystems.getArm(), subsystems.getRot(), subsystems.getIntake()),
-                new WaitCommand(30)
+                new ScoreConeStack(subsystems.getArm(), subsystems.getRot(), subsystems.getIntake())
         );
     }
-
-
 }

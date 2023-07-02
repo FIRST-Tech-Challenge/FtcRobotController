@@ -6,9 +6,9 @@ import com.arcrobotics.ftclib.command.SequentialCommandGroup;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
 import org.firstinspires.ftc.teamcode.commandBased.classes.enums.Stack;
+import org.firstinspires.ftc.teamcode.commandBased.commands._groups.auto.general.ParkIdle;
 import org.firstinspires.ftc.teamcode.commandBased.commands._groups.auto.mid.CycleConeMid;
 import org.firstinspires.ftc.teamcode.commandBased.commands._groups.auto.mid.InitialMoveMid;
-import org.firstinspires.ftc.teamcode.commandBased.commands._groups.auto.general.ParkIdle;
 import org.firstinspires.ftc.teamcode.commandBased.commands._groups.auto.mid.parts.ScoreConeMid;
 import org.firstinspires.ftc.teamcode.commandBased.commands.rotator.MoveRotatorToPosition;
 import org.firstinspires.ftc.teamcode.commandBased.opmodes.AutoOpMode;
@@ -16,10 +16,10 @@ import org.firstinspires.ftc.teamcode.commandBased.opmodes.Positions;
 import org.firstinspires.ftc.teamcode.rr.trajectorysequence.TrajectorySequence;
 
 import static org.firstinspires.ftc.teamcode.commandBased.Constants.*;
-import static org.firstinspires.ftc.teamcode.commandBased.AutoLConstants.*;
+import static org.firstinspires.ftc.teamcode.commandBased.AutoRConstants.*;
 
 @Autonomous
-public class LeftMid extends AutoOpMode {
+public class RightMid extends AutoOpMode {
 
     public static ParkIdle parkIdle;
 

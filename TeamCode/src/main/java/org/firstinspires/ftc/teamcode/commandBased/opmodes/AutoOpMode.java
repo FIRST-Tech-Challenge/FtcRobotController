@@ -2,10 +2,6 @@ package org.firstinspires.ftc.teamcode.commandBased.opmodes;
 
 import android.annotation.SuppressLint;
 
-import com.acmerobotics.dashboard.FtcDashboard;
-import com.acmerobotics.dashboard.canvas.Canvas;
-import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
-import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.qualcomm.hardware.rev.RevBlinkinLedDriver;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
@@ -17,7 +13,6 @@ import org.firstinspires.ftc.teamcode.commandBased.pipelines.AprilTagDetectionPi
 import org.firstinspires.ftc.teamcode.commandBased.subsystems.AutoDrivetrainSubsystem;
 import org.firstinspires.ftc.teamcode.commandBased.subsystems.Subsystems;
 import org.firstinspires.ftc.teamcode.rr.drive.SampleMecanumDrive;
-import org.firstinspires.ftc.teamcode.rr.util.DashboardUtil;
 import org.openftc.apriltag.AprilTagDetection;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
@@ -42,9 +37,6 @@ public class AutoOpMode extends BaseOpMode {
 
     protected AprilTagDetection tagOfInterest = null;
 
-//    protected TelemetryPacket packet;
-//    protected Canvas fieldOverlay;
-
     protected enum TagPos {
         LEFT(0),
         MIDDLE(1),
@@ -67,9 +59,6 @@ public class AutoOpMode extends BaseOpMode {
     @Override
     public void initialize() {
         super.initialize();
-
-//        packet = new TelemetryPacket();
-//        fieldOverlay = packet.fieldOverlay();
 
         rrDrive = new SampleMecanumDrive(hardwareMap);
 
@@ -162,6 +151,21 @@ public class AutoOpMode extends BaseOpMode {
                 }
 
             }
+
+            if (tagOfInterest == null) {
+                tagPos = TagPos.NULL;
+                blinkin.setPattern(RevBlinkinLedDriver.BlinkinPattern.BLACK);
+            } else if (tagOfInterest.id == TagPos.LEFT.value) {
+                tagPos = TagPos.LEFT;
+                blinkin.setPattern(RevBlinkinLedDriver.BlinkinPattern.RED);
+            } else if (tagOfInterest.id == TagPos.MIDDLE.value) {
+                tagPos = TagPos.MIDDLE;
+                blinkin.setPattern(RevBlinkinLedDriver.BlinkinPattern.GREEN);
+            } else if (tagOfInterest.id == TagPos.RIGHT.value) {
+                tagPos = TagPos.RIGHT;
+                blinkin.setPattern(RevBlinkinLedDriver.BlinkinPattern.BLUE);
+            }
+
             drawRobot();
             telemetry.update();
 

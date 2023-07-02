@@ -12,7 +12,9 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.firstinspires.ftc.robotcore.external.Const;
 import org.firstinspires.ftc.teamcode.commandBased.Constants;
+import org.firstinspires.ftc.teamcode.commandBased.opmodes.Positions;
 
 
 public class ElevatorSubsystem extends SubsystemBase {
@@ -26,6 +28,7 @@ public class ElevatorSubsystem extends SubsystemBase {
     //ELEVATOR VARIABLES
     private double elePos;
     private double eleTarget;
+    private double eleEncOffset;
 
     private PIDFController controller;
     private MotionProfile profile;
@@ -56,6 +59,8 @@ public class ElevatorSubsystem extends SubsystemBase {
         ele = new MotorGroup(eleL, eleR);
         ele.setRunMode(Motor.RunMode.RawPower);
 
+        eleEncOffset = Positions.elePosition;
+
         //pid controller and motion profile setup
         controller = new PIDFController(
                 Constants.ELE_COEFFS,
@@ -75,7 +80,7 @@ public class ElevatorSubsystem extends SubsystemBase {
 
     @Override
     public void periodic() {
-        elePos = (m_eleL.getCurrentPosition() + m_eleR.getCurrentPosition()) / 2.0;
+        elePos = getOffsetPos((m_eleL.getCurrentPosition() + m_eleR.getCurrentPosition()) / 2.0);
 
         //motion profiling
         state = profile.get(timer.seconds());
@@ -86,6 +91,10 @@ public class ElevatorSubsystem extends SubsystemBase {
 
         correction = controller.update(elePos);
         ele.set(correction + Constants.ELE_KG);
+    }
+
+    private double getOffsetPos(double pos) {
+        return pos + eleEncOffset;
     }
 
     public void createNewController() {
@@ -110,6 +119,10 @@ public class ElevatorSubsystem extends SubsystemBase {
                 inchesToTicks(Constants.ELE_MAX_ACCEL)
         );
         timer.reset();
+    }
+
+    public void moveProfileTarget(double amount) {
+        setProfileTarget(getElePos() + amount);
     }
 
     public boolean isFinished() {

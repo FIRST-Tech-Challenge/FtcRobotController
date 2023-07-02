@@ -1,9 +1,8 @@
-package org.firstinspires.ftc.teamcode.commandBased.commands._auto.general;
+package org.firstinspires.ftc.teamcode.commandBased.commands._groups.auto.general;
 
 import com.arcrobotics.ftclib.command.ParallelCommandGroup;
 import com.arcrobotics.ftclib.command.SequentialCommandGroup;
 
-import org.firstinspires.ftc.teamcode.commandBased.commands._groups.ComeFinished;
 import org.firstinspires.ftc.teamcode.commandBased.commands._rr.FollowTrajectorySequenceAsync;
 import org.firstinspires.ftc.teamcode.commandBased.subsystems.Subsystems;
 import org.firstinspires.ftc.teamcode.rr.trajectorysequence.TrajectorySequence;

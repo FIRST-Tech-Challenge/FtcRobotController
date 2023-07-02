@@ -1,12 +1,46 @@
 package org.firstinspires.ftc.teamcode.commandBased.opmodes.teleop;
 
+import static com.arcrobotics.ftclib.gamepad.GamepadKeys.Button.A;
+import static com.arcrobotics.ftclib.gamepad.GamepadKeys.Button.B;
+import static com.arcrobotics.ftclib.gamepad.GamepadKeys.Button.BACK;
+import static com.arcrobotics.ftclib.gamepad.GamepadKeys.Button.DPAD_DOWN;
+import static com.arcrobotics.ftclib.gamepad.GamepadKeys.Button.DPAD_LEFT;
+import static com.arcrobotics.ftclib.gamepad.GamepadKeys.Button.DPAD_RIGHT;
+import static com.arcrobotics.ftclib.gamepad.GamepadKeys.Button.DPAD_UP;
+import static com.arcrobotics.ftclib.gamepad.GamepadKeys.Button.LEFT_BUMPER;
+import static com.arcrobotics.ftclib.gamepad.GamepadKeys.Button.LEFT_STICK_BUTTON;
+import static com.arcrobotics.ftclib.gamepad.GamepadKeys.Button.RIGHT_BUMPER;
+import static com.arcrobotics.ftclib.gamepad.GamepadKeys.Button.RIGHT_STICK_BUTTON;
+import static com.arcrobotics.ftclib.gamepad.GamepadKeys.Button.START;
+import static com.arcrobotics.ftclib.gamepad.GamepadKeys.Button.X;
+import static com.arcrobotics.ftclib.gamepad.GamepadKeys.Button.Y;
+import static com.arcrobotics.ftclib.gamepad.GamepadKeys.Trigger.LEFT_TRIGGER;
+import static org.firstinspires.ftc.teamcode.commandBased.Constants.ANGLE_OFFSET;
+import static org.firstinspires.ftc.teamcode.commandBased.Constants.ARM_ANGLE_BACK;
+import static org.firstinspires.ftc.teamcode.commandBased.Constants.ARM_ANGLE_FRONT;
+import static org.firstinspires.ftc.teamcode.commandBased.Constants.ARM_ANGLE_IDLE;
+import static org.firstinspires.ftc.teamcode.commandBased.Constants.DRIVE_FAST_FORWARD;
+import static org.firstinspires.ftc.teamcode.commandBased.Constants.DRIVE_FAST_STRAFE;
+import static org.firstinspires.ftc.teamcode.commandBased.Constants.DRIVE_FAST_TURN;
+import static org.firstinspires.ftc.teamcode.commandBased.Constants.DRIVE_SLOW_FORWARD;
+import static org.firstinspires.ftc.teamcode.commandBased.Constants.DRIVE_SLOW_STRAFE;
+import static org.firstinspires.ftc.teamcode.commandBased.Constants.DRIVE_SLOW_TURN;
+import static org.firstinspires.ftc.teamcode.commandBased.Constants.ELE_HIGH;
+import static org.firstinspires.ftc.teamcode.commandBased.Constants.ELE_IDLE;
+import static org.firstinspires.ftc.teamcode.commandBased.Constants.ELE_LOW;
+import static org.firstinspires.ftc.teamcode.commandBased.Constants.ELE_MANUAL_DOWN;
+import static org.firstinspires.ftc.teamcode.commandBased.Constants.ELE_MANUAL_UP;
+import static org.firstinspires.ftc.teamcode.commandBased.Constants.ELE_MID;
+import static org.firstinspires.ftc.teamcode.commandBased.Constants.ROTATOR_BACK;
+import static org.firstinspires.ftc.teamcode.commandBased.Constants.ROTATOR_FRONT;
+import static org.firstinspires.ftc.teamcode.commandBased.Constants.TARGET;
+import static org.firstinspires.ftc.teamcode.commandBased.Constants.TUNED_RANGE;
+
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
-import org.firstinspires.ftc.teamcode.commandBased.Constants;
 import org.firstinspires.ftc.teamcode.commandBased.commands._groups.tele.GrabCone;
 import org.firstinspires.ftc.teamcode.commandBased.commands._groups.tele.LiftMoveRotateArm;
 import org.firstinspires.ftc.teamcode.commandBased.commands._groups.tele.ScoreToIdle;
-import org.firstinspires.ftc.teamcode.commandBased.commands.arm.MoveArmIncrementally;
 import org.firstinspires.ftc.teamcode.commandBased.commands.arm.MoveArmToAngle;
 import org.firstinspires.ftc.teamcode.commandBased.commands.arm.UpdateArmPID;
 import org.firstinspires.ftc.teamcode.commandBased.commands.drive.FieldCentric;
@@ -22,13 +56,8 @@ import org.firstinspires.ftc.teamcode.commandBased.commands.rotator.MoveRotatorT
 import org.firstinspires.ftc.teamcode.commandBased.commands.rotator.SetRotatorRange;
 import org.firstinspires.ftc.teamcode.commandBased.opmodes.TeleOpMode;
 
-import static com.arcrobotics.ftclib.gamepad.GamepadKeys.Button.*;
-import static com.arcrobotics.ftclib.gamepad.GamepadKeys.Trigger.*;
-
-import static org.firstinspires.ftc.teamcode.commandBased.Constants.*;
-
 @TeleOp
-public class Test extends TeleOpMode {
+public class Final extends TeleOpMode {
 
     //drive commands
     protected FieldCentric fieldCentric;
@@ -84,36 +113,16 @@ public class Test extends TeleOpMode {
         initializeAllCommands();
 
 
-        //arm controls
-        gp1(B, 1).whenActive(armFront);
-        gp1(A, 1).whenActive(armIdle);
-        gp1(X, 1).whenActive(armBack);
 
-        //pid controls
-        gp1(LEFT_STICK_BUTTON, 1).whenActive(updateElevatorPID);
-        gp1(RIGHT_STICK_BUTTON, 1).whenActive(updateArmPID);
+        gp1(A, 1).whenActive(intakeOuttake).whenInactive(intakeIdle);
+        gp1(Y, 1).whenActive(intakeIntake).whenInactive(intakeIdle);
 
-        //rotator controls
-        gp1(BACK, 1).whenActive(rotatorBack);
-        gp1(START, 1).whenActive(rotatorFront);
-
-        //intake controls
-        gp1(LEFT_BUMPER, 1).whenActive(intakeOuttake).whenInactive(intakeIdle);
-        gp1(RIGHT_BUMPER, 1).whenActive(intakeIntake).whenInactive(intakeIdle);
-
-        //macro controls
-        gp1(Y, 2).whenActive(armBackHigh);
-        gp1(X, 2).whenActive(armFrontHigh);
-        gp1(B, 2).whenActive(armBackMid);
-        gp1(A, 2).whenActive(armFrontMid);
-
-        gp1(DPAD_UP, 2).whenActive(scoreToIdle);
-        gp1(DPAD_DOWN, 2).whenActive(grabCone);
+        gp1(LEFT_BUMPER, 1).whenActive(slowMode).whenInactive(fastMode);
 
         gp1(A, 3).toggleWhenActive(robotCentric, fieldCentric);
         gp1(Y, 3).whenActive(resetGyro);
 
-
+        
 
         gp2(DPAD_DOWN, 1).whenActive(eleLow);
         gp2(DPAD_LEFT, 1).whenActive(eleIdle);

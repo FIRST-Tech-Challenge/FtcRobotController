@@ -34,6 +34,7 @@ public class Constants {
     public static Motor.GoBILDA ELE_MOTOR = Motor.GoBILDA.RPM_312;
     public static Motor.GoBILDA ARM_MOTOR = Motor.GoBILDA.RPM_117;
 
+
     //drivetrain constants
     public static double DRIVE_FAST_STRAFE = 1;
     public static double DRIVE_FAST_FORWARD = 1;
@@ -50,8 +51,8 @@ public class Constants {
     public static Pose2d STARTING_POINT = new Pose2d(0, 0, Math.toRadians(0));
     public static double ANGLE_OFFSET = 180;
 
+
     //elevator pid
-    //public static PIDCoefficients ELE_COEFFS = new PIDCoefficients(0.0075, 0, 0.00005);
     public static PIDCoefficients ELE_COEFFS = new PIDCoefficients(0.005, 00.0002, 0.0004);
     public static double ELE_KG = 0.175;
     public static double ELE_KV = 0;
@@ -69,9 +70,13 @@ public class Constants {
     public static double ELE_MID = 9;
     public static double ELE_HIGH = 12;
 
+    public static double ELE_MANUAL_DOWN = -0.5;
+    public static double ELE_MANUAL_UP = 0.5;
+
     //command-ending deadzones
     public static double ELE_DONE_DEADZONE = 1;
     public static double ELE_TRIGGER = 6;
+
 
     //arm pid
     public static PIDCoefficients ARM_COEFFS = new PIDCoefficients(0.01, 0.0001, 0.0001);
@@ -113,6 +118,7 @@ public class Constants {
     public static double ARM_ENC_FRONT_MAX = 410;
     public static double ARM_ENC_CENTER = -145;
 
+
     //rotator limits
     public static double ROTATOR_FRONT = 1;
     public static double ROTATOR_BACK = 0;
@@ -122,6 +128,7 @@ public class Constants {
     public static double ROTATOR_LARGE_INCREMENT = 100;
 
     public static int ROTATOR_AVG_LENGTH = 10;
+
 
     //intake powers
     public static double INTAKE_IN = 1;

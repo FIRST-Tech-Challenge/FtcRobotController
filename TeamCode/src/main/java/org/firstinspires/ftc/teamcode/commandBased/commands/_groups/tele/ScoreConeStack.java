@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.commandBased.commands._groups;
+package org.firstinspires.ftc.teamcode.commandBased.commands._groups.tele;
 
 import static org.firstinspires.ftc.teamcode.commandBased.Constants.ARM_ANGLE_IDLE;
 import static org.firstinspires.ftc.teamcode.commandBased.Constants.ARM_ANGLE_STACK;
