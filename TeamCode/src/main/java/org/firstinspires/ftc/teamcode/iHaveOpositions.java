@@ -22,7 +22,7 @@ public class iHaveOpositions extends LinearOpMode {
         motorBackRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
         // Reverse the right side motors
-        // Reverse left motors if you are using NeveRests (but still reverse right motors for consistency with autonomous mode
+        // Reverse left motors if you are using NeveRests
         motorFrontRight.setDirection(DcMotorSimple.Direction.REVERSE);
         motorBackRight.setDirection(DcMotorSimple.Direction.REVERSE);
 

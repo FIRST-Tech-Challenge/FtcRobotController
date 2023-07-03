@@ -1,3 +1,6 @@
+// note: to change the tests of the code, go to line 39 and change the values
+
+
 package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -5,20 +8,13 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
-// note: to change the tests of the code, go to line 39 and change the values
-// note: around line 55 I set the front and back motors to the same target. this might be consequential in the future
-
-@Autonomous(name = "Autonomous Mode (Djokovic is still the GOAT of tennis)")
+@Autonomous(name = "Novak Djokovic is the GOAT of tennis.")
 public class Opsareautonomousnow extends LinearOpMode {
 
-    private DcMotor leftFront;
-    private DcMotor leftBack;
-    private DcMotor rightFront;
-    private DcMotor rightBack;
-    private int leftFront_Pos;
-    private int leftBack_Pos;
-    private int rightFront_Pos;
-    private int rightBack_Pos;
+    private DcMotor left;
+    private DcMotor right;
+    private int leftPos;
+    private int rightPos;
 
 
     @Override
@@ -27,59 +23,43 @@ public class Opsareautonomousnow extends LinearOpMode {
 
 
         // setting motors
-        leftFront = hardwareMap.get(DcMotor.class, "motorLeftFront");
-        leftBack = hardwareMap.get(DcMotor.class, "motorLeftBack");
-        rightFront = hardwareMap.get(DcMotor.class, "motorRightFront");
-        rightBack = hardwareMap.get(DcMotor.class, "motorRightBack");
+        left = hardwareMap.get(DcMotor.class, "leftMotor");
+        right = hardwareMap.get(DcMotor.class, "rightMotor");
 
         // reset encoders
-        leftFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        leftBack.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        rightFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        rightBack.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        leftFront_Pos = 0;
-        leftBack_Pos = 0;
-        rightFront_Pos = 0;
-        rightBack_Pos = 0;
+        left.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        right.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        leftPos = 0;
+        rightPos = 0;
 
         // reverse one of the motors so they don't spin in opposite directions
-        rightFront.setDirection(DcMotorSimple.Direction.REVERSE);
-        rightBack.setDirection(DcMotorSimple.Direction.REVERSE);
+        right.setDirection(DcMotorSimple.Direction.REVERSE);
 
         waitForStart();
 
         // both positive means that it moves straight by 2000 ticks (around 1.5 feet?)
         // one positive one negative means it turns. ex. -2000, 2000 means it turns left, while 2000, -2000 means it turns right
-        drive(-2000, -2000, 0.8);
+        drive(2000, 2000, 0.8);
         drive(-2000, 2000, 0.5);
     }
 
     private void drive(int leftTarget, int rightTarget, double speed) {
 
         // set desired target
-        leftFront_Pos += leftTarget;
-        leftBack_Pos += leftTarget;
-
-        rightFront_Pos += rightTarget;
-        rightBack_Pos += rightTarget;
-        leftFront.setTargetPosition(leftFront_Pos);
-        leftBack.setTargetPosition(leftBack_Pos);
-        rightFront.setTargetPosition(rightFront_Pos);
-        rightBack.setTargetPosition(rightBack_Pos);
+        leftPos += leftTarget;
+        rightPos += rightTarget;
+        left.setTargetPosition(leftPos);
+        right.setTargetPosition(rightPos);
 
         // move to target until target is reached
-        leftFront.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        leftBack.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        rightFront.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        rightBack.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        left.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        right.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
         // sets velocity for robot based on desired target
-        leftFront.setPower(speed);
-        leftBack.setPower(speed);
-        rightFront.setPower(speed);
-        rightBack.setPower(speed);
+        left.setPower(speed);
+        right.setPower(speed);
 
-        while(opModeIsActive() && leftFront.isBusy() && leftFront.isBusy() && rightFront.isBusy() && rightBack.isBusy()) {
+        while(opModeIsActive() && left.isBusy() && right.isBusy()) {
             // ensure that nothing happens while the robot is attempting to reach the target
             idle();
 
