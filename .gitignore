@@ -18,6 +18,9 @@ gen/
 out/
 caches/
 wrapper/
+daemon/
+native/
+.idea/
 #  Uncomment the following line in case you need and you don't have the release build type files in your app
 # release/
 
