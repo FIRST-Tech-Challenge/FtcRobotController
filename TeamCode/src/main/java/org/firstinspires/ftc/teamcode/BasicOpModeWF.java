@@ -33,6 +33,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 /**
@@ -73,7 +74,8 @@ public class BasicOpModeWF extends LinearOpMode {
     private DcMotor leftBackDrive = null;
     private DcMotor rightFrontDrive = null;
     private DcMotor rightBackDrive = null;
-
+    public boolean low_power = false;
+    public boolean intakeToggle = false;
     @Override
     public void runOpMode() {
 
@@ -105,6 +107,11 @@ public class BasicOpModeWF extends LinearOpMode {
 
         waitForStart();
         runtime.reset();
+        Gamepad currentGamepad1 = new Gamepad();
+        Gamepad currentGamepad2 = new Gamepad();
+
+        Gamepad previousGamepad1 = new Gamepad();
+        Gamepad previousGamepad2 = new Gamepad();
 
 
         // run until the end of the match (driver presses STOP)
@@ -122,7 +129,24 @@ public class BasicOpModeWF extends LinearOpMode {
             double rightFrontPower = axial - lateral - yaw;
             double leftBackPower   = axial - lateral + yaw;
             double rightBackPower  = axial + lateral - yaw;
+            previousGamepad1.copy(currentGamepad1);
+            previousGamepad2.copy(currentGamepad2);
+            currentGamepad1.copy(gamepad1);
+            currentGamepad2.copy(gamepad2);
+            if (currentGamepad1.a && !previousGamepad1.a) {
+                // This will set intakeToggle to true if it was previously false
+                // and intakeToggle to false if it was previously true,
+                // providing a toggling behavior.
+                intakeToggle = !intakeToggle;
+            }
 
+// Using the toggle variable to control the robot.
+            if (intakeToggle) {
+                low_power = false;
+            }
+            else {
+                low_power = true;
+            }
             // Normalize the values so no wheel power exceeds 100%
             // This ensures that the robot maintains the desired motion.
             max = Math.max(Math.abs(leftFrontPower), Math.abs(rightFrontPower));
@@ -130,10 +154,19 @@ public class BasicOpModeWF extends LinearOpMode {
             max = Math.max(max, Math.abs(rightBackPower));
 
             if (max > 1.0) {
-                leftFrontPower  /= max;
-                rightFrontPower /= max;
-                leftBackPower   /= max;
-                rightBackPower  /= max;
+                if (low_power == false) {
+                    leftFrontPower /= max;
+                    rightFrontPower /= max;
+                    leftBackPower /= max;
+                    rightBackPower /= max;
+                }
+                else{
+                    // not sure if this will work
+                    leftFrontPower /= max/2;
+                    rightFrontPower /= max/2;
+                    leftBackPower /= max/2;
+                    rightBackPower /= max/2;
+                }
             }
 
             // This is test code:
