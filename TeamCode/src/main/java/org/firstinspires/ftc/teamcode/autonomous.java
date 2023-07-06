@@ -187,7 +187,7 @@ public class autonomous extends LinearOpMode
 
         waitForStart();
         runtime.reset();
-        
+        driveForward(1,1000);
         // run until the end of the match (driver presses STOP)
 
     }
