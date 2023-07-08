@@ -8,6 +8,11 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 public class PIDTesting extends LinearOpMode {
 
     DcMotorEx motor;
+    /*
+    need to tune these values with by using this helpful method from Victor Lomboda:
+    Raise P until it oscillates around the setpoint. Add D to cancel out the oscillation. Only add I if you need to
+    also we need to get some things like ftc dashboard
+     */
     double integralSum = 0;
     double Kp = 0;
     double Ki = 0;
