@@ -160,7 +160,7 @@ public class RightLowOnly extends LinearOpMode {
         TrajectorySequence seq1 = drive.trajectorySequenceBuilder(drive.getPoseEstimate())
                 .lineToLinearHeading(new Pose2d(-60, -60, Math.toRadians(0))) //move to middle of the corner square
                 .lineToLinearHeading(new Pose2d(-36, -60, Math.toRadians(45))) //goes to middle of 2nd square towards cone stack (and turns 45 toward low junction)
-                .lineToLinearHeading(new Pose2d(-28,-52,Math.toRadians(45))) //drives to low junction
+                .lineToLinearHeading(new Pose2d(-29,-52,Math.toRadians(45))) //drives to low junction
                 .build();
 
         //drive to low pole
@@ -218,7 +218,7 @@ public class RightLowOnly extends LinearOpMode {
             TrajectorySequence seq4 = drive.trajectorySequenceBuilder(drive.getPoseEstimate())
                     .lineToLinearHeading(new Pose2d(-11, -52, Math.toRadians(-90))) //backing up to make turn
                     .lineToLinearHeading(new Pose2d(-11, -46.5, Math.toRadians(180))) //turn to going toward pole
-                    .lineToLinearHeading(new Pose2d(-16.5, -46.5, Math.toRadians(180))) //driving to pole
+                    .lineToLinearHeading(new Pose2d(-17, -46.5, Math.toRadians(180))) //driving to pole
                     .build();
 
             //drive to low pole
@@ -267,7 +267,7 @@ public class RightLowOnly extends LinearOpMode {
         } else if (park == 2) {
             pose = new Pose2d(-12, -36, Math.toRadians(-90));
         } else {
-            pose = new Pose2d(-12, -12, Math.toRadians(-90));
+            pose = new Pose2d(-12, -10, Math.toRadians(-90));
         }
         TrajectorySequence seq = drive.trajectorySequenceBuilder(drive.getPoseEstimate())
                 .lineToLinearHeading(pose)
