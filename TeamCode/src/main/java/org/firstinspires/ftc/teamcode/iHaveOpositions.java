@@ -11,10 +11,10 @@ public class iHaveOpositions extends LinearOpMode {
     public void runOpMode() throws InterruptedException {
         // Declare our motors
         // Make sure your ID's match your configuration
-        DcMotor motorFrontLeft = hardwareMap.dcMotor.get("motorLeftFront");
-        DcMotor motorBackLeft = hardwareMap.dcMotor.get("motorLeftBack");
-        DcMotor motorFrontRight = hardwareMap.dcMotor.get("motorRightFront");
-        DcMotor motorBackRight = hardwareMap.dcMotor.get("motorRightBack");
+        DcMotor motorFrontLeft = hardwareMap.dcMotor.get("leftFront");
+        DcMotor motorBackLeft = hardwareMap.dcMotor.get("leftBack");
+        DcMotor motorFrontRight = hardwareMap.dcMotor.get("rightFront");
+        DcMotor motorBackRight = hardwareMap.dcMotor.get("rightBack");
 
         motorFrontLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         motorFrontRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -31,7 +31,7 @@ public class iHaveOpositions extends LinearOpMode {
         if (isStopRequested()) return;
 
         while (opModeIsActive()) {
-            double y = gamepad1.left_stick_y; // Remember, this is reversed!
+            double y = -gamepad1.left_stick_y; // Remember, this is reversed!
             double x = gamepad1.left_stick_x * 1.1; // Counteract imperfect strafing
             double rx = gamepad1.right_stick_x;
 

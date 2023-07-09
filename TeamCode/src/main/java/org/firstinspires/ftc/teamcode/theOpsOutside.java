@@ -71,10 +71,10 @@ public class theOpsOutside extends OpMode {
 
     @Override
     public void init(){
-        LFMotor = hardwareMap.get(DcMotor.class, "motorLeftFront");
-        RFMotor = hardwareMap.get(DcMotor.class, "motorRightFront");
-        LBMotor = hardwareMap.get(DcMotor.class, "motorLeftBack");
-        RBMotor = hardwareMap.get(DcMotor.class, "motorRightBack");
+        LFMotor = hardwareMap.get(DcMotor.class, "leftFront");
+        RFMotor = hardwareMap.get(DcMotor.class, "rightFront");
+        LBMotor = hardwareMap.get(DcMotor.class, "leftBack");
+        RBMotor = hardwareMap.get(DcMotor.class, "rightBack");
 
         LFMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         RFMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
