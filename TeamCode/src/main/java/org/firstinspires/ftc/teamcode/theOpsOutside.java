@@ -38,10 +38,10 @@ public class theOpsOutside extends OpMode {
 
 
 
-        double LF = power * cos/max - turn;
-        double RF = power * sin/max + turn;
-        double LB = power * sin/max - turn;
-        double RB = power * cos/max + turn;
+        double LF = power * cos/max + turn;
+        double RF = power * sin/max - turn;
+        double LB = power * sin/max + turn;
+        double RB = power * cos/max - turn;
 
         if ((LF + Math.abs(turn)) > 1) {
             LF /= power + Math.abs(turn);
