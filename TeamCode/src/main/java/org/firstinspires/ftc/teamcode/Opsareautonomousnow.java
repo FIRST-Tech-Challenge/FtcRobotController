@@ -27,10 +27,10 @@ public class Opsareautonomousnow extends LinearOpMode {
 
 
         // setting motors
-        leftFront = hardwareMap.get(DcMotor.class, "motorLeftFront");
-        leftBack = hardwareMap.get(DcMotor.class, "motorLeftBack");
-        rightFront = hardwareMap.get(DcMotor.class, "motorRightFront");
-        rightBack = hardwareMap.get(DcMotor.class, "motorRightBack");
+        leftFront = hardwareMap.get(DcMotor.class, "leftFront");
+        leftBack = hardwareMap.get(DcMotor.class, "leftBack");
+        rightFront = hardwareMap.get(DcMotor.class, "rightFront");
+        rightBack = hardwareMap.get(DcMotor.class, "rightBack");
 
         // reset encoders
         leftFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
