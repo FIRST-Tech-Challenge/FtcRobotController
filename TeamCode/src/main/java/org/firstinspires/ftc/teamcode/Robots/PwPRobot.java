@@ -366,7 +366,7 @@ public class PwPRobot extends BasicRobot {
 
     public boolean[] checkIsOb(boolean l, boolean r, Pose2d endPose) {
         boolean[] vals = {l, r};
-        if (queuer.queue(true, queuer.isStarted() && (!roadrun.isBusy() || l || r || clawSwitch.isSwitched() || CLAW_CLOSING.getStatus()))) {
+        if (queuer.queue(true, queuer.isStarted() && (!roadrun.isBusy() || l || r || clawSwitch.isSwitched() || CLAW_CLOSING.getStatus()||!claw.isClawWide()))) {
             if (!distBroke) {
                 if (isObL(endPose) && !l && !r) {
                     vals[0] = true;
@@ -1217,7 +1217,10 @@ public class PwPRobot extends BasicRobot {
         }
         if (time > 90 && time < 92) {
             rainbowRainbow();
-        } /*else if ((!CLAW_CLOSED.getStatus() && !ARM_OUTTAKE.getStatus()) && false*//*field.lookingAtCone()*//*) {
+        }
+        else if(CLAW_CLOSED.getStatus()){
+            heartbeatRed();/*else if ((!CLAW_CLOSED.getStatus() && !ARM_OUTTAKE.getStatus()) && false*/
+        }/*field.lookingAtCone()*//*) {
             leds.pattern29();
             if (op.gamepad1.a) {
                 autoTeleCone();
@@ -1236,7 +1239,7 @@ partycolorwave();
                 darkGreen();
         }
         } else {
-            heartbeatRed();
+
         }
 
 

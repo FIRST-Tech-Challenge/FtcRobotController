@@ -106,7 +106,7 @@ public class Lift {
     }
 
     public enum LiftConstants {
-        LIFT_HIGH_JUNCTION(MAX_LIFT_TICKS - 140, false),
+        LIFT_HIGH_JUNCTION(MAX_LIFT_TICKS - 120, false),
         LIFT_MED_JUNCTION(860*.8-80, false),
         LIFT_LOW_JUNCTION(15*.75, false),
         LIFT_GROUND_JUNCTION(0, false),

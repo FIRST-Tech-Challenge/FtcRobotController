@@ -27,7 +27,7 @@ public class BlueRightMid {
     private boolean boosted,tooHot=false;
     PwPRobot robot=null;
     LinearOpMode op;
-    double dummyP = 0, dropX=-29.2, dropY=20.2, dropA = toRadians(215),lastTime = 0.0,startTime=0.0;
+    double dummyP = 0, dropX=-29.2, dropY=20, dropA = toRadians(215),lastTime = 0.0,startTime=0.0;
 
     TrajectorySequence preloadtrajectory=null, pickupTrajectory=null, park1trajectory=null,
             park2trajectory=null, park3trajectory=null, clearLTrajectory=null, clearRTrajectory=null,
@@ -53,7 +53,7 @@ public class BlueRightMid {
                 .setReversed(true)
                 .lineToLinearHeading(new Pose2d(-33, 46, toRadians(90)))
                 .splineToSplineHeading(new Pose2d(-33, 15, toRadians(225)), toRadians(270))
-                .lineToLinearHeading(new Pose2d(-28, 19, toRadians(225)))
+                .lineToLinearHeading(new Pose2d(-29, 19.5, toRadians(225)))
                 .addTemporalMarker(robot::done)
                 .build();
 
@@ -75,24 +75,31 @@ public class BlueRightMid {
         }
 
         for (int i = 0; i < 5; i++) {
-            dropTrajectory.add(robot.roadrun.trajectorySequenceBuilder(new Pose2d(-62,12.0+0.93*i,Math.toRadians(180)))
+            dropTrajectory.add(robot.roadrun.trajectorySequenceBuilder(new Pose2d(-62,11.0-0.7*i,Math.toRadians(180)))
                     .setTangentOffset((toRadians(180)))
                     .splineToSplineHeading(new Pose2d(dropX, dropY, dropA), toRadians(30))
                     .addTemporalMarker(robot::done)
                     .build());
         }
         for (int i = 0; i < 5; i++) {
+            if(i==0){
+                pick.add(robot.roadrun.trajectorySequenceBuilder(new Pose2d(-29,19.5,toRadians(225)))
+                        .setReversed(false)
+                        .splineTo(new Vector2d(-63+0.2*i, 11.0-0.5*i), toRadians(180))
+                        .addTemporalMarker(robot::done)
+                        .build());
+            }
             pick.add(robot.roadrun.trajectorySequenceBuilder(new Pose2d(dropX,dropY,dropA))
                     .setReversed(false)
-                    .splineTo(new Vector2d(-63.8+0.2*i, 12.0+0.63*i), toRadians(180))
+                    .splineTo(new Vector2d(-63+0.2*i, 11.0-0.5*i), toRadians(180))
                     .addTemporalMarker(robot::done)
                     .build());
         }
-        reDropTrajectory = robot.roadrun.trajectorySequenceBuilder(new Pose2d(dropX,dropY,Math.toRadians(150)))
+        reDropTrajectory = robot.roadrun.trajectorySequenceBuilder(new Pose2d(dropX,dropY,Math.toRadians(210)))
                 .setReversed(false)
-                .lineToLinearHeading(new Pose2d(dropX+4.3,dropY-2.2,Math.toRadians(145)))
+                .lineToLinearHeading(new Pose2d(dropX-4.3,dropY-2.2,Math.toRadians(210)))
                 .setReversed(true)
-                .lineToLinearHeading(new Pose2d(dropX,dropY,Math.toRadians(145)))
+                .lineToLinearHeading(new Pose2d(dropX,dropY,Math.toRadians(210)))
                 .addTemporalMarker(robot::done)
                 .build();
 
@@ -107,7 +114,7 @@ public class BlueRightMid {
                 .build();
         park3trajectory = robot.roadrun.trajectorySequenceBuilder(new Pose2d(dropX, dropY, dropA))
                 .setReversed(false)
-                .splineTo(new Vector2d(-59, 14), toRadians(180))
+                .splineToSplineHeading(new Pose2d(-57, 11.5, Math.toRadians(90)), Math.toRadians(180))
                 .build();
 
         while (!op.isStarted() && !op.isStopRequested()) {
@@ -183,8 +190,8 @@ public class BlueRightMid {
 //            robot.updateTrajectoryWithCam();
         }
 //        robot.delay(0.023 + 0.005 * (3 - i));
-        robot.liftToPosition(LIFT_MED_JUNCTION);
-        robot.delay(0.35);
+        robot.liftToPosition((int)LIFT_MED_JUNCTION.getValue()+20);
+        robot.delay(0.15);
         robot.raiseLiftArmToOuttake(true);
         if (boosted) {
             robot.delay(0.1);
@@ -236,7 +243,7 @@ public class BlueRightMid {
 //    }
 
     public boolean rePick() {
-        return robot.clawSwitch.isSwitched();
+        return true;
     }
 
     public void reDrop() {

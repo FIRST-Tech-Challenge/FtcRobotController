@@ -39,8 +39,9 @@ public class BlueRightAutoMidCycleBoost extends LinearOpMode {
     public void runOpMode() {
         PwPRobot robot = new PwPRobot(this,false);
         BlueRightMid autoRunner = new BlueRightMid(true,this, robot);
-        sleep(500);
+//        sleep(500);
         autoRunner.init();
+        time=0;
         abort:
         while ((getRuntime() < 27 && (!robot.queuer.isFullfilled() || robot.queuer.isFirstLoop()))&&!isStopRequested()) {
             autoRunner.preload();

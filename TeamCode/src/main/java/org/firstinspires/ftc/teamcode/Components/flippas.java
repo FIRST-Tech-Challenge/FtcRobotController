@@ -19,7 +19,7 @@ public class flippas {
 
     private RFDualServo flippaServo;
 
-    private final double LIFT_ARM_INTAKE_POS = 0.27;
+    private final double LIFT_ARM_INTAKE_POS = 0.25;
     private final double LIFT_ARM_CYCLE_POS = 0.955;
 
     private final double LIFT_ARM_OUTTAKE_POS = 0.78;
