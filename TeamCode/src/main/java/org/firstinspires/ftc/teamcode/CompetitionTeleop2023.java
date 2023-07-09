@@ -4,10 +4,10 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.TouchSensor;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 
 @TeleOp(name="Competition Teleop", group="Iterative Opmode")
 public class CompetitionTeleop2023 extends OpMode {
@@ -22,8 +22,10 @@ public class CompetitionTeleop2023 extends OpMode {
     //Declare variables used for our arm lift
     private DcMotor arm = null; //Located on Expansion Hub- Motor port 0
     private Servo gripper = null; //Located on Expansion Hub- Servo port 0
+    //variable for Rev Touch Sensor
+    private TouchSensor touch;
 
-    private double PowerFactor = 8.0f; //Max power available for wheels
+    private double PowerFactor = 0.8f; //Max power available for wheels
     private int maxEncode = 4200; //4200 for higher, 2175 for lower-- Max so arm won't overextend and position 3
     private int minEncode = 110;//Minimum so string on arm lift doesn't break and position 0
     private int pos1 = 1850; //Position 1
@@ -33,8 +35,12 @@ public class CompetitionTeleop2023 extends OpMode {
 
     boolean changed = false; //Used for the gripper button code
     boolean changed2 = false; //Used for the code that allows the driver to alter speed
-    boolean changed3 = false; //Used to toggle betweeen auto and manual mode for arm
+    boolean changed3 = false; //Used to toggle between auto and manual mode for arm
+    boolean game2back = false; //Used to override switch for arm in case of failure
+    boolean game1back = false; //Used to override minEncode for arm in case of bad encoding
     boolean gamebpush = false; //To go through intervals one at a time
+
+    boolean touchIsPressed = false;
 
     /*
       Code to run ONCE when the driver hits INIT
@@ -43,7 +49,7 @@ public class CompetitionTeleop2023 extends OpMode {
     public void init() {
         telemetry.addData("Status", "Initialized");
 
-        // Initialize the hardware variables. Note that the strings used here as parameters
+        // Initiali ze the hardware variables. Note that the strings used here as parameters
         // to 'get' must correspond to the names assigned during the robot configuration
         // step (using the FTC Robot Controller app on the phone).
         LF = hardwareMap.get(DcMotor.class, "LF");
@@ -52,6 +58,9 @@ public class CompetitionTeleop2023 extends OpMode {
         RB = hardwareMap.get(DcMotor.class, "RB");
         arm = hardwareMap.get(DcMotor.class, "arm");
         gripper = hardwareMap.get(Servo.class, "gripper");
+
+        //gripper sensor for pulling arm down
+        touch  = hardwareMap.get(TouchSensor .class, "Touch");
 
         // Most robots need the motor on one side to be reversed to drive forward
         // Reverse the motor that runs backwards when connected directly to the battery
@@ -73,11 +82,7 @@ public class CompetitionTeleop2023 extends OpMode {
     /*
      * Code to run REPEATEDLY after the driver hits INIT, but before they hit PLAY
      */
-    @Override
-    public void init_loop() {
-        //Set gripper servo to 0
-        gripper.setPosition(0.2);
-    }
+
 
     /*
      * Code to run ONCE when the driver hits PLAY
@@ -92,22 +97,13 @@ public class CompetitionTeleop2023 extends OpMode {
         double RBPower;
 
         //Code for gamepad1
-        //Allows the driver to alter speed and make the robot move faster or slower
-        if (gamepad1.y && !changed2) {
-            if (PowerFactor == 0.8f) {
-                PowerFactor = 0.3f;
-            } else {
-                PowerFactor = (0.8f);
-            }
-            changed2 = true;
-        } else if (!gamepad1.y) {
-            changed2 = false;
-        }
+        //Code for throttling the power factor
+        PowerFactor = (1 - gamepad1.right_trigger) *.8f;
 
         //Code for mecanum wheels
         double r = Math.hypot(gamepad1.left_stick_x, gamepad1.left_stick_y) * PowerFactor;
         double robotAngle = Math.atan2(gamepad1.left_stick_y, gamepad1.left_stick_x) - Math.PI / 4;
-        double rightX = Math.pow(gamepad1.right_stick_x, 5.0);
+        double rightX = Math.pow(gamepad1.right_stick_x, 5.0)*(1-gamepad1.right_trigger);
         //double rightX = (-gamepad1.right_stick_x);
         LBPower = r * Math.cos(robotAngle) - rightX;
         RBPower = r * Math.sin(robotAngle) + rightX;
@@ -125,28 +121,58 @@ public class CompetitionTeleop2023 extends OpMode {
         telemetry.addData("Left Back Motor","Speed: "+ LBPower);
         telemetry.addData("Right Front Motor","Speed: "+RFPower);
         telemetry.addData("Right Back Motor","Speed: "+ RBPower);
+        telemetry.addData("Arm Encoder Height","Height: "+arm.getCurrentPosition());
 
         //Code for gamepad2
         //Toggle auto and manual mode
         if (gamepad2.y) {
             changed3 = !changed3;
         }
+        if (gamepad2.back) {
+            game2back = !game2back;
+        }
+        if (gamepad1.back) {
+            game1back = !game1back;
+            // If we were in override mode then once arm is down and override released
+            // zero out encoder of ARM
+            if (!game1back) {
+                arm.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            }
+        }
+        if (gamepad2.left_trigger >= .1)
+        {
+            touchIsPressed = false;
+        }
+        else if (!touch.isPressed())
+        {
+            touchIsPressed = !game2back;
+        }
+
+
         //Moves the arm up
-        if (!changed3) {
-            if (gamepad2.left_trigger >= .1 && arm.getCurrentPosition() < maxEncode) {
+        if (!changed3)
+        {
+            if (gamepad2.left_trigger >= .1 && arm.getCurrentPosition() < maxEncode)
+            {
                 arm.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
                 arm.setPower(gamepad2.left_trigger);
                 telemetry.addData("arm ticks", arm.getCurrentPosition());
                 telemetry.update();
                 //Moves the arm down
-            } else if (gamepad2.right_trigger >= .1 && arm.getCurrentPosition() > minEncode) {
+            }
+            else if (gamepad2.right_trigger >= .1 && ((arm.getCurrentPosition() > 0) || game1back || !game2back) && !touchIsPressed)
+            {
                 arm.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
                 arm.setPower(-gamepad2.right_trigger);
-            } else {
+            }
+            else
+            {
                 arm.setPower(0);
                 arm.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
             }
-        } else {
+        }
+        else
+        {
             //Allows the arm to stay in the location the drivers want
             if (!gamepad2.b && gamebpush) {
                 desiredpos += 1;
@@ -205,6 +231,8 @@ public class CompetitionTeleop2023 extends OpMode {
         }
     // Show the elapsed game time and wheel power.
             telemetry.addData("Status","Run Time: "+runtime.toString());
+        telemetry.addData("touchIsPressed ", touchIsPressed);
+        telemetry.update();
     //  telemetry.addData("positionTarget: ", "%.2f", positionTarget);
 }
 

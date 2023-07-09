@@ -5,6 +5,7 @@ import static org.firstinspires.ftc.robotcore.external.navigation.AngleUnit.DEGR
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
@@ -27,6 +28,7 @@ import org.openftc.easyopencv.OpenCvCameraRotation;
 import java.util.List;
 import java.util.Locale;
 
+@Disabled
 @Autonomous(name = "RightPPTerminal", group = "")
 public class RightPPTerminal extends LinearOpMode {
     //test1
@@ -174,6 +176,7 @@ public class RightPPTerminal extends LinearOpMode {
                     moveUtils.goStraight(-45,MAX_SPEED,MIN_SPEED,ACCEL);
                     moveUtils.turnCCW(90);
                     moveUtils.goStraight(20,MIN_SPEED,MIN_SPEED,ACCEL);
+                    actuatorUtils.armPole(0);
                     done=true;
                     break;
                 case 2:
@@ -182,6 +185,7 @@ public class RightPPTerminal extends LinearOpMode {
                     moveUtils.goStraight(-18,MAX_SPEED,MIN_SPEED,ACCEL);
                     moveUtils.strafeBuddy(-20);
                     moveUtils.strafeBuddy(3);
+                    actuatorUtils.armPole(0);
                     done=true;
                     break;
                 case 3:
@@ -192,6 +196,7 @@ public class RightPPTerminal extends LinearOpMode {
                     moveUtils.goStraight(22,MAX_SPEED,MIN_SPEED,ACCEL);
                     moveUtils.strafeBuddy(15);
                     moveUtils.goStraight(4,MIN_SPEED,MIN_SPEED,ACCEL);
+                    actuatorUtils.armPole(0);
                     done=true;
                     break;
             }

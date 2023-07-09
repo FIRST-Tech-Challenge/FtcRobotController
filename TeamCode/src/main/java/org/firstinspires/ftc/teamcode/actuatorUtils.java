@@ -16,13 +16,28 @@ public class actuatorUtils {
     //test
     private static int maxEncode = 4200; //4200 for higher, 2175 for lower-- Max so arm won't overextend and position 3
     private static int minEncode = 300; //Minimum so string on arm lift doesn't break and position 0
-    private static int pos1 = 1750; //Low pole height
-    private static int pos2 = 3000; //Med pole height
-    private static int cone1 = 800; //Height for top cone in stack
-    private static int cone2 = 700; //Height for second cone in stack
-    private static int cone3 = 600; //Height for second cone in stack
+    private static int highPole = maxEncode; //high pole height
+    private static int medPole = 3100; //Med pole height
+    private static int lowPole = 1900; //Low pole height
+    private static int cone5 = 685; //Height for top cone in stack
+    private static int cone4 = 475; //Height for second cone in stack
+    private static int cone3 = 203; //Height for third cone in stack
+    private static int cone2 = 36; //height for second cone in stack
+    private static int cone1 = 9; //height for first cone in stack
     private static double armPower = .7f; //Set power to .7 so arm does not go up too fast
 
+    enum ArmLevel
+    {
+        ZERO,
+        CONE1,
+        CONE2,
+        CONE3,
+        CONE4,
+        CONE5,
+        LOW_POLE,
+        MED_POLE,
+        HIGH_POLE
+    }
 
     //Initialize actuators
     public static void initializeActuator(DcMotor arm, Servo gripper) {
@@ -72,10 +87,14 @@ public class actuatorUtils {
 
     //Method used to close gripper
     public static void gripperClose(boolean liftUp) throws InterruptedException {
+        gripperClose(liftUp, true);
+    }
+    public static void gripperClose(boolean liftUp, boolean doSleep) throws InterruptedException {
         gripper.setPosition(.6); //Position that grabs cone tightly
         if (liftUp == true) {
-            sleep(500);
-            arm.setTargetPosition(165); //Lifts arm up so we can move w/o drag
+            if (doSleep)
+                sleep(250);
+            arm.setTargetPosition(minEncode); //Lifts arm up so we can move w/o drag
             arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             arm.setPower(armPower);
         }
@@ -83,10 +102,15 @@ public class actuatorUtils {
 
     //Method to open gripper
     public static void gripperOpen(boolean liftDown) throws InterruptedException {
-        sleep(500);
+        gripperOpen(liftDown, true);
+    }
+    public static void gripperOpen(boolean liftDown, boolean doSleep) throws InterruptedException {
+        if (doSleep)
+            sleep(500);
         gripper.setPosition(.2); //Position to open gripper
         if (liftDown == true) {
-            sleep(1000);
+            if (doSleep)
+                sleep(1000);
             arm.setTargetPosition(minEncode); //Lowers arm to min pos.
             arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             arm.setPower(armPower);
@@ -94,43 +118,102 @@ public class actuatorUtils {
     }
 
     //Method to move arm to pole heights
+    public static void armPole(ArmLevel desiredHeight) throws InterruptedException {
+        armPole(desiredHeight, true);
+    }
     public static void armPole(int desiredHeight) throws InterruptedException {
-        if (desiredHeight == 1)
+        ArmLevel newHeight;
+        if (desiredHeight==0)
+            newHeight = ArmLevel.CONE1;
+        else if (desiredHeight==4 || desiredHeight==1)
+            newHeight = ArmLevel.LOW_POLE;
+        else if (desiredHeight==2)
+            newHeight = ArmLevel.MED_POLE;
+        else
+            newHeight = ArmLevel.HIGH_POLE;
+        armPole(newHeight, true);
+    }
+    public static void armPole(ArmLevel desiredHeight, boolean doSleep) throws InterruptedException {
+        if (desiredHeight == ArmLevel.LOW_POLE)
         {
-            arm.setTargetPosition(pos1);
+            arm.setTargetPosition(lowPole);
             //Set arm to RUN_TO_POSITION so we can effectively use the setTargetPosition() method
             arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             arm.setPower(armPower);
-            sleep(2500);
+            if (doSleep)
+                sleep(500);
         }
-        else if(desiredHeight == 2)
+        else if(desiredHeight == ArmLevel.MED_POLE)
         {
-            arm.setTargetPosition(pos2);
+            arm.setTargetPosition(medPole);
             //Set arm to RUN_TO_POSITION so we can effectively use the setTargetPosition() method
             arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             arm.setPower(armPower);
-            sleep(2500);
+            if (doSleep)
+                sleep(2500);
         }
-        else if(desiredHeight == 3)
+        else if(desiredHeight == ArmLevel.HIGH_POLE)
         {
-            arm.setTargetPosition(maxEncode);
+            arm.setTargetPosition(highPole);
             //Set arm to RUN_TO_POSITION so we can effectively use the setTargetPosition() method
             arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             arm.setPower(armPower);
-            sleep(2500);
+            if (doSleep)
+                sleep(2500);
         }
-        else if(desiredHeight==4)
+        else if(desiredHeight == ArmLevel.CONE5)
         {
-            arm.setTargetPosition(minEncode);
+            arm.setTargetPosition(cone5);
             //Set arm to RUN_TO_POSITION so we can effectively use the setTargetPosition() method
             arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             arm.setPower(armPower);
-            sleep(3000);
+            if (doSleep)
+                sleep(3000);
         }
+        else if (desiredHeight == ArmLevel.CONE4){
+            arm.setTargetPosition(cone4);
+            //Set arm to RUN_TO_POSITION so we can effectively use the setTargetPosition() method
+            arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            arm.setPower(armPower);
+            if (doSleep)
+                sleep(3000);
+        }
+        else if (desiredHeight == ArmLevel.CONE3){
+            arm.setTargetPosition(cone3);
+            //Set arm to RUN_TO_POSITION so we can effectively use the setTargetPosition() method
+            arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            arm.setPower(armPower);
+            if (doSleep)
+                sleep(3000);
+        }
+        else if (desiredHeight == ArmLevel.CONE2){
+            arm.setTargetPosition(cone2);
+            //Set arm to RUN_TO_POSITION so we can effectively use the setTargetPosition() method
+            arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            arm.setPower(armPower);
+            if (doSleep)
+                sleep(3000);
+        }
+        else if (desiredHeight == ArmLevel.CONE1){
+            arm.setTargetPosition(cone1);
+            //Set arm to RUN_TO_POSITION so we can effectively use the setTargetPosition() method
+            arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            arm.setPower(armPower);
+            if (doSleep)
+                sleep(3000);
+        }
+        else if (desiredHeight == ArmLevel.ZERO) {
+            arm.setTargetPosition(0);
+            //Set arm to RUN_TO_POSITION so we can effectively use the setTargetPosition() method
+            arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            arm.setPower(armPower);
+            if (doSleep)
+                sleep(3000);
+               }
     }
 
     //Method to move arm to cone collection heights
-    public static void coneCollect (int desiredCone) throws InterruptedException {
+    /*public static void coneCollect (int desiredCone) throws InterruptedException {
         if (desiredCone == 1)
         {
             arm.setTargetPosition(cone1);
@@ -155,6 +238,7 @@ public class actuatorUtils {
             arm.setPower(armPower);
         }
     }
+     */
 
 
 }

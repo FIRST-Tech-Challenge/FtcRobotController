@@ -5,6 +5,7 @@ import static org.firstinspires.ftc.robotcore.external.navigation.AngleUnit.DEGR
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
@@ -27,6 +28,7 @@ import org.openftc.easyopencv.OpenCvCameraRotation;
 import java.util.List;
 import java.util.Locale;
 
+@Disabled
 @Autonomous(name = "LeftPPTerminal", group = "")
 public class LeftPPTerminal extends LinearOpMode {
     //test1
@@ -174,6 +176,7 @@ public class LeftPPTerminal extends LinearOpMode {
                     moveUtils.strafeBuddy(24);
                     moveUtils.strafeBuddy(-2);
                     moveUtils.goStraight(2,MIN_SPEED,MIN_SPEED,ACCEL);
+                    actuatorUtils.armPole(0);
                     done=true;
                     break;
                 case 2:
@@ -182,6 +185,7 @@ public class LeftPPTerminal extends LinearOpMode {
                     moveUtils.goStraight(-17,MAX_SPEED,MIN_SPEED,ACCEL);
                     moveUtils.strafeBuddy(24);
                     moveUtils.strafeBuddy(-2);
+                    actuatorUtils.armPole(0);
                     done=true;
                     break;
                 case 3:
@@ -189,6 +193,7 @@ public class LeftPPTerminal extends LinearOpMode {
                     beginAuto();
                     moveUtils.goStraight(-45,MAX_SPEED,MIN_SPEED,ACCEL);
                     moveUtils.strafeBuddy(24);
+                    actuatorUtils.armPole(0);
                     done=true;
                     break;
             }
@@ -199,7 +204,7 @@ public class LeftPPTerminal extends LinearOpMode {
     }
     private void beginAuto() throws InterruptedException {
         moveUtils.goStraight(1.5f,MAX_SPEED,MIN_SPEED,ACCEL);
-        moveUtils.turnCCW(92);
+        moveUtils.turnCCW(92); //og 92
         moveUtils.goStraight(18,MAX_SPEED,MIN_SPEED,ACCEL);
         actuatorUtils.gripperOpen(true);
 
