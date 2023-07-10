@@ -14,6 +14,7 @@
     <rect x="545" y="1320" width="350" height="120" fill="none" stroke="black" stroke-width="5" stroke-dasharray="20"/>
 
     <!-- Labels -->
+    <text x="720" y="70" text-anchor="middle" font-family="Verdana" font-size="35" fill="black">Goal</text>
     <text x="720" y="1250" text-anchor="middle" font-family="Verdana" font-size="35" fill="black">Starting Zone</text>
 </svg>
 
