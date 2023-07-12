@@ -17,7 +17,7 @@ public class theOpsOutside extends OpMode {
     DcMotor RBMotor;
 
     public void moveDrive(){
-        double x = gamepad1.left_stick_x;
+        double x = -gamepad1.left_stick_x;
         double y = -gamepad1.left_stick_y;
         double turn = gamepad1.right_stick_x;
         telemetry.addData("Turn", turn);
@@ -38,10 +38,10 @@ public class theOpsOutside extends OpMode {
 
 
 
-        double LF = power * cos/max + turn;
-        double RF = power * sin/max - turn;
-        double LB = power * sin/max + turn;
-        double RB = power * cos/max - turn;
+        double LF = power * sin/max + turn;
+        double RF = power * cos/max - turn;
+        double LB = power * cos/max + turn;
+        double RB = power * sin/max - turn;
 
         if ((LF + Math.abs(turn)) > 1) {
             LF /= power + Math.abs(turn);
