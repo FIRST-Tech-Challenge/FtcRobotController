@@ -36,7 +36,7 @@ import org.firstinspires.ftc.teamcode.Old.PowerPlay.Components.CV.CVMaster;
 import org.firstinspires.ftc.teamcode.Old.PowerPlay.Components.Claw;
 import org.firstinspires.ftc.teamcode.Old.PowerPlay.Components.ClawExtension;
 import org.firstinspires.ftc.teamcode.Old.PowerPlay.Components.Field;
-import org.firstinspires.ftc.teamcode.Components.LEDStrip;
+import org.firstinspires.ftc.teamcode.Components.RFModules.Devices.LEDStrip;
 import org.firstinspires.ftc.teamcode.Old.PowerPlay.Components.Lift;
 import org.firstinspires.ftc.teamcode.Old.PowerPlay.Components.LiftArm;
 import org.firstinspires.ftc.teamcode.Components.RFModules.Devices.RFGamepad;
