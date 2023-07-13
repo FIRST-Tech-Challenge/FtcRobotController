@@ -1,12 +1,8 @@
 package org.firstinspires.ftc.teamcode.Tests;
 
-import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.time;
-
 import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-
-import org.firstinspires.ftc.teamcode.Robots.PwPRobot;
 
 @Config
 @Autonomous(name = "Crash")
@@ -14,10 +10,11 @@ import org.firstinspires.ftc.teamcode.Robots.PwPRobot;
 
 public class Crash extends LinearOpMode {
     public void runOpMode() {
-//        PwPRobot robot = new PwPRobot(this, false);
+        //let them have second chance in case they regret selecting this program
         waitForStart();
         while (true) {
-            telemetry.addData("stop program ;)", 8008135);
+            //tell them to stop program(it won't)
+            telemetry.addData("stop the program ;)", 8008135);
             telemetry.update();
         }
     }

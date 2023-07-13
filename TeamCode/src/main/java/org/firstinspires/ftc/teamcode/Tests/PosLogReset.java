@@ -11,7 +11,7 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 
-@Autonomous(name= "PosLogReset", preselectTeleOp = "OneGPTeleop")
+@Autonomous(name= "PosLogReset")
 public class PosLogReset extends LinearOpMode {
     @SuppressLint("SdCardPath")
     File myObj = new File("/sdcard/tmp/pos.csv");
