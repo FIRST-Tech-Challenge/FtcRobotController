@@ -15,15 +15,15 @@ public class QueueElement {
     private boolean started = false;
     //if done
     private boolean isDone = false;
-    //For delay
+    //For calculating delay, 1000 is just a placeholder that should never be reached normally
     private double readyTime = 1000;
-
+    //should it wait for everything else to finish
     private boolean mustFinish = false;
-
+    //should it wait for everything else to finish
     private boolean shouldFinish = false;
-
+    //is it an optional event
     private boolean isOptional = false;
-
+    //is it skippable right now
     private boolean option = false;
 
     public QueueElement(int queueNum, boolean p_asynchronous, int p_startCondition, boolean p_mustFinish) {
@@ -42,6 +42,7 @@ public class QueueElement {
         isOptional = p_isOptional;
     }
 
+    //calculate if Ready
     public boolean isReady(int currentEvent, boolean extraCondition) {
         //is it this elements turn to run
         if (currentEvent >= startCondition && !isDone) {
@@ -50,6 +51,7 @@ public class QueueElement {
                 readyTime = time;
                 logger.log("/RobotLogs/GeneralRobot", queuePos + "readyTime =" + readyTime +"optional"+isOptional);
             }
+            //consider extraw condition(if it exists)
             if (extraCondition) {
                 return true;
             } else {
@@ -86,6 +88,7 @@ public class QueueElement {
     }
 
     public void setAsynchronous(boolean p_asynchronous){asynchronous = p_asynchronous;}
+
     public void setStartCondition(int p_condition){
         startCondition=p_condition;
     }
