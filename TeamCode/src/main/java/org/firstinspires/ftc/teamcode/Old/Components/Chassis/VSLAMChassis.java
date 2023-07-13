@@ -1249,7 +1249,7 @@ public class VSLAMChassis extends BasicChassis {
 
                     tarcurpos[1] = 0.5 * ((2 * point[i + 1][1]) + (point[i + 2][1] - point[i + 1][1]) * t + (-5 * point[i + 1][1] + 4 * point[i + 2][1] - point[i + 3][1]) * pow(t, 2) +
                             (+3 * point[i + 1][1] - 3 * point[i + 2][1] + point[i + 3][1]) * pow(t, 3));
-                    target_position[2] = (0.5 * (+(+point[i + 2][1] - point[i + 1][1]) + 2 * (2 * point[i + 1][1] - 5 * point[i + 1][1] + 4 * point[i + 2][1] - point[i + 3][1]) * t +
+                    target_position[2] = (0.5 * ((point[i + 2][1] - point[i + 1][1]) + 2 * (2 * point[i + 1][1] - 5 * point[i + 1][1] + 4 * point[i + 2][1] - point[i + 3][1]) * t +
                             3 * (-point[i + 1][1] + 3 * point[i + 1][1] - 3 * point[i + 2][1] + point[i + 3][1]) * pow(t, 2)));
                     mpconst = target_position[2];
                     target_position[2] = atan(1 / target_position[2]) + (direction - 1) * PI;
