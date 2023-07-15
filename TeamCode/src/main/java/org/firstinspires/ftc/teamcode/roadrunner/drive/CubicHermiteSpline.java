@@ -14,9 +14,10 @@ public class CubicHermiteSpline {
     private double length = 0;
     private double duration = 0;
     private double lengthResolution = 200;
-    private double numericDerivResolution = 10000;
+    private double numericDerivResolution = 10000, travelDist=0;
+    private double AVG_SCALE_FACTOR=1.2;
     private RFTrajectory traj;
-    private Vector2d endPos, endVel;
+    private Vector2d endPos, endVel, lastPos;
     Pose2d targetPose;
     Pose2d targetVelocity;
     Pose2d targetAcceleration;
@@ -29,6 +30,7 @@ public class CubicHermiteSpline {
         endVel = p_endVel;
         length = p_startPos.distTo(p_endPos);
         //calc approxDuration
+        duration = traj.calculateSegmentDuration(length*AVG_SCALE_FACTOR);
         Vector2d p_startVelo = p_startVel.times(duration);
         Vector2d p_endVelo = p_endVel.times(duration);
         coeffs.add(p_startPos);
@@ -42,6 +44,7 @@ public class CubicHermiteSpline {
             lastPos = newPos;
         }
         //calc duration
+        duration = traj.calculateSegmentDuration(length);
         p_startVelo = p_startVel.times(duration);
         p_endVelo = p_endVel.times(duration);
         coeffs.clear();
@@ -49,10 +52,17 @@ public class CubicHermiteSpline {
         coeffs.add(p_startVelo);
         coeffs.add(p_startPos.times(-3).minus(p_startVelo.times(2)).minus(p_endVelo).plus(p_endPos.times(3)));
         coeffs.add(p_startPos.times(2).plus(p_startVelo).plus(p_endVelo).minus(p_endPos.times(2)));
+        lastPos = currentPose.vec();
     }
 
     public double getLength() {
         return length;
+    }
+
+    public double getRemDistance(){
+        travelDist+=currentPose.vec().distTo(lastPos);
+        lastPos = currentPose.vec();
+        return length - travelDist;
     }
 
     public Vector2d poseAt(double p_t, ArrayList<Vector2d> coeffs) {
@@ -72,13 +82,14 @@ public class CubicHermiteSpline {
                 / ((vel.getY() * vel.getY()) / (vel.getX() * vel.getX()) + 1);
     }
 
-    public void calculateTargetPoseAt(double p_t, double ttoTimeRatio) {
+    public void calculateTargetPoseAt(double p_t) {
         Vector2d pose = poseAt(p_t, coeffs);
         Vector2d deriv = derivAt(p_t, coeffs);
         Vector2d scnDeriv = scndDerivAt(p_t, coeffs);
         double angle = Math.atan2(deriv.getY(), deriv.getX());
         targetPose = new Pose2d(pose, angle);
         Vector2d velo = deriv.times(1 / deriv.norm());
+        double ttoTimeRatio = traj.timeToTRatio(deriv.norm());
         double angularVel = calcAngularVel(deriv.div(ttoTimeRatio), scnDeriv.div(ttoTimeRatio * ttoTimeRatio));
         targetVelocity = new Pose2d(velo, angularVel);
         Vector2d accel = scnDeriv.times(1 / deriv.norm());
@@ -92,7 +103,7 @@ public class CubicHermiteSpline {
     public void calculateInstantaneousTargetPose() {
         Vector2d curPos = currentPose.vec();
         Vector2d curVel = currentVelocity.vec();
-        double remDuration = 0;
+        double remDuration = traj.remainingSegmentTime(getRemDistance());
         Vector2d curVelo = curVel.times(remDuration);
         Vector2d endVelo = endVel.times(remDuration);
         ArrayList<Vector2d> tempCoeffs = new ArrayList();
@@ -100,7 +111,7 @@ public class CubicHermiteSpline {
         tempCoeffs.add(curVelo);
         tempCoeffs.add(curPos.times(-3).minus(curVelo.times(2)).minus(endVelo).plus(endPos.times(3)));
         tempCoeffs.add(curPos.times(2).plus(curVelo).plus(endVelo).minus(endPos.times(2)));
-        Vector2d accel = tempCoeffs.get(2).div(remDuration * remDuration / 2);
+        Vector2d accel = tempCoeffs.get(2).div(remDuration * remDuration *0.5);
         double angularVel = calcAngularVel(curVel, accel);
         instantaneousVelocity = new Pose2d(curVel, angularVel);
         Vector2d curVel2 = derivAt(1 / numericDerivResolution, tempCoeffs).div(remDuration);

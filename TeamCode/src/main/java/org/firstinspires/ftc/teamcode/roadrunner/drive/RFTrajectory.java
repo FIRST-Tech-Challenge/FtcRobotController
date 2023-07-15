@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.roadrunner.drive;
 
+import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.time;
 import static org.firstinspires.ftc.teamcode.roadrunner.drive.PoseStorage.currentPose;
 import static org.firstinspires.ftc.teamcode.roadrunner.drive.PoseStorage.currentVelocity;
 
@@ -20,7 +21,7 @@ public class RFTrajectory {
 
     public RFTrajectory() {
         segments = new ArrayList();
-        startPoint = new RFWaypoint(currentPose,currentVelocity.vec().angle(),currentVelocity.vec().norm());
+        startPoint = new RFWaypoint(currentPose, currentVelocity.vec().angle(), currentVelocity.vec().norm());
     }
 
     public RFTrajectory(RFTrajectory p_trajectory) {
@@ -31,13 +32,30 @@ public class RFTrajectory {
 
     public void addSegment(RFSegment p_segment) {
         segments.add(p_segment);
-        segments.get(segments.size()-2).setCompiled(false);
-        segments.get(segments.size()-3).setCompiled(false);
+        segments.get(segments.size() - 2).setCompiled(false);
+        segments.get(segments.size() - 3).setCompiled(false);
     }
 
-    public void compileSegments(){
-        for(int i=0;i<segments.size();i++){
-            if(!segments.get(i).isCompiled()){
+    public Pose2d getTargetVelocity() {
+        return null;
+    }
+
+    public Pose2d getTargetAcceleration() {
+        return null;
+    }
+
+    public Pose2d getInstantaneousTargetVelocity() {
+        return null;
+    }
+
+    public Pose2d getInstantaneousTargetAcceleration() {
+        return null;
+    }
+
+
+    public void compileSegments() {
+        for (int i = 0; i < segments.size(); i++) {
+            if (!segments.get(i).isCompiled()) {
                 CatmulRomInterpolater CRerp = new CatmulRomInterpolater(segments, i);
                 segments.get(i).getWaypoint().changeTo(CRerp.CRerpWaypoint());
                 segments.get(i).setCompiled(true);
@@ -48,39 +66,43 @@ public class RFTrajectory {
     public Vector2d tangentAndMagToVector(double tangent, double mag) {
         return new Vector2d(cos(tangent) * mag, sin(tangent) * mag);
     }
-    public void setCurrentPath(RFWaypoint p0, RFWaypoint p1){
+
+    public void setCurrentPath(RFWaypoint p0, RFWaypoint p1) {
         currentPath = new CubicHermiteSpline(p0.getTarget().vec(), p0.getEndVelocityVec(),
-                p1.getEndVelocityVec(), p1.getTarget().vec(),this);
+                p1.getEndVelocityVec(), p1.getTarget().vec(), this);
     }
-    public void setMotionProfile(RFWaypoint p0, RFSegment p1){
-        motionProfile = new RFMotionProfile(p0.getTarget().vec(), p0.getEndVelocityVec(),
-                p1.getWaypoint().getEndVelocityVec(), p1.getWaypoint().getTarget().vec(),
+
+    public void setMotionProfile(RFWaypoint p0, RFSegment p1) {
+        motionProfile = new RFMotionProfile(p0.getEndVelocityVec(),
+                p1.getWaypoint().getEndVelocityVec(),
                 p1.getCurviness());
     }
 
-    public double currentT(){
-        //calc current t
-            //function to map time to t
-                //inverse of cubic, inverse of integral of trapezoid, set equal to each other, solve for t
-            //use real time to get t
+    public double targetCurrentDistance() {
+        return motionProfile.motionProfileTimeToDist(time);
+    }
+
+    public double calculateSegmentDuration(double distance) {
+        motionProfile.setLength(distance);
+        return motionProfile.motionProfileRemDistToRemTime(distance);
+    }
+
+    public double remainingSegmentTime(double distance) {
+        motionProfile.motionProfileRemDistToRemTime(distance);
         return 0;
     }
 
-    public double remainingSegmentTime(){
-        //calc remaining distance
-            //running sum of distance traveled projected on to spline diff with initial calculated distance
-        //convert distance to time
-        return 0;
+    public double timeToTRatio(double tToXDerivative) {
+        return motionProfile.targetVelocity / tToXDerivative;
     }
 
-    public void setCurrentSegment(int index){
+    public void setCurrentSegment(int index) {
         segIndex = index;
-        if(segIndex>0){
-            setCurrentPath(segments.get(segIndex-1).getWaypoint(), segments.get(segIndex).getWaypoint());
-            setMotionProfile(segments.get(segIndex-1).getWaypoint(), segments.get(segIndex));
-        }
-        else{
-            RFWaypoint curWaypoint = new RFWaypoint(currentPose,currentVelocity.vec().angle(),currentVelocity.vec().norm());
+        if (segIndex > 0) {
+            setCurrentPath(segments.get(segIndex - 1).getWaypoint(), segments.get(segIndex).getWaypoint());
+            setMotionProfile(segments.get(segIndex - 1).getWaypoint(), segments.get(segIndex));
+        } else {
+            RFWaypoint curWaypoint = new RFWaypoint(currentPose, currentVelocity.vec().angle(), currentVelocity.vec().norm());
             setCurrentPath(curWaypoint, segments.get(segIndex).getWaypoint());
             setMotionProfile(curWaypoint, segments.get(segIndex));
         }
@@ -101,6 +123,6 @@ public class RFTrajectory {
 
     public void clear() {
         segments.clear();
-        segIndex=-1;
+        segIndex = -1;
     }
 }
