@@ -3,6 +3,9 @@ package org.firstinspires.ftc.teamcode.roadrunner.drive;
 import static org.firstinspires.ftc.teamcode.roadrunner.drive.PoseStorage.currentPose;
 import static org.firstinspires.ftc.teamcode.roadrunner.drive.PoseStorage.currentVelocity;
 
+import static java.lang.Math.abs;
+import static java.lang.Math.pow;
+
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
 
@@ -16,11 +19,13 @@ public class CubicHermiteSpline {
     private double lengthResolution = 200;
     private double numericDerivResolution = 10000, travelDist=0;
     private double AVG_SCALE_FACTOR=1.2;
+    private double numericIntegral, numericT=0;
+    private double numericIntegralResolution = 0.001;
     private RFTrajectory traj;
-    private Vector2d endPos, endVel, lastPos;
+    private Vector2d endPos, endVel, lastPos, lastIntegralPos;
     Pose2d targetPose;
     Pose2d targetVelocity;
-    Pose2d targetAcceleration;
+//    Pose2d targetAcceleration;
     Pose2d instantaneousVelocity;
     Pose2d instantaneousAcceleration;
 
@@ -37,11 +42,11 @@ public class CubicHermiteSpline {
         coeffs.add(p_startVelo);
         coeffs.add(p_startPos.times(-3).minus(p_startVelo.times(2)).minus(p_endVelo).plus(p_endPos.times(3)));
         coeffs.add(p_startPos.times(2).plus(p_startVelo).plus(p_endVelo).minus(p_endPos.times(2)));
-        Vector2d lastPos = p_startPos;
+        Vector2d lastPose = p_startPos;
         for (int i = 1; i < lengthResolution; i++) {
             Vector2d newPos = poseAt(i / lengthResolution, coeffs);
-            length += Math.sqrt(newPos.distTo(lastPos));
-            lastPos = newPos;
+            length += Math.sqrt(newPos.distTo(lastPose));
+            lastPose = newPos;
         }
         //calc duration
         duration = traj.calculateSegmentDuration(length);
@@ -53,6 +58,7 @@ public class CubicHermiteSpline {
         coeffs.add(p_startPos.times(-3).minus(p_startVelo.times(2)).minus(p_endVelo).plus(p_endPos.times(3)));
         coeffs.add(p_startPos.times(2).plus(p_startVelo).plus(p_endVelo).minus(p_endPos.times(2)));
         lastPos = currentPose.vec();
+        lastIntegralPos = lastPos;
     }
 
     public double getLength() {
@@ -82,7 +88,40 @@ public class CubicHermiteSpline {
                 / ((vel.getY() * vel.getY()) / (vel.getX() * vel.getX()) + 1);
     }
 
-    public void calculateTargetPoseAt(double p_t) {
+    public double approximateT(double distance){
+        double switchTimes = 1, error = distance-numericIntegral;
+        boolean lastDirection = true;
+        if(error<0){
+            lastDirection=false;
+        }
+        while(abs(error)>numericIntegralResolution){
+            if(error>0){
+                if(!lastDirection){
+                    lastDirection = true;
+                    switchTimes++;
+                }
+                numericT+=Math.max(pow(0.1,switchTimes),numericIntegralResolution);
+                Vector2d newPos = poseAt(numericT,coeffs);
+                numericIntegral+=lastIntegralPos.distTo(newPos);
+                lastIntegralPos = newPos;
+            }
+            else{
+                if(lastDirection){
+                    lastDirection = false;
+                    switchTimes++;
+                }
+                numericT-=Math.max(pow(0.1,switchTimes),numericIntegralResolution);
+                Vector2d newPos = poseAt(numericT,coeffs);
+                numericIntegral-=lastIntegralPos.distTo(newPos);
+                lastIntegralPos = newPos;
+            }
+            error = distance-numericIntegral;
+        }
+        return numericT;
+    }
+
+    public void calculateTargetPoseAt(double distance) {
+        double p_t = approximateT(distance);
         Vector2d pose = poseAt(p_t, coeffs);
         Vector2d deriv = derivAt(p_t, coeffs);
         Vector2d scnDeriv = scndDerivAt(p_t, coeffs);
@@ -92,18 +131,19 @@ public class CubicHermiteSpline {
         double ttoTimeRatio = traj.timeToTRatio(deriv.norm());
         double angularVel = calcAngularVel(deriv.div(ttoTimeRatio), scnDeriv.div(ttoTimeRatio * ttoTimeRatio));
         targetVelocity = new Pose2d(velo, angularVel);
-        Vector2d accel = scnDeriv.times(1 / deriv.norm());
-        Vector2d deriv2 = derivAt(p_t + 1 / numericDerivResolution, coeffs);
-        Vector2d scnDeriv2 = scndDerivAt(p_t + 1 / numericDerivResolution, coeffs);
-        angularVel -= calcAngularVel(deriv2.div(ttoTimeRatio), scnDeriv2.div(ttoTimeRatio * ttoTimeRatio));
-        angularVel *= -1 * numericDerivResolution;
-        targetAcceleration = new Pose2d(accel, angularVel);
+        //calculated target Acceleration, not needed for PID
+//        Vector2d accel = scnDeriv.times(1 / deriv.norm());
+//        Vector2d deriv2 = derivAt(p_t + 1 / numericDerivResolution, coeffs);
+//        Vector2d scnDeriv2 = scndDerivAt(p_t + 1 / numericDerivResolution, coeffs);
+//        angularVel -= calcAngularVel(deriv2.div(ttoTimeRatio), scnDeriv2.div(ttoTimeRatio * ttoTimeRatio));
+//        angularVel *= -1 * numericDerivResolution;
+//        targetAcceleration = new Pose2d(accel, angularVel);
     }
 
     public void calculateInstantaneousTargetPose() {
         Vector2d curPos = currentPose.vec();
         Vector2d curVel = currentVelocity.vec();
-        double remDuration = traj.remainingSegmentTime(getRemDistance());
+        double remDuration = traj.remainingSegmentTime(length-travelDist);
         Vector2d curVelo = curVel.times(remDuration);
         Vector2d endVelo = endVel.times(remDuration);
         ArrayList<Vector2d> tempCoeffs = new ArrayList();

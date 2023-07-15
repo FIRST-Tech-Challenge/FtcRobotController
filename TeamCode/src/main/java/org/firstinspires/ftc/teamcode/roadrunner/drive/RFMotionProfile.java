@@ -24,7 +24,7 @@ public class RFMotionProfile {
     public RFMotionProfile(Vector2d p_startVel, Vector2d p_endVel, double p_curviness) {
         curviness = min(p_curviness, 1);
         //convert from percentage to slope
-        c = 2 * MAX_ACCEL * MAX_ACCEL * (1 - curviness) / (curviness * MAX_VEL);
+        c = 2 * MAX_ACCEL * MAX_ACCEL * (1 - curviness*0.5) / (curviness*0.5 * MAX_VEL);
         velo1 = MAX_ACCEL * MAX_ACCEL / (2 * c * c * c);
         velo2 = MAX_VEL - velo1;
         endVel = p_endVel.norm();
@@ -36,6 +36,10 @@ public class RFMotionProfile {
             length = p_length;
             calculateTList(length);
         }
+    }
+
+    public boolean isProfileDone(double time) {
+        return time>tList.get(7)-tList.get(8);
     }
 
     public double getInstantaneousTargetAcceleration(double dist) {

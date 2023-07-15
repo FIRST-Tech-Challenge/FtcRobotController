@@ -4,8 +4,10 @@ import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.time;
 import static org.firstinspires.ftc.teamcode.roadrunner.drive.PoseStorage.currentPose;
 import static org.firstinspires.ftc.teamcode.roadrunner.drive.PoseStorage.currentVelocity;
 
+import static java.lang.Math.abs;
 import static java.lang.Math.cos;
 import static java.lang.Math.sin;
+import static java.lang.Math.toRadians;
 
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
@@ -18,6 +20,7 @@ public class RFTrajectory {
     RFMotionProfile motionProfile;
     RFWaypoint startPoint;
     int segIndex = -1;
+    double transAccuracy = 0.5, headingAccuracy = toRadians(30);
 
     public RFTrajectory() {
         segments = new ArrayList();
@@ -36,20 +39,67 @@ public class RFTrajectory {
         segments.get(segments.size() - 3).setCompiled(false);
     }
 
-    public Pose2d getTargetVelocity() {
-        return null;
+    public Pose2d getTargetPosition() {
+        return currentPath.targetPose;
     }
 
-    public Pose2d getTargetAcceleration() {
-        return null;
+    public void updateSegments(){
+        if(segIndex==-1){
+            setCurrentSegment(0);
+        }
+        else if(segIndex+1<segments.size()){
+            if(motionProfile.isProfileDone(time)){
+                setCurrentSegment(segIndex+1);
+            }
+        }
+        else{
+            Pose2d curPos = currentPose;
+            Pose2d targetPos = segments.get(segIndex).getWaypoint().getTarget();
+            if(curPos.vec().distTo(targetPos.vec())<0.5&&abs(angleDist(curPos.getHeading(),targetPos.getHeading()+getTangentOffset()))<headingAccuracy){
+                segments.clear();
+            }
+        }
     }
+
+    public double angleDist(double ang1, double ang2){
+        double dist = ang1-ang2;
+        if(dist>180){
+            dist-=360;
+        }
+        else if (dist<-180){
+            dist+=360;
+        }
+        return dist;
+    }
+
+    public double getTangentOffset(){
+        return segments.get(segIndex).getTangentOffset();
+    }
+
+    //run before getTargetPosition
+    public Pose2d getTargetVelocity() {
+        double veloMag = motionProfile.calculateTargetVelocity(time);
+        currentPath.calculateTargetPoseAt(motionProfile.motionProfileTimeToDist(time));
+        Pose2d veloRatio = currentPath.targetVelocity;
+        return new Pose2d(veloRatio.vec().times(veloMag), veloRatio.getHeading());
+    }
+    //not needed for PID
+//    public Pose2d getTargetAcceleration() {
+//        return null;
+//    }
 
     public Pose2d getInstantaneousTargetVelocity() {
-        return null;
+        return currentPath.instantaneousVelocity;
     }
 
+    //run this before getInstanTaneousTargetVelosity
     public Pose2d getInstantaneousTargetAcceleration() {
-        return null;
+        double accelMag = motionProfile.getInstantaneousTargetAcceleration(currentPath.getRemDistance());
+        currentPath.calculateInstantaneousTargetPose();
+        Pose2d pathAccel = currentPath.instantaneousAcceleration;
+        double projectMag = pathAccel.vec().dot(currentVelocity.vec());
+        Vector2d projectedDiff = currentVelocity.vec().times(projectMag / currentVelocity.vec().norm()).times(1 - (accelMag / projectMag));
+        return new Pose2d(pathAccel.vec().minus(projectedDiff), pathAccel.getHeading());
     }
 
 
