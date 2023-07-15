@@ -93,13 +93,13 @@ public class Constants {
     }
 
     public enum Position {
-        ORIGIN(new Pose2d(0, 9, Math.toRadians(0))), //not a legal starting position - should never be actually used
+        ORIGIN_DEFAULT (new Pose2d(0, 0, 0)), //this if used will reset the origin to FTC Dashboard's default
+        ORIGIN_ALLIANCE_RED (new Pose2d(0, 12*6, 0)), //these origin redefinitions are relative to the FTC Dashboard default which is different from a Canvas default
+        ORIGIN_ALLIANCE_BLUE (new Pose2d(0, -12*6, Math.PI)),
+        ORIGIN_6CAN (new Pose2d(-5*12, 0, Math.toRadians(0))),
         START_LEFT(new Pose2d(9, 1.5 * Field.INCHES_PER_GRID, Math.toRadians(0))),
         START_RIGHT(new Pose2d(9, -1.5 * Field.INCHES_PER_GRID, Math.toRadians(0))),
-        START_SIXCAN(new Pose2d(9, 0, Math.toRadians(90))),
-
-        RED_SHIPPING_HUB(new Pose2d(-12, -24)),
-        BLUE_SHIPPING_HUB(new Pose2d(-12, 24));
+        START_SIXCAN(new Pose2d(9, 0, Math.toRadians(0)));
 
         private final Pose2d pose;
 

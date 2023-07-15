@@ -82,7 +82,27 @@ public class DashboardUtil {
         canvas.strokeLine(x1, y1, x2, y2);
     }
 
-    public static void drawRobot(Canvas canvas, Pose2d pose, List<Double> wheelVelocities, double turretHeading, double shoulderAngle, double extendInches, Vector3 fieldPositionTarget, List<Target> targets) {
+    public static void drawRobot(Canvas canvas, Constants.Position origin, Pose2d pose, List<Double> wheelVelocities, double turretHeading, double shoulderAngle, double extendInches, Vector3 fieldPositionTarget, List<Target> targets) {
+        //set the origin for subsequent drawing coordinate
+        canvas.setRotation(origin.getPose().headingVec().angle());
+        canvas.setTranslation(origin.getPose().getX(), origin.getPose().getY());
+
+        //override the field image if needed
+        if(origin.equals(Constants.Position.ORIGIN_6CAN)) //different competition
+            canvas.setAltImage("/dash/assets/dprg6can.svg", 0,0, 144, 144,true);
+
+        //draw the origin
+        boolean offsetLabel = (origin.equals(Constants.Position.ORIGIN_ALLIANCE_RED) || origin.equals(Constants.Position.ORIGIN_6CAN))? true: false;
+        canvas.setStrokeWidth(1);
+        canvas.setStroke("red");
+        canvas.strokeLine(0,0,24,0); //x axis
+        canvas.setFill("red");
+        canvas.fillText("X axis", 0, 0,"8px Arial", 0);
+        canvas.setStroke("green");
+        canvas.strokeLine(0,0,0,24); //y axis
+        canvas.setFill("green");
+        canvas.fillText("Y axis", (offsetLabel? -24: 0), 0,"8px Arial", Math.PI/2 * (offsetLabel? -1: 1));
+
         // calculating wheel positions
         Vector2d position = pose.vec();
         Vector2d leftWheel = new Vector2d(0, TRACK_WIDTH / 2);

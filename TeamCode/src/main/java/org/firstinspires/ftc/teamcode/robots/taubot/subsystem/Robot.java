@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.robots.taubot.subsystem;
 
+import static org.firstinspires.ftc.teamcode.robots.taubot.PowerPlay_6832.origin;
 import static org.firstinspires.ftc.teamcode.robots.taubot.util.Constants.MAX_CHASSIS_LENGTH;
 import static org.firstinspires.ftc.teamcode.robots.taubot.util.Constants.MIN_SAFE_CHASSIS_LENGTH;
 import static org.firstinspires.ftc.teamcode.robots.taubot.util.Utils.craneIK;
@@ -271,7 +272,7 @@ public class Robot implements Subsystem {
 
         Utils.matToBitmap(craneMat, craneBitmap);
 
-        DashboardUtil.drawRobot(fieldOverlay, driveTrain.getPoseEstimate(), driveTrain.getWheelVelocities(), turret.getHeading(), crane.getShoulderAngle(), crane.getExtendInches(), crane.fieldPositionTarget, targets);
+        DashboardUtil.drawRobot(fieldOverlay, origin, driveTrain.getPoseEstimate(), driveTrain.getWheelVelocities(), turret.getHeading(), crane.getShoulderAngle(), crane.getExtendInches(), crane.fieldPositionTarget, targets);
     }
 
     public Bitmap getBitmap() {

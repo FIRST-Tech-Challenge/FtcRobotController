@@ -658,7 +658,7 @@ public class Autonomous implements TelemetryProvider {
                 break;
             case 1:
                 //start facing right and turn left until pointing down the field
-                if (robot.driveTrain.turnUntilDegrees(90)) {
+                if (robot.driveTrain.turnUntilDegrees(0)) {
                     sixCanStage++; //progress to next stage
                 }
                 break;

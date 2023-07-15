@@ -91,6 +91,8 @@ public class PowerPlay_6832 extends OpMode {
     private boolean initializing, smoothingEnabled;
     public static boolean numericalDashboardEnabled = false;
     static Constants.Alliance alliance;
+
+    public static Constants.Position origin;
     static Constants.Position startingPosition;
     static boolean targetAltPole = false;
     public static GameState gameState = GameState.AUTONOMOUS;
@@ -224,9 +226,12 @@ public class PowerPlay_6832 extends OpMode {
         // gamepads
         dc = new DriverControls(gamepad1,gamepad2);
 
-        //auton setup
+        //default auton setup
         alliance = Constants.Alliance.RED;
-        startingPosition = Constants.Position.START_RIGHT;
+        //origin = Constants.Position.ORIGIN_ALLIANCE_RED;
+        origin = origin = Constants.Position.ORIGIN_6CAN;
+        //startingPosition = Constants.Position.START_RIGHT;
+        startingPosition = Constants.Position.START_SIXCAN;
         auto = new Autonomous(robot);
 
         //todo this is really hinky - finalizing the vision provider in init() is way too soon - prevents selecting alternates during init_loop()
@@ -265,7 +270,10 @@ public class PowerPlay_6832 extends OpMode {
 
         //run all driver controls needed in init_loop
         dc.init_loop();
+
+        //jankily inserting 6can here
         if (RunSixCan) {
+            origin = Constants.Position.ORIGIN_6CAN;
             if (auto.SixCan()) {
                 RunSixCan = false; //thinks it completed
                 robot.driveTrain.stop();
