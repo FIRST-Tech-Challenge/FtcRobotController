@@ -24,7 +24,7 @@ public class Gripper extends HWMap {
         return degrees;
     }
     public void run(Controller controller){
-        if(controller.leftBumper){
+        if(controller.gamePad1LBumper){
             canGrip = !canGrip;
         }
         if(canGrip){

@@ -9,10 +9,11 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
-import org.firstinspires.ftc.teamcode.Mechanism.ConeTransporter;
+import org.firstinspires.ftc.teamcode.Mechanism.LinearSlides;
 import org.firstinspires.ftc.teamcode.Auto.RR.drive.DriveConstants;
 import org.firstinspires.ftc.teamcode.Auto.RR.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.Auto.RR.trajectorysequence.TrajectorySequence;
+import org.firstinspires.ftc.teamcode.Mechanism.RetractOdo;
 import org.openftc.apriltag.AprilTagDetection;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
@@ -43,7 +44,8 @@ import java.util.ArrayList;
      int RIGHT = 3;
      AprilTagDetection tagOfInterest = null;
      private SampleMecanumDrive drive;
-     private ConeTransporter coneTransporter;
+     private LinearSlides linearSLides;
+     private RetractOdo retractOdo;
      private ElapsedTime timer;
      public boolean coneTransportedSetup = false;
      public double startHeading;
@@ -102,7 +104,8 @@ import java.util.ArrayList;
      @Override
      public void runOpMode() {
          drive = new SampleMecanumDrive(hardwareMap);
-         coneTransporter = new ConeTransporter(telemetry, hardwareMap);
+         linearSLides = new LinearSlides(telemetry, hardwareMap);
+         retractOdo = new RetractOdo(telemetry, hardwareMap);
          timer = new ElapsedTime();
          imu = this.hardwareMap.get(BNO055IMU.class, "imu");
 
@@ -132,9 +135,9 @@ import java.util.ArrayList;
              }
              ArrayList<AprilTagDetection> currentDetections = detection.getLatestDetections();
              if (!coneTransportedSetup) {
-                 coneTransporter.unretractOdometryServos();
-                 coneTransporter.linearSlides.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-                 coneTransporter.setGripperPosition(.75);
+                 retractOdo.unretractOdometryServos();
+                 linearSLides.linearSlides.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+                 linearSLides.setGripperPosition(.75);
                  sleep(2000);
                  sleep(2000);
                  coneTransportedSetup = true;
@@ -209,22 +212,22 @@ import java.util.ArrayList;
                  //dropping the preload__________________________________________________________________________
                  .waitSeconds(autoDelay)
                  .UNSTABLE_addTemporalMarkerOffset(0, () -> {
-                     coneTransporter.setHeight(ConeTransporter.equate(ConeTransporter.LINEAR_SLIDES_NORM + 35));
+                     linearSLides.setHeight(LinearSlides.Ls.NORM.level + 35);
                  })
                  .lineToLinearHeading(new Pose2d(-36, 36, Math.toRadians(270)))
                  .UNSTABLE_addTemporalMarkerOffset(0.0, () -> {
-                     coneTransporter.setHeight(ConeTransporter.equate(ConeTransporter.LINEAR_SLIDES_MEDIUM));
+                     linearSLides.setHeight(LinearSlides.Ls.MEDIUM.level);
                  })
                  .strafeLeft(11.5)
                  .forward(3)
                  .UNSTABLE_addTemporalMarkerOffset(0, () -> {
-                     coneTransporter.setGripperPosition(1.0);
+                     linearSLides.setGripperPosition(1.0);
                  })
                  .waitSeconds(0.15)
                  .back(3)
                  .lineToLinearHeading(new Pose2d(-34 + (-24 * numericalTag), 36, Math.toRadians(270)), SampleMecanumDrive.getVelocityConstraint(48.0, 3.0, DriveConstants.TRACK_WIDTH), SampleMecanumDrive.getAccelerationConstraint(48.0))
                  .UNSTABLE_addTemporalMarkerOffset(0.0, () -> {
-                     coneTransporter.setHeight(ConeTransporter.equate(ConeTransporter.LINEAR_SLIDES_IN_CONE));
+                     linearSLides.setHeight(LinearSlides.Ls.IN_CONE.level);
                  })
                  .waitSeconds(3)
                  .build();
@@ -238,7 +241,7 @@ import java.util.ArrayList;
              }
              //coneTransporter.retractOdometryServos();
              //.imuAngle = readFromIMU();
-             coneTransporter.loop();
+             linearSLides.loop();
              //telemetry.update();
              drive.update();
              //if(imuTimer.time() - lastIMUCall >= .1 && drive.getPoseVelocity().vec().norm() < 5.0) {

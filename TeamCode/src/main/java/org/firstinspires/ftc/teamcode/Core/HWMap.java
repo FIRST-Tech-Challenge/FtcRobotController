@@ -42,7 +42,7 @@ public class HWMap {
     public ColorSensor middleCS;
 
     //Other Variables
-    HardwareMap hardwareMap;
+    public HardwareMap hardwareMap;
     public Telemetry telemetry;
     public ElapsedTime timer = new ElapsedTime();
 

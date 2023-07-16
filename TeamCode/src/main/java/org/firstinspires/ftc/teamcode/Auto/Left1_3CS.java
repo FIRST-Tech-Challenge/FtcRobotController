@@ -3,17 +3,17 @@ package org.firstinspires.ftc.teamcode.Auto;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.lynx.LynxModule;
-import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.teamcode.Mechanism.ColorSensorMech;
-import org.firstinspires.ftc.teamcode.Mechanism.ConeTransporter;
+import org.firstinspires.ftc.teamcode.Mechanism.LinearSlides;
 import org.firstinspires.ftc.teamcode.Auto.RR.drive.DriveConstants;
 import org.firstinspires.ftc.teamcode.Auto.RR.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.Auto.RR.trajectorysequence.TrajectorySequence;
+import org.firstinspires.ftc.teamcode.Mechanism.RetractOdo;
 import org.openftc.apriltag.AprilTagDetection;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
@@ -44,7 +44,8 @@ public class Left1_3CS extends LinearOpMode {
     int RIGHT = 3;
     AprilTagDetection tagOfInterest = null;
     private SampleMecanumDrive drive;
-    private ConeTransporter coneTransporter;
+    private LinearSlides linearSLides;
+    private RetractOdo retractOdo;
     private ColorSensorMech colorSensorMech;
     private ElapsedTime timer;
     public boolean coneTransportedSetup = false;
@@ -104,7 +105,8 @@ public class Left1_3CS extends LinearOpMode {
     @Override
     public void runOpMode() {
         drive = new SampleMecanumDrive(hardwareMap);
-        coneTransporter = new ConeTransporter(telemetry, hardwareMap);
+        linearSLides = new LinearSlides(telemetry, hardwareMap);
+        retractOdo = new RetractOdo(telemetry, hardwareMap);
         colorSensorMech = new ColorSensorMech(telemetry, hardwareMap);
         timer = new ElapsedTime();
         imu = this.hardwareMap.get(BNO055IMU.class, "imu");
@@ -132,9 +134,9 @@ public class Left1_3CS extends LinearOpMode {
             }
             ArrayList<AprilTagDetection> currentDetections = detection.getLatestDetections();
             if (!coneTransportedSetup) {
-                coneTransporter.unretractOdometryServos();
-                coneTransporter.linearSlides.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-                coneTransporter.setGripperPosition(.75);
+                retractOdo.unretractOdometryServos();
+                linearSLides.linearSlides.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+                linearSLides.setGripperPosition(.75);
                 sleep(2000);
                 sleep(2000);
                 coneTransportedSetup = true;
@@ -209,15 +211,15 @@ public class Left1_3CS extends LinearOpMode {
                 //dropping the preload__________________________________________________________________________
                 .waitSeconds(autoDelay)
                 .UNSTABLE_addTemporalMarkerOffset(0, () -> {
-                    coneTransporter.setHeight(ConeTransporter.equate(ConeTransporter.LINEAR_SLIDES_NORM + 35));
+                    linearSLides.setHeight(LinearSlides.Ls.NORM.level + 35);
                 })
                 .lineToLinearHeading(new Pose2d(36, 12, Math.toRadians(269.9)))
                 .UNSTABLE_addTemporalMarkerOffset(0.0, () -> {
-                    coneTransporter.setHeight(ConeTransporter.equate(ConeTransporter.LINEAR_SLIDES_LOW));
+                    linearSLides.setHeight(LinearSlides.Ls.LOW.level);
                 })
                 .lineToLinearHeading(new Pose2d(preJCTX+preXOff+F_preXOff, preJCTY+preYOff+F_preYOff, Math.toRadians(90)), SampleMecanumDrive.getVelocityConstraint(35.0, 2.5, DriveConstants.TRACK_WIDTH), SampleMecanumDrive.getAccelerationConstraint(35))
                 .UNSTABLE_addTemporalMarkerOffset(0, () -> {
-                    coneTransporter.setGripperPosition(1.0);
+                    linearSLides.setGripperPosition(1.0);
                     telemetry.addData("IMUAngle", drive.getExternalHeading());
                     drive.setPoseEstimate(new Pose2d(drive.getPoseEstimate().getX(), drive.getPoseEstimate().getY(), drive.getPoseEstimate().getHeading())); //(readFromIMU() + Math.toRadians(90)) % Math.toRadians(360))
                 })
@@ -225,7 +227,7 @@ public class Left1_3CS extends LinearOpMode {
                 //TODO: CYCLE #1________________________________________________________________________________________
                 //* 15 Out of Cone
                 .UNSTABLE_addTemporalMarkerOffset(0.6, () -> {
-                    coneTransporter.setHeight(ConeTransporter.equate(ConeTransporter.AUTO_LINEAR_SLIDES_15));
+                    linearSLides.setHeight(LinearSlides.Stack.ABOVE_CONE_5.level);
                 })
                 // Go to Stack
                 .setTangent(Math.toRadians(300))
@@ -240,15 +242,15 @@ public class Left1_3CS extends LinearOpMode {
                 .lineToLinearHeading(new Pose2d(stackX + stackXOff + 3, stackY + stackYOff, Math.toRadians(0)))
                 // Go into Cone -> Grab -> Slides low Junction
                 .UNSTABLE_addTemporalMarkerOffset(0.2, () -> {
-                    coneTransporter.setHeight(ConeTransporter.equate(ConeTransporter.AUTO_LINEAR_SLIDES_15_IN_CONE));
+                    linearSLides.setHeight(LinearSlides.Stack.INSIDE_CONE_5.level);
                 })
                 .waitSeconds(.65)
                 .UNSTABLE_addTemporalMarkerOffset(0, () -> {
-                    coneTransporter.setGripperPosition(.75);
+                    linearSLides.setGripperPosition(.75);
                 })
                 .waitSeconds(.25)
                 .UNSTABLE_addTemporalMarkerOffset(0, () -> {
-                    coneTransporter.setHeight(ConeTransporter.equate(ConeTransporter.LINEAR_SLIDES_LOW));
+                    linearSLides.setHeight(LinearSlides.Ls.LOW.level);
                 })
                 .waitSeconds(.2)
                 // Stack -> Junction
@@ -256,13 +258,13 @@ public class Left1_3CS extends LinearOpMode {
                 .splineToLinearHeading(new Pose2d((cycleJCTX + cycleXOff + F_cycleXOff1), (cycleJCTY + cycleYOff + F_cycleYOff1), Math.toRadians(90 + F_cycleAngOff1)), Math.toRadians(90))
                 // Dropping Cone
                 .UNSTABLE_addTemporalMarkerOffset(0, () -> {
-                    coneTransporter.setGripperPosition(1.0);
+                    linearSLides.setGripperPosition(1.0);
                 })
                 .waitSeconds(0.05)
                 //TODO: CYCLE #2________________________________________________________________________________________
                 //* 15 Out of Cone
                 .UNSTABLE_addTemporalMarkerOffset(0.6, () -> {
-                    coneTransporter.setHeight(ConeTransporter.equate(ConeTransporter.AUTO_LINEAR_SLIDES_15));
+                    linearSLides.setHeight(LinearSlides.Stack.ABOVE_CONE_5.level);
                 })
                 // Go to Stack
                 .setTangent(Math.toRadians(300))
@@ -277,15 +279,15 @@ public class Left1_3CS extends LinearOpMode {
                 .lineToLinearHeading(new Pose2d(stackX + stackXOff + 3, stackY + stackYOff, Math.toRadians(0)))
                 // Go into Cone -> Grab -> Slides low Junction
                 .UNSTABLE_addTemporalMarkerOffset(0.2, () -> {
-                    coneTransporter.setHeight(ConeTransporter.equate(ConeTransporter.AUTO_LINEAR_SLIDES_14_IN_CONE));
+                    linearSLides.setHeight(LinearSlides.Stack.INSIDE_CONE_4.level);
                 })
                 .waitSeconds(.65)
                 .UNSTABLE_addTemporalMarkerOffset(0, () -> {
-                    coneTransporter.setGripperPosition(.75);
+                    linearSLides.setGripperPosition(.75);
                 })
                 .waitSeconds(.25)
                 .UNSTABLE_addTemporalMarkerOffset(0, () -> {
-                    coneTransporter.setHeight(ConeTransporter.equate(ConeTransporter.LINEAR_SLIDES_LOW));
+                    linearSLides.setHeight(LinearSlides.Ls.LOW.level);
                 })
                 .waitSeconds(.2)
                 // Stack -> Junction
@@ -293,13 +295,13 @@ public class Left1_3CS extends LinearOpMode {
                 .splineToLinearHeading(new Pose2d((cycleJCTX + cycleXOff + F_cycleXOff2), (cycleJCTY + cycleYOff + F_cycleYOff2), Math.toRadians(90 + F_cycleAngOff2)), Math.toRadians(90))
                 // Dropping Cone
                 .UNSTABLE_addTemporalMarkerOffset(0, () -> {
-                    coneTransporter.setGripperPosition(1.0);
+                    linearSLides.setGripperPosition(1.0);
                 })
                 .waitSeconds(0.05)
                 //TODO: CYCLE #3________________________________________________________________________________________
                 //* 15 Out of Cone
                 .UNSTABLE_addTemporalMarkerOffset(0.6, () -> {
-                    coneTransporter.setHeight(ConeTransporter.equate(ConeTransporter.AUTO_LINEAR_SLIDES_15));
+                    linearSLides.setHeight(LinearSlides.Stack.ABOVE_CONE_5.level);
                 })
                 // Go to Stack
                 .splineToLinearHeading(new Pose2d((stackX + F_stackXOff1), (stackY + stackYOff + F_stackYOff1), Math.toRadians(0 + F_stackAngOff1)), Math.toRadians(35))
@@ -313,15 +315,15 @@ public class Left1_3CS extends LinearOpMode {
                 .lineToLinearHeading(new Pose2d(stackX + stackXOff + 3, stackY + stackYOff, Math.toRadians(0)))
                 // Go into Cone -> Grab -> Slides low Junction
                 .UNSTABLE_addTemporalMarkerOffset(0.2, () -> {
-                    coneTransporter.setHeight(ConeTransporter.equate(ConeTransporter.AUTO_LINEAR_SLIDES_13_IN_CONE));
+                    linearSLides.setHeight(LinearSlides.Stack.INSIDE_CONE_3.level);
                 })
                 .waitSeconds(.65)
                 .UNSTABLE_addTemporalMarkerOffset(0, () -> {
-                    coneTransporter.setGripperPosition(.75);
+                    linearSLides.setGripperPosition(.75);
                 })
                 .waitSeconds(.25)
                 .UNSTABLE_addTemporalMarkerOffset(0, () -> {
-                    coneTransporter.setHeight(ConeTransporter.equate(ConeTransporter.LINEAR_SLIDES_LOW));
+                    linearSLides.setHeight(LinearSlides.Ls.LOW.level);
                 })
                 .waitSeconds(.2)
                 // Stack -> Junction
@@ -329,17 +331,17 @@ public class Left1_3CS extends LinearOpMode {
                 .splineToLinearHeading(new Pose2d((cycleJCTX + cycleXOff + F_cycleXOff3), (cycleJCTY + cycleYOff + F_cycleYOff3), Math.toRadians(90 + F_cycleAngOff3)), Math.toRadians(90))
                 // Dropping Cone
                 .UNSTABLE_addTemporalMarkerOffset(0, () -> {
-                    coneTransporter.setGripperPosition(1.0);
+                    linearSLides.setGripperPosition(1.0);
                 })
                 .waitSeconds(0.05)
                 //TODO: PARKING______________________________________________________________________________________
                 .UNSTABLE_addTemporalMarkerOffset(1, () -> {
-                    coneTransporter.setHeight(ConeTransporter.equate(ConeTransporter.LINEAR_SLIDES_NORM));
+                    linearSLides.setHeight(LinearSlides.Ls.NORM.level);
                 })
                 .lineToLinearHeading(new Pose2d(34 + (-24 * numericalTag), 12, Math.toRadians(271)), SampleMecanumDrive.getVelocityConstraint(48.0, 3.0, DriveConstants.TRACK_WIDTH), SampleMecanumDrive.getAccelerationConstraint(48.0))
                 .back(14)
                 .UNSTABLE_addTemporalMarkerOffset(0, () -> {
-                    coneTransporter.setHeight(ConeTransporter.equate(ConeTransporter.LINEAR_SLIDES_IN_CONE));
+                    linearSLides.setHeight(LinearSlides.Ls.IN_CONE.level);
                 })
                 .waitSeconds(3)
                 .build();
@@ -353,7 +355,7 @@ public class Left1_3CS extends LinearOpMode {
             }
             //coneTransporter.retractOdometryServos();
             //imuAngle = readFromIMU();
-            coneTransporter.loop();
+            linearSLides.loop();
             //telemetry.update();
             drive.update();
             //if(imuTimer.time() - lastIMUCall >= .1 && drive.getPoseVelocity().vec().norm() < 5.0) {

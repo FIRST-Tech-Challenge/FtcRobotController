@@ -4,19 +4,20 @@ import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
 import org.firstinspires.ftc.teamcode.Auto.RR.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.Auto.RR.trajectorysequence.TrajectorySequence;
 import org.firstinspires.ftc.teamcode.Mechanism.ColorSensorMech;
-import org.firstinspires.ftc.teamcode.Mechanism.ConeTransporter;
+import org.firstinspires.ftc.teamcode.Mechanism.LinearSlides;
+import org.firstinspires.ftc.teamcode.Mechanism.RetractOdo;
 
 @Autonomous
 public class ColorSensorTest extends LinearOpMode {
 
     private SampleMecanumDrive drive;
-    private ConeTransporter coneTransporter;
+    private LinearSlides linearSLides;
+    private RetractOdo retractOdo;
     private ColorSensorMech colorSensorMech;
     public boolean coneTransportedSetup = false;
     private double startX = 36.0;
@@ -29,8 +30,9 @@ public class ColorSensorTest extends LinearOpMode {
     public void runOpMode() {
 
         drive = new SampleMecanumDrive(hardwareMap);
-        coneTransporter = new ConeTransporter(telemetry, hardwareMap);
+        linearSLides = new LinearSlides(telemetry, hardwareMap);
         colorSensorMech = new ColorSensorMech(telemetry, hardwareMap);
+        retractOdo = new RetractOdo(telemetry, hardwareMap);
 
         telemetry.addData("At least something is happening", "Hello");
 
@@ -40,9 +42,9 @@ public class ColorSensorTest extends LinearOpMode {
                 module.setBulkCachingMode(LynxModule.BulkCachingMode.MANUAL);
             }
             if (!coneTransportedSetup) {
-                coneTransporter.unretractOdometryServos();
-                coneTransporter.linearSlides.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-                coneTransporter.setGripperPosition(.75);
+                retractOdo.unretractOdometryServos();
+                linearSLides.linearSlides.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+                linearSLides.setGripperPosition(.75);
                 sleep(2000);
                 sleep(2000);
                 coneTransportedSetup = true;

@@ -2,10 +2,9 @@ package org.firstinspires.ftc.teamcode.Teleop;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.hardware.DcMotor;
-import org.firstinspires.ftc.teamcode.Core.HWMap;
+
 import org.firstinspires.ftc.teamcode.Core.Controller;
-import org.firstinspires.ftc.teamcode.Mechanism.ConeTransporter;
+import org.firstinspires.ftc.teamcode.Mechanism.LinearSlides;
 
 import java.util.Objects;
 
@@ -15,7 +14,7 @@ public class TeleopV1 extends LinearOpMode {
     // declare class variables here
     private Controller controller;
     private FieldCentricDrive fieldCentricDrive;
-    private ConeTransporter coneTransporter;
+    private LinearSlides linearSLides;
     // Check if B is pressed
     private boolean b_Press = false;
     public int triggerPressCount = 0;
@@ -33,7 +32,7 @@ public class TeleopV1 extends LinearOpMode {
             // setup
             controller = new Controller(gamepad1, gamepad2);
             fieldCentricDrive = new FieldCentricDrive(telemetry, hardwareMap);
-            coneTransporter = new ConeTransporter(telemetry, hardwareMap);
+            linearSLides = new LinearSlides(telemetry, hardwareMap);
 
 
         } catch (Exception exception) {
@@ -48,7 +47,7 @@ public class TeleopV1 extends LinearOpMode {
         }
 
         telemetry.update();
-        coneTransporter.init();
+        linearSLides.init();
         TIP tip = TIP.NOT_TIPPING;
         waitForStart();
         while (opModeIsActive()) {
@@ -88,79 +87,79 @@ public class TeleopV1 extends LinearOpMode {
 
                 }
 
-                if (controller.dpadDown){
-                    coneTransporter.zeroMode = true;
+                if (controller.gamePad1DpadDown){
+                    linearSLides.zeroMode = true;
                 }
 
                 //Code for each stack Height
-                if (controller.y) {
-                    coneTransporter.automation = false;
+                if (controller.y1) {
+                    linearSLides.automation = false;
                     stackState = false;
                     triggerPressCount = 0;
-                    coneTransporter.setHeight(coneTransporter.equate(coneTransporter.LINEAR_SLIDES_HIGH));
-                    coneTransporter.ledTimer.reset();
-                } else if (controller.a) {
-                    coneTransporter.automation = false;
+                    linearSLides.setHeight(LinearSlides.Ls.HIGH.level);
+                    linearSLides.ledTimer.reset();
+                } else if (controller.a1) {
+                    linearSLides.automation = false;
                     stackState = false;
                     triggerPressCount = 0;
-                    coneTransporter.setHeight(coneTransporter.equate(coneTransporter.LINEAR_SLIDES_LOW));
-                    coneTransporter.ledTimer.reset();
+                    linearSLides.setHeight(LinearSlides.Ls.LOW.level);
+                    linearSLides.ledTimer.reset();
 
-                } else if (controller.x) {
-                    coneTransporter.automation = false;
+                } else if (controller.x1) {
+                    linearSLides.automation = false;
                     stackState = false;
                     triggerPressCount = 0;
-                    coneTransporter.setHeight(coneTransporter.equate(coneTransporter.LINEAR_SLIDES_MEDIUM));
-                    coneTransporter.ledTimer.reset();
-                } else if (controller.rightTrigger) {
-                    coneTransporter.automation = false;
+                    linearSLides.setHeight(LinearSlides.Ls.MEDIUM.level);
+                    linearSLides.ledTimer.reset();
+                } else if (controller.gamePad1RTrigger) {
+                    linearSLides.automation = false;
                     stackState = false;
                     triggerPressCount = 0;
-                    coneTransporter.setHeight(coneTransporter.equate(32));
+                    linearSLides.setHeight(32);
                 }
 
                 //This will check if b is pressed if yes then it will check the position of the slides and decide where it should go
-                if (controller.b & !b_Press) {
-                    coneTransporter.ledTimer.reset();
-                    coneTransporter.automation = false;
+                if (controller.b1 & !b_Press) {
+                    linearSLides.ledTimer.reset();
+                    linearSLides.automation = false;
                     b_Press = true;
                     stackState = false;
                     triggerPressCount = 0;
-                    if (coneTransporter.target == coneTransporter.equate(coneTransporter.LINEAR_SLIDES_NORM)) {
-                        coneTransporter.setHeight(coneTransporter.equate(coneTransporter.LINEAR_SLIDES_IN_CONE));
+                    if (linearSLides.target == LinearSlides.Ls.NORM.level) {
+                        linearSLides.setHeight(LinearSlides.Ls.IN_CONE.level);
                     } else {
-                        coneTransporter.setHeight(coneTransporter.equate(coneTransporter.LINEAR_SLIDES_NORM));
+                        linearSLides.setHeight(LinearSlides.Ls.NORM.level);
                     }
                 } else {
                     b_Press = false;
                 }
 
-                if (controller.leftTrigger) {
-                    if(!stackState && (coneTransporter.linearSlides.getTargetPosition() != coneTransporter.equate(coneTransporter.AUTO_LINEAR_SLIDES_15))){
-                        coneTransporter.ledTimer.reset();
-                        coneTransporter.automation = false;
-                        coneTransporter.setHeight((coneTransporter.equate(coneTransporter.AUTO_LINEAR_SLIDES_15)));
+                if (controller.gamePad1LTrigger) {
+                    if(!stackState && (linearSLides.linearSlides.getTargetPosition() != LinearSlides.Stack.ABOVE_CONE_5.level)){
+                        linearSLides.ledTimer.reset();
+                        linearSLides.automation = false;
+                        linearSLides.setHeight(LinearSlides.Stack.ABOVE_CONE_5.level);
                         stackState = true;
                     } else {
-                        coneTransporter.automation = true;
-                        coneTransporter.setGripperPosition(1.0);
-                        coneTransporter.coneSense();
+                        linearSLides.automation = true;
+                        linearSLides.setGripperPosition(1.0);
+                        linearSLides.coneSense();
                         stackState = false;
                     }
                     tip = TIP.ON_STACKS;
                 }
-                coneTransporter.coneSense();
+                linearSLides.coneSense();
 
                 //GRIPPER__________________________________________________________________________________
 
-                if (controller.leftBumper && !(controller.rightBumper)) {
+                if (controller.gamePad1LBumper && !(controller.gamePad1RBumper)) {
                     triggerPressCount = 0;
-                    coneTransporter.setGripperPosition(.75);
+                    linearSLides.setGripperPosition(.75);
                 }
 
-                if (controller.rightBumper && !(controller.leftBumper)) {
+                if (controller.gamePad1RBumper && !(controller.gamePad1LBumper)) {
                     triggerPressCount = 0;
-                    coneTransporter.setGripperPosition(1.0);
+                    linearSLides.setGripperPosition(1.0);
                 }
 
                 //telemetry.addData("-", "tip is activated");
@@ -183,8 +182,8 @@ public class TeleopV1 extends LinearOpMode {
                     }
                 }*/
                 fieldCentricDrive.addTelemetry();
-                coneTransporter.loop();
-                coneTransporter.zeroSlides();
+                linearSLides.loop();
+                linearSLides.zeroSlides();
 
             } catch (Exception exception) {
                 telemetry.addLine("Inside of the while loop:");

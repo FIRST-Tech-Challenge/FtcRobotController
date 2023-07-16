@@ -1,21 +1,18 @@
 package org.firstinspires.ftc.teamcode.Auto;
 
 import com.acmerobotics.roadrunner.geometry.Pose2d;
-import com.acmerobotics.roadrunner.trajectory.Trajectory;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.lynx.LynxModule;
-import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.teamcode.Mechanism.ColorSensorMech;
-import org.firstinspires.ftc.teamcode.Mechanism.ConeTransporter;
-import org.firstinspires.ftc.teamcode.Auto.RR.drive.DriveConstants;
+import org.firstinspires.ftc.teamcode.Mechanism.LinearSlides;
 import org.firstinspires.ftc.teamcode.Auto.RR.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.Auto.RR.trajectorysequence.TrajectorySequence;
+import org.firstinspires.ftc.teamcode.Mechanism.RetractOdo;
 import org.openftc.apriltag.AprilTagDetection;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
@@ -45,7 +42,8 @@ public class CSTest extends LinearOpMode {
     int RIGHT = 3;
     AprilTagDetection tagOfInterest = null;
     private SampleMecanumDrive drive;
-    private ConeTransporter coneTransporter;
+    private LinearSlides linearSLides;
+    private RetractOdo retractOdo;
     private ColorSensorMech colorSensorMech;
     private ElapsedTime timer;
     public boolean coneTransportedSetup = false;
@@ -107,7 +105,8 @@ public class CSTest extends LinearOpMode {
     @Override
     public void runOpMode() {
         drive = new SampleMecanumDrive(hardwareMap);
-        coneTransporter = new ConeTransporter(telemetry, hardwareMap);
+        linearSLides = new LinearSlides(telemetry, hardwareMap);
+        retractOdo = new RetractOdo(telemetry, hardwareMap);
         colorSensorMech = new ColorSensorMech(telemetry, hardwareMap);
         timer = new ElapsedTime();
         imu = this.hardwareMap.get(BNO055IMU.class, "imu");
@@ -135,9 +134,9 @@ public class CSTest extends LinearOpMode {
             }
             ArrayList<AprilTagDetection> currentDetections = detection.getLatestDetections();
             if (!coneTransportedSetup) {
-                coneTransporter.unretractOdometryServos();
-                coneTransporter.linearSlides.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-                coneTransporter.setGripperPosition(.75);
+                retractOdo.unretractOdometryServos();
+                linearSLides.linearSlides.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+                linearSLides.setGripperPosition(.75);
                 sleep(2000);
                 sleep(2000);
                 coneTransportedSetup = true;
@@ -257,7 +256,7 @@ public class CSTest extends LinearOpMode {
             }
             //coneTransporter.retractOdometryServos();
             imuAngle = readFromIMU();
-            coneTransporter.loop();
+            linearSLides.loop();
             //telemetry.update();
             drive.update();
             //if(imuTimer.time() - lastIMUCall >= .1 && drive.getPoseVelocity().vec().norm() < 5.0) {
