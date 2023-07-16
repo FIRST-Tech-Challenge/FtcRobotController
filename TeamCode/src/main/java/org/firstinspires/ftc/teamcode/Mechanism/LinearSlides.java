@@ -49,14 +49,14 @@ public class LinearSlides extends HWMap {
 
     public enum Stack {
         ABOVE_CONE_1(133.35),
-        INSIDE_CONE_1(ABOVE_CONE_1.level - inFactor_MM),
         ABOVE_CONE_2(165.1),
-        INSIDE_CONE_2(ABOVE_CONE_2.level - inFactor_MM),
         ABOVE_CONE_3(196.85),
-        INSIDE_CONE_3(ABOVE_CONE_3.level - inFactor_MM),
         ABOVE_CONE_4(228.6),
-        INSIDE_CONE_4(ABOVE_CONE_4.level - inFactor_MM),
         ABOVE_CONE_5(248),
+        INSIDE_CONE_1(ABOVE_CONE_1.level - inFactor_MM),
+        INSIDE_CONE_2(ABOVE_CONE_2.level - inFactor_MM),
+        INSIDE_CONE_3(ABOVE_CONE_3.level - inFactor_MM),
+        INSIDE_CONE_4(ABOVE_CONE_4.level - inFactor_MM),
         INSIDE_CONE_5(ABOVE_CONE_5.level - inFactor_MM);
 
         public final double level;
@@ -149,16 +149,6 @@ public class LinearSlides extends HWMap {
             linearSlides.setPower(power);
         }
 
-
-//        telemetry.addData("pos ", slidePos);
-//        telemetry.addData("target ", target);
-//        telemetry.addData("power ", power);
-//        telemetry.addData("current ", linearSlides.getCurrent(CurrentUnit.MILLIAMPS));
-//        telemetry.addData("slideDisplay ", slideDisplay);
-//        telemetry.addData("LED Timer ", ledTimer);
-//        telemetry.addData("Color Red", colorSensor1.red());
-//        telemetry.addData("Color Green", colorSensor1.green());
-//        telemetry.addData("Color Blue", colorSensor1.blue());
         telemetry.update();
     }
 
