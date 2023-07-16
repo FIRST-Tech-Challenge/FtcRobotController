@@ -9,7 +9,7 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 
-@Autonomous(name= "LogReset", preselectTeleOp = "OneGPTeleop")
+@Autonomous(name= "LogReset")
 public class LogReset extends LinearOpMode {
     File myObj = new File("/storage/emulated/0/tmp/LogIndex.csv");
     FileWriter indexer;

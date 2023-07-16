@@ -1,15 +1,15 @@
 package org.firstinspires.ftc.teamcode.Tests;
 
-        import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
+import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
         import com.qualcomm.robotcore.hardware.TouchSensor;
         import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
         import com.qualcomm.robotcore.hardware.DcMotor;
-
+@Disabled
 @TeleOp
 public class TouchTest extends LinearOpMode {
     // Define variables for our touch sensor and motor
     TouchSensor touch;
-    DcMotor motor;
 
     @Override
     public void runOpMode() {

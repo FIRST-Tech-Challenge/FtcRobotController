@@ -3,8 +3,8 @@ package org.firstinspires.ftc.teamcode.Robots;
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import org.firstinspires.ftc.teamcode.Components.Logger;
-import org.firstinspires.ftc.teamcode.Components.Queuer;
+import org.firstinspires.ftc.teamcode.Components.RFModules.System.Logger;
+import org.firstinspires.ftc.teamcode.Components.RFModules.System.Queuer;
 
 public class BasicRobot{
     public static Logger logger;
