@@ -8,24 +8,23 @@ import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.ServoController;
 
 public class RFCRServo implements CRServo {
-    //all servo regular stuff
-
+    // servo init
     private CRServo RFCRServo;
 
-    Servo.Direction servodirection;
-    String devicename;
-
-    public RFCRServo (Servo.Direction direction, String deviceName) {
-        servodirection = direction;
-        devicename = deviceName;
-        RFCRServo = op.hardwareMap.get(CRServo.class, deviceName);
+    Servo.Direction servoDirection;
+    String deviceName;
+    //crservo with specified direction
+    public RFCRServo (Servo.Direction direction, String c_deviceName) {
+        servoDirection = direction;
+        deviceName = c_deviceName;
+        RFCRServo = op.hardwareMap.get(CRServo.class, c_deviceName);
     }
-
-    public RFCRServo (String deviceName) {
-        devicename = deviceName;
-        RFCRServo = op.hardwareMap.get(CRServo.class, deviceName);
+    //crservo using default direction
+    public RFCRServo (String c_deviceName) {
+        deviceName = c_deviceName;
+        RFCRServo = op.hardwareMap.get(CRServo.class, c_deviceName);
     }
-
+    //movement methods
     public void spinClockwise() {
         RFCRServo.setPower(1.0);
     }
@@ -38,6 +37,7 @@ public class RFCRServo implements CRServo {
         RFCRServo.setPower(0);
     }
 
+    //these methods override the methods in the crservo class, which rfcrservo implements, in order to compile
     @Override
     public ServoController getController() {
         return null;
@@ -49,9 +49,7 @@ public class RFCRServo implements CRServo {
     }
 
     @Override
-    public void setDirection(Direction direction) {
-
-    }
+    public void setDirection(Direction direction) {}
 
     @Override
     public Direction getDirection() {
@@ -89,9 +87,7 @@ public class RFCRServo implements CRServo {
     }
 
     @Override
-    public void resetDeviceConfigurationForOpMode() {
-
-    }
+    public void resetDeviceConfigurationForOpMode() {}
 
     @Override
     public void close() {

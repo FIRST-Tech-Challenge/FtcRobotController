@@ -7,18 +7,19 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 public class RFGamepad {
+    //hashmaps for storing states and arraylist for output
     HashMap<String, Boolean> booleanMap = new HashMap<>();
     HashMap<String, Float> floatMap = new HashMap<>();
     ArrayList<Integer> seq = new ArrayList<>();
 
     public RFGamepad() {
+        //all the gamepad buttons are created and set to their default states, false & 0
         booleanMap.put("gamepad1_y", false);
         booleanMap.put("gamepad1_x", false);
         booleanMap.put("gamepad1_a", false);
         booleanMap.put("gamepad1_b", false);
         booleanMap.put("gamepad1_left_bumper", false);
         booleanMap.put("gamepad1_left_trigger", false);
-
         booleanMap.put("gamepad1_right_bumper", false);
         booleanMap.put("gamepad1_dpad_left", false);
         booleanMap.put("gamepad1_dpad_right", false);
@@ -48,6 +49,7 @@ public class RFGamepad {
         floatMap.put("gamepad2_left_trigger", 0f);
     }
 
+    //readgamepad for floats, logs & changes corresponding element in hashmap
     public void readGamepad(float value, String name, String action) {
         if (value != floatMap.get(name)) {
             logger.log("/RobotLogs/GeneralRobot", "Gamepad," + name + "," + action + ": " + value, true);
@@ -55,6 +57,7 @@ public class RFGamepad {
         }
     }
 
+    //readgamepad for floats, logs & changes corresponding element in hashmap
     public boolean readGamepad(boolean value, String name, String action) {
         if (value != booleanMap.get(name)) {
             logger.log("/RobotLogs/GeneralRobot", "Gamepad," + name + "," + action + ": " + value, true);
@@ -64,26 +67,7 @@ public class RFGamepad {
         return false;
     }
 
-    //    public boolean isReleased(String name){
-//        boolean val = false;
-//        if(booleanMap.get(name) == false){
-//            val = true;
-//        }
-//        else if(booleanMap.get(name) == true){
-//            val = false;
-//        }
-//        return val;
-//    }
-    //1 = down, 2 = right, 3 = up, 4 = left
-
-    //    ArrayList<Integer> old = new ArrayList<>();
-//    int newVal;
-//    double timeOfPress = 0;
-    // Boolean map of status of all buttons
-    // Take in a button, update that corresponding status with the status of button
-    //    -
-    //
-    //
+    //a lot of if statements to check if buttons have been let go
     public boolean updateSequence() {
         boolean updated = false;
         if (op.gamepad1.dpad_down) {
@@ -92,8 +76,8 @@ public class RFGamepad {
                 booleanMap.replace("gamepad1_dpad_down", true);
                 updated = true;
             }
-            //timeOfPress = op.getRuntime();
-        } else if (!op.gamepad1.dpad_down) {
+        }
+        else if (!op.gamepad1.dpad_down) {
             booleanMap.replace("gamepad1_dpad_down", false);
         }
         if (op.gamepad1.dpad_right) {
@@ -102,8 +86,8 @@ public class RFGamepad {
                 booleanMap.replace("gamepad1_dpad_right", true);
                 updated = true;
             }
-            //timeOfPress = op.getRuntime();
-        } else if (!op.gamepad1.dpad_right) {
+        }
+        else if (!op.gamepad1.dpad_right) {
             booleanMap.replace("gamepad1_dpad_right", false);
         }
         if (op.gamepad1.dpad_up) {
@@ -112,8 +96,8 @@ public class RFGamepad {
                 booleanMap.replace("gamepad1_dpad_up", true);
                 updated = true;
             }
-            //timeOfPress = op.getRuntime();
-        } else if (!op.gamepad1.dpad_up) {
+        }
+        else if (!op.gamepad1.dpad_up) {
             booleanMap.replace("gamepad1_dpad_up", false);
         }
         if (op.gamepad1.dpad_left) {
@@ -122,8 +106,8 @@ public class RFGamepad {
                 booleanMap.replace("gamepad1_dpad_left", true);
                 updated = true;
             }
-            //timeOfPress = op.getRuntime();
-        } else if (!op.gamepad1.dpad_left) {
+        }
+        else if (!op.gamepad1.dpad_left) {
             booleanMap.put("gamepad1_dpad_left", false);
         }
         if (op.gamepad1.x) {
@@ -132,8 +116,8 @@ public class RFGamepad {
                 booleanMap.replace("gamepad1_x", true);
                 updated = true;
             }
-            //timeOfPress = op.getRuntime();
-        } else if (!op.gamepad1.x) {
+        }
+        else if (!op.gamepad1.x) {
             booleanMap.replace("gamepad1_x", false);
         }
         if (op.gamepad1.b) {
@@ -142,22 +126,26 @@ public class RFGamepad {
                 booleanMap.replace("gamepad1_b", true);
                 updated = true;
             }
-            //timeOfPress = op.getRuntime();
-        } else if (!op.gamepad1.b) {
+        }
+        else if (!op.gamepad1.b) {
             booleanMap.replace("gamepad1_b", false);
         }
         return updated;
     }
 
+    //returns sequence of key presses
     public ArrayList<Integer> getSequence() {
         return seq;
     }
 
+    //get rid of first element in arraylist
     public void removeSequenceElement() {
         if(!seq.isEmpty()) {
             seq.remove(0);
         }
     }
+
+    //clear arraylist
     public void clearSequence(){
         seq.clear();
     }

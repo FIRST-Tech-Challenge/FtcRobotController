@@ -31,12 +31,12 @@ import com.acmerobotics.roadrunner.trajectory.Trajectory;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.VoltageSensor;
 
+import org.firstinspires.ftc.teamcode.Components.RFModules.Devices.RFLEDStrip;
 import org.firstinspires.ftc.teamcode.Old.PowerPlay.Components.Aligner;
 import org.firstinspires.ftc.teamcode.Old.PowerPlay.Components.CV.CVMaster;
 import org.firstinspires.ftc.teamcode.Old.PowerPlay.Components.Claw;
 import org.firstinspires.ftc.teamcode.Old.PowerPlay.Components.ClawExtension;
 import org.firstinspires.ftc.teamcode.Old.PowerPlay.Components.Field;
-import org.firstinspires.ftc.teamcode.Components.RFModules.Devices.LEDStrip;
 import org.firstinspires.ftc.teamcode.Old.PowerPlay.Components.Lift;
 import org.firstinspires.ftc.teamcode.Old.PowerPlay.Components.LiftArm;
 import org.firstinspires.ftc.teamcode.Components.RFModules.Devices.RFGamepad;
@@ -67,7 +67,7 @@ public class PwPRobot extends BasicRobot {
     private IMU imu = null;
     private ArrayList<Integer> seq;
     private boolean regularDrive = true;
-    private LEDStrip leds = null;
+    private RFLEDStrip leds = null;
     private VoltageSensor voltageSensor = null;
     private flippas flipper = null;
     boolean finished = false, coning = false, poling = false;
@@ -101,7 +101,7 @@ public class PwPRobot extends BasicRobot {
         liftArm = new LiftArm();
 //        clawExtension = new ClawExtension();
         lift = new Lift();
-        leds = new LEDStrip();
+        leds = new RFLEDStrip();
         clawSwitch = new Switch();
         flipper = new flippas();
         finished = true;

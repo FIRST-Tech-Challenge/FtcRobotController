@@ -18,7 +18,7 @@ import java.text.DecimalFormat;
 import java.util.ArrayList;
 
 @Config
-public class RFMotor extends Motor {
+public class  RFMotor extends Motor {
     private DcMotorEx rfMotor = null;
     private ArrayList<Double> coefs = null;
     private ArrayList<Double> coefs2 = null;
