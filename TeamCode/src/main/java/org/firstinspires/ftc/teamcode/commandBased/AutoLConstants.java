@@ -16,7 +16,7 @@ public class AutoLConstants {
 
     //medium
     public static Pose2dSpline INITIAL_SCORE_FIRST_MED = new Pose2dSpline(new Pose2d(36, 46, toRad(-90)), toRad(-90));
-    public static Pose2dSpline INITIAL_SCORE_SECOND_MED = new Pose2dSpline(new Pose2d(35, 23, toRad(0)), toRad(-90));
+    public static Pose2dSpline INITIAL_SCORE_SECOND_MED = new Pose2dSpline(new Pose2d(33.75, 23, toRad(0)), toRad(-90));
     public static Pose2d       INITIAL_STACK_FIRST_MED = new Pose2d(35, 18, toRad(0));
     public static Pose2dSpline INITIAL_STACK_SECOND_MED = new Pose2dSpline(STACK_POSE, toRad(0));
 
@@ -28,9 +28,9 @@ public class AutoLConstants {
 
     //park
     public static Pose2d       PARK_L_FIRST = new Pose2d(35, 18, toRad(0));
-    public static Pose2dSpline PARK_L_SECOND = new Pose2dSpline(new Pose2d(62, 14, toRad(0)), toRad(0));
+    public static Pose2dSpline PARK_L_SECOND = new Pose2dSpline(new Pose2d(61, 14, toRad(0)), toRad(0));
 
-    public static Pose2d       PARK_M_FIRST = new Pose2d(34.5, 10, toRad(0));
+    public static Pose2d       PARK_M_FIRST = new Pose2d(31.5, 10, toRad(0));
 
     public static Pose2d       PARK_R_FIRST = new Pose2d(35, 18, toRad(0));
     public static Pose2dSpline PARK_R_SECOND = new Pose2dSpline(new Pose2d(13, 14, toRad(0)), toRad(0));

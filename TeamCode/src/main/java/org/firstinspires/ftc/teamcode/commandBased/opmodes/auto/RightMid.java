@@ -9,6 +9,7 @@ import org.firstinspires.ftc.teamcode.commandBased.classes.enums.Stack;
 import org.firstinspires.ftc.teamcode.commandBased.commands._groups.auto.general.ParkIdle;
 import org.firstinspires.ftc.teamcode.commandBased.commands._groups.auto.mid.CycleConeMid;
 import org.firstinspires.ftc.teamcode.commandBased.commands._groups.auto.mid.InitialMoveMid;
+import org.firstinspires.ftc.teamcode.commandBased.commands._groups.auto.mid.parts.InitialMoveMidMid;
 import org.firstinspires.ftc.teamcode.commandBased.commands._groups.auto.mid.parts.ScoreConeMid;
 import org.firstinspires.ftc.teamcode.commandBased.commands.rotator.MoveRotatorToPosition;
 import org.firstinspires.ftc.teamcode.commandBased.opmodes.AutoOpMode;
@@ -49,6 +50,8 @@ public class RightMid extends AutoOpMode {
         voltage = getVoltage();
 
         initSchedule();
+
+        playInit = false;
 
         updateCurrentTag();
     }
@@ -91,18 +94,8 @@ public class RightMid extends AutoOpMode {
     protected void pathSchedule() {
         schedule(
                 new SequentialCommandGroup(
-                        new InitialMoveMid(subsystems, firstMoveToPole, firstMoveToStack),
-
-                        new InstantCommand(this::driftAccommodation),
-                        new CycleConeMid(subsystems, medFromStack, stackFromMed, Stack.Cone.FOURTH),
-
-                        new InstantCommand(this::driftAccommodation),
-                        new CycleConeMid(subsystems, medFromStack, stackFromMed, Stack.Cone.THIRD),
-
-                        new InstantCommand(this::driftAccommodation),
-                        new ScoreConeMid(subsystems, medFromStack),
-                        parkIdle,
-                        new InstantCommand(this::savePositions)
+                        new InitialMoveMidMid(subsystems, firstMoveToPole),
+                        parkIdle
                 ));
     }
 

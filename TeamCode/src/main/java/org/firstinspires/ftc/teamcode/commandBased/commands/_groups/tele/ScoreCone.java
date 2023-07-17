@@ -27,9 +27,9 @@ public class ScoreCone extends SequentialCommandGroup {
                         new WaitCommand(250)
                 ),
                 new MoveArmToAngle(arm, ARM_ANGLE_IDLE),
+                new WaitCommand(1000),
                 new MoveRotatorToPosition(rot, ROTATOR_FRONT),
                 new SetIntakePower(intake, INTAKE_IDLE)
         );
     }
-
 }

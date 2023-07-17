@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.commandBased.commands._groups.auto.general;
 
 import com.arcrobotics.ftclib.command.SequentialCommandGroup;
+import com.arcrobotics.ftclib.command.WaitCommand;
 
 import org.firstinspires.ftc.teamcode.commandBased.Constants;
 import org.firstinspires.ftc.teamcode.commandBased.commands.arm.MoveArmToAngle;
@@ -21,6 +22,7 @@ public class ComeFinished extends SequentialCommandGroup {
     ) {
         addCommands(
                 new MoveArmToAngle(arm, ARM_ANGLE_IDLE),
+                new WaitCommand(2000),
                 new MoveRotatorToPosition(rot, ROTATOR_FRONT),
                 new MoveElevatorToPosition(ele, 0)
         );

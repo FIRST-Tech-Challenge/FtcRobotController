@@ -29,6 +29,8 @@ public class ArmSubsystem extends SubsystemBase {
 
     private double KF;
 
+    private boolean disabled = false;
+
     private PIDFController controller;
     private MotionProfile profile;
     private final ElapsedTime timer;
@@ -104,6 +106,7 @@ public class ArmSubsystem extends SubsystemBase {
         setArmPos();
         motionProfiling();
         calculateKF();
+        armPower();
         PIDF();
     }
 
@@ -121,7 +124,35 @@ public class ArmSubsystem extends SubsystemBase {
 
     private void PIDF() {
         correction = controller.update(armPos);
-        arm.set(correction + KF);
+        if (!disabled) {
+            arm.set(correction + KF);
+        } else {
+            arm.set(0);
+        }
+    }
+
+    private void armPower() {
+        if (disabled) {
+            arm.setZeroPowerBehavior(Motor.ZeroPowerBehavior.FLOAT);
+        } else {
+            arm.setZeroPowerBehavior(Motor.ZeroPowerBehavior.BRAKE);
+        }
+    }
+
+    public void setDisabled(boolean disabled) {
+        this.disabled = disabled;
+    }
+
+    public boolean isDisabled() {
+        return disabled;
+    }
+
+    public void addOffset(double offset) {
+        Positions.armPosition += offset;
+    }
+
+    public void resetEncoder() {
+        Positions.armPosition = -(getArmPos());
     }
 
     private double getSIN(double angle) {
@@ -162,7 +193,7 @@ public class ArmSubsystem extends SubsystemBase {
     }
 
     private double getOffsetPos(double pos) {
-        return pos + armEncOffset;
+        return pos + Positions.armPosition;
     }
 
     //getters

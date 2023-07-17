@@ -15,6 +15,7 @@ import static com.arcrobotics.ftclib.gamepad.GamepadKeys.Button.START;
 import static com.arcrobotics.ftclib.gamepad.GamepadKeys.Button.X;
 import static com.arcrobotics.ftclib.gamepad.GamepadKeys.Button.Y;
 import static com.arcrobotics.ftclib.gamepad.GamepadKeys.Trigger.LEFT_TRIGGER;
+import static com.arcrobotics.ftclib.gamepad.GamepadKeys.Trigger.RIGHT_TRIGGER;
 import static org.firstinspires.ftc.teamcode.commandBased.Constants.ANGLE_OFFSET;
 import static org.firstinspires.ftc.teamcode.commandBased.Constants.ARM_ANGLE_BACK;
 import static org.firstinspires.ftc.teamcode.commandBased.Constants.ARM_ANGLE_FRONT;
@@ -40,8 +41,10 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.commandBased.commands._groups.tele.GrabCone;
 import org.firstinspires.ftc.teamcode.commandBased.commands._groups.tele.LiftMoveRotateArm;
+import org.firstinspires.ftc.teamcode.commandBased.commands._groups.tele.ResetArm;
 import org.firstinspires.ftc.teamcode.commandBased.commands._groups.tele.ScoreToIdle;
 import org.firstinspires.ftc.teamcode.commandBased.commands.arm.MoveArmToAngle;
+import org.firstinspires.ftc.teamcode.commandBased.commands.arm.ShiftArmPosition;
 import org.firstinspires.ftc.teamcode.commandBased.commands.arm.UpdateArmPID;
 import org.firstinspires.ftc.teamcode.commandBased.commands.drive.FieldCentric;
 import org.firstinspires.ftc.teamcode.commandBased.commands.drive.PointCentric;
@@ -87,6 +90,10 @@ public class Final extends TeleOpMode {
 
     protected UpdateArmPID updateArmPID;
 
+    protected ResetArm resetArm;
+    protected ShiftArmPosition armManualForward;
+    protected ShiftArmPosition armManualBackward;
+
     //rotator commands
     protected MoveRotatorToPosition rotatorBack;
     protected MoveRotatorToPosition rotatorFront;
@@ -122,9 +129,17 @@ public class Final extends TeleOpMode {
         gp1(A, 3).toggleWhenActive(robotCentric, fieldCentric);
         gp1(Y, 3).whenActive(resetGyro);
 
+        gp1(START, 1).whileActiveContinuous(eleManualUp);
+        gp1(BACK, 1).whileActiveContinuous(eleManualDown);
+
+        gp1(START, 2).whenActive(armManualBackward);
+        gp1(BACK, 2).whenActive(armManualForward);
+
+        gp1(RIGHT_BUMPER, 1).whenActive(resetArm);
+
         
 
-        gp2(DPAD_DOWN, 1).whenActive(eleLow);
+        gp2(DPAD_DOWN, 1).whenActive(grabCone);
         gp2(DPAD_LEFT, 1).whenActive(eleIdle);
         gp2(DPAD_RIGHT, 1).whenActive(eleMid);
         gp2(DPAD_UP, 1).whenActive(eleHigh);
@@ -137,7 +152,12 @@ public class Final extends TeleOpMode {
 
         gp2(LEFT_BUMPER, 1).whenActive(armBackHigh);
         gp2(RIGHT_BUMPER, 1).whenActive(scoreToIdle);
-        gp2(LEFT_TRIGGER, 1).whenActive(grabCone);
+        //gp2(LEFT_TRIGGER, 1).whenActive(grabCone);
+
+        gp2(LEFT_TRIGGER, 1).whenActive(intakeIntake).whenInactive(intakeIdle);
+        gp2(RIGHT_TRIGGER, 1).whenActive(intakeOuttake).whenInactive(intakeIdle);
+
+        gp2(RIGHT_STICK_BUTTON, 1).whenActive(resetArm);
 
 
 
@@ -217,6 +237,10 @@ public class Final extends TeleOpMode {
         armFront = new MoveArmToAngle(armSS, ARM_ANGLE_FRONT);
 
         updateArmPID = new UpdateArmPID(armSS);
+        resetArm = new ResetArm(armSS);
+
+        armManualBackward = new ShiftArmPosition(armSS, -10);
+        armManualForward = new ShiftArmPosition(armSS, 10);
     }
 
     protected void initializeRotatorCommands() {
@@ -229,7 +253,7 @@ public class Final extends TeleOpMode {
     protected void initializeIntakeCommands() {
         intakeIntake = new SetIntakePower(intakeSS, 1);
         intakeIdle = new SetIntakePower(intakeSS, 0);
-        intakeOuttake = new SetIntakePower(intakeSS, -0);
+        intakeOuttake = new SetIntakePower(intakeSS, -1);
     }
 
     protected void initializeMacroCommands() {

@@ -4,8 +4,10 @@ import com.arcrobotics.ftclib.command.ParallelCommandGroup;
 import com.arcrobotics.ftclib.command.SequentialCommandGroup;
 
 import org.firstinspires.ftc.teamcode.commandBased.commands._groups.tele.LiftMoveRotateArm;
+import org.firstinspires.ftc.teamcode.commandBased.commands._groups.tele.ScoreCone;
 import org.firstinspires.ftc.teamcode.commandBased.commands._groups.tele.ScoreConeStack;
 import org.firstinspires.ftc.teamcode.commandBased.commands._rr.FollowTrajectorySequenceAsync;
+import org.firstinspires.ftc.teamcode.commandBased.commands.intake.SetIntakePower;
 import org.firstinspires.ftc.teamcode.commandBased.subsystems.Subsystems;
 import org.firstinspires.ftc.teamcode.rr.trajectorysequence.TrajectorySequence;
 
@@ -23,13 +25,13 @@ public class InitialMoveMidMid extends SequentialCommandGroup {
                                 subsystems.getEle(),
                                 subsystems.getArm(),
                                 subsystems.getRot(),
-                                ARM_ANGLE_BACK,
+                                ARM_ANGLE_IDLE,
                                 ELE_MID,
-                                ROTATOR_BACK
+                                ROTATOR_FRONT
                         ),
                         new FollowTrajectorySequenceAsync(subsystems.rrDrive(), traj)
-                ),
-                new ScoreConeStack(subsystems.getArm(), subsystems.getRot(), subsystems.getIntake())
+                )
+                //new SetIntakePower(subsystems.getIntake(), -1)
         );
     }
 }

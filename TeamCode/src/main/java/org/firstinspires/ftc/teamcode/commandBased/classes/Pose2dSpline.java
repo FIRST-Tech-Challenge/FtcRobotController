@@ -2,10 +2,13 @@ package org.firstinspires.ftc.teamcode.commandBased.classes;
 
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 
+import kotlin.jvm.JvmField;
+
 public class Pose2dSpline {
 
-    private final Pose2d pose;
-    private final double radians;
+
+    @JvmField private final Pose2d pose;
+    @JvmField private final double radians;
 
     public Pose2dSpline(Pose2d pose, double radians) {
         this.pose = pose;

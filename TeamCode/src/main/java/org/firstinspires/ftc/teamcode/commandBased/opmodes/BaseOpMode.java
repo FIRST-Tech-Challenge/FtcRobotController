@@ -93,6 +93,7 @@ public class BaseOpMode extends CommandOpMode {
             tad("arm velocity", armSS.getArmVelocity());
             tad("arm acceleration", armSS.getArmAcceleration());
             tad("arm KF", armSS.getCoeffs()[6]);
+            tad("arm disabled", armSS.isDisabled());
         }
 
         if (Constants.DEBUG_ROTATOR) {
