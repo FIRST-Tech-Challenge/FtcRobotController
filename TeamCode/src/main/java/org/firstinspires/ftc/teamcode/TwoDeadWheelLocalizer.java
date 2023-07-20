@@ -4,7 +4,7 @@ import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.roadrunner.DualNum;
 import com.acmerobotics.roadrunner.Rotation2d;
 import com.acmerobotics.roadrunner.Time;
-import com.acmerobotics.roadrunner.Twist2dIncrDual;
+import com.acmerobotics.roadrunner.Twist2dDual;
 import com.acmerobotics.roadrunner.Vector2dDual;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
@@ -40,7 +40,7 @@ public final class TwoDeadWheelLocalizer implements Localizer {
         this.inPerTick = inPerTick;
     }
 
-    public Twist2dIncrDual<Time> update() {
+    public Twist2dDual<Time> update() {
         Encoder.PositionVelocityPair parPosVel = par.getPositionAndVelocity();
         Encoder.PositionVelocityPair perpPosVel = perp.getPositionAndVelocity();
         Rotation2d heading = Rotation2d.exp(imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS));
@@ -51,7 +51,7 @@ public final class TwoDeadWheelLocalizer implements Localizer {
 
         double headingVel = imu.getRobotAngularVelocity(AngleUnit.RADIANS).zRotationRate;
 
-        Twist2dIncrDual<Time> twistIncr = new Twist2dIncrDual<>(
+        Twist2dDual<Time> twist = new Twist2dDual<>(
                 new Vector2dDual<>(
                         new DualNum<Time>(new double[] {
                                 parPosDelta - PAR_Y_TICKS * headingDelta,
@@ -72,6 +72,6 @@ public final class TwoDeadWheelLocalizer implements Localizer {
         lastPerpPos = perpPosVel.position;
         lastHeading = heading;
 
-        return twistIncr;
+        return twist;
     }
 }

@@ -15,6 +15,8 @@ import com.acmerobotics.roadrunner.MinVelConstraint;
 import com.acmerobotics.roadrunner.MotorFeedforward;
 import com.acmerobotics.roadrunner.Pose2d;
 import com.acmerobotics.roadrunner.Pose2dDual;
+import com.acmerobotics.roadrunner.PoseVelocity2d;
+import com.acmerobotics.roadrunner.PoseVelocity2dDual;
 import com.acmerobotics.roadrunner.ProfileAccelConstraint;
 import com.acmerobotics.roadrunner.RamseteController;
 import com.acmerobotics.roadrunner.TankKinematics;
@@ -25,7 +27,6 @@ import com.acmerobotics.roadrunner.TrajectoryActionBuilder;
 import com.acmerobotics.roadrunner.TurnConstraints;
 import com.acmerobotics.roadrunner.Twist2d;
 import com.acmerobotics.roadrunner.Twist2dDual;
-import com.acmerobotics.roadrunner.Twist2dIncrDual;
 import com.acmerobotics.roadrunner.Vector2d;
 import com.acmerobotics.roadrunner.Vector2dDual;
 import com.acmerobotics.roadrunner.VelConstraint;
@@ -135,7 +136,7 @@ public final class TankDrive {
         }
 
         @Override
-        public Twist2dIncrDual<Time> update() {
+        public Twist2dDual<Time> update() {
             double meanLeftPos = 0.0, meanLeftVel = 0.0;
             for (Encoder e : leftEncs) {
                 Encoder.PositionVelocityPair p = e.getPositionAndVelocity();
@@ -154,7 +155,7 @@ public final class TankDrive {
             meanRightPos /= rightEncs.size();
             meanRightVel /= rightEncs.size();
 
-            TankKinematics.WheelIncrements<Time> incrs = new TankKinematics.WheelIncrements<>(
+            TankKinematics.WheelIncrements<Time> twist = new TankKinematics.WheelIncrements<>(
                     new DualNum<Time>(new double[] {
                             meanLeftPos - lastLeftPos,
                             meanLeftVel
@@ -168,7 +169,7 @@ public final class TankDrive {
             lastLeftPos = meanLeftPos;
             lastRightPos = meanRightPos;
 
-            return kinematics.forward(incrs);
+            return kinematics.forward(twist);
         }
     }
 
@@ -203,8 +204,9 @@ public final class TankDrive {
         localizer = new TankDrive.DriveLocalizer();
     }
 
-    public void setDrivePowers(Twist2d powers) {
-        TankKinematics.WheelVelocities<Time> wheelVels = new TankKinematics(2).inverse(Twist2dDual.constant(powers, 1));
+    public void setDrivePowers(PoseVelocity2d powers) {
+        TankKinematics.WheelVelocities<Time> wheelVels = new TankKinematics(2).inverse(
+                PoseVelocity2dDual.constant(powers, 1));
 
         double maxPowerMag = 1;
         for (DualNum<Time> power : wheelVels.all()) {
@@ -235,8 +237,8 @@ public final class TankDrive {
             yPoints = new double[disps.size()];
             for (int i = 0; i < disps.size(); i++) {
                 Pose2d p = t.path.get(disps.get(i), 1).value();
-                xPoints[i] = p.trans.x;
-                yPoints[i] = p.trans.y;
+                xPoints[i] = p.position.x;
+                yPoints[i] = p.position.y;
             }
         }
 
@@ -267,7 +269,7 @@ public final class TankDrive {
 
             updatePoseEstimate();
 
-            Twist2dDual<Time> command = new RamseteController(kinematics.trackWidth, RAMSETE_ZETA, RAMSETE_BBAR)
+            PoseVelocity2dDual<Time> command = new RamseteController(kinematics.trackWidth, RAMSETE_ZETA, RAMSETE_BBAR)
                     .compute(x, txWorldTarget, pose);
 
             TankKinematics.WheelVelocities<Time> wheelVels = kinematics.inverse(command);
@@ -279,14 +281,14 @@ public final class TankDrive {
                 m.setPower(feedforward.compute(wheelVels.right) / voltage);
             }
 
-            p.put("x", pose.trans.x);
-            p.put("y", pose.trans.y);
-            p.put("heading (deg)", Math.toDegrees(pose.rot.log()));
+            p.put("x", pose.position.x);
+            p.put("y", pose.position.y);
+            p.put("heading (deg)", Math.toDegrees(pose.heading.log()));
 
             Pose2d error = txWorldTarget.value().minusExp(pose);
-            p.put("xError", error.trans.x);
-            p.put("yError", error.trans.y);
-            p.put("headingError (deg)", Math.toDegrees(error.rot.log()));
+            p.put("xError", error.position.x);
+            p.put("yError", error.position.y);
+            p.put("headingError (deg)", Math.toDegrees(error.heading.log()));
 
             LogFiles.recordTargetPose(txWorldTarget.value());
 
@@ -347,13 +349,13 @@ public final class TankDrive {
 
             Pose2dDual<Time> txWorldTarget = turn.get(t);
 
-            Twist2d robotVelRobot = updatePoseEstimate();
+            PoseVelocity2d robotVelRobot = updatePoseEstimate();
 
-            Twist2dDual<Time> command = new Twist2dDual<>(
+            PoseVelocity2dDual<Time> command = new PoseVelocity2dDual<>(
                     Vector2dDual.constant(new Vector2d(0, 0), 3),
-                    txWorldTarget.rot.velocity().plus(
-                            TURN_GAIN * pose.rot.minus(txWorldTarget.rot.value()) +
-                            TURN_VEL_GAIN * (robotVelRobot.rotVel - txWorldTarget.rot.velocity().value())
+                    txWorldTarget.heading.velocity().plus(
+                            TURN_GAIN * pose.heading.minus(txWorldTarget.heading.value()) +
+                            TURN_VEL_GAIN * (robotVelRobot.angVel - txWorldTarget.heading.velocity().value())
                     )
             );
 
@@ -378,7 +380,7 @@ public final class TankDrive {
             drawRobot(c, pose);
 
             c.setStroke("#7C4DFFFF");
-            c.fillCircle(turn.beginPose.trans.x, turn.beginPose.trans.y, 2);
+            c.fillCircle(turn.beginPose.position.x, turn.beginPose.position.y, 2);
 
             return true;
         }
@@ -386,13 +388,13 @@ public final class TankDrive {
         @Override
         public void preview(Canvas c) {
             c.setStroke("#7C4DFF7A");
-            c.fillCircle(turn.beginPose.trans.x, turn.beginPose.trans.y, 2);
+            c.fillCircle(turn.beginPose.position.x, turn.beginPose.position.y, 2);
         }
     }
 
-    public Twist2d updatePoseEstimate() {
-        Twist2dIncrDual<Time> incr = localizer.update();
-        pose = pose.plus(incr.value());
+    public PoseVelocity2d updatePoseEstimate() {
+        Twist2dDual<Time> twist = localizer.update();
+        pose = pose.plus(twist.value());
 
         poseHistory.add(pose);
         while (poseHistory.size() > 100) {
@@ -401,7 +403,7 @@ public final class TankDrive {
 
         LogFiles.recordPose(pose);
 
-        return incr.velocity().value();
+        return twist.velocity().value();
     }
 
     private void drawPoseHistory(Canvas c) {
@@ -410,8 +412,8 @@ public final class TankDrive {
 
         int i = 0;
         for (Pose2d t : poseHistory) {
-            xPoints[i] = t.trans.x;
-            yPoints[i] = t.trans.y;
+            xPoints[i] = t.position.x;
+            yPoints[i] = t.position.y;
 
             i++;
         }
@@ -425,10 +427,10 @@ public final class TankDrive {
         final double ROBOT_RADIUS = 9;
 
         c.setStrokeWidth(1);
-        c.strokeCircle(t.trans.x, t.trans.y, ROBOT_RADIUS);
+        c.strokeCircle(t.position.x, t.position.y, ROBOT_RADIUS);
 
-        Vector2d halfv = t.rot.vec().times(0.5 * ROBOT_RADIUS);
-        Vector2d p1 = t.trans.plus(halfv);
+        Vector2d halfv = t.heading.vec().times(0.5 * ROBOT_RADIUS);
+        Vector2d p1 = t.position.plus(halfv);
         Vector2d p2 = p1.plus(halfv);
         c.strokeLine(p1.x, p1.y, p2.x, p2.y);
     }
@@ -437,10 +439,10 @@ public final class TankDrive {
         return new TrajectoryActionBuilder(
                 TurnAction::new,
                 FollowTrajectoryAction::new,
-                beginPose, 1e-6,
+                beginPose, 1e-6, 0.0,
                 defaultTurnConstraints,
                 defaultVelConstraint, defaultAccelConstraint,
-                0.25
+                0.25, 0.1
         );
     }
 }

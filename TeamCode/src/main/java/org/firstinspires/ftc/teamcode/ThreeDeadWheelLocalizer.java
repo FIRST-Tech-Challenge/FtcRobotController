@@ -3,7 +3,7 @@ package org.firstinspires.ftc.teamcode;
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.roadrunner.DualNum;
 import com.acmerobotics.roadrunner.Time;
-import com.acmerobotics.roadrunner.Twist2dIncrDual;
+import com.acmerobotics.roadrunner.Twist2dDual;
 import com.acmerobotics.roadrunner.Vector2dDual;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
@@ -36,7 +36,7 @@ public final class ThreeDeadWheelLocalizer implements Localizer {
         this.inPerTick = inPerTick;
     }
 
-    public Twist2dIncrDual<Time> update() {
+    public Twist2dDual<Time> update() {
         Encoder.PositionVelocityPair par0PosVel = par0.getPositionAndVelocity();
         Encoder.PositionVelocityPair par1PosVel = par1.getPositionAndVelocity();
         Encoder.PositionVelocityPair perpPosVel = perp.getPositionAndVelocity();
@@ -45,7 +45,7 @@ public final class ThreeDeadWheelLocalizer implements Localizer {
         int par1PosDelta = par1PosVel.position - lastPar1Pos;
         int perpPosDelta = perpPosVel.position - lastPerpPos;
 
-        Twist2dIncrDual<Time> twistIncr = new Twist2dIncrDual<>(
+        Twist2dDual<Time> twist = new Twist2dDual<>(
                 new Vector2dDual<>(
                         new DualNum<Time>(new double[] {
                                 (PAR0_Y_TICKS * par1PosDelta - PAR1_Y_TICKS * par0PosDelta) / (PAR0_Y_TICKS - PAR1_Y_TICKS),
@@ -66,6 +66,6 @@ public final class ThreeDeadWheelLocalizer implements Localizer {
         lastPar1Pos = par1PosVel.position;
         lastPerpPos = perpPosVel.position;
 
-        return twistIncr;
+        return twist;
     }
 }

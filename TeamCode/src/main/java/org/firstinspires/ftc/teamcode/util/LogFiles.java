@@ -106,18 +106,18 @@ public final class LogFiles {
     }
 
     public static void recordTargetPose(Pose2d targetPose) {
-        log.targetXs.add(targetPose.trans.x);
-        log.targetYs.add(targetPose.trans.y);
-        log.targetHeadings.add(targetPose.rot.log());
+        log.targetXs.add(targetPose.position.x);
+        log.targetYs.add(targetPose.position.y);
+        log.targetHeadings.add(targetPose.heading.log());
     }
 
     public static void recordPose(Pose2d pose) {
         // arbitrarily add time here
         log.nsTimes.add(System.nanoTime());
 
-        log.xs.add(pose.trans.x);
-        log.ys.add(pose.trans.y);
-        log.headings.add(pose.rot.log());
+        log.xs.add(pose.position.x);
+        log.ys.add(pose.position.y);
+        log.headings.add(pose.heading.log());
     }
 
     private static final OpModeManagerNotifier.Notifications notifHandler = new OpModeManagerNotifier.Notifications() {

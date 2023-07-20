@@ -2,7 +2,7 @@ package org.firstinspires.ftc.teamcode.tuning;
 
 import com.acmerobotics.roadrunner.MotorFeedforward;
 import com.acmerobotics.roadrunner.Pose2d;
-import com.acmerobotics.roadrunner.Twist2d;
+import com.acmerobotics.roadrunner.PoseVelocity2d;
 import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
@@ -176,7 +176,7 @@ final class DriveView {
         throw new AssertionError();
     }
 
-    public void setDrivePowers(Twist2d powers) {
+    public void setDrivePowers(PoseVelocity2d powers) {
         if (md != null) {
             md.setDrivePowers(powers);
             return;

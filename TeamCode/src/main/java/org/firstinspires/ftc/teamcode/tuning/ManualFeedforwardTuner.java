@@ -4,6 +4,7 @@ import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.acmerobotics.roadrunner.DualNum;
+import com.acmerobotics.roadrunner.PoseVelocity2d;
 import com.acmerobotics.roadrunner.Profiles;
 import com.acmerobotics.roadrunner.Time;
 import com.acmerobotics.roadrunner.TimeProfile;
@@ -72,7 +73,7 @@ public class ManualFeedforwardTuner extends LinearOpMode {
                     telemetry.addData("vref", v.get(0));
 
                     double power = view.feedforward().compute(v) / view.voltageSensor.getVoltage();
-                    view.setDrivePowers(new Twist2d(new Vector2d(power, 0), 0));
+                    view.setDrivePowers(new PoseVelocity2d(new Vector2d(power, 0), 0));
 
                     break;
                 }
@@ -84,7 +85,7 @@ public class ManualFeedforwardTuner extends LinearOpMode {
                     }
 
                     view.setDrivePowers(
-                            new Twist2d(
+                            new PoseVelocity2d(
                                     new Vector2d(
                                             -gamepad1.left_stick_y,
                                             -gamepad1.left_stick_x

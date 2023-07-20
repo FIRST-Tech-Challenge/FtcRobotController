@@ -13,7 +13,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-public final class ForwardRampLogger extends LinearOpMode {
+public final class  ForwardRampLogger extends LinearOpMode {
     private static double power(double seconds) {
         return Math.min(0.1 * seconds, 0.9);
     }

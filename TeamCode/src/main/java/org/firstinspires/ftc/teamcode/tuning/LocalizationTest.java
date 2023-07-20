@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.tuning;
 
 import com.acmerobotics.roadrunner.Pose2d;
+import com.acmerobotics.roadrunner.PoseVelocity2d;
 import com.acmerobotics.roadrunner.Twist2d;
 import com.acmerobotics.roadrunner.Vector2d;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -17,7 +18,7 @@ public class LocalizationTest extends LinearOpMode {
             waitForStart();
 
             while (opModeIsActive()) {
-                drive.setDrivePowers(new Twist2d(
+                drive.setDrivePowers(new PoseVelocity2d(
                         new Vector2d(
                                 -gamepad1.left_stick_y,
                                 -gamepad1.left_stick_x
@@ -27,9 +28,9 @@ public class LocalizationTest extends LinearOpMode {
 
                 drive.updatePoseEstimate();
 
-                telemetry.addData("x", drive.pose.trans.x);
-                telemetry.addData("y", drive.pose.trans.y);
-                telemetry.addData("heading", drive.pose.rot);
+                telemetry.addData("x", drive.pose.position.x);
+                telemetry.addData("y", drive.pose.position.y);
+                telemetry.addData("heading", drive.pose.heading);
                 telemetry.update();
             }
         } else if (TuningOpModes.DRIVE_CLASS.equals(TankDrive.class)) {
@@ -38,7 +39,7 @@ public class LocalizationTest extends LinearOpMode {
             waitForStart();
 
             while (opModeIsActive()) {
-                drive.setDrivePowers(new Twist2d(
+                drive.setDrivePowers(new PoseVelocity2d(
                         new Vector2d(
                                 -gamepad1.left_stick_y,
                                 0.0
@@ -48,9 +49,9 @@ public class LocalizationTest extends LinearOpMode {
 
                 drive.updatePoseEstimate();
 
-                telemetry.addData("x", drive.pose.trans.x);
-                telemetry.addData("y", drive.pose.trans.y);
-                telemetry.addData("heading", drive.pose.rot);
+                telemetry.addData("x", drive.pose.position.x);
+                telemetry.addData("y", drive.pose.position.y);
+                telemetry.addData("heading", drive.pose.heading);
                 telemetry.update();
             }
         } else {
