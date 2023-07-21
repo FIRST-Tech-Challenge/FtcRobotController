@@ -63,8 +63,8 @@ import com.qualcomm.robotcore.util.ElapsedTime;
  * Remove or comment out the @Disabled line to add this opmode to the Driver Station OpMode list
  */
 
-@Autonomous(name="Basic: Omni Linear OpMode", group="Linear Opmode")
-@Disabled
+@Autonomous(name="Basic: Omni Linear - Autonomous", group="Linear Opmode")
+//@Disabled
 
 public class autonomous extends LinearOpMode
 {
