@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.roadrunner.drive;
 
+import static org.firstinspires.ftc.teamcode.roadrunner.drive.DriveConstants.MAX_ACCEL;
 import static org.firstinspires.ftc.teamcode.roadrunner.drive.DriveConstants.MAX_VEL;
 import static org.firstinspires.ftc.teamcode.roadrunner.drive.PoseStorage.currentPose;
 import static org.firstinspires.ftc.teamcode.roadrunner.drive.PoseStorage.currentVelocity;
@@ -51,7 +52,8 @@ public class CatmulRomInterpolater {
             if (ref.getDefinedness() < 2) {
                 double endTangent = getEndTangent();
                 if (ref.getDefinedness() == 0) {
-                    return new RFWaypoint(new Pose2d(ref.getTarget().getX(), ref.getTarget().getY(), endTangent + offset), endTangent, targetVelocity, ref.getDefinedness());
+                    return new RFWaypoint(new Pose2d(ref.getTarget().getX(), ref.getTarget().getY(), endTangent + offset), endTangent
+                            , targetVelocity, ref.getDefinedness());
                 }
                 if (ref.getDefinedness() == 1) {
                     return new RFWaypoint(ref.getTarget(), ref.getTarget().getHeading() + offset, targetVelocity, ref.getDefinedness());

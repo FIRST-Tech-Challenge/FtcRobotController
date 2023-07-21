@@ -1,6 +1,6 @@
 package org.firstinspires.ftc.teamcode.Components.RFModules.Devices;
 
-import static org.firstinspires.ftc.teamcode.Old.FreightFrenzy.Robots.BlackoutRobot.logger;
+import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.logger;
 import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.op;
 import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.time;
 import static java.lang.Double.max;

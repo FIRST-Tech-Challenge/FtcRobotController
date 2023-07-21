@@ -17,11 +17,11 @@ public class RFSegment {
         createRFSegment(p_waypoint,p_tangentOffset,p_constantHeading,0);
     }
 
-    public void createRFSegment(RFWaypoint p_waypoint, double p_tangentOffset, boolean p_constantHeading, double curviness){
+    public void createRFSegment(RFWaypoint p_waypoint, double p_tangentOffset, boolean p_constantHeading, double p_curviness){
         waypoint = p_waypoint;
         tangentOffset = p_tangentOffset;
         constantHeading = p_constantHeading;
-        curviness = max(min(1,curviness),0);
+        curviness = max(min(1,p_curviness),0);
         isCompiled = false;
     }
 

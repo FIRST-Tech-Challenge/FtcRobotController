@@ -6,7 +6,8 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
-import org.firstinspires.ftc.teamcode.Old.PowerPlay.Robot.PwPRobot;
+import org.firstinspires.ftc.teamcode.Robots.BasicRobot;
+import org.firstinspires.ftc.teamcode.roadrunner.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.roadrunner.trajectorysequence.TrajectorySequence;
 //@Disabled
 @Autonomous(name = "RoadRunMoveTest")
@@ -14,11 +15,11 @@ public class RoadRunMoveTest extends LinearOpMode {
 
     @Override
     public void runOpMode() throws InterruptedException {
-        PwPRobot robot = new PwPRobot(this, false);
-
+        BasicRobot robot = new BasicRobot(this, false);
+        SampleMecanumDrive roadrun = new SampleMecanumDrive(this.hardwareMap);
         Pose2d startPose = new Pose2d(35.25, 57.75, Math.toRadians(270));
-        robot.roadrun.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        robot.roadrun.setPoseEstimate(startPose);
+        roadrun.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        roadrun.setPoseEstimate(startPose);
 
         waitForStart();
 //1.5,0,0.25,0.7,0.4,0.8,0.9,1.3,0.5,0,0.25
@@ -36,7 +37,7 @@ public class RoadRunMoveTest extends LinearOpMode {
 //                .lineTo(new com.acmerobotics.roadrunner.geometry.Vector2d(1.75, 57.75))
 //                .lineTo(new Vector2d(35.25, 57.75))
 ////                .build();
-        TrajectorySequence trajSeq2 = robot.roadrun.trajectorySequenceBuilder(new Pose2d(35.25,57.75, Math.toRadians(270)))
+        TrajectorySequence trajSeq2 = roadrun.trajectorySequenceBuilder(new Pose2d(35.25,57.75, Math.toRadians(270)))
                 .lineToSplineHeading(new Pose2d(35.25, 35.25,Math.toRadians(180)))
                 .lineToSplineHeading(new Pose2d(13.75, 35.25,Math.toRadians(90)))
                 .lineToSplineHeading(new Pose2d(13.75, 57.75,Math.toRadians(0)))
@@ -57,18 +58,15 @@ public class RoadRunMoveTest extends LinearOpMode {
             //0.5,0.5,0.25,0.5
             //2
             //1
-            robot.followTrajectorySequenceAsync(trajSeq2);
-            robot.followTrajectorySequenceAsync(trajSeq2);
-            robot.followTrajectorySequenceAsync(trajSeq2);
-            robot.followTrajectorySequenceAsync(trajSeq2);
-            robot.followTrajectorySequenceAsync(trajSeq2);
-            robot.followTrajectorySequenceAsync(trajSeq2);
-            robot.followTrajectorySequenceAsync(trajSeq2);
-            robot.followTrajectorySequenceAsync(trajSeq2);
-
-//            //func
-            robot.setFirstLoop(false);
-            robot.roadrun.update();
+            roadrun.followTrajectorySequence(trajSeq2);
+            roadrun.followTrajectorySequence(trajSeq2);
+            roadrun.followTrajectorySequence(trajSeq2);
+            roadrun.followTrajectorySequence(trajSeq2);
+            roadrun.followTrajectorySequence(trajSeq2);
+            roadrun.followTrajectorySequence(trajSeq2);
+            roadrun.followTrajectorySequence(trajSeq2);
+            roadrun.followTrajectorySequence(trajSeq2);
+            roadrun.update();
             telemetry.update();
         }
     }

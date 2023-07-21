@@ -1,14 +1,19 @@
 package org.firstinspires.ftc.teamcode.roadrunner.drive;
 
 import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.op;
+import static org.firstinspires.ftc.teamcode.roadrunner.drive.PoseStorage.currentPose;
 
+import com.acmerobotics.dashboard.config.Config;
+import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
-
+@Config
 public class RFMecanumDrive {
     private DcMotorEx leftFront, leftRear, rightRear, rightFront;
     private RFPathFollower pathFollower;
+    private RFPoseSim poseSim;
+    public static boolean isPoseSim = true;
     public RFMecanumDrive(){
         pathFollower = new RFPathFollower();
         for (LynxModule module : op.hardwareMap.getAll(LynxModule.class)) {
@@ -26,6 +31,7 @@ public class RFMecanumDrive {
         leftFront.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         leftRear.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         rightRear.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        poseSim = new RFPoseSim();
     }
 
     public void addWaypoint(RFWaypoint p_waypoint) {
@@ -37,6 +43,24 @@ public class RFMecanumDrive {
 
     public void setTangentOffset(double p_tangentOffset) {
         pathFollower.setTangentOffset(p_tangentOffset);
+    }
+    public void setMotorPowers(double[] powers){
+
+    }
+    public void setPose(Pose2d p_pos){
+        currentPose=p_pos;
+    }
+    public void update(){
+        if(pathFollower.isFollowing()){
+            if(isPoseSim){
+                poseSim.updateSim();
+                pathFollower.update();
+                poseSim.getTargets(new Pose2d(0,0,0)/*pathFollower.rfTrajectory.getTargetPosition()*/, pathFollower.finalTargetVelocity);
+            }
+            else{
+                setMotorPowers(pathFollower.update());
+            }
+        }
     }
 
     public void setConstantHeading(boolean p_constantHeading) {

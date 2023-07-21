@@ -8,7 +8,8 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
-import org.firstinspires.ftc.teamcode.Old.PowerPlay.Robot.PwPRobot;
+import org.firstinspires.ftc.teamcode.Robots.BasicRobot;
+import org.firstinspires.ftc.teamcode.roadrunner.drive.SampleMecanumDrive;
 
 import java.util.Objects;
 
@@ -23,15 +24,15 @@ import java.util.Objects;
 public class LocalizationTest extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
-        PwPRobot robot = new PwPRobot(this, false);
-
+        BasicRobot robot = new BasicRobot(this, false);
+        SampleMecanumDrive roadrun = new SampleMecanumDrive(this.hardwareMap);
         Pose2d startPose = new Pose2d(35.25, 57.75, Math.toRadians(270));
-        robot.roadrun.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        robot.roadrun.setPoseEstimate(startPose);
+        roadrun.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        roadrun.setPoseEstimate(startPose);
         waitForStart();
 
         while (!isStopRequested()) {
-            robot.roadrun.setWeightedDrivePower(
+            roadrun.setWeightedDrivePower(
                     new Pose2d(
                             -gamepad1.left_stick_y,
                             -gamepad1.left_stick_x,
@@ -39,16 +40,16 @@ public class LocalizationTest extends LinearOpMode {
                     )
             );
 
-            robot.roadrun.update();
+            roadrun.update();
 
-            Pose2d poseEstimate = robot.roadrun.getPoseEstimate();
+            Pose2d poseEstimate = roadrun.getPoseEstimate();
             telemetry.addData("angle", poseEstimate.getHeading());
-            telemetry.addData("angleVel", Objects.requireNonNull(robot.roadrun.getPoseVelocity()).getHeading());
+            telemetry.addData("angleVel", Objects.requireNonNull(roadrun.getPoseVelocity()).getHeading());
             telemetry.addData("x", poseEstimate.getX());
             telemetry.addData("y", poseEstimate.getY());
             telemetry.update();
-            logger.log("/RobotLogs/GeneralRobot", "Vel"+robot.roadrun.getPoseVelocity().getX());
-            logger.log("/RobotLogs/GeneralRobot", "Vel"+robot.roadrun.getPoseVelocity().getY());
+            logger.log("/RobotLogs/GeneralRobot", "Vel"+roadrun.getPoseVelocity().getX());
+            logger.log("/RobotLogs/GeneralRobot", "Vel"+roadrun.getPoseVelocity().getY());
         }
     }
 }
