@@ -26,6 +26,13 @@ public class QueueElement {
     //is it skippable right now
     private boolean option = false;
 
+    /**
+     * Initialize QueueElement
+     * @param queueNum
+     * @param p_asynchronous
+     * @param p_startCondition
+     * @param p_mustFinish
+     */
     public QueueElement(int queueNum, boolean p_asynchronous, int p_startCondition, boolean p_mustFinish) {
         queuePos = queueNum;
         asynchronous = p_asynchronous;
@@ -33,6 +40,15 @@ public class QueueElement {
         mustFinish = p_mustFinish;
     }
 
+    /**
+     * Initialize QueueElement
+     * @param queueNum
+     * @param p_asynchronous
+     * @param p_startCondition
+     * @param p_mustFinish
+     * @param p_shouldFinish
+     * @param p_isOptional
+     */
     public QueueElement(int queueNum, boolean p_asynchronous, int p_startCondition, boolean p_mustFinish, boolean p_shouldFinish, boolean p_isOptional) {
         queuePos = queueNum;
         asynchronous = p_asynchronous;
@@ -42,7 +58,12 @@ public class QueueElement {
         isOptional = p_isOptional;
     }
 
-    //calculate if Ready
+    /**calculate if Ready
+     *
+     * @param currentEvent
+     * @param extraCondition
+     * @return
+     */
     public boolean isReady(int currentEvent, boolean extraCondition) {
         //is it this elements turn to run
         if (currentEvent >= startCondition && !isDone) {
@@ -63,6 +84,10 @@ public class QueueElement {
         }
     }
 
+    /**
+     * get Variables
+     * @return
+     */
     public boolean isMustFinish() {
         return mustFinish;
     }

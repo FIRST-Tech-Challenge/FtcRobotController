@@ -4,6 +4,7 @@ import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
+import org.firstinspires.ftc.teamcode.Autonomous.BlueLeftHigh;
 import org.firstinspires.ftc.teamcode.Old.PowerPlay.Robot.PwPRobot;
 //@Disabled
 

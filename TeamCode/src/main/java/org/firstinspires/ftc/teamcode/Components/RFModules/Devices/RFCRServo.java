@@ -8,23 +8,33 @@ import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.ServoController;
 
 public class RFCRServo implements CRServo {
-    // servo init
     private CRServo RFCRServo;
+    private Servo.Direction servoDirection;
+    private String deviceName;
 
-    Servo.Direction servoDirection;
-    String deviceName;
-    //crservo with specified direction
+    /**crservo with specified direction
+     *
+     * @param direction
+     * @param c_deviceName
+     */
     public RFCRServo (Servo.Direction direction, String c_deviceName) {
         servoDirection = direction;
         deviceName = c_deviceName;
         RFCRServo = op.hardwareMap.get(CRServo.class, c_deviceName);
     }
-    //crservo using default direction
+
+    /**crservo using default direction
+     *
+     * @param c_deviceName
+     */
     public RFCRServo (String c_deviceName) {
         deviceName = c_deviceName;
         RFCRServo = op.hardwareMap.get(CRServo.class, c_deviceName);
     }
-    //movement methods
+
+    /**movement methods
+     *
+     */
     public void spinClockwise() {
         RFCRServo.setPower(1.0);
     }
@@ -37,23 +47,26 @@ public class RFCRServo implements CRServo {
         RFCRServo.setPower(0);
     }
 
-    //these methods override the methods in the crservo class, which rfcrservo implements, in order to compile
+    /**these methods override the methods in the crservo class, which rfcrservo implements, in order to compile
+     *
+     *
+     */
     @Override
     public ServoController getController() {
-        return null;
+        return RFCRServo.getController();
     }
 
     @Override
     public int getPortNumber() {
-        return 0;
+        return RFCRServo.getPortNumber();
     }
 
     @Override
-    public void setDirection(Direction direction) {}
+    public void setDirection(Direction direction) {RFCRServo.setDirection(direction);}
 
     @Override
     public Direction getDirection() {
-        return null;
+        return RFCRServo.getDirection();
     }
 
     @Override
@@ -63,34 +76,34 @@ public class RFCRServo implements CRServo {
 
     @Override
     public double getPower() {
-        return 0;
+        return RFCRServo.getPower();
     }
 
     @Override
     public Manufacturer getManufacturer() {
-        return null;
+        return RFCRServo.getManufacturer();
     }
 
     @Override
     public String getDeviceName() {
-        return null;
+        return RFCRServo.getDeviceName();
     }
 
     @Override
     public String getConnectionInfo() {
-        return null;
+        return RFCRServo.getConnectionInfo();
     }
 
     @Override
     public int getVersion() {
-        return 0;
+        return RFCRServo.getVersion();
     }
 
     @Override
-    public void resetDeviceConfigurationForOpMode() {}
+    public void resetDeviceConfigurationForOpMode() {RFCRServo.resetDeviceConfigurationForOpMode();}
 
     @Override
     public void close() {
-
+        RFCRServo.close();
     }
 }
