@@ -29,13 +29,17 @@
 
 package org.firstinspires.ftc.teamcode;
 
+import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Gamepad;
+import com.qualcomm.robotcore.hardware.IMU;
 import com.qualcomm.robotcore.util.ElapsedTime;
+
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 
 /**
  * This file contains an example of a Linear "OpMode".
@@ -53,8 +57,8 @@ import com.qualcomm.robotcore.util.ElapsedTime;
  * Holonomic drives provide the ability for the robot to move in three axes (directions) simultaneously.
  * Each motion axis is controlled by one Joystick axis.
  *
- * 1) Axial:    Driving forward and backward               Left-joystick Forward/Backward
- * 2) Lateral:  Strafing right and left                     Left-joystick Right and Left
+ * 1) y:    Driving forward and backward               Left-joystick Forward/Backward
+ * 2) x:  Strafing right and left                     Left-joystick Right and Left
  * 3) Yaw:      Rotating Clockwise and counter clockwise    Right-joystick Right and Left
  *
  * This code is written assuming that the right-side motors need to be reversed for the robot to drive forward.
@@ -75,6 +79,7 @@ public class BasicOpModeWF extends LinearOpMode {
     private DcMotor leftBackDrive = null;
     private DcMotor rightFrontDrive = null;
     private DcMotor rightBackDrive = null;
+    private IMU imu = null;
 
     @Override
     public void runOpMode() {
@@ -84,6 +89,14 @@ public class BasicOpModeWF extends LinearOpMode {
         leftBackDrive  = hardwareMap.get(DcMotor.class, "backleft");
         rightFrontDrive = hardwareMap.get(DcMotor.class, "frontright");
         rightBackDrive = hardwareMap.get(DcMotor.class, "backright");
+
+        imu = hardwareMap.get(IMU.class, "imu");
+        // Adjust the orientation parameters to match your robot
+        IMU.Parameters parameters = new IMU.Parameters(new RevHubOrientationOnRobot(
+                RevHubOrientationOnRobot.LogoFacingDirection.UP,
+                RevHubOrientationOnRobot.UsbFacingDirection.RIGHT));
+        // Without this, the REV Hub's orientation is assumed to be logo up / USB forward
+        imu.initialize(parameters);
 
         // ########################################################################################
         // !!!            IMPORTANT Drive Information. Test your motor directions.            !!!!!
@@ -100,6 +113,9 @@ public class BasicOpModeWF extends LinearOpMode {
         rightFrontDrive.setDirection(DcMotor.Direction.FORWARD);
         rightBackDrive.setDirection(DcMotor.Direction.FORWARD);
 
+        Gamepad currentGamepad1 = new Gamepad();
+        Gamepad previousGamepad1 = new Gamepad();
+
         // Wait for the game to start (driver presses PLAY)
         telemetry.addData("Status", "Initialized");
         telemetry.update();
@@ -109,21 +125,39 @@ public class BasicOpModeWF extends LinearOpMode {
 
         // Speed factor to slow down the robot, goes from 0.1 to 1.0
         double speed = 0.5;
+        imu.resetYaw();
 
         // run until the end of the match (driver presses STOP)
         while (opModeIsActive()) {
             double max;
+            previousGamepad1.copy(currentGamepad1);
+            currentGamepad1.copy(gamepad1);
+
             // POV Mode uses left joystick to go forward & strafe, and right joystick to rotate.
-            double axial   = -gamepad1.left_stick_y;  // Note: pushing stick forward gives negative value
-            double lateral =  gamepad1.left_stick_x;
+            double y   = -gamepad1.left_stick_y;  // Note: pushing stick forward gives negative value
+            double x =  gamepad1.left_stick_x * 1.1; // Counteract imperfect strafing
             double yaw     =  gamepad1.right_stick_x;
 
-            // Combine the joystick requests for each axis-motion to determine each wheel's power.
-            // Set up a variable for each drive wheel to save the power level for telemetry.
-            double leftFrontPower  = axial + lateral + yaw;
-            double rightFrontPower = axial - lateral - yaw;
-            double leftBackPower   = axial - lateral + yaw;
-            double rightBackPower  = axial + lateral - yaw;
+            if (gamepad1.back)
+                imu.resetYaw();
+
+            double botHeading = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS);
+
+            // Field centric driving is activated when any of the hat buttons are pressed
+            if (gamepad1.dpad_down || gamepad1.dpad_up || gamepad1.dpad_left || gamepad1.dpad_right) {
+                x = gamepad1.dpad_left ? -1 : (gamepad1.dpad_right ? 1 : 0);
+                y = gamepad1.dpad_up ? 1 : (gamepad1.dpad_down ? -1 : 0);
+                // Rotate the movement direction counter to the bot's rotation
+                double newX = x * Math.cos(-botHeading) - y * Math.sin(-botHeading);
+                double newY = x * Math.sin(-botHeading) + y * Math.cos(-botHeading);
+                x = newX;
+                y = newY;
+            }
+
+            double leftFrontPower  = y + x + yaw;
+            double rightFrontPower = y - x - yaw;
+            double leftBackPower   = y - x + yaw;
+            double rightBackPower  = y + x - yaw;
 
             // Normalize the values so no wheel power exceeds 100%
             // This ensures that the robot maintains the desired motion.
@@ -143,6 +177,11 @@ public class BasicOpModeWF extends LinearOpMode {
             if (gamepad1.right_bumper)
                 speed = 1.0;
 
+            if (previousGamepad1.left_trigger != 0 && currentGamepad1.left_trigger == 0 && speed > 0.1)
+                speed -= 0.1;
+            if (previousGamepad1.right_trigger != 0 && currentGamepad1.right_trigger == 0 && speed < 1.0)
+                speed += 0.1;
+
             // Send calculated power to wheels
             leftFrontDrive.setPower(leftFrontPower * speed);
             rightFrontDrive.setPower(rightFrontPower * speed);
@@ -151,6 +190,8 @@ public class BasicOpModeWF extends LinearOpMode {
 
             telemetry.addData("Status", "Run Time: " + runtime.toString());
             telemetry.addData("Speed", "%1.1f", speed);
+            telemetry.addData("Bot Heading", "%4.2f", botHeading);
+            telemetry.addData("X/Y", "%4.2f, %4.2f", x, y);
             telemetry.addData("Front left/Right", "%4.2f, %4.2f", leftFrontPower, rightFrontPower);
             telemetry.addData("Back  left/Right", "%4.2f, %4.2f", leftBackPower, rightBackPower);
             telemetry.update();
