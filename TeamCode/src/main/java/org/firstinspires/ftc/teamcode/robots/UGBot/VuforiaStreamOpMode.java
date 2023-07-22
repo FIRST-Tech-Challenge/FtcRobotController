@@ -6,6 +6,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.robotcore.external.ClassFactory;
+import org.firstinspires.ftc.robotcore.external.hardware.camera.BuiltinCameraDirection;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
 import org.firstinspires.ftc.teamcode.RC;
@@ -29,7 +30,7 @@ public class VuforiaStreamOpMode extends LinearOpMode {
         VuforiaLocalizer.Parameters vuforiaParams = new VuforiaLocalizer.Parameters();
         vuforiaParams.cameraName = hardwareMap.get(WebcamName.class, "Webcam 1");
         vuforiaParams.vuforiaLicenseKey = RC.VUFORIA_LICENSE_KEY;
-        vuforiaParams.cameraDirection = VuforiaLocalizer.CameraDirection.BACK;
+        vuforiaParams.cameraDirection = BuiltinCameraDirection.BACK;
         VuforiaLocalizer vuforia = ClassFactory.getInstance().createVuforia(vuforiaParams);
 
         FtcDashboard.getInstance().startCameraStream(vuforia, 0);

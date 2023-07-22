@@ -894,9 +894,9 @@ public class FtcRobotControllerActivity extends Activity
             if(key == KeyEvent.KEYCODE_BUTTON_X) {
               Robot robot = controllerService.getRobot();
               if ((robot != null) && (robot.eventLoopManager != null)) {
-                robot.eventLoopManager.getEventLoop().getOpModeManager().initActiveOpMode("CartHack");
+                robot.eventLoopManager.getEventLoop().getOpModeManager().initOpMode("CartHack");
                 EventLoop cartbotEventLoop = robot.eventLoopManager.getEventLoop();
-                cartbotEventLoop.getOpModeManager().initActiveOpMode("CartHack");
+                cartbotEventLoop.getOpModeManager().initOpMode("CartHack");
                 try {
                   robot.eventLoopManager.setEventLoop(cartbotEventLoop);
                 } catch(Exception e) {

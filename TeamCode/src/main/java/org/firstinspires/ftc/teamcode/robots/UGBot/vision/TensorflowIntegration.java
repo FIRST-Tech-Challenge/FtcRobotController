@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.robots.UGBot.vision;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.ClassFactory;
+import org.firstinspires.ftc.robotcore.external.hardware.camera.BuiltinCameraDirection;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
 import org.firstinspires.ftc.robotcore.external.tfod.Recognition;
@@ -50,11 +51,11 @@ public class TensorflowIntegration implements VisionProvider {
         VuforiaLocalizer.Parameters parameters = new VuforiaLocalizer.Parameters();
         parameters.vuforiaLicenseKey = RC.VUFORIA_LICENSE_KEY;
         if (viewpoint == Viewpoint.BACK)
-            parameters.cameraDirection = VuforiaLocalizer.CameraDirection.BACK;
+            parameters.cameraDirection = BuiltinCameraDirection.BACK;
         else if (viewpoint == Viewpoint.WEBCAM)
             parameters.cameraName = hardwareMap.get(WebcamName.class, "Webcam 1");
         else
-            parameters.cameraDirection = VuforiaLocalizer.CameraDirection.FRONT;
+            parameters.cameraDirection = BuiltinCameraDirection.FRONT;
         vuforia = ClassFactory.getInstance().createVuforia(parameters);
     }
 
@@ -64,10 +65,12 @@ public class TensorflowIntegration implements VisionProvider {
     private void initTfod(HardwareMap hardwareMap) {
         int tfodMonitorViewId = hardwareMap.appContext.getResources().getIdentifier(
                 "tfodMonitorViewId", "id", hardwareMap.appContext.getPackageName());
+  /*
         TFObjectDetector.Parameters tfodParameters = new TFObjectDetector.Parameters(tfodMonitorViewId);
         tfodParameters.minResultConfidence = 0.8f;
         tfod = ClassFactory.getInstance().createTFObjectDetector(tfodParameters, vuforia);
         tfod.loadModelFromAsset(TFOD_MODEL_ASSET, LABEL_FIRST_ELEMENT, LABEL_SECOND_ELEMENT);
+*/
     }
 
     @Override

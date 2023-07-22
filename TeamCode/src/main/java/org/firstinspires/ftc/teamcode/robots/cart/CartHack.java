@@ -36,6 +36,7 @@ import com.vuforia.Vuforia;
 
 import org.firstinspires.ftc.robotcore.external.ClassFactory;
 import org.firstinspires.ftc.robotcore.external.Func;
+import org.firstinspires.ftc.robotcore.external.hardware.camera.BuiltinCameraDirection;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
@@ -149,10 +150,10 @@ public class CartHack extends OpMode {
         telemetry.update();
 
         configureDashboard();
-
+        //todo redo vision so it's more like our vision provider pi
         VuforiaLocalizer.Parameters params = new VuforiaLocalizer.Parameters(R.id.cameraMonitorViewId);
         params.vuforiaLicenseKey = RC.VUFORIA_LICENSE_KEY;
-        params.cameraDirection = VuforiaLocalizer.CameraDirection.FRONT;
+        params.cameraDirection = BuiltinCameraDirection.FRONT;
 
         locale = ClassFactory.createVuforiaLocalizer(params);
         locale.setFrameQueueCapacity(1);

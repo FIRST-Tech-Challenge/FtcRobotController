@@ -14,6 +14,7 @@ import com.vuforia.PIXEL_FORMAT;
 import com.vuforia.*;
 
 import org.firstinspires.ftc.robotcore.external.ClassFactory;
+import org.firstinspires.ftc.robotcore.external.hardware.camera.BuiltinCameraDirection;
 import org.firstinspires.ftc.robotcore.external.matrices.MatrixF;
 import org.firstinspires.ftc.robotcore.external.matrices.OpenGLMatrix;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
@@ -105,7 +106,8 @@ public class VisionTest extends LinearOpMode {
          */
         VuforiaLocalizer.Parameters parameters = new VuforiaLocalizer.Parameters(R.id.cameraMonitorViewId);
         parameters.vuforiaLicenseKey = RC.VUFORIA_LICENSE_KEY;
-        parameters.cameraDirection = VuforiaLocalizer.CameraDirection.FRONT;
+        parameters.cameraDirection = BuiltinCameraDirection.FRONT;
+        
         this.vuforia = ClassFactory.createVuforiaLocalizer(parameters);
         vuforia.setFrameQueueCapacity(1);
 

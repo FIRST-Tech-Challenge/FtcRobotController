@@ -10,6 +10,7 @@ import com.vuforia.Vuforia;
 
 import org.firstinspires.ftc.robotcore.external.ClassFactory;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.robotcore.external.hardware.camera.BuiltinCameraDirection;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
 import org.firstinspires.ftc.teamcode.RC;
@@ -43,11 +44,11 @@ public class DogeCVIntegration implements VisionProvider {
         VuforiaLocalizer.Parameters parameters = new VuforiaLocalizer.Parameters();
         parameters.vuforiaLicenseKey = RC.VUFORIA_LICENSE_KEY;
         if (viewpoint == Viewpoint.BACK)
-            parameters.cameraDirection = VuforiaLocalizer.CameraDirection.BACK;
+            parameters.cameraDirection = BuiltinCameraDirection.BACK;
         else if (viewpoint == Viewpoint.WEBCAM)
             parameters.cameraName = hardwareMap.get(WebcamName.class, "Webcam 1");
         else
-            parameters.cameraDirection = VuforiaLocalizer.CameraDirection.FRONT;
+            parameters.cameraDirection = BuiltinCameraDirection.FRONT;
         vuforia = ClassFactory.getInstance().createVuforia(parameters);
         Vuforia.setFrameFormat(PIXEL_FORMAT.RGB565, true);
         vuforia.setFrameQueueCapacity(1);
