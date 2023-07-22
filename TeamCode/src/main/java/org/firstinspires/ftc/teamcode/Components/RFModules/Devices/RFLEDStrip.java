@@ -6,8 +6,8 @@ import com.qualcomm.hardware.rev.RevBlinkinLedDriver;
 
 public class RFLEDStrip {
     //init blinkin, define conestack colors preset
-    RevBlinkinLedDriver blinkIn;
-    RevBlinkinLedDriver.BlinkinPattern[] stackLevelColors = {RevBlinkinLedDriver.BlinkinPattern.VIOLET, RevBlinkinLedDriver.BlinkinPattern.BLUE,
+    private RevBlinkinLedDriver blinkIn;
+    private RevBlinkinLedDriver.BlinkinPattern[] stackLevelColors = {RevBlinkinLedDriver.BlinkinPattern.VIOLET, RevBlinkinLedDriver.BlinkinPattern.BLUE,
             RevBlinkinLedDriver.BlinkinPattern.YELLOW, RevBlinkinLedDriver.BlinkinPattern.ORANGE};
     //constructor
     public RFLEDStrip(){

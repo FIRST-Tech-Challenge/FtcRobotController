@@ -8,9 +8,9 @@ import java.util.HashMap;
 
 public class RFGamepad {
     //hashmaps for storing states and arraylist for output
-    HashMap<String, Boolean> booleanMap = new HashMap<>();
-    HashMap<String, Float> floatMap = new HashMap<>();
-    ArrayList<Integer> seq = new ArrayList<>();
+    private HashMap<String, Boolean> booleanMap = new HashMap<>();
+    private HashMap<String, Float> floatMap = new HashMap<>();
+    private ArrayList<Integer> seq = new ArrayList<>();
 
     public RFGamepad() {
         //all the gamepad buttons are created and set to their default states, false & 0
@@ -49,7 +49,12 @@ public class RFGamepad {
         floatMap.put("gamepad2_left_trigger", 0f);
     }
 
-    //readgamepad for floats, logs & changes corresponding element in hashmap
+    /**
+     * readgamepad for floats, logs & changes corresponding element in hashmap
+     * @param value
+     * @param name
+     * @param action
+     */
     public void readGamepad(float value, String name, String action) {
         if (value != floatMap.get(name)) {
             logger.log("/RobotLogs/GeneralRobot", "Gamepad," + name + "," + action + ": " + value, true);
@@ -57,7 +62,13 @@ public class RFGamepad {
         }
     }
 
-    //readgamepad for floats, logs & changes corresponding element in hashmap
+    /**
+     * readgamepad for floats, logs & changes corresponding element in hashmap
+     * @param value
+     * @param name
+     * @param action
+     * @return
+     */
     public boolean readGamepad(boolean value, String name, String action) {
         if (value != booleanMap.get(name)) {
             logger.log("/RobotLogs/GeneralRobot", "Gamepad," + name + "," + action + ": " + value, true);
@@ -67,7 +78,10 @@ public class RFGamepad {
         return false;
     }
 
-    //a lot of if statements to check if buttons have been let go
+    /**
+     * a lot of if statements to check if buttons have been let go
+     * @return
+     */
     public boolean updateSequence() {
         boolean updated = false;
         if (op.gamepad1.dpad_down) {
@@ -133,19 +147,26 @@ public class RFGamepad {
         return updated;
     }
 
-    //returns sequence of key presses
+    /**
+     * returns sequence of key presses
+     * @return
+     */
     public ArrayList<Integer> getSequence() {
         return seq;
     }
 
-    //get rid of first element in arraylist
+    /**
+     * get rid of first element in arraylist
+     */
     public void removeSequenceElement() {
         if(!seq.isEmpty()) {
             seq.remove(0);
         }
     }
 
-    //clear arraylist
+    /**
+     * clear arraylist
+     */
     public void clearSequence(){
         seq.clear();
     }
