@@ -34,8 +34,6 @@ public class  RFMotor extends Motor {
     private double power = 0, position = 0, velocity = 0, targetPos = 0, resistance = 0, acceleration = 0, avgResistance;
     private String rfMotorName;
 
-    private static final DecimalFormat df = new DecimalFormat("0.00");
-
     /*Initializes the motor
         Inputs:
         motorName: the name of the device | Ex:'motorRightFront'
@@ -235,11 +233,7 @@ public class  RFMotor extends Motor {
     }
 
     public boolean atTargetPosition() {
-        if (abs(position - targetPos) < TICK_STOP_PADDING) {
-            return true;
-        } else {
-            return false;
-        }
+        return abs(position - targetPos) < TICK_STOP_PADDING;
     }
 
     public void setPower(double power) {

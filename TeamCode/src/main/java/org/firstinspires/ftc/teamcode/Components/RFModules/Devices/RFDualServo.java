@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.Components.RFModules.Devices;
 
 import static com.qualcomm.robotcore.hardware.Servo.Direction.FORWARD;
 import static com.qualcomm.robotcore.hardware.Servo.Direction.REVERSE;
+import static org.firstinspires.ftc.teamcode.Components.RFModules.System.Logger.df;
 import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.logger;
 import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.op;
 import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.time;
@@ -24,8 +25,6 @@ public class RFDualServo implements Servo {
     private Servo dualServo2;
 
     private double lastTime = -100;
-
-    private static final DecimalFormat df = new DecimalFormat("0.00");
 
     double servoLimit = 0;
     boolean flipped = false;

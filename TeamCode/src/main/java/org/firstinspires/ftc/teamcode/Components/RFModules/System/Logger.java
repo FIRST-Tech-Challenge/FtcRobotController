@@ -11,31 +11,41 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Scanner;
 
 public class Logger {
-    File LogIndex = new File("/storage/emulated/0/tmp/LogIndex.csv");
-    Scanner logindexReader;
+
+    /* This class is used to log information from any function in any class to a file in order to help the user debug
+    * their code. There are various different options for logging; the functions themselves can be found below, and
+    * examples can be found in motor and servo classes. */
+
+    File logIndex = new File("/storage/emulated/0/tmp/LogIndex.csv");
+    Scanner logIndexReader;
 
     HashMap<String, File> logList = new HashMap<>();
 
     HashMap<File, ArrayList<Integer>> headerList = new HashMap<>();
 
-    ArrayList<Integer> tempheaderPositions = new ArrayList<>();
+    ArrayList<Integer> tempHeaderPositions = new ArrayList<>();
 
     ArrayList<String> inputStrings = new ArrayList<>();
 
-    FileWriter logindexer;
-    FileWriter filewriter = null;
+    FileWriter logIndexer;
+    FileWriter fileWriter = null;
     String currentTime;
-    public int loopcounter=0;
     String data = "0";
     String loggingString;
-    char prevchar;
-    int previnputstringstartindex = 0;
+
+    public int loopCounter=0;
+    public static final DecimalFormat df = new DecimalFormat("0.00");
+    char prevChar;
+    int prevInputStringStartIndex = 0;
+
+    /* Constructor */
 
     @SuppressLint("SdCardPath")
     public Logger (){
@@ -45,9 +55,9 @@ public class Logger {
         new File("/sdcard/tmp/CRServoLogs").mkdirs();
         new File("/sdcard/tmp/RobotLogs").mkdirs();
         try {
-            logindexReader = new Scanner(LogIndex);
-            data = logindexReader.nextLine();
-            logindexer = new FileWriter(LogIndex);
+            logIndexReader = new Scanner(logIndex);
+            data = logIndexReader.nextLine();
+            logIndexer = new FileWriter(logIndex);
 
             char a = data.charAt(0);
             a++;
@@ -55,16 +65,17 @@ public class Logger {
                 a='0';
             }
 
-            logindexer.write(a);
-            logindexer.close();
+            logIndexer.write(a);
+            logIndexer.close();
 
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
         } catch (IOException e) {
             e.printStackTrace();
         }
 
     }
+
+    /* Logs a Pose2d position ArrayList */
+
     @SuppressLint("SdCardPath")
     public void logPos(Pose2d position){
         try {
@@ -72,12 +83,13 @@ public class Logger {
             poser.write(position.getX()+"\n"+position.getY()+"\n"+position.getHeading());
             poser.close();
 
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
+
+    /* Returns the logged Pose2d position in the log file */
+
     public Pose2d readLogPos(){
         Pose2d returner = new Pose2d(0,0,0);
         try {
@@ -96,14 +108,16 @@ public class Logger {
         return returner;
     }
 
+    /* Creates a new file for logging given a file name and the headers for organization of information */
+
     @SuppressLint("SdCardPath")
     public void createFile (String fileName, String headers) {
         File file = new File("/sdcard/tmp/"+fileName+data+"Log.csv");
         headerList.computeIfAbsent(file, k -> new ArrayList<>());
         headerList.get(file).add(0);
         for (int i = 2; i < headers.length(); i++) {
-            prevchar = headers.charAt(i - 1);
-            if (prevchar == ' ' && headers.charAt(i) != prevchar) {
+            prevChar = headers.charAt(i - 1);
+            if (prevChar == ' ' && headers.charAt(i) != prevChar) {
                 headerList.get(file).add(i);
             }
         }
@@ -119,65 +133,70 @@ public class Logger {
                 op.telemetry.update();
             }
 
-            filewriter = new FileWriter(file, true);
+            fileWriter = new FileWriter(file, true);
             logList.put(fileName, file);
             currentTime = Calendar.getInstance().getTime().toString();
 
-            filewriter.write(currentTime + "\n");
-            filewriter.write(headers + "\n");
+            fileWriter.write(currentTime + "\n");
+            fileWriter.write(headers + "\n");
             for (int i = 0; i < headers.length(); i++) {
-                filewriter.write("=");
+                fileWriter.write("=");
             }
-            filewriter.write("\n");
-            filewriter.close();
+            fileWriter.write("\n");
+            fileWriter.close();
 
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
+
+    /* Logs inputted string given file name to write to */
+
     @SuppressLint("DefaultLocale")
     public void log(String fileName, String input) {
         try {
+            @SuppressLint("SdCardPath")
             File file = new File("/sdcard/tmp/"+fileName+data+"Log.csv");
-            FileWriter filewriter = new FileWriter(file, true);
-            filewriter.write(String.format("%.2f", time) + ":" + input + "\n");
-            filewriter.close();
+            FileWriter fileWriter = new FileWriter(file, true);
+            fileWriter.write(String.format("%.2f", time) + ":" + input + "\n");
+            fileWriter.close();
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
+    /* Logs inputted string given file name to write to and has option to be formatted to headers */
 
     @SuppressLint("DefaultLocale")
     public void log(String fileName, String input, boolean p_isFormatted){
         if (p_isFormatted) {
             loggingString = "";
-            tempheaderPositions = headerList.get(logList.get(fileName));
-            previnputstringstartindex = 0;
+            tempHeaderPositions = headerList.get(logList.get(fileName));
+            prevInputStringStartIndex = 0;
             inputStrings.clear();
 
             for (int i = 1; i < input.length(); i++) {
-                prevchar = input.charAt(i - 1);
-                if (prevchar == ',') {
-                    inputStrings.add(input.substring(previnputstringstartindex, i - 1));
-                    previnputstringstartindex = i;
+                prevChar = input.charAt(i - 1);
+                if (prevChar == ',') {
+                    inputStrings.add(input.substring(prevInputStringStartIndex, i - 1));
+                    prevInputStringStartIndex = i;
                 }
             }
 
-            inputStrings.add(input.substring(previnputstringstartindex));
+            inputStrings.add(input.substring(prevInputStringStartIndex));
 
             for (int i = 0; i < inputStrings.size(); i++) {
 
-                while (tempheaderPositions.get(i + 1)- loggingString.length()-String.format("%.2f", time).length() - 1 >0) {
+                while (tempHeaderPositions.get(i + 1)- loggingString.length()-String.format("%.2f", time).length() - 1 >0) {
                     loggingString += " ";
                 }
                 loggingString += inputStrings.get(i);
             }
 
             try {
-                FileWriter filewriter = new FileWriter(logList.get(fileName), true);
-                filewriter.write(String.format("%.2f", time) + ":" + loggingString + "\n");
-                filewriter.close();
+                FileWriter fileWriter = new FileWriter(logList.get(fileName), true);
+                fileWriter.write(String.format("%.2f", time) + ":" + loggingString + "\n");
+                fileWriter.close();
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -187,50 +206,58 @@ public class Logger {
             log(fileName, input);
         }
     }
+
+    /* Logs inputted string given file name to write to without the runtime at the beginning of the line */
+
     @SuppressLint("DefaultLocale")
     public void logNoTime(String fileName, String input){
         try {
+            @SuppressLint("SdCardPath")
             File file = new File("/sdcard/tmp/"+fileName+data+"Log.csv");
-            FileWriter filewriter = new FileWriter(file, true);
-            filewriter.write(input + "\n");
-            filewriter.close();
+            FileWriter fileWriter = new FileWriter(file, true);
+            fileWriter.write(input + "\n");
+            fileWriter.close();
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
+    /* Logs inputted string given file name to write to and has option to be formatted to headers and the option
+    * to be regulated to only log every 20 loops
+    */
+
     @SuppressLint("DefaultLocale")
     public void log(String fileName, String input, boolean p_isFormatted, boolean p_isRegulated){
         if (p_isFormatted && p_isRegulated) {
             loggingString = "";
-            tempheaderPositions = headerList.get(logList.get(fileName));
-            previnputstringstartindex = 0;
+            tempHeaderPositions = headerList.get(logList.get(fileName));
+            prevInputStringStartIndex = 0;
             inputStrings.clear();
 
-            if (loopcounter % 20 == 0) {
+            if (loopCounter % 20 == 0) {
 
                 for (int i = 1; i < input.length(); i++) {
-                    prevchar = input.charAt(i - 1);
-                    if (prevchar == ',') {
-                        inputStrings.add(input.substring(previnputstringstartindex, i - 1));
-                        previnputstringstartindex = i;
+                    prevChar = input.charAt(i - 1);
+                    if (prevChar == ',') {
+                        inputStrings.add(input.substring(prevInputStringStartIndex, i - 1));
+                        prevInputStringStartIndex = i;
                     }
                 }
 
-                inputStrings.add(input.substring(previnputstringstartindex));
+                inputStrings.add(input.substring(prevInputStringStartIndex));
 
                 for (int i = 0; i < inputStrings.size(); i++) {
 
-                    while (tempheaderPositions.get(i + 1) - loggingString.length() - String.format("%.2f", time).length() - 1 > 0) {
+                    while (tempHeaderPositions.get(i + 1) - loggingString.length() - String.format("%.2f", time).length() - 1 > 0) {
                         loggingString += " ";
                     }
                     loggingString += inputStrings.get(i);
                 }
 
                 try {
-                    FileWriter filewriter = new FileWriter(logList.get(fileName), true);
-                    filewriter.write(String.format("%.2f", time) + ":" + loggingString + "\n");
-                    filewriter.close();
+                    FileWriter fileWriter = new FileWriter(logList.get(fileName), true);
+                    fileWriter.write(String.format("%.2f", time) + ":" + loggingString + "\n");
+                    fileWriter.close();
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
@@ -240,12 +267,12 @@ public class Logger {
 
         }
 
-        else if (p_isFormatted && !p_isRegulated) {
-            log(fileName, input, p_isFormatted);
+        else if (p_isFormatted) {
+            log(fileName, input, true);
         }
 
-        else if (!p_isFormatted && p_isRegulated) {
-            if (loopcounter % 20 == 0) {
+        else if (p_isRegulated) {
+            if (loopCounter % 20 == 0) {
                 log(fileName, input);
             }
         }
@@ -255,38 +282,42 @@ public class Logger {
         }
     }
 
+    /* Logs inputted string given file name to write to and has the option to be formatted to headers, the option
+     * to be regulated to only log every 20 loops, and the option to also print the input as telemetry
+     */
+
     @SuppressLint("DefaultLocale")
     public void log(String fileName, String input, boolean p_isFormatted, boolean p_isRegulated, boolean p_isTelemetry){
         if (p_isFormatted && p_isRegulated) {
             loggingString = "";
-            tempheaderPositions = headerList.get(logList.get(fileName));
-            previnputstringstartindex = 0;
+            tempHeaderPositions = headerList.get(logList.get(fileName));
+            prevInputStringStartIndex = 0;
             inputStrings.clear();
 
-            if (loopcounter % 20 == 0) {
+            if (loopCounter % 20 == 0) {
 
                 for (int i = 1; i < input.length(); i++) {
-                    prevchar = input.charAt(i - 1);
-                    if (prevchar == ',') {
-                        inputStrings.add(input.substring(previnputstringstartindex, i - 1));
-                        previnputstringstartindex = i;
+                    prevChar = input.charAt(i - 1);
+                    if (prevChar == ',') {
+                        inputStrings.add(input.substring(prevInputStringStartIndex, i - 1));
+                        prevInputStringStartIndex = i;
                     }
                 }
 
-                inputStrings.add(input.substring(previnputstringstartindex));
+                inputStrings.add(input.substring(prevInputStringStartIndex));
 
                 for (int i = 0; i < inputStrings.size(); i++) {
 
-                    while (tempheaderPositions.get(i + 1) - loggingString.length() - String.format("%.2f", time).length() - 1 > 0) {
+                    while (tempHeaderPositions.get(i + 1) - loggingString.length() - String.format("%.2f", time).length() - 1 > 0) {
                         loggingString += " ";
                     }
                     loggingString += inputStrings.get(i);
                 }
 
                 try {
-                    FileWriter filewriter = new FileWriter(logList.get(fileName), true);
-                    filewriter.write(String.format("%.2f", time) + ":" + loggingString + "\n");
-                    filewriter.close();
+                    FileWriter fileWriter = new FileWriter(logList.get(fileName), true);
+                    fileWriter.write(String.format("%.2f", time) + ":" + loggingString + "\n");
+                    fileWriter.close();
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
@@ -296,17 +327,17 @@ public class Logger {
 
         }
 
-        else if (p_isFormatted && !p_isRegulated) {
-            log(fileName, input, p_isFormatted);
+        else if (p_isFormatted) {
+            log(fileName, input, true);
         }
 
-        else if (!p_isFormatted && p_isRegulated) {
-            if (loopcounter % 20 == 0) {
+        else if (p_isRegulated) {
+            if (loopCounter % 20 == 0) {
                 log(fileName, input);
             }
         }
 
-        else if (!p_isFormatted && !p_isRegulated && p_isTelemetry) {
+        else if (p_isTelemetry) {
             log(fileName, input);
             op.telemetry.addData("Log Telemetry: ", input);
         }
@@ -317,11 +348,11 @@ public class Logger {
     }
 
 //    public void logMessage(String fileName, String input){
-////        if (loopcounter % 5 == 0) {
+////        if (loopCounter % 5 == 0) {
 //        try {
-//            FileWriter filewriter = new FileWriter(logList.get(fileName), true);
-//            filewriter.write(String.format("%.2f", op.getRuntime()) + ":" + input + "\n");
-//            filewriter.close();
+//            FileWriter fileWriter = new FileWriter(logList.get(fileName), true);
+//            fileWriter.write(String.format("%.2f", op.getRuntime()) + ":" + input + "\n");
+//            fileWriter.close();
 //        } catch (IOException e) {
 //            e.printStackTrace();
 //        }
@@ -332,34 +363,34 @@ public class Logger {
 //    public void logRegulated(String fileName, String input){
 //
 //        loggingString = "";
-//        tempheaderPositions = headerList.get(logList.get(fileName));
-//        previnputstringstartindex = 0;
+//        tempHeaderPositions = headerList.get(logList.get(fileName));
+//        prevInputStringStartIndex = 0;
 //        inputStrings.clear();
 //
-//        if (loopcounter % 20 == 0) {
+//        if (loopCounter % 20 == 0) {
 //
 //            for (int i = 1; i < input.length(); i++) {
-//                prevchar = input.charAt(i - 1);
-//                if (prevchar == ',') {
-//                    inputStrings.add(input.substring(previnputstringstartindex, i - 1));
-//                    previnputstringstartindex = i;
+//                prevChar = input.charAt(i - 1);
+//                if (prevChar == ',') {
+//                    inputStrings.add(input.substring(prevInputStringStartIndex, i - 1));
+//                    prevInputStringStartIndex = i;
 //                }
 //            }
 //
-//            inputStrings.add(input.substring(previnputstringstartindex));
+//            inputStrings.add(input.substring(prevInputStringStartIndex));
 //
 //            for (int i = 0; i < inputStrings.size(); i++) {
 //
-//                while (tempheaderPositions.get(i + 1) - loggingString.length() - String.format("%.2f", op.getRuntime()).length() - 1 > 0) {
+//                while (tempHeaderPositions.get(i + 1) - loggingString.length() - String.format("%.2f", op.getRuntime()).length() - 1 > 0) {
 //                    loggingString += " ";
 //                }
 //                loggingString += inputStrings.get(i);
 //            }
 //
 //            try {
-//                FileWriter filewriter = new FileWriter(logList.get(fileName), true);
-//                filewriter.write(String.format("%.2f", op.getRuntime()) + ":" + loggingString + "\n");
-//                filewriter.close();
+//                FileWriter fileWriter = new FileWriter(logList.get(fileName), true);
+//                fileWriter.write(String.format("%.2f", op.getRuntime()) + ":" + loggingString + "\n");
+//                fileWriter.close();
 //            } catch (IOException e) {
 //                e.printStackTrace();
 //            }
@@ -368,22 +399,24 @@ public class Logger {
 //    }
 //
 //    public void logRegulatedMessage(String fileName, String input) {
-//        if (loopcounter % 10 == 0) {
+//        if (loopCounter % 10 == 0) {
 //            try {
-//                FileWriter filewriter = new FileWriter(logList.get(fileName), true);
-//                filewriter.write(String.format("%.2f", op.getRuntime()) + ":" + input + "\n");
-//                filewriter.close();
+//                FileWriter fileWriter = new FileWriter(logList.get(fileName), true);
+//                fileWriter.write(String.format("%.2f", op.getRuntime()) + ":" + input + "\n");
+//                fileWriter.close();
 //            } catch (IOException e) {
 //                e.printStackTrace();
 //            }
 //        }
 //    }
 
+    /* Closes log files */
+
     public void closeLog(){
         File[] fileArray = logList.values().toArray(new File[1]);
         try {
-            for (int i=0; i< fileArray.length;i++){
-                FileWriter file = new FileWriter(fileArray[i]);
+            for (File value : fileArray) {
+                FileWriter file = new FileWriter(value);
                 file.close();
             }
         }
