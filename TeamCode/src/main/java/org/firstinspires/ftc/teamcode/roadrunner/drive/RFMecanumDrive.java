@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.roadrunner.drive;
 
 import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.op;
 import static org.firstinspires.ftc.teamcode.roadrunner.drive.PoseStorage.currentPose;
+import static org.firstinspires.ftc.teamcode.roadrunner.drive.PoseStorage.currentVelocity;
 
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
@@ -19,19 +20,20 @@ public class RFMecanumDrive {
         for (LynxModule module : op.hardwareMap.getAll(LynxModule.class)) {
             module.setBulkCachingMode(LynxModule.BulkCachingMode.AUTO);
         }
-        leftFront = op.hardwareMap.get(DcMotorEx.class, "motorLeftFront");
-        leftRear = op.hardwareMap.get(DcMotorEx.class, "motorLeftBack");
-        rightRear = op.hardwareMap.get(DcMotorEx.class, "motorRightBack");
-        rightFront = op.hardwareMap.get(DcMotorEx.class, "motorRightFront");
-        rightFront.setDirection(DcMotor.Direction.FORWARD);
-        leftFront.setDirection(DcMotor.Direction.REVERSE);
-        leftRear.setDirection(DcMotor.Direction.REVERSE);
-        rightRear.setDirection(DcMotor.Direction.FORWARD);
-        rightFront.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        leftFront.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        leftRear.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        rightRear.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+//        leftFront = op.hardwareMap.get(DcMotorEx.class, "motorLeftFront");
+//        leftRear = op.hardwareMap.get(DcMotorEx.class, "motorLeftBack");
+//        rightRear = op.hardwareMap.get(DcMotorEx.class, "motorRightBack");
+//        rightFront = op.hardwareMap.get(DcMotorEx.class, "motorRightFront");
+//        rightFront.setDirection(DcMotor.Direction.FORWARD);
+//        leftFront.setDirection(DcMotor.Direction.REVERSE);
+//        leftRear.setDirection(DcMotor.Direction.REVERSE);
+//        rightRear.setDirection(DcMotor.Direction.FORWARD);
+//        rightFront.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+//        leftFront.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+//        leftRear.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+//        rightRear.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         poseSim = new RFPoseSim();
+        currentVelocity = new Pose2d(0,0,0);
     }
 
     public void addWaypoint(RFWaypoint p_waypoint) {
@@ -55,7 +57,7 @@ public class RFMecanumDrive {
             if(isPoseSim){
                 poseSim.updateSim();
                 pathFollower.update();
-                poseSim.getTargets(new Pose2d(0,0,0)/*pathFollower.rfTrajectory.getTargetPosition()*/, pathFollower.finalTargetVelocity);
+                poseSim.getTargets(pathFollower.rfTrajectory.getTargetPosition(), pathFollower.PIDTargetVelocity);
             }
             else{
                 setMotorPowers(pathFollower.update());

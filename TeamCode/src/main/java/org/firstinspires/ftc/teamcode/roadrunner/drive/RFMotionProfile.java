@@ -19,9 +19,9 @@ import com.acmerobotics.roadrunner.geometry.Vector2d;
 import java.util.ArrayList;
 
 public class RFMotionProfile {
-    double curviness, c, velo1, velo2, endVel, startVel;
+    double curviness, c, velo1, velo2, endVel, startVel,startT;
     ArrayList<Double> tList;
-    double MIN_DECEL = -5, startDist, endDist, totalDist, length, targetVelocity, peakVel, targetAcceleration;
+    double MIN_DECEL = -5, startDist, endDist, totalDist, length, targetVelocity, peakVel, distance=0, targetAcceleration;
     int SEARCH_RESOLUTION = 12;
 
     public RFMotionProfile(Vector2d p_startVel, Vector2d p_endVel, double p_curviness) {
@@ -37,12 +37,16 @@ public class RFMotionProfile {
             velo1 = MAX_ACCEL * 0.5 * (t * curviness * 0.5);
             velo2 = MAX_VEL - velo1;
         }
-        endVel = p_endVel.norm();
-        startVel = p_startVel.norm();
+        endVel = min(p_endVel.norm(),MAX_VEL);
+        startVel = min(p_startVel.norm(),MAX_VEL);
+        packet.put("mpStartVel", startVel);
     }
 
     public void setLength(double p_length) {
         if (length != p_length) {
+            if(distance==0){
+                distance = p_length;
+            }
             length = p_length;
             calculateTList(length);
             packet.put("inpudDist1", length);
@@ -50,23 +54,33 @@ public class RFMotionProfile {
     }
 
     public boolean isProfileDone(double time) {
-        return time > tList.get(7) - tList.get(8);
+        return scaledTime(time) > tList.get(7) - tList.get(8);
     }
 
     public double getInstantaneousTargetAcceleration(double dist) {
         double velo = currentVelocity.vec().norm(), targetAccel;
         if (velo < velo1) {
-            targetAccel = c * Math.sqrt(2 * (velo) * c);
+            targetAccel = c * Math.sqrt(2 * (velo) / c);
+            packet.put("accelMagCase1", targetAccel);
         } else if (velo < velo2) {
             targetAccel = MAX_ACCEL;
+            packet.put("accelMagCase2", targetAccel);
+
         } else if (velo > velo2 && velo < peakVel) {
-            targetAccel = MAX_ACCEL - c * Math.sqrt(2 * (velo - velo2));
+            targetAccel = MAX_ACCEL - c * Math.sqrt(2 * (velo - velo2)/c);
+            packet.put("accelMagCase3", targetAccel);
+
         } else {
+
             targetAccel = 0;
+            packet.put("accelMagCase4", targetAccel);
+
         }
         //if u should decel
         if (dist < getAccelDist(currentVelocity.vec().norm(), endVel)) {
             targetAccel = min(targetAccel * -1, MIN_DECEL);
+            packet.put("accelMagCase5", targetAccel);
+
         } else {
             //nothing
         }
@@ -74,9 +88,9 @@ public class RFMotionProfile {
     }
 
     //v=c, c =a, a =b, d=d
-    public double solveCubicEquation(int A, int B, int C, int D) {
+    public double solveCubicEquation(double A, double B, double C, double D) {
 
-        double x1, x2 = 0, x3;
+        double x1 = 0, x2 = 0, x3 = 0;
         double a = (double) B / A;
         double b = (double) C / A;
         double c = (double) D / A;
@@ -128,7 +142,7 @@ public class RFMotionProfile {
             x3 = (2.0 / Math.sqrt(3)) * (Math.sqrt(-p) * Math.cos((1 / 3.0) * Math.asin(((3 * Math.sqrt(3) * q) / (2 * Math.pow(Math.pow(-p, (double) 1 / 2), 3)))) + (Math.PI / 6))) - (a / 3.0);
 
         }
-        return x2;
+        return x1;
     }
 
     public double cubicFormula(double a, double b, double c, double d) {
@@ -144,42 +158,75 @@ public class RFMotionProfile {
         double endT;
         if (c != POSITIVE_INFINITY) {
             if (startVel < velo1) {
-                double t = 2 * startVel / MAX_ACCEL;
+                double t = sqrt(2 * startVel / c);
                 tList.add(time - t);
                 startDist = c * t * t * t / 6;
+                startT = t;
+                packet.put("strtDist1", t);
+
             } else if (startVel < velo2) {
                 double t1 = 2 * velo1 / MAX_ACCEL;
                 double t2 = (startVel - velo1) / MAX_ACCEL;
                 tList.add(time - t1 - t2);
                 startDist = c * t1 * t1 * t1 / 6 + velo1 * t2 + MAX_ACCEL * t2 * t2 / 2;
+                startT = t1+t2;
+                packet.put("strtDist2", startT);
+
             } else {
-                double t1 = 2 * velo1 / MAX_ACCEL;
+                double t1 = sqrt(2 * velo1 / c);
                 double t2 = (velo2 - velo1) / MAX_ACCEL;
-                double t3 = 2 * (startVel - velo2) / MAX_ACCEL;
+                double t3 = sqrt(2 * (startVel - velo2) / c);
                 tList.add(time - t1 - t2 - t3);
                 startDist = c * t1 * t1 * t1 / 6 + velo1 * t2 + MAX_ACCEL * t2 * t2 / 2 + velo2 * t3 + MAX_ACCEL * t3 * t3 / 2
                         - c * t3 * t3 * t3 / 6;
+                startT = t1+t2+t3;
+                packet.put("strtDist3", t1+t2+t3);
+
             }
-            double avgAccel = MAX_ACCEL * (1 - 0.5 * curviness);
+            //calc avgAccel
+            double avgAccel;
+            endVel = abs(endVel);
+            if (endVel < velo1) {
+                double t = sqrt(2 * endVel / c);
+                avgAccel = c*t*0.5;
+                packet.put("avgAccel1", avgAccel);
+
+            } else if (endVel < velo2) {
+                double t1 = MAX_ACCEL / c;
+                double t2 = (endVel - velo1) / MAX_ACCEL;
+                avgAccel = MAX_ACCEL * (t2 + 0.5 * t1) / (t1 + t2);
+                packet.put("avgAccel2", avgAccel);
+
+            } else {
+                endVel = min(MAX_VEL, endVel);
+                double t1 = MAX_ACCEL / c;
+                double t2 = (velo2 - velo1) / MAX_ACCEL;
+                double t3 = sqrt(2 * (endVel - velo2) / c);
+                avgAccel = MAX_ACCEL * (t2 + 0.5 * (t1 + t3)) / (t2 + t1 + t3);
+                packet.put("avgAccel3", avgAccel);
+
+            }
+            packet.put("avgAccel", avgAccel);
+
             endVel = min(endVel, sqrt(startVel * startVel + 2 * avgAccel * length));
             if (endVel < velo1) {
-                endT = 2 * (endVel) / MAX_ACCEL;
+                endT = sqrt(2 * (endVel) / c);
                 endDist = c * endT * endT * endT / 6;
             } else if (endVel < velo2) {
                 double t1 = 2 * (velo1) / MAX_ACCEL;
                 double t2 = (endVel - velo1) / MAX_ACCEL;
                 endT = t1 + t2;
                 endDist = c * t1 * t1 * t1 / 6 + velo1 * t2 + MAX_ACCEL * t2 * t2 / 2;
-
             } else {
                 double t1 = 2 * (velo1) / MAX_ACCEL;
                 double t2 = (velo2 - velo1) / MAX_ACCEL;
-                double t3 = 2 * (endVel - velo2) / MAX_ACCEL;
+                double t3 = sqrt(2 * (endVel - velo2) / c);
                 endT = t1 + t2 + t3;
                 endDist = c * t1 * t1 * t1 / 6 + velo1 * t2 + MAX_ACCEL * t2 * t2 / 2 + velo2 * t3 + MAX_ACCEL * t3 * t3 / 2
                         - c * t3 * t3 * t3 / 6;
 
             }
+            packet.put("mpStartDst", startDist);
             totalDist = length + startDist + endDist;
             double t1 = 2 * (velo1) / MAX_ACCEL;
             double t2 = (velo2 - velo1) / MAX_ACCEL;
@@ -190,7 +237,7 @@ public class RFMotionProfile {
             if (totalDist * 0.5 < phase1dist) {
                 double t = cbrt(3 * totalDist / c);
                 peakVel = t * MAX_ACCEL * 0.5;
-                packet.put("peakVelCase0", t);
+                packet.put("peakVelCase0", peakVel);
             } else if (totalDist * 0.5 < phase2dist + phase1dist) {
                 double dist = totalDist * 0.5 - phase1dist;
                 double t = -velo1 + sqrt(velo1 * velo1 + 2 * MAX_ACCEL * dist);
@@ -200,8 +247,8 @@ public class RFMotionProfile {
 
             } else if (totalDist * 0.5 < phase3dist + phase2dist + phase1dist) {
                 double dist = totalDist * 0.5 - phase1dist - phase2dist;
-                double t = cubicFormula(-c / 6, MAX_ACCEL / 2, velo2, -dist);
-                peakVel = velo2 + MAX_ACCEL * 0.5 * t * t;
+                double t = solveCubicEquation(-c / 6, MAX_ACCEL / 2, velo2, -dist);
+                peakVel = velo2 + c * 0.5 * t *t;
                 packet.put("peakVelCase2", peakVel);
 
             } else {
@@ -210,14 +257,14 @@ public class RFMotionProfile {
 
             }
 
-            double cruiseLength = max(length - getAccelDist(peakVel, endVel) - getAccelDist(startVel, peakVel), 0);
-            tList.add(tList.get(0) + 2 * min(velo1, peakVel) / MAX_ACCEL);
+            double cruiseLength = max(totalDist - 2 * min((phase1dist + phase2dist + phase3dist), totalDist * 0.5), 0);
+            tList.add(tList.get(0) + sqrt(2 * min(velo1, peakVel) / c));
             tList.add(tList.get(1) + (min(velo2, peakVel) - min(velo1, peakVel)) / MAX_ACCEL);
-            tList.add(tList.get(2) + 2 * (peakVel - min(velo2, peakVel)) / MAX_ACCEL);
+            tList.add(tList.get(2) + sqrt(2 * (peakVel - min(velo2, peakVel)) / c));
             tList.add(tList.get(3) + cruiseLength / peakVel);
-            tList.add(tList.get(4) + 2 * (peakVel - min(velo2, peakVel) / MAX_ACCEL));
-            tList.add(tList.get(5) + (min(velo2, peakVel) - min(velo1, peakVel)) / MAX_ACCEL);
-            tList.add(tList.get(6) + 2 * min(velo1, peakVel) / MAX_ACCEL);
+            tList.add(tList.get(4) + tList.get(3) - tList.get(2));
+            tList.add(tList.get(5) + tList.get(2) - tList.get(1));
+            tList.add(tList.get(6) + tList.get(1) - tList.get(0));
             tList.add(endT);
         } else {
             double t0 = startVel / MAX_ACCEL;
@@ -228,7 +275,6 @@ public class RFMotionProfile {
             endDist = MAX_ACCEL * endT * endT * 0.5;
             totalDist = length + startDist + endDist;
             peakVel = min(sqrt(totalDist * MAX_ACCEL), MAX_VEL);
-
             double cruiseLength = max(length - getAccelDist(peakVel, endVel) - getAccelDist(startVel, peakVel), 0);
             tList.add(time - startVel / MAX_ACCEL);
             tList.add(tList.get(0));
@@ -250,33 +296,55 @@ public class RFMotionProfile {
 
 
     }
+    public double scaledTime(double time){
+        double scaledTime = time - (time-tList.get(0)-  startT)*(1-distance/length);
+        packet.put("unscaledT", time);
+        packet.put("scaledT", scaledTime);
+        return time ;
+    }
 
     public double calculateTargetVelocity(double time) {
+        time = scaledTime(time);
         if (time > tList.get(7) - tList.get(8)) {
             time = tList.get(7) - tList.get(8);
         }
         if (curviness != 0) {
+            packet.put("mpTime", time);
             if (time < tList.get(1)) {
-                targetVelocity = startVel + 0.5 * c * (time - tList.get(0)) * (time - tList.get(0));
+                packet.put("mpVCase", 10);
+
+                targetVelocity = 0.5 * c * (time - tList.get(0)) * (time - tList.get(0));
                 return targetVelocity;
             } else if (time < tList.get(2)) {
+                packet.put("mpVCase", 20);
+
                 targetVelocity = velo1 + MAX_ACCEL * (time - tList.get(1));
                 return targetVelocity;
             } else if (time < tList.get(3)) {
+                packet.put("mpVCase", 30);
+
                 targetVelocity = peakVel - 0.5 * c * (tList.get(3) - time) * (tList.get(3) - time);
                 return targetVelocity;
             } else if (time < tList.get(4)) {
+                packet.put("mpVCase", 40);
+
                 targetVelocity = peakVel;
                 return targetVelocity;
             } else if (time < tList.get(5)) {
+                packet.put("mpVCase", 50);
+
                 return peakVel - 0.5 * c * (time - tList.get(4)) * (time - tList.get(4));
             } else if (time < tList.get(6)) {
+                packet.put("mpVCase", 60);
+
                 return velo2 - MAX_ACCEL * (time - tList.get(5));
             } else {
+                packet.put("mpVCase", 70);
+
                 if (time > tList.get(7)) {
                     time = tList.get(7);
                 }
-                return velo1 - 0.5 * c * (time - tList.get(6)) * (time - tList.get(6));
+                return 0.5 * c * (tList.get(7) - time) * (tList.get(7) - time);
             }
         } else {
             if (time < tList.get(2)) {
@@ -296,54 +364,38 @@ public class RFMotionProfile {
         }
     }
 
-    public double calculateTargetAcceleration(double time) {
-        if (time > tList.get(7) - tList.get(8)) {
-            time = tList.get(7) - tList.get(8);
-        }
-        if (time < tList.get(1)) {
-            return c * (time - tList.get(0));
-        } else if (time < tList.get(2)) {
-            return MAX_ACCEL;
-        } else if (time < tList.get(3)) {
-            return MAX_ACCEL - c * (time - tList.get(2));
-        } else if (time < tList.get(4)) {
-            return 0;
-        } else if (time < tList.get(5)) {
-            return -c * (time - tList.get(4));
-        } else if (time < tList.get(6)) {
-            return -MAX_ACCEL;
-        } else {
-            if (time > tList.get(7)) {
-                time = tList.get(7);
-            }
-            return -MAX_ACCEL + c * (time - tList.get(6));
-        }
-    }
-
     //input current time, output amount of distance traveled
     public double motionProfileTimeToDist(double time) {
+//        time = scaledTime(time);
         if (time > tList.get(7) - tList.get(8)) {
             time = tList.get(7) - tList.get(8);
         }
         if (curviness != 0) {
             if (time > tList.get(6)) {
                 double t = tList.get(7) - time;
-                return totalDist - c * t * t * t / 6;
+                packet.put("searchCase1",t);
+                return totalDist - startDist - c * t * t * t / 6;
             } else if (time > tList.get(5)) {
                 double t1 = tList.get(7) - tList.get(6);
                 double t2 = tList.get(6) - time;
-                return totalDist - (c * t1 * t1 * t1 / 6 + velo1 * t2 + MAX_ACCEL * t2 * t2 * 0.5);
+                packet.put("searchCase2",t1);
+
+                return totalDist - startDist- (c * t1 * t1 * t1 / 6 + velo1 * t2 + MAX_ACCEL * t2 * t2 * 0.5);
             } else if (time > tList.get(4)) {
                 double t1 = tList.get(7) - tList.get(6);
                 double t2 = tList.get(6) - tList.get(5);
                 double t3 = tList.get(5) - time;
-                return totalDist - (c * t1 * t1 * t1 / 6 + velo1 * t2 + MAX_ACCEL * t2 * t2 * 0.5 + velo2 * t3 + MAX_ACCEL * t3 * t3 * 0.5 - c * t3 * t3 * t3 / 6);
+                packet.put("searchCase3",t1);
+
+                return totalDist - startDist- (c * t1 * t1 * t1 / 6 + velo1 * t2 + MAX_ACCEL * t2 * t2 * 0.5 + velo2 * t3 + MAX_ACCEL * t3 * t3 * 0.5 - c * t3 * t3 * t3 / 6);
             } else if (time > tList.get(3)) {
                 double t1 = tList.get(7) - tList.get(6);
                 double t2 = tList.get(6) - tList.get(5);
                 double t3 = tList.get(5) - tList.get(4);
                 double t4 = tList.get(4) - time;
-                return totalDist - (c * t1 * t1 * t1 / 6 + velo1 * t2 + MAX_ACCEL * t2 * t2 * 0.5 + velo2 * t3 + MAX_ACCEL * t3 * t3 * 0.5 - c * t3 * t3 * t3 / 6 +
+                packet.put("searchCase4",t1);
+
+                return totalDist - startDist- (c * t1 * t1 * t1 / 6 + velo1 * t2 + MAX_ACCEL * t2 * t2 * 0.5 + velo2 * t3 + MAX_ACCEL * t3 * t3 * 0.5 - c * t3 * t3 * t3 / 6 +
                         peakVel * t4);
             } else if (time > tList.get(2)) {
                 double t1 = tList.get(7) - tList.get(6);
@@ -351,7 +403,9 @@ public class RFMotionProfile {
                 double t3 = tList.get(5) - tList.get(4);
                 double t4 = tList.get(4) - tList.get(3);
                 double t5 = tList.get(3) - time;
-                return totalDist - (c * t1 * t1 * t1 / 6 + velo1 * t2 + MAX_ACCEL * t2 * t2 * 0.5 + velo2 * t3 + MAX_ACCEL * t3 * t3 * 0.5 - c * t3 * t3 * t3 / 6 +
+                packet.put("searchCase5",t1);
+
+                return totalDist - startDist- (c * t1 * t1 * t1 / 6 + velo1 * t2 + MAX_ACCEL * t2 * t2 * 0.5 + velo2 * t3 + MAX_ACCEL * t3 * t3 * 0.5 - c * t3 * t3 * t3 / 6 +
                         peakVel * t4 + peakVel * t5 - c * t5 * t5 * t5 / 6);
             } else if (time > tList.get(1)) {
                 double t1 = tList.get(7) - tList.get(6);
@@ -360,7 +414,9 @@ public class RFMotionProfile {
                 double t4 = tList.get(4) - tList.get(3);
                 double t5 = tList.get(3) - tList.get(2);
                 double t6 = tList.get(2) - time;
-                return totalDist - (c * t1 * t1 * t1 / 6 + velo1 * t2 + MAX_ACCEL * t2 * t2 * 0.5 + velo2 * t3 + MAX_ACCEL * t3 * t3 * 0.5 - c * t3 * t3 * t3 / 6 +
+                packet.put("searchCase6",t1);
+
+                return totalDist - startDist- (c * t1 * t1 * t1 / 6 + velo1 * t2 + MAX_ACCEL * t2 * t2 * 0.5 + velo2 * t3 + MAX_ACCEL * t3 * t3 * 0.5 - c * t3 * t3 * t3 / 6 +
                         peakVel * t4 + peakVel * t5 - c * t5 * t5 * t5 / 6 + velo2 * t6 - MAX_ACCEL * t6 * t6 * 0.5);
             } else {
                 if (time < tList.get(0)) {
@@ -373,8 +429,18 @@ public class RFMotionProfile {
                 double t5 = tList.get(3) - tList.get(2);
                 double t6 = tList.get(2) - tList.get(1);
                 double t7 = tList.get(1) - time;
-                return totalDist - (c * t1 * t1 * t1 / 6 + velo1 * t2 + MAX_ACCEL * t2 * t2 * 0.5 + velo2 * t3 + MAX_ACCEL * t3 * t3 * 0.5 - c * t3 * t3 * t3 / 6 +
-                        peakVel * t4 + peakVel * t5 - c * t5 * t5 * t5 / 6 + velo2 * t6 - MAX_ACCEL * t6 * t6 * 0.5 + velo1 * t7 - MAX_ACCEL * t7 * t7 * 0.5
+                packet.put("Mptime", time);
+                double phase1Dist = c * t1 * t1 * t1 / 6;
+                double phase2Dist = velo1 * t2 + MAX_ACCEL * t2 * t2 * 0.5;
+                double phase3Dist = velo2 * t3 + MAX_ACCEL * t3 * t3 * 0.5 - c * t3 * t3 * t3 / 6;
+                double phase4Dist = peakVel * t4;
+                packet.put("phase1Dist", phase1Dist);
+                packet.put("phase2Dist", phase2Dist);
+                packet.put("phase3Dist", phase3Dist);
+                packet.put("phase4Dist", phase4Dist);
+                packet.put("searchCase7",t1);
+
+                return totalDist - startDist - (phase1Dist + 2 * phase2Dist + 2 * phase3Dist + phase4Dist + velo1 * t7 - MAX_ACCEL * t7 * t7 * 0.5
                         + c * t7 * t7 * t7 / 6);
             }
         } else {
@@ -397,12 +463,9 @@ public class RFMotionProfile {
     //take in remaining dist, convert to remaining time
     public double motionProfileRemDistToRemTime(double dist) {
         dist = totalDist - dist - endDist;
-        packet.put("dist", dist);
         double time = 0.5;
         for (int i = 0; i < SEARCH_RESOLUTION - 1; i++) {
-            double searchDist = motionProfileTimeToDist(tList.get(7) * (time) + tList.get(0) * (1 - time));
-            packet.put("time" + i, tList.get(7) * (time) + tList.get(0) * (1 - time));
-            packet.put("dist" + i, searchDist);
+            double searchDist = motionProfileTimeToDist(scaledTime(tList.get(7) * (time) + tList.get(0) * (1 - time)));
             double error = dist - searchDist;
             if (abs(error) > 0.01) {
                 if (error > 0) {
@@ -413,6 +476,14 @@ public class RFMotionProfile {
             }
         }
         return tList.get(7) - (tList.get(7) * (time) + tList.get(0) * (1 - time));
+    }
+    public double motionProfileRemainingTime(double time){
+        return tList.get(7) - tList.get(8) - scaledTime(time);
+    }
+
+    public double antiScaledTime(double time){
+        double scaledTime = time + (time-tList.get(0) - startT) * (length/distance -1);
+        return scaledTime;
     }
 
     public double getDecelTime(double vel) {

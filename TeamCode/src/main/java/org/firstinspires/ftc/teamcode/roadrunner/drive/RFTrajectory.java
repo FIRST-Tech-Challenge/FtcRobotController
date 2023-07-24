@@ -36,10 +36,10 @@ public class RFTrajectory {
 
     public void addSegment(RFSegment p_segment) {
         segments.add(p_segment);
-        if(segments.size()>1) {
+        if (segments.size() > 1) {
             segments.get(segments.size() - 2).setCompiled(false);
         }
-        if(segments.size()>2) {
+        if (segments.size() > 2) {
             segments.get(segments.size() - 3).setCompiled(false);
         }
     }
@@ -48,48 +48,49 @@ public class RFTrajectory {
         return currentPath.targetPose;
     }
 
-    public void updateSegments(){
-        if(segIndex==-1){
+    public boolean updateSegments() {
+        if (segIndex == -1) {
             setCurrentSegment(0);
-        }
-        else if(segIndex+1<segments.size()){
-            if(motionProfile.isProfileDone(time)){
-                setCurrentSegment(segIndex+1);
+            return true;
+        } else if (segIndex + 1 < segments.size()) {
+            if (motionProfile.isProfileDone(time)) {
+                setCurrentSegment(segIndex + 1);
+                return true;
+
             }
-        }
-        else{
+        } else {
             Pose2d curPos = currentPose;
-            Pose2d targetPos = segments.get(segIndex).getWaypoint().getTarget();
-            if(curPos.vec().distTo(targetPos.vec())<0.5&&abs(angleDist(curPos.getHeading(),targetPos.getHeading()+getTangentOffset()))<headingAccuracy){
-                segments.clear();
+            Pose2d targetPos = segments.get(segments.size() - 1).getWaypoint().getTarget();
+            if (curPos.vec().distTo(targetPos.vec()) < 0.25) {
+                clear();
+                return true;
             }
         }
+        return false;
     }
 
-    public double angleDist(double ang1, double ang2){
-        double dist = ang1-ang2;
-        while(dist>Math.toRadians(180)){
-            dist-=Math.toRadians(360);
+    public double angleDist(double ang1, double ang2) {
+        double dist = ang1 - ang2;
+        while (dist > Math.toRadians(180)) {
+            dist -= Math.toRadians(360);
         }
-        while(dist<-Math.toRadians(180)){
-            dist+=Math.toRadians(360);
+        while (dist < -Math.toRadians(180)) {
+            dist += Math.toRadians(360);
         }
         return dist;
     }
 
-    public double getTangentOffset(){
+    public double getTangentOffset() {
         return segments.get(segIndex).getTangentOffset();
     }
 
     //run before getTargetPosition
     public Pose2d getTargetVelocity() {
-        double veloMag = motionProfile.calculateTargetVelocity(time);
-        packet.put("veloMag",veloMag);
         double distance = motionProfile.motionProfileTimeToDist(time);
-        packet.put("mpPos",distance);
+        packet.put("mpPos", distance);
         currentPath.calculateTargetPoseAt(distance);
         Pose2d veloRatio = currentPath.targetVelocity;
-        return new Pose2d(veloRatio.vec().times(veloMag), veloRatio.getHeading());
+        return new Pose2d(veloRatio.vec(), veloRatio.getHeading());
     }
     //not needed for PID
 //    public Pose2d getTargetAcceleration() {
@@ -106,13 +107,12 @@ public class RFTrajectory {
         currentPath.calculateInstantaneousTargetPose();
         Pose2d pathAccel = currentPath.instantaneousAcceleration;
         double projectMag = pathAccel.vec().dot(currentVelocity.vec());
-        if(projectMag==0){
-            projectMag=0.0001;
-        }
-        if(currentVelocity.vec().norm()==0){
-            currentVelocity = new Pose2d(0,0.0001,0);
+        packet.put("projectMag", projectMag);
+        if (projectMag == 0) {
+            projectMag = 0.0001;
         }
         Vector2d projectedDiff = currentVelocity.vec().times(projectMag / currentVelocity.vec().norm()).times(1 - (accelMag / projectMag));
+        packet.put("pathAccel", pathAccel);
         return new Pose2d(pathAccel.vec().minus(projectedDiff), pathAccel.getHeading());
     }
 
@@ -149,7 +149,7 @@ public class RFTrajectory {
     public double calculateSegmentDuration(double distance) {
         double input = distance;
         motionProfile.setLength(input);
-        double output = motionProfile.motionProfileRemDistToRemTime(input);
+        double output = motionProfile.motionProfileRemainingTime(time);
         return output;
     }
 
@@ -159,22 +159,34 @@ public class RFTrajectory {
     }
 
     public double timeToTRatio(double tToXDerivative) {
-        if(tToXDerivative==0){
-            if(motionProfile.calculateTargetVelocity(time)==0){
+        double mpVelo = motionProfile.calculateTargetVelocity(time);
+
+        if (tToXDerivative == 0) {
+            if (mpVelo == 0) {
                 return 1;
-            }
-            else{
+            } else {
                 tToXDerivative = 0.0001;
             }
         }
-        return motionProfile.calculateTargetVelocity(time) / tToXDerivative;
+        packet.put("veloMag", mpVelo);
+        packet.put("segment", segIndex * 10);
+        if (tToXDerivative > mpVelo || motionProfile.motionProfileRemainingTime(time) < 0.4) {
+            if(mpVelo==0){
+                mpVelo = 0.0001;
+            }
+            return mpVelo / tToXDerivative;
+        } else {
+            return 1;
+        }
+//        return motionProfile.calculateTargetVelocity(time) / tToXDerivative;
     }
 
     public void setCurrentSegment(int index) {
         segIndex = index;
         if (segIndex > 0) {
-            setMotionProfile(segments.get(segIndex - 1).getWaypoint(), segments.get(segIndex));
-            setCurrentPath(segments.get(segIndex - 1).getWaypoint(), segments.get(segIndex).getWaypoint());
+            RFWaypoint curWaypoint = new RFWaypoint(currentPose, currentVelocity.vec().angle(), currentVelocity.vec().norm());
+            setMotionProfile(curWaypoint, segments.get(segIndex));
+            setCurrentPath(curWaypoint, segments.get(segIndex).getWaypoint());
         } else {
             RFWaypoint curWaypoint = new RFWaypoint(currentPose, currentVelocity.vec().angle(), currentVelocity.vec().norm());
             setMotionProfile(curWaypoint, segments.get(segIndex));
@@ -182,7 +194,7 @@ public class RFTrajectory {
         }
     }
 
-    public RFSegment getCurrentSegment(){
+    public RFSegment getCurrentSegment() {
         return segments.get(segIndex);
     }
 

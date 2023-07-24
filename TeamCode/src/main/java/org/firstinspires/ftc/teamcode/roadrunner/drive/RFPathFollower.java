@@ -26,8 +26,8 @@ public class RFPathFollower {
     double tangentOffset = 0, curviness = 0;
     boolean constantHeading = false, isFollowing = false;
     RFTrajectory rfTrajectory;
-    Pose2d finalTargetVelocity;
-    public static int VERBOSITY=1;
+    Pose2d finalTargetVelocity = new Pose2d(0,0,0), PIDTargetVelocity= new Pose2d(0,0,0);
+    public static int VERBOSITY = 1;
 
     public RFPathFollower() {
         rfTrajectory = new RFTrajectory();
@@ -36,21 +36,18 @@ public class RFPathFollower {
     public double[] update() {
         if (!isFollowing && rfTrajectory.length() != 0) {
             rfTrajectory.compileSegments();
-            isFollowing=true;
+            isFollowing = true;
         }
-        rfTrajectory.updateSegments();
+        boolean updated = rfTrajectory.updateSegments();
         double[] powers = {0, 0, 0, 0};
-        //update poseStorage
-        if(isFollowing()) {
+        if (isFollowing()) {
             Pose2d curPos = currentPose;
             Pose2d curVel = currentVelocity;
-            Pose2d PIDTargetVelocity = new Pose2d(0,0,0);
-//            rfTrajectory.getTargetVelocity();
-            Pose2d PIDTargetPose = new Pose2d(0,0,0);
-//            rfTrajectory.getTargetPosition();
+            PIDTargetVelocity = rfTrajectory.getTargetVelocity();
+            Pose2d PIDTargetPose = rfTrajectory.getTargetPosition();
             Vector2d transPosError = PIDTargetPose.vec().minus(curPos.vec());
             Vector2d transVelError = PIDTargetVelocity.vec().minus(curVel.vec());
-            double headError = rfTrajectory.angleDist(PIDTargetPose.getHeading()+ rfTrajectory.getTangentOffset(), curPos.getHeading());
+            double headError = rfTrajectory.angleDist(PIDTargetPose.getHeading() + rfTrajectory.getTangentOffset(), curPos.getHeading());
             double headVelError = PIDTargetVelocity.getHeading() - curVel.getHeading();
             Pose2d FFTargetAcceleration = rfTrajectory.getInstantaneousTargetAcceleration();
             Pose2d FFTargetVelocity = rfTrajectory.getInstantaneousTargetVelocity();
@@ -70,26 +67,26 @@ public class RFPathFollower {
             powers[2] = pF - pS + pR;
             //backRight
             powers[3] = pF + pS + pR;
-            if(VERBOSITY>0){
-                packet.put("curX",curPos.getX());
-                packet.put("curY",curPos.getY());
-                packet.put("curH",curPos.getHeading());
-                packet.put("curdX",curVel.getX());
-                packet.put("curdY",curVel.getY());
-                packet.put("curdH",curVel.getHeading());
-                packet.put("tarX",PIDTargetPose.getX());
-                packet.put("tarY",PIDTargetPose.getY());
-                packet.put("tarH",PIDTargetPose.getHeading());
-                packet.put("targdX",PIDTargetVelocity.getX());
-                packet.put("targdY",PIDTargetVelocity.getY());
-                packet.put("targdH",PIDTargetVelocity.getHeading());
-                packet.put("vel",PIDTargetVelocity.vec().norm());
-                packet.put("FFtargdX",FFTargetVelocity.getX());
-                packet.put("FFtargdY",FFTargetVelocity.getY());
-                packet.put("FFtargdH",FFTargetVelocity.getHeading());
-                packet.put("FFtargddX",FFTargetAcceleration.getX());
-                packet.put("FFtargddY",FFTargetAcceleration.getY());
-                packet.put("FFtargddH",FFTargetAcceleration.getHeading());
+            if (VERBOSITY > 0) {
+                packet.put("curX", curPos.getX());
+                packet.put("curY", curPos.getY());
+                packet.put("curH", curPos.getHeading());
+                packet.put("curdX", curVel.getX());
+                packet.put("curdY", curVel.getY());
+                packet.put("curdH", curVel.getHeading());
+                packet.put("tarX", PIDTargetPose.getX());
+                packet.put("tarY", PIDTargetPose.getY());
+                packet.put("tarH", PIDTargetPose.getHeading());
+                packet.put("targdX", PIDTargetVelocity.getX());
+                packet.put("targdY", PIDTargetVelocity.getY());
+                packet.put("targdH", PIDTargetVelocity.getHeading());
+                packet.put("vel", PIDTargetVelocity.vec().norm());
+                packet.put("FFtargdX", FFTargetVelocity.getX());
+                packet.put("FFtargdY", FFTargetVelocity.getY());
+                packet.put("FFtargdH", FFTargetVelocity.getHeading());
+                packet.put("FFtargddX", FFTargetAcceleration.getX());
+                packet.put("FFtargddY", FFTargetAcceleration.getY());
+                packet.put("FFtargddH", FFTargetAcceleration.getHeading());
                 RFSegment seg = rfTrajectory.getCurrentSegment();
                 packet.put("target", seg.getWaypoint().getTarget());
                 packet.put("segIndex", rfTrajectory.segIndex);
@@ -100,25 +97,26 @@ public class RFPathFollower {
                 packet.put("mpCurviness", rfTrajectory.motionProfile.curviness);
                 packet.put("mpJerk", rfTrajectory.motionProfile.c);
                 packet.put("spLength", rfTrajectory.currentPath.getLength());
-                packet.put("startPos",rfTrajectory.currentPath.startPos);
-                packet.put("startVel",rfTrajectory.currentPath.startVel);
-                packet.put("endVel",rfTrajectory.currentPath.endVel);
-                packet.put("endPos",rfTrajectory.currentPath.endPos);
-                packet.put("definedness",seg.getWaypoint().getDefinedness());
-                packet.put("endVelMag",seg.getWaypoint().getEndVelocity());
-                packet.put("isCompiled",seg.isCompiled());
-                for(int i=0;i<8;i++){
-                    packet.put("tList"+i,rfTrajectory.motionProfile.tList.get(i));
+                packet.put("startPos", rfTrajectory.currentPath.startPos);
+                packet.put("startVel", rfTrajectory.currentPath.startVel);
+                packet.put("endVel", rfTrajectory.currentPath.endVel);
+                packet.put("endPos", rfTrajectory.currentPath.endPos);
+                packet.put("definedness", seg.getWaypoint().getDefinedness());
+                packet.put("endVelMag", seg.getWaypoint().getEndVelocity());
+                packet.put("isCompiled", seg.isCompiled());
+                for (int i = 0; i < 8; i++) {
+                    packet.put("tList" + i, rfTrajectory.motionProfile.tList.get(i));
                 }
                 ArrayList<Vector2d> derivs = rfTrajectory.currentPath.getCurDerivs();
-                packet.put("spPose",derivs.get(0));
-                packet.put("spDeriv",derivs.get(1));
-                packet.put("spScnDeriv",derivs.get(2));
-                packet.put("spTargetDist",rfTrajectory.currentPath.targetDistance);
+                packet.put("spPose", derivs.get(0));
+                packet.put("spDeriv", derivs.get(1));
+                packet.put("spScnDeriv", derivs.get(2));
+                packet.put("spTargetDist", rfTrajectory.currentPath.targetDistance);
                 packet.put("spT", rfTrajectory.currentPath.numericT);
-                packet.put("mpVelMag",rfTrajectory.motionProfile.calculateTargetVelocity(time));
-                packet.put("time",time);
-                packet.put("motionProfileDone",rfTrajectory.motionProfile.isProfileDone(time));
+                packet.put("mpVelMag", rfTrajectory.motionProfile.calculateTargetVelocity(time));
+                packet.put("time", time);
+                packet.put("motionProfileDone", rfTrajectory.motionProfile.isProfileDone(time));
+                packet.put("isFollowing", isFollowing);
 
             }
         }
@@ -158,7 +156,7 @@ public class RFPathFollower {
     }
 
     public boolean isFollowing() {
-        if(rfTrajectory.length()==0){
+        if (rfTrajectory.length() == 0) {
             isFollowing = false;
         }
         return rfTrajectory.length() != 0;
