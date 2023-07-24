@@ -103,14 +103,11 @@ public class SampleBasicLinearOpMode extends LinearOpMode {
             // rightPower   = Range.clip(drive - turn, -1.0, 1.0) ;
 
             if (runtime.seconds() < 1) {
-                leftPower = 0.5;
-                rightPower = 0.5;
-            } else if (runtime.seconds() >= 1 && runtime.seconds() < 2) {
-                leftPower = 0.0;
                 rightPower = 0.0;
             } else if (runtime.seconds() >= 2 && runtime.seconds() < 3) {
-                leftPower = -0.5;
-                rightPower = -0.5;
+                //move backwards
+                leftPower = -0.3;
+                rightPower = -0.3;
             } else if (runtime.seconds() >= 3) {
                 leftPower = 0.0;
                 rightPower = 0.0;
