@@ -105,7 +105,9 @@ public class SampleBasicLinearOpMode extends LinearOpMode {
             if (runtime.seconds() < 1) {
                 rightPower = 0.0;
                 leftPower = 0.0;
-
+            }  else if (runtime.seconds() >= 1 && runtime.seconds() < 2) {
+                leftPower = 0.0;
+                rightPower = 0.0;
             } else if (runtime.seconds() >= 2 && runtime.seconds() < 5) {
                 //move backwards
                 leftPower = -0.7;
