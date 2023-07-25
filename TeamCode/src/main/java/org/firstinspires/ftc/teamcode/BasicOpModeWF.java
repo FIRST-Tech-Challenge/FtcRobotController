@@ -81,8 +81,8 @@ public class BasicOpModeWF extends LinearOpMode {
     private DcMotor rightBackDrive = null;
     private IMU imu = null;
 
-    @Override
-    public void runOpMode() {
+    private void Initialize()
+    {
         // Initialize the hardware variables. Note that the strings used here must correspond
         // to the names assigned during the robot configuration step on the DS or RC devices.
         leftFrontDrive  = hardwareMap.get(DcMotor.class, "frontleft");
@@ -98,20 +98,15 @@ public class BasicOpModeWF extends LinearOpMode {
         // Without this, the REV Hub's orientation is assumed to be logo up / USB forward
         imu.initialize(parameters);
 
-        // ########################################################################################
-        // !!!            IMPORTANT Drive Information. Test your motor directions.            !!!!!
-        // ########################################################################################
-        // Most robots need the motors on one side to be reversed to drive forward.
-        // The motor reversals shown here are for a "direct drive" robot (the wheels turn the same direction as the motor shaft)
-        // If your robot has additional gear reductions or uses a right-angled drive, it's important to ensure
-        // that your motors are turning in the correct direction.  So, start out with the reversals here, BUT
-        // when you first test your robot, push the left joystick forward and observe the direction the wheels turn.
-        // Reverse the direction (flip FORWARD <-> REVERSE ) of any wheel that runs backward
-        // Keep testing until ALL the wheels move the robot forward when you push the left joystick forward.
         leftFrontDrive.setDirection(DcMotor.Direction.REVERSE);
         leftBackDrive.setDirection(DcMotor.Direction.FORWARD);
         rightFrontDrive.setDirection(DcMotor.Direction.FORWARD);
         rightBackDrive.setDirection(DcMotor.Direction.FORWARD);
+    }
+
+    @Override
+    public void runOpMode() {
+        Initialize();
 
         Gamepad currentGamepad1 = new Gamepad();
         Gamepad previousGamepad1 = new Gamepad();
@@ -124,77 +119,106 @@ public class BasicOpModeWF extends LinearOpMode {
         runtime.reset();
 
         // Speed factor to slow down the robot, goes from 0.1 to 1.0
-        double speed = 0.5;
+        double speedFactor = 0.5;
+        double kp = -0.028;
+        boolean isAutoTurning = false;
+        double autoTurningStart = 0.0;
+        double autoTurningTarget = 0.0;
         imu.resetYaw();
 
         // run until the end of the match (driver presses STOP)
         while (opModeIsActive()) {
-            double max;
             previousGamepad1.copy(currentGamepad1);
             currentGamepad1.copy(gamepad1);
 
             // POV Mode uses left joystick to go forward & strafe, and right joystick to rotate.
-            double y   = -gamepad1.left_stick_y;  // Note: pushing stick forward gives negative value
-            double x =  gamepad1.left_stick_x * 1.1; // Counteract imperfect strafing
-            double yaw     =  gamepad1.right_stick_x;
+            double y = -gamepad1.left_stick_y;  // Note: pushing stick forward gives negative value
+            double x = gamepad1.left_stick_x * 1.1; // Counteract imperfect strafing
+            double yaw = gamepad1.right_stick_x;
 
             if (gamepad1.back)
                 imu.resetYaw();
 
-            double botHeading = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS);
+            double botHeading = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES);
+            double rotatingSpeed = imu.getRobotAngularVelocity(AngleUnit.DEGREES).zRotationRate;
 
             // Field centric driving is activated when any of the hat buttons are pressed
             if (gamepad1.dpad_down || gamepad1.dpad_up || gamepad1.dpad_left || gamepad1.dpad_right) {
                 x = gamepad1.dpad_left ? -1 : (gamepad1.dpad_right ? 1 : 0);
                 y = gamepad1.dpad_up ? 1 : (gamepad1.dpad_down ? -1 : 0);
+                double botHeadingRadians = Math.toRadians(botHeading);
                 // Rotate the movement direction counter to the bot's rotation
-                double newX = x * Math.cos(-botHeading) - y * Math.sin(-botHeading);
-                double newY = x * Math.sin(-botHeading) + y * Math.cos(-botHeading);
+                double newX = x * Math.cos(-botHeadingRadians) - y * Math.sin(-botHeadingRadians);
+                double newY = x * Math.sin(-botHeadingRadians) + y * Math.cos(-botHeadingRadians);
                 x = newX;
                 y = newY;
             }
 
-            double leftFrontPower  = y + x + yaw;
-            double rightFrontPower = y - x - yaw;
-            double leftBackPower   = y - x + yaw;
-            double rightBackPower  = y + x - yaw;
+            if (gamepad1.left_bumper)
+                speedFactor = 0.5;
+            if (gamepad1.right_bumper)
+                speedFactor = 1.0;
 
-            // Normalize the values so no wheel power exceeds 100%
-            // This ensures that the robot maintains the desired motion.
-            max = Math.max(Math.abs(leftFrontPower), Math.abs(rightFrontPower));
-            max = Math.max(max, Math.abs(leftBackPower));
-            max = Math.max(max, Math.abs(rightBackPower));
+            if (previousGamepad1.left_trigger != 0 && currentGamepad1.left_trigger == 0 && speedFactor > 0.1)
+                speedFactor -= 0.1;
+            if (previousGamepad1.right_trigger != 0 && currentGamepad1.right_trigger == 0 && speedFactor < 1.0)
+                speedFactor += 0.1;
 
-            if (max > 1.0) {
-                leftFrontPower /= max;
-                rightFrontPower /= max;
-                leftBackPower /= max;
-                rightBackPower /= max;
+            if (!isAutoTurning &&
+                    ((!previousGamepad1.y && currentGamepad1.y) || (!previousGamepad1.x && currentGamepad1.x) ||
+                     (!previousGamepad1.b && currentGamepad1.b) || (!previousGamepad1.a && currentGamepad1.a))) {
+                isAutoTurning = true;
+                autoTurningTarget = currentGamepad1.y ? 0.0 : currentGamepad1.x ? 90.0 : currentGamepad1.b ? -90.0 : 179.9;
+                autoTurningStart = runtime.milliseconds();
             }
 
-            if (gamepad1.left_bumper)
-                speed = 0.5;
-            if (gamepad1.right_bumper)
-                speed = 1.0;
+            if (isAutoTurning)
+            {
+                double currentTime = runtime.milliseconds();
+                double deltaDegrees = (autoTurningTarget - botHeading + 540) % 360 - 180;
+                if ((Math.abs(deltaDegrees) < 1.0 && Math.abs(rotatingSpeed) < 2.0) || (currentTime - autoTurningStart > 2000.0)) {
+                    isAutoTurning = false;
+                }
+                else {
+                    yaw = kp * deltaDegrees / speedFactor;
+                }
+            }
 
-            if (previousGamepad1.left_trigger != 0 && currentGamepad1.left_trigger == 0 && speed > 0.1)
-                speed -= 0.1;
-            if (previousGamepad1.right_trigger != 0 && currentGamepad1.right_trigger == 0 && speed < 1.0)
-                speed += 0.1;
-
-            // Send calculated power to wheels
-            leftFrontDrive.setPower(leftFrontPower * speed);
-            rightFrontDrive.setPower(rightFrontPower * speed);
-            leftBackDrive.setPower(leftBackPower * speed);
-            rightBackDrive.setPower(rightBackPower * speed);
+            SendPowerToWheels(x, y, yaw, speedFactor);
 
             telemetry.addData("Status", "Run Time: " + runtime.toString());
-            telemetry.addData("Speed", "%1.1f", speed);
+            telemetry.addData("Speed Factor", "%1.1f", speedFactor);
             telemetry.addData("Bot Heading", "%4.2f", botHeading);
-            telemetry.addData("X/Y", "%4.2f, %4.2f", x, y);
-            telemetry.addData("Front left/Right", "%4.2f, %4.2f", leftFrontPower, rightFrontPower);
-            telemetry.addData("Back  left/Right", "%4.2f, %4.2f", leftBackPower, rightBackPower);
+            telemetry.addData("X/Y/Yaw", "%4.2f, %4.2f, %4.2f", x, y, yaw);
             telemetry.update();
         }
+    }
+
+    private void SendPowerToWheels(double x, double y, double yaw, double speedFactor)
+    {
+        double max;
+        double leftFrontPower  = y + x + yaw;
+        double rightFrontPower = y - x - yaw;
+        double leftBackPower   = y - x + yaw;
+        double rightBackPower  = y + x - yaw;
+
+        // Normalize the values so no wheel power exceeds 100%
+        // This ensures that the robot maintains the desired motion.
+        max = Math.max(Math.abs(leftFrontPower), Math.abs(rightFrontPower));
+        max = Math.max(max, Math.abs(leftBackPower));
+        max = Math.max(max, Math.abs(rightBackPower));
+
+        if (max > 1.0) {
+            leftFrontPower /= max;
+            rightFrontPower /= max;
+            leftBackPower /= max;
+            rightBackPower /= max;
+        }
+
+        // Send calculated power to wheels
+        leftFrontDrive.setPower(leftFrontPower * speedFactor);
+        rightFrontDrive.setPower(rightFrontPower * speedFactor);
+        leftBackDrive.setPower(leftBackPower * speedFactor);
+        rightBackDrive.setPower(rightBackPower * speedFactor);
     }
 }
