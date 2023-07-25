@@ -164,8 +164,6 @@ public class RFTrajectory {
         if (tToXDerivative == 0) {
             if (mpVelo == 0) {
                 return 1;
-            } else {
-                tToXDerivative = 0.0001;
             }
         }
         packet.put("veloMag", mpVelo);
@@ -173,6 +171,9 @@ public class RFTrajectory {
         if (tToXDerivative > mpVelo || motionProfile.motionProfileRemainingTime(time) < 0.4) {
             if(mpVelo==0){
                 mpVelo = 0.0001;
+            }
+            if(tToXDerivative ==0){
+                tToXDerivative = 0.0001;
             }
             return mpVelo / tToXDerivative;
         } else {

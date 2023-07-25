@@ -18,7 +18,7 @@ import org.firstinspires.ftc.teamcode.roadrunner.trajectorysequence.TrajectorySe
 @Config
 @Autonomous(name = "RFMotionControllerTest")
 public class RFMotionControllerTest extends LinearOpMode {
-    public static double targetX1 =25 , targetY1=0, targetX2=50, targetY2=0, targetX3=75,targetY3=0;
+    public static double targetX1 =50 , targetY1=0, targetX2=00, targetY2=0, targetX3=50,targetY3=0;
     @Override
     public void runOpMode() throws InterruptedException {
         BasicRobot robot = new BasicRobot(this,true);

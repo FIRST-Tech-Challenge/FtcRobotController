@@ -2,9 +2,11 @@ package org.firstinspires.ftc.teamcode.roadrunner.drive;
 
 import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.op;
 import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.packet;
+import static org.firstinspires.ftc.teamcode.roadrunner.drive.DriveConstants.TRACK_WIDTH;
 import static org.firstinspires.ftc.teamcode.roadrunner.drive.PoseStorage.currentPose;
 import static org.firstinspires.ftc.teamcode.roadrunner.drive.PoseStorage.currentVelocity;
 
+import static java.lang.Double.max;
 import static java.lang.Math.abs;
 import static java.lang.Math.min;
 import static java.lang.Math.pow;
@@ -43,9 +45,9 @@ public class CubicHermiteSpline {
         //calc approxDuration
         packet.put("length0", length);
 
-        duration = traj.calculateSegmentDuration(length * AVG_SCALE_FACTOR);
+        duration = max(1/0.4,traj.calculateSegmentDuration(length * AVG_SCALE_FACTOR));
         Vector2d p_startVelo = p_startVel.times(1 / duration);
-        Vector2d p_endVelo = p_endVel.times(1 / duration);
+        Vector2d p_endVelo = p_endVel.times(1/ duration);
         packet.put("duration", duration);
         coeffs = new ArrayList<>();
         coeffs.add(p_startPos);
@@ -60,12 +62,8 @@ public class CubicHermiteSpline {
             lastPose = newPos;
         }
         packet.put("length1", length);
-        if(length>1000){
-            op.sleep(10000);
-        }
-
         //calc duration
-        duration = 1 / traj.calculateSegmentDuration(length);
+        duration = min(0.4,1 / traj.calculateSegmentDuration(length));
         p_startVelo = p_startVel.times(duration);
         p_endVelo = p_endVel.times(duration);
         coeffs.clear();
@@ -85,7 +83,7 @@ public class CubicHermiteSpline {
         packet.put("coeffs2", coeffs.get(2));
         packet.put("coeffs3", coeffs.get(3));
         //calc duration
-        duration = 1 / traj.calculateSegmentDuration(length);
+        duration = min(0.4,1 / traj.calculateSegmentDuration(length));
         p_startVelo = p_startVel.times(duration);
         p_endVelo = p_endVel.times(duration);
         coeffs.clear();
@@ -191,7 +189,7 @@ public class CubicHermiteSpline {
 
     public void calculateTargetPoseAt(double distance) {
         double p_t = min(approximateT(distance), 1);
-        packet.put("Dist", distance);
+        packet.put("DIst", distance);
 
         packet.put("approxT", p_t);
         targetDistance = distance;
@@ -203,10 +201,13 @@ public class CubicHermiteSpline {
         Vector2d velo;
         double ttoTimeRatio = traj.timeToTRatio(deriv.norm());
         packet.put("timeToTRatio", ttoTimeRatio);
+        packet.put("derivX", deriv.getX());
         //calculated target Acceleration, not needed for PID
         Vector2d deriv2 = derivAt(p_t + 1 / numericDerivResolution, coeffs);
         double angle2 = Math.atan2(deriv2.getY(), deriv2.getX());
-        double angularVel = (angle2 - angle) / (numericDerivResolution * ttoTimeRatio);
+        double angularVel = calcAngularVel(deriv,scnDeriv) * ttoTimeRatio;
+        double magSquared = deriv.norm()*deriv.norm();
+//        ttoTimeRatio*= magSquared/(angularVel*angularVel*TRACK_WIDTH*TRACK_WIDTH*0.25 + magSquared);
         targetVelocity = new Pose2d(deriv.times(ttoTimeRatio), angularVel);
 
     }

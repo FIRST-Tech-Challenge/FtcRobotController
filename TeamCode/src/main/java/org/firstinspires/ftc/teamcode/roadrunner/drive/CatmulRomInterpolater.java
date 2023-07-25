@@ -4,6 +4,7 @@ import static org.firstinspires.ftc.teamcode.roadrunner.drive.DriveConstants.MAX
 import static org.firstinspires.ftc.teamcode.roadrunner.drive.DriveConstants.MAX_VEL;
 import static org.firstinspires.ftc.teamcode.roadrunner.drive.PoseStorage.currentPose;
 import static org.firstinspires.ftc.teamcode.roadrunner.drive.PoseStorage.currentVelocity;
+import static java.lang.Double.min;
 import static java.lang.Math.atan2;
 
 import com.acmerobotics.roadrunner.geometry.Pose2d;
@@ -15,6 +16,7 @@ public class CatmulRomInterpolater {
     boolean isEndpoint = false;
     RFWaypoint ref;
     double offset = 0;
+    double CURVING_DISTANCE = 30;
 
     public CatmulRomInterpolater(ArrayList<RFSegment> p_segments, int index) {
         points = new ArrayList();
@@ -45,7 +47,10 @@ public class CatmulRomInterpolater {
 
     public RFWaypoint CRerpWaypoint() {
         if (ref.getDefinedness() < 3) {
-            double targetVelocity = MAX_VEL;
+            double scaleFactor = Math.cos(points.get(3).vec().minus(points.get(2).vec()).angleBetween(points.get(2).vec().minus(points.get(1).vec()))/2);
+            double distance = points.get(2).vec().distTo(points.get(1).vec());
+            double targetVelocity = MAX_VEL * scaleFactor*scaleFactor * CURVING_DISTANCE/distance;
+            targetVelocity = min(targetVelocity, points.get(3).vec().minus(points.get(2).vec()).norm()*2);
             if (isEndpoint) {
                 targetVelocity = 0;
             }
