@@ -17,7 +17,7 @@ public class SlidesLimitSwitchTest extends BaseTeleOp {
     @Override
     public void runOpMode() {
         initialize();
-        driveSlidesLoop(0);
+        //broken code: driveSlidesLoop(0);
         telemetry.addData("DONE", "DONE");
         telemetry.update();
         waitForStart();
@@ -33,22 +33,23 @@ public class SlidesLimitSwitchTest extends BaseTeleOp {
                     telemetry.addData("target position", targetPosition);
                     telemetry.addData("encoder Position", motorLeftSlides.getCurrentPosition());
                     telemetry.update();
-                    driveSlidesLoop(targetPosition);
+                    //broken code: driveSlidesLoop(targetPosition);
                 }
 
                 sleep(500);
                 telemetry.addLine("homing");
                 telemetry.update();
-                driveSlidesLoop(0);
+                //broken code: driveSlidesLoop(0);
                 telemetry.addLine("done");
                 telemetry.update();
                 sleep(1000);
             }
 
             // driveSlides() adds the encoder offset to telemetrySave so it can be printed here
-            for (Object o : telemetrySave) {
+            //broken code:
+           /* for (Object o : telemetrySave) {
                 telemetry.addData("test", o);
-            }
+            }*/
             telemetry.update();
             sleep(100000);
         }

@@ -78,7 +78,8 @@ public class ConceptTensorFlowObjectDetectionWebcam extends BaseOpMode {
             // to artificially zoom in to the center of image.  For best results, the "aspectRatio" argument
             // should be set to the value of the images used to create the TensorFlow Object Detection model
             // (typically 16/9).
-            tfod.setZoom(1.0, 16.0 / 9.0);
+
+            // broken code: tfod.setZoom(1.0, 16.0 / 9.0);
         }
 
         /** Wait for the game to begin */
@@ -133,7 +134,8 @@ public class ConceptTensorFlowObjectDetectionWebcam extends BaseOpMode {
          * Initialize the TensorFlow Object Detection engine.
          */
         public void initTfod() {
-            int tfodMonitorViewId = hardwareMap.appContext.getResources().getIdentifier(
+            //broken code:
+          /*  int tfodMonitorViewId = hardwareMap.appContext.getResources().getIdentifier(
                     "tfodMonitorViewId", "id", hardwareMap.appContext.getPackageName());
             TFObjectDetector.Parameters tfodParameters = new TFObjectDetector.Parameters(tfodMonitorViewId);
             tfodParameters.minResultConfidence = 0.75f;
@@ -143,6 +145,6 @@ public class ConceptTensorFlowObjectDetectionWebcam extends BaseOpMode {
 
             // Use loadModelFromAsset() if the TF Model is built in as an asset by Android Studio
             // Use loadModelFromFile() if you have downloaded a custom team model to the Robot Controller's FLASH.
-            tfod.loadModelFromAsset(TFOD_MODEL_ASSET, LABELS);
+            tfod.loadModelFromAsset(TFOD_MODEL_ASSET, LABELS);*/
         }
     }
