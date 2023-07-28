@@ -130,22 +130,26 @@ public class  RFMotor extends Motor {
         additionalTicks = position-rfMotor.getCurrentPosition();
     }
 
-    public void setPosition(double p_targetpos, double curve) {
+    public void setPosition(double p_targetPos, double curve) {
+        double[][] targetMotion = getTargetMotion(curve);
+    }
+
+    public void setPosition(double p_targetPos) {
         power = 0;
-        if (p_targetpos > maxtickcount) {
-            p_targetpos = maxtickcount;
+        if (p_targetPos > maxtickcount) {
+            p_targetPos = maxtickcount;
         }
-        if (p_targetpos < mintickcount) {
-            p_targetpos = mintickcount;
+        if (p_targetPos < mintickcount) {
+            p_targetPos = mintickcount;
         }
         position = getCurrentPosition();
-        targetPos = p_targetpos;
+        targetPos = p_targetPos;
         acceleration = getVelocity() - velocity;
         velocity += acceleration;
         acceleration /= (time - lastTime);
         getAvgResistance();
-        double[][] targetMotion = getTargetMotion(curve);
-        double power = (kP * (targetMotion[0][0] - resistance) - kA * targetMotion[1][0]);
+        double[] targetMotion = getTargetMotion();
+        double power = (kP * (targetMotion[0] - resistance) - kA * targetMotion[1]);
         if(abs(targetPos-position)>TICK_BOUNDARY_PADDING && abs(velocity)<3){
             if(power<0){
                 power-=kS;
@@ -290,38 +294,38 @@ public class  RFMotor extends Motor {
         return decelDist;
     }
 
-//    public double[] getTargetMotion() {
-//        double[] targets = {0, 0};
-//        double DECEL_DIST = getDecelDist(), distance = targetPos - position;
-//        double direction = abs(distance)/distance;
-//        if (abs(distance) > DECEL_DIST && abs(velocity) < MAX_VELOCITY - RESISTANCE*direction - 0.1 * MAX_ACCELERATION) {
-//            if (distance > 0) {
-//                targets[0] = velocity + .1 * MAX_ACCELERATION * (1 - 1 / (abs(distance - DECEL_DIST) / 100 + 1));
-//                targets[1] = velocity - targets[0];
-//            } else {
-//                targets[0] = velocity - 0.1 * MAX_ACCELERATION * (1 - 1 / (abs(distance - DECEL_DIST) / 100 + 1));
-//                targets[1] = velocity - targets[0];
-//            }
-//        } else if (abs(distance) > DECEL_DIST && abs(distance) > 20) {
-//            if (distance > 0) {
-//                targets[0] = MAX_VELOCITY - RESISTANCE*direction;
-//                targets[1] = velocity - targets[0];
-//            } else {
-//                targets[0] = -MAX_VELOCITY - RESISTANCE*direction;
-//                targets[1] = velocity - targets[0];
-//
-//            }
-//        } else {
-//            if (distance < 0) {
-//                targets[0] = min(-pow((abs(distance)) * (MAX_ACCELERATION - RESISTANCE*direction), 0.5), 0);
-//                targets[1] = velocity - targets[0];
-//            } else {
-//                targets[0] = max(pow((abs(distance)) * (MAX_ACCELERATION - RESISTANCE*direction), 0.5), 0);
-//                targets[1] = velocity - targets[0];
-//            }
-//        }
-//        return targets;
-//    }
+    public double[] getTargetMotion() {
+        double[] targets = {0, 0};
+        double DECEL_DIST = getDecelDist(), distance = targetPos - position;
+        double direction = abs(distance)/distance;
+        if (abs(distance) > DECEL_DIST && abs(velocity) < MAX_VELOCITY - RESISTANCE*direction - 0.1 * MAX_ACCELERATION) {
+            if (distance > 0) {
+                targets[0] = velocity + .1 * MAX_ACCELERATION * (1 - 1 / (abs(distance - DECEL_DIST) / 100 + 1));
+                targets[1] = velocity - targets[0];
+            } else {
+                targets[0] = velocity - 0.1 * MAX_ACCELERATION * (1 - 1 / (abs(distance - DECEL_DIST) / 100 + 1));
+                targets[1] = velocity - targets[0];
+            }
+        } else if (abs(distance) > DECEL_DIST && abs(distance) > 20) {
+            if (distance > 0) {
+                targets[0] = MAX_VELOCITY - RESISTANCE*direction;
+                targets[1] = velocity - targets[0];
+            } else {
+                targets[0] = -MAX_VELOCITY - RESISTANCE*direction;
+                targets[1] = velocity - targets[0];
+
+            }
+        } else {
+            if (distance < 0) {
+                targets[0] = min(-pow((abs(distance)) * (MAX_ACCELERATION - RESISTANCE*direction), 0.5), 0);
+                targets[1] = velocity - targets[0];
+            } else {
+                targets[0] = max(pow((abs(distance)) * (MAX_ACCELERATION - RESISTANCE*direction), 0.5), 0);
+                targets[1] = velocity - targets[0];
+            }
+        }
+        return targets;
+    }
 
     public boolean atTargetPosition() {
         return abs(position - targetPos) < TICK_STOP_PADDING;
