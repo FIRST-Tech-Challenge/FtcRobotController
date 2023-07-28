@@ -75,7 +75,7 @@ public class BlueRightPark extends LinearOpMode {
 
 
         while (opModeIsActive() && !isStopRequested() && getRuntime() < 28) {
-            logger.loopcounter++;
+            logger.loopCounter++;
             robot.followTrajectorySequenceAsync(parkTrajectory);
             if (dummyP == 1) {
                 robot.followTrajectoryAsync(park1trajectory);

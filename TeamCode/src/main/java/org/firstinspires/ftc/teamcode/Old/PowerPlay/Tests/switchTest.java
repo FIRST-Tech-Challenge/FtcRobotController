@@ -20,7 +20,7 @@ public class switchTest extends LinearOpMode{
         waitForStart();
 
         while (opModeIsActive() && !isStopRequested()) {
-            logger.loopcounter++;
+            logger.loopCounter++;
             telemetry.addData("switched?", switcho.isSwitched());
             telemetry.update();
         }

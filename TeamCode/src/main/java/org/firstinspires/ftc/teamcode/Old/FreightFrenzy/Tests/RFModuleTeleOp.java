@@ -76,7 +76,7 @@ public class RFModuleTeleOp extends LinearOpMode {
             double x = xpos - 8.75;
             double y = ypos - 6.25;
 
-            logger.loopcounter++;
+            logger.loopCounter++;
 
             packet.fieldOverlay().setFill("blue").fillRect(x, y, 15, 15);
             telemetry.addData("status", "waiting for start command...");

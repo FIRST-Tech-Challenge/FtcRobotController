@@ -20,7 +20,7 @@ public class ClawQueuerTest extends LinearOpMode{
         waitForStart();
 
         while (opModeIsActive() && !isStopRequested()) {
-            logger.loopcounter++;
+            logger.loopCounter++;
 //            robot.toggleClawPosition(false);
             for (int i = 0; i < 5; i++) {
                 robot.closeClaw(false);

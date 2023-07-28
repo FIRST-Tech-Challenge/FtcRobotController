@@ -32,7 +32,7 @@ public class PwPTeleOp extends LinearOpMode {
         robot.roadrun.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         robot.roadrun.update();
         while(!isStopRequested()){
-            logger.loopcounter++;
+            logger.loopCounter++;
             robot.teleOp();
             telemetry.update();
         }

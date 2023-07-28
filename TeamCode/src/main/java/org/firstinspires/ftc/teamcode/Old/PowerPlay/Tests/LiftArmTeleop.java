@@ -18,7 +18,7 @@ public class LiftArmTeleop extends LinearOpMode {
         LiftArm lfitArm = new LiftArm();
         waitForStart();
         while(opModeIsActive()){
-            logger.loopcounter++;
+            logger.loopCounter++;
             if (gamepad1.a) {
                 lfitArm.raiseLiftArmToOuttake();
             }

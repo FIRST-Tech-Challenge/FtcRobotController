@@ -115,7 +115,7 @@ public class BlueLeftAutoMidCycleTemp extends LinearOpMode {
 
 
         while (opModeIsActive() && !isStopRequested() && getRuntime() < 29) {
-            logger.loopcounter++;
+            logger.loopCounter++;
             robot.followTrajectorySequenceAsync(initialtrajectory);
             robot.raiseLiftArmToOuttake(true);
             robot.delay(0.9);

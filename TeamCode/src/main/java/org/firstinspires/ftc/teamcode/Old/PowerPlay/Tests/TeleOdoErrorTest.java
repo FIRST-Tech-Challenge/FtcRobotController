@@ -61,8 +61,8 @@ public class TeleOdoErrorTest extends LinearOpMode {
         waitForStart();
         if (isStopRequested()) return;
         while (opModeIsActive() && !isStopRequested()) {
-            logger.loopcounter++;
-            if (logger.loopcounter == 1) {
+            logger.loopCounter++;
+            if (logger.loopCounter == 1) {
                 robot.followTrajectorySequenceAsync(pretrajectory);
             }
             robot.followTrajectorySequenceAsync(testtrajectory);

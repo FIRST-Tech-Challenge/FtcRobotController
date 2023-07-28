@@ -269,7 +269,7 @@ public class BlackoutRobot extends BasicRobot {
         time = op.getRuntime();
         //according to blue side left auto next to barrier
         changed = false;
-        logger.loopcounter++;
+        logger.loopCounter++;
         int up = 0;
         intake.updateIntakeStates();
         turret.updateTurretPositions();
