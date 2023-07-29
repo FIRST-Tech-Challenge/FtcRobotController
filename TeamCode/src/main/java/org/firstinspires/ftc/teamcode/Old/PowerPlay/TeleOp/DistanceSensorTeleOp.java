@@ -31,7 +31,7 @@ public class DistanceSensorTeleOp extends LinearOpMode {
         robot.roadrun.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         robot.roadrun.update();
         while(!isStopRequested()){
-            logger.loopcounter++;
+            logger.loopCounter++;
             robot.printLR();
             telemetry.update();
         }

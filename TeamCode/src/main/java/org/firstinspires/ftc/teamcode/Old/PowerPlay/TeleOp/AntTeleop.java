@@ -10,7 +10,6 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import org.firstinspires.ftc.teamcode.Components.RFModules.Devices.RFMotor;
 import org.firstinspires.ftc.teamcode.Components.RFModules.Devices.RFServo;
 import org.firstinspires.ftc.teamcode.Old.FreightFrenzy.Robots.FWDRobot;
-@Disabled
 @TeleOp(name = "AntTeleop")
 public class AntTeleop extends LinearOpMode {
     public RFMotor motorLeftBack;

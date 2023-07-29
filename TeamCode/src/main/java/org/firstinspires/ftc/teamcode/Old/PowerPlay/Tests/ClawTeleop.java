@@ -17,7 +17,7 @@ public class ClawTeleop extends LinearOpMode {
         robot = new PwPRobot(this,true);
         waitForStart();
         while(opModeIsActive()){
-            logger.loopcounter++;
+            logger.loopCounter++;
             if (gamepad1.a) {
                 robot.openClaw();
             }

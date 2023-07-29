@@ -32,7 +32,7 @@ public class HardwareTestTrack extends LinearOpMode {
         robot.roadrun.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         robot.roadrun.update();
         while(!isStopRequested()){
-            logger.loopcounter++;
+            logger.loopCounter++;
             if(gamepad1.dpad_right){
                 robot.roadrun.followTrajectory(robot.roadrun.trajectoryBuilder(robot.roadrun.getPoseEstimate()).strafeRight(47).build());
             }

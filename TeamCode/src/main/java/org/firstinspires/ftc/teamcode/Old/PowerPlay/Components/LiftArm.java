@@ -67,7 +67,7 @@ public class LiftArm {
     //constructor
     public LiftArm() {
         //init RFServo
-        liftArmServo = new RFDualServo("liftArmServo", "liftArmServo2", 1);
+        liftArmServo = new RFDualServo("liftArm", "liftArmServo", "liftArmServo2", 1);
         //set servo position
         liftArmServo.setPositions(LIFT_ARM_INTAKE_POS);
 

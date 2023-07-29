@@ -14,7 +14,8 @@ import java.text.DecimalFormat;
 import java.util.ArrayList;
 
 public class RFDualServo implements Servo {
-    /**init
+    /**
+     * init
      * two servos
      * last time servo was flipped, set to -100 because it will be changed later
      * 2 decimal places, used in logger
@@ -26,73 +27,77 @@ public class RFDualServo implements Servo {
 
     private double lastTime = -100;
 
-    double servoLimit = 0;
-    boolean flipped = false;
+    private double servoLimit = 0;
+    private boolean flipped = false;
 
-    Servo.Direction servoDirection1;
+    final double FLIP_TIME_SEC = 0.2;
+
+    private Servo.Direction servoDirection1;
 
     private String rfDualServoName;
 
     private ArrayList<String> inputlogs = new ArrayList<>();
 
-    /**Dual Servo when not given a specific direction
+    /**
+     * Dual Servo when not given a specific direction
      *
-     * @param deviceName1
-     * @param deviceName2
+     * @param p_deviceName1
+     * @param p_deviceName2
      * @param limit
      */
-    public RFDualServo(String deviceName1, String deviceName2, double limit) {
+    public RFDualServo(String p_dualServoName, String p_deviceName1, String p_deviceName2, double limit) {
         //hwmap
-        dualServo1 = op.hardwareMap.servo.get(deviceName1);
-        dualServo2 = op.hardwareMap.servo.get(deviceName2);
+        dualServo1 = op.hardwareMap.servo.get(p_deviceName1);
+        dualServo2 = op.hardwareMap.servo.get(p_deviceName2);
         //sets the servo limit to the passed in limit
         servoLimit = limit;
 
-        rfDualServoName = deviceName1;
+        rfDualServoName = p_dualServoName;
 
         logger.createFile("/DualServoLogs/RFDualServo", "Runtime    Component               " +
                 "Function               Action");
     }
 
-    /**Dual Servo w/ direction
+    /**
+     * Dual Servo w/ direction
      *
      * @param servoDirection
-     * @param deviceName1
-     * @param deviceName2
+     * @param p_deviceName1
+     * @param p_deviceName2
      * @param limit
      */
-    public RFDualServo(Servo.Direction servoDirection, String deviceName1, String deviceName2, double limit) {
+    public RFDualServo(String p_dualServoName, Servo.Direction servoDirection, String p_deviceName1, String p_deviceName2, double limit) {
 
-        dualServo1 = op.hardwareMap.servo.get(deviceName1);
-        dualServo2 = op.hardwareMap.servo.get(deviceName2);
+        dualServo1 = op.hardwareMap.servo.get(p_deviceName1);
+        dualServo2 = op.hardwareMap.servo.get(p_deviceName2);
 
         dualServo1.setDirection(servoDirection);
 
         if (servoDirection == REVERSE) {
             dualServo2.setDirection(FORWARD);
-        }
-        else {
+        } else {
             dualServo2.setDirection(REVERSE);
         }
 
         servoLimit = limit;
 
-        rfDualServoName = deviceName1;
+        rfDualServoName = p_dualServoName;
     }
 
-    /**sets the lastTime variable to when it was last flipped
+    /**
+     * sets the lastTime variable to when it was last flipped
      *
      * @param p_lastTime
      */
-    public void setLasttime(double p_lastTime){
+    public void setLasttime(double p_lastTime) {
         lastTime = p_lastTime;
     }
 
-    /**turns servos to their maximum/minimum depending on if already flipped
-     *
+    /**
+     * turns servos to their maximum/minimum depending on if already flipped
      */
-    public void flipServosMax (){
-        if (op.getRuntime() - lastTime > 0.2) {
+    public void flipServosMax() {
+        if (op.getRuntime() - lastTime > FLIP_TIME_SEC) {
             if (!flipped) {
                 setPositions(servoLimit);
                 flipped = true;
@@ -104,13 +109,14 @@ public class RFDualServo implements Servo {
         }
     }
 
-    /**pass in doubles for specific amount the servos should turn to
+    /**
+     * pass in doubles for specific amount the servos should turn to
      *
      * @param servo1lowerpos
      * @param servo1upperpos
      */
-    public void flipServosInterval (double servo1lowerpos, double servo1upperpos){
-        if(op.getRuntime() - lastTime > 0.2) {
+    public void flipServosInterval(double servo1lowerpos, double servo1upperpos) {
+        if (op.getRuntime() - lastTime > FLIP_TIME_SEC) {
             if (!flipped) {
                 setPositions(servo1upperpos);
                 flipped = true;
@@ -122,7 +128,6 @@ public class RFDualServo implements Servo {
     }
 
     /**
-     *
      * @param position
      */
     public void setPositions(double position) {
@@ -139,7 +144,8 @@ public class RFDualServo implements Servo {
 
     }
 
-    /**gets time of last flip
+    /**
+     * gets time of last flip
      *
      * @return
      */
@@ -147,8 +153,8 @@ public class RFDualServo implements Servo {
         return lastTime;
     }
 
-    /**remove power from servos, used for cone flipper in PowerPlay
-     *
+    /**
+     * remove power from servos, used for cone flipper in PowerPlay
      */
     public void disableServos() {
         ServoController rfServoController1 = (ServoController) dualServo1.getController();
@@ -157,8 +163,8 @@ public class RFDualServo implements Servo {
         rfServoController2.pwmDisable();
     }
 
-    /**give power back to servos
-     *
+    /**
+     * give power back to servos
      */
     public void enableServos() {
         ServoController rfServoController1 = (ServoController) dualServo1.getController();
@@ -167,21 +173,23 @@ public class RFDualServo implements Servo {
         rfServoController2.pwmEnable();
     }
 
-    /**returns if servos are on or not
+    /**
+     * returns if servos are on or not
      *
      * @return
      */
     public boolean abledServos() {
         ServoController rfServoController1 = (ServoController) dualServo1.getController();
         ServoController rfServoController2 = (ServoController) dualServo2.getController();
-        if(rfServoController1.getPwmStatus()== ServoController.PwmStatus.ENABLED){
+        if (rfServoController1.getPwmStatus() == ServoController.PwmStatus.ENABLED) {
             return true;
-        }else{
+        } else {
             return false;
         }
     }
 
-    /**overrides are needed so implemented class does not cause compilation error
+    /**
+     * overrides are needed so implemented class does not cause compilation error
      *
      * @return
      */
@@ -201,7 +209,7 @@ public class RFDualServo implements Servo {
     }
 
     @Override
-    public void setDirection (Servo.Direction direction) {
+    public void setDirection(Servo.Direction direction) {
         dualServo1.setDirection(direction);
 
         dualServo2.setDirection(REVERSE);

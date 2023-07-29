@@ -116,7 +116,7 @@ public class BlueLeftAutoCycle extends LinearOpMode {
 
 
         while (opModeIsActive() && !isStopRequested() && time<28) {
-            logger.loopcounter++;
+            logger.loopCounter++;
             robot.followTrajectoryAsync(initialtrajectory);
             robot.delay(0.4);
             robot.liftToPosition(LIFT_HIGH_JUNCTION);

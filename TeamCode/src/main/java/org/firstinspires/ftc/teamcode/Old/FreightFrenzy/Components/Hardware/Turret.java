@@ -71,7 +71,7 @@ public class Turret {
         checker = checkers;
         areTeleop = isTeleOp;
         if (hardware_present) {
-            turret_Angle_Control = new RFAngleAdjust("turret_Angle_Control", "turret_Angle_Control2", 118.0/270);
+            turret_Angle_Control = new RFAngleAdjust("turretAngle", "turret_Angle_Control", "turret_Angle_Control2", 118.0/270);
             turret_Rotation = (DcMotorEx)op.hardwareMap.dcMotor.get("turret_Rotation");
             turret_Rotation.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
             turret_Extension = (DcMotorEx)op.hardwareMap.dcMotor.get("turret_Extension");

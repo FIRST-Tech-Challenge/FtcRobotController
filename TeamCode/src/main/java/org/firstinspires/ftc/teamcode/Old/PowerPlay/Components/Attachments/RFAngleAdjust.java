@@ -10,10 +10,10 @@ public class RFAngleAdjust extends RFDualServo{
     private final double DEG_PER_TICK_SERVO = 118.0/270.0/35.0, minDiffTime = 0.3;
 
     LinearOpMode op;
-    public RFAngleAdjust(String deviceName1, String deviceName2, double limit) {
-        super(deviceName1, deviceName2, limit);
+    public RFAngleAdjust(String dualServoName, String deviceName1, String deviceName2, double limit) {
+        super(dualServoName, deviceName1, deviceName2, limit);
 
-        angleAdjustServo = new RFDualServo(deviceName1, deviceName2, limit);
+        angleAdjustServo = new RFDualServo(dualServoName, deviceName1, deviceName2, limit);
 
     }
 

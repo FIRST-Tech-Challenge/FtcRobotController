@@ -84,7 +84,7 @@ public class BlueRightAutoHigh extends LinearOpMode {
                 .build();
 
         while (opModeIsActive() && !isStopRequested() && getRuntime()<28) {
-            logger.loopcounter++;
+            logger.loopCounter++;
             robot.followTrajectoryAsync(initialtrajectory);
             robot.liftToPosition(LIFT_HIGH_JUNCTION);
             robot.raiseLiftArmToOuttake(true);

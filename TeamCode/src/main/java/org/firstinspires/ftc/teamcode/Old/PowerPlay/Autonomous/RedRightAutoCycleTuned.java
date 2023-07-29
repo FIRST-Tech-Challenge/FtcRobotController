@@ -124,7 +124,7 @@ public class RedRightAutoCycleTuned extends LinearOpMode {
 
 
         while (opModeIsActive() && !isStopRequested() && getRuntime() < 29.8) {
-            logger.loopcounter++;
+            logger.loopCounter++;
             robot.followTrajectorySequenceAsync(initialtrajectory);
             robot.delay(0.3);
             robot.raiseLiftArmToOuttake(true);

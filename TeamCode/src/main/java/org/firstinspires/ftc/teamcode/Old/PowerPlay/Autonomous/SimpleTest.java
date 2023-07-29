@@ -39,7 +39,7 @@ public class SimpleTest extends LinearOpMode {
         resetRuntime();
         if (isStopRequested()) return;
         while (opModeIsActive() && !isStopRequested() && getRuntime()<28) {
-            logger.loopcounter++;
+            logger.loopCounter++;
             robot.liftToPosition(400);
             robot.waitForFinish();
             robot.liftToPosition(800);

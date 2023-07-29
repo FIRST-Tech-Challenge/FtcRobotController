@@ -35,7 +35,7 @@ public class abortionTest extends LinearOpMode {
         if (isStopRequested()) return;
         robot.setFirstLoop(true);
         while (opModeIsActive() && !isStopRequested() && getRuntime()<29.8&&(!robot.queuer.isFullfilled()||robot.queuer.isFirstLoop())) {
-            logger.loopcounter++;
+            logger.loopCounter++;
             if(!mainSequence()){
                 robot.roadrun.breakFollowing();
                 robot.roadrun.setMotorPowers(0,0,0,0);
@@ -47,7 +47,7 @@ public class abortionTest extends LinearOpMode {
         }
         robot.queuer.reset();
         while (opModeIsActive() && !isStopRequested() && getRuntime()<29.8&&(!robot.queuer.isFullfilled()||robot.queuer.isFirstLoop())) {
-            logger.loopcounter++;
+            logger.loopCounter++;
             parkSequence();
             robot.setFirstLoop(false);
             robot.roadrun.update();
