@@ -1,0 +1,12 @@
+<?xml version='1.0' encoding='UTF-8' standalone='yes' ?>
+<Robot type="FirstInspires-FTC">
+    <LynxUsbDevice name="Control Hub Portal 1" serialNumber="(embedded)" parentModuleAddress="1">
+        <LynxModule name="Expansion Hub 1" port="1">
+            <RevRobotics40HDHexMotor name="brake" port="0" />
+            <RevRobotics40HDHexMotor name="accelerator" port="1" />
+            <RevRobotics40HDHexMotor name="steering" port="2" />
+            <Servo name="cannon" port="3" />
+        </LynxModule>
+    </LynxUsbDevice>
+    <Webcam name="Webcam 1" serialNumber="E5DD717F" />
+</Robot>
