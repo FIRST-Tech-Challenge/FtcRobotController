@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.Old.PowerPlay.Components.Attachments;
 
 import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.op;
 
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.teamcode.Components.RFModules.Devices.RFCRServo;
@@ -10,10 +11,10 @@ public class RFCarousel extends RFCRServo {
 
     private RFCRServo carouselCRServo;
 
-    public RFCarousel(Servo.Direction direction, String deviceName) {
-        super(direction, deviceName);
+    public RFCarousel(DcMotorSimple.Direction direction, String deviceName) {
+        super(deviceName, direction);
 
-        carouselCRServo = new RFCRServo(direction, deviceName);
+        carouselCRServo = new RFCRServo(deviceName, direction);
     }
 
     public  void spinCarouselAutonomousBlue (){

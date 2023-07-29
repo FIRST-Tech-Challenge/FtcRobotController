@@ -65,7 +65,7 @@ public class flippas {
     //constructor
     public flippas() {
         //init RFServo
-        flippaServo = new RFDualServo("rightFlipper", "leftFlipper", 1);
+        flippaServo = new RFDualServo("flippers", "rightFlipper", "leftFlipper", 1);
         //set servo position
         flippaServo.setPositions(LIFT_ARM_OUTTAKE_POS);
 

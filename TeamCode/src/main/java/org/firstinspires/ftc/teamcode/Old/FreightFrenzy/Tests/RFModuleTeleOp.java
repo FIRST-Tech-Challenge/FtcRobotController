@@ -46,7 +46,7 @@ public class RFModuleTeleOp extends LinearOpMode {
         BlackoutRobot robot = new BlackoutRobot(this, BasicChassis.ChassisType.ENCODER, true ,true
                 ,0);
 
-        RFAngleAdjust angleAdjust = new RFAngleAdjust("turret_Angle_Control",
+        RFAngleAdjust angleAdjust = new RFAngleAdjust("angleAdjust", "turret_Angle_Control",
                 "turret_Angle_Control2", 118.0/270);
         RFTurret turretRotation = new RFTurret("turret_Rotation", DcMotor.RunMode.RUN_USING_ENCODER,
                 true, rotationCoefs, 570, -570);
@@ -54,7 +54,7 @@ public class RFModuleTeleOp extends LinearOpMode {
                 true, extensionCoefs, 1000, 0);
 
         RFIntake intakeMotor = new RFIntake("IntakeMotor", DcMotor.RunMode.RUN_USING_ENCODER, true);
-        RFFlippingIntake intakeServos = new RFFlippingIntake("IntakeServo", "IntakeServo2", 1);
+        RFFlippingIntake intakeServos = new RFFlippingIntake("flippingIntake", "IntakeServo", "IntakeServo2", 1);
         RFBasket basketServo = new RFBasket("basketActuationServo", 0.75);
         RFBasket basketArmServo = new RFBasket("basketArmServo", 0.75);
         RFCRServo carouselCRServo = new RFCRServo("carousel");
