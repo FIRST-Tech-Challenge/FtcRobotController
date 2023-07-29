@@ -37,14 +37,14 @@ public class Queuer {
     /**
      * same as regular queue, but will have an extra condition
      * @param p_asynchronous
-     * @param done_condition
+     * @param p_done_condition
      * @param p_isOptional
      * @return
      */
-    public boolean queue(boolean p_asynchronous, boolean done_condition, boolean p_isOptional) {
+    public boolean queue(boolean p_asynchronous, boolean p_done_condition, boolean p_isOptional) {
         double p_delay = delay;
         delay = 0;
-        return queue(p_asynchronous, done_condition, true, p_isOptional);
+        return queue(p_asynchronous, p_done_condition, true, p_isOptional);
     }
 
     /**
@@ -86,14 +86,14 @@ public class Queuer {
      * update start conditions of subsequent events after one is suddenly changed to non-optional
      * @parm ind
      */
-    public void updateStartConditions(int ind) {
-        if (ind < queueElements.size()) {
-            if (queueElements.get(ind).startCondition != recalcStartPosSkipOptional(ind, queueElements.get(ind).isAsynchronous(), queueElements.get(ind).isOptional())) {
-                queueElements.get(ind).setStartCondition(recalcStartPosSkipOptional(ind, queueElements.get(ind).isAsynchronous(), queueElements.get(ind).isOptional()));
-                logger.log("/RobotLogs/GeneralRobot", ind + "StartCondition" + queueElements.get(ind).startCondition);
-                updateStartConditions(ind + 1);
-                updateStartConditions(ind + 2);
-                updateStartConditions(ind + 3);
+    public void updateStartConditions(int p_ind) {
+        if (p_ind < queueElements.size()) {
+            if (queueElements.get(p_ind).startCondition != recalcStartPosSkipOptional(p_ind, queueElements.get(p_ind).isAsynchronous(), queueElements.get(p_ind).isOptional())) {
+                queueElements.get(p_ind).setStartCondition(recalcStartPosSkipOptional(p_ind, queueElements.get(p_ind).isAsynchronous(), queueElements.get(p_ind).isOptional()));
+                logger.log("/RobotLogs/GeneralRobot", p_ind + "StartCondition" + queueElements.get(p_ind).startCondition);
+                updateStartConditions(p_ind + 1);
+                updateStartConditions(p_ind + 2);
+                updateStartConditions(p_ind + 3);
 
             }
         }
@@ -114,11 +114,11 @@ public class Queuer {
     /**
      * updates and processes all things related to currently queued event
      * @param p_asynchronous
-     * @param done_condition
+     * @param p_done_condition
      * @param extra_condition
      * @param p_isOptional
      */
-    public boolean queue(boolean p_asynchronous, boolean done_condition, boolean extra_condition, boolean p_isOptional) {
+    public boolean queue(boolean p_asynchronous, boolean p_done_condition, boolean extra_condition, boolean p_isOptional) {
         //if it is first Loop
         if (firstLoop) {
             //create queue element
@@ -126,7 +126,7 @@ public class Queuer {
         }
 
         //update which element is currently being queued & which event is currently being executed
-        updateQueuer(done_condition, p_isOptional);
+        updateQueuer(p_done_condition, p_isOptional);
         //save some processing time if the event is done alrdy
         if (queueElements.get(currentlyQueueing).isDone()) {
             return false;
@@ -264,10 +264,10 @@ public class Queuer {
 
     /**
      * update which element is currently being queued(processed) and which element is currently being executed
-     * @param done_condition
+     * @param p_done_condition
      * @param p_isOptional
      */
-    private void updateQueuer(boolean done_condition, boolean p_isOptional) {
+    private void updateQueuer(boolean p_done_condition, boolean p_isOptional) {
         //update which element is currently being queued
         if (currentlyQueueing >= queueElements.size() - 1) {
             currentlyQueueing = 0;
@@ -277,8 +277,8 @@ public class Queuer {
         //update which event is currently being executed
         if (!firstLoop) {
             if (queueElements.get(currentlyQueueing).isStarted() && !queueElements.get(currentlyQueueing).isDone()) {
-                queueElements.get(currentlyQueueing).setDone(done_condition);
-                if (done_condition) {
+                queueElements.get(currentlyQueueing).setDone(p_done_condition);
+                if (p_done_condition) {
                     calculateCompleteCurrentEvent();
                     logger.log("/RobotLogs/GeneralRobot", "event" + currentlyQueueing + "Done" + "completeEvents" + completeCurrentEvent);
                     if (currentlyQueueing > currentEvent && !queueElements.get(currentlyQueueing).isAsynchronous()) {

@@ -28,13 +28,13 @@ public class QueueElement {
 
     /**
      * Initialize QueueElement
-     * @param queueNum
+     * @param p_queuePos
      * @param p_asynchronous
      * @param p_startCondition
      * @param p_mustFinish
      */
-    public QueueElement(int queueNum, boolean p_asynchronous, int p_startCondition, boolean p_mustFinish) {
-        queuePos = queueNum;
+    public QueueElement(int p_queuePos, boolean p_asynchronous, int p_startCondition, boolean p_mustFinish) {
+        queuePos = p_queuePos;
         asynchronous = p_asynchronous;
         startCondition = p_startCondition;
         mustFinish = p_mustFinish;
@@ -42,15 +42,15 @@ public class QueueElement {
 
     /**
      * Initialize QueueElement
-     * @param queueNum
+     * @param p_queuePos
      * @param p_asynchronous
      * @param p_startCondition
      * @param p_mustFinish
      * @param p_shouldFinish
      * @param p_isOptional
      */
-    public QueueElement(int queueNum, boolean p_asynchronous, int p_startCondition, boolean p_mustFinish, boolean p_shouldFinish, boolean p_isOptional) {
-        queuePos = queueNum;
+    public QueueElement(int p_queuePos, boolean p_asynchronous, int p_startCondition, boolean p_mustFinish, boolean p_shouldFinish, boolean p_isOptional) {
+        queuePos = p_queuePos;
         asynchronous = p_asynchronous;
         startCondition = p_startCondition;
         mustFinish = p_mustFinish;
@@ -60,20 +60,20 @@ public class QueueElement {
 
     /**calculate if Ready
      *
-     * @param currentEvent
-     * @param extraCondition
+     * @param p_currentEvent
+     * @param p_extraCondition
      * @return
      */
-    public boolean isReady(int currentEvent, boolean extraCondition) {
+    public boolean isReady(int p_currentEvent, boolean p_extraCondition) {
         //is it this elements turn to run
-        if (currentEvent >= startCondition && !isDone) {
+        if (p_currentEvent >= startCondition && !isDone) {
             // update when start for delay logic
             if (readyTime > time) {
                 readyTime = time;
                 logger.log("/RobotLogs/GeneralRobot", queuePos + "readyTime =" + readyTime +"optional"+isOptional);
             }
             //consider extraw condition(if it exists)
-            if (extraCondition) {
+            if (p_extraCondition) {
                 return true;
             } else {
 //                logger.log("/RobotLogs/GeneralRobot", queuePos + "readyTime =" + readyTime);
