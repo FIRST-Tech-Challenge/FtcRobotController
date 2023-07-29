@@ -12,18 +12,21 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
 import org.firstinspires.ftc.teamcode.Robots.BasicRobot;
+import org.firstinspires.ftc.teamcode.roadrunner.drive.Localizers.LocalizerFactory;
+import org.firstinspires.ftc.teamcode.roadrunner.drive.Localizers.Tracker;
 import org.firstinspires.ftc.teamcode.roadrunner.drive.RFMecanumDrive;
 import org.firstinspires.ftc.teamcode.roadrunner.drive.RFWaypoint;
 import org.firstinspires.ftc.teamcode.roadrunner.trajectorysequence.TrajectorySequence;
 @Config
 @Autonomous(name = "RFMotionControllerTest")
 public class RFMotionControllerTest extends LinearOpMode {
-    public static double targetX1 =20 , targetY1=5, targetX2=30, targetY2=-5, targetX3=50,targetY3=0;
+    public static double targetX1 =20 , targetY1=0, targetX2=30, targetY2=0, targetX3=50,targetY3=0;
     @Override
     public void runOpMode() throws InterruptedException {
         BasicRobot robot = new BasicRobot(this,true);
         RFMecanumDrive drive = new RFMecanumDrive();
-        Pose2d startPose = new Pose2d(0,0,Math.toRadians(90));
+        Tracker localizer = LocalizerFactory.getChassis(Tracker.TrackType.ODOMETRY);
+        Pose2d startPose = new Pose2d(0,0,Math.toRadians(0));
         drive.setPose(startPose);
         waitForStart();
         if (isStopRequested()) return;
@@ -33,8 +36,8 @@ public class RFMotionControllerTest extends LinearOpMode {
         while (opModeIsActive()) {
 //        for(int i=0; i<1;i++) {
             if (!drive.isFollowing()) {
-                currentPose = new Pose2d (0,0,0);
-                currentVelocity = new Pose2d(0,0,0);
+//                currentPose = new Pose2d (0,0,0);
+//                currentVelocity = new Pose2d(0,0,0);
                 drive.setReversed(false);
                 drive.setCurviness(0.5);
                 drive.addWaypoint(new RFWaypoint(new Vector2d(targetX1, targetY1)));
@@ -42,6 +45,7 @@ public class RFMotionControllerTest extends LinearOpMode {
                 drive.addWaypoint(new RFWaypoint(new Vector2d(targetX3, targetY3)));
 
             }
+            localizer.update();
             drive.update();
             robot.update();
         }

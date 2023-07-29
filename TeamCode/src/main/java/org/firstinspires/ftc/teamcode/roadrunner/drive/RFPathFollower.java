@@ -20,6 +20,7 @@ import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.acmerobotics.roadrunner.trajectory.MarkerCallback;
 
 import java.util.ArrayList;
+import java.util.FormattableFlags;
 
 @Config
 public class RFPathFollower {
@@ -51,14 +52,16 @@ public class RFPathFollower {
             double headVelError = PIDTargetVelocity.getHeading() - curVel.getHeading();
             Pose2d FFTargetAcceleration = rfTrajectory.getInstantaneousTargetAcceleration();
             Pose2d FFTargetVelocity = rfTrajectory.getInstantaneousTargetVelocity();
-            finalTargetVelocity = new Pose2d(FFTargetVelocity.getX() + transPosError.getX() * kPTrans + transVelError.getX() * kDTrans,
-                    FFTargetVelocity.getY() + transPosError.getY() * kPTrans + transVelError.getY() * kDTrans,
-                    FFTargetVelocity.getHeading() + headError * kPHead + headVelError * kDHead);
+            finalTargetVelocity = new Pose2d(FFTargetVelocity.getX() + transPosError.getX() * kPTrans ,
+                    FFTargetVelocity.getY() + transPosError.getY() * kPTrans ,
+                    FFTargetVelocity.getHeading() + headError * kPHead);
+            Pose2d finalTargetAcceleration = new Pose2d(FFTargetAcceleration.getX()+ transVelError.getX() * kDTrans, FFTargetAcceleration.getY()+ transVelError.getY() * kDTrans,
+                    FFTargetAcceleration.getHeading()+ headVelError * kDHead);
             Vector2d rotateTargetVelocity = finalTargetVelocity.vec().rotated(curPos.getHeading());
-            Vector2d rotateTargetAccel = FFTargetAcceleration.vec().rotated(curPos.getHeading());
+            Vector2d rotateTargetAccel = finalTargetAcceleration.vec().rotated(curPos.getHeading());
             double pF = rotateTargetVelocity.getX() * kV + rotateTargetAccel.getX() * kA,
                     pS = rotateTargetVelocity.getY() * kV + rotateTargetAccel.getY() * kA,
-                    pR = 2 * TRACK_WIDTH * (finalTargetVelocity.getHeading() * kV + FFTargetAcceleration.getHeading() * kA);
+                    pR = /*2 * TRACK_WIDTH * (finalTargetVelocity.getHeading() * kV + finalTargetAcceleration.getHeading() * kA)*/0;
             //frontLeft
             powers[0] = pF - pS - pR;
             //backLeft

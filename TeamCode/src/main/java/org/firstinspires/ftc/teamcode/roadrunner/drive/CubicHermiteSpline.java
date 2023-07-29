@@ -267,7 +267,7 @@ public class CubicHermiteSpline {
         double angle2 = Math.atan2(curVel2.getY(), curVel2.getX());
         double angle = Math.atan2(curVel.getY(), curVel.getX());
         double angle3 = Math.atan2(curVel3.getY(), curVel3.getX());
-        double dT = newT / remDuration;
+        double dT = newT * remDuration;
         double angularVel = (angle2 - angle) / dT;
         double angularVel2 = (angle3 - angle2) / dT;
         instantaneousVelocity = new Pose2d(curVel, angularVel);

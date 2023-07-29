@@ -105,6 +105,7 @@ public class RFTrajectory {
     //run this before getInstanTaneousTargetVelosity,
     public Pose2d getInstantaneousTargetAcceleration() {
         double accelMag = motionProfile.getInstantaneousTargetAcceleration(currentPath.getRemDistance());
+        packet.put("accelMag",accelMag);
         currentPath.calculateInstantaneousTargetPose();
         Pose2d pathAccel = currentPath.instantaneousAcceleration;
         double projectMag = pathAccel.vec().dot(currentVelocity.vec());
@@ -112,7 +113,7 @@ public class RFTrajectory {
         if (projectMag == 0) {
             projectMag = 0.0001;
         }
-        Vector2d projectedDiff = currentVelocity.vec().times(projectMag / currentVelocity.vec().norm()).times(1 - (accelMag / projectMag));
+        Vector2d projectedDiff = currentVelocity.vec().times(projectMag / Math.max(currentVelocity.vec().norm(),0.001)).times(1 - (accelMag / projectMag));
         packet.put("pathAccel", pathAccel);
         return new Pose2d(pathAccel.vec().minus(projectedDiff), pathAccel.getHeading());
     }
