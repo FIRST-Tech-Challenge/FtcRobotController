@@ -18,12 +18,12 @@ import org.firstinspires.ftc.teamcode.roadrunner.trajectorysequence.TrajectorySe
 @Config
 @Autonomous(name = "RFMotionControllerTest")
 public class RFMotionControllerTest extends LinearOpMode {
-    public static double targetX1 =50 , targetY1=0, targetX2=00, targetY2=0, targetX3=50,targetY3=0;
+    public static double targetX1 =20 , targetY1=5, targetX2=30, targetY2=-5, targetX3=50,targetY3=0;
     @Override
     public void runOpMode() throws InterruptedException {
         BasicRobot robot = new BasicRobot(this,true);
         RFMecanumDrive drive = new RFMecanumDrive();
-        Pose2d startPose = new Pose2d(0,0,Math.toRadians(0));
+        Pose2d startPose = new Pose2d(0,0,Math.toRadians(90));
         drive.setPose(startPose);
         waitForStart();
         if (isStopRequested()) return;

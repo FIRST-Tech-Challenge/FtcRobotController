@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.roadrunner.drive;
 
+import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.packet;
 import static java.lang.Math.cos;
 import static java.lang.Math.sin;
 
@@ -63,6 +64,8 @@ public class RFWaypoint {
     }
 
     public Vector2d getEndVelocityVec(){
+        packet.put("endTangentCalc", endTangent);
+        packet.put("endVeloCalc", endVelocity);
         return new Vector2d(cos(endTangent)*endVelocity, sin(endTangent)*endVelocity);
     }
 

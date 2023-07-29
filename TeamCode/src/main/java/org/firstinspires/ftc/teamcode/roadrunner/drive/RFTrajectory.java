@@ -2,12 +2,14 @@ package org.firstinspires.ftc.teamcode.roadrunner.drive;
 
 import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.packet;
 import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.time;
+import static org.firstinspires.ftc.teamcode.roadrunner.drive.DriveConstants.TRACK_WIDTH;
 import static org.firstinspires.ftc.teamcode.roadrunner.drive.PoseStorage.currentPose;
 import static org.firstinspires.ftc.teamcode.roadrunner.drive.PoseStorage.currentVelocity;
 
 import static java.lang.Math.abs;
 import static java.lang.Math.cos;
 import static java.lang.Math.sin;
+import static java.lang.Math.sqrt;
 import static java.lang.Math.toRadians;
 
 import com.acmerobotics.roadrunner.geometry.Pose2d;
@@ -89,8 +91,7 @@ public class RFTrajectory {
         double distance = motionProfile.motionProfileTimeToDist(time);
         packet.put("mpPos", distance);
         currentPath.calculateTargetPoseAt(distance);
-        Pose2d veloRatio = currentPath.targetVelocity;
-        return new Pose2d(veloRatio.vec(), veloRatio.getHeading());
+        return currentPath.targetVelocity;
     }
     //not needed for PID
 //    public Pose2d getTargetAcceleration() {
@@ -177,22 +178,25 @@ public class RFTrajectory {
             }
             return mpVelo / tToXDerivative;
         } else {
-            return 1;
+            return mpVelo/ tToXDerivative;
         }
 //        return motionProfile.calculateTargetVelocity(time) / tToXDerivative;
     }
 
     public void setCurrentSegment(int index) {
         segIndex = index;
-        if (segIndex > 0) {
-            RFWaypoint curWaypoint = new RFWaypoint(currentPose, currentVelocity.vec().angle(), currentVelocity.vec().norm());
-            setMotionProfile(curWaypoint, segments.get(segIndex));
-            setCurrentPath(curWaypoint, segments.get(segIndex).getWaypoint());
-        } else {
-            RFWaypoint curWaypoint = new RFWaypoint(currentPose, currentVelocity.vec().angle(), currentVelocity.vec().norm());
-            setMotionProfile(curWaypoint, segments.get(segIndex));
-            setCurrentPath(curWaypoint, segments.get(segIndex).getWaypoint());
+        Vector2d curVel = currentVelocity.vec();
+        if(curVel.norm()==0){
+            double angle = currentPose.getHeading();
+            curVel = new Vector2d(cos(angle),sin(angle));
         }
+
+        double curAng = currentVelocity.getHeading();
+        double velMag = sqrt(currentVelocity.vec().norm()*currentVelocity.vec().norm()+curAng*curAng*TRACK_WIDTH*TRACK_WIDTH*0.25);
+        RFWaypoint curWaypoint = new RFWaypoint(currentPose, curVel.angle(), velMag);
+        setMotionProfile(curWaypoint, segments.get(segIndex));
+        curWaypoint = new RFWaypoint(currentPose, curVel.angle(), curVel.norm());
+        setCurrentPath(curWaypoint, segments.get(segIndex).getWaypoint());
     }
 
     public RFSegment getCurrentSegment() {
