@@ -18,33 +18,35 @@ public class RFServo implements Servo {
 
     double SERVO_LIMIT;
 
+    double FLIP_TIME = 0.2;
+
     boolean flipped = false;
 
     private final String rfServoName;
 
     /* Constructor with name, direction, and limit */
 
-    public RFServo (String deviceName, Servo.Direction direction, double limit) {
-        rfServo = op.hardwareMap.get(Servo.class, deviceName);
-        rfServoName = deviceName;
-        rfServo.setDirection(direction);
+    public RFServo (String p_deviceName, Servo.Direction p_direction, double p_limit) {
+        rfServo = op.hardwareMap.get(Servo.class, p_deviceName);
+        rfServoName = p_deviceName;
+        rfServo.setDirection(p_direction);
 
         logger.createFile("/ServoLogs/RFServo", "Runtime    Component               " +
                 "Function               Action");
 
-        SERVO_LIMIT = limit;
+        SERVO_LIMIT = p_limit;
     }
 
     /* Constructor with name and limit */
 
-    public RFServo (String deviceName, double limit) {
-        rfServo = op.hardwareMap.get(Servo.class, deviceName);
-        rfServoName = deviceName;
+    public RFServo (String p_deviceName, double p_limit) {
+        rfServo = op.hardwareMap.get(Servo.class, p_deviceName);
+        rfServoName = p_deviceName;
 
         logger.createFile("/ServoLogs/RFServo", "Runtime    Component               " +
                 "Function               Action");
 
-        SERVO_LIMIT = limit;
+        SERVO_LIMIT = p_limit;
     }
 
     /* Updating the last time the servo flipped */
@@ -55,38 +57,38 @@ public class RFServo implements Servo {
 
     /* Setting position of the servo */
 
-    public void setPosition(double position) {
-        if (time - lastTime > 0.2) {
+    public void setPosition(double p_position) {
+        if (time - lastTime > FLIP_TIME) {
                 logger.log("/ServoLogs/RFServo", rfServoName + ",setPosition(),Setting Position: "
-                        + df.format(position), true);
-            rfServo.setPosition(position);
+                        + df.format(p_position), true);
+            rfServo.setPosition(p_position);
             lastTime = time;
         }
     }
 
     /* Flipping the servo between two positions inside the max range */
 
-    public boolean flipServoInterval(double lowerPos, double upperPos) {
-        if(time - lastTime > 0.2) {
+    public boolean flipServoInterval(double p_lowerPos, double p_upperPos) {
+        if(time - lastTime > FLIP_TIME) {
             if (flipped) {
-                rfServo.setPosition(lowerPos);
+                rfServo.setPosition(p_lowerPos);
                 logger.log("/ServoLogs/RFServo", rfServoName + ",flipServoInterval(),Setting Position: "
-                        + df.format(lowerPos), true);
+                        + df.format(p_lowerPos), true);
                 flipped = false;
             } else {
-                rfServo.setPosition(upperPos);
+                rfServo.setPosition(p_upperPos);
                 logger.log("/ServoLogs/RFServo", rfServoName + ",flipServoInterval(),Setting Position: "
-                        + df.format(upperPos), true);
+                        + df.format(p_upperPos), true);
                 flipped = true;
             }
         }
-        return time - lastTime > 0.2;
+        return time - lastTime > FLIP_TIME;
     }
 
     /* Flipping the servo in the max range */
 
     public void flipServoMax() {
-        if (time - lastTime > 0.2) {
+        if (time - lastTime > FLIP_TIME) {
             if (flipped) {
                 rfServo.setPosition(0);
                 logger.log("/ServoLogs/RFServo", rfServoName + ",flipServoMax(),Setting Position: "
