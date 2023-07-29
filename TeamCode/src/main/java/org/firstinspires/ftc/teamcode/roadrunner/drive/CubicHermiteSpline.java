@@ -38,7 +38,7 @@ public class CubicHermiteSpline {
     //    Pose2d targetAcceleration;
     Pose2d instantaneousVelocity;
     Pose2d instantaneousAcceleration;
-    public static double LOOPINESS = 2.0;
+    public static double LOOPINESS = 1.4;
 
     public CubicHermiteSpline(Vector2d p_startPos, Vector2d p_startVel, Vector2d p_endVel, Vector2d p_endPos, RFTrajectory p_traj) {
         traj = p_traj;
@@ -49,8 +49,11 @@ public class CubicHermiteSpline {
         length = p_startPos.distTo(p_endPos);
         //calc approxDuration
         packet.put("length0", length);
-
+        double loopyStorage = LOOPINESS;
         duration = traj.calculateSegmentDuration(length * AVG_SCALE_FACTOR);
+        if(p_endVel.norm()*duration*LOOPINESS>MAX_VEL){
+            LOOPINESS = MAX_VEL/(p_endVel.norm()*duration*LOOPINESS);
+        }
         Vector2d p_startVelo = p_startVel.times(LOOPINESS* duration);
         Vector2d p_endVelo = p_endVel.times(LOOPINESS* duration);
         boolean shortSegment = p_endVelo.norm()-p_startVelo.norm()>length/AVG_SCALE_FACTOR;
@@ -104,6 +107,7 @@ public class CubicHermiteSpline {
         lastPos = currentPose.vec();
         lastIntegralPos = lastPos;
         numericDerivResolution*=duration;
+        LOOPINESS = loopyStorage;
     }
 
     public double getLength() {

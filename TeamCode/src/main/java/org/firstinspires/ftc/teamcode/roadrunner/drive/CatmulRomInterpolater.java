@@ -68,7 +68,9 @@ public class CatmulRomInterpolater {
                 curTangent = curVel.angle();
             }
             double segTangent = points.get(2).minus(points.get(1)).vec().angle();
-            double scaleFactor = Math.cos(endVel.angle() - curTangent - segTangent);
+            double nextSegTangent = points.get(3).minus(points.get(2)).vec().angle();
+            double scaleFactor = Math.cos(endVel.angle()+nextSegTangent- 2*segTangent);
+
             packet.put("curTangent", curTangent);
             packet.put("segTangent", segTangent);
 
@@ -78,11 +80,12 @@ public class CatmulRomInterpolater {
                 scaleFactor = 0;
             }
 
-            packet.put("scaleFac", scaleFactor);
 
             double distance = points.get(2).vec().distTo(points.get(1).vec());
             double curveFactor = CURVING_DISTANCE / distance;
-            double targetVelocity = MAX_VEL * pow(scaleFactor, curveFactor * curveFactor * curveFactor);
+//            packet.put("scaleFac", pow(scaleFactor, curveFactor * curveFactor * curveFactor));
+
+            double targetVelocity = MAX_VEL * scaleFactor;
             targetVelocity = min(targetVelocity, sqrt((points.get(2).vec()
                     .distTo(points.get(1).vec())) * 0.5 * MAX_ACCEL));
             packet.put("targetENdVelocity", targetVelocity);
