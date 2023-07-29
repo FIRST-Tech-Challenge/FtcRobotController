@@ -14,7 +14,7 @@ public class RFMecanumDrive {
     private DcMotorEx leftFront, leftRear, rightRear, rightFront;
     private RFPathFollower pathFollower;
     private RFPoseSim poseSim;
-    public static boolean isPoseSim = true;
+    public static boolean isPoseSim = false;
     public RFMecanumDrive(){
         pathFollower = new RFPathFollower();
         for (LynxModule module : op.hardwareMap.getAll(LynxModule.class)) {
