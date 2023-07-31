@@ -61,7 +61,7 @@ public class RFPathFollower {
             Vector2d rotateTargetAccel = finalTargetAcceleration.vec().rotated(curPos.getHeading());
             double pF = rotateTargetVelocity.getX() * kV + rotateTargetAccel.getX() * kA,
                     pS = rotateTargetVelocity.getY() * kV + rotateTargetAccel.getY() * kA,
-                    pR = /*2 * TRACK_WIDTH * (finalTargetVelocity.getHeading() * kV + finalTargetAcceleration.getHeading() * kA)*/0;
+                    pR = 2 * TRACK_WIDTH * (finalTargetVelocity.getHeading() * kV + finalTargetAcceleration.getHeading() * kA);
             //frontLeft
             powers[0] = pF - pS - pR;
             //backLeft

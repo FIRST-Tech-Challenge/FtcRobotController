@@ -1,11 +1,17 @@
 package org.firstinspires.ftc.teamcode.roadrunner.drive;
 
 import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.op;
+import static org.firstinspires.ftc.teamcode.roadrunner.drive.DriveConstants.MAX_ANG_VEL;
+import static org.firstinspires.ftc.teamcode.roadrunner.drive.DriveConstants.MAX_VEL;
+import static org.firstinspires.ftc.teamcode.roadrunner.drive.DriveConstants.TRACK_WIDTH;
+import static org.firstinspires.ftc.teamcode.roadrunner.drive.DriveConstants.kA;
+import static org.firstinspires.ftc.teamcode.roadrunner.drive.DriveConstants.kV;
 import static org.firstinspires.ftc.teamcode.roadrunner.drive.PoseStorage.currentPose;
 import static org.firstinspires.ftc.teamcode.roadrunner.drive.PoseStorage.currentVelocity;
 
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
+import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
@@ -14,7 +20,7 @@ public class RFMecanumDrive {
     private DcMotorEx leftFront, leftRear, rightRear, rightFront;
     private RFPathFollower pathFollower;
     private RFPoseSim poseSim;
-    public static boolean isPoseSim = true;
+    public static boolean isPoseSim = false;
     public RFMecanumDrive(){
         pathFollower = new RFPathFollower();
         for (LynxModule module : op.hardwareMap.getAll(LynxModule.class)) {
@@ -25,8 +31,8 @@ public class RFMecanumDrive {
             leftRear = op.hardwareMap.get(DcMotorEx.class, "motorLeftBack");
             rightRear = op.hardwareMap.get(DcMotorEx.class, "motorRightBack");
             rightFront = op.hardwareMap.get(DcMotorEx.class, "motorRightFront");
-            rightFront.setDirection(DcMotor.Direction.FORWARD);
-            leftFront.setDirection(DcMotor.Direction.REVERSE);
+            rightFront.setDirection(DcMotor.Direction.REVERSE);
+            leftFront.setDirection(DcMotor.Direction.FORWARD);
             leftRear.setDirection(DcMotor.Direction.REVERSE);
             rightRear.setDirection(DcMotor.Direction.FORWARD);
             rightFront.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
@@ -41,10 +47,33 @@ public class RFMecanumDrive {
     public void addWaypoint(RFWaypoint p_waypoint) {
         pathFollower.addWaypoint(p_waypoint);
     }
-    public void setReversed(boolean reversed) {
-        pathFollower.setReversed(reversed);
+    public void setReversed(boolean p_reversed) {
+        pathFollower.setReversed(p_reversed);
     }
-
+    public void setDriveVelocity(Pose2d p_driveVelocity){
+        double pF = p_driveVelocity.getX() * kV,
+                pS = p_driveVelocity.getY() * kV,
+                pR = 2 * TRACK_WIDTH * (p_driveVelocity.getHeading() * kV);
+        double powers[] = {0,0,0,0};
+        //frontLeft
+        powers[0] = pF - pS - pR;
+        //backLeft
+        powers[1] = pF + pS - pR;
+        //frontRight
+        powers[2] = pF - pS + pR;
+        //backRight
+        powers[3] = pF + pS + pR;
+        setMotorPowers(powers);
+    }
+    public void setJoystickPower(double p_y, double p_x, double p_a){
+        Vector2d velocity = new Vector2d(p_y*MAX_VEL, p_x*MAX_VEL);
+        double angle = p_a*MAX_ANG_VEL;
+        double magnitude = velocity.norm()*velocity.norm()+angle*angle*4*TRACK_WIDTH*TRACK_WIDTH;
+        if(magnitude>MAX_VEL*MAX_VEL){
+            velocity.times(MAX_VEL/magnitude);
+        }
+        setDriveVelocity(new Pose2d(velocity,angle));
+    }
     public void setTangentOffset(double p_tangentOffset) {
         pathFollower.setTangentOffset(p_tangentOffset);
     }
