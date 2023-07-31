@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.roadrunner.drive.Localizers;
 
 import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.op;
+import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.packet;
 import static org.firstinspires.ftc.teamcode.roadrunner.drive.PoseStorage.currentPOVVelocity;
 import static org.firstinspires.ftc.teamcode.roadrunner.drive.PoseStorage.currentPose;
 import static org.firstinspires.ftc.teamcode.roadrunner.drive.PoseStorage.currentVelocity;
@@ -9,6 +10,7 @@ import static java.lang.Math.abs;
 import static java.lang.Math.cos;
 import static java.lang.Math.sin;
 
+import com.acmerobotics.dashboard.canvas.Canvas;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.hardware.AnalogInput;
@@ -24,6 +26,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 import org.firstinspires.ftc.teamcode.roadrunner.drive.Localizers.Tracker;
+import org.firstinspires.ftc.teamcode.roadrunner.util.DashboardUtil;
 import org.firstinspires.ftc.teamcode.roadrunner.util.Encoder;
 
 //5900,4900
@@ -101,35 +104,41 @@ public class OdometryIMUTracker extends Tracker {
         double[] deltaTicks = {nowTicks[0] - lastTicks[0], nowTicks[1] - lastTicks[1]};
         lastTicks = nowTicks;
         double newAngle = getAngle();
-        if(deltaAngle==0){
-            deltaAngle=0.00000000001;
-        }
         double [][] initalAngle = {{cos(angle),-sin(angle),0},
                 {sin(angle),cos(angle),0},
                 {0,0,1}};
         double [][] deltaMatrix = {{sin(deltaAngle)/deltaAngle,(cos(deltaAngle)-1)/deltaAngle,0},
                 {(1-cos(deltaAngle))/deltaAngle,sin(deltaAngle)/deltaAngle,0},
                 {0,0,1}};
-        double [][] robotDelta = {{(deltaTicks[0]+deltaTicks[1])/2, deltaTicks[2]- (FORWARD_OFFSET*deltaAngle)}};
+        double [][] robotDelta = {{(deltaTicks[0])/ticks_per_inch},
+                {deltaTicks[1]/ticks_per_inch- (FORWARD_OFFSET*deltaAngle)},
+                {deltaAngle}};
         double[][] partialSolve = multiplyMatrix(3,3, initalAngle, 3,3, deltaMatrix);
-        double [][] finalSolve = multiplyMatrix(3,1, partialSolve, 3,1, robotDelta);
+
+        double [][] finalSolve = multiplyMatrix(3,3, partialSolve, 3,1, robotDelta);
+
         double deltaX = finalSolve[0][0];
         double deltaY = finalSolve[1][0];
-        angle += deltaAngle;
+        angle = newAngle;
         xpos += deltaX;
         ypos += deltaY;
-        op.telemetry.addData("xpos",xpos);
-        op.telemetry.addData("ypos",ypos);
-        op.telemetry.addData("angle",angle);
-        op.telemetry.addData("left",nowTicks);
-        op.telemetry.addData("right",nowTicks); //left
-        op.telemetry.addData("front",nowTicks); //right
-        op.telemetry.update();
         currentPose = new Pose2d(xpos,ypos,angle);
         double[] velo = {odomconst[0]*encoderPar.getVelocity()/ticks_per_inch, odomconst[1]*encoderBack.getVelocity()/ticks_per_inch};
         currentPOVVelocity = new Pose2d((velo[0]+velo[1])*0.5, velo[2]-angularVelocity.xRotationRate*LATERAL_OFFSET,
                 angularVelocity.xRotationRate);
         currentVelocity = new Pose2d(currentPOVVelocity.vec().rotated(angle), currentPOVVelocity.getHeading());
+        Canvas fieldOverlay = packet.fieldOverlay();
+        packet.put("currentPose", currentPose);
+        packet.put("currentVelocity", currentVelocity);
+        packet.put("currentPOVVelocity", currentPOVVelocity);
+        packet.put("parTicks", nowTicks[0]);
+        packet.put("perpTicks", nowTicks[1]);
+
+        if(currentPose!=null) {
+            fieldOverlay.setStrokeWidth(1);
+            fieldOverlay.setStroke("#4CAF50");
+            DashboardUtil.drawRobot(fieldOverlay, currentPose);
+        }
     }
 
     public double getAngle() {

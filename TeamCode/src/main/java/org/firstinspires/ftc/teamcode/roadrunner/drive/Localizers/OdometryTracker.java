@@ -79,10 +79,6 @@ public class OdometryTracker extends Tracker {
         double[] deltaTicks = {nowTicks[0] - lastTicks[0], nowTicks[1] - lastTicks[1], nowTicks[2] - lastTicks[2]};
         lastTicks = nowTicks;
         double deltaAngle = (deltaTicks[0] - deltaTicks[1]) / ticks_per_radian;
-        if(deltaAngle==0){
-            deltaAngle=0.00000000001;
-        }
-
 
         double [][] initalAngle = {{cos(angle),-sin(angle),0},
                 {sin(angle),cos(angle),0},

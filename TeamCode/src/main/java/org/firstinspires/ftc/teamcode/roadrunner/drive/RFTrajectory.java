@@ -144,6 +144,10 @@ public class RFTrajectory {
                 p1.getCurviness());
     }
 
+    public double getEndVelMag(){
+        return motionProfile.endVel;
+    }
+
     public double targetCurrentDistance() {
         return motionProfile.motionProfileTimeToDist(time);
     }

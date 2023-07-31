@@ -77,8 +77,10 @@ public class CubicHermiteSpline {
         packet.put("length1", length);
         //calc duration
         duration = traj.calculateSegmentDuration(length);
+        double newEndVel = traj.getEndVelMag();
         p_startVelo = p_startVel.times(LOOPINESS* duration);
         p_endVelo = p_endVel.times(LOOPINESS* duration);
+        p_endVelo = p_endVelo.times(newEndVel/p_endVelo.norm());
         coeffs.clear();
         coeffs.add(p_startPos);
         coeffs.add(p_startVelo);
@@ -99,6 +101,7 @@ public class CubicHermiteSpline {
         duration = traj.calculateSegmentDuration(length);
         p_startVelo = p_startVel.times(LOOPINESS* duration);
         p_endVelo = p_endVel.times(LOOPINESS* duration);
+        p_endVelo = p_endVelo.times(newEndVel/p_endVelo.norm());
         coeffs.clear();
         coeffs.add(p_startPos);
         coeffs.add(p_startVelo);
@@ -237,7 +240,7 @@ public class CubicHermiteSpline {
         if(ratio<1) {
             targetVelocity.times(ratio);
         }
-        packet.put("ratio",ratio);
+//        packet.put("ratio",ratio);
     }
 
     public void calculateInstantaneousTargetPose() {

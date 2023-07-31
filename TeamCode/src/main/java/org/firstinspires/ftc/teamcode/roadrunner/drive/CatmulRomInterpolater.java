@@ -25,12 +25,17 @@ public class CatmulRomInterpolater {
     ArrayList<Pose2d> points;
     boolean isEndpoint = false;
     RFWaypoint ref;
+    RFSegment refSegment;
+    ArrayList<RFSegment> segments;
+    int index;
     double offset = 0;
     //turning radius
     double CURVING_DISTANCE = 10;
     public static double ALPHA = 5, TENSION = 0;
 
-    public CatmulRomInterpolater(ArrayList<RFSegment> p_segments, int index) {
+    public CatmulRomInterpolater(ArrayList<RFSegment> p_segments, int p_index) {
+        segments = p_segments;
+        index = p_index;
         points = new ArrayList();
         //generate first three points for interpolation, fill in if there are none
         if (index > 1) {
@@ -55,24 +60,20 @@ public class CatmulRomInterpolater {
         }
         ref = p_segments.get(index).getWaypoint();
         offset = p_segments.get(index).getTangentOffset();
+        refSegment = p_segments.get(index);
     }
 
     public RFWaypoint CRerpWaypoint() {
         if (ref.getDefinedness() < 3) {
             Vector2d endVel = new Vector2d(terminalXVelocity(), terminalYVelocity());
-            Vector2d curVel = currentVelocity.vec();
-            double curTangent;
-            if (Double.isNaN(curVel.angle())) {
-                curTangent = currentPose.getHeading();
-            } else {
-                curTangent = curVel.angle();
-            }
+//            Vector2d curVel = currentVelocity.vec();
+//            double curTangent;
+
             double segTangent = points.get(2).minus(points.get(1)).vec().angle();
             double nextSegTangent = points.get(3).minus(points.get(2)).vec().angle();
-            double scaleFactor = Math.cos(endVel.angle()+nextSegTangent- 2*segTangent);
+            double scaleFactor = Math.cos((nextSegTangent+endVel.angle()- 2*segTangent)*0.5);
 
-            packet.put("curTangent", curTangent);
-            packet.put("segTangent", segTangent);
+//            packet.put("segTangent", segTangent);
 
             if (Double.isNaN(scaleFactor)) {
                 scaleFactor = 1;
@@ -81,21 +82,23 @@ public class CatmulRomInterpolater {
             }
 
 
-            double distance = points.get(2).vec().distTo(points.get(1).vec());
-            double curveFactor = CURVING_DISTANCE / distance;
+//            double distance = points.get(2).vec().distTo(points.get(1).vec());
+//            double curveFactor = CURVING_DISTANCE / distance;
 //            packet.put("scaleFac", pow(scaleFactor, curveFactor * curveFactor * curveFactor));
 
             double targetVelocity = MAX_VEL * scaleFactor;
-            targetVelocity = min(targetVelocity, sqrt((points.get(2).vec()
-                    .distTo(points.get(1).vec())) * 0.5 * MAX_ACCEL));
-            packet.put("targetENdVelocity", targetVelocity);
+            double c = refSegment.getCurviness();
+                targetVelocity = min(targetVelocity, sqrt(segments.get(segments.size()-1).getWaypoint().getTarget().vec()
+                        .distTo(points.get(2).vec()) * 2 * MAX_ACCEL * (1 - c * 0.5)));
+
+//            packet.put("targetENdVelocity", targetVelocity);
 
             if (isEndpoint) {
                 targetVelocity = 0;
             }
             if (ref.getDefinedness() < 2) {
                 double endTangent = endVel.angle();
-                packet.put("endTangent", endTangent);
+//                packet.put("endTangent", endTangent);
                 if (ref.getDefinedness() == 0) {
                     return new RFWaypoint(new Pose2d(ref.getTarget().getX(), ref.getTarget().getY(), endTangent + offset), endTangent
                             , targetVelocity, ref.getDefinedness());
