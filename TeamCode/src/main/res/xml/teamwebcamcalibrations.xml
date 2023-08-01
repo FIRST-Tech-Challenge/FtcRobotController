@@ -158,4 +158,46 @@
 
     <!-- ======================================================================================= -->
 
+    <!-- MOKOSE 4K Ultra HD Webcam USB UVC -->
+    <Camera vid="0x1bcf" pid="0x0001">
+        <Calibration
+            size="3840 2160"
+            focalLength="822.317f, 822.317f"
+            principalPoint="319.495f, 242.502f"
+            distortionCoefficients="-0.0449369, 1.17277, 0, 0, -3.63244, 0, 0, 0"
+            />
+        <Calibration
+            size="2560 1440"
+            focalLength="822.317f, 822.317f"
+            principalPoint="319.495f, 242.502f"
+            distortionCoefficients="-0.0449369, 1.17277, 0, 0, -3.63244, 0, 0, 0"
+            />
+        <Calibration
+            size="2048 1536"
+            focalLength="822.317f, 822.317f"
+            principalPoint="319.495f, 242.502f"
+            distortionCoefficients="-0.0449369, 1.17277, 0, 0, -3.63244, 0, 0, 0"
+            />
+        <Calibration
+            size="1920 1080"
+            focalLength="822.317f, 822.317f"
+            principalPoint="319.495f, 242.502f"
+            distortionCoefficients="-0.0449369, 1.17277, 0, 0, -3.63244, 0, 0, 0"
+            />
+        <Calibration
+            size="1280 720"
+            focalLength="822.317f, 822.317f"
+            principalPoint="319.495f, 242.502f"
+            distortionCoefficients="-0.0449369, 1.17277, 0, 0, -3.63244, 0, 0, 0"
+            />
+        <Calibration
+            size="640 480"
+            focalLength="426.461549772f, 426.461549772f"
+            principalPoint="365.484999818f, 226.539154455f"
+            distortionCoefficients="0.091226239729, -0.382560037155, -0.00257797550865, 0.0262912721701, 0.269434873255, 0, 0, 0"
+            />
+    </Camera>
+
+    <!-- ======================================================================================= -->
+
 </Calibrations>
