@@ -20,7 +20,7 @@ public class RFMecanumDrive {
     private DcMotorEx leftFront, leftRear, rightRear, rightFront;
     private RFPathFollower pathFollower;
     private RFPoseSim poseSim;
-    public static boolean isPoseSim = false;
+    public static boolean isPoseSim = true;
     public RFMecanumDrive(){
         pathFollower = new RFPathFollower();
         for (LynxModule module : op.hardwareMap.getAll(LynxModule.class)) {
@@ -60,9 +60,9 @@ public class RFMecanumDrive {
         //backLeft
         powers[1] = pF + pS - pR;
         //frontRight
-        powers[2] = pF - pS + pR;
+        powers[2] = pF + pS + pR;
         //backRight
-        powers[3] = pF + pS + pR;
+        powers[3] = pF - pS + pR;
         setMotorPowers(powers);
     }
     public void setJoystickPower(double p_y, double p_x, double p_a){

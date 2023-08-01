@@ -8,6 +8,7 @@ import static org.firstinspires.ftc.teamcode.roadrunner.drive.PoseStorage.curren
 import static java.lang.Double.NaN;
 import static java.lang.Double.max;
 import static java.lang.Double.min;
+import static java.lang.Math.PI;
 import static java.lang.Math.abs;
 import static java.lang.Math.atan2;
 import static java.lang.Math.pow;
@@ -69,12 +70,16 @@ public class CatmulRomInterpolater {
 //            Vector2d curVel = currentVelocity.vec();
 //            double curTangent;
 
-            double segTangent = points.get(2).minus(points.get(1)).vec().angle();
-            double nextSegTangent = points.get(3).minus(points.get(2)).vec().angle();
-            double scaleFactor = Math.cos((nextSegTangent+endVel.angle()- 2*segTangent)*0.5);
-
-//            packet.put("segTangent", segTangent);
-
+            Vector2d segTangent = points.get(2).minus(points.get(1)).vec();
+            Vector2d nextSegTangent = points.get(3).minus(points.get(2)).vec();
+            double scaleFactor = Math.cos(reduce(distBetween(nextSegTangent.angle(),endVel.angle()) + distBetween(endVel.angle(),segTangent.angle()))*0.5);
+//            if(nextSegTangent.angle()==0 && points.get(1).getX()==50 && points.get(2).getX()==0) {
+//                packet.put("targeta",points.get(2));
+//                packet.put("segTangent", abs(nextSegTangent.angleBetween(endVel)));
+//                packet.put("endVelTangent", endVel.angle());
+//                packet.put("segTangent1", segTangent.angle());
+//                packet.put("segTangent2", abs(endVel.angleBetween(segTangent)));
+//            }
             if (Double.isNaN(scaleFactor)) {
                 scaleFactor = 1;
             } else if (scaleFactor < 0) {
@@ -119,9 +124,19 @@ public class CatmulRomInterpolater {
         double dist = angle1 - angle2;
         while (abs(dist) > toRadians(180)) {
             if (dist > toRadians(180)) {
-                dist -= toRadians(180);
+                dist -= toRadians(360);
             } else if (dist < toRadians(-180)) {
-                dist += toRadians(180);
+                dist += toRadians(360);
+            }
+        }
+        return abs(dist);
+    }
+    public double reduce(double dist){
+        while (abs(dist) > toRadians(360)) {
+            if (dist > toRadians(360)) {
+                dist -= toRadians(360);
+            } else if (dist < toRadians(-360)) {
+                dist += toRadians(360);
             }
         }
         return abs(dist);

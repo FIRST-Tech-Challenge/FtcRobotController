@@ -67,9 +67,9 @@ public class RFPathFollower {
             //backLeft
             powers[1] = pF + pS - pR;
             //frontRight
-            powers[2] = pF - pS + pR;
+            powers[2] = pF + pS + pR;
             //backRight
-            powers[3] = pF + pS + pR;
+            powers[3] = pF - pS + pR;
             if (VERBOSITY > 0) {
                 packet.put("curX", curPos.getX());
                 packet.put("curY", curPos.getY());

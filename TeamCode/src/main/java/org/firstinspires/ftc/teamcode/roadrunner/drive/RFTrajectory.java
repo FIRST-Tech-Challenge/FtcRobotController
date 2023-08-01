@@ -2,12 +2,14 @@ package org.firstinspires.ftc.teamcode.roadrunner.drive;
 
 import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.packet;
 import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.time;
+import static org.firstinspires.ftc.teamcode.roadrunner.drive.DriveConstants.MAX_ACCEL;
 import static org.firstinspires.ftc.teamcode.roadrunner.drive.DriveConstants.TRACK_WIDTH;
 import static org.firstinspires.ftc.teamcode.roadrunner.drive.PoseStorage.currentPose;
 import static org.firstinspires.ftc.teamcode.roadrunner.drive.PoseStorage.currentVelocity;
 
 import static java.lang.Math.abs;
 import static java.lang.Math.cos;
+import static java.lang.Math.min;
 import static java.lang.Math.sin;
 import static java.lang.Math.sqrt;
 import static java.lang.Math.toRadians;
@@ -108,14 +110,12 @@ public class RFTrajectory {
         packet.put("accelMag",accelMag);
         currentPath.calculateInstantaneousTargetPose();
         Pose2d pathAccel = currentPath.instantaneousAcceleration;
-        double projectMag = pathAccel.vec().dot(currentVelocity.vec());
-        packet.put("projectMag", projectMag);
-        if (projectMag == 0) {
-            projectMag = 0.0001;
+        pathAccel = new Pose2d(pathAccel.vec().times(accelMag/pathAccel.vec().norm()), pathAccel.getHeading());
+        double totalMagnitude = pathAccel.vec().norm()*pathAccel.vec().norm()+pathAccel.getHeading()*pathAccel.getHeading()*TRACK_WIDTH*TRACK_WIDTH*0.25;
+        if(totalMagnitude>MAX_ACCEL*MAX_ACCEL){
+            pathAccel.times(sqrt(MAX_ACCEL*MAX_ACCEL/totalMagnitude));
         }
-        Vector2d projectedDiff = currentVelocity.vec().times(projectMag / Math.max(currentVelocity.vec().norm(),0.001)).times(1 - (accelMag / projectMag));
-        packet.put("pathAccel", pathAccel);
-        return new Pose2d(pathAccel.vec().minus(projectedDiff), pathAccel.getHeading());
+        return pathAccel;
     }
 
 

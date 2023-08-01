@@ -19,6 +19,7 @@ public class ButterflyTest extends LinearOpMode {
     double lastSwitchTime = 0;
     double BUTTERED_POSITION = 0.6;
     double INIT_POSITION = 1.0;
+    double [] offset = {0.005,-0.005,0.01,0.02 };
     ArrayList<Servo> servos;
     public void runOpMode(){
         robot = new BasicRobot(this,true);
@@ -35,7 +36,8 @@ public class ButterflyTest extends LinearOpMode {
                 drive.setJoystickPower(gamepad1.left_stick_y, gamepad1.left_stick_x, gamepad1.right_stick_x);
             }else{
                 double y = gamepad1.left_stick_y;
-                double a = gamepad1.right_stick_x;
+                double a = -gamepad1.right_stick_x;
+                telemetry.addData("rightStckX", a);
                 double[] powers = {y+a,y+a,y-a,y-a};
                 drive.setMotorPowers(powers);
             }
@@ -50,7 +52,7 @@ public class ButterflyTest extends LinearOpMode {
     public void toggleServos(){
         if(isButtered){
             for(int i=0;i<4;i++){
-                servos.get(i).setPosition(BUTTERED_POSITION);
+                servos.get(i).setPosition(BUTTERED_POSITION+offset[i]);
             }
         }
         else{

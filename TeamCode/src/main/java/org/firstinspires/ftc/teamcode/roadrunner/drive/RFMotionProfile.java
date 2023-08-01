@@ -80,11 +80,11 @@ public class RFMotionProfile {
         }
         //if u should decel
         if (dist < getAccelDist(currentVelocity.vec().norm(), endVel)) {
-            targetAccel = min(targetAccel * -1, MIN_DECEL);
-            packet.put("accelMagCase5", targetAccel);
+            targetAccel*=-1;
+            packet.put("shouldAccel", 20);
 
         } else {
-            //nothing
+            packet.put("shouldAccel", 0);
         }
         return targetAccel;
     }
@@ -551,6 +551,7 @@ public class RFMotionProfile {
         return getAccelTime(vel) * (vel + endVel) * 0.5;
     }
 
+    //WRITE A MUCH BETTTTER ONE, case when ur in final decel
     public double getAccelTime(double vel1, double vel2) {
         return abs(vel1 - vel2) / ((1 - curviness * 0.5) * MAX_ACCEL);
     }
