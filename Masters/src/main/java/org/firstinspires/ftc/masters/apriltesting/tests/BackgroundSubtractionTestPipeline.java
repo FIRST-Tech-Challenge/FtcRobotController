@@ -52,6 +52,7 @@ public class BackgroundSubtractionTestPipeline extends OpenCvPipeline {
 
     @Override
     public Mat processFrame(Mat input) {
+
         backSub.apply(input, fgMask);
 
         diff_im = new Mat();

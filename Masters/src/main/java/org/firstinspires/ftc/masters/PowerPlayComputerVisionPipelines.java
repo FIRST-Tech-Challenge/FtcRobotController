@@ -21,6 +21,8 @@
 
 package org.firstinspires.ftc.masters;
 
+import static org.opencv.imgproc.Imgproc.GaussianBlur;
+
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
@@ -33,6 +35,7 @@ import org.opencv.core.Point;
 import org.opencv.core.Rect;
 import org.opencv.core.RotatedRect;
 import org.opencv.core.Scalar;
+import org.opencv.core.Size;
 import org.opencv.core.TermCriteria;
 import org.opencv.imgproc.Imgproc;
 import org.opencv.video.Video;
@@ -248,16 +251,12 @@ public class PowerPlayComputerVisionPipelines {
 
 
         //        Sizes for subregions of the camera from which our data is extracted
-        static final int SLEEVE_REGION_WIDTH = 32;
-        static final int SLEEVE_REGION_HEIGHT = 50;
 
         /*
          * List for the storage of points, if you're only dealing with a few regions declare them all separately, the freight regions in the other pipeline
          * are done like this.
          */
-
-        Point sleeveTopLeftPoint = new Point(304, 256);
-        Point sleeveBottomRightPoint = new Point(sleeveTopLeftPoint.x + SLEEVE_REGION_WIDTH, sleeveTopLeftPoint.y + SLEEVE_REGION_HEIGHT);
+        private final Rect interest = new Rect(304, 231, 32, 50);
 
 
         //        The thresholds to which the averages are compared.
@@ -287,9 +286,10 @@ public class PowerPlayComputerVisionPipelines {
         Mat SLEEVE_LAB = new Mat();
         Mat SLEEVE_A = new Mat();
         Mat SLEEVE_B = new Mat();
+        Mat dst = new Mat();
 
-        Mat sleeve_aRegion;
-        Mat sleeve_bRegion;
+        Mat sleeve_aRegion = new Mat();
+        Mat sleeve_bRegion = new Mat();
 
         int sleeve_aChannelAvg;
         int sleeve_bChannelAvg;
@@ -316,9 +316,9 @@ public class PowerPlayComputerVisionPipelines {
         void inputToLAB(Mat input) {
 
             if (pipelineType == PipelineType.SLEEVE) {
-                Imgproc.cvtColor(input, SLEEVE_LAB, Imgproc.COLOR_RGB2Lab);
-                Core.extractChannel(SLEEVE_LAB, SLEEVE_A, 1);
-                Core.extractChannel(SLEEVE_LAB, SLEEVE_B, 2);
+                Imgproc.cvtColor(input, SLEEVE_LAB, Imgproc.COLOR_RGB2HSV);
+                Core.extractChannel(SLEEVE_LAB, SLEEVE_A, 0);
+                Core.extractChannel(SLEEVE_LAB, SLEEVE_B, 1);
             }
             if (pipelineType == PipelineType.PIPE){
                 Imgproc.cvtColor(input, PIPE_LAB, Imgproc.COLOR_RGB2Lab);
@@ -359,48 +359,33 @@ public class PowerPlayComputerVisionPipelines {
         }
 
         public Mat processSleeve(Mat input) {
-            inputToLAB(input);
 
-//            Declare regions
-            sleeve_aRegion = SLEEVE_A.submat(new Rect(sleeveTopLeftPoint, sleeveBottomRightPoint));
-            sleeve_bRegion = SLEEVE_B.submat(new Rect(sleeveTopLeftPoint, sleeveBottomRightPoint));
+            GaussianBlur(input, dst, new Size(39, 39), 0, 0 );
+
+
+            inputToLAB(dst);
+
+            sleeve_aRegion = SLEEVE_A.submat(interest);
+            sleeve_bRegion = SLEEVE_B.submat(interest);
 
             sleeve_aChannelAvg = (int) Core.mean(sleeve_aRegion).val[0];
             sleeve_bChannelAvg = (int) Core.mean(sleeve_bRegion).val[0];
 
+//            if (sleeve_aChannelAvg >= 9 && sleeve_bChannelAvg >= 170) {
+//                color = SleeveColor.GREEN;// 3
+//            } else if (sleeve_aChannelAvg >= 9) {
+//                color = SleeveColor.RED;// 2
+//            } else if (sleeve_bChannelAvg >= 170) {
+//                color = SleeveColor.GRAY;// 1
+//            }
 
-//              This is what displays the rectangle to the camera stream on the drive hub
-            Imgproc.rectangle(
-                    input, // Buffer to draw on
-                    sleeveTopLeftPoint, // First point which defines the rectangle
-                    sleeveBottomRightPoint, // Second point which defines the rectangle
-                    BLUE, // The color the rectangle is drawn in
-                    2); // Thickness of the rectangle lines
-
-//            Display telemetry
-            telemetry.addData("A Average",sleeve_aChannelAvg);
-            telemetry.addData("B Average", sleeve_bChannelAvg);
-
-            distanceFromGreen = Math.abs(sleeve_aChannelAvg - GREEN_SLEEVE_SIDE);
-            distanceFromRed = Math.abs(sleeve_aChannelAvg - RED_SLEEVE_SIDE);
-            distanceFromGray = Math.abs(sleeve_aChannelAvg - GRAY_SLEEVE_SIDE);
-
-
-            telemetry.addData("distanceFromGreen", distanceFromGreen);
-            telemetry.addData("distanceFromRed", distanceFromRed);
-            telemetry.addData("distanceFromGray", distanceFromGray);
-
-
-            if (distanceFromGreen < distanceFromRed && distanceFromGreen < distanceFromGray) {
-                color = SleeveColor.GREEN;
-            } else if (distanceFromRed < distanceFromGreen && distanceFromRed < distanceFromGray) {
-                color = SleeveColor.RED;
-            } else if (distanceFromGray < distanceFromRed) {
-                color = SleeveColor.GRAY;
+            if (sleeve_aChannelAvg >= 78) {
+                color = SleeveColor.GRAY;// 3
+            } else if (sleeve_bChannelAvg >= 15) {
+                color = SleeveColor.RED;// 2
+            } else {
+                color = SleeveColor.GREEN;// 3
             }
-
-            telemetry.addData("Color detected", color);
-            telemetry.update();
 
             SLEEVE_LAB.release();
             SLEEVE_A.release();
@@ -408,7 +393,9 @@ public class PowerPlayComputerVisionPipelines {
             sleeve_aRegion.release();
             sleeve_aRegion.release();
 
-            return input;
+            Imgproc.rectangle(dst, new Point(interest.x, interest.y), new Point(interest.x + interest.width, interest.y+ interest.height), new Scalar(0,255,0),1 );
+
+            return dst;
         }
 
         public Mat processPipe(Mat input) {
