@@ -36,7 +36,6 @@ public class PowerPlayRightCyclingWORLD extends LinearOpMode {
         FIRST_DEPOSIT_PATH_1,
         FIRST_DEPOSIT_TURN,
         FIRST_DEPOSIT_SCORE_CONE,
-
         BACK_UP_FROM_JUNCTION,
 
         CYCLE_PICKUP_TURN,
