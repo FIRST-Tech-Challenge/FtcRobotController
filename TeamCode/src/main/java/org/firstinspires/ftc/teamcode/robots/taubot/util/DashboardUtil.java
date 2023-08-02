@@ -89,7 +89,7 @@ public class DashboardUtil {
 
         //override the field image if needed
         if(origin.equals(Constants.Position.ORIGIN_6CAN)) //different competition
-            canvas.drawImage("/dash/assets/dprg6can.svg", 0,0, 144, 144,0,true);
+            canvas.drawImage("/dash/assets/dprg6can.svg", 0,0, 144, 144,0,0,0,true);
 
         //draw the origin
         boolean offsetLabel = (origin.equals(Constants.Position.ORIGIN_ALLIANCE_RED) || origin.equals(Constants.Position.ORIGIN_6CAN))? true: false;
