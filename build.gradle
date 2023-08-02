@@ -1,27 +1,20 @@
- /**
+/**
  * Top-level build file for ftc_app project.
  *
  * It is extraordinarily rare that you will ever need to edit this file.
  */
 
 buildscript {
-    repositories {//sdfljkfsdkjllkfdskljfdslksdfkljjjjjjjjjjjjjjjjjjjjjjjjjkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkk  I've escaped the boundaries of the univers ha HA
+    repositories {
         mavenCentral()
         google()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:7.3.1'
+        // Note for FTC Teams: Do not modify this yourself.
+        classpath 'com.android.tools.build:gradle:7.2.0'
     }
 }
-/*
-JOKE AHHAHHHAHHAHHHAHHAHAHHAHHAHHAHHAH
-I did a silly.
-Congratulations random person probably just me later on, you found a practical joke
-Muahahahahahah
-3/17/2021
-THE FUTURE
-6/31/2027
- */
+
 // This is now required because aapt2 has to be downloaded from the
 // google() repository beginning with version 3.2 of the Android Gradle Plugin
 allprojects {
@@ -33,8 +26,4 @@ allprojects {
 
 repositories {
     mavenCentral()
-
-    flatDir {
-        dirs '../libs'
-    }
 }
