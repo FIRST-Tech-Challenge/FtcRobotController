@@ -6,7 +6,7 @@
 
 buildscript {
     //todo - next 2 lines are not needed when we revert to using rbrott's published version of FtcDashboard
-    ext.dashboard_version = '0.4.9'
+    ext.dashboard_version = '0.4.10'
     ext.checkstyle_version = '8.18'
     repositories {
         mavenCentral()
