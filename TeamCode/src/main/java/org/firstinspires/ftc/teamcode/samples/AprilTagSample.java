@@ -1,5 +1,3 @@
-package org.firstinspires.ftc.teamcode.samples;
-
 /*
  * Copyright (c) 2021 OpenFTC Team
  *
@@ -21,19 +19,28 @@ package org.firstinspires.ftc.teamcode.samples;
  * SOFTWARE.
  */
 
+package org.firstinspires.ftc.teamcode.samples;
+
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
-import org.firstinspires.ftc.teamcode.vision.AprilTagDetectionPipeline;
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
+import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
+import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
+import org.firstinspires.ftc.teamcode.robots.taubot.vision.pipeline.AprilTagDetectionPipeline;
 import org.openftc.apriltag.AprilTagDetection;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
+import org.openftc.easyopencv.OpenCvInternalCamera;
 
 import java.util.ArrayList;
 
-@TeleOp(name = "Webcam: April Tag Sample", group = "Sensor")
+@Disabled
+@TeleOp
 public class AprilTagSample extends LinearOpMode
 {
     OpenCvCamera camera;
@@ -51,11 +58,9 @@ public class AprilTagSample extends LinearOpMode
     double cy = 221.506;
 
     // UNITS ARE METERS
-    double tagsize = 0.045; //tag size on iron reign signal sleeve
+    double tagsize = 0.166;
 
-    int ID_TAG_OF_INTEREST = 1; // Tag ID 1 from the 36h11 family
-    int tagCount = 0;
-    boolean tagFound = false;
+    int ID_TAG_OF_INTEREST = 2; // Tag ID 18 from the 36h11 family
 
     AprilTagDetection tagOfInterest = null;
 
@@ -72,7 +77,7 @@ public class AprilTagSample extends LinearOpMode
             @Override
             public void onOpened()
             {
-                camera.startStreaming(800,448, OpenCvCameraRotation.UPSIDE_DOWN);
+                camera.startStreaming(800,448, OpenCvCameraRotation.UPRIGHT);
             }
 
             @Override
@@ -88,22 +93,20 @@ public class AprilTagSample extends LinearOpMode
          * The INIT-loop:
          * This REPLACES waitForStart!
          */
-        tagCount=0;
         while (!isStarted() && !isStopRequested())
         {
             ArrayList<AprilTagDetection> currentDetections = aprilTagDetectionPipeline.getLatestDetections();
 
             if(currentDetections.size() != 0)
             {
-                tagFound = false;
+                boolean tagFound = false;
 
                 for(AprilTagDetection tag : currentDetections)
                 {
-                    if(tag.id == 1 || tag.id ==2 || tag.id == 3)
+                    if(tag.id == ID_TAG_OF_INTEREST)
                     {
                         tagOfInterest = tag;
                         tagFound = true;
-                        tagCount++;
                         break;
                     }
                 }
@@ -115,7 +118,6 @@ public class AprilTagSample extends LinearOpMode
                 }
                 else
                 {
-                    tagCount = 0;
                     telemetry.addLine("Don't see tag of interest :(");
 
                     if(tagOfInterest == null)
@@ -124,7 +126,7 @@ public class AprilTagSample extends LinearOpMode
                     }
                     else
                     {
-                        telemetry.addLine("\nBut we HAVE seen a tag before; last seen at:");
+                        telemetry.addLine("\nBut we HAVE seen the tag before; last seen at:");
                         tagToTelemetry(tagOfInterest);
                     }
                 }
@@ -132,16 +134,15 @@ public class AprilTagSample extends LinearOpMode
             }
             else
             {
-                tagCount=0;
                 telemetry.addLine("Don't see tag of interest :(");
 
                 if(tagOfInterest == null)
                 {
-                    telemetry.addLine("(A tag has never been seen)");
+                    telemetry.addLine("(The tag has never been seen)");
                 }
                 else
                 {
-                    telemetry.addLine("\nBut we HAVE seen a tag before; last seen at:");
+                    telemetry.addLine("\nBut we HAVE seen the tag before; last seen at:");
                     tagToTelemetry(tagOfInterest);
                 }
 
@@ -205,13 +206,14 @@ public class AprilTagSample extends LinearOpMode
 
     void tagToTelemetry(AprilTagDetection detection)
     {
+        Orientation rot = Orientation.getOrientation(detection.pose.R, AxesReference.INTRINSIC, AxesOrder.YXZ, AngleUnit.DEGREES);
+
         telemetry.addLine(String.format("\nDetected tag ID=%d", detection.id));
-        telemetry.addLine(String.format("\nTag Count ID=%d", tagCount));
         telemetry.addLine(String.format("Translation X: %.2f feet", detection.pose.x*FEET_PER_METER));
         telemetry.addLine(String.format("Translation Y: %.2f feet", detection.pose.y*FEET_PER_METER));
         telemetry.addLine(String.format("Translation Z: %.2f feet", detection.pose.z*FEET_PER_METER));
-        //telemetry.addLine(String.format("Rotation Yaw: %.2f degrees", Math.toDegrees(detection.pose.yaw)));
-        //telemetry.addLine(String.format("Rotation Pitch: %.2f degrees", Math.toDegrees(detection.pose.pitch)));
-        //telemetry.addLine(String.format("Rotation Roll: %.2f degrees", Math.toDegrees(detection.pose.roll)));
+        telemetry.addLine(String.format("Rotation Yaw: %.2f degrees", rot.firstAngle));
+        telemetry.addLine(String.format("Rotation Pitch: %.2f degrees", rot.secondAngle));
+        telemetry.addLine(String.format("Rotation Roll: %.2f degrees", rot.thirdAngle));
     }
 }

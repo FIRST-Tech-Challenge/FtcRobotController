@@ -1,4 +1,3 @@
-package org.firstinspires.ftc.teamcode.vision;
 
 /*
  * Copyright (c) 2021 OpenFTC Team
@@ -21,6 +20,7 @@ package org.firstinspires.ftc.teamcode.vision;
  * SOFTWARE.
  */
 
+package org.firstinspires.ftc.teamcode.vision;
 
 import org.opencv.calib3d.Calib3d;
 import org.opencv.core.CvType;
@@ -34,11 +34,12 @@ import org.opencv.core.Scalar;
 import org.opencv.imgproc.Imgproc;
 import org.openftc.apriltag.AprilTagDetection;
 import org.openftc.apriltag.AprilTagDetectorJNI;
+import org.openftc.apriltag.AprilTagPose;
 import org.openftc.easyopencv.OpenCvPipeline;
 
 import java.util.ArrayList;
 
-public class AprilTagDetectionPipeline extends OpenCvPipeline
+class AprilTagDetectionPipeline extends OpenCvPipeline
 {
     private long nativeApriltagPtr;
     private Mat grey = new Mat();
@@ -123,11 +124,11 @@ public class AprilTagDetectionPipeline extends OpenCvPipeline
             detectionsUpdate = detections;
         }
 
-        // For fun, use OpenCV to draw 6DOF markers on the image. We actually recompute the pose using
-        // OpenCV because I haven't yet figured out how to re-use AprilTag's pose in OpenCV.
+        // For fun, use OpenCV to draw 6DOF markers on the image.
         for(AprilTagDetection detection : detections)
         {
-            Pose pose = poseFromTrapezoid(detection.corners, cameraMatrix, tagsizeX, tagsizeY);
+            Pose pose = aprilTagPoseToOpenCvPose(detection.pose);
+            //Pose pose = poseFromTrapezoid(detection.corners, cameraMatrix, tagsizeX, tagsizeY);
             drawAxisMarker(input, tagsizeY/2.0, 6, pose.rvec, pose.tvec, cameraMatrix);
             draw3dCubeMarker(input, tagsizeX, tagsizeX, tagsizeY, 5, pose.rvec, pose.tvec, cameraMatrix);
         }
@@ -259,6 +260,28 @@ public class AprilTagDetectionPipeline extends OpenCvPipeline
         Imgproc.line(buf, projectedPoints[4], projectedPoints[7], green, thickness);
     }
 
+    Pose aprilTagPoseToOpenCvPose(AprilTagPose aprilTagPose)
+    {
+        Pose pose = new Pose();
+        pose.tvec.put(0,0, aprilTagPose.x);
+        pose.tvec.put(1,0, aprilTagPose.y);
+        pose.tvec.put(2,0, aprilTagPose.z);
+
+        Mat R = new Mat(3, 3, CvType.CV_32F);
+
+        for (int i = 0; i < 3; i++)
+        {
+            for (int j = 0; j < 3; j++)
+            {
+                R.put(i,j, aprilTagPose.R.get(i,j));
+            }
+        }
+
+        Calib3d.Rodrigues(R, pose.rvec);
+
+        return pose;
+    }
+
     /**
      * Extracts 6DOF pose from a trapezoid, using a camera intrinsics matrix and the
      * original size of the tag.
@@ -300,8 +323,8 @@ public class AprilTagDetectionPipeline extends OpenCvPipeline
 
         public Pose()
         {
-            rvec = new Mat();
-            tvec = new Mat();
+            rvec = new Mat(3, 1, CvType.CV_32F);
+            tvec = new Mat(3, 1, CvType.CV_32F);
         }
 
         public Pose(Mat rvec, Mat tvec)
