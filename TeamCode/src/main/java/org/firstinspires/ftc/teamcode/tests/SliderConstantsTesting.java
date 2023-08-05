@@ -16,7 +16,7 @@ import java.util.List;
 
 @Disabled
 @Config
-@TeleOp
+@TeleOp (name = "SliderConstantsTesting", group = "Tests")
 public class SliderConstantsTesting extends LinearOpMode {
     MotorEx sliderMotor;
     GamepadEx driverOp;

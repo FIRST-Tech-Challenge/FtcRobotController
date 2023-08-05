@@ -16,24 +16,24 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.inventors.ftc.robotbase.MecanumDrivePPV2;
-import org.firstinspires.ftc.teamcode.powerplayV2.AprilTagDetectionSubsystem;
-import org.firstinspires.ftc.teamcode.powerplayV2.PowerPlayRobotV2;
-import org.firstinspires.ftc.teamcode.powerplayV2.RoadRunnerSubsystem;
-import org.firstinspires.ftc.teamcode.powerplayV2.commands.ElevatorCommand;
-import org.firstinspires.ftc.teamcode.powerplayV2.subsystems.ArmSubsystem;
-import org.firstinspires.ftc.teamcode.powerplayV2.subsystems.BasketSubsystem;
-import org.firstinspires.ftc.teamcode.powerplayV2.subsystems.ClawSubsystem;
-import org.firstinspires.ftc.teamcode.powerplayV2.subsystems.ConeDetectorSubsystem;
-import org.firstinspires.ftc.teamcode.powerplayV2.subsystems.ElevatorSubsystem;
-import org.firstinspires.ftc.teamcode.powerplayV2.subsystems.FrontSliderSubsystem;
-import org.firstinspires.ftc.teamcode.powerplayV2.subsystems.LimitSwitchSubsystem;
+import org.firstinspires.ftc.teamcode.Slidy_PPV2.AprilTagDetectionSubsystem;
+import org.firstinspires.ftc.teamcode.Slidy_PPV2.SlidyRobot;
+import org.firstinspires.ftc.teamcode.Slidy_PPV2.RoadRunnerSubsystem;
+import org.firstinspires.ftc.teamcode.Slidy_PPV2.commands.ElevatorCommand;
+import org.firstinspires.ftc.teamcode.Slidy_PPV2.subsystems.ArmSubsystem;
+import org.firstinspires.ftc.teamcode.Slidy_PPV2.subsystems.BasketSubsystem;
+import org.firstinspires.ftc.teamcode.Slidy_PPV2.subsystems.ClawSubsystem;
+import org.firstinspires.ftc.teamcode.Slidy_PPV2.subsystems.ConeDetectorSubsystem;
+import org.firstinspires.ftc.teamcode.Slidy_PPV2.subsystems.ElevatorSubsystem;
+import org.firstinspires.ftc.teamcode.Slidy_PPV2.subsystems.FrontSliderSubsystem;
+import org.firstinspires.ftc.teamcode.Slidy_PPV2.subsystems.LimitSwitchSubsystem;
 import org.inventors.ftc.robotbase.GamepadExEx;
 
 import java.util.HashMap;
 
-@Autonomous(name = "PowerPlay (1 cone)", group = "Final Autonomous")
+@Autonomous(name = "AutoOneCone", group = "Final Autonomous")
 public class PowerPlayAutonomous extends CommandOpMode {
-    PowerPlayRobotV2 robot;
+    SlidyRobot slidy;
     protected ElapsedTime runtime;
     protected MecanumDrivePPV2 drive;
     protected RoadRunnerSubsystem RR;
@@ -53,7 +53,7 @@ public class PowerPlayAutonomous extends CommandOpMode {
         GamepadExEx driverOp = new GamepadExEx(gamepad1);
         GamepadExEx toolOp = new GamepadExEx(gamepad2);
 
-        robot = new PowerPlayRobotV2(hardwareMap, telemetry, driverOp, toolOp, AUTO, true,
+        slidy = new SlidyRobot(hardwareMap, telemetry, driverOp, toolOp, AUTO, true,
                 false);
 
         drive = new MecanumDrivePPV2(hardwareMap, AUTO);
@@ -62,7 +62,7 @@ public class PowerPlayAutonomous extends CommandOpMode {
 
         dashboardTelemetry = FtcDashboard.getInstance().getTelemetry();
 
-        april_tag = new AprilTagDetectionSubsystem(robot.camera, dashboardTelemetry);
+        april_tag = new AprilTagDetectionSubsystem(slidy.camera, dashboardTelemetry);
 
         claw = new ClawSubsystem(hardwareMap);
         elevator = new ElevatorSubsystem(hardwareMap);
@@ -107,8 +107,8 @@ public class PowerPlayAutonomous extends CommandOpMode {
     public void run() {
         super.run();
         // TODO: Make telemetry subsystem/command and remove this function
-        robot.telemetryUpdate();
-        robot.dashboardTelemetryUpdate();
+        slidy.telemetryUpdate();
+        slidy.dashboardTelemetryUpdate();
     }
 
     @Override

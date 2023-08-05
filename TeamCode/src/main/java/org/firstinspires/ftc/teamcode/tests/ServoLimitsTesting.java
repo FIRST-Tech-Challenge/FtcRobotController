@@ -1,25 +1,18 @@
 package org.firstinspires.ftc.teamcode.tests;
 
-import android.view.animation.LinearInterpolator;
-
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
-import com.arcrobotics.ftclib.command.CommandOpMode;
-import com.arcrobotics.ftclib.hardware.SimpleServo;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.hardware.CRServo;
-import com.qualcomm.robotcore.hardware.CRServoImpl;
-import com.qualcomm.robotcore.hardware.ServoImplEx;
 
-import org.apache.commons.math3.geometry.euclidean.twod.Line;
+//import org.apache.commons.math3.geometry.euclidean.twod.Line;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
-import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
-import org.firstinspires.ftc.teamcode.powerplayV2.subsystems.ClawSubsystem;
+import org.firstinspires.ftc.teamcode.Slidy_PPV2.subsystems.ClawSubsystem;
 
+@Disabled
 @Config
-@TeleOp
+@TeleOp (name = "ServoLimitsTesting", group = "Tests")
 public class ServoLimitsTesting extends LinearOpMode {
     ClawSubsystem claw;
 

@@ -35,5 +35,5 @@ dependencies {
     implementation 'org.ftclib.ftclib:core:2.0.1' // core
     implementation 'com.acmerobotics.roadrunner:core:0.5.5'
     implementation 'org.openftc:apriltag:1.1.0'
-    implementation 'com.github.theinventors-ftc:InventorsFtcLib:7063986367'
+    implementation 'com.github.theinventors-ftc:InventorsFtcLib:0.0.1-alpha'
 }

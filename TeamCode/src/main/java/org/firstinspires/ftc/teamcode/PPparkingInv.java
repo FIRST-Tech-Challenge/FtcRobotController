@@ -8,15 +8,15 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.inventors.ftc.robotbase.MecanumDrivePPV2;
 import org.inventors.ftc.opencvpipelines.AprilTagDetectionPipeline;
-import org.firstinspires.ftc.teamcode.powerplayV2.AprilTagDetectionSubsystem;
-import org.firstinspires.ftc.teamcode.powerplayV2.PowerPlayRobotV2;
-import org.firstinspires.ftc.teamcode.powerplayV2.RoadRunnerSubsystem;
+import org.firstinspires.ftc.teamcode.Slidy_PPV2.AprilTagDetectionSubsystem;
+import org.firstinspires.ftc.teamcode.Slidy_PPV2.SlidyRobot;
+import org.firstinspires.ftc.teamcode.Slidy_PPV2.RoadRunnerSubsystem;
 import org.inventors.ftc.robotbase.GamepadExEx;
 
-@Autonomous(name = "PP Inv (parking)", group = "Final Autonomous")
+@Autonomous(name = "AutoOnlyParkingInv", group = "Final Autonomous")
 public class PPparkingInv extends CommandOpMode {
 
-    PowerPlayRobotV2 robot;
+    SlidyRobot robot;
     AprilTagDetectionPipeline aprilTagDetectionPipeline;
     protected ElapsedTime runtime;
     protected MecanumDrivePPV2 drive;
@@ -28,7 +28,7 @@ public class PPparkingInv extends CommandOpMode {
         GamepadExEx driverOp = new GamepadExEx(gamepad1);
         GamepadExEx toolOp = new GamepadExEx(gamepad2);
 
-        robot = new PowerPlayRobotV2(hardwareMap, telemetry, driverOp, toolOp, AUTO, true,
+        robot = new SlidyRobot(hardwareMap, telemetry, driverOp, toolOp, AUTO, true,
                 false);
 
         drive = new MecanumDrivePPV2(hardwareMap, AUTO);

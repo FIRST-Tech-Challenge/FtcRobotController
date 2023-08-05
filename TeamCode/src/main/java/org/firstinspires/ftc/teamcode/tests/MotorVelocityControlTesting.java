@@ -15,9 +15,9 @@ import org.inventors.ftc.robotbase.MotorExEx;
 
 import java.util.List;
 
+@Disabled
 @Config
 @TeleOp(name="Motor Velocity Controlled Test", group="Tests")
-@Disabled
 public class MotorVelocityControlTesting extends LinearOpMode {
     MotorExEx frontLeft;
     MotorExEx frontRight;
