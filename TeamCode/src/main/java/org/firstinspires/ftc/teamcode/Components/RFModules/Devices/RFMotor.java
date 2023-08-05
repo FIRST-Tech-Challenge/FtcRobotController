@@ -25,9 +25,15 @@ public class RFMotor extends Motor {
     private ArrayList<Double> coefs = null;
     private ArrayList<Double> coefs2 = null;
     private ArrayList<String> inputlogs = new ArrayList<>();
-    public static double D = 0.00000, D2 = 0, kP = 5E-4, kA = 0.0001, R = 0, kS = 0.15,
-            MAX_VELOCITY = 1 / kP, MAX_ACCELERATION = 11000, DECEL_DIST = 60, RESISTANCE = 400;
-    private double peakVelo, J;
+    public static double D = 0.00000, D2 = 0, kP = 5E-4, kI, kV = 0.005, kA = 0.0001, kR = 0, kS = 0.15,
+            MAX_VELOCITY = 1 / kP, MAX_ACCELERATION = 11000, RESISTANCE = 400;
+    private double relativeDist, peakVelo, J, decelDist;
+    private double[][] calculatedIntervals;
+    private double[][][] calculatedMotions = new double[3][7][5];;
+    private double[] timeIntervals;
+    private double[] distances;
+    private double[] velocities;
+    private double[] positions;
     private double maxtickcount = 0;
     private double mintickcount = 0;
     private double DEFAULTCOEF1 = 0.0001, DEFAULTCOEF2 = 0.01;
@@ -136,6 +142,7 @@ public class RFMotor extends Motor {
     public void setPosition(double p_targetPos, double curve) {
         power = 0;
         double[] targetMotion = getTargetMotion(curve);
+        double currentTargetPos = 0;
         if (p_targetPos > maxtickcount) {
             p_targetPos = maxtickcount;
         }
@@ -144,6 +151,42 @@ public class RFMotor extends Motor {
         }
         position = getCurrentPosition();
         targetPos = p_targetPos;
+        acceleration = getVelocity() - velocity;
+        velocity += acceleration;
+        acceleration /= (time - lastTime);
+        getAvgResistance();
+        for (int i = 0; i < 7; i++) {
+            if (timeIntervals[0] == timeIntervals[1] && timeIntervals[1] == timeIntervals[2] &&
+                    timeIntervals[2] == timeIntervals[3] && i == 0) {
+                i = 3;
+            }
+            if (time > timeIntervals[i] && time < timeIntervals[i + 1]) {
+                currentTargetPos = positions[i];
+                for (int j = 0; j < 4; j++) {
+                    if (calculatedMotions[2][i][4] != -1) {
+                        if (calculatedMotions[2][i][j] != -1) {
+                            currentTargetPos += pow(time - calculatedMotions[2][i][4], j);
+                        }
+                    }
+                    else {
+                        if (calculatedMotions[2][i][j] != -1) {
+                            currentTargetPos += pow(time, j);
+                        }
+                    }
+                }
+                break;
+            }
+        }
+        double power = (kV * targetMotion[0] + kA * targetMotion[1] + kP * (currentTargetPos - getCurrentPosition()));
+        if (abs(targetPos - position) > TICK_BOUNDARY_PADDING && abs(velocity) < 3) {
+            if (power < 0) {
+                power -= kS;
+            } else {
+                power += kS;
+            }
+        }
+        setRawPower(power);
+        lastTime = time;
     }
 
     public void setPosition(double p_targetPos) {
@@ -162,6 +205,7 @@ public class RFMotor extends Motor {
         getAvgResistance();
         double[] targetMotion = getTargetMotion();
         double power = (kP * (targetMotion[0] - resistance) - kA * targetMotion[1]);
+
         if (abs(targetPos - position) > TICK_BOUNDARY_PADDING && abs(velocity) < 3) {
             if (power < 0) {
                 power -= kS;
@@ -186,28 +230,38 @@ public class RFMotor extends Motor {
     }
 
     public double[] getTargetMotion(double curve) {
-        double distance = targetPos - position;
-        peakVelo = MAX_VELOCITY + min(0, distance - 420 - 266* (distance/1000));
+        double[] targets = {0, 0};
+        relativeDist = targetPos - position;
+        double direction = abs(relativeDist) / relativeDist;
+        peakVelo = MAX_VELOCITY + min(0, relativeDist - 420 - 266 * (relativeDist / 1000));
         J = MAX_ACCELERATION / (peakVelo / (MAX_ACCELERATION * (1 - curve / 2)) + curve / 2);
 
-        double[] targets = {0, 0};
-        double[][] calculatedIntervals = calculateIntervals(J);
-        double[][][] calculatedMotions = calculateMotions(J, calculatedIntervals);
-        double[] timeIntervals = calculatedIntervals[0];
-        double[] distances = calculatedIntervals[1];
-        double[] velocities = calculatedIntervals[2];
-        double[] positions = calculatedIntervals[3];
-        double decelDist = calculatedIntervals[3][7] - calculatedIntervals[3][4];
+        calculateIntervals(J);
+        calculateMotions(J, calculatedIntervals);
+        timeIntervals = calculatedIntervals[0];
+        distances = calculatedIntervals[1];
+        velocities = calculatedIntervals[2];
+        positions = calculatedIntervals[3];
+        decelDist = calculatedIntervals[3][7] - calculatedIntervals[3][4];
 
-        if (distance > 0) {
+        if (abs(relativeDist) > decelDist && abs(velocity) < MAX_VELOCITY - RESISTANCE * direction - 0.1 * MAX_ACCELERATION) {
+            targets[0] = velocity + direction * .1 * MAX_ACCELERATION * (1 - 1 / (abs(relativeDist - decelDist) / 100 + 1));
 
+        } else if (abs(relativeDist) > decelDist && abs(relativeDist) > TICK_STOP_PADDING) {
+            targets[0] = direction * MAX_VELOCITY - RESISTANCE * direction;
+        } else {
+            if (relativeDist < 0) {
+                targets[0] = min(-pow((abs(relativeDist)) * (MAX_ACCELERATION - RESISTANCE * direction), 0.5), 0);
+            } else {
+                targets[0] = max(pow((abs(relativeDist)) * (MAX_ACCELERATION - RESISTANCE * direction), 0.5), 0);
+            }
         }
+        targets[1] = (targets[0] - velocity);
 
         return targets;
     }
 
-    public double[][] calculateIntervals(double J) {
-        double[][] calculations = new double[4][8];
+    public void calculateIntervals(double J) {
         double[] timeIntervals = new double[8];
         double cruiseTime;
         double[] distances = new double[8];
@@ -217,7 +271,9 @@ public class RFMotor extends Motor {
         double[] velocities = new double[8];
         double[] positions = new double[8];
 
-        velocities[0] = rfMotor.getVelocity();
+        if (relativeDist < 0) {
+            velocities[0] = -rfMotor.getVelocity();
+        }
 
         timeIntervals[0] = 0;
         timeIntervals[2] = max(sqrt((peakVelo - velocities[0]) / J), (max(0, (peakVelo - velocities[0])
@@ -233,26 +289,31 @@ public class RFMotor extends Motor {
         velocities[2] = velocities[1] + MAX_ACCELERATION * cruiseAccelTime;
         velocities[3] = peakVelo;
         velocities[4] = peakVelo;
-        velocities[5] = velocities[4] - J * pow(MAX_ACCELERATION/J, 2) / 2;
-        velocities[6] = J * pow(MAX_ACCELERATION/J, 2) / 2;
+        velocities[5] = velocities[4] - J * pow(MAX_ACCELERATION / J, 2) / 2;
+        velocities[6] = J * pow(MAX_ACCELERATION / J, 2) / 2;
         velocities[7] = 0;
 
         distances[0] = 0;
         distances[1] = J * pow(timeIntervals[1], 3) / 6;
         distances[2] = velocities[1] * cruiseAccelTime + MAX_ACCELERATION * pow(cruiseAccelTime, 2) / 2;
         distances[3] = velocities[2] * changingAccelTime + J * pow(changingAccelTime, 3) / 6;
-        distances[5] =  velocities[4] * MAX_ACCELERATION/J - J * pow(MAX_ACCELERATION/J, 3) / 6;
-        distances[6] =  velocities[5] * (peakVelo/MAX_ACCELERATION - MAX_ACCELERATION/J) -
-                MAX_ACCELERATION * pow(peakVelo/MAX_ACCELERATION - MAX_ACCELERATION/J, 2) / 2;
-        distances[7] = J * pow(MAX_ACCELERATION/J, 3) / 6;
+        distances[5] = velocities[4] * MAX_ACCELERATION / J - J * pow(MAX_ACCELERATION / J, 3) / 6;
+        distances[6] = velocities[5] * (peakVelo / MAX_ACCELERATION - MAX_ACCELERATION / J) -
+                MAX_ACCELERATION * pow(peakVelo / MAX_ACCELERATION - MAX_ACCELERATION / J, 2) / 2;
+        distances[7] = J * pow(MAX_ACCELERATION / J, 3) / 6;
 
         semiTotal = distances[1] + distances[2] + distances[3] + distances[5] + distances[6] + distances[7];
-        cruiseTime = (targetPos - semiTotal) / peakVelo;
+        if (relativeDist < 0) {
+            cruiseTime = (-relativeDist - semiTotal) / peakVelo;
+        }
+        else {
+            cruiseTime = (relativeDist - semiTotal) / peakVelo;
+        }
 
         timeIntervals[4] = timeIntervals[3] + cruiseTime;
-        timeIntervals[5] = timeIntervals[4] + MAX_ACCELERATION/J;
-        timeIntervals[6] = timeIntervals[4] + peakVelo/MAX_ACCELERATION;
-        timeIntervals[7] = timeIntervals[7] + MAX_ACCELERATION/J;
+        timeIntervals[5] = timeIntervals[4] + MAX_ACCELERATION / J;
+        timeIntervals[6] = timeIntervals[4] + peakVelo / MAX_ACCELERATION;
+        timeIntervals[7] = timeIntervals[7] + MAX_ACCELERATION / J;
 
         distances[4] = velocities[3] * (timeIntervals[4] - timeIntervals[3]);
 
@@ -265,24 +326,28 @@ public class RFMotor extends Motor {
         positions[6] = positions[5] + distances[6];
         positions[7] = positions[6] + distances[7];
 
-        calculations[0] = timeIntervals;
-        calculations[1] = distances;
-        calculations[2] = velocities;
-        calculations[3] = positions;
+        calculatedIntervals[0] = timeIntervals;
+        calculatedIntervals[1] = distances;
+        calculatedIntervals[2] = velocities;
+        calculatedIntervals[3] = positions;
 
-        return calculations;
     }
 
-    public double[][][] calculateMotions(double J, double[][] calculatedIntervals) {
-        double[][][] profiles = new double[3][7][5];
+    public void calculateMotions(double J, double[][] calculatedIntervals) {
         double[][] acceleration = new double[7][5];
         double[][] velocity = new double[7][5];
         double[][] position = new double[7][5];
 
-        for (double[][] type : profiles) {
-            for (double[] values : type) {
-                Arrays.fill(values, -1);
-            }
+        for (double[] type : acceleration) {
+            Arrays.fill(type, -1);
+        }
+
+        for (double[] type : velocity) {
+            Arrays.fill(type, -1);
+        }
+
+        for (double[] type : position) {
+            Arrays.fill(type, -1);
         }
 
         acceleration[0][1] = J;
@@ -307,7 +372,7 @@ public class RFMotor extends Motor {
         velocity[1][1] = MAX_ACCELERATION;
         velocity[1][4] = calculatedIntervals[0][1];
 
-        velocity[2][0] = calculatedIntervals[2][1] + J/2 * pow(calculatedIntervals[0][1], 2);
+        velocity[2][0] = calculatedIntervals[2][1] + J / 2 * pow(calculatedIntervals[0][1], 2);
         velocity[2][2] = -J / 2;
         velocity[2][4] = calculatedIntervals[0][3];
 
@@ -357,11 +422,10 @@ public class RFMotor extends Motor {
         position[6][3] = J / 6;
         position[6][4] = calculatedIntervals[0][7];
 
-        profiles[0] = acceleration;
-        profiles[1] = velocity;
-        profiles[2] = position;
+        calculatedMotions[0] = acceleration;
+        calculatedMotions[1] = velocity;
+        calculatedMotions[2] = position;
 
-        return profiles;
     }
 
     public double[] getTargetMotion() {
