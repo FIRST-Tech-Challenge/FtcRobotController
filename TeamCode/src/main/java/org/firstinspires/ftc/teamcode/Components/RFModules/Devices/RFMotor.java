@@ -7,6 +7,7 @@ import static java.lang.Double.max;
 import static java.lang.Double.min;
 import static java.lang.Math.abs;
 import static java.lang.Math.pow;
+import static java.lang.Math.sqrt;
 
 import com.acmerobotics.dashboard.config.Config;
 import com.arcrobotics.ftclib.hardware.motors.Motor;
@@ -16,6 +17,7 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
 import java.text.DecimalFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 
 @Config
 public class RFMotor extends Motor {
@@ -25,6 +27,7 @@ public class RFMotor extends Motor {
     private ArrayList<String> inputlogs = new ArrayList<>();
     public static double D = 0.00000, D2 = 0, kP = 5E-4, kA = 0.0001, R = 0, kS = 0.15,
             MAX_VELOCITY = 1 / kP, MAX_ACCELERATION = 11000, DECEL_DIST = 60, RESISTANCE = 400;
+    private double peakVelo, J;
     private double maxtickcount = 0;
     private double mintickcount = 0;
     private double DEFAULTCOEF1 = 0.0001, DEFAULTCOEF2 = 0.01;
@@ -183,8 +186,9 @@ public class RFMotor extends Motor {
     }
 
     public double[] getTargetMotion(double curve) {
-        double J = MAX_ACCELERATION / (MAX_VELOCITY / (MAX_ACCELERATION * (1 - curve / 2)) + curve / 2);
         double distance = targetPos - position;
+        peakVelo = MAX_VELOCITY + min(0, distance - 420 - 266* (distance/1000));
+        J = MAX_ACCELERATION / (peakVelo / (MAX_ACCELERATION * (1 - curve / 2)) + curve / 2);
 
         double[] targets = {0, 0};
         double[][] calculatedIntervals = calculateIntervals(J);
@@ -213,42 +217,44 @@ public class RFMotor extends Motor {
         double[] velocities = new double[8];
         double[] positions = new double[8];
 
+        velocities[0] = rfMotor.getVelocity();
+
         timeIntervals[0] = 0;
-        timeIntervals[1] = MAX_ACCELERATION / J;
-        timeIntervals[2] = MAX_VELOCITY / MAX_ACCELERATION;
+        timeIntervals[2] = max(sqrt((peakVelo - velocities[0]) / J), (max(0, (peakVelo - velocities[0])
+                / MAX_ACCELERATION)));
+        timeIntervals[1] = min(timeIntervals[2], MAX_ACCELERATION / J);
         timeIntervals[3] = timeIntervals[1] + timeIntervals[2];
 
         cruiseAccelTime = timeIntervals[2] - timeIntervals[1];
         changingAccelTime = timeIntervals[1] - timeIntervals[0];
 
-        velocities[0] = 0;
-        velocities[1] = J * pow(timeIntervals[1], 2) / 2;
+
+        velocities[1] = velocities[0] + J * pow(timeIntervals[1], 2) / 2;
         velocities[2] = velocities[1] + MAX_ACCELERATION * cruiseAccelTime;
-        velocities[3] = MAX_VELOCITY;
-        velocities[4] = MAX_VELOCITY;
-        velocities[5] = velocities[2];
-        velocities[6] = velocities[1];
+        velocities[3] = peakVelo;
+        velocities[4] = peakVelo;
+        velocities[5] = velocities[4] - J * pow(MAX_ACCELERATION/J, 2) / 2;
+        velocities[6] = J * pow(MAX_ACCELERATION/J, 2) / 2;
         velocities[7] = 0;
 
         distances[0] = 0;
         distances[1] = J * pow(timeIntervals[1], 3) / 6;
-        distances[2] = velocities[1] * cruiseAccelTime + MAX_ACCELERATION *
-                pow(cruiseAccelTime, 2) / 2;
-        distances[3] = (velocities[1] + velocities[2]) * changingAccelTime + J *
-                pow(changingAccelTime, 3) / 6;
-        distances[5] = distances[3];
-        distances[6] = distances[2];
-        distances[7] = distances[1];
+        distances[2] = velocities[1] * cruiseAccelTime + MAX_ACCELERATION * pow(cruiseAccelTime, 2) / 2;
+        distances[3] = velocities[2] * changingAccelTime + J * pow(changingAccelTime, 3) / 6;
+        distances[5] =  velocities[4] * MAX_ACCELERATION/J - J * pow(MAX_ACCELERATION/J, 3) / 6;
+        distances[6] =  velocities[5] * (peakVelo/MAX_ACCELERATION - MAX_ACCELERATION/J) -
+                MAX_ACCELERATION * pow(peakVelo/MAX_ACCELERATION - MAX_ACCELERATION/J, 2) / 2;
+        distances[7] = J * pow(MAX_ACCELERATION/J, 3) / 6;
 
         semiTotal = distances[1] + distances[2] + distances[3] + distances[5] + distances[6] + distances[7];
-        cruiseTime = (targetPos - semiTotal) / MAX_VELOCITY;
+        cruiseTime = (targetPos - semiTotal) / peakVelo;
 
         timeIntervals[4] = timeIntervals[3] + cruiseTime;
-        timeIntervals[5] = timeIntervals[4] + timeIntervals[1];
-        timeIntervals[6] = timeIntervals[4] + timeIntervals[2];
-        timeIntervals[7] = timeIntervals[7] + timeIntervals[1];
+        timeIntervals[5] = timeIntervals[4] + MAX_ACCELERATION/J;
+        timeIntervals[6] = timeIntervals[4] + peakVelo/MAX_ACCELERATION;
+        timeIntervals[7] = timeIntervals[7] + MAX_ACCELERATION/J;
 
-        distances[4] = MAX_VELOCITY * (timeIntervals[4] - timeIntervals[3]);
+        distances[4] = velocities[3] * (timeIntervals[4] - timeIntervals[3]);
 
         positions[0] = 0;
         positions[1] = positions[0] + distances[1];
@@ -273,9 +279,15 @@ public class RFMotor extends Motor {
         double[][] velocity = new double[7][5];
         double[][] position = new double[7][5];
 
+        for (double[][] type : profiles) {
+            for (double[] values : type) {
+                Arrays.fill(values, -1);
+            }
+        }
+
         acceleration[0][1] = J;
 
-        acceleration[1][0] = MAX_ACCELERATION;
+        acceleration[1][0] = MAX_ACCELERATION * calculatedIntervals[0][1];
 
         acceleration[2][1] = -J;
         acceleration[2][4] = calculatedIntervals[0][3];
@@ -295,13 +307,13 @@ public class RFMotor extends Motor {
         velocity[1][1] = MAX_ACCELERATION;
         velocity[1][4] = calculatedIntervals[0][1];
 
-        velocity[2][0] = calculatedIntervals[2][1] + calculatedIntervals[2][2];
+        velocity[2][0] = calculatedIntervals[2][1] + J/2 * pow(calculatedIntervals[0][1], 2);
         velocity[2][2] = -J / 2;
         velocity[2][4] = calculatedIntervals[0][3];
 
-        velocity[3][0] = MAX_VELOCITY;
+        velocity[3][0] = calculatedIntervals[2][3];
 
-        velocity[4][0] = calculatedIntervals[2][1] + calculatedIntervals[2][2];
+        velocity[4][0] = calculatedIntervals[2][4];
         velocity[4][2] = -J / 2;
         velocity[4][4] = calculatedIntervals[0][4];
 
@@ -314,6 +326,7 @@ public class RFMotor extends Motor {
 
 
         position[0][0] = calculatedIntervals[3][0];
+        position[0][1] = calculatedIntervals[2][0];
         position[0][3] = J / 6;
 
         position[1][0] = calculatedIntervals[3][1];
@@ -322,8 +335,8 @@ public class RFMotor extends Motor {
         position[1][4] = calculatedIntervals[0][1];
 
         position[2][0] = calculatedIntervals[3][2];
-        position[2][1] = calculatedIntervals[2][1] + calculatedIntervals[2][2];
-        position[2][3] = -J / 6;
+        position[2][1] = calculatedIntervals[2][2];
+        position[2][3] = J / 6;
         position[2][4] = calculatedIntervals[0][2];
 
         position[3][0] = calculatedIntervals[3][3];
@@ -340,7 +353,7 @@ public class RFMotor extends Motor {
         position[5][2] = -MAX_ACCELERATION / 2;
         position[5][4] = calculatedIntervals[0][5];
 
-        position[6][0] = calculatedIntervals[1][1] + calculatedIntervals[3][6];
+        position[6][0] = calculatedIntervals[3][6];
         position[6][3] = J / 6;
         position[6][4] = calculatedIntervals[0][7];
 
