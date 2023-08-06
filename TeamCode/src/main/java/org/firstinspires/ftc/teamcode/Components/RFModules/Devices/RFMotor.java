@@ -15,6 +15,8 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
+import org.firstinspires.ftc.teamcode.roadrunner.drive.RFMotorPoseSim;
+
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -42,6 +44,7 @@ public class RFMotor extends Motor {
     private double TICK_BOUNDARY_PADDING = 10, TICK_STOP_PADDING = 20;
     private double power = 0, position = 0, velocity = 0, targetPos = 0, resistance = 0, acceleration = 0, avgResistance;
     private String rfMotorName;
+    private RFMotorPoseSim poseSim = new RFMotorPoseSim();
 
     /*Initializes the motor
         Inputs:
@@ -137,6 +140,10 @@ public class RFMotor extends Motor {
 
     public void setCurrentPosition(double position) {
         additionalTicks = position - rfMotor.getCurrentPosition();
+    }
+
+    public void update(){
+        poseSim.updateSim();
     }
 
     public void setPosition(double p_targetPos, double curve) {
