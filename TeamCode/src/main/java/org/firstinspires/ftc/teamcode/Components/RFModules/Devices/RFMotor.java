@@ -30,7 +30,7 @@ public class RFMotor extends Motor {
     public static double D = 0.00000, D2 = 0, kP = 5E-4, kI, kV = 0.005, kA = 0.0001, kR = 0, kS = 0.15,
             MAX_VELOCITY = 1 / kP, MAX_ACCELERATION = 11000, RESISTANCE = 400;
     private double relativeDist, peakVelo, J, decelDist;
-    private double[][] calculatedIntervals;
+    private double[][] calculatedIntervals = new double[4][8];
     private double[][][] calculatedMotions = new double[3][7][5];;
     private double[] timeIntervals;
     private double[] distances;

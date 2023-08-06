@@ -20,7 +20,7 @@ public class RFMotionProfilerTest extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
         BasicRobot robot = new BasicRobot(this,true);
-        RFMotor motor = new RFMotor("simMotor", DcMotor.RunMode.RUN_WITHOUT_ENCODER, false, 10000, 0);
+        RFMotor motor = new RFMotor("motorRightFront", DcMotor.RunMode.RUN_WITHOUT_ENCODER, false, 10000, 0);
         waitForStart();
         if (isStopRequested()) return;
         resetRuntime();
