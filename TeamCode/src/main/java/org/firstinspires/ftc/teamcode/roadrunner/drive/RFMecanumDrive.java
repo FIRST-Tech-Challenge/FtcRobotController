@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.roadrunner.drive;
 
 import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.op;
+import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.packet;
 import static org.firstinspires.ftc.teamcode.roadrunner.drive.DriveConstants.MAX_ANG_VEL;
 import static org.firstinspires.ftc.teamcode.roadrunner.drive.DriveConstants.MAX_VEL;
 import static org.firstinspires.ftc.teamcode.roadrunner.drive.DriveConstants.TRACK_WIDTH;
@@ -31,8 +32,8 @@ public class RFMecanumDrive {
             leftRear = op.hardwareMap.get(DcMotorEx.class, "motorLeftBack");
             rightRear = op.hardwareMap.get(DcMotorEx.class, "motorRightBack");
             rightFront = op.hardwareMap.get(DcMotorEx.class, "motorRightFront");
-            rightFront.setDirection(DcMotor.Direction.REVERSE);
-            leftFront.setDirection(DcMotor.Direction.FORWARD);
+            rightFront.setDirection(DcMotor.Direction.FORWARD);
+            leftFront.setDirection(DcMotor.Direction.REVERSE);
             leftRear.setDirection(DcMotor.Direction.REVERSE);
             rightRear.setDirection(DcMotor.Direction.FORWARD);
             rightFront.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
@@ -63,6 +64,7 @@ public class RFMecanumDrive {
         powers[2] = pF + pS + pR;
         //backRight
         powers[3] = pF - pS + pR;
+
         setMotorPowers(powers);
     }
     public void setJoystickPower(double p_y, double p_x, double p_a){
@@ -91,12 +93,16 @@ public class RFMecanumDrive {
     public void update(){
         if(pathFollower.isFollowing()){
             if(isPoseSim){
-                poseSim.updateSim();
                 pathFollower.update();
-                poseSim.getTargets(pathFollower.rfTrajectory.getTargetPosition(), pathFollower.PIDTargetVelocity);
+                poseSim.updateSim(pathFollower.pF, pathFollower.pS, pathFollower.pR);
             }
             else{
-                setMotorPowers(pathFollower.update());
+                double[] powers = pathFollower.update();
+                setMotorPowers(powers);
+                packet.put("powers0", powers[0]);
+                packet.put("powers1", powers[1]);
+                packet.put("powers2", powers[2]);
+                packet.put("powers3", powers[3]);
             }
         }
     }

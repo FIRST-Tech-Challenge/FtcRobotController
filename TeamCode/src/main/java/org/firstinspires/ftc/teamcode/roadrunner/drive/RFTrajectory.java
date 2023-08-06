@@ -65,7 +65,7 @@ public class RFTrajectory {
         } else {
             Pose2d curPos = currentPose;
             Pose2d targetPos = segments.get(segments.size() - 1).getWaypoint().getTarget();
-            if (curPos.vec().distTo(targetPos.vec()) < 0.25) {
+            if (curPos.vec().distTo(targetPos.vec()) <1.0) {
                 clear();
                 return true;
             }
@@ -105,16 +105,39 @@ public class RFTrajectory {
     }
 
     //run this before getInstanTaneousTargetVelosity,
+    public double projectOnto(Vector2d u, Vector2d v){
+        double dot = u.getX()*v.getX()+u.getX()*v.getY()+u.getY()*v.getY();
+        double norm = v.norm();
+        if(norm ==0){
+            norm =0.001;
+        }
+        return dot/norm;
+    }
+    //TODO make this work for when u giga slow and out of time
     public Pose2d getInstantaneousTargetAcceleration() {
-        double accelMag = motionProfile.getInstantaneousTargetAcceleration(currentPath.getRemDistance());
+        Vector2d deltaVec = getTargetPosition().vec().minus(currentPose.vec());
+        double projectedVelocity = projectOnto(currentVelocity.vec(), deltaVec);
+        if(deltaVec.norm()==0){
+            deltaVec = new Vector2d(0.1,0);
+        }
+        deltaVec = deltaVec.times(projectedVelocity/deltaVec.norm());
+        packet.put("currentVelocityVec", currentVelocity.vec());
+        packet.put("projectedVel", projectedVelocity);
+        double accelMag = motionProfile.getInstantaneousTargetAcceleration(currentPath.getRemDistance(), projectedVelocity);
         packet.put("accelMag",accelMag);
         currentPath.calculateInstantaneousTargetPose();
         Pose2d pathAccel = currentPath.instantaneousAcceleration;
-        pathAccel = new Pose2d(pathAccel.vec().times(accelMag/pathAccel.vec().norm()), pathAccel.getHeading());
+        packet.put("deltaTangent", getTargetPosition().vec().minus(currentPose.vec()).angle());
+        packet.put("deltaVec", deltaVec);
+        packet.put("pathAccelMag1", pathAccel.vec().norm());
+
+        Vector2d scaledPathAccel = pathAccel.vec().times(accelMag/pathAccel.vec().norm());
+        pathAccel = new Pose2d(scaledPathAccel/*.plus(currentVelocity.vec()).minus(deltaVec)*/, pathAccel.getHeading());
         double totalMagnitude = pathAccel.vec().norm()*pathAccel.vec().norm()+pathAccel.getHeading()*pathAccel.getHeading()*TRACK_WIDTH*TRACK_WIDTH*0.25;
         if(totalMagnitude>MAX_ACCEL*MAX_ACCEL){
             pathAccel.times(sqrt(MAX_ACCEL*MAX_ACCEL/totalMagnitude));
         }
+        packet.put("pathAccelMag", pathAccel.vec().norm());
         return pathAccel;
     }
 
@@ -160,8 +183,7 @@ public class RFTrajectory {
     }
 
     public double remainingSegmentTime(double distance) {
-        motionProfile.motionProfileRemDistToRemTime(distance);
-        return 0;
+        return motionProfile.motionProfileRemDistToRemTime(distance);
     }
 
     public double timeToTRatio(double tToXDerivative) {

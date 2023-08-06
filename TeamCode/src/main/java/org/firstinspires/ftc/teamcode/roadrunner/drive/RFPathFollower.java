@@ -9,9 +9,13 @@ import static org.firstinspires.ftc.teamcode.roadrunner.drive.DriveConstants.kDH
 import static org.firstinspires.ftc.teamcode.roadrunner.drive.DriveConstants.kDTrans;
 import static org.firstinspires.ftc.teamcode.roadrunner.drive.DriveConstants.kPHead;
 import static org.firstinspires.ftc.teamcode.roadrunner.drive.DriveConstants.kPTrans;
+import static org.firstinspires.ftc.teamcode.roadrunner.drive.DriveConstants.kStatic;
 import static org.firstinspires.ftc.teamcode.roadrunner.drive.DriveConstants.kV;
 import static org.firstinspires.ftc.teamcode.roadrunner.drive.PoseStorage.currentPose;
 import static org.firstinspires.ftc.teamcode.roadrunner.drive.PoseStorage.currentVelocity;
+
+import static java.lang.Math.abs;
+import static java.lang.Math.sqrt;
 
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
@@ -24,10 +28,11 @@ import java.util.FormattableFlags;
 
 @Config
 public class RFPathFollower {
-    double tangentOffset = 0, curviness = 0;
+    double tangentOffset = 0, curviness = 0, pF = 0, pS = 0, pR = 0;
     boolean constantHeading = false, isFollowing = false;
     RFTrajectory rfTrajectory;
-    Pose2d finalTargetVelocity = new Pose2d(0,0,0), PIDTargetVelocity= new Pose2d(0,0,0);
+    Pose2d finalTargetAcceleration = new Pose2d(0, 0, 0);
+    Pose2d finalTargetVelocity = new Pose2d(0, 0, 0), PIDTargetVelocity = new Pose2d(0, 0, 0);
     public static int VERBOSITY = 1;
 
     public RFPathFollower() {
@@ -52,24 +57,32 @@ public class RFPathFollower {
             double headVelError = PIDTargetVelocity.getHeading() - curVel.getHeading();
             Pose2d FFTargetAcceleration = rfTrajectory.getInstantaneousTargetAcceleration();
             Pose2d FFTargetVelocity = rfTrajectory.getInstantaneousTargetVelocity();
-            finalTargetVelocity = new Pose2d(FFTargetVelocity.getX() + transPosError.getX() * kPTrans ,
-                    FFTargetVelocity.getY() + transPosError.getY() * kPTrans ,
+            finalTargetVelocity = new Pose2d(FFTargetVelocity.getX() + transPosError.getX() * kPTrans,
+                    FFTargetVelocity.getY() + transPosError.getY() * kPTrans,
                     FFTargetVelocity.getHeading() + headError * kPHead);
-            Pose2d finalTargetAcceleration = new Pose2d(FFTargetAcceleration.getX()+ transVelError.getX() * kDTrans, FFTargetAcceleration.getY()+ transVelError.getY() * kDTrans,
-                    FFTargetAcceleration.getHeading()+ headVelError * kDHead);
-            Vector2d rotateTargetVelocity = finalTargetVelocity.vec().rotated(curPos.getHeading());
-            Vector2d rotateTargetAccel = finalTargetAcceleration.vec().rotated(curPos.getHeading());
-            double pF = rotateTargetVelocity.getX() * kV + rotateTargetAccel.getX() * kA,
-                    pS = rotateTargetVelocity.getY() * kV + rotateTargetAccel.getY() * kA,
-                    pR = 2 * TRACK_WIDTH * (finalTargetVelocity.getHeading() * kV + finalTargetAcceleration.getHeading() * kA);
-            //frontLeft
-            powers[0] = pF - pS - pR;
-            //backLeft
-            powers[1] = pF + pS - pR;
-            //frontRight
-            powers[2] = pF + pS + pR;
-            //backRight
-            powers[3] = pF - pS + pR;
+            finalTargetAcceleration = new Pose2d(FFTargetAcceleration.getX() + transVelError.getX() * kDTrans, FFTargetAcceleration.getY() + transVelError.getY() * kDTrans,
+                    FFTargetAcceleration.getHeading() + headVelError * kDHead);
+            Vector2d rotateTargetVelocity = finalTargetVelocity.vec().rotated(-curPos.getHeading());
+            Vector2d rotateTargetAccel = finalTargetAcceleration.vec().rotated(-curPos.getHeading());
+
+            pF = rotateTargetVelocity.getX() * kV + rotateTargetAccel.getX() * kA;
+            pS = rotateTargetVelocity.getY() * kV + rotateTargetAccel.getY() * kA;
+            pR = 0.5 * TRACK_WIDTH * (finalTargetVelocity.getHeading() * kV + finalTargetAcceleration.getHeading() * kA);
+            boolean isStatic = false;
+            if (currentVelocity.vec().norm() + currentVelocity.getHeading() < 0.05) {
+                isStatic = true;
+            }
+            if (isStatic) {
+                double mag = sqrt(pF * pF + pS * pS + pR * pR);
+                if (mag == 0) {
+                    Pose2d diff = rfTrajectory.getTargetPosition().minus(currentPose);
+                    mag = sqrt(diff.getX() * diff.getX() + diff.getY() * diff.getY() + diff.getHeading() * diff.getHeading());
+                }
+
+                if (mag != 0) {
+                    pF += pF / mag * kStatic + pS / mag * kStatic * 2 + pR / mag * kStatic * 0.5;
+                }
+            }
             if (VERBOSITY > 0) {
                 packet.put("curX", curPos.getX());
                 packet.put("curY", curPos.getY());
@@ -92,36 +105,50 @@ public class RFPathFollower {
                 packet.put("FFtargddH", FFTargetAcceleration.getHeading());
                 RFSegment seg = rfTrajectory.getCurrentSegment();
                 packet.put("target", seg.getWaypoint().getTarget());
-                packet.put("segIndex", rfTrajectory.segIndex);
-                packet.put("isFollowing", isFollowing());
-                packet.put("mpLength", rfTrajectory.motionProfile.length);
-                packet.put("mpVelo1", rfTrajectory.motionProfile.velo1);
-                packet.put("mpVelo2", rfTrajectory.motionProfile.velo2);
-                packet.put("mpCurviness", rfTrajectory.motionProfile.curviness);
-                packet.put("mpJerk", rfTrajectory.motionProfile.c);
-                packet.put("spLength", rfTrajectory.currentPath.getLength());
-                packet.put("startPos", rfTrajectory.currentPath.startPos);
-                packet.put("startVel", rfTrajectory.currentPath.startVel);
-                packet.put("endVel", rfTrajectory.currentPath.endVel);
-                packet.put("endPos", rfTrajectory.currentPath.endPos);
-                packet.put("definedness", seg.getWaypoint().getDefinedness());
-                packet.put("endVelMag", seg.getWaypoint().getEndVelocity());
-                packet.put("isCompiled", seg.isCompiled());
-                for (int i = 0; i < 8; i++) {
-                    packet.put("tList" + i, rfTrajectory.motionProfile.tList.get(i));
-                }
-                ArrayList<Vector2d> derivs = rfTrajectory.currentPath.getCurDerivs();
-                packet.put("spPose", derivs.get(0));
-                packet.put("spDeriv", derivs.get(1));
-                packet.put("spScnDeriv", derivs.get(2));
-                packet.put("spTargetDist", rfTrajectory.currentPath.targetDistance);
-                packet.put("spT", rfTrajectory.currentPath.numericT);
-                packet.put("mpVelMag", rfTrajectory.motionProfile.calculateTargetVelocity(time));
-                packet.put("time", time);
-                packet.put("motionProfileDone", rfTrajectory.motionProfile.isProfileDone(time));
-                packet.put("isFollowing", isFollowing);
+//                packet.put("segIndex", rfTrajectory.segIndex);
+//                packet.put("isFollowing", isFollowing());
+//                packet.put("mpLength", rfTrajectory.motionProfile.length);
+//                packet.put("mpVelo1", rfTrajectory.motionProfile.velo1);
+//                packet.put("mpVelo2", rfTrajectory.motionProfile.velo2);
+//                packet.put("mpCurviness", rfTrajectory.motionProfile.curviness);
+//                packet.put("mpJerk", rfTrajectory.motionProfile.c);
+//                packet.put("spLength", rfTrajectory.currentPath.getLength());
+//                packet.put("startPos", rfTrajectory.currentPath.startPos);
+//                packet.put("startVel", rfTrajectory.currentPath.startVel);
+//                packet.put("endVel", rfTrajectory.currentPath.endVel);
+//                packet.put("endPos", rfTrajectory.currentPath.endPos);
+//                packet.put("definedness", seg.getWaypoint().getDefinedness());
+//                packet.put("endVelMag", seg.getWaypoint().getEndVelocity());
+//                packet.put("isCompiled", seg.isCompiled());
+//                for (int i = 0; i < 8; i++) {
+//                    packet.put("tList" + i, rfTrajectory.motionProfile.tList.get(i));
+//                }
+//                ArrayList<Vector2d> derivs = rfTrajectory.currentPath.getCurDerivs();
+//                packet.put("spPose", derivs.get(0));
+//                packet.put("spDeriv", derivs.get(1));
+//                packet.put("spScnDeriv", derivs.get(2));
+//                packet.put("spTargetDist", rfTrajectory.currentPath.targetDistance);
+//                packet.put("spT", rfTrajectory.currentPath.numericT);
+//                packet.put("mpVelMag", rfTrajectory.motionProfile.calculateTargetVelocity(time));
+//                packet.put("time", time);
+//                packet.put("motionProfileDone", rfTrajectory.motionProfile.isProfileDone(time));
+//                packet.put("isFollowing", isFollowing);
+                packet.put("pF", pF);
+                packet.put("pS", pS);
+                packet.put("pR", pR);
+
 
             }
+//            pR=0;
+            //frontLeft
+            powers[0] = pF - pS - pR;
+            //backLeft
+            powers[1] = pF + pS - pR;
+            //frontRight
+            powers[2] = pF + pS + pR;
+            //backRight
+            powers[3] = pF - pS + pR;
+
         }
         return powers;
     }

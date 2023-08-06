@@ -78,8 +78,10 @@ public class OdometryTracker extends Tracker {
                 odomconst[2]*encoderBack.getCurrentPosition()};
         double[] deltaTicks = {nowTicks[0] - lastTicks[0], nowTicks[1] - lastTicks[1], nowTicks[2] - lastTicks[2]};
         lastTicks = nowTicks;
-        double deltaAngle = (deltaTicks[0] - deltaTicks[1]) / ticks_per_radian;
-
+        double deltaAngle = (deltaTicks[1] - deltaTicks[0]) / ticks_per_radian;
+        if(deltaAngle==0){
+            deltaAngle=0.00000000001;
+        }
         double [][] initalAngle = {{cos(angle),-sin(angle),0},
                 {sin(angle),cos(angle),0},
                 {0,0,1}};
@@ -87,7 +89,7 @@ public class OdometryTracker extends Tracker {
                 {(1-cos(deltaAngle))/deltaAngle,sin(deltaAngle)/deltaAngle,0},
                 {0,0,1}};
         double [][] robotDelta = {{(deltaTicks[0]+deltaTicks[1])*0.5/ticks_per_inch},
-                {deltaTicks[2]/ticks_per_inch- (FORWARD_OFFSET*deltaAngle)},
+                {deltaTicks[2]/ticks_per_inch - (FORWARD_OFFSET*deltaAngle)},
                 {deltaAngle}};
         double[][] partialSolve = multiplyMatrix(3,3, initalAngle, 3,3, deltaMatrix);
 
@@ -102,7 +104,7 @@ public class OdometryTracker extends Tracker {
         double[] velo = {odomconst[0]*encoderLeft.getVelocity()/ticks_per_inch, odomconst[1]*encoderRight.getVelocity()/ticks_per_inch,
                 odomconst[2]*encoderBack.getVelocity()/ticks_per_inch};
         double headingVelo = (velo[0]-velo[1])/LATERAL_DISTANCE;
-        currentPOVVelocity = new Pose2d((velo[0]+velo[1])*0.5, velo[2]-headingVelo*LATERAL_DISTANCE, headingVelo);
+        currentPOVVelocity = new Pose2d((velo[0]+velo[1])*0.5, velo[2]+headingVelo*LATERAL_DISTANCE, -headingVelo);
         currentVelocity = new Pose2d(currentPOVVelocity.vec().rotated(angle), currentPOVVelocity.getHeading());
         Canvas fieldOverlay = packet.fieldOverlay();
         packet.put("currentPose", currentPose);

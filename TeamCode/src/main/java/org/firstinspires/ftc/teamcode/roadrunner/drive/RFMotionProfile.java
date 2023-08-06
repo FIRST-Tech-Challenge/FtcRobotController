@@ -23,8 +23,9 @@ import java.util.ArrayList;
 public class RFMotionProfile {
     double curviness, c, velo1, velo2, endVel, startVel, startT;
     ArrayList<Double> tList;
-    double MIN_DECEL = -5, startDist, endDist, totalDist, length, targetVelocity, peakVel, distance = 0, targetAcceleration;
+    double MIN_DECEL = -5, startDist, endDist, totalDist, length=1000, targetVelocity, peakVel, distance = 0, targetAcceleration;
     int SEARCH_RESOLUTION = 12;
+    double FFTime = 0.1;
 
     public RFMotionProfile(Vector2d p_startVel, Vector2d p_endVel, double p_curviness) {
         curviness = min(p_curviness, 1);
@@ -58,10 +59,31 @@ public class RFMotionProfile {
     public boolean isProfileDone(double time) {
         return scaledTime(time) > tList.get(7) - tList.get(8);
     }
+    public double getInstantaneousTargetAcceleration(double dist, double velo) {
+        double p_vel = velo;
+        double targetAccel=0;
+        //if u should decel
+        boolean shouldDecel = false;
+        double decelDist = getAccelDist(p_vel, endVel);
+        packet.put("decelDist", abs(decelDist));
+        packet.put("dist", abs(dist));
 
-    public double getInstantaneousTargetAcceleration(double dist) {
-        double velo = currentVelocity.vec().norm(), targetAccel;
+        if (abs(dist) <= abs(decelDist)+1) {
+shouldDecel = true;
+packet.put("shouldAccel", 20);
+
+        } else {
+            packet.put("shouldAccel", 0);
+        }
+//        boolean neg=false;
+        if(velo<0){
+//            neg=true;
+            velo*=-1;
+        }
         if (velo < velo1) {
+            if(shouldDecel){
+                velo = velo1-velo;
+            }
             targetAccel = c * Math.sqrt(2 * (velo) / c);
             packet.put("accelMagCase1", targetAccel);
         } else if (velo < velo2) {
@@ -69,7 +91,13 @@ public class RFMotionProfile {
             packet.put("accelMagCase2", targetAccel);
 
         } else if (velo > velo2 && velo < peakVel) {
-            targetAccel = MAX_ACCEL - c * Math.sqrt(2 * (velo - velo2) / c);
+            if(shouldDecel){
+                velo=MAX_VEL-velo;
+            }
+            else{
+                velo = velo-velo2;
+            }
+            targetAccel = MAX_ACCEL - c * Math.sqrt(2 * (velo) / c);
             packet.put("accelMagCase3", targetAccel);
 
         } else {
@@ -78,14 +106,7 @@ public class RFMotionProfile {
             packet.put("accelMagCase4", targetAccel);
 
         }
-        //if u should decel
-        if (dist < getAccelDist(currentVelocity.vec().norm(), endVel)) {
-            targetAccel*=-1;
-            packet.put("shouldAccel", 20);
 
-        } else {
-            packet.put("shouldAccel", 0);
-        }
         return targetAccel;
     }
 
@@ -206,7 +227,6 @@ public class RFMotionProfile {
                 double t3 = sqrt(2 * (endVel - velo2) / c);
                 avgAccel = MAX_ACCEL * (t2 + 0.5 * (t1 + t3)) / (t2 + t1 + t3);
                 packet.put("avgAccel3", avgAccel);
-
             }
             packet.put("avgAccel", avgAccel);
 
@@ -271,12 +291,12 @@ public class RFMotionProfile {
         } else {
             double t0 = startVel / MAX_ACCEL;
             startDist = MAX_ACCEL * t0 * t0 * 0.5;
-            double avgAccel = MAX_ACCEL * (1 - 0.5 * curviness);
+            double avgAccel = MAX_ACCEL;
             endVel = min(endVel, sqrt(startVel * startVel + 2 * avgAccel * length));
             endT = endVel / MAX_ACCEL;
-            endDist = MAX_ACCEL * endT * endT * 0.5;
+            endDist = endVel*endT + MAX_ACCEL * endT * endT * 0.5;
             totalDist = length + startDist + endDist;
-            peakVel = min(sqrt(totalDist * MAX_ACCEL), MAX_VEL);
+            peakVel = min(sqrt(totalDist*MAX_ACCEL ), MAX_VEL);
             double cruiseLength = max(length - getAccelDist(peakVel, endVel) - getAccelDist(startVel, peakVel), 0);
             tList.add(time - startVel / MAX_ACCEL);
             tList.add(tList.get(0));
@@ -553,10 +573,43 @@ public class RFMotionProfile {
 
     //WRITE A MUCH BETTTTER ONE, case when ur in final decel
     public double getAccelTime(double vel1, double vel2) {
+
         return abs(vel1 - vel2) / ((1 - curviness * 0.5) * MAX_ACCEL);
     }
+    public double veloDecelDist(double vel){
+        double dist=0;
+        boolean neg = false;
+        if(vel<0){
+            neg=true;
+            vel = abs(vel);
+        }
+        if (vel < velo1) {
+            double t = sqrt(2 * vel / c);
+            dist = c * t * t * t / 6;
 
+        } else if (vel < velo2) {
+            double t1 = 2 * velo1 / MAX_ACCEL;
+            double t2 = (vel - velo1) / MAX_ACCEL;
+            dist = c * t1 * t1 * t1 / 6 + velo1 * t2 + MAX_ACCEL * t2 * t2 / 2;
+        } else {
+            double t1 = sqrt(2 * min(velo1, vel) / c);
+            double t2 = (min(velo2,vel) - min(vel,velo1)) / MAX_ACCEL;
+            double t3 = sqrt(2 * (vel - min(velo2,vel)) / c);
+            dist = c * t1 * t1 * t1 / 6 + min(velo1,vel) * t2 + MAX_ACCEL * t2 * t2 / 2 + min(velo2,vel) * t3 + MAX_ACCEL * t3 * t3 / 2
+                    - c * t3 * t3 * t3 / 6;
+        }
+        if(neg){
+            dist*=-1;
+        }
+        return dist;
+    }
     public double getAccelDist(double vel1, double vel2) {
-        return getAccelTime(vel1, vel2) * (vel1 + vel2) * 0.5;
+        if(curviness!=0) {
+            return veloDecelDist(vel2) - veloDecelDist(vel1);
+        }
+        else{
+            double t = (vel2-vel1)/MAX_ACCEL;
+            return vel1*t+0.5 * MAX_ACCEL*t*t;
+        }
     }
 }

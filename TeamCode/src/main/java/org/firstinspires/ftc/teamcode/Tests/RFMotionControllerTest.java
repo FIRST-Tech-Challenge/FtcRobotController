@@ -5,6 +5,8 @@ import static org.firstinspires.ftc.teamcode.roadrunner.drive.PoseStorage.curren
 import static org.firstinspires.ftc.teamcode.roadrunner.drive.PoseStorage.currentVelocity;
 import static org.firstinspires.ftc.teamcode.roadrunner.drive.RFMecanumDrive.isPoseSim;
 
+import static java.lang.Math.toRadians;
+
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
@@ -21,7 +23,7 @@ import org.firstinspires.ftc.teamcode.roadrunner.trajectorysequence.TrajectorySe
 @Config
 @Autonomous(name = "RFMotionControllerTest")
 public class RFMotionControllerTest extends LinearOpMode {
-    public static double targetX1 =50 , targetY1=0, targetX2=0, targetY2=0, targetX3=50,targetY3=0;
+    public static double targetX1 =30 , targetY1=0, targetX2=60, targetY2=0, targetX3=0,targetY3=0, CURVINESS = 0.4;
     @Override
     public void runOpMode() throws InterruptedException {
         BasicRobot robot = new BasicRobot(this,true);
@@ -30,7 +32,7 @@ public class RFMotionControllerTest extends LinearOpMode {
         if(!isPoseSim) {
             localizer = LocalizerFactory.getChassis(Tracker.TrackType.ODOMETRY);
         }
-        Pose2d startPose = new Pose2d(0,0,Math.toRadians(0));
+        Pose2d startPose = new Pose2d(0,0, toRadians(0));
         drive.setPose(startPose);
         waitForStart();
         if (isStopRequested()) return;
@@ -41,13 +43,16 @@ public class RFMotionControllerTest extends LinearOpMode {
 //        for(int i=0; i<1;i++) {
             if (!drive.isFollowing()) {
                 if(isPoseSim) {
-                    currentPose = new Pose2d(0, 0, 0);
+                    currentPose = new Pose2d(0, 0, toRadians(0));
                     currentVelocity = new Pose2d(0, 0, 0);
                 }
                 drive.setReversed(false);
-                drive.setCurviness(0.5);
+                drive.setCurviness(CURVINESS);
                 drive.addWaypoint(new RFWaypoint(new Vector2d(targetX1, targetY1)));
+//                drive.setTangentOffset(-90);
                 drive.addWaypoint(new RFWaypoint(new Vector2d(targetX2, targetY2)));
+//                drive.setReversed(false);
+                drive.setReversed(true);
                 drive.addWaypoint(new RFWaypoint(new Vector2d(targetX3, targetY3)));
 
             }

@@ -46,7 +46,7 @@ public class DriveConstants {
      */
     public static double WHEEL_RADIUS = 1.89; // in
     public static double GEAR_RATIO = 1; // output (wheel) speed / input (motor) speed
-    public static double TRACK_WIDTH = 13.5; // in
+    public static double TRACK_WIDTH = 11.5; // in
 
     public static double kPTrans = 0;
     public static double kDTrans = 0;
@@ -61,7 +61,7 @@ public class DriveConstants {
      * empirically tuned.
      */
     public static double kV = 0.016;
-    public static double kA = 0.0023;
+    public static double kA = 0.014;
     public static double kStatic = 0.14;
 
     /*
