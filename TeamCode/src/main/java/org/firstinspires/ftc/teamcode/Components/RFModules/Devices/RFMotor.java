@@ -144,6 +144,7 @@ public class RFMotor extends Motor {
 
     public void update(){
         poseSim.updateSim();
+        poseSim.getTargets(setSimPosition(5000, 0.5)[0], setSimPosition(5000, 0.5)[1]);
     }
 
     public void setPosition(double p_targetPos, double curve) {
@@ -194,6 +195,20 @@ public class RFMotor extends Motor {
         }
         setRawPower(power);
         lastTime = time;
+    }
+
+    public double[] setSimPosition(double p_targetPos, double curve) {
+        if (p_targetPos > maxtickcount) {
+            p_targetPos = maxtickcount;
+        }
+        if (p_targetPos < mintickcount) {
+            p_targetPos = mintickcount;
+        }
+        position = getCurrentPosition();
+        targetPos = p_targetPos;
+        lastTime = time;
+
+        return getTargetMotion(curve);
     }
 
     public void setPosition(double p_targetPos) {
