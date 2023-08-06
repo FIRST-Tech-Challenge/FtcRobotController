@@ -106,10 +106,10 @@ public class PwPRobot extends BasicRobot {
         flipper = new flippas();
         finished = true;
         distBroke = false;
-        if (isTeleop) {
-            roadrun.setPoseEstimate(PoseStorage.currentPose);
-            kA *= 0.25;
-        }
+//        if (isTeleop) {
+//            roadrun.setPoseEstimate(PoseStorage.currentPose);
+//            kA *= 0.25;
+//        }
         voltageSensor = op.hardwareMap.voltageSensor.iterator().next();
         voltage = voltageSensor.getVoltage();
         RFMotor.kP *= 13 / voltageSensor.getVoltage();
@@ -883,7 +883,7 @@ public class PwPRobot extends BasicRobot {
 
     public void setPoseEstimate(Pose2d newPose) {
         roadrun.setPoseEstimate(newPose);
-        PoseStorage.currentPose = newPose;
+//        PoseStorage.currentPose = newPose;
     }
 
     public void iterateConestackUp() {
