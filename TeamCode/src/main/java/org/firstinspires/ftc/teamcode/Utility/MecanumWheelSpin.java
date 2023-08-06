@@ -85,7 +85,9 @@ public class MecanumWheelSpin extends LinearOpMode {
   public void runOpMode() {
 
     // Initialize the hardware variables. Note that the strings used here must correspond
-    // to the names assigned during the robot configuration step on the DS or RC devices.
+    // to the names assigned during the robot configuration step on the DS or RC devices
+    double SPIN_POWER = 0.3;
+
     for (int i = 0; i < motor.length; i++) {
       motor[i] = hardwareMap.get(DcMotorEx.class, motorLabels[i]);
                                         /* motor stops and then brakes
@@ -113,7 +115,7 @@ public class MecanumWheelSpin extends LinearOpMode {
      *  Y       Triangle    Right Front 2       REVERSE
      *  B       Circle      Right Back  3       REVERSE
      */
-    motor[0].setDirection(DcMotorEx.Direction.REVERSE); // these are default settings; redundant here really
+    motor[0].setDirection(DcMotorEx.Direction.REVERSE);
     motor[1].setDirection(DcMotorEx.Direction.REVERSE);
     motor[2].setDirection(DcMotorEx.Direction.FORWARD);
     motor[3].setDirection(DcMotorEx.Direction.FORWARD);
@@ -140,10 +142,10 @@ public class MecanumWheelSpin extends LinearOpMode {
        *    the setDirection() calls above.
       // Once the correct motors move in the correct direction re-comment this code.
       */
-      motorPower[0]  = gamepad1.x ? 0.3 : 0.0;  // X gamepad
-      motorPower[1]  = gamepad1.a ? 0.3 : 0.0;  // A gamepad
-      motorPower[2]  = gamepad1.y ? 0.3 : 0.0;  // Y gamepad
-      motorPower[3]  = gamepad1.b ? 0.3 : 0.0;  // B gamepad
+      motorPower[0]  = gamepad1.x ? SPIN_POWER : 0.0;  // X gamepad
+      motorPower[1]  = gamepad1.a ? SPIN_POWER : 0.0;  // A gamepad
+      motorPower[2]  = gamepad1.y ? SPIN_POWER : 0.0;  // Y gamepad
+      motorPower[3]  = gamepad1.b ? SPIN_POWER : 0.0;  // B gamepad
 
       for (int i = 0; i < motor.length; i++) {
         motor[i].setPower(motorPower[i]);// Send calculated power to wheels
