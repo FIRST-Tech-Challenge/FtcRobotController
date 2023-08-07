@@ -23,7 +23,7 @@ public class RFMotorPoseSim {
         lastUpdateTime = time;
     }
     public void updateSim(){
-        Pose2d targetPose = new Pose2d(0, currentPos, 0);
+        Pose2d targetPose = new Pose2d(currentPos*0.036, 0, 0);
         lastUpdateTime=time;
         Canvas fieldOverlay = packet.fieldOverlay();
         fieldOverlay.setStrokeWidth(1);

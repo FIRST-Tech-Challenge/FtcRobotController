@@ -3,6 +3,8 @@ package org.firstinspires.ftc.teamcode.Components.RFModules.Devices;
 import static org.firstinspires.ftc.teamcode.Old.FreightFrenzy.Robots.BlackoutRobot.logger;
 import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.op;
 import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.time;
+import static org.firstinspires.ftc.teamcode.roadrunner.drive.PoseStorage.currentPos;
+import static org.firstinspires.ftc.teamcode.roadrunner.drive.PoseStorage.currentVelocity;
 import static java.lang.Double.max;
 import static java.lang.Double.min;
 import static java.lang.Math.abs;
@@ -45,6 +47,7 @@ public class RFMotor extends Motor {
     private double power = 0, position = 0, velocity = 0, targetPos = 0, resistance = 0, acceleration = 0, avgResistance;
     private String rfMotorName;
     private RFMotorPoseSim poseSim = new RFMotorPoseSim();
+    private boolean isSim = false;
 
     /*Initializes the motor
         Inputs:
@@ -142,9 +145,10 @@ public class RFMotor extends Motor {
         additionalTicks = position - rfMotor.getCurrentPosition();
     }
 
-    public void update(){
+    public void update(double target){
         poseSim.updateSim();
-        poseSim.getTargets(setSimPosition(5000, 0.5)[0], setSimPosition(5000, 0.5)[1]);
+        setPosition(target, 0.5);
+        poseSim.getTargets(getCurrentPosition(), setSimPosition(target, 0.5)[1]);
     }
 
     public void setPosition(double p_targetPos, double curve) {
@@ -207,6 +211,7 @@ public class RFMotor extends Motor {
         position = getCurrentPosition();
         targetPos = p_targetPos;
         lastTime = time;
+        isSim = true;
 
         return getTargetMotion(curve);
     }
@@ -295,6 +300,10 @@ public class RFMotor extends Motor {
 
         if (relativeDist < 0) {
             velocities[0] = -rfMotor.getVelocity();
+        }
+        if (isSim) {
+            velocities[0] = currentVelocity;
+            isSim = false;
         }
 
         timeIntervals[0] = 0;

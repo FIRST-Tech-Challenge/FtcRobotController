@@ -1,19 +1,17 @@
 package org.firstinspires.ftc.teamcode.Tests;
 
 
+import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.packet;
 import static org.firstinspires.ftc.teamcode.roadrunner.drive.PoseStorage.currentPos;
 import static org.firstinspires.ftc.teamcode.roadrunner.drive.PoseStorage.currentVelocity;
 
 import com.acmerobotics.dashboard.config.Config;
-import com.acmerobotics.roadrunner.geometry.Pose2d;
-import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
 import org.firstinspires.ftc.teamcode.Components.RFModules.Devices.RFMotor;
 import org.firstinspires.ftc.teamcode.Robots.BasicRobot;
-import org.firstinspires.ftc.teamcode.roadrunner.trajectorysequence.TrajectorySequence;
 @Config
 @Autonomous(name = "RFMotionProfilerTest")
 public class RFMotionProfilerTest extends LinearOpMode {
@@ -28,8 +26,20 @@ public class RFMotionProfilerTest extends LinearOpMode {
         BasicRobot.time = 0;
         currentPos = 0;
         currentVelocity = 0;
+        double targetPos = 0;
         while (opModeIsActive()) {
-            motor.update();
+            packet.put("curTickPos", currentPos);
+            packet.put("curVelo", currentVelocity);
+            packet.put("curPos", motor.getCurrentPosition()*0.036);
+            if (currentPos >= 9000) {
+                targetPos = 0;
+            }
+            else if (currentPos <= 1000) {
+                targetPos = 10000;
+            }
+
+            motor.update(targetPos);
+
             robot.update();
         }
     }
