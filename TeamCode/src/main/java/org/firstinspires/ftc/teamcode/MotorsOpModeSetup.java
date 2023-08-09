@@ -86,6 +86,8 @@ public class MotorsOpModeSetup extends LinearOpMode {
         telemetry.addData("Status", "Initialized");
         telemetry.update();
 
+        InitalizeMotors();
+        
         // Wait for the game to start (driver presses PLAY)
         waitForStart();
         runtime.reset();
