@@ -67,7 +67,6 @@ public class moo extends LinearOpMode {
                 frontLeft.setPower(0);
                 frontRight.setPower(0);
             }
-            }
         }
     }
 }
