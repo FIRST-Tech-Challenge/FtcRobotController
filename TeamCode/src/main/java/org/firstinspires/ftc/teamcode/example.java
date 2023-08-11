@@ -24,7 +24,7 @@ public class example extends LinearOpMode {
         servoTest = hardwareMap.get(Servo.class, "servoTest");
 
         //Telemetry sends data to the driver station, it can be very useful for debugging and testing
-        telemetry.addData("Status", "Initialized")
+        telemetry.addData("Status", "Initialized");
         telemetry.update();
 
         waitForStart();
