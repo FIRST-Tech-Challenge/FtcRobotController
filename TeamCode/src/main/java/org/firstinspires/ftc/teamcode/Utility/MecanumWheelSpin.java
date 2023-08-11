@@ -51,21 +51,13 @@ import org.firstinspires.ftc.robotcore.external.navigation.Velocity;
  *  - A Mecanum drive must display an X roller-pattern in plan view (top/above)
  *  - Set the correct rotation direction for each motor
  *
- *  Holonomic drives provide the ability for the robot to move in three axes (directions) simultaneously:
- *  1 - axial
- *  2 - lateral
- *  3 - yaw
+ *  Button  Alternate    Wheel        Port    Setting
+ *    X       Square      Left Front  0       FORWARD
+ *    A       Cross       Left Back   1       FORWARD
+ *    Y       Triangle    Right Front 2       REVERSE
+ *    B       Circle      Right Back  3       REVERSE
  *
- *  Each motion is controlled by one gamepad joystick axis
- *  Movement     Expected Response                        Operation
- *  1 - axial:   driving forward and backward             left joystick forward and backward
- *  2 - lateral: strafing right and left                  left joystick right and left
- *  3 - yaw:     rotating clockwise and counter clockwise right joystick right and left
- *
- *  Sanity check:
- *  When the left stick is pushed forward and the motor moves backward then the direction of the motor should be reversed
- *
- * @link https://first-tech-challenge.github.io/SkyStone/com/qualcomm/hardware/bosch/BNO055IMU.Parameters.html
+ * @link https://youtu.be/DN7KW_fiVR4
  *  */
 @TeleOp(name = "Mecanum: Wheel Spin", group = "Test")
 //@Disabled

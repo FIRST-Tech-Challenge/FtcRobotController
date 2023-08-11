@@ -29,22 +29,15 @@
 
 package org.firstinspires.ftc.teamcode.Robot.AutoDrive;
 
-import static com.sun.tools.doclint.Entity.or;
-
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
-import com.qualcomm.robotcore.hardware.IMU;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.IMU;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
-import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
-import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
-import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
 import org.firstinspires.ftc.teamcode.Utility.Datalogger;
 
@@ -70,20 +63,31 @@ import org.firstinspires.ftc.teamcode.Utility.Datalogger;
  *  There are other ways to perform encoder based moves, but this method is probably the simplest.
  *  This code uses the RUN_TO_POSITION mode to enable the Motor controllers to generate the run profile
  *
+ *  The equation to reduce speed of motor travel to a preset linear distance for travel under proportional control is:
+ *
+ * speed = Kp * (target_distance - current_distance)
+ *
+ * Where:
+ *
+ *     Kp is the proportional gain constant
+ *     target_distance is the desired distance to travel
+ *     current_distance is the current distance traveled
+ *
+ * The proportional gain constant, Kp, determines how sensitive the motor speed is to the difference between the target distance and the current distance. A higher Kp value will cause the motor speed to change more quickly in response to a difference in distance, while a lower Kp value will cause the motor speed to change more slowly.
+ *
  *  Adapted from SDK 8.2 example, RobotAutoDriveByEncoderLinear
  *  2023-08-01 0.1 armw initial foray using prior season's Mecanum drivetrain parameters
  */
 
-@Autonomous(name="Auto: Drive By Encoder", group="Robot")
+@Autonomous(name="Auto: Drive By Encoder with P", group="Robot")
 //@Disabled
-public class ByEncoder_Linear extends LinearOpMode {
+public class ByEncoder_Linear_P extends LinearOpMode {
 
     // Declare OpMode members
-    Datalog datalog = new Datalog("ByEncoder_Linear_01");
+    Datalog datalog = new Datalog("ByEncoder_Linear_P_01");
     // for data logging use in this specific OpMode since IMU is not used directly
     private IMU imu             = null;      // Control/Expansion Hub IMU
     private final double robotHeading  = 0;
-    private final double headingOffset = 0;
     private final double headingError  = 0;
     private final double targetHeading = 0;
 
