@@ -34,8 +34,8 @@ public class MaxwellProgram extends LinearOpMode {
              leftStickInput=gamepad1.left_stick_y;
              frontleft.setPower(leftStickInput);
              backLeft.setPower(leftStickInput*-1);
-             frontRight.setPower(rightStickInput*-1);
-             backRight.setPower(rightStickInput);
+             frontRight.setPower(rightStickInput);
+             backRight.setPower(rightStickInput*-1);
          }
     }
 }
