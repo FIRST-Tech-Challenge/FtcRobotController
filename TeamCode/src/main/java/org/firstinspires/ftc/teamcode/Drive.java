@@ -17,7 +17,8 @@ public class Drive extends LinearOpMode{
         DcMotor bRight  = hardwareMap.dcMotor.get("bRight");
        //  DcMotor arm = hardwareMap.dcMotor.get("arm");
 
-       // Servo servo1 = hardwareMap.servo.get("servo1"); // chloe's territory
+       // Servo servo1 = hardwareMap.servo.get("servo1");
+        // chloe's territory
         // Servo servo2 = hardwareMap.servo.get("servo2");
 
         // this is Hung's line
