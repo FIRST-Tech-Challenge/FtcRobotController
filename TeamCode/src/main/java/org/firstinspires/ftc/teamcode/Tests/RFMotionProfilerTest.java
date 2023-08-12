@@ -26,21 +26,55 @@ public class RFMotionProfilerTest extends LinearOpMode {
         BasicRobot.time = 0;
         currentPos = 0;
         currentVelocity = 0;
-        double targetPos = 0;
+        boolean reversed = false;
+        double targetPos = 9900;
+        double maxPos = 0;
+        double maxVelo = 0;
+        double minPos = 10000000;
+        double minVelo = 10000000;
+        packet.put("curTickPos", currentPos);
+        packet.put("curVelo", currentVelocity);
+        packet.put("curPos", currentPos*0.036);
+        packet.put("targetPos", targetPos);
+        packet.put("maxPos", maxPos);
+        packet.put("maxVelo", maxVelo);
+        packet.put("minPos", minPos);
+        packet.put("minVelo", minVelo);
         while (opModeIsActive()) {
-            packet.put("curTickPos", currentPos);
-            packet.put("curVelo", currentVelocity);
-            packet.put("curPos", motor.getCurrentPosition()*0.036);
-            if (currentPos >= 9000) {
-                targetPos = 0;
+            if (currentPos > maxPos) {
+                maxPos = currentPos;
             }
-            else if (currentPos <= 1000) {
-                targetPos = 10000;
+            if (currentVelocity > maxVelo) {
+                maxVelo = currentVelocity;
             }
+
+            if (currentPos < minPos) {
+                minPos = currentPos;
+            }
+            if (currentVelocity < minVelo) {
+                minVelo = currentVelocity;
+            }
+
+            if (currentPos >= 9000 && !reversed) {
+                targetPos = 100;
+                reversed = true;
+            }
+//            else if (currentPos <= 1000 && reversed) {
+//                targetPos = 9900;
+//                reversed = false;
+//            }
 
             motor.update(targetPos);
 
             robot.update();
+            packet.put("curTickPos", currentPos);
+            packet.put("curVelo", currentVelocity);
+            packet.put("curPos", currentPos*0.036);
+            packet.put("targetPos", targetPos);
+            packet.put("maxPos", maxPos);
+            packet.put("maxVelo", maxVelo);
+            packet.put("minPos", minPos);
+            packet.put("minVelo", minVelo);
         }
     }
 }
