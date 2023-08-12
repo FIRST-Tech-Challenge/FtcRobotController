@@ -1,5 +1,5 @@
 package org.firstinspires.ftc.teamcode;
 
 public class letest {
-    //eee
+    int talkthatshitonyourlipsitsosweet = 1;
 }
