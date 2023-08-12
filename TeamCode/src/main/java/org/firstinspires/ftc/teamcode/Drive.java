@@ -12,7 +12,7 @@ public class Drive extends LinearOpMode{
     @Override
     public void runOpMode() throws InterruptedException {
         DcMotor fLeft  = hardwareMap.dcMotor.get("fLeft");
-        DcMotor bLeft = hardwareMap.dcMotor.get("bLeft");
+        DcMotor bLeft = hardwareMap.dcMotor.get("bLeft"); //yaya kaitlyn was here :)
         DcMotor fRight = hardwareMap.dcMotor.get("fRight");
         DcMotor bRight  = hardwareMap.dcMotor.get("bRight");
        //  DcMotor arm = hardwareMap.dcMotor.get("arm");
