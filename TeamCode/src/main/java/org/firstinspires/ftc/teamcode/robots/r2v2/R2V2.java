@@ -34,13 +34,13 @@ public class R2V2 extends OpMode {
     long currentSteeringTicks;
     long waitTime;
     boolean calibrateFailed = false;
-    public static int maxSteeringTicksPerSecond = 100;
+    public static int maxSteeringTicksPerSecond = 500;
     public int maxRightSteeringTicks, maxLeftSteeringTicks, centerSteeringTicks;
     int calibrateIndex = 0;
 
     FtcDashboard dashboard;
-    public static double COUNTERBRAKE_TENSION_AMPS = 3;
-    public static int COUNTERBRAKE_CALIBRATE_VELOCITY = 50;
+    public static double COUNTERBRAKE_TENSION_AMPS = 3.5;
+    public static int COUNTERBRAKE_CALIBRATE_VELOCITY = 150;
 
     public int counterBrakeMaxTicks;
     public static double STEERING_STALL_AMPS = 4.5;
@@ -73,14 +73,17 @@ public class R2V2 extends OpMode {
         telemetry();
         if(calibrated) {
             //default actions
-            counterBrake.setPower(0);
-            steering.setVelocity(gamepad1.right_stick_x * maxSteeringTicksPerSecond);
+            steering.setPower(1);
+            steering.setTargetPosition((int)(steering.getCurrentPosition() + (gamepad1.right_stick_x * maxSteeringTicksPerSecond)));
 
             //if left trigger (counterBrake) is intentionally depressed, allow acceleration and apply counterBrake
             if (gamepad1.left_trigger > .5) {
-                counterBrake.setPower(gamepad1.right_trigger);
+                counterBrake.setPower(1);
+                counterBrake.setTargetPosition((int)(gamepad1.right_trigger * counterBrakeMaxTicks));
                 //accelerator.setPower(gamepad1.right_trigger);
             }
+            else
+                counterBrake.setPower(0);
         }
         else {
             steering.setMotorDisable();
@@ -98,6 +101,9 @@ public class R2V2 extends OpMode {
     public void telemetry() {
         telemetry.addData("Steering Location:\t", steering.getCurrentPosition());
         telemetry.addData("Steering Amps:\t", steering.getCurrent(CurrentUnit.AMPS));
+        telemetry.addData("counterBrake Location:\t", counterBrake.getCurrentPosition());
+        telemetry.addData("Calibrated:\t", calibrated);
+
     }
 
     public void calibrateTelemetry()
@@ -108,11 +114,15 @@ public class R2V2 extends OpMode {
             else {
             telemetry.addData("Steering Location:\t", steering.getCurrentPosition());
             telemetry.addData("Steering Amps:\t", steering.getCurrent(CurrentUnit.AMPS));
+            telemetry.addData("CounterBreak:\t", counterBrake.getCurrent(CurrentUnit.AMPS));
             telemetry.addData("Steering Max Left:\t", maxLeftSteeringTicks);
             telemetry.addData("Steering Max Right:\t", maxRightSteeringTicks);
             telemetry.addData("Steering Center:\t", centerSteeringTicks);
             telemetry.addData("Calibration Index", calibrateIndex);
             telemetry.addData("waitTime", waitTime);
+            telemetry.addData("CounterBrake Position", counterBrake.getCurrentPosition());
+            telemetry.addData("CounterBrake Max Ticks", waitTime);
+
         }
     }
     public boolean calibrate()
@@ -186,7 +196,7 @@ public class R2V2 extends OpMode {
                 break;
             }
             case 6: {
-                if (counterBrake.getCurrent(CurrentUnit.AMPS) > COUNTERBRAKE_TENSION_AMPS) {
+                if (counterBrake.getCurrent(CurrentUnit.AMPS) > COUNTERBRAKE_TENSION_AMPS || gamepad1.x) {
                     counterBrake.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
                     counterBrake.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
                     counterBrake.setVelocity(COUNTERBRAKE_CALIBRATE_VELOCITY);
