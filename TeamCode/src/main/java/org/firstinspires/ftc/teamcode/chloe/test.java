@@ -1,4 +1,4 @@
 package org.firstinspires.ftc.teamcode.chloe;
 
-public class test {
+public class testCrazyThing {
 }
