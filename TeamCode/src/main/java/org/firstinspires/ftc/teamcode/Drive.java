@@ -20,7 +20,7 @@ public class Drive extends LinearOpMode{
        // Servo servo1 = hardwareMap.servo.get("servo1");
         // Servo servo2 = hardwareMap.servo.get("servo2");
 
-
+        // this is Hung's line
         fLeft.setDirection(DcMotorSimple.Direction.REVERSE);
         bLeft.setDirection(DcMotorSimple.Direction.FORWARD);
         fRight.setDirection(DcMotorSimple.Direction.REVERSE);
