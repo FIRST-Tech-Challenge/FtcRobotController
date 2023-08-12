@@ -34,7 +34,7 @@ public class Drive extends LinearOpMode{
         waitForStart();
 
         while (opModeIsActive()) {
-            double forwardMovement = -gamepad1.left_stick_y / 4;
+            double forwardMovement = -gamepad1.left_stick_y / 4; //vivian was here hehehe
             double turnMovement = gamepad1.right_stick_x /4;
             double mecanumMovement = gamepad1.left_stick_x /4;
            //  double armPower = gamepad1.right_stick_y;
