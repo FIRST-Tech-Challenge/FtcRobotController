@@ -16,6 +16,8 @@ import org.firstinspires.ftc.teamcode.Robots.BasicRobot;
  */
 public class PoseStorage {
     public static double currentPos;
+    public static double currentTickPos;
     public static double currentVelocity;
+    public static double currentAcceleration;
     public static Pose2d currentPOVVelocity = new Pose2d(0,0,0);
 }

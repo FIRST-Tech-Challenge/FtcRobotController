@@ -4,7 +4,9 @@ import static org.firstinspires.ftc.teamcode.Old.FreightFrenzy.Robots.BlackoutRo
 import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.op;
 import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.time;
 import static org.firstinspires.ftc.teamcode.roadrunner.drive.PoseStorage.currentPos;
+import static org.firstinspires.ftc.teamcode.roadrunner.drive.PoseStorage.currentTickPos;
 import static org.firstinspires.ftc.teamcode.roadrunner.drive.PoseStorage.currentVelocity;
+import static org.firstinspires.ftc.teamcode.roadrunner.drive.PoseStorage.currentAcceleration;
 import static java.lang.Double.max;
 import static java.lang.Double.min;
 import static java.lang.Math.abs;
@@ -31,7 +33,7 @@ public class RFMotor extends Motor {
     private ArrayList<Double> coefs = null;
     private ArrayList<Double> coefs2 = null;
     private ArrayList<String> inputlogs = new ArrayList<>();
-    public static double D = 0.00000, D2 = 0, kP = 5E-4, kI, kV = 0.005, kA = 0.0001, kR = 0, kS = 0.15,
+    public static double D = 0.00000, D2 = 0, kP = 5E-4, kI, kV = 0.0005, kA = 0.00001, kR = 0, kS = 0.15,
             MAX_VELOCITY = 1 / kP, MAX_ACCELERATION = 11000, RESISTANCE = 400;
     private double relativeDist, peakVelo, J, decelDist;
     private double[][] calculatedIntervals = new double[4][8];
@@ -147,10 +149,27 @@ public class RFMotor extends Motor {
         additionalTicks = position - rfMotor.getCurrentPosition();
     }
 
-    public void update(double target){
+    public void update(){
+        poseSim.getTargets(getTargetPosition(BasicRobot.time) * 0.05, getTargetPosition(BasicRobot.time),
+                getTargetVelocity(BasicRobot.time), getTargetAcceleration(BasicRobot.time));
         poseSim.updateSim();
-        setPosition(target, 0.5);
-        poseSim.getTargets(getTargetPosition(BasicRobot.time), setSimPosition(target, 0.5)[1]);
+    }
+
+    public double getTargetPower() {
+        double power = 0;
+        if (currentVelocity < MAX_VELOCITY) {
+            power = kV * currentVelocity + kA * currentAcceleration;
+            //+ kP * (currentTargetPos - getCurrentPosition()) + kI * (currentTargetVelo - getVelocity()));
+
+        }
+
+        if (currentVelocity > MAX_VELOCITY - 10) {
+            power = kV * currentVelocity;
+            //+ kP * (currentTargetPos - getCurrentPosition());
+
+        }
+
+        return power;
     }
 
     public void setPosition(double p_targetPos, double curve) {
@@ -199,9 +218,12 @@ public class RFMotor extends Motor {
     }
 
     public double getTargetPosition(double p_time) {
+        if (p_time >= timeIntervals[7]) {
+            return 0;
+        }
         double currentTargetPos = 0;
         for (int i = 0; i < 7; i++) {
-            if (p_time > timeIntervals[i] && p_time < timeIntervals[i + 1]) {
+            if (p_time >= timeIntervals[i] && p_time < timeIntervals[i + 1]) {
                 for (int j = 0; j < 4; j++) {
                     if (calculatedMotions[2][i][4] != -1) {
                         if (calculatedMotions[2][i][j] != -1) {
@@ -221,6 +243,9 @@ public class RFMotor extends Motor {
     }
 
     public double getTargetVelocity(double p_time) {
+        if (p_time >= timeIntervals[7]) {
+            return 0;
+        }
         double currentTargetVelo = 0;
         for (int i = 0; i < 7; i++) {
             if (p_time > timeIntervals[i] && p_time < timeIntervals[i + 1]) {
@@ -243,6 +268,9 @@ public class RFMotor extends Motor {
     }
 
     public double getTargetAcceleration(double p_time) {
+        if (p_time >= timeIntervals[7]) {
+            return 0;
+        }
         double currentTargetAccel = 0;
         for (int i = 0; i < 7; i++) {
             if (p_time > timeIntervals[i] && p_time < timeIntervals[i + 1]) {
@@ -268,6 +296,19 @@ public class RFMotor extends Motor {
         targetPos = p_targetPos;
     }
 
+    public void setStartingVelo(double p_startingVelo) {
+        velocities[0] = p_startingVelo;
+    }
+
+    public void setStartingPos(double p_startingPos) {
+        position = p_startingPos;
+    }
+
+    public void setIsSim(boolean p_IsSim) {
+        isSim = p_IsSim;
+    }
+
+
     public double[] getTimeIntervals() {
         return timeIntervals;
     }
@@ -284,56 +325,16 @@ public class RFMotor extends Motor {
         return velocities[0];
     }
 
-    public void setPosition(double p_targetPos) {
-        power = 0;
-        if (p_targetPos > maxtickcount) {
-            p_targetPos = maxtickcount;
-        }
-        if (p_targetPos < mintickcount) {
-            p_targetPos = mintickcount;
-        }
-        position = getCurrentPosition();
-        targetPos = p_targetPos;
-        acceleration = getVelocity() - velocity;
-        velocity += acceleration;
-        acceleration /= (time - lastTime);
-        getAvgResistance();
-        double[] targetMotion = getTargetMotion();
-        double power = (kP * (targetMotion[0] - resistance) - kA * targetMotion[1]);
-
-        if (abs(targetPos - position) > TICK_BOUNDARY_PADDING && abs(velocity) < 3) {
-            if (power < 0) {
-                power -= kS;
-            } else {
-                power += kS;
-            }
-        }
-        setRawPower(power);
-//        TelemetryPacket data = new TelemetryPacket();
-//        data.put("decelDist", getDecelDist());
-//        data.put("dist", targetPos - position);
-//        data.put("targetVelocity", targetMotion[0]);
-//        data.put("velocity", velocity);
-//        data.put("targetAcceleration", targetMotion[1]);
-//        data.put("trueAcceleration", acceleration);
-//        data.put("resistance", resistance);
-//        data.put("power", power);
-////        logger.log("/RobotLogs/GeneralRobot", "liftingTo" +targetPos);
-//
-//        BasicRobot.dashboard.sendTelemetryPacket(data);
-        lastTime = time;
-    }
-
     public double[] getTargetMotion(double curve) {
         double[] targets = {0, 0};
         relativeDist = targetPos - position;
-        double direction = abs(relativeDist) / relativeDist;
 
         if (relativeDist < 0) {
             velocities[0] = -rfMotor.getVelocity();
         }
         if (isSim) {
             velocities[0] = currentVelocity;
+            positions[0] = currentTickPos;
             isSim = false;
         }
 
@@ -359,6 +360,8 @@ public class RFMotor extends Motor {
 
         targets[0] = getTargetVelocity(BasicRobot.time);
         targets[1] = getTargetAcceleration(BasicRobot.time);
+
+        decelDist = getTargetPosition(timeIntervals[7]) - getTargetPosition(timeIntervals[4]);
 
         return targets;
     }
@@ -514,7 +517,7 @@ public class RFMotor extends Motor {
         position[5][2] = -MAX_ACCELERATION / 2;
         position[5][4] = calculatedIntervals[0][5];
 
-        position[6][0] = calculatedIntervals[3][6];
+        position[6][0] = calculatedIntervals[3][7];
         position[6][3] = J / 6;
         position[6][4] = calculatedIntervals[0][7];
 
@@ -522,6 +525,46 @@ public class RFMotor extends Motor {
         calculatedMotions[1] = velocity;
         calculatedMotions[2] = position;
 
+    }
+
+    public void setPosition(double p_targetPos) {
+        power = 0;
+        if (p_targetPos > maxtickcount) {
+            p_targetPos = maxtickcount;
+        }
+        if (p_targetPos < mintickcount) {
+            p_targetPos = mintickcount;
+        }
+        position = getCurrentPosition();
+        targetPos = p_targetPos;
+        acceleration = getVelocity() - velocity;
+        velocity += acceleration;
+        acceleration /= (time - lastTime);
+        getAvgResistance();
+        double[] targetMotion = getTargetMotion();
+        double power = (kP * (targetMotion[0] - resistance) - kA * targetMotion[1]);
+
+        if (abs(targetPos - position) > TICK_BOUNDARY_PADDING && abs(velocity) < 3) {
+            if (power < 0) {
+                power -= kS;
+            } else {
+                power += kS;
+            }
+        }
+        setRawPower(power);
+//        TelemetryPacket data = new TelemetryPacket();
+//        data.put("decelDist", getDecelDist());
+//        data.put("dist", targetPos - position);
+//        data.put("targetVelocity", targetMotion[0]);
+//        data.put("velocity", velocity);
+//        data.put("targetAcceleration", targetMotion[1]);
+//        data.put("trueAcceleration", acceleration);
+//        data.put("resistance", resistance);
+//        data.put("power", power);
+////        logger.log("/RobotLogs/GeneralRobot", "liftingTo" +targetPos);
+//
+//        BasicRobot.dashboard.sendTelemetryPacket(data);
+        lastTime = time;
     }
 
     public double[] getTargetMotion() {
