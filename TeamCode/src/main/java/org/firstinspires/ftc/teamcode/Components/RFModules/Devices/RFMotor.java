@@ -226,8 +226,15 @@ public class RFMotor extends Motor {
             return positions[7] * direction + positions[0];
         }
         double currentTargetPos = 0;
+        double firstInterval;
         for (int i = 0; i < 7; i++) {
-            if (p_time >= timeIntervals[i] && p_time < timeIntervals[i + 1]) {
+            if (i == 0) {
+                firstInterval = 0;
+            }
+            else {
+                firstInterval = timeIntervals[i];
+            }
+            if (p_time >= firstInterval && p_time < timeIntervals[i + 1]) {
                 for (int j = 0; j < 4; j++) {
                     if (calculatedMotions[2][i][4] != -1) {
                         if (calculatedMotions[2][i][j] != -1) {
@@ -253,9 +260,15 @@ public class RFMotor extends Motor {
             return positions[7] * direction;
         }
         double currentTargetVelo = 0;
+        double firstInterval;
         for (int i = 0; i < 7; i++) {
-
-            if (p_time > timeIntervals[i] && p_time < timeIntervals[i + 1]) {
+            if (i == 0) {
+                firstInterval = 0;
+            }
+            else {
+                firstInterval = timeIntervals[i];
+            }
+            if (p_time >= firstInterval && p_time < timeIntervals[i + 1]) {
                 for (int j = 0; j < 4; j++) {
                     if (calculatedMotions[1][i][4] != -1) {
                         if (calculatedMotions[1][i][j] != -1) {
@@ -280,8 +293,15 @@ public class RFMotor extends Motor {
             return positions[7] * direction;
         }
         double currentTargetAccel = 0;
+        double firstInterval;
         for (int i = 0; i < 7; i++) {
-            if (p_time > timeIntervals[i] && p_time < timeIntervals[i + 1]) {
+            if (i == 0) {
+                firstInterval = 0;
+            }
+            else {
+                firstInterval = timeIntervals[i];
+            }
+            if (p_time > firstInterval && p_time < timeIntervals[i + 1]) {
                 for (int j = 0; j < 4; j++) {
                     if (calculatedMotions[0][i][4] != -1) {
                         if (calculatedMotions[0][i][j] != -1) {
@@ -357,7 +377,7 @@ public class RFMotor extends Motor {
         direction = abs(relativeDist)/relativeDist;
 
         if (isSim) {
-            velocities[0] = currentVelocity;
+            velocities[0] = direction * currentVelocity;
             positions[0] = direction * currentTickPos;
         }
         else {
@@ -384,8 +404,6 @@ public class RFMotor extends Motor {
         positions = calculatedIntervals[3];
         decelDist = calculatedIntervals[3][7] - calculatedIntervals[3][4];
 
-        packet.put("distances", Arrays.toString(distances));
-
         if (isSim) {
             velocities[0] = currentVelocity;
             positions[0] = currentTickPos;
@@ -409,9 +427,7 @@ public class RFMotor extends Motor {
         double[] temp_velocities = new double[8];
         double[] temp_positions = new double[8];
 
-        if (!sameTarget) {
-            temp_timeIntervals[0] = BasicRobot.time;
-        }
+        temp_timeIntervals[0] = BasicRobot.time;
         temp_timeIntervals[2] = max(sqrt((peakVelo - velocities[0]) / J), (max(0, (peakVelo - velocities[0])
                 / MAX_ACCELERATION)));
         temp_timeIntervals[1] = min(temp_timeIntervals[2], MAX_ACCELERATION / J);
@@ -441,8 +457,6 @@ public class RFMotor extends Motor {
                 temp_distances[6] + temp_distances[7];
 
         cruiseTime = (abs(relativeDist) - semiTotal) / peakVelo;
-
-        packet.put("cruise time", cruiseTime);
 
         temp_timeIntervals[4] = temp_timeIntervals[3] + cruiseTime;
         temp_timeIntervals[5] = temp_timeIntervals[4] + MAX_ACCELERATION / J;
@@ -485,7 +499,7 @@ public class RFMotor extends Motor {
 
         acceleration[0][1] = J;
 
-        acceleration[1][0] = MAX_ACCELERATION * calculatedIntervals[0][1];
+        acceleration[1][0] = J * calculatedIntervals[0][1];
 
         acceleration[2][1] = -J;
         acceleration[2][4] = calculatedIntervals[0][3];

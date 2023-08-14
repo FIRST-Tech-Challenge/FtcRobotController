@@ -49,7 +49,7 @@ public class RFMotionProfilerTest extends LinearOpMode {
                 motor.getTargetMotion(1);
             }
 
-            if (currentTickPos > 1000 - 1/pow(10, 5)) {
+            else if (currentTickPos > 500 - 1/pow(10, 5)) {
                 motor.setTargetPos(0);
                 motor.getTargetMotion(1);
             }
@@ -67,17 +67,20 @@ public class RFMotionProfilerTest extends LinearOpMode {
             double power = motor.getTargetPower();
             double velo = motor.getTargetVelocity(BasicRobot.time);
             double pos = motor.getTargetPosition(BasicRobot.time);
+            double accel = motor.getTargetAcceleration(BasicRobot.time);
 
             packet.put("Target Power", power);
 
-            packet.put("Target Velocity", currentVelocity);
+            packet.put("Target Velocity", velo);
+
+            packet.put("Target Acceleration", accel);
 
 //            if (velo < minvelo) {
 //                minvelo = velo;
 //            }
 //            packet.put("Min Velocity", minvelo);
 
-            packet.put("Target Position", currentPos);
+            packet.put("Target Position", pos);
 
             packet.put("Tick Position", currentTickPos);
 
