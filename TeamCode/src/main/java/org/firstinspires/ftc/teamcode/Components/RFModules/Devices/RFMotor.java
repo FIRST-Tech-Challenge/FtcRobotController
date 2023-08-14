@@ -222,8 +222,6 @@ public class RFMotor extends Motor {
 
     public double getTargetPosition(double p_time) {
         p_time -= timeIntervals[0];
-        packet.put("STARTING POS", positions[0]);
-        packet.put("ENDING POS", positions[7]);
         if (p_time >= timeIntervals[7]) {
             return positions[7] * direction + positions[0];
         }
@@ -251,8 +249,6 @@ public class RFMotor extends Motor {
 
     public double getTargetVelocity(double p_time) {
         p_time -= timeIntervals[0];
-        packet.put("DIRECTIOn", direction);
-        packet.put("TIMEEEEE", p_time);
         if (p_time >= timeIntervals[7]) {
             return positions[7] * direction;
         }
@@ -346,7 +342,6 @@ public class RFMotor extends Motor {
     public double[] getTargetMotion(double curve) {
         double[] targets = {0, 0};
 
-        packet.put("STARTING TIME", timeIntervals[0]);
         relativeDist = targetPos - currentTickPos;
 
         if (relativeDist == 0) {
@@ -369,10 +364,6 @@ public class RFMotor extends Motor {
             velocities[0] = direction * rfMotor.getVelocity();
         }
 
-        packet.put("relativeDist", relativeDist);
-
-        packet.put("intial velo", velocities[0]);
-
         if (velocities[0] == 0) {
             peakVelo = min((131 - 38 * curve)/131 * sqrt(MAX_ACCELERATION * abs(relativeDist)), MAX_VELOCITY);
         }
@@ -392,6 +383,8 @@ public class RFMotor extends Motor {
         velocities = calculatedIntervals[2];
         positions = calculatedIntervals[3];
         decelDist = calculatedIntervals[3][7] - calculatedIntervals[3][4];
+
+        packet.put("distances", Arrays.toString(distances));
 
         if (isSim) {
             velocities[0] = currentVelocity;
@@ -448,6 +441,8 @@ public class RFMotor extends Motor {
                 temp_distances[6] + temp_distances[7];
 
         cruiseTime = (abs(relativeDist) - semiTotal) / peakVelo;
+
+        packet.put("cruise time", cruiseTime);
 
         temp_timeIntervals[4] = temp_timeIntervals[3] + cruiseTime;
         temp_timeIntervals[5] = temp_timeIntervals[4] + MAX_ACCELERATION / J;

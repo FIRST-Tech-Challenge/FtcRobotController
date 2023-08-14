@@ -6,6 +6,8 @@ import static org.firstinspires.ftc.teamcode.roadrunner.drive.PoseStorage.curren
 import static org.firstinspires.ftc.teamcode.roadrunner.drive.PoseStorage.currentTickPos;
 import static org.firstinspires.ftc.teamcode.roadrunner.drive.PoseStorage.currentVelocity;
 
+import static java.lang.Math.pow;
+
 import android.util.Log;
 
 import com.acmerobotics.dashboard.config.Config;
@@ -37,18 +39,17 @@ public class RFMotionProfilerTest extends LinearOpMode {
 
         double maxpos = 0;
         double minvelo = 2000;
+        packet.clearLines();
 
         while (opModeIsActive()) {
             motor.setIsSim(true);
 
-            if (currentTickPos < 1) {
-                packet.put("GIOING FORWARD", "HALLO");
+            if (currentTickPos < 0 + 1/pow(10, 5)) {
                 motor.setTargetPos(1000);
                 motor.getTargetMotion(1);
             }
 
-            if (currentTickPos > 999) {
-                packet.put("GIONG BACK", "HALLO");
+            if (currentTickPos > 1000 - 1/pow(10, 5)) {
                 motor.setTargetPos(0);
                 motor.getTargetMotion(1);
             }
@@ -67,16 +68,16 @@ public class RFMotionProfilerTest extends LinearOpMode {
             double velo = motor.getTargetVelocity(BasicRobot.time);
             double pos = motor.getTargetPosition(BasicRobot.time);
 
-            packet.put("Target Power", power * 2000); //multiplied just to have same scale as velocity
+            packet.put("Target Power", power);
 
-            packet.put("Target Velocity", velo);
+            packet.put("Target Velocity", currentVelocity);
 
-            if (velo < minvelo) {
-                minvelo = velo;
-            }
-            packet.put("Min Velocity", minvelo);
+//            if (velo < minvelo) {
+//                minvelo = velo;
+//            }
+//            packet.put("Min Velocity", minvelo);
 
-            packet.put("Target Position", pos);
+            packet.put("Target Position", currentPos);
 
             packet.put("Tick Position", currentTickPos);
 
