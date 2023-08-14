@@ -23,7 +23,7 @@ import org.firstinspires.ftc.teamcode.roadrunner.trajectorysequence.TrajectorySe
 @Config
 @Autonomous(name = "RFMotionControllerTest")
 public class RFMotionControllerTest extends LinearOpMode {
-    public static double targetX1 =30 , targetY1=0, targetX2=60, targetY2=0, targetX3=0,targetY3=0, CURVINESS = 0.4;
+    public static double targetX1 =50 , targetY1=0, targetX2=0, targetY2=0, targetX3=50,targetY3=0, CURVINESS = 0.4;
     @Override
     public void runOpMode() throws InterruptedException {
         BasicRobot robot = new BasicRobot(this,true);
@@ -43,16 +43,18 @@ public class RFMotionControllerTest extends LinearOpMode {
 //        for(int i=0; i<1;i++) {
             if (!drive.isFollowing()) {
                 if(isPoseSim) {
-                    currentPose = new Pose2d(0, 0, toRadians(0));
+                    currentPose = new Pose2d(0, 0, toRadians(90));
                     currentVelocity = new Pose2d(0, 0, 0);
                 }
                 drive.setReversed(false);
                 drive.setCurviness(CURVINESS);
+                drive.setTangentOffset(-90);
                 drive.addWaypoint(new RFWaypoint(new Vector2d(targetX1, targetY1)));
-//                drive.setTangentOffset(-90);
+                drive.setTangentOffset(90);
+//                drive.setReversed(true);
+
                 drive.addWaypoint(new RFWaypoint(new Vector2d(targetX2, targetY2)));
-//                drive.setReversed(false);
-                drive.setReversed(true);
+                drive.setTangentOffset(-90);
                 drive.addWaypoint(new RFWaypoint(new Vector2d(targetX3, targetY3)));
 
             }

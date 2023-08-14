@@ -32,8 +32,8 @@ public class CubicHermiteSpline {
     private double length = 0;
     private double duration = 0;
     private double lengthResolution = 400;
-    private double numericDerivResolution = 200, travelDist = 0;
-    private double AVG_SCALE_FACTOR = 1;
+    private double numericDerivResolution = 10, travelDist = 0;
+    private double AVG_SCALE_FACTOR = 1.7;
     double numericIntegral, numericT = 0;
     private double numericIntegralResolution = 0.001;
     private RFTrajectory traj;
@@ -44,7 +44,7 @@ public class CubicHermiteSpline {
     //    Pose2d targetAcceleration;
     Pose2d instantaneousVelocity;
     Pose2d instantaneousAcceleration;
-    public static double LOOPINESS = 1, HEADING_ALIGN_TIME = 0.5;
+    public static double LOOPINESS = 1, HEADING_ALIGN_TIME = 0.2, END_VEL_SCALE=1.0;
 
     public CubicHermiteSpline(Vector2d p_startPos, Vector2d p_startVel, Vector2d p_endVel, Vector2d p_endPos, RFTrajectory p_traj) {
         traj = p_traj;
@@ -63,7 +63,7 @@ public class CubicHermiteSpline {
         double loopyStorage = LOOPINESS;
         duration = traj.calculateSegmentDuration(length * AVG_SCALE_FACTOR);
 
-        Vector2d p_startVelo = p_startVel.times(min(LOOPINESS* duration,MAX_VEL));
+        Vector2d p_startVelo = p_startVel.times(LOOPINESS* duration);
         Vector2d p_endVelo = p_endVel.times(duration);
 
 
@@ -88,7 +88,7 @@ public class CubicHermiteSpline {
         double newEndVel = traj.getEndVelMag();
         packet.put("newEndVel", newEndVel);
 
-        p_startVelo = p_startVel.times(min(LOOPINESS* duration,MAX_VEL));
+        p_startVelo = p_startVel.times(LOOPINESS* duration);
         p_endVelo = p_endVel.times(duration);
         if(p_endVelo.norm()!=0) {
             p_endVelo = p_endVelo.times(newEndVel / p_endVelo.norm());
@@ -111,7 +111,7 @@ public class CubicHermiteSpline {
         packet.put("coeffs3", coeffs.get(3));
         //calc duration
         duration = traj.calculateSegmentDuration(length);
-        p_startVelo = p_startVel.times(min(LOOPINESS* duration,MAX_VEL));
+        p_startVelo = p_startVel.times(LOOPINESS* duration);
         newEndVel = traj.getEndVelMag();
         p_endVelo = p_endVel.times(duration);
         if(p_endVelo.norm()!=0) {
@@ -260,8 +260,8 @@ public class CubicHermiteSpline {
         double remDistance = max(getRemDistance(), targPos.vec().distTo(currentPose.vec()));
         double remDuration = traj.remainingSegmentTime(remDistance);
         packet.put("remDuration", remDuration);
-        if (remDuration < 0.2) {
-            remDuration = 0.2;
+        if (remDuration < 0.0) {
+            remDuration = 0.001;
         }
         double numericDerivResolution = this.numericDerivResolution*remDuration;
 //        Vector2d endVel = this.endVel;
@@ -269,57 +269,84 @@ public class CubicHermiteSpline {
 //            endVel = this.endVel.times(traj.getEndVelMag() / this.endVel.norm());
 //        }
         Vector2d curVelo = curVel.times(remDuration);
-        Vector2d endVelo;
+        Vector2d endVelo = new Vector2d(0,0);
 //        endVelo = endVel.times(remDuration);
         if(endVel.norm()==0||Double.isNaN(endVel.norm())||isNaN(traj.getEndVelMag())){
             endVelo = new Vector2d(0,0);
         }
         else {
 //            remDuration=1;
-            endVelo = endVel.times(traj.getEndVelMag() * remDuration/ endVel.norm());
+            if(endVel.norm()>0.1) {
+                endVelo = endVel.times(remDuration);
+            }
 //            endVelo = endVelo.div(remDuration);
-            packet.put("endVelo", endVelo);
         }
 //        if(Double.isNaN(endVelo.norm())){
 //            endVelo = new Vector2d(0,0);
 //        }
+        if(endVelo.norm()<0.1){
+            endVelo = new Vector2d(0.1,0.1);
+        }
+        packet.put("endVeloGam", endVelo);
+
+//        endVelo = new Vector2d(0.1,0.1);
         ArrayList<Vector2d> tempCoeffs = new ArrayList<>();
         tempCoeffs.add(curPos);
         tempCoeffs.add(curVelo);
         tempCoeffs.add(curPos.times(-3).minus(curVelo.times(2)).minus(endVelo).plus(endPos.times(3)));
         tempCoeffs.add(curPos.times(2).plus(curVelo).plus(endVelo).minus(endPos.times(2)));
-        Vector2d accel = tempCoeffs.get(2).div(remDuration * remDuration * 0.5);
+        Vector2d accel = tempCoeffs.get(2).times(2);
         double newT =  1/numericDerivResolution;
-        if(newT>0.5){
-            newT = 0.5;
+        if(newT>1.0){
+            newT = 1.0;
             numericDerivResolution = 0.5;
         }
+//        newT = 1.0;
+//        curVel = derivAt(0,tempCoeffs).div(remDuration);
         Vector2d curVel2 = derivAt(newT, tempCoeffs).div(remDuration);
-        Vector2d curVel3 = derivAt(2*newT, tempCoeffs).div(remDuration);
+//        Vector2d curVel3 = derivAt(2*newT, tempCoeffs).div(remDuration);
         double angle2 = Math.atan2(curVel2.getY(), curVel2.getX());
         double angle = currentPose.getHeading()+traj.getCurrentSegment().getTangentOffset();
-        double angle3 = Math.atan2(curVel3.getY(), curVel3.getX());
+//        double angle3 = Math.atan2(curVel3.getY(), curVel3.getX());
         double angularVel = (distBetween(angle2,angle)) / HEADING_ALIGN_TIME;
-        double angularVel2 = (distBetween(angle3,angle2)) * this.numericDerivResolution;
+//        double angularVel2 = (distBetween(angle3,angle2)) * this.numericDerivResolution;
         if(abs(angularVel)>MAX_ANG_VEL){
             angularVel *= MAX_ANG_VEL/abs(angularVel);
         }
         instantaneousVelocity = currentVelocity;
         packet.put("angull", angle);
         packet.put("angull2", angle2);  
-        packet.put("angull3", angle3);
+//        packet.put("angull3", angle3);
         packet.put("angullVel1", angularVel);
-        packet.put("angullVel2", angularVel2);
-        angularVel = (angularVel-currentVelocity.getHeading()) / HEADING_ALIGN_TIME;
+//        packet.put("angullVel2", angularVel2);
+        if(currentVelocity.vec().norm()>1) {
+            angularVel = (angularVel - currentVelocity.getHeading()) / HEADING_ALIGN_TIME;
+        }else{
+            angularVel = 0.001;
+        }
         if(abs(angularVel)>MAX_ANG_ACCEL){
             angularVel *= MAX_ANG_ACCEL/abs(angularVel);
         }
         packet.put("angullAccel", angularVel);
-        instantaneousAcceleration = new Pose2d(curVel2.minus(curVel).div(remDuration*newT), angularVel);
+        packet.put("newT", newT);
+        instantaneousAcceleration = new Pose2d(curVel2.minus(curVel).div(remDuration*newT), 0.0002/*angularVel*/);
+//        if(instantaneousAcceleration.vec().norm()<5){
+//            instantaneousAcceleration = new Pose2d(currentVelocity.vec().times(1.1).minus(curVel), 0.0002);
+//            packet.put("FFAccelMag",20);
+//
+//        }
+//        else{
+//            packet.put("FFAccelMag", instantaneousAcceleration.vec().norm());
+//        }
 //        if(remDuration<=0){
 //            instantaneousAcceleration= new Pose2d(targPos.vec().minus(currentPose.vec()), distBetween(targPos.getHeading(),currentPose.getHeading()));
 //        }
         packet.put("curVel2", curVel2.getX());
+        packet.put("curVel1", curVel.getX());
+        packet.put("velDiff", curVel2.getX()-curVel.getX());
+        packet.put("tempCoeffs1", tempCoeffs.get(1).getX());
+        packet.put("tempCoeffs2", tempCoeffs.get(2).getX());
+        packet.put("tempCoeffs3", tempCoeffs.get(3).getX());
 
     }
     public double distBetween(double angle1, double angle2) {

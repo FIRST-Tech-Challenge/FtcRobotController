@@ -116,14 +116,15 @@ public class RFTrajectory {
     //TODO make this work for when u giga slow and out of time
     public Pose2d getInstantaneousTargetAcceleration() {
         Vector2d deltaVec = getTargetPosition().vec().minus(currentPose.vec());
-        double projectedVelocity = projectOnto(currentVelocity.vec(), deltaVec);
+        Vector2d projectedVelocity = currentVelocity.vec().projectOnto(deltaVec);
+//                projectOnto(currentVelocity.vec(), deltaVec);
         if(deltaVec.norm()==0){
             deltaVec = new Vector2d(0.1,0);
         }
-        deltaVec = deltaVec.times(projectedVelocity/deltaVec.norm());
+        deltaVec = deltaVec.times(projectedVelocity.norm()/deltaVec.norm());
         packet.put("currentVelocityVec", currentVelocity.vec());
         packet.put("projectedVel", projectedVelocity);
-        double accelMag = motionProfile.getInstantaneousTargetAcceleration(currentPath.getRemDistance(), projectedVelocity);
+        double accelMag = abs(motionProfile.getInstantaneousTargetAcceleration(currentPath.getRemDistance(), projectedVelocity.norm()));
         packet.put("accelMag",accelMag);
         currentPath.calculateInstantaneousTargetPose();
         Pose2d pathAccel = currentPath.instantaneousAcceleration;
