@@ -34,8 +34,9 @@ public class RFMotor extends Motor {
     private ArrayList<Double> coefs = null;
     private ArrayList<Double> coefs2 = null;
     private ArrayList<String> inputlogs = new ArrayList<>();
-    public static double D = 0.00000, D2 = 0, kP = 5E-4, kI, kD = 0.0001, kV = 0.0005, kA = 0.00001, kR = 0, kS = 0.15,
-            MAX_VELOCITY = 1 / kP, MAX_ACCELERATION = 11000, RESISTANCE = 400;
+    public static double D = 0.00000, D2 = 0, kP = 0.005, kI, kD = 0.00001, kV = 0.00058, kA = 0.00004, kR = 0, kS = 0.15,
+            MAX_VELOCITY = 1400, MAX_ACCELERATION = 6000, RESISTANCE = 400;
+    public static double gravity = 0.2;
     private double relativeDist, direction, peakVelo, J, decelDist;
     private double[][] calculatedIntervals = new double[4][8];
     private double[][][] calculatedMotions = new double[3][7][5];;
@@ -174,6 +175,13 @@ public class RFMotor extends Motor {
     }
 
     public void setPosition(double p_targetPos, double curve) {
+        if (targetPos == p_targetPos) {
+            sameTarget = true;
+        }
+        else {
+            targetPos = p_targetPos;
+            sameTarget = false;
+        }
         power = 0;
         if (p_targetPos > maxtickcount) {
             p_targetPos = maxtickcount;
@@ -189,11 +197,21 @@ public class RFMotor extends Motor {
         getAvgResistance();
 
         double[] targetMotion = getTargetMotion(curve);
-        double currentTargetPos = getTargetPosition(BasicRobot.time);
-        double currentTargetVelo = getTargetVelocity(BasicRobot.time);
 
-        double power = (kV * targetMotion[0] + kA * targetMotion[1] + kP * (currentTargetPos - getCurrentPosition())
-                + kD * (currentTargetVelo - getVelocity()));
+        double power = (kV * targetMotion[0] + kA * targetMotion[1] +
+                kP * (getTargetPosition(BasicRobot.time) - position) + kD * (getTargetVelocity(BasicRobot.time) - velocity) + gravity);
+        power = abs(power)/power * min(1, abs(power));
+
+        op.telemetry.addData("POWERRR", power * 1000);
+        op.telemetry.addData("ACTUAL POS", position);
+        op.telemetry.addData("TARGET POS", getTargetPosition(BasicRobot.time));
+        op.telemetry.addData("TARGET VELOOO", getTargetVelocity(BasicRobot.time));
+        op.telemetry.addData("ACTUAL VELO", velocity);
+        op.telemetry.addData("TARGET ACCEL", getTargetAcceleration(BasicRobot.time));
+
+//        kP * (getTargetPosition(BasicRobot.time) - getCurrentPosition())
+//                + kD * (targetMotion[1] - getVelocity())
+
         if (abs(targetPos - position) > TICK_BOUNDARY_PADDING && abs(velocity) < 3) {
             if (power < 0) {
                 power -= kS;
@@ -257,7 +275,7 @@ public class RFMotor extends Motor {
     public double getTargetVelocity(double p_time) {
         p_time -= timeIntervals[0];
         if (p_time >= timeIntervals[7]) {
-            return positions[7] * direction;
+            return velocities[7] * direction;
         }
         double currentTargetVelo = 0;
         double firstInterval;
@@ -290,7 +308,7 @@ public class RFMotor extends Motor {
     public double getTargetAcceleration(double p_time) {
         p_time -= timeIntervals[0];
         if (p_time > timeIntervals[7]) {
-            return positions[7] * direction;
+            return 0;
         }
         double currentTargetAccel = 0;
         double firstInterval;
@@ -362,7 +380,7 @@ public class RFMotor extends Motor {
     public double[] getTargetMotion(double curve) {
         double[] targets = {0, 0};
 
-        relativeDist = targetPos - currentTickPos;
+        relativeDist = targetPos - getCurrentPosition();
 
         if (relativeDist == 0) {
             return targets;

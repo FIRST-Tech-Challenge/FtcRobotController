@@ -45,11 +45,11 @@ public class RFMotionProfilerTest extends LinearOpMode {
             motor.setIsSim(true);
 
             if (currentTickPos < 0 + 1/pow(10, 5)) {
-                motor.setTargetPos(1000);
+                motor.setTargetPos(1250);
                 motor.getTargetMotion(1);
             }
 
-            else if (currentTickPos > 500 - 1/pow(10, 5)) {
+            else if (currentTickPos > 1250 - 1/pow(10, 5)) {
                 motor.setTargetPos(0);
                 motor.getTargetMotion(1);
             }

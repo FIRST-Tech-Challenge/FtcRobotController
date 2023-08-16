@@ -43,7 +43,7 @@ public class Lift {
     private boolean done = true;
     private double lastManualTime = 0.0;
     double[] coneStack = {500*0.6+30,410*0.6+14,315*0.6-20,180*0.6 - 30};
-    ;
+
     private int stackLevel = 0;
     private double lastStackTime =0;
 
@@ -291,14 +291,14 @@ public class Lift {
     }
 
     public void liftToTargetAuto() {
-        liftMotor.setPosition(liftTarget);
+        liftMotor.setPosition(liftTarget, 1);
     }
 
     private boolean LTTZeroLogged = false;
 
     public void liftToTarget() {
         if (time- lastManualTime > 0.2) {
-            liftMotor.setPosition(liftTarget);
+            liftMotor.setPosition(liftTarget, 1);
             //logger.log("/RobotLogs/GeneralRobot", "Lift," + "liftToTarget()," + "Lifting to Target of:" + liftTarget + " ticks" + logger.loopcounter, true);
             //logger.log("/RobotLogs/GeneralRobot", "Lift," + "liftToTarget()," + "Target: " + liftTarget + " ticks | Current Position: " + liftMotor.getCurrentPosition() + " | Velocity: " + liftMotor.getVelocity(), true);
             LTTZeroLogged = false;
