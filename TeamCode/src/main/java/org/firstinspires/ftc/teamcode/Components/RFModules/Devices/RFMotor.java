@@ -34,9 +34,10 @@ public class RFMotor extends Motor {
     private ArrayList<Double> coefs = null;
     private ArrayList<Double> coefs2 = null;
     private ArrayList<String> inputlogs = new ArrayList<>();
-    public static double D = 0.00000, D2 = 0, kP = 0.005, kI, kD = 0.00001, kV = 0.00058, kA = 0.00004, kR = 0, kS = 0.15,
-            MAX_VELOCITY = 1400, MAX_ACCELERATION = 6000, RESISTANCE = 400;
+    public static double D = 0.00000, D2 = 0, kP = 0.009, kI, kD = 0.0001, kV = 0.0003, kA = 0.00004, kR = 0, kS = 0.15,
+            MAX_ACCELERATION = 6000, RESISTANCE = 400;
     public static double gravity = 0.2;
+    private double MAX_VELOCITY = 1450 - 225 * (13.5 - BasicRobot.voltageSensor.getVoltage());
     private double relativeDist, direction, peakVelo, J, decelDist;
     private double[][] calculatedIntervals = new double[4][8];
     private double[][][] calculatedMotions = new double[3][7][5];;
@@ -400,6 +401,7 @@ public class RFMotor extends Motor {
         }
         else {
             velocities[0] = direction * rfMotor.getVelocity();
+            positions[0] = direction * currentTickPos;
         }
 
         if (velocities[0] == 0) {
@@ -426,6 +428,10 @@ public class RFMotor extends Motor {
             velocities[0] = currentVelocity;
             positions[0] = currentTickPos;
             isSim = false;
+        }
+        else {
+            velocities[0] = rfMotor.getVelocity();
+            positions[0] = currentTickPos;
         }
 
         targets[0] = getTargetVelocity(BasicRobot.time);
