@@ -25,12 +25,14 @@ public class BasicRobot{
         queuer = new Queuer();
         isTeleop = p_isTeleop;
         op.telemetry = new MultipleTelemetry(op.telemetry, FtcDashboard.getInstance().getTelemetry());
-        voltageSensor = op.hardwareMap.voltageSensor.
+        voltageSensor = op.hardwareMap.voltageSensor.iterator().next();
     }
+    //deprecated
     public void updateTime(){time=op.getRuntime();}
     public void resetQueuer() {
         queuer.reset();
     }
+    public double getVoltage(){return voltageSensor.getVoltage();}
 
 
 }
