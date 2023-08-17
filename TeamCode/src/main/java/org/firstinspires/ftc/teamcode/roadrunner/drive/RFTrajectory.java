@@ -7,6 +7,7 @@ import static org.firstinspires.ftc.teamcode.roadrunner.drive.DriveConstants.TRA
 import static org.firstinspires.ftc.teamcode.roadrunner.drive.PoseStorage.currentPose;
 import static org.firstinspires.ftc.teamcode.roadrunner.drive.PoseStorage.currentVelocity;
 
+import static java.lang.Double.max;
 import static java.lang.Math.abs;
 import static java.lang.Math.cos;
 import static java.lang.Math.min;
@@ -57,7 +58,7 @@ public class RFTrajectory {
             setCurrentSegment(0);
             return true;
         } else if (segIndex + 1 < segments.size()) {
-            if (motionProfile.isProfileDone(time)) {
+            if (motionProfile.isProfileDone(time)&&(currentPose.vec().distTo(segments.get(segIndex).getWaypoint().getTarget().vec())<5||motionProfile.isProfileDone(time-1.5))) {
                 setCurrentSegment(segIndex + 1);
                 return true;
 
@@ -124,7 +125,12 @@ public class RFTrajectory {
         deltaVec = deltaVec.times(projectedVelocity.norm()/deltaVec.norm());
         packet.put("currentVelocityVec", currentVelocity.vec());
         packet.put("projectedVel", projectedVelocity);
-        double accelMag = abs(motionProfile.getInstantaneousTargetAcceleration(currentPath.getRemDistance(), projectedVelocity.norm()));
+        double accelMag = motionProfile.getInstantaneousTargetAcceleration(max(currentPath.getRemDistance(), currentPose.vec().distTo(getCurrentSegment().getWaypoint().getTarget().vec()))
+                , projectedVelocity.norm());
+        if(!currentPath.isOverride){
+            accelMag = abs(accelMag);
+        }
+
         packet.put("accelMag",accelMag);
         currentPath.calculateInstantaneousTargetPose();
         Pose2d pathAccel = currentPath.instantaneousAcceleration;
@@ -136,9 +142,10 @@ public class RFTrajectory {
         pathAccel = new Pose2d(scaledPathAccel/*.plus(currentVelocity.vec()).minus(deltaVec)*/, pathAccel.getHeading());
         double totalMagnitude = pathAccel.vec().norm()*pathAccel.vec().norm()+pathAccel.getHeading()*pathAccel.getHeading()*TRACK_WIDTH*TRACK_WIDTH*0.25;
         if(totalMagnitude>MAX_ACCEL*MAX_ACCEL){
-            pathAccel.times(sqrt(MAX_ACCEL*MAX_ACCEL/totalMagnitude));
+//            pathAccel.times(sqrt(MAX_ACCEL*MAX_ACCEL/totalMagnitude));
         }
         packet.put("pathAccelMag", pathAccel.vec().norm());
+        packet.put("remDist", max(currentPath.getRemDistance(), currentPose.vec().distTo(getCurrentSegment().getWaypoint().getTarget().vec())));
         return pathAccel;
     }
 

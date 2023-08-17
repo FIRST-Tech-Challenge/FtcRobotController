@@ -32,7 +32,7 @@ public class RFMotionControllerTest extends LinearOpMode {
         if(!isPoseSim) {
             localizer = LocalizerFactory.getChassis(Tracker.TrackType.ODOMETRY);
         }
-        Pose2d startPose = new Pose2d(0,0, toRadians(0));
+        Pose2d startPose = new Pose2d(0,0, toRadians(90));
         drive.setPose(startPose);
         waitForStart();
         if (isStopRequested()) return;
@@ -43,18 +43,18 @@ public class RFMotionControllerTest extends LinearOpMode {
 //        for(int i=0; i<1;i++) {
             if (!drive.isFollowing()) {
                 if(isPoseSim) {
-                    currentPose = new Pose2d(0, 0, toRadians(90));
+                    currentPose = new Pose2d(0, 0, toRadians(0));
                     currentVelocity = new Pose2d(0, 0, 0);
                 }
                 drive.setReversed(false);
                 drive.setCurviness(CURVINESS);
-                drive.setTangentOffset(-90);
-                drive.addWaypoint(new RFWaypoint(new Vector2d(targetX1, targetY1)));
-                drive.setTangentOffset(90);
+//                drive.setTangentOffset(toRadians(-90));
+                drive.addWaypoint(new RFWaypoint(new Vector2d(targetX1,targetY1)));
+//                drive.setTangentOffset(toRadians(-90));
 //                drive.setReversed(true);
 
                 drive.addWaypoint(new RFWaypoint(new Vector2d(targetX2, targetY2)));
-                drive.setTangentOffset(-90);
+//                drive.setTangentOffset(toRadians(-90));
                 drive.addWaypoint(new RFWaypoint(new Vector2d(targetX3, targetY3)));
 
             }
@@ -62,6 +62,7 @@ public class RFMotionControllerTest extends LinearOpMode {
 //                assert localizer != null;
                 localizer.update();
             }
+            sleep(10);
             drive.update();
             robot.update();
         }

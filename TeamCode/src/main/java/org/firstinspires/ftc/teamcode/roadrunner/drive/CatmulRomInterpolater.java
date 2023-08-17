@@ -105,11 +105,11 @@ public class CatmulRomInterpolater {
                 double endTangent = endVel.angle();
 //                packet.put("endTangent", endTangent);
                 if (ref.getDefinedness() == 0) {
-                    return new RFWaypoint(new Pose2d(ref.getTarget().getX(), ref.getTarget().getY(), endTangent + offset), endTangent
+                    return new RFWaypoint(new Pose2d(ref.getTarget().getX(), ref.getTarget().getY(), endTangent - offset), endTangent
                             , targetVelocity, ref.getDefinedness());
                 }
                 if (ref.getDefinedness() == 1) {
-                    return new RFWaypoint(ref.getTarget(), ref.getTarget().getHeading() + offset, targetVelocity, ref.getDefinedness());
+                    return new RFWaypoint(ref.getTarget(), ref.getTarget().getHeading() - offset, targetVelocity, ref.getDefinedness());
                 }
             } else {
                 return new RFWaypoint(ref.getTarget(), ref.getEndTangent(), targetVelocity, ref.getDefinedness());

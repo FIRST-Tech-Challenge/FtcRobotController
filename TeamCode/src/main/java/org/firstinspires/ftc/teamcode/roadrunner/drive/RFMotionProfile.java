@@ -102,11 +102,13 @@ packet.put("shouldAccel", 20);
 
         } else {
 
-            targetAccel = 0;
+            targetAccel = 0.0;
             packet.put("accelMagCase4", targetAccel);
 
         }
-
+        if(shouldDecel){
+            targetAccel*=-1;
+        }
         return targetAccel;
     }
 
