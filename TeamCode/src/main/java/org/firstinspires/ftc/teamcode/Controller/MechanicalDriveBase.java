@@ -86,7 +86,7 @@ public class MechanicalDriveBase
      * @param strafe strafe (left or right = -1 to 1)
      * @param speedFactor scale factor that is applied to all motor powers (0 to 1)
      */
-      public void driveMotors(double drive,double turn,double strafe,double speedFactor)
+      public void driveMotors(double drive, double turn, double strafe, double speedFactor)
       {
           leftPowerFront  = (drive + turn + strafe);
           rightPowerFront = (drive - turn - strafe);
