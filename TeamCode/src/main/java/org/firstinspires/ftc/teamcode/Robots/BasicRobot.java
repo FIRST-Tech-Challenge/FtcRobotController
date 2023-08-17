@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.Robots;
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.hardware.VoltageSensor;
 import org.firstinspires.ftc.teamcode.Components.RFModules.System.Logger;
 import org.firstinspires.ftc.teamcode.Components.RFModules.System.Queuer;
 
@@ -13,6 +14,7 @@ public class BasicRobot{
     public static boolean isTeleop;
     public static FtcDashboard dashboard;
     public static double time= 0.0;
+    public static VoltageSensor voltageSensor;
     public BasicRobot(LinearOpMode opMode, boolean p_isTeleop){
         op = opMode;
         logger = new Logger();
@@ -23,10 +25,12 @@ public class BasicRobot{
         queuer = new Queuer();
         isTeleop = p_isTeleop;
         op.telemetry = new MultipleTelemetry(op.telemetry, FtcDashboard.getInstance().getTelemetry());
-
+        voltageSensor = op.hardwareMap.voltageSensor.
     }
     public void updateTime(){time=op.getRuntime();}
     public void resetQueuer() {
         queuer.reset();
     }
+
+
 }
