@@ -4,20 +4,14 @@
  * It is extraordinarily rare that you will ever need to edit this file.
  */
 
-configurations {
-    doc { transitive false }
-}
-
 buildscript {
-    ext.kotlin_version = '1.7.10'
     repositories {
         mavenCentral()
         google()
-        jcenter()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:7.2.2'
-        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
+        // Note for FTC Teams: Do not modify this yourself.
+        classpath 'com.android.tools.build:gradle:7.2.0'
     }
 }
 
@@ -27,46 +21,9 @@ allprojects {
     repositories {
         mavenCentral()
         google()
-        jcenter()
     }
 }
 
 repositories {
     mavenCentral()
-
-    flatDir {
-        dirs '../libs'
-    }
 }
-
-dependencies {
-    doc 'org.firstinspires.ftc:Hardware:8.1.1'
-    doc 'org.firstinspires.ftc:RobotCore:8.1.1'
-    doc 'org.firstinspires.ftc:FtcCommon:8.1.1'
-    doc 'org.firstinspires.ftc:OnBotJava:8.1.1'
-    doc 'org.firstinspires.ftc:Inspection:8.1.1'
-}
-
-
-task extractJavadoc {
-    doLast {
-        def componentIds = configurations.doc.incoming.resolutionResult.allDependencies.collect { it.selected.id }
-
-        def result = dependencies.createArtifactResolutionQuery()
-                .forComponents(componentIds)
-                .withArtifacts(JvmLibrary, SourcesArtifact, JavadocArtifact)
-                .execute()
-
-        for (component in result.resolvedComponents) {
-            component.getArtifacts(JavadocArtifact).each { artifact ->
-                def version = artifact.identifier.componentIdentifier.version
-                def libName = artifact.identifier.componentIdentifier.moduleIdentifier.name
-                copy {
-                    from zipTree(artifact.file)
-                    into "docs/$version/$libName/"
-                }
-            }
-        }
-    }
-}
-
