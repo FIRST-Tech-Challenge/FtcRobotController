@@ -28,10 +28,10 @@ public class QueueElement {
 
     /**
      * Initialize QueueElement
-     * @param p_queuePos
-     * @param p_asynchronous
-     * @param p_startCondition
-     * @param p_mustFinish
+     * @param p_queuePos index of the queue element
+     * @param p_asynchronous should the event be asynchronous
+     * @param p_startCondition when should the event start
+     * @param p_mustFinish does the event need to finish
      */
     public QueueElement(int p_queuePos, boolean p_asynchronous, int p_startCondition, boolean p_mustFinish) {
         queuePos = p_queuePos;
@@ -42,12 +42,12 @@ public class QueueElement {
 
     /**
      * Initialize QueueElement
-     * @param p_queuePos
-     * @param p_asynchronous
-     * @param p_startCondition
-     * @param p_mustFinish
-     * @param p_shouldFinish
-     * @param p_isOptional
+     * @param p_queuePos index of the queue element
+     * @param p_asynchronous should the event be asynchronous
+     * @param p_startCondition when should the event start
+     * @param p_mustFinish does the event need to finish
+     * @param p_shouldFinish does the event need to finish
+     * @param p_isOptional is the event optional
      */
     public QueueElement(int p_queuePos, boolean p_asynchronous, int p_startCondition, boolean p_mustFinish, boolean p_shouldFinish, boolean p_isOptional) {
         queuePos = p_queuePos;
@@ -60,9 +60,9 @@ public class QueueElement {
 
     /**calculate if Ready
      *
-     * @param p_currentEvent
-     * @param p_extraCondition
-     * @return
+     * @param p_currentEvent what event is queuer currently queueing
+     * @param p_extraCondition what extra conditions need to be satisfied before running this event
+     * @return boolean for if the function should the function run
      */
     public boolean isReady(int p_currentEvent, boolean p_extraCondition) {
         //is it this elements turn to run
@@ -85,8 +85,7 @@ public class QueueElement {
     }
 
     /**
-     * get Variables
-     * @return
+     * get & set functions
      */
     public boolean isMustFinish() {
         return mustFinish;
