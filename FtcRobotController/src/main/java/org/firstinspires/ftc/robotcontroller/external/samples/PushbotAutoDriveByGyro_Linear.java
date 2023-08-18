@@ -72,7 +72,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
  *  The angle of movement/rotation is assumed to be a standardized rotation around the robot Z axis,
  *  which means that a Positive rotation is Counter Clockwise, looking down on the field.
  *  This is consistent with the FTC field coordinate conventions set out in the document:
- *  ftc_app\doc\tutorial\FTC_FieldCoordinateSystemDefinition.pdf
+ *  https://ftc-docs.firstinspires.org/field-coordinate-system
  *
  *  Control Approach.
  *

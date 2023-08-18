@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.Components.RFModules.Devices;
 
+import static org.firstinspires.ftc.teamcode.Components.RFModules.System.Logger.df;
 import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.op;
 import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.logger;
 import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.time;
@@ -7,120 +8,121 @@ import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.time;
 
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.ServoController;
-import com.qualcomm.robotcore.hardware.ServoControllerEx;
-
-import java.text.DecimalFormat;
-import java.util.ArrayList;
 
 public class RFServo implements Servo {
-    //all servo regular stuff
+    /* Basic Servo device class with reusable code */
 
     private final Servo rfServo;
 
-    private double lasttime = -100;
+    private double lastTime = -100;
 
-    double servolimit = 0;
+    double SERVO_LIMIT;
+
+    double FLIP_TIME = 0.2;
 
     boolean flipped = false;
 
-    private String rfServoName;
+    private final String rfServoName;
 
-    private ArrayList<String> inputlogs = new ArrayList<>();
+    /* Constructor with name, direction, and limit */
 
-    private static final DecimalFormat df = new DecimalFormat("0.00");
-
-    public RFServo (String deviceName, Servo.Direction direction, double limit) {
-        rfServo = op.hardwareMap.get(Servo.class, deviceName);
-        rfServoName = deviceName;
-        rfServo.setDirection(direction);
+    public RFServo (String p_deviceName, Servo.Direction p_direction, double p_limit) {
+        rfServo = op.hardwareMap.get(Servo.class, p_deviceName);
+        rfServoName = p_deviceName;
+        rfServo.setDirection(p_direction);
 
         logger.createFile("/ServoLogs/RFServo", "Runtime    Component               " +
                 "Function               Action");
 
-        servolimit = limit;
+        SERVO_LIMIT = p_limit;
     }
 
-    public RFServo (String deviceName, double limit) {
-        rfServo = op.hardwareMap.get(Servo.class, deviceName);
-        rfServoName = deviceName;
+    /* Constructor with name and limit */
+
+    public RFServo (String p_deviceName, double p_limit) {
+        rfServo = op.hardwareMap.get(Servo.class, p_deviceName);
+        rfServoName = p_deviceName;
 
         logger.createFile("/ServoLogs/RFServo", "Runtime    Component               " +
                 "Function               Action");
 
-        servolimit = limit;
+        SERVO_LIMIT = p_limit;
     }
+
+    /* Updating the last time the servo flipped */
+
     public void setFlipTime(double p_flipTime){
-        lasttime=p_flipTime;
+        lastTime=p_flipTime;
     }
 
-    public void setPosition(double position) {
-        if (time - lasttime > 0.2) {
-//            if (rfServo.getPosition() != position) {
-//                inputlogs.clear();
-//                inputlogs.add(rfServoName);
-//                inputlogs.add("setPosition()");
-//                inputlogs.add("Setting Position: " + rfServo.getPosition());
+    /* Setting position of the servo */
+
+    public void setPosition(double p_position) {
+        if (time - lastTime > FLIP_TIME) {
                 logger.log("/ServoLogs/RFServo", rfServoName + ",setPosition(),Setting Position: "
-                        + df.format(position), true);
-//                inputlogs.clear();
-
-//                logger.logRegulated("/ServoLogs/RFServo", "Setting Position:" + position);
-//                logger.logRegulated("/RobotLogs/GeneralRobot", rfServoName + "\nsetPosition():\nSetting Position:" + position);
-
-            rfServo.setPosition(position);
-            lasttime = time;
+                        + df.format(p_position), true);
+            rfServo.setPosition(p_position);
+            lastTime = time;
         }
     }
 
-    public boolean flipServoInterval(double lowerpos, double upperpos) {
-        if(time - lasttime > 0.2) {
+    /* Flipping the servo between two positions inside the max range */
+
+    public boolean flipServoInterval(double p_lowerPos, double p_upperPos) {
+        if(time - lastTime > FLIP_TIME) {
             if (flipped) {
-                rfServo.setPosition(lowerpos);
+                rfServo.setPosition(p_lowerPos);
                 logger.log("/ServoLogs/RFServo", rfServoName + ",flipServoInterval(),Setting Position: "
-                        + df.format(lowerpos), true);
+                        + df.format(p_lowerPos), true);
                 flipped = false;
             } else {
-                rfServo.setPosition(upperpos);
+                rfServo.setPosition(p_upperPos);
                 logger.log("/ServoLogs/RFServo", rfServoName + ",flipServoInterval(),Setting Position: "
-                        + df.format(upperpos), true);
+                        + df.format(p_upperPos), true);
                 flipped = true;
             }
         }
-        return time - lasttime > 0.2;
+        return time - lastTime > FLIP_TIME;
     }
 
+    /* Flipping the servo in the max range */
+
     public void flipServoMax() {
-        if (time - lasttime > 0.2) {
+        if (time - lastTime > FLIP_TIME) {
             if (flipped) {
                 rfServo.setPosition(0);
                 logger.log("/ServoLogs/RFServo", rfServoName + ",flipServoMax(),Setting Position: "
                         + df.format(0), true);
                 flipped = false;
             } else {
-                rfServo.setPosition(servolimit);
+                rfServo.setPosition(SERVO_LIMIT);
                 logger.log("/ServoLogs/RFServo", rfServoName + ",flipServoMax(),Setting Position: "
-                        + df.format(servolimit), true);
+                        + df.format(SERVO_LIMIT), true);
                 flipped = true;
             }
-            lasttime = time;
+            lastTime = time;
         }
     }
 
+    /* Returns current position of the servo */
+
     public double getPosition() {
-//        inputlogs.add(rfServoName);
-//        inputlogs.add("getPosition()");
-//        inputlogs.add("Getting Position: " + rfServo.getPosition());
-//        logger.log("/RobotLogs/GeneralRobot", inputlogs);
-//        logger.log("RFServoLog", "Current Position:" + rfServo.getPosition());
         return rfServo.getPosition();
     }
 
+    /* Returns last time the servo was flipped */
+
     public double getLastTime() {
-        return lasttime;
+        return lastTime;
     }
-    public void setLastTime(double lastTime){
-        lasttime = lastTime;
+
+    /* Manual update of last time servo was flipped */
+
+    public void setLastTime(double p_lastTime){
+        lastTime = p_lastTime;
     }
+
+    /* Overridden functions from implemented Servo class */
 
     @Override
     public void scaleRange(double min, double max) {

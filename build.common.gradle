@@ -21,7 +21,7 @@ apply plugin: 'com.android.application'
 
 android {
 
-    compileSdkVersion 31
+    compileSdkVersion 33
 
     signingConfigs {
         release {
@@ -100,7 +100,6 @@ android {
         debug {
             debuggable true
             jniDebuggable true
-            renderscriptDebuggable true
             ndk {
                 abiFilters "armeabi-v7a", "arm32-v8a"
             }
@@ -123,9 +122,5 @@ android {
 }
 
 repositories {
-    flatDir {
-        dirs rootProject.file('libs')
-//        maven { url = "https://maven.0x778.tk" }
-    }
 }
 

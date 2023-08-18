@@ -4,97 +4,106 @@ import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.op;
 import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.logger;
 
 import com.qualcomm.robotcore.hardware.CRServo;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.ServoController;
-
+// NOT TESTED YET - 7/28/2023, PUSHING AFTER SOME MORE CLEANUP
 public class RFCRServo implements CRServo {
-    //all servo regular stuff
+    private CRServo crServo;
+    private String deviceName;
 
-    private CRServo RFCRServo;
-
-    Servo.Direction servodirection;
-    String devicename;
-
-    public RFCRServo (Servo.Direction direction, String deviceName) {
-        servodirection = direction;
-        devicename = deviceName;
-        RFCRServo = op.hardwareMap.get(CRServo.class, deviceName);
+    /**crservo with specified direction
+     *
+     * @param c_direction
+     * @param p_deviceName
+     */
+    public RFCRServo (String p_deviceName, DcMotorSimple.Direction c_direction) {
+        deviceName = p_deviceName;
+        crServo = op.hardwareMap.get(CRServo.class, p_deviceName);
+        crServo.setDirection(c_direction);
     }
 
-    public RFCRServo (String deviceName) {
-        devicename = deviceName;
-        RFCRServo = op.hardwareMap.get(CRServo.class, deviceName);
+    /**crservo using default direction
+     *
+     * @param p_deviceName
+     */
+    public RFCRServo (String p_deviceName) {
+        deviceName = p_deviceName;
+        crServo = op.hardwareMap.get(CRServo.class, p_deviceName);
     }
 
+    /**movement methods
+     *
+     */
     public void spinClockwise() {
-        RFCRServo.setPower(1.0);
+        crServo.setPower(1.0);
     }
 
     public void spinCounterClockwise() {
-        RFCRServo.setPower(-1.0);
+        crServo.setPower(-1.0);
     }
 
     public void stopSpinning() {
-        RFCRServo.setPower(0);
+        crServo.setPower(0);
     }
 
+    /**these methods override the methods in the crservo class, which rfcrservo implements, in order to compile
+     *
+     *
+     */
     @Override
     public ServoController getController() {
-        return null;
+        return crServo.getController();
     }
 
     @Override
     public int getPortNumber() {
-        return 0;
+        return crServo.getPortNumber();
     }
 
     @Override
-    public void setDirection(Direction direction) {
-
-    }
+    public void setDirection(Direction direction) {crServo.setDirection(direction);}
 
     @Override
     public Direction getDirection() {
-        return null;
+        return crServo.getDirection();
     }
 
     @Override
     public void setPower(double v) {
-        RFCRServo.setPower(v);
+        crServo.setPower(v);
     }
 
     @Override
     public double getPower() {
-        return 0;
+        return crServo.getPower();
     }
 
     @Override
     public Manufacturer getManufacturer() {
-        return null;
+        return crServo.getManufacturer();
     }
 
     @Override
     public String getDeviceName() {
-        return null;
+        return crServo.getDeviceName();
     }
 
     @Override
     public String getConnectionInfo() {
-        return null;
+        return crServo.getConnectionInfo();
     }
 
     @Override
     public int getVersion() {
-        return 0;
+        return crServo.getVersion();
     }
 
     @Override
-    public void resetDeviceConfigurationForOpMode() {
-
-    }
+    public void resetDeviceConfigurationForOpMode() {crServo.resetDeviceConfigurationForOpMode();}
 
     @Override
     public void close() {
-
+        crServo.close();
     }
 }
