@@ -1,13 +1,23 @@
+<<<<<<< HEAD:TeamCode/src/main/java/org/firstinspires/ftc/teamcode/Chloe/chloeDrive.java
 package org.firstinspires.ftc.teamcode.Chloe;
+=======
+package org.firstinspires.ftc.teamcode;
+>>>>>>> 4fe6f0f (im gay for catlin >:)):TeamCode/src/main/java/org/firstinspires/ftc/teamcode/Drive.java
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
+<<<<<<< HEAD:TeamCode/src/main/java/org/firstinspires/ftc/teamcode/Chloe/chloeDrive.java
 import com.qualcomm.robotcore.hardware.Servo;
 
 @TeleOp
 public class chloeDrive extends LinearOpMode{
+=======
+
+@TeleOp
+public class Drive extends LinearOpMode{
+>>>>>>> 4fe6f0f (im gay for catlin >:)):TeamCode/src/main/java/org/firstinspires/ftc/teamcode/Drive.java
     @Override
     public void runOpMode() throws InterruptedException {
         DcMotor fLeft  = hardwareMap.dcMotor.get("fLeft");
@@ -20,6 +30,10 @@ public class chloeDrive extends LinearOpMode{
         Servo servo2 = hardwareMap.servo.get("servo2");
 
 
+<<<<<<< HEAD:TeamCode/src/main/java/org/firstinspires/ftc/teamcode/Chloe/chloeDrive.java
+=======
+
+>>>>>>> 4fe6f0f (im gay for catlin >:)):TeamCode/src/main/java/org/firstinspires/ftc/teamcode/Drive.java
         fLeft.setDirection(DcMotorSimple.Direction.REVERSE);
         bLeft.setDirection(DcMotorSimple.Direction.FORWARD);
         fRight.setDirection(DcMotorSimple.Direction.REVERSE);
