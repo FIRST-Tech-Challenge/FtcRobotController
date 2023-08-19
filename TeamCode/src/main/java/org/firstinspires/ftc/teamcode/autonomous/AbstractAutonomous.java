@@ -18,7 +18,7 @@ public abstract class AbstractAutonomous extends LinearOpMode {
         timer.reset();
         robot.leftDrive.setPower(.75);
         robot.rightDrive.setPower(.75);
-        while (timer.seconds() > seconds) {
+        while (timer.seconds() < seconds) {
 
         }
         robot.leftDrive.setPower(0);
@@ -40,7 +40,7 @@ public abstract class AbstractAutonomous extends LinearOpMode {
     public void turnLeft(int seconds) {
         timer.reset();
         robot.rightDrive.setPower(.75);
-        while (timer.seconds() > seconds) {
+        while (timer.seconds() < seconds) {
 
         }
         robot.rightDrive.setPower(0);
@@ -53,7 +53,7 @@ public abstract class AbstractAutonomous extends LinearOpMode {
     public void turnRight(int seconds) {
         timer.reset();
         robot.leftDrive.setPower(.75);
-        while (timer.seconds() > seconds) {
+        while (timer.seconds() < seconds) {
 
         }
         robot.leftDrive.setPower(0);
