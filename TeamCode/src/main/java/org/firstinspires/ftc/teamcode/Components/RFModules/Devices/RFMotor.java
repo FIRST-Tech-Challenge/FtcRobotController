@@ -34,10 +34,11 @@ public class RFMotor extends Motor {
     private ArrayList<Double> coefs = null;
     private ArrayList<Double> coefs2 = null;
     private ArrayList<String> inputlogs = new ArrayList<>();
-    public static double D = 0.00000, D2 = 0, kP = 0.009, kI, kD = 0.0001, kV = 0.0003, kA = 0.00004, kR = 0, kS = 0.15,
-            MAX_ACCELERATION = 6000, RESISTANCE = 400;
+    public static double D = 0.00000, D2 = 0, kP = 0.009, kI, kD = 0.00001, kV = 0.0003, kA = 0.00004, kR = 0, kS = 0.15,
+            MAX_ACCELERATION_UP = 6000, MAX_ACCELERATION_DOWN = 12000, RESISTANCE = 400;
     public static double gravity = 0.2;
-    private double MAX_VELOCITY = 1450 - 225 * (13.5 - BasicRobot.voltageSensor.getVoltage());
+    private double MAX_VELOCITY_UP = 1475 - 225 * (13.5 - BasicRobot.voltageSensor.getVoltage());
+    private double MAX_VELOCITY_DOWN = 3500;
     private double relativeDist, direction, peakVelo, J, decelDist;
     private double[][] calculatedIntervals = new double[4][8];
     private double[][][] calculatedMotions = new double[3][7][5];;
@@ -160,18 +161,17 @@ public class RFMotor extends Motor {
 
     public double getTargetPower() {
         double power = 0;
-        if (currentVelocity < MAX_VELOCITY) {
+        if (currentVelocity > getMaxVelocity()) {
             power = kV * currentVelocity + kA * currentAcceleration;
             //+ kP * (currentTargetPos - getCurrentPosition()) + kD * (currentTargetVelo - getVelocity()));
 
         }
 
-        if (currentVelocity > MAX_VELOCITY - 10) {
+        if (currentVelocity < getMaxVelocity() - 10) {
             power = kV * currentVelocity;
             //+ kP * (currentTargetPos - getCurrentPosition());
 
         }
-
         return power;
     }
 
@@ -370,6 +370,23 @@ public class RFMotor extends Motor {
         return peakVelo;
     }
 
+    public double getMaxVelocity() {
+        if (direction == 1) {
+            return MAX_VELOCITY_UP;
+        }
+        else {
+            return MAX_VELOCITY_DOWN;
+        }
+    }
+
+    public double getMaxAcceleration() {
+        if (direction == 1) {
+            return MAX_ACCELERATION_UP;
+        }
+        else {
+            return MAX_ACCELERATION_DOWN;
+        }
+    }
     public double getJ() {
         return J;
     }
@@ -401,20 +418,22 @@ public class RFMotor extends Motor {
         }
         else {
             velocities[0] = direction * rfMotor.getVelocity();
-            positions[0] = direction * currentTickPos;
+            positions[0] = direction * rfMotor.getCurrentPosition();
         }
 
         if (velocities[0] == 0) {
-            peakVelo = min((131 - 38 * curve)/131 * sqrt(MAX_ACCELERATION * abs(relativeDist)), MAX_VELOCITY);
+            peakVelo = min((131 - 38 * curve)/131 * sqrt(getMaxAcceleration() * abs(relativeDist)), getMaxVelocity());
         }
         else {
-            peakVelo = min((131 - 38 * curve)/131 * sqrt(MAX_ACCELERATION * (abs(relativeDist) -
-                    abs(velocities[0])/velocities[0] * pow(velocities[0], 2)/(2 * MAX_ACCELERATION))), MAX_VELOCITY);
+            peakVelo = min((131 - 38 * curve)/131 * sqrt(getMaxAcceleration() * (abs(relativeDist) -
+                    abs(velocities[0])/velocities[0] * pow(velocities[0], 2)/(2 * getMaxAcceleration()))), getMaxVelocity());
         }
+
+        J = getMaxAcceleration() / ((peakVelo / (getMaxAcceleration() * (1 - curve / 2))) * curve / 2);
 
         velocities[0] = min(velocities[0], peakVelo);
 
-        J = MAX_ACCELERATION / ((peakVelo / (MAX_ACCELERATION * (1 - curve / 2))) * curve / 2);
+
 
         calculateIntervals();
         calculateMotions();
@@ -431,7 +450,7 @@ public class RFMotor extends Motor {
         }
         else {
             velocities[0] = rfMotor.getVelocity();
-            positions[0] = currentTickPos;
+            positions[0] = rfMotor.getCurrentPosition();
         }
 
         targets[0] = getTargetVelocity(BasicRobot.time);
@@ -453,29 +472,29 @@ public class RFMotor extends Motor {
 
         temp_timeIntervals[0] = BasicRobot.time;
         temp_timeIntervals[2] = max(sqrt((peakVelo - velocities[0]) / J), (max(0, (peakVelo - velocities[0])
-                / MAX_ACCELERATION)));
-        temp_timeIntervals[1] = min(temp_timeIntervals[2], MAX_ACCELERATION / J);
+                / getMaxAcceleration())));
+        temp_timeIntervals[1] = min(temp_timeIntervals[2], getMaxAcceleration() / J);
         temp_timeIntervals[3] = temp_timeIntervals[1] + temp_timeIntervals[2];
 
         cruiseAccelTime = temp_timeIntervals[2] - temp_timeIntervals[1];
 
         temp_velocities[0] = velocities[0];
         temp_velocities[1] = temp_velocities[0] + J * pow(temp_timeIntervals[1], 2) / 2;
-        temp_velocities[2] = temp_velocities[1] + MAX_ACCELERATION * cruiseAccelTime;
+        temp_velocities[2] = temp_velocities[1] + getMaxAcceleration() * cruiseAccelTime;
         temp_velocities[3] = peakVelo;
         temp_velocities[4] = peakVelo;
-        temp_velocities[5] = temp_velocities[4] - J * pow(MAX_ACCELERATION / J, 2) / 2;
-        temp_velocities[6] = J * pow(MAX_ACCELERATION / J, 2) / 2;
+        temp_velocities[5] = temp_velocities[4] - J * pow(getMaxAcceleration() / J, 2) / 2;
+        temp_velocities[6] = J * pow(getMaxAcceleration() / J, 2) / 2;
         temp_velocities[7] = 0;
 
         temp_distances[0] = 0;
         temp_distances[1] = J * pow(temp_timeIntervals[1], 3) / 6 + temp_velocities[0] * temp_timeIntervals[1];
-        temp_distances[2] = temp_velocities[1] * cruiseAccelTime + MAX_ACCELERATION * pow(cruiseAccelTime, 2) / 2;
+        temp_distances[2] = temp_velocities[1] * cruiseAccelTime + getMaxAcceleration() * pow(cruiseAccelTime, 2) / 2;
         temp_distances[3] = temp_velocities[2] * temp_timeIntervals[1] + J * pow(temp_timeIntervals[1], 3) / 6;
-        temp_distances[5] = temp_velocities[4] * MAX_ACCELERATION / J - J * pow(MAX_ACCELERATION / J, 3) / 6;
-        temp_distances[6] = temp_velocities[5] * (peakVelo / MAX_ACCELERATION - MAX_ACCELERATION / J) -
-                MAX_ACCELERATION * pow(peakVelo / MAX_ACCELERATION - MAX_ACCELERATION / J, 2) / 2;
-        temp_distances[7] = J * pow(MAX_ACCELERATION / J, 3) / 6;
+        temp_distances[5] = temp_velocities[4] * getMaxAcceleration() / J - J * pow(getMaxAcceleration() / J, 3) / 6;
+        temp_distances[6] = temp_velocities[5] * (peakVelo / getMaxAcceleration() - getMaxAcceleration() / J) -
+                getMaxAcceleration() * pow(peakVelo / getMaxAcceleration() - getMaxAcceleration() / J, 2) / 2;
+        temp_distances[7] = J * pow(getMaxAcceleration() / J, 3) / 6;
 
         semiTotal = temp_distances[1] + temp_distances[2] + temp_distances[3] + temp_distances[5] +
                 temp_distances[6] + temp_distances[7];
@@ -483,9 +502,9 @@ public class RFMotor extends Motor {
         cruiseTime = (abs(relativeDist) - semiTotal) / peakVelo;
 
         temp_timeIntervals[4] = temp_timeIntervals[3] + cruiseTime;
-        temp_timeIntervals[5] = temp_timeIntervals[4] + MAX_ACCELERATION / J;
-        temp_timeIntervals[6] = temp_timeIntervals[4] + peakVelo / MAX_ACCELERATION;
-        temp_timeIntervals[7] = temp_timeIntervals[6] + MAX_ACCELERATION / J;
+        temp_timeIntervals[5] = temp_timeIntervals[4] + getMaxAcceleration() / J;
+        temp_timeIntervals[6] = temp_timeIntervals[4] + peakVelo / getMaxAcceleration();
+        temp_timeIntervals[7] = temp_timeIntervals[6] + getMaxAcceleration() / J;
 
         temp_distances[4] = temp_velocities[3] * cruiseTime;
 
@@ -531,7 +550,7 @@ public class RFMotor extends Motor {
         acceleration[4][1] = -J;
         acceleration[4][4] = calculatedIntervals[0][4];
 
-        acceleration[5][0] = -MAX_ACCELERATION;
+        acceleration[5][0] = -getMaxAcceleration();
 
         acceleration[6][1] = J;
         acceleration[6][4] = calculatedIntervals[0][7];
@@ -540,7 +559,7 @@ public class RFMotor extends Motor {
         velocity[0][2] = J / 2;
 
         velocity[1][0] = calculatedIntervals[2][1];
-        velocity[1][1] = MAX_ACCELERATION;
+        velocity[1][1] = getMaxAcceleration();
         velocity[1][4] = calculatedIntervals[0][1];
 
         velocity[2][0] = calculatedIntervals[2][2] + J / 2 * pow(calculatedIntervals[0][1], 2);
@@ -554,7 +573,7 @@ public class RFMotor extends Motor {
         velocity[4][4] = calculatedIntervals[0][4];
 
         velocity[5][0] = calculatedIntervals[2][5];
-        velocity[5][1] = -MAX_ACCELERATION;
+        velocity[5][1] = -getMaxAcceleration();
         velocity[5][4] = calculatedIntervals[0][5];
 
         velocity[6][2] = J / 2;
@@ -567,7 +586,7 @@ public class RFMotor extends Motor {
 
         position[1][0] = calculatedIntervals[3][1];
         position[1][1] = calculatedIntervals[2][1];
-        position[1][2] = MAX_ACCELERATION / 2;
+        position[1][2] = getMaxAcceleration() / 2;
         position[1][4] = calculatedIntervals[0][1];
 
         position[2][0] = calculatedIntervals[3][2];
@@ -586,7 +605,7 @@ public class RFMotor extends Motor {
 
         position[5][0] = calculatedIntervals[3][5];
         position[5][1] = calculatedIntervals[2][5];
-        position[5][2] = -MAX_ACCELERATION / 2;
+        position[5][2] = -getMaxAcceleration() / 2;
         position[5][4] = calculatedIntervals[0][5];
 
         position[6][0] = calculatedIntervals[3][7];
@@ -643,29 +662,29 @@ public class RFMotor extends Motor {
         double[] targets = {0, 0};
         double DECEL_DIST = getDecelDist(), distance = targetPos - position;
         double direction = abs(distance) / distance;
-        if (abs(distance) > DECEL_DIST && abs(velocity) < MAX_VELOCITY - RESISTANCE * direction - 0.1 * MAX_ACCELERATION) {
+        if (abs(distance) > DECEL_DIST && abs(velocity) < getMaxVelocity() - RESISTANCE * direction - 0.1 * getMaxAcceleration()) {
             if (distance > 0) {
-                targets[0] = velocity + .1 * MAX_ACCELERATION * (1 - 1 / (abs(distance - DECEL_DIST) / 100 + 1));
+                targets[0] = velocity + .1 * getMaxAcceleration() * (1 - 1 / (abs(distance - DECEL_DIST) / 100 + 1));
                 targets[1] = velocity - targets[0];
             } else {
-                targets[0] = velocity - 0.1 * MAX_ACCELERATION * (1 - 1 / (abs(distance - DECEL_DIST) / 100 + 1));
+                targets[0] = velocity - 0.1 * getMaxAcceleration() * (1 - 1 / (abs(distance - DECEL_DIST) / 100 + 1));
                 targets[1] = velocity - targets[0];
             }
         } else if (abs(distance) > DECEL_DIST && abs(distance) > 20) {
             if (distance > 0) {
-                targets[0] = MAX_VELOCITY - RESISTANCE * direction;
+                targets[0] = getMaxVelocity() - RESISTANCE * direction;
                 targets[1] = velocity - targets[0];
             } else {
-                targets[0] = -MAX_VELOCITY - RESISTANCE * direction;
+                targets[0] = -getMaxVelocity() - RESISTANCE * direction;
                 targets[1] = velocity - targets[0];
 
             }
         } else {
             if (distance < 0) {
-                targets[0] = min(-pow((abs(distance)) * (MAX_ACCELERATION - RESISTANCE * direction), 0.5), 0);
+                targets[0] = min(-pow((abs(distance)) * (getMaxAcceleration() - RESISTANCE * direction), 0.5), 0);
                 targets[1] = velocity - targets[0];
             } else {
-                targets[0] = max(pow((abs(distance)) * (MAX_ACCELERATION - RESISTANCE * direction), 0.5), 0);
+                targets[0] = max(pow((abs(distance)) * (getMaxAcceleration() - RESISTANCE * direction), 0.5), 0);
                 targets[1] = velocity - targets[0];
             }
         }
@@ -696,9 +715,9 @@ public class RFMotor extends Motor {
     public double getDecelDist() {
         double decelDist = 0;
         if (velocity > 0) {
-            decelDist = 0.7 * pow(abs(velocity), 2) / (MAX_ACCELERATION - avgResistance);
+            decelDist = 0.7 * pow(abs(velocity), 2) / (getMaxAcceleration() - avgResistance);
         } else {
-            decelDist = 0.7 * pow(abs(velocity), 2) / (MAX_ACCELERATION + avgResistance);
+            decelDist = 0.7 * pow(abs(velocity), 2) / (getMaxAcceleration() + avgResistance);
         }
         return decelDist;
     }

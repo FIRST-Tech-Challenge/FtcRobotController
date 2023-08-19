@@ -157,7 +157,7 @@ public class RFServo implements Servo {
     /* Overridden functions from implemented Servo class */
 
     @Override
-    public void scaleRange(double min, double max) {
+    public void scaleRange(double p_min, double p_max) {
     }
 
     @Override
@@ -170,8 +170,8 @@ public class RFServo implements Servo {
         return 0;
     }
 
-    public void setDirection (Servo.Direction direction) {
-        rfServo.setDirection(direction);
+    public void setDirection (Servo.Direction p_direction) {
+        rfServo.setDirection(p_direction);
     }
 
     @Override
