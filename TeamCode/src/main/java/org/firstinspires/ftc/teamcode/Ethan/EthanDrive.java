@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode;
+package org.firstinspires.ftc.teamcode.Ethan;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
@@ -7,8 +7,7 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 
 @TeleOp
-public class EthanDrivetrain extends LinearOpMode {
-
+public class EthanDrive extends LinearOpMode {
 
 
 
@@ -28,9 +27,6 @@ public class EthanDrivetrain extends LinearOpMode {
         waitForStart();
 
 
-
-        lServo.setDirection(Servo.Direction.REVERSE);
-
         rBack.setDirection(DcMotorSimple.Direction.FORWARD);
         lBack.setDirection(DcMotorSimple.Direction.REVERSE);
         rFront.setDirection(DcMotorSimple.Direction.FORWARD);
@@ -39,7 +35,14 @@ public class EthanDrivetrain extends LinearOpMode {
 
         while (opModeIsActive()) {
 
-
+            if (gamepad1.left_bumper) {
+                lServo.setPosition(0);
+                rServo.setPosition(1);
+            }
+            if (gamepad1.right_bumper) {
+                lServo.setPosition(1);
+                rServo.setPosition(0);
+            }
 
             //forward & backward
             double forwardBackward = gamepad1.left_stick_y * -0.25;
@@ -60,6 +63,7 @@ public class EthanDrivetrain extends LinearOpMode {
 
             //arm up and down
             double armPower = gamepad1.right_stick_y * -0.25;
+
             //Everything
             lFront.setPower(forwardBackward + turning + mecanuming);
             rFront.setPower(forwardBackward - turning - mecanuming);
@@ -67,18 +71,44 @@ public class EthanDrivetrain extends LinearOpMode {
             rBack.setPower(forwardBackward - turning + mecanuming);
             arm.setPower(armPower);
 
-            if (gamepad1.left_bumper) {
-                lServo.setPosition(1);
-                rServo.setPosition(1);
-            }
-            if (gamepad1.right_bumper) {
-                lServo.setPosition(0);
-                rServo.setPosition(0);
+            double fLeftPower = forwardBackward + turning + mecanuming;
+            double fRightPower = forwardBackward - turning - mecanuming;
+            double bLeftPower = forwardBackward + turning - mecanuming;
+            double bRightPower = forwardBackward - turning + mecanuming;
+            
+            double maxPower = maxAbsValueDouble(fLeftPower, fRightPower, bLeftPower, bRightPower);
+
+            if (Math.abs(maxPower) > 1) {
+
+                double scale = Math.abs(maxPower);
+
+                fLeftPower /= scale;
+                fRightPower /= scale;
+                bLeftPower /= scale;
+                bRightPower /= scale;
             }
 
-
+            lFront.setPower(fLeftPower);
+            rFront.setPower(fRightPower);
+            lBack.setPower(bLeftPower);
+            rBack.setPower(bRightPower);
 
         }
     }
+
+    private double maxAbsValueDouble(double a, double... others) {
+
+        double max = a;
+
+        for (double next : others) {
+            if (Math.abs(next) > Math.abs(a)) {
+                max = next;
+            }
+
+        }
+
+        return max;
+    }
+
 }
-//aanyaIsAwesome:DDDDwdfqweheheheheheheheheeljwfn;owrng;oqrngqoign;qreg
+
