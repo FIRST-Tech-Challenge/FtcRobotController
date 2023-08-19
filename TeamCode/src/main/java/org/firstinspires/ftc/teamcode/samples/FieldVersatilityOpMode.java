@@ -3,14 +3,14 @@ package org.firstinspires.ftc.teamcode.samples;
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
-import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 /*
  * Demonstration of the dashboard's versatile field overlay display capabilities.
  */
 @Config
-@Autonomous
+@TeleOp
 public class FieldVersatilityOpMode extends LinearOpMode {
     public static double AMPLITUDE = 1;
     public static double PHASE = 90;
@@ -31,6 +31,9 @@ public class FieldVersatilityOpMode extends LinearOpMode {
     public static double ALTIMGH = 144; //try 48
     public static double SCALEX = 1.0;
     public static double SCALEY = 1.0;
+
+    public static double LOGOX = 24, LOGOY = 24, LOGOW = 48, LOGOH = 48, LOGO_PIVOTX = 24, LOGO_PIVOTY = 24, LOGO_THETA_DEGREES = 15;
+    public static boolean LOGO_USE_PAGE_FRAME = false;
     public static int GRID_LINESX = 13; //includes field edges
     public static int GRID_LINESY = 13;
     public static double GRIDX = -24;
@@ -117,7 +120,7 @@ public class FieldVersatilityOpMode extends LinearOpMode {
                     //.drawGrid(GRIDX, GRIDY, GRIDW, GRIDH, GRID_LINESX, GRID_LINESY, angleAnim, GRID_PIVOTX, GRID_PIVOTY, GRID_USE_PAGE_FRAME)
 
                     //you can draw multiple images and can rotate them around a specified anchor/pivot point and draw them in the current transform instead of the page frame
-                    .drawImage("/dash/ftc.jpg", 24, 24, 48, 48, 0, 0, 0, false)
+                    .drawImage("/dash/ftc.jpg", LOGOX, LOGOY, LOGOW, LOGOH, Math.toRadians(LOGO_THETA_DEGREES), LOGO_PIVOTX, LOGO_PIVOTY, LOGO_USE_PAGE_FRAME)
 
                     //demonstrate an alternate transform to move the origin and orientation
                     //default origin for dashboard is in the center of the field with X axis pointing up
