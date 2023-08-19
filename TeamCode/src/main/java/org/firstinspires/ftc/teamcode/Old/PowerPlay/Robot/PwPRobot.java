@@ -74,7 +74,7 @@ public class PwPRobot extends BasicRobot {
     double voltage, startTime;
     boolean manualSlides = false;
     double thisTime = 0, lastTime = 0, loopTime = 0, lastDistTime = 0;
-    boolean distBroke = false, tooHot = false, lowBattery = false;
+    boolean distBroke = false, tooHot = false, lowBattery = false, started = false;
 
 
     public PwPRobot(LinearOpMode opMode, boolean p_isTeleop) {
@@ -106,18 +106,18 @@ public class PwPRobot extends BasicRobot {
         flipper = new flippas();
         finished = true;
         distBroke = false;
-        if (isTeleop) {
-            roadrun.setPoseEstimate(PoseStorage.currentPose);
-            kA *= 0.25;
-        }
+//        if (isTeleop) {
+//            roadrun.setPoseEstimate(PoseStorage.currentPose);
+//            kA *= 0.25;
+//        }
         voltageSensor = op.hardwareMap.voltageSensor.iterator().next();
         voltage = voltageSensor.getVoltage();
         RFMotor.kP *= 13 / voltageSensor.getVoltage();
         RESISTANCE *= 13 / voltageSensor.getVoltage();
         RFMotor.kA *= 13 / voltageSensor.getVoltage();
 //        DriveConstants.TRACK_WIDTH *= 12.7 / voltageSensor.getVoltage();
-        DriveConstants.MAX_ACCEL*=13/voltageSensor.getVoltage();
-        DriveConstants.MAX_VEL*=13/voltageSensor.getVoltage();
+        DriveConstants.MAX_ACCEL *= 13 / voltageSensor.getVoltage();
+        DriveConstants.MAX_VEL *= 13 / voltageSensor.getVoltage();
 //        kV *= 12.8 / voltageSensor.getVoltage();
 //        if(voltage > 12.9){
 //            kA *= pow(12.0/voltage,1.2);
@@ -135,7 +135,7 @@ public class PwPRobot extends BasicRobot {
     public void stop() {
         logger.logPos(roadrun.getPoseEstimate());
         roadrun.breakFollowing();
-        roadrun.setMotorPowers(0,0,0,0);
+        roadrun.setMotorPowers(0, 0, 0, 0);
 //        cv.stopCamera();
         logger.log("/RobotLogs/GeneralRobot", "program stoped");
     }
@@ -363,7 +363,7 @@ public class PwPRobot extends BasicRobot {
 
     public boolean[] checkIsOb(boolean l, boolean r, Pose2d endPose) {
         boolean[] vals = {l, r};
-        if (queuer.queue(true, queuer.isStarted() && (!roadrun.isBusy() || l || r || clawSwitch.isSwitched() || CLAW_CLOSING.getStatus()||!claw.isClawWide()))) {
+        if (queuer.queue(true, queuer.isStarted() && (!roadrun.isBusy() || l || r || clawSwitch.isSwitched() || CLAW_CLOSING.getStatus() || !claw.isClawWide()))) {
             if (!distBroke) {
                 if (isObL(endPose) && !l && !r) {
                     vals[0] = true;
@@ -618,7 +618,7 @@ public class PwPRobot extends BasicRobot {
     }
 
     public void wideClaw(boolean asyn) {
-        if (queuer.queue(asyn, !CLAW_WIDING.getStatus()&&claw.isClawWide())) {
+        if (queuer.queue(asyn, !CLAW_WIDING.getStatus() && claw.isClawWide())) {
             claw.wideClaw();
         }
     }
@@ -883,7 +883,7 @@ public class PwPRobot extends BasicRobot {
 
     public void setPoseEstimate(Pose2d newPose) {
         roadrun.setPoseEstimate(newPose);
-        PoseStorage.currentPose = newPose;
+//        PoseStorage.currentPose = newPose;
     }
 
     public void iterateConestackUp() {
@@ -1035,14 +1035,17 @@ public class PwPRobot extends BasicRobot {
         if (op.gamepad2.y) {
             lift.setLiftTarget(LIFT_HIGH_JUNCTION.getValue());
             liftArm.raiseLiftArmToOuttake();
+            started = true;
         }
         if (op.gamepad2.b) {
             lift.setLiftTarget(LIFT_MED_JUNCTION.getValue());
             liftArm.raiseLiftArmToOuttake();
+            started = true;
         }
         if (op.gamepad2.a) {
             liftArm.lowerLiftArmToIntake();
-            lift.setLiftTarget(-20);
+            lift.setLiftTarget(0);
+            started = true;
         }
 
         if (op.gamepad2.dpad_left) {
@@ -1060,11 +1063,13 @@ public class PwPRobot extends BasicRobot {
                 lift.setLiftPower((op.gamepad2.right_trigger - op.gamepad2.left_trigger));
                 lift.updateLastManualTime();
             }
-        } else if (!manualSlides) {
+        } else if (!manualSlides && started) {
 //            lift.setLiftPower(0);
             lift.liftToTarget();
         } else {
-            lift.setLiftRawPower(0);
+            if (started) {
+                lift.setLiftRawPower(0);
+            }
         }
         flipper.update();
 
@@ -1200,7 +1205,7 @@ public class PwPRobot extends BasicRobot {
             }
         }
 //        claw.closeClaw();
-        if (!prezzed && CLAW_CLOSED.getStatus()&& ARM_INTAKE.getStatus()) {
+        if (!prezzed && CLAW_CLOSED.getStatus() && ARM_INTAKE.getStatus()) {
             claw.wideClaw();
         }
         if (time - claw.getLastTime() > 1 && time - claw.getLastTime() < 1.3 && CLAW_CLOSED.getStatus() && lift.getStackPos() == lift.getLiftTarget()) {
@@ -1214,8 +1219,7 @@ public class PwPRobot extends BasicRobot {
         }
         if (time > 90 && time < 92) {
             rainbowRainbow();
-        }
-        else if(CLAW_CLOSED.getStatus()){
+        } else if (CLAW_CLOSED.getStatus()) {
             heartbeatRed();/*else if ((!CLAW_CLOSED.getStatus() && !ARM_OUTTAKE.getStatus()) && false*/
         }/*field.lookingAtCone()*//*) {
             leds.pattern29();
@@ -1231,10 +1235,10 @@ public class PwPRobot extends BasicRobot {
             setStackLevelColor(lift.getStackLevel());
         } else if (CLAW_OPEN.getStatus() || CLAW_WIDE.getStatus()) {
             if (distBroke) {
-partycolorwave();
-            } else{
+                partycolorwave();
+            } else {
                 darkGreen();
-        }
+            }
         } else {
 
         }
