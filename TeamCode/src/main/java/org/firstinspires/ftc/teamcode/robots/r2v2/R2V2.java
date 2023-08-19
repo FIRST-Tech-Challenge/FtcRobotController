@@ -67,15 +67,15 @@ public class R2V2 extends OpMode {
             steering.setPower(1);
             //add a fraction of the max steering tps depending on gamepad input
             //check if current gamepad input will send steering wheel out of maxLeft or maxRight
-            if (
-                    (steering.getCurrentPosition() + (gamepad1.right_stick_x * maxSteeringTicksPerSecond) > maxRightSteeringTicks)
-                ||  (steering.getCurrentPosition() + (gamepad1.right_stick_x * maxSteeringTicksPerSecond) < maxLeftSteeringTicks)
-            ) {
-                steering.setTargetPosition((int) (steering.getCurrentPosition() + (gamepad1.right_stick_x * maxSteeringTicksPerSecond)));
-            }
-            else {
-                steering.setTargetPosition(steering.getCurrentPosition());
-            }
+//            if (
+//                    (steering.getCurrentPosition() + (gamepad1.right_stick_x * maxSteeringTicksPerSecond) > maxRightSteeringTicks)
+//                ||  (steering.getCurrentPosition() + (gamepad1.right_stick_x * maxSteeringTicksPerSecond) < maxLeftSteeringTicks)
+//            ) {
+                steering.setTargetPosition((int) (steering.getCurrentPosition() + (-gamepad1.right_stick_x * maxSteeringTicksPerSecond)));
+//            }
+//            else {
+//                steering.setTargetPosition(steering.getCurrentPosition());
+//            }
 
             //if deadman's switch (on second gamepad) is intentionally depressed, allow acceleration and apply counterBrake
             if (gamepad2.left_trigger > .5) {
