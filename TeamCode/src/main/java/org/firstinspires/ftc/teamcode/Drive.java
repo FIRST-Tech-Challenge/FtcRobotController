@@ -1,15 +1,13 @@
 package org.firstinspires.ftc.teamcode;
-//hey hey hey
+
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
-//this is le's line
-
 @TeleOp
 public class Drive extends LinearOpMode{
-    @Override //magic????
+    @Override
     public void runOpMode() throws InterruptedException {
         DcMotor fLeft  = hardwareMap.dcMotor.get("fLeft");
         DcMotor bLeft = hardwareMap.dcMotor.get("bLeft"); //yaya kaitlyn was here :)
@@ -21,7 +19,7 @@ public class Drive extends LinearOpMode{
         // chloe's territory
         // Servo servo2 = hardwareMap.servo.get("servo2");
 
-        // this is Hung's line
+
         fLeft.setDirection(DcMotorSimple.Direction.REVERSE);
         bLeft.setDirection(DcMotorSimple.Direction.FORWARD);
         fRight.setDirection(DcMotorSimple.Direction.REVERSE);
