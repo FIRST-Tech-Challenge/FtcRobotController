@@ -64,11 +64,7 @@ public class EthanDrive extends LinearOpMode {
             //arm up and down
             double armPower = gamepad1.right_stick_y * -0.25;
 
-            //Everything
-            lFront.setPower(forwardBackward + turning + mecanuming);
-            rFront.setPower(forwardBackward - turning - mecanuming);
-            lBack.setPower(forwardBackward + turning - mecanuming);
-            rBack.setPower(forwardBackward - turning + mecanuming);
+            //Arm Power
             arm.setPower(armPower);
 
             double fLeftPower = forwardBackward + turning + mecanuming;
@@ -80,12 +76,11 @@ public class EthanDrive extends LinearOpMode {
 
             if (Math.abs(maxPower) > 1) {
 
-                double scale = Math.abs(maxPower);
 
-                fLeftPower /= scale;
-                fRightPower /= scale;
-                bLeftPower /= scale;
-                bRightPower /= scale;
+                fLeftPower /= Math.abs(maxPower);
+                fRightPower /= Math.abs(maxPower);
+                bLeftPower /= Math.abs(maxPower);
+                bRightPower /= Math.abs(maxPower);
             }
 
             lFront.setPower(fLeftPower);
@@ -101,7 +96,7 @@ public class EthanDrive extends LinearOpMode {
         double max = a;
 
         for (double next : others) {
-            if (Math.abs(next) > Math.abs(a)) {
+            if (Math.abs(next) > Math.abs(max)) {
                 max = next;
             }
 
