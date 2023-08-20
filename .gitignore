@@ -9,8 +9,9 @@
 # Files for the ART/Dalvik VM
 *.dex
 
-# Java class files
+# Java/JDK files
 *.class
+*.hprof
 
 # Generated files
 bin/
@@ -40,17 +41,10 @@ captures/
 
 # IntelliJ
 *.iml
-.idea/workspace.xml
-.idea/tasks.xml
-.idea/gradle.xml
-.idea/assetWizardSettings.xml
-.idea/dictionaries
-.idea/libraries
-# Android Studio 3 in .gitignore file.
-.idea/caches
-.idea/modules.xml
-# Comment next line if keeping position of elements in Navigation Editor is relevant for you
-.idea/navEditor.xml
+.idea/
+
+# For Mac users
+.DS_Store
 
 # Keystore files
 # Uncomment the following lines if you do not want to check your keystore files in.

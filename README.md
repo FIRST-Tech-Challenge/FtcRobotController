@@ -9,6 +9,11 @@ This repository contains the public FTC SDK for the POWERPLAY (2022-2023) compet
 ## Welcome!
 This GitHub repository contains the source code that is used to build an Android app to control a *FIRST* Tech Challenge competition robot.  To use this SDK, download/clone the entire project to your local computer.
 
+## Requirements
+To use this Android Studio project, you will need Android Studio 2021.2 (codename Chipmunk) or later.
+
+To program your robot in Blocks or OnBot Java, you do not need Android Studio.
+
 ## Getting Started
 If you are new to robotics or new to the *FIRST* Tech Challenge, then you should consider reviewing the [FTC Blocks Tutorial](https://ftc-docs.firstinspires.org/programming_resources/blocks/Blocks-Tutorial.html) to get familiar with how to use the control system:
 
@@ -58,12 +63,69 @@ The readme.md file located in the [/TeamCode/src/main/java/org/firstinspires/ftc
 
 # Release Information
 
+## Version 8.2 (20230707-131020)
+
+### Breaking changes
+* Non-linear (iterative) Op Modes are no longer allowed to manipulate actuators in their `stop()` method. Attempts to do so will be ignored and logged.
+  * When an Op Mode attempts to illegally manipulate an actuator, the Robot Controller will print a log message
+    including the text `CANCELLED_FOR_SAFETY`.
+  * Additionally, LinearOpModes are no longer able to regain the ability to manipulate actuators by removing their
+    thread's interrupt or using another thread.
+* Removes support for Android version 6.0 (Marshmallow). The minSdkVersion is now 24.
+* Increases the Robocol version.
+  * This means an 8.2 or later Robot Controller or Driver Station will not be able to communicate with an 8.1 or earlier Driver Station or Robot Controller.
+  * If you forget to update both apps at the same time, an error message will be shown explaining which app is older and should be updated.
+* FTC_FieldCoordinateSystemDefinition.pdf has been moved.  It is still in the git history, but has been removed from the git snapshot corresponding with the 8.2 tag.  The official version now lives at [Field Coordinate System](https://ftc-docs.firstinspires.org/field-coordinate-system).
+* `LynxUsbDevice.addConfiguredModule()` and `LynxUsbDevice.getConfiguredModule()` have been replaced with `LynxUsbDevice.getOrAddModule()`.
+
+### New features
+* Adds new `VisionPortal` API for computer vision
+    * **This API may be subject to change for final kickoff release!**
+    * Several new samples added.
+    * Adds support for detecting AprilTags.
+    * `VisionPortal` is the new entry point for both AprilTag and TFOD processing.
+    * Vuforia will be removed in a future release.
+    * Updated TensorFlow dependencies.
+    * Added support for webcam camera controls to blocks.
+    * Previous blocks for Vuforia and TensorFlow Object Detection are obsolete.
+* Related documentation for associated technologies can be found at
+    * [AprilTag Introduction](https://ftc-docs.firstinspires.org/apriltag-intro)
+    * [AprilTag SDK Guide](https://ftc-docs.firstinspires.org/apriltag-sdk)
+    * [AprilTag Detection Values](https://ftc-docs.firstinspires.org/apriltag-detection-values)
+    * [AprilTag Test Images](https://ftc-docs.firstinspires.org/apriltag-test-images)
+    * [Camera Calibration](https://ftc-docs.firstinspires.org/camera-calibration)
+* Adds Driver Station support for Logitech Dual Action and Sony PS5 DualSense gamepads.
+    * This **does not** include support for the Sony PS5 DualSense Edge gamepad.
+    * Always refer to Game Manual 1 to determine gamepad legality in competition.
+* Adds support for MJPEG payload streaming to UVC driver (external JPEG decompression routine required for use).
+* Shows a hint on the Driver Station UI about how to bind a gamepad when buttons are pressed or the sticks are moved on an unbound gamepad.
+* Adds option for fullscreening "Camera Stream" on Driver Station.
+* OnBotJava source code is automatically saved as a ZIP file on every build with a rolling window of the last 30 builds kept; allows recovering source code from previous builds if code is accidentally deleted or corrupted.
+* Adds support for changing the addresses of Expansion Hubs that are not connected directly via USB.
+  * The Expansion Hub Address Change screen now has an Apply button that changes the addresses without leaving the screen.
+  * Addresses that are assigned to other hubs connected to the same USB connection or Control Hub are no longer able to be selected.
+* Increases maximum size of Blocks inline comments to 100 characters
+* Saves position of open Blocks comment balloons
+* Adds new AprilTag Driving samples:  RobotDriveToAprilTagTank & RobotDriveToAprilTagOmni
+* Adds Sample to illustrate optimizing camera exposure for AprilTags: ConceptAprilTagOptimizeExposure
+
+### Bug Fixes
+* Corrects inspection screen to report app version using the SDK version defined in the libraries instead of the version specified in `AndroidManifest.xml`. This corrects the case where the app could show matching versions numbers to the user but still state that the versions did not match.
+  * If the version specified in `AndroidManifest.xml` does not match the SDK version, an SDK version entry will be displayed on the Manage webpage.
+* Fixes no error being displayed when saving a configuration file with duplicate names from the Driver Station.
+* Fixes a deadlock in the UVC driver which manifested in https://github.com/OpenFTC/EasyOpenCV/issues/57.
+* Fixes a deadlock in the UVC driver that could occur when hot-plugging cameras.
+* Fixes UVC driver compatibility with Arducam OV9281 global shutter camera.
+* Fixes Emergency Stop condition when an OnBotJava build with duplicate Op Mode names occurs.
+* Fixes known causes of "Attempted use of a closed LynxModule instance" logspam.
+* Fixes the visual identification LED pattern when configuring Expansion Hubs connected via RS-485.
+
 ## Version 8.1.1 (20221201-150726)
 
 This is a bug fix only release to address the following four issues.
 
-* [Issue #495](https://github.com/FIRST-Tech-Challenge/FtcRobotController/issues/495) - Can't create new blocks opmodes.
-* [Issue #492](https://github.com/FIRST-Tech-Challenge/FtcRobotController/issues/492) - Remove the final modifier from the OpMode's Telemetry object.
+* [Issue #492](https://github.com/FIRST-Tech-Challenge/FtcRobotController/issues/492) - Can't create new blocks opmodes.
+* [Issue #495](https://github.com/FIRST-Tech-Challenge/FtcRobotController/issues/495) - Remove the final modifier from the OpMode's Telemetry object.
 * [Issue #500](https://github.com/FIRST-Tech-Challenge/FtcRobotController/issues/500) - Some devices cannot be configured when the Driver Station app has been updated to 8.1
   * Updating either the Robot Controller app or the Driver Station app to 8.1.1 or later will fix this issue.
 * The Modern Robotics touch sensor was configurable as a  Digital Device. It can only be used as an Analog Device.

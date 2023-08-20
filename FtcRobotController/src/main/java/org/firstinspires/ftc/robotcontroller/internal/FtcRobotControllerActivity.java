@@ -625,8 +625,8 @@ public class FtcRobotControllerActivity extends Activity
   }
 
   /**
-   * Updates the orientation of monitorContainer (which contains cameraMonitorView and
-   * tfodMonitorView) based on the given configuration. Makes the children split the space.
+   * Updates the orientation of monitorContainer (which contains cameraMonitorView)
+   * based on the given configuration. Makes the children split the space.
    */
   private void updateMonitorLayout(Configuration configuration) {
     LinearLayout monitorContainer = (LinearLayout) findViewById(R.id.monitorContainer);
