@@ -1,4 +1,4 @@
-# Built application files
+ # Built application files
 *.apk
 *.aar
 *.ap_
@@ -79,8 +79,4 @@ lint/generated/
 lint/outputs/
 lint/tmp/
 # lint/reports/
-.idea/misc.xml
-.idea/compiler.xml
-.idea/misc.xml
-.idea/misc.xml
-.idea/misc.xml
+
