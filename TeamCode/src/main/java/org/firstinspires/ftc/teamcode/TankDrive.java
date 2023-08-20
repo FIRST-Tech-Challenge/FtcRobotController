@@ -25,11 +25,16 @@ import com.acmerobotics.roadrunner.TimeTrajectory;
 import com.acmerobotics.roadrunner.TimeTurn;
 import com.acmerobotics.roadrunner.TrajectoryActionBuilder;
 import com.acmerobotics.roadrunner.TurnConstraints;
-import com.acmerobotics.roadrunner.Twist2d;
 import com.acmerobotics.roadrunner.Twist2dDual;
 import com.acmerobotics.roadrunner.Vector2d;
 import com.acmerobotics.roadrunner.Vector2dDual;
 import com.acmerobotics.roadrunner.VelConstraint;
+import com.acmerobotics.roadrunner.ftc.Encoder;
+import com.acmerobotics.roadrunner.ftc.FlightRecorder;
+import com.acmerobotics.roadrunner.ftc.LynxFirmware;
+import com.acmerobotics.roadrunner.ftc.OverflowEncoder;
+import com.acmerobotics.roadrunner.ftc.PositionVelocityPair;
+import com.acmerobotics.roadrunner.ftc.RawEncoder;
 import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -37,13 +42,6 @@ import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.IMU;
 import com.qualcomm.robotcore.hardware.VoltageSensor;
-
-import org.firstinspires.ftc.teamcode.util.LogFiles;
-import org.firstinspires.ftc.teamcode.util.Encoder;
-import org.firstinspires.ftc.teamcode.util.Localizer;
-import org.firstinspires.ftc.teamcode.util.LynxFirmwareVersion;
-import org.firstinspires.ftc.teamcode.util.OverflowEncoder;
-import org.firstinspires.ftc.teamcode.util.RawEncoder;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -78,6 +76,36 @@ public final class TankDrive {
     // turn controller gains
     public static double TURN_GAIN = 0.0;
     public static double TURN_VEL_GAIN = 0.0;
+
+    public static class Params {
+        // drive model parameters
+        public double inPerTick = 0;
+        public double trackWidthTicks = 0;
+
+        // feedforward parameters in tick units
+        public double kS = 0;
+        public double kV = 0;
+        public double kA = 0;
+
+        // path profile parameters
+        public double maxWheelVel = 50;
+        public double minProfileAccel = -30;
+        public double maxProfileAccel = 50;
+
+        // turn profile parameters
+        public double maxAngVel = Math.PI; // shared with path
+        public double maxAngAccel = Math.PI;
+
+        // path controller gains
+        public double ramseteZeta = 0.7; // in the range (0, 1)
+        public double ramseteBBar = 2.0; // positive
+
+        // turn controller gains
+        public double turnGain = 0.0;
+        public double turnVelGain = 0.0;
+    }
+
+    public static Params PARAMS = new Params();
 
     public final TankKinematics kinematics = new TankKinematics(IN_PER_TICK * TRACK_WIDTH_TICKS);
 
@@ -139,7 +167,7 @@ public final class TankDrive {
         public Twist2dDual<Time> update() {
             double meanLeftPos = 0.0, meanLeftVel = 0.0;
             for (Encoder e : leftEncs) {
-                Encoder.PositionVelocityPair p = e.getPositionAndVelocity();
+                PositionVelocityPair p = e.getPositionAndVelocity();
                 meanLeftPos += p.position;
                 meanLeftVel += p.velocity;
             }
@@ -148,7 +176,7 @@ public final class TankDrive {
 
             double meanRightPos = 0.0, meanRightVel = 0.0;
             for (Encoder e : rightEncs) {
-                Encoder.PositionVelocityPair p = e.getPositionAndVelocity();
+                PositionVelocityPair p = e.getPositionAndVelocity();
                 meanRightPos += p.position;
                 meanRightVel += p.velocity;
             }
@@ -176,8 +204,7 @@ public final class TankDrive {
     public TankDrive(HardwareMap hardwareMap, Pose2d pose) {
         this.pose = pose;
 
-        LynxFirmwareVersion.throwIfAnyModulesBelowVersion(hardwareMap,
-                new LynxFirmwareVersion(1, 8, 2));
+        LynxFirmware.throwIfModulesAreOutdated(hardwareMap);
 
         for (LynxModule module : hardwareMap.getAll(LynxModule.class)) {
             module.setBulkCachingMode(LynxModule.BulkCachingMode.AUTO);
@@ -202,6 +229,8 @@ public final class TankDrive {
         voltageSensor = hardwareMap.voltageSensor.iterator().next();
 
         localizer = new TankDrive.DriveLocalizer();
+
+        FlightRecorder.write("TANK_PARAMS", PARAMS);
     }
 
     public void setDrivePowers(PoseVelocity2d powers) {
@@ -290,7 +319,7 @@ public final class TankDrive {
             p.put("yError", error.position.y);
             p.put("headingError (deg)", Math.toDegrees(error.heading.log()));
 
-            LogFiles.recordTargetPose(txWorldTarget.value());
+            FlightRecorder.write("TARGET_POSE", new PoseMessage(txWorldTarget.value()));
 
             // only draw when active; only one drive action should be active at a time
             Canvas c = p.fieldOverlay();
@@ -368,7 +397,7 @@ public final class TankDrive {
                 m.setPower(feedforward.compute(wheelVels.right) / voltage);
             }
 
-            LogFiles.recordTargetPose(txWorldTarget.value());
+            FlightRecorder.write("TARGET_POSE", new PoseMessage(txWorldTarget.value()));
 
             Canvas c = p.fieldOverlay();
             drawPoseHistory(c);
@@ -401,7 +430,7 @@ public final class TankDrive {
             poseHistory.removeFirst();
         }
 
-        LogFiles.recordPose(pose);
+        FlightRecorder.write("ESTIMATED_POSE", new PoseMessage(pose));
 
         return twist.velocity().value();
     }

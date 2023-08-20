@@ -5,18 +5,22 @@ import com.acmerobotics.roadrunner.DualNum;
 import com.acmerobotics.roadrunner.Time;
 import com.acmerobotics.roadrunner.Twist2dDual;
 import com.acmerobotics.roadrunner.Vector2dDual;
+import com.acmerobotics.roadrunner.ftc.Encoder;
+import com.acmerobotics.roadrunner.ftc.FlightRecorder;
+import com.acmerobotics.roadrunner.ftc.PositionVelocityPair;
+import com.acmerobotics.roadrunner.ftc.RawEncoder;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
-import org.firstinspires.ftc.teamcode.util.Encoder;
-import org.firstinspires.ftc.teamcode.util.Localizer;
-import org.firstinspires.ftc.teamcode.util.RawEncoder;
-
 @Config
 public final class ThreeDeadWheelLocalizer implements Localizer {
-    public static double PAR0_Y_TICKS = 0.0;
-    public static double PAR1_Y_TICKS = 0.0;
-    public static double PERP_X_TICKS = 0.0;
+    public static class Params {
+        public double PAR0_Y_TICKS = 0.0;
+        public double PAR1_Y_TICKS = 0.0;
+        public double PERP_X_TICKS = 0.0;
+    }
+
+    public static Params PARAMS = new Params();
 
     public final Encoder par0, par1, perp;
 
@@ -34,12 +38,14 @@ public final class ThreeDeadWheelLocalizer implements Localizer {
         lastPerpPos = perp.getPositionAndVelocity().position;
 
         this.inPerTick = inPerTick;
+
+        FlightRecorder.write("THREE_DEAD_WHEEL_PARAMS", PARAMS);
     }
 
     public Twist2dDual<Time> update() {
-        Encoder.PositionVelocityPair par0PosVel = par0.getPositionAndVelocity();
-        Encoder.PositionVelocityPair par1PosVel = par1.getPositionAndVelocity();
-        Encoder.PositionVelocityPair perpPosVel = perp.getPositionAndVelocity();
+        PositionVelocityPair par0PosVel = par0.getPositionAndVelocity();
+        PositionVelocityPair par1PosVel = par1.getPositionAndVelocity();
+        PositionVelocityPair perpPosVel = perp.getPositionAndVelocity();
 
         int par0PosDelta = par0PosVel.position - lastPar0Pos;
         int par1PosDelta = par1PosVel.position - lastPar1Pos;
@@ -48,17 +54,17 @@ public final class ThreeDeadWheelLocalizer implements Localizer {
         Twist2dDual<Time> twist = new Twist2dDual<>(
                 new Vector2dDual<>(
                         new DualNum<Time>(new double[] {
-                                (PAR0_Y_TICKS * par1PosDelta - PAR1_Y_TICKS * par0PosDelta) / (PAR0_Y_TICKS - PAR1_Y_TICKS),
-                                (PAR0_Y_TICKS * par1PosVel.velocity - PAR1_Y_TICKS * par0PosVel.velocity) / (PAR0_Y_TICKS - PAR1_Y_TICKS),
+                                (PARAMS.PAR0_Y_TICKS * par1PosDelta - PARAMS.PAR1_Y_TICKS * par0PosDelta) / (PARAMS.PAR0_Y_TICKS - PARAMS.PAR1_Y_TICKS),
+                                (PARAMS.PAR0_Y_TICKS * par1PosVel.velocity - PARAMS.PAR1_Y_TICKS * par0PosVel.velocity) / (PARAMS.PAR0_Y_TICKS - PARAMS.PAR1_Y_TICKS),
                         }).times(inPerTick),
                         new DualNum<Time>(new double[] {
-                                (PERP_X_TICKS / (PAR0_Y_TICKS - PAR1_Y_TICKS) * (par1PosDelta - par0PosDelta) + perpPosDelta),
-                                (PERP_X_TICKS / (PAR0_Y_TICKS - PAR1_Y_TICKS) * (par1PosVel.velocity - par0PosVel.velocity) + perpPosVel.velocity),
+                                (PARAMS.PERP_X_TICKS / (PARAMS.PAR0_Y_TICKS - PARAMS.PAR1_Y_TICKS) * (par1PosDelta - par0PosDelta) + perpPosDelta),
+                                (PARAMS.PERP_X_TICKS / (PARAMS.PAR0_Y_TICKS - PARAMS.PAR1_Y_TICKS) * (par1PosVel.velocity - par0PosVel.velocity) + perpPosVel.velocity),
                         }).times(inPerTick)
                 ),
                 new DualNum<>(new double[] {
-                        (par0PosDelta - par1PosDelta) / (PAR0_Y_TICKS - PAR1_Y_TICKS),
-                        (par0PosVel.velocity - par1PosVel.velocity) / (PAR0_Y_TICKS - PAR1_Y_TICKS),
+                        (par0PosDelta - par1PosDelta) / (PARAMS.PAR0_Y_TICKS - PARAMS.PAR1_Y_TICKS),
+                        (par0PosVel.velocity - par1PosVel.velocity) / (PARAMS.PAR0_Y_TICKS - PARAMS.PAR1_Y_TICKS),
                 })
         );
 

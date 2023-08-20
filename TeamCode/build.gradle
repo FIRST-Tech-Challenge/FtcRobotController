@@ -27,6 +27,7 @@ repositories {
     maven {
         url = 'https://maven.brott.dev/'
     }
+    mavenLocal()
 }
 
 dependencies {
@@ -38,4 +39,6 @@ dependencies {
     implementation 'com.acmerobotics.roadrunner:actions:1.0.0-beta2'
 
     implementation 'com.fasterxml.jackson.core:jackson-databind:2.12.7'
+
+    implementation "com.acmerobotics.roadrunner:ftc:0.1.0-SNAPSHOT"
 }
