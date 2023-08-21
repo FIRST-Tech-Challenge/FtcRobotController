@@ -8,7 +8,7 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 @TeleOp
 public class EncoderMethod extends LinearOpMode {
 
-    public void encoderMove(double targetDistance) throws InterruptedException {
+    public void AutoForward(double targetDistanceInMM) throws InterruptedException {
 
         DcMotor lFront = hardwareMap.dcMotor.get("Left front");
         DcMotor rFront = hardwareMap.dcMotor.get("Right front");
@@ -29,7 +29,7 @@ public class EncoderMethod extends LinearOpMode {
         lFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         lFront.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
-        double pValue = 0.001;
+        double P_VALUE = 0.006;
 
         //301 = circumferance mm
         //537.7, ticks per motor revolution
@@ -39,7 +39,7 @@ public class EncoderMethod extends LinearOpMode {
 
         waitForStart();
 
-        double targetPos = targetDistance * MM_TO_TICKS + lFront.getCurrentPosition();
+        double targetPos = targetDistanceInMM * MM_TO_TICKS + lFront.getCurrentPosition();
 
         /*lFront.setPower(0.1);
         lBack.setPower(0.1);
@@ -53,25 +53,32 @@ public class EncoderMethod extends LinearOpMode {
         rFront.setPower(0);
         rBack.setPower(0);*/
 
-        while (opModeIsActive()) {
+        while (lFront.getCurrentPosition() <= Math.abs(targetPos) && opModeIsActive()) {
 
             double error = targetPos - lFront.getCurrentPosition();
 
-            lFront.setPower(pValue*error);
-            lBack.setPower(pValue*error);
-            rFront.setPower(pValue*error);
-            rBack.setPower(pValue*error);
+            lFront.setPower(P_VALUE*error);
+            lBack.setPower(P_VALUE*error);
+            rFront.setPower(P_VALUE*error);
+            rBack.setPower(P_VALUE*error);
 
+            telemetry.addLine("moving");
+            telemetry.update();
         }
 
-
+        lFront.setPower(0);
+        lBack.setPower(0);
+        rFront.setPower(0);
+        rBack.setPower(0);
 
         telemetry.addLine(String.valueOf(lFront.getCurrentPosition()/MM_TO_TICKS));
         telemetry.update();
 
-        while (opModeIsActive()) {
+        double oldTick = 0;
+
+        while (true) {
             double newTick = lFront.getCurrentPosition();
-            double oldTick = 0;
+
 
             if (newTick == oldTick) {
                 break;
@@ -82,8 +89,70 @@ public class EncoderMethod extends LinearOpMode {
             Thread.sleep(5);
         }
 
+        telemetry.addLine("done");
+        telemetry.update();
+
     }
 
+    public void AutoTurning (double targetAngle) throws InterruptedException  {
+
+        DcMotor lFront = hardwareMap.dcMotor.get("Left front");
+        DcMotor lBack = hardwareMap.dcMotor.get("Left back");
+        DcMotor rFront = hardwareMap.dcMotor.get("Right front");
+        DcMotor rBack = hardwareMap.dcMotor.get("Right back");
+
+        lFront.setDirection(DcMotorSimple.Direction.REVERSE);
+        lBack.setDirection(DcMotorSimple.Direction.FORWARD);
+        rFront.setDirection(DcMotorSimple.Direction.FORWARD);
+        rBack.setDirection(DcMotorSimple.Direction.REVERSE);
+
+        lFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        lBack.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        rFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        rBack.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
+        lFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        lBack.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        rFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        rBack.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
+        lFront.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        lBack.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        rFront.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        rBack.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+
+
+        double angleInTicks = targetAngle*(850/90);
+        double P_VALUE_FOR_TURNING = 0.006;
+
+
+       while (opModeIsActive()) {
+           double angleError = angleInTicks-lFront.getCurrentPosition();
+
+           lFront.setPower(P_VALUE_FOR_TURNING*angleError);
+           lBack.setPower(P_VALUE_FOR_TURNING*angleError);
+           rFront.setPower(P_VALUE_FOR_TURNING*angleError);
+           rBack.setPower(P_VALUE_FOR_TURNING*angleError);
+       }
+
+
+
+        double oldTick = 0;
+
+        waitForStart();
+        while (opModeIsActive()) {
+            double newTick = lFront.getCurrentPosition();
+
+
+            if (newTick == oldTick) {
+                break;
+            }
+
+            oldTick = newTick;
+
+            Thread.sleep(5);
+        }
+    }
 
 
     @Override
@@ -91,7 +160,10 @@ public class EncoderMethod extends LinearOpMode {
 
         waitForStart();
 
-           encoderMove(600);
+        AutoTurning(90);
+
+        /*AutoForward(300);
+        AutoForward(-300);*/
 
     }
 }
