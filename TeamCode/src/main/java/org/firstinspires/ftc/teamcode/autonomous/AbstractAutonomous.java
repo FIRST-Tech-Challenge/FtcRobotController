@@ -4,7 +4,6 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.hardware.UpdatedClawbotHardware;
-import org.firstinspires.ftc.teamcode.hardware.UpdatedClawbotTeleop;
 
 public abstract class AbstractAutonomous extends LinearOpMode {
     public UpdatedClawbotHardware robot = new UpdatedClawbotHardware();
