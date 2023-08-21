@@ -23,15 +23,24 @@ public class EthanDrive extends LinearOpMode {
         Servo rServo = hardwareMap.servo.get("rServo");
 
 
-
-        waitForStart();
-
-
         rBack.setDirection(DcMotorSimple.Direction.FORWARD);
         lBack.setDirection(DcMotorSimple.Direction.REVERSE);
         rFront.setDirection(DcMotorSimple.Direction.FORWARD);
         lFront.setDirection(DcMotorSimple.Direction.REVERSE);
-        arm.setDirection(DcMotorSimple.Direction.REVERSE);
+        arm.setDirection(DcMotorSimple.Direction.FORWARD);
+
+        lFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        lBack.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        rFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        rBack.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
+        lFront.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        lBack.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        rFront.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        rBack.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+
+
+        waitForStart();
 
         while (opModeIsActive()) {
 
@@ -87,6 +96,14 @@ public class EthanDrive extends LinearOpMode {
             rFront.setPower(fRightPower);
             lBack.setPower(bLeftPower);
             rBack.setPower(bRightPower);
+
+            telemetry.addLine(String.valueOf(lFront.getCurrentPosition()));
+            telemetry.addLine(String.valueOf(lBack.getCurrentPosition()));
+            telemetry.addLine(String.valueOf(rFront.getCurrentPosition()));
+            telemetry.addLine(String.valueOf(rBack.getCurrentPosition()));
+
+            telemetry.update();
+
 
         }
     }
