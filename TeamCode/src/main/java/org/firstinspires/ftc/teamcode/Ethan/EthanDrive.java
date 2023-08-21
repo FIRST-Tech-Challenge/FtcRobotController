@@ -72,7 +72,6 @@ public class EthanDrive extends LinearOpMode {
 
             //arm up and down
             double armPower = gamepad1.right_stick_y * -0.25;
-
             //Arm Power
             arm.setPower(armPower);
 
@@ -112,6 +111,7 @@ public class EthanDrive extends LinearOpMode {
 
         double max = a;
 
+
         for (double next : others) {
             if (Math.abs(next) > Math.abs(max)) {
                 max = next;
@@ -123,4 +123,3 @@ public class EthanDrive extends LinearOpMode {
     }
 
 }
-
