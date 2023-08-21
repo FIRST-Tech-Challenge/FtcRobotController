@@ -87,14 +87,23 @@ public class HelloWorldWithMovementPriyanshu extends LinearOpMode {
                 liftMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             }
             //movement forward and backwards
-            if (gamepad1.right_stick_y>0.4){
+            if (gamepad1.left_stick_y>0.4){
                 rightMotor.setPower(1);
                 leftMotor.setPower(1);
             }
-            if (gamepad1.right_stick_y<-0.4){
+            if (gamepad1.left_stick_y<-0.4){
                 rightMotor.setPower(-0.6);
                 leftMotor.setPower(-0.6);
             }
+            if(gamepad1.left_stick_x>0.4){
+                rightMotor.setPower(1);
+                leftMotor.setPower(-1);
+            }
+            if(gamepad1.left_stick_x<-0.4){
+                rightMotor.setPower(-1);
+                leftMotor.setPower(1);
+            }
+
 
             telemetry.update();
             sleep(50);
