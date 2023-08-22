@@ -17,8 +17,8 @@ import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
 /**
  * This OpMode executes a Swerve Drive control TeleOp for a two wheel/pod differential swerve drive robot
  * The code is structured as an Iterative OpMode
- * In this mode, the Right joysticks controls the direction of motion
- * and the right bumper controls the forward speed.
+ * In this mode, the Right joysticks controls the direction of motion and speed, while the robot maintains orientation
+ * and the left joystick-x changes the orientation (rotation) of the robot
  */
 @TeleOp
 public class SwerveDrive extends OpMode{

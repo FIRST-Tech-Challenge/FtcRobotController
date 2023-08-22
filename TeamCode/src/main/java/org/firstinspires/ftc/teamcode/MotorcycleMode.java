@@ -15,12 +15,12 @@ import com.qualcomm.robotcore.util.RobotLog;
 @TeleOp
 public class MotorcycleMode extends OpMode{
     // Constants
-    static final double TICK_SPEED = 30.0; // tick linear speed multiplier, set to approx loop time in milliseconds
-    static final double TICK_TURN = 170.0; // 220 ticks approximately turns wheels 90 degrees
+    static final double TICK_SPEED = 10.0; // gamepad joystick tick increment (speed) multiplier for linear movement.
+    static final double TICK_TURN = 170.0; // gamepad joystick tick multiplier for rotation. 220 ticks approximately turns wheels 90 degrees
     static final double MAX_MTR_SPEED = 0.8;  // full speed  = 1.0. Backed off to prevent damage while developing
     static final double TICKS_PER_180_TURN = 433.5; // turn both motors this amount for 180 deg turn, was 458.62
 
-    static final double INITIAL_WHEEL_ANGLE = 0.0; // Wheel angle in radians
+    static final double INITIAL_WHEEL_ANGLE = 0.0; // Wheel initial angle, in radians
 
     /* Declare OpMode members. */
     double priorTime = 0.0; // for logging loop times
