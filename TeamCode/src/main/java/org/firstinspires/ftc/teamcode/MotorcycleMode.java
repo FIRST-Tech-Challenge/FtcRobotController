@@ -19,7 +19,6 @@ public class MotorcycleMode extends OpMode{
     static final double TICK_TURN = 170.0; // gamepad joystick tick multiplier for rotation. 220 ticks approximately turns wheels 90 degrees
     static final double MAX_MTR_SPEED = 0.8;  // full speed  = 1.0. Backed off to prevent damage while developing
     static final double TICKS_PER_180_TURN = 433.5; // turn both motors this amount for 180 deg turn, was 458.62
-
     static final double INITIAL_WHEEL_ANGLE = 0.0; // Wheel initial angle, in radians
 
     /* Declare OpMode members. */
@@ -36,14 +35,14 @@ public class MotorcycleMode extends OpMode{
 
     int targetPosition = 0; // motorcycle mode translation, in ticks
     double turnPod1 = 0; // used for both pod angles in translateMode
-    double turnPod2=0;
+    double turnPod2 = 0;
     // target positions for each motor, in ticks
     int targetPosA, targetPosB, targetPosC, targetPosD;
     //double speed; // the robot speed
+    int initTurnTicks1,initTurnTicks2;
 
     @Override
     public void init() {
-        int turnTicks,turnTicks2;
         double deltaAngle;
 
         // Define and Initialize Motors
@@ -63,14 +62,14 @@ public class MotorcycleMode extends OpMode{
         pots.getAngleFromPots(false,0); // find out where the wheel are pointed
 
         deltaAngle = pots.getShortestTurnAngle(pots.angle1,INITIAL_WHEEL_ANGLE);
-        turnTicks =  (int)((deltaAngle / Math.PI) * TICKS_PER_180_TURN);
-        targetPosA = turnTicks;
-        targetPosB = turnTicks;
+        initTurnTicks1 =  (int)((deltaAngle / Math.PI) * TICKS_PER_180_TURN);
+        targetPosA = initTurnTicks1;
+        targetPosB = initTurnTicks1;
 
         deltaAngle = pots.getShortestTurnAngle(pots.angle2,INITIAL_WHEEL_ANGLE);
-        turnTicks2 =  (int)((deltaAngle/ Math.PI) * TICKS_PER_180_TURN);
-        targetPosC = turnTicks2;
-        targetPosD = turnTicks2;
+        initTurnTicks2 =  (int)((deltaAngle/ Math.PI) * TICKS_PER_180_TURN);
+        targetPosC = initTurnTicks2;
+        targetPosD = initTurnTicks2;
 
         setRunToPos();
 
@@ -90,12 +89,16 @@ public class MotorcycleMode extends OpMode{
 
     @Override
     public void start() {
-        targetPosA=0;
-        targetPosB=0;
-        targetPosC=0;
-        targetPosD=0;
-        setRunToPos();
+        //targetPosA=0;
+        //targetPosB=0;
+        //targetPosC=0;
+        //targetPosD=0;
+        //setRunToPos();
     }
+
+    /**
+     * setRunToPos executes the sequence required for using RUN_TO_POSITION
+     */
     void setRunToPos() {
         motor1a.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         motor1b.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -120,10 +123,10 @@ public class MotorcycleMode extends OpMode{
     }
     void setMotorMotorcycleMode() {
         // used in motorcycle mode
-        targetPosA = targetPosition + (int)(turnPod1* TICK_TURN);
-        targetPosB = -targetPosition + (int)(turnPod1* TICK_TURN);
-        targetPosC = targetPosition + (int)(turnPod2* TICK_TURN);
-        targetPosD = -targetPosition + (int)(turnPod2* TICK_TURN);
+        targetPosA = initTurnTicks1 + targetPosition + (int)(turnPod1* TICK_TURN);
+        targetPosB = initTurnTicks1 - targetPosition + (int)(turnPod1* TICK_TURN);
+        targetPosC = initTurnTicks2 + targetPosition + (int)(turnPod2* TICK_TURN);
+        targetPosD = initTurnTicks2 - targetPosition + (int)(turnPod2* TICK_TURN);
         //
         setMotorPositions();
     }
@@ -135,11 +138,11 @@ public class MotorcycleMode extends OpMode{
     public void loop() {
         double gpLeftX, gpRightY;
         double loopTime;
-       double podAngle;
+        double podAngle;
 
         gpLeftX = gamepad1.left_stick_x;
         gpRightY = gamepad1.right_stick_y;
-        gpRightY = gpRightY*gpRightY*gpRightY;  // cube
+        gpRightY = gpRightY*gpRightY*gpRightY;  // cube the input to make it smoother
 
         podAngle = gpLeftX;
         turnPod1 = podAngle;
@@ -155,7 +158,7 @@ public class MotorcycleMode extends OpMode{
         loopTime = getRuntime() - priorTime;
         priorTime = getRuntime();
 
-        RobotLog.d("SRA-loop-MOTORCYCLE = %.05f, loop = %.05f",priorTime,loopTime);
+        RobotLog.d("SRA-loop-MOTORCYCLE = %.05f, loop = %.05f,targetPos = %d,podAngle = %.04f",priorTime,loopTime,targetPosition,podAngle);
         //RobotLog.d("SRA-loop-gamepad = %.03f, %.03f",gamepad1.right_stick_x,gamepad1.right_stick_y);
         //RobotLog.d("SRA-loop-ENCODERS = %d, %d, %d, %d", motor1a.getCurrentPosition(), motor1b.getCurrentPosition(), motor2c.getCurrentPosition(), motor2d.getCurrentPosition());
         //RobotLog.d("SRA-loop-TARGET = %d, %d, %d, %d",targetPosA,targetPosB,targetPosC,targetPosD);

@@ -32,6 +32,7 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.util.RobotLog;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.BuiltinCameraDirection;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
@@ -63,6 +64,8 @@ public class ConceptAprilTagEasy extends LinearOpMode {
      * {@link #visionPortal} is the variable to store our instance of the vision portal.
      */
     private VisionPortal visionPortal;
+    double loopTime;
+    double priorTime = 0.0;
 
     @Override
     public void runOpMode() {
@@ -92,6 +95,11 @@ public class ConceptAprilTagEasy extends LinearOpMode {
 
                 // Share the CPU.
                 sleep(20);
+
+                loopTime = getRuntime() - priorTime;
+                priorTime = getRuntime();
+                RobotLog.d("ConceptAprilTagEasy = %.05f, loop = %.05f",priorTime,loopTime);
+
             }
         }
 
