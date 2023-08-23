@@ -1,4 +1,4 @@
-package McDonald;
+package org.firstinspires.ftc.teamcode.McDonald;
 
 @Teleop
 public class HelloLanden extends_OpMode {
