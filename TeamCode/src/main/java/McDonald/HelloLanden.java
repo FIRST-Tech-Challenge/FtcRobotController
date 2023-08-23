@@ -1,11 +1,16 @@
-package McDonald;
+package org.firstinspires.ftc.teamcode.McDonald;
 
-@Teleop
-public class HelloLanden extends_OpMode {
-    public void init() {j
-        telemetry.addData(caption; "Hello", value "Landen");
+import...
+
+@TeleOp()
+public class HelloLanden extends OpMode {
+    @Override
+    public void init() {
+        telemetry.addData("Hello","Landen");
     }
-    puclic void loop (){
+
+    @Override
+    public void loop() {
 
     }
 }
