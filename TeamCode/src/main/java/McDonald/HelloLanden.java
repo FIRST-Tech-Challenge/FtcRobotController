@@ -1,11 +1,16 @@
 package McDonald;
 
-@Teleop
-public class HelloLanden extends_OpMode {
-    public void init() {j
+import com.qualcomm.robotcore.eventloop.opmode.OpMode;
+import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+
+@TeleOp()
+
+public class HelloLanden extends OpMode {
+    @Override
+    public void init() {
         telemetry.addData(caption; "Hello", value "Landen");
     }
-    puclic void loop (){
+    public void loop (){
 
     }
 }
