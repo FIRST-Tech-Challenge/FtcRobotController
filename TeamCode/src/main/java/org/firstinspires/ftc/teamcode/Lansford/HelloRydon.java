@@ -1,15 +1,13 @@
-package org.firstinspires.ftc.robotcontroller.McAnally;
+package org.firstinspires.ftc.teamcode.Lansford;
 
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
-@TeleOp
-public class HelloLuke extends OpMode {
+@TeleOp()
+public class HelloRydon extends OpMode {
     @Override
     public void init() {
-        telemetry.addData("Hello","World");
-    }
-    @Override
+        telemetry.addData("Hello","Rydon"); }
     public void loop() {
     }
 }
