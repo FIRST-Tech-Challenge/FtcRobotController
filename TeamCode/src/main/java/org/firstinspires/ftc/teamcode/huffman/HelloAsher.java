@@ -1,9 +1,10 @@
 package org.firstinspires.ftc.teamcode.huffman;
 
+import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
-@TeleOp()
+@Autonomous()
 public class HelloAsher extends OpMode {
     @Override
     public void init() {
