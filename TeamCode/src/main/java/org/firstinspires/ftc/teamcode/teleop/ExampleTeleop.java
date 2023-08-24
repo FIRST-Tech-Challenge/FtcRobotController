@@ -13,7 +13,7 @@ public class ExampleTeleop extends OpMode {
 
     @Override
     public void init() {
-        gamepad = new ImprovedGamepad(new Gamepad(), new ElapsedTime(), "Gamepad");
+        gamepad = new ImprovedGamepad(gamepad1, new ElapsedTime(), "Gamepad");
         robot.init(this.hardwareMap);
     }
 
