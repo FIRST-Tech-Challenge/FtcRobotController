@@ -1,9 +1,9 @@
 package org.firstinspires.ftc.teamcode.mcanally;
 
+import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
-import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
-@TeleOp()
+@Autonomous()
 
 public class HelloLuke extends OpMode {
 

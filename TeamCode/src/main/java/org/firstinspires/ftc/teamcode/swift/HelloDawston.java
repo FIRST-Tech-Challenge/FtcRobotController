@@ -1,9 +1,9 @@
 package org.firstinspires.ftc.teamcode.swift;
 
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
-import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
-@TeleOp()
+@Autonomous()
 
 public class HelloDawston extends OpMode {
     @Override
