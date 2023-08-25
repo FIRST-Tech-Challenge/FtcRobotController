@@ -108,7 +108,7 @@ public class OdometryTracker extends Tracker {
         currentVelocity = new Pose2d(currentPOVVelocity.vec().rotated(angle), currentPOVVelocity.getHeading());
         Canvas fieldOverlay = packet.fieldOverlay();
         packet.put("currentPose", currentPose);
-        packet.put("currentVelocity", currentVelocity);
+        packet.put("currentVelocity", currentVelocity.getX());
         packet.put("currentPOVVelocity", currentPOVVelocity);
         packet.put("leftTicks", nowTicks[0]);
         packet.put("rightTicks", nowTicks[1]);

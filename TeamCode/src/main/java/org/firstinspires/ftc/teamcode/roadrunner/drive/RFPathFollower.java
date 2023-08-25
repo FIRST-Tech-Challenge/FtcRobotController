@@ -139,6 +139,7 @@ public class RFPathFollower {
 
 
             }
+            pS*=1.41;
 //            pR=0;
             //frontLeft
             powers[0] = pF - pS - pR;

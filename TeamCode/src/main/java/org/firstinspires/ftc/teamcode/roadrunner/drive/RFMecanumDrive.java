@@ -21,13 +21,14 @@ public class RFMecanumDrive {
     private DcMotorEx leftFront, leftRear, rightRear, rightFront;
     private RFPathFollower pathFollower;
     private RFPoseSim poseSim;
-    public static boolean isPoseSim = true;
+//    public static boolean isPoseSim = true;
+    public static int poseMode = 0;
     public RFMecanumDrive(){
         pathFollower = new RFPathFollower();
         for (LynxModule module : op.hardwareMap.getAll(LynxModule.class)) {
             module.setBulkCachingMode(LynxModule.BulkCachingMode.AUTO);
         }
-        if(!isPoseSim) {
+        if(poseMode>1) {
             leftFront = op.hardwareMap.get(DcMotorEx.class, "motorLeftFront");
             leftRear = op.hardwareMap.get(DcMotorEx.class, "motorLeftBack");
             rightRear = op.hardwareMap.get(DcMotorEx.class, "motorRightBack");
@@ -80,7 +81,7 @@ public class RFMecanumDrive {
         pathFollower.setTangentOffset(p_tangentOffset);
     }
     public void setMotorPowers(double[] p_powers){
-        if(!isPoseSim) {
+        if(poseMode>1) {
             leftFront.setPower(p_powers[0]);
             leftRear.setPower(p_powers[1]);
             rightFront.setPower(p_powers[2]);
@@ -92,7 +93,7 @@ public class RFMecanumDrive {
     }
     public void update(){
         if(pathFollower.isFollowing()){
-            if(isPoseSim){
+            if(poseMode<1){
                 pathFollower.update();
                 poseSim.updateSim(pathFollower.pF, pathFollower.pS, pathFollower.pR);
             }

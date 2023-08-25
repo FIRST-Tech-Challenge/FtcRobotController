@@ -6,7 +6,9 @@ import static org.firstinspires.ftc.teamcode.roadrunner.drive.DriveConstants.MAX
 import static org.firstinspires.ftc.teamcode.roadrunner.drive.DriveConstants.TRACK_WIDTH;
 import static org.firstinspires.ftc.teamcode.roadrunner.drive.PoseStorage.currentPose;
 import static org.firstinspires.ftc.teamcode.roadrunner.drive.PoseStorage.currentVelocity;
+import static org.firstinspires.ftc.teamcode.roadrunner.drive.RFMecanumDrive.poseMode;
 
+import static java.lang.Double.isNaN;
 import static java.lang.Double.max;
 import static java.lang.Math.abs;
 import static java.lang.Math.cos;
@@ -15,12 +17,14 @@ import static java.lang.Math.sin;
 import static java.lang.Math.sqrt;
 import static java.lang.Math.toRadians;
 
+import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
 
 import java.util.ArrayList;
-
+@Config
 public class RFTrajectory {
+    public static double SCALE = 1.0;
     ArrayList<RFSegment> segments;
     CubicHermiteSpline currentPath;
     RFMotionProfile motionProfile;
@@ -58,7 +62,7 @@ public class RFTrajectory {
             setCurrentSegment(0);
             return true;
         } else if (segIndex + 1 < segments.size()) {
-            if (motionProfile.isProfileDone(time)&&(currentPose.vec().distTo(segments.get(segIndex).getWaypoint().getTarget().vec())<5||motionProfile.isProfileDone(time-1.5))) {
+            if (motionProfile.isProfileDone(time) || (/*currentPose.vec().distTo(segments.get(segIndex).getWaypoint().getTarget().vec()) < 5*/  motionProfile.isProfileDone(time - 1.5))) {
                 setCurrentSegment(segIndex + 1);
                 return true;
 
@@ -66,7 +70,7 @@ public class RFTrajectory {
         } else {
             Pose2d curPos = currentPose;
             Pose2d targetPos = segments.get(segments.size() - 1).getWaypoint().getTarget();
-            if (curPos.vec().distTo(targetPos.vec()) <1.0) {
+            if (curPos.vec().distTo(targetPos.vec()) < 5.0) {
                 clear();
                 return true;
             }
@@ -102,51 +106,98 @@ public class RFTrajectory {
 //    }
 
     public Pose2d getInstantaneousTargetVelocity() {
-        return currentPath.instantaneousVelocity;
+        if(poseMode==1||poseMode==3) {
+            return currentPath.instantaneousVelocity;
+        }
+        else{
+            return currentPath.targetVelocity.times(motionProfile.targetVelocity/currentPath.targetVelocity.vec().norm());
+        }
     }
 
     //run this before getInstanTaneousTargetVelosity,
-    public double projectOnto(Vector2d u, Vector2d v){
-        double dot = u.getX()*v.getX()+u.getX()*v.getY()+u.getY()*v.getY();
+    public double projectOnto(Vector2d u, Vector2d v) {
+        double dot = u.getX() * v.getX() + u.getX() * v.getY() + u.getY() * v.getY();
         double norm = v.norm();
-        if(norm ==0){
-            norm =0.001;
+        if (norm == 0) {
+            norm = 0.001;
         }
-        return dot/norm;
+        return dot / norm;
     }
+
     //TODO make this work for when u giga slow and out of time
     public Pose2d getInstantaneousTargetAcceleration() {
-        Vector2d deltaVec = getTargetPosition().vec().minus(currentPose.vec());
-        Vector2d projectedVelocity = currentVelocity.vec().projectOnto(deltaVec);
-//                projectOnto(currentVelocity.vec(), deltaVec);
-        if(deltaVec.norm()==0){
-            deltaVec = new Vector2d(0.1,0);
-        }
-        deltaVec = deltaVec.times(projectedVelocity.norm()/deltaVec.norm());
-        packet.put("currentVelocityVec", currentVelocity.vec());
-        packet.put("projectedVel", projectedVelocity);
-        double accelMag = motionProfile.getInstantaneousTargetAcceleration(max(currentPath.getRemDistance(), currentPose.vec().distTo(getCurrentSegment().getWaypoint().getTarget().vec()))
-                , projectedVelocity.norm());
-        if(!currentPath.isOverride){
-            accelMag = abs(accelMag);
-        }
+        if(poseMode==1||poseMode==3) {
 
-        packet.put("accelMag",accelMag);
-        currentPath.calculateInstantaneousTargetPose();
-        Pose2d pathAccel = currentPath.instantaneousAcceleration;
-        packet.put("deltaTangent", getTargetPosition().vec().minus(currentPose.vec()).angle());
-        packet.put("deltaVec", deltaVec);
-        packet.put("pathAccelMag1", pathAccel.vec().norm());
+            packet.put("currentVelocityVec", currentVelocity.vec());
+//        Vector2d deltaVec = currentPath.endPos.minus((currentPose.vec()));
+            Vector2d projectedVelo = new Vector2d(0.1, 0);
+            if (currentVelocity != null && currentPath.targetVelocity != null) {
+                projectedVelo = currentVelocity.vec().projectOnto(currentPath.targetVelocity.vec());
+            }
 
-        Vector2d scaledPathAccel = pathAccel.vec().times(accelMag/pathAccel.vec().norm());
-        pathAccel = new Pose2d(scaledPathAccel/*.plus(currentVelocity.vec()).minus(deltaVec)*/, pathAccel.getHeading());
-        double totalMagnitude = pathAccel.vec().norm()*pathAccel.vec().norm()+pathAccel.getHeading()*pathAccel.getHeading()*TRACK_WIDTH*TRACK_WIDTH*0.25;
-        if(totalMagnitude>MAX_ACCEL*MAX_ACCEL){
-//            pathAccel.times(sqrt(MAX_ACCEL*MAX_ACCEL/totalMagnitude));
+            double accelMag = motionProfile.getInstantaneousTargetAcceleration(max(currentPath.getRemDistance(),
+                            currentPose.vec().distTo(getCurrentSegment()
+                                    .getWaypoint().getTarget().vec())), projectedVelo
+                    , currentPath.endVel);
+            packet.put("accelMag", accelMag);
+//        if(!currentPath.isOverride){
+//            accelMag = abs(accelMag);
+//        }
+
+//        packet.put("accelMag",accelMag);
+            double targetVeloMag = currentVelocity.vec().norm() + accelMag / currentPath.numericDerivResolution;
+            packet.put("targetVeloMag", targetVeloMag);
+            packet.put("currentVeloMag", currentVelocity.vec().norm());
+//        Vector2d newTargetVel = currentPath.curVel2.times(targetVeloMag / currentPath.curVel2.norm());
+//        packet.put("newTargetVel", newTargetVel.getY());
+            if (abs(targetVeloMag) < 0.001) {
+                targetVeloMag = 0.001;
+            }
+            currentPath.calculateInstantaneousTargetPose(targetVeloMag);
+            Pose2d pathAccel = currentPath.instantaneousAcceleration;
+            Vector2d scaledPathAccel = pathAccel.vec().times(abs(accelMag) / pathAccel.vec().norm());
+            pathAccel = new Pose2d(scaledPathAccel/*.plus(currentVelocity.vec()).minus(deltaVec)*/, pathAccel.getHeading());
+            packet.put("pathAccelMag", pathAccel.vec().norm());
+            packet.put("RemDist", max(currentPath.getRemDistance(), currentPose.vec().distTo(getCurrentSegment().getWaypoint().getTarget().vec())));
+            return pathAccel;
         }
-        packet.put("pathAccelMag", pathAccel.vec().norm());
-        packet.put("remDist", max(currentPath.getRemDistance(), currentPose.vec().distTo(getCurrentSegment().getWaypoint().getTarget().vec())));
-        return pathAccel;
+        else{
+            packet.put("currentVelocityVec", currentVelocity.vec());
+//        Vector2d deltaVec = currentPath.endPos.minus((currentPose.vec()));
+
+            double accelMag = motionProfile.targetAcceleration;/*motionProfile.getInstantaneousTargetAcceleration(max(currentPath.getRemDistance(),
+                            currentPose.vec().distTo(getCurrentSegment()
+                                    .getWaypoint().getTarget().vec())), projectedVelo
+                    , currentPath.endVel);*/
+            packet.put("accelMag", accelMag);
+//        if(!currentPath.isOverride){
+//            accelMag = abs(accelMag);
+//        }
+
+//        packet.put("accelMag",accelMag);
+            double targetVeloMag = currentVelocity.vec().norm() + accelMag / currentPath.numericDerivResolution;
+            packet.put("targetVeloMag", targetVeloMag);
+            packet.put("currentVeloMag", currentVelocity.vec().norm());
+//        Vector2d newTargetVel = currentPath.curVel2.times(targetVeloMag / currentPath.curVel2.norm());
+//        packet.put("newTargetVel", newTargetVel.getY());
+            if (abs(targetVeloMag) < 0.001) {
+                targetVeloMag = 0.001;
+            }
+//            currentPath.calculateInstantaneousTargetPose(targetVeloMag);
+            Pose2d pathAccel = currentPath.targetAcceleration;
+//            currentPath.targetAcceleration;
+            if(pathAccel==null||pathAccel.vec().norm()<0.1){
+                pathAccel=new Pose2d(1,0, 0);
+            }
+            if(isNaN((accelMag))||accelMag==0){
+                accelMag=1;
+            }
+            Vector2d scaledPathAccel = pathAccel.vec().times(SCALE*abs(accelMag) / pathAccel.vec().norm());
+            pathAccel = new Pose2d(scaledPathAccel/*.plus(currentVelocity.vec()).minus(deltaVec)*/, pathAccel.getHeading());
+            packet.put("pathAccelMag", pathAccel.vec().norm());
+//            packet.put("RemDist", max(currentPath.getRemDistance(), currentPose.vec().distTo(getCurrentSegment().getWaypoint().getTarget().vec())));
+            return pathAccel;
+        }
     }
 
 
@@ -175,7 +226,7 @@ public class RFTrajectory {
                 p1.getCurviness());
     }
 
-    public double getEndVelMag(){
+    public double getEndVelMag() {
         return motionProfile.endVel;
     }
 
@@ -205,15 +256,15 @@ public class RFTrajectory {
         packet.put("veloMag", mpVelo);
         packet.put("segment", segIndex * 10);
         if (tToXDerivative > mpVelo || motionProfile.motionProfileRemainingTime(time) < 0.4) {
-            if(mpVelo==0){
+            if (mpVelo == 0) {
                 mpVelo = 0.0001;
             }
-            if(tToXDerivative ==0){
+            if (tToXDerivative == 0) {
                 tToXDerivative = 0.0001;
             }
             return mpVelo / tToXDerivative;
         } else {
-            return mpVelo/ tToXDerivative;
+            return mpVelo / tToXDerivative;
         }
 //        return motionProfile.calculateTargetVelocity(time) / tToXDerivative;
     }
@@ -221,13 +272,13 @@ public class RFTrajectory {
     public void setCurrentSegment(int index) {
         segIndex = index;
         Vector2d curVel = currentVelocity.vec();
-        if(curVel.norm()==0){
+        if (curVel.norm() == 0) {
             double angle = currentPose.getHeading();
-            curVel = new Vector2d(cos(angle),sin(angle));
+            curVel = new Vector2d(cos(angle), sin(angle));
         }
 
         double curAng = currentVelocity.getHeading();
-        double velMag = sqrt(currentVelocity.vec().norm()*currentVelocity.vec().norm()+curAng*curAng*TRACK_WIDTH*TRACK_WIDTH*0.25);
+        double velMag = sqrt(currentVelocity.vec().norm() * currentVelocity.vec().norm() + curAng * curAng * TRACK_WIDTH * TRACK_WIDTH * 0.25);
         RFWaypoint curWaypoint = new RFWaypoint(currentPose, curVel.angle(), velMag);
         setMotionProfile(curWaypoint, segments.get(segIndex));
         curWaypoint = new RFWaypoint(currentPose, curVel.angle(), curVel.norm());

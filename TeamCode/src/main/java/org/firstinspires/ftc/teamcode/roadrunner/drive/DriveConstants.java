@@ -48,11 +48,11 @@ public class DriveConstants {
     public static double GEAR_RATIO = 1; // output (wheel) speed / input (motor) speed
     public static double TRACK_WIDTH = 11.5; // in
 
-    public static double kPTrans = 0;
-    public static double kDTrans = 0;
+    public static double kPTrans = 0.00;
+    public static double kDTrans = 0.000;
 
-    public static double kPHead = 0;
-    public static double kDHead = 0;
+    public static double kPHead = 0.00;
+    public static double kDHead = 0.000;
 
     /*
      * These are the feedforward parameters used to model the drive motor behavior. If you are using
@@ -61,7 +61,7 @@ public class DriveConstants {
      * empirically tuned.
      */
     public static double kV = 0.016;
-    public static double kA = 0.014;
+    public static double kA = 0.004 ;
     public static double kStatic = 0.14;
 
     /*
@@ -71,10 +71,10 @@ public class DriveConstants {
      * small and gradually increase them later after everything is working. All distance units are
      * inches.
      */
-    public static double MAX_VEL = 80;
-    public static double MAX_ACCEL = 52;
+    public static double MAX_VEL = 60;
+    public static double MAX_ACCEL = 50;
     public static double MAX_ANG_VEL = 6;
-    public static double MAX_ANG_ACCEL = 6;
+    public static double MAX_ANG_ACCEL = 3;
 
 
     public static double encoderTicksToInches(double ticks) {

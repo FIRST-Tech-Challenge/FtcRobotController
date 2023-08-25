@@ -93,7 +93,7 @@ public class CatmulRomInterpolater {
 
             double targetVelocity = MAX_VEL * scaleFactor;
             double c = refSegment.getCurviness();
-                targetVelocity = min(targetVelocity, sqrt(segments.get(segments.size()-1).getWaypoint().getTarget().vec()
+                targetVelocity = min(targetVelocity, 0.8*sqrt(segments.get(segments.size()-1).getWaypoint().getTarget().vec()
                         .distTo(points.get(2).vec()) * 2 * MAX_ACCEL * (1 - c * 0.5)));
 
 //            packet.put("targetENdVelocity", targetVelocity);

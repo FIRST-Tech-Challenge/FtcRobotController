@@ -3,7 +3,8 @@ package org.firstinspires.ftc.teamcode.Tests;
 
 import static org.firstinspires.ftc.teamcode.roadrunner.drive.PoseStorage.currentPose;
 import static org.firstinspires.ftc.teamcode.roadrunner.drive.PoseStorage.currentVelocity;
-import static org.firstinspires.ftc.teamcode.roadrunner.drive.RFMecanumDrive.isPoseSim;
+import static org.firstinspires.ftc.teamcode.roadrunner.drive.RFMecanumDrive.poseMode;
+//import static org.firstinspires.ftc.teamcode.roadrunner.drive.RFMecanumDrive.isPoseSim;
 
 import static java.lang.Math.toRadians;
 
@@ -23,13 +24,13 @@ import org.firstinspires.ftc.teamcode.roadrunner.trajectorysequence.TrajectorySe
 @Config
 @Autonomous(name = "RFMotionControllerTest")
 public class RFMotionControllerTest extends LinearOpMode {
-    public static double targetX1 =50 , targetY1=0, targetX2=0, targetY2=0, targetX3=50,targetY3=0, CURVINESS = 0.4;
+    public static double targetX1 =24, targetY1=-24, targetX2=48, targetY2=0, targetX3=24,targetY3=0, CURVINESS = 0.4;
     @Override
     public void runOpMode() throws InterruptedException {
         BasicRobot robot = new BasicRobot(this,true);
         RFMecanumDrive drive = new RFMecanumDrive();
         Tracker localizer = null;
-        if(!isPoseSim) {
+        if(poseMode>1) {
             localizer = LocalizerFactory.getChassis(Tracker.TrackType.ODOMETRY);
         }
         Pose2d startPose = new Pose2d(0,0, toRadians(90));
@@ -40,11 +41,17 @@ public class RFMotionControllerTest extends LinearOpMode {
         robot.update();
         BasicRobot.time = 0;
         while (opModeIsActive()) {
+
 //        for(int i=0; i<1;i++) {
             if (!drive.isFollowing()) {
-                if(isPoseSim) {
+                if(poseMode<=1) {
                     currentPose = new Pose2d(0, 0, toRadians(0));
                     currentVelocity = new Pose2d(0, 0, 0);
+                }
+                else{
+//                    if(time>4){
+//                        break;
+//                    }
                 }
                 drive.setReversed(false);
                 drive.setCurviness(CURVINESS);
@@ -55,14 +62,14 @@ public class RFMotionControllerTest extends LinearOpMode {
 
                 drive.addWaypoint(new RFWaypoint(new Vector2d(targetX2, targetY2)));
 //                drive.setTangentOffset(toRadians(-90));
-                drive.addWaypoint(new RFWaypoint(new Vector2d(targetX3, targetY3)));
+//                drive.addWaypoint(new RFWaypoint(new Vector2d(targetX3, targetY3)));
 
             }
-            if(!isPoseSim) {
+            if(poseMode>1) {
 //                assert localizer != null;
                 localizer.update();
             }
-            sleep(10);
+//            sleep(10);
             drive.update();
             robot.update();
         }
