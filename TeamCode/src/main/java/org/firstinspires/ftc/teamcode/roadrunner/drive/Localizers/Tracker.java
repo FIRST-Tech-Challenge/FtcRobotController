@@ -9,14 +9,8 @@ public abstract class Tracker {
     }
 
     public enum TrackType {
-        ODOMETRY,ODOMETRY_IMU_LEFT, ODOMETRY_IMU_RIGHT
+        ODOMETRY,ODOMETRY_IMU_LEFT, ODOMETRY_IMU_RIGHT, ROADRUN_ODOMETRY, ROADRUN_IMU_LEFT, ROADRUN_IMU_RIGHT
     }
 
     abstract public void update();
-    public double[] getPos() {
-        return new double[] {xpos,ypos,angle};
-    }
-    public double[] getVelocity(){
-        return new double[] {Velocity,xVelocity,yVelocity,aVelocity};
-    }
 }

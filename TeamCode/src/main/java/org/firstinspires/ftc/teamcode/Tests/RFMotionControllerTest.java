@@ -13,14 +13,12 @@ import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.hardware.DcMotor;
 
 import org.firstinspires.ftc.teamcode.Robots.BasicRobot;
 import org.firstinspires.ftc.teamcode.roadrunner.drive.Localizers.LocalizerFactory;
 import org.firstinspires.ftc.teamcode.roadrunner.drive.Localizers.Tracker;
 import org.firstinspires.ftc.teamcode.roadrunner.drive.RFMecanumDrive;
 import org.firstinspires.ftc.teamcode.roadrunner.drive.RFWaypoint;
-import org.firstinspires.ftc.teamcode.roadrunner.trajectorysequence.TrajectorySequence;
 @Config
 @Autonomous(name = "RFMotionControllerTest")
 public class RFMotionControllerTest extends LinearOpMode {
@@ -31,7 +29,7 @@ public class RFMotionControllerTest extends LinearOpMode {
         RFMecanumDrive drive = new RFMecanumDrive();
         Tracker localizer = null;
         if(poseMode>1) {
-            localizer = LocalizerFactory.getChassis(Tracker.TrackType.ODOMETRY);
+            localizer = LocalizerFactory.getTracker(Tracker.TrackType.ODOMETRY);
         }
         Pose2d startPose = new Pose2d(0,0, toRadians(90));
         drive.setPose(startPose);
@@ -48,11 +46,6 @@ public class RFMotionControllerTest extends LinearOpMode {
                     currentPose = new Pose2d(0, 0, toRadians(0));
                     currentVelocity = new Pose2d(0, 0, 0);
                 }
-                else{
-//                    if(time>4){
-//                        break;
-//                    }
-                }
                 drive.setReversed(false);
                 drive.setCurviness(CURVINESS);
 //                drive.setTangentOffset(toRadians(-90));
@@ -66,7 +59,7 @@ public class RFMotionControllerTest extends LinearOpMode {
 
             }
             if(poseMode>1) {
-//                assert localizer != null;
+                assert localizer != null;
                 localizer.update();
             }
 //            sleep(10);
