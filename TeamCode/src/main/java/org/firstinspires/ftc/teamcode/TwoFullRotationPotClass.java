@@ -12,7 +12,7 @@ import com.qualcomm.robotcore.util.RobotLog;
  * NOTE: The REV HUB Analog Input Ports give NON-LINEAR results.
  * The voltage on the input ports needs to be converted through a function to get angles.
  */
-public class PotClass {
+public class TwoFullRotationPotClass {
     // CONSTANTS
     static final int SAMPLES = 2;  // number of readings averaged for one reading
 
@@ -27,7 +27,7 @@ public class PotClass {
     private AnalogInput potentiometer4;
 
     // Constructor
-    public PotClass() {
+    public TwoFullRotationPotClass() {
         this.angle1 = 0.0;
         this.angle2 = 0.0;
     }
@@ -158,6 +158,21 @@ public class PotClass {
     }
 
     /**
+     * Math routine to solve a 3rd order polynomial
+     * @param x for this class, the voltage
+     * @param c0 constant c0
+     * @param c1 constant c1
+     * @param c2 constant c2
+     * @param c3 constant c3
+     * @return the y value for the x value
+     */
+    private double polynomial3(double x,double c0,double c1,double c2,double c3) {
+        double y;
+        y = c0 + c1*x + c2*x*x + c3*x*x*x;
+        return y;
+    }
+
+    /**
      * Returns an angle from 0 to 2*PI for any real angle
      * @param inAngle any real angle
      * @return an angle from 0 to 2*PI
@@ -172,45 +187,4 @@ public class PotClass {
         return currentRemainderAngle;
     }
 
-    /**
-     * Returns the shortest turn angle
-     * @param currentWheelAng Current Wheel Angle
-     * @param newAngle Desired wheel angle
-     * @return The smallest delta angle to get to the new angle
-     */
-    public double getShortestTurnAngle(double currentWheelAng, double newAngle) {
-        // newAngle will be from -PI to PI, because it uses ATAN2
-        double deltaAngle;
-        double currentRemainderAngle;
-        double newRemainder;
-
-        // Convert current angle into number from zero to 2*PI
-        currentRemainderAngle = moduloAngle(currentWheelAng);
-
-        // Convert new angle into number from -PI to PI
-        newRemainder = moduloAngle(newAngle);
-        if(newRemainder>Math.PI) newRemainder -= (2.0*Math.PI);
-
-        // Find the shortest turn to newAngle
-        deltaAngle = newRemainder - currentRemainderAngle;
-        if(deltaAngle < -Math.PI) {
-            deltaAngle = newAngle + (2.0*Math.PI) - currentRemainderAngle;
-        }
-        return deltaAngle;
-    }
-
-    /**
-     * Math routine to solve a 3rd order polynomial
-     * @param x for this class, the voltage
-     * @param c0 constant c0
-     * @param c1 constant c1
-     * @param c2 constant c2
-     * @param c3 constant c3
-     * @return the y value for the x value
-     */
-    private double polynomial3(double x,double c0,double c1,double c2,double c3) {
-        double y;
-        y = c0 + c1*x + c2*x*x + c3*x*x*x;
-        return y;
-    }
 }

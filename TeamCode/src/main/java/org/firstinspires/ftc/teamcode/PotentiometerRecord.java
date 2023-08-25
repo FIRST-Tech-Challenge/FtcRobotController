@@ -29,7 +29,7 @@ public class PotentiometerRecord extends OpMode{
     DcMotor motor2d = null;
 
     // Potentiometer Class
-    public PotClass pots;
+    public TwoFullRotationPotClass pots;
 
     // ROBOT GLOBALS
     // target positions for robot
@@ -55,7 +55,7 @@ public class PotentiometerRecord extends OpMode{
         motor2c.setDirection(DcMotor.Direction.FORWARD);
         motor2d.setDirection(DcMotor.Direction.FORWARD);
 
-        pots = new PotClass();
+        pots = new TwoFullRotationPotClass();
         pots.initPots(hardwareMap);
 
         pots.getAngleFromPots(true,INITIAL_WHEEL_ANGLE); // find out where the wheel are pointed

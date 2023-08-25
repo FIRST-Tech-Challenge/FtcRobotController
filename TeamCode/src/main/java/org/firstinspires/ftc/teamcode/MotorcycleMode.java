@@ -1,6 +1,8 @@
 
 package org.firstinspires.ftc.teamcode;
 
+import static org.firstinspires.ftc.teamcode.TwoWheelDiffSwerveClass.TICKS_PER_HALF_WHEEL_TURN;
+
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -17,61 +19,33 @@ public class MotorcycleMode extends OpMode{
     // Constants
     static final double TICK_SPEED = 10.0; // gamepad joystick tick increment (speed) multiplier for linear movement.
     static final double TICK_TURN = 170.0; // gamepad joystick tick multiplier for rotation. 220 ticks approximately turns wheels 90 degrees
-    static final double MAX_MTR_SPEED = 0.8;  // full speed  = 1.0. Backed off to prevent damage while developing
-    static final double TICKS_PER_180_TURN = 433.5; // turn both motors this amount for 180 deg turn, was 458.62
     static final double INITIAL_WHEEL_ANGLE = 0.0; // Wheel initial angle, in radians
 
     /* Declare OpMode members. */
     double priorTime = 0.0; // for logging loop times
 
-    // HARDWARE
-    // DcMotors
-    DcMotor motor1a = null;
-    DcMotor motor1b = null;
-    DcMotor motor2c = null;
-    DcMotor motor2d = null;
-    // Potentiometer Class
-    PotClass pots;
+    TwoWheelDiffSwerveClass drive;
 
-    int targetPosition = 0; // motorcycle mode translation, in ticks
-    double turnPod1 = 0; // used for both pod angles in translateMode
-    double turnPod2 = 0;
-    // target positions for each motor, in ticks
-    int targetPosA, targetPosB, targetPosC, targetPosD;
-    //double speed; // the robot speed
-    int initTurnTicks1,initTurnTicks2;
+    // Potentiometer Class
+    TwoFullRotationPotClass pots;
+
 
     @Override
     public void init() {
-        double deltaAngle;
+        double deltaAngle1;
+        double deltaAngle2;
 
-        // Define and Initialize Motors
-        motor1a = hardwareMap.get(DcMotor.class, "a");
-        motor1b = hardwareMap.get(DcMotor.class, "b");
-        motor2c = hardwareMap.get(DcMotor.class, "c");
-        motor2d = hardwareMap.get(DcMotor.class, "d");
+        drive = new TwoWheelDiffSwerveClass();
+        drive.initDrive(hardwareMap);
 
-        motor1a.setDirection(DcMotor.Direction.FORWARD);
-        motor1b.setDirection(DcMotor.Direction.REVERSE); // Why??
-        motor2c.setDirection(DcMotor.Direction.FORWARD);
-        motor2d.setDirection(DcMotor.Direction.FORWARD);
-
-        pots = new PotClass();
+        pots = new TwoFullRotationPotClass();
         pots.initPots(hardwareMap);
 
         pots.getAngleFromPots(false,0); // find out where the wheel are pointed
 
-        deltaAngle = pots.getShortestTurnAngle(pots.angle1,INITIAL_WHEEL_ANGLE);
-        initTurnTicks1 =  (int)((deltaAngle / Math.PI) * TICKS_PER_180_TURN);
-        targetPosA = initTurnTicks1;
-        targetPosB = initTurnTicks1;
-
-        deltaAngle = pots.getShortestTurnAngle(pots.angle2,INITIAL_WHEEL_ANGLE);
-        initTurnTicks2 =  (int)((deltaAngle/ Math.PI) * TICKS_PER_180_TURN);
-        targetPosC = initTurnTicks2;
-        targetPosD = initTurnTicks2;
-
-        setRunToPos();
+        deltaAngle1 = drive.getShortestTurnAngle(pots.angle1,INITIAL_WHEEL_ANGLE);
+        deltaAngle2 = drive.getShortestTurnAngle(pots.angle2,INITIAL_WHEEL_ANGLE);
+        drive.initWheelAngles(deltaAngle1,deltaAngle2);  // set the wheels to desired angle
 
         // Send telemetry message to signify robot waiting;
         telemetry.addData(">", "Robot Ready.  Press Play.");
@@ -89,46 +63,6 @@ public class MotorcycleMode extends OpMode{
 
     @Override
     public void start() {
-        //targetPosA=0;
-        //targetPosB=0;
-        //targetPosC=0;
-        //targetPosD=0;
-        //setRunToPos();
-    }
-
-    /**
-     * setRunToPos executes the sequence required for using RUN_TO_POSITION
-     */
-    void setRunToPos() {
-        motor1a.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        motor1b.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        motor2c.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        motor2d.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        motor1a.setPower(MAX_MTR_SPEED);
-        motor1b.setPower(MAX_MTR_SPEED);
-        motor2c.setPower(MAX_MTR_SPEED);
-        motor2d.setPower(MAX_MTR_SPEED);
-        setMotorPositions();
-        motor1a.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        motor1b.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        motor2c.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        motor2d.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-    }
-
-    void setMotorPositions() {
-        motor1a.setTargetPosition(targetPosA);
-        motor1b.setTargetPosition(targetPosB);
-        motor2c.setTargetPosition(targetPosC);
-        motor2d.setTargetPosition(targetPosD);
-    }
-    void setMotorMotorcycleMode() {
-        // used in motorcycle mode
-        targetPosA = initTurnTicks1 + targetPosition + (int)(turnPod1* TICK_TURN);
-        targetPosB = initTurnTicks1 - targetPosition + (int)(turnPod1* TICK_TURN);
-        targetPosC = initTurnTicks2 + targetPosition + (int)(turnPod2* TICK_TURN);
-        targetPosD = initTurnTicks2 - targetPosition + (int)(turnPod2* TICK_TURN);
-        //
-        setMotorPositions();
     }
 
     /*
@@ -139,6 +73,7 @@ public class MotorcycleMode extends OpMode{
         double gpLeftX, gpRightY;
         double loopTime;
         double podAngle;
+        double turnPod1, turnPod2;
 
         gpLeftX = gamepad1.left_stick_x;
         gpRightY = gamepad1.right_stick_y;
@@ -148,8 +83,8 @@ public class MotorcycleMode extends OpMode{
         turnPod1 = podAngle;
         turnPod2 = -podAngle;
 
-        targetPosition += (int) (gpRightY * TICK_SPEED);
-        setMotorMotorcycleMode();
+        drive.setRobotTranslation((int) (gpRightY * TICK_SPEED));
+        drive.setMotorPositions((int)(turnPod1* TICK_TURN),(int)(turnPod2* TICK_TURN),0);
 
         telemetry.addData("Right stick y", gamepad1.right_stick_y);
         telemetry.addData("Right stick x", gamepad1.right_stick_x);
@@ -158,7 +93,7 @@ public class MotorcycleMode extends OpMode{
         loopTime = getRuntime() - priorTime;
         priorTime = getRuntime();
 
-        RobotLog.d("SRA-loop-MOTORCYCLE = %.05f, loop = %.05f,targetPos = %d,podAngle = %.04f",priorTime,loopTime,targetPosition,podAngle);
+        RobotLog.d("SRA-loop-MOTORCYCLE = %.05f, loop = %.05f,targetPos = %d,podAngle = %.04f",priorTime,loopTime,drive.targetPosition,podAngle);
         //RobotLog.d("SRA-loop-gamepad = %.03f, %.03f",gamepad1.right_stick_x,gamepad1.right_stick_y);
         //RobotLog.d("SRA-loop-ENCODERS = %d, %d, %d, %d", motor1a.getCurrentPosition(), motor1b.getCurrentPosition(), motor2c.getCurrentPosition(), motor2d.getCurrentPosition());
         //RobotLog.d("SRA-loop-TARGET = %d, %d, %d, %d",targetPosA,targetPosB,targetPosC,targetPosD);
