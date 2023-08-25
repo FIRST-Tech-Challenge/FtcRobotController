@@ -37,11 +37,11 @@ import java.util.List;
  */
 public class TwoWheelTrackingLocalizerLeft extends RFTwoTrackingWheelLocalizer {
     public static double TICKS_PER_REV = 8192;
-    public static double WHEEL_RADIUS = 1.377/2; // in
+    public static double WHEEL_RADIUS = 1.377 / 2; // in
     public static double GEAR_RATIO = 1; // output (wheel) speed / input (encoder) speed
 
     public static double PARALLEL_X = 0; // X is the up and down direction
-    public static double PARALLEL_Y = 11.0/2; // Y is the strafe direction
+    public static double PARALLEL_Y = 11.0 / 2; // Y is the strafe direction
 
     public static double PERPENDICULAR_X = -4.35;
     public static double PERPENDICULAR_Y = 0;
@@ -84,9 +84,9 @@ public class TwoWheelTrackingLocalizerLeft extends RFTwoTrackingWheelLocalizer {
     @NonNull
     @Override
     public List<Double> getWheelPositions() {
-        op.telemetry.addData("x",getPoseEstimate().getX());
-        op.telemetry.addData("y",getPoseEstimate().getY());
-        op.telemetry.addData("a",getPoseEstimate().getHeading()*180/PI);
+        op.telemetry.addData("x", getPoseEstimate().getX());
+        op.telemetry.addData("y", getPoseEstimate().getY());
+        op.telemetry.addData("a", getPoseEstimate().getHeading() * 180 / PI);
         return Arrays.asList(
                 encoderTicksToInches(parallelEncoder.getCurrentPosition()),
                 encoderTicksToInches(perpendicularEncoder.getCurrentPosition())

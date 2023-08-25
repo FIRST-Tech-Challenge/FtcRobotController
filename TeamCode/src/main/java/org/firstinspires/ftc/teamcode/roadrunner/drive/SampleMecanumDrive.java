@@ -50,6 +50,7 @@ import org.firstinspires.ftc.teamcode.roadrunner.trajectorysequence.sequencesegm
 import org.firstinspires.ftc.teamcode.roadrunner.util.AxisDirection;
 import org.firstinspires.ftc.teamcode.roadrunner.util.BNO055IMUUtil;
 import org.firstinspires.ftc.teamcode.roadrunner.util.LynxModuleUtil;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -61,7 +62,7 @@ import java.util.List;
 @Config
 public class SampleMecanumDrive extends MecanumDrive {
     public static PIDCoefficients TRANSLATIONAL_PID = new PIDCoefficients(12, 0.0, 0.5);
-    public static PIDCoefficients HEADING_PID = new PIDCoefficients(7, 0.0, 0.1  );
+    public static PIDCoefficients HEADING_PID = new PIDCoefficients(7, 0.0, 0.1);
 
     public static double LATERAL_MULTIPLIER = 1;
 
@@ -81,7 +82,7 @@ public class SampleMecanumDrive extends MecanumDrive {
 
     private BNO055IMU imu;
     private VoltageSensor batteryVoltageSensor;
-    private Pose2d endPose = new Pose2d(0,0,0);
+    private Pose2d endPose = new Pose2d(0, 0, 0);
 
     public SampleMecanumDrive(HardwareMap hardwareMap, Tracker.TrackType trackType) {
         super(kV,
@@ -90,9 +91,10 @@ public class SampleMecanumDrive extends MecanumDrive {
                 TRACK_WIDTH,
                 TRACK_WIDTH,
                 LATERAL_MULTIPLIER);
-       initializeDrive(hardwareMap,trackType);
+        initializeDrive(hardwareMap, trackType);
     }
-    public SampleMecanumDrive(HardwareMap hardwareMap){
+
+    public SampleMecanumDrive(HardwareMap hardwareMap) {
         super(kV,
                 kA,
                 kStatic,
@@ -101,7 +103,8 @@ public class SampleMecanumDrive extends MecanumDrive {
                 LATERAL_MULTIPLIER);
         initializeDrive(hardwareMap, Tracker.TrackType.ROADRUN_ODOMETRY);
     }
-    public void initializeDrive(HardwareMap hardwareMap, Tracker.TrackType trackType){
+
+    public void initializeDrive(HardwareMap hardwareMap, Tracker.TrackType trackType) {
         follower = new RFHolonomicPIDVAFollower(TRANSLATIONAL_PID, TRANSLATIONAL_PID, HEADING_PID,
                 new Pose2d(0.5, 0.5, Math.toRadians(5.0)), 0.5);
 
@@ -138,13 +141,13 @@ public class SampleMecanumDrive extends MecanumDrive {
         // and the placement of the dot/orientation from https://docs.revrobotics.com/rev-control-system/control-system-overview/dimensions#imu-location
         //
         // For example, if +Y in this diagram faces downwards, you would use AxisDirection.NEG_Y.
-         BNO055IMUUtil.remapZAxis(imu, AxisDirection.NEG_Y);
+        BNO055IMUUtil.remapZAxis(imu, AxisDirection.NEG_Y);
 
         leftFront = hardwareMap.get(DcMotorEx.class, "motorLeftFront");
         leftRear = hardwareMap.get(DcMotorEx.class, "motorLeftBack");
         rightRear = hardwareMap.get(DcMotorEx.class, "motorRightBack");
         rightFront = hardwareMap.get(DcMotorEx.class, "motorRightFront");
-        DcMotorEx backEncoder= hardwareMap.get(DcMotorEx.class, "motorLeftFront");
+        DcMotorEx backEncoder = hardwareMap.get(DcMotorEx.class, "motorLeftFront");
         DcMotorEx leftEncoder = hardwareMap.get(DcMotorEx.class, "leftEncoder");
         DcMotorEx rightEncoder = hardwareMap.get(DcMotorEx.class, "rightEncoder");
         leftEncoder.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -155,7 +158,6 @@ public class SampleMecanumDrive extends MecanumDrive {
 //        leftRear.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 //        rightFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 //        rightRear.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-
 
 
         motors = Arrays.asList(leftFront, leftRear, rightRear, rightFront);
@@ -183,16 +185,13 @@ public class SampleMecanumDrive extends MecanumDrive {
         rightRear.setDirection(DcMotor.Direction.FORWARD);
         // TODO: if desired, use setLocalizer() to change the localization method
         // for instance, setLocalizer(new ThreeTrackingWheelLocalizer(...));
-        if(trackType == Tracker.TrackType.ROADRUN_ODOMETRY) {
+        if (trackType == Tracker.TrackType.ROADRUN_ODOMETRY) {
             setLocalizer(new StandardTrackingWheelLocalizer(hardwareMap));
-        }
-        else if(trackType == Tracker.TrackType.ROADRUN_IMU_LEFT){
+        } else if (trackType == Tracker.TrackType.ROADRUN_IMU_LEFT) {
             setLocalizer(new TwoWheelTrackingLocalizerLeft(hardwareMap, this));
-        }
-        else if(trackType == Tracker.TrackType.ROADRUN_IMU_RIGHT){
+        } else if (trackType == Tracker.TrackType.ROADRUN_IMU_RIGHT) {
             setLocalizer(new TwoWheelTrackingLocalizerRight(hardwareMap, this));
-        }
-        else{
+        } else {
             setLocalizer(new StandardTrackingWheelLocalizer(hardwareMap));
         }
         trajectorySequenceRunner = new TrajectorySequenceRunner(follower, HEADING_PID);
@@ -203,8 +202,8 @@ public class SampleMecanumDrive extends MecanumDrive {
         BNO055IMUUtil.remapZAxis(imu, AxisDirection.POS_Y);
         BasicRobot.dashboard = FtcDashboard.getInstance();
         BasicRobot.dashboard.setTelemetryTransmissionInterval(25);
-        logger.createFile("RoadrunLog","Runtime, X, Y, A, error[0], error[1]");
-        trajectorySeq = trajectorySequenceBuilder(getPoseEstimate()).lineTo(new Vector2d(10,0)).build();
+        logger.createFile("RoadrunLog", "Runtime, X, Y, A, error[0], error[1]");
+        trajectorySeq = trajectorySequenceBuilder(getPoseEstimate()).lineTo(new Vector2d(10, 0)).build();
     }
 
     public TrajectoryBuilder trajectoryBuilder(Pose2d startPose) {
@@ -250,13 +249,13 @@ public class SampleMecanumDrive extends MecanumDrive {
     }
 
     public void followTrajectory(Trajectory trajectory) {
-        logger.log("/RobotLogs/GeneralRobot","followingTrajectory");
+        logger.log("/RobotLogs/GeneralRobot", "followingTrajectory");
         followTrajectoryAsync(trajectory);
         waitForIdle();
     }
 
     public void followTrajectorySequenceAsync(TrajectorySequence trajectorySequence) {
-        logger.log("/RobotLogs/GeneralRobot","followingTrajectory");
+        logger.log("/RobotLogs/GeneralRobot", "followingTrajectory");
         trajectorySequenceRunner.followTrajectorySequenceAsync(trajectorySequence);
         trajectorySeq = trajectorySequence;
         endPose = trajectorySequence.end();
@@ -268,11 +267,12 @@ public class SampleMecanumDrive extends MecanumDrive {
         trajectorySeq = trajectorySequence;
 
     }
+
     public void changeTrajectorySequence(TrajectorySequence trajectorySequence) {
         trajectorySequenceRunner.changeTrajectorySequence(trajectorySequence);
         trajectorySeq = trajectorySequence;
         endPose = trajectorySequence.end();
-        Trajectory tragedy = ((TrajectorySegment)trajectorySequence.get(0)).getTrajectory();
+        Trajectory tragedy = ((TrajectorySegment) trajectorySequence.get(0)).getTrajectory();
         follower.changeTrajectory(tragedy);
     }
 
@@ -286,7 +286,7 @@ public class SampleMecanumDrive extends MecanumDrive {
 
     public void update() {
         updatePoseEstimate();
-        logger.log("RoadrunLog","pos"+getPoseEstimate());
+        logger.log("RoadrunLog", "pos" + getPoseEstimate());
 //        PoseStorage.currentPose = getPoseEstimate();
         DriveSignal signal = trajectorySequenceRunner.update(getPoseEstimate(), getPoseVelocity());
         if (signal != null) setDriveSignal(signal);
@@ -323,7 +323,8 @@ public class SampleMecanumDrive extends MecanumDrive {
             motor.setPIDFCoefficients(runMode, compensatedCoefficients);
         }
     }
-    public TrajectorySequence getCurrentTraj(){
+
+    public TrajectorySequence getCurrentTraj() {
         return trajectorySequenceRunner.getTrajectorySequence();
     }
 

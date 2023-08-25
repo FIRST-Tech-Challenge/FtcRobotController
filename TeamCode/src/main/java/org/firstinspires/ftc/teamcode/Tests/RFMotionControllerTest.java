@@ -19,19 +19,21 @@ import org.firstinspires.ftc.teamcode.roadrunner.drive.Localizers.LocalizerFacto
 import org.firstinspires.ftc.teamcode.roadrunner.drive.Localizers.Tracker;
 import org.firstinspires.ftc.teamcode.roadrunner.drive.RFMecanumDrive;
 import org.firstinspires.ftc.teamcode.roadrunner.drive.RFWaypoint;
+
 @Config
 @Autonomous(name = "RFMotionControllerTest")
 public class RFMotionControllerTest extends LinearOpMode {
-    public static double targetX1 =24, targetY1=-24, targetX2=48, targetY2=0, targetX3=24,targetY3=0, CURVINESS = 0.4;
+    public static double targetX1 = 24, targetY1 = -24, targetX2 = 48, targetY2 = 0, targetX3 = 24, targetY3 = 0, CURVINESS = 0.4;
+
     @Override
     public void runOpMode() throws InterruptedException {
-        BasicRobot robot = new BasicRobot(this,true);
+        BasicRobot robot = new BasicRobot(this, true);
         RFMecanumDrive drive = new RFMecanumDrive();
         Tracker localizer = null;
-        if(poseMode>1) {
+        if (poseMode > 1) {
             localizer = LocalizerFactory.getTracker(Tracker.TrackType.ODOMETRY);
         }
-        Pose2d startPose = new Pose2d(0,0, toRadians(90));
+        Pose2d startPose = new Pose2d(0, 0, toRadians(90));
         drive.setPose(startPose);
         waitForStart();
         if (isStopRequested()) return;
@@ -42,14 +44,14 @@ public class RFMotionControllerTest extends LinearOpMode {
 
 //        for(int i=0; i<1;i++) {
             if (!drive.isFollowing()) {
-                if(poseMode<=1) {
+                if (poseMode <= 1) {
                     currentPose = new Pose2d(0, 0, toRadians(0));
                     currentVelocity = new Pose2d(0, 0, 0);
                 }
                 drive.setReversed(false);
                 drive.setCurviness(CURVINESS);
 //                drive.setTangentOffset(toRadians(-90));
-                drive.addWaypoint(new RFWaypoint(new Vector2d(targetX1,targetY1)));
+                drive.addWaypoint(new RFWaypoint(new Vector2d(targetX1, targetY1)));
 //                drive.setTangentOffset(toRadians(-90));
 //                drive.setReversed(true);
 
@@ -58,7 +60,7 @@ public class RFMotionControllerTest extends LinearOpMode {
 //                drive.addWaypoint(new RFWaypoint(new Vector2d(targetX3, targetY3)));
 
             }
-            if(poseMode>1) {
+            if (poseMode > 1) {
                 assert localizer != null;
                 localizer.update();
             }
@@ -67,6 +69,6 @@ public class RFMotionControllerTest extends LinearOpMode {
             robot.update();
         }
 //            robot.update();
-        }
+    }
 //    }
 }

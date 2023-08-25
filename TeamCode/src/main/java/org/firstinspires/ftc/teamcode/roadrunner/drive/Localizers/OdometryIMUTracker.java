@@ -36,7 +36,7 @@ import org.firstinspires.ftc.teamcode.roadrunner.util.Encoder;
 public class OdometryIMUTracker extends Tracker {
     private DcMotorEx encoderPar, encoderBack;
     public static double TICKS_PER_REV = 8192;
-    public static double WHEEL_RADIUS = 1.3779/2;
+    public static double WHEEL_RADIUS = 1.3779 / 2;
     public static double LATERAL_OFFSET = 5.45;
     public static double FORWARD_OFFSET = -4.35;
     private double ticks_per_inch, deltaAngle;
@@ -71,7 +71,7 @@ public class OdometryIMUTracker extends Tracker {
         imu.initialize(parameters);
         lastAngles = new Orientation();
         lastAngles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
-        ticks_per_inch = TICKS_PER_REV/(2*PI*WHEEL_RADIUS);
+        ticks_per_inch = TICKS_PER_REV / (2 * PI * WHEEL_RADIUS);
 
         // make sure the imu gyro is calibrated before continuing.
         while (!op.isStopRequested() && !imu.isGyroCalibrated()) {
@@ -100,31 +100,31 @@ public class OdometryIMUTracker extends Tracker {
     }
 
     public void update() {
-        double[] nowTicks = {odomconst[0]*encoderPar.getCurrentPosition(), odomconst[1]*encoderBack.getCurrentPosition()};
+        double[] nowTicks = {odomconst[0] * encoderPar.getCurrentPosition(), odomconst[1] * encoderBack.getCurrentPosition()};
         double[] deltaTicks = {nowTicks[0] - lastTicks[0], nowTicks[1] - lastTicks[1]};
         lastTicks = nowTicks;
         double newAngle = getAngle();
-        double [][] initalAngle = {{cos(angle),-sin(angle),0},
-                {sin(angle),cos(angle),0},
-                {0,0,1}};
-        double [][] deltaMatrix = {{sin(deltaAngle)/deltaAngle,(cos(deltaAngle)-1)/deltaAngle,0},
-                {(1-cos(deltaAngle))/deltaAngle,sin(deltaAngle)/deltaAngle,0},
-                {0,0,1}};
-        double [][] robotDelta = {{(deltaTicks[0])/ticks_per_inch},
-                {deltaTicks[1]/ticks_per_inch- (FORWARD_OFFSET*deltaAngle)},
+        double[][] initalAngle = {{cos(angle), -sin(angle), 0},
+                {sin(angle), cos(angle), 0},
+                {0, 0, 1}};
+        double[][] deltaMatrix = {{sin(deltaAngle) / deltaAngle, (cos(deltaAngle) - 1) / deltaAngle, 0},
+                {(1 - cos(deltaAngle)) / deltaAngle, sin(deltaAngle) / deltaAngle, 0},
+                {0, 0, 1}};
+        double[][] robotDelta = {{(deltaTicks[0]) / ticks_per_inch},
+                {deltaTicks[1] / ticks_per_inch - (FORWARD_OFFSET * deltaAngle)},
                 {deltaAngle}};
-        double[][] partialSolve = multiplyMatrix(3,3, initalAngle, 3,3, deltaMatrix);
+        double[][] partialSolve = multiplyMatrix(3, 3, initalAngle, 3, 3, deltaMatrix);
 
-        double [][] finalSolve = multiplyMatrix(3,3, partialSolve, 3,1, robotDelta);
+        double[][] finalSolve = multiplyMatrix(3, 3, partialSolve, 3, 1, robotDelta);
 
         double deltaX = finalSolve[0][0];
         double deltaY = finalSolve[1][0];
         angle = newAngle;
         xpos += deltaX;
         ypos += deltaY;
-        currentPose = new Pose2d(xpos,ypos,angle);
-        double[] velo = {odomconst[0]*encoderPar.getVelocity()/ticks_per_inch, odomconst[1]*encoderBack.getVelocity()/ticks_per_inch};
-        currentPOVVelocity = new Pose2d((velo[0]+velo[1])*0.5, velo[2]-angularVelocity.xRotationRate*LATERAL_OFFSET,
+        currentPose = new Pose2d(xpos, ypos, angle);
+        double[] velo = {odomconst[0] * encoderPar.getVelocity() / ticks_per_inch, odomconst[1] * encoderBack.getVelocity() / ticks_per_inch};
+        currentPOVVelocity = new Pose2d((velo[0] + velo[1]) * 0.5, velo[2] - angularVelocity.xRotationRate * LATERAL_OFFSET,
                 angularVelocity.xRotationRate);
         currentVelocity = new Pose2d(currentPOVVelocity.vec().rotated(angle), currentPOVVelocity.getHeading());
         Canvas fieldOverlay = packet.fieldOverlay();
@@ -134,7 +134,7 @@ public class OdometryIMUTracker extends Tracker {
         packet.put("parTicks", nowTicks[0]);
         packet.put("perpTicks", nowTicks[1]);
 
-        if(currentPose!=null) {
+        if (currentPose != null) {
             fieldOverlay.setStrokeWidth(1);
             fieldOverlay.setStroke("#4CAF50");
             DashboardUtil.drawRobot(fieldOverlay, currentPose);
@@ -144,7 +144,7 @@ public class OdometryIMUTracker extends Tracker {
     public double getAngle() {
         Orientation angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
         deltaAngle = angles.firstAngle - lastAngles.firstAngle;
-        angularVelocity=imu.getAngularVelocity();
+        angularVelocity = imu.getAngularVelocity();
         if (deltaAngle <= -180) //If the angle is -180, it should be 180, because they are at the same point. The acceptable angles are (-180, 180]
             deltaAngle += 360;
         else if (deltaAngle > 180)
