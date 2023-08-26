@@ -1,16 +1,13 @@
 package org.firstinspires.ftc.teamcode.Components.RFModules.Devices;
 
 import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.op;
-import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.logger;
-
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
-import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.ServoController;
 // NOT TESTED YET - 7/28/2023, PUSHING AFTER SOME MORE CLEANUP
 public class RFCRServo implements CRServo {
-    private CRServo crServo;
-    private String deviceName;
+    private final CRServo crServo;
+    private final String deviceName;
 
     /**crservo with specified direction
      *

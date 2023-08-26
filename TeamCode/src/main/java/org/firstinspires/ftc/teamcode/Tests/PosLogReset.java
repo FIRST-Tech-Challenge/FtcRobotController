@@ -14,6 +14,7 @@ import java.io.IOException;
 @Autonomous(name= "PosLogReset")
 public class PosLogReset extends LinearOpMode {
     @SuppressLint("SdCardPath")
+    final
     File myObj = new File("/sdcard/tmp/pos.csv");
     FileWriter indexer;
 
@@ -27,8 +28,6 @@ public class PosLogReset extends LinearOpMode {
                 telemetry.addData("Logger:", "File created:%S\n", "Logger");
                 telemetry.update();
             } else {
-                myObj.delete();
-                myObj.createNewFile();
                 telemetry.addData("Logger:", "File already exists:%S\n", "Overriding");
                 telemetry.update();
             }

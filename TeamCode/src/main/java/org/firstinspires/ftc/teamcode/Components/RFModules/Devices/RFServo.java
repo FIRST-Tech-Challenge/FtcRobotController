@@ -16,9 +16,9 @@ public class RFServo implements Servo {
 
     private double lastTime = -100;
 
-    double SERVO_LIMIT;
+    final double SERVO_LIMIT;
 
-    double FLIP_TIME = 0.2;
+    final double FLIP_TIME = 0.2;
 
     boolean flipped = false;
 

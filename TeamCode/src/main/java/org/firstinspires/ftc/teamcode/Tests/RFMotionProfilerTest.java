@@ -1,11 +1,6 @@
 package org.firstinspires.ftc.teamcode.Tests;
 
 import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.packet;
-import static org.firstinspires.ftc.teamcode.roadrunner.drive.PoseStorage.currentVelocity;
-
-import static java.lang.Math.pow;
-
-import android.util.Log;
 
 import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
@@ -14,8 +9,6 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 
 import org.firstinspires.ftc.teamcode.Components.RFModules.Devices.RFMotor;
 import org.firstinspires.ftc.teamcode.Robots.BasicRobot;
-
-import java.util.Arrays;
 
 @Config
 @Autonomous(name = "RFMotionProfilerTest")

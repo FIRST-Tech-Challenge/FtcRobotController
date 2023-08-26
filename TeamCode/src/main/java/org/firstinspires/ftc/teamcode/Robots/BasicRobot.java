@@ -11,13 +11,13 @@ import org.firstinspires.ftc.teamcode.Components.RFModules.System.Queuer;
 public class BasicRobot{
     public static Logger logger;
     public static LinearOpMode op = null;
-    public Queuer queuer = null;
+    public Queuer queuer;
     public static boolean isTeleop;
     public static FtcDashboard dashboard;
     public static double time= 0.0;
     public static VoltageSensor voltageSensor;
     public static TelemetryPacket packet;
-    private final boolean isSim = true;
+
     public BasicRobot(LinearOpMode opMode, boolean p_isTeleop){
         op = opMode;
         logger = new Logger();
@@ -28,14 +28,14 @@ public class BasicRobot{
         queuer = new Queuer();
         isTeleop = p_isTeleop;
         op.telemetry = new MultipleTelemetry(op.telemetry, FtcDashboard.getInstance().getTelemetry());
+        boolean isSim = true;
         if(!isSim) {
             voltageSensor = op.hardwareMap.voltageSensor.iterator().next();
         }
         dashboard.setTelemetryTransmissionInterval(25);
         packet=new TelemetryPacket();
     }
-    //deprecated
-    public void updateTime(){time=op.getRuntime();}
+
     public void update(){
         time = op.getRuntime();
         dashboard.sendTelemetryPacket(packet);

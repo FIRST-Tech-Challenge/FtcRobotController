@@ -141,11 +141,11 @@ public class Queuer {
         if (currentEvent < queueElements.get(currentlyQueueing).startCondition - 2) {
             return false;
         }
-        boolean isReady = false;
+        boolean isReady;
         //is currently queued event optional and should be running for first time
         if (queueElements.get(currentlyQueueing).isOptional() && p_isOptional && !queueElements.get(currentlyQueueing).isDone() && !firstLoop) {
             //make this optional event have to run
-            queueElements.get(currentlyQueueing).setSkipOption(p_isOptional);
+            queueElements.get(currentlyQueueing).setSkipOption(true);
             //update start conditions of subsequent actions
             updateStartConditions(currentlyQueueing);
             //calculate if event should run
@@ -244,7 +244,6 @@ public class Queuer {
                         break;
                     }
                     startCondition = queueElements.get(p_ind - i - 1).startCondition;
-                    shouldFinish = queueElements.get(p_ind - i - 1).isMustFinish();
                 }
                 break;
             }
@@ -259,7 +258,7 @@ public class Queuer {
      * @param p_isOptional  is the function optional
      */
     private void createQueueElement(boolean p_asynchrnous, boolean p_isOptional) {
-        int startCondition = -1;
+        int startCondition;
         if (!mustFinish) {
             startCondition = recalcStartPosSkipOptional(queueElements.size(), p_asynchrnous, p_isOptional);
             queueElements.add(new QueueElement(queueElements.size(), p_asynchrnous, startCondition, mustFinish, false, p_isOptional));

@@ -1,8 +1,6 @@
 package org.firstinspires.ftc.teamcode.roadrunner.drive;
 
-import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.dashboard;
 import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.packet;
-import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.time;
 import static org.firstinspires.ftc.teamcode.roadrunner.drive.DriveConstants.TRACK_WIDTH;
 import static org.firstinspires.ftc.teamcode.roadrunner.drive.DriveConstants.kA;
 import static org.firstinspires.ftc.teamcode.roadrunner.drive.DriveConstants.kDHead;
@@ -14,26 +12,20 @@ import static org.firstinspires.ftc.teamcode.roadrunner.drive.DriveConstants.kV;
 import static org.firstinspires.ftc.teamcode.roadrunner.drive.PoseStorage.currentPose;
 import static org.firstinspires.ftc.teamcode.roadrunner.drive.PoseStorage.currentVelocity;
 
-import static java.lang.Math.abs;
 import static java.lang.Math.sqrt;
 
 import com.acmerobotics.dashboard.config.Config;
-import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
-import com.acmerobotics.roadrunner.trajectory.MarkerCallback;
-
-import java.util.ArrayList;
-import java.util.FormattableFlags;
 
 @Config
 public class RFPathFollower {
     double tangentOffset = 0, curviness = 0, pF = 0, pS = 0, pR = 0;
     boolean constantHeading = false, isFollowing = false;
-    RFTrajectory rfTrajectory;
+    final RFTrajectory rfTrajectory;
     Pose2d finalTargetAcceleration = new Pose2d(0, 0, 0);
     Pose2d finalTargetVelocity = new Pose2d(0, 0, 0), PIDTargetVelocity = new Pose2d(0, 0, 0);
-    public static int VERBOSITY = 1;
+    public static final int VERBOSITY = 1;
 
     public RFPathFollower() {
         rfTrajectory = new RFTrajectory();
@@ -68,10 +60,7 @@ public class RFPathFollower {
             pF = rotateTargetVelocity.getX() * kV + rotateTargetAccel.getX() * kA;
             pS = rotateTargetVelocity.getY() * kV + rotateTargetAccel.getY() * kA;
             pR = 0.5 * TRACK_WIDTH * (finalTargetVelocity.getHeading() * kV + finalTargetAcceleration.getHeading() * kA);
-            boolean isStatic = false;
-            if (currentVelocity.vec().norm() + currentVelocity.getHeading() < 0.05) {
-                isStatic = true;
-            }
+            boolean isStatic = currentVelocity.vec().norm() + currentVelocity.getHeading() < 0.05;
             if (isStatic) {
                 double mag = sqrt(pF * pF + pS * pS + pR * pR);
                 if (mag == 0) {

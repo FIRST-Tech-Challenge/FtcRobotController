@@ -23,7 +23,13 @@ import org.firstinspires.ftc.teamcode.roadrunner.drive.RFWaypoint;
 @Config
 @Autonomous(name = "RFMotionControllerTest")
 public class RFMotionControllerTest extends LinearOpMode {
-    public static double targetX1 = 24, targetY1 = -24, targetX2 = 48, targetY2 = 0, targetX3 = 24, targetY3 = 0, CURVINESS = 0.4;
+    public static final double targetX1 = 24;
+    public static final double targetY1 = -24;
+    public static final double targetX2 = 48;
+    public static final double targetY2 = 0;
+    public static double targetX3 = 24;
+    public static double targetY3 = 0;
+    public static final double CURVINESS = 0.4;
 
     @Override
     public void runOpMode() throws InterruptedException {

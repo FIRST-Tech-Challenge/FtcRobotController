@@ -6,19 +6,15 @@ import static org.firstinspires.ftc.teamcode.roadrunner.drive.PoseStorage.curren
 import static org.firstinspires.ftc.teamcode.roadrunner.drive.PoseStorage.currentPose;
 import static org.firstinspires.ftc.teamcode.roadrunner.drive.PoseStorage.currentVelocity;
 import static java.lang.Math.PI;
-import static java.lang.Math.abs;
 import static java.lang.Math.cos;
 import static java.lang.Math.sin;
 
 import com.acmerobotics.dashboard.canvas.Canvas;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.qualcomm.hardware.bosch.BNO055IMU;
-import com.qualcomm.robotcore.hardware.AnalogInput;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
-import com.qualcomm.robotcore.hardware.DigitalChannel;
-import com.qualcomm.robotcore.hardware.LED;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AngularVelocity;
@@ -27,22 +23,24 @@ import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 import org.firstinspires.ftc.teamcode.roadrunner.drive.Localizers.Tracker;
 import org.firstinspires.ftc.teamcode.roadrunner.util.DashboardUtil;
-import org.firstinspires.ftc.teamcode.roadrunner.util.Encoder;
 
 //5900,4900
 //5700,4300
 //3853
 //2/1.337/pi*8092
 public class OdometryIMUTracker extends Tracker {
-    private DcMotorEx encoderPar, encoderBack;
-    public static double TICKS_PER_REV = 8192;
-    public static double WHEEL_RADIUS = 1.3779 / 2;
-    public static double LATERAL_OFFSET = 5.45;
-    public static double FORWARD_OFFSET = -4.35;
-    private double ticks_per_inch, deltaAngle;
-    private double[] lastTicks = {0, 0}, odomconst = {1, -1};
+    private final DcMotorEx encoderPar;
+    private final DcMotorEx encoderBack;
+    public static final double TICKS_PER_REV = 8192;
+    public static final double WHEEL_RADIUS = 1.3779 / 2;
+    public static final double LATERAL_OFFSET = 5.45;
+    public static final double FORWARD_OFFSET = -4.35;
+    private final double ticks_per_inch;
+    private double deltaAngle;
+    private double[] lastTicks = {0, 0};
+    private final double[] odomconst = {1, -1};
     private final BNO055IMU imu;
-    private Orientation lastAngles = null;
+    private Orientation lastAngles;
     public static float globalAngle = 0;
     private AngularVelocity angularVelocity;
 
@@ -80,14 +78,14 @@ public class OdometryIMUTracker extends Tracker {
         }
     }
 
-    public double[][] multiplyMatrix(int row1, int col1, double A[][], int row2, int col2, double B[][]) {
+    public double[][] multiplyMatrix(int row1, int col1, double[][] A, int row2, int col2, double[][] B) {
         int i, j, k;
 
         if (row2 != col1) {
             return null;
         }
 
-        double C[][] = new double[row1][col2];
+        double[][] C = new double[row1][col2];
 
         // Multiply the two matrices
         for (i = 0; i < row1; i++) {
@@ -99,6 +97,7 @@ public class OdometryIMUTracker extends Tracker {
         return C;
     }
 
+    @Override
     public void update() {
         double[] nowTicks = {odomconst[0] * encoderPar.getCurrentPosition(), odomconst[1] * encoderBack.getCurrentPosition()};
         double[] deltaTicks = {nowTicks[0] - lastTicks[0], nowTicks[1] - lastTicks[1]};
@@ -124,7 +123,7 @@ public class OdometryIMUTracker extends Tracker {
         ypos += deltaY;
         currentPose = new Pose2d(xpos, ypos, angle);
         double[] velo = {odomconst[0] * encoderPar.getVelocity() / ticks_per_inch, odomconst[1] * encoderBack.getVelocity() / ticks_per_inch};
-        currentPOVVelocity = new Pose2d((velo[0] + velo[1]) * 0.5, velo[2] - angularVelocity.xRotationRate * LATERAL_OFFSET,
+        currentPOVVelocity = new Pose2d((velo[0]) * 0.5, velo[1] - angularVelocity.xRotationRate * LATERAL_OFFSET,
                 angularVelocity.xRotationRate);
         currentVelocity = new Pose2d(currentPOVVelocity.vec().rotated(angle), currentPOVVelocity.getHeading());
         Canvas fieldOverlay = packet.fieldOverlay();

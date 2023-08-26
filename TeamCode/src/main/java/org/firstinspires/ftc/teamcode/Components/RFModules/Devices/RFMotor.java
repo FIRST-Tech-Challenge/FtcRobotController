@@ -10,8 +10,6 @@ import static java.lang.Math.abs;
 import static java.lang.Math.pow;
 import static java.lang.Math.sqrt;
 
-import android.util.Log;
-
 import com.acmerobotics.dashboard.canvas.Canvas;
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
@@ -29,33 +27,45 @@ import java.util.Arrays;
 
 @Config
 public class RFMotor extends Motor {
-    private DcMotorEx rfMotor = null;
+    private DcMotorEx rfMotor;
     private ArrayList<Double> coefs = null;
-    private ArrayList<Double> coefs2 = null;
-    private ArrayList<String> inputlogs = new ArrayList<>();
-    public static double D = 0.00000, D2 = 0, kP = 0.009, kI, kD = 0.00001, kV = 0.0003, kA = 0.00004, kR = 0, kS = 0.15,
-            MAX_ACCELERATION_UP = 6000, MAX_ACCELERATION_DOWN = 12000, RESISTANCE = 400;
-    public static double gravity = 0.2;
-    private double MAX_VELOCITY_UP = 1475 - 225 * (13.5 - BasicRobot.voltageSensor.getVoltage());
-    private double MAX_VELOCITY_DOWN = 3500;
+    private final ArrayList<Double> coefs2 = null;
+    private final ArrayList<String> inputlogs = new ArrayList<>();
+    public static double D = 0.00000;
+    public static double D2 = 0;
+    public static double kP = 0.009;
+    public static double kI;
+    public static final double kD = 0.00001;
+    public static final double kV = 0.0003;
+    public static final double kA = 0.00004;
+    public static double kR = 0;
+    public static final double kS = 0.15;
+    public static final double MAX_ACCELERATION_UP = 6000;
+    public static final double MAX_ACCELERATION_DOWN = 12000;
+    public static final double RESISTANCE = 400;
+    public static final double gravity = 0.2;
+    private final double MAX_VELOCITY_UP = 1475 - 225 * (13.5 - BasicRobot.voltageSensor.getVoltage());
+    private final double MAX_VELOCITY_DOWN = 3500;
     private double relativeDist, direction, peakVelo, J, decelDist;
-    private double[][] calculatedIntervals = new double[4][8];
-    private double[][][] calculatedMotions = new double[3][7][5];;
+    private final double[][] calculatedIntervals = new double[4][8];
+    private final double[][][] calculatedMotions = new double[3][7][5];
     private double[] timeIntervals = new double[8];
     private double[] distances = new double[8];
     private double[] velocities = new double[8];
     private double[] positions = new double[8];
     private double maxtickcount = 0;
     private double mintickcount = 0;
-    private double DEFAULTCOEF1 = 0.0001, DEFAULTCOEF2 = 0.01;
-    private double lastError = 0, lastTime = 0;
+    private final double DEFAULTCOEF1 = 0.0001;
+    private final double DEFAULTCOEF2 = 0.01;
+    private final double lastError = 0;
+    private double lastTime = 0;
     private double additionalTicks = 0;
     private double TICK_BOUNDARY_PADDING = 10, TICK_STOP_PADDING = 20;
 
     private double currentAcceleration,currentPos,currentTickPos;
     private double power = 0, position = 0, velocity = 0, targetPos = 0, resistance = 0, acceleration = 0, avgResistance;
     private String rfMotorName;
-    private RFMotorPoseSim poseSim = new RFMotorPoseSim();
+    private final RFMotorPoseSim poseSim = new RFMotorPoseSim();
     private boolean isSim = false, sameTarget = false;
 
     /*Initializes the motor
@@ -666,28 +676,25 @@ public class RFMotor extends Motor {
         if (abs(distance) > DECEL_DIST && abs(velocity) < getMaxVelocity() - RESISTANCE * direction - 0.1 * getMaxAcceleration()) {
             if (distance > 0) {
                 targets[0] = velocity + .1 * getMaxAcceleration() * (1 - 1 / (abs(distance - DECEL_DIST) / 100 + 1));
-                targets[1] = velocity - targets[0];
             } else {
                 targets[0] = velocity - 0.1 * getMaxAcceleration() * (1 - 1 / (abs(distance - DECEL_DIST) / 100 + 1));
-                targets[1] = velocity - targets[0];
             }
+            targets[1] = velocity - targets[0];
         } else if (abs(distance) > DECEL_DIST && abs(distance) > 20) {
             if (distance > 0) {
                 targets[0] = getMaxVelocity() - RESISTANCE * direction;
-                targets[1] = velocity - targets[0];
             } else {
                 targets[0] = -getMaxVelocity() - RESISTANCE * direction;
-                targets[1] = velocity - targets[0];
 
             }
+            targets[1] = velocity - targets[0];
         } else {
             if (distance < 0) {
                 targets[0] = min(-pow((abs(distance)) * (getMaxAcceleration() - RESISTANCE * direction), 0.5), 0);
-                targets[1] = velocity - targets[0];
             } else {
                 targets[0] = max(pow((abs(distance)) * (getMaxAcceleration() - RESISTANCE * direction), 0.5), 0);
-                targets[1] = velocity - targets[0];
             }
+            targets[1] = velocity - targets[0];
         }
         return targets;
     }
@@ -697,24 +704,24 @@ public class RFMotor extends Motor {
     }
 
     public double getResistance() {
-        double resistance = 0;
-        resistance -= 200 + 0.4 * position - 0.00012 * position * position;
-        resistance -= velocity * 0.3 * pow(abs(position) + 1, -.12);
+//        double resistance = 0;
+//        resistance -= 200 + 0.4 * position - 0.00012 * position * position;
+//        resistance -= velocity * 0.3 * pow(abs(position) + 1, -.12);
         return -RESISTANCE;
     }
 
     public void getAvgResistance() {
-        double resistances = 0;
-        resistances -= RESISTANCE /* - 0.000135* position * position*/;
-//        resistances -= velocity * 0.2 * pow(abs(position) + 1, -.13);
-//        resistance = resistances* VOLTAGE_CONST;
-        resistances -= RESISTANCE/* - 0.000135 * targetPos * targetPos*/;
+//        double resistances = 0;
+//        resistances -= RESISTANCE /* - 0.000135* position * position*/;
+////        resistances -= velocity * 0.2 * pow(abs(position) + 1, -.13);
+////        resistance = resistances* VOLTAGE_CONST;
+//        resistances -= RESISTANCE/* - 0.000135 * targetPos * targetPos*/;
         resistance = -RESISTANCE;
         avgResistance = -RESISTANCE;
     }
 
     public double getDecelDist() {
-        double decelDist = 0;
+        double decelDist;
         if (velocity > 0) {
             decelDist = 0.7 * pow(abs(velocity), 2) / (getMaxAcceleration() - avgResistance);
         } else {
