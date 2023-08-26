@@ -159,7 +159,7 @@ public class KaitlynAuto extends LinearOpMode {
 
         waitForStart();
 
-        while (Yaw > degreesToTurn && opModeIsActive()) {
+        while ((Math.abs(Yaw) < Math.abs(degreesToTurn)) && opModeIsActive()) {
             error = degreesToTurn - Yaw;
 
             fLeft.setPower(P_CONSTANT*error);
