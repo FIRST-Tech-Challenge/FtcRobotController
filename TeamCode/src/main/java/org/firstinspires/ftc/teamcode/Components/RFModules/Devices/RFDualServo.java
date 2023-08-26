@@ -30,7 +30,7 @@ public class RFDualServo implements Servo {
     private double servoLimit = 0;
     private boolean flipped = false;
 
-    final double FLIP_TIME_SEC = 0.2;
+    private final double FLIP_TIME_SEC = 0.2;
 
     private Servo.Direction servoDirection1;
 

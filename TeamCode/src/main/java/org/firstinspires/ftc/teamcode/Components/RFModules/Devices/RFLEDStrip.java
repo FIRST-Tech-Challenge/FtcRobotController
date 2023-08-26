@@ -5,23 +5,25 @@ import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.op;
 import com.qualcomm.hardware.rev.RevBlinkinLedDriver;
 
 public class RFLEDStrip {
-    //init blinkin, define conestack colors preset
+    //init blinkin
     private RevBlinkinLedDriver blinkIn;
-    private RevBlinkinLedDriver.BlinkinPattern[] stackLevelColors = {RevBlinkinLedDriver.BlinkinPattern.VIOLET, RevBlinkinLedDriver.BlinkinPattern.BLUE,
+
+    //Conestack colors
+    private RevBlinkinLedDriver.BlinkinPattern[] stackLevelColors =
+            {RevBlinkinLedDriver.BlinkinPattern.VIOLET, RevBlinkinLedDriver.BlinkinPattern.BLUE,
             RevBlinkinLedDriver.BlinkinPattern.YELLOW, RevBlinkinLedDriver.BlinkinPattern.ORANGE};
-    //constructor
+
+    //constructor, hwMap blinkin
     public RFLEDStrip(){
         blinkIn = op.hardwareMap.get(RevBlinkinLedDriver.class, "blinkIn");
     }
+
     //change leds w/ passed in integer stack level
     public void setStackLevelColor(int level) {
         blinkIn.setPattern(stackLevelColors[level]);
     }
 
-
-
     //basic colors
-
     public void red(){
         blinkIn.setPattern(RevBlinkinLedDriver.BlinkinPattern.RED);
     }
