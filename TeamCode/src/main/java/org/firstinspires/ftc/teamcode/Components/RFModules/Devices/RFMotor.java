@@ -4,10 +4,6 @@ import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.logger;
 import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.op;
 import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.packet;
 import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.time;
-import static org.firstinspires.ftc.teamcode.roadrunner.drive.PoseStorage.currentPos;
-import static org.firstinspires.ftc.teamcode.roadrunner.drive.PoseStorage.currentTickPos;
-import static org.firstinspires.ftc.teamcode.roadrunner.drive.PoseStorage.currentVelocity;
-import static org.firstinspires.ftc.teamcode.roadrunner.drive.PoseStorage.currentAcceleration;
 import static java.lang.Double.max;
 import static java.lang.Double.min;
 import static java.lang.Math.abs;
@@ -16,7 +12,9 @@ import static java.lang.Math.sqrt;
 
 import android.util.Log;
 
+import com.acmerobotics.dashboard.canvas.Canvas;
 import com.acmerobotics.dashboard.config.Config;
+import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.arcrobotics.ftclib.hardware.motors.Motor;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
@@ -24,6 +22,7 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
 import org.firstinspires.ftc.teamcode.Robots.BasicRobot;
 import org.firstinspires.ftc.teamcode.roadrunner.drive.RFMotorPoseSim;
+import org.firstinspires.ftc.teamcode.roadrunner.util.DashboardUtil;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -52,6 +51,8 @@ public class RFMotor extends Motor {
     private double lastError = 0, lastTime = 0;
     private double additionalTicks = 0;
     private double TICK_BOUNDARY_PADDING = 10, TICK_STOP_PADDING = 20;
+
+    private double currentAcceleration,currentPos,currentTickPos;
     private double power = 0, position = 0, velocity = 0, targetPos = 0, resistance = 0, acceleration = 0, avgResistance;
     private String rfMotorName;
     private RFMotorPoseSim poseSim = new RFMotorPoseSim();
@@ -154,21 +155,21 @@ public class RFMotor extends Motor {
     }
 
     public void update(){
-        poseSim.getTargets(getTargetPosition(BasicRobot.time) * 0.05, getTargetPosition(BasicRobot.time),
+        getTargets(getTargetPosition(BasicRobot.time) * 0.05, getTargetPosition(BasicRobot.time),
                 getTargetVelocity(BasicRobot.time), getTargetAcceleration(BasicRobot.time));
-        poseSim.updateSim();
+        updateSim();
     }
 
     public double getTargetPower() {
         double power = 0;
-        if (currentVelocity > getMaxVelocity()) {
-            power = kV * currentVelocity + kA * currentAcceleration;
+        if (velocity > getMaxVelocity()) {
+            power = kV * velocity + kA * currentAcceleration;
             //+ kP * (currentTargetPos - getCurrentPosition()) + kD * (currentTargetVelo - getVelocity()));
 
         }
 
-        if (currentVelocity < getMaxVelocity() - 10) {
-            power = kV * currentVelocity;
+        if (velocity < getMaxVelocity() - 10) {
+            power = kV * velocity;
             //+ kP * (currentTargetPos - getCurrentPosition());
 
         }
@@ -413,7 +414,7 @@ public class RFMotor extends Motor {
         direction = abs(relativeDist)/relativeDist;
 
         if (isSim) {
-            velocities[0] = direction * currentVelocity;
+            velocities[0] = direction * velocity;
             positions[0] = direction * currentTickPos;
         }
         else {
@@ -444,7 +445,7 @@ public class RFMotor extends Motor {
         decelDist = calculatedIntervals[3][7] - calculatedIntervals[3][4];
 
         if (isSim) {
-            velocities[0] = currentVelocity;
+            velocities[0] = velocity;
             positions[0] = currentTickPos;
             isSim = false;
         }
@@ -814,5 +815,21 @@ public class RFMotor extends Motor {
 
     public void setTICK_STOP_PADDING(double p_TICK_STOP_PADDING) {
         TICK_STOP_PADDING = p_TICK_STOP_PADDING;
+    }
+    double lastUpdateTime = 0.0;
+    public void getTargets(double p_targetPos, double p_tickPos, double p_targetVelo, double p_targetAccel){
+        currentPos = p_targetPos;
+        currentTickPos = p_tickPos;
+        velocity = p_targetVelo;
+        currentAcceleration = p_targetAccel;
+        lastUpdateTime = time;
+    }
+    public void updateSim(){
+        Pose2d targetPose = new Pose2d(currentPos, 0, 0);
+        lastUpdateTime=time;
+        Canvas fieldOverlay = packet.fieldOverlay();
+        fieldOverlay.setStrokeWidth(1);
+        fieldOverlay.setStroke("#4CAF50");
+        DashboardUtil.drawRobot(fieldOverlay, targetPose);
     }
 }
