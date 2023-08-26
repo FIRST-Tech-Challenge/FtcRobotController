@@ -6,7 +6,6 @@ import static java.lang.Math.PI;
 import androidx.annotation.NonNull;
 
 import com.acmerobotics.roadrunner.geometry.Pose2d;
-import com.acmerobotics.roadrunner.localization.RFTwoTrackingWheelLocalizer;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
@@ -61,7 +60,7 @@ public class TwoWheelTrackingLocalizerRight extends RFTwoTrackingWheelLocalizer 
 
         this.drive = drive;
 
-        parallelEncoder = new Encoder(hardwareMap.get(DcMotorEx.class, "leftEncoder"));
+        parallelEncoder = new Encoder(hardwareMap.get(DcMotorEx.class, "rightEncoder"));
         perpendicularEncoder = new Encoder(hardwareMap.get(DcMotorEx.class, "motorRightFront"));
         perpendicularEncoder.setDirection(Encoder.Direction.REVERSE);
     }

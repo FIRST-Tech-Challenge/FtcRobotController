@@ -24,8 +24,6 @@ public class LogReset extends LinearOpMode {
             telemetry.addData("Logger:", "File created:%S\n", "Logger");
             telemetry.update();
         } else {
-            myObj.delete();
-            myObj.createNewFile();
             telemetry.addData("Logger:", "File already exists:%S\n", "Overriding");
             telemetry.update();
         }

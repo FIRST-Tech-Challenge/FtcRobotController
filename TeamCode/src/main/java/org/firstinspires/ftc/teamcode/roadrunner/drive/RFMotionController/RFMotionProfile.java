@@ -1,10 +1,9 @@
-package org.firstinspires.ftc.teamcode.roadrunner.drive;
+package org.firstinspires.ftc.teamcode.roadrunner.drive.RFMotionController;
 
 import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.packet;
 import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.time;
 import static org.firstinspires.ftc.teamcode.roadrunner.drive.DriveConstants.MAX_ACCEL;
 import static org.firstinspires.ftc.teamcode.roadrunner.drive.DriveConstants.MAX_VEL;
-import static org.firstinspires.ftc.teamcode.roadrunner.drive.PoseStorage.currentVelocity;
 
 import static java.lang.Double.POSITIVE_INFINITY;
 import static java.lang.Double.max;

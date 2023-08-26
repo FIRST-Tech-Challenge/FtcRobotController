@@ -1,11 +1,10 @@
-package org.firstinspires.ftc.teamcode.roadrunner.drive;
+package org.firstinspires.ftc.teamcode.roadrunner.drive.RFMotionController;
 
 import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.op;
 import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.packet;
 import static org.firstinspires.ftc.teamcode.roadrunner.drive.DriveConstants.MAX_ANG_VEL;
 import static org.firstinspires.ftc.teamcode.roadrunner.drive.DriveConstants.MAX_VEL;
 import static org.firstinspires.ftc.teamcode.roadrunner.drive.DriveConstants.TRACK_WIDTH;
-import static org.firstinspires.ftc.teamcode.roadrunner.drive.DriveConstants.kA;
 import static org.firstinspires.ftc.teamcode.roadrunner.drive.DriveConstants.kV;
 import static org.firstinspires.ftc.teamcode.roadrunner.drive.PoseStorage.currentPose;
 import static org.firstinspires.ftc.teamcode.roadrunner.drive.PoseStorage.currentVelocity;
@@ -16,11 +15,12 @@ import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
+
 @Config
 public class RFMecanumDrive {
     private DcMotorEx leftFront, leftRear, rightRear, rightFront;
-    private RFPathFollower pathFollower;
-    private RFPoseSim poseSim;
+    private final RFPathFollower pathFollower;
+    private final RFPoseSim poseSim;
 //    public static boolean isPoseSim = true;
     public static int poseMode = 0;
     public RFMecanumDrive(){

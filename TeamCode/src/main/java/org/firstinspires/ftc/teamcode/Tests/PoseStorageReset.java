@@ -9,10 +9,6 @@ import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
-
 @Autonomous(name= "PoseStorageReset")
 public class PoseStorageReset extends LinearOpMode {
 

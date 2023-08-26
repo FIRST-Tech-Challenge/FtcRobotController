@@ -1,16 +1,15 @@
 package org.firstinspires.ftc.teamcode.Components.RFModules.System;
 
 import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.logger;
-import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.op;
 import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.time;
 
 public class QueueElement {
     //place in line
-    private int queuePos = 0;
+    private final int queuePos;
     //after which item is done u can run
-    public int startCondition = 0;
+    public int startCondition;
     //if event is asynchronous(if should be sequential or ignore)
-    private boolean asynchronous = false;
+    private final boolean asynchronous;
     //if started
     private boolean started = false;
     //if done
@@ -18,7 +17,7 @@ public class QueueElement {
     //For calculating delay, 1000 is just a placeholder that should never be reached normally
     private double readyTime = 1000;
     //should it wait for everything else to finish
-    private boolean mustFinish = false;
+    private final boolean mustFinish;
     //should it wait for everything else to finish
     private boolean shouldFinish = false;
     //is it an optional event
@@ -73,12 +72,8 @@ public class QueueElement {
                 logger.log("/RobotLogs/GeneralRobot", queuePos + "readyTime =" + readyTime +"optional"+isOptional);
             }
             //consider extraw condition(if it exists)
-            if (p_extraCondition) {
-                return true;
-            } else {
-//                logger.log("/RobotLogs/GeneralRobot", queuePos + "readyTime =" + readyTime);
-                return false;
-            }
+            //                logger.log("/RobotLogs/GeneralRobot", queuePos + "readyTime =" + readyTime);
+            return p_extraCondition;
         } else {
             return false;
         }
@@ -110,8 +105,6 @@ public class QueueElement {
     public boolean isAsynchronous() {
         return asynchronous;
     }
-
-    public void setAsynchronous(boolean p_asynchronous){asynchronous = p_asynchronous;}
 
     public void setStartCondition(int p_condition){
         startCondition=p_condition;
