@@ -19,7 +19,6 @@ import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
 import org.firstinspires.ftc.teamcode.Robots.BasicRobot;
-import org.firstinspires.ftc.teamcode.roadrunner.drive.RFMotorPoseSim;
 import org.firstinspires.ftc.teamcode.roadrunner.util.DashboardUtil;
 
 import java.util.ArrayList;

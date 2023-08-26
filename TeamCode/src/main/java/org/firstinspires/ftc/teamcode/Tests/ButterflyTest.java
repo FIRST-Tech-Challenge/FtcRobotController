@@ -1,29 +1,25 @@
 package org.firstinspires.ftc.teamcode.Tests;
 
-import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.Servo;
-import com.qualcomm.robotcore.hardware.ServoImpl;
 
 import org.firstinspires.ftc.teamcode.Robots.BasicRobot;
-import org.firstinspires.ftc.teamcode.roadrunner.drive.RFMecanumDrive;
+import org.firstinspires.ftc.teamcode.roadrunner.drive.RFMotionController.RFMecanumDrive;
 
 import java.util.ArrayList;
 
 @TeleOp(name = "ButterflyTest")
 public class ButterflyTest extends LinearOpMode {
-    BasicRobot robot;
-    RFMecanumDrive drive;
-    boolean isButtered = false;
-    double lastSwitchTime = 0;
-    double BUTTERED_POSITION = 0.6;
-    double INIT_POSITION = 1.0;
-    double [] offset = {0.005,-0.005,0.01,0.02 };
-    ArrayList<Servo> servos;
+    private final double [] OFFSETS = {0.005,-0.005,0.01,0.02 };
+    private boolean isButtered = false;
+    private ArrayList<Servo> servos;
+
+
     public void runOpMode(){
-        robot = new BasicRobot(this,true);
-        drive = new RFMecanumDrive();
+        double lastSwitchTime = 0;
+        BasicRobot robot = new BasicRobot(this, true);
+        RFMecanumDrive drive = new RFMecanumDrive();
         servos = new ArrayList<>();
         servos.add(hardwareMap.servo.get("servoLeftFront"));
         servos.add(hardwareMap.servo.get("servoLeftBack"));
@@ -52,11 +48,13 @@ public class ButterflyTest extends LinearOpMode {
     public void toggleServos(){
         if(isButtered){
             for(int i=0;i<4;i++){
-                servos.get(i).setPosition(BUTTERED_POSITION+offset[i]);
+                double BUTTERED_POSITION = 0.6;
+                servos.get(i).setPosition(BUTTERED_POSITION +OFFSETS[i]);
             }
         }
         else{
             for(int i=0;i<4;i++){
+                double INIT_POSITION = 1.0;
                 servos.get(i).setPosition(INIT_POSITION);
             }
         }

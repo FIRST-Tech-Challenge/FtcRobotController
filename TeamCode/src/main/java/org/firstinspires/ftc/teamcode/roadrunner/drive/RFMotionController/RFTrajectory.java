@@ -1,12 +1,11 @@
-package org.firstinspires.ftc.teamcode.roadrunner.drive;
+package org.firstinspires.ftc.teamcode.roadrunner.drive.RFMotionController;
 
 import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.packet;
 import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.time;
-import static org.firstinspires.ftc.teamcode.roadrunner.drive.DriveConstants.MAX_ACCEL;
 import static org.firstinspires.ftc.teamcode.roadrunner.drive.DriveConstants.TRACK_WIDTH;
 import static org.firstinspires.ftc.teamcode.roadrunner.drive.PoseStorage.currentPose;
 import static org.firstinspires.ftc.teamcode.roadrunner.drive.PoseStorage.currentVelocity;
-import static org.firstinspires.ftc.teamcode.roadrunner.drive.RFMecanumDrive.poseMode;
+import static org.firstinspires.ftc.teamcode.roadrunner.drive.RFMotionController.RFMecanumDrive.poseMode;
 
 import static java.lang.Double.isNaN;
 import static java.lang.Double.max;

@@ -1,10 +1,10 @@
-package org.firstinspires.ftc.teamcode.Tests;
+package org.firstinspires.ftc.teamcode.roadrunner.drive.opmode;
 
 
 import static org.firstinspires.ftc.teamcode.roadrunner.drive.PoseStorage.currentPose;
 import static org.firstinspires.ftc.teamcode.roadrunner.drive.PoseStorage.currentVelocity;
-import static org.firstinspires.ftc.teamcode.roadrunner.drive.RFMecanumDrive.poseMode;
-//import static org.firstinspires.ftc.teamcode.roadrunner.drive.RFMecanumDrive.isPoseSim;
+import static org.firstinspires.ftc.teamcode.roadrunner.drive.RFMotionController.RFMecanumDrive.poseMode;
+//import static org.firstinspires.ftc.teamcode.roadrunner.RFMotionController.RFMecanumDrive.isPoseSim;
 
 import static java.lang.Math.toRadians;
 
@@ -15,10 +15,10 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.teamcode.Robots.BasicRobot;
-import org.firstinspires.ftc.teamcode.roadrunner.drive.Localizers.LocalizerFactory;
-import org.firstinspires.ftc.teamcode.roadrunner.drive.Localizers.Tracker;
-import org.firstinspires.ftc.teamcode.roadrunner.drive.RFMecanumDrive;
-import org.firstinspires.ftc.teamcode.roadrunner.drive.RFWaypoint;
+import org.firstinspires.ftc.teamcode.roadrunner.drive.RFMotionController.Localizers.LocalizerFactory;
+import org.firstinspires.ftc.teamcode.roadrunner.drive.RFMotionController.Localizers.Tracker;
+import org.firstinspires.ftc.teamcode.roadrunner.drive.RFMotionController.RFMecanumDrive;
+import org.firstinspires.ftc.teamcode.roadrunner.drive.RFMotionController.RFWaypoint;
 
 @Config
 @Autonomous(name = "RFMotionControllerTest")
