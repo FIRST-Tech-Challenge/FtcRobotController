@@ -17,8 +17,14 @@ apply from: '../build.dependencies.gradle'
 
 android {
     namespace = 'org.firstinspires.ftc.teamcode'
+    androidResources {
+        noCompress 'tflite'
+    }
 
     packagingOptions {
+        jniLibs {
+            pickFirsts += ['**/*.so']
+        }
         jniLibs.useLegacyPackaging true
     }
 }
@@ -26,4 +32,14 @@ android {
 dependencies {
     implementation project(':FtcRobotController')
     annotationProcessor files('lib/OpModeAnnotationProcessor.jar')
+    implementation 'org.ftclib.ftclib:core:2.1.1'
+    implementation 'org.ftclib.ftclib:vision:2.1.0'
+    implementation 'org.openftc:easyopencv:1.7.0'
+    implementation 'org.openftc:apriltag:2.0.0'
+    /*
+        fixed
+        Supported source version 'RELEASE_7' from annotation processor 'org.gradle.api.internal.tasks.compile.processing.TimeTrackingProcessor' less than -source '8'
+        Not sure if has other issues
+    */
+    implementation 'android.arch.lifecycle:common-java8:1.0.0'
 }
