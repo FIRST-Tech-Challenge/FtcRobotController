@@ -27,18 +27,11 @@ repositories {
     maven {
         url = 'https://maven.brott.dev/'
     }
-    mavenLocal()
 }
 
 dependencies {
     implementation project(':FtcRobotController')
     annotationProcessor files('lib/OpModeAnnotationProcessor.jar')
 
-    implementation 'com.acmerobotics.dashboard:dashboard:0.4.9'
-    implementation 'com.acmerobotics.roadrunner:core:1.0.0-beta2'
-    implementation 'com.acmerobotics.roadrunner:actions:1.0.0-beta2'
-
-    implementation 'com.fasterxml.jackson.core:jackson-databind:2.12.7'
-
-    implementation "com.acmerobotics.roadrunner:ftc:0.1.0-SNAPSHOT"
+    implementation "com.acmerobotics.roadrunner:ftc:0.1.0"
 }
