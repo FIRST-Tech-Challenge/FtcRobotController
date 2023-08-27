@@ -27,7 +27,6 @@ import java.util.Arrays;
 @Config
 public class RFMotor extends Motor {
     private final DcMotorEx rfMotor;
-    private ArrayList<Double> coefs = null;
     public static double kP = 0.009;
     public static final double kD = 0.00001;
     public static final double kV = 0.0003;
@@ -56,70 +55,49 @@ public class RFMotor extends Motor {
     private double TICK_BOUNDARY_PADDING = 10, TICK_STOP_PADDING = 20;
 
     private double currentAcceleration, currentPos, currentTickPos;
-    private double power = 0, position = 0, velocity = 0, targetPos = 0, resistance = 0, acceleration = 0, avgResistance;
+    private double power = 0, position = 0, velocity = 0, targetPos = 0, resistance = 0, acceleration = 0;
     private String rfMotorName;
     private boolean isSim = false, sameTarget = false;
 
-    /*Initializes the motor
-        Inputs:
-        motorName: the name of the device | Ex:'motorRightFront'
-        motorDirection: the direction of the motor | 0 for Reverse, 1 for Forward | Ex: 0
+    /**
+     * Constructor
+     * @param p_motorName the name of the device
+     * @param p_motorDirection the direction of the motor | 0 for Reverse, 1 for Forward
+     * @param p_resetPos if true, motor encoder is reset to 0; if false, nothing happens
+     * @param p_maxtick max allowed tick position of the motor
+     * @param p_mintick minimum allowed tick position of the motor
      */
-
-    //for motors used for complex functions
-
-    public RFMotor(String motorName, DcMotorSimple.Direction motorDirection, DcMotor.RunMode runMode,
-                   boolean resetPos, ArrayList<Double> coefficients,
-                   double maxtick, double mintick) {
-        rfMotor = (DcMotorEx) op.hardwareMap.dcMotor.get(motorName);
-        rfMotor.setDirection(motorDirection);
-        if (resetPos) {
+    public RFMotor(String p_motorName, DcMotorSimple.Direction p_motorDirection, boolean p_resetPos, double p_maxtick,
+                   double p_mintick) {
+        rfMotor = (DcMotorEx) op.hardwareMap.dcMotor.get(p_motorName);
+        rfMotor.setDirection(p_motorDirection);
+        if (p_resetPos) {
             rfMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         }
-        rfMotor.setMode(runMode);
-        coefs = coefficients;
-        maxtickcount = maxtick;
-        mintickcount = mintick;
+        maxtickcount = p_maxtick;
+        mintickcount = p_mintick;
 
-        logger.createFile("/MotorLogs/RFMotor" + motorName, "Runtime    Component               " +
+        logger.createFile("/MotorLogs/RFMotor" + p_motorName, "Runtime    Component               " +
                 "Function               Action");
         rfMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         additionalTicks = 0;
     }
 
-    //same as above but assuming motor direction is foward
-    public RFMotor(String motorName, DcMotor.RunMode runMode, boolean resetPos,
-                   ArrayList<Double> coefficients, double maxtick, double mintick) {
-        rfMotor = (DcMotorEx) op.hardwareMap.dcMotor.get(motorName);
-        rfMotorName = motorName;
-        if (resetPos) {
+    /**
+     * Constructor
+     * @param p_motorName the name of the device
+     * @param p_resetPos if true, motor encoder is reset to 0; if false, nothing happens
+     * @param p_maxtick max allowed tick position of the motor
+     * @param p_mintick minimum allowed tick position of the motor
+     */
+    public RFMotor(String p_motorName, boolean p_resetPos, double p_maxtick, double p_mintick) {
+        rfMotor = (DcMotorEx) op.hardwareMap.dcMotor.get(p_motorName);
+        rfMotorName = p_motorName;
+        if (p_resetPos) {
             rfMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         }
-        rfMotor.setMode(runMode);
-        coefs = coefficients;
-        maxtickcount = maxtick;
-        mintickcount = mintick;
-
-        logger.createFile("/MotorLogs/RFMotor" + motorName, "Runtime    Component               " +
-                "Function               Action");
-        rfMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        additionalTicks = 0;
-    }
-
-    //same as above but using default coefficients
-    public RFMotor(String motorName, DcMotor.RunMode runMode, boolean resetPos,
-                   double maxtick, double mintick) {
-        rfMotor = (DcMotorEx) op.hardwareMap.dcMotor.get(motorName);
-        rfMotorName = motorName;
-        if (resetPos) {
-            rfMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        }
-        rfMotor.setMode(runMode);
-        coefs = new ArrayList<>();
-        coefs.add(DEFAULTCOEF1);
-        coefs.add(DEFAULTCOEF2);
-        maxtickcount = maxtick;
-        mintickcount = mintick;
+        maxtickcount = p_maxtick;
+        mintickcount = p_mintick;
 
         logger.createFile("/MotorLogs/RFMotor" + rfMotorName, "Runtime    Component               " +
                 "Function               Action");
@@ -127,21 +105,29 @@ public class RFMotor extends Motor {
 
     }
 
-    //for chassis wheels where you only need it to spin continuously
-    public RFMotor(String motorName, DcMotor.RunMode runMode, boolean resetPos) {
-        rfMotor = (DcMotorEx) op.hardwareMap.dcMotor.get(motorName);
-        rfMotorName = motorName;
-        if (resetPos) {
+    /**
+     * Constructor
+     * @param p_motorName the name of the device
+     * @param p_resetPos if true, motor encoder is reset to 0; if false, nothing happens
+     */
+    public RFMotor(String p_motorName, boolean p_resetPos) {
+        rfMotor = (DcMotorEx) op.hardwareMap.dcMotor.get(p_motorName);
+        rfMotorName = p_motorName;
+        if (p_resetPos) {
             rfMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         }
-        rfMotor.setMode(runMode);
 
-        logger.createFile("/MotorLogs/RFMotor" + motorName, "Runtime    Component               " +
+        logger.createFile("/MotorLogs/RFMotor" + p_motorName, "Runtime    Component               " +
                 "Function               Action");
         rfMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
     }
 
-    public void setPosition(double p_targetPos, double curve) {
+    /**
+     * Setting target position of the motor
+     * @param p_targetPos target position for motor to travel to
+     * @param p_curve desired curviness of S-Curve
+     */
+    public void setPosition(double p_targetPos, double p_curve) {
         if (targetPos == p_targetPos) {
             sameTarget = true;
         } else {
@@ -160,9 +146,8 @@ public class RFMotor extends Motor {
         acceleration = getVelocity() - velocity;
         velocity += acceleration;
         acceleration /= (time - lastTime);
-        getAvgResistance();
 
-        double[] targetMotion = getTargetMotion(curve);
+        double[] targetMotion = getTargetMotion(p_curve);
 
         double power = (kV * targetMotion[0] + kA * targetMotion[1] +
                 kP * (getTargetPosition(BasicRobot.time) - position) + kD * (getTargetVelocity(BasicRobot.time) - velocity) + gravity);
@@ -179,8 +164,12 @@ public class RFMotor extends Motor {
         lastTime = time;
     }
 
-
-    public double[] getTargetMotion(double curve) {
+    /**
+     * Gets target current velocity and target current acceleration
+     * @param p_curve desired curviness of S-Curve
+     * @return target current velocity and target current acceleration
+     */
+    public double[] getTargetMotion(double p_curve) {
         double[] targets = {0, 0};
 
         relativeDist = targetPos - getCurrentPosition();
@@ -206,13 +195,13 @@ public class RFMotor extends Motor {
         }
 
         if (velocities[0] == 0) {
-            peakVelo = min((131 - 38 * curve) / 131 * sqrt(getMaxAcceleration() * abs(relativeDist)), getMaxVelocity());
+            peakVelo = min((131 - 38 * p_curve) / 131 * sqrt(getMaxAcceleration() * abs(relativeDist)), getMaxVelocity());
         } else {
-            peakVelo = min((131 - 38 * curve) / 131 * sqrt(getMaxAcceleration() * (abs(relativeDist) -
+            peakVelo = min((131 - 38 * p_curve) / 131 * sqrt(getMaxAcceleration() * (abs(relativeDist) -
                     abs(velocities[0]) / velocities[0] * pow(velocities[0], 2) / (2 * getMaxAcceleration()))), getMaxVelocity());
         }
 
-        J = getMaxAcceleration() / ((peakVelo / (getMaxAcceleration() * (1 - curve / 2))) * curve / 2);
+        J = getMaxAcceleration() / ((peakVelo / (getMaxAcceleration() * (1 - p_curve / 2))) * p_curve / 2);
 
         velocities[0] = min(velocities[0], peakVelo);
 
@@ -241,6 +230,10 @@ public class RFMotor extends Motor {
         return targets;
     }
 
+    /**
+     * Calculates time intervals, end velocities and positions at the end of each time interval, and distance
+     * covered in each time segment, then updates the public static arrays
+     */
     public void calculateIntervals() {
         double[] temp_timeIntervals = new double[8];
         double cruiseTime;
@@ -300,9 +293,11 @@ public class RFMotor extends Motor {
         calculatedIntervals[1] = temp_distances;
         calculatedIntervals[2] = temp_velocities;
         calculatedIntervals[3] = temp_positions;
-
     }
 
+    /**
+     * Stores coefficients for calculating target position, velocity, or acceleration at any given time
+     */
     public void calculateMotions() {
         double[][] acceleration = new double[7][5];
         double[][] velocity = new double[7][5];
@@ -398,6 +393,11 @@ public class RFMotor extends Motor {
 
     }
 
+    /**
+     * Calculates current target position given time
+     * @param p_time current time
+     * @return
+     */
     public double getTargetPosition(double p_time) {
         p_time -= timeIntervals[0];
         if (p_time >= timeIntervals[7]) {
@@ -430,6 +430,11 @@ public class RFMotor extends Motor {
         return direction * currentTargetPos + positions[0];
     }
 
+    /**
+     * Calculates current target velcotiy given time
+     * @param p_time current time
+     * @return
+     */
     public double getTargetVelocity(double p_time) {
         p_time -= timeIntervals[0];
         if (p_time >= timeIntervals[7]) {
@@ -461,6 +466,11 @@ public class RFMotor extends Motor {
         return direction * currentTargetVelo;
     }
 
+    /**
+     * Calculates current target acceleration given time
+     * @param p_time current time
+     * @return
+     */
     public double getTargetAcceleration(double p_time) {
         p_time -= timeIntervals[0];
         if (p_time > timeIntervals[7]) {
@@ -492,6 +502,10 @@ public class RFMotor extends Motor {
         return direction * currentTargetAccel;
     }
 
+    /**
+     * Determines which MAX_VELOCITY to use based on direction of movement
+     * @return determined MAX_VELOCITY
+     */
     public double getMaxVelocity() {
         if (direction == 1) {
             return MAX_VELOCITY_UP;
@@ -500,6 +514,10 @@ public class RFMotor extends Motor {
         }
     }
 
+    /**
+     * Determines which MAX_ACCEL to use based on direction of movement
+     * @return determined MAX_ACCEL
+     */
     public double getMaxAcceleration() {
         if (direction == 1) {
             return MAX_ACCELERATION_UP;
@@ -508,111 +526,107 @@ public class RFMotor extends Motor {
         }
     }
 
+    /**
+     * Returns current target position
+     * @return current target position
+     */
     public double getTarget() {
         return targetPos;
     }
 
-    public double getResistance() {
-//        double resistance = 0;
-//        resistance -= 200 + 0.4 * position - 0.00012 * position * position;
-//        resistance -= velocity * 0.3 * pow(abs(position) + 1, -.12);
-        return -RESISTANCE;
-    }
-
-    public void getAvgResistance() {
-//        double resistances = 0;
-//        resistances -= RESISTANCE /* - 0.000135* position * position*/;
-////        resistances -= velocity * 0.2 * pow(abs(position) + 1, -.13);
-////        resistance = resistances* VOLTAGE_CONST;
-//        resistances -= RESISTANCE/* - 0.000135 * targetPos * targetPos*/;
-        resistance = -RESISTANCE;
-        avgResistance = -RESISTANCE;
-    }
-
+    /**
+     * Determines whether you are reasonably close to target position yet
+     * @return boolean indicating ^^
+     */
     public boolean atTargetPosition() {
         return abs(position - targetPos) < TICK_STOP_PADDING;
     }
 
-    public void setDirection(DcMotorSimple.Direction direction) {
-        rfMotor.setDirection(direction);
+    /**
+     * Sets direction of motor
+     * @param p_direction input direction for motor
+     */
+    public void setDirection(DcMotorSimple.Direction p_direction) {
+        rfMotor.setDirection(p_direction);
     }
 
-    public void setVelToAnalog(double velToAnalog) {
-        kP = velToAnalog;
+    /**
+     * Overrides encoder position; artificially sets encoder to 0 or max
+     * @param p_position position parameter
+     */
+    public void setCurrentPosition(double p_position) {
+        additionalTicks = p_position - rfMotor.getCurrentPosition();
     }
 
-    public void setCurrentPosition(double position) {
-        additionalTicks = position - rfMotor.getCurrentPosition();
-    }
-
-    public void setPower(double power) {
+    /**
+     * Manually set power
+     * @param p_power target power
+     */
+    public void setPower(double p_power) {
         rfMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        getAvgResistance();
-//        logger.log("/RobotLogs/GeneralRobot", rfMotorName + ",setPower():,Setting Power: " + power, false, false);
-        rfMotor.setPower(power - kP * resistance);
-//        logger.log("/MotorLogs/RFMotor" + rfMotorName, "Setting Power," + (power - kP * getResistance()), false, false);
+        rfMotor.setPower(p_power - kP * -RESISTANCE);
 
     }
 
-    public void setRawPower(double power) {
+    /**
+     * Manually set raw power
+     * @param p_power target raw power
+     */
+    public void setRawPower(double p_power) {
         rfMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-//        getAvgResistance();
-//        logger.log("/RobotLogs/GeneralRobot", rfMotorName + ",setPower():,Setting Power: " + power, false, false);
-        rfMotor.setPower(power);
-//        logger.log("/MotorLogs/RFMotor" + rfMotorName, "Setting Power," + (power), false, false);
-
+        rfMotor.setPower(p_power);
     }
 
+    /**
+     *Returns current motor power
+     * @return current motor power
+     */
     public double getPower() {
         return rfMotor.getPower();
     }
 
-    public double getGRAVITY_CONSTANT() {
-        return getResistance();
+    /**
+     * Manually set velocity
+     * @param p_velocity target velocity
+     */
+    public void setVelocity(double p_velocity) {
+        rfMotor.setVelocity(p_velocity);
     }
 
-    public void setVelocity(double velocity) {
-        rfMotor.setVelocity(velocity);
-    }
-
+    /**
+     * Returns current encoder position + stored additionalTicks for offset
+     * @return same as above ^
+     */
     public int getCurrentPosition() {
         return rfMotor.getCurrentPosition() + (int) additionalTicks;
     }
 
-    public void setMode(DcMotor.RunMode runMode) {
-        rfMotor.setMode(runMode);
-        if (rfMotor.getMode() != runMode) {
-            logger.log("/MotorLogs/RFMotor", rfMotorName + ",setMode(),Setting RunMode: " + runMode,
+    public void setMode(DcMotor.RunMode p_runMode) {
+        rfMotor.setMode(p_runMode);
+        if (rfMotor.getMode() != p_runMode) {
+            logger.log("/MotorLogs/RFMotor", rfMotorName + ",setMode(),Setting RunMode: " + p_runMode,
                     true, true);
         }
     }
 
-    public void setZeroPowerBehavior(DcMotor.ZeroPowerBehavior behavior) {
-        rfMotor.setZeroPowerBehavior(behavior);
-    }
-
+    /**
+     * Returns current motor velocity
+     * @return current motor velocity
+     */
     public double getVelocity() {
         return rfMotor.getVelocity();
     }
 
-    public double getTICK_BOUNDARY_PADDING() {
-        return TICK_BOUNDARY_PADDING;
-    }
-
-    public double getTICK_STOP_PADDING() {
-        return TICK_STOP_PADDING;
-    }
-
-    public void setTICK_BOUNDARY_PADDING(double p_TICK_BOUNDARY_PADDING) {
-        TICK_BOUNDARY_PADDING = p_TICK_BOUNDARY_PADDING;
-    }
-
-    public void setTICK_STOP_PADDING(double p_TICK_STOP_PADDING) {
-        TICK_STOP_PADDING = p_TICK_STOP_PADDING;
-    }
-
+    //Below functions are used for simulation
     double lastUpdateTime = 0.0;
 
+    /**
+     * Updates variables in RFPoseSim storage
+     * @param p_targetPos Target position
+     * @param p_tickPos Simulated current tick position of the motor
+     * @param p_targetVelo Target Velocity
+     * @param p_targetAccel Target Acceleration
+     */
     public void getTargets(double p_targetPos, double p_tickPos, double p_targetVelo, double p_targetAccel) {
         currentPos = p_targetPos;
         currentTickPos = p_tickPos;
@@ -621,6 +635,9 @@ public class RFMotor extends Motor {
         lastUpdateTime = time;
     }
 
+    /**
+     * Visually updates the simulation
+     */
     public void updateSim() {
         Pose2d targetPose = new Pose2d(currentPos, 0, 0);
         lastUpdateTime = time;
@@ -630,17 +647,30 @@ public class RFMotor extends Motor {
         DashboardUtil.drawRobot(fieldOverlay, targetPose);
     }
 
+    /**
+     * Calculates and updates both the stored variables in RFPoseSim and the visual simulation
+     */
     public void update() {
         getTargets(getTargetPosition(BasicRobot.time) * 0.05, getTargetPosition(BasicRobot.time),
                 getTargetVelocity(BasicRobot.time), getTargetAcceleration(BasicRobot.time));
         updateSim();
     }
 
+    /**
+     * Change the isSim boolean to true or false
+     * @param p_IsSim desired value of isSim
+     */
     public void setIsSim(boolean p_IsSim) {
         isSim = p_IsSim;
     }
 
-    public double[] setSimPosition(double p_targetPos, double curve) {
+    /**
+     * Simplified setPosition() function just for simulation; only gets targets
+     * @param p_targetPos target position
+     * @param p_curve desired curve for S-Curve
+     * @return target velocity and acceleration at current time
+     */
+    public double[] setSimPosition(double p_targetPos, double p_curve) {
         if (p_targetPos > maxtickcount) {
             p_targetPos = maxtickcount;
         }
@@ -652,6 +682,6 @@ public class RFMotor extends Motor {
         lastTime = time;
         isSim = true;
 
-        return getTargetMotion(curve);
+        return getTargetMotion(p_curve);
     }
 }
