@@ -7,6 +7,55 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
 @TeleOp
 public class Auto extends LinearOpMode {
+
+    public void proportionalMove(int inches) {
+        DcMotor fLeft = hardwareMap.dcMotor.get("fLeft");
+        DcMotor bLeft = hardwareMap.dcMotor.get("bLeft");
+        DcMotor fRight = hardwareMap.dcMotor.get("fRight");
+        DcMotor bRight = hardwareMap.dcMotor.get("bRight");
+
+        fLeft.setDirection(DcMotorSimple.Direction.REVERSE);
+        bLeft.setDirection(DcMotorSimple.Direction.REVERSE);
+        fRight.setDirection(DcMotorSimple.Direction.FORWARD);
+        bRight.setDirection(DcMotorSimple.Direction.FORWARD);
+
+        fLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        fLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+
+        fLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        bLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        fRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        bRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
+        fLeft.setDirection(DcMotorSimple.Direction.REVERSE);
+        bLeft.setDirection(DcMotorSimple.Direction.FORWARD);
+        fRight.setDirection(DcMotorSimple.Direction.REVERSE);
+        bRight.setDirection(DcMotorSimple.Direction.FORWARD);
+
+        fLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        fLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        fLeft.getCurrentPosition();
+
+        double ticksPerInch = (537.7 / 1.4) / 11.87373601322835;
+        double error = ticksPerInch * inches;
+        double P = 0.001;
+
+        telemetry.addData("error", error);
+        telemetry.update();
+
+        while(Math.abs(error) <= 30  && opModeIsActive()){
+            error = ticksPerInch * inches - fLeft.getCurrentPosition();
+            telemetry.addData("Current Position", fLeft.getCurrentPosition());
+            telemetry.addData("Target Position", ticksPerInch * Math.abs(inches));
+            telemetry.update();
+
+            fLeft.setPower(error * P);
+            bLeft.setPower(error * P);
+            fRight.setPower(error * P);
+            bRight.setPower(error * P);
+        }
+    }
+
     public void encoderMove(int inches) {
         DcMotor fLeft = hardwareMap.dcMotor.get("fLeft");
         DcMotor bLeft = hardwareMap.dcMotor.get("bLeft");
@@ -65,8 +114,9 @@ public class Auto extends LinearOpMode {
     public void runOpMode() throws InterruptedException{
 
         waitForStart();
-        encoderMove(12); // moves forward 12 inches
-        encoderMove(-12); // moves backward 12 inches
+        proportionalMove(12);
+        //encoderMove(12); // moves forward 12 inches
+        //encoderMove(-12); // moves backward 12 inches
     }
 
 }
