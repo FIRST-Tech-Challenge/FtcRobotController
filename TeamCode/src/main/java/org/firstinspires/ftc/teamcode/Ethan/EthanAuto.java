@@ -4,6 +4,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.IMU;
 
 @TeleOp
 public class EthanAuto extends LinearOpMode {
@@ -68,10 +69,7 @@ public class EthanAuto extends LinearOpMode {
             telemetry.update();
         }
 
-        lFront.setPower(0);
-        lBack.setPower(0);
-        rFront.setPower(0);
-        rBack.setPower(0);
+
 
         telemetry.addLine(String.valueOf(lFront.getCurrentPosition()/MM_TO_TICKS));
         telemetry.update();
