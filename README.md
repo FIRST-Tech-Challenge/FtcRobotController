@@ -1,11 +1,9 @@
-## TeamCode Module
+# Steve's FTC Code Repository
 
 Welcome!
 
-Test code by SrAmorosi
+## Code
 
-## OpModes
+The code files are in the [TeamCode Folder](/TeamCode/src/main/java/org/firstinspires/ftc/teamcode)
 
-### SwerveDrive
-### MotorcycleMode
-### PotentiometerRecord
+Have Fun!
