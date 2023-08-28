@@ -23,7 +23,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 @TeleOp
 public class SwerveDrive extends OpMode{
     // Constants
-    static final double INITIAL_WHEEL_ANGLE = (Math.PI/2.0); // Wheel angle in radians
+    static final double INITIAL_WHEEL_ANGLE = -(Math.PI/2.0); // Wheel angle in radians
 
     /* Declare OpMode members. */
     double priorTime = 0.0; // for logging loop times
@@ -40,7 +40,7 @@ public class SwerveDrive extends OpMode{
     Orientation or; // robots orientation (x,y,z angles) from IMU on Hub
     double globalIMUHeading;
 
-    double targetPodAngles = INITIAL_WHEEL_ANGLE;
+    double targetPodAngles = 0;  // angle relative to the initial angles
     int deltaS = 0;
 
     /*
@@ -74,6 +74,8 @@ public class SwerveDrive extends OpMode{
 
         // Send telemetry message to signify robot waiting;
         telemetry.addData("INITIAL POT 1 ="," %.05f, POT 2 = %.05f",pots.angle1,pots.angle2);
+        pots.getAngleFromPots(false,0); // find out where the wheels are pointed
+        telemetry.addData("NEW POT 1 ="," %.05f, POT 2 = %.05f",pots.angle1,pots.angle2);
         telemetry.addData(">", "Swerve Robot Ready.  Press Play.");
 
         // Write to log file
@@ -104,11 +106,11 @@ public class SwerveDrive extends OpMode{
 
         or = imu.getRobotOrientation(AxesReference.INTRINSIC, AxesOrder.XYZ, AngleUnit.RADIANS);
 
-        // setup so thet wheels hold current angle if there is no input
+        // setup so that wheels hold current angle if there is no input
         if (fwdSpeed>0.1) { // detect Right joystick movement, update angle
-            targetPodAngles = Math.atan2(-gpRightY,-gpRightX); // atan2(y,x) = radians
+            targetPodAngles = Math.atan2(gpRightX,-gpRightY); // atan2(y,x) = radians
             if (fwdSpeed>0.2) {
-                deltaS = (int) (fwdSpeed*TICKS_PER_INCH);  // amount to move
+                deltaS = (int) (fwdSpeed*0.5*TICKS_PER_INCH);  // amount to move
             } else {
                 deltaS = 0;
             }
@@ -117,9 +119,9 @@ public class SwerveDrive extends OpMode{
         }
 
         // check if the wheel angle supports a heading change
-        goHeadingUpdate = ((Math.abs(targetPodAngles)>= Math.PI/2.5) && (Math.abs(targetPodAngles)<=Math.PI/1.5));
+        goHeadingUpdate = ((Math.abs(targetPodAngles)>= -.2) && (Math.abs(targetPodAngles)<=0.2));
         if(goHeadingUpdate) {
-            drive.robotAngle += (gpLeftX/10.0); // update the robot angle in radians
+            drive.robotAngle += (gpLeftX/20.0); // update the robot angle in radians
         }
 
         drive.setRobotTranslation(deltaS);

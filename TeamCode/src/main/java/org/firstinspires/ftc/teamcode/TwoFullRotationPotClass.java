@@ -17,8 +17,8 @@ public class TwoFullRotationPotClass {
     static final int SAMPLES = 2;  // number of readings averaged for one reading
 
     // Members
-    public double angle1; // angle of wheel 1
-    public double angle2; // angle of wheel 2
+    public double angle1; // angle of wheel 1, radians
+    public double angle2; // angle of wheel 2, radians
 
     // Potentiometers analog voltage values from REV HUB
     private AnalogInput potentiometer1;
@@ -90,7 +90,7 @@ public class TwoFullRotationPotClass {
         return angle;
     }
     public double getAngleFromPot2(double voltsP1, double voltsP2, double low, double high) {
-        double angle;
+        double angle=0;
         double average;
         boolean v1good, v2good;
         double deltaV;

@@ -1,32 +1,3 @@
-/* Copyright (c) 2023 FIRST. All rights reserved.
- *
- * Redistribution and use in source and binary forms, with or without modification,
- * are permitted (subject to the limitations in the disclaimer below) provided that
- * the following conditions are met:
- *
- * Redistributions of source code must retain the above copyright notice, this list
- * of conditions and the following disclaimer.
- *
- * Redistributions in binary form must reproduce the above copyright notice, this
- * list of conditions and the following disclaimer in the documentation and/or
- * other materials provided with the distribution.
- *
- * Neither the name of FIRST nor the names of its contributors may be used to endorse or
- * promote products derived from this software without specific prior written permission.
- *
- * NO EXPRESS OR IMPLIED LICENSES TO ANY PARTY'S PATENT RIGHTS ARE GRANTED BY THIS
- * LICENSE. THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
- * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
- * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
- * ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE
- * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
- * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
- * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
- * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
- * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
- */
-
 package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
@@ -34,6 +5,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.RobotLog;
 
+import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.BuiltinCameraDirection;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.vision.VisionPortal;
@@ -49,7 +21,7 @@ import java.util.List;
  * Use Android Studio to Copy this Class, and Paste it into your team's code folder with a new name.
  * Remove or comment out the @Disabled line to add this OpMode to the Driver Station OpMode list.
  */
-@TeleOp(name = "Concept: AprilTag Easy", group = "Concept")
+@TeleOp(name = "AprilTag Easy Tracking")
 //@Disabled
 public class ConceptAprilTagEasy extends LinearOpMode {
 
@@ -66,11 +38,31 @@ public class ConceptAprilTagEasy extends LinearOpMode {
     private VisionPortal visionPortal;
     double loopTime;
     double priorTime = 0.0;
+    static final double INITIAL_WHEEL_ANGLE = (Math.PI/2.0); // Wheel angle in radians
+    TwoWheelDiffSwerveClass drive;
+
+    // Potentiometer Class
+    TwoFullRotationPotClass pots;
+
+    double rotationAngle= 0;
 
     @Override
     public void runOpMode() {
 
         initAprilTag();
+        drive = new TwoWheelDiffSwerveClass();
+        drive.initDrive(hardwareMap);
+
+        pots = new TwoFullRotationPotClass();
+        pots.initPots(hardwareMap);
+        pots.getAngleFromPots(false,0); // find out where the wheels are pointed
+
+        drive.initWheelAngles(pots.angle1, pots.angle2,INITIAL_WHEEL_ANGLE,INITIAL_WHEEL_ANGLE);  // set the wheels to desired angle
+
+        // Send telemetry message to signify robot waiting;
+        telemetry.addData("INITIAL POT 1 ="," %.05f, POT 2 = %.05f",pots.angle1,pots.angle2);
+        pots.getAngleFromPots(false,0); // find out where the wheels are pointed
+        telemetry.addData("NEW POT 1 ="," %.05f, POT 2 = %.05f",pots.angle1,pots.angle2);
 
         // Wait for the DS start button to be touched.
         telemetry.addData("DS preview on/off", "3 dots, Camera Stream");
@@ -78,10 +70,25 @@ public class ConceptAprilTagEasy extends LinearOpMode {
         telemetry.update();
         waitForStart();
 
+        drive.setMotorsPower(0.8); // full speed  = 1.0. Backed off to prevent damage while developing
+
         if (opModeIsActive()) {
             while (opModeIsActive()) {
 
-                telemetryAprilTag();
+
+                List<AprilTagDetection> currentDetections = aprilTag.getDetections();
+
+                // Step through the list of detections and display info for each one.
+                for (AprilTagDetection detection : currentDetections) {
+                    rotationAngle = 0;
+                    if (detection.metadata != null) {
+                        rotationAngle =  detection.ftcPose.bearing*Math.PI/180.0;
+                        drive.setMotorPositions(0,0,-(rotationAngle/8.0)); // rotates the robot
+                    }
+                }   // end for() loop
+                telemetry.addData("ROTATION ANGLE = ", rotationAngle);
+
+                //telemetryAprilTag();
 
                 // Push telemetry to the Driver Station.
                 telemetry.update();
@@ -93,12 +100,12 @@ public class ConceptAprilTagEasy extends LinearOpMode {
                     visionPortal.resumeStreaming();
                 }
 
-                // Share the CPU.
+                // Share the CPU.  Lag time is worse without this
                 sleep(20);
 
                 loopTime = getRuntime() - priorTime;
                 priorTime = getRuntime();
-                RobotLog.d("ConceptAprilTagEasy = %.05f, loop = %.05f",priorTime,loopTime);
+                RobotLog.d("ConceptAprilTagEasy = %.05f, loop = %.05f, rotationAngle = %.05f",priorTime,loopTime,rotationAngle);
 
             }
         }
@@ -132,8 +139,7 @@ public class ConceptAprilTagEasy extends LinearOpMode {
      */
     private void telemetryAprilTag() {
 
-        List<AprilTagDetection> currentDetections = aprilTag.getDetections();
-        telemetry.addData("# AprilTags Detected", currentDetections.size());
+        List<AprilTagDetection> currentDetections = aprilTag.getDetections();        telemetry.addData("# AprilTags Detected", currentDetections.size());
 
         // Step through the list of detections and display info for each one.
         for (AprilTagDetection detection : currentDetections) {

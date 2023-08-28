@@ -12,7 +12,7 @@ import com.qualcomm.robotcore.util.RobotLog;
 @TeleOp
 public class MotorcycleMode extends OpMode{
     // Constants
-    static final double TICK_SPEED = 10.0; // gamepad joystick tick increment (speed) multiplier for linear movement.
+    static final double TICK_SPEED = 8.0; // gamepad joystick tick increment (speed) multiplier for linear movement.
     static final double INITIAL_WHEEL_ANGLE = 0.0; // Wheel initial angle, in radians
 
     /* Declare OpMode members. */
@@ -50,7 +50,7 @@ public class MotorcycleMode extends OpMode{
 
     @Override
     public void start() {
-        drive.setMotorsPower(0.8); // full speed  = 1.0. Backed off to prevent damage while developing
+        drive.setMotorsPower(1.0); // full speed  = 1.0. Backed off to prevent damage while developing
     }
 
     /**
@@ -59,6 +59,7 @@ public class MotorcycleMode extends OpMode{
     @Override
     public void loop() {
         double gpLeftX, gpRightY;
+        double throttle;
         double loopTime;
         double podAngle;
 
@@ -68,11 +69,14 @@ public class MotorcycleMode extends OpMode{
 
         podAngle = gpLeftX;  // 1 radian ~ 60 degrees, about right for max wheel turn
 
-        drive.setRobotTranslation((int) (gpRightY * TICK_SPEED));
+        throttle = gamepad1.right_trigger;
+
+        drive.setRobotTranslation((int) ((1+throttle)* gpRightY * TICK_SPEED));
         drive.setMotorPositions(podAngle,-podAngle,0.0); // Moves the robot
 
         telemetry.addData("Right stick y = SPEED = ", gpRightY);
         telemetry.addData("Left stick x = TURN = ", gpLeftX);
+        telemetry.addData("Right Trigger = THROTTLE = ", throttle);
         telemetry.update();
 
         loopTime = getRuntime() - priorTime;
