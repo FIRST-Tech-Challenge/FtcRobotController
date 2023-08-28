@@ -3,17 +3,23 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
+/**
+ * Two Wheeled Differential Swerve Drive Class
+ * Local system = Positive X is the line from wheel 2 to wheel 1
+ */
 public class TwoWheelDiffSwerveClass {
     // CONSTANTS
-    static final double TICKS_PER_HALF_WHEEL_TURN = 433.5; // turn both motors this amount for 180 deg turn, was 458.62
+    static final double TICKS_PER_RAD_WHEEL_TURN = 137.987; // turn both motors 433.5 ticks for 180 deg turn
     static final double TICKS_PER_INCH = 24.2; // Wheel movement. Pod motors turn opposite same amount
     static final double TICKS_PER_RAD_ROBOT_TURN = 47.7*TICKS_PER_INCH/(2.0*Math.PI); // Wheels must be perpendicular
-    public double currentRobotAngle; // the angle of the robot
-    public int targetPosition; // robot translation, in ticks
+    public double robotAngle; // the angle of the robot, radians
+    public double wheel1Angle; // the angle of wheel/pod 1, radians
+    public double wheel2Angle; // the angle of wheel/pod 2, radians
+    public int targetPosition; // robot cumulative translation at center, in ticks
 
-    // initial positions for each motor, in ticks, to get initial angle
-    private int initialTurnTicks1;
-    private int initialTurnTicks2;
+    // initial positions for each wheel (motor pair), in ticks, to get initial wheel angle
+    private int initialTurnTicks1 = 0;
+    private int initialTurnTicks2 = 0;
 
     // HARDWARE
     // DcMotors
@@ -24,8 +30,10 @@ public class TwoWheelDiffSwerveClass {
 
     // Constructor
     public TwoWheelDiffSwerveClass() {
-        currentRobotAngle = 0;
-        targetPosition = 0;
+        this.robotAngle = 0;
+        this.wheel1Angle = 0;
+        this.wheel2Angle = 0;
+        this.targetPosition = 0;
     }
     public void initDrive(HardwareMap hwMap) {
         // Define and Initialize Motors
@@ -40,13 +48,23 @@ public class TwoWheelDiffSwerveClass {
         motor2d.setDirection(DcMotor.Direction.FORWARD);
     }
 
-    public void initWheelAngles(double wheelAngle1, double wheelAngle2){
+    public void initWheelAngles(double isWheelAngle1, double isWheelAngle2, double tobeWheelAngle1, double tobeWheelAngle2) {
+        double deltaAngle1, deltaAngle2;
+        //deltaAngle1 = tobeWheelAngle1 - isWheelAngle1;
+        //deltaAngle2 = tobeWheelAngle2 - isWheelAngle2;
+        deltaAngle1 = getShortestTurnAngle(isWheelAngle1,tobeWheelAngle1);
+        deltaAngle2 = getShortestTurnAngle(isWheelAngle2,tobeWheelAngle2);
 
-        initialTurnTicks1 =  (int)((wheelAngle1 / Math.PI) * TICKS_PER_HALF_WHEEL_TURN);
+        initialTurnTicks1 =  (int)(deltaAngle1 * TICKS_PER_RAD_WHEEL_TURN);
+        initialTurnTicks2 =  (int)(deltaAngle2 * TICKS_PER_RAD_WHEEL_TURN);
 
-        initialTurnTicks2 =  (int)((wheelAngle2/ Math.PI) * TICKS_PER_HALF_WHEEL_TURN);
-
-        setRunToPos(0.8);  // full speed  = 1.0. Backed off to prevent damage while developing
+        setRunToPos(0.5);  // full speed  = 1.0. Backed off to prevent damage while developing
+    }
+    public void setMotorsPower(double mtrSpeed) {
+        motor1a.setPower(mtrSpeed);
+        motor1b.setPower(mtrSpeed);
+        motor2c.setPower(mtrSpeed);
+        motor2d.setPower(mtrSpeed);
     }
     /**
      * setRunToPos executes the sequence required for using RUN_TO_POSITION
@@ -56,10 +74,7 @@ public class TwoWheelDiffSwerveClass {
         motor1b.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         motor2c.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         motor2d.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        motor1a.setPower(mtrSpeed);
-        motor1b.setPower(mtrSpeed);
-        motor2c.setPower(mtrSpeed);
-        motor2d.setPower(mtrSpeed);
+        setMotorsPower(mtrSpeed);
         setMotorPositions(0,0,0);
         motor1a.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         motor1b.setMode(DcMotor.RunMode.RUN_TO_POSITION);
@@ -69,11 +84,20 @@ public class TwoWheelDiffSwerveClass {
     public void setRobotTranslation(int deltaRobotPosTicks) {
         targetPosition += deltaRobotPosTicks;
     }
-    public void setMotorPositions(int turnPod1,int turnPod2,int robotHeadingTicks) {
+    public void setMotorPositions(double newWheel1Angle, double newWheel2Angle,double deltaRobotAngle) {
         int ticksA,ticksB, ticksC,ticksD;
+        int turnPod1, turnPod2;
+        int robotHeadingTicks;
+
+        robotAngle += deltaRobotAngle;
+        robotHeadingTicks = (int) (robotAngle * TICKS_PER_RAD_ROBOT_TURN); // convert robot heading to ticks
+        wheel1Angle = newWheel1Angle;
+        turnPod1 = (int) (wheel1Angle* TICKS_PER_RAD_WHEEL_TURN);
+        wheel2Angle = newWheel2Angle;
+        turnPod2 = (int) (wheel2Angle* TICKS_PER_RAD_WHEEL_TURN);
 
         // Add together initial pod angles, position ticks, pot turn ticks and robot turn ticks
-        ticksA = initialTurnTicks2 + targetPosition + turnPod1 - robotHeadingTicks;
+        ticksA = initialTurnTicks1 + targetPosition + turnPod1 - robotHeadingTicks;
         ticksB = initialTurnTicks1 - targetPosition + turnPod1 + robotHeadingTicks;
         ticksC = initialTurnTicks2 + targetPosition + turnPod2 + robotHeadingTicks;
         ticksD = initialTurnTicks2 - targetPosition + turnPod2 - robotHeadingTicks;

@@ -13,20 +13,13 @@ import com.qualcomm.robotcore.util.RobotLog;
 @TeleOp
 public class PotentiometerRecord extends OpMode{
     // Constants
-    static final double MAX_MTR_SPEED = 0.7;  // full speed  = 1.0. Backed off to prevent damage while developing
-    static final double TICKS_PER_180_TURN = 435; // turn both motors this amount for 180 deg turn
     static final double INITIAL_WHEEL_ANGLE = 0.0; // Wheel angle in radians
     static final boolean CW = true; // If true, wheel rotation is CW, else CCW
 
     /* Declare OpMode members. */
     double priorTime = 0.0; // for logging loop times
 
-    // HARDWARE
-    // DcMotors
-    DcMotor motor1a = null;
-    DcMotor motor1b = null;
-    DcMotor motor2c = null;
-    DcMotor motor2d = null;
+    TwoWheelDiffSwerveClass drive;
 
     // Potentiometer Class
     public TwoFullRotationPotClass pots;
@@ -35,46 +28,19 @@ public class PotentiometerRecord extends OpMode{
     // target positions for robot
     double currentAngle = INITIAL_WHEEL_ANGLE;  // the robot angle
 
-    // target positions for each motor, in ticks
-    int targetPosA, targetPosB, targetPosC, targetPosD;
-
     @Override
     public void init() {
-        int turnTicks,turnTicks2;
-        double deltaAngle;
-
-        // Define and Initialize Motors
-        motor1a = hardwareMap.get(DcMotor.class, "a");
-        motor1b = hardwareMap.get(DcMotor.class, "b");
-        motor2c = hardwareMap.get(DcMotor.class, "c");
-        motor2d = hardwareMap.get(DcMotor.class, "d");
-
-        motor1a.setDirection(DcMotor.Direction.FORWARD);
-        motor1b.setDirection(DcMotor.Direction.REVERSE); // Why??
-
-        motor2c.setDirection(DcMotor.Direction.FORWARD);
-        motor2d.setDirection(DcMotor.Direction.FORWARD);
+        drive = new TwoWheelDiffSwerveClass();
+        drive.initDrive(hardwareMap);
 
         pots = new TwoFullRotationPotClass();
         pots.initPots(hardwareMap);
+        pots.getAngleFromPots(false,0); // find out where the wheels are pointed
 
-        pots.getAngleFromPots(true,INITIAL_WHEEL_ANGLE); // find out where the wheel are pointed
-
-        deltaAngle = pots.getShortestTurnAngle(pots.angle1,INITIAL_WHEEL_ANGLE);
-        turnTicks =  (int)((deltaAngle / Math.PI) * TICKS_PER_180_TURN);
-        targetPosA = turnTicks;
-        targetPosB = turnTicks;
-
-        deltaAngle = pots.getShortestTurnAngle(pots.angle2,INITIAL_WHEEL_ANGLE);
-        turnTicks2 =  (int)((deltaAngle/ Math.PI) * TICKS_PER_180_TURN);
-        targetPosC = turnTicks2;
-        targetPosD = turnTicks2;
-
-        setMotorPositions(); // Turn to the initial position
-
-        setRunToPos();
+        drive.initWheelAngles(pots.angle1, pots.angle2,INITIAL_WHEEL_ANGLE,INITIAL_WHEEL_ANGLE);  // set the wheels to desired angle
 
         // Send telemetry message to signify robot waiting;
+        telemetry.addData("INITIAL POT 1 ="," %.05f, POT 2 = %.05f",pots.angle1,pots.angle2);
         telemetry.addData(">", "Robot Ready.  Press Play.");
 
         // Write to log file
@@ -86,34 +52,13 @@ public class PotentiometerRecord extends OpMode{
 
     @Override
     public void start() {
-        setRunToPos();
-    }
-
-    void setRunToPos() {
-        motor1a.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        motor1b.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        motor2c.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        motor2d.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        motor1a.setPower(MAX_MTR_SPEED);
-        motor1b.setPower(MAX_MTR_SPEED);
-        motor2c.setPower(MAX_MTR_SPEED);
-        motor2d.setPower(MAX_MTR_SPEED);
-        motor1a.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        motor1b.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        motor2c.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        motor2d.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-    }
-    void setMotorPositions() {
-        motor1a.setTargetPosition(targetPosA);
-        motor1b.setTargetPosition(targetPosB);
-        motor2c.setTargetPosition(targetPosC);
-        motor2d.setTargetPosition(targetPosD);
+        drive.setMotorsPower(0.8); // full speed  = 1.0. Backed off to prevent damage while developing
+        drive.setRobotTranslation(0);
     }
 
     @Override
     public void loop() {
         double loopTime;
-        int ticks;
         boolean log;
 
         if (CW) {
@@ -123,13 +68,7 @@ public class PotentiometerRecord extends OpMode{
             if(currentAngle>=(-4.1*Math.PI)) currentAngle -= 0.03;  // spin a bit more than 2 revs, increment angle
             log = ((currentAngle<=(-2.0*Math.PI)) && (currentAngle>=(-4.0*Math.PI))); // only log 2nd rotation
         }
-
-        ticks = (int)((currentAngle/Math.PI) * TICKS_PER_180_TURN);
-        targetPosA = ticks;
-        targetPosB = ticks;
-        targetPosC = ticks;
-        targetPosD = ticks;
-        setMotorPositions();
+        drive.setMotorPositions(currentAngle,currentAngle,0.0); // Moves the robot
 
         pots.getAngleFromPots(log,pots.moduloAngle(currentAngle));
         telemetry.addData("CURRENT ANG (rad)","=%.03f",currentAngle);
