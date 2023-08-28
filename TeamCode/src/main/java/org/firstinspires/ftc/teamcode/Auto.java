@@ -36,24 +36,27 @@ public class Auto extends LinearOpMode {
         fLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         fLeft.getCurrentPosition();
 
+        // start of PID part (P)
         double ticksPerInch = (537.7 / 1.4) / 11.87373601322835;
         double error = ticksPerInch * inches;
-        double P = 0.001;
+        double P = 0.0008;
 
         telemetry.addData("error", error);
         telemetry.update();
 
-        while(Math.abs(error) <= 30  && opModeIsActive()){
+        while (opModeIsActive() && Math.abs(error) > 40){
             error = ticksPerInch * inches - fLeft.getCurrentPosition();
-            telemetry.addData("Current Position", fLeft.getCurrentPosition());
-            telemetry.addData("Target Position", ticksPerInch * Math.abs(inches));
-            telemetry.update();
 
+            telemetry.addData("motor power", error * P);
+            telemetry.update();
             fLeft.setPower(error * P);
             bLeft.setPower(error * P);
             fRight.setPower(error * P);
             bRight.setPower(error * P);
         }
+        if ( > fLeft.getTargetPosition())
+        telemetry.addLine("help-");
+        telemetry.update();
     }
 
     public void encoderMove(int inches) {
@@ -115,8 +118,9 @@ public class Auto extends LinearOpMode {
 
         waitForStart();
         proportionalMove(12);
+        proportionalMove(-12);
         //encoderMove(12); // moves forward 12 inches
-        //encoderMove(-12); // moves backward 12 inches
+        // encoderMove(-12); // moves backward 12 inches
     }
 
 }
