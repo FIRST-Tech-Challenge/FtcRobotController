@@ -6,13 +6,17 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 
+
+
+
+
 @TeleOp
 public class EthanDrive extends LinearOpMode {
 
-
-
     @Override
     public void runOpMode() {
+        waitForStart();
+
         DcMotor lFront = hardwareMap.dcMotor.get("Left front");
         DcMotor rFront = hardwareMap.dcMotor.get("Right front");
         DcMotor lBack = hardwareMap.dcMotor.get("Left back");
@@ -21,12 +25,6 @@ public class EthanDrive extends LinearOpMode {
 
         Servo lServo = hardwareMap.servo.get("lServo");
         Servo rServo = hardwareMap.servo.get("rServo");
-
-        // chloe was here
-
-        waitForStart();
-
-
 
         lServo.setDirection(Servo.Direction.REVERSE);
 
@@ -46,8 +44,6 @@ public class EthanDrive extends LinearOpMode {
         rFront.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         rBack.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
-
-        waitForStart();
 
         while (opModeIsActive()) {
 

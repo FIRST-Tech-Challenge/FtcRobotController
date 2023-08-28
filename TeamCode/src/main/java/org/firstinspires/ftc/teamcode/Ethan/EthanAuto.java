@@ -1,10 +1,16 @@
 package org.firstinspires.ftc.teamcode.Ethan;
 
+import com.qualcomm.hardware.bosch.BHI260IMU;
+import com.qualcomm.hardware.bosch.BNO055IMU;
+import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.IMU;
+
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.opencv.core.Mat;
 
 @TeleOp
 public class EthanAuto extends LinearOpMode {
@@ -96,6 +102,7 @@ public class EthanAuto extends LinearOpMode {
 
     public void AutoTurning (double targetAngle) throws InterruptedException  {
 
+
         DcMotor lFront = hardwareMap.dcMotor.get("Left front");
         DcMotor lBack = hardwareMap.dcMotor.get("Left back");
         DcMotor rFront = hardwareMap.dcMotor.get("Right front");
@@ -124,10 +131,11 @@ public class EthanAuto extends LinearOpMode {
 
 
         double angleInTicks = targetAngle*(850./90);
-        double P_VALUE_FOR_TURNING = 0.001;
+        final double P_VALUE_FOR_TURNING = 0.001;
 
 
-        while (opModeIsActive()) {
+
+        while (opModeIsActive() && lFront.getCurrentPosition() <= Math.abs(angleInTicks)) {
            double angleError = angleInTicks-lFront.getCurrentPosition();
 
            telemetry.addData("left front ticks", lFront.getCurrentPosition());
@@ -145,13 +153,89 @@ public class EthanAuto extends LinearOpMode {
         rBack.setPower(0);
     }
 
+    public void imuTurning(int degrees) {
 
+
+        DcMotor lFront = hardwareMap.dcMotor.get("Left front");
+        DcMotor lBack = hardwareMap.dcMotor.get("Left back");
+        DcMotor rFront = hardwareMap.dcMotor.get("Right front");
+        DcMotor rBack = hardwareMap.dcMotor.get("Right back");
+
+        lFront.setDirection(DcMotorSimple.Direction.REVERSE);
+        lBack.setDirection(DcMotorSimple.Direction.REVERSE);
+        rFront.setDirection(DcMotorSimple.Direction.FORWARD);
+        rBack.setDirection(DcMotorSimple.Direction.FORWARD);
+
+
+        lFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        lBack.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        rFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        rBack.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
+        lFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        lBack.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        rFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        rBack.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
+        lFront.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        lBack.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        rFront.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        rBack.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+
+
+        final double P_VALUE_FOR_TURNING_IMU = 0.002;
+
+
+
+        IMU imu = hardwareMap.get(IMU.class, "imu");
+
+        imu.initialize(new IMU.Parameters(
+                new RevHubOrientationOnRobot(
+                        RevHubOrientationOnRobot.LogoFacingDirection.UP,
+                        RevHubOrientationOnRobot.UsbFacingDirection.FORWARD
+                    )
+                ));
+
+        double yaw = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES);
+
+        imu.resetYaw();
+
+
+        while (opModeIsActive() && !(-yaw <degrees+5 && -yaw >degrees-5)) {
+
+            yaw = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES);
+
+            telemetry.addLine(String.valueOf(yaw));
+
+
+            double angleError = degrees - yaw;
+
+            telemetry.addLine(String.valueOf(angleError));
+
+            lFront.setPower(P_VALUE_FOR_TURNING_IMU*angleError);
+            lBack.setPower(P_VALUE_FOR_TURNING_IMU*angleError);
+            rFront.setPower(-P_VALUE_FOR_TURNING_IMU*angleError);
+            rBack.setPower(-P_VALUE_FOR_TURNING_IMU*angleError);
+
+            telemetry.update();
+
+
+
+        }
+
+
+    }
     @Override
     public void runOpMode() throws InterruptedException {
 
         waitForStart();
 
-        AutoTurning(90);
+        AutoForward(100);
+        imuTurning(-90);
+        AutoForward(100);
+
+
+       // AutoTurning(90);
 
         /*AutoForward(300);
         AutoForward(-300);*/
