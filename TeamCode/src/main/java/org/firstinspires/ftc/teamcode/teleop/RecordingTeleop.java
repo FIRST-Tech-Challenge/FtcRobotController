@@ -19,6 +19,7 @@ public class RecordingTeleop extends OpMode {
     public RI3WHardware robot = new RI3WHardware();
     public ElapsedTime timer = new ElapsedTime();
     public boolean isOpen = true;
+    //test
     int lastKnownMilisecond;
 
     FileOutputStream fileOutputStream = new FileOutputStream(Environment.getExternalStorageDirectory().getAbsolutePath() + "/test.log", false);
