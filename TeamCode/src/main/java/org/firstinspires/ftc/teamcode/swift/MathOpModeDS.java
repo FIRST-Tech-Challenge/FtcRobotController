@@ -18,8 +18,14 @@ public class MathOpModeDS extends OpMode {
         telemetry.addData("Left stick y", gamepad1.left_stick_y);
         telemetry.addData("speed Forward", speedForward);
         double speedSideways = -gamepad1.right_stick_y / 2.0;
-        telemetry.addData("Right stick x", gamepad1.right_stick_x);
+        telemetry.addData("Right stick y", gamepad1.right_stick_y);
         telemetry.addData("speed Sideways", speedSideways);
+
+        if(gamepad1.a)
+            telemetry.addData("A Button", "pressed");
+
+        double YDiffrence = gamepad1.left_stick_y - gamepad1.right_stick_y;
+        telemetry.addData("Y stick difference", YDiffrence);
         /*this is whats being called to show on the drive hub, whats showing are the values that
         control/display the different aspects of you controllers movement*/
     }
