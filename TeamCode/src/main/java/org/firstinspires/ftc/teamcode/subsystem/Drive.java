@@ -2,11 +2,19 @@ package org.firstinspires.ftc.teamcode.subsystem;
 
 import com.arcrobotics.ftclib.command.SubsystemBase;
 import com.arcrobotics.ftclib.drivebase.MecanumDrive;
+import com.arcrobotics.ftclib.geometry.Pose2d;
+import com.arcrobotics.ftclib.geometry.Rotation2d;
+import com.arcrobotics.ftclib.geometry.Translation2d;
 import com.arcrobotics.ftclib.hardware.motors.Motor;
+import com.arcrobotics.ftclib.kinematics.wpilibkinematics.MecanumDriveKinematics;
+import com.arcrobotics.ftclib.kinematics.wpilibkinematics.MecanumDriveOdometry;
+import com.arcrobotics.ftclib.kinematics.wpilibkinematics.MecanumDriveWheelSpeeds;
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.IMU;
+import com.qualcomm.robotcore.util.ElapsedTime;
+
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 
@@ -18,6 +26,10 @@ public class Drive extends SubsystemBase {
     public IMU imu;
     private final Telemetry telemetry;
     private final MecanumDrive mecanumDrive;
+    MecanumDriveOdometry mecanumDriveOdometry;
+    MecanumDriveKinematics kinematics;
+    Pose2d m_pose;
+    private ElapsedTime runtime = new ElapsedTime();
 
     // sets drive speed states
     public final double SPRINT = 0.9;
@@ -37,8 +49,8 @@ public class Drive extends SubsystemBase {
         rightFront = new Motor(hardwareMap, "motorTest2", Motor.GoBILDA.RPM_312);
         leftBack = new Motor(hardwareMap, "motorTest0", Motor.GoBILDA.RPM_312);
         rightBack = new Motor(hardwareMap, "motorTest3", Motor.GoBILDA.RPM_312);
-        // access motors, reverses directions and sets braking behaviour
 
+        // access motors, reverses directions and sets braking behaviour
 //        leftFront.motor.setDirection(DcMotor.Direction.REVERSE);
 //        rightFront.motor.setDirection(DcMotor.Direction.REVERSE);
 //        leftBack.motor.setDirection(DcMotor.Direction.REVERSE);
@@ -58,6 +70,23 @@ public class Drive extends SubsystemBase {
         imu.resetYaw();
         resetEncoders();
         mecanumDrive = new MecanumDrive(leftFront, rightFront, leftBack, rightBack);
+
+        Translation2d frontLeftLocation = new Translation2d(0.11, 0.11);
+        Translation2d frontRightLocation = new Translation2d(0.11, -0.11);
+        Translation2d backLeftLocation = new Translation2d(-0.11, 0.11);
+        Translation2d backRightLocation = new Translation2d(-0.11, -0.11);
+
+        kinematics = new MecanumDriveKinematics(
+                frontLeftLocation, frontRightLocation, backLeftLocation, backRightLocation
+        );
+
+        Rotation2d gyroAngle = Rotation2d.fromDegrees(imuAngle());
+
+        mecanumDriveOdometry = new MecanumDriveOdometry(
+                kinematics,gyroAngle,
+                new Pose2d(0,0, new Rotation2d())
+        );
+        runtime.reset();
     }
 
     /**
@@ -77,10 +106,26 @@ public class Drive extends SubsystemBase {
 
     @Override
     public void periodic() {
+        MecanumDriveWheelSpeeds wheelSpeeds = new MecanumDriveWheelSpeeds(
+//                leftFront.encoder.getRate(), rightFront.encoder.getRate(),
+//                leftBack.encoder.getRate(), rightBack.encoder.getRate()
+                rightBack.encoder.getRate(), rightBack.encoder.getRate(),
+                rightBack.encoder.getRate(), rightBack.encoder.getRate()
+        );
+
+        // Get my gyro angle.
+        Rotation2d gyroAngle = Rotation2d.fromDegrees(imuAngle());
+
+        // Update the pose
+        m_pose = mecanumDriveOdometry.updateWithTime(runtime.seconds(), gyroAngle, wheelSpeeds);
+
         telemetry.addData("RightRear3 Position", rightBackPos());
-        telemetry.addData("leftFront1 Position", leftFrontPos());
         telemetry.addData("Motor Power", rightBackPower());
         telemetry.addData("IMU Value", imuAngle());
+        telemetry.addData("Pose x", m_pose.getX());//39.5cm-981/71-1717
+        telemetry.addData("Pose y", m_pose.getY());
+        telemetry.addData("Run time", runtime);
+        telemetry.update();
     }
 
     public void mecanumFieldDrive(double strafeSpeed, double forwardSpeed, double turnSpeed, boolean squareInputs) {
@@ -89,13 +134,8 @@ public class Drive extends SubsystemBase {
     public void mecanumCentricDrive(double strafeRightPositive, double forwardPositive, double rotateClockwisePositive, boolean squareInputs) {
         mecanumDrive.driveRobotCentric(-strafeRightPositive, forwardPositive, -rotateClockwisePositive, squareInputs);
     }
-
     public int rightBackPos() {
         return rightBack.getCurrentPosition();
-    }
-
-    public int leftFrontPos() {
-        return leftFront.getCurrentPosition();
     }
 
     public double rightBackPower() {

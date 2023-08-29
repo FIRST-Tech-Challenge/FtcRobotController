@@ -8,7 +8,7 @@ public class TeleopDrive  extends CommandBase {
 
     private final Drive mDrive;
     private final Gamepad mGamepad;
-    private final  double driveKp = 0.5;
+    private final  double driveKp = 0.3;
     public TeleopDrive (Drive drive, Gamepad gamepad) {
         mDrive = drive;
         mGamepad = gamepad;

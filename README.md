@@ -82,14 +82,14 @@ The readme.md file located in the [/TeamCode/src/main/java/org/firstinspires/ftc
     * `VisionPortal` is the new entry point for both AprilTag and TFOD processing.
     * Vuforia will be removed in a future release.
     * Updated TensorFlow dependencies.
-    * Added support for webcam camera controls to blocks.
+    * Added support for webcam myCamera controls to blocks.
     * Previous blocks for Vuforia and TensorFlow Object Detection are obsolete.
 * Related documentation for associated technologies can be found at
     * [AprilTag Introduction](https://ftc-docs.firstinspires.org/apriltag-intro)
     * [AprilTag SDK Guide](https://ftc-docs.firstinspires.org/apriltag-sdk)
     * [AprilTag Detection Values](https://ftc-docs.firstinspires.org/apriltag-detection-values)
     * [AprilTag Test Images](https://ftc-docs.firstinspires.org/apriltag-test-images)
-    * [Camera Calibration](https://ftc-docs.firstinspires.org/camera-calibration)
+    * [Camera Calibration](https://ftc-docs.firstinspires.org/myCamera-calibration)
 * Adds Driver Station support for Logitech Dual Action and Sony PS5 DualSense gamepads.
     * This **does not** include support for the Sony PS5 DualSense Edge gamepad.
     * Always refer to Game Manual 1 to determine gamepad legality in competition.
@@ -103,7 +103,7 @@ The readme.md file located in the [/TeamCode/src/main/java/org/firstinspires/ftc
 * Increases maximum size of Blocks inline comments to 100 characters
 * Saves position of open Blocks comment balloons
 * Adds new AprilTag Driving samples:  RobotDriveToAprilTagTank & RobotDriveToAprilTagOmni
-* Adds Sample to illustrate optimizing camera exposure for AprilTags: ConceptAprilTagOptimizeExposure
+* Adds Sample to illustrate optimizing myCamera exposure for AprilTags: ConceptAprilTagOptimizeExposure
 
 ### Bug Fixes
 * Corrects inspection screen to report app version using the SDK version defined in the libraries instead of the version specified in `AndroidManifest.xml`. This corrects the case where the app could show matching versions numbers to the user but still state that the versions did not match.
@@ -111,7 +111,7 @@ The readme.md file located in the [/TeamCode/src/main/java/org/firstinspires/ftc
 * Fixes no error being displayed when saving a configuration file with duplicate names from the Driver Station.
 * Fixes a deadlock in the UVC driver which manifested in https://github.com/OpenFTC/EasyOpenCV/issues/57.
 * Fixes a deadlock in the UVC driver that could occur when hot-plugging cameras.
-* Fixes UVC driver compatibility with Arducam OV9281 global shutter camera.
+* Fixes UVC driver compatibility with Arducam OV9281 global shutter myCamera.
 * Fixes Emergency Stop condition when an OnBotJava build with duplicate Op Mode names occurs.
 * Fixes known causes of "Attempted use of a closed LynxModule instance" logspam.
 * Fixes the visual identification LED pattern when configuring Expansion Hubs connected via RS-485.
@@ -256,7 +256,7 @@ This is a bug fix only release to address the following four issues.
 * Adds parameterDefaultValues field to @ExportToBlocks. This provides the ability for a java method with an @ExportToBlocks annotation to specify default values for method parameters when it is shown in the block editor.
 * Make LinearOpMode blocks more readable. The opmode name is displayed on the runOpMode block, but not on the other LinearOpMode blocks.
 * Added support to TensorFlow Object Detection for using a different frame generator, instead of Vuforia.
-  Using Vuforia to pass the camera frame to TFOD is still supported.
+  Using Vuforia to pass the myCamera frame to TFOD is still supported.
 * Removes usage of Renderscript.
 * Fixes logspam on app startup of repeated stacktraces relating to `"Failed resolution of: Landroid/net/wifi/p2p/WifiP2pManager$DeviceInfoListener"`
 * Allows disabling bluetooth radio from inspection screen
@@ -402,7 +402,7 @@ This is a bug fix only release to address the following four issues.
 * Fixes issue where a Control Hub with a configured USB-connected Expansion Hub would not work if the Expansion Hub was missing at startup
 * Fixes potential issues caused by having mismatched Control/Expansion Hub firmware versions 
 * Fixes [ftc_app issue 673](https://github.com/ftctechnh/ftc_app/issues/673) Latest matchlog is being deleted instead of old ones by RobotLog
-* Fixes ConceptVuforiaUltimateGoalNavigationWebcam sample opmode by correctly orienting camera on robot.
+* Fixes ConceptVuforiaUltimateGoalNavigationWebcam sample opmode by correctly orienting myCamera on robot.
 * Fixes issue where logcat would be spammed with InterruptedExceptions when stop is requested from the Driver Station (this behavior was accidentally introduced in v5.3). This change has no impact on functionality.
 * Fixes issue where the blocks editor fails to load if the name of any TeleOp opmode contains an apostrophe.
 
@@ -413,7 +413,7 @@ This is a bug fix only release to address the following four issues.
 * Fixes issue in UVC driver where some cameras (e.g. certain MS Lifecams) which reported frame intervals as rounded rather than truncated values (e.g. `666667*100ns` instead of `666666*100ns` for 15FPS) would fail to start streaming.
 * Adds support in UVC driver for virtual PTZ control
 * Adds support in UVC driver for gain (ISO) control
-* Adds support in UVC driver for enabling/disable AE priority. This setting provides a means to tell the camera firmware either
+* Adds support in UVC driver for enabling/disable AE priority. This setting provides a means to tell the myCamera firmware either
     * A) It can undershoot the requested frame rate in order to provide a theoretically better image (i.e. with a longer exposure than the inter-frame period of the selected frame rate allows)
     * B) It *must* meet the inter-frame deadline for the selected frame rate, even if the image may be underexposed as a result
 * Adds support for the Control Hub OS 1.1.2 Robot Controller watchdog
@@ -592,7 +592,7 @@ Version 5.5 requires Android Studio 4.0 or later.
 * Improves generation of fake serial numbers for UVC cameras which do not provide a real serial number
     * Previously some devices would assign such cameras a serial of `0:0` and fail to open and start streaming
 	* Fixes [ftc_app issue #638](https://github.com/ftctechnh/ftc_app/issues/638).
-* Fixes a slew of bugs with the Vuforia camera monitor including:
+* Fixes a slew of bugs with the Vuforia myCamera monitor including:
     * Fixes bug where preview could be displayed with a wonky aspect ratio
     * Fixes bug where preview could be cut off in landscape
     * Fixes bug where preview got totally messed up when rotating phone
@@ -601,7 +601,7 @@ Version 5.5 requires Android Studio 4.0 or later.
     * Issue manifested as kernel panic on devices which do not have [this kernel patch](https://lore.kernel.org/patchwork/patch/352400/).
     * On affected devices which **do** have the patch, the issue was manifest as simply a failure to start streaming.
     * The Tech Team believes that the root cause of the issue is a bug in the Linux kernel XHCI driver. A workaround was implemented in the SDK UVC driver.
-* Fixes bug in UVC driver where often half the frames from the camera would be dropped (e.g. only 15FPS delivered during a streaming session configured for 30FPS).
+* Fixes bug in UVC driver where often half the frames from the myCamera would be dropped (e.g. only 15FPS delivered during a streaming session configured for 30FPS).
 * Fixes issue where TensorFlow Object Detection would show results whose confidence was lower than
   the minimum confidence parameter.
 * Fixes a potential exploitation issue of [CVE-2019-11358](https://www.cvedetails.com/cve/CVE-2019-11358/) in OnBotJava
@@ -706,7 +706,7 @@ Version 5.5 requires Android Studio 4.0 or later.
 * Prevents extra DS User clicks by filtering based on current state.
 * Prevents incorrect DS UI state changes when receiving new OpMode list from RC
 * Adds support for REV Color Sensor V3
-* Adds a manual-refresh DS Camera Stream for remotely viewing RC camera frames.
+* Adds a manual-refresh DS Camera Stream for remotely viewing RC myCamera frames.
     * To show the stream on the DS, initialize **but do not run** a stream-enabled opmode, select the Camera Stream option in the DS menu, and tap the image to refresh. This feature is automatically enabled when using Vuforia or TFOD—no additional RC configuration is required for typical use cases. To hide the stream, select the same menu item again.
     * Note that gamepads are disabled and the selected opmode cannot be started while the stream is open as a safety precaution.
     * To use custom streams, consult the API docs for `CameraStreamServer#setSource` and `CameraStreamSource`.
@@ -718,7 +718,7 @@ Version 5.5 requires Android Studio 4.0 or later.
 
 Known issues:
 * Camera Stream
-    * The Vuforia camera stream inherits the issues present in the phone preview (namely [ftc_app issue #574](https://github.com/ftctechnh/ftc_app/issues/574)). This problem does not affect the TFOD camera stream even though it receives frames from Vuforia.
+    * The Vuforia myCamera stream inherits the issues present in the phone preview (namely [ftc_app issue #574](https://github.com/ftctechnh/ftc_app/issues/574)). This problem does not affect the TFOD myCamera stream even though it receives frames from Vuforia.
     * The orientation of the stream frames may not always match the phone preview. For now, these frames may be rotated manually via a custom `CameraStreamSource` if desired.
 * OnBotJava
     * Browser back button may not always work correctly
@@ -778,15 +778,15 @@ Changes include:
 
 Changes include:
  * Initial support for UVC compatible cameras
-    - If UVC camera has a unique serial number, RC will detect and enumerate by serial number.
-    - If UVC camera lacks a unique serial number, RC will only support one camera of that type connected.
+    - If UVC myCamera has a unique serial number, RC will detect and enumerate by serial number.
+    - If UVC myCamera lacks a unique serial number, RC will only support one myCamera of that type connected.
     - Calibration settings for a few cameras are included (see TeamCode/src/main/res/xml/teamwebcamcalibrations.xml for details).
     - User can upload calibration files from Program and Manage web interface.
     - UVC cameras seem to draw a fair amount of electrical current from the USB bus.
          + This does not appear to present any problems for the REV Robotics Control Hub.
 	 + This does seem to create stability problems when using some cameras with an Android phone-based Robot Controller.
 	 + FTC Tech Team is investigating options to mitigate this issue with the phone-based Robot Controllers.
-    - Updated sample Vuforia Navigation and VuMark Op Modes to demonstrate how to use an internal phone-based camera and an external UVC webcam.
+    - Updated sample Vuforia Navigation and VuMark Op Modes to demonstrate how to use an internal phone-based myCamera and an external UVC webcam.
 
  * Support for improved motor control.
     - REV Robotics Expansion Hub firmware 1.8 and greater will support a feed forward mechanism for closed loop motor control.
@@ -1154,7 +1154,7 @@ Changes include:
      - Added support for AnalogOutput
      - Fix for CompassSensor setMode block
   * Vuforia
-     - Fix deadlock / make camera data available while Vuforia is running.
+     - Fix deadlock / make myCamera data available while Vuforia is running.
      - Update to Vuforia 6.0.117 (recommended by Vuforia and Google to close security loophole).
   * Fix for autonomous 30 second timer bug (where timer was in effect, even though it appeared to have timed out).
   * opModeIsActive changes to allow cleanup after op mode is stopped (with enforced 2 second safety timeout).

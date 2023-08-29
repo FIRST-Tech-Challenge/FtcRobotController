@@ -144,8 +144,8 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
         </LinearLayout>
 
       <!-- When visible, the error message will overlay and thus partially
-           obscure part of the camera monitor. We make this trade off so as to
-           allow for a bigger camera monitor view in the common case when the
+           obscure part of the myCamera monitor. We make this trade off so as to
+           allow for a bigger myCamera monitor view in the common case when the
            error is not in fact present
         -->
         <TextView style="@style/FtcTextViewStyleBold"
