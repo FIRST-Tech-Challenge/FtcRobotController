@@ -18,7 +18,7 @@ import java.io.IOException;
 public class RecordingTeleop extends OpMode {
     public RI3WHardware robot = new RI3WHardware();
     public ElapsedTime timer = new ElapsedTime();
-
+    public boolean isOpen = true;
     int lastKnownMilisecond;
 
     FileOutputStream fileOutputStream = new FileOutputStream(Environment.getExternalStorageDirectory().getAbsolutePath() + "/test.log", false);
@@ -39,6 +39,12 @@ public class RecordingTeleop extends OpMode {
     @Override
     public void loop() {
         gamepad.update();
+        try {
+            recordInput();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+
         lastKnownMilisecond = (int) Math.floor(timer.milliseconds());
         if(gamepad.right_trigger.getValue() > 0){
             turningPower = .3 * gamepad.right_trigger.getValue();
@@ -61,6 +67,14 @@ public class RecordingTeleop extends OpMode {
 
         telemetry.addData("Right", gamepad.right_stick_y.getValue());
         telemetry.addData("Lrft", gamepad.left_stick_y.getValue());
+
+        if (gamepad.a.isPressed()) {
+            try {
+                writeFile.close();
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        }
 //        telemetry.addData("Front Left Power", robot.frontLeft.getPower());
 //        telemetry.addData("Front Right Power", robot.frontRight.getPower());
 //        telemetry.addData("Back Left Power", robot.backLeft.getPower());
@@ -74,13 +88,16 @@ public class RecordingTeleop extends OpMode {
     }
 
     public void recordInput() throws IOException {
-        if (timer.milliseconds() > lastKnownMilisecond) {
-            // ry rx ly l
-            lastKnownMilisecond = (int) Math.floor(timer.milliseconds());
+        int currentMiliseconds = (int) Math.floor(timer.milliseconds());
+        if (currentMiliseconds > lastKnownMilisecond && isOpen) {
+            // ry rx ly lx
+            lastKnownMilisecond = currentMiliseconds;
             writeFile.writeFloat(gamepad.right_stick_y.getValue());
             writeFile.writeFloat(gamepad.right_stick_x.getValue());
             writeFile.writeFloat(gamepad.left_stick_y.getValue());
             writeFile.writeFloat(gamepad.left_stick_x.getValue());
+            telemetry.addData("Data was written", true);
+            writeFile.flush();
         }
     }
 }
