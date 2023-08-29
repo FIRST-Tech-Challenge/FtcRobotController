@@ -4,7 +4,7 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 @TeleOp() //Assigns OpMode to the TeleOp dropdown on DriverStation
-public class PrimitiveTypes extends OpMode {
+public class PrimitiveTypesAH extends OpMode {
     @Override
     public void init() {
         //create variable of type integer to store team number

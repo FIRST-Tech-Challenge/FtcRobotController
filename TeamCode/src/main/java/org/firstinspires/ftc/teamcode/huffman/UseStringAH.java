@@ -4,7 +4,7 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 @TeleOp() //Assigns the OpMode to the TeleOp dropdown on Driver Station
-public class UseString extends OpMode {
+public class UseStringAH extends OpMode {
     @Override
     public void init() {
         //creates a String class to store myName
