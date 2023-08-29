@@ -26,6 +26,10 @@ public class MathOpModeDS extends OpMode {
 
         double YDiffrence = gamepad1.left_stick_y - gamepad1.right_stick_y;
         telemetry.addData("Y stick difference", YDiffrence);
+
+        double TriggerDiff = gamepad1.left_trigger - gamepad1.right_trigger;
+        telemetry.addData("Trigger difference",TriggerDiff );
+
         /*this is whats being called to show on the drive hub, whats showing are the values that
         control/display the different aspects of you controllers movement*/
     }
