@@ -8,16 +8,18 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.teamcode.Robots.BasicRobot;
+import org.firstinspires.ftc.teamcode.roadrunner.drive.RFMotionController.Localizers.LocalizerFactory;
 import org.firstinspires.ftc.teamcode.roadrunner.drive.RFMotionController.Localizers.Tracker;
+import org.firstinspires.ftc.teamcode.roadrunner.drive.RFMotionController.RFMecanumDrive;
 import org.firstinspires.ftc.teamcode.roadrunner.drive.SampleMecanumDrive;
 
 @Config
-@Autonomous(name = "OdometryLocalizerTest")
-public class RFLocalizerTest extends LinearOpMode {
+@Autonomous(name = "LeftIMULocalizerTest")
+public class LeftLocalizerTest extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
         BasicRobot robot = new BasicRobot(this,true);
-        SampleMecanumDrive drive = new SampleMecanumDrive(this.hardwareMap, Tracker.TrackType.ROADRUN_ODOMETRY);
+        SampleMecanumDrive drive = new SampleMecanumDrive(this.hardwareMap, Tracker.TrackType.ROADRUN_IMU_LEFT);
         waitForStart();
         while (opModeIsActive()) {
             robot.update();

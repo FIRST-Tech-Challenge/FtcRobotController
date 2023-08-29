@@ -7,16 +7,18 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
 import org.firstinspires.ftc.teamcode.Robots.BasicRobot;
+import org.firstinspires.ftc.teamcode.roadrunner.drive.RFMotionController.Localizers.Tracker;
 import org.firstinspires.ftc.teamcode.roadrunner.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.roadrunner.trajectorysequence.TrajectorySequence;
+
 //@Disabled
-@Autonomous(name = "OdomMoveTest")
-public class RoadRunMoveTest extends LinearOpMode {
+@Autonomous(name = "LeftIMUMoveTest")
+public class LeftIMUMoveTest extends LinearOpMode {
 
     @Override
     public void runOpMode() throws InterruptedException {
         BasicRobot robot = new BasicRobot(this, false);
-        SampleMecanumDrive roadrun = new SampleMecanumDrive(this.hardwareMap);
+        SampleMecanumDrive roadrun = new SampleMecanumDrive(this.hardwareMap, Tracker.TrackType.ROADRUN_IMU_LEFT);
         Pose2d startPose = new Pose2d(35.25, 57.75, Math.toRadians(270));
         roadrun.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         roadrun.setPoseEstimate(startPose);
@@ -30,15 +32,15 @@ public class RoadRunMoveTest extends LinearOpMode {
                 .lineToSplineHeading(new Pose2d(35.25, 57.75,Math.toRadians(270)))
                 .build();
 
-//        while (opModeIsActive()) {
-            roadrun.followTrajectorySequence(trajSeq2);
-            roadrun.followTrajectorySequence(trajSeq2);
-            roadrun.followTrajectorySequence(trajSeq2);
-            roadrun.followTrajectorySequence(trajSeq2);
-            roadrun.followTrajectorySequence(trajSeq2);
-            roadrun.followTrajectorySequence(trajSeq2);
-            roadrun.followTrajectorySequence(trajSeq2);
-            roadrun.followTrajectorySequence(trajSeq2);
+        //        while (opModeIsActive()) {
+        roadrun.followTrajectorySequence(trajSeq2);
+        roadrun.followTrajectorySequence(trajSeq2);
+        roadrun.followTrajectorySequence(trajSeq2);
+        roadrun.followTrajectorySequence(trajSeq2);
+        roadrun.followTrajectorySequence(trajSeq2);
+        roadrun.followTrajectorySequence(trajSeq2);
+        roadrun.followTrajectorySequence(trajSeq2);
+        roadrun.followTrajectorySequence(trajSeq2);
 //            roadrun.update();
 //            telemetry.update();
 //            robot.update();

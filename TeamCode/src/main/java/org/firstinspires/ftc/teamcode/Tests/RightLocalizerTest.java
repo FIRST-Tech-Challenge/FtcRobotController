@@ -12,12 +12,12 @@ import org.firstinspires.ftc.teamcode.roadrunner.drive.RFMotionController.Locali
 import org.firstinspires.ftc.teamcode.roadrunner.drive.SampleMecanumDrive;
 
 @Config
-@Autonomous(name = "OdometryLocalizerTest")
-public class RFLocalizerTest extends LinearOpMode {
+@Autonomous(name = "RightIMULocalizerTest")
+public class RightLocalizerTest extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
         BasicRobot robot = new BasicRobot(this,true);
-        SampleMecanumDrive drive = new SampleMecanumDrive(this.hardwareMap, Tracker.TrackType.ROADRUN_ODOMETRY);
+        SampleMecanumDrive drive = new SampleMecanumDrive(this.hardwareMap, Tracker.TrackType.ROADRUN_IMU_RIGHT);
         waitForStart();
         while (opModeIsActive()) {
             robot.update();
