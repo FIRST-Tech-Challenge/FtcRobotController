@@ -7,16 +7,16 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 public class PrimitiveTypesMrR extends OpMode {
     @Override
     public void init () {
-        //creates a variable that stores team number
+        //create variable of type integer to store team number (17348)
         int teamNumber = 17348;
 
-        //creates a variable of type double to store motor speed (range = 0.0 to 1.0)
+        //create a variable of type double to store motor speed (range = 0.0 to 1.0)
         double motorSpeed = 0.5;
 
-        //creates a boolean type variable for the touch sensor
+        //create a boolean type variable for the touch sensor, assign value of true at initialization
         boolean touchSensorPressed = true;
 
-        //writes data stored in each variable to the Driver Station
+        //write data stored in each variable to the Driver Station
         telemetry.addData("Team Number", teamNumber);
         telemetry.addData("Motor Speed", motorSpeed);
         telemetry.addData("Touch Sensor", touchSensorPressed);
