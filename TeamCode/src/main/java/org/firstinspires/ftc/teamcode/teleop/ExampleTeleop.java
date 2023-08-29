@@ -12,6 +12,7 @@ import org.firstinspires.ftc.teamcode.hardware.UpdatedClawbotHardware;
 public class ExampleTeleop extends OpMode {
     UpdatedClawbotHardware robot = new UpdatedClawbotHardware();
     ImprovedGamepad gamepad;
+    int state = 0;
     double rightStickValue = 0;
 
     @Override
