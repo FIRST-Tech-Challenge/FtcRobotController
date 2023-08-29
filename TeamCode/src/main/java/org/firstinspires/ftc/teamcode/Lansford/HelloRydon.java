@@ -1,9 +1,9 @@
 package org.firstinspires.ftc.teamcode.Lansford;
 
+import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
-import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
-@TeleOp()
+@Autonomous()
 public class HelloRydon extends OpMode {
     @Override
     public void init() {
