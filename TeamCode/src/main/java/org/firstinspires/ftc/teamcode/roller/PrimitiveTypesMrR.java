@@ -17,7 +17,7 @@ public class PrimitiveTypesMrR extends OpMode {
         boolean touchSensorPressed = true;
 
         //write data stored in each variable to the Driver Station
-        telemetry.addData("Team Number", teamNumber);
+        telemetry.addData("TEAM NUMBER", teamNumber);
         telemetry.addData("Motor Speed", motorSpeed);
         telemetry.addData("Touch Sensor", touchSensorPressed);
 
