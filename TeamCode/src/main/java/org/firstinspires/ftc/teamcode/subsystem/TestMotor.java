@@ -7,7 +7,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.Constants;
-import org.firstinspires.ftc.teamcode.lib.RollingAverage;
+import org.firstinspires.ftc.teamcode.util.RollingAverage;
 
 public class TestMotor extends SubsystemBase {
     public Motor testMotor;

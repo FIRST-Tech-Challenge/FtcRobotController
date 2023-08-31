@@ -36,6 +36,7 @@ dependencies {
     implementation 'org.ftclib.ftclib:vision:2.1.0'
     implementation 'org.openftc:easyopencv:1.7.0'
     implementation 'org.openftc:apriltag:2.0.0'
+    implementation 'com.acmerobotics.roadrunner:core:0.5.5'
     /*
         fixed
         Supported source version 'RELEASE_7' from annotation processor 'org.gradle.api.internal.tasks.compile.processing.TimeTrackingProcessor' less than -source '8'

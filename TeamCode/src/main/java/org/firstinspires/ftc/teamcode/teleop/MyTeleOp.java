@@ -3,7 +3,6 @@ package org.firstinspires.ftc.teamcode.teleop;
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.arcrobotics.ftclib.command.CommandOpMode;
-import com.arcrobotics.ftclib.command.RunCommand;
 import com.arcrobotics.ftclib.command.button.Button;
 import com.arcrobotics.ftclib.command.button.GamepadButton;
 import com.arcrobotics.ftclib.gamepad.GamepadEx;
@@ -15,8 +14,8 @@ import org.firstinspires.ftc.teamcode.command.CameraStream;
 import org.firstinspires.ftc.teamcode.command.FlyWheel;
 import org.firstinspires.ftc.teamcode.command.MovePosition;
 import org.firstinspires.ftc.teamcode.command.TeleopDrive;
+import org.firstinspires.ftc.teamcode.drivePose.DrivePose;
 import org.firstinspires.ftc.teamcode.subsystem.MyCamera;
-import org.firstinspires.ftc.teamcode.subsystem.Drive;
 import org.firstinspires.ftc.teamcode.subsystem.TestMotor;
 
 @TeleOp
@@ -26,8 +25,9 @@ public class MyTeleOp extends CommandOpMode {
     private final Telemetry dashboardTelemetry = new MultipleTelemetry(telemetry, dashboard.getTelemetry());
     @Override
     public void initialize() {
-        Drive drive = new Drive(hardwareMap, dashboardTelemetry);
+        DrivePose drive = new DrivePose(hardwareMap, dashboardTelemetry);
         drive.setDefaultCommand(new TeleopDrive(drive, gamepad1));
+
         TestMotor shooter = new TestMotor(hardwareMap, dashboardTelemetry);
         MyCamera myCamera = new MyCamera(hardwareMap, dashboardTelemetry);
         schedule(new CameraStream(myCamera, gamepad1));

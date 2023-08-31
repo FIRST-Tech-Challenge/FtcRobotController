@@ -2,14 +2,15 @@ package org.firstinspires.ftc.teamcode.command;
 
 import com.arcrobotics.ftclib.command.CommandBase;
 import com.qualcomm.robotcore.hardware.Gamepad;
-import org.firstinspires.ftc.teamcode.subsystem.Drive;
+
+import org.firstinspires.ftc.teamcode.drivePose.DrivePose;
 
 public class TeleopDrive  extends CommandBase {
 
-    private final Drive mDrive;
+    private final DrivePose mDrive;
     private final Gamepad mGamepad;
     private final  double driveKp = 0.3;
-    public TeleopDrive (Drive drive, Gamepad gamepad) {
+    public TeleopDrive (DrivePose drive, Gamepad gamepad) {
         mDrive = drive;
         mGamepad = gamepad;
         addRequirements(mDrive);
@@ -20,12 +21,13 @@ public class TeleopDrive  extends CommandBase {
 
     @Override
     public void execute() {
-        mDrive.mecanumFieldDrive(mGamepad.left_stick_x * driveKp
-                , mGamepad.left_stick_y * driveKp
-                , mGamepad.right_stick_x * driveKp, false);
+//        mDrive.mecanumFieldDrive(mGamepad.left_stick_x * driveKp
+//                , mGamepad.left_stick_y * driveKp
+//                , mGamepad.right_stick_x * driveKp, false);
 //        mDrive.mecanumCentricDrive(mGamepad.left_stick_x * driveKp
 //                                 , mGamepad.left_stick_y * driveKp
 //                                 , mGamepad.right_stick_x * driveKp, false);
+        mDrive.driveJoy(mGamepad);
     }
 
     @Override

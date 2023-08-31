@@ -129,3 +129,61 @@ Note: Some names start with "Team" and others start with "team".  This is intent
 5)  Add:    include ':Team0417' to the "/settings.gradle" file.
     
 6)  Open up Android Studios and clean out any old files by using the menu to "Build/Clean Project""
+
+
+
+
+    /*
+     * Updates robot-centric field movement
+     * @param left_stick_y y-position of left stick controlling front-back motion
+     * @param left_stick_x x-position of left stick controlling strafing
+     * @param right_stick_x x-position of right stick controlling rotation
+     */
+//    public void updateRobot(double left_stick_y, double left_stick_x, double right_stick_x) {
+//        double y = -left_stick_y;
+//        double x = left_stick_x * 1.1; // Counteract imperfect strafing
+//        double rx = right_stick_x;
+//
+//        // Denominator is the largest motor power (absolute value) or 1
+//        // Keeps all motor powers in proportion
+//        double denominator = Math.max(Math.abs(y) + Math.abs(x) + Math.abs(rx), 1.0);
+//        double frontLeftPower = (y + x + rx) / denominator * state;
+//        double backLeftPower = (y - x + rx) / denominator * state;
+//        double frontRightPower = (y - x - rx) / denominator * state;
+//        double backRightPower = (y + x - rx) / denominator * state;
+//
+//        // Set powers
+//        leftFront.setPower(frontLeftPower);
+//        leftBack.setPower(backLeftPower);
+//        rightFront.setPower(frontRightPower);
+//        rightBack.setPower(backRightPower);
+//    }
+
+    /*
+     * Updates field-centric robot movement
+     * @param left_stick_y y-position of left stick controlling front-back motion
+     * @param left_stick_x x-position of left stick controlling strafing
+     * @param right_stick_x x-position of right stick controlling rotation
+     */
+//    public void updateField(double left_stick_y, double left_stick_x, double right_stick_x) {
+//        double y = -left_stick_y;
+//        double x = left_stick_x * 1.1;
+//        double rx = right_stick_x;
+//
+//        double botHeading = getHeading();
+//
+//        // Rotate the movement direction counter to the robot's rotation
+//        double rotX = x * Math.cos(-botHeading) - y * Math.sin(-botHeading);
+//        double rotY = x * Math.sin(-botHeading) + y * Math.cos(-botHeading);
+//
+//        double denominator = Math.max(Math.abs(y) + Math.abs(x) + Math.abs(rx), 1.0);
+//        double frontLeftPower = (rotY + rotX + rx) / denominator * state;
+//        double backLeftPower = (rotY - rotX + rx) / denominator * state;
+//        double frontRightPower = (rotY - rotX - rx) / denominator * state;
+//        double backRightPower = (rotY + rotX - rx) / denominator * state;
+//
+//        leftFront.setPower(frontLeftPower);
+//        leftBack.setPower(backLeftPower);
+//        rightFront.setPower(frontRightPower);
+//        rightBack.setPower(backRightPower);
+//    }
