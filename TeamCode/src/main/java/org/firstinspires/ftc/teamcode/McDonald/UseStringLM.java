@@ -6,7 +6,7 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 
 
 @TeleOp
-public class UseString extends OpMode {
+public class UseStringLM extends OpMode {
     @Override
     public void init() {
         String myName = "Landen McDonald";
