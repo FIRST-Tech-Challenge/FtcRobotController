@@ -1,8 +1,7 @@
-package org.firstinspires.ftc.teamcode.src;
+package org.firstinspires.ftc.teamcode.src.v1;
 
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.hardware.DcMotor;
 
 //INSTRUCTIONS:
 // align modules to be facing the same direction (make sure not 180 degrees apart)
