@@ -6,7 +6,7 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 
 
 @TeleOp
-public class UseString extends OpMode {
+public class UseStringLM extends OpMode {
     @Override
     public void init() {
         String myName = "Landen McDonald";
@@ -15,7 +15,7 @@ public class UseString extends OpMode {
         // Created a new variable called "grade" and set it to "9"
         telemetry.addData("Hello", myName);
 
-        telemetry.addData("grade",grade);
+        telemetry.addData("Grade",grade);
 
     }
 
