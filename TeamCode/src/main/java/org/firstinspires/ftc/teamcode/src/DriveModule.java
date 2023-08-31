@@ -21,12 +21,12 @@ public class DriveModule {
     // a WHEEL rev is when the wheel drives a distance equal to its circumference
 
     //TODO: modify this variable to match drive gear ratio
-    public final double TICKS_PER_MODULE_REV = (((1 + ((double)(46)/17)) * (1 + ((double)(46)/11))) * 28 ) * (double)(24)/24 * (double)(14)/33 * (double)(33)/110;
+    public final double TICKS_PER_MODULE_REV = (((1 + ((double)(46)/17)) * (1 + ((double)(46)/11))) * 28 ) * (double)(24)/24 * (double)(39)/17 * (double)(29)/110 * 2;
     //28 * (double)(60)/11 * (double)(48)/15 * (double)(82)/22 * 2; //ticks per MODULE revolution
     public final double DEGREES_PER_TICK = 360/TICKS_PER_MODULE_REV;
 
     //TODO: modify this variable to match drive gear ratio
-    public final double TICKS_PER_WHEEL_REV = (((1 + ((double)(46)/17)) * (1 + ((double)(46)/11))) * 28 ) * (double)(24)/24 * (double)(14)/33 * (double)(33)/110 * (double)(62)/18;
+    public final double TICKS_PER_WHEEL_REV = (((1 + ((double)(46)/17)) * (1 + ((double)(46)/11))) * 28 ) * (double)(24)/24 * (double)(39)/17 * (double)(29)/110 * (double)(62)/18;
     //28 * (double)(60)/11 * (double)(48)/15 * (double)(82)/22 * (double)(14)/60; //ticks per WHEEL revolution
 
     public final double CM_WHEEL_DIAMETER = 2.5 * 2.54; //TODO: change to match wheel size
@@ -40,11 +40,11 @@ public class DriveModule {
     public final double ALLOWED_MODULE_ORIENTATION_ERROR = 5;
 
     //TODO: tune this variable (see commented out section in TeleOp)
-    public final double ROT_ADVANTAGE = 1; //max rotation power divided by max translation power (scaling factor)
+    public double ROT_ADVANTAGE = 1; //max rotation power divided by max translation power (scaling factor)
 
     //this variable is set to 0.7 because when in RUN_USING_ENCODERS mode, powers about ~0.7 are the same
     //setting to 1 may increase robot top speed, but may decrease accuracy
-    public double MAX_MOTOR_POWER = 0.7;
+    public double MAX_MOTOR_POWER = 0.3;
 
     //unit vectors representing motors in the rotation power vs. translation power coordinate system
     //more documentation on this coming soon
@@ -76,8 +76,8 @@ public class DriveModule {
         lastMotor2Encoder = motor2.getCurrentPosition();
 
         //set run mode to NOT use encoders for velocity PID regulation
-        motor1.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        motor2.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        motor1.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        motor2.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         motor1.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         motor2.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -202,7 +202,7 @@ public class DriveModule {
         robot.telemetry.addData(moduleSide + " Motor 1 Power: ", motor1power);
         robot.telemetry.addData(moduleSide + " Motor 2 Power: ", motor2power);
         motor1.setPower(motor1power);
-        motor2.setPower(-motor2power);
+        motor2.setPower(motor2power);
     }
 
 
