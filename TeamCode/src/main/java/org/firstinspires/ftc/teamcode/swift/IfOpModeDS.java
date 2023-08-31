@@ -13,13 +13,30 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
  @Override
  public void loop() {
+
  if(gamepad1.left_stick_y < 0){
  telemetry.addData("Left stick", " is negative");
  }
+  if(gamepad1.right_stick_y < 0){
+   telemetry.addData("Right stick", " is negative");
+  }
+
 telemetry.addData("Left stick y", gamepad1.left_stick_y);
 //this is whats being called to display on the driver hub. If "if" is true, then it runs whatever is in "if"
- if(gamepad1.a)
-         telemetry.addData("A Button", "pressed");
+ if(gamepad1.a) {
+  telemetry.addData("Crazy Mode", "Activated");
+  telemetry.addData("Right stick y", gamepad1.left_stick_y);
+  telemetry.addData("Left stick y", gamepad1.right_stick_y);
+ }
+  else{
+  telemetry.addData("Crazy Mode", "Deactivated");}
+ if(gamepad1.b) {
+  telemetry.addData("Turbo Mode", "Activated");
+
+ }
+ else {
+  telemetry.addData("Turbo Mode", "Deactivated");
+ }
 //same here
    }
  }

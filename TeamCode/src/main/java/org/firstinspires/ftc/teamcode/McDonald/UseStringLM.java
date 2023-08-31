@@ -15,7 +15,7 @@ public class UseStringLM extends OpMode {
         // Created a new variable called "grade" and set it to "9"
         telemetry.addData("Hello", myName);
 
-        telemetry.addData("grade",grade);
+        telemetry.addData("Grade",grade);
 
     }
 

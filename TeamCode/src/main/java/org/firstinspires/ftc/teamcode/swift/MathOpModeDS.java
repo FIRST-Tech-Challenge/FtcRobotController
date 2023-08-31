@@ -23,6 +23,8 @@ public class MathOpModeDS extends OpMode {
 
         if(gamepad1.a)
             telemetry.addData("A Button", "pressed");
+        if(gamepad1.b)
+            telemetry.addData("B Button", "pressed");
 
         double YDiffrence = gamepad1.left_stick_y - gamepad1.right_stick_y;
         telemetry.addData("Y stick difference", YDiffrence);
