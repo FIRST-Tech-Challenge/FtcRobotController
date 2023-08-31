@@ -27,7 +27,6 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
   if(gamepad1.b) {
    telemetry.addData("Turbo Mode", "Activated");
-   speedForward *= 2;
 
   }
   else {
