@@ -1,44 +1,14 @@
-/* Copyright (c) 2019 FIRST. All rights reserved.
- *
- * Redistribution and use in source and binary forms, with or without modification,
- * are permitted (subject to the limitations in the disclaimer below) provided that
- * the following conditions are met:
- *
- * Redistributions of source code must retain the above copyright notice, this list
- * of conditions and the following disclaimer.
- *
- * Redistributions in binary form must reproduce the above copyright notice, this
- * list of conditions and the following disclaimer in the documentation and/or
- * other materials provided with the distribution.
- *
- * Neither the name of FIRST nor the names of its contributors may be used to endorse or
- * promote products derived from this software without specific prior written permission.
- *
- * NO EXPRESS OR IMPLIED LICENSES TO ANY PARTY'S PATENT RIGHTS ARE GRANTED BY THIS
- * LICENSE. THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
- * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
- * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
- * ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE
- * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
- * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
- * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
- * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
- * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
- */
-
-package org.firstinspires.ftc.teamcode.auton;
+package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.hardware.bosch.BNO055IMU;
-import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
 import com.qualcomm.robotcore.util.RobotLog;
 
-import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
+
+
 import org.firstinspires.ftc.robotcore.external.matrices.VectorF;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
@@ -46,21 +16,13 @@ import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 import org.firstinspires.ftc.teamcode.NewHardwareMap;
-import org.openftc.apriltag.AprilTagDetection;
-import org.openftc.easyopencv.OpenCvCamera;
-import org.openftc.easyopencv.OpenCvCameraFactory;
-import org.openftc.easyopencv.OpenCvCameraRotation;
 
-import java.util.ArrayList;
+public class MethodMap {
 
+    LinearOpMode opMode;
 
-//Start of Program
-@Autonomous(name="PowerAuto_Red_Third", group ="Concept", preselectTeleOp="Power_TeleOp")
-
-public class PowerAuto_April_Third extends LinearOpMode {
-
-    /* Declare OpMode members. */
     NewHardwareMap robot =   new NewHardwareMap();
+
     BNO055IMU               imu;                            // IMU device
     Orientation             lastAngles = new Orientation();
     double                  globalAngle, correction;
@@ -98,358 +60,9 @@ public class PowerAuto_April_Third extends LinearOpMode {
     public double sensorNum = 40;
     public double sensorNumIn = 0;
 
-    OpenCvCamera camera;
-    AprilTagDetectionPipeline aprilTagDetectionPipeline;
-
-    static final double FEET_PER_METER = 3.28084;
-
-    // Lens intrinsics
-    // UNITS ARE PIXELS
-    // NOTE: this calibration is for the C920 webcam at 800x448.
-    // You will need to do your own calibration for other configurations!
-    double fx = 578.272;
-    double fy = 578.272;
-    double cx = 402.145;
-    double cy = 221.506;
-
-    // UNITS ARE METERS
-    double tagsize = 0.166;
-
-    // Tag ID 1,2,3 from the 36h11 family
-    /*EDIT IF NEEDED!!!*/
-
-    int LEFT = 4;
-    int MIDDLE = 2;
-    int RIGHT = 5;
-
-    AprilTagDetection tagOfInterest = null;
-
-
-    @Override public void runOpMode() {   //driver presses Init button
-
-            int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
-            camera = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "Webcam 1"), cameraMonitorViewId);
-            aprilTagDetectionPipeline = new AprilTagDetectionPipeline(tagsize, fx, fy, cx, cy);
-
-            camera.setPipeline(aprilTagDetectionPipeline);
-            camera.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener()
-            {
-                @Override
-                public void onOpened()
-                {
-                    camera.startStreaming(800,448, OpenCvCameraRotation.UPRIGHT);
-                }
-
-                @Override
-                public void onError(int errorCode)
-                {
-
-                }
-            });
-
-            telemetry.setMsTransmissionInterval(50);
-        robot.init(hardwareMap);
-
-        //robot.CameraPan.setPosition(robot.CameraOne);
-
-        //robot.FreightArm.setPosition(0.9);
-
-        //IMU initialization
-        BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
-
-        parameters.mode                = BNO055IMU.SensorMode.IMU;
-        parameters.angleUnit           = BNO055IMU.AngleUnit.DEGREES;
-        parameters.accelUnit           = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
-        parameters.loggingEnabled      = false;
-
-        // Ensure the robot it stationary, then reset the encoders and calibrate the gyro.
-        robot.FmotorLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        robot.FmotorRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        robot.BmotorLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        robot.BmotorRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-
-        // Retrieve and initialize the IMU. We expect the IMU to be attached to an I2C port
-        // on a Core Device Interface Module, configured to be a sensor of type "AdaFruit IMU",
-        // and named "imu".
-        imu = hardwareMap.get(BNO055IMU.class, "imu");
-
-        imu.initialize(parameters);
-
-        telemetry.addData("Mode", "calibrating...");
-        telemetry.update();
-
-        // make sure the imu gyro is calibrated before continuing.
-        while (!isStopRequested() && !imu.isGyroCalibrated())
-        {
-            sleep(50);
-            idle();
-        }
-
-        telemetry.addData("Mode", "faster than a fish in the Smoky Mountains");
-        telemetry.addData("imu calib status", imu.getCalibrationStatus().toString());
-        telemetry.update();
-
-        robot.FmotorLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        robot.FmotorRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        robot.BmotorLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        robot.BmotorRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-
-            /*******************************************************************
-             *                                                                  *
-             *                                                                  *
-             *                 Image and Signal Determination                   *
-             *                                                                  *
-             *                                                                  *
-             *******************************************************************/
-
-        //New WaitForStart Function
-
-            while (!isStarted() && !isStopRequested())
-            {
-                ArrayList<AprilTagDetection> currentDetections = aprilTagDetectionPipeline.getLatestDetections();
-
-                if(currentDetections.size() != 0)
-                {
-                    boolean tagFound = false;
-
-                    for(AprilTagDetection tag : currentDetections)
-                    {
-                        if(tag.id == LEFT || tag.id == MIDDLE || tag.id == RIGHT)
-                        {
-                            tagOfInterest = tag;
-                            tagFound = true;
-                            break;
-                        }
-                    }
-
-                    if(tagFound)
-                    {
-                        telemetry.addLine("Tag of interest is in sight!\n\nLocation data:");
-                        tagToTelemetry(tagOfInterest);
-                    }
-                    else
-                    {
-                        telemetry.addLine("Don't see tag of interest :(");
-
-                        if(tagOfInterest == null)
-                        {
-                            telemetry.addLine("(The tag has never been seen)");
-                        }
-                        else
-                        {
-                            telemetry.addLine("\nBut we HAVE seen the tag before; last seen at:");
-                            tagToTelemetry(tagOfInterest);
-                        }
-                    }
-
-                }
-                else
-                {
-                    telemetry.addLine("Don't see tag of interest :(");
-
-                    if(tagOfInterest == null)
-                    {
-                        telemetry.addLine("(The tag has never been seen)");
-                    }
-                    else
-                    {
-                        telemetry.addLine("\nBut we HAVE seen the tag before; last seen at:");
-                        tagToTelemetry(tagOfInterest);
-                    }
-
-                }
-
-                telemetry.update();
-                sleep(20);
-            }
-
-
-
-
-
-            if(tagOfInterest != null)
-            {
-                telemetry.addLine("Tag snapshot:\n");
-                tagToTelemetry(tagOfInterest);
-                telemetry.update();
-            }
-            else
-            {
-                telemetry.addLine("No tag snapshot available, it was never sighted during the init loop :(");
-                telemetry.update();
-            }
-
-        robot.LiftMotor.setPower(1.0);
-        sleep(200);
-        robot.LiftMotor.setPower(0);
-
-        RobotLog.d("LOGGING START");
-
-        /******************************************************************
-         *                                                                 *
-         *                                                                 *
-         *                     Path planning                               *
-         *                                                                 *
-         *                                                                 *
-         ******************************************************************/
-        // Step through each leg of the path,
-        // Note: Reverse movement is obtained by setting a negative distance (not speed)
-
-        //Arm positions are 0.9 for closed and 0.5 for open
-        //Drive to junction
-        gyroDrive(0.4, 3, 0, 15.0);
-        gyroStrafe(STRAFE_SPEED, 20, 0, 15.0);
-        gyroDriveLU(0.5, 47, 0, 15.0);
-        sleep(200);
-
-
-        while (!robot.touch3.isPressed()) {
-            robot.LiftMotor.setPower(1.0);
-        }
-        robot.LiftMotor.setPower(0.05);
-
-        //Detect the Junction
-        gyroSensorStrafe(0.2, -25, 0, 15.0);
-        //gyroStrafe(0.4, -4, 0, 15.0);
-
-        sensorNum = robot.sensorRange.getDistance(DistanceUnit.INCH);
-        sensorNumIn = 6.5 - sensorNum;
-        gyroDrive(0.4, sensorNumIn, 0, 15.0);
-
-        sleep(200);
-        liftDrive(-0.5, 400, true);
-
-        //Deliver Cone
-        robot.Gray.setPower(-1);
-        robot.Green.setPower(1);
-        sleep(1000);
-        robot.Gray.setPower(0);
-        robot.Green.setPower(0);
-        //sleep(500);
-
-        //Drive to Cone Stack
-        gyroDrive(DRIVE_SPEED, -2, 0, 15.0);
-        gyroTurn(TURN_SPEED, 90);
-
-            /*while (!robot.touch.isPressed()) {
-                robot.LiftMotor.setPower(-0.8);
-            }
-            robot.LiftMotor.setPower(0);*/
-
-        gyroDriveLD(DRIVE_SPEED, 26, 90, 15.0);
-        while (!robot.touch.isPressed()) {
-            robot.LiftMotor.setPower(-0.8);
-        }
-        robot.LiftMotor.setPower(0);
-
-        //Pick up cone stack
-        liftDrive(1.0, 230, false);
-        //gyroDrive(0.5, 8, 90, 15.0);
-        robot.Gray.setPower(1);
-        robot.Green.setPower(-1);
-        gyroDrive(0.4, 7, 90, 15.0);
-        sleep(500);
-        robot.Gray.setPower(0);
-        robot.Green.setPower(0);
-        //sleep(500);
-        liftDrive(0.6, 800, true);
-        gyroDrive(0.5, -11, 90, 15.0);
-
-        //Deliver the second cone
-        gyroTurn(TURN_SPEED, 180);
-        sleep(100);
-        //robot.LiftMotor.setPower(-0.5);
-        //sleep(10);
-
-        //Deliver Cone
-        robot.Gray.setPower(-1);
-        robot.Green.setPower(1);
-        sleep(500);
-        robot.Gray.setPower(0);
-        robot.Green.setPower(0);
-        //sleep(500);
-
-        //Third Cone Code Starts Here
-
-        //gyroDrive(DRIVE_SPEED,-3,180,15.0);
-        gyroTurn(TURN_SPEED, 90);
-        /*while (!robot.touch.isPressed()) {
-            robot.LiftMotor.setPower(-0.8);
-        }*/
-        robot.LiftMotor.setPower(0);
-        sleep(200);
-        //Pick up cone stack
-        liftDrive(-0.6, 700, false);
-        gyroDrive(DRIVE_SPEED, 8, 90, 15.0);
-        robot.Gray.setPower(1);
-        robot.Green.setPower(-1);
-        gyroDrive(0.4, 5, 90, 15.0);
-        sleep(500);
-        robot.Gray.setPower(0);
-        robot.Green.setPower(0);
-        //sleep(500);
-        liftDrive(0.6, 950, true);
-        gyroDrive(0.5, -11, 90, 15.0);
-
-        //Deliver the third cone
-        gyroTurn(TURN_SPEED, 180);
-        //gyroDrive(DRIVE_SPEED,2,180,15.0);
-        sleep(100);
-        //robot.LiftMotor.setPower(-0.5);
-        //sleep(10);
-
-        //Deliver Cone
-        robot.Gray.setPower(-1);
-        robot.Green.setPower(1);
-        sleep(500);
-        robot.Gray.setPower(0);
-        robot.Green.setPower(0);
-        //sleep(500);*/
-
-        gyroDrive(DRIVE_SPEED,-2,180,15.0);
-        gyroTurn(DRIVE_SPEED, 90);
-        /*while (!robot.touch.isPressed()) {
-            robot.LiftMotor.setPower(-0.8);
-        }
-        robot.LiftMotor.setPower(0);*/
-
-        //Drive to Target Zone
-
-        if(tagOfInterest.id == LEFT){
-            gyroDriveLD(DRIVE_SPEED, 9, 90, 15.0);
-        }
-        else if(tagOfInterest.id == MIDDLE){
-            gyroDriveLD(DRIVE_SPEED, -14, 90, 15.0);
-        }
-        else if(tagOfInterest.id == RIGHT){
-            gyroDriveLD(1.0, -34, 90, 15.0);
-        }
-
-
-    }
-
-
-    /*******************************************************************
-     *                                                                 *
-     *                                                                 *
-     *                      Lightsaber Library                         *
-     *                                                                 *
-     *                                                                 *
-     *******************************************************************/
-        void tagToTelemetry(AprilTagDetection detection)
-        {
-            telemetry.addLine(String.format("\nDetected tag ID=%d", detection.id));
-            telemetry.addLine(String.format("Translation X: %.2f feet", detection.pose.x*FEET_PER_METER));
-            telemetry.addLine(String.format("Translation Y: %.2f feet", detection.pose.y*FEET_PER_METER));
-            telemetry.addLine(String.format("Translation Z: %.2f feet", detection.pose.z*FEET_PER_METER));
-            telemetry.addLine(String.format("Rotation Yaw: %.2f degrees", Math.toDegrees(detection.pose.yaw)));
-            telemetry.addLine(String.format("Rotation Pitch: %.2f degrees", Math.toDegrees(detection.pose.pitch)));
-            telemetry.addLine(String.format("Rotation Roll: %.2f degrees", Math.toDegrees(detection.pose.roll)));
-        }
-
-    public void liftDrive(double power, int time, boolean hold) {
+    public void liftDrive(double power, int time, boolean hold) throws InterruptedException {
         robot.LiftMotor.setPower(power);
-        sleep(time);
+        opMode.sleep(time);
         if(hold == true) {
             robot.LiftMotor.setPower(0.05);
         }
@@ -459,8 +72,8 @@ public class PowerAuto_April_Third extends LinearOpMode {
     }
 
     public void gyroTelem() {
-        telemetry.addData("imu calib status", imu.getCalibrationStatus().toString());
-        telemetry.update();
+        opMode.telemetry.addData("imu calib status", imu.getCalibrationStatus().toString());
+        opMode.telemetry.update();
     }
 
     public void driveStraight(double speed,double inches,double timeoutS){                                                                                                                                                                                              //:(
@@ -501,7 +114,7 @@ public class PowerAuto_April_Third extends LinearOpMode {
 
 
         // Ensure that the opmode is still active
-        if (opModeIsActive()) {
+        if (opMode.opModeIsActive()) {
 
             robot.FmotorLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
             robot.FmotorRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -563,16 +176,16 @@ public class PowerAuto_April_Third extends LinearOpMode {
             // always end the motion as soon as possible.
             // However, if you require that BOTH motors have finished their moves before the robot continues
             // onto the next step, use (isBusy() || isBusy()) in the loop test.
-            while (opModeIsActive() &&
+            while (opMode.opModeIsActive() &&
                     (runtime.seconds() < timeoutS) &&
                     (robot.FmotorLeft.isBusy() && robot.FmotorRight.isBusy() && robot.BmotorLeft.isBusy() && robot.BmotorRight.isBusy())) {
 
                 // Display it for the driver.
-                telemetry.addData("Target: ", "to %7d :%7d :%7d :%7d", FLeftTarget,  FRightTarget, BLeftTarget, BRightTarget);
-                telemetry.addData("Postion:", "at %7d :%7d :%7d :%7d", robot.FmotorLeft.getCurrentPosition(),
+                opMode.telemetry.addData("Target: ", "to %7d :%7d :%7d :%7d", FLeftTarget,  FRightTarget, BLeftTarget, BRightTarget);
+                opMode.telemetry.addData("Postion:", "at %7d :%7d :%7d :%7d", robot.FmotorLeft.getCurrentPosition(),
                         robot.FmotorRight.getCurrentPosition(),robot.BmotorLeft.getCurrentPosition(),
                         robot.BmotorRight.getCurrentPosition());
-                telemetry.update();
+                opMode.telemetry.update();
                 RobotLog.d("%7d,%7d,%7d,%7d,%7d,", FLeftTarget,robot.FmotorLeft.getCurrentPosition(),
                         robot.FmotorRight.getCurrentPosition(),robot.BmotorLeft.getCurrentPosition(),
                         robot.BmotorRight.getCurrentPosition());
@@ -591,7 +204,7 @@ public class PowerAuto_April_Third extends LinearOpMode {
             robot.BmotorLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
             robot.BmotorRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
-            sleep(250);   // optional pause after each move
+            opMode.sleep(250);   // optional pause after each move
         }
     }
 
@@ -641,7 +254,7 @@ public class PowerAuto_April_Third extends LinearOpMode {
         double  rightSpeed;
 
         // Ensure that the opmode is still active
-        if (opModeIsActive()) {
+        if (opMode.opModeIsActive()) {
 
             robot.FmotorLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
             robot.FmotorRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -674,7 +287,7 @@ public class PowerAuto_April_Third extends LinearOpMode {
             robot.BmotorRight.setPower(Math.abs(speed));
 
             // keep looping while we are still active, and BOTH motors are running.
-            while (opModeIsActive() &&
+            while (opMode.opModeIsActive() &&
                     (runtime.seconds() < timeoutS) &&
                     (robot.FmotorLeft.isBusy() && robot.FmotorRight.isBusy() && robot.BmotorLeft.isBusy() && robot.BmotorRight.isBusy() )) {
 
@@ -703,13 +316,13 @@ public class PowerAuto_April_Third extends LinearOpMode {
                 robot.BmotorRight.setPower(rightSpeed);
 
                 // Display drive status for the driver.
-                telemetry.addData("Err/St",  "%5.1f/%5.1f",  error, steer);
-                telemetry.addData("Target",  "%7d:%7d:%7d:%7d",      FLeftTarget,  FRightTarget, BLeftTarget,  BRightTarget);
-                telemetry.addData("Actual",  "%7d:%7d:%7d:%7d",      robot.FmotorLeft.getCurrentPosition(),robot.FmotorRight.getCurrentPosition(),
+                opMode.telemetry.addData("Err/St",  "%5.1f/%5.1f",  error, steer);
+                opMode.telemetry.addData("Target",  "%7d:%7d:%7d:%7d",      FLeftTarget,  FRightTarget, BLeftTarget,  BRightTarget);
+                opMode.telemetry.addData("Actual",  "%7d:%7d:%7d:%7d",      robot.FmotorLeft.getCurrentPosition(),robot.FmotorRight.getCurrentPosition(),
                         robot.BmotorLeft.getCurrentPosition(), robot.BmotorRight.getCurrentPosition());
 
-                telemetry.addData("Speed",   "%5.2f:%5.2f",  leftSpeed, rightSpeed);
-                telemetry.update();
+                opMode.telemetry.addData("Speed",   "%5.2f:%5.2f",  leftSpeed, rightSpeed);
+                opMode.telemetry.update();
                 RobotLog.d("%7d,%7d,%7d,%7d,%7d,", FLeftTarget,robot.FmotorLeft.getCurrentPosition(),
                         robot.FmotorRight.getCurrentPosition(),robot.BmotorLeft.getCurrentPosition(),
                         robot.BmotorRight.getCurrentPosition());
@@ -730,8 +343,8 @@ public class PowerAuto_April_Third extends LinearOpMode {
         }
     }
     public void gyroDriveLD ( double speed,
-                            double distance,
-                            double angle, double timeoutS) {
+                              double distance,
+                              double angle, double timeoutS) {
 
         RobotLog.d("GD START");
         int FLeftTarget;
@@ -745,7 +358,7 @@ public class PowerAuto_April_Third extends LinearOpMode {
         double  rightSpeed;
 
         // Ensure that the opmode is still active
-        if (opModeIsActive()) {
+        if (opMode.opModeIsActive()) {
 
             robot.FmotorLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
             robot.FmotorRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -778,7 +391,7 @@ public class PowerAuto_April_Third extends LinearOpMode {
             robot.BmotorRight.setPower(Math.abs(speed));
 
             // keep looping while we are still active, and BOTH motors are running.
-            while (opModeIsActive() &&
+            while (opMode.opModeIsActive() &&
                     (runtime.seconds() < timeoutS) &&
                     (robot.FmotorLeft.isBusy() && robot.FmotorRight.isBusy() && robot.BmotorLeft.isBusy() && robot.BmotorRight.isBusy() )) {
 
@@ -814,13 +427,13 @@ public class PowerAuto_April_Third extends LinearOpMode {
                 robot.BmotorRight.setPower(rightSpeed);
 
                 // Display drive status for the driver.
-                telemetry.addData("Err/St",  "%5.1f/%5.1f",  error, steer);
-                telemetry.addData("Target",  "%7d:%7d:%7d:%7d",      FLeftTarget,  FRightTarget, BLeftTarget,  BRightTarget);
-                telemetry.addData("Actual",  "%7d:%7d:%7d:%7d",      robot.FmotorLeft.getCurrentPosition(),robot.FmotorRight.getCurrentPosition(),
+                opMode.telemetry.addData("Err/St",  "%5.1f/%5.1f",  error, steer);
+                opMode.telemetry.addData("Target",  "%7d:%7d:%7d:%7d",      FLeftTarget,  FRightTarget, BLeftTarget,  BRightTarget);
+                opMode.telemetry.addData("Actual",  "%7d:%7d:%7d:%7d",      robot.FmotorLeft.getCurrentPosition(),robot.FmotorRight.getCurrentPosition(),
                         robot.BmotorLeft.getCurrentPosition(), robot.BmotorRight.getCurrentPosition());
 
-                telemetry.addData("Speed",   "%5.2f:%5.2f",  leftSpeed, rightSpeed);
-                telemetry.update();
+                opMode.telemetry.addData("Speed",   "%5.2f:%5.2f",  leftSpeed, rightSpeed);
+                opMode.telemetry.update();
                 RobotLog.d("%7d,%7d,%7d,%7d,%7d,", FLeftTarget,robot.FmotorLeft.getCurrentPosition(),
                         robot.FmotorRight.getCurrentPosition(),robot.BmotorLeft.getCurrentPosition(),
                         robot.BmotorRight.getCurrentPosition());
@@ -857,7 +470,7 @@ public class PowerAuto_April_Third extends LinearOpMode {
         double  rightSpeed;
 
         // Ensure that the opmode is still active
-        if (opModeIsActive()) {
+        if (opMode.opModeIsActive()) {
 
             robot.FmotorLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
             robot.FmotorRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -890,7 +503,7 @@ public class PowerAuto_April_Third extends LinearOpMode {
             robot.BmotorRight.setPower(Math.abs(speed));
 
             // keep looping while we are still active, and BOTH motors are running.
-            while (opModeIsActive() &&
+            while (opMode.opModeIsActive() &&
                     (runtime.seconds() < timeoutS) &&
                     (robot.FmotorLeft.isBusy() && robot.FmotorRight.isBusy() && robot.BmotorLeft.isBusy() && robot.BmotorRight.isBusy() )) {
 
@@ -926,13 +539,13 @@ public class PowerAuto_April_Third extends LinearOpMode {
                 robot.BmotorRight.setPower(rightSpeed);
 
                 // Display drive status for the driver.
-                telemetry.addData("Err/St",  "%5.1f/%5.1f",  error, steer);
-                telemetry.addData("Target",  "%7d:%7d:%7d:%7d",      FLeftTarget,  FRightTarget, BLeftTarget,  BRightTarget);
-                telemetry.addData("Actual",  "%7d:%7d:%7d:%7d",      robot.FmotorLeft.getCurrentPosition(),robot.FmotorRight.getCurrentPosition(),
+                opMode.telemetry.addData("Err/St",  "%5.1f/%5.1f",  error, steer);
+                opMode.telemetry.addData("Target",  "%7d:%7d:%7d:%7d",      FLeftTarget,  FRightTarget, BLeftTarget,  BRightTarget);
+                opMode.telemetry.addData("Actual",  "%7d:%7d:%7d:%7d",      robot.FmotorLeft.getCurrentPosition(),robot.FmotorRight.getCurrentPosition(),
                         robot.BmotorLeft.getCurrentPosition(), robot.BmotorRight.getCurrentPosition());
 
-                telemetry.addData("Speed",   "%5.2f:%5.2f",  leftSpeed, rightSpeed);
-                telemetry.update();
+                opMode.telemetry.addData("Speed",   "%5.2f:%5.2f",  leftSpeed, rightSpeed);
+                opMode.telemetry.update();
                 RobotLog.d("%7d,%7d,%7d,%7d,%7d,", FLeftTarget,robot.FmotorLeft.getCurrentPosition(),
                         robot.FmotorRight.getCurrentPosition(),robot.BmotorLeft.getCurrentPosition(),
                         robot.BmotorRight.getCurrentPosition());
@@ -973,7 +586,7 @@ public class PowerAuto_April_Third extends LinearOpMode {
         double  tempRightSpeed;
 
         // Ensure that the opmode is still active
-        if (opModeIsActive()) {
+        if (opMode.opModeIsActive()) {
 
             robot.FmotorLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
             robot.FmotorRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -1006,7 +619,7 @@ public class PowerAuto_April_Third extends LinearOpMode {
             robot.BmotorRight.setPower(Math.abs(speed));
 
             // keep looping while we are still active, and BOTH motors are running.
-            while (opModeIsActive() &&
+            while (opMode.opModeIsActive() &&
                     (runtime.seconds() < timeoutS) &&
                     (robot.FmotorLeft.isBusy() && robot.FmotorRight.isBusy() && robot.BmotorLeft.isBusy() && robot.BmotorRight.isBusy() )) {
 
@@ -1064,13 +677,13 @@ public class PowerAuto_April_Third extends LinearOpMode {
                 robot.BmotorRight.setPower(rightSpeed);
 
                 // Display drive status for the driver.
-                telemetry.addData("Err/St",  "%5.1f/%5.1f",  error, steer);
-                telemetry.addData("Target",  "%7d:%7d:%7d:%7d",      FLeftTarget,  FRightTarget, BLeftTarget,  BRightTarget);
-                telemetry.addData("Actual",  "%7d:%7d:%7d:%7d",      robot.FmotorLeft.getCurrentPosition(),robot.FmotorRight.getCurrentPosition(),
+                opMode.telemetry.addData("Err/St",  "%5.1f/%5.1f",  error, steer);
+                opMode.telemetry.addData("Target",  "%7d:%7d:%7d:%7d",      FLeftTarget,  FRightTarget, BLeftTarget,  BRightTarget);
+                opMode.telemetry.addData("Actual",  "%7d:%7d:%7d:%7d",      robot.FmotorLeft.getCurrentPosition(),robot.FmotorRight.getCurrentPosition(),
                         robot.BmotorLeft.getCurrentPosition(), robot.BmotorRight.getCurrentPosition());
 
-                telemetry.addData("Speed",   "%5.2f:%5.2f",  leftSpeed, rightSpeed);
-                telemetry.update();
+                opMode.telemetry.addData("Speed",   "%5.2f:%5.2f",  leftSpeed, rightSpeed);
+                opMode.telemetry.update();
                 RobotLog.d("%7d,%7d,%7d,%7d,%7d,%5.2f:%5.2f", FLeftTarget,robot.FmotorLeft.getCurrentPosition(),
                         robot.FmotorRight.getCurrentPosition(),robot.BmotorLeft.getCurrentPosition(),
                         robot.BmotorRight.getCurrentPosition(), leftSpeed, rightSpeed);
@@ -1109,7 +722,7 @@ public class PowerAuto_April_Third extends LinearOpMode {
         double  backSpeed;
 
         // Ensure that the opmode is still active
-        if (opModeIsActive()) {
+        if (opMode.opModeIsActive()) {
 
             robot.FmotorLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
             robot.FmotorRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -1142,7 +755,7 @@ public class PowerAuto_April_Third extends LinearOpMode {
             robot.BmotorRight.setPower(Math.abs(speed));
 
             // keep looping while we are still active, and BOTH motors are running.
-            while (opModeIsActive() &&
+            while (opMode.opModeIsActive() &&
                     (runtime.seconds() < timeoutS) &&
                     (robot.FmotorLeft.isBusy() && robot.FmotorRight.isBusy() && robot.BmotorLeft.isBusy() && robot.BmotorRight.isBusy() )) {
 
@@ -1171,13 +784,13 @@ public class PowerAuto_April_Third extends LinearOpMode {
                 robot.BmotorRight.setPower(backSpeed);
 
                 // Display drive status for the driver.
-                telemetry.addData("Err/St",  "%5.1f/%5.1f",  error, steer);
-                telemetry.addData("Target",  "%7d:%7d:%7d:%7d",      FLeftTarget,  FRightTarget, BLeftTarget,  BRightTarget);
-                telemetry.addData("Actual",  "%7d:%7d:%7d:%7d",      robot.FmotorLeft.getCurrentPosition(),
+                opMode.telemetry.addData("Err/St",  "%5.1f/%5.1f",  error, steer);
+                opMode.telemetry.addData("Target",  "%7d:%7d:%7d:%7d",      FLeftTarget,  FRightTarget, BLeftTarget,  BRightTarget);
+                opMode.telemetry.addData("Actual",  "%7d:%7d:%7d:%7d",      robot.FmotorLeft.getCurrentPosition(),
                         robot.FmotorRight.getCurrentPosition(), robot.BmotorLeft.getCurrentPosition(),
                         robot.BmotorRight.getCurrentPosition());
-                telemetry.addData("Speed",   "%5.2f:%5.2f",  frontSpeed, backSpeed);
-                telemetry.update();
+                opMode.telemetry.addData("Speed",   "%5.2f:%5.2f",  frontSpeed, backSpeed);
+                opMode.telemetry.update();
                 RobotLog.d("%7d,%7d,%7d,%7d,%7d,", FLeftTarget,robot.FmotorLeft.getCurrentPosition(),
                         robot.FmotorRight.getCurrentPosition(),robot.BmotorLeft.getCurrentPosition(),
                         robot.BmotorRight.getCurrentPosition());
@@ -1215,7 +828,7 @@ public class PowerAuto_April_Third extends LinearOpMode {
         double  backSpeed;
 
         // Ensure that the opmode is still active
-        if (opModeIsActive()) {
+        if (opMode.opModeIsActive()) {
 
             robot.FmotorLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
             robot.FmotorRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -1250,7 +863,7 @@ public class PowerAuto_April_Third extends LinearOpMode {
             //sensorNum = robot.sensorRange.getDistance(DistanceUnit.CM);
 
             // keep looping while we are still active, and BOTH motors are running.
-            while (opModeIsActive() && (sensorNum > 20 ) &&
+            while (opMode.opModeIsActive() && (sensorNum > 20 ) &&
                     (runtime.seconds() < timeoutS) &&
                     (robot.FmotorLeft.isBusy() && robot.FmotorRight.isBusy() && robot.BmotorLeft.isBusy() && robot.BmotorRight.isBusy() )) {
 
@@ -1331,10 +944,10 @@ public class PowerAuto_April_Third extends LinearOpMode {
     public void gyroTurn (double speed, double angle) {
         RobotLog.d("GT START");
         // keep looping while we are still active, and not on heading.
-        while (opModeIsActive() && !onHeading(speed, angle, P_TURN_COEFF)) {
+        while (opMode.opModeIsActive() && !onHeading(speed, angle, P_TURN_COEFF)) {
             // Update telemetry & Allow time for other processes to run.
 
-            telemetry.update();
+            opMode.telemetry.update();
         }
         RobotLog.d("GT STOP");
     }
@@ -1355,10 +968,10 @@ public class PowerAuto_April_Third extends LinearOpMode {
 
         // keep looping while we have time remaining.
         holdTimer.reset();
-        while (opModeIsActive() && (holdTimer.time() < holdTime)) {
+        while (opMode.opModeIsActive() && (holdTimer.time() < holdTime)) {
             // Update telemetry & Allow time for other processes to run.
             onHeading(speed, angle, P_TURN_COEFF);
-            telemetry.update();
+            opMode.telemetry.update();
         }
 
         // Stop all motion;
@@ -1407,9 +1020,9 @@ public class PowerAuto_April_Third extends LinearOpMode {
         robot.BmotorRight.setPower(-rightSpeed);
 
         // Display it for the driver.
-        telemetry.addData("Target", "%5.2f", angle);
-        telemetry.addData("Err/St", "%5.2f/%5.2f", error, steer);
-        telemetry.addData("Speed.", "%5.2f:%5.2f", leftSpeed, rightSpeed);
+        opMode.telemetry.addData("Target", "%5.2f", angle);
+        opMode.telemetry.addData("Err/St", "%5.2f/%5.2f", error, steer);
+        opMode.telemetry.addData("Speed.", "%5.2f:%5.2f", leftSpeed, rightSpeed);
 
         RobotLog.d("%5.2f,%5.2f,%5.2f,%5.2f, %5.2f", angle, error, steer, leftSpeed, rightSpeed);
 
@@ -1444,5 +1057,4 @@ public class PowerAuto_April_Third extends LinearOpMode {
     public double getSteer(double error, double PCoeff) {
         return Range.clip(error * PCoeff, -1.0, 1.0);
     }
-
 }

@@ -66,31 +66,6 @@ import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
  */
 public class NewHardwareMap
 {
-    // position of servos
-
-    /*final double ScoopL_Down = 0.88; //0.86
-    final double ScoopLA_Down = ScoopL_Down - 0.06;
-    final double ScoopL_PS = 0.55; //less is more up .53 PowerShots
-    final double ScoopL_Up = 0.55; //less is more up .53
-    final double ScoopL_WG = 0.42; //less is more up .40
-
-    final double ScoopR_Down = 0.16; //0.17
-    final double ScoopRA_Down = ScoopR_Down + 0.06;
-    final double ScoopR_PS = 0.48;  //more is more up .47 PowerShots
-    final double ScoopR_Up = 0.44;  //more is more up .47
-    final double ScoopR_WG = 0.58;  //more is more up .60
-
-    final double Hammer_stowed = 0.05; //0.05
-    final double Hammer_fire = 0.35; //more is more out 0.35
-    final double WG_locked  = 0.7;
-    final double WG_locked_Auto  = 0.75;
-    final double WG_un_lock = 0.1;
-    final double WG_push = 0.3;
-
-    final double FarShootVel = 2200;  //~2500max
-    final double HighShootVel = 2100;  //~2500max * 0.81 = 2100
-    final double PSshootVel = 1975;     //~2500max * 0.7 = 1950
-    final double PSshootVelJ = 2175;*/
 
 
     final double CameraOne = 0.85;
@@ -192,20 +167,9 @@ public class NewHardwareMap
              return sensorRange;
          }*/
 
-        //DcMotorEx ehShooter = hardwareMap.get(DcMotorEx.class, "eh_smotor");
-        //ehShooter = hwMap.get(DcMotorEx.class,"eh_smotor");
-        //ehShooter.setDirection(DcMotor.Direction.REVERSE);
-        //ehShooter.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        //ehShooter.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
-        //SparkMini
-        //Shooter = hwMap.get(DcMotorSimple.class, "smotor"); //SparkMini
 
         //SERVOS
-        /*ScoopL = hwMap.servo.get("scoop_l");
-        ScoopR = hwMap.servo.get("scoop_r");
-        Hammer = hwMap.servo.get("trigger");
-        WG_lock = hwMap.servo.get("wg_lock");*/
         CameraPan = hwMap.servo.get("camera_servo");
         Gray = hwMap.crservo.get("gray");
         Green = hwMap.crservo.get("green");

@@ -419,10 +419,10 @@ public class PowerAuto_April_Third_Blue extends LinearOpMode {
             gyroDriveLD(DRIVE_SPEED, 9, -90, 15.0);
         }
         else if(tagOfInterest.id == MIDDLE){
-            gyroDriveLD(DRIVE_SPEED, -12, -90, 15.0);
+            gyroDriveLD(DRIVE_SPEED, -14, -90, 15.0);
         }
         else if(tagOfInterest.id == LEFT){
-            gyroDriveLD(DRIVE_SPEED, -34, -90, 15.0);
+            gyroDriveLD(1.0, -34, -90, 15.0);
         }
 
 

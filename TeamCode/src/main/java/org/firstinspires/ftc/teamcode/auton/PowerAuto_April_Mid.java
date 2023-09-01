@@ -283,7 +283,7 @@ public class PowerAuto_April_Mid extends LinearOpMode {
                 telemetry.update();
             }
 
-        //robot.LiftMotor.setPower(1.0);
+        robot.LiftMotor.setPower(1.0);
         sleep(200);
         robot.LiftMotor.setPower(0);
 
@@ -298,33 +298,24 @@ public class PowerAuto_April_Mid extends LinearOpMode {
          ******************************************************************/
         // Step through each leg of the path,
         // Note: Reverse movement is obtained by setting a negative distance (not speed)
-        liftDrive(1.0, 24, 15.0);
-        robot.LiftMotor.setPower(0.01);
-        sleep(200000);
         //Arm positions are 0.9 for closed and 0.5 for open
         //Drive to junction
-        /*gyroDrive(0.4, 3, 0, 15.0);
+        gyroDrive(0.4, 3, 0, 15.0);
         gyroStrafe(STRAFE_SPEED, 20, 0, 15.0);
-        gyroDriveLU(0.5, 23, 0, 15.0);
+        liftDrive(0.5, 23, 0, 40, 15.0);
+        robot.LiftMotor.setPower(0.4);
+        sleep(300);
         robot.LiftMotor.setPower(0);
-        sleep(200);
-
-
-        /*while (!robot.touch3.isPressed()) {
-            robot.LiftMotor.setPower(1.0);
-        }
-        robot.LiftMotor.setPower(0.05);*/
 
         //Detect the Junction
-        /*gyroSensorStrafe(0.2, -25, 0, 15.0);
-        //gyroStrafe(0.4, -4, 0, 15.0);
+        gyroSensorStrafe(0.2, -25, 0, 15.0);
 
         sensorNum = robot.sensorRange.getDistance(DistanceUnit.INCH);
         sensorNumIn = 6.5 - sensorNum;
-        gyroDrive(0.4, sensorNumIn, 0, 15.0);
+        gyroDrive(0.4, sensorNumIn+1, 0, 15.0);
 
         sleep(200);
-        liftDrive(-0.5, 400, true);
+        liftPower(-0.5, 400, true);
 
         //Deliver Cone
         robot.Gray.setPower(-1);
@@ -335,39 +326,33 @@ public class PowerAuto_April_Mid extends LinearOpMode {
         //sleep(500);
 
         //Drive to Cone Stack
-        gyroDrive(DRIVE_SPEED, -2, -90, 15.0);
-        //gyroTurn(TURN_SPEED, 0);
+        gyroDrive(DRIVE_SPEED, -2, 0, 15.0);
 
-            /*while (!robot.touch.isPressed()) {
-                robot.LiftMotor.setPower(-0.8);
-            }
-            robot.LiftMotor.setPower(0);*/
-        /*gyroStrafeLD(STRAFE_SPEED, -40, 0, 15.0);
-        gyroDriveLD(DRIVE_SPEED, 20, 0, 15.0);
+        gyroStrafeLD(STRAFE_SPEED, -15, 0, 15.0);
+
+        //Pick up cone stack
+        gyroDriveLD(DRIVE_SPEED, 22, 0, 15.0);
         while (!robot.touch.isPressed()) {
             robot.LiftMotor.setPower(-0.8);
         }
         robot.LiftMotor.setPower(0);
-
-        //Pick up cone stack
         gyroTurn(TURN_SPEED, 90);
-        liftDrive(1.0, 230, false);
-        //gyroDrive(0.5, 8, 90, 15.0);
+
+        liftDrive(DRIVE_SPEED, 20, 90, 4.75, 15.0);
+
         robot.Gray.setPower(1);
         robot.Green.setPower(-1);
-        gyroDrive(0.4, 7, 90, 15.0);
+        gyroDrive(0.4, 6, 90, 15.0);
         sleep(500);
         robot.Gray.setPower(0);
         robot.Green.setPower(0);
         //sleep(500);
-        liftDrive(0.6, 800, true);
+        liftPower(0.6, 800, false);
         gyroDrive(0.5, -11, 90, 15.0);
 
         //Deliver the second cone
         gyroTurn(TURN_SPEED, 180);
         sleep(100);
-        //robot.LiftMotor.setPower(-0.5);
-        //sleep(10);
 
         //Deliver Cone
         robot.Gray.setPower(-1);
@@ -375,36 +360,26 @@ public class PowerAuto_April_Mid extends LinearOpMode {
         sleep(500);
         robot.Gray.setPower(0);
         robot.Green.setPower(0);
-        //sleep(500);
 
         //Third Cone Code Starts Here
 
-        //gyroDrive(DRIVE_SPEED,-3,180,15.0);
         gyroTurn(TURN_SPEED, 90);
-        /*while (!robot.touch.isPressed()) {
-            robot.LiftMotor.setPower(-0.8);
-        }*/
-        /*robot.LiftMotor.setPower(0);
-        sleep(200);
+
         //Pick up cone stack
-        liftDrive(-0.6, 700, false);
+        liftPower(-0.6, 685, false);
         gyroDrive(DRIVE_SPEED, 8, 90, 15.0);
         robot.Gray.setPower(1);
         robot.Green.setPower(-1);
-        gyroDrive(0.4, 5, 90, 15.0);
+        gyroDrive(0.4, 9, 90, 15.0);
         sleep(500);
         robot.Gray.setPower(0);
         robot.Green.setPower(0);
-        //sleep(500);
-        liftDrive(0.6, 950, true);
+        liftPower(0.6, 950, false);
         gyroDrive(0.5, -11, 90, 15.0);
 
         //Deliver the third cone
         gyroTurn(TURN_SPEED, 180);
-        //gyroDrive(DRIVE_SPEED,2,180,15.0);
         sleep(100);
-        //robot.LiftMotor.setPower(-0.5);
-        //sleep(10);
 
         //Deliver Cone
         robot.Gray.setPower(-1);
@@ -412,26 +387,22 @@ public class PowerAuto_April_Mid extends LinearOpMode {
         sleep(500);
         robot.Gray.setPower(0);
         robot.Green.setPower(0);
-        //sleep(500);*/
+        //sleep(500);
 
-        /*gyroDrive(DRIVE_SPEED,-2,180,15.0);
+        gyroDrive(DRIVE_SPEED,-2,180,15.0);
         gyroTurn(DRIVE_SPEED, 90);
-        /*while (!robot.touch.isPressed()) {
-            robot.LiftMotor.setPower(-0.8);
-        }
-        robot.LiftMotor.setPower(0);*/
 
         //Drive to Target Zone
 
-        /*if(tagOfInterest.id == LEFT){
+        if(tagOfInterest.id == LEFT){
             gyroDriveLD(DRIVE_SPEED, 9, 90, 15.0);
         }
         else if(tagOfInterest.id == MIDDLE){
-            gyroDriveLD(DRIVE_SPEED, -12, 90, 15.0);
+            gyroDriveLD(DRIVE_SPEED, -14, 90, 15.0);
         }
         else if(tagOfInterest.id == RIGHT){
-            gyroDriveLD(DRIVE_SPEED, -34, 90, 15.0);
-        }*/
+            gyroDriveLD(1.0, -36, 90, 15.0);
+        }
 
 
     }
@@ -455,7 +426,7 @@ public class PowerAuto_April_Mid extends LinearOpMode {
             telemetry.addLine(String.format("Rotation Roll: %.2f degrees", Math.toDegrees(detection.pose.roll)));
         }
 
-    /*public void liftDrive(double power, int time, boolean hold) {
+    public void liftPower(double power, int time, boolean hold) {
         robot.LiftMotor.setPower(power);
         sleep(time);
         if(hold == true) {
@@ -464,7 +435,7 @@ public class PowerAuto_April_Mid extends LinearOpMode {
         else{
             robot.LiftMotor.setPower(0);
         }
-    }*/
+    }
 
     public void gyroTelem() {
         telemetry.addData("imu calib status", imu.getCalibrationStatus().toString());
@@ -603,44 +574,117 @@ public class PowerAuto_April_Mid extends LinearOpMode {
         }
     }
 
-    public void liftDrive(double speed, double LMotorInches, double timeoutS) {                                                                                                                                                                                                                 // :)
+    public void liftDrive(double speed, double distance, double angle, double LMotorInches, double timeoutS) {                                                                                                                                                                                                                 // :)
 
         int LMotorTarget;
+        int FLeftTarget;
+        int FRightTarget;
+        int BRightTarget;
+        int BLeftTarget;
+        double  max;
+        double  error;
+        double  steer;
+        double  leftSpeed;
+        double  rightSpeed;
 
+        if(opModeIsActive()) {
 
-        robot.LiftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            robot.LiftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            robot.FmotorLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            robot.FmotorRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            robot.BmotorLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            robot.BmotorRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
-        // Determine new target position, and pass to motor controller
-        LMotorTarget  = (int)(LMotorInches * COUNTS_PER_INCH_LIFT);
+            // Determine new target position, and pass to motor controller
+            FLeftTarget  = (int)(-distance * COUNTS_PER_INCH);
+            FRightTarget = (int)(-distance * COUNTS_PER_INCH);
+            BLeftTarget = (int)(-distance * COUNTS_PER_INCH);
+            BRightTarget = (int)(-distance * COUNTS_PER_INCH);
+            LMotorTarget = (int) (LMotorInches * COUNTS_PER_INCH_LIFT);
 
-        robot.LiftMotor.setTargetPosition(LMotorTarget);
+            robot.FmotorLeft.setTargetPosition(FLeftTarget);
+            robot.FmotorRight.setTargetPosition(FRightTarget);
+            robot.BmotorLeft.setTargetPosition(BLeftTarget);
+            robot.BmotorRight.setTargetPosition(BRightTarget);
+            robot.LiftMotor.setTargetPosition(LMotorTarget);
 
-        // Turn On RUN_TO_POSITION
-        robot.LiftMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            // Turn On RUN_TO_POSITION
+            robot.FmotorLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            robot.FmotorRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            robot.BmotorLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            robot.BmotorRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            robot.LiftMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
-        // reset the timeout time and start motion.
-        //runtime.reset();
-        robot.LiftMotor.setPower(Math.abs(speed));
+            // reset the timeout time and start motion.
+            runtime.reset();
+            robot.FmotorLeft.setPower(Math.abs(speed));
+            robot.FmotorRight.setPower(Math.abs(speed));
+            robot.BmotorLeft.setPower(Math.abs(speed));
+            robot.BmotorRight.setPower(Math.abs(speed));
+            robot.LiftMotor.setPower(Math.abs(1.0));
 
-        while (opModeIsActive() &&
-                (runtime.seconds() < timeoutS) &&
-                (robot.LiftMotor.isBusy() )) {
+            while (opModeIsActive() &&
+                    (runtime.seconds() < timeoutS) &&
+                    (robot.FmotorLeft.isBusy() && robot.FmotorRight.isBusy() && robot.BmotorLeft.isBusy() && robot.BmotorRight.isBusy() )) {
+                // adjust relative speed based on heading error.
+                error = getError(angle);
+                steer = getSteer(error, P_DRIVE_COEFF);
 
-            // Display it for the driver.
-            telemetry.addData("Target: ", "to %7d", LMotorTarget);
-            telemetry.addData("Postion:", "at %7d", robot.LiftMotor.getCurrentPosition());
-            telemetry.update();
-            RobotLog.d("%7d %7d", LMotorTarget,robot.LiftMotor.getCurrentPosition());
+                // if driving in reverse, the motor correction also needs to be reversed
+                if (distance < 0)
+                    steer *= -1.0;
+
+                leftSpeed = speed - steer;
+                rightSpeed = speed + steer;
+
+                // Normalize speeds if either one exceeds +/- 1.0;
+                max = Math.max(Math.abs(leftSpeed), Math.abs(rightSpeed));
+                if (max > 1.0)
+                {
+                    leftSpeed /= max;
+                    rightSpeed /= max;
+                }
+
+                robot.FmotorLeft.setPower(leftSpeed);
+                robot.BmotorLeft.setPower(leftSpeed);
+                robot.FmotorRight.setPower(rightSpeed);
+                robot.BmotorRight.setPower(rightSpeed);
+
+                // Display drive status for the driver.
+                telemetry.addData("Err/St",  "%5.1f/%5.1f",  error, steer);
+                telemetry.addData("Target",  "%7d:%7d:%7d:%7d",      FLeftTarget,  FRightTarget, BLeftTarget,  BRightTarget);
+                telemetry.addData("Actual",  "%7d:%7d:%7d:%7d",      robot.FmotorLeft.getCurrentPosition(),robot.FmotorRight.getCurrentPosition(),
+                        robot.BmotorLeft.getCurrentPosition(), robot.BmotorRight.getCurrentPosition());
+
+                telemetry.addData("Speed",   "%5.2f:%5.2f",  leftSpeed, rightSpeed);
+                telemetry.update();
+                RobotLog.d("%7d,%7d,%7d,%7d,%7d,", FLeftTarget,robot.FmotorLeft.getCurrentPosition(),
+                        robot.FmotorRight.getCurrentPosition(),robot.BmotorLeft.getCurrentPosition(),
+                        robot.BmotorRight.getCurrentPosition());
+
+                // Display Lift for the driver.
+                telemetry.addData("Target: ", "to %7d", LMotorTarget);
+                telemetry.addData("Postion:", "at %7d", robot.LiftMotor.getCurrentPosition());
+                telemetry.update();
+                RobotLog.d("%7d %7d", LMotorTarget, robot.LiftMotor.getCurrentPosition());
+            }
+
+            // Stop all motion;
+            robot.LiftMotor.setPower(0);
+            robot.FmotorLeft.setPower(0);
+            robot.FmotorRight.setPower(0);
+            robot.BmotorLeft.setPower(0);
+            robot.BmotorRight.setPower(0);
+
+            // Turn off RUN_TO_POSITION
+            robot.LiftMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+            robot.FmotorLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            robot.FmotorRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            robot.BmotorLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            robot.BmotorRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+            //sleep(250);   // optional pause after each move
         }
-
-        // Stop all motion;
-        robot.LiftMotor.setPower(0);
-
-
-        // Turn off RUN_TO_POSITION
-        robot.LiftMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-
-        //sleep(250);   // optional pause after each move
     }
 
     public void gyroDrive ( double speed,
@@ -805,7 +849,7 @@ public class PowerAuto_April_Mid extends LinearOpMode {
                 }
                 else if (robot.touch.isPressed()) {
                     robot.LiftMotor.setPower(0);
-                };
+                }
 
                 // adjust relative speed based on heading error.
                 error = getError(angle);
@@ -917,7 +961,7 @@ public class PowerAuto_April_Mid extends LinearOpMode {
                 }
                 else if (robot.touch3.isPressed()) {
                     robot.LiftMotor.setPower(0);
-                };
+                }
 
                 // adjust relative speed based on heading error.
                 error = getError(angle);
@@ -1275,7 +1319,7 @@ public class PowerAuto_April_Mid extends LinearOpMode {
                 }
                 else if (robot.touch3.isPressed()) {
                     robot.LiftMotor.setPower(0);
-                };
+                }
 
                 // adjust relative speed based on heading error.
                 error = getError(angle);
