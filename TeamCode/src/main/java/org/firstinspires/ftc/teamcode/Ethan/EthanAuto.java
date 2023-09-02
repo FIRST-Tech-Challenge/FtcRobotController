@@ -1,9 +1,5 @@
 package org.firstinspires.ftc.teamcode.Ethan;
 
-import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.opMode;
-
-import com.qualcomm.hardware.bosch.BHI260IMU;
-import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
@@ -12,7 +8,6 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.IMU;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
-import org.opencv.core.Mat;
 
 @TeleOp
 public class EthanAuto extends LinearOpMode {
@@ -242,9 +237,11 @@ public class EthanAuto extends LinearOpMode {
 
         waitForStart();
 
-        ethanRobot.AForward(300);
+        ethanRobot.autoImuTurning(90);
 
-        this.opModeIsActive();
+        //ethanRobot.AutoForward(300);
+
+        opModeIsActive();
 
         /*AutoForward(100);
         imuTurning(-90);

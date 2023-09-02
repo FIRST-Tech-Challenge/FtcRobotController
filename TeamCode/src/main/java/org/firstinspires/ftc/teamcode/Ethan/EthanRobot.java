@@ -1,17 +1,14 @@
 package org.firstinspires.ftc.teamcode.Ethan;
 
-import android.graphics.Path;
-import android.util.Log;
-
+import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.eventloop.opmode.OpMode;
-import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
-import com.qualcomm.robotcore.hardware.HardwareDevice;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.hardware.IMU;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 
 public class EthanRobot {
 
@@ -23,6 +20,8 @@ public class EthanRobot {
     DcMotor rFront;
     DcMotor lBack;
     DcMotor rBack;
+
+    IMU imu;
     public EthanRobot(HardwareMap hardwareMap, LinearOpMode opMode, Telemetry telemetry) {
         this.hardwareMap = hardwareMap;
         this.opMode = opMode;
@@ -51,10 +50,24 @@ public class EthanRobot {
         lFront.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
     }
 
+    public void setUpImu() {
 
-    public void AForward(double targetDistanceInMM) throws InterruptedException {
+        IMU imu = hardwareMap.get(IMU.class, "imu");
+
+        imu.initialize(new IMU.Parameters(
+                new RevHubOrientationOnRobot(
+                        RevHubOrientationOnRobot.LogoFacingDirection.UP,
+                        RevHubOrientationOnRobot.UsbFacingDirection.FORWARD
+                )
+        ));
+
+        imu.resetYaw();
 
 
+    }
+
+
+    public void AutoForward(double targetDistanceInMM) throws InterruptedException {
 
 
 
@@ -154,5 +167,39 @@ public class EthanRobot {
 
 
 
+    }
+
+    public void autoImuTurning(int degrees) {
+
+
+
+
+            final double P_VALUE_FOR_TURNING_IMU = 0.002;
+
+
+
+
+            double yaw = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES);
+
+            while (opMode.opModeIsActive() && !(-yaw <degrees+5 && -yaw >degrees-5)) {
+
+                yaw = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES);
+
+                telemetry.addLine(String.valueOf(yaw));
+
+
+                double angleError = degrees - yaw;
+
+                telemetry.addLine(String.valueOf(angleError));
+
+                lFront.setPower(P_VALUE_FOR_TURNING_IMU*angleError);
+                lBack.setPower(P_VALUE_FOR_TURNING_IMU*angleError);
+                rFront.setPower(-P_VALUE_FOR_TURNING_IMU*angleError);
+                rBack.setPower(-P_VALUE_FOR_TURNING_IMU*angleError);
+
+                telemetry.update();
+
+
+        }
     }
 }
