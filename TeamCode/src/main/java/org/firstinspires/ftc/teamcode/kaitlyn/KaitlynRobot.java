@@ -16,7 +16,7 @@ public class KaitlynRobot{
 
     public static final double TICKS_PER_INCH = (537.7 / 1.4) / 11.87373601322835;
 
-    public static final double P_CONSTANT = 0.006;
+    public static final double P_CONSTANT = 0.01;
 
 
     public static final double P_CONSTANT_TURNING = 0.011;
