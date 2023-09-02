@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.roadrunner.drive;
 
 import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.op;
+import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.packet;
 import static java.lang.Math.PI;
 
 import androidx.annotation.NonNull;
@@ -38,13 +39,15 @@ public class StandardTrackingWheelLocalizer extends ThreeTrackingWheelLocalizer 
     public static double WHEEL_RADIUS = 1.3779/2; // in
     public static double GEAR_RATIO = 1; // output (wheel) speed / input (encoder) speed
 
-    public static double LATERAL_DISTANCE = 10.9*X_MULTIPLIER/*10.9951*X_MULTIPLIER*/; // in; distance between the left and right wheels
-    public static double FORWARD_OFFSET = -4.35*Y_MULTIPLIER/*-4.32939*/; // in; offset of the lateral wheel
+    public static double LATERAL_DISTANCE = 13.195*X_MULTIPLIER/*10.9951*X_MULTIPLIER*/; // in; distance between the left and right wheels
+    public static double FORWARD_OFFSET = 0*Y_MULTIPLIER/*-4.32939*/; // in; offset of the lateral wheel
     //start 5.1,5.5,...
     //end 4 low
     //robot_wid*pi*8/(1.377*pi)*8192
     //1300000 = lateralDistance * 8192/1.377 * 10 * 2
-    private Encoder leftEncoder, rightEncoder, frontEncoder;
+    private final Encoder leftEncoder;
+    private final Encoder rightEncoder;
+    private final Encoder frontEncoder;
 
     public StandardTrackingWheelLocalizer(HardwareMap hardwareMap) {
         super(Arrays.asList(
@@ -53,9 +56,9 @@ public class StandardTrackingWheelLocalizer extends ThreeTrackingWheelLocalizer 
                 new Pose2d(FORWARD_OFFSET, -41.025/25.4, Math.toRadians(90)) // front
         ));
 
-        leftEncoder = new Encoder(hardwareMap.get(DcMotorEx.class, "leftEncoder"));
-        rightEncoder = new Encoder(hardwareMap.get(DcMotorEx.class, "rightEncoder"));
-        frontEncoder = new Encoder(hardwareMap.get(DcMotorEx.class, "motorLeftFront"));
+        leftEncoder = new Encoder(hardwareMap.get(DcMotorEx.class, "motorLeftFront"));
+        rightEncoder = new Encoder(hardwareMap.get(DcMotorEx.class, "motorRightBack"));
+        frontEncoder = new Encoder(hardwareMap.get(DcMotorEx.class, "motorRightFront"));
         frontEncoder.setDirection(Encoder.Direction.REVERSE);
 
         // TODO: reverse any encoders using Encoder.setDirection(Encoder.Direction.REVERSE)
@@ -68,13 +71,12 @@ public class StandardTrackingWheelLocalizer extends ThreeTrackingWheelLocalizer 
     @NonNull
     @Override
     public List<Double> getWheelPositions() {
-
-        op.telemetry.addData("left",leftEncoder.getCurrentPosition());
-        op.telemetry.addData("right",rightEncoder.getCurrentPosition());
-        op.telemetry.addData("back",frontEncoder.getCurrentPosition());
-        op.telemetry.addData("x",getPoseEstimate().getX());
-        op.telemetry.addData("y",getPoseEstimate().getY());
-        op.telemetry.addData("a",getPoseEstimate().getHeading()*180/PI);        /*op.telemetry.update();*/
+        packet.put("left",leftEncoder.getCurrentPosition());
+        packet.put("right",rightEncoder.getCurrentPosition());
+        packet.put("back",frontEncoder.getCurrentPosition());
+        packet.put("x",getPoseEstimate().getX());
+        packet.put("y",getPoseEstimate().getY());
+        packet.put("a",getPoseEstimate().getHeading()*180/PI);        /*op.telemetry.update();*/
         return Arrays.asList(
                 encoderTicksToInches(leftEncoder.getCurrentPosition()*X_MULTIPLIER),
                 encoderTicksToInches(rightEncoder.getCurrentPosition()*X_MULTIPLIER),
