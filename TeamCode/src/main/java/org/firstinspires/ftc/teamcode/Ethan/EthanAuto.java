@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.Ethan;
 
+import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.opMode;
+
 import com.qualcomm.hardware.bosch.BHI260IMU;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
@@ -15,15 +17,19 @@ import org.opencv.core.Mat;
 @TeleOp
 public class EthanAuto extends LinearOpMode {
 
-    private static final double P_VALUE = 0.006;
+
+
+
+    /*private static final double P_VALUE = 0.006;
 
     //301 = circumferance mm
     //537.7, ticks per motor revolution
     //1.4, gear ratio
     //converting mm to ticks
-    private static final double MM_TO_TICKS = (537.7/1.4)/301.59;
+    private static final double MM_TO_TICKS = (537.7/1.4)/301.59;*/
 
-    public void AutoForward(double targetDistanceInMM) throws InterruptedException {
+
+    /*public void AutoForward(double targetDistanceInMM) throws InterruptedException {
 
         DcMotor lFront = hardwareMap.dcMotor.get("Left front");
         DcMotor rFront = hardwareMap.dcMotor.get("Right front");
@@ -50,7 +56,7 @@ public class EthanAuto extends LinearOpMode {
 
         double targetPos = targetDistanceInMM * MM_TO_TICKS + lFront.getCurrentPosition();
 
-        /*lFront.setPower(0.1);
+        *//*lFront.setPower(0.1);
         lBack.setPower(0.1);
         rFront.setPower(0.1);
         rBack.setPower(0.1);
@@ -60,7 +66,7 @@ public class EthanAuto extends LinearOpMode {
         lFront.setPower(0);
         lBack.setPower(0);
         rFront.setPower(0);
-        rBack.setPower(0);*/
+        rBack.setPower(0);*//*
 
         while (lFront.getCurrentPosition() <= Math.abs(targetPos) && opModeIsActive()) {
 
@@ -98,7 +104,7 @@ public class EthanAuto extends LinearOpMode {
         telemetry.addLine("done");
         telemetry.update();
 
-    }
+    }*/
 
     public void AutoTurning (double targetAngle) throws InterruptedException  {
 
@@ -225,14 +231,24 @@ public class EthanAuto extends LinearOpMode {
 
 
     }
+
+
     @Override
     public void runOpMode() throws InterruptedException {
 
+        EthanRobot ethanRobot = new EthanRobot(hardwareMap, this, telemetry);
+
+        ethanRobot.setUpMotors();
+
         waitForStart();
 
-        AutoForward(100);
+        ethanRobot.AForward(300);
+
+        this.opModeIsActive();
+
+        /*AutoForward(100);
         imuTurning(-90);
-        AutoForward(100);
+        AutoForward(100);*/
 
 
        // AutoTurning(90);
