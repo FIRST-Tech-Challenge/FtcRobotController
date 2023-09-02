@@ -12,6 +12,8 @@ import org.firstinspires.ftc.blackswan.trajectorySequence.TrajectorySequence;
 @Autonomous(name = "EmptyRoad")
 public class emptyRoad extends LinearOpMode {
 
+
+
     @Override
     public void runOpMode() throws InterruptedException {
 
@@ -27,6 +29,8 @@ public class emptyRoad extends LinearOpMode {
         drive.setPoseEstimate(startPose);
 
         TrajectorySequence trajSeq = drive.trajectorySequenceBuilder(startPose)
+
+
 
                 .build();
 
