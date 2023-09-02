@@ -33,57 +33,43 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import java.util.List;
 
 @Config
-@TeleOp(name="Power Play TeleOp Demo", group = "competition")
+@TeleOp(name="Demo TeleOp Demo", group = "competition")
 public class PowerPlayTeleopDemo extends LinearOpMode {
 
 
     private final FtcDashboard dashboard = FtcDashboard.getInstance();
 
-   // ArmPIDControllerMotionProfile armPIDController;
     ArmPIDController armPIDController;
     LiftPIDController liftPIDController;
-    /* Declare OpMode members. */
     private final ElapsedTime runtime = new ElapsedTime();
     DcMotor leftFrontMotor = null;
     DcMotor rightFrontMotor = null;
     DcMotor leftRearMotor = null;
     DcMotor rightRearMotor = null;
-    //DcMotor intakeMotor = null;
     DcMotorEx linearSlideMotor = null;
     DcMotorEx frontSlide = null;
     DcMotorEx slideOtherer = null;
-
-//    private final double MAX_VELOCITY= 435/60*384.5*0.8;
-   // ProfiledPIDController m_controller;
-
-    public static double ALIGN_SPEED = 0.4;
-
     Servo clawServo = null;
     DcMotorEx armMotor = null;
     Servo tippingServo = null;
 
     double maxPowerConstraint = 1;
-
     int strafeConstant=1;
 
     STATE currentState= STATE.ZERO, previousState = STATE.ZERO;
-
     int armSelection =0, slideSelection =0;
-
     int   armTarget =0, slideTarget =0;
     boolean set = true;
     boolean trigger = false;
 
-    int stackIncrement=0;
-
     int liftOffset;
     int armOffset;
-    PowerPlayComputerVisionPipelines  CV= null;
 
-    public static double kp=6, ki=0, kd=0.09;
+    double move_left_stick_x;
+    double move_left_stick_y;
+    double move_right_stick_x;
 
-
-    @Override
+        @Override
     public void runOpMode() {
         /*
             Controls
@@ -103,7 +89,6 @@ public class PowerPlayTeleopDemo extends LinearOpMode {
             --------
 
         */
-        CV = new PowerPlayComputerVisionPipelines(hardwareMap, telemetry);
         telemetry.addData("Status", "Initialized");
        // telemetry.update();
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
@@ -171,9 +156,9 @@ public class PowerPlayTeleopDemo extends LinearOpMode {
         boolean moveArm = false;
         boolean openClaw = true;
 
-        boolean aligning = false;
+        double gregory_demo = 1;
+
         boolean yPushed= false;
-        CV.setPipeDetectionFront();
 
         List<LynxModule> allHubs = hardwareMap.getAll(LynxModule.class);
 
@@ -188,18 +173,14 @@ public class PowerPlayTeleopDemo extends LinearOpMode {
 
         // run until the end of the match (driver presses STOP)
         while (opModeIsActive()) {
-//            telemetry.addData("linear slide encoder",  + linearSlideMotor.getCurrentPosition());
-            telemetry.addData("lift", slideOtherer.getCurrentPosition());
+
             double y = 0;
             double x = 0;
             double rx = 0;
-            telemetry.addData("left y", gamepad1.left_stick_y);
-            telemetry.addData("left x", gamepad1.left_stick_x);
-            telemetry.addData("right x", gamepad1.right_stick_x);
 
-            y = -gamepad1.left_stick_y;
-            x = gamepad1.left_stick_x;
-            rx = gamepad1.right_stick_x;
+            y = -gamepad1.left_stick_y * gregory_demo - gamepad2.left_stick_y * Math.abs(gregory_demo-1);
+            x = gamepad1.left_stick_x * gregory_demo + gamepad2.left_stick_x * Math.abs(gregory_demo-1);
+            rx = gamepad1.right_stick_x * gregory_demo + gamepad2.right_stick_x * Math.abs(gregory_demo-1);
 
             if (Math.abs(y) < 0.2) {
                 y = 0;
@@ -231,24 +212,17 @@ public class PowerPlayTeleopDemo extends LinearOpMode {
             rightFrontMotor.setPower(rightFrontPower * maxPowerConstraint * .5);
             rightRearMotor.setPower(rightRearPower * maxPowerConstraint * .5);
 
-//            telemetry.addData("left front power", leftFrontPower);
-//            telemetry.addData("left back power", leftRearPower);
-//            telemetry.addData("right front power", rightFrontPower);
-//            telemetry.addData("right back power", rightRearPower);
+//            if (gamepad1.a) {
+//                maxPowerConstraint = 1;
+//            } else if (gamepad1.x) {
+//                maxPowerConstraint = 0.75;
+//            }
 
-            if (gamepad1.a) {
-                maxPowerConstraint = 1;
-            } else if (gamepad1.x) {
-                maxPowerConstraint = 0.75;
-            }
-
-            if (gamepad1.y){
+            if (gamepad2.y){
                 if (!yPushed){
-                    aligning = !aligning;
+                    gregory_demo = Math.abs(gregory_demo-1);
                 }
-
                 yPushed = true;
-
             } else {
                 yPushed = false;
             }
@@ -257,24 +231,17 @@ public class PowerPlayTeleopDemo extends LinearOpMode {
                 armTarget = 100;
                 tippingServo.setPosition(TIP_FRONT);
             }
-            if (aligning){
-                if (alignPole()){
-                    aligning = false;
 
-                }
-            }
-
-            if (gamepad1.left_trigger>0.2){
-                armMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-                sleep(200);
-                armMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-            }
+//            if (gamepad1.left_trigger>0.2){
+//                armMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+//                sleep(200);
+//                armMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+//            }
 //
             if (gamepad2.a) {
                 clawServo.setPosition(CLAW_CLOSED);
 
             } else if (gamepad2.b) {
-               // tippingServo.setPosition(TIP_CENTER);
                 clawServo.setPosition(CLAW_OPEN);
 
             }
@@ -431,14 +398,14 @@ public class PowerPlayTeleopDemo extends LinearOpMode {
                 }
             }
 
-            if (gamepad2.right_stick_y>0.5){
+            if (gamepad2.right_stick_y*gregory_demo>0.5){
                 previousState= currentState;
                 currentState = STATE.MANUAL;
                 if (armMotor.getCurrentPosition()>100){
                     slideTarget -= 12;
                 }
 
-            } else if (gamepad2.right_stick_y<-0.5){
+            } else if (gamepad2.right_stick_y*gregory_demo<-0.5){
                 previousState= currentState;
                 currentState = STATE.MANUAL;
                 if (armMotor.getCurrentPosition()>100){
@@ -446,7 +413,7 @@ public class PowerPlayTeleopDemo extends LinearOpMode {
                 }
             }
 
-            if (gamepad2.left_stick_y>0.6){
+            if ((gamepad2.left_stick_y*gregory_demo)>0.6){
                 previousState= currentState;
                 currentState = STATE.MANUAL;
                 if(openClaw){
@@ -460,7 +427,7 @@ public class PowerPlayTeleopDemo extends LinearOpMode {
                 armTarget = armTarget -8;
 
             }
-            else if (gamepad2.left_stick_y<-0.6){
+            else if (gamepad2.left_stick_y*gregory_demo<-0.6){
                 previousState= currentState;
                 currentState = STATE.MANUAL;
                 if(openClaw){
@@ -478,7 +445,6 @@ public class PowerPlayTeleopDemo extends LinearOpMode {
             telemetry.update();
         }
     }
-
     protected void moveSlideMotors (){
         telemetry.addData("target", slideTarget);
         liftPIDController.setTarget(slideTarget);
@@ -486,82 +452,13 @@ public class PowerPlayTeleopDemo extends LinearOpMode {
         linearSlideMotor.setPower(power);
         slideOtherer.setPower(liftPIDController.calculatePower(slideOtherer));
         frontSlide.setPower(power);
-
-//        linearSlideMotor.setTargetPosition(slideTarget);
-//        frontSlide.setTargetPosition(slideTarget);
-//        slideOtherer.setTargetPosition(slideTarget);
-//        linearSlideMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-//        frontSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-//        slideOtherer.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-//        slideOtherer.setPower(1);
-//        linearSlideMotor.setPower(1);
-//        frontSlide.setPower(1);
-
     }
-
     protected void moveArm (){
         armPIDController.setTarget(armTarget);
-    //    armMotor.setVelocity(armPIDController.calculateVelocity());
-
-//        m_controller.setGoal(armTarget);
-//
-//        double output = m_controller.calculate(
-//                armMotor.getCurrentPosition()  // the measured value
-//        );
-//
-//        double ff = Math.cos(Math.toRadians((armTarget+400) / ticks_in_degree)) * f_arm * ticks_per_seconds;
-//        telemetry.addData("output", output + ff);
-//        armMotor.setVelocity(output+ ff);
-//
-//        //armPIDController.setTarget(armTarget);
        double velocity = armPIDController.calculateVelocity();
        armMotor.setPower(velocity);
-
-       // telemetry.addData("power", velocity);
     }
-
     enum STATE{
         ZERO, BOTTOM, MID, HIGH, BACK_MID, BACK_HIGH, MANUAL, CONE
     }
-
-    public boolean alignPole() {
-        PowerPlayComputerVisionPipelines.PipePosition pos = CV.sleevePipeline.position;
-        switch (pos) {
-            case LEFT2:
-            case LEFT3:
-            case LEFT4:
-            case LEFT5:
-            case LEFT6:
-            case LEFT7:
-            case LEFT8:
-                leftFrontMotor.setPower(-ALIGN_SPEED);
-                leftRearMotor.setPower(-ALIGN_SPEED);
-                rightFrontMotor.setPower(ALIGN_SPEED);
-                rightRearMotor.setPower(ALIGN_SPEED);
-                break;
-            case RIGHT2:
-            case RIGHT3:
-            case RIGHT4:
-            case RIGHT5:
-            case RIGHT6:
-            case RIGHT7:
-            case RIGHT8:
-                leftFrontMotor.setPower(ALIGN_SPEED);
-                leftRearMotor.setPower(ALIGN_SPEED);
-                rightFrontMotor.setPower(-ALIGN_SPEED);
-                rightRearMotor.setPower(-ALIGN_SPEED);
-                break;
-            case CENTER:
-            case LEFT1:
-            case RIGHT1:
-                leftFrontMotor.setPower(0);
-                leftRearMotor.setPower(0);
-                rightFrontMotor.setPower(0);
-                rightRearMotor.setPower(0);
-                return true;
-        }
-        return false;
-    }
-
-
 }
