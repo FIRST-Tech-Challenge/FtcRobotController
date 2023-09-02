@@ -207,16 +207,10 @@ public class PowerPlayTeleopDemo extends LinearOpMode {
                 rightRearPower /= max;
             }
 
-            leftFrontMotor.setPower(leftFrontPower * maxPowerConstraint * .5);
-            leftRearMotor.setPower(leftRearPower * maxPowerConstraint * .5);
-            rightFrontMotor.setPower(rightFrontPower * maxPowerConstraint * .5);
-            rightRearMotor.setPower(rightRearPower * maxPowerConstraint * .5);
-
-//            if (gamepad1.a) {
-//                maxPowerConstraint = 1;
-//            } else if (gamepad1.x) {
-//                maxPowerConstraint = 0.75;
-//            }
+            leftFrontMotor.setPower(leftFrontPower * maxPowerConstraint * .7);
+            leftRearMotor.setPower(leftRearPower * maxPowerConstraint * .7);
+            rightFrontMotor.setPower(rightFrontPower * maxPowerConstraint * .7);
+            rightRearMotor.setPower(rightRearPower * maxPowerConstraint * .7);
 
             if (gamepad2.y){
                 if (!yPushed){
@@ -227,17 +221,6 @@ public class PowerPlayTeleopDemo extends LinearOpMode {
                 yPushed = false;
             }
 
-            if (gamepad1.b){
-                armTarget = 100;
-                tippingServo.setPosition(TIP_FRONT);
-            }
-
-//            if (gamepad1.left_trigger>0.2){
-//                armMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-//                sleep(200);
-//                armMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-//            }
-//
             if (gamepad2.a) {
                 clawServo.setPosition(CLAW_CLOSED);
 
@@ -249,29 +232,12 @@ public class PowerPlayTeleopDemo extends LinearOpMode {
             if (gamepad2.x){
                 tippingServo.setPosition(TIP_FRONT);
             }
-            if (gamepad2.y){
-                tippingServo.setPosition(TIP_BACK);
-            }
+
             if (gamepad2.right_trigger>0.1){
                 tippingServo.setPosition(TIP_CENTER);
             }
 
-      if (gamepad2.left_trigger>0.1){
-                previousState = currentState;
-                currentState = STATE.BACK_HIGH;
-                armSelection = ARM_BACK_TOP - armOffset;
-                slideSelection= SLIDE_HIGH_BACK - liftOffset;
-
-                if (previousState == STATE.ZERO || previousState == STATE.MANUAL){
-                    armTarget= armSelection;
-                } else {
-                    slideTarget= slideSelection;
-                    armTarget = armSelection;
-                }
-                set= false;
-                clawServo.setPosition(CLAW_CLOSED);
-            }
-            else if (gamepad2.dpad_up){
+     if (gamepad2.dpad_up){
 
                 previousState = currentState;
                 currentState = STATE.HIGH;
@@ -289,21 +255,7 @@ public class PowerPlayTeleopDemo extends LinearOpMode {
 
             }
 
-            if (gamepad2.left_bumper){
-                previousState = currentState;
-                currentState = STATE.BACK_MID;
-                slideSelection = SLIDE_MIDDLE_BACK - liftOffset;
-                armSelection = ARM_BACK_TOP - armOffset;
-                if (previousState == STATE.ZERO || previousState == STATE.MANUAL){
-                    armTarget = armSelection;
-                } else {
-                    armTarget = armSelection;
-                    slideTarget = slideSelection;
-                }
-                set=false;
-                clawServo.setPosition(CLAW_CLOSED);
-            }
-            else if (gamepad2.dpad_right) {
+           if (gamepad2.dpad_right) {
                 previousState = currentState;
                 currentState = STATE.MID;
                 slideSelection = SLIDE_MIDDLE - liftOffset;
