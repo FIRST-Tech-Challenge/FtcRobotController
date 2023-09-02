@@ -19,7 +19,7 @@
  * SOFTWARE.
  */
 
-package org.firstinspires.ftc.masters.tests;
+package org.firstinspires.ftc.masters.apriltesting.tests;
 
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
