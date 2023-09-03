@@ -14,8 +14,64 @@ import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 @TeleOp
 
 public class VivianAuto extends LinearOpMode {
+    public void encoderMove(int inches){ //move the robot about 12 inches and back
 
+    DcMotor fLeft = hardwareMap.dcMotor.get("fLeft");
+    DcMotor bLeft = hardwareMap.dcMotor.get("bLeft");
+    DcMotor fRight = hardwareMap.dcMotor.get("fRight");
+    DcMotor bRight = hardwareMap.dcMotor.get("bRight");
+
+    fLeft.setDirection(DcMotorSimple.Direction.REVERSE);
+    bLeft.setDirection(DcMotorSimple.Direction.FORWARD);
+    fRight.setDirection(DcMotorSimple.Direction.REVERSE);
+    bRight.setDirection(DcMotorSimple.Direction.FORWARD);
+
+    fLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+    fLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+    fLeft.getCurrentPosition();
+
+    double ticksPerInch = (537.7 / 1.4) / 11.87373601322835;//how many ticks in 1 inch
+
+
+    while (Math.abs(fLeft.getCurrentPosition()) <= ticksPerInch * Math.abs(inches) && opModeIsActive()) {
+        //debug
+        telemetry.addData("Current Position", fLeft.getCurrentPosition());
+        telemetry.addData("Target Position", ticksPerInch * Math.abs(inches));
+        telemetry.update();
+
+
+        if (Math.abs(fLeft.getCurrentPosition()) >= ticksPerInch * Math.abs(inches)) {
+            fLeft.setPower(0);
+            bLeft.setPower(0);
+            fRight.setPower(0);
+            bRight.setPower(0);
+            //if the current position is greater then 12 inches, set power to 0
+        }
+
+        else { // same as : else if (ticksPerInch * Math.abs(inches) > fLeft.getCurrentPosition())
+
+            if (inches > 0){
+                fLeft.setPower(0.25);
+                bLeft.setPower(0.25);
+                fRight.setPower(0.25);
+                bRight.setPower(0.25);
+                // if amount of ticks is positive then set power to 0.25
+            }
+            if (inches < 0 ){
+                fLeft.setPower(-0.25);
+                bLeft.setPower(-0.25);
+                fRight.setPower(-0.25);
+                bRight.setPower(-0.25);
+                //if the ticks are negative then set power to -0.25
+            }
+
+        }
+
+    }
+
+}
     public void proportionalMove (int inches){ //move robot 12 inches and back with P part
+
         DcMotor fLeft = hardwareMap.dcMotor.get("fLeft");
         DcMotor bLeft = hardwareMap.dcMotor.get("bLeft");
         DcMotor fRight = hardwareMap.dcMotor.get("fRight");
@@ -34,9 +90,6 @@ public class VivianAuto extends LinearOpMode {
         fLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         fLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         fLeft.getCurrentPosition();
-
-
-
 
 
         double ticksPerInch = (537.7 / 1.4) / 11.87373601322835;//how many ticks in 1 inch
@@ -65,6 +118,7 @@ public class VivianAuto extends LinearOpMode {
     public void proportionalTurn (double degrees){ //turn 90 degrees with P part and imu
 
         //set up motors
+
         DcMotor fLeft = hardwareMap.dcMotor.get("fLeft");
         DcMotor bLeft = hardwareMap.dcMotor.get("bLeft");
         DcMotor fRight = hardwareMap.dcMotor.get("fRight");
@@ -101,7 +155,6 @@ public class VivianAuto extends LinearOpMode {
         telemetry.addData("error", error);
         telemetry.update();
 
-
         while (opModeIsActive() && Math.abs(error) > 2){
             double currentYaw = -imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES);//current angle
 
@@ -118,7 +171,6 @@ public class VivianAuto extends LinearOpMode {
             telemetry.update();
 
         }
-
     }
 
     @Override
@@ -135,5 +187,6 @@ public class VivianAuto extends LinearOpMode {
         //encoderMove(-12); //move backwards about 12 inches
 
     }
+
 
 }
