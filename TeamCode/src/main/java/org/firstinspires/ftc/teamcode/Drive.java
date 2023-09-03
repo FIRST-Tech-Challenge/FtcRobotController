@@ -38,6 +38,7 @@ public class Drive extends LinearOpMode{
             double mecanumMovement = gamepad1.left_stick_x /4;
             double armPower = gamepad1.right_stick_y;
 
+
             double fLeftPower = forwardMovement + turnMovement + mecanumMovement;
             double bLeftPower = forwardMovement + turnMovement - mecanumMovement;
             double fRightPower = forwardMovement - turnMovement - mecanumMovement;
@@ -52,8 +53,6 @@ public class Drive extends LinearOpMode{
                 bLeftPower /= scale;
                 fRightPower /= scale;
                 bRightPower /= scale;
-
-
 
             }
 
@@ -73,14 +72,10 @@ public class Drive extends LinearOpMode{
                 servoTwoPos += 0.025;
             }
 
-
             servo1.setPosition(servoOnePos);
             servo2.setPosition(servoTwoPos);
 
-
         }
-
-
 
     }
 
