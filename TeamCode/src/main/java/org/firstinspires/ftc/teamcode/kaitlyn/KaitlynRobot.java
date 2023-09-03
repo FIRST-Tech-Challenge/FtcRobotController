@@ -7,6 +7,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.IMU;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
@@ -17,7 +18,6 @@ public class KaitlynRobot{
     public static final double TICKS_PER_INCH = (537.7 / 1.4) / 11.87373601322835;
 
     public static final double P_CONSTANT = 0.01;
-
 
     public static final double P_CONSTANT_TURNING = 0.011;
     private final LinearOpMode opMode;
@@ -30,11 +30,12 @@ public class KaitlynRobot{
     DcMotor bLeft;
     DcMotor bRight;
 
+    ElapsedTime elapsedTime = new ElapsedTime();
+
     public KaitlynRobot(HardwareMap hardwareMap, Telemetry telemetry, KaitlynAuto kaitlynAuto) {
         this.robotHardwareMap = hardwareMap;
         this.robotTelemetry = telemetry;
         this.opMode = kaitlynAuto;
-
     }
 
     public void encoderMove (int inches) {
@@ -59,7 +60,10 @@ public class KaitlynRobot{
         int ticks = fLeft.getCurrentPosition();
         double error;
 
-        while (ticks <= (TICKS_PER_INCH * Math.abs(inches)) && opMode.opModeIsActive()) {
+        elapsedTime.reset();
+        double oldTick = 0;
+
+        while (opMode.opModeIsActive()) {
 
             ticks = fLeft.getCurrentPosition();
             error = (TICKS_PER_INCH * inches) - ticks;
@@ -73,6 +77,21 @@ public class KaitlynRobot{
             fRight.setPower(P_CONSTANT*error);
             bLeft.setPower(P_CONSTANT*error);
             bRight.setPower(P_CONSTANT*error);
+
+            if (elapsedTime.milliseconds() >= 500) {
+
+                double newTick = fLeft.getCurrentPosition();
+
+
+                if (newTick == oldTick) {
+                    break;
+                }
+
+                oldTick = newTick;
+
+                elapsedTime.reset();
+
+            }
 
         }
 
