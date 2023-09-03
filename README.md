@@ -1,6 +1,7 @@
 ## NOTICE
 
 if you dont write good code im gonna remove you from the repo guys i hate messy code i hate it i hate it i hate it
+-kian 🙏
 
 
 
