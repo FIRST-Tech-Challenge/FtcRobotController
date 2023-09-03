@@ -1,5 +1,12 @@
 ## NOTICE
 
+if you dont write good code im gonna remove you from the repo guys i hate messy code i hate it i hate it i hate it
+
+
+
+
+## NOTICE
+
 This repository contains the public FTC SDK for the POWERPLAY (2022-2023) competition season.
 
 ## Welcome!
