@@ -56,7 +56,7 @@ public class BasicOpModeWF extends LinearOpMode {
         runtime.reset();
         imu.resetYaw();
         int speedFactor = 5; // it goes from 1 (10% speed) to 10 (100% speed)
-
+        boolean isAutoTurning = false;
 
         // run until the end of the match (driver presses STOP)
         while (opModeIsActive()) {
@@ -65,41 +65,80 @@ public class BasicOpModeWF extends LinearOpMode {
             double y = -gamepad1.left_stick_y;  // Note: pushing stick forward gives negative value
             double x = gamepad1.left_stick_x * 1.1; // Counteract imperfect strafing
             double yaw = gamepad1.right_stick_x;
-            if(gamepad1.right_bumper)
+            if (gamepad1.right_bumper)
                 speedFactor = 10;
-            if(gamepad1.left_bumper)
+            if (gamepad1.left_bumper)
                 speedFactor = 5;
-            if(gamepad1.back)
+            if (gamepad1.back)
                 imu.resetYaw();
-            double botHeading = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS);
+            double botHeading = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES);
 
             if (gamepad1.dpad_up || gamepad1.dpad_down || gamepad1.dpad_left || gamepad1.dpad_right) {
-                if(gamepad1.dpad_up)
+                if (gamepad1.dpad_up)
                     y = 1.0;
-                if(gamepad1.dpad_down)
+                if (gamepad1.dpad_down)
                     y = -1.0;
                 if (gamepad1.dpad_left)
                     x = -1.0;
                 if (gamepad1.dpad_right)
                     x = 1.0;
 
-                double newx = x * Math.cos(-botHeading) - y * Math.sin(-botHeading);
-                double newy = x * Math.sin(-botHeading) + y * Math.cos(-botHeading);
+                double botHeadingRadians = Math.toRadians(botHeading);
+                double newx = x * Math.cos(-botHeadingRadians) - y * Math.sin(-botHeadingRadians);
+                double newy = x * Math.sin(-botHeadingRadians) + y * Math.cos(-botHeadingRadians);
                 x = newx;
                 y = newy;
 
+            }
 
+            double targetangle = 0;
+            double  angle = 0;
+            double  speed = 0;
+            double threshhold = 0.5;
+            if ((gamepad1.a || gamepad1.b || gamepad1.x || gamepad1.y) && isAutoTurning == false) {
+                isAutoTurning = true;
+                if (gamepad1.a)
+                    targetangle = 0;
 
+                if (gamepad1.b)
+                    targetangle = 90;
+                if (gamepad1.a)
+                    targetangle = 180;
+                if (gamepad1.b)
+                    targetangle = 360;
+            }
+
+            if (isAutoTurning==true) {
+                angle = Math.abs(botHeading - targetangle);
+                if (angle > 90){
+                    speed = 1;
+                }
+                else if (angle < 7){
+                    speed = 0.12;
+                }
+                else{
+                    speed = angle / 90;
+                }
+                if (botHeading > targetangle) {
+                    yaw = speed;
+                }
+                if (botHeading < targetangle) {
+                    yaw = -speed;
+                }
+                if (angle <= 2) {
+                    yaw = 0;
+                    isAutoTurning=false;
+                }
             }
 
 
 
             SendPowerToWheels(x, y, yaw, speedFactor);
-
             telemetry.addData("Status", "Run Time: " + runtime.toString());
             telemetry.addData("X/Y/Yaw", "%4.2f, %4.2f, %4.2f", x, y, yaw);
             telemetry.addData("SpeedFactor = ", "%d", speedFactor);
             telemetry.addData("BotHeading = ", "%4.2f", botHeading);
+
             telemetry.update();
         }
     }
