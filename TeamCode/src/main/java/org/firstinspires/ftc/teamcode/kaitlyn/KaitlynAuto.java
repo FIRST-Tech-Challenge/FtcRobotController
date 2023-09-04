@@ -28,7 +28,9 @@ public class KaitlynAuto extends LinearOpMode {
         //encoderMove(12);
         //mecanumStrafe(12);
         KaitlynRobot robot = new KaitlynRobot(hardwareMap, telemetry, this);
-        robot.encoderMove(12);
+        robot.encoderMoveWithPID(12);
+        wait(2);
+        robot.encoderMoveWithPID(-12);
 //        wait(1);
 //        robot.mecanumStrafe(8);
 
