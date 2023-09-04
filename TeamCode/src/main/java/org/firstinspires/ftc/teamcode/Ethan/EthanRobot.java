@@ -208,7 +208,17 @@ public class EthanRobot {
     long lastCheckMillis = System.currentTimeMillis();
     long millis = System.currentTimeMillis();
 
+    public double makeTargetPos(double targetDistanceInMM) {
+        final double MM_TO_TICKS = (537.7 / 1.4) / 301.59;
+
+        double targetPos = targetDistanceInMM * MM_TO_TICKS + lFront.getCurrentPosition();
+
+        return makeTargetPos(150);
+    }
+    double targetPos = makeTargetPos(150);
+
     public boolean checkReachedDistance(double targetDistanceInMM2, boolean servoPosition) {
+
 
         final double P_VALUE = 0.006;
 
@@ -216,9 +226,7 @@ public class EthanRobot {
         //537.7, ticks per motor revolution
         //1.4, gear ratio
         //converting mm to ticks
-        final double MM_TO_TICKS = (537.7 / 1.4) / 301.59;
 
-        double targetPos = targetDistanceInMM2 * MM_TO_TICKS + lFront.getCurrentPosition();
         double error = targetPos - lFront.getCurrentPosition();
 
         final double PROPORTIONAL_POWER = P_VALUE * error;
