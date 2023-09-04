@@ -32,6 +32,7 @@ public class EthanRobot {
         this.opMode = opMode;
         this.telemetry = telemetry;
     }
+
     public void setUpMotors() {
         lFront = hardwareMap.dcMotor.get("Left front");
         rFront = hardwareMap.dcMotor.get("Right front");
@@ -52,6 +53,7 @@ public class EthanRobot {
         lFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         lFront.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
     }
+
     public void setUpImu() {
 
         this.imu = hardwareMap.get(IMU.class, "imu");
@@ -67,14 +69,16 @@ public class EthanRobot {
 
 
     }
+
     public void setUpArmAndServo() {
 
         arm = hardwareMap.dcMotor.get("arm");
         arm.setDirection(DcMotorSimple.Direction.FORWARD);
 
-         this.lServo = hardwareMap.servo.get("lServo");
-         this.rServo = hardwareMap.servo.get("rServo");
+        this.lServo = hardwareMap.servo.get("lServo");
+        this.rServo = hardwareMap.servo.get("rServo");
     }
+
     public void setMotorPower(double lFront, double rFront, double lBack, double rBack) {
         this.lFront.setPower(lFront);
         this.rFront.setPower(rFront);
@@ -82,24 +86,25 @@ public class EthanRobot {
         this.rBack.setPower(rBack);
     }
 
-    public void setArmPower(double armPower){
+    public void setArmPower(double armPower) {
         arm.setPower(armPower);
     }
+
     public void setServoPosition(@NonNull Boolean servoPosition) {
 
-        if(servoPosition) {
+        if (servoPosition) {
             lServo.setPosition(1);
             rServo.setPosition(0);
         }
 
-        if(servoPosition) {
+        if (servoPosition) {
             lServo.setPosition(0);
             rServo.setPosition(1);
         }
 
     }
-    public void autoForward(double targetDistanceInMM) throws InterruptedException {
 
+    public void autoForward(double targetDistanceInMM) throws InterruptedException {
 
 
         final double P_VALUE = 0.006;
@@ -108,12 +113,12 @@ public class EthanRobot {
         //537.7, ticks per motor revolution
         //1.4, gear ratio
         //converting mm to ticks
-        final double MM_TO_TICKS = (537.7/1.4)/301.59;
+        final double MM_TO_TICKS = (537.7 / 1.4) / 301.59;
 
         double targetPos = targetDistanceInMM * MM_TO_TICKS + lFront.getCurrentPosition();
         double error = targetPos - lFront.getCurrentPosition();
 
-        final double PROPORTIONAL_POWER = P_VALUE*error;
+        final double PROPORTIONAL_POWER = P_VALUE * error;
 
 
 
@@ -128,7 +133,6 @@ public class EthanRobot {
         lBack.setPower(0);
         rFront.setPower(0);
         rBack.setPower(0);*/
-
 
 
         long lastCheckMillis = System.currentTimeMillis();
@@ -156,8 +160,7 @@ public class EthanRobot {
             telemetry.addLine("moving");
 
 
-
-            if (millis > lastCheckMillis+500) {
+            if (millis > lastCheckMillis + 500) {
                 lastCheckMillis = millis;
                 double newTicks = lFront.getCurrentPosition();
 
@@ -171,7 +174,6 @@ public class EthanRobot {
             }
 
 
-
             telemetry.update();
         }
 
@@ -180,7 +182,7 @@ public class EthanRobot {
         rFront.setPower(0);
         rBack.setPower(0);
 
-        telemetry.addLine(String.valueOf(lFront.getCurrentPosition()/MM_TO_TICKS));
+        telemetry.addLine(String.valueOf(lFront.getCurrentPosition() / MM_TO_TICKS));
 
         /*double oldTick = 0;
 
@@ -201,10 +203,11 @@ public class EthanRobot {
         telemetry.update();
 
 
-
     }
+
     long lastCheckMillis = System.currentTimeMillis();
     long millis = System.currentTimeMillis();
+
     public boolean checkReachedDistance(double targetDistanceInMM2, boolean servoPosition) {
 
         final double P_VALUE = 0.006;
@@ -213,12 +216,12 @@ public class EthanRobot {
         //537.7, ticks per motor revolution
         //1.4, gear ratio
         //converting mm to ticks
-        final double MM_TO_TICKS = (537.7/1.4)/301.59;
+        final double MM_TO_TICKS = (537.7 / 1.4) / 301.59;
 
         double targetPos = targetDistanceInMM2 * MM_TO_TICKS + lFront.getCurrentPosition();
         double error = targetPos - lFront.getCurrentPosition();
 
-        final double PROPORTIONAL_POWER = P_VALUE*error;
+        final double PROPORTIONAL_POWER = P_VALUE * error;
 
         millis = System.currentTimeMillis();
 
@@ -233,20 +236,19 @@ public class EthanRobot {
         telemetry.addLine(String.valueOf(error));
         telemetry.addLine(String.valueOf(lFront.getPower()));
 
-        if (millis > lastCheckMillis+500) {
+        if (millis > lastCheckMillis + 500) {
             lastCheckMillis = millis;
             double newTicks = lFront.getCurrentPosition();
 
             if (oldTick == newTicks) {
                 isStopped = true;
             }
-
             oldTick = newTicks;
 
 
         }
 
-        if(error < 10 && isStopped){
+        if (error < 10 && isStopped) {
             setMotorPower(0, 0, 0, 0);
             arm.setPower(0);
 
@@ -258,35 +260,32 @@ public class EthanRobot {
 
 
     }
+
     public void autoImuTurning(int degrees) {
 
 
+        final double P_VALUE_FOR_TURNING_IMU = 0.002;
 
 
-            final double P_VALUE_FOR_TURNING_IMU = 0.002;
+        double yaw = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES);
+
+        while (opMode.opModeIsActive() && !(-yaw < degrees + 5 && -yaw > degrees - 5)) {
+
+            yaw = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES);
+
+            telemetry.addLine(String.valueOf(yaw));
 
 
+            double angleError = degrees - yaw;
 
+            telemetry.addLine(String.valueOf(angleError));
 
-            double yaw = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES);
+            lFront.setPower(P_VALUE_FOR_TURNING_IMU * angleError);
+            lBack.setPower(P_VALUE_FOR_TURNING_IMU * angleError);
+            rFront.setPower(-P_VALUE_FOR_TURNING_IMU * angleError);
+            rBack.setPower(-P_VALUE_FOR_TURNING_IMU * angleError);
 
-            while (opMode.opModeIsActive() && !(-yaw <degrees+5 && -yaw >degrees-5)) {
-
-                yaw = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES);
-
-                telemetry.addLine(String.valueOf(yaw));
-
-
-                double angleError = degrees - yaw;
-
-                telemetry.addLine(String.valueOf(angleError));
-
-                lFront.setPower(P_VALUE_FOR_TURNING_IMU*angleError);
-                lBack.setPower(P_VALUE_FOR_TURNING_IMU*angleError);
-                rFront.setPower(-P_VALUE_FOR_TURNING_IMU*angleError);
-                rBack.setPower(-P_VALUE_FOR_TURNING_IMU*angleError);
-
-                telemetry.update();
+            telemetry.update();
 
 
         }
