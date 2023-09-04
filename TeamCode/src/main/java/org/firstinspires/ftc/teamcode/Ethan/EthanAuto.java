@@ -234,24 +234,21 @@ public class EthanAuto extends LinearOpMode {
         EthanRobot ethanRobot = new EthanRobot(hardwareMap, this, telemetry);
 
         ethanRobot.setUpMotors();
+        ethanRobot.setUpImu();
+        ethanRobot.setUpArmAndServo();
 
         waitForStart();
 
-        ethanRobot.autoImuTurning(90);
-
-        //ethanRobot.AutoForward(300);
-
-        opModeIsActive();
-
-        /*AutoForward(100);
-        imuTurning(-90);
-        AutoForward(100);*/
+        while (opModeIsActive()){
 
 
-       // AutoTurning(90);
+            ethanRobot.setMotorPower(0.5, 0.5, 0.5, 0.5);
+            ethanRobot.setArmPower(0.25);
+            if (ethanRobot.checkReachedDistance(150, true)) {
+                break;
+            }
 
-        /*AutoForward(300);
-        AutoForward(-300);*/
 
+        }
     }
 }

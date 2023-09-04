@@ -1,11 +1,14 @@
 package org.firstinspires.ftc.teamcode.Ethan;
 
+import androidx.annotation.NonNull;
+
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.IMU;
+import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
@@ -15,20 +18,20 @@ public class EthanRobot {
     HardwareMap hardwareMap;
     Telemetry telemetry;
     LinearOpMode opMode;
-
     DcMotor lFront;
     DcMotor rFront;
     DcMotor lBack;
     DcMotor rBack;
-
+    DcMotor arm;
+    Servo lServo;
+    Servo rServo;
     IMU imu;
+
     public EthanRobot(HardwareMap hardwareMap, LinearOpMode opMode, Telemetry telemetry) {
         this.hardwareMap = hardwareMap;
         this.opMode = opMode;
         this.telemetry = telemetry;
     }
-
-
     public void setUpMotors() {
         lFront = hardwareMap.dcMotor.get("Left front");
         rFront = hardwareMap.dcMotor.get("Right front");
@@ -49,10 +52,9 @@ public class EthanRobot {
         lFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         lFront.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
     }
-
     public void setUpImu() {
 
-        IMU imu = hardwareMap.get(IMU.class, "imu");
+        this.imu = hardwareMap.get(IMU.class, "imu");
 
         imu.initialize(new IMU.Parameters(
                 new RevHubOrientationOnRobot(
@@ -65,9 +67,38 @@ public class EthanRobot {
 
 
     }
+    public void setUpArmAndServo() {
 
+        arm = hardwareMap.dcMotor.get("arm");
+        arm.setDirection(DcMotorSimple.Direction.FORWARD);
 
-    public void AutoForward(double targetDistanceInMM) throws InterruptedException {
+         this.lServo = hardwareMap.servo.get("lServo");
+         this.rServo = hardwareMap.servo.get("rServo");
+    }
+    public void setMotorPower(double lFront, double rFront, double lBack, double rBack) {
+        this.lFront.setPower(lFront);
+        this.rFront.setPower(rFront);
+        this.lBack.setPower(lBack);
+        this.rBack.setPower(rBack);
+    }
+
+    public void setArmPower(double armPower){
+        arm.setPower(armPower);
+    }
+    public void setServoPosition(@NonNull Boolean servoPosition) {
+
+        if(servoPosition) {
+            lServo.setPosition(1);
+            rServo.setPosition(0);
+        }
+
+        if(servoPosition) {
+            lServo.setPosition(0);
+            rServo.setPosition(1);
+        }
+
+    }
+    public void autoForward(double targetDistanceInMM) throws InterruptedException {
 
 
 
@@ -79,8 +110,12 @@ public class EthanRobot {
         //converting mm to ticks
         final double MM_TO_TICKS = (537.7/1.4)/301.59;
 
-
         double targetPos = targetDistanceInMM * MM_TO_TICKS + lFront.getCurrentPosition();
+        double error = targetPos - lFront.getCurrentPosition();
+
+        final double PROPORTIONAL_POWER = P_VALUE*error;
+
+
 
         /*lFront.setPower(0.1);
         lBack.setPower(0.1);
@@ -94,7 +129,7 @@ public class EthanRobot {
         rFront.setPower(0);
         rBack.setPower(0);*/
 
-        double error = targetPos - lFront.getCurrentPosition();
+
 
         long lastCheckMillis = System.currentTimeMillis();
         long millis = System.currentTimeMillis();
@@ -113,10 +148,10 @@ public class EthanRobot {
             error = targetPos - lFront.getCurrentPosition();
             telemetry.addLine(String.valueOf(error));
 
-            lFront.setPower(P_VALUE*error);
-            lBack.setPower(P_VALUE*error);
-            rFront.setPower(P_VALUE*error);
-            rBack.setPower(P_VALUE*error);
+            lFront.setPower(PROPORTIONAL_POWER);
+            lBack.setPower(PROPORTIONAL_POWER);
+            rFront.setPower(PROPORTIONAL_POWER);
+            rBack.setPower(PROPORTIONAL_POWER);
 
             telemetry.addLine("moving");
 
@@ -168,7 +203,61 @@ public class EthanRobot {
 
 
     }
+    long lastCheckMillis = System.currentTimeMillis();
+    long millis = System.currentTimeMillis();
+    public boolean checkReachedDistance(double targetDistanceInMM2, boolean servoPosition) {
 
+        final double P_VALUE = 0.006;
+
+        //301 = circumferance mm
+        //537.7, ticks per motor revolution
+        //1.4, gear ratio
+        //converting mm to ticks
+        final double MM_TO_TICKS = (537.7/1.4)/301.59;
+
+        double targetPos = targetDistanceInMM2 * MM_TO_TICKS + lFront.getCurrentPosition();
+        double error = targetPos - lFront.getCurrentPosition();
+
+        final double PROPORTIONAL_POWER = P_VALUE*error;
+
+        millis = System.currentTimeMillis();
+
+        double oldTick = lFront.getCurrentPosition();
+
+        boolean isStopped = false;
+        boolean done = false;
+
+        setUpArmAndServo();
+
+        error = targetPos - lFront.getCurrentPosition();
+        telemetry.addLine(String.valueOf(error));
+        telemetry.addLine(String.valueOf(lFront.getPower()));
+
+        if (millis > lastCheckMillis+500) {
+            lastCheckMillis = millis;
+            double newTicks = lFront.getCurrentPosition();
+
+            if (oldTick == newTicks) {
+                isStopped = true;
+            }
+
+            oldTick = newTicks;
+
+
+        }
+
+        if(error < 10 && isStopped){
+            setMotorPower(0, 0, 0, 0);
+            arm.setPower(0);
+
+            done = true;
+        }
+
+        telemetry.update();
+        return done;
+
+
+    }
     public void autoImuTurning(int degrees) {
 
 

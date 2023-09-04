@@ -26,7 +26,6 @@ public class EthanDrive extends LinearOpMode {
         Servo lServo = hardwareMap.servo.get("lServo");
         Servo rServo = hardwareMap.servo.get("rServo");
 
-        lServo.setDirection(Servo.Direction.REVERSE);
 
         rBack.setDirection(DcMotorSimple.Direction.FORWARD);
         lBack.setDirection(DcMotorSimple.Direction.REVERSE);
