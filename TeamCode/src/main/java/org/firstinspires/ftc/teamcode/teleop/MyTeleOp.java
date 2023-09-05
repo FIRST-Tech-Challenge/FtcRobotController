@@ -21,7 +21,6 @@ import org.firstinspires.ftc.teamcode.subsystem.TestMotor;
 @TeleOp
 public class MyTeleOp extends CommandOpMode {
     private final FtcDashboard dashboard = FtcDashboard.getInstance();
-//    private final Telemetry dashboardTelemetry = dashboard.getTelemetry();
     private final Telemetry dashboardTelemetry = new MultipleTelemetry(telemetry, dashboard.getTelemetry());
     @Override
     public void initialize() {
