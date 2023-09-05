@@ -11,7 +11,8 @@ public class TwoWheelDiffSwerveClass {
     // CONSTANTS
     static final double TICKS_PER_RAD_WHEEL_TURN = 137.987; // turn both motors 433.5 ticks for 180 deg turn
     static final double TICKS_PER_INCH = 24.2; // Wheel movement. Pod motors turn opposite same amount
-    static final double TICKS_PER_RAD_ROBOT_TURN = 47.7*TICKS_PER_INCH/(2.0*Math.PI); // Wheels must be perpendicular
+    static final double WHEEL_DISTANCE = 15.2; // Distance between wheels, in inches.
+    static final double TICKS_PER_RAD_ROBOT_TURN = WHEEL_DISTANCE*Math.PI*TICKS_PER_INCH/(2.0*Math.PI); // Wheels must be perpendicular
     public double robotAngle; // the angle of the robot, radians
     public double wheel1Angle; // the angle of wheel/pod 1, radians
     public double wheel2Angle; // the angle of wheel/pod 2, radians
@@ -20,6 +21,10 @@ public class TwoWheelDiffSwerveClass {
     // initial positions for each wheel (motor pair), in ticks, to get initial wheel angle
     private int initialTurnTicks1 = 0;
     private int initialTurnTicks2 = 0;
+
+    // Used to reverse wheel direction to minimize pod turning
+    private int wheel1Sign;
+    private int wheel2Sign;
 
     // HARDWARE
     // DcMotors
@@ -34,6 +39,8 @@ public class TwoWheelDiffSwerveClass {
         this.wheel1Angle = 0;
         this.wheel2Angle = 0;
         this.targetPosition = 0;
+        this.wheel1Sign = 1;
+        this.wheel2Sign = 1;
     }
     public void initDrive(HardwareMap hwMap) {
         // Define and Initialize Motors
@@ -50,13 +57,11 @@ public class TwoWheelDiffSwerveClass {
 
     public void initWheelAngles(double isWheelAngle1, double isWheelAngle2, double tobeWheelAngle1, double tobeWheelAngle2) {
         double deltaAngle1, deltaAngle2;
-        //deltaAngle1 = tobeWheelAngle1 - isWheelAngle1;
-        //deltaAngle2 = tobeWheelAngle2 - isWheelAngle2;
-        deltaAngle1 = getShortestTurnAngle(isWheelAngle1,tobeWheelAngle1);
-        deltaAngle2 = getShortestTurnAngle(isWheelAngle2,tobeWheelAngle2);
+        deltaAngle1 = getShortestTurnAngle(isWheelAngle1,tobeWheelAngle1,1);
+        deltaAngle2 = getShortestTurnAngle(isWheelAngle2,tobeWheelAngle2,2);
 
-        initialTurnTicks1 =  (int)(deltaAngle1 * TICKS_PER_RAD_WHEEL_TURN);
-        initialTurnTicks2 =  (int)(deltaAngle2 * TICKS_PER_RAD_WHEEL_TURN);
+        initialTurnTicks1 =  (int)(deltaAngle1 * TICKS_PER_RAD_WHEEL_TURN)*wheel1Sign;
+        initialTurnTicks2 =  (int)(deltaAngle2 * TICKS_PER_RAD_WHEEL_TURN)*wheel2Sign;
 
         setRunToPos(0.5);  // full speed  = 1.0. Backed off to prevent damage while developing
     }
@@ -91,10 +96,14 @@ public class TwoWheelDiffSwerveClass {
 
         robotAngle += deltaRobotAngle;
         robotHeadingTicks = (int) (robotAngle * TICKS_PER_RAD_ROBOT_TURN); // convert robot heading to ticks
+
         wheel1Angle = newWheel1Angle;
-        turnPod1 = (int) (wheel1Angle* TICKS_PER_RAD_WHEEL_TURN);
+        //wheel1Angle = getShortestTurnAngle(wheel1Angle,newWheel1Angle,1);
+        turnPod1 = (int) (wheel1Angle* TICKS_PER_RAD_WHEEL_TURN)*wheel1Sign;
+
         wheel2Angle = newWheel2Angle;
-        turnPod2 = (int) (wheel2Angle* TICKS_PER_RAD_WHEEL_TURN);
+        //wheel2Angle = getShortestTurnAngle(wheel2Angle,newWheel2Angle,2);
+        turnPod2 = (int) (wheel2Angle* TICKS_PER_RAD_WHEEL_TURN)*wheel2Sign;
 
         // Add together initial pod angles, position ticks, pot turn ticks and robot turn ticks
         ticksA = initialTurnTicks1 + targetPosition + turnPod1 - robotHeadingTicks;
@@ -114,11 +123,12 @@ public class TwoWheelDiffSwerveClass {
      * @param newAngle Desired wheel angle
      * @return The smallest delta angle to get to the new angle
      */
-    public double getShortestTurnAngle(double currentWheelAng, double newAngle) {
+    public double getShortestTurnAngle(double currentWheelAng, double newAngle, int pod) {
         // newAngle will be from -PI to PI, because it uses ATAN2
         double deltaAngle;
         double currentRemainderAngle;
         double newRemainder;
+        int sign;
 
         // Convert current angle into number from zero to 2*PI
         currentRemainderAngle = moduloAngle(currentWheelAng);
@@ -129,9 +139,31 @@ public class TwoWheelDiffSwerveClass {
 
         // Find the shortest turn to newAngle
         deltaAngle = newRemainder - currentRemainderAngle;
+        /*
+        if(deltaAngle<=-1.5*Math.PI) {
+            deltaAngle = currentRemainderAngle-(newRemainder+2.0*Math.PI);
+            sign = 1;
+        } else if(deltaAngle<=-0.5*Math.PI) {
+            deltaAngle = newRemainder-(currentRemainderAngle-Math.PI);
+            sign = -1;
+        } else if(deltaAngle<=0.5*Math.PI) {
+            deltaAngle = newRemainder - currentRemainderAngle;
+            sign = 1;
+        } else if(deltaAngle<=1.5*Math.PI) {
+            deltaAngle = newRemainder-(currentRemainderAngle+Math.PI);
+            sign = -1;
+        } else {
+            deltaAngle = newRemainder-(currentRemainderAngle+2.0*Math.PI);
+            sign = 1;
+        }
+
+        if(pod==1) wheel1Sign = sign;
+        else wheel2Sign = sign;
+*/
         if(deltaAngle < -Math.PI) {
             deltaAngle = newAngle + (2.0*Math.PI) - currentRemainderAngle;
         }
+
         return deltaAngle;
     }
     /**
