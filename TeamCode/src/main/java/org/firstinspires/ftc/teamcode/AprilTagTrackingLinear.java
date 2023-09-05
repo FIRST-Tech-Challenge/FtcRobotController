@@ -1,11 +1,9 @@
 package org.firstinspires.ftc.teamcode;
 
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.RobotLog;
 
-import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.BuiltinCameraDirection;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.vision.VisionPortal;
@@ -21,9 +19,9 @@ import java.util.List;
  * Use Android Studio to Copy this Class, and Paste it into your team's code folder with a new name.
  * Remove or comment out the @Disabled line to add this OpMode to the Driver Station OpMode list.
  */
-@TeleOp(name = "AprilTag Easy Tracking")
+@TeleOp(name = "AprilTagTracking Linear")
 //@Disabled
-public class ConceptAprilTagEasy extends LinearOpMode {
+public class AprilTagTrackingLinear extends LinearOpMode {
 
     private static final boolean USE_WEBCAM = false;  // true for webcam, false for phone camera
 
@@ -105,7 +103,7 @@ public class ConceptAprilTagEasy extends LinearOpMode {
 
                 loopTime = getRuntime() - priorTime;
                 priorTime = getRuntime();
-                RobotLog.d("ConceptAprilTagEasy = %.05f, loop = %.05f, rotationAngle = %.05f",priorTime,loopTime,rotationAngle);
+                RobotLog.d("AprilTagLinear = %.05f, loop = %.05f, rotationAngle = %.05f, robotangle = %.05f",priorTime,loopTime,rotationAngle,drive.robotAngle);
 
             }
         }
