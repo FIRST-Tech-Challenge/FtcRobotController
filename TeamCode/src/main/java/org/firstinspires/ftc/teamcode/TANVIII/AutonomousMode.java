@@ -5,7 +5,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
 @Autonomous
-public class AutoNomNom extends LinearOpMode {
+public class AutonomousMode extends LinearOpMode {
 
     Robot robot;
 
@@ -44,6 +44,7 @@ public class AutoNomNom extends LinearOpMode {
     }
 
     //TODO: i forgot what this does but should put it in robot class
+    //TODO: refactor autostraight
     private void autoStraight(double straightSpeed, double centerTurnSpeed, double mecanumSpeed) {
         //inches * tickToIn
         /*
@@ -71,16 +72,15 @@ public class AutoNomNom extends LinearOpMode {
     }
 
     public void encoderStraight(double inches) {
-
-        double flTicksNow = Math.abs(fl.getCurrentPosition());
+        double flTicksNow = Math.abs(robot.getEncoderPosition("fl"));
         double flTicksEnd = inches * inToTick + flTicksNow; //rip ticksToIn :(
 
-        while (flTicksNow < flTicksEnd && opModeIsActive()) {
+        while (opModeIsActive()) {
             double KP = 0.007; //0.0027;
-            flTicksNow = Math.abs(fl.getCurrentPosition());
+            flTicksNow = Math.abs(robot.getEncoderPosition("fl"));
 
             double flError = flTicksEnd - flTicksNow;
-            if ((flError) < 16) {
+            if (Math.abs(flError) < 5) {
                 break;
             }
 
@@ -91,26 +91,69 @@ public class AutoNomNom extends LinearOpMode {
                 flPower = -1;
             }
             autoStraight(flPower/4, 0,0);
-            flTicksNow = Math.abs(fl.getCurrentPosition());
         }
+
         autoStraight(0,0,0); //stop
     }
+
     //calculating KP:
     //KP*(12*intotick) ~= 1
     //KP ~= 1/(# ticks in 12")
     //make KP more than that for cutoff, then cutoff before sending to autostraight
     //KP ~= 1/(12*32.357) ~= 0.0026
 
+    public void encoderCenterTurn(double degrees, boolean counterclockwise) {
+        double flTicksEnd;
+        //about -9 ticks in 1 degree clockwise
+        double degreeToTick = 8.8;
+
+        double flTicksNow = Math.abs(robot.getEncoderPosition("fl"));
+        if (counterclockwise) {
+            flTicksEnd = degrees * degreeToTick + flTicksNow;
+        } else {
+            flTicksEnd = (-1) * degrees * degreeToTick + flTicksNow;
+        }
+
+        while (opModeIsActive()) {
+            double KP = 0.1; //started at 0.007 from encoderstraight
+            flTicksNow = Math.abs(robot.getEncoderPosition("fl"));
+
+            double flError = flTicksEnd - flTicksNow;
+            if (Math.abs(flError) < 5) {
+                break;
+            }
+            double flPower = KP * flError;
+
+            //cap power
+            if (flPower > 1) {
+                flPower = 1;
+            } else if (flPower < -1) {
+                flPower = -1;
+            }
+
+            robot.setDrivetrainPower(flPower/4, flPower/4, flPower/4, flPower/4);
+        }
+
+        robot.setDrivetrainPower(0, 0, 0, 0);
+    }
+
     @Override
     public void runOpMode() throws InterruptedException {
 
-        Robot robot = new Robot(hardwareMap);
+        robot = new Robot(hardwareMap);
 
         waitForStart();
 
         while (opModeIsActive()) {
+            /*
             encoderStraight(24);
-            sleep(5);
+            sleep(100);
+            encoderStraight(-24);
+            sleep(100);
+             */
+            encoderCenterTurn(90, true);
+            sleep(5000);
+            encoderCenterTurn(90, false);
             break;
         }
     }
