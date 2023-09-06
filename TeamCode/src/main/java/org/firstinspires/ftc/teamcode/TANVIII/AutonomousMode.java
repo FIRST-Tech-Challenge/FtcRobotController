@@ -1,8 +1,13 @@
 package org.firstinspires.ftc.teamcode.TANVIII;
 
+import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.IMU;
+
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
 
 @Autonomous
 public class AutonomousMode extends LinearOpMode {
@@ -14,6 +19,7 @@ public class AutonomousMode extends LinearOpMode {
     DcMotor fr;
     DcMotor bl;
     DcMotor br;
+    IMU imu;
 
     /*
     DcMotor armMotor;
@@ -137,10 +143,78 @@ public class AutonomousMode extends LinearOpMode {
         robot.setDrivetrainPower(0, 0, 0, 0);
     }
 
+    public void imuTurn(double degrees, boolean counterclockwise) {
+        /*
+        endYaw is input degrees
+        nowYaw is get yaw
+        while nowYaw not equal to endYaw
+            if nowYaw < endYaw
+                turn c clock
+            if nowYaw < endYaw
+                turn clock
+        break
+         */
+
+        double endYaw;
+        double currentYaw;
+
+        YawPitchRollAngles robotOrientation;
+        robotOrientation = imu.getRobotYawPitchRollAngles();
+        currentYaw = robotOrientation.getYaw(AngleUnit.DEGREES);
+
+        if (counterclockwise) {
+            endYaw = degrees + currentYaw;
+        } else {
+            endYaw = (-1) * degrees  + currentYaw;
+        }
+
+        while (opModeIsActive()) {
+            double KP = 0.15; //started at 0.1 from encoderTurn
+            robotOrientation = imu.getRobotYawPitchRollAngles();
+            currentYaw = robotOrientation.getYaw(AngleUnit.DEGREES);
+
+            double error = endYaw - currentYaw;
+
+            if (Math.abs(error) < 0.5) {
+                break;
+            }
+
+            double power = KP * error;
+
+            //cap power
+            if (power > 1) {
+                power = 1;
+            } else if (power < -1) {
+                power = -1;
+            }
+
+            robot.setDrivetrainPower(power/4, power/4, power/4, power/4);
+        }
+
+        robot.setDrivetrainPower(0, 0, 0, 0);
+    }
+
     @Override
     public void runOpMode() throws InterruptedException {
 
         robot = new Robot(hardwareMap);
+
+        imu = hardwareMap.get(IMU.class, "imu");
+
+        IMU.Parameters myIMUparameters;
+
+        myIMUparameters = new IMU.Parameters(
+                new RevHubOrientationOnRobot(
+                        RevHubOrientationOnRobot.LogoFacingDirection.UP,
+                        RevHubOrientationOnRobot.UsbFacingDirection.FORWARD
+                )
+        );
+
+        // Initialize IMU using Parameters
+        imu.initialize(myIMUparameters);
+
+        // Reset Yaw
+        imu.resetYaw();
 
         waitForStart();
 
@@ -151,9 +225,15 @@ public class AutonomousMode extends LinearOpMode {
             encoderStraight(-24);
             sleep(100);
              */
-            encoderCenterTurn(90, true);
+
+            imuTurn(90, true);
+
             sleep(5000);
-            encoderCenterTurn(90, false);
+
+            imuTurn(90, false);
+
+            sleep(5000);
+
             break;
         }
     }
