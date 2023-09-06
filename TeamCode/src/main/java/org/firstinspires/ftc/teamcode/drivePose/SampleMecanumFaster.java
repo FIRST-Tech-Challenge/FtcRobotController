@@ -24,6 +24,8 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 import com.qualcomm.robotcore.hardware.VoltageSensor;
 import com.qualcomm.robotcore.hardware.configuration.typecontainers.MotorConfigurationType;
+
+import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequence;
 import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequenceBuilder;
 import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequenceRunner;
@@ -61,6 +63,7 @@ public class SampleMecanumFaster extends MecanumDrive {
     private TrajectoryFollower follower;
 
     private DcMotorEx leftFront, leftRear, rightRear, rightFront;
+    private Telemetry telemetry;
     private List<DcMotorEx> motors;
 
     private BNO055IMU imu;
@@ -71,20 +74,16 @@ public class SampleMecanumFaster extends MecanumDrive {
     double pastv2 = 0;
     double pastv3 = 0;
 
-    public SampleMecanumFaster(HardwareMap hardwareMap) {
+    public SampleMecanumFaster(HardwareMap hardwareMap, Telemetry telemetry) {
         super(kV, kA, kStatic, TRACK_WIDTH, TRACK_WIDTH, LATERAL_MULTIPLIER);
-
         follower = new HolonomicPIDVAFollower(TRANSLATIONAL_PID, TRANSLATIONAL_PID, HEADING_PID,
                 new Pose2d(0.1, 0.1, Math.toRadians(0.5)), 0.3);
-
         LynxModuleUtil.ensureMinimumFirmwareVersion(hardwareMap);
-
+        this.telemetry = telemetry;
         batteryVoltageSensor = hardwareMap.voltageSensor.iterator().next();
-
         for (LynxModule module : hardwareMap.getAll(LynxModule.class)) {
             module.setBulkCachingMode(LynxModule.BulkCachingMode.AUTO);
         }
-
         // TODO: adjust the names of the following hardware devices to match your configuration
 //        imu = hardwareMap.get(BNO055IMU.class, "imu");
 //        BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();

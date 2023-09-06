@@ -35,6 +35,5 @@ public class DrivePose extends SubsystemBase {
         telemetry.addData("TWLPoseX", poseEstimate.getX());
         telemetry.addData("TWLPoseY", poseEstimate.getY());
         telemetry.addData("TWLPoseH", Math.toDegrees(poseEstimate.getHeading()));
-        telemetry.update();
     }
 }
