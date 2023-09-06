@@ -58,9 +58,6 @@ public class Robot {
     public void setArmPower (double armPower) {
         armMotor.setPower(armPower);
     }
-
-    //getflcurrentpos(name string)
-
     public int getEncoderPosition (String motorName) {
         if (Objects.equals(motorName, "fl")) {
             return fl.getCurrentPosition();
