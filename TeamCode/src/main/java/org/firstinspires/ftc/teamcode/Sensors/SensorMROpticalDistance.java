@@ -29,6 +29,8 @@
 
 package org.firstinspires.ftc.teamcode.Sensors;
 
+import android.text.method.Touch;
+
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
@@ -36,6 +38,7 @@ import com.qualcomm.robotcore.hardware.DigitalChannel;
 import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.OpticalDistanceSensor;
 import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.hardware.TouchSensor;
 
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 
@@ -51,7 +54,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 public class SensorMROpticalDistance extends LinearOpMode {
 
   DistanceSensor odsSensor;  // Hardware Device Object
-  DigitalChannel digitalTouch;  // Hardware Device Object
+  TouchSensor digitalTouch;  // Hardware Device Object
 
   // Define class members
   Servo   serv1;
@@ -66,10 +69,9 @@ public class SensorMROpticalDistance extends LinearOpMode {
     odsSensor = hardwareMap.get(DistanceSensor.class, "distanceSensor");
 
     // get a reference to our digitalTouch object.
-    digitalTouch = hardwareMap.get(DigitalChannel.class, "touchSensor");
+    digitalTouch = hardwareMap.get(TouchSensor.class, "touchSensor");
 
     // set the digital channel to input.
-    digitalTouch.setMode(DigitalChannel.Mode.INPUT);
 
     serv1 = hardwareMap.get(Servo.class, "RServo");
     serv2 = hardwareMap.get(Servo.class, "LServo");
@@ -86,7 +88,7 @@ public class SensorMROpticalDistance extends LinearOpMode {
 
       // send the info back to driver station using telemetry function.
       // if the digital channel returns true it's HIGH and the button is unpressed.
-      if (digitalTouch.getState()) {
+      if (!digitalTouch.isPressed()) {
         servo1.setTarget(1.0);
         telemetry.addData("Digital Touch", "Is Not Pressed");
       } else {
@@ -94,7 +96,7 @@ public class SensorMROpticalDistance extends LinearOpMode {
         telemetry.addData("Digital Touch", "Is Pressed");
       }
       double dist = odsSensor.getDistance(DistanceUnit.CM);
-      if (dist < 50){
+      if (dist > 50){
         servo2.setTarget(1.0);
       }else{
         servo2.setTarget(0.0);
