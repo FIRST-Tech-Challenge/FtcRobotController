@@ -71,8 +71,6 @@ public class SensorMROpticalDistance extends LinearOpMode {
     // get a reference to our digitalTouch object.
     digitalTouch = hardwareMap.get(TouchSensor.class, "touchSensor");
 
-    // set the digital channel to input.
-
     serv1 = hardwareMap.get(Servo.class, "RServo");
     serv2 = hardwareMap.get(Servo.class, "LServo");
     servo1 = new SlowServo(serv1);
@@ -88,12 +86,12 @@ public class SensorMROpticalDistance extends LinearOpMode {
 
       // send the info back to driver station using telemetry function.
       // if the digital channel returns true it's HIGH and the button is unpressed.
-      if (!digitalTouch.isPressed()) {
+      if (digitalTouch.isPressed()) {
         servo1.setTarget(1.0);
-        telemetry.addData("Digital Touch", "Is Not Pressed");
+        telemetry.addData("Digital Touch", "Is Pressed");
       } else {
         servo1.setTarget(0.0);
-        telemetry.addData("Digital Touch", "Is Pressed");
+        telemetry.addData("Digital Touch", "Is Not Pressed");
       }
       double dist = odsSensor.getDistance(DistanceUnit.CM);
       if (dist > 50){
