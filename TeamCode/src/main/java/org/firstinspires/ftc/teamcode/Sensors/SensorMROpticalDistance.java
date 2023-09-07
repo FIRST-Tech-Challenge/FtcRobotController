@@ -60,16 +60,16 @@ public class SensorMROpticalDistance extends LinearOpMode {
   public void runOpMode() {
 
     // get a reference to our Light Sensor object.
-    odsSensor = hardwareMap.get(OpticalDistanceSensor.class, "sensor_ods");
+    odsSensor = hardwareMap.get(OpticalDistanceSensor.class, "distanceSensor");
 
     // get a reference to our digitalTouch object.
-    digitalTouch = hardwareMap.get(DigitalChannel.class, "sensor_digital");
+    digitalTouch = hardwareMap.get(DigitalChannel.class, "touchSensor");
 
     // set the digital channel to input.
     digitalTouch.setMode(DigitalChannel.Mode.INPUT);
 
-    serv1 = hardwareMap.get(Servo.class, "left_hand");
-    serv2 = hardwareMap.get(Servo.class, "left_hand");
+    serv1 = hardwareMap.get(Servo.class, "RServo");
+    serv2 = hardwareMap.get(Servo.class, "LServo");
     servo1 = new SlowServo(serv1);
     servo2 = new SlowServo(serv2);
 
