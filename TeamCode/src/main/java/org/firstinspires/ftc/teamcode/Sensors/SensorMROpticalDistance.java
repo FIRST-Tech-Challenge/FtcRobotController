@@ -33,8 +33,11 @@ import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DigitalChannel;
+import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.OpticalDistanceSensor;
 import com.qualcomm.robotcore.hardware.Servo;
+
+import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 
 /*
  * This is an example LinearOpMode that shows how to use
@@ -47,7 +50,7 @@ import com.qualcomm.robotcore.hardware.Servo;
 @TeleOp(name = "Sensors: Touch And Distance", group = "Sensor")
 public class SensorMROpticalDistance extends LinearOpMode {
 
-  OpticalDistanceSensor odsSensor;  // Hardware Device Object
+  DistanceSensor odsSensor;  // Hardware Device Object
   DigitalChannel digitalTouch;  // Hardware Device Object
 
   // Define class members
@@ -60,7 +63,7 @@ public class SensorMROpticalDistance extends LinearOpMode {
   public void runOpMode() {
 
     // get a reference to our Light Sensor object.
-    odsSensor = hardwareMap.get(OpticalDistanceSensor.class, "distanceSensor");
+    odsSensor = hardwareMap.get(DistanceSensor.class, "distanceSensor");
 
     // get a reference to our digitalTouch object.
     digitalTouch = hardwareMap.get(DigitalChannel.class, "touchSensor");
@@ -90,14 +93,14 @@ public class SensorMROpticalDistance extends LinearOpMode {
         servo1.setTarget(0.0);
         telemetry.addData("Digital Touch", "Is Pressed");
       }
-      if (odsSensor.getLightDetected()>50){
+      double dist = odsSensor.getDistance(DistanceUnit.CM);
+      if (dist < 50){
         servo2.setTarget(1.0);
       }else{
         servo2.setTarget(0.0);
       }
       // send the info back to driver station using telemetry function.
-      telemetry.addData("Raw",    odsSensor.getRawLightDetected());
-      telemetry.addData("Normal", odsSensor.getLightDetected());
+      telemetry.addData("Distance",    dist);
       telemetry.update();
       servo1.update();
       servo2.update();
