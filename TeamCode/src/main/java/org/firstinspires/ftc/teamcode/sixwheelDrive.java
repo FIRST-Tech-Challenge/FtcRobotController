@@ -30,14 +30,14 @@ public class sixwheelDrive extends LinearOpMode {
         double rightStickInput;
         double leftStickInput;
 
-        while opModeIsActive(){
+        while (opModeIsActive()){
 
             rightStickInput=gamepad1.right_stick_y;
             leftStickInput=gamepad1.left_stick_y;
             frontleft.setPower(gamepad1.left_stick_y);
             backLeft.setPower(gamepad1.left_stick_y);
-            frontRight.setPower(this-gamepad1.right_stick_y);
-            backRight.setPower(this-gamepad1.right_stick_y);
+            frontRight.setPower(-1*gamepad1.right_stick_y);
+            backRight.setPower(-1*gamepad1.right_stick_y);
 
         }
 
