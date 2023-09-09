@@ -5,8 +5,8 @@
             <RevRobotics40HDHexMotor name="brake" port="0" />
             <RevRobotics40HDHexMotor name="accelerator" port="1" />
             <RevRobotics40HDHexMotor name="steering" port="2" />
-            <Servo name="cannon" port="3" />
+            <Servo name="cameraServo" port="3" />
         </LynxModule>
     </LynxUsbDevice>
-    <Webcam name="Webcam 1" serialNumber="E5DD717F" />
+    <Webcam name="Webcam 1" serialNumber="2E7FB3AF" />
 </Robot>
