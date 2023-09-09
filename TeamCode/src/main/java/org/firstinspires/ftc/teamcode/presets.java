@@ -90,7 +90,7 @@ public class presets extends OpMode {
             lightoff = gamepad1.b;
             light = gamepad1.a;
 
-              crainpower = gamepad2.right_stick_y;
+            crainpower = gamepad2.right_stick_y;
 
             guideDown=gamepad1.x;
             down=gamepad2.a;
