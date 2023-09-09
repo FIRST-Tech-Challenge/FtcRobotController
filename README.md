@@ -1,3 +1,29 @@
+## Joining the Coding Team
+
+- download git
+- download android studio
+- sign into Atomic Narwahls Github
+- create SSH key
+    - ssh-keygen
+    - click enter twice
+    - type notepad .ssh/id_rsa.pub
+    - Copy the hashkey
+- New SSH key in Atomic Narwahls personal account (under settings)
+- go into most recent codebase
+- code->SSH->copy
+- in command line type:
+## We need to do this because github changed setup details
+- ssh-keygen -R github.com
+- notepad C:\users\YOURUSERNAME\.ssh\known_hosts ##Change YOURUSERNAME to your username
+- at the end of the file make a new line, paste in:
+- github.com ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQCj7ndNxQowgcQnjshcLrqPEiiphnt+VTTvDP6mHBL9j1aNUkY4Ue1gvwnGLVlOhGeYrnZaMgRK6+PKCUXaDbC7qtbW8gIkhL7aGCsOr/C56SJMy/BCZfxd1nWzAOxSDPgVsmerOBYfNqltV9/hWCqBywINIR+5dIg6JTJ72pcEpEjcYgXkE2YEFXV1JHnsKgbLWNlhScqb2UmyRkQyytRLtL+38TGxkxCflmO+5Z8CSSNY7GidjMIZ7Q4zMjA2n1nGrlTDkzwDCsw+wqFPGQA179cnfGWOWRVruj16z6XyvxvjJwbz0wQZ75XK5tKSb7FNyeIEs4TT4jk+S4dhPeAUC5y+bDYirYgM4GC7uEnztnZyaVWQ7B381AK4Qdrwt51ZqExKbQpTUNn+EjqoTwvqNj4kqx5QUCI0ThS/YkOxJCXmPUWZbhjpCg56i+2aB6CmK2JGhn57K5mj0MNdBXA4/WnwH6XoPWJzK5Nyu2zB3nAZp+S5hpQs+p1vN1/wsjk=
+- save and exit the file
+- back in command line type:
+- git clone git@github.com:team16736/CENTERSTAGE.git
+- open project in Android Studio
+- Download Revhub control software OR use ADB to connect
+
+
 ## NOTICE
 
 This repository contains the public FTC SDK for the CENTERSTAGE (2023-2024) competition season.
