@@ -10,7 +10,10 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import org.firstinspires.ftc.teamcode.Robots.BasicRobot;
 import org.firstinspires.ftc.teamcode.roadrunner.drive.RFMotionController.Localizers.Tracker;
 import org.firstinspires.ftc.teamcode.roadrunner.drive.SampleMecanumDrive;
-
+/**
+ * Warren Zhou
+ * 9/6/23
+ */
 @Config
 @Autonomous(name = "RightIMULocalizerTest")
 public class RightLocalizerTest extends LinearOpMode {

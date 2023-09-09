@@ -9,6 +9,11 @@ import org.firstinspires.ftc.teamcode.roadrunner.drive.RFMotionController.RFMeca
 
 import java.util.ArrayList;
 
+/**
+ * Warren Zhou
+ * 7/29/23
+ * Test teleOp for a butterfly drivetrain
+ */
 @TeleOp(name = "ButterflyTest")
 public class ButterflyTest extends LinearOpMode {
     private final double [] OFFSETS = {0.005,-0.005,0.01,0.02 };

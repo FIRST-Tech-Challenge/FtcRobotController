@@ -5,6 +5,11 @@ import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.time;
 
 import java.util.ArrayList;
 
+/**
+ * Warren Zhou
+ * 8/23
+ * function scheduler that allows for sequential, asynchronous, and other forms of scheduling
+ */
 public class Queuer {
     private final ArrayList<QueueElement> queueElements;
     private boolean firstLoop = true, mustFinish = false;

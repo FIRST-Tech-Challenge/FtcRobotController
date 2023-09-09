@@ -5,6 +5,12 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
         import com.qualcomm.robotcore.hardware.TouchSensor;
         import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
         import com.qualcomm.robotcore.hardware.DcMotor;
+
+/**
+ * Warren Zhou
+ * 4/23
+ * Testing for limit switches and other touch sensors
+ */
 @Disabled
 @TeleOp
 public class TouchTest extends LinearOpMode {

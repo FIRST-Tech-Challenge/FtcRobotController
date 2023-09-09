@@ -9,6 +9,11 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 
+/**
+ * Warren Zhou
+ * 6/22
+ * reset log file that stores log index, maybe deprecatd
+ */
 @Autonomous(name= "LogReset")
 public class LogReset extends LinearOpMode {
     File myObj = new File("/storage/emulated/0/tmp/LogIndex.csv");

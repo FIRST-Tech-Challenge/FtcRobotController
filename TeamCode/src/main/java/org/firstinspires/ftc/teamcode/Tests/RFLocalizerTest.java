@@ -11,6 +11,11 @@ import org.firstinspires.ftc.teamcode.Robots.BasicRobot;
 import org.firstinspires.ftc.teamcode.roadrunner.drive.RFMotionController.Localizers.Tracker;
 import org.firstinspires.ftc.teamcode.roadrunner.drive.SampleMecanumDrive;
 
+/**
+ * Warren ZHou
+ * 8/22
+ * TeleOp + RR odometry test
+ */
 @Config
 @Autonomous(name = "OdometryLocalizerTest")
 public class RFLocalizerTest extends LinearOpMode {

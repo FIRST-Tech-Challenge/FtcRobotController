@@ -10,7 +10,11 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-
+/**
+ * Warren Zhou
+ * 6/22
+ * reset log file that stores position data
+ */
 @Autonomous(name= "PosLogReset")
 public class PosLogReset extends LinearOpMode {
     @SuppressLint("SdCardPath")

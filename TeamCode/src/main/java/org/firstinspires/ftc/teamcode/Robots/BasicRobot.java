@@ -7,7 +7,11 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.VoltageSensor;
 import org.firstinspires.ftc.teamcode.Components.RFModules.System.Logger;
 import org.firstinspires.ftc.teamcode.Components.RFModules.System.Queuer;
-
+/**
+ * Warren Zhou
+ * 9/1
+ * Basic robot with basic features that all should have
+ */
 public class BasicRobot{
     public static Logger logger;
     public static LinearOpMode op = null;

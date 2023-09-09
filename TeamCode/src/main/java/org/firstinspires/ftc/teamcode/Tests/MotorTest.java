@@ -9,6 +9,11 @@ import org.firstinspires.ftc.teamcode.Robots.BasicRobot;
 import org.firstinspires.ftc.teamcode.roadrunner.drive.RFMotionController.Localizers.Tracker;
 import org.firstinspires.ftc.teamcode.roadrunner.drive.SampleMecanumDrive;
 
+/**
+ * Warren Zhou
+ * 8/16/23
+ * Easily find which motor is right or wrong configured
+ */
 @Autonomous(name = "MotorTest")
 public class MotorTest extends LinearOpMode {
     public void runOpMode() throws InterruptedException {

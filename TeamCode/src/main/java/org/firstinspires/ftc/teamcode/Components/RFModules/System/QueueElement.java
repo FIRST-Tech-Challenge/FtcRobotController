@@ -3,6 +3,11 @@ package org.firstinspires.ftc.teamcode.Components.RFModules.System;
 import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.logger;
 import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.time;
 
+/**
+ * Warren Zhou
+ * 8/23
+ * Data tpe for individual event
+ */
 public class QueueElement {
     //place in line
     private final int queuePos;
