@@ -54,10 +54,13 @@ public class RoadRunMoveTest extends LinearOpMode {
             }
             loops++;
             packet.put("loopTime", loops/BasicRobot.time);
+            queuer.setFirstLoop(false);
+            robot.update();
+            roadrun.update();
         }
     }
     public void followTrajAsync(TrajectorySequence traj){
-        if(queuer.queue(false, roadrun.isBusy())){
+        if(queuer.queue(false, !roadrun.isBusy())){
             if(!roadrun.isBusy()) {
                 roadrun.followTrajectorySequenceAsync(traj);
             }

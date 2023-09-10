@@ -19,7 +19,7 @@ import org.firstinspires.ftc.teamcode.roadrunner.trajectorysequence.TrajectorySe
 /**
  * Warren Zhou
  * 9/6/23
- * Left IMU Odom localizer 8 24x24 squares
+ * lefet imu localizer 8 24x24 squares
  */
 @Autonomous(name = "LeftIMUMoveTest")
 public class LeftIMUMoveTest extends LinearOpMode {
@@ -54,10 +54,13 @@ public class LeftIMUMoveTest extends LinearOpMode {
             }
             loops++;
             packet.put("loopTime", loops/BasicRobot.time);
+            queuer.setFirstLoop(false);
+            robot.update();
+            roadrun.update();
         }
     }
     public void followTrajAsync(TrajectorySequence traj){
-        if(queuer.queue(false, roadrun.isBusy())){
+        if(queuer.queue(false, !roadrun.isBusy())){
             if(!roadrun.isBusy()) {
                 roadrun.followTrajectorySequenceAsync(traj);
             }
