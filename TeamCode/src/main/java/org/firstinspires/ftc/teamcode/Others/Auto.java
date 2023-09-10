@@ -56,7 +56,7 @@ public class Auto extends LinearOpMode {
             fRight.setPower(error * P);
             bRight.setPower(error * P);
         }
-        if (fLeft.getCurrentPosition() > fLeft.getTargetPosition())
+    //    if (fLeft.getCurrentPosition() > fLeft.getTargetPosition())
         telemetry.addLine("help-");
         telemetry.update();
     }
@@ -127,13 +127,16 @@ public class Auto extends LinearOpMode {
 
     public static class EthanTeleOp extends LinearOpMode {
 
-        EthanDrive ethanDrive = new EthanDrive()
+        EthanDrive ethanDrive = new EthanDrive();
 
         @Override
         public void runOpMode() throws InterruptedException {
 
         }
     }
+
+
+
 }
 
 
