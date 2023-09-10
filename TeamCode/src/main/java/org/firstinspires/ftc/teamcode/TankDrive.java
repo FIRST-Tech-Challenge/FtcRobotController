@@ -51,32 +51,6 @@ import java.util.List;
 
 @Config
 public final class TankDrive {
-    // drive model parameters
-    public static double IN_PER_TICK = 0;
-    public static double TRACK_WIDTH_TICKS = 0;
-
-    // feedforward parameters in tick units
-    public static double kS = 0;
-    public static double kV = 0;
-    public static double kA = 0;
-
-    // path profile parameters
-    public static double MAX_WHEEL_VEL = 50;
-    public static double MIN_PROFILE_ACCEL = -30;
-    public static double MAX_PROFILE_ACCEL = 50;
-
-    // turn profile parameters
-    public static double MAX_ANG_VEL = Math.PI; // shared with path
-    public static double MAX_ANG_ACCEL = Math.PI;
-
-    // path controller gains
-    public static double RAMSETE_ZETA = 0.7; // in the range (0, 1)
-    public static double RAMSETE_BBAR = 2.0; // positive
-
-    // turn controller gains
-    public static double TURN_GAIN = 0.0;
-    public static double TURN_VEL_GAIN = 0.0;
-
     public static class Params {
         // drive model parameters
         public double inPerTick = 0;
@@ -107,19 +81,19 @@ public final class TankDrive {
 
     public static Params PARAMS = new Params();
 
-    public final TankKinematics kinematics = new TankKinematics(IN_PER_TICK * TRACK_WIDTH_TICKS);
+    public final TankKinematics kinematics = new TankKinematics(PARAMS.inPerTick * PARAMS.trackWidthTicks);
 
-    public final MotorFeedforward feedforward = new MotorFeedforward(kS, kV / IN_PER_TICK, kA / IN_PER_TICK);
+    public final MotorFeedforward feedforward = new MotorFeedforward(PARAMS.kS, PARAMS.kV / PARAMS.inPerTick, PARAMS.kA / PARAMS.inPerTick);
 
     public final TurnConstraints defaultTurnConstraints = new TurnConstraints(
-            MAX_ANG_VEL, -MAX_ANG_ACCEL, MAX_ANG_ACCEL);
+            PARAMS.maxAngVel, -PARAMS.maxAngVel, PARAMS.maxAngAccel);
     public final VelConstraint defaultVelConstraint =
             new MinVelConstraint(Arrays.asList(
-                    kinematics.new WheelVelConstraint(MAX_WHEEL_VEL),
-                    new AngularVelConstraint(MAX_ANG_VEL)
+                    kinematics.new WheelVelConstraint(PARAMS.maxWheelVel),
+                    new AngularVelConstraint(PARAMS.maxAngVel)
             ));
     public final AccelConstraint defaultAccelConstraint =
-            new ProfileAccelConstraint(MIN_PROFILE_ACCEL, MAX_PROFILE_ACCEL);
+            new ProfileAccelConstraint(PARAMS.minProfileAccel, PARAMS.maxProfileAccel);
 
     public final List<DcMotorEx> leftMotors, rightMotors;
 
@@ -129,8 +103,6 @@ public final class TankDrive {
 
     public final Localizer localizer;
     public Pose2d pose;
-
-    public final double inPerTick = IN_PER_TICK;
 
     private final LinkedList<Pose2d> poseHistory = new LinkedList<>();
 
@@ -187,11 +159,11 @@ public final class TankDrive {
                     new DualNum<Time>(new double[] {
                             meanLeftPos - lastLeftPos,
                             meanLeftVel
-                    }).times(inPerTick),
+                    }).times(PARAMS.inPerTick),
                     new DualNum<Time>(new double[] {
                             meanRightPos - lastRightPos,
                             meanRightVel,
-                    }).times(inPerTick)
+                    }).times(PARAMS.inPerTick)
             );
 
             lastLeftPos = meanLeftPos;
@@ -298,7 +270,7 @@ public final class TankDrive {
 
             updatePoseEstimate();
 
-            PoseVelocity2dDual<Time> command = new RamseteController(kinematics.trackWidth, RAMSETE_ZETA, RAMSETE_BBAR)
+            PoseVelocity2dDual<Time> command = new RamseteController(kinematics.trackWidth, PARAMS.ramseteZeta, PARAMS.ramseteBBar)
                     .compute(x, txWorldTarget, pose);
 
             TankKinematics.WheelVelocities<Time> wheelVels = kinematics.inverse(command);
@@ -383,8 +355,8 @@ public final class TankDrive {
             PoseVelocity2dDual<Time> command = new PoseVelocity2dDual<>(
                     Vector2dDual.constant(new Vector2d(0, 0), 3),
                     txWorldTarget.heading.velocity().plus(
-                            TURN_GAIN * pose.heading.minus(txWorldTarget.heading.value()) +
-                            TURN_VEL_GAIN * (robotVelRobot.angVel - txWorldTarget.heading.velocity().value())
+                            PARAMS.turnGain * pose.heading.minus(txWorldTarget.heading.value()) +
+                            PARAMS.turnVelGain * (robotVelRobot.angVel - txWorldTarget.heading.velocity().value())
                     )
             );
 
