@@ -29,46 +29,44 @@
 
 package org.firstinspires.ftc.robotcontroller.external.samples;
 
-import static com.qualcomm.hardware.rev.RevHubOrientationOnRobot.xyzOrientation;
-
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.IMU;
-
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AngularVelocity;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
 
-/**
- * {@link SensorIMUNonOrthogonal} shows how to use the new universal {@link IMU} interface. This
+import static com.qualcomm.hardware.rev.RevHubOrientationOnRobot.xyzOrientation;
+
+/*
+ * This OpMode shows how to use the new universal IMU interface. This
  * interface may be used with the BNO055 IMU or the BHI260 IMU. It assumes that an IMU is configured
  * on the robot with the name "imu".
- * <p>
+ *
  * The sample will display the current Yaw, Pitch and Roll of the robot.<br>
  * With the correct orientation parameters selected, pitch/roll/yaw should act as follows:
- * <p>
- *   Pitch value should INCREASE as the robot is tipped UP at the front. (Rotation about X) <br>
- *   Roll value should INCREASE as the robot is tipped UP at the left side. (Rotation about Y) <br>
- *   Yaw value should INCREASE as the robot is rotated Counter Clockwise. (Rotation about Z) <br>
- * <p>
+ *   Pitch value should INCREASE as the robot is tipped UP at the front. (Rotation about X)
+ *   Roll value should INCREASE as the robot is tipped UP at the left side. (Rotation about Y)
+ *   Yaw value should INCREASE as the robot is rotated Counter Clockwise. (Rotation about Z)
+ *
  * The yaw can be reset (to zero) by pressing the Y button on the gamepad (Triangle on a PS4 controller)
- * <p>
+ *
  * This specific sample DOES NOT assume that the Hub is mounted on one of the three orthogonal
  * planes (X/Y, X/Z or Y/Z) OR that the Hub has only been rotated in a range of 90 degree increments.
- * <p>
+ *
  * Note: if your Hub is mounted Orthogonally (on a orthogonal surface, angled at some multiple of
  * 90 Degrees) then you should use the simpler SensorImuOrthogonal sample in this folder.
- * <p>
+ *
  * But... If your Hub is mounted Non-Orthogonally, you must specify one or more rotational angles
  * that transform a "Default" Hub orientation into your desired orientation.  That is what is
  * illustrated here.
- * <p>
+ *
  * Use Android Studio to Copy this Class, and Paste it into your team's code folder with a new name.
  * Remove or comment out the @Disabled line to add this OpMode to the Driver Station OpMode list.
- * <p>
+ *
  * Finally, edit this OpMode to use at least one angle around an axis to orient your Hub.
  */
 @TeleOp(name = "Sensor: IMU Non-Orthogonal", group = "Sensor")
