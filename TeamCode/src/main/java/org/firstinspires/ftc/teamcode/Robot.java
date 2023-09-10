@@ -1,6 +1,4 @@
-package org.firstinspires.ftc.teamcode.Ethan;
-
-import androidx.annotation.NonNull;
+package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -8,14 +6,13 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.IMU;
-import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 
-public class EthanRobot {
+public class Robot {
 
-    // CLASS PROPERTIES
+
     HardwareMap hardwareMap;
     Telemetry telemetry;
     LinearOpMode opMode;
@@ -23,23 +20,45 @@ public class EthanRobot {
     DcMotor rFront;
     DcMotor lBack;
     DcMotor rBack;
-    DcMotor arm;
-    Servo lServo;
-    Servo rServo;
     IMU imu;
+
+    double yaw;
 
     double oldTick;
     long millis = System.currentTimeMillis();
     long lastCheckMillis = System.currentTimeMillis();
 
-    // CONSTRUCTOR
-    public EthanRobot(HardwareMap hardwareMap, LinearOpMode opMode, Telemetry telemetry) {
+    public Robot(HardwareMap hardwareMap, LinearOpMode opMode, Telemetry telemetry) {
         this.hardwareMap = hardwareMap;
         this.opMode = opMode;
         this.telemetry = telemetry;
         setUpMotors();
+        setUpImu();
     }
 
+
+    public void setUpImu() {
+
+        this.imu = hardwareMap.get(IMU.class, "imu");
+
+        imu.initialize(new IMU.Parameters(
+                new RevHubOrientationOnRobot(
+                        RevHubOrientationOnRobot.LogoFacingDirection.UP,
+                        RevHubOrientationOnRobot.UsbFacingDirection.FORWARD
+                )
+        ));
+
+        imu.resetYaw();
+
+
+    }
+
+    public void setMotorPower(double lFront, double rFront, double lBack, double rBack) {
+        this.lFront.setPower(lFront);
+        this.rFront.setPower(rFront);
+        this.lBack.setPower(lBack);
+        this.rBack.setPower(rBack);
+    }
     public void setUpMotors() {
         lFront = hardwareMap.dcMotor.get("Left front");
         rFront = hardwareMap.dcMotor.get("Right front");
@@ -59,56 +78,6 @@ public class EthanRobot {
 
         lFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         lFront.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-    }
-
-    public void setUpImu() {
-
-        this.imu = hardwareMap.get(IMU.class, "imu");
-
-        imu.initialize(new IMU.Parameters(
-                new RevHubOrientationOnRobot(
-                        RevHubOrientationOnRobot.LogoFacingDirection.UP,
-                        RevHubOrientationOnRobot.UsbFacingDirection.FORWARD
-                )
-        ));
-
-        imu.resetYaw();
-
-
-    }
-
-    public void setUpArmAndServo() {
-
-        arm = hardwareMap.dcMotor.get("arm");
-        arm.setDirection(DcMotorSimple.Direction.FORWARD);
-
-        this.lServo = hardwareMap.servo.get("lServo");
-        this.rServo = hardwareMap.servo.get("rServo");
-    }
-
-    public void setMotorPower(double lFront, double rFront, double lBack, double rBack) {
-        this.lFront.setPower(lFront);
-        this.rFront.setPower(rFront);
-        this.lBack.setPower(lBack);
-        this.rBack.setPower(rBack);
-    }
-
-    public void setArmPower(double armPower) {
-        arm.setPower(armPower);
-    }
-
-    public void setServoPosition(@NonNull Boolean servoPosition) {
-
-        if (servoPosition) {
-            lServo.setPosition(1);
-            rServo.setPosition(0);
-        }
-
-        if (servoPosition) {
-            lServo.setPosition(0);
-            rServo.setPosition(1);
-        }
-
     }
 
     public void autoForward(double targetDistanceInMM) throws InterruptedException {
@@ -209,14 +178,111 @@ public class EthanRobot {
         telemetry.addLine("done");
         telemetry.update();
 
-
-    }
-
-    public void checkArmPosition(double degreesForArm) {
-
     }
 
 
+    public void autoMecanuming(double targetMecanumDistance) {
+        final double P_VALUE = 0.004;
+
+        //301 = circumferance mm
+        //537.7, ticks per motor revolution
+        //1.4, gear ratio
+        //converting mm to ticks
+        final double MM_TO_TICKS = (537.7 / 1.4) / 301.59;
+
+        double targetPos = targetMecanumDistance * MM_TO_TICKS*(2.45);
+        double error = targetPos - lFront.getCurrentPosition();
+
+        final double PROPORTIONAL_POWER = P_VALUE * error;
+
+
+        long lastCheckMillis = System.currentTimeMillis();
+        long millis = System.currentTimeMillis();
+
+        double oldTick = lFront.getCurrentPosition();
+
+        boolean isStopped = false;
+
+
+        millis = System.currentTimeMillis();
+
+        telemetry.addLine(String.valueOf(targetPos));
+        telemetry.addLine(String.valueOf(lFront.getCurrentPosition()));
+
+        error = targetPos - lFront.getCurrentPosition();
+        telemetry.addLine(String.valueOf(error));
+
+        double imuPower = calculateImuPower(0);
+
+        setMotorPower(PROPORTIONAL_POWER+imuPower, -PROPORTIONAL_POWER+imuPower, -PROPORTIONAL_POWER+imuPower, PROPORTIONAL_POWER+imuPower);
+
+
+        telemetry.addLine("moving");
+
+
+        if (millis > lastCheckMillis + 500) {
+            lastCheckMillis = millis;
+            double newTicks = lFront.getCurrentPosition();
+
+            if (oldTick == newTicks) {
+                isStopped = true;
+            }
+
+            oldTick = newTicks;
+
+            telemetry.update();
+        }
+
+
+
+        telemetry.addLine(String.valueOf(lFront.getCurrentPosition() / MM_TO_TICKS));
+
+        /*double oldTick = 0;
+
+        while (true) {
+            double newTick = lFront.getCurrentPosition();
+
+
+            if (newTick == oldTick) {
+                break;
+            }
+
+            oldTick = newTick;
+
+            Thread.sleep(5);
+        }*/
+
+        telemetry.addLine("done");
+        telemetry.update();
+
+
+    }
+
+
+    public double calculateImuPower(int degrees) {
+
+
+        final double P_VALUE_FOR_TURNING_IMU = 0.002;
+
+        yaw = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES);
+
+        double proportionalPowerForImu = 0;
+
+        yaw = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES);
+
+        telemetry.addLine(String.valueOf(yaw));
+
+        double angleError = degrees - yaw;
+
+        proportionalPowerForImu = P_VALUE_FOR_TURNING_IMU * angleError;
+
+        telemetry.addLine(String.valueOf(angleError));
+
+        telemetry.update();
+
+        return proportionalPowerForImu;
+
+    }
 
     public double convertMMToTicks(double targetDistanceInMM) {
 
@@ -231,15 +297,6 @@ public class EthanRobot {
         return targetPos;
     }
 
-    public double getRemainingTicks(double targetDistanceInMM) {
-        double targetDistanceInTicks = convertMMToTicks(targetDistanceInMM);
-        double remainingDistance = targetDistanceInTicks - lFront.getCurrentPosition();
-        telemetry.addLine("target"+targetDistanceInTicks);
-        telemetry.addLine("remaining distance 1    "+remainingDistance);
-
-        return remainingDistance;
-    }
-
     public double computeDrivetrainPower(double targetDistanceInMM) {
         final double P_VALUE = 0.002;
 
@@ -251,6 +308,16 @@ public class EthanRobot {
         telemetry.addLine(String.valueOf(proportionalPower));
         return proportionalPower;
     }
+
+    public double getRemainingTicks(double targetDistanceInMM) {
+        double targetDistanceInTicks = convertMMToTicks(targetDistanceInMM);
+        double remainingDistance = targetDistanceInTicks - lFront.getCurrentPosition();
+        telemetry.addLine("target"+targetDistanceInTicks);
+        telemetry.addLine("remaining distance 1    "+remainingDistance);
+
+        return remainingDistance;
+    }
+
 
 
     public boolean checkReachedDistance(double targetDistanceInMM, boolean servoPosition) {
@@ -282,7 +349,6 @@ public class EthanRobot {
 
         }
         if (remainingDistance < 10 && isStopped) {
-            arm.setPower(0);
             setMotorPower(0, 0, 0, 0);
             done = true;
         }
@@ -291,31 +357,4 @@ public class EthanRobot {
     }
 
 
-    public void autoImuTurning(int degrees) {
-
-
-        final double P_VALUE_FOR_TURNING_IMU = 0.002;
-
-
-        double yaw = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES);
-
-        while (opMode.opModeIsActive() && !(-yaw < degrees + 5 && -yaw > degrees - 5)) {
-
-            yaw = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES);
-
-            telemetry.addLine(String.valueOf(yaw));
-
-            double angleError = degrees - yaw;
-
-            double proportionalPowerForImu = P_VALUE_FOR_TURNING_IMU * angleError;
-
-            telemetry.addLine(String.valueOf(angleError));
-
-            setMotorPower(proportionalPowerForImu, proportionalPowerForImu, proportionalPowerForImu, proportionalPowerForImu);
-
-            telemetry.update();
-
-
-        }
-    }
 }
