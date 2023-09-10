@@ -1,9 +1,11 @@
-package org.firstinspires.ftc.teamcode;
+package org.firstinspires.ftc.teamcode.Others;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
+
+import org.firstinspires.ftc.teamcode.Ethan.EthanDrive;
 
 @TeleOp
 public class Auto extends LinearOpMode {
@@ -123,6 +125,15 @@ public class Auto extends LinearOpMode {
         // encoderMove(-12); // moves backward 12 inches
     }
 
+    public static class EthanTeleOp extends LinearOpMode {
+
+        EthanDrive ethanDrive = new EthanDrive()
+
+        @Override
+        public void runOpMode() throws InterruptedException {
+
+        }
+    }
 }
 
 
