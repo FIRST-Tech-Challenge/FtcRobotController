@@ -21,7 +21,7 @@ import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 public class DriveConstants {
 
     /*
-     * These are motor constants that should be listed online for your motors.For roadruner
+     * These are motor constants that should be listed online for your motors.
      */
     public static final double TICKS_PER_REV = 8192;
     public static final double MAX_RPM = 312;
