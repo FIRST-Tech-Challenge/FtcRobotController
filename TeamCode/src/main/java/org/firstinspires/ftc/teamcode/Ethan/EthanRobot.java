@@ -241,7 +241,7 @@ public class EthanRobot {
     }
 
     public double computeDrivetrainPower(double targetDistanceInMM) {
-        final double P_VALUE = 0.004;
+        final double P_VALUE = 0.002;
 
         double remainingDistance = getRemainingTicks(targetDistanceInMM);
         if (remainingDistance < 10){
