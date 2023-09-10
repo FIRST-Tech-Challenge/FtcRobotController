@@ -190,7 +190,7 @@ public class Robot {
         //converting mm to ticks
         final double MM_TO_TICKS = (537.7 / 1.4) / 301.59;
 
-        double targetPos = targetMecanumDistance * MM_TO_TICKS*(2.45);
+        double targetPos = targetMecanumDistance * MM_TO_TICKS*(1.225);
         double error = targetPos - lFront.getCurrentPosition();
 
         final double PROPORTIONAL_POWER = P_VALUE * error;
