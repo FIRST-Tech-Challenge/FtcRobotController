@@ -136,19 +136,19 @@ public final class MecanumDrive {
 
             Twist2dDual<Time> twist = kinematics.forward(new MecanumKinematics.WheelIncrements<>(
                     new DualNum<Time>(new double[]{
-                            (leftFrontPosVel.position - lastLeftFrontPos) + kinematics.trackWidth * headingDelta,
+                            (leftFrontPosVel.position - lastLeftFrontPos),
                             leftFrontPosVel.velocity,
                     }).times(PARAMS.inPerTick),
                     new DualNum<Time>(new double[]{
-                            (leftRearPosVel.position - lastLeftRearPos) + kinematics.trackWidth * headingDelta,
+                            (leftRearPosVel.position - lastLeftRearPos),
                             leftRearPosVel.velocity,
                     }).times(PARAMS.inPerTick),
                     new DualNum<Time>(new double[]{
-                            (rightRearPosVel.position - lastRightRearPos) - kinematics.trackWidth * headingDelta,
+                            (rightRearPosVel.position - lastRightRearPos),
                             rightRearPosVel.velocity,
                     }).times(PARAMS.inPerTick),
                     new DualNum<Time>(new double[]{
-                            (rightFrontPosVel.position - lastRightFrontPos) - kinematics.trackWidth * headingDelta,
+                            (rightFrontPosVel.position - lastRightFrontPos),
                             rightFrontPosVel.velocity,
                     }).times(PARAMS.inPerTick)
             ));
