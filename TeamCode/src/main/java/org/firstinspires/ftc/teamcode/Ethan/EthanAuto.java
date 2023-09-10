@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.Ethan;
 
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
+import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -9,7 +10,7 @@ import com.qualcomm.robotcore.hardware.IMU;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 
-@TeleOp
+@Autonomous
 public class EthanAuto extends LinearOpMode {
 
 
@@ -241,13 +242,14 @@ public class EthanAuto extends LinearOpMode {
 
         while (opModeIsActive()){
 
+            double drivetrainPower = ethanRobot.computeDrivetrainPower(300);
 
-            ethanRobot.setMotorPower(0.5, 0.5, 0.5, 0.5);
-            ethanRobot.setArmPower(0.25);
-            if (ethanRobot.checkReachedDistance(150, true)) {
+            //set motor power for pid
+            ethanRobot.setMotorPower(drivetrainPower, drivetrainPower, drivetrainPower, drivetrainPower);
+            ethanRobot.setArmPower(0.1);
+            if (ethanRobot.checkReachedDistance(300, true)) {
                 break;
             }
-
 
         }
     }
