@@ -15,6 +15,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 
 public class EthanRobot {
 
+    // CLASS PROPERTIES
     HardwareMap hardwareMap;
     Telemetry telemetry;
     LinearOpMode opMode;
@@ -27,10 +28,16 @@ public class EthanRobot {
     Servo rServo;
     IMU imu;
 
+    double oldTick;
+    long millis = System.currentTimeMillis();
+    long lastCheckMillis = System.currentTimeMillis();
+
+    // CONSTRUCTOR
     public EthanRobot(HardwareMap hardwareMap, LinearOpMode opMode, Telemetry telemetry) {
         this.hardwareMap = hardwareMap;
         this.opMode = opMode;
         this.telemetry = telemetry;
+        setUpMotors();
     }
 
     public void setUpMotors() {
@@ -205,68 +212,82 @@ public class EthanRobot {
 
     }
 
-    long lastCheckMillis = System.currentTimeMillis();
-    long millis = System.currentTimeMillis();
+    public void checkArmPosition(double degreesForArm) {
 
-    public double makeTargetPos(double targetDistanceInMM) {
-        final double MM_TO_TICKS = (537.7 / 1.4) / 301.59;
-
-        double targetPos = targetDistanceInMM * MM_TO_TICKS + lFront.getCurrentPosition();
-
-        return makeTargetPos(150);
     }
-    double targetPos = makeTargetPos(150);
-
-    public boolean checkReachedDistance(double targetDistanceInMM2, boolean servoPosition) {
 
 
-        final double P_VALUE = 0.006;
+
+    public double convertMMToTicks(double targetDistanceInMM) {
 
         //301 = circumferance mm
         //537.7, ticks per motor revolution
         //1.4, gear ratio
         //converting mm to ticks
+        final double MM_TO_TICKS = (537.7 / 1.4) / 301.59;
 
-        double error = targetPos - lFront.getCurrentPosition();
+        double targetPos = targetDistanceInMM * MM_TO_TICKS;
 
-        final double PROPORTIONAL_POWER = P_VALUE * error;
+        return targetPos;
+    }
 
-        millis = System.currentTimeMillis();
+    public double getRemainingTicks(double targetDistanceInMM) {
+        double targetDistanceInTicks = convertMMToTicks(targetDistanceInMM);
+        double remainingDistance = targetDistanceInTicks - lFront.getCurrentPosition();
+        telemetry.addLine("target"+targetDistanceInTicks);
+        telemetry.addLine("remaining distance 1    "+remainingDistance);
 
-        double oldTick = lFront.getCurrentPosition();
+        return remainingDistance;
+    }
+
+    public double computeDrivetrainPower(double targetDistanceInMM) {
+        final double P_VALUE = 0.004;
+
+        double remainingDistance = getRemainingTicks(targetDistanceInMM);
+        if (remainingDistance < 10){
+            return 0;
+        }
+        double proportionalPower = P_VALUE*remainingDistance;
+        telemetry.addLine(String.valueOf(proportionalPower));
+        return proportionalPower;
+    }
+
+
+    public boolean checkReachedDistance(double targetDistanceInMM, boolean servoPosition) {
+        double newTicks = lFront.getCurrentPosition();
 
         boolean isStopped = false;
         boolean done = false;
+        double remainingDistance = getRemainingTicks(targetDistanceInMM);
 
-        setUpArmAndServo();
+        telemetry.addLine("reamaining distance"+remainingDistance);
+        telemetry.addLine("current pos"+lFront.getCurrentPosition());
 
-        error = targetPos - lFront.getCurrentPosition();
-        telemetry.addLine(String.valueOf(error));
-        telemetry.addLine(String.valueOf(lFront.getPower()));
-
-        if (millis > lastCheckMillis + 500) {
+        /*telemetry.addLine("isStopped:"+isStopped);
+        telemetry.addLine("oldTick:"+oldTick);
+        telemetry.addLine("newTicks"+newTicks);
+        telemetry.addLine("millis:"+millis);
+        telemetry.addLine("lastCheckMillis"+lastCheckMillis);*/
+        if (millis > lastCheckMillis + 250) {
             lastCheckMillis = millis;
-            double newTicks = lFront.getCurrentPosition();
+            newTicks = lFront.getCurrentPosition();
+            telemetry.addLine("inside");
 
             if (oldTick == newTicks) {
                 isStopped = true;
+                telemetry.addLine("inside if 2");
             }
             oldTick = newTicks;
 
 
         }
-
-        if (error < 10 && isStopped) {
-            setMotorPower(0, 0, 0, 0);
+        if (remainingDistance < 10 && isStopped) {
             arm.setPower(0);
-
+            setMotorPower(0, 0, 0, 0);
             done = true;
         }
-
         telemetry.update();
         return done;
-
-
     }
 
     public void autoImuTurning(int degrees) {
