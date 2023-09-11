@@ -1,5 +1,5 @@
 //
-// build.gradle in TeamCode
+// build.gradle in Sixteen750
 //
 // Most of the definitions for building your module reside in a common, shared
 // file 'build.common.gradle'. Being factored in this way makes it easier to
@@ -16,7 +16,7 @@ apply from: '../build.common.gradle'
 apply from: '../build.dependencies.gradle'
 
 android {
-    namespace = 'org.firstinspires.ftc.teamcode'
+    namespace = 'org.firstinspires.ftc.sixteen750'
 
     packagingOptions {
         jniLibs.useLegacyPackaging true
