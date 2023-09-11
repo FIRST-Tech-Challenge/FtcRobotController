@@ -45,7 +45,7 @@ public class FtcOpModeRegister implements OpModeRegister {
     /**
      * {@link #register(OpModeManager)} is called by the SDK game in order to register
      * OpMode classes or instances that will participate in an FTC game.
-     *
+     * <p>
      * There are two mechanisms by which an OpMode may be registered.
      * <p>
      *  1) The preferred method is by means of class annotations in the OpMode itself.
