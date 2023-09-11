@@ -5,7 +5,7 @@
      So it won't ultimately be as empty as it might here appear to be :-) -->
 
 <!-- The package name here determines the package for your R class and your BuildConfig class -->
-<manifest
+<manifest xmlns:tools="http://schemas.android.com/tools"
     xmlns:android="http://schemas.android.com/apk/res/android">
-    <application/>
+    <application tools:ignore="MissingApplicationIcon" />
 </manifest>
