@@ -75,3 +75,6 @@ request</span>.</li>
 <li><b>Set Repo Correctly: </b>Ensure that the <span style = "color: red;"> Base Repository is set to DishaVai/FtcRobotController.</span> </li>
 <li> <b>Finish: </b> Make sure all the changed files are present, then click <span style = "background-color:green; color:white;"> Create Pull Request </span></li>
 </ol>
+
+## Merging
+Once you have opened a pull request, let someone else know, so that they can approve your pull request, then you can merge.
