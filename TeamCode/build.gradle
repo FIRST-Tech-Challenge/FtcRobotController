@@ -26,11 +26,19 @@ android {
         }
         jniLibs.useLegacyPackaging true
     }
+
     kotlinOptions {
         jvmTarget = '1.8'
     }
+
     androidResources {
         noCompress 'tflite'
+    }
+}
+
+repositories {
+    maven {
+        url = 'https://maven.brott.dev/'
     }
 }
 
@@ -42,10 +50,5 @@ dependencies {
 //    Gamepadyn
     implementation project(path: ':Gamepadyn')
 //    roadrunner
-    //noinspection GradleDependency
-    implementation 'org.apache.commons:commons-math3:3.6.1'
-    //noinspection GradleDependency
-    implementation 'com.fasterxml.jackson.core:jackson-databind:2.12.7'
-    //noinspection GradleDependency
-    implementation 'com.acmerobotics.roadrunner:core:0.5.6'
+    implementation "com.acmerobotics.roadrunner:ftc:0.1.3"
 }
