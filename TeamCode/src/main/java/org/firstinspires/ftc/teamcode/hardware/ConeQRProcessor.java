@@ -2,7 +2,7 @@ package org.firstinspires.ftc.teamcode.hardware;
 
 import android.util.Log;
 
-import  org.opencv.core.Core;
+import org.opencv.core.Core;
 import org.opencv.core.CvType;
 import org.opencv.core.Mat;
 
@@ -28,8 +28,8 @@ public class ConeQRProcessor  extends OpenCvPipeline {
     double meanVal =0.0;
 
     //Adjustable parameters here.
-    double sleev1Peak = 60;
-    double sleev2Peak = 100.0 ;
+    double sleev1Peak = 10;
+    double sleev2Peak = 80.0 ;
     double sleev3Peak = 150.0;
 
     //Range for background, mat is grey

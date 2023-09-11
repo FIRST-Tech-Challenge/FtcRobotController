@@ -107,7 +107,7 @@ public abstract class BaseAuto extends LinearOpMode {
         telemetry.update();
         sleep(1000);
 
-        //TODO
+
         scoreMidPole();
 
         switch ( currentSide) {

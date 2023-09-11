@@ -14,7 +14,7 @@ public class LeftAutoComplex extends BaseAuto {
 
     @Override
     void parkTerminal() {
-        hdw.moveYAxis(-6, -0.3);
+        hdw.moveYAxis(-24, -0.3);
         hdw.moveXAxis(-26, 0.5);
     }
 

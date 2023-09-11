@@ -249,7 +249,7 @@ public class Hardware2022 {
 
         lnXPidfCrtler.setSetPoint(0);
         //Set tolerance as 0.5 degrees
-        lnXPidfCrtler.setTolerance(15);
+        lnXPidfCrtler.setTolerance(20);
         //set Integration between -0.5 to 0.5 to avoid saturating PID output.
         lnXPidfCrtler.setIntegrationBounds(-0.5 , 0.5 );
 
@@ -265,7 +265,7 @@ public class Hardware2022 {
 
         long initMill = System.currentTimeMillis();
 
-        while ( !lnPidfCrtler.atSetPoint()
+        while ( !(lnPidfCrtler.atSetPoint()&&lnXPidfCrtler.atSetPoint() )
                 && ( (System.currentTimeMillis() -initMill  )<5000)  ) {
             currentPosition = yEncoder.getCurrentPosition();
             //Calculate new distance
@@ -327,6 +327,7 @@ public class Hardware2022 {
      *
      */
     private void moveXAxisDegree(int distance, double power ) {
+
         wheelFrontLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         wheelBackLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         wheelFrontRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -338,8 +339,8 @@ public class Hardware2022 {
         wheelFrontRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         wheelBackRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
-        int currenYPosition = yEncoder.getCurrentPosition();
-        Log.d("9010", "current Y Position " + currenYPosition);
+        int currentYPosition = yEncoder.getCurrentPosition();
+        Log.d("9010", "current Y Position " + currentYPosition);
 
         //Get current orientation.  Angle is between -180 to 180
         int currentPosition = xEncoder.getCurrentPosition();
@@ -373,7 +374,7 @@ public class Hardware2022 {
 
         lnYPidfCrtler.setSetPoint(0);
         //Set tolerance as 0.5 degrees
-        lnYPidfCrtler.setTolerance(15);
+        lnYPidfCrtler.setTolerance(20);
         //set Integration between -0.5 to 0.5 to avoid saturating PID output.
         lnYPidfCrtler.setIntegrationBounds(-0.5 , 0.5 );
 
@@ -389,7 +390,7 @@ public class Hardware2022 {
 
         long initMill = System.currentTimeMillis();
 
-        while ( !lnPidfCrtler.atSetPoint()
+        while ( ! (lnPidfCrtler.atSetPoint() && lnYPidfCrtler.atSetPoint())
                 && ( (System.currentTimeMillis() -initMill  )<5000) ) {
             currentPosition = xEncoder.getCurrentPosition();
             //Calculate new distance
@@ -411,10 +412,10 @@ public class Hardware2022 {
             Log.d("9010", "Turn Error: " + turnError );
             Log.d("9010", "Calculated rx:  " + rx );
 
-            double yError = yEncoder.getCurrentPosition() - currenYPosition;
+            double yError = yEncoder.getCurrentPosition() - currentYPosition;
             Log.d("9010", "Y Error " + yError);
             yVelocity = lnYPidfCrtler.calculate(yError)*7;
-            Log.d("9010", "Y Veol:  " + yVelocity);
+            Log.d("9010", "Y Vel:  " + yVelocity);
 
 
             wheelFrontLeft.setVelocity(-velocityCaculated + rx + yVelocity);
@@ -668,7 +669,7 @@ public class Hardware2022 {
         Log.d("9010", "slideStartPostion:  " + slideStartPostion);
         Log.d("9010", "Travel:  " + travel);
 
-        while (clawTouch.getState()==true && ( travel < 1000 )) {
+        while (clawTouch.getState()==true && ( travel < 1200 )) {
             vSlide.setVelocity(power * ANGULAR_RATE);
             travel = slideStartPostion - vSlide.getCurrentPosition();
             //Log.d("9010", "postion:  " + vSlide.getCurrentPosition());
