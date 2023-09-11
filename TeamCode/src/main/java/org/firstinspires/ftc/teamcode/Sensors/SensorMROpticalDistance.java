@@ -34,10 +34,12 @@ import android.text.method.Touch;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DigitalChannel;
 import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.OpticalDistanceSensor;
 import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.hardware.ServoImplEx;
 import com.qualcomm.robotcore.hardware.TouchSensor;
 
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
@@ -57,8 +59,6 @@ public class SensorMROpticalDistance extends LinearOpMode {
   TouchSensor digitalTouch;  // Hardware Device Object
 
   // Define class members
-  Servo   serv1;
-  Servo serv2;
   SlowServo servo1;
   SlowServo servo2;
 
@@ -66,16 +66,12 @@ public class SensorMROpticalDistance extends LinearOpMode {
   public void runOpMode() {
 
     // get a reference to our Light Sensor object.
-    odsSensor = hardwareMap.get(DistanceSensor.class, "distanceSensor");
+    odsSensor = hardwareMap.get(DistanceSensor.class, GreenhillHardware.DISTANCE_SENSOR);
 
     // get a reference to our digitalTouch object.
-    digitalTouch = hardwareMap.get(TouchSensor.class, "touchSensor");
-
-    serv1 = hardwareMap.get(Servo.class, "RServo");
-    serv2 = hardwareMap.get(Servo.class, "LServo");
-    servo1 = new SlowServo(serv1);
-    servo2 = new SlowServo(serv2);
-
+    digitalTouch = hardwareMap.get(TouchSensor.class, GreenhillHardware.TOUCH_SENSOR);
+    servo1 = new SlowServo(hardwareMap.servo.get(GreenhillHardware.RIGHT_SERVO));
+    servo2 = new SlowServo(hardwareMap.servo.get(GreenhillHardware.LEFT_SERVO));
 
     // wait for the start button to be pressed.
     waitForStart();
@@ -101,9 +97,9 @@ public class SensorMROpticalDistance extends LinearOpMode {
       }
       // send the info back to driver station using telemetry function.
       telemetry.addData("Distance",    dist);
-      telemetry.update();
       servo1.update();
       servo2.update();
+      telemetry.update();
       idle();
 
     }
