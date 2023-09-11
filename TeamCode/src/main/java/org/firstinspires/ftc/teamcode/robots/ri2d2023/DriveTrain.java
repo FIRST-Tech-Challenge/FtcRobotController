@@ -66,7 +66,7 @@ class DriveTrain {
     }
 
     public void mechanumDrive(double forward, double strafe, double turn) {
-        forward = -forward;
+        forward = forward;
         turn = -turn;
         double r = Math.hypot(strafe, forward);
         double robotAngle = Math.atan2(forward, strafe) - Math.PI / 4;

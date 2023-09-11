@@ -5,6 +5,7 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
+import org.firstinspires.ftc.teamcode.robots.taubot.util.StickyGamepad;
 import org.firstinspires.ftc.teamcode.robots.taubot.vision.pipeline.AprilTagDetectionPipeline;
 import org.openftc.apriltag.AprilTagDetection;
 import org.openftc.easyopencv.OpenCvCamera;
@@ -16,6 +17,7 @@ import java.util.ArrayList;
 @Config ("RI2D2023GameVariables")
 @TeleOp(name="RI2D OpMode", group="Challenge")
 public class RI2D extends OpMode {
+    private StickyGamepad stickyGamepad1, stickyGamepad2;
     //autonomous variables
     public boolean auton = false; // controls if auton will run set to true to run with auton
     public static  boolean testing = false;// turns off normal robot motion
@@ -47,39 +49,51 @@ public class RI2D extends OpMode {
     //Cone stack for auton
     @Override
     public void init() {
+        stickyGamepad1 = new StickyGamepad(gamepad1);
+        stickyGamepad2 = new StickyGamepad(gamepad2);
         robot = new Robot(telemetry, hardwareMap);
         autonomous = new Autonomous(robot);
         telemetry.addData("Status", "Initializing " + this.getClass() + "...");
         telemetry.update();
         robot.init();
-        visionInit();
+        //visionInit();
     }
 
     @Override
     public void init_loop() {
-        aprilTagInitLoop();
+        //aprilTagInitLoop();
         telemetry.update();
-        if (!calibrate && calibrateOn);
     }
     @Override
     public void loop() {
+        stickyGamepad1.update();
+        stickyGamepad2.update();
         if(auton) {
 //            autonInit(tagDetected);
         }
         telemetryOutput();
         if(!testing){
             telemetry.addData("should auton be running? \t", autonomous.hasBehaviors());
-            if (!calibrate && calibrateOn);
-            else if(autonomous.hasBehaviors()) {
+            /*if(autonomous.hasBehaviors()) {
                 autonomous.runBehaviors();
             }
-            else {
+            else {*/
                 robot.driveTrain.mechanumDrive(-gamepad1.left_stick_y, gamepad1.left_stick_x, gamepad1.right_stick_x);
+//                robot.driveTrain.tankDrive(gamepad1.left_stick_y, gamepad1.right_stick_y);
                 if(gamepad1.left_bumper)
                     robot.intake.clawOpen();
                 if(gamepad1.right_bumper)
                     robot.intake.clawClose();
-//                robot.driveTrain.tankDrive(gamepad1.left_stick_y, gamepad1.right_stick_y);
+                if(gamepad1.left_trigger > DEADZONE)
+                    robot.intake.moveClawArm(gamepad1.left_trigger);
+                if(gamepad1.right_trigger > DEADZONE)
+                    robot.intake.moveClawArm(-gamepad1.right_trigger);
+                if(gamepad1.a)
+                    robot.outtake.moveSlide(1);
+                if(gamepad1.b)
+                    robot.outtake.moveSlide(-1);
+                if(stickyGamepad1.y)
+                    robot.outtake.flip();
                 if (gamepad1.dpad_down) {
                     calibrate = false;
                 }
@@ -89,13 +103,14 @@ public class RI2D extends OpMode {
                     else
                         robot.driveTrain.robotSpeed = 1;
                 }
-            }
+            //}
         }
     }
     public void telemetryOutput() {
         telemetry.addData("is in auton \t", auton);
         telemetry.addData("tag value: \t", tagDetected);
         robot.driveTrain.telemetryOutput();
+        robot.intake.telemetryOutput();
     }
     public void autonInit(int tagValue) {
         telemetry.addData("tag", tagValue);
