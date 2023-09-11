@@ -17,8 +17,8 @@ android {
         // by changing this, 1.1s becomes 369ms
         buildConfigField "String", "APP_BUILD_TIME", '"' + "2023-08-02T20:07:58.710-0400" + '"'
     }
- 
-    compileSdk 29
+    compileSdk 33
+
 
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8

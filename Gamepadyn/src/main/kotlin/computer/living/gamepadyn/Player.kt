@@ -14,9 +14,9 @@ sealed class Player<TUA: IUserAction> constructor(
      * NOTE: This is problematic. Without the ability to verify that TUA is an enum,
      * we have no way of enumerating all of its values,
      * and therefore cannot easily fill the map.
-     * This has no easy solution. I've tried my best to make it better, but both Java and Kotlin have no easy way of
+     * This has no easy solution. I've tried my best to make it better, but both Java and Kotlin have no easy way of reflecting or extending in the way I want.
      */
     fun getState(action: TUA): IActionData? = data[action]
-    val onUpdate: Event<>
+//    val onUpdate: Event<>
 
 }
