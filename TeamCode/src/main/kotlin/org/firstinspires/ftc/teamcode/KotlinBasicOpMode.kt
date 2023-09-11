@@ -7,10 +7,9 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple.Direction.FORWARD
 import com.qualcomm.robotcore.hardware.DcMotorSimple.Direction.REVERSE
 import com.qualcomm.robotcore.util.ElapsedTime
 import com.qualcomm.robotcore.util.Range
-import computer.living.gamepadyn.Gamepadyn
 
 @TeleOp(name = "BasicKotlinOpMode")
-class BasicKotlinOpMode : OpMode() {
+class KotlinBasicOpMode : OpMode() {
 
     /**
      * How long the OpMode has been running for

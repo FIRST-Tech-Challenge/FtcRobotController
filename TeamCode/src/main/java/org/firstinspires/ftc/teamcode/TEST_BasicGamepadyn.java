@@ -1,5 +1,6 @@
-package org.firstinspires.ftc.teamcode.roadrunner;
+package org.firstinspires.ftc.teamcode;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
@@ -7,6 +8,7 @@ import computer.living.gamepadyn.Gamepadyn;
 import computer.living.gamepadyn.IUserAction;
 
 @TeleOp
+@Disabled
 public class TEST_BasicGamepadyn extends OpMode {
 
     enum UserAction implements IUserAction {
