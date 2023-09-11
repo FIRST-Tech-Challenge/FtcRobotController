@@ -66,4 +66,8 @@ Follow these steps to make changes to the project.
 <li><b>Fix any errors that come up:</b> After you have fixed all the issues,
  commit again.</li>
 <li><b>Push changes to remote:</b> Run <code>git push --set-upstream origin &lt;your branch name&gt;</code></li>
+<li><b>You can push as many times as you want:</b> If more changes are necessary
+for your branch, follow the steps starting from step 4 through 7. When the code is ready
+to push, run <code>git push</code>. Note: There is no need to set upstream as you did in step eight
+because it is already set.</li>
 </ol>
