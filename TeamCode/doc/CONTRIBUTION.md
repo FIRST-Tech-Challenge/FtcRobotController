@@ -70,4 +70,7 @@ Follow these steps to make changes to the project.
 for your branch, follow the steps starting from step 4 through 7. When the code is ready
 to push, run <code>git push</code>. Note: There is no need to set upstream as you did in step eight
 because it is already set.</li>
+<li><b>Create pull request:</b> Go to this repository on github.com and click on <span style = "background-color:green; color:white;"> Compare & pull
+request</span>.</li>
+<li><b>Finish:</b> Make sure all the changed files are present, then click <span style = "background-color:green; color:white;"> Create Pull Request </span></li>
 </ol>
