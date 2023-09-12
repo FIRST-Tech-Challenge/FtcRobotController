@@ -78,7 +78,7 @@ public class mdt extends LinearOpMode {
         // Wait for the game to start (driver presses PLAY)
         waitForStart();
 
-        double x=0;
+        boolean slowturn=false;
         double rx;
         // run until the end of the match (driver presses STOP)
         while (opModeIsActive()) {
@@ -87,11 +87,11 @@ public class mdt extends LinearOpMode {
 //            double g=dc.green();
 //            double b = dc.blue();
             if(gamepad1.a){
-                x=1;
+                slowturn=true;
             }if(gamepad1.b){
-                x=0;
+                slowturn=false;
             }
-            if(x==1){rx=gamepad1.right_stick_x*0.7;} else{rx=gamepad1.right_stick_x;}
+            if(slowturn){rx=gamepad1.right_stick_x*0.7;} else{rx=gamepad1.right_stick_x;}
             if(gamepad1.left_bumper){
                 dt.run(gamepad1.left_stick_y,gamepad1.left_stick_x,rx,0.5,true);
             }else {
