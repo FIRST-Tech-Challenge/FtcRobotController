@@ -1,12 +1,26 @@
 repositories {
     mavenCentral()
     google() // Needed for androidx
+
+    // Start Freik-added stuff:
+    // Used by TechnoLib; jitpack.io can turn GitHub Releases into package repository like jsDelivr
+    maven { url = 'https://jitpack.io' }
+
+    // Specifically for Road Runner and FTC Dashboard
+    maven { url = 'https://maven.brott.dev/' }
+    // don't remove this extra maven url unless maven.brott.dev is redirecting to something else
+    // `maven.brott.dev` is 302 redirecting to `acmerobotics.z13.web.core.windows.net`
+    // if unable to access `maven.brott.dev` the above code can fail-over to `acmerobotics.z13.web.core.windows.net`
+    // if experiencing DNS poisoning, try to add this to etc/hosts `52.239.247.97 acmerobotics.z13.web.core.windows.net`
+    // alternatively you can add `142.251.33.115 maven.brott.dev` to your etc/hosts, `nslookup ghs.googlehosted.com` to get the latest IP address
+    maven { url = 'https://acmerobotics.z13.web.core.windows.net/' }
 }
 
 dependencies {
     implementation 'org.firstinspires.ftc:Inspection:9.0.0'
     implementation 'org.firstinspires.ftc:Blocks:9.0.0'
-    implementation 'org.firstinspires.ftc:Tfod:9.0.0'
+    // Freik: We're not using TensorFlow
+    // implementation 'org.firstinspires.ftc:Tfod:9.0.0'
     implementation 'org.firstinspires.ftc:RobotCore:9.0.0'
     implementation 'org.firstinspires.ftc:RobotServer:9.0.0'
     implementation 'org.firstinspires.ftc:OnBotJava:9.0.0'
@@ -14,8 +28,24 @@ dependencies {
     implementation 'org.firstinspires.ftc:FtcCommon:9.0.0'
     implementation 'org.firstinspires.ftc:Vision:9.0.0'
     implementation 'org.firstinspires.ftc:gameAssets-CenterStage:1.0.0'
-    implementation 'org.tensorflow:tensorflow-lite-task-vision:0.4.3'
-    runtimeOnly 'org.tensorflow:tensorflow-lite:2.12.0'
+    // Freik: We're not using TensorFlow
+    // implementation 'org.tensorflow:tensorflow-lite-task-vision:0.4.3'
+    // runtimeOnly 'org.tensorflow:tensorflow-lite:2.12.0'
     implementation 'androidx.appcompat:appcompat:1.2.0'
-}
 
+    // Freik: 16750/20403 external dependencies:
+    // TechnoLib: This should be commented out to use a local source copy
+    //            yarn libflip will also comment it out
+    implementation 'com.github.technototes:TechnoLib:1.2.0' // FLIP: TechnoLibLocal
+
+    // RoadRunner:
+    implementation 'com.acmerobotics.roadrunner:core:0.5.6'
+    // EasyOpenCv:
+    implementation 'org.openftc:easyopencv:1.5.2'
+    // FTC Dashboard:
+    implementation 'com.acmerobotics.dashboard:dashboard:0.4.12'
+
+    // If we wanted, we could use PhotoCore, but maybe not. It's a perf
+    // optimization, and maybe not worth taking a dependency on early in the season
+    // implementation 'com.github.Eeshwar-Krishnan:PhotonFTC:v2.0.2'
+}

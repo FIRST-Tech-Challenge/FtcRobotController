@@ -1,2 +1,17 @@
 include ':FtcRobotController'
-include ':TeamCode'
+
+// Uncomment this to use TechnoLib from a subdirectory.
+// Or just try 'yarn libflip' to let the script do it for you...
+// include 'RobotLibrary'                                                   // FLIP: TechnoLibLocal
+// project(':RobotLibrary').projectDir = new File('TechnoLib/RobotLibrary') // FLIP: TechnoLibLocal
+// include 'Path'                                                           // FLIP: TechnoLibLocal
+// project(':Path').projectDir = new File('TechnoLib/Path')                 // FLIP: TechnoLibLocal
+// include 'Vision'                                                         // FLIP: TechnoLibLocal
+// project(':Vision').projectDir = new File('TechnoLib/Vision')             // FLIP: TechnoLibLocal
+
+include ':Sixteen750'
+include ':Twenty403'
+
+// include ':RoadRunnerQuickStart'                                          // FLIP: BUILD ALL BOTS
+// include ':ForTeaching'                                                   // FLIP: BUILD ALL BOTS
+// include ':MeepMeepTesting'                                               // FLIP: BUILD ALL BOTS

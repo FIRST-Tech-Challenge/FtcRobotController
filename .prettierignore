@@ -1,0 +1,4 @@
+**/generated/**
+**/*.xml
+# The Prettier Java plugin messes up the lambdas in these files pretty badly:
+**/AutoConst*.java
