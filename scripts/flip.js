@@ -29,7 +29,7 @@ const fileList = new Map([
     {
       name: 'TechnoLibLocal',
       files: [
-        'ForTeaching/build.gradle',
+        'LearnBot/build.gradle',
         'Sixteen750/build.gradle',
         'Twenty403/build.gradle',
         'build.dependencies.gradle',
