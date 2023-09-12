@@ -196,10 +196,14 @@ public class SampleMecanumDrive extends MecanumDrive {
         } else {
             setLocalizer(new StandardTrackingWheelLocalizer(hardwareMap));
         }
+
+        setLocalizer(new TwoWheelTrackingLocalizerRight(hardwareMap, this));
+
         imu = hardwareMap.get(IMU.class, "imu");
 
         imu.initialize(new IMU.Parameters(new RevHubOrientationOnRobot(RevHubOrientationOnRobot.LogoFacingDirection.LEFT,
                 RevHubOrientationOnRobot.UsbFacingDirection.UP)));
+        imu.resetYaw();
         BasicRobot.dashboard = FtcDashboard.getInstance();
         BasicRobot.dashboard.setTelemetryTransmissionInterval(25);
         logger.createFile("RoadrunLog", "Runtime, X, Y, A, error[0], error[1]");
