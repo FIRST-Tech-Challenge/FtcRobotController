@@ -36,8 +36,8 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.Range;
 
-/**
- * This particular OpMode executes a Tank Drive control TeleOp a direct drive robot
+/*
+ * This OpMode executes a Tank Drive control TeleOp a direct drive robot
  * The code is structured as an Iterative OpMode
  *
  * In this mode, the left and right joysticks control the left and right motors respectively.

@@ -32,7 +32,6 @@ package org.firstinspires.ftc.robotcontroller.external.samples;
 import android.app.Activity;
 import android.graphics.Color;
 import android.view.View;
-
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
@@ -40,10 +39,10 @@ import com.qualcomm.robotcore.hardware.ColorSensor;
 
 /*
  *
- * This is an example LinearOpMode that shows how to use
+ * This OpMode that shows how to use
  * a Modern Robotics Color Sensor.
  *
- * The op mode assumes that the color sensor
+ * The OpMode assumes that the color sensor
  * is configured with a name of "sensor_color".
  *
  * You can use the X button on gamepad1 to toggle the LED on and off.
@@ -88,7 +87,7 @@ public class SensorMRColor extends LinearOpMode {
     // wait for the start button to be pressed.
     waitForStart();
 
-    // while the op mode is active, loop and read the RGB data.
+    // while the OpMode is active, loop and read the RGB data.
     // Note we use opModeIsActive() as our loop condition because it is an interruptible method.
     while (opModeIsActive()) {
 
