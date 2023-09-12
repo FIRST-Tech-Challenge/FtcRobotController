@@ -79,3 +79,11 @@ lint/generated/
 lint/outputs/
 lint/tmp/
 # lint/reports/
+
+.project
+**/.settings
+**/.classpath
+branches.txt
+scripts/branch-list.txt
+node_modules
+TechnoLib
