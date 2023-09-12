@@ -17,6 +17,7 @@
 bin/
 gen/
 out/
+.settings/
 #  Uncomment the following line in case you need and you don't have the release build type files in your app
 # release/
 
