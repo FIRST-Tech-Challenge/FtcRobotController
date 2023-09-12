@@ -1,0 +1,27 @@
+apply plugin: 'java-library'
+
+java {
+    sourceCompatibility = JavaVersion.VERSION_1_8
+    targetCompatibility = JavaVersion.VERSION_1_8
+}
+
+repositories {
+    maven { url 'https://jitpack.io' }
+
+    // Specifically for MeepMeep
+    maven { url = 'https://maven.brott.dev/' }
+    // don't remove this extra maven url unless maven.brott.dev is redirecting to something else
+    // `maven.brott.dev` is 302 redirecting to `acmerobotics.z13.web.core.windows.net`
+    // if unable to access `maven.brott.dev` the above code can fail-over to `acmerobotics.z13.web.core.windows.net`
+    // if experiencing DNS poisoning, try to add this to etc/hosts `52.239.247.97 acmerobotics.z13.web.core.windows.net`
+    // alternatively you can add `142.251.33.115 maven.brott.dev` to your etc/hosts, `nslookup ghs.googlehosted.com` to get the latest IP address
+    maven { url = 'https://acmerobotics.z13.web.core.windows.net/' }
+}
+// Do not use apply from here
+// Include common definitions from above.
+//apply from: '../build.common.gradle'
+//apply from: '../build.dependencies.gradle'
+
+dependencies {
+    implementation 'com.github.NoahBres:MeepMeep:2.0.2'
+}
