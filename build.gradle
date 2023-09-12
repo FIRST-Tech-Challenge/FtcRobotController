@@ -27,3 +27,12 @@ allprojects {
 repositories {
     mavenCentral()
 }
+
+task justAssembleDebug(type: GradleBuild) {
+    tasks = [
+        ':Twenty403:assembleDebug',
+        // ':ForTeaching:assembleDebug',          // FLIP: BUILD ALL BOTS
+        // ':RoadRunnerQuickStart:assembleDebug', // FLIP: BUILD ALL BOTS
+        ':Sixteen750:assembleDebug'
+    ]
+}

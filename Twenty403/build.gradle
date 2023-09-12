@@ -25,5 +25,9 @@ android {
 
 dependencies {
     implementation project(':FtcRobotController')
+    // Uncomment this to use a local version of TechnoLib
+    // implementation project(':RobotLibrary') // FLIP: TechnoLibLocal
+    // implementation project(':Path')         // FLIP: TechnoLibLocal
+    // implementation project(':Vision')       // FLIP: TechnoLibLocal
     annotationProcessor files('lib/OpModeAnnotationProcessor.jar')
 }
