@@ -31,8 +31,6 @@ package org.firstinspires.ftc.teamcode.Drivercontrol;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.hardware.rev.RevColorSensorV3;
-import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 
 /**
  * This file contains an minimal example of a Linear "OpMode". An OpMode is a 'program' that runs in either
@@ -47,9 +45,9 @@ import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
  * Remove or comment out the @Disabled line to add this opmode to the Driver Station OpMode list
  */
 
-@TeleOp(name="mecdt")
+@TeleOp(name="mainteleOp")
 
-public class mdt extends LinearOpMode {
+public class mainteleOp extends LinearOpMode {
     //RevColorSensorV3 dc;
     // Declare OpMode members.
 
