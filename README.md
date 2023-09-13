@@ -1,4 +1,4 @@
-# Hello and welcome to FTC Team 23838, or the Beta Blockheads's repository for the 2023-2024 FTC season Crescendo!
+# Hello and welcome to FTC Team 23838, or the Beta Blockheads's repository for the 2023-2024 FTC season CENTERSTAGE!
 If you want to learn FTC programming, GO LOOK AT `Teamcode/src/main/java/org/firstinspires/ftc/teamcode/common/RobotContainer`!!! It has really nicely explained code from last year!!
 If you don't understand it and know Java, go ask someone! If you don't know Java, [learn it](https://www.w3schools.com/java/)!
 
