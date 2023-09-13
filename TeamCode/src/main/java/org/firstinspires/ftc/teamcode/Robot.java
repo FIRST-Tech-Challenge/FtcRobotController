@@ -47,7 +47,7 @@ public class Robot extends Thread {
     }
 
     /* Calculate Drivetrain PID cofficients */
-
+/*
     private final int motorFLMaxSpeed = 2780;
     double motorFLF = 32767 / (double) motorFLMaxSpeed;
     double motorFLP = 0.1 * motorFLF;
@@ -66,7 +66,7 @@ public class Robot extends Thread {
     private final int motorBRMaxSpeed = 2720;
     double motorBRF = 32767 / (double) motorBRMaxSpeed;
     double motorBRP = 0.1 * motorBRF;
-    double mototBRI = 0.1 * motorBRP;
+    double mototBRI = 0.1 * motorBRP; */
 
 
     private void initDeviceCore() throws Exception {
@@ -90,7 +90,7 @@ public class Robot extends Thread {
         Motor_BR.setPositionPIDFCoefficients(5.0);
 
         Motor_BL.setVelocityPIDFCoefficients(0.93, 0.093, 0, 9.3);
-        Motor_BL.setPositionPIDFCoefficients(5.0);*/
+        Motor_BL.setPositionPIDFCoefficients(5.0);
 
         Log.i(TAG, "Motor FR Cofficients: P: " + motorFRP + " I: " + mototFRI + " F: " + motorFRF);
         Log.i(TAG, "Motor FL Cofficients: P: " + motorFLP + " I: " + mototFLI + " F: " + motorFLF);
@@ -112,7 +112,7 @@ public class Robot extends Thread {
         Motor_FL.setTargetPositionTolerance(15);
         Motor_FR.setTargetPositionTolerance(15);
         Motor_BL.setTargetPositionTolerance(15);
-        Motor_BR.setTargetPositionTolerance(15);
+        Motor_BR.setTargetPositionTolerance(15);*/
 
 
         Motor_FL.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -265,5 +265,234 @@ public class Robot extends Thread {
             Log.i(TAG, "Exit Function: moveForwardToPosition");
         }
     }
+
+
+    /*****************************************************************************/
+    /* Section:      Move to specific distance functions                         */
+    /*                                                                           */
+    /* Purpose:    Used for moving motor specific inches                         */
+    /*                                                                           */
+    /* Returns:   Nothing                                                        */
+    /*                                                                           */
+    /* Params:    IN     power         - Speed  (-1 to 1)                        */
+    /*            IN     distance      -  in inches                              */
+    /*                                                                           */
+
+    /*****************************************************************************/
+    // Move backward to specific distance in inches, with power (0 to 1)
+    public void moveBackwardToPosition(double power, double distance) {
+        Log.i(TAG, "Enter Function: moveBackwardToPosition Power : " + power + " and distance : " + distance);
+        // Reset all encoders
+        long startTime = System.currentTimeMillis();
+
+        Motor_FL.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        Motor_FR.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        Motor_BR.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        Motor_BL.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
+        //Find the motor ticks needed to travel the required distance
+        int ticks = DistanceToTick(distance);
+
+        // Set the target position for all motors (in ticks)
+        Motor_FL.setTargetPosition(ticks);
+        Motor_FR.setTargetPosition((-1) * ticks);
+        Motor_BR.setTargetPosition((-1) * ticks);
+        Motor_BL.setTargetPosition(ticks);
+
+        //Set power of all motors
+        Motor_FL.setPower(power);
+        Motor_FR.setPower(power);
+        Motor_BR.setPower(power);
+        Motor_BL.setPower(power);
+
+        //Set Motors to RUN_TO_POSITION
+        Motor_FL.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        Motor_FR.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        Motor_BR.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        Motor_BL.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+        while (Motor_FL.isBusy() && Motor_BL.isBusy() && Motor_FR.isBusy() && Motor_BR.isBusy()) {
+            if ((System.currentTimeMillis() - startTime) > 3000) {
+                break;
+            }
+            if (DEBUG_DEBUG) {
+                Log.i(TAG, "Actual Ticks Motor0 : " + Motor_FL.getCurrentPosition());
+                Log.i(TAG, "Actual Ticks Motor1 : " + Motor_FR.getCurrentPosition());
+                Log.i(TAG, "Actual Ticks Motor2 : " + Motor_BR.getCurrentPosition());
+                Log.i(TAG, "Actual Ticks Motor3 : " + Motor_BL.getCurrentPosition());
+            }
+            //Waiting for Robot to travel the distance
+            telemetry.addData("Backward", "Moving");
+            telemetry.update();
+        }
+
+
+        //Reached the distance, so stop the motors
+        Motor_FL.setPower(0);
+        Motor_FR.setPower(0);
+        Motor_BR.setPower(0);
+        Motor_BL.setPower(0);
+
+        if (DEBUG_INFO) {
+            Log.i(TAG, "TICKS needed : " + ticks);
+            Log.i(TAG, "Actual Ticks Motor0 : " + Motor_FL.getCurrentPosition());
+            Log.i(TAG, "Actual Ticks Motor1 : " + Motor_FR.getCurrentPosition());
+            Log.i(TAG, "Actual Ticks Motor2 : " + Motor_BR.getCurrentPosition());
+            Log.i(TAG, "Actual Ticks Motor3 : " + Motor_BL.getCurrentPosition());
+            Log.i(TAG, "Exit Function: moveBackwardToPosition");
+        }
+    }
+    /*****************************************************************************/
+    /* Section:      Move to specific distance functions                         */
+    /*                                                                           */
+    /* Purpose:    Used for moving motor specific inches                         */
+    /*                                                                           */
+    /* Returns:   Nothing                                                        */
+    /*                                                                           */
+    /* Params:    IN     power         - Speed  (-1 to 1)                        */
+    /*            IN     distance      -  in inches                              */
+    /*                                                                           */
+
+    /*****************************************************************************/
+    // Move Left to specific distance in inches, with power (0 to 1)
+    public void moveLeftToPosition(double power, double distance) {
+        Log.i(TAG, "Enter Function: moveLeftToPosition Power : " + power + " and distance : " + distance);
+        // Reset all encoders
+        long startTime = System.currentTimeMillis();
+
+        Motor_FL.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        Motor_FR.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        Motor_BR.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        Motor_BL.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
+        //Find the motor ticks needed to travel the required distance
+        int ticks = DistanceToTick(distance);
+
+        // Set the target position for all motors (in ticks)
+        Motor_FL.setTargetPosition(ticks);
+        Motor_FR.setTargetPosition(ticks);
+        Motor_BR.setTargetPosition((-1) * ticks);
+        Motor_BL.setTargetPosition((-1) * ticks);
+
+        //Set power of all motors
+        Motor_FL.setPower(power);
+        Motor_FR.setPower(power);
+        Motor_BR.setPower(power);
+        Motor_BL.setPower(power);
+
+        //Set Motors to RUN_TO_POSITION
+        Motor_FL.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        Motor_FR.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        Motor_BR.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        Motor_BL.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+        while (Motor_FL.isBusy() && Motor_BL.isBusy() && Motor_FR.isBusy() && Motor_BR.isBusy()) {
+            if ((System.currentTimeMillis() - startTime) > 3000) {
+                break;
+            }
+            if (DEBUG_DEBUG) {
+                Log.i(TAG, "Actual Ticks Motor0 : " + Motor_FL.getCurrentPosition());
+                Log.i(TAG, "Actual Ticks Motor1 : " + Motor_FR.getCurrentPosition());
+                Log.i(TAG, "Actual Ticks Motor2 : " + Motor_BR.getCurrentPosition());
+                Log.i(TAG, "Actual Ticks Motor3 : " + Motor_BL.getCurrentPosition());
+            }
+            //Waiting for Robot to travel the distance
+            telemetry.addData("Left", "Moving");
+            telemetry.update();
+        }
+
+
+        //Reached the distance, so stop the motors
+        Motor_FL.setPower(0);
+        Motor_FR.setPower(0);
+        Motor_BR.setPower(0);
+        Motor_BL.setPower(0);
+
+        if (DEBUG_INFO) {
+            Log.i(TAG, "TICKS needed : " + ticks);
+            Log.i(TAG, "Actual Ticks Motor0 : " + Motor_FL.getCurrentPosition());
+            Log.i(TAG, "Actual Ticks Motor1 : " + Motor_FR.getCurrentPosition());
+            Log.i(TAG, "Actual Ticks Motor2 : " + Motor_BR.getCurrentPosition());
+            Log.i(TAG, "Actual Ticks Motor3 : " + Motor_BL.getCurrentPosition());
+            Log.i(TAG, "Exit Function: moveLeftToPosition");
+        }
+    }
+    /*****************************************************************************/
+    /* Section:      Move to specific distance functions                         */
+    /*                                                                           */
+    /* Purpose:    Used for moving motor specific inches                         */
+    /*                                                                           */
+    /* Returns:   Nothing                                                        */
+    /*                                                                           */
+    /* Params:    IN     power         - Speed  (-1 to 1)                        */
+    /*            IN     distance      -  in inches                              */
+    /*                                                                           */
+
+    /*****************************************************************************/
+    // Move Right to specific distance in inches, with power (0 to 1)
+    public void moveRightToPosition(double power, double distance) {
+        Log.i(TAG, "Enter Function: moveRightToPosition Power : " + power + " and distance : " + distance);
+        // Reset all encoders
+        long startTime = System.currentTimeMillis();
+
+        Motor_FL.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        Motor_FR.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        Motor_BR.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        Motor_BL.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
+        //Find the motor ticks needed to travel the required distance
+        int ticks = DistanceToTick(distance);
+
+        // Set the target position for all motors (in ticks)
+        Motor_FL.setTargetPosition((-1) * ticks);
+        Motor_FR.setTargetPosition((-1) * ticks);
+        Motor_BR.setTargetPosition(ticks);
+        Motor_BL.setTargetPosition(ticks);
+
+        //Set power of all motors
+        Motor_FL.setPower(power);
+        Motor_FR.setPower(power);
+        Motor_BR.setPower(power);
+        Motor_BL.setPower(power);
+
+        //Set Motors to RUN_TO_POSITION
+        Motor_FL.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        Motor_FR.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        Motor_BR.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        Motor_BL.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+        while (Motor_FL.isBusy() && Motor_BL.isBusy() && Motor_FR.isBusy() && Motor_BR.isBusy()) {
+            if ((System.currentTimeMillis() - startTime) > 3000) {
+                break;
+            }
+            if (DEBUG_DEBUG) {
+                Log.i(TAG, "Actual Ticks Motor0 : " + Motor_FL.getCurrentPosition());
+                Log.i(TAG, "Actual Ticks Motor1 : " + Motor_FR.getCurrentPosition());
+                Log.i(TAG, "Actual Ticks Motor2 : " + Motor_BR.getCurrentPosition());
+                Log.i(TAG, "Actual Ticks Motor3 : " + Motor_BL.getCurrentPosition());
+            }
+            //Waiting for Robot to travel the distance
+            telemetry.addData("Right", "Moving");
+            telemetry.update();
+        }
+
+
+        //Reached the distance, so stop the motors
+        Motor_FL.setPower(0);
+        Motor_FR.setPower(0);
+        Motor_BR.setPower(0);
+        Motor_BL.setPower(0);
+
+        if (DEBUG_INFO) {
+            Log.i(TAG, "TICKS needed : " + ticks);
+            Log.i(TAG, "Actual Ticks Motor0 : " + Motor_FL.getCurrentPosition());
+            Log.i(TAG, "Actual Ticks Motor1 : " + Motor_FR.getCurrentPosition());
+            Log.i(TAG, "Actual Ticks Motor2 : " + Motor_BR.getCurrentPosition());
+            Log.i(TAG, "Actual Ticks Motor3 : " + Motor_BL.getCurrentPosition());
+            Log.i(TAG, "Exit Function: moveRightToPosition");
+        }
+    }
+
 }
+
 
