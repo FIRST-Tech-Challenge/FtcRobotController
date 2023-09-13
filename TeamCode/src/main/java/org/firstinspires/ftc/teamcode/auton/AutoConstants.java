@@ -61,10 +61,12 @@ public class AutoConstants {
 //    public static final Pose2d L_START = new Pose2d(START_X, START_Y, START_HEADING);
     public static final Vector2d L_STACK = new Vector2d(L_STACK_X, L_STACK_Y);
 
-    public static final Pose2d L_SCORE_POSE = new Pose2d(10.0, 0.0, 0.0);
+    public static final Pose2d L_SCORE_POSE = new Pose2d(10.0, 0.0, 45.0);
 //    public static final Pose2d L_SCORE_POSE = new Pose2d(L_SCORE_X, L_SCORE_Y, L_SCORE_HEADING);
-    public static final Vector2d L_SCORE_VECTOR = new Vector2d(20.0, 0.0);
+    public static final Vector2d L_SCORE_VECTOR = new Vector2d(20.0, 90.0);
 //    public static final Vector2d L_SCORE_VECTOR = new Vector2d(L_SCORE_X, L_SCORE_Y);
+    public static final Pose2d L_PARK_LEFT = new Pose2d(0.0, 0.0, 0.0);
+//    public static final Pose2d L_PARK_LEFT = new Pose2d(LPL_X, PARK_Y, PARK_HEADING);
 
     public static final Pose2d L_SCORE_MID_POSE = new Pose2d(L_SCORE_MID_X + .55, L_SCORE_Y, L_SCORE_HEADING);
     public static final Vector2d L_SCORE_MID_VECTOR = new Vector2d(L_SCORE_MID_X, L_SCORE_Y);
@@ -91,8 +93,6 @@ public class AutoConstants {
     public static final Pose2d R_SCORE_MID_POSE = new Pose2d(R_SCORE_MID_X - .2, R_SCORE_Y, R_SCORE_HEADING);
     public static final Vector2d R_SCORE_MID_VECTOR = new Vector2d(R_SCORE_MID_X, R_SCORE_Y);
 
-    public static final Pose2d L_PARK_LEFT = new Pose2d(30.0, 0.0, 0.0);
-//    public static final Pose2d L_PARK_LEFT = new Pose2d(LPL_X, PARK_Y, PARK_HEADING);
     public static final Pose2d L_PARK_MIDDLE = new Pose2d(LPM_X, PARK_Y, PARK_HEADING);
     public static final Pose2d L_PARK_RIGHT = new Pose2d(LPR_X, PARK_Y, PARK_HEADING);
     public static final Pose2d R_PARK_LEFT = new Pose2d(RPL_X, PARK_Y + 3, RIGHT_PARK_HEADING);

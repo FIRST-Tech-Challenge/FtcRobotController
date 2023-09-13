@@ -59,14 +59,13 @@ public class CommonAuto extends LinearOpMode {
                 })
                 .lineToLinearHeading(AutoConstants.L_PARK_LEFT)
                 .waitSeconds(1.5)
-                .back(15.0)
                 .build();
 
-
-        telemetry.setMsTransmissionInterval(50);
+//        dashboardTelemetry.setMsTransmissionInterval(50);//Default value: 250
 
         while (!isStarted() && !isStopRequested()) {
             dashboardTelemetry.addLine("Robot is (!isStarted() && !isStopRequested())");
+            dashboardTelemetry.addData("minT", dashboardTelemetry.getMsTransmissionInterval());
             dashboardTelemetry.update();
             sleep(20);
         }

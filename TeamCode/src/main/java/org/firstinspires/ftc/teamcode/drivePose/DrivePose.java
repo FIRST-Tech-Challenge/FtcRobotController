@@ -22,9 +22,9 @@ public class DrivePose extends SubsystemBase {
     public void driveJoy(Gamepad gamepad) {
         drive.setWeightedDrivePower(
                 new Pose2d(
-                        -gamepad.left_stick_y * .3,
-                        -gamepad.left_stick_x * .3,
-                        -gamepad.right_stick_x * .3
+                        -gamepad.left_stick_y * .6,
+                        gamepad.left_stick_x * .6,
+                        -gamepad.right_stick_x * .6
 //                        -gamepad.left_stick_y,
 //                        -gamepad.left_stick_x,
 //                        -gamepad.right_stick_x

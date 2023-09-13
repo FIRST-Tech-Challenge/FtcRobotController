@@ -46,8 +46,8 @@ import static org.firstinspires.ftc.teamcode.drivePose.DriveConstants.kStatic;
 import static org.firstinspires.ftc.teamcode.drivePose.DriveConstants.kV;
 
 public class SampleMecanumFaster extends MecanumDrive {
-    public static PIDCoefficients TRANSLATIONAL_PID = new PIDCoefficients(9.5, 0, 0);
-    public static PIDCoefficients HEADING_PID = new PIDCoefficients(8, 0, 0);
+    public static PIDCoefficients TRANSLATIONAL_PID = new PIDCoefficients(6.5, 0, 0);
+    public static PIDCoefficients HEADING_PID = new PIDCoefficients(5, 0, 0);
 
     public static double LATERAL_MULTIPLIER = 1;
 
@@ -116,10 +116,10 @@ public class SampleMecanumFaster extends MecanumDrive {
 //        leftRear = hardwareMap.get(DcMotorEx.class, "leftRear");
 //        rightRear = hardwareMap.get(DcMotorEx.class, "rightFront");
 //        rightFront = hardwareMap.get(DcMotorEx.class, "rightRear");
-        leftFront = hardwareMap.get(DcMotorEx.class, "motorTest1");
-        leftRear = hardwareMap.get(DcMotorEx.class, "motorTest0");
-        rightRear = hardwareMap.get(DcMotorEx.class, "motorTest3");
-        rightFront = hardwareMap.get(DcMotorEx.class, "motorTest2");
+        leftFront = hardwareMap.get(DcMotorEx.class, "motorTest0");
+        leftRear = hardwareMap.get(DcMotorEx.class, "motorTest1");
+        rightRear = hardwareMap.get(DcMotorEx.class, "motorTest2");
+        rightFront = hardwareMap.get(DcMotorEx.class, "motorTest3");
 
         motors = Arrays.asList(leftFront, leftRear, rightRear, rightFront);
 
