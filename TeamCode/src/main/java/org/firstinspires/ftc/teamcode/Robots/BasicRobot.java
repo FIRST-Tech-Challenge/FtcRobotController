@@ -44,6 +44,7 @@ public class BasicRobot{
         time = op.getRuntime();
         dashboard.sendTelemetryPacket(packet);
         packet = new TelemetryPacket();
+        packet.clearLines();
     }
     public void resetQueuer() {
         queuer.reset();
