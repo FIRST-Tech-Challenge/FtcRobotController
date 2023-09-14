@@ -31,6 +31,8 @@ package org.firstinspires.ftc.teamcode.Drivercontrol;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.DcMotor;
+
 
 /**
  * This file contains an minimal example of a Linear "OpMode". An OpMode is a 'program' that runs in either
@@ -50,7 +52,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 public class mainteleOp extends LinearOpMode {
     //RevColorSensorV3 dc;
     // Declare OpMode members.
-
+ DcMotor leftMotor;
 
 
     @Override
