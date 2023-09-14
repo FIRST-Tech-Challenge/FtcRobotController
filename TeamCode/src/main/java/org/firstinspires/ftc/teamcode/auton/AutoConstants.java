@@ -61,9 +61,9 @@ public class AutoConstants {
 //    public static final Pose2d L_START = new Pose2d(START_X, START_Y, START_HEADING);
     public static final Vector2d L_STACK = new Vector2d(L_STACK_X, L_STACK_Y);
 
-    public static final Pose2d L_SCORE_POSE = new Pose2d(10.0, 0.0, 45.0);
+    public static final Pose2d L_SCORE_POSE = new Pose2d(10.0, 0.0, 0.0);
 //    public static final Pose2d L_SCORE_POSE = new Pose2d(L_SCORE_X, L_SCORE_Y, L_SCORE_HEADING);
-    public static final Vector2d L_SCORE_VECTOR = new Vector2d(20.0, 90.0);
+    public static final Vector2d L_SCORE_VECTOR = new Vector2d(20.0, 0.0);
 //    public static final Vector2d L_SCORE_VECTOR = new Vector2d(L_SCORE_X, L_SCORE_Y);
     public static final Pose2d L_PARK_LEFT = new Pose2d(0.0, 0.0, 0.0);
 //    public static final Pose2d L_PARK_LEFT = new Pose2d(LPL_X, PARK_Y, PARK_HEADING);

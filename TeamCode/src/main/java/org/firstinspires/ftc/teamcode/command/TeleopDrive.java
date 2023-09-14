@@ -27,7 +27,7 @@ public class TeleopDrive  extends CommandBase {
 //        mDrive.mecanumCentricDrive(mGamepad.left_stick_x * driveKp
 //                                 , mGamepad.left_stick_y * driveKp
 //                                 , mGamepad.right_stick_x * driveKp, false);
-        mDrive.driveJoy(mGamepad);
+        mDrive.driveJoy(-mGamepad.left_stick_y, mGamepad.left_stick_x, mGamepad.right_stick_x);
     }
 
     @Override

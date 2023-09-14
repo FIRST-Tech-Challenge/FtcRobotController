@@ -49,7 +49,17 @@ public class MyCamera extends SubsystemBase {
             Thread.currentThread().interrupt();
         }
     }
-    public void runDoubleVision(Gamepad gamepad) {
+
+    @Override
+    public void periodic() {
+//        runDoubleVision();
+//        telemetry.addData("Info0", getAprilTagData()[0][0]);
+//        telemetry.addData("Info1", getAprilTagData()[0][1]);
+//        telemetry.addData("Info2", getAprilTagData()[0][2]);
+//        telemetry.addData("Info3", getAprilTagData()[0][3]);
+    }
+
+    public void runDoubleVision() {
         if (myVisionPortal.getProcessorEnabled(aprilTag)) {
             telemetry.addLine("Dpad Left to disable AprilTag");
             telemetryAprilTag();
@@ -62,17 +72,18 @@ public class MyCamera extends SubsystemBase {
         } else {
             telemetry.addLine("Dpad Up to enable TFOD");
         }
+        telemetry.update();
 
-        if (gamepad.dpad_left) {
-            myVisionPortal.setProcessorEnabled(aprilTag, false);
-        } else if (gamepad.dpad_right) {
-            myVisionPortal.setProcessorEnabled(aprilTag, true);
-        }
-        if (gamepad.dpad_down) {
-            myVisionPortal.setProcessorEnabled(tfod, false);
-        } else if (gamepad.dpad_up) {
-            myVisionPortal.setProcessorEnabled(tfod, true);
-        }
+//        if (gamepad.dpad_left) {
+//            myVisionPortal.setProcessorEnabled(aprilTag, false);
+//        } else if (gamepad.dpad_right) {
+//            myVisionPortal.setProcessorEnabled(aprilTag, true);
+//        }
+//        if (gamepad.dpad_down) {
+//            myVisionPortal.setProcessorEnabled(tfod, false);
+//        } else if (gamepad.dpad_up) {
+//            myVisionPortal.setProcessorEnabled(tfod, true);
+//        }
 
         try {
             Thread.sleep(20); // Share the CPU.
@@ -115,7 +126,7 @@ public class MyCamera extends SubsystemBase {
             myVisionPortal = new VisionPortal.Builder()
                     .setCamera(hardwareMap.get(WebcamName.class, "Webcam 1"))
                     .addProcessors(tfod, aprilTag)
-                    .enableCameraMonitoring(true)
+                    .enableLiveView(true)
                     .setStreamFormat(VisionPortal.StreamFormat.YUY2)
                     .setAutoStopLiveView(false)
                     .build();
@@ -157,7 +168,7 @@ public class MyCamera extends SubsystemBase {
         // Choose a camera resolution. Not all cameras support all resolutions.
         builder.setCameraResolution(new Size(640, 480));
         // Enable the RC preview (LiveView).  Set "false" to omit camera monitoring.
-        builder.enableCameraMonitoring(true);
+        builder.enableLiveView(true);
         // Set the stream format; MJPEG uses less bandwidth than default YUY2.
         builder.setStreamFormat(VisionPortal.StreamFormat.YUY2);
         // Choose whether or not LiveView stops if no processors are enabled.
@@ -172,15 +183,19 @@ public class MyCamera extends SubsystemBase {
         visionPortal.setProcessorEnabled(aprilTag, true);
     }
 
+    public List<AprilTagDetection> currentDetections() {
+        return aprilTag.getDetections();
+    }
+
     /**
      * Function to add telemetry about AprilTag detections.
      */
     @SuppressLint("DefaultLocale")
     private void telemetryAprilTag() {
-        List<AprilTagDetection> currentDetections = aprilTag.getDetections();
-        telemetry.addData("# AprilTags Detected", currentDetections.size());
+//        List<AprilTagDetection> currentDetections = aprilTag.getDetections();
+        telemetry.addData("# AprilTags Detected", currentDetections().size());
         // Step through the list of detections and display info for each one.
-        for (AprilTagDetection detection : currentDetections) {
+        for (AprilTagDetection detection : currentDetections()) {
             if (detection.metadata != null) {
                 telemetry.addLine(String.format("==== (ID %d) %s", detection.id, detection.metadata.name));
                 telemetry.addLine(String.format("XYZ %6.1f %6.1f %6.1f  (inch)", detection.ftcPose.x, detection.ftcPose.y, detection.ftcPose.z));
@@ -190,12 +205,28 @@ public class MyCamera extends SubsystemBase {
                 telemetry.addLine(String.format("==== (ID %d) Unknown", detection.id));
                 telemetry.addLine(String.format("Center %6.0f %6.0f   (pixels)", detection.center.x, detection.center.y));
             }
-        }   // end for() loop
+        }
         // Add "key" information to telemetry
 //        telemetry.addLine("key:\nXYZ = X (Right), Y (Forward), Z (Up) dist.");
 //        telemetry.addLine("PRY = Pitch, Roll & Yaw (XYZ Rotation)");
 //        telemetry.addLine("RBE = Range, Bearing & Elevation");
     }
+
+    public double[][] getAprilTagData() {
+        double[][] info = new double[3][4];
+        if (currentDetections()!=null) {
+            for (int i = 0; i < currentDetections().size(); i++) {
+                info[i][0] = currentDetections().get(i).id;//april tag id
+                if (currentDetections().get(i).ftcPose != null) {
+                    info[i][1] = currentDetections().get(i).ftcPose.y;//forward-backward
+                    info[i][2] = currentDetections().get(i).ftcPose.x;//left-right
+                    info[i][3] = currentDetections().get(i).ftcPose.roll;//rotate
+                }
+            }
+        }
+        return info;
+    }
+
     private void telemetryTfod() {
         List<Recognition> currentRecognitions = tfod.getRecognitions();
         telemetry.addData("#TFOD Detected", currentRecognitions.size());

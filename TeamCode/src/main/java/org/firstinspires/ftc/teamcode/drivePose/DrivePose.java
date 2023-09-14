@@ -19,15 +19,12 @@ public class DrivePose extends SubsystemBase {
         drive.setLocalizer(new StandardTrackingWheelLocalizer(hardwareMap));//reset pose
     }
 
-    public void driveJoy(Gamepad gamepad) {
+    public void driveJoy(double left_stick_y, double left_stick_x, double right_stick_x) {
         drive.setWeightedDrivePower(
                 new Pose2d(
-                        -gamepad.left_stick_y * .6,
-                        gamepad.left_stick_x * .6,
-                        -gamepad.right_stick_x * .6
-//                        -gamepad.left_stick_y,
-//                        -gamepad.left_stick_x,
-//                        -gamepad.right_stick_x
+                        left_stick_y * .6,
+                        left_stick_x * .6,
+                        -right_stick_x * .6
                 )
         );
         drive.update();

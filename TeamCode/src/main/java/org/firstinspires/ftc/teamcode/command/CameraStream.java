@@ -16,6 +16,6 @@ public class CameraStream extends CommandBase {
     @Override
     public void execute() {
 //        myCamera.runAprilVision(gamepad);
-        myCamera.runDoubleVision(gamepad);
+        myCamera.runDoubleVision();
     }
 }

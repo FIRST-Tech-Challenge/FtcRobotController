@@ -10,6 +10,7 @@ import com.arcrobotics.ftclib.gamepad.GamepadKeys;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.teamcode.command.AlignAprilTag;
 import org.firstinspires.ftc.teamcode.command.CameraStream;
 import org.firstinspires.ftc.teamcode.command.FlyWheel;
 import org.firstinspires.ftc.teamcode.command.MovePosition;
@@ -29,7 +30,7 @@ public class MyTeleOp extends CommandOpMode {
 
         TestMotor shooter = new TestMotor(hardwareMap, dashboardTelemetry);
         MyCamera myCamera = new MyCamera(hardwareMap, dashboardTelemetry);
-        schedule(new CameraStream(myCamera, gamepad1));
+//        schedule(new CameraStream(myCamera, gamepad1));
 
         Button a = new GamepadButton(new GamepadEx(gamepad1), GamepadKeys.Button.A);
         a.whileHeld(new FlyWheel(shooter, 500.0));
@@ -40,6 +41,11 @@ public class MyTeleOp extends CommandOpMode {
         x.whenPressed(new MovePosition(shooter,100));
         Button y = new GamepadButton(new GamepadEx(gamepad1), GamepadKeys.Button.Y);
         y.whenPressed(new MovePosition(shooter,800));
+
+        Button lb = new GamepadButton(new GamepadEx(gamepad1), GamepadKeys.Button.LEFT_BUMPER);
+        lb.whenPressed(new AlignAprilTag(dashboardTelemetry, gamepad1, drive, myCamera, 10.0, 13.216, -0.3125, -0.34));
+        Button rb = new GamepadButton(new GamepadEx(gamepad1), GamepadKeys.Button.RIGHT_BUMPER);
+        rb.whenPressed(new AlignAprilTag(dashboardTelemetry, gamepad1, drive, myCamera, 10.0, 20.0, 0.0, 0.0));
 
     }
 }
