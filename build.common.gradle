@@ -121,5 +121,7 @@ android {
 }
 
 repositories {
+    jcenter()
 }
+
 

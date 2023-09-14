@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
@@ -13,6 +14,22 @@ public class Hardware
     public DcMotorEx backLeft;
     public DcMotorEx backRight;
 
+    //helper class variables
+    public double x = 0, y = 0, theta = 0;
+    public static LinearOpMode currentOpMode;
+
+    public DcMotorEx leftOdom, rightOdom, centerOdom;
+
+    // Real world distance traveled by the wheels
+    public double leftOdomTraveled, rightOdomTraveled, centerOdomTraveled;
+
+    // Odometry encoder positions
+    public int leftEncoderPos, centerEncoderPos, rightEncoderPos;
+
+    //used in our odo but not RoadRunner classes
+    public static final double ODOM_TICKS_PER_IN = 1831.471685;
+    public static double trackwidth = 10.976;
+
     public Hardware(HardwareMap hardwareMap)
     {
         //drive motor initialization
@@ -21,6 +38,10 @@ public class Hardware
         backLeft = hardwareMap.get(DcMotorEx.class, "Back Left");
         backRight = hardwareMap.get(DcMotorEx.class, "Back Right");
 
+        //odom
+        leftOdom = hardwareMap.get(DcMotorEx.class, "Front Left");
+        rightOdom = hardwareMap.get(DcMotorEx.class, "Front Right");
+        centerOdom = hardwareMap.get(DcMotorEx.class, "Back Right");
     }
 
     //robot-oriented drive method
