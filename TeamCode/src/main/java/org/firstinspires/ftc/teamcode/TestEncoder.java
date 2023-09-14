@@ -90,6 +90,10 @@ public class TestEncoder extends LinearOpMode {
         sleep(1000);
         robot.moveRightToPosition(0.4, 24);
         sleep(1000);
+        robot.rotateAntiClock(90, 0.4);
+        sleep(1000);
+       // robot.rotateRight(90, 0.4);
+        robot.rotateAntiClock(-90, 0.4);
         telemetry.addData("Path", "Complete");
         telemetry.update();
         sleep(1000);
