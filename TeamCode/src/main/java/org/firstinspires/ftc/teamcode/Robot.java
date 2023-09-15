@@ -20,6 +20,7 @@ public class Robot {
     DcMotor rFront;
     DcMotor lBack;
     DcMotor rBack;
+    DcMotor arm;
     IMU imu;
 
     double yaw;
@@ -28,11 +29,12 @@ public class Robot {
     long millis = System.currentTimeMillis();
     long lastCheckMillis = System.currentTimeMillis();
 
+    //CONSTRUCTOR
     public Robot(HardwareMap hardwareMap, LinearOpMode opMode, Telemetry telemetry) {
         this.hardwareMap = hardwareMap;
         this.opMode = opMode;
         this.telemetry = telemetry;
-        setUpMotors();
+        setUpDrivetrainMotors();
         setUpImu();
     }
 
@@ -59,7 +61,70 @@ public class Robot {
         this.lBack.setPower(lBack);
         this.rBack.setPower(rBack);
     }
-    public void setUpMotors() {
+    public void setUpArmMotor() {
+        arm = hardwareMap.dcMotor.get("arm");
+
+        arm.setDirection(DcMotorSimple.Direction.FORWARD);
+
+        arm.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
+        arm.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        arm.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+    }
+
+    public double calculateArmPower(int targetAngleInDegrees) {
+
+        final double P_VALUE = 0.002;
+
+        double remainingDistance = getRemainingTicks(targetAngleInDegrees);
+        if (remainingDistance < 10){
+            return 0;
+        }
+        double proportionalPower = P_VALUE*remainingDistance;
+        telemetry.addLine(String.valueOf(proportionalPower));
+        return proportionalPower;
+
+    }
+    public void setArmPower(double armPower) {
+        arm.setPower(armPower);
+    }
+
+    public boolean checkArmPos(int targetAngleInDegrees) {
+        double newTicks = arm.getCurrentPosition();
+
+        boolean isStopped = false;
+        boolean doneArm = false;
+        double remainingDistance = getRemainingTicks(targetAngleInDegrees);
+
+        telemetry.addLine("remaining distance"+remainingDistance);
+        telemetry.addLine("current pos"+arm.getCurrentPosition());
+
+        /*telemetry.addLine("isStopped:"+isStopped);
+        telemetry.addLine("oldTick:"+oldTick);
+        telemetry.addLine("newTicks"+newTicks);
+        telemetry.addLine("millis:"+millis);
+        telemetry.addLine("lastCheckMillis"+lastCheckMillis);*/
+        if (millis > lastCheckMillis + 250) {
+            lastCheckMillis = millis;
+            newTicks = arm.getCurrentPosition();
+            telemetry.addLine("inside");
+
+            if (oldTick == newTicks) {
+                isStopped = true;
+                telemetry.addLine("inside if 2");
+            }
+            oldTick = newTicks;
+
+
+        }
+        if (remainingDistance < 10 && isStopped) {
+            setArmPower(0);
+            doneArm = true;
+        }
+        telemetry.update();
+        return doneArm;
+    }
+    public void setUpDrivetrainMotors() {
         lFront = hardwareMap.dcMotor.get("Left front");
         rFront = hardwareMap.dcMotor.get("Right front");
         lBack = hardwareMap.dcMotor.get("Left back");
@@ -297,6 +362,18 @@ public class Robot {
         return targetPos;
     }
 
+    public double convertDegreesToTicks(double targetDistanceInDegrees) {
+
+        //537.7, ticks per motor revolution
+        //1.4, gear ratio
+        //converting mm to ticks
+        final double Degrees_TO_TICKS = 537.7 / 25;
+
+        double targetPos = targetDistanceInDegrees * Degrees_TO_TICKS;
+
+        return targetPos;
+    }
+
     public double computeDrivetrainPower(double targetDistanceInMM) {
         final double P_VALUE = 0.002;
 
@@ -318,9 +395,17 @@ public class Robot {
         return remainingDistance;
     }
 
+    public double getRemainingTicksForArm(double targetDistanceInDegrees) {
+        double targetDistanceInTicks = convertDegreesToTicks(targetDistanceInDegrees);
+        double remainingDistance = targetDistanceInTicks - lFront.getCurrentPosition();
+        telemetry.addLine("target"+targetDistanceInTicks);
+        telemetry.addLine("remaining distance 1    "+remainingDistance);
+
+        return remainingDistance;
+    }
 
 
-    public boolean checkReachedDistance(double targetDistanceInMM, boolean servoPosition) {
+    public boolean checkReachedDistance(double targetDistanceInMM) {
         double newTicks = lFront.getCurrentPosition();
 
         boolean isStopped = false;
