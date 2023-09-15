@@ -11,11 +11,10 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.command.AlignAprilTag;
-import org.firstinspires.ftc.teamcode.command.CameraStream;
 import org.firstinspires.ftc.teamcode.command.FlyWheel;
 import org.firstinspires.ftc.teamcode.command.MovePosition;
 import org.firstinspires.ftc.teamcode.command.TeleopDrive;
-import org.firstinspires.ftc.teamcode.drivePose.DrivePose;
+import org.firstinspires.ftc.teamcode.drive.DrivePose;
 import org.firstinspires.ftc.teamcode.subsystem.MyCamera;
 import org.firstinspires.ftc.teamcode.subsystem.TestMotor;
 

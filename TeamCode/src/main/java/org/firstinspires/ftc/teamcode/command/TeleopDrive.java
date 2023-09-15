@@ -3,7 +3,7 @@ package org.firstinspires.ftc.teamcode.command;
 import com.arcrobotics.ftclib.command.CommandBase;
 import com.qualcomm.robotcore.hardware.Gamepad;
 
-import org.firstinspires.ftc.teamcode.drivePose.DrivePose;
+import org.firstinspires.ftc.teamcode.drive.DrivePose;
 
 public class TeleopDrive  extends CommandBase {
 

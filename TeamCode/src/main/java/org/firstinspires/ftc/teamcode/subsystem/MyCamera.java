@@ -212,6 +212,26 @@ public class MyCamera extends SubsystemBase {
 //        telemetry.addLine("RBE = Range, Bearing & Elevation");
     }
 
+    public double[] getAprilTagIDData(int id) {
+        double[] info = new double[4];
+        if (currentDetections()!=null) {
+            for (int i = 0; i < currentDetections().size(); i++) {
+                if (currentDetections().get(i) != null) {
+                    if (id == currentDetections().get(i).id) {
+                        info[0] = id;
+                        if (currentDetections().get(i).ftcPose != null) {
+                            info[1] = currentDetections().get(i).ftcPose.y;//forward-backward
+                            info[2] = currentDetections().get(i).ftcPose.x;//left-right
+                            info[3] = currentDetections().get(i).ftcPose.roll;//rotate
+                        }
+                        break;
+                    }
+                }
+            }
+        }
+        return info;
+    }
+
     public double[][] getAprilTagData() {
         double[][] info = new double[3][4];
         if (currentDetections()!=null) {

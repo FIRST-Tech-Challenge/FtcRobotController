@@ -1,13 +1,12 @@
 package org.firstinspires.ftc.teamcode.command;
 
-import com.acmerobotics.roadrunner.util.MathUtil;
 import com.arcrobotics.ftclib.command.CommandBase;
 import com.arcrobotics.ftclib.util.MathUtils;
 import com.qualcomm.robotcore.hardware.Gamepad;
-
 import org.firstinspires.ftc.robotcore.external.Telemetry;
-import org.firstinspires.ftc.teamcode.drivePose.DrivePose;
+import org.firstinspires.ftc.teamcode.drive.DrivePose;
 import org.firstinspires.ftc.teamcode.subsystem.MyCamera;
+import org.firstinspires.ftc.teamcode.util.RollingAverage;
 
 public class AlignAprilTag extends CommandBase {
     private Gamepad gamepad;
@@ -16,9 +15,11 @@ public class AlignAprilTag extends CommandBase {
     private double[] tag = new double[4];
     private double translation, strafe, rotation;
     private double id, translationVal, strafeVal, rotationVal;
-    private double translationError, strafeError, rotationError;
-    private boolean hasTarget, isHasTarget, tolerance;
-    private int no;
+    private double lastX, lastY;
+    private boolean  isHasTarget, tolerance, standStill;
+    private int invalidNo, runNo;
+    private RollingAverage rollAverX = new RollingAverage(5);
+    private RollingAverage rollAverY = new RollingAverage(5);
     private Telemetry telemetry;
 
     public AlignAprilTag(Telemetry telemetry, Gamepad gamepad, DrivePose drive, MyCamera myCamera, double id, double strafe, double translation, double rotation) {
@@ -35,20 +36,22 @@ public class AlignAprilTag extends CommandBase {
 
     @Override
     public void initialize() {
+        runNo = 0;
+        standStill = false;
+        isHasTarget = true;
+        tolerance = false;
     }
 
     @Override
     public void execute() {
-        isHasTarget = false;
-        for (int i = 0; i < myCamera.getAprilTagData().length; i++) {
-            if (myCamera.getAprilTagData()[i][0] == id) {
-                tag = myCamera.getAprilTagData()[i];
-                isHasTarget = true;
-                break;
-            }
+        tag = myCamera.getAprilTagIDData(10);
+        if (tag[0] == 10) {
+            isHasTarget = true;
+        } else {
+            isHasTarget = false;
         }
         if (isHasTarget) {
-            no = 0;
+            invalidNo = 0;
             //move forward and backward
             if (tag[1] - strafe < 30.0) {
                 strafeVal = MathUtils.clamp((tag[1] - strafe) * 0.1, -0.4, 0.4);
@@ -71,18 +74,32 @@ public class AlignAprilTag extends CommandBase {
                     rotationVal); //rotate left and right
             tolerance = (Math.abs(strafeVal) < 0.03) && (Math.abs(translationVal) < 0.055) && (Math.abs(rotationVal) < 0.02);
 
-            telemetry.addData("Error1", strafeVal);
-            telemetry.addData("Error2", translationVal);
-            telemetry.addData("Error3", rotationVal);
+//            telemetry.addData("Error1", strafeVal);
+//            telemetry.addData("Error2", translationVal);
+//            telemetry.addData("Error3", rotationVal);
+            rollAverX.add(drive.getMyPose()[0]);
+            rollAverY.add(drive.getMyPose()[1]);
+//            telemetry.addData("ErrorX", Math.abs(rollAverX.getAverage() - lastX));
+//            telemetry.addData("ErrorY", Math.abs(rollAverY.getAverage() - lastY));
+            runNo++;
+            if (runNo%10==0) {
+                runNo = 0;
+                if ((Math.abs(strafeVal) < 0.09) && (Math.abs(translationVal) < 0.15) && (Math.abs(rotationVal) < 0.06)) {
+                    if (Math.abs(rollAverX.getAverage() - lastX)<0.03&&Math.abs(rollAverY.getAverage() - lastY)<0.03) {
+                         standStill= true;
+                    }
+                }
+                lastX = rollAverX.getAverage();
+                lastY = rollAverY.getAverage();
+            }
         } else {
             drive.driveJoy(0.0, 0.0, 0.0);
-            no++;
+            invalidNo++;
         }
 //        telemetry.addData("info0", tag[0]);
 //        telemetry.addData("info1", tag[1]);
 //        telemetry.addData("info2", tag[2]);
 //        telemetry.addData("info3", tag[3]);
-        telemetry.update();
     }
 
     @Override
@@ -92,6 +109,6 @@ public class AlignAprilTag extends CommandBase {
 
     @Override
     public boolean isFinished() {
-        return (!isHasTarget && no > 20) || gamepad.left_stick_button || tolerance;
+        return (!isHasTarget && invalidNo > 20) || gamepad.left_stick_button || tolerance || standStill;
     }
 }
