@@ -2,12 +2,12 @@ package org.firstinspires.ftc.teamcode.Autonomous
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous
 import org.firstinspires.ftc.teamcode.DriveMethods
-import org.firstinspires.ftc.teamcode.Variables
+import org.firstinspires.ftc.teamcode.Variables.VisionProcessors
 
 @Autonomous(name = "AprilTagTest1", group = "A")
 class AprilTagTest1: DriveMethods() {
     override fun runOpMode() {
-        initVision(Variables.VisionProcessors.APRILTAG)
+        initVision(VisionProcessors.APRILTAG)
 
         telemetry.addLine("Initialized AprilTag")
         telemetry.update()
