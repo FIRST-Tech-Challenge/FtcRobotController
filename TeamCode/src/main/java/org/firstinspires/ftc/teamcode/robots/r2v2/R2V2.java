@@ -69,7 +69,7 @@ public class R2V2 extends OpMode {
     ControlMode mode = ControlMode.CALIBRATE;
     @Override
     public void init() {
-        mode = ControlMode.FOLLOW_CONE;//when testing vision pipeline
+        mode = ControlMode.CALIBRATE;//when testing vision pipeline
         boolean initialized = initMotors();
         dashboard = FtcDashboard.getInstance();
         //telemetry = dashboard.getTelemetry();
@@ -165,6 +165,15 @@ public class R2V2 extends OpMode {
         }
         else if(mode.equals(ControlMode.FOLLOW_CONE))
         {
+            if (gamepad1.b || gamepad2.b) {
+                steering.setMotorEnable();
+                counterBrake.setMotorDisable();
+                accelerator.setMotorDisable();
+                stop();
+            }
+            //default actions
+            steering.setPower(1);
+
             coneVision = (R2V2ConeDetectorProvider) visionProvider;
             coneVision.update();
 
@@ -196,7 +205,7 @@ public class R2V2 extends OpMode {
             //send the camera angle as a steering wheel correction
             //map the range of the tracking camera servo to the range of the target steering ticks
             //todo - we should change this to relating angles instead of target positions
-            steeringTarget = (int)map(cameraServoTarget, .25, .75, maxLeftSteeringTicks, maxRightSteeringTicks);
+            steeringTarget = (int)map(-cameraServoTarget, .25, .75, maxLeftSteeringTicks, maxRightSteeringTicks);
 
 
             //if the vision target is too large (experimentally determine), then apply the brake automatically
@@ -268,6 +277,7 @@ public class R2V2 extends OpMode {
 
         if(steeringCalibrated && !calibrateFailed) {
             telemetry.addData("Steering Location:\t", steering.getCurrentPosition());
+            telemetry.addData("Steering Target:\t", steering.getTargetPosition());
             telemetry.addData("Steering Amperage:\t", steering.getCurrent(CurrentUnit.AMPS));
             telemetry.addData("CounterBrake Location:\t", counterBrake.getCurrentPosition());
             telemetry.addData("CounterBrake Amperage:\t", counterBrake.getCurrent(CurrentUnit.AMPS));
@@ -289,6 +299,7 @@ public class R2V2 extends OpMode {
             telemetry.addData("CALIBRATION FAILED - CHECK HARDWARE", "");
         } else {
             telemetry.addData("Steering Location:\t", steering.getCurrentPosition());
+            telemetry.addData("Steering Target:\t", steering.getTargetPosition());
             telemetry.addData("Steering Amps:\t", steering.getCurrent(CurrentUnit.AMPS));
             telemetry.addData("CounterBrake Amps:\t", counterBrake.getCurrent(CurrentUnit.AMPS));
             telemetry.addData("Steering Max Left:\t", maxLeftSteeringTicks);
@@ -391,7 +402,7 @@ public class R2V2 extends OpMode {
                 centerSteeringTicks = maxRightSteeringTicks / 2; //assume center is halfway between left max and right max
                 steering.setTargetPosition(centerSteeringTicks);
                 steering.setMode(DcMotor.RunMode.RUN_TO_POSITION); //switch back to runtoposition to go to center
-                if (steering.getCurrentPosition() == steering.getTargetPosition()) {
+                if (Math.abs(steering.getCurrentPosition() - steering.getTargetPosition()) < 10) {
                     //go to center and set center to 0, keeping left negative and right positive
                     steering.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
                     steering.setTargetPosition(0);
