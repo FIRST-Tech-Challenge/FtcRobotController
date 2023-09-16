@@ -1,7 +1,10 @@
 package org.firstinspires.ftc.teamcode.TANVIII;
 
+import static android.os.SystemClock.sleep;
+
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.hardware.Servo;
 
 import java.util.Objects;
 
@@ -15,6 +18,8 @@ public class Robot {
     DcMotor br;
 
     DcMotor armMotor;
+    Servo leftyServo;
+    Servo rightyServo;
 
     public Robot (HardwareMap hardwareMap) {
         this.hwMap = hardwareMap;
@@ -27,6 +32,9 @@ public class Robot {
 
         this.armMotor = hardwareMap.dcMotor.get("a");
 
+        this.leftyServo = hardwareMap.servo.get("1");
+        this.rightyServo = hardwareMap.servo.get("2");
+
         //reset encoder
         fl.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         fl.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
@@ -37,11 +45,8 @@ public class Robot {
         br.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         br.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
-        /*
-        //arm
         armMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        armMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-         */
+        armMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
         //zero pwr behavior (auto)
         fl.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -72,4 +77,31 @@ public class Robot {
             return 0;
         }
     }
+    public void moveArm (int ticks) {
+        armMotor.setTargetPosition(ticks);
+        armMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        armMotor.setPower(0.5);
+        while (armMotor.isBusy()) {
+            sleep(10);
+        }
+    }
+
+    public void setArmPos (boolean goingUp) {
+        if (goingUp) {
+            moveArm(2150);
+        } else {
+            moveArm(-2150);
+        }
+    }
+
+    public void setServoPos (boolean intake) {
+        if (intake) {
+            leftyServo.setPosition(0);
+            rightyServo.setPosition(1);
+        } else {
+            leftyServo.setPosition(1);
+            rightyServo.setPosition(0);
+        }
+    }
+
 }
