@@ -17,7 +17,7 @@ class TFODAutoTest1 : DriveMethods() {
             .build();
 
         // Create the bob the builder to build the VisionPortal
-        var builder: VisionPortal.Builder = VisionPortal.Builder()
+        val builder: VisionPortal.Builder = VisionPortal.Builder()
 
         // Set the camera of the new VisionPortal to the webcam mounted to the robot
         builder.setCamera(hardwareMap.get(WebcamName::class.java, "Webcam 1"))
@@ -40,7 +40,7 @@ class TFODAutoTest1 : DriveMethods() {
         waitForStart()
 
         while (opModeIsActive()) {
-            var recognitions: List<Recognition> = tfod.recognitions
+            val recognitions: List<Recognition> = tfod.recognitions
 
             telemetry.addData("# Objects Detected", recognitions.size)
 
