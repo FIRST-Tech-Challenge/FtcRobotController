@@ -1,11 +1,14 @@
 package org.firstinspires.ftc.teamcode.Autonomous
 
+import com.google.blocks.ftcrobotcontroller.util.CurrentGame.TFOD_MODEL_ASSET
+import com.qualcomm.robotcore.eventloop.opmode.Autonomous
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName
 import org.firstinspires.ftc.robotcore.external.tfod.Recognition
 import org.firstinspires.ftc.teamcode.DriveMethods
 import org.firstinspires.ftc.vision.VisionPortal
 import org.firstinspires.ftc.vision.tfod.TfodProcessor
 
+@Autonomous(name = "TFODAutoTest1", group = "A")
 class TFODAutoTest1 : DriveMethods() {
     private lateinit var visionPortal: VisionPortal;
 
@@ -14,6 +17,7 @@ class TFODAutoTest1 : DriveMethods() {
     fun initTfod() {
         // Initialize the TensorFlow Processor
         tfod = TfodProcessor.Builder()
+            .setModelAssetName(TFOD_MODEL_ASSET)
             .build();
 
         // Create the bob the builder to build the VisionPortal
