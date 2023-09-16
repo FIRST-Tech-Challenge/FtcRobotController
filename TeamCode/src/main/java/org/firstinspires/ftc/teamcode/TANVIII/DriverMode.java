@@ -2,7 +2,6 @@ package org.firstinspires.ftc.teamcode.TANVIII;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
 
 @TeleOp
@@ -26,7 +25,7 @@ public class DriverMode extends LinearOpMode {
         double brpr = -(straightSpeed) - (centerTurnSpeed) + (mecanumSpeed);
 
         //scaling
-        double bigPr = bigAbsVal(flpr, frpr, blpr, brpr);
+        double bigPr = robot.getBigAbsVal(flpr, frpr, blpr, brpr);
 
         if (Math.abs(bigPr) > (powerMult)) {
             double scaleFactor = Math.abs(bigPr);
@@ -65,7 +64,7 @@ public class DriverMode extends LinearOpMode {
 
             driveWithGamepad();
 
-            //moving arm
+            //arm logic
             if (gamepad1.left_bumper && gamepad1.right_bumper) {
                 robot.setArmPower(0);
             } else if (gamepad1.right_bumper) {
@@ -89,15 +88,5 @@ public class DriverMode extends LinearOpMode {
             }
         }
     }
-    private double bigAbsVal(double a, double... others) {
 
-        double max = a;
-
-        for (double next : others) {
-            if (Math.abs(next) > Math.abs(max)) {
-                max = next;
-            }
-        }
-        return max;
-    }
 }

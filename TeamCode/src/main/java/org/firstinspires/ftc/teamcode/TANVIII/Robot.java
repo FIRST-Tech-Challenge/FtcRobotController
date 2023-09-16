@@ -4,7 +4,11 @@ import static android.os.SystemClock.sleep;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.hardware.IMU;
 import com.qualcomm.robotcore.hardware.Servo;
+
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
 
 import java.util.Objects;
 
@@ -104,4 +108,21 @@ public class Robot {
         }
     }
 
+    public double getYawDegrees(IMU imu) {
+        YawPitchRollAngles robotOrientation;
+        robotOrientation = imu.getRobotYawPitchRollAngles();
+        double currentYaw = robotOrientation.getYaw(AngleUnit.DEGREES);
+        return currentYaw;
+    }
+
+    public double getBigAbsVal(double a, double... others) {
+        double max = a;
+
+        for (double next : others) {
+            if (Math.abs(next) > Math.abs(max)) {
+                max = next;
+            }
+        }
+        return max;
+    }
 }
