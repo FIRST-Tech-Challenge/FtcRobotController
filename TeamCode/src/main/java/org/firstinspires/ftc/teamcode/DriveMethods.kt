@@ -21,7 +21,7 @@ open class DriveMethods: LinearOpMode() {
 
     lateinit var visionProcessor: VisionProcessors
 
-    fun initVison(processorType: VisionProcessors) {
+    fun initVision(processorType: VisionProcessors) {
         // Create the bob the builder to build the VisionPortal
         val builder: VisionPortal.Builder = VisionPortal.Builder()
 
@@ -93,7 +93,7 @@ open class DriveMethods: LinearOpMode() {
             }
 
             VisionProcessors.APRILTAG -> {
-                var detectionList: List<AprilTagDetection> = aprilTag.detections
+                val detectionList: List<AprilTagDetection> = aprilTag.detections
 
                 for (detection in detectionList) {
                     if (detection.metadata != null) {
@@ -144,6 +144,4 @@ open class DriveMethods: LinearOpMode() {
             else -> telemetry.addLine("Please Initialize Vision")
         }
     }
-
-
 }

@@ -9,7 +9,7 @@ import org.firstinspires.ftc.teamcode.Variables
 class TFODAutoTest1 : DriveMethods() {
     override fun runOpMode() {
         // Initialize TensorFlow
-        initVison(Variables.VisionProcessors.TFOD)
+        initVision(Variables.VisionProcessors.TFOD)
 
         telemetry.addLine("Initialized")
         telemetry.update()
