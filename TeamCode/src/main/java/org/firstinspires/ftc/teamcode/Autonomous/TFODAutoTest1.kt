@@ -1,45 +1,15 @@
 package org.firstinspires.ftc.teamcode.Autonomous
 
-import com.google.blocks.ftcrobotcontroller.util.CurrentGame.TFOD_MODEL_ASSET
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous
-import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName
 import org.firstinspires.ftc.robotcore.external.tfod.Recognition
 import org.firstinspires.ftc.teamcode.DriveMethods
-import org.firstinspires.ftc.vision.VisionPortal
-import org.firstinspires.ftc.vision.tfod.TfodProcessor
+import org.firstinspires.ftc.teamcode.Variables
 
 @Autonomous(name = "TFODAutoTest1", group = "A")
 class TFODAutoTest1 : DriveMethods() {
-    private lateinit var visionPortal: VisionPortal
-
-    private lateinit var tfod: TfodProcessor
-
-    fun initTfod() {
-        // Initialize the TensorFlow Processor
-        tfod = TfodProcessor.Builder()
-            .setModelAssetName(TFOD_MODEL_ASSET)
-            .build()
-
-        // Create the bob the builder to build the VisionPortal
-        val builder: VisionPortal.Builder = VisionPortal.Builder()
-
-        // Set the camera of the new VisionPortal to the webcam mounted to the robot
-        builder.setCamera(hardwareMap.get(WebcamName::class.java, "Webcam 1"))
-
-        // Enable Live View for debugging purposes
-        builder.enableLiveView(true)
-
-        builder.setAutoStopLiveView(false)
-
-        // Add TensorFlow Processor
-        builder.addProcessor(tfod)
-
-        // Build the VisionPortal and set visionPortal to it
-        visionPortal = builder.build()
-    }
     override fun runOpMode() {
         // Initialize TensorFlow
-        initTfod()
+        initVison(Variables.VisionProcessors.TFOD)
 
         telemetry.addLine("Initialized")
         telemetry.update()

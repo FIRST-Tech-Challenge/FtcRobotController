@@ -9,4 +9,8 @@ public class Variables {
     // Farmers Market Servo Values
     public static double servoRelease = 0.0;
     public static double servoClamp = 0.0;
+
+    public static enum VisionProcessors {
+        TFOD, APRILTAG, BOTH
+    };
 }
