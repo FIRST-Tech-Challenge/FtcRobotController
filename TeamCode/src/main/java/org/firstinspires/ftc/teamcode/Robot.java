@@ -54,7 +54,6 @@ public class Robot {
 
 
     }
-
     public void setMotorPower(double lFront, double rFront, double lBack, double rBack) {
         this.lFront.setPower(lFront);
         this.rFront.setPower(rFront);
@@ -71,12 +70,11 @@ public class Robot {
         arm.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         arm.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
     }
-
     public double calculateArmPower(int targetAngleInDegrees) {
 
-        final double P_VALUE = 0.002;
+        final double P_VALUE = 0.006;
 
-        double remainingDistance = getRemainingTicks(targetAngleInDegrees);
+        double remainingDistance = getRemainingTicksForArm(targetAngleInDegrees);
         if (remainingDistance < 10){
             return 0;
         }
@@ -88,13 +86,12 @@ public class Robot {
     public void setArmPower(double armPower) {
         arm.setPower(armPower);
     }
-
     public boolean checkArmPos(int targetAngleInDegrees) {
         double newTicks = arm.getCurrentPosition();
 
         boolean isStopped = false;
         boolean doneArm = false;
-        double remainingDistance = getRemainingTicks(targetAngleInDegrees);
+        double remainingDistance = getRemainingTicksForDrivetrain(targetAngleInDegrees);
 
         telemetry.addLine("remaining distance"+remainingDistance);
         telemetry.addLine("current pos"+arm.getCurrentPosition());
@@ -144,7 +141,6 @@ public class Robot {
         lFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         lFront.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
     }
-
     public void autoForward(double targetDistanceInMM) throws InterruptedException {
 
 
@@ -245,7 +241,7 @@ public class Robot {
 
     }
 
-
+    //TODO make auto mecanuming parrallel
     public void autoMecanuming(double targetMecanumDistance) {
         final double P_VALUE = 0.004;
 
@@ -322,8 +318,6 @@ public class Robot {
 
 
     }
-
-
     public double calculateImuPower(int degrees) {
 
 
@@ -348,7 +342,6 @@ public class Robot {
         return proportionalPowerForImu;
 
     }
-
     public double convertMMToTicks(double targetDistanceInMM) {
 
         //301 = circumferance mm
@@ -361,23 +354,21 @@ public class Robot {
 
         return targetPos;
     }
-
     public double convertDegreesToTicks(double targetDistanceInDegrees) {
 
         //537.7, ticks per motor revolution
         //1.4, gear ratio
         //converting mm to ticks
-        final double Degrees_TO_TICKS = 537.7 / 25;
+        final double Degrees_TO_TICKS = 537.7 / 15;
 
         double targetPos = targetDistanceInDegrees * Degrees_TO_TICKS;
 
         return targetPos;
     }
-
-    public double computeDrivetrainPower(double targetDistanceInMM) {
+    public double calculateDrivetrainPower(double targetDistanceInMM) {
         final double P_VALUE = 0.002;
 
-        double remainingDistance = getRemainingTicks(targetDistanceInMM);
+        double remainingDistance = getRemainingTicksForDrivetrain(targetDistanceInMM);
         if (remainingDistance < 10){
             return 0;
         }
@@ -385,8 +376,7 @@ public class Robot {
         telemetry.addLine(String.valueOf(proportionalPower));
         return proportionalPower;
     }
-
-    public double getRemainingTicks(double targetDistanceInMM) {
+    public double getRemainingTicksForDrivetrain(double targetDistanceInMM) {
         double targetDistanceInTicks = convertMMToTicks(targetDistanceInMM);
         double remainingDistance = targetDistanceInTicks - lFront.getCurrentPosition();
         telemetry.addLine("target"+targetDistanceInTicks);
@@ -394,23 +384,20 @@ public class Robot {
 
         return remainingDistance;
     }
-
     public double getRemainingTicksForArm(double targetDistanceInDegrees) {
         double targetDistanceInTicks = convertDegreesToTicks(targetDistanceInDegrees);
-        double remainingDistance = targetDistanceInTicks - lFront.getCurrentPosition();
-        telemetry.addLine("target"+targetDistanceInTicks);
+        double remainingDistance = targetDistanceInTicks - arm.getCurrentPosition();
+        telemetry.addLine("target              "+targetDistanceInTicks);
         telemetry.addLine("remaining distance 1    "+remainingDistance);
 
         return remainingDistance;
     }
-
-
     public boolean checkReachedDistance(double targetDistanceInMM) {
         double newTicks = lFront.getCurrentPosition();
 
         boolean isStopped = false;
         boolean done = false;
-        double remainingDistance = getRemainingTicks(targetDistanceInMM);
+        double remainingDistance = getRemainingTicksForDrivetrain(targetDistanceInMM);
 
         telemetry.addLine("reamaining distance"+remainingDistance);
         telemetry.addLine("current pos"+lFront.getCurrentPosition());

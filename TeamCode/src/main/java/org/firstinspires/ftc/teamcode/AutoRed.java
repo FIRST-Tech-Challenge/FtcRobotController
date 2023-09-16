@@ -17,14 +17,24 @@ public class AutoRed extends LinearOpMode {
         robot.setUpArmMotor();
         waitForStart();
 
-
+        double armPower = robot.calculateArmPower(90);
+        double forwardPower = robot.calculateDrivetrainPower(150);
 
         while (opModeIsActive()) {
-            double armPower = robot.calculateArmPower(30);
-            robot.setArmPower(armPower);
+            armPower = robot.calculateArmPower(90);
+            forwardPower = robot.calculateDrivetrainPower(150);
 
-            if (robot.checkArmPos(30)) {
-                break;
+
+            if (!robot.checkReachedDistance(150)) {
+                robot.setMotorPower(forwardPower, forwardPower, forwardPower, forwardPower);
+            } else {
+                robot.setMotorPower(0, 0, 0, 0);
+            }
+
+            if (!robot.checkArmPos(90)) {
+                robot.setArmPower(armPower);
+            } else {
+                robot.setArmPower(0);
             }
 
         }
