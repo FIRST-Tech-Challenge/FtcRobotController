@@ -19,8 +19,8 @@ import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 @Config
 public final class TwoDeadWheelLocalizer implements Localizer {
     public static class Params {
-        public double PAR_Y_TICKS = 0.0;
-        public double PERP_X_TICKS = 0.0;
+        public double parYTicks = 0.0; // y position of the parallel encoder (in tick units)
+        public double perpXTicks = 0.0; // x position of the perpendicular encoder (in tick units)
     }
 
     public static Params PARAMS = new Params();
@@ -61,12 +61,12 @@ public final class TwoDeadWheelLocalizer implements Localizer {
         Twist2dDual<Time> twist = new Twist2dDual<>(
                 new Vector2dDual<>(
                         new DualNum<Time>(new double[] {
-                                parPosDelta - PARAMS.PAR_Y_TICKS * headingDelta,
-                                parPosVel.velocity - PARAMS.PAR_Y_TICKS * headingVel,
+                                parPosDelta - PARAMS.parYTicks * headingDelta,
+                                parPosVel.velocity - PARAMS.parYTicks * headingVel,
                         }).times(inPerTick),
                         new DualNum<Time>(new double[] {
-                                perpPosDelta - PARAMS.PERP_X_TICKS * headingDelta,
-                                perpPosVel.velocity - PARAMS.PERP_X_TICKS * headingVel,
+                                perpPosDelta - PARAMS.perpXTicks * headingDelta,
+                                perpPosVel.velocity - PARAMS.perpXTicks * headingVel,
                         }).times(inPerTick)
                 ),
                 new DualNum<>(new double[] {
