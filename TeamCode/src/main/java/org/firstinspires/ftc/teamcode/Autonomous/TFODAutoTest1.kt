@@ -29,6 +29,8 @@ class TFODAutoTest1 : DriveMethods() {
         // Enable Live View for debugging purposes
         builder.enableLiveView(true)
 
+        builder.setAutoStopLiveView(false)
+
         // Add TensorFlow Processor
         builder.addProcessor(tfod)
 
@@ -64,6 +66,8 @@ class TFODAutoTest1 : DriveMethods() {
             }
 
             telemetry.update()
+
+            sleep(50)
         }
     }
 }
