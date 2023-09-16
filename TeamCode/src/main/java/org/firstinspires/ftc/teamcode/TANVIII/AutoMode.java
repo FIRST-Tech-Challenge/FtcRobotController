@@ -11,7 +11,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
 
 @Autonomous
-public class AutonomousMode extends LinearOpMode {
+public class AutoMode extends LinearOpMode {
 
     Robot robot;
 
@@ -160,7 +160,7 @@ public class AutonomousMode extends LinearOpMode {
 
         YawPitchRollAngles robotOrientation;
         robotOrientation = imu.getRobotYawPitchRollAngles();
-        currentYaw = robotOrientation.getYaw(AngleUnit.DEGREES);
+        currentYaw = robot.getYawDegrees(imu);
 
         if (counterclockwise) {
             endYaw = degrees + currentYaw;
@@ -193,6 +193,13 @@ public class AutonomousMode extends LinearOpMode {
 
         robot.setDrivetrainPower(0, 0, 0, 0);
     }
+
+
+    /*
+    init ONCE
+    get yaw function
+    set based on delta (now, wanted) and kp = 0.15
+     */
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -239,7 +246,7 @@ public class AutonomousMode extends LinearOpMode {
             robot.moveArm(0);
             robot.setServoPos(true);
             sleep(1000);
-            imuTurn(180, false);    
+            imuTurn(180, false);
             encoderStraight(18);
 
             break;
