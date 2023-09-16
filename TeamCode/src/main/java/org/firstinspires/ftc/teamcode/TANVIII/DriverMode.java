@@ -8,7 +8,7 @@ import com.qualcomm.robotcore.hardware.Servo;
 @TeleOp
 public class DriverMode extends LinearOpMode {
     Robot robot;
-    DcMotor armMotor;
+    //DcMotor armMotor;
     Servo leftyServo;
     Servo rightyServo;
 
@@ -37,13 +37,6 @@ public class DriverMode extends LinearOpMode {
 
         }
         robot.setDrivetrainPower(flpr, frpr, blpr, brpr);
-
-        telemetry.addLine(String.valueOf(robot.getEncoderPosition("fl")));
-        telemetry.addLine(String.valueOf(robot.getEncoderPosition("fr")));
-        telemetry.addLine(String.valueOf(robot.getEncoderPosition("bl")));
-        telemetry.addLine(String.valueOf(robot.getEncoderPosition("br")));
-        telemetry.update();
-
     }
 
     @Override
@@ -82,6 +75,9 @@ public class DriverMode extends LinearOpMode {
             } else {
                 robot.setArmPower(0);
             }
+
+            telemetry.addLine(String.valueOf(robot.armMotor.getCurrentPosition()));
+            telemetry.update();
 
             //move servos
             if (gamepad1.a) {

@@ -5,6 +5,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.IMU;
+import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
@@ -21,11 +22,10 @@ public class AutonomousMode extends LinearOpMode {
     DcMotor br;
     IMU imu;
 
-    /*
     DcMotor armMotor;
+
     Servo leftyServo;
     Servo rightyServo;
-    */
 
     //wheel measurements
     final double PPR = 537.7;
@@ -219,13 +219,32 @@ public class AutonomousMode extends LinearOpMode {
         waitForStart();
 
         while (opModeIsActive()) {
-            /*
-            encoderStraight(24);
-            sleep(100);
-            encoderStraight(-24);
-            sleep(100);
-             */
 
+            /*
+            robot.moveArm(2150);
+            sleep(5);
+            double current_pos = robot.armMotor.getCurrentPosition();
+            telemetry.addLine(String.valueOf(current_pos));
+            telemetry.update();
+            break;
+            */
+
+            robot.setArmPos(true);
+            encoderStraight(24);
+            sleep(300);
+            imuTurn(90, false);
+            sleep(300);
+            encoderStraight(18);
+            sleep(5);
+            robot.moveArm(0);
+            robot.setServoPos(true);
+            sleep(1000);
+            imuTurn(180, false);    
+            encoderStraight(18);
+
+            break;
+
+            /*
             imuTurn(90, true);
 
             sleep(5000);
@@ -235,6 +254,7 @@ public class AutonomousMode extends LinearOpMode {
             sleep(5000);
 
             break;
+             */
         }
     }
 }
