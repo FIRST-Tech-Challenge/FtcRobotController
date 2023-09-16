@@ -144,4 +144,8 @@ open class DriveMethods: LinearOpMode() {
             else -> telemetry.addLine("Please Initialize Vision")
         }
     }
+    fun quickPrint(message: String) {
+        telemetry.addLine(message)
+        telemetry.update()
+    }
 }
