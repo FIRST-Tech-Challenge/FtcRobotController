@@ -49,7 +49,7 @@ public class AprilTagTest1 extends LinearOpMode {
                     telemetry.addLine(String.format("Center %6.0f %6.0f   (pixels)", detection.center.x, detection.center.y));
                 }
             }
-            telemetry.addLine("Hello, World!");
+            telemetry.addLine("line");
             telemetry.update();
         }
     }

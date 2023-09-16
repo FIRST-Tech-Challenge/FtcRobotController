@@ -10,15 +10,15 @@ import org.firstinspires.ftc.vision.tfod.TfodProcessor
 
 @Autonomous(name = "TFODAutoTest1", group = "A")
 class TFODAutoTest1 : DriveMethods() {
-    private lateinit var visionPortal: VisionPortal;
+    private lateinit var visionPortal: VisionPortal
 
-    private lateinit var tfod: TfodProcessor;
+    private lateinit var tfod: TfodProcessor
 
     fun initTfod() {
         // Initialize the TensorFlow Processor
         tfod = TfodProcessor.Builder()
             .setModelAssetName(TFOD_MODEL_ASSET)
-            .build();
+            .build()
 
         // Create the bob the builder to build the VisionPortal
         val builder: VisionPortal.Builder = VisionPortal.Builder()
