@@ -17,17 +17,17 @@ public class EthanDrive extends LinearOpMode {
     public void runOpMode() {
         waitForStart();
 
-        DcMotor lFront = hardwareMap.dcMotor.get("Left front");
-        DcMotor rFront = hardwareMap.dcMotor.get("Right front");
-        DcMotor lBack = hardwareMap.dcMotor.get("Left back");
-        DcMotor rBack = hardwareMap.dcMotor.get("Right back");
+        DcMotor lFront = hardwareMap.dcMotor.get("fLeft");
+        DcMotor rFront = hardwareMap.dcMotor.get("fRight");
+        DcMotor lBack = hardwareMap.dcMotor.get("bLeft");
+        DcMotor rBack = hardwareMap.dcMotor.get("bRight");
         DcMotor arm = hardwareMap.dcMotor.get("arm");
 
         Servo lServo = hardwareMap.servo.get("lServo");
         Servo rServo = hardwareMap.servo.get("rServo");
 
 
-        rBack.setDirection(DcMotorSimple.Direction.FORWARD);
+        rBack.setDirection(DcMotorSimple.Direction.REVERSE);
         lBack.setDirection(DcMotorSimple.Direction.REVERSE);
         rFront.setDirection(DcMotorSimple.Direction.FORWARD);
         lFront.setDirection(DcMotorSimple.Direction.REVERSE);
@@ -56,21 +56,21 @@ public class EthanDrive extends LinearOpMode {
             }
 
             //forward & backward
-            double forwardBackward = gamepad1.left_stick_y * -0.25;
+            double forwardBackward = gamepad1.left_stick_y * -0.5;
             /*lFront.setPower(gamepad1.left_stick_y*-0.5);
             rFront.setPower(gamepad1.left_stick_y*-0.5);
             lBack.setPower(gamepad1.left_stick_y*-0.5);
             rBack.setPower(gamepad1.left_stick_y*-0.5);
                */
             //turning
-            double turning = gamepad1.right_stick_x * 0.25;
+            double turning = gamepad1.right_stick_x * 0.5;
             /*lFront.setPower(gamepad1.right_stick_x*0.5);
             rFront.setPower(gamepad1.right_stick_x*-0.5);
             lBack.setPower(gamepad1.right_stick_x*0.5);
             rBack.setPower(gamepad1.right_stick_x*-0.5);
             */
             //mecanuming
-            double mecanuming = gamepad1.left_stick_x * 0.25;
+            double mecanuming = gamepad1.left_stick_x * 0.5;
 
             //arm up and down
             double armPower = gamepad1.right_stick_y * -0.25;
@@ -121,7 +121,7 @@ public class EthanDrive extends LinearOpMode {
 
         }
 
-        return max;
+        return Math.abs(max);
     }
 
 }
