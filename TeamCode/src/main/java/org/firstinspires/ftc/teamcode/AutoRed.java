@@ -18,20 +18,20 @@ public class AutoRed extends LinearOpMode {
         waitForStart();
 
         double armPower = robot.calculateArmPower(90);
-        double[] mecanumPower = robot.calculateMecanumPower(300);
+        double[] forwardBackwardPower = robot.calculateDrivetrainPower(300);
 
         while (opModeIsActive()) {
             armPower = robot.calculateArmPower(90);
-            mecanumPower = robot.calculateMecanumPower(600);
+            forwardBackwardPower = robot.calculateDrivetrainPower(300);
 
-            telemetry.addLine("mecanum power       " + mecanumPower[0]);
-            telemetry.addLine("mecanum power       " + mecanumPower[1]);
-            telemetry.addLine("mecanum power       " + mecanumPower[2]);
-            telemetry.addLine("mecanum power       " + mecanumPower[3]);
+            telemetry.addLine("power       " + forwardBackwardPower[0]);
+            telemetry.addLine("power       " + forwardBackwardPower[1]);
+            telemetry.addLine("power       " + forwardBackwardPower[2]);
+            telemetry.addLine("power       " + forwardBackwardPower[3]);
 
 
-            if (!robot.checkReachedDistanceForMecanum(600)) {
-                robot.setMotorPower(mecanumPower);
+            if (!robot.checkReachedDistance(600)) {
+                robot.setMotorPower(forwardBackwardPower[0], forwardBackwardPower[1], forwardBackwardPower[2], forwardBackwardPower[3]);
             } else {
                 robot.setMotorPower(0, 0, 0, 0);
             }

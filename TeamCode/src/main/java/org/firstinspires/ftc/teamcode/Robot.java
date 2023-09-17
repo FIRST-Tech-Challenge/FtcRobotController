@@ -204,9 +204,8 @@ public class Robot {
 
         //301 = circumferance mm
         //537.7, ticks per motor revolution
-        //1.4, gear ratio
         //converting mm to ticks
-        final double MM_TO_TICKS = 537.7 / 301.59;
+        final double MM_TO_TICKS = (537.7 / 301.59)*2;
 
         double targetPos = targetDistanceInMM * MM_TO_TICKS;
 
@@ -249,7 +248,7 @@ public class Robot {
     }
     public double getRemainingTicksForDrivetrain(double targetDistanceInMM) {
         double targetDistanceInTicks = convertMMToTicks(targetDistanceInMM);
-        double remainingDistance = targetDistanceInTicks - fLeft.getCurrentPosition();
+        double remainingDistance = targetDistanceInTicks + fLeft.getCurrentPosition();
         //telemetry.addLine("target"+targetDistanceInTicks);
         //telemetry.addLine("remaining distance 1    "+remainingDistance);
 
@@ -277,16 +276,22 @@ public class Robot {
         fLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         fLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
     }
-    public double calculateDrivetrainPower(double targetDistanceInMM) {
+    public double[] calculateDrivetrainPower(double targetDistanceInMM) {
         final double P_VALUE = 0.002;
 
         double remainingDistance = getRemainingTicksForDrivetrain(targetDistanceInMM);
         if (remainingDistance < 10){
-            return 0;
+            return new double[] {0, 0, 0, 0};
         }
         double proportionalPower = P_VALUE*remainingDistance;
+        double scaleImu = 0;
         //telemetry.addLine("POWER  "+proportionalPower);
-        return proportionalPower;
+        return scalePowers(new double[]{
+                -proportionalPower + calculateImuPower(0)*scaleImu,
+                -proportionalPower - calculateImuPower(0)*scaleImu,
+                -proportionalPower + calculateImuPower(0)*scaleImu,
+                -proportionalPower - calculateImuPower(0)*scaleImu
+        });
     }
     public void autoForward(double targetDistanceInMM) throws InterruptedException {
 
@@ -391,7 +396,7 @@ public class Robot {
         //301 = circumferance mm
         //537.7, ticks per motor revolution
         //converting mm to ticks
-        final double MM_TO_TICKS = (537.7 / 301.59)*1.41421;
+        final double MM_TO_TICKS = (537.7 / 301.59)*1.2;
 
         double targetPos = targetDistanceInMM * MM_TO_TICKS;
 
@@ -450,7 +455,7 @@ public class Robot {
             return new double[] {0, 0, 0, 0};
         }
         double proportionalPower = P_VALUE_FOR_MECANUM*remainingDistance;
-        double scaleImu = 8.3;
+        double scaleImu = 8.25;
         //telemetry.addLine("POWER  "+ proportionalPower);
         return scalePowers(new double[]{
                 - proportionalPower + calculateImuPower(0)*scaleImu,
