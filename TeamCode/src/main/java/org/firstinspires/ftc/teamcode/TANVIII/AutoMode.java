@@ -156,7 +156,7 @@ public class AutoMode extends LinearOpMode {
          */
 
         double endYaw;
-        double currentYaw;
+        double currentYaw = robot.getCurrentYaw(imu);
 
         YawPitchRollAngles robotOrientation;
         robotOrientation = imu.getRobotYawPitchRollAngles();
@@ -194,12 +194,9 @@ public class AutoMode extends LinearOpMode {
         robot.setDrivetrainPower(0, 0, 0, 0);
     }
 
-
-    /*
-    init ONCE
-    get yaw function
-    set based on delta (now, wanted) and kp = 0.15
-     */
+    public void setTurnOffYaw(IMU imu) {
+        robot.getCurrentYaw(imu);
+    }
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -236,7 +233,7 @@ public class AutoMode extends LinearOpMode {
             break;
             */
 
-            robot.setArmPos(true);
+            /* robot.setArmPos(true);
             encoderStraight(24);
             sleep(300);
             imuTurn(90, false);
@@ -246,10 +243,11 @@ public class AutoMode extends LinearOpMode {
             robot.moveArm(0);
             robot.setServoPos(true);
             sleep(1000);
-            imuTurn(180, false);
+            imuTurn(180, false);    
             encoderStraight(18);
 
             break;
+            */
 
             /*
             imuTurn(90, true);
@@ -262,6 +260,11 @@ public class AutoMode extends LinearOpMode {
 
             break;
              */
+
+            robot.setHeading(-90, false, robot, imu, telemetry);
+            robot.getCurrentYaw(imu);
+
         }
     }
+
 }
