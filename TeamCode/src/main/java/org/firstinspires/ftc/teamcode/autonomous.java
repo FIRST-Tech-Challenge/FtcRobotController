@@ -35,6 +35,8 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+
 /**
  * This file contains an example of a Linear "OpMode".
  * An OpMode is a 'program' that runs in either the autonomous or the teleop period of an FTC match.
@@ -64,10 +66,10 @@ import com.qualcomm.robotcore.util.ElapsedTime;
  */
 
 @Autonomous(name="Basic: Omni Linear - Autonomous", group="Linear Opmode")
-//@Disabled
+@Disabled
 
-public class autonomous extends LinearOpMode
-{
+
+public class autonomous extends LinearOpMode {
     public int direction = 1;
     // Declare OpMode members for each of the 4 motors.
     private ElapsedTime runtime = new ElapsedTime();
@@ -75,6 +77,7 @@ public class autonomous extends LinearOpMode
     private DcMotor leftBackDrive = null;
     private DcMotor rightFrontDrive = null;
     private DcMotor rightBackDrive = null;
+
     //@Override
     public void stopM() {
         leftFrontDrive.setPower(0);
@@ -82,7 +85,8 @@ public class autonomous extends LinearOpMode
         leftBackDrive.setPower(0);
         rightBackDrive.setPower(0);
     }
-    public void driveForward(double power, int miliseconds){
+
+    public void driveForward(double power, int miliseconds) {
         direction = 1;
         leftFrontDrive.setPower(power * direction);
         rightFrontDrive.setPower(power * direction);
@@ -93,7 +97,7 @@ public class autonomous extends LinearOpMode
     }
 
 
-    public void driveBackward(double power, int miliseconds){
+    public void driveBackward(double power, int miliseconds) {
         direction = -1;
         leftFrontDrive.setPower(power * direction);
         rightFrontDrive.setPower(power * direction);
@@ -103,7 +107,7 @@ public class autonomous extends LinearOpMode
         stopM();
     }
 
-    public void rotateRight(double power, int miliseconds){
+    public void rotateRight(double power, int miliseconds) {
         direction = 1;
         leftFrontDrive.setPower(power * direction);
         rightFrontDrive.setPower(power * direction * -1);
@@ -112,7 +116,8 @@ public class autonomous extends LinearOpMode
         sleep(miliseconds);
         stopM();
     }
-    public void rotateLeft(double power, int miliseconds){
+
+    public void rotateLeft(double power, int miliseconds) {
         direction = -1;
         leftFrontDrive.setPower(power * direction);
         rightFrontDrive.setPower(power * direction * -1);
@@ -122,7 +127,7 @@ public class autonomous extends LinearOpMode
         stopM();
     }
 
-    public void straifRight(double power, int miliseconds){
+    public void straifRight(double power, int miliseconds) {
         direction = 1;
         leftFrontDrive.setPower(power * direction * -1);
         rightFrontDrive.setPower(power * direction);
@@ -131,7 +136,8 @@ public class autonomous extends LinearOpMode
         sleep(miliseconds);
         stopM();
     }
-    public void straifLeft(double power, int miliseconds){
+
+    public void straifLeft(double power, int miliseconds) {
         direction = -1;
         leftFrontDrive.setPower(power * direction * -1);
         rightFrontDrive.setPower(power * direction);
@@ -140,7 +146,8 @@ public class autonomous extends LinearOpMode
         sleep(miliseconds);
         stopM();
     }
-    public void returnToLocaiton(double power, int miliseconds, int direction){
+
+    public void returnToLocaiton(double power, int miliseconds, int direction) {
 
         leftFrontDrive.setPower(power * direction);
         rightFrontDrive.setPower(power * direction);
@@ -156,40 +163,22 @@ public class autonomous extends LinearOpMode
         sleep(miliseconds);
         stopM();
     }
-    public void runOpMode()
-    {
 
-        // Initialize the hardware variables. Note that the strings used here must correspond
-        // to the names assigned during the robot configuration step on the DS or RC devices.
-        leftFrontDrive  = hardwareMap.get(DcMotor.class, "left_front_drive");
-        leftBackDrive  = hardwareMap.get(DcMotor.class, "left_back_drive");
-        rightFrontDrive = hardwareMap.get(DcMotor.class, "right_front_drive");
-        rightBackDrive = hardwareMap.get(DcMotor.class, "right_back_drive");
+    public void runOpMode() {
+        // Initialize your hardware here (motor hardware mappings)
 
-        // ########################################################################################
-        // !!!            IMPORTANT Drive Information. Test your motor directions.            !!!!!
-        // ########################################################################################
-        // Most robots need the motors on one side to be reversed to drive forward.
-        // The motor reversals shown here are for a "direct drive" robot (the wheels turn the same direction as the motor shaft)
-        // If your robot has additional gear reductions or uses a right-angled drive, it's important to ensure
-        // that your motors are turning in the correct direction.  So, start out with the reversals here, BUT
-        // when you first test your robot, push the left joystick forward and observe the direction the wheels turn.
-        // Reverse the direction (flip FORWARD <-> REVERSE ) of any wheel that runs backward
-        // Keep testing until ALL the wheels move the robot forward when you push the left joystick forward.
-        leftFrontDrive.setDirection(DcMotor.Direction.REVERSE);
-        leftBackDrive.setDirection(DcMotor.Direction.REVERSE);
-        rightFrontDrive.setDirection(DcMotor.Direction.FORWARD);
-        rightBackDrive.setDirection(DcMotor.Direction.FORWARD);
+        waitForStart(); // Wait for the start button to be pressed
+            driveForward(1,1000);
+            rotateLeft(1, 500);
+        // Your autonomous code here:
+        // Example: driveForward(0.5, 1000); // Drive forward at half power for 1 second
 
-        // Wait for the game to start (driver presses PLAY)
-        telemetry.addData("Status", "Initialized");
-        telemetry.update();
-
-        waitForStart();
-        runtime.reset();
-        driveForward(1,1000);
-        // run until the end of the match (driver presses STOP)
-
+        // Stop all motors when autonomous is done
+        stopM();
     }
+
+
 }
+
+
 

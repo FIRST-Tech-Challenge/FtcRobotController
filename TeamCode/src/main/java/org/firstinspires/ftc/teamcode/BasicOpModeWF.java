@@ -7,6 +7,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 
 
@@ -57,7 +58,7 @@ public class BasicOpModeWF extends LinearOpMode {
         imu.resetYaw();
         int speedFactor = 5; // it goes from 1 (10% speed) to 10 (100% speed)
         boolean isAutoTurning = false;
-
+        double targetAnge = 0;
         // run until the end of the match (driver presses STOP)
         while (opModeIsActive()) {
 
@@ -95,17 +96,17 @@ public class BasicOpModeWF extends LinearOpMode {
             double  angle = 0;
             double  speed = 0;
             double threshhold = 0.5;
+            double turningdirection = -1;
             if ((gamepad1.a || gamepad1.b || gamepad1.x || gamepad1.y) && isAutoTurning == false) {
                 isAutoTurning = true;
                 if (gamepad1.a)
                     targetangle = 0;
-
                 if (gamepad1.b)
                     targetangle = 90;
                 if (gamepad1.a)
                     targetangle = 180;
                 if (gamepad1.b)
-                    targetangle = 360;
+                    targetangle = 270;
             }
 
             if (isAutoTurning==true) {
