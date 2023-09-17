@@ -25,7 +25,7 @@ public class DriverMode extends LinearOpMode {
         double brpr = -(straightSpeed) - (centerTurnSpeed) + (mecanumSpeed);
 
         //scaling
-        double bigPr = robot.getBigAbsVal(flpr, frpr, blpr, brpr);
+        double bigPr = robot.bigAbsVal(flpr, frpr, blpr, brpr);
 
         if (Math.abs(bigPr) > (powerMult)) {
             double scaleFactor = Math.abs(bigPr);

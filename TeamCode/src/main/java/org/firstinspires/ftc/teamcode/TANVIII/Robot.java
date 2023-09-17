@@ -7,6 +7,7 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.IMU;
 import com.qualcomm.robotcore.hardware.Servo;
 
+import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
 
@@ -108,14 +109,8 @@ public class Robot {
         }
     }
 
-    public double getYawDegrees(IMU imu) {
-        YawPitchRollAngles robotOrientation;
-        robotOrientation = imu.getRobotYawPitchRollAngles();
-        double currentYaw = robotOrientation.getYaw(AngleUnit.DEGREES);
-        return currentYaw;
-    }
+    public double bigAbsVal(double a, double... others) {
 
-    public double getBigAbsVal(double a, double... others) {
         double max = a;
 
         for (double next : others) {
@@ -124,5 +119,49 @@ public class Robot {
             }
         }
         return max;
+    }
+
+    public double getCurrentYaw (IMU imu) {
+        double currentYaw;
+        YawPitchRollAngles robotOrientation;
+        robotOrientation = imu.getRobotYawPitchRollAngles();
+        currentYaw = robotOrientation.getYaw(AngleUnit.DEGREES);
+        return currentYaw;
+    }
+
+    public void setHeading (double angleRelativeToStart, boolean counterclockwise, Robot robot, IMU imu, Telemetry telemetry) {
+        double currentYaw = robot.getCurrentYaw(imu);
+        YawPitchRollAngles robotOrientation = imu.getRobotYawPitchRollAngles();
+        currentYaw = robotOrientation.getYaw(AngleUnit.DEGREES);
+        double setTo;
+
+        if (counterclockwise) {
+            setTo = angleRelativeToStart;
+        } else {
+            setTo = -1 * angleRelativeToStart;
+        }
+
+        double KP = 0.15; //dont even ask where i got THIS from
+
+        double error = setTo - currentYaw; //error is degrees to goal
+
+        double power = KP * error;
+
+        if (Math.abs(error) < 0.5) {
+            power = 0;
+        }
+
+        //cap power
+        if (power > 1) {
+            power = 1;
+        } else if (power < -1) {
+            power = -1;
+        }
+
+
+        robot.setDrivetrainPower(power/4, power/4, power/4, power/4);
+        String message = String.valueOf(robot.getCurrentYaw(imu));
+        telemetry.addLine(message);
+        telemetry.update();
     }
 }
