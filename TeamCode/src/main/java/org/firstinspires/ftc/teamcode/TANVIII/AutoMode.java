@@ -156,7 +156,7 @@ public class AutoMode extends LinearOpMode {
          */
 
         double endYaw;
-        double currentYaw = robot.getCurrentYaw(imu);
+        double currentYaw = robot.getCurrentHeading(imu);
 
         YawPitchRollAngles robotOrientation;
         robotOrientation = imu.getRobotYawPitchRollAngles();
@@ -195,7 +195,7 @@ public class AutoMode extends LinearOpMode {
     }
 
     public void setTurnOffYaw(IMU imu) {
-        robot.getCurrentYaw(imu);
+        robot.getCurrentHeading(imu);
     }
 
     @Override
@@ -261,10 +261,15 @@ public class AutoMode extends LinearOpMode {
             break;
              */
 
-            robot.setHeading(-90, false, robot, imu, telemetry);
-            robot.getCurrentYaw(imu);
+            robot.setHeading(  -135, robot, imu, telemetry);
+            robot.getCurrentHeading(imu);
+
+            /*
+            135
+            -135
+            -184
+             */
 
         }
     }
-
 }

@@ -59,7 +59,7 @@ public class Robot {
         bl.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         br.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
     }
-    public void setDrivetrainPower(double flPower, double frPower, double blPower, double brPower) {
+    public void setDrivetrainPower (double flPower, double frPower, double blPower, double brPower) {
         fl.setPower(flPower);
         fr.setPower(frPower);
         bl.setPower(blPower);
@@ -109,7 +109,7 @@ public class Robot {
         }
     }
 
-    public double bigAbsVal(double a, double... others) {
+    public double bigAbsVal (double a, double... others) {
 
         double max = a;
 
@@ -121,7 +121,7 @@ public class Robot {
         return max;
     }
 
-    public double getCurrentYaw (IMU imu) {
+    public double getCurrentHeading (IMU imu) {
         double currentYaw;
         YawPitchRollAngles robotOrientation;
         robotOrientation = imu.getRobotYawPitchRollAngles();
@@ -129,21 +129,25 @@ public class Robot {
         return currentYaw;
     }
 
-    public void setHeading (double angleRelativeToStart, boolean counterclockwise, Robot robot, IMU imu, Telemetry telemetry) {
-        double currentYaw = robot.getCurrentYaw(imu);
+    public void setHeading (double wantedAbsoluteAngle, Robot robot, IMU imu, Telemetry telemetry) {
+
+        if (wantedAbsoluteAngle < -179 || wantedAbsoluteAngle > 180) {
+            telemetry.addLine("error: wantedAbsoluteAngle takes range -179 through 180");
+            telemetry.update();
+            return;
+        } else if (wantedAbsoluteAngle == 180) {
+            robot.setHeading(179.5, robot, imu, telemetry);
+        }
+        double currentHeading = robot.getCurrentHeading(imu);
         YawPitchRollAngles robotOrientation = imu.getRobotYawPitchRollAngles();
-        currentYaw = robotOrientation.getYaw(AngleUnit.DEGREES);
+        currentHeading = robotOrientation.getYaw(AngleUnit.DEGREES);
         double setTo;
 
-        if (counterclockwise) {
-            setTo = angleRelativeToStart;
-        } else {
-            setTo = -1 * angleRelativeToStart;
-        }
+        setTo = wantedAbsoluteAngle;
 
-        double KP = 0.15; //dont even ask where i got THIS from
+        double KP = 0.15;
 
-        double error = setTo - currentYaw; //error is degrees to goal
+        double error = setTo - currentHeading; //error is degrees to goal
 
         double power = KP * error;
 
@@ -160,8 +164,9 @@ public class Robot {
 
 
         robot.setDrivetrainPower(power/4, power/4, power/4, power/4);
-        String message = String.valueOf(robot.getCurrentYaw(imu));
+        String message = String.valueOf(robot.getCurrentHeading(imu));
         telemetry.addLine(message);
         telemetry.update();
-    }
+        }
+
 }
