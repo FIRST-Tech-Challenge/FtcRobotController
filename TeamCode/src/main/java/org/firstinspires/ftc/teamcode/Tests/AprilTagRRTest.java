@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.Tests;
 
 
+import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.logger;
 import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.packet;
 
 import com.acmerobotics.roadrunner.geometry.Pose2d;
@@ -44,7 +45,7 @@ public class AprilTagRRTest extends LinearOpMode {
         TrajectorySequence trajSeq2 = roadrun.trajectorySequenceBuilder(new Pose2d(0, 1.5*23.5, 0))
                 .splineTo(new Vector2d(45, 1.5*23),0)
                 .setReversed(true)
-                .splineTo(new Vector2d(0,1.5*23.5),0)
+                .lineTo(new Vector2d(0,1.5*23.5))
                 .setReversed(false)
 //                .splineTo(new Vector2d(45, 1.5*23),0)
 //                .setReversed(true)
@@ -89,12 +90,13 @@ public class AprilTagRRTest extends LinearOpMode {
             roadrun.update();
 //            cam.update();
             if(cam.update()) {
-//                roadrun.setPoseEstimate(cam.getCamPose());
+                logger.log("/RobotLogs/GeneralRobot", "position = "+roadrun.getPoseEstimate()+", april"+cam.getCamPose());
+                roadrun.setPoseEstimate(cam.getCamPose());
             }
         }
     }
     public void followTrajAsync(TrajectorySequence traj){
-        if(queuer.queue(false, !roadrun.isBusy()&&(roadrun.getPoseEstimate().vec().distTo(traj.end().vec())<3))){
+        if(queuer.queue(false, queuer.isStarted()&&!roadrun.isBusy())){
             if(!roadrun.isBusy()) {
                 roadrun.followTrajectorySequenceAsync(traj);
             }

@@ -5,6 +5,10 @@ import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.ServoController;
 // NOT TESTED YET - 7/28/2023, PUSHING AFTER SOME MORE CLEANUP
+
+/**
+ * Harry
+ */
 public class RFCRServo implements CRServo {
     private final CRServo crServo;
     private final String deviceName;

@@ -6,6 +6,9 @@ import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.op;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+/**
+ * Harry
+ */
 public class RFGamepad {
     //hashmaps for storing states and arraylist for output
     private HashMap<String, Boolean> booleanMap = new HashMap<>();

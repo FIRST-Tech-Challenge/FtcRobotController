@@ -24,6 +24,9 @@ import org.firstinspires.ftc.teamcode.roadrunner.util.DashboardUtil;
 import java.util.ArrayList;
 import java.util.Arrays;
 
+/**
+ * Harry
+ */
 @Config
 public class RFMotor extends Motor {
     private final DcMotorEx rfMotor;

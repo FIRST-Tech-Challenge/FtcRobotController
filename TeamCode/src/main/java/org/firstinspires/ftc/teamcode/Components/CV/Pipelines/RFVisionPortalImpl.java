@@ -58,6 +58,10 @@ import org.openftc.easyopencv.OpenCvSwitchableWebcam;
 import org.openftc.easyopencv.OpenCvWebcam;
 import org.openftc.easyopencv.TimestampedOpenCvPipeline;
 
+/**
+ * Warren
+ * A duplicate class to fulfill some of our required features
+ */
 public class RFVisionPortalImpl extends RFVisionPortal
 {
     protected OpenCvCamera camera;

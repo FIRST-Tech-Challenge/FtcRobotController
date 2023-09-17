@@ -17,6 +17,9 @@ import java.util.HashMap;
 import java.util.Objects;
 import java.util.Scanner;
 
+/**
+ * Harry
+ */
 public class Logger {
 
     /**

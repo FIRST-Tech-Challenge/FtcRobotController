@@ -48,6 +48,10 @@ import org.firstinspires.ftc.vision.VisionProcessor;
 import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvWebcam;
 
+/**
+ * Warren
+ * A duplicate class of provided to integrate some of our required features
+ */
 public abstract class RFVisionPortal
 {
     public static final int DEFAULT_VIEW_CONTAINER_ID = AppUtil.getDefContext().getResources().getIdentifier("cameraMonitorViewId", "id", AppUtil.getDefContext().getPackageName());

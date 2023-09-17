@@ -1,7 +1,10 @@
 package org.firstinspires.ftc.teamcode.Components.CV.Pipelines;
 
+import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.logger;
 import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.op;
 import static org.firstinspires.ftc.teamcode.roadrunner.drive.PoseStorage.currentPose;
+
+import static java.lang.Math.sqrt;
 
 import android.os.Build;
 import android.util.Size;
@@ -19,18 +22,23 @@ import org.firstinspires.ftc.vision.apriltag.AprilTagPoseFtc;
 import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
 
 import java.util.ArrayList;
+
+/**
+ * Warren
+ */
 @Config
 public class RFAprilCam {
-    public static double X_OFFSET = 0, Y_OFFSET = 0, UPSAMPLE_THRESHOLD=40;
+    public static double X_OFFSET = 0, Y_OFFSET = 0, UPSAMPLE_THRESHOLD=50;
     public static float DOWNSAMPLE = 2, UPSAMPLE = 3;
     private AprilTagProcessor aprilTag;
     private RFVisionPortal visionPortal;
+    boolean upsample=false;
     private Vector2d[] values = {new Vector2d(0, 0), new Vector2d(0, 0),new Vector2d(0, 0),new Vector2d(0, 0),
             new Vector2d(0, 0),new Vector2d(0, 0),new Vector2d(0, 0)
-            ,new Vector2d(0, 0),new Vector2d(3*23.5-1,1.5*23.5),new Vector2d(3*23.5-1,1.5*23.5-5.5)
-            ,new Vector2d(3*23.5-1,-1.5*23.5),new Vector2d( 3*23.5-1,-1.5*23.5+5.5)};
+            ,new Vector2d(0, 0),new Vector2d(3*23.5-1,1.5*23.5),new Vector2d(3*23.5-1,1.5*23.5-4.5)
+            ,new Vector2d(3*23.5-1,-1.5*23.5),new Vector2d( 3*23.5-1,-1.5*23.5+4.5)};
     private ArrayList<Pose2d> camPose = new ArrayList<>();
-    private double[][] directions = {{-1, 1}, {-1, 1},{-1, 1},{-1, 1},{-1, 1},{-1, 1},{-1, 1},{-1, 1},{-1, 1},{-1, 1},{-1, 1}};
+    private double[][] directions = {{-1, 1}, {-1, 1},{-1, 1},{-1, 1},{-1, 1},{-1, 1},{-1, 1},{-1, 1},{-1, -1},{-1, -1},{-1, -1}};
 
     public RFAprilCam() {
         aprilTag = new AprilTagProcessor.Builder()
@@ -58,30 +66,26 @@ public class RFAprilCam {
     public boolean update() {
         ArrayList<AprilTagDetection> detections = aprilTag.getDetections();
         //if close start upsampling
-        boolean upsample = false;
         camPose.clear();
         for (AprilTagDetection detection : detections) {
+            upsample=false;
              AprilTagPoseFtc poseFtc= detection.ftcPose;
              double p_x = poseFtc.y, p_y = poseFtc.x;
              int p_ind = detection.id;
              camPose.add(new Pose2d(values[p_ind].plus(new Vector2d(p_x * directions[p_ind][0]+X_OFFSET, p_y * directions[p_ind][1]+Y_OFFSET)),
                      directions[p_ind][0]*poseFtc.yaw));
-             double dist = poseFtc.x*poseFtc.x + poseFtc.y*poseFtc.y;
+             double dist = sqrt(poseFtc.x*poseFtc.x + poseFtc.y*poseFtc.y);
              if(dist<UPSAMPLE_THRESHOLD){
                  upsample=true;
              }
+             logger.log("/RobotLogs/GeneralRobot", "aprilPos = "+camPose.get(camPose.size()-1)+", dist:"+dist);
         }
         if(upsample){
             aprilTag.setDecimation(UPSAMPLE);
         }else{
             aprilTag.setDecimation(DOWNSAMPLE);
         }
-        if(camPose.size()>0&&upsample){
-            return true;
-        }
-        else{
-            return false;
-        }
+        return camPose.size() > 0 && upsample;
     }
     public Pose2d getCamPose(){
         if(camPose.size()>0) {

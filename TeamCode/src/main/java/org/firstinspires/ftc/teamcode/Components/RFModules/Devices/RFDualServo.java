@@ -13,6 +13,9 @@ import com.qualcomm.robotcore.hardware.ServoController;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 
+/**
+ * William
+ */
 public class RFDualServo implements Servo {
     /**
      * init

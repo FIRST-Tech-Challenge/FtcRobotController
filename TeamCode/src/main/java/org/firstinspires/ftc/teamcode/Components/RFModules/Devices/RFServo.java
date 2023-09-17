@@ -9,6 +9,9 @@ import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.time;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.ServoController;
 
+/**
+ * William
+ */
 public class RFServo implements Servo {
     /* Basic Servo device class with reusable code */
 
