@@ -31,7 +31,7 @@ import java.util.List;
  *
  */
 @Config
-public class StandardTrackingWheelLocalizer extends ThreeTrackingWheelLocalizer {
+public class StandardTrackingWheelLocalizer extends RFThreeTrackingWheelLocalizer {
     public static double Y_MULTIPLIER = 1/*0.896707*/;
     public static double X_MULTIPLIER = 1/*107.5/119*/;
 
