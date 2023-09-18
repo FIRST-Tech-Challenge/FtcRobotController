@@ -2,10 +2,13 @@ package org.firstinspires.ftc.teamcode.TANVIII;
 
 import static android.os.SystemClock.sleep;
 
+import android.os.SystemClock;
+
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.IMU;
 import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.util.Range;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
@@ -25,6 +28,8 @@ public class Robot {
     DcMotor armMotor;
     Servo leftyServo;
     Servo rightyServo;
+    double prevError = 0;
+    double prevTime = 0;
 
     public Robot (HardwareMap hardwareMap) {
         this.hwMap = hardwareMap;
@@ -129,7 +134,9 @@ public class Robot {
         return currentYaw;
     }
 
+
     public void setHeading (double wantedAbsoluteAngle, Robot robot, IMU imu, Telemetry telemetry) {
+        double currentTime = SystemClock.elapsedRealtimeNanos();
 
         if (wantedAbsoluteAngle < -179 || wantedAbsoluteAngle > 180) {
             telemetry.addLine("error: wantedAbsoluteAngle takes range -179 through 180");
@@ -138,6 +145,7 @@ public class Robot {
         } else if (wantedAbsoluteAngle == 180) {
             robot.setHeading(179.5, robot, imu, telemetry);
         }
+
         double currentHeading = robot.getCurrentHeading(imu);
         YawPitchRollAngles robotOrientation = imu.getRobotYawPitchRollAngles();
         currentHeading = robotOrientation.getYaw(AngleUnit.DEGREES);
@@ -145,28 +153,36 @@ public class Robot {
 
         setTo = wantedAbsoluteAngle;
 
-        double KP = 0.15;
+        double KP = 0.04; //started 0.15
+        double KD = 2_500_000;
 
         double error = setTo - currentHeading; //error is degrees to goal
+        double errorDer = (error - prevError)/(currentTime - prevTime);
 
-        double power = KP * error;
+        double power = (KP * error) + (KD * errorDer);
+        // + kd * der
 
-        if (Math.abs(error) < 0.5) {
+        if (Math.abs(error) < 0.3) {
             power = 0;
         }
 
         //cap power
-        if (power > 1) {
-            power = 1;
-        } else if (power < -1) {
-            power = -1;
-        }
+        power = Range.clip(power, -1, 1);
+//        if (power > 1) {
+//            power = 1;
+//        } else if (power < -1) {
+//            power = -1;
+//        }
 
 
-        robot.setDrivetrainPower(power/4, power/4, power/4, power/4);
+        robot.setDrivetrainPower(power, power, power, power);
         String message = String.valueOf(robot.getCurrentHeading(imu));
         telemetry.addLine(message);
         telemetry.update();
+
+        prevError = error;
+        prevTime = currentTime;
+
         }
 
 }
