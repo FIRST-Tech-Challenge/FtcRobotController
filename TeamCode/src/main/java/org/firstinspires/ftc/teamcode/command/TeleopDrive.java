@@ -4,10 +4,12 @@ import com.arcrobotics.ftclib.command.CommandBase;
 import com.qualcomm.robotcore.hardware.Gamepad;
 
 import org.firstinspires.ftc.teamcode.drive.DrivePose;
+import org.firstinspires.ftc.teamcode.subsystem.MyCamera;
 
 public class TeleopDrive  extends CommandBase {
 
     private final DrivePose mDrive;
+//    private final MyCamera myCamera;
     private final Gamepad mGamepad;
     private final  double driveKp = 0.3;
     public TeleopDrive (DrivePose drive, Gamepad gamepad) {
@@ -27,7 +29,12 @@ public class TeleopDrive  extends CommandBase {
 //        mDrive.mecanumCentricDrive(mGamepad.left_stick_x * driveKp
 //                                 , mGamepad.left_stick_y * driveKp
 //                                 , mGamepad.right_stick_x * driveKp, false);
-        mDrive.driveJoy(-mGamepad.left_stick_y, mGamepad.left_stick_x, mGamepad.right_stick_x);
+//        mDrive.driveJoy(-mGamepad.left_stick_y, mGamepad.left_stick_x, mGamepad.right_stick_x);
+
+        mDrive.driveField(mGamepad.left_stick_y, mGamepad.left_stick_x, mGamepad.right_stick_x);
+
+//        double[] id = myCamera.getAprilTagIDData(10);
+//        mDrive.driveAlign(id[0], id[1], id[2], id[3]);
     }
 
     @Override

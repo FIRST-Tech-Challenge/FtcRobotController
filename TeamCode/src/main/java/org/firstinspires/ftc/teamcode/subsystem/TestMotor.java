@@ -51,6 +51,16 @@ public class TestMotor extends SubsystemBase {
 
     @Override
     public void periodic() {
+        loop();
+    }
+
+    public void init(int position) {
+        configPosition();
+        setPosition(position);
+        setSpeed(0.35);
+    }
+
+    public void loop() {
         switch (currWheelState) {
             case OFF:
                 Constants.ShooterConst.mIsHighReady = false;

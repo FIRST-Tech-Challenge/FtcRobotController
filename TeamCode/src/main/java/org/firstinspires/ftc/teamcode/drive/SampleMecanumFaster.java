@@ -15,17 +15,23 @@ import com.acmerobotics.roadrunner.trajectory.constraints.MinVelocityConstraint;
 import com.acmerobotics.roadrunner.trajectory.constraints.ProfileAccelerationConstraint;
 import com.acmerobotics.roadrunner.trajectory.constraints.TrajectoryAccelerationConstraint;
 import com.acmerobotics.roadrunner.trajectory.constraints.TrajectoryVelocityConstraint;
+import com.arcrobotics.ftclib.util.MathUtils;
+import com.qualcomm.hardware.bosch.BHI260IMU;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.lynx.LynxModule;
+import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.hardware.IMU;
 import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 import com.qualcomm.robotcore.hardware.VoltageSensor;
 import com.qualcomm.robotcore.hardware.configuration.typecontainers.MotorConfigurationType;
-
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.robotcore.external.navigation.AngularVelocity;
+import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
 import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequence;
 import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequenceBuilder;
 import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequenceRunner;
@@ -46,6 +52,7 @@ import static org.firstinspires.ftc.teamcode.drive.DriveConstants.kStatic;
 import static org.firstinspires.ftc.teamcode.drive.DriveConstants.kV;
 
 public class SampleMecanumFaster extends MecanumDrive {
+    private BHI260IMU imu;
     public static PIDCoefficients TRANSLATIONAL_PID = new PIDCoefficients(6.5, 0, 0);
     public static PIDCoefficients HEADING_PID = new PIDCoefficients(5, 0, 0);
 
@@ -65,14 +72,13 @@ public class SampleMecanumFaster extends MecanumDrive {
     private DcMotorEx leftFront, leftRear, rightRear, rightFront;
     private Telemetry telemetry;
     private List<DcMotorEx> motors;
-
-    private BNO055IMU imu;
     private VoltageSensor batteryVoltageSensor;
 
     double pastv = 0;
     double pastv1 = 0;
     double pastv2 = 0;
     double pastv3 = 0;
+    private boolean tolerance;
 
     public SampleMecanumFaster(HardwareMap hardwareMap, Telemetry telemetry) {
         super(kV, kA, kStatic, TRACK_WIDTH, TRACK_WIDTH, LATERAL_MULTIPLIER);
@@ -85,10 +91,14 @@ public class SampleMecanumFaster extends MecanumDrive {
             module.setBulkCachingMode(LynxModule.BulkCachingMode.AUTO);
         }
         // TODO: adjust the names of the following hardware devices to match your configuration
-//        imu = hardwareMap.get(BNO055IMU.class, "imu");
-//        BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
-//        parameters.angleUnit = BNO055IMU.AngleUnit.RADIANS;
-//        imu.initialize(parameters);
+        imu = hardwareMap.get(BHI260IMU.class, "imu");
+        IMU.Parameters parameters = new IMU.Parameters(
+                new RevHubOrientationOnRobot(
+                        RevHubOrientationOnRobot.LogoFacingDirection.UP,
+                        RevHubOrientationOnRobot.UsbFacingDirection.LEFT
+                )
+        );
+        imu.initialize(parameters);
 
         // TODO: If the hub containing the IMU you are using is mounted so that the "REV" logo does
         // not face up, remap the IMU axes so that the z-axis points upward (normal to the floor.)
@@ -150,6 +160,103 @@ public class SampleMecanumFaster extends MecanumDrive {
         trajectorySequenceRunner = new TrajectorySequenceRunner(follower, HEADING_PID);
     }
 
+    public void alignAprilTag(double x, double y, double r, double id, double X, double Y, double R) {
+        double strafeVal = 0.0, strafeFriction;
+        //move forward and backward
+        if (X - x < 30.0) {
+            strafeVal = MathUtils.clamp((X - x) * 0.1, -0.4, 0.4);
+            strafeFriction = Math.signum(strafeVal) * 0.008;
+        } else {
+            strafeFriction = 0.0;
+        }
+        //Move left and right
+        double dist = Math.abs(X - x);
+        double kp2 = dist > 4.0 ? dist / 3.0 * dist / 3.0 : 1.0;
+        double translationVal = MathUtils.clamp((y - Y) * 0.6 * kp2, -0.32, 0.32);
+        double translationFriction = Math.signum(translationVal) * 0.04;
+        //move rotate
+        double kp3 = dist > 4.0 ? 1.3 : 1.0;
+        double rotationVal = MathUtils.clamp((R - r) * 0.2 * kp3, -0.13, 0.13);
+        double rotationFriction = Math.signum(rotationVal) * 0.01;
+        telemetry.addData("Error1", strafeVal);
+        telemetry.addData("Error2", translationVal);
+        telemetry.addData("Error3", rotationVal);
+        tolerance = (Math.abs(strafeVal) < 0.01) && (Math.abs(translationVal) < 0.02) && (Math.abs(rotationVal) < 0.015);
+        if (id != 0) {
+            setWeightedDrivePower(
+                    new Pose2d(
+                            strafeVal * 0.4 + strafeFriction,
+                            translationVal * 0.4 + translationFriction,
+                            rotationVal * 0.4 + rotationFriction
+                    )
+            );
+        } else {
+            setWeightedDrivePower(new Pose2d(0.0, 0.0, 0.0));
+        }
+        update();
+    }
+
+    public boolean isEndAlign() {
+        return tolerance;
+    }
+
+    public void update() {
+        updatePoseEstimate();
+        Pose2d poseEstimate = getPoseEstimate();
+        telemetry.addData("TWLPoseX", poseEstimate.getX());
+        telemetry.addData("TWLPoseY", poseEstimate.getY());
+        telemetry.addData("TWLPoseH", Math.toDegrees(poseEstimate.getHeading()));
+        telemetry.update();
+        DriveSignal signal = trajectorySequenceRunner.update(getPoseEstimate(), getPoseVelocity());
+        if (signal != null) setDriveSignal(signal);
+    }
+
+    public void updateRobotDrive(double left_stick_y, double left_stick_x, double right_stick_x, double driveK) {
+        double y = -left_stick_y;
+        double x = left_stick_x * 1.1; // Counteract imperfect strafing
+        double rx = right_stick_x;
+
+        // Denominator is the largest motor power (absolute value) or 1
+        // Keeps all motor powers in proportion
+        double denominator = Math.max(Math.abs(y) + Math.abs(x) + Math.abs(rx), 1.0);
+        double frontLeftPower = (y + x + rx) / denominator * driveK;
+        double backLeftPower = (y - x + rx) / denominator * driveK;
+        double frontRightPower = (y - x - rx) / denominator * driveK;
+        double backRightPower = (y + x - rx) / denominator * driveK;
+
+        // Set powers
+        leftFront.setPower(frontLeftPower);
+        leftRear.setPower(backLeftPower);
+        rightFront.setPower(frontRightPower);
+        rightRear.setPower(backRightPower);
+    }
+    public void updateField(double left_stick_y, double left_stick_x, double right_stick_x, double driveK) {
+        double y = -left_stick_y;
+        double x = left_stick_x * 1.1;
+        double rx = right_stick_x;
+
+        double botHeading = getRawExternalHeading();
+
+        // Rotate the movement direction counter to the robot's rotation
+        double rotX = x * Math.cos(-botHeading) - y * Math.sin(-botHeading);
+        double rotY = x * Math.sin(-botHeading) + y * Math.cos(-botHeading);
+
+        double denominator = Math.max(Math.abs(y) + Math.abs(x) + Math.abs(rx), 1.0);
+        double frontLeftPower = (rotY + rotX + rx) / denominator * driveK;
+        double backLeftPower = (rotY - rotX + rx) / denominator * driveK;
+        double frontRightPower = (rotY - rotX - rx) / denominator * driveK;
+        double backRightPower = (rotY + rotX - rx) / denominator * driveK;
+
+        update();
+        leftFront.setPower(frontLeftPower);
+        leftRear.setPower(backLeftPower);
+        rightFront.setPower(frontRightPower);
+        rightRear.setPower(backRightPower);
+
+        telemetry.addData("Heading", AngleUnit.RADIANS.toDegrees(getPoseEstimate().getHeading()));
+        telemetry.addData("HeadingPos", AngleUnit.RADIANS.toDegrees(botHeading));
+    }
+
     public TrajectoryBuilder trajectoryBuilder(Pose2d startPose) {
         return new TrajectoryBuilder(startPose, VEL_CONSTRAINT, ACCEL_CONSTRAINT);
     }
@@ -207,12 +314,6 @@ public class SampleMecanumFaster extends MecanumDrive {
 
     public Pose2d getLastError() {
         return trajectorySequenceRunner.getLastPoseError();
-    }
-
-    public void update() {
-        updatePoseEstimate();
-        DriveSignal signal = trajectorySequenceRunner.update(getPoseEstimate(), getPoseVelocity());
-        if (signal != null) setDriveSignal(signal);
     }
 
     public void waitForIdle() {
@@ -303,12 +404,14 @@ public class SampleMecanumFaster extends MecanumDrive {
 
     @Override
     public double getRawExternalHeading() {
-        return 0;
+        YawPitchRollAngles orientation = imu.getRobotYawPitchRollAngles();
+        return orientation.getYaw(AngleUnit.RADIANS);
     }
 
     @Override
     public Double getExternalHeadingVelocity() {
-        return (double) imu.getAngularVelocity().zRotationRate;
+        AngularVelocity angularVelocity = imu.getRobotAngularVelocity(AngleUnit.RADIANS);
+        return (double) angularVelocity.zRotationRate;
     }
 
     public static TrajectoryVelocityConstraint getVelocityConstraint(double maxVel, double maxAngularVel, double trackWidth) {

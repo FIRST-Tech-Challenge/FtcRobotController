@@ -20,15 +20,16 @@ import org.firstinspires.ftc.teamcode.subsystem.TestMotor;
 
 @TeleOp
 public class MyTeleOp extends CommandOpMode {
+    private MyCamera myCamera;
     private final FtcDashboard dashboard = FtcDashboard.getInstance();
     private final Telemetry dashboardTelemetry = new MultipleTelemetry(telemetry, dashboard.getTelemetry());
     @Override
     public void initialize() {
+        myCamera = new MyCamera(hardwareMap, dashboardTelemetry);
         DrivePose drive = new DrivePose(hardwareMap, dashboardTelemetry);
         drive.setDefaultCommand(new TeleopDrive(drive, gamepad1));
 
         TestMotor shooter = new TestMotor(hardwareMap, dashboardTelemetry);
-        MyCamera myCamera = new MyCamera(hardwareMap, dashboardTelemetry);
 //        schedule(new CameraStream(myCamera, gamepad1));
 
         Button a = new GamepadButton(new GamepadEx(gamepad1), GamepadKeys.Button.A);
