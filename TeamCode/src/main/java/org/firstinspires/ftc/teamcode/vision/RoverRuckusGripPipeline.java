@@ -3,6 +3,8 @@ package org.firstinspires.ftc.teamcode.vision;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.firstinspires.ftc.teamcode.robots.r2v2.vision.pipeline.OpenCVPipeline;
+import org.firstinspires.ftc.teamcode.vision.VisionProvider;
 import org.opencv.core.*;
 import org.opencv.imgproc.*;
 
@@ -13,7 +15,7 @@ import org.opencv.imgproc.*;
  *
  * @author GRIP
  */
-public class RoverRuckusGripPipeline {
+public class RoverRuckusGripPipeline extends OpenCVPipeline {
 
     //Outputs
     private Mat resizeImageOutput = new Mat();

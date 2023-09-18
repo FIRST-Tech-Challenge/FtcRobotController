@@ -5,13 +5,10 @@ import android.graphics.Bitmap;
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.qualcomm.robotcore.hardware.HardwareMap;
-import com.vuforia.Image;
-import com.vuforia.PIXEL_FORMAT;
-import com.vuforia.Vuforia;
 
 import org.firstinspires.ftc.robotcore.external.ClassFactory;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
-import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
+
 import org.firstinspires.ftc.teamcode.RC;
 import org.firstinspires.ftc.teamcode.robots.reach.utils.Constants;
 import org.firstinspires.ftc.teamcode.util.BlobStats;

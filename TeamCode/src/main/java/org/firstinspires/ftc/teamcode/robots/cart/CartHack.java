@@ -30,10 +30,6 @@ import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.ElapsedTime;
-import com.vuforia.HINT;
-import com.vuforia.PIXEL_FORMAT;
-import com.vuforia.Vuforia;
-
 import org.firstinspires.ftc.robotcore.external.ClassFactory;
 import org.firstinspires.ftc.robotcore.external.Func;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.BuiltinCameraDirection;
@@ -41,11 +37,6 @@ import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
-import org.firstinspires.ftc.robotcore.external.navigation.RelicRecoveryVuMark;
-import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
-import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackable;
-import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackableDefaultListener;
-import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackables;
 import org.firstinspires.ftc.teamcode.R;
 import org.firstinspires.ftc.teamcode.RC;
 import org.firstinspires.ftc.teamcode.vision.colorblob.ColorBlobDetector;
@@ -96,10 +87,6 @@ public class CartHack extends OpMode {
 
 
     //vision objects/vision-based variables
-    public VuforiaTrackables relicCodex;
-    public int savedVuMarkCodex = 0;
-    VuforiaTrackable relicTemplate;
-    VuforiaLocalizer locale;
     private ColorBlobDetector mDetector;
     private int beaconConfig = 0;
     private double vuPwr = 0;
@@ -150,32 +137,8 @@ public class CartHack extends OpMode {
         telemetry.update();
 
         configureDashboard();
-        //todo redo vision so it's more like our vision provider pi
-        VuforiaLocalizer.Parameters params = new VuforiaLocalizer.Parameters(R.id.cameraMonitorViewId);
-        params.vuforiaLicenseKey = RC.VUFORIA_LICENSE_KEY;
-        params.cameraDirection = BuiltinCameraDirection.FRONT;
-
-        locale = ClassFactory.createVuforiaLocalizer(params);
-        locale.setFrameQueueCapacity(1);
-        Vuforia.setFrameFormat(PIXEL_FORMAT.RGB565, true);
-
-        Vuforia.setHint(HINT.HINT_MAX_SIMULTANEOUS_IMAGE_TARGETS, 1);
-
-        //set vuforia to look for assets from the Relic Recovery library
-        relicCodex = locale.loadTrackablesFromAsset("RelicVuMark");
-        relicCodex.get(0).setName("RelicTemplate");
-
-
-        relicTemplate = relicCodex.get(0);
-
-//        waitForStart(); //this is commented out but left here to document that we are still doing the functions that waitForStart() normally does, but needed to customize it.
-
-        //activate vuforia to start identifying targets/vuMarks
-//        relicCodex.activate();
-
+        //todo add back some vision stuff at some point - the vuforia stuff is all gone
         mDetector = new ColorBlobDetector();
-
-        relicCodex.activate();
     }
 
     /*
@@ -185,28 +148,8 @@ public class CartHack extends OpMode {
     public void init_loop() {
 
             stateSwitch();
-
-
-            if(toggleAllowed(gamepadRC.b, b)){
-                relicCodex.activate();
-                vuActive = true;
-
-            }
-//            else if(toggleAllowed(gamepadRC.start, startBtn) && state==0){
-//                relicCodex.deactivate();
-//            }
-
-            if(vuActive){
-                telemetry.addData("Vu", "Active");
-            }
-            else{
-                telemetry.addData("Vu", "Inactive");
-            }
-
             telemetry.addData("Status", "Initialized");
             telemetry.update();
-
-            //idle(); // Always call idle() at the bottom of your while(opModeIsActive()) loop
         }
 
 
@@ -230,8 +173,7 @@ public class CartHack extends OpMode {
                     case 0: //code for tele-op control
                         joystickDrive();
                         break;
-                    case 1: //this is the tertiaryAuto we use if our teamates can also go for the beacons more reliably than we can; scores 2 balls and pushes the cap ball, also parks on the center element
-                        demo((VuforiaTrackableDefaultListener) relicTemplate.getListener(),500);
+                    case 1: //this was target following mode
                         break;
                     case 2:
 
@@ -251,51 +193,6 @@ public class CartHack extends OpMode {
 
             //idle(); // Always call idle() at the bottom of your while(opModeIsActive()) loop
         }
-
-    public void demo(VuforiaTrackableDefaultListener beaconTarget, double distance){
-//        if(gamepadRC.x){
-//            robot.maintainHeading(gamepadRC.x);
-//        }
-//        else {
-//
-//
-//        }
-//        if(gamepadRC.y) {
-            robot.driveToTargetVu(beaconTarget, distance, .75, !gamepadRC.x);
-//        }
-
-
-//        if(gamepadRC.a) {
-//            robot.driveToTargetVu(beaconTarget, isBlue, 0, distance, .5, false, false);
-//        }
-
-    }
-
-
-
-
-    public String getRelicCodexStr(){
-        RelicRecoveryVuMark relicConfig = RelicRecoveryVuMark.from(relicTemplate);
-        if(relicConfig != RelicRecoveryVuMark.UNKNOWN){
-            if(relicConfig == RelicRecoveryVuMark.LEFT) return "left";
-            else if(relicConfig == RelicRecoveryVuMark.RIGHT) return "right";
-            else return "center";
-        }
-        return "unknown";
-    }
-
-    public int getRelicCodex(){
-        RelicRecoveryVuMark relicConfig = RelicRecoveryVuMark.from(relicTemplate);
-        if(relicConfig != RelicRecoveryVuMark.UNKNOWN){
-            if(relicConfig == RelicRecoveryVuMark.LEFT) return 0;
-            else if(relicConfig == RelicRecoveryVuMark.RIGHT) return 2;
-            else return 1;
-        }
-        return 1;
-    }
-
-
-
 
     public void joystickDrive() {
 
@@ -430,24 +327,9 @@ public class CartHack extends OpMode {
                         return Integer.toString(state);
                     }
                 });
-//        telemetry.addLine()
-//                .addData("Kp", new Func<String>() {
-//                    @Override public String value() {
-//                        return "" + robot.getKpDrive();
-//                    }
-//                })
-//                .addData("Kd", new Func<String>() {
-//                    @Override public String value() {
-//                        return "" + robot.getKdDrive();
-//                    }
-//                });
-//
+
         telemetry.addLine()
-//                .addData("phone pos", new Func<String>() {
-//                    @Override public String value() {
-//                        return Integer.toString(robot.glyphSystem.maintainPhoneTilt());
-//                    }
-//                })
+
                 .addData("status", new Func<String>() {
                     @Override public String value() {
                         return robot.imu.getSystemStatus().toShortString();
@@ -458,17 +340,6 @@ public class CartHack extends OpMode {
                         return robot.imu.getCalibrationStatus().toString();
                     }
                 });
-
-//                .addData("Relic Codex", new Func<String>() {
-//                    @Override public String value() {
-//                        return getRelicCodexStr();
-//                    }
-//                })
-//                .addData("Relic Codex", new Func<String>() {
-//                    @Override public String value() {
-//                        return Integer.toString(savedVuMarkCodex);
-//                    }
-//                });
 
         telemetry.addLine()
                 .addData("left", new Func<String>() {
@@ -483,24 +354,7 @@ public class CartHack extends OpMode {
                 });
 
         telemetry.addLine()
-//                .addData("heading", new Func<String>() {
-//                    @Override public String value() {
-//                        return formatAngle(angles.angleUnit, angles.firstAngle);
-//                        return Double.toString(robot.getHeading());
-//                    }
-//                })
-//                .addData("pitch", new Func<String>() {
-//                    @Override public String value() {
-//                        return formatAngle(angles.angleUnit, angles.firstAngle);
-//                        return Double.toString(robot.getPitch());
-//                    }
-//                })
-//                .addData("roll", new Func<String>() {
-//                    @Override public String value() {
-//                        return formatAngle(angles.angleUnit, angles.firstAngle);
-//                        return Double.toString(robot.getRoll());
-//                    }
-//                });
+
                 .addData("PID Calc", new Func<String>() {
                     @Override public String value() {
                         return Double.toString(robot.drivePID.performPID() );

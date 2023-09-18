@@ -8,7 +8,6 @@ import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.rev.RevBlinkinLedDriver;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
-import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.VoltageSensor;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
@@ -19,8 +18,6 @@ import org.firstinspires.ftc.teamcode.robots.ri2d.utils.CanvasUtils;
 import org.firstinspires.ftc.teamcode.robots.ri2d.utils.Constants;
 import org.firstinspires.ftc.teamcode.robots.ri2d.vision.StackHeight;
 import org.firstinspires.ftc.teamcode.util.PIDController;
-import org.firstinspires.ftc.teamcode.vision.SkystoneGripPipeline;
-import org.firstinspires.ftc.teamcode.vision.TowerHeightPipeline;
 import org.firstinspires.ftc.teamcode.vision.Viewpoint;
 
 import java.util.Arrays;
@@ -141,9 +138,6 @@ public class PoseRi2D {
 
     public boolean rangeIsHot = true;
 
-    // vision related
-    public SkystoneGripPipeline pipeline;
-    public TowerHeightPipeline towerHeightPipeline;
 
     public enum MoveMode {
         forward, backward, left, right, rotate, still;

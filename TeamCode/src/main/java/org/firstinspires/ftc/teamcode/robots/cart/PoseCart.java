@@ -11,7 +11,6 @@ import org.firstinspires.ftc.robotcore.external.matrices.VectorF;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
-import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackableDefaultListener;
 import org.firstinspires.ftc.teamcode.util.PIDController;
 import org.firstinspires.ftc.teamcode.RC;
 
@@ -797,92 +796,10 @@ public class PoseCart
 
     }
 
-
     public static double servoNormalize(int pulse){
         double normalized = (double)pulse;
         return (normalized - 750.0) / 1500.0; //convert mr servo controller pulse width to double on _0 - 1 scale
     }
-
-/**
-    public double strafeBeacon(VuforiaTrackableDefaultListener beacon, double offsetDistance, double pwrMax, double iWishForThisToBeOurHeading) {
-
-        //double vuDepth = 0;
-        double pwr = 0;
-
-        if (beacon.getPose() != null) {
-            vuTrans = beacon.getRawPose().getTranslation();
-
-            //todo - add a new transform that will shift our target left or right depending on beacon analysis
-
-            vuAngle = Math.toDegrees(Math.atan2(vuTrans.get(0), vuTrans.get(2)));
-            vuXOffset = vuTrans.get(0);
-
-                            // this is a very simple proportional on the distance to target - todo - convert to PID control
-            pwr = clampDouble(-pwrMax, pwrMax, ((vuXOffset - offsetDistance)/1200.0));//but this should be equivalent
-            Log.i("Beacon Angle", String.valueOf(vuAngle));
-            driveIMU(kpDrive, kiDrive, kdDrive, pwr, iWishForThisToBeOurHeading, true);
-
-        } else { //disable motors if given target not visible
-            vuDepth = 0;
-            driveMixerMec(0,0,0);
-        }//else
-
-        return vuDepth - offsetDistance; // 0 indicates there was no good vuforia pose - target likely not visible
-    }//getJewelConfig
- **/
-
-    public double driveToTargetVu(VuforiaTrackableDefaultListener target, double bufferDistance, double maxSpeed, boolean turnOnly) {
-
-        //double vuDepth = 0;
-        double pwr = 0;
-
-        if (target.getPose() != null) {
-            vuTrans = target.getRawPose().getTranslation();
-
-            //todo - add a new transform that will shift our target left or right depending on beacon analysis
-
-            vuAngle = Math.toDegrees(Math.atan2(vuTrans.get(0), vuTrans.get(2)));
-            vuDepth = vuTrans.get(2);
-
-            if (turnOnly)
-                pwr = 0; //(vuDepth - bufferDistance/1200.0);
-            else
-                // this is a very simple proportional on the distance to target - todo - convert to PID control
-                pwr = -clampDouble(-maxSpeed, maxSpeed, ((vuDepth - bufferDistance)/600.0));//but this should be equivalent
-//            Log.i("Beacon Angle", String.valueOf(vuAngle));
-            movePID(kpDrive, kiDrive, kdDrive, pwr, -vuAngle, 0);
-
-        }
-        else { //disable motors if given target not visible
-            vuDepth = 0;
-            driveMixerTank(0, 0, false);
-        }//else
-
-        return vuDepth; // 0 indicates there was no good vuforia pose - target likely not visible
-    }//driveToTargetVu
-
-    /**
-    public double getBeaconOffset(boolean isBlue, int beaconConfig){
-        double offset = 0;
-        if((isBlue && beaconConfig == 1) || (!isBlue && beaconConfig == 2)){
-            offset = -80;
-        }
-        else {
-            offset = 80;
-        }
-        return offset;
-    }
-
-    public double getVuAngle(){
-        return vuAngle;
-    }
-    public double getVuDepth(){
-        return vuDepth;
-    }
-    public double getVuXOffset(){
-        return vuXOffset;
-    }
-    **/
 
     public double getBatteryVoltage(){
         return RC.h.voltageSensor.get("Motor Controller 1").getVoltage();

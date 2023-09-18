@@ -7,7 +7,6 @@ import org.firstinspires.ftc.teamcode.statemachine.MineralStateProvider;
 import org.firstinspires.ftc.teamcode.statemachine.Stage;
 import org.firstinspires.ftc.teamcode.statemachine.StateMachine;
 import org.firstinspires.ftc.teamcode.vision.GoldPos;
-import org.firstinspires.ftc.teamcode.vision.SkystoneGripPipeline;
 import org.firstinspires.ftc.teamcode.vision.Viewpoint;
 import org.firstinspires.ftc.teamcode.vision.VisionProvider;
 import org.firstinspires.ftc.teamcode.vision.VisionProvidersRoverRuckus;

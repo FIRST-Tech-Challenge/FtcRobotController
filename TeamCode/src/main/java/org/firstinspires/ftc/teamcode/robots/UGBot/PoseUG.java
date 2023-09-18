@@ -27,8 +27,6 @@ import org.firstinspires.ftc.teamcode.robots.UGBot.utils.TrajectoryCalculator;
 import org.firstinspires.ftc.teamcode.robots.UGBot.utils.TrajectorySolution;
 import org.firstinspires.ftc.teamcode.robots.UGBot.vision.StackHeight;
 import org.firstinspires.ftc.teamcode.util.PIDController;
-import org.firstinspires.ftc.teamcode.vision.SkystoneGripPipeline;
-import org.firstinspires.ftc.teamcode.vision.TowerHeightPipeline;
 import org.firstinspires.ftc.teamcode.vision.Viewpoint;
 
 import java.util.Arrays;
@@ -190,10 +188,6 @@ public class PoseUG {
     private int craneArticulation = 0;
 
     public boolean rangeIsHot = true;
-
-    // vision related
-    public SkystoneGripPipeline pipeline;
-    public TowerHeightPipeline towerHeightPipeline;
 
     public enum MoveMode {
         forward, backward, left, right, rotate, still;

@@ -41,15 +41,12 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
-import com.vuforia.Image;
-import com.vuforia.PIXEL_FORMAT;
-import com.vuforia.Vuforia;
+
 
 import org.firstinspires.ftc.robotcore.external.ClassFactory;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.BuiltinCameraDirection;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
-import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
 import org.firstinspires.ftc.teamcode.RC;
 import org.firstinspires.ftc.teamcode.util.VisionUtils;
 import org.firstinspires.ftc.teamcode.vision.colorblob.ColorBlobDetector;
@@ -82,10 +79,7 @@ public class WebCamCapture extends LinearOpMode {
 
     // Declare OpMode members.
     private ElapsedTime runtime = new ElapsedTime();
-    private VuforiaLocalizer vuforia;
-    private BlockingQueue<VuforiaLocalizer.CloseableFrame> q;
     private FtcDashboard dashboard;
-    VuforiaLocalizer.CloseableFrame frame;
     private DcMotor headlight = null;
 
     @Override
@@ -97,7 +91,7 @@ public class WebCamCapture extends LinearOpMode {
         // to 'get' must correspond to the names assigned during the robot configuration
         // step (using the FTC Robot Controller app on the phone).
 
-        initializeVision(hardwareMap, Viewpoint.WEBCAM);
+        //initializeVision(hardwareMap, Viewpoint.WEBCAM);
 
         // Wait for the game to start (driver presses PLAY)
         waitForStart();
@@ -108,17 +102,15 @@ public class WebCamCapture extends LinearOpMode {
 
         // run until the end of the match (driver presses STOP)
         while (opModeIsActive()) {
+        //todo, we ripped out the vuforia based frame handling
+        // todo this is inoperative until we rebuild the ability to get frames from the camera
 
-            if (!q.isEmpty()) {
+            if (true) { //test if we have a frame
 
-                try {
-                    frame = q.take();
-                } catch (InterruptedException e) {
-                    throw new RuntimeException(e);
-                }
-                Image img = VisionUtils.getImageFromFrame(frame, PIXEL_FORMAT.RGB565);
-                Bitmap bm = Bitmap.createBitmap(img.getWidth(), img.getHeight(), Bitmap.Config.RGB_565);
-                bm.copyPixelsFromBuffer(img.getPixels());
+                //Image img = VisionUtils.getImageFromFrame(frame, PIXEL_FORMAT.RGB565);
+                //Bitmap bm = Bitmap.createBitmap(img.getWidth(), img.getHeight(), Bitmap.Config.RGB_565);
+                Bitmap bm = Bitmap.createBitmap(320, 240, Bitmap.Config.RGB_565);
+                //bm.copyPixelsFromBuffer(img.getPixels());
                 dashboard.sendImage(bm);
                 if (gamepad1.a) saveTempBitmap(bm);
             }
@@ -129,6 +121,8 @@ public class WebCamCapture extends LinearOpMode {
             telemetry.update();
         }
     }
+
+    /* todo this all needs to be replaced with something that gets frames from VisonPortal or through OpenCVPipeline
     private void initVuforia(HardwareMap hardwareMap, Viewpoint viewpoint) {
         VuforiaLocalizer.Parameters parameters = new VuforiaLocalizer.Parameters();
         parameters.vuforiaLicenseKey = RC.VUFORIA_LICENSE_KEY;
@@ -152,6 +146,8 @@ public class WebCamCapture extends LinearOpMode {
         dashboard.sendTelemetryPacket(packet);
 
     }
+    */
+
     public void saveTempBitmap(Bitmap bitmap) {
         if (isExternalStorageWritable()) {
             saveImage(bitmap);

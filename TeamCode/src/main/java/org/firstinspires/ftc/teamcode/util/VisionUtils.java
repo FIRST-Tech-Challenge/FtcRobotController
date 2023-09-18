@@ -14,15 +14,9 @@ import android.view.View;
 //import com.vuforia.CameraCalibration; //to do revert after https://github.com/FIRST-Tech-Challenge/FtcRobotController/issues/26
 import org.firstinspires.ftc.robotcore.internal.camera.calibration.CameraCalibration;
 //import org.firstinspires.ftc.robotcore.internal.vuforia.
-import com.vuforia.Image;
-import com.vuforia.Matrix34F;
-import com.vuforia.Tool;
-import com.vuforia.Vec3F;
 
 import org.firstinspires.ftc.robotcore.external.matrices.OpenGLMatrix;
 import org.firstinspires.ftc.robotcore.external.matrices.VectorF;
-import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
-import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackableDefaultListener;
 import org.firstinspires.ftc.teamcode.vision.colorblob.ColorBlobDetector;
 import org.firstinspires.ftc.teamcode.RC;
 import org.opencv.core.Core;
@@ -94,17 +88,6 @@ public class VisionUtils {
         return mask;
     }
 
-    public static int waitForBeaconConfig(Image img, VuforiaTrackableDefaultListener beacon, CameraCalibration camCal, long timeOut) {
-
-        int config = NOT_VISIBLE;
-        long beginTime = System.currentTimeMillis();
-        while (config == NOT_VISIBLE && System.currentTimeMillis() - beginTime < timeOut && RC.l.opModeIsActive()) {
-            config = getJewelConfig(img, beacon, camCal);
-            RC.l.idle();
-        }//while
-
-        return config;
-    }
 
     public static int getJewelConfig(Bitmap bm) {
 
@@ -152,6 +135,7 @@ public class VisionUtils {
     }//getJewelConfig
 
 
+/* old vision stuff dead with Vuforia removed
     public static double getColumnPos(Image img, int columnId, ColorBlobDetector detector) {
 
         Mat overlay;
@@ -185,91 +169,7 @@ public class VisionUtils {
 
     }
 
-
-    public static int getJewelConfig(Image img, VuforiaTrackableDefaultListener codex, CameraCalibration camCalVuforia) {
-
-        OpenGLMatrix pose = codex.getRawPose();
-        com.vuforia.CameraCalibration camCal = com.vuforia.CameraDevice.getInstance().getCameraCalibration();
-
-        if (pose != null && img != null && img.getPixels() != null) {
-
-            Matrix34F rawPose = new Matrix34F();
-            float[] poseData = Arrays.copyOfRange(pose.transposed().getData(), 0, 12);
-
-            rawPose.setData(poseData);
-
-            //calculating pixel coordinates of beacon corners
-            float[][] corners = new float[4][2];
-
- //todo uncomment after there is a fix for issue 26 https://github.com/FIRST-Tech-Challenge/FtcRobotController/issues/26
-            corners[0] = Tool.projectPoint(camCal, rawPose, new Vec3F(-127, -0, 0)).getData(); //upper left of beacon
-            corners[1] = Tool.projectPoint(camCal, rawPose, new Vec3F(-254, -0, 0)).getData(); //upper right of beacon
-            corners[2] = Tool.projectPoint(camCal, rawPose, new Vec3F(-254, -254, 0)).getData(); //lower right of beacon
-            corners[3] = Tool.projectPoint(camCal, rawPose, new Vec3F(-127, -254, 0)).getData(); //lower left of beacon
-
-//            corners[0] = Tool.projectPoint(camCal, rawPose, new Vec3F(-127, 276, 0)).getData(); //upper left of beacon
-//            corners[1] = Tool.projectPoint(camCal, rawPose, new Vec3F(127, 276, 0)).getData(); //upper right of beacon
-//            corners[2] = Tool.projectPoint(camCal, rawPose, new Vec3F(127, -92, 0)).getData(); //lower right of beacon
-//            corners[3] = Tool.projectPoint(camCal, rawPose, new Vec3F(-127, -92, 0)).getData(); //lower left of beacon
-
-            //getting camera image...
-            Bitmap bm = Bitmap.createBitmap(img.getWidth(), img.getHeight(), Bitmap.Config.RGB_565);
-            bm.copyPixelsFromBuffer(img.getPixels());
-
-            //turning the corner pixel coordinates into a proper bounding box
-            Mat crop = bitmapToMat(bm, CvType.CV_8UC3);
-            float x = Math.min(Math.min(corners[1][0], corners[3][0]), Math.min(corners[0][0], corners[2][0]));
-            float y = Math.min(Math.min(corners[1][1], corners[3][1]), Math.min(corners[0][1], corners[2][1]));
-            float width = Math.max(Math.abs(corners[0][0] - corners[2][0]), Math.abs(corners[1][0] - corners[3][0]));
-            float height = Math.max(Math.abs(corners[0][1] - corners[2][1]), Math.abs(corners[1][1] - corners[3][1]));
-
-
-            //make sure our bounding box doesn't go outside of the image
-            //OpenCV doesn't like that...
-            x = Math.max(x, 0);
-            y = Math.max(y, 0);
-            width = (x + width > crop.cols())? crop.cols() - x : width;
-            height = (y + height > crop.rows())? crop.rows() - y : height;
-
-            //cropping bounding box out of camera image
-            final Mat cropped = new Mat(crop, new Rect((int) x, (int) y, (int) width, (int) height));
-
-            //filtering out non-beacon-blue colours in HSV colour space
-            Imgproc.cvtColor(cropped, cropped, Imgproc.COLOR_RGB2HSV_FULL);
-
-            //get filtered mask
-            //if pixel is within acceptable blue-beacon-colour range, it's changed to white.
-            //Otherwise, it's turned to black
-            Mat mask = new Mat();
-
-            Core.inRange(cropped, BEACON_BLUE_LOW, BEACON_BLUE_HIGH, mask);
-            Moments mmnts = Imgproc.moments(mask, true);
-
-            //calculating centroid of the resulting binary mask via image moments
-            Log.i("CentroidX", "" + ((mmnts.get_m10() / mmnts.get_m00())));
-            Log.i("CentroidY", "" + ((mmnts.get_m01() / mmnts.get_m00())));
-
-
-            //checking if blue either takes up the majority of the image (which means the beacon is all blue)
-            //or if there's barely any blue in the image (which means the beacon is all red or off)
-//            if (mmnts.get_m00() / mask.total() > 0.8) {
-//                return VortexUtils.BEACON_ALL_BLUE;
-//            } else if (mmnts.get_m00() / mask.total() < 0.1) {
-//                return VortexUtils.BEACON_NO_BLUE;
-//            }//elseif
-
-            //Note: for some reason, we end up with a image that is rotated 90 degrees
-            //if centroid is in the bottom half of the image, the blue beacon is on the left
-            //if the centroid is in the top half, the blue beacon is on the right
-            if ((mmnts.get_m10() / mmnts.get_m00()) < cropped.cols() / 2) {
-                return VisionUtils.BEACON_RED_BLUE;
-            } else {
-                return VisionUtils.BEACON_BLUE_RED;
-            }//else
-        }//if
-
-        return VisionUtils.NOT_VISIBLE;
-    }//getJewelConfig
+ */
 
 
     Bitmap getBitmapFromView(View v)
@@ -281,33 +181,8 @@ public class VisionUtils {
     }
 
 
-
-    public static int isBlueOrRed(Image img) {
-
-        if (img != null && img.getPixels() != null) {
-
-            Bitmap bm = Bitmap.createBitmap(img.getWidth(), img.getHeight(), Bitmap.Config.RGB_565);
-            bm.copyPixelsFromBuffer(img.getPixels());
-
-            //turning the corner pixel coordinates into a proper bounding box
-            Mat analyse = bitmapToMat(bm, CvType.CV_8UC3);
-
-            Mat maskBlue = applyMask(analyse.clone(), OTHER_BLUE_LOW, OTHER_BLUE_HIGH);
-
-            Mat maskRed = applyMask(analyse.clone(), OTHER_RED_LOW, OTHER_RED_HIGH);
-
-            if (Imgproc.moments(maskBlue).get_m00() > Imgproc.moments(maskRed).get_m00()) {
-                return OBJECT_BLUE;
-            } else {
-                return OBJECT_RED;
-            }//else
-
-        }//if
-
-        return NOT_VISIBLE;
-    }//isBlueOrRed
-
     //@Nullable
+    /* Vuforia Removed
     public static Image getImageFromFrame(VuforiaLocalizer.CloseableFrame frame, int format) {
 
         long numImgs = frame.getNumImages();
@@ -320,59 +195,8 @@ public class VisionUtils {
         return null;
     }
 
-/*    public Mat onCameraFrame(CameraBridgeViewBase.CvCameraViewFrame inputFrame, ColorBlobDetector pipeline) {
-        Mat mRgba = inputFrame.rgba();
+     */
 
-        if (true) {
-            pipeline.process(mRgba);
-            List<MatOfPoint> contours = pipeline.getContours();
-            Log.e(TAG, "Contours count: " + contours.size());
-            Imgproc.drawContours(mRgba, contours, -1, CONTOUR_COLOR, 3);
-
-            //get the centroid (center of mass) and area for each contour
-
-            List<Moments> mu = new ArrayList<Moments>(contours.size());
-            maxContour=0;
-            blobWidth = 0;
-            blobHeight = 0;
-            blobBox = null;
-
-            for (int i = 0; i < contours.size(); i++) {
-                mu.add(i, Imgproc.moments(contours.get(i), false));
-                Moments p = mu.get(i);
-                int x = (int) (p.get_m10() / p.get_m00());
-                int y = (int) (p.get_m01() / p.get_m00());
-                //Core.circle(mRgba, new Point(x, y), 4, new Scalar(255,49,0,255));
-                Core.circle(mRgba, new Point(x, y), 5, CONTOUR_COLOR, -1);
-                double area = Imgproc.contourArea(contours.get(i));
-                if (area > maxContour)
-                {
-                    maxContour=area;
-                    blobx=x;
-                    bloby=y;
-                    blobBox=Imgproc.boundingRect(contours.get(i));
-                    blobWidth=blobBox.width;
-                    blobHeight = blobBox.height;
-                }
-            }
-
-            if (targetContour == -1 && maxContour > 0 )
-            {
-                targetContour = maxContour; //new target size, thus distance to object
-            }
-
-
-
-
-            Mat colorLabel = mRgba.submat(4, 68, 4, 68);
-            colorLabel.setTo(mBlobColorRgba);
-
-            Mat spectrumLabel = mRgba.submat(4, 4 + mSpectrum.rows(), 70, 70 + mSpectrum.cols());
-            mSpectrum.copyTo(spectrumLabel);
-        }
-
-        return mRgba;
-    }*/
     //this assumes the horizontal axis is the y-axis since the phone is vertical
     //robot angle is relative to "parallel with the beacon wall"
     public static VectorF navOffWall(VectorF trans, double robotAngle, VectorF offWall){

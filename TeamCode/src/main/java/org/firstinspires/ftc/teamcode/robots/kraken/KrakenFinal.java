@@ -30,10 +30,6 @@ import com.qualcomm.ftccommon.SoundPlayer;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.ElapsedTime;
-import com.vuforia.HINT;
-import com.vuforia.PIXEL_FORMAT;
-import com.vuforia.Vuforia;
-
 import org.firstinspires.ftc.robotcore.external.ClassFactory;
 import org.firstinspires.ftc.robotcore.external.Func;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.BuiltinCameraDirection;
@@ -41,11 +37,6 @@ import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
-import org.firstinspires.ftc.robotcore.external.navigation.RelicRecoveryVuMark;
-import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
-import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackable;
-import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackableDefaultListener;
-import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackables;
 import org.firstinspires.ftc.teamcode.vision.colorblob.ColorBlobDetector;
 import org.firstinspires.ftc.teamcode.R;
 import org.firstinspires.ftc.teamcode.RC;
@@ -54,9 +45,6 @@ import org.firstinspires.ftc.teamcode.util.VisionUtils;
 import java.util.Locale;
 
 import static org.firstinspires.ftc.teamcode.robots.kraken.PoseKraken.servoNormalize;
-import static org.firstinspires.ftc.teamcode.util.VisionUtils.getImageFromFrame;
-import static org.firstinspires.ftc.teamcode.util.VisionUtils.getJewelConfig;
-import static org.firstinspires.ftc.teamcode.util.VisionUtils.getColumnPos;
 
 /**
  * This file contains an minimal example of a Linear "OpMode". An OpMode is a 'program' that runs in either
@@ -132,10 +120,9 @@ public class KrakenFinal extends LinearOpMode {
 
 
     //vision objects/vision-based variables
-    public VuforiaTrackables relicCodex;
+
     public int savedVuMarkCodex = 0;
-    VuforiaTrackable relicTemplate;
-    VuforiaLocalizer locale;
+
     private ColorBlobDetector mDetector;
     private int beaconConfig = 0;
     private double vuPwr = 0;
@@ -182,7 +169,7 @@ public class KrakenFinal extends LinearOpMode {
         telemetry.update();
 
         configureDashboard();
-
+/* vuforia stuff removed
         VuforiaLocalizer.Parameters params = new VuforiaLocalizer.Parameters(R.id.cameraMonitorViewId);
         params.vuforiaLicenseKey = RC.VUFORIA_LICENSE_KEY;
         params.cameraDirection = BuiltinCameraDirection.FRONT;
@@ -204,6 +191,8 @@ public class KrakenFinal extends LinearOpMode {
 
         relicTemplate = relicCodex.get(0);
 
+
+ */
 //        waitForStart(); //this is commented out but left here to document that we are still doing the functions that waitForStart() normally does, but needed to customize it.
 
         //activate vuforia to start identifying targets/vuMarks
@@ -247,7 +236,7 @@ public class KrakenFinal extends LinearOpMode {
 
 
             if(toggleAllowed(gamepad1.b, b)){
-                relicCodex.activate();
+                //relicCodex.activate();
                 vuActive = true;
 
             }
@@ -317,7 +306,7 @@ public class KrakenFinal extends LinearOpMode {
                         auto4();
                         break;
                     case 4:
-                        demo((VuforiaTrackableDefaultListener) relicTemplate.getListener(),500);
+                        //demo removed when vuforia was removed
                         break;
                     case 5: //provides data for forwards/backwards calibration
                         joystickDriveStarted = false;
@@ -343,10 +332,10 @@ public class KrakenFinal extends LinearOpMode {
                     case 9:
                         autonomous3();
                         break;
-                    case 10: //vision testing
+                    case 10: //vision testing - this is broken with removal of vuforia
                         if(visionConfigured)
                         {
-                            getColumnPos((getImageFromFrame(locale.getFrameQueue().take(), PIXEL_FORMAT.RGB565)),1, mDetector);
+                            //getColumnPos((getImageFromFrame(locale.getFrameQueue().take(), PIXEL_FORMAT.RGB565)),1, mDetector);
                         }
                         else //setup colorblobtracker
                         {
@@ -382,196 +371,6 @@ public class KrakenFinal extends LinearOpMode {
             robot.ledSystem.offPos();
         }
     }
-
-
-
-    public void demo(VuforiaTrackableDefaultListener beaconTarget, double distance){
-        robot.glyphSystem.tiltPhoneDown();
-        if(gamepad1.x){
-            robot.maintainHeading(gamepad1.x);
-        }
-        else {
-
-
-        }
-        if(gamepad1.y) {
-            robot.driveToBeacon(beaconTarget, isBlue, 0, distance, .5, true, false);
-        }
-
-
-        if(gamepad1.a) {
-            robot.driveToBeacon(beaconTarget, isBlue, 0, distance, .5, false, false);
-        }
-
-    }
-
-
-
-
-    public String getRelicCodexStr(){
-        RelicRecoveryVuMark relicConfig = RelicRecoveryVuMark.from(relicTemplate);
-        if(relicConfig != RelicRecoveryVuMark.UNKNOWN){
-            if(relicConfig == RelicRecoveryVuMark.LEFT) return "left";
-            else if(relicConfig == RelicRecoveryVuMark.RIGHT) return "right";
-            else return "center";
-        }
-        return "unknown";
-    }
-
-    public int getRelicCodex(){
-        RelicRecoveryVuMark relicConfig = RelicRecoveryVuMark.from(relicTemplate);
-        if(relicConfig != RelicRecoveryVuMark.UNKNOWN){
-            if(relicConfig == RelicRecoveryVuMark.LEFT) return 0;
-            else if(relicConfig == RelicRecoveryVuMark.RIGHT) return 2;
-            else return 1;
-        }
-        return 1;
-    }
-
-    public boolean flashRelicCodex(){
-        switch (savedVuMarkCodex){
-            case 0:
-                switch (codexFlashStage){
-                    case 0:
-                        codexFlashTimer = futureTime(.5f);
-                        robot.headLampOff();
-                        codexFlashStage++;
-                        break;
-                    case 1:
-                        if(codexFlashTimer < System.nanoTime()) {
-                            codexFlashTimer = futureTime(.15f);
-                            robot.headLampOn();
-                            codexFlashStage++;
-                        }
-                        break;
-                    case 2:
-                        if(codexFlashTimer < System.nanoTime()){
-                            robot.headLamp.setPower(0);
-                            codexFlashTimer = futureTime(.5f);
-                            codexFlashStage++;}
-                        break;
-                    case 3:
-                        if(codexFlashTimer < System.nanoTime()){
-                            robot.headLampOn();
-                            codexFlashStage = 0;
-                            return true;
-                        }
-                        break;
-                    default:
-                        codexFlashStage = 0;
-                        break;
-                }
-                break;
-            case 1:
-                switch (codexFlashStage){
-                    case 0:
-                        codexFlashTimer = futureTime(.5f);
-                        robot.headLamp.setPower(0);
-                        codexFlashStage++;
-                        break;
-                    case 1:
-                        if(codexFlashTimer < System.nanoTime()) {
-                            codexFlashTimer = futureTime(.15f);
-                            robot.headLampOn();
-                            codexFlashStage++;
-                        }
-                        break;
-                    case 2:
-                        if(codexFlashTimer < System.nanoTime()){
-                            robot.headLamp.setPower(0);
-                            codexFlashTimer = futureTime(.15f);
-                            codexFlashStage++;}
-                        break;
-                    case 3:
-                        if(codexFlashTimer < System.nanoTime()) {
-                            codexFlashTimer = futureTime(.15f);
-                            robot.headLampOn();
-                            codexFlashStage++;
-                        }
-                        break;
-                    case 4:
-                        if(codexFlashTimer < System.nanoTime()){
-                            robot.headLamp.setPower(0);
-                            codexFlashTimer = futureTime(.5f);
-                            codexFlashStage++;}
-                        break;
-                    case 5:
-                        if(codexFlashTimer < System.nanoTime()){
-                            robot.headLampOn();
-                            codexFlashStage = 0;
-                            return true;
-                        }
-                        break;
-                    default:
-                        codexFlashStage = 0;
-                        break;
-                }
-                break;
-            case 2:
-                switch (codexFlashStage){
-                    case 0:
-                        codexFlashTimer = futureTime(.5f);
-                        robot.headLamp.setPower(0);
-                        codexFlashStage++;
-                        break;
-                    case 1:
-                        if(codexFlashTimer < System.nanoTime()) {
-                            codexFlashTimer = futureTime(.15f);
-                            robot.headLampOn();
-                            codexFlashStage++;
-                        }
-                        break;
-                    case 2:
-                        if(codexFlashTimer < System.nanoTime()){
-                            robot.headLamp.setPower(0);
-                            codexFlashTimer = futureTime(.15f);
-                            codexFlashStage++;}
-                        break;
-                    case 3:
-                        if(codexFlashTimer < System.nanoTime()) {
-                            codexFlashTimer = futureTime(.15f);
-                            robot.headLampOn();
-                            codexFlashStage++;
-                        }
-                        break;
-                    case 4:
-                        if(codexFlashTimer < System.nanoTime()){
-                            robot.headLamp.setPower(0);
-                            codexFlashTimer = futureTime(.15f);
-                            codexFlashStage++;}
-                        break;
-                    case 5:
-                        if(codexFlashTimer < System.nanoTime()) {
-                            codexFlashTimer = futureTime(.15f);
-                            robot.headLampOn();
-                            codexFlashStage++;
-                        }
-                        break;
-                    case 6:
-                        if(codexFlashTimer < System.nanoTime()){
-                            robot.headLamp.setPower(0);
-                            codexFlashTimer = futureTime(.5f);
-                            codexFlashStage++;}
-                        break;
-                    case 7:
-                        if(codexFlashTimer < System.nanoTime()){
-                            robot.headLampOn();
-                            codexFlashStage = 0;
-                            return true;
-                        }
-                        break;
-                    default:
-                        codexFlashStage = 0;
-                        break;
-                }
-                break;
-
-        }
-        return false;
-    }
-
-
-
 
     public void joystickDrive(){
 
@@ -895,7 +694,7 @@ public class KrakenFinal extends LinearOpMode {
                 robot.glyphSystem.tiltPhoneDown();
                 robot.glyphSystem.closeGrip();
                 robot.glyphSystem.collect();
-                savedVuMarkCodex = getRelicCodex();
+                //savedVuMarkCodex = getRelicCodex();
                 robot.ledSystem.offPos();
 
                 autoSetupStage++;
@@ -1080,7 +879,7 @@ public class KrakenFinal extends LinearOpMode {
                 robot.glyphSystem.tiltPhoneDown();
                 robot.glyphSystem.closeGrip();
                 robot.glyphSystem.collect();
-                savedVuMarkCodex = getRelicCodex();
+                //savedVuMarkCodex = getRelicCodex();
                 robot.ledSystem.offPos();
                 autoStage++;
                 break;
@@ -1348,7 +1147,7 @@ public class KrakenFinal extends LinearOpMode {
                 robot.glyphSystem.tiltPhoneDown();
                 robot.glyphSystem.closeGrip();
                 robot.glyphSystem.collect();
-                savedVuMarkCodex = getRelicCodex();
+                //savedVuMarkCodex = getRelicCodex();
                 robot.ledSystem.offPos();
                 autoStage++;
                 break;
@@ -1942,7 +1741,7 @@ public class KrakenFinal extends LinearOpMode {
                 if(robot.driveForward(true, .1, .4)){
                     robot.glyphSystem.hold();
                     robot.glyphSystem.hold();
-                    relicCodex.deactivate();
+                    //relicCodex.deactivate();
                     robot.resetMotors(true);
                     autoStage++;
                 }break;

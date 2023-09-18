@@ -23,8 +23,6 @@ import org.firstinspires.ftc.teamcode.robots.reach.utils.TrikeChassisMovementCal
 import org.firstinspires.ftc.teamcode.robots.reach.vision.StackHeight;
 import org.firstinspires.ftc.teamcode.robots.reach.utils.CanvasUtils.Point;
 import org.firstinspires.ftc.teamcode.util.PIDController;
-import org.firstinspires.ftc.teamcode.vision.SkystoneGripPipeline;
-import org.firstinspires.ftc.teamcode.vision.TowerHeightPipeline;
 import org.firstinspires.ftc.teamcode.vision.Viewpoint;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 
@@ -153,10 +151,6 @@ public class ReachPose {
     public double autonomousIMUOffset = 0;
 
     public boolean rangeIsHot = true;
-
-    // vision related
-    public SkystoneGripPipeline pipeline;
-    public TowerHeightPipeline towerHeightPipeline;
 
     public enum MoveMode {
         forward, backward, left, right, rotate, still;

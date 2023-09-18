@@ -17,8 +17,6 @@ import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 import org.firstinspires.ftc.teamcode.util.PIDController;
-import org.firstinspires.ftc.teamcode.vision.SkystoneGripPipeline;
-import org.firstinspires.ftc.teamcode.vision.TowerHeightPipeline;
 import org.firstinspires.ftc.teamcode.vision.Viewpoint;
 import org.opencv.android.Utils;
 import org.opencv.core.Mat;
@@ -149,13 +147,17 @@ public class PoseSkystone {
 
     private int craneArticulation = 0;
 
-    // vision related
+    // vision related stuff broke in sdk 9.0 when vuforia was removed
+
+    /*
     public SkystoneGripPipeline pipeline;
     public TowerHeightPipeline towerHeightPipeline;
-
+ */
     public enum MoveMode {
         forward, backward, left, right, rotate, still;
     }
+
+
 
     protected MoveMode moveMode;
 
@@ -714,19 +716,19 @@ public class PoseSkystone {
                 }
                 break;
             case extendToTowerHeightArticulation:
-                if (extendToTowerHeightArticulation()) {
+                //if (extendToTowerHeightArticulation()) {
                     articulation = Articulation.manual;
-                }
+                //}
                 break;
             case autoExtendToTowerHeightArticulation:
-                if (autoExtendToTowerHeightArticulation()) {
+                //if (autoExtendToTowerHeightArticulation()) {
                     articulation = Articulation.manual;
-                }
+                //}
                 break;
             case autoAlignArticulation:
-                if(autoAlignArticulation()) {
+                //if(autoAlignArticulation()) {
                     articulation = Articulation.manual;
-                }
+                //}
                 break;
             case autoRotateToFaceStone:
                 if(RotateToFaceStone()) {
@@ -957,6 +959,7 @@ public class PoseSkystone {
         return true;
     }
 
+    /*
     public boolean autoExtendToTowerHeightArticulation() {
         Mat mat = towerHeightPipeline.process();
         if(mat != null) {
@@ -972,6 +975,8 @@ public class PoseSkystone {
         crane.extendToTowerHeight(getDistForwardDist(), towerHeightPipeline.blocks);
         return true;
     }
+
+
 
     public Mat towerHeightPipelineProcess() {
         Mat mat = towerHeightPipeline.process();
@@ -990,22 +995,8 @@ public class PoseSkystone {
         return mat;
     }
 
-//    public boolean autoAlignArticulation() {
-//        Mat mat = towerHeightPipelineProcess();
-//
-//        alignPID.setSetpoint(mat.width() / 2.0);
-//        alignPID.setOutputRange(-0.5, 0.5);
-//        alignPID.setTolerance(0.05);
-//        alignPID.enable();
-//
-//        while(!alignPID.onTarget()) {
-//            alignPID.setInput(towerHeightPipeline.x);
-//            driveMixerDiffSteer(alignPID.performPID(), 0);
-//            towerHeightPipeline.process();
-//            towerHeightPipelineProcess();
-//        }
-//        return true;
-//    }
+
+
 
     public boolean autoAlignArticulation() {
         Mat mat = towerHeightPipelineProcess();
@@ -1032,7 +1023,7 @@ public class PoseSkystone {
         }
         return false;
     }
-
+     */
     int RotateToFaceStoneStage = 0;
 
     public boolean RotateToFaceStone(){
