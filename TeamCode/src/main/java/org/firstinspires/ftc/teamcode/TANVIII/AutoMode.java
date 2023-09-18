@@ -261,7 +261,7 @@ public class AutoMode extends LinearOpMode {
             break;
              */
 
-            robot.setHeading(  -135, robot, imu, telemetry);
+            robot.setHeading(  90, robot, imu, telemetry);
             robot.getCurrentHeading(imu);
 
             /*
