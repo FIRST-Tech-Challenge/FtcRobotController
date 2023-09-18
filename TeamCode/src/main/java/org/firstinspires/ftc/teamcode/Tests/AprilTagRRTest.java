@@ -81,18 +81,14 @@ public class AprilTagRRTest extends LinearOpMode {
         BasicRobot.time = 0;
         while(!isStopRequested()&&opModeIsActive()) {
             for(int i=0;i<8;i++){
-                followTrajAsync(trajSeq2);
+//                followTrajAsync(trajSeq2);
             }
             loops++;
             packet.put("loopTime", loops/BasicRobot.time);
             queuer.setFirstLoop(false);
             robot.update();
             roadrun.update();
-//            cam.update();
-            if(cam.update()) {
-                logger.log("/RobotLogs/GeneralRobot", "position = "+roadrun.getPoseEstimate()+", april"+cam.getCamPose());
-                roadrun.setPoseEstimate(cam.getCamPose());
-            }
+           cam.update();
         }
     }
     public void followTrajAsync(TrajectorySequence traj){

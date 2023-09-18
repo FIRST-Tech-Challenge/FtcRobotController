@@ -12,6 +12,7 @@ import static org.firstinspires.ftc.teamcode.roadrunner.drive.DriveConstants.enc
 import static org.firstinspires.ftc.teamcode.roadrunner.drive.DriveConstants.kA;
 import static org.firstinspires.ftc.teamcode.roadrunner.drive.DriveConstants.kStatic;
 import static org.firstinspires.ftc.teamcode.roadrunner.drive.DriveConstants.kV;
+import static org.firstinspires.ftc.teamcode.roadrunner.drive.PoseStorage.currentPose;
 
 import androidx.annotation.NonNull;
 
@@ -298,8 +299,12 @@ public class SampleMecanumDrive extends MecanumDrive {
     }
 
     public void update() {
+//        setPoseEstimate(currentPose);
+        logger.log("/RobotLogs/GeneralRobot", "curPose"+getPoseEstimate());
         updatePoseEstimate();
-        PoseStorage.currentPose = getPoseEstimate();
+        currentPose = getPoseEstimate();
+        logger.log("/RobotLogs/GeneralRobot", "curPose2"+getPoseEstimate());
+
         DriveSignal signal = trajectorySequenceRunner.update(getPoseEstimate(), getPoseVelocity());
         if (signal != null) setDriveSignal(signal);
     }

@@ -10,6 +10,7 @@ import org.apache.commons.math3.linear.Array2DRowRealMatrix
 import org.apache.commons.math3.linear.DecompositionSolver
 import org.apache.commons.math3.linear.LUDecomposition
 import org.apache.commons.math3.linear.MatrixUtils
+import org.firstinspires.ftc.teamcode.Robots.BasicRobot.logger
 import org.firstinspires.ftc.teamcode.roadrunner.drive.PoseStorage.currentPose
 import kotlin.math.cos
 import kotlin.math.sin
@@ -68,6 +69,7 @@ abstract class RFThreeTrackingWheelLocalizer(
     }
 
     override fun update() {
+//        poseEstimate=currentPose
         val wheelPositions = getWheelPositions()
         if (lastWheelPositions.isNotEmpty()) {
             val wheelDeltas = wheelPositions
@@ -75,7 +77,6 @@ abstract class RFThreeTrackingWheelLocalizer(
                 .map { it.first - it.second }
             val robotPoseDelta = calculatePoseDelta(wheelDeltas)
             _poseEstimate = relativeOdometryUpdate(robotPoseDelta)
-            currentPose = _poseEstimate;
         }
 
         val wheelVelocities = getWheelVelocities()
@@ -103,12 +104,12 @@ abstract class RFThreeTrackingWheelLocalizer(
             cosTerm * robotPoseDelta.x + sineTerm * robotPoseDelta.y
         )
 
-        val fieldPoseDelta = Pose2d(fieldPositionDelta.rotated(currentPose.heading), robotPoseDelta.heading)
+        val fieldPoseDelta = Pose2d(fieldPositionDelta.rotated(_poseEstimate.heading), robotPoseDelta.heading)
 
         return Pose2d(
-            currentPose.x + fieldPoseDelta.x,
-            currentPose.y + fieldPoseDelta.y,
-            Angle.norm(currentPose.heading + fieldPoseDelta.heading)
+            _poseEstimate.x + fieldPoseDelta.x,
+            _poseEstimate.y + fieldPoseDelta.y,
+            Angle.norm(_poseEstimate.heading + fieldPoseDelta.heading)
         )
     }
 

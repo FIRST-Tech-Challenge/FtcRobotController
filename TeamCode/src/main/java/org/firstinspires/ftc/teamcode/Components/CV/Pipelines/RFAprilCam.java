@@ -35,11 +35,11 @@ public class RFAprilCam {
     private RFVisionPortal visionPortal;
     boolean upsample=false;
     private Vector2d[] values = {new Vector2d(0, 0), new Vector2d(0, 0),new Vector2d(0, 0),new Vector2d(0, 0),
-            new Vector2d(0, 0),new Vector2d(0, 0),new Vector2d(0, 0)
+            new Vector2d(0, 0),new Vector2d(0, 0)
             ,new Vector2d(0, 0),new Vector2d(3*23.5-1,1.5*23.5),new Vector2d(3*23.5-1,1.5*23.5-4.5)
             ,new Vector2d(3*23.5-1,-1.5*23.5),new Vector2d( 3*23.5-1,-1.5*23.5+4.5)};
     private ArrayList<Pose2d> camPose = new ArrayList<>();
-    private double[][] directions = {{-1, 1}, {-1, 1},{-1, 1},{-1, 1},{-1, 1},{-1, 1},{-1, 1},{-1, 1},{-1, -1},{-1, -1},{-1, -1}};
+    private double[][] directions = {{-1, 1}, {-1, 1},{-1, 1},{-1, 1},{-1, 1},{-1, 1},{-1, 1},{-1, -1},{-1, -1},{-1, -1},{-1, -1}};
 
     /**
      * Initialize apriltag camera
@@ -90,7 +90,7 @@ public class RFAprilCam {
              if(dist<UPSAMPLE_THRESHOLD){
                  upsample=true;
                  poseCount++;
-                 newPose.plus(camPose.get(camPose.size()-1));
+                 newPose = newPose.plus(camPose.get(camPose.size()-1));
              }
              logger.log("/RobotLogs/GeneralRobot", "aprilPos = "+camPose.get(camPose.size()-1)+", dist:"+dist);
         }
@@ -100,7 +100,8 @@ public class RFAprilCam {
             aprilTag.setDecimation(DOWNSAMPLE);
         }
         if(camPose.size() > 0 && upsample && poseCount!=0){
-            currentPose = newPose.div(poseCount);
+            logger.log("/RobotLogs/GeneralRobot", "avgAprilPose"+newPose.div(poseCount));
+            currentPose = new Pose2d(newPose.div(poseCount).vec(), currentPose.getHeading());
         }
     }
 
