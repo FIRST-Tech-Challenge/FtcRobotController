@@ -205,7 +205,7 @@ public class R2V2 extends OpMode {
             //send the camera angle as a steering wheel correction
             //map the range of the tracking camera servo to the range of the target steering ticks
             //todo - we should change this to relating angles instead of target positions
-            steeringTarget = (int)map(-cameraServoTarget, .25, .75, maxLeftSteeringTicks, maxRightSteeringTicks);
+            steeringTarget = -(int)map(cameraServoTarget, .25, .75, maxLeftSteeringTicks, maxRightSteeringTicks);
 
 
             //if the vision target is too large (experimentally determine), then apply the brake automatically
@@ -221,8 +221,9 @@ public class R2V2 extends OpMode {
 
     //todo - we really should have done our normal architecture where this update function is in a robot subsystem
     public void update(){
-
+        //safety bounds on steering
         steeringTarget = Math.max(Math.min(steeringTarget, maxRightSteeringTicks), maxLeftSteeringTicks);
+        if(!mode.equals(ControlMode.CALIBRATE))
         steering.setTargetPosition(steeringTarget);
 
         telemetry();
@@ -308,7 +309,6 @@ public class R2V2 extends OpMode {
             telemetry.addData("Calibration Index", calibrateIndex);
             telemetry.addData("CounterBrake Position", counterBrake.getCurrentPosition());
             telemetry.addData("CounterBrake Max Ticks", counterBrakeMaxTicks);
-
         }
     }
 
@@ -402,19 +402,25 @@ public class R2V2 extends OpMode {
                 centerSteeringTicks = maxRightSteeringTicks / 2; //assume center is halfway between left max and right max
                 steering.setTargetPosition(centerSteeringTicks);
                 steering.setMode(DcMotor.RunMode.RUN_TO_POSITION); //switch back to runtoposition to go to center
-                if (Math.abs(steering.getCurrentPosition() - steering.getTargetPosition()) < 10) {
-                    //go to center and set center to 0, keeping left negative and right positive
-                    steering.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-                    steering.setTargetPosition(0);
-                    steering.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                    maxLeftSteeringTicks = (int)(-centerSteeringTicks * ANTI_STRESS_PROPORTIONAL);
-                    maxRightSteeringTicks = (int)(centerSteeringTicks * ANTI_STRESS_PROPORTIONAL);
-                    centerSteeringTicks = 0;
+                if (Math.abs(steering.getCurrentPosition() - steering.getTargetPosition()) < 3) {
                     calibrateIndex++;
                 }
                 break;
             }
+
             case 5: {
+                //at center reset encoder to zero, keeping left negative and right positive
+                steering.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+                steering.setTargetPosition(0);
+                steering.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                maxLeftSteeringTicks = (int)(-centerSteeringTicks * ANTI_STRESS_PROPORTIONAL);
+                maxRightSteeringTicks = (int)(centerSteeringTicks * ANTI_STRESS_PROPORTIONAL);
+                centerSteeringTicks = 0;
+                steeringTarget = 0;
+                calibrateIndex++;
+                break;
+            }
+            case 6: {
                 steeringCalibrated = true;
                 calibrateIndex = 0;
                 return true;
