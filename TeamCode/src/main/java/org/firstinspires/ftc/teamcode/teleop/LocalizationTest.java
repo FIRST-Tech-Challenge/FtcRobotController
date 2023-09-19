@@ -32,7 +32,7 @@ public class LocalizationTest extends LinearOpMode {
                     )
             );
             if(gamepad1.b) {
-                drive.setLocalizer(new StandardTrackingWheelLocalizer(hardwareMap));//reset pose 0
+//                drive.setLocalizer(new StandardTrackingWheelLocalizer(hardwareMap));//reset pose 0
             }
             double curr = timer.milliseconds();
             telemetry.addData("loop: ", curr-lastTime);

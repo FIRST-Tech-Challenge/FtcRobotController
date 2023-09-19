@@ -4,13 +4,11 @@ import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
-import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
-import org.firstinspires.ftc.teamcode.command.MovePosition;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumFaster;
 import org.firstinspires.ftc.teamcode.hardware.Turret;
 import org.firstinspires.ftc.teamcode.subsystem.MyCamera;
@@ -27,7 +25,7 @@ public class CommonAuto extends LinearOpMode {
     private final FtcDashboard dashboard = FtcDashboard.getInstance();
     private final Telemetry dashboardTelemetry = new MultipleTelemetry(telemetry, dashboard.getTelemetry());
     ElapsedTime timer = new ElapsedTime();
-    double lastTime = 0;
+    double initTime = 0;
     double currentTime = 0;
     public static double cycleDelay = .52;
     public static double turretAfterScoreDelay = .7;
@@ -37,7 +35,11 @@ public class CommonAuto extends LinearOpMode {
     private enum Auto_State {
         drivePose, alignAprilTag, PARK, STOP
     }
-    Auto_State mState = Auto_State.drivePose;
+    private enum Command_State {
+        init, execute, end, isFinish
+    }
+    Auto_State aState = Auto_State.drivePose;
+    Command_State cState = Command_State.init;
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -84,7 +86,7 @@ public class CommonAuto extends LinearOpMode {
                 .lineToLinearHeading(AutoConstants.L_SCORE_POSE)
                 .UNSTABLE_addTemporalMarkerOffset(turretAfterScoreDelay, () -> {
 //                    turret.setTargetAngle(300);
-                    mState = Auto_State.alignAprilTag;
+                    aState = Auto_State.alignAprilTag;
                 })
 //                .waitSeconds(cycleDelay)
                 // END CONE 1 (PRELOAD)
@@ -116,7 +118,7 @@ public class CommonAuto extends LinearOpMode {
 
         while (!isStarted() && !isStopRequested()) {
             dashboardTelemetry.addLine("Robot is (!isStarted() && !isStopRequested())");
-            dashboardTelemetry.addData("minT", dashboardTelemetry.getMsTransmissionInterval());
+//            dashboardTelemetry.addData("minT", dashboardTelemetry.getMsTransmissionInterval());
             dashboardTelemetry.addData("Error1", 0.0);
             dashboardTelemetry.addData("Error2", 0.0);
             dashboardTelemetry.addData("Error3", 0.0);
@@ -124,52 +126,92 @@ public class CommonAuto extends LinearOpMode {
             sleep(20);
         }
 
-//        drive.followTrajectorySequenceAsync(path);
-        lastTime = timer.milliseconds();
-
         while (!isStopRequested() && opModeIsActive()) {
             dashboardTelemetry.addData("timer", timer.milliseconds());
-            switch (mState) {
+            dashboardTelemetry.addData("AprilTagX", myCamera.getAprilTagIDData(10)[2]);
+            dashboardTelemetry.update();
+            drive.update();
+            switch (aState) {
                 case drivePose:
                     dashboardTelemetry.addLine("drive pose updating");
-                    dashboardTelemetry.addData("AprilTagX", myCamera.getAprilTagIDData(10)[2]);
-                    drive.update();
-                    if (!isAutoEnd) {
-                        drive.followTrajectorySequenceAsync(path);
-                        isAutoEnd = true;
+                    switch (cState) {
+                        case init:
+                            initTime = timer.milliseconds();
+                            cState = Command_State.isFinish;
+                            break;
+                        case execute:
+                            drive.autoMoveXY(12.0, 0.3, -15.0, 0.3, timer.milliseconds() - initTime, 8000.0, 10.0, 0.6);
+                            cState = Command_State.isFinish;
+                            break;
+                        case end:
+                            aState = Auto_State.alignAprilTag;
+                            cState = Command_State.init;
+                            break;
+                        case isFinish:
+                            if (drive.isEndAutoMove()) {
+                                drive.initAuto();
+                                cState = Command_State.end;
+                            } else {
+                                cState = Command_State.execute;
+                            }
+                            break;
                     }
                     break;
                 case alignAprilTag:
                     dashboardTelemetry.addLine("align aprilTag updating");
-                    double[] idData = myCamera.getAprilTagIDData(10);
-                    drive.alignAprilTag(16.0, 0.0, 0.0, idData[0], idData[1], idData[2], idData[3]);
-                    if (drive.isEndAlign()) {
-//                        lastPose = drive.getPoseEstimate();
-//                        drive.setPoseEstimate(lastPose);
-                        mState = Auto_State.PARK;
+                    switch (cState) {
+                        case init:
+                            cState = Command_State.isFinish;
+                            break;
+                        case execute:
+                            double[] idData = myCamera.getAprilTagIDData(10);
+                            drive.alignAprilTag(18.0, 0.0, 0.0, idData[0], idData[1], idData[2], idData[3]);
+                            cState = Command_State.isFinish;
+                            break;
+                        case end:
+                            aState = Auto_State.PARK;
+                            cState = Command_State.init;
+                            break;
+                        case isFinish:
+                            if (drive.isEndAlign()) {
+                                cState = Command_State.end;
+                                drive.initAuto();
+                            } else {
+                                cState = Command_State.execute;
+                            }
+                            break;
                     }
                     break;
                 case PARK:
                     dashboardTelemetry.addLine("drive park");
-                    drive.followTrajectorySequenceAsync(path2);
-                    mState = Auto_State.STOP;
+                    switch (cState) {
+                        case init:
+                            initTime = timer.milliseconds();
+                            cState = Command_State.isFinish;
+                            break;
+                        case execute:
+                            drive.autoMoveXY(0.0, 0.3, 0.0, 0.3, timer.milliseconds() - initTime, 8000.0, 10.0, 0.6);
+                            cState = Command_State.isFinish;
+                            break;
+                        case end:
+                            aState = Auto_State.STOP;
+                            cState = Command_State.init;
+                            break;
+                        case isFinish:
+                            if (drive.isEndAutoMove()) {
+                                cState = Command_State.end;
+                                drive.initAuto();
+                            } else {
+                                cState = Command_State.execute;
+                            }
+                            break;
+                    }
                     break;
                 case STOP:
                     dashboardTelemetry.addLine("STOP Now");
-                    drive.update();
+                    drive.updateRobotDrive(0.0, 0.0, 0.0, 0.0);
                     break;
             }
-//            drive.update();
-////            turret.loop();
-//            testMotor.loop();
-//            currentTime = timer.milliseconds();
-//            dashboardTelemetry.addLine("run-time: " + currentTime/1000);
-//            dashboardTelemetry.addLine("loop-time: " + (currentTime - lastTime)/1000);
-//            if (currentTime > 7000.0 && !isAutoEnd) {
-//                drive.followTrajectorySequenceAsync(leftPark);
-//                isAutoEnd = true;
-//            }
-//            lastTime = currentTime;
         }
     }
 }

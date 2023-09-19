@@ -16,7 +16,7 @@ public class DrivePose extends SubsystemBase {
 //        drive = new SampleMecanumDrive(hardwareMap);
         drive = new SampleMecanumFaster(hardwareMap, telemetry);
         drive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        drive.setLocalizer(new StandardTrackingWheelLocalizer(hardwareMap));//reset pose
+//        drive.setLocalizer(new StandardTrackingWheelLocalizer(hardwareMap));//reset pose
     }
     public void driveJoy(double left_stick_y, double left_stick_x, double right_stick_x) {
         drive.setWeightedDrivePower(
@@ -26,12 +26,10 @@ public class DrivePose extends SubsystemBase {
                         -right_stick_x * 1.0
                 )
         );
-        drive.update();
-        poseEstimate = drive.getPoseEstimate();
-        telemetry.addData("TWLPoseX", poseEstimate.getX());
-        telemetry.addData("TWLPoseY", poseEstimate.getY());
-        telemetry.addData("TWLPoseH", Math.toDegrees(poseEstimate.getHeading()));
-        telemetry.update();
+    }
+
+    public void autoMoveXY(double runTime) {
+        drive.autoMoveXY(25.0, 0.3, 0.0, 0.3, runTime, 8000.0, 10.0, 0.6);
     }
     public void driveAlign(double id, double x, double y, double r) {
         drive.alignAprilTag(16.0,0.0,0.0, id, x, y, r);
@@ -48,5 +46,10 @@ public class DrivePose extends SubsystemBase {
             xyValue[1] = poseEstimate.getY();
         }
         return xyValue;
+    }
+
+    @Override
+    public void periodic() {
+        drive.update();
     }
 }

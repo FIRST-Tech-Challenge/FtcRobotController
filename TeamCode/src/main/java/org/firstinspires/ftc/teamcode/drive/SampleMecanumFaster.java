@@ -2,7 +2,6 @@ package org.firstinspires.ftc.teamcode.drive;
 
 import androidx.annotation.NonNull;
 import com.acmerobotics.roadrunner.control.PIDCoefficients;
-import com.acmerobotics.roadrunner.drive.DriveSignal;
 import com.acmerobotics.roadrunner.drive.MecanumDrive;
 import com.acmerobotics.roadrunner.followers.HolonomicPIDVAFollower;
 import com.acmerobotics.roadrunner.followers.TrajectoryFollower;
@@ -17,7 +16,6 @@ import com.acmerobotics.roadrunner.trajectory.constraints.TrajectoryAcceleration
 import com.acmerobotics.roadrunner.trajectory.constraints.TrajectoryVelocityConstraint;
 import com.arcrobotics.ftclib.util.MathUtils;
 import com.qualcomm.hardware.bosch.BHI260IMU;
-import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -52,6 +50,7 @@ import static org.firstinspires.ftc.teamcode.drive.DriveConstants.kStatic;
 import static org.firstinspires.ftc.teamcode.drive.DriveConstants.kV;
 
 public class SampleMecanumFaster extends MecanumDrive {
+    private StandardTrackingWheelLocalizer sTWLoclizer;
     private BHI260IMU imu;
     public static PIDCoefficients TRANSLATIONAL_PID = new PIDCoefficients(6.5, 0, 0);
     public static PIDCoefficients HEADING_PID = new PIDCoefficients(5, 0, 0);
@@ -78,7 +77,8 @@ public class SampleMecanumFaster extends MecanumDrive {
     double pastv1 = 0;
     double pastv2 = 0;
     double pastv3 = 0;
-    private boolean tolerance;
+    private boolean tolerance = false;
+    private List<Double> tWheelPos;
 
     public SampleMecanumFaster(HardwareMap hardwareMap, Telemetry telemetry) {
         super(kV, kA, kStatic, TRACK_WIDTH, TRACK_WIDTH, LATERAL_MULTIPLIER);
@@ -155,9 +155,63 @@ public class SampleMecanumFaster extends MecanumDrive {
         leftFront.setDirection(DcMotorSimple.Direction.REVERSE);
         leftRear.setDirection(DcMotorSimple.Direction.REVERSE);
         // TODO: if desired, use setLocalizer() to change the localization method
-        setLocalizer(new StandardTrackingWheelLocalizer(hardwareMap));
+        sTWLoclizer = new StandardTrackingWheelLocalizer(hardwareMap);
+//        setLocalizer(sTWLoclizer);
 
         trajectorySequenceRunner = new TrajectorySequenceRunner(follower, HEADING_PID);
+    }
+
+    public void initAuto() {
+        tolerance = false;
+    }
+
+    public void autoMoveXY(double xDist, double xK, double yDist, double yK, double runTime, double timeout, double brakeDist, double speedLimit) {
+        tWheelPos = sTWLoclizer.getWheelPos();//Localizer wheel: [0]-left, [1]-right, [2]-front
+        double strafeVal = 0, xError = 0, yError = 0, zError = 0.0, translationVal = 0.0;
+        //move forward and backward -------------------------------------------//
+        xError = xDist - tWheelPos.get(1);
+        if (Math.abs(xError) < brakeDist) {//Start decrease speed and stop
+            strafeVal = MathUtils.clamp(xError/brakeDist*xK*0.6, -speedLimit, speedLimit);
+        } else {//Increase speed until speedLimit
+            strafeVal = MathUtils.clamp( Math.signum(xError) * (runTime/1000.0) * xK, -speedLimit, speedLimit);
+        }
+        double strafeFriction = Math.abs(xError) < 0.02 ? 0.0 : Math.signum(strafeVal) * 0.055;
+        //Move left and right -------------------------------------------------//
+        yError = yDist - tWheelPos.get(2);
+        if (Math.abs(yError) < brakeDist) {//Start decrease speed and stop
+            translationVal = MathUtils.clamp(yError/brakeDist*yK, -speedLimit, speedLimit);
+        } else {//Increase speed until speedLimit
+            translationVal = MathUtils.clamp( Math.signum(yError) * runTime/1000.0 * yK, -speedLimit, speedLimit);
+        }
+        double transFriction = Math.abs(yError) < 0.02 ? 0.0 : Math.signum(translationVal) * 0.055;
+        //move rotate ---------------------------------------------------------//
+//        zError = tWheelPos.get(0)-tWheelPos.get(1);
+        zError = -Math.toDegrees(getRawExternalHeading());
+        double rotationVal = MathUtils.clamp(zError * 0.05, -0.1, 0.1);
+        double rotationFriction = Math.abs(zError) < 0.02 ? 0.0 : Math.signum(rotationVal) * 0.03;
+        if (runTime < timeout) {
+            setWeightedDrivePower(
+                    new Pose2d(
+                            strafeVal + strafeFriction,
+                            translationVal + transFriction,
+                            rotationVal + rotationFriction
+                    )
+            );
+        } else {
+            setWeightedDrivePower(new Pose2d(0.0, 0.0, 0.0));
+        }
+        tolerance = runTime > 100 && (Math.abs(strafeVal) < 0.01) && (Math.abs(translationVal) < 0.02) && (Math.abs(rotationVal) < 0.015);
+        telemetry.addData("Error1", strafeVal);
+        telemetry.addData("Error2", translationVal);
+        telemetry.addData("Error3", rotationVal);
+        telemetry.addData("Runtime", runTime);
+        telemetry.addData("LeftEnc1", tWheelPos.get(0));
+        telemetry.addData("LeftEnc2", tWheelPos.get(1));
+        telemetry.addData("LeftEnc3", tWheelPos.get(2));
+    }
+
+    public boolean isEndAutoMove() {
+        return tolerance;
     }
 
     public void alignAprilTag(double x, double y, double r, double id, double X, double Y, double R) {
@@ -165,7 +219,7 @@ public class SampleMecanumFaster extends MecanumDrive {
         //move forward and backward
         if (X - x < 30.0) {
             strafeVal = MathUtils.clamp((X - x) * 0.1, -0.4, 0.4);
-            strafeFriction = Math.signum(strafeVal) * 0.008;
+            strafeFriction = Math.signum(strafeVal) * 0.01;
         } else {
             strafeFriction = 0.0;
         }
@@ -173,15 +227,19 @@ public class SampleMecanumFaster extends MecanumDrive {
         double dist = Math.abs(X - x);
         double kp2 = dist > 4.0 ? dist / 3.0 * dist / 3.0 : 1.0;
         double translationVal = MathUtils.clamp((y - Y) * 0.6 * kp2, -0.32, 0.32);
-        double translationFriction = Math.signum(translationVal) * 0.04;
+        double translationFriction = Math.signum(translationVal) * 0.037;
         //move rotate
         double kp3 = dist > 4.0 ? 1.3 : 1.0;
         double rotationVal = MathUtils.clamp((R - r) * 0.2 * kp3, -0.13, 0.13);
-        double rotationFriction = Math.signum(rotationVal) * 0.01;
+        double rotationFriction = Math.signum(rotationVal) * 0.012;
         telemetry.addData("Error1", strafeVal);
         telemetry.addData("Error2", translationVal);
         telemetry.addData("Error3", rotationVal);
-        tolerance = (Math.abs(strafeVal) < 0.01) && (Math.abs(translationVal) < 0.02) && (Math.abs(rotationVal) < 0.015);
+        tWheelPos = sTWLoclizer.getWheelPos();
+        telemetry.addData("LeftEnc1", tWheelPos.get(0));
+        telemetry.addData("LeftEnc2", tWheelPos.get(1));
+        telemetry.addData("LeftEnc3", tWheelPos.get(2));
+        tolerance = (Math.abs(strafeVal) < 0.02) && (Math.abs(translationVal) < 0.033) && (Math.abs(rotationVal) < 0.024);
         if (id != 0) {
             setWeightedDrivePower(
                     new Pose2d(
@@ -193,7 +251,6 @@ public class SampleMecanumFaster extends MecanumDrive {
         } else {
             setWeightedDrivePower(new Pose2d(0.0, 0.0, 0.0));
         }
-        update();
     }
 
     public boolean isEndAlign() {
@@ -201,14 +258,15 @@ public class SampleMecanumFaster extends MecanumDrive {
     }
 
     public void update() {
-        updatePoseEstimate();
-        Pose2d poseEstimate = getPoseEstimate();
-        telemetry.addData("TWLPoseX", poseEstimate.getX());
-        telemetry.addData("TWLPoseY", poseEstimate.getY());
-        telemetry.addData("TWLPoseH", Math.toDegrees(poseEstimate.getHeading()));
-        telemetry.update();
-        DriveSignal signal = trajectorySequenceRunner.update(getPoseEstimate(), getPoseVelocity());
-        if (signal != null) setDriveSignal(signal);
+//        updatePoseEstimate();
+//        Pose2d poseEstimate = getPoseEstimate();
+//        telemetry.addData("TWLPoseX", poseEstimate.getX());
+//        telemetry.addData("TWLPoseY", poseEstimate.getY());
+//        telemetry.addData("TWLPoseH", Math.toDegrees(poseEstimate.getHeading()));
+        telemetry.addData("ImuHeading", Math.toDegrees(getRawExternalHeading()));
+//        telemetry.update();
+//        DriveSignal signal = trajectorySequenceRunner.update(getPoseEstimate(), getPoseVelocity());
+//        if (signal != null) setDriveSignal(signal);
     }
 
     public void updateRobotDrive(double left_stick_y, double left_stick_x, double right_stick_x, double driveK) {
@@ -247,7 +305,6 @@ public class SampleMecanumFaster extends MecanumDrive {
         double frontRightPower = (rotY - rotX - rx) / denominator * driveK;
         double backRightPower = (rotY + rotX - rx) / denominator * driveK;
 
-        update();
         leftFront.setPower(frontLeftPower);
         leftRear.setPower(backLeftPower);
         rightFront.setPower(frontRightPower);

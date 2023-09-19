@@ -72,7 +72,6 @@ public class MyCamera extends SubsystemBase {
         } else {
             telemetry.addLine("Dpad Up to enable TFOD");
         }
-        telemetry.update();
 
 //        if (gamepad.dpad_left) {
 //            myVisionPortal.setProcessorEnabled(aprilTag, false);
@@ -212,17 +211,18 @@ public class MyCamera extends SubsystemBase {
 //        telemetry.addLine("RBE = Range, Bearing & Elevation");
     }
 
-    public double[] getAprilTagIDData(int id) {
+    public double[] getAprilTagIDData(int id) {//TO-DO fix
         double[] info = new double[4];
         if (currentDetections()!=null) {
-            for (int i = 0; i < currentDetections().size(); i++) {
-                if (currentDetections().get(i) != null) {
-                    if (id == currentDetections().get(i).id) {
+            List<AprilTagDetection> detection = currentDetections();
+            for (int i = 0; i < detection.size(); i++) {
+                if (detection.get(i) != null) {
+                    if (id == detection.get(i).id) {
                         info[0] = id;
-                        if (currentDetections().get(i).ftcPose != null) {
-                            info[1] = currentDetections().get(i).ftcPose.y;//forward-backward
-                            info[2] = currentDetections().get(i).ftcPose.x;//left-right
-                            info[3] = currentDetections().get(i).ftcPose.roll;//rotate
+                        if (detection.get(i).ftcPose != null) {
+                            info[1] = detection.get(i).ftcPose.y;//forward-backward
+                            info[2] = detection.get(i).ftcPose.x;//left-right
+                            info[3] = detection.get(i).ftcPose.roll;//rotate
                         }
                         break;
                     }

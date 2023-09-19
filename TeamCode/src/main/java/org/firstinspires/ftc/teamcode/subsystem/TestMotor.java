@@ -88,12 +88,12 @@ public class TestMotor extends SubsystemBase {
                 break;
         }
 
-        telemetry.addData("Arm Position", getPosition());
-        telemetry.addData("Arm Corrected Velocity", testMotor.getCorrectedVelocity());
-        telemetry.addData("Wheel State", currWheelState);
-        telemetry.addData("Desired Velocity", mDesiredVelocity);
-        telemetry.addData("Wheel RPM", getWheelRPM());
-        telemetry.addData("Wheel RPM Error", mDesiredVelocity + rpmOffset - getWheelRPM());
+//        telemetry.addData("Arm Position", getPosition());
+//        telemetry.addData("Arm Corrected Velocity", testMotor.getCorrectedVelocity());
+//        telemetry.addData("Wheel State", currWheelState);
+//        telemetry.addData("Desired Velocity", mDesiredVelocity);
+//        telemetry.addData("Wheel RPM", getWheelRPM());
+//        telemetry.addData("Wheel RPM Error", mDesiredVelocity + rpmOffset - getWheelRPM());
     }
 
     public void flyWheel(double desiredHighVelocity) {
