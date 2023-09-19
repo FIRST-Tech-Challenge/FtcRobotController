@@ -12,7 +12,12 @@ public class EmptyOpMode_Iterative extends OpMode
      * Code to run ONCE when the driver hits INIT
      */
     @Override
-    public void init() { }
+    public void init() {
+
+
+        telemetry.setAutoClear(true);
+        telemetry.addData("Status", "Ready");
+        telemetry.update();}
 
     /*
      * Code to run REPEATEDLY after the driver hits INIT, but before they hit PLAY

@@ -22,10 +22,6 @@ public class PlayerOpMode_Iterative extends OpMode
     public void init() {
         _drive = new Drive();
         _drive.playerInit(hardwareMap);
-
-        telemetry.setAutoClear(true);
-        telemetry.addData("Status", "Ready");
-        telemetry.update();
     }
 
     /*
@@ -47,20 +43,7 @@ public class PlayerOpMode_Iterative extends OpMode
      */
     @Override
     public void loop() {
-        telemetry.addData("Runtime", _runtime.milliseconds());
-        telemetry.addData("IsTouching", _drive.isTouching());
-        telemetry.addData("Distance (cm)", _drive.getDistance());
-        telemetry.update();
-
         mecanumDrive();
-
-        if(BuildConfig.DEBUG) {
-            if (_runtime.milliseconds() > 500) {
-                _runtime.reset();
-                Log.i(Config.LOG_TAG, "IsTouching: " + _drive.isTouching());
-                Log.i(Config.LOG_TAG, "Distance: " + _drive.getDistance());
-            }
-        }
     }
 
     /*
