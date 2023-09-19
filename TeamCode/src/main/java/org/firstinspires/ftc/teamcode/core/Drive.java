@@ -20,9 +20,6 @@ public class Drive {
     private DcMotor _mRearRight;
 
     private void baseInit(HardwareMap hardwareMap) {
-        _tSensor = hardwareMap.get(TouchSensor.class, Config.TOUCH_SENSOR);
-        _dSensor = hardwareMap.get(DistanceSensor.class, Config.DISTANCE_SENSOR);
-
         _mFrontLeft = hardwareMap.get(DcMotor.class, Config.FRONT_LEFT_MOTOR);
         _mFrontRight = hardwareMap.get(DcMotor.class, Config.FRONT_RIGHT_MOTOR);
         _mRearLeft = hardwareMap.get(DcMotor.class, Config.REAR_LEFT_MOTOR);
@@ -117,14 +114,5 @@ public class Drive {
         dict.put("RearRightTargetPosition", _mRearRight.getTargetPosition());
 
         return dict;
-    }
-
-    public Boolean isTouching() {
-        return _tSensor.isPressed();
-    }
-
-    public double getDistance() {
-        //TODO: Is CM the right UoM
-        return _dSensor.getDistance(DistanceUnit.CM);
     }
 }

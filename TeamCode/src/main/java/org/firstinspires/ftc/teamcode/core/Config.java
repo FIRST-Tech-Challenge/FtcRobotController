@@ -6,6 +6,4 @@ public class Config {
     public static final String REAR_LEFT_MOTOR = "mRearLeft";
     public static final String FRONT_RIGHT_MOTOR = "mFrontRight";
     public static final String REAR_RIGHT_MOTOR = "mRearRight";
-    public static final String TOUCH_SENSOR = "TS";
-    public static final String DISTANCE_SENSOR = "DST";
 }
