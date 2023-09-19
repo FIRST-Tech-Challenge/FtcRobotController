@@ -7,10 +7,10 @@ import com.qualcomm.robotcore.util.Range;
 
 import org.firstinspires.ftc.teamcode.HWC;
 
-@TeleOp(name="Basic Strafe Drive", group="Iterative OpMode")
+@TeleOp(name = "Basic Strafe Drive", group = "Iterative OpMode")
 public class StrafeDrive extends OpMode {
-    HWC robot;
-    private ElapsedTime time = new ElapsedTime();
+    HWC robot; // Declare the object for HWC, will allow us to access all the motors declared there!
+    private final ElapsedTime time = new ElapsedTime();
 
     // init() Runs ONCE after the driver hits initialize
     @Override
@@ -20,7 +20,7 @@ public class StrafeDrive extends OpMode {
 
         // Do all init stuff
         // TODO: ADD INITS THAT YOU NEED
-        robot = new HWC(hardwareMap, telemetry); // Declare the hardware
+        robot = new HWC(hardwareMap, telemetry);
 
         // Tell the driver the robot is ready
         telemetry.addData("Status", "Initialized");
@@ -39,9 +39,9 @@ public class StrafeDrive extends OpMode {
     // loop() - Runs continuously while the OpMode is active
     @Override
     public void loop() {
-        double leftFPower ;
+        double leftFPower;
         double rightFPower;
-        double leftBPower ;
+        double leftBPower;
         double rightBPower;
         double drive = -gamepad1.left_stick_y * 0.8;
         double turn = gamepad1.left_stick_x * 0.6;
