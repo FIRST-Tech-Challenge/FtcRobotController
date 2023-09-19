@@ -48,7 +48,7 @@ dependencies {
 //    kotlin
 //    implementation 'androidx.core:core-ktx:1.10.1'
 //    Gamepadyn
-//    implementation project(path: ':Gamepadyn')
+    implementation project(path: ':Gamepadyn')
 //    roadrunner
     implementation "com.acmerobotics.roadrunner:ftc:0.1.3"
 }
