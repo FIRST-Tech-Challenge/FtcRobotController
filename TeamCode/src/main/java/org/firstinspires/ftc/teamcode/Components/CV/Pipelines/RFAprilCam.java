@@ -32,7 +32,7 @@ public class RFAprilCam {
     public static double X_OFFSET = 0, Y_OFFSET = 0, UPSAMPLE_THRESHOLD=50;
     public static float DOWNSAMPLE = 2, UPSAMPLE = 3;
     private AprilTagProcessor aprilTag;
-    private RFVisionPortal visionPortal;
+    public RFVisionPortal visionPortal;
     boolean upsample=false;
     private Vector2d[] values = {new Vector2d(0, 0), new Vector2d(0, 0),new Vector2d(0, 0),new Vector2d(0, 0),
             new Vector2d(0, 0),new Vector2d(0, 0)
