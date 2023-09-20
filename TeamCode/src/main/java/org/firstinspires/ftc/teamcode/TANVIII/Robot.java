@@ -138,10 +138,15 @@ public class Robot {
     public void setHeading (double wantedAbsoluteAngle, Robot robot, IMU imu, Telemetry telemetry) {
         double currentTime = SystemClock.elapsedRealtimeNanos();
 
-        if (wantedAbsoluteAngle < -179 || wantedAbsoluteAngle > 180) {
+        //TODO: add conditionals for >180 and <179, maybe also 360
+        if (wantedAbsoluteAngle < -179) {
+
+        } else if (wantedAbsoluteAngle > 180) {
+            /*
             telemetry.addLine("error: wantedAbsoluteAngle takes range -179 through 180");
             telemetry.update();
             return;
+            */
         } else if (wantedAbsoluteAngle == 180) {
             robot.setHeading(179.5, robot, imu, telemetry);
         }
@@ -153,7 +158,7 @@ public class Robot {
 
         setTo = wantedAbsoluteAngle;
 
-        double KP = 0.04; //started 0.15
+        double KP = 0.06; //started 0.15
         double KD = 2_500_000;
 
         double error = setTo - currentHeading; //error is degrees to goal
@@ -162,7 +167,7 @@ public class Robot {
         double power = (KP * error) + (KD * errorDer);
         // + kd * der
 
-        if (Math.abs(error) < 0.3) {
+        if (Math.abs(error) < 0.1) {
             power = 0;
         }
 
@@ -176,13 +181,12 @@ public class Robot {
 
 
         robot.setDrivetrainPower(power, power, power, power);
-        String message = String.valueOf(robot.getCurrentHeading(imu));
-        telemetry.addLine(message);
+        telemetry.addLine(String.valueOf(robot.getCurrentHeading(imu)));
+        telemetry.addLine(String.valueOf(power));
         telemetry.update();
 
         prevError = error;
         prevTime = currentTime;
 
-        }
-
+    }
 }

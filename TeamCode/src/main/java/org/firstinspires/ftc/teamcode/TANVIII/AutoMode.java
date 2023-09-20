@@ -51,7 +51,7 @@ public class AutoMode extends LinearOpMode {
 
     //TODO: i forgot what this does but should put it in robot class
     //TODO: refactor autostraight
-    private void autoStraight(double straightSpeed, double centerTurnSpeed, double mecanumSpeed) {
+    private void autoDrive (double straightSpeed, double centerTurnSpeed, double mecanumSpeed) {
         //inches * tickToIn
         /*
         straightSpeed positive is forward
@@ -96,10 +96,10 @@ public class AutoMode extends LinearOpMode {
             } else if (flPower < -1) {
                 flPower = -1;
             }
-            autoStraight(flPower/4, 0,0);
+            autoDrive(flPower/4, 0,0);
         }
 
-        autoStraight(0,0,0); //stop
+        autoDrive(0,0,0); //stop
     }
 
     //calculating KP:
