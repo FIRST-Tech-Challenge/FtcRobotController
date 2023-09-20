@@ -7,6 +7,7 @@ import android.os.SystemClock;
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.IMU;
 import com.qualcomm.robotcore.util.Range;
@@ -44,6 +45,11 @@ public class Robot {
         this.telemetry = telemetry;
         this.opMode = opMode;
 
+        rBack.setDirection(DcMotorSimple.Direction.FORWARD);
+        lBack.setDirection(DcMotorSimple.Direction.REVERSE);
+        rFront.setDirection(DcMotorSimple.Direction.FORWARD);
+        lFront.setDirection(DcMotorSimple.Direction.REVERSE);
+
         //reset encoder
         lFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         lFront.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
@@ -77,7 +83,7 @@ public class Robot {
         // Initialize IMU using Parameters
         imu.initialize(myIMUparameters);
     }
-    public void setDrivetrainPower (double flPower, double frPower, double blPower, double brPower) {
+    public void setMotorPower (double flPower, double frPower, double blPower, double brPower) {
         lFront.setPower(flPower);
         rFront.setPower(frPower);
         lBack.setPower(blPower);
@@ -178,7 +184,7 @@ public class Robot {
 //        }
 
 
-        setDrivetrainPower(power, power, power, power);
+        setMotorPower(-1 * power, power, -1 * power, power);
         telemetry.addLine(String.valueOf(getCurrentHeading()));
         telemetry.addLine(String.valueOf(power));
         telemetry.update();

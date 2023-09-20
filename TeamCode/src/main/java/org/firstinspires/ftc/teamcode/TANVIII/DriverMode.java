@@ -35,7 +35,7 @@ public class DriverMode extends LinearOpMode {
             brpr /= scaleFactor/powerMult;
 
         }
-        robot.setDrivetrainPower(flpr, frpr, blpr, brpr);
+        robot.setMotorPower(flpr, frpr, blpr, brpr);
     }
 
     @Override
