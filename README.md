@@ -2,7 +2,7 @@
 
 This repository contains the public FTC SDK for the CENTERSTAGE (2023-2024) competition season.
 
-##Installation instructions
+## Installation instructions
 
 This branch (FtcRobotController_CenterStage2023) of this forked repository is used for the FtcRobotController for CENTERSTAGE (2023-2024). It includes a submodule for the TeamCode_CenterStage2023 repository.  To clone these repositories simultaneously, use the following git command:
 
