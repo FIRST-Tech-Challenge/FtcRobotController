@@ -41,7 +41,7 @@ public class DriverMode extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
 
-        robot = new Robot(hardwareMap);
+        robot = new Robot(hardwareMap, this, telemetry);
 
         leftyServo = hardwareMap.servo.get("1");
         rightyServo = hardwareMap.servo.get("2");
@@ -75,7 +75,7 @@ public class DriverMode extends LinearOpMode {
                 robot.setArmPower(0);
             }
 
-            telemetry.addLine(String.valueOf(robot.armMotor.getCurrentPosition()));
+            telemetry.addLine(String.valueOf(robot.arm.getCurrentPosition()));
             telemetry.update();
 
             //move servos
