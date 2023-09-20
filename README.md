@@ -8,7 +8,7 @@ This branch (FtcRobotController_CenterStage2023) of this forked repository is us
 
 git clone -b FtcRobotController_CenterStage2023 --recursive https://github.com/Maywood-FTC-Team2/FtcRobotController.git
 
-Do note that the TeamCode submodule will have a detached HEAD after cloning the repos (due to how git behaves), so you should navigate to the TeamCode directory/repo and be sure to checkout the main branch:
+Do note that the TeamCode submodule will have a detached HEAD after cloning the repos (due to git's default behavior), so you should navigate to the TeamCode directory/repo after cloning and checkout the main branch:
 
 git checkout main
 
