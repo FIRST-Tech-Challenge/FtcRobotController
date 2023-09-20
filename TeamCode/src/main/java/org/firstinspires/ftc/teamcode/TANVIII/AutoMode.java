@@ -49,8 +49,7 @@ public class AutoMode extends LinearOpMode {
         return max;
     }
 
-    //TODO: i forgot what this does but should put it in robot class
-    //TODO: refactor autostraight
+    //TODO: should put it in robot class?
     private void autoDrive (double straightSpeed, double centerTurnSpeed, double mecanumSpeed) {
         //inches * tickToIn
         /*
@@ -156,7 +155,7 @@ public class AutoMode extends LinearOpMode {
          */
 
         double endYaw;
-        double currentYaw = robot.getCurrentHeading(imu);
+        double currentYaw = robot.getCurrentHeading();
 
         YawPitchRollAngles robotOrientation;
         robotOrientation = imu.getRobotYawPitchRollAngles();
@@ -195,13 +194,13 @@ public class AutoMode extends LinearOpMode {
     }
 
     public void setTurnOffYaw(IMU imu) {
-        robot.getCurrentHeading(imu);
+        robot.getCurrentHeading();
     }
 
     @Override
     public void runOpMode() throws InterruptedException {
 
-        robot = new Robot(hardwareMap);
+        robot = new Robot(hardwareMap, this, telemetry);
 
         imu = hardwareMap.get(IMU.class, "imu");
 
@@ -223,7 +222,6 @@ public class AutoMode extends LinearOpMode {
         waitForStart();
 
         while (opModeIsActive()) {
-
             /*
             robot.moveArm(2150);
             sleep(5);
@@ -233,43 +231,8 @@ public class AutoMode extends LinearOpMode {
             break;
             */
 
-            /* robot.setArmPos(true);
-            encoderStraight(24);
-            sleep(300);
-            imuTurn(90, false);
-            sleep(300);
-            encoderStraight(18);
-            sleep(5);
-            robot.moveArm(0);
-            robot.setServoPos(true);
-            sleep(1000);
-            imuTurn(180, false);    
-            encoderStraight(18);
-
-            break;
-            */
-
-            /*
-            imuTurn(90, true);
-
-            sleep(5000);
-
-            imuTurn(90, false);
-
-            sleep(5000);
-
-            break;
-             */
-
-            robot.setHeading(  90, robot, imu, telemetry);
-            robot.getCurrentHeading(imu);
-
-            /*
-            135
-            -135
-            -184
-             */
-
+            robot.setHeading(90);
+            robot.getCurrentHeading();
         }
     }
 }

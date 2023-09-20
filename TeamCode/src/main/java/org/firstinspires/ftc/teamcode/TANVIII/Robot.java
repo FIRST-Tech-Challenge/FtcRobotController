@@ -4,10 +4,11 @@ import static android.os.SystemClock.sleep;
 
 import android.os.SystemClock;
 
+import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
+import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.IMU;
-import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.Range;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
@@ -17,85 +18,96 @@ import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
 import java.util.Objects;
 
 public class Robot {
-    HardwareMap hwMap;
-
-    //declare local variables for all motors
-    DcMotor fl;
-    DcMotor fr;
-    DcMotor bl;
-    DcMotor br;
-
-    DcMotor armMotor;
-    Servo leftyServo;
-    Servo rightyServo;
+    HardwareMap hardwareMap;
+    Telemetry telemetry;
+    LinearOpMode opMode;
+    DcMotor lFront;
+    DcMotor rFront;
+    DcMotor lBack;
+    DcMotor rBack;
+    DcMotor arm;
+    IMU imu;
     double prevError = 0;
     double prevTime = 0;
 
-    public Robot (HardwareMap hardwareMap) {
-        this.hwMap = hardwareMap;
+    public Robot (HardwareMap hardwareMap, LinearOpMode opMode, Telemetry telemetry) {
+        this.hardwareMap = hardwareMap;
 
         //initialize all motors
-        this.fl = hardwareMap.dcMotor.get("fl");
-        this.fr = hardwareMap.dcMotor.get("fr");
-        this.bl = hardwareMap.dcMotor.get("bl");
-        this.br = hardwareMap.dcMotor.get("br");
+        this.lFront = hardwareMap.dcMotor.get("fl");
+        this.rFront = hardwareMap.dcMotor.get("fr");
+        this.lBack = hardwareMap.dcMotor.get("bl");
+        this.rBack = hardwareMap.dcMotor.get("br");
 
-        this.armMotor = hardwareMap.dcMotor.get("a");
+        this.arm = hardwareMap.dcMotor.get("a");
 
-        this.leftyServo = hardwareMap.servo.get("1");
-        this.rightyServo = hardwareMap.servo.get("2");
+        this.telemetry = telemetry;
+        this.opMode = opMode;
 
         //reset encoder
-        fl.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        fl.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        fr.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        fr.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        bl.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        bl.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        br.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        br.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        lFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        lFront.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        rFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        rFront.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        lBack.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        lBack.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        rBack.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        rBack.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
-        armMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        armMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        arm.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        arm.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
         //zero pwr behavior (auto)
-        fl.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        fr.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        bl.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        br.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        lFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        rFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        lBack.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        rBack.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
+        imu = hardwareMap.get(IMU.class, "imu");
+
+        IMU.Parameters myIMUparameters;
+
+        myIMUparameters = new IMU.Parameters(
+                new RevHubOrientationOnRobot(
+                        RevHubOrientationOnRobot.LogoFacingDirection.UP,
+                        RevHubOrientationOnRobot.UsbFacingDirection.FORWARD
+                )
+        );
+
+        // Initialize IMU using Parameters
+        imu.initialize(myIMUparameters);
     }
     public void setDrivetrainPower (double flPower, double frPower, double blPower, double brPower) {
-        fl.setPower(flPower);
-        fr.setPower(frPower);
-        bl.setPower(blPower);
-        br.setPower(brPower);
+        lFront.setPower(flPower);
+        rFront.setPower(frPower);
+        lBack.setPower(blPower);
+        rBack.setPower(brPower);
     }
     public void setArmPower (double armPower) {
-        armMotor.setPower(armPower);
+        arm.setPower(armPower);
     }
     public int getEncoderPosition (String motorName) {
         if (Objects.equals(motorName, "fl")) {
-            return fl.getCurrentPosition();
+            return lFront.getCurrentPosition();
         } else if (Objects.equals(motorName, "fr")) {
-            return fr.getCurrentPosition();
+            return rFront.getCurrentPosition();
         } else if (Objects.equals(motorName, "bl")) {
-            return bl.getCurrentPosition();
+            return lBack.getCurrentPosition();
         } else if (Objects.equals(motorName, "br")) {
-            return br.getCurrentPosition();
+            return rBack.getCurrentPosition();
         } else {
             assert false;
             return 0;
         }
     }
     public void moveArm (int ticks) {
-        armMotor.setTargetPosition(ticks);
-        armMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        armMotor.setPower(0.5);
-        while (armMotor.isBusy()) {
+        arm.setTargetPosition(ticks);
+        arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        arm.setPower(0.5);
+        while (arm.isBusy()) {
             sleep(10);
         }
     }
-
     public void setArmPos (boolean goingUp) {
         if (goingUp) {
             moveArm(2150);
@@ -103,17 +115,6 @@ public class Robot {
             moveArm(-2150);
         }
     }
-
-    public void setServoPos (boolean intake) {
-        if (intake) {
-            leftyServo.setPosition(0);
-            rightyServo.setPosition(1);
-        } else {
-            leftyServo.setPosition(1);
-            rightyServo.setPosition(0);
-        }
-    }
-
     public double bigAbsVal (double a, double... others) {
 
         double max = a;
@@ -125,17 +126,14 @@ public class Robot {
         }
         return max;
     }
-
-    public double getCurrentHeading (IMU imu) {
+    public double getCurrentHeading () {
         double currentYaw;
         YawPitchRollAngles robotOrientation;
         robotOrientation = imu.getRobotYawPitchRollAngles();
         currentYaw = robotOrientation.getYaw(AngleUnit.DEGREES);
         return currentYaw;
     }
-
-
-    public void setHeading (double wantedAbsoluteAngle, Robot robot, IMU imu, Telemetry telemetry) {
+    public void setHeading (double wantedAbsoluteAngle) {
         double currentTime = SystemClock.elapsedRealtimeNanos();
 
         //TODO: add conditionals for >180 and <179, maybe also 360
@@ -148,10 +146,10 @@ public class Robot {
             return;
             */
         } else if (wantedAbsoluteAngle == 180) {
-            robot.setHeading(179.5, robot, imu, telemetry);
+            setHeading(179.5);
         }
 
-        double currentHeading = robot.getCurrentHeading(imu);
+        double currentHeading = getCurrentHeading();
         YawPitchRollAngles robotOrientation = imu.getRobotYawPitchRollAngles();
         currentHeading = robotOrientation.getYaw(AngleUnit.DEGREES);
         double setTo;
@@ -180,8 +178,8 @@ public class Robot {
 //        }
 
 
-        robot.setDrivetrainPower(power, power, power, power);
-        telemetry.addLine(String.valueOf(robot.getCurrentHeading(imu)));
+        setDrivetrainPower(power, power, power, power);
+        telemetry.addLine(String.valueOf(getCurrentHeading()));
         telemetry.addLine(String.valueOf(power));
         telemetry.update();
 
