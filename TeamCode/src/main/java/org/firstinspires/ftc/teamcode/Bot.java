@@ -26,14 +26,16 @@ public class Bot {
 
     public static Bot instance;
 
-    public final Slides slides;
+    /*public final Slides slides;
     public final Noodles noodles;
     public final TransferClaw transferClaw;
+    Slides, Noodles, and TransferClaw subsystems
+     */
 
     private final DcMotorEx fl, fr, bl, br, susMotor;
-    private final Servo tcServo, droneServo_1, droneServo_2, outtake;
+    private final Servo tcServo, droneServo_1, droneServo_2, outtakeServo;
 
-    public BotState state = BotState.STORAGE;
+    public BotState state = BotState.STORAGE_NOT_FULL;
 
     public OpMode opMode;
 
@@ -76,15 +78,21 @@ public class Bot {
         fr = opMode.hardwareMap.get(DcMotorEx.class, "fr");
         bl = opMode.hardwareMap.get(DcMotorEx.class, "bl");
         br = opMode.hardwareMap.get(DcMotorEx.class, "br");
-        tcServo = op
+        tcServo = opMode.hardwareMap.get(Servo.class, "tcServo");
+        droneServo_1 = opMode.hardwareMap.get(Servo.class, "droneServo_1");;
+        droneServo_2= opMode.hardwareMap.get(Servo.class, "droneServo_2");;
+        outtakeServo = opMode.hardwareMap.get(Servo.class, "outtakeServo");;
+        susMotor = opMode.hardwareMap.get(DcMotorEx.class, "susMotor");
 
         fl.setMode(RUN_USING_ENCODER);
 
         //subsystems uwu
 
-        this.slides = new Slides(opMode);
-        this.noodles = new Noodles(opMode);
-        this.transferClaw = new TransferClaw(opMode);
+        /*this.slides = new Slides(opMode); slides subsystem
+        this.noodles = new Noodles(opMode); noodles subsystem
+        this.transferClaw = new TransferClaw(opMode); transferClaw subsystem
+         */
+
 
     }
 
@@ -100,7 +108,7 @@ public class Bot {
 
 
     //pixelval is an enum, with
-    public void turretalignjunction() {
+    /*public void turretalignjunction() {
         if (PixelDetectionPipeline.junctionVal == PixelDetectionPipeline.JunctionVal.ONLEFT) {
             if (JunctionDetectionPipeline.width > 100) {
                 turret.runRawPower(-0.4);
@@ -130,6 +138,8 @@ public class Bot {
         }
     }
 
+     */
+
     /*
     public void intakeFallen() {
         state = BotState.INTAKE;
@@ -143,14 +153,14 @@ public class Bot {
 
     public void prepForOuttake() {
         state = BotState.STORAGE_FULL;
-        slides.runToBottom();
+        //slides.runToBottom(); code in slides subsystem
     }
     //move to slides
 
     public void outtake() { // must be combined with bot.slide.run___() in MainTeleOp
         state = BotState.OUTTAKE;
-        slides.runTo(//int arg 1-12, revisit it later);
-                transferClaw.open();
+        //slides.runTo(//int arg 1-12, revisit it later); code in slides subsystem
+        //transferClaw.open();code in transferClaw subsystem
     }
 
     public void secure() {
@@ -250,7 +260,7 @@ public class Bot {
         fr.setMode(STOP_AND_RESET_ENCODER);
         br.setMode(STOP_AND_RESET_ENCODER);
         bl.setMode(STOP_AND_RESET_ENCODER);
-        slides.resetEncoder();
+        //slides.resetEncoder(); code this in slides subsystems
         //reset encoder in slides
 
     }
@@ -272,8 +282,8 @@ public class Bot {
     }
 
     public void resetProfiler() {
-        slides.resetProfiler();
+        //slides.resetProfiler(); code in slides subsystem
         //figure this out
-        horizSlides.resetProfiler();
+
     }
 }
