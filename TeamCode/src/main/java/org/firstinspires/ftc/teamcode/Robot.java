@@ -308,10 +308,9 @@ public class Robot {
         return currentYaw;
     }
     public void setHeading (double wantedAbsoluteAngle) {
-        double currentTime = SystemClock.elapsedRealtimeNanos();
 
         //TODO: add conditionals for >180 and <179, maybe also 360
-        if (wantedAbsoluteAngle < -179) {
+        if (wantedAbsoluteAngle < -180) {
 
         } else if (wantedAbsoluteAngle > 180) {
             /*
@@ -321,40 +320,47 @@ public class Robot {
             */
         } else if (wantedAbsoluteAngle == 180) {
             setHeading(179.5);
+        } else {
+
+
+            YawPitchRollAngles robotOrientation;
+
+            double KP = 0.06; //started 0.15
+            double KD = 2_500_000;
+            double ERROR_TOLERANCE = 0.1; //degrees
+
+            double setTo = wantedAbsoluteAngle;
+            double currentHeading = getCurrentHeading();
+            double error = setTo - currentHeading;
+            double errorDer;
+            double power;
+            double currentTime;
+
+            //while startx
+            while (Math.abs(error) > ERROR_TOLERANCE && opMode.opModeIsActive()) {
+                robotOrientation = imu.getRobotYawPitchRollAngles();
+                currentHeading = robotOrientation.getYaw(AngleUnit.DEGREES);
+                currentTime = SystemClock.elapsedRealtimeNanos();
+
+                error = setTo - currentHeading; //error is degrees to goal
+                errorDer = (error - prevError) / (currentTime - prevTime);
+
+                power = (KP * error) + (KD * errorDer);
+
+                //cap power
+                power = Range.clip(power, -1, 1);
+
+
+                setMotorPower(-1 * power, power, -1 * power, power);
+                telemetry.addLine(String.valueOf(getCurrentHeading()));
+                telemetry.addLine(String.valueOf(power));
+                telemetry.update();
+
+                prevError = error;
+                prevTime = currentTime;
+            }
+            setMotorPower(0, 0, 0, 0);
         }
-
-        double currentHeading = getCurrentHeading();
-        YawPitchRollAngles robotOrientation = imu.getRobotYawPitchRollAngles();
-        currentHeading = robotOrientation.getYaw(AngleUnit.DEGREES);
-        double setTo;
-
-        setTo = wantedAbsoluteAngle;
-
-        double KP = 0.06; //started 0.15
-        double KD = 2_500_000;
-
-        double error = setTo - currentHeading; //error is degrees to goal
-        double errorDer = (error - prevError)/(currentTime - prevTime);
-
-        double power = (KP * error) + (KD * errorDer);
-        // + kd * der
-
-        if (Math.abs(error) < 0.1) {
-            power = 0;
-        }
-
-        //cap power
-        power = Range.clip(power, -1, 1);
-
-
-        setMotorPower(-1 * power, power, -1 * power, power);
-        telemetry.addLine(String.valueOf(getCurrentHeading()));
-        telemetry.addLine(String.valueOf(power));
-        telemetry.update();
-
-        prevError = error;
-        prevTime = currentTime;
-
     }
     public void autoForward(double targetDistanceInMM) throws InterruptedException {
 

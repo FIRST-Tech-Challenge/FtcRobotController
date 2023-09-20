@@ -1,5 +1,4 @@
 package org.firstinspires.ftc.teamcode.TANVIII;
-
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.IMU;
@@ -197,6 +196,7 @@ public class AutoMode extends LinearOpMode {
 
             robot.setHeading(90);
             robot.getCurrentHeading();
+            break;
         }
     }
 }
