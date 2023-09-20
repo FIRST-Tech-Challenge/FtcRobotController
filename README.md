@@ -2,6 +2,16 @@
 
 This repository contains the public FTC SDK for the CENTERSTAGE (2023-2024) competition season.
 
+##Installation instructions
+
+This branch (FtcRobotController_CenterStage2023) of this forked repository is used for the FtcRobotController for CENTERSTAGE (2023-2024). It includes a submodule for the TeamCode_CenterStage2023 repository.  To clone these repositories simultaneously, use the following git command:
+
+git clone -b FtcRobotController_CenterStage2023 --recursive https://github.com/Maywood-FTC-Team2/FtcRobotController.git
+
+Do note that the TeamCode submodule will have a detached HEAD after cloning the repos (due to how git behaves), so you should navigate to the TeamCode directory/repo and be sure to checkout the main branch:
+
+git checkout main
+
 ## Welcome!
 This GitHub repository contains the source code that is used to build an Android app to control a *FIRST* Tech Challenge competition robot.  To use this SDK, download/clone the entire project to your local computer.
 
