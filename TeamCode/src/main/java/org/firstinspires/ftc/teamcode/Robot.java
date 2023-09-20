@@ -1,14 +1,18 @@
 package org.firstinspires.ftc.teamcode;
 
+import android.os.SystemClock;
+
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.IMU;
+import com.qualcomm.robotcore.util.Range;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
 
 public class Robot {
 
@@ -28,6 +32,10 @@ public class Robot {
     double oldTick;
     long millis = System.currentTimeMillis();
     long lastCheckMillis = System.currentTimeMillis();
+
+    double prevError = 0;
+    double prevTime = 0;
+
 
     //CONSTRUCTOR
     public Robot(HardwareMap hardwareMap, LinearOpMode opMode, Telemetry telemetry) {
@@ -267,11 +275,10 @@ public class Robot {
         fRight.setDirection(DcMotorSimple.Direction.REVERSE);
         fLeft.setDirection(DcMotorSimple.Direction.FORWARD);
 
-
-        fLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        bLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        fRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        bRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        lFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        lBack.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        rFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        rBack.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
         fLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         fLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
@@ -292,6 +299,62 @@ public class Robot {
                 -proportionalPower + calculateImuPower(0)*scaleImu,
                 -proportionalPower - calculateImuPower(0)*scaleImu
         });
+    }
+    public double getCurrentHeading () {
+        double currentYaw;
+        YawPitchRollAngles robotOrientation;
+        robotOrientation = imu.getRobotYawPitchRollAngles();
+        currentYaw = robotOrientation.getYaw(AngleUnit.DEGREES);
+        return currentYaw;
+    }
+    public void setHeading (double wantedAbsoluteAngle) {
+        double currentTime = SystemClock.elapsedRealtimeNanos();
+
+        //TODO: add conditionals for >180 and <179, maybe also 360
+        if (wantedAbsoluteAngle < -179) {
+
+        } else if (wantedAbsoluteAngle > 180) {
+            /*
+            telemetry.addLine("error: wantedAbsoluteAngle takes range -179 through 180");
+            telemetry.update();
+            return;
+            */
+        } else if (wantedAbsoluteAngle == 180) {
+            setHeading(179.5);
+        }
+
+        double currentHeading = getCurrentHeading();
+        YawPitchRollAngles robotOrientation = imu.getRobotYawPitchRollAngles();
+        currentHeading = robotOrientation.getYaw(AngleUnit.DEGREES);
+        double setTo;
+
+        setTo = wantedAbsoluteAngle;
+
+        double KP = 0.06; //started 0.15
+        double KD = 2_500_000;
+
+        double error = setTo - currentHeading; //error is degrees to goal
+        double errorDer = (error - prevError)/(currentTime - prevTime);
+
+        double power = (KP * error) + (KD * errorDer);
+        // + kd * der
+
+        if (Math.abs(error) < 0.1) {
+            power = 0;
+        }
+
+        //cap power
+        power = Range.clip(power, -1, 1);
+
+
+        setMotorPower(-1 * power, power, -1 * power, power);
+        telemetry.addLine(String.valueOf(getCurrentHeading()));
+        telemetry.addLine(String.valueOf(power));
+        telemetry.update();
+
+        prevError = error;
+        prevTime = currentTime;
+
     }
     public void autoForward(double targetDistanceInMM) throws InterruptedException {
 
@@ -526,6 +589,7 @@ public class Robot {
 
 
     }
-
-
+    public void resetImuYaw () {
+        imu.resetYaw();
+    }
 }

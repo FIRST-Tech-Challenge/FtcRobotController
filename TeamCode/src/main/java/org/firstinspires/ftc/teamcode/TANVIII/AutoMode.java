@@ -1,31 +1,14 @@
 package org.firstinspires.ftc.teamcode.TANVIII;
 
-import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.IMU;
-import com.qualcomm.robotcore.hardware.Servo;
-
-import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
-import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
+import org.firstinspires.ftc.teamcode.Robot;
 
 @Autonomous
 public class AutoMode extends LinearOpMode {
 
     Robot robot;
-
-    //declare all motors
-    DcMotor fl;
-    DcMotor fr;
-    DcMotor bl;
-    DcMotor br;
-    IMU imu;
-
-    DcMotor armMotor;
-
-    Servo leftyServo;
-    Servo rightyServo;
 
     //wheel measurements
     final double PPR = 537.7;
@@ -73,9 +56,9 @@ public class AutoMode extends LinearOpMode {
             blpr /= scaleFactor;
             brpr /= scaleFactor;
         }
-        robot.setDrivetrainPower(flpr, frpr, blpr, brpr);
+        robot.setMotorPower(flpr, frpr, blpr, brpr);
     }
-
+    /*
     public void encoderStraight(double inches) {
         double flTicksNow = Math.abs(robot.getEncoderPosition("fl"));
         double flTicksEnd = inches * inToTick + flTicksNow; //rip ticksToIn :(
@@ -100,6 +83,7 @@ public class AutoMode extends LinearOpMode {
 
         autoDrive(0,0,0); //stop
     }
+
 
     //calculating KP:
     //KP*(12*intotick) ~= 1
@@ -136,23 +120,16 @@ public class AutoMode extends LinearOpMode {
                 flPower = -1;
             }
 
-            robot.setDrivetrainPower(flPower/4, flPower/4, flPower/4, flPower/4);
+            robot.setMotorPower(flPower/4, flPower/4, flPower/4, flPower/4);
         }
 
-        robot.setDrivetrainPower(0, 0, 0, 0);
+        robot.setMotorPower(0, 0, 0, 0);
     }
 
+     */
+    /*
     public void imuTurn(double degrees, boolean counterclockwise) {
-        /*
-        endYaw is input degrees
-        nowYaw is get yaw
-        while nowYaw not equal to endYaw
-            if nowYaw < endYaw
-                turn c clock
-            if nowYaw < endYaw
-                turn clock
-        break
-         */
+
 
         double endYaw;
         double currentYaw = robot.getCurrentHeading();
@@ -187,11 +164,12 @@ public class AutoMode extends LinearOpMode {
                 power = -1;
             }
 
-            robot.setDrivetrainPower(power/4, power/4, power/4, power/4);
+            robot.setMotorPower(power/4, power/4, power/4, power/4);
         }
 
-        robot.setDrivetrainPower(0, 0, 0, 0);
+        robot.setMotorPower(0, 0, 0, 0);
     }
+    */
 
     public void setTurnOffYaw(IMU imu) {
         robot.getCurrentHeading();
@@ -200,24 +178,10 @@ public class AutoMode extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
 
-        robot = new Robot(hardwareMap, this, telemetry);
-
-        imu = hardwareMap.get(IMU.class, "imu");
-
-        IMU.Parameters myIMUparameters;
-
-        myIMUparameters = new IMU.Parameters(
-                new RevHubOrientationOnRobot(
-                        RevHubOrientationOnRobot.LogoFacingDirection.UP,
-                        RevHubOrientationOnRobot.UsbFacingDirection.FORWARD
-                )
-        );
-
-        // Initialize IMU using Parameters
-        imu.initialize(myIMUparameters);
+        robot = new org.firstinspires.ftc.teamcode.Robot(hardwareMap, this, telemetry);
 
         // Reset Yaw
-        imu.resetYaw();
+        robot.resetImuYaw();
 
         waitForStart();
 
