@@ -84,3 +84,4 @@ lint/generated/
 lint/outputs/
 lint/tmp/
 # lint/reports/
+/TeamCode/src/main/java/org/firstinspires/ftc/teamcode/TestOpenCV/eocvsim_workspace.json

@@ -36,8 +36,10 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.IMU;
 import com.qualcomm.robotcore.util.ElapsedTime;
+import org.opencv.core.Core;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.opencv.core.Size;
 
 /**
  * This file contains an example of a Linear "OpMode".
@@ -67,7 +69,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
  * Remove or comment out the @Disabled line to add this opmode to the Driver Station OpMode list
  */
 
-@TeleOp(name="Basic: Omni TeleOp", group="Linear Opmode")
+@TeleOp(name="Omni TeleOp Auto-Turn", group="Linear Opmode")
 //@Disabled
 public class WF_DriveTrain_AutoTurn extends LinearOpMode {
 
