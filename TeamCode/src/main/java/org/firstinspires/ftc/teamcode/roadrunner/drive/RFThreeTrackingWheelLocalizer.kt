@@ -1,12 +1,19 @@
 package org.firstinspires.ftc.teamcode.roadrunner.drive
 
 import com.acmerobotics.roadrunner.geometry.Pose2d
+import com.acmerobotics.roadrunner.geometry.Vector2d
 import com.acmerobotics.roadrunner.kinematics.Kinematics
 import com.acmerobotics.roadrunner.localization.Localizer
+import com.acmerobotics.roadrunner.util.Angle
+import com.acmerobotics.roadrunner.util.epsilonEquals
 import org.apache.commons.math3.linear.Array2DRowRealMatrix
 import org.apache.commons.math3.linear.DecompositionSolver
 import org.apache.commons.math3.linear.LUDecomposition
 import org.apache.commons.math3.linear.MatrixUtils
+import org.firstinspires.ftc.teamcode.Robots.BasicRobot.logger
+import org.firstinspires.ftc.teamcode.roadrunner.drive.PoseStorage.currentPose
+import kotlin.math.cos
+import kotlin.math.sin
 
 /**
  * Localizer based on three unpowered tracking omni wheels.
@@ -62,13 +69,14 @@ abstract class RFThreeTrackingWheelLocalizer(
     }
 
     override fun update() {
+//        poseEstimate=currentPose
         val wheelPositions = getWheelPositions()
         if (lastWheelPositions.isNotEmpty()) {
             val wheelDeltas = wheelPositions
                 .zip(lastWheelPositions)
                 .map { it.first - it.second }
             val robotPoseDelta = calculatePoseDelta(wheelDeltas)
-            _poseEstimate = Kinematics.relativeOdometryUpdate(_poseEstimate, robotPoseDelta)
+            _poseEstimate = relativeOdometryUpdate(robotPoseDelta)
         }
 
         val wheelVelocities = getWheelVelocities()
@@ -77,6 +85,32 @@ abstract class RFThreeTrackingWheelLocalizer(
         }
 
         lastWheelPositions = wheelPositions
+    }
+
+    /**
+     * Performs a relative odometry update. Note: this assumes that the robot moves with constant velocity over the
+     * measurement interval.
+     */
+    fun relativeOdometryUpdate(robotPoseDelta: Pose2d): Pose2d {
+        val dtheta = robotPoseDelta.heading
+        val (sineTerm, cosTerm) = if (dtheta epsilonEquals 0.0) {
+            1.0 - dtheta * dtheta / 6.0 to dtheta / 2.0
+        } else {
+            sin(dtheta) / dtheta to (1 - cos(dtheta)) / dtheta
+        }
+
+        val fieldPositionDelta = Vector2d(
+            sineTerm * robotPoseDelta.x - cosTerm * robotPoseDelta.y,
+            cosTerm * robotPoseDelta.x + sineTerm * robotPoseDelta.y
+        )
+
+        val fieldPoseDelta = Pose2d(fieldPositionDelta.rotated(_poseEstimate.heading), robotPoseDelta.heading)
+
+        return Pose2d(
+            _poseEstimate.x + fieldPoseDelta.x,
+            _poseEstimate.y + fieldPoseDelta.y,
+            Angle.norm(_poseEstimate.heading + fieldPoseDelta.heading)
+        )
     }
 
     /**
