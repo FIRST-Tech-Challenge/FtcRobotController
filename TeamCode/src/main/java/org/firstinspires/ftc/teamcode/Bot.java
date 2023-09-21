@@ -3,6 +3,8 @@ package org.firstinspires.ftc.teamcode;
 import static com.qualcomm.robotcore.hardware.DcMotor.RunMode.RUN_USING_ENCODER;
 import static com.qualcomm.robotcore.hardware.DcMotor.RunMode.STOP_AND_RESET_ENCODER;
 
+import static org.firstinspires.ftc.teamcode.Bot.BotState.STORAGE_NOT_FULL;
+
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.hardware.bosch.BNO055IMU;
@@ -24,6 +26,7 @@ public class Bot {
         OUTTAKE, // ready to outtake
     }
 
+    private BotState currentState = STORAGE_NOT_FULL;
     public static Bot instance;
 
     /*public final Slides slides;
@@ -35,7 +38,7 @@ public class Bot {
     private final DcMotorEx fl, fr, bl, br, susMotor;
     private final Servo tcServo, droneServo_1, droneServo_2, outtakeServo;
 
-    public BotState state = BotState.STORAGE_NOT_FULL;
+    public BotState state = STORAGE_NOT_FULL;
 
     public OpMode opMode;
 
