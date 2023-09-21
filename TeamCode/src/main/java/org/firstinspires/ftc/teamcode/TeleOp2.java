@@ -21,10 +21,10 @@ public class TeleOp2 extends LinearOpMode {
 
         // Initialize the hardware variables. Note that the strings used here must correspond
         // to the names assigned during the robot configuration step on the DS or RC devices.
-        leftFrontDrive  = hardwareMap.get(DcMotor.class, "leftfront");
-        leftBackDrive  = hardwareMap.get(DcMotor.class, "leftback");
-        rightFrontDrive = hardwareMap.get(DcMotor.class, "rightfront");
-        rightBackDrive = hardwareMap.get(DcMotor.class, "rightback");
+        leftFrontDrive  = hardwareMap.get(DcMotor.class, "frontleft");
+        leftBackDrive  = hardwareMap.get(DcMotor.class, "backleft");
+        rightFrontDrive = hardwareMap.get(DcMotor.class, "frontright");
+        rightBackDrive = hardwareMap.get(DcMotor.class, "backright");
 
         // ########################################################################################
         // !!!            IMPORTANT Drive Information. Test your motor directions.            !!!!!
