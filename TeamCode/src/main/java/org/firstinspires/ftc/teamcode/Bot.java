@@ -184,9 +184,9 @@ public class Bot {
 
 
     public void fixMotors(double velocity) {
-        fl.setVelocity(-velocity); //invert
+        fl.setDirection(DcMotorEx.Direction.REVERSE); //invert
         fr.setVelocity(velocity);
-        bl.setVelocity(-velocity); // invert
+        bl.setDirection(DcMotorEx.Direction.REVERSE); // invert
         br.setVelocity(velocity);
 
         fl.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);

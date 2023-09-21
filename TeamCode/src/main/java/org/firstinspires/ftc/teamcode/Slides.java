@@ -1,23 +1,25 @@
 package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
+import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
-package org.firstinspires.ftc.teamcode.teleop.subsystems;
-
-import com.acmerobotics.dashboard.config.Config;
+import com.qualcomm.robotcore.hardware.PIDFCoefficients;
+/*import com.acmerobotics.dashboard.config.Config;
 import com.arcrobotics.ftclib.controller.PIDFController;
 import com.arcrobotics.ftclib.hardware.motors.Motor;
 import com.arcrobotics.ftclib.hardware.motors.MotorEx;
 import com.arcrobotics.ftclib.hardware.motors.MotorGroup;
-import com.qualcomm.robotcore.eventloop.opmode.OpMode;
+import com.qualcomm.robotcore.hardware.PIDFCoefficients;
+ */
 //how to import these packages?
 
-import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
-import org.firstinspires.ftc.teamcode.util.MotionProfiler;
+//import org.firstinspires.ftc.teamcode.util.MotionProfiler;
 
 public class Slides {
-    public final DcMotorEx motor_1;
+    public final DcMotorEx slidesMotor_left;
+    public final DcMotorEx slidesMotor_right;
     private static double p = 0.015, i = 0 , d = 0, f = 0;
+    private PIDFCoefficients coeff = new PIDFCoefficients(p,i,d,f);
     //4410 code has staticF, not sure what that is. Look into it later
 
     //change values in slidesPosition based on the number of stages in the slides
@@ -40,6 +42,19 @@ public class Slides {
     private double target = 0;
     private boolean goingDown = false;
     private double profile_init_time = 0;
-    private MotionProfiler profiler = new MotionProfiler(30000, 20000);
+    //private MotionProfiler profiler = new MotionProfiler(30000, 20000);
+    public boolean movingDown = false;
+
+    public Slides(OpMode opMode){
+        this.opMode = opMode;
+        slidesMotor_left = opMode.hardwareMap.get(DcMotorEx.class, "left slides motor");
+        slidesMotor_right = opMode.hardwareMap.get(DcMotorEx.class, "right slides motor");
+        slidesMotor_right.setDirection(DcMotorEx.Direction.REVERSE);
+        slidesMotor_left.setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER, coeff);
+
+
+
+
+    }
 
 }
