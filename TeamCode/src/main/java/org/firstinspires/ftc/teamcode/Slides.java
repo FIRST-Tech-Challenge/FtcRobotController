@@ -4,6 +4,7 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.PIDFCoefficients;
+
 /*import com.acmerobotics.dashboard.config.Config;
 import com.arcrobotics.ftclib.controller.PIDFController;
 import com.arcrobotics.ftclib.hardware.motors.Motor;
@@ -18,8 +19,8 @@ import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 public class Slides {
     public final DcMotorEx slidesMotor_left;
     public final DcMotorEx slidesMotor_right;
-    private static double p = 0.015, i = 0 , d = 0, f = 0;
-    private PIDFCoefficients coeff = new PIDFCoefficients(p,i,d,f);
+    private final static double p = 0.015, i = 0 , d = 0, f = 0;
+    private final PIDFCoefficients coeff = new PIDFCoefficients(p,i,d,f);
     //4410 code has staticF, not sure what that is. Look into it later
 
     //change values in slidesPosition based on the number of stages in the slides
@@ -29,6 +30,8 @@ public class Slides {
         MID,
         HIGH
     }
+
+    // private PIDFController controller;
 
     private slidesPosition position = slidesPosition.GROUND;
     private final double tolerance = 20, powerUp = 0.1, powerDown = 0.05, manualDivide = 1, powerMin = 0.1;
@@ -53,8 +56,38 @@ public class Slides {
         slidesMotor_left.setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER, coeff);
 
 
+     /*   controller = new PIDFController(PIDFCoefficients);
+        controller.setTolerance(tolerance);
+        controller.setSetPoint(0);
 
+      */
+        slidesMotor_left.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
+        slidesMotor_right.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
 
+       /* slidesMotor_right.setRunMode(Motor.RunMode.RawPower);
+          slidesMotor_left.setRunMode(Motor.RunMode.RawPower);
+        */
+    }
+
+    public void runTo(int t) {
+       // slidesMotor_left.setRunMode(Motor.RunMode.RawPower);
+        slidesMotor_left.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
+       // slidesMotor_right.setRunMode(Motor.RunMode.RawPower);
+        slidesMotor_right.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
+
+       /* controller = new PIDFController(p, i, d, f);
+        controller.setTolerance(tolerance);
+        resetProfiler();
+        profiler.init_new_profile(motorLeft.getCurrentPosition(), t);
+        profile_init_time = opMode.time;
+
+        */
+        if (t > target) {
+            goingDown = true;
+        } else {
+            goingDown = false;
+        }
+        target = t;
     }
 
 }
