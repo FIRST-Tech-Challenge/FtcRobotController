@@ -20,8 +20,14 @@ public class Hardware {
             frontLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
             frontLeft.setPower(0);
         } catch (Exception e){
-            telemetry.add()
+            telemetry.addData("FrontLeftMotor:", "Error");
+            telemetry.update();
         }
+        try{
+            frontRight = hardwareMap.dcMotor.get("frontRightMotor");
+            frontRight.setDirection(DcMotor.Direction.FORWARD);
+            frontRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+            frontRight.setPower(0);
     }
 
 
