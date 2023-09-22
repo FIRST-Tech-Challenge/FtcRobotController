@@ -17,10 +17,13 @@ Add distance sensor
 //import org.firstinspires.ftc.teamcode.util.MotionProfiler;
 
 public class Slides {
-    public final DcMotorEx slidesMotor_left;
-    public final DcMotorEx slidesMotor_right;
+    public final DcMotorEx slidesMotor;
     private final static double p = 0.015, i = 0 , d = 0, f = 0;
     private final PIDFCoefficients coeff = new PIDFCoefficients(p,i,d,f);
+    double encoderClickPerSecond;
+
+    double maxVelocity, maxAcceleration, distance;
+    private MotionProfiler profiler = new MotionProfiler(maxVelocity, maxAcceleration, distance);
     //4410 code has staticF, not sure what that is. Look into it later
     //private PIDFController controller;
 
@@ -32,7 +35,7 @@ public class Slides {
         HIGH
     }
 
-    // private PIDFController controller;
+     private PIDFController controller;
 
     private slidesPosition position = slidesPosition.GROUND;
     private final double tolerance = 20, powerUp = 0.1, powerDown = 0.05, manualDivide = 1, powerMin = 0.1;
@@ -45,57 +48,50 @@ public class Slides {
     private final OpMode opMode;
     private double target = 0;
     private boolean goingDown = false;
-    private double profile_init_time = 0;
+    private double profileElapsedTime = 0;
     //private MotionProfiler profiler = new MotionProfiler(30000, 20000);
     public boolean movingDown = false;
 
     public Slides(OpMode opMode){
         this.opMode = opMode;
-        slidesMotor_left = opMode.hardwareMap.get(DcMotorEx.class, "left slides motor");
-        slidesMotor_right = opMode.hardwareMap.get(DcMotorEx.class, "right slides motor");
-        slidesMotor_right.setDirection(DcMotorEx.Direction.REVERSE);
-        slidesMotor_left.setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER, coeff);
-        slidesMotor_right.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        slidesMotor_left.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        slidesMotor = opMode.hardwareMap.get(DcMotorEx.class, "left slides motor");
+        slidesMotor.setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER, coeff);
+        slidesMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
     }
     public void runTo(int stage){
-        slidesMotor_left.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
-        slidesMotor_right.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
-        /*
-        things to code when I can import PIDFcontroller from arcrobotics library:
-         */
-     /*   controller = new PIDFController(PIDFCoefficients);
+        slidesMotor.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
+
+
+        controller = new PIDFController(p, i, d, f);
         controller.setTolerance(tolerance);
         controller.setSetPoint(0);
 
-      */
-        slidesMotor_left.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
-        slidesMotor_right.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
 
-       /* slidesMotor_right.setRunMode(Motor.RunMode.RawPower);
-          slidesMotor_left.setRunMode(Motor.RunMode.RawPower);
-        */
+        slidesMotor.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
+
     }
 
-    public void runTo(double t) {
-       // slidesMotor_left.setRunMode(Motor.RunMode.RawPower);
-        slidesMotor_left.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
-       // slidesMotor_right.setRunMode(Motor.RunMode.RawPower);
-        slidesMotor_right.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
+    public void runTo(double target) {
 
-       /* controller = new PIDFController(p, i, d, f);
+        slidesMotor.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
+
+        controller = new PIDFController(p, i, d, f);
         controller.setTolerance(tolerance);
         resetProfiler();
-        profiler.init_new_profile(motorLeft.getCurrentPosition(), t);
-        profile_init_time = opMode.time;
+        profiler.profileMotion(distance);
+        profileElapsedTime = opMode.time;
 
-        */
-        if (t > target) {
-            goingDown = true;
-        } else {
-            goingDown = false;
-        }
-        target = t;
+
+        goingDown = target > this.target;
+        this.target = target;
     }
+
+    public void resetProfiler() {
+        profiler = new MotionProfiler(1,encoderClickPerSecond,100);
+    }
+    public void resetEncoder() {
+        slidesMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+    }
+
 
 }

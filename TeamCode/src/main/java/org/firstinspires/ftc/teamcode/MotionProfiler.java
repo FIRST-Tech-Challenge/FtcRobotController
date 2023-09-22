@@ -2,34 +2,74 @@ package org.firstinspires.ftc.teamcode;
 import com.arcrobotics.ftclib.controller.PIDFController;
 
 public class MotionProfiler {
-    //trustttt i will change based on actual measurements
-    double maxVelocity;
-    double maxAccel;
-    double distance;
-    double timeElapsed;
 
-    public MotionProfiler(double maxVelocity, double maxAcceleration, double distance, double timeElapsed){
+    double maxVelocity, maxAccel, distance, totalDt, accelerationDt, halfwayDist, accelerationDistance, deaccelerationDt, cruiseDistance, cruiseDt, deaccelerationTime;
+    double cruiseCurrentDt;
+    boolean isOver= false, isDone=false;
+
+
+    public MotionProfiler(double maxVelocity, double maxAcceleration, double distance){
         this.maxVelocity = maxVelocity;
         this.maxAccel = maxAcceleration;
-        this.distance = distance;
-        this.timeElapsed = timeElapsed;
-        //should I not make time elapsed an instance field??
+        this.distance= distance;
     }
 
-    public double motion_profile(){
-        //time to accelerate to max velocity
-        double acceleration_dt = maxVelocity/maxAccel;
-        double halfway_dist = distance/2;
-        double accelerationDistance = 0.5 * maxAccel * Math.pow(acceleration_dt,2);
-        if(accelerationDistance>halfway_dist){
-            acceleration_dt = Math.sqrt(halfway_dist/(0.5*maxAccel));
-            //accelerates as much as it can if it can't accelerate
+    public void initMotionProfiler(double distance){
+        this.distance = distance;
+    }
+
+        public double profileMotion(double timeElapsed){
+
+        //accelDt = time to accelerate to max velocity
+        accelerationDt = maxVelocity/maxAccel;
+        halfwayDist = distance/2;
+        accelerationDistance = 0.5 * maxAccel * Math.pow(accelerationDt,2);
+        //distance of acceleration: 1/2 a delta t^2 (more kinematic equations!!!!)
+        if((accelerationDistance)>halfwayDist){
+            accelerationDt = Math.sqrt(halfwayDist/(0.5*maxAccel));
+            //ask someone good at physics: why do we take the square root of the distance/half of accel?
+            //If we can't accelerate to max velocity in given distance, will accelerate as much as possible
         }
-        this.maxVelocity = maxAccel * acceleration_dt;
-        double deacceleration = acceleration_dt;
+        maxVelocity = maxAccel * accelerationDt;
+        deaccelerationDt = accelerationDt;
+        //acceleration time is same as deacceleration time
+
+        cruiseDistance = distance - 2 * accelerationDistance;
+        //cruising distance is twice as much as acceleration distance
+        cruiseDt = cruiseDistance / maxVelocity;
+        deaccelerationTime = accelerationDt + cruiseDt;
+
+        totalDt = accelerationDt + cruiseDt + deaccelerationDt;
+        if (timeElapsed > totalDt)
+            return distance;
+
+        if (timeElapsed < accelerationDt)
+            // use the kinematic equation for acceleration
+            return 0.5 * maxAccel * Math.pow(timeElapsed,2);
+
+        else if (timeElapsed < deaccelerationTime) {
+            accelerationDistance = 0.5 * maxAccel * Math.pow(accelerationDt,2);
+            cruiseCurrentDt = timeElapsed - accelerationDt;
+
+            //constant velocity
+            return accelerationDistance + maxVelocity * cruiseCurrentDt;
+
+    } // deacceleration
+        else{
+            accelerationDistance = 0.5 * maxAccel * Math.pow(accelerationDt,2);
+            cruiseDistance = maxVelocity * cruiseDt;
+            deaccelerationTime = timeElapsed - deaccelerationTime;
+
+            // use the kinematic equations to calculate the instantaneous desired position
+            return accelerationDistance + cruiseDistance + maxVelocity * deaccelerationTime - 0.5 * maxAccel * Math.pow(deaccelerationTime,2);
+        }
+
+        //method returns the power fed to motors (works in conjunction with PID controller)
 
     }
 
 
 
 }
+
+
