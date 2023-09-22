@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Gyroscope;
 import com.qualcomm.robotcore.hardware.Servo;
 
@@ -39,7 +40,27 @@ public class XDrive extends LinearOpMode {
 
         waitForStart();
 
+        //variables for drivetrain
+        double forwardPower;
+        double strafePower;
+
+        //set the directions of motors
+        northWheel.setDirection(DcMotor.Direction.FORWARD);
+        southWheel.setDirection(DcMotor.Direction.REVERSE);
+        westWheel.setDirection(DcMotor.Direction.FORWARD);
+        eastWheel.setDirection(DcMotor.Direction.REVERSE);
+
         while(opModeIsActive()){
+
+            //Sets variables for driving on gamepad1
+            forwardPower=gamepad1.left_stick_y;
+            strafePower=gamepad1.right_stick_x;
+
+            //Sets power of wheels based on double variables
+            northWheel.setPower(strafePower);
+            southWheel.setPower(strafePower);
+            westWheel.setPower(forwardPower);
+            eastWheel.setPower(forwardPower);
 
             telemetry.addData("status", "running");
             telemetry.update();
