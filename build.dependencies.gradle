@@ -5,6 +5,7 @@ repositories {
 
 dependencies {
     implementation 'org.firstinspires.ftc:Inspection:9.0.0'
+    implementation 'com.qualcomm.robotcore:quack:6.0.0'
     implementation 'org.firstinspires.ftc:Blocks:9.0.0'
     implementation 'org.firstinspires.ftc:Tfod:9.0.0'
     implementation 'org.firstinspires.ftc:RobotCore:9.0.0'

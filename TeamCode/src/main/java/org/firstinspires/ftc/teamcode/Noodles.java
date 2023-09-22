@@ -10,7 +10,7 @@ public class Noodles {
 
     public Noodles(OpMode opMode) {
         this.opMode = opMode;
-        noodleMotor= opMode.hardwareMap.get(DcMotorEx.class, "left slides motor");
+        noodleMotor= opMode.hardwareMap.get(DcMotorEx.class, "noodles motor");
         noodleMotor.setDirection(DcMotorEx.Direction.FORWARD);
         isIntake=false;
     }

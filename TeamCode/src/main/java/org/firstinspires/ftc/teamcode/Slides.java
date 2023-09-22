@@ -5,13 +5,13 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 
-/*import com.acmerobotics.dashboard.config.Config;
+//import com.acmerobotics.dashboard.config.Config;
 import com.arcrobotics.ftclib.controller.PIDFController;
-import com.arcrobotics.ftclib.hardware.motors.Motor;
-import com.arcrobotics.ftclib.hardware.motors.MotorEx;
 import com.arcrobotics.ftclib.hardware.motors.MotorGroup;
-import com.qualcomm.robotcore.hardware.PIDFCoefficients;
+/*
+Add distance sensor
  */
+
 //how to import these packages?
 
 //import org.firstinspires.ftc.teamcode.util.MotionProfiler;
@@ -22,6 +22,7 @@ public class Slides {
     private final static double p = 0.015, i = 0 , d = 0, f = 0;
     private final PIDFCoefficients coeff = new PIDFCoefficients(p,i,d,f);
     //4410 code has staticF, not sure what that is. Look into it later
+    //private PIDFController controller;
 
     //change values in slidesPosition based on the number of stages in the slides
     public enum slidesPosition{
@@ -54,8 +55,15 @@ public class Slides {
         slidesMotor_right = opMode.hardwareMap.get(DcMotorEx.class, "right slides motor");
         slidesMotor_right.setDirection(DcMotorEx.Direction.REVERSE);
         slidesMotor_left.setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER, coeff);
-
-
+        slidesMotor_right.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        slidesMotor_left.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+    }
+    public void runTo(int stage){
+        slidesMotor_left.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
+        slidesMotor_right.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
+        /*
+        things to code when I can import PIDFcontroller from arcrobotics library:
+         */
      /*   controller = new PIDFController(PIDFCoefficients);
         controller.setTolerance(tolerance);
         controller.setSetPoint(0);
@@ -69,7 +77,7 @@ public class Slides {
         */
     }
 
-    public void runTo(int t) {
+    public void runTo(double t) {
        // slidesMotor_left.setRunMode(Motor.RunMode.RawPower);
         slidesMotor_left.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
        // slidesMotor_right.setRunMode(Motor.RunMode.RawPower);
