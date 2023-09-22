@@ -5,6 +5,10 @@ import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.noahbres.meepmeep.MeepMeep;
 import com.noahbres.meepmeep.roadrunner.DefaultBotBuilder;
 import com.noahbres.meepmeep.roadrunner.entity.RoadRunnerBotEntity;
+import javax.imageio.ImageIO;
+import java.io.File;
+import java.awt.Image;
+import java.io.IOException;
 
 public class MeepMeepTesting {
     enum autos {
@@ -84,7 +88,13 @@ public class MeepMeepTesting {
 //                                        .strafeLeft(10)
                                         .build()
                 );
-        meepMeep.setBackground(MeepMeep.Background.FIELD_POWERPLAY_OFFICIAL)
+        Image img = null;
+        try { img = ImageIO.read(new File("images/uqcy8o9sfpob1.png")); }
+        catch (IOException e) {}
+
+        meepMeep.setBackground(img)
+
+//        meepMeep.setBackground(MeepMeep.Background.FIELD_POWERPLAY_OFFICIAL)
                 .setDarkMode(true)
                 .setBackgroundAlpha(0.95f)
                 .addEntity(myBot)
