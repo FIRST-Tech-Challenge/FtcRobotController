@@ -33,10 +33,11 @@ import com.qualcomm.ftccommon.SoundPlayer;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+
 import java.io.File;
 
-/**
- * This file demonstrates how to play simple sounds on both the RC and DS phones.
+/*
+ * This OpMode demonstrates how to play simple sounds on both the RC and DS phones.
  * It illustrates how to play sound files that have been copied to the RC Phone
  * This technique is best suited for use with OnBotJava since it does not require the app to be modified.
  *
