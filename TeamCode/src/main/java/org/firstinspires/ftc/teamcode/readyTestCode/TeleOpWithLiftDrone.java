@@ -24,10 +24,10 @@ public class TeleOpWithLiftDrone extends LinearOpMode {
         Servo droneServo = hardwareMap.servo.get("drone");
 
         // Reverse the right side motors. Flip if goes backward.
+        frontRightMotor.setDirection(DcMotorSimple.Direction.FORWARD);
         frontLeftMotor.setDirection(DcMotorSimple.Direction.FORWARD);
-        backLeftMotor.setDirection(DcMotorSimple.Direction.FORWARD);
-        frontRightMotor.setDirection(DcMotorSimple.Direction.REVERSE);
-        backRightMotor.setDirection(DcMotorSimple.Direction.REVERSE);
+        frontLeftMotor.setDirection(DcMotorSimple.Direction.REVERSE);
+        backLeftMotor.setDirection(DcMotorSimple.Direction.REVERSE);
 
         // ADDED CODE - sets directions of motor and servos (just in case)
         lift.setDirection(DcMotorSimple.Direction.FORWARD);
@@ -56,8 +56,8 @@ public class TeleOpWithLiftDrone extends LinearOpMode {
             double rx = gamepad1.right_stick_x;
 
             // ADDED CODE - creates variables for right and left trigger values
-            double rTrigger = gamepad1.right_trigger;
-            double lTrigger = gamepad1.left_trigger;
+            double rTrigger = gamepad1.right_trigger/5;
+            double lTrigger = gamepad1.left_trigger/5;
             double droneServoPosition = droneServo.getPosition();
             double liftPower = lift.getPower();
 
