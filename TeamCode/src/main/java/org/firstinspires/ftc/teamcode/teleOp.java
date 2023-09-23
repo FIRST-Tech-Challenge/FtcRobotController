@@ -98,7 +98,7 @@ public class teleOp extends LinearOpMode {
                 robot.bucket.setPosition(0);
             }
             if (gamepad2.dpad_up){
-                robot.bucket.setPosition(.3);
+                robot.bucket.setPosition(.31);
             }
         }
     }
