@@ -29,11 +29,11 @@
 
 package org.firstinspires.ftc.teamcode;
 
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.Range;
+
 import org.firstinspires.ftc.robotcore.external.hardware.camera.BuiltinCameraDirection;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.controls.ExposureControl;
@@ -78,8 +78,8 @@ import java.util.concurrent.TimeUnit;
  *
  */
 
-@TeleOp(name="Omni Drive To AprilTag", group = "Concept")
-public class RobotAutoDriveToAprilTagOmni extends LinearOpMode
+@TeleOp(name="TEST Omni Drive To AprilTag", group = "Concept")
+public class TEST_RobotAutoDriveToAprilTagOmni extends LinearOpMode
 {
     // Adjust these numbers to suit your robot.
     final double DESIRED_DISTANCE = 12.0; //  this is how close the camera should get to the target (inches)
@@ -101,13 +101,35 @@ public class RobotAutoDriveToAprilTagOmni extends LinearOpMode
     private DcMotor rightBackDrive   = null;  //  Used to control the right back drive wheel
 
     private static final boolean USE_WEBCAM = true;  // Set true to use a webcam, or false for a phone camera
-    private static final int DESIRED_TAG_ID = 5;
+    private static final int desiredID1 = 1;
+    private static final int desiredID2 = 2;
+    private static final int desiredID3 = 3;
+    private static final int desiredID1 = 1;
+    private static final int desiredID1 = 1;
+    private static final int desiredID1 = 1;
+    private static final int desiredID1 = 1;
+    private static final int desiredID1 = 1;
+    private static final int desiredID1 = 1;
+    private static final int desiredID1 = 1;
+
+
     // private static final int DESIRED_TAG_ID = 5;Choose the tag you want to approach or set to -1 for ANY tag.
 
 
     private VisionPortal visionPortal;               // Used to manage the video source.
     private AprilTagProcessor aprilTag;              // Used for managing the AprilTag detection process.
-    private AprilTagDetection desiredTag = null;     // Used to hold the data for a detected AprilTag
+    private AprilTagDetection DESIRED_TAG_ID = null;
+    private AprilTagDetection ID1 = null;
+    private AprilTagDetection ID2 = null;
+    private AprilTagDetection ID3 = null;
+    private AprilTagDetection ID4 = null;
+    private AprilTagDetection ID5 = null;
+    private AprilTagDetection ID6 = null;
+    private AprilTagDetection ID7 = null;
+    private AprilTagDetection ID8 = null;
+    private AprilTagDetection ID9 = null;
+    private AprilTagDetection ID10 = null;
+    // Used to hold the data for a detected AprilTag
 
     @Override public void runOpMode()
     {
