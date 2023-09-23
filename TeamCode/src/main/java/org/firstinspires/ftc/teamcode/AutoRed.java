@@ -27,9 +27,8 @@ public class AutoRed extends LinearOpMode {
         boolean doneWithBackward = false;
 
 
+
         while (opModeIsActive()) {
-
-
 
             telemetry.addLine("power       " + forwardPower[0]);
             telemetry.addLine("power       " + forwardPower[1]);
@@ -71,9 +70,8 @@ public class AutoRed extends LinearOpMode {
             telemetry.addData("done with backward", doneWithBackward);
 
             if (!robot.checkArmPos(90)) {
-                armPower = robot.calculateArmPower(90);
                 robot.setArmPower(armPower);
-            } else if (robot.checkArmPos(90)){
+            } else {
                 robot.setArmPower(0);
             }
 
