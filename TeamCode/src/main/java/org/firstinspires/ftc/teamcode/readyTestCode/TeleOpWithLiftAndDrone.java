@@ -5,10 +5,12 @@ import com.qualcomm.robotcore.hardware.IMU;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
+import com.qualcomm.robotcore.hardware.Servo;
+
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 
-@com.qualcomm.robotcore.eventloop.opmode.TeleOp(name = "Lift with drivebase test code")
-public class TeleOpWithLift extends LinearOpMode {
+@com.qualcomm.robotcore.eventloop.opmode.TeleOp(name = "Drivebase w/ Lift & Drone Test Code")
+public class TeleOpWithLiftAndDrone extends LinearOpMode {
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -16,15 +18,20 @@ public class TeleOpWithLift extends LinearOpMode {
         DcMotor backLeftMotor = hardwareMap.dcMotor.get("motorBL");
         DcMotor frontRightMotor = hardwareMap.dcMotor.get("motorFR");
         DcMotor backRightMotor = hardwareMap.dcMotor.get("motorBR");
-        DcMotor lift = hardwareMap.dcMotor.get("lift");
 
+        // ADDED CODE - sets up lift motor and drone servo
+        DcMotor lift = hardwareMap.dcMotor.get("lift");
+        Servo droneServo = hardwareMap.servo.get("drone");
 
         // Reverse the right side motors. Flip if goes backward.
-        lift.setDirection(DcMotorSimple.Direction.FORWARD);
         frontRightMotor.setDirection(DcMotorSimple.Direction.FORWARD);
         frontLeftMotor.setDirection(DcMotorSimple.Direction.FORWARD);
         frontLeftMotor.setDirection(DcMotorSimple.Direction.REVERSE);
         backLeftMotor.setDirection(DcMotorSimple.Direction.REVERSE);
+
+        // ADDED CODE - sets directions of motor and servo (just in case)
+        lift.setDirection(DcMotorSimple.Direction.FORWARD);
+        droneServo.setDirection(Servo.Direction.FORWARD);
 
         // Retrieve the IMU from the hardware map
         IMU imu = hardwareMap.get(IMU.class, "imu");
@@ -36,27 +43,52 @@ public class TeleOpWithLift extends LinearOpMode {
         // Without this, the REV Hub's orientation is assumed to be logo up / USB forward
         imu.initialize(parameters);
 
+        // ADDED CODE - sets servo's range and default position beforehand
+        // WILL LIKELY NEED TO BE CHANGED AFTER TESTING
+        droneServo.scaleRange(0, 0.25);
+        droneServo.setPosition(0);
+
         waitForStart();
 
         while (opModeIsActive()) {
             double y = -gamepad1.left_stick_y; // Remember, Y stick value is reversed
             double x = gamepad1.left_stick_x;
             double rx = gamepad1.right_stick_x;
-            double rightTrigger = gamepad1.right_trigger;
+
+            // ADDED CODE - creates variables for right and left trigger values
+            double rTrigger = gamepad1.right_trigger;
+            double lTrigger = gamepad1.left_trigger;
+            double droneServoPosition = droneServo.getPosition();
+
+            // ADDED CODE - holding down right trigger makes lift move up
+            // and left trigger makes lift move down
+            // depending on how much you press
+            // while you aren't pressing anything, sets the motor power to zero
+            if (rTrigger > 0) {
+                lift.setPower(rTrigger);
+            }else if (lTrigger > 0) {
+                lift.setPower(-lTrigger);
+            }else {
+                lift.setPower(0);
+            }
+
+            // ADDED CODE - pressing button A moves servo to hopefully launch the drone
+            // pressing button Y resets the servo's position to default to reload the rubber band
+            if (gamepad1.a) {
+                droneServo.setPosition(1);
+            }else if (gamepad1.y) {
+                droneServo.setPosition(0);
+            }
+
+            // ADDED CODE - sends info about current servo position to driver station
+            telemetry.addData("Servo Position: ", droneServoPosition);
+            telemetry.update();
 
             // This button choice was made so that it is hard to hit on accident,
             // it can be freely changed based on preference.
             // The equivalent button is start on Xbox-style controllers.
             if (gamepad1.x) {
                 imu.resetYaw();
-            }
-
-            if (gamepad1.y) {
-                lift.setPower(1);
-            }else if (gamepad1.a) {
-                lift.setPower(-1);
-            }else {
-                lift.setPower(0);
             }
 
             double botHeading = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS);
@@ -84,3 +116,4 @@ public class TeleOpWithLift extends LinearOpMode {
         }
     }
 }
+
