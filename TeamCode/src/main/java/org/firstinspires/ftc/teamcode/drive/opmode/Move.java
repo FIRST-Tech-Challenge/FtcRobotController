@@ -19,23 +19,21 @@ import com.qualcomm.robotcore.hardware.configuration.annotations.I2cDeviceType;
 @I2cDeviceType()
 
 public class Move extends OpMode {
-
-    Gamepad.RumbleEffect Endgame;
-    Gamepad.RumbleEffect Park;
-
+    //Motors
     private DcMotor leftFrontDrive = null;
     private DcMotor rightFrontDrive = null;
     private DcMotor leftBackDrive = null;
     private DcMotor rightBackDrive = null;
 
-    public float time_elapsed = 0;
+
+
+    //bools
     public boolean Endgametrue = false;
     public boolean Parktrue = false;
-    final double Endgamefloat = 80.0;
-    final double EndOfGamefloat = 115.0;
     private static final boolean ON = true;
     private static final boolean OFF = false;
 
+    //ElapsedTime Runtime
     ElapsedTime runtime = new ElapsedTime();
 
     static void sleep(int LongMilliseconds) {
@@ -48,10 +46,12 @@ public class Move extends OpMode {
 
     @Override
     public void init() {
-        // Initialize gamepad rumble effects
 
-        telemetry.addLine(">>>>>> PRESS START BUTTON");
+        //Telemetry
+        telemetry.addLine(">> Press Start Button");
         telemetry.update();
+
+
 
         // Initialize DcMotors
         leftFrontDrive = hardwareMap.get(DcMotor.class, "left_front");
@@ -59,6 +59,7 @@ public class Move extends OpMode {
         leftBackDrive = hardwareMap.get(DcMotor.class, "left_back");
         rightBackDrive = hardwareMap.get(DcMotor.class, "right_back");
 
+        //Sets em to back or forward
         leftFrontDrive.setDirection(DcMotorSimple.Direction.REVERSE);
         rightFrontDrive.setDirection(DcMotorSimple.Direction.FORWARD);
         leftBackDrive.setDirection(DcMotorSimple.Direction.REVERSE);
@@ -66,8 +67,9 @@ public class Move extends OpMode {
     }
 
     @Override
+    //Start fuction
     public void start() {
-        time_elapsed = 0;
+        //restes all telemitry
         telemetry.clearAll();
         Endgametrue = false;
         Parktrue = false;
@@ -97,7 +99,7 @@ public class Move extends OpMode {
         telemetry.addData("Right Stick Y: ", -gamepad1.right_stick_y);
         telemetry.update();
 
-        // Endgame timer
+        //backup
         if (gamepad1.y || gamepad1.x) {
             leftFrontPower = -0.16;
             leftBackPower = -0.16;
@@ -105,7 +107,7 @@ public class Move extends OpMode {
             rightBackPower = -0.16;
         }
 
-        // Slow movement
+        // Slow movement + Fast movement
         if (gamepad1.right_bumper) {
             leftFrontPower /= 4;
             leftBackPower /= 4;
@@ -119,9 +121,7 @@ public class Move extends OpMode {
             rightBackPower *= 1.25;
         }
 
-
-
-        // Set motor powers
+        // Set motor powers to updated power
         leftFrontDrive.setPower(leftFrontPower);
         rightFrontDrive.setPower(rightFrontPower);
         leftBackDrive.setPower(leftBackPower);
@@ -130,7 +130,7 @@ public class Move extends OpMode {
 
     @Override
     public void stop() {
-        // Stop all motors
+        // Stop all motors if no input
         leftFrontDrive.setPower(0);
         rightFrontDrive.setPower(0);
         leftBackDrive.setPower(0);
