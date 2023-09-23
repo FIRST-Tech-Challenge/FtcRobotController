@@ -110,12 +110,12 @@ class tensorFlowTest1: LinearOpMode(){
             BufferedReader(FileReader(tfod_labels)).use { br ->
                 var index = 0
                 while (br.ready()) {
-                    if (index == 0) {
-                        // skip first line.
-                        br.readLine()
-                    } else {
+//                    if (index == 0) {
+//                        // skip first line.
+//                        br.readLine()
+//                    } else {
                         labelList.add(br.readLine())
-                    }
+//                    }
                     index++
                 }
             }
