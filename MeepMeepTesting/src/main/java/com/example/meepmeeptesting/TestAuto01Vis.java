@@ -7,19 +7,16 @@ import com.noahbres.meepmeep.roadrunner.DefaultBotBuilder;
 import com.noahbres.meepmeep.roadrunner.entity.RoadRunnerBotEntity;
 
 public class TestAuto01Vis {
-    enum autos {
-        BBHIGH,
-        BRHIGH,
-        RBHIGH,
-        RRHIGH,
-        TESTING,
-        SMOLTESTING
+    enum detections {
+        LEFT,
+        CENTER,
+        RIGHT
     };
     public static void main(String[] args) {
         System.setProperty("sun.java2d.opengl", "true");
         MeepMeep meepMeep = new MeepMeep(800);
 
-        autos auto = autos.SMOLTESTING;
+        detections detection = detections.CENTER;
         RoadRunnerBotEntity myBot;
                 myBot = new DefaultBotBuilder(meepMeep)
                         .setConstraints(60, 60, Math.toRadians(180), Math.toRadians(180), 15)
@@ -28,6 +25,15 @@ public class TestAuto01Vis {
                                         .forward(25.0)
                                         .build()
                         );
+
+                switch (detection) {
+                    case LEFT:
+                        break;
+                    case CENTER:
+                        break;
+                    case RIGHT:
+                        break;
+                }
         meepMeep.setBackground(MeepMeep.Background.FIELD_POWERPLAY_OFFICIAL)
                 .setDarkMode(true)
                 .setBackgroundAlpha(0.95f)
