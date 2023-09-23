@@ -26,9 +26,25 @@ public class AutoRed extends LinearOpMode {
         boolean doneWithForward = false;
         boolean doneWithBackward = false;
 
+<<<<<<< HEAD
 
 
         while (opModeIsActive()) {
+
+            telemetry.addLine("power       " + forwardPower[0]);
+            telemetry.addLine("power       " + forwardPower[1]);
+            telemetry.addLine("power       " + forwardPower[2]);
+            telemetry.addLine("power       " + forwardPower[3]);
+=======
+
+        while (opModeIsActive()) {
+>>>>>>> b5638f4 (albert push, same code)
+
+            if (!doneWithMecanum && !robot.checkReachedDistanceForMecanum(150)) {
+                mecanumPower = robot.calculateMecanumPower(150);
+
+<<<<<<< HEAD
+=======
 
             telemetry.addLine("power       " + forwardPower[0]);
             telemetry.addLine("power       " + forwardPower[1]);
@@ -38,6 +54,7 @@ public class AutoRed extends LinearOpMode {
             if (!doneWithMecanum && !robot.checkReachedDistanceForMecanum(150)) {
                 mecanumPower = robot.calculateMecanumPower(150);
 
+>>>>>>> b5638f4 (albert push, same code)
                 robot.setMotorPower(mecanumPower);
             } else if (!doneWithMecanum){
                 robot.setMotorPower(0, 0, 0, 0);
@@ -70,8 +87,9 @@ public class AutoRed extends LinearOpMode {
             telemetry.addData("done with backward", doneWithBackward);
 
             if (!robot.checkArmPos(90)) {
+                armPower = robot.calculateArmPower(90);
                 robot.setArmPower(armPower);
-            } else {
+            } else if (robot.checkArmPos(90)){
                 robot.setArmPower(0);
             }
 
