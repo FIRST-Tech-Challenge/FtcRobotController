@@ -1,18 +1,14 @@
 package org.firstinspires.ftc.teamcode;
 
-import android.os.SystemClock;
-
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.IMU;
-import com.qualcomm.robotcore.util.Range;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
-import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
 
 public class Robot {
 
@@ -33,10 +29,6 @@ public class Robot {
     long millis = System.currentTimeMillis();
     long lastCheckMillis = System.currentTimeMillis();
 
-    double prevError = 0;
-    double prevTime = 0;
-
-
     //CONSTRUCTOR
     public Robot(HardwareMap hardwareMap, LinearOpMode opMode, Telemetry telemetry) {
         this.hardwareMap = hardwareMap;
@@ -44,6 +36,42 @@ public class Robot {
         this.telemetry = telemetry;
         setUpDrivetrainMotors();
         setUpImu();
+    }
+
+    public void setUpImu() {
+
+        this.imu = hardwareMap.get(IMU.class, "imu");
+
+        imu.initialize(new IMU.Parameters(
+                new RevHubOrientationOnRobot(
+                        RevHubOrientationOnRobot.LogoFacingDirection.UP,
+                        RevHubOrientationOnRobot.UsbFacingDirection.FORWARD
+                )
+        ));
+
+        imu.resetYaw();
+
+
+    }
+    public void setUpDrivetrainMotors() {
+        fLeft = hardwareMap.dcMotor.get("fLeft");
+        fRight = hardwareMap.dcMotor.get("fRight");
+        bLeft = hardwareMap.dcMotor.get("bLeft");
+        bRight = hardwareMap.dcMotor.get("bRight");
+
+
+        fLeft.setDirection(DcMotorSimple.Direction.REVERSE);
+        fRight.setDirection(DcMotorSimple.Direction.FORWARD);
+        bLeft.setDirection(DcMotorSimple.Direction.REVERSE);
+        bRight.setDirection(DcMotorSimple.Direction.REVERSE);
+
+        fLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        bLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        fRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        bRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
+        fLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        fLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
     }
 
 
@@ -77,21 +105,7 @@ public class Robot {
         };
     }
 
-    public void setUpImu() {
 
-        this.imu = hardwareMap.get(IMU.class, "imu");
-
-        imu.initialize(new IMU.Parameters(
-                new RevHubOrientationOnRobot(
-                        RevHubOrientationOnRobot.LogoFacingDirection.UP,
-                        RevHubOrientationOnRobot.UsbFacingDirection.FORWARD
-                )
-        ));
-
-        imu.resetYaw();
-
-
-    }
     public double calculateImuPower(int degrees) {
 
 
@@ -103,13 +117,11 @@ public class Robot {
 
         yaw = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES);
 
-        telemetry.addLine(String.valueOf(yaw));
 
         double angleError = degrees - yaw;
 
         proportionalPowerForImu = P_VALUE_FOR_TURNING_IMU * angleError;
 
-        telemetry.addLine(String.valueOf(angleError));
 
 
         return proportionalPowerForImu;
@@ -134,7 +146,6 @@ public class Robot {
             return 0;
         }
         double proportionalPower = P_VALUE*remainingDistance;
-        telemetry.addLine(String.valueOf(proportionalPower));
         return proportionalPower;
 
     }
@@ -142,34 +153,12 @@ public class Robot {
         arm.setPower(armPower);
     }
     public boolean checkArmPos(int targetAngleInDegrees) {
-        double newTicks = arm.getCurrentPosition();
 
-        boolean isStopped = false;
         boolean doneArm = false;
-        double remainingDistance = getRemainingTicksForDrivetrain(targetAngleInDegrees);
-
-        telemetry.addLine("remaining distance"+remainingDistance);
-        telemetry.addLine("current pos for arm"+arm.getCurrentPosition());
-
-        /*telemetry.addLine("isStopped:"+isStopped);
-        telemetry.addLine("oldTick:"+oldTick);
-        telemetry.addLine("newTicks"+newTicks);
-        telemetry.addLine("millis:"+millis);
-        telemetry.addLine("lastCheckMillis"+lastCheckMillis);*/
-        if (millis > lastCheckMillis + 250) {
-            lastCheckMillis = millis;
-            newTicks = arm.getCurrentPosition();
-            //telemetry.addLine("inside");
-
-            if (oldTick == newTicks) {
-                isStopped = true;
-                //telemetry.addLine("inside if 2");
-            }
-            oldTick = newTicks;
+        double remainingDistance = getRemainingTicksForArm(targetAngleInDegrees);
 
 
-        }
-        if (remainingDistance < 10 && isStopped) {
+        if (remainingDistance < 10) {
             setArmPower(0);
             doneArm = true;
         }
@@ -178,8 +167,6 @@ public class Robot {
     public double getRemainingTicksForArm(double targetDistanceInDegrees) {
         double targetDistanceInTicks = convertDegreesToTicks(targetDistanceInDegrees);
         double remainingDistance = targetDistanceInTicks - arm.getCurrentPosition();
-        telemetry.addLine("target              "+targetDistanceInTicks);
-        telemetry.addLine("remaining distance 1    "+remainingDistance);
 
         return remainingDistance;
     }
@@ -213,7 +200,7 @@ public class Robot {
         //301 = circumferance mm
         //537.7, ticks per motor revolution
         //converting mm to ticks
-        final double MM_TO_TICKS = (537.7 / 301.59)*2;
+        final double MM_TO_TICKS = (537.7 / 301.59);
 
         double targetPos = targetDistanceInMM * MM_TO_TICKS;
 
@@ -221,146 +208,47 @@ public class Robot {
     }
 
     public boolean checkReachedDistance(double targetDistanceInMM) {
-        double newTicks = fLeft.getCurrentPosition();
 
-        boolean isStopped = false;
         boolean done = false;
-        double remainingDistance = getRemainingTicksForDrivetrain(targetDistanceInMM);
+        double remainingDistance = Math.abs(getRemainingTicksForDrivetrain(targetDistanceInMM));
 
-        //telemetry.addLine("reamaining distance"+remainingDistance);
-        //telemetry.addLine("current pos"+lFront.getCurrentPosition());
+        telemetry.addData("remainig distance for ffowrard and backeward", remainingDistance);
 
-        /*telemetry.addLine("isStopped:"+isStopped);
-        telemetry.addLine("oldTick:"+oldTick);
-        telemetry.addLine("newTicks"+newTicks);
-        telemetry.addLine("millis:"+millis);
-        telemetry.addLine("lastCheckMillis"+lastCheckMillis);*/
-        if (millis > lastCheckMillis + 250) {
-            lastCheckMillis = millis;
-            newTicks = fLeft.getCurrentPosition();
-            //telemetry.addLine("inside");
-
-            if (oldTick == newTicks) {
-                isStopped = true;
-                //telemetry.addLine("inside if 2");
-            }
-            oldTick = newTicks;
-
-
-        }
-        if (remainingDistance < 10 && isStopped) {
-            setMotorPower(0, 0, 0, 0);
+        if (remainingDistance < 30) {
             done = true;
         }
         return done;
     }
     public double getRemainingTicksForDrivetrain(double targetDistanceInMM) {
         double targetDistanceInTicks = convertMMToTicks(targetDistanceInMM);
-        double remainingDistance = targetDistanceInTicks + fLeft.getCurrentPosition();
-        //telemetry.addLine("target"+targetDistanceInTicks);
-        //telemetry.addLine("remaining distance 1    "+remainingDistance);
+        double remainingDistance = targetDistanceInTicks - fLeft.getCurrentPosition();
 
         return remainingDistance;
     }
 
 
-    public void setUpDrivetrainMotors() {
-        fLeft = hardwareMap.dcMotor.get("fLeft");
-        fRight = hardwareMap.dcMotor.get("fRight");
-        bLeft = hardwareMap.dcMotor.get("bLeft");
-        bRight = hardwareMap.dcMotor.get("bRight");
-
-        bRight.setDirection(DcMotorSimple.Direction.FORWARD);
-        bLeft.setDirection(DcMotorSimple.Direction.FORWARD);
-        fRight.setDirection(DcMotorSimple.Direction.REVERSE);
-        fLeft.setDirection(DcMotorSimple.Direction.FORWARD);
-
-        lFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        lBack.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        rFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        rBack.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-
+    public void resetEncoder() {
         fLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         fLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
     }
-    public double[] calculateDrivetrainPower(double targetDistanceInMM) {
-        final double P_VALUE = 0.002;
 
-        double remainingDistance = getRemainingTicksForDrivetrain(targetDistanceInMM);
-        if (remainingDistance < 10){
+    public double[] calculateDrivetrainPower(double targetDistanceInMM) {
+        final double P_VALUE = 0.0015;
+
+        if (checkReachedDistance(targetDistanceInMM)){
             return new double[] {0, 0, 0, 0};
         }
+
+        double remainingDistance = getRemainingTicksForDrivetrain(targetDistanceInMM);
+
         double proportionalPower = P_VALUE*remainingDistance;
         double scaleImu = 0;
-        //telemetry.addLine("POWER  "+proportionalPower);
         return scalePowers(new double[]{
-                -proportionalPower + calculateImuPower(0)*scaleImu,
-                -proportionalPower - calculateImuPower(0)*scaleImu,
-                -proportionalPower + calculateImuPower(0)*scaleImu,
-                -proportionalPower - calculateImuPower(0)*scaleImu
+                proportionalPower + calculateImuPower(0)*scaleImu,
+                proportionalPower - calculateImuPower(0)*scaleImu,
+                proportionalPower + calculateImuPower(0)*scaleImu,
+                proportionalPower - calculateImuPower(0)*scaleImu
         });
-    }
-    public double getCurrentHeading () {
-        double currentYaw;
-        YawPitchRollAngles robotOrientation;
-        robotOrientation = imu.getRobotYawPitchRollAngles();
-        currentYaw = robotOrientation.getYaw(AngleUnit.DEGREES);
-        return currentYaw;
-    }
-    public void setHeading (double wantedAbsoluteAngle) {
-
-        //TODO: add conditionals for >180 and <179, maybe also 360
-        if (wantedAbsoluteAngle < -180) {
-
-        } else if (wantedAbsoluteAngle > 180) {
-            /*
-            telemetry.addLine("error: wantedAbsoluteAngle takes range -179 through 180");
-            telemetry.update();
-            return;
-            */
-        } else if (wantedAbsoluteAngle == 180) {
-            setHeading(179.5);
-        } else {
-
-
-            YawPitchRollAngles robotOrientation;
-
-            double KP = 0.06; //started 0.15
-            double KD = 2_500_000;
-            double ERROR_TOLERANCE = 0.1; //degrees
-
-            double setTo = wantedAbsoluteAngle;
-            double currentHeading = getCurrentHeading();
-            double error = setTo - currentHeading;
-            double errorDer;
-            double power;
-            double currentTime;
-
-            //while startx
-            while (Math.abs(error) > ERROR_TOLERANCE && opMode.opModeIsActive()) {
-                robotOrientation = imu.getRobotYawPitchRollAngles();
-                currentHeading = robotOrientation.getYaw(AngleUnit.DEGREES);
-                currentTime = SystemClock.elapsedRealtimeNanos();
-
-                error = setTo - currentHeading; //error is degrees to goal
-                errorDer = (error - prevError) / (currentTime - prevTime);
-
-                power = (KP * error) + (KD * errorDer);
-
-                //cap power
-                power = Range.clip(power, -1, 1);
-
-
-                setMotorPower(-1 * power, power, -1 * power, power);
-                telemetry.addLine(String.valueOf(getCurrentHeading()));
-                telemetry.addLine(String.valueOf(power));
-                telemetry.update();
-
-                prevError = error;
-                prevTime = currentTime;
-            }
-            setMotorPower(0, 0, 0, 0);
-        }
     }
     public void autoForward(double targetDistanceInMM) throws InterruptedException {
 
@@ -380,19 +268,6 @@ public class Robot {
 
 
 
-        /*lFront.setPower(0.1);
-        lBack.setPower(0.1);
-        rFront.setPower(0.1);
-        rBack.setPower(0.1);
-
-        while (lFront.getCurrentPosition() < targetPos && opModeIsActive()) {}
-
-        lFront.setPower(0);
-        lBack.setPower(0);
-        rFront.setPower(0);
-        rBack.setPower(0);*/
-
-
         long lastCheckMillis = System.currentTimeMillis();
         long millis = System.currentTimeMillis();
 
@@ -404,18 +279,13 @@ public class Robot {
 
             millis = System.currentTimeMillis();
 
-            //telemetry.addLine(String.valueOf(targetPos));
-            //telemetry.addLine(String.valueOf(lFront.getCurrentPosition()));
 
             error = targetPos - fLeft.getCurrentPosition();
-            //telemetry.addLine(String.valueOf(error));
 
             fLeft.setPower(PROPORTIONAL_POWER);
             bLeft.setPower(PROPORTIONAL_POWER);
             fRight.setPower(PROPORTIONAL_POWER);
             bRight.setPower(PROPORTIONAL_POWER);
-
-            //telemetry.addLine("moving");
 
 
             if (millis > lastCheckMillis + 500) {
@@ -438,29 +308,8 @@ public class Robot {
         fRight.setPower(0);
         bRight.setPower(0);
 
-        //telemetry.addLine(String.valueOf(lFront.getCurrentPosition() / MM_TO_TICKS));
-
-        /*double oldTick = 0;
-
-        while (true) {
-            double newTick = lFront.getCurrentPosition();
-
-
-            if (newTick == oldTick) {
-                break;
-            }
-
-            oldTick = newTick;
-
-            Thread.sleep(5);
-        }*/
-
-        telemetry.addLine("done");
-
     }//Auto Forward but Better
     public double convertMMToTicksForMecanum(double targetDistanceInMM) {
-
-        //655 per 9 inches
 
         //301 = circumferance mm
         //537.7, ticks per motor revolution
@@ -473,9 +322,7 @@ public class Robot {
     }
     public double getRemainingTicksForDrivetrainMecanum(double targetDistanceInMM) {
         double targetDistanceInTicks = convertMMToTicksForMecanum(targetDistanceInMM);
-        double remainingDistance = targetDistanceInTicks + fLeft.getCurrentPosition();
-        //telemetry.addLine("target"+targetDistanceInTicks);
-        //telemetry.addLine("remaining distance 1    "+remainingDistance);
+        double remainingDistance = targetDistanceInTicks - fLeft.getCurrentPosition();
 
         return remainingDistance;
     }
@@ -483,35 +330,14 @@ public class Robot {
     //TODO document for notebook
 
     public boolean checkReachedDistanceForMecanum(double targetDistanceInMM) {
-        double newTicks = fLeft.getCurrentPosition();
 
-        boolean isStopped = false;
         boolean done = false;
-        double remainingDistance = getRemainingTicksForDrivetrain(targetDistanceInMM);
+        double remainingDistance = Math.abs(getRemainingTicksForDrivetrainMecanum(targetDistanceInMM));
 
-        //telemetry.addLine("remaining distance   "+remainingDistance);
-        //telemetry.addLine("current pos  "+lFront.getCurrentPosition());
-
-        /*telemetry.addLine("isStopped:"+isStopped);
-        telemetry.addLine("oldTick:"+oldTick);
-        telemetry.addLine("newTicks"+newTicks);
-        telemetry.addLine("millis:"+millis);
-        telemetry.addLine("lastCheckMillis"+lastCheckMillis);*/
-        if (millis > lastCheckMillis + 250) {
-            lastCheckMillis = millis;
-            newTicks = fLeft.getCurrentPosition();
-            //telemetry.addLine("inside");
-
-            if (oldTick == newTicks) {
-                isStopped = true;
-                //telemetry.addLine("inside if 2");
-            }
-            oldTick = newTicks;
+        telemetry.addData("remaining distance in ticks for mecananamasm", remainingDistance);
 
 
-        }
-        if (remainingDistance < 10 && isStopped && -yaw <5 && -yaw > - 5) {
-            setMotorPower(0, 0, 0, 0);
+        if (remainingDistance < 30 && -yaw <5 && -yaw > - 5) {
             done = true;
         }
         return done;
@@ -519,18 +345,19 @@ public class Robot {
     public double[] calculateMecanumPower(double targetDistanceInMM) {
         final double P_VALUE_FOR_MECANUM = 0.002;
 
-        double remainingDistance = getRemainingTicksForDrivetrainMecanum(targetDistanceInMM);
-        if (remainingDistance<10){
+        if (checkReachedDistanceForMecanum(targetDistanceInMM)){
             return new double[] {0, 0, 0, 0};
         }
+
+        double remainingDistance = getRemainingTicksForDrivetrainMecanum(targetDistanceInMM);
         double proportionalPower = P_VALUE_FOR_MECANUM*remainingDistance;
-        double scaleImu = 8.25;
-        //telemetry.addLine("POWER  "+ proportionalPower);
+
+        double scaleImu = 8.15;
         return scalePowers(new double[]{
-                - proportionalPower + calculateImuPower(0)*scaleImu,
-                + proportionalPower - calculateImuPower(0)*scaleImu,
                 + proportionalPower + calculateImuPower(0)*scaleImu,
-                - proportionalPower - calculateImuPower(0)*scaleImu
+                - proportionalPower - calculateImuPower(0)*scaleImu,
+                - proportionalPower + calculateImuPower(0)*scaleImu,
+                + proportionalPower - calculateImuPower(0)*scaleImu
         });
     }
 
@@ -559,18 +386,12 @@ public class Robot {
 
         millis = System.currentTimeMillis();
 
-        //telemetry.addLine(String.valueOf(targetPos));
-        //telemetry.addLine(String.valueOf(lFront.getCurrentPosition()));
 
         error = targetPos - fLeft.getCurrentPosition();
-        //telemetry.addLine(String.valueOf(error));
 
         double imuPower = calculateImuPower(0);
 
         setMotorPower(PROPORTIONAL_POWER+imuPower, -PROPORTIONAL_POWER+imuPower, -PROPORTIONAL_POWER+imuPower, PROPORTIONAL_POWER+imuPower);
-
-
-        //telemetry.addLine("moving");
 
 
         if (millis > lastCheckMillis + 500) {
@@ -584,18 +405,5 @@ public class Robot {
             oldTick = newTicks;
 
         }
-
-
-
-        //telemetry.addLine(String.valueOf(lFront.getCurrentPosition() / MM_TO_TICKS));
-
-
-
-        telemetry.addLine("done");
-
-
-    }
-    public void resetImuYaw () {
-        imu.resetYaw();
     }
 }
