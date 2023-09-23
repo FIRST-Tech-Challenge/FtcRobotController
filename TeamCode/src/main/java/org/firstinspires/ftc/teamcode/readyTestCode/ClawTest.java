@@ -21,6 +21,16 @@ public class ClawTest extends LinearOpMode {
         // pressing button Y moves servo to hopefully open and then close the claw
         while (opModeIsActive()) {
             double clawServoPosition = clawServo.getPosition();
+            float clawPos = 1f;
+
+            if (gamepad1.dpad_up && clawPos <= 1 && clawPos <=0.1) {
+                clawPos -= 0.1;
+                clawServo.setPosition(clawPos);
+            } else if (gamepad1.dpad_down && clawPos <= 0.9 && clawPos >= 0) {
+                clawPos += 0.1;
+                clawServo.setPosition(clawPos);
+            }
+
             if (gamepad1.y) {
                 clawServo.setPosition(0);
                 sleep(2000);

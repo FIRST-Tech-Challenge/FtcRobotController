@@ -66,6 +66,7 @@ public class TeleOpWithClawLiftDrone extends LinearOpMode {
             double lTrigger = gamepad1.left_trigger;
             double droneServoPosition = droneServo.getPosition();
             double clawServoPosition = clawServo.getPosition();
+            float clawPos = 1f;
 
             // ADDED CODE - holding down right trigger makes lift move up
             // and left trigger makes lift move down
@@ -91,6 +92,14 @@ public class TeleOpWithClawLiftDrone extends LinearOpMode {
                 clawServo.setPosition(0);
                 sleep(2000);
                 clawServo.setPosition(1);
+            }
+
+            if (gamepad1.dpad_up && clawPos <= 1 && clawPos <=0.1) {
+                clawPos -= 0.1;
+                clawServo.setPosition(clawPos);
+            } else if (gamepad1.dpad_down && clawPos <= 0.9 && clawPos >= 0) {
+                clawPos += 0.1;
+                clawServo.setPosition(clawPos);
             }
 
             // ADDED CODE - sends info about current servo position to driver station
