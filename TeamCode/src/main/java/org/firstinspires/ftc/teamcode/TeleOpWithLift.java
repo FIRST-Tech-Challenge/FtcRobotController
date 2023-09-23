@@ -51,12 +51,10 @@ public class TeleOpWithLift extends LinearOpMode {
                 imu.resetYaw();
             }
 
-            while (opModeIsActive()) {
-                if (gamepad1.y) {
-                    lift.setPower(1);
-                }else {
-                    lift.setPower(0);
-                }
+            if (gamepad1.y) {
+                lift.setPower(1);
+            }else {
+                lift.setPower(0);
             }
 
             double botHeading = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS);
