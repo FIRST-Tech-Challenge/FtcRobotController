@@ -72,6 +72,7 @@ public class Queuer {
 
     /**
      * Set currently queued synchronous event to done, manually skipping it, overriding any other conditions
+     * logs which  event gets finished at general surface level
      */
     public void done() {
         int inde = 908;
@@ -93,7 +94,7 @@ public class Queuer {
 
     /**
      * update start conditions of subsequent events after one is suddenly changed to non-optional
-     *
+     * logs which  event gets updated at general surface level
      * @param p_ind index of queueElement in question
      */
     public void updateStartConditions(int p_ind) {
@@ -184,6 +185,7 @@ public class Queuer {
 
     /**
      * set the current event to whatever is currently being queued, skip back or forward into the queue
+     * logs that this function is called event gets updated at general surface level
      */
     public void setToNow() {
         done();
@@ -198,6 +200,7 @@ public class Queuer {
 
     /**
      * reset the queuer to factory settings
+     * logs that this function is being called to general surface level
      */
     public void reset() {
         queueElements.clear();
@@ -212,6 +215,7 @@ public class Queuer {
 
     /**
      * is the entire queuer done
+     * logs if queuer is done surface level
      */
     public boolean isFullfilled() {
         return !queueElements.isEmpty() && currentEvent == queueElements.size() - 1;
@@ -258,6 +262,7 @@ public class Queuer {
 
     /**
      * create new queueElement
+     * logs which event was queued
      *
      * @param p_asynchrnous is the function asynchronous
      * @param p_isOptional  is the function optional
@@ -278,7 +283,7 @@ public class Queuer {
 
     /**
      * update which element is currently being queued(processed) and which element is currently being executed
-     *
+     *log which element is currently being queued and which is being executed
      * @param p_done_condition is the function done
      * @param p_isOptional     is the function optional
      */

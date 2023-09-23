@@ -25,21 +25,26 @@ import java.util.ArrayList;
 
 /**
  * Warren
+ * All operations associated with aprilTag
  */
 @Config
 public class RFAprilCam {
     public static double X_OFFSET = 0, Y_OFFSET = 0, UPSAMPLE_THRESHOLD=50;
     public static float DOWNSAMPLE = 2, UPSAMPLE = 3;
     private AprilTagProcessor aprilTag;
-    private RFVisionPortal visionPortal;
+    public RFVisionPortal visionPortal;
     boolean upsample=false;
     private Vector2d[] values = {new Vector2d(0, 0), new Vector2d(0, 0),new Vector2d(0, 0),new Vector2d(0, 0),
-            new Vector2d(0, 0),new Vector2d(0, 0),new Vector2d(0, 0)
+            new Vector2d(0, 0),new Vector2d(0, 0)
             ,new Vector2d(0, 0),new Vector2d(3*23.5-1,1.5*23.5),new Vector2d(3*23.5-1,1.5*23.5-4.5)
             ,new Vector2d(3*23.5-1,-1.5*23.5),new Vector2d( 3*23.5-1,-1.5*23.5+4.5)};
     private ArrayList<Pose2d> camPose = new ArrayList<>();
-    private double[][] directions = {{-1, 1}, {-1, 1},{-1, 1},{-1, 1},{-1, 1},{-1, 1},{-1, 1},{-1, 1},{-1, -1},{-1, -1},{-1, -1}};
+    private double[][] directions = {{-1, 1}, {-1, 1},{-1, 1},{-1, 1},{-1, 1},{-1, 1},{-1, 1},{-1, -1},{-1, -1},{-1, -1},{-1, -1}};
 
+    /**
+     * Initialize apriltag camera
+     * Logs that the camera is initialized highest verbosity level
+     */
     public RFAprilCam() {
         aprilTag = new AprilTagProcessor.Builder()
                 .setDrawAxes(false)
@@ -63,12 +68,19 @@ public class RFAprilCam {
                 .build();
         visionPortal.stopLiveView();
     }
-    public boolean update() {
+
+    /**
+     * Updates stored info to the latest available apriltag data
+     * Logs newly calculated position at finest verbosity level
+     */
+    public void update() {
         ArrayList<AprilTagDetection> detections = aprilTag.getDetections();
         //if close start upsampling
+        Pose2d newPose = new Pose2d(0,0,0);
+        double poseCount =0;
         camPose.clear();
+        upsample=false;
         for (AprilTagDetection detection : detections) {
-            upsample=false;
              AprilTagPoseFtc poseFtc= detection.ftcPose;
              double p_x = poseFtc.y, p_y = poseFtc.x;
              int p_ind = detection.id;
@@ -77,6 +89,8 @@ public class RFAprilCam {
              double dist = sqrt(poseFtc.x*poseFtc.x + poseFtc.y*poseFtc.y);
              if(dist<UPSAMPLE_THRESHOLD){
                  upsample=true;
+                 poseCount++;
+                 newPose = newPose.plus(camPose.get(camPose.size()-1));
              }
              logger.log("/RobotLogs/GeneralRobot", "aprilPos = "+camPose.get(camPose.size()-1)+", dist:"+dist);
         }
@@ -85,8 +99,16 @@ public class RFAprilCam {
         }else{
             aprilTag.setDecimation(DOWNSAMPLE);
         }
-        return camPose.size() > 0 && upsample;
+        if(camPose.size() > 0 && upsample && poseCount!=0){
+            logger.log("/RobotLogs/GeneralRobot", "avgAprilPose"+newPose.div(poseCount));
+            currentPose = new Pose2d(newPose.div(poseCount).vec(), currentPose.getHeading());
+        }
     }
+
+    /**
+     * Gets the most recently stored camera position
+     * @return cameraPosition
+     */
     public Pose2d getCamPose(){
         if(camPose.size()>0) {
             return camPose.get(0);
