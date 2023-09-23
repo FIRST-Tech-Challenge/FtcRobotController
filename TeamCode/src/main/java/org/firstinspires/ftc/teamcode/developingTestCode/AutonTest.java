@@ -16,20 +16,26 @@ public class AutonTest extends LinearOpMode{
                 DcMotor frontRightMotor = hardwareMap.dcMotor.get("motorFR");
                 DcMotor backRightMotor = hardwareMap.dcMotor.get("motorBR");
 
-                frontRightMotor.setDirection(DcMotorSimple.Direction.FORWARD);
                 frontLeftMotor.setDirection(DcMotorSimple.Direction.FORWARD);
+                backLeftMotor.setDirection(DcMotorSimple.Direction.FORWARD);
+                frontRightMotor.setDirection(DcMotorSimple.Direction.REVERSE);
                 backRightMotor.setDirection(DcMotorSimple.Direction.REVERSE);
-                backLeftMotor.setDirection(DcMotorSimple.Direction.REVERSE);
 
                 frontRightMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-                frontLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-                frontRightMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+                frontLeftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+                backRightMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+                backLeftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
-                leftDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-                rightDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+                frontRightMotor.setTargetPosition(100);
+                frontLeftMotor.setTargetPosition(100);
+                backLeftMotor.setTargetPosition(100);
+                backRightMotor.setTargetPosition(100);
 
-                leftDrive.setTargetPosition(100);
-                rightDrive.set
+                frontRightMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+                frontLeftMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+                backRightMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+                backLeftMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
         }
 
 
