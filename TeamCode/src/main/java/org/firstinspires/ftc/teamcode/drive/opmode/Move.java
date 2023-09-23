@@ -4,16 +4,14 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
-import com.qualcomm.robotcore.hardware.Gamepad;
-import com.qualcomm.robotcore.hardware.Servo;
+//import com.qualcomm.robotcore.hardware.Gamepad;
+//import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
-import com.qualcomm.robotcore.hardware.configuration.annotations.DeviceProperties;
+//import com.qualcomm.robotcore.hardware.configuration.annotations.DeviceProperties;
 import com.qualcomm.robotcore.hardware.configuration.annotations.I2cDeviceType;
-import com.qualcomm.robotcore.hardware.configuration.annotations.DeviceProperties;
-import com.qualcomm.robotcore.hardware.configuration.annotations.I2cDeviceType;
-
-
+//import com.qualcomm.robotcore.hardware.configuration.annotations.DeviceProperties;
+//import com.qualcomm.robotcore.hardware.configuration.annotations.I2cDeviceType;
 
 @TeleOp
 @I2cDeviceType()
@@ -28,19 +26,17 @@ public class Move extends OpMode {
     //bools
     public boolean Endgametrue = false;
     public boolean Parktrue = false;
-    private static final boolean ON = true;
-    private static final boolean OFF = false;
 
     //ElapsedTime Runtime
     ElapsedTime runtime = new ElapsedTime();
 
-    static void sleep(int LongMilliseconds) {
-        try {
-            Thread.sleep(LongMilliseconds);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-    }
+//    static void sleep(int LongMilliseconds) {
+//        try {
+//            Thread.sleep(LongMilliseconds);
+//        } catch (InterruptedException e) {
+//            e.printStackTrace();
+//        }
+//    }
 
     @Override
     public void init() {
