@@ -48,9 +48,9 @@ import com.qualcomm.robotcore.util.Range;
  * Remove or comment out the @Disabled line to add this OpMode to the Driver Station OpMode list
  */
 
-@TeleOp(name="Robot: Teleop POV", group="Robot")
+@TeleOp(name="MotorDroneMechanism", group="Robot")
 @Disabled
-public class RobotTeleopPOV_Linear extends LinearOpMode {
+public class MotorDroneMechanism extends LinearOpMode {
 
     /* Declare OpMode members. */
     public DcMotor  leftDrive   = null;
