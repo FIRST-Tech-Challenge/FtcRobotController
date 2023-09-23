@@ -24,10 +24,10 @@ public class TeleOpWithLiftDrone extends LinearOpMode {
         Servo droneServo = hardwareMap.servo.get("drone");
 
         // Reverse the right side motors. Flip if goes backward.
-        frontRightMotor.setDirection(DcMotorSimple.Direction.FORWARD);
         frontLeftMotor.setDirection(DcMotorSimple.Direction.FORWARD);
-        frontLeftMotor.setDirection(DcMotorSimple.Direction.REVERSE);
-        backLeftMotor.setDirection(DcMotorSimple.Direction.REVERSE);
+        backLeftMotor.setDirection(DcMotorSimple.Direction.FORWARD);
+        frontRightMotor.setDirection(DcMotorSimple.Direction.REVERSE);
+        backRightMotor.setDirection(DcMotorSimple.Direction.REVERSE);
 
         // ADDED CODE - sets directions of motor and servos (just in case)
         lift.setDirection(DcMotorSimple.Direction.FORWARD);
