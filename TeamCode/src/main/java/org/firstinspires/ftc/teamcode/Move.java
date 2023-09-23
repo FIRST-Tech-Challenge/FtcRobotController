@@ -25,8 +25,6 @@ public class Move extends OpMode {
     private DcMotor leftBackDrive = null;
     private DcMotor rightBackDrive = null;
 
-
-
     //bools
     public boolean Endgametrue = false;
     public boolean Parktrue = false;
