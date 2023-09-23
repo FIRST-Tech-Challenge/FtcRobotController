@@ -3,58 +3,67 @@ package org.firstinspires.ftc.teamcode;
 //By Ethan Clawsie and Aman Sulaiman, 2021-2022 Freight Frenzy
 
 import com.qualcomm.robotcore.hardware.CRServo;
-import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.ColorSensor;
+import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
-import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
-import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
-import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.hardware.DigitalChannel;
 import com.qualcomm.robotcore.hardware.TouchSensor;
 
 
-public class piRhosHardware {
-    public DcMotor frontLeft, backLeft, frontRight, backRight, cascadeMotor1, cascadeMotor2, slider, carousel;
+public class OutreachHardware {
+    public DcMotor frontLeft, backLeft, frontRight, backRight, cascadeMotorRight, cascadeMotorLeft, arm;
     public TouchSensor touchRight, touchLeft;
-    public Servo bucket;
-    public CRServo intake1, intake2;
+    public ColorSensor colorSensor;
+    public Servo claw;
+    public CRServo wrist;
+    public DistanceSensor distanceSensor;
     HardwareMap hwMap;
+    static final double COUNTS_PER_MOTOR_REV = 537.7;    // eg: TETRIX Motor Encoder
+    static final double DRIVE_GEAR_REDUCTION = 1.0;     // No External Gearing.
+    static final double WHEEL_DIAMETER_INCHES = 4.0;     // For figuring circumference
+    static final double COUNTS_PER_INCH = (COUNTS_PER_MOTOR_REV * DRIVE_GEAR_REDUCTION) /
+            (WHEEL_DIAMETER_INCHES * 3.1415);
+    static final double DRIVE_SPEED = 0.6;
+    static final double TURN_SPEED = 0.5;
     public ElapsedTime timer = new ElapsedTime();
+
     public void initTeleOpIMU(HardwareMap hwMap) {
         this.hwMap = hwMap;
         timer.reset();
-        backLeft = hwMap.dcMotor.get("back_left");
-        backRight = hwMap.dcMotor.get("back_right");
-        frontLeft = hwMap.dcMotor.get("front_left");
-        frontRight = hwMap.dcMotor.get("front_right");
-        carousel = hwMap.dcMotor.get("carousel");
-        cascadeMotor1 = hwMap.dcMotor.get("cascadeMotorRight");
-        cascadeMotor2 = hwMap.dcMotor.get("cascadeMotorLeft");
-        //cascadeTouch = hwMap.touchSensor.get("cascade_touch");
-        bucket = hwMap.servo.get("bucket");
-        //intake1 = hwMap.crservo.get("intake1");
-        //intake2 = hwMap.crservo.get("intake2");
+        backLeft = hwMap.dcMotor.get("lb");
+        backRight = hwMap.dcMotor.get("rb");
+        frontLeft = hwMap.dcMotor.get("lf");
+        frontRight = hwMap.dcMotor.get("rf");
+        //colorSensor  = hwMap.colorSensor.get("colorSensor");
+        //distanceSensor = (DistanceSensor)hwMap.get("distanceSensor");
+        frontRight.setDirection(DcMotorSimple.Direction.REVERSE);
+        backLeft.setDirection(DcMotorSimple.Direction.REVERSE);
+        claw = hwMap.servo.get("claw");
+//        arm = hwMap.dcMotor.get("arm");
+//        wrist = hwMap.crservo.get("wrist");
+//        //turntable = hwMap.dcMotor.get("turntable");
+        //cascadeMotorRight = hwMap.dcMotor.get("cascadeMotorRight");
+        //cascadeMotorLeft = hwMap.dcMotor.get("cascadeMotorLeft");
+//        //cascadeTouch = hwMap.touchSensor.get("cascade_touch");
+////        bucket = hwMap.servo.get("bucket");
+        //intake1 = hwMap.crservo.get("intakeServoRight");
+        //intake2 = hwMap.crservo.get("intakeServoLeft");
         //slider = hwMap.dcMotor.get("slider");
-        touchRight = hwMap.touchSensor.get("touch_right");
-        touchLeft = hwMap.touchSensor.get("touch_left");
-        backLeft.setDirection(DcMotor.Direction.REVERSE);
-        frontLeft.setDirection(DcMotor.Direction.REVERSE);
+        //touchRight = hwMap.touchSensor.get("touch_right");
+        //touchLeft = hwMap.touchSensor.get("touch_left");
+
         boolean go = true;
 
         //bucket.setPosition(.9);
     }
 
 
-    public void setPowerOfAllMotorsToForTime(double power, double time)
-    {
+    public void setPowerOfAllMotorsToForTime(double power, double time) {
         timer.reset();
-        while(timer.seconds() <= time){
+        while (timer.seconds() <= time) {
             backLeft.setPower(power);
             backRight.setPower(power);
             frontLeft.setPower(power);
@@ -65,11 +74,11 @@ public class piRhosHardware {
         frontLeft.setPower(0);
         frontRight.setPower(0);
     }
+
     //Strafes right for certain amount of time
-    public void strafeRightForTime(double power, double time)
-    {
+    public void strafeRightForTime(double power, double time) {
         timer.reset();
-        while(timer.seconds() <= time){
+        while (timer.seconds() <= time) {
             backLeft.setPower(-power);
             backRight.setPower(power);
             frontLeft.setPower(power);
@@ -80,11 +89,11 @@ public class piRhosHardware {
         frontLeft.setPower(0);
         frontRight.setPower(0);
     }
+
     //strafes left for certain amount of time
-    public void strafeLeftForTime(double power, double time)
-    {
+    public void strafeLeftForTime(double power, double time) {
         timer.reset();
-        while(timer.seconds() <= time){
+        while (timer.seconds() <= time) {
             backLeft.setPower(power);
             backRight.setPower(-power);
             frontLeft.setPower(-power);
@@ -95,11 +104,11 @@ public class piRhosHardware {
         frontLeft.setPower(0);
         frontRight.setPower(0);
     }
+
     //turns left for certain amount of time
-    public void turnRightForTime(double power, double time)
-    {
+    public void turnRightForTime(double power, double time) {
         timer.reset();
-        while(timer.seconds() <= time){
+        while (timer.seconds() <= time) {
             backLeft.setPower(power);
             backRight.setPower(-power);
             frontLeft.setPower(power);
@@ -110,11 +119,11 @@ public class piRhosHardware {
         frontLeft.setPower(0);
         frontRight.setPower(0);
     }
+
     //turns right for certain amount of time
-    public void turnLeftForTime(double power, double time)
-    {
+    public void turnLeftForTime(double power, double time) {
         timer.reset();
-        while(timer.seconds() <= time){
+        while (timer.seconds() <= time) {
             backLeft.setPower(-power);
             backRight.setPower(power);
             frontLeft.setPower(-power);
@@ -125,17 +134,19 @@ public class piRhosHardware {
         frontLeft.setPower(0);
         frontRight.setPower(0);
     }
+
     //gives you Elapsed time
-    public double getTime(){
+    public double getTime() {
         return timer.time();
     }
-    public void setPowerOfAllMotorsTo(double power)
-    {
+
+    public void setPowerOfAllMotorsTo(double power) {
         backLeft.setPower(power);
         backRight.setPower(power);
         frontLeft.setPower(power);
         frontRight.setPower(power);
     }
+
     public void strafeLeft(double power) {
 
         backLeft.setPower(power);
@@ -153,7 +164,6 @@ public class piRhosHardware {
     }
 
 
-
     /*public void slideForTime(double power, double time)
     {
         timer.reset();
@@ -162,16 +172,16 @@ public class piRhosHardware {
         }
         slider.setPower(0);
     }*/
-    public void cascadeupfortime(double power, double time)
-    {
+    public void cascadeupfortime(double power, double time) {
         timer.reset();
-        while(timer.seconds() <= time){
-            cascadeMotor1.setPower(power);
-            cascadeMotor2.setPower(power);
+        while (timer.seconds() <= time) {
+            cascadeMotorRight.setPower(power);
+            cascadeMotorLeft.setPower(power);
         }
-        cascadeMotor1.setPower(0.1);
-        cascadeMotor2.setPower(0.1);
+        cascadeMotorRight.setPower(0.1);
+        cascadeMotorLeft.setPower(0.1);
     }
+
     /*public void intakeForTime(double power, double time) {
         timer.reset();
         while (timer.seconds() <= time) {
@@ -180,13 +190,13 @@ public class piRhosHardware {
         }
 
     }*/
-    public void carouselpowerfortime(double power, double time) {
+    /*public void carouselpowerfortime(double power, double time) {
         timer.reset();
         while (timer.seconds() <= time) {
             carousel.setPower(power);
         }
         carousel.setPower(0);
-    }
+    }*/
     public void movedist(int dist) {
         double startticks = frontLeft.getCurrentPosition();
         setPowerOfAllMotorsTo(0.5);
@@ -199,6 +209,7 @@ public class piRhosHardware {
             }
         }
     }
+
     public void movebackdist(int dist) {
         double startticks = frontLeft.getCurrentPosition();
         setPowerOfAllMotorsTo(-0.5);
@@ -211,8 +222,20 @@ public class piRhosHardware {
             }
         }
     }
-
-
-
+    public int inchesToTicksCascadeOld(int inches){
+        int cpi = (int) (384.5/ (2* 3.14159265));
+        return inches * cpi;
+    }
+    public int inchesToTicksOldDrive(double inches){
+        int cpi = (int) (537.7 / (3.78* 3.14159265));
+        return (int) (inches * cpi);
+    }
+    public int degreesToTicks(int degrees){
+        int ticksPerDegree = (int)(2786.2/360);
+        return ticksPerDegree * degrees;
+    }
 
 }
+//650, -17, -650, -2, 1277, 609, -14,
+// 653, -8, -652, 647, 1280,
+// 646, -3,
