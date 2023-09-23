@@ -9,8 +9,8 @@ import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 
-@com.qualcomm.robotcore.eventloop.opmode.TeleOp(name = "Drivebase w/ Claw+Lift+Drone Test Code")
-public class TeleOpWithClawLiftDrone extends LinearOpMode {
+@com.qualcomm.robotcore.eventloop.opmode.TeleOp(name = "Drivebase w/ Lift+Drone Test Code")
+public class TeleOpWithLiftDrone extends LinearOpMode {
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -18,7 +18,6 @@ public class TeleOpWithClawLiftDrone extends LinearOpMode {
         DcMotor backLeftMotor = hardwareMap.dcMotor.get("motorBL");
         DcMotor frontRightMotor = hardwareMap.dcMotor.get("motorFR");
         DcMotor backRightMotor = hardwareMap.dcMotor.get("motorBR");
-        Servo clawServo = hardwareMap.servo.get("claw");
 
         // ADDED CODE - sets up lift motor and drone servo
         DcMotor lift = hardwareMap.dcMotor.get("lift");
@@ -33,8 +32,6 @@ public class TeleOpWithClawLiftDrone extends LinearOpMode {
         // ADDED CODE - sets directions of motor and servos (just in case)
         lift.setDirection(DcMotorSimple.Direction.FORWARD);
         droneServo.setDirection(Servo.Direction.FORWARD);
-
-        clawServo.setDirection(Servo.Direction.REVERSE);
 
         // Retrieve the IMU from the hardware map
         IMU imu = hardwareMap.get(IMU.class, "imu");
@@ -51,9 +48,6 @@ public class TeleOpWithClawLiftDrone extends LinearOpMode {
         droneServo.scaleRange(0, 1);
         droneServo.setPosition(0.85);
 
-        clawServo.scaleRange(0, 0.85);
-        clawServo.setPosition(1);
-
         waitForStart();
 
         while (opModeIsActive()) {
@@ -65,8 +59,7 @@ public class TeleOpWithClawLiftDrone extends LinearOpMode {
             double rTrigger = gamepad1.right_trigger;
             double lTrigger = gamepad1.left_trigger;
             double droneServoPosition = droneServo.getPosition();
-            double clawServoPosition = clawServo.getPosition();
-            float clawPos = 1f;
+            double liftPower = lift.getPower();
 
             // ADDED CODE - holding down right trigger makes lift move up
             // and left trigger makes lift move down
@@ -81,32 +74,17 @@ public class TeleOpWithClawLiftDrone extends LinearOpMode {
             }
 
             // ADDED CODE - pressing button A moves servo to launch the drone and then reset launcher position
-            // pressing button Y opens the claw and then closes it
             if (gamepad1.a) {
                 droneServo.setPosition(1);
                 sleep(1500);
                 droneServo.setPosition(0.85);
             }
 
-            if (gamepad1.y) {
-                clawServo.setPosition(0);
-                sleep(2000);
-                clawServo.setPosition(1);
-            }
-
-            if (gamepad1.dpad_down && clawPos <= 0.9 && clawPos >= 0) {
-                clawPos += 0.1;
-                clawServo.setPosition(clawPos);
-            } else if (gamepad1.dpad_up && clawPos <= 1 && clawPos <=0.1) {
-                clawPos -= 0.1;
-                clawServo.setPosition(clawPos);
-            }
-
             // ADDED CODE - sends info about current servo position to driver station
             telemetry.addData("Servo Position: ", droneServoPosition);
-            telemetry.update();
-
-            telemetry.addData("Claw Position: ", clawServoPosition);
+            telemetry.addData("Lift power: ", liftPower);
+            telemetry.addData("Left trigger: ", lTrigger);
+            telemetry.addData("Right trigger: ", rTrigger);
             telemetry.update();
 
             // This button choice was made so that it is hard to hit on accident,
@@ -141,4 +119,3 @@ public class TeleOpWithClawLiftDrone extends LinearOpMode {
         }
     }
 }
-

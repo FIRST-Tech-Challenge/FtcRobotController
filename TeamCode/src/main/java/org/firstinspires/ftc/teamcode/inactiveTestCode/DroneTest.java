@@ -1,9 +1,11 @@
-package org.firstinspires.ftc.teamcode.developingTestCode;
+package org.firstinspires.ftc.teamcode.inactiveTestCode;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.Servo;
 
 @com.qualcomm.robotcore.eventloop.opmode.TeleOp(name = "Drone Test")
+@Disabled
 public class DroneTest extends LinearOpMode {
 
     @Override
