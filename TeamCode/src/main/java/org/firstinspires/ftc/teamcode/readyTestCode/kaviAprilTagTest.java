@@ -40,10 +40,12 @@ public class kaviAprilTagTest extends LinearOpMode {
                     telemetry.addData("Found AprilTag: ", detection.metadata);
                     desiredTag = detection;
                     telemetry.addData("desiredTag: ", desiredTag);
+                    telemetry.update();
 
                     break;  // don't look any further.
                 } else {
                     telemetry.addData("Unknown Target", "Tag ID %d is not in TagLibrary\n", detection.id);
+                    telemetry.update();
                 }
             }
         }

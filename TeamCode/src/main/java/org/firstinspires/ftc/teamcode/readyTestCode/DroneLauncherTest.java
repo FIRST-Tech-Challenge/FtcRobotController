@@ -13,19 +13,18 @@ public class DroneLauncherTest extends LinearOpMode {
 
         // sets servo's range and default position beforehand
         // WILL LIKELY NEED TO BE CHANGED AFTER TESTING
-        droneServo.scaleRange(0, 0.25);
-        droneServo.setPosition(0);
+        droneServo.scaleRange(0, 1);
+        droneServo.setPosition(0.85);
 
         waitForStart();
 
-        // pressing button A moves servo to hopefully launch the drone
-        // pressing button Y resets the servo's position to default to reload the rubber band
+        // pressing button A moves servo to hopefully launch the drone and then reset launcher position
         while (opModeIsActive()) {
             double droneServoPosition = droneServo.getPosition();
             if (gamepad1.a) {
                 droneServo.setPosition(1);
-            }else if (gamepad1.y) {
-                droneServo.setPosition(0);
+                sleep(1500);
+                droneServo.setPosition(0.85);
             }
 
             // sends info about current servo position to driver station
