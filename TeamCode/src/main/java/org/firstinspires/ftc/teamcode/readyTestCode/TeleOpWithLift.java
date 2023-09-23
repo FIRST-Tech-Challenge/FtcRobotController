@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode;
+package org.firstinspires.ftc.teamcode.readyTestCode;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.IMU;
@@ -53,6 +53,12 @@ public class TeleOpWithLift extends LinearOpMode {
 
             if (gamepad1.y) {
                 lift.setPower(1);
+            }else {
+                lift.setPower(0);
+            }
+
+            if (gamepad1.a) {
+                lift.setPower(-1);
             }else {
                 lift.setPower(0);
             }
