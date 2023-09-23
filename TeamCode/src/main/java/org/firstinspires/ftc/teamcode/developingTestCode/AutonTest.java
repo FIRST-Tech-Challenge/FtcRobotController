@@ -26,15 +26,20 @@ public class AutonTest extends LinearOpMode{
                 backRightMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
                 backLeftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
+                frontRightMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+                frontLeftMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+                backRightMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+                backLeftMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
                 frontRightMotor.setTargetPosition(100);
                 frontLeftMotor.setTargetPosition(100);
                 backLeftMotor.setTargetPosition(100);
                 backRightMotor.setTargetPosition(100);
 
-                frontRightMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-                frontLeftMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-                backRightMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-                backLeftMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+                frontRightMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                frontLeftMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                backRightMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                backLeftMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
         }
 
