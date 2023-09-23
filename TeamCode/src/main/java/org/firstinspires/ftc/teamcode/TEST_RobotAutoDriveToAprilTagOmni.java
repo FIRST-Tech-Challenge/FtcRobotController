@@ -101,16 +101,16 @@ public class TEST_RobotAutoDriveToAprilTagOmni extends LinearOpMode
     private DcMotor rightBackDrive   = null;  //  Used to control the right back drive wheel
 
     private static final boolean USE_WEBCAM = true;  // Set true to use a webcam, or false for a phone camera
-    private static final int desiredID1 = 1;
-    private static final int desiredID2 = 2;
-    private static final int desiredID3 = 3;
-    private static final int desiredID1 = 1;
-    private static final int desiredID1 = 1;
-    private static final int desiredID1 = 1;
-    private static final int desiredID1 = 1;
-    private static final int desiredID1 = 1;
-    private static final int desiredID1 = 1;
-    private static final int desiredID1 = 1;
+    private static final int ID1 = 1;
+    private static final int ID2 = 2;
+    private static final int ID3 = 3;
+    private static final int ID4 = 4;
+    private static final int ID5 = 5;
+    private static final int ID6 = 6;
+    private static final int ID7 = 7;
+    private static final int ID8 = 8;
+    private static final int ID9 = 9;
+    private static final int ID10 = 10;
 
 
     // private static final int DESIRED_TAG_ID = 5;Choose the tag you want to approach or set to -1 for ANY tag.
@@ -118,17 +118,17 @@ public class TEST_RobotAutoDriveToAprilTagOmni extends LinearOpMode
 
     private VisionPortal visionPortal;               // Used to manage the video source.
     private AprilTagProcessor aprilTag;              // Used for managing the AprilTag detection process.
-    private AprilTagDetection DESIRED_TAG_ID = null;
-    private AprilTagDetection ID1 = null;
-    private AprilTagDetection ID2 = null;
-    private AprilTagDetection ID3 = null;
-    private AprilTagDetection ID4 = null;
-    private AprilTagDetection ID5 = null;
-    private AprilTagDetection ID6 = null;
-    private AprilTagDetection ID7 = null;
-    private AprilTagDetection ID8 = null;
-    private AprilTagDetection ID9 = null;
-    private AprilTagDetection ID10 = null;
+    private AprilTagDetection desiredTag = null;
+    private AprilTagDetection desiredID1 = null;
+    private AprilTagDetection desiredID2 = null;
+    private AprilTagDetection desiredID3 = null;
+    private AprilTagDetection desiredID4 = null;
+    private AprilTagDetection desiredID5 = null;
+    private AprilTagDetection desiredID6 = null;
+    private AprilTagDetection desiredID7 = null;
+    private AprilTagDetection desiredID8 = null;
+    private AprilTagDetection desiredID9 = null;
+    private AprilTagDetection desiredID10 = null;
     // Used to hold the data for a detected AprilTag
 
     @Override public void runOpMode()
@@ -170,16 +170,81 @@ public class TEST_RobotAutoDriveToAprilTagOmni extends LinearOpMode
         {
             targetFound = false;
             desiredTag  = null;
+            desiredID1 = null;
+            desiredID2 = null;
+            desiredID3 = null;
+            desiredID4 = null;
+            desiredID5 = null;
+            desiredID6 = null;
+            desiredID7 = null;
+            desiredID8 = null;
+            desiredID9 = null;
+            desiredID10 = null;
 
             // Step through the list of detected tags and look for a matching tag
             List<AprilTagDetection> currentDetections = aprilTag.getDetections();
             for (AprilTagDetection detection : currentDetections) {
                 if ((detection.metadata != null) &&
-                        ((DESIRED_TAG_ID < 0) || (detection.id == DESIRED_TAG_ID))  ){
+                        ((ID1 < 0) || (detection.id == ID1))  ){
                     targetFound = true;
                     desiredTag = detection;
+                    desiredID1 = detection;
                     break;  // don't look any further.
-                } else {
+                } else if ((detection.metadata != null) &&
+                        ((ID2 < 0) || (detection.id == ID2))  ) {
+                    targetFound = true;
+                    desiredTag = detection;
+                    desiredID2 = detection;
+                    break;
+                } else if ((detection.metadata != null) &&
+                        ((ID3 < 0) || (detection.id == ID3))  ) {
+                    targetFound = true;
+                    desiredTag = detection;
+                    desiredID3 = detection;
+                    break;
+                } else if ((detection.metadata != null) &&
+                        ((ID4 < 0) || (detection.id == ID4))  ) {
+                    targetFound = true;
+                    desiredTag = detection;
+                    desiredID4 = detection;
+                    break;
+                } else if ((detection.metadata != null) &&
+                        ((ID5 < 0) || (detection.id == ID5))  ) {
+                    targetFound = true;
+                    desiredTag = detection;
+                    desiredID5 = detection;
+                    break;
+                } else if ((detection.metadata != null) &&
+                        ((ID6 < 0) || (detection.id == ID6))  ) {
+                    targetFound = true;
+                    desiredTag = detection;
+                    desiredID6 = detection;
+                    break;
+                } else if ((detection.metadata != null) &&
+                        ((ID7 < 0) || (detection.id == ID7))  ) {
+                    targetFound = true;
+                    desiredTag = detection;
+                    desiredID7 = detection;
+                    break;
+                } else if ((detection.metadata != null) &&
+                        ((ID8 < 0) || (detection.id == ID8))  ) {
+                    targetFound = true;
+                    desiredTag = detection;
+                    desiredID8 = detection;
+                    break;
+                } else if ((detection.metadata != null) &&
+                        ((ID9 < 0) || (detection.id == ID9))  ) {
+                    targetFound = true;
+                    desiredTag = detection;
+                    desiredID9 = detection;
+                    break;
+                } else if ((detection.metadata != null) &&
+                        ((ID10 < 0) || (detection.id == ID10))  ) {
+                    targetFound = true;
+                    desiredTag = detection;
+                    desiredID10 = detection;
+                    break;
+                }else {
                     telemetry.addData("Unknown Target", "Tag ID %d is not in TagLibrary\n", detection.id);
                 }
             }
