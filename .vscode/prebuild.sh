@@ -12,7 +12,7 @@ if [[ "$OSTYPE" == "darwin"* ]]; then
   adb connect 192.168.43.1 # change the ip based on your RC's wifi ip
   ./gradlew installRelease
 
-elif [[ "$OSTYPE" == "mysys"* ]]; then
+elif [[ "$OSTYPE" == "msys"* ]]; then
   # Windows specific commands
   adb tcpip 5555
   adb connect 192.168.43.1 # change the ip based on your RC's wifi ip
