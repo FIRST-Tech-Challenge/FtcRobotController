@@ -94,11 +94,11 @@ public class TeleOpWithClawLiftDrone extends LinearOpMode {
                 clawServo.setPosition(1);
             }
 
-            if (gamepad1.dpad_up && clawPos <= 1 && clawPos <=0.1) {
-                clawPos -= 0.1;
-                clawServo.setPosition(clawPos);
-            } else if (gamepad1.dpad_down && clawPos <= 0.9 && clawPos >= 0) {
+            if (gamepad1.dpad_down && clawPos <= 0.9 && clawPos >= 0) {
                 clawPos += 0.1;
+                clawServo.setPosition(clawPos);
+            } else if (gamepad1.dpad_up && clawPos <= 1 && clawPos <=0.1) {
+                clawPos -= 0.1;
                 clawServo.setPosition(clawPos);
             }
 
