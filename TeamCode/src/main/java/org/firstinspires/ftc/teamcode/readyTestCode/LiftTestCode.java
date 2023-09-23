@@ -15,11 +15,7 @@ public class LiftTestCode extends LinearOpMode {
         while (opModeIsActive()) {
             if (gamepad1.y) {
                 lift.setPower(1);
-            }else {
-                lift.setPower(0);
-            }
-
-            if (gamepad1.a) {
+            }else if (gamepad1.a) {
                 lift.setPower(-1);
             }else {
                 lift.setPower(0);
