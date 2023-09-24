@@ -14,7 +14,7 @@ public class MotionProfiler {
         this.distance= distance;
     }
 
-    public void initMotionProfiler(double distance){
+    public void updateDistance(double distance){
         this.distance = distance;
     }
 
@@ -27,7 +27,6 @@ public class MotionProfiler {
         //distance of acceleration: 1/2 a delta t^2 (more kinematic equations!!!!)
         if((accelerationDistance)>halfwayDist){
             accelerationDt = Math.sqrt(halfwayDist/(0.5*maxAccel));
-            //ask someone good at physics: why do we take the square root of the distance/half of accel?
             //If we can't accelerate to max velocity in given distance, will accelerate as much as possible
         }
         maxVelocity = maxAccel * accelerationDt;
@@ -40,8 +39,10 @@ public class MotionProfiler {
         deaccelerationTime = accelerationDt + cruiseDt;
 
         totalDt = accelerationDt + cruiseDt + deaccelerationDt;
-        if (timeElapsed > totalDt)
+        if (timeElapsed > totalDt) {
+            isDone = true;
             return distance;
+        }
 
         if (timeElapsed < accelerationDt)
             // use the kinematic equation for acceleration
@@ -64,7 +65,7 @@ public class MotionProfiler {
             return accelerationDistance + cruiseDistance + maxVelocity * deaccelerationTime - 0.5 * maxAccel * Math.pow(deaccelerationTime,2);
         }
 
-        //method returns the power fed to motors (works in conjunction with PID controller)
+        //method returns the distance you need to go to reach next target
 
     }
 

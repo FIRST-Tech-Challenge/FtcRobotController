@@ -25,22 +25,24 @@ public class Bot {
         STORAGE_NOT_FULL,
         OUTTAKE, // ready to outtake
     }
-
+    public OpMode opMode;
     private BotState currentState = STORAGE_NOT_FULL;
     public static Bot instance;
 
-    /*public final Slides slides;
+    public final Slides slides;
     public final Noodles noodles;
+
+    /*
     public final TransferClaw transferClaw;
     Slides, Noodles, and TransferClaw subsystems
      */
 
-    private final DcMotorEx fl, fr, bl, br, susMotor;
+    private final DcMotorEx fl, fr, bl, br, susMotor, slidesMotor;
     private final Servo tcServo, droneServo_1, droneServo_2, outtakeServo;
 
     public BotState state = STORAGE_NOT_FULL;
 
-    public OpMode opMode;
+
 
     public BNO055IMU imu;
     public boolean fieldCentricRunMode = false;
@@ -86,13 +88,18 @@ public class Bot {
         droneServo_2= opMode.hardwareMap.get(Servo.class, "droneServo_2");;
         outtakeServo = opMode.hardwareMap.get(Servo.class, "outtakeServo");;
         susMotor = opMode.hardwareMap.get(DcMotorEx.class, "susMotor");
+        slidesMotor = opMode.hardwareMap.get(DcMotorEx.class, "slidesMotor");
 
         fl.setMode(RUN_USING_ENCODER);
+        fr.setMode(RUN_USING_ENCODER);
+        bl.setMode(RUN_USING_ENCODER);
+        br.setMode(RUN_USING_ENCODER);
 
         //subsystems uwu
 
-        /*this.slides = new Slides(opMode); slides subsystem
-        this.noodles = new Noodles(opMode); noodles subsystem
+        this.slides = new Slides(opMode); //slides subsystem
+        this.noodles = new Noodles(opMode); //noodles subsystem
+        /*
         this.transferClaw = new TransferClaw(opMode); transferClaw subsystem
          */
 

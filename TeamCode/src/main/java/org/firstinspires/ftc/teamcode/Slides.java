@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode;
 
+import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.telemetry;
+
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
@@ -20,12 +22,12 @@ public class Slides {
     public final DcMotorEx slidesMotor;
     private final static double p = 0.015, i = 0 , d = 0, f = 0;
     private final PIDFCoefficients coeff = new PIDFCoefficients(p,i,d,f);
-    double encoderClickPerSecond;
+    double encoderClickPerSecond, setPoint;
 
-    double maxVelocity, maxAcceleration, distance;
-    private MotionProfiler profiler = new MotionProfiler(maxVelocity, maxAcceleration, distance);
+    double maxVelocity, maxAcceleration, distance, motorPower;
+    private MotionProfiler profiler;
     //4410 code has staticF, not sure what that is. Look into it later
-    //private PIDFController controller;
+    private PIDController controller;
 
     //change values in slidesPosition based on the number of stages in the slides
     public enum slidesPosition{
@@ -35,20 +37,19 @@ public class Slides {
         HIGH
     }
 
-     private PIDFController controller;
 
     private slidesPosition position = slidesPosition.GROUND;
     private final double tolerance = 20, powerUp = 0.1, powerDown = 0.05, manualDivide = 1, powerMin = 0.1;
     //change these values based on what they actually are
     private double manualPower = 0;
 
-    public static int MAXHEIGHT = -2000, top = -1700, topTeleOp = -1750, mid = -980, low = -300, ground = 0, move_up_inc = 100, move_down_dec = 300;
+    public static int MAX_HEIGHT = -2000, top = -1700, topTeleOp = -1750, mid = -980, low = -300, ground = 0, move_up_inc = 100, move_down_dec = 300;
     //change values based on what they actually are
 
     private final OpMode opMode;
     private double target = 0;
     private boolean goingDown = false;
-    private double profileElapsedTime = 0;
+    private double elapsedTime = 0;
     //private MotionProfiler profiler = new MotionProfiler(30000, 20000);
     public boolean movingDown = false;
 
@@ -61,29 +62,60 @@ public class Slides {
     public void runTo(int stage){
         slidesMotor.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
 
-
-        controller = new PIDFController(p, i, d, f);
-        controller.setTolerance(tolerance);
-        controller.setSetPoint(0);
-
+        controller = new PIDController(p, i, d);
 
         slidesMotor.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
 
+        if(stage == 1){
+            setPoint = low;
+        }else if(stage == 2){
+            setPoint = mid;
+        }else if(stage == 3){
+            setPoint = top;
+        }else{
+            telemetry.addData("incorrect value entered: ", stage);
+            return;
+        }
+        //currently made to support 3 stages will update later
+
+        if(position.equals(slidesPosition.GROUND)){
+            distance = setPoint;
+        }else if(position.equals(slidesPosition.LOW)){
+            distance = low - setPoint;
+        }else if(position.equals(slidesPosition.MID)){
+            distance = mid - setPoint;
+        }else{
+            distance = top - setPoint;
+        }
+
+        controller.setSetPoint(setPoint);
+        profiler = new MotionProfiler(maxVelocity, maxAcceleration, distance);
+
+        while(!profiler.isDone){
+           elapsedTime = opMode.time;
+           double nextTargetPos = profiler.profileMotion(elapsedTime);
+           //you only need to create ONE motion profile aka no need to update distance everytime...I think...? PLS HELP IM GOING INSANE
+           controller.setSetPoint(nextTargetPos);
+           double motorPower = controller.calculatePower(slidesMotor, elapsedTime);
+           slidesMotor.setPower(motorPower);
+           //I kinda know what i'm doing hopefully this isn't trolling
+        }
     }
 
     public void runTo(double target) {
 
         slidesMotor.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
 
-        controller = new PIDFController(p, i, d, f);
-        controller.setTolerance(tolerance);
+        controller = new PIDController(p, i, d);
+
         resetProfiler();
         profiler.profileMotion(distance);
-        profileElapsedTime = opMode.time;
+        elapsedTime = opMode.time;
 
 
         goingDown = target > this.target;
         this.target = target;
+        //need to update this
     }
 
     public void resetProfiler() {
