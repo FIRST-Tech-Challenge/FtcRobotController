@@ -84,7 +84,7 @@ public class Lift extends RFMotor {
      * Logs to finest level.
      * Updates LiftMovingStates state machine.
      */
-    public void manualExtend(double power) {
+    public void setManual(double power) {
 
     }
 
