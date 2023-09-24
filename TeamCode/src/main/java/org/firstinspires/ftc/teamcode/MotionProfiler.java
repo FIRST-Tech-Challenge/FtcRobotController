@@ -5,13 +5,18 @@ public class MotionProfiler {
 
     double maxVelocity, maxAccel, distance, totalDt, accelerationDt, halfwayDist, accelerationDistance, deaccelerationDt, cruiseDistance, cruiseDt, deaccelerationTime;
     double cruiseCurrentDt;
-    boolean isOver= false, isDone=false;
+    boolean isDone=false;
 
 
     public MotionProfiler(double maxVelocity, double maxAcceleration, double distance){
         this.maxVelocity = maxVelocity;
         this.maxAccel = maxAcceleration;
         this.distance= distance;
+    }
+
+    public MotionProfiler(double maxVelocity, double maxAccel){
+        this.maxVelocity = maxVelocity;
+        this.maxAccel = maxAccel;
     }
 
     public void updateDistance(double distance){

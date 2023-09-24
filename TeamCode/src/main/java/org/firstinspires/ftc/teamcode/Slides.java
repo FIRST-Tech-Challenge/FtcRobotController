@@ -24,7 +24,7 @@ public class Slides {
     private final PIDFCoefficients coeff = new PIDFCoefficients(p,i,d,f);
     double encoderClickPerSecond, setPoint;
 
-    double maxVelocity, maxAcceleration, distance, motorPower;
+    double maxVelocity, maxAcceleration, distance;
     private MotionProfiler profiler;
     //4410 code has staticF, not sure what that is. Look into it later
     private PIDController controller;
@@ -60,12 +60,12 @@ public class Slides {
         slidesMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
     }
     public void runTo(int stage){
+        resetProfiler();
         slidesMotor.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
-
         controller = new PIDController(p, i, d);
-
         slidesMotor.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
 
+        //calculate setPoint based on stage
         if(stage == 1){
             setPoint = low;
         }else if(stage == 2){
@@ -76,7 +76,7 @@ public class Slides {
             telemetry.addData("incorrect value entered: ", stage);
             return;
         }
-        //currently made to support 3 stages will update later
+        //currently supports 3 stages, will update later
 
         if(position.equals(slidesPosition.GROUND)){
             distance = setPoint;
@@ -84,20 +84,23 @@ public class Slides {
             distance = low - setPoint;
         }else if(position.equals(slidesPosition.MID)){
             distance = mid - setPoint;
-        }else{
+        }else if(position.equals(slidesPosition.HIGH)){
             distance = top - setPoint;
         }
 
+        //sets initial values for controller and profiler
         controller.setSetPoint(setPoint);
         profiler = new MotionProfiler(maxVelocity, maxAcceleration, distance);
+        elapsedTime = opMode.time;
+        double power = controller.calculatePower(slidesMotor, elapsedTime);
+        slidesMotor.setPower(power);
 
         while(!profiler.isDone){
-           elapsedTime = opMode.time;
            double nextTargetPos = profiler.profileMotion(elapsedTime);
            //you only need to create ONE motion profile aka no need to update distance everytime...I think...? PLS HELP IM GOING INSANE
            controller.setSetPoint(nextTargetPos);
-           double motorPower = controller.calculatePower(slidesMotor, elapsedTime);
-           slidesMotor.setPower(motorPower);
+           power = controller.calculatePower(slidesMotor, elapsedTime);
+           slidesMotor.setPower(power);
            //I kinda know what i'm doing hopefully this isn't trolling
         }
     }
@@ -105,21 +108,38 @@ public class Slides {
     public void runTo(double target) {
 
         slidesMotor.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
-
-        controller = new PIDController(p, i, d);
-
         resetProfiler();
-        profiler.profileMotion(distance);
-        elapsedTime = opMode.time;
-
-
+        controller = new PIDController(p, i, d);
         goingDown = target > this.target;
         this.target = target;
-        //need to update this
+        setPoint = target;
+
+        if(position.equals(slidesPosition.GROUND)){
+            distance = setPoint;
+        }else if(position.equals(slidesPosition.LOW)){
+            distance = low - setPoint;
+        }else if(position.equals(slidesPosition.MID)){
+            distance = mid - setPoint;
+        }else if(position.equals(slidesPosition.HIGH)){
+            distance = top - setPoint;
+        }
+
+        profiler.updateDistance(distance);
+        elapsedTime = opMode.time;
+        double power = controller.calculatePower(slidesMotor, elapsedTime);
+        slidesMotor.setPower(power);
+
+        while(!profiler.isDone){
+            elapsedTime = opMode.time;
+            double targetPos = profiler.profileMotion(elapsedTime);
+            power = controller.calculatePower(slidesMotor, targetPos);
+            slidesMotor.setPower(power);
+        }
+
     }
 
     public void resetProfiler() {
-        profiler = new MotionProfiler(1,encoderClickPerSecond,100);
+        profiler = new MotionProfiler(1, encoderClickPerSecond);
     }
     public void resetEncoder() {
         slidesMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
