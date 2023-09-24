@@ -21,17 +21,17 @@ public class EthanDrive extends LinearOpMode {
         DcMotor rFront = hardwareMap.dcMotor.get("fRight");
         DcMotor lBack = hardwareMap.dcMotor.get("bLeft");
         DcMotor rBack = hardwareMap.dcMotor.get("bRight");
-        DcMotor arm = hardwareMap.dcMotor.get("arm");
+        //DcMotor arm = hardwareMap.dcMotor.get("arm");
 
-        Servo lServo = hardwareMap.servo.get("lServo");
-        Servo rServo = hardwareMap.servo.get("rServo");
+        //Servo lServo = hardwareMap.servo.get("lServo");
+        //Servo rServo = hardwareMap.servo.get("rServo");
 
 
-        rBack.setDirection(DcMotorSimple.Direction.REVERSE);
+        rBack.setDirection(DcMotorSimple.Direction.FORWARD);
         lBack.setDirection(DcMotorSimple.Direction.REVERSE);
         rFront.setDirection(DcMotorSimple.Direction.FORWARD);
         lFront.setDirection(DcMotorSimple.Direction.REVERSE);
-        arm.setDirection(DcMotorSimple.Direction.FORWARD);
+        //arm.setDirection(DcMotorSimple.Direction.FORWARD);
 
         lFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         lBack.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -45,7 +45,7 @@ public class EthanDrive extends LinearOpMode {
 
 
         while (opModeIsActive()) {
-
+            /*
             if (gamepad1.left_bumper) {
                 lServo.setPosition(0);
                 rServo.setPosition(1);
@@ -54,7 +54,7 @@ public class EthanDrive extends LinearOpMode {
                 lServo.setPosition(1);
                 rServo.setPosition(0);
             }
-
+*/
             //forward & backward
             double forwardBackward = gamepad1.left_stick_y * -0.5;
             /*lFront.setPower(gamepad1.left_stick_y*-0.5);
@@ -73,9 +73,9 @@ public class EthanDrive extends LinearOpMode {
             double mecanuming = gamepad1.left_stick_x * 0.5;
 
             //arm up and down
-            double armPower = gamepad1.right_stick_y * -0.25;
+            //double armPower = gamepad1.right_stick_y * -0.25;
             //Arm Power
-            arm.setPower(armPower);
+            //arm.setPower(armPower);
 
             double fLeftPower = forwardBackward + turning + mecanuming;
             double fRightPower = forwardBackward - turning - mecanuming;
