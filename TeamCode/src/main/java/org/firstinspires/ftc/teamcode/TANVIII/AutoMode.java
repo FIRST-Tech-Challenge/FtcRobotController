@@ -171,7 +171,7 @@ public class AutoMode extends LinearOpMode {
     */
 
     public void setTurnOffYaw(IMU imu) {
-        robot.getCurrentHeading();
+        //robot.getCurrentHeading();
     }
 
     @Override
@@ -180,7 +180,7 @@ public class AutoMode extends LinearOpMode {
         robot = new org.firstinspires.ftc.teamcode.Robot(hardwareMap, this, telemetry);
 
         // Reset Yaw
-        robot.resetImuYaw();
+        //robot.resetImuYaw();
 
         waitForStart();
 
@@ -194,8 +194,8 @@ public class AutoMode extends LinearOpMode {
             break;
             */
 
-            robot.setHeading(90);
-            robot.getCurrentHeading();
+            //robot.setHeading(90);
+            //robot.getCurrentHeading();
             break;
         }
     }
