@@ -205,9 +205,7 @@ public class SampleMecanumDrive extends MecanumDrive {
         } else {
             setLocalizer(new StandardTrackingWheelLocalizer(hardwareMap));
         }
-
-        setLocalizer(new TwoWheelTrackingLocalizerRight(hardwareMap, this));
-
+        
         imu = hardwareMap.get(IMU.class, "imu");
 
         imu.initialize(new IMU.Parameters(new RevHubOrientationOnRobot(RevHubOrientationOnRobot.LogoFacingDirection.LEFT,
@@ -300,10 +298,10 @@ public class SampleMecanumDrive extends MecanumDrive {
 
     public void update() {
 //        setPoseEstimate(currentPose);
-        logger.log("/RobotLogs/GeneralRobot", "curPose"+getPoseEstimate());
+        logger.log("/RobotLogs/GeneralRobot", "curPose"+currentPose);
         updatePoseEstimate();
-        currentPose = getPoseEstimate();
-        logger.log("/RobotLogs/GeneralRobot", "curPose2"+getPoseEstimate());
+
+        logger.log("/RobotLogs/GeneralRobot", "curPose2"+currentPose);
 
         DriveSignal signal = trajectorySequenceRunner.update(getPoseEstimate(), getPoseVelocity());
         if (signal != null) setDriveSignal(signal);
