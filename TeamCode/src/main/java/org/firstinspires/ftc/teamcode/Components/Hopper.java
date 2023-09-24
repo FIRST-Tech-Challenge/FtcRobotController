@@ -8,6 +8,7 @@ import org.firstinspires.ftc.teamcode.Components.RFModules.Devices.RFServo;
  * Harry
  */
 public class Hopper extends RFServo {
+    private final static double ZERO_POSITION = 0.0, ONE_POSITION = 0.5, TWO_POSITION = 1.0;
     RFLEDStrip leds;
     RFColorSensor colorSensor;
     public Hopper(){
@@ -16,9 +17,9 @@ public class Hopper extends RFServo {
         colorSensor = new RFColorSensor("colorSensor");
     }
     public enum HopperValues{
-        ZEROPIXEL(0),
-        ONEPIXEL(0.5),
-        TWOPIXEL(1);
+        ZEROPIXEL(ZERO_POSITION),
+        ONEPIXEL(ONE_POSITION),
+        TWOPIXEL(TWO_POSITION);
 
         final double target;
         HopperValues(double p_target){
@@ -27,15 +28,17 @@ public class Hopper extends RFServo {
     }
 
     public enum HopperColor{
-        WHITE(false),
-        PURPLE(false),
-        YELLOW(false),
-        GREEN(false),
-        NONE(true);
+        WHITE(false, "WHITE"),
+        PURPLE(false, "PURPLE"),
+        YELLOW(false, "YELLOW"),
+        GREEN(false, "GREEN"),
+        NONE(true, "NONE");
 
         boolean state = false;
-        HopperColor(boolean p_state){
+        String color = "";
+        HopperColor(boolean p_state, String p_color){
             state = p_state;
+            color = p_color;
         }
 
         void setStateTrue(){
@@ -74,7 +77,7 @@ public class Hopper extends RFServo {
     }
 
     public String getPixelColor(){
-        return "";
+        return HopperColor.NONE.getTrueState().color;
     }
 
     public void outtakePixel(HopperValues p_pixelNumber){
