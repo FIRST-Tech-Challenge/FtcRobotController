@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.Components.CV.Pipelines;
 
 import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.logger;
 import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.op;
+import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.packet;
 import static org.firstinspires.ftc.teamcode.roadrunner.drive.PoseStorage.currentPose;
 
 import static java.lang.Math.sqrt;
@@ -86,6 +87,8 @@ public class RFAprilCam {
              int p_ind = detection.id;
              camPose.add(new Pose2d(values[p_ind].plus(new Vector2d(p_x * directions[p_ind][0]+X_OFFSET, p_y * directions[p_ind][1]+Y_OFFSET)),
                      directions[p_ind][0]*poseFtc.yaw));
+             packet.put("Y,P,R", new Pose2d(poseFtc.yaw,poseFtc.pitch,poseFtc.roll));
+             packet.put("bearing", poseFtc.bearing);
              double dist = sqrt(poseFtc.x*poseFtc.x + poseFtc.y*poseFtc.y);
              if(dist<UPSAMPLE_THRESHOLD){
                  upsample=true;
@@ -102,6 +105,8 @@ public class RFAprilCam {
         if(camPose.size() > 0 && upsample && poseCount!=0){
             logger.log("/RobotLogs/GeneralRobot", "avgAprilPose"+newPose.div(poseCount));
             currentPose = new Pose2d(newPose.div(poseCount).vec(), currentPose.getHeading());
+            logger.log("/RobotLogs/GeneralRobot", "avgPose"+currentPose);
+
         }
     }
 
