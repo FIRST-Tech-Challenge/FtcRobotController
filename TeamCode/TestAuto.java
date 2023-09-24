@@ -1,0 +1,4 @@
+
+@Autonomous
+public class TestAuto {
+}
