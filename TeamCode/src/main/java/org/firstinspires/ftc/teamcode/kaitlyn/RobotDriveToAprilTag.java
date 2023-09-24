@@ -84,7 +84,7 @@ import java.util.concurrent.TimeUnit;
 public class RobotDriveToAprilTag extends LinearOpMode
 {
     // Adjust these numbers to suit your robot.
-    final double DESIRED_DISTANCE = 12.0; //  this is how close the camera should get to the target (inches)
+    final double DESIRED_DISTANCE = 5.0; //  this is how close the camera should get to the target (inches)
 
     //  Set the GAIN constants to control the relationship between the measured position error, and how much power is
     //  applied to the drive motors to correct the error.
@@ -92,8 +92,8 @@ public class RobotDriveToAprilTag extends LinearOpMode
     final double SPEED_GAIN =   0.02 ;   //  Speed Control "Gain". eg: Ramp up to 50% power at a 25 inch error.   (0.50 / 25.0)
     final double TURN_GAIN  =   0.01 ;   //  Turn Control "Gain".  eg: Ramp up to 25% power at a 25 degree error. (0.25 / 25.0)
 
-    final double MAX_AUTO_SPEED = 0.5;   //  Clip the approach speed to this max value (adjust for your robot)
-    final double MAX_AUTO_TURN  = 0.25;  //  Clip the turn speed to this max value (adjust for your robot)
+    final double MAX_AUTO_SPEED = 0.2;   //  Clip the approach speed to this max value (adjust for your robot)
+    final double MAX_AUTO_TURN  = 0.1;  //  Clip the turn speed to this max value (adjust for your robot)
 
     private DcMotor fLeft = null;  //  Used to control the left drive wheel
     private DcMotor bLeft;
@@ -127,8 +127,8 @@ public class RobotDriveToAprilTag extends LinearOpMode
         // When run, this OpMode should start both motors driving forward. So adjust these two lines based on your first test drive.
         // Note: The settings here assume direct drive on left and right wheels.  Single Gear Reduction or 90 Deg drives may require direction flips
         fLeft.setDirection(DcMotor.Direction.REVERSE);
-        bLeft.setDirection(DcMotorSimple.Direction.REVERSE);
-        fRight.setDirection(DcMotor.Direction.FORWARD);
+        bLeft.setDirection(DcMotorSimple.Direction.FORWARD);
+        fRight.setDirection(DcMotor.Direction.REVERSE);
         bRight.setDirection(DcMotor.Direction.FORWARD);
 
         if (USE_WEBCAM)
