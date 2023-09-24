@@ -22,6 +22,9 @@ public class AutoRed extends LinearOpMode {
         double[] mecanumPower = robot.calculateMecanumPower(600);
         double[] backwardPower = robot.calculateDrivetrainPower(-300);
 
+        double mecanumDistance = -711.2;
+        double forwardDistance = 1828.8;
+
         boolean doneWithMecanum = false;
         boolean doneWithForward = false;
         boolean doneWithBackward = false;
@@ -34,8 +37,8 @@ public class AutoRed extends LinearOpMode {
             telemetry.addLine("power       " + forwardPower[2]);
             telemetry.addLine("power       " + forwardPower[3]);
 
-            if (!doneWithMecanum && !robot.checkReachedDistanceForMecanum(150)) {
-                mecanumPower = robot.calculateMecanumPower(150);
+            if (!doneWithMecanum && !robot.checkReachedDistanceForMecanum(mecanumDistance)) {
+                mecanumPower = robot.calculateMecanumPower(mecanumDistance);
 
                 robot.setMotorPower(mecanumPower);
             } else if (!doneWithMecanum){
@@ -46,19 +49,22 @@ public class AutoRed extends LinearOpMode {
 
             telemetry.addData("is done wit macanum", doneWithMecanum);
 
-            if (!doneWithForward && doneWithMecanum && !robot.checkReachedDistance(300)) {
-                forwardPower = robot.calculateDrivetrainPower(300);
+            if (!doneWithForward && doneWithMecanum && !robot.checkReachedDistance(forwardDistance)) {
+                forwardPower = robot.calculateDrivetrainPower(forwardDistance);
                 robot.setMotorPower(forwardPower);
             } else if (!doneWithForward && doneWithMecanum){
                 robot.setMotorPower(0, 0, 0, 0);
                 robot.resetEncoder();
                 doneWithForward = true;
+                Thread.sleep(5000);
+
             }
+
 
             telemetry.addData("is done with forward", doneWithForward);
 
-            if (!doneWithBackward && doneWithMecanum && doneWithForward && !robot.checkReachedDistance(-300)) {
-                backwardPower = robot.calculateDrivetrainPower(-300);
+            if (!doneWithBackward && doneWithMecanum && doneWithForward && !robot.checkReachedDistance(-forwardDistance)) {
+                backwardPower = robot.calculateDrivetrainPower(-forwardDistance);
                 robot.setMotorPower(backwardPower);
             } else if (!doneWithBackward && doneWithForward) {
                 robot.setMotorPower(0, 0, 0, 0);

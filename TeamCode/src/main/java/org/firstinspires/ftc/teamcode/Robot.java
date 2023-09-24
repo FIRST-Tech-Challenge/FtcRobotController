@@ -351,7 +351,7 @@ public class Robot {
         double remainingDistance = getRemainingTicksForDrivetrainMecanum(targetDistanceInMM);
         double proportionalPower = P_VALUE_FOR_MECANUM*remainingDistance;
 
-        double scaleImu = 8.15;
+        double scaleImu = 0; //8.15;
 
         return scalePowers(new double[]{
                 + proportionalPower + calculateImuPower(0)*scaleImu,
