@@ -15,6 +15,7 @@ import org.firstinspires.ftc.teamcode.Components.Launcher;
 import org.firstinspires.ftc.teamcode.Components.Lift;
 import org.firstinspires.ftc.teamcode.Components.Ultrasonics;
 import org.firstinspires.ftc.teamcode.roadrunner.drive.SampleMecanumDrive;
+import org.firstinspires.ftc.teamcode.roadrunner.trajectorysequence.TrajectorySequence;
 
 /**
  * Warren
@@ -32,6 +33,7 @@ public class BradBot extends BasicRobot{
 
     /**
      * Instatiates all the hardware and sets up initial states of some software
+     * Logs that this function is being called to general surface
      * @param p_op opMode
      * @param p_is_Teleop is the program a teleop program
      */
@@ -44,13 +46,62 @@ public class BradBot extends BasicRobot{
         launcher = new Launcher();
         lift = new Lift();
         roadrun = new SampleMecanumDrive(p_op.hardwareMap);
-//        ultras = new Ultrasonics();
+        ultras = new Ultrasonics();
     }
+
+    /**
+     * starts the intake, for autonomous, intake.update() will handle the rest
+     * Logs that this function called to general surface
+     */
+    public void startIntakeAuto(){
+
+    }
+
+    /**
+     * Empties the hopper in auto, hopper.update() will handle the rest
+     * Logs that this function called to general surface
+     */
+    public void depositAuto(){
+
+    }
+
+    /**
+     * Calls other lift auto
+     * Logs that function is called
+     * @param p_liftPosition target position
+     */
+    public void liftAuto(Lift.LiftPositionStates p_liftPosition){
+        liftAuto(p_liftPosition.getPosition());
+    }
+    /**
+     * Auto lifts lift to this position, lift.update() will handle the rest
+     * Logs that this function called to general surface
+     * @param p_position what position to go to
+     */
+    public void liftAuto(double p_position){
+
+    }
+
+    /**
+     * follows inputted trajectory
+     * Logs that this function is called as well as initial and target pose to general surface
+     * @param p_traj inputted trajectory
+     */
+    public void followTrajSeq(TrajectorySequence p_traj){
+
+    }
+
+    /**
+     * What is run each loop in teleOp
+     * Logs that this function is being called to general surface
+     */
     public void teleOp(){
         boolean isA = gampad.readGamepad(op.gamepad1.a, "gamepad1_a", "toggleArm");
         boolean rightBumper = gampad.readGamepad(op.gamepad1.right_bumper, "gamepad1_right_bumper", "startIntake");
         boolean leftBumper = gampad.readGamepad(op.gamepad1.left_bumper, "gamepad1_left_bumper", "reverseIntake");
         boolean isB = gampad.readGamepad(op.gamepad1.b,"gamepad1_b", "shoot");
+        boolean isX = gampad.readGamepad(op.gamepad1.x, "gamepad1_x", "toggleButterfly");
+        boolean isY = gampad.readGamepad(op.gamepad1.y, "gamepad1_y", "deposit");
         boolean up = gampad.readGamepad(op.gamepad1.dpad_up, "gamepad1_dpad_up", "lift Up");
         boolean down = gampad.readGamepad(op.gamepad1.dpad_down, "gamepad1_dpad_down", "lift down");
         float manualUp = op.gamepad1.right_trigger;
@@ -68,19 +119,38 @@ public class BradBot extends BasicRobot{
             launcher.shoot();
         }
         if(up){
-//            lift.iterateUp();
+            lift.iterateUp();
         }
         if(down){
-//            lift.iterateDown();
+            lift.iterateDown();
         }
         if(abs(manualUp-manualDown)>0.05){
-//            lift.setManual(manualUp-manualDown);
+            lift.manualExtend(manualUp-manualDown);
         }
-        roadrun.setWeightedDrivePower(new Pose2d(op.gamepad1.left_stick_y
-                , op.gamepad1.left_stick_x
-                , op.gamepad1.right_stick_x));
+        if(isY){
+            hopper.outtakePixel(Hopper.HopperValues.ONEPIXEL);
+        }
+        if(isX){
+//            roadrun.toggleButtered();
+        }
+        if(true/*!roadrun.isButtered()*/) {
+            roadrun.setWeightedDrivePower(new Pose2d(op.gamepad1.left_stick_y
+                    , op.gamepad1.left_stick_x
+                    , op.gamepad1.right_stick_x));
+        }
+        else{
+//            roadrun.setButteredDrivePower(new Pose2d(op.gamepad1.left_stick_y
+//                    , op.gamepad1.left_stick_x
+//                    , op.gamepad1.right_stick_x));
+        }
         update();
     }
+
+    /**
+     * updates the states of all the following
+     * Logs that this function is being called to surface general log
+     * All else is logged in each respective function
+     */
     public void update(){
         super.update();
         arm.update();
@@ -89,6 +159,6 @@ public class BradBot extends BasicRobot{
         hopper.update();
         lift.update();
         roadrun.update();
-//        ultras.update();
+        ultras.update();
     }
 }

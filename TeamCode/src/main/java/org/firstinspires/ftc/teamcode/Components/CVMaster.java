@@ -26,7 +26,9 @@ public class CVMaster {
     private boolean isStreaming = false;
 
     /**
-     * initializes opencv webcam, starts observing spike, logs that opencv webcam is initialized and recording spike pipeline to general surface log
+     * initializes opencv webcam, starts observing spike
+     * logs that func is called to general surface log
+     * logs that opencv webcam is initialized and recording spike pipeline to general surface log
      */
     public CVMaster() {
         webcam = OpenCvCameraFactory.getInstance().createWebcam(op.hardwareMap.get(WebcamName.class, "Webcam1"));
@@ -34,7 +36,8 @@ public class CVMaster {
     }
 
     /**
-     * observes spike, logs that spike is being observed general surface log
+     * observes spike
+     * logs that spike is being observed general surface log
      */
     public void observeSpike() {
         openSleevi = new SpikeObserverPipeline();
@@ -80,6 +83,7 @@ public class CVMaster {
 
     /**
      * gets calculated position from spike pipeline
+     * logging is done internally
      * @return position from spike pipeline
      */
     public int getPosition() {
@@ -87,7 +91,8 @@ public class CVMaster {
     }
 
     /**
-     * switches to apriltag camera, logs to general surface log
+     * switches to apriltag camera
+     * logs to general surface log
      */
     public void switchToApril() {
         webcam.stopRecordingPipeline();
@@ -96,7 +101,8 @@ public class CVMaster {
     }
 
     /**
-     * updates the aprilTag info if you arre currently on aprilTag mode, logs to genereal surface(inside RFAprilCam class)
+     * updates the aprilTag info if you are currently on aprilTag mode
+     * logs to general surface(inside RFAprilCam class)
      */
     public void update(){
         if(!isStreaming){

@@ -44,7 +44,7 @@ public class RFAprilCam {
 
     /**
      * Initialize apriltag camera
-     * Logs that the camera is initialized highest verbosity level
+     * Logs that function is called and camera is aprilTag  general surface level
      */
     public RFAprilCam() {
         aprilTag = new AprilTagProcessor.Builder()

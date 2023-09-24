@@ -131,6 +131,7 @@ public class Queuer {
      * @param p_isOptional      is the function optional
      */
     public boolean queue(boolean p_asynchronous, boolean p_done_condition, boolean p_extra_condition, boolean p_isOptional) {
+        p_done_condition = isStarted()&&p_done_condition;
         //if it is first Loop
         if (firstLoop) {
             //create queue element

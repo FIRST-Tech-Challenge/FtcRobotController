@@ -29,6 +29,9 @@ public class Lift extends RFMotor {
         void setState(boolean p_state) {
             this.state = p_state;
         }
+        public double getPosition(){
+            return position;
+        }
     }
 
     public enum LiftMovingStates {

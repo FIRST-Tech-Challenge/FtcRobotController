@@ -27,6 +27,13 @@ public class BasicRobot{
     public static TelemetryPacket packet;
     public static RFGamepad gampad;
 
+    /**
+     * instantiates basic robot
+     * Logs that function is called to general surface
+     * @param opMode linearOpMode, auto or teleOp class
+     * @param p_isTeleop is it teleOp
+     */
+
     public BasicRobot(LinearOpMode opMode, boolean p_isTeleop){
         op = opMode;
         logger = new Logger();
@@ -46,6 +53,11 @@ public class BasicRobot{
         gampad = new RFGamepad();
     }
 
+    /**
+     * updates all system files
+     * logs that this function is being called to general finest
+     */
+
     public void update(){
         logger.log("/RobotLogs/GeneralRobot", "basicPose"+currentPose);
         time = op.getRuntime();
@@ -53,9 +65,20 @@ public class BasicRobot{
         packet = new TelemetryPacket();
         packet.clearLines();
     }
+
+    /**
+     * resets the queuer
+     * logs that this function is being called to general surface
+     */
     public void resetQueuer() {
         queuer.reset();
     }
+
+    /**
+     * gets the current voltage
+     * logs that this function is being called and the currentVoltage to general surface
+     * @return the voltage
+     */
     public double getVoltage(){return voltageSensor.getVoltage();}
 
 

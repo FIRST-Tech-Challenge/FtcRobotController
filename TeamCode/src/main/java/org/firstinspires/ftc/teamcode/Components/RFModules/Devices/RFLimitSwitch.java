@@ -13,6 +13,12 @@ public class RFLimitSwitch {
     private DigitalChannel limitSwitch;
     private double lastSwitchTime = -100;
     private boolean mode = false, pressed = false;
+
+    /**
+     * initializes the hardware
+     * Logs that function is called and that hardware is initialized to general surface level
+     * @param name the config name of the limit switch
+     */
     public RFLimitSwitch(String name){
         limitSwitch = op.hardwareMap.get(DigitalChannel.class, name);
         limitSwitch.setMode(DigitalChannel.Mode.INPUT);
