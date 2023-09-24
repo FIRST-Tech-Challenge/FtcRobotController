@@ -406,7 +406,12 @@ public class Robot {
 
         double imuPower = calculateImuPower(0);
 
-        setMotorPower(PROPORTIONAL_POWER+imuPower, -PROPORTIONAL_POWER+imuPower, -PROPORTIONAL_POWER+imuPower, PROPORTIONAL_POWER+imuPower);
+        setMotorPower(
+                +PROPORTIONAL_POWER+imuPower,
+                -PROPORTIONAL_POWER+imuPower,
+                -PROPORTIONAL_POWER+imuPower,
+                +PROPORTIONAL_POWER+imuPower
+        );
 
 
         if (millis > lastCheckMillis + 500) {
