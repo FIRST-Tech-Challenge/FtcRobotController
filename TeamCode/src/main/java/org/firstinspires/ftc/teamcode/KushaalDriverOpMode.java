@@ -108,65 +108,47 @@ public class KushaalDriverOpMode extends LinearOpMode {
         waitForStart();
         runtime.reset();
 
+        double speed = 0.75;
+        double strafe = 0;
+
         // run until the end of the match (driver presses STOP)
         while (opModeIsActive()) {
             double max;
-            double speed = NULL;
-            double strafe = NULL;
 
             if (speed < 0){
                 speed = 0;
             }
 
+            if (speed > 100){
+                speed = 100;
+            }
 
-            if ((gamepad1.dpad_down = true) || (gamepad1.dpad_up = true)){
-                while (gamepad1.dpad_down = true){
+            if ((gamepad1.dpad_down) || (gamepad1.dpad_up)) {
+                while (gamepad1.dpad_down) {
                     speed -= 25;
-                    while(gamepad1.dpad_down = true)
-                    {
-                        Thread.sleep(100);
+                    while (gamepad1.dpad_down) {
                     }
                     speed += 25;
                 }
-                while (gamepad1.dpad_up = true){
+                while (gamepad1.dpad_up) {
                     speed += 25;
-                    while(gamepad1.dpad_up = true)
-                    {
-                        Thread.sleep(100);
+                    while (gamepad1.dpad_up) {
                     }
                     speed -= 25;
                 }
             }
-            if ((gamepad1.dpad_down = true) || (gamepad1.dpad_up = true)){
-                while (gamepad1.a = true){
-                    speed -= 25;
-                    while(gamepad1.dpad_down = true)
-                    {
-                        Thread.sleep(100);
-                    }
-                    speed += 25;
-                }
-                while (gamepad1.dpad_up = true){
-                    speed += 25;
-                    while(gamepad1.dpad_up = true)
-                    {
-                        Thread.sleep(100);
-                    }
-                    speed -= 25;
-                }
-            }
-            if (gamepad1.dpad_left = true){
+            if (gamepad1.dpad_left){
                 speed -= 25;
                 Thread.sleep(50);
             }
-            if (gamepad1.dpad_right = true){
+            if (gamepad1.dpad_right){
                 speed += 25;
                 Thread.sleep(50);
             }
-            if (gamepad1.left_bumper = true){
+            if (gamepad1.left_bumper){
                 strafe = -1;
             }
-            if (gamepad1.right_bumper = true){
+            if (gamepad1.right_bumper){
                 strafe = 1;
             }
 
