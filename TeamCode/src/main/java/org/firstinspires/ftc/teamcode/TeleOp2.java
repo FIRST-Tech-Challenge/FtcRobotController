@@ -60,10 +60,10 @@ public class TeleOp2 extends LinearOpMode {
 
             // Combine the joystick requests for each axis-motion to determine each wheel's power.
             // Set up a variable for each drive wheel to save the power level for telemetry.
-            double leftFrontPower  = axial + lateral + yaw;
-            double rightFrontPower = axial - lateral - yaw;
-            double leftBackPower   = axial - lateral + yaw;
-            double rightBackPower  = axial + lateral - yaw;
+            double leftFrontPower  = 2*axial + 2*lateral + yaw;
+            double rightFrontPower = 2*axial - 2*lateral - yaw;
+            double leftBackPower   = 2*axial - 2*lateral + yaw;
+            double rightBackPower  = 2*axial + 2*lateral - yaw;
 
             // Normalize the values so no wheel power exceeds 100%
             // This ensures that the robot maintains the desired motion.
@@ -88,11 +88,12 @@ public class TeleOp2 extends LinearOpMode {
             //      the setDirection() calls above.
             // Once the correct motors move in the correct direction re-comment this code.
 
-            
+            /*
             leftFrontPower  = gamepad1.x ? 1.0 : 0.0;  // X gamepad
             leftBackPower   = gamepad1.a ? 1.0 : 0.0;  // A gamepad
             rightFrontPower = gamepad1.y ? 1.0 : 0.0;  // Y gamepad
             rightBackPower  = gamepad1.b ? 1.0 : 0.0;  // B gamepad
+            */
 
             // Send calculated power to wheels
             leftFrontDrive.setPower(leftFrontPower);
