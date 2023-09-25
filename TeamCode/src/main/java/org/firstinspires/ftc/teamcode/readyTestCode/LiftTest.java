@@ -14,8 +14,8 @@ public class LiftTest extends LinearOpMode {
         waitForStart();
         while (opModeIsActive()) {
             // creates variables for right and left trigger values
-            double rTrigger = gamepad1.right_trigger;
-            double lTrigger = gamepad1.left_trigger;
+            double rTrigger = gamepad1.right_trigger/5;
+            double lTrigger = gamepad1.left_trigger/5;
 
             // holding down right trigger makes lift move up
             // and left trigger makes lift move down

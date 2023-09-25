@@ -1,8 +1,6 @@
 package org.firstinspires.ftc.teamcode.readyTestCode;
 
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.Range;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.BuiltinCameraDirection;
@@ -45,7 +43,8 @@ public class kaviAprilTagTest extends LinearOpMode {
     private AprilTagProcessor aprilTag;              // Used for managing the AprilTag detection process.
     private AprilTagDetection desiredTag = null;     // Used to hold the data for a detected AprilTag
     //moveForward
-    @Override public void runOpMode() {
+    @Override
+    public void runOpMode() {
         double  drive           = 0;        // Desired forward power/speed (-1 to +1)
         double  strafe          = 0;        // Desired strafe power/speed (-1 to +1)
         double  turn            = 0;        // Desired turning power/speed (-1 to +1)
@@ -53,6 +52,11 @@ public class kaviAprilTagTest extends LinearOpMode {
         rightFrontDrive = hardwareMap.get(DcMotor.class, "motorFR");
         leftBackDrive  = hardwareMap.get(DcMotor.class, "motorBL");
         rightBackDrive = hardwareMap.get(DcMotor.class, "motorBR");
+
+        leftFrontDrive.setDirection(DcMotor.Direction.REVERSE);
+        leftBackDrive.setDirection(DcMotor.Direction.REVERSE);
+        rightFrontDrive.setDirection(DcMotor.Direction.FORWARD);
+        rightBackDrive.setDirection(DcMotor.Direction.FORWARD);
         HashMap<String, Integer> aprilTagSpikeStripCorrelation = new HashMap<String, Integer>();
         /*
         aprilTagMap.put("Blue Alliance Left", 1);
@@ -85,15 +89,18 @@ public class kaviAprilTagTest extends LinearOpMode {
         initAprilTag();
         telemetry.addLine("Waiting for start");
         String spikePosition = null;
+        telemetry.addData("Status", "Initialized");
+        telemetry.update();
         waitForStart();
 
         while(opModeIsActive()) {
             //Tensor Flow Object Detection Code
             //Return appropriate spikePosition
+            telemetry.addData("Status", "Running");
             spikePosition = "Blue Front Left"; //TFOD sim
             telemetry.addData("Spike Position is: ", spikePosition);
             int correspondingAprilTag = aprilTagSpikeStripCorrelation.get(spikePosition);
-            telemetry.addData("Correspoinding April Tag is: ", spikePosition);
+            telemetry.addData("Corresponding April Tag is: ", spikePosition);
             boolean correspondingAprilTagFound = false;
 
 
@@ -112,9 +119,6 @@ public class kaviAprilTagTest extends LinearOpMode {
                         correspondingAprilTagFound = true;
                         telemetry.addLine("Corresponding April Tag Found");
                     }
-
-
-                    break;  // don't look any further.
                 } else {
                     telemetry.addData("Unknown Target", "Tag ID %d is not in TagLibrary\n", detection.id);
                 }
@@ -132,9 +136,8 @@ public class kaviAprilTagTest extends LinearOpMode {
             }
             moveRobot(drive, strafe, turn);
             sleep(10);
-            telemetry.update();
         }
-
+        telemetry.update();
     }
     private void initAprilTag() {
         // Create the AprilTag processor by using a builder.
