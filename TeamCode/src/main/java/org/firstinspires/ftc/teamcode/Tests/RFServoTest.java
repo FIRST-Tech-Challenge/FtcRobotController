@@ -1,18 +1,6 @@
 package org.firstinspires.ftc.teamcode.Tests;
-
-
-
-import static org.firstinspires.ftc.teamcode.Components.RFModules.System.Logger.df;
-import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.logger;
-import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.op;
-import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.time;
-
-import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-
-
 import org.firstinspires.ftc.teamcode.Components.RFModules.Devices.RFServo;
-import org.firstinspires.ftc.teamcode.Robots.BasicRobot;
 
 /**
  * William
@@ -44,6 +32,10 @@ public abstract class RFServoTest extends LinearOpMode {
 
     /**
      * Continuously sets servo to lower limit and upper limit.
+     * Logs that the servo has been flipped to max positions.
+     * Logs to RFServo & general logs.
+     * Logs to second finest level.
+     * Does not update a state machine.
      */
     public void autoLoop() {
         if (time - lastTime > FLIP_TIME) {

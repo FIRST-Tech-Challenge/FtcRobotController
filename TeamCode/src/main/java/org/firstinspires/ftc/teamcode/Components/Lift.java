@@ -6,6 +6,9 @@ import org.firstinspires.ftc.teamcode.Components.RFModules.Devices.RFMotor;
  * William
  */
 public class Lift extends RFMotor {
+    /**
+     * Constructor
+     */
     public Lift() {
         super("liftMotor", true);
     }
@@ -26,8 +29,11 @@ public class Lift extends RFMotor {
             this.position = p_position;
             this.state = p_state;
         }
-        void setState(boolean p_state) {
-            this.state = p_state;
+        void setStateTrue() {
+            for(int i = 0; i < LiftPositionStates.values().length; i++){
+                LiftPositionStates.values()[i].state=false;
+            }
+            this.state=true;
         }
     }
 
@@ -58,7 +64,7 @@ public class Lift extends RFMotor {
      * Updates LiftMovingStates and LiftPositionStates state machines.
      */
     public void update() {
-
+        //enum.values()[]
     }
 
     /**
