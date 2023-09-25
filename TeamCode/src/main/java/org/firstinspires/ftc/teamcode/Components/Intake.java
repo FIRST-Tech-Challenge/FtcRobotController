@@ -1,7 +1,6 @@
 package org.firstinspires.ftc.teamcode.Components;
 
 import org.firstinspires.ftc.teamcode.Components.RFModules.Devices.RFBreakBeam;
-import org.firstinspires.ftc.teamcode.Components.RFModules.Devices.RFDualServo;
 import org.firstinspires.ftc.teamcode.Components.RFModules.Devices.RFLimitSwitch;
 import org.firstinspires.ftc.teamcode.Components.RFModules.Devices.RFMotor;
 import org.firstinspires.ftc.teamcode.Components.RFModules.Devices.RFServo;
@@ -10,40 +9,35 @@ import org.firstinspires.ftc.teamcode.Components.RFModules.Devices.RFServo;
  * Warren
  * Class to contain flipping intake and associated functions
  */
-public class FlippingIntake {
-    RFMotor intake;
-    RFServo flipper;
+public class Intake extends RFMotor {
     RFBreakBeam breakBeam;
     RFLimitSwitch limitSwitch;
 
-    private final double FLIP_TIME = 0.4;
     private final double INTAKE_POWER = 0.6;
     private final double REVERSE_POWER=-0.3;
+
+    private boolean full = false;
 
     /**
      * initializes all the hardware, logs that hardware has been initialized
      */
-    public FlippingIntake(){
-        intake = new RFMotor("intakeMotor", true);
-        flipper = new RFServo("flipServo",1);
-        breakBeam = new RFBreakBeam("breakBeam");
+    public Intake(){
+        super("intakeMotor",true);
+        breakBeam = new RFBreakBeam();
         limitSwitch = new RFLimitSwitch("intakeSwitch");
     }
 
     /**
      * possible states of intake
      */
-    public enum FlintakeStates{
-        EMPTY_DOWN(true),
-        HALF_DOWN(false),
-        FULL_DOWN(false),
-        FULL_MID(false),
-        FULL_UP(false),
-        FLIPPING_UP(false),
-        FLIPPING_DOWN(false),
-        EMPTY_UP(false);
+    public enum IntakeStates{
+        STOPPED(true),
+        INTAKING(false),
+        REVERSING(false);
+
+
         boolean state;
-        FlintakeStates(boolean p_state){
+        IntakeStates(boolean p_state){
             state = p_state;
         }
 
@@ -51,48 +45,30 @@ public class FlippingIntake {
          * sets current state to true, logs that this state is true in general and intake surface
          */
         public void setStateTrue() {
-            for(int i=0;i<FlintakeStates.values().length;i++){
-                FlintakeStates.values()[i].state=false;
+            for(int i = 0; i< IntakeStates.values().length; i++){
+                IntakeStates.values()[i].state=false;
             }
             this.state = true;
         }
     }
 
     /**
-     * enum to contain preset positions of flipper
+     * Sets intake power to INTAKE_POWER, logs that the robot is intaking to general and intake surface level
      */
-    public enum FlintakePos{
-        DOWN(0.0),
-        MID(0.5),
-        UP(1.0);
-        final double position;
-        FlintakePos(double p_position){
-            position = p_position;
-        }
-    }
     public void intake(){
-        intake.setPower(INTAKE_POWER);
+        setPower(INTAKE_POWER);
     }
+    /**
+     * Sets intake power to REVERSE_POWER, logs that the robot is reversing to general and intake surface level
+     */
     public void reverseIntake(){
-        intake.setPower(REVERSE_POWER);
+        setPower(REVERSE_POWER);
     }
+    /**
+     * Sets intake power 0, logs that intake is stopped to general and intake surface level
+     */
     public void stopIntake(){
-        intake.setPower(0);
-    }
-    public void setIntakePower(double p_power){
-        intake.setPower(p_power);
-    }
-    public void flipUp(){
-        flipper.setPosition(FlintakePos.UP.position);
-    }
-    public void flipDown(){
-        flipper.setPosition(FlintakePos.DOWN.position);
-    }
-    public void flipMid(){
-        flipper.setPosition(FlintakePos.MID.position);
-    }
-    public void flipTo(double p_pos){
-        flipper.setPosition(p_pos);
+        setPower(0);
     }
 
     /**
@@ -114,7 +90,7 @@ public class FlippingIntake {
 
     /**
      * updates the state machine, log in general and intake surface
-     * updates sensor information, triggers following action
+     * updates sensor information, triggers following action to reverse/stop intaking
      */
     public void update(){
 

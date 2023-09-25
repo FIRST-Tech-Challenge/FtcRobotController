@@ -1,10 +1,14 @@
 package org.firstinspires.ftc.teamcode.Robots;
 
+import static org.firstinspires.ftc.teamcode.roadrunner.drive.PoseStorage.currentPose;
+
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.VoltageSensor;
+
+import org.firstinspires.ftc.teamcode.Components.RFModules.Devices.RFGamepad;
 import org.firstinspires.ftc.teamcode.Components.RFModules.System.Logger;
 import org.firstinspires.ftc.teamcode.Components.RFModules.System.Queuer;
 /**
@@ -21,6 +25,7 @@ public class BasicRobot{
     public static double time= 0.0;
     public static VoltageSensor voltageSensor;
     public static TelemetryPacket packet;
+    public static RFGamepad gampad;
 
     public BasicRobot(LinearOpMode opMode, boolean p_isTeleop){
         op = opMode;
@@ -38,9 +43,11 @@ public class BasicRobot{
         }
         dashboard.setTelemetryTransmissionInterval(25);
         packet=new TelemetryPacket();
+        gampad = new RFGamepad();
     }
 
     public void update(){
+        logger.log("/RobotLogs/GeneralRobot", "basicPose"+currentPose);
         time = op.getRuntime();
         dashboard.sendTelemetryPacket(packet);
         packet = new TelemetryPacket();

@@ -42,10 +42,10 @@ public class AprilTagRRTest extends LinearOpMode {
 
         waitForStart();
         if (isStopRequested()) return;
-        TrajectorySequence trajSeq2 = roadrun.trajectorySequenceBuilder(new Pose2d(0, 1.5*23.5, 0))
-                .splineTo(new Vector2d(45, 1.5*23),0)
+        TrajectorySequence trajSeq2 = roadrun.trajectorySequenceBuilder(new Pose2d(0, -1.5*23.5, 0))
+                .splineTo(new Vector2d(45, -1.5*23),0)
                 .setReversed(true)
-                .lineTo(new Vector2d(0,1.5*23.5))
+                .lineTo(new Vector2d(0,-1.5*23.5))
                 .setReversed(false)
 //                .splineTo(new Vector2d(45, 1.5*23),0)
 //                .setReversed(true)
