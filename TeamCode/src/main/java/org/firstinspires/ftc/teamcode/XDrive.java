@@ -85,7 +85,7 @@ public class XDrive extends LinearOpMode {
                 wrist.setPosition(wrist.getPosition()-0.1);
             }
 
-            //changes current grip position based on inputs recieved from A and B buttons on gamepad2
+            //changes current grip position based on inputs received from A and B buttons on gamepad2
             if(gamepad2.a) {
                 //returns grip to retracted position
                 leftGrip.setPosition(0);
