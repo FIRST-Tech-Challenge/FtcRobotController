@@ -56,6 +56,7 @@ public class Robot {
 
 
     }
+
     public void setUpDrivetrainMotors() {
         fLeft = hardwareMap.dcMotor.get("fLeft");
         fRight = hardwareMap.dcMotor.get("fRight");
@@ -76,6 +77,7 @@ public class Robot {
         fLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         fLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
     }
+
     private double maxAbsValueDouble(double[] values) {
 
         double max = -Double.MIN_VALUE;
@@ -127,6 +129,7 @@ public class Robot {
         return proportionalPowerForImu;
 
     } //IMU
+
     public void setUpArmMotor() {
         arm = hardwareMap.dcMotor.get("arm");
 
@@ -137,36 +140,38 @@ public class Robot {
         arm.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         arm.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
     }
-/*
-    public double calculateArmPower(int targetAngleInDegrees) {
 
-        final double P_VALUE = 0.006;
+    /*
+        public double calculateArmPower(int targetAngleInDegrees) {
 
-        double remainingDistance = getRemainingTicksForArm(targetAngleInDegrees);
-        if (remainingDistance < 10){
-            return 0;
+            final double P_VALUE = 0.006;
+
+            double remainingDistance = getRemainingTicksForArm(targetAngleInDegrees);
+            if (remainingDistance < 10){
+                return 0;
+            }
+            double proportionalPower = P_VALUE*remainingDistance;
+            return proportionalPower;
+
         }
-        double proportionalPower = P_VALUE*remainingDistance;
-        return proportionalPower;
-
-    }
-*/
+    */
     public void setArmPower(double armPower) {
         arm.setPower(armPower);
     }
-/*
-    public boolean checkArmPos(int targetAngleInDegrees) {
 
-        boolean doneArm = false;
-        double remainingDistance = getRemainingTicksForArm(targetAngleInDegrees);
+    /*
+        public boolean checkArmPos(int targetAngleInDegrees) {
 
-        if (remainingDistance < 10) {
-            setArmPower(0);
-            doneArm = true;
+            boolean doneArm = false;
+            double remainingDistance = getRemainingTicksForArm(targetAngleInDegrees);
+
+            if (remainingDistance < 10) {
+                setArmPower(0);
+                doneArm = true;
+            }
+            return doneArm;
         }
-        return doneArm;
-    }
-*/
+    */
 /*
     public double getRemainingTicksForArm(double targetDistanceInDegrees) {
         double targetDistanceInTicks = convertDegreesToTicks(targetDistanceInDegrees);
@@ -186,18 +191,21 @@ public class Robot {
 
         return targetPos;
     }//Arm
+
     public void setMotorPower(double lFront, double rFront, double lBack, double rBack) {
         this.fLeft.setPower(lFront);
         this.fRight.setPower(rFront);
         this.bLeft.setPower(lBack);
         this.bRight.setPower(rBack);
     }
+
     public void setMotorPower(double[] powers) {
         this.fLeft.setPower(powers[0]);
         this.fRight.setPower(powers[1]);
         this.bLeft.setPower(powers[2]);
         this.bRight.setPower(powers[3]);
     }
+
     public double convertMMToTicks(double targetDistanceInMM) {
 
         //301 = circumferance mm
@@ -209,6 +217,7 @@ public class Robot {
 
         return targetPos;
     }
+
     public boolean checkReachedDistance(double targetDistanceInMM) {
 
         boolean done = false;
@@ -216,17 +225,19 @@ public class Robot {
 
         telemetry.addData("remainig distance for ffowrard and backeward", remainingDistance);
 
-        if (remainingDistance < 30 && -yaw <5 && -yaw > - 5) {
+        if (remainingDistance < 30 && -yaw < 5 && -yaw > -5) {
             done = true;
         }
         return done;
     }
+
     public double getRemainingTicksForDrivetrain(double targetDistanceInMM) {
         double targetDistanceInTicks = convertMMToTicks(targetDistanceInMM);
         double remainingDistance = targetDistanceInTicks - fLeft.getCurrentPosition();
 
         return remainingDistance;
     }
+
     public void resetEncoder() {
         fLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         fLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
@@ -235,49 +246,51 @@ public class Robot {
     public double[] calculateDrivetrainPower(double targetDistanceInMM) {
         final double P_VALUE = 0.0015;
 
-        if (checkReachedDistance(targetDistanceInMM)){
-            return new double[] {0, 0, 0, 0};
+        if (checkReachedDistance(targetDistanceInMM)) {
+            return new double[]{0, 0, 0, 0};
         }
 
         double remainingDistance = getRemainingTicksForDrivetrain(targetDistanceInMM);
 
-        double proportionalPower = P_VALUE*remainingDistance;
+        double proportionalPower = P_VALUE * remainingDistance;
         double scaleImu = 0;
         return scalePowers(new double[]{
-                proportionalPower + calculateImuPower(0)*scaleImu,
-                proportionalPower - calculateImuPower(0)*scaleImu,
-                proportionalPower + calculateImuPower(0)*scaleImu,
-                proportionalPower - calculateImuPower(0)*scaleImu
+                proportionalPower + calculateImuPower(0) * scaleImu,
+                proportionalPower - calculateImuPower(0) * scaleImu,
+                proportionalPower + calculateImuPower(0) * scaleImu,
+                proportionalPower - calculateImuPower(0) * scaleImu
         });
     }
 
     public double[] calculateDrivetrainPowerWithTurning(double targetDistanceInMM, int angleToTurn) {
         final double P_VALUE = 0.0015;
 
-        if (checkReachedDistance(targetDistanceInMM)){
-            return new double[] {0, 0, 0, 0};
+        if (checkReachedDistance(targetDistanceInMM)) {
+            return new double[]{0, 0, 0, 0};
         }
 
         double remainingDistance = getRemainingTicksForDrivetrain(targetDistanceInMM);
 
-        double proportionalPower = P_VALUE*remainingDistance;
+        double proportionalPower = P_VALUE * remainingDistance;
         double scaleImu = 1.5;
         return scalePowers(new double[]{
-                proportionalPower + calculateImuPower(angleToTurn)*scaleImu,
-                proportionalPower - calculateImuPower(angleToTurn)*scaleImu,
-                proportionalPower + calculateImuPower(angleToTurn)*scaleImu,
-                proportionalPower - calculateImuPower(angleToTurn)*scaleImu
+                proportionalPower + calculateImuPower(angleToTurn) * scaleImu,
+                proportionalPower - calculateImuPower(angleToTurn) * scaleImu,
+                proportionalPower + calculateImuPower(angleToTurn) * scaleImu,
+                proportionalPower - calculateImuPower(angleToTurn) * scaleImu
         });
     }
 
-    public double getCurrentHeading () {
+    public double getCurrentHeading() {
         double currentYaw;
         YawPitchRollAngles robotOrientation;
         robotOrientation = imu.getRobotYawPitchRollAngles();
         currentYaw = robotOrientation.getYaw(AngleUnit.DEGREES);
         return currentYaw;
     }
-    public void setHeading (double targetAbsoluteAngleInDegrees) {
+
+    public boolean setHeading(double targetAbsoluteAngleInDegrees) {
+        boolean done = false;
 
         //TODO: add conditionals for >180 and <179, maybe also 360
         if (targetAbsoluteAngleInDegrees < -180) {
@@ -328,9 +341,13 @@ public class Robot {
 
                 prevError = error;
                 prevTime = currentTime;
+
             }
-            setMotorPower(0, 0, 0, 0);
+            if (error < 1) {
+                done = true;
+            }
         }
+        return done;
     }
 
     public void autoForward(double targetDistanceInMM) throws InterruptedException {
