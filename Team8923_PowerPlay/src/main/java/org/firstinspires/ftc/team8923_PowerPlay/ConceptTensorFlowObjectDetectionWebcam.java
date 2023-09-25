@@ -1,10 +1,10 @@
 package org.firstinspires.ftc.team8923_PowerPlay;
-
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
 import org.firstinspires.ftc.robotcore.external.ClassFactory;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
-import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
+// Broken code, SDK 9.0 removed Vuforia
+// import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
 import org.firstinspires.ftc.robotcore.external.tfod.Recognition;
 import org.firstinspires.ftc.robotcore.external.tfod.TFObjectDetector;
 
@@ -50,7 +50,8 @@ public class ConceptTensorFlowObjectDetectionWebcam extends BaseOpMode {
      * {@link #vuforia} is the variable we will use to store our instance of the Vuforia
      * localization engine.
      */
-    private VuforiaLocalizer vuforia;
+// Broken code, SDK 9.0 removed Vuforia
+//    private VuforiaLocalizer vuforia;
 
     /**
      * {@link #tfod} is the variable we will use to store our instance of the TensorFlow Object
@@ -121,6 +122,8 @@ public class ConceptTensorFlowObjectDetectionWebcam extends BaseOpMode {
             /*
              * Configure Vuforia by creating a Parameter object, and passing it to the Vuforia engine.
              */
+// Broken code, SDK 9.0 removed Vuforia
+/*
             VuforiaLocalizer.Parameters parameters = new VuforiaLocalizer.Parameters();
 
             parameters.vuforiaLicenseKey = VUFORIA_KEY;
@@ -128,6 +131,7 @@ public class ConceptTensorFlowObjectDetectionWebcam extends BaseOpMode {
 
             // Instantiate the Vuforia engine
             vuforia = ClassFactory.getInstance().createVuforia(parameters);
+  */
         }
 
         /**
