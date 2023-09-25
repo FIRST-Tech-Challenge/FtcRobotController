@@ -66,9 +66,6 @@ import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
  */
 
 @Autonomous(name="Basic: Omni Linear - Autonomous", group="Linear Opmode")
-@Disabled
-
-
 public class autonomous extends LinearOpMode {
     public int direction = 1;
     // Declare OpMode members for each of the 4 motors.

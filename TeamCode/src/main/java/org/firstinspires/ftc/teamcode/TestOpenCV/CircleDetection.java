@@ -78,10 +78,12 @@ public class CircleDetection extends OpenCvPipeline
         Imgproc.HoughCircles(blurMat, circles, Imgproc.HOUGH_GRADIENT, 1, 150, 130, 30);
         numCirclesFound = circles.cols();
         input.copyTo(circlesOnFrameMat);
+        Point center = new Point(0, 0);
+
         for(int i=0; i < numCirclesFound; i++)
         {
             double[] data = circles.get(0, i);
-            Point center = new Point(Math.round(data[0]), Math.round(data[1]));
+            center = new Point(Math.round(data[0]), Math.round(data[1]));
             // circle center
             Imgproc.circle(circlesOnFrameMat, center, 1, new Scalar(0, 0, 255), 2, 8, 0 );
             // circle outline
@@ -91,6 +93,7 @@ public class CircleDetection extends OpenCvPipeline
 
         telemetry.addData("[Stage]", stageToRenderToViewport);
         telemetry.addData("[Found Circles]", "%d", numCirclesFound);
+        telemetry.addData("Center:", "%4.0f, %4.0f", center.x, center.y);
         telemetry.update();
 
         switch (stageToRenderToViewport)
