@@ -18,7 +18,7 @@ public class AutoRed extends LinearOpMode {
 //        double armPower = robot.calculateArmPower(90);
         double[] forwardPower = robot.calculateDrivetrainPower(600);
         double[] mecanumPower = robot.calculateMecanumPower(0);
-        double[] backwardPower = robot.calculateDrivetrainPower(0);
+        double[] forwardPowerNumeroDuos = robot.calculateDrivetrainPower(0);
 
         double mecanumDistance = -711.2;
         double forwardDistance = 150;
@@ -28,6 +28,7 @@ public class AutoRed extends LinearOpMode {
         boolean doneWithMecanum = false;
         boolean doneWithForward = false;
         boolean doneWithForward2 = false;
+
 
 
         while (opModeIsActive()) {
@@ -60,6 +61,10 @@ public class AutoRed extends LinearOpMode {
 
             telemetry.addData("is done with forward", doneWithForward);
 
+            if (doneWithForward && robot.setHeading(30)) {
+                robot.setHeading(30);
+                break;
+            }
 
             /*if (!robot.checkArmPos(90)) {
                 armPower = robot.calculateArmPower(90);
@@ -71,15 +76,10 @@ public class AutoRed extends LinearOpMode {
             telemetry.update();
         }
 
-        robot.getCurrentHeading();
-
-        robot.setHeading(30);
-
         while (opModeIsActive()) {
-
             if (!doneWithForward2 && doneWithMecanum && doneWithForward && !robot.checkReachedDistance(forwardDistanceNumeroDuos)) {
-                backwardPower = robot.calculateDrivetrainPower(forwardDistanceNumeroDuos);
-                robot.setMotorPower(backwardPower);
+                forwardPowerNumeroDuos = robot.calculateDrivetrainPower(forwardDistanceNumeroDuos);
+                robot.setMotorPower(forwardPowerNumeroDuos);
             } else if (!doneWithForward2 && doneWithForward) {
                 robot.setMotorPower(0, 0, 0, 0);
                 robot.resetEncoder();
@@ -89,7 +89,7 @@ public class AutoRed extends LinearOpMode {
             telemetry.addData("done with backward", doneWithForward2);
 
 
-            telemetry.update();
         }
+
     }
 }
