@@ -31,13 +31,11 @@ public class Bot {
 
     public final Slides slides;
     public final Noodles noodles;
+    public final Fourbar fourbar;
+    public final Drone drone;
 
-    /*
-    public final TransferClaw transferClaw;
-    Slides, Noodles, and TransferClaw subsystems
-     */
 
-    private final DcMotorEx fl, fr, bl, br, susMotor, slidesMotor;
+    private final DcMotorEx fl, fr, bl, br, susMotor, slidesMotor, fourbarMotor;
     private final Servo tcServo, droneServo_1, droneServo_2, outtakeServo;
 
     public BotState state = STORAGE_NOT_FULL;
@@ -89,25 +87,26 @@ public class Bot {
         outtakeServo = opMode.hardwareMap.get(Servo.class, "outtakeServo");;
         susMotor = opMode.hardwareMap.get(DcMotorEx.class, "susMotor");
         slidesMotor = opMode.hardwareMap.get(DcMotorEx.class, "slidesMotor");
+        fourbarMotor= opMode.hardwareMap.get(DcMotorEx.class,"fourbarMotor");
 
         fl.setMode(RUN_USING_ENCODER);
         fr.setMode(RUN_USING_ENCODER);
         bl.setMode(RUN_USING_ENCODER);
         br.setMode(RUN_USING_ENCODER);
 
-        //subsystems uwu
 
-        this.slides = new Slides(opMode); //slides subsystem
-        this.noodles = new Noodles(opMode); //noodles subsystem
-        /*
-        this.transferClaw = new TransferClaw(opMode); transferClaw subsystem
-         */
+
+        this.slides = new Slides(opMode);
+        this.noodles = new Noodles(opMode);
+        this.fourbar = new Fourbar(opMode);
+        this.drone= new Drone(opMode);
+
 
 
     }
 
 
-
+//pipeline code goes here
 
     /*public void slidesalignjunction() {
         while (horizSlides.getCurrent() > horizSlides.currentthres){
@@ -117,25 +116,10 @@ public class Bot {
      */
 
 
-    //pixelval is an enum, with
-    /*public void turretalignjunction() {
-        if (PixelDetectionPipeline.junctionVal == PixelDetectionPipeline.JunctionVal.ONLEFT) {
-            if (JunctionDetectionPipeline.width > 100) {
-                turret.runRawPower(-0.4);
-            } else {
-                turret.runRawPower(-0.3);
-            }
-        }
-        if (JunctionDetectionPipeline.junctionVal == JunctionDetectionPipeline.JunctionVal.ONRIGHT) {
-            if (JunctionDetectionPipeline.width > 100){
-                turret.runRawPower(0.4);
-            }
-            turret.runRawPower(0.3);
-        }
-        if (JunctionDetectionPipeline.junctionVal == JunctionDetectionPipeline.JunctionVal.NOTDETECTED || JunctionDetectionPipeline.junctionVal == JunctionDetectionPipeline.JunctionVal.ATJUNCTION) {
-            turret.runRawPower(0);
-        }
-    }
+    /*
+
+    public void turretalignjunction() {
+
     public void slowturretalignjunction() {
         if (JunctionDetectionPipeline.junctionVal == JunctionDetectionPipeline.JunctionVal.ONLEFT) {
             turret.runRawPower(-0.2);
@@ -150,15 +134,6 @@ public class Bot {
 
      */
 
-    /*
-    public void intakeFallen() {
-        state = BotState.INTAKE;
-        slides.runToBottom();
-        arm.fallenintake();
-        horizSlides.runToFullIn();
-        claw.open();
-    }
-     */
 
 
     public void prepForOuttake() {
@@ -176,6 +151,7 @@ public class Bot {
     public void secure() {
         //pipeline detected pixel, and intake was run
     }
+
     public void initializeImus() {
         imu = opMode.hardwareMap.get(BNO055IMU.class, "imu");
         final BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
@@ -224,38 +200,7 @@ public class Bot {
         br.setPower(speeds[3]);
     }
 
-    public void driveFieldCentric(double strafeSpeed, double forwardBackSpeed, double turnSpeed, double heading) {
-        double magnitude = Math.sqrt(strafeSpeed * strafeSpeed + forwardBackSpeed * forwardBackSpeed);
-        double theta = (Math.atan2(forwardBackSpeed, strafeSpeed) - heading) % (2 * Math.PI);
-        double[] speeds = {
-                magnitude * Math.sin(theta + Math.PI / 4) + turnSpeed,
-                magnitude * Math.sin(theta - Math.PI / 4) - turnSpeed,
-                magnitude * Math.sin(theta - Math.PI / 4) + turnSpeed,
-                magnitude * Math.sin(theta + Math.PI / 4) - turnSpeed
-        };
 
-        double maxSpeed = 0;
-
-        for (int i = 0; i < 4; i++) {
-            maxSpeed = Math.max(maxSpeed, speeds[i]);
-        }
-
-        if (maxSpeed > 1) {
-            for (int i = 0; i < 4; i++) {
-                speeds[i] /= maxSpeed;
-            }
-        }
-
-        //        for (int i = 0; i < 4; i++) {
-        //            driveTrainMotors[i].set(speeds[i]);
-        //        }
-        // manually invert the left side
-
-        fl.setPower(speeds[0]);
-        fr.setPower(speeds[1]);
-        bl.setPower(speeds[2]);
-        br.setPower(speeds[3]);
-    }
 
     private void enableAutoBulkRead() {
         for (LynxModule mod : opMode.hardwareMap.getAll(LynxModule.class)) {
@@ -289,11 +234,5 @@ public class Bot {
             angle = angle - 360;
         }
         return angle;
-    }
-
-    public void resetProfiler() {
-        //slides.resetProfiler(); code in slides subsystem
-        //figure this out
-
     }
 }
