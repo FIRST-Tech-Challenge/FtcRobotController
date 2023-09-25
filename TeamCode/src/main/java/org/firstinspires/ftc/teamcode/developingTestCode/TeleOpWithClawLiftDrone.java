@@ -26,7 +26,7 @@ public class TeleOpWithClawLiftDrone extends LinearOpMode {
 
         // Reverse the right side motors. Flip if goes backward.
         frontRightMotor.setDirection(DcMotorSimple.Direction.FORWARD);
-        frontLeftMotor.setDirection(DcMotorSimple.Direction.FORWARD);
+        backRightMotor.setDirection(DcMotorSimple.Direction.FORWARD);
         frontLeftMotor.setDirection(DcMotorSimple.Direction.REVERSE);
         backLeftMotor.setDirection(DcMotorSimple.Direction.REVERSE);
 
@@ -128,10 +128,10 @@ public class TeleOpWithClawLiftDrone extends LinearOpMode {
             // This ensures all the powers maintain the same ratio,
             // but only if at least one is out of the range [-1, 1]
             double denominator = Math.max(Math.abs(rotY) + Math.abs(rotX) + Math.abs(rx), 1);
-            double frontLeftPower = ((rotY + rotX + rx) / denominator);
-            double backLeftPower = ((rotY - rotX + rx) / denominator);
-            double frontRightPower = ((rotY - rotX - rx) / denominator);
-            double backRightPower = ((rotY + rotX - rx) / denominator);
+            double frontLeftPower = (rotY + rotX + rx) / denominator;
+            double backLeftPower = (rotY - rotX + rx) / denominator;
+            double frontRightPower = (rotY - rotX - rx) / denominator;
+            double backRightPower = (rotY + rotX - rx) / denominator;
 
             frontLeftMotor.setPower(frontLeftPower);
             backLeftMotor.setPower(backLeftPower);
