@@ -2,6 +2,8 @@ package org.firstinspires.ftc.teamcode;
 
 import android.util.Log;
 
+import com.qualcomm.robotcore.hardware.IMU;
+
 import org.opencv.core.Core;
 import org.opencv.core.Mat;
 import org.opencv.core.Rect;
@@ -25,7 +27,7 @@ public class TestDetector extends OpenCvPipeline {
     }
 
     @Override
-    public final Mat processFrame (Mat input) {
+    public final Mat processFrame(Mat input) {
         input.copyTo(workingMatrix);
 
         if (workingMatrix.empty()) {
@@ -50,13 +52,13 @@ public class TestDetector extends OpenCvPipeline {
         double rightCbTotal = Core.sumElems(matRight).val[2];
         double centerCbTotal = Core.sumElems(matCenter).val[2];
 
-        avgLeftCr = leftCrTotal / (SUBMAT_WIDTH*SUBMAT_HEIGHT);
-        double avgRightCr = rightCrTotal / (SUBMAT_WIDTH*SUBMAT_HEIGHT);
-        double avgCenterCr = centerCrTotal / (SUBMAT_WIDTH*SUBMAT_HEIGHT);
+        avgLeftCr = leftCrTotal / (SUBMAT_WIDTH * SUBMAT_HEIGHT);
+        double avgRightCr = rightCrTotal / (SUBMAT_WIDTH * SUBMAT_HEIGHT);
+        double avgCenterCr = centerCrTotal / (SUBMAT_WIDTH * SUBMAT_HEIGHT);
 
-        double avgLeftCb = leftCbTotal / (SUBMAT_WIDTH*SUBMAT_HEIGHT);
-        double avgRightCb = rightCbTotal / (SUBMAT_WIDTH*SUBMAT_HEIGHT);
-        double avgCenterCb = centerCbTotal / (SUBMAT_WIDTH*SUBMAT_HEIGHT);
+        double avgLeftCb = leftCbTotal / (SUBMAT_WIDTH * SUBMAT_HEIGHT);
+        double avgRightCb = rightCbTotal / (SUBMAT_WIDTH * SUBMAT_HEIGHT);
+        double avgCenterCb = centerCbTotal / (SUBMAT_WIDTH * SUBMAT_HEIGHT);
 
         // y 16-255
         // cb 16-240
@@ -64,17 +66,34 @@ public class TestDetector extends OpenCvPipeline {
         // cr, cb middle value: 128
         //checking for red values
 
-        int colorMiddleValue = 128;
+        // colorMiddleValue = 128;
 
-        if (((184 <= avgLeftCr) && (avgLeftCr <= 240)) && ((avgLeftCb >= 16) && (avgLeftCb <= 128))) {
-            position = "LEFT";
-        } else if (((184 <= avgRightCr) && (avgRightCr <= 240)) && ((avgRightCb >= 16) && (avgRightCb <= 128))) {
-            position = "RIGHT";
-        } else if (((184 <= avgCenterCr) && (avgCenterCr <= 240)) && ((avgCenterCb >= 16) && (avgCenterCb <= 128))) {
-            position = "CENTER";
+//        if (((184 <= avgLeftCr) && (avgLeftCr <= 240)) && ((avgLeftCb >= 16) && (avgLeftCb <= 128))) {
+//            position = "LEFT";
+//        } else if (((184 <= avgRightCr) && (avgRightCr <= 240)) && ((avgRightCb >= 16) && (avgRightCb <= 128))) {
+//            position = "RIGHT";
+//        } else if (((184 <= avgCenterCr) && (avgCenterCr <= 240)) && ((avgCenterCb >= 16) && (avgCenterCb <= 128))) {
+//            position = "CENTER";
+//        } else {
+//            position = "cannot find marker";
+//        }
+
+        position = "cannot find marker";
+
+        if (avgLeftCr > avgCenterCr) {
+            if (avgLeftCr > avgRightCr) {
+                position = "LEFT";
+            } else {
+                position = "RIGHT";
+            }
         } else {
-            position = "cannot find marker";
+            if (avgCenterCr > avgRightCr) {
+                position = "CENTER";
+            } else {
+                position = "RIGHT";
+            }
         }
+
 
 //        if (leftCbTotal > centerCbTotal) {
 //            if (leftCbTotal > rightCbTotal) {
@@ -94,6 +113,9 @@ public class TestDetector extends OpenCvPipeline {
 //            }
 //        }
 
-        return workingMatrix;
+            return workingMatrix;
+        }
     }
-}
+
+
+
