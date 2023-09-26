@@ -79,6 +79,7 @@ import java.util.concurrent.TimeUnit;
  */
 
 @TeleOp(name="Omni Drive To AprilTag", group = "Concept")
+@Disabled
 public class AprilTags extends LinearOpMode
 {
     // Adjust these numbers to suit your robot.
@@ -161,6 +162,7 @@ public class AprilTags extends LinearOpMode
 
             // Tell the driver what we see, and what to do.
             if (targetFound) {
+
                 telemetry.addData(">","HOLD Left-Bumper to Drive to Target\n");
                 telemetry.addData("Target", "ID %d (%s)", desiredTag.id, desiredTag.metadata.name);
                 telemetry.addData("Range",  "%5.1f inches", desiredTag.ftcPose.range);

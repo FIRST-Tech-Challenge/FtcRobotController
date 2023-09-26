@@ -13,9 +13,10 @@ import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 
 @TeleOp(name = "Mecanum - DO")
 @Disabled
-public class mecenum extends LinearOpMode {
+public class mecenum_2 extends LinearOpMode {
 
     public Servo Claw = null;
+
     @Override
     public void runOpMode() throws InterruptedException {
         DcMotor frontLeftMotor = hardwareMap.dcMotor.get("motorFL");
@@ -23,26 +24,34 @@ public class mecenum extends LinearOpMode {
         DcMotor frontRightMotor = hardwareMap.dcMotor.get("motorFR");
         DcMotor backRightMotor = hardwareMap.dcMotor.get("motorBR");
         DcMotor liftMotor = hardwareMap.dcMotor.get("liftMotor");
+        DcMotor armMotor= hardwareMap.dcMotor.get("armMotor");
 
         Claw = hardwareMap.get(Servo.class, "Servo1");
 
+
+
         // Reverse the right side motors. Flip if goes backward.
         frontRightMotor.setDirection(DcMotorSimple.Direction.FORWARD);
-        frontLeftMotor.setDirection(DcMotorSimple.Direction.FORWARD);
+        backRightMotor.setDirection(DcMotorSimple.Direction.FORWARD);
         frontLeftMotor.setDirection(DcMotorSimple.Direction.REVERSE);
         backLeftMotor.setDirection(DcMotorSimple.Direction.REVERSE);
 
         // Retrieve the IMU from the hardware map
         IMU imu = hardwareMap.get(IMU.class, "imu");
+        IMU.Parameters imuParams;
 
-        // Adjust the orientation parameters to match your robot
-        IMU.Parameters parameters = new IMU.Parameters(new RevHubOrientationOnRobot(
-                RevHubOrientationOnRobot.LogoFacingDirection.UP,
-                RevHubOrientationOnRobot.UsbFacingDirection.FORWARD));
-        // Without this, the REV Hub's orientation is assumed to be logo up / USB forward
-        imu.initialize(parameters);
+        imuParams = new IMU.Parameters(
+                new RevHubOrientationOnRobot(
+                        RevHubOrientationOnRobot.LogoFacingDirection.UP,
+                        RevHubOrientationOnRobot.UsbFacingDirection.BACKWARD
+                )
+        );
+        // Technically this is the default, however specifying it is clearer
+        // Without this, data retrieving from the IMU throws an exception
+        imu.initialize(imuParams);
 
         double clawPosition=0;
+
 
         waitForStart();
 
@@ -56,6 +65,25 @@ public class mecenum extends LinearOpMode {
             // The equivalent button is start on Xbox-style controllers.
             if (gamepad1.x) {
                 imu.resetYaw();
+            }
+            if (gamepad1.left_trigger >= 0.4) {
+                armMotor.setPower(gamepad1.left_trigger);
+            }
+            else if (gamepad1.right_trigger>=0.4){
+                liftMotor.setPower(-gamepad1.right_trigger);
+            }
+            else{
+                liftMotor.setPower(0);
+            }
+            if (gamepad1.right_bumper && gamepad1.left_bumper){
+                telemetry.addLine("Claw Open");
+                clawPosition = 0.3;
+                Claw.setPosition(clawPosition);
+            }
+            else if (gamepad1.right_bumper || gamepad1.left_bumper){
+                telemetry.addLine("Claw Closed");
+                clawPosition = 0.7;
+                Claw.setPosition(clawPosition);
             }
 
             double botHeading = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS);
@@ -79,44 +107,8 @@ public class mecenum extends LinearOpMode {
             backLeftMotor.setPower(backLeftPower);
             frontRightMotor.setPower(frontRightPower);
             backRightMotor.setPower(backRightPower);
-
-            if (gamepad1.right_trigger>=0.4) {
-                liftMotor.setPower(gamepad1.right_trigger);
-                telemetry.addData("liftMotor.getCurrentPosition",liftMotor.getCurrentPosition());
-            }
-            else if (gamepad1.left_trigger>=0.4) {
-                liftMotor.setPower(gamepad1.left_trigger * -1);
-                telemetry.addData("liftMotor.getCurrentPosition",liftMotor.getCurrentPosition());
-            }
-            else {
-                liftMotor.setPower(0);
-            }
-
-            if (gamepad2.right_trigger>=0.4) {
-                liftMotor.setPower(gamepad1.right_trigger);
-                telemetry.addData("liftMotor.getCurrentPosition",liftMotor.getCurrentPosition());
-            }
-            else if (gamepad2.left_trigger>=0.4) {
-                liftMotor.setPower(gamepad1.left_trigger * -1);
-                telemetry.addData("liftMotor.getCurrentPosition",liftMotor.getCurrentPosition());
-            }
-            else {
-                liftMotor.setPower(0);
-            }
-
-            if (gamepad2.right_bumper && gamepad1.left_bumper) {
-                telemetry.addLine("Claw Opened");
-                clawPosition = 0.3;
-                Claw.setPosition(clawPosition);
-            }
-            else if (gamepad2.right_bumper || gamepad1.left_bumper) {
-                //don't need    telemetry.addData("gamepad1.right_bumper",gamepad1.right_bumper);
-                telemetry.addLine("claw closed");
-                clawPosition = 0.7;
-                Claw.setPosition(clawPosition);
-            }
-
-
         }
     }
 }
+
+
