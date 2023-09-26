@@ -1,0 +1,28 @@
+name: Check Javadocs
+
+on:
+  pull_request:
+    types:
+      - opened
+  workflow_dispatch:
+
+# Jobs
+jobs:
+  # Generate the docs.
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v2
+        with:
+          distribution: 'zulu'
+          java-version: 17
+
+      - name: Install dependencies
+        run: sudo apt-get install -y graphviz
+
+      - name: Build and generate Javadocs
+        run: ./gradlew generateDebugJavadoc -PgenerateUML --no-daemon

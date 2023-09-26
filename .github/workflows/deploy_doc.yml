@@ -1,0 +1,51 @@
+name: Deploy Javadocs to GitHub Pages
+
+# Keep up to date with master, not a branch.
+on:
+  push:
+    branches: [master]
+  workflow_dispatch:
+
+# Sets permissions of the GITHUB_TOKEN to allow deployment to GitHub Pages
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# Allow one concurrent deployment
+concurrency:
+  group: "pages"
+  cancel-in-progress: true
+
+# Jobs
+jobs:
+  # Generate the docs.
+  deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v2
+        with:
+          distribution: 'zulu'
+          java-version: 17
+
+      - name: Install dependencies
+        run: sudo apt-get install -y graphviz
+
+      - name: Build and generate Javadocs
+        run: ./gradlew generateDebugJavadoc -PgenerateUML --no-daemon
+
+      - name: Deploy to GitHub Pages
+        uses: actions/upload-pages-artifact@v1
+        with:
+          path: './TeamCode/build/docs/javadoc/'
+
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v1

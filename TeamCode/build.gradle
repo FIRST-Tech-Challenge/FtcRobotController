@@ -12,11 +12,50 @@
 apply from: '../build.common.gradle'
 apply from: '../build.dependencies.gradle'
 
+configurations {
+    umlDoclet
+}
+
 android {
     namespace = 'org.firstinspires.ftc.teamcode'
 
     packagingOptions {
+        jniLibs {
+            pickFirsts += ['**/*.so']
+        }
         jniLibs.useLegacyPackaging true
+    }
+
+    /* AHHHHHHHHH */
+    afterEvaluate {
+        android.applicationVariants.each { variant ->
+            project.tasks.register('generate' + variant.name.capitalize() + 'Javadoc', Javadoc) {
+                group = "TeamcodeDoc"
+                description = "Generate documentation for Teamcode ($variant.name)."
+
+                source = android.sourceSets.main.java.srcDirs
+                classpath += variant.javaCompileProvider.get().classpath
+                classpath += files(variant.javaCompileProvider.get().destinationDirectory)
+
+                if (project.hasProperty("generateUML")) {
+                    options.docletpath = configurations.umlDoclet.files as List
+                    options.doclet = "nl.talsmasoftware.umldoclet.UMLDoclet"
+                } else {
+                    logger.info('Use -PgenerateUML to generate UML diagrams.')
+                }
+
+                doFirst {
+                    ext.androidJar = "${android.sdkDirectory}/platforms/${android.compileSdkVersion}/android.jar"
+                    //noinspection GrDeprecatedAPIUsage
+                    classpath = files(variant.javaCompile.classpath.files) + files(ext.androidJar)
+
+                    options.addStringOption "-show-members", "package"
+                }
+            }
+        }
+    }
+    androidResources {
+        noCompress 'tflite'
     }
 }
 
@@ -24,6 +63,7 @@ dependencies {
     implementation project(':FtcRobotController')
     annotationProcessor files('lib/OpModeAnnotationProcessor.jar')
 
+    umlDoclet "nl.talsmasoftware:umldoclet:2.1.0"
     implementation 'com.acmerobotics.roadrunner:core:0.5.5'
     implementation 'com.acmerobotics.dashboard:dashboard:0.4.12'
     implementation 'org.openftc:easyopencv:1.7.0'
