@@ -279,18 +279,13 @@ public class Robot {
         currentYaw = robotOrientation.getYaw(AngleUnit.DEGREES);
         return currentYaw;
     }
+    //the desired heading must be relative to last imu reset
+    //-180 < desired heading <= 180
     public void setHeading(double targetAbsoluteAngleInDegrees) {
 
-        //TODO: add conditionals for >180 and <179, maybe also 360
-        if (targetAbsoluteAngleInDegrees < -180) {
-
-        } else if (targetAbsoluteAngleInDegrees > 180) {
-            /*
-            telemetry.addLine("error: wantedAbsoluteAngle takes range -179 through 180");
-            telemetry.update();
-            return;
-            */
-        } else if (targetAbsoluteAngleInDegrees == 180) {
+        assert(targetAbsoluteAngleInDegrees > 180);
+        assert(targetAbsoluteAngleInDegrees <= -180);
+        if (targetAbsoluteAngleInDegrees == 180) {
             setHeading(179.5);
         } else {
 
@@ -319,9 +314,6 @@ public class Robot {
                 double minPower = 0.15; //TODO: tune
 
                 power = (KP * error) + (KD * errorDer);
-                telemetry.addLine(String.valueOf(power));
-                telemetry.addLine(String.valueOf(getCurrentHeading()));
-                telemetry.update();
 
                 if (power > 0) {
                     power += minPower;
@@ -338,6 +330,16 @@ public class Robot {
                 prevTime = currentTime;
             }
             setMotorPower(0, 0, 0, 0);
+        }
+    }
+    public boolean isHeadingWithinError (double targetHeading) {
+        double ERROR_TOLERANCE = 0.5;
+        double currentHeading = getCurrentHeading();
+        double deltaHeading = Math.abs(targetHeading - currentHeading);
+        if (deltaHeading <= ERROR_TOLERANCE) {
+            return true;
+        } else {
+            return false;
         }
     }
     public void autoForward(double targetDistanceInMM) throws InterruptedException {
