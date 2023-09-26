@@ -33,6 +33,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.Range;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.BuiltinCameraDirection;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
@@ -95,10 +96,10 @@ public class TeleOpAprilLiftDrone extends LinearOpMode
     final double MAX_AUTO_STRAFE= 0.5;   //  Clip the approach speed to this max value (adjust for your robot)
     final double MAX_AUTO_TURN  = 0.3;   //  Clip the turn speed to this max value (adjust for your robot)
 
-    private DcMotor leftFrontDrive   = null;  //  Used to control the left front drive wheel
-    private DcMotor rightFrontDrive  = null;  //  Used to control the right front drive wheel
-    private DcMotor leftBackDrive    = null;  //  Used to control the left back drive wheel
-    private DcMotor rightBackDrive   = null;  //  Used to control the right back drive wheel
+    private DcMotor frontLeftMotor   = null;  //  Used to control the left front drive wheel
+    private DcMotor frontRightMotor  = null;  //  Used to control the right front drive wheel
+    private DcMotor backLeftMotor    = null;  //  Used to control the left back drive wheel
+    private DcMotor backRightMotor   = null;  //  Used to control the right back drive wheel
 
     private static final boolean USE_WEBCAM = true;  // Set true to use a webcam, or false for a phone camera
     private static final int DESIRED_TAG_ID = -1;
@@ -122,18 +123,21 @@ public class TeleOpAprilLiftDrone extends LinearOpMode
         // Initialize the hardware variables. Note that the strings used here as parameters
         // to 'get' must match the names assigned during the robot configuration.
         // step (using the FTC Robot Controller app on the phone).
-        leftFrontDrive  = hardwareMap.get(DcMotor.class, "motorFL");
-        rightFrontDrive = hardwareMap.get(DcMotor.class, "motorFR");
-        leftBackDrive  = hardwareMap.get(DcMotor.class, "motorBL");
-        rightBackDrive = hardwareMap.get(DcMotor.class, "motorBR");
+        frontLeftMotor  = hardwareMap.get(DcMotor.class, "motorFL");
+        frontRightMotor = hardwareMap.get(DcMotor.class, "motorFR");
+        backLeftMotor  = hardwareMap.get(DcMotor.class, "motorBL");
+        backRightMotor = hardwareMap.get(DcMotor.class, "motorBR");
+
+        DcMotor lift = hardwareMap.dcMotor.get("lift");
+        Servo droneServo = hardwareMap.servo.get("drone");
 
         // To drive forward, most robots need the motor on one side to be reversed, because the axles point in opposite directions.
         // When run, this OpMode should start both motors driving forward. So adjust these two lines based on your first test drive.
         // Note: The settings here assume direct drive on left and right wheels.  Gear Reduction or 90 Deg drives may require direction flips
-        leftFrontDrive.setDirection(DcMotor.Direction.REVERSE);
-        leftBackDrive.setDirection(DcMotor.Direction.REVERSE);
-        rightFrontDrive.setDirection(DcMotor.Direction.FORWARD);
-        rightBackDrive.setDirection(DcMotor.Direction.FORWARD);
+        frontLeftMotor.setDirection(DcMotor.Direction.REVERSE);
+        frontRightMotor.setDirection(DcMotor.Direction.REVERSE);
+        backLeftMotor.setDirection(DcMotor.Direction.FORWARD);
+        backRightMotor.setDirection(DcMotor.Direction.FORWARD);
 
         if (USE_WEBCAM)
             setManualExposure(6, 250);  // Use low exposure time to reduce motion blur
@@ -232,10 +236,10 @@ public class TeleOpAprilLiftDrone extends LinearOpMode
         }
 
         // Send powers to the wheels.
-        leftFrontDrive.setPower(leftFrontPower);
-        rightFrontDrive.setPower(rightFrontPower);
-        leftBackDrive.setPower(leftBackPower);
-        rightBackDrive.setPower(rightBackPower);
+        frontLeftMotor.setPower(leftFrontPower);
+        frontRightMotor.setPower(rightFrontPower);
+        backLeftMotor.setPower(leftBackPower);
+        backRightMotor.setPower(rightBackPower);
     }
 
     /**
