@@ -67,6 +67,12 @@ public class gibsonmech extends LinearOpMode{
                 m_frontLeft.setPower(-1);
                 m_frontRight.setPower(-1);
             }
+            else{
+                m_rearLeft.setPower(0);
+                m_rearRight.setPower(0);
+                m_frontLeft.setPower(0);
+                m_frontRight.setPower(0);
+            }
         }
 
     }
