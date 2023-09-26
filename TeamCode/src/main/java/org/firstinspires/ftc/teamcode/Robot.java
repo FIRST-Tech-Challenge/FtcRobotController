@@ -2,7 +2,6 @@ package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
@@ -280,8 +279,7 @@ public class Robot {
         currentYaw = robotOrientation.getYaw(AngleUnit.DEGREES);
         return currentYaw;
     }
-    public boolean setHeading(double targetAbsoluteAngleInDegrees) {
-        boolean done = false;
+    public void setHeading(double targetAbsoluteAngleInDegrees) {
 
         //TODO: add conditionals for >180 and <179, maybe also 360
         if (targetAbsoluteAngleInDegrees < -180) {
@@ -296,12 +294,11 @@ public class Robot {
             setHeading(179.5);
         } else {
 
-
             YawPitchRollAngles robotOrientation;
 
             double KP = 0.06; //started 0.15
             double KD = 2_500_000;
-            double ERROR_TOLERANCE = 1; //degrees
+            double ERROR_TOLERANCE = 0.5; //degrees
 
             double setTo = targetAbsoluteAngleInDegrees;
             double currentHeading = getCurrentHeading();
@@ -310,7 +307,7 @@ public class Robot {
             double power;
             double currentTime;
 
-            //while startx
+            //while start
             while (Math.abs(error) > ERROR_TOLERANCE && opMode.opModeIsActive()) {
                 robotOrientation = imu.getRobotYawPitchRollAngles();
                 currentHeading = robotOrientation.getYaw(AngleUnit.DEGREES);
@@ -319,20 +316,29 @@ public class Robot {
                 error = setTo - currentHeading; //error is degrees to goal
                 errorDer = (error - prevError) / (currentTime - prevTime);
 
+                double minPower = 0.15; //TODO: tune
+
                 power = (KP * error) + (KD * errorDer);
+                telemetry.addLine(String.valueOf(power));
+                telemetry.addLine(String.valueOf(getCurrentHeading()));
+                telemetry.update();
+
+                if (power > 0) {
+                    power += minPower;
+                } else if (power < 0) {
+                    power -= minPower;
+                }
 
                 //cap power
                 power = Range.clip(power, -1, 1);
 
+                setMotorPower(-1 * power, power, -1 * power, power);
+
                 prevError = error;
                 prevTime = currentTime;
-
             }
-            if (error < 1) {
-                done = true;
-            }
+            setMotorPower(0, 0, 0, 0);
         }
-        return done;
     }
     public void autoForward(double targetDistanceInMM) throws InterruptedException {
 

@@ -6,8 +6,6 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 @Autonomous
 public class AutoRed extends LinearOpMode {
 
-
-
     @Override
     public void runOpMode() throws InterruptedException {
         Robot robot = new Robot(hardwareMap, this, telemetry);
@@ -61,10 +59,12 @@ public class AutoRed extends LinearOpMode {
 
             telemetry.addData("is done with forward", doneWithForward);
 
-            if (doneWithForward && robot.setHeading(30)) {
+            if (doneWithForward) {
                 robot.setHeading(30);
                 break;
             }
+
+            //removed boolean setheading
 
             /*if (!robot.checkArmPos(90)) {
                 armPower = robot.calculateArmPower(90);
