@@ -185,18 +185,10 @@ public class AutoMode extends LinearOpMode {
         waitForStart();
 
         while (opModeIsActive()) {
-            /*
-            robot.moveArm(2150);
-            sleep(5);
-            double current_pos = robot.armMotor.getCurrentPosition();
-            telemetry.addLine(String.valueOf(current_pos));
-            telemetry.update();
-            break;
-            */
 
-            //robot.setHeading(90);
-            //robot.getCurrentHeading();
+            robot.setHeading(30);
             break;
+
         }
     }
 }
