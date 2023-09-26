@@ -4,6 +4,7 @@ import com.qualcomm.robotcore.hardware.DcMotorEx;
 
 
 public class Noodles {
+    //we need a sensor to sense how many pixels we are intaking!
     public final DcMotorEx noodleMotor;
     private final OpMode opMode;
     private boolean isIntake;
@@ -15,9 +16,10 @@ public class Noodles {
         isIntake=false;
     }
 
-    public void Intake(){
+    public boolean Intake(){
         noodleMotor.setPower(0.5);
         isIntake=true;
+        return isIntake;
     }
 
     public void reverseIntake(){

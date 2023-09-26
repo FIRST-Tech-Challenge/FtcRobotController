@@ -135,7 +135,6 @@ public class Slides {
             power = controller.calculatePower(slidesMotor, targetPos);
             slidesMotor.setPower(power);
         }
-
     }
 
     public void resetProfiler() {
@@ -144,6 +143,5 @@ public class Slides {
     public void resetEncoder() {
         slidesMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
     }
-
 
 }
