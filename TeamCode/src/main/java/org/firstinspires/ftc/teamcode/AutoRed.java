@@ -21,7 +21,7 @@ public class AutoRed extends LinearOpMode {
         double mecanumDistance = -711.2;
         double forwardDistance = 150;
 
-        double forwardDistanceNumeroDuos = 600;
+        double forwardDistanceNumeroDuos = 450;
 
         boolean doneWithMecanum = false;
         boolean doneWithForward = false;
