@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
@@ -191,21 +192,18 @@ public class Robot {
 
         return targetPos;
     }//Arm
-
     public void setMotorPower(double lFront, double rFront, double lBack, double rBack) {
         this.fLeft.setPower(lFront);
         this.fRight.setPower(rFront);
         this.bLeft.setPower(lBack);
         this.bRight.setPower(rBack);
     }
-
     public void setMotorPower(double[] powers) {
         this.fLeft.setPower(powers[0]);
         this.fRight.setPower(powers[1]);
         this.bLeft.setPower(powers[2]);
         this.bRight.setPower(powers[3]);
     }
-
     public double convertMMToTicks(double targetDistanceInMM) {
 
         //301 = circumferance mm
@@ -217,7 +215,6 @@ public class Robot {
 
         return targetPos;
     }
-
     public boolean checkReachedDistance(double targetDistanceInMM) {
 
         boolean done = false;
@@ -230,19 +227,16 @@ public class Robot {
         }
         return done;
     }
-
     public double getRemainingTicksForDrivetrain(double targetDistanceInMM) {
         double targetDistanceInTicks = convertMMToTicks(targetDistanceInMM);
         double remainingDistance = targetDistanceInTicks - fLeft.getCurrentPosition();
 
         return remainingDistance;
     }
-
     public void resetEncoder() {
         fLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         fLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
     }
-
     public double[] calculateDrivetrainPower(double targetDistanceInMM) {
         final double P_VALUE = 0.0015;
 
@@ -261,7 +255,6 @@ public class Robot {
                 proportionalPower - calculateImuPower(0) * scaleImu
         });
     }
-
     public double[] calculateDrivetrainPowerWithTurning(double targetDistanceInMM, int angleToTurn) {
         final double P_VALUE = 0.0015;
 
@@ -280,7 +273,6 @@ public class Robot {
                 proportionalPower - calculateImuPower(angleToTurn) * scaleImu
         });
     }
-
     public double getCurrentHeading() {
         double currentYaw;
         YawPitchRollAngles robotOrientation;
@@ -288,7 +280,6 @@ public class Robot {
         currentYaw = robotOrientation.getYaw(AngleUnit.DEGREES);
         return currentYaw;
     }
-
     public boolean setHeading(double targetAbsoluteAngleInDegrees) {
         boolean done = false;
 
@@ -310,7 +301,7 @@ public class Robot {
 
             double KP = 0.06; //started 0.15
             double KD = 2_500_000;
-            double ERROR_TOLERANCE = 0.1; //degrees
+            double ERROR_TOLERANCE = 1; //degrees
 
             double setTo = targetAbsoluteAngleInDegrees;
             double currentHeading = getCurrentHeading();
@@ -333,12 +324,6 @@ public class Robot {
                 //cap power
                 power = Range.clip(power, -1, 1);
 
-
-                setMotorPower(-1 * power, power, -1 * power, power);
-                telemetry.addLine(String.valueOf(getCurrentHeading()));
-                telemetry.addLine(String.valueOf(power));
-                telemetry.update();
-
                 prevError = error;
                 prevTime = currentTime;
 
@@ -349,7 +334,6 @@ public class Robot {
         }
         return done;
     }
-
     public void autoForward(double targetDistanceInMM) throws InterruptedException {
 
 
@@ -512,4 +496,5 @@ public class Robot {
 
         }
     }
+
 }
