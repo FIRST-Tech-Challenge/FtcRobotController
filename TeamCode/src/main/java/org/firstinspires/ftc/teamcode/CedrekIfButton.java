@@ -4,7 +4,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
-@TeleOp(name="Basic Mecanum OpMode", group="Basic")
+@TeleOp(name="Basic Mecanum OpMode Cedrek", group="Basic")
 public class CedrekIfButton extends LinearOpMode{
     DcMotor m_frontLeft;
     DcMotor m_frontRight;

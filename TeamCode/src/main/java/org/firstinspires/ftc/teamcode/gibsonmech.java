@@ -6,7 +6,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-@TeleOp(name="Basic Mecanum OpMode", group="Basic")
+@TeleOp(name="Basic Mecanum OpMode Gibson", group="Basic")
 public class gibsonmech extends LinearOpMode{
     DcMotor m_frontLeft;
     DcMotor m_frontRight;
