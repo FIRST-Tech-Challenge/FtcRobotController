@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.readyTestCode;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.util.Range;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.BuiltinCameraDirection;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
@@ -52,11 +53,12 @@ public class kaviAprilTagTest extends LinearOpMode {
         rightFrontDrive = hardwareMap.get(DcMotor.class, "motorFR");
         leftBackDrive  = hardwareMap.get(DcMotor.class, "motorBL");
         rightBackDrive = hardwareMap.get(DcMotor.class, "motorBR");
-
-        leftFrontDrive.setDirection(DcMotor.Direction.REVERSE);
-        leftBackDrive.setDirection(DcMotor.Direction.REVERSE);
-        rightFrontDrive.setDirection(DcMotor.Direction.FORWARD);
-        rightBackDrive.setDirection(DcMotor.Direction.FORWARD);
+/*
+        leftFrontDrive.setDirection(DcMotor.Direction.FORWARD);
+        leftBackDrive.setDirection(DcMotor.Direction.FORWARD);
+        rightFrontDrive.setDirection(DcMotor.Direction.REVERSE);
+        rightBackDrive.setDirection(DcMotor.Direction.REVERSE);
+        */
         HashMap<String, Integer> aprilTagSpikeStripCorrelation = new HashMap<String, Integer>();
         /*
         aprilTagMap.put("Blue Alliance Left", 1);
@@ -97,10 +99,11 @@ public class kaviAprilTagTest extends LinearOpMode {
             //Tensor Flow Object Detection Code
             //Return appropriate spikePosition
             telemetry.addData("Status", "Running");
-            spikePosition = "Blue Front Left"; //TFOD sim
+            telemetry.update();
+            spikePosition = "Red Front Left"; //TFOD sim
             telemetry.addData("Spike Position is: ", spikePosition);
             int correspondingAprilTag = aprilTagSpikeStripCorrelation.get(spikePosition);
-            telemetry.addData("Corresponding April Tag is: ", spikePosition);
+            telemetry.addData("Corresponding April Tag is: ", correspondingAprilTag);
             boolean correspondingAprilTagFound = false;
 
 
@@ -115,6 +118,7 @@ public class kaviAprilTagTest extends LinearOpMode {
                     telemetry.addData("Range",  "%5.1f inches", desiredTag.ftcPose.range);
                     telemetry.addData("Bearing","%3.0f degrees", desiredTag.ftcPose.bearing);
                     telemetry.addData("Yaw","%3.0f degrees", desiredTag.ftcPose.yaw);
+                    telemetry.update();
                     if (detection.id == correspondingAprilTag) {
                         correspondingAprilTagFound = true;
                         telemetry.addLine("Corresponding April Tag Found");
