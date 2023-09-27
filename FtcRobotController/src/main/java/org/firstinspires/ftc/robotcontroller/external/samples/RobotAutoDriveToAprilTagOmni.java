@@ -34,7 +34,6 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.Range;
-
 import org.firstinspires.ftc.robotcore.external.hardware.camera.BuiltinCameraDirection;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.controls.ExposureControl;
@@ -46,7 +45,7 @@ import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
-/**
+/*
  * This OpMode illustrates using a camera to locate and drive towards a specific AprilTag.
  * The code assumes a Holonomic (Mecanum or X Drive) Robot.
  *
@@ -151,11 +150,13 @@ public class RobotAutoDriveToAprilTagOmni extends LinearOpMode
             // Step through the list of detected tags and look for a matching tag
             List<AprilTagDetection> currentDetections = aprilTag.getDetections();
             for (AprilTagDetection detection : currentDetections) {
-                if ((detection.metadata != null)
-                        && ((DESIRED_TAG_ID >= 0) || (detection.id == DESIRED_TAG_ID))  ){
+                if ((detection.metadata != null) &&
+                    ((DESIRED_TAG_ID < 0) || (detection.id == DESIRED_TAG_ID))  ){
                     targetFound = true;
                     desiredTag = detection;
                     break;  // don't look any further.
+                } else {
+                    telemetry.addData("Unknown Target", "Tag ID %d is not in TagLibrary\n", detection.id);
                 }
             }
 
@@ -167,7 +168,7 @@ public class RobotAutoDriveToAprilTagOmni extends LinearOpMode
                 telemetry.addData("Bearing","%3.0f degrees", desiredTag.ftcPose.bearing);
                 telemetry.addData("Yaw","%3.0f degrees", desiredTag.ftcPose.yaw);
             } else {
-                telemetry.addData(">","Drive using joystick to find target\n");
+                telemetry.addData(">","Drive using joysticks to find valid target\n");
             }
 
             // If Left Bumper is being pressed, AND we have found the desired target, Drive to target Automatically .
@@ -202,8 +203,11 @@ public class RobotAutoDriveToAprilTagOmni extends LinearOpMode
 
     /**
      * Move robot according to desired axes motions
+     * <p>
      * Positive X is forward
+     * <p>
      * Positive Y is strafe left
+     * <p>
      * Positive Yaw is counter-clockwise
      */
     public void moveRobot(double x, double y, double yaw) {
