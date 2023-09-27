@@ -29,8 +29,12 @@ public class Bot {
     public static BotState currentState = STORAGE_NOT_FULL;
     public static Bot instance;
 
-    public final Slides slides;
-    public final Noodles noodles;
+    public static Slides slides;
+    public static Noodles noodles;
+    public static Drone drone;
+    public static Fourbar fourbar;
+    public static Box box;
+
 
     /*
     public final TransferClaw transferClaw;
@@ -98,6 +102,9 @@ public class Bot {
 
         this.slides = new Slides(opMode); //slides subsystem
         this.noodles = new Noodles(opMode); //noodles subsystem
+        this.drone= new Drone(opMode);
+        this.fourbar = new Fourbar(opMode);
+        this.box= new Box(opMode);
         /*
         this.transferClaw = new TransferClaw(opMode); transferClaw subsystem
          */

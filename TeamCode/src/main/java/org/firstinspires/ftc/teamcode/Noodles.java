@@ -16,16 +16,25 @@ public class Noodles {
         isIntake=false;
     }
 
-    public boolean Intake(){
+    public void Intake(){
         noodleMotor.setPower(0.5);
         isIntake=true;
-        return isIntake;
     }
+    public void Stop(){
+        isIntake= false;
+        noodleMotor.setPower(0);
+    }
+
 
     public void reverseIntake(){
         noodleMotor.setDirection(DcMotorEx.Direction.REVERSE);
         noodleMotor.setPower(0.5);
         isIntake=false;
+        noodleMotor.setPower(0.5);
+    }
+
+    public boolean getIntakeState(){
+        return isIntake;
     }
 
 }

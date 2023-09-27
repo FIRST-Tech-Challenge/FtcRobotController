@@ -17,7 +17,7 @@ public class Drone {
         droneServo2.setDirection(Servo.Direction.REVERSE);
     }
 
-    public void Shoot(){
+    public void shoot(){
         droneServo1.setPosition(shoot);
         droneServo2.setPosition(shoot);
     }

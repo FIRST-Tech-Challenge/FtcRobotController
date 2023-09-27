@@ -21,13 +21,13 @@ public class Fourbar {
         isOuttakePosition= false;
     }
 
-    public void Outtake(){
+    public void outtake(){
         fourbarOne.setPosition(outtake);
         fourbarTwo.setPosition(outtake);
         isOuttakePosition= true;
     }
 
-    public void Storage(){
+    public void storage(){
         fourbarOne.setDirection(Servo.Direction.REVERSE);
         fourbarTwo.setDirection(Servo.Direction.REVERSE);
         fourbarOne.setPosition(storage);

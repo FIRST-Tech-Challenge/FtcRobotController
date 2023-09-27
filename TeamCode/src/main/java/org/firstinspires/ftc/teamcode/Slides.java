@@ -103,6 +103,7 @@ public class Slides {
            slidesMotor.setPower(power);
            //I kinda know what i'm doing hopefully this isn't trolling
         }
+        slidesMotor.setPower(0);
     }
 
     public void runTo(double target) {
@@ -135,6 +136,7 @@ public class Slides {
             power = controller.calculatePower(slidesMotor, targetPos);
             slidesMotor.setPower(power);
         }
+        slidesMotor.setPower(0);
     }
 
     public void resetProfiler() {
