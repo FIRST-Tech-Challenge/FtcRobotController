@@ -29,6 +29,8 @@
 
 package org.firstinspires.ftc.teamcode;
 
+import android.os.Environment;
+
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
@@ -112,8 +114,9 @@ public class ConceptTensorFlowObjectDetection extends LinearOpMode {
             // Use setModelAssetName() if the TF Model is built in as an asset.
             // Use setModelFileName() if you have downloaded a custom team model to the Robot Controller.
 
-            // .setModelAssetName("FtcRobotController/src/main/assets/Test_Model_Blue_Cone.tflite") // If the other path below doesn't work, try this one?
-            .setModelAssetName("/sdcard/FIRST/tflitemodels/est_Model_Blue_Cone.tflite")
+            .setModelAssetName("Blue_Cone_Test_Model.tflite") // If the other path below doesn't work, try this one?
+            // .setModelAssetName("/sdcard/FIRST/tflitemodels/Blue_Cone_Test_Model.tflite")
+            // .setModelAssetName(Environment.getExternalStorageDirectory().getPath())
 
             //.setModelFileName(TFOD_MODEL_FILE)
 
