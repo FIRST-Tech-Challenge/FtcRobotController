@@ -60,4 +60,10 @@ public class Hardware {
         backLeft.setPower(power);
         backRight.setPower(power);
     }
+    public void drive(double frontLeftPower, double frontRightPower, double backLeftPower, double backRightPower){
+        frontLeft.setPower(frontLeftPower);
+        frontRight.setPower(frontRightPower);
+        backLeft.setPower(backLeftPower);
+        backRight.setPower(backRightPower);
+    }
 }
