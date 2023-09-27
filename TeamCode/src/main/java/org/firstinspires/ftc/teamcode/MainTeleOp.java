@@ -40,8 +40,6 @@ public class MainTeleOp extends LinearOpMode {
             telemetry.addData("teleOp is ", "running");
             telemetry.update();
 
-
-
         }
     }
 }

@@ -6,9 +6,10 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 public class Box {
     private final Servo flywheelServo;
     private final Servo flapServo;
+    private boolean pixelsCollected;
     private boolean boxFull;
-    private boolean flapClosed;
-    private double flapOpenOrClosedPos = 0.5;
+    private double flapClosed = 0.5;
+    private double flapOpen = -0.5;
     private double grabPixelPos = 0.5;
 
 
@@ -23,15 +24,27 @@ public class Box {
     public void collectPixel(){
         if(Bot.currentState == Bot.BotState.OUTTAKE){
             if(boxFull){
+                pixelsCollected = true;
                 return;
             }else{
+                flapServo.setPosition(flapClosed);
                 flywheelServo.setPosition(grabPixelPos);
-                flapServo.setPosition(flapOpenOrClosedPos);
                 this.boxFull = true;
+                pixelsCollected = true;
             }
         }
     }
 
-    //INCOMPLETE
+    public void outtakeBox(){
+        if(Bot.currentState == Bot.BotState.OUTTAKE && pixelsCollected){
+            flapServo.setPosition(flapOpen);
+        }
+    }
+
+    public void resetBox(){
+        flapServo.setPosition(flapClosed);
+        flywheelServo.setPosition(0);
+        boxFull = false;
+    }
 
 }
