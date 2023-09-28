@@ -104,6 +104,7 @@ public class BradBot extends BasicRobot{
         boolean isY = gampad.readGamepad(op.gamepad1.y, "gamepad1_y", "deposit");
         boolean up = gampad.readGamepad(op.gamepad1.dpad_up, "gamepad1_dpad_up", "lift Up");
         boolean down = gampad.readGamepad(op.gamepad1.dpad_down, "gamepad1_dpad_down", "lift down");
+        boolean right = gampad.readGamepad(op.gamepad1.dpad_right, "gamepad1_dpad_right", "toggleFieldCentricSLow");
         float manualUp = op.gamepad1.right_trigger;
         float manualDown = op.gamepad1.left_trigger;
         if(isA){
@@ -131,18 +132,14 @@ public class BradBot extends BasicRobot{
             hopper.outtakePixel(Hopper.HopperValues.ONEPIXEL);
         }
         if(isX){
-//            roadrun.toggleButtered();
+            roadrun.toggleButtered();
         }
-        if(true/*!roadrun.isButtered()*/) {
-            roadrun.setWeightedDrivePower(new Pose2d(op.gamepad1.left_stick_y
+        if(right){
+            roadrun.toggleFieldCentric();
+        }
+        roadrun.setWeightedDrivePower(new Pose2d(op.gamepad1.left_stick_y
                     , op.gamepad1.left_stick_x
                     , op.gamepad1.right_stick_x));
-        }
-        else{
-//            roadrun.setButteredDrivePower(new Pose2d(op.gamepad1.left_stick_y
-//                    , op.gamepad1.left_stick_x
-//                    , op.gamepad1.right_stick_x));
-        }
         update();
     }
 

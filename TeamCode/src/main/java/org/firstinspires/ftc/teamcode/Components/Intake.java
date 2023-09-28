@@ -4,6 +4,7 @@ import org.firstinspires.ftc.teamcode.Components.RFModules.Devices.RFBreakBeam;
 import org.firstinspires.ftc.teamcode.Components.RFModules.Devices.RFLimitSwitch;
 import org.firstinspires.ftc.teamcode.Components.RFModules.Devices.RFMotor;
 import org.firstinspires.ftc.teamcode.Components.RFModules.Devices.RFServo;
+import org.openftc.easyopencv.LIFO_OpModeCallbackDelegate;
 
 /**
  * Warren
@@ -93,6 +94,17 @@ public class Intake extends RFMotor {
      * updates sensor information, triggers following action to reverse/stop intaking
      */
     public void update(){
-
+        double power = this.getPower();
+        if(power>0){
+            IntakeStates.INTAKING.setStateTrue();
+        }
+        else if(power<0){
+            IntakeStates.REVERSING.setStateTrue();
+        }else{
+            IntakeStates.STOPPED.setStateTrue();
+        }
+        if(countPixels()==2&& IntakeStates.INTAKING.state){
+            stopIntake();
+        }
     }
 }
