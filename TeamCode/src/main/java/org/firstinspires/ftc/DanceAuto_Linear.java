@@ -9,7 +9,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 @Autonomous(name="Robot: Dance Baby Dance!", group="Robot")
-public class DanceAuto_Linear extends LinearOpMode{
+public class DanceAuto_Linear extends LinearOpMode {
     /* Declare OpMode members. */
     private DcMotor leftFrontDrive = null;
     private DcMotor leftBackDrive = null;
@@ -30,6 +30,8 @@ public class DanceAuto_Linear extends LinearOpMode{
         leftBackDrive  = hardwareMap.get(DcMotor.class, "bl_drv");
         rightFrontDrive = hardwareMap.get(DcMotor.class, "fr_drv");
         rightBackDrive = hardwareMap.get(DcMotor.class, "br_drv");
+
+        
 
         // To drive forward, most robots need the motor on one side to be reversed, because the axles point in opposite directions.
         // When run, this OpMode should start both motors driving forward. So adjust these two lines based on your first test drive.
