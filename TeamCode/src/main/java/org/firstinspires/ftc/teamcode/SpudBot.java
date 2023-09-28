@@ -38,6 +38,11 @@ public class SpudBot {
         rightBackDrive = hardwareMap.get(DcMotor.class, "br_drv");
     }
 
-    public void
+    public void resetHardware() {
+        leftFrontDrive.setPower(0);
+        leftBackDrive.setPower(0);
+        rightFrontDrive.setPower(0);
+        rightBackDrive.setPower(0);
+    }
 
 }
