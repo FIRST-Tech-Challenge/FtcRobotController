@@ -34,7 +34,7 @@ public class gibsonmech extends LinearOpMode{
 
         // run until the end of the match (driver presses STOP)
         while (opModeIsActive()) {
-            double y = -gamepad1.left_stick_y;// Note: pushing stick forward gives negative value
+            /*double y = -gamepad1.left_stick_y;// Note: pushing stick forward gives negative value
             double x = gamepad1.left_stick_x;
             double rotation = gamepad1.right_stick_x;
 
@@ -42,30 +42,40 @@ public class gibsonmech extends LinearOpMode{
             m_rearLeft.setPower(y - x + rotation);
             m_frontRight.setPower(y - x - rotation);
             m_rearRight.setPower(y + x - rotation);*/
+            double LY = -gamepad1.left_stick_y; //y axis on left stick
+            double LX = -gamepad1.left_stick_x; //X axis on left stick
+            double RY = -gamepad1.right_stick_y; //y axis on right stick
+            double RX = -gamepad1.right_stick_x; //X axis on right stick
 
-            if(gamepad1.y){
+            if(LY == 1){
                 m_rearLeft.setPower(1);
                 m_rearRight.setPower(1);
                 m_frontLeft.setPower(1);
                 m_frontRight.setPower(1);
             }
-            else if(gamepad1.x){
-                m_rearLeft.setPower(-1);
-                m_rearRight.setPower(1);
-                m_frontLeft.setPower(1);
-                m_frontRight.setPower(-1);
-            }
-            else if(gamepad1.b){
+            else if(LX == -1){
                 m_rearLeft.setPower(1);
                 m_rearRight.setPower(-1);
                 m_frontLeft.setPower(-1);
                 m_frontRight.setPower(1);
             }
-            else if(gamepad1.a){
+            else if(LX == 1){
+                m_rearLeft.setPower(-1);
+                m_rearRight.setPower(1);
+                m_frontLeft.setPower(1);
+                m_frontRight.setPower(-1);
+            }
+            else if(LY == -1){
                 m_rearLeft.setPower(-1);
                 m_rearRight.setPower(-1);
                 m_frontLeft.setPower(-1);
                 m_frontRight.setPower(-1);
+            }
+            else if(RY == 1){
+
+            }
+            else if(RY == -1){
+
             }
             else{
                 m_rearLeft.setPower(0);
@@ -73,6 +83,7 @@ public class gibsonmech extends LinearOpMode{
                 m_frontLeft.setPower(0);
                 m_frontRight.setPower(0);
             }
+
         }
 
     }
