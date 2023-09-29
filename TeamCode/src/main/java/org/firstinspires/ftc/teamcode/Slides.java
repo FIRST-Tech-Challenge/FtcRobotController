@@ -7,16 +7,6 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 
-//import com.acmerobotics.dashboard.config.Config;
-import com.arcrobotics.ftclib.controller.PIDFController;
-import com.arcrobotics.ftclib.hardware.motors.MotorGroup;
-/*
-Add distance sensor
- */
-
-//how to import these packages?
-
-//import org.firstinspires.ftc.teamcode.util.MotionProfiler;
 
 public class Slides {
     public final DcMotorEx slidesMotor;
@@ -26,10 +16,8 @@ public class Slides {
 
     double maxVelocity, maxAcceleration, distance;
     private MotionProfiler profiler;
-    //4410 code has staticF, not sure what that is. Look into it later
     private PIDController controller;
 
-    //change values in slidesPosition based on the number of stages in the slides
     public enum slidesPosition{
         GROUND,
         LOW,
@@ -39,18 +27,14 @@ public class Slides {
 
 
     private slidesPosition position = slidesPosition.GROUND;
-    private final double tolerance = 20, powerUp = 0.1, powerDown = 0.05, manualDivide = 1, powerMin = 0.1;
-    //change these values based on what they actually are
-    private double manualPower = 0;
 
-    public static int MAX_HEIGHT = -2000, top = -1700, topTeleOp = -1750, mid = -980, low = -300, ground = 0, move_up_inc = 100, move_down_dec = 300;
-    //change values based on what they actually are
+
+    public static int storage= -800, top = -1700, mid = -980, low = -300;
 
     private final OpMode opMode;
     private double target = 0;
     private boolean goingDown = false;
     private double elapsedTime = 0;
-    //private MotionProfiler profiler = new MotionProfiler(30000, 20000);
     public boolean movingDown = false;
 
     public Slides(OpMode opMode){
@@ -65,18 +49,18 @@ public class Slides {
         controller = new PIDController(p, i, d);
         slidesMotor.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
 
-        //calculate setPoint based on stage
         if(stage == 1){
-            setPoint = low;
+            setPoint = storage;
         }else if(stage == 2){
-            setPoint = mid;
+            setPoint = low;
         }else if(stage == 3){
-            setPoint = top;
-        }else{
+            setPoint = mid;
+        }else if(stage==4){
+            setPoint= top;
+        } else{
             telemetry.addData("incorrect value entered: ", stage);
             return;
         }
-        //currently supports 3 stages, will update later
 
         if(position.equals(slidesPosition.GROUND)){
             distance = setPoint;
@@ -97,11 +81,10 @@ public class Slides {
 
         while(!profiler.isDone){
            double nextTargetPos = profiler.profileMotion(elapsedTime);
-           //you only need to create ONE motion profile aka no need to update distance everytime...I think...? PLS HELP IM GOING INSANE
+           //you only need to create ONE motion profile aka no need to update distance everytime
            controller.setSetPoint(nextTargetPos);
            power = controller.calculatePower(slidesMotor, elapsedTime);
            slidesMotor.setPower(power);
-           //I kinda know what i'm doing hopefully this isn't trolling
         }
         slidesMotor.setPower(0);
     }
@@ -138,6 +121,7 @@ public class Slides {
         }
         slidesMotor.setPower(0);
     }
+
 
     public void resetProfiler() {
         profiler = new MotionProfiler(1, encoderClickPerSecond);

@@ -195,6 +195,16 @@ public class Bot {
         resetIMU();
     }
 
+    public static void storageSlides(){
+        slides.runTo(1);
+    }
+
+    public static void goOuttakeStoragePosition(){
+        Bot.box.resetBox();
+        Bot.storageSlides();
+        Bot.fourbar.storage();
+    }
+
 
     public void fixMotors(double velocity) {
         fl.setDirection(DcMotorEx.Direction.REVERSE); //invert

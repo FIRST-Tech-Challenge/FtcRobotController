@@ -85,14 +85,12 @@ public class MainTeleOp extends LinearOpMode {
 
                 //Box deposits
                 if(gp2.wasJustPressed(GamepadKeys.Button.A) && !firstPixelIsDesposited){
-                //    Bot.box.depositeFirstPixel();
+                    Bot.box.depositFirstPixel();
                     firstPixelIsDesposited= true;
                 }
                 if(gp2.wasJustPressed(GamepadKeys.Button.A) && firstPixelIsDesposited) {
-                 //   Bot.box.depositSecondPixel();
-                    Bot.box.resetBox();
-                  //  Bot.slides.storage();
-                    Bot.fourbar.storage();
+                    Bot.box.depositSecondPixel();
+                    Bot.goOuttakeStoragePosition();;
                     firstPixelIsDesposited = false;
                 }
                 if(gp2.wasJustPressed(GamepadKeys.Button.B)) {
@@ -123,10 +121,10 @@ public class MainTeleOp extends LinearOpMode {
                     Bot.box.resetBox();
                 }
                 if(gp2.wasJustPressed(GamepadKeys.Button.A) && !firstPixelIsDesposited){
-                 //   Bot.box.depositFirstPixel();
+                    Bot.box.depositFirstPixel();
                 }
                 if(gp2.wasJustPressed(GamepadKeys.Button.A) && firstPixelIsDesposited){
-                    //Bot.box.depositSecondPixel();
+                    Bot.box.depositSecondPixel();
                 }
 
                 //intake movement
