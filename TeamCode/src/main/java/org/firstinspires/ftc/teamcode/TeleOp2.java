@@ -96,12 +96,24 @@ public class TeleOp2 extends LinearOpMode {
             */
 
             // Send calculated power to wheels
-            leftFrontDrive.setPower(.5*leftFrontPower);
-            rightFrontDrive.setPower(.5*rightFrontPower);
-            leftBackDrive.setPower(.5*leftBackPower);
-            rightBackDrive.setPower(.5*rightBackPower);
-+
-        +
+            if (leftFrontPower <= -.05){
+                leftFrontPower += -.12;
+            }
+            if (leftBackPower >= .05){
+                leftFrontPower += .12;
+            }
+            if (rightFrontPower >= .05){
+                rightFrontPower += .12;
+            }
+            if (rightBackPower >= .05){
+                rightBackPower += .12;
+            }
+
+            leftFrontDrive.setPower(leftFrontPower);
+            rightFrontDrive.setPower(rightFrontPower);
+            leftBackDrive.setPower(leftBackPower);
+            rightBackDrive.setPower(rightBackPower);
+
             // Show the elapsed game time and wheel power.
             telemetry.addData("Status", "Run Time: " + runtime.toString());
             telemetry.addData("Front left/Right", "%4.2f, %4.2f", leftFrontPower, rightFrontPower);
