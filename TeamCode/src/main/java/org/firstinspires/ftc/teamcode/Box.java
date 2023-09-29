@@ -4,47 +4,44 @@ import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 
 public class Box {
-    private final Servo flywheelServo;
+    private final Servo flywheelServo1;
+    private final Servo flywheelServo2;
     private final Servo flapServo;
-    private boolean pixelsCollected;
     private boolean boxFull;
+
     private double flapClosed = 0.5;
     private double flapOpen = -0.5;
-    private double grabPixelPos = 0.5;
+
+    //boolean boxFull has to receive input from break beam sensor
 
 
     public Box(OpMode opMode) {
-        flywheelServo = opMode.hardwareMap.servo.get("flywheel servo");
+        flywheelServo1 = opMode.hardwareMap.servo.get("flywheel servo");
+        flywheelServo2 = opMode.hardwareMap.servo.get("flywheel servo2");
         flapServo = opMode.hardwareMap.servo.get("flap servo");
-
-        flywheelServo.setDirection(Servo.Direction.FORWARD);
-        flapServo.setDirection(Servo.Direction.FORWARD);
     }
 
-    public void collectPixel(){
-        if(Bot.currentState == Bot.BotState.OUTTAKE){
-            if(boxFull){
-                pixelsCollected = true;
-                return;
-            }else{
-                flapServo.setPosition(flapClosed);
-                flywheelServo.setPosition(grabPixelPos);
-                this.boxFull = true;
-                pixelsCollected = true;
-            }
-        }
+    public void depositFirstPixel(){
+        flywheelServo1.setPosition(0.5);
+        flapServo.setPosition(flapOpen);
     }
 
-    public void outtakeBox(){
-        if(Bot.currentState == Bot.BotState.OUTTAKE && pixelsCollected){
+    public void depositSecondPixel(){
+        flywheelServo2.setPosition(0.5);
+        flapServo.setPosition(flapOpen);
+    }
+
+
+    public void openFlap(){
+        if(Bot.currentState == Bot.BotState.OUTTAKE && boxFull){
             flapServo.setPosition(flapOpen);
         }
     }
 
     public void resetBox(){
         flapServo.setPosition(flapClosed);
-        flywheelServo.setPosition(0);
-        boxFull = false;
+        flywheelServo1.setPosition(0);
+        flywheelServo2.setPosition(0);
     }
 
 }
