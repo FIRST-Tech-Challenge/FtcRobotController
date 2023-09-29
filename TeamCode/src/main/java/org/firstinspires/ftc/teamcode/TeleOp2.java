@@ -51,7 +51,7 @@ public class TeleOp2 extends LinearOpMode {
 
         // run until the end of the match (driver presses STOP)
         while (opModeIsActive()) {
-            double max;
+            //double max;
 
             // POV Mode uses left joystick to go forward & strafe, and right joystick to rotate.
             double axial   = -gamepad1.left_stick_y;  // Note: pushing stick forward gives negative value
@@ -67,16 +67,16 @@ public class TeleOp2 extends LinearOpMode {
 
             // Normalize the values so no wheel power exceeds 100%
             // This ensures that the robot maintains the desired motion.
-            max = Math.max(Math.abs(leftFrontPower), Math.abs(rightFrontPower));
-            max = Math.max(max, Math.abs(leftBackPower));
-            max = Math.max(max, Math.abs(rightBackPower));
+            //max = Math.max(Math.abs(leftFrontPower), Math.abs(rightFrontPower));
+            //max = Math.max(max, Math.abs(leftBackPower));
+            //max = Math.max(max, Math.abs(rightBackPower));
 
-            if (max > 1.0) {
+            /*if (max > 1.0) {
                 leftFrontPower  /= max;
                 rightFrontPower /= max;
                 leftBackPower   /= max;
                 rightBackPower  /= max;
-            }
+            }*/
 
             // This is test code:
             //
@@ -96,6 +96,19 @@ public class TeleOp2 extends LinearOpMode {
             */
 
             // Send calculated power to wheels
+            if (leftFrontPower <= -.05){
+                leftFrontPower += -.12;
+            }
+            if (leftBackPower >= .05){
+                leftFrontPower += .12;
+            }
+            if (rightFrontPower >= .05){
+                rightFrontPower += .12;
+            }
+            if (rightBackPower >= .05){
+                rightBackPower += .12;
+            }
+
             leftFrontDrive.setPower(leftFrontPower);
             rightFrontDrive.setPower(rightFrontPower);
             leftBackDrive.setPower(leftBackPower);
