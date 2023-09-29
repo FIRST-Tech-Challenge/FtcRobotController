@@ -20,7 +20,13 @@ public class Noodles {
         noodleMotor.setPower(0.5);
         isIntake=true;
     }
-    public void Stop(){
+
+    public void intake(double power){
+        noodleMotor.setPower(power);
+        isIntake=true;
+    }
+
+    public void stop(){
         isIntake= false;
         noodleMotor.setPower(0);
     }

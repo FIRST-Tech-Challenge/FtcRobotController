@@ -26,12 +26,9 @@ public class MainTeleOp extends LinearOpMode {
     private IMU imu;
     private GamepadEx gp1, gp2;
     Bot bot;
+    private boolean isAutomatic;
+    private boolean firstPixelIsDesposited;
 
-   /* Slides slides;
-    Noodles noodles;
-    Transfer transfer;
-
-    */
 
     private double driveSpeed=1;
 
@@ -54,58 +51,114 @@ public class MainTeleOp extends LinearOpMode {
             gp1.readButtons();
             gp2.readButtons();
 
-            //slide movement (automatic stages)
-            if (gp2.wasJustPressed(GamepadKeys.Button.DPAD_UP)) {
-                Bot.slides.runTo(3);
-            } else if (gp2.wasJustPressed(GamepadKeys.Button.DPAD_LEFT)) {
-                Bot.slides.runTo(2);
-            } else if (gp2.wasJustPressed(GamepadKeys.Button.DPAD_RIGHT)) {
-                Bot.slides.runTo(4);
-            } else if (gp2.wasJustPressed(GamepadKeys.Button.DPAD_DOWN)) {
-                Bot.slides.runTo(1);
+            if(gp2.wasJustPressed(GamepadKeys.Button.START)){
+                isAutomatic=!isAutomatic;
             }
 
-            //triggers are for manual movement of slides and fourbar
-            if(gp2.getTrigger(GamepadKeys.Trigger.LEFT_TRIGGER)>0.1){
-                Bot.slides.runTo(gp2.getTrigger(GamepadKeys.Trigger.LEFT_TRIGGER));
-            }
-            if(gp2.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER)>0.1){
-                Bot.fourbar.runManualOuttake(gp2.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER));
-            }
+            if(isAutomatic){
 
-            //fourbar automatic movement)
-            if(gp2.wasJustPressed(GamepadKeys.Button.X)){
-                Bot.fourbar.outtake();
-            }
-            if(gp2.wasJustPressed(GamepadKeys.Button.Y)){
-                Bot.fourbar.storage();
-            }
-
-            //drone movement
-            if(gp2.wasJustPressed(GamepadKeys.Button.A)){
-                Bot.drone.shoot();
-                Bot.drone.reset();
-            }
-
-            //noodle intake
-            if(gp2.wasJustPressed(GamepadKeys.Button.B)){
-                if(Bot.noodles.getIntakeState()){
-                    Bot.noodles.Intake();
+                //noodle intake
+                if(gp2.wasJustPressed(GamepadKeys.Button.Y)){
+                        Bot.noodles.Intake();
+                        /*  while(!holdFull){
+                                Bot.noodles.Intake();
+                          }
+                          if(holdFull){
+                            Bot.noodles.stop()
+                            Bot.fourbar.outtake();
+                          }
+                          */
+                    //when break beam sensor detects hold if full, stop intaking and bring fourbar to outtake position
                 }
-                if(!Bot.noodles.getIntakeState()){
-                    Bot.noodles.Stop();
+
+                //slide movement (automatic stages)
+                if (gp2.wasJustPressed(GamepadKeys.Button.DPAD_UP)) {
+                    Bot.slides.runTo(3);
+                } else if (gp2.wasJustPressed(GamepadKeys.Button.DPAD_LEFT)) {
+                    Bot.slides.runTo(2);
+                } else if (gp2.wasJustPressed(GamepadKeys.Button.DPAD_RIGHT)) {
+                    Bot.slides.runTo(4);
+                } else if (gp2.wasJustPressed(GamepadKeys.Button.DPAD_DOWN)) {
+                    Bot.slides.runTo(1);
                 }
+
+
+                //Box deposits
+                if(gp2.wasJustPressed(GamepadKeys.Button.A) && !firstPixelIsDesposited){
+                //    Bot.box.depositeFirstPixel();
+                    firstPixelIsDesposited= true;
+                }
+                if(gp2.wasJustPressed(GamepadKeys.Button.A) && firstPixelIsDesposited) {
+                 //   Bot.box.depositSecondPixel();
+                    Bot.box.resetBox();
+                  //  Bot.slides.storage();
+                    Bot.fourbar.storage();
+                    firstPixelIsDesposited = false;
+                }
+                if(gp2.wasJustPressed(GamepadKeys.Button.B)) {
+                //   Bot.suspension.hang();
+                    Bot.drone.shoot();
+
+                }
+
             }
 
-            //HAVE TO ADD BOX CODE
 
 
+            if(!isAutomatic){
 
+                //drone movement
+                if(gp2.wasJustPressed(GamepadKeys.Button.X)){
+                    Bot.drone.shoot();
+                    Bot.drone.reset();
+                }
 
+                //suspension hang
+                if(gp2.wasJustPressed(GamepadKeys.Button.B)){
+                  //  Bot.suspension.hang();
+                }
+
+                //Box movement
+                if(gp2.wasJustPressed(GamepadKeys.Button.Y)){
+                    Bot.box.resetBox();
+                }
+                if(gp2.wasJustPressed(GamepadKeys.Button.A) && !firstPixelIsDesposited){
+                 //   Bot.box.depositFirstPixel();
+                }
+                if(gp2.wasJustPressed(GamepadKeys.Button.A) && firstPixelIsDesposited){
+                    //Bot.box.depositSecondPixel();
+                }
+
+                //intake movement
+                if(gp2.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER)>0.1){
+                    double power = gp2.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER);
+                    while(gp2.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER)>0.1){
+                        Bot.noodles.intake(power);
+                        power= gp2.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER);
+                    }
+                    Bot.noodles.stop();
+                }
+
+                //JOYSTICK CODE??? FOR SLIDES AND FOURBAR
+
+                //slides code
+                if(gp2.getLeftY()!=0){
+                    Bot.slides.runTo(gp2.getLeftY());
+                }
+
+                //fourbar code
+                if(gp2.getRightY()>0){
+                    Bot.fourbar.runManualOuttake(gp2.getLeftY());
+                }
+                if(gp2.getRightY()<0){
+                    Bot.fourbar.runManualStorage(gp2.getLeftY());
+                }
+
+            }
         }
-
-
     }
+
+
     private void drive() {
         if (gp1.wasJustReleased(GamepadKeys.Button.LEFT_STICK_BUTTON)) {
             bot.resetIMU();
