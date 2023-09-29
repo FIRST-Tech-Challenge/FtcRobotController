@@ -1,1 +1,0 @@
-Location of external libs
