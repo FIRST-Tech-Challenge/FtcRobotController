@@ -149,6 +149,7 @@ public class BradBot extends BasicRobot{
      * All else is logged in each respective function
      */
     public void update(){
+        LOGGER.log("Entering Function BradBot.update(), updating each component");
         super.update();
         arm.update();
         cv.update();

@@ -55,6 +55,7 @@ public class RFLogger {
         }
     }
 
+    @SuppressLint("SdCardPath")
     public RFLogger (String className){
         LOGGER = Logger.getLogger(className);
         LOGGER.setLevel(logLevel);

@@ -11,6 +11,8 @@ import com.qualcomm.robotcore.hardware.VoltageSensor;
 import org.firstinspires.ftc.teamcode.Components.RFModules.Devices.RFGamepad;
 import org.firstinspires.ftc.teamcode.Components.RFModules.System.Logger;
 import org.firstinspires.ftc.teamcode.Components.RFModules.System.Queuer;
+import org.firstinspires.ftc.teamcode.Components.RFModules.System.RFLogger;
+
 /**
  * Warren Zhou
  * 9/1
@@ -18,6 +20,7 @@ import org.firstinspires.ftc.teamcode.Components.RFModules.System.Queuer;
  */
 public class BasicRobot{
     public static Logger logger;
+    public static RFLogger LOGGER;
     public static LinearOpMode op = null;
     public Queuer queuer;
     public static boolean isTeleop;
@@ -36,6 +39,7 @@ public class BasicRobot{
 
     public BasicRobot(LinearOpMode opMode, boolean p_isTeleop){
         op = opMode;
+        LOGGER = new RFLogger("Robot");
         logger = new Logger();
         logger.createFile("/RobotLogs/GeneralRobot", "Runtime    Component               " +
                 "Function                        Action");

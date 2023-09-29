@@ -53,7 +53,8 @@ public class StandardTrackingWheelLocalizer implements Localizer {
 
     private double[] lastTicks = {0,0,0};
 
-    private double ticks_per_radian = TICKS_PER_REV*LATERAL_DISTANCE/(WHEEL_RADIUS*4*PI), ticks_per_inch = TICKS_PER_REV/(WHEEL_RADIUS*2*PI);
+    private double ticks_per_radian = TICKS_PER_REV*LATERAL_DISTANCE/(WHEEL_RADIUS*4*PI), ticks_per_inch = TICKS_PER_REV/(WHEEL_RADIUS*2*PI),
+    aOffset=0, lastAngle=0;
 
     //start 5.1,5.5,...
     //end 4 low
@@ -146,7 +147,11 @@ public class StandardTrackingWheelLocalizer implements Localizer {
 
         double deltaX = finalSolve[0][0];
         double deltaY = finalSolve[1][0];
-        angle = (nowTicks[1]-nowTicks[0])/ticks_per_radian;
+        if(angle!=lastAngle){
+            aOffset += angle-lastAngle;
+        }
+        angle = aOffset + (nowTicks[1]-nowTicks[0])/ticks_per_radian;
+        lastAngle = angle;
         xpos += deltaX;
         ypos += deltaY;
         currentPose = new Pose2d(xpos,ypos,angle);
