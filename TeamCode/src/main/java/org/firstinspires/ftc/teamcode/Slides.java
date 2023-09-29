@@ -18,6 +18,7 @@ public class Slides {
     private MotionProfiler profiler;
     private PIDController controller;
 
+
     public enum slidesPosition{
         GROUND,
         LOW,
@@ -29,10 +30,11 @@ public class Slides {
     private slidesPosition position = slidesPosition.GROUND;
 
 
-    public static int storage= -800, top = -1700, mid = -980, low = -300;
+
+    public static int storage= 0, top = 1700, mid = 980, low = 300;
 
     private final OpMode opMode;
-    private double target = 0;
+    private double currentPosition = 0;
     private boolean goingDown = false;
     private double elapsedTime = 0;
     public boolean movingDown = false;
@@ -89,24 +91,20 @@ public class Slides {
         slidesMotor.setPower(0);
     }
 
-    public void runTo(double target) {
-
+    public void runTo(double setPoint) {
         slidesMotor.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
         resetProfiler();
         controller = new PIDController(p, i, d);
-        goingDown = target > this.target;
-        this.target = target;
-        setPoint = target;
+        goingDown = setPoint < currentPosition;
 
-        if(position.equals(slidesPosition.GROUND)){
-            distance = setPoint;
-        }else if(position.equals(slidesPosition.LOW)){
-            distance = low - setPoint;
-        }else if(position.equals(slidesPosition.MID)){
-            distance = mid - setPoint;
-        }else if(position.equals(slidesPosition.HIGH)){
-            distance = top - setPoint;
+
+        if(goingDown){
+            distance =  currentPosition - setPoint;
+            slidesMotor.setDirection(DcMotorEx.Direction.REVERSE);
+        }else{
+            distance = setPoint - currentPosition;
         }
+
 
         profiler.updateDistance(distance);
         elapsedTime = opMode.time;
@@ -128,6 +126,10 @@ public class Slides {
     }
     public void resetEncoder() {
         slidesMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+    }
+
+    public boolean getGoingDown(){
+        return goingDown;
     }
 
 }

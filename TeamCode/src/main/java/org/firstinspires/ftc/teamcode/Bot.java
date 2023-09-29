@@ -199,7 +199,7 @@ public class Bot {
         slides.runTo(1);
     }
 
-    public static void goOuttakeStoragePosition(){
+    public static void resetOuttake(){
         Bot.box.resetBox();
         Bot.storageSlides();
         Bot.fourbar.storage();
