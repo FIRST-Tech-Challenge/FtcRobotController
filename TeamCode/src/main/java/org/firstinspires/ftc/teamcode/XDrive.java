@@ -44,6 +44,14 @@ public class XDrive extends LinearOpMode {
         double forwardPower;
         double strafePower;
 
+        //variables for arm
+        double neckInput;
+        double shoulderInput;
+
+        //initializes positions for claw grips
+        leftGrip.setPosition(0);
+        rightGrip.setPosition(0);
+
         //set the directions of motors
         northWheel.setDirection(DcMotor.Direction.FORWARD);
         southWheel.setDirection(DcMotor.Direction.REVERSE);
@@ -61,6 +69,33 @@ public class XDrive extends LinearOpMode {
             southWheel.setPower(strafePower);
             westWheel.setPower(forwardPower);
             eastWheel.setPower(forwardPower);
+
+            //Sets variables for inputs received from gamepad2
+            neckInput=gamepad2.left_stick_x;
+            shoulderInput=gamepad2.right_stick_y;
+
+            //Sets power of the neck and shoulder based on double variables
+            neck.setPower(neckInput);
+            shoulder.setPower(shoulderInput);
+
+            //changes the current wrist position based on inputs received from the dpad on gamepad2
+            while(gamepad2.dpad_up){
+                wrist.setPosition(wrist.getPosition()+0.1);
+            } while(gamepad2.dpad_down){
+                wrist.setPosition(wrist.getPosition()-0.1);
+            }
+
+            //changes current grip position based on inputs received from A and B buttons on gamepad2
+            if(gamepad2.a) {
+                //returns grip to retracted position
+                leftGrip.setPosition(0);
+                rightGrip.setPosition(0);
+            }
+            if (gamepad2.b) {
+                //sets grip to grab position
+                leftGrip.setPosition(0.5);
+                rightGrip.setPosition(0.5);
+            }
 
             telemetry.addData("status", "running");
             telemetry.update();
