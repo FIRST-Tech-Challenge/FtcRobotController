@@ -10,14 +10,14 @@ import com.noahbres.meepmeep.roadrunner.trajectorysequence.sequencesegment.Seque
 
 import java.util.ArrayList;
 
-public class TestAuto01Vis {
+public class FrontRedAuto {
     enum Detection {
         LEFT,
         CENTER,
         RIGHT
     }
 
-    private static final Pose2d STARTING_POSE = new Pose2d(61.5, -36, Math.toRadians(180));
+    private static final Pose2d STARTING_POSE = new Pose2d(12, -61.5, Math.toRadians(90));
 
     private static ArrayList<TrajectorySequence> sequences = new ArrayList<TrajectorySequence>();
 
@@ -59,7 +59,7 @@ public class TestAuto01Vis {
     public static void main(String[] args) {
         System.setProperty("sun.java2d.opengl", "true");
         MeepMeep meepMeep = new MeepMeep(800);
-        Detection detection = Detection.LEFT;
+        Detection detection = Detection.RIGHT;
         RoadRunnerBotEntity myBot;
         DriveShim driveShim;
 
@@ -71,7 +71,7 @@ public class TestAuto01Vis {
 
         followTrajectorySequence(
                 driveShim.trajectorySequenceBuilder(STARTING_POSE)
-                        .forward(25.0)
+                        .forward(28.0)
                         .build()
         );
 
@@ -82,20 +82,17 @@ public class TestAuto01Vis {
                 followTrajectorySequence(
                         driveShim.trajectorySequenceBuilder(getCurrentTrajectorySequence(driveShim).end())
                                 .turn(Math.toRadians(90))
+                                .forward(2)
                                 .build()
                 );
                 break;
             case CENTER:
-//                followTrajectorySequence(
-//                        driveShim.trajectorySequenceBuilder(getCn    urrentTrajectorySequence(driveShim).end())
-//
-//                                .build()
-//                );
                 break;
             case RIGHT:
                 followTrajectorySequence(
                         driveShim.trajectorySequenceBuilder(getCurrentTrajectorySequence(driveShim).end())
                                 .turn(Math.toRadians(-90))
+                                .forward(2)
                                 .build()
                 );
                 break;
@@ -103,7 +100,7 @@ public class TestAuto01Vis {
 
         myBot.followTrajectorySequence(mergeSequences(sequences));
 
-        meepMeep.setBackground(MeepMeep.Background.FIELD_POWERPLAY_OFFICIAL)
+        meepMeep.setBackground(MeepMeep.Background.FIELD_CENTERSTAGE_JUICE_DARK)
                 .setDarkMode(true)
                 .setBackgroundAlpha(0.95f)
                 .addEntity(myBot)
