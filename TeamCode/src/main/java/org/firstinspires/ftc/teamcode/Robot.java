@@ -339,8 +339,10 @@ public class Robot {
         double currentHeading = getCurrentHeading();
         double deltaHeading = Math.abs(targetHeading - currentHeading);
         if (deltaHeading <= ERROR_TOLERANCE) {
+            telemetry.addLine("within error, return true");
             return true;
         } else {
+            telemetry.addLine("not within error, return false");
             return false;
         }
     }
