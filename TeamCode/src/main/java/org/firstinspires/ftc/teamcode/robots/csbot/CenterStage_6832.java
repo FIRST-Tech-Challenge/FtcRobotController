@@ -30,7 +30,7 @@ CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR
 TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
 THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
-package org.firstinspires.ftc.teamcode.robots.taubot;
+package org.firstinspires.ftc.teamcode.robots.csbot;
 
 import static org.firstinspires.ftc.teamcode.robots.taubot.util.Constants.LOW_BATTERY_VOLTAGE;
 
@@ -44,13 +44,13 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 import org.firstinspires.ftc.robotcore.internal.system.Misc;
-import org.firstinspires.ftc.teamcode.robots.taubot.subsystem.DriveTrain;
-import org.firstinspires.ftc.teamcode.robots.taubot.subsystem.Robot;
-import org.firstinspires.ftc.teamcode.robots.taubot.subsystem.UnderArm;
-import org.firstinspires.ftc.teamcode.robots.taubot.util.Constants;
-import org.firstinspires.ftc.teamcode.robots.taubot.util.ExponentialSmoother;
-import org.firstinspires.ftc.teamcode.robots.taubot.util.TelemetryProvider;
-import org.firstinspires.ftc.teamcode.robots.taubot.vision.VisionProviders;
+import org.firstinspires.ftc.teamcode.robots.csbot.subsystem.TauDriveTrain;
+import org.firstinspires.ftc.teamcode.robots.csbot.subsystem.Robot;
+import org.firstinspires.ftc.teamcode.robots.csbot.subsystem.UnderArm;
+import org.firstinspires.ftc.teamcode.robots.csbot.util.Constants;
+import org.firstinspires.ftc.teamcode.robots.csbot.util.ExponentialSmoother;
+import org.firstinspires.ftc.teamcode.robots.csbot.util.TelemetryProvider;
+import org.firstinspires.ftc.teamcode.robots.csbot.vision.VisionProviders;
 import org.firstinspires.ftc.teamcode.util.Vector2;
 
 import java.util.Arrays;
@@ -64,15 +64,15 @@ import java.util.Map;
 
 @com.qualcomm.robotcore.eventloop.opmode.Autonomous(name = "0 PowerPlay_6832", group = "Challenge") // @Autonomous(...) is the other common choice
 @Config(value = "AA_PP_6832")
-public class PowerPlay_6832 extends OpMode {
+public class CenterStage_6832 extends OpMode {
 
     /* Declare OpMode members. */
     private ElapsedTime runtime = new ElapsedTime();
 
     //private PoseFishin.RobotType currentBot = PoseFishin.RobotType.TomBot;
 
-    public static Robot robot;
-    public static Autonomous auto;
+    static Robot robot;
+    static Autonomous auto;
     private FtcDashboard dashboard;
     ExponentialSmoother forwardSmoother, rotateSmoother;
     public static double FORWARD_SMOOTHING_FACTOR = 0.3;
@@ -90,19 +90,19 @@ public class PowerPlay_6832 extends OpMode {
     static boolean gridDriveActive = false;
     private boolean initializing, smoothingEnabled;
     public static boolean numericalDashboardEnabled = false;
-    public static Constants.Alliance alliance;
+    static Constants.Alliance alliance;
 
     public static Constants.Position origin;
-    public static Constants.Position startingPosition;
-    public static boolean targetAltPole = false;
+    static Constants.Position startingPosition;
+    static boolean targetAltPole = false;
     public static GameState gameState = GameState.AUTONOMOUS;
     static int gameStateIndex;
 
     private long startTime;
 
     // vision state
-    public static int visionProviderIndex;
-    public static boolean visionProviderFinalized;
+    static int visionProviderIndex;
+    static boolean visionProviderFinalized;
 
     // loop time profile
     long lastLoopClockTime, loopTime;
@@ -261,7 +261,7 @@ public class PowerPlay_6832 extends OpMode {
 
         telemetry.update();
 
-        robot.driveTrain.articulate(DriveTrain.Articulation.unlock);
+        robot.driveTrain.articulate(TauDriveTrain.Articulation.unlock);
     }
 
     // Code to run REPEATEDLY after the driver hits INIT, but before they hit PLAY
@@ -299,7 +299,7 @@ public class PowerPlay_6832 extends OpMode {
         //load saved position if teleop and recent enough/preset otherwise
         resetGame();
 
-        robot.driveTrain.articulate(DriveTrain.Articulation.unlock);
+        robot.driveTrain.articulate(TauDriveTrain.Articulation.unlock);
 
 
         if(gameState.equals(GameState.TELE_OP)){
@@ -312,7 +312,7 @@ public class PowerPlay_6832 extends OpMode {
             robot.underarm.articulate(UnderArm.Articulation.home);
         }
         robot.crane.updateScoringPattern();
-        robot.driveTrain.articulate(DriveTrain.Articulation.unlock);
+        robot.driveTrain.articulate(TauDriveTrain.Articulation.unlock);
         robot.driveTrain.enableChassisLength();
 
         rumble();
@@ -347,7 +347,7 @@ public class PowerPlay_6832 extends OpMode {
 
             if (active) {
                 long currentTime = System.currentTimeMillis();
-                if (!endGameHandled && gameState == PowerPlay_6832.GameState.TELE_OP && (currentTime - startTime) * 1e-3 >= 80) {
+                if (!endGameHandled && gameState == GameState.TELE_OP && (currentTime - startTime) * 1e-3 >= 80) {
 //                robot.articulate(Robot.Articulation.START_END_GAME);
                     endGameHandled = true;
                     rumble();

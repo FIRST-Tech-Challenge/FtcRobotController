@@ -1,9 +1,7 @@
-package org.firstinspires.ftc.teamcode.robots.taubot.subsystem;
+package org.firstinspires.ftc.teamcode.robots.csbot.subsystem;
 
-import static org.firstinspires.ftc.teamcode.robots.taubot.PowerPlay_6832.origin;
 import static org.firstinspires.ftc.teamcode.robots.taubot.util.Constants.MAX_CHASSIS_LENGTH;
 import static org.firstinspires.ftc.teamcode.robots.taubot.util.Constants.MIN_SAFE_CHASSIS_LENGTH;
-import static org.firstinspires.ftc.teamcode.robots.taubot.util.Utils.craneIK;
 import static org.firstinspires.ftc.teamcode.robots.taubot.util.Utils.wrapAngleRad;
 import static org.firstinspires.ftc.teamcode.util.utilMethods.futureTime;
 
@@ -17,14 +15,12 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.VoltageSensor;
 
 import org.firstinspires.ftc.robotcore.internal.system.Misc;
-import org.firstinspires.ftc.teamcode.robots.taubot.Autonomous;
-import org.firstinspires.ftc.teamcode.robots.taubot.Field;
-import org.firstinspires.ftc.teamcode.robots.taubot.PowerPlay_6832;
-import org.firstinspires.ftc.teamcode.robots.taubot.util.Constants;
-import org.firstinspires.ftc.teamcode.robots.taubot.util.DashboardUtil;
-import org.firstinspires.ftc.teamcode.robots.taubot.util.PositionCache;
-import org.firstinspires.ftc.teamcode.robots.taubot.util.TauPosition;
-import org.firstinspires.ftc.teamcode.robots.taubot.vision.Target;
+import org.firstinspires.ftc.teamcode.robots.csbot.Field;
+import org.firstinspires.ftc.teamcode.robots.csbot.CenterStage_6832;
+import org.firstinspires.ftc.teamcode.robots.csbot.util.Constants;
+import org.firstinspires.ftc.teamcode.robots.csbot.util.PositionCache;
+import org.firstinspires.ftc.teamcode.robots.csbot.util.TauPosition;
+import org.firstinspires.ftc.teamcode.robots.csbot.vision.Target;
 import org.firstinspires.ftc.teamcode.statemachine.StateMachine;
 import org.opencv.android.Utils;
 import org.opencv.core.CvType;
@@ -44,10 +40,11 @@ import java.util.Objects;
  * @author Mahesh Natamai
  */
 
-@Config(value = "AA_PPRobot")
+@Config(value = "AA_CSRobot")
 public class Robot implements Subsystem {
 
-    public DriveTrain driveTrain;
+    public TauDriveTrain driveTrain;
+    public CSDriveTrain csDriveTrain;
     public Turret turret;
     public Crane crane;
     public UnderArm underarm;
@@ -59,8 +56,6 @@ public class Robot implements Subsystem {
     public boolean updatePositionCache = false;
 
     private long[] subsystemUpdateTimes;
-    private boolean autoDumpEnabled, doubleDuckEnabled;
-
     private TauPosition pos;
 
     private boolean rightConeStack;
@@ -77,7 +72,6 @@ public class Robot implements Subsystem {
     private Mat craneMat;
     public static int CB_WIDTH = 320;
     public static int CB_HEIGHT = 240;
-    public static int numConesToCycle = 1;
     boolean updatePoseHappens = false;
 
     double current_dx = 0;
@@ -97,7 +91,7 @@ public class Robot implements Subsystem {
         }
 
         // initializing subsystems
-        driveTrain = new DriveTrain(hardwareMap, this, simulated);
+        driveTrain = new TauDriveTrain(hardwareMap, this, simulated);
         turret = new Turret(hardwareMap, this, simulated);
         underarm = new UnderArm(hardwareMap, this, simulated);
         crane = new Crane(hardwareMap, this, simulated);
@@ -130,7 +124,6 @@ public class Robot implements Subsystem {
         telemetryMap.put("Time Thing", timeSupervisor);
         telemetryMap.put("Auton Time", (totalAutonTime-System.nanoTime())/1e9);
         telemetryMap.put("Unfold Stage", unfoldStage);
-        telemetryMap.put("auto-dump enabled", autoDumpEnabled);
         telemetryMap.put("Cancel Transfer Stage", cancelTransferIndex);
 
         for (int i = 0; i < subsystems.length; i++) {
@@ -176,22 +169,22 @@ public class Robot implements Subsystem {
         //driveTrain.resetDrivetrainPos(start, pos, loggerTimeoutMinutes);
         //turret.resetTurretHeading(pos, loggerTimeoutMinutes);
         driveTrain.resetEncoders();
-        if(PowerPlay_6832.gameState.equals(PowerPlay_6832.GameState.AUTONOMOUS)) {
+        if(CenterStage_6832.gameState.equals(CenterStage_6832.GameState.AUTONOMOUS)) {
             driveTrain.setPoseEstimate(new Pose2d(start.getPose().getX(), start.getPose().getY()));
             //articulate(Robot.Articulation.UNFOLD);
-            articulate(Robot.Articulation.MANUAL);
+            articulate(Articulation.MANUAL);
             turret.articulate(Turret.Articulation.lockToZero);
             turret.setHeading((turret.TUNEABLE_SIZING_OFFSET/turret.TRANSFER_TICS)*Math.PI);
-        }else if (PowerPlay_6832.gameState.equals(PowerPlay_6832.GameState.TEST) || PowerPlay_6832.gameState.equals(PowerPlay_6832.GameState.DEMO)){
+        }else if (CenterStage_6832.gameState.equals(CenterStage_6832.GameState.TEST) || CenterStage_6832.gameState.equals(CenterStage_6832.GameState.DEMO)){
             driveTrain.setPoseEstimate(new Pose2d(start.getPose().getX(), start.getPose().getY()));
-            articulate(Robot.Articulation.UNFOLD_WITH_PLATE);
+            articulate(Articulation.UNFOLD_WITH_PLATE);
             turret.articulate(Turret.Articulation.lockToZero);
             turret.setHeading((turret.TUNEABLE_SIZING_OFFSET/turret.TRANSFER_TICS)*Math.PI);
-        }else if(PowerPlay_6832.gameState.equals(PowerPlay_6832.GameState.TELE_OP)){
+        }else if(CenterStage_6832.gameState.equals(CenterStage_6832.GameState.TELE_OP)){
             int loggerTimeout = (int)(loggerTimeoutMinutes*60000);
             if(System.currentTimeMillis()-pos.getTimestamp()>loggerTimeout||ignoreCache) { //dont use cached position
                 driveTrain.setPoseEstimate(new Pose2d(start.getPose().getX(), start.getPose().getY()));
-                articulate(Robot.Articulation.MANUAL);
+                articulate(Articulation.MANUAL);
                 //articulate(Robot.Articulation.UNFOLD);
                 turret.articulate(Turret.Articulation.lockToZero);
                 //turret.setHeading(0);
@@ -214,7 +207,7 @@ public class Robot implements Subsystem {
     }
 
     public void start(){
-        driveTrain.articulate(DriveTrain.Articulation.unlock);
+        driveTrain.articulate(TauDriveTrain.Articulation.unlock);
         underarm.articulate(UnderArm.Articulation.manual);
         crane.enableAllPID();
         //turret.articulate(Turret.Articulation.runToAngle);
@@ -272,7 +265,7 @@ public class Robot implements Subsystem {
 
         Utils.matToBitmap(craneMat, craneBitmap);
 
-        DashboardUtil.drawRobot(fieldOverlay, origin, driveTrain.getPoseEstimate(), driveTrain.getWheelVelocities(), turret.getHeading(), crane.getShoulderAngle(), crane.getExtendInches(), crane.fieldPositionTarget, targets);
+//        DashboardUtil.drawRobot(fieldOverlay, origin, driveTrain.getPoseEstimate(), driveTrain.getWheelVelocities(), turret.getHeading(), crane.getShoulderAngle(), crane.getExtendInches(), crane.fieldPositionTarget, targets);
     }
 
     public Bitmap getBitmap() {
@@ -304,13 +297,13 @@ public class Robot implements Subsystem {
 
     int timeSupervisor = 0;
 
-    public static double mainTargetPoleX = 2*Field.INCHES_PER_GRID;
+    public static double mainTargetPoleX = 2* Field.INCHES_PER_GRID;
     public static double mainTargetPoleY = 0;
 
-    public static double rightAltTargetPoleX = 2*Field.INCHES_PER_GRID;
+    public static double rightAltTargetPoleX = 2* Field.INCHES_PER_GRID;
     public static double rightAltTargetPoleY = -Field.INCHES_PER_GRID;
 
-    public static double leftAltTargetPoleX = 2*Field.INCHES_PER_GRID;
+    public static double leftAltTargetPoleX = 2* Field.INCHES_PER_GRID;
     public static double leftAltTargetPoleY = Field.INCHES_PER_GRID;
 
     double targetPoleX;
@@ -331,7 +324,7 @@ public class Robot implements Subsystem {
         switch (timeSupervisor) {
             case 0:
                 //init stuff
-                driveTrain.articulate(DriveTrain.Articulation.unlock);
+                driveTrain.articulate(TauDriveTrain.Articulation.unlock);
                 crane.setCraneTarget(driveTrain.getPoseEstimate().getX()+6,driveTrain.getPoseEstimate().getY(),8);
                 totalAutonTime = futureTime(25);
                 autonIndex = 0;
@@ -513,10 +506,10 @@ public class Robot implements Subsystem {
                 //middle parking position/no parking target found
                 if (autonTarget == 1) {
                     if(startingPosition.equals(Constants.Position.START_LEFT)){
-                        if (driveTrain.driveUntilDegrees(1*Field.INCHES_PER_GRID, 90, 20))
+                        if (driveTrain.driveUntilDegrees(1* Field.INCHES_PER_GRID, 90, 20))
                             timeSupervisor++;
                     }else{
-                        if (driveTrain.driveUntilDegrees(1*Field.INCHES_PER_GRID, -90, 20))
+                        if (driveTrain.driveUntilDegrees(1* Field.INCHES_PER_GRID, -90, 20))
                             timeSupervisor++;
                     }
                 }
@@ -562,7 +555,7 @@ public class Robot implements Subsystem {
                 }
                 break;
             case 4:
-                if(driveTrain.driveUntilDegrees(0.3*Field.INCHES_PER_GRID,180,20)){
+                if(driveTrain.driveUntilDegrees(0.3* Field.INCHES_PER_GRID,180,20)){
                     autonNotDriving();
                     crane.articulate(Crane.Articulation.manual);
                     timeSupervisor++;
@@ -606,7 +599,6 @@ public class Robot implements Subsystem {
         // misc. articulations
         INIT,
         START,
-        CANCEL_TRANSFER,
         START_DOWN, // use to prep for start - stows the crane
         START_END_GAME, //use on a timer to automatically deploy carousel spinner 10 seconds before end game
 
@@ -625,7 +617,7 @@ public class Robot implements Subsystem {
         articulation = target;
         if(isDriverDriving()) { //bypass the normal articulation flow when driving - this could short circuit other articulations leaving them in unknown stages
             resetArticulations();
-            driveTrain.articulate(DriveTrain.Articulation.unlock);
+            driveTrain.articulate(TauDriveTrain.Articulation.unlock);
             underarm.articulate(UnderArm.Articulation.driving);
             if(!driveInit){
                 crane.articulate(Crane.Articulation.lockToTransfer); //keeps crane in safe position
@@ -636,7 +628,7 @@ public class Robot implements Subsystem {
         else{
             driveInit = false;
             if(!notDriveInit){
-                driveTrain.articulate(DriveTrain.Articulation.lockWheels);
+                driveTrain.articulate(TauDriveTrain.Articulation.lockWheels);
                 underarm.articulate(UnderArm.Articulation.manual);
                 notDriveInit = true;
             }
@@ -644,10 +636,7 @@ public class Robot implements Subsystem {
                 case MANUAL:
 
                     break;
-                case CANCEL_TRANSFER:
-                    if(cancelTransfer()) {
-                        articulation = Articulation.MANUAL;
-                    }
+
                 case UNFOLD_WITH_PLATE:
                     if(unfoldWithPlate()){
                         unfolded = true;
@@ -664,11 +653,6 @@ public class Robot implements Subsystem {
                         turret.articulate(Turret.Articulation.runToAngle);
                         crane.articulate(Crane.Articulation.scoreCone);
                         //underarm.articulate(UnderArm.Articulation.substationHover);
-                        articulation = Articulation.MANUAL;
-                    }
-                    break;
-                case UNDERARM_CONESTACK:
-                    if(underarmConeStack()) {
                         articulation = Articulation.MANUAL;
                     }
                     break;
@@ -713,7 +697,7 @@ public class Robot implements Subsystem {
         return false;
     }
     public boolean getAutonConeStack() {
-        return false;
+        return rightConeStack;
     }
     public Articulation getArticulation(){
         return articulation;
@@ -747,7 +731,7 @@ public class Robot implements Subsystem {
 
     public boolean checkCollision(double calcShoulder, double calcTurret){
         if(Math.abs(calcTurret - Math.toDegrees(driveTrain.getRawHeading())) < 20) {
-            double maxHeight = Math.max(UnderArm.UPPER_ARM_LENGTH * Math.sin(Math.toRadians(underarm.getCalculatedShoulderAngle())), underarm.getCalculatedHeight()) - (Crane.shoulderHeight*Constants.INCHES_PER_METER - UnderArm.shoulderHeight);
+            double maxHeight = Math.max(UnderArm.UPPER_ARM_LENGTH * Math.sin(Math.toRadians(underarm.getCalculatedShoulderAngle())), underarm.getCalculatedHeight()) - (Crane.shoulderHeight* Constants.INCHES_PER_METER - UnderArm.shoulderHeight);
             double x = (maxHeight / Math.tan(Math.toRadians(calcShoulder))) - driveTrain.getChassisLength() - Turret.turretOffset;
 
             if (x > 0) {
@@ -765,7 +749,7 @@ public class Robot implements Subsystem {
     public boolean  unfold(){
         switch (unfoldStage){
             case 0:
-                driveTrain.articulate(DriveTrain.Articulation.unlock);
+                driveTrain.articulate(TauDriveTrain.Articulation.unlock);
                 crane.articulate(Crane.Articulation.manual);
                 underarm.articulate(UnderArm.Articulation.manual);
                 crane.setShoulderTargetAngle(30);
@@ -856,72 +840,6 @@ public class Robot implements Subsystem {
 
     int coneStackStage = 0;
     long coneStackTimer = 0;
-    public boolean underarmConeStack () {
-        //from after the robot drives forward in auton to the end of cycling cones from conestack
-        //will still have to handle park from within runAuton
-//        ConeStack obj = field.getConeStack(rightConeStack);
-//        Pose2d pos = Field.convertToInches(obj.getPosition());
-        if(numConesToCycle > 0) {
-            switch (coneStackStage) {
-                case 0:
-                    //so that underarm is facing conestack (don't know the actual angle)
-//                    if(rightConeStack)
-//                        if (driveTrain.turnUntilDegrees(90))
-//                            coneStackStage++;
-//                    if(!rightConeStack)
-//                        if(driveTrain.turnUntilDegrees(-90));
-                    driveTrain.setChassisLength(Constants.CONESTACK_CHASSIS_LENGTH);
-                    underarm.release();
-                    //coneStackStage++;
-                    break;
-                case 1:
-                    //turn on vision pipeline and set chassis length and heading accordingly
-//                    if (/* SOME KIND OF CHECK, PLEASE NO TIMER */ false
-
-                    //coneStackStage++;
-                    break;
-                case 2:
-                    if (underarm.atConeStack()) {
-                        //coneStackStage++;
-                    }
-                    break;
-                case 3:
-                    underarm.grip();
-                    if (/* SOME KIND OF CHECK, PLEASE NO TIMER */ false) {
-                        //coneStackStage++;
-                    }
-                    break;
-                case 4:
-                    if(transfer()) {
-                        //coneStackStage++;
-                    }
-//                    if (/* SOME KIND OF CHECK, PLEASE NO TIMER */ false)
-//                        coneStackStage++;
-                    break;
-                case 5:
-                    underarm.updateConeStackAngles();
-                    field.getConeStack(rightConeStack).takeCone();
-                    if (crane.goToFieldthing(field.objects[34])) {
-                        //coneStackStage++;
-                    }
-                    break;
-                case 6:
-                    crane.release();
-                    //coneStackStage++;
-                    break;
-                case 7:
-                    crane.articulate(Crane.Articulation.transfer);
-                    numConesToCycle --;
-                    coneStackStage = 0;
-
-            }
-        }
-        else
-            return true;
-
-        return false;
-
-    }
 
     long transferTimer = 0;
 
@@ -933,7 +851,7 @@ public class Robot implements Subsystem {
 
         switch (transferStage) {
             case 0: //move Crane to transfer position
-                driveTrain.articulate(DriveTrain.Articulation.lockWheels);
+                driveTrain.articulate(TauDriveTrain.Articulation.lockWheels);
                 driveTrain.setChassisLength(Constants.MAX_CHASSIS_LENGTH);
                 crane.release();
                 crane.articulate(Crane.Articulation.transfer); //tells crane to go to transfer position
@@ -983,40 +901,7 @@ public class Robot implements Subsystem {
 
     long cancelTransferTimer;
     int cancelTransferIndex = 0;
-    public boolean cancelTransfer() {
-        switch (cancelTransferIndex) {
-            case (0):
-            {
-                underarm.setEnableLasso(false);
-                transferStage = 0;
-                turret.articulate(Turret.Articulation.transfer);
-                crane.articulate(Crane.Articulation.manual);
-                driveTrain.articulate(DriveTrain.Articulation.unlock);
-                crane.setShoulderTargetAngle(Crane.SAFE_SHOULDER_ANGLE);
-                cancelTransferTimer = futureTime(1);
-                cancelTransferIndex++;
-                break;
-            }
-            case (1):
-            {
-                if(System.nanoTime() > cancelTransferTimer) {
-                    crane.articulate(Crane.Articulation.home);
-                    turret.articulate(Turret.Articulation.runToAngle);
-                    underarm.articulate(UnderArm.Articulation.home);
-                    cancelTransferTimer = futureTime(0.7);
-                    cancelTransferIndex++;
-                }
-                break;
-            }
-            case 2:
-                underarm.setEnableLasso(true);
-                cancelTransferIndex = 0;
-                return true;
 
-
-        }
-        return false;
-    }
 
     public void updateFieldTargetPose(double dx, double dy){
         updatePoseHappens = true;
