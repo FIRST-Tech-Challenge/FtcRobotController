@@ -12,7 +12,7 @@ import java.io.BufferedReader
 import java.io.FileReader
 
 
-@TeleOp(name="Tensor Flow Test", group="Concept")
+@TeleOp(name="TensorFlow Test 1", group="Concept")
 class tensorFlowTest1: LinearOpMode(){
     private val USE_WEBCAM = true;
     lateinit var tfod: TfodProcessor
@@ -50,7 +50,7 @@ class tensorFlowTest1: LinearOpMode(){
 
         // Create the TensorFlow processor the easy way.
         tfod = TfodProcessor.Builder()
-            .setModelFileName("/sdcard/FIRST/models/kollmodel.tflite")
+            .setModelFileName("/sdcard/FIRST/models/ssd_mobilenet_v2_320x320_coco17_tpu_8.tflite")
 //            .setIsModelTensorFlow2(false)
             .setModelLabels(labels)
             .build()

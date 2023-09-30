@@ -19,6 +19,8 @@ import org.firstinspires.ftc.vision.VisionPortal
 import org.firstinspires.ftc.vision.apriltag.AprilTagDetection
 import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor
 import org.firstinspires.ftc.vision.tfod.TfodProcessor
+import java.io.BufferedReader
+import java.io.FileReader
 import java.util.concurrent.TimeUnit
 
 
@@ -33,7 +35,7 @@ open class DriveMethods: LinearOpMode() {
 
     lateinit var visionProcessor: VisionProcessors
 
-    fun initVision(processorType: VisionProcessors) {
+    fun initVision(processorType: VisionProcessors, zoom: Double = 1.0, model: String = "/sdcard/FIRST/models/ssd_mobilenet_v2_320x320_coco17_tpu_8.tflite") {
         // Create the bob the builder to build the VisionPortal
         val builder: VisionPortal.Builder = VisionPortal.Builder()
 
@@ -54,8 +56,10 @@ open class DriveMethods: LinearOpMode() {
             VisionProcessors.TFOD -> {
                 // Initialize the TensorFlow Processor
                 tfod = TfodProcessor.Builder()
-                    .setModelAssetName(CurrentGame.TFOD_MODEL_ASSET)
+                    .setModelFileName(model)
                     .build()
+
+                tfod.setZoom(zoom)
 
                 // Add TensorFlow Processor to VisionPortal builder
                 builder.addProcessor(tfod)
@@ -80,6 +84,43 @@ open class DriveMethods: LinearOpMode() {
 
         visionProcessor = processorType
     }
+
+    private fun readLabels(labelsPath: String): Array<String> {
+        val labelList = ArrayList<String>()
+
+        // try to read in the the labels.
+        try {
+            BufferedReader(FileReader(labelsPath)).use { br ->
+                var index = 0
+                while (br.ready()) {
+                    labelList.add(br.readLine())
+                    index++
+                }
+            }
+        } catch (e: Exception) {
+            telemetry.addData("Exception", e.localizedMessage)
+            telemetry.update()
+        }
+        if (labelList.size > 0) {
+            telemetry.addData("readLabels()", "%d labels read.", labelList.size)
+            telemetry.update()
+
+            for (label in labelList) {
+                telemetry.addData("readLabels()", " %f", label);
+
+                telemetry.update()
+            }
+
+            return labelList.toTypedArray()
+        } else {
+            telemetry.addLine("readLabels() - No Lines read");
+
+            telemetry.update()
+
+            return Array<String>(1) {""}
+        }
+    }
+
 
     fun addDataToTelemetry() {
         when (this.visionProcessor) {
@@ -209,5 +250,14 @@ open class DriveMethods: LinearOpMode() {
     fun quickPrint(message: String) {
         telemetry.addLine(message)
         telemetry.update()
+    }
+
+    fun updateZoom(zoom: Double) {
+        when (this.visionProcessor) {
+            VisionProcessors.TFOD -> tfod.setZoom(zoom)
+            VisionProcessors.BOTH -> tfod.setZoom(zoom)
+
+            else -> {}
+        }
     }
 }
