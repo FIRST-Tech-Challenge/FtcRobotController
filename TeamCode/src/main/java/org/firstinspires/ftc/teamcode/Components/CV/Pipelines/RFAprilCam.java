@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.Components.CV.Pipelines;
 
+import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.LOGGER;
 import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.logger;
 import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.op;
 import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.packet;
@@ -23,6 +24,7 @@ import org.firstinspires.ftc.robotcore.external.hardware.camera.controls.GainCon
 import org.firstinspires.ftc.robotcore.external.matrices.VectorF;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
+import org.firstinspires.ftc.teamcode.Components.RFModules.System.RFLogger;
 import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
 import org.firstinspires.ftc.vision.apriltag.AprilTagGameDatabase;
 import org.firstinspires.ftc.vision.apriltag.AprilTagLibrary;
@@ -56,13 +58,15 @@ public class RFAprilCam {
     private double poseCount =0;
     private double[][] directions = {{-1, 1}, {-1, 1},{-1, 1},{-1, 1},{-1, 1},{-1, 1}
             ,{-1, 1},{-1, -1},{-1, -1},{-1, 1},{-1, 1}};
-    private double[] angle = {-1,-1,-1,-1,-1,-1,
-    -1,-1,-1,1,-1};
+    private double[] angle = {1,1,1,1,1,1,
+    1,-1,-1,1,-1};
     /**
      * Initialize apriltag camera
      * Logs that function is called and camera is aprilTag  general surface level
      */
     public RFAprilCam() {
+        LOGGER.setLogLevel(RFLogger.Severity.FINE);
+        LOGGER.log("Entering RFAprilCam Constructor, ");
         aprilTagGameDatabase = AprilTagGameDatabase.getCenterStageTagLibrary();
         aprilTag = new AprilTagProcessor.Builder()
                 .setDrawAxes(false)
@@ -105,7 +109,9 @@ public class RFAprilCam {
      * Logs newly calculated position at finest verbosity level
      */
     public void update() {
-        ArrayList<AprilTagDetection> detections = aprilTag.getFreshDetections();
+        LOGGER.setLogLevel(RFLogger.Severity.FINER);
+        LOGGER.log( "Entering RFAprilCam.update()");
+        ArrayList<AprilTagDetection> detections = aprilTag.getDetections();
         //if close start upsampling
         upsample=false;
         for (AprilTagDetection detection : detections) {
@@ -122,12 +128,14 @@ public class RFAprilCam {
                  camPoseError.plus(camPose).minus(currentPose);
                  poseCount++;
              }
-             logger.log("/RobotLogs/GeneralRobot", "id: "+ p_ind+ " aprilPos = "+camPose+", dist:"+poseFtc.range+" p_x, p_y: " + p_x +',' +p_y);
+            LOGGER.setLogLevel(RFLogger.Severity.FINEST);
+            LOGGER.log( "id: "+ p_ind+ " aprilPos = "+camPose+", dist:"+poseFtc.range+" p_x, p_y: " + p_x +',' +p_y);
         }
         if(upsample && poseCount>NUMBER_OF_SAMPLES){
-            logger.log("/RobotLogs/GeneralRobot", "avgAprilPose"+currentPose.plus(camPoseError.div(poseCount)));
+            LOGGER.setLogLevel(RFLogger.Severity.FINER);
+            LOGGER.log("avgAprilError"+camPoseError.div(poseCount));
             currentPose = currentPose.plus(camPoseError.div(poseCount));
-            logger.log("/RobotLogs/GeneralRobot", "avgPose"+currentPose);
+            LOGGER.log("newPose"+currentPose);
             poseCount=0;
             camPoseError=new Pose2d(0,0,0);
         }

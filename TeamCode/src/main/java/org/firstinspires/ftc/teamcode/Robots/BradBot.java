@@ -13,6 +13,7 @@ import org.firstinspires.ftc.teamcode.Components.Hopper;
 import org.firstinspires.ftc.teamcode.Components.Intake;
 import org.firstinspires.ftc.teamcode.Components.Launcher;
 import org.firstinspires.ftc.teamcode.Components.Lift;
+import org.firstinspires.ftc.teamcode.Components.RFModules.System.RFLogger;
 import org.firstinspires.ftc.teamcode.Components.Ultrasonics;
 import org.firstinspires.ftc.teamcode.roadrunner.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.roadrunner.trajectorysequence.TrajectorySequence;
@@ -39,6 +40,8 @@ public class BradBot extends BasicRobot{
      */
     public BradBot(LinearOpMode p_op, boolean p_is_Teleop){
         super(p_op,p_is_Teleop);
+        LOGGER.setLogLevel(RFLogger.Severity.ALL);
+        LOGGER.log("BradBot() : Initializing Components!");
         arm = new Arm();
         cv = new CVMaster();
         intake = new Intake();
@@ -54,7 +57,9 @@ public class BradBot extends BasicRobot{
      * Logs that this function called to general surface
      */
     public void startIntakeAuto(){
+        if(queuer.queue(true, Intake.IntakeStates.STOPPED.getState())){
 
+        }
     }
 
     /**
@@ -149,6 +154,7 @@ public class BradBot extends BasicRobot{
      * All else is logged in each respective function
      */
     public void update(){
+        LOGGER.setLogLevel(RFLogger.Severity.FINER);
         LOGGER.log("Entering Function BradBot.update(), updating each component");
         super.update();
         arm.update();

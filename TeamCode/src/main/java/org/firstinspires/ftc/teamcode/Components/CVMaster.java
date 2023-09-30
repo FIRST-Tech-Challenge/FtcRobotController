@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.Components;
 
+import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.LOGGER;
 import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.dashboard;
 import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.logger;
 import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.op;
@@ -7,6 +8,7 @@ import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.op;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.teamcode.Components.CV.Pipelines.RFAprilCam;
 import org.firstinspires.ftc.teamcode.Components.CV.Pipelines.SpikeObserverPipeline;
+import org.firstinspires.ftc.teamcode.Components.RFModules.System.RFLogger;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
@@ -105,6 +107,8 @@ public class CVMaster {
      * logs to general surface(inside RFAprilCam class)
      */
     public void update(){
+        LOGGER.setLogLevel(RFLogger.Severity.FINER);
+        LOGGER.log("Entering Function CVMaster.update(), updating camera info");
         if(!isStreaming){
             cam.update();
         }

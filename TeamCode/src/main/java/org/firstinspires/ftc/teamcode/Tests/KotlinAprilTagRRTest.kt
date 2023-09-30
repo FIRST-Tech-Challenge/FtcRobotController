@@ -43,8 +43,8 @@ class KotlinAprilTagRRTest : LinearOpMode() {
         resetRuntime()
         BasicRobot.time = 0.0
         while (!isStopRequested && opModeIsActive()) {
-            for (i in 1..10)
-                followTrajAsync(trajSeq2)
+//            for (i in 1..10)
+//                followTrajAsync(trajSeq2)
             loops++
             BasicRobot.packet.put("loopTime", loops / BasicRobot.time)
             queuer.isFirstLoop = false
