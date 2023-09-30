@@ -282,9 +282,11 @@ public class Robot {
     //the desired heading must be relative to last imu reset
     //-180 < desired heading <= 180
     public void setHeading(double targetAbsoluteAngleInDegrees) {
-
+    /*
         assert(targetAbsoluteAngleInDegrees > 180);
         assert(targetAbsoluteAngleInDegrees <= -180);
+
+     */
         if (targetAbsoluteAngleInDegrees == 180) {
             setHeading(179.5);
         } else {
