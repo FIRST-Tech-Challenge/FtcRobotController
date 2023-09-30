@@ -54,6 +54,7 @@ import static org.firstinspires.ftc.teamcode.robots.kraken.PoseKraken.servoNorma
  */
 
 @TeleOp(name="RoBoPoGlo", group="Linear Opmode")
+//this is robopoglo
 
 @Disabled
 public class robopoglo extends LinearOpMode {

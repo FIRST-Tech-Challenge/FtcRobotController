@@ -42,6 +42,7 @@ import java.util.Objects;
 
 @Config(value = "AA_CSRobot")
 public class Robot implements Subsystem {
+    //this is a robot
 
     public TauDriveTrain driveTrain;
     public CSDriveTrain csDriveTrain;
