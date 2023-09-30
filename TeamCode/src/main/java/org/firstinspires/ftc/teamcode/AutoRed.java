@@ -28,7 +28,7 @@ public class AutoRed extends LinearOpMode {
         boolean doneWithMecanum = false;
         boolean doneWithForward = false;
         boolean doneWithForward2 = false;
-
+        boolean downwithturn = false;
 
 
         while (opModeIsActive()) {
@@ -49,7 +49,7 @@ public class AutoRed extends LinearOpMode {
                 doneWithMecanum = true;
             }
             telemetry.addData("is done wit macanum", doneWithMecanum);*/
-            /*doneWithMecanum = true;
+            doneWithMecanum = true;
             if (!doneWithForward && doneWithMecanum && !robot.checkReachedDistance(forwardDistance)) {
                 forwardPower = robot.calculateDrivetrainPower(forwardDistance);
                 robot.setMotorPower(forwardPower);
@@ -57,23 +57,27 @@ public class AutoRed extends LinearOpMode {
                 robot.setMotorPower(0, 0, 0, 0);
                 robot.resetEncoder();
                 doneWithForward = true;
-            }*/
+            }
 
             telemetry.addData("is done with forward", doneWithForward);
-
+            if (doneWithForward && !downwithturn) {
                 robot.setHeading(30);
-
-                /*if (!doneWithForward2 && doneWithMecanum && doneWithForward && !robot.checkReachedDistance(forwardDistanceNumeroDuos)) {
-                    forwardPowerNumeroDuos = robot.calculateDrivetrainPower(forwardDistanceNumeroDuos);
-                    robot.setMotorPower(forwardPowerNumeroDuos);
-                } else if (!doneWithForward2 && doneWithForward) {
-                    robot.setMotorPower(0, 0, 0, 0);
-                    robot.resetEncoder();
-                    doneWithForward2 = true;
+                if (robot.isHeadingWithinError(30)) {
+                    downwithturn = true;
                 }
+            }
 
-                telemetry.addData("done with backward", doneWithForward2);
-*/
+            if (!doneWithForward2 && doneWithMecanum && doneWithForward && !robot.checkReachedDistance(forwardDistanceNumeroDuos)) {
+                forwardPowerNumeroDuos = robot.calculateDrivetrainPower(forwardDistanceNumeroDuos);
+                robot.setMotorPower(forwardPowerNumeroDuos);
+            } else if (!doneWithForward2 && doneWithForward) {
+                robot.setMotorPower(0, 0, 0, 0);
+                robot.resetEncoder();
+                doneWithForward2 = true;
+            }
+
+            telemetry.addData("done with backward", doneWithForward2);
+
 
             telemetry.update();
         }
