@@ -79,3 +79,6 @@ lint/generated/
 lint/outputs/
 lint/tmp/
 # lint/reports/
+
+# The TeamCode folder is the submodule reference.  We can tell git to ignore it.
+TeamCode
