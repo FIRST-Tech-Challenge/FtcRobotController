@@ -40,6 +40,10 @@ open class DriveMethods: LinearOpMode() {
 
     lateinit var visionProcessor: VisionProcessors
 
+    fun initVision(processorType: VisionProcessors) {
+        initVision(processorType, 1.0, "/sdcard/FIRST/models/ssd_mobilenet_v2_320x320_coco17_tpu_8.tflite")
+    }
+
     fun initVision(processorType: VisionProcessors, zoom: Double = 1.0, model: String = "/sdcard/FIRST/models/ssd_mobilenet_v2_320x320_coco17_tpu_8.tflite") {
         // Create the bob the builder to build the VisionPortal
         val builder: VisionPortal.Builder = VisionPortal.Builder()
