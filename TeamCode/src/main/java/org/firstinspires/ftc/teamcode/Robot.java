@@ -172,7 +172,7 @@ public class Robot {
             return doneArm;
         }
     */
-/*
+    /*
     public double getRemainingTicksForArm(double targetDistanceInDegrees) {
         double targetDistanceInTicks = convertDegreesToTicks(targetDistanceInDegrees);
         double remainingDistance = targetDistanceInTicks - arm.getCurrentPosition();
@@ -237,7 +237,7 @@ public class Robot {
         fLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
     }
     public double[] calculateDrivetrainPower(double targetDistanceInMM) {
-        final double P_VALUE = 0.00125;
+        final double P_VALUE = 0.002;
 
         if (checkReachedDistance(targetDistanceInMM)) {
             return new double[]{0, 0, 0, 0};
