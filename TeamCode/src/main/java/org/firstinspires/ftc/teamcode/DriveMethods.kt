@@ -2,13 +2,25 @@ package org.firstinspires.ftc.teamcode
 
 import com.google.blocks.ftcrobotcontroller.util.CurrentGame
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode
+import com.qualcomm.robotcore.hardware.DcMotor
+import com.qualcomm.robotcore.hardware.DcMotorSimple
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName
+import org.firstinspires.ftc.robotcore.external.hardware.camera.controls.ExposureControl
+import org.firstinspires.ftc.robotcore.external.hardware.camera.controls.GainControl
 import org.firstinspires.ftc.robotcore.external.tfod.Recognition
 import org.firstinspires.ftc.teamcode.Variables.VisionProcessors
+import org.firstinspires.ftc.teamcode.Variables.desiredTag
+import org.firstinspires.ftc.teamcode.Variables.motorBL
+import org.firstinspires.ftc.teamcode.Variables.motorBR
+import org.firstinspires.ftc.teamcode.Variables.motorFL
+import org.firstinspires.ftc.teamcode.Variables.motorFR
+import org.firstinspires.ftc.teamcode.Variables.targetFound
 import org.firstinspires.ftc.vision.VisionPortal
 import org.firstinspires.ftc.vision.apriltag.AprilTagDetection
 import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor
 import org.firstinspires.ftc.vision.tfod.TfodProcessor
+import java.util.concurrent.TimeUnit
+
 
 open class DriveMethods: LinearOpMode() {
     override fun runOpMode() {}
@@ -96,6 +108,8 @@ open class DriveMethods: LinearOpMode() {
                 val detectionList: List<AprilTagDetection> = aprilTag.detections
 
                 for (detection in detectionList) {
+                    desiredTag = detection
+                    targetFound = true
                     if (detection.metadata != null) {
                         telemetry.addLine(
                             String.format(
@@ -144,6 +158,54 @@ open class DriveMethods: LinearOpMode() {
             else -> telemetry.addLine("Please Initialize Vision")
         }
     }
+    fun moveRobot(x: Double, y: Double, yaw: Double) {
+        motorFL!!.power = x - y - yaw
+        motorFR!!.power = x + y + yaw
+        motorBL!!.power = x + y - yaw
+        motorBR!!.power = x - y + yaw
+    }
+    open fun initMotorsSecondBot() {
+        motorFL = hardwareMap.get<DcMotor>(DcMotor::class.java, "motorFL")
+        motorBL = hardwareMap.get<DcMotor>(DcMotor::class.java, "motorBL")
+        motorFR = hardwareMap.get<DcMotor>(DcMotor::class.java, "motorFR")
+        motorBR = hardwareMap.get<DcMotor>(DcMotor::class.java, "motorBR")
+    }
+    fun setManualExposure(exposureMS: Int, gain: Int) {
+        // Wait for the camera to be open, then use the controls
+        if (visionPortal == null) {
+            return
+        }
+
+        // Make sure camera is streaming before we try to set the exposure controls
+        if (visionPortal!!.cameraState != VisionPortal.CameraState.STREAMING) {
+            telemetry.addData("Camera", "Waiting")
+            telemetry.update()
+            while (!isStopRequested && visionPortal!!.cameraState != VisionPortal.CameraState.STREAMING) {
+                sleep(20)
+            }
+            telemetry.addData("Camera", "Ready")
+            telemetry.update()
+        }
+
+        // Set camera controls unless we are stopping.
+        if (!isStopRequested) {
+            val exposureControl = visionPortal!!.getCameraControl(
+                ExposureControl::class.java
+            )
+            if (exposureControl.mode != ExposureControl.Mode.Manual) {
+                exposureControl.mode = ExposureControl.Mode.Manual
+                sleep(50)
+            }
+            exposureControl.setExposure(exposureMS.toLong(), TimeUnit.MILLISECONDS)
+            sleep(20)
+            val gainControl = visionPortal!!.getCameraControl(
+                GainControl::class.java
+            )
+            gainControl.gain = gain
+            sleep(20)
+        }
+    }
+
     fun quickPrint(message: String) {
         telemetry.addLine(message)
         telemetry.update()
