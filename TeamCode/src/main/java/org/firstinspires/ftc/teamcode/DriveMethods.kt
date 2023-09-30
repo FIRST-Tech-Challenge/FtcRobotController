@@ -9,12 +9,17 @@ import org.firstinspires.ftc.robotcore.external.hardware.camera.controls.Exposur
 import org.firstinspires.ftc.robotcore.external.hardware.camera.controls.GainControl
 import org.firstinspires.ftc.robotcore.external.tfod.Recognition
 import org.firstinspires.ftc.teamcode.Variables.VisionProcessors
+import org.firstinspires.ftc.teamcode.Variables.clawAngle
 import org.firstinspires.ftc.teamcode.Variables.desiredTag
 import org.firstinspires.ftc.teamcode.Variables.motorBL
 import org.firstinspires.ftc.teamcode.Variables.motorBR
 import org.firstinspires.ftc.teamcode.Variables.motorFL
 import org.firstinspires.ftc.teamcode.Variables.motorFR
+import org.firstinspires.ftc.teamcode.Variables.slideAngle
+import org.firstinspires.ftc.teamcode.Variables.slideLength
 import org.firstinspires.ftc.teamcode.Variables.targetFound
+import org.firstinspires.ftc.teamcode.Variables.x
+import org.firstinspires.ftc.teamcode.Variables.y
 import org.firstinspires.ftc.vision.VisionPortal
 import org.firstinspires.ftc.vision.apriltag.AprilTagDetection
 import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor
@@ -259,5 +264,13 @@ open class DriveMethods: LinearOpMode() {
 
             else -> {}
         }
+    }
+
+    fun linearSlideCalc() {
+        x =  Variables.slideToBoard - Variables.clawToBoard + .5* Variables.t;
+        y = Math.sqrt(3.0)/2 * Variables.t;
+        slideLength = Math.sqrt(Math.pow(x, 2.0) + Math.pow(y, 2.0));
+        slideAngle = Math.atan(y/x);
+        clawAngle = 60 - slideAngle;
     }
 }

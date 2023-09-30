@@ -48,11 +48,11 @@ object Variables {
     var t = 0.0;
     var slideToBoard = 0.0;
     var clawToBoard = 0.0;
-    var x =  slideToBoard - clawToBoard + .5*t;
-    var y = Math.sqrt(3.0)/2 * t;
-    var slideLength = Math.sqrt(Math.pow(x, 2.0) + Math.pow(y, 2.0));
-    var slideAngle = Math.atan(y/x);
-    var clawAngle = 60 - slideAngle;
+    var x =  0.0;
+    var y = 0.0;
+    var slideLength = 0.0;
+    var slideAngle = 0.0;
+    var clawAngle = 0.0;
 
     enum class VisionProcessors {
         TFOD, APRILTAG, BOTH

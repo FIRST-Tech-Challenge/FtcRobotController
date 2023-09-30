@@ -9,6 +9,10 @@ import org.firstinspires.ftc.robotcore.external.hardware.camera.BuiltinCameraDir
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName
 import org.firstinspires.ftc.robotcore.external.hardware.camera.controls.ExposureControl
 import org.firstinspires.ftc.robotcore.external.hardware.camera.controls.GainControl
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit
+import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder
+import org.firstinspires.ftc.robotcore.external.navigation.AxesReference
+import org.firstinspires.ftc.robotcore.external.navigation.Orientation
 import org.firstinspires.ftc.teamcode.DriveMethods
 import org.firstinspires.ftc.teamcode.Variables
 import org.firstinspires.ftc.teamcode.Variables.DESIRED_DISTANCE
@@ -18,9 +22,12 @@ import org.firstinspires.ftc.teamcode.Variables.MAX_AUTO_TURN
 import org.firstinspires.ftc.teamcode.Variables.SPEED_GAIN
 import org.firstinspires.ftc.teamcode.Variables.STRAFE_GAIN
 import org.firstinspires.ftc.teamcode.Variables.TURN_GAIN
+import org.firstinspires.ftc.teamcode.Variables.clawToBoard
 import org.firstinspires.ftc.teamcode.Variables.desiredTag
 import org.firstinspires.ftc.teamcode.Variables.drive
+import org.firstinspires.ftc.teamcode.Variables.slideToBoard
 import org.firstinspires.ftc.teamcode.Variables.strafe
+import org.firstinspires.ftc.teamcode.Variables.t
 import org.firstinspires.ftc.teamcode.Variables.targetFound
 import org.firstinspires.ftc.teamcode.Variables.turn
 import org.firstinspires.ftc.vision.VisionPortal
@@ -67,8 +74,19 @@ class Teleop9999: DriveMethods() {
                     turn
                 )
             }
-            telemetry.update()
 
+            if (gamepad1.a) {
+                for (detection in aprilTag.getDetections())  {
+                    // Original source data
+                    var poseY = detection.rawPose.y;
+
+                    slideToBoard = poseY + .05
+                    clawToBoard = .01
+                    linearSlideCalc()
+
+                }
+            }
+            telemetry.update()
             moveRobot(drive, strafe, turn)
             sleep(10)
         }
