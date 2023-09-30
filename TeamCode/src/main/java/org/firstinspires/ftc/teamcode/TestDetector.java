@@ -82,15 +82,23 @@ public class TestDetector extends OpenCvPipeline {
 
         if (avgLeftCr > avgCenterCr) {
             if (avgLeftCr > avgRightCr) {
-                position = "LEFT";
+                if (((184 <= avgLeftCr) && (avgLeftCr <= 240)) && ((avgLeftCb >= 16) && (avgLeftCb <= 128))) {
+                    position = "LEFT";
+                }
             } else {
-                position = "RIGHT";
+                if (((184 <= avgRightCr) && (avgRightCr <= 240)) && ((avgRightCb >= 16) && (avgRightCb <= 128))) {
+                    position = "RIGHT";
+                }
             }
         } else {
             if (avgCenterCr > avgRightCr) {
-                position = "CENTER";
+                if (((184 <= avgCenterCr) && (avgCenterCr <= 240)) && ((avgCenterCb >= 16) && (avgCenterCb <= 128))) {
+                    position = "CENTER";
+                }
             } else {
-                position = "RIGHT";
+                if (((184 <= avgRightCr) && (avgRightCr <= 240)) && ((avgRightCb >= 16) && (avgRightCb <= 128))) {
+                    position = "RIGHT";
+                }
             }
         }
 
