@@ -15,10 +15,19 @@ import org.firstinspires.ftc.vision.VisionPortal;
 import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
 import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Autonomous(name = "Scred")
 public class scred extends LinearOpMode {
+
+    enum State {
+        TAG_NOT_FOUND,
+        PATH
+    }
+
+    int tagx = 0;
+    int tagy = 0;
 
     private static final boolean USE_WEBCAM = true;  // true for webcam, false for phone camera
 
@@ -26,13 +35,14 @@ public class scred extends LinearOpMode {
 
     private VisionPortal visionPortal;
 
-    private List<AprilTagDetection> currentDetections;
-    private AprilTagDetection aprilTagDetection;
+    List<AprilTagDetection> currentDetections = aprilTag.getDetections();
 
     @Override
     public void runOpMode() throws InterruptedException {
 
         SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
+
+        State current_state = State.TAG_NOT_FOUND;
 
         initAprilTag();
 
@@ -42,34 +52,34 @@ public class scred extends LinearOpMode {
 
         drive.setPoseEstimate(startPose);
 
-        currentDetections = aprilTag.getDetections();
-
-        aprilTagDetection = currentDetections.get(0);
-
-        TrajectorySequence trajSeq = drive.trajectorySequenceBuilder(startPose)
-
-                .strafeRight(aprilTagDetection.ftcPose.x)
-                .forward(aprilTagDetection.ftcPose.y)
-                .build();
-
-        if (opModeIsActive()) {
-            while (opModeIsActive()) {
-
-//                telemetryAprilTag();
-                telemetry.update();
-
-                sleep(20);
-
+        while (opModeIsActive()) {
+            TrajectorySequence trajSeq = null;
+            switch (current_state) {
+                case TAG_NOT_FOUND:
+                    for (AprilTagDetection detection : currentDetections) {
+                        tagx = (int) detection.ftcPose.x;
+                        tagy = (int) detection.ftcPose.y;
+                    }
+                    if (tagx != 0 || tagy != 0) {
+                        visionPortal.close();
+                        current_state = State.PATH;
+                    }
+                    break;
+                case PATH:
+                    trajSeq = drive.trajectorySequenceBuilder(startPose)
+                            .forward(tagy)
+                            .strafeRight(tagx)
+                            .build();
+                    break;
             }
-
-            visionPortal.close();
-
+            drive.followTrajectorySequence(trajSeq);
         }
 
     }
 
     private void initAprilTag() {
 
+        // Create the AprilTag processor.
         aprilTag = new AprilTagProcessor.Builder()
                 .setDrawAxes(true)
                 .setDrawCubeProjection(true)
@@ -78,12 +88,21 @@ public class scred extends LinearOpMode {
                 .setTagLibrary((org.firstinspires.ftc.masters.apriltesting.CustomDatabase.DataBaseTest()))
                 .setOutputUnits(DistanceUnit.INCH, AngleUnit.DEGREES)
 
+                // == CAMERA CALIBRATION ==
+                // If you do not manually specify calibration parameters, the SDK will attempt
+                // to load a predefined calibration for your camera.
+                //.setLensIntrinsics(578.272, 578.272, 402.145, 221.506)
+
+                // ... these parameters are fx, fy, cx, cy.
+
                 .build();
 
+        // Create the vision portal by using a builder.
         VisionPortal.Builder builder = new VisionPortal.Builder();
 
+        // Set the camera (webcam vs. built-in RC phone camera).
         if (USE_WEBCAM) {
-            builder.setCamera(hardwareMap.get(WebcamName.class, "webcam"));
+            builder.setCamera(hardwareMap.get(WebcamName.class, "webcamSleeve"));
         } else {
             builder.setCamera(BuiltinCameraDirection.BACK);
         }
@@ -91,33 +110,27 @@ public class scred extends LinearOpMode {
         // Choose a camera resolution. Not all cameras support all resolutions.
         //builder.setCameraResolution(new Size(640, 480));
 
+        // Enable the RC preview (LiveView).  Set "false" to omit camera monitoring.
         builder.enableCameraMonitoring(true);
 
+        // Set the stream format; MJPEG uses less bandwidth than default YUY2.
+        //builder.setStreamFormat(VisionPortal.StreamFormat.YUY2);
+
+        // Choose whether or not LiveView stops if no processors are enabled.
+        // If set "true", monitor shows solid orange screen if no processors enabled.
+        // If set "false", monitor shows camera view without annotations.
+        //builder.setAutoStopLiveView(false);
+
+        // Set and enable the processor.
         builder.addProcessor(aprilTag);
+
+        // Build the Vision Portal, using the above settings.
         visionPortal = builder.build();
-    }
 
-    private void telemetryAprilTag() {
+        // Disable or re-enable the aprilTag processor at any time.
+        //visionPortal.setProcessorEnabled(aprilTag, true);
 
-        this.currentDetections = aprilTag.getDetections();
-        telemetry.addData("# AprilTags Detected", currentDetections.size());
-
-        for (AprilTagDetection detection : currentDetections) {
-            if (detection.metadata != null) {
-                telemetry.addLine(String.format("\n==== (ID %d) %s", detection.id, detection.metadata.name));
-                telemetry.addLine(String.format("XYZ %6.1f %6.1f %6.1f  (inch)", detection.ftcPose.x, detection.ftcPose.y, detection.ftcPose.z));
-                telemetry.addLine(String.format("PRY %6.1f %6.1f %6.1f  (deg)", detection.ftcPose.pitch, detection.ftcPose.roll, detection.ftcPose.yaw));
-                telemetry.addLine(String.format("RBE %6.1f %6.1f %6.1f  (inch, deg, deg)", detection.ftcPose.range, detection.ftcPose.bearing, detection.ftcPose.elevation));
-            } else {
-                telemetry.addLine(String.format("\n==== (ID %d) Unknown", detection.id));
-                telemetry.addLine(String.format("Center %6.0f %6.0f   (pixels)", detection.center.x, detection.center.y));
-            }
-        }
-
-        telemetry.addLine("\nkey:\nXYZ = X (Right), Y (Forward), Z (Up) dist.");
-        telemetry.addLine("PRY = Pitch, Roll & Yaw (XYZ Rotation)");
-        telemetry.addLine("RBE = Range, Bearing & Elevation");
-
-    }
+    }   // end method initAprilTag()
 
 }
+

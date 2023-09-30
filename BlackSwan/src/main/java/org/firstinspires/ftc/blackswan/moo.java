@@ -5,7 +5,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
-@TeleOp(name = "move x")
+@TeleOp(name = "poopoo")
 public class moo extends LinearOpMode {
 
     public void runOpMode() throws InterruptedException {
