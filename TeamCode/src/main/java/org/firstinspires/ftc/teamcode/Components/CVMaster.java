@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.Components;
 
+import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.LOGGER;
 import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.dashboard;
 import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.logger;
 import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.op;
@@ -7,6 +8,7 @@ import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.op;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.teamcode.Components.CV.Pipelines.RFAprilCam;
 import org.firstinspires.ftc.teamcode.Components.CV.Pipelines.SpikeObserverPipeline;
+import org.firstinspires.ftc.teamcode.Components.RFModules.System.RFLogger;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
@@ -26,7 +28,9 @@ public class CVMaster {
     private boolean isStreaming = false;
 
     /**
-     * initializes opencv webcam, starts observing spike, logs that opencv webcam is initialized and recording spike pipeline to general surface log
+     * initializes opencv webcam, starts observing spike
+     * logs that func is called to general surface log
+     * logs that opencv webcam is initialized and recording spike pipeline to general surface log
      */
     public CVMaster() {
         webcam = OpenCvCameraFactory.getInstance().createWebcam(op.hardwareMap.get(WebcamName.class, "Webcam1"));
@@ -34,7 +38,8 @@ public class CVMaster {
     }
 
     /**
-     * observes spike, logs that spike is being observed general surface log
+     * observes spike
+     * logs that spike is being observed general surface log
      */
     public void observeSpike() {
         openSleevi = new SpikeObserverPipeline();
@@ -80,6 +85,7 @@ public class CVMaster {
 
     /**
      * gets calculated position from spike pipeline
+     * logging is done internally
      * @return position from spike pipeline
      */
     public int getPosition() {
@@ -87,7 +93,8 @@ public class CVMaster {
     }
 
     /**
-     * switches to apriltag camera, logs to general surface log
+     * switches to apriltag camera
+     * logs to general surface log
      */
     public void switchToApril() {
         webcam.stopRecordingPipeline();
@@ -96,9 +103,12 @@ public class CVMaster {
     }
 
     /**
-     * updates the aprilTag info if you arre currently on aprilTag mode, logs to genereal surface(inside RFAprilCam class)
+     * updates the aprilTag info if you are currently on aprilTag mode
+     * logs to general surface(inside RFAprilCam class)
      */
     public void update(){
+        LOGGER.setLogLevel(RFLogger.Severity.FINER);
+        LOGGER.log("Entering Function CVMaster.update(), updating camera info");
         if(!isStreaming){
             cam.update();
         }

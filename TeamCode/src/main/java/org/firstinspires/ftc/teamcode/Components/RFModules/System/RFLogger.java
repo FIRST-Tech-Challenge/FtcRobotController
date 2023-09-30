@@ -20,7 +20,7 @@ public class RFLogger {
     StackTraceElement[] elements = new StackTraceElement[0];
     SimpleFormatter sh = new SimpleFormatter();
     FileHandler TestFH;
-    Level logLevel = Level.ALL;
+    Level logLevel = Level.FINEST;
     static FileHandler GeneralFH, AutonomousFH, HardwareFH, QueuerFH;
 
     public enum Files {
@@ -55,6 +55,7 @@ public class RFLogger {
         }
     }
 
+    @SuppressLint("SdCardPath")
     public RFLogger (String className){
         LOGGER = Logger.getLogger(className);
         LOGGER.setLevel(logLevel);

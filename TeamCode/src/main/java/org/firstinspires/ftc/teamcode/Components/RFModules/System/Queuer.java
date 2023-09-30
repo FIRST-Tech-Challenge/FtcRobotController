@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.Components.RFModules.System;
 
+import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.LOGGER;
 import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.logger;
 import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.time;
 
@@ -15,6 +16,8 @@ public class Queuer {
     private boolean firstLoop = true, mustFinish = false;
     private int currentlyQueueing = 0, currentEvent = -1, mustStartCondition = -1, completeCurrentEvent = 0;
     private double delay = 0;
+
+    private boolean isFulfilled = false;
 
 
     public Queuer() {
@@ -94,14 +97,15 @@ public class Queuer {
 
     /**
      * update start conditions of subsequent events after one is suddenly changed to non-optional
-     * logs which  event gets updated at general surface level
+     * logs which  event gets updated at general fine level
      * @param p_ind index of queueElement in question
      */
     public void updateStartConditions(int p_ind) {
         if (p_ind < queueElements.size()) {
             if (queueElements.get(p_ind).startCondition != recalcStartPosSkipOptional(p_ind, queueElements.get(p_ind).isAsynchronous(), queueElements.get(p_ind).isOptional())) {
                 queueElements.get(p_ind).setStartCondition(recalcStartPosSkipOptional(p_ind, queueElements.get(p_ind).isAsynchronous(), queueElements.get(p_ind).isOptional()));
-                logger.log("/RobotLogs/GeneralRobot", p_ind + "StartCondition" + queueElements.get(p_ind).startCondition);
+                LOGGER.setLogLevel(RFLogger.Severity.FINE);
+                LOGGER.log( "Queuer.updateStartConditions() : Event: "+ p_ind +" StartCondition: " + queueElements.get(p_ind).startCondition);
                 updateStartConditions(p_ind + 1);
                 updateStartConditions(p_ind + 2);
                 updateStartConditions(p_ind + 3);
@@ -131,6 +135,7 @@ public class Queuer {
      * @param p_isOptional      is the function optional
      */
     public boolean queue(boolean p_asynchronous, boolean p_done_condition, boolean p_extra_condition, boolean p_isOptional) {
+        p_done_condition = isStarted()&&p_done_condition;
         //if it is first Loop
         if (firstLoop) {
             //create queue element
@@ -193,9 +198,10 @@ public class Queuer {
             queueElements.get(i).setDone(false);
             queueElements.get(i).setStarted(false);
         }
-        currentEvent = queueElements.get(currentlyQueueing).startCondition;
-        logger.log("/RobotLogs/GeneralRobot", "setToNOW" + currentlyQueueing);
         done();
+        currentEvent = queueElements.get(currentlyQueueing).startCondition;
+        LOGGER.setLogLevel(RFLogger.Severity.ALL);
+        LOGGER.log( "Queuer.setToNow() : currentEvent :" + currentEvent);
     }
 
     /**
@@ -203,6 +209,8 @@ public class Queuer {
      * logs that this function is being called to general surface level
      */
     public void reset() {
+        LOGGER.setLogLevel(RFLogger.Severity.ALL);
+        LOGGER.log( "Queuer.reset() : reset queuer");
         queueElements.clear();
         firstLoop = true;
         mustFinish = false;
@@ -218,7 +226,13 @@ public class Queuer {
      * logs if queuer is done surface level
      */
     public boolean isFullfilled() {
-        return !queueElements.isEmpty() && currentEvent == queueElements.size() - 1;
+        var newFulfilled = !queueElements.isEmpty() && currentEvent == queueElements.size() - 1;
+        if(isFulfilled!=newFulfilled&&newFulfilled){
+            LOGGER.setLogLevel(RFLogger.Severity.ALL);
+            LOGGER.log( "Queuer.isFullfilled() : queue finished!");
+        }
+        isFulfilled=newFulfilled;
+        return isFulfilled;
     }
 
     /**
@@ -272,12 +286,14 @@ public class Queuer {
         if (!mustFinish) {
             startCondition = recalcStartPosSkipOptional(queueElements.size(), p_asynchrnous, p_isOptional);
             queueElements.add(new QueueElement(queueElements.size(), p_asynchrnous, startCondition, mustFinish, false, p_isOptional));
-            logger.log("/RobotLogs/GeneralRobot", queueElements.size() - 1 + "StartCondition" + startCondition);
+            LOGGER.setLogLevel(RFLogger.Severity.ALL);
+            LOGGER.log( "Queuer.createQueueElement(): event# : " + (queueElements.size() - 1) + ", StartCondition : " + startCondition);
         } else {
             mustFinish = false;
             startCondition = mustStartCondition;
             queueElements.add(new QueueElement(queueElements.size(), p_asynchrnous, startCondition, true));
-            logger.log("/RobotLogs/GeneralRobot", queueElements.size() - 1 + "mustStartCondition" + mustStartCondition);
+            LOGGER.setLogLevel(RFLogger.Severity.ALL);
+            LOGGER.log( "Queuer.createQueueElement(): event# : " + (queueElements.size() - 1) + ", StartCondition : " + startCondition);
         }
     }
 
@@ -300,10 +316,11 @@ public class Queuer {
                 queueElements.get(currentlyQueueing).setDone(p_done_condition);
                 if (p_done_condition) {
                     calculateCompleteCurrentEvent();
-                    logger.log("/RobotLogs/GeneralRobot", "event" + currentlyQueueing + "Done" + "completeEvents" + completeCurrentEvent);
+                    LOGGER.setLogLevel(RFLogger.Severity.ALL);
+                    LOGGER.log( "Queuer.updateQueuer(): currenty Queueing event# : " + currentlyQueueing + "is Done, " + "completeEvents" + completeCurrentEvent);
                     if (currentlyQueueing > currentEvent && !queueElements.get(currentlyQueueing).isAsynchronous()) {
                         currentEvent = currentlyQueueing;
-                        logger.log("/RobotLogs/GeneralRobot", "currentEvent" + currentEvent);
+                        LOGGER.log( "Queuer.updateQueuer(): currenty finished event# : " + currentEvent + "is Done, " + "completeEvents" + completeCurrentEvent);
                     }
                 }
             }
