@@ -13,15 +13,17 @@ public class AutoRed extends LinearOpMode {
 //        robot.setUpArmMotor();
         waitForStart();
 
-//        double armPower = robot.calculateArmPower(90);
-        double[] forwardPower = robot.calculateDrivetrainPower(600);
-        double[] mecanumPower = robot.calculateMecanumPower(0);
-        double[] forwardPowerNumeroDuos = robot.calculateDrivetrainPower(0);
 
         double mecanumDistance = -711.2;
         double forwardDistance = 150;
 
         double forwardDistanceNumeroDuos = 450;
+
+
+//        double armPower = robot.calculateArmPower(90);
+        double[] forwardPower = robot.calculateDrivetrainPower(forwardDistance);
+        double[] mecanumPower = robot.calculateMecanumPower(0);
+        double[] forwardPowerNumeroDuos = robot.calculateDrivetrainPower(forwardDistanceNumeroDuos);
 
         boolean doneWithMecanum = false;
         boolean doneWithForward = false;
@@ -61,7 +63,6 @@ public class AutoRed extends LinearOpMode {
 
             if (doneWithForward) {
                 robot.setHeading(30);
-                break;
             }
 
             //removed boolean setheading
@@ -77,6 +78,7 @@ public class AutoRed extends LinearOpMode {
         }
 
         while (opModeIsActive()) {
+
             if (!doneWithForward2 && doneWithMecanum && doneWithForward && !robot.checkReachedDistance(forwardDistanceNumeroDuos)) {
                 forwardPowerNumeroDuos = robot.calculateDrivetrainPower(forwardDistanceNumeroDuos);
                 robot.setMotorPower(forwardPowerNumeroDuos);
@@ -87,6 +89,20 @@ public class AutoRed extends LinearOpMode {
             }
 
             telemetry.addData("done with backward", doneWithForward2);
+
+
+
+            /*if (!robot.checkArmPos(90)) {
+                armPower = robot.calculateArmPower(90);
+                robot.setArmPower(armPower);
+            } else if (robot.checkArmPos(90)){
+                robot.setArmPower(0);
+            }
+*/
+            telemetry.update();
+        }
+
+        while (opModeIsActive()) {
 
 
         }
