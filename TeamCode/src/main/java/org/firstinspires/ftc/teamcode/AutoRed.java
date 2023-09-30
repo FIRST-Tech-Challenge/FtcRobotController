@@ -49,7 +49,7 @@ public class AutoRed extends LinearOpMode {
                 doneWithMecanum = true;
             }
             telemetry.addData("is done wit macanum", doneWithMecanum);*/
-            doneWithMecanum = true;
+            /*doneWithMecanum = true;
             if (!doneWithForward && doneWithMecanum && !robot.checkReachedDistance(forwardDistance)) {
                 forwardPower = robot.calculateDrivetrainPower(forwardDistance);
                 robot.setMotorPower(forwardPower);
@@ -57,15 +57,26 @@ public class AutoRed extends LinearOpMode {
                 robot.setMotorPower(0, 0, 0, 0);
                 robot.resetEncoder();
                 doneWithForward = true;
-            }
+            }*/
 
             telemetry.addData("is done with forward", doneWithForward);
 
-            if (doneWithForward) {
                 robot.setHeading(30);
-            }
 
-            //removed boolean setheading
+                /*if (!doneWithForward2 && doneWithMecanum && doneWithForward && !robot.checkReachedDistance(forwardDistanceNumeroDuos)) {
+                    forwardPowerNumeroDuos = robot.calculateDrivetrainPower(forwardDistanceNumeroDuos);
+                    robot.setMotorPower(forwardPowerNumeroDuos);
+                } else if (!doneWithForward2 && doneWithForward) {
+                    robot.setMotorPower(0, 0, 0, 0);
+                    robot.resetEncoder();
+                    doneWithForward2 = true;
+                }
+
+                telemetry.addData("done with backward", doneWithForward2);
+*/
+
+            telemetry.update();
+        }
 
             /*if (!robot.checkArmPos(90)) {
                 armPower = robot.calculateArmPower(90);
@@ -74,38 +85,6 @@ public class AutoRed extends LinearOpMode {
                 robot.setArmPower(0);
             }
 */
-            telemetry.update();
-        }
-
-        while (opModeIsActive()) {
-
-            if (!doneWithForward2 && doneWithMecanum && doneWithForward && !robot.checkReachedDistance(forwardDistanceNumeroDuos)) {
-                forwardPowerNumeroDuos = robot.calculateDrivetrainPower(forwardDistanceNumeroDuos);
-                robot.setMotorPower(forwardPowerNumeroDuos);
-            } else if (!doneWithForward2 && doneWithForward) {
-                robot.setMotorPower(0, 0, 0, 0);
-                robot.resetEncoder();
-                doneWithForward2 = true;
-            }
-
-            telemetry.addData("done with backward", doneWithForward2);
-
-
-
-            /*if (!robot.checkArmPos(90)) {
-                armPower = robot.calculateArmPower(90);
-                robot.setArmPower(armPower);
-            } else if (robot.checkArmPos(90)){
-                robot.setArmPower(0);
-            }
-*/
-            telemetry.update();
-        }
-
-        while (opModeIsActive()) {
-
-
-        }
 
     }
 }
