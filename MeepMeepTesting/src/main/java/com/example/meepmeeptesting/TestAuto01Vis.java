@@ -11,11 +11,13 @@ import com.noahbres.meepmeep.roadrunner.trajectorysequence.sequencesegment.Seque
 import java.util.ArrayList;
 
 public class TestAuto01Vis {
-    enum detections {
+    enum Detection {
         LEFT,
         CENTER,
         RIGHT
     }
+
+    private static final Pose2d STARTING_POSE = new Pose2d(61.5, -36, Math.toRadians(180));
 
     private static ArrayList<TrajectorySequence> sequences = new ArrayList<TrajectorySequence>();
 
@@ -38,8 +40,16 @@ public class TestAuto01Vis {
         return new TrajectorySequence(trajectorySegments);
     }
 
-    private static TrajectorySequence getCurrentTrajectorySequence() {
-        return sequences.get(sequences.size() - 1);
+    private static TrajectorySequence getCurrentTrajectorySequence(DriveShim driveShim) {
+        TrajectorySequence currentTrajectory;
+        if (true) {
+            currentTrajectory = sequences.get(sequences.size() - 1);
+        } else {
+            currentTrajectory = driveShim.trajectorySequenceBuilder(STARTING_POSE)
+                    .forward(0.0)
+                    .build();
+        }
+        return currentTrajectory;
     }
 
     private static void followTrajectorySequence(TrajectorySequence trajectorySequence) {
@@ -49,7 +59,7 @@ public class TestAuto01Vis {
     public static void main(String[] args) {
         System.setProperty("sun.java2d.opengl", "true");
         MeepMeep meepMeep = new MeepMeep(800);
-        detections detection = detections.LEFT;
+        Detection detection = Detection.LEFT;
         RoadRunnerBotEntity myBot;
         DriveShim driveShim;
 
@@ -60,24 +70,34 @@ public class TestAuto01Vis {
         driveShim = myBot.getDrive();
 
         followTrajectorySequence(
-                driveShim.trajectorySequenceBuilder(new Pose2d(61.5, -36, Math.toRadians(180)))
+                driveShim.trajectorySequenceBuilder(STARTING_POSE)
                         .forward(25.0)
                         .build()
         );
 
-        assert getCurrentTrajectorySequence() != null; // Null Pointer Protection
+        assert getCurrentTrajectorySequence(driveShim) != null; // Null Pointer Protection
 
         switch (detection) {
             case LEFT:
                 followTrajectorySequence(
-                        driveShim.trajectorySequenceBuilder(getCurrentTrajectorySequence().end())
-                                .forward(100.0)
+                        driveShim.trajectorySequenceBuilder(getCurrentTrajectorySequence(driveShim).end())
+                                .turn(Math.toRadians(90))
                                 .build()
                 );
                 break;
             case CENTER:
+//                followTrajectorySequence(
+//                        driveShim.trajectorySequenceBuilder(getCn    urrentTrajectorySequence(driveShim).end())
+//
+//                                .build()
+//                );
                 break;
             case RIGHT:
+                followTrajectorySequence(
+                        driveShim.trajectorySequenceBuilder(getCurrentTrajectorySequence(driveShim).end())
+                                .turn(Math.toRadians(-90))
+                                .build()
+                );
                 break;
         }
 
