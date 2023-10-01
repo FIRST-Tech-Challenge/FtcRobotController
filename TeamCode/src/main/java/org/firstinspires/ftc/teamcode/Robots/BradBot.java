@@ -191,4 +191,10 @@ public class BradBot extends BasicRobot{
         roadrun.update();
         ultras.update();
     }
+
+    public void stop(){
+        LOGGER.setLogLevel(RFLogger.Severity.INFO);
+        LOGGER.log("Entering Function Robot.stop(), the program has stopped normally");
+        op.stop();
+    }
 }
