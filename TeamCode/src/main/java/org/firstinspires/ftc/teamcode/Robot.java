@@ -295,6 +295,7 @@ public class Robot {
             double errorDer;
             double power;
             double currentTime;
+            double minPower = 0.15;
 
             //while start
             while (Math.abs(error) > ERROR_TOLERANCE && opMode.opModeIsActive()) {
@@ -304,14 +305,11 @@ public class Robot {
 
                 error = setTo - currentHeading; //error is degrees to goal
                 errorDer = (error - prevError) / (currentTime - prevTime);
-
-                double minPower = 0.15;
-
                 power = (KP * error) + (KD * errorDer);
 
-                if (power > 0) {
+                if (power > 0 && power < minPower) {
                     power += minPower;
-                } else if (power < 0) {
+                } else if (power < 0 && power > -1 * minPower) {
                     power -= minPower;
                 }
 
@@ -502,23 +500,14 @@ public class Robot {
     }
     public void blockMecanum (double inches, boolean right) {
 
-        //301 = circumference mm
-        //537.7, ticks per motor revolution
-        //converting mm to ticks
-
-        //get remaining ticks
-        //convert mm to ticks
-        //check reached distance
-        //calculate power
-
-        //auto mecanuming
-
-        final double IN_TO_TICK = (537.7 / 301.59) * 1.2 * 25.4;
-        double currentTick = fLeft.getCurrentPosition();
-
-
+        double ERROR_TOLERANCE = 10;
+        double power;
         double targetTick;
-        targetTick = currentTick + inches * IN_TO_TICK;
+        final double KP_MECANUM = 0.002;
+        final double minPower = 0.15;
+        final double IN_TO_TICK = (537.7 / 301.59) * 1.2 * 25.4;
+
+        double currentTick = fLeft.getCurrentPosition();
 
         if (right) {
             targetTick = currentTick + inches * IN_TO_TICK;
@@ -526,17 +515,13 @@ public class Robot {
             targetTick = currentTick - inches * IN_TO_TICK;
         }
 
-        double remainingDistance = targetTick - currentTick;
-        double ERROR_TOLERANCE = 50;
-        double power;
-        final double KP_MECANUM = 0.002;
-        final double minPower = 0.15;
+        double error = targetTick - currentTick;
 
-        while (Math.abs(remainingDistance) >= ERROR_TOLERANCE && opMode.opModeIsActive()) {
+        while (Math.abs(error) >= ERROR_TOLERANCE && opMode.opModeIsActive()) {
 
-            power = KP_MECANUM * remainingDistance;
+            power = KP_MECANUM * error;
 
-            if (minPower > power && power > 0) {
+            if (power > 0 && power < minPower) {
                 power += minPower;
             } else if (power < 0 && power > -1 * minPower) {
                 power -= minPower;
@@ -547,7 +532,10 @@ public class Robot {
 
             setMotorPower(power, -1 * power, -1 * power, power);
 
-            remainingDistance = targetTick - fLeft.getCurrentPosition();
+            error = targetTick - fLeft.getCurrentPosition();
+
+            telemetry.addLine(String.valueOf(error));
+            telemetry.update();
         }
         setMotorPower(0, 0, 0, 0);
     }
