@@ -114,12 +114,8 @@ public class CenterStage_6832 extends OpMode {
     public static double AVERAGE_LOOP_TIME_SMOOTHING_FACTOR = 0.1;
     public static boolean DEFAULT_DEBUG_TELEMETRY_ENABLED = false;
 
-    // drive train control variables
-    private double pwrDamper = 1;
-    private int direction = 1; // -1 to reverse direction
 
-    // sensors/sensing-related variables
-    private Orientation angles;
+
 
     // these are meant as short term testing variables, don't expect their usage
     // to be consistent across development sessions
@@ -229,7 +225,7 @@ public class CenterStage_6832 extends OpMode {
         //default auton setup
         alliance = Constants.Alliance.RED;
         //origin = Constants.Position.ORIGIN_ALLIANCE_RED;
-        origin = origin = Constants.Position.ORIGIN_6CAN;
+        origin = Constants.Position.ORIGIN_6CAN;
         //startingPosition = Constants.Position.START_RIGHT;
         startingPosition = Constants.Position.START_SIXCAN;
         auto = new Autonomous(robot);
