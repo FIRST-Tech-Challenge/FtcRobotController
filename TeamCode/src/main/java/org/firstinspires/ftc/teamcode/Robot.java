@@ -531,18 +531,18 @@ public class Robot {
         }
         setMotorPower(0, 0, 0, 0);
     }
-    public void straightBlocking (double inches, boolean right) {
+    public void straightBlocking (double inches, boolean forward) {
 
         double ERROR_TOLERANCE = 10;
         double power;
         double endTick;
-        final double KP = 0.002;
+        final double KP = 0.007;
         final double minPower = 0.15;
-        final double IN_TO_TICK = (537.7 / 301.59) * 1.2 * 25.4;
+        final double IN_TO_TICK = 33; //PPR / (motorToWheelRatio * wheelCircIn); //~32.357
 
         double currentTick = fLeft.getCurrentPosition();
 
-        if (right) {
+        if (forward) {
             endTick = currentTick + inches * IN_TO_TICK;
         } else {
             endTick = currentTick - inches * IN_TO_TICK;
@@ -563,7 +563,7 @@ public class Robot {
             //cap power
             power = Range.clip(power, -1, 1);
 
-            setMotorPower(power, -1 * power, -1 * power, power);
+            setMotorPower(power, power, power, power);
 
             error = endTick - fLeft.getCurrentPosition();
 
