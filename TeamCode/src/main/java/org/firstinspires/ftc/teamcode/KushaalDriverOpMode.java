@@ -132,6 +132,9 @@ public class KushaalDriverOpMode extends LinearOpMode {
             if (gamepad1.right_bumper) {
                 strafe = 1;
             }
+            if (!(gamepad1.right_bumper || gamepad1.left_bumper)){
+                strafe = 0;
+            }
             if (gamepad1.y) {
                 speed = 0;
             }
