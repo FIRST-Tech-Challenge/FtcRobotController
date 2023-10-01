@@ -1,8 +1,8 @@
 package org.firstinspires.ftc.teamcode;
 
-import static java.lang.Thread.sleep;
+//import static java.lang.Thread.sleep;
 
-import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+//import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
@@ -192,7 +192,7 @@ public class TensorFlowDetector {
     }
 
     /**
-     * Updates the telemetry with information about a SIGNLE detection with a given label, based on parameters
+     * Updates the telemetry with information about a SINGLE detection with a given label, based on parameters
      * @param label the label to search for
      * @param showXYPos display the XY position of the detections
      * @param showDetectionConfidence display the detection confidence of the detections
@@ -216,6 +216,42 @@ public class TensorFlowDetector {
     public void updateRecognitions() {
         currentRecognitions = detector.getRecognitions();
     }
+
+    /**
+     * set the minimum confidence for a detection to be considered valid. By default, 0.75f
+     * @param confidenceThreshold
+     */
+    public void setConfidenceThreshold (float confidenceThreshold) {
+        if (confidenceThreshold < 0f || confidenceThreshold > 1f) {
+            throw new IllegalArgumentException("confidence threshold should be a float 0 < x < 1");
+        } else if (confidenceThreshold == 0f || confidenceThreshold == 1f) {
+            throw new IllegalArgumentException("confidence threshold should be a value between 0 and 1, non-inclusive");
+        }
+        detector.setMinResultConfidence(confidenceThreshold);
+    }
+
+    /**
+     * Temporarily disable the detector (to save CPU resources)
+     */
+    public void disable () {
+        visionPortal.setProcessorEnabled(detector, false);
+    }
+
+    /**
+     * Re-enable the detector
+     */
+    public void enable () {
+        visionPortal.setProcessorEnabled(detector, true);
+    }
+
+    /**
+     * Permanently close the detector
+     */
+    public void close() {
+        visionPortal.close();
+    }
+
+
 
     /**
      * Get the number of Recognitions since last updating Recognitions
