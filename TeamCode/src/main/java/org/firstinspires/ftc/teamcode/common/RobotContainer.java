@@ -6,18 +6,13 @@ any packages we need to import for our code - these can't actually
 be found in the codebase and are instead fetched by android studio 
 when you build your program 
 */
-import com.qualcomm.robotcore.hardware.CRServo;
-import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.HardwareMap;
-import com.qualcomm.robotcore.hardware.DcMotorEx;
-import com.qualcomm.hardware.bosch.BNO055IMU;
-import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
 
-import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
-import org.firstinspires.ftc.robotcore.external.navigation.Acceleration;
-import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
-import org.openftc.easyopencv.OpenCvCamera;
-import org.openftc.easyopencv.OpenCvCameraFactory;
+import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
+import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.IMU;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
 /* every java file needs a class that matches its name! */
 public class RobotContainer {
@@ -32,18 +27,14 @@ public class RobotContainer {
     note that not all of these motors may be applicable to
     your season!!
     */
+    private ElapsedTime runtime = new ElapsedTime();
     public DcMotorEx lf = null; // left front motor/wheel
     public DcMotorEx rf = null; // right front motor/wheel
     public DcMotorEx lb = null; // left back motor/wheel
     public DcMotorEx rb = null; // right back motor/wheel
-    public DcMotorEx lift = null; // the motor that operates our lift
-    public CRServo serv0; // the servomotor that operates our claw
+    public IMU imu = null;
 
     /* declare our gyro (imu) and camera */
-    public BNO055IMU imu; // every control hub has a built-in gyroscope and it is initialized here
-    public OpenCvCamera camera; // we bought a camera to assist in image recognition
-    public Orientation angles; // we can use this to figure out the roll, pitch and yaw of the robot with the imu/gyro
-    public Acceleration gravity; // figure it out, idk if it's useful
 
     /**
      * The initialization method used in every driveMode and
@@ -63,47 +54,30 @@ public class RobotContainer {
         rf = hwMap.get(DcMotorEx.class, "right_front");
         lb = hwMap.get(DcMotorEx.class, "left_back");
         rb = hwMap.get(DcMotorEx.class, "right_back");
-        lift = hwMap.get(DcMotorEx.class, "lift");
-        serv0 = hwMap.get(CRServo.class, "serv0");
 
         /* all of our gyro initialization stuff - you probably don't need to worry about this*/
-        BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
-        parameters.angleUnit = BNO055IMU.AngleUnit.DEGREES;
-        parameters.accelUnit = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
-        parameters.calibrationDataFile = "BNO055IMUCalibration.json";
-        parameters.loggingEnabled = true;
-        parameters.loggingTag = "IMU";
-        parameters.accelerationIntegrationAlgorithm = new JustLoggingAccelerationIntegrator();
-        /* we use .get() on the imu as well! */
-        imu = hwMap.get(BNO055IMU.class, "imu");
-        imu.initialize(parameters);
+        /*
+        imu = hwMap.get(IMU.class, "imu");
+        RevHubOrientationOnRobot.LogoFacingDirection logoDirection = RevHubOrientationOnRobot.LogoFacingDirection.UP;
+        RevHubOrientationOnRobot.UsbFacingDirection  usbDirection  = RevHubOrientationOnRobot.UsbFacingDirection.FORWARD;
+        RevHubOrientationOnRobot orientationOnRobot = new RevHubOrientationOnRobot(logoDirection, usbDirection);
+        imu.initialize(new IMU.Parameters(orientationOnRobot));
 
-        /* find our webcam and initialize it */
-        int cameraMonitorViewID = hwMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hwMap.appContext.getPackageName());
-        camera = OpenCvCameraFactory.getInstance().createWebcam(hwMap.get(WebcamName.class, "log920"), cameraMonitorViewID);
+         */
 
         /* make sure all of our motors are going the right way, changes across robots */
-        lf.setDirection(DcMotorEx.Direction.REVERSE);
-        lb.setDirection(DcMotorEx.Direction.REVERSE);
-        rf.setDirection(DcMotorEx.Direction.FORWARD);
-        rb.setDirection(DcMotorEx.Direction.FORWARD);
-        lift.setDirection(DcMotorEx.Direction.REVERSE);
+        lf.setDirection(DcMotor.Direction.FORWARD);
+        lb.setDirection(DcMotor.Direction.FORWARD);
+        rf.setDirection(DcMotor.Direction.FORWARD);
+        rb.setDirection(DcMotor.Direction.FORWARD);
 
         /* stop and reset the encoder */
         lf.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         lb.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         rf.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         rb.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        lift.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
-        /* run each motor using the encoder so we can get data */
-        lf.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        lb.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        rf.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        rb.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        lift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-
-        /* 
+        /*
         wow, you read the whole thing
         go to the teleop folder and look at BaseDriveComplete now!
         */
