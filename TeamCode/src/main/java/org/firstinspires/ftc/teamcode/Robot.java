@@ -497,7 +497,7 @@ public class Robot {
         double targetTick;
         final double KP_MECANUM = 0.002;
         final double minPower = 0.15;
-        final double IN_TO_TICK = (537.7 / 301.59) * 1.2 * 25.4;
+        final double IN_TO_TICK = 56.3;
 
         double currentTick = fLeft.getCurrentPosition();
 
@@ -509,8 +509,12 @@ public class Robot {
 
         double error = targetTick - currentTick;
 
-        while (Math.abs(error) >= ERROR_TOLERANCE && opMode.opModeIsActive()) {
+        telemetry.addLine("current ticks: " + String.valueOf(currentTick));
+        telemetry.addLine("target ticks: " + String.valueOf(targetTick));
+        telemetry.addLine("delta: " + error);
+        telemetry.update();
 
+        while (Math.abs(error) >= ERROR_TOLERANCE && opMode.opModeIsActive()) {
             power = KP_MECANUM * error;
 
             if (power > 0 && power < minPower) {
@@ -525,9 +529,6 @@ public class Robot {
             setMotorPower(power, -1 * power, -1 * power, power);
 
             error = targetTick - fLeft.getCurrentPosition();
-
-            telemetry.addLine(String.valueOf(error));
-            telemetry.update();
         }
         setMotorPower(0, 0, 0, 0);
     }
@@ -536,11 +537,18 @@ public class Robot {
         double ERROR_TOLERANCE = 10;
         double power;
         double endTick;
-        final double KP = 0.007;
-        final double minPower = 0.15;
-        final double IN_TO_TICK = 33; //PPR / (motorToWheelRatio * wheelCircIn); //~32.357
-
+        final double KP = 0.01;
+        final double KD = 500_000;
+        final double minPower = 0.2;
         double currentTick = fLeft.getCurrentPosition();
+        double errorDer;
+        double currentTime;
+
+        //inch to tick
+        final double wheelDiaMm = 96;
+        final double PI = 3.14159;
+        final double wheelCircIn = wheelDiaMm * PI / 25.4; //~11.87
+        final double IN_TO_TICK = 537/wheelCircIn;
 
         if (forward) {
             endTick = currentTick + inches * IN_TO_TICK;
@@ -552,7 +560,10 @@ public class Robot {
 
         while (Math.abs(error) >= ERROR_TOLERANCE && opMode.opModeIsActive()) {
 
-            power = KP * error;
+            currentTime = SystemClock.elapsedRealtimeNanos();
+            error = endTick - currentTick;
+            errorDer = (error - prevError) / (currentTime - prevTime);
+            power = (KP * error) + (KD * errorDer);
 
             if (power > 0 && power < minPower) {
                 power += minPower;
@@ -561,14 +572,13 @@ public class Robot {
             }
 
             //cap power
-            power = Range.clip(power, -1, 1);
+            power = Range.clip(power, -0.7, 0.7);
 
             setMotorPower(power, power, power, power);
 
-            error = endTick - fLeft.getCurrentPosition();
-
-            telemetry.addLine(String.valueOf(error));
-            telemetry.update();
+            currentTick = fLeft.getCurrentPosition();
+            prevTime = currentTime;
+            prevError = error;
         }
         setMotorPower(0, 0, 0, 0);
     }
