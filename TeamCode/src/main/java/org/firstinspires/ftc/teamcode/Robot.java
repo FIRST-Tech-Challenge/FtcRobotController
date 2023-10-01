@@ -446,12 +446,8 @@ public class Robot {
         boolean done = false;
         double remainingDistance = Math.abs(getRemainingTicksForDrivetrainMecanum(targetDistanceInMM));
 
-<<<<<<< HEAD
-        telemetry.addData("remaining distance in ticks for mecanum", remainingDistance);
-=======
-        //telemetry.addData("remaining distance in ticks for mecananamasm", remainingDistance);
->>>>>>> 003dc4d (Move a certain distance relative to april tag)
 
+        //telemetry.addData("remaining distance in ticks for mecananamasm", remainingDistance);
 
         if (remainingDistance < 30 && -yaw <5 && -yaw > - 5) {
             done = true;
