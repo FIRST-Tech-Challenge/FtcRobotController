@@ -29,6 +29,7 @@
 
 package org.firstinspires.ftc.teamcode;
 
+import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
@@ -38,6 +39,8 @@ import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.vision.VisionPortal;
 import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
 import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
+
+import com.acmerobotics.dashboard.FtcDashboard;
 
 import java.util.List;
 
@@ -92,10 +95,13 @@ public class ConceptAprilTagEasy extends LinearOpMode {
 
         initAprilTag();
 
+
+
         // Wait for the DS start button to be touched.
         telemetry.addData("DS preview on/off", "3 dots, Camera Stream");
         telemetry.addData(">", "Touch Play to start OpMode");
         telemetry.update();
+
         waitForStart();
 
         if (opModeIsActive()) {
@@ -161,6 +167,13 @@ public class ConceptAprilTagEasy extends LinearOpMode {
                 telemetry.addLine(String.format("\n==== (ID %d) Unknown", detection.id));
                 telemetry.addLine(String.format("Center %6.0f %6.0f   (pixels)", detection.center.x, detection.center.y));
             }
+
+            if (detection.id == 1 && detection.ftcPose != null) {
+                final TelemetryPacket packet = new TelemetryPacket();
+                packet.put("x-pos", detection.ftcPose.x);
+
+                FtcDashboard.getInstance().sendTelemetryPacket(packet);
+            }
         }   // end for() loop
 
         // Add "key" information to telemetry
@@ -169,5 +182,6 @@ public class ConceptAprilTagEasy extends LinearOpMode {
         telemetry.addLine("RBE = Range, Bearing & Elevation");
 
     }   // end method telemetryAprilTag()
+
 
 }   // end class
