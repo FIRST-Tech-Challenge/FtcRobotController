@@ -8,10 +8,17 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.IMU;
 import android.os.SystemClock;
 import com.qualcomm.robotcore.util.Range;
+
+import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.vision.VisionPortal;
+import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
+import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
+
+import java.util.List;
 
 public class Robot {
 
@@ -28,6 +35,10 @@ public class Robot {
 
     double yaw;
 
+    private AprilTagProcessor aprilTag;
+    private VisionPortal visionPortal;
+
+
 
     double prevError = 0;
     double prevTime = 0;
@@ -40,6 +51,29 @@ public class Robot {
         setUpDrivetrainMotors();
         setUpImu();
     }
+
+    public void setUpAprilTags() {
+        aprilTag = AprilTagProcessor.easyCreateWithDefaults();
+        visionPortal = VisionPortal.easyCreateWithDefaults(
+                hardwareMap.get(WebcamName.class, "Webcam 1"), aprilTag);
+
+    }
+
+    public double getAprilTagPose() {
+        boolean done = false;
+
+        List<AprilTagDetection> currentDetections = aprilTag.getDetections();
+
+        double pose = 0;
+        for (AprilTagDetection detection : currentDetections) {
+            if (detection.metadata != null) {
+                pose = detection.ftcPose.range;
+            }
+
+        }
+        return pose;
+    }
+
     public void setUpImu() {
 
         this.imu = hardwareMap.get(IMU.class, "imu");
@@ -119,7 +153,7 @@ public class Robot {
 
         proportionalPowerForImu = P_VALUE_FOR_TURNING_IMU * angleError;
 
-        telemetry.addData("yaw", yaw);
+        //telemetry.addData("yaw", yaw);
 
         return proportionalPowerForImu;
 
@@ -209,7 +243,8 @@ public class Robot {
         boolean done = false;
         double remainingDistance = Math.abs(getRemainingTicksForDrivetrain(targetDistanceInMM));
 
-        telemetry.addData("remaining distance for forward and backward", remainingDistance);
+
+        //telemetry.addData("remainig distance for ffowrard and backeward", remainingDistance);
 
         if (remainingDistance < 30 && -yaw < 5 && -yaw > -5) {
             done = true;
@@ -225,7 +260,7 @@ public class Robot {
         fLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
     }
     public double[] calculateDrivetrainPower(double targetDistanceInMM) {
-        final double P_VALUE = 0.002;
+        final double P_VALUE = 0.001;
 
         if (checkReachedDistance(targetDistanceInMM)) {
             return new double[]{0, 0, 0, 0};
@@ -324,10 +359,10 @@ public class Robot {
         double currentHeading = getCurrentHeading();
         double deltaHeading = Math.abs(targetHeading - currentHeading);
         if (deltaHeading <= ERROR_TOLERANCE) {
-            telemetry.addLine("within error, return true");
+            //telemetry.addLine("within error, return true");
             return true;
         } else {
-            telemetry.addLine("not within error, return false");
+            //telemetry.addLine("not within error, return false");
             return false;
         }
     }
@@ -411,7 +446,11 @@ public class Robot {
         boolean done = false;
         double remainingDistance = Math.abs(getRemainingTicksForDrivetrainMecanum(targetDistanceInMM));
 
+<<<<<<< HEAD
         telemetry.addData("remaining distance in ticks for mecanum", remainingDistance);
+=======
+        //telemetry.addData("remaining distance in ticks for mecananamasm", remainingDistance);
+>>>>>>> 003dc4d (Move a certain distance relative to april tag)
 
 
         if (remainingDistance < 30 && -yaw <5 && -yaw > - 5) {
