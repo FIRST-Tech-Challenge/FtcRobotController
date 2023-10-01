@@ -187,29 +187,29 @@ public class AutoMode extends LinearOpMode {
         while (opModeIsActive()) {
 
             robot.straightBlocking(28, true);
-            sleep(500);
+            sleep(100);
             robot.setHeading(0);
-            sleep(500);
+            sleep(100);
             robot.straightBlocking(13, false);
-            sleep(500);
+            sleep(100);
             robot.setHeading(0);
-            sleep(500);
+            sleep(100);
             robot.mecanumBlocking(17, false);
-            sleep(500);
+            sleep(100);
             robot.setHeading(0);
-            sleep(500);
+            sleep(100);
             robot.straightBlocking(38, true);
-            sleep(500);
+            sleep(100);
             robot.setHeading(-90);
-            sleep(500);
+            sleep(100);
             robot.straightBlocking(88, true);
-            sleep(500);
+            sleep(100);
             robot.setHeading(-90);
-            sleep(500);
+            sleep(100);
             robot.mecanumBlocking(25, true);
-            sleep(500);
+            sleep(100);
             robot.setHeading(-90);
-            sleep(500);
+            sleep(100);
             break;
         }
     }
