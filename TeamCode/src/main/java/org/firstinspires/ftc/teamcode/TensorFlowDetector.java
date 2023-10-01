@@ -16,7 +16,6 @@ import org.firstinspires.ftc.vision.tfod.TfodProcessor;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.BuiltinCameraDirection;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 
-import java.sql.Array;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -137,11 +136,77 @@ public class TensorFlowDetector {
         updateTelemetry (i, true, true, true, false);
     }
 
+    /**
+     * Updates the telemetry with information about a SINGLE detection with a given label
+     * @param label the label to search for
+     */
     public void updateTelemetry(String label) {
         int i = getRecognitionIndex(label);
-        updateTelemetry(i);
+        if (i == -1) {
+            telemetry.addLine("No recognitions with label \"" + label + "\" were found.");
+        } else {
+            updateTelemetry(i);
+        }
     }
 
+
+    /**
+     * Updates the telemetry with information about ALL detections with a given label
+     * @param label the label to search for
+     */
+    public void updateTelemetry(String label, boolean showAll) {
+        if (!showAll) {
+            updateTelemetry(label);
+        } else {
+            List<Integer> indexes = getRecognitionIndexes(label);
+            if (indexes.isEmpty()) {
+                telemetry.addLine("No recognitions with label \"" + label + "\" were found.");
+            }
+            for (int i = 0; i < indexes.size(); i++) {
+                updateTelemetry(indexes.get(i));
+            }
+        }
+    }
+
+    /**
+     * Updates the telemetry with information about detections with a given label, based on parameters
+     * @param label the label to search for
+     * @param showAll whether the telemetry should be updated for only the first detection with that label, or all detections with that label
+     * @param showXYPos display the XY position of the detections
+     * @param showDetectionConfidence display the detection confidence of the detections
+     * @param showSize display the size of the detections
+     * @param showEstimatedAngle display the ESTIMATED angle from the camera to the detections
+     */
+    public void updateTelemetry(String label, boolean showAll, boolean showXYPos, boolean showDetectionConfidence, boolean showSize, boolean showEstimatedAngle) {
+        if (!showAll) {
+            updateTelemetry(label, showXYPos, showDetectionConfidence, showSize, showEstimatedAngle);
+        } else {
+            List<Integer> indexes = getRecognitionIndexes(label);
+            if (indexes.isEmpty()) {
+                telemetry.addLine("No recognitions with label \"" + label + "\" were found.");
+            }
+            for (int i = 0; i < indexes.size(); i++) {
+                updateTelemetry(indexes.get(i), showXYPos, showDetectionConfidence, showSize, showEstimatedAngle);
+            }
+        }
+    }
+
+    /**
+     * Updates the telemetry with information about a SIGNLE detection with a given label, based on parameters
+     * @param label the label to search for
+     * @param showXYPos display the XY position of the detections
+     * @param showDetectionConfidence display the detection confidence of the detections
+     * @param showSize display the size of the detections
+     * @param showEstimatedAngle display the ESTIMATED angle from the camera to the detections
+     */
+    public void updateTelemetry(String label, boolean showXYPos, boolean showDetectionConfidence, boolean showSize, boolean showEstimatedAngle) {
+        int i = getRecognitionIndex(label);
+        if (i == -1) {
+            telemetry.addLine("No recognitions with label \"" + label + "\" were found.");
+        } else {
+            updateTelemetry(i, showXYPos, showDetectionConfidence, showSize, showEstimatedAngle);
+        }
+    }
 
 
     /**
