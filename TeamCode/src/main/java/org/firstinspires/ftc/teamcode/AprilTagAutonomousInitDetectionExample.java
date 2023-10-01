@@ -62,10 +62,12 @@ public class AprilTagAutonomousInitDetectionExample extends autonomous
     int right = 6;
 
     AprilTagDetection tagOfInterest = null;
+    DrivingFunctions df;
 
     @Override
     public void runOpMode()
     {
+        df = new DrivingFunctions(this);
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
         camera = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "Webcam 1"), cameraMonitorViewId);
         aprilTagDetectionPipeline = new AprilTagDetectionPipeline(tagsize, fx, fy, cx, cy);
@@ -171,12 +173,12 @@ public class AprilTagAutonomousInitDetectionExample extends autonomous
 
         /* Actually do something useful */
        if (tagOfInterest.id == left) {
-           rotateLeft(1, 1000);
+           df.rotateLeft(1, 1000);
        } else if (tagOfInterest == null || tagOfInterest.id == middle) {
-            driveForward(1, 100);
-            driveBackward(1, 100);
+            df.driveForward(1, 100);
+            df.driveBackward(1, 100);
        } else if (tagOfInterest.id == right) {
-           rotateRight(1, 1000);
+           df.rotateRight(1, 1000);
        }
 
         /* You wouldn't have this in your autonomous, this is just to prevent the sample from ending */

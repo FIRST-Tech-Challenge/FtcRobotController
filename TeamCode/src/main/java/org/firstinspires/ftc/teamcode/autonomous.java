@@ -74,104 +74,18 @@ public class autonomous extends LinearOpMode {
     private DcMotor leftBackDrive = null;
     private DcMotor rightFrontDrive = null;
     private DcMotor rightBackDrive = null;
+    private DrivingFunctions df = new DrivingFunctions(this);
 
     //@Override
-    public void stopM() {
-        leftFrontDrive.setPower(0);
-        rightFrontDrive.setPower(0);
-        leftBackDrive.setPower(0);
-        rightBackDrive.setPower(0);
-    }
-
-    public void driveForward(double power, int miliseconds) {
-        direction = 1;
-        leftFrontDrive.setPower(power * direction);
-        rightFrontDrive.setPower(power * direction);
-        leftBackDrive.setPower(power * direction);
-        rightBackDrive.setPower(power * direction);
-        sleep(miliseconds);
-        stopM();
-    }
-
-
-    public void driveBackward(double power, int miliseconds) {
-        direction = -1;
-        leftFrontDrive.setPower(power * direction);
-        rightFrontDrive.setPower(power * direction);
-        leftBackDrive.setPower(power * direction);
-        rightBackDrive.setPower(power * direction);
-        sleep(miliseconds);
-        stopM();
-    }
-
-    public void rotateRight(double power, int miliseconds) {
-        direction = 1;
-        leftFrontDrive.setPower(power * direction);
-        rightFrontDrive.setPower(power * direction * -1);
-        leftBackDrive.setPower(power * direction);
-        rightBackDrive.setPower(power * direction * -1);
-        sleep(miliseconds);
-        stopM();
-    }
-
-    public void rotateLeft(double power, int miliseconds) {
-        direction = -1;
-        leftFrontDrive.setPower(power * direction);
-        rightFrontDrive.setPower(power * direction * -1);
-        leftBackDrive.setPower(power * direction);
-        rightBackDrive.setPower(power * direction * -1);
-        sleep(miliseconds);
-        stopM();
-    }
-
-    public void straifRight(double power, int miliseconds) {
-        direction = 1;
-        leftFrontDrive.setPower(power * direction * -1);
-        rightFrontDrive.setPower(power * direction);
-        leftBackDrive.setPower(power * direction * -1);
-        rightBackDrive.setPower(power * direction);
-        sleep(miliseconds);
-        stopM();
-    }
-
-    public void straifLeft(double power, int miliseconds) {
-        direction = -1;
-        leftFrontDrive.setPower(power * direction * -1);
-        rightFrontDrive.setPower(power * direction);
-        leftBackDrive.setPower(power * direction * -1);
-        rightBackDrive.setPower(power * direction);
-        sleep(miliseconds);
-        stopM();
-    }
-
-    public void returnToLocaiton(double power, int miliseconds, int direction) {
-
-        leftFrontDrive.setPower(power * direction);
-        rightFrontDrive.setPower(power * direction);
-        leftBackDrive.setPower(power * direction);
-        rightBackDrive.setPower(power * direction);
-        sleep(miliseconds);
-        stopM();
-
-        leftFrontDrive.setPower(power * direction * -1);
-        rightFrontDrive.setPower(power * direction * -1);
-        leftBackDrive.setPower(power * direction * -1);
-        rightBackDrive.setPower(power * direction * -1);
-        sleep(miliseconds);
-        stopM();
-    }
 
     public void runOpMode() {
         // Initialize your hardware here (motor hardware mappings)
 
         waitForStart(); // Wait for the start button to be pressed
-            driveForward(1,1000);
-            rotateLeft(1, 500);
-        // Your autonomous code here:
-        // Example: driveForward(0.5, 1000); // Drive forward at half power for 1 second
-
+        df.driveForward(1,1000);
+        df.rotateLeft(1, 500);
         // Stop all motors when autonomous is done
-        stopM();
+        df.stopM();
     }
 
 
