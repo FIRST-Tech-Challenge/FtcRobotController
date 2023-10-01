@@ -110,7 +110,7 @@ public class Robot {
 
         yaw = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES);
 
-        double proportionalPowerForImu = 0;
+        double proportionalPowerForImu;
 
         yaw = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES);
 
@@ -179,9 +179,8 @@ public class Robot {
         //converting mm to ticks
         final double Degrees_TO_TICKS = 537.7 / 15;
 
-        double targetPos = targetDistanceInDegrees * Degrees_TO_TICKS;
+        return targetDistanceInDegrees * Degrees_TO_TICKS;
 
-        return targetPos;
     }//Arm
     public void setMotorPower(double lFront, double rFront, double lBack, double rBack) {
         this.fLeft.setPower(lFront);
@@ -197,21 +196,20 @@ public class Robot {
     }
     public double convertMMToTicks(double targetDistanceInMM) {
 
-        //301 = circumferance mm
+        //301 = circumference mm
         //537.7, ticks per motor revolution
         //converting mm to ticks
         final double MM_TO_TICKS = (537.7 / 301.59);
 
-        double targetPos = targetDistanceInMM * MM_TO_TICKS;
+        return targetDistanceInMM * MM_TO_TICKS;
 
-        return targetPos;
     }
     public boolean checkReachedDistance(double targetDistanceInMM) {
 
         boolean done = false;
         double remainingDistance = Math.abs(getRemainingTicksForDrivetrain(targetDistanceInMM));
 
-        telemetry.addData("remainig distance for ffowrard and backeward", remainingDistance);
+        telemetry.addData("remaining distance for forward and backward", remainingDistance);
 
         if (remainingDistance < 30 && -yaw < 5 && -yaw > -5) {
             done = true;
@@ -220,9 +218,7 @@ public class Robot {
     }
     public double getRemainingTicksForDrivetrain(double targetDistanceInMM) {
         double targetDistanceInTicks = convertMMToTicks(targetDistanceInMM);
-        double remainingDistance = targetDistanceInTicks - fLeft.getCurrentPosition();
-
-        return remainingDistance;
+        return targetDistanceInTicks - fLeft.getCurrentPosition();
     }
     public void resetEncoder() {
         fLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -273,13 +269,13 @@ public class Robot {
     }
     //the desired heading must be relative to last imu reset
     //-180 < desired heading <= 180
-    public void setHeading(double targetAbsoluteAngleInDegrees) {
+    public void setHeading(double targetAbsDegrees) {
     /*
-        assert(targetAbsoluteAngleInDegrees > 180);
-        assert(targetAbsoluteAngleInDegrees <= -180);
+        assert(targetAbsDegrees > 180);
+        assert(targetAbsDegrees <= -180);
 
      */
-        if (targetAbsoluteAngleInDegrees == 180) {
+        if (targetAbsDegrees == 180) {
             setHeading(179.5);
         } else {
 
@@ -289,9 +285,8 @@ public class Robot {
             double KD = 2_500_000;
             double ERROR_TOLERANCE = 0.5; //degrees
 
-            double setTo = targetAbsoluteAngleInDegrees;
             double currentHeading = getCurrentHeading();
-            double error = setTo - currentHeading;
+            double error = targetAbsDegrees - currentHeading;
             double errorDer;
             double power;
             double currentTime;
@@ -303,7 +298,7 @@ public class Robot {
                 currentHeading = robotOrientation.getYaw(AngleUnit.DEGREES);
                 currentTime = SystemClock.elapsedRealtimeNanos();
 
-                error = setTo - currentHeading; //error is degrees to goal
+                error = targetAbsDegrees - currentHeading; //error is degrees to goal
                 errorDer = (error - prevError) / (currentTime - prevTime);
                 power = (KP * error) + (KD * errorDer);
 
@@ -341,7 +336,7 @@ public class Robot {
 
         final double P_VALUE = 0.006;
 
-        //301 = circumferance mm
+        //301 = circumference mm
         //537.7, ticks per motor revolution
         //1.4, gear ratio
         //converting mm to ticks
@@ -397,20 +392,16 @@ public class Robot {
     }//Auto Forward but Better
     public double convertMMToTicksForMecanum(double targetDistanceInMM) {
 
-        //301 = circumferance mm
+        //301 = circumference mm
         //537.7, ticks per motor revolution
         //converting mm to ticks
         final double MM_TO_TICKS = (537.7 / 301.59)*1.2;
 
-        double targetPos = targetDistanceInMM * MM_TO_TICKS;
-
-        return targetPos;
+        return targetDistanceInMM * MM_TO_TICKS;
     }
     public double getRemainingTicksForDrivetrainMecanum(double targetDistanceInMM) {
         double targetDistanceInTicks = convertMMToTicksForMecanum(targetDistanceInMM);
-        double remainingDistance = targetDistanceInTicks - fLeft.getCurrentPosition();
-
-        return remainingDistance;
+        return targetDistanceInTicks - fLeft.getCurrentPosition();
     }
 
     //TODO document for notebook
@@ -420,7 +411,7 @@ public class Robot {
         boolean done = false;
         double remainingDistance = Math.abs(getRemainingTicksForDrivetrainMecanum(targetDistanceInMM));
 
-        telemetry.addData("remaining distance in ticks for mecananamasm", remainingDistance);
+        telemetry.addData("remaining distance in ticks for mecanum", remainingDistance);
 
 
         if (remainingDistance < 30 && -yaw <5 && -yaw > - 5) {
@@ -441,17 +432,17 @@ public class Robot {
         double scaleImu = 0; //8.15;
 
         return scalePowers(new double[]{
-                + proportionalPower + calculateImuPower(0)*scaleImu,
+                proportionalPower + calculateImuPower(0)*scaleImu,
                 - proportionalPower - calculateImuPower(0)*scaleImu,
                 - proportionalPower + calculateImuPower(0)*scaleImu,
-                + proportionalPower - calculateImuPower(0)*scaleImu
+                proportionalPower - calculateImuPower(0)*scaleImu
         });
     }
 
     public void autoMecanuming(double targetMecanumDistance) {
         final double P_VALUE = 0.004;
 
-        //301 = circumferance mm
+        //301 = circumference mm
         //537.7, ticks per motor revolution
         //1.4, gear ratio
         //converting mm to ticks
@@ -480,10 +471,10 @@ public class Robot {
         double imuPower = calculateImuPower(0);
 
         setMotorPower(
-                +PROPORTIONAL_POWER+imuPower,
+                PROPORTIONAL_POWER+imuPower,
                 -PROPORTIONAL_POWER+imuPower,
                 -PROPORTIONAL_POWER+imuPower,
-                +PROPORTIONAL_POWER+imuPower
+                PROPORTIONAL_POWER+imuPower
         );
 
         if (millis > lastCheckMillis + 500) {
@@ -498,7 +489,8 @@ public class Robot {
 
         }
     }
-    public void blockMecanum (double inches, boolean right) {
+
+    public void mecanumBlocking (double inches, boolean right) {
 
         double ERROR_TOLERANCE = 10;
         double power;
@@ -533,6 +525,47 @@ public class Robot {
             setMotorPower(power, -1 * power, -1 * power, power);
 
             error = targetTick - fLeft.getCurrentPosition();
+
+            telemetry.addLine(String.valueOf(error));
+            telemetry.update();
+        }
+        setMotorPower(0, 0, 0, 0);
+    }
+    public void straightBlocking (double inches, boolean right) {
+
+        double ERROR_TOLERANCE = 10;
+        double power;
+        double endTick;
+        final double KP = 0.002;
+        final double minPower = 0.15;
+        final double IN_TO_TICK = (537.7 / 301.59) * 1.2 * 25.4;
+
+        double currentTick = fLeft.getCurrentPosition();
+
+        if (right) {
+            endTick = currentTick + inches * IN_TO_TICK;
+        } else {
+            endTick = currentTick - inches * IN_TO_TICK;
+        }
+
+        double error = endTick - currentTick;
+
+        while (Math.abs(error) >= ERROR_TOLERANCE && opMode.opModeIsActive()) {
+
+            power = KP * error;
+
+            if (power > 0 && power < minPower) {
+                power += minPower;
+            } else if (power < 0 && power > -1 * minPower) {
+                power -= minPower;
+            }
+
+            //cap power
+            power = Range.clip(power, -1, 1);
+
+            setMotorPower(power, -1 * power, -1 * power, power);
+
+            error = endTick - fLeft.getCurrentPosition();
 
             telemetry.addLine(String.valueOf(error));
             telemetry.update();
