@@ -1,9 +1,5 @@
 package org.firstinspires.ftc.teamcode;
 
-import android.util.Log;
-
-import com.qualcomm.robotcore.hardware.IMU;
-
 import org.opencv.core.Core;
 import org.opencv.core.Mat;
 import org.opencv.core.Rect;
@@ -11,10 +7,10 @@ import org.opencv.core.Scalar;
 import org.opencv.imgproc.Imgproc;
 import org.openftc.easyopencv.OpenCvPipeline;
 
-public class TestDetector extends OpenCvPipeline {
+public class MarkerDetector extends OpenCvPipeline {
     private Mat workingMatrix = new Mat();
 
-    public String position = "- - - - -";
+    public MARKER_POSITION position = MARKER_POSITION.UNKNOWN;
 
     double avgLeftCr;
 
@@ -22,7 +18,11 @@ public class TestDetector extends OpenCvPipeline {
     private static final int SUBMAT_WIDTH = 80;
     private static final int SUBMAT_HEIGHT = 80;
 
-    public TestDetector() {
+    public enum MARKER_POSITION {
+        LEFT, RIGHT, CENTER, UNDETECTED, UNKNOWN;
+    }
+
+    public MarkerDetector() {
 
     }
 
@@ -78,26 +78,26 @@ public class TestDetector extends OpenCvPipeline {
 //            position = "cannot find marker";
 //        }
 
-        position = "cannot find marker";
+        position = MARKER_POSITION.UNDETECTED;
 
         if (avgLeftCr > avgCenterCr) {
             if (avgLeftCr > avgRightCr) {
                 if (((184 <= avgLeftCr) && (avgLeftCr <= 240)) && ((avgLeftCb >= 16) && (avgLeftCb <= 128))) {
-                    position = "LEFT";
+                    position = MARKER_POSITION.LEFT;
                 }
             } else {
                 if (((184 <= avgRightCr) && (avgRightCr <= 240)) && ((avgRightCb >= 16) && (avgRightCb <= 128))) {
-                    position = "RIGHT";
+                    position = MARKER_POSITION.RIGHT;
                 }
             }
         } else {
             if (avgCenterCr > avgRightCr) {
                 if (((184 <= avgCenterCr) && (avgCenterCr <= 240)) && ((avgCenterCb >= 16) && (avgCenterCb <= 128))) {
-                    position = "CENTER";
+                    position = MARKER_POSITION.CENTER;
                 }
             } else {
                 if (((184 <= avgRightCr) && (avgRightCr <= 240)) && ((avgRightCb >= 16) && (avgRightCb <= 128))) {
-                    position = "RIGHT";
+                    position = MARKER_POSITION.RIGHT;
                 }
             }
         }
