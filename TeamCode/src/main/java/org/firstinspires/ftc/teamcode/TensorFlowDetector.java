@@ -25,7 +25,6 @@ public class TensorFlowDetector {
     private static final boolean USE_WEBCAM = true;
 
     private String[] labels = {};
-    private boolean isActive = false;
     private TfodProcessor detector;
     private VisionPortal visionPortal;
     private HardwareMap hardwareMap;
