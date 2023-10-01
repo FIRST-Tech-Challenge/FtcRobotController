@@ -40,7 +40,6 @@ public class Robot {
         setUpDrivetrainMotors();
         setUpImu();
     }
-
     public void setUpImu() {
 
         this.imu = hardwareMap.get(IMU.class, "imu");
@@ -56,7 +55,6 @@ public class Robot {
 
 
     }
-
     public void setUpDrivetrainMotors() {
         fLeft = hardwareMap.dcMotor.get("fLeft");
         fRight = hardwareMap.dcMotor.get("fRight");
@@ -77,7 +75,6 @@ public class Robot {
         fLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         fLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
     }
-
     private double maxAbsValueDouble(double[] values) {
 
         double max = -Double.MIN_VALUE;
@@ -92,7 +89,6 @@ public class Robot {
 
         return Math.abs(max);
     }
-
     private double[] scalePowers(double[] powers) {
         double maxPower = maxAbsValueDouble(powers);
 
@@ -107,7 +103,6 @@ public class Robot {
                 powers[3] / maxPower
         };
     }
-
     public double calculateImuPower(int degrees) {
 
 
@@ -129,7 +124,6 @@ public class Robot {
         return proportionalPowerForImu;
 
     } //IMU
-
     public void setUpArmMotor() {
         arm = hardwareMap.dcMotor.get("arm");
 
@@ -140,7 +134,6 @@ public class Robot {
         arm.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         arm.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
     }
-
     /*
         public double calculateArmPower(int targetAngleInDegrees) {
 
@@ -158,7 +151,6 @@ public class Robot {
     public void setArmPower(double armPower) {
         arm.setPower(armPower);
     }
-
     /*
         public boolean checkArmPos(int targetAngleInDegrees) {
 
@@ -313,7 +305,7 @@ public class Robot {
                 error = setTo - currentHeading; //error is degrees to goal
                 errorDer = (error - prevError) / (currentTime - prevTime);
 
-                double minPower = 0.15; //TODO: tune
+                double minPower = 0.15;
 
                 power = (KP * error) + (KD * errorDer);
 
@@ -465,6 +457,7 @@ public class Robot {
         //537.7, ticks per motor revolution
         //1.4, gear ratio
         //converting mm to ticks
+
         final double MM_TO_TICKS = 537.7/301.59;
 
         double targetPos = targetMecanumDistance * MM_TO_TICKS*(1.225);
@@ -495,7 +488,6 @@ public class Robot {
                 +PROPORTIONAL_POWER+imuPower
         );
 
-
         if (millis > lastCheckMillis + 500) {
             lastCheckMillis = millis;
             double newTicks = fLeft.getCurrentPosition();
@@ -508,5 +500,55 @@ public class Robot {
 
         }
     }
+    public void blockMecanum (double inches, boolean right) {
 
+        //301 = circumference mm
+        //537.7, ticks per motor revolution
+        //converting mm to ticks
+
+        //get remaining ticks
+        //convert mm to ticks
+        //check reached distance
+        //calculate power
+
+        //auto mecanuming
+
+        final double IN_TO_TICK = (537.7 / 301.59) * 1.2 * 25.4;
+        double currentTick = fLeft.getCurrentPosition();
+
+
+        double targetTick;
+        targetTick = currentTick + inches * IN_TO_TICK;
+
+        if (right) {
+            targetTick = currentTick + inches * IN_TO_TICK;
+        } else {
+            targetTick = currentTick - inches * IN_TO_TICK;
+        }
+
+        double remainingDistance = targetTick - currentTick;
+        double ERROR_TOLERANCE = 50;
+        double power;
+        final double KP_MECANUM = 0.002;
+        final double minPower = 0.15;
+
+        while (Math.abs(remainingDistance) >= ERROR_TOLERANCE && opMode.opModeIsActive()) {
+
+            power = KP_MECANUM * remainingDistance;
+
+            if (minPower > power && power > 0) {
+                power += minPower;
+            } else if (power < 0 && power > -1 * minPower) {
+                power -= minPower;
+            }
+
+            //cap power
+            power = Range.clip(power, -1, 1);
+
+            setMotorPower(power, -1 * power, -1 * power, power);
+
+            remainingDistance = targetTick - fLeft.getCurrentPosition();
+        }
+        setMotorPower(0, 0, 0, 0);
+    }
 }
