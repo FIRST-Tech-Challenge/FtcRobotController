@@ -7,21 +7,15 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
-import org.opencv.core.Mat;
-import org.opencv.core.Point;
-import org.opencv.core.Scalar;
-import org.opencv.imgproc.Imgproc;
-import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
-import org.openftc.easyopencv.OpenCvPipeline;
 import org.openftc.easyopencv.OpenCvWebcam;
 
 @TeleOp
 public class TestAuto extends LinearOpMode {
     OpenCvWebcam webcam;
-    private TestDetector detector;
-    private String position;
+    private MarkerDetector detector;
+    private MarkerDetector.MARKER_POSITION position;
     private double LEFT_CR_AVG;
 
     ElapsedTime elapsedTime;
@@ -32,7 +26,7 @@ public class TestAuto extends LinearOpMode {
         webcam = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "Webcam 1"), cameraMonitorViewId);
         elapsedTime = new ElapsedTime();
 
-        detector = new TestDetector();
+        detector = new MarkerDetector();
         webcam.setPipeline(detector);
         webcam.openCameraDevice();
         webcam.startStreaming(320, 240, OpenCvCameraRotation.UPRIGHT);
@@ -51,10 +45,13 @@ public class TestAuto extends LinearOpMode {
                 telemetry.addData("position: ", position);
                 telemetry.addLine(String.valueOf(LEFT_CR_AVG));
                 telemetry.addLine(String.valueOf(detector.leftCrTotal));
-                Log.v("Vision", position);
                 telemetry.update();
                 elapsedTime.reset();
             }
+        }
+
+        if (position == MarkerDetector.MARKER_POSITION.LEFT) {
+
         }
 
     }
