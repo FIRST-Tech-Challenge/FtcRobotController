@@ -6,6 +6,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.tfod.Recognition;
 import org.firstinspires.ftc.vision.VisionPortal;
 import org.firstinspires.ftc.vision.tfod.TfodProcessor;
@@ -42,28 +43,125 @@ public class TensorFlowDetector {
         this.hardwareMap = hardwaremap;
     }
 
-    public void initModel () throws InterruptedException {
+    /**
+     * Initialize the model, and update the recognitions once.
+     */
+    public void initModel () {
         initDetector(modelName);
         telemetry.addLine("Model with name " + modelName + " successfully initialized");
 
-        if (isActive) {
-            while (isActive) {
-                updateRecognitions();
-                sleep(20); // @TODO make this use the opmode sleep rather than Thread.sleep
+        updateRecognitions();
+
+    }
+
+    /**
+     * Updates the telemetry with information based on parameters. Will update for ALL recognitions
+     * @param showNumDetections Display the total number of detections.
+     * @param showXYPos Display the XY position of each recognition
+     * @param showDetectionConfidences Display the confidence in each detection.
+     * @param showSizes Display the sizes in pixels of each detection
+     * @param showEstimatedAngle Display the ESTIMATED angle from the camera to each detection.
+     */
+    public void updateTelemetry(boolean showNumDetections, boolean showXYPos, boolean showDetectionConfidences, boolean showSizes, boolean showEstimatedAngle) {
+        if (currentRecognitions.size() == 0) {
+            telemetry.addLine("No objects currently detected");
+        } else {
+            if (showNumDetections) {
+                telemetry.addData("Number of Detections: ", "%i", getNumRecognitions());
+            }
+            for (Recognition recognition : currentRecognitions) {
+                telemetry.addData("", " ");
+                if (showDetectionConfidences) {
+                    telemetry.addData("Image", "%s (%.0f %% Conf.)", recognition.getLabel(), recognition.getConfidence() * 100);
+                } else {
+                    telemetry.addData("Image", "%s", recognition.getLabel());
+                }
+                if (showXYPos) {
+                    double x = (recognition.getLeft() + recognition.getRight()) / 2;
+                    double y = (recognition.getTop() + recognition.getBottom()) / 2;
+                    telemetry.addData("- Position", "%.0f / %.0f", x, y);
+                }
+                if (showSizes) {
+                    telemetry.addData("- Size", "%.0f x %.0f", recognition.getWidth(), recognition.getHeight());
+                }
+                if (showEstimatedAngle) {
+                    telemetry.addData("- Estimated Angle", "%.0f degrees", recognition.estimateAngleToObject(AngleUnit.DEGREES));
+                }
             }
         }
     }
 
-    private void updateRecognitions() {
+    /**
+     * Updates the telemetry with NumDetections, XYPos, DetectionConfidences, and Sizes. Will update for ALL recognitions.
+     */
+    public void updateTelemetry() {
+        updateTelemetry(true, true, true, true, false);
+    }
+
+    /**
+     * Updates the telemetry with information about a single detection with index i, based on parameters.
+     * @param i the index of the recognition to get. Will throw an exception if the recognition with that index doesn't exist.
+     * @param showXYPos Display the XY position of the recognition
+     * @param showDetectionConfidence Display the confidence of the recognition
+     * @param showSize Display the size of the recognition
+     * @param showEstimatedAngle Display the ESTIMATED angle to the recognition
+     */
+    public void updateTelemetry (int i, boolean showXYPos, boolean showDetectionConfidence, boolean showSize, boolean showEstimatedAngle){
+        checkValidIndex(i);
+        Recognition recognition = getRecognition(i);
+
+        telemetry.addData("", " ");
+        if (showDetectionConfidence) {
+            telemetry.addData("Image", "%s (%.0f %% Conf.)", recognition.getLabel(), recognition.getConfidence() * 100);
+        } else {
+            telemetry.addData("Image", "%s", recognition.getLabel());
+        }
+        if (showXYPos) {
+            double x = (recognition.getLeft() + recognition.getRight()) / 2;
+            double y = (recognition.getTop() + recognition.getBottom()) / 2;
+            telemetry.addData("- Position", "%.0f / %.0f", x, y);
+        }
+        if (showSize) {
+            telemetry.addData("- Size", "%.0f x %.0f", recognition.getWidth(), recognition.getHeight());
+        }
+        if (showEstimatedAngle) {
+            telemetry.addData("- Estimated Angle", "%.0f degrees", recognition.estimateAngleToObject(AngleUnit.DEGREES));
+        }
+    }
+
+    /**
+     * Updates the telemetry with NumDetections, XYPos, DetectionConfidences, and Sizes for a single recognition with index i.
+     * @param i the index of the recognition to update
+     */
+    public void updateTelemetry (int i) {
+        updateTelemetry (i, true, true, true, false);
+    }
+
+    public void updateTelemetry(String label) {
+        int i = getRecognitionIndex(label);
+        updateTelemetry(i);
+    }
+
+
+
+    /**
+     * This updates the recognitions. THIS METHOD SHOULD NOT BE CALLED IN A LOOP WITHOUT USING
+     * SLEEP TO SHARE THE CPU TIME!
+     */
+    public void updateRecognitions() {
         currentRecognitions = detector.getRecognitions();
     }
 
+    /**
+     * Get the number of Recognitions since last updating Recognitions
+     * @return an int of the number of Recognitions currently found.
+     */
     public int getNumRecognitions() {
         return currentRecognitions.size();
     }
 
     /**
-     * Get the position of all recognitions in the format of a 2-D array:
+     * Get the position of ALL recognitions in the format of a 2-D array:
      * [[x1, y1],
      * [x2, y2]]
      * @return the 2-D array shown above
@@ -80,18 +178,27 @@ public class TensorFlowDetector {
         return recognitionPositions;
     }
 
+    /**
+     * Get the position of ALL the Recognitions with a given label in the form of a 2-D array:
+     * [[x1, y1],
+     * [x2,y2]]
+     * @param label the label to search for
+     * @return the 2-D array shown above
+     */
     public double[][] getRecognitionPositions(String label) {
         int numRecognitions = 0;
+        List<Recognition> correctRecognitions = new ArrayList<>();
         for (int i = 0; i < currentRecognitions.size(); i++) {
             Recognition recognition = currentRecognitions.get(i);
             if (recognition.getLabel().equals(label)) {
-                // @TODO finish this method
+                numRecognitions ++;
+                correctRecognitions.add(recognition);
             }
         }
 
-        double [][] recognitionPositions = new double[getNumRecognitions()][2];
-        for (int i = 0; i < getNumRecognitions(); i++) {
-            Recognition recognition = currentRecognitions.get(i);
+        double [][] recognitionPositions = new double[numRecognitions][2];
+        for (int i = 0; i < numRecognitions; i++) {
+            Recognition recognition = correctRecognitions.get(i);
             if (recognition.getLabel().equals(label)) {
                 double x = (recognition.getLeft() + recognition.getRight()) / 2;
                 double y = (recognition.getTop() + recognition.getBottom()) / 2;
@@ -104,7 +211,7 @@ public class TensorFlowDetector {
 
     /**
      * Get the position of a recognition with a given index i
-     * @param i the index of the recognition to get the coordinates of
+     * @param i the index of the recognition to get the coordinates of, as an int
      * @return a double[] of length 2 in the format [x, y]
      */
     public double[] getRecognitionPosition(int i) {
@@ -119,6 +226,11 @@ public class TensorFlowDetector {
         return recognitionPosition;
     }
 
+    /**
+     * Get the position of a SINGLE recognition with the given label
+     * @param label the label to be searched for, as a String
+     * @return a double[] of length 2 in the format [x,y]
+     */
     public double[] getRecognitionPosition(String label) {
         double[] recognitionPosition = new double[2];
         Recognition recognition = getRecognition(label);
@@ -131,9 +243,21 @@ public class TensorFlowDetector {
         return recognitionPosition;
     }
 
+    /**
+     * get a recognition with a given index
+     * @param i the index of the recognition to return
+     * @return a Recognition
+     */
     public Recognition getRecognition(int i) {
+        checkValidIndex(i);
         return currentRecognitions.get(i);
     }
+
+    /**
+     * Get a SINGLE recognition with the given label.
+     * @param label the label to search for.
+     * @return the Recognition if one such Recognition was found, null otherwise.
+     */
     public Recognition getRecognition (String label) {
         for (Recognition recognition : currentRecognitions) {
             if (recognition.getLabel().equals(label)) {
@@ -143,10 +267,20 @@ public class TensorFlowDetector {
         return null;
     }
 
+    /**
+     * Get all current Recognitions in the form of an ArrayList.
+     * @return An ArrayList of all current Recognitions.
+     */
     public List<Recognition> getAllRecognitions () {
         return currentRecognitions;
     }
 
+    /**
+     * Get ALL current recognitions with a given label in the form of an ArrayList.
+     * @param label the label to search for.
+     * @return an ArrayList of all Recognitions that match the label passed. Will return an empty
+     * ArrayList if no such Recognition is found.
+     */
     public List<Recognition> getAllRecognitions (String label) {
         List<Recognition> recognitions = new ArrayList<>();
         for (Recognition recognition : currentRecognitions) {
@@ -155,6 +289,36 @@ public class TensorFlowDetector {
             }
         }
         return recognitions;
+    }
+
+    /**
+     * get the index of a SINGLE recognition with a given label
+     * @param label the label to search for
+     * @return the index as an int of the recognition with that label
+     */
+    public int getRecognitionIndex (String label) {
+        for (int i = 0; i < getNumRecognitions(); i++) {
+            if (currentRecognitions.get(i).getLabel().equals(label)) {
+                return i;
+            }
+        }
+        return -1;
+    }
+
+    /**
+     * get the index of ALL recognitions with a given label
+     * @param label the label to search for
+     * @return An ArrayList<Integer> with the indexes where the label was found. Will return an
+     * empty ArrayList if no such recognitions were found.
+     */
+    public List<Integer> getRecognitionIndexes (String label) {
+        List <Integer> recognitionIndexes= new ArrayList<>();
+        for (int i = 0; i < getNumRecognitions(); i++) {
+            if (currentRecognitions.get(i).getLabel().equals(label)) {
+                recognitionIndexes.add(i);
+            }
+        }
+        return recognitionIndexes;
     }
 
 
@@ -187,6 +351,14 @@ public class TensorFlowDetector {
 
         //detector.setMinResultConfidence(0.75f); // can be called at any time
         //visionPortal.setProcessorEnabled(detector, true); // can be called at any time
+    }
+
+    private void checkValidIndex(int i) {
+        if (i >= getNumRecognitions()) {
+            throw new IndexOutOfBoundsException("There exists no Recognition with that index");
+        } else if (i < 0) {
+            throw new IllegalArgumentException("The index cannot be a negative number");
+        }
     }
 
 }
