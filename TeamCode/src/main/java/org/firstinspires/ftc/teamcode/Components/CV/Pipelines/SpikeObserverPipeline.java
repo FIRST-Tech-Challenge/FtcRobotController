@@ -40,7 +40,8 @@ public class SpikeObserverPipeline extends OpenCvPipeline {
     }
 
     /**
-     * This will calculate which
+     * This will process the frame
+     * will NOT log, all this done asynchronously
      * @param input inputted fram from camera
      * @return outputted frame from this function
      */
@@ -76,6 +77,11 @@ public class SpikeObserverPipeline extends OpenCvPipeline {
         return input;
     }
 
+    /**
+     * This will get the spike location
+     * Logs spike location to general medium verbosity
+     * @return spike's location
+     */
     public int getPosition(){
         double[] sums = {0,0,0};
         for(int i=0;i<frameList.size()-1;i++){

@@ -35,6 +35,9 @@ public class Lift extends RFMotor {
             }
             this.state=true;
         }
+        public double getPosition(){
+            return position;
+        }
     }
 
     public enum LiftMovingStates {

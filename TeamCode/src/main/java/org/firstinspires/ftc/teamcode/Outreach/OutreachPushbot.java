@@ -1,4 +1,5 @@
-package org.firstinspires.ftc.teamcode.Old.Teleop;
+package org.firstinspires.ftc.teamcode.Outreach;
+
 import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
@@ -15,11 +16,11 @@ public class OutreachPushbot extends LinearOpMode{
     @Override
     public void runOpMode() throws InterruptedException{
 
-    leftMotor = hardwareMap.get(DcMotor.class, "leftMotor");
-    rightMotor = hardwareMap.get(DcMotor.class, "rightMotor");
-    leftMotor.setDirection(DcMotorSimple.Direction.FORWARD);
-    rightMotor.setDirection(DcMotorSimple.Direction.REVERSE);
-    waitForStart();
+        leftMotor = hardwareMap.get(DcMotor.class, "leftMotor");
+        rightMotor = hardwareMap.get(DcMotor.class, "rightMotor");
+        leftMotor.setDirection(DcMotorSimple.Direction.FORWARD);
+        rightMotor.setDirection(DcMotorSimple.Direction.REVERSE);
+        waitForStart();
 
 
         while (opModeIsActive()&&!isStopRequested()) {
@@ -34,7 +35,8 @@ public class OutreachPushbot extends LinearOpMode{
             rightMotor.setPower(drive-turn);
 
 
-            }
+        }
     }
 
 }
+

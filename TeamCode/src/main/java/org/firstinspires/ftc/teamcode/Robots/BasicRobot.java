@@ -11,6 +11,8 @@ import com.qualcomm.robotcore.hardware.VoltageSensor;
 import org.firstinspires.ftc.teamcode.Components.RFModules.Devices.RFGamepad;
 import org.firstinspires.ftc.teamcode.Components.RFModules.System.Logger;
 import org.firstinspires.ftc.teamcode.Components.RFModules.System.Queuer;
+import org.firstinspires.ftc.teamcode.Components.RFModules.System.RFLogger;
+
 /**
  * Warren Zhou
  * 9/1
@@ -18,6 +20,7 @@ import org.firstinspires.ftc.teamcode.Components.RFModules.System.Queuer;
  */
 public class BasicRobot{
     public static Logger logger;
+    public static RFLogger LOGGER;
     public static LinearOpMode op = null;
     public Queuer queuer;
     public static boolean isTeleop;
@@ -27,8 +30,18 @@ public class BasicRobot{
     public static TelemetryPacket packet;
     public static RFGamepad gampad;
 
+    /**
+     * instantiates basic robot
+     * Logs that function is called to general surface
+     * @param opMode linearOpMode, auto or teleOp class
+     * @param p_isTeleop is it teleOp
+     */
+
     public BasicRobot(LinearOpMode opMode, boolean p_isTeleop){
         op = opMode;
+        LOGGER = new RFLogger("Robot");
+        LOGGER.setLogLevel(RFLogger.Severity.ALL);
+        LOGGER.log("BasicRobot() : Creating Robot!");
         logger = new Logger();
         logger.createFile("/RobotLogs/GeneralRobot", "Runtime    Component               " +
                 "Function                        Action");
@@ -46,17 +59,39 @@ public class BasicRobot{
         gampad = new RFGamepad();
     }
 
+    /**
+     * updates all system files
+     * logs that this function is being called to general finest
+     */
+
     public void update(){
-        logger.log("/RobotLogs/GeneralRobot", "basicPose"+currentPose);
+        LOGGER.setLogLevel(RFLogger.Severity.FINEST);
+        LOGGER.log("BasicRobot.update()");
         time = op.getRuntime();
         dashboard.sendTelemetryPacket(packet);
         packet = new TelemetryPacket();
         packet.clearLines();
     }
+
+    /**
+     * resets the queuer
+     * logs that this function is being called to general surface
+     */
     public void resetQueuer() {
+        LOGGER.setLogLevel(RFLogger.Severity.ALL);
+        LOGGER.log("BasicRobot.resetQueuer() : queuer reset");
         queuer.reset();
     }
-    public double getVoltage(){return voltageSensor.getVoltage();}
 
-
+    /**
+     * gets the current voltage
+     * logs that this function is being called and the currentVoltage to general surface
+     * @return the voltage
+     */
+    public double getVoltage(){
+        double voltage = voltageSensor.getVoltage();
+        LOGGER.setLogLevel(RFLogger.Severity.ALL);
+        LOGGER.log("BasicRobot.getVoltage(): voltage = "+voltage);
+        return voltage;
+    }
 }

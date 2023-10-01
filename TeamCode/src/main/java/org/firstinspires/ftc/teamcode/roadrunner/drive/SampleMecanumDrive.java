@@ -41,6 +41,7 @@ import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.IMU;
 import com.qualcomm.robotcore.hardware.PIDFCoefficients;
+import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.VoltageSensor;
 import com.qualcomm.robotcore.hardware.configuration.typecontainers.MotorConfigurationType;
 
@@ -90,6 +91,18 @@ public class SampleMecanumDrive extends MecanumDrive {
     private IMU imu;
     private VoltageSensor batteryVoltageSensor;
     private Pose2d endPose = new Pose2d(0, 0, 0);
+
+    private final double [] OFFSETS = {0.005,-0.005,0.01,0.02 };
+
+    private final double BUTTERED_POSITION = 0.6;
+    private final double INIT_POSITION = 1.0;
+
+    private final double FIELD_CENTRIC_DOWNSCALE = 0.3;
+
+
+    private boolean isButtered = false, isFieldCentric = false;
+
+    private ArrayList<Servo> servos;
 
     public SampleMecanumDrive(HardwareMap hardwareMap, Tracker.TrackType trackType) {
         super(kV,
@@ -216,6 +229,11 @@ public class SampleMecanumDrive extends MecanumDrive {
         logger.createFile("RoadrunLog", "Runtime, X, Y, A, error[0], error[1]");
         trajectorySequenceRunner = new TrajectorySequenceRunner(follower, HEADING_PID);
         trajectorySeq = trajectorySequenceBuilder(getPoseEstimate()).lineTo(new Vector2d(10, 0)).build();
+        servos = new ArrayList<>();
+        servos.add(hardwareMap.servo.get("servoLeftFront"));
+        servos.add(hardwareMap.servo.get("servoLeftBack"));
+        servos.add(hardwareMap.servo.get("servoRightFront"));
+        servos.add(hardwareMap.servo.get("servoRightBack"));
     }
 
     public TrajectoryBuilder trajectoryBuilder(Pose2d startPose) {
@@ -345,7 +363,13 @@ public class SampleMecanumDrive extends MecanumDrive {
 
     public void setWeightedDrivePower(Pose2d drivePower) {
         Pose2d vel = drivePower;
-
+        if(isButtered){
+            vel = new Pose2d(vel.getX(),0,vel.getHeading());
+        }
+        if(isFieldCentric){
+            vel = vel.times(FIELD_CENTRIC_DOWNSCALE);
+            vel = new Pose2d(vel.vec().rotated(currentPose.getHeading()), vel.getHeading());
+        }
         if (Math.abs(drivePower.getX()) + Math.abs(drivePower.getY())
                 + Math.abs(drivePower.getHeading()) > 1) {
             // re-normalize the powers according to the weights
@@ -361,6 +385,41 @@ public class SampleMecanumDrive extends MecanumDrive {
         }
 
         setDrivePower(vel);
+        if(isButtered){
+            isButtered=false;
+            toggleServos();
+        }
+    }
+    public void toggleFieldCentric(){
+        isFieldCentric= !isFieldCentric;
+        if(isFieldCentric&&isButtered){
+            toggleButtered();
+        }
+    }
+    public void toggleButtered(){
+        isButtered=!isButtered;
+        if(isButtered&&isFieldCentric){
+            toggleFieldCentric();
+        }
+        toggleServos();
+    }
+
+    public boolean isButtered(){
+        return isButtered;
+    }
+
+
+    public void toggleServos(){
+        if(isButtered){
+            for(int i=0;i<4;i++){
+                servos.get(i).setPosition(BUTTERED_POSITION +OFFSETS[i]);
+            }
+        }
+        else{
+            for(int i=0;i<4;i++){
+                servos.get(i).setPosition(INIT_POSITION);
+            }
+        }
     }
 
     @NonNull
