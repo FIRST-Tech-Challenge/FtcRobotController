@@ -1,30 +1,29 @@
-package org.firstinspires.ftc.teamcode;
+package org.firstinspires.ftc.teamcode.TestBot;
 
 //By Ethan Clawsie and Aman Sulaiman, 2021-2022 Freight Frenzy4
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.util.Range;
 
 
 @TeleOp(group = "PiRhos", name = "bussin2")
-public class teleOpOutreach extends LinearOpMode {
+public class TestTeleOp extends LinearOpMode {
     double cascadeMotorPower;
 
-    public OutreachHardware robot = new OutreachHardware();
+    public TestHardware robot = new TestHardware();
 
     public void runOpMode() {
-        robot.initTeleOpIMU(hardwareMap);
+        robot.init(hardwareMap);
 
         waitForStart();
         while (opModeIsActive()) {
             cascadeMotorPower = Range.clip(cascadeMotorPower, -.1, .8);
-            robot.frontRight.setPower(.8 * ((gamepad1.left_stick_y + gamepad1.right_stick_x) + gamepad1.left_stick_x));
+            robot.frontRight.setPower(.8 * ((gamepad1.left_stick_y - gamepad1.right_stick_x) + gamepad1.left_stick_x));
             robot.frontLeft.setPower(.8 * ((gamepad1.left_stick_y - gamepad1.right_stick_x) - gamepad1.left_stick_x));
             robot.backRight.setPower(.8 * ((gamepad1.left_stick_y + gamepad1.right_stick_x) - gamepad1.left_stick_x));
-            robot.backLeft.setPower(-.8 * ((gamepad1.left_stick_y - gamepad1.right_stick_x) + gamepad1.left_stick_x));
+            robot.backLeft.setPower(.8 * ((gamepad1.left_stick_y + gamepad1.right_stick_x) + gamepad1.left_stick_x));
             //robot.cascadeMotorLeft.setDirection(DcMotorSimple.Direction.REVERSE);
             robot.backLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
             robot.frontLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -35,8 +34,8 @@ public class teleOpOutreach extends LinearOpMode {
 
 
             //robot.frontLeft.setDirection(DcMotorSimple.Direction.REVERSE);
-            robot.frontRight.setDirection(DcMotorSimple.Direction.REVERSE);
-            robot.backRight.setDirection(DcMotorSimple.Direction.REVERSE);
+
+
 
             /*if (gamepad1.right_trigger > 0.5){
                 robot.carouselpowerfortime(.5, .1);
@@ -46,7 +45,7 @@ public class teleOpOutreach extends LinearOpMode {
             }*/
 
 
-            if (gamepad2.a) {
+            /*if (gamepad2.a) {
 
                 if (robot.touchLeft.isPressed() || robot.touchRight.isPressed()){
                     robot.cascadeMotorLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);

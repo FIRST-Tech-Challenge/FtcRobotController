@@ -48,7 +48,7 @@ import java.util.List;
  * Remove or comment out the @Disabled line to add this OpMode to the Driver Station OpMode list.
  */
 @TeleOp(name = "Concept: TensorFlow Object Detection", group = "Concept")
-@Disabled
+
 public class ConceptTensorFlowObjectDetection extends LinearOpMode {
 
     private static final boolean USE_WEBCAM = true;  // true for webcam, false for phone camera
@@ -109,14 +109,14 @@ public class ConceptTensorFlowObjectDetection extends LinearOpMode {
 
             // Use setModelAssetName() if the TF Model is built in as an asset.
             // Use setModelFileName() if you have downloaded a custom team model to the Robot Controller.
-            //.setModelAssetName(TFOD_MODEL_ASSET)
+            .setModelAssetName("CenterStage.tflite")
             //.setModelFileName(TFOD_MODEL_FILE)
 
             //.setModelLabels(LABELS)
-            //.setIsModelTensorFlow2(true)
-            //.setIsModelQuantized(true)
-            //.setModelInputSize(300)
-            //.setModelAspectRatio(16.0 / 9.0)
+            .setIsModelTensorFlow2(true)
+            .setIsModelQuantized(true)
+            .setModelInputSize(300)
+            .setModelAspectRatio(16.0 / 9.0)
 
             .build();
 

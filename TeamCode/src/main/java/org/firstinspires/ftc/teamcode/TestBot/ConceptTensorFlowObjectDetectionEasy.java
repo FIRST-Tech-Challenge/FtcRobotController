@@ -27,11 +27,11 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package org.firstinspires.ftc.robotcontroller.external.samples;
+package org.firstinspires.ftc.teamcode.TestBot;
 
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+
 import org.firstinspires.ftc.robotcore.external.hardware.camera.BuiltinCameraDirection;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.robotcore.external.tfod.Recognition;
@@ -48,8 +48,10 @@ import java.util.List;
  * Remove or comment out the @Disabled line to add this OpMode to the Driver Station OpMode list.
  */
 @TeleOp(name = "Concept: TensorFlow Object Detection Easy", group = "Concept")
-@Disabled
+
 public class ConceptTensorFlowObjectDetectionEasy extends LinearOpMode {
+
+    TestHardware robot = new TestHardware();
 
     private static final boolean USE_WEBCAM = true;  // true for webcam, false for phone camera
 
@@ -62,10 +64,11 @@ public class ConceptTensorFlowObjectDetectionEasy extends LinearOpMode {
      * The variable to store our instance of the vision portal.
      */
     private VisionPortal visionPortal;
+    double xcoord;
 
     @Override
     public void runOpMode() {
-
+        robot.init(hardwareMap);
         initTfod();
 
         // Wait for the DS start button to be touched.
@@ -124,17 +127,31 @@ public class ConceptTensorFlowObjectDetectionEasy extends LinearOpMode {
     private void telemetryTfod() {
 
         List<Recognition> currentRecognitions = tfod.getRecognitions();
-        telemetry.addData("# Objects Detected", currentRecognitions.size());
+        while (currentRecognitions.size() == 0){
+            robot.setPowerOfAllMotorsTo(.2);
+        }
+        robot.setPowerOfAllMotorsTo(0);
+        //telemetry.addData("# Objects Detected", currentRecognitions.size());
 
         // Step through the list of recognitions and display info for each one.
         for (Recognition recognition : currentRecognitions) {
             double x = (recognition.getLeft() + recognition.getRight()) / 2 ;
             double y = (recognition.getTop()  + recognition.getBottom()) / 2 ;
+            if (100 < x && x < 200){
+                telemetry.addLine("left stripe");
+                telemetry.update();
 
-            telemetry.addData(""," ");
+            }
+            else if (400 < x && x < 500){
+                telemetry.addLine("left stripe");
+                telemetry.update();
+
+            }
+
+            /*telemetry.addData(""," ");
             telemetry.addData("Image", "%s (%.0f %% Conf.)", recognition.getLabel(), recognition.getConfidence() * 100);
             telemetry.addData("- Position", "%.0f / %.0f", x, y);
-            telemetry.addData("- Size", "%.0f x %.0f", recognition.getWidth(), recognition.getHeight());
+            telemetry.addData("- Size", "%.0f x %.0f", recognition.getWidth(), recognition.getHeight());*/
         }   // end for() loop
 
     }   // end method telemetryTfod()
