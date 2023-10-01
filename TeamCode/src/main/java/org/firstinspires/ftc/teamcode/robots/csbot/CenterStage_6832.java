@@ -42,7 +42,6 @@ import com.qualcomm.ftccommon.SoundPlayer;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 import org.firstinspires.ftc.robotcore.internal.system.Misc;
 import org.firstinspires.ftc.teamcode.robots.csbot.subsystem.TauDriveTrain;
 import org.firstinspires.ftc.teamcode.robots.csbot.subsystem.Robot;
@@ -72,7 +71,7 @@ public class CenterStage_6832 extends OpMode {
     //private PoseFishin.RobotType currentBot = PoseFishin.RobotType.TomBot;
 
     static Robot robot;
-    static Autonomous auto;
+    static Autonomous auton;
     private FtcDashboard dashboard;
     ExponentialSmoother forwardSmoother, rotateSmoother;
     public static double FORWARD_SMOOTHING_FACTOR = 0.3;
@@ -228,16 +227,16 @@ public class CenterStage_6832 extends OpMode {
         origin = Constants.Position.ORIGIN_6CAN;
         //startingPosition = Constants.Position.START_RIGHT;
         startingPosition = Constants.Position.START_SIXCAN;
-        auto = new Autonomous(robot);
+        auton = new Autonomous(robot);
 
         //todo this is really hinky - finalizing the vision provider in init() is way too soon - prevents selecting alternates during init_loop()
         //todo but that's the way Vance had it so not messing with it right now - dprg currently running in init_loop anyway
         //todo uncomment next line and comment the following one to return to AprilTag provider for Powerplay
         //auto.createVisionProvider(VisionProviders.DEFAULT_PROVIDER_INDEX);
-        auto.createVisionProvider(1); //selects the DPRG Can Detector
-        auto.visionProvider.initializeVision(hardwareMap, robot);
+        auton.createVisionProvider(1); //selects the DPRG Can Detector
+        auton.visionProvider.initializeVision(hardwareMap, robot);
         visionProviderFinalized = true;
-        auto.build(startingPosition);
+        auton.build(startingPosition);
 
         dashboard = FtcDashboard.getInstance();
         dashboard.setTelemetryTransmissionInterval(25);
@@ -270,12 +269,12 @@ public class CenterStage_6832 extends OpMode {
         //jankily inserting 6can here
         if (RunSixCan) {
             origin = Constants.Position.ORIGIN_6CAN;
-            if (auto.SixCan()) {
+            if (auton.SixCan()) {
                 RunSixCan = false; //thinks it completed
                 robot.driveTrain.stop();
             }
         }
-        else auto.sixCanStage = 0;
+        else auton.sixCanStage = 0;
         update();
     }
     private void rumble() {
@@ -350,7 +349,7 @@ public class CenterStage_6832 extends OpMode {
                 }
                 switch(gameState) {
                     case AUTONOMOUS:
-                        if(robot.AutonRun(auto.visionProvider.getMostFrequentPosition().getIndex(),startingPosition, targetAltPole)) {
+                        if(robot.AutonRun(auton.visionProvider.getMostFrequentPosition().getIndex(),startingPosition, targetAltPole)) {
                             gameState = GameState.TELE_OP;
                             gameStateIndex = 1;
                             robot.underarm.resetArticulations();
@@ -403,16 +402,16 @@ public class CenterStage_6832 extends OpMode {
                         robot.crane.extendNudgeStick();
                         break;
                     case BACK_AND_FORTH:
-                        auto.backAndForth.execute();
+                        auton.backAndForth.execute();
                         break;
                     case SQUARE:
-                        auto.square.execute();
+                        auton.square.execute();
                         break;
                     case SQUARENORR:
-                        auto.squareNoRR.execute();
+                        auton.squareNoRR.execute();
                         break;
                     case TURN:
-                        auto.turn.execute();
+                        auton.turn.execute();
                 }
             } else {
                 dc.handlePregameControls();
@@ -547,7 +546,7 @@ public class CenterStage_6832 extends OpMode {
 
         handleTelemetry(opModeTelemetryMap,  Misc.formatInvariant("(%d): %s", gameStateIndex, gameState.getName()), packet);
 
-        handleTelemetry(auto.getTelemetry(debugTelemetryEnabled),  auto.getTelemetryName(), packet);
+        handleTelemetry(auton.getTelemetry(debugTelemetryEnabled),  auton.getTelemetryName(), packet);
 
         handleTelemetry(robot.getTelemetry(debugTelemetryEnabled), robot.getTelemetryName(), packet);
 
@@ -557,7 +556,7 @@ public class CenterStage_6832 extends OpMode {
 
 
         // handling vision telemetry
-        Map<String, Object> visionTelemetryMap = auto.visionProvider.getTelemetry(debugTelemetryEnabled);
+        Map<String, Object> visionTelemetryMap = auton.visionProvider.getTelemetry(debugTelemetryEnabled);
         visionTelemetryMap.put("Backend",
                 Misc.formatInvariant("%s (%s)",
                         VisionProviders.VISION_PROVIDERS[visionProviderIndex].getSimpleName(),
@@ -568,7 +567,7 @@ public class CenterStage_6832 extends OpMode {
         );
 
 
-        handleTelemetry(visionTelemetryMap, auto.visionProvider.getTelemetryName(), packet);
+        handleTelemetry(visionTelemetryMap, auton.visionProvider.getTelemetryName(), packet);
         dashboard.sendTelemetryPacket(packet);
         telemetry.update();
 

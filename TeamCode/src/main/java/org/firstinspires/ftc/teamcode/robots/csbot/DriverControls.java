@@ -3,7 +3,7 @@ package org.firstinspires.ftc.teamcode.robots.csbot;
 import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.hardwareMap;
 import static org.firstinspires.ftc.teamcode.robots.csbot.CenterStage_6832.active;
 import static org.firstinspires.ftc.teamcode.robots.csbot.CenterStage_6832.alliance;
-import static org.firstinspires.ftc.teamcode.robots.csbot.CenterStage_6832.auto;
+import static org.firstinspires.ftc.teamcode.robots.csbot.CenterStage_6832.auton;
 import static org.firstinspires.ftc.teamcode.robots.csbot.CenterStage_6832.debugTelemetryEnabled;
 import static org.firstinspires.ftc.teamcode.robots.csbot.CenterStage_6832.ignoreCachePosition;
 import static org.firstinspires.ftc.teamcode.robots.csbot.CenterStage_6832.robot;
@@ -20,7 +20,6 @@ import com.qualcomm.robotcore.hardware.Gamepad;
 import org.firstinspires.ftc.teamcode.robots.csbot.subsystem.Crane;
 import org.firstinspires.ftc.teamcode.robots.csbot.subsystem.TauDriveTrain;
 import org.firstinspires.ftc.teamcode.robots.csbot.subsystem.Robot;
-import org.firstinspires.ftc.teamcode.robots.csbot.subsystem.UnderArm;
 import org.firstinspires.ftc.teamcode.robots.csbot.util.Constants;
 import org.firstinspires.ftc.teamcode.robots.csbot.util.StickyGamepad;
 import org.firstinspires.ftc.teamcode.robots.csbot.vision.VisionProviders;
@@ -317,23 +316,23 @@ public class DriverControls {
             if(!visionProviderFinalized) {
                 if (stickyGamepad1.dpad_left || stickyGamepad2.dpad_left) {
                     visionProviderIndex = (visionProviderIndex + 1) % VisionProviders.VISION_PROVIDERS.length; // switch vision provider
-                    auto.createVisionProvider(visionProviderIndex);
+                    auton.createVisionProvider(visionProviderIndex);
                 }
                 if (stickyGamepad1.dpad_up || stickyGamepad2.dpad_up) {
-                    auto.visionProvider.initializeVision(hardwareMap); // this is blocking
+                    auton.visionProvider.initializeVision(hardwareMap); // this is blocking
                     visionProviderFinalized = true;
                 }
             } else if (stickyGamepad1.dpad_up || stickyGamepad2.dpad_up) {
-                auto.visionProvider.shutdownVision(); // also blocking, but should be very quick
+                auton.visionProvider.shutdownVision(); // also blocking, but should be very quick
                 visionProviderFinalized = false;
             }
         }
         else if((stickyGamepad1.dpad_right || stickyGamepad2.dpad_right) && visionProviderFinalized)
         {
-            auto.visionProvider.saveDashboardImage();
+            auton.visionProvider.saveDashboardImage();
         }
         if(visionProviderFinalized)
-            auto.visionProvider.update();
+            auton.visionProvider.update();
     }
 
     public void UnderarmControls() {
