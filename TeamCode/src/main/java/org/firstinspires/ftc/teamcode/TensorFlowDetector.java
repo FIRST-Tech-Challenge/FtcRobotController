@@ -21,6 +21,7 @@ import java.util.List;
 
 
 public class TensorFlowDetector {
+    // this should pretty much always be true
     private static final boolean USE_WEBCAM = true;
 
     private String[] labels = {};
@@ -35,7 +36,8 @@ public class TensorFlowDetector {
 
 
 
-    public TensorFlowDetector (String modelName, String[] labels, Telemetry telemetry, HardwareMap hardwaremap) {
+    public TensorFlowDetector (String modelName, String[] labels, Telemetry telemetry,
+                               HardwareMap hardwaremap) {
         this.modelName = modelName;
         this.labels = labels;
         this.telemetry = telemetry;
@@ -53,6 +55,10 @@ public class TensorFlowDetector {
 
     }
 
+    // ********************************************************************************************
+    // **************************** BEGIN TELEMETRY METHODS ***************************************
+    // ********************************************************************************************
+
     /**
      * Updates the telemetry with information based on parameters. Will update for ALL recognitions
      * @param showNumDetections Display the total number of detections.
@@ -61,17 +67,21 @@ public class TensorFlowDetector {
      * @param showSizes Display the sizes in pixels of each detection
      * @param showEstimatedAngle Display the ESTIMATED angle from the camera to each detection.
      */
-    public void updateTelemetry(boolean showNumDetections, boolean showXYPos, boolean showDetectionConfidences, boolean showSizes, boolean showEstimatedAngle) {
+    public void updateTelemetry(boolean showNumDetections, boolean showXYPos,
+                                boolean showDetectionConfidences, boolean showSizes,
+                                boolean showEstimatedAngle) {
         if (currentRecognitions.size() == 0) {
             telemetry.addLine("No objects currently detected");
         } else {
             if (showNumDetections) {
-                telemetry.addData("Number of Detections: ", "%i", getNumRecognitions());
+                telemetry.addData("Number of Detections: ", "%i",
+                        getNumRecognitions());
             }
             for (Recognition recognition : currentRecognitions) {
                 telemetry.addData("", " ");
                 if (showDetectionConfidences) {
-                    telemetry.addData("Image", "%s (%.0f %% Conf.)", recognition.getLabel(), recognition.getConfidence() * 100);
+                    telemetry.addData("Image", "%s (%.0f %% Conf.)",
+                            recognition.getLabel(), recognition.getConfidence() * 100);
                 } else {
                     telemetry.addData("Image", "%s", recognition.getLabel());
                 }
@@ -81,37 +91,44 @@ public class TensorFlowDetector {
                     telemetry.addData("- Position", "%.0f / %.0f", x, y);
                 }
                 if (showSizes) {
-                    telemetry.addData("- Size", "%.0f x %.0f", recognition.getWidth(), recognition.getHeight());
+                    telemetry.addData("- Size", "%.0f x %.0f", recognition.getWidth(),
+                            recognition.getHeight());
                 }
                 if (showEstimatedAngle) {
-                    telemetry.addData("- Estimated Angle", "%.0f degrees", recognition.estimateAngleToObject(AngleUnit.DEGREES));
+                    telemetry.addData("- Estimated Angle", "%.0f degrees",
+                            recognition.estimateAngleToObject(AngleUnit.DEGREES));
                 }
             }
         }
     }
 
     /**
-     * Updates the telemetry with NumDetections, XYPos, DetectionConfidences, and Sizes. Will update for ALL recognitions.
+     * Updates the telemetry with NumDetections, XYPos, DetectionConfidences, and Sizes.
+     * Will update for ALL recognitions.
      */
     public void updateTelemetry() {
         updateTelemetry(true, true, true, true, false);
     }
 
     /**
-     * Updates the telemetry with information about a single detection with index i, based on parameters.
-     * @param i the index of the recognition to get. Will throw an exception if the recognition with that index doesn't exist.
+     * Updates the telemetry with information about a single detection with index i, based on
+     * parameters.
+     * @param i the index of the recognition to get. Will throw an exception if the recognition
+     *          with that index doesn't exist.
      * @param showXYPos Display the XY position of the recognition
      * @param showDetectionConfidence Display the confidence of the recognition
      * @param showSize Display the size of the recognition
      * @param showEstimatedAngle Display the ESTIMATED angle to the recognition
      */
-    public void updateTelemetry (int i, boolean showXYPos, boolean showDetectionConfidence, boolean showSize, boolean showEstimatedAngle){
+    public void updateTelemetry (int i, boolean showXYPos, boolean showDetectionConfidence,
+                                 boolean showSize, boolean showEstimatedAngle){
         checkValidIndex(i);
         Recognition recognition = getRecognition(i);
 
         telemetry.addData("", " ");
         if (showDetectionConfidence) {
-            telemetry.addData("Image", "%s (%.0f %% Conf.)", recognition.getLabel(), recognition.getConfidence() * 100);
+            telemetry.addData("Image", "%s (%.0f %% Conf.)",
+                    recognition.getLabel(), recognition.getConfidence() * 100);
         } else {
             telemetry.addData("Image", "%s", recognition.getLabel());
         }
@@ -121,15 +138,18 @@ public class TensorFlowDetector {
             telemetry.addData("- Position", "%.0f / %.0f", x, y);
         }
         if (showSize) {
-            telemetry.addData("- Size", "%.0f x %.0f", recognition.getWidth(), recognition.getHeight());
+            telemetry.addData("- Size", "%.0f x %.0f", recognition.getWidth(),
+                    recognition.getHeight());
         }
         if (showEstimatedAngle) {
-            telemetry.addData("- Estimated Angle", "%.0f degrees", recognition.estimateAngleToObject(AngleUnit.DEGREES));
+            telemetry.addData("- Estimated Angle", "%.0f degrees",
+                    recognition.estimateAngleToObject(AngleUnit.DEGREES));
         }
     }
 
     /**
-     * Updates the telemetry with NumDetections, XYPos, DetectionConfidences, and Sizes for a single recognition with index i.
+     * Updates the telemetry with NumDetections, XYPos, DetectionConfidences, and Sizes for a single
+     * recognition with index i.
      * @param i the index of the recognition to update
      */
     public void updateTelemetry (int i) {
@@ -169,15 +189,19 @@ public class TensorFlowDetector {
     }
 
     /**
-     * Updates the telemetry with information about detections with a given label, based on parameters
+     * Updates the telemetry with information about detections with a given label, based on
+     * parameters
      * @param label the label to search for
-     * @param showAll whether the telemetry should be updated for only the first detection with that label, or all detections with that label
+     * @param showAll whether the telemetry should be updated for only the first detection with that
+     *                label, or all detections with that label
      * @param showXYPos display the XY position of the detections
      * @param showDetectionConfidence display the detection confidence of the detections
      * @param showSize display the size of the detections
      * @param showEstimatedAngle display the ESTIMATED angle from the camera to the detections
      */
-    public void updateTelemetry(String label, boolean showAll, boolean showXYPos, boolean showDetectionConfidence, boolean showSize, boolean showEstimatedAngle) {
+    public void updateTelemetry(String label, boolean showAll, boolean showXYPos,
+                                boolean showDetectionConfidence, boolean showSize,
+                                boolean showEstimatedAngle) {
         if (!showAll) {
             updateTelemetry(label, showXYPos, showDetectionConfidence, showSize, showEstimatedAngle);
         } else {
@@ -186,20 +210,23 @@ public class TensorFlowDetector {
                 telemetry.addLine("No recognitions with label \"" + label + "\" were found.");
             }
             for (int i = 0; i < indexes.size(); i++) {
-                updateTelemetry(indexes.get(i), showXYPos, showDetectionConfidence, showSize, showEstimatedAngle);
+                updateTelemetry(indexes.get(i), showXYPos, showDetectionConfidence, showSize,
+                        showEstimatedAngle);
             }
         }
     }
 
     /**
-     * Updates the telemetry with information about a SINGLE detection with a given label, based on parameters
+     * Updates the telemetry with information about a SINGLE detection with a given label, based on
+     * parameters
      * @param label the label to search for
      * @param showXYPos display the XY position of the detections
      * @param showDetectionConfidence display the detection confidence of the detections
      * @param showSize display the size of the detections
      * @param showEstimatedAngle display the ESTIMATED angle from the camera to the detections
      */
-    public void updateTelemetry(String label, boolean showXYPos, boolean showDetectionConfidence, boolean showSize, boolean showEstimatedAngle) {
+    public void updateTelemetry(String label, boolean showXYPos, boolean showDetectionConfidence,
+                                boolean showSize, boolean showEstimatedAngle) {
         int i = getRecognitionIndex(label);
         if (i == -1) {
             telemetry.addLine("No recognitions with label \"" + label + "\" were found.");
@@ -207,6 +234,10 @@ public class TensorFlowDetector {
             updateTelemetry(i, showXYPos, showDetectionConfidence, showSize, showEstimatedAngle);
         }
     }
+
+    // ********************************************************************************************
+    // **************************** BEGIN DETECTOR TUNING METHODS *********************************
+    // ********************************************************************************************
 
 
     /**
@@ -219,13 +250,16 @@ public class TensorFlowDetector {
 
     /**
      * set the minimum confidence for a detection to be considered valid. By default, 0.75f
-     * @param confidenceThreshold
+     * @param confidenceThreshold a float describing the minimum confidence needed to count a
+     *                            detection. By default, 0.75f
      */
     public void setConfidenceThreshold (float confidenceThreshold) {
         if (confidenceThreshold < 0f || confidenceThreshold > 1f) {
             throw new IllegalArgumentException("confidence threshold should be a float 0 < x < 1");
         } else if (confidenceThreshold == 0f || confidenceThreshold == 1f) {
-            throw new IllegalArgumentException("confidence threshold should be a value between 0 and 1, non-inclusive");
+            throw new IllegalArgumentException(
+                    "confidence threshold should be a value between 0 and 1, non-inclusive"
+            );
         }
         detector.setMinResultConfidence(confidenceThreshold);
     }
@@ -251,7 +285,9 @@ public class TensorFlowDetector {
         visionPortal.close();
     }
 
-
+    // ********************************************************************************************
+    // **************************** BEGIN DETECTOR METHODS ****************************************
+    // ********************************************************************************************
 
     /**
      * Get the number of Recognitions since last updating Recognitions
@@ -380,7 +416,7 @@ public class TensorFlowDetector {
      * Get ALL current recognitions with a given label in the form of an ArrayList.
      * @param label the label to search for.
      * @return an ArrayList of all Recognitions that match the label passed. Will return an empty
-     * ArrayList if no such Recognition is found.
+     *         ArrayList if no such Recognition is found.
      */
     public List<Recognition> getAllRecognitions (String label) {
         List<Recognition> recognitions = new ArrayList<>();
@@ -410,7 +446,7 @@ public class TensorFlowDetector {
      * get the index of ALL recognitions with a given label
      * @param label the label to search for
      * @return An ArrayList<Integer> with the indexes where the label was found. Will return an
-     * empty ArrayList if no such recognitions were found.
+     *         empty ArrayList if no such recognitions were found.
      */
     public List<Integer> getRecognitionIndexes (String label) {
         List <Integer> recognitionIndexes= new ArrayList<>();
@@ -422,7 +458,15 @@ public class TensorFlowDetector {
         return recognitionIndexes;
     }
 
+    // ********************************************************************************************
+    // **************************** BEGIN PRIVATE METHODS *****************************************
+    // ********************************************************************************************
 
+    /**
+     * Initialize the detector with the given model name. Only needs to be run once
+     * @param modelName the name of the model trained (ie. the name of the tflite file).
+     *                  EX: "Blue_Cone_Test_Model.tflite"
+     */
     private void initDetector(String modelName) {
         detector = new TfodProcessor.Builder()
                 .setModelAssetName(modelName)
