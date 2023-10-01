@@ -112,7 +112,8 @@ public class ConceptSoundsASJava extends LinearOpMode {
         while (opModeIsActive()) {
 
             // say Silver each time gamepad X is pressed (This sound is a resource)
-            if (silverFound && (isX = gamepad1.x) && !wasX) {
+            if (silverFound && gamepad1.x && !wasX) {
+
                 SoundPlayer.getInstance().startPlaying(hardwareMap.appContext, silverSoundID);
                 telemetry.addData("Playing", "Resource Silver");
                 telemetry.update();
@@ -120,14 +121,16 @@ public class ConceptSoundsASJava extends LinearOpMode {
 
             // say Gold each time gamepad B is pressed  (This sound is a resource)
             if (goldFound && (isB = gamepad1.b) && !WasB) {
+                isB = true;
                 SoundPlayer.getInstance().startPlaying(hardwareMap.appContext, goldSoundID);
                 telemetry.addData("Playing", "Resource Gold");
                 telemetry.update();
             }
-
+            isX = gamepad1.x;
             // Save last button states
             wasX = isX;
             WasB = isB;
         }
     }
 }
+
