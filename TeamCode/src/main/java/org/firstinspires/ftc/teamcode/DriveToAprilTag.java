@@ -1,5 +1,9 @@
 package org.firstinspires.ftc.teamcode;
 
+import android.annotation.SuppressLint;
+
+import com.acmerobotics.dashboard.FtcDashboard;
+import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
@@ -77,8 +81,10 @@ public class DriveToAprilTag extends LinearOpMode
     private AprilTagProcessor aprilTag;              // Used for managing the AprilTag detection process.
     private AprilTagDetection desiredTag = null;     // Used to hold the data for a detected AprilTag
 
+    @SuppressLint("DefaultLocale")
     @Override public void runOpMode()
     {
+        FtcDashboard dashboard = FtcDashboard.getInstance();
         boolean targetFound     = false;    // Set to true when an AprilTag target is detected
         double  drive           = 0;        // Desired forward power/speed (-1 to +1)
         double  strafe          = 0;        // Desired strafe power/speed (-1 to +1)
@@ -107,9 +113,10 @@ public class DriveToAprilTag extends LinearOpMode
             setManualExposure(6, 250);  // Use low exposure time to reduce motion blur
 
         // Wait for driver to press start
-        telemetry.addData("Camera preview on/off", "3 dots, Camera Stream");
-        telemetry.addData(">", "Touch Play to start OpMode");
-        telemetry.update();
+        TelemetryPacket packet = new TelemetryPacket();
+        packet.put("Camera preview on/off", "3 dots, Camera Stream");
+        packet.put(">", "Touch Play to start OpMode");
+        dashboard.sendTelemetryPacket(packet);
         waitForStart();
 
         while (opModeIsActive())
@@ -129,16 +136,16 @@ public class DriveToAprilTag extends LinearOpMode
                     telemetry.addData("Unknown Target", "Tag ID %d is not in TagLibrary\n", detection.id);
                 }
             }
-
+            packet = new TelemetryPacket();
             // Tell the driver what we see, and what to do.
             if (targetFound) {
-                telemetry.addData(">","HOLD Left-Bumper to Drive to Target\n");
-                telemetry.addData("Target", "ID %d (%s)", desiredTag.id, desiredTag.metadata.name);
-                telemetry.addData("Range",  "%5.1f inches", desiredTag.ftcPose.range);
-                telemetry.addData("Bearing","%3.0f degrees", desiredTag.ftcPose.bearing);
-                telemetry.addData("Yaw","%3.0f degrees", desiredTag.ftcPose.yaw);
+                packet.put(">","HOLD Left-Bumper to Drive to Target\n");
+                packet.put("Target", String.format("ID %d (%s)", desiredTag.id, desiredTag.metadata.name));
+                packet.put("Range", String.format("%5.1f inches", desiredTag.ftcPose.range));
+                packet.put("Bearing", String.format("%3.0f degrees", desiredTag.ftcPose.bearing));
+                packet.put("Yaw", String.format("%3.0f degrees", desiredTag.ftcPose.yaw));
             } else {
-                telemetry.addData(">","Drive using joysticks to find valid target\n");
+               packet.put(">","Drive using joysticks to find valid target\n");
             }
 
             // If Left Bumper is being pressed, AND we have found the desired target, Drive to target Automatically .
@@ -154,16 +161,16 @@ public class DriveToAprilTag extends LinearOpMode
                 turn   = Range.clip(headingError * TURN_GAIN, -MAX_AUTO_TURN, MAX_AUTO_TURN) ;
                 strafe = Range.clip(-yawError * STRAFE_GAIN, -MAX_AUTO_STRAFE, MAX_AUTO_STRAFE);
 
-                telemetry.addData("Auto","Drive %5.2f, Strafe %5.2f, Turn %5.2f ", drive, strafe, turn);
+                packet.put("Auto", String.format("Drive %5.2f, Strafe %5.2f, Turn %5.2f ", drive, strafe, turn));
             } else {
 
                 // drive using manual POV Joystick mode.  Slow things down to make the robot more controlable.
                 drive  = -gamepad1.left_stick_y  / 2.0;  // Reduce drive rate to 50%.
                 strafe = -gamepad1.left_stick_x  / 2.0;  // Reduce strafe rate to 50%.
                 turn   = -gamepad1.right_stick_x / 3.0;  // Reduce turn rate to 33%.
-                telemetry.addData("Manual","Drive %5.2f, Strafe %5.2f, Turn %5.2f ", drive, strafe, turn);
+                packet.put("Manual", String.format("Drive %5.2f, Strafe %5.2f, Turn %5.2f ", drive, strafe, turn));
             }
-            telemetry.update();
+            dashboard.sendTelemetryPacket(packet);
 
             // Apply desired axes motions to the drivetrain.
             moveRobot(drive, strafe, turn);
