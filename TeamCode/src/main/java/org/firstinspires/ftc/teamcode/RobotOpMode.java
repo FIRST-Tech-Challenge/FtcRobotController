@@ -17,6 +17,11 @@ public abstract class RobotOpMode extends OpMode {
         rightFrontDrive = hardwareMap.get(DcMotor.class, "fr_drv");
         rightBackDrive = hardwareMap.get(DcMotor.class, "br_drv");
         elapsedTime = new ElapsedTime();
+
+        leftFrontDrive.setDirection(DcMotor.Direction.REVERSE);
+        leftBackDrive.setDirection(DcMotor.Direction.REVERSE);
+        rightFrontDrive.setDirection(DcMotor.Direction.FORWARD);
+        rightBackDrive.setDirection(DcMotor.Direction.FORWARD);
     }
 
     @Override
