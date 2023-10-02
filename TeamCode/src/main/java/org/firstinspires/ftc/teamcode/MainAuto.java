@@ -15,6 +15,7 @@ public class MainAuto extends LinearOpMode{
 
     SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
 
+
     //need to clarify values later
     double x,y;
     double randomDistance;
@@ -89,6 +90,7 @@ public class MainAuto extends LinearOpMode{
 
                 if(dtb== DistanceToBackdrop.FAR && side==Side.LEFT){
                     blueAllianceFarNoSenseThread.start();
+
                     //place purple pixel
                     sleep(1000);
                     Bot.fourbar.outtake();
@@ -100,6 +102,25 @@ public class MainAuto extends LinearOpMode{
                     blueAllianceFarNoSenseThread.interrupt();
 
                 }
+            /*    boolean actionsPerformed=false;
+
+                drive.followTrajectory(blueAllianceFarNoSense, () -> {
+                    // Perform actions only at Waypoint 3 (between second and third spline)
+                    // For example, move an arm, grab an object, etc.
+                    if (!actionsPerformed) {
+                        Bot.fourbar.outtake();
+                        Bot.slides.runTo(1);
+                        Bot.box.depositFirstPixel();
+                        Bot.slides.runTo(2);
+                        Bot.box.depositSecondPixel();
+                        Bot.resetOuttake();
+                        actionsPerformed = true; // Set the flag to prevent further actions
+                    }
+                });
+
+             */
+
+
 
 
 
