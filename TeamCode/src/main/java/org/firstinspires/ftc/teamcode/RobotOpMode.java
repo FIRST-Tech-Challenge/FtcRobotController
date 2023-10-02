@@ -21,13 +21,13 @@ public abstract class RobotOpMode extends OpMode {
 
     @Override
     public final void loop() {
-        robotLoop();
+        robotloop();
         telemetry.update();
     }
 
-    public abstract void robotLoop();
+    public abstract void robotloop();
 
-    public void gamepadMoveRobot() {
+    public void gamePadMoveRobot() {
         if(gamepad1 == null) {
             return;
         }
