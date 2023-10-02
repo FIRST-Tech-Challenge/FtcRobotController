@@ -81,10 +81,11 @@ public class DriveToAprilTag extends LinearOpMode
     private AprilTagProcessor aprilTag;              // Used for managing the AprilTag detection process.
     private AprilTagDetection desiredTag = null;     // Used to hold the data for a detected AprilTag
 
+    private FTCDashboardPackets dbp = FTCDashboardPackets();
+
     @SuppressLint("DefaultLocale")
     @Override public void runOpMode()
     {
-        FtcDashboard dashboard = FtcDashboard.getInstance();
         boolean targetFound     = false;    // Set to true when an AprilTag target is detected
         double  drive           = 0;        // Desired forward power/speed (-1 to +1)
         double  strafe          = 0;        // Desired strafe power/speed (-1 to +1)
@@ -113,16 +114,18 @@ public class DriveToAprilTag extends LinearOpMode
             setManualExposure(6, 250);  // Use low exposure time to reduce motion blur
 
         // Wait for driver to press start
-        TelemetryPacket packet = new TelemetryPacket();
-        packet.put("Camera preview on/off", "3 dots, Camera Stream");
-        packet.put(">", "Touch Play to start OpMode");
-        dashboard.sendTelemetryPacket(packet);
+        dbp.createNewTelePacket();
+        dbp.put("Camera preview on/off", "3 dots, Camera Stream");
+        dbp.put(">", "Touch Play to start OpMode");
+        dbp.send(false);
         waitForStart();
 
         while (opModeIsActive())
         {
             targetFound = false;
             desiredTag  = null;
+
+            dbp.createNewTelePacket();
 
             // Step through the list of detected tags and look for a matching tag
             List<AprilTagDetection> currentDetections = aprilTag.getDetections();
@@ -133,19 +136,18 @@ public class DriveToAprilTag extends LinearOpMode
                     desiredTag = detection;
                     break;  // don't look any further.
                 } else {
-                    telemetry.addData("Unknown Target", "Tag ID %d is not in TagLibrary\n", detection.id);
+                    dbp.put("Unknown Target", String.format("Tag ID %d is not in TagLibrary\n", detection.id));
                 }
             }
-            packet = new TelemetryPacket();
             // Tell the driver what we see, and what to do.
             if (targetFound) {
-                packet.put(">","HOLD Left-Bumper to Drive to Target\n");
-                packet.put("Target", String.format("ID %d (%s)", desiredTag.id, desiredTag.metadata.name));
-                packet.put("Range", String.format("%5.1f inches", desiredTag.ftcPose.range));
-                packet.put("Bearing", String.format("%3.0f degrees", desiredTag.ftcPose.bearing));
-                packet.put("Yaw", String.format("%3.0f degrees", desiredTag.ftcPose.yaw));
+                dbp.put(">","HOLD Left-Bumper to Drive to Target\n");
+                dbp.put("Target", String.format("ID %d (%s)", desiredTag.id, desiredTag.metadata.name));
+                dbp.put("Range", String.format("%5.1f inches", desiredTag.ftcPose.range));
+                dbp.put("Bearing", String.format("%3.0f degrees", desiredTag.ftcPose.bearing));
+                dbp.put("Yaw", String.format("%3.0f degrees", desiredTag.ftcPose.yaw));
             } else {
-               packet.put(">","Drive using joysticks to find valid target\n");
+               dbp.put(">","Drive using joysticks to find valid target\n");
             }
 
             // If Left Bumper is being pressed, AND we have found the desired target, Drive to target Automatically .
@@ -161,16 +163,16 @@ public class DriveToAprilTag extends LinearOpMode
                 turn   = Range.clip(headingError * TURN_GAIN, -MAX_AUTO_TURN, MAX_AUTO_TURN) ;
                 strafe = Range.clip(-yawError * STRAFE_GAIN, -MAX_AUTO_STRAFE, MAX_AUTO_STRAFE);
 
-                packet.put("Auto", String.format("Drive %5.2f, Strafe %5.2f, Turn %5.2f ", drive, strafe, turn));
+                dbp.put("Auto", String.format("Drive %5.2f, Strafe %5.2f, Turn %5.2f ", drive, strafe, turn));
             } else {
 
                 // drive using manual POV Joystick mode.  Slow things down to make the robot more controlable.
                 drive  = -gamepad1.left_stick_y  / 2.0;  // Reduce drive rate to 50%.
                 strafe = -gamepad1.left_stick_x  / 2.0;  // Reduce strafe rate to 50%.
                 turn   = -gamepad1.right_stick_x / 3.0;  // Reduce turn rate to 33%.
-                packet.put("Manual", String.format("Drive %5.2f, Strafe %5.2f, Turn %5.2f ", drive, strafe, turn));
+                dbp.put("Manual", String.format("Drive %5.2f, Strafe %5.2f, Turn %5.2f ", drive, strafe, turn));
             }
-            dashboard.sendTelemetryPacket(packet);
+            dbp.send(false);
 
             // Apply desired axes motions to the drivetrain.
             moveRobot(drive, strafe, turn);
@@ -245,15 +247,17 @@ public class DriveToAprilTag extends LinearOpMode
             return;
         }
 
+        dbp.createNewTelePacket();
+
         // Make sure camera is streaming before we try to set the exposure controls
         if (visionPortal.getCameraState() != VisionPortal.CameraState.STREAMING) {
-            telemetry.addData("Camera", "Waiting");
-            telemetry.update();
+            dbp.put("Camera", "Waiting");
+            dbp.send(true);
             while (!isStopRequested() && (visionPortal.getCameraState() != VisionPortal.CameraState.STREAMING)) {
                 sleep(20);
             }
-            telemetry.addData("Camera", "Ready");
-            telemetry.update();
+            dbp.put("Camera", "Ready");
+            dbp.send(true);
         }
 
         // Set camera controls unless we are stopping.
