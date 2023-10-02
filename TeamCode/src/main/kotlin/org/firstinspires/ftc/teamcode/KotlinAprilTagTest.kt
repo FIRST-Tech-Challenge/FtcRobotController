@@ -25,7 +25,7 @@ class KotlinAprilTagTest: OpMode() {
 
     override fun init() { initAprilTagDetection() }
 
-    fun initAprilTagDetection() {
+    private fun initAprilTagDetection() {
         aprilTag = AprilTagProcessor.Builder().build(); // or AprilTagProcessor.easyCreateWithDefaults()
 
         // Create the vision portal the easy way.
@@ -42,7 +42,7 @@ class KotlinAprilTagTest: OpMode() {
         }
     }
 
-    fun runAprilTagTelemetry() {
+    private fun runAprilTagTelemetry() {
         val currentDetections = aprilTag.detections
 
         // Step through the list of detections and display info for each one.
