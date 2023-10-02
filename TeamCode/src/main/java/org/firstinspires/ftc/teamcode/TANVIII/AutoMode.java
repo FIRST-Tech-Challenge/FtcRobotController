@@ -207,8 +207,22 @@ public class AutoMode extends LinearOpMode {
             robot.setHeading(-90);
             sleep(100);
             robot.mecanumBlocking(25, true);
+            sleep(2000);
+            robot.setHeading(0);
+            sleep(100);
+            robot.straightBlocking(24, true);
+            sleep(100);
+            robot.setHeading(90);
+            sleep(100);
+            robot.straightBlocking(84, true);
+            sleep(2000);
+            robot.setHeading(-90);
+            sleep(100);
+            robot.straightBlocking(84, true);
             sleep(100);
             robot.setHeading(-90);
+            sleep(100);
+            robot.mecanumBlocking(25, true);
             sleep(100);
             break;
         }
