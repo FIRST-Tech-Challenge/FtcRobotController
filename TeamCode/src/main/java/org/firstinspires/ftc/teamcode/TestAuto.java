@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode;
 
 import android.util.Log;
 
+import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -11,12 +12,14 @@ import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
 import org.openftc.easyopencv.OpenCvWebcam;
 
-@TeleOp
+@Autonomous
 public class TestAuto extends LinearOpMode {
     OpenCvWebcam webcam;
     private MarkerDetector detector;
     private MarkerDetector.MARKER_POSITION position;
     private double LEFT_CR_AVG;
+
+    Robot robot;
 
     ElapsedTime elapsedTime;
 
@@ -25,6 +28,9 @@ public class TestAuto extends LinearOpMode {
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
         webcam = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "Webcam 1"), cameraMonitorViewId);
         elapsedTime = new ElapsedTime();
+        robot = new Robot(hardwareMap, this, telemetry);
+        robot.setUpDrivetrainMotors();
+        boolean movedToMarker = false;
 
         detector = new MarkerDetector();
         webcam.setPipeline(detector);
@@ -33,28 +39,65 @@ public class TestAuto extends LinearOpMode {
 
         position = detector.position;
 
+        waitForStart();
+
         while (!isStarted() || opModeIsActive()) {
             position = detector.position;
             LEFT_CR_AVG = detector.avgLeftCr;
-            telemetry.addData("position: ", position);
-            telemetry.update();
-            telemetry.addLine(String.valueOf(LEFT_CR_AVG));
-            telemetry.addLine(String.valueOf(detector.leftCrTotal));
+//            telemetry.addData("position: ", position);
+//            telemetry.update();
+//            telemetry.addLine(String.valueOf(LEFT_CR_AVG));
+//            telemetry.addLine(String.valueOf(detector.leftCrTotal));
+//            telemetry.addLine(String.valueOf(elapsedTime.milliseconds()));
+//
+//            wait(5);
+//            telemetry.addLine("true");
+//            telemetry.update();
 
-            if (elapsedTime.milliseconds() >= 2000) {
-                telemetry.addData("position: ", position);
-                telemetry.addLine(String.valueOf(LEFT_CR_AVG));
-                telemetry.addLine(String.valueOf(detector.leftCrTotal));
-                telemetry.update();
-                elapsedTime.reset();
+            if (position == MarkerDetector.MARKER_POSITION.CENTER) {
+                robot.straightBlocking(20, true);
+                robot.setHeading(15);
+                robot.straightBlocking(6, true);
+                wait(3);
+                robot.straightBlocking(6, false);
+                robot.setHeading(0);
+                robot.straightBlocking(19, false);
+                break;
+            } else if (position == MarkerDetector.MARKER_POSITION.LEFT) {
+                robot.straightBlocking(18, true);
+                robot.setHeading(30);
+                robot.straightBlocking(3, true);
+                wait(3);
+                robot.straightBlocking(3, false);
+                robot.setHeading(0);
+                robot.straightBlocking(17, false);
+                break;
+            } else if (position == MarkerDetector.MARKER_POSITION.RIGHT) {
+                robot.straightBlocking(18, true);
+                robot.setHeading(-30);
+                robot.straightBlocking(3, true);
+                wait(3);
+                robot.straightBlocking(3, false);
+                robot.setHeading(0);
+                robot.straightBlocking(17, false);
+                break;
             }
         }
 
-        if (position == MarkerDetector.MARKER_POSITION.LEFT) {
 
-        }
 
     }
 
+    public void wait(int seconds) {
+        elapsedTime.reset();
+        while (opModeIsActive()) {
+
+            if (elapsedTime.milliseconds() >= seconds*1000) {
+                break;
+
+            }
+
+        }
+    }
 
 }
