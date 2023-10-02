@@ -36,13 +36,13 @@ public class MarkerDetector extends OpenCvPipeline {
 
         Imgproc.cvtColor(workingMatrix, workingMatrix, Imgproc.COLOR_RGB2YCrCb);
 
-        Mat matLeft = workingMatrix.submat(80, 160, 10, 90); //frame is 240x320
+        Mat matLeft = workingMatrix.submat(80, 160, 0, 80); //frame is 240x320
         Mat matCenter = workingMatrix.submat(80, 160, 120, 200);
-        Mat matRight = workingMatrix.submat(80, 160, 230, 310);
+        Mat matRight = workingMatrix.submat(80, 160, 240, 320);
 
-        Imgproc.rectangle(workingMatrix, new Rect(10, 80, SUBMAT_WIDTH, SUBMAT_HEIGHT), new Scalar(0, 255, 0));
+        Imgproc.rectangle(workingMatrix, new Rect(00, 80, SUBMAT_WIDTH, SUBMAT_HEIGHT), new Scalar(0, 255, 0));
         Imgproc.rectangle(workingMatrix, new Rect(120, 80, SUBMAT_WIDTH, SUBMAT_HEIGHT), new Scalar(0, 255, 0));
-        Imgproc.rectangle(workingMatrix, new Rect(230, 80, SUBMAT_WIDTH, SUBMAT_HEIGHT), new Scalar(0, 255, 0));
+        Imgproc.rectangle(workingMatrix, new Rect(240, 80, SUBMAT_WIDTH, SUBMAT_HEIGHT), new Scalar(0, 255, 0));
 
         leftCrTotal = Core.sumElems(matLeft).val[1];
         double rightCrTotal = Core.sumElems(matRight).val[1];
@@ -82,21 +82,21 @@ public class MarkerDetector extends OpenCvPipeline {
 
         if (avgLeftCr > avgCenterCr) {
             if (avgLeftCr > avgRightCr) {
-                if (((184 <= avgLeftCr) && (avgLeftCr <= 240)) && ((avgLeftCb >= 16) && (avgLeftCb <= 128))) {
+                if (((160 <= avgLeftCr) && (avgLeftCr <= 240)) && ((avgLeftCb >= 16) && (avgLeftCb <= 128))) {
                     position = MARKER_POSITION.LEFT;
                 }
             } else {
-                if (((184 <= avgRightCr) && (avgRightCr <= 240)) && ((avgRightCb >= 16) && (avgRightCb <= 128))) {
+                if (((160 <= avgRightCr) && (avgRightCr <= 240)) && ((avgRightCb >= 16) && (avgRightCb <= 128))) {
                     position = MARKER_POSITION.RIGHT;
                 }
             }
         } else {
             if (avgCenterCr > avgRightCr) {
-                if (((184 <= avgCenterCr) && (avgCenterCr <= 240)) && ((avgCenterCb >= 16) && (avgCenterCb <= 128))) {
+                if (((160 <= avgCenterCr) && (avgCenterCr <= 240)) && ((avgCenterCb >= 16) && (avgCenterCb <= 128))) {
                     position = MARKER_POSITION.CENTER;
                 }
             } else {
-                if (((184 <= avgRightCr) && (avgRightCr <= 240)) && ((avgRightCb >= 16) && (avgRightCb <= 128))) {
+                if (((160 <= avgRightCr) && (avgRightCr <= 240)) && ((avgRightCb >= 16) && (avgRightCb <= 128))) {
                     position = MARKER_POSITION.RIGHT;
                 }
             }
