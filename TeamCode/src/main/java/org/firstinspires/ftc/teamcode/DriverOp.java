@@ -13,7 +13,7 @@ public class DriverOp extends RobotOpMode {
     }
 
     @Override
-    public void robotLoop() {
-        gamepadMoveRobot();
+    public void robotloop() {
+        gamePadMoveRobot();
     }
 }
