@@ -47,7 +47,7 @@ public class R2V2 extends OpMode {
     public static int COUNTERBRAKE_CALIBRATE_VELOCITY = 150;
 
     public int counterBrakeMaxTicks;
-    public static double STEERING_STALL_AMPS = 4.5;
+    public static double STEERING_STALL_AMPS = 6.0;
 
     public static double ANTI_STRESS_PROPORTIONAL = 0.9;
     boolean steeringCalibrated = false;
@@ -120,7 +120,7 @@ public class R2V2 extends OpMode {
             mode = ControlMode.GPS;
         }
         if(mode.equals(ControlMode.MANUAL)) {
-            if (!isCalibratingBrake && !isCalibratingSteering && steeringCalibrated && brakeCalibrated) {
+            if (true){ //!isCalibratingSteering && steeringCalibrated) {
                 //emergency stop button
                 //locks steering and disables counterbrake and accelerator to be backdriven
                 //todo IMPORTANT - this test should be enforced regardless of mode ASAP
@@ -210,8 +210,8 @@ public class R2V2 extends OpMode {
 
             //if the vision target is too large (experimentally determine), then apply the brake automatically
             //todo this needs a LOT of work to convert the target height or size to a real distance value and do gradual braking
-            if (currentTarget.getAreaPixels()>4000)
-                counterBrake.setTargetPosition(0); //full braking at the moment
+            //if (currentTarget.getAreaPixels()>4000)
+            //    counterBrake.setTargetPosition(0); //full braking at the moment
 
 
 
