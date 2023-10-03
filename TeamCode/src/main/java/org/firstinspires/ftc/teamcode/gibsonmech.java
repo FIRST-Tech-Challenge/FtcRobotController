@@ -89,10 +89,14 @@ public class gibsonmech extends LinearOpMode{
             else if(gamepad1.right_trigger == 1){
                 m_frontLeft.setPower(-1);
                 m_frontRight.setPower(1);
+                m_rearLeft.setPower(0);
+                m_rearRight.setPower(0);
             }
             else if(gamepad1.left_trigger == 1){
                 m_frontLeft.setPower(1);
                 m_frontRight.setPower(-1);
+                m_rearLeft.setPower(0);
+                m_rearRight.setPower(0);
             }
             else{
                 m_rearLeft.setPower(0);
