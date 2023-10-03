@@ -13,8 +13,7 @@ public class ClawTest extends LinearOpMode {
 
         // sets servo's range and default position beforehand
         // WILL LIKELY NEED TO BE CHANGED AFTER TESTING
-        clawServo.scaleRange(0, 0.85);
-        clawServo.setPosition(1);
+
 
         waitForStart();
 
@@ -23,10 +22,10 @@ public class ClawTest extends LinearOpMode {
             double clawServoPosition = clawServo.getPosition();
             float clawPos = 1f;
 
-            if (gamepad1.dpad_up && clawPos <= 1 && clawPos <=0.1) {
+            if (gamepad1.right_bumper && clawPos <= 1 && clawPos <=0.1) {
                 clawPos -= 0.1;
                 clawServo.setPosition(clawPos);
-            } else if (gamepad1.dpad_down && clawPos <= 0.9 && clawPos >= 0) {
+            } else if (gamepad1.left_bumper && clawPos <= 0.9 && clawPos >= 0) {
                 clawPos += 0.1;
                 clawServo.setPosition(clawPos);
             }

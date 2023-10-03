@@ -22,6 +22,7 @@ public class TeleOpWithLiftDrone extends LinearOpMode {
         // ADDED CODE - sets up lift motor and drone servo
         DcMotor lift = hardwareMap.dcMotor.get("lift");
         Servo droneServo = hardwareMap.servo.get("drone");
+        Servo clawServo = hardwareMap.servo.get("claw");
 
         // Reverse the right side motors. Flip if goes backward.
         frontRightMotor.setDirection(DcMotorSimple.Direction.FORWARD);
@@ -55,6 +56,9 @@ public class TeleOpWithLiftDrone extends LinearOpMode {
             double x = gamepad1.left_stick_x;
             double rx = gamepad1.right_stick_x;
 
+            double clawServoPosition = clawServo.getPosition();
+            float clawPos = 1f;
+
             // ADDED CODE - creates variables for right and left trigger values
             double rTrigger = gamepad1.right_trigger/5;
             double lTrigger = gamepad1.left_trigger/5;
@@ -71,6 +75,14 @@ public class TeleOpWithLiftDrone extends LinearOpMode {
                 lift.setPower(-lTrigger);
             }else {
                 lift.setPower(0);
+            }
+
+            if (gamepad1.right_bumper && clawPos <= 0.9 && clawPos >= 0) {
+                clawPos += 0.1;
+                clawServo.setPosition(clawPos);
+            } else if (gamepad1.left_bumper && clawPos <= 1 && clawPos <=0.1) {
+                clawPos -= 0.1;
+                clawServo.setPosition(clawPos);
             }
 
             // ADDED CODE - pressing button A moves servo to launch the drone and then reset launcher position
