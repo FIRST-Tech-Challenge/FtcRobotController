@@ -15,6 +15,17 @@ public class GibsonAuto extends LinearOpMode{
     @Override
     public void runOpMode() {
         //Initialization code
+
+        m_frontLeft = hardwareMap.get(DcMotor.class, "frontLeft");
+        m_frontRight = hardwareMap.get(DcMotor.class, "frontRight");
+        m_rearLeft = hardwareMap.get(DcMotor.class, "rearLeft");
+        m_rearRight = hardwareMap.get(DcMotor.class, "rearRight");
+
+        m_frontLeft.setDirection(DcMotor.Direction.REVERSE);
+        m_rearLeft.setDirection(DcMotor.Direction.REVERSE);
+        m_frontRight.setDirection(DcMotor.Direction.FORWARD);
+        m_rearRight.setDirection(DcMotor.Direction.FORWARD);
+        
         double LY = -gamepad1.left_stick_y; //y axis on left stick
         double LX = -gamepad1.left_stick_x; //X axis on left stick
         double RY = -gamepad1.right_stick_y; //y axis on right stick
