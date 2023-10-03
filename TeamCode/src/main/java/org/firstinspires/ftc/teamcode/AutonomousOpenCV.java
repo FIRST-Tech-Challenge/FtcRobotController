@@ -1,29 +1,17 @@
 package org.firstinspires.ftc.teamcode;
 
-import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.IMU;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
-import org.firstinspires.ftc.teamcode.TestOpenCV.CircleDetection;
-import org.opencv.core.Core;
-import org.opencv.core.Mat;
-import org.opencv.core.Point;
-import org.opencv.core.Scalar;
-import org.opencv.imgproc.Imgproc;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
-import org.openftc.easyopencv.OpenCvPipeline;
 import org.openftc.easyopencv.OpenCvWebcam;
 
-@Autonomous
-public class AutonomousOpenCV extends autonomous {
+@Autonomous(name="Autonomous - Red ball", group="Linear Opmode")
+public class AutonomousOpenCV extends LinearOpMode {
     private OpenCvWebcam webcam;
     private CircleDetection circleDetection;
     private DrivingFunctions df;
@@ -35,7 +23,7 @@ public class AutonomousOpenCV extends autonomous {
         df = new DrivingFunctions(this);
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
         webcam = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "Webcam 1"), cameraMonitorViewId);
-        circleDetection = new CircleDetection(telemetry);
+        circleDetection = new CircleDetection(telemetry, false);                            
         webcam.setPipeline(circleDetection);
         webcam.setMillisecondsPermissionTimeout(5000); // Timeout for obtaining permission is configurable. Set before opening.
         webcam.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
@@ -61,24 +49,51 @@ public class AutonomousOpenCV extends autonomous {
 
         int tries = 0;
         // Waits until the camera detects the ball, up to 5 seconds
-        while(circleDetection.ballPosition == BallPosition.UNDEFINED && tries < 50) {
+        /*while(opModeIsActive()){//circleDetection.ballPosition == BallPosition.UNDEFINED && tries < 50) {
             sleep(100);
             tries++;
             UpdateTelemetry();
-        }
+        } */
+
+        df.rotateDegrees(0.5,90);
+        //df.wait(300);
+        df.rotateDegrees(0.5,179);
+        //df.wait(300);
+        df.rotateDegrees(0.5,-30);
+        //df.wait(300);
+        df.rotateDegrees(0.5,-179);
+
+        df.rotateFeildCentric(0.5,90);
+        //df.wait(300);
+        df.rotateFeildCentric(0.5,179);
+        //df.wait(300);
+        df.rotateFeildCentric(0.5,-90);
+        //df.wait(300);
+        df.rotateFeildCentric(0.5,-179);
+        //df.waitStopped(1000);
+
+
+
+
+
+
+
 
         if(circleDetection.ballPosition == BallPosition.UNDEFINED)
             circleDetection.ballPosition = BallPosition.LEFT; // Ball not found, makes a guess to the left
 
-        df.driveForward(0.5,1000);
+        //df.driveForward(0.3,500);
 
         if(circleDetection.ballPosition == BallPosition.LEFT) {
-            df.rotateLeft(0.5, 300);
+            //df.driveForward(0.3,400);
+            //df.strafeRight(0.5,250);
         }
         if(circleDetection.ballPosition == BallPosition.RIGHT) {
-            df.rotateRight(0.5, 300);
+            //df.driveForward(0.5, 100);
+            //df.rotateLeft(1, 500);
+            //df.driveForward(0.5,700);
         }
-        df.driveForward(0.5,1000);
+        //df.driveForward(0.5,1000);
         UpdateTelemetry();
         StopStreaming();
     }
@@ -103,49 +118,4 @@ public class AutonomousOpenCV extends autonomous {
         telemetry.update();
     }
     enum BallPosition {LEFT, CENTER, RIGHT, UNDEFINED};
-    public class CircleDetection extends OpenCvPipeline {
-        public BallPosition ballPosition = BallPosition.UNDEFINED;
-        Mat grayMat = new Mat();
-        Mat hsvMaskedMat = new Mat();
-        Mat mask1 = new Mat();
-        Mat mask2 = new Mat();
-        Mat mask = new Mat();
-        Mat hsvMat = new Mat();
-
-        public int numCirclesFound = 0;
-        public Point circleCenter = new Point(0.0, 0.0);
-
-        private Telemetry telemetry;
-
-        public CircleDetection(Telemetry telemetry) {
-            this.telemetry = telemetry;
-        }
-
-        @Override
-        public Mat processFrame(Mat input) {
-            Imgproc.cvtColor(input, hsvMat, Imgproc.COLOR_RGB2HSV);
-
-            Core.inRange(hsvMat, new Scalar(0, 70, 50), new Scalar(10, 255, 255), mask1);
-            Core.inRange(hsvMat, new Scalar(160, 70, 50), new Scalar(180, 255, 255), mask2);
-
-            Core.bitwise_or(mask1, mask2, mask);
-            hsvMaskedMat.release();
-            Core.bitwise_and(input, input, hsvMaskedMat, mask);
-
-            Imgproc.cvtColor(hsvMaskedMat, grayMat, Imgproc.COLOR_RGB2GRAY);
-
-            Imgproc.GaussianBlur(grayMat, grayMat, new org.opencv.core.Size(15.0, 15.0), 2, 2);
-            Mat circles = new Mat();
-            Imgproc.HoughCircles(grayMat, circles, Imgproc.HOUGH_GRADIENT, 1, 150, 130, 30);
-
-            numCirclesFound = circles.cols();
-
-            for (int i = 0; i < numCirclesFound; i++) {
-                double[] data = circles.get(0, i);
-                circleCenter = new Point(Math.round(data[0]), Math.round(data[1]));
-                ballPosition = circleCenter.x < 300 ? BallPosition.LEFT : (circleCenter.x > 700 ? BallPosition.RIGHT : BallPosition.CENTER);
-            }
-            return input;
-        }
-    }
 }

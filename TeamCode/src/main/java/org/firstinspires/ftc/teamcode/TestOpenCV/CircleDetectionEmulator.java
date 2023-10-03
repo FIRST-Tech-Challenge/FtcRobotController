@@ -1,19 +1,14 @@
 package org.firstinspires.ftc.teamcode.TestOpenCV;
 
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 //import org.firstinspires.ftc.robotcore.external.android.util.Size;
 import org.opencv.core.*;
 import org.opencv.core.Mat;
-import org.opencv.core.MatOfPoint;
 import org.opencv.core.Scalar;
 import org.opencv.imgproc.Imgproc;
 import org.openftc.easyopencv.OpenCvPipeline;
 
-import java.util.ArrayList;
-import java.util.List;
-
-public class CircleDetection extends OpenCvPipeline
+public class CircleDetectionEmulator extends OpenCvPipeline
 {
     Mat grayMat = new Mat();
     Mat blurMat = new Mat();
@@ -35,7 +30,7 @@ public class CircleDetection extends OpenCvPipeline
 
     private Telemetry telemetry;
 
-    public CircleDetection  (Telemetry telemetry) {
+    public CircleDetectionEmulator(Telemetry telemetry) {
         this.telemetry = telemetry;
     }
 
@@ -64,10 +59,12 @@ public class CircleDetection extends OpenCvPipeline
 
         Imgproc.cvtColor(input, hsvMat, Imgproc.COLOR_RGB2HSV);
 
-        Core.inRange(hsvMat, new Scalar(0, 70, 50), new Scalar(10, 255, 255), mask1);
-        Core.inRange(hsvMat, new Scalar(160, 70, 50), new Scalar(180, 255, 255), mask2);
+        //Core.inRange(hsvMat, new Scalar(0, 70, 50), new Scalar(10, 255, 255), mask1);
+        //Core.inRange(hsvMat, new Scalar(160, 70, 50), new Scalar(180, 255, 255), mask2);
+        Core.inRange(hsvMat, new Scalar(25, 50, 50), new Scalar(115, 255, 255), mask);
 
-        Core.bitwise_or(mask1, mask2, mask);
+
+        //Core.bitwise_or(mask1, mask2, mask);
         hsvMaskedMat.release();
         Core.bitwise_and(input, input, hsvMaskedMat, mask);
 
@@ -75,10 +72,11 @@ public class CircleDetection extends OpenCvPipeline
 
         Imgproc.GaussianBlur(grayMat, blurMat, new org.opencv.core.Size(15.0, 15.0), 2, 2);
         Mat circles = new Mat();
-        Imgproc.HoughCircles(blurMat, circles, Imgproc.HOUGH_GRADIENT, 1, 150, 130, 30);
+        Imgproc.HoughCircles(blurMat, circles, Imgproc.HOUGH_GRADIENT, 1, 300, 110, 35);
         numCirclesFound = circles.cols();
         input.copyTo(circlesOnFrameMat);
         Point center = new Point(0, 0);
+        int radius = 0;
 
         for(int i=0; i < numCirclesFound; i++)
         {
@@ -87,13 +85,14 @@ public class CircleDetection extends OpenCvPipeline
             // circle center
             Imgproc.circle(circlesOnFrameMat, center, 1, new Scalar(0, 0, 255), 2, 8, 0 );
             // circle outline
-            int radius = (int) Math.round(data[2]);
+            radius = (int) Math.round(data[2]);
             Imgproc.circle(circlesOnFrameMat, center, radius, new Scalar(0,0,255), 2, 8, 0 );
         }
 
         telemetry.addData("[Stage]", stageToRenderToViewport);
         telemetry.addData("[Found Circles]", "%d", numCirclesFound);
         telemetry.addData("Center:", "%4.0f, %4.0f", center.x, center.y);
+        telemetry.addData("radius: ", "%d", radius);
         telemetry.update();
 
         switch (stageToRenderToViewport)

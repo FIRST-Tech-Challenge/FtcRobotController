@@ -5,6 +5,8 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.IMU;
 
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+
 public class DrivingFunctions {
     private DcMotor leftFrontDrive = null;
     private DcMotor leftBackDrive = null;
@@ -35,7 +37,7 @@ public class DrivingFunctions {
                 RevHubOrientationOnRobot.UsbFacingDirection.RIGHT));
         // Without this, the REV Hub's orientation is assumed to be logo up / USB forward
         imu.initialize(parameters);
-
+        imu.resetYaw();
         leftFrontDrive.setDirection(DcMotor.Direction.REVERSE);
         leftBackDrive.setDirection(DcMotor.Direction.FORWARD);
         rightFrontDrive.setDirection(DcMotor.Direction.FORWARD);
@@ -48,7 +50,61 @@ public class DrivingFunctions {
         leftBackDrive.setPower(0);
         rightBackDrive.setPower(0);
     }
+    public void waitStopped(int time){
+        stopM();
+        lom.sleep(time);
+    }
+    public void rotateFeildCentric(double power, int degrees){
+        double TargetAngle = degrees;
+        double botHeading = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES);
+        double deltaDegrees = (TargetAngle - botHeading + 540) % 360 - 180;
+        double yaw = 0;
+        double kp = -0.033;
+        while (true){
 
+            if ((Math.abs(deltaDegrees) < 1.0 && Math.abs(power) < 2.0)){
+                break;
+            }
+            else {
+                yaw = kp * deltaDegrees / power;
+            }
+            double leftFrontPower  = yaw;
+            double rightFrontPower = -yaw;
+            double leftBackPower   = yaw;
+            double rightBackPower  = -yaw;
+            leftFrontDrive.setPower(leftFrontPower * power);
+            rightFrontDrive.setPower(rightFrontPower * power);
+            leftBackDrive.setPower(leftBackPower * power);
+            rightBackDrive.setPower(rightBackPower * power);
+
+        }
+    }
+    public void rotateDegrees(double power, int degrees){
+        double TargetAngle = degrees;
+        int stop = 1000;
+        while (stop > 0){
+            stop -= 1;
+            double botHeading = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES);
+            double deltaDegrees = (TargetAngle - botHeading + 540) % 360 - 180;
+            double yaw = 0;
+            double kp = -0.033;
+            if ((Math.abs(deltaDegrees) < 1.0 && Math.abs(power) < 2.0)){
+                break;
+            }
+            else {
+                yaw = kp * deltaDegrees / power;
+            }
+            double leftFrontPower  = yaw;
+            double rightFrontPower = -yaw;
+            double leftBackPower   = yaw;
+            double rightBackPower  = -yaw;
+            leftFrontDrive.setPower(leftFrontPower * power);
+            rightFrontDrive.setPower(rightFrontPower * power);
+            leftBackDrive.setPower(leftBackPower * power);
+            rightBackDrive.setPower(rightBackPower * power);
+
+        }
+    }
     public void driveForward(double power, int miliseconds) {
         int direction = 1;
         leftFrontDrive.setPower(power * direction);
