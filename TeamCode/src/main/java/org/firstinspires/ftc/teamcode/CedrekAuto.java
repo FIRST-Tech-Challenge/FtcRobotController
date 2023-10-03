@@ -36,8 +36,6 @@ public class CedrekAuto extends LinearOpMode {
                 m_frontRight.setPower(-1);
                 m_rearLeft.setPower(-1);
                 m_rearRight.setPower(-1);
-
-
             } else if (getRuntime() < 2) {
                 m_rearRight.setPower(1);
                 m_rearLeft.setPower(1);
