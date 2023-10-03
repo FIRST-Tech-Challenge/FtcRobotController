@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.Gamepad;
 
 @TeleOp(name="Basic Mecanum OpMode Cedrek", group="Basic")
 public class CedrekIfButton extends LinearOpMode{
@@ -36,13 +37,15 @@ public class CedrekIfButton extends LinearOpMode{
             double x = gamepad1.left_stick_x;
             double rotation = gamepad1.right_stick_x;
 
-            /* m_frontLeft.setPower(y + x + rotation); // Note: pushing stick forward gives negative value
+
+            /*m_rearLeft.setPower(y + x + rotation); // Note: pushing stick forward gives negative value
             m_rearLeft.setPower(y - x + rotation);
             m_frontRight.setPower(y - x - rotation);
             m_rearRight.setPower(y + x - rotation); */
 
 
             if(gamepad1.a){
+                //Forward
                 m_frontLeft.setPower(-1);
                 m_frontRight.setPower(-1);
                 m_rearLeft.setPower(-1);
@@ -76,7 +79,6 @@ public class CedrekIfButton extends LinearOpMode{
                 m_rearLeft.setPower(0);
                 m_rearRight.setPower(0);
             }
-
 
 
 
