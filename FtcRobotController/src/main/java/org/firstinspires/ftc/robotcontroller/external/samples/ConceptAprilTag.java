@@ -94,19 +94,27 @@ public class ConceptAprilTag extends LinearOpMode {
         if (opModeIsActive()) {
             while (opModeIsActive()) {
 
-                telemetryAprilTag();
+                List<AprilTagDetection> currentDetections = telemetryAprilTag();
+
+                for (AprilTagDetection detection : currentDetections) {
+                    if (detection.metadata != null) {
+                        if detection.id == 585 {
+                            telemetry.addLine("Detected 585, Cousteau")
+                        }
+                    }
+                }   // end for() loop
 
                 // Push telemetry to the Driver Station.
                 telemetry.update();
 
                 // Save CPU resources; can resume streaming when needed.
-                if (gamepad1.dpad_down) {
+                /*if (gamepad1.dpad_down) {
                     visionPortal.stopStreaming();
                 } else if (gamepad1.dpad_up) {
                     visionPortal.resumeStreaming();
                 }
 
-                // Share the CPU.
+                // Share the CPU. */
                 sleep(20);
             }
         }
@@ -211,6 +219,7 @@ public class ConceptAprilTag extends LinearOpMode {
         telemetry.addLine("PRY = Pitch, Roll & Yaw (XYZ Rotation)");
         telemetry.addLine("RBE = Range, Bearing & Elevation");
 
+        return currentDetections
     }   // end method telemetryAprilTag()
 
 }   // end class
