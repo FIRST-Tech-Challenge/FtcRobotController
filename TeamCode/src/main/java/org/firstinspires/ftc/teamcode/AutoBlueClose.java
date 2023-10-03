@@ -35,10 +35,10 @@ public class AutoBlueClose extends LinearOpMode {
 
         while (opModeIsActive() && runtime.seconds() <= 2.0)
         {
-            leftFrontDrive.setPower(-1.0);
-            leftBackDrive.setPower(1.0);
-            rightFrontDrive.setPower(1.0);
-            rightBackDrive.setPower(-1.0);
+            leftFrontDrive.setPower(-0.5);
+            leftBackDrive.setPower(0.5);
+            rightFrontDrive.setPower(0.5);
+            rightBackDrive.setPower(-0.5);
         }
         leftFrontDrive.setPower(0);
         leftBackDrive.setPower(0);
