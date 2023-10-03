@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
@@ -10,11 +11,13 @@ import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
 import org.openftc.easyopencv.OpenCvWebcam;
 
-@Autonomous(name="Autonomous - Red ball", group="Linear Opmode")
+@Autonomous(name="Autonomous - Generic", group="Linear Opmode")
+@Disabled
 public class AutonomousOpenCV extends LinearOpMode {
     private OpenCvWebcam webcam;
     private CircleDetection circleDetection;
     private DrivingFunctions df;
+    protected boolean detectionRed = false; // whether to detect a red ball (if false detects blue)
 
     private ElapsedTime runtime = new ElapsedTime();
 
@@ -23,7 +26,7 @@ public class AutonomousOpenCV extends LinearOpMode {
         df = new DrivingFunctions(this);
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
         webcam = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "Webcam 1"), cameraMonitorViewId);
-        circleDetection = new CircleDetection(telemetry, false);                            
+        circleDetection = new CircleDetection(telemetry, detectionRed);
         webcam.setPipeline(circleDetection);
         webcam.setMillisecondsPermissionTimeout(5000); // Timeout for obtaining permission is configurable. Set before opening.
         webcam.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
@@ -49,12 +52,12 @@ public class AutonomousOpenCV extends LinearOpMode {
 
         int tries = 0;
         // Waits until the camera detects the ball, up to 5 seconds
-        /*while(opModeIsActive()){//circleDetection.ballPosition == BallPosition.UNDEFINED && tries < 50) {
+        while(opModeIsActive()){//circleDetection.ballPosition == BallPosition.UNDEFINED && tries < 50) {
             sleep(100);
             tries++;
             UpdateTelemetry();
-        } */
-
+        }
+/*
         df.rotateDegrees(0.5,90);
         //df.wait(300);
         df.rotateDegrees(0.5,179);
@@ -72,12 +75,7 @@ public class AutonomousOpenCV extends LinearOpMode {
         df.rotateFeildCentric(0.5,-179);
         //df.waitStopped(1000);
 
-
-
-
-
-
-
+*/
 
         if(circleDetection.ballPosition == BallPosition.UNDEFINED)
             circleDetection.ballPosition = BallPosition.LEFT; // Ball not found, makes a guess to the left

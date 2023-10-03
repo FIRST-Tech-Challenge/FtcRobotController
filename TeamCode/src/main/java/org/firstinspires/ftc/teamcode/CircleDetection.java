@@ -13,8 +13,6 @@ public class CircleDetection extends OpenCvPipeline {
     private boolean detectionRed = true;
     Mat grayMat = new Mat();
     Mat hsvMaskedMat = new Mat();
-    Mat mask1 = new Mat();
-    Mat mask2 = new Mat();
     Mat mask = new Mat();
     Mat hsvMat = new Mat();
 
@@ -32,11 +30,9 @@ public class CircleDetection extends OpenCvPipeline {
     public Mat processFrame(Mat input) {
         Imgproc.cvtColor(input, hsvMat, Imgproc.COLOR_RGB2HSV);
         if (detectionRed) {
-            Core.inRange(hsvMat, new Scalar(0, 70, 50), new Scalar(10, 255, 255), mask1);   // Red range 1
-            Core.inRange(hsvMat, new Scalar(160, 70, 50), new Scalar(180, 255, 255), mask2);  // Red range 2
-            Core.bitwise_or(mask1, mask2, mask);
+            Core.inRange(hsvMat, new Scalar(160, 70, 50), new Scalar(180, 255, 255), mask); //RED
         } else {
-            Core.inRange(hsvMat, new Scalar(25, 50, 50), new Scalar(115, 255, 255), mask); // Blue range
+            Core.inRange(hsvMat, new Scalar(92, 60, 0), new Scalar(123, 255, 255), mask); //BLUE
         }
         hsvMaskedMat.release();
         Core.bitwise_and(input, input, hsvMaskedMat, mask);
@@ -45,7 +41,7 @@ public class CircleDetection extends OpenCvPipeline {
 
         Imgproc.GaussianBlur(grayMat, grayMat, new org.opencv.core.Size(15.0, 15.0), 2, 2);
         Mat circles = new Mat();
-        Imgproc.HoughCircles(grayMat, circles, Imgproc.HOUGH_GRADIENT, 1, 150, 130, 30);
+        Imgproc.HoughCircles(grayMat, circles, Imgproc.HOUGH_GRADIENT, 2, 300, 140, 35);
 
         numCirclesFound = circles.cols();
 

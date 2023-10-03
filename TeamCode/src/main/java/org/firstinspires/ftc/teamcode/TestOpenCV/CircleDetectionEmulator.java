@@ -52,19 +52,14 @@ public class CircleDetectionEmulator extends OpenCvPipeline
     @Override
     public Mat processFrame(Mat input)
     {
-        Mat mask1 = new Mat();
-        Mat mask2 = new Mat();
         Mat mask = new Mat();
         Mat hsvMat = new Mat();
 
         Imgproc.cvtColor(input, hsvMat, Imgproc.COLOR_RGB2HSV);
 
-        //Core.inRange(hsvMat, new Scalar(0, 70, 50), new Scalar(10, 255, 255), mask1);
-        //Core.inRange(hsvMat, new Scalar(160, 70, 50), new Scalar(180, 255, 255), mask2);
-        Core.inRange(hsvMat, new Scalar(25, 50, 50), new Scalar(115, 255, 255), mask);
+        Core.inRange(hsvMat, new Scalar(160, 70, 50), new Scalar(180, 255, 255), mask); // RED
+        //Core.inRange(hsvMat, new Scalar(92, 60, 0), new Scalar(123, 255, 255), mask); // BLUE
 
-
-        //Core.bitwise_or(mask1, mask2, mask);
         hsvMaskedMat.release();
         Core.bitwise_and(input, input, hsvMaskedMat, mask);
 
@@ -72,7 +67,7 @@ public class CircleDetectionEmulator extends OpenCvPipeline
 
         Imgproc.GaussianBlur(grayMat, blurMat, new org.opencv.core.Size(15.0, 15.0), 2, 2);
         Mat circles = new Mat();
-        Imgproc.HoughCircles(blurMat, circles, Imgproc.HOUGH_GRADIENT, 1, 300, 110, 35);
+        Imgproc.HoughCircles(blurMat, circles, Imgproc.HOUGH_GRADIENT, 2, 300, 140, 35);
         numCirclesFound = circles.cols();
         input.copyTo(circlesOnFrameMat);
         Point center = new Point(0, 0);
