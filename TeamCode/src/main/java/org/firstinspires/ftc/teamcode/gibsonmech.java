@@ -5,6 +5,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.util.ElapsedTime;
+import com.qualcomm.robotcore.hardware.ColorSensor;
 
 @TeleOp(name="Basic Mecanum OpMode Gibson", group="Basic")
 public class gibsonmech extends LinearOpMode{
@@ -12,6 +13,7 @@ public class gibsonmech extends LinearOpMode{
     DcMotor m_frontRight;
     DcMotor m_rearLeft;
     DcMotor m_rearRight;
+    ColorSensor color_sensor;
 
     @Override
     public void runOpMode() {
@@ -31,7 +33,8 @@ public class gibsonmech extends LinearOpMode{
 
         // Wait for the game to start (driver presses PLAY)
         waitForStart();
-
+        telemetry.addData("please open README.Scam with your IP address visibly on your screen!!!", 0);
+        telemetry.addData("Status", "Started");
         // run until the end of the match (driver presses STOP)
         while (opModeIsActive()) {
             /*double y = -gamepad1.left_stick_y;// Note: pushing stick forward gives negative value
@@ -72,16 +75,36 @@ public class gibsonmech extends LinearOpMode{
                 m_frontRight.setPower(-1);
             }
             else if(RY == 1){
-
+                m_rearLeft.setPower(1);
+                m_rearRight.setPower(-1);
+                m_frontLeft.setPower(1);
+                m_frontRight.setPower(-1);
             }
             else if(RY == -1){
-
+                m_rearLeft.setPower(-1);
+                m_rearRight.setPower(1);
+                m_frontLeft.setPower(-1);
+                m_frontRight.setPower(1);
+            }
+            else if(gamepad1.right_trigger == 1){
+                m_frontLeft.setPower(-1);
+                m_frontRight.setPower(1);
+            }
+            else if(gamepad1.left_trigger == 1){
+                m_frontLeft.setPower(1);
+                m_frontRight.setPower(-1);
             }
             else{
                 m_rearLeft.setPower(0);
                 m_rearRight.setPower(0);
                 m_frontLeft.setPower(0);
                 m_frontRight.setPower(0);
+            }
+            if (color_sensor.alpha() < 20) {
+                telemetry.addData("White color detected!", 0);
+            }
+            else{
+                telemetry.addData("Other color detected!", 0);
             }
 
         }
