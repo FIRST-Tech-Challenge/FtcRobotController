@@ -10,6 +10,13 @@ import com.qualcomm.hardware.motors.GoBILDA5202Series;
 
 public class Hardware {
     final public ElapsedTime timePassed = new ElapsedTime();
+
+    final private double COUNTS_PER_MOTOR_REV = 1440 ;
+    final private double DRIVE_GEAR_REDUCTION = 1.0 ;
+    final private double WHEEL_DIAMETER_INCHES = 4.0 ;
+    final private double COUNTS_PER_INCH = (COUNTS_PER_MOTOR_REV * DRIVE_GEAR_REDUCTION)/ (WHEEL_DIAMETER_INCHES * 3.1415);
+    final private double DRIVE_SPEED = 0.6;
+    final private double TURN_SPEED = 0.5;
     public DcMotor frontLeft;
     public DcMotor frontRight;
     public DcMotor backLeft;
@@ -19,6 +26,7 @@ public class Hardware {
         try {
             frontLeft = hardwareMap.dcMotor.get("frontLeftMotor");
             frontLeft.setDirection(DcMotor.Direction.FORWARD);
+            frontLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
             frontLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
             frontLeft.setPower(0);
         } catch (Exception e) {
@@ -28,6 +36,7 @@ public class Hardware {
         try {
             frontRight = hardwareMap.dcMotor.get("frontRightMotor");
             frontRight.setDirection(DcMotor.Direction.FORWARD);
+            frontRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
             frontRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
             frontRight.setPower(0);
         } catch (Exception e) {
@@ -37,6 +46,7 @@ public class Hardware {
         try {
             backRight = hardwareMap.dcMotor.get("backRightMotor");
             backRight.setDirection(DcMotor.Direction.FORWARD);
+            backRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
             backRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
             backRight.setPower(0);
         } catch (Exception e) {
@@ -46,6 +56,7 @@ public class Hardware {
         try {
             backLeft = hardwareMap.dcMotor.get("backLeftMotor");
             backLeft.setDirection(DcMotor.Direction.FORWARD);
+            backLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
             backLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
             backLeft.setPower(0);
         } catch (Exception e) {
@@ -65,5 +76,13 @@ public class Hardware {
         frontRight.setPower(frontRightPower);
         backLeft.setPower(backLeftPower);
         backRight.setPower(backRightPower);
+    }
+    // for distance: right is positive, left is negative
+    public void strafe(double distance, double power){
+
+        frontLeft.setPower(power);
+        frontRight.setPower(-power);
+        backLeft.setPower(power);
+        frontRight.setPower(-power);
     }
 }
