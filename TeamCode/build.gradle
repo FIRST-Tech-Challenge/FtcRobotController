@@ -23,7 +23,41 @@ android {
     }
 }
 
+// kotlin
+apply plugin: 'org.jetbrains.kotlin.android'
+
+android {
+    namespace = 'org.firstinspires.ftc.teamcode'
+
+    packagingOptions {
+        jniLibs {
+            pickFirsts += ['**/*.so']
+        }
+        jniLibs.useLegacyPackaging true
+    }
+
+    kotlinOptions {
+        jvmTarget = '1.8'
+    }
+
+    androidResources {
+        noCompress 'tflite'
+    }
+}
+
+repositories {
+    maven {
+        url = 'https://maven.brott.dev/'
+    }
+}
+
 dependencies {
     implementation project(':FtcRobotController')
     annotationProcessor files('lib/OpModeAnnotationProcessor.jar')
+//    kotlin
+//    implementation 'androidx.core:core-ktx:1.10.1'
+//    Gamepadyn
+//    implementation project(path: ':Gamepadyn')
+//    roadrunner
+    implementation "com.acmerobotics.roadrunner:ftc:0.1.3"
 }
