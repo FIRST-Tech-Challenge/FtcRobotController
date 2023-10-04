@@ -3,18 +3,16 @@ package org.firstinspires.ftc.teamcode.Hardware;
 import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.telemetry;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.util.ElapsedTime;
-import com.qualcomm.hardware.motors.GoBILDA5202Series;
 
 public class Hardware {
     final public ElapsedTime timePassed = new ElapsedTime();
 
-    final private double COUNTS_PER_MOTOR_REV = 6000;
+    final private double TICKS_PER_MOTOR_REV = 6000;
     final private double DRIVE_GEAR_REDUCTION = 1.0 ;
     final private double WHEEL_DIAMETER_INCHES = 4.0 ;
-    final private double COUNTS_PER_INCH = (COUNTS_PER_MOTOR_REV * DRIVE_GEAR_REDUCTION)/ (WHEEL_DIAMETER_INCHES * 3.1415);
+    final private double TICKS_PER_INCH = (TICKS_PER_MOTOR_REV * DRIVE_GEAR_REDUCTION)/ (WHEEL_DIAMETER_INCHES * 3.1415);
     final private double DRIVE_SPEED = 0.6;
 //    final private double TURN_SPEED = 0.5;
     public DcMotor frontLeft;
@@ -79,10 +77,10 @@ public class Hardware {
     }
     // for distance: right is positive, left is negative
     public void strafe(double distance, double power) {
-        frontLeft.setTargetPosition((int) distance);
-        frontRight.setTargetPosition((int) -distance);
-        backLeft.setTargetPosition((int) distance);
-        backRight.setTargetPosition((int) -distance));
+        frontLeft.setTargetPosition((int) (distance * TICKS_PER_INCH));
+        frontRight.setTargetPosition((int) (-distance * TICKS_PER_INCH));
+        backLeft.setTargetPosition((int) (distance * TICKS_PER_INCH));
+        backRight.setTargetPosition((int) (-distance * TICKS_PER_INCH));
 
         frontLeft.setPower(power);
         frontRight.setPower(-power);
@@ -92,6 +90,8 @@ public class Hardware {
                 frontRight.getCurrentPosition() <= frontRight.getTargetPosition() &&
                 backRight.getCurrentPosition() <= backRight.getTargetPosition() &&
                 backLeft.getCurrentPosition() <= backLeft.getTargetPosition()));
+
+
         frontLeft.setPower(0);
         frontRight.setPower(0);
         backLeft.setPower(0);
