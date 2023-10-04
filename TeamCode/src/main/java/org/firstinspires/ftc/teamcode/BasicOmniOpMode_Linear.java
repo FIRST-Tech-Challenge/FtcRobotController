@@ -1,4 +1,8 @@
+
+package org.firstinspires.ftc.teamcode;/* Copyright (c) 2021 FIRST. All rights reserved.
+
 /* Copyright (c) 2021 FIRST. All rights reserved.
+
  *
  * Redistribution and use in source and binary forms, with or without modification,
  * are permitted (subject to the limitations in the disclaimer below) provided that
@@ -26,6 +30,7 @@
  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
+
 
 package org.firstinspires.ftc.teamcode;
 
@@ -64,6 +69,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
  */
 
 @TeleOp(name="Basic: Omni Linear OpMode", group="Linear OpMode")
+
 // @Disabled
 public class BasicOmniOpMode_Linear extends LinearOpMode {
 
