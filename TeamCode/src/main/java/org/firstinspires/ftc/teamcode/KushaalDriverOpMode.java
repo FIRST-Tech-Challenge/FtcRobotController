@@ -65,9 +65,9 @@ import com.qualcomm.robotcore.util.ElapsedTime;
  * Remove or comment out the @Disabled line to add this OpMode to the Driver Station OpMode list
  */
 
-@TeleOp(name="KushaalOpMode", group="Linear OpMode")
-@Disabled
-public class KushaalOpMode extends LinearOpMode {
+@TeleOp(name="KushaalDriverOpMode", group="Linear OpMode")
+// @Disabled
+public class KushaalDriverOpMode extends LinearOpMode {
 
     // Declare OpMode members for each of the 4 motors.
     private ElapsedTime runtime = new ElapsedTime();
@@ -108,71 +108,51 @@ public class KushaalOpMode extends LinearOpMode {
         waitForStart();
         runtime.reset();
 
+        double speed = 0.75;
+        double strafe = 0;
+
         // run until the end of the match (driver presses STOP)
         while (opModeIsActive()) {
             double max;
-            double speed = NULL;
-            double strafe = NULL;
 
             if (speed < 0){
                 speed = 0;
             }
 
+            if (speed > 100){
+                speed = 100;
+            }
 
-            if ((gamepad1.dpad_down = true) || (gamepad1.dpad_up = true)){
-                while (gamepad1.dpad_down = true){
+            if ((gamepad1.dpad_down) || (gamepad1.dpad_up)) {
+                while (gamepad1.dpad_down) {
                     speed -= 25;
-                    while(gamepad1.dpad_down = true)
-                    {
-                        Thread.sleep(100);
+                    while (gamepad1.dpad_down) {
                     }
                     speed += 25;
                 }
-                while (gamepad1.dpad_up = true){
+                while (gamepad1.dpad_up) {
                     speed += 25;
-                    while(gamepad1.dpad_up = true)
-                    {
-                        Thread.sleep(100);
+                    while (gamepad1.dpad_up) {
                     }
                     speed -= 25;
                 }
             }
-            if ((gamepad1.dpad_down = true) || (gamepad1.dpad_up = true)){
-                while (gamepad1.a = true){
-                    speed -= 25;
-                    while(gamepad1.dpad_down = true)
-                    {
-                        Thread.sleep(100);
-                    }
-                    speed += 25;
-                }
-                while (gamepad1.dpad_up = true){
-                    speed += 25;
-                    while(gamepad1.dpad_up = true)
-                    {
-                        Thread.sleep(100);
-                    }
-                    speed -= 25;
-                }
-            }
-            if (gamepad1.dpad_left = true){
+            if (gamepad1.dpad_left){
                 speed -= 25;
                 Thread.sleep(50);
             }
-            if (gamepad1.dpad_right = true){
+            if (gamepad1.dpad_right){
                 speed += 25;
                 Thread.sleep(50);
             }
-            if (gamepad1.left_bumper = true){
+            if (gamepad1.left_bumper){
                 strafe = -1;
             }
-            if (gamepad1.right_bumper = true){
+            if (gamepad1.right_bumper){
                 strafe = 1;
             }
 
             // POV Mode uses left joystick to go forward & strafe, and right joystick to rotate.
-            {
-            }
             double axial = -gamepad1.left_stick_y;
             double yaw = -gamepad1.right_stick_y;
 
@@ -223,8 +203,9 @@ public class KushaalOpMode extends LinearOpMode {
             telemetry.addData("Status", "Run Time: " + runtime.toString());
             telemetry.addData("Front left/Right", "%4.2f, %4.2f", leftFrontPower, rightFrontPower);
             telemetry.addData("Back  left/Right", "%4.2f, %4.2f", leftBackPower, rightBackPower);
-            telemetry.addData("Speed Value", "%1f", speed);
-            telemetry.addData("Strafe Value", "%1f", strafe);
+            telemetry.addData("Speed Value", "%1.0f", speed);
+            telemetry.addData("Strafe Value", "%1.0f", strafe);
             telemetry.update();
         }
-    }}
+    }
+}
