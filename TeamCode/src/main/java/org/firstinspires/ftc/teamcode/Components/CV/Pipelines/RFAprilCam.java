@@ -111,7 +111,7 @@ public class RFAprilCam {
     public void update() {
         LOGGER.setLogLevel(RFLogger.Severity.FINER);
         LOGGER.log( "Entering RFAprilCam.update()");
-        ArrayList<AprilTagDetection> detections = aprilTag.getDetections();
+        ArrayList<AprilTagDetection> detections = aprilTag.getFreshDetections();
         //if close start upsampling
         upsample=false;
         for (AprilTagDetection detection : detections) {

@@ -89,6 +89,10 @@ public class Hopper extends RFServo {
             }
             this.state = true;
         }
+
+        public boolean getState(){
+            return this.state;
+        }
     }
 
     /**

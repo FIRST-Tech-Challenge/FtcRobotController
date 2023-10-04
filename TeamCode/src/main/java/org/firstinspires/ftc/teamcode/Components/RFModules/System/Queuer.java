@@ -125,6 +125,9 @@ public class Queuer {
         }
         return false;
     }
+    public boolean isExecuted(){
+        return queueElements.get(currentlyQueueing).isExecuted();
+    }
 
     /**
      * updates and processes all things related to currently queued event
@@ -135,7 +138,8 @@ public class Queuer {
      * @param p_isOptional      is the function optional
      */
     public boolean queue(boolean p_asynchronous, boolean p_done_condition, boolean p_extra_condition, boolean p_isOptional) {
-        p_done_condition = isStarted()&&p_done_condition;
+        boolean isStart = isStarted();
+        p_done_condition = isStart&&p_done_condition;
         //if it is first Loop
         if (firstLoop) {
             //create queue element
@@ -144,6 +148,9 @@ public class Queuer {
 
         //update which element is currently being queued & which event is currently being executed
         updateQueuer(p_done_condition, p_isOptional);
+        if(isStart){
+            queueElements.get(currentlyQueueing).setExecuted(true);
+        }
         //save some processing time if the event is done alrdy
         if (queueElements.get(currentlyQueueing).isDone()) {
             return false;
