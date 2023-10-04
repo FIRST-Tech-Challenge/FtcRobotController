@@ -11,12 +11,12 @@ import com.qualcomm.hardware.motors.GoBILDA5202Series;
 public class Hardware {
     final public ElapsedTime timePassed = new ElapsedTime();
 
-    final private double COUNTS_PER_MOTOR_REV = 1440 ;
+    final private double COUNTS_PER_MOTOR_REV = 6000;
     final private double DRIVE_GEAR_REDUCTION = 1.0 ;
     final private double WHEEL_DIAMETER_INCHES = 4.0 ;
     final private double COUNTS_PER_INCH = (COUNTS_PER_MOTOR_REV * DRIVE_GEAR_REDUCTION)/ (WHEEL_DIAMETER_INCHES * 3.1415);
     final private double DRIVE_SPEED = 0.6;
-    final private double TURN_SPEED = 0.5;
+//    final private double TURN_SPEED = 0.5;
     public DcMotor frontLeft;
     public DcMotor frontRight;
     public DcMotor backLeft;
@@ -78,11 +78,23 @@ public class Hardware {
         backRight.setPower(backRightPower);
     }
     // for distance: right is positive, left is negative
-    public void strafe(double distance, double power){
+    public void strafe(double distance, double power) {
+        frontLeft.setTargetPosition((int) distance);
+        frontRight.setTargetPosition((int) -distance);
+        backLeft.setTargetPosition((int) distance);
+        backRight.setTargetPosition((int) -distance));
 
         frontLeft.setPower(power);
         frontRight.setPower(-power);
         backLeft.setPower(power);
         frontRight.setPower(-power);
+        while (!(frontLeft.getCurrentPosition() <= frontLeft.getTargetPosition() &&
+                frontRight.getCurrentPosition() <= frontRight.getTargetPosition() &&
+                backRight.getCurrentPosition() <= backRight.getTargetPosition() &&
+                backLeft.getCurrentPosition() <= backLeft.getTargetPosition()));
+        frontLeft.setPower(0);
+        frontRight.setPower(0);
+        backLeft.setPower(0);
+        backRight.setPower(0);
     }
 }
