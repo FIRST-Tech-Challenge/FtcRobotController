@@ -30,7 +30,7 @@ import org.opencv.core.Scalar;
 import org.opencv.imgproc.Imgproc;
 import org.openftc.easyopencv.OpenCvPipeline;
 
-public class OpenCV extends OpenCvPipeline {
+public class OpenCVRed extends OpenCvPipeline {
 
     /*
      * These are our variables that will be
@@ -46,14 +46,14 @@ public class OpenCV extends OpenCvPipeline {
      * min and max values here for now, meaning
      * that all pixels will be shown.
      */
-    private Scalar lower = new Scalar(96.3f, 73.7f, 0);
-    private Scalar upper = new Scalar(147.3f, 255, 199.8f);
+    private Scalar lower = new Scalar(0f, 144.5f, 36.8);
+    private Scalar upper = new Scalar(202.6f, 255, 255);
     /**
      * This will allow us to choose the color
      * space we want to use on the live field
      * tuner instead of hardcoding it
      */
-    private ColorSpace colorSpace = ColorSpace.HSV;
+    private OpenCVRed.ColorSpace colorSpace = ColorSpace.Lab;
 
     /*
      * A good practice when typing EOCV pipelines is
@@ -100,7 +100,7 @@ public class OpenCV extends OpenCvPipeline {
         }
     }
 
-    public OpenCV(Telemetry telemetry) {
+    public OpenCVRed(Telemetry telemetry) {
         this.telemetry = telemetry;
     }
 
@@ -216,5 +216,4 @@ public class OpenCV extends OpenCvPipeline {
         return maskedInputMat;
         // return dest_matrix;
     }
-
 }
