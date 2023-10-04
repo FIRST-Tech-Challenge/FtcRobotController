@@ -3,11 +3,24 @@ package org.firstinspires.ftc.teamcode;
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
-import com.acmerobotics.roadrunner.trajectory.Trajectory;
 import com.arcrobotics.ftclib.gamepad.GamepadEx;
 import com.arcrobotics.ftclib.gamepad.GamepadKeys;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+
+
+/*
+
+To Do:
+
+1) change startPose for each alliance/position
+2) drop purple pixel method
+3) incorporate AprilTags
+4) if splines do not work, switch to forward(), strafeRight(), and strafeLeft()
+
+ */
+
+
 
 @Config
 @Autonomous(name = "MainAutonomous")
@@ -15,28 +28,27 @@ public class MainAuto extends LinearOpMode{
 
     SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
 
-
-    //need to clarify values later
-    double x,y;
-    double randomDistance;
-
     Bot bot;
 
     enum Side {
-        RIGHT, LEFT, NULL;
+        RED, BLUE, NULL;
     }
     enum DistanceToBackdrop{
         CLOSE, FAR, NULL;
     }
 
+    enum AutoPath{
+        MECHANICAL_FAILURE, NO_SENSE, OPTIMAL;
+    }
+
     Side side = Side.NULL;
     DistanceToBackdrop dtb= DistanceToBackdrop.NULL;
+    AutoPath autopath = AutoPath.OPTIMAL;
 
     @Override
     public void runOpMode() throws InterruptedException {
         bot = Bot.getInstance(this);
         GamepadEx gp1 = new GamepadEx(gamepad1);
-        GamepadEx gp2 = new GamepadEx(gamepad2);
 
         Pose2d startPose = new Pose2d(0, 0, 0);
         drive.setPoseEstimate(startPose);
@@ -45,10 +57,10 @@ public class MainAuto extends LinearOpMode{
         while (!isStarted()) {
             gp1.readButtons();
             if (gp1.wasJustPressed(GamepadKeys.Button.B)) {
-                side = Side.RIGHT;
+                side = Side.RED;
             }
             if (gp1.wasJustPressed(GamepadKeys.Button.A)) {
-                side = Side.LEFT;
+                side = Side.BLUE;
             }
             if(gp1.wasJustPressed(GamepadKeys.Button.X)){
                 dtb= DistanceToBackdrop.CLOSE;
@@ -56,77 +68,101 @@ public class MainAuto extends LinearOpMode{
             if(gp1.wasJustPressed(GamepadKeys.Button.Y)){
                 dtb= DistanceToBackdrop.FAR;
             }
+            if(gp1.wasJustPressed(GamepadKeys.Button.DPAD_LEFT)){
+                autopath= AutoPath.MECHANICAL_FAILURE;
+            }
+            if(gp1.wasJustPressed(GamepadKeys.Button.DPAD_RIGHT)){
+                autopath= AutoPath.NO_SENSE;
+            }
 
 
-            //moves to specified coordinates while maintaining current heading
-            Trajectory forward = drive.trajectoryBuilder(startPose)
-                    .lineTo(new Vector2d(x, y))
-                    .build();
-
-            Trajectory strafeLeft = drive.trajectoryBuilder(forward.end())
-                    .strafeLeft(randomDistance)
-                    .build();
-
-            Trajectory strafeRight = drive.trajectoryBuilder(strafeLeft.end())
-                    .strafeRight(randomDistance)
-                    .build();
-
-
-            Trajectory blueAllianceFarNoSense = drive.trajectoryBuilder(strafeLeft.end())
+            TrajectorySequence blueAllianceFar = drive.trajectorySequenceBuilder(startPose)
                     .splineTo(new Vector2d(-36,-36), Math.toRadians(0))
-
-                    //spline will occur slower
-                    .splineTo(new Vector2d(-36,48), Math.toRadians(90), SampleMecanumDrive.getVelocityConstraint(0.2, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
-                            SampleMecanumDrive.getAccelerationConstraint(DriveConstants.MAX_ACCEL))
-
-                    .splineTo(new Vector2d(-48,48), Math.toRadians(90))
+                    .addTemporalMarker(this::dropPurplePixel)
+                    .splineTo(new Vector2d(-36,48), Math.toRadians(90))
+                    .UNSTABLE_addTemporalMarkerOffset(-0.5, this::outtake)
+                    .splineTo(new Vector2d(-72,48), Math.toRadians(90))
                     .build();
 
-            Thread blueAllianceFarNoSenseThread = new Thread(() -> drive.followTrajectory(blueAllianceFarNoSense));
-            //this thread will enable the robot to move forward while performing other activities
+            TrajectorySequence redAllianceFar= drive.trajectorySequenceBuilder(startPose)
+                    .splineTo(new Vector2d(36,-36), Math.toRadians(0))
+                    .addTemporalMarker(this::dropPurplePixel)
+                    .splineTo(new Vector2d(36,48), Math.toRadians(-90))
+                    .UNSTABLE_addTemporalMarkerOffset(-0.5, this::outtake)
+                    .splineTo(new Vector2d(72,48), Math.toRadians(-90))
+                    .build();
+
+            TrajectorySequence blueAllianceClose = drive.trajectorySequenceBuilder(startPose)
+                    .splineTo(new Vector2d(-54,20), Math.toRadians(0))
+                    .splineTo(new Vector2d(-36,20), Math.toRadians(90))
+                    .addTemporalMarker(this::dropPurplePixel)
+                    .splineTo(new Vector2d(-36,48), Math.toRadians(90))
+                    .UNSTABLE_addTemporalMarkerOffset(-0.5, this::outtake)
+                    .splineTo(new Vector2d(-72,48), Math.toRadians(90))
+                    .build();
+
+            TrajectorySequence redAllianceClose= drive.trajectorySequenceBuilder(startPose)
+                    .splineTo(new Vector2d(54,12), Math.toRadians(0))
+                    .splineTo(new Vector2d(36,12), Math.toRadians(-90))
+                    .addTemporalMarker(this::dropPurplePixel)
+                    .splineTo(new Vector2d(36,48), Math.toRadians(-90))
+                    .UNSTABLE_addTemporalMarkerOffset(-0.5, this::outtake)
+                    .splineTo(new Vector2d(72,48), Math.toRadians(90))
+                    .build();
+
+
+            //thread will enable the robot to move forward while performing other activities
+            Thread blueAllianceFarThread = new Thread(() -> drive.followTrajectorySequence(blueAllianceFar));
+            Thread redAllianceFarThread = new Thread(() -> drive.followTrajectorySequence(redAllianceFar));
+            Thread blueAllianceCloseThread = new Thread(() -> drive.followTrajectorySequence(blueAllianceClose));
+            Thread redAllianceCloseThread = new Thread(() -> drive.followTrajectorySequence(redAllianceClose));
 
             waitForStart();
             if (!isStopRequested()) {
 
-                if(dtb== DistanceToBackdrop.FAR && side==Side.LEFT){
-                    blueAllianceFarNoSenseThread.start();
 
-                    //place purple pixel
+                if(dtb== DistanceToBackdrop.FAR && side==Side.BLUE && autopath==AutoPath.NO_SENSE){
+                    blueAllianceFarThread.start();
                     sleep(1000);
-                    Bot.fourbar.outtake();
-                    Bot.slides.runTo(1);
-                    Bot.box.depositFirstPixel();
-                    Bot.slides.runTo(2);
-                    Bot.box.depositSecondPixel();
-                    Bot.resetOuttake();
-                    blueAllianceFarNoSenseThread.interrupt();
-
+                    blueAllianceFarThread.interrupt();
                 }
-            /*    boolean actionsPerformed=false;
 
-                drive.followTrajectory(blueAllianceFarNoSense, () -> {
-                    // Perform actions only at Waypoint 3 (between second and third spline)
-                    // For example, move an arm, grab an object, etc.
-                    if (!actionsPerformed) {
-                        Bot.fourbar.outtake();
-                        Bot.slides.runTo(1);
-                        Bot.box.depositFirstPixel();
-                        Bot.slides.runTo(2);
-                        Bot.box.depositSecondPixel();
-                        Bot.resetOuttake();
-                        actionsPerformed = true; // Set the flag to prevent further actions
-                    }
-                });
-
-             */
-
-
-
+                if(dtb== DistanceToBackdrop.FAR && side==Side.RED && autopath==AutoPath.NO_SENSE){
+                    redAllianceFar.start();
+                    sleep(1000);
+                    redAllianceFarThread.interrupt();
+                }
+                if(dtb== DistanceToBackdrop.CLOSE && side==Side.BLUE && autopath==AutoPath.NO_SENSE){
+                    blueAllianceCloseThread.start();
+                    sleep(1000);
+                    blueAllianceFarThread.interrupt();
+                }
+                if(dtb== DistanceToBackdrop.CLOSE && side==Side.RED && autopath==AutoPath.NO_SENSE){
+                    blueAllianceCloseThread.start();
+                    sleep(1000);
+                    blueAllianceFarThread.interrupt();
+                }
 
 
             }
-
-
         }
+    }
+
+    private void outtake(){
+        Bot.fourbar.outtake();
+        Bot.slides.runTo(1);
+        Bot.box.depositFirstPixel();
+        Bot.slides.runTo(2);
+        Bot.box.depositSecondPixel();
+        Bot.resetOuttake();
+    }
+
+    private void dropPurplePixel(){
+
+    }
+
+    private void readAprilTag(){
+        //read april tag and perform actions accordingly
+        //then incorporate into trajectory
     }
 }
