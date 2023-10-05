@@ -26,7 +26,7 @@ public class GibsonAuto extends LinearOpMode{
         m_rearLeft.setDirection(DcMotor.Direction.REVERSE);
         m_frontRight.setDirection(DcMotor.Direction.FORWARD);
         m_rearRight.setDirection(DcMotor.Direction.FORWARD);
-        
+
         double LY = -gamepad1.left_stick_y; //y axis on left stick
         double LX = -gamepad1.left_stick_x; //X axis on left stick
         double RY = -gamepad1.right_stick_y; //y axis on right stick
