@@ -5,6 +5,7 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.Servo;
 
 public class Hardware
 {
@@ -13,6 +14,10 @@ public class Hardware
     public DcMotorEx frontRight;
     public DcMotorEx backLeft;
     public DcMotorEx backRight;
+
+    //servo declaration
+    public Servo depositServoOne;
+    public Servo depositServoTwo;
 
     //helper class variables
     public double x = 0, y = 0, theta = 0;
@@ -32,6 +37,10 @@ public class Hardware
 
     public Hardware(HardwareMap hardwareMap)
     {
+        //Deposit servo config
+        depositServoOne = hardwareMap.get(Servo.class, "Left Deposit");
+        depositServoTwo = hardwareMap.get(Servo.class, "Right Deposit");
+
         //drive motor initialization
         frontLeft = hardwareMap.get(DcMotorEx.class, "Front Left");
         frontRight = hardwareMap.get(DcMotorEx.class, "Front Right");
@@ -63,5 +72,4 @@ public class Hardware
         frontRight.setPower(forward + rotation + sideways);
         backRight.setPower(forward + rotation - sideways);
     }
-
 }
