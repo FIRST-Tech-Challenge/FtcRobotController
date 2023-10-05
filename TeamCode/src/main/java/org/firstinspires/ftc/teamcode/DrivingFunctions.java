@@ -144,7 +144,7 @@ public class DrivingFunctions {
                     turnSpeed *= -1.0;
 
                 // Apply the turning correction to the current driving speed.
-                //moveRobot(driveSpeed, turnSpeed);
+                moveRobot(driveSpeed, turnSpeed);
 
                 // Display drive status for the driver.
                 sendTelemetry(true);
@@ -152,10 +152,10 @@ public class DrivingFunctions {
 
             // Stop all motion & Turn off RUN_TO_POSITION
             moveRobot(0, 0);
-            leftFrontDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-            rightFrontDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-            leftBackDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-            rightBackDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            leftFrontDrive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+            rightFrontDrive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+            leftBackDrive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+            rightBackDrive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         }
     }
 

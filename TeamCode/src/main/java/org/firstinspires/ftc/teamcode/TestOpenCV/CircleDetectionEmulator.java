@@ -13,6 +13,7 @@ public class CircleDetectionEmulator extends OpenCvPipeline
     Mat grayMat = new Mat();
     Mat blurMat = new Mat();
     Mat hsvMaskedMat = new Mat();
+    Mat subMat = new Mat();
     Mat circlesOnFrameMat = new Mat();
     int numCirclesFound;
 
@@ -53,11 +54,15 @@ public class CircleDetectionEmulator extends OpenCvPipeline
     public Mat processFrame(Mat input)
     {
         Mat mask = new Mat();
+        Mat mask1 = new Mat();
+        Mat mask2 = new Mat();
         Mat hsvMat = new Mat();
 
         Imgproc.cvtColor(input, hsvMat, Imgproc.COLOR_RGB2HSV);
 
-        Core.inRange(hsvMat, new Scalar(160, 70, 50), new Scalar(180, 255, 255), mask); // RED
+        Core.inRange(hsvMat, new Scalar(0, 70, 50), new Scalar(10, 255, 255), mask1); // RED 1
+        Core.inRange(hsvMat, new Scalar(160, 70, 50), new Scalar(180, 255, 255), mask2); // RED 2
+        Core.bitwise_or(mask1, mask2, mask);
         //Core.inRange(hsvMat, new Scalar(92, 60, 0), new Scalar(123, 255, 255), mask); // BLUE
 
         hsvMaskedMat.release();
@@ -67,7 +72,9 @@ public class CircleDetectionEmulator extends OpenCvPipeline
 
         Imgproc.GaussianBlur(grayMat, blurMat, new org.opencv.core.Size(15.0, 15.0), 2, 2);
         Mat circles = new Mat();
-        Imgproc.HoughCircles(blurMat, circles, Imgproc.HOUGH_GRADIENT, 2, 300, 140, 35);
+
+        subMat = blurMat.submat(new Rect(100, 250, 1000, 300));
+        Imgproc.HoughCircles(subMat, circles, Imgproc.HOUGH_GRADIENT, 1, 300, 120, 25);
         numCirclesFound = circles.cols();
         input.copyTo(circlesOnFrameMat);
         Point center = new Point(0, 0);
@@ -76,7 +83,7 @@ public class CircleDetectionEmulator extends OpenCvPipeline
         for(int i=0; i < numCirclesFound; i++)
         {
             double[] data = circles.get(0, i);
-            center = new Point(Math.round(data[0]), Math.round(data[1]));
+            center = new Point(Math.round(data[0]+100), Math.round(data[1])+250);
             // circle center
             Imgproc.circle(circlesOnFrameMat, center, 1, new Scalar(0, 0, 255), 2, 8, 0 );
             // circle outline
@@ -104,7 +111,7 @@ public class CircleDetectionEmulator extends OpenCvPipeline
 
             case BLUR:
             {
-                return blurMat;
+                return subMat;
             }
 
             case CIRCLES_OVERLAYED_ON_FRAME:

@@ -52,7 +52,7 @@ public class AutonomousOpenCV extends LinearOpMode {
 
         int tries = 0;
         // Waits until the camera detects the ball, up to 5 seconds
-        while(opModeIsActive()){//circleDetection.ballPosition == BallPosition.UNDEFINED && tries < 50) {
+        while(opModeIsActive() && circleDetection.ballPosition == BallPosition.UNDEFINED && tries < 50) {
             sleep(100);
             tries++;
             UpdateTelemetry();
@@ -61,30 +61,9 @@ public class AutonomousOpenCV extends LinearOpMode {
         if(circleDetection.ballPosition == BallPosition.UNDEFINED)
             circleDetection.ballPosition = BallPosition.LEFT; // Ball not found, makes a guess to the left
 
-        //df.driveForward(0.3,500);
-
-        //df.driveStraight(0.4, 23.8, 0.0);
-        //df.driveForward(0.3, 3000);
-
+        df.driveStraight(0.3, 35, 0.0);
         sleep(1000);
-        //df.driveBackward(0.3, 3000);
-        //df.driveStraight(0.3, -23.8, 0.0);
-        sleep(1000);
-        //df.turnToHeading(0.5, 45);
-        //df.holdHeading(0.5, 45, 300);
-        //df.driveStraight(0.3, 100, 45);
-        //sleep(1000); */
 
-    //    if(circleDetection.ballPosition == BallPosition.LEFT) {
-            //df.driveForward(0.3,400);
-            //df.strafeRight(0.5,250);
-      //  }
-      //  if(circleDetection.ballPosition == BallPosition.RIGHT) {
-            //df.driveForward(0.5, 100);
-            //df.rotateLeft(1, 500);
-            //df.driveForward(0.5,700);
-      //  }
-        //df.driveForward(0.5,1000);
         UpdateTelemetry();
         StopStreaming();
     }
