@@ -36,10 +36,10 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 public class HardwarePushbot
 {
     /* Public OpMode members. */
-    public DcMotor  leftFront   = null;
-    public DcMotor  rightFront = null;
-    public DcMotor  leftBack = null;
-    public DcMotor  rightBack = null;
+    public DcMotor  frontLeft   = null;
+    public DcMotor  frontRight = null;
+    public DcMotor  backLeft = null;
+    public DcMotor  backRight = null;
 
     /* local OpMode members. */
     HardwareMap hwMap           =  null;
@@ -56,26 +56,26 @@ public class HardwarePushbot
         hwMap = ahwMap;
 
         // Define and Initialize Motors
-        leftFront  = hwMap.get(DcMotor.class, "LF");
-        leftBack  = hwMap.get(DcMotor.class, "LB");
-        rightFront  = hwMap.get(DcMotor.class, "RF");
-        rightBack  = hwMap.get(DcMotor.class, "RB");
+        frontLeft  = hwMap.get(DcMotor.class, "LF");
+        backLeft  = hwMap.get(DcMotor.class, "LB");
+        frontRight = hwMap.get(DcMotor.class, "RF");
+        backRight  = hwMap.get(DcMotor.class, "RB");
 
         // Reversing left motors
-        rightFront.setDirection(DcMotor.Direction.FORWARD);
-        leftFront.setDirection(DcMotor.Direction.REVERSE);
-        rightBack.setDirection(DcMotor.Direction.FORWARD);
-        leftBack.setDirection(DcMotor.Direction.REVERSE);
+        frontRight.setDirection(DcMotor.Direction.FORWARD);
+        frontLeft.setDirection(DcMotor.Direction.REVERSE);
+        backRight.setDirection(DcMotor.Direction.FORWARD);
+        backLeft.setDirection(DcMotor.Direction.REVERSE);
 
         // Set all motors to zero power'
         setMotorPowers(0);
 
         // Set all motors to run without encoders.
         // May want to use RUN_USING_ENCODERS if encoders are installed.
-        leftFront.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        rightFront.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        leftBack.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        rightBack.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        frontLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        frontRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        backLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        backRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
     }
 
     /**
@@ -86,10 +86,10 @@ public class HardwarePushbot
      * @param RBPower
      */
     public void setMotorPowers(double LFPower, double RFPower, double LBPower, double RBPower) {
-        leftFront.setPower(LFPower);
-        rightFront.setPower(RFPower);
-        leftBack.setPower(LBPower);
-        rightBack.setPower(RBPower);
+        frontLeft.setPower(LFPower);
+        frontRight.setPower(RFPower);
+        backLeft.setPower(LBPower);
+        backRight.setPower(RBPower);
     }
 
     public void setMotorPowers(double allPower) {
