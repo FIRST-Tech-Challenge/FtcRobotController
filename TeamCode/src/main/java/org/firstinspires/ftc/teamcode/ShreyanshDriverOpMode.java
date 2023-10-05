@@ -1,8 +1,4 @@
-
-package org.firstinspires.ftc.teamcode;/* Copyright (c) 2021 FIRST. All rights reserved.
-
 /* Copyright (c) 2021 FIRST. All rights reserved.
-
  *
  * Redistribution and use in source and binary forms, with or without modification,
  * are permitted (subject to the limitations in the disclaimer below) provided that
@@ -31,10 +27,8 @@ package org.firstinspires.ftc.teamcode;/* Copyright (c) 2021 FIRST. All rights r
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-
 package org.firstinspires.ftc.teamcode;
 
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -68,10 +62,9 @@ import com.qualcomm.robotcore.util.ElapsedTime;
  * Remove or comment out the @Disabled line to add this OpMode to the Driver Station OpMode list
  */
 
-@TeleOp(name="Basic: Omni Linear OpMode", group="Linear OpMode")
-
+@TeleOp(name="Basic: ShreyanshDriverOpMode", group="Linear OpMode")
 // @Disabled
-public class BasicOmniOpMode_Linear extends LinearOpMode {
+public class ShreyanshDriverOpMode extends LinearOpMode {
 
     // Declare OpMode members for each of the 4 motors.
     private ElapsedTime runtime = new ElapsedTime();
@@ -81,7 +74,7 @@ public class BasicOmniOpMode_Linear extends LinearOpMode {
     private DcMotor rightBackDrive = null;
 
     @Override
-    public void runOpMode() {
+    public void runOpMode() throws InterruptedException {
 
         // Initialize the hardware variables. Note that the strings used here must correspond
         // to the names assigned during the robot configuration step on the DS or RC devices.
@@ -113,14 +106,38 @@ public class BasicOmniOpMode_Linear extends LinearOpMode {
         runtime.reset();
 
         double speed = 0.75;
+        double strafe = 0;
 
         // run until the end of the match (driver presses STOP)
         while (opModeIsActive()) {
             double max;
 
+            if (speed < 0){
+                speed = 0;
+            }
+
+            if (speed > 100){
+                speed = 100;
+            }
+
+            if (gamepad1.dpad_left){
+                speed -= 25;
+                Thread.sleep(100);
+            }
+            if (gamepad1.dpad_right){
+                speed += 25;
+                Thread.sleep(100);
+            }
+            if (gamepad1.left_bumper){
+                strafe = -1;
+            }
+            if (gamepad1.right_bumper){
+                strafe = 1;
+            }
             if (gamepad1.y){
                 speed = 0;
             }
+
             // POV Mode uses left joystick to go forward & strafe, and right joystick to rotate.
             double axial   = -gamepad1.left_stick_y;  // Note: pushing stick forward gives negative value
             double lateral =  gamepad1.left_stick_x;
@@ -164,7 +181,6 @@ public class BasicOmniOpMode_Linear extends LinearOpMode {
             */
 
             // Send calculated power to wheels
-
             leftFrontDrive.setPower(leftFrontPower);
             rightFrontDrive.setPower(rightFrontPower);
             leftBackDrive.setPower(leftBackPower);
