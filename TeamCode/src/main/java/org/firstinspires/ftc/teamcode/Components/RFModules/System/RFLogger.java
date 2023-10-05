@@ -20,7 +20,7 @@ public class RFLogger {
     StackTraceElement[] elements = new StackTraceElement[0];
     SimpleFormatter sh = new SimpleFormatter();
     FileHandler TestFH;
-    Level logLevel = Level.FINEST;
+    Level logLevel = Level.INFO;
     static FileHandler GeneralFH, AutonomousFH, HardwareFH, QueuerFH;
 
     public enum Files {
@@ -109,7 +109,7 @@ public class RFLogger {
         HardwareFH.setFormatter(sh);
         QueuerFH.setFormatter(sh);
 
-        LOGGER.addHandler(TestFH);
+        LOGGER.addHandler(GeneralFH);
 
     }
 
@@ -150,11 +150,11 @@ public class RFLogger {
         LOGGER.log(logLevel, firstElement.getMethodName() + output + info + maxMethods);
     }
 
-    public void log(Files p_file, String info){
+    public void log(FileHandler p_file, String info){
         StringBuilder output = new StringBuilder(":");
 //        fh = handlerList.get(p_file.index);
 //        LOGGER.addHandler(fh);
-        LOGGER.addHandler(TestFH);
+        LOGGER.addHandler(p_file);
         elements = Thread.currentThread().getStackTrace();
         for (StackTraceElement element : elements) {
             if (element.getClassName().startsWith("TeamCode")) {

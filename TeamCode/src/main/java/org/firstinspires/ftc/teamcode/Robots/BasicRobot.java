@@ -29,6 +29,7 @@ public class BasicRobot{
     public static VoltageSensor voltageSensor;
     public static TelemetryPacket packet;
     public static RFGamepad gampad;
+    public static final boolean isSim = false;
 
     /**
      * instantiates basic robot
@@ -50,7 +51,6 @@ public class BasicRobot{
         queuer = new Queuer();
         isTeleop = p_isTeleop;
         op.telemetry = new MultipleTelemetry(op.telemetry, FtcDashboard.getInstance().getTelemetry());
-        boolean isSim = true;
         if(!isSim) {
             voltageSensor = op.hardwareMap.voltageSensor.iterator().next();
         }
