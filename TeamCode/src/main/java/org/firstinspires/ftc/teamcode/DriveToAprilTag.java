@@ -81,7 +81,7 @@ public class DriveToAprilTag extends LinearOpMode
     private AprilTagProcessor aprilTag;              // Used for managing the AprilTag detection process.
     private AprilTagDetection desiredTag = null;     // Used to hold the data for a detected AprilTag
 
-    private FTCDashboardPackets dbp = FTCDashboardPackets();
+    private FTCDashboardPackets dbp = new FTCDashboardPackets();
 
     @SuppressLint("DefaultLocale")
     @Override public void runOpMode()
