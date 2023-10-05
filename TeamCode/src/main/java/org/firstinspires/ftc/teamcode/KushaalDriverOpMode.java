@@ -105,39 +105,27 @@ public class KushaalDriverOpMode extends LinearOpMode {
         waitForStart();
         runtime.reset();
 
-        double speed = 0.75;
         double strafe = 0;
         double max;
+        String StrafeToString = null;
         // run until the end of the match (driver presses STOP)
         while (opModeIsActive()) {
 
-            if (speed < 0) {
-                speed = 0;
-            }
 
-            if (speed > 100) {
-                speed = 100;
-            }
-
-            if (gamepad1.dpad_left) {
-                speed -= 25;
-            }
-            if (gamepad1.dpad_right) {
-                speed += 25;
-            }
             if (gamepad1.left_bumper) {
                 strafe = -1;
+                StrafeToString = "Left";
             }
 
             if (gamepad1.right_bumper) {
                 strafe = 1;
+                StrafeToString = "Right";
             }
             if (!(gamepad1.right_bumper || gamepad1.left_bumper)){
                 strafe = 0;
+                StrafeToString = "Idle";
             }
-            if (gamepad1.y) {
-                speed = 0;
-            }
+
 
             // POV Mode uses left joystick to go forward & strafe, and right joystick to rotate.
             double axial = -gamepad1.left_stick_y;
@@ -145,10 +133,10 @@ public class KushaalDriverOpMode extends LinearOpMode {
 
             // Combine the joystick requests for each axis-motion to determine each wheel's power.
             // Set up a variable for each drive wheel to save the power level for telemetry.
-            double leftFrontPower = strafe + axial * speed;
-            double rightFrontPower = -strafe + yaw * speed;
-            double leftBackPower = -strafe + axial * speed;
-            double rightBackPower = strafe + yaw * speed;
+            double leftFrontPower = strafe + axial;
+            double rightFrontPower = -strafe + yaw;
+            double leftBackPower = -strafe + axial;
+            double rightBackPower = strafe + yaw;
 
             // Normalize the values so no wheel power exceeds 100%
             // This ensures that the robot maintains the desired motion.
@@ -190,8 +178,7 @@ public class KushaalDriverOpMode extends LinearOpMode {
             telemetry.addData("Status", "Run Time: " + runtime.toString());
             telemetry.addData("Front left/Right", "%4.2f, %4.2f", leftFrontPower, rightFrontPower);
             telemetry.addData("Back  left/Right", "%4.2f, %4.2f", leftBackPower, rightBackPower);
-            telemetry.addData("Speed Value", "%1.0f", speed);
-            telemetry.addData("Strafe Value", "%1.0f", strafe);
+            telemetry.addData("Strafe Value", StrafeToString);
             telemetry.update();
         }
     }
