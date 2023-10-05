@@ -32,6 +32,7 @@ package org.firstinspires.ftc.teamcode.readyTestCode;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.DcMotor;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.BuiltinCameraDirection;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
@@ -63,10 +64,37 @@ public class ConceptTensorFlowObjectDetection extends LinearOpMode {
      */
     private VisionPortal visionPortal;
 
+    private DcMotor leftFrontDrive   = null;  //  Used to control the left front drive wheel
+    private DcMotor rightFrontDrive  = null;  //  Used to control the right front drive wheel
+    private DcMotor leftBackDrive    = null;  //  Used to control the left back drive wheel
+    private DcMotor rightBackDrive   = null;  //  Used to control the right back drive wheel
+
+
+
     @Override
     public void runOpMode() {
 
         initTfod();
+
+        leftFrontDrive.setDirection(DcMotor.Direction.REVERSE);
+        leftBackDrive.setDirection(DcMotor.Direction.REVERSE);
+        rightFrontDrive.setDirection(DcMotor.Direction.FORWARD);
+        rightBackDrive.setDirection(DcMotor.Direction.FORWARD);
+
+        double  drive           = 0;        // Desired forward power/speed (-1 to +1)
+        double  strafe          = 0;        // Desired strafe power/speed (-1 to +1)
+        double  turn            = 0;        // Desired turning power/speed (-1 to +1)
+        leftFrontDrive  = hardwareMap.get(DcMotor.class, "motorFL");
+        rightFrontDrive = hardwareMap.get(DcMotor.class, "motorFR");
+        leftBackDrive  = hardwareMap.get(DcMotor.class, "motorBL");
+        rightBackDrive = hardwareMap.get(DcMotor.class, "motorBR");
+
+        leftFrontDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        rightFrontDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        leftBackDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        rightBackDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+
 
         // Wait for the DS start button to be touched.
         telemetry.addData("DS preview on/off", "3 dots, Camera Stream");
@@ -88,6 +116,8 @@ public class ConceptTensorFlowObjectDetection extends LinearOpMode {
                 } else if (gamepad1.dpad_up) {
                     visionPortal.resumeStreaming();
                 }
+
+                moveRobot(0.5, 2000);
 
                 // Share the CPU.
                 sleep(20);
@@ -178,5 +208,33 @@ public class ConceptTensorFlowObjectDetection extends LinearOpMode {
         }   // end for() loop
 
     }   // end method telemetryTfod()
+
+    public void moveRobot(double speed, int ticks) {
+        // Calculate wheel powers.
+        /*
+        double leftFrontPower    =  x -y -yaw;
+        double rightFrontPower   =  x +y +yaw;
+        double leftBackPower     =  x +y -yaw;
+        double rightBackPower    =  x -y +yaw;
+        */
+        leftFrontDrive.setTargetPosition(ticks);
+        leftFrontDrive.setPower(speed);
+        leftFrontDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+        rightFrontDrive.setTargetPosition(ticks);
+        rightFrontDrive.setPower(speed);
+        rightFrontDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+        leftBackDrive.setTargetPosition(ticks);
+        leftBackDrive.setPower(speed);
+        leftBackDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+        rightBackDrive.setTargetPosition(ticks);
+        rightBackDrive.setPower(speed);
+        rightBackDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+
+        // Normalize wheel powers to be less than 1.0
+    }
 
 }   // end class
