@@ -14,7 +14,7 @@ public class AutoRedClose extends LinearOpMode {
     private DcMotor rightFrontDrive = null;
     private DcMotor rightBackDrive = null;
     private boolean isRunning = true;
-    private final int oneRotaion = 1440;
+    private final int oneRotaion = 25920;
 
     @Override
     public void runOpMode() {
