@@ -19,8 +19,10 @@ public class MotorTest extends LinearOpMode {
         while (opModeIsActive()) {
         TestMotor = hardwareMap.get(DcMotor.class, "motor1");
         TestMotor.setPower(0.75);
-        TimeUnit.SECONDS.sleep(3);
+        TimeUnit.SECONDS.sleep(1);
         TestMotor.setDirection(DcMotorSimple.Direction.REVERSE);
+        TimeUnit.SECONDS.sleep(1);
+        TestMotor.setPower(0);
         }
     }
 }
