@@ -5,6 +5,8 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
+import java.util.concurrent.TimeUnit;
+
 @TeleOp
 public class MotorTest extends LinearOpMode {
     private DcMotor TestMotor = null;
@@ -17,7 +19,7 @@ public class MotorTest extends LinearOpMode {
         while (opModeIsActive()) {
         TestMotor = hardwareMap.get(DcMotor.class, "motor1");
         TestMotor.setPower(0.75);
-        wait(2);
+        TimeUnit.SECONDS.sleep(3);
         TestMotor.setDirection(DcMotorSimple.Direction.REVERSE);
         }
     }
