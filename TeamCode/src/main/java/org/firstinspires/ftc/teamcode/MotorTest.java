@@ -18,11 +18,12 @@ public class MotorTest extends LinearOpMode {
         if (isStopRequested())
             return;
         while (opModeIsActive()) {
-            if (gamepad1.right_trigger>0) {
-                TestMotor.setPower(gamepad1.right_trigger);
-            }
-            else {
-                TestMotor.setPower(0);
+            if (gamepad1.a) {
+                if (gamepad1.right_trigger > 0) {
+                    TestMotor.setPower(gamepad1.right_trigger);
+                } else {
+                    TestMotor.setPower(0);
+                }
             }
         }
     }
