@@ -23,13 +23,24 @@ public class Position {
      protected double strafePower = 1.0; //Strafe is set to FULL POWER. Number can range ONLY from -1 to 1
      protected double rotatePower = 1.0; //Rotation is set to FULL POWER.
 
-     Position(){
+     Position() { //This sets all the presets on the field as a blank or a 0.
         x = 0.0; //Sets X as a value of 0 on the field (where it starts)
         y = 0.0; //Sets y as a value of 0 on the field (where it starts)
-        name = ""; //
-        setRotation(0.0);
+        name = ""; //Name of the position (set as blank, used for debugging)
+        setRotation(0.0); //Rotation is set as a value of 0 on the field
 
      }
+
+    Position(double x, double y, double theta, String name) {
+        this.x = x; //Calls X from the Protected X (in this code/class)
+        this.y = y; //Calls Y from the Protected Y (in this code/class)
+        this.name = name; //Calls the String Name (in this code/class)
+        setRotation(theta); //
+    }
+
+    Position(double x, String name, Navigation.Action action, double strafePower, double strafePower, double roatePower, double theta) {
+
+    }
 
 
 }
