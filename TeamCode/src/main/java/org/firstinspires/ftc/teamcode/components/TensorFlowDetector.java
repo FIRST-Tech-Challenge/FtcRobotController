@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode;
+package org.firstinspires.ftc.teamcode.components;
 
 //import static java.lang.Thread.sleep;
 
@@ -25,13 +25,15 @@ public class TensorFlowDetector {
     private static final boolean USE_WEBCAM = true;
 
     private String[] labels = {};
-    private TfodProcessor detector;
-    private VisionPortal visionPortal;
-    private HardwareMap hardwareMap;
-    private Telemetry telemetry;
+    protected TfodProcessor detector;
+    protected VisionPortal visionPortal;
+    protected HardwareMap hardwareMap;
+    protected Telemetry telemetry;
     private String modelName;
 
     private List<Recognition> currentRecognitions;
+
+    private float confidenceThreshold = 0.75f;
 
 
 
@@ -41,6 +43,28 @@ public class TensorFlowDetector {
         this.labels = labels;
         this.telemetry = telemetry;
         this.hardwareMap = hardwaremap;
+    }
+
+    public TensorFlowDetector(Telemetry telemetry, HardwareMap hardwareMap) {
+        this.telemetry = telemetry;
+        this.hardwareMap = hardwareMap;
+    }
+
+    /**
+     * Sets the model name. Does not do anything after running initModel()
+     * @param modelName A string representing the model name. EX: "Blue_Cone_Test_Model.tflite"
+     */
+    public void setModelName(String modelName) {
+        this.modelName = modelName;
+
+    }
+
+    /**
+     * Sets the labels. Does not do anything after running initModel()
+     * @param labels An array of string that represent all the labels to search for
+     */
+    public void setLabels(String[] labels) {
+        this.labels = labels;
     }
 
     /**
@@ -73,7 +97,7 @@ public class TensorFlowDetector {
             telemetry.addLine("No objects currently detected");
         } else {
             if (showNumDetections) {
-                telemetry.addData("Number of Detections: ", "%i",
+                telemetry.addData("Number of Detections: ", "%d",
                         getNumRecognitions());
             }
             for (Recognition recognition : currentRecognitions) {
@@ -260,7 +284,12 @@ public class TensorFlowDetector {
                     "confidence threshold should be a value between 0 and 1, non-inclusive"
             );
         }
+        this.confidenceThreshold = confidenceThreshold;
         detector.setMinResultConfidence(confidenceThreshold);
+    }
+
+    public float getConfidenceThreshold () {
+        return confidenceThreshold;
     }
 
     /**
@@ -457,6 +486,46 @@ public class TensorFlowDetector {
         return recognitionIndexes;
     }
 
+    /**
+     * returns the Recognition with the highest confidence
+     * @return A Recognition with the highest confidence out of all recognitions
+     */
+    public Recognition getHighestConfidenceRecognition() {
+        if (getNumRecognitions() == 0) {
+            return null;
+        }
+        float maxConfidence = -1f;
+        Recognition highestConfidence = getRecognition(0);
+        for (int i = 0; i < getNumRecognitions(); i++) {
+            if (getRecognition(i).getConfidence() > maxConfidence) {
+                maxConfidence = getRecognition(i).getConfidence();
+                highestConfidence = getRecognition(i);
+            }
+        }
+        return highestConfidence;
+    }
+
+    /**
+     * returns the Recognition with the highest confidence
+     * @return A Recognition with the highest confidence out of all recognitions
+     */
+    public Recognition getHighestConfidenceRecognition(String label) {
+        if (getNumRecognitions() == 0) {
+            return null;
+        }
+
+        List<Recognition> recognitionsWithCorrectLabel = getAllRecognitions(label);
+        float maxConfidence = -1f;
+        Recognition highestConfidence = recognitionsWithCorrectLabel.get(0);
+        for (int i = 0; i < recognitionsWithCorrectLabel.size(); i++) {
+            if (recognitionsWithCorrectLabel.get(i).getConfidence() > maxConfidence) {
+                maxConfidence = recognitionsWithCorrectLabel.get(i).getConfidence();
+                highestConfidence = recognitionsWithCorrectLabel.get(i);
+            }
+        }
+        return highestConfidence;
+    }
+
     // ********************************************************************************************
     // **************************** BEGIN PRIVATE METHODS *****************************************
     // ********************************************************************************************
@@ -479,7 +548,6 @@ public class TensorFlowDetector {
         VisionPortal.Builder builder = new VisionPortal.Builder();
 
         if (USE_WEBCAM) {
-
             builder.setCamera(hardwareMap.get(WebcamName.class, "Webcam 1"));
         } else {
             builder.setCamera(BuiltinCameraDirection.BACK);
