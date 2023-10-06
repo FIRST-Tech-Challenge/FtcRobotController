@@ -2,19 +2,15 @@ package org.firstinspires.ftc.teamcode;
 
 import static com.qualcomm.robotcore.hardware.DcMotor.RunMode.RUN_USING_ENCODER;
 import static com.qualcomm.robotcore.hardware.DcMotor.RunMode.STOP_AND_RESET_ENCODER;
-
 import static org.firstinspires.ftc.teamcode.Bot.BotState.STORAGE_NOT_FULL;
 
-import com.qualcomm.robotcore.hardware.DcMotorEx;
-import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
+import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.Servo;
 
-
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
-import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
 
 
 public class Bot {
@@ -311,5 +307,12 @@ public class Bot {
         //slides.resetProfiler(); code in slides subsystem
         //figure this out
 
+    }
+    public void turn(double power){
+        if(power>0)
+        fl.setPower(power);
+        if(power<0){
+            fr.setPower(-power);
+        }
     }
 }

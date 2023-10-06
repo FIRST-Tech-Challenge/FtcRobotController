@@ -7,6 +7,7 @@ import com.arcrobotics.ftclib.gamepad.GamepadEx;
 import com.arcrobotics.ftclib.gamepad.GamepadKeys;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.hardware.DistanceSensor;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.openftc.easyopencv.OpenCvCamera;
@@ -18,10 +19,9 @@ import org.openftc.easyopencv.OpenCvCameraRotation;
 
 To Do:
 
-1) drop purple pixel method
-2) incorporate AprilTags
-3) openCV split screen stuff to detect team prop location
-4) if splines do not work, switch to forward(), strafeRight(), and strafeLeft()
+1) move trajectories into distance sensor output if statements
+2) openCV split screen stuff to detect team prop location
+3) if splines do not work, switch to forward(), strafeRight(), and strafeLeft()
 
  */
 
@@ -34,6 +34,8 @@ public class MainAuto extends LinearOpMode{
     SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
 
     Bot bot;
+    private DistanceSensor distanceSensor;
+    double distanceFromObject;
 
     enum Side {
         RED, BLUE, NULL;
@@ -45,10 +47,14 @@ public class MainAuto extends LinearOpMode{
     enum AutoPath{
         MECHANICAL_FAILURE, NO_SENSE, OPTIMAL;
     }
+    enum TeamPropLocation{
+        ONE, TWO, THREE;
+    }
 
     Side side = Side.NULL;
     DistanceToBackdrop dtb= DistanceToBackdrop.NULL;
     AutoPath autopath = AutoPath.OPTIMAL;
+    TeamPropLocation teamPropLocation = TeamPropLocation.ONE;
 
     double fx = 1078.03779;
     double fy = 1084.50988;
@@ -172,6 +178,28 @@ public class MainAuto extends LinearOpMode{
 
             waitForStart();
             if (!isStopRequested()) {
+              /*  distanceFromObject= distanceSensor.getDistance(DistanceUnit.CM);
+                int count=0;
+
+                while(distanceFromObject>5 && count<4){
+                    bot.turn(0.1);
+                    distanceFromObject= distanceSensor.getDistance(DistanceUnit.CM);
+                    count++;
+                }
+                if(count==0){
+                    teamPropLocation= TeamPropLocation.ONE;
+                }
+                if(count>1 && count<= 4){
+                    teamPropLocation= TeamPropLocation.TWO;
+                    bot.turn((-0.1 * (count)));
+                }
+                if(count>4){
+                    teamPropLocation= TeamPropLocation.THREE;
+                }
+
+               */
+
+
 
 
                 if(dtb== DistanceToBackdrop.FAR && side==Side.BLUE && autopath==AutoPath.NO_SENSE){
@@ -188,7 +216,7 @@ public class MainAuto extends LinearOpMode{
                 if(dtb== DistanceToBackdrop.CLOSE && side==Side.BLUE && autopath==AutoPath.NO_SENSE){
                     blueAllianceCloseThread.start();
                     sleep(1000);
-                    blueAllianceFarThread.interrupt();
+                    blueAllianceCloseThread.interrupt();
                 }
                 if(dtb== DistanceToBackdrop.CLOSE && side==Side.RED && autopath==AutoPath.NO_SENSE){
                     blueAllianceCloseThread.start();
@@ -211,6 +239,19 @@ public class MainAuto extends LinearOpMode{
     }
 
     private void dropPurplePixel(){
+        bot.noodles.reverseIntake();
+    }
 
+    //CHANGE ACCORDINGLY
+    private void moveBasedOnSpikeMark(){
+        if(teamPropLocation==TeamPropLocation.THREE){
+
+        }
+        if(teamPropLocation==TeamPropLocation.ONE){
+
+        }
+        if(teamPropLocation==TeamPropLocation.TWO){
+
+        }
     }
 }

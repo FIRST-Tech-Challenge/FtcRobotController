@@ -120,20 +120,18 @@ public class AprilTagsDetection {
         }
 
 
+
         if(tagOfInterest == null){
-
-        } else if(tagOfInterest.id == ONE){
-
-        } else if(tagOfInterest.id == TWO){
+            tagOfInterest.id=ONE;
+        }
+        if(tagOfInterest.id == ONE){
+            //may not use april tags
+        }
+        else if(tagOfInterest.id == TWO){
 
         } else {
 
         }
-        {
-
-
-        }
-
 
     }
 
