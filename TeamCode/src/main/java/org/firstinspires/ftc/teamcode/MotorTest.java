@@ -19,11 +19,24 @@ public class MotorTest extends LinearOpMode {
             return;
         while (opModeIsActive()) {
             if (gamepad1.a) {
-                TestMotor.setPower(gamepad1.right_trigger);
-            }
-            else {
-                TestMotor.setPower(0);
+                if (gamepad1.right_trigger>0) {
+                    TestMotor.setDirection(DcMotorSimple.Direction.FORWARD);
+                    TestMotor.setPower(gamepad1.right_trigger);
                 }
+                else {
+                    TestMotor.setPower(0);
+                }
+                if (gamepad1.left_trigger>0) {
+                    TestMotor.setDirection(DcMotorSimple.Direction.REVERSE);
+                    TestMotor.setPower(gamepad1.left_trigger);
+
+                }
+                else {
+                    TestMotor.setPower(0);
+                }
+            }
+
+
             }
         }
     }
