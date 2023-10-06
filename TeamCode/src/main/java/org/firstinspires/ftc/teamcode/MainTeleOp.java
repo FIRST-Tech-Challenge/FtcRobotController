@@ -1,10 +1,13 @@
 package org.firstinspires.ftc.teamcode;
+
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
+
 import com.qualcomm.robotcore.hardware.DistanceSensor;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
+
 import com.arcrobotics.ftclib.controller.PIDController;
 import com.arcrobotics.ftclib.gamepad.GamepadEx;
 import com.arcrobotics.ftclib.gamepad.GamepadKeys;
@@ -12,12 +15,10 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DigitalChannel;
 
+
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.IMU;
-
-
-
 
 @TeleOp
 public class MainTeleOp extends LinearOpMode {
@@ -37,8 +38,6 @@ public class MainTeleOp extends LinearOpMode {
     private boolean firstPixelIsDesposited;
 
 
-
-
     private double driveSpeed=1;
 
     @Override
@@ -54,12 +53,14 @@ public class MainTeleOp extends LinearOpMode {
 
         distanceFromObject = distanceSensor.getDistance(DistanceUnit.CM);
         telemetry.addData("teleOp is ", "initialized");
+        telemetry.addData("teleOp is ", "initialized");
 
         while (opModeIsActive() && !isStopRequested()) {
             telemetry.addData("teleOp is ", "running");
             telemetry.update();
             gp1.readButtons();
             gp2.readButtons();
+
             telemetry.update();
 
 
@@ -162,9 +163,9 @@ public class MainTeleOp extends LinearOpMode {
                 }
             }
         }
+
+
     }
-
-
     private void drive() {
         if (gp1.wasJustReleased(GamepadKeys.Button.LEFT_STICK_BUTTON)) {
             bot.resetIMU();
@@ -180,6 +181,7 @@ public class MainTeleOp extends LinearOpMode {
                 turnVector.getX() * driveSpeed / 1.7
         );
     }
+
 
     public void distanceTuning(){
         double diffy = distanceFromObject - perfectDistance;

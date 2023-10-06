@@ -46,7 +46,7 @@ public class MotionProfiler {
         totalDt = accelerationDt + cruiseDt + deaccelerationDt;
         if (timeElapsed > totalDt) {
             isDone = true;
-            return distance;
+            return 0;
         }
 
         if (timeElapsed < accelerationDt)
