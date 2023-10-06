@@ -20,8 +20,8 @@ To Do:
 
 1) drop purple pixel method
 2) incorporate AprilTags
-    - I think AprilTagsDetection class should be in MainAuto
-3) if splines do not work, switch to forward(), strafeRight(), and strafeLeft()
+3) openCV split screen stuff to detect team prop location
+4) if splines do not work, switch to forward(), strafeRight(), and strafeLeft()
 
  */
 
@@ -193,7 +193,7 @@ public class MainAuto extends LinearOpMode{
                 if(dtb== DistanceToBackdrop.CLOSE && side==Side.RED && autopath==AutoPath.NO_SENSE){
                     blueAllianceCloseThread.start();
                     sleep(1000);
-                    blueAllianceFarThread.interrupt();
+                    redAllianceCloseThread.interrupt();
                 }
 
 
@@ -212,10 +212,5 @@ public class MainAuto extends LinearOpMode{
 
     private void dropPurplePixel(){
 
-    }
-
-    private void readAprilTag(){
-        //read april tag and perform actions accordingly
-        //then incorporate into trajectory
     }
 }

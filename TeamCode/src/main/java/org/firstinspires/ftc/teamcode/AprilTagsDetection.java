@@ -1,17 +1,22 @@
 package org.firstinspires.ftc.teamcode;
 
-import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.hardwareMap;
+import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.telemetry;
+import static java.lang.Thread.sleep;
+
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.openftc.apriltag.AprilTagDetection;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
+
 import java.util.ArrayList;
 
 @TeleOp
-public class AprilTagsDetection extends LinearOpMode
-{
+public class AprilTagsDetection {
+
     OpenCvCamera camera;
     AprilTagsPipeline AprilTagsPipeline;
 
@@ -33,8 +38,8 @@ public class AprilTagsDetection extends LinearOpMode
 
     AprilTagDetection tagOfInterest = null;
 
-    @Override
-    public void runOpMode() {
+    public void AprilTagDetection() throws InterruptedException{
+
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
         camera = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "Webcam 1"), cameraMonitorViewId);
         AprilTagsPipeline = new org.firstinspires.ftc.teamcode.AprilTagsPipeline(tagsize, fx, fy, cx, cy);
@@ -56,8 +61,7 @@ public class AprilTagsDetection extends LinearOpMode
 
         telemetry.setMsTransmissionInterval(50);
 
-        //init loop
-        while (!isStarted() && !isStopRequested()){
+
             ArrayList<AprilTagDetection> currentDetections = AprilTagsPipeline.getLatestDetections();
 
             if(currentDetections.size() != 0){
@@ -102,7 +106,7 @@ public class AprilTagsDetection extends LinearOpMode
 
             telemetry.update();
             sleep(20);
-        }
+
 
         //update telemetry
         if(tagOfInterest != null){
@@ -117,13 +121,13 @@ public class AprilTagsDetection extends LinearOpMode
 
 
         if(tagOfInterest == null){
-            //default auto for no detection
+
         } else if(tagOfInterest.id == ONE){
-            //to april tag 1
+
         } else if(tagOfInterest.id == TWO){
-            //to april tag 2
+
         } else {
-            //to april tag 3
+
         }
         {
 
