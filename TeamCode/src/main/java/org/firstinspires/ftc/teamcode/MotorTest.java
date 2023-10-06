@@ -13,13 +13,16 @@ public class MotorTest extends LinearOpMode {
     @Override
 
     public void runOpMode() throws InterruptedException{
+        TestMotor = hardwareMap.get(DcMotor.class, "motor1");
         waitForStart();
         if (isStopRequested())
             return;
         while (opModeIsActive()) {
-            while (gamepad1.a) {
-                TestMotor.setPower(.25);
-
+            if (gamepad1.a) {
+                TestMotor.setPower(0.25);
+            }
+            else {
+                TestMotor.setPower(0);
             }
         }
     }
