@@ -7,7 +7,7 @@ import java.util.Map;
 
 /** Controls motors and servos that are not involved in moving the robot around the field.
  */
-public class MechanismDriving {
+public class MechanismDriving{
 
 
 }
