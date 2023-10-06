@@ -8,15 +8,20 @@ import com.arcrobotics.ftclib.gamepad.GamepadKeys;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
+import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
+import org.openftc.easyopencv.OpenCvCamera;
+import org.openftc.easyopencv.OpenCvCameraFactory;
+import org.openftc.easyopencv.OpenCvCameraRotation;
+
 
 /*
 
 To Do:
 
-1) change startPose for each alliance/position
-2) drop purple pixel method
-3) incorporate AprilTags
-4) if splines do not work, switch to forward(), strafeRight(), and strafeLeft()
+1) drop purple pixel method
+2) incorporate AprilTags
+    - I think AprilTagsDetection class should be in MainAuto
+3) if splines do not work, switch to forward(), strafeRight(), and strafeLeft()
 
  */
 
@@ -45,13 +50,47 @@ public class MainAuto extends LinearOpMode{
     DistanceToBackdrop dtb= DistanceToBackdrop.NULL;
     AutoPath autopath = AutoPath.OPTIMAL;
 
+    double fx = 1078.03779;
+    double fy = 1084.50988;
+    double cx = 580.850545;
+    double cy = 245.959325;
+
+    // UNITS ARE METERS
+    double tagsize = 0.032; //ONLY FOR TESTING
+
+
+
     @Override
     public void runOpMode() throws InterruptedException {
         bot = Bot.getInstance(this);
         GamepadEx gp1 = new GamepadEx(gamepad1);
 
-        Pose2d startPose = new Pose2d(0, 0, 0);
-        drive.setPoseEstimate(startPose);
+        Pose2d startPoseBlueFar = new Pose2d(-54, -36, 0);
+        Pose2d startPoseBlueClose = new Pose2d(-54, 36, 0);
+        Pose2d startPoseRedClose = new Pose2d(54, 36, 0);
+        Pose2d startPoseRedFar = new Pose2d(54, -36, 0);
+
+
+        //CAMERA STUFF =====================
+
+        WebcamName camName = hardwareMap.get(WebcamName.class, "Webcam 1");
+        OpenCvCamera camera = OpenCvCameraFactory.getInstance().createWebcam(camName);
+        AprilTagsPipeline aprilTagPipeline = new AprilTagsPipeline(tagsize, fx, fy, cx, cy);
+
+
+        camera.setPipeline(aprilTagPipeline);
+        camera.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
+            @Override
+            public void onOpened() {
+                camera.startStreaming(1280, 720, OpenCvCameraRotation.UPRIGHT);
+            }
+
+            @Override
+            public void onError(int errorCode) {
+
+            }
+        });
+
 
 
         while (!isStarted()) {
@@ -75,8 +114,22 @@ public class MainAuto extends LinearOpMode{
                 autopath= AutoPath.NO_SENSE;
             }
 
+            if(dtb== DistanceToBackdrop.FAR && side==Side.BLUE){
+                drive.setPoseEstimate(startPoseBlueFar);
+            }
 
-            TrajectorySequence blueAllianceFar = drive.trajectorySequenceBuilder(startPose)
+            if(dtb== DistanceToBackdrop.FAR && side==Side.RED){
+                drive.setPoseEstimate(startPoseRedFar);
+            }
+            if(dtb== DistanceToBackdrop.CLOSE && side==Side.BLUE){
+                drive.setPoseEstimate(startPoseBlueClose);
+            }
+            if(dtb== DistanceToBackdrop.CLOSE && side==Side.RED){
+                drive.setPoseEstimate(startPoseRedClose);
+            }
+
+
+            TrajectorySequence blueAllianceFar = drive.trajectorySequenceBuilder(startPoseBlueFar)
                     .splineTo(new Vector2d(-36,-36), Math.toRadians(0))
                     .addTemporalMarker(this::dropPurplePixel)
                     .splineTo(new Vector2d(-36,48), Math.toRadians(90))
@@ -84,7 +137,7 @@ public class MainAuto extends LinearOpMode{
                     .splineTo(new Vector2d(-72,48), Math.toRadians(90))
                     .build();
 
-            TrajectorySequence redAllianceFar= drive.trajectorySequenceBuilder(startPose)
+            TrajectorySequence redAllianceFar= drive.trajectorySequenceBuilder(startPoseRedFar)
                     .splineTo(new Vector2d(36,-36), Math.toRadians(0))
                     .addTemporalMarker(this::dropPurplePixel)
                     .splineTo(new Vector2d(36,48), Math.toRadians(-90))
@@ -92,7 +145,7 @@ public class MainAuto extends LinearOpMode{
                     .splineTo(new Vector2d(72,48), Math.toRadians(-90))
                     .build();
 
-            TrajectorySequence blueAllianceClose = drive.trajectorySequenceBuilder(startPose)
+            TrajectorySequence blueAllianceClose = drive.trajectorySequenceBuilder(startPoseBlueClose)
                     .splineTo(new Vector2d(-54,20), Math.toRadians(0))
                     .splineTo(new Vector2d(-36,20), Math.toRadians(90))
                     .addTemporalMarker(this::dropPurplePixel)
@@ -101,7 +154,7 @@ public class MainAuto extends LinearOpMode{
                     .splineTo(new Vector2d(-72,48), Math.toRadians(90))
                     .build();
 
-            TrajectorySequence redAllianceClose= drive.trajectorySequenceBuilder(startPose)
+            TrajectorySequence redAllianceClose= drive.trajectorySequenceBuilder(startPoseRedClose)
                     .splineTo(new Vector2d(54,12), Math.toRadians(0))
                     .splineTo(new Vector2d(36,12), Math.toRadians(-90))
                     .addTemporalMarker(this::dropPurplePixel)
