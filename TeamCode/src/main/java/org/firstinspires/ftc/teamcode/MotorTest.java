@@ -17,12 +17,10 @@ public class MotorTest extends LinearOpMode {
         if (isStopRequested())
             return;
         while (opModeIsActive()) {
-        TestMotor = hardwareMap.get(DcMotor.class, "motor1");
-        TestMotor.setPower(0.75);
-        TimeUnit.SECONDS.sleep(1);
-        TestMotor.setDirection(DcMotorSimple.Direction.REVERSE);
-        TimeUnit.SECONDS.sleep(1);
-        TestMotor.setPower(0);
+            while (gamepad1.a) {
+                TestMotor.setPower(.25);
+
+            }
         }
     }
 }
