@@ -4,6 +4,12 @@ Tyler M. (SuperTylerMan)
 
 Oscar Y. (Oscar3334)
 
+Vincent L. (kryptic-val)
+
+Manan C. (duckw333d)
+
+James L. (jamesxgamesyt)
+
 ## TeamCode Module
 
 Welcome!
