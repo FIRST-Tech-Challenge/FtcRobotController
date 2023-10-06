@@ -10,6 +10,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DistanceSensor;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
+import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
@@ -19,9 +20,11 @@ import org.openftc.easyopencv.OpenCvCameraRotation;
 
 To Do:
 
-1) move trajectories into distance sensor output if statements
-2) openCV split screen stuff to detect team prop location
-3) if splines do not work, switch to forward(), strafeRight(), and strafeLeft()
+1) TEST AUTOPATHS AND TELEOP!!!!
+    - if splines do not work, switch to forward(), strafeRight(), and strafeLeft()
+2) Add to moveBasedOnSpikeMark()
+3) update turn() in bot class
+4) Add more autopaths
 
  */
 
@@ -139,6 +142,7 @@ public class MainAuto extends LinearOpMode{
                     .splineTo(new Vector2d(-36,-36), Math.toRadians(0))
                     .addTemporalMarker(this::dropPurplePixel)
                     .splineTo(new Vector2d(-36,48), Math.toRadians(90))
+                    .UNSTABLE_addTemporalMarkerOffset(-0.5,this::moveBasedOnSpikeMark)
                     .UNSTABLE_addTemporalMarkerOffset(-0.5, this::outtake)
                     .splineTo(new Vector2d(-72,48), Math.toRadians(90))
                     .build();
@@ -147,6 +151,7 @@ public class MainAuto extends LinearOpMode{
                     .splineTo(new Vector2d(36,-36), Math.toRadians(0))
                     .addTemporalMarker(this::dropPurplePixel)
                     .splineTo(new Vector2d(36,48), Math.toRadians(-90))
+                    .UNSTABLE_addTemporalMarkerOffset(-0.5,this::moveBasedOnSpikeMark)
                     .UNSTABLE_addTemporalMarkerOffset(-0.5, this::outtake)
                     .splineTo(new Vector2d(72,48), Math.toRadians(-90))
                     .build();
@@ -156,6 +161,7 @@ public class MainAuto extends LinearOpMode{
                     .splineTo(new Vector2d(-36,20), Math.toRadians(90))
                     .addTemporalMarker(this::dropPurplePixel)
                     .splineTo(new Vector2d(-36,48), Math.toRadians(90))
+                    .UNSTABLE_addTemporalMarkerOffset(-0.5,this::moveBasedOnSpikeMark)
                     .UNSTABLE_addTemporalMarkerOffset(-0.5, this::outtake)
                     .splineTo(new Vector2d(-72,48), Math.toRadians(90))
                     .build();
@@ -165,6 +171,7 @@ public class MainAuto extends LinearOpMode{
                     .splineTo(new Vector2d(36,12), Math.toRadians(-90))
                     .addTemporalMarker(this::dropPurplePixel)
                     .splineTo(new Vector2d(36,48), Math.toRadians(-90))
+                    .UNSTABLE_addTemporalMarkerOffset(-0.5,this::moveBasedOnSpikeMark)
                     .UNSTABLE_addTemporalMarkerOffset(-0.5, this::outtake)
                     .splineTo(new Vector2d(72,48), Math.toRadians(90))
                     .build();
@@ -178,7 +185,7 @@ public class MainAuto extends LinearOpMode{
 
             waitForStart();
             if (!isStopRequested()) {
-              /*  distanceFromObject= distanceSensor.getDistance(DistanceUnit.CM);
+                distanceFromObject= distanceSensor.getDistance(DistanceUnit.CM);
                 int count=0;
 
                 while(distanceFromObject>5 && count<4){
@@ -186,6 +193,7 @@ public class MainAuto extends LinearOpMode{
                     distanceFromObject= distanceSensor.getDistance(DistanceUnit.CM);
                     count++;
                 }
+
                 if(count==0){
                     teamPropLocation= TeamPropLocation.ONE;
                 }
@@ -196,9 +204,6 @@ public class MainAuto extends LinearOpMode{
                 if(count>4){
                     teamPropLocation= TeamPropLocation.THREE;
                 }
-
-               */
-
 
 
 
@@ -245,6 +250,7 @@ public class MainAuto extends LinearOpMode{
     //CHANGE ACCORDINGLY
     private void moveBasedOnSpikeMark(){
         if(teamPropLocation==TeamPropLocation.THREE){
+
 
         }
         if(teamPropLocation==TeamPropLocation.ONE){

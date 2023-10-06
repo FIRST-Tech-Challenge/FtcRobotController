@@ -309,8 +309,9 @@ public class Bot {
 
     }
     public void turn(double power){
-        if(power>0)
-        fl.setPower(power);
+        if(power>0) {
+            fl.setPower(power);
+        }
         if(power<0){
             fr.setPower(-power);
         }
