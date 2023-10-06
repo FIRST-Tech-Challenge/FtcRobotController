@@ -21,10 +21,10 @@ class BotShared(opMode: OpMode) {
     // Get stuff from the hardware map (HardwareMap.get() can be shorthanded to HardwareMap[] in Kotlin)
     @JvmField var imu: IMU =                      opMode.hardwareMap[IMU::class.java,         "imu"]
     @JvmField var tagCamera: WebcamName =         opMode.hardwareMap[WebcamName::class.java,  "Webcam 1"]
-    @JvmField var motorFrontRight: DcMotorEx =    opMode.hardwareMap[DcMotorEx::class.java,   "MotorFrontRight"]
-    @JvmField var motorFrontLeft: DcMotorEx =     opMode.hardwareMap[DcMotorEx::class.java,   "MotorFrontLeft"]
-    @JvmField var motorBackRight: DcMotorEx =     opMode.hardwareMap[DcMotorEx::class.java,   "MotorBackRight"]
-    @JvmField var motorBackLeft: DcMotorEx =      opMode.hardwareMap[DcMotorEx::class.java,   "MotorBackLeft"]
+    @JvmField var motorFrontRight: DcMotorEx =    opMode.hardwareMap[DcMotorEx::class.java,   "rightFront"]
+    @JvmField var motorFrontLeft: DcMotorEx =     opMode.hardwareMap[DcMotorEx::class.java,   "leftFront"]
+    @JvmField var motorBackRight: DcMotorEx =     opMode.hardwareMap[DcMotorEx::class.java,   "rightBack"]
+    @JvmField var motorBackLeft: DcMotorEx =      opMode.hardwareMap[DcMotorEx::class.java,   "leftBack"]
     @JvmField var pixelPlacer: PixelPlacer<WebcamName> = PixelPlacer(opMode, tagCamera)
     @JvmField var drive: MecanumDrive? = null
 
