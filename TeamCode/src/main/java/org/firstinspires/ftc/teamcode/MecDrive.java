@@ -86,11 +86,13 @@ public class MecDrive extends LinearOpMode {
 
         NormalizedRGBA colors = colorSensor.getNormalizedColors();
         Color.colorToHSV(colors.toColor(), hsvValues);
-        telemetry.addData("Color Sensor (Rev 3)", "%.3f %.3f %.3f ", colors.red, colors.green, colors.blue);
+        telemetry.addData("Color Sensor (Rev 3)", " %d %d %d", Math.round(colors.red * 10000), Math.round(colors.green * 10000), Math.round(colors.blue * 10000));
+        telemetry.addData( "Colors (hsv)", "%d %d %d %d", Math.round(hsvValues[0] * 1), Math.round(hsvValues[1] * 1), Math.round(hsvValues[2] * 1), Math.round(colors.alpha * 10000));
+        telemetry.update();
 
         MecanumDrive.cartesian(Globals.robot,
-                -leftStickY * .5,
-                leftStickX * .5,
-                rightStickX * .35);
+                -leftStickY * 1,
+                leftStickX * 1,
+                rightStickX * .75);
     }
 }
