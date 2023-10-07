@@ -61,7 +61,7 @@ import java.util.Map;
  * TeleOp and Autonomous.
  */
 
-@com.qualcomm.robotcore.eventloop.opmode.Autonomous(name = "0 PowerPlay_6832", group = "Challenge") // @Autonomous(...) is the other common choice
+@com.qualcomm.robotcore.eventloop.opmode.Autonomous(name = "0 nothing", group = "Challenge") // @Autonomous(...) is the other common choice
 @Config(value = "AA_PP_6832")
 public class CenterStage_6832 extends OpMode {
 
