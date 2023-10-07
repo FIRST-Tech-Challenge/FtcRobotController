@@ -501,7 +501,7 @@ public class CenterStage_6832 extends OpMode {
         forwardSmoother.setSmoothingFactor(FORWARD_SMOOTHING_FACTOR);
         rotateSmoother.setSmoothingFactor(ROTATE_SMOOTHING_FACTOR);
 
-       Pose2d target = robot.field.targetCoordinate;
+        Pose2d target = robot.field.targetCoordinate;
        Pose2d current = robot.field.poseToCoordinates(robot.driveTrain.getPoseEstimate());
        Pose2d current2 = robot.driveTrain.getPoseEstimate();
         telemetry.addLine("State (" + gameStateIndex + "): " + gameState.getName());

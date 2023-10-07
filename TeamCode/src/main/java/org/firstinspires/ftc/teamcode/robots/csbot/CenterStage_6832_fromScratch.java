@@ -10,8 +10,12 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.internal.system.Misc;
 import org.firstinspires.ftc.teamcode.robots.csbot.subsystem.Robot;
+import org.firstinspires.ftc.teamcode.robots.csbot.subsystem.TauDriveTrain;
+import org.firstinspires.ftc.teamcode.robots.csbot.subsystem.UnderArm;
 import org.firstinspires.ftc.teamcode.robots.csbot.util.Constants;
 import org.firstinspires.ftc.teamcode.robots.csbot.util.ExponentialSmoother;
+import org.firstinspires.ftc.teamcode.robots.csbot.util.TelemetryProvider;
+import org.firstinspires.ftc.teamcode.robots.csbot.vision.VisionProviders;
 
 import java.util.Arrays;
 import java.util.LinkedHashMap;
@@ -35,6 +39,8 @@ public class CenterStage_6832_fromScratch extends OpMode {
     public static boolean debugTelemetryEnabled;
     private boolean initializing;
     private boolean visionProviderFinalized;
+
+    public boolean endGameHandled;
 
     //GAMESTATES
     public enum GameState {
@@ -81,6 +87,10 @@ public class CenterStage_6832_fromScratch extends OpMode {
     public static Constants.Position origin;
     private ExponentialSmoother loopTimeSmoother, averageUpdateTimeSmoother, voltageSmoother;
     public static double AVERAGE_LOOP_TIME_SMOOTHING_FACTOR = 0.1;
+    public final double FORWARD_SMOOTHING_FACTOR = 0.3;
+    public final double ROTATE_SMOOTHING_FACTOR = 0.25;
+    ExponentialSmoother forwardSmoother = new ExponentialSmoother(FORWARD_SMOOTHING_FACTOR);
+    ExponentialSmoother rotateSmoother = new ExponentialSmoother(ROTATE_SMOOTHING_FACTOR);
 
 
     //LIVE DATA
@@ -136,27 +146,171 @@ public class CenterStage_6832_fromScratch extends OpMode {
     }
     //end init()
 
-    @Override
-    public void start() {
-        startTime = System.currentTimeMillis();
-        lastLoopClockTime = System.nanoTime();
-    }
-    //end start()
-
     public void init_loop() {
         dc.init_loop();
     }
     //end init_loop()
 
     @Override
-    public void loop() {
-        if (active) {
+    public void start() {
+        startTime = System.currentTimeMillis();
+        lastLoopClockTime = System.nanoTime();
 
-        } else {
+        //TODO - implement a resetGame function
+//        resetGame();
+
+        robot.driveTrain.articulate(TauDriveTrain.Articulation.unlock);
+
+
+        if(gameState.equals(CenterStage_6832.GameState.TELE_OP)){
+
+        }
+
+        if(gameState.equals(CenterStage_6832.GameState.TEST) ||  gameState.equals(CenterStage_6832.GameState.DEMO)){
+
+        }
+
+        dc.rumble(.5);
+
+        robot.start();
+    }
+    //end start()
+
+
+
+    @Override
+    public void loop() {
+        dc.updateStickyGamepads();
+        dc.handleStateSwitch();
+
+        if (active) {
+            long currentTime = System.currentTimeMillis();
+            if (!endGameHandled && gameState == CenterStage_6832_fromScratch.GameState.TELE_OP && (currentTime - startTime) * 1e-3 >= 80) {
+                //TODO - handle endgame actions
+//                robot.articulate(Robot.Articulation.START_END_GAME);
+                endGameHandled = true;
+
+            }
+
+            switch(gameState) {
+                case AUTONOMOUS:
+                    //TODO - remove targetAltCone placeholder
+                    if(robot.AutonRun(auton.visionProvider.getMostFrequentPosition().getIndex(),startingPosition, false)) {
+                        gameState = CenterStage_6832_fromScratch.GameState.TELE_OP;
+                        active = false;
+                    }
+                    break;
+
+                case TELE_OP:
+                    //implement teleop
+                    break;
+
+                case TEST:
+                    dc.joystickDrive();
+                    break;
+
+                case DEMO:
+                    dc.joystickDriveDemoMode();
+                    break;
+
+                case MANUAL_DIAGNOSTIC:
+
+                    break;
+
+                case SQUARE:
+                    auton.square.execute();
+                    break;
+
+                case TURN:
+                    auton.turn.execute();
+            }
+        }
+        else {
             dc.handlePregameControls();
         }
+        update();
     }
     //end loop()
+
+    @Override
+    public void stop(){
+        robot.stop();
+    }
+
+    private void update() {
+        // handling dashboard changes
+        forwardSmoother.setSmoothingFactor(FORWARD_SMOOTHING_FACTOR);
+        rotateSmoother.setSmoothingFactor(ROTATE_SMOOTHING_FACTOR);
+
+        telemetry.addLine("State : " + gameState.getName());
+
+        //TODO - implement field target & current position to telemetry
+
+//        telemetry.addLine("target X" + target.getX());
+//        telemetry.addLine("target Y" + target.getY());
+//
+//        telemetry.addLine("current_coordinate X" + current.getX());
+//        telemetry.addLine("current_coordinate Y" + current.getY());
+//
+//        telemetry.addLine("current_Pose X" + current2.getX());
+//        telemetry.addLine("current_Pose Y" + current2.getY());
+
+        TelemetryPacket packet = new TelemetryPacket();
+
+        long updateStartTime = System.nanoTime();
+        robot.update(packet.fieldOverlay());
+        long updateTime = (System.nanoTime() - updateStartTime);
+        double averageUpdateTime = averageUpdateTimeSmoother.update(updateTime);
+
+        Map<String, Object> opModeTelemetryMap = new LinkedHashMap<>();
+        // handling op mode telemetry
+        opModeTelemetryMap.put("Active", active);
+        if(initializing) {
+            opModeTelemetryMap.put("Starting Position", startingPosition);
+        }
+        opModeTelemetryMap.put("Battery Voltage", averageVoltage);
+        opModeTelemetryMap.put("Average Loop Time", Misc.formatInvariant("%d ms (%d hz)", (int) (averageLoopTime * 1e-6), (int) (1 / (averageLoopTime * 1e-9))));
+        opModeTelemetryMap.put("Last Loop Time", Misc.formatInvariant("%d ms (%d hz)", (int) (averageLoopTime * 1e-6), (int) (1 / (averageLoopTime * 1e-9))));
+        opModeTelemetryMap.put("Average Robot Update Time", Misc.formatInvariant("%d ms (%d hz)", (int) (averageUpdateTime * 1e-6), (int) (1 / (averageUpdateTime * 1e-9))));
+        opModeTelemetryMap.put("Last Robot Update Time", Misc.formatInvariant("%d ms (%d hz)", (int) (updateTime * 1e-6), (int) (1 / (updateTime * 1e-9))));
+
+        //IF NECESSARY, ADD TELEMETRY FOR EACH GAME STATE
+        switch(gameState) {
+            case TELE_OP:
+                //opModeTelemetryMap.put("Double Duck", robot.isDoubleDuckEnabled());
+                break;
+            case AUTONOMOUS:
+                handleTelemetry(auton.getTelemetry(debugTelemetryEnabled),  auton.getTelemetryName(), packet);
+                break;
+        }
+
+        //handle this class' telemetry
+        handleTelemetry(opModeTelemetryMap,  Misc.formatInvariant("(%d): %s", gameState.getName()), packet);
+
+        //handle robot telemetry
+        handleTelemetry(robot.getTelemetry(debugTelemetryEnabled), robot.getTelemetryName(), packet);
+
+        for(TelemetryProvider telemetryProvider: robot.subsystems)
+            handleTelemetry(telemetryProvider.getTelemetry(debugTelemetryEnabled), telemetryProvider.getTelemetryName(), packet);
+
+        Map<String, Object> visionTelemetryMap = auton.visionProvider.getTelemetry(debugTelemetryEnabled);
+        visionTelemetryMap.put("Backend",
+                Misc.formatInvariant("%s (%s)",
+                        //TODO - CURRENTLY OPENCV, CHANGE IF NECESSARY
+                        VisionProviders.VISION_PROVIDERS[3].getSimpleName(),
+                        visionProviderFinalized ?
+                                "finalized" :
+                                System.currentTimeMillis() / 500 % 2 == 0 ? "**NOT FINALIZED**" : "  NOT FINALIZED  "
+                )
+        );
+
+        handleTelemetry(visionTelemetryMap, auton.visionProvider.getTelemetryName(), packet);
+        dashboard.sendTelemetryPacket(packet);
+        telemetry.update();
+
+        updateLiveStates();
+
+    }
 
     //HELPER METHODS
     private void updateLiveStates() {

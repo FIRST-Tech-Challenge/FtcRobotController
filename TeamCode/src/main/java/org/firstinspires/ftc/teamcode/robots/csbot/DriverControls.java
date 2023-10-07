@@ -335,6 +335,11 @@ public class DriverControls {
             auton.visionProvider.update();
     }
 
+    public void rumble(double rumbleDuration) {
+        gamepad1.rumble((int) (rumbleDuration * 1000));
+        gamepad2.rumble((int) (rumbleDuration * 1000));
+    }
+
     public void UnderarmControls() {
 
         if (stickyGamepad2.a) {
