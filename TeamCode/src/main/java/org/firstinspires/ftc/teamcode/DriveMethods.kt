@@ -27,6 +27,9 @@ import org.firstinspires.ftc.vision.tfod.TfodProcessor
 import java.io.BufferedReader
 import java.io.FileReader
 import java.util.concurrent.TimeUnit
+import kotlin.math.atan
+import kotlin.math.pow
+import kotlin.math.sqrt
 
 
 open class DriveMethods: LinearOpMode() {
@@ -276,9 +279,9 @@ open class DriveMethods: LinearOpMode() {
 
     fun linearSlideCalc() {
         x =  Variables.slideToBoard - Variables.clawToBoard + .5* Variables.t;
-        y = Math.sqrt(3.0)/2 * Variables.t;
-        slideLength = Math.sqrt(Math.pow(x, 2.0) + Math.pow(y, 2.0));
-        slideAngle = Math.atan(y/x);
+        y = sqrt(3.0) /2 * Variables.t;
+        slideLength = sqrt(x.pow(2.0) + y.pow(2.0));
+        slideAngle = atan(y/x);
         clawAngle = 60 - slideAngle;
     }
 }
