@@ -33,6 +33,7 @@ public class CVMaster {
      * logs that opencv webcam is initialized and recording spike pipeline to general surface log
      */
     public CVMaster() {
+        LOGGER.log(RFLogger.Severity.INFO, "CVMaster() : intializing OpenCV");
         webcam = OpenCvCameraFactory.getInstance().createWebcam(op.hardwareMap.get(WebcamName.class, "Webcam 1"));
         observeSpike();
     }
