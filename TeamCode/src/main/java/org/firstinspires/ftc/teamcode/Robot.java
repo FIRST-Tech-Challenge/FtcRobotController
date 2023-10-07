@@ -31,6 +31,7 @@ public class Robot extends Thread {
     private DcMotorEx Motor_FR;
     private DcMotorEx Motor_BR;
     private DcMotorEx Motor_BL;
+    private Servo planePusher;
     private BNO055IMU imu;
     private Orientation     angles;
     private PIDController   pidRotate, pidDrive;
@@ -84,6 +85,8 @@ public class Robot extends Thread {
         Motor_FR = hardwareMap.get(DcMotorEx.class, "motor_fr");
         Motor_BR = hardwareMap.get(DcMotorEx.class, "motor_br");
         Motor_BL = hardwareMap.get(DcMotorEx.class, "motor_bl");
+
+      //  planePusher = hardwareMap.get(Servo.class, "planePusher");
 
        /*Motor_FR.setVelocityPIDFCoefficients(0.95, 0.095, 0, 9.5);
         Motor_FR.setPositionPIDFCoefficients(5.0);
@@ -509,6 +512,202 @@ public class Robot extends Thread {
         }
     }
 
+    /*****************************************************************************/
+    /* Section:      Move For specific time functions                            */
+    /*                                                                           */
+    /* Purpose:    Used if constant speed is needed                              */
+    /*                                                                           */
+    /* Returns:   Nothing                                                        */
+    /*                                                                           */
+    /* Params:    IN     power         - Speed  (-1 to 1)                        */
+    /*            IN     time          - Time in MilliSeconds                    */
+    /*                                                                           */
+    /*****************************************************************************/
+    // Move forward for specific time in milliseconds, with power (0 to 1)
+    public void moveBackwardForTime(double power, int time, boolean speed) {
+        Log.i(TAG, "Enter Function: moveBackwardForTime Power : " + power + " and time : " + time);
+
+        Motor_FL.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        Motor_FR.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        Motor_BR.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        Motor_BL.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+
+
+        //Set power of all motors
+        Motor_FL.setPower((-1) * power);
+        Motor_FR.setPower(power);
+        Motor_BR.setPower(power);
+        Motor_BL.setPower((-1) * power);
+
+        try {
+            sleep(time);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        //Reached the distance, so stop the motors
+        Motor_FL.setPower(0);
+        Motor_FR.setPower(0);
+        Motor_BR.setPower(0);
+        Motor_BL.setPower(0);
+
+        Log.i(TAG, "Exit Function: moveBackwardForTime");
+    }
+
+    public void moveForwardForTime(double power, int time, boolean speed) {
+        Log.i(TAG, "Enter Function: moveForwardForTime Power : " + power + " and time : " + time);
+
+        Motor_FL.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        Motor_FR.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        Motor_BR.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        Motor_BL.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+
+        //Set power of all motors
+        Motor_FL.setPower(power);
+        Motor_FR.setPower((-1) * power);
+        Motor_BR.setPower((-1) * power);
+        Motor_BL.setPower(power);
+
+        try {
+            sleep(time);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        //Reached the distance, so stop the motors
+        Motor_FL.setPower(0);
+        Motor_FR.setPower(0);
+        Motor_BR.setPower(0);
+        Motor_BL.setPower(0);
+
+        Log.i(TAG, "Exit Function: moveForwardForTime");
+    }
+
+    public void moveLeftForTime(double power, int time, boolean speed) {
+        Log.i(TAG, "Enter Function: moveLeftForTime Power : " + power + " and time : " + time);
+
+        Motor_FL.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        Motor_FR.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        Motor_BR.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        Motor_BL.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        //Set power of all motors
+        Motor_FL.setPower(power);
+        Motor_FR.setPower(power);
+        Motor_BR.setPower((-1) * power);
+        Motor_BL.setPower((-1) * power);
+
+
+        try {
+            sleep(time);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        Motor_FL.setPower(0);
+        Motor_FR.setPower(0);
+        Motor_BR.setPower(0);
+        Motor_BL.setPower(0);
+
+        Log.i(TAG, "Exit Function: moveLeftForTime");
+    }
+
+    public void moveRightForTime(double power, int time, boolean speed) {
+        Log.i(TAG, "Enter Function: moveRightForTime Power : " + power + " and time : " + time);
+
+        Motor_FL.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        Motor_FR.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        Motor_BR.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        Motor_BL.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+
+        //Set power of all motors
+        Motor_FL.setPower((-1) * power);
+        Motor_FR.setPower((-1) * power);
+        Motor_BR.setPower(power);
+        Motor_BL.setPower(power);
+
+
+        try {
+            sleep(time);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        //Reached the distance, so stop the motors
+        Motor_FL.setPower(0);
+        Motor_FR.setPower(0);
+        Motor_BR.setPower(0);
+        Motor_BL.setPower(0);
+
+        Log.i(TAG, "Exit Function: moveRightForTime");
+    }
+
+    public void turnForTime(double power, int time, boolean speed, int orientation) {
+        Log.i(TAG, "Enter Function: turnForTime Power : " + power + " and time : " + time + "Speed : " + speed + "orientation : " + orientation);
+
+        Motor_FL.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        Motor_FR.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        Motor_BR.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        Motor_BL.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        //Set power of all motors
+        Motor_FL.setPower(orientation * power);
+        Motor_FR.setPower(orientation * power);
+        Motor_BR.setPower(orientation * power);
+        Motor_BL.setPower(orientation * power);
+
+       /* try {
+            sleep(time);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        //Reached the distance, so stop the motors
+        Motor_FL.setPower(0);
+        Motor_FR.setPower(0);
+        Motor_BR.setPower(0);
+        Motor_BL.setPower(0);*/
+    }
+
+    public void turnOff(){
+        Motor_FL.setPower(0);
+        Motor_FR.setPower(0);
+        Motor_BR.setPower(0);
+        Motor_BL.setPower(0);
+    }
+
+
+    public void moveF(double power, long distance) {
+
+        Motor_FL.setPower(power);
+        Motor_FR.setPower((-1) * power);
+        Motor_BR.setPower((-1) * power);
+        Motor_BL.setPower(power);
+
+    }
+
+    public void moveB(double power, long distance) {
+        Motor_FL.setPower((-1) * power); //FL
+        Motor_FR.setPower(power); //FR
+        Motor_BR.setPower(power); //BR
+        Motor_BL.setPower((-1) * power); //BL
+
+    }
+
+    public void moveL(double power, long distance) {
+        Motor_FL.setPower(power );
+        Motor_FR.setPower(power);
+        Motor_BR.setPower((-1) * power);
+        Motor_BL.setPower((-1) *  power);
+    }
+
+    public void moveR(double power, long distance) {
+        Motor_FL.setPower((-1) * power);
+        Motor_FR.setPower((-1) * power);
+        Motor_BR.setPower(power);
+        Motor_BL.setPower(power);
+
+    }
+
+
     private void resetAngle()
     {
         lastAngles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
@@ -644,6 +843,11 @@ public class Robot extends Thread {
         resetAngle();
         Log.i(TAG, "Exit Function: rotate");
     }
+
+    /*
+    public void pushPlane (){
+        planePusher.setPosition(0.19);
+    }*/
 
 }
 
