@@ -53,7 +53,7 @@ public class AprilTagRRTest extends LinearOpMode {
         resetRuntime();
         BasicRobot.time = 0;
         while(!isStopRequested()&&opModeIsActive()) {
-            for(int i=0;i<8;i++){
+            for(int i=0;i<20;i++){
                 followTrajAsync(trajSeq2);
             }
             loops++;
