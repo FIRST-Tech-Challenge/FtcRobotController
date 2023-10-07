@@ -47,13 +47,14 @@ public class Robot {
             rearLeft  = hardwareMap.get(DcMotor.class, Config.DriveMotors.REAR_LEFT);
             rearRight = hardwareMap.get(DcMotor.class, Config.DriveMotors.REAR_RIGHT);
             //pass dcmotor reference and set to config
-            initMotor(frontLeft, Config.DriveMotors.FRONT_LEFT, hardwareMap);
-            initMotor(frontRight,Config.DriveMotors.FRONT_RIGHT,hardwareMap);
-            initMotor(rearLeft,  Config.DriveMotors.REAR_LEFT,  hardwareMap);
-            initMotor(rearRight, Config.DriveMotors.REAR_RIGHT, hardwareMap);
+            initMotor(frontLeft, Config.DriveMotors.FRONT_LEFT);
+            initMotor(frontRight,Config.DriveMotors.FRONT_RIGHT);
+            initMotor(rearLeft,  Config.DriveMotors.REAR_LEFT);
+            initMotor(rearRight, Config.DriveMotors.REAR_RIGHT);
         }
         //init motor takes motor reference and then does some in-place changes to it
-        private void initMotor(DcMotor motor, Config.DriveMotors config, HardwareMap hardwareMap) {
+        //not actually sure this works, but it should so i hope it works xdddd
+        private void initMotor(DcMotor motor, Config.DriveMotors config) {
             //I have no clue why you need Objects.requireNonNull(Object), left in just in case though
             Objects.requireNonNull(motor).setDirection(config.getDirection());
             Objects.requireNonNull(motor).setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
