@@ -7,7 +7,7 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 
-@TeleOp(name="Empty Opmode")
+@TeleOp(name="CedrekElev")
 public class CedrekElevator extends LinearOpMode{
     DcMotor m_elevator;
     // Definitions

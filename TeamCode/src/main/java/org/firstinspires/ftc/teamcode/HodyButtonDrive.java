@@ -4,7 +4,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
-@TeleOp(name="Hody Button", group="Basic")
+@TeleOp(name="Hody Button Drive", group="Basic")
 public class HodyButtonDrive extends LinearOpMode {
     DcMotor m_frontLeft;
     DcMotor m_frontRight;
@@ -44,19 +44,19 @@ public class HodyButtonDrive extends LinearOpMode {
 
             if (gamepad1.a) {
                 m_frontLeft.setPower(-1);
-                m_frontRight.setPower(1);
+                m_frontRight.setPower(-1);
                 m_rearLeft.setPower(-1);
-                m_rearRight.setPower(1);
+                m_rearRight.setPower(-1);
             } else if (gamepad1.b) {
-                m_frontLeft.setPower(-1);
-                m_frontRight.setPower(1);
-                m_rearLeft.setPower(-1);
-                m_rearRight.setPower(1);
+                m_frontLeft.setPower(1);
+                m_frontRight.setPower(-1);
+                m_rearLeft.setPower(1);
+                m_rearRight.setPower(-1);
 
             } else if (gamepad1.y) {
-                m_frontLeft.setPower(-1);
+                m_frontLeft.setPower(1);
                 m_frontRight.setPower(1);
-                m_rearLeft.setPower(-1);
+                m_rearLeft.setPower(1);
                 m_rearRight.setPower(1);
             } else if (gamepad1.x) {
                 m_frontLeft.setPower(-1);
