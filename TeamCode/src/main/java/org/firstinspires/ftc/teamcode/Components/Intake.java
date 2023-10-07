@@ -32,7 +32,7 @@ public class Intake extends RFMotor {
         super("intakeMotor",true);
         LOGGER.setLogLevel(RFLogger.Severity.ALL);
         LOGGER.log("Intake() : Initializing Intake Motor and intake sensors!");
-        breakBeam = new RFBreakBeam();
+        breakBeam = new RFBreakBeam("breakBeam");
         limitSwitch = new RFLimitSwitch("intakeSwitch");
     }
 

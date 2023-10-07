@@ -22,8 +22,6 @@ public class RFBreakBeam {
      * Does not update a state machine.
      */
     public boolean check() {
-        //placeholder
-        return true;
+        return (breakBeam.isPressed());
     }
-
 }
