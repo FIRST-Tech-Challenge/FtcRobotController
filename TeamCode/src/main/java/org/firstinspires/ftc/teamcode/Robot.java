@@ -38,7 +38,19 @@ public class Robot {
     }
     
     //making a class to store driveMotors instead of a hashmap
-    class DriveMotors {
+    abstract class Motors {
+        //init motor takes motor reference and then does some in-place changes to it
+        //not actually sure this works, but it should so i hope it works xdddd
+        private void initMotor(DcMotor motor, Config.DriveMotors config) {
+            //I have no clue why you need Objects.requireNonNull(Object), left in just in case though
+            Objects.requireNonNull(motor).setDirection(config.getDirection());
+            Objects.requireNonNull(motor).setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            Objects.requireNonNull(motor).setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            Objects.requireNonNull(motor).setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+        }
+    }
+
+    class DriveMotors extends Motors {
         public DcMotor frontLeft, frontRight, rearLeft, rearRight;
         //take hardware map and then init all motors
         public DriveMotors(HardwareMap hardwareMap) {
@@ -52,16 +64,16 @@ public class Robot {
             initMotor(rearLeft,  Config.DriveMotors.REAR_LEFT);
             initMotor(rearRight, Config.DriveMotors.REAR_RIGHT);
         }
-        //init motor takes motor reference and then does some in-place changes to it
-        //not actually sure this works, but it should so i hope it works xdddd
-        private void initMotor(DcMotor motor, Config.DriveMotors config) {
-            //I have no clue why you need Objects.requireNonNull(Object), left in just in case though
-            Objects.requireNonNull(motor).setDirection(config.getDirection());
-            Objects.requireNonNull(motor).setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-            Objects.requireNonNull(motor).setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-            Objects.requireNonNull(motor).setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+    }
+/*
+    class SlideMotors extends Motors {
+        public DcMotors slide;
+        public DriveMotors(HardwareMap hardwareMap) {
+            slide = hardwareMap.get(DcMotor.class, Config.SlideMotors.whatever);
+            initMotor(slide, Config.SlideMotors.whatever);
         }
     }
+*/
     
     //enum spam
 
