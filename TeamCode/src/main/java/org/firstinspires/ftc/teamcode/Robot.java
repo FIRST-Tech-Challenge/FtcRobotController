@@ -15,7 +15,7 @@ import java.util.Objects;
 public class Robot {
     //static class Config instead of RobotConfig, access via Robot.Config
     static class Config {
-        //using enums instead of hashmap spam
+        //enums to store const info on robot config
         public enum DriveMotors {
             FRONT_LEFT  ("front_left", DcMotor.Direction.REVERSE),
             FRONT_RIGHT ("front_right",DcMotor.Direction.REVERSE),
@@ -32,6 +32,9 @@ public class Robot {
             public String            getName()      { return name; }
             public DcMotor.Direction getDirection() { return direction; }
         }
+        /* other enums
+         *
+        */
     }
     
     //making a class to store driveMotors instead of a hashmap
@@ -72,7 +75,7 @@ public class Robot {
     public Robot(HardwareMap hardwareMap, Telemetry telemetry, ElapsedTime elapsedTime) {
         this.telemetry = telemtry;
         this.elapsedTime = elapsedTime;
-        positionManger = new PositionManage(hardwareMap, telemtry);
+        positionManger = new PositionManager(hardwareMap, telemtry);
         driveMotors = new DriveMotors(hardwareMap);
 
         /*whatever goes here
