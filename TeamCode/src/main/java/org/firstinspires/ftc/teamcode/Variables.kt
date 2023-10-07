@@ -19,6 +19,8 @@ object Variables {
     var motorBL: DcMotor? = null
     var motorFR: DcMotor? = null
     var motorBR: DcMotor? = null
+    var motorSlideLeft: DcMotor? = null
+    var motorSlideRight: DcMotor? = null
 
     var blinkinLedDriver: RevBlinkinLedDriver? = null
     var pattern: BlinkinPattern? = null

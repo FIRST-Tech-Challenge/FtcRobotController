@@ -4,6 +4,8 @@ import com.google.blocks.ftcrobotcontroller.util.CurrentGame
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode
 import com.qualcomm.robotcore.hardware.DcMotor
 import com.qualcomm.robotcore.hardware.DcMotorSimple
+import com.qualcomm.robotcore.hardware.HardwareDevice
+import com.qualcomm.robotcore.hardware.HardwareMap
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName
 import org.firstinspires.ftc.robotcore.external.hardware.camera.controls.ExposureControl
 import org.firstinspires.ftc.robotcore.external.hardware.camera.controls.GainControl
@@ -15,6 +17,8 @@ import org.firstinspires.ftc.teamcode.Variables.motorBL
 import org.firstinspires.ftc.teamcode.Variables.motorBR
 import org.firstinspires.ftc.teamcode.Variables.motorFL
 import org.firstinspires.ftc.teamcode.Variables.motorFR
+import org.firstinspires.ftc.teamcode.Variables.motorSlideLeft
+import org.firstinspires.ftc.teamcode.Variables.motorSlideRight
 import org.firstinspires.ftc.teamcode.Variables.slideAngle
 import org.firstinspires.ftc.teamcode.Variables.slideLength
 import org.firstinspires.ftc.teamcode.Variables.targetFound
@@ -223,6 +227,11 @@ open class DriveMethods: LinearOpMode() {
         motorBL = hardwareMap.get<DcMotor>(DcMotor::class.java, "motorBL")
         motorFR = hardwareMap.get<DcMotor>(DcMotor::class.java, "motorFR")
         motorBR = hardwareMap.get<DcMotor>(DcMotor::class.java, "motorBR")
+    }
+
+    open fun initSlideMotors() {
+        motorSlideLeft = hardwareMap.get<DcMotor>(DcMotor::class.java, "motorSlideLeft")
+        motorSlideRight = hardwareMap.get<DcMotor>(DcMotor::class.java, "motorSlideRight")
     }
     fun setManualExposure(exposureMS: Int, gain: Int) {
         // Wait for the camera to be open, then use the controls
