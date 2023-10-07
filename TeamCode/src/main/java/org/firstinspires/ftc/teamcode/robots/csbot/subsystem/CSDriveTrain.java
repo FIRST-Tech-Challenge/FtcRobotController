@@ -49,12 +49,14 @@ import org.firstinspires.ftc.teamcode.robots.csbot.util.LynxModuleUtil;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 
 /*
  * Simple mecanum drive hardware implementation for REV hardware.
  */
 
- class CSDriveTrain extends MecanumDrive {
+ class CSDriveTrain extends MecanumDrive implements Subsystem {
+     public Robot_fromScratch robot;
     public static PIDCoefficients TRANSLATIONAL_PID = new PIDCoefficients(0, 0, 0);
     public static PIDCoefficients HEADING_PID = new PIDCoefficients(0, 0, 0);
 
@@ -83,62 +85,64 @@ import java.util.List;
     private final List<Integer> lastEncPositions = new ArrayList<>();
     private final List<Integer> lastEncVels = new ArrayList<>();
 
-    public CSDriveTrain(HardwareMap hardwareMap) {
+    public CSDriveTrain(HardwareMap hardwareMap, Robot_fromScratch robot, boolean simulated) {
         super(kV, kA, kStatic, TRACK_WIDTH, TRACK_WIDTH, LATERAL_MULTIPLIER);
+        this.robot = robot;
+        //TODO - implement simulations
+            follower = new HolonomicPIDVAFollower(TRANSLATIONAL_PID, TRANSLATIONAL_PID, HEADING_PID,
+                    new Pose2d(0.5, 0.5, Math.toRadians(5.0)), 0.5);
 
-        follower = new HolonomicPIDVAFollower(TRANSLATIONAL_PID, TRANSLATIONAL_PID, HEADING_PID,
-                new Pose2d(0.5, 0.5, Math.toRadians(5.0)), 0.5);
+            LynxModuleUtil.ensureMinimumFirmwareVersion(hardwareMap);
 
-        LynxModuleUtil.ensureMinimumFirmwareVersion(hardwareMap);
+            batteryVoltageSensor = hardwareMap.voltageSensor.iterator().next();
 
-        batteryVoltageSensor = hardwareMap.voltageSensor.iterator().next();
+            for (LynxModule module : hardwareMap.getAll(LynxModule.class)) {
+                module.setBulkCachingMode(LynxModule.BulkCachingMode.AUTO);
+            }
 
-        for (LynxModule module : hardwareMap.getAll(LynxModule.class)) {
-            module.setBulkCachingMode(LynxModule.BulkCachingMode.AUTO);
+            // TODO: adjust the names of the following hardware devices to match your configuration
+            imu = hardwareMap.get(IMU.class, "imu");
+            IMU.Parameters parameters = new IMU.Parameters(new RevHubOrientationOnRobot(
+                    DriveConstants.LOGO_FACING_DIR, DriveConstants.USB_FACING_DIR));
+            imu.initialize(parameters);
+
+            leftFront = hardwareMap.get(DcMotorEx.class, "leftFront");
+            leftRear = hardwareMap.get(DcMotorEx.class, "leftRear");
+            rightRear = hardwareMap.get(DcMotorEx.class, "rightRear");
+            rightFront = hardwareMap.get(DcMotorEx.class, "rightFront");
+
+            motors = Arrays.asList(leftFront, leftRear, rightRear, rightFront);
+
+            for (DcMotorEx motor : motors) {
+                MotorConfigurationType motorConfigurationType = motor.getMotorType().clone();
+                ((MotorConfigurationType) motorConfigurationType).setAchieveableMaxRPMFraction(1.0);
+                motor.setMotorType(motorConfigurationType);
+            }
+
+            if (RUN_USING_ENCODER) {
+                setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            }
+
+            setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
+            if (RUN_USING_ENCODER && MOTOR_VELO_PID != null) {
+                setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER, MOTOR_VELO_PID);
+            }
+
+            // TODO: reverse any motors using DcMotor.setDirection()
+
+            List<Integer> lastTrackingEncPositions = new ArrayList<>();
+            List<Integer> lastTrackingEncVels = new ArrayList<>();
+
+            // TODO: if desired, use setLocalizer() to change the localization method
+            // setLocalizer(new StandardTrackingWheelLocalizer(hardwareMap, lastTrackingEncPositions, lastTrackingEncVels));
+
+            trajectorySequenceRunner = new TrajectorySequenceRunner(
+                    follower, HEADING_PID, batteryVoltageSensor,
+                    lastEncPositions, lastEncVels, lastTrackingEncPositions, lastTrackingEncVels
+            );
         }
-
-        // TODO: adjust the names of the following hardware devices to match your configuration
-        imu = hardwareMap.get(IMU.class, "imu");
-        IMU.Parameters parameters = new IMU.Parameters(new RevHubOrientationOnRobot(
-                DriveConstants.LOGO_FACING_DIR, DriveConstants.USB_FACING_DIR));
-        imu.initialize(parameters);
-
-        leftFront = hardwareMap.get(DcMotorEx.class, "leftFront");
-        leftRear = hardwareMap.get(DcMotorEx.class, "leftRear");
-        rightRear = hardwareMap.get(DcMotorEx.class, "rightRear");
-        rightFront = hardwareMap.get(DcMotorEx.class, "rightFront");
-
-        motors = Arrays.asList(leftFront, leftRear, rightRear, rightFront);
-
-        for (DcMotorEx motor : motors) {
-            MotorConfigurationType motorConfigurationType = motor.getMotorType().clone();
-            ((MotorConfigurationType) motorConfigurationType).setAchieveableMaxRPMFraction(1.0);
-            motor.setMotorType(motorConfigurationType);
-        }
-
-        if (RUN_USING_ENCODER) {
-            setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        }
-
-        setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-
-        if (RUN_USING_ENCODER && MOTOR_VELO_PID != null) {
-            setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER, MOTOR_VELO_PID);
-        }
-
-        // TODO: reverse any motors using DcMotor.setDirection()
-
-        List<Integer> lastTrackingEncPositions = new ArrayList<>();
-        List<Integer> lastTrackingEncVels = new ArrayList<>();
-
-        // TODO: if desired, use setLocalizer() to change the localization method
-        // setLocalizer(new StandardTrackingWheelLocalizer(hardwareMap, lastTrackingEncPositions, lastTrackingEncVels));
-
-        trajectorySequenceRunner = new TrajectorySequenceRunner(
-                follower, HEADING_PID, batteryVoltageSensor,
-                lastEncPositions, lastEncVels, lastTrackingEncPositions, lastTrackingEncVels
-        );
-    }
+    //end constructor
 
     public TrajectoryBuilder trajectoryBuilder(Pose2d startPose) {
         return new TrajectoryBuilder(startPose, VEL_CONSTRAINT, ACCEL_CONSTRAINT);
@@ -312,4 +316,26 @@ import java.util.List;
     public static TrajectoryAccelerationConstraint getAccelerationConstraint(double maxAccel) {
         return new ProfileAccelerationConstraint(maxAccel);
     }
-}
+
+     @Override
+     public void update(Canvas fieldOverlay) {
+
+     }
+
+     @Override
+     public void stop() {
+        for(DcMotor k : motors) {
+            k.setPower(0);
+        }
+     }
+
+     @Override
+     public Map<String, Object> getTelemetry(boolean debug) {
+         return null;
+     }
+
+     @Override
+     public String getTelemetryName() {
+         return null;
+     }
+ }
