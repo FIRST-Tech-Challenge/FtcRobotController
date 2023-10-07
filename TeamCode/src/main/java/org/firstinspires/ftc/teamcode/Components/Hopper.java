@@ -18,8 +18,8 @@ public class Hopper extends RFServo {
      */
     public Hopper(){
         super("hopperServo", 1.0);
-        leds = new RFLEDStrip();
-        colorSensor = new RFColorSensor("colorSensor");
+//        leds = new RFLEDStrip();
+//        colorSensor = new RFColorSensor("colorSensor");
     }
 
     /**
