@@ -59,8 +59,53 @@ public class Robot {
 
     }
 
-    public double getAprilTagPose() {
-        boolean done = false;
+
+    public double getAprilTagYPos() {
+        List<AprilTagDetection> currentDetections = aprilTag.getDetections();
+
+        double yValue = 0;
+
+        for (AprilTagDetection detection : currentDetections) {
+            if (detection.metadata != null) {
+                yValue = detection.ftcPose.y;
+            }
+
+        }
+
+        return yValue;
+    }
+
+    public double getAprilTagXPos() {
+        List<AprilTagDetection> currentDetections = aprilTag.getDetections();
+
+        double xValue = 0;
+
+        for (AprilTagDetection detection : currentDetections) {
+            if (detection.metadata != null) {
+                xValue = detection.ftcPose.x;
+            }
+
+        }
+
+        return xValue;
+    }
+
+    public double getAprilTagYaw() {
+        List<AprilTagDetection> currentDetections = aprilTag.getDetections();
+
+        double yawAprilTag = 0;
+
+        for (AprilTagDetection detection : currentDetections) {
+            if (detection.metadata != null) {
+                yawAprilTag = detection.ftcPose.yaw;
+            }
+
+        }
+
+        return yawAprilTag;
+    }
+
+    public double getAprilTagRange() {
 
         List<AprilTagDetection> currentDetections = aprilTag.getDetections();
 
@@ -74,6 +119,28 @@ public class Robot {
         return pose;
     }
 
+    public void moveRelativeToAprilTag(double mmFromAprilTag) {
+        double inchesFromAprilTag = mmFromAprilTag/25.4;
+
+        double[] powerMoveCloser = calculateDrivetrainPower((inchesFromAprilTag - getAprilTagRange()));
+        double[] powerMoveAway = calculateDrivetrainPower(-(inchesFromAprilTag - getAprilTagRange()));
+
+        double[] stopPower = {0, 0, 0, 0};
+
+        if (getAprilTagRange() != 0 && getAprilTagRange() < inchesFromAprilTag) {
+        //TODO fix inches thing right here below
+            calculateDrivetrainPower(-(inchesFromAprilTag - getAprilTagRange()));
+            setMotorPower(powerMoveAway);
+
+        } else if (getAprilTagRange() != 0 && getAprilTagRange() > inchesFromAprilTag) {
+
+            calculateDrivetrainPower((inchesFromAprilTag - getAprilTagRange()));
+            setMotorPower(powerMoveCloser);
+        } else {
+            setMotorPower(stopPower);
+        }
+
+    }
     public void setUpImu() {
 
         this.imu = hardwareMap.get(IMU.class, "imu");

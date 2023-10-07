@@ -43,12 +43,13 @@ public class AutoRed extends LinearOpMode {
         boolean downWithTurn = false;
         boolean doneWithMecanum2 = false;
 
+        double targetDistanceFromAprilTag = 10;
 
-        double[] power = robot.calculateDrivetrainPower(-25.4*(10 - robot.getAprilTagPose()));
+        double[] powerMoveCloser = robot.calculateDrivetrainPower(25.4*(targetDistanceFromAprilTag - robot.getAprilTagRange()));
+        double[] powerMoveAway = robot.calculateDrivetrainPower(-25.4*(targetDistanceFromAprilTag - robot.getAprilTagRange()));
+
+
         double[] stopPower = {0, 0, 0, 0};
-
-        while (opModeIsActive()) {
-
             /*
             //Forward 1
             if (!doneWithForward && !robot.checkReachedDistance(forwardDistance)) {
@@ -132,16 +133,34 @@ public class AutoRed extends LinearOpMode {
 */
 
 
-            if (robot.getAprilTagPose() != 0 && robot.getAprilTagPose() < 10 || robot.getAprilTagPose() > 10) {
-               telemetry.addLine("OMYGOD THATS CRAZY" + -(10 - robot.getAprilTagPose()));
+        while (opModeIsActive()) {
 
-                robot.calculateDrivetrainPower(-25.4*(10 - robot.getAprilTagPose()));
-                robot.setMotorPower(power);
-            } else {
+            if (
+                !(robot.getAprilTagRange() > targetDistanceFromAprilTag - 0.5 &&
+                robot.getAprilTagRange() < targetDistanceFromAprilTag + 0.5) &&
+                robot.getAprilTagRange() < targetDistanceFromAprilTag
+            ){
+
+                powerMoveAway = robot.calculateDrivetrainPower(25.4*(targetDistanceFromAprilTag - robot.getAprilTagRange()));
+                robot.setMotorPower(powerMoveAway);
+
+            } else if (
+                       !(robot.getAprilTagRange() > targetDistanceFromAprilTag - 0.5 &&
+                       robot.getAprilTagRange() < targetDistanceFromAprilTag + 0.5) &&
+                       robot.getAprilTagRange() > targetDistanceFromAprilTag
+            ){
+
+                powerMoveCloser = robot.calculateDrivetrainPower(-25.4*(targetDistanceFromAprilTag - robot.getAprilTagRange()));
+                robot.setMotorPower(powerMoveCloser);
+            } else if (
+                       robot.getAprilTagRange() > targetDistanceFromAprilTag - 0.5 &&
+                       robot.getAprilTagRange() < targetDistanceFromAprilTag + 0.5
+            ){
                 robot.setMotorPower(stopPower);
             }
 
 
+            //robot.moveRelativeToAprilTag(10);
 
             telemetry.update();
         }
