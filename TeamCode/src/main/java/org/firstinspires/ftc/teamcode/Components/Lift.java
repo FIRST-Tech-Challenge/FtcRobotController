@@ -12,6 +12,7 @@ import org.firstinspires.ftc.teamcode.Components.RFModules.System.RFLogger;
 public class Lift extends RFMotor {
     private double lastPower = 0.0;
     private double target = 0.0;
+    private double MIN_VELOCITY = 20;
     /**
      * Constructor
      */
@@ -36,10 +37,12 @@ public class Lift extends RFMotor {
             this.state = p_state;
         }
         void setStateTrue() {
-            for(int i = 0; i < LiftPositionStates.values().length; i++){
-                LiftPositionStates.values()[i].state=false;
+            for (var i : LiftPositionStates.values()) {
+                i.state = false;
             }
             this.state=true;
+            LOGGER.setLogLevel(RFLogger.Severity.INFO);
+            LOGGER.log("Lift.LiftPositionStates.setStateTrue(): assigned true to state: " + this);
         }
         public double getPosition(){
             return position;
@@ -59,8 +62,13 @@ public class Lift extends RFMotor {
         LiftMovingStates(boolean p_state) {
             this.state = p_state;
         }
-        void setState(boolean p_state) {
-            this.state = p_state;
+        void setStateTrue() {
+            for (var i : LiftPositionStates.values()) {
+                i.state = false;
+            }
+            this.state = true;
+            LOGGER.setLogLevel(RFLogger.Severity.INFO);
+            LOGGER.log("Lift.LiftMovingStates.setStateTrue(): assigned true to state: " + this);
         }
     }
 
@@ -73,7 +81,22 @@ public class Lift extends RFMotor {
      * Updates LiftMovingStates and LiftPositionStates state machines.
      */
     public void update() {
-        //enum.values()[]
+        if (super.getCurrentPosition() >= LiftPositionStates.HIGH_SET_LINE.position) {
+            LiftPositionStates.HIGH_SET_LINE.setStateTrue();
+            LiftMovingStates.HIGH.setStateTrue();
+        }
+        else if (super.getCurrentPosition() >= LiftPositionStates.MID_SET_LINE.position) {
+            LiftPositionStates.MID_SET_LINE.setStateTrue();
+            LiftMovingStates.MID.setStateTrue();
+        }
+        else if (super.getCurrentPosition() >= LiftPositionStates.LOW_SET_LINE.position) {
+            LiftPositionStates.LOW_SET_LINE.setStateTrue();
+            LiftMovingStates.LOW.setStateTrue();
+        }
+        else if (super.getCurrentPosition() >= LiftPositionStates.AT_ZERO.position) {
+            LiftPositionStates.AT_ZERO.setStateTrue();
+            LiftMovingStates.AT_ZERO.setStateTrue();
+        }
     }
 
     /**
@@ -88,7 +111,7 @@ public class Lift extends RFMotor {
         super.setPosition(p_target, 0);
         if(target!=p_target) {
             LOGGER.setLogLevel(RFLogger.Severity.INFO);
-            LOGGER.log("Lift position set to: " + p_target);
+            LOGGER.log("Lift.setPosition(): lifting to: " + p_target);
             target=p_target;
         }
     }
@@ -96,7 +119,7 @@ public class Lift extends RFMotor {
         super.setPosition(p_state.position, 0);
         if(target!=p_state.position) {
             LOGGER.setLogLevel(RFLogger.Severity.INFO);
-            LOGGER.log("Lift position set to: " + p_state.position);
+            LOGGER.log("Lift.setPosition(): lifting to: " + p_state.position);
             target=p_state.position;
         }
     }
@@ -113,7 +136,7 @@ public class Lift extends RFMotor {
         super.setPower(p_power);
         if(p_power!=lastPower) {
             LOGGER.setLogLevel(RFLogger.Severity.INFO);
-            LOGGER.log("Lift power set to: " + p_power);
+            LOGGER.log("Lift.manualExtend(): setting power to: " + p_power);
             lastPower=p_power;
         }
     }
@@ -126,16 +149,14 @@ public class Lift extends RFMotor {
      * Updates LiftMovingStates state machine.
      */
     public void iterateUp() {
-        int ordinal = 0;
-        for (int i = 0; i < LiftPositionStates.values().length; i++) {
-            if (LiftPositionStates.values()[i].state) {
-                ordinal = i;
+        for (var i : LiftPositionStates.values()) {
+            if (i.state) {
+                var targetState = LiftPositionStates.values()[(i.ordinal() + 1)%4];
+                setPosition(targetState);
+                LOGGER.setLogLevel(RFLogger.Severity.INFO);
+                LOGGER.log("Lift.iterateDown(): iterated up to state: " + targetState);
             }
         }
-        ordinal = (ordinal + 1) % 4;
-        setPosition(LiftPositionStates.values()[ordinal]);
-        LOGGER.setLogLevel(RFLogger.Severity.INFO);
-        LOGGER.log("Lift state iterated up to state: " + LiftPositionStates.values()[ordinal]);
     }
 
     /**
@@ -146,15 +167,13 @@ public class Lift extends RFMotor {
      * Updates LiftMovingStates state machine.
      */
     public void iterateDown() {
-        int ordinal = 0;
-        for (int i = 0; i < LiftPositionStates.values().length; i++) {
-            if (LiftPositionStates.values()[i].state) {
-                ordinal = i;
+        for (var i : LiftPositionStates.values()) {
+            if (i.state) {
+                var targetState = LiftPositionStates.values()[(i.ordinal() - 1)%4];
+                setPosition(targetState);
+                LOGGER.setLogLevel(RFLogger.Severity.INFO);
+                LOGGER.log("Lift.iterateDown(): iterated down to state: " + targetState);
             }
         }
-        ordinal = (ordinal - 1) % 4;
-        setPosition(LiftPositionStates.values()[ordinal]);
-        LOGGER.setLogLevel(RFLogger.Severity.INFO);
-        LOGGER.log("Lift state iterated down to state: " + LiftPositionStates.values()[ordinal]);
     }
 }
