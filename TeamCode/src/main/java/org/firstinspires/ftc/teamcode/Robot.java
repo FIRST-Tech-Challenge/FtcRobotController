@@ -42,7 +42,11 @@ public class Robot {
         public DcMotor frontLeft, frontRight, rearLeft, rearRight;
         //take hardware map and then init all motors
         public DriveMotors(HardwareMap hardwareMap) {
-            //pass dcmotor reference and set to desired configs with hardwaremap
+            frontLeft = hardwareMap.get(DcMotor.class, Config.DriveMotors.FRONT_LEFT);
+            frontRight= hardwareMap.get(DcMotor.class, Config.DriveMotors.FRONT_RIGHT);
+            rearLeft  = hardwareMap.get(DcMotor.class, Config.DriveMotors.REAR_LEFT);
+            rearRight = hardwareMap.get(DcMotor.class, Config.DriveMotors.REAR_RIGHT);
+            //pass dcmotor reference and set to config
             initMotor(frontLeft, Config.DriveMotors.FRONT_LEFT, hardwareMap);
             initMotor(frontRight,Config.DriveMotors.FRONT_RIGHT,hardwareMap);
             initMotor(rearLeft,  Config.DriveMotors.REAR_LEFT,  hardwareMap);
@@ -50,7 +54,6 @@ public class Robot {
         }
         //init motor takes motor reference and then does some in-place changes to it
         private void initMotor(DcMotor motor, Config.DriveMotors config, HardwareMap hardwareMap) {
-            motor = hardwareMap.get(DcMotor.class, config.getName());
             //I have no clue why you need Objects.requireNonNull(Object), left in just in case though
             Objects.requireNonNull(motor).setDirection(config.getDirection());
             Objects.requireNonNull(motor).setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -73,10 +76,10 @@ public class Robot {
     public PositionManager positionManager;
 
     public Robot(HardwareMap hardwareMap, Telemetry telemetry, ElapsedTime elapsedTime) {
-        this.telemetry = telemtry;
+        this.telemetry   = telemtry;
         this.elapsedTime = elapsedTime;
-        positionManger = new PositionManager(hardwareMap, telemtry);
-        driveMotors = new DriveMotors(hardwareMap);
+        positionManger   = new PositionManager(hardwareMap, telemtry);
+        driveMotors      = new DriveMotors(hardwareMap);
 
         /*whatever goes here
          *
