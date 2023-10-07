@@ -231,7 +231,6 @@ open class DriveMethods: LinearOpMode() {
 
     open fun initSlideMotors() {
         motorSlideLeft = hardwareMap.get<DcMotor>(DcMotor::class.java, "motorSlideLeft")
-        motorSlideRight = hardwareMap.get<DcMotor>(DcMotor::class.java, "motorSlideRight")
     }
     fun setManualExposure(exposureMS: Int, gain: Int) {
         // Wait for the camera to be open, then use the controls
