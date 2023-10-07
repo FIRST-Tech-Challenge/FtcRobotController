@@ -107,7 +107,7 @@ public class CVMaster {
      * logs to general surface(inside RFAprilCam class)
      */
     public void update(){
-        LOGGER.setLogLevel(RFLogger.Severity.INFO);
+        LOGGER.setLogLevel(RFLogger.Severity.FINEST);
         LOGGER.log("Entering Function CVMaster.update(), updating camera info");
         if(op.isStarted()&&isStreaming){
             switchToApril();

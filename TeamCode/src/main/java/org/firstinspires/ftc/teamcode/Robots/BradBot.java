@@ -29,7 +29,7 @@ public class BradBot extends BasicRobot{
     Hopper hopper;
     Launcher launcher;
     Lift lift;
-    SampleMecanumDrive roadrun;
+    public SampleMecanumDrive roadrun;
     Ultrasonics ultras;
 
     /**
@@ -49,7 +49,11 @@ public class BradBot extends BasicRobot{
         launcher = new Launcher();
         lift = new Lift();
         roadrun = new SampleMecanumDrive(p_op.hardwareMap);
-        ultras = new Ultrasonics();
+//        ultras = new Ultrasonics();
+    }
+
+    public int getSpikePos(){
+        return cv.getPosition();
     }
 
     /**
@@ -174,6 +178,10 @@ public class BradBot extends BasicRobot{
         update();
     }
 
+    public void done(){
+        queuer.done();
+    }
+
     /**
      * updates the states of all the following
      * Logs that this function is being called to surface general log
@@ -189,7 +197,7 @@ public class BradBot extends BasicRobot{
         hopper.update();
         lift.update();
         roadrun.update();
-        ultras.update();
+//        ultras.update();
     }
 
     public void stop(){

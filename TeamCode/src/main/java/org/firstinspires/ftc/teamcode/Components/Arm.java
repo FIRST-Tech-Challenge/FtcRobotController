@@ -1,6 +1,9 @@
 package org.firstinspires.ftc.teamcode.Components;
 
+import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.LOGGER;
+
 import org.firstinspires.ftc.teamcode.Components.RFModules.Devices.RFServo;
+import org.firstinspires.ftc.teamcode.Components.RFModules.System.RFLogger;
 
 /**
  * Harry
@@ -43,9 +46,11 @@ public class Arm extends RFServo {
     public void flip(){
         if(ArmStates.UNFLIPPED.state){
             super.setPosition(UPPER_LIMIT);
+            LOGGER.log(RFLogger.Severity.INFO, "Entering Arm.flip(): flipping up");
         }
         else{
             super.setPosition(LOWER_LIMIT);
+            LOGGER.log(RFLogger.Severity.INFO, "Entering Arm.flip(): flipping down");
         }
     }
 
