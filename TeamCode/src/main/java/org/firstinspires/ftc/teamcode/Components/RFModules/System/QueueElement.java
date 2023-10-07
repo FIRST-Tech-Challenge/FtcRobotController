@@ -30,6 +30,8 @@ public class QueueElement {
     //is it skippable right now
     private boolean option = false;
 
+    private boolean isExecuted = false;
+
     /**
      * Initialize QueueElement
      * @param p_queuePos index of the queue element
@@ -128,4 +130,7 @@ public class QueueElement {
     public boolean isShouldFinish() {
         return shouldFinish;
     }
+
+    public void setExecuted(boolean p_executed){isExecuted=p_executed;}
+    public boolean isExecuted(){return isExecuted;}
 }

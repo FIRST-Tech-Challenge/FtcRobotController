@@ -19,7 +19,7 @@ public class Launcher extends RFServo {
      */
     public Launcher(){
         super("launcherServo", 1.0);
-        LOGGER.setLogLevel(RFLogger.Severity.ALL);
+        LOGGER.setLogLevel(RFLogger.Severity.INFO);
         LOGGER.log("Launcher(), initializing hardware, setting position to OTHER_POSITION : " +OTHER_POSITION);
         setPosition(OTHER_POSITION);
         isLoaded=true;
@@ -29,7 +29,7 @@ public class Launcher extends RFServo {
      * Shoots the plane, changes state. Logs these two to general surface level
      */
     public void shoot(){
-        LOGGER.setLogLevel(RFLogger.Severity.ALL);
+        LOGGER.setLogLevel(RFLogger.Severity.INFO);
         LOGGER.log("Launcher.shoot(), shooting, setting position to SHOOT_POSITION : " + SHOOT_POSITION);
         setPosition(SHOOT_POSITION);
         isLoaded = false;
@@ -39,7 +39,7 @@ public class Launcher extends RFServo {
      * Loads the launcher, changes state. Logs these two to general surface level
      */
     public void load(){
-        LOGGER.setLogLevel(RFLogger.Severity.ALL);
+        LOGGER.setLogLevel(RFLogger.Severity.INFO);
         LOGGER.log("Launcher.load(), loading, setting position to OTHER_POSITIOn : " + OTHER_POSITION);
         setPosition(OTHER_POSITION);
         isLoaded = true;

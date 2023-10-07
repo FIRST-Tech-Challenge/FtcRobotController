@@ -18,8 +18,8 @@ public class Hopper extends RFServo {
      */
     public Hopper(){
         super("hopperServo", 1.0);
-        leds = new RFLEDStrip();
-        colorSensor = new RFColorSensor("colorSensor");
+//        leds = new RFLEDStrip();
+//        colorSensor = new RFColorSensor("colorSensor");
     }
 
     /**
@@ -88,6 +88,10 @@ public class Hopper extends RFServo {
                 HopperStates.values()[i].state = false;
             }
             this.state = true;
+        }
+
+        public boolean getState(){
+            return this.state;
         }
     }
 

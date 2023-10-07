@@ -226,7 +226,6 @@ public class SampleMecanumDrive extends MecanumDrive {
         imu.resetYaw();
         BasicRobot.dashboard = FtcDashboard.getInstance();
         BasicRobot.dashboard.setTelemetryTransmissionInterval(25);
-        logger.createFile("RoadrunLog", "Runtime, X, Y, A, error[0], error[1]");
         trajectorySequenceRunner = new TrajectorySequenceRunner(follower, HEADING_PID);
         trajectorySeq = trajectorySequenceBuilder(getPoseEstimate()).lineTo(new Vector2d(10, 0)).build();
         servos = new ArrayList<>();
@@ -279,13 +278,11 @@ public class SampleMecanumDrive extends MecanumDrive {
     }
 
     public void followTrajectory(Trajectory trajectory) {
-        logger.log("/RobotLogs/GeneralRobot", "followingTrajectory");
         followTrajectoryAsync(trajectory);
         waitForIdle();
     }
 
     public void followTrajectorySequenceAsync(TrajectorySequence trajectorySequence) {
-        logger.log("/RobotLogs/GeneralRobot", "followingTrajectory");
         trajectorySequenceRunner.followTrajectorySequenceAsync(trajectorySequence);
         trajectorySeq = trajectorySequence;
         endPose = trajectorySequence.end();
@@ -364,11 +361,14 @@ public class SampleMecanumDrive extends MecanumDrive {
     public void setWeightedDrivePower(Pose2d drivePower) {
         Pose2d vel = drivePower;
         if(isButtered){
+            drivePower = new Pose2d(vel.getX(),0,vel.getHeading());
             vel = new Pose2d(vel.getX(),0,vel.getHeading());
+
         }
         if(isFieldCentric){
             vel = vel.times(FIELD_CENTRIC_DOWNSCALE);
-            vel = new Pose2d(vel.vec().rotated(currentPose.getHeading()), vel.getHeading());
+            drivePower = new Pose2d(vel.vec().rotated(-currentPose.getHeading()), vel.getHeading());
+            vel = drivePower;
         }
         if (Math.abs(drivePower.getX()) + Math.abs(drivePower.getY())
                 + Math.abs(drivePower.getHeading()) > 1) {
@@ -385,10 +385,6 @@ public class SampleMecanumDrive extends MecanumDrive {
         }
 
         setDrivePower(vel);
-        if(isButtered){
-            isButtered=false;
-            toggleServos();
-        }
     }
     public void toggleFieldCentric(){
         isFieldCentric= !isFieldCentric;

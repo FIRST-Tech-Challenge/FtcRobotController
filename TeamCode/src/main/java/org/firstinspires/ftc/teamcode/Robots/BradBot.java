@@ -40,7 +40,7 @@ public class BradBot extends BasicRobot{
      */
     public BradBot(LinearOpMode p_op, boolean p_is_Teleop){
         super(p_op,p_is_Teleop);
-        LOGGER.setLogLevel(RFLogger.Severity.ALL);
+        LOGGER.setLogLevel(RFLogger.Severity.INFO);
         LOGGER.log("BradBot() : Initializing Components!");
         arm = new Arm();
         cv = new CVMaster();
@@ -58,7 +58,10 @@ public class BradBot extends BasicRobot{
      */
     public void startIntakeAuto(){
         if(queuer.queue(true, Intake.IntakeStates.STOPPED.getState())){
-
+            if(!queuer.isExecuted()) {
+                LOGGER.setLogLevel(RFLogger.Severity.INFO);
+                LOGGER.log("Entering Function BradBot.startIntakeAuto(), intaking until 2 pixels are stored");
+            }
         }
     }
 
@@ -67,7 +70,12 @@ public class BradBot extends BasicRobot{
      * Logs that this function called to general surface
      */
     public void depositAuto(){
-
+        if(queuer.queue(true, Hopper.HopperStates.ZERO.getState())){
+            if(!queuer.isExecuted()) {
+                LOGGER.setLogLevel(RFLogger.Severity.INFO);
+                LOGGER.log("Entering Function BradBot.depositAuto(), depositing until 0 pixels remain");
+            }
+        }
     }
 
     /**
@@ -76,7 +84,13 @@ public class BradBot extends BasicRobot{
      * @param p_liftPosition target position
      */
     public void liftAuto(Lift.LiftPositionStates p_liftPosition){
-        liftAuto(p_liftPosition.getPosition());
+        if(queuer.queue(true, lift.atTargetPosition())) {
+            if(!queuer.isExecuted()) {
+                LOGGER.setLogLevel(RFLogger.Severity.INFO);
+                LOGGER.log("Entering Function BradBot.liftAuto(LiftPositionStates), lifting to: " + p_liftPosition.name());
+                liftAuto(p_liftPosition.getPosition());
+            }
+        }
     }
     /**
      * Auto lifts lift to this position, lift.update() will handle the rest
@@ -84,7 +98,13 @@ public class BradBot extends BasicRobot{
      * @param p_position what position to go to
      */
     public void liftAuto(double p_position){
-
+        if(queuer.queue(true, lift.atTargetPosition())) {
+            if(!queuer.isExecuted()) {
+                LOGGER.setLogLevel(RFLogger.Severity.INFO);
+                LOGGER.log("Entering Function BradBot.liftAuto(double), lifting to: " + p_position);
+                liftAuto(p_position);
+            }
+        }
     }
 
     /**
@@ -93,7 +113,13 @@ public class BradBot extends BasicRobot{
      * @param p_traj inputted trajectory
      */
     public void followTrajSeq(TrajectorySequence p_traj){
-
+        if(queuer.queue(false, !roadrun.isBusy())) {
+            if(!queuer.isExecuted()){
+                LOGGER.setLogLevel(RFLogger.Severity.INFO);
+                LOGGER.log("Entering Function BradBot.followTrajSeq(), going from: " +p_traj.start() +" to: " + p_traj.end());
+                roadrun.followTrajectorySequenceAsync(p_traj);
+            }
+        }
     }
 
     /**
@@ -113,7 +139,7 @@ public class BradBot extends BasicRobot{
         float manualUp = op.gamepad1.right_trigger;
         float manualDown = op.gamepad1.left_trigger;
         if(isA){
-//            arm.flip();
+            arm.flip();
         }
         if(rightBumper){
             intake.intake();
@@ -136,15 +162,15 @@ public class BradBot extends BasicRobot{
         if(isY){
             hopper.outtakePixel(Hopper.HopperValues.ONEPIXEL);
         }
-        if(isX){
+        if(right){
             roadrun.toggleButtered();
         }
-        if(right){
+        if(isX){
             roadrun.toggleFieldCentric();
         }
-        roadrun.setWeightedDrivePower(new Pose2d(op.gamepad1.left_stick_y
-                    , op.gamepad1.left_stick_x
-                    , op.gamepad1.right_stick_x));
+        roadrun.setWeightedDrivePower(new Pose2d(-op.gamepad1.left_stick_y
+                    , -op.gamepad1.left_stick_x
+                    , -op.gamepad1.right_stick_x));
         update();
     }
 
@@ -164,5 +190,11 @@ public class BradBot extends BasicRobot{
         lift.update();
         roadrun.update();
         ultras.update();
+    }
+
+    public void stop(){
+        LOGGER.setLogLevel(RFLogger.Severity.INFO);
+        LOGGER.log("Entering Function Robot.stop(), the program has stopped normally");
+        op.stop();
     }
 }

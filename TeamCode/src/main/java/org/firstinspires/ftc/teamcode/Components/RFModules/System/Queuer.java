@@ -125,6 +125,9 @@ public class Queuer {
         }
         return false;
     }
+    public boolean isExecuted(){
+        return queueElements.get(currentlyQueueing).isExecuted();
+    }
 
     /**
      * updates and processes all things related to currently queued event
@@ -135,7 +138,8 @@ public class Queuer {
      * @param p_isOptional      is the function optional
      */
     public boolean queue(boolean p_asynchronous, boolean p_done_condition, boolean p_extra_condition, boolean p_isOptional) {
-        p_done_condition = isStarted()&&p_done_condition;
+        boolean isStart = isStarted();
+        p_done_condition = isStart&&p_done_condition;
         //if it is first Loop
         if (firstLoop) {
             //create queue element
@@ -144,6 +148,9 @@ public class Queuer {
 
         //update which element is currently being queued & which event is currently being executed
         updateQueuer(p_done_condition, p_isOptional);
+        if(isStart){
+            queueElements.get(currentlyQueueing).setExecuted(true);
+        }
         //save some processing time if the event is done alrdy
         if (queueElements.get(currentlyQueueing).isDone()) {
             return false;
@@ -200,7 +207,7 @@ public class Queuer {
         }
         done();
         currentEvent = queueElements.get(currentlyQueueing).startCondition;
-        LOGGER.setLogLevel(RFLogger.Severity.ALL);
+        LOGGER.setLogLevel(RFLogger.Severity.INFO);
         LOGGER.log( "Queuer.setToNow() : currentEvent :" + currentEvent);
     }
 
@@ -209,7 +216,7 @@ public class Queuer {
      * logs that this function is being called to general surface level
      */
     public void reset() {
-        LOGGER.setLogLevel(RFLogger.Severity.ALL);
+        LOGGER.setLogLevel(RFLogger.Severity.INFO);
         LOGGER.log( "Queuer.reset() : reset queuer");
         queueElements.clear();
         firstLoop = true;
@@ -228,7 +235,7 @@ public class Queuer {
     public boolean isFullfilled() {
         var newFulfilled = !queueElements.isEmpty() && currentEvent == queueElements.size() - 1;
         if(isFulfilled!=newFulfilled&&newFulfilled){
-            LOGGER.setLogLevel(RFLogger.Severity.ALL);
+            LOGGER.setLogLevel(RFLogger.Severity.INFO);
             LOGGER.log( "Queuer.isFullfilled() : queue finished!");
         }
         isFulfilled=newFulfilled;
@@ -286,13 +293,13 @@ public class Queuer {
         if (!mustFinish) {
             startCondition = recalcStartPosSkipOptional(queueElements.size(), p_asynchrnous, p_isOptional);
             queueElements.add(new QueueElement(queueElements.size(), p_asynchrnous, startCondition, mustFinish, false, p_isOptional));
-            LOGGER.setLogLevel(RFLogger.Severity.ALL);
+            LOGGER.setLogLevel(RFLogger.Severity.INFO);
             LOGGER.log( "Queuer.createQueueElement(): event# : " + (queueElements.size() - 1) + ", StartCondition : " + startCondition);
         } else {
             mustFinish = false;
             startCondition = mustStartCondition;
             queueElements.add(new QueueElement(queueElements.size(), p_asynchrnous, startCondition, true));
-            LOGGER.setLogLevel(RFLogger.Severity.ALL);
+            LOGGER.setLogLevel(RFLogger.Severity.INFO);
             LOGGER.log( "Queuer.createQueueElement(): event# : " + (queueElements.size() - 1) + ", StartCondition : " + startCondition);
         }
     }
@@ -316,7 +323,7 @@ public class Queuer {
                 queueElements.get(currentlyQueueing).setDone(p_done_condition);
                 if (p_done_condition) {
                     calculateCompleteCurrentEvent();
-                    LOGGER.setLogLevel(RFLogger.Severity.ALL);
+                    LOGGER.setLogLevel(RFLogger.Severity.INFO);
                     LOGGER.log( "Queuer.updateQueuer(): currenty Queueing event# : " + currentlyQueueing + "is Done, " + "completeEvents" + completeCurrentEvent);
                     if (currentlyQueueing > currentEvent && !queueElements.get(currentlyQueueing).isAsynchronous()) {
                         currentEvent = currentlyQueueing;
