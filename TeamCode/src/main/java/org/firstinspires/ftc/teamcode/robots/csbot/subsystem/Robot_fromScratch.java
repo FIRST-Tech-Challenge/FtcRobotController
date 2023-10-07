@@ -10,28 +10,48 @@ import com.qualcomm.robotcore.hardware.VoltageSensor;
 
 import org.firstinspires.ftc.teamcode.robots.csbot.Field;
 import org.firstinspires.ftc.teamcode.robots.csbot.util.PositionCache;
+import org.firstinspires.ftc.teamcode.robots.csbot.vision.Target;
 import org.opencv.core.CvType;
 import org.opencv.core.Mat;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 @Config(value = "AA_CSRobot_fromScratch")
-public class Robot_fromScratch extends Robot implements Subsystem{
+public class Robot_fromScratch implements Subsystem{
 
     //components and subsystems
-    public CSDriveTrain driveTrain;
-//    public Intake;
     public Subsystem[] subsystems;
+    public CSDriveTrain driveTrain;
+    //TODO - implement subsystems that build team comes up with
+//    public Intake;
+    public Field field;
 
 
     private long[] subsystemUpdateTimes;
     private final List<LynxModule> hubs;
     private VoltageSensor batteryVoltageSensor;
+    private Articulation articulation;
+    public List<Target> targets = new ArrayList<Target>();
+
+    public enum Articulation {
+        //beater bar, drivetrain, drone launcher, outtake
+        MANUAL,
+        AUTON,
+        CALIBRATE,
+        SCORE_PIXEL,
+        INTAKE_PIXEL,
+        FOLD,
+        UNFOLD,
+        HANG,
+        LAUNCH_DRONE,
+
+    }
+
 
     public Robot_fromScratch(HardwareMap hardwareMap, boolean simulated) {
-        super(hardwareMap, false);
         hubs = hardwareMap.getAll(LynxModule.class);
         for(LynxModule module : hubs) {
             module.setBulkCachingMode(LynxModule.BulkCachingMode.MANUAL);
@@ -39,13 +59,8 @@ public class Robot_fromScratch extends Robot implements Subsystem{
 
         // initializing subsystems
         driveTrain = new CSDriveTrain(hardwareMap, this, simulated);
-        turret = new Turret(hardwareMap, this, simulated);
-        underarm = new UnderArm(hardwareMap, this, simulated);
-        crane = new Crane(hardwareMap, this, simulated);
 
-        positionCache = new PositionCache( 5);
-
-        subsystems = new Subsystem[] {driveTrain, turret, crane, underarm}; //{driveTrain, turret, crane};
+        subsystems = new Subsystem[] {driveTrain}; //{driveTrain, turret, crane};
         subsystemUpdateTimes = new long[subsystems.length];
 
         batteryVoltageSensor = hardwareMap.voltageSensor.iterator().next();
