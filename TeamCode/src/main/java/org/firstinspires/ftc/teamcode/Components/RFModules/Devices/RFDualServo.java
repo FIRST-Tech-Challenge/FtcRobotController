@@ -20,7 +20,7 @@ public class RFDualServo implements Servo {
     /**
      * init
      * two servos
-     * last time servo was flipped, set to -100 because it will be changed later
+     * last time servo was flipped, set to -1 because it will be changed later
      * 2 decimal places, used in logger
      * create class variables
      */
@@ -28,9 +28,9 @@ public class RFDualServo implements Servo {
     private Servo dualServo1;
     private Servo dualServo2;
 
-    private double lastTime = -100;
+    private double lastTime = -1;
 
-    private double servoLimit = 0;
+    private double servoLimit;
     private boolean flipped = false;
 
     private final double FLIP_TIME_SEC = 0.2;
@@ -43,16 +43,18 @@ public class RFDualServo implements Servo {
 
     /**
      * Dual Servo when not given a specific direction
-     *
-     * @param p_deviceName1
-     * @param p_deviceName2
-     * @param limit
+     * @param p_dualServoName name of the set of servos for logging
+     * @param p_deviceName1 name of the first servo in the hardware map
+     * @param p_deviceName2 name of the second servo in the hardware map
+     * @param limit upper limit of the servo's motion
+     * Logs which state(s)' values have been changed and to what.
+     * Logs to RFDualServo & general logs.
+     * Logs to least fine level.
+     * Does not update any state machines.
      */
     public RFDualServo(String p_dualServoName, String p_deviceName1, String p_deviceName2, double limit) {
-        //hwmap
         dualServo1 = op.hardwareMap.servo.get(p_deviceName1);
         dualServo2 = op.hardwareMap.servo.get(p_deviceName2);
-        //sets the servo limit to the passed in limit
         servoLimit = limit;
 
         rfDualServoName = p_dualServoName;
@@ -62,21 +64,25 @@ public class RFDualServo implements Servo {
     }
 
     /**
-     * Dual Servo w/ direction
-     *
-     * @param servoDirection
-     * @param p_deviceName1
-     * @param p_deviceName2
-     * @param limit
+     * Dual Servo when not given a specific direction
+     * @param p_dualServoName name of the set of servos for logging
+     * @param p_servoDirection direction of the first servo
+     * @param p_deviceName1 name of the first servo in the hardware map
+     * @param p_deviceName2 name of the second servo in the hardware map
+     * @param limit upper limit of the servo's motion
+     * Logs which state(s)' values have been changed and to what.
+     * Logs to RFDualServo & general logs.
+     * Logs to least fine level.
+     * Does not update any state machines.
      */
-    public RFDualServo(String p_dualServoName, Servo.Direction servoDirection, String p_deviceName1, String p_deviceName2, double limit) {
+    public RFDualServo(String p_dualServoName, Servo.Direction p_servoDirection, String p_deviceName1, String p_deviceName2, double limit) {
 
         dualServo1 = op.hardwareMap.servo.get(p_deviceName1);
         dualServo2 = op.hardwareMap.servo.get(p_deviceName2);
 
-        dualServo1.setDirection(servoDirection);
+        dualServo1.setDirection(p_servoDirection);
 
-        if (servoDirection == REVERSE) {
+        if (p_servoDirection == REVERSE) {
             dualServo2.setDirection(FORWARD);
         } else {
             dualServo2.setDirection(REVERSE);
@@ -88,16 +94,23 @@ public class RFDualServo implements Servo {
     }
 
     /**
-     * sets the lastTime variable to when it was last flipped
-     *
+     * Sets last time the servo was flipped.
      * @param p_lastTime
+     * Logs what lastTime has been changed to.
+     * Logs to RFDualServo & general logs.
+     * Logs to least fine level.
+     * Does not update any state machines.
      */
     public void setLasttime(double p_lastTime) {
         lastTime = p_lastTime;
     }
 
     /**
-     * turns servos to their maximum/minimum depending on if already flipped
+     * Flips the servos to the upper or lower limit.
+     * Logs which limit the servos have been flipped to.
+     * Logs to RFDualServo & general logs.
+     * Logs to least fine level.
+     * Does not update any state machines.
      */
     public void flipServosMax() {
         if (op.getRuntime() - lastTime > FLIP_TIME_SEC) {
@@ -113,51 +126,65 @@ public class RFDualServo implements Servo {
     }
 
     /**
-     * pass in doubles for specific amount the servos should turn to
-     *
-     * @param servo1lowerpos
-     * @param servo1upperpos
+     * Sets last time the servo was flipped.
+     * @param p_servo1lowerpos lower limit of the first servo
+     * @param p_servo1upperpos upper limit of the first servo
+     * Logs what limit the servos have been flipped to.
+     * Logs to RFDualServo & general logs.
+     * Logs to least fine level.
+     * Does not update any state machines.
      */
-    public void flipServosInterval(double servo1lowerpos, double servo1upperpos) {
+    public void flipServosInterval(double p_servo1lowerpos, double p_servo1upperpos) {
         if (op.getRuntime() - lastTime > FLIP_TIME_SEC) {
             if (!flipped) {
-                setPositions(servo1upperpos);
+                setPositions(p_servo1upperpos);
                 flipped = true;
             } else {
-                setPositions(servo1lowerpos);
+                setPositions(p_servo1lowerpos);
                 flipped = false;
             }
         }
     }
 
     /**
-     * @param position
+     * Sets positions of the servos.
+     * @param p_position target position
+     * Logs what positions the servos have been flipped to.
+     * Logs to RFDualServo & general logs.
+     * Logs to least fine level.
+     * Does not update any state machines.
      */
-    public void setPositions(double position) {
-        if (position <= servoLimit) {
-            if (dualServo1.getPosition() != position) {
-                dualServo1.setPosition(position);
-                dualServo2.setPosition(servoLimit - position);
+    public void setPositions(double p_position) {
+        if (p_position <= servoLimit) {
+            if (dualServo1.getPosition() != p_position) {
+                dualServo1.setPosition(p_position);
+                dualServo2.setPosition(servoLimit - p_position);
                 logger.log("/DualServoLogs/RFDualServo", rfDualServoName +
-                        ",setPositions(),Setting Positions: " + df.format(position) + " " +
-                        df.format(servoLimit - position), true);
+                        ",setPositions(),Setting Positions: " + df.format(p_position) + " " +
+                        df.format(servoLimit - p_position), true);
                 lastTime = op.getRuntime();
             }
         }
-
     }
 
     /**
-     * gets time of last flip
-     *
-     * @return
+     * Returns the last time the servos were flipped
+     * @return lastTime last time the servo were flipped
+     * Logs value of lastTime.
+     * Logs to RFDualServo & general logs.
+     * Logs to least fine level.
+     * Does not update any state machines.
      */
     public double getLastTime() {
         return lastTime;
     }
 
     /**
-     * remove power from servos, used for cone flipper in PowerPlay
+     * Removes all power from the servos, used for cone flipper during Power Play season.
+     * Logs that servos have been disabled.
+     * Logs to RFDualServo & general logs.
+     * Logs to least fine level.
+     * Does not update any state machines.
      */
     public void disableServos() {
         ServoController rfServoController1 = (ServoController) dualServo1.getController();
@@ -167,7 +194,11 @@ public class RFDualServo implements Servo {
     }
 
     /**
-     * give power back to servos
+     * Adds power to the servos, used for cone flipper during Power Play season.
+     * Logs that servos have been disabled.
+     * Logs to RFDualServo & general logs.
+     * Logs to least fine level.
+     * Does not update any state machines.
      */
     public void enableServos() {
         ServoController rfServoController1 = (ServoController) dualServo1.getController();
@@ -177,24 +208,21 @@ public class RFDualServo implements Servo {
     }
 
     /**
-     * returns if servos are on or not
-     *
-     * @return
+     * Returns if the servos are enabled or not.
+     * @return status of servo
+     * Logs if servos are enabled or disabled
+     * Logs to RFDualServo & general logs.
+     * Logs to least fine level.
+     * Does not update any state machines.
      */
     public boolean abledServos() {
         ServoController rfServoController1 = (ServoController) dualServo1.getController();
         ServoController rfServoController2 = (ServoController) dualServo2.getController();
-        if (rfServoController1.getPwmStatus() == ServoController.PwmStatus.ENABLED) {
-            return true;
-        } else {
-            return false;
-        }
+        return rfServoController1.getPwmStatus() == ServoController.PwmStatus.ENABLED;
     }
 
     /**
-     * overrides are needed so implemented class does not cause compilation error
-     *
-     * @return
+     * Overrides, needed so implemented class does not cause compilation error.
      */
     @Override
     public double getPosition() {

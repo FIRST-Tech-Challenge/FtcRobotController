@@ -1,11 +1,17 @@
 package org.firstinspires.ftc.teamcode.Components;
 
+import static org.firstinspires.ftc.teamcode.Components.RFModules.System.RFLogger.LOGGER;
+
 import org.firstinspires.ftc.teamcode.Components.RFModules.Devices.RFMotor;
+import org.firstinspires.ftc.teamcode.Components.RFModules.System.RFLogger;
 
 /**
  * William
  */
 public class Lift extends RFMotor {
+    /**
+     * Constructor
+     */
     public Lift() {
         super("liftMotor", true);
     }
@@ -26,8 +32,11 @@ public class Lift extends RFMotor {
             this.position = p_position;
             this.state = p_state;
         }
-        void setState(boolean p_state) {
-            this.state = p_state;
+        void setStateTrue() {
+            for(int i = 0; i < LiftPositionStates.values().length; i++){
+                LiftPositionStates.values()[i].state=false;
+            }
+            this.state=true;
         }
         public double getPosition(){
             return position;
@@ -61,7 +70,7 @@ public class Lift extends RFMotor {
      * Updates LiftMovingStates and LiftPositionStates state machines.
      */
     public void update() {
-
+        //enum.values()[]
     }
 
     /**
@@ -74,21 +83,24 @@ public class Lift extends RFMotor {
      */
     public void setPosition(double p_target) {
         super.setPosition(p_target, 0);
+        LOGGER.finest("Lift position set to: " + p_target);
     }
     public void setPosition(LiftPositionStates p_state) {
         super.setPosition(p_state.position, 0);
+        LOGGER.finest("Lift position set to: " + p_state.position);
     }
 
     /**
      * Manually extend/retract slides
-     * @param power How fast the user wants to move the slides and in what direction
+     * @param p_power How fast the user wants to move the slides and in what direction
      * Logs that the lift is currently being manually extended.
      * Logs to RFMotor & general logs.
      * Logs to finest level.
      * Updates LiftMovingStates state machine.
      */
-    public void manualExtend(double power) {
-
+    public void manualExtend(double p_power) {
+        super.setPower(p_power);
+        LOGGER.finest("Lift power set to: " + p_power);
     }
 
     /**
@@ -99,7 +111,15 @@ public class Lift extends RFMotor {
      * Updates LiftMovingStates state machine.
      */
     public void iterateUp() {
-
+        int ordinal = 0;
+        for (int i = 0; i < LiftPositionStates.values().length; i++) {
+            if (LiftPositionStates.values()[i].state) {
+                ordinal = i;
+            }
+        }
+        ordinal = (ordinal + 1) % 4;
+        setPosition(LiftPositionStates.values()[ordinal]);
+        LOGGER.finest("Lift state iterated up to state: " + LiftPositionStates.values()[ordinal]);
     }
 
     /**
@@ -110,6 +130,14 @@ public class Lift extends RFMotor {
      * Updates LiftMovingStates state machine.
      */
     public void iterateDown() {
-
+        int ordinal = 0;
+        for (int i = 0; i < LiftPositionStates.values().length; i++) {
+            if (LiftPositionStates.values()[i].state) {
+                ordinal = i;
+            }
+        }
+        ordinal = (ordinal - 1) % 4;
+        setPosition(LiftPositionStates.values()[ordinal]);
+        LOGGER.finest("Lift state iterated up to state: " + LiftPositionStates.values()[ordinal]);
     }
 }
