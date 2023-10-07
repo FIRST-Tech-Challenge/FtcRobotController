@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.Components;
+package org.firstinspires.ftc.teamcode.Components.FutureComponents;
 
 import org.firstinspires.ftc.teamcode.Components.RFModules.Devices.RFBreakBeam;
 import org.firstinspires.ftc.teamcode.Components.RFModules.Devices.RFDualServo;
@@ -26,7 +26,7 @@ public class FlippingIntake {
     public FlippingIntake(){
         intake = new RFMotor("intakeMotor", true);
         flipper = new RFServo("flipServo",1);
-        breakBeam = new RFBreakBeam();
+        breakBeam = new RFBreakBeam("breakBeam");
         limitSwitch = new RFLimitSwitch("intakeSwitch");
     }
 

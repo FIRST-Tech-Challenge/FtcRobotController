@@ -56,6 +56,7 @@ public class Logger {
 
     @SuppressLint("SdCardPath")
     public Logger (){
+        loggingString = new StringBuilder();
         new File("/sdcard/tmp/MotorLogs").mkdirs();
         new File("/sdcard/tmp/ServoLogs").mkdirs();
         new File("/sdcard/tmp/DualServoLogs").mkdirs();

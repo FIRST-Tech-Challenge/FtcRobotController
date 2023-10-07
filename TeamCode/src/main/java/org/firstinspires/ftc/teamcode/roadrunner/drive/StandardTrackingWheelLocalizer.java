@@ -10,10 +10,12 @@ import static java.lang.Math.cos;
 import static java.lang.Math.sin;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 import com.acmerobotics.dashboard.canvas.Canvas;
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
+import com.acmerobotics.roadrunner.localization.Localizer;
 import com.acmerobotics.roadrunner.localization.ThreeTrackingWheelLocalizer;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
@@ -38,7 +40,7 @@ import java.util.List;
  *
  */
 @Config
-public class StandardTrackingWheelLocalizer extends RFThreeTrackingWheelLocalizer {
+public class StandardTrackingWheelLocalizer implements Localizer {
     public static double Y_MULTIPLIER = 1/*0.896707*/;
     public static double X_MULTIPLIER = 1/*107.5/119*/;
 
@@ -51,7 +53,8 @@ public class StandardTrackingWheelLocalizer extends RFThreeTrackingWheelLocalize
 
     private double[] lastTicks = {0,0,0};
 
-    private double ticks_per_radian = TICKS_PER_REV*LATERAL_DISTANCE/(WHEEL_RADIUS*2), ticks_per_inch = TICKS_PER_REV/(WHEEL_RADIUS*2*PI);
+    private double ticks_per_radian = TICKS_PER_REV*LATERAL_DISTANCE/(WHEEL_RADIUS*2*PI), ticks_per_inch = TICKS_PER_REV/(WHEEL_RADIUS*2*PI),
+    aOffset=0, lastAngle=0;
 
     //start 5.1,5.5,...
     //end 4 low
@@ -62,12 +65,6 @@ public class StandardTrackingWheelLocalizer extends RFThreeTrackingWheelLocalize
     private final Encoder frontEncoder;
 
     public StandardTrackingWheelLocalizer(HardwareMap hardwareMap) {
-        super(Arrays.asList(
-                new Pose2d(0, LATERAL_DISTANCE / 2, 0), // left
-                new Pose2d(0, -LATERAL_DISTANCE / 2, 0), // right
-                new Pose2d(FORWARD_OFFSET, -41.025/25.4, Math.toRadians(90)) // front
-        ));
-
         leftEncoder = new Encoder(hardwareMap.get(DcMotorEx.class, "motorLeftFront"));
         rightEncoder = new Encoder(hardwareMap.get(DcMotorEx.class, "motorRightBack"));
         frontEncoder = new Encoder(hardwareMap.get(DcMotorEx.class, "motorRightFront"));
@@ -81,7 +78,6 @@ public class StandardTrackingWheelLocalizer extends RFThreeTrackingWheelLocalize
     }
 
     @NonNull
-    @Override
     public List<Double> getWheelPositions() {
         packet.put("left",leftEncoder.getCurrentPosition());
         packet.put("right",rightEncoder.getCurrentPosition());
@@ -97,7 +93,6 @@ public class StandardTrackingWheelLocalizer extends RFThreeTrackingWheelLocalize
     }
 
     @NonNull
-    @Override
     public List<Double>  getWheelVelocities() {
         // TODO: If your encoder velocity can exceed 32767 counts / second (such as the REV Through Bore and other
         //  competing magnetic encoders), change Encoder.getRawVelocity() to Encoder.getCorrectedVelocity() to enable a
@@ -152,7 +147,11 @@ public class StandardTrackingWheelLocalizer extends RFThreeTrackingWheelLocalize
 
         double deltaX = finalSolve[0][0];
         double deltaY = finalSolve[1][0];
-        angle = (nowTicks[1]-nowTicks[0])/ticks_per_radian;
+        if(angle!=lastAngle){
+            aOffset += angle-lastAngle;
+        }
+        angle = aOffset + (nowTicks[1]-nowTicks[0])/ticks_per_radian;
+        lastAngle = angle;
         xpos += deltaX;
         ypos += deltaY;
         currentPose = new Pose2d(xpos,ypos,angle);
@@ -174,5 +173,17 @@ public class StandardTrackingWheelLocalizer extends RFThreeTrackingWheelLocalize
             fieldOverlay.setStroke("#4CAF50");
             DashboardUtil.drawRobot(fieldOverlay, currentPose);
         }
+    }
+
+    public Pose2d getPoseEstimate() {
+        return currentPose;
+    }
+
+    public void setPoseEstimate(@NonNull Pose2d pose2d) {
+        currentPose=pose2d;
+    }
+
+    public Pose2d getPoseVelocity() {
+        return currentPOVVelocity;
     }
 }
