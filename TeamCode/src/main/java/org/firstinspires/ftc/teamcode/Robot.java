@@ -1,19 +1,19 @@
 package org.firstinspires.ftc.teamcode;
 
+import android.os.SystemClock;
+
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.IMU;
-import android.os.SystemClock;
 import com.qualcomm.robotcore.util.Range;
 
-import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
-import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
-
 import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
 import org.firstinspires.ftc.vision.VisionPortal;
 import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
 import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
@@ -37,7 +37,6 @@ public class Robot {
 
     private AprilTagProcessor aprilTag;
     private VisionPortal visionPortal;
-
 
 
     double prevError = 0;
@@ -75,19 +74,20 @@ public class Robot {
         return yValue;
     }
 
-    public double getAprilTagXPos() {
+    public double getAprilTagXPos(int idNumber) {
         List<AprilTagDetection> currentDetections = aprilTag.getDetections();
 
         double xValue = 0;
 
         for (AprilTagDetection detection : currentDetections) {
-            if (detection.metadata != null) {
+            if (detection.metadata.id == idNumber) {
                 xValue = detection.ftcPose.x;
+                break;
             }
 
         }
 
-        return xValue;
+        return -xValue;
     }
 
     public double getAprilTagYaw() {
@@ -105,42 +105,77 @@ public class Robot {
         return yawAprilTag;
     }
 
-    public double getAprilTagRange() {
+    public double getAprilTagRange(int idNumber) {
 
         List<AprilTagDetection> currentDetections = aprilTag.getDetections();
 
-        double pose = 0;
+        double range = 0;
         for (AprilTagDetection detection : currentDetections) {
-            if (detection.metadata != null) {
-                pose = detection.ftcPose.range;
+            if (detection.metadata.id == idNumber) {
+                range = detection.ftcPose.range;
+                break;
             }
 
         }
-        return pose;
+        return -range;
     }
 
-    public void moveRelativeToAprilTag(double mmFromAprilTag) {
-        double inchesFromAprilTag = mmFromAprilTag/25.4;
+    public boolean moveRelativeToAprilTagX(double mmFromAprilTag, int idNumber) {
+        double inchesFromAprilTag = mmFromAprilTag / 25.4;
+        boolean done = false;
 
-        double[] powerMoveCloser = calculateDrivetrainPower((inchesFromAprilTag - getAprilTagRange()));
-        double[] powerMoveAway = calculateDrivetrainPower(-(inchesFromAprilTag - getAprilTagRange()));
+        double[] powerMoveNegative = calculateMecanumPower((inchesFromAprilTag - getAprilTagXPos(idNumber)));
+        double[] powerMovePositive = calculateMecanumPower(-(inchesFromAprilTag - getAprilTagXPos(idNumber)));
 
         double[] stopPower = {0, 0, 0, 0};
 
-        if (getAprilTagRange() != 0 && getAprilTagRange() < inchesFromAprilTag) {
-        //TODO fix inches thing right here below
-            calculateDrivetrainPower(-(inchesFromAprilTag - getAprilTagRange()));
-            setMotorPower(powerMoveAway);
-
-        } else if (getAprilTagRange() != 0 && getAprilTagRange() > inchesFromAprilTag) {
-
-            calculateDrivetrainPower((inchesFromAprilTag - getAprilTagRange()));
-            setMotorPower(powerMoveCloser);
+        if (!(getAprilTagXPos(idNumber) > inchesFromAprilTag - 0.5 &&
+                getAprilTagXPos(idNumber) < inchesFromAprilTag + 0.5)) {
+            if (getAprilTagXPos(idNumber) < inchesFromAprilTag) {
+                powerMovePositive = calculateMecanumPower(25.4 * (inchesFromAprilTag - getAprilTagXPos(idNumber)));
+                setMotorPower(powerMovePositive);
+            } else {
+                powerMoveNegative = calculateMecanumPower(25.4 * (inchesFromAprilTag - getAprilTagXPos(idNumber)));
+                setMotorPower(powerMoveNegative);
+            }
         } else {
             setMotorPower(stopPower);
+            done = true;
         }
 
+        return done;
     }
+
+    public boolean moveRelativeToAprilTagRange(double mmFromAprilTag, int idNumber) {
+        double inchesFromAprilTag = mmFromAprilTag / 25.4;
+        boolean done = false;
+
+        double[] powerMoveNegative = calculateDrivetrainPower((inchesFromAprilTag - getAprilTagRange(idNumber)));
+        double[] powerMovePositive = calculateDrivetrainPower(-(inchesFromAprilTag - getAprilTagRange(idNumber)));
+
+        double[] stopPower = {0, 0, 0, 0};
+
+        if (!(getAprilTagRange(idNumber) > inchesFromAprilTag - 0.5 &&
+                getAprilTagRange(idNumber) < inchesFromAprilTag + 0.5)) {
+            if (getAprilTagRange(idNumber) < inchesFromAprilTag) {
+                powerMovePositive = calculateDrivetrainPower(25.4 * (inchesFromAprilTag - getAprilTagRange(idNumber)));
+                setMotorPower(powerMovePositive);
+            } else {
+                powerMoveNegative = calculateDrivetrainPower(25.4 * (inchesFromAprilTag - getAprilTagRange(idNumber)));
+                setMotorPower(powerMoveNegative);
+            }
+        } else {
+            setMotorPower(stopPower);
+            done = true;
+        }
+
+        telemetry.addData("power", powerMovePositive);
+        telemetry.addData("power 2", powerMoveNegative);
+        telemetry.addData("range", getAprilTagRange(idNumber));
+
+        return done;
+    }
+
     public void setUpImu() {
 
         this.imu = hardwareMap.get(IMU.class, "imu");
@@ -156,6 +191,7 @@ public class Robot {
 
 
     }
+
     public void setUpDrivetrainMotors() {
         fLeft = hardwareMap.dcMotor.get("fLeft");
         fRight = hardwareMap.dcMotor.get("fRight");
@@ -176,6 +212,7 @@ public class Robot {
         fLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         fLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
     }
+
     private double maxAbsValueDouble(double[] values) {
 
         double max = -Double.MIN_VALUE;
@@ -190,6 +227,7 @@ public class Robot {
 
         return Math.abs(max);
     }
+
     private double[] scalePowers(double[] powers) {
         double maxPower = maxAbsValueDouble(powers);
 
@@ -204,6 +242,7 @@ public class Robot {
                 powers[3] / maxPower
         };
     }
+
     public double calculateImuPower(int degrees) {
 
 
@@ -225,6 +264,7 @@ public class Robot {
         return proportionalPowerForImu;
 
     } //IMU
+
     public void setUpArmMotor() {
         arm = hardwareMap.dcMotor.get("arm");
 
@@ -235,6 +275,7 @@ public class Robot {
         arm.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         arm.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
     }
+
     /*
         public double calculateArmPower(int targetAngleInDegrees) {
 
@@ -252,6 +293,7 @@ public class Robot {
     public void setArmPower(double armPower) {
         arm.setPower(armPower);
     }
+
     /*
         public boolean checkArmPos(int targetAngleInDegrees) {
 
@@ -283,18 +325,21 @@ public class Robot {
         return targetDistanceInDegrees * Degrees_TO_TICKS;
 
     }//Arm
+
     public void setMotorPower(double lFront, double rFront, double lBack, double rBack) {
         this.fLeft.setPower(lFront);
         this.fRight.setPower(rFront);
         this.bLeft.setPower(lBack);
         this.bRight.setPower(rBack);
     }
+
     public void setMotorPower(double[] powers) {
         this.fLeft.setPower(powers[0]);
         this.fRight.setPower(powers[1]);
         this.bLeft.setPower(powers[2]);
         this.bRight.setPower(powers[3]);
     }
+
     public double convertMMToTicks(double targetDistanceInMM) {
 
         //301 = circumference mm
@@ -305,6 +350,7 @@ public class Robot {
         return targetDistanceInMM * MM_TO_TICKS;
 
     }
+
     public boolean checkReachedDistance(double targetDistanceInMM) {
 
         boolean done = false;
@@ -318,14 +364,17 @@ public class Robot {
         }
         return done;
     }
+
     public double getRemainingTicksForDrivetrain(double targetDistanceInMM) {
         double targetDistanceInTicks = convertMMToTicks(targetDistanceInMM);
         return targetDistanceInTicks - fLeft.getCurrentPosition();
     }
+
     public void resetEncoder() {
         fLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         fLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
     }
+
     public double[] calculateDrivetrainPower(double targetDistanceInMM) {
         final double P_VALUE = 0.001;
 
@@ -344,6 +393,7 @@ public class Robot {
                 proportionalPower - calculateImuPower(0) * scaleImu
         });
     }
+
     public double[] calculateDrivetrainPowerWithTurning(double targetDistanceInMM, int angleToTurn) {
         final double P_VALUE = 0.0015;
 
@@ -362,6 +412,7 @@ public class Robot {
                 proportionalPower - calculateImuPower(angleToTurn) * scaleImu
         });
     }
+
     public double getCurrentHeading() {
         double currentYaw;
         YawPitchRollAngles robotOrientation;
@@ -369,6 +420,7 @@ public class Robot {
         currentYaw = robotOrientation.getYaw(AngleUnit.DEGREES);
         return currentYaw;
     }
+
     //the desired heading must be relative to last imu reset
     //-180 < desired heading <= 180
     public void setHeading(double targetAbsDegrees) {
@@ -421,7 +473,8 @@ public class Robot {
             setMotorPower(0, 0, 0, 0);
         }
     }
-    public boolean isHeadingWithinError (double targetHeading) {
+
+    public boolean isHeadingWithinError(double targetHeading) {
         double ERROR_TOLERANCE = 0.5;
         double currentHeading = getCurrentHeading();
         double deltaHeading = Math.abs(targetHeading - currentHeading);
@@ -433,6 +486,7 @@ public class Robot {
             return false;
         }
     }
+
     public void autoForward(double targetDistanceInMM) throws InterruptedException {
 
 
@@ -448,7 +502,6 @@ public class Robot {
         double error = targetPos - fLeft.getCurrentPosition();
 
         final double PROPORTIONAL_POWER = P_VALUE * error;
-
 
 
         long lastCheckMillis = System.currentTimeMillis();
@@ -492,15 +545,17 @@ public class Robot {
         bRight.setPower(0);
 
     }//Auto Forward but Better
+
     public double convertMMToTicksForMecanum(double targetDistanceInMM) {
 
         //301 = circumference mm
         //537.7, ticks per motor revolution
         //converting mm to ticks
-        final double MM_TO_TICKS = (537.7 / 301.59)*1.2;
+        final double MM_TO_TICKS = (537.7 / 301.59) * 1.2;
 
         return targetDistanceInMM * MM_TO_TICKS;
     }
+
     public double getRemainingTicksForDrivetrainMecanum(double targetDistanceInMM) {
         double targetDistanceInTicks = convertMMToTicksForMecanum(targetDistanceInMM);
         return targetDistanceInTicks - fLeft.getCurrentPosition();
@@ -516,28 +571,29 @@ public class Robot {
 
         //telemetry.addData("remaining distance in ticks for mecananamasm", remainingDistance);
 
-        if (remainingDistance < 30 && -yaw <5 && -yaw > - 5) {
+        if (remainingDistance < 30 && -yaw < 5 && -yaw > -5) {
             done = true;
         }
         return done;
     }
+
     public double[] calculateMecanumPower(double targetDistanceInMM) {
         final double P_VALUE_FOR_MECANUM = 0.002;
 
-        if (checkReachedDistanceForMecanum(targetDistanceInMM)){
-            return new double[] {0, 0, 0, 0};
+        if (checkReachedDistanceForMecanum(targetDistanceInMM)) {
+            return new double[]{0, 0, 0, 0};
         }
 
         double remainingDistance = getRemainingTicksForDrivetrainMecanum(targetDistanceInMM);
-        double proportionalPower = P_VALUE_FOR_MECANUM*remainingDistance;
+        double proportionalPower = P_VALUE_FOR_MECANUM * remainingDistance;
 
         double scaleImu = 0; //8.15;
 
         return scalePowers(new double[]{
-                proportionalPower + calculateImuPower(0)*scaleImu,
-                - proportionalPower - calculateImuPower(0)*scaleImu,
-                - proportionalPower + calculateImuPower(0)*scaleImu,
-                proportionalPower - calculateImuPower(0)*scaleImu
+                proportionalPower + calculateImuPower(0) * scaleImu,
+                -proportionalPower - calculateImuPower(0) * scaleImu,
+                -proportionalPower + calculateImuPower(0) * scaleImu,
+                proportionalPower - calculateImuPower(0) * scaleImu
         });
     }
 
@@ -549,9 +605,9 @@ public class Robot {
         //1.4, gear ratio
         //converting mm to ticks
 
-        final double MM_TO_TICKS = 537.7/301.59;
+        final double MM_TO_TICKS = 537.7 / 301.59;
 
-        double targetPos = targetMecanumDistance * MM_TO_TICKS*(1.225);
+        double targetPos = targetMecanumDistance * MM_TO_TICKS * (1.225);
         double error = targetPos - fLeft.getCurrentPosition();
 
         final double PROPORTIONAL_POWER = P_VALUE * error;
@@ -573,10 +629,10 @@ public class Robot {
         double imuPower = calculateImuPower(0);
 
         setMotorPower(
-                PROPORTIONAL_POWER+imuPower,
-                -PROPORTIONAL_POWER+imuPower,
-                -PROPORTIONAL_POWER+imuPower,
-                PROPORTIONAL_POWER+imuPower
+                PROPORTIONAL_POWER + imuPower,
+                -PROPORTIONAL_POWER + imuPower,
+                -PROPORTIONAL_POWER + imuPower,
+                PROPORTIONAL_POWER + imuPower
         );
 
         if (millis > lastCheckMillis + 500) {
@@ -592,7 +648,7 @@ public class Robot {
         }
     }
 
-    public void mecanumBlocking (double inches, boolean right) {
+    public void mecanumBlocking(double inches, boolean right) {
 
         double ERROR_TOLERANCE = 10;
         double power;
@@ -634,7 +690,8 @@ public class Robot {
         }
         setMotorPower(0, 0, 0, 0);
     }
-    public void straightBlocking (double inches, boolean forward) {
+
+    public void straightBlocking(double inches, boolean forward) {
 
         double ERROR_TOLERANCE = 10;
         double power;
@@ -650,7 +707,7 @@ public class Robot {
         final double wheelDiaMm = 96;
         final double PI = 3.14159;
         final double wheelCircIn = wheelDiaMm * PI / 25.4; //~11.87
-        final double IN_TO_TICK = 537/wheelCircIn;
+        final double IN_TO_TICK = 537 / wheelCircIn;
 
         if (forward) {
             endTick = currentTick + inches * IN_TO_TICK;
