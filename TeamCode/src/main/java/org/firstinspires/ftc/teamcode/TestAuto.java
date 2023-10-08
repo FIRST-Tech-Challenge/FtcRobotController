@@ -73,13 +73,13 @@ public class TestAuto extends LinearOpMode {
                 robot.straightBlocking(17, false);
                 break;
             } else if (position == MarkerDetector.MARKER_POSITION.RIGHT) {
-                robot.straightBlocking(18, true);
-                robot.setHeading(-30);
-                robot.straightBlocking(3, true);
+                robot.straightBlocking(14, true);
+                robot.setHeading(-45);
+                robot.straightBlocking(11, true);
                 wait(3);
-                robot.straightBlocking(3, false);
+                robot.straightBlocking(11, false);
                 robot.setHeading(0);
-                robot.straightBlocking(17, false);
+                robot.straightBlocking(12, false);
                 break;
             }
         }

@@ -8,6 +8,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.IMU;
+import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
@@ -17,6 +18,9 @@ import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
 import org.firstinspires.ftc.vision.VisionPortal;
 import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
 import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
+import org.openftc.easyopencv.OpenCvCameraFactory;
+import org.openftc.easyopencv.OpenCvCameraRotation;
+import org.openftc.easyopencv.OpenCvWebcam;
 
 import java.util.List;
 
@@ -32,6 +36,8 @@ public class Robot {
     DcMotor bRight;
     DcMotor arm;
     IMU imu;
+
+    ElapsedTime elapsedTime;
 
     double yaw;
 
@@ -740,5 +746,72 @@ public class Robot {
             prevError = error;
         }
         setMotorPower(0, 0, 0, 0);
+    }
+
+    public void detectAndMoveToMarker() {
+        OpenCvWebcam webcam;
+        MarkerDetector detector;
+        MarkerDetector.MARKER_POSITION position;
+
+        int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
+        webcam = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "Webcam 1"), cameraMonitorViewId);
+        elapsedTime = new ElapsedTime();
+
+        detector = new MarkerDetector();
+        webcam.setPipeline(detector);
+        webcam.openCameraDevice();
+        webcam.startStreaming(320, 240, OpenCvCameraRotation.UPRIGHT);
+
+        while (opMode.opModeIsActive()) {
+            position = detector.position;
+
+            if (position == MarkerDetector.MARKER_POSITION.CENTER) {
+                straightBlocking(20, true);
+                setHeading(15);
+                waitFor(0.1);
+                straightBlocking(6, true);
+                waitFor(1.5);
+                straightBlocking(6, false);
+                setHeading(0);
+                waitFor(0.1);
+                straightBlocking(19, false);
+                break;
+            } else if (position == MarkerDetector.MARKER_POSITION.LEFT) {
+                straightBlocking(18, true);
+                setHeading(30);
+                waitFor(0.1);
+                straightBlocking(3, true);
+                waitFor(1.5);
+                straightBlocking(3, false);
+                setHeading(0);
+                waitFor(0.1);
+                straightBlocking(17, false);
+                break;
+            } else if (position == MarkerDetector.MARKER_POSITION.RIGHT) {
+                straightBlocking(14, true);
+                setHeading(-45);
+                waitFor(0.1);
+                straightBlocking(11, true);
+                waitFor(1.5);
+                straightBlocking(11, false);
+                setHeading(0);
+                waitFor(0.1);
+                straightBlocking(12, false);
+                break;
+            }
+        }
+    }
+
+    public void waitFor(double seconds) {
+        elapsedTime = new ElapsedTime();
+        elapsedTime.reset();
+        while (opMode.opModeIsActive()) {
+
+            if (elapsedTime.milliseconds() >= seconds*1000) {
+                break;
+
+            }
+
+        }
     }
 }
