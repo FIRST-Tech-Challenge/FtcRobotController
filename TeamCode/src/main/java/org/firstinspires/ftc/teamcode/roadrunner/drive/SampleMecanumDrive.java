@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.roadrunner.drive;
 
+import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.LOGGER;
 import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.logger;
 import static org.firstinspires.ftc.teamcode.roadrunner.drive.DriveConstants.MAX_ACCEL;
 import static org.firstinspires.ftc.teamcode.roadrunner.drive.DriveConstants.MAX_ANG_ACCEL;
@@ -46,6 +47,7 @@ import com.qualcomm.robotcore.hardware.VoltageSensor;
 import com.qualcomm.robotcore.hardware.configuration.typecontainers.MotorConfigurationType;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.teamcode.Components.RFModules.System.RFLogger;
 import org.firstinspires.ftc.teamcode.Robots.BasicRobot;
 import org.firstinspires.ftc.teamcode.roadrunner.drive.RFMotionController.Localizers.Tracker;
 import org.firstinspires.ftc.teamcode.roadrunner.drive.StandardTrackingWheelLocalizer;
@@ -283,6 +285,8 @@ public class SampleMecanumDrive extends MecanumDrive {
     }
 
     public void followTrajectorySequenceAsync(TrajectorySequence trajectorySequence) {
+        LOGGER.setLogLevel(RFLogger.Severity.INFO);
+        LOGGER.log("BradBot.followTrajSeq(): going from: " +trajectorySequence.start() +" to: " + trajectorySequence.end());
         trajectorySequenceRunner.followTrajectorySequenceAsync(trajectorySequence);
         trajectorySeq = trajectorySequence;
         endPose = trajectorySequence.end();
@@ -391,6 +395,7 @@ public class SampleMecanumDrive extends MecanumDrive {
         if(isFieldCentric&&isButtered){
             toggleButtered();
         }
+        LOGGER.log(RFLogger.Severity.INFO, "SampleMecanumDrive.toggleFieldCentric(): fieldCentric: "+isFieldCentric);
     }
     public void toggleButtered(){
         isButtered=!isButtered;
@@ -398,6 +403,7 @@ public class SampleMecanumDrive extends MecanumDrive {
             toggleFieldCentric();
         }
         toggleServos();
+        LOGGER.log(RFLogger.Severity.INFO, "SampleMecanumDrive.toggleButtered(): isButtered: "+isButtered);
     }
 
     public boolean isButtered(){

@@ -67,7 +67,7 @@ public class RFAprilCam {
      */
     public RFAprilCam() {
         LOGGER.setLogLevel(RFLogger.Severity.INFO);
-        LOGGER.log("Entering RFAprilCam Constructor, ");
+        LOGGER.log("RFAprilCam() : initializing Apriltag processor ");
         aprilTagGameDatabase = AprilTagGameDatabase.getCenterStageTagLibrary();
         aprilTag = new AprilTagProcessor.Builder()
                 .setDrawAxes(false)
