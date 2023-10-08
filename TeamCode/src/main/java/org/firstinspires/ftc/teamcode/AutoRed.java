@@ -42,8 +42,9 @@ public class AutoRed extends LinearOpMode {
         boolean downWithTurn = false;
         boolean doneWithMecanum2 = false;
 
-        double targetDistanceFromAprilTag = 10;
         int idNumber = 6;
+
+        double targetDistanceFromAprilTag = 10;
 
         double[] powerMoveCloser = robot.calculateDrivetrainPower(25.4 * (targetDistanceFromAprilTag - robot.getAprilTagRange(idNumber)));
         double[] powerMoveAway = robot.calculateDrivetrainPower(-25.4 * (targetDistanceFromAprilTag - robot.getAprilTagRange(idNumber)));
@@ -51,6 +52,7 @@ public class AutoRed extends LinearOpMode {
 
         double[] stopPower = {0, 0, 0, 0};
         boolean isDone = false;
+
 
         while (opModeIsActive() && !isDone) {
 

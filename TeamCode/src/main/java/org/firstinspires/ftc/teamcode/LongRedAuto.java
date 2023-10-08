@@ -66,5 +66,37 @@ public class LongRedAuto extends LinearOpMode {
             robot.waitFor(0.1);
 
 
+
+            boolean isDone = false;
+            int idNumber = 6;
+
+
+            while (opModeIsActive() && !isDone) {
+
+
+                    if (!robot.moveRelativeToAprilTagX(0, idNumber)) {
+                            isDone = robot.moveRelativeToAprilTagX(0, idNumber);
+                    }
+
+                    telemetry.addData("x", isDone);
+                    //robot.moveRelativeToAprilTag(10);
+
+                    telemetry.update();
+            }
+            isDone = false;
+            while (opModeIsActive() && !isDone) {
+
+
+                    if (!robot.moveRelativeToAprilTagRange(10, idNumber)) {
+                            isDone = robot.moveRelativeToAprilTagRange(10, idNumber);
+                    }
+
+                    telemetry.addData("range", isDone);
+                    //robot.moveRelativeToAprilTag(10);
+
+                    telemetry.update();
+            }
+
+
     }
 }
