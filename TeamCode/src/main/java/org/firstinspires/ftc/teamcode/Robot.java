@@ -11,8 +11,16 @@ import java.util.Objects;
  *  Also has a "desired state" for mechanism driving.
  */
 public class Robot {
-    static class Config { // access via Robot.Config
-        public enum MotorConfigs { // (name, direction, behavior)
+    
+    /**
+     * Stores config info on robot 
+     */
+    static class Config {
+        
+        /**
+         * Stores motor configs
+         */
+        public enum MotorConfigs {
             //drive motors
             FRONT_LEFT  ("front_left", DcMotor.Direction.REVERSE, DcMotor.ZeroPowerBehavior.FLOAT),
             FRONT_RIGHT ("front_right",DcMotor.Direction.REVERSE, DcMotor.ZeroPowerBehavior.FLOAT),
@@ -24,11 +32,12 @@ public class Robot {
             TWO         ("slides_motor_2",         DcMotor.Direction.REVERSE, DcMotor.ZeroPowerBehavior.BRAKE),
             SECONDARY   ("secondary_slides_motor", DcMotor.Direction.FORWARD, DcMotor.ZeroPowerBehavior.BRAKE);
             
-            private String name;
-            private DcMotor.Direction direction;
-            private DcMotor.ZeroPowerBehavior behavior
+            private final String name;
+            private final DcMotor.Direction direction;
+            private final DcMotor.ZeroPowerBehavior behavior
             
-            /**Creates motor configuration
+            /**
+             * Creates motor configuration
              * @param name the name of component
              * @param direction the direction of the motor
              * @param behavior the zeroPowerBehavior of the motor
@@ -44,13 +53,17 @@ public class Robot {
             public DcMotor.ZeroPowerBehavior getZeroPowerBehavior() { return behavior; }
         }
 
+        /**
+         * Stores motor configs
+         */
         public enum ServoConfigs { // (name, direction) // not sure if you need direction
             //not sure what to put here yet
             
-            private String name;
-            private Servo.Direction direction;
+            private final String name;
+            private final Servo.Direction direction;
 
-            /**Creates servo configuration
+            /**
+             * Creates servo configuration
              * @param name the name of the component
              * @param direction the direction of the servo
              */
@@ -62,14 +75,18 @@ public class Robot {
             public String          getName()      { return name; }
             public Servo.Direction getDirection() {return direction; }
         }
-
+        
+        /**
+         * Stores switch configs
+         */
         public enum SwitchConfigs { // (name)
             SLIDES_LIMIT("slides_limit");
 
-            /**Creates switch configuration
+            /**
+             * Creates switch configuration
              * @param name the name of the component
              */
-            private String name;
+            private final String name;
             private SwitchConfigs(final String name) {
                 this.name = name;
             }
@@ -116,7 +133,7 @@ public class Robot {
     public ElapsedTime elapsedTime = new ElapsedTime(ElapsedTime.Resolution.MILLISECONDS);
     public PositionManager positionManager;
 
-    /**Creates robot and gets components
+    /* Creates robot and gets components
      * @param hardwareMap map components to hardware components
      * @param telemtry dunno
      * @param elapsedTime dunno
@@ -146,14 +163,16 @@ public class Robot {
 }
 
 abstract class Motors { // this might be a bad abstraction
-    /**Resets a motor's encoder
+    /**
+     * Resets a motor's encoder
      * @param motor the motor acted upon
      */
     public static void resetMotor(DcMotor motor) {
         Objects.requireNonNull(motor).setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         Objects.requireNonNull(motor).setMode(DcMotor.RunMode.RUN_USING_ENCODER);
     }
-    /**Sets a motor's config to config
+    /**
+     * Sets a motor's config to config
      * @param motor the motor acted upon
      * @param config the desired config
      */
@@ -165,7 +184,8 @@ abstract class Motors { // this might be a bad abstraction
 
 class DriveMotors extends Motors {
     public DcMotor frontLeft, frontRight, rearLeft, rearRight;
-    /**Takes hardwareMap and gets drive motors from it
+    /**
+     * Takes hardwareMap and gets drive motors from it
      * @param hardwareMap the hardwareMap used
      */
     public DriveMotors(HardwareMap hardwareMap) {
@@ -179,7 +199,8 @@ class DriveMotors extends Motors {
         setMotorToConfig(rearLeft,  Robot.Config.MotorConfigs.REAR_LEFT);
         setMotorToConfig(rearRight, Robot.Config.MotorConfigs.REAR_RIGHT);
     }
-    /**Sets a motor's config to config and resets motor encoder
+    /**
+     * Sets a motor's config to config and resets motor encoder
      * @param motor the motor acted upon
      * @param config the desired config
      */
@@ -191,7 +212,8 @@ class DriveMotors extends Motors {
 
 class SlidesMotors extends Motors {
     public DcMotors one, two, secondary;
-    /**Gets slides motors from hardware
+    /**
+     * Gets slides motors from hardware
      * @param hardwareMap the hardwareMap used
      */
     public DriveMotors(HardwareMap hardwareMap) {
