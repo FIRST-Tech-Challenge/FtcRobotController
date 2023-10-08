@@ -27,6 +27,12 @@ public class Robot {
             private String name;
             private DcMotor.Direction direction;
             private DcMotor.ZeroPowerBehavior behavior
+            
+            /**Creates motor configuration
+             * @param name the name of component
+             * @param direction the direction of the motor
+             * @param behavior the zeroPowerBehavior of the motor
+             */
             private MotorConfigs(final String name, final DcMotor.Direction direction, final DcMotor.ZeroPowerBehavior behavior) {
                 this.name      = name;
                 this.direction = direction;
@@ -43,6 +49,11 @@ public class Robot {
             
             private String name;
             private Servo.Direction direction;
+
+            /**Creates servo configuration
+             * @param name the name of the component
+             * @param direction the direction of the servo
+             */
             private ServoConfigs(final String name, final Servo.Direction direction) {
                 this.name      = name;
                 this.direction = direction;
@@ -54,7 +65,10 @@ public class Robot {
 
         public enum SwitchConfigs { // (name)
             SLIDES_LIMIT("slides_limit");
-            
+
+            /**Creates switch configuration
+             * @param name the name of the component
+             */
             private String name;
             private SwitchConfigs(final String name) {
                 this.name = name;
