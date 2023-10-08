@@ -18,6 +18,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
 import org.firstinspires.ftc.vision.VisionPortal;
 import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
 import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
+import org.firstinspires.ftc.vision.tfod.TfodProcessor;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
@@ -49,6 +50,13 @@ public class Robot {
     double prevError = 0;
     double prevTime = 0;
 
+
+    OpenCvWebcam webcam;
+    MarkerDetector detector;
+    MarkerDetector.MARKER_POSITION position;
+    private TfodProcessor tfod;
+
+
     //CONSTRUCTOR
     public Robot(HardwareMap hardwareMap, LinearOpMode opMode, Telemetry telemetry) {
         this.hardwareMap = hardwareMap;
@@ -56,13 +64,23 @@ public class Robot {
         this.telemetry = telemetry;
         setUpDrivetrainMotors();
         setUpImu();
+        int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
+        webcam = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "Webcam 1"), cameraMonitorViewId);
     }
 
     public void setUpAprilTags() {
-        aprilTag = AprilTagProcessor.easyCreateWithDefaults();
-        visionPortal = VisionPortal.easyCreateWithDefaults(
-                hardwareMap.get(WebcamName.class, "Webcam 1"), aprilTag);
+ //       aprilTag = AprilTagProcessor.easyCreateWithDefaults();
+        //visionPortal = VisionPortal.easyCreateWithDefaults(webcam, aprilTag);
+        aprilTag = new AprilTagProcessor.Builder()
+                .build();
 
+        tfod = new TfodProcessor.Builder()
+                .build();
+
+        visionPortal = new VisionPortal.Builder()
+                .setCamera(hardwareMap.get(WebcamName.class, "Webcam 1"))
+                .addProcessors(tfod, aprilTag)
+                .build();
     }
 
 
@@ -756,12 +774,7 @@ public class Robot {
     }
 
     public void detectAndMoveToMarker() {
-        OpenCvWebcam webcam;
-        MarkerDetector detector;
-        MarkerDetector.MARKER_POSITION position;
 
-        int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
-        webcam = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "Webcam 1"), cameraMonitorViewId);
         elapsedTime = new ElapsedTime();
 
         detector = new MarkerDetector();
