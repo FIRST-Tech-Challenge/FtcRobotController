@@ -149,6 +149,12 @@ public class Robot {
             done = true;
         }
 
+        telemetry.addData("power", powerMovePositive);
+        telemetry.addData("power 2", powerMoveNegative);
+        telemetry.addData("x", getAprilTagXPos(idNumber));
+        telemetry.addData("left range", getAprilTagXPos(idNumber) > inchesFromAprilTag - 0.5);
+        telemetry.addData("right range", getAprilTagXPos(idNumber) < inchesFromAprilTag + 0.5);
+
         return done;
     }
 
