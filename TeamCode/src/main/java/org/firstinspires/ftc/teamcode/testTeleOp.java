@@ -13,6 +13,9 @@ public class testTeleOp extends LinearOpMode {
     public void runOpMode() throws InterruptedException {
 
         DcMotor intake = hardwareMap.dcMotor.get("intake");
+        DcMotor flippyThingy = hardwareMap.dcMotor.get("flipper");
+        flippyThingy.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        flippyThingy.setDirection(DcMotorSimple.Direction.FORWARD);
         intake.setDirection(DcMotorSimple.Direction.REVERSE);
 
         waitForStart();
@@ -25,6 +28,15 @@ public class testTeleOp extends LinearOpMode {
                 intake.setPower(-0.6  );
             } else {
                 intake.setPower(0);
+            }
+
+            if (gamepad1.x == true) {
+                flippyThingy.setPower(0.6);
+
+            } else if (gamepad1.y == true) {
+                flippyThingy.setPower(-0.6);
+            } else {
+                flippyThingy.setPower(0);
             }
         }
     }
