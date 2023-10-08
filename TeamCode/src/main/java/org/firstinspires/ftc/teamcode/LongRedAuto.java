@@ -20,8 +20,6 @@ public class LongRedAuto extends LinearOpMode {
         int idNumber = 6;
         Robot robot = new Robot(hardwareMap, this, telemetry);
 
-        robot.setUpAprilTags();
-
         waitForStart();
 
 
@@ -46,6 +44,8 @@ public class LongRedAuto extends LinearOpMode {
         robot.waitFor(0.1);
         robot.mecanumBlocking(25, true);
         //TODO: APRILTAG GOES HERE !!!!!!
+
+        robot.setUpAprilTags();
         while (opModeIsActive() && !isDone) {
 
 
@@ -74,7 +74,7 @@ public class LongRedAuto extends LinearOpMode {
         }
 
 
-        robot.waitFor(2);
+        /*robot.waitFor(2);
         robot.setHeading(0);
         robot.waitFor(0.1);
         robot.straightBlocking(24, true);
@@ -91,7 +91,7 @@ public class LongRedAuto extends LinearOpMode {
         robot.waitFor(0.1);
         robot.mecanumBlocking(25, true);
         robot.waitFor(0.1);
-
+*/
 
     }
 }
