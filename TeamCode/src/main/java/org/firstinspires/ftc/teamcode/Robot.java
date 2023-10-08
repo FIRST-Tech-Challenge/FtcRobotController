@@ -24,7 +24,7 @@ public class Robot {
             
             private String name;
             private DcMotor.Direction direction;
-            private DriveMotor(final String name, final DcMotor.Direction direction) {
+            private DriveMotor(final String name, final DcMotor.Direction direction) {//you need an s at the end of DriveMotor
                 this.name = name;
                 this.direction = direction;
             }
@@ -41,7 +41,7 @@ public class Robot {
     abstract class Motors {
         //init motor takes motor reference and then does some in-place changes to it
         //not actually sure this works, but it should so i hope it works xdddd
-        private void initMotor(DcMotor motor, Config.DriveMotors config) {
+        private void initMotor(DcMotor motor, Config.DriveMotors config) {//this needs to be public inorder for it to be used
             //I have no clue why you need Objects.requireNonNull(Object), left in just in case though
             Objects.requireNonNull(motor).setDirection(config.getDirection());
             Objects.requireNonNull(motor).setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -54,6 +54,7 @@ public class Robot {
         public DcMotor frontLeft, frontRight, rearLeft, rearRight;
         //take hardware map and then init all motors
         public DriveMotors(HardwareMap hardwareMap) {
+            //the get method requires (Class<?> , String) not (Class<?>, DriveMotors) . append .getName() to the drive motors reference
             frontLeft = hardwareMap.get(DcMotor.class, Config.DriveMotors.FRONT_LEFT);
             frontRight= hardwareMap.get(DcMotor.class, Config.DriveMotors.FRONT_RIGHT);
             rearLeft  = hardwareMap.get(DcMotor.class, Config.DriveMotors.REAR_LEFT);
@@ -89,15 +90,16 @@ public class Robot {
     public PositionManager positionManager;
 
     public Robot(HardwareMap hardwareMap, Telemetry telemetry, ElapsedTime elapsedTime) {
-        this.telemetry   = telemtry;
+        this.telemetry   = telemtry;//spelled wrong
         this.elapsedTime = elapsedTime;
-        positionManger   = new PositionManager(hardwareMap, telemtry);
+        positionManger   = new PositionManager(hardwareMap, telemtry);//2 thongs spelled wrong
         driveMotors      = new DriveMotors(hardwareMap);
 
         /*whatever goes here
          *
          */
 
+        //this is not necessary because the use of the constructor (new DriveMotors(hardwareMap)) already does this
         driveMotors.frontLeft = hardwareMap.get(DcMotor.class, Robot)
     }
 }
