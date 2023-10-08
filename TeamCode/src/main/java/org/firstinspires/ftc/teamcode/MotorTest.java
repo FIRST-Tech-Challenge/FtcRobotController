@@ -9,30 +9,54 @@ import java.util.concurrent.TimeUnit;
 
 @TeleOp
 public class MotorTest extends LinearOpMode {
-    private DcMotor TestMotor = null;
+    private DcMotor frontLeft = null;
+    private DcMotor frontRight = null;
+    private DcMotor backLeft = null;
+    private DcMotor backRight = null;
     @Override
 
     public void runOpMode() throws InterruptedException{
-        TestMotor = hardwareMap.get(DcMotor.class, "motor1");
+        frontLeft = hardwareMap.get(DcMotor.class, "frontleft");
+        frontRight = hardwareMap.get(DcMotor.class, "frontright");
+        backLeft = hardwareMap.get(DcMotor.class, "backleft");
+        backRight = hardwareMap.get(DcMotor.class, "backright");
         waitForStart();
         if (isStopRequested())
             return;
         while (opModeIsActive()) {
             if (gamepad1.b) {
                 if (gamepad1.right_trigger>0) {
-                    TestMotor.setDirection(DcMotorSimple.Direction.FORWARD);
-                    TestMotor.setPower(gamepad1.right_trigger);
+                    frontLeft.setDirection(DcMotorSimple.Direction.REVERSE);
+                    frontRight.setDirection(DcMotorSimple.Direction.FORWARD);
+                    backLeft.setDirection(DcMotorSimple.Direction.REVERSE);
+                    backRight.setDirection(DcMotorSimple.Direction.FORWARD);
+                    frontLeft.setPower(gamepad1.right_trigger);
+                    frontRight.setPower(gamepad1.right_trigger);
+                    backLeft.setPower(gamepad1.right_trigger);
+                    backRight.setPower(gamepad1.right_trigger);
                 }
                 else {
-                    TestMotor.setPower(0);
+                    frontLeft.setPower(0);
+                    frontRight.setPower(0);
+                    backLeft.setPower(0);
+                    backRight.setPower(0);
                 }
                 if (gamepad1.left_trigger>0) {
-                    TestMotor.setDirection(DcMotorSimple.Direction.REVERSE);
-                    TestMotor.setPower(gamepad1.left_trigger);
-
+                    frontLeft.setDirection(DcMotorSimple.Direction.FORWARD);
+                    frontRight.setDirection(DcMotorSimple.Direction.REVERSE);
+                    backLeft.setDirection(DcMotorSimple.Direction.FORWARD);
+                    backRight.setDirection(DcMotorSimple.Direction.REVERSE);
+                    frontLeft.setPower(gamepad1.left_trigger);
+                    frontRight.setPower(gamepad1.left_trigger);
+                    backLeft.setPower(gamepad1.left_trigger);
+                    backRight.setPower(gamepad1.left_trigger);
                 }
                 else {
-                    TestMotor.setPower(0);
+                    frontLeft.setPower(0);
+                    frontRight.setPower(0);
+                    backLeft.setPower(0);
+                    backRight.setPower(0);
+
                 }
             }
 
