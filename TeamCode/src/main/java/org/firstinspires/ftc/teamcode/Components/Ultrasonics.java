@@ -27,6 +27,7 @@ public class Ultrasonics {
      * Does not update a state machine.
      */
     public boolean checkAlliance() {
+
         return true;
         //placeholder
     }
@@ -51,4 +52,6 @@ public class Ultrasonics {
     public void update(){
 
     }
+
+    //regulate flipping pin, logic for if detected robot with boundaries and if something within boundaries
 }

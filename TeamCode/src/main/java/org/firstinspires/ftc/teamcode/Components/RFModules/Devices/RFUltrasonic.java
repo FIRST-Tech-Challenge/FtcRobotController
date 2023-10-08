@@ -29,4 +29,6 @@ public class RFUltrasonic {
         return true;
         //placeholder
     }
+
+    //distance data, flip pin
 }

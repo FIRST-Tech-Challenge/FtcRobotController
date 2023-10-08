@@ -1,6 +1,9 @@
 package org.firstinspires.ftc.teamcode.Tests;
+import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.LOGGER;
+
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import org.firstinspires.ftc.teamcode.Components.RFModules.Devices.RFServo;
+import org.firstinspires.ftc.teamcode.Components.RFModules.System.RFLogger;
 
 /**
  * William
@@ -41,9 +44,11 @@ public abstract class RFServoTest extends LinearOpMode {
         if (time - lastTime > FLIP_TIME) {
             if (flipped) {
                 testServo.setPosition(SERVO_LOWER_LIMIT);
+                LOGGER.log(RFLogger.Severity.INFO, "RFServoTest.autoLoop(): flipped servo to position: " + SERVO_LOWER_LIMIT);
                 flipped = false;
             } else {
                 testServo.setPosition(SERVO_UPPER_LIMIT);
+                LOGGER.log(RFLogger.Severity.INFO, "RFServoTest.autoLoop(): flipped servo to position: " + SERVO_UPPER_LIMIT);
                 flipped = true;
             }
             lastTime = time;
