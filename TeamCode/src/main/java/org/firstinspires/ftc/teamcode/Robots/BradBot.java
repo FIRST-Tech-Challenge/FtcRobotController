@@ -64,7 +64,7 @@ public class BradBot extends BasicRobot{
         if(queuer.queue(true, Intake.IntakeStates.STOPPED.getState())){
             if(!queuer.isExecuted()) {
                 LOGGER.setLogLevel(RFLogger.Severity.INFO);
-                LOGGER.log("Entering Function BradBot.startIntakeAuto(), intaking until 2 pixels are stored");
+                LOGGER.log("BradBot.startIntakeAuto(): intaking until 2 pixels are stored");
             }
         }
     }
@@ -77,7 +77,7 @@ public class BradBot extends BasicRobot{
         if(queuer.queue(true, Hopper.HopperStates.ZERO.getState())){
             if(!queuer.isExecuted()) {
                 LOGGER.setLogLevel(RFLogger.Severity.INFO);
-                LOGGER.log("Entering Function BradBot.depositAuto(), depositing until 0 pixels remain");
+                LOGGER.log("BradBot.depositAuto(): depositing until 0 pixels remain");
             }
         }
     }
@@ -91,7 +91,7 @@ public class BradBot extends BasicRobot{
         if(queuer.queue(true, lift.atTargetPosition())) {
             if(!queuer.isExecuted()) {
                 LOGGER.setLogLevel(RFLogger.Severity.INFO);
-                LOGGER.log("Entering Function BradBot.liftAuto(LiftPositionStates), lifting to: " + p_liftPosition.name());
+                LOGGER.log("BradBot.liftAuto(LiftPositionStates): lifting to: " + p_liftPosition.name());
                 liftAuto(p_liftPosition.getPosition());
             }
         }
@@ -105,7 +105,7 @@ public class BradBot extends BasicRobot{
         if(queuer.queue(true, lift.atTargetPosition())) {
             if(!queuer.isExecuted()) {
                 LOGGER.setLogLevel(RFLogger.Severity.INFO);
-                LOGGER.log("Entering Function BradBot.liftAuto(double), lifting to: " + p_position);
+                LOGGER.log("BradBot.liftAuto(double): lifting to: " + p_position);
                 liftAuto(p_position);
             }
         }
@@ -120,7 +120,7 @@ public class BradBot extends BasicRobot{
         if(queuer.queue(false, !roadrun.isBusy())) {
             if(!queuer.isExecuted()){
                 LOGGER.setLogLevel(RFLogger.Severity.INFO);
-                LOGGER.log("Entering Function BradBot.followTrajSeq(), going from: " +p_traj.start() +" to: " + p_traj.end());
+                LOGGER.log("BradBot.followTrajSeq(): going from: " +p_traj.start() +" to: " + p_traj.end());
                 roadrun.followTrajectorySequenceAsync(p_traj);
             }
         }
@@ -189,7 +189,7 @@ public class BradBot extends BasicRobot{
      */
     public void update(){
         LOGGER.setLogLevel(RFLogger.Severity.FINER);
-        LOGGER.log("Entering Function BradBot.update(), updating each component");
+        LOGGER.log("BradBot.update(): updating each component");
         super.update();
         arm.update();
         cv.update();
@@ -202,7 +202,7 @@ public class BradBot extends BasicRobot{
 
     public void stop(){
         LOGGER.setLogLevel(RFLogger.Severity.INFO);
-        LOGGER.log("Entering Function Robot.stop(), the program has stopped normally");
+        LOGGER.log("BradBot.stop(): the program has stopped normally");
         op.stop();
     }
 }

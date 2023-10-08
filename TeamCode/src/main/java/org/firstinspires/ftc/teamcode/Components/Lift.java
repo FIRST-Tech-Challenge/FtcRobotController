@@ -39,10 +39,10 @@ public class Lift extends RFMotor {
         }
 
         void setStateTrue() {
-            for (var i : LiftPositionStates.values())
-                i.state = false;
             if (!this.state)
                 LOGGER.log(RFLogger.Severity.INFO, "Lift.LiftMovingStates.setStateTrue(): assigned true to state: " + this.name());
+            for (var i : LiftPositionStates.values())
+                i.state = false;
             this.state = true;
         }
 
@@ -66,10 +66,10 @@ public class Lift extends RFMotor {
         }
 
         void setStateTrue() {
-            for (var i : LiftMovingStates.values())
-                i.state = false;
             if (!this.state)
                 LOGGER.log(RFLogger.Severity.INFO, "Lift.LiftMovingStates.setStateTrue():  assigned true to state: " + this.name());
+            for (var i : LiftMovingStates.values())
+                i.state = false;
             this.state = true;
         }
     }

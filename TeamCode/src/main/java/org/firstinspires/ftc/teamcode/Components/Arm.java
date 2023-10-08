@@ -46,11 +46,11 @@ public class Arm extends RFServo {
     public void flip(){
         if(ArmStates.UNFLIPPED.state){
             super.setPosition(UPPER_LIMIT);
-            LOGGER.log(RFLogger.Severity.INFO, "Entering Arm.flip(): flipping up");
+            LOGGER.log(RFLogger.Severity.INFO, "Arm.flip(): flipping up");
         }
         else{
             super.setPosition(LOWER_LIMIT);
-            LOGGER.log(RFLogger.Severity.INFO, "Entering Arm.flip(): flipping down");
+            LOGGER.log(RFLogger.Severity.INFO, "Arm.flip(): flipping down");
         }
     }
 
