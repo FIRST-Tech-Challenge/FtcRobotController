@@ -131,7 +131,7 @@ abstract class Motors { // this might be a bad abstraction
         Objects.requireNonNull(motor).setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         Objects.requireNonNull(motor).setMode(DcMotor.RunMode.RUN_USING_ENCODER);
     }
-    protected static void setMotorToConfig(DcMotor motor, Config.MotorConfigs config) {
+    static void setMotorToConfig(DcMotor motor, Config.MotorConfigs config) {
         Objects.requireNonNull(motor).setDirection(config.getDirection());
         Objects.requireNonNull(motor).setZeroPowerBehavior(config.getZeroPowerBehavior());
     }
@@ -151,7 +151,7 @@ class DriveMotors extends Motors {
         setMotorToConfig(rearRight, Config.MotorConfigs.REAR_RIGHT);
     }
     @Override
-    protected static void setMotorToConfig(DcMotor motor, Config.MotorConfigs config) {
+    static void setMotorToConfig(DcMotor motor, Config.MotorConfigs config) {
         super.setMotorToConfig(motor, config);
         resetMotor(motor);
     }
