@@ -10,6 +10,8 @@ import org.firstinspires.ftc.teamcode.Components.RFModules.Devices.RFUltrasonic;
 public class Ultrasonics {
     RFUltrasonic backLeft, backRight, frontLeft, frontRight;
 
+    private double lastFlipTime = 0;
+
     /**
      * Constructor
      */
@@ -27,9 +29,7 @@ public class Ultrasonics {
      * Does not update a state machine.
      */
     public boolean checkAlliance() {
-
-        return true;
-        //placeholder
+        return frontLeft.check() && frontRight.check();
     }
     /**
      * Checks if there is a robot near or coming to the opponent's pixel stack(s).
@@ -39,8 +39,7 @@ public class Ultrasonics {
      * Does not update a state machine.
      */
     public boolean checkOpp() {
-        return true;
-        //placeholder
+        return frontRight.check() && backRight.check();
     }
     /**
      * Updates if the pins on the ultrasonics have been flipped.
@@ -50,8 +49,12 @@ public class Ultrasonics {
      * Does not update a state machine.
      */
     public void update(){
-
+        if (op.getRuntime() - lastFlipTime > 0.1) {
+            frontLeft.flipPin();
+            frontRight.flipPin();
+            backLeft.flipPin();
+            backRight.flipPin();
+        }
     }
 
-    //regulate flipping pin, logic for if detected robot with boundaries and if something within boundaries
 }

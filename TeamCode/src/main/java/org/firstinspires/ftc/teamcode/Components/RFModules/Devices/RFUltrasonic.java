@@ -10,6 +10,8 @@ import com.qualcomm.robotcore.hardware.UltrasonicSensor;
 public class RFUltrasonic {
     private UltrasonicSensor ultrasonic;
 
+    private double MAX_RANGE = 30;
+
     /**
      * Constructor
      * @param p_ultraName name of the ultrasonic in the hardware map
@@ -26,9 +28,14 @@ public class RFUltrasonic {
      * Does not update a state machine.
      */
     public boolean check() {
-        return true;
-        //placeholder
+        return checkDist() < MAX_RANGE;
     }
 
-    //distance data, flip pin
+    public double checkDist() {
+        return ultrasonic.getUltrasonicLevel();
+    }
+
+    public void flipPin() {
+        ultrasonic.close();
+    }
 }
