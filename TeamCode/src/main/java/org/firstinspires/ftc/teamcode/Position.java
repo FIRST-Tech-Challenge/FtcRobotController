@@ -5,7 +5,7 @@ package org.firstinspires.ftc.teamcode;
  */
 
  /**What is protected?
-  - specifies that the member can only be accesed within its own package
+  - specifies that the member can only be accessed within its own package
    (as with package-private) and, in addiction,
     by a subclass of its class in another package.
   */
@@ -23,7 +23,7 @@ public class Position {
     protected double strafePower = 1.0; //Strafe is set to FULL POWER. Number can range ONLY from -1 to 1
     protected double rotatePower = 1.0; //Rotation is set to FULL POWER.
 
-     /** creates a point with the coordinats of (0,0), no name, a rotation of 0. and powersettings of 1
+     /** creates a point with the coordinates of (0,0), no name, a rotation of 0. and powersettings of 1
       *
       */
     public Position() { //This sets all the presets on the field as a blank or a 0.
@@ -106,9 +106,9 @@ public class Position {
     public static Position add(Position a, Position b) {
        return new Position(a.getX() + b.getX(), a.getY() + b.getY(), (a.getRotation() + b.getRotation()) % (2 * Math.PI),"");
     }
-    /**sets the rotarion of the position
-    *p@param r theangle to set to
-    *@return the instace of this class. (useful for chaining)
+    /**sets the rotation of the position
+    *p@param r the angle to set to
+    *@return the instance of this class. (useful for chaining)
     */
     public Position setRotation(double r) {
       this.rotation = r;
