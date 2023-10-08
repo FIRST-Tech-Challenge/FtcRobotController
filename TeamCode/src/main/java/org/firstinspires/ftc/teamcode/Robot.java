@@ -807,6 +807,8 @@ public class Robot {
                 break;
             }
         }
+
+        webcam.stopStreaming();
         webcam.closeCameraDevice();
     }
 
