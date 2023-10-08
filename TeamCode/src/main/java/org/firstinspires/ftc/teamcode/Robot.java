@@ -162,6 +162,9 @@ public class Robot {
     }
 }
 
+/**
+ * container for motors
+ */
 abstract class Motors { // this might be a bad abstraction
     /**
      * Resets a motor's encoder
@@ -181,7 +184,9 @@ abstract class Motors { // this might be a bad abstraction
         Objects.requireNonNull(motor).setZeroPowerBehavior(config.getZeroPowerBehavior());
     }
 }
-
+/**
+ * stores drive motors
+ */
 class DriveMotors extends Motors {
     public DcMotor frontLeft, frontRight, rearLeft, rearRight;
     /**
@@ -209,7 +214,9 @@ class DriveMotors extends Motors {
         resetMotor(motor);
     }
 }
-
+/**
+ * stores slides motors
+ */
 class SlidesMotors extends Motors {
     public DcMotors one, two, secondary;
     /**
