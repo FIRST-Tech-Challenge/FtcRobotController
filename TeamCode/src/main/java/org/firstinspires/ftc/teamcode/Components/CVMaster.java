@@ -109,7 +109,7 @@ public class CVMaster {
      */
     public void update(){
         LOGGER.setLogLevel(RFLogger.Severity.FINEST);
-        LOGGER.log("Entering Function CVMaster.update(), updating camera info");
+        LOGGER.log("CVMaster.update() : updating camera info");
         if(op.isStarted()&&isStreaming){
             switchToApril();
         }
