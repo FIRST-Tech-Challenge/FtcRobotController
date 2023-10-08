@@ -10,7 +10,8 @@ import org.opencv.imgproc.Imgproc;
 import org.openftc.easyopencv.OpenCvPipeline;
 
 public class CircleDetection extends OpenCvPipeline {
-    public AutonomousOpenCV.BallPosition ballPosition = AutonomousOpenCV.BallPosition.UNDEFINED;
+    enum BallPosition {LEFT, CENTER, RIGHT, UNDEFINED};
+    private BallPosition ballPosition = BallPosition.UNDEFINED;
     private boolean detectionRed = true;
     Mat grayMat = new Mat();
     Mat hsvMaskedMat = new Mat();
@@ -19,20 +20,39 @@ public class CircleDetection extends OpenCvPipeline {
     Mat mask2 = new Mat();
     Mat hsvMat = new Mat();
     Mat subMat = new Mat();
+    private int numCirclesFound = 0;
+    private Point circleCenter = new Point(0.0, 0.0);
 
-    public int numCirclesFound = 0;
-    public Point circleCenter = new Point(0.0, 0.0);
-
-    private Telemetry telemetry;
-
-    public CircleDetection(Telemetry telemetry, boolean detectionRed) {
-        this.telemetry = telemetry;
+    public CircleDetection(boolean detectionRed) {
         this.detectionRed = detectionRed;
     }
 
+    public int NumCirclesFound()
+    {
+        return numCirclesFound;
+    }
+    public Point CircleCenter()
+    {
+        return circleCenter;
+    }
+
+    public boolean CircleFound()
+    {
+        return ballPosition != BallPosition.UNDEFINED;
+    }
+    public BallPosition GetBallPosition()
+    {
+        return ballPosition;
+    }
+
+    public void SetBallPosition(BallPosition ballPosition)
+    {
+        this.ballPosition = ballPosition;
+    }
     @Override
     public Mat processFrame(Mat input) {
-        Imgproc.cvtColor(input, hsvMat, Imgproc.COLOR_RGB2HSV);
+        subMat = input.submat(new Rect(100, 250, 1000, 300));
+        Imgproc.cvtColor(subMat, hsvMat, Imgproc.COLOR_RGB2HSV);
         if (detectionRed) {
             Core.inRange(hsvMat, new Scalar(0, 70, 50), new Scalar(10, 255, 255), mask1); // RED 1
             Core.inRange(hsvMat, new Scalar(160, 70, 50), new Scalar(180, 255, 255), mask2); // RED 2
@@ -41,21 +61,20 @@ public class CircleDetection extends OpenCvPipeline {
             Core.inRange(hsvMat, new Scalar(92, 60, 0), new Scalar(123, 255, 255), mask); //BLUE
         }
         hsvMaskedMat.release();
-        Core.bitwise_and(input, input, hsvMaskedMat, mask);
+        Core.bitwise_and(subMat, subMat, hsvMaskedMat, mask);
 
         Imgproc.cvtColor(hsvMaskedMat, grayMat, Imgproc.COLOR_RGB2GRAY);
 
         Imgproc.GaussianBlur(grayMat, grayMat, new org.opencv.core.Size(15.0, 15.0), 2, 2);
         Mat circles = new Mat();
-        subMat = grayMat.submat(new Rect(100, 250, 1000, 300));
-        Imgproc.HoughCircles(subMat, circles, Imgproc.HOUGH_GRADIENT, 1, 300, 120, 25);
+        Imgproc.HoughCircles(grayMat, circles, Imgproc.HOUGH_GRADIENT, 1, 300, 120, 25);
 
         numCirclesFound = circles.cols();
 
         for (int i = 0; i < numCirclesFound; i++) {
             double[] data = circles.get(0, i);
             circleCenter = new Point(Math.round(data[0])+100, Math.round(data[1])+250);
-            ballPosition = circleCenter.x < 427 ? AutonomousOpenCV.BallPosition.LEFT : (circleCenter.x > 853 ? AutonomousOpenCV.BallPosition.RIGHT : AutonomousOpenCV.BallPosition.CENTER);
+            ballPosition = circleCenter.x < 427 ? BallPosition.LEFT : (circleCenter.x > 853 ? BallPosition.RIGHT : BallPosition.CENTER);
         }
         return input;
     }

@@ -83,10 +83,8 @@ public class autonomous extends LinearOpMode {
         // Initialize your hardware here (motor hardware mappings)
 
         waitForStart(); // Wait for the start button to be pressed
-        df.driveForward(1,1000);
-        df.rotateLeft(1, 500);
-        // Stop all motors when autonomous is done
-        df.stopM();
+        df.driveStraight(0.5,50.0, 0);
+        df.turnToHeading(0.4, 90);
     }
 
 

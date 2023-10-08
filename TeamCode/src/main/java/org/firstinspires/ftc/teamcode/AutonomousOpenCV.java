@@ -18,15 +18,34 @@ public class AutonomousOpenCV extends LinearOpMode {
     private CircleDetection circleDetection;
     private DrivingFunctions df;
     protected boolean detectionRed = false; // whether to detect a red ball (if false detects blue)
+    protected boolean runBallDetectionTest = false;
+    protected boolean runEncoderTest = false;
+    static final double DRIVE_SPEED = 0.3;
+    static final double TURN_SPEED = 0.35;
 
-    private ElapsedTime runtime = new ElapsedTime();
+    private void RunBallDetectionTest() {
+        while (opModeIsActive()) {
+            sleep(100);
+            UpdateCircleDetectionTelemetry();
+        }
+    }
 
-    private void Initialize()
-    {
+    private void DetectBallPosition(int timeoutInSeconds) {
+        int tries = 0;
+        while (opModeIsActive() && !circleDetection.CircleFound() && tries < timeoutInSeconds * 10) {
+            sleep(100);
+            tries++;
+            UpdateCircleDetectionTelemetry();
+        }
+        if (!circleDetection.CircleFound())
+            circleDetection.SetBallPosition(CircleDetection.BallPosition.LEFT); // Ball not found, makes a guess to the left
+    }
+
+    private void Initialize() {
         df = new DrivingFunctions(this);
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
         webcam = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "Webcam 1"), cameraMonitorViewId);
-        circleDetection = new CircleDetection(telemetry, detectionRed);
+        circleDetection = new CircleDetection(detectionRed);
         webcam.setPipeline(circleDetection);
         webcam.setMillisecondsPermissionTimeout(5000); // Timeout for obtaining permission is configurable. Set before opening.
         webcam.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
@@ -41,51 +60,90 @@ public class AutonomousOpenCV extends LinearOpMode {
             }
         });
     }
+
     @Override
     public void runOpMode() {
         Initialize();
-
-        telemetry.addLine("Waiting for start");
-        telemetry.update();
-
         waitForStart();
-
-        int tries = 0;
-        // Waits until the camera detects the ball, up to 5 seconds
-        while(opModeIsActive() && circleDetection.ballPosition == BallPosition.UNDEFINED && tries < 50) {
-            sleep(100);
-            tries++;
-            UpdateTelemetry();
+        if (runBallDetectionTest) {
+            RunBallDetectionTest();
+            return;
+        }
+        if (runEncoderTest) {
+            RunEncoderTest();
+            return;
         }
 
-        if(circleDetection.ballPosition == BallPosition.UNDEFINED)
-            circleDetection.ballPosition = BallPosition.LEFT; // Ball not found, makes a guess to the left
+        DetectBallPosition(5);
 
-        df.driveStraight(0.3, 35, 0.0);
-        sleep(1000);
-
-        UpdateTelemetry();
-        StopStreaming();
+        if(circleDetection.GetBallPosition() == CircleDetection.BallPosition.LEFT)
+        {
+            PushPixelLeft();
+        }
+        if(circleDetection.GetBallPosition() == CircleDetection.BallPosition.CENTER)
+        {
+            PushPixelCentert();
+        }
+        if(circleDetection.GetBallPosition() == CircleDetection.BallPosition.RIGHT)
+        {
+            PushPixelRight();
+        }
     }
 
+    private void PushPixelRight()
+    {
+        df.driveStraight(DRIVE_SPEED, 35, 0);
+        df.turnToHeading(TURN_SPEED, -45); // Negative angles turn to the right
+        df.driveStraight(DRIVE_SPEED, 28, -45);
+        df.driveStraight(DRIVE_SPEED, -28, -45);
+        df.turnToHeading(TURN_SPEED, 0);
+        df.driveStraight(DRIVE_SPEED, -30, 0);
+    }
+
+    private void PushPixelLeft()
+    {
+        df.driveStraight(DRIVE_SPEED, 35, 0);
+        df.turnToHeading(TURN_SPEED, 45); // Positive angles turn to the left
+        df.driveStraight(DRIVE_SPEED, 28, 45);
+        df.driveStraight(DRIVE_SPEED, -28, 45);
+        df.turnToHeading(TURN_SPEED, 0);
+        df.driveStraight(DRIVE_SPEED, -30, 0);
+
+    }
+    private void PushPixelCentert()
+    {
+        df.driveStraight(DRIVE_SPEED, 38, 0);
+        df.driveStraight(DRIVE_SPEED, -30, 0);
+    }
+
+    private void RunEncoderTest()
+    {
+        StopStreaming();
+        df.TestEncoders();
+    }
+    protected void finalize()
+    {
+        StopStreaming();
+    }
     private void StopStreaming()
     {
         webcam.stopStreaming();
         webcam.closeCameraDevice();
     }
-
-    private void UpdateTelemetry()
+    private void UpdateCircleDetectionTelemetry()
     {
-        telemetry.addData("Frame Count", webcam.getFrameCount());
-        telemetry.addData("FPS", String.format("%.2f", webcam.getFps()));
-        telemetry.addData("Total frame time ms", webcam.getTotalFrameTimeMs());
-        telemetry.addData("Pipeline time ms", webcam.getPipelineTimeMs());
-        telemetry.addData("Overhead time ms", webcam.getOverheadTimeMs());
-        telemetry.addData("Theoretical max FPS", webcam.getCurrentPipelineMaxFps());
-        telemetry.addData("Circles detected: ", "%d", circleDetection.numCirclesFound);
-        telemetry.addData("Circle center = ", "%4.0f, %4.0f", circleDetection.circleCenter.x, circleDetection.circleCenter.y);
-        telemetry.addData("Ball Position: ", "%s", circleDetection.ballPosition);
+        if(!runEncoderTest) {
+            telemetry.addData("Frame Count", webcam.getFrameCount());
+            telemetry.addData("FPS", String.format("%.2f", webcam.getFps()));
+            telemetry.addData("Total frame time ms", webcam.getTotalFrameTimeMs());
+            telemetry.addData("Pipeline time ms", webcam.getPipelineTimeMs());
+            telemetry.addData("Overhead time ms", webcam.getOverheadTimeMs());
+            telemetry.addData("Theoretical max FPS", webcam.getCurrentPipelineMaxFps());
+            telemetry.addData("Circles detected: ", "%d", circleDetection.NumCirclesFound());
+            telemetry.addData("Circle center = ", "%4.0f, %4.0f", circleDetection.CircleCenter().x, circleDetection.CircleCenter().y);
+            telemetry.addData("Ball Position: ", "%s", circleDetection.GetBallPosition());
+        }
         telemetry.update();
     }
-    enum BallPosition {LEFT, CENTER, RIGHT, UNDEFINED};
+
 }
