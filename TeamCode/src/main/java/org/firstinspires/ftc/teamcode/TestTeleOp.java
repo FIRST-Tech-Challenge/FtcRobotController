@@ -4,25 +4,25 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.Servo;
 
 //add any test stuff you need to do here
 @TeleOp
-public class testTeleOp extends LinearOpMode {
+public class TestTeleOp extends LinearOpMode {
 
     @Override
     public void runOpMode() throws InterruptedException {
 
         DcMotor intake = hardwareMap.dcMotor.get("intake");
-        DcMotor flippyThingy = hardwareMap.dcMotor.get("flipper");
-        flippyThingy.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        flippyThingy.setDirection(DcMotorSimple.Direction.FORWARD);
-        intake.setDirection(DcMotorSimple.Direction.REVERSE);
+        Servo holderClamp = hardwareMap.servo.get("holderClamp");
+        Servo arm = hardwareMap.servo.get("arm");
 
         DcMotor lFront = hardwareMap.dcMotor.get("fLeft");
         DcMotor rFront = hardwareMap.dcMotor.get("fRight");
         DcMotor lBack = hardwareMap.dcMotor.get("bLeft");
         DcMotor rBack = hardwareMap.dcMotor.get("bRight");
 
+        intake.setDirection(DcMotorSimple.Direction.REVERSE);
         rBack.setDirection(DcMotorSimple.Direction.FORWARD);
         lBack.setDirection(DcMotorSimple.Direction.REVERSE);
         rFront.setDirection(DcMotorSimple.Direction.FORWARD);
@@ -30,23 +30,28 @@ public class testTeleOp extends LinearOpMode {
 
         waitForStart();
 
+        double holderClampPos = 0.5;
+        //double armPos = 0.5;
+
         while (opModeIsActive()) {
             if (gamepad1.a == true) {
                 intake.setPower(0.6);
-
             } else if (gamepad1.b == true) {
-                intake.setPower(-0.6  );
+                intake.setPower(-0.6);
             } else {
                 intake.setPower(0);
             }
 
-            if (gamepad1.x == true) {
-                flippyThingy.setPower(0.6);
+            if(gamepad1.left_bumper == true) {
+                holderClampPos += 0.0025;
+            } else if (gamepad1.right_bumper == true) {
+                holderClampPos -= 0.0025;
+            }
 
+            if(gamepad1.x == true) {
+                //armPos += 0.025;
             } else if (gamepad1.y == true) {
-                flippyThingy.setPower(-0.6);
-            } else {
-                flippyThingy.setPower(0);
+                //armPos -= 0.025;
             }
 
             double forwardBackward = gamepad1.left_stick_y * -0.5;
@@ -73,6 +78,9 @@ public class testTeleOp extends LinearOpMode {
             rFront.setPower(fRightPower);
             lBack.setPower(bLeftPower);
             rBack.setPower(bRightPower);
+
+            holderClamp.setPosition(holderClampPos);
+            //arm.setPosition(armPos);
         }
     }
 

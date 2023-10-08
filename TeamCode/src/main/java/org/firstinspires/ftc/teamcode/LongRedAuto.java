@@ -11,14 +11,12 @@ import org.openftc.easyopencv.OpenCvWebcam;
 @Autonomous
 public class LongRedAuto extends LinearOpMode {
 
-
-
-
     @Override
     public void runOpMode() throws InterruptedException {
         boolean isDone = false;
-        int idNumber = 6;
+        int idNumber = 1;
         Robot robot = new Robot(hardwareMap, this, telemetry);
+        robot.setUpDrivetrainMotors();
 
         waitForStart();
 
