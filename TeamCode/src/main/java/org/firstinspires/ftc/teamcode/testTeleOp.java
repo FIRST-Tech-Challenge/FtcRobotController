@@ -18,15 +18,15 @@ public class testTeleOp extends LinearOpMode {
         flippyThingy.setDirection(DcMotorSimple.Direction.FORWARD);
         intake.setDirection(DcMotorSimple.Direction.REVERSE);
 
-        DcMotor fLeft = hardwareMap.dcMotor.get("fLeft");
-        DcMotor bLeft = hardwareMap.dcMotor.get("bLeft");
-        DcMotor fRight = hardwareMap.dcMotor.get("fRight");
-        DcMotor bRight = hardwareMap.dcMotor.get("bRight");
+        DcMotor lFront = hardwareMap.dcMotor.get("fLeft");
+        DcMotor rFront = hardwareMap.dcMotor.get("fRight");
+        DcMotor lBack = hardwareMap.dcMotor.get("bLeft");
+        DcMotor rBack = hardwareMap.dcMotor.get("bRight");
 
-        fLeft.setDirection(DcMotorSimple.Direction.FORWARD);
-        bLeft.setDirection(DcMotorSimple.Direction.FORWARD);
-        fRight.setDirection(DcMotorSimple.Direction.REVERSE);
-        bRight.setDirection(DcMotorSimple.Direction.REVERSE);
+        rBack.setDirection(DcMotorSimple.Direction.FORWARD);
+        lBack.setDirection(DcMotorSimple.Direction.REVERSE);
+        rFront.setDirection(DcMotorSimple.Direction.FORWARD);
+        lFront.setDirection(DcMotorSimple.Direction.REVERSE);
 
         waitForStart();
 
@@ -49,14 +49,14 @@ public class testTeleOp extends LinearOpMode {
                 flippyThingy.setPower(0);
             }
 
-            double forwardMovement = -gamepad1.left_stick_y;
-            double turnMovement = gamepad1.right_stick_x;
-            double mecanumMovement = -gamepad1.left_stick_x;
+            double forwardBackward = gamepad1.left_stick_y * -0.5;
+            double turning = gamepad1.right_stick_x * 0.5;
+            double mecanuming = gamepad1.left_stick_x * 0.5;
 
-            double fLeftPower = forwardMovement + turnMovement + mecanumMovement;
-            double bLeftPower = forwardMovement + turnMovement - mecanumMovement;
-            double fRightPower = forwardMovement - turnMovement - mecanumMovement;
-            double bRightPower = forwardMovement - turnMovement + mecanumMovement;
+            double fLeftPower = forwardBackward + turning + mecanuming;
+            double fRightPower = forwardBackward - turning - mecanuming;
+            double bLeftPower = forwardBackward + turning - mecanuming;
+            double bRightPower = forwardBackward - turning + mecanuming;
 
             double maxPower = maxAbsValueDouble(fLeftPower, bLeftPower, fRightPower, bRightPower);
 
@@ -69,10 +69,10 @@ public class testTeleOp extends LinearOpMode {
                 bRightPower /= scale;
             }
 
-            fLeft.setPower(fLeftPower);
-            bLeft.setPower(bLeftPower);
-            fRight.setPower(fRightPower);
-            bLeft.setPower(bRightPower);
+            lFront.setPower(fLeftPower);
+            rFront.setPower(fRightPower);
+            lBack.setPower(bLeftPower);
+            rBack.setPower(bRightPower);
         }
     }
 
