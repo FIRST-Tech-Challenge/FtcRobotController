@@ -18,7 +18,7 @@ public class MotorTest extends LinearOpMode {
         if (isStopRequested())
             return;
         while (opModeIsActive()) {
-            if (gamepad1.a) {
+            if (gamepad1.b) {
                 if (gamepad1.right_trigger>0) {
                     TestMotor.setDirection(DcMotorSimple.Direction.FORWARD);
                     TestMotor.setPower(gamepad1.right_trigger);
