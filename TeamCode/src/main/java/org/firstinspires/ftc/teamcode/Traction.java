@@ -29,7 +29,6 @@
 
 package org.firstinspires.ftc.teamcode;
 
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -63,28 +62,25 @@ import com.qualcomm.robotcore.util.ElapsedTime;
  * Remove or comment out the @Disabled line to add this OpMode to the Driver Station OpMode list
  */
 
-@Disabled
-//@TeleOp(name="CCS-KnightBot_01", group="Linear OpMode")
-public class BasicOmniOpMode_Linear extends LinearOpMode {
+@TeleOp(name="Traction", group="Linear OpMode")
+public class Traction extends LinearOpMode {
 
     // Declare OpMode members for each of the 4 motors.
     private ElapsedTime runtime = new ElapsedTime();
-    private DcMotor leftFrontMotor_0 = null;
-    private DcMotor leftBackMotor_1 = null;
-    private DcMotor rightFrontMotor_3 = null;
-    private DcMotor rightBackMotor_2 = null;
-
+    private DcMotor leftFrontDrive_0 = null;
+    private DcMotor leftBackDrive_1 = null;
+    private DcMotor rightFrontDrive_2 = null;
+    private DcMotor rightBackDrive_3 = null;
 
     @Override
     public void runOpMode() {
 
         // Initialize the hardware variables. Note that the strings used here must correspond
         // to the names assigned during the robot configuration step on the DS or RC devices.
-        leftFrontMotor_0 = hardwareMap.get(DcMotor.class, "leftFrontMotor_0");
-        leftBackMotor_1 = hardwareMap.get(DcMotor.class, "leftBackMotor_1");
-        rightFrontMotor_3 = hardwareMap.get(DcMotor.class, "rightBackMotor_2");
-        rightFrontMotor_3 = hardwareMap.get(DcMotor.class, "rightFrontMotor_3");
-
+        leftFrontDrive_0 = hardwareMap.get(DcMotor.class, "leftFrontDrive_0");
+        leftBackDrive_1  = hardwareMap.get(DcMotor.class, "leftBackDrive_1");
+        rightFrontDrive_2 = hardwareMap.get(DcMotor.class, "rightFrontDrive_2");
+        rightBackDrive_3 = hardwareMap.get(DcMotor.class, "rightBackDrive_3");
 
         // ########################################################################################
         // !!!            IMPORTANT Drive Information. Test your motor directions.            !!!!!
@@ -96,10 +92,10 @@ public class BasicOmniOpMode_Linear extends LinearOpMode {
         // when you first test your robot, push the left joystick forward and observe the direction the wheels turn.
         // Reverse the direction (flip FORWARD <-> REVERSE ) of any wheel that runs backward
         // Keep testing until ALL the wheels move the robot forward when you push the left joystick forward.
-        leftFrontMotor_0.setDirection(DcMotor.Direction.REVERSE);
-        leftBackMotor_1.setDirection(DcMotor.Direction.REVERSE);
-        rightFrontMotor_3.setDirection(DcMotor.Direction.FORWARD);
-        rightFrontMotor_3.setDirection(DcMotor.Direction.FORWARD);
+        leftFrontDrive_0.setDirection(DcMotor.Direction.REVERSE);
+        leftBackDrive_1.setDirection(DcMotor.Direction.REVERSE);
+        rightFrontDrive_2.setDirection(DcMotor.Direction.FORWARD);
+        rightBackDrive_3.setDirection(DcMotor.Direction.FORWARD);
 
         // Wait for the game to start (driver presses PLAY)
         telemetry.addData("Status", "Initialized");
@@ -121,8 +117,11 @@ public class BasicOmniOpMode_Linear extends LinearOpMode {
             // Set up a variable for each drive wheel to save the power level for telemetry.
             double leftFrontPower  = axial + lateral + yaw;
             double rightFrontPower = axial - lateral - yaw;
-            double leftBackPower   = -(axial - lateral + yaw);
-            double rightBackPower  = -(axial + lateral - yaw);
+            double leftBackPower   = -axial + lateral - yaw;
+            double rightBackPower  = -axial - lateral + yaw;
+
+//            double leftBackPower   = axial - lateral + yaw;
+//            double rightBackPower  = axial + lateral - yaw;
 
             // Normalize the values so no wheel power exceeds 100%
             // This ensures that the robot maintains the desired motion.
@@ -155,10 +154,10 @@ public class BasicOmniOpMode_Linear extends LinearOpMode {
             */
 
             // Send calculated power to wheels
-            leftFrontMotor_0.setPower(leftFrontPower);
-            rightFrontMotor_3.setPower(rightFrontPower);
-            leftBackMotor_1.setPower(leftBackPower);
-            rightFrontMotor_3.setPower(rightBackPower);
+            leftFrontDrive_0.setPower(leftFrontPower);
+            rightFrontDrive_2.setPower(rightFrontPower);
+            leftBackDrive_1.setPower(leftBackPower);
+            rightBackDrive_3.setPower(rightBackPower);
 
             // Show the elapsed game time and wheel power.
             telemetry.addData("Status", "Run Time: " + runtime.toString());
