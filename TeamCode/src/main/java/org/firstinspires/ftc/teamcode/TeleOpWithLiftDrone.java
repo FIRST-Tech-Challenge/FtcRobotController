@@ -73,18 +73,20 @@ public class TeleOpWithLiftDrone extends LinearOpMode {
             if (rTrigger > 0) {
                 lift.setTargetPosition(lift.getCurrentPosition() + 100);
                 lift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                lift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+                lift.setPower(rTrigger);
             }else if (lTrigger > 0) {
                 lift.setTargetPosition(lift.getCurrentPosition() - 100);
                 lift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                lift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+                lift.setPower(lTrigger);
             }else {
                 lift.setPower(0);
             }
-            lift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
             if(gamepad1.b) {
                 wristServo.setPosition(0);
             }
-
             if (gamepad1.right_bumper) {
                 wristServo.setPosition(wristServo.getPosition() + 0.1);
             } else if (gamepad1.left_bumper) {
