@@ -178,6 +178,7 @@ public class AutoMode extends LinearOpMode {
     public void runOpMode() throws InterruptedException {
 
         robot = new org.firstinspires.ftc.teamcode.Robot(hardwareMap, this, telemetry);
+        robot.setUpAprilTags();
 
         // Reset Yaw
         //robot.resetImuYaw();
@@ -185,7 +186,8 @@ public class AutoMode extends LinearOpMode {
         waitForStart();
 
         while (opModeIsActive()) {
-
+            robot.moveToApril();
+/*
             robot.straightBlocking(28, true);
             sleep(100);
             robot.setHeading(0);
@@ -225,6 +227,7 @@ public class AutoMode extends LinearOpMode {
             robot.mecanumBlocking(25, true);
             sleep(100);
             break;
+ */
         }
     }
 }
