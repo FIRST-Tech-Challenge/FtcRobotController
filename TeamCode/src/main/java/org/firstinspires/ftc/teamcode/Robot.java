@@ -51,6 +51,8 @@ public class Robot {
     private AprilTagProcessor aprilTag;
     private VisionPortal visionPortal;
 
+    int idNumber;
+
 
     //CONSTRUCTOR
     public Robot(HardwareMap hardwareMap, LinearOpMode opMode, Telemetry telemetry) {
@@ -81,7 +83,7 @@ public class Robot {
     }
 
 
-    public double getAprilTagYPos() {
+    public double getAprilY(int idNumber) {
         List<AprilTagDetection> currentDetections = aprilTag.getDetections();
 
         double yValue = 0;
@@ -116,7 +118,7 @@ public class Robot {
         return -xValue;
     }
 
-    public double getAprilTagYaw() {
+    public double getAprilZ(int idNumber) {
         List<AprilTagDetection> currentDetections = aprilTag.getDetections();
 
         double yawAprilTag = 0;
@@ -127,7 +129,6 @@ public class Robot {
             }
 
         }
-
         return yawAprilTag;
     }
 
@@ -152,8 +153,8 @@ public class Robot {
         double inchesFromAprilTag = mmFromAprilTag / 25.4;
         boolean done = false;
 
-        double[] powerMoveNegative = calculateMecanumPower((inchesFromAprilTag - getAprilTagXPos(idNumber)));
-        double[] powerMovePositive = calculateMecanumPower(-(inchesFromAprilTag - getAprilTagXPos(idNumber)));
+        double[] powerMoveNegative = calculateMecanumPower((inchesFromAprilTag - getAprilX(idNumber)));
+        double[] powerMovePositive = calculateMecanumPower(-(inchesFromAprilTag - getAprilX(idNumber)));
 
         double[] stopPower = {0, 0, 0, 0};
 
@@ -324,10 +325,11 @@ public class Robot {
 
         }
     */
+    /*
     public void setArmPower(double armPower) {
         arm.setPower(armPower);
     }
-
+    */
     /*
         public boolean checkArmPos(int targetAngleInDegrees) {
 
@@ -348,7 +350,8 @@ public class Robot {
 
         return remainingDistance;
     }
-*/
+    */
+
     public double convertDegreesToTicks(double targetDistanceInDegrees) {
 
         //537.7, ticks per motor revolution
@@ -727,53 +730,53 @@ public class Robot {
 
     public void straightBlocking(double inches, boolean forward) {
 
-        double ERROR_TOLERANCE = 10;
-        double power;
-        double endTick;
-        final double KP = 0.01;
-        final double KD = 500_000;
-        final double minPower = 0.2;
-        double currentTick = fLeft.getCurrentPosition();
-        double errorDer;
-        double currentTime;
+            double ERROR_TOLERANCE = 10;
+            double power;
+            double endTick;
+            final double KP = 0.01;
+            final double KD = 500_000;
+            final double minPower = 0.2;
+            double currentTick = fLeft.getCurrentPosition();
+            double errorDer;
+            double currentTime;
 
-        //inch to tick
-        final double wheelDiaMm = 96;
-        final double PI = 3.14159;
-        final double wheelCircIn = wheelDiaMm * PI / 25.4; //~11.87
-        final double IN_TO_TICK = 537 / wheelCircIn;
+            //inch to tick
+            final double wheelDiaMm = 96;
+            final double PI = 3.14159;
+            final double wheelCircIn = wheelDiaMm * PI / 25.4; //~11.87
+            final double IN_TO_TICK = 537 / wheelCircIn;
 
-        if (forward) {
-            endTick = currentTick + inches * IN_TO_TICK;
-        } else {
-            endTick = currentTick - inches * IN_TO_TICK;
-        }
-
-        double error = endTick - currentTick;
-
-        while (Math.abs(error) >= ERROR_TOLERANCE && opMode.opModeIsActive()) {
-
-            currentTime = SystemClock.elapsedRealtimeNanos();
-            error = endTick - currentTick;
-            errorDer = (error - prevError) / (currentTime - prevTime);
-            power = (KP * error) + (KD * errorDer);
-
-            if (power > 0 && power < minPower) {
-                power += minPower;
-            } else if (power < 0 && power > -1 * minPower) {
-                power -= minPower;
+            if (forward) {
+                endTick = currentTick + inches * IN_TO_TICK;
+            } else {
+                endTick = currentTick - inches * IN_TO_TICK;
             }
 
-            //cap power
-            power = Range.clip(power, -0.7, 0.7);
+            double error = endTick - currentTick;
 
-            setMotorPower(power, power, power, power);
+            while (Math.abs(error) >= ERROR_TOLERANCE && opMode.opModeIsActive()) {
 
-            currentTick = fLeft.getCurrentPosition();
-            prevTime = currentTime;
-            prevError = error;
-        }
-        setMotorPower(0, 0, 0, 0);
+                currentTime = SystemClock.elapsedRealtimeNanos();
+                error = endTick - currentTick;
+                errorDer = (error - prevError) / (currentTime - prevTime);
+                power = (KP * error) + (KD * errorDer);
+
+                if (power > 0 && power < minPower) {
+                    power += minPower;
+                } else if (power < 0 && power > -1 * minPower) {
+                    power -= minPower;
+                }
+
+                //cap power
+                power = Range.clip(power, -0.7, 0.7);
+
+                setMotorPower(power, power, power, power);
+
+                currentTick = fLeft.getCurrentPosition();
+                prevTime = currentTime;
+                prevError = error;
+            }
+            setMotorPower(0, 0, 0, 0);
     }
 
     public void detectAndMoveToMarker() {
@@ -849,4 +852,172 @@ public class Robot {
 
         }
     }
+    public void moveToApril() {
+
+        webcam.openCameraDevice();
+        webcam.startStreaming(320, 240, OpenCvCameraRotation.UPRIGHT);
+
+//        webcam.startStreaming(320, 240, OpenCvCameraRotation.UPRIGHT);
+
+        /*
+        setup
+
+        if pos is left
+        look for 4
+        if center, 5
+        if right, 6
+
+        xval should be zero
+        if xval < 0, move right
+        if xval > 0, move left
+        if xval = 0, break
+        else telemetry.addLine("xval doesn't exist"); telemetry.update;
+        */
+
+        //setup
+
+        /*
+        if (position == MarkerDetector.MARKER_POSITION.LEFT) {
+            idNumber = 4;
+        } else if (position == MarkerDetector.MARKER_POSITION.CENTER) {
+            idNumber = 5;
+        } else if (position == MarkerDetector.MARKER_POSITION.RIGHT) {
+            idNumber = 6;
+        } else {
+            telemetry.addLine("idNumber not 4 5 or 6");
+        }
+        */
+
+        idNumber = 4;
+
+        double aprX = getAprilX(4);
+        while (opMode.opModeIsActive()) {
+            List<AprilTagDetection> currentDetections = aprilTag.getDetections();
+            telemetry.addLine(currentDetections.toString());
+        }
+        /*
+        double ERROR_TOLERANCE = 10;
+        double power;
+        double wantedAprX = 7_0000000; //TODO: this needs to be zero
+        final double KP_MECANUM = 0.002;
+        final double minPower = 0.2;
+        double inches = 0; //TODO: what are the units
+        final double IN_TO_TICK = 56.3;
+        */
+
+        /*
+        if (aprX > ERROR_TOLERANCE) {
+            wantedAprX = aprX + inches * IN_TO_TICK;
+        } else {
+            wantedAprX = aprX - inches * IN_TO_TICK;
+        }
+        */
+
+        // double error = wantedAprX - aprX;
+
+        /*
+        while (Math.abs(error) >= ERROR_TOLERANCE && opMode.opModeIsActive()) {
+            power = KP_MECANUM * error;
+
+            //min pwr
+            if (power > 0 && power < minPower) {
+                power += minPower;
+            } else if (power < 0 && power > -1 * minPower) {
+                power -= minPower;
+            }
+
+            //cap power
+            power = Range.clip(power, -1, 1);
+
+            setMotorPower(power, -1 * power, -1 * power, power);
+
+            error = wantedAprX - aprX;
+        }
+        setMotorPower(0, 0, 0, 0);
+    }
+
+        if (aprX < 0) {
+            //move right
+        } else if (aprX > 0) {
+            //break
+        } else if (aprX == 0) {
+            //move left
+        } else {
+            telemetry.addLine("april tag X value (aprX) doesn't exist");
+        }
+
+        double aprY = getAprilY(idNumber);
+        double wantedAprY = 0;
+        if (aprY < 0) {
+        } else if (aprY > 0) {
+        } else if (aprY == 0) {
+        } else {
+            telemetry.addLine("april tag X value (aprX) doesn't exist");
+        }
+
+        double aprZ = getAprilZ(idNumber);
+        double wantedAprZ = 0;
+        if (aprY < 0) {
+        } else if (aprY > 0) {
+        } else if (aprY == 0) {
+        } else {
+            telemetry.addLine("april tag X value (aprX) doesn't exist");
+        }
+
+
+
+        telemetry.update();
+
+        elapsedTime = new ElapsedTime();
+
+        detector = new MarkerDetector();
+        webcam.setPipeline(detector);
+        webcam.openCameraDevice();
+        webcam.startStreaming(320, 240, OpenCvCameraRotation.UPRIGHT);
+
+        while (opMode.opModeIsActive()) {
+            position = detector.position;
+
+            if (position == MarkerDetector.MARKER_POSITION.CENTER) {
+                straightBlocking(20, true);
+                setHeading(15);
+                waitFor(0.1);
+                straightBlocking(6, true);
+                waitFor(1.5);
+                straightBlocking(6, false);
+                setHeading(0);
+                waitFor(0.1);
+                straightBlocking(19, false);
+                break;
+            } else if (position == MarkerDetector.MARKER_POSITION.LEFT) {
+                straightBlocking(18, true);
+                setHeading(30);
+                waitFor(0.1);
+                straightBlocking(3, true);
+                waitFor(1.5);
+                straightBlocking(3, false);
+                setHeading(0);
+                waitFor(0.1);
+                straightBlocking(17, false);
+                break;
+            } else if (position == MarkerDetector.MARKER_POSITION.RIGHT) {
+                straightBlocking(14, true);
+                setHeading(-45);
+                waitFor(0.1);
+                straightBlocking(11, true);
+                waitFor(1.5);
+                straightBlocking(11, false);
+                setHeading(0);
+                waitFor(0.1);
+                straightBlocking(12, false);
+                break;
+            }
+        }
+
+        webcam.stopStreaming();
+        webcam.closeCameraDevice();
+        */
+    }
+
 }
+

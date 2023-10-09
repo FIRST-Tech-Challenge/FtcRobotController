@@ -51,6 +51,7 @@ public class LongRedAuto extends LinearOpMode {
 
             telemetry.addData("x", isDoneWithAprilTagX);
 
+
             telemetry.update();
         }
         telemetry.addLine("got out");
