@@ -24,7 +24,8 @@
               android:screenOrientation="fullUser"
               android:configChanges="orientation|screenSize"
               android:label="@string/app_name"
-              android:launchMode="singleTask" >
+              android:launchMode="singleTask"
+        android:exported="true">
 
       <intent-filter>
         <category android:name="android.intent.category.LAUNCHER" />
@@ -38,7 +39,8 @@
       android:screenOrientation="fullUser"
       android:configChanges="orientation|screenSize"
       android:label="@string/app_name"
-      android:launchMode="singleTask" >
+      android:launchMode="singleTask"
+        android:exported="true">
 
       <intent-filter>
         <action android:name="android.hardware.usb.action.USB_DEVICE_ATTACHED" />
