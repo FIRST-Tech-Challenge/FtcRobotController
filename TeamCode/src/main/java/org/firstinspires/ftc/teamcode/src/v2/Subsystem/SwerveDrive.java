@@ -18,13 +18,14 @@ public class SwerveDrive {
     final private AnalogInput mod1E, mod2E;
     final private Telemetry telemetry;
     final private boolean eff;
-    private double module1Adjust = -10, module2Adjust = -10
+    private double module1Adjust = -10, module2Adjust = -10;// module3Adjust = -45;
     private final PIDcontroller mod1PID = new PIDcontroller(0.1, 0.002, 3, 1, 0.5);
     private final PIDcontroller mod2PID = new PIDcontroller(0.1, 0.002, 2, 0.5, 0.5);
     private final swerveKinematics swavemath = new swerveKinematics();
 
     double mod1reference = 0;
     double mod2reference = 0;
+    //double mod3reference = 0;
     double heading;
     double imuOffset = 0;
 
@@ -67,7 +68,7 @@ public class SwerveDrive {
         //keep previous module heading if joystick not being used
         if (y != 0 || x != 0 || rot != 0) {
             mod1reference = output[3];
-            mod3reference = output[5];
+            //mod3reference = output[5];
             mod2reference = output[4];
         }
 
@@ -81,7 +82,7 @@ public class SwerveDrive {
 
         mod1reference = mathsOperations.angleWrap(mod1reference);
         mod2reference = mathsOperations.angleWrap(mod2reference);
-        mod3reference = mathsOperations.angleWrap(mod3reference);
+        //mod3reference = mathsOperations.angleWrap(mod3reference);
 
         //Make sure that a module never turns more than 90 degrees
         double[] mod1efvalues = mathsOperations.efficientTurn(mod1reference, mod1P, mod1power);
@@ -107,7 +108,7 @@ public class SwerveDrive {
 
         telemetry.addData("mod1reference", mod1reference);
         telemetry.addData("mod2reference", mod2reference);
-        telemetry.addData("mod3reference", mod3reference);
+        //telemetry.addData("mod3reference", mod3reference);
 
         telemetry.addData("mod1P", mod1P);
         telemetry.addData("mod2P", mod2P);
@@ -130,7 +131,7 @@ public class SwerveDrive {
     public void setModuleAdjustments(double module1Adjust, double module2Adjust, double module3Adjust) {
         this.module1Adjust = module1Adjust;
         this.module2Adjust = module2Adjust;
-        this.module3Adjust = module3Adjust;
+        //this.module3Adjust = module3Adjust;
     }
 
     public double getHeading() {
