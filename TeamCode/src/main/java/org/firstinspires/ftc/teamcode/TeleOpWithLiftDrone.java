@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.readyTestCode;
+package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.IMU;
@@ -9,9 +9,8 @@ import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 
-@com.qualcomm.robotcore.eventloop.opmode.TeleOp(name = "Drivebase w/ Lift+Drone Test Code")
+@com.qualcomm.robotcore.eventloop.opmode.TeleOp(name = "Test Code")
 public class TeleOpWithLiftDrone extends LinearOpMode {
-
     @Override
     public void runOpMode() throws InterruptedException {
         DcMotor frontLeftMotor = hardwareMap.dcMotor.get("motorFL");
@@ -22,7 +21,7 @@ public class TeleOpWithLiftDrone extends LinearOpMode {
         // ADDED CODE - sets up lift motor and drone servo
         DcMotor lift = hardwareMap.dcMotor.get("lift");
         Servo droneServo = hardwareMap.servo.get("drone");
-        Servo clawServo = hardwareMap.servo.get("claw");
+        Servo wristServo = hardwareMap.servo.get("wrist");
 
         // Reverse the right side motors. Flip if goes backward.
         frontRightMotor.setDirection(DcMotorSimple.Direction.FORWARD);
@@ -33,6 +32,10 @@ public class TeleOpWithLiftDrone extends LinearOpMode {
         // ADDED CODE - sets directions of motor and servos (just in case)
         lift.setDirection(DcMotorSimple.Direction.FORWARD);
         droneServo.setDirection(Servo.Direction.FORWARD);
+        wristServo.setDirection(Servo.Direction.FORWARD);
+
+        lift.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        lift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         // Retrieve the IMU from the hardware map
         IMU imu = hardwareMap.get(IMU.class, "imu");
@@ -48,6 +51,7 @@ public class TeleOpWithLiftDrone extends LinearOpMode {
         // WILL LIKELY NEED TO BE CHANGED AFTER TESTING
         droneServo.scaleRange(0, 1);
         droneServo.setPosition(0.85);
+        wristServo.setPosition(0);
 
         waitForStart();
 
@@ -56,33 +60,35 @@ public class TeleOpWithLiftDrone extends LinearOpMode {
             double x = gamepad1.left_stick_x;
             double rx = gamepad1.right_stick_x;
 
-            double clawServoPosition = clawServo.getPosition();
-            float clawPos = 1f;
+            float wristPos = 1f;
 
             // ADDED CODE - creates variables for right and left trigger values
-            double rTrigger = gamepad1.right_trigger/5;
-            double lTrigger = gamepad1.left_trigger/5;
+            double rTrigger = gamepad1.right_trigger/4;
+            double lTrigger = gamepad1.left_trigger/4;
             double droneServoPosition = droneServo.getPosition();
             double liftPower = lift.getPower();
+            double liftPos = lift.getCurrentPosition();
 
-            // ADDED CODE - holding down right trigger makes lift move up
-            // and left trigger makes lift move down
-            // depending on how much you press
-            // while you aren't pressing anything, sets the motor power to zero
+            // ADDED CODE
             if (rTrigger > 0) {
-                lift.setPower(rTrigger);
+                lift.setTargetPosition(lift.getCurrentPosition() + 100);
+                lift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             }else if (lTrigger > 0) {
-                lift.setPower(-lTrigger);
+                lift.setTargetPosition(lift.getCurrentPosition() - 100);
+                lift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             }else {
                 lift.setPower(0);
             }
+            lift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
-            if (gamepad1.right_bumper && clawPos <= 0.9 && clawPos >= 0) {
-                clawPos += 0.1;
-                clawServo.setPosition(clawPos);
-            } else if (gamepad1.left_bumper && clawPos <= 1 && clawPos <=0.1) {
-                clawPos -= 0.1;
-                clawServo.setPosition(clawPos);
+            if(gamepad1.b) {
+                wristServo.setPosition(0);
+            }
+
+            if (gamepad1.right_bumper) {
+                wristServo.setPosition(wristServo.getPosition() + 0.1);
+            } else if (gamepad1.left_bumper) {
+                wristServo.setPosition(wristServo.getPosition() - 0.1);
             }
 
             // ADDED CODE - pressing button A moves servo to launch the drone and then reset launcher position
@@ -94,9 +100,9 @@ public class TeleOpWithLiftDrone extends LinearOpMode {
 
             // ADDED CODE - sends info about current servo position to driver station
             telemetry.addData("Servo Position: ", droneServoPosition);
+            telemetry.addData("Wrist Position: ", wristServo.getPosition());
+            telemetry.addData("Lift position: ", liftPos);
             telemetry.addData("Lift power: ", liftPower);
-            telemetry.addData("Left trigger: ", lTrigger);
-            telemetry.addData("Right trigger: ", rTrigger);
             telemetry.update();
 
             // This button choice was made so that it is hard to hit on accident,
