@@ -822,7 +822,6 @@ public class Robot {
         }
 
         webcam.stopStreaming();
-        webcam.closeCameraDevice();
     }
 
     public void waitFor(double seconds) {
