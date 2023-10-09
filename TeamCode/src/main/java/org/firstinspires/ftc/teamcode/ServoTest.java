@@ -14,17 +14,21 @@ public class ServoTest extends LinearOpMode {
         waitForStart();
         telemetry.addData("Entering servo test", "Servo0");
 
-        servo = hardwareMap.get(Servo.class, "servo");
+        servo = hardwareMap.get(Servo.class, "PixelReleaseServo");
         while(opModeIsActive()) {
-            servo.setPosition(0);
-            sleep(1000);
-            servo.setPosition(0.5);
-            sleep(1000);
-            servo.setPosition(1);
-            sleep(1000);
-            telemetry.addData("Servo Position", servo.getPosition());
-            telemetry.addData("Status", "Running");
-            telemetry.update();
+            SetServoPosition(0.0, 3000);
+            SetServoPosition(0.25, 1000);
+            SetServoPosition(0.5, 1000);
+            SetServoPosition(0.75, 1000);
+            SetServoPosition(1.0,2000);
         }
+    }
+
+    private void SetServoPosition(double position, int sleepMilliseconds)
+    {
+        servo.setPosition(position);
+        telemetry.addData("Servo Position: ", servo.getPosition());
+        telemetry.update();
+        sleep(sleepMilliseconds);
     }
 }
