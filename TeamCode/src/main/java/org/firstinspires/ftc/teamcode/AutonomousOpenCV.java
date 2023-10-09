@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
@@ -17,6 +18,8 @@ public class AutonomousOpenCV extends LinearOpMode {
     private OpenCvWebcam webcam;
     private CircleDetection circleDetection;
     private DrivingFunctions df;
+
+    Servo servo;
     protected boolean detectionRed = false; // whether to detect a red ball (if false detects blue)
     protected boolean runBallDetectionTest = false;
     protected boolean runEncoderTest = false;
@@ -63,8 +66,11 @@ public class AutonomousOpenCV extends LinearOpMode {
 
     @Override
     public void runOpMode() {
+
         Initialize();
         waitForStart();
+
+
         if (runBallDetectionTest) {
             RunBallDetectionTest();
             return;
