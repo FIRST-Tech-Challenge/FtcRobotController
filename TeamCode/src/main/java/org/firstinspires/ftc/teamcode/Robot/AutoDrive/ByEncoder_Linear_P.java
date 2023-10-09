@@ -233,19 +233,21 @@ public class ByEncoder_Linear_P extends LinearOpMode {
     public void encoderDrive(double speed,
                              double leftInches, double rightInches,
                              double timeoutS) {
-        int newLeftTarget;
-        int newRightTarget;
+
+        final int[] target = new int[]{0, 0, 0, 0};
 
         if (opModeIsActive()) { // Ensure that the opmode is still active
 
             // Determine new target position, and pass to motor controller
-            newLeftTarget = motor[0].getCurrentPosition() + (int)(leftInches * COUNTS_PER_INCH);
-            newRightTarget = motor[2].getCurrentPosition() + (int)(rightInches * COUNTS_PER_INCH);
-            motor[0].setTargetPosition(newLeftTarget);
-            motor[1].setTargetPosition(newRightTarget);
-            motor[2].setTargetPosition(newRightTarget);
-            motor[3].setTargetPosition(newLeftTarget);
-            datalog.distance.set(newLeftTarget);
+            target[0] = motor[0].getCurrentPosition() + (int)(leftInches * COUNTS_PER_INCH);
+            target[1] = motor[1].getCurrentPosition() + (int)(leftInches * COUNTS_PER_INCH);
+            target[2] = motor[2].getCurrentPosition() + (int)(rightInches * COUNTS_PER_INCH);
+            target[3] = motor[3].getCurrentPosition() + (int)(rightInches * COUNTS_PER_INCH);
+            motor[0].setTargetPosition(target[0]);
+            motor[1].setTargetPosition(target[1]);
+            motor[2].setTargetPosition(target[2]);
+            motor[3].setTargetPosition(target[3]);
+            datalog.distance.set(target[0]);
             datalog.setSpeed.set(speed);
 
             setMotorMode(DcMotor.RunMode.RUN_TO_POSITION); // Turn On RUN_TO_POSITION
@@ -263,8 +265,8 @@ public class ByEncoder_Linear_P extends LinearOpMode {
                    (runtime.seconds() < timeoutS) &&
                    (motor[0].isBusy() && motor[2].isBusy() && motor[2].isBusy() && motor[3].isBusy())) {
 
-                // Display current parameters to the driver
-                telemetry.addData("Running to",  " %7d :%7d", newLeftTarget,  newRightTarget);
+                                        // Display current parameters to the driver
+                telemetry.addData("Running to",  " %7d :%7d", target[0], target[1]);
                 telemetry.addData("Currently at",  " at %7d :%7d",
                                             motor[0].getCurrentPosition(), motor[1].getCurrentPosition());
                 telemetry.addData("Currently at",  " at %7d :%7d",
@@ -280,7 +282,7 @@ public class ByEncoder_Linear_P extends LinearOpMode {
                 datalog.writeLine();    // timestamp applied by helper class
             }
 
-            setMotorSpeed(0.0); // Stop all motion
+            setMotorSpeed(0.0);         // Stop all motion
             setMotorMode(DcMotorEx.RunMode.RUN_USING_ENCODER); // Turn off RUN_TO_POSITION
 
             sleep(10000);   // optional pause after each move.
