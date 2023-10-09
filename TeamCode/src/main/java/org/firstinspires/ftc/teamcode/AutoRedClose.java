@@ -14,7 +14,12 @@ public class AutoRedClose extends LinearOpMode {
     private DcMotor rightFrontDrive = null;
     private DcMotor rightBackDrive = null;
     private boolean isRunning = true;
-    private final int oneRotaion = 25920; //Ask cody for proper gear ratio, 1440 is one rotation
+    private final int oneRotaion = 27648; //19.2:1 gear ratio
+    private final int inch = 325721; //3.75 wheel diameter
+    private int newLFTarget;
+    private int newLBTarget;
+    private int newRFTarget;
+    private int newRBTarget;
 
     @Override
     public void runOpMode() {
@@ -44,15 +49,38 @@ public class AutoRedClose extends LinearOpMode {
         waitForStart();
 
         while (opModeIsActive() && isRunning) {
-            leftFrontDrive.setTargetPosition(leftFrontDrive.getCurrentPosition() + 5*oneRotaion);
-            leftBackDrive.setTargetPosition(leftBackDrive.getCurrentPosition() - 5*oneRotaion);
-            rightFrontDrive.setTargetPosition(leftFrontDrive.getCurrentPosition() - 5*oneRotaion);
-            rightBackDrive.setTargetPosition(leftBackDrive.getCurrentPosition() + 5*oneRotaion);
+            newLFTarget = leftFrontDrive.getCurrentPosition() + 5*oneRotaion;
+            newLFTarget = leftBackDrive.getCurrentPosition() - 5*oneRotaion;
+            newLFTarget = rightFrontDrive.getCurrentPosition() - 5*oneRotaion;
+            newLFTarget = rightBackDrive.getCurrentPosition() + 5*oneRotaion;
+
+            leftFrontDrive.setTargetPosition(newLFTarget);
+            leftBackDrive.setTargetPosition(newLBTarget);
+            rightFrontDrive.setTargetPosition(newRFTarget);
+            rightBackDrive.setTargetPosition(newRBTarget);
 
             leftFrontDrive.setPower(0.5);
             leftBackDrive.setPower(0.5);
             rightFrontDrive.setPower(0.5);
             rightBackDrive.setPower(0.5);
+
+            leftFrontDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            leftBackDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            rightFrontDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            rightBackDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+            sleep(500);
+
+            //test forward
+            newLFTarget = leftFrontDrive.getCurrentPosition() + 5*inch;
+            newLFTarget = leftBackDrive.getCurrentPosition() + 5*inch;
+            newLFTarget = rightFrontDrive.getCurrentPosition() + 5*inch;
+            newLFTarget = rightBackDrive.getCurrentPosition() + 5*inch;
+
+            leftFrontDrive.setTargetPosition(newLFTarget);
+            leftBackDrive.setTargetPosition(newLBTarget);
+            rightFrontDrive.setTargetPosition(newRFTarget);
+            rightBackDrive.setTargetPosition(newRBTarget);
 
             leftFrontDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             leftBackDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
@@ -65,17 +93,6 @@ public class AutoRedClose extends LinearOpMode {
         leftBackDrive.setPower(0);
         rightFrontDrive.setPower(0);
         rightBackDrive.setPower(0);
-
-//        while (opModeIsActive() && (runtime.seconds() <= 2.0)) {
-//            leftFrontDrive.setPower(0.5);
-//            leftBackDrive.setPower(-0.5);
-//            rightFrontDrive.setPower(-0.5);
-//            rightBackDrive.setPower(0.5);
-//        }
-//        leftFrontDrive.setPower(0);
-//        leftBackDrive.setPower(0);
-//        rightFrontDrive.setPower(0);
-//        rightBackDrive.setPower(0);
     }
 }
 
