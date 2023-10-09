@@ -8,6 +8,7 @@ import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
@@ -31,11 +32,6 @@ public class Bot {
     public static Fourbar fourbar;
     public static Box box;
 
-
-    /*
-    public final TransferClaw transferClaw;
-    Slides, Noodles, and TransferClaw subsystems
-     */
 
     private final DcMotorEx fl, fr, bl, br, susMotor, slidesMotor;
     private final Servo tcServo, droneServo_1, droneServo_2, outtakeServo;
@@ -107,60 +103,6 @@ public class Bot {
 
 
     }
-
-
-
-
-    /*public void slidesalignjunction() {
-        while (horizSlides.getCurrent() > horizSlides.currentthres){
-            horizSlides.runManual(0.35);
-        }
-    }
-     */
-
-
-    //pixelval is an enum, with
-    /*public void turretalignjunction() {
-        if (PixelDetectionPipeline.junctionVal == PixelDetectionPipeline.JunctionVal.ONLEFT) {
-            if (JunctionDetectionPipeline.width > 100) {
-                turret.runRawPower(-0.4);
-            } else {
-                turret.runRawPower(-0.3);
-            }
-        }
-        if (JunctionDetectionPipeline.junctionVal == JunctionDetectionPipeline.JunctionVal.ONRIGHT) {
-            if (JunctionDetectionPipeline.width > 100){
-                turret.runRawPower(0.4);
-            }
-            turret.runRawPower(0.3);
-        }
-        if (JunctionDetectionPipeline.junctionVal == JunctionDetectionPipeline.JunctionVal.NOTDETECTED || JunctionDetectionPipeline.junctionVal == JunctionDetectionPipeline.JunctionVal.ATJUNCTION) {
-            turret.runRawPower(0);
-        }
-    }
-    public void slowturretalignjunction() {
-        if (JunctionDetectionPipeline.junctionVal == JunctionDetectionPipeline.JunctionVal.ONLEFT) {
-            turret.runRawPower(-0.2);
-        }
-        if (JunctionDetectionPipeline.junctionVal == JunctionDetectionPipeline.JunctionVal.ONRIGHT) {
-            turret.runRawPower(0.2);
-        }
-        if (JunctionDetectionPipeline.junctionVal == JunctionDetectionPipeline.JunctionVal.NOTDETECTED || JunctionDetectionPipeline.junctionVal == JunctionDetectionPipeline.JunctionVal.ATJUNCTION) {
-            turret.runRawPower(0);
-        }
-    }
-
-     */
-
-    /*
-    public void intakeFallen() {
-        state = BotState.INTAKE;
-        slides.runToBottom();
-        arm.fallenintake();
-        horizSlides.runToFullIn();
-        claw.open();
-    }
-     */
 
 
     public void prepForOuttake() {
@@ -315,5 +257,33 @@ public class Bot {
         if(power<0){
             fr.setPower(-power);
         }
+    }
+    public void strafeRight(){
+        fl.setDirection(DcMotorSimple.Direction.REVERSE);
+        br.setDirection(DcMotorSimple.Direction.REVERSE);
+        fl.setPower(0.1);
+        fr.setPower(0.1);
+        br.setPower(0.1);
+        bl.setPower(0.1);
+        fl.setDirection(DcMotorSimple.Direction.FORWARD);
+        br.setDirection(DcMotorSimple.Direction.FORWARD);
+        fl.setPower(0);
+        fr.setPower(0);
+        br.setPower(0);
+        bl.setPower(0);
+    }
+    public void strafeLeft(){
+        bl.setDirection(DcMotorSimple.Direction.REVERSE);
+        fr.setDirection(DcMotorSimple.Direction.REVERSE);
+        fl.setPower(0.1);
+        fr.setPower(0.1);
+        br.setPower(0.1);
+        bl.setPower(0.1);
+        bl.setDirection(DcMotorSimple.Direction.FORWARD);
+        fr.setDirection(DcMotorSimple.Direction.FORWARD);
+        fl.setPower(0);
+        fr.setPower(0);
+        br.setPower(0);
+        bl.setPower(0);
     }
 }

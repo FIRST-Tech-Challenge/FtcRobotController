@@ -10,7 +10,6 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DistanceSensor;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
-import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
@@ -22,9 +21,7 @@ To Do:
 
 1) TEST AUTOPATHS AND TELEOP!!!!
     - if splines do not work, switch to forward(), strafeRight(), and strafeLeft()
-2) Add to moveBasedOnSpikeMark()
-3) update turn() in bot class
-4) Add more autopaths
+2) Add more autopaths
 
  */
 
@@ -41,23 +38,21 @@ public class MainAuto extends LinearOpMode{
     double distanceFromObject;
 
     enum Side {
-        RED, BLUE, NULL;
+        RED, BLUE, NULL
     }
     enum DistanceToBackdrop{
-        CLOSE, FAR, NULL;
+        CLOSE, FAR, NULL
     }
 
     enum AutoPath{
-        MECHANICAL_FAILURE, NO_SENSE, OPTIMAL;
+        MECHANICAL_FAILURE, NO_SENSE, OPTIMAL
     }
-    enum TeamPropLocation{
-        ONE, TWO, THREE;
-    }
+
 
     Side side = Side.NULL;
     DistanceToBackdrop dtb= DistanceToBackdrop.NULL;
     AutoPath autopath = AutoPath.OPTIMAL;
-    TeamPropLocation teamPropLocation = TeamPropLocation.ONE;
+
 
     double fx = 1078.03779;
     double fy = 1084.50988;
@@ -84,10 +79,10 @@ public class MainAuto extends LinearOpMode{
 
         WebcamName camName = hardwareMap.get(WebcamName.class, "Webcam 1");
         OpenCvCamera camera = OpenCvCameraFactory.getInstance().createWebcam(camName);
-        AprilTagsPipeline aprilTagPipeline = new AprilTagsPipeline(tagsize, fx, fy, cx, cy);
+        TeamPropDetectionPipeline teamPropDetectionPipeline = new TeamPropDetectionPipeline(telemetry);
 
 
-        camera.setPipeline(aprilTagPipeline);
+        camera.setPipeline(teamPropDetectionPipeline);
         camera.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
             @Override
             public void onOpened() {
@@ -185,6 +180,7 @@ public class MainAuto extends LinearOpMode{
 
             waitForStart();
             if (!isStopRequested()) {
+              /*
                 distanceFromObject= distanceSensor.getDistance(DistanceUnit.CM);
                 int count=0;
 
@@ -205,6 +201,8 @@ public class MainAuto extends LinearOpMode{
                     teamPropLocation= TeamPropLocation.THREE;
                 }
 
+               */
+
 
 
                 if(dtb== DistanceToBackdrop.FAR && side==Side.BLUE && autopath==AutoPath.NO_SENSE){
@@ -224,7 +222,7 @@ public class MainAuto extends LinearOpMode{
                     blueAllianceCloseThread.interrupt();
                 }
                 if(dtb== DistanceToBackdrop.CLOSE && side==Side.RED && autopath==AutoPath.NO_SENSE){
-                    blueAllianceCloseThread.start();
+                    redAllianceCloseThread.start();
                     sleep(1000);
                     redAllianceCloseThread.interrupt();
                 }
@@ -244,20 +242,15 @@ public class MainAuto extends LinearOpMode{
     }
 
     private void dropPurplePixel(){
-        bot.noodles.reverseIntake();
+        Bot.noodles.reverseIntake();
     }
 
-    //CHANGE ACCORDINGLY
     private void moveBasedOnSpikeMark(){
-        if(teamPropLocation==TeamPropLocation.THREE){
-
-
+        if(TeamPropDetectionPipeline.teamPropLocation== TeamPropDetectionPipeline.TeamProp.ONLEFT){
+            bot.strafeLeft();
         }
-        if(teamPropLocation==TeamPropLocation.ONE){
-
-        }
-        if(teamPropLocation==TeamPropLocation.TWO){
-
+        else if(TeamPropDetectionPipeline.teamPropLocation== TeamPropDetectionPipeline.TeamProp.ONRIGHT){
+            bot.strafeRight();
         }
     }
 }
