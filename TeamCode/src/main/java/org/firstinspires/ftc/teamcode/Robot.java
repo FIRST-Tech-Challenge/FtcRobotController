@@ -133,7 +133,7 @@ public class Robot {
     public ElapsedTime elapsedTime = new ElapsedTime(ElapsedTime.Resolution.MILLISECONDS);
     public PositionManager positionManager;
 
-    /* Creates robot and gets components
+    /** Creates robot and gets components
      * @param hardwareMap map components to hardware components
      * @param telemtry dunno
      * @param elapsedTime dunno
