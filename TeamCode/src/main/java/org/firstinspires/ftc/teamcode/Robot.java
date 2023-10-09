@@ -157,10 +157,10 @@ public class Robot {
         if (!(getAprilTagXPos(idNumber) > inchesFromAprilTag - 0.5 &&
                 getAprilTagXPos(idNumber) < inchesFromAprilTag + 0.5)) {
             if (getAprilTagXPos(idNumber) < inchesFromAprilTag) {
-                powerMovePositive = calculateMecanumPower(25.4 * (inchesFromAprilTag - getAprilTagXPos(idNumber)));
+                powerMovePositive = calculateMecanumPower(-25.4 * (inchesFromAprilTag - getAprilTagXPos(idNumber)));
                 setMotorPower(powerMovePositive);
             } else {
-                powerMoveNegative = calculateMecanumPower(25.4 * (inchesFromAprilTag - getAprilTagXPos(idNumber)));
+                powerMoveNegative = calculateMecanumPower(-25.4 * (inchesFromAprilTag - getAprilTagXPos(idNumber)));
                 setMotorPower(powerMoveNegative);
             }
         } else {
@@ -189,10 +189,10 @@ public class Robot {
         if (!(getAprilTagRange(idNumber) > inchesFromAprilTag - 0.5 &&
                 getAprilTagRange(idNumber) < inchesFromAprilTag + 0.5)) {
             if (getAprilTagRange(idNumber) < inchesFromAprilTag) {
-                powerMovePositive = calculateDrivetrainPower(25.4 * (inchesFromAprilTag - getAprilTagRange(idNumber)));
+                powerMovePositive = calculateDrivetrainPower(-25.4 * (inchesFromAprilTag - getAprilTagRange(idNumber)));
                 setMotorPower(powerMovePositive);
             } else {
-                powerMoveNegative = calculateDrivetrainPower(25.4 * (inchesFromAprilTag - getAprilTagRange(idNumber)));
+                powerMoveNegative = calculateDrivetrainPower(-25.4 * (inchesFromAprilTag - getAprilTagRange(idNumber)));
                 setMotorPower(powerMoveNegative);
             }
         } else {
