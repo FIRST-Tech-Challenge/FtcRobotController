@@ -1,20 +1,15 @@
 package org.firstinspires.ftc.teamcode;
-import com.acmerobotics.dashboard.FtcDashboard;
-import com.acmerobotics.dashboard.config.Config;
-import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
+
 import com.acmerobotics.roadrunner.geometry.Vector2d;
-import com.qualcomm.robotcore.hardware.DistanceSensor;
-import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
-import com.arcrobotics.ftclib.controller.PIDController;
 import com.arcrobotics.ftclib.gamepad.GamepadEx;
 import com.arcrobotics.ftclib.gamepad.GamepadKeys;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.hardware.DigitalChannel;
-
 import com.qualcomm.robotcore.hardware.DcMotorEx;
-import com.qualcomm.robotcore.hardware.Gamepad;
+import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.IMU;
+
+import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 
 
 
@@ -30,7 +25,7 @@ public class MainTeleOp extends LinearOpMode {
     private GamepadEx gp1, gp2;
     private DistanceSensor distanceSensor;
     private double distanceFromObject;
-    private double perfectDistance;
+    private double perfectDistance= 5;
 
     Bot bot;
     private boolean isAutomatic;
@@ -189,12 +184,14 @@ public class MainTeleOp extends LinearOpMode {
         }
         while(!inRange){
             if(diffy<0){
-                //move back
-                distanceTuning();
+                bot.back();
             }else{
-                //move forward
-                distanceTuning();
+                bot.forward();
             }
+            distanceFromObject = distanceSensor.getDistance(DistanceUnit.CM);
+            diffy = distanceFromObject - perfectDistance;
+            inRange = Math.abs(diffy) <= 5;
+            distanceTuning();
         }
     }
 

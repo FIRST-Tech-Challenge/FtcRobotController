@@ -36,7 +36,7 @@ public class AprilTagsDetection {
     int TWO = 2;
     int THREE = 3;
 
-    AprilTagDetection tagOfInterest = null;
+    static AprilTagDetection tagOfInterest = null;
 
     public void AprilTagDetection() throws InterruptedException{
 
@@ -121,17 +121,19 @@ public class AprilTagsDetection {
 
 
 
-        if(tagOfInterest == null){
+      /*  if(tagOfInterest == null){
             tagOfInterest.id=ONE;
         }
         if(tagOfInterest.id == ONE){
-            //may not use april tags
+
         }
         else if(tagOfInterest.id == TWO){
 
         } else {
 
         }
+
+       */
 
     }
 

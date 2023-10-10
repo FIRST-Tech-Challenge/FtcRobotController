@@ -10,21 +10,24 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DistanceSensor;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
+import org.firstinspires.ftc.teamcode.TeamPropDetectionPipeline.TeamProp;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
 
 
 /*
-
 To Do:
 
 1) TEST AUTOPATHS AND TELEOP!!!!
     - if splines do not work, switch to forward(), strafeRight(), and strafeLeft()
-2) Add more autopaths
+2) incorporate distance sensing??
+3) add more autopaths
 
  */
 
+//*** Note: I created two pipelines, and assigned the camera to different pipeline at different times => this may create error
+//I created a method to store teamPropLocation Info before I call moveBasedOnSpikeMark(), is that necessary??
 
 
 @Config
@@ -48,6 +51,8 @@ public class MainAuto extends LinearOpMode{
         MECHANICAL_FAILURE, NO_SENSE, OPTIMAL
     }
 
+    TeamProp teamPropLocation;
+
 
     Side side = Side.NULL;
     DistanceToBackdrop dtb= DistanceToBackdrop.NULL;
@@ -60,7 +65,9 @@ public class MainAuto extends LinearOpMode{
     double cy = 245.959325;
 
     // UNITS ARE METERS
-    double tagsize = 0.032; //ONLY FOR TESTING
+    double tagSize = 0.032;
+    OpenCvCamera camera;
+    AprilTagsPipeline aprilTagsPipeline;
 
 
 
@@ -78,8 +85,9 @@ public class MainAuto extends LinearOpMode{
         //CAMERA STUFF =====================
 
         WebcamName camName = hardwareMap.get(WebcamName.class, "Webcam 1");
-        OpenCvCamera camera = OpenCvCameraFactory.getInstance().createWebcam(camName);
+        camera = OpenCvCameraFactory.getInstance().createWebcam(camName);
         TeamPropDetectionPipeline teamPropDetectionPipeline = new TeamPropDetectionPipeline(telemetry);
+        aprilTagsPipeline= new AprilTagsPipeline(tagSize, fx, fy, cx, cy);
 
 
         camera.setPipeline(teamPropDetectionPipeline);
@@ -172,11 +180,12 @@ public class MainAuto extends LinearOpMode{
                     .build();
 
 
-            //thread will enable the robot to move forward while performing other activities
-            Thread blueAllianceFarThread = new Thread(() -> drive.followTrajectorySequence(blueAllianceFar));
+           /* Thread blueAllianceFarThread = new Thread(() -> drive.followTrajectorySequence(blueAllianceFar));
             Thread redAllianceFarThread = new Thread(() -> drive.followTrajectorySequence(redAllianceFar));
             Thread blueAllianceCloseThread = new Thread(() -> drive.followTrajectorySequence(blueAllianceClose));
             Thread redAllianceCloseThread = new Thread(() -> drive.followTrajectorySequence(redAllianceClose));
+
+            */
 
             waitForStart();
             if (!isStopRequested()) {
@@ -203,28 +212,20 @@ public class MainAuto extends LinearOpMode{
 
                */
 
+                findSpikeMarkLocation();
 
-
-                if(dtb== DistanceToBackdrop.FAR && side==Side.BLUE && autopath==AutoPath.NO_SENSE){
-                    blueAllianceFarThread.start();
-                    sleep(1000);
-                    blueAllianceFarThread.interrupt();
+                if(dtb== DistanceToBackdrop.FAR && side==Side.BLUE && autopath==AutoPath.OPTIMAL){
+                    drive.followTrajectorySequence(blueAllianceFar);
                 }
 
-                if(dtb== DistanceToBackdrop.FAR && side==Side.RED && autopath==AutoPath.NO_SENSE){
-                    redAllianceFar.start();
-                    sleep(1000);
-                    redAllianceFarThread.interrupt();
+                if(dtb== DistanceToBackdrop.FAR && side==Side.RED && autopath==AutoPath.OPTIMAL){
+                    drive.followTrajectorySequence(redAllianceFar);
                 }
-                if(dtb== DistanceToBackdrop.CLOSE && side==Side.BLUE && autopath==AutoPath.NO_SENSE){
-                    blueAllianceCloseThread.start();
-                    sleep(1000);
-                    blueAllianceCloseThread.interrupt();
+                if(dtb== DistanceToBackdrop.CLOSE && side==Side.BLUE && autopath==AutoPath.OPTIMAL){
+                    drive.followTrajectorySequence(blueAllianceClose);
                 }
-                if(dtb== DistanceToBackdrop.CLOSE && side==Side.RED && autopath==AutoPath.NO_SENSE){
-                    redAllianceCloseThread.start();
-                    sleep(1000);
-                    redAllianceCloseThread.interrupt();
+                if(dtb== DistanceToBackdrop.CLOSE && side==Side.RED && autopath==AutoPath.OPTIMAL){
+                    drive.followTrajectorySequence(redAllianceClose);
                 }
 
 
@@ -233,6 +234,8 @@ public class MainAuto extends LinearOpMode{
     }
 
     private void outtake(){
+
+      //  MainTeleOp.distanceTuning();
         Bot.fourbar.outtake();
         Bot.slides.runTo(1);
         Bot.box.depositFirstPixel();
@@ -245,12 +248,36 @@ public class MainAuto extends LinearOpMode{
         Bot.noodles.reverseIntake();
     }
 
+    private void findSpikeMarkLocation(){
+        if(TeamPropDetectionPipeline.teamPropLocation== TeamProp.ONLEFT){
+            teamPropLocation= TeamProp.ONLEFT;
+        }
+
+        else if(TeamPropDetectionPipeline.teamPropLocation== TeamProp.ONRIGHT){
+            teamPropLocation= TeamProp.ONRIGHT;
+        }
+        else if(TeamPropDetectionPipeline.teamPropLocation== TeamProp.INFRONT){
+            teamPropLocation= TeamProp.INFRONT;
+        }
+        else{
+            teamPropLocation= TeamProp.NOTDETECTED;
+        }
+    }
+
     private void moveBasedOnSpikeMark(){
-        if(TeamPropDetectionPipeline.teamPropLocation== TeamPropDetectionPipeline.TeamProp.ONLEFT){
-            bot.strafeLeft();
+       // camera.setPipeline(aprilTagsPipeline); => pipeline is set in AprilTagsDetection
+
+        if(teamPropLocation== TeamProp.ONLEFT){
+            while(AprilTagsDetection.tagOfInterest==null){
+                bot.strafeLeft();
+            }
         }
-        else if(TeamPropDetectionPipeline.teamPropLocation== TeamPropDetectionPipeline.TeamProp.ONRIGHT){
-            bot.strafeRight();
+
+        else if(teamPropLocation== TeamProp.ONRIGHT){
+            while(AprilTagsDetection.tagOfInterest==null){
+                bot.strafeRight();
+            }
         }
+
     }
 }
