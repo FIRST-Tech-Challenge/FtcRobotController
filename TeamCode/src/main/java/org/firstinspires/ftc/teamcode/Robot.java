@@ -4,9 +4,6 @@ import com.qualcomm.robotcore.hardware.*;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 
-import java.util.Objects;
-
-
 /** Stores the Robot's hardware and position.
  *  Also has a "desired state" for mechanism driving.
  */
@@ -54,7 +51,6 @@ public class Robot {
          */
         public DcMotor initalize(Robot.MotorConfigs config, HardwareMap hardwareMap) {
             DcMotor motor = hardwareMap.get(DcMotor.class, config.getName());
-            Objects.requireNonNull(motor, "Motor " + config.getName() + " not found.");
             motor.setDirection(config.getDirection());
             motor.setZeroPowerBehavior(config.getZeroPowerBehavior());
             return motor;
@@ -91,7 +87,6 @@ public class Robot {
          */
         public Servo initalize(Robot.ServoConfigs config, HardwareMap hardwareMap) {
             Servo servo = hardwareMap.get(Servo.class, config.getName());
-            Objects.requireNonNull(servo, "Servo " + config.getName() + " not found.");
             motor.setDirection(config.getDirection());
             return servo;
         }
@@ -122,7 +117,6 @@ public class Robot {
          */
         public TouchSensor initalize(Robot.SwitchConfigs config, HardwareMap hardwareMap) {
             TouchSensor sensor = hardwareMap.get(TouchSensor.class, config.getName());
-            Objects.requireNonNull(sensor, "Switch " + config.getName() + " not found");
             return sensor;
         }
     }
