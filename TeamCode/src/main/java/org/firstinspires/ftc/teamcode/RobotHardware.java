@@ -113,7 +113,8 @@ public class RobotHardware {
         // ColorSensor, because NormalizedColorSensor consistently gives values between 0 and 1, while
         // the values you get from ColorSensor are dependent on the specific sensor you're using.
         /* when ready to use the left/right color sensor
-        leftColorSensor = myOpMode.hardwareMap.get(NormalizedColorSensor.class, "color_left");
+        leftColorSensor =
+        .hardwareMap.get(NormalizedColorSensor.class, "color_left");
         rightColorSensor = myOpMode.hardwareMap.get(NormalizedColorSensor.class, "color_right");
         */
 
