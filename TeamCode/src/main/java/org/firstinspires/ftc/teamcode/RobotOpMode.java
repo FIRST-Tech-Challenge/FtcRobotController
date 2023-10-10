@@ -34,7 +34,7 @@ public abstract class RobotOpMode extends OpMode {
         rightFrontDrive.setDirection(DcMotor.Direction.FORWARD);
         rightBackDrive.setDirection(DcMotor.Direction.FORWARD);
         try {
-            imu = hardwareMap.get(BNO055IMU.class, "IMU");
+            imu = hardwareMap.get(BNO055IMU.class, "imu");
         } catch(Exception e) {
             telemetry.addData("IMU WARNING (error initializing IMU) ", e.getMessage());
         }

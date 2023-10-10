@@ -36,18 +36,22 @@ public class ActualRobotDanceOpMode extends RobotOpMode {
                 break;
             case DANCE:
                 // dance
-                long time = elapsedTime.startTimeNanoseconds()+TimeUnit.SECONDS.convert(8, TimeUnit.NANOSECONDS);
+                long time = (long) (elapsedTime.startTimeNanoseconds()+(8*Math.PI)*1e9);
                 double secondsElapsed = elapsedTime.seconds();
+                telemetry.addData("SECONDS", secondsElapsed);
+                telemetry.addData("TIME 1", time);
+                telemetry.addData("TIME 2", elapsedTime.now(TimeUnit.NANOSECONDS));
 
                 double speed = 3;
                 double axial = Math.round(Math.sin((secondsElapsed*Math.PI)/speed));
                 double lateral = Math.round(Math.cos((secondsElapsed*Math.PI)/speed));
-                double yaw = Math.sin((-secondsElapsed*Math.PI)/speed*1.5d)/2;
-                boolean finished = moveRobot(axial, lateral, yaw, time);
+                double yaw = Math.sin((-secondsElapsed*Math.PI)/speed*4d)/2;
+                boolean finished = !moveRobot(axial, lateral, yaw, time);
 
                 if(finished) {
                     currentState = FINISH;
                     telemetry.speak("womp womp");
+                    telemetry.addData("finished","now");
                 }
                 break;
         }
