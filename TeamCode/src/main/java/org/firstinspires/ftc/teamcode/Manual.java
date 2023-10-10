@@ -1,18 +1,14 @@
 package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import org.firstinspires.ftc.robotcore.external.hardware.camera.Camera;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.hardware.Blinker;
-import com.qualcomm.robotcore.hardware.IMU;
-import com.qualcomm.robotcore.hardware.DcMotor;
 
 import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
 
 import java.util.List;
 
 @TeleOp
-public class Manual  extends LinearOpMode{
+public class Manualv2  extends LinearOpMode{
 
     private RobotHardware robot = new RobotHardware(this);
 

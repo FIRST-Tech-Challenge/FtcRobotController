@@ -1,15 +1,13 @@
 package org.firstinspires.ftc.teamcode;
 
-import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.hardware.Blinker;
-import com.qualcomm.robotcore.hardware.IMU;
-import com.qualcomm.robotcore.hardware.DcMotor;
 
-@TeleOp
-public class Autonomous  extends LinearOpMode{
+@Autonomous(name="Robot: Auto Drive until stop", group="Robot")
+public class AutoDriveUntilStop  extends LinearOpMode{
 
     private RobotHardware robot = new RobotHardware(this);
+    static final double FORWARD_SPEED = 0.2;
 
     @Override
     public void runOpMode() {
@@ -24,15 +22,14 @@ public class Autonomous  extends LinearOpMode{
         while (opModeIsActive() && !isStopRequested()) {
             telemetry.addData("Status", "Ready to run...");
             telemetry.update();
-            double speed = 0.2;
 
-            robot.driveRobot(speed, 0);
+            robot.driveRobot(FORWARD_SPEED, 0);
             sleep(500);
-            robot.driveRobot(0, speed);
+            robot.driveRobot(0, FORWARD_SPEED);
             sleep(500);
-            robot.driveRobot(speed, 0);
+            robot.driveRobot(FORWARD_SPEED, 0);
             sleep(500);
-            robot.driveRobot(0, speed);
+            robot.driveRobot(0, FORWARD_SPEED);
             sleep(500);
         }
     }
