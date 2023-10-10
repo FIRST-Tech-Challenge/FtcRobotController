@@ -45,6 +45,20 @@ public class Robot {
         public String                    getName()              { return name; }
         public DcMotor.Direction         getDirection()         { return direction; }
         public DcMotor.ZeroPowerBehavior getZeroPowerBehavior() { return behavior; }
+
+        /**
+         * Configures and retrieves motor
+         * @param config The desired motor
+         * @param hardwareMap hardwareMap
+         * @return Motor from config
+         */
+        public DcMotor initalize(Robot.MotorConfigs config, HardwareMap hardwareMap) {
+            DcMotor motor = hardwareMap.get(DcMotor.class, config.getName());
+            Objects.requireNonNull(motor, "Motor " + config.getName() + " not found.");
+            motor.setDirection(config.getDirection());
+            motor.setZeroPowerBehavior(config.getZeroPowerBehavior());
+            return motor;
+        }
     }
 
     /**
@@ -68,12 +82,25 @@ public class Robot {
         
         public String          getName()      { return name; }
         public Servo.Direction getDirection() { return direction; }
+
+        /**
+         * Configures and retrieves servo
+         * @param config the desired servo
+         * @param hardwareMap hardwareMap
+         * @return the servo
+         */
+        public Servo initalize(Robot.ServoConfigs config, HardwareMap hardwareMap) {
+            Servo servo = hardwareMap.get(Servo.class, config.getName());
+            Objects.requireNonNull(servo, "Servo " + config.getName() + " not found.");
+            motor.setDirection(config.getDirection());
+            return servo;
+        }
     }
     
     /**
      * Stores switch configs
      */
-    public enum SwitchConfigs { // (name)
+    public enum SwitchConfigs {
         SLIDES_LIMIT("slides_limit");
 
         /**
@@ -86,6 +113,18 @@ public class Robot {
         }
         
         public String getName() { return name; }
+
+        /**
+         * Retrieves switch
+         * @param config the desired switch
+         * @param hardwareMap hardwareMap
+         * @return the switch
+         */
+        public TouchSensor initalize(Robot.SwitchConfigs config, HardwareMap hardwareMap) {
+            TouchSensor sensor = hardwareMap.get(TouchSensor.class, config.getName());
+            Objects.requireNonNull(sensor, "Switch " + config.getName() + " not found");
+            return sensor;
+        }
     }
 
     //Enums for state
@@ -136,7 +175,7 @@ public class Robot {
         positionManager  = new PositionManager(hardwareMap, telemetry);
         driveMotors      = new DriveMotors(hardwareMap);
         slidesMotors     = new SlidesMotors(hardwareMap);
-        slidesLimitSwitch= hardwareMap.get(TouchSensor.class, Robot.SwitchConfigs.SLIDES_LIMIT.getName());
+        slidesLimitSwitch= Robot.SwitchConfigs.initalize(Robot.SwitchConfigs.SLIDES_LIMIT, hardwareMap);
         
         //probably some servos 
         
@@ -155,7 +194,7 @@ public class Robot {
 }
 
 /**
- * container template for motors
+ * Container template for motors
  */
 abstract class Motors { // this might be a bad abstraction
     /**
@@ -163,17 +202,8 @@ abstract class Motors { // this might be a bad abstraction
      * @param motor the motor acted upon
      */
     public static void resetEncoder(DcMotor motor) {
-        Objects.requireNonNull(motor).setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        Objects.requireNonNull(motor).setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-    }
-    /**
-     * Sets a motor's config to config
-     * @param motor the motor acted upon
-     * @param config the desired config
-     */
-    public static void setMotorToConfig(DcMotor motor, Robot.MotorConfigs config) {
-        Objects.requireNonNull(motor).setDirection(config.getDirection());
-        Objects.requireNonNull(motor).setZeroPowerBehavior(config.getZeroPowerBehavior());
+        motor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        motor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
     }
 }
 
@@ -187,24 +217,15 @@ class DriveMotors extends Motors {
      * @param hardwareMap the hardwareMap used
      */
     public DriveMotors(HardwareMap hardwareMap) {
-        frontLeft = hardwareMap.get(DcMotor.class, Robot.MotorConfigs.FRONT_LEFT.getName());
-        frontRight= hardwareMap.get(DcMotor.class, Robot.MotorConfigs.FRONT_RIGHT.getName());
-        rearLeft  = hardwareMap.get(DcMotor.class, Robot.MotorConfigs.REAR_LEFT.getName());
-        rearRight = hardwareMap.get(DcMotor.class, Robot.MotorConfigs.REAR_RIGHT.getName());
-        //pass dcmotor reference and set to config
-        setMotorToConfig(frontLeft, Robot.MotorConfigs.FRONT_LEFT);
-        setMotorToConfig(frontRight,Robot.MotorConfigs.FRONT_RIGHT);
-        setMotorToConfig(rearLeft,  Robot.MotorConfigs.REAR_LEFT);
-        setMotorToConfig(rearRight, Robot.MotorConfigs.REAR_RIGHT);
-    }
-    /**
-     * Sets a motor's config to config and resets motor encoder
-     * @param motor the motor acted upon
-     * @param config the desired config
-     */
-    public static void setMotorToConfig(DcMotor motor, Robot.MotorConfigs config) {
-        Motors.setMotorToConfig(motor, config);
-        resetEncoder(motor);
+        frontLeft = Robot.MotorConfigs.initalize(Robot.MotorConfigs.FRONT_LEFT, hardwareMap);
+        frontRight= Robot.MotorConfigs.initalize(Robot.MotorConfigs.FRONT_RIGHT, hardwareMap);
+        rearLeft  = Robot.MotorConfigs.initalize(Robot.MotorConfigs.REAR_LEFT, hardwareMap);
+        rearRight = Robot.MotorConfigs.initalize(Robot.MotorConfigs.REAR_RIGHT, hardwareMap);
+
+        resetEncoder(frontLeft);
+        resetEncoder(frontRight);
+        resetEncoder(rearLeft);
+        resetEncoder(rearRight);
     }
 }
 /**
@@ -217,12 +238,8 @@ class SlidesMotors extends Motors {
      * @param hardwareMap the hardwareMap used
      */
     public SlidesMotors(HardwareMap hardwareMap) {
-        one       = hardwareMap.get(DcMotor.class, Robot.MotorConfigs.ONE.getName());
-        two       = hardwareMap.get(DcMotor.class, Robot.MotorConfigs.TWO.getName());
-        secondary = hardwareMap.get(DcMotor.class, Robot.MotorConfigs.SECONDARY.getName());
-        
-        setMotorToConfig(one, Robot.MotorConfigs.ONE);
-        setMotorToConfig(two, Robot.MotorConfigs.TWO);
-        setMotorToConfig(secondary, Robot.MotorConfigs.SECONDARY);
+        one       = Robot.MotorConfigs.initalize(Robot.MotorConfigs.ONE, hardwareMap);
+        two       = Robot.MotorConfigs.initalize(Robot.MotorConfigs.TWO, hardwareMap);
+        secondary = Robot.MotorConfigs.initalize(Robot.MotorConfigs.SECONDARY, hardwareMap);
     }
 }
