@@ -28,7 +28,7 @@ public class Robot {
         
         private final String name;
         private final DcMotor.Direction direction;
-        private final DcMotor.ZeroPowerBehavior behavior
+        private final DcMotor.ZeroPowerBehavior behavior;
         
         /**
          * Creates motor configuration
@@ -98,7 +98,7 @@ public class Robot {
     public enum SecondaryConeRetrieved {DONE, NOT_DONE}
     
     // State
-    public static SlidesState     desiredSlidesState = SlidesState.UNREADY; // why is this one static?
+    public static SlidesState     desiredSlidesState = SlidesState.UNREADY;
     public SecondarySlidesState   desiredSecondarySlidePosition;
 
     public SecondarySystemStatus  secondarySystemStatus;
@@ -127,7 +127,7 @@ public class Robot {
 
     /** Creates robot and gets components
      * @param hardwareMap map components to hardware components
-     * @param telemtry dunno
+     * @param telemetry dunno
      * @param elapsedTime dunno
      */
     public Robot(HardwareMap hardwareMap, Telemetry telemetry, ElapsedTime elapsedTime) {
@@ -135,16 +135,16 @@ public class Robot {
         this.elapsedTime = elapsedTime;
         positionManager  = new PositionManager(hardwareMap, telemetry);
         driveMotors      = new DriveMotors(hardwareMap);
-        slidesMotors     = new SlideMotors(hardwareMap);
+        slidesMotors     = new SlidesMotors(hardwareMap);
         slidesLimitSwitch= hardwareMap.get(TouchSensor.class, Robot.SwitchConfigs.SLIDES_LIMIT.getName());
         
         //probably some servos 
         
         if (desiredSlidesState == SlidesState.UNREADY) { //if the slides have yet to be initialised then reset the encoders for the slides and set the slide state to retracted
             this.telemetry.addData("desired string state", desiredSlidesState.toString());
-            Motors.resetMotor(one);
-            Motors.resetMotor(two);
-            Motors.resetMotor(secondary);
+            Motors.resetEncoder(one);
+            Motors.resetEncoder(two);
+            Motors.resetEncoder(secondary);
             desiredSlidesState = SlidesState.RETRACTED;
         }
     }
@@ -162,7 +162,7 @@ abstract class Motors { // this might be a bad abstraction
      * Resets a motor's encoder
      * @param motor the motor acted upon
      */
-    public static void resetMotor(DcMotor motor) {
+    public static void resetEncoder(DcMotor motor) {
         Objects.requireNonNull(motor).setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         Objects.requireNonNull(motor).setMode(DcMotor.RunMode.RUN_USING_ENCODER);
     }
@@ -171,7 +171,7 @@ abstract class Motors { // this might be a bad abstraction
      * @param motor the motor acted upon
      * @param config the desired config
      */
-    static void setMotorToConfig(DcMotor motor, Robot.MotorConfigs config) {
+    public static void setMotorToConfig(DcMotor motor, Robot.MotorConfigs config) {
         Objects.requireNonNull(motor).setDirection(config.getDirection());
         Objects.requireNonNull(motor).setZeroPowerBehavior(config.getZeroPowerBehavior());
     }
@@ -202,21 +202,21 @@ class DriveMotors extends Motors {
      * @param motor the motor acted upon
      * @param config the desired config
      */
-    static void setMotorToConfig(DcMotor motor, Robot.MotorConfigs config) {
-        super.setMotorToConfig(motor, config);
-        resetMotor(motor);
+    public static void setMotorToConfig(DcMotor motor, Robot.MotorConfigs config) {
+        Motors.setMotorToConfig(motor, config);
+        resetEncoder(motor);
     }
 }
 /**
  * stores slides motors
  */
 class SlidesMotors extends Motors {
-    public DcMotors one, two, secondary;
+    public DcMotor one, two, secondary;
     /**
      * Gets slides motors from hardware
      * @param hardwareMap the hardwareMap used
      */
-    public DriveMotors(HardwareMap hardwareMap) {
+    public SlidesMotors(HardwareMap hardwareMap) {
         one       = hardwareMap.get(DcMotor.class, Robot.MotorConfigs.ONE.getName());
         two       = hardwareMap.get(DcMotor.class, Robot.MotorConfigs.TWO.getName());
         secondary = hardwareMap.get(DcMotor.class, Robot.MotorConfigs.SECONDARY.getName());
