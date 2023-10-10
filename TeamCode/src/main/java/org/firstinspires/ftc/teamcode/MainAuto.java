@@ -7,24 +7,27 @@ import com.arcrobotics.ftclib.gamepad.GamepadEx;
 import com.arcrobotics.ftclib.gamepad.GamepadKeys;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.hardware.DistanceSensor;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
+import org.firstinspires.ftc.teamcode.TeamPropDetectionPipeline.TeamProp;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
 
 
 /*
-
 To Do:
 
-1) drop purple pixel method
-2) incorporate AprilTags
-3) openCV split screen stuff to detect team prop location
-4) if splines do not work, switch to forward(), strafeRight(), and strafeLeft()
+1) TEST AUTOPATHS AND TELEOP!!!!
+    - if splines do not work, switch to forward(), strafeRight(), and strafeLeft()
+2) incorporate distance sensing??
+3) add more autopaths
 
  */
 
+//*** Note: I created two pipelines, and assigned the camera to different pipeline at different times => this may create error
+//I created a method to store teamPropLocation Info before I call moveBasedOnSpikeMark(), is that necessary??
 
 
 @Config
@@ -34,21 +37,27 @@ public class MainAuto extends LinearOpMode{
     SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
 
     Bot bot;
+    private DistanceSensor distanceSensor;
+    double distanceFromObject;
 
     enum Side {
-        RED, BLUE, NULL;
+        RED, BLUE, NULL
     }
     enum DistanceToBackdrop{
-        CLOSE, FAR, NULL;
+        CLOSE, FAR, NULL
     }
 
     enum AutoPath{
-        MECHANICAL_FAILURE, NO_SENSE, OPTIMAL;
+        MECHANICAL_FAILURE, NO_SENSE, OPTIMAL
     }
+
+    TeamProp teamPropLocation;
+
 
     Side side = Side.NULL;
     DistanceToBackdrop dtb= DistanceToBackdrop.NULL;
     AutoPath autopath = AutoPath.OPTIMAL;
+
 
     double fx = 1078.03779;
     double fy = 1084.50988;
@@ -56,7 +65,9 @@ public class MainAuto extends LinearOpMode{
     double cy = 245.959325;
 
     // UNITS ARE METERS
-    double tagsize = 0.032; //ONLY FOR TESTING
+    double tagSize = 0.032;
+    OpenCvCamera camera;
+    AprilTagsPipeline aprilTagsPipeline;
 
 
 
@@ -74,11 +85,12 @@ public class MainAuto extends LinearOpMode{
         //CAMERA STUFF =====================
 
         WebcamName camName = hardwareMap.get(WebcamName.class, "Webcam 1");
-        OpenCvCamera camera = OpenCvCameraFactory.getInstance().createWebcam(camName);
-        AprilTagsPipeline aprilTagPipeline = new AprilTagsPipeline(tagsize, fx, fy, cx, cy);
+        camera = OpenCvCameraFactory.getInstance().createWebcam(camName);
+        TeamPropDetectionPipeline teamPropDetectionPipeline = new TeamPropDetectionPipeline(telemetry);
+        aprilTagsPipeline= new AprilTagsPipeline(tagSize, fx, fy, cx, cy);
 
 
-        camera.setPipeline(aprilTagPipeline);
+        camera.setPipeline(teamPropDetectionPipeline);
         camera.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
             @Override
             public void onOpened() {
@@ -133,6 +145,7 @@ public class MainAuto extends LinearOpMode{
                     .splineTo(new Vector2d(-36,-36), Math.toRadians(0))
                     .addTemporalMarker(this::dropPurplePixel)
                     .splineTo(new Vector2d(-36,48), Math.toRadians(90))
+                    .UNSTABLE_addTemporalMarkerOffset(-0.5,this::moveBasedOnSpikeMark)
                     .UNSTABLE_addTemporalMarkerOffset(-0.5, this::outtake)
                     .splineTo(new Vector2d(-72,48), Math.toRadians(90))
                     .build();
@@ -141,6 +154,7 @@ public class MainAuto extends LinearOpMode{
                     .splineTo(new Vector2d(36,-36), Math.toRadians(0))
                     .addTemporalMarker(this::dropPurplePixel)
                     .splineTo(new Vector2d(36,48), Math.toRadians(-90))
+                    .UNSTABLE_addTemporalMarkerOffset(-0.5,this::moveBasedOnSpikeMark)
                     .UNSTABLE_addTemporalMarkerOffset(-0.5, this::outtake)
                     .splineTo(new Vector2d(72,48), Math.toRadians(-90))
                     .build();
@@ -150,6 +164,7 @@ public class MainAuto extends LinearOpMode{
                     .splineTo(new Vector2d(-36,20), Math.toRadians(90))
                     .addTemporalMarker(this::dropPurplePixel)
                     .splineTo(new Vector2d(-36,48), Math.toRadians(90))
+                    .UNSTABLE_addTemporalMarkerOffset(-0.5,this::moveBasedOnSpikeMark)
                     .UNSTABLE_addTemporalMarkerOffset(-0.5, this::outtake)
                     .splineTo(new Vector2d(-72,48), Math.toRadians(90))
                     .build();
@@ -159,41 +174,58 @@ public class MainAuto extends LinearOpMode{
                     .splineTo(new Vector2d(36,12), Math.toRadians(-90))
                     .addTemporalMarker(this::dropPurplePixel)
                     .splineTo(new Vector2d(36,48), Math.toRadians(-90))
+                    .UNSTABLE_addTemporalMarkerOffset(-0.5,this::moveBasedOnSpikeMark)
                     .UNSTABLE_addTemporalMarkerOffset(-0.5, this::outtake)
                     .splineTo(new Vector2d(72,48), Math.toRadians(90))
                     .build();
 
 
-            //thread will enable the robot to move forward while performing other activities
-            Thread blueAllianceFarThread = new Thread(() -> drive.followTrajectorySequence(blueAllianceFar));
+           /* Thread blueAllianceFarThread = new Thread(() -> drive.followTrajectorySequence(blueAllianceFar));
             Thread redAllianceFarThread = new Thread(() -> drive.followTrajectorySequence(redAllianceFar));
             Thread blueAllianceCloseThread = new Thread(() -> drive.followTrajectorySequence(blueAllianceClose));
             Thread redAllianceCloseThread = new Thread(() -> drive.followTrajectorySequence(redAllianceClose));
 
+            */
+
             waitForStart();
             if (!isStopRequested()) {
+              /*
+                distanceFromObject= distanceSensor.getDistance(DistanceUnit.CM);
+                int count=0;
 
-
-                if(dtb== DistanceToBackdrop.FAR && side==Side.BLUE && autopath==AutoPath.NO_SENSE){
-                    blueAllianceFarThread.start();
-                    sleep(1000);
-                    blueAllianceFarThread.interrupt();
+                while(distanceFromObject>5 && count<4){
+                    bot.turn(0.1);
+                    distanceFromObject= distanceSensor.getDistance(DistanceUnit.CM);
+                    count++;
                 }
 
-                if(dtb== DistanceToBackdrop.FAR && side==Side.RED && autopath==AutoPath.NO_SENSE){
-                    redAllianceFar.start();
-                    sleep(1000);
-                    redAllianceFarThread.interrupt();
+                if(count==0){
+                    teamPropLocation= TeamPropLocation.ONE;
                 }
-                if(dtb== DistanceToBackdrop.CLOSE && side==Side.BLUE && autopath==AutoPath.NO_SENSE){
-                    blueAllianceCloseThread.start();
-                    sleep(1000);
-                    blueAllianceFarThread.interrupt();
+                if(count>1 && count<= 4){
+                    teamPropLocation= TeamPropLocation.TWO;
+                    bot.turn((-0.1 * (count)));
                 }
-                if(dtb== DistanceToBackdrop.CLOSE && side==Side.RED && autopath==AutoPath.NO_SENSE){
-                    blueAllianceCloseThread.start();
-                    sleep(1000);
-                    redAllianceCloseThread.interrupt();
+                if(count>4){
+                    teamPropLocation= TeamPropLocation.THREE;
+                }
+
+               */
+
+                findSpikeMarkLocation();
+
+                if(dtb== DistanceToBackdrop.FAR && side==Side.BLUE && autopath==AutoPath.OPTIMAL){
+                    drive.followTrajectorySequence(blueAllianceFar);
+                }
+
+                if(dtb== DistanceToBackdrop.FAR && side==Side.RED && autopath==AutoPath.OPTIMAL){
+                    drive.followTrajectorySequence(redAllianceFar);
+                }
+                if(dtb== DistanceToBackdrop.CLOSE && side==Side.BLUE && autopath==AutoPath.OPTIMAL){
+                    drive.followTrajectorySequence(blueAllianceClose);
+                }
+                if(dtb== DistanceToBackdrop.CLOSE && side==Side.RED && autopath==AutoPath.OPTIMAL){
+                    drive.followTrajectorySequence(redAllianceClose);
                 }
 
 
@@ -202,6 +234,8 @@ public class MainAuto extends LinearOpMode{
     }
 
     private void outtake(){
+
+      //  MainTeleOp.distanceTuning();
         Bot.fourbar.outtake();
         Bot.slides.runTo(1);
         Bot.box.depositFirstPixel();
@@ -211,6 +245,39 @@ public class MainAuto extends LinearOpMode{
     }
 
     private void dropPurplePixel(){
+        Bot.noodles.reverseIntake();
+    }
+
+    private void findSpikeMarkLocation(){
+        if(TeamPropDetectionPipeline.teamPropLocation== TeamProp.ONLEFT){
+            teamPropLocation= TeamProp.ONLEFT;
+        }
+
+        else if(TeamPropDetectionPipeline.teamPropLocation== TeamProp.ONRIGHT){
+            teamPropLocation= TeamProp.ONRIGHT;
+        }
+        else if(TeamPropDetectionPipeline.teamPropLocation== TeamProp.INFRONT){
+            teamPropLocation= TeamProp.INFRONT;
+        }
+        else{
+            teamPropLocation= TeamProp.NOTDETECTED;
+        }
+    }
+
+    private void moveBasedOnSpikeMark(){
+       // camera.setPipeline(aprilTagsPipeline); => pipeline is set in AprilTagsDetection
+
+        if(teamPropLocation== TeamProp.ONLEFT){
+            while(AprilTagsDetection.tagOfInterest==null){
+                bot.strafeLeft();
+            }
+        }
+
+        else if(teamPropLocation== TeamProp.ONRIGHT){
+            while(AprilTagsDetection.tagOfInterest==null){
+                bot.strafeRight();
+            }
+        }
 
     }
 }
