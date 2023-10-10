@@ -1,8 +1,10 @@
 package org.firstinspires.ftc.teamcode;
 
+import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Gamepad;
+import com.qualcomm.robotcore.hardware.IMU;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.internal.ui.GamepadUser;
@@ -15,6 +17,7 @@ public abstract class RobotOpMode extends OpMode {
     // Used in the endTime parameter in moveRobot()
     public static long STOP_NEVER = Long.MAX_VALUE;
     DcMotor leftFrontDrive, leftBackDrive, rightFrontDrive, rightBackDrive;
+    BNO055IMU imu;
     ElapsedTime elapsedTime;
 
 
@@ -30,6 +33,11 @@ public abstract class RobotOpMode extends OpMode {
         leftBackDrive.setDirection(DcMotor.Direction.REVERSE);
         rightFrontDrive.setDirection(DcMotor.Direction.FORWARD);
         rightBackDrive.setDirection(DcMotor.Direction.FORWARD);
+        try {
+            imu = hardwareMap.get(BNO055IMU.class, "IMU");
+        } catch(Exception e) {
+            telemetry.addData("IMU WARNING (error initializing IMU) ", e.getMessage());
+        }
     }
 
     @Override
