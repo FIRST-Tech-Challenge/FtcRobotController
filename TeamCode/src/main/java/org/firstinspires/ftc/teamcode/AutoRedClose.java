@@ -13,9 +13,8 @@ public class AutoRedClose extends LinearOpMode {
     private DcMotor leftBackDrive = null;
     private DcMotor rightFrontDrive = null;
     private DcMotor rightBackDrive = null;
-    private double speed = 0.5;
-    private final int oneRotaion = 270; 
-    private final int inch = 40; //3.75 wheel diameter
+    private double speed;
+    private final int oneRotaion = 540;
     private int newLFTarget;
     private int newLBTarget;
     private int newRFTarget;
@@ -48,10 +47,12 @@ public class AutoRedClose extends LinearOpMode {
 
         waitForStart();
 
-        newLFTarget = leftFrontDrive.getCurrentPosition() + 1*oneRotaion;
-        newLBTarget = leftBackDrive.getCurrentPosition() - 1*oneRotaion;
-        newRFTarget = rightFrontDrive.getCurrentPosition() - 1*oneRotaion;
-        newRBTarget = rightBackDrive.getCurrentPosition() + 1*oneRotaion;
+        speed = 1.0;
+
+        newLFTarget = leftFrontDrive.getCurrentPosition() + oneRotaion;
+        newLBTarget = leftBackDrive.getCurrentPosition() + oneRotaion;
+        newRFTarget = rightFrontDrive.getCurrentPosition() + oneRotaion;
+        newRBTarget = rightBackDrive.getCurrentPosition() + oneRotaion;
 
         leftFrontDrive.setTargetPosition(newLFTarget);
         leftBackDrive.setTargetPosition(newLBTarget);
@@ -81,7 +82,46 @@ public class AutoRedClose extends LinearOpMode {
         rightFrontDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         rightBackDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
-        sleep(500);
+        sleep(5000);
+
+        speed = 0.25;
+
+        newLFTarget = leftFrontDrive.getCurrentPosition() + oneRotaion;
+        newLBTarget = leftBackDrive.getCurrentPosition() + oneRotaion;
+        newRFTarget = rightFrontDrive.getCurrentPosition() + oneRotaion;
+        newRBTarget = rightBackDrive.getCurrentPosition() + oneRotaion;
+
+        leftFrontDrive.setTargetPosition(newLFTarget);
+        leftBackDrive.setTargetPosition(newLBTarget);
+        rightFrontDrive.setTargetPosition(newRFTarget);
+        rightBackDrive.setTargetPosition(newRBTarget);
+
+        leftFrontDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        leftBackDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        rightFrontDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        rightBackDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+        leftFrontDrive.setPower(speed);
+        leftBackDrive.setPower(speed);
+        rightFrontDrive.setPower(speed);
+        rightBackDrive.setPower(speed);
+
+        while (opModeIsActive() && leftFrontDrive.isBusy() && leftBackDrive.isBusy() && rightFrontDrive.isBusy() && rightBackDrive.isBusy()) {
+            continue;
+        }
+        leftFrontDrive.setPower(0);
+        leftBackDrive.setPower(0);
+        rightFrontDrive.setPower(0);
+        rightBackDrive.setPower(0);
+
+        leftFrontDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        leftBackDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        rightFrontDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        rightBackDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+        sleep(5000);
+
+
     }
 }
 
