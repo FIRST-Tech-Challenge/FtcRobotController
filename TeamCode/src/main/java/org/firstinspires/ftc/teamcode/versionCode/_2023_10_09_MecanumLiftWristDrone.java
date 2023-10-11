@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode;
+package org.firstinspires.ftc.teamcode.versionCode;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.IMU;
@@ -9,8 +9,8 @@ import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 
-@com.qualcomm.robotcore.eventloop.opmode.TeleOp(name = "Test Code")
-public class TeleOpWithLiftDrone extends LinearOpMode {
+@com.qualcomm.robotcore.eventloop.opmode.TeleOp(name = "Oct 9 Test Code")
+public class _2023_10_09_MecanumLiftWristDrone extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
         DcMotor frontLeftMotor = hardwareMap.dcMotor.get("motorFL");
@@ -44,7 +44,7 @@ public class TeleOpWithLiftDrone extends LinearOpMode {
         IMU.Parameters parameters = new IMU.Parameters(new RevHubOrientationOnRobot(
                 RevHubOrientationOnRobot.LogoFacingDirection.UP,
                 RevHubOrientationOnRobot.UsbFacingDirection.BACKWARD));
-        // Without this, the REV Hub's orientation is assumed to be logo up / USB forward
+        // Without this, the REV Hub's orientation is assumed to be logo up / USB backward
         imu.initialize(parameters);
 
         // ADDED CODE - sets servo's range and default position beforehand
@@ -59,8 +59,7 @@ public class TeleOpWithLiftDrone extends LinearOpMode {
             double y = -gamepad1.left_stick_y; // Remember, Y stick value is reversed
             double x = gamepad1.left_stick_x;
             double rx = gamepad1.right_stick_x;
-
-            float wristPos = 1f;
+            int targetPosition = 0;
 
             // ADDED CODE - creates variables for right and left trigger values
             double rTrigger = gamepad1.right_trigger/4;
@@ -70,19 +69,19 @@ public class TeleOpWithLiftDrone extends LinearOpMode {
             double liftPos = lift.getCurrentPosition();
 
             // ADDED CODE
-            if (rTrigger > 0) {
-                lift.setTargetPosition(lift.getCurrentPosition() + 100);
-                lift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                lift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-                lift.setPower(rTrigger);
-            }else if (lTrigger > 0) {
-                lift.setTargetPosition(lift.getCurrentPosition() - 100);
-                lift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                lift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-                lift.setPower(lTrigger);
-            }else {
-                lift.setPower(0);
+            if (rTrigger != 0) {
+                targetPosition += 10;
+            }else if (lTrigger != 0) {
+                targetPosition -= 10;
             }
+            if (targetPosition > 1000){
+                targetPosition = 990;
+            }
+            else if (targetPosition < 0){
+                targetPosition = 10;
+            }
+            lift.setTargetPosition(targetPosition);
+            lift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
             if(gamepad1.b) {
                 wristServo.setPosition(0);
