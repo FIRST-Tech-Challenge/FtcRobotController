@@ -10,7 +10,6 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DistanceSensor;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
-import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.teamcode.TeamPropDetectionPipeline.TeamProp;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
@@ -181,17 +180,10 @@ public class MainAuto extends LinearOpMode{
                     .build();
 
 
-           /* Thread blueAllianceFarThread = new Thread(() -> drive.followTrajectorySequence(blueAllianceFar));
-            Thread redAllianceFarThread = new Thread(() -> drive.followTrajectorySequence(redAllianceFar));
-            Thread blueAllianceCloseThread = new Thread(() -> drive.followTrajectorySequence(blueAllianceClose));
-            Thread redAllianceCloseThread = new Thread(() -> drive.followTrajectorySequence(redAllianceClose));
-
-            */
-
             waitForStart();
             if (!isStopRequested()) {
 
-                distanceFromObject= distanceSensor.getDistance(DistanceUnit.CM);
+               /* distanceFromObject= distanceSensor.getDistance(DistanceUnit.CM);
                 int count=0;
 
                 while(distanceFromObject>5 && count<4){
@@ -199,6 +191,9 @@ public class MainAuto extends LinearOpMode{
                     distanceFromObject= distanceSensor.getDistance(DistanceUnit.CM);
                     count++;
                 }
+
+                */
+
                 findSpikeMarkLocation();
 
                 if(dtb== DistanceToBackdrop.FAR && side==Side.BLUE && autopath==AutoPath.OPTIMAL){
@@ -251,26 +246,24 @@ public class MainAuto extends LinearOpMode{
     }
 
     private void moveBasedOnSpikeMark(){
-       // camera.setPipeline(aprilTagsPipeline); => pipeline is set in AprilTagsDetection
+        camera.setPipeline(aprilTagsPipeline);
 
         if(teamPropLocation== TeamProp.ONLEFT){
             while(AprilTagsDetection.tagOfInterest==null){
+                AprilTagsDetection.detectTag();
                 bot.strafeLeft();
             }
         }
 
         else if(teamPropLocation== TeamProp.ONRIGHT){
             while(AprilTagsDetection.tagOfInterest==null){
+                AprilTagsDetection.detectTag();
                 bot.strafeRight();
             }
         }
         else if(teamPropLocation == TeamProp.NOTDETECTED){
             telemetry.addData("Prop not detected, check pipeline", teamPropLocation);
         }
-    }
-
-    public void optimalAuto(){
-
     }
 
 }
