@@ -14,31 +14,12 @@
 // Include common definitions from above.
 apply from: '../build.common.gradle'
 apply from: '../build.dependencies.gradle'
-// kotlin
-apply plugin: 'org.jetbrains.kotlin.android'
 
 android {
     namespace = 'org.firstinspires.ftc.teamcode'
 
     packagingOptions {
-        jniLibs {
-            pickFirsts += ['**/*.so']
-        }
         jniLibs.useLegacyPackaging true
-    }
-
-    kotlinOptions {
-        jvmTarget = '1.8'
-    }
-
-    androidResources {
-        noCompress 'tflite'
-    }
-}
-
-repositories {
-    maven {
-        url = 'https://maven.brott.dev/'
     }
 }
 
