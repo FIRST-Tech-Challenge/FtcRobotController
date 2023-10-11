@@ -2,7 +2,7 @@ package org.firstinspires.ftc.team8923_CENTERSTAGE;
 
 @com.qualcomm.robotcore.eventloop.opmode.TeleOp(name = "TeleOp")
 
-abstract public class TeleOp extends BaseTeleOp {
+public class TeleOp extends BaseTeleOp {
     @Override
     public void runOpMode() {
         initHardware();
