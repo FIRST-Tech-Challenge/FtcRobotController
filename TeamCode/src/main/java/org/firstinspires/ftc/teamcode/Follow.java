@@ -35,6 +35,7 @@ import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.util.Range;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.BuiltinCameraDirection;
@@ -115,6 +116,7 @@ public class Follow extends LinearOpMode {
         telemetry.addData("DS preview on/off", "3 dots, Camera Stream");
         telemetry.addData(">", "Touch Play to start OpMode");
         telemetry.update();
+        setManualExposure(6, 250);
 
         waitForStart();
 
@@ -122,6 +124,16 @@ public class Follow extends LinearOpMode {
             while (opModeIsActive()) {
 
                 telemetryAprilTag();
+
+                if (gamepad1.square) {
+                    targetTag = 1;
+                }
+                if (gamepad1.triangle) {
+                    targetTag = 2;
+                }
+                if (gamepad1.circle) {
+                    targetTag = 3;
+                }
 
                 final double xError = getTagXPos(targetTag).orElse(0.0);
 
@@ -229,7 +241,7 @@ public class Follow extends LinearOpMode {
         }
     }
 
-    private void    setManualExposure(int exposureMS, int gain) {
+    private void setManualExposure(int exposureMS, int gain) {
         // Wait for the camera to be open, then use the controls
 
         if (visionPortal == null) {
