@@ -23,6 +23,9 @@
 
 package org.firstinspires.ftc.teamcode.Vision;
 
+import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+//import com.qualcomm.robotcore.hardware.configuration.annotations.I2cDeviceType;
+
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.opencv.core.Core;
 import org.opencv.core.Mat;
@@ -30,7 +33,11 @@ import org.opencv.core.Scalar;
 import org.opencv.imgproc.Imgproc;
 import org.openftc.easyopencv.OpenCvPipeline;
 
+//@I2cDeviceType()
+//@TeleOp
 public class OpenCVBlue extends OpenCvPipeline {
+
+    public volatile String result = "start";
 
     /*
      * These are our variables that will be
@@ -46,6 +53,7 @@ public class OpenCVBlue extends OpenCvPipeline {
      * min and max values here for now, meaning
      * that all pixels will be shown.
      */
+    //public String result = "";
     private Scalar lower = new Scalar(96.3f, 73.7f, 0);
     private Scalar upper = new Scalar(147.3f, 255, 199.8f);
     /**
@@ -67,7 +75,7 @@ public class OpenCVBlue extends OpenCvPipeline {
      */
     private Mat ycrcbMat       = new Mat();
     private Mat binaryMat      = new Mat();
-    private Mat maskedInputMat = new Mat();
+    public Mat maskedInputMat = new Mat();
 
     Mat dest_matrix = new Mat();
     Mat stats_mat = new Mat();
@@ -91,6 +99,8 @@ public class OpenCVBlue extends OpenCvPipeline {
         YCrCb(Imgproc.COLOR_RGB2YCrCb),
         Lab(Imgproc.COLOR_RGB2Lab);
 
+
+
         //store cvtCode in a public var
         public int cvtCode = 0;
 
@@ -104,7 +114,12 @@ public class OpenCVBlue extends OpenCvPipeline {
         this.telemetry = telemetry;
     }
 
-    @Override
+
+    public String getResult()
+    {
+        return result;
+    }
+
     public Mat processFrame(Mat input) {
         /*
          * Converts our input mat from RGB to
@@ -159,7 +174,7 @@ public class OpenCVBlue extends OpenCvPipeline {
 
         double x_pos = cens_mat.get(bestmaxblob, 0)[0];
         double y_pos = cens_mat.get(bestmaxblob, 1)[0];
-        String result = "";
+
 
         if(x_pos > 1270)
         {
@@ -213,8 +228,10 @@ public class OpenCVBlue extends OpenCvPipeline {
          * pixel from the input Mat that were inside
          * the threshold range.
          */
-        return maskedInputMat;
-        // return dest_matrix;
+        return  maskedInputMat;
+        // return  maskedInputMat;
     }
+
+
 
 }

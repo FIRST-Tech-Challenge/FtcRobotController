@@ -23,11 +23,19 @@ public class Move extends OpMode {
     private DcMotor leftBackDrive = null;
     private DcMotor rightBackDrive = null;
 
+    private DcMotor Arm = null;
+
+    private DcMotor Extend = null;
+
     //bools
     public boolean Endgametrue = false;
     public boolean Parktrue = false;
 
     //ElapsedTime Runtime
+    public float armmove;
+    public float extendmove;
+    public float extendpower;
+    public float armPower = 0;
     ElapsedTime runtime = new ElapsedTime();
 
 //    static void sleep(int LongMilliseconds) {
@@ -48,16 +56,22 @@ public class Move extends OpMode {
 
 
         // Initialize DcMotors
-        leftFrontDrive = hardwareMap.get(DcMotor.class, "left_front");
-        rightFrontDrive = hardwareMap.get(DcMotor.class, "right_front");
-        leftBackDrive = hardwareMap.get(DcMotor.class, "left_back");
-        rightBackDrive = hardwareMap.get(DcMotor.class, "right_back");
+        leftFrontDrive = hardwareMap.get(DcMotor.class, "LF");
+        rightFrontDrive = hardwareMap.get(DcMotor.class, "RF");
+        leftBackDrive = hardwareMap.get(DcMotor.class, "LB");
+        rightBackDrive = hardwareMap.get(DcMotor.class, "RB");
+
+        Arm = hardwareMap.get(DcMotor.class, "ARM");
+
+        Extend = hardwareMap.get(DcMotor.class, "EX");
 
         //Sets em to back or forward
         leftFrontDrive.setDirection(DcMotorSimple.Direction.REVERSE);
         rightFrontDrive.setDirection(DcMotorSimple.Direction.FORWARD);
         leftBackDrive.setDirection(DcMotorSimple.Direction.REVERSE);
         rightBackDrive.setDirection(DcMotorSimple.Direction.FORWARD);
+        Arm.setDirection(DcMotorSimple.Direction.FORWARD);
+        Extend.setDirection(DcMotorSimple.Direction.FORWARD);
     }
 
     @Override
@@ -93,33 +107,72 @@ public class Move extends OpMode {
         telemetry.addData("Right Stick Y: ", -gamepad1.right_stick_y);
         telemetry.update();
 
+
         //backup
-        if (gamepad1.y || gamepad1.x) {
-            leftFrontPower = -0.16;
-            leftBackPower = -0.16;
-            rightFrontPower = -0.16;
-            rightBackPower = -0.16;
-        }
+
 
         // Slow movement + Fast movement
-        if (gamepad1.right_bumper) {
-            leftFrontPower /= 4;
-            leftBackPower /= 4;
-            rightFrontPower /= 4;
-            rightBackPower /= 4;
+
+
+//        else if(gamepad1.a)
+//        {
+//            armmove = armmove + 0.05f;
+//            armPower = armmove;
+//
+//        }
+//        else if(gamepad1.b)
+//        {
+////            if(armmove != 10)
+////            {
+//                armmove = armmove - 0.05f;
+//                armPower = armmove;
+////            }
+//
+//
+//        }
+
+        if(gamepad1.dpad_up)
+        {
+            armmove = 1f;
+            armPower = armmove;
         }
-        else if(gamepad1.left_bumper){
-            leftFrontPower *= 1.25;
-            leftBackPower *= 1.25;
-            rightFrontPower *= 1.25;
-            rightBackPower *= 1.25;
+        else if(gamepad1.dpad_down)
+        {
+            armmove = -1f;
+            armPower = armmove;
         }
+        else
+        {
+            armPower = 0;
+        }
+        if(gamepad1.a)
+        {
+            extendmove = 1f;
+            extendpower = extendmove;
+        }
+        else if(gamepad1.b)
+        {
+            extendmove = -1f;
+            extendpower = extendmove;
+        }
+        else
+        {
+            extendpower = 0;
+        }
+
+
 
         // Set motor powers to updated power
         leftFrontDrive.setPower(leftFrontPower);
         rightFrontDrive.setPower(rightFrontPower);
         leftBackDrive.setPower(leftBackPower);
         rightBackDrive.setPower(rightBackPower);
+        Arm.setPower(armPower);
+        Extend.setPower(extendpower);
+
+
+
+
     }
 
     @Override
@@ -129,6 +182,8 @@ public class Move extends OpMode {
         rightFrontDrive.setPower(0);
         leftBackDrive.setPower(0);
         rightBackDrive.setPower(0);
+        Arm.setPower(0);
+        Extend.setPower(0);
     }
 }
 
