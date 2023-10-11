@@ -20,14 +20,6 @@ public class AutoRedFar extends RobotLinearOpMode {
     private int newRFTarget;
     private int newRBTarget;
 
-    public void driveForward(double speed, double rotations){
-
-    }
-
-    public void driveRight(double speed, double rotations){
-
-    }
-
     @Override
     public void runOpMode() {
         declareHardwareProperties();
