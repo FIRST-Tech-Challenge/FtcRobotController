@@ -42,7 +42,7 @@ public class Hardware {
         hwMap = ahwMap;
 
         /*
-        Defining what type of hardware "TestMotor" and "TestServo" are
+        Defining what type of hardware "TestMotor" and "TestServo" are.
          */
         TestMotor = hwMap.get(DcMotor.class, "TestMotor");
         TestServo = hwMap.get(Servo.class, "TestServo");
