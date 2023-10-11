@@ -2,9 +2,6 @@ package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.Servo;
-
 
 // This defines the program as a TeleOp program instead of an Autonomous one.
 
@@ -17,12 +14,19 @@ import com.qualcomm.robotcore.hardware.Servo;
   It makes the class inherit characteristics from the "LinearOpMode" class that was written by FTC.
   You'll be using "LinearOpMode" for anything that is actually a teleop or autonomous program.
  */
-public class Tutorial extends LinearOpMode {
+public class Tutorial_HW extends LinearOpMode {
 
-    //These two lines define what type of object we're creating, as well as what we call it for the rest of the file.
+    /*
+    Calls the hardware class and declares it as an object to import hardware information.
 
-    private DcMotor TestMotor;
-    private Servo TestServo;
+    This requires a separate hardware class with everything mapped properly, but will make your code
+    easier to read and will overall make your code less-cluttered.
+
+    If you do this, you need to preface every instance of the motor/servo/sensor with whatever you
+    name this object. In this instance it's named "hardware"
+     */
+
+    Hardware hardware = new Hardware();
 
     /*
       "runOpMode" here is a Method. It's essentially another program written somewhere else in the files.
@@ -37,16 +41,13 @@ public class Tutorial extends LinearOpMode {
     public void runOpMode() throws InterruptedException {
 
         /*
-        These two lines of code map the named motor/servo to the actual hardware type they are. This defines
-        what commands they can take, like setting power for motors or setting position for servos.
+        This is pulling the hardware information from the "hardware" object.
          */
-
-        TestMotor = hardwareMap.get(DcMotor.class, "TestMotor");
-        TestServo = hardwareMap.get(Servo.class, "TestServo");
+        hardware.init(hardwareMap);
 
         // This line serves to set the servo to it's midpoint position during initialization
 
-        TestServo.setPosition(0.5);
+        hardware.TestServo.setPosition(0.5);
 
         /*
         Telemetry is important. It helps you figure out what is going on with the robot, and can also
@@ -70,7 +71,7 @@ public class Tutorial extends LinearOpMode {
          this method, so it's here instead.
          */
 
-        double tgtPower = 0;
+        double tgtPower;
 
         /*
          While is a type of loop that will keep repeating as long as the condition is active. In this
@@ -91,7 +92,7 @@ public class Tutorial extends LinearOpMode {
 
             tgtPower = gamepad1.left_stick_y;
 
-            TestMotor.setPower(tgtPower);
+            hardware.TestMotor.setPower(tgtPower);
 
             /*
             This next group of code is a series of "if" and "else if" statements.
@@ -107,13 +108,13 @@ public class Tutorial extends LinearOpMode {
              */
 
             if (gamepad1.x){
-                TestServo.setPosition(0);
-            } else if (gamepad1.x) {
-                TestServo.setPosition(0.33);
+                hardware.TestServo.setPosition(0);
+            } else if (gamepad1.a) {
+                hardware.TestServo.setPosition(0.33);
             } else if (gamepad1.b) {
-                TestServo.setPosition((0.66));
+                hardware.TestServo.setPosition((0.66));
             } else if (gamepad1.y) {
-                TestServo.setPosition(1);
+                hardware.TestServo.setPosition(1);
             }
 
             /*
@@ -124,8 +125,8 @@ public class Tutorial extends LinearOpMode {
 
             telemetry.addData("Status","Running");
             telemetry.addData("Target Power", tgtPower);
-            telemetry.addData("Motor Power", TestMotor.getPower());
-            telemetry.addData("Servo Position", TestServo.getPosition());
+            telemetry.addData("Motor Power", hardware.TestMotor.getPower());
+            telemetry.addData("Servo Position", hardware.TestServo.getPosition());
             telemetry.update();
 
         }
