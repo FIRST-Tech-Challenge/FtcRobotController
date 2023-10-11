@@ -1,6 +1,6 @@
 package computer.living.gamepadyn
 
-enum class EActionType {
+enum class ActionType {
     DIGITAL,
     ANALOG
 }
