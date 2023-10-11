@@ -17,6 +17,7 @@ public class Centerstage_TeleOp extends LinearOpMode {
         while (opModeIsActive()) {
 
             // This controls the drive train unsing three input methods:
+            // -1 to 1
             robot.driveTrain.drive(-gamepad1.left_stick_y, gamepad1.left_stick_x, gamepad1.right_stick_x);
 
             // The next six lines give the power of each of the driving motors to the driver station:
