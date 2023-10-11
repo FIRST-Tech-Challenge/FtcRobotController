@@ -1,32 +1,55 @@
 package computer.living.gamepadyn
 
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
-import kotlin.reflect.KClass
+import kotlin.collections.toMap
+import kotlin.collections.toMutableMap
+import java.util.EnumMap
 
-// Generic name somewhat breaks style guidelines, but the use of the generic "T" would be incredibly confusing
+/**
+ * Description of an action. This typename is long; it is recommended to use the alias if you are using Kotlin, importable via `gamepadyn.GAD`.
+ */
+data class ActionDescriptor @JvmOverloads constructor(val type: ActionType = ActionType.DIGITAL, val axis: Int = 0) {
+//    init {
+//        // NOTE: runtime errors SUCK! ALL GAMEPADYN CODE WILL BE WRITTEN SO THAT AXIS IS IGNORED UNLESS THE ACTION TYPE IS ANALOG!
+//        //       HOWEVER, IF AXIS IS NOT 0 FOR A DIGITAL ACTION, THAT IS STILL MALFORMED! This is just for the sake of debugging!
+//
+//        // assert(type != ActionType.DIGITAL || axis == 0)
+//    }
+}
+
+typealias GAD = ActionDescriptor
+
 /**
  * A Gamepadyn instance. Construct during the "init" phase of your OpMode.
  *
  * @constructor Creates a Gamepadyn instance.
  * @param opMode A reference to the OpMode where this Gamepadyn instance is running (should always be `this`)
- * @param actionList A list of actions that this Gamepadyn instance should be aware of (should always be `someEnum.values()`)
+ * @param actions A map of actions that this Gamepadyn instance should be aware of
  * @param useInputThread WIP: Whether to initialize with multithreading.
  */
 @Suppress("MemberVisibilityCanBePrivate")
-class Gamepadyn<TUA: IUserAction> @JvmOverloads constructor(
-    internal var opMode: OpMode,
-    internal val actionList: Array<TUA>,
-    val useInputThread: Boolean = false
+class Gamepadyn<T: Enum<T>> @JvmOverloads constructor(
+    internal val opMode: OpMode,
+    @JvmField val useInputThread: Boolean = false,
+    internal val actions: Map<T, ActionDescriptor?>
 ) {
+
+
+
+    @JvmOverloads constructor(
+        opMode: OpMode,
+        useInputThread: Boolean = false,
+        vararg actions: Pair<T, ActionDescriptor?>
+    ) : this(opMode, useInputThread, actions.toMap())
 
     // If more than 2 players are ever allowed in the FTC:
     //   1: pigs will fly
     //   2: this code will need to be rewritten
 
     @Suppress("MemberVisibilityCanBePrivate")
-    internal lateinit var player1: Player<TUA>
+    internal lateinit var player1: Player<T>
     @Suppress("MemberVisibilityCanBePrivate")
-    internal lateinit var player2: Player<TUA>
+    internal lateinit var player2: Player<T>
 
     // TODO: multithread input (remove this line)
     init { if (useInputThread) throw Error("Gamepadyn has no multithreading implementation yet!") }
@@ -36,7 +59,7 @@ class Gamepadyn<TUA: IUserAction> @JvmOverloads constructor(
      * @param i The player's index (0 is player 1, 1 is player 2, etc.)
      */
     @Suppress("unused")
-    fun getPlayer(i: Int): Player<TUA>? {
+    fun getPlayer(i: Int): Player<T>? {
         assert (i >= 0)
         return when (i) {
             0 -> player1

@@ -2,11 +2,11 @@ package computer.living.gamepadyn
 
 import kotlin.reflect.KClass
 
-sealed class Player<TUA: IUserAction> constructor(
-    internal val parent: Gamepadyn<TUA>
+sealed class Player<T: Enum<T>> constructor(
+    internal val parent: Gamepadyn<T>
 ) {
 
-    internal var data: MutableMap<TUA, IActionData> = mutableMapOf()
+    internal var data: MutableMap<T, IActionData> = mutableMapOf()
 
     /**
      * Returns the current state of the provided action (if valid) and `null` if the state doesn't exist or hasn't been updated.
@@ -16,7 +16,7 @@ sealed class Player<TUA: IUserAction> constructor(
      * and therefore cannot easily fill the map.
      * This has no easy solution. I've tried my best to make it better, but both Java and Kotlin have no easy way of reflecting or extending in the way I want.
      */
-    fun getState(action: TUA): IActionData? = data[action]
+    fun getState(action: T): IActionData? = data[action]
 //    val onUpdate: Event<>
 
 }
