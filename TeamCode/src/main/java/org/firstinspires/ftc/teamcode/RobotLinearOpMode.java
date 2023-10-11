@@ -39,7 +39,7 @@ public abstract class RobotLinearOpMode extends LinearOpMode {
         //Specifications of hardware
         final double WHEEL_DIAMETER_INCHES = 3.77953;
         final double WHEEL_CIRCUMFERENCE_INCHES = (WHEEL_DIAMETER_INCHES * 3.141592653589793);
-        final double GEAR_RATIO = 20;
+        final double GEAR_RATIO = 19.2;
         final double COUNTS_PER_ROTATION_AT_MOTOR = 28;
         final double TICKS_PER_ROTATION = (GEAR_RATIO * COUNTS_PER_ROTATION_AT_MOTOR);
         final double TICKS_PER_INCH = (TICKS_PER_ROTATION) / (WHEEL_CIRCUMFERENCE_INCHES);
@@ -333,10 +333,10 @@ public abstract class RobotLinearOpMode extends LinearOpMode {
     public void declareHardwareProperties() {
 
 
-        rightFrontDriveMotor = hardwareMap.get(DcMotor.class, "frontleft");
-        leftFrontDriveMotor = hardwareMap.get(DcMotor.class, "backleft");
-        rightBackDriveMotor = hardwareMap.get(DcMotor.class, "frontright");
-        leftBackDriveMotor = hardwareMap.get(DcMotor.class, "backright");
+        rightFrontDriveMotor = hardwareMap.get(DcMotor.class, "frontright");
+        leftFrontDriveMotor = hardwareMap.get(DcMotor.class, "frontleft");
+        rightBackDriveMotor = hardwareMap.get(DcMotor.class, "backright");
+        leftBackDriveMotor = hardwareMap.get(DcMotor.class, "backleft");
 
         rightFrontDriveMotor.setDirection(DcMotorEx.Direction.FORWARD);
         leftFrontDriveMotor.setDirection(DcMotorEx.Direction.REVERSE);

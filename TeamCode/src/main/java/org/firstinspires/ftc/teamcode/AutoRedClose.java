@@ -7,7 +7,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 @Autonomous(name = "AutoRedClose", group = "linear autoMode")
 
-public class AutoRedClose extends LinearOpMode {
+public class AutoRedClose extends RobotLinearOpMode {
     private ElapsedTime runtime = new ElapsedTime();
     private DcMotor leftFront = null;
     private DcMotor leftBack = null;
@@ -30,106 +30,9 @@ public class AutoRedClose extends LinearOpMode {
 
     @Override
     public void runOpMode() {
-        leftFront = hardwareMap.get(DcMotor.class, "frontleft");
-        leftBack = hardwareMap.get(DcMotor.class, "backleft");
-        rightFront = hardwareMap.get(DcMotor.class, "frontright");
-        rightBack = hardwareMap.get(DcMotor.class, "backright");
-
-        leftFront.setDirection(DcMotor.Direction.FORWARD);
-        leftBack.setDirection(DcMotor.Direction.REVERSE);
-        rightFront.setDirection(DcMotor.Direction.FORWARD);
-        rightBack.setDirection(DcMotor.Direction.FORWARD);
-
-        leftFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        leftBack.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        rightFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        rightBack.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-
-        leftFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        leftBack.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        rightFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        rightBack.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-
-        telemetry.addData("Status", "Initialized");
-        telemetry.update();
-
+        declareHardwareProperties();
         waitForStart();
-
-        speed = 1.0;
-
-        newLFTarget = leftFront.getCurrentPosition() + oneRotaion;
-        newLBTarget = leftBack.getCurrentPosition() + oneRotaion;
-        newRFTarget = rightFront.getCurrentPosition() + oneRotaion;
-        newRBTarget = rightBack.getCurrentPosition() + oneRotaion;
-
-        leftFront.setTargetPosition(newLFTarget);
-        leftBack.setTargetPosition(newLBTarget);
-        rightFront.setTargetPosition(newRFTarget);
-        rightBack.setTargetPosition(newRBTarget);
-
-        leftFront.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        leftBack.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        rightFront.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        rightBack.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-
-        leftFront.setPower(speed);
-        leftBack.setPower(speed);
-        rightFront.setPower(speed);
-        rightBack.setPower(speed);
-
-        while (opModeIsActive() && leftFront.isBusy() && leftBack.isBusy() && rightFront.isBusy() && rightBack.isBusy()) {
-            continue;
-        }
-        leftFront.setPower(0);
-        leftBack.setPower(0);
-        rightFront.setPower(0);
-        rightBack.setPower(0);
-
-        leftFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        leftBack.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        rightFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        rightBack.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-
-        sleep(5000);
-
-        speed = 0.25;
-
-        newLFTarget = leftFront.getCurrentPosition() + oneRotaion;
-        newLBTarget = leftBack.getCurrentPosition() + oneRotaion;
-        newRFTarget = rightFront.getCurrentPosition() + oneRotaion;
-        newRBTarget = rightBack.getCurrentPosition() + oneRotaion;
-
-        leftFront.setTargetPosition(newLFTarget);
-        leftBack.setTargetPosition(newLBTarget);
-        rightFront.setTargetPosition(newRFTarget);
-        rightBack.setTargetPosition(newRBTarget);
-
-        leftFront.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        leftBack.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        rightFront.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        rightBack.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-
-        leftFront.setPower(speed);
-        leftBack.setPower(speed);
-        rightFront.setPower(speed);
-        rightBack.setPower(speed);
-
-        while (opModeIsActive() && leftFront.isBusy() && leftBack.isBusy() && rightFront.isBusy() && rightBack.isBusy()) {
-            continue;
-        }
-        leftFront.setPower(0);
-        leftBack.setPower(0);
-        rightFront.setPower(0);
-        rightBack.setPower(0);
-
-        leftFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        leftBack.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        rightFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        rightBack.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-
-        sleep(5000);
-
-
+        encoderDrive(0.6, 5, MOVEMENT_DIRECTION.STRAFE_RIGHT);
     }
 }
 
