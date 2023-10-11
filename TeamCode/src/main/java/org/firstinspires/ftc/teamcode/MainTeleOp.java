@@ -78,19 +78,19 @@ public class MainTeleOp extends LinearOpMode {
 
                 //slide movement (automatic stages)
                 if (gp2.wasJustPressed(GamepadKeys.Button.DPAD_UP)) {
-                    distanceTuning();
+                    bot.distanceTuning(distanceSensor);
                     Bot.slides.runTo(3);
                     bot.box.depositFirstPixel();
                 } else if (gp2.wasJustPressed(GamepadKeys.Button.DPAD_LEFT)) {
-                    distanceTuning();
+                    bot.distanceTuning(distanceSensor);
                     Bot.slides.runTo(2);
                     bot.box.depositFirstPixel();
                 } else if (gp2.wasJustPressed(GamepadKeys.Button.DPAD_RIGHT)) {
-                    distanceTuning();
+                    bot.distanceTuning(distanceSensor);
                     Bot.slides.runTo(4);
                     bot.box.depositFirstPixel();
                 } else if (gp2.wasJustPressed(GamepadKeys.Button.DPAD_DOWN)) {
-                    distanceTuning();
+                    bot.distanceTuning(distanceSensor);
                     Bot.slides.runTo(1);
                     bot.box.depositFirstPixel();
                 }
@@ -176,24 +176,7 @@ public class MainTeleOp extends LinearOpMode {
         );
     }
 
-    public void distanceTuning(){
-        double diffy = distanceFromObject - perfectDistance;
-        boolean inRange = Math.abs(diffy) <= 5;
-        if(inRange){
-           return;
-        }
-        while(!inRange){
-            if(diffy<0){
-                bot.back();
-            }else{
-                bot.forward();
-            }
-            distanceFromObject = distanceSensor.getDistance(DistanceUnit.CM);
-            diffy = distanceFromObject - perfectDistance;
-            inRange = Math.abs(diffy) <= 5;
-            distanceTuning();
-        }
-    }
+
 
 
 }

@@ -10,6 +10,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DistanceSensor;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
+import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.teamcode.TeamPropDetectionPipeline.TeamProp;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
@@ -21,13 +22,11 @@ To Do:
 
 1) TEST AUTOPATHS AND TELEOP!!!!
     - if splines do not work, switch to forward(), strafeRight(), and strafeLeft()
-2) incorporate distance sensing??
-3) add more autopaths
+2) add more autopaths
 
  */
 
 //*** Note: I created two pipelines, and assigned the camera to different pipeline at different times => this may create error
-//I created a method to store teamPropLocation Info before I call moveBasedOnSpikeMark(), is that necessary??
 
 
 @Config
@@ -105,8 +104,10 @@ public class MainAuto extends LinearOpMode{
 
 
 
-        while (!isStarted()) {
+        while (!isStarted() && !isStopRequested()) {
             gp1.readButtons();
+
+            //Set distance, side, and auto type
             if (gp1.wasJustPressed(GamepadKeys.Button.B)) {
                 side = Side.RED;
             }
@@ -126,7 +127,7 @@ public class MainAuto extends LinearOpMode{
                 autopath= AutoPath.NO_SENSE;
             }
 
-            if(dtb== DistanceToBackdrop.FAR && side==Side.BLUE){
+            if(dtb == DistanceToBackdrop.FAR && side==Side.BLUE){
                 drive.setPoseEstimate(startPoseBlueFar);
             }
 
@@ -189,7 +190,7 @@ public class MainAuto extends LinearOpMode{
 
             waitForStart();
             if (!isStopRequested()) {
-              /*
+
                 distanceFromObject= distanceSensor.getDistance(DistanceUnit.CM);
                 int count=0;
 
@@ -198,20 +199,6 @@ public class MainAuto extends LinearOpMode{
                     distanceFromObject= distanceSensor.getDistance(DistanceUnit.CM);
                     count++;
                 }
-
-                if(count==0){
-                    teamPropLocation= TeamPropLocation.ONE;
-                }
-                if(count>1 && count<= 4){
-                    teamPropLocation= TeamPropLocation.TWO;
-                    bot.turn((-0.1 * (count)));
-                }
-                if(count>4){
-                    teamPropLocation= TeamPropLocation.THREE;
-                }
-
-               */
-
                 findSpikeMarkLocation();
 
                 if(dtb== DistanceToBackdrop.FAR && side==Side.BLUE && autopath==AutoPath.OPTIMAL){
@@ -234,8 +221,7 @@ public class MainAuto extends LinearOpMode{
     }
 
     private void outtake(){
-
-      //  MainTeleOp.distanceTuning();
+      bot.distanceTuning(distanceSensor);
         Bot.fourbar.outtake();
         Bot.slides.runTo(1);
         Bot.box.depositFirstPixel();
@@ -256,8 +242,8 @@ public class MainAuto extends LinearOpMode{
         else if(TeamPropDetectionPipeline.teamPropLocation== TeamProp.ONRIGHT){
             teamPropLocation= TeamProp.ONRIGHT;
         }
-        else if(TeamPropDetectionPipeline.teamPropLocation== TeamProp.INFRONT){
-            teamPropLocation= TeamProp.INFRONT;
+        else if(TeamPropDetectionPipeline.teamPropLocation== TeamProp.MIDDLE){
+            teamPropLocation= TeamProp.MIDDLE;
         }
         else{
             teamPropLocation= TeamProp.NOTDETECTED;
@@ -278,6 +264,13 @@ public class MainAuto extends LinearOpMode{
                 bot.strafeRight();
             }
         }
+        else if(teamPropLocation == TeamProp.NOTDETECTED){
+            telemetry.addData("Prop not detected, check pipeline", teamPropLocation);
+        }
+    }
+
+    public void optimalAuto(){
 
     }
+
 }

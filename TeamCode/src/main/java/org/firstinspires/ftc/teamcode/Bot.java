@@ -9,9 +9,11 @@ import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 
 
 public class Bot {
@@ -22,6 +24,8 @@ public class Bot {
         STORAGE_NOT_FULL,
         OUTTAKE, // ready to outtake
     }
+
+
     public OpMode opMode;
     public static BotState currentState = STORAGE_NOT_FULL;
     public static Bot instance;
@@ -43,7 +47,9 @@ public class Bot {
     public boolean fieldCentricRunMode = false;
 
     private double imuOffset = 0;
-    //verify
+    private double distanceFromBackdrop;
+    private final double optimalDistanceFromBackdrop = 10;
+    //arbitrary number for now
 
     public static Bot getInstance() {
         if (instance == null) {
@@ -310,5 +316,24 @@ public class Bot {
         fr.setPower(0.1);
         br.setPower(0.1);
         bl.setPower(0.1);
+    }
+
+    public void distanceTuning(DistanceSensor sensor){
+        double diffy = this.distanceFromBackdrop - optimalDistanceFromBackdrop;
+        boolean inRange = Math.abs(diffy) <= 5;
+        if(inRange){
+            return;
+        }
+        while(!inRange){
+            if(diffy<0){
+                back();
+            }else{
+                forward();
+            }
+            distanceFromBackdrop = sensor.getDistance(DistanceUnit.CM);
+            diffy = distanceFromBackdrop - optimalDistanceFromBackdrop;
+            inRange = Math.abs(diffy) <= 5;
+            distanceTuning(sensor);
+        }
     }
 }
