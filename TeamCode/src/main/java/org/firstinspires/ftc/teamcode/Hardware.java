@@ -100,4 +100,19 @@ public class Hardware {
         backLeft.setPower(0);
         backRight.setPower(0);
     }
+
+    //positive power -> turn right, negative power -> turn left
+    public void turn(double distance, double power){
+        frontRight.setTargetPosition((int) (distance * TICKS_PER_INCH));
+        backRight.setTargetPosition((int) (distance * TICKS_PER_INCH));
+
+        frontRight.setPower(power);
+        backRight.setPower(power);
+        while (!(frontRight.getCurrentPosition() <= frontRight.getTargetPosition() &&
+                backRight.getCurrentPosition() <= backRight.getTargetPosition()));
+
+
+        frontRight.setPower(0);
+        backRight.setPower(0);
+    }
 }
