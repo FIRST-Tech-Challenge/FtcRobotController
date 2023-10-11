@@ -225,9 +225,12 @@ public final class MecanumDrive {
 
             List<Double> disps = com.acmerobotics.roadrunner.Math.range(
                     0, t.path.length(),
-                    (int) Math.ceil(t.path.length() / 2));
+                    (int) Math.ceil(t.path.length() / 2)
+            );
+
             xPoints = new double[disps.size()];
             yPoints = new double[disps.size()];
+
             for (int i = 0; i < disps.size(); i++) {
                 Pose2d p = t.path.get(disps.get(i), 1).value();
                 xPoints[i] = p.position.x;
@@ -421,8 +424,8 @@ public final class MecanumDrive {
 
     public TrajectoryActionBuilder actionBuilder(Pose2d beginPose) {
         return new TrajectoryActionBuilder(
-                TurnAction::new,
-                FollowTrajectoryAction::new,
+                MecanumDrive.TurnAction::new,
+                MecanumDrive.FollowTrajectoryAction::new,
                 beginPose, 1e-6, 0.0,
                 defaultTurnConstraints,
                 defaultVelConstraint, defaultAccelConstraint,

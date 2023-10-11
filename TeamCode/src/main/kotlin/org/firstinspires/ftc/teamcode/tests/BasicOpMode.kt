@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode
+package org.firstinspires.ftc.teamcode.tests
 
 import com.qualcomm.robotcore.eventloop.opmode.OpMode
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp
@@ -8,8 +8,8 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple.Direction.REVERSE
 import com.qualcomm.robotcore.util.ElapsedTime
 import com.qualcomm.robotcore.util.Range
 
-@TeleOp(name = "BasicKotlinOpMode")
-class KotlinBasicOpMode : OpMode() {
+@TeleOp(name = "Kotlin Basic OpMode", group = "KtTest")
+class BasicOpMode : OpMode() {
 
     /**
      * How long the OpMode has been running for
