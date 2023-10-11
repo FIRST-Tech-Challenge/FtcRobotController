@@ -9,10 +9,10 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 public class AutoRedClose extends LinearOpMode {
     private ElapsedTime runtime = new ElapsedTime();
-    private DcMotor leftFrontDrive = null;
-    private DcMotor leftBackDrive = null;
-    private DcMotor rightFrontDrive = null;
-    private DcMotor rightBackDrive = null;
+    private DcMotor leftFront = null;
+    private DcMotor leftBack = null;
+    private DcMotor rightFront = null;
+    private DcMotor rightBack = null;
     private double speed;
     private final int oneRotaion = 540;
     private int newLFTarget;
@@ -20,27 +20,35 @@ public class AutoRedClose extends LinearOpMode {
     private int newRFTarget;
     private int newRBTarget;
 
+    public void driveForward(double speed, double rotations){
+
+    }
+
+    public void driveRight(double speed, double rotations){
+
+    }
+
     @Override
     public void runOpMode() {
-        leftFrontDrive = hardwareMap.get(DcMotor.class, "frontleft");
-        leftBackDrive = hardwareMap.get(DcMotor.class, "backleft");
-        rightFrontDrive = hardwareMap.get(DcMotor.class, "frontright");
-        rightBackDrive = hardwareMap.get(DcMotor.class, "backright");
+        leftFront = hardwareMap.get(DcMotor.class, "frontleft");
+        leftBack = hardwareMap.get(DcMotor.class, "backleft");
+        rightFront = hardwareMap.get(DcMotor.class, "frontright");
+        rightBack = hardwareMap.get(DcMotor.class, "backright");
 
-        leftFrontDrive.setDirection(DcMotor.Direction.FORWARD);
-        leftBackDrive.setDirection(DcMotor.Direction.REVERSE);
-        rightFrontDrive.setDirection(DcMotor.Direction.FORWARD);
-        rightBackDrive.setDirection(DcMotor.Direction.FORWARD);
+        leftFront.setDirection(DcMotor.Direction.FORWARD);
+        leftBack.setDirection(DcMotor.Direction.REVERSE);
+        rightFront.setDirection(DcMotor.Direction.FORWARD);
+        rightBack.setDirection(DcMotor.Direction.FORWARD);
 
-        leftFrontDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        leftBackDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        rightFrontDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        rightBackDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        leftFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        leftBack.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        rightFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        rightBack.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
-        leftFrontDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        leftBackDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        rightFrontDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        rightBackDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        leftFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        leftBack.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        rightFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        rightBack.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         telemetry.addData("Status", "Initialized");
         telemetry.update();
@@ -49,75 +57,75 @@ public class AutoRedClose extends LinearOpMode {
 
         speed = 1.0;
 
-        newLFTarget = leftFrontDrive.getCurrentPosition() + oneRotaion;
-        newLBTarget = leftBackDrive.getCurrentPosition() + oneRotaion;
-        newRFTarget = rightFrontDrive.getCurrentPosition() + oneRotaion;
-        newRBTarget = rightBackDrive.getCurrentPosition() + oneRotaion;
+        newLFTarget = leftFront.getCurrentPosition() + oneRotaion;
+        newLBTarget = leftBack.getCurrentPosition() + oneRotaion;
+        newRFTarget = rightFront.getCurrentPosition() + oneRotaion;
+        newRBTarget = rightBack.getCurrentPosition() + oneRotaion;
 
-        leftFrontDrive.setTargetPosition(newLFTarget);
-        leftBackDrive.setTargetPosition(newLBTarget);
-        rightFrontDrive.setTargetPosition(newRFTarget);
-        rightBackDrive.setTargetPosition(newRBTarget);
+        leftFront.setTargetPosition(newLFTarget);
+        leftBack.setTargetPosition(newLBTarget);
+        rightFront.setTargetPosition(newRFTarget);
+        rightBack.setTargetPosition(newRBTarget);
 
-        leftFrontDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        leftBackDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        rightFrontDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        rightBackDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        leftFront.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        leftBack.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        rightFront.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        rightBack.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
-        leftFrontDrive.setPower(speed);
-        leftBackDrive.setPower(speed);
-        rightFrontDrive.setPower(speed);
-        rightBackDrive.setPower(speed);
+        leftFront.setPower(speed);
+        leftBack.setPower(speed);
+        rightFront.setPower(speed);
+        rightBack.setPower(speed);
 
-        while (opModeIsActive() && leftFrontDrive.isBusy() && leftBackDrive.isBusy() && rightFrontDrive.isBusy() && rightBackDrive.isBusy()) {
+        while (opModeIsActive() && leftFront.isBusy() && leftBack.isBusy() && rightFront.isBusy() && rightBack.isBusy()) {
             continue;
         }
-        leftFrontDrive.setPower(0);
-        leftBackDrive.setPower(0);
-        rightFrontDrive.setPower(0);
-        rightBackDrive.setPower(0);
+        leftFront.setPower(0);
+        leftBack.setPower(0);
+        rightFront.setPower(0);
+        rightBack.setPower(0);
 
-        leftFrontDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        leftBackDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        rightFrontDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        rightBackDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        leftFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        leftBack.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        rightFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        rightBack.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         sleep(5000);
 
         speed = 0.25;
 
-        newLFTarget = leftFrontDrive.getCurrentPosition() + oneRotaion;
-        newLBTarget = leftBackDrive.getCurrentPosition() + oneRotaion;
-        newRFTarget = rightFrontDrive.getCurrentPosition() + oneRotaion;
-        newRBTarget = rightBackDrive.getCurrentPosition() + oneRotaion;
+        newLFTarget = leftFront.getCurrentPosition() + oneRotaion;
+        newLBTarget = leftBack.getCurrentPosition() + oneRotaion;
+        newRFTarget = rightFront.getCurrentPosition() + oneRotaion;
+        newRBTarget = rightBack.getCurrentPosition() + oneRotaion;
 
-        leftFrontDrive.setTargetPosition(newLFTarget);
-        leftBackDrive.setTargetPosition(newLBTarget);
-        rightFrontDrive.setTargetPosition(newRFTarget);
-        rightBackDrive.setTargetPosition(newRBTarget);
+        leftFront.setTargetPosition(newLFTarget);
+        leftBack.setTargetPosition(newLBTarget);
+        rightFront.setTargetPosition(newRFTarget);
+        rightBack.setTargetPosition(newRBTarget);
 
-        leftFrontDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        leftBackDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        rightFrontDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        rightBackDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        leftFront.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        leftBack.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        rightFront.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        rightBack.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
-        leftFrontDrive.setPower(speed);
-        leftBackDrive.setPower(speed);
-        rightFrontDrive.setPower(speed);
-        rightBackDrive.setPower(speed);
+        leftFront.setPower(speed);
+        leftBack.setPower(speed);
+        rightFront.setPower(speed);
+        rightBack.setPower(speed);
 
-        while (opModeIsActive() && leftFrontDrive.isBusy() && leftBackDrive.isBusy() && rightFrontDrive.isBusy() && rightBackDrive.isBusy()) {
+        while (opModeIsActive() && leftFront.isBusy() && leftBack.isBusy() && rightFront.isBusy() && rightBack.isBusy()) {
             continue;
         }
-        leftFrontDrive.setPower(0);
-        leftBackDrive.setPower(0);
-        rightFrontDrive.setPower(0);
-        rightBackDrive.setPower(0);
+        leftFront.setPower(0);
+        leftBack.setPower(0);
+        rightFront.setPower(0);
+        rightBack.setPower(0);
 
-        leftFrontDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        leftBackDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        rightFrontDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        rightBackDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        leftFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        leftBack.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        rightFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        rightBack.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         sleep(5000);
 
