@@ -60,6 +60,7 @@ public class _2023_10_10_01_MecanumLiftWristDrone extends LinearOpMode {
             double x = gamepad1.left_stick_x;
             double rx = gamepad1.right_stick_x;
             int targetPosition = 0;
+            double wristTargetPos = 0;
 
             // ADDED CODE - creates variables for right and left trigger values
             double droneServoPosition = droneServo.getPosition();
@@ -81,11 +82,17 @@ public class _2023_10_10_01_MecanumLiftWristDrone extends LinearOpMode {
             lift.setPower(0.3);
             lift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
-            if (gamepad1.right_bumper) {
-                wristServo.setPosition(wristServo.getPosition() + 0.1);
+            if (wristTargetPos > 1){
+                wristTargetPos = 0.9;
+            } else if (wristTargetPos < 0){
+                wristTargetPos = 0.1;
             }
-            if (gamepad1.left_bumper) {
-                wristServo.setPosition(wristServo.getPosition() - 0.1);
+            if (gamepad1.right_bumper) {
+                wristTargetPos += 0.1;
+                wristServo.setPosition(wristTargetPos);
+            }else if (gamepad1.left_bumper) {
+                wristTargetPos -= 0.1;
+                wristServo.setPosition(wristTargetPos);
             }
 
             // ADDED CODE - pressing button A moves servo to launch the drone and then reset launcher position
