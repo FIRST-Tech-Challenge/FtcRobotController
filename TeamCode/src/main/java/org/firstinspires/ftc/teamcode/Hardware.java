@@ -1,15 +1,14 @@
-package org.firstinspires.ftc.teamcode.Hardware;
+package org.firstinspires.ftc.teamcode;
 
 import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.telemetry;
-
+import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 public class Hardware {
     final public ElapsedTime timePassed = new ElapsedTime();
-
-    final private double TICKS_PER_MOTOR_REV = 6000;
+    final private double TICKS_PER_MOTOR_REV = ((((1+((double)46/17))) * (1+((double)46/11))) * 28);
     final private double DRIVE_GEAR_REDUCTION = 1.0 ;
     final private double WHEEL_DIAMETER_INCHES = 4.0 ;
     final private double TICKS_PER_INCH = (TICKS_PER_MOTOR_REV * DRIVE_GEAR_REDUCTION)/ (WHEEL_DIAMETER_INCHES * 3.1415);
@@ -61,6 +60,11 @@ public class Hardware {
             telemetry.addData("BackLeftMotor: ", "Error");
             telemetry.update();
         }
+        // Have to test this when the drive train is created
+        frontLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        frontRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        backLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        backRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
     }
 
     public void drive(double power){
@@ -90,7 +94,6 @@ public class Hardware {
                 frontRight.getCurrentPosition() <= frontRight.getTargetPosition() &&
                 backRight.getCurrentPosition() <= backRight.getTargetPosition() &&
                 backLeft.getCurrentPosition() <= backLeft.getTargetPosition()));
-
 
         frontLeft.setPower(0);
         frontRight.setPower(0);
