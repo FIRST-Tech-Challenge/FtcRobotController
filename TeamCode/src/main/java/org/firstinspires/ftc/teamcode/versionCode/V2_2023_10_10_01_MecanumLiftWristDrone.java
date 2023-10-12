@@ -21,6 +21,7 @@ public class V2_2023_10_10_01_MecanumLiftWristDrone extends LinearOpMode {
         DcMotor lift = hardwareMap.dcMotor.get("lift");
         Servo droneServo = hardwareMap.servo.get("drone");
         Servo wristServo = hardwareMap.servo.get("wrist");
+        Servo clawServo = hardwareMap.servo.get("claw");
 
         frontRightMotor.setDirection(DcMotorSimple.Direction.FORWARD);
         frontLeftMotor.setDirection(DcMotorSimple.Direction.FORWARD);
@@ -30,6 +31,7 @@ public class V2_2023_10_10_01_MecanumLiftWristDrone extends LinearOpMode {
         lift.setDirection(DcMotorSimple.Direction.FORWARD);
         droneServo.setDirection(Servo.Direction.FORWARD);
         wristServo.setDirection(Servo.Direction.FORWARD);
+        clawServo.setDirection(Servo.Direction.FORWARD);
 
         lift.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         lift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -50,6 +52,7 @@ public class V2_2023_10_10_01_MecanumLiftWristDrone extends LinearOpMode {
         wristServo.setPosition(0);
         int targetPosition = 5;
         double wristTargetPos = 0;
+        float claw =0;
 
         waitForStart();
 
@@ -88,6 +91,15 @@ public class V2_2023_10_10_01_MecanumLiftWristDrone extends LinearOpMode {
             }else if (gamepad1.left_bumper) {
                 wristTargetPos -= 0.1;
                 wristServo.setPosition(wristTargetPos);
+            }
+
+
+            if (gamepad1.dpad_up) {
+                claw += 0.01;
+                wristServo.setPosition(claw);
+            }else if (gamepad1.dpad_down) {
+                claw -= 0.01;
+                wristServo.setPosition(claw);
             }
 
             if (gamepad1.a) {
