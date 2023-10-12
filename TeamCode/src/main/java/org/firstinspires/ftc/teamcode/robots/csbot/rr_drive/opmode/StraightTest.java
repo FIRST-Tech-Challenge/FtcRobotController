@@ -16,10 +16,9 @@ import org.firstinspires.ftc.teamcode.robots.csbot.rr_drive.SampleMecanumDrive;
  * This is a simple routine to test translational drive capabilities.
  */
 @Config
-@Disabled
-//@Autonomous(group = "drive")
+@Autonomous(name = "Straignt Test CS", group = "test")
 public class StraightTest extends LinearOpMode {
-    public static double DISTANCE = 60; // in
+    public static double DISTANCE = 48; // in
 
     @Override
     public void runOpMode() throws InterruptedException {

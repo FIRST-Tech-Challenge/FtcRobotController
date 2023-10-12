@@ -1,16 +1,16 @@
 package org.firstinspires.ftc.teamcode.robots.csbot.rr_drive;
 
-import static org.firstinspires.ftc.teamcode.robots.ri2d2023.rr_drive.DriveConstants.MAX_ACCEL;
-import static org.firstinspires.ftc.teamcode.robots.ri2d2023.rr_drive.DriveConstants.MAX_ANG_ACCEL;
-import static org.firstinspires.ftc.teamcode.robots.ri2d2023.rr_drive.DriveConstants.MAX_ANG_VEL;
-import static org.firstinspires.ftc.teamcode.robots.ri2d2023.rr_drive.DriveConstants.MAX_VEL;
-import static org.firstinspires.ftc.teamcode.robots.ri2d2023.rr_drive.DriveConstants.MOTOR_VELO_PID;
-import static org.firstinspires.ftc.teamcode.robots.ri2d2023.rr_drive.DriveConstants.RUN_USING_ENCODER;
-import static org.firstinspires.ftc.teamcode.robots.ri2d2023.rr_drive.DriveConstants.TRACK_WIDTH;
-import static org.firstinspires.ftc.teamcode.robots.ri2d2023.rr_drive.DriveConstants.encoderTicksToInches;
-import static org.firstinspires.ftc.teamcode.robots.ri2d2023.rr_drive.DriveConstants.kA;
-import static org.firstinspires.ftc.teamcode.robots.ri2d2023.rr_drive.DriveConstants.kStatic;
-import static org.firstinspires.ftc.teamcode.robots.ri2d2023.rr_drive.DriveConstants.kV;
+import static org.firstinspires.ftc.teamcode.robots.csbot.rr_drive.DriveConstants.MAX_ACCEL;
+import static org.firstinspires.ftc.teamcode.robots.csbot.rr_drive.DriveConstants.MAX_ANG_ACCEL;
+import static org.firstinspires.ftc.teamcode.robots.csbot.rr_drive.DriveConstants.MAX_ANG_VEL;
+import static org.firstinspires.ftc.teamcode.robots.csbot.rr_drive.DriveConstants.MAX_VEL;
+import static org.firstinspires.ftc.teamcode.robots.csbot.rr_drive.DriveConstants.MOTOR_VELO_PID;
+import static org.firstinspires.ftc.teamcode.robots.csbot.rr_drive.DriveConstants.RUN_USING_ENCODER;
+import static org.firstinspires.ftc.teamcode.robots.csbot.rr_drive.DriveConstants.TRACK_WIDTH;
+import static org.firstinspires.ftc.teamcode.robots.csbot.rr_drive.DriveConstants.encoderTicksToInches;
+import static org.firstinspires.ftc.teamcode.robots.csbot.rr_drive.DriveConstants.kA;
+import static org.firstinspires.ftc.teamcode.robots.csbot.rr_drive.DriveConstants.kStatic;
+import static org.firstinspires.ftc.teamcode.robots.csbot.rr_drive.DriveConstants.kV;
 
 import androidx.annotation.NonNull;
 
@@ -34,6 +34,7 @@ import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.IMU;
 import com.qualcomm.robotcore.hardware.PIDFCoefficients;
@@ -72,7 +73,7 @@ public class SampleMecanumDrive extends MecanumDrive {
 
     private TrajectoryFollower follower;
 
-    private DcMotorEx leftFront, leftRear, rightRear, rightFront;
+    public DcMotorEx leftFront, leftRear, rightRear, rightFront;
     private List<DcMotorEx> motors;
 
     private IMU imu;
@@ -101,10 +102,10 @@ public class SampleMecanumDrive extends MecanumDrive {
                 DriveConstants.LOGO_FACING_DIR, DriveConstants.USB_FACING_DIR));
         imu.initialize(parameters);
 
-        leftFront = hardwareMap.get(DcMotorEx.class, "leftFront");
-        leftRear = hardwareMap.get(DcMotorEx.class, "leftRear");
-        rightRear = hardwareMap.get(DcMotorEx.class, "rightRear");
-        rightFront = hardwareMap.get(DcMotorEx.class, "rightFront");
+        leftFront = hardwareMap.get(DcMotorEx.class, "motorFrontLeft");
+        leftRear = hardwareMap.get(DcMotorEx.class, "motorBackLeft");
+        rightRear = hardwareMap.get(DcMotorEx.class, "motorBackRight");
+        rightFront = hardwareMap.get(DcMotorEx.class, "motorFrontRight");
 
         motors = Arrays.asList(leftFront, leftRear, rightRear, rightFront);
 
@@ -125,6 +126,8 @@ public class SampleMecanumDrive extends MecanumDrive {
         }
 
         // TODO: reverse any motors using DcMotor.setDirection()
+        leftFront.setDirection(DcMotorSimple.Direction.REVERSE);
+        leftRear.setDirection(DcMotorSimple.Direction.REVERSE);
 
         List<Integer> lastTrackingEncPositions = new ArrayList<>();
         List<Integer> lastTrackingEncVels = new ArrayList<>();

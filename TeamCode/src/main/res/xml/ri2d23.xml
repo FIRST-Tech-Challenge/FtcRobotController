@@ -12,6 +12,7 @@
             <RevRobotics40HDHexMotor name="motorFrontRight" port="0" />
             <RevRobotics40HDHexMotor name="motorFrontLeft" port="2" />
             <RevRobotics40HDHexMotor name="motorBackLeft" port="3" />
+            <LynxEmbeddedIMU name="imu" port="0" bus="0" />s
         </LynxModule>
     </LynxUsbDevice>
 </Robot>
