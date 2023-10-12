@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.OpMode;
 
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.CRServo;
@@ -8,6 +9,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
 
 @TeleOp
+@Disabled //REMOVE LATER
 
 public class MainOp extends LinearOpMode {
     @Override
@@ -50,8 +52,8 @@ public class MainOp extends LinearOpMode {
         CRServo rightIntakeCRServo = hardwareMap.crservo.get("rightIntakeCRServo");
 
         //Intake (Hinging) Servos
-        Servo leftIntakeHingeServo = hardwareMap.servo.get("leftIntakeHingeServo");
-        Servo rightIntakeHingeServo = hardwareMap.servo.get("rightIntakeHingeServo");
+        CRServo leftIntakeHingeCRServo = hardwareMap.crservo.get("leftIntakeHingeCRServo");
+        CRServo rightIntakeHingeCRServo = hardwareMap.crservo.get("rightIntakeHingeCRServo");
 
         //Drone dropping Servo located upon secondary lin slide
         Servo droneServo = hardwareMap.servo.get("droneServo");
@@ -108,7 +110,7 @@ public class MainOp extends LinearOpMode {
         IntakeGekkoWheelCRServos.gekkoWheelInit(leftIntakeCRServo, rightIntakeCRServo);
         MainLinearSlides.linearSlideInit(leftLinSlide, rightLinSlide);
         LiftingSlide.liftingSlideInit(liftingLinSlide);
-        IntakeHingeServos.intakeHingeServoInit(leftIntakeHingeServo, rightIntakeHingeServo);
+        IntakeHingeServos.intakeHingeServoInit(leftIntakeHingeCRServo, rightIntakeHingeCRServo);
 
         //OpMode
         waitForStart();
@@ -118,7 +120,7 @@ public class MainOp extends LinearOpMode {
             Drivechain.drive(yLeftStickCTLR1, xRightStickCTLR1);
             MainLinearSlides.manualMove(leftTriggerCTRL1, rightTriggerCTRL1);
             IntakeGekkoWheelCRServos.runWheels(dpadUpCTRL1);
-
+            MainLinearSlides.moveToLowerUpper(leftBumperCTRL1, rightBumperCTRL1);
         }
     }
 }
