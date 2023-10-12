@@ -50,6 +50,7 @@ public class V3_2023_10_10_01_MecanumLiftWristClawDrone extends LinearOpMode {
         droneServo.scaleRange(0, 1);
         droneServo.setPosition(0.85);
         wristServo.setPosition(0);
+        clawServo.scaleRange(0.3, 0.7)
         clawServo.setPosition(0);
 
         waitForStart();
@@ -91,6 +92,10 @@ public class V3_2023_10_10_01_MecanumLiftWristClawDrone extends LinearOpMode {
             }else if (gamepad1.left_bumper) {
                 wristTargetPos -= 0.1;
                 wristServo.setPosition(wristTargetPos);
+            }
+
+            if (gamepad1.y) {
+
             }
 
             if (gamepad1.a) {

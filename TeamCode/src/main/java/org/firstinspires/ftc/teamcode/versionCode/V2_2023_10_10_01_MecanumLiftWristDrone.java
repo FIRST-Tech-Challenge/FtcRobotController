@@ -62,15 +62,15 @@ public class V2_2023_10_10_01_MecanumLiftWristDrone extends LinearOpMode {
             double liftPos = lift.getCurrentPosition();
 
             if (gamepad1.right_trigger != 0) {
-                targetPosition += 10;
+                targetPosition += 100;
             }else if (gamepad1.left_trigger != 0) {
-                targetPosition -= 10;
+                targetPosition -= 100;
             }
             if (targetPosition > 1000){
-                targetPosition = 990;
+                targetPosition = 900;
             }
             else if (targetPosition < 0){
-                targetPosition = 10;
+                targetPosition = 100;
             }
             lift.setTargetPosition(targetPosition);
             lift.setPower(0.3);
