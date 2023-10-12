@@ -1,11 +1,13 @@
 package org.firstinspires.ftc.teamcode.Robots;
 
 import static org.apache.commons.math3.util.FastMath.abs;
+import static org.firstinspires.ftc.teamcode.Components.Arm.ArmStates.*;
 
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.teamcode.Components.Arm;
+import org.firstinspires.ftc.teamcode.Components.Arm.ArmStates;
 import org.firstinspires.ftc.teamcode.Components.CVMaster;
 import org.firstinspires.ftc.teamcode.Components.FutureComponents.Extendo;
 import org.firstinspires.ftc.teamcode.Components.FutureComponents.FlippingIntake;
@@ -15,6 +17,7 @@ import org.firstinspires.ftc.teamcode.Components.Launcher;
 import org.firstinspires.ftc.teamcode.Components.Lift;
 import org.firstinspires.ftc.teamcode.Components.RFModules.System.RFLogger;
 import org.firstinspires.ftc.teamcode.Components.Ultrasonics;
+import org.firstinspires.ftc.teamcode.Components.Wrist;
 import org.firstinspires.ftc.teamcode.roadrunner.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.roadrunner.trajectorysequence.TrajectorySequence;
 
@@ -26,11 +29,11 @@ public class BradBot extends BasicRobot{
     Arm arm;
     CVMaster cv;
     Intake intake;
-    Hopper hopper;
     Launcher launcher;
     Lift lift;
     public SampleMecanumDrive roadrun;
     Ultrasonics ultras;
+    Wrist wrist;
 
     /**
      * Instatiates all the hardware and sets up initial states of some software
@@ -41,15 +44,15 @@ public class BradBot extends BasicRobot{
     public BradBot(LinearOpMode p_op, boolean p_is_Teleop){
         super(p_op,p_is_Teleop);
         LOGGER.setLogLevel(RFLogger.Severity.INFO);
-        LOGGER.log("BradBot() : Initializing Components!");
+        LOGGER.log("Initializing Components!");
         arm = new Arm();
         cv = new CVMaster();
         intake = new Intake();
-        hopper = new Hopper();
         launcher = new Launcher();
         lift = new Lift();
         roadrun = new SampleMecanumDrive(p_op.hardwareMap);
 //        ultras = new Ultrasonics();
+        wrist = new Wrist();
     }
 
     public int getSpikePos(){
@@ -64,7 +67,7 @@ public class BradBot extends BasicRobot{
         if(queuer.queue(true, Intake.IntakeStates.STOPPED.getState())){
             if(!queuer.isExecuted()) {
                 LOGGER.setLogLevel(RFLogger.Severity.INFO);
-                LOGGER.log("BradBot.startIntakeAuto(): intaking until 2 pixels are stored");
+                LOGGER.log("intaking until 2 pixels are stored");
             }
         }
     }
@@ -77,7 +80,7 @@ public class BradBot extends BasicRobot{
         if(queuer.queue(true, Hopper.HopperStates.ZERO.getState())){
             if(!queuer.isExecuted()) {
                 LOGGER.setLogLevel(RFLogger.Severity.INFO);
-                LOGGER.log("BradBot.depositAuto(): depositing until 0 pixels remain");
+                LOGGER.log("depositing until 0 pixels remain");
             }
         }
     }
@@ -91,7 +94,7 @@ public class BradBot extends BasicRobot{
         if(queuer.queue(true, lift.atTargetPosition())) {
             if(!queuer.isExecuted()) {
                 LOGGER.setLogLevel(RFLogger.Severity.INFO);
-                LOGGER.log("BradBot.liftAuto(LiftPositionStates): lifting to: " + p_liftPosition.name());
+                LOGGER.log("lifting to: " + p_liftPosition.name());
                 liftAuto(p_liftPosition.getPosition());
             }
         }
@@ -105,7 +108,7 @@ public class BradBot extends BasicRobot{
         if(queuer.queue(true, lift.atTargetPosition())) {
             if(!queuer.isExecuted()) {
                 LOGGER.setLogLevel(RFLogger.Severity.INFO);
-                LOGGER.log("BradBot.liftAuto(double): lifting to: " + p_position);
+                LOGGER.log("lifting to: " + p_position);
                 liftAuto(p_position);
             }
         }
@@ -120,7 +123,7 @@ public class BradBot extends BasicRobot{
         if(queuer.queue(false, !roadrun.isBusy())) {
             if(!queuer.isExecuted()){
                 LOGGER.setLogLevel(RFLogger.Severity.INFO);
-                LOGGER.log("BradBot.followTrajSeq(): going from: " +p_traj.start() +" to: " + p_traj.end());
+                LOGGER.log("going from: " +p_traj.start() +" to: " + p_traj.end());
                 roadrun.followTrajectorySequenceAsync(p_traj);
             }
         }
@@ -131,22 +134,29 @@ public class BradBot extends BasicRobot{
      * Logs that this function is being called to general surface
      */
     public void teleOp(){
-        boolean isA = gampad.readGamepad(op.gamepad1.a, "gamepad1_a", "toggleArm");
+        boolean isA = gampad.readGamepad(op.gamepad1.a, "gamepad1_a", "resetOuttake");
         boolean rightBumper = gampad.readGamepad(op.gamepad1.right_bumper, "gamepad1_right_bumper", "startIntake");
         boolean leftBumper = gampad.readGamepad(op.gamepad1.left_bumper, "gamepad1_left_bumper", "reverseIntake");
         boolean isB = gampad.readGamepad(op.gamepad1.b,"gamepad1_b", "shoot");
-        boolean isX = gampad.readGamepad(op.gamepad1.x, "gamepad1_x", "toggleButterfly");
+        boolean isX = gampad.readGamepad(op.gamepad1.x, "gamepad1_x", "toggleFieldCentricSlow");
         boolean isY = gampad.readGamepad(op.gamepad1.y, "gamepad1_y", "deposit");
         boolean up = gampad.readGamepad(op.gamepad1.dpad_up, "gamepad1_dpad_up", "lift Up");
         boolean down = gampad.readGamepad(op.gamepad1.dpad_down, "gamepad1_dpad_down", "lift down");
-        boolean right = gampad.readGamepad(op.gamepad1.dpad_right, "gamepad1_dpad_right", "toggleFieldCentricSLow");
+        boolean right = gampad.readGamepad(op.gamepad1.dpad_right, "gamepad1_dpad_right", "toggleButterfly");
         float manualUp = op.gamepad1.right_trigger;
         float manualDown = op.gamepad1.left_trigger;
         if(isA){
-            arm.flip();
+            arm.flipTo(UNFLIPPED);
+            wrist.flipTo(Wrist.WristTargetStates.FLAT);
+            lift.setPosition(Lift.LiftPositionStates.AT_ZERO);
         }
         if(rightBumper){
-            intake.intake();
+            if(Intake.IntakeStates.STOPPED.getState()) {
+                intake.intake();
+            }
+            else{
+                intake.stopIntake();
+            }
         }
         if(leftBumper){
             intake.reverseIntake();
@@ -155,16 +165,20 @@ public class BradBot extends BasicRobot{
             launcher.shoot();
         }
         if(up){
+            arm.flipTo(FLIPPED);
+            wrist.flipTo(Wrist.WristTargetStates.HOLD);
             lift.iterateUp();
         }
         if(down){
+            arm.flipTo(FLIPPED);
+            wrist.flipTo(Wrist.WristTargetStates.HOLD);
             lift.iterateDown();
         }
         if(abs(manualUp-manualDown)>0.05){
             lift.manualExtend(manualUp-manualDown);
         }
         if(isY){
-            hopper.outtakePixel(Hopper.HopperValues.ONEPIXEL);
+            wrist.flipTo(Wrist.WristTargetStates.DROP);
         }
         if(right){
             roadrun.toggleButtered();
@@ -189,20 +203,20 @@ public class BradBot extends BasicRobot{
      */
     public void update(){
         LOGGER.setLogLevel(RFLogger.Severity.FINER);
-        LOGGER.log("BradBot.update(): updating each component");
+        LOGGER.log("updating each component");
         super.update();
         arm.update();
         cv.update();
         intake.update();
-        hopper.update();
         lift.update();
         roadrun.update();
 //        ultras.update();
+        wrist.update();
     }
 
     public void stop(){
-        LOGGER.setLogLevel(RFLogger.Severity.INFO);
-        LOGGER.log("BradBot.stop(): the program has stopped normally");
+        LOGGER.log("the program has stopped normally");
+        cv.stop();
         op.stop();
     }
 }

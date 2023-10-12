@@ -67,7 +67,7 @@ public class RFAprilCam {
      */
     public RFAprilCam() {
         LOGGER.setLogLevel(RFLogger.Severity.INFO);
-        LOGGER.log("RFAprilCam() : initializing Apriltag processor ");
+        LOGGER.log("initializing Apriltag processor ");
         aprilTagGameDatabase = AprilTagGameDatabase.getCenterStageTagLibrary();
         aprilTag = new AprilTagProcessor.Builder()
                 .setDrawAxes(false)
@@ -110,53 +110,57 @@ public class RFAprilCam {
      * Logs newly calculated position at finest verbosity level
      */
     public void update() {
-        LOGGER.setLogLevel(RFLogger.Severity.FINEST);
-        LOGGER.log( "Entering RFAprilCam.update()");
+
         ArrayList<AprilTagDetection> detections = aprilTag.getFreshDetections();
         //if close start upsampling
         upsample=false;
         if(detections!=null) {
             for (AprilTagDetection detection : detections) {
                 AprilTagPoseFtc poseFtc = detection.ftcPose;
-                double p_x = poseFtc.y, p_y = -poseFtc.x;
-                int p_ind = detection.id;
-                AprilTagMetadata tagData = aprilTagGameDatabase.lookupTag(p_ind);
-                VectorF values = tagData.fieldPosition;
-                Vector2d pos = new Vector2d(-values.get(0), -values.get(1));
-                Pose2d camPose = new Pose2d(pos.plus(new Vector2d((p_x-X_OFFSET) * directions[p_ind][0], (p_y-Y_OFFSET) * directions[p_ind][1])),
-                        directions[p_ind][0] * poseFtc.yaw * PI / 180);
-                if (poseFtc.range < UPSAMPLE_THRESHOLD) {
-                    if(!upsample){
-                        aprilTag.setDecimation((float)UPSAMPLE);
+                if (poseFtc!=null) {
+                    double p_x = poseFtc.y, p_y = -poseFtc.x;
+                    int p_ind = detection.id;
+                    AprilTagMetadata tagData = aprilTagGameDatabase.lookupTag(p_ind);
+                    VectorF values = tagData.fieldPosition;
+                    Vector2d pos = new Vector2d(-values.get(0), -values.get(1));
+                    Pose2d camPose = new Pose2d(pos.plus(new Vector2d((p_x - X_OFFSET) * directions[p_ind][0], (p_y - Y_OFFSET) * directions[p_ind][1])),
+                            directions[p_ind][0] * poseFtc.yaw * PI / 180);
+                    if (poseFtc.range < UPSAMPLE_THRESHOLD) {
+                        if (!upsample) {
+                            aprilTag.setDecimation((float) UPSAMPLE);
+                        }
+                        upsample = true;
+                        camPoseError = camPoseError.plus(camPose).minus(currentPose);
+                        poseCount++;
+                    } else {
+                        if (upsample) {
+                            aprilTag.setDecimation((float) DOWNSAMPLE);
+                        }
+                        upsample = false;
                     }
-                    upsample = true;
-                    camPoseError=camPoseError.plus(camPose).minus(currentPose);
-                    poseCount++;
+                    LOGGER.setLogLevel(RFLogger.Severity.FINER);
+                    LOGGER.log("id: " + p_ind + " aprilPos = " + camPose + ", dist:" + poseFtc.range + " p_x, p_y: " + p_x + ',' + p_y);
+                    LOGGER.log("poseCount" + poseCount + ", upsample: " + upsample);
+                    LOGGER.log("camPoseError" + camPoseError);
                 }
-                else{
-                    if(upsample){
-                        aprilTag.setDecimation((float)DOWNSAMPLE);
-                    }
-                    upsample=false;
+                if (upsample && poseCount >= NUMBER_OF_SAMPLES) {
+                    LOGGER.setLogLevel(RFLogger.Severity.FINE);
+                    LOGGER.log("avgAprilError" + camPoseError.div(poseCount));
+                    currentPose = currentPose.plus(camPoseError.div(poseCount));
+                    LOGGER.log("newPose" + currentPose);
+                    poseCount = 0;
+                    camPoseError = new Pose2d(0, 0, 0);
                 }
-                LOGGER.setLogLevel(RFLogger.Severity.FINER);
-                LOGGER.log("id: " + p_ind + " aprilPos = " + camPose + ", dist:" + poseFtc.range + " p_x, p_y: " + p_x + ',' + p_y);
-                LOGGER.log("poseCount" + poseCount + ", upsample: "+upsample);
-                LOGGER.log("camPoseError" + camPoseError);
-            }
-            if (upsample && poseCount >= NUMBER_OF_SAMPLES) {
-                LOGGER.setLogLevel(RFLogger.Severity.FINE);
-                LOGGER.log("avgAprilError" + camPoseError.div(poseCount));
-                currentPose = currentPose.plus(camPoseError.div(poseCount));
-                LOGGER.log("newPose" + currentPose);
-                poseCount = 0;
-                camPoseError = new Pose2d(0, 0, 0);
             }
         }
         else if(upsample){
             upsample=false;
                 aprilTag.setDecimation((float)DOWNSAMPLE);
         }
+    }
+    public void stop(){
+        visionPortal.stopStreaming();
+        visionPortal.close();
     }
 
     /**

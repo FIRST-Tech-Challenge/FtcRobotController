@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.Components.RFModules.System;
 
 import android.annotation.SuppressLint;
+
 import java.io.IOException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -25,13 +26,15 @@ import java.util.logging.SimpleFormatter;
 public class RFLogger {
     public Logger LOGGER;
     ArrayList<FileHandler> handlerList = new ArrayList<>();
-    Level logLevel = Level.ALL;
+    Severity logLevel = Severity.ALL;
     static FileHandler GeneralFH, AutonomousFH, HardwareFH, QueuerFH;
-    public static final Severity FILTER = Severity.INFO;
+    public static Severity FILTER = Severity.INFO;
+
+    private boolean logLevelSet = false;
 
 
     public enum Files {
-        GENERAL_LOG("/sdcard/tmp/General.log",0),
+        GENERAL_LOG("/sdcard/tmp/General.log", 0),
         AUTONOMOUS_LOG("/sdcard/tmp/Autonomous.log", 1),
         HARDWARE_LOG("/sdcard/tmp/Hardware.log", 2),
         QUEUER_LOG("/sdcard/tmp/Queuer.log", 3);
@@ -39,7 +42,7 @@ public class RFLogger {
         String filePath;
         int index;
 
-        Files(String p_filePath, int p_index){
+        Files(String p_filePath, int p_index) {
             filePath = p_filePath;
             index = p_index;
         }
@@ -57,14 +60,14 @@ public class RFLogger {
 
         Level logSeverity;
 
-        Severity(Level p_logSeverity){
+        Severity(Level p_logSeverity) {
             logSeverity = p_logSeverity;
         }
     }
 
-    public RFLogger (String className){
+    public RFLogger(String className) {
         LOGGER = Logger.getLogger(className);
-        LOGGER.setLevel(logLevel);
+        LOGGER.setLevel(logLevel.logSeverity);
 
         try {
             GeneralFH = new FileHandler(Files.GENERAL_LOG.filePath);
@@ -97,6 +100,7 @@ public class RFLogger {
 
         SimpleFormatter customSH = new SimpleFormatter() {
             private static final String format = "[%1$tF %1$tT.%1$tL] [%2$-7s] %3$s %n";
+
             @SuppressLint("DefaultLocale")
             public synchronized String format(LogRecord lr) {
                 return String.format(format,
@@ -115,27 +119,36 @@ public class RFLogger {
         LOGGER.addHandler(GeneralFH);
     }
 
-    public void setLogLevel(Severity p_severity){
-        logLevel = p_severity.logSeverity;
-        LOGGER.setLevel(logLevel);
+    public void setLogLevel(Severity p_severity) {
+        logLevel = p_severity;
+        LOGGER.setLevel(logLevel.logSeverity);
+        logLevelSet = true;
     }
 
-    public void log(String info){
-        log(Files.GENERAL_LOG, info);
+    public void log(String info) {
+        Severity severity = Severity.INFO;
+        if (logLevelSet) {
+            severity = logLevel;
+        }
+        log(Files.GENERAL_LOG, severity, info);
     }
 
-    public void log(Severity p_severity, String info){
-        setLogLevel(p_severity);
-        log(info);
+    public void log(Severity p_severity, String info) {
+        log(Files.GENERAL_LOG, p_severity, info);
     }
 
-    public void log(Files p_file, String info){
-        if(logLevel.intValue()>=FILTER.logSeverity.intValue()) {
+    public void log(Files p_file, String info) {
+        log(p_file, Severity.INFO, info);
+    }
+
+    public void log(Files p_file, Severity p_Severity, String info) {
+        setLogLevel(p_Severity);
+        if (logLevel.logSeverity.intValue() >= FILTER.logSeverity.intValue()) {
             for (Handler i : LOGGER.getHandlers()) {
                 LOGGER.removeHandler(i);
             }
             LOGGER.addHandler(handlerList.get(p_file.index));
-            StringBuilder output = new StringBuilder(":");
+            StringBuilder output = new StringBuilder();
             StackTraceElement[] elements = Thread.currentThread().getStackTrace();
             boolean first = false;
             StackTraceElement firstElement = elements[0];
@@ -148,13 +161,15 @@ public class RFLogger {
                     }
                 }
             }
-            LOGGER.log(logLevel, firstElement.getMethodName() + output + info);
+            String fileNam = firstElement.getFileName();
+            LOGGER.log(logLevel.logSeverity, fileNam.substring(0, fileNam.length() - 5) + "." + firstElement.getMethodName()
+                    + "(): " + output + info);
         }
+        logLevelSet = false;
     }
 
-    public void log(Files p_file, Severity p_Severity, String info){
-        setLogLevel(p_Severity);
-        log(p_file, info);
+    public void setFilter(Severity p_severity) {
+        FILTER = p_severity;
     }
 
 //    public void logMAX(String info){
