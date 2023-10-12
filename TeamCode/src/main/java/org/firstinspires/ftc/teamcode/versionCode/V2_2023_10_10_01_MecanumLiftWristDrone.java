@@ -48,6 +48,8 @@ public class V2_2023_10_10_01_MecanumLiftWristDrone extends LinearOpMode {
         droneServo.setPosition(0.85);
         wristServo.scaleRange(0, 1);
         wristServo.setPosition(0);
+        int targetPosition = 5;
+        double wristTargetPos = 0;
 
         waitForStart();
 
@@ -55,33 +57,25 @@ public class V2_2023_10_10_01_MecanumLiftWristDrone extends LinearOpMode {
             double y = -gamepad1.left_stick_y; // Remember, Y stick value is reversed
             double x = gamepad1.left_stick_x;
             double rx = gamepad1.right_stick_x;
-            int targetPosition = 500;
-            double wristTargetPos = 0;
 
             double droneServoPosition = droneServo.getPosition();
             double liftPower = lift.getPower();
-            double liftPos = lift.getCurrentPosition();
 
-            if (gamepad1.right_trigger != 0) {
-                targetPosition += 100;
-            }else if (gamepad1.left_trigger != 0) {
-                targetPosition -= 100;
+            if (gamepad1.right_trigger > 0) {
+                targetPosition += 5;
+            }else if (gamepad1.left_trigger > 0) {
+                targetPosition -= 5;
             }
-            if (targetPosition > 4000){
-                targetPosition = 3900;
+            if (targetPosition > 962) {
+                targetPosition = 957;
             }
-            else if (targetPosition < 500){
-                targetPosition = 600;
+            if (targetPosition < 0) {
+                targetPosition = 5;
             }
+
             lift.setTargetPosition(targetPosition);
             lift.setPower(1);
             lift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-
-            int minLift = 0;
-            int maxLift = 4000;
-            double K_P = 0.03;
-
-
 
             if (wristTargetPos > 1){
                 wristTargetPos = 0.9;
@@ -105,7 +99,9 @@ public class V2_2023_10_10_01_MecanumLiftWristDrone extends LinearOpMode {
             // ADDED CODE - sends info about current servo position to driver station
             telemetry.addData("Servo Position: ", droneServoPosition);
             telemetry.addData("Wrist Position: ", wristServo.getPosition());
-            telemetry.addData("Lift position: ", liftPos);
+            telemetry.addData("Lift position: ", lift.getCurrentPosition());
+            telemetry.addData("Target Position Requested: ", targetPosition);
+            telemetry.addData("Actual Target Position: ", lift.getTargetPosition());
             telemetry.addData("Lift power: ", liftPower);
             telemetry.update();
 
