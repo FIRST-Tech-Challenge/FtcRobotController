@@ -26,7 +26,7 @@ public class Robot_fromScratch implements Subsystem{
     public Subsystem[] subsystems;
     public CSDriveTrain driveTrain;
     //TODO - implement subsystems that build team comes up with
-//    public Intake;
+    public Intake intake;
     public Field field;
 
 
@@ -50,6 +50,12 @@ public class Robot_fromScratch implements Subsystem{
 
     }
 
+    public void start() {
+        //TODO - articulate starting position
+        articulation = Articulation.MANUAL;
+    }
+    //end start
+
 
     public Robot_fromScratch(HardwareMap hardwareMap, boolean simulated) {
         hubs = hardwareMap.getAll(LynxModule.class);
@@ -59,39 +65,42 @@ public class Robot_fromScratch implements Subsystem{
 
         // initializing subsystems
         driveTrain = new CSDriveTrain(hardwareMap, this, simulated);
+        intake = new Intake(hardwareMap, this);
 
-        subsystems = new Subsystem[] {driveTrain}; //{driveTrain, turret, crane};
+        subsystems = new Subsystem[] {driveTrain, intake}; //{driveTrain, turret, crane};
         subsystemUpdateTimes = new long[subsystems.length];
 
         batteryVoltageSensor = hardwareMap.voltageSensor.iterator().next();
 
-//        articulation = Robot.Articulation.MANUAL;
+        articulation = Robot_fromScratch.Articulation.MANUAL;
 
-//        articulationMap = new HashMap<>();
-
-//        craneBitmap = Bitmap.createBitmap(CB_WIDTH, CB_HEIGHT, Bitmap.Config.RGB_565);
-//        craneMat = new Mat(CB_HEIGHT, CB_WIDTH, CvType.CV_8UC3);
         field = new Field(true);
     }
     //end constructor
 
+    public double deltaTime = 0;
+    long lastTime = 0;
     @Override
     public void update(Canvas fieldOverlay) {
-
+        deltaTime = (System.nanoTime()-lastTime)/1e9;
+        lastTime = System.nanoTime();
     }
+    //end update
 
     @Override
     public void stop() {
 
     }
+    //end stop
 
     @Override
     public Map<String, Object> getTelemetry(boolean debug) {
         return null;
     }
+    //end getTelemetry
 
     @Override
     public String getTelemetryName() {
-        return null;
+        return "ROBOT";
     }
 }

@@ -15,6 +15,7 @@ import static org.firstinspires.ftc.teamcode.robots.reachRefactor.util.Constants
 import androidx.annotation.NonNull;
 
 import com.acmerobotics.dashboard.canvas.Canvas;
+import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.roadrunner.control.PIDCoefficients;
 import com.acmerobotics.roadrunner.drive.DriveSignal;
 import com.acmerobotics.roadrunner.drive.MecanumDrive;
@@ -51,10 +52,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
-/*
- * Simple mecanum drive hardware implementation for REV hardware.
- */
-
+@Config(value = "CS_ROADRUNNER")
  class CSDriveTrain extends MecanumDrive implements Subsystem {
      public Robot_fromScratch robot;
     public static PIDCoefficients TRANSLATIONAL_PID = new PIDCoefficients(0, 0, 0);
@@ -168,6 +166,20 @@ import java.util.Map;
         trajectorySequenceRunner.followTrajectorySequenceAsync(
                 trajectorySequenceBuilder(getPoseEstimate())
                         .turn(angle)
+                        .build()
+        );
+    }
+
+    public void squareTest() {
+        trajectorySequenceRunner.followTrajectorySequenceAsync(
+                trajectorySequenceBuilder(getPoseEstimate())
+                        .forward( 15, VEL_CONSTRAINT, ACCEL_CONSTRAINT)
+                        .turn(90, MAX_ANG_VEL, MAX_ANG_ACCEL)
+                        .forward( 15, VEL_CONSTRAINT, ACCEL_CONSTRAINT)
+                        .turn(90, MAX_ANG_VEL, MAX_ANG_ACCEL)
+                        .forward( 15, VEL_CONSTRAINT, ACCEL_CONSTRAINT)
+                        .turn(90, MAX_ANG_VEL, MAX_ANG_ACCEL)
+                        .forward( 15, VEL_CONSTRAINT, ACCEL_CONSTRAINT)
                         .build()
         );
     }
