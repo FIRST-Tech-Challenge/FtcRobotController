@@ -55,7 +55,7 @@ public class V2_2023_10_10_01_MecanumLiftWristDrone extends LinearOpMode {
             double y = -gamepad1.left_stick_y; // Remember, Y stick value is reversed
             double x = gamepad1.left_stick_x;
             double rx = gamepad1.right_stick_x;
-            int targetPosition = 0;
+            int targetPosition = 500;
             double wristTargetPos = 0;
 
             double droneServoPosition = droneServo.getPosition();
@@ -67,15 +67,21 @@ public class V2_2023_10_10_01_MecanumLiftWristDrone extends LinearOpMode {
             }else if (gamepad1.left_trigger != 0) {
                 targetPosition -= 100;
             }
-            if (targetPosition > 1000){
-                targetPosition = 900;
+            if (targetPosition > 4000){
+                targetPosition = 3900;
             }
-            else if (targetPosition < 0){
-                targetPosition = 100;
+            else if (targetPosition < 500){
+                targetPosition = 600;
             }
             lift.setTargetPosition(targetPosition);
             lift.setPower(1);
             lift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+            int minLift = 0;
+            int maxLift = 4000;
+            double K_P = 0.03;
+
+
 
             if (wristTargetPos > 1){
                 wristTargetPos = 0.9;
