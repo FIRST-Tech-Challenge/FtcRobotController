@@ -24,7 +24,7 @@ import org.firstinspires.ftc.teamcode.robots.ri2d2023.rr_trajectorysequence.Traj
  */
 @Config
 @Disabled
-@Autonomous(group = "drive")
+//@Autonomous(group = "drive")
 public class FollowerPIDTuner extends LinearOpMode {
     public static double DISTANCE = 48; // in
 

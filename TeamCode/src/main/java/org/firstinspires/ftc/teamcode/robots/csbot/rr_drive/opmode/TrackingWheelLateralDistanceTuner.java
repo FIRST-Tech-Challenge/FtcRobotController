@@ -64,7 +64,7 @@ import org.firstinspires.ftc.teamcode.robots.csbot.rr_drive.StandardTrackingWhee
  */
 @Config
 @Disabled
-@TeleOp(group = "drive")
+//@TeleOp(group = "drive")
 public class TrackingWheelLateralDistanceTuner extends LinearOpMode {
     public static int NUM_TURNS = 10;
 

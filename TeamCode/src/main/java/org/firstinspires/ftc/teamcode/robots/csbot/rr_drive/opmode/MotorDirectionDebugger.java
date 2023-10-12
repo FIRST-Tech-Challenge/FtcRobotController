@@ -40,7 +40,7 @@ import org.firstinspires.ftc.teamcode.robots.csbot.rr_drive.SampleMecanumDrive;
  */
 @Disabled
 @Config
-@TeleOp(group = "drive")
+//@TeleOp(group = "drive")
 public class MotorDirectionDebugger extends LinearOpMode {
     public static double MOTOR_POWER = 0.7;
 

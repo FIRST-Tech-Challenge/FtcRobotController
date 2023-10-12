@@ -27,7 +27,7 @@ import org.firstinspires.ftc.teamcode.robots.csbot.rr_drive.SampleMecanumDrive;
  */
 @Config
 @Disabled
-@Autonomous(group = "drive")
+//@Autonomous(group = "drive")
 public class BackAndForth extends LinearOpMode {
 
     public static double DISTANCE = 50;
