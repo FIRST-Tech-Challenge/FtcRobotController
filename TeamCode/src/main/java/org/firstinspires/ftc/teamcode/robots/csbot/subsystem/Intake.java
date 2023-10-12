@@ -1,7 +1,10 @@
 package org.firstinspires.ftc.teamcode.robots.csbot.subsystem;
 
 import com.acmerobotics.dashboard.canvas.Canvas;
+import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.hardware.Servo;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -12,32 +15,51 @@ public class Intake implements Subsystem {
     //CONSTANTS
     HardwareMap hardwareMap;
     Robot_fromScratch robot;
-    //TODO - ACTUALLY FIGURE THIS OUT
-    public static double GRIP_TICKS = 500;
-    public static double RELEASE_TICKS = 800;
+    Servo diverter, beaterBarAngleController;
+    DcMotorEx beaterBar;
+    public static double BEATER_BAR_INTAKE_VELOCITY = 1.0;
+    public static double BEATER_BAR_EJECT_VELOCITY = -1.0;
+
 
     public enum Articulation {
-        MANUAL,
-        GRAB_PIXEL,
+        INTAKE,
+        EJECT,
+        OFF,
         FOLD,
     }
 
 
     //LIVE STATES
-    public static boolean gripped;
-    public static double clawTicks;
     public Articulation articulation;
 
 
     public Intake(HardwareMap hardwareMap, Robot_fromScratch robot) {
             this.hardwareMap = hardwareMap;
             this.robot = robot;
-            articulation = Articulation.FOLD;
+            articulation = Articulation.OFF;
+
+            diverter = hardwareMap.get(Servo.class, "diverter");
+            beaterBarAngleController = hardwareMap.get(Servo.class, "beaterBarAngleController");
+            beaterBar = hardwareMap.get(DcMotorEx.class, "beaterBar");
+
+            beaterBar.setMotorEnable();
+            beaterBar.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
     }
 
     @Override
     public void update(Canvas fieldOverlay) {
-
+        switch (articulation) {
+            case OFF:
+                beaterBar.setPower(0);
+                break;
+            case INTAKE:
+                beaterBar.setVelocity(BEATER_BAR_INTAKE_VELOCITY);
+                break;
+            case EJECT:
+                beaterBar.setVelocity(BEATER_BAR_EJECT_VELOCITY);
+                break;
+        }
     }
 
     public Articulation articulate(Articulation target) {
@@ -47,15 +69,14 @@ public class Intake implements Subsystem {
 
     @Override
     public void stop() {
-
+        beaterBar.setMotorDisable();
     }
 
     @Override
     public Map<String, Object> getTelemetry(boolean debug) {
         Map<String, Object> telemetryMap = new LinkedHashMap<>();
         telemetryMap.put("articulation", articulation.name());
-        telemetryMap.put("claw gripped?", gripped);
-        telemetryMap.put("claw position", clawTicks);
+        telemetryMap.put("beater bar amps", beaterBar.getPower());
         return telemetryMap;
     }
 
