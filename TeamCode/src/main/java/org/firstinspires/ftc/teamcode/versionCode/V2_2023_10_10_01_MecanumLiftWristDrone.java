@@ -46,6 +46,7 @@ public class V2_2023_10_10_01_MecanumLiftWristDrone extends LinearOpMode {
 
         droneServo.scaleRange(0, 1);
         droneServo.setPosition(0.85);
+        wristServo.scaleRange(0, 1);
         wristServo.setPosition(0);
 
         waitForStart();
