@@ -13,7 +13,6 @@ import java.util.concurrent.TimeUnit;
 
 public abstract class RobotOpMode extends OpMode {
 
-
     // Used in the endTime parameter in moveRobot()
     public static long STOP_NEVER = Long.MAX_VALUE;
     DcMotor leftFrontDrive, leftBackDrive, rightFrontDrive, rightBackDrive;
@@ -38,6 +37,14 @@ public abstract class RobotOpMode extends OpMode {
         } catch(Exception e) {
             telemetry.addData("IMU WARNING (error initializing IMU) ", e.getMessage());
         }
+        if(imu != null) {
+            telemetry.addLine("IMU Connection Successful!");
+        }
+        BNO055IMU.Parameters paramaters = new BNO055IMU.Parameters();
+        paramaters.temperatureUnit = BNO055IMU.TempUnit.CELSIUS;
+        paramaters.accelUnit = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
+        paramaters.angleUnit = BNO055IMU.AngleUnit.RADIANS;
+        imu.initialize(paramaters);
     }
 
     @Override
