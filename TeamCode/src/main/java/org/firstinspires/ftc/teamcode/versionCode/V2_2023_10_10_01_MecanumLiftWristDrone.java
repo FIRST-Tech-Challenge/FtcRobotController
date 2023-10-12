@@ -73,7 +73,7 @@ public class V2_2023_10_10_01_MecanumLiftWristDrone extends LinearOpMode {
                 targetPosition = 100;
             }
             lift.setTargetPosition(targetPosition);
-            lift.setPower(0.3);
+            lift.setPower(1);
             lift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
             if (wristTargetPos > 1){
