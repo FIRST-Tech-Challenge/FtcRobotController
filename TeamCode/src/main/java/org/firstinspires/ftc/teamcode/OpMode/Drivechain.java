@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.OpMode;
 
+import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.telemetry;
+
 import com.qualcomm.robotcore.hardware.DcMotor;
 
 public class Drivechain {
@@ -17,6 +19,7 @@ public class Drivechain {
     }
 
     public static void drive(double leftStick, double rightStick) {
+
         double y = -leftStick; // Remember, this is reversed!
         double x = rightStick * 1.1; // Counteract imperfect strafing
         double rx = rightStick;
@@ -32,5 +35,15 @@ public class Drivechain {
         backLeft.setPower(-backLeftPower*0.6);
         frontRight.setPower(-frontRightPower*0.6);
         backRight.setPower(-backRightPower*0.6);
+
+        telemetry.addData("TEST VALUES", null);
+        telemetry.addData("LEFT STICK Y - FWD BACK DRIVE (REMEMBER THAT THIS IS OPPOSITE OF DIRECTION OF STICK)", leftStick);
+        telemetry.addData("RIGHT STICK X - STRAFING", rightStick);
+        telemetry.addData("frontLeftPower:", frontLeftPower);
+        telemetry.addData("frontRightPower:", frontRightPower);
+        telemetry.addData("backLeftPower:", backLeftPower);
+        telemetry.addData("backRightPower:", backRightPower);
+        telemetry.update();
+
     }
 }
