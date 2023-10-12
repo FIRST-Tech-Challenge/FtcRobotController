@@ -173,12 +173,8 @@ public class AprilTagAutonomousInitDetectionExample extends autonomous
 
         /* Actually do something useful */
        if (tagOfInterest.id == left) {
-           df.turnToHeading(0.3, -45);
        } else if (tagOfInterest == null || tagOfInterest.id == middle) {
-            df.driveStraight(0.4, 50.0, 0);
-            df.driveStraight(0.3, -50.0, 0);
        } else if (tagOfInterest.id == right) {
-           df.turnToHeading(0.3, 45);
        }
 
         /* You wouldn't have this in your autonomous, this is just to prevent the sample from ending */

@@ -15,6 +15,7 @@ import org.openftc.easyopencv.OpenCvWebcam;
 @Autonomous(name="Autonomous - Generic", group="Linear Opmode")
 @Disabled
 public class AutonomousOpenCV extends LinearOpMode {
+    public String ballPosition;
     private OpenCvWebcam webcam;
     private CircleDetection circleDetection;
     private DrivingFunctions df;
@@ -84,44 +85,56 @@ public class AutonomousOpenCV extends LinearOpMode {
 
         if(circleDetection.GetBallPosition() == CircleDetection.BallPosition.LEFT)
         {
+
+            ballPosition = "left";
             PushPixelLeft();
         }
-        if(circleDetection.GetBallPosition() == CircleDetection.BallPosition.CENTER)
+        else if(circleDetection.GetBallPosition() == CircleDetection.BallPosition.CENTER)
         {
+            ballPosition = "center";
             PushPixelCentert();
         }
-        if(circleDetection.GetBallPosition() == CircleDetection.BallPosition.RIGHT)
+        else if(circleDetection.GetBallPosition() == CircleDetection.BallPosition.RIGHT)
         {
+            ballPosition = "right";
             PushPixelRight();
         }
     }
 
     private void PushPixelRight()
     {
-        df.driveStraight(DRIVE_SPEED, 35, 0);
-        df.turnToHeading(TURN_SPEED, -45); // Negative angles turn to the right
-        df.driveStraight(DRIVE_SPEED, 28, -45);
-        df.driveStraight(DRIVE_SPEED, -28, -45);
-        df.turnToHeading(TURN_SPEED, 0);
-        df.driveStraight(DRIVE_SPEED, -30, 0);
+        df.driveStraight(DRIVE_SPEED, 20, 0);
+        df.turnToHeading(TURN_SPEED, -60); // Negative angles turn to the right
+        df.driveStraight(DRIVE_SPEED, 10, -60);
+        df.driveStraight(DRIVE_SPEED, -10, -60);
+        df.turnToHeading(TURN_SPEED, -10);
+        df.driveStraight(DRIVE_SPEED, -18, -10);
+        df.turnToHeading(TURN_SPEED, -90);
+        df.driveStraight(DRIVE_SPEED, 40, -90);
+        //df.strafeLeft(1, 100);
+        //df.turnToHeading(TURN_SPEED, -90);
+        //df.driveStraight(DRIVE_SPEED, 47, -90);
     }
 
     private void PushPixelLeft()
     {
-        df.driveStraight(DRIVE_SPEED, 35, 0);
-        df.turnToHeading(TURN_SPEED, 45); // Positive angles turn to the left
-        df.driveStraight(DRIVE_SPEED, 28, 45);
-        df.driveStraight(DRIVE_SPEED, -28, 45);
-        df.turnToHeading(TURN_SPEED, 0);
-        df.driveStraight(DRIVE_SPEED, -30, 0);
-
+        df.driveStraight(DRIVE_SPEED, 20, 0);
+        df.turnToHeading(TURN_SPEED, 60); // Positive angles turn to the left
+        df.driveStraight(DRIVE_SPEED, 10, 60);
+        df.driveStraight(DRIVE_SPEED, -12, 60);
+        df.turnToHeading(TURN_SPEED, -25);
+        df.driveStraight(DRIVE_SPEED, -16, 0);
+        df.turnToHeading(TURN_SPEED, -90);
+        df.driveStraight(DRIVE_SPEED, 40, -90);
     }
     private void PushPixelCentert()
     {
-        df.driveStraight(DRIVE_SPEED, 38, 0);
+        df.driveStraight(DRIVE_SPEED, 35, 0);
+        df.turnToHeading(TURN_SPEED, -10);
         df.driveStraight(DRIVE_SPEED, -30, 0);
+        df.turnToHeading(TURN_SPEED, -90);
+        df.driveStraight(DRIVE_SPEED, 40, -90);
     }
-
     private void RunEncoderTest()
     {
         StopStreaming();

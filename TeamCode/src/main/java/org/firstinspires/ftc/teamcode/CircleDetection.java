@@ -20,6 +20,7 @@ public class CircleDetection extends OpenCvPipeline {
     Mat mask2 = new Mat();
     Mat hsvMat = new Mat();
     Mat subMat = new Mat();
+    double[] data;
     private int numCirclesFound = 0;
     private Point circleCenter = new Point(0.0, 0.0);
 
@@ -72,10 +73,14 @@ public class CircleDetection extends OpenCvPipeline {
         numCirclesFound = circles.cols();
 
         for (int i = 0; i < numCirclesFound; i++) {
-            double[] data = circles.get(0, i);
+             data = circles.get(0, i);
             circleCenter = new Point(Math.round(data[0])+100, Math.round(data[1])+250);
             ballPosition = circleCenter.x < 427 ? BallPosition.LEFT : (circleCenter.x > 853 ? BallPosition.RIGHT : BallPosition.CENTER);
         }
         return input;
+    }
+    public double[] getCircleData() {
+        double circlesRadius = data[2];
+        return data;
     }
 }
