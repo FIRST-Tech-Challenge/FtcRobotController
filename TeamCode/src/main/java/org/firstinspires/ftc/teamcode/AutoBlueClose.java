@@ -5,45 +5,26 @@ import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
-@Autonomous(name = "AutoBlueClose", group = "linear autoMode")
+@Autonomous(name = "AutoRedClose", group = "linear autoMode")
 
-public class AutoBlueClose extends LinearOpMode {
+public class AutoBlueClose extends RobotLinearOpMode {
     private ElapsedTime runtime = new ElapsedTime();
-    private DcMotor leftFrontDrive = null;
-    private DcMotor leftBackDrive = null;
-    private DcMotor rightFrontDrive = null;
-    private DcMotor rightBackDrive = null;
+    private DcMotor leftFront = null;
+    private DcMotor leftBack = null;
+    private DcMotor rightFront = null;
+    private DcMotor rightBack = null;
+    private double speed;
+    private final int oneRotaion = 540;
+    private int newLFTarget;
+    private int newLBTarget;
+    private int newRFTarget;
+    private int newRBTarget;
 
     @Override
-    public void runOpMode()
-    {
-        //Setting motor names
-        leftFrontDrive  = hardwareMap.get(DcMotor.class, "frontleft");
-        leftBackDrive  = hardwareMap.get(DcMotor.class, "backleft");
-        rightFrontDrive = hardwareMap.get(DcMotor.class, "frontright");
-        rightBackDrive = hardwareMap.get(DcMotor.class, "backright");
-        //Setting motor direction
-        leftFrontDrive.setDirection(DcMotor.Direction.FORWARD);
-        leftBackDrive.setDirection(DcMotor.Direction.REVERSE);
-        rightFrontDrive.setDirection(DcMotor.Direction.FORWARD);
-        rightBackDrive.setDirection(DcMotor.Direction.FORWARD);
-
-        telemetry.addData("Status", "Initialized");
-        telemetry.update();
+    public void runOpMode() {
+        declareHardwareProperties();
         waitForStart();
-        runtime.reset();
-
-        while (opModeIsActive() && runtime.seconds() <= 2.0)
-        {
-            leftFrontDrive.setPower(-0.5);
-            leftBackDrive.setPower(0.5);
-            rightFrontDrive.setPower(0.5);
-            rightBackDrive.setPower(-0.5);
-        }
-        leftFrontDrive.setPower(0);
-        leftBackDrive.setPower(0);
-        rightFrontDrive.setPower(0);
-        rightBackDrive.setPower(0);
+        encoderDrive(0.6, 20, MOVEMENT_DIRECTION.STRAFE_LEFT);
     }
-
 }
+
