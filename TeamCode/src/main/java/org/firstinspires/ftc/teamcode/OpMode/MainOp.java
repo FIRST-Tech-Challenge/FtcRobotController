@@ -28,7 +28,7 @@ public class MainOp extends LinearOpMode {
         wheelBackLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         wheelBackRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
-        wheelFrontRight.setDirection(DcMotorSimple.Direction.REVERSE); //CHECK MOTORS FOR WHICH ONES ARE REVERSED
+        wheelFrontRight.setDirection(DcMotorSimple.Direction.REVERSE); //CHECK MOTORS FOR WHICH ONES ARE REVERSED / CHECK GEARS / MOTOR ORIENTATION
         wheelBackRight.setDirection(DcMotorSimple.Direction.REVERSE);
 
         //Main lin slide Motors
