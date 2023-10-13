@@ -13,17 +13,8 @@ public class TeleOp extends LinearOpMode {
 
     @Override
     public void runOpMode() throws InterruptedException {
-        //to do: improve motor initialization. It's probably wrong
-        frontLeft = hardwareMap.dcMotor.get("frontLeftMotor");
-        backLeft = hardwareMap.dcMotor.get("backLeftMotor");
-        frontRight = hardwareMap.dcMotor.get("frontRightMotor");
-        backRight = hardwareMap.dcMotor.get("backRightMotor");
-
-        frontLeft.setDirection(DcMotorSimple.Direction.FORWARD);
-        backLeft.setDirection(DcMotorSimple.Direction.FORWARD);
-        frontRight.setDirection(DcMotorSimple.Direction.FORWARD);
-        backRight.setDirection(DcMotorSimple.Direction.FORWARD);
-
+        Hardware hw = new Hardware();
+        hw.init(hardwareMap);
 
         telemetry.addData("Init >> ", "Ready for start");
         telemetry.update();
