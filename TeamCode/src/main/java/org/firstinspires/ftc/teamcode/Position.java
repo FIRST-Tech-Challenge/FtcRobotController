@@ -62,6 +62,7 @@ public class Position {
         setRotation(theta);
         this.strafePower = strafePower; //Sets strafePower from Line 23
         this.rotatePower = rotatePower; //Sets rotatePower form Line 24
+        this.action = action;
 
     }
 
