@@ -62,7 +62,11 @@ public class MainTeleOp extends LinearOpMode {
                 isAutomatic = !isAutomatic;
             }
 
+
+//Finite State Machine Organization => two systems: Automatic and Manual (can toggle between modes using the start button
+
             if(isAutomatic) {
+
                 //noodle intake
                 if(gp2.wasJustPressed(GamepadKeys.Button.Y)) {
                     Bot.noodles.Intake();
