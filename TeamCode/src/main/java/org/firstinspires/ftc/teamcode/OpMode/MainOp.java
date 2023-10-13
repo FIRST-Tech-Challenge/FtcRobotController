@@ -28,7 +28,7 @@ public class MainOp extends LinearOpMode {
         wheelBackLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         wheelBackRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
-        wheelFrontRight.setDirection(DcMotorSimple.Direction.REVERSE);
+        wheelFrontRight.setDirection(DcMotorSimple.Direction.REVERSE); //CHECK MOTORS FOR WHICH ONES ARE REVERSED
         wheelBackRight.setDirection(DcMotorSimple.Direction.REVERSE);
 
         //Main lin slide Motors
@@ -119,7 +119,7 @@ public class MainOp extends LinearOpMode {
             float leftTriggerCTRL2 = gamepad2.left_trigger;
             float rightTriggerCTRL2 = gamepad2.right_trigger;
 
-            Drivechain.drive(yLeftStickCTLR1, xRightStickCTLR1);
+            Drivechain.motorDirectionTest(yLeftStickCTLR1, xRightStickCTLR1); //ON TESTING METHOD
             MainLinearSlides.manualMove(leftTriggerCTRL1, rightTriggerCTRL1);
             IntakeGekkoWheelCRServo.runWheels(dpadUpCTRL1);
             MainLinearSlides.moveToLowerUpper(leftBumperCTRL1, rightBumperCTRL1);

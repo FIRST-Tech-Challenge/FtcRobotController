@@ -18,7 +18,34 @@ public class Drivechain {
         backRight = backRightWheel;
     }
 
+    public static void motorDirectionTest(double leftStick, double rightStick) { //REMEMBER RIGHT SIDE MOTORS ARE REVERSED IN TELEOP
+        frontLeft.setPower(rightStick);
+        frontRight.setPower(rightStick);
+        backLeft.setPower(rightStick);
+        backRight.setPower(rightStick);
+    }
+
     public static void drive(double leftStick, double rightStick) {
+
+        /* https://gm0.org/en/latest/docs/software/tutorials/mecanum-drive.html
+        double y = -gamepad1.left_stick_y; // Remember, Y stick value is reversed
+            double x = gamepad1.left_stick_x * 1.1; // Counteract imperfect strafing
+            double rx = gamepad1.right_stick_x;
+
+            // Denominator is the largest motor power (absolute value) or 1
+            // This ensures all the powers maintain the same ratio,
+            // but only if at least one is out of the range [-1, 1]
+            double denominator = Math.max(Math.abs(y) + Math.abs(x) + Math.abs(rx), 1);
+            double frontLeftPower = (y + x + rx) / denominator;
+            double backLeftPower = (y - x + rx) / denominator;
+            double frontRightPower = (y - x - rx) / denominator;
+            double backRightPower = (y + x - rx) / denominator;
+
+            frontLeftMotor.setPower(frontLeftPower);
+            backLeftMotor.setPower(backLeftPower);
+            frontRightMotor.setPower(frontRightPower);
+            backRightMotor.setPower(backRightPower);
+         */
 
             if(leftStick != 0) {
                 if(rightStick > 0) {
@@ -35,8 +62,8 @@ public class Drivechain {
                 }
             } else {
                 frontLeft.setPower(-rightStick);
-                frontRight.setPower(-rightStick);
-                backLeft.setPower(rightStick);
+                frontRight.setPower(rightStick);
+                backLeft.setPower(-rightStick);
                 backRight.setPower(rightStick);
             }
     }
