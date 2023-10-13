@@ -43,11 +43,11 @@ public class MainOp extends LinearOpMode {
         rightLinSlide.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         //Secondary, single motor lin slide used to hoist the robot at the end of the game
-        //DcMotor liftingLinSlide = hardwareMap.dcMotor.get("liftingLinSlide");
+        DcMotor liftingLinSlide = hardwareMap.dcMotor.get("liftingLinSlide");
 
-        //liftingLinSlide.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        //liftingLinSlide.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        //liftingLinSlide.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        liftingLinSlide.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        liftingLinSlide.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        liftingLinSlide.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         //Intake (GoGekko Wheel) Continuous Servo
         CRServo goGekkoCRServo = hardwareMap.crservo.get("goGekkoCRServo");
@@ -62,7 +62,7 @@ public class MainOp extends LinearOpMode {
         Drivechain.driveChainInit(wheelFrontLeft, wheelFrontRight, wheelBackLeft, wheelBackRight);
         IntakeGekkoWheelCRServo.gekkoWheelInit(goGekkoCRServo);
         MainLinearSlides.linearSlideInit(leftLinSlide, rightLinSlide);
-        //LiftingSlide.liftingSlideInit(liftingLinSlide); //ADD BACK ONCE WRITTEN
+        LiftingSlide.liftingSlideInit(liftingLinSlide);
         IntakeHingeCRServo.intakeHingeServoInit(hingeCRServo);
         IntakeHatchServo.hatchServoInit(hatchServo);
 
@@ -88,11 +88,13 @@ public class MainOp extends LinearOpMode {
             boolean yButtonCTLR1 = gamepad1.y;
             boolean aButtonCTLR1 = gamepad1.a;
             boolean bButtonCTLR1 = gamepad1.b;
+            boolean startButtonCTRL1 = gamepad1.start;
 
             boolean xButtonCTLR2 = gamepad2.x;
             boolean yButtonCTLR2 = gamepad2.y;
             boolean aButtonCTLR2 = gamepad2.a;
             boolean bButtonCTLR2 = gamepad2.b;
+            boolean startButtonCTRL2 = gamepad2.start;
 
             //Controller Dpad Initialization
             boolean dpadUpCTRL1 = gamepad1.dpad_up;
@@ -120,11 +122,12 @@ public class MainOp extends LinearOpMode {
             float rightTriggerCTRL2 = gamepad2.right_trigger;
 
             Drivechain.motorDirectionTest(yLeftStickCTLR1, xRightStickCTLR1); //ON TESTING METHOD
-            MainLinearSlides.manualMove(leftTriggerCTRL1, rightTriggerCTRL1);
-            IntakeGekkoWheelCRServo.runWheels(dpadUpCTRL1);
-            MainLinearSlides.moveToLowerUpper(leftBumperCTRL1, rightBumperCTRL1);
-            IntakeHingeCRServo.manualHinge(aButtonCTLR1, bButtonCTLR1);
-            IntakeHatchServo.hinge(dpadDownCTRL1);
+            MainLinearSlides.manualMove(leftTriggerCTRL1, rightTriggerCTRL1); //TEST ME
+            IntakeGekkoWheelCRServo.runWheels(dpadUpCTRL1); //TEST ME
+            MainLinearSlides.moveToLowerUpper(leftBumperCTRL1, rightBumperCTRL1); //TEST ME
+            IntakeHingeCRServo.manualHinge(aButtonCTLR1, bButtonCTLR1); //TEST ME
+            IntakeHatchServo.hinge(dpadDownCTRL1); //TEST ME
+            LiftingSlide.hoist(startButtonCTRL1); //TEST ME
         }
     }
 }
