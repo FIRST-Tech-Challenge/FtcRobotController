@@ -25,7 +25,7 @@ public class TeleOp extends LinearOpMode {
         backRight.setDirection(DcMotorSimple.Direction.FORWARD);
 
 
-        telemetry.addData("Init: ", "Ready for start");
+        telemetry.addData("Init >> ", "Ready for start");
         telemetry.update();
 
         waitForStart();
@@ -38,19 +38,24 @@ public class TeleOp extends LinearOpMode {
 
             double maxPower = Math.max(Math.abs(drive) + Math.abs(turn) + Math.abs(strafe), 1);
 
-            //do stuff
 
             //to do: verify this works
-            if(turn >= 0){ //forward and backward with turning || positive turn = turn right
-                frontRight.setPower((drive - turn) / maxPower);
-                backRight.setPower((drive - turn) / maxPower);
+            if(turn >= 0){ //forward and backward with turning and strafing || positive strafe/turn = strafe/turn right
+                frontRight.setPower((drive - turn + strafe) / maxPower);
+                backRight.setPower((drive - turn + strafe) / maxPower);
             } else {
-                frontLeft.setPower((drive - turn) / maxPower);
-                backLeft.setPower((drive - turn) / maxPower);
+                frontLeft.setPower((drive - turn - strafe) / maxPower);
+                backLeft.setPower((drive - turn - strafe) / maxPower);
             }
 
-            //cycle every 10 milliseconds, to prevent memory death
-            sleep(10);
+            //cycle every 50 milliseconds, to prevent memory death --> 20 cycles/s
+            sleep(50);
         }
+
+        //end TeleOp
+        frontLeft.setPower(0);
+        backLeft.setPower(0);
+        frontRight.setPower(0);
+        backRight.setPower(0);
     }
 }
