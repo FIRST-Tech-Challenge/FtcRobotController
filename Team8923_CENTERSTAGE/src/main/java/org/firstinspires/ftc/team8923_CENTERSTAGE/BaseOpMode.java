@@ -57,7 +57,7 @@ abstract public class BaseOpMode extends LinearOpMode {
         motorBR.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
         motorFL.setDirection(DcMotor.Direction.FORWARD);
-        motorFR.setDirection(DcMotor.Direction.REVERSE);
+        motorFR.setDirection(DcMotor.Direction.FORWARD);
         motorBL.setDirection(DcMotor.Direction.FORWARD);
         motorBR.setDirection(DcMotor.Direction.REVERSE);
 
