@@ -17,7 +17,8 @@ class LinearSlideTest: DriveMethods() {
 
 
         waitForStart()
-        var speed = 800;
+        var speed = 400;
+        var max = 1.0;
         var target = 0.0;
         motorSlideLeft!!.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER)
         sleep(100)
@@ -25,7 +26,14 @@ class LinearSlideTest: DriveMethods() {
         while (opModeIsActive()) {
 
             var Pos = motorSlideLeft?.let { Math.abs(it.currentPosition) }
-            motorSlideLeft?.power = -((2 / (1 + (exp(-(target - Pos!!) / speed)))) - 1)
+            if (target < Pos!!) {
+                speed = 50
+                max = 0.7ro
+            } else {
+                speed = 300
+                max = 1.0
+            }
+            motorSlideLeft?.power = -((2 / (1 + (exp(-(target - Pos!!) / speed)))) - 1) * max
             if (gamepad1.x) {
                 //here is cool stuff
                 sleep(200)
@@ -36,6 +44,14 @@ class LinearSlideTest: DriveMethods() {
             }
             if (gamepad1.b) {
                 target -= 100
+                sleep(200)
+            }
+            if (gamepad1.y) {
+                target = 500.0
+                sleep(200)
+            }
+            if (gamepad1.x) {
+                target = 1500.0
                 sleep(200)
             }
             if (true) {
