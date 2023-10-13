@@ -5,15 +5,19 @@ import com.qualcomm.robotcore.hardware.Servo;
 
 public class IntakeHingeServos {
 
-    static CRServo leftHinge;
-    static CRServo rightHinge;
+    static CRServo hingeCRServo;
 
-    public static void intakeHingeServoInit(CRServo left, CRServo right) {
-        leftHinge = left;
-        rightHinge = right;
+    public static void intakeHingeServoInit(CRServo hingey) {
+        hingeCRServo = hingey;
     }
 
-    public static void manualHinge() {
-
+    public static void manualHinge(boolean a, boolean b) {
+        if(a) {
+            hingeCRServo.setPower(0.1);
+        } else if(b) {
+            hingeCRServo.setPower(-0.1);
+        } else {
+            hingeCRServo.setPower(0);
+        }
     }
 }
