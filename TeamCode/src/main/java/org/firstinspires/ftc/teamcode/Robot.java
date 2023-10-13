@@ -136,7 +136,7 @@ public class Robot {
     public CompartmentState desiredCompartmentLeftState = CompartmentState.CLOSED;
     public CompartmentState desiredCompartmentRightState = CompartmentState.CLOSED;
     public enum CompliantWheelsState          {ON, OFF};
-    public CompliantWheelsState desiredCompliantWheelsState = CompartmentState.CLOSED;
+    public CompliantWheelsState desiredCompliantWheelsState = CompliantWheelsState.OFF;
     public enum PlaneSpringState          {UNRELEASED, RELEASED};
     public PlaneSpringState desiredPlaneStringState = PlaneSpringState.UNRELEASED;
     enum MovementMode {NORMAL, FINE, ULTRA_FINE}
@@ -146,7 +146,7 @@ public class Robot {
     // Hardware
     public DcMotor slides, compliantWheelLeft, compliantWheelRight;
     public DcMotor frontLeft, frontRight, rearLeft, rearRight;
-    public Servo planeSpring, compartmentleft, compartmentRight;
+    public Servo planeSpring, compartmentLeft, compartmentRight;
 
 //    public TouchSensor slidesLimitSwitch;
     //servos
@@ -187,7 +187,7 @@ public class Robot {
         // Set slides state to Retracted
         if (desiredSlidesState == SlidesState.UNREADY) { //if the slides have yet to be initialised then reset the encoders for the slides and set the slide state to retracted
             this.telemetry.addData("desired string state", desiredSlidesState.toString());
-            resetEncoder(slide);
+            resetEncoder(slides);
             desiredSlidesState = SlidesState.RETRACTED;
         }
     }
