@@ -1,7 +1,6 @@
 package org.firstinspires.ftc.teamcode.OpMode;
 
 
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.CRServo;
@@ -43,28 +42,30 @@ public class MainOp extends LinearOpMode {
         rightLinSlide.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         rightLinSlide.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
-        //Secondary, single motor lin slide used to "launch" drone at the beginning of the game and hoist the robot at the end
+        //Secondary, single motor lin slide used to hoist the robot at the end of the game
         //DcMotor liftingLinSlide = hardwareMap.dcMotor.get("liftingLinSlide");
 
         //liftingLinSlide.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         //liftingLinSlide.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         //liftingLinSlide.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
-        //Intake (GoGekko Wheel) Continuous Servos
+        //Intake (GoGekko Wheel) Continuous Servo
         CRServo goGekkoCRServo = hardwareMap.crservo.get("goGekkoCRServo");
 
-        //Intake (Hinging) Servos
+        //Intake (Hinging) Servo
         CRServo hingeCRServo = hardwareMap.crservo.get("hingeCRServo");
 
-        //Drone dropping Servo located upon secondary lin slide
-        Servo droneServo = hardwareMap.servo.get("droneServo");
+        //Intake (Hatch) Servo
+        Servo hatchServo = hardwareMap.servo.get("hatchServo");
 
         //Running initialization methods
         Drivechain.driveChainInit(wheelFrontLeft, wheelFrontRight, wheelBackLeft, wheelBackRight);
-        IntakeGekkoWheelCRServos.gekkoWheelInit(goGekkoCRServo);
+        IntakeGekkoWheelCRServo.gekkoWheelInit(goGekkoCRServo);
         MainLinearSlides.linearSlideInit(leftLinSlide, rightLinSlide);
-        //LiftingSlide.liftingSlideInit(liftingLinSlide); //ADD BACK ONCE WRITEN
-        IntakeHingeServos.intakeHingeServoInit(hingeCRServo);
+        //LiftingSlide.liftingSlideInit(liftingLinSlide); //ADD BACK ONCE WRITTEN
+        IntakeHingeCRServo.intakeHingeServoInit(hingeCRServo);
+        IntakeHatchServo.hatchServoInit(hatchServo);
+
 
         //OpMode
         waitForStart();
@@ -120,9 +121,10 @@ public class MainOp extends LinearOpMode {
 
             Drivechain.drive(yLeftStickCTLR1, xRightStickCTLR1);
             MainLinearSlides.manualMove(leftTriggerCTRL1, rightTriggerCTRL1);
-            IntakeGekkoWheelCRServos.runWheels(dpadUpCTRL1);
+            IntakeGekkoWheelCRServo.runWheels(dpadUpCTRL1);
             MainLinearSlides.moveToLowerUpper(leftBumperCTRL1, rightBumperCTRL1);
-            IntakeHingeServos.manualHinge(aButtonCTLR1, bButtonCTLR1);
+            IntakeHingeCRServo.manualHinge(aButtonCTLR1, bButtonCTLR1);
+            IntakeHatchServo.hinge(dpadDownCTRL1);
         }
     }
 }

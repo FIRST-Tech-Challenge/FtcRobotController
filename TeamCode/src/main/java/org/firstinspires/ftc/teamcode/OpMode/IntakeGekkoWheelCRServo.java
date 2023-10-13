@@ -2,7 +2,7 @@ package org.firstinspires.ftc.teamcode.OpMode;
 
 import com.qualcomm.robotcore.hardware.CRServo;
 
-public class IntakeGekkoWheelCRServos {
+public class IntakeGekkoWheelCRServo {
 
     static CRServo axleCRServo;
 
@@ -10,7 +10,12 @@ public class IntakeGekkoWheelCRServos {
         axleCRServo = spinny;
     }
 
-    public static void runWheels(boolean dpadUp) {
-        axleCRServo.setPower(1.0);
+    public static void runWheels(boolean a) {
+
+        if(a) {
+            axleCRServo.setPower(1);
+        } else {
+            axleCRServo.setPower(0);
+        }
     }
 }
