@@ -44,7 +44,7 @@ class RackAndPain: DriveMethods() {
 
     override fun runOpMode() {
         //init
-        initMotorsSecondBot()
+//        initMotorsSecondBot()
         rMotorR = hardwareMap.get<DcMotor>(DcMotor::class.java, "rMotorR");
         rMotorL = hardwareMap.get<DcMotor>(DcMotor::class.java, "rMotorL");
         var lClick =0;
@@ -62,18 +62,18 @@ class RackAndPain: DriveMethods() {
             var leftRack = -1;
             var rightRack = 1;
             if (gamepad1.dpad_up){
-              rMotorR!.setPower(0.2*rightRack)
-              rMotorL!.setPower(0.2*leftRack)
+              rMotorR!!.setPower(0.2*rightRack);
+              rMotorL!!.setPower(0.2*leftRack);
             }
             else if(gamepad1.dpad_down){
 
-              rMotorR!.setPower(-0.2*rightRack)
-              rMotorL!.setPower(-0.2*leftRack)
+              rMotorR!!.setPower(-0.2*rightRack);
+              rMotorL!!.setPower(-0.2*leftRack);
             }
             else{
             
-              rMotorR!.setPower(0*rightRack)
-              rMotorL!.setPower(0*leftRack)
+              rMotorR!!.setPower(0.0*rightRack);
+              rMotorL!!.setPower(0.0*leftRack);
             }
 
             sleep(10)
