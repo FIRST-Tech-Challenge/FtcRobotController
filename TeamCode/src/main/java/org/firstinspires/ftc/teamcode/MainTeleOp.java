@@ -65,9 +65,11 @@ public class MainTeleOp extends LinearOpMode {
 
 //Finite State Machine Organization => two systems: Automatic and Manual (can toggle between modes using the start button
 
+            //automatic state machine
             if(isAutomatic) {
 
-                //noodle intake
+                //noodle intake (incorporates break beam sensor)
+                // fourbar immediately goes to outtake position once Box if full
                 if(gp2.wasJustPressed(GamepadKeys.Button.Y)) {
                     Bot.noodles.Intake();
                     while(!bot.box.getIsFull()) {
@@ -81,6 +83,8 @@ public class MainTeleOp extends LinearOpMode {
                 }
 
                 //slide movement (automatic stages)
+                //driver inputs stage level via DPad => slides use motion profiling to reach position
+                //deposit first pixel as soon as slides reach specific stage
                 if (gp2.wasJustPressed(GamepadKeys.Button.DPAD_UP)) {
                     bot.distanceTuning(distanceSensor);
                     Bot.slides.runTo(3);
@@ -99,13 +103,14 @@ public class MainTeleOp extends LinearOpMode {
                     bot.box.depositFirstPixel();
                 }
 
-                //keeping second pixel deposit manual for reasons
+                //can desposit second pixel by clicking A
+                // not automatic so driver can move robot horizontally to deposit this pixel in a specific location
                 if(gp2.wasJustPressed(GamepadKeys.Button.A) && Bot.box.getNumPixelsDeposited()==1) {
                     bot.box.depositSecondPixel();
                     Bot.resetOuttake();
                 }
 
-                //drone + sus code
+                // as soon as suspension is achieved, shoot drone
                 if(gp2.wasJustPressed(GamepadKeys.Button.B)) {
                 //   Bot.suspension.hang();
                     Bot.drone.shoot();
@@ -113,7 +118,10 @@ public class MainTeleOp extends LinearOpMode {
 
             }
 
+
+            //manual state machine
             if(!isAutomatic){
+
                 //drone movement
                 if(gp2.wasJustPressed(GamepadKeys.Button.X)){
                     Bot.drone.shoot();
@@ -136,7 +144,7 @@ public class MainTeleOp extends LinearOpMode {
                     bot.box.depositSecondPixel();
                 }
 
-                //intake movement
+                //intake movement (intake faster when pressing trigger harder)
                 if(gp2.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER)>0.1){
                     double power = gp2.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER);
                     while(gp2.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER)>0.1){
@@ -147,12 +155,12 @@ public class MainTeleOp extends LinearOpMode {
                 }
 
 
-                //slides code
+                //slides code (manually set power of slides via left joystick y value)
                 if(gp2.getLeftY()!=0){
                     Bot.slides.runTo(gp2.getLeftY());
                 }
 
-                //fourbar code
+                //fourbar code (manually set power of slides via right joystick y value)
                 if(gp2.getRightY()>0){
                     Bot.fourbar.runManualOuttake(gp2.getLeftY());
                 }
@@ -164,6 +172,7 @@ public class MainTeleOp extends LinearOpMode {
     }
 
 
+    //drivetrain strafing
     private void drive() {
         if (gp1.wasJustReleased(GamepadKeys.Button.LEFT_STICK_BUTTON)) {
             bot.resetIMU();
