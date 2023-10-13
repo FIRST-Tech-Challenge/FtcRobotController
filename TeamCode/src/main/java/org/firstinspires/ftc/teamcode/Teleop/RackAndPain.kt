@@ -11,7 +11,8 @@ import org.firstinspires.ftc.teamcode.DriveMethods
 class RackAndPain: DriveMethods() {
     var rMotorR: DcMotor? = null;
     var rMotorL: DcMotor? = null;
-    var touchy: TouchSensor? = null
+    var touchyR: TouchSensor? = null
+    var touchyL: TouchSensor? = null
 
 
     override fun runOpMode() {
@@ -19,7 +20,8 @@ class RackAndPain: DriveMethods() {
 //        initMotorsSecondBot()
         rMotorR = hardwareMap.get<DcMotor>(DcMotor::class.java, "rMotorR");
         rMotorL = hardwareMap.get<DcMotor>(DcMotor::class.java, "rMotorL");
-        touchy = hardwareMap.get<TouchSensor>(TouchSensor::class.java, "Touchy")
+        touchyR = hardwareMap.get<TouchSensor>(TouchSensor::class.java, "touchyR")
+        touchyL = hardwareMap.get<TouchSensor>(TouchSensor::class.java, "touchyL")
         var lClick =0;
         var rClick = 0;
         var lPower = 0.2
@@ -37,8 +39,10 @@ class RackAndPain: DriveMethods() {
         var changed_mode2 = false;
         //mode 0 = both, 1 = left, 2 = right
         while (opModeIsActive()) {
-            if (touchy!!.isPressed) {
+            if (touchyR!!.isPressed) {
                 rMotorR!!.setPower(.4*rightRack)
+            }
+            if (touchyL!!.isPressed){
                 rMotorL!!.setPower(.4*leftRack)
             }
 
