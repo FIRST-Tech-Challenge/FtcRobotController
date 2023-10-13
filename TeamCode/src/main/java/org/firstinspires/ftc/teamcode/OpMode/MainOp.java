@@ -28,8 +28,8 @@ public class MainOp extends LinearOpMode {
         wheelBackLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         wheelBackRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
-        wheelFrontRight.setDirection(DcMotorSimple.Direction.REVERSE); //CHECK MOTORS FOR WHICH ONES ARE REVERSED / CHECK GEARS / MOTOR ORIENTATION
-        wheelBackRight.setDirection(DcMotorSimple.Direction.REVERSE);
+        wheelFrontLeft.setDirection(DcMotorSimple.Direction.REVERSE); //CHECK MOTORS FOR WHICH ONES ARE REVERSED / CHECK GEARS / MOTOR ORIENTATION
+        wheelBackLeft.setDirection(DcMotorSimple.Direction.REVERSE);
 
         //Main lin slide Motors
         DcMotor leftLinSlide = hardwareMap.dcMotor.get("leftLinSlide");
@@ -50,21 +50,21 @@ public class MainOp extends LinearOpMode {
         liftingLinSlide.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         //Intake (GoGekko Wheel) Continuous Servo
-        CRServo goGekkoCRServo = hardwareMap.crservo.get("goGekkoCRServo");
+        //CRServo goGekkoCRServo = hardwareMap.crservo.get("goGekkoCRServo");
 
         //Intake (Hinging) Servo
-        CRServo hingeCRServo = hardwareMap.crservo.get("hingeCRServo");
+        //CRServo hingeCRServo = hardwareMap.crservo.get("hingeCRServo");
 
         //Intake (Hatch) Servo
-        Servo hatchServo = hardwareMap.servo.get("hatchServo");
+        //Servo hatchServo = hardwareMap.servo.get("hatchServo");
 
         //Running initialization methods
         Drivechain.driveChainInit(wheelFrontLeft, wheelFrontRight, wheelBackLeft, wheelBackRight);
-        IntakeGekkoWheelCRServo.gekkoWheelInit(goGekkoCRServo);
+        //IntakeGekkoWheelCRServo.gekkoWheelInit(goGekkoCRServo);
         MainLinearSlides.linearSlideInit(leftLinSlide, rightLinSlide);
         LiftingSlide.liftingSlideInit(liftingLinSlide);
-        IntakeHingeCRServo.intakeHingeServoInit(hingeCRServo);
-        IntakeHatchServo.hatchServoInit(hatchServo);
+        //IntakeHingeCRServo.intakeHingeServoInit(hingeCRServo);
+        //IntakeHatchServo.hatchServoInit(hatchServo);
 
 
         //OpMode
@@ -122,12 +122,12 @@ public class MainOp extends LinearOpMode {
             float rightTriggerCTRL2 = gamepad2.right_trigger;
 
             Drivechain.motorDirectionTest(yLeftStickCTLR1, xRightStickCTLR1); //ON TESTING METHOD
-            MainLinearSlides.manualMove(leftTriggerCTRL1, rightTriggerCTRL1); //TEST ME
-            IntakeGekkoWheelCRServo.runWheels(dpadUpCTRL1); //TEST ME
-            MainLinearSlides.moveToLowerUpper(leftBumperCTRL1, rightBumperCTRL1); //TEST ME
-            IntakeHingeCRServo.manualHinge(aButtonCTLR1, bButtonCTLR1); //TEST ME
-            IntakeHatchServo.hinge(dpadDownCTRL1); //TEST ME
-            LiftingSlide.hoist(startButtonCTRL1); //TEST ME
+            MainLinearSlides.manualMove(rightTriggerCTRL1); //TEST ME
+            //IntakeGekkoWheelCRServo.runWheels(dpadUpCTRL1); //TEST ME
+            //MainLinearSlides.moveToLowerUpper(leftBumperCTRL1, rightBumperCTRL1); //TEST ME
+            //IntakeHingeCRServo.manualHinge(aButtonCTLR1, bButtonCTLR1); //TEST ME
+            //IntakeHatchServo.hinge(dpadDownCTRL1); //TEST ME
+            LiftingSlide.hoist(yButtonCTLR1); //TEST ME
         }
     }
 }

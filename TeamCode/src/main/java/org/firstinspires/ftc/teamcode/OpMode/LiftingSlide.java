@@ -5,7 +5,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 public class LiftingSlide {
 
     static DcMotor slideMotor;
-    static boolean isDown;
+    static boolean isDown = true;
 
     public static void liftingSlideInit(DcMotor slide) {
         slideMotor = slide;

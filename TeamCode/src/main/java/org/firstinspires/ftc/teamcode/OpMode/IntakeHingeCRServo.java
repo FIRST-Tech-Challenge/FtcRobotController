@@ -12,9 +12,9 @@ public class IntakeHingeCRServo {
 
     public static void manualHinge(boolean a, boolean b) {
         if(a) {
-            hingeCRServo.setPower(0.1);
+            hingeCRServo.setPower(0.2);
         } else if(b) {
-            hingeCRServo.setPower(-0.1);
+            hingeCRServo.setPower(-0.2);
         } else {
             hingeCRServo.setPower(0);
         }

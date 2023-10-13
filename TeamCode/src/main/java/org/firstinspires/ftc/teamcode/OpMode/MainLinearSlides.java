@@ -12,14 +12,13 @@ public class MainLinearSlides {
         rightSlide = right;
     }
 
-    public static void manualMove(float leftTrigger, float rightTrigger) {
-        leftSlide.setPower(-rightTrigger);
-        rightSlide.setPower(rightTrigger);
-        leftSlide.setPower(leftTrigger);
-        rightSlide.setPower(-leftTrigger);
+
+    public static void manualMove(float rightTrigger) {
+        leftSlide.setPower(rightTrigger);
+        rightSlide.setPower(-rightTrigger);
     }
 
-    public static void moveToLowerUpper(boolean leftBumper, boolean rightBumper) {
+    /*public static void moveToLowerUpper(boolean leftBumper, boolean rightBumper) {
 
         if(leftBumper) {
             if(leftSlide.getCurrentPosition() > 0 && rightSlide.getCurrentPosition() > 0) {
@@ -51,5 +50,5 @@ public class MainLinearSlides {
             }
         }
 
-    }
+    }*/
 }
