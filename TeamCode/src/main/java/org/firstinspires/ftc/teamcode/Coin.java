@@ -1,4 +1,4 @@
-
+package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
@@ -91,17 +91,19 @@ public class Coin extends OpMode{
      */
 
     public void loop() {
-        double left;
+        double lefty;
+        double leftx;
         double right;
 
         // Run wheels in tank mode (note: The joystick goes negative when pushed forward, so negate it)
-        left = gamepad1.left_stick_y;
-        right = gamepad1.right_stick_y;
+        lefty = gamepad1.left_stick_y;
+        leftx = gamepad1.left_stick_x;
+        right = gamepad1.right_stick_x;
 
-        frontLeft.setPower(right);
-        frontRight.setPower(left);
-        backLeft.setPower(right);
-        backRight.setPower(left);
+        frontLeft.setPower(-lefty - leftx + right);
+        frontRight.setPower(lefty + leftx + right);
+        backLeft.setPower(lefty - leftx - right);
+        backRight.setPower(lefty + leftx - right);
         // Use gamepad left & right Bumpers to open and close the claw
         //if (gamepad1.right_bumper)
         //    clawOffset += CLAW_SPEED;
@@ -123,7 +125,8 @@ public class Coin extends OpMode{
 
         // Send telemetry message to signify robot running;
         telemetry.addData("claw",  "Offset = %.2f", clawOffset);
-        telemetry.addData("left",  "%.2f", left);
+        telemetry.addData("left",  "%.2f", lefty);
+        telemetry.addData("left",  "%.2f", leftx);
         telemetry.addData("right", "%.2f", right);
     }
 
