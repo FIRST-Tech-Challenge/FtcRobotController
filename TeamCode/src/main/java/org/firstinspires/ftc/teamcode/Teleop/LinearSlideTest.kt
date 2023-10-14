@@ -28,7 +28,7 @@ class LinearSlideTest: DriveMethods() {
             var Pos = motorSlideLeft?.let { Math.abs(it.currentPosition) }
             if (target < Pos!!) {
                 speed = 50
-                max = 0.7ro
+                max = 0.7
             } else {
                 speed = 300
                 max = 1.0
