@@ -26,4 +26,11 @@ android {
 dependencies {
     implementation project(':FtcRobotController')
     annotationProcessor files('lib/OpModeAnnotationProcessor.jar')
+
+    //Road Runner implementations
+    implementation 'org.apache.commons:commons-math3:3.6.1'
+    implementation 'com.acmerobotics.roadrunner:core:0.5.5'
+    implementation 'org.ejml:ejml-all:0.39' //For Mecanum files in teamcode/lib/control
+    implementation 'org.openftc:easyopencv:1.5.2'//OpenCV implementation
+    implementation 'org.openftc:rev-extensions-2:1.2'
 }
