@@ -39,6 +39,7 @@ open class DriveMethods: LinearOpMode() {
     lateinit var visionPortalRight: VisionPortal
 
     lateinit var tfod: TfodProcessor
+    lateinit var tfodRight: TfodProcessor
 
     lateinit var aprilTag: AprilTagProcessor
 
@@ -49,25 +50,30 @@ open class DriveMethods: LinearOpMode() {
         initVision(processorType, 1.0, "/sdcard/FIRST/models/ssd_mobilenet_v2_320x320_coco17_tpu_8.tflite", readLabels("/sdcard/FIRST/models/ssd_mobilenet_v2_label_map.txt"))
     }
 
+    fun initVision(processorType: VisionProcessors, useRightCam: Boolean) {
+        initVision(processorType, 1.0, "/sdcard/FIRST/models/ssd_mobilenet_v2_320x320_coco17_tpu_8.tflite", readLabels("/sdcard/FIRST/models/ssd_mobilenet_v2_label_map.txt"), useRightCam)
+    }
+
     fun initVision(processorType: VisionProcessors, zoom: Double) {
         initVision(processorType, zoom, "/sdcard/FIRST/models/ssd_mobilenet_v2_320x320_coco17_tpu_8.tflite", readLabels("/sdcard/FIRST/models/ssd_mobilenet_v2_label_map.txt"))
     }
 
-    fun initVision(processorType: VisionProcessors, zoom: Double = 1.0, model: String = "/sdcard/FIRST/models/ssd_mobilenet_v2_320x320_coco17_tpu_8.tflite", labelMap: Array<String> = readLabels("/sdcard/FIRST/models/ssd_mobilenet_v2_label_map.txt"), useRightCam: Boolean = false) {
+    fun initVision(processorType: VisionProcessors, zoom: Double = 1.0, model: String = "/sdcard/FIRST/models/ssd_mobilenet_v2_320x320_coco17_tpu_8.tflite", labelMap: Array<String> = readLabels("/sdcard/FIRST/models/ssd_mobilenet_v2_label_map.txt"), useRightCam: Boolean = true) {
         // Create the bob the builder to build the VisionPortal
         val builderLeft: VisionPortal.Builder = VisionPortal.Builder()
         val builderRight: VisionPortal.Builder? = if (useRightCam)  VisionPortal.Builder() else null
 
         // Set the camera of the new VisionPortal to the webcam mounted to the robot
         builderLeft.setCamera(hardwareMap.get(WebcamName::class.java, "Webcam 1"))
-//        builderLeft.setCameraResolution(Size(800, 600))
-        if (useRightCam) {
-            builderRight?.setCamera(hardwareMap.get(WebcamName::class.java, "Webcam 2"))
-        }
+        if (useRightCam) builderRight?.setCamera(hardwareMap.get(WebcamName::class.java, "Webcam 2"))
 
         // Enable Live View for debugging purposes
         builderLeft.enableLiveView(true)
         builderRight?.enableLiveView(true)
+        builderLeft.setCameraResolution(Size(320, 240))
+        builderRight?.setCameraResolution(Size(320,240))
+
+        var view = VisionPortal.makeMultiPortalView(2, VisionPortal.MultiPortalLayout.HORIZONTAL)
 
         when (processorType) {
             VisionProcessors.APRILTAG -> {
@@ -84,13 +90,21 @@ open class DriveMethods: LinearOpMode() {
                     .setModelFileName(model)
                     .setModelLabels(labelMap)
                     .build()
+                if (useRightCam) {
+                    tfodRight = TfodProcessor.Builder()
+                        .setModelFileName(model)
+                        .setModelLabels(labelMap)
+                        .build()
+                }
 
                 tfod.setZoom(zoom)
                 tfod.setMinResultConfidence(0.5F)
-
+                if (useRightCam) tfod.setZoom(zoom)
+                if (useRightCam) tfod.setMinResultConfidence(0.5F)
                 // Add TensorFlow Processor to VisionPortal builder
                 builderLeft.addProcessor(tfod)
-                if (useRightCam) builderRight?.addProcessor(tfod)
+                if (useRightCam) builderRight?.addProcessor(tfodRight)
+
             }
             VisionProcessors.BOTH -> {
                 // Initialize the TensorFlow Processor
@@ -108,7 +122,8 @@ open class DriveMethods: LinearOpMode() {
                 if (useRightCam) builderRight?.addProcessor(aprilTag)
             }
         }
-
+        builderLeft.setLiveViewContainerId(view[0])
+        if (useRightCam) builderRight?.setLiveViewContainerId(view[1])
         // Build the VisionPortal and set visionPortal to it
         visionPortalLeft = builderLeft.build()
         if (useRightCam) visionPortalRight = builderRight?.build()!!
