@@ -96,8 +96,8 @@ public class Move extends OpMode {
         // Set motor power
         leftFrontPower = Range.clip(drive + turn + strafe, -0.35, 0.35);
         rightFrontPower = Range.clip(drive - turn - strafe, -0.35, 0.35);
-        leftBackPower = Range.clip(drive + turn - strafe, -0.35, 0.35);
-        rightBackPower = Range.clip(drive - turn + strafe, -0.35, 0.35);
+        leftBackPower = Range.clip(drive + turn - strafe, -1.4, 1.4);
+        rightBackPower = Range.clip(drive - turn + strafe, -1.4, 1.4);
 
         // Telemetry
         telemetry.addData("Speed: ", (leftFrontPower + leftBackPower + rightBackPower + rightFrontPower) / 4);
