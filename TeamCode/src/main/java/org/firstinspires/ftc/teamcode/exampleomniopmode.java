@@ -1,4 +1,8 @@
+
+package org.firstinspires.ftc.teamcode;/* Copyright (c) 2021 FIRST. All rights reserved.
+
 /* Copyright (c) 2021 FIRST. All rights reserved.
+
  *
  * Redistribution and use in source and binary forms, with or without modification,
  * are permitted (subject to the limitations in the disclaimer below) provided that
@@ -26,6 +30,7 @@
  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
+
 
 package org.firstinspires.ftc.teamcode;
 
@@ -63,6 +68,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
  */
 
 @TeleOp(name="Basic: Omni Linear OpMode", group="Linear OpMode")
+
 // @Disabled
 public class exampleomniopmode extends LinearOpMode {
 
@@ -105,10 +111,15 @@ public class exampleomniopmode extends LinearOpMode {
         waitForStart();
         runtime.reset();
 
+        double speed = 0.75;
+
         // run until the end of the match (driver presses STOP)
         while (opModeIsActive()) {
             double max;
 
+            if (gamepad1.y){
+                speed = 0;
+            }
             // POV Mode uses left joystick to go forward & strafe, and right joystick to rotate.
             double axial   = -gamepad1.left_stick_y;  // Note: pushing stick forward gives negative value
             double lateral =  gamepad1.left_stick_x;
@@ -116,10 +127,10 @@ public class exampleomniopmode extends LinearOpMode {
 
             // Combine the joystick requests for each axis-motion to determine each wheel's power.
             // Set up a variable for each drive wheel to save the power level for telemetry.
-            double leftFrontPower  = axial + lateral + yaw;
-            double rightFrontPower = axial - lateral - yaw;
-            double leftBackPower   = axial - lateral + yaw;
-            double rightBackPower  = axial + lateral - yaw;
+            double leftFrontPower  = axial + lateral + yaw * speed;
+            double rightFrontPower = axial - lateral - yaw * speed;
+            double leftBackPower   = axial - lateral + yaw * speed;
+            double rightBackPower  = axial + lateral - yaw * speed;
 
             // Normalize the values so no wheel power exceeds 100%
             // This ensures that the robot maintains the desired motion.
@@ -152,6 +163,7 @@ public class exampleomniopmode extends LinearOpMode {
             */
 
             // Send calculated power to wheels
+
             leftFrontDrive.setPower(leftFrontPower);
             rightFrontDrive.setPower(rightFrontPower);
             leftBackDrive.setPower(leftBackPower);

@@ -62,9 +62,9 @@ import com.qualcomm.robotcore.util.ElapsedTime;
  * Remove or comment out the @Disabled line to add this OpMode to the Driver Station OpMode list
  */
 
-@TeleOp(name="KushaalDriverOpMode", group="Linear OpMode")
+@TeleOp(name="Basic: ShreyanshDriverOpMode", group="Linear OpMode")
 // @Disabled
-public class KushaalDriverOpMode extends LinearOpMode {
+public class ShreyanshDriverOpMode extends LinearOpMode {
 
     // Declare OpMode members for each of the 4 motors.
     private ElapsedTime runtime = new ElapsedTime();
@@ -78,8 +78,8 @@ public class KushaalDriverOpMode extends LinearOpMode {
 
         // Initialize the hardware variables. Note that the strings used here must correspond
         // to the names assigned during the robot configuration step on the DS or RC devices.
-        leftFrontDrive = hardwareMap.get(DcMotor.class, "left_front_drive");
-        leftBackDrive = hardwareMap.get(DcMotor.class, "left_back_drive");
+        leftFrontDrive  = hardwareMap.get(DcMotor.class, "left_front_drive");
+        leftBackDrive  = hardwareMap.get(DcMotor.class, "left_back_drive");
         rightFrontDrive = hardwareMap.get(DcMotor.class, "right_front_drive");
         rightBackDrive = hardwareMap.get(DcMotor.class, "right_back_drive");
 
@@ -105,38 +105,50 @@ public class KushaalDriverOpMode extends LinearOpMode {
         waitForStart();
         runtime.reset();
 
+        double speed = 0.75;
         double strafe = 0;
-        double max;
-        String StrafeToString = null;
+
         // run until the end of the match (driver presses STOP)
         while (opModeIsActive()) {
+            double max;
 
+            if (speed < 0){
+                speed = 0;
+            }
 
-            if (gamepad1.left_bumper) {
+            if (speed > 100){
+                speed = 100;
+            }
+
+            if (gamepad1.dpad_left){
+                speed -= 25;
+                Thread.sleep(100);
+            }
+            if (gamepad1.dpad_right){
+                speed += 25;
+                Thread.sleep(100);
+            }
+            if (gamepad1.left_bumper){
                 strafe = -1;
-                StrafeToString = "Left";
             }
-
-            if (gamepad1.right_bumper) {
+            if (gamepad1.right_bumper){
                 strafe = 1;
-                StrafeToString = "Right";
             }
-            if (!(gamepad1.right_bumper || gamepad1.left_bumper)){
-                strafe = 0;
-                StrafeToString = "Idle";
+            if (gamepad1.y){
+                speed = 0;
             }
-
 
             // POV Mode uses left joystick to go forward & strafe, and right joystick to rotate.
-            double axial = -gamepad1.left_stick_y;
-            double yaw = -gamepad1.right_stick_y;
+            double axial   = -gamepad1.left_stick_y;  // Note: pushing stick forward gives negative value
+            double lateral =  gamepad1.left_stick_x;
+            double yaw     =  gamepad1.right_stick_x;
 
             // Combine the joystick requests for each axis-motion to determine each wheel's power.
             // Set up a variable for each drive wheel to save the power level for telemetry.
-            double leftFrontPower = strafe + axial;
-            double rightFrontPower = -strafe + yaw;
-            double leftBackPower = -strafe + axial;
-            double rightBackPower = strafe + yaw;
+            double leftFrontPower  = axial + lateral + yaw * speed;
+            double rightFrontPower = axial - lateral - yaw * speed;
+            double leftBackPower   = axial - lateral + yaw * speed;
+            double rightBackPower  = axial + lateral - yaw * speed;
 
             // Normalize the values so no wheel power exceeds 100%
             // This ensures that the robot maintains the desired motion.
@@ -145,10 +157,10 @@ public class KushaalDriverOpMode extends LinearOpMode {
             max = Math.max(max, Math.abs(rightBackPower));
 
             if (max > 1.0) {
-                leftFrontPower /= max;
+                leftFrontPower  /= max;
                 rightFrontPower /= max;
-                leftBackPower /= max;
-                rightBackPower /= max;
+                leftBackPower   /= max;
+                rightBackPower  /= max;
             }
 
             // This is test code:
@@ -169,18 +181,15 @@ public class KushaalDriverOpMode extends LinearOpMode {
             */
 
             // Send calculated power to wheels
-            if (!gamepad1.y) {
-                leftFrontDrive.setPower(leftFrontPower);
-                rightFrontDrive.setPower(rightFrontPower);
-                leftBackDrive.setPower(leftBackPower);
-                rightBackDrive.setPower(rightBackPower);
-            }
+            leftFrontDrive.setPower(leftFrontPower);
+            rightFrontDrive.setPower(rightFrontPower);
+            leftBackDrive.setPower(leftBackPower);
+            rightBackDrive.setPower(rightBackPower);
+
             // Show the elapsed game time and wheel power.
             telemetry.addData("Status", "Run Time: " + runtime.toString());
             telemetry.addData("Front left/Right", "%4.2f, %4.2f", leftFrontPower, rightFrontPower);
             telemetry.addData("Back  left/Right", "%4.2f, %4.2f", leftBackPower, rightBackPower);
-            telemetry.addData("Strafe Value", StrafeToString);
             telemetry.update();
         }
-    }
-}
+    }}
