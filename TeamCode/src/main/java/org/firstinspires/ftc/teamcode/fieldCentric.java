@@ -9,7 +9,11 @@ import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 
 @TeleOp
-public class FieldCentricMecanumTeleOp extends LinearOpMode {
+public class fieldCentric extends LinearOpMode {
+
+    // declare buttons
+    Button driverButtonLeftBumper;
+    Button driverButtonRightBumper;
     @Override
     public void runOpMode() throws InterruptedException {
         // Declare our motors
@@ -18,6 +22,10 @@ public class FieldCentricMecanumTeleOp extends LinearOpMode {
         DcMotor backLeftMotor = hardwareMap.dcMotor.get("backLeftMotor");
         DcMotor frontRightMotor = hardwareMap.dcMotor.get("frontRightMotor");
         DcMotor backRightMotor = hardwareMap.dcMotor.get("backRightMotor");
+
+        // map buttons
+        driverButtonLeftBumper = new Button(gamepad1, Button.NAME.LEFT_BUMPER);
+        driverButtonRightBumper = new Button(gamepad1, Button.NAME.RIGHT_BUMPER);
 
         // Reverse the right side motors. This may be wrong for your setup.
         // If your robot moves backwards when commanded to go forwards,
@@ -42,21 +50,29 @@ public class FieldCentricMecanumTeleOp extends LinearOpMode {
         while (opModeIsActive()) {
             double y = -gamepad1.left_stick_y; // Remember, Y stick value is reversed
             double x = gamepad1.left_stick_x;
-            double rx = gamepad1.right_stick_x;
+            double rx = -gamepad1.right_stick_x;
 
             // This button choice was made so that it is hard to hit on accident,
             // it can be freely changed based on preference.
             // The equivalent button is start on Xbox-style controllers.
             if (gamepad1.options) {
-                imu.resetYaw();
+                imu.resetYaw(); // Reset the IMU yaw angle when the 'options' button is pressed.
             }
 
-            double botHeading = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS);
+            // Strafe
+            /*if (driverButtonLeftBumper.Pressed()) {
+                x = -1.0; // Strafe left
+            } else if (driverButtonRightBumper.Pressed()) {
+                x = 1.0; // Strafe right
+            }*/
+
+            // gets the angle of the robot via the imu and gets the yaw
+            double botHeading = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS) + Math.PI;
 
             // Rotate the movement direction counter to the bot's rotation
             double rotX = x * Math.cos(-botHeading) - y * Math.sin(-botHeading);
             double rotY = x * Math.sin(-botHeading) + y * Math.cos(-botHeading);
-            double rotationalCorrection = 1.0; // original value was 1.1
+            double rotationalCorrection = 1.1; // original value of code on site was 1.1
 
             rotX = rotX * rotationalCorrection;  // Counteract imperfect strafing
 
@@ -64,11 +80,13 @@ public class FieldCentricMecanumTeleOp extends LinearOpMode {
             // This ensures all the powers maintain the same ratio,
             // but only if at least one is out of the range [-1, 1]
             double denominator = Math.max(Math.abs(rotY) + Math.abs(rotX) + Math.abs(rx), 1);
+            // uses the values calculated via the imu's yaw to create accurate movement
             double frontLeftPower = (rotY + rotX + rx) / denominator;
             double backLeftPower = (rotY - rotX + rx) / denominator;
             double frontRightPower = (rotY - rotX - rx) / denominator;
             double backRightPower = (rotY + rotX - rx) / denominator;
 
+            // Set motor power based on the calculated values
             frontLeftMotor.setPower(frontLeftPower);
             backLeftMotor.setPower(backLeftPower);
             frontRightMotor.setPower(frontRightPower);
