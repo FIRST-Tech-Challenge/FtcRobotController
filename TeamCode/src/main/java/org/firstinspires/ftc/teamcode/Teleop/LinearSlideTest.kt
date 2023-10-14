@@ -7,6 +7,7 @@ import org.firstinspires.ftc.teamcode.DriveMethods
 import org.firstinspires.ftc.teamcode.Variables.motorSlideLeft
 import org.firstinspires.ftc.teamcode.Variables.motorSlideRight
 import kotlin.math.E
+import kotlin.math.abs
 import kotlin.math.exp
 
 @TeleOp(name = "LSTest", group = "LinearSlide")
@@ -33,7 +34,7 @@ class LinearSlideTest: DriveMethods() {
                 speed = 300
                 max = 1.0
             }
-            motorSlideLeft?.power = -((2 / (1 + (exp(-(target - Pos!!) / speed)))) - 1) * max
+            motorSlideLeft?.power = -((2 / (1 + (exp(-(target - Pos) / speed)))) - 1) * max
             if (gamepad1.x) {
                 //here is cool stuff
                 sleep(200)
