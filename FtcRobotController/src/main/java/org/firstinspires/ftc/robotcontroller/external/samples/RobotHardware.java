@@ -77,6 +77,31 @@ public class RobotHardware {
     }
 
     /**
+     * Calculates the left/right motor powers required to achieve the requested
+     * robot motions: Drive (Axial motion) and Turn (Yaw motion).
+     * Then sends these power levels to the motors.
+     *
+     * @param Drive     Fwd/Rev driving power (-1.0 to 1.0) +ve is forward
+     * @param Turn      Right/Left turning power (-1.0 to 1.0) +ve is CW
+     */
+    public void driveRobot(double Drive, double Turn) {
+        // Combine drive and turn for blended motion.
+        double left  = Drive + Turn;
+        double right = Drive - Turn;
+
+        // Scale the values so neither exceed +/- 1.0
+        double max = Math.max(Math.abs(left), Math.abs(right));
+        if (max > 1.0)
+        {
+            left /= max;
+            right /= max;
+        }
+
+        // Use existing function to drive both wheels.
+        setDrivePower(left, right);
+    }
+
+    /**
      * Initialize all the robot's hardware.
      * This method must be called ONCE when the OpMode is initialized.
      * <p>
@@ -106,31 +131,6 @@ public class RobotHardware {
 
         myOpMode.telemetry.addData(">", "Hardware Initialized");
         myOpMode.telemetry.update();
-    }
-
-    /**
-     * Calculates the left/right motor powers required to achieve the requested
-     * robot motions: Drive (Axial motion) and Turn (Yaw motion).
-     * Then sends these power levels to the motors.
-     *
-     * @param Drive     Fwd/Rev driving power (-1.0 to 1.0) +ve is forward
-     * @param Turn      Right/Left turning power (-1.0 to 1.0) +ve is CW
-     */
-    public void driveRobot(double Drive, double Turn) {
-        // Combine drive and turn for blended motion.
-        double left  = Drive + Turn;
-        double right = Drive - Turn;
-
-        // Scale the values so neither exceed +/- 1.0
-        double max = Math.max(Math.abs(left), Math.abs(right));
-        if (max > 1.0)
-        {
-            left /= max;
-            right /= max;
-        }
-
-        // Use existing function to drive both wheels.
-        setDrivePower(left, right);
     }
 
     /**
