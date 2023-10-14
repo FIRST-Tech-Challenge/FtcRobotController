@@ -25,7 +25,7 @@ class RackAndPain: DriveMethods() {
         var lClick =0;
         var rClick = 0;
         var lPower = 0.2
-        var rPower = 0.2
+        var rPower = 0.2 * 1.26923076923 * 0.87772397094
         var leftRack = 1;
         var rightRack = -1;
         telemetry.addData("Initiating", "Rack Motor Init");
@@ -39,13 +39,19 @@ class RackAndPain: DriveMethods() {
         var changed_mode2 = false;
         //mode 0 = both, 1 = left, 2 = right
         while (opModeIsActive()) {
+            var ending = false;
             if (touchyR!!.isPressed) {
                 rMotorR!!.setPower(.4*rightRack)
                 telemetry.addLine("R Sensor Detected")
+                ending = true;
             }
             if (touchyL!!.isPressed){
                 rMotorL!!.setPower(.4*leftRack)
                 telemetry.addLine("L Sensor Detected")
+                ending = true;
+            }
+            if (ending){
+              continue;
             }
 
             lClick = (rMotorL!!.getCurrentPosition())
@@ -107,7 +113,7 @@ class RackAndPain: DriveMethods() {
                 } else if (mode == 1) {
                     rMotorL!!.power = lPower * leftRack;
                 } else if (mode == 2) {
-                    rMotorR!!.power = lPower * leftRack;
+                    rMotorR!!.power = rPower * rightRack;
                 }
             }
 
