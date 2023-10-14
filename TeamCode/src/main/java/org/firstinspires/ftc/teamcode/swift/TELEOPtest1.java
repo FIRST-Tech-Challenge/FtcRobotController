@@ -158,7 +158,7 @@ public class TELEOPtest1 extends LinearOpMode {
             armPosition = .5;                   // set arm to half way up.
             gripPosition = MAX_POSITION;        // set grip to full open.
 
-            while (opModeIsActive()) {
+
                 leftY = gamepad2.left_stick_y * -1;
                 rightY = gamepad2.right_stick_y * -1;
 
@@ -206,5 +206,5 @@ public class TELEOPtest1 extends LinearOpMode {
             }
         }
     }
-}
+
 
