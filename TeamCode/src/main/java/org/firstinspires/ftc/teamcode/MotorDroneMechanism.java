@@ -49,7 +49,7 @@ import com.qualcomm.robotcore.util.Range;
  */
 
 @TeleOp(name="MotorDroneMechanism", group="Robot")
-@Disabled
+//@Disabled
 public class MotorDroneMechanism extends LinearOpMode {
 
     /* Declare OpMode members. */
