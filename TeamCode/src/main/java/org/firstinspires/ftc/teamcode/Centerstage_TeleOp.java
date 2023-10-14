@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
 // This file is the main TeleOp file.
 
@@ -12,13 +13,26 @@ public class Centerstage_TeleOp extends LinearOpMode {
     public void runOpMode() {
         // Initiates Bessie!
         Robot robot = new Robot(hardwareMap);
+        boolean toggle = false;
+        ElapsedTime toggleTime = new ElapsedTime();
 
         waitForStart();
         while (opModeIsActive()) {
 
-            // This controls the drive train unsing three input methods:
+            // This controls the drive train using three input methods:
             // -1 to 1
             robot.driveTrain.drive(-gamepad1.left_stick_y, gamepad1.left_stick_x, gamepad1.right_stick_x);
+
+            if (gamepad2.x && toggleTime.time() > .75 && !toggle) {
+                toggle = true;
+                toggleTime.reset(); }
+            else if (gamepad2.x && toggleTime.time() > .75 && toggle) {
+                toggle = false;
+                toggleTime.reset();
+            }
+
+            robot.intake.driveIntake(toggle);
+            robot.outtake.driveLift(gamepad2.dpad_up, gamepad2.dpad_down);
 
             // The next six lines give the power of each of the driving motors to the driver station:
             telemetry.addData("Front Driving Motors | Left, Right", "%4.2f, %4.2f",
@@ -27,6 +41,9 @@ public class Centerstage_TeleOp extends LinearOpMode {
             telemetry.addData("Back Driving Motors | Left, Right", "%4.2f, %4.2f",
                     robot.driveTrain.leftBackDrive.getPower(),
                     robot.driveTrain.rightBackDrive.getPower());
+            telemetry.addData("Intake Motor", robot.intake.intakeMotor.getPower());
+            telemetry.addData("Outtake: Lift Motor", robot.outtake.outtakeMotor.getPower());
+            telemetry.addData("Toggle Status", toggle);
             telemetry.update();
         }
     }
