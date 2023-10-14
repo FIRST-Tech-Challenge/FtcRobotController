@@ -12,7 +12,6 @@ import com.qualcomm.robotcore.hardware.Servo;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 
 @TeleOp(name = "Mecanum - DO")
-@Disabled
 public class mecenum_2 extends LinearOpMode {
 
     public Servo Claw = null;
@@ -30,7 +29,12 @@ public class mecenum_2 extends LinearOpMode {
 
 
 
-        // Reverse the right side motors. Flip if goes backward.
+
+        // Reverse the right side motors. Flip if goes backward. hi monkey
+        liftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        liftMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        armMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        armMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         frontRightMotor.setDirection(DcMotorSimple.Direction.FORWARD);
         backRightMotor.setDirection(DcMotorSimple.Direction.FORWARD);
         frontLeftMotor.setDirection(DcMotorSimple.Direction.REVERSE);
@@ -51,13 +55,15 @@ public class mecenum_2 extends LinearOpMode {
         imu.initialize(imuParams);
 
         double clawPosition=0;
+        double lift = 0;
+        double armPosition = 0;
 
 
         waitForStart();
 
         while (opModeIsActive()) {
             double y = -gamepad1.left_stick_y; // Remember, Y stick value is reversed
-            double x = gamepad1.left_stick_x;
+            double x = -gamepad1.left_stick_x;
             double rx = gamepad1.right_stick_x;
 
             // This button choice was made so that it is hard to hit on accident,
@@ -66,25 +72,46 @@ public class mecenum_2 extends LinearOpMode {
             if (gamepad1.x) {
                 imu.resetYaw();
             }
-            if (gamepad1.left_trigger >= 0.4) {
-                armMotor.setPower(gamepad1.left_trigger);
+            if (lift<=100 && (gamepad1.left_trigger >= 0.4)) {
+                liftMotor.setPower(gamepad1.left_trigger);
+                telemetry.addData("going up",liftMotor.getCurrentPosition());
+                lift = liftMotor.getCurrentPosition();
+
             }
-            else if (gamepad1.right_trigger>=0.4){
-                liftMotor.setPower(-gamepad1.right_trigger);
+            else if (lift>=0 && (gamepad1.right_trigger>=0.4)){
+                liftMotor.setPower(-gamepad1.left_trigger);
+                telemetry.addData("rotating",liftMotor.getCurrentPosition());
+                lift = liftMotor.getCurrentPosition();
             }
             else{
-                liftMotor.setPower(0);
+                armMotor.setPower(0);
+                telemetry.addLine("not moving");
             }
-            if (gamepad1.right_bumper && gamepad1.left_bumper){
-                telemetry.addLine("Claw Open");
+            if (armPosition>=100 && (gamepad2.right_trigger >=0.4)){
+                armMotor.setPower(gamepad2.left_trigger);
+                telemetry.addData("lifting",liftMotor.getCurrentPosition());
+                armPosition = armMotor.getCurrentPosition();
+            }
+            else if (armPosition<=100 && (gamepad2.left_trigger>=0.4)){
+                armMotor.setPower(-gamepad2.right_trigger);
+                telemetry.addData("lifting",liftMotor.getCurrentPosition());
+                armPosition = armMotor.getCurrentPosition();
+            }
+            else{
+                armMotor.setPower(0);
+                telemetry.addLine("not going up");
+            }
+            if (gamepad1.right_bumper) {
+                telemetry.addLine("Claw Opened");
                 clawPosition = 0.3;
                 Claw.setPosition(clawPosition);
-            }
-            else if (gamepad1.right_bumper || gamepad1.left_bumper){
-                telemetry.addLine("Claw Closed");
+            } else if (gamepad1.left_bumper) {
+                //don't need    telemetry.addData("gamepad1.right_bumper",gamepad1.right_bumper);
+                telemetry.addLine("claw closed");
                 clawPosition = 0.7;
                 Claw.setPosition(clawPosition);
             }
+
 
             double botHeading = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS);
 
@@ -107,6 +134,9 @@ public class mecenum_2 extends LinearOpMode {
             backLeftMotor.setPower(backLeftPower);
             frontRightMotor.setPower(frontRightPower);
             backRightMotor.setPower(backRightPower);
+
+            telemetry.update();
+            sleep(500);
         }
     }
 }

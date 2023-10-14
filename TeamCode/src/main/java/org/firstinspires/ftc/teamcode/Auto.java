@@ -12,6 +12,7 @@ import org.checkerframework.checker.units.qual.C;
 
 @Autonomous
 @Disabled
+
 public class Auto extends LinearOpMode{
 
     static final double FEET_PER_METER = 3.28084;
@@ -99,7 +100,7 @@ public class Auto extends LinearOpMode{
     }
     private void lift(double speed, double inches) {
 
-        liftMotor.setTargetPosition((int) (inches * INCHES_PER_DEGREE * COUNTS_PER_INCH + leftMotor.getCurrentPosition()));
+        liftMotor.setTargetPosition((int) (inches * INCHES_PER_DEGREE * COUNTS_PER_INCH + liftMotor.getCurrentPosition()));
 
         liftMotor.setPower(speed);
 
