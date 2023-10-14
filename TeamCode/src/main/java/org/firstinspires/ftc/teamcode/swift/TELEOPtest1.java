@@ -131,8 +131,9 @@ public class TELEOPtest1 extends LinearOpMode {
         telemetry.update();
 
 
-
+        //Define variables for arm, wrist, and gripper
         Servo wristServo, left_Gripper, right_Gripper;
+        DcMotor armMotor;
         //CRServo contServo;
         float leftY, rightY;
         double armPosition, gripPosition, contPower;
@@ -141,11 +142,7 @@ public class TELEOPtest1 extends LinearOpMode {
         // called when init button is  pressed.
 
         {
-            armMotor = hardwareMap.dcMotor.get("armMotor");
-            //rightMotor = hardwareMap.dcMotor.get("right_motor");
-
-            //leftMotor.setDirection(DcMotor.Direction.REVERSE);
-
+            armMotor = hardwareMap.get(DcMotor.class, "armMotor");
             wristServo = hardwareMap.servo.get("Wrist Servo");
             left_Gripper = hardwareMap.servo.get("Left Gripper");
             right_Gripper = hardwareMap.servo.get("Right Gripper");
