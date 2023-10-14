@@ -47,9 +47,10 @@ public class ClimberBot extends LinearOpMode{
             m_rearRight.setPower(y + x - rotation);
             m_climber.setPower(gamepad2.right_stick_y);
 
-            
+
         }
 
     }
 
 }
+\
