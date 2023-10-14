@@ -158,7 +158,7 @@ public class TinyWebServer extends Thread {
 
         InetAddress addr = InetAddress.getByName(ip); ////"172.31.0.186");
         serverSocket = new ServerSocket(port, 100, addr);
-        serverSocket.setSoTimeout(5000);  //set timeout for listner
+        serverSocket.setSoTimeout(5000);  //set timeout for listener
 
     }
 
