@@ -159,8 +159,8 @@ public class TELEOPtest1 extends LinearOpMode {
             gripPosition = MAX_POSITION;        // set grip to full open.
 
             while (opModeIsActive()) {
-                leftY = gamepad1.left_stick_y * -1;
-                rightY = gamepad1.right_stick_y * -1;
+                leftY = gamepad2.left_stick_y * -1;
+                rightY = gamepad2.right_stick_y * -1;
 
                 armMotor.setPower(Range.clip(leftY, -1.0, 1.0));
                 //rightMotor.setPower(Range.clip(rightY, -1.0, 1.0));
@@ -172,24 +172,24 @@ public class TELEOPtest1 extends LinearOpMode {
                 // variable to change the servo location.
 
                 // move arm down on A button if not already at lowest position.
-                if (gamepad1.a && armPosition > MIN_POSITION) armPosition -= .01;
+                if (gamepad2.a && armPosition > MIN_POSITION) armPosition -= .01;
 
                 // move arm up on B button if not already at the highest position.
-                if (gamepad1.b && armPosition < MAX_POSITION) armPosition += .01;
+                if (gamepad2.b && armPosition < MAX_POSITION) armPosition += .01;
 
                 // open the gripper on X button if not already at most open position.
-                if (gamepad1.x && gripPosition < MAX_POSITION) gripPosition = gripPosition + .01;
+                if (gamepad2.x && gripPosition < MAX_POSITION) gripPosition = gripPosition + .01;
 
                 // close the gripper on Y button if not already at the closed position.
-                if (gamepad1.y && gripPosition > MIN_POSITION) gripPosition = gripPosition - .01;
+                if (gamepad2.y && gripPosition > MIN_POSITION) gripPosition = gripPosition - .01;
 
                 // Set continuous servo power level and direction.
-                if (gamepad1.dpad_left)
-                    contPower = .20;
-                else if (gamepad1.dpad_right)
-                    contPower = -.20;
-                else
-                    contPower = 0.0;
+                //if (gamepad1.dpad_left)
+                    //contPower = .20;
+                //else if (gamepad1.dpad_right)
+                    //contPower = -.20;
+                //else
+                    //contPower = 0.0;
 
                 // set the servo position/power values as we have computed them.
                 wristServo.setPosition(Range.clip(armPosition, MIN_POSITION, MAX_POSITION));
