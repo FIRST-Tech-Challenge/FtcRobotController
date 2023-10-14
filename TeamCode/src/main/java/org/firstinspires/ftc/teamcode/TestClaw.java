@@ -51,16 +51,44 @@ import org.firstinspires.ftc.robotcontroller.external.samples.RobotHardware;
  * Use Android Studio to Copy this Class, and Paste it into your team's code folder with a new name.
  * Remove or comment out the @Disabled line to add this OpMode to the Driver Station OpMode list
  */
+<<<<<<< HEAD:TeamCode/src/main/java/org/firstinspires/ftc/teamcode/TestClaw.java
 @TeleOp(name = "Test: Claw", group = "Concept")
 public class TestClaw extends LinearOpMode {
+=======
+@TeleOp(name = "Concept: Scan Servo", group = "Concept")
+// @Disabled
+public class ConceptScanServo extends LinearOpMode {
+
+
+    static final double INCREMENT   = 0.01;     // amount to slew servo each CYCLE_MS cycle
+    static final int    CYCLE_MS    =   50;     // period of each cycle
+
+    static final double MAX_POS     =  1.0;     // Maximum rotational position
+    static final double MIN_POS     =  0.0;     // Minimum rotational position
+
+    // Define class members
+    Servo   servo;
+    double  position = (MAX_POS - MIN_POS) / 2; // Start at halfway position
+    boolean rampUp = true;
+>>>>>>> master:TeamCode/src/main/java/org/firstinspires/ftc/teamcode/ConceptScanServo.java
 
     Claw claw       = new Claw(this);
 
     @Override
     public void runOpMode() {
 
+<<<<<<< HEAD:TeamCode/src/main/java/org/firstinspires/ftc/teamcode/TestClaw.java
         // initialize all the hardware, using the hardware class. See how clean and simple this is?
         claw.init();
+=======
+        // Connect to servo (Assume Robot Left Hand)
+        // Change the text in quotes to match any servo name on your robot.
+        servo = hardwareMap.get(Servo.class, "drone_launcher");
+
+        // Wait for the start button
+        telemetry.addData(">", "Press Start to scan Servo." );
+        telemetry.update();
+>>>>>>> master:TeamCode/src/main/java/org/firstinspires/ftc/teamcode/ConceptScanServo.java
 
         // Send telemetry message to signify robot waiting;
         // Wait for the game to start (driver presses PLAY)
