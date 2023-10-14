@@ -96,8 +96,8 @@ public class Move extends OpMode {
         // Set motor power
         leftFrontPower = Range.clip(drive + turn + strafe, -0.35, 0.35);
         rightFrontPower = Range.clip(drive - turn - strafe, -0.35, 0.35);
-        leftBackPower = Range.clip(drive + turn - strafe, -0.35, 0.35);
-        rightBackPower = Range.clip(drive - turn + strafe, -0.35, 0.35);
+        leftBackPower = Range.clip(drive + turn - strafe, -1.7, 1.7);
+        rightBackPower = Range.clip(drive - turn + strafe, -1.7, 1.7);
 
         // Telemetry
         telemetry.addData("Speed: ", (leftFrontPower + leftBackPower + rightBackPower + rightFrontPower) / 4);
@@ -141,11 +141,7 @@ public class Move extends OpMode {
             armmove = -1f;
             armPower = armmove;
         }
-        else
-        {
-            armPower = 0;
-        }
-        if(gamepad1.a)
+        else if(gamepad1.a)
         {
             extendmove = 1f;
             extendpower = extendmove;
@@ -158,9 +154,8 @@ public class Move extends OpMode {
         else
         {
             extendpower = 0;
+            armPower = 0;
         }
-
-
 
         // Set motor powers to updated power
         leftFrontDrive.setPower(leftFrontPower);
@@ -169,9 +164,6 @@ public class Move extends OpMode {
         rightBackDrive.setPower(rightBackPower);
         Arm.setPower(armPower);
         Extend.setPower(extendpower);
-
-
-
 
     }
 
