@@ -41,9 +41,11 @@ class RackAndPain: DriveMethods() {
         while (opModeIsActive()) {
             if (touchyR!!.isPressed) {
                 rMotorR!!.setPower(.4*rightRack)
+                telemetry.addLine("R Sensor Detected")
             }
             if (touchyL!!.isPressed){
                 rMotorL!!.setPower(.4*leftRack)
+                telemetry.addLine("L Sensor Detected")
             }
 
             lClick = (rMotorL!!.getCurrentPosition())
@@ -51,6 +53,7 @@ class RackAndPain: DriveMethods() {
             telemetry.addLine("Current LPos: "+lClick+"\nCurrent RPos: "+rClick);
             telemetry.addLine("LPower: " + lPower + "\nRPower: " + rPower);
             telemetry.addLine("Mode: "+mode)
+            telemetry.addLine("IncreaseMode: "+increaseMode)
             telemetry.addLine()
             telemetry.update()
 
@@ -67,7 +70,7 @@ class RackAndPain: DriveMethods() {
             }
 
 
-            if (!changed_mode&&gamepad1.x){
+            if (!changed_mode2&&gamepad1.x){
                 if (mode<1){
                     increaseMode+=1;
                 }else {
@@ -75,7 +78,7 @@ class RackAndPain: DriveMethods() {
                 }
                 changed_mode2=true;
             }
-            if(changed_mode&&!gamepad1.x){
+            if(changed_mode2&&!gamepad1.x){
                 changed_mode2=false;
             }
 

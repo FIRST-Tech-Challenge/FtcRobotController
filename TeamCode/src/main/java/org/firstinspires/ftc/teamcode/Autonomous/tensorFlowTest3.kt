@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.Autonomous
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp
+import com.qualcomm.robotcore.hardware.Gamepad
 import com.qualcomm.robotcore.util.RobotLog
 import org.firstinspires.ftc.robotcore.external.hardware.camera.BuiltinCameraDirection
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName
@@ -20,6 +21,8 @@ class tensorFlowTest3: LinearOpMode(){
     val tfod_labels = "/sdcard/FIRST/models/ssd_mobilenet_v2_label_map.txt"
     private lateinit var labels: Array<String>
     override fun runOpMode() {
+//       var funfunGamePad = hardwareMap[Gamepad::class.java,"Gamepad 1"];
+
         telemetry.addLine("Reading Lables");
         telemetry.update()
         readLabels();

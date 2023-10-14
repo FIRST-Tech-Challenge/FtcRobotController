@@ -20,6 +20,7 @@ class tensorFlowTest1: LinearOpMode(){
     val tfod_labels = "/sdcard/FIRST/models/ssd_mobilenet_v2_label_map.txt"
     private lateinit var labels: Array<String>
     override fun runOpMode() {
+
         telemetry.addLine("Reading Lables");
         telemetry.update()
         readLabels();
