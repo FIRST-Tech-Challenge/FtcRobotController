@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.Components.RFModules.Devices;
 
+import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.LOGGER;
 import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.logger;
 import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.op;
 import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.packet;
@@ -153,7 +154,8 @@ public class RFMotor  {
         acceleration /= (time - lastTime);
 
         double[] targetMotion = getTargetMotion(p_curve);
-
+        LOGGER.log("kA:"+ kA+" kV:"+kV);
+        LOGGER.log("targetMotion[0]:"+ targetMotion[0]+" targetMotion[1]:"+targetMotion[1]);
         double power = (kV * targetMotion[0] + kA * targetMotion[1] +
                 kP * (getTargetPosition(BasicRobot.time) - position) + kD * (getTargetVelocity(BasicRobot.time) - velocity) + resistance*kV);
         if (abs(targetPos - position) > TICK_BOUNDARY_PADDING && abs(velocity) < 3) {
@@ -163,6 +165,7 @@ public class RFMotor  {
                 power += kS;
             }
         }
+        LOGGER.log("motor power :" + power+" pos " + position + " targetPos " + targetPos);
         setRawPower(power);
         lastTime = time;
     }
@@ -399,8 +402,10 @@ public class RFMotor  {
         return abs(currentPos- targetPos)<20;
     }
 
-    public void setConstants(double p_resistance, double p_kS, double p_kV, double p_kA, double p_maxUpVelo,
+    public void setConstants(double p_max, double p_min, double p_resistance, double p_kS, double p_kV, double p_kA, double p_maxUpVelo,
                              double p_maxDownVelo, double p_maxAccel, double p_maxDecel, double p_kP, double p_kD){
+        maxtickcount = p_max;
+        mintickcount = p_min;
         RESISTANCE = p_resistance;
         kS = p_kS;
         kV = p_kV;

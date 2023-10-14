@@ -35,24 +35,32 @@ public abstract class RFMotorTest extends LinearOpMode {
         robot = new BasicRobot(this, false);
         motor = new RFMotor(p_name, true);
         motor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        motor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         motor.setDirection(direction);
-        motor.setConstants(resistance, kS, kV, kA, maxUpVelo, maxDownVelo, maxAccel, maxDecel, kP, kD);
+        motor.setConstants(p_max, p_min, resistance, kS, kV, kA, maxUpVelo, maxDownVelo, maxAccel, maxDecel, kP, kD);
+        motor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
     }
 
-    public void setConstants(double p_resistance, double p_kS, double p_kV, double p_kA, double p_maxUpVelo,
+    public void setConstants(double p_max, double p_min, double p_resistance, double p_kS, double p_kV, double p_kA, double p_maxUpVelo,
                              double p_maxDownVelo, double p_maxAccel, double p_maxDecel, double p_kP, double p_kD) {
-        motor.setConstants(p_resistance, p_kS, p_kV, p_kA, p_maxUpVelo, p_maxDownVelo, p_maxAccel, p_maxDecel, p_kP, p_kD);
+        motor.setConstants(p_max, p_min, p_resistance, p_kS, p_kV, p_kA, p_maxUpVelo, p_maxDownVelo, p_maxAccel, p_maxDecel, p_kP, p_kD);
     }
 
     public void auto() {
+            motor.setPosition((max + min)*0.9,0);
+            packet.put("MOVING", "up");
             while(!motor.isDone()) {
                 motor.setPosition((max + min) * 0.9, 0);
+                packet.put("MOVING", "up");
+
                 robot.update();
             }
-            while(!motor.isDone()) {
+        motor.setPosition((max + min)*0.1,0);
+        packet.put("MOVING", "down");
+
+        while(!motor.isDone()) {
                 motor.setPosition((max + min) * 0.1, 0);
-                robot.update();
+            packet.put("MOVING", "down");
+            robot.update();
             }
     }
 }

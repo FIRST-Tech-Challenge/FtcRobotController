@@ -26,7 +26,7 @@ public class Lift extends RFDualMotor {
     public Lift() {
         super("leftLiftMotor", "rightLiftMotor",true);
         super.setDirection(DcMotorSimple.Direction.REVERSE);
-        super.setConstants(134, 0.0, 3.2786E-4, 7.286E-4, 2440, -2280, 1097, -66974, 0, 0);
+        super.setConstants(3000,0,134, 0.0, 3.2786E-4, 7.286E-4, 2440, -2280, 1097, -66974, 0, 0);
     }
 
     /**

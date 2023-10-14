@@ -1,16 +1,18 @@
 package org.firstinspires.ftc.teamcode.Tests;
 
+import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
 import org.firstinspires.ftc.teamcode.Components.RFModules.Devices.RFMotor;
-
+@Autonomous(name = "liftMotorTest")
 public class TesMotorTest extends RFMotorTest {
-    public static double RESISTANCE, kS, kV, kA, MAX_UP_VELO, MAX_DOWN_VELO, MAX_ACCEL, MAX_DECEL, kP, kD;
+    public static double max = 3000, min =0 , RESISTANCE = 134, kS = 0.0,kV =  3.2786E-4,kA= 7.286E-4,
+            MAX_UP_VELO= 2440, MAX_DOWN_VELO=-2280,MAX_ACCEL =  1097, MAX_DECEL = -66974,kP= 0,kD= 0;
     public void runOpMode() throws InterruptedException {
-        initialize("leftLiftMotor", 3000,0, DcMotorSimple.Direction.REVERSE);
+        initialize("leftLiftMotor",(int)max,(int)min, DcMotorSimple.Direction.REVERSE);
         waitForStart();
         while(opModeIsActive()&&!isStopRequested()){
-            setConstants(RESISTANCE, kS, kV,kA,MAX_UP_VELO, MAX_DOWN_VELO, MAX_ACCEL, MAX_DECEL, kP, kD);
+            setConstants(max, min , RESISTANCE, kS, kV,kA,MAX_UP_VELO, MAX_DOWN_VELO, MAX_ACCEL, MAX_DECEL, kP, kD);
             auto();
         }
         stop();
