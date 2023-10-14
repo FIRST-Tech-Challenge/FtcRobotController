@@ -4,7 +4,6 @@ import android.util.Size
 import com.google.blocks.ftcrobotcontroller.util.CurrentGame
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode
 import com.qualcomm.robotcore.hardware.DcMotor
-import com.qualcomm.robotcore.hardware.DcMotorSimple
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName
 import org.firstinspires.ftc.robotcore.external.hardware.camera.controls.ExposureControl
 import org.firstinspires.ftc.robotcore.external.hardware.camera.controls.GainControl
@@ -25,7 +24,6 @@ import org.firstinspires.ftc.vision.VisionPortal
 import org.firstinspires.ftc.vision.apriltag.AprilTagDetection
 import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor
 import org.firstinspires.ftc.vision.tfod.TfodProcessor
-import org.tensorflow.lite.task.vision.detector.Detection
 import java.io.BufferedReader
 import java.io.FileReader
 import java.util.concurrent.TimeUnit
@@ -37,13 +35,15 @@ import kotlin.math.sqrt
 open class DriveMethods: LinearOpMode() {
     override fun runOpMode() {}
 
-    lateinit var visionPortal: VisionPortal
+    lateinit var visionPortalLeft: VisionPortal
+    lateinit var visionPortalRight: VisionPortal
 
     lateinit var tfod: TfodProcessor
 
     lateinit var aprilTag: AprilTagProcessor
 
     lateinit var visionProcessor: VisionProcessors
+    var useRightcam: Boolean = false
 
     fun initVision(processorType: VisionProcessors) {
         initVision(processorType, 1.0, "/sdcard/FIRST/models/ssd_mobilenet_v2_320x320_coco17_tpu_8.tflite", readLabels("/sdcard/FIRST/models/ssd_mobilenet_v2_label_map.txt"))
@@ -53,16 +53,21 @@ open class DriveMethods: LinearOpMode() {
         initVision(processorType, zoom, "/sdcard/FIRST/models/ssd_mobilenet_v2_320x320_coco17_tpu_8.tflite", readLabels("/sdcard/FIRST/models/ssd_mobilenet_v2_label_map.txt"))
     }
 
-    fun initVision(processorType: VisionProcessors, zoom: Double = 1.0, model: String = "/sdcard/FIRST/models/ssd_mobilenet_v2_320x320_coco17_tpu_8.tflite", labelMap: Array<String> = readLabels("/sdcard/FIRST/models/ssd_mobilenet_v2_label_map.txt")) {
+    fun initVision(processorType: VisionProcessors, zoom: Double = 1.0, model: String = "/sdcard/FIRST/models/ssd_mobilenet_v2_320x320_coco17_tpu_8.tflite", labelMap: Array<String> = readLabels("/sdcard/FIRST/models/ssd_mobilenet_v2_label_map.txt"), useRightCam: Boolean = false) {
         // Create the bob the builder to build the VisionPortal
-        val builder: VisionPortal.Builder = VisionPortal.Builder()
+        val builderLeft: VisionPortal.Builder = VisionPortal.Builder()
+        val builderRight: VisionPortal.Builder? = if (useRightCam)  VisionPortal.Builder() else null
 
         // Set the camera of the new VisionPortal to the webcam mounted to the robot
-        builder.setCamera(hardwareMap.get(WebcamName::class.java, "Webcam 1"))
-        builder.setCameraResolution(Size(800, 600))
+        builderLeft.setCamera(hardwareMap.get(WebcamName::class.java, "Webcam 1"))
+//        builderLeft.setCameraResolution(Size(800, 600))
+        if (useRightCam) {
+            builderRight?.setCamera(hardwareMap.get(WebcamName::class.java, "Webcam 2"))
+        }
 
         // Enable Live View for debugging purposes
-        builder.enableLiveView(true)
+        builderLeft.enableLiveView(true)
+        builderRight?.enableLiveView(true)
 
         when (processorType) {
             VisionProcessors.APRILTAG -> {
@@ -70,7 +75,8 @@ open class DriveMethods: LinearOpMode() {
                 aprilTag = AprilTagProcessor.Builder()
                     .build()
 
-                builder.addProcessor(aprilTag)
+                builderLeft.addProcessor(aprilTag)
+                if (useRightCam) builderRight?.addProcessor(aprilTag)
             }
             VisionProcessors.TFOD -> {
                 // Initialize the TensorFlow Processor
@@ -80,10 +86,11 @@ open class DriveMethods: LinearOpMode() {
                     .build()
 
                 tfod.setZoom(zoom)
-                tfod.setMinResultConfidence(0.40F)
+                tfod.setMinResultConfidence(0.5F)
 
                 // Add TensorFlow Processor to VisionPortal builder
-                builder.addProcessor(tfod)
+                builderLeft.addProcessor(tfod)
+                if (useRightCam) builderRight?.addProcessor(tfod)
             }
             VisionProcessors.BOTH -> {
                 // Initialize the TensorFlow Processor
@@ -95,16 +102,25 @@ open class DriveMethods: LinearOpMode() {
                 aprilTag = AprilTagProcessor.Builder()
                     .build()
 
-                builder.addProcessor(tfod)
-                builder.addProcessor(aprilTag)
+                builderLeft.addProcessor(tfod)
+                builderLeft.addProcessor(aprilTag)
+                if (useRightCam) builderRight?.addProcessor(tfod)
+                if (useRightCam) builderRight?.addProcessor(aprilTag)
             }
         }
 
         // Build the VisionPortal and set visionPortal to it
-        visionPortal = builder.build()
+        visionPortalLeft = builderLeft.build()
+        if (useRightCam) visionPortalRight = builderRight?.build()!!
+        this.useRightcam = useRightcam
 
         visionProcessor = processorType
     }
+
+//    fun switchCamera(cameraName: String) {
+//        visionPortal.activeCamera = hardwareMap.get(WebcamName::class.java, cameraName)
+//        telemetry.addLine()
+//    }
 
     private fun readLabels(labelsPath: String): Array<String> {
         val labelList = ArrayList<String>()
@@ -242,15 +258,15 @@ open class DriveMethods: LinearOpMode() {
     }
     fun setManualExposure(exposureMS: Int, gain: Int) {
         // Wait for the camera to be open, then use the controls
-        if (visionPortal == null) {
+        if (visionPortalLeft == null) {
             return
         }
 
         // Make sure camera is streaming before we try to set the exposure controls
-        if (visionPortal!!.cameraState != VisionPortal.CameraState.STREAMING) {
+        if (visionPortalLeft!!.cameraState != VisionPortal.CameraState.STREAMING) {
             telemetry.addData("Camera", "Waiting")
             telemetry.update()
-            while (!isStopRequested && visionPortal!!.cameraState != VisionPortal.CameraState.STREAMING) {
+            while (!isStopRequested && visionPortalLeft!!.cameraState != VisionPortal.CameraState.STREAMING) {
                 sleep(20)
             }
             telemetry.addData("Camera", "Ready")
@@ -259,7 +275,7 @@ open class DriveMethods: LinearOpMode() {
 
         // Set camera controls unless we are stopping.
         if (!isStopRequested) {
-            val exposureControl = visionPortal!!.getCameraControl(
+            val exposureControl = visionPortalLeft!!.getCameraControl(
                 ExposureControl::class.java
             )
             if (exposureControl.mode != ExposureControl.Mode.Manual) {
@@ -268,7 +284,7 @@ open class DriveMethods: LinearOpMode() {
             }
             exposureControl.setExposure(exposureMS.toLong(), TimeUnit.MILLISECONDS)
             sleep(20)
-            val gainControl = visionPortal!!.getCameraControl(
+            val gainControl = visionPortalLeft!!.getCameraControl(
                 GainControl::class.java
             )
             gainControl.gain = gain
@@ -296,4 +312,6 @@ open class DriveMethods: LinearOpMode() {
         slideAngle = atan(y/x);
         clawAngle = 60 - slideAngle;
     }
+
+
 }

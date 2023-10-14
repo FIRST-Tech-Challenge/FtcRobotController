@@ -76,7 +76,7 @@ class Teleop9999: DriveMethods() {
             }
 
             if (gamepad1.a) {
-                for (detection in aprilTag.getDetections())  {
+                for (detection in aprilTag.detections)  {
                     // Original source data
                     var poseY = detection.rawPose.y;
 
