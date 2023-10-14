@@ -15,8 +15,16 @@ public class MotorTickTest extends OpMode {
         leftBack = hardwareMap.get(DcMotorEx.class, "motorBackLeft");
         rightBack = hardwareMap.get(DcMotorEx.class, "motorBackRight");
         rightFront = hardwareMap.get(DcMotorEx.class, "motorFrontRight");
+        leftFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        leftBack.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        rightFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        rightBack.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         leftFront.setDirection(DcMotorSimple.Direction.REVERSE);
         leftBack.setDirection(DcMotorSimple.Direction.REVERSE);
+        leftFront.setTargetPosition(0);
+        leftBack.setTargetPosition(0);
+        rightFront.setTargetPosition(0);
+        rightBack.setTargetPosition(0);
         leftFront.setPower(.25);
         leftFront.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         rightFront.setPower(.25);
@@ -29,9 +37,13 @@ public class MotorTickTest extends OpMode {
 
     @Override
     public void loop() {
-        leftFront.setTargetPosition(500);
-        leftBack.setTargetPosition(500);
-        rightFront.setTargetPosition(500);
-        rightBack.setTargetPosition(500);
+        telemetry.addData("Left Front Motor Position\t", leftFront.getCurrentPosition());
+        telemetry.addData("Left Back Motor Position\t", leftBack.getCurrentPosition());
+        telemetry.addData("Right Front Motor Position\t", rightFront.getCurrentPosition());
+        telemetry.addData("Right Back Motor Position\t", rightBack.getCurrentPosition());
+        leftFront.setTargetPosition(2000);
+        leftBack.setTargetPosition(2000);
+        rightFront.setTargetPosition(2000);
+        rightBack.setTargetPosition(2000);
     }
 }

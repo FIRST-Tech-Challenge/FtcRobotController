@@ -16,8 +16,7 @@ import org.firstinspires.ftc.teamcode.robots.csbot.rr_drive.SampleMecanumDrive;
  * This is a simple routine to test translational drive capabilities.
  */
 @Config
-@Disabled
-//@Autonomous(group = "drive")
+@Autonomous(name ="Strafe Test CS", group = "test")
 public class StrafeTest extends LinearOpMode {
     public static double DISTANCE = 60; // in
 

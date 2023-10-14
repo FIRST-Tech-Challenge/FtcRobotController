@@ -1,10 +1,10 @@
 package org.firstinspires.ftc.teamcode.robots.csbot.rr_drive.opmode;
 
-import static org.firstinspires.ftc.teamcode.robots.ri2d2023.rr_drive.DriveConstants.MAX_ACCEL;
-import static org.firstinspires.ftc.teamcode.robots.ri2d2023.rr_drive.DriveConstants.MAX_VEL;
-import static org.firstinspires.ftc.teamcode.robots.ri2d2023.rr_drive.DriveConstants.MOTOR_VELO_PID;
-import static org.firstinspires.ftc.teamcode.robots.ri2d2023.rr_drive.DriveConstants.RUN_USING_ENCODER;
-import static org.firstinspires.ftc.teamcode.robots.ri2d2023.rr_drive.DriveConstants.kV;
+import static org.firstinspires.ftc.teamcode.robots.csbot.rr_drive.DriveConstants.MAX_ACCEL;
+import static org.firstinspires.ftc.teamcode.robots.csbot.rr_drive.DriveConstants.MAX_VEL;
+import static org.firstinspires.ftc.teamcode.robots.csbot.rr_drive.DriveConstants.MOTOR_VELO_PID;
+import static org.firstinspires.ftc.teamcode.robots.csbot.rr_drive.DriveConstants.RUN_USING_ENCODER;
+import static org.firstinspires.ftc.teamcode.robots.csbot.rr_drive.DriveConstants.kV;
 
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
@@ -49,9 +49,8 @@ import java.util.List;
  * user to reset the position of the bot in the event that it drifts off the path.
  * Pressing B/O (Xbox/PS4) will cede control back to the tuning process.
  */
-@Config
-@Disabled
-//@Autonomous(group = "drive")
+@Config("Drive Velocity PID Tuner CS")
+@Autonomous(name = "Drive Velocity PID Tuner CS", group = "test")
 public class DriveVelocityPIDTuner extends LinearOpMode {
     public static double DISTANCE = 72; // in
 
