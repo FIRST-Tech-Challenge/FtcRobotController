@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode
 
+import android.util.Size
 import com.google.blocks.ftcrobotcontroller.util.CurrentGame
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode
 import com.qualcomm.robotcore.hardware.DcMotor
@@ -24,6 +25,7 @@ import org.firstinspires.ftc.vision.VisionPortal
 import org.firstinspires.ftc.vision.apriltag.AprilTagDetection
 import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor
 import org.firstinspires.ftc.vision.tfod.TfodProcessor
+import org.tensorflow.lite.task.vision.detector.Detection
 import java.io.BufferedReader
 import java.io.FileReader
 import java.util.concurrent.TimeUnit
@@ -44,19 +46,20 @@ open class DriveMethods: LinearOpMode() {
     lateinit var visionProcessor: VisionProcessors
 
     fun initVision(processorType: VisionProcessors) {
-        initVision(processorType, 1.0, "/sdcard/FIRST/models/ssd_mobilenet_v2_320x320_coco17_tpu_8.tflite")
+        initVision(processorType, 1.0, "/sdcard/FIRST/models/ssd_mobilenet_v2_320x320_coco17_tpu_8.tflite", readLabels("/sdcard/FIRST/models/ssd_mobilenet_v2_label_map.txt"))
     }
 
     fun initVision(processorType: VisionProcessors, zoom: Double) {
-        initVision(processorType, zoom, "/sdcard/FIRST/models/ssd_mobilenet_v2_320x320_coco17_tpu_8.tflite")
+        initVision(processorType, zoom, "/sdcard/FIRST/models/ssd_mobilenet_v2_320x320_coco17_tpu_8.tflite", readLabels("/sdcard/FIRST/models/ssd_mobilenet_v2_label_map.txt"))
     }
 
-    fun initVision(processorType: VisionProcessors, zoom: Double = 1.0, model: String = "/sdcard/FIRST/models/ssd_mobilenet_v2_320x320_coco17_tpu_8.tflite") {
+    fun initVision(processorType: VisionProcessors, zoom: Double = 1.0, model: String = "/sdcard/FIRST/models/ssd_mobilenet_v2_320x320_coco17_tpu_8.tflite", labelMap: Array<String> = readLabels("/sdcard/FIRST/models/ssd_mobilenet_v2_label_map.txt")) {
         // Create the bob the builder to build the VisionPortal
         val builder: VisionPortal.Builder = VisionPortal.Builder()
 
         // Set the camera of the new VisionPortal to the webcam mounted to the robot
         builder.setCamera(hardwareMap.get(WebcamName::class.java, "Webcam 1"))
+        builder.setCameraResolution(Size(800, 600))
 
         // Enable Live View for debugging purposes
         builder.enableLiveView(true)
@@ -73,9 +76,11 @@ open class DriveMethods: LinearOpMode() {
                 // Initialize the TensorFlow Processor
                 tfod = TfodProcessor.Builder()
                     .setModelFileName(model)
+                    .setModelLabels(labelMap)
                     .build()
 
                 tfod.setZoom(zoom)
+                tfod.setMinResultConfidence(0.40F)
 
                 // Add TensorFlow Processor to VisionPortal builder
                 builder.addProcessor(tfod)
@@ -122,7 +127,7 @@ open class DriveMethods: LinearOpMode() {
             telemetry.update()
 
             for (label in labelList) {
-                telemetry.addData("readLabels()", " %f", label);
+                telemetry.addData("readLabels()", " %s", label.toString());
 
                 telemetry.update()
             }
@@ -135,6 +140,14 @@ open class DriveMethods: LinearOpMode() {
 
             return Array<String>(1) {""}
         }
+    }
+
+    fun getDetectionsApriltag(): ArrayList<AprilTagDetection>? {
+        return aprilTag.detections
+    }
+
+    fun getDetectionsTFOD(): MutableList<Recognition>? {
+        return tfod.recognitions
     }
 
 
