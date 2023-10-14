@@ -51,6 +51,8 @@ class RackAndPain: DriveMethods() {
             telemetry.addLine("Current LPos: "+lClick+"\nCurrent RPos: "+rClick);
             telemetry.addLine("LPower: " + lPower + "\nRPower: " + rPower);
             telemetry.addLine("Mode: "+mode)
+            telemetry.addLine("Left touch sensor pressed is: " + touchyL!!.isPressed)
+            telemetry.addLine("Right touch sensor pressed is: " + touchyR!!.isPressed)
             telemetry.addLine()
             telemetry.update()
 
@@ -62,7 +64,7 @@ class RackAndPain: DriveMethods() {
                 }
                 changed_mode = true;
             }
-            if(changed_mode&&!gamepad1.y) {
+            if(changed_mode&&gamepad1.y) {
                 changed_mode = false;
             }
 
@@ -97,28 +99,28 @@ class RackAndPain: DriveMethods() {
 
             if (gamepad1.dpad_up) {
                 if (mode == 0) {
-                    rMotorR!!.setPower(rPower * rightRack);
-                    rMotorL!!.setPower(lPower * leftRack);
+                    rMotorR!!.power = rPower * rightRack;
+                    rMotorL!!.power = lPower * leftRack;
                 } else if (mode == 1) {
-                    rMotorL!!.setPower(lPower * leftRack);
+                    rMotorL!!.power = lPower * leftRack;
                 } else if (mode == 2) {
-                    rMotorR!!.setPower(lPower * leftRack);
+                    rMotorR!!.power = lPower * leftRack;
                 }
             }
 
             else if(gamepad1.dpad_down) {
                 if (mode == 0) {
-                    rMotorR!!.setPower(-rPower * rightRack);
-                    rMotorL!!.setPower(-lPower * leftRack);
+                    rMotorR!!.power = -rPower * rightRack;
+                    rMotorL!!.power = -lPower * leftRack;
                 } else if (mode == 1) {
-                    rMotorL!!.setPower(-lPower * leftRack);
+                    rMotorL!!.power = -lPower * leftRack;
                 } else if (mode == 2) {
-                    rMotorR!!.setPower(-rPower * rightRack);
+                    rMotorR!!.power = -rPower * rightRack;
                 }
             }
             else{
-              rMotorR!!.setPower(0.0);
-              rMotorL!!.setPower(0.0);
+                rMotorR!!.power = 0.0;
+                rMotorL!!.power = 0.0;
             }
             sleep(10)
         }
