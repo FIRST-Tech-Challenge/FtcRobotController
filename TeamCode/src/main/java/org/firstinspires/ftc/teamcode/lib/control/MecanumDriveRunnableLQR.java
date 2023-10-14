@@ -2,7 +2,7 @@ package org.firstinspires.ftc.teamcode.lib.control;
 
 import org.firstinspires.ftc.teamcode.lib.util.TimeProfiler;
 import org.firstinspires.ftc.teamcode.lib.util.TimeUnits;
-import org.firstinspires.ftc.teamcode.team10515.Robot;
+import org.firstinspires.ftc.teamcode.team.Robot;
 
 import java.util.function.Supplier;
 

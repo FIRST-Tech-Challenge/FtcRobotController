@@ -2,7 +2,7 @@ package org.firstinspires.ftc.teamcode.lib.util;
 
 import android.os.SystemClock;
 
-import org.firstinspires.ftc.teamcode.team10515.Robot;
+import org.firstinspires.ftc.teamcode.team.Robot;
 
 public class TimeUtil {
     private static final double SECONDS_PER_MINUTE = 60d;

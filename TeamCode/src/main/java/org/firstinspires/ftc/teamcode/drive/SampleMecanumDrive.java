@@ -38,9 +38,9 @@ import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 import com.qualcomm.robotcore.hardware.VoltageSensor;
 import com.qualcomm.robotcore.hardware.configuration.typecontainers.MotorConfigurationType;
 
-import org.firstinspires.ftc.teamcode.team10515.odometry.trajectorysequence.TrajectorySequence;
-import org.firstinspires.ftc.teamcode.team10515.odometry.trajectorysequence.TrajectorySequenceBuilder;
-import org.firstinspires.ftc.teamcode.team10515.odometry.trajectorysequence.TrajectorySequenceRunner;
+import org.firstinspires.ftc.teamcode.team.odometry.trajectorysequence.TrajectorySequence;
+import org.firstinspires.ftc.teamcode.team.odometry.trajectorysequence.TrajectorySequenceBuilder;
+import org.firstinspires.ftc.teamcode.team.odometry.trajectorysequence.TrajectorySequenceRunner;
 import org.firstinspires.ftc.teamcode.util.LynxModuleUtil;
 
 import java.util.ArrayList;

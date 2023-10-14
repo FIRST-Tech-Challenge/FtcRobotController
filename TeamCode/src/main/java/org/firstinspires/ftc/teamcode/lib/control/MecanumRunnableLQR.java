@@ -3,7 +3,7 @@ package org.firstinspires.ftc.teamcode.lib.control;
 import org.ejml.simple.SimpleMatrix;
 import org.firstinspires.ftc.teamcode.lib.util.TimeProfiler;
 import org.firstinspires.ftc.teamcode.lib.util.TimeUnits;
-import org.firstinspires.ftc.teamcode.team10515.Robot;
+import org.firstinspires.ftc.teamcode.team.Robot;
 
 public class MecanumRunnableLQR implements Runnable {
     private TimeProfiler timeProfiler;
