@@ -285,8 +285,7 @@ open class DriveMethods: LinearOpMode() {
         when (this.visionProcessor) {
             VisionProcessors.TFOD -> tfod.setZoom(zoom)
             VisionProcessors.BOTH -> tfod.setZoom(zoom)
-
-            else -> {}
+            else -> telemetry.addLine("Zoom not updated")
         }
     }
 
