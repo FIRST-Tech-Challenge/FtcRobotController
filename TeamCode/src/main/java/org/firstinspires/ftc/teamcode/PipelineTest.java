@@ -9,9 +9,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
-//test1
-import org.checkerframework.checker.units.qual.A;
-import org.firstinspires.ftc.robotcore.external.ClassFactory;
+
 import org.firstinspires.ftc.robotcore.external.Func;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.robotcore.external.navigation.Acceleration;
@@ -19,17 +17,14 @@ import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
-import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
-import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer.CameraDirection;
-import org.firstinspires.ftc.robotcore.external.tfod.Recognition;
-import org.firstinspires.ftc.robotcore.external.tfod.TFObjectDetector;
-//test
-import java.util.List;
+import org.openftc.easyopencv.OpenCvCamera;
+import org.openftc.easyopencv.OpenCvCameraFactory;
+import org.openftc.easyopencv.OpenCvCameraRotation;
+
 import java.util.Locale;
 
-@Disabled
-@Autonomous(name = "Park", group = "")
-public class Park extends LinearOpMode {
+@Autonomous(name = "PipelineTest", group = "")
+public class PipelineTest extends LinearOpMode {
     //test1
     private DcMotor LF = null;
     private DcMotor RF = null;
@@ -43,13 +38,17 @@ public class Park extends LinearOpMode {
     static final int ACCEL = 75;  // Scaling factor used in accel / decel code.  Was 100!
     public float desiredHeading;
 
+    private PIDController pidRotate;
+    private  OpenCvCamera webCam;
+    private boolean isCameraStreaming = false;
+    Pipeline2023 modifyPipeline = new Pipeline2023(false);
+
+
     BNO055IMU imu;
     Orientation angles;
     Acceleration gravity;
 
-    PIDController pidRotate;
-
-    private static final String TFOD_MODEL_ASSET = "PowerPlay.tflite";
+    /*private static final String TFOD_MODEL_ASSET = "PowerPlay.tflite";
     private static final String[] LABELS = {
             "Bolt",
             "Bulbs",
@@ -59,8 +58,8 @@ public class Park extends LinearOpMode {
             "AVXWcGz/////AAABmZfYj2wlVElmo2nUkerrNGhEBBg+g8Gq1KY3/lN0SEBYx7HyMslyrHttOZoGtwRt7db9nfvCiG0TBEp7V/+hojHXCorf1CEvmJWWka9nFfAbOuyl1tU/IwdgHIvSuW6rbJY2UmMWXfjryO3t9nNtRqX004LcE8O2zkKdBTw0xdqq4dr9zeA9gX0uayps7t0TRmiToWRjGUs9tQB3BDmSinXxEnElq+z3SMJGcn5Aj44iEB7uy/wuB8cGCR6GfOpDRYqn/R8wwD757NucR5LXA48rulTdthGIuHoEjud1QzyQOv4BpaODj9Oi0TMuBmBzhFJMwWzyZ4lKVyOCbf3uCRia7Q+HO+LbFbghNIGIIzZC";
     private VuforiaLocalizer vuforia;
     private TFObjectDetector tfod;
-
-    private int resultROI=2;
+*/
+    private int resultROI=3;
 
     private  boolean done = false;
 
@@ -94,12 +93,11 @@ public class Park extends LinearOpMode {
         parameters.loggingEnabled = true;
         parameters.loggingTag = "IMU";
         parameters.accelerationIntegrationAlgorithm = new JustLoggingAccelerationIntegrator();
+        pidRotate = new PIDController(0.75, .5, .25);
+
 
         imu = hardwareMap.get(BNO055IMU.class, "imu");
         imu.initialize(parameters);
-
-        pidRotate = new PIDController(.003, .00003, 0);
-
 
         // Set up our telemetry dashboard
         composeTelemetry();  // need to add this method at end of code
@@ -115,98 +113,78 @@ public class Park extends LinearOpMode {
         Long startTime = System.currentTimeMillis();
         Long currTime = startTime;
 
-        initVuforia();
-        initTfod();
+        initOpenCV();
+  /*      initTfod();
 
         if (tfod != null) {
             tfod.activate();
 
             tfod.setZoom(1.5, 16.0 / 9.0);
-        }
+        }*/
         actuatorUtils.gripperClose(false);
 
 
         waitForStart();
         currTime=System.currentTimeMillis();
         startTime=currTime;
-        if (tfod != null && resultROI == 2) {
+        if (resultROI == 3) {
 
             // getUpdatedRecognitions() will return null if no new information is available since
             // the last time that call was made.
+            done = false;
             while (!done && opModeIsActive()) {
-                if((currTime - startTime) < 3000){
-                    List<Recognition> updatedRecognitions = tfod.getUpdatedRecognitions();
-                    if (updatedRecognitions != null) {
-                        telemetry.addData("# Objects Detected", updatedRecognitions.size());
-                        if (updatedRecognitions.size() != 0) {
-                            done = true;
-                        }
-                        // step through the list of recognitions and display image position/size information for each one
-                        // Note: "Image number" refers to the randomized image orientation/number
-                        for (Recognition recognition : updatedRecognitions) {
-                            double col = (recognition.getLeft() + recognition.getRight()) / 2;
-                            double row = (recognition.getTop() + recognition.getBottom()) / 2;
-                            double width = Math.abs(recognition.getRight() - recognition.getLeft());
-                            double height = Math.abs(recognition.getTop() - recognition.getBottom());
-
-                            telemetry.addData("", " ");
-                            telemetry.addData("Image", "%s (%.0f %% Conf.)", recognition.getLabel(), recognition.getConfidence() * 100);
-                            telemetry.addData("- Position (Row/Col)", "%.0f / %.0f", row, col);
-                            telemetry.addData("- Size (Width/Height)", "%.0f / %.0f", width, height);
-
-                            String imageCheck = recognition.getLabel();
-                            if (imageCheck.equals("Bolt")) {
-                                resultROI = 1;
-                            } else if (imageCheck.equals("Bulbs")) {
-                                resultROI = 2;
-                            } else if (imageCheck.equals("Panels")) {
-                                resultROI = 3;
-                            } else {
-                                resultROI = 2;
-                            }
-                            telemetry.addData("ResultROI", resultROI);
-
-                        }
-                        telemetry.update();
+                if (currTime - startTime < 100) {
+                    telemetry.addData("Camera: ", "Waiting to make sure valid data is incoming");
+                } else {
+                    telemetry.addData("Time Delta: ", (currTime - startTime));
+                    resultROI = modifyPipeline.getResultROI();
+                    if (resultROI == 0) {
+                        telemetry.addData("Resulting ROI: ", "Left");
+                        done = true;
+                    } else if (resultROI == 1) {
+                        telemetry.addData("Resulting ROI: ", "Middle");
+                        done = true;
+                    } else if (resultROI == 2) {
+                        telemetry.addData("Resulting ROI: ", "Right");
+                        done = true;
+                    } else {
+                        telemetry.addData("Resulting ROI: ", "Something went wrong.");
                     }
-                    currTime = System.currentTimeMillis();}
-
-                else {
-                    vuforia.close();
-                    done=true;
-                    resultROI=2;
                 }
+                telemetry.update();
+                currTime = System.currentTimeMillis();
+
             }
 
         }
         telemetry.update();
-        done = false;
+        done = true;
         //lift arm up
-        actuatorUtils.armPole(4);
+        actuatorUtils.armPole(actuatorUtils.ArmLevel.LOW_POLE);
         while (((currTime - startTime) < 30000)&& !done && opModeIsActive()) {
 
             switch (resultROI) {
                 case 1:
                     // Far left
-                    moveUtils.strafeBuddy(-28);
-                    moveUtils.goStraight(23,MAX_SPEED,MIN_SPEED,ACCEL);
+                    beginAuto();
+                    moveUtils.strafeBuddy(-23);
+                    moveUtils.goStraight(28f,MAX_SPEED,MIN_SPEED,ACCEL);
+                    actuatorUtils.armPole(actuatorUtils.ArmLevel.CONE1);
                     done=true;
                     break;
                 case 2:
                     // Middle
-                    moveUtils.strafeBuddy(-25);
-                    moveUtils.goStraight(20,MAX_SPEED,MIN_SPEED,ACCEL);
-                    moveUtils.turnCCW(82);
-                    moveUtils.goStraight(-15,MAX_SPEED,MIN_SPEED,ACCEL);
+                    beginAuto();
+                    moveUtils.goStraight(20f,MAX_SPEED,MIN_SPEED,ACCEL);
+                    actuatorUtils.armPole(actuatorUtils.ArmLevel.CONE1);
                     done=true;
                     break;
                 case 3:
                     // Far right
-                    moveUtils.goStraight(2,MAX_SPEED,MIN_SPEED,ACCEL);
-                    moveUtils.turnCW(82);
-                    moveUtils.goStraight(17,MAX_SPEED,MIN_SPEED,ACCEL);
-                    moveUtils.turnCCW(82);
-                    moveUtils.goStraight(14,MAX_SPEED,MIN_SPEED,ACCEL);
+                    beginAuto();
+                    moveUtils.strafeBuddy(24);
+                    moveUtils.goStraight(28,MAX_SPEED,MIN_SPEED,ACCEL);
+                    actuatorUtils.armPole(actuatorUtils.ArmLevel.CONE1);
                     done=true;
                     break;
             }
@@ -216,16 +194,13 @@ public class Park extends LinearOpMode {
         }
     }
     private void beginAuto() throws InterruptedException {
-        moveUtils.goStraight(2,MAX_SPEED,MIN_SPEED,ACCEL);
-        moveUtils.turnCW(82);
-        moveUtils.goStraight(17,MAX_SPEED,MIN_SPEED,ACCEL);
-        moveUtils.turnCCW(82);
-        moveUtils.goStraight(14,MAX_SPEED,MIN_SPEED,ACCEL);
-        moveUtils.turnCW(45);
-        actuatorUtils.armPole(3);
-        moveUtils.goStraight(4.2f,MAX_SPEED,MIN_SPEED,ACCEL);
+        moveUtils.goStraight(4f,MAX_SPEED,MIN_SPEED,ACCEL);
+        moveUtils.turnCW(56);
+        actuatorUtils.armPole(actuatorUtils.ArmLevel.CONE1);
+        moveUtils.goStraight(10f,MAX_SPEED,MIN_SPEED,ACCEL);
         actuatorUtils.gripperOpen(true);
-        moveUtils.goStraight(-5,MAX_SPEED,MIN_SPEED,ACCEL);
+        moveUtils.goStraight(-12f,MAX_SPEED,MIN_SPEED,ACCEL);
+        moveUtils.turnCCW(56);
     }
 
     void composeTelemetry() {
@@ -294,19 +269,33 @@ public class Park extends LinearOpMode {
         return angles.firstAngle;
     }
 
-    private void initVuforia() {
-        /*
-         * Configure Vuforia by creating a Parameter object, and passing it to the Vuforia engine.
-         */
-        VuforiaLocalizer.Parameters parameters = new VuforiaLocalizer.Parameters();
+    private void initOpenCV() {
+        int cameraMonitorViewId2 = hardwareMap.appContext.getResources().getIdentifier(
+                "cameraMonitorViewId",
+                "id",
+                hardwareMap.appContext.getPackageName());
+        // For a webcam (uncomment below)
+        webCam = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "Webcam 1"), cameraMonitorViewId2);
+        // For a phone camera (uncomment below)
+        // webCam = OpenCvCameraFactory.getInstance().createInternalCamera(OpenCvInternalCamera.CameraDirection.BACK, cameraMonitorViewId2);
+        webCam.setPipeline(modifyPipeline);
+        webCam.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
+            @Override
+            public void onOpened() {
+                webCam.startStreaming(320,240, OpenCvCameraRotation.UPRIGHT);
+                telemetry.addData("Pipeline: ", "Initialized");
+                telemetry.update();
+                isCameraStreaming = true;
+            }
 
-        parameters.vuforiaLicenseKey = VUFORIA_KEY;
-        parameters.cameraName = hardwareMap.get(WebcamName.class, "Webcam 1");
-
-        //  Instantiate the Vuforia engine
-        vuforia = ClassFactory.getInstance().createVuforia(parameters);
+            @Override
+            public void onError(int errorCode) {
+                telemetry.addData("Error: ", "Something went wrong :(");
+                telemetry.update();
+            }
+        });
     }
-    private void initTfod() {
+    /*private void initTfod() {
         int tfodMonitorViewId = hardwareMap.appContext.getResources().getIdentifier(
                 "tfodMonitorViewId", "id", hardwareMap.appContext.getPackageName());
         TFObjectDetector.Parameters tfodParameters = new TFObjectDetector.Parameters(tfodMonitorViewId);
@@ -320,5 +309,5 @@ public class Park extends LinearOpMode {
         tfod.loadModelFromAsset(TFOD_MODEL_ASSET, LABELS);
         // tfod.loadModelFromFile(TFOD_MODEL_FILE, LABELS);
     }
-
+*/
 }
