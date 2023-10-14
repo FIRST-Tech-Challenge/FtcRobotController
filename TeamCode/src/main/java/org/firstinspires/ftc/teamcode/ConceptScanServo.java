@@ -52,8 +52,10 @@ import com.qualcomm.robotcore.hardware.Servo;
 //@Disabled
 public class ConceptScanServo extends LinearOpMode {
 
-    static final double INCREMENT   = 0.2;     // amount to slew servo each CYCLE_MS cycle
-    static final int    CYCLE_MS    =   1000;     // period of each cycle
+
+    static final double INCREMENT   = 0.01;     // amount to slew servo each CYCLE_MS cycle
+    static final int    CYCLE_MS    =   50;     // period of each cycle
+
     static final double MAX_POS     =  1.0;     // Maximum rotational position
     static final double MIN_POS     =  0.0;     // Minimum rotational position
 
@@ -80,41 +82,24 @@ public class ConceptScanServo extends LinearOpMode {
         // Scan servo till stop pressed.
         while(opModeIsActive()){
 
-            if (gamepad2.dpad_down) {
-                position = MIN_POS;
-//                position -= INCREMENT ;
-//                if (position <= MIN_POS ) {
-//                    position = MIN_POS;
-//                }
-                gamepad2.reset();
+            // slew the servo, according to the rampUp (direction) variable.
+            if (rampUp) {
+                // Keep stepping up until we hit the max value.
+                position += INCREMENT ;
+                if (position >= MAX_POS ) {
+                    position = MAX_POS;
+                    rampUp = !rampUp;   // Switch ramp direction
+                }
+            }
+            else {
+                // Keep stepping down until we hit the min value.
+                position -= INCREMENT ;
+                if (position <= MIN_POS ) {
+                    position = MIN_POS;
+                    rampUp = !rampUp;  // Switch ramp direction
+                }
             }
 
-            if (gamepad2.dpad_up) {
-                position = MAX_POS;
-//                position += INCREMENT ;
-//                if (position >= MAX_POS ) {
-//                    position = MAX_POS;
-//                }
-                gamepad2.reset();
-            }
-//
-//            // slew the servo, according to the rampUp (direction) variable.
-//            if (rampUp) {
-//                // Keep stepping up until we hit the max value.
-//                position += INCREMENT ;
-//                if (position >= MAX_POS ) {
-//                    position = MAX_POS;
-//                    rampUp = !rampUp;   // Switch ramp direction
-//                }
-//            }
-//            else {
-//                // Keep stepping down until we hit the min value.
-//                position -= INCREMENT ;
-//                if (position <= MIN_POS ) {
-//                    position = MIN_POS;
-//                    rampUp = !rampUp;  // Switch ramp direction
-//                }
-//            }
 
             // Display the current value
             telemetry.addData("Servo Position", "%5.2f", position);
