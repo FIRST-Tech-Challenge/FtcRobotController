@@ -33,7 +33,6 @@ public class AprilTagTesting extends LinearOpMode {
                 .setStreamFormat(VisionPortal.StreamFormat.YUY2)
                 .setAutoStopLiveView(true)
                 .build();
-
          */
 
         // Create the AprilTag processor the easy way.
@@ -43,6 +42,7 @@ public class AprilTagTesting extends LinearOpMode {
         VisionPortal myVisionPortal = VisionPortal.easyCreateWithDefaults(
                     hardwareMap.get(WebcamName.class, "Webcam 1"), myAprilTagProcessor);
 
+        int desiredTagId = 5;
 
         waitForStart();
 
@@ -53,6 +53,7 @@ public class AprilTagTesting extends LinearOpMode {
 
             // Cycle through through the list and process each AprilTag
             for (AprilTagDetection detection : myAprilTagDetections) {
+
                 if (detection.metadata != null) {  // This check for non-null Metadata is not needed for reading only ID code.
                     // Now take action based on this tag's ID code, or store info for later action.
                     telemetry.addData("ID", "%d (%s)", detection.id, detection.metadata.name);
@@ -61,6 +62,11 @@ public class AprilTagTesting extends LinearOpMode {
                     telemetry.addLine(String.format("PRY %6.1f %6.1f %6.1f  (deg)", detection.ftcPose.pitch, detection.ftcPose.roll, detection.ftcPose.yaw));
                     telemetry.addLine(String.format("RBE %6.1f %6.1f %6.1f  (inch, deg, deg)", detection.ftcPose.range, detection.ftcPose.bearing, detection.ftcPose.elevation));
                 }
+
+                if (detection.id == desiredTagId) {
+
+                }
+
                 telemetry.update();
             }
         }
