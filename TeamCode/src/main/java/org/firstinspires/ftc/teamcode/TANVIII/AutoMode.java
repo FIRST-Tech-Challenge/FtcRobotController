@@ -178,7 +178,7 @@ public class AutoMode extends LinearOpMode {
     public void runOpMode() throws InterruptedException {
 
         robot = new org.firstinspires.ftc.teamcode.Robot(hardwareMap, this, telemetry);
-        robot.setUpAprilTags();
+      //  robot.setUpAprilTags();
 
         // Reset Yaw
         //robot.resetImuYaw();
