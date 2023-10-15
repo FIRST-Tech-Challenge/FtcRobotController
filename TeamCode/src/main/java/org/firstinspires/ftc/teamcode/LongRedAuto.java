@@ -13,6 +13,7 @@ public class LongRedAuto extends LinearOpMode {
         boolean isDoneWithAprilTagX = false;
         boolean isDoneWithAprilTagRange = false;
         int idNumber = 1;
+
         Robot robot = new Robot(hardwareMap, this, telemetry);
         robot.setUpDrivetrainMotors();
         robot.setUpVisionProcessing();
@@ -27,7 +28,7 @@ public class LongRedAuto extends LinearOpMode {
         robot.waitFor(0.1);
         robot.setHeading(0);
         robot.waitFor(0.1);
-        robot.mecanumBlocking(20, true);
+        robot.mecanumBlocking(18, true);
         robot.waitFor(0.1);
         robot.setHeading(0);
         robot.waitFor(0.1);
@@ -35,11 +36,11 @@ public class LongRedAuto extends LinearOpMode {
         robot.waitFor(0.1);
         robot.setHeading(-90);
         robot.waitFor(0.1);
-        robot.straightBlocking(88, false);
+        robot.straightBlocking(86, false);
         robot.waitFor(0.1);
         robot.setHeading(-90);
         robot.waitFor(0.1);
-        robot.mecanumBlocking(28, false);*/
+        robot.mecanumBlocking(25, false);
 
         //TODO: APRILTAG GOES HERE !!!!!!
 
@@ -51,6 +52,14 @@ public class LongRedAuto extends LinearOpMode {
 
             telemetry.addData("x", isDoneWithAprilTagX);
 
+        while (opModeIsActive() && !isAprPosReached) {
+            boolean isMethodDone = robot.moveRelativeToAprilTagX(0, idNumber);
+            if (!isMethodDone) {
+                isAprPosReached = robot.moveRelativeToAprilTagX(0, idNumber);
+            }
+
+            telemetry.addData("x", isAprPosReached);
+            //robot.moveRelativeToAprilTag(10);
 
             telemetry.update();
         }
@@ -62,6 +71,7 @@ public class LongRedAuto extends LinearOpMode {
 
 
             telemetry.addData("range", isDoneWithAprilTagRange);
+
 
             telemetry.update();
         }
