@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode;
 
+import android.util.Log;
+
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
@@ -12,12 +14,15 @@ public class LongRedAuto extends LinearOpMode {
         int idNumber = 1;
         Robot robot = new Robot(hardwareMap, this, telemetry);
         robot.setUpDrivetrainMotors();
+        Log.d("vision", "pre set up vision");
         robot.setUpVisionProcessing();
 
         waitForStart();
+        Log.d("vision", "just ran");
 
 
         robot.detectAndMoveToMarker();
+        Log.d("vision", "after kaitlyns big mess");
         robot.waitFor(0.75);
         /*
         robot.straightBlocking(15, false);
@@ -46,7 +51,7 @@ public class LongRedAuto extends LinearOpMode {
             if (!robot.moveRelativeToAprilTagX(0, idNumber)) {
                 isDone = robot.moveRelativeToAprilTagX(0, idNumber);
             }
-
+            Log.d("vision", "post ethens big mess");
             telemetry.addData("x", isDone);
             //robot.moveRelativeToAprilTag(10);
 
