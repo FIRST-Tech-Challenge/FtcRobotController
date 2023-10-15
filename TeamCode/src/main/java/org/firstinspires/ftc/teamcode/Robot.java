@@ -21,6 +21,7 @@ import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
 import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
 import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvWebcam;
+import org.slf4j.Marker;
 
 import java.util.List;
 
@@ -46,7 +47,8 @@ public class Robot {
 
 
     OpenCvWebcam webcam;
-    MarkerProcessor.MARKER_POSITION position;
+    MarkerDetector.MARKER_POSITION position;
+    private MarkerDetector detector;
     private MarkerProcessor markerProcessor;
     private AprilTagProcessor aprilTag;
     private VisionPortal visionPortal;
@@ -786,19 +788,19 @@ public class Robot {
         webcam.openCameraDevice();*/
 //        visionPortal.setProcessorEnabled(aprilTag, false);
  //       visionPortal.setProcessorEnabled(markerProcessor, true);
-        position = markerProcessor.position;
+        position = detector.position;
 
 
         //if seeing nothing then make center
         if (position == null) {
             telemetry.addLine("im seeing nothing forcing to be center");
             Log.d("vision", "im not seeing anything forcing to be center");
-            position = MarkerProcessor.MARKER_POSITION.CENTER;
+            position = MarkerDetector.MARKER_POSITION.CENTER;
         }
 
         while (opMode.opModeIsActive()) {
 
-            if (position == MarkerProcessor.MARKER_POSITION.CENTER) {
+            if (position == MarkerDetector.MARKER_POSITION.CENTER) {
                 straightBlocking(20, false);
                 setHeading(15);
                 waitFor(0.1);
@@ -809,7 +811,7 @@ public class Robot {
                 waitFor(0.1);
                 straightBlocking(19, true);
                 break;
-            } else if (position == MarkerProcessor.MARKER_POSITION.LEFT) {
+            } else if (position == MarkerDetector.MARKER_POSITION.LEFT) {
                 straightBlocking(18, false);
                 setHeading(30);
                 waitFor(0.1);
@@ -820,7 +822,7 @@ public class Robot {
                 waitFor(0.1);
                 straightBlocking(17, true);
                 break;
-            } else if (position == MarkerProcessor.MARKER_POSITION.RIGHT) {
+            } else if (position == MarkerDetector.MARKER_POSITION.RIGHT) {
                 straightBlocking(14, false);
                 setHeading(-45);
                 waitFor(0.1);
