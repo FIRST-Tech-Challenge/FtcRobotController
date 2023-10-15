@@ -1,10 +1,12 @@
-package org.firstinspires.ftc.teamcode;
+package org.firstinspires.ftc.teamcode.kaitlyn;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
+import org.firstinspires.ftc.teamcode.MarkerDetector;
+import org.firstinspires.ftc.teamcode.Robot;
 import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
 import org.openftc.easyopencv.OpenCvWebcam;
@@ -40,7 +42,6 @@ public class TestAuto extends LinearOpMode {
 
         while (!isStarted() || opModeIsActive()) {
             position = detector.position;
-//          LEFT_CR_AVG = detector.leftRedAvg;
 //            telemetry.addData("position: ", position);
 //            telemetry.update();
 //            telemetry.addLine(String.valueOf(LEFT_CR_AVG));
