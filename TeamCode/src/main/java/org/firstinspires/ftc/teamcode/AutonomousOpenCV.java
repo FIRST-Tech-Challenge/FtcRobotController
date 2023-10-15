@@ -19,7 +19,6 @@ public class AutonomousOpenCV extends LinearOpMode {
     private OpenCvWebcam webcam;
     private CircleDetection circleDetection;
     private DrivingFunctions df;
-
     Servo servo;
     protected boolean detectionRed = false; // whether to detect a red ball (if false detects blue)
     protected boolean runBallDetectionTest = false;
@@ -33,7 +32,6 @@ public class AutonomousOpenCV extends LinearOpMode {
             UpdateCircleDetectionTelemetry();
         }
     }
-
     private void DetectBallPosition(int timeoutInSeconds) {
         int tries = 0;
         while (opModeIsActive() && !circleDetection.CircleFound() && tries < timeoutInSeconds * 10) {
@@ -44,7 +42,6 @@ public class AutonomousOpenCV extends LinearOpMode {
         if (!circleDetection.CircleFound())
             circleDetection.SetBallPosition(CircleDetection.BallPosition.LEFT); // Ball not found, makes a guess to the left
     }
-
     private void Initialize() {
         df = new DrivingFunctions(this);
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
@@ -57,20 +54,16 @@ public class AutonomousOpenCV extends LinearOpMode {
             public void onOpened() {
                 webcam.startStreaming(1280, 720, OpenCvCameraRotation.UPRIGHT);
             }
-
             @Override
             public void onError(int errorCode) {
-
             }
         });
     }
 
     @Override
     public void runOpMode() {
-
         Initialize();
         waitForStart();
-
 
         if (runBallDetectionTest) {
             RunBallDetectionTest();
@@ -85,7 +78,6 @@ public class AutonomousOpenCV extends LinearOpMode {
 
         if(circleDetection.GetBallPosition() == CircleDetection.BallPosition.LEFT)
         {
-
             ballPosition = "left";
             PushPixelLeft();
         }
@@ -103,14 +95,14 @@ public class AutonomousOpenCV extends LinearOpMode {
 
     private void PushPixelRight()
     {
-        df.driveStraight(DRIVE_SPEED, 20, 0);
-        df.turnToHeading(TURN_SPEED, -60); // Negative angles turn to the right
-        df.driveStraight(DRIVE_SPEED, 10, -60);
-        df.driveStraight(DRIVE_SPEED, -10, -60);
-        df.turnToHeading(TURN_SPEED, -10);
-        df.driveStraight(DRIVE_SPEED, -18, -10);
-        df.turnToHeading(TURN_SPEED, -90);
-        df.driveStraight(DRIVE_SPEED, 40, -90);
+        df.DriveStraight(DRIVE_SPEED, 20, 0);
+        df.TurnToHeading(TURN_SPEED, -60); // Negative angles turn to the right
+        df.DriveStraight(DRIVE_SPEED, 10, -60);
+        df.DriveStraight(DRIVE_SPEED, -10, -60);
+        df.TurnToHeading(TURN_SPEED, -10);
+        df.DriveStraight(DRIVE_SPEED, -18, -10);
+        df.TurnToHeading(TURN_SPEED, -90);
+        df.DriveStraight(DRIVE_SPEED, 40, -90);
         //df.strafeLeft(1, 100);
         //df.turnToHeading(TURN_SPEED, -90);
         //df.driveStraight(DRIVE_SPEED, 47, -90);
@@ -118,22 +110,22 @@ public class AutonomousOpenCV extends LinearOpMode {
 
     private void PushPixelLeft()
     {
-        df.driveStraight(DRIVE_SPEED, 20, 0);
-        df.turnToHeading(TURN_SPEED, 60); // Positive angles turn to the left
-        df.driveStraight(DRIVE_SPEED, 10, 60);
-        df.driveStraight(DRIVE_SPEED, -12, 60);
-        df.turnToHeading(TURN_SPEED, -25);
-        df.driveStraight(DRIVE_SPEED, -16, 0);
-        df.turnToHeading(TURN_SPEED, -90);
-        df.driveStraight(DRIVE_SPEED, 40, -90);
+        df.DriveStraight(DRIVE_SPEED, 20, 0);
+        df.TurnToHeading(TURN_SPEED, 60); // Positive angles turn to the left
+        df.DriveStraight(DRIVE_SPEED, 10, 60);
+        df.DriveStraight(DRIVE_SPEED, -12, 60);
+        df.TurnToHeading(TURN_SPEED, -25);
+        df.DriveStraight(DRIVE_SPEED, -16, 0);
+        df.TurnToHeading(TURN_SPEED, -90);
+        df.DriveStraight(DRIVE_SPEED, 40, -90);
     }
     private void PushPixelCentert()
     {
-        df.driveStraight(DRIVE_SPEED, 35, 0);
-        df.turnToHeading(TURN_SPEED, -10);
-        df.driveStraight(DRIVE_SPEED, -30, 0);
-        df.turnToHeading(TURN_SPEED, -90);
-        df.driveStraight(DRIVE_SPEED, 40, -90);
+        df.DriveStraight(DRIVE_SPEED, 35, 0);
+        df.TurnToHeading(TURN_SPEED, -10);
+        df.DriveStraight(DRIVE_SPEED, -30, 0);
+        df.TurnToHeading(TURN_SPEED, -90);
+        df.DriveStraight(DRIVE_SPEED, 40, -90);
     }
     private void RunEncoderTest()
     {
