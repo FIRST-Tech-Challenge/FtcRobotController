@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode;
 
 import android.os.SystemClock;
+import android.util.Log;
 
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -18,10 +19,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
 import org.firstinspires.ftc.vision.VisionPortal;
 import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
 import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
-import org.firstinspires.ftc.vision.tfod.TfodProcessor;
-import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
-import org.openftc.easyopencv.OpenCvCameraRotation;
 import org.openftc.easyopencv.OpenCvWebcam;
 
 import java.util.List;
@@ -43,18 +41,15 @@ public class Robot {
 
     double yaw;
 
-    private AprilTagProcessor aprilTag;
-    private VisionPortal visionPortal;
-
-
     double prevError = 0;
     double prevTime = 0;
 
 
     OpenCvWebcam webcam;
-    MarkerDetector detector;
-    MarkerDetector.MARKER_POSITION position;
-    private TfodProcessor tfod;
+    MarkerProcessor.MARKER_POSITION position;
+    private MarkerProcessor markerProcessor;
+    private AprilTagProcessor aprilTag;
+    private VisionPortal visionPortal;
 
 
     //CONSTRUCTOR
@@ -68,19 +63,21 @@ public class Robot {
         webcam = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "Webcam 1"), cameraMonitorViewId);
     }
 
-    public void setUpAprilTags() {
- //       aprilTag = AprilTagProcessor.easyCreateWithDefaults();
-        //visionPortal = VisionPortal.easyCreateWithDefaults(webcam, aprilTag);
+    public void setUpVisionProcessing() {
+       /* aprilTag = AprilTagProcessor.easyCreateWithDefaults();
+        visionPortal = VisionPortal.easyCreateWithDefaults(hardwareMap.get(WebcamName.class, "Webcam 1"), aprilTag);*/
         aprilTag = new AprilTagProcessor.Builder()
                 .build();
 
-        tfod = new TfodProcessor.Builder()
-                .build();
+        Log.d("vision", "just made apriltag");
 
+        markerProcessor = new MarkerProcessor();
         visionPortal = new VisionPortal.Builder()
-                .setCamera(hardwareMap.get(WebcamName.class, "Webcam 1"))
-                .addProcessors(tfod, aprilTag)
-                .build();
+            .setCamera(hardwareMap.get(WebcamName.class, "Webcam 1"))
+            .addProcessors(markerProcessor, aprilTag)
+            .build();
+        visionPortal.setProcessorEnabled(markerProcessor, false);
+        visionPortal.setProcessorEnabled(aprilTag, false);
     }
 
 
@@ -100,18 +97,20 @@ public class Robot {
     }
 
     public double getAprilTagXPos(int idNumber) {
-        List<AprilTagDetection> currentDetections = aprilTag.getDetections();
 
+        visionPortal.setProcessorEnabled(aprilTag, true);
+        visionPortal.setProcessorEnabled(markerProcessor, false);
         double xValue = 0;
+        List<AprilTagDetection> currentDetections = aprilTag.getDetections();
 
         for (AprilTagDetection detection : currentDetections) {
             if (detection.metadata.id == idNumber) {
                 xValue = detection.ftcPose.x;
+                telemetry.addData("id detected", idNumber);
                 break;
             }
-
+            telemetry.addLine("not detected");
         }
-
         return -xValue;
     }
 
@@ -131,6 +130,8 @@ public class Robot {
     }
 
     public double getAprilTagRange(int idNumber) {
+        visionPortal.setProcessorEnabled(markerProcessor, false);
+        visionPortal.setProcessorEnabled(aprilTag, true);
 
         List<AprilTagDetection> currentDetections = aprilTag.getDetections();
 
@@ -170,7 +171,7 @@ public class Robot {
 
         telemetry.addData("power", powerMovePositive);
         telemetry.addData("power 2", powerMoveNegative);
-        telemetry.addData("x", getAprilTagXPos(idNumber));
+        telemetry.addData("x ", getAprilTagXPos(idNumber));
         telemetry.addData("left range", getAprilTagXPos(idNumber) > inchesFromAprilTag - 0.5);
         telemetry.addData("right range", getAprilTagXPos(idNumber) < inchesFromAprilTag + 0.5);
 
@@ -777,51 +778,50 @@ public class Robot {
 
         elapsedTime = new ElapsedTime();
 
-        detector = new MarkerDetector();
-        webcam.setPipeline(detector);
-        webcam.openCameraDevice();
-        webcam.startStreaming(320, 240, OpenCvCameraRotation.UPRIGHT);
+        /*webcam.setPipeline(detector);
+        webcam.openCameraDevice();*/
+        visionPortal.setProcessorEnabled(aprilTag, false);
+        visionPortal.setProcessorEnabled(markerProcessor, true);
+        position = markerProcessor.position;
 
         while (opMode.opModeIsActive()) {
-            position = detector.position;
 
-            if (position == MarkerDetector.MARKER_POSITION.CENTER) {
-                straightBlocking(20, true);
+            if (position == MarkerProcessor.MARKER_POSITION.CENTER) {
+                straightBlocking(20, false);
                 setHeading(15);
                 waitFor(0.1);
-                straightBlocking(6, true);
-                waitFor(1.5);
                 straightBlocking(6, false);
+                waitFor(1.5);
+                straightBlocking(6, true);
                 setHeading(0);
                 waitFor(0.1);
-                straightBlocking(19, false);
+                straightBlocking(19, true);
                 break;
-            } else if (position == MarkerDetector.MARKER_POSITION.LEFT) {
-                straightBlocking(18, true);
+            } else if (position == MarkerProcessor.MARKER_POSITION.LEFT) {
+                straightBlocking(18, false);
                 setHeading(30);
                 waitFor(0.1);
-                straightBlocking(3, true);
-                waitFor(1.5);
                 straightBlocking(3, false);
+                waitFor(1.5);
+                straightBlocking(3, true);
                 setHeading(0);
                 waitFor(0.1);
-                straightBlocking(17, false);
+                straightBlocking(17, true);
                 break;
-            } else if (position == MarkerDetector.MARKER_POSITION.RIGHT) {
-                straightBlocking(14, true);
+            } else if (position == MarkerProcessor.MARKER_POSITION.RIGHT) {
+                straightBlocking(14, false);
                 setHeading(-45);
                 waitFor(0.1);
-                straightBlocking(11, true);
-                waitFor(1.5);
                 straightBlocking(11, false);
+                waitFor(1.5);
+                straightBlocking(11, true);
                 setHeading(0);
                 waitFor(0.1);
-                straightBlocking(12, false);
+                straightBlocking(12, true);
                 break;
             }
         }
 
-        webcam.stopStreaming();
     }
 
     public void waitFor(double seconds) {

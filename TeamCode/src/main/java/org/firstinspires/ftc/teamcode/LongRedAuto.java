@@ -2,11 +2,6 @@ package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.util.ElapsedTime;
-
-import org.firstinspires.ftc.vision.VisionPortal;
-import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
-import org.openftc.easyopencv.OpenCvWebcam;
 
 @Autonomous
 public class LongRedAuto extends LinearOpMode {
@@ -17,34 +12,34 @@ public class LongRedAuto extends LinearOpMode {
         int idNumber = 1;
         Robot robot = new Robot(hardwareMap, this, telemetry);
         robot.setUpDrivetrainMotors();
+        robot.setUpVisionProcessing();
 
         waitForStart();
 
 
         robot.detectAndMoveToMarker();
         robot.waitFor(0.75);
-
-        robot.straightBlocking(15, true);
+        /*
+        robot.straightBlocking(15, false);
         robot.waitFor(0.1);
         robot.setHeading(0);
         robot.waitFor(0.1);
-        robot.mecanumBlocking(20, false);
+        robot.mecanumBlocking(20, true);
         robot.waitFor(0.1);
         robot.setHeading(0);
         robot.waitFor(0.1);
-        robot.straightBlocking(38, true);
+        robot.straightBlocking(38, false);
         robot.waitFor(0.1);
         robot.setHeading(-90);
         robot.waitFor(0.1);
-        robot.straightBlocking(88, true);
+        robot.straightBlocking(88, false);
         robot.waitFor(0.1);
         robot.setHeading(-90);
         robot.waitFor(0.1);
-        robot.mecanumBlocking(25, true);
+        robot.mecanumBlocking(28, false);*/
 
         //TODO: APRILTAG GOES HERE !!!!!!
 
-        robot.setUpAprilTags();
         while (opModeIsActive() && !isDone) {
 
 
