@@ -66,8 +66,10 @@ public class Robot {
     }
 
     public void setUpVisionProcessing() {
-       /* aprilTag = AprilTagProcessor.easyCreateWithDefaults();
-        visionPortal = VisionPortal.easyCreateWithDefaults(hardwareMap.get(WebcamName.class, "Webcam 1"), aprilTag);*/
+        /*
+        aprilTag = AprilTagProcessor.easyCreateWithDefaults();
+        visionPortal = VisionPortal.easyCreateWithDefaults(hardwareMap.get(WebcamName.class, "Webcam 1"), aprilTag);
+        */
         aprilTag = new AprilTagProcessor.Builder()
                 .build();
 
@@ -779,6 +781,9 @@ public class Robot {
             setMotorPower(0, 0, 0, 0);
     }
 
+    /**
+     * Detects the T-marker and move this marker.
+     */
     public void detectAndMoveToMarker() {
 
         elapsedTime = new ElapsedTime();
