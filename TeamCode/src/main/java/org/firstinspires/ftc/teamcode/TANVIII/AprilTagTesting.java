@@ -42,7 +42,7 @@ public class AprilTagTesting extends LinearOpMode {
         VisionPortal myVisionPortal = VisionPortal.easyCreateWithDefaults(
                     hardwareMap.get(WebcamName.class, "Webcam 1"), myAprilTagProcessor);
 
-        int desiredTagId = 5;
+        //int desiredTagId = 5;
 
         waitForStart();
 
@@ -63,9 +63,11 @@ public class AprilTagTesting extends LinearOpMode {
                     telemetry.addLine(String.format("RBE %6.1f %6.1f %6.1f  (inch, deg, deg)", detection.ftcPose.range, detection.ftcPose.bearing, detection.ftcPose.elevation));
                 }
 
+                /*
                 if (detection.id == desiredTagId) {
 
                 }
+                */
 
                 telemetry.update();
             }

@@ -19,9 +19,18 @@ public class LongRedAuto extends LinearOpMode {
 
         waitForStart();
 
+        if (opModeIsActive()) {
+            robot.straightBlocking(2, false);
+            robot.detectAndMoveToMarker(); // detect the red block
+            robot.waitFor(0.75);
+        }
+
+
 
         robot.detectAndMoveToMarker();
         robot.waitFor(0.75);
+        /*
+
 
         robot.straightBlocking(15, false);
         robot.waitFor(0.1);
@@ -50,7 +59,6 @@ public class LongRedAuto extends LinearOpMode {
 
 
             telemetry.addData("x", isDoneWithAprilTagX);
-        }
 
             telemetry.update();
         }
@@ -84,6 +92,7 @@ public class LongRedAuto extends LinearOpMode {
         robot.waitFor(0.1);
         robot.mecanumBlocking(25, true);
         robot.waitFor(0.1);
+*/
 
     }
 }
