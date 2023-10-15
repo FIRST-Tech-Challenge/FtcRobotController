@@ -9,11 +9,11 @@ public class AutoBlueFar extends AutonomousOpenCV {
     {
         detectionRed = false;
         super.runOpMode();
-        df.turnToHeading(TURN_SPEED, 0);
-        df.driveStraight(DRIVE_SPEED, 18, 0);
-        df.turnToHeading(TURN_SPEED, 90);
-        df.driveStraight(1, 60, 90);
-        df.turnToHeading(TURN_SPEED, 30);
-        df.driveStraight(1, 40, 30);
+        df.TurnToHeading(TURN_SPEED, 0);
+        df.DriveStraight(DRIVE_SPEED, 18, 0);
+        df.TurnToHeading(TURN_SPEED, 90);
+        df.DriveStraight(1, 60, 90);
+        df.TurnToHeading(TURN_SPEED, 30);
+        df.DriveStraight(1, 40, 30);
     }
 }

@@ -10,8 +10,8 @@ public class AutoBlueNear extends AutonomousOpenCV {
         detectionRed = false;
         super.runOpMode();
         // write code for Blue Near
-        df.turnToHeading(TURN_SPEED, 90);
-df.driveStraight(DRIVE_SPEED, 40, 90);
+        df.TurnToHeading(TURN_SPEED, 90);
+        df.DriveStraight(DRIVE_SPEED, 40, 90);
     }
 
 }
