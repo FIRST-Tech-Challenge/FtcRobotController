@@ -52,10 +52,14 @@ public class AprilTagTesting extends LinearOpMode {
             telemetry.update();
 
             // Cycle through through the list and process each AprilTag
-            for (AprilTagDetection myAprilTagDetection : myAprilTagDetections) {
-                if (myAprilTagDetection.metadata != null) {  // This check for non-null Metadata is not needed for reading only ID code.
+            for (AprilTagDetection detection : myAprilTagDetections) {
+                if (detection.metadata != null) {  // This check for non-null Metadata is not needed for reading only ID code.
                     // Now take action based on this tag's ID code, or store info for later action.
-                    telemetry.addData("ID", "%d (%s)", myAprilTagDetection.id, myAprilTagDetection.metadata.name);
+                    telemetry.addData("ID", "%d (%s)", detection.id, detection.metadata.name);
+                    telemetry.addLine(String.format("\n==== (ID %d) %s", detection.id, detection.metadata.name));
+                    telemetry.addLine(String.format("XYZ %6.1f %6.1f %6.1f  (inch)", detection.ftcPose.x, detection.ftcPose.y, detection.ftcPose.z));
+                    telemetry.addLine(String.format("PRY %6.1f %6.1f %6.1f  (deg)", detection.ftcPose.pitch, detection.ftcPose.roll, detection.ftcPose.yaw));
+                    telemetry.addLine(String.format("RBE %6.1f %6.1f %6.1f  (inch, deg, deg)", detection.ftcPose.range, detection.ftcPose.bearing, detection.ftcPose.elevation));
                 }
                 telemetry.update();
             }
