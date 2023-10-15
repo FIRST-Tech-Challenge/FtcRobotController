@@ -153,8 +153,8 @@ public class Robot {
         double inchesFromAprilTag = mmFromAprilTag / 25.4;
         boolean done = false;
 
-        double[] powerMoveNegative = calculateMecanumPower((inchesFromAprilTag - getAprilX(idNumber)));
-        double[] powerMovePositive = calculateMecanumPower(-(inchesFromAprilTag - getAprilX(idNumber)));
+        double[] powerMoveNegative = calculateMecanumPower((inchesFromAprilTag - getAprilTagXPos(idNumber)));
+        double[] powerMovePositive = calculateMecanumPower(-(inchesFromAprilTag - getAprilTagXPos(idNumber)));
 
         double[] stopPower = {0, 0, 0, 0};
 
@@ -855,7 +855,7 @@ public class Robot {
     public void moveToApril() {
 
         webcam.openCameraDevice();
-        webcam.startStreaming(320, 240, OpenCvCameraRotation.UPRIGHT);
+       // webcam.startStreaming(320, 240, OpenCvCameraRotation.UPRIGHT);
 
 //        webcam.startStreaming(320, 240, OpenCvCameraRotation.UPRIGHT);
 
@@ -890,7 +890,7 @@ public class Robot {
 
         idNumber = 4;
 
-        double aprX = getAprilX(4);
+        double aprX = getAprilTagXPos(4);
         while (opMode.opModeIsActive()) {
             List<AprilTagDetection> currentDetections = aprilTag.getDetections();
             telemetry.addLine(currentDetections.toString());
