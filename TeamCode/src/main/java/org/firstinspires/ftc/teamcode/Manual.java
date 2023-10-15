@@ -41,6 +41,9 @@ public class Manual  extends LinearOpMode{
             // Combine drive and turn for blended motion. Use RobotHardware class
             robot.driveRobot(drive, turn);
 
+            manageLauncher();
+            manageArm();
+
             // April Tag detection call
             telemetryAprilTag();
 
@@ -54,6 +57,27 @@ public class Manual  extends LinearOpMode{
 
             // Pace this loop so hands move at a reasonable speed.
             sleep(50);
+        }
+    }
+
+    private void manageLauncher(){
+        if (gamepad1.a){
+            robot.resetLaunch();
+        }
+
+        if (gamepad1.b || gamepad1.right_bumper){
+            robot.setLauncher(RobotHardware.LAUNCHER_MAX);
+        }
+    }
+    private void manageArm(){
+        if (gamepad1.dpad_up) {
+            robot.moveArm(true);
+        }
+        else if (gamepad1.dpad_down) {
+            robot.moveArm(false);
+        }
+        else{
+            robot.stopArm();
         }
     }
 

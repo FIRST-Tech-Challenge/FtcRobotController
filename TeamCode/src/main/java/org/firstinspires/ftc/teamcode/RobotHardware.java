@@ -41,15 +41,21 @@ public class RobotHardware {
     private DcMotor rbMotor;
     private DcMotor lfMotor;
     private DcMotor lbMotor;
-    private DcMotor armMotor = null;
-    private Servo   leftHand = null;
-    private Servo   rightHand = null;
+    private DcMotor armMotorL = null;
+    private DcMotor armMotorR = null;
+    private DcMotor leftHand = null;
+    private DcMotor rightHand = null;
+    private Servo   launcher = null;
 
     // Define Drive constants.  Make them public so they CAN be used by the calling OpMode
     public static final double MID_SERVO       =  0.5 ;
     public static final double HAND_SPEED      =  0.02 ;  // sets rate to move servo
     public static final double ARM_UP_POWER    =  0.45 ;
     public static final double ARM_DOWN_POWER  = -0.45 ;
+
+    public static final double LAUNCHER_MIN     = 0.0;
+    public static final double LAUNCHER_MAX     = 0.4;
+
 
     //camera
     private Camera camera;
@@ -97,17 +103,26 @@ public class RobotHardware {
         lfMotor.setDirection(DcMotor.Direction.REVERSE);
         lbMotor.setDirection(DcMotor.Direction.REVERSE);
 
+        //servos
+        launcher = myOpMode.hardwareMap.get(Servo.class, "launcher");
+        //launcher.setDirection(Servo.Direction.REVERSE);
+        launcher.setPosition(LAUNCHER_MIN);
+
+        //arm motors
+        armMotorL = myOpMode.hardwareMap.get(DcMotor.class, "motorlefthex");
+        armMotorR = myOpMode.hardwareMap.get(DcMotor.class, "motorrighthex");
+        armMotorL.setDirection(DcMotor.Direction.REVERSE);
+
         // If there are encoders connected, switch to RUN_USING_ENCODER mode for greater accuracy
         // leftDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         // rightDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         // Define and initialize ALL installed servos.
-        /* Uncomment when arms is ready to be plugged in
-        leftHand = myOpMode.hardwareMap.get(Servo.class, "left_hand");
-        rightHand = myOpMode.hardwareMap.get(Servo.class, "right_hand");
-        leftHand.setPosition(MID_SERVO);
-        rightHand.setPosition(MID_SERVO);
-        */
+        //leftHand = myOpMode.hardwareMap.get(DcMotor.class, "motorlefthex");
+        //leftHand.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        //leftHand.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+
 
         // Get a reference to our sensor object. It's recommended to use NormalizedColorSensor over
         // ColorSensor, because NormalizedColorSensor consistently gives values between 0 and 1, while
@@ -218,10 +233,22 @@ public class RobotHardware {
     /**
      * Pass the requested arm power to the appropriate hardware drive motor
      *
-     * @param power driving power (-1.0 to 1.0)
+     * @param isUp Should the Arm be moved up or down
      */
-    public void setArmPower(double power) {
-        armMotor.setPower(power);
+    public void moveArm (boolean isUp) {
+        double power = 0.25;
+        int direction = (isUp)?1:-1;
+        armMotorL.setPower(power * direction);
+        armMotorR.setPower(power * direction);
+    }
+
+    /**
+     * Stop the arm from moving
+     *
+     */
+    public void stopArm(){
+        armMotorL.setPower(0);
+        armMotorR.setPower(0);
     }
 
     /**
@@ -229,9 +256,21 @@ public class RobotHardware {
      *
      * @param offset
      */
-    public void setHandPositions(double offset) {
-        offset = Range.clip(offset, -0.5, 0.5);
-        leftHand.setPosition(MID_SERVO + offset);
-        rightHand.setPosition(MID_SERVO - offset);
+    public void setHandPositions(int offset, double speed) {
+        //leftHand.setTargetPosition(leftHand.getCurrentPosition() + offset);
+        //leftHand.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        //leftHand.setPower(speed);
+
+        //offset = Range.clip(offset, -0.5, 0.5);
+        //leftHand.setPosition(MID_SERVO + offset);
+        //rightHand.setPosition(MID_SERVO - offset);
+    }
+
+    public void setLauncher(double position){
+        launcher.setPosition(position);
+    }
+
+    public void resetLaunch(){
+        launcher.setPosition(LAUNCHER_MIN);
     }
 }
