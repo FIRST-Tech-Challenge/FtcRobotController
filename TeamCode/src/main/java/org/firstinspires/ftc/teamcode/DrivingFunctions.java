@@ -31,7 +31,7 @@ public class DrivingFunctions {
     static final double     P_TURN_GAIN            = 0.035;     // Larger is more responsive, but also less stable
     static final double     P_DRIVE_GAIN           = 0.03;     // Larger is more responsive, but also less stable
     static final int     SERVO_SMOOTH_MOVE_STEPS   = 20;     // Larger is smoother, but potentially slower
-    static final double   PIXEL_RELESE_SERVO_INIT_POS   = 0.8;
+    static final double   PIXEL_RELESE_SERVO_INIT_POS   = 0.5;
     public DrivingFunctions(LinearOpMode l)
     {
         lom = l;
@@ -163,7 +163,7 @@ public class DrivingFunctions {
                     turnSpeed *= -1.0;
 
                 // Apply the turning correction to the current driving speed.
-                MoveRobot(0, maxDriveSpeed, turnSpeed, 1.0);
+                MoveRobot(0, maxDriveSpeed, -turnSpeed, 1.0);
             }
             StopMotors();
         }
@@ -207,7 +207,7 @@ public class DrivingFunctions {
             turnSpeed = Range.clip(turnSpeed, -maxTurnSpeed, maxTurnSpeed);
 
             // Pivot in place by applying the turning correction
-            MoveRobot(0, 0, turnSpeed, 1.0);
+            MoveRobot(0, 0, -turnSpeed, 1.0);
         }
         // Stop all motion;
         StopMotors();

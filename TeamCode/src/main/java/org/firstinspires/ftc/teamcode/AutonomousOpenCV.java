@@ -24,6 +24,8 @@ public class AutonomousOpenCV extends LinearOpMode {
     protected boolean detectionRed = false; // whether to detect a red ball (if false detects blue)
     protected boolean runBallDetectionTest = false;
     protected boolean runEncoderTest = false;
+
+    protected boolean runAutoDrivingTest = false;
     static final double DRIVE_SPEED = 0.3;
     static final double TURN_SPEED = 0.35;
 
@@ -68,6 +70,11 @@ public class AutonomousOpenCV extends LinearOpMode {
         Initialize();
         waitForStart();
 
+        if (runAutoDrivingTest) {
+            RunAutoDrivingTest();
+            return;
+        }
+
         if (runBallDetectionTest) {
             RunBallDetectionTest();
             return;
@@ -95,7 +102,15 @@ public class AutonomousOpenCV extends LinearOpMode {
             PushPixelRight();
         }
     }
+    protected void RunAutoDrivingTest()
+    {
+        df.DriveStraight(DRIVE_SPEED, 20, 0);
+        df.DriveStraight(DRIVE_SPEED, -20, 0);
 
+        df.TurnToHeading(TURN_SPEED, -60); // Positive angles turn to the left
+        df.DriveStraight(DRIVE_SPEED, 10, -60);
+        df.DriveStraight(DRIVE_SPEED, -12, -60);
+    }
 
     protected void PushPixelRight()
     {
