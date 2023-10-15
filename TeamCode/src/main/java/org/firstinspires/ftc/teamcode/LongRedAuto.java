@@ -10,19 +10,17 @@ public class LongRedAuto extends LinearOpMode {
 
     @Override
     public void runOpMode() throws InterruptedException {
-        boolean isDone = false;
+        boolean isDoneWithAprilTagX = false;
+        boolean isDoneWithAprilTagRange = false;
         int idNumber = 1;
         Robot robot = new Robot(hardwareMap, this, telemetry);
         robot.setUpDrivetrainMotors();
-        Log.d("vision", "pre set up vision");
         robot.setUpVisionProcessing();
 
         waitForStart();
-        Log.d("vision", "just ran");
 
 
-        robot.detectAndMoveToMarker();
-        Log.d("vision", "after kaitlyns big mess");
+        //robot.detectAndMoveToMarker();
         robot.waitFor(0.75);
         /*
         robot.straightBlocking(15, false);
@@ -45,29 +43,24 @@ public class LongRedAuto extends LinearOpMode {
 
         //TODO: APRILTAG GOES HERE !!!!!!
 
-        while (opModeIsActive() && !isDone) {
+        while (opModeIsActive() && !isDoneWithAprilTagX) {
 
 
-            if (!robot.moveRelativeToAprilTagX(0, idNumber)) {
-                isDone = robot.moveRelativeToAprilTagX(0, idNumber);
-            }
-            Log.d("vision", "post ethens big mess");
-            telemetry.addData("x", isDone);
-            //robot.moveRelativeToAprilTag(10);
+            isDoneWithAprilTagX = robot.moveRelativeToAprilTagX(0, idNumber);
+
+
+            telemetry.addData("x", isDoneWithAprilTagX);
 
             telemetry.update();
         }
         telemetry.addLine("got out");
-        isDone = false;
-        while (opModeIsActive() && !isDone) {
+        while (opModeIsActive() && !isDoneWithAprilTagRange) {
 
 
-            if (!robot.moveRelativeToAprilTagRange(10, idNumber)) {
-                isDone = robot.moveRelativeToAprilTagRange(10, idNumber);
-            }
+                isDoneWithAprilTagRange = robot.moveRelativeToAprilTagRange(10, idNumber);
 
-            telemetry.addData("range", isDone);
-            //robot.moveRelativeToAprilTag(10);
+
+            telemetry.addData("range", isDoneWithAprilTagRange);
 
             telemetry.update();
         }

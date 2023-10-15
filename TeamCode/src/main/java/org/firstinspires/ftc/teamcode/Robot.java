@@ -100,10 +100,12 @@ public class Robot {
 
         visionPortal.setProcessorEnabled(aprilTag, true);
         visionPortal.setProcessorEnabled(markerProcessor, false);
+
         double xValue = 0;
         List<AprilTagDetection> currentDetections = aprilTag.getDetections();
-
+        Log.d("vision", "num of detections" + currentDetections.size());
         for (AprilTagDetection detection : currentDetections) {
+            Log.d("vision", "id detections" + detection.metadata.id);
             if (detection.metadata.id == idNumber) {
                 xValue = detection.ftcPose.x;
                 telemetry.addData("id detected", idNumber);
@@ -784,6 +786,14 @@ public class Robot {
         visionPortal.setProcessorEnabled(markerProcessor, true);
         position = markerProcessor.position;
 
+
+        //if seeing nothing then make center
+        if (position == null) {
+            telemetry.addLine("im seeing nothing forcing to be center");
+            Log.d("vision", "im not seeing anything forcing to be center");
+            position = MarkerProcessor.MARKER_POSITION.CENTER;
+        }
+
         while (opMode.opModeIsActive()) {
 
             if (position == MarkerProcessor.MARKER_POSITION.CENTER) {
@@ -819,7 +829,10 @@ public class Robot {
                 waitFor(0.1);
                 straightBlocking(12, true);
                 break;
+            } else {
+                break;
             }
+
         }
 
     }
