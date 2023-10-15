@@ -9,11 +9,11 @@ public class AutoRedFar extends AutonomousOpenCV {
     {
         detectionRed = true;
         super.runOpMode();
-        df.turnToHeading(DRIVE_SPEED, 0);
-        df.driveStraight(DRIVE_SPEED, 18, 0);
-        df.turnToHeading(DRIVE_SPEED, -90);
-        df.driveStraight(1, 60, -90);
-        df.turnToHeading(DRIVE_SPEED, -30);
-        df.driveStraight(1, 40, -30);
+        df.TurnToHeading(DRIVE_SPEED, 0);
+        df.DriveStraight(DRIVE_SPEED, 18, 0);
+        df.TurnToHeading(DRIVE_SPEED, -90);
+        df.DriveStraight(1, 60, -90);
+        df.TurnToHeading(DRIVE_SPEED, -30);
+        df.DriveStraight(1, 40, -30);
     }
 }
