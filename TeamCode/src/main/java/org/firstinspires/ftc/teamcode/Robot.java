@@ -61,49 +61,43 @@ public class Robot {
         this.telemetry = telemetry;
         setUpDrivetrainMotors();
         setUpImu();
-        int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
-        webcam = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "Webcam 1"), cameraMonitorViewId);
+        //int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
+        //webcam = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "Webcam 1"), cameraMonitorViewId);
     }
 
     public void setUpVisionProcessing() {
-        /*
-        aprilTag = AprilTagProcessor.easyCreateWithDefaults();
-        visionPortal = VisionPortal.easyCreateWithDefaults(hardwareMap.get(WebcamName.class, "Webcam 1"), aprilTag);
-        */
-        aprilTag = new AprilTagProcessor.Builder()
-                .build();
 
-        Log.d("vision", "just made apriltag");
-
+//        aprilTag = new AprilTagProcessor.Builder().build();
         markerProcessor = new MarkerProcessor();
+
         visionPortal = new VisionPortal.Builder()
             .setCamera(hardwareMap.get(WebcamName.class, "Webcam 1"))
-            .addProcessors(markerProcessor, aprilTag)
+            .addProcessors(markerProcessor)
             .build();
-        visionPortal.setProcessorEnabled(markerProcessor, false);
-        visionPortal.setProcessorEnabled(aprilTag, false);
+//        visionPortal.setProcessorEnabled(markerProcessor, false);
+//        visionPortal.setProcessorEnabled(aprilTag, false);
     }
 
 
-    public double getAprilY(int idNumber) {
-        List<AprilTagDetection> currentDetections = aprilTag.getDetections();
-
-        double yValue = 0;
-
-        for (AprilTagDetection detection : currentDetections) {
-            if (detection.metadata != null) {
-                yValue = detection.ftcPose.y;
-            }
-
-        }
-
-        return yValue;
-    }
+//    public double getAprilY(int idNumber) {
+//        List<AprilTagDetection> currentDetections = aprilTag.getDetections();
+//
+//        double yValue = 0;
+//
+//        for (AprilTagDetection detection : currentDetections) {
+//            if (detection.metadata != null) {
+//                yValue = detection.ftcPose.y;
+//            }
+//
+//        }
+//
+//        return yValue;
+//    }
 
     public double getAprilTagXPos(int idNumber) {
 
-        visionPortal.setProcessorEnabled(aprilTag, true);
-        visionPortal.setProcessorEnabled(markerProcessor, false);
+//        visionPortal.setProcessorEnabled(aprilTag, true);
+//        visionPortal.setProcessorEnabled(markerProcessor, false);
 
         double xValue = 0;
         List<AprilTagDetection> currentDetections = aprilTag.getDetections();
@@ -135,8 +129,8 @@ public class Robot {
     }
 
     public double getAprilTagRange(int idNumber) {
-        visionPortal.setProcessorEnabled(markerProcessor, false);
-        visionPortal.setProcessorEnabled(aprilTag, true);
+//        visionPortal.setProcessorEnabled(markerProcessor, false);
+//        m.setProcessorEnabled(aprilTag, true);
 
         List<AprilTagDetection> currentDetections = aprilTag.getDetections();
 
@@ -790,8 +784,8 @@ public class Robot {
 
         /*webcam.setPipeline(detector);
         webcam.openCameraDevice();*/
-        visionPortal.setProcessorEnabled(aprilTag, false);
-        visionPortal.setProcessorEnabled(markerProcessor, true);
+//        visionPortal.setProcessorEnabled(aprilTag, false);
+ //       visionPortal.setProcessorEnabled(markerProcessor, true);
         position = markerProcessor.position;
 
 

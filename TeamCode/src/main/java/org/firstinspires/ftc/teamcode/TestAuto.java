@@ -55,31 +55,31 @@ public class TestAuto extends LinearOpMode {
 //            telemetry.update();
 
             if (position == MarkerDetector.MARKER_POSITION.CENTER) {
-                robot.straightBlocking(20, true);
+                robot.straightBlocking(20, false);
                 robot.setHeading(15);
-                robot.straightBlocking(6, true);
-                wait(3);
                 robot.straightBlocking(6, false);
+                wait(3);
+                robot.straightBlocking(6, true);
                 robot.setHeading(0);
-                robot.straightBlocking(19, false);
+                robot.straightBlocking(19, true);
                 break;
             } else if (position == MarkerDetector.MARKER_POSITION.LEFT) {
-                robot.straightBlocking(18, true);
+                robot.straightBlocking(18, false);
                 robot.setHeading(30);
-                robot.straightBlocking(3, true);
-                wait(3);
                 robot.straightBlocking(3, false);
+                wait(3);
+                robot.straightBlocking(3, true);
                 robot.setHeading(0);
-                robot.straightBlocking(17, false);
+                robot.straightBlocking(17, true);
                 break;
             } else if (position == MarkerDetector.MARKER_POSITION.RIGHT) {
-                robot.straightBlocking(14, true);
+                robot.straightBlocking(14, false);
                 robot.setHeading(-45);
-                robot.straightBlocking(11, true);
-                wait(3);
                 robot.straightBlocking(11, false);
+                wait(3);
+                robot.straightBlocking(11, true);
                 robot.setHeading(0);
-                robot.straightBlocking(12, false);
+                robot.straightBlocking(12, true);
                 break;
             }
         }
