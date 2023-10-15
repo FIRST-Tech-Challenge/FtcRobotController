@@ -12,7 +12,7 @@ public class AutoRed extends LinearOpMode {
         robot.setUpDrivetrainMotors();
 //        robot.setUpArmMotor();
 
-        robot.setUpAprilTags();
+        robot.setUpVisionProcessing();
         waitForStart();
 
 
@@ -42,7 +42,7 @@ public class AutoRed extends LinearOpMode {
 //        boolean downWithTurn = false;
 //        boolean doneWithMecanum2 = false;
 
-        int idNumber = 6;
+        int idNumber = 1;
 
         double targetDistanceFromAprilTag = 10;
 
@@ -61,7 +61,7 @@ public class AutoRed extends LinearOpMode {
                 isDone = robot.moveRelativeToAprilTagX(0, idNumber);
             }
 
-            telemetry.addData("x", isDone);
+            telemetry.addData("x is done", isDone);
             //robot.moveRelativeToAprilTag(10);
 
             telemetry.update();
