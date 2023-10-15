@@ -1,14 +1,15 @@
 package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
-@Autonomous(name="Autonomous - Red ball", group="Linear Opmode")
-public class AutonomousOpenCV_Red extends AutonomousOpenCV {
+@Autonomous(name="Auto - Red - Near", group="Linear Opmode")
+public class AutoRedNear extends AutonomousOpenCV {
     @Override
     public void runOpMode()
     {
         detectionRed = true;
         super.runOpMode();
+        df.turnToHeading(TURN_SPEED, -90);
+        df.driveStraight(DRIVE_SPEED, 40, -90);
     }
 }
