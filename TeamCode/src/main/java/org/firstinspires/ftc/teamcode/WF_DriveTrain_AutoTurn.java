@@ -35,6 +35,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.IMU;
+import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import org.opencv.core.Core;
 
@@ -46,6 +47,7 @@ import org.opencv.core.Size;
 public class WF_DriveTrain_AutoTurn extends LinearOpMode {
 
     // Declare OpMode members for each of the 4 motors.
+    Servo servo;
     private final ElapsedTime runtime = new ElapsedTime();
     private DrivingFunctions df = null;
     private void Initialize()
@@ -68,7 +70,9 @@ public class WF_DriveTrain_AutoTurn extends LinearOpMode {
         runtime.reset();
 
         // Speed factor to slow down the robot, goes from 0.1 to 1.0
+        servo = hardwareMap.get(Servo.class, "PixelReleaseServo");
         double speedFactor = 0.5;
+        double position = 1;
         double kp = -0.033;
         boolean isAutoTurning = false;
         double autoTurningStart = 0.0;
@@ -104,8 +108,20 @@ public class WF_DriveTrain_AutoTurn extends LinearOpMode {
             if (!previousGamepad1.left_bumper && currentGamepad1.left_bumper)
                 speedFactor = 0.5;
             if (!previousGamepad1.right_bumper && currentGamepad1.right_bumper)
+                speedFactor = 1;
+            if (currentGamepad1.start)
                 df.PutPixelInBackBoard();
 
+            if (currentGamepad1.right_trigger > 0.5)
+                if (position <= 1) {
+                    position += 0.01;
+                }
+            if (currentGamepad1.left_trigger > 0.5)
+                if (position >= 0.5) {
+                    position -= 0.01;
+                }
+            if (position > 0.5)
+                servo.setPosition(position);
             if (previousGamepad1.left_trigger != 0 && currentGamepad1.left_trigger == 0 && speedFactor > 0.1)
                 speedFactor -= 0.1;
             if (previousGamepad1.right_trigger != 0 && currentGamepad1.right_trigger == 0 && speedFactor < 1.0)
@@ -134,6 +150,8 @@ public class WF_DriveTrain_AutoTurn extends LinearOpMode {
             df.MoveRobot(x, y, yaw, speedFactor);
 
             telemetry.addData("Speed Factor", "%1.1f", speedFactor);
+            telemetry.addData("pos var", "%1.1f", position);
+            telemetry.addData("position", "%1.1f", servo.getPosition());
             telemetry.addData("Bot Heading", "%4.2f", botHeading);
             telemetry.addData("X/Y/Yaw", "%4.2f, %4.2f, %4.2f", x, y, yaw);
             telemetry.update();
