@@ -41,67 +41,16 @@ import org.opencv.core.Core;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.opencv.core.Size;
 
-/**
- * This file contains an example of a Linear "OpMode".
- * An OpMode is a 'program' that runs in either the autonomous or the teleop period of an FTC match.
- * The names of OpModes appear on the menu of the FTC Driver Station.
- * When a selection is made from the menu, the corresponding OpMode is executed.
- *
- * This particular OpMode illustrates driving a 4-motor Omni-Directional (or Holonomic) robot.
- * This code will work with either a Mecanum-Drive or an X-Drive train.
- * Both of these drives are illustrated at https://gm0.org/en/latest/docs/robot-design/drivetrains/holonomic.html
- * Note that a Mecanum drive must display an X roller-pattern when viewed from above.
- *
- * Also note that it is critical to set the correct rotation direction for each motor.  See details below.
- *
- * Holonomic drives provide the ability for the robot to move in three axes (directions) simultaneously.
- * Each motion axis is controlled by one Joystick axis.
- *
- * 1) y:    Driving forward and backward               Left-joystick Forward/Backward
- * 2) x:  Strafing right and left                     Left-joystick Right and Left
- * 3) Yaw:      Rotating Clockwise and counter clockwise    Right-joystick Right and Left
- *
- * This code is written assuming that the right-side motors need to be reversed for the robot to drive forward.
- * When you first test your robot, if it moves backward when you push the left stick forward, then you must flip
- * the direction of all 4 motors (see code below).
- *
- * Use Android Studio to Copy this Class, and Paste it into your team's code folder with a new name.
- * Remove or comment out the @Disabled line to add this opmode to the Driver Station OpMode list
- */
-
 @TeleOp(name="Omni TeleOp Auto-Turn", group="Linear Opmode")
 //@Disabled
 public class WF_DriveTrain_AutoTurn extends LinearOpMode {
 
     // Declare OpMode members for each of the 4 motors.
-    private ElapsedTime runtime = new ElapsedTime();
-    private DcMotor leftFrontDrive = null;
-    private DcMotor leftBackDrive = null;
-    private DcMotor rightFrontDrive = null;
-    private DcMotor rightBackDrive = null;
-    private IMU imu = null;
-
+    private final ElapsedTime runtime = new ElapsedTime();
+    private DrivingFunctions df = null;
     private void Initialize()
     {
-        // Initialize the hardware variables. Note that the strings used here must correspond
-        // to the names assigned during the robot configuration step on the DS or RC devices.
-        leftFrontDrive  = hardwareMap.get(DcMotor.class, "frontleft");
-        leftBackDrive  = hardwareMap.get(DcMotor.class, "backleft");
-        rightFrontDrive = hardwareMap.get(DcMotor.class, "frontright");
-        rightBackDrive = hardwareMap.get(DcMotor.class, "backright");
-
-        imu = hardwareMap.get(IMU.class, "imu");
-        // Adjust the orientation parameters to match your robot
-        IMU.Parameters parameters = new IMU.Parameters(new RevHubOrientationOnRobot(
-                RevHubOrientationOnRobot.LogoFacingDirection.UP,
-                RevHubOrientationOnRobot.UsbFacingDirection.RIGHT));
-        // Without this, the REV Hub's orientation is assumed to be logo up / USB forward
-        imu.initialize(parameters);
-
-        leftFrontDrive.setDirection(DcMotor.Direction.REVERSE);
-        leftBackDrive.setDirection(DcMotor.Direction.FORWARD);
-        rightFrontDrive.setDirection(DcMotor.Direction.FORWARD);
-        rightBackDrive.setDirection(DcMotor.Direction.FORWARD);
+        df = new DrivingFunctions(this);
     }
 
     @Override
@@ -124,7 +73,6 @@ public class WF_DriveTrain_AutoTurn extends LinearOpMode {
         boolean isAutoTurning = false;
         double autoTurningStart = 0.0;
         double autoTurningTarget = 0.0;
-        imu.resetYaw();
 
         // run until the end of the match (driver presses STOP)
         while (opModeIsActive()) {
@@ -137,11 +85,10 @@ public class WF_DriveTrain_AutoTurn extends LinearOpMode {
             double yaw = gamepad1.right_stick_x;
 
             if (gamepad1.back)
-                imu.resetYaw();
+                df.ResetYaw();
 
-            double botHeading = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES);
-            double rotatingSpeed = imu.getRobotAngularVelocity(AngleUnit.DEGREES).zRotationRate;
-
+            double botHeading = df.GetHeading();
+            double rotatingSpeed = df.GetRotatingSpeed();
             // Field centric driving is activated when any of the hat buttons are pressed
             if (gamepad1.dpad_down || gamepad1.dpad_up || gamepad1.dpad_left || gamepad1.dpad_right) {
                 x = gamepad1.dpad_left ? -1 : (gamepad1.dpad_right ? 1 : 0);
@@ -154,10 +101,10 @@ public class WF_DriveTrain_AutoTurn extends LinearOpMode {
                 y = newY;
             }
 
-            if (gamepad1.left_bumper)
+            if (!previousGamepad1.left_bumper && currentGamepad1.left_bumper)
                 speedFactor = 0.5;
-            if (gamepad1.right_bumper)
-                speedFactor = 1.0;
+            if (!previousGamepad1.right_bumper && currentGamepad1.right_bumper)
+                df.PutPixelInBackBoard();
 
             if (previousGamepad1.left_trigger != 0 && currentGamepad1.left_trigger == 0 && speedFactor > 0.1)
                 speedFactor -= 0.1;
@@ -184,42 +131,13 @@ public class WF_DriveTrain_AutoTurn extends LinearOpMode {
                 }
             }
 
-            SendPowerToWheels(x, y, yaw, speedFactor);
+            df.MoveRobot(x, y, yaw, speedFactor);
 
-            telemetry.addData("Status - 9/10", "Run Time: " + runtime.toString());
             telemetry.addData("Speed Factor", "%1.1f", speedFactor);
             telemetry.addData("Bot Heading", "%4.2f", botHeading);
             telemetry.addData("X/Y/Yaw", "%4.2f, %4.2f, %4.2f", x, y, yaw);
             telemetry.update();
         }
-    }
-
-    private void SendPowerToWheels(double x, double y, double yaw, double speedFactor)
-    {
-        double max;
-        double leftFrontPower  = y + x + yaw;
-        double rightFrontPower = y - x - yaw;
-        double leftBackPower   = y - x + yaw;
-        double rightBackPower  = y + x - yaw;
-
-        // Normalize the values so no wheel power exceeds 100%
-        // This ensures that the robot maintains the desired motion.
-        max = Math.max(Math.abs(leftFrontPower), Math.abs(rightFrontPower));
-        max = Math.max(max, Math.abs(leftBackPower));
-        max = Math.max(max, Math.abs(rightBackPower));
-
-        if (max > 1.0) {
-            leftFrontPower /= max;
-            rightFrontPower /= max;
-            leftBackPower /= max;
-            rightBackPower /= max;
-        }
-
-        // Send calculated power to wheels
-        leftFrontDrive.setPower(leftFrontPower * speedFactor);
-        rightFrontDrive.setPower(rightFrontPower * speedFactor);
-        leftBackDrive.setPower(leftBackPower * speedFactor);
-        rightBackDrive.setPower(rightBackPower * speedFactor);
     }
 }
 
