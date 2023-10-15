@@ -128,7 +128,7 @@ public class DrivingFunctions {
      */
     public void DriveStraight(double maxDriveSpeed,
                               double distance,
-                              double heading) {
+                              double heading, boolean strafe) {
 
         // Ensure that the OpMode is still active
         if (lom.opModeIsActive()) {
@@ -138,10 +138,15 @@ public class DrivingFunctions {
 
             // Set Target FIRST, then turn on RUN_TO_POSITION
             leftFrontDrive.setTargetPosition(leftFrontDrive.getCurrentPosition() + moveCounts);
-            rightFrontDrive.setTargetPosition(rightFrontDrive.getCurrentPosition() + moveCounts);
-            leftBackDrive.setTargetPosition(leftBackDrive.getCurrentPosition() + moveCounts);
             rightBackDrive.setTargetPosition(rightBackDrive.getCurrentPosition() + moveCounts);
-
+            if (!strafe) {
+                rightFrontDrive.setTargetPosition(rightFrontDrive.getCurrentPosition() + moveCounts);
+                leftBackDrive.setTargetPosition(leftBackDrive.getCurrentPosition() + moveCounts);
+            }
+            else{
+                rightFrontDrive.setTargetPosition(rightFrontDrive.getCurrentPosition() - moveCounts);
+                leftBackDrive.setTargetPosition(leftBackDrive.getCurrentPosition() - moveCounts);
+            }
             leftFrontDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             rightFrontDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             leftBackDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
@@ -150,8 +155,12 @@ public class DrivingFunctions {
             // Set the required driving speed  (must be positive for RUN_TO_POSITION)
             // Start driving straight, and then enter the control loop
             maxDriveSpeed = Math.abs(maxDriveSpeed);
-            MoveRobot(0, maxDriveSpeed, 0, 1.0);
-
+            if (!strafe) {
+                MoveRobot(0, maxDriveSpeed, 0, 1.0);
+            }
+            else{
+                MoveRobot(maxDriveSpeed, 0, 0, 1.0);
+            }
             // keep looping while we are still active, and BOTH motors are running.
             while (lom.opModeIsActive() &&
                     (leftFrontDrive.isBusy() && rightFrontDrive.isBusy() && leftBackDrive.isBusy() && rightBackDrive.isBusy())) {
@@ -163,7 +172,12 @@ public class DrivingFunctions {
                     turnSpeed *= -1.0;
 
                 // Apply the turning correction to the current driving speed.
-                MoveRobot(0, maxDriveSpeed, -turnSpeed, 1.0);
+                if (!strafe) {
+                    MoveRobot(0, maxDriveSpeed, -turnSpeed, 1.0);
+                }
+                else{
+                    MoveRobot(maxDriveSpeed, 0, -turnSpeed, 1.0);
+                }
             }
             StopMotors();
         }

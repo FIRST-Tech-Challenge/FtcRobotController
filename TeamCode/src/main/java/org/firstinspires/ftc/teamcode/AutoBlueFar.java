@@ -10,10 +10,10 @@ public class AutoBlueFar extends AutonomousOpenCV {
         detectionRed = false;
         super.runOpMode();
         df.TurnToHeading(TURN_SPEED, 0);
-        df.DriveStraight(DRIVE_SPEED, 18, 0);
+        df.DriveStraight(DRIVE_SPEED, 18, 0, false);
         df.TurnToHeading(TURN_SPEED, 90);
-        df.DriveStraight(1, 60, 90);
+        df.DriveStraight(1, 60, 90, false);
         df.TurnToHeading(TURN_SPEED, 30);
-        df.DriveStraight(1, 40, 30);
+        df.DriveStraight(1, 40, 30, false);
     }
 }

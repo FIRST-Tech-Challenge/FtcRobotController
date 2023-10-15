@@ -10,6 +10,6 @@ public class AutoRedNear extends AutonomousOpenCV {
         detectionRed = true;
         super.runOpMode();
         df.TurnToHeading(TURN_SPEED, -90);
-        df.DriveStraight(DRIVE_SPEED, 40, -90);
+        df.DriveStraight(DRIVE_SPEED, 40, -90, false);
     }
 }
