@@ -44,6 +44,23 @@ import java.util.List;
  * This OpMode illustrates the basics of AprilTag recognition and pose estimation,
  * including Java Builder structures for specifying Vision parameters.
  *
+ * For an introduction to AprilTags, see the FTC-DOCS link below:
+ * https://ftc-docs.firstinspires.org/en/latest/apriltag/vision_portal/apriltag_intro/apriltag-intro.html
+ *
+ * In this sample, any visible tag ID will be detected and displayed, but only tags that are included in the default
+ * "TagLibrary" will have their position and orientation information displayed.  This default TagLibrary contains
+ * the current Season's AprilTags and a small set of "test Tags" in the high number range.
+ *
+ * When an AprilTag in the TagLibrary is detected, the SDK provides location and orientation of the tag, relative to the camera.
+ * This information is provided in the "ftcPose" member of the returned "detection", and is explained in the ftc-docs page linked below.
+ * https://ftc-docs.firstinspires.org/apriltag-detection-values
+ *
+ * To experiment with using AprilTags to navigate, try out these two driving samples:
+ * RobotAutoDriveToAprilTagOmni and RobotAutoDriveToAprilTagTank
+ *
+ * There are many "default" VisionPortal and AprilTag configuration parameters that may be overridden if desired.
+ * These default parameters are shown as comments in the code below.
+ *
  * Use Android Studio to Copy this Class, and Paste it into your team's code folder with a new name.
  * Remove or comment out the @Disabled line to add this OpMode to the Driver Station OpMode list.
  */
@@ -106,6 +123,8 @@ public class ConceptAprilTag extends LinearOpMode {
 
         // Create the AprilTag processor.
         aprilTag = new AprilTagProcessor.Builder()
+
+            // The following default settings are available to un-comment and edit as needed.
             //.setDrawAxes(false)
             //.setDrawCubeProjection(false)
             //.setDrawTagOutline(true)
@@ -117,10 +136,18 @@ public class ConceptAprilTag extends LinearOpMode {
             // If you do not manually specify calibration parameters, the SDK will attempt
             // to load a predefined calibration for your camera.
             //.setLensIntrinsics(578.272, 578.272, 402.145, 221.506)
-
             // ... these parameters are fx, fy, cx, cy.
 
             .build();
+
+        // Adjust Image Decimation to trade-off detection-range for detection-rate.
+        // eg: Some typical detection data using a Logitech C920 WebCam
+        // Decimation = 1 ..  Detect 2" Tag from 10 feet away at 10 Frames per second
+        // Decimation = 2 ..  Detect 2" Tag from 6  feet away at 22 Frames per second
+        // Decimation = 3 ..  Detect 2" Tag from 4  feet away at 30 Frames Per Second (default)
+        // Decimation = 3 ..  Detect 5" Tag from 10 feet away at 30 Frames Per Second (default)
+        // Note: Decimation can be changed on-the-fly to adapt during a match.
+        //aprilTag.setDecimation(3);
 
         // Create the vision portal by using a builder.
         VisionPortal.Builder builder = new VisionPortal.Builder();
@@ -136,7 +163,7 @@ public class ConceptAprilTag extends LinearOpMode {
         //builder.setCameraResolution(new Size(640, 480));
 
         // Enable the RC preview (LiveView).  Set "false" to omit camera monitoring.
-        //builder.enableCameraMonitoring(true);
+        //builder.enableLiveView(true);
 
         // Set the stream format; MJPEG uses less bandwidth than default YUY2.
         //builder.setStreamFormat(VisionPortal.StreamFormat.YUY2);
