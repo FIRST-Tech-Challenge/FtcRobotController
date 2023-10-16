@@ -33,14 +33,33 @@ class Gamepadyn<T: Enum<T>> @JvmOverloads constructor(
     @JvmField val useInputThread: Boolean = false,
     internal val actions: Map<T, ActionDescriptor?>
 ) {
-
-
-
     @JvmOverloads constructor(
         opMode: OpMode,
         useInputThread: Boolean = false,
         vararg actions: Pair<T, ActionDescriptor?>
     ) : this(opMode, useInputThread, actions.toMap())
+
+//    class MapBuilder() {
+//        internal var binds: ArrayList<> =
+//        fun analog() {
+//
+//        }
+//
+//        fun d() {
+//
+//        }
+//
+//        fun build() {
+//            return
+//        }
+//    }
+//
+//    fun mapBuilder(): MapBuilder {
+//        return MapBuilder()
+//    }
+
+
+
 
     // If more than 2 players are ever allowed in the FTC:
     //   1: pigs will fly
