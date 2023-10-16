@@ -38,10 +38,10 @@ public class MainTeleOp extends LinearOpMode {
 
     @Override
     public void runOpMode() throws InterruptedException {
-        motor_fr = hardwareMap.get(DcMotorEx.class, "frontRight");
-        motor_fl = hardwareMap.get(DcMotorEx.class, "frontLeft");
-        motor_br = hardwareMap.get(DcMotorEx.class, "backRight");
-        motor_bl = hardwareMap.get(DcMotorEx.class, "backLeft");
+        motor_fr = hardwareMap.get(DcMotorEx.class, "fr");
+        motor_fl = hardwareMap.get(DcMotorEx.class, "fl");
+        motor_br = hardwareMap.get(DcMotorEx.class, "br");
+        motor_bl = hardwareMap.get(DcMotorEx.class, "bl");
         distanceSensor = hardwareMap.get(DistanceSensor.class, "distanceSensor");
         imu = hardwareMap.get(IMU.class, "IMU?");
         gp2 = new GamepadEx(gamepad2);
@@ -49,6 +49,8 @@ public class MainTeleOp extends LinearOpMode {
 
         distanceFromObject = distanceSensor.getDistance(DistanceUnit.CM);
         telemetry.addData("teleOp is ", "initialized");
+
+        waitForStart();
 
         while (opModeIsActive() && !isStopRequested()) {
             telemetry.addData("teleOp is ", "running");
@@ -168,6 +170,7 @@ public class MainTeleOp extends LinearOpMode {
                     Bot.fourbar.runManualStorage(gp2.getLeftY());
                 }
             }
+            drive();
         }
     }
 
