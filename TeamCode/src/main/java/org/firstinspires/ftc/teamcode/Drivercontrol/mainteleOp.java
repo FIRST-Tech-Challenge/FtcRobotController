@@ -58,7 +58,7 @@ public class mainteleOp extends LinearOpMode {
     @Override
     public void runOpMode() {
         //dc=hardwareMap.get(RevColorSensorV3.class, "dc");
-        mecdt dt = new mecdt();
+        Feildcentricdrive dt = new Feildcentricdrive();
         dt.init(hardwareMap,0);
         telemetry.addData("Status", "Initialized");
         telemetry.update();

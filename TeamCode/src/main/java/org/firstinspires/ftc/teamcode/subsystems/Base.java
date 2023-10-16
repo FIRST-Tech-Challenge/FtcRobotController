@@ -9,7 +9,7 @@ public class Base {
     static DcMotor rightFront;
     static DcMotor leftRear;
     static DcMotor rightRear;
-    public static void initBase(HardwareMap hardwareMap){
+    public static void init(HardwareMap hardwareMap){
         leftFront = hardwareMap.dcMotor.get("leftFront");//hwmap
         leftRear = hardwareMap.dcMotor.get("leftRear");
         rightFront = hardwareMap.dcMotor.get("rightFront");

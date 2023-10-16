@@ -1,21 +1,16 @@
 package org.firstinspires.ftc.teamcode.Drivercontrol;
 
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
-import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
-import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.IMU;
 import com.qualcomm.robotcore.hardware.IMU.Parameters;
 import com.qualcomm.robotcore.util.Range;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
-import org.firstinspires.ftc.robotcore.external.StateMachine;
 
 
-
-public class mecdt{
+public class oldFeildcentricdrive {
     private boolean reset = false;
     private IMU imu;
     private DcMotor motorFrontLeft;
@@ -35,8 +30,7 @@ public class mecdt{
         motorFrontRight = hardwareMap.dcMotor.get("rightFront");
         motorBackRight = hardwareMap.dcMotor.get("rightRear");
 
-        // Reverse the right side motors
-        // Reverse left motors if you are using NeveRests
+
         motorFrontLeft.setDirection(DcMotorSimple.Direction.REVERSE);
         motorBackLeft.setDirection(DcMotorSimple.Direction.REVERSE);
 
