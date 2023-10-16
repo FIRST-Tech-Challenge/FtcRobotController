@@ -133,7 +133,7 @@ public class TELEOPtest1 extends LinearOpMode {
                 if (gamepad2.x && gripPosition < MAX_POSITION) gripPosition = gripPosition + 1;
 
                 // close the gripper on Y button if not already at the closed position.
-                if (gamepad2.y && gripPosition > MIN_POSITION) gripPosition = gripPosition - .5;
+                if (gamepad2.y && gripPosition > MIN_POSITION) gripPosition = gripPosition - 1;
 
                 // Set continuous servo power level and direction.
                 //if (gamepad1.dpad_left)
