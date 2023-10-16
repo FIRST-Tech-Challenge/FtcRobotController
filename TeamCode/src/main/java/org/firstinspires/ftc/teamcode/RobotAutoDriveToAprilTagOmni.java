@@ -91,8 +91,7 @@ import java.util.concurrent.TimeUnit;
 public class RobotAutoDriveToAprilTagOmni extends LinearOpMode
 {
     // Adjust these numbers to suit your robot.
-    final double DESIRED_DISTANCE = 12.0; //  this is how close the camera should get to the target (inches)
-
+    final double DESIRED_DISTANCE = 6.0; //  this is how close the camera should get to the target (inches)
     final double SPEED_GAIN  =  0.02  ;   //  Forward Speed Control "Gain". eg: Ramp up to 50% power at a 25 inch error.   (0.50 / 25.0)
     final double STRAFE_GAIN =  0.015 ;   //  Strafe Speed Control "Gain".  eg: Ramp up to 25% power at a 25 degree Yaw error.   (0.25 / 25.0)
     final double TURN_GAIN   =  0.01  ;   //  Turn Control "Gain".  eg: Ramp up to 25% power at a 25 degree error. (0.25 / 25.0)
@@ -189,7 +188,7 @@ public class RobotAutoDriveToAprilTagOmni extends LinearOpMode
             telemetry.update();
 
             // Apply desired axes motions to the drivetrain.
-            df.MoveRobot(strafe, drive, turn, 1.0);
+            df.MoveRobot(strafe, drive, -turn, 1.0);
         }
     }
 

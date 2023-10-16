@@ -16,7 +16,6 @@ public class DrivingFunctions {
     private DcMotor leftBackDrive = null;
     private DcMotor rightFrontDrive = null;
     private DcMotor rightBackDrive = null;
-    private Servo pixelReleaseServo = null;
     private IMU imu = null;
     private LinearOpMode lom = null;
     private double headingError = 0.0;
@@ -30,8 +29,6 @@ public class DrivingFunctions {
     static final double     HEADING_THRESHOLD       = 1.0 ;    // How close must the heading get to the target before moving to next step.
     static final double     P_TURN_GAIN            = 0.035;     // Larger is more responsive, but also less stable
     static final double     P_DRIVE_GAIN           = 0.03;     // Larger is more responsive, but also less stable
-    static final int     SERVO_SMOOTH_MOVE_STEPS   = 20;     // Larger is smoother, but potentially slower
-    static final double   PIXEL_RELESE_SERVO_INIT_POS   = 0.5;
     public DrivingFunctions(LinearOpMode l)
     {
         lom = l;
@@ -45,7 +42,6 @@ public class DrivingFunctions {
         leftBackDrive  = lom.hardwareMap.get(DcMotor.class, "backleft");
         rightFrontDrive = lom.hardwareMap.get(DcMotor.class, "frontright");
         rightBackDrive = lom.hardwareMap.get(DcMotor.class, "backright");
-        pixelReleaseServo = lom.hardwareMap.get(Servo .class, "PixelReleaseServo");
 
         imu = lom.hardwareMap.get(IMU.class, "imu");
         // Adjust the orientation parameters to match your robot
@@ -71,35 +67,12 @@ public class DrivingFunctions {
         rightBackDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         StopMotors();
         ResetYaw();
-
-        pixelReleaseServo.setPosition(PIXEL_RELESE_SERVO_INIT_POS);
     }
 
     public void ResetYaw()
     {
         imu.resetYaw();
     }
-    public void PutPixelInBackBoard()
-    {
-        MoveServoSmoothly(pixelReleaseServo, 1.0, 1500);
-        lom.sleep(500);
-        MoveServoSmoothly(pixelReleaseServo, PIXEL_RELESE_SERVO_INIT_POS, 500);
-    }
-
-    private void MoveServoSmoothly(Servo s, double endPosition, int timeInMilliseconds)
-    {
-        double stepSize = (endPosition - s.getPosition()) / SERVO_SMOOTH_MOVE_STEPS;
-        long sleepTime = timeInMilliseconds / SERVO_SMOOTH_MOVE_STEPS;
-        double position = s.getPosition();
-
-        for (int i=0; i < SERVO_SMOOTH_MOVE_STEPS; i++)
-        {
-            position += stepSize;
-            s.setPosition(position);
-            lom.sleep(sleepTime);
-        }
-    }
-
     public void TestEncoders()
     {
         while(lom.opModeIsActive())
@@ -247,8 +220,10 @@ public class DrivingFunctions {
         // Multiply the error by the gain to determine the required steering correction/  Limit the result to +/- 1.0
         return Range.clip(this.headingError * proportionalGain, -1, 1);
     }
+
     public void MoveRobot(double x, double y, double yaw, double speedFactor)
     {
+        // If yaw is positive, it turns to the right
         double max;
         double leftFrontPower  = y + x + yaw;
         double rightFrontPower = y - x - yaw;
@@ -274,14 +249,11 @@ public class DrivingFunctions {
         leftBackDrive.setPower(leftBackPower * speedFactor);
         rightBackDrive.setPower(rightBackPower * speedFactor);
     }
-
     public double GetHeading() {
         return imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES);
     }
-
     public double GetRotatingSpeed()
     {
         return imu.getRobotAngularVelocity(AngleUnit.DEGREES).zRotationRate;
     }
-
 }

@@ -13,6 +13,6 @@ public class AutoRedNear extends AutonomousOpenCV {
         df.DriveStraight(DRIVE_SPEED, -10, 0, false);
         df.DriveStraight(DRIVE_SPEED, 48, 0, true);
         df.DriveStraight(DRIVE_SPEED, 13, 0, false);
-        df.PutPixelInBackBoard();
+        sf.PutPixelInBackBoard();
     }
 }
