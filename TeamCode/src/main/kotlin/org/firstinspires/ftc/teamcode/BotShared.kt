@@ -8,6 +8,7 @@ import com.qualcomm.robotcore.hardware.DcMotorEx
 import com.qualcomm.robotcore.hardware.DcMotorSimple.Direction.FORWARD
 import com.qualcomm.robotcore.hardware.DcMotorSimple.Direction.REVERSE
 import com.qualcomm.robotcore.hardware.IMU
+import com.qualcomm.robotcore.hardware.Servo
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName
 import org.firstinspires.ftc.teamcode.roadrunner.MecanumDrive
 
@@ -19,14 +20,20 @@ import org.firstinspires.ftc.teamcode.roadrunner.MecanumDrive
 class BotShared(opMode: OpMode) {
 
     // Get stuff from the hardware map (HardwareMap.get() can be shorthanded to HardwareMap[] in Kotlin)
-    @JvmField var imu: IMU =                      opMode.hardwareMap[IMU::class.java,         "imu"]
-    @JvmField var tagCamera: WebcamName =         opMode.hardwareMap[WebcamName::class.java,  "Webcam 1"]
-    @JvmField var motorFrontRight: DcMotorEx =    opMode.hardwareMap[DcMotorEx::class.java,   "rightFront"]
-    @JvmField var motorFrontLeft: DcMotorEx =     opMode.hardwareMap[DcMotorEx::class.java,   "leftFront"]
-    @JvmField var motorBackRight: DcMotorEx =     opMode.hardwareMap[DcMotorEx::class.java,   "rightBack"]
-    @JvmField var motorBackLeft: DcMotorEx =      opMode.hardwareMap[DcMotorEx::class.java,   "leftBack"]
-    @JvmField var pixelPlacer: PixelPlacer<WebcamName> = PixelPlacer(opMode, tagCamera)
+    @JvmField var imu: IMU =                        opMode.hardwareMap[IMU::class.java,         "imu"]
+    @JvmField var tagCamera: WebcamName =           opMode.hardwareMap[WebcamName::class.java,  "Webcam 1"]
+    @JvmField var motorFrontRight: DcMotorEx =      opMode.hardwareMap[DcMotorEx::class.java,   "rightFront"]
+    @JvmField var motorFrontLeft: DcMotorEx =       opMode.hardwareMap[DcMotorEx::class.java,   "leftFront"]
+    @JvmField var motorBackRight: DcMotorEx =       opMode.hardwareMap[DcMotorEx::class.java,   "rightBack"]
+    @JvmField var motorBackLeft: DcMotorEx =        opMode.hardwareMap[DcMotorEx::class.java,   "leftBack"]
+    @JvmField var motorIntake: DcMotorEx =          opMode.hardwareMap[DcMotorEx::class.java,   "intake"]
+    @JvmField var servoIntakeLeft: Servo =          opMode.hardwareMap[Servo::class.java,       "servoIntakeLeft"]
+    @JvmField var servoIntakeRight: Servo =         opMode.hardwareMap[Servo::class.java,       "servoIntakeRight"]
+
     @JvmField var drive: MecanumDrive? = null
+
+    @JvmField var outtake: PixelPlacer<WebcamName> = PixelPlacer(opMode, tagCamera)
+    @JvmField var intake: PixelIntake = PixelIntake(opMode, servoIntakeLeft, servoIntakeRight, motorIntake)
 
     init {
         // IMU orientation/calibration

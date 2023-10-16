@@ -4,9 +4,14 @@ import com.acmerobotics.roadrunner.Pose2d
 import com.acmerobotics.roadrunner.Vector2d
 import com.qualcomm.robotcore.eventloop.opmode.OpMode
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit
 import org.firstinspires.ftc.teamcode.roadrunner.MecanumDrive
 import kotlin.math.abs
+import kotlin.math.atan2
+import kotlin.math.cos
 import kotlin.math.max
+import kotlin.math.sin
+import kotlin.math.sqrt
 
 /*
     CONTROL IDEAS:
@@ -30,14 +35,26 @@ class DriverControl: OpMode() {
 
     override fun loop() {
 
-        // Most values are [-1.0, 1.0]
-        val control = object {
-            val movement = Vector2d(gamepad1.left_stick_x.toDouble(), -gamepad1.left_stick_y.toDouble())
-            val rotation = gamepad1.right_stick_x.toDouble();
-        }
+        // TODO: test driver relative, check
 
         val gyroRotation = shared.imu.robotYawPitchRollAngles
-        // gyroRotation.getYaw(AngleUnit.DEGREES)
+        val gyroYaw = -gyroRotation.getYaw(AngleUnit.RADIANS)
+
+        val inputTheta = atan2(gamepad1.left_stick_y.toDouble(), -gamepad1.left_stick_x.toDouble())
+        val driveTheta = inputTheta - gyroYaw
+        val inputPower = sqrt((gamepad1.left_stick_y.toDouble() * gamepad1.left_stick_y.toDouble()) + (gamepad1.left_stick_x.toDouble() * gamepad1.left_stick_x.toDouble()))
+        val driveRelativeX = cos(driveTheta) * inputPower
+        val driveRelativeY = sin(driveTheta) * inputPower
+
+        // Most values are [-1.0, 1.0]
+
+        val control = object {
+            val movement = Vector2d(driveRelativeX, driveRelativeY)
+            val rotation = gamepad1.right_stick_x.toDouble()
+            val intake = gamepad1.a
+        }
+
+        //
 
         // NOTE: This code is bot-relative
 
@@ -75,5 +92,10 @@ class DriverControl: OpMode() {
         shared.motorFrontRight.power =  rightFrontPower
         shared.motorBackLeft.power =    leftBackPower
         shared.motorBackRight.power =   rightBackPower
+
+        telemetry.addLine("Gyro Yaw: " + gyroRotation.getYaw(AngleUnit.DEGREES))
+        telemetry.update()
+
+        shared.intake.active = control.intake
     }
 }
