@@ -25,6 +25,6 @@ public class AutoRedFar extends RobotLinearOpMode {
         declareHardwareProperties();
         waitForStart();
         encoderDrive(0.2, 1, MOVEMENT_DIRECTION.FORWARD);
-        encoderDrive(0.6, 80, MOVEMENT_DIRECTION.STRAFE_RIGHT);
+        encoderDrive(0.6, 30, MOVEMENT_DIRECTION.STRAFE_RIGHT);
     }
 }
