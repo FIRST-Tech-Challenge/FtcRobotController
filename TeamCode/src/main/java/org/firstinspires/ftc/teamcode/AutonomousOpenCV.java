@@ -105,9 +105,7 @@ public class AutonomousOpenCV extends LinearOpMode {
     protected void RunAutoDrivingTest()
     {
         df.DriveStraight(DRIVE_SPEED, 20, 0, false);
-        df.DriveStraight(DRIVE_SPEED, 20, 0, true);
         df.DriveStraight(DRIVE_SPEED, -20, 0, false);
-        df.DriveStraight(DRIVE_SPEED, -20, 0, true);
 
         df.TurnToHeading(TURN_SPEED, -60); // Positive angles turn to the left
         df.DriveStraight(DRIVE_SPEED, 10, -60, false);
@@ -138,14 +136,13 @@ public class AutonomousOpenCV extends LinearOpMode {
         df.DriveStraight(DRIVE_SPEED, 20, 0, false);
         df.TurnToHeading(TURN_SPEED, 60); // Positive angles turn to the left
         df.DriveStraight(DRIVE_SPEED, 10, 60, false);
-        df.DriveStraight(DRIVE_SPEED, -12, 60, false);
+        df.DriveStraight(DRIVE_SPEED, -12, 60,false);
 
     }
     private void PushPixelCentert()
     {
         df.DriveStraight(DRIVE_SPEED, 35, 0, false);
-        df.TurnToHeading(TURN_SPEED, -10);
-        df.DriveStraight(DRIVE_SPEED, -30, 0, false);
+        df.DriveStraight(DRIVE_SPEED, -15, 0, false);
         df.TurnToHeading(TURN_SPEED, -90);
         df.DriveStraight(DRIVE_SPEED, 40, -90, false);
     }
