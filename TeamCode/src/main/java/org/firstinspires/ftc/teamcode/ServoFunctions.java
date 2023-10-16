@@ -7,7 +7,7 @@ import com.qualcomm.robotcore.util.Range;
 public class ServoFunctions {
     private LinearOpMode lom = null;
     private Servo pixelReleaseServo = null;
-    static final double   PIXEL_RELEASE_SERVO_INIT_POS   = 0.7;
+    static final double   PIXEL_RELEASE_SERVO_INIT_POS   = 0.0;
     static final int     SERVO_SMOOTH_MOVE_STEPS   = 20;     // Larger is smoother, but potentially slower
     public ServoFunctions(LinearOpMode l)
     {
