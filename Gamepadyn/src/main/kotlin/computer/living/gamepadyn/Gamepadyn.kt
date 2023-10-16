@@ -4,6 +4,7 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import kotlin.collections.toMap
 import kotlin.collections.toMutableMap
 import java.util.EnumMap
+import javax.validation.constraints.PositiveOrZero
 
 /**
  * Description of an action. This typename is long; it is recommended to use the alias if you are using Kotlin, importable via `gamepadyn.GAD`.
@@ -38,6 +39,9 @@ class Gamepadyn<T: Enum<T>> @JvmOverloads constructor(
         useInputThread: Boolean = false,
         vararg actions: Pair<T, ActionDescriptor?>
     ) : this(opMode, useInputThread, actions.toMap())
+
+    // for calculating delta time
+    val lastUpdateTime: Double = 0.0
 
 //    class MapBuilder() {
 //        internal var binds: ArrayList<> =
@@ -78,7 +82,7 @@ class Gamepadyn<T: Enum<T>> @JvmOverloads constructor(
      * @param i The player's index (0 is player 1, 1 is player 2, etc.)
      */
     @Suppress("unused")
-    fun getPlayer(i: Int): Player<T>? {
+    fun getPlayer(@PositiveOrZero i: Int): Player<T>? {
         assert (i >= 0)
         return when (i) {
             0 -> player1

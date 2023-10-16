@@ -45,7 +45,7 @@ enum class TestAction {
 ### Configurations and Bindings
 
 A Configuration is a set of Bindings.
-A Binding is a map from a raw gamepad input to an action/actions.
+A Binding is a map between a raw gamepad input to an action/actions.
 A simple Binding is a good Binding- don't overcomplicate things.
 Try to operate under the philosophy of "one button per action,"
 as stacking multiple inputs for single actions may confuse the input handler.

@@ -18,7 +18,7 @@ data class ActionDataDigital(var digitalData: Boolean = false): ActionData { ove
  * @property analogData The action data. The size of the array is equal to the amount of axes the action has.
  */
 class ActionDataAnalog(
-    vararg val analogData: FloatArray
+    vararg val analogData: Float
 ): ActionData {
     override val type = ActionType.ANALOG
 

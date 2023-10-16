@@ -53,13 +53,14 @@ repositories {
 
 dependencies {
     implementation project(':FtcRobotController')
-//  remove this to get faster compiles BUT no compile-time OpMode duplication checking
-    annotationProcessor files('lib/OpModeAnnotationProcessor.jar')
-//    kotlin
+//  comment below to get faster compiles BUT no compile-time OpMode duplication checking
+//    annotationProcessor files('lib/OpModeAnnotationProcessor.jar')
+
+//  kotlin
 //    implementation 'androidx.core:core-ktx:1.10.1'
-//    Gamepadyn
+//  Gamepadyn
     implementation project(path: ':Gamepadyn')
-//    roadrunner
+//  roadrunner
     implementation "com.acmerobotics.roadrunner:ftc:0.1.3"
 //    roadrunner 1.0.0 BETA (NOT USING UNTIL FULL RELEASE!!!)
     //    implementation 'com.acmerobotics.roadrunner:core:1.0.0-beta3'

@@ -1,5 +1,4 @@
 package computer.living.gamepadyn
-
 import java.util.stream.Collectors.toMap
 
 /**
