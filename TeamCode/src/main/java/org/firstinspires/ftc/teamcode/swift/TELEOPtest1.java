@@ -16,12 +16,13 @@ public class TELEOPtest1 extends LinearOpMode {
     static final double MAX_FWD = 1.0;     // Maximum FWD power applied to motor
     static final double MAX_REV = -1.0;     // Maximum REV power applied to motor
 
+    private Servo leftGripper;
+    private Servo rightGripper;
 
     @Override
     public void runOpMode() {
 
         waitForStart();
-
         launcherServo = hardwareMap.get(Servo.class, "launcherServo");
 
         while (opModeIsActive()) {
@@ -85,7 +86,7 @@ public class TELEOPtest1 extends LinearOpMode {
 
 
             //Define variables for arm, wrist, and gripper
-            Servo wristServo, left_Gripper, right_Gripper;
+            Servo wristServo, leftGripper, rightGripper;
             DcMotor armMotor;
             //CRServo contServo;
             float leftY, rightY;
@@ -96,26 +97,15 @@ public class TELEOPtest1 extends LinearOpMode {
 
 
                 armMotor = hardwareMap.get(DcMotor.class, "armMotor");
-                wristServo = hardwareMap.servo.get("Wrist Servo");
-                left_Gripper = hardwareMap.servo.get("Left Gripper");
-                right_Gripper = hardwareMap.servo.get("Right Gripper");
-                //contServo = hardwareMap.crservo.get("cont_servo");
+                wristServo = hardwareMap.servo.get("wristServo");
 
                 telemetry.addData("Mode", "waiting");
-                telemetry.update();
-
-                // wait for start button.
-
-
-                armPosition = .5;                   // set arm to half way up.
-                gripPosition = MAX_POSITION;        // set grip to full open.
 
 
                 leftY = gamepad2.left_stick_y * -1;
                 rightY = gamepad2.right_stick_y * -1;
 
                 armMotor.setPower(Range.clip(leftY, -1.0, 1.0));
-                //rightMotor.setPower(Range.clip(rightY, -1.0, 1.0));
 
                 telemetry.addData("Mode", "running");
                 telemetry.addData("sticks", "  left=" + leftY + "  right=" + rightY);
@@ -124,39 +114,24 @@ public class TELEOPtest1 extends LinearOpMode {
                 // variable to change the servo location.
 
                 // move arm down on A button if not already at lowest position.
-                if (gamepad2.a && armPosition > MIN_POSITION) armPosition -= .01;
 
-                // move arm up on B button if not already at the highest position.
-                if (gamepad2.b && armPosition < MAX_POSITION) armPosition += .01;
+                leftGripper = hardwareMap.get(Servo.class, "leftGripper");
+                rightGripper = hardwareMap.get(Servo.class, "rightGripper");
 
-                // open the gripper on X button if not already at most open position.
-                if (gamepad2.x && gripPosition < MAX_POSITION) gripPosition = gripPosition + 1;
-
-                // close the gripper on Y button if not already at the closed position.
-                if (gamepad2.y && gripPosition > MIN_POSITION) gripPosition = gripPosition - 1;
-
-                // Set continuous servo power level and direction.
-                //if (gamepad1.dpad_left)
-                //contPower = .20;
-                //else if (gamepad1.dpad_right)
-                //contPower = -.20;
-                //else
-                //contPower = 0.0;
-
-                // set the servo position/power values as we have computed them.
-                wristServo.setPosition(Range.clip(armPosition, MIN_POSITION, MAX_POSITION));
-                left_Gripper.setPosition(Range.clip(gripPosition, MIN_POSITION, MAX_POSITION));
-                right_Gripper.setPosition(Range.clip(gripPosition, MIN_POSITION, MAX_POSITION));
-                // contServo.setPower(contPower);
-
-                telemetry.addData("arm servo", "position=" + armPosition + "  actual=" + wristServo.getPosition());
-                telemetry.addData("grip servo", "position=" + gripPosition + "    actual=" + left_Gripper.getPosition());
-                telemetry.addData("grip servo", "position=" + gripPosition + "    actual=" + right_Gripper.getPosition());
+                    if (gamepad2.y) {
+                        // Move servos in opposite directions when "y" is pressed
+                        leftGripper.setPosition(1); // Adjust the position value as needed
+                        rightGripper.setPosition(0); // Adjust the position value as needed
+                    } else if (gamepad2.x) {
+                        // Return servos to the center position when "x" is pressed
+                        leftGripper.setPosition(0.9); // Adjust the position value for the center position
+                        rightGripper.setPosition(0.1); // Adjust the position value for the center position
 
 
-                telemetry.update();
+                        telemetry.update();
+                    }
+                }
             }
         }
-    }
 
 
