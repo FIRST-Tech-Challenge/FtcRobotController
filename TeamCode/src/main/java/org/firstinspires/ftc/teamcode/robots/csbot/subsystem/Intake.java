@@ -80,7 +80,7 @@ public class Intake implements Subsystem {
                 break;
             case FOLD:
                 beaterBar.setPower(0);
-                beaterBarAngleController.setTargetAngle(BEATER_BAR_FOLD_ANGLE);
+                beaterBarTargetAngle = BEATER_BAR_FOLD_ANGLE;
                 break;
             case STACK_INTAKE:
                 beaterBar.setPower(BEATER_BAR_INTAKE_VELOCITY);
