@@ -82,6 +82,7 @@ import java.util.concurrent.TimeUnit;
  */
 
 @TeleOp(name="Mecanum April", group = "Concept")
+@com.qualcomm.robotcore.eventloop.opmode.Disabled
 public class MecanumApril extends LinearOpMode
 {
     // Adjust these numbers to suit your robot.

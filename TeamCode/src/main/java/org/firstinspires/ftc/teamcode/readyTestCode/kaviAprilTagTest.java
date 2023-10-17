@@ -20,6 +20,7 @@ import java.util.concurrent.TimeUnit;
 
 
 @Autonomous(name="Autonomous Test", group="Test")
+@com.qualcomm.robotcore.eventloop.opmode.Disabled
 public class kaviAprilTagTest extends LinearOpMode {
     // Adjust these numbers to suit your robot.
     final double DESIRED_DISTANCE = 12.0; //  this is how close the camera should get to the target (inches)

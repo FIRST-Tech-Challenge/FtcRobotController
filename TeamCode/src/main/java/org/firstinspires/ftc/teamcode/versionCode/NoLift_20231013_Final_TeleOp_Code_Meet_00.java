@@ -9,8 +9,8 @@ import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 
-@com.qualcomm.robotcore.eventloop.opmode.TeleOp(name = "V3 Claw Test Code")
-public class V3_2023_10_10_01_MecanumLiftWristClawDrone extends LinearOpMode {
+@com.qualcomm.robotcore.eventloop.opmode.TeleOp(name = "No Lift TeleOp Meet 0 Final")
+public class NoLift_20231013_Final_TeleOp_Code_Meet_00 extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
         DcMotor frontLeftMotor = hardwareMap.dcMotor.get("motorFL");
@@ -18,24 +18,18 @@ public class V3_2023_10_10_01_MecanumLiftWristClawDrone extends LinearOpMode {
         DcMotor frontRightMotor = hardwareMap.dcMotor.get("motorFR");
         DcMotor backRightMotor = hardwareMap.dcMotor.get("motorBR");
 
-        DcMotor lift = hardwareMap.dcMotor.get("lift");
         Servo droneServo = hardwareMap.servo.get("drone");
         Servo wristServo = hardwareMap.servo.get("wrist");
         Servo clawServo = hardwareMap.servo.get("claw");
 
-        // Reverse the right side motors. Flip if goes backward.
         frontRightMotor.setDirection(DcMotorSimple.Direction.FORWARD);
-        frontLeftMotor.setDirection(DcMotorSimple.Direction.FORWARD);
+        backRightMotor.setDirection(DcMotorSimple.Direction.FORWARD);
         frontLeftMotor.setDirection(DcMotorSimple.Direction.REVERSE);
         backLeftMotor.setDirection(DcMotorSimple.Direction.REVERSE);
 
-        lift.setDirection(DcMotorSimple.Direction.FORWARD);
         droneServo.setDirection(Servo.Direction.FORWARD);
         wristServo.setDirection(Servo.Direction.FORWARD);
-        clawServo.setDirection(Servo.Direction.FORWARD);
-
-        lift.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        lift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        clawServo.setDirection(Servo.Direction.REVERSE);
 
         // Retrieve the IMU from the hardware map
         IMU imu = hardwareMap.get(IMU.class, "imu");
@@ -49,71 +43,23 @@ public class V3_2023_10_10_01_MecanumLiftWristClawDrone extends LinearOpMode {
 
         droneServo.scaleRange(0, 1);
         droneServo.setPosition(0.85);
+
+        wristServo.scaleRange(0, 1);
         wristServo.setPosition(0);
-        clawServo.scaleRange(0.3, 0.7);
-        clawServo.setPosition(0);
+        double wristTargetPos = wristServo.getPosition();
+        double openClaw = 0;
+        double closeClaw = 0.5;
+
+
 
         waitForStart();
 
         while (opModeIsActive()) {
+            //gamepad 1 - drive base
             double y = -gamepad1.left_stick_y; // Remember, Y stick value is reversed
             double x = gamepad1.left_stick_x;
             double rx = gamepad1.right_stick_x;
-            int targetPosition = 0;
-            double wristTargetPos = 0;
 
-            double droneServoPosition = droneServo.getPosition();
-            double liftPower = lift.getPower();
-            double liftPos = lift.getCurrentPosition();
-
-            if (gamepad1.right_trigger != 0) {
-                targetPosition += 10;
-            }else if (gamepad1.left_trigger != 0) {
-                targetPosition -= 10;
-            }
-            if (targetPosition > 1000){
-                targetPosition = 990;
-            }
-            else if (targetPosition < 0){
-                targetPosition = 10;
-            }
-            lift.setTargetPosition(targetPosition);
-            lift.setPower(0.3);
-            lift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-
-            if (wristTargetPos > 1){
-                wristTargetPos = 0.9;
-            } else if (wristTargetPos < 0){
-                wristTargetPos = 0.1;
-            }
-            if (gamepad1.right_bumper) {
-                wristTargetPos += 0.1;
-                wristServo.setPosition(wristTargetPos);
-            }else if (gamepad1.left_bumper) {
-                wristTargetPos -= 0.1;
-                wristServo.setPosition(wristTargetPos);
-            }
-
-            if (gamepad1.y) {
-
-            }
-
-            if (gamepad1.a) {
-                droneServo.setPosition(1);
-                sleep(1500);
-                droneServo.setPosition(0.85);
-            }
-
-            // ADDED CODE - sends info about current servo position to driver station
-            telemetry.addData("Servo Position: ", droneServoPosition);
-            telemetry.addData("Wrist Position: ", wristServo.getPosition());
-            telemetry.addData("Lift position: ", liftPos);
-            telemetry.addData("Lift power: ", liftPower);
-            telemetry.update();
-
-            // This button choice was made so that it is hard to hit on accident,
-            // it can be freely changed based on preference.
-            // The equivalent button is start on Xbox-style controllers.
             if (gamepad1.x) {
                 imu.resetYaw();
             }
@@ -135,11 +81,47 @@ public class V3_2023_10_10_01_MecanumLiftWristClawDrone extends LinearOpMode {
             double frontRightPower = ((rotY - rotX - rx) / denominator);
             double backRightPower = ((rotY + rotX - rx) / denominator);
 
-            frontLeftMotor.setPower(frontLeftPower/2);
-            backLeftMotor.setPower(backLeftPower/2);
-            frontRightMotor.setPower(frontRightPower/2);
-            backRightMotor.setPower(backRightPower/2);
+            frontLeftMotor.setPower(frontLeftPower*0.65);
+            backLeftMotor.setPower(backLeftPower*0.65);
+            frontRightMotor.setPower(frontRightPower*0.65);
+            backRightMotor.setPower(backRightPower*0.65);
 
+            if (gamepad2.left_bumper){
+                wristTargetPos += 0.1;
+                wristServo.setPosition(wristTargetPos);
+            } else if (gamepad2.right_bumper){
+                wristTargetPos -= 0.1;
+                wristServo.setPosition(wristTargetPos);
+            }
+
+            if (gamepad2.dpad_up) {
+                clawServo.setPosition(closeClaw);
+            }
+            if (gamepad2.dpad_down) {
+                clawServo.setPosition(openClaw);
+            }
+
+
+            //drone launcher code
+
+            double droneServoPosition = droneServo.getPosition();
+
+            if (gamepad2.a) {
+                droneServo.setPosition(1);
+                sleep(1500);
+                droneServo.setPosition(0.85);
+            }
+
+            // ADDED CODE - sends info about current servo position to driver station
+            telemetry.addData("Drone Servo Position: ", droneServoPosition);
+
+            telemetry.addData("Wrist Position: ", wristServo.getPosition());
+            telemetry.addData("Wrist Target: ", wristTargetPos);
+
+            telemetry.addData("Claw Position: ", clawServo.getPosition());
+            //telemetry.addData("Claw Target: ", claw);
+
+            telemetry.update();
         }
     }
 }

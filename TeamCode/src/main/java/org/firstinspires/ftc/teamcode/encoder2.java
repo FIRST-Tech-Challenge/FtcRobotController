@@ -23,6 +23,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 
 
 @Autonomous(name="encoder2")
+@com.qualcomm.robotcore.eventloop.opmode.Disabled
 
 public class encoder2 extends LinearOpMode {
     private DcMotor leftFrontDrive   = null;  //  Used to control the left front drive wheel

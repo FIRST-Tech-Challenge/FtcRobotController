@@ -7,6 +7,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
 @Autonomous(name="Auton Test")
+@com.qualcomm.robotcore.eventloop.opmode.Disabled
 public class AutonTest extends LinearOpMode{
 
         @Override

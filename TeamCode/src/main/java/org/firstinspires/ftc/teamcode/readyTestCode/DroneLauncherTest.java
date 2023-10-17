@@ -4,6 +4,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.Servo;
 
 @com.qualcomm.robotcore.eventloop.opmode.TeleOp(name = "Drone Launcher Test Code")
+@com.qualcomm.robotcore.eventloop.opmode.Disabled
 public class DroneLauncherTest extends LinearOpMode {
 
     @Override

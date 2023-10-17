@@ -10,6 +10,7 @@ import com.qualcomm.robotcore.hardware.Servo;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 
 @com.qualcomm.robotcore.eventloop.opmode.TeleOp(name = "V2 Test Code")
+@com.qualcomm.robotcore.eventloop.opmode.Disabled
 public class V2_2023_10_10_01_MecanumLiftWristDrone extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {

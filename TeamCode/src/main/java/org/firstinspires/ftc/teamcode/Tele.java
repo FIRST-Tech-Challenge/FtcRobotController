@@ -9,6 +9,7 @@ import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 
 @TeleOp(name = "Mecanum - DO")
+@com.qualcomm.robotcore.eventloop.opmode.Disabled
 public class Tele extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {

@@ -10,6 +10,7 @@ import com.qualcomm.robotcore.hardware.Servo;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 
 @com.qualcomm.robotcore.eventloop.opmode.TeleOp(name = "Drivebase w/ Claw+Lift+Drone Test Code")
+@com.qualcomm.robotcore.eventloop.opmode.Disabled
 public class TeleOpWithClawLiftDrone extends LinearOpMode {
 
     @Override

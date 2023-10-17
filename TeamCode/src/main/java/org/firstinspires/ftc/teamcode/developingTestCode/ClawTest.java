@@ -5,6 +5,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
 
 @com.qualcomm.robotcore.eventloop.opmode.TeleOp(name = "Lift+Wrist Test Code")
+@com.qualcomm.robotcore.eventloop.opmode.Disabled
 public class ClawTest extends LinearOpMode {
 
     @Override

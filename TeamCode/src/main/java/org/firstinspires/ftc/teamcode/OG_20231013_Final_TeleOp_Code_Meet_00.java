@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.versionCode;
+package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -9,8 +9,8 @@ import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 
-@com.qualcomm.robotcore.eventloop.opmode.TeleOp(name = "Tele Operated Meet 0 Final")
-public class _20231013_Kavi_Gupta_FTC_48_Tele_Operated_Final_Code_Meet_00 extends LinearOpMode {
+@com.qualcomm.robotcore.eventloop.opmode.TeleOp(name = "Original TeleOp Meet 0 Final")
+public class OG_20231013_Final_TeleOp_Code_Meet_00 extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
         DcMotor frontLeftMotor = hardwareMap.dcMotor.get("motorFL");
@@ -31,7 +31,7 @@ public class _20231013_Kavi_Gupta_FTC_48_Tele_Operated_Final_Code_Meet_00 extend
         lift.setDirection(DcMotorSimple.Direction.FORWARD);
         droneServo.setDirection(Servo.Direction.FORWARD);
         wristServo.setDirection(Servo.Direction.FORWARD);
-        clawServo.setDirection(Servo.Direction.FORWARD);
+        clawServo.setDirection(Servo.Direction.REVERSE);
 
         lift.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         lift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -48,11 +48,15 @@ public class _20231013_Kavi_Gupta_FTC_48_Tele_Operated_Final_Code_Meet_00 extend
 
         droneServo.scaleRange(0, 1);
         droneServo.setPosition(0.85);
+
         wristServo.scaleRange(0, 1);
         wristServo.setPosition(0);
         int liftTargetPosition = 5;
-        double wristTargetPos = 0;
-        float claw = 0;
+        double wristTargetPos = wristServo.getPosition();
+        double openClaw = 0;
+        double closeClaw = 0.5;
+
+
 
         waitForStart();
 
@@ -83,13 +87,15 @@ public class _20231013_Kavi_Gupta_FTC_48_Tele_Operated_Final_Code_Meet_00 extend
             double frontRightPower = ((rotY - rotX - rx) / denominator);
             double backRightPower = ((rotY + rotX - rx) / denominator);
 
-            frontLeftMotor.setPower(frontLeftPower/2);
-            backLeftMotor.setPower(backLeftPower/2);
-            frontRightMotor.setPower(frontRightPower/2);
-            backRightMotor.setPower(backRightPower/2);
+            frontLeftMotor.setPower(frontLeftPower*0.65);
+            backLeftMotor.setPower(backLeftPower*0.65);
+            frontRightMotor.setPower(frontRightPower*0.65);
+            backRightMotor.setPower(backRightPower*0.65);
+
 
             //gamepad 2 - mechanisms
             //lift code
+
             double liftPower = lift.getPower();
 
             if (gamepad2.right_trigger > 0) {
@@ -110,49 +116,37 @@ public class _20231013_Kavi_Gupta_FTC_48_Tele_Operated_Final_Code_Meet_00 extend
 
             //wrist code
 
-            if (wristTargetPos > 1){
-                wristTargetPos = 1;
-            } else if (wristTargetPos < 0){
-                wristTargetPos = 0;
+            if (gamepad2.left_bumper){
+                wristTargetPos += 0.1;
+                wristServo.setPosition(wristTargetPos);
+            } else if (gamepad2.right_bumper){
+                wristTargetPos -= 0.1;
+                wristServo.setPosition(wristTargetPos);
             }
 
+
+
             if (lift.getCurrentPosition() >= 0 && lift.getCurrentPosition() < 500) {
-                wristTargetPos = 0;
+                wristTargetPos = 1;
                 wristServo.setPosition(wristTargetPos);
 
             } else if (lift.getCurrentPosition() >= 500) {
-                wristTargetPos = 1;
+                wristTargetPos = 0;
                 wristServo.setPosition(wristTargetPos);
             }
 
-            //claw code
 
-            float clawOpenPosition = 1;
-            float clawClosedPosition = 0;
-            double clawActualPosition = clawServo.getPosition();
-            String clawStatus = null;
-
-            if (clawActualPosition >= clawOpenPosition - 0.25 && clawActualPosition <= clawClosedPosition/2) {
-                clawStatus = "open";
-            } else if (clawActualPosition <= clawClosedPosition + 0.25 && clawActualPosition > clawClosedPosition/2) {
-                clawStatus = "closed";
-            }
-
-            if (gamepad2.b) {
-                if (clawStatus == "open") {
-                    claw = clawClosedPosition;
-                } else if (clawStatus == "closed") {
-                    claw = clawOpenPosition;
-                }
-            }
 
             if (gamepad2.dpad_up) {
-                claw += 0.05;
-                clawServo.setPosition(claw);
-            }else if (gamepad2.dpad_down) {
-                claw -= 0.05;
-                clawServo.setPosition(claw);
+                clawServo.setPosition(closeClaw);
             }
+            if (gamepad2.dpad_down) {
+                clawServo.setPosition(openClaw);
+
+
+
+            }
+
 
             //drone launcher code
 
@@ -165,14 +159,23 @@ public class _20231013_Kavi_Gupta_FTC_48_Tele_Operated_Final_Code_Meet_00 extend
             }
 
             // ADDED CODE - sends info about current servo position to driver station
-            telemetry.addData("Servo Position: ", droneServoPosition);
+            telemetry.addData("Drone Servo Position: ", droneServoPosition);
+
+
             telemetry.addData("Wrist Position: ", wristServo.getPosition());
+            telemetry.addData("Wrist Target: ", wristTargetPos);
+
+            telemetry.addData("Claw Position: ", clawServo.getPosition());
+            //telemetry.addData("Claw Target: ", claw);555 iirj dc
+
             telemetry.addData("Lift position: ", lift.getCurrentPosition());
-            telemetry.addData("Target Position Requested: ", liftTargetPosition);
-            telemetry.addData("Actual Target Position: ", lift.getTargetPosition());
             telemetry.addData("Lift power: ", liftPower);
-            telemetry.addData("Claw Target: ", claw);
-            telemetry.addData("Claw Actual: ", clawActualPosition);
+            telemetry.addData("Lift Target Position Requested: ", liftTargetPosition);
+            telemetry.addData("Lift Actual Target Position: ", lift.getTargetPosition());
+
+
+
+
             telemetry.update();
         }
     }
