@@ -89,7 +89,7 @@ public class Hardware {
         frontLeft.setPower(power);
         frontRight.setPower(-power);
         backLeft.setPower(power);
-        frontRight.setPower(-power);
+        backRight.setPower(-power);
         while (!(frontLeft.getCurrentPosition() <= frontLeft.getTargetPosition() &&
                 frontRight.getCurrentPosition() <= frontRight.getTargetPosition() &&
                 backRight.getCurrentPosition() <= backRight.getTargetPosition() &&
