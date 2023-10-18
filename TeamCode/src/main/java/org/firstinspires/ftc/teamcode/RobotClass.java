@@ -12,10 +12,15 @@ package org.firstinspires.ftc.teamcode;
 
 import static java.lang.Thread.sleep;
 
+import com.qualcomm.hardware.bosch.BNO055IMU;
+import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+
+import org.firstinspires.ftc.robotcore.external.navigation.Acceleration;
+import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 
 public class RobotClass {
 
@@ -29,6 +34,9 @@ public class RobotClass {
     public DcMotor frontRight = null;
     public DcMotor backLeft = null;
     public DcMotor backRight = null;
+    public BNO055IMU imu = null;
+    public Orientation angles = null;
+    public Acceleration gravity = null;
 
     public RobotClass(LinearOpMode opmode) {
         myOpMode = opmode;
@@ -46,6 +54,23 @@ public class RobotClass {
         backRight.setDirection(DcMotorSimple.Direction.FORWARD);
         frontLeft.setDirection(DcMotorSimple.Direction.FORWARD);
         backLeft.setDirection(DcMotorSimple.Direction.REVERSE);
+
+        //initializing imu
+        // Set up the parameters with which we will use our IMU.
+            BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
+            parameters.angleUnit           = BNO055IMU.AngleUnit.DEGREES;
+            parameters.accelUnit           = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
+            parameters.calibrationDataFile = "BNO055IMUCalibration.json"; // see the calibration sample OpMode
+            parameters.loggingEnabled      = true;
+            parameters.loggingTag          = "IMU";
+            parameters.accelerationIntegrationAlgorithm = new JustLoggingAccelerationIntegrator();
+
+        //hardware mapping and initializing imu
+        imu = ahsMap.get(BNO055IMU.class, "imu");
+        imu.initialize(parameters);
+        if (!imu.isGyroCalibrated()){
+            imu.initialize(parameters);
+        }
     }
 
     public void resetEncoders() {
@@ -119,6 +144,48 @@ public class RobotClass {
     }
 
     //turning with gyro code
-    public void gyroTurning(double targetAngle){
+    public void gyroTurning(double targetAngle, double buffer) throws InterruptedException{
+        while (targetAngle < targetAngle-buffer || targetAngle > targetAngle+buffer) {
+            //getting angle in degrees
+            double angle = angles.firstAngle;
+
+            //setting power of motors
+            if (targetAngle-angle < 0){
+                frontLeft.setPower(-0.5);
+                frontRight.setPower(0.5);
+                backLeft.setPower(-0.5);
+                backRight.setPower(0.5);
+            }else {
+                frontLeft.setPower(0.5);
+                frontRight.setPower(-0.5);
+                backLeft.setPower(0.5);
+                backRight.setPower(-0.5);
+            }
+
+            //getting angle
+            angles = imu.getAngularOrientation();
+
+            //printing angle
+            myOpMode.telemetry.addData("angle", angle);
+            myOpMode.telemetry.update();
+        }
+    }
+
+    //strafing class with power and direction as parameters
+    public void strafing (String direction, double power){
+        if (direction == "left") {
+            frontLeft.setPower(-power);
+            frontRight.setPower(power);
+            backLeft.setPower(power);
+            backRight.setPower(-power);
+        } else if (direction == "right"){
+            frontLeft.setPower(power);
+            frontRight.setPower(-power);
+            backLeft.setPower(-power);
+            backRight.setPower(power);
+        } else {
+            myOpMode.telemetry.addData("Error", "Invalid direction");
+            myOpMode.telemetry.update();
+        }
     }
 }
