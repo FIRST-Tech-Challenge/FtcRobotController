@@ -84,7 +84,6 @@ public class TELEOPtest1 extends LinearOpMode {
             boolean rampUp = true;
 
 
-
             //Define variables for arm, wrist, and gripper
             Servo wristServo, leftGripper, rightGripper;
             DcMotor armMotor;
@@ -96,42 +95,50 @@ public class TELEOPtest1 extends LinearOpMode {
             // called when init button is  pressed.
 
 
-                armMotor = hardwareMap.get(DcMotor.class, "armMotor");
-                wristServo = hardwareMap.servo.get("wristServo");
+            armMotor = hardwareMap.get(DcMotor.class, "armMotor");
+            wristServo = hardwareMap.servo.get("wristServo");
 
-                telemetry.addData("Mode", "waiting");
-
-
-                leftY = gamepad2.left_stick_y * -1;
-                rightY = gamepad2.right_stick_y * -1;
-
-                armMotor.setPower(Range.clip(leftY, -1.0, 1.0));
-
-                telemetry.addData("Mode", "running");
-                telemetry.addData("sticks", "  left=" + leftY + "  right=" + rightY);
-
-                // check the gamepad buttons and if pressed, increment the appropriate position
-                // variable to change the servo location.
-
-                // move arm down on A button if not already at lowest position.
-
-                leftGripper = hardwareMap.get(Servo.class, "leftGripper");
-                rightGripper = hardwareMap.get(Servo.class, "rightGripper");
-
-                    if (gamepad2.y) {
-                        // Move servos in opposite directions when "y" is pressed
-                        leftGripper.setPosition(1); // Adjust the position value as needed
-                        rightGripper.setPosition(0); // Adjust the position value as needed
-                    } else if (gamepad2.x) {
-                        // Return servos to the center position when "x" is pressed
-                        leftGripper.setPosition(0.9); // Adjust the position value for the center position
-                        rightGripper.setPosition(0.1); // Adjust the position value for the center position
+            telemetry.addData("Mode", "waiting");
 
 
-                        telemetry.update();
-                    }
+            leftY = gamepad2.left_stick_y * -1;
+            rightY = gamepad2.right_stick_y * -1;
+
+            armMotor.setPower(Range.clip(leftY, -1.0, 1.0));
+
+            telemetry.addData("Mode", "running");
+            telemetry.addData("sticks", "  left=" + leftY + "  right=" + rightY);
+
+            // check the gamepad buttons and if pressed, increment the appropriate position
+            // variable to change the servo location.
+
+            // move arm down on A button if not already at lowest position.
+
+            leftGripper = hardwareMap.get(Servo.class, "leftGripper");
+            rightGripper = hardwareMap.get(Servo.class, "rightGripper");
+
+            if (gamepad2.y) {
+                // Move servos in opposite directions when "y" is pressed
+                leftGripper.setPosition(1); // Adjust the position value as needed
+                rightGripper.setPosition(0); // Adjust the position value as needed
+            } else if (gamepad2.x) {
+                // Return servos to the center position when "x" is pressed
+                leftGripper.setPosition(0.9); // Adjust the position value for the center position
+                rightGripper.setPosition(0.1); // Adjust the position value for the center position
+            }
+                if (gamepad2.b) {
+                    // Move servo in opposite directions when "y" is pressed
+                    wristServo.setPosition(.4); // Adjust the position value as needed
+
+                } else if (gamepad2.a) {
+                    // Return servos to the center position when "x" is pressed
+                    wristServo.setPosition(0); // Adjust the position value for the center position
+
+                    telemetry.update();
                 }
             }
         }
+    }
+
 
 
