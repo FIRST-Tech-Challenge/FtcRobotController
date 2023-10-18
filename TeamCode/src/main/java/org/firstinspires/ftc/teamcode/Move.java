@@ -36,6 +36,9 @@ public class Move extends OpMode {
     public float extendmove;
     public float extendpower;
     public float armPower = 0;
+
+    public int arm = 0;
+    public int extend = 0;
     ElapsedTime runtime = new ElapsedTime();
 
 //    static void sleep(int LongMilliseconds) {
@@ -64,6 +67,11 @@ public class Move extends OpMode {
         Arm = hardwareMap.get(DcMotor.class, "ARM");
 
         Extend = hardwareMap.get(DcMotor.class, "EX");
+
+        Arm.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        Arm.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+        Extend.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        Extend.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
 
         //Sets em to back or forward
         leftFrontDrive.setDirection(DcMotorSimple.Direction.REVERSE);
@@ -95,8 +103,8 @@ public class Move extends OpMode {
 
         // Set motor power
         leftFrontPower = Range.clip(drive + turn + strafe, -0.35, 0.35);
-        rightFrontPower = Range.clip(drive - turn - strafe, -0.35, 0.35);
-        leftBackPower = Range.clip(drive + turn - strafe, -1.4, 1.4);
+        rightFrontPower = Range.clip(drive - turn - strafe, -1.4, 2);
+        leftBackPower = Range.clip(drive + turn - strafe, -0.35, 0.35);
         rightBackPower = Range.clip(drive - turn + strafe, -1.4, 1.4);
 
         // Telemetry
@@ -105,6 +113,9 @@ public class Move extends OpMode {
         telemetry.addData("Left Stick Y: ", -gamepad1.left_stick_y);
         telemetry.addData("Right Stick X: ", gamepad1.right_stick_x);
         telemetry.addData("Right Stick Y: ", -gamepad1.right_stick_y);
+        telemetry.addData("Lift Encoder Ticks: ", Arm.getCurrentPosition());
+        telemetry.addData("Turret Encoder Ticks", Extend.getCurrentPosition());
+        telemetry.addData("arm", arm);
         telemetry.update();
 
 
@@ -133,13 +144,29 @@ public class Move extends OpMode {
 
         if(gamepad1.dpad_up)
         {
-            armmove = 1f;
+
+            armmove = -1f;
+
             armPower = armmove;
+            if(Arm.getCurrentPosition() > -2542)
+            {
+                Arm.setTargetPosition(arm);
+                Arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                Arm.setPower(2);
+                arm = arm - 5;
+            }
+
         }
         else if(gamepad1.dpad_down)
         {
-            armmove = -1f;
+
+            armmove = 1f;
+            arm = arm + 5;
             armPower = armmove;
+
+            Arm.setTargetPosition(arm);
+            Arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            Arm.setPower(2);
         }
         else
         {
@@ -147,12 +174,36 @@ public class Move extends OpMode {
         }
         if(gamepad1.a)
         {
+            if(Extend.getCurrentPosition() > -3235)
+            {
+                Extend.setTargetPosition(extend);
+                Extend.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                Extend.setPower(-2);
+
+
+                extend = extend - 5;
+            }
+
+
             extendmove = 1f;
+
+
             extendpower = extendmove;
         }
         else if(gamepad1.b)
         {
-            extendmove = -1f;
+
+
+            if(Extend.getCurrentPosition() < -1)
+            {
+                Extend.setTargetPosition(extend);
+                Extend.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                Extend.setPower(2);
+                extend = extend + 5;
+                extendmove = -1f;
+            }
+
+
             extendpower = extendmove;
         }
         else
