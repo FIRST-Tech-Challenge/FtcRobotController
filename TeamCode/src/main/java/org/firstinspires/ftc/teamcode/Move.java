@@ -161,12 +161,17 @@ public class Move extends OpMode {
         {
 
             armmove = 1f;
-            arm = arm + 5;
-            armPower = armmove;
 
-            Arm.setTargetPosition(arm);
-            Arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            Arm.setPower(2);
+
+            if(Arm.getCurrentPosition() < -1)
+            {
+                arm = arm + 5;
+                armPower = armmove;
+
+                Arm.setTargetPosition(arm);
+                Arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                Arm.setPower(2);
+            }
         }
         else
         {
