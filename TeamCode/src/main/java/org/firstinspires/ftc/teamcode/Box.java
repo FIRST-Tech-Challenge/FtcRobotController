@@ -34,13 +34,13 @@ public class Box {
     public void depositFirstPixel(){
         flywheelServo1.setPosition(0.5);
         flapServo.setPosition(flapOpen);
-        numPixelsDeposited =1;
+        numPixelsDeposited = 1;
     }
 
     public void depositSecondPixel(){
         flywheelServo2.setPosition(0.5);
         flapServo.setPosition(flapOpen);
-        numPixelsDeposited =2;
+        numPixelsDeposited = 2;
     }
 
 
@@ -53,8 +53,8 @@ public class Box {
 
 
     public void resetBox(){
-        timesBroken=0;
-        numPixelsDeposited =0;
+        timesBroken= 0;
+        numPixelsDeposited = 0;
         flapServo.setPosition(flapClosed);
         flywheelServo1.setPosition(0);
         flywheelServo2.setPosition(0);

@@ -23,6 +23,7 @@ To Do:
 1) TEST AUTOPATHS AND TELEOP!!!!
     - if splines do not work, switch to forward(), strafeRight(), and strafeLeft()
 2) add more autopaths
+3) odometry
 
  */
 

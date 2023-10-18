@@ -20,8 +20,8 @@ public class Bot {
 
     public enum BotState {
         INTAKE, // surgical tubing ready to pick up pixel
-        STORAGE_FULL, // either 1 or 2 pixels in storage
-        STORAGE_NOT_FULL,
+        STORAGE_FULL, // 2 pixels in storage
+        STORAGE_NOT_FULL, //1 or 0 pixels in storage
         OUTTAKE, // ready to outtake
     }
 
@@ -113,19 +113,22 @@ public class Bot {
 
     public void prepForOuttake() {
         currentState = BotState.STORAGE_FULL;
-        //slides.runToBottom(); code in slides subsystem
+        resetOuttake();
     }
     //move to slides
 
-    public void outtake() { // must be combined with bot.slide.run___() in MainTeleOp
+    public void outtake(int stage, DistanceSensor sensor,boolean pixelTwo) { // must be combined with bot.slide.run___() in MainTeleOp
         currentState = BotState.OUTTAKE;
-        //slides.runTo(//int arg 1-12, revisit it later); code in slides subsystem
-        //transferClaw.open();code in transferClaw subsystem
+        distanceTuning(sensor);
+        slides.runTo(stage);
+        box.depositFirstPixel();
+        if(pixelTwo){
+            box.depositSecondPixel();
+            resetOuttake();
+        }
     }
 
-    public void secure() {
-        //pipeline detected pixel, and intake was run
-    }
+
     public void initializeImus() {
         imu = opMode.hardwareMap.get(BNO055IMU.class, "imu");
         final BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
@@ -220,6 +223,21 @@ public class Bot {
     private void enableAutoBulkRead() {
         for (LynxModule mod : opMode.hardwareMap.getAll(LynxModule.class)) {
             mod.setBulkCachingMode(LynxModule.BulkCachingMode.AUTO);
+        }
+    }
+
+    public void intake(double power){
+        currentState = BotState.INTAKE;
+        noodles.intake(power);
+    }
+
+    public void outtake(){
+        currentState = BotState.OUTTAKE;
+        if(box.getNumPixelsDeposited() == 0){
+            box.depositFirstPixel();
+        }else if(box.getNumPixelsDeposited()==1){
+            box.depositSecondPixel();
+            box.resetBox();
         }
     }
 

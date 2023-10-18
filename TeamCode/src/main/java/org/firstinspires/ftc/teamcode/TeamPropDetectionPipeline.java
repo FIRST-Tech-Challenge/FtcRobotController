@@ -87,7 +87,7 @@ public class TeamPropDetectionPipeline extends OpenCvPipeline {
                 } else if (midpointRect > rightRect.tl().x && midpointRect < rightRect.br().x) {
                     teamPropLocation = TeamProp.ONRIGHT;
                 } else if (midpointRect < frontRect.tl().x && midpointRect > frontRect.br().x){
-                    teamPropLocation = TeamProp.INFRONT;
+                    teamPropLocation = TeamProp.MIDDLE;
                 }
 
             }

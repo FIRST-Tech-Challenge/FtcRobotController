@@ -120,6 +120,12 @@ public class Slides {
         slidesMotor.setPower(0);
     }
 
+    public void runToBottom(){
+        if(position != slidesPosition.GROUND){
+            runTo(1);
+        }
+    }
+
 
     public void resetProfiler() {
         profiler = new MotionProfiler(1, encoderClickPerSecond);
