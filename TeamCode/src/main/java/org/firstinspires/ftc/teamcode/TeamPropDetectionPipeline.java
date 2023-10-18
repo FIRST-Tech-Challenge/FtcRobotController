@@ -25,7 +25,7 @@ public class TeamPropDetectionPipeline extends OpenCvPipeline {
     public enum TeamProp{
         ONLEFT,
         ONRIGHT,
-        MIDDLE,
+        INFRONT,
         NOTDETECTED
     }
     public static TeamProp teamPropLocation= TeamProp.NOTDETECTED;

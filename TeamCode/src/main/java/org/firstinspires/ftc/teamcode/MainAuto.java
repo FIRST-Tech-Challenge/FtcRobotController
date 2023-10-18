@@ -10,7 +10,6 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DistanceSensor;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
-import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.teamcode.TeamPropDetectionPipeline.TeamProp;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
@@ -47,6 +46,7 @@ public class MainAuto extends LinearOpMode{
         CLOSE, FAR, NULL
     }
 
+    //different paths to follow depending on driver input before match
     enum AutoPath{
         MECHANICAL_FAILURE, NO_SENSE, OPTIMAL
     }
@@ -76,6 +76,7 @@ public class MainAuto extends LinearOpMode{
         bot = Bot.getInstance(this);
         GamepadEx gp1 = new GamepadEx(gamepad1);
 
+        //different start positions depending on alliance and distance from backdrop
         Pose2d startPoseBlueFar = new Pose2d(-54, -36, 0);
         Pose2d startPoseBlueClose = new Pose2d(-54, 36, 0);
         Pose2d startPoseRedClose = new Pose2d(54, 36, 0);
@@ -143,10 +144,15 @@ public class MainAuto extends LinearOpMode{
             }
 
 
+            //creating Trajectories/Paths
             TrajectorySequence blueAllianceFar = drive.trajectorySequenceBuilder(startPoseBlueFar)
+                    //go to the position (-36,-36) from startPoseBlueFar => do not turn and keep constant acceleration
                     .splineTo(new Vector2d(-36,-36), Math.toRadians(0))
+                    //perform dropPurplePixel() at this moment
                     .addTemporalMarker(this::dropPurplePixel)
+                    //go to position (-36,48) and turn 90 degrees
                     .splineTo(new Vector2d(-36,48), Math.toRadians(90))
+                    //perform moveBasedOnSpikeMark() 0.5 seconds before this moment
                     .UNSTABLE_addTemporalMarkerOffset(-0.5,this::moveBasedOnSpikeMark)
                     .UNSTABLE_addTemporalMarkerOffset(-0.5, this::outtake)
                     .splineTo(new Vector2d(-72,48), Math.toRadians(90))
@@ -182,17 +188,10 @@ public class MainAuto extends LinearOpMode{
                     .build();
 
 
-           /* Thread blueAllianceFarThread = new Thread(() -> drive.followTrajectorySequence(blueAllianceFar));
-            Thread redAllianceFarThread = new Thread(() -> drive.followTrajectorySequence(redAllianceFar));
-            Thread blueAllianceCloseThread = new Thread(() -> drive.followTrajectorySequence(blueAllianceClose));
-            Thread redAllianceCloseThread = new Thread(() -> drive.followTrajectorySequence(redAllianceClose));
-
-            */
-
             waitForStart();
             if (!isStopRequested()) {
 
-                distanceFromObject= distanceSensor.getDistance(DistanceUnit.CM);
+               /* distanceFromObject= distanceSensor.getDistance(DistanceUnit.CM);
                 int count=0;
 
                 while(distanceFromObject>5 && count<4){
@@ -200,8 +199,14 @@ public class MainAuto extends LinearOpMode{
                     distanceFromObject= distanceSensor.getDistance(DistanceUnit.CM);
                     count++;
                 }
+
+                */
+
+                //store the spikeMarkLocation based on input from team prop pipeline
                 findSpikeMarkLocation();
 
+
+                //follow different trajectories based on your position
                 if(dtb== DistanceToBackdrop.FAR && side==Side.BLUE && autopath==AutoPath.OPTIMAL){
                     drive.followTrajectorySequence(blueAllianceFar);
                 }
@@ -221,6 +226,7 @@ public class MainAuto extends LinearOpMode{
         }
     }
 
+    //outtake sequence including slides, fourbar, and box movement
     private void outtake(){
       bot.distanceTuning(distanceSensor);
         Bot.fourbar.outtake();
@@ -251,27 +257,30 @@ public class MainAuto extends LinearOpMode{
         }
     }
 
-    private void moveBasedOnSpikeMark(){
-       // camera.setPipeline(aprilTagsPipeline); => pipeline is set in AprilTagsDetection
 
+    private void moveBasedOnSpikeMark(){
+
+        //switch to aprilTagsPipeline => looking for AprilTags
+        camera.setPipeline(aprilTagsPipeline);
+
+        //based on where team prop is, move to the corresponding position on the backdrop
         if(teamPropLocation== TeamProp.ONLEFT){
+            //keep strafing left until robot detects AprilTag
             while(AprilTagsDetection.tagOfInterest==null){
+                AprilTagsDetection.detectTag();
                 bot.strafeLeft();
             }
         }
 
         else if(teamPropLocation== TeamProp.ONRIGHT){
             while(AprilTagsDetection.tagOfInterest==null){
+                AprilTagsDetection.detectTag();
                 bot.strafeRight();
             }
         }
         else if(teamPropLocation == TeamProp.NOTDETECTED){
             telemetry.addData("Prop not detected, check pipeline", teamPropLocation);
         }
-    }
-
-    public void optimalAuto(){
-
     }
 
 }
