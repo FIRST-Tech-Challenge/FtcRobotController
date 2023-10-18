@@ -10,8 +10,8 @@ abstract public class BaseTeleOp extends BaseOpMode {
     double mechanismSpeed = 0.9;
 
     public void driveRobot() {
-        double y = -gamepad1.left_stick_y;
-        double x = gamepad1.left_stick_x;
+        double y = -gamepad1.left_stick_y * 0.2;
+        double x = gamepad1.left_stick_x * 0.2; //make sure to undo multiplicatio
         double pivot = gamepad1.right_stick_x;
 
         double angle = Math.toDegrees(Math.atan2(y, x));
