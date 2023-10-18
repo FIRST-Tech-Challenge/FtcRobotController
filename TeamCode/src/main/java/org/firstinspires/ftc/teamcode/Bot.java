@@ -121,6 +121,7 @@ public class Bot {
         currentState = BotState.OUTTAKE;
         distanceTuning(sensor);
         slides.runTo(stage);
+        fourbar.outtake();
         box.depositFirstPixel();
         if(pixelTwo){
             box.depositSecondPixel();
@@ -187,6 +188,7 @@ public class Bot {
         br.setPower(speeds[3]);
     }
 
+    //cope no one uses field centric
     public void driveFieldCentric(double strafeSpeed, double forwardBackSpeed, double turnSpeed, double heading) {
         double magnitude = Math.sqrt(strafeSpeed * strafeSpeed + forwardBackSpeed * forwardBackSpeed);
         double theta = (Math.atan2(forwardBackSpeed, strafeSpeed) - heading) % (2 * Math.PI);
@@ -232,7 +234,7 @@ public class Bot {
         //im adding this comment because OTHERWISE IT WONT LET ME PUSH screw you git
     }
 
-    public void outtake(){
+    public void outtakeBox(){
         currentState = BotState.OUTTAKE;
         if(box.getNumPixelsDeposited() == 0){
             box.depositFirstPixel();

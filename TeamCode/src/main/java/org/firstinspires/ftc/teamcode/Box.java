@@ -68,7 +68,7 @@ public class Box {
         boxFull = isFull;
     }
 
-    public void boxIsFull(){
+    public void checkBeam(){
         boolean isBeamBroken = breakbeamSensor.getState();
         if (isBeamBroken) {
             telemetry.addData("Status", "Object detected!");

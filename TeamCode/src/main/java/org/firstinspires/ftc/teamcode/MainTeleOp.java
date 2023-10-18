@@ -17,7 +17,6 @@ import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 @TeleOp
 public class MainTeleOp extends LinearOpMode {
 
-
     private DcMotorEx motor_fr;
     private DcMotorEx motor_fl;
     private DcMotorEx motor_br;
@@ -31,6 +30,7 @@ public class MainTeleOp extends LinearOpMode {
     Bot bot;
     private boolean isAutomatic;
     private boolean firstPixelIsDesposited;
+
 
 
 
@@ -68,13 +68,13 @@ public class MainTeleOp extends LinearOpMode {
             if(isAutomatic) {
                 //noodle intake
                 if(gp2.wasJustPressed(GamepadKeys.Button.Y)) {
-                    bot.noodles.Intake();
-                    while(!bot.box.getIsFull()) {
-                        bot.box.boxIsFull();
-                        bot.noodles.Intake();
+                    Bot.noodles.Intake();
+                    while(!Bot.box.getIsFull()) {
+                        Bot.box.checkBeam();
+                        Bot.noodles.Intake();
                     }
-                    if(bot.box.getIsFull()) {
-                        bot.noodles.stop();
+                    if(Bot.box.getIsFull()) {
+                        Bot.noodles.stop();
                         bot.prepForOuttake();
                     }
                 }
@@ -91,15 +91,15 @@ public class MainTeleOp extends LinearOpMode {
                 }
 
                 //keeping second pixel deposit manual for reasons
-                if(gp2.wasJustPressed(GamepadKeys.Button.A) && bot.box.getNumPixelsDeposited()==1) {
-                    bot.box.depositSecondPixel();
-                    bot.resetOuttake();
+                if(gp2.wasJustPressed(GamepadKeys.Button.A) && Bot.box.getNumPixelsDeposited()==1) {
+                    Bot.box.depositSecondPixel();
+                    Bot.resetOuttake();
                 }
 
                 //drone + sus code
                 if(gp2.wasJustPressed(GamepadKeys.Button.B)) {
-                //  bot.suspension.hang();
-                    bot.drone.shoot();
+                //  Bot.suspension.hang();
+                    Bot.drone.shoot();
                 }
             }
 
@@ -107,49 +107,49 @@ public class MainTeleOp extends LinearOpMode {
             if(!isAutomatic){
                 //drone movement
                 if(gp2.wasJustPressed(GamepadKeys.Button.X)){
-                    bot.drone.shoot();
-                    bot.drone.reset();
+                    Bot.drone.shoot();
+                    Bot.drone.reset();
                 }
 
                 //suspension
                 if(gp2.wasJustPressed(GamepadKeys.Button.B)){
-                  //bot.suspension.hang();
+                  //Bot.suspension.hang();
                 }
 
                 //Box movement
                 if(gp2.wasJustPressed(GamepadKeys.Button.Y)){
-                    bot.box.resetBox();
+                    Bot.box.resetBox();
                 }
                 if(gp2.wasJustPressed(GamepadKeys.Button.A)){
-                    bot.outtake();
+                    bot.outtakeBox();
                 }
                 if(gp2.wasJustPressed(GamepadKeys.Button.A)){
-                    bot.outtake();
+                    bot.outtakeBox();
                 }
 
                 //intake
                 if(gp2.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER)>0.1){
                     double power = gp2.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER);
                     while(gp2.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER)>0.1){
-                        bot.noodles.intake(power);
+                        Bot.noodles.intake(power);
                         power= gp2.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER);
                     }
-                    bot.noodles.stop();
+                    Bot.noodles.stop();
                 }
 
 
                 //slides
                 if(gp2.getLeftY()!=0){
-                    bot.slides.runTo(gp2.getLeftY());
+                    Bot.slides.runTo(gp2.getLeftY());
                     //the left y on the y joystick will be at max 1. We need to change this
                 }
 
                 //fourbar
                 if(gp2.getRightY()>0){
-                    bot.fourbar.runManualOuttake(gp2.getLeftY());
+                    Bot.fourbar.runManualOuttake(gp2.getLeftY());
                 }
                 if(gp2.getRightY()<0){
-                    bot.fourbar.runManualStorage(gp2.getLeftY());
+                    Bot.fourbar.runManualStorage(gp2.getLeftY());
                 }
             }
             drive();
