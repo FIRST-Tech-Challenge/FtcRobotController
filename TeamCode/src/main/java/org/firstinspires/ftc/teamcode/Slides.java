@@ -12,7 +12,7 @@ public class Slides {
     public final DcMotorEx slidesMotor;
     private final static double p = 0.015, i = 0 , d = 0, f = 0;
     private final PIDFCoefficients coeff = new PIDFCoefficients(p,i,d,f);
-    double encoderClickPerSecond, setPoint;
+    double setPoint;
 
     double maxVelocity, maxAcceleration, distance;
     private MotionProfiler profiler;
@@ -31,13 +31,12 @@ public class Slides {
 
 
 
-    public static int storage= 0, top = 1700, mid = 980, low = 300;
+    public static int storage= 0, top = 1800, mid = 980, low = 300;
 
     private final OpMode opMode;
     private double currentPosition = 0;
     private boolean goingDown = false;
     private double elapsedTime = 0;
-    public boolean movingDown = false;
 
     public Slides(OpMode opMode){
         this.opMode = opMode;
@@ -45,6 +44,7 @@ public class Slides {
         slidesMotor.setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER, coeff);
         slidesMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
     }
+
     public void runTo(int stage){
         resetProfiler();
         slidesMotor.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
@@ -128,7 +128,7 @@ public class Slides {
 
 
     public void resetProfiler() {
-        profiler = new MotionProfiler(1, encoderClickPerSecond);
+        profiler = new MotionProfiler(1, maxAcceleration);
     }
     public void resetEncoder() {
         slidesMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);

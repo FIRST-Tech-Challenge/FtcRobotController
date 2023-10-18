@@ -152,7 +152,6 @@ public class MainTeleOp extends LinearOpMode {
         }
     }
 
-
     private void drive() {
         if (gp1.wasJustReleased(GamepadKeys.Button.LEFT_STICK_BUTTON)) {
             bot.resetIMU();

@@ -9,44 +9,43 @@ import com.qualcomm.robotcore.hardware.DigitalChannel;
 
 
 public class Box {
-    private final Servo flywheelServo1;
-    private final Servo flywheelServo2;
+    private final Servo wheelServo;
     private final Servo flapServo;
     private int numPixelsDeposited;
     private DigitalChannel breakbeamSensor;
     private boolean boxFull;
 
     private int timesBroken;
-    private double flapClosed = 0.5;
-    private double flapOpen = -0.5;
+    private double flapClosed = 1;
+    private double flapOpen = 0;
 
     //boolean boxFull has to receive input from break beam sensor
 
 
     public Box(OpMode opMode) {
-        flywheelServo1 = opMode.hardwareMap.servo.get("flywheel servo");
-        flywheelServo2 = opMode.hardwareMap.servo.get("flywheel servo2");
+        wheelServo = opMode.hardwareMap.servo.get("wheel servo");
         flapServo = opMode.hardwareMap.servo.get("flap servo");
         breakbeamSensor = hardwareMap.get(DigitalChannel.class, "breakbeamSensor");
         breakbeamSensor.setMode(DigitalChannel.Mode.INPUT);
     }
 
     public void depositFirstPixel(){
-        flywheelServo1.setPosition(0.5);
+        //purely gravity, open the flap
         flapServo.setPosition(flapOpen);
+        runWheel(10);
         numPixelsDeposited = 1;
     }
 
     public void depositSecondPixel(){
-        flywheelServo2.setPosition(0.5);
         flapServo.setPosition(flapOpen);
+        runWheel(1);
         numPixelsDeposited = 2;
     }
 
 
-    public void openFlap(){
-        if(Bot.currentState == Bot.BotState.OUTTAKE && boxFull){
-            flapServo.setPosition(flapOpen);
+    public void runWheel(double inc){
+        for(int i = 1; i<=inc; i++){
+            wheelServo.setPosition(i* (1/inc));
         }
     }
     //wheel spins in reverse to keep the pixel from falling out
@@ -55,8 +54,7 @@ public class Box {
         timesBroken= 0;
         numPixelsDeposited = 0;
         flapServo.setPosition(flapClosed);
-        flywheelServo1.setPosition(0);
-        flywheelServo2.setPosition(0);
+        wheelServo.setPosition(0);
     }
 
     public boolean getIsFull(){
