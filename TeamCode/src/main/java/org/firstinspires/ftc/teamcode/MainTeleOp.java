@@ -1,5 +1,4 @@
 package org.firstinspires.ftc.teamcode;
-
 import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.arcrobotics.ftclib.gamepad.GamepadEx;
 import com.arcrobotics.ftclib.gamepad.GamepadKeys;
@@ -8,7 +7,6 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.IMU;
-
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 
 
@@ -22,17 +20,13 @@ public class MainTeleOp extends LinearOpMode {
     private DcMotorEx motor_br;
     private DcMotorEx motor_bl;
     private IMU imu;
+    //robot centric orientation
     private GamepadEx gp1, gp2;
     private DistanceSensor distanceSensor;
     private double distanceFromObject;
-    private double perfectDistance= 5;
 
     Bot bot;
     private boolean isAutomatic;
-    private boolean firstPixelIsDesposited;
-
-
-
 
     private double driveSpeed=1;
 
@@ -59,9 +53,9 @@ public class MainTeleOp extends LinearOpMode {
             gp2.readButtons();
             telemetry.update();
 
-
             if(gp2.wasJustPressed(GamepadKeys.Button.START)) {
                 isAutomatic = !isAutomatic;
+                telemetry.addData("selected automatic driving mode",isAutomatic);
             }
 
             //Finite state machine enabled
@@ -131,27 +125,29 @@ public class MainTeleOp extends LinearOpMode {
                 if(gp2.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER)>0.1){
                     double power = gp2.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER);
                     while(gp2.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER)>0.1){
-                        Bot.noodles.intake(power);
-                        power= gp2.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER);
+                        bot.intake(power);
+                        power = gp2.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER);
                     }
-                    Bot.noodles.stop();
+                    bot.intake(0);
                 }
 
 
                 //slides
                 if(gp2.getLeftY()!=0){
-                    Bot.slides.runTo(gp2.getLeftY());
-                    //the left y on the y joystick will be at max 1. We need to change this
+                    double raw = gp2.getLeftY();
+                    bot.outtakeSlides(raw*1800);
+                    //the max value for the joystick will be equal to 1, so the max value for runTo in slides will be 1800
                 }
 
                 //fourbar
                 if(gp2.getRightY()>0){
-                    Bot.fourbar.runManualOuttake(gp2.getLeftY());
+                    bot.outtakeFourbar(gp2.getRightY());
                 }
                 if(gp2.getRightY()<0){
-                    Bot.fourbar.runManualStorage(gp2.getLeftY());
+                    bot.outtakeFourbar(gp2.getLeftY());
                 }
             }
+            //constantly checking for drive inputs
             drive();
         }
     }
@@ -172,8 +168,4 @@ public class MainTeleOp extends LinearOpMode {
                 turnVector.getX() * driveSpeed / 1.7
         );
     }
-
-
-
-
 }

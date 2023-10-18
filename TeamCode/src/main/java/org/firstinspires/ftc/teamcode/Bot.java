@@ -231,7 +231,9 @@ public class Bot {
     public void intake(double power){
         currentState = BotState.INTAKE;
         noodles.intake(power);
-        //im adding this comment because OTHERWISE IT WONT LET ME PUSH screw you git
+        if(power<=0.1){
+            noodles.stop();
+        }
     }
 
     public void outtakeBox(){
@@ -241,6 +243,18 @@ public class Bot {
         }else if(box.getNumPixelsDeposited()==1){
             box.depositSecondPixel();
             box.resetBox();
+        }
+    }
+
+
+    public void outtakeSlides(double target){
+        currentState = BotState.OUTTAKE;
+        slides.runTo(target);
+    }
+
+    public void outtakeFourbar(double input){
+        if(!fourbar.getIsOuttakePos()){
+            fourbar.runManualOuttake(input);
         }
     }
 

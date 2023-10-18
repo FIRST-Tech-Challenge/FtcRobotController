@@ -49,9 +49,8 @@ public class Box {
             flapServo.setPosition(flapOpen);
         }
     }
-
-
-
+    //wheel spins in reverse to keep the pixel from falling out
+// 2 servos - one for wheel, one for flap
     public void resetBox(){
         timesBroken= 0;
         numPixelsDeposited = 0;

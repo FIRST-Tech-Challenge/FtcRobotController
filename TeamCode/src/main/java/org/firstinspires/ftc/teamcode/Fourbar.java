@@ -8,8 +8,10 @@ public class Fourbar {
     private final Servo fourbarTwo;
 
     //values need to be changed
-    public static double outtake = 0.6;
-    public static double storage = 0.6;
+    public static double outtake = 1;
+
+    //approximating angle as 180 degrees
+    public static double storage = 0;
     public static boolean isOuttakePosition;
 
 
@@ -24,7 +26,7 @@ public class Fourbar {
     public void outtake(){
         fourbarOne.setPosition(outtake);
         fourbarTwo.setPosition(outtake);
-        isOuttakePosition= true;
+        isOuttakePosition = true;
     }
 
     public void storage(){
@@ -32,7 +34,7 @@ public class Fourbar {
         fourbarTwo.setDirection(Servo.Direction.REVERSE);
         fourbarOne.setPosition(storage);
         fourbarTwo.setPosition(storage);
-        isOuttakePosition= false;
+        isOuttakePosition = false;
     }
 
     public void runManualOuttake(double position){
@@ -45,6 +47,10 @@ public class Fourbar {
         fourbarTwo.setDirection(Servo.Direction.REVERSE);
         fourbarOne.setPosition(position);
         fourbarTwo.setPosition(position);
+    }
+
+    public boolean getIsOuttakePos(){
+        return isOuttakePosition;
     }
 
 }
