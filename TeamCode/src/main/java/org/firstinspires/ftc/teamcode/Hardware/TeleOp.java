@@ -23,9 +23,9 @@ public class TeleOp extends LinearOpMode {
 
         while(opModeIsActive()){
             //temporary code
-            double drive = gamepad1.left_stick_y;
-            double turn = gamepad1.right_stick_x;
-            double strafe = gamepad1.left_stick_x;
+            double drive = curveInput(gamepad1.left_stick_y);
+            double turn = curveInput(gamepad1.right_stick_x);
+            double strafe = curveInput(gamepad1.left_stick_x);
 
             double maxPower = Math.max(Math.abs(drive) + Math.abs(turn) + Math.abs(strafe), 1);
 
@@ -48,5 +48,14 @@ public class TeleOp extends LinearOpMode {
         backLeft.setPower(0);
         frontRight.setPower(0);
         backRight.setPower(0);
+    }
+
+    public double curveInput(double input){
+        /*
+            curve function:
+            y = (-2.09 / (1+e^4x)) + 1.04
+        */
+
+        return ((-2.09 / (1 + Math.pow(Math.E, 4 * input))) + 1.04);
     }
 }
