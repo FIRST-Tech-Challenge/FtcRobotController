@@ -20,6 +20,6 @@ public class AutoCameraTest extends LinearOpMode
     @Override
     public void runOpMode()
     {
-        
+
     }
 }
