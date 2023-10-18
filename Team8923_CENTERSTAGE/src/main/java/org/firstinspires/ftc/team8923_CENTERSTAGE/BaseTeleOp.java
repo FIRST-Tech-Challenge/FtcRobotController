@@ -9,20 +9,20 @@ abstract public class BaseTeleOp extends BaseOpMode {
     double driveSpeed = 0.8;
     double mechanismSpeed = 0.9;
 
-    public void driveRobot() {
-        double y = -gamepad1.left_stick_y * 0.2;
-        double x = gamepad1.left_stick_x * 0.2; //make sure to undo multiplicatio
+    /*public void driveRobot() { This is not called
+        double y = -gamepad1.left_stick_y;
+        double x = gamepad1.left_stick_x;
         double pivot = gamepad1.right_stick_x;
 
         double angle = Math.toDegrees(Math.atan2(y, x));
         double power = calculateDistance(x,y);
 
-        driveMecanum(angle, power, pivot);
-    }
+        driveMecanum(x, y, pivot);
+    }*/
 
     public void teleopDriving() {
         // driveMechanism(INTAKE_SPEED, SLIDES_SPEED);
-        driveRobot();
+       // driveRobot();
     }
 
     /*public void driveMechanism(double speedInput, double speedOutput) {

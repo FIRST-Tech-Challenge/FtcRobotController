@@ -9,15 +9,15 @@ public class TeleOp extends BaseTeleOp {
         waitForStart();
         
         while (opModeIsActive()) {
-            double y = (-gamepad1.left_stick_y)/2;
-            double x = gamepad1.left_stick_x;
-            double rotationalPower = -gamepad1.right_stick_x;
+            double y = (-gamepad1.left_stick_y)/10;
+            double x = gamepad1.left_stick_x/10;
+            double pivot = gamepad1.right_stick_x/10;
 
             double power = calculateDistance(x, y);
 
             double angle = Math.toDegrees(Math.atan2(y, x)); // 0 degrees is forward
 
-            driveMecanum(angle, power, rotationalPower);
+            driveMecanum(x, y, pivot);
 
             // teleopDriving();
 
