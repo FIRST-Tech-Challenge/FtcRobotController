@@ -50,6 +50,8 @@ public class MainTeleOp extends LinearOpMode {
         distanceFromObject = distanceSensor.getDistance(DistanceUnit.CM);
         telemetry.addData("teleOp is ", "initialized");
 
+        waitForStart();
+
         while (opModeIsActive() && !isStopRequested()) {
             telemetry.addData("teleOp is ", "running");
             telemetry.update();
