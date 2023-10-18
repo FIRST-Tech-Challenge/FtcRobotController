@@ -29,13 +29,19 @@
 
 package org.firstinspires.ftc.teamcode.Robot.AutoDrive;
 
+import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.IMU;
 import com.qualcomm.robotcore.hardware.NormalizedColorSensor;
 import com.qualcomm.robotcore.hardware.NormalizedRGBA;
 import com.qualcomm.robotcore.hardware.SwitchableLight;
+
+import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
+import org.firstinspires.ftc.teamcode.Utility.Datalogger;
 
 /**
  * This file illustrates the concept of driving up to a line and then stopping.
@@ -60,15 +66,23 @@ import com.qualcomm.robotcore.hardware.SwitchableLight;
  *   Remove or comment out the @Disabled line to add this OpMode to the Driver Station OpMode list
  */
 
-@Autonomous(name="Robot: Auto Drive To Line", group="Robot")
-@Disabled
+@Autonomous(name="Color: Auto Drive To Color Line", group="Robot")
+//@Disabled
 public class ToLine_Linear extends LinearOpMode {
 
     /* Declare OpMode members. */
-    /*
-    private DcMotor         leftDrive   = null;
-    private DcMotor         rightDrive  = null;
-     */
+    // Declare OpMode members
+    Datalog datalog = new Datalog("ToLine_Linear_01");
+    // for data logging use in this specific OpMode since IMU is not used directly
+    private IMU imu             = null;      // Control/Expansion Hub IMU
+    private final DcMotorEx[] motor = new DcMotorEx[]{null, null, null, null};
+    String[] motorLabels = {
+            "motorLeftFront",           // port 0 Control Hub
+            "motorLeftBack",            // port 1 Control Hub
+            "motorRightFront",          // port 2 Control Hub
+            "motorRightBack"            // port 3 Control Hub
+    };
+
 
     /** The colorSensor field will contain a reference to our color sensor hardware object */
     NormalizedColorSensor colorSensor;
@@ -93,10 +107,40 @@ public class ToLine_Linear extends LinearOpMode {
         // leftDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         // rightDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
+        // Initialize the drive system variables
+        int inchesLeft, inchesRight;
+        // Initialize the hardware variables
+        // define initialization values for IMU, and then initialize it.
+        imu = hardwareMap.get(IMU.class, "imu");
+
+        IMU.Parameters myIMUparameters;
+
+        new IMU.Parameters(
+                new RevHubOrientationOnRobot(
+                        RevHubOrientationOnRobot.LogoFacingDirection.FORWARD,
+                        RevHubOrientationOnRobot.UsbFacingDirection.UP
+                )
+        );
+
+        /* The next two lines define Hub orientation.
+         * The Default Orientation (shown) is when a hub is mounted horizontally with the printed logo pointing UP and the USB port pointing FORWARD.
+         *
+         * To Do:  EDIT these two lines to match YOUR mounting configuration.
+         */
+        RevHubOrientationOnRobot.LogoFacingDirection logoDirection = RevHubOrientationOnRobot.LogoFacingDirection.FORWARD;
+        RevHubOrientationOnRobot.UsbFacingDirection  usbDirection  = RevHubOrientationOnRobot.UsbFacingDirection.UP;
+
+        RevHubOrientationOnRobot orientationOnRobot = new RevHubOrientationOnRobot(logoDirection, usbDirection);
+
+        // Now initialize the IMU with this mounting orientation
+        // Note: if you choose two conflicting directions, this initialization will cause a code exception.
+        imu.initialize(new IMU.Parameters(orientationOnRobot));
+        YawPitchRollAngles orientation = imu.getRobotYawPitchRollAngles();
+
         // Get a reference to our sensor object. It's recommended to use NormalizedColorSensor over
         // ColorSensor, because NormalizedColorSensor consistently gives values between 0 and 1, while
         // the values you get from ColorSensor are dependent on the specific sensor you're using.
-        colorSensor = hardwareMap.get(NormalizedColorSensor.class, "sensor_color");
+        colorSensor = hardwareMap.get(NormalizedColorSensor.class, "sensorColor");
 
         // If necessary, turn ON the white LED (if there is no LED switch on the sensor)
         if (colorSensor instanceof SwitchableLight) {
@@ -129,8 +173,7 @@ public class ToLine_Linear extends LinearOpMode {
         }
 
         // Stop all motors
-        //leftDrive.setPower(0);
-        //rightDrive.setPower(0);
+        setMotorSpeed(0.0);  // stop all motors
     }
 
     // to obtain reflected light, read the normalized values from the color sensor.  Return the Alpha channel.
@@ -140,5 +183,86 @@ public class ToLine_Linear extends LinearOpMode {
         telemetry.update();
 
         return colors.alpha;
+    }
+
+
+    /**
+     * helper method to set a common speed for all motors in the drivetrain
+     * @param speed setting applied to all motors
+     */
+    private void setMotorSpeed(double speed) {
+        for (DcMotorEx dcMotorEx : motor) {
+            dcMotorEx.setPower(speed);
+        }
+    }
+
+    /**
+     * This class encapsulates all the fields that will go into the datalog.
+     */
+    public static class Datalog
+    {
+        // The underlying datalogger object - it cares only about an array of loggable fields
+        private final Datalogger datalogger;
+
+        // These are all of the fields that we want in the datalog.
+        // Note that order here is NOT important. The order is important in the setFields() call below
+        public Datalogger.GenericField opModeStatus     = new Datalogger.GenericField("OpModeStatus");
+        public Datalogger.GenericField setSpeed         = new Datalogger.GenericField("Initial Speed");
+        public Datalogger.GenericField direction        = new Datalogger.GenericField("Direction");
+        public Datalogger.GenericField distance         = new Datalogger.GenericField("Distance");
+        public Datalogger.GenericField ticks0           = new Datalogger.GenericField("Ticks 0");
+        public Datalogger.GenericField ticks1           = new Datalogger.GenericField("Ticks 1");
+        public Datalogger.GenericField ticks2           = new Datalogger.GenericField("Ticks 2");
+        public Datalogger.GenericField ticks3           = new Datalogger.GenericField("Ticks 3");
+        public Datalogger.GenericField currentSpeed0    = new Datalogger.GenericField("Current Speed 0");
+        public Datalogger.GenericField currentSpeed1    = new Datalogger.GenericField("Current Speed 1");
+        public Datalogger.GenericField currentSpeed2    = new Datalogger.GenericField("Current Speed 2");
+        public Datalogger.GenericField currentSpeed3    = new Datalogger.GenericField("Current Speed 3");
+        public Datalogger.GenericField heading          = new Datalogger.GenericField("Heading");
+
+        /**
+         * Initializer for class
+         * @param name filename for output log
+         */
+        public Datalog(String name)
+        {
+            // Build the underlying datalog object
+            datalogger = new Datalogger.Builder()
+
+                    // Pass through the filename
+                    .setFilename(name)
+
+                    // Request an automatic timestamp field
+                    .setAutoTimestamp(Datalogger.AutoTimestamp.DECIMAL_SECONDS)
+
+                    // Tell it about the fields we care to log.
+                    // Note that order *IS* important here! The order in which we list
+                    // the fields is the order in which they will appear in the log.
+                    .setFields(
+                            opModeStatus,
+                            setSpeed,
+                            direction,
+                            distance,
+                            ticks0,
+                            ticks1,
+                            ticks2,
+                            ticks3,
+                            currentSpeed0,
+                            currentSpeed1,
+                            currentSpeed2,
+                            currentSpeed3,
+                            heading
+                    )
+                    .build();
+        }
+
+        /**
+         * Tell the datalogger to gather the values of the fields
+         * and write a new line in the log.
+         */
+        public void writeLine()
+        {
+            datalogger.writeLine();
+        }
     }
 }

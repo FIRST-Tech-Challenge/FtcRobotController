@@ -33,7 +33,6 @@ THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 package org.firstinspires.ftc.teamcode.Sensor;
 
 import com.qualcomm.hardware.dfrobot.HuskyLens;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
@@ -70,9 +69,9 @@ import java.util.concurrent.TimeUnit;
  * REV Robotics Control Hub [GND VDC SDA SCL]
  * REV 4-pin sensor wire    [BLK RED WHT BLU]
  */
-@TeleOp(name = "HuskyLens: Basic test", group = "Sensor")
+@TeleOp(name = "HuskyLens: Color test", group = "Sensor")
 //@Disabled
-public class HuskyLensBasic extends LinearOpMode {
+public class HuskyLensColor extends LinearOpMode {
 
     private final int READ_PERIOD = 1;
 
@@ -122,7 +121,10 @@ public class HuskyLensBasic extends LinearOpMode {
          * within the OpMode by calling selectAlgorithm() and passing it one of the values
          * found in the enumeration HuskyLens.Algorithm.
          */
-        huskyLens.selectAlgorithm(HuskyLens.Algorithm.TAG_RECOGNITION);
+        // huskyLens.selectAlgorithm(HuskyLens.Algorithm.TAG_RECOGNITION);
+        // for team game element detection - blue or red
+        huskyLens.selectAlgorithm(HuskyLens.Algorithm.COLOR_RECOGNITION);
+
 
         telemetry.update();
         waitForStart();
@@ -157,10 +159,20 @@ public class HuskyLensBasic extends LinearOpMode {
              *
              * Returns an empty array if no objects are seen.
              */
+
             HuskyLens.Block[] blocks = huskyLens.blocks();
+            //HuskyLens.Block[] response = blocks().readBlocksResponse();
             telemetry.addData("Blocks counted", blocks.length);
             for (int i = 0; i < blocks.length; i++) {
                 telemetry.addData("Block", blocks[i].toString());
+                telemetry.addData("id", blocks[i].id);
+                telemetry.addData("height", blocks[i].height);
+                telemetry.addData("left", blocks[i].left);
+                telemetry.addData("top", blocks[i].top);
+                telemetry.addData("width", blocks[i].width);
+                telemetry.addData("x", blocks[i].x);
+                telemetry.addData("y", blocks[i].y);
+                //telemetry.addData("Response", blocks[i].readBlocksResponse() );
             }
 
             telemetry.update();
