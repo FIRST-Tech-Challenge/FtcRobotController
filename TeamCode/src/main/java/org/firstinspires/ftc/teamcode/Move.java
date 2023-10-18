@@ -18,22 +18,27 @@ import com.qualcomm.robotcore.hardware.configuration.annotations.I2cDeviceType;
 
 public class Move extends OpMode {
     //Motors
-    private DcMotor leftFrontDrive, rightFrontDrive, leftBackDrive, rightBackDrive = null;
+    private DcMotor leftFrontDrive = null;
+    private DcMotor rightFrontDrive = null;
+    private DcMotor leftBackDrive = null;
+    private DcMotor rightBackDrive = null;
 
+    private DcMotor Arm = null;
 
-
-    //more motors for accsesory
-    private DcMotor Arm, Extend = null;
+    private DcMotor Extend = null;
 
     //bools
-    public boolean Parktrue, Endgametrue = false;
+    public boolean Endgametrue = false;
+    public boolean Parktrue = false;
 
+    //ElapsedTime Runtime
+    public float armmove;
+    public float extendmove;
+    public float extendpower;
+    public float armPower = 0;
 
-    public float armmove, extendmove, extendpower, armPower = 0;
-
-
-    public int arm, extend = 0;
-
+    public int arm = 0;
+    public int extend = 0;
     ElapsedTime runtime = new ElapsedTime();
 
 //    static void sleep(int LongMilliseconds) {
@@ -50,6 +55,7 @@ public class Move extends OpMode {
         //Telemetry
         telemetry.addLine(">> Press Start Button");
         telemetry.update();
+
 
 
         // Initialize DcMotors
@@ -88,7 +94,10 @@ public class Move extends OpMode {
 
     @Override
     public void loop() {
-        double leftFrontPower, rightFrontPower, leftBackPower, rightBackPower; // Declare motor power variables
+        double leftFrontPower;
+        double rightFrontPower;
+        double leftBackPower;
+        double rightBackPower; // Declare motor power variables
 
         // Set drive controls
         double drive = -gamepad1.left_stick_y;
@@ -97,7 +106,7 @@ public class Move extends OpMode {
 
         // Set motor power
         leftFrontPower = Range.clip(drive + turn + strafe, -0.35, 0.35);
-        rightFrontPower = Range.clip(drive - turn - strafe, -0.7, 0.7);
+        rightFrontPower = Range.clip(drive - turn - strafe, -0.35, 0.35);
         leftBackPower = Range.clip(drive + turn - strafe, -0.35, 0.35);
         rightBackPower = Range.clip(drive - turn + strafe, -0.35, 0.35);
 
@@ -112,12 +121,36 @@ public class Move extends OpMode {
         telemetry.addData("arm", arm);
         telemetry.update();
 
+
         //backup
 
 
         // Slow movement + Fast movement
 
 
+//        else if(gamepad1.a)
+//        {
+//            armmove = armmove + 0.05f;
+//            armPower = armmove;
+//
+//        }
+//        else if(gamepad1.b)
+//        {
+////            if(armmove != 10)
+////            {
+//                armmove = armmove - 0.05f;
+//                armPower = armmove;
+////            }
+//
+//
+//        }
+
+        if(gamepad1.right_bumper) {
+            leftFrontPower /= 4;
+            leftBackPower /= 4;
+            rightFrontPower /= 4;
+            rightBackPower /= 4;
+        }
 
         if(gamepad1.dpad_up)
         {
@@ -125,12 +158,12 @@ public class Move extends OpMode {
             armmove = -1f;
 
             armPower = armmove;
-            if(Arm.getCurrentPosition() > -2800)
+            if(Arm.getCurrentPosition() > -2542)
             {
                 Arm.setTargetPosition(arm);
                 Arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 Arm.setPower(2);
-                arm = arm - 8;
+                arm = arm - 5;
             }
 
         }
@@ -140,9 +173,9 @@ public class Move extends OpMode {
             armmove = 1f;
 
 
-            if(Arm.getCurrentPosition() < -10)
+            if(Arm.getCurrentPosition() < -1)
             {
-                arm = arm + 8;
+                arm = arm + 5;
                 armPower = armmove;
 
                 Arm.setTargetPosition(arm);
@@ -156,14 +189,14 @@ public class Move extends OpMode {
         }
         if(gamepad1.a)
         {
-            if(Extend.getCurrentPosition() > -2535)
+            if(Extend.getCurrentPosition() > -3235)
             {
                 Extend.setTargetPosition(extend);
                 Extend.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 Extend.setPower(-2);
 
 
-                extend = extend - 8;
+                extend = extend - 5;
             }
 
 
@@ -181,7 +214,7 @@ public class Move extends OpMode {
                 Extend.setTargetPosition(extend);
                 Extend.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 Extend.setPower(2);
-                extend = extend + 8;
+                extend = extend + 5;
                 extendmove = -1f;
             }
 
