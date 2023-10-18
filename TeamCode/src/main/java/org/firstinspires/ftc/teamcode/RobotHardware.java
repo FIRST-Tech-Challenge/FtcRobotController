@@ -41,11 +41,14 @@ public class RobotHardware {
     private DcMotor rbMotor;
     private DcMotor lfMotor;
     private DcMotor lbMotor;
-    private DcMotor armMotorL = null;
-    private DcMotor armMotorR = null;
-    private DcMotor leftHand = null;
-    private DcMotor rightHand = null;
-    private Servo   launcher = null;
+    private DcMotor armMotorL   = null;
+    private DcMotor armMotorR   = null;
+    private DcMotor leftHand    = null;
+    private DcMotor rightHand   = null;
+
+    private Servo   elbowServo  = null;
+    private Servo   grabberServo= null;
+    private Servo   launcher    = null;
 
     // Define Drive constants.  Make them public so they CAN be used by the calling OpMode
     public static final double MID_SERVO       =  0.5 ;
@@ -55,7 +58,13 @@ public class RobotHardware {
 
     public static final double LAUNCHER_MIN     = 0.0;
     public static final double LAUNCHER_MAX     = 0.4;
+    public static final double ELBOW_MIN        = 0.0;
+    public static final double ELBOW_MAX        = 1.0;
+    public static final double GRABBER_MIN        = 0.0;
+    public static final double GRABBER_MAX        = 1.0;
 
+    private static double elbowDrive           = 0.5;
+    private static double grabberDrive         = 0.0;
 
     //camera
     private Camera camera;
@@ -109,8 +118,10 @@ public class RobotHardware {
         launcher.setPosition(LAUNCHER_MIN);
 
         //arm motors
-        armMotorL = myOpMode.hardwareMap.get(DcMotor.class, "motorlefthex");
-        armMotorR = myOpMode.hardwareMap.get(DcMotor.class, "motorrighthex");
+        armMotorL       = myOpMode.hardwareMap.get(DcMotor.class, "motorlefthex");
+        armMotorR       = myOpMode.hardwareMap.get(DcMotor.class, "motorrighthex");
+        elbowServo      = myOpMode.hardwareMap.get(Servo.class, "elbow");
+        grabberServo    = myOpMode.hardwareMap.get(Servo.class, "grabber");
         armMotorL.setDirection(DcMotor.Direction.REVERSE);
 
         // If there are encoders connected, switch to RUN_USING_ENCODER mode for greater accuracy
@@ -232,14 +243,13 @@ public class RobotHardware {
 
     /**
      * Pass the requested arm power to the appropriate hardware drive motor
+     *      Power is reduced by 25%
      *
-     * @param isUp Should the Arm be moved up or down
+     * @param power Should the Arm be moved up or down
      */
-    public void moveArm (boolean isUp) {
-        double power = 0.25;
-        int direction = (isUp)?1:-1;
-        armMotorL.setPower(power * direction);
-        armMotorR.setPower(power * direction);
+    public void moveArm (double power) {
+        armMotorL.setPower(power * 0.25);
+        armMotorR.setPower(power * 0.25);
     }
 
     /**
@@ -249,6 +259,22 @@ public class RobotHardware {
     public void stopArm(){
         armMotorL.setPower(0);
         armMotorR.setPower(0);
+    }
+
+    public void moveElbow(boolean moveUp){
+        if (moveUp && elbowDrive > ELBOW_MIN) elbowDrive -= .01;
+
+        if (!moveUp && elbowDrive < ELBOW_MAX) elbowDrive += .01;
+
+        elbowServo.setPosition(Range.clip(elbowDrive, ELBOW_MIN, ELBOW_MAX));
+    }
+
+    public void moveGrabber(boolean closeGrabber){
+        if (closeGrabber && grabberDrive > GRABBER_MIN) grabberDrive -= .01;
+
+        if (!closeGrabber && grabberDrive < GRABBER_MAX) grabberDrive += .01;
+
+        grabberServo.setPosition(Range.clip(grabberDrive, GRABBER_MIN, GRABBER_MAX));
     }
 
     /**

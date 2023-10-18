@@ -11,13 +11,10 @@ import java.util.List;
 public class Manual  extends LinearOpMode{
 
     private RobotHardware robot = new RobotHardware(this);
-
+    private double elbowPosition= 0;
 
     @Override
     public void runOpMode() {
-        double drive        = 0;
-        double turn         = 0;
-
         // initialize all the hardware, using the hardware class. See how clean and simple this is?
         robot.init();
         robot.initCamera();
@@ -32,32 +29,38 @@ public class Manual  extends LinearOpMode{
             telemetry.addData("Status", "Ready to run...");
             telemetry.update();
 
-            // Run wheels in POV mode (note: The joystick goes negative when pushed forward, so negate it)
-            // In this mode the Left stick moves the robot fwd and back, the Right stick turns left and right.
-            // This way it's also easy to just drive straight, or just turn.
-            drive = gamepad1.left_stick_y;
-            turn  = gamepad1.right_stick_x;
-
-            // Combine drive and turn for blended motion. Use RobotHardware class
-            robot.driveRobot(drive, turn);
-
+            //manageDriveMotors(); //TODO: enable this for driving
             manageLauncher();
             manageArm();
+            manageGrabber();
 
             // April Tag detection call
             telemetryAprilTag();
 
-            telemetry.addData("Drive", "Left Stick");
-            telemetry.addData("Turn", "Right Stick");
-            telemetry.addData("-", "-------");
-
-            telemetry.addData("Drive Power", "%.2f", drive);
-            telemetry.addData("Turn Power",  "%.2f", turn);
-            telemetry.update();
-
             // Pace this loop so hands move at a reasonable speed.
             sleep(50);
         }
+    }
+
+    private void manageDriveMotors(){
+        double drive        = 0;
+        double turn         = 0;
+        // Run wheels in POV mode (note: The joystick goes negative when pushed forward, so negate it)
+        // In this mode the Left stick moves the robot fwd and back, the Right stick turns left and right.
+        // This way it's also easy to just drive straight, or just turn.
+        drive = gamepad1.right_stick_y;
+        turn  = gamepad1.right_stick_x;
+
+        // Combine drive and turn for blended motion. Use RobotHardware class
+        robot.driveRobot(drive, turn);
+
+        telemetry.addData("Drive", "Left Stick");
+        telemetry.addData("Turn", "Right Stick");
+        telemetry.addData("-", "-------");
+
+        telemetry.addData("Drive Power", "%.2f", drive);
+        telemetry.addData("Turn Power",  "%.2f", turn);
+        telemetry.update();
     }
 
     private void manageLauncher(){
@@ -70,6 +73,23 @@ public class Manual  extends LinearOpMode{
         }
     }
     private void manageArm(){
+        double armDrive;
+
+        armDrive = gamepad1.right_stick_y;
+
+        robot.moveArm(armDrive);
+        if (gamepad1.dpad_up) {
+            robot.moveElbow(true);
+        }
+        else if (gamepad1.dpad_down) {
+            robot.moveElbow(false);
+        }
+        else{
+            //robot.stopElbow();
+        }
+
+
+        /*
         if (gamepad1.dpad_up) {
             robot.moveArm(true);
         }
@@ -78,6 +98,24 @@ public class Manual  extends LinearOpMode{
         }
         else{
             robot.stopArm();
+        }
+
+        //temp
+        robot.setElbow(elbowPosition);
+        elbowPosition += .1;
+        */
+    }
+
+    private void manageGrabber(){
+
+        if (gamepad1.dpad_left) {
+            robot.moveGrabber(true);
+        }
+        else if (gamepad1.dpad_right) {
+            robot.moveGrabber(false);
+        }
+        else{
+            //robot.stopElbow();
         }
     }
 
