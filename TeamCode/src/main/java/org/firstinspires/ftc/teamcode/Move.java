@@ -94,7 +94,10 @@ public class Move extends OpMode {
 
     @Override
     public void loop() {
-        double leftFrontPower, rightFrontPower, leftBackPower, rightBackPower; // Declare motor power variables
+        double leftFrontPower;
+        double rightFrontPower;
+        double leftBackPower;
+        double rightBackPower; // Declare motor power variables
 
         // Set drive controls
         double drive = -gamepad1.left_stick_y;
@@ -103,9 +106,9 @@ public class Move extends OpMode {
 
         // Set motor power
         leftFrontPower = Range.clip(drive + turn + strafe, -0.35, 0.35);
-        rightFrontPower = Range.clip(drive - turn - strafe, -1.4, 2);
+        rightFrontPower = Range.clip(drive - turn - strafe, -0.35, 0.35);
         leftBackPower = Range.clip(drive + turn - strafe, -0.35, 0.35);
-        rightBackPower = Range.clip(drive - turn + strafe, -1.4, 1.4);
+        rightBackPower = Range.clip(drive - turn + strafe, -0.35, 0.35);
 
         // Telemetry
         telemetry.addData("Speed: ", (leftFrontPower + leftBackPower + rightBackPower + rightFrontPower) / 4);
@@ -141,6 +144,13 @@ public class Move extends OpMode {
 //
 //
 //        }
+
+        if(gamepad1.right_bumper) {
+            leftFrontPower /= 4;
+            leftBackPower /= 4;
+            rightFrontPower /= 4;
+            rightBackPower /= 4;
+        }
 
         if(gamepad1.dpad_up)
         {
