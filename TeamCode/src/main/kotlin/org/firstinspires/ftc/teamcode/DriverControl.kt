@@ -33,6 +33,14 @@ class DriverControl: OpMode() {
         shared.drive = MecanumDrive(hardwareMap, Pose2d(0.0, 0.0, 0.0))
     }
 
+    override fun start() {
+        super.start()
+        shared.intake.raise()
+    }
+
+    /** true for lowered, false for raised */
+    var lastIntakeStatus = false
+
     override fun loop() {
 
         // TODO: test driver relative, check
@@ -81,21 +89,31 @@ class DriverControl: OpMode() {
         powerMax = max(powerMax, abs(rightBackPower))
 
         if (powerMax > 1.0) {
-            leftFrontPower /=   powerMax
+            leftFrontPower  /=  powerMax
             rightFrontPower /=  powerMax
-            leftBackPower /=    powerMax
-            rightBackPower /=   powerMax
+            leftBackPower   /=  powerMax
+            rightBackPower  /=  powerMax
         }
 
         // Send calculated power to wheels
-        shared.motorFrontLeft.power =   leftFrontPower
-        shared.motorFrontRight.power =  rightFrontPower
-        shared.motorBackLeft.power =    leftBackPower
-        shared.motorBackRight.power =   rightBackPower
+        shared.motorLeftFront.power =   leftFrontPower
+        shared.motorRightFront.power =  rightFrontPower
+        shared.motorLeftBack.power =    leftBackPower
+        shared.motorRightBack.power =   rightBackPower
 
         telemetry.addLine("Gyro Yaw: " + gyroRotation.getYaw(AngleUnit.DEGREES))
         telemetry.update()
 
+
+        if (control.intake != lastIntakeStatus) {
+            lastIntakeStatus = if (control.intake) {
+                shared.intake.lower()
+                true
+            } else {
+                shared.intake.raise()
+                false
+            }
+        }
         shared.intake.active = control.intake
     }
 }
