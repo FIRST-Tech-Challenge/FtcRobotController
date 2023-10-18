@@ -5,7 +5,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
-@Autonomous(name = "AutoRedFar", group = "linear autoMode")
+@Autonomous(name = "AutoBlueFar", group = "linear autoMode")
 
 public class AutoBlueFar extends RobotLinearOpMode {
     private ElapsedTime runtime = new ElapsedTime();
