@@ -129,7 +129,7 @@ public class BasicOpMode_Linear extends LinearOpMode {
             double leftBackPower   = axial + lateral + yaw;
             double rightBackPower  = axial + lateral - yaw;
 
-            double armPower        = arm;
+            double armPower = arm;
 
             // Normalize the values so no wheel power exceeds 100%
             // This ensures that the robot maintains the desired motion.
