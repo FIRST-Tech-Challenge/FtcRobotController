@@ -11,6 +11,6 @@ public class RedLeftPark extends BaseAutonomous {
         waitForStart();
         // go forward then strafe to backstage
         driveInches(0, 3);
-        driveInches(80, 0);
+        driveInches(100, 0);
     }
 }
