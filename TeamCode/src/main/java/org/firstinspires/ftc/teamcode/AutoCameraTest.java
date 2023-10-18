@@ -15,16 +15,11 @@ public class AutoCameraTest extends LinearOpMode
 {
     OpenCvWebcam webcam;
     org.openftc.easyopencv.OpenCvPipeline pipeline;
-    SkystoneDeterminationExample.SkystoneDeterminationPipeline pipeline;
-    org.openftc.easyopencv.OpenCv snapshotAnalysis = SkystoneDeterminationExample.SkystoneDeterminationPipeline.SkystonePosition.LEFT; // default
+    org.openftc.easyopencv.OpenCvPipeline snapshotAnalysis = org.openftc.easyopencv.OpenCvPipeline.; // default
 
     @Override
     public void runOpMode()
     {
-        int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
-        webcam = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "Webcam 1"), cameraMonitorViewId);
-        pipeline = new org.openftc.easyopencv.OpenCvPipeline.OpenCvPipeline();
-        pipeline = new SkystoneDeterminationExample.SkystoneDeterminationPipeline();
-        webcam.setPipeline(pipeline);
+        
     }
 }
