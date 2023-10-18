@@ -38,10 +38,10 @@ public class MainTeleOp extends LinearOpMode {
 
     @Override
     public void runOpMode() throws InterruptedException {
-        motor_fr = hardwareMap.get(DcMotorEx.class, "frontRight");
-        motor_fl = hardwareMap.get(DcMotorEx.class, "frontLeft");
-        motor_br = hardwareMap.get(DcMotorEx.class, "backRight");
-        motor_bl = hardwareMap.get(DcMotorEx.class, "backLeft");
+        motor_fr = hardwareMap.get(DcMotorEx.class, "fr");
+        motor_fl = hardwareMap.get(DcMotorEx.class, "fl");
+        motor_br = hardwareMap.get(DcMotorEx.class, "br");
+        motor_bl = hardwareMap.get(DcMotorEx.class, "bl");
         distanceSensor = hardwareMap.get(DistanceSensor.class, "distanceSensor");
         imu = hardwareMap.get(IMU.class, "IMU?");
         gp2 = new GamepadEx(gamepad2);
@@ -67,11 +67,11 @@ public class MainTeleOp extends LinearOpMode {
                 //noodle intake
                 if(gp2.wasJustPressed(GamepadKeys.Button.Y)) {
                     Bot.noodles.Intake();
-                    while(!bot.box.getIsFull()) {
-                        bot.box.boxIsFull();
+                    while(!Bot.box.getIsFull()) {
+                        Bot.box.boxIsFull();
                         Bot.noodles.Intake();
                     }
-                    if(bot.box.getIsFull()) {
+                    if(Bot.box.getIsFull()) {
                         Bot.noodles.stop();
                         bot.prepForOuttake();
                     }
@@ -90,7 +90,7 @@ public class MainTeleOp extends LinearOpMode {
 
                 //keeping second pixel deposit manual for reasons
                 if(gp2.wasJustPressed(GamepadKeys.Button.A) && Bot.box.getNumPixelsDeposited()==1) {
-                    bot.box.depositSecondPixel();
+                    Bot.box.depositSecondPixel();
                     Bot.resetOuttake();
                 }
 
@@ -116,7 +116,7 @@ public class MainTeleOp extends LinearOpMode {
 
                 //Box movement
                 if(gp2.wasJustPressed(GamepadKeys.Button.Y)){
-                    bot.box.resetBox();
+                    Bot.box.resetBox();
                 }
                 if(gp2.wasJustPressed(GamepadKeys.Button.A)){
                     bot.outtake();
@@ -150,6 +150,7 @@ public class MainTeleOp extends LinearOpMode {
                     Bot.fourbar.runManualStorage(gp2.getLeftY());
                 }
             }
+            drive();
         }
     }
 
