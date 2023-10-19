@@ -30,27 +30,20 @@
 package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
 
 public class Claw {
 
-    static final int    CYCLE_MS    =   50;     // period of each cycle
-    static final double MAX_POS     =  1.0;     // Maximum rotational position
-    static final double MIN_POS     =  0.0;     // Minimum rotational position
-    static final double CLAW_CLOSE_POS = 0.2;
-    static final double CLAW_OPEN_POS = 0.4;
+    static final double CLAW_CLOSE_POS = 0;
+    static final double CLAW_OPEN_POS = 1;
 
 
     // Define class members
-    Servo   servo;
 
-    double  position = (MAX_POS - MIN_POS) / 2; // Start at halfway position
 
-    private LinearOpMode myOpMode = null;   // gain access to methods in the calling OpMode.
+    private LinearOpMode myOpMode;   // gain access to methods in the calling OpMode.
 
-    private Servo clawDrive = null;
+    Servo clawDrive = null;
     public Claw (LinearOpMode opmode) {
         myOpMode = opmode;
     }
@@ -60,11 +53,11 @@ public class Claw {
         clawDrive = myOpMode.hardwareMap.get(Servo.class, "claw");
     }
 
-    private void closeClaw() {
-        servo.setPosition(CLAW_CLOSE_POS);
+    public void closeClaw() {
+        clawDrive.setPosition(CLAW_CLOSE_POS);
     }
-    private void openClaw(){
-        servo.setPosition(CLAW_OPEN_POS);
+    public void openClaw(){
+        clawDrive.setPosition(CLAW_OPEN_POS);
     }
 
     public void listen() {
