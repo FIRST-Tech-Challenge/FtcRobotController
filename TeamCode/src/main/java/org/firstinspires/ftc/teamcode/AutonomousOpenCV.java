@@ -15,16 +15,25 @@ import org.openftc.easyopencv.OpenCvWebcam;
 @Autonomous(name="Autonomous - Generic", group="Linear Opmode")
 @Disabled
 public class AutonomousOpenCV extends LinearOpMode {
+    public String ballPosition;
     private OpenCvWebcam webcam;
-    private CircleDetection circleDetection;
+    protected CircleDetection circleDetection;
     protected DrivingFunctions df;
     protected ServoFunctions sf;
     protected boolean detectionRed = false; // whether to detect a red ball (if false detects blue)
     protected boolean runBallDetectionTest = false;
     protected boolean runEncoderTest = false;
+
     protected boolean runAutoDrivingTest = false;
     static final double DRIVE_SPEED = 0.3;
     static final double TURN_SPEED = 0.35;
+
+    private void RunBallDetectionTest() {
+        while (opModeIsActive()) {
+            sleep(100);
+            UpdateCircleDetectionTelemetry();
+        }
+    }
 
     private void DetectBallPosition(int timeoutInSeconds) {
         int tries = 0;
@@ -33,18 +42,19 @@ public class AutonomousOpenCV extends LinearOpMode {
             tries++;
             UpdateCircleDetectionTelemetry();
         }
-        webcam.stopStreaming();
         if (!circleDetection.CircleFound())
             circleDetection.SetBallPosition(CircleDetection.BallPosition.LEFT); // Ball not found, makes a guess to the left
     }
+
     private void Initialize() {
         df = new DrivingFunctions(this);
         sf = new ServoFunctions(this);
+
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
         webcam = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "Webcam 1"), cameraMonitorViewId);
         circleDetection = new CircleDetection(detectionRed);
         webcam.setPipeline(circleDetection);
-        webcam.setMillisecondsPermissionTimeout(3000); // Timeout for obtaining permission is configurable. Set before opening.
+        webcam.setMillisecondsPermissionTimeout(5000); // Timeout for obtaining permission is configurable. Set before opening.
         webcam.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
             @Override
             public void onOpened() {
@@ -55,6 +65,7 @@ public class AutonomousOpenCV extends LinearOpMode {
             }
         });
     }
+
     @Override
     public void runOpMode() {
         Initialize();
@@ -78,39 +89,59 @@ public class AutonomousOpenCV extends LinearOpMode {
 
         if(circleDetection.GetBallPosition() == CircleDetection.BallPosition.LEFT)
         {
+            ballPosition = "left";
             PushPixelLeft();
         }
         else if(circleDetection.GetBallPosition() == CircleDetection.BallPosition.CENTER)
         {
-            PushPixelCenter();
+            ballPosition = "center";
+            PushPixelCentert();
         }
         else if(circleDetection.GetBallPosition() == CircleDetection.BallPosition.RIGHT)
         {
+            ballPosition = "right";
             PushPixelRight();
         }
     }
-    protected void PushPixelRight()
+    protected void RunAutoDrivingTest()
     {
         df.DriveStraight(DRIVE_SPEED, 20, 0, false);
-        df.TurnToHeading(TURN_SPEED, -60); // Negative angles turn to the right
+        df.DriveStraight(DRIVE_SPEED, -20, 0, false);
+
+        df.TurnToHeading(TURN_SPEED, -60); // Positive angles turn to the left
         df.DriveStraight(DRIVE_SPEED, 10, -60, false);
         df.DriveStraight(DRIVE_SPEED, -12, -60, false);
     }
+
+    protected void PushPixelRight()
+    {
+        df.DriveStraight(DRIVE_SPEED, 29, 0, false);
+        df.DriveStraight(DRIVE_SPEED, 10, 0, true);
+        df.DriveStraight(DRIVE_SPEED, -5, 0, false);
+    }
+
     protected void PushPixelLeft()
     {
-        df.DriveStraight(DRIVE_SPEED, 20, 0, false);
-        df.TurnToHeading(TURN_SPEED, 60); // Positive angles turn to the left
-        df.DriveStraight(DRIVE_SPEED, 10, 60, false);
-        df.DriveStraight(DRIVE_SPEED, -12, 60,false);
+        df.DriveStraight(DRIVE_SPEED, 29, 0, false);
+        df.DriveStraight(DRIVE_SPEED, -10, 0, true);
+        df.DriveStraight(DRIVE_SPEED, -5, 0, false);
+
     }
-    private void PushPixelCenter()
+    private void PushPixelCentert()
     {
         df.DriveStraight(DRIVE_SPEED, 35, 0, false);
-        df.DriveStraight(DRIVE_SPEED, -15, 0, false);
-        df.TurnToHeading(TURN_SPEED, -90);
-        df.DriveStraight(DRIVE_SPEED, 40, -90, false);
+        df.DriveStraight(DRIVE_SPEED, -11, 0, false);
+    }
+    private void RunEncoderTest()
+    {
+        StopStreaming();
+        df.TestEncoders();
     }
     protected void finalize()
+    {
+        StopStreaming();
+    }
+    private void StopStreaming()
     {
         webcam.stopStreaming();
         webcam.closeCameraDevice();
@@ -131,24 +162,4 @@ public class AutonomousOpenCV extends LinearOpMode {
         telemetry.update();
     }
 
-    // Functions to run tests
-    private void RunBallDetectionTest() {
-        while (opModeIsActive()) {
-            sleep(100);
-            UpdateCircleDetectionTelemetry();
-        }
-    }
-    private void RunEncoderTest()
-    {
-        webcam.stopStreaming();
-        df.TestEncoders();
-    }
-    protected void RunAutoDrivingTest()
-    {
-        df.DriveStraight(DRIVE_SPEED, 20, 0, false);
-        df.DriveStraight(DRIVE_SPEED, -20, 0, false);
-        df.TurnToHeading(TURN_SPEED, -60); // Positive angles turn to the left
-        df.DriveStraight(DRIVE_SPEED, 10, -60, false);
-        df.DriveStraight(DRIVE_SPEED, -12, -60, false);
-    }
 }
