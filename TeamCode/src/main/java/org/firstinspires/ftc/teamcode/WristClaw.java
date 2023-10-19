@@ -33,9 +33,6 @@ import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.Servo;
-import com.qualcomm.robotcore.util.Range;
-
-import org.firstinspires.ftc.robotcontroller.external.samples.RobotHardware;
 
 /*
  * This OpMode scans a single servo back and forward until Stop is pressed.
@@ -51,29 +48,68 @@ import org.firstinspires.ftc.robotcontroller.external.samples.RobotHardware;
  * Use Android Studio to Copy this Class, and Paste it into your team's code folder with a new name.
  * Remove or comment out the @Disabled line to add this OpMode to the Driver Station OpMode list
  */
-@TeleOp(name = "Test: Claw", group = "Concept")
-public class TestClaw extends LinearOpMode {
+@TeleOp(name = "Concept: Scan S", group = "Concept")
+//@Disabled
+public class WristClaw extends LinearOpMode {
+
+         // amount to slew servo each CYCLE_MS cycle
+    static final int    CYCLE_MS    =   50;     // period of each cycle
+    static final double MAX_POS     =  1.0;     // Maximum rotational position
+    static final double MIN_POS     =  0.0;     // Minimum rotational position
+
+    // Define class members
+    Servo   servo;
 
 
-    Claw claw       = new Claw(this);
+
 
     @Override
     public void runOpMode() {
 
-        // initialize all the hardware, using the hardware class. See how clean and simple this is?
-        claw.init();
+        // Connect to servo (Assume Robot Left Hand)
+        // Change the text in quotes to match any servo name on your robot.
+        servo = hardwareMap.get(Servo.class, "left_hand");
 
-
-        // Send telemetry message to signify robot waiting;
-        // Wait for the game to start (driver presses PLAY)
+        // Wait for the start button
+        telemetry.addData(">", "Press Start to scan Servo." );
+        telemetry.update();
         waitForStart();
 
-        // run until the end of the match (driver presses STOP)
-        while (opModeIsActive()) {
 
-            claw.listen();
-            // Pace this loop so hands move at a reasonable speed.
-            sleep(50);
+        // Scan servo till stop pressed.
+        while(opModeIsActive()){
+
+            // slew the servo, according to the rampUp (direction) variable.
+            if () {
+                // Keep stepping up until we hit the max value.
+                 ;
+                if ( >= MAX_POS ) {
+                     = MAX_POS;
+                    ;   // Switch ramp direction
+                }
+            }
+            else {
+                // Keep stepping down until we hit the min value.
+                position ;
+                if (position <= MIN_POS ) {
+                     = MIN_POS;
+                    ;  // Switch ramp direction
+                }
+            }
+
+            // Display the current value
+            telemetry.addData("Servo Position", "%5.2f", position);
+            telemetry.addData(">", "Press Stop to end test." );
+            telemetry.update();
+
+            // Set the servo to the new position and pause;
+            servo.setPosition(position);
+            sleep(CYCLE_MS);
+            idle();
         }
+
+        // Signal done;
+        telemetry.addData(">", "Done");
+        telemetry.update();
     }
 }
