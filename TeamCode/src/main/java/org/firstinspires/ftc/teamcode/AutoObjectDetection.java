@@ -1,12 +1,17 @@
-package org.firstinspires.ftc.robotcontroller.external.samples;
+package org.firstinspires.ftc.teamcode;
 
+//.robotcontroller.external.samples
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.DistanceSensor;
+
 import org.firstinspires.ftc.robotcore.external.hardware.camera.BuiltinCameraDirection;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
+import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.robotcore.external.tfod.Recognition;
+import org.firstinspires.ftc.teamcode.HornetSquadObject;
 import org.firstinspires.ftc.teamcode.RobotHardware;
 import org.firstinspires.ftc.vision.VisionPortal;
 import org.firstinspires.ftc.vision.tfod.TfodProcessor;
@@ -41,8 +46,18 @@ public class AutoObjectDetection extends LinearOpMode {
      * The variable to store our instance of the TensorFlow Object Detection processor.
      */
     private TfodProcessor tfod;
+    private DistanceSensor sensorDistance;
 
     /**
+     *
+     *
+     *
+     *
+     *
+     *
+     *
+     *
+     *
      * The variable to store our instance of the vision portal.
      */
     private VisionPortal visionPortal;
@@ -56,6 +71,7 @@ public class AutoObjectDetection extends LinearOpMode {
         robot.init();
 
         initTfod();
+
         //robot.initCamera();
 
         // Wait for the DS start button to be touched.
@@ -65,16 +81,23 @@ public class AutoObjectDetection extends LinearOpMode {
         waitForStart();
 
         boolean moveRobo = true;
+        double targetDistanceInInches = 23;
         if (opModeIsActive()) {
             while (opModeIsActive()) {
-                if (moveRobo) {
+                if (!telemetryTfod()) { //object detected = false
+                    //keep moving for 23inches/rotations and then increment in 5 inches
+                    if (hasReached(targetDistanceInInches))
+                    {
+                        //tilt right to see object is detected
+                        //tilt left to see object is detected
+                        targetDistanceInInches += 5;
+                    }
                     MoveRobo();
                 }
-                //TODO: need to figure out logic to stop
-                if (telemetryTfod()) {
-                    moveRobo = false;
+                else {
+                    //move the arm and release gripper to place pixel
+                    telemetry.addData("Move Arm to drop the pixel", "");
                 }
-
                 // Push telemetry to the Driver Station.
                 telemetry.update();
 
@@ -171,7 +194,7 @@ public class AutoObjectDetection extends LinearOpMode {
 
         // Step through the list of recognitions and display info for each one.
         for (Recognition recognition : currentRecognitions) {
-            objectDetected = true;
+            //objectDetected = true;
             double x = (recognition.getLeft() + recognition.getRight()) / 2 ;
             double y = (recognition.getTop()  + recognition.getBottom()) / 2 ;
 
@@ -179,6 +202,13 @@ public class AutoObjectDetection extends LinearOpMode {
             telemetry.addData("Image", "%s (%.0f %% Conf.)", recognition.getLabel(), recognition.getConfidence() * 100);
             telemetry.addData("- Position", "%.0f / %.0f", x, y);
             telemetry.addData("- Size", "%.0f x %.0f", recognition.getWidth(), recognition.getHeight());
+
+            if (IsItHornetSquadObject(recognition))
+            {
+                telemetry.addData("Found Hornet Squad Object","");
+                objectDetected = true;
+            }
+
         }   // end for() loop
 
         return objectDetected;
@@ -199,4 +229,35 @@ public class AutoObjectDetection extends LinearOpMode {
             sleep(500);
         */
     }
+
+    private boolean IsItHornetSquadObject(Recognition recognition)
+    {
+        double objectDetectedWidth = recognition.getWidth();
+        double objectDetectedHeight = recognition.getHeight();
+
+        if (HornetSquadObject.WIDTH == objectDetectedWidth &&
+                HornetSquadObject.HEIGHT == objectDetectedHeight )
+            return  true;
+        return false;
+    }
+
+    private boolean hasReached(double distanceInInches)
+    {
+        // generic DistanceSensor methods.
+        telemetry.addData("deviceName", sensorDistance.getDeviceName() );
+        telemetry.addData("range", String.format("%.01f mm", sensorDistance.getDistance(DistanceUnit.MM)));
+        telemetry.addData("range", String.format("%.01f cm", sensorDistance.getDistance(DistanceUnit.CM)));
+        telemetry.addData("range", String.format("%.01f m", sensorDistance.getDistance(DistanceUnit.METER)));
+        telemetry.addData("range", String.format("%.01f in", sensorDistance.getDistance(DistanceUnit.INCH)));
+
+        // Rev2mDistanceSensor specific methods.
+        //telemetry.addData("ID", String.format("%x", sensorTimeOfFlight.getModelID()));
+        //telemetry.addData("did time out", Boolean.toString(sensorTimeOfFlight.didTimeoutOccur()));
+
+        telemetry.update();
+        if (sensorDistance.getDistance(DistanceUnit.INCH) == distanceInInches)
+            return true;
+        return false;
+    }
+
 }   // end class

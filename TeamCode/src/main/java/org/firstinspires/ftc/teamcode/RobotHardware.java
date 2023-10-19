@@ -118,11 +118,11 @@ public class RobotHardware {
         rightColorSensor = myOpMode.hardwareMap.get(NormalizedColorSensor.class, "color_right");
         */
 
-        /* when ready to use distance sensor
+        // when ready to use distance sensor
         // you can use this as a regular DistanceSensor.
-        sensorDistance = hardwareMap.get(DistanceSensor.class, "distance_sensor");
+        sensorDistance = myOpMode.hardwareMap.get(DistanceSensor.class, "distance_sensor");
 
-        // you can also cast this to a Rev2mDistanceSensor if you want to use added
+        /* you can also cast this to a Rev2mDistanceSensor if you want to use added
         // methods associated with the Rev2mDistanceSensor class.
         Rev2mDistanceSensor sensorTimeOfFlight = (Rev2mDistanceSensor) sensorDistance;
         */

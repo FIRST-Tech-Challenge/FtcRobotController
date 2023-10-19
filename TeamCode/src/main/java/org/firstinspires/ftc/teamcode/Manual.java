@@ -8,7 +8,7 @@ import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
 import java.util.List;
 
 @TeleOp
-public class Manualv2  extends LinearOpMode{
+public class Manual extends LinearOpMode{
 
     private RobotHardware robot = new RobotHardware(this);
 
