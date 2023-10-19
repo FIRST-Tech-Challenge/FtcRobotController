@@ -22,7 +22,7 @@ public class ServoFunctions {
     }
     public void PutPixelInBackBoard()
     {
-        MoveServoSmoothly(pixelReleaseServo, 1.0, 1500);
+        MoveServoSmoothly(pixelReleaseServo, 1.0, 1000);
         lom.sleep(300);
         MoveServoSmoothly(pixelReleaseServo, 0.0, 500);
     }

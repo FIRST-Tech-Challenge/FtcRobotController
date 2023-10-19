@@ -115,22 +115,25 @@ public class AutonomousOpenCV extends LinearOpMode {
 
     protected void PushPixelRight()
     {
-        df.DriveStraight(DRIVE_SPEED, 29, 0, false);
-        df.DriveStraight(DRIVE_SPEED, 10, 0, true);
-        df.DriveStraight(DRIVE_SPEED, -5, 0, false);
+        df.DriveStraight(DRIVE_SPEED, 27, 0, false);
+        df.TurnToHeading(TURN_SPEED, -90);
+        df.DriveStraight(DRIVE_SPEED, 13, 0, false);
+        df.DriveStraight(DRIVE_SPEED, -13, 0, false);
+        df.TurnToHeading(TURN_SPEED, 0);
     }
 
     protected void PushPixelLeft()
     {
-        df.DriveStraight(DRIVE_SPEED, 29, 0, false);
-        df.DriveStraight(DRIVE_SPEED, -10, 0, true);
-        df.DriveStraight(DRIVE_SPEED, -5, 0, false);
-
+        df.DriveStraight(DRIVE_SPEED, 27, 0, false);
+        df.TurnToHeading(TURN_SPEED, 90);
+        df.DriveStraight(DRIVE_SPEED, 13, 0, false);
+        df.DriveStraight(DRIVE_SPEED, -13, 0, false);
+        df.TurnToHeading(TURN_SPEED, 0);
     }
     private void PushPixelCentert()
     {
-        df.DriveStraight(DRIVE_SPEED, 35, 0, false);
-        df.DriveStraight(DRIVE_SPEED, -11, 0, false);
+        df.DriveStraight(DRIVE_SPEED, 33, 0, false);
+        df.DriveStraight(DRIVE_SPEED, -6, 0, false);
     }
     private void RunEncoderTest()
     {
