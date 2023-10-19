@@ -3,13 +3,12 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DigitalChannelController;
 import com.qualcomm.robotcore.hardware.IMU;
-import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
-import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
 
 public class DrivingFunctions {
     private DcMotor leftFrontDrive = null;
@@ -29,6 +28,7 @@ public class DrivingFunctions {
     static final double     HEADING_THRESHOLD       = 1.0 ;    // How close must the heading get to the target before moving to next step.
     static final double     P_TURN_GAIN            = 0.035;     // Larger is more responsive, but also less stable
     static final double     P_DRIVE_GAIN           = 0.03;     // Larger is more responsive, but also less stable
+    private String controlHubName = "";
     public DrivingFunctions(LinearOpMode l)
     {
         lom = l;
@@ -42,6 +42,7 @@ public class DrivingFunctions {
         leftBackDrive  = lom.hardwareMap.get(DcMotor.class, "backleft");
         rightFrontDrive = lom.hardwareMap.get(DcMotor.class, "frontright");
         rightBackDrive = lom.hardwareMap.get(DcMotor.class, "backright");
+        controlHubName = lom.hardwareMap.get(DigitalChannelController.class, "Control Hub").getDeviceName();
 
         imu = lom.hardwareMap.get(IMU.class, "imu");
         // Adjust the orientation parameters to match your robot
@@ -77,6 +78,7 @@ public class DrivingFunctions {
     {
         while(lom.opModeIsActive())
         {
+            lom.telemetry.addData("Control Hub Name: ",  "%s", controlHubName);
             lom.telemetry.addData("Left Front Position: ",  "%7d", leftFrontDrive.getCurrentPosition());
             lom.telemetry.addData("Right Front Position: ",  "%7d", rightFrontDrive.getCurrentPosition());
             lom.telemetry.addData("Left Back Position: ",  "%7d", leftBackDrive.getCurrentPosition());
@@ -105,7 +107,9 @@ public class DrivingFunctions {
 
         // Ensure that the OpMode is still active
         if (lom.opModeIsActive()) {
-
+            CalculateHeadingError(heading);
+            if (Math.abs(this.headingError) > 4.0)
+                TurnToHeading(maxDriveSpeed, heading);
             // Determine new target position, and pass to motor controller
             int moveCounts = (int)(distance * COUNTS_PER_INCH);
 
@@ -209,16 +213,20 @@ public class DrivingFunctions {
      * @param proportionalGain      Gain factor applied to heading error to obtain turning power.
      * @return                      Turning power needed to get to required heading.
      */
-    public double GetSteeringCorrection(double desiredHeading, double proportionalGain) {
-        // Determine the heading current error
+    private double GetSteeringCorrection(double desiredHeading, double proportionalGain)
+    {
+        CalculateHeadingError(desiredHeading);
+        // Multiply the error by the gain to determine the required steering correction/  Limit the result to +/- 1.0
+        return Range.clip(this.headingError * proportionalGain, -1, 1);
+    }
+
+    private void CalculateHeadingError(double desiredHeading)
+    {
         this.headingError = desiredHeading - GetHeading();
 
         // Normalize the error to be within +/- 180 degrees
         while (this.headingError > 180)  this.headingError -= 360;
         while (this.headingError <= -180) this.headingError += 360;
-
-        // Multiply the error by the gain to determine the required steering correction/  Limit the result to +/- 1.0
-        return Range.clip(this.headingError * proportionalGain, -1, 1);
     }
 
     public void MoveRobot(double x, double y, double yaw, double speedFactor)

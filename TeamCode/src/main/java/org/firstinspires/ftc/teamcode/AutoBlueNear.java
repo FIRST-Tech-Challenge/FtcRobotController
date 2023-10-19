@@ -7,11 +7,9 @@ public class AutoBlueNear extends AutonomousOpenCV {
     @Override
     public void runOpMode()
     {
-        detectionRed = false;
+        isRed = false;
+        isNear = true;
         super.runOpMode();
-        // write code for Blue Near
-        df.TurnToHeading(TURN_SPEED, 90);
-        df.DriveStraight(DRIVE_SPEED, 40, 90, true);
     }
 
 }

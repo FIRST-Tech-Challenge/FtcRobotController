@@ -13,14 +13,15 @@ public class CircleDetection extends OpenCvPipeline {
     enum BallPosition {LEFT, CENTER, RIGHT, UNDEFINED};
     private BallPosition ballPosition = BallPosition.UNDEFINED;
     private boolean detectionRed = true;
-    Mat grayMat = new Mat();
-    Mat hsvMaskedMat = new Mat();
-    Mat mask = new Mat();
-    Mat mask1 = new Mat();
-    Mat mask2 = new Mat();
-    Mat hsvMat = new Mat();
-    Mat subMat = new Mat();
-    double[] data;
+    private Mat grayMat = new Mat();
+    private Mat hsvMaskedMat = new Mat();
+    private Mat mask = new Mat();
+    private Mat mask1 = new Mat();
+    private Mat mask2 = new Mat();
+    private Mat hsvMat = new Mat();
+    private Mat subMat = new Mat();
+    private double[] data;
+    private int framesProcessed = 0;
     private int numCirclesFound = 0;
     private Point circleCenter = new Point(0.0, 0.0);
 
@@ -28,6 +29,7 @@ public class CircleDetection extends OpenCvPipeline {
         this.detectionRed = detectionRed;
     }
 
+    public int FramesProcessed() { return framesProcessed; }
     public int NumCirclesFound()
     {
         return numCirclesFound;
@@ -52,6 +54,7 @@ public class CircleDetection extends OpenCvPipeline {
     }
     @Override
     public Mat processFrame(Mat input) {
+        framesProcessed++;
         subMat = input.submat(new Rect(100, 250, 1000, 300));
         Imgproc.cvtColor(subMat, hsvMat, Imgproc.COLOR_RGB2HSV);
         if (detectionRed) {
