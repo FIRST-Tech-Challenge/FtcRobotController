@@ -91,6 +91,7 @@ public class AutonomousCENTERSTAGE extends LinearOpMode {
 
         if (opModeIsActive()) {
             move(5.0);
+
             /**
             while (opModeIsActive()) {
 
