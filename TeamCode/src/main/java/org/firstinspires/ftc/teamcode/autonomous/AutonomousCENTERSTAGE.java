@@ -90,6 +90,8 @@ public class AutonomousCENTERSTAGE extends LinearOpMode {
         waitForStart();
 
         if (opModeIsActive()) {
+            move(5.0);
+            /**
             while (opModeIsActive()) {
 
                 telemetryAprilTag();
@@ -108,6 +110,7 @@ public class AutonomousCENTERSTAGE extends LinearOpMode {
                 // Share the CPU.
                 sleep(20);
              }
+             */
         }
 
         // Save more CPU resources when camera is no longer needed.
@@ -296,7 +299,15 @@ public class AutonomousCENTERSTAGE extends LinearOpMode {
 
     }   // end method telemetryTfod()
 
-    private void move(float distanceft) {
-
+    private void move(double distanceft) {
+        leftFrontDrive.setPower(1);
+        rightFrontDrive.setPower(1);
+        leftBackDrive.setPower(1);
+        rightBackDrive.setPower(1);
+        sleep(1000);
+        leftFrontDrive.setPower(0);
+        rightFrontDrive.setPower(0);
+        leftBackDrive.setPower(0);
+        rightBackDrive.setPower(0);
     }
 }   // end class
