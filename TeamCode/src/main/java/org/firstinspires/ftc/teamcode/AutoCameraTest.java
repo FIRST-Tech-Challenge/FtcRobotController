@@ -30,6 +30,7 @@ import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
 import org.openftc.easyopencv.OpenCvWebcam;
+import org.opencv.core.Mat;
 
 /*
  * This sample demonstrates how to run analysis during INIT
@@ -42,6 +43,7 @@ public class AutoCameraTest extends LinearOpMode
     OpenCvWebcam webcam;
     SkystoneDeterminationExample.SkystoneDeterminationPipeline pipeline;
     SkystoneDeterminationExample.SkystoneDeterminationPipeline.SkystonePosition snapshotAnalysis = SkystoneDeterminationExample.SkystoneDeterminationPipeline.SkystonePosition.LEFT; // default
+
 
     @Override
     public void runOpMode()
@@ -63,7 +65,7 @@ public class AutoCameraTest extends LinearOpMode
             @Override
             public void onOpened()
             {
-                webcam.startStreaming(320,240, OpenCvCameraRotation.UPRIGHT);
+                webcam.startStreaming(320,240, OpenCvCameraRotation.SIDEWAYS_RIGHT);
             }
 
             @Override
