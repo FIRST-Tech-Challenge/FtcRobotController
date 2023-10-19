@@ -23,6 +23,11 @@ public class GamepadOpModeLM extends OpMode {
         telemetry.addData("yStickdifference", yStick);
         telemetry.addData("trigger sum", trigger);
 
+        double y = -gamepad1.left_stick_y;
+        double x = gamepad1.left_stick_x;
+        double rx = gamepad1.right_stick_x;
+
+
 
 
 

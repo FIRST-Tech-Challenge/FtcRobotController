@@ -4,7 +4,7 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 @TeleOp()
-public class MathOpModeLM extends OpMode {
+public class MathOpModeLFM extends OpMode {
     @Override
     public void init() {
     }
