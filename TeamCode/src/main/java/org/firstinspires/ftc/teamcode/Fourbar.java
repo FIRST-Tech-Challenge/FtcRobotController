@@ -16,9 +16,9 @@ public class Fourbar {
 
 
     public Fourbar(OpMode opMode) {
-        fourbarOne = opMode.hardwareMap.servo.get("fourbarOne");
+        fourbarOne = opMode.hardwareMap.servo.get("fourBarServo_1");
         fourbarOne.setDirection(Servo.Direction.FORWARD);
-        fourbarTwo = opMode.hardwareMap.servo.get("fourbarTwo");
+        fourbarTwo = opMode.hardwareMap.servo.get("fourBarServo_2");
         fourbarTwo.setDirection(Servo.Direction.FORWARD);
         isOuttakePosition= false;
     }

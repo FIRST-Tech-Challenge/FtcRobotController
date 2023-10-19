@@ -154,7 +154,7 @@ public class MainAuto extends LinearOpMode{
                     .splineTo(new Vector2d(-36,48), Math.toRadians(90))
                     //perform moveBasedOnSpikeMark() 0.5 seconds before this moment
                     .UNSTABLE_addTemporalMarkerOffset(-0.5,this::moveBasedOnSpikeMark)
-                    .UNSTABLE_addTemporalMarkerOffset(-0.5, this::outtake)
+                    .UNSTABLE_addTemporalMarkerOffset(-0.5, () -> bot.outtake(1, distanceSensor,true))
                     .splineTo(new Vector2d(-72,48), Math.toRadians(90))
                     .build();
 
@@ -163,7 +163,7 @@ public class MainAuto extends LinearOpMode{
                     .addTemporalMarker(this::dropPurplePixel)
                     .splineTo(new Vector2d(36,48), Math.toRadians(-90))
                     .UNSTABLE_addTemporalMarkerOffset(-0.5,this::moveBasedOnSpikeMark)
-                    .UNSTABLE_addTemporalMarkerOffset(-0.5, this::outtake)
+                    .UNSTABLE_addTemporalMarkerOffset(-0.5, () -> bot.outtake(1, distanceSensor,true))
                     .splineTo(new Vector2d(72,48), Math.toRadians(-90))
                     .build();
 
@@ -173,7 +173,7 @@ public class MainAuto extends LinearOpMode{
                     .addTemporalMarker(this::dropPurplePixel)
                     .splineTo(new Vector2d(-36,48), Math.toRadians(90))
                     .UNSTABLE_addTemporalMarkerOffset(-0.5,this::moveBasedOnSpikeMark)
-                    .UNSTABLE_addTemporalMarkerOffset(-0.5, this::outtake)
+                    .UNSTABLE_addTemporalMarkerOffset(-0.5, () -> bot.outtake(1, distanceSensor,true))
                     .splineTo(new Vector2d(-72,48), Math.toRadians(90))
                     .build();
 
@@ -183,7 +183,7 @@ public class MainAuto extends LinearOpMode{
                     .addTemporalMarker(this::dropPurplePixel)
                     .splineTo(new Vector2d(36,48), Math.toRadians(-90))
                     .UNSTABLE_addTemporalMarkerOffset(-0.5,this::moveBasedOnSpikeMark)
-                    .UNSTABLE_addTemporalMarkerOffset(-0.5, this::outtake)
+                    .UNSTABLE_addTemporalMarkerOffset(-0.5, () -> bot.outtake(1, distanceSensor,true))
                     .splineTo(new Vector2d(72,48), Math.toRadians(90))
                     .build();
 
@@ -226,17 +226,6 @@ public class MainAuto extends LinearOpMode{
         }
     }
 
-    //outtake sequence including slides, fourbar, and box movement
-    private void outtake(){
-      bot.distanceTuning(distanceSensor);
-        Bot.fourbar.outtake();
-        Bot.slides.runTo(1);
-        Bot.box.depositFirstPixel();
-        Bot.slides.runTo(2);
-        Bot.box.depositSecondPixel();
-        Bot.resetOuttake();
-    }
-
     private void dropPurplePixel(){
         Bot.noodles.reverseIntake();
     }
@@ -249,8 +238,8 @@ public class MainAuto extends LinearOpMode{
         else if(TeamPropDetectionPipeline.teamPropLocation== TeamProp.ONRIGHT){
             teamPropLocation= TeamProp.ONRIGHT;
         }
-        else if(TeamPropDetectionPipeline.teamPropLocation== TeamProp.MIDDLE){
-            teamPropLocation= TeamProp.MIDDLE;
+        else if(TeamPropDetectionPipeline.teamPropLocation== TeamProp.INFRONT){
+            teamPropLocation= TeamProp.INFRONT;
         }
         else{
             teamPropLocation= TeamProp.NOTDETECTED;

@@ -22,9 +22,8 @@ public class Bot {
         INTAKE, // surgical tubing ready to pick up pixel
         STORAGE_FULL, // 2 pixels in storage
         STORAGE_NOT_FULL, //1 or 0 pixels in storage
-        OUTTAKE, // ready to outtake
+        OUTTAKE, //is in outtake position
     }
-
 
     public OpMode opMode;
     public static BotState currentState = STORAGE_NOT_FULL;
@@ -38,7 +37,7 @@ public class Bot {
 
 
     private final DcMotorEx fl, fr, bl, br, susMotor, slidesMotor;
-    private final Servo tcServo, droneServo_1, droneServo_2, outtakeServo;
+    private final Servo droneServo, fourBarServo_1, fourBarServo_2;
 
 
 
@@ -79,15 +78,13 @@ public class Bot {
 
         }
 
-
         fl = opMode.hardwareMap.get(DcMotorEx.class, "fl");
         fr = opMode.hardwareMap.get(DcMotorEx.class, "fr");
         bl = opMode.hardwareMap.get(DcMotorEx.class, "bl");
         br = opMode.hardwareMap.get(DcMotorEx.class, "br");
-        tcServo = opMode.hardwareMap.get(Servo.class, "tcServo");
-        droneServo_1 = opMode.hardwareMap.get(Servo.class, "droneServo_1");;
-        droneServo_2= opMode.hardwareMap.get(Servo.class, "droneServo_2");;
-        outtakeServo = opMode.hardwareMap.get(Servo.class, "outtakeServo");;
+        droneServo= opMode.hardwareMap.get(Servo.class, "droneServo");;
+        fourBarServo_1= opMode.hardwareMap.get(Servo.class, "fourBarServo_1");
+        fourBarServo_2= opMode.hardwareMap.get(Servo.class, "fourBarServo_2");
         susMotor = opMode.hardwareMap.get(DcMotorEx.class, "susMotor");
         slidesMotor = opMode.hardwareMap.get(DcMotorEx.class, "slidesMotor");
 
@@ -96,28 +93,25 @@ public class Bot {
         bl.setMode(RUN_USING_ENCODER);
         br.setMode(RUN_USING_ENCODER);
 
-        //subsystems uwu
 
-        this.slides = new Slides(opMode); //slides subsystem
-        this.noodles = new Noodles(opMode); //noodles subsystem
-        this.drone= new Drone(opMode);
-        this.fourbar = new Fourbar(opMode);
-        this.box= new Box(opMode);
-        /*
-        this.transferClaw = new TransferClaw(opMode); transferClaw subsystem
-         */
+        slides = new Slides(opMode);
+        noodles = new Noodles(opMode);
+        drone= new Drone(opMode);
+        fourbar = new Fourbar(opMode);
+        box= new Box(opMode);
 
 
     }
+
 
 
     public void prepForOuttake() {
         currentState = BotState.STORAGE_FULL;
         resetOuttake();
     }
-    //move to slides
 
-    public void outtake(int stage, DistanceSensor sensor,boolean pixelTwo) { // must be combined with bot.slide.run___() in MainTeleOp
+    // must be combined with bot.slide.run___() in MainTeleOp
+    public void outtake(int stage, DistanceSensor sensor,boolean pixelTwo) {
         currentState = BotState.OUTTAKE;
         distanceTuning(sensor);
         slides.runTo(stage);

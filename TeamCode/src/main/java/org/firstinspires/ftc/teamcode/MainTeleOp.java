@@ -10,8 +10,6 @@ import com.qualcomm.robotcore.hardware.IMU;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 
 
-
-
 @TeleOp
 public class MainTeleOp extends LinearOpMode {
 
