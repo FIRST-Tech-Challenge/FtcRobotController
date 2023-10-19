@@ -1,12 +1,8 @@
 package org.firstinspires.ftc.teamcode;
 
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
-import com.qualcomm.robotcore.hardware.Servo;
-import com.qualcomm.robotcore.util.Range;
 
 /*
  * This OpMode executes a Tank Drive control TeleOp a direct drive robot
@@ -21,9 +17,9 @@ import com.qualcomm.robotcore.util.Range;
  * Remove or comment out the @Disabled line to add this OpMode to the Driver Station OpMode list
  */
 
-@TeleOp(name="Coin", group="Robot")
+@TeleOp(name="Mecanum Tele-Op", group="Robot")
 
-public class Coin extends OpMode{
+public class TeleOpMecanumDriveFTC2023 extends OpMode{
 
     /* Declare OpMode members. */
     public DcMotor  frontLeft   = null;
@@ -82,7 +78,27 @@ public class Coin extends OpMode{
     /*
      * Code to run ONCE when the driver hits PLAY
      */
-
+    public void driveStraight(double pwr, int dir) {
+        // dir must be -1 to 1 (to specify direction)
+        frontLeft.setPower(pwr*dir);
+        frontRight.setPower(pwr*dir);
+        backLeft.setPower(pwr*dir);
+        backRight.setPower(pwr*dir);
+    }
+    public void driveSide(double pwr, int dir) {
+        // dir must be -1 to 1 (to specify direction)
+        frontLeft.setPower(pwr*-1*dir);
+        frontRight.setPower(pwr*dir);
+        backLeft.setPower(pwr*dir);
+        backRight.setPower(pwr*-1*dir);
+    }
+    public void driveTurn(double pwr, int dir) {
+        // dir must be -1 to 1 (to specify direction)
+        frontLeft.setPower(pwr*-1*dir);
+        frontRight.setPower(pwr*dir);
+        backLeft.setPower(pwr*-1*dir);
+        backRight.setPower(pwr*dir);
+    }
     public void start() {
     }
 
@@ -93,17 +109,34 @@ public class Coin extends OpMode{
     public void loop() {
         double lefty;
         double leftx;
-        double right;
+        double rightx;
 
         // Run wheels in tank mode (note: The joystick goes negative when pushed forward, so negate it)
         lefty = gamepad1.left_stick_y;
         leftx = gamepad1.left_stick_x;
-        right = gamepad1.right_stick_x;
+        rightx = gamepad1.right_stick_x;
 
-        frontLeft.setPower(-lefty - leftx + right);
-        frontRight.setPower(lefty + leftx + right);
-        backLeft.setPower(-lefty - leftx - right);
-        backRight.setPower(lefty + leftx - right);
+        if (lefty >= 0) {
+            driveStraight(lefty,1);
+
+        } else if(lefty < 0) {
+            driveStraight(-1*lefty,-1);
+        }
+        if (leftx >= 0) {
+            driveSide(leftx,-1);
+
+        } else if(leftx < 0) {
+            driveSide(-1*leftx,1);
+        } else if(rightx < 0) {
+            driveTurn(rightx, -1);
+        } else if(rightx >= 0) {
+            driveTurn(rightx, 1);
+        }
+
+//        frontLeft.setPower(lefty - leftx + right);
+//        frontRight.setPower(lefty + leftx + right);
+//        backLeft.setPower(lefty - leftx - right);
+//        backRight.setPower(lefty + leftx - right);
         // Use gamepad left & right Bumpers to open and close the claw
         //if (gamepad1.right_bumper)
         //    clawOffset += CLAW_SPEED;
@@ -127,7 +160,7 @@ public class Coin extends OpMode{
         telemetry.addData("claw",  "Offset = %.2f", clawOffset);
         telemetry.addData("left",  "%.2f", lefty);
         telemetry.addData("left",  "%.2f", leftx);
-        telemetry.addData("right", "%.2f", right);
+        telemetry.addData("right", "%.2f", rightx);
     }
 
     /*
