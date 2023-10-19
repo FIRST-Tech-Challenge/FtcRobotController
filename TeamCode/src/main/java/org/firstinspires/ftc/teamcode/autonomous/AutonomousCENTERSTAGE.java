@@ -16,6 +16,10 @@ import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
 import org.firstinspires.ftc.robotcore.external.tfod.Recognition;
 import org.firstinspires.ftc.vision.tfod.TfodProcessor;
 
+// Movement
+import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
 import java.util.List;
 
@@ -23,6 +27,15 @@ import java.util.List;
 
 public class AutonomousCENTERSTAGE extends LinearOpMode {
 
+    // Below is MOVEMENT
+    public ElapsedTime runtime = new ElapsedTime();
+    public DcMotor leftFrontDrive = null;
+    public DcMotor leftBackDrive = null;
+    public DcMotor rightFrontDrive = null;
+    public DcMotor rightBackDrive = null;
+    public DcMotor armExtendMotor = null;
+
+    // Below is DETECTION
     private static final boolean USE_WEBCAM = true;  // true for webcam, false for phone camera
 
     /**
@@ -54,6 +67,19 @@ public class AutonomousCENTERSTAGE extends LinearOpMode {
     @Override
     public void runOpMode() {
 
+        // Initialize everything
+        leftFrontDrive  = hardwareMap.get(DcMotor.class, "left_front_drive");
+        leftBackDrive  = hardwareMap.get(DcMotor.class, "left_back_drive");
+        rightFrontDrive = hardwareMap.get(DcMotor.class, "right_front_drive");
+        rightBackDrive = hardwareMap.get(DcMotor.class, "right_back_drive");
+        armExtendMotor = hardwareMap.get(DcMotor.class, "armExtendMotor");
+
+        leftFrontDrive.setDirection(DcMotor.Direction.REVERSE);
+        leftBackDrive.setDirection(DcMotor.Direction.REVERSE);
+        rightFrontDrive.setDirection(DcMotor.Direction.FORWARD);
+        rightBackDrive.setDirection(DcMotor.Direction.FORWARD);
+        armExtendMotor.setDirection(DcMotor.Direction.REVERSE);
+
         initAprilTag();
         initTfod();
 
@@ -64,6 +90,8 @@ public class AutonomousCENTERSTAGE extends LinearOpMode {
         waitForStart();
 
         if (opModeIsActive()) {
+            move(5.0);
+            /**
             while (opModeIsActive()) {
 
                 telemetryAprilTag();
@@ -82,6 +110,7 @@ public class AutonomousCENTERSTAGE extends LinearOpMode {
                 // Share the CPU.
                 sleep(20);
              }
+             */
         }
 
         // Save more CPU resources when camera is no longer needed.
@@ -157,7 +186,6 @@ public class AutonomousCENTERSTAGE extends LinearOpMode {
 
     }   // end method initAprilTag()
 
-
     /**
      * Add telemetry about AprilTag detections.
      */
@@ -185,7 +213,6 @@ public class AutonomousCENTERSTAGE extends LinearOpMode {
         telemetry.addLine("RBE = Range, Bearing & Elevation");
 
     }   // end method telemetryAprilTag()
-
 
     /**
      * Initialize the TensorFlow Object Detection processor.
@@ -251,7 +278,6 @@ public class AutonomousCENTERSTAGE extends LinearOpMode {
 
     }   // end method initTfod()
 
-
     /**
      * Add telemetry about TensorFlow Object Detection (TFOD) recognitions.
      */
@@ -272,4 +298,16 @@ public class AutonomousCENTERSTAGE extends LinearOpMode {
         }   // end for() loop
 
     }   // end method telemetryTfod()
+
+    private void move(double distanceft) {
+        leftFrontDrive.setPower(1);
+        rightFrontDrive.setPower(1);
+        leftBackDrive.setPower(1);
+        rightBackDrive.setPower(1);
+        sleep(1000);
+        leftFrontDrive.setPower(0);
+        rightFrontDrive.setPower(0);
+        leftBackDrive.setPower(0);
+        rightBackDrive.setPower(0);
+    }
 }   // end class
