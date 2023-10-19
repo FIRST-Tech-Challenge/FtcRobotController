@@ -46,7 +46,7 @@ public abstract class AutoRFMotorTest extends LinearOpMode {
     public void auto(){
         while(motor.getVelocity()<5){
             motor.setPower(kG);
-            kG+=0.0001;
+            kG+=0.0005;
             LOGGER.log("kG: "+kG+ " velo: " + motor.getVelocity());
             robot.update();
         }

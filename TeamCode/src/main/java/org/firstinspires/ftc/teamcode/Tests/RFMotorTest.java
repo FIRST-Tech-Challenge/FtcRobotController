@@ -51,7 +51,10 @@ public abstract class RFMotorTest extends LinearOpMode {
             while(!motor.isDone()) {
                 motor.setPosition((max + min) * 0.9, 0);
                 packet.put("MOVING", "up");
-
+                packet.put("position", motor.getCurrentPosition());
+                packet.put("velocity", motor.getVelocity());
+                packet.put("targPosition", motor.getTarCurPos());
+                packet.put("targVel", motor.getTargVel());
                 robot.update();
             }
         motor.setPosition((max + min)*0.1,0);
@@ -60,6 +63,10 @@ public abstract class RFMotorTest extends LinearOpMode {
         while(!motor.isDone()) {
                 motor.setPosition((max + min) * 0.1, 0);
             packet.put("MOVING", "down");
+            packet.put("position", motor.getCurrentPosition());
+            packet.put("velocity", motor.getVelocity());
+            packet.put("targPosition",motor.getTarCurPos());
+            packet.put("targVel", motor.getTargVel());
             robot.update();
             }
     }

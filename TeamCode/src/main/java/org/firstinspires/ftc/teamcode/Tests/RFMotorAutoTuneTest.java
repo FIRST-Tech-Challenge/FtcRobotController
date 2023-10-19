@@ -8,7 +8,7 @@ public class RFMotorAutoTuneTest extends AutoRFMotorTest{
 
     @Override
     public void runOpMode() throws InterruptedException {
-        initialize("leftLiftMotor", 3000, 0, DcMotorSimple.Direction.REVERSE);
+        initialize("motorRightFront", 3000, 0, DcMotorSimple.Direction.REVERSE);
         waitForStart();
         auto();
     }
