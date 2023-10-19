@@ -74,6 +74,7 @@ public class BasicOpMode_Linear extends LinearOpMode {
     private DcMotor rightFrontDrive = null;
     private DcMotor rightBackDrive = null;
     private DcMotor armExtendMotor = null;
+    private DcMotor outputServoMotor = null;
 
     @Override
     public void runOpMode() {
@@ -86,6 +87,7 @@ public class BasicOpMode_Linear extends LinearOpMode {
         rightFrontDrive = hardwareMap.get(DcMotor.class, "right_front_drive");
         rightBackDrive = hardwareMap.get(DcMotor.class, "right_back_drive");
         armExtendMotor = hardwareMap.get(DcMotor.class, "armExtendMotor");
+        outputServoMotor = hardwareMap.get(DcMotor.class, "outputServo");
 
         // ########################################################################################
         // !!!            IMPORTANT Drive Information. Test your motor directions.            !!!!!
@@ -103,6 +105,7 @@ public class BasicOpMode_Linear extends LinearOpMode {
         rightBackDrive.setDirection(DcMotor.Direction.FORWARD);
 
         armExtendMotor.setDirection(DcMotor.Direction.REVERSE);
+        outputServoMotor.setDirection(DcMotor.Direction.REVERSE);
 
         // Wait for the game to start (driver presses PLAY)
         telemetry.addData("Status", "Initialized");
@@ -121,6 +124,7 @@ public class BasicOpMode_Linear extends LinearOpMode {
             double yaw     =  gamepad1.right_stick_x;
 
             double arm = -gamepad2.left_stick_y;
+            double outputServo = -gamepad2.right_stick_y;
 
             // Combine the joystick requests for each axis-motion to determine each wheel's power.
             // Set up a variable for each drive wheel to save the power level for telemetry.
@@ -130,6 +134,7 @@ public class BasicOpMode_Linear extends LinearOpMode {
             double rightBackPower  = axial + lateral - yaw;
 
             double armPower = arm;
+            double outputServoPower = outputServo;
 
             // Normalize the values so no wheel power exceeds 100%
             // This ensures that the robot maintains the desired motion.
@@ -143,6 +148,7 @@ public class BasicOpMode_Linear extends LinearOpMode {
                 leftBackPower   /= max;
                 rightBackPower  /= max;
                 armPower        /= max;
+                outputServoPower /= max;
             }
 
             // This is test code:
@@ -168,6 +174,7 @@ public class BasicOpMode_Linear extends LinearOpMode {
             leftBackDrive.setPower(leftBackPower);
             rightBackDrive.setPower(rightBackPower);
             armExtendMotor.setPower(armPower);
+            outputServoMotor.setPower(outputServoPower);
 
             // Show the elapsed game time and wheel power.
             telemetry.addData("Status", "Run Time: " + runtime.toString());
