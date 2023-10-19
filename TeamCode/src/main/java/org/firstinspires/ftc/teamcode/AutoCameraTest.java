@@ -119,7 +119,7 @@ public class AutoCameraTest extends LinearOpMode
                 /* Your autonomous code*/
                 telemetry.addData("Where?: ", "Center");
                 telemetry.update();
-                
+
             }
         }
 
