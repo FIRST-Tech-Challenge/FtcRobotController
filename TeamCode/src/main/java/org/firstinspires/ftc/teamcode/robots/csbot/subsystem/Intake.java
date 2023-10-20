@@ -16,11 +16,11 @@ import java.util.Map;
 public class Intake implements Subsystem {
     //CONSTANTS
     HardwareMap hardwareMap;
-    Robot_fromScratch robot;
+    Robot robot;
     Servo diverter;
     Joint beaterBarAngleController;
     DcMotorEx beaterBar;
-    public static double BEATER_BAR_ADJUST_SPEED = 5;
+    public static double BEATER_BAR_ADJUST_SPEED = 2;
     public static double BEATER_BAR_INTAKE_VELOCITY = 1.0;
     public static double BEATER_BAR_EJECT_VELOCITY = -1.0;
     public static double BEATER_BAR_ANGLE_CONTROLLER_HOME;
@@ -50,7 +50,7 @@ public class Intake implements Subsystem {
     public static double beaterBarTargetAngle;
 
 
-    public Intake(HardwareMap hardwareMap, Robot_fromScratch robot) {
+    public Intake(HardwareMap hardwareMap, Robot robot) {
             this.hardwareMap = hardwareMap;
             this.robot = robot;
             articulation = Articulation.FOLD;

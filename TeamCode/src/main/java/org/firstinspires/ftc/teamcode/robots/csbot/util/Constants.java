@@ -4,8 +4,6 @@ import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 
-import org.firstinspires.ftc.teamcode.robots.csbot.Field;
-
 @Config(value = "PPConstants")
 public class Constants {
 
@@ -35,6 +33,8 @@ public class Constants {
 
     public static final double TRACK_WIDTH = 13.5;
     public static final double DISTANCE_BETWEEN_WHEELS = TRACK_WIDTH;
+
+    public static double FIELD_INCHES_PER_GRID = 23.5;
 
 
     public static double MAX_ANG_VEL = Math.toRadians(180);
@@ -97,8 +97,8 @@ public class Constants {
         ORIGIN_ALLIANCE_RED (new Pose2d(0, 12*6, 0)), //these origin redefinitions are relative to the FTC Dashboard default which is different from a Canvas default
         ORIGIN_ALLIANCE_BLUE (new Pose2d(0, -12*6, Math.PI)),
         ORIGIN_6CAN (new Pose2d(-5*12, 0, Math.toRadians(0))),
-        START_LEFT(new Pose2d(9, 1.5 * Field.INCHES_PER_GRID, Math.toRadians(0))),
-        START_RIGHT(new Pose2d(9, -1.5 * Field.INCHES_PER_GRID, Math.toRadians(0))),
+        START_LEFT(new Pose2d(9, 1.5 * FIELD_INCHES_PER_GRID, Math.toRadians(0))),
+        START_RIGHT(new Pose2d(9, -1.5 * FIELD_INCHES_PER_GRID, Math.toRadians(0))),
         START_SIXCAN(new Pose2d(9, 0, Math.toRadians(0)));
 
         private final Pose2d pose;

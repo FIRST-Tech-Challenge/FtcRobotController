@@ -9,7 +9,7 @@ import java.util.Map;
 public class Outtake implements Subsystem {
 
     HardwareMap hardwareMap;
-    Robot_fromScratch robot;
+    Robot robot;
 
     public enum Articulation {
         MANUAL,
@@ -23,7 +23,7 @@ public class Outtake implements Subsystem {
     public static double outtakeTicks;
 
 
-    public Outtake (HardwareMap hardwareMap, Robot_fromScratch robot) {
+    public Outtake (HardwareMap hardwareMap, Robot robot) {
         this.hardwareMap = hardwareMap;
         this.robot = robot;
 

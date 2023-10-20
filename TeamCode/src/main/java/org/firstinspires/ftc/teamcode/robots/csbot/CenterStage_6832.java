@@ -10,7 +10,6 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.internal.system.Misc;
 import org.firstinspires.ftc.teamcode.robots.csbot.subsystem.Robot;
-import org.firstinspires.ftc.teamcode.robots.csbot.subsystem.TauDriveTrain;
 import org.firstinspires.ftc.teamcode.robots.csbot.util.Constants;
 import org.firstinspires.ftc.teamcode.robots.csbot.util.ExponentialSmoother;
 import org.firstinspires.ftc.teamcode.robots.csbot.util.TelemetryProvider;
@@ -170,7 +169,6 @@ public class CenterStage_6832 extends OpMode {
         //TODO - implement a resetGame function
 //        resetGame();
 
-        robot.driveTrain.articulate(TauDriveTrain.Articulation.unlock);
 
 
         if(gameState.equals(CenterStage_6832.GameState.TELE_OP)){
@@ -181,7 +179,6 @@ public class CenterStage_6832 extends OpMode {
 
         }
 
-        dc.rumble(.5);
 
         robot.start();
     }
@@ -206,10 +203,10 @@ public class CenterStage_6832 extends OpMode {
             switch(gameState) {
                 case AUTONOMOUS:
                     //TODO - remove targetAltCone placeholder
-                    if(robot.AutonRun(auton.visionProvider.getMostFrequentPosition().getIndex(),startingPosition, false)) {
-                        gameState = CenterStage_6832.GameState.TELE_OP;
-                        active = false;
-                    }
+//                    if(robot.AutonRun(auton.visionProvider.getMostFrequentPosition().getIndex(),startingPosition, false)) {
+//                        gameState = CenterStage_6832.GameState.TELE_OP;
+//                        active = false;
+//                    }
                     break;
 
                 case TELE_OP:
@@ -221,7 +218,7 @@ public class CenterStage_6832 extends OpMode {
                     break;
 
                 case DEMO:
-                    dc.joystickDriveDemoMode();
+//                    dc.joystickDriveDemoMode();
                     break;
 
                 case MANUAL_DIAGNOSTIC:
