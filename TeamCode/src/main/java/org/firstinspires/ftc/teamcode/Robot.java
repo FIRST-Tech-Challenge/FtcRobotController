@@ -128,6 +128,7 @@ public class Robot {
 
     // State
     public static SlidesState     desiredSlidesState = SlidesState.UNREADY;
+    public static SlidesState     desiredSlidesState = SlidesState.UNREADY;
 
 
     enum MovementMode {NORMAL, FINE, ULTRA_FINE}
