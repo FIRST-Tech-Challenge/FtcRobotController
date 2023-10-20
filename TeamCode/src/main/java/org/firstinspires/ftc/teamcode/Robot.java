@@ -126,6 +126,7 @@ public class Robot {
 //        }
 //    }
 
+
     //Enums for states
     public enum SlidesState            {RETRACTED, LOW, MEDIUM, HIGH, UNREADY, MOVE_UP, MOVE_DOWN, STOPPED};
     public SlidesState desiredSlidesState = SlidesState.UNREADY;
@@ -139,6 +140,7 @@ public class Robot {
     public enum PlaneSpringState       {UNRELEASED, RELEASED};
     public PlaneSpringState desiredPlaneStringState = PlaneSpringState.UNRELEASED;
     enum MovementMode                  {NORMAL, FINE, ULTRA_FINE}
+
     MovementMode movementMode = MovementMode.NORMAL;
     boolean wheelSpeedAdjustment = false;
     
