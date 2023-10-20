@@ -59,7 +59,6 @@ public class PositionManager {
 
 
 }
-//TODO: Once this stuff Oscar is done, this will be updated with the appropiote values and function
 class EncoderPositioning{
     //NOTE: DO NOT EDIT THE MAGICAL FACTORS UNLESS IF IT IS DEEMED NECESSARY.
     static int ENCODER_COUNTS_PER_ROTATION = 560;
@@ -70,28 +69,28 @@ class EncoderPositioning{
     static double MAGICAL_RATIO_Y = MAGICAL_FACTOR_Y / ENCODER_COUNTS_PER_ROTATION;
 
     //Stores the last known encoder values for each wheel. They all start at a value of 0.
-    static HashMap<Robot.Config.DriveMotors, Integer> wheelEncoderCounts = new HashMap<RobotConfig.DriveMotors, Integer>() {{
-        put(Robot.Config.DriveMotors.FRONT_RIGHT, 0);
-        put(Robot.Config.DriveMotors.FRONT_LEFT, 0);
-        put(Robot.Config.DriveMotors.REAR_RIGHT, 0);
-        put(Robot.Config.DriveMotors.REAR_LEFT, 0);
+    static HashMap<Robot.MotorConfigs, Integer> wheelEncoderCounts = new HashMap<Robot.MotorConfigs, Integer>() {{
+        put(Robot.MotorConfigs.FRONT_RIGHT, 0);
+        put(Robot.MotorConfigs.FRONT_LEFT, 0);
+        put(Robot.MotorConfigs.REAR_RIGHT, 0);
+        put(Robot.MotorConfigs.REAR_LEFT, 0);
     }};
 
     //Stores the encoder counts of each wheel when the last time the robot was at rest.
-    static HashMap<Robot.Config.DriveMotors, Integer> wheelEncoderCountsAtRest = new HashMap<RobotConfig.DriveMotors, Integer>() {{
-        put(Robot.Config.DriveMotors.FRONT_RIGHT, 0);
-        put(Robot.Config.DriveMotors.FRONT_LEFT, 0);
-        put(Robot.Config.DriveMotors.REAR_RIGHT, 0);
-        put(Robot.Config.DriveMotors.REAR_LEFT, 0);
-    }};
+//    static HashMap<Robot.MotorConfigs, Integer> wheelEncoderCountsAtRest = new HashMap<Robot.MotorConfigs, Integer>() {{
+//        put(Robot.MotorConfigs.FRONT_RIGHT, 0);
+//        put(Robot.MotorConfigs.FRONT_LEFT, 0);
+//        put(Robot.MotorConfigs.REAR_RIGHT, 0);
+//        put(Robot.MotorConfigs.REAR_LEFT, 0);
+//    }};
 
     //Stores the angle of the rollers on each Mecanum wheels (values may need to get changed) (USING THE UNIT CIRCLE)
     //NOTE: The d means double, the code automatically reads it as a double, don't ask why it's in there. It is not necessary.
-    static HashMap<Robot.Config.DriveMotors, Double> RollerAngles = new HashMap<RobotConfig.DriveMotors, Double>() {{
-        put(Robot.Config.DriveMotors.FRONT_RIGHT, Math.PI / 4.d);
-        put(Robot.Config.DriveMotors.FRONT_LEFT, 3 * Math.PI / 4.d );
-        put(Robot.Config.DriveMotors.REAR_RIGHT, Math.PI / 4.d);
-        put(Robot.Config.DriveMotors.REAR_LEFT, 3 * Math.PI / 4.d);
+    static HashMap<Robot.MotorConfigs, Double> RollerAngles = new HashMap<Robot.MotorConfigs, Double>() {{
+        put(Robot.MotorConfigs.FRONT_RIGHT, Math.PI / 4.d);
+        put(Robot.MotorConfigs.FRONT_LEFT, 3 * Math.PI / 4.d );
+        put(Robot.MotorConfigs.REAR_RIGHT, Math.PI / 4.d);
+        put(Robot.MotorConfigs.REAR_LEFT, 3 * Math.PI / 4.d);
     }};
 
     /**Checks the robot's encoders to get an estimate of the distance and direction traveled.
@@ -105,7 +104,7 @@ class EncoderPositioning{
         double theta = robot.positionManager.position.getRotation();
         double deltaPSumX = 0.0d, deltaPSumY = 0.0d;
 
-        for (HashMap.Entry<Robot.Config.DriveMotors, Double> rollerAngle : RollerAngles.entrySet()) {
+        for (HashMap.Entry<Robot.MotorConfigs, Double> rollerAngle : RollerAngles.entrySet()) {
             int encoderCounts = Objects.requireNonNull(wheelEncoderCounts.get(rollerAngle.getKey()));
             double force = rollerAngle.getValue();
 
@@ -119,35 +118,30 @@ class EncoderPositioning{
             }
 
         }
-        resetEncoders(robot);
+        setEncoders(robot);
         return new Position(MAGICAL_RATIO_X * deltaPSumX, MAGICAL_RATIO_Y * deltaPSumY, 0.0, "");
     }
 
     /**
-     ** ResetEncoders reset the robots X and Y position of the wheels
+     ** setEncoders reset the robots X and Y position of the wheels
      * TODO Work with Oscar on getting the code parameters are variables connected through the seperate files.
      * @param robot a reference to the robot used for accessing hardware
      */
-    private void resetEncoders(Robot robot){
-        //reset the current stored value of each encoder to 0. Commented out as it may not be necessarry.
-        //wheelEncoderCounts.put(Robot.Config.DriveMotors.FRONT_RIGHT,0);
-        //wheelEncoderCounts.put(Robot.Config.DriveMotors.FRONT_LEFT,0);
-        //wheelEncoderCounts.put(Robot.Config.DriveMotors.REAR_RIGHT,0);
-        //wheelEncoderCounts.put(Robot.Config.DriveMotors.REAR_LEFT,0);
+    private void setEncoders(Robot robot){
         //update the value of the stored previous value
-        wheelEncoderCountsAtRest.put(Robot.Config.DriveMotors.FRONT_RIGHT,robot.driveMotors.frontLeft.getCurrentPosition());
-        wheelEncoderCountsAtRest.put(Robot.Config.DriveMotors.FRONT_LEFT, robot.driveMotors.frontRight.getCurrentPosition());
-        wheelEncoderCountsAtRest.put(Robot.Config.DriveMotors.REAR_RIGHT, robot.driveMotors.rearLeft.getCurrentPosition());
-        wheelEncoderCountsAtRest.put(Robot.Config.DriveMotors.REAR_LEFT,  robot.driveMotors.rearRight.getCurrentPosition());
+        wheelEncoderCounts.put(Robot.MotorConfigs.FRONT_RIGHT,robot.frontLeft.getCurrentPosition());
+        wheelEncoderCounts.put(Robot.MotorConfigs.FRONT_LEFT, robot.frontRight.getCurrentPosition());
+        wheelEncoderCounts.put(Robot.MotorConfigs.REAR_RIGHT, robot.rearLeft.getCurrentPosition());
+        wheelEncoderCounts.put(Robot.MotorConfigs.REAR_LEFT,  robot.rearRight.getCurrentPosition());
     }
 
 
     private void updateEncoderCounts(Robot robot){
         //get the change in encoder value since the last time the encoders were checked.
-        wheelEncoderCounts.put(Robot.Config.DriveMotors.FRONT_RIGHT, robot.driveMotors.frontLeft.getCurrentPosition() - wheelEncoderCountsAtRest.get(Robot.Config.DriveMotors.FRONT_RIGHT));
-        wheelEncoderCounts.put(Robot.Config.DriveMotors.FRONT_LEFT,  robot.driveMotors.frontRight.getCurrentPosition() - wheelEncoderCountsAtRest.get(Robot.Config.DriveMotors.FRONT_LEFT));
-        wheelEncoderCounts.put(Robot.Config.DriveMotors.REAR_RIGHT,  robot.driveMotors.rearLeft.getCurrentPosition() - wheelEncoderCountsAtRest.get(Robot.Config.DriveMotors.REAR_RIGHT));
-        wheelEncoderCounts.put(Robot.Config.DriveMotors.REAR_LEFT,   robot.driveMotors.rearRight.getCurrentPosition() - wheelEncoderCountsAtRest.get(Robot.Config.DriveMotors.REAR_LEFT));
+        wheelEncoderCounts.put(Robot.MotorConfigs.FRONT_RIGHT, robot.frontLeft.getCurrentPosition() - wheelEncoderCounts.get(Robot.MotorConfigs.FRONT_RIGHT));
+        wheelEncoderCounts.put(Robot.MotorConfigs.FRONT_LEFT,  robot.frontRight.getCurrentPosition() - wheelEncoderCounts.get(Robot.MotorConfigs.FRONT_LEFT));
+        wheelEncoderCounts.put(Robot.MotorConfigs.REAR_RIGHT,  robot.rearLeft.getCurrentPosition() - wheelEncoderCounts.get(Robot.MotorConfigs.REAR_RIGHT));
+        wheelEncoderCounts.put(Robot.MotorConfigs.REAR_LEFT,   robot.rearRight.getCurrentPosition() - wheelEncoderCounts.get(Robot.MotorConfigs.REAR_LEFT));
 
     }
 }
@@ -155,7 +149,7 @@ class EncoderPositioning{
 
 class IMUPositioning{
     static private BNO055IMU imu;
-    static private BN0055IMU.Parameters parameters;
+    static private BNO055IMU.Parameters parameters;
 
     /**
      *
@@ -163,14 +157,14 @@ class IMUPositioning{
      */
     IMUPositioning(HardwareMap hardwareMap){
         //configure the parameters for the IMU
-        parameters = new BN0055IMU.Parameters();
-        parameters.mode = BN0055IMU.SensorMode.IMU;
-        parameters.angleUnit = BN0055IMU.AngleUnit.RADIANS;
-        parameters.accelUnit = BN0055IMU.AccelUnit.METERS_PERSEC_PERSEC;
+        parameters = new BNO055IMU.Parameters();
+        parameters.mode = BNO055IMU.SensorMode.IMU;
+        parameters.angleUnit = BNO055IMU.AngleUnit.RADIANS;
+        parameters.accelUnit = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
         parameters.loggingEnabled = false; //we hate logging stuff, so we kept it false :)
 
         //get the IMU
-        imu = hardwareMap.get(BN0055IMU.class, "imu");
+        imu = hardwareMap.get(BNO055IMU.class, "imu");
 
     }
 
