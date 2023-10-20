@@ -1,11 +1,13 @@
 package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
+import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.opencv.core.Mat;
 
+@TeleOp(name = "MecanumDrive", group = "Opmode" )
 public class MecanumDrive extends OpMode {
     // Declare OpMode members for each of the 4 motors.
     private ElapsedTime runtime = new ElapsedTime();
@@ -27,10 +29,11 @@ public class MecanumDrive extends OpMode {
         FrontRightWheel.setDirection(DcMotor.Direction.FORWARD);
         BackRightWheel.setDirection(DcMotor.Direction.FORWARD);
 
-
         telemetry.addData("Status", "Initialized");
         telemetry.update();
+
     }
+
 
     @Override
     public void loop() {
@@ -63,10 +66,10 @@ public class MecanumDrive extends OpMode {
             }
 
             //set motor power
-            FrontLeftWheel.setPower(FrontLeftPower);
-            BackLeftWheel.setPower(BackLeftPower);
-            FrontRightWheel.setPower(FrontRightPower);
-            BackRightWheel.setPower(BackRightPower);
+            FrontLeftWheel.setPower(FrontLeftPower * .50);
+            BackLeftWheel.setPower(BackLeftPower* .50);
+            FrontRightWheel.setPower(FrontRightPower* .50);
+            BackRightWheel.setPower(BackRightPower* .50);
 
             // Show the elapsed game time and wheel power.
             telemetry.addData("Status", "Run Time: " + runtime.toString());
