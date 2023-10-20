@@ -12,18 +12,6 @@ abstract public class BaseOpMode extends LinearOpMode {
     DcMotor motorFR;
     DcMotor motorBL;
     DcMotor motorBR;
-    /*DcMotor leftTransferMotor;
-    DcMotor rightTransferMotor;
-
-    DcMotor leftSlideMotor;
-    DcMotor rightSlideMotor;
-
-    Servo leftIntake;
-    Servo rightIntake;
-
-    Servo leftRaiseGondola;
-    Servo rightRaiseGondola;
-    Servo releasePixels;*/
 
     // constants
     static final double TICKS_PER_REVOLUTION = 537.6; // Neverest orbital 20, 7 pulse per revolution
@@ -32,6 +20,7 @@ abstract public class BaseOpMode extends LinearOpMode {
     static final double TICKS_PER_INCH =  (TICKS_PER_REVOLUTION * GEAR_RATIO) / (WHEEL_DIAMETER * Math.PI);
     static final double INCHES_PER_REVOLUTION = Math.PI * WHEEL_DIAMETER;
     static final double INCHES_PER_TICK = INCHES_PER_REVOLUTION / TICKS_PER_REVOLUTION;
+    static final double INTAKE_SPEED = 0.8;
 
     public void initHardware() {
         // drive motors
@@ -60,24 +49,14 @@ abstract public class BaseOpMode extends LinearOpMode {
         motorBL.setDirection(DcMotor.Direction.REVERSE);
         motorBR.setDirection(DcMotor.Direction.REVERSE);
 
-        // mechanism motors and servos
-        /*leftTransferMotor = hardwareMap.dcMotor.get("leftTransferMotor");
-        rightTransferMotor = hardwareMap.dcMotor.get("rightTransferMotor");*/
-
     }
 
+    // mecanum drive method
     public void driveMecanum(double x, double y, double turning) {
         motorFL.setPower(x + y + turning);
         motorFR.setPower(y - x - turning);
         motorBL.setPower(y - x + turning);
         motorBR.setPower(x + y - turning);
     }
-
-    double calculateDistance(double deltaX, double deltaY) {
-        return Math.sqrt(Math.pow(deltaX, 2) + Math.pow(deltaY, 2));
-    }
-
-
-
 
 }

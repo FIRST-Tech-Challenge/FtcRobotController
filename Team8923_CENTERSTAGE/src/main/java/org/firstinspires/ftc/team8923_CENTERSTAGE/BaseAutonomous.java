@@ -9,11 +9,6 @@ abstract public class BaseAutonomous extends BaseOpMode {
 
     private ElapsedTime runtime = new ElapsedTime();
 
-    double speedFL;
-    double speedFR;
-    double speedBL;
-    double speedBR;
-
     int lastEncoderFL = 0;
     int lastEncoderFR = 0;
     int lastEncoderBL = 0;
@@ -31,7 +26,6 @@ abstract public class BaseAutonomous extends BaseOpMode {
         lastEncoderFL = motorFL.getCurrentPosition();
         lastEncoderBL = motorBL.getCurrentPosition();
         lastEncoderBR = motorBR.getCurrentPosition();
-
 
         telemetry.clear();
         telemetry.addLine("Initialized. Ready to start!");
