@@ -48,19 +48,16 @@ import com.qualcomm.robotcore.hardware.Servo;
  * Use Android Studio to Copy this Class, and Paste it into your team's code folder with a new name.
  * Remove or comment out the @Disabled line to add this OpMode to the Driver Station OpMode list
  */
-@TeleOp(name = "Concept: Scan S", group = "Concept")
+@TeleOp(name = "Concept: WristClaw", group = "Concept")
 //@Disabled
 public class WristClaw extends LinearOpMode {
 
          // amount to slew servo each CYCLE_MS cycle
     static final int    CYCLE_MS    =   50;     // period of each cycle
-    static final double MAX_POS     =  1.0;     // Maximum rotational position
-    static final double MIN_POS     =  0.0;     // Minimum rotational position
+
 
     // Define class members
     Servo   servo;
-
-
 
 
     @Override
@@ -80,30 +77,18 @@ public class WristClaw extends LinearOpMode {
         while(opModeIsActive()){
 
             // slew the servo, according to the rampUp (direction) variable.
-            if () {
-                // Keep stepping up until we hit the max value.
-                 ;
-                if ( >= MAX_POS ) {
-                     = MAX_POS;
-                    ;   // Switch ramp direction
-                }
-            }
-            else {
-                // Keep stepping down until we hit the min value.
-                position ;
-                if (position <= MIN_POS ) {
-                     = MIN_POS;
-                    ;  // Switch ramp direction
-                }
+            if (gamepad2.dpad_up) {
+                servo.setPosition(0.0);
+
+            } else if (gamepad2.dpad_down) {
+                servo.setPosition(1.0);
             }
 
             // Display the current value
-            telemetry.addData("Servo Position", "%5.2f", position);
             telemetry.addData(">", "Press Stop to end test." );
             telemetry.update();
 
             // Set the servo to the new position and pause;
-            servo.setPosition(position);
             sleep(CYCLE_MS);
             idle();
         }
