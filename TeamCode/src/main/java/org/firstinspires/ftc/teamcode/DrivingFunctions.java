@@ -3,7 +3,7 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DigitalChannelController;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.IMU;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
@@ -11,6 +11,7 @@ import com.qualcomm.robotcore.util.Range;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 
 public class DrivingFunctions {
+    private boolean isRobotA = false;
     private DcMotor leftFrontDrive = null;
     private DcMotor leftBackDrive = null;
     private DcMotor rightFrontDrive = null;
@@ -28,21 +29,34 @@ public class DrivingFunctions {
     static final double     HEADING_THRESHOLD       = 1.0 ;    // How close must the heading get to the target before moving to next step.
     static final double     P_TURN_GAIN            = 0.035;     // Larger is more responsive, but also less stable
     static final double     P_DRIVE_GAIN           = 0.03;     // Larger is more responsive, but also less stable
-    private String controlHubName = "";
     public DrivingFunctions(LinearOpMode l)
     {
         lom = l;
         Initialize();
     }
+    private void DetermineWhatRobotThisIs()
+    {
+        // In our Wire Fire Robot B, we named the front-left motor "b-frontleft". If that's found, then this is RobotB.
+        // If this throws an exception, then this is Robot A
+        try {
+            leftFrontDrive = lom.hardwareMap.get(DcMotor.class, "b-frontleft");
+            isRobotA = false; // If this line is executed, the above call didn't fail, so this is RobotB
+        }
+        catch (Exception e)
+        {
+            isRobotA = true;
+        }
+    }
     private void Initialize()
     {
+        DetermineWhatRobotThisIs();
         // Initialize the hardware variables. Note that the strings used here must correspond
         // to the names assigned during the robot configuration step on the DS or RC devices.
-        leftFrontDrive  = lom.hardwareMap.get(DcMotor.class, "frontleft");
+        if(isRobotA)
+            leftFrontDrive  = lom.hardwareMap.get(DcMotor.class, "frontleft");
         leftBackDrive  = lom.hardwareMap.get(DcMotor.class, "backleft");
         rightFrontDrive = lom.hardwareMap.get(DcMotor.class, "frontright");
         rightBackDrive = lom.hardwareMap.get(DcMotor.class, "backright");
-        controlHubName = lom.hardwareMap.get(DigitalChannelController.class, "Control Hub").getDeviceName();
 
         imu = lom.hardwareMap.get(IMU.class, "imu");
         // Adjust the orientation parameters to match your robot
@@ -52,10 +66,10 @@ public class DrivingFunctions {
         // Without this, the REV Hub's orientation is assumed to be logo up / USB forward
         imu.initialize(parameters);
 
-        leftFrontDrive.setDirection(DcMotor.Direction.REVERSE);
-        leftBackDrive.setDirection(DcMotor.Direction.FORWARD);
+        leftFrontDrive.setDirection(isRobotA ? DcMotor.Direction.REVERSE : DcMotor.Direction.FORWARD);
+        leftBackDrive.setDirection(isRobotA ? DcMotor.Direction.FORWARD: DcMotor.Direction.REVERSE);
         rightFrontDrive.setDirection(DcMotor.Direction.FORWARD);
-        rightBackDrive.setDirection(DcMotor.Direction.FORWARD);
+        rightBackDrive.setDirection(isRobotA ? DcMotor.Direction.FORWARD: DcMotor.Direction.REVERSE);
 
         // Ensure the robot is stationary.  Reset the encoders and set the motors to BRAKE mode
         leftFrontDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -78,12 +92,10 @@ public class DrivingFunctions {
     {
         while(lom.opModeIsActive())
         {
-            lom.telemetry.addData("Control Hub Name: ",  "%s", controlHubName);
             lom.telemetry.addData("Left Front Position: ",  "%7d", leftFrontDrive.getCurrentPosition());
             lom.telemetry.addData("Right Front Position: ",  "%7d", rightFrontDrive.getCurrentPosition());
             lom.telemetry.addData("Left Back Position: ",  "%7d", leftBackDrive.getCurrentPosition());
             lom.telemetry.addData("Right Back Position: ",  "%7d", rightBackDrive.getCurrentPosition());
-
             lom.telemetry.addData("Heading:", "%5.0f", GetHeading());
             lom.telemetry.update();
         }
@@ -101,63 +113,59 @@ public class DrivingFunctions {
      *                   0 = fwd. +ve is CCW from fwd. -ve is CW from forward.
      *                   If a relative angle is required, add/subtract from the current robotHeading.
      */
-    public void DriveStraight(double maxDriveSpeed,
-                              double distance,
-                              double heading, boolean strafe) {
+    public void DriveStraight(double maxDriveSpeed, double distance, double heading, boolean strafe)
+    {
+        CalculateHeadingError(heading);
+        if (Math.abs(this.headingError) > 2.0)
+            TurnToHeading(maxDriveSpeed, heading);
+        // Determine new target position, and pass to motor controller
+        int moveCounts = (int)(distance * COUNTS_PER_INCH);
 
-        // Ensure that the OpMode is still active
-        if (lom.opModeIsActive()) {
-            CalculateHeadingError(heading);
-            if (Math.abs(this.headingError) > 4.0)
-                TurnToHeading(maxDriveSpeed, heading);
-            // Determine new target position, and pass to motor controller
-            int moveCounts = (int)(distance * COUNTS_PER_INCH);
-
-            // Set Target FIRST, then turn on RUN_TO_POSITION
-            leftFrontDrive.setTargetPosition(leftFrontDrive.getCurrentPosition() + moveCounts);
-            rightBackDrive.setTargetPosition(rightBackDrive.getCurrentPosition() + moveCounts);
-            if (!strafe) {
-                rightFrontDrive.setTargetPosition(rightFrontDrive.getCurrentPosition() + moveCounts);
-                leftBackDrive.setTargetPosition(leftBackDrive.getCurrentPosition() + moveCounts);
-            }
-            else{
-                rightFrontDrive.setTargetPosition(rightFrontDrive.getCurrentPosition() - moveCounts);
-                leftBackDrive.setTargetPosition(leftBackDrive.getCurrentPosition() - moveCounts);
-            }
-            leftFrontDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            rightFrontDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            leftBackDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            rightBackDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-
-            // Set the required driving speed  (must be positive for RUN_TO_POSITION)
-            // Start driving straight, and then enter the control loop
-            maxDriveSpeed = Math.abs(maxDriveSpeed);
-            if (!strafe) {
-                MoveRobot(0, maxDriveSpeed, 0, 1.0);
-            }
-            else{
-                MoveRobot(maxDriveSpeed, 0, 0, 1.0);
-            }
-            // keep looping while we are still active, and BOTH motors are running.
-            while (lom.opModeIsActive() &&
-                    (leftFrontDrive.isBusy() && rightFrontDrive.isBusy() && leftBackDrive.isBusy() && rightBackDrive.isBusy())) {
-                // Determine required steering to keep on heading
-                double turnSpeed = GetSteeringCorrection(heading, P_DRIVE_GAIN);
-
-                // if driving in reverse, the motor correction also needs to be reversed
-                if (distance < 0)
-                    turnSpeed *= -1.0;
-
-                // Apply the turning correction to the current driving speed.
-                if (!strafe) {
-                    MoveRobot(0, maxDriveSpeed, -turnSpeed, 1.0);
-                }
-                else{
-                    MoveRobot(maxDriveSpeed, 0, -turnSpeed, 1.0);
-                }
-            }
-            StopMotors();
+        // Set Target FIRST, then turn on RUN_TO_POSITION
+        leftFrontDrive.setTargetPosition(leftFrontDrive.getCurrentPosition() + moveCounts);
+        rightBackDrive.setTargetPosition(rightBackDrive.getCurrentPosition() + moveCounts);
+        if (!strafe) {
+            rightFrontDrive.setTargetPosition(rightFrontDrive.getCurrentPosition() + moveCounts);
+            leftBackDrive.setTargetPosition(leftBackDrive.getCurrentPosition() + moveCounts);
         }
+        else{
+            rightFrontDrive.setTargetPosition(rightFrontDrive.getCurrentPosition() - moveCounts);
+            leftBackDrive.setTargetPosition(leftBackDrive.getCurrentPosition() - moveCounts);
+        }
+        leftFrontDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        rightFrontDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        leftBackDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        rightBackDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+        // Set the required driving speed  (must be positive for RUN_TO_POSITION)
+        // Start driving straight, and then enter the control loop
+        maxDriveSpeed = Math.abs(maxDriveSpeed);
+        if (!strafe) {
+            MoveRobot(0, maxDriveSpeed, 0, 1.0);
+        }
+        else{
+            MoveRobot(maxDriveSpeed, 0, 0, 1.0);
+        }
+        // keep looping while we are still active, and BOTH motors are running.
+        while (lom.opModeIsActive() &&
+                (leftFrontDrive.isBusy() && rightFrontDrive.isBusy() && leftBackDrive.isBusy() && rightBackDrive.isBusy()))
+        {
+            // Determine required steering to keep on heading
+            double turnSpeed = GetSteeringCorrection(heading, P_DRIVE_GAIN);
+
+            // if driving in reverse, the motor correction also needs to be reversed
+            if (distance < 0)
+                turnSpeed *= -1.0;
+
+            // Apply the turning correction to the current driving speed.
+            if (!strafe) {
+                MoveRobot(0, maxDriveSpeed, -turnSpeed, 1.0);
+            }
+            else{
+                MoveRobot(maxDriveSpeed, 0, -turnSpeed, 1.0);
+            }
+        }
+        StopMotors();
     }
     private void StopMotors()
     {
@@ -189,8 +197,9 @@ public class DrivingFunctions {
 
         // keep looping while we are still active, and not on heading.
         while ((runtime.milliseconds() - startTime) < TURN_TIMEOUT_MILLISECONDS &&
-                lom.opModeIsActive() && (Math.abs(this.headingError) > HEADING_THRESHOLD)) {
-
+                lom.opModeIsActive() &&
+                ((Math.abs(this.headingError) > HEADING_THRESHOLD) || Math.abs(GetRotatingSpeed()) > 2.0))
+        {
             // Determine required steering to keep on heading
             double turnSpeed = GetSteeringCorrection(heading, P_TURN_GAIN);
 
