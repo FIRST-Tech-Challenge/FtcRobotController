@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode;
+package org.firstinspires.ftc.team6220_CENTERSTAGE;
 
 import androidx.annotation.NonNull;
 
@@ -198,7 +198,7 @@ public final class TankDrive {
 
         voltageSensor = hardwareMap.voltageSensor.iterator().next();
 
-        localizer = new TankDrive.DriveLocalizer();
+        localizer = new DriveLocalizer();
 
         FlightRecorder.write("TANK_PARAMS", PARAMS);
     }
