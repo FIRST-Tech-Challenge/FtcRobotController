@@ -129,6 +129,7 @@ public class Robot {
     //Enums for states
     public enum SlidesState            {RETRACTED, LOW, MEDIUM, HIGH, UNREADY, MOVE_UP, MOVE_DOWN, STOPPED};
     public SlidesState desiredSlidesState = SlidesState.UNREADY;
+    public int desiredSlidesPosition;
     public enum ParkingPosition        {INSIDE, MIDDLE, OUTSIDE};
     public enum CompartmentState       {OPEN, CLOSED};
     public CompartmentState desiredCompartmentLeftState = CompartmentState.CLOSED;
@@ -175,11 +176,11 @@ public class Robot {
         resetEncoder(rearRight);
 
         slides            = Robot.MotorConfigs.initialize(Robot.MotorConfigs.SLIDES, hardwareMap);
-        compliantWheelLeft            = Robot.MotorConfigs.initialize(MotorConfigs.COMPLIANT_MOTOR_LEFT, hardwareMap);
-        compliantWheelRight            = Robot.MotorConfigs.initialize(MotorConfigs.COMPLIANT_MOTOR_RIGHT, hardwareMap);
-        planeSpring     = Robot.ServoConfigs.initialize(ServoConfigs.PLANE_SPRING, hardwareMap);
-        compartmentLeft     = Robot.ServoConfigs.initialize(ServoConfigs.COMPARTMENT_LEFT, hardwareMap);
-        compartmentRight     = Robot.ServoConfigs.initialize(ServoConfigs.COMPARTMENT_RIGHT, hardwareMap);
+        compliantWheelLeft            = Robot.MotorConfigs.initialize(Robot.MotorConfigs.COMPLIANT_MOTOR_LEFT, hardwareMap);
+        compliantWheelRight            = Robot.MotorConfigs.initialize(Robot.MotorConfigs.COMPLIANT_MOTOR_RIGHT, hardwareMap);
+        planeSpring     = Robot.ServoConfigs.initialize(Robot.ServoConfigs.PLANE_SPRING, hardwareMap);
+        compartmentLeft     = Robot.ServoConfigs.initialize(Robot.ServoConfigs.COMPARTMENT_LEFT, hardwareMap);
+        compartmentRight     = Robot.ServoConfigs.initialize(Robot.ServoConfigs.COMPARTMENT_RIGHT, hardwareMap);
 //        slidesLimitSwitch= Robot.SwitchConfigs.initialize(Robot.SwitchConfigs.SLIDES_LIMIT, hardwareMap);
 
         // Set slides state to Retracted
