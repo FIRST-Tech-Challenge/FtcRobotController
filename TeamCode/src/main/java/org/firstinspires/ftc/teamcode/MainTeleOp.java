@@ -1,28 +1,25 @@
 package org.firstinspires.ftc.teamcode;
+
 import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.arcrobotics.ftclib.gamepad.GamepadEx;
 import com.arcrobotics.ftclib.gamepad.GamepadKeys;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.hardware.DcMotorEx;
-import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.IMU;
+
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 
 
 @TeleOp
 public class MainTeleOp extends LinearOpMode {
 
-    private DcMotorEx motor_fr;
-    private DcMotorEx motor_fl;
-    private DcMotorEx motor_br;
-    private DcMotorEx motor_bl;
+
     private IMU imu;
     //robot centric orientation
     private GamepadEx gp1, gp2;
-    private DistanceSensor distanceSensor;
     private double distanceFromObject;
 
+    //do we ever initialize bot? Like with the opMode?
     Bot bot;
     private boolean isAutomatic;
 
@@ -30,16 +27,13 @@ public class MainTeleOp extends LinearOpMode {
 
     @Override
     public void runOpMode() throws InterruptedException {
-        motor_fr = hardwareMap.get(DcMotorEx.class, "fr");
-        motor_fl = hardwareMap.get(DcMotorEx.class, "fl");
-        motor_br = hardwareMap.get(DcMotorEx.class, "br");
-        motor_bl = hardwareMap.get(DcMotorEx.class, "bl");
-        distanceSensor = hardwareMap.get(DistanceSensor.class, "distanceSensor");
+
+        //shouldn't imu be in Bot?
         imu = hardwareMap.get(IMU.class, "IMU?");
         gp2 = new GamepadEx(gamepad2);
         gp1 = new GamepadEx(gamepad1);
 
-        distanceFromObject = distanceSensor.getDistance(DistanceUnit.CM);
+        distanceFromObject = bot.distanceSensor.getDistance(DistanceUnit.CM);
         telemetry.addData("teleOp is ", "initialized");
 
         waitForStart();
@@ -73,13 +67,13 @@ public class MainTeleOp extends LinearOpMode {
 
                 //slide movement (automatic stages)
                 if (gp2.wasJustPressed(GamepadKeys.Button.DPAD_UP)) {
-                    bot.outtake(3,distanceSensor,false);
+                    bot.outtake(3,bot.distanceSensor,false);
                 } else if (gp2.wasJustPressed(GamepadKeys.Button.DPAD_LEFT)) {
-                    bot.outtake(2,distanceSensor,false);
+                    bot.outtake(2,bot.distanceSensor,false);
                 } else if (gp2.wasJustPressed(GamepadKeys.Button.DPAD_RIGHT)) {
-                    bot.outtake(4,distanceSensor,false);
+                    bot.outtake(4,bot.distanceSensor,false);
                 } else if (gp2.wasJustPressed(GamepadKeys.Button.DPAD_DOWN)) {
-                    bot.outtake(1,distanceSensor,false);
+                    bot.outtake(1,bot.distanceSensor,false);
                 }
 
                 //keeping second pixel deposit manual for reasons

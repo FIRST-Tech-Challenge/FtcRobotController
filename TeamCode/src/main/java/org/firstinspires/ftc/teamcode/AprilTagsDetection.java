@@ -29,6 +29,7 @@ public class AprilTagsDetection {
     static int TWO = 2;
     static int THREE = 3;
 
+
     static AprilTagDetection tagOfInterest = null;
 
     public static void detectTag(){

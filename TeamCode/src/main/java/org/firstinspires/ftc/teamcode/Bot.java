@@ -35,6 +35,8 @@ public class Bot {
     public static Fourbar fourbar;
     public static Box box;
 
+    //I moved distance sensor into the Bot class (instead of two separate distance sensors in MainTeleop and MainAuto)
+    public static DistanceSensor distanceSensor;
 
     private final DcMotorEx fl, fr, bl, br, susMotor, slidesMotor;
     private final Servo droneServo, fourBarServo_1, fourBarServo_2;
@@ -87,6 +89,8 @@ public class Bot {
         fourBarServo_2= opMode.hardwareMap.get(Servo.class, "fourBarServo_2");
         susMotor = opMode.hardwareMap.get(DcMotorEx.class, "susMotor");
         slidesMotor = opMode.hardwareMap.get(DcMotorEx.class, "slidesMotor");
+        distanceSensor = opMode.hardwareMap.get(DistanceSensor.class, "distanceSensor");
+
 
         fl.setMode(RUN_USING_ENCODER);
         fr.setMode(RUN_USING_ENCODER);
@@ -287,9 +291,11 @@ public class Bot {
     }
     public void turn(double power){
         if(power>0) {
+            //turn right
             fl.setPower(power);
         }
         if(power<0){
+            //turn left
             fr.setPower(-power);
         }
     }

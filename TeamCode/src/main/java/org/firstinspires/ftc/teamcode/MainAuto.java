@@ -7,7 +7,6 @@ import com.arcrobotics.ftclib.gamepad.GamepadEx;
 import com.arcrobotics.ftclib.gamepad.GamepadKeys;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.hardware.DistanceSensor;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.teamcode.TeamPropDetectionPipeline.TeamProp;
@@ -36,7 +35,6 @@ public class MainAuto extends LinearOpMode{
     SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
 
     Bot bot;
-    private DistanceSensor distanceSensor;
     double distanceFromObject;
 
     enum Side {
@@ -154,7 +152,7 @@ public class MainAuto extends LinearOpMode{
                     .splineTo(new Vector2d(-36,48), Math.toRadians(90))
                     //perform moveBasedOnSpikeMark() 0.5 seconds before this moment
                     .UNSTABLE_addTemporalMarkerOffset(-0.5,this::moveBasedOnSpikeMark)
-                    .UNSTABLE_addTemporalMarkerOffset(-0.5, () -> bot.outtake(1, distanceSensor,true))
+                    .UNSTABLE_addTemporalMarkerOffset(-0.5, () -> bot.outtake(1, bot.distanceSensor,true))
                     .splineTo(new Vector2d(-72,48), Math.toRadians(90))
                     .build();
 
@@ -163,7 +161,7 @@ public class MainAuto extends LinearOpMode{
                     .addTemporalMarker(this::dropPurplePixel)
                     .splineTo(new Vector2d(36,48), Math.toRadians(-90))
                     .UNSTABLE_addTemporalMarkerOffset(-0.5,this::moveBasedOnSpikeMark)
-                    .UNSTABLE_addTemporalMarkerOffset(-0.5, () -> bot.outtake(1, distanceSensor,true))
+                    .UNSTABLE_addTemporalMarkerOffset(-0.5, () -> bot.outtake(1, bot.distanceSensor,true))
                     .splineTo(new Vector2d(72,48), Math.toRadians(-90))
                     .build();
 
@@ -173,7 +171,7 @@ public class MainAuto extends LinearOpMode{
                     .addTemporalMarker(this::dropPurplePixel)
                     .splineTo(new Vector2d(-36,48), Math.toRadians(90))
                     .UNSTABLE_addTemporalMarkerOffset(-0.5,this::moveBasedOnSpikeMark)
-                    .UNSTABLE_addTemporalMarkerOffset(-0.5, () -> bot.outtake(1, distanceSensor,true))
+                    .UNSTABLE_addTemporalMarkerOffset(-0.5, () -> bot.outtake(1, bot.distanceSensor,true))
                     .splineTo(new Vector2d(-72,48), Math.toRadians(90))
                     .build();
 
@@ -183,7 +181,7 @@ public class MainAuto extends LinearOpMode{
                     .addTemporalMarker(this::dropPurplePixel)
                     .splineTo(new Vector2d(36,48), Math.toRadians(-90))
                     .UNSTABLE_addTemporalMarkerOffset(-0.5,this::moveBasedOnSpikeMark)
-                    .UNSTABLE_addTemporalMarkerOffset(-0.5, () -> bot.outtake(1, distanceSensor,true))
+                    .UNSTABLE_addTemporalMarkerOffset(-0.5, () -> bot.outtake(1, bot.distanceSensor,true))
                     .splineTo(new Vector2d(72,48), Math.toRadians(90))
                     .build();
 
@@ -227,6 +225,16 @@ public class MainAuto extends LinearOpMode{
     }
 
     private void dropPurplePixel(){
+
+        if(teamPropLocation==TeamProp.ONLEFT){
+            bot.turn(-0.25);
+        }
+        else if(teamPropLocation==TeamProp.ONRIGHT){
+            bot.turn(0.25);
+        }
+        else{
+            bot.forward();
+        }
         Bot.noodles.reverseIntake();
     }
 
@@ -251,22 +259,28 @@ public class MainAuto extends LinearOpMode{
 
         //switch to aprilTagsPipeline => looking for AprilTags
         camera.setPipeline(aprilTagsPipeline);
+        int counter=0;
 
         //based on where team prop is, move to the corresponding position on the backdrop
         if(teamPropLocation== TeamProp.ONLEFT){
-            //keep strafing left until robot detects AprilTag
-            while(AprilTagsDetection.tagOfInterest==null){
+
+            //keep strafing left until robot detects AprilTag or if you have run loop over 5 times
+            while(AprilTagsDetection.tagOfInterest.id!= 1 && counter<5){
                 AprilTagsDetection.detectTag();
                 bot.strafeLeft();
+                counter++;
             }
         }
 
         else if(teamPropLocation== TeamProp.ONRIGHT){
-            while(AprilTagsDetection.tagOfInterest==null){
+
+            while(AprilTagsDetection.tagOfInterest.id!=3 && counter<5){
                 AprilTagsDetection.detectTag();
                 bot.strafeRight();
+                counter++;
             }
         }
+
         else if(teamPropLocation == TeamProp.NOTDETECTED){
             telemetry.addData("Prop not detected, check pipeline", teamPropLocation);
         }
