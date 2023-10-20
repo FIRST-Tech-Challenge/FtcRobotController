@@ -7,6 +7,7 @@ import static org.firstinspires.ftc.teamcode.util.utilMethods.futureTime;
 
 import android.graphics.Bitmap;
 
+import org.firstinspires.ftc.teamcode.robots.csbot.CenterStage_6832;
 import com.acmerobotics.dashboard.canvas.Canvas;
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
@@ -16,7 +17,6 @@ import com.qualcomm.robotcore.hardware.VoltageSensor;
 
 import org.firstinspires.ftc.robotcore.internal.system.Misc;
 import org.firstinspires.ftc.teamcode.robots.csbot.Field;
-import org.firstinspires.ftc.teamcode.robots.csbot.CenterStage_6832;
 import org.firstinspires.ftc.teamcode.robots.csbot.util.Constants;
 import org.firstinspires.ftc.teamcode.robots.csbot.util.PositionCache;
 import org.firstinspires.ftc.teamcode.robots.csbot.util.TauPosition;
@@ -48,6 +48,7 @@ public class Robot implements Subsystem {
     public CSDriveTrain csDriveTrain;
     public Turret turret;
     public Crane crane;
+    public Intake intake;
     public UnderArm underarm;
     public Subsystem[] subsystems;
     public Field field;
@@ -99,7 +100,7 @@ public class Robot implements Subsystem {
 
         positionCache = new PositionCache( 5);
 
-        subsystems = new Subsystem[] {driveTrain, turret, crane, underarm}; //{driveTrain, turret, crane};
+        subsystems = new Subsystem[] {driveTrain, turret, crane, underarm, intake}; //{driveTrain, turret, crane};
         subsystemUpdateTimes = new long[subsystems.length];
 
         batteryVoltageSensor = hardwareMap.voltageSensor.iterator().next();

@@ -5,10 +5,8 @@ import static org.firstinspires.ftc.teamcode.robots.csbot.CenterStage_6832.activ
 import static org.firstinspires.ftc.teamcode.robots.csbot.CenterStage_6832.alliance;
 import static org.firstinspires.ftc.teamcode.robots.csbot.CenterStage_6832.auton;
 import static org.firstinspires.ftc.teamcode.robots.csbot.CenterStage_6832.debugTelemetryEnabled;
-import static org.firstinspires.ftc.teamcode.robots.csbot.CenterStage_6832.ignoreCachePosition;
 import static org.firstinspires.ftc.teamcode.robots.csbot.CenterStage_6832.robot;
 import static org.firstinspires.ftc.teamcode.robots.csbot.CenterStage_6832.startingPosition;
-import static org.firstinspires.ftc.teamcode.robots.csbot.CenterStage_6832.targetAltPole;
 import static org.firstinspires.ftc.teamcode.robots.csbot.CenterStage_6832.visionProviderFinalized;
 import static org.firstinspires.ftc.teamcode.robots.csbot.CenterStage_6832.visionProviderIndex;
 import static org.firstinspires.ftc.teamcode.robots.taubot.util.Utils.notJoystickDeadZone;
@@ -50,7 +48,6 @@ public class DriverControls {
         stickyGamepad2.update();
     }
 
-    public static double TURRET_DEADZONE = 0.03;
 
     void joystickDrive() {
 
@@ -270,11 +267,11 @@ public class DriverControls {
         if(stickyGamepad1.b || stickyGamepad2.b) {
             alliance = Constants.Alliance.RED;
         }
-        if(stickyGamepad1.a || stickyGamepad2.a)
-            targetAltPole = !targetAltPole;
-        if(stickyGamepad1.guide) {
-            ignoreCachePosition =!ignoreCachePosition;
-        }
+//        if(stickyGamepad1.a || stickyGamepad2.a)
+//            targetAltPole = !targetAltPole;
+//        if(stickyGamepad1.guide) {
+//            ignoreCachePosition =!ignoreCachePosition;
+//        }
 
         if(stickyGamepad1.dpad_left || stickyGamepad2.dpad_left)startingPosition = Constants.Position.START_LEFT;
         if(stickyGamepad1.dpad_right || stickyGamepad2.dpad_right)startingPosition = Constants.Position.START_RIGHT;

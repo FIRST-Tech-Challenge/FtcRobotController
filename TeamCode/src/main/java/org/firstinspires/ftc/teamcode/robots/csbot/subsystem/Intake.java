@@ -20,6 +20,7 @@ public class Intake implements Subsystem {
     Servo diverter;
     Joint beaterBarAngleController;
     DcMotorEx beaterBar;
+    public static double BEATER_BAR_ADJUST_SPEED = 5;
     public static double BEATER_BAR_INTAKE_VELOCITY = 1.0;
     public static double BEATER_BAR_EJECT_VELOCITY = -1.0;
     public static double BEATER_BAR_ANGLE_CONTROLLER_HOME;
@@ -94,6 +95,18 @@ public class Intake implements Subsystem {
     public Articulation articulate(Articulation target) {
         articulation = target;
         return articulation;
+    }
+
+    public double adjustBeaterBarAngle(double speed) {
+        beaterBarTargetAngle += speed * BEATER_BAR_ADJUST_SPEED;
+        return beaterBarTargetAngle;
+    }
+
+    public void toggleBeaterBar() {
+        if(Math.abs(beaterBar.getVelocity() - BEATER_BAR_INTAKE_VELOCITY) < .2)
+        beaterBar.setVelocity(0);
+        else
+            beaterBar.setVelocity(BEATER_BAR_INTAKE_VELOCITY);
     }
 
     @Override
