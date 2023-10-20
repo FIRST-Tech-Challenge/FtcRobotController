@@ -126,20 +126,18 @@ public class Robot {
 //        }
 //    }
 
-    //Enums for state
+    //Enums for states
     public enum SlidesState            {RETRACTED, LOW, MEDIUM, HIGH, UNREADY, MOVE_UP, MOVE_DOWN, STOPPED};
+    public SlidesState desiredSlidesState = SlidesState.UNREADY;
     public enum ParkingPosition        {INSIDE, MIDDLE, OUTSIDE};
-
-    // State
-    public SlidesState     desiredSlidesState = SlidesState.UNREADY;
-    public enum CompartmentState          {OPEN, CLOSED};
+    public enum CompartmentState       {OPEN, CLOSED};
     public CompartmentState desiredCompartmentLeftState = CompartmentState.CLOSED;
     public CompartmentState desiredCompartmentRightState = CompartmentState.CLOSED;
-    public enum CompliantWheelsState          {ON, OFF};
+    public enum CompliantWheelsState   {ON, OFF};
     public CompliantWheelsState desiredCompliantWheelsState = CompliantWheelsState.OFF;
-    public enum PlaneSpringState          {UNRELEASED, RELEASED};
+    public enum PlaneSpringState       {UNRELEASED, RELEASED};
     public PlaneSpringState desiredPlaneStringState = PlaneSpringState.UNRELEASED;
-    enum MovementMode {NORMAL, FINE, ULTRA_FINE}
+    enum MovementMode                  {NORMAL, FINE, ULTRA_FINE}
     MovementMode movementMode = MovementMode.NORMAL;
     boolean wheelSpeedAdjustment = false;
     
