@@ -1,6 +1,5 @@
 package org.firstinspires.ftc.team417_CENTERSTAGE;
 
-import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
@@ -12,7 +11,7 @@ abstract class BaseOpMode extends LinearOpMode {
     public DcMotor BL;
 
     //Declares IMU
-    public BNO055IMU imu;
+    //public BNO055IMU imu;
 
     //Initializes motors, servos, and sensors
     public void initializeHardware() {
@@ -41,6 +40,7 @@ abstract class BaseOpMode extends LinearOpMode {
         BL.setDirection(DcMotor.Direction.FORWARD);
         BR.setDirection(DcMotor.Direction.REVERSE);
 
+        /*
         // Sets up the parameters with which we will use our IMU. Note that integration
         // algorithm here just reports accelerations to the logcat log; it doesn't actually
         // provide positional information.
@@ -56,6 +56,7 @@ abstract class BaseOpMode extends LinearOpMode {
         // and named "imu".
         imu = hardwareMap.get(BNO055IMU.class, "imu");
         imu.initialize(parameters);
+        */
 
         // Waits so the imu can process
         sleep(2000);

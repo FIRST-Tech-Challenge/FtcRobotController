@@ -1,5 +1,8 @@
 package org.firstinspires.ftc.team417_CENTERSTAGE;
 
+import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+
+@TeleOp(name = "TeleOp League 1")
 public class BaseTeleOp extends BaseOpMode {
     @Override
     public void runOpMode() {
@@ -13,9 +16,13 @@ public class BaseTeleOp extends BaseOpMode {
     }
 
     public void drive() {
-        double y = -gamepad1.left_stick_y;
-        double x = gamepad1.left_stick_x * 1.1;
-        double rotX = gamepad1.right_stick_x;
+        double sensitivity = 0.5;
+        double rotSensitivity = 0.8;
+        double strafeConstant = 1.1;
+
+        double y = -gamepad1.left_stick_y * sensitivity;
+        double x = gamepad1.left_stick_x * strafeConstant * sensitivity;
+        double rotX = gamepad1.right_stick_x * rotSensitivity;
 
         double denominator = Math.max(Math.abs(y) + Math.abs(x) + Math.abs(rotX), 1);
 
