@@ -66,20 +66,19 @@ class RackAndPain: DriveMethods() {
             telemetry.update()
 
             if (!changed_mode&&gamepad1.y) {
-                if (mode < 2) {
-                    mode += 1;
-                } else {
+                mode++;
+                if (mode > 2) {
                     mode = 0;
                 }
                 changed_mode = true;
             }
-            if(changed_mode&&gamepad1.y) {
+            if(changed_mode&&!gamepad1.y) {
                 changed_mode = false;
             }
 
 
             if (!changed_mode2&&gamepad1.x){
-                if (mode<1){
+                if (increaseMode<1){
                     increaseMode+=1;
                 }else {
                     increaseMode=0;
