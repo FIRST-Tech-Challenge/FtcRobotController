@@ -3,10 +3,13 @@ package org.firstinspires.ftc.teamcode.McDonald;
 import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.hardwareMap;
 import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.telemetry;
 
+import android.util.Size;
+
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.BuiltinCameraDirection;
@@ -16,9 +19,7 @@ import org.firstinspires.ftc.vision.VisionPortal;
 import org.firstinspires.ftc.vision.tfod.TfodProcessor;
 
 import java.util.List;
-
-public class VisionLFM {
-
+import java.util.Locale;
     /*
      * This OpMode illustrates the basics of TensorFlow Object Detection, using
      * the easiest way.
@@ -27,9 +28,14 @@ public class VisionLFM {
      * Remove or comment out the @Disabled line to add this OpMode to the Driver Station OpMode list.
      */
     @TeleOp(name = "Auto Mode LFM (by time)", group = "Auto")
-    public class AutoModeLFM extends LinearOpMode {
+    public class VisionLFM extends LinearOpMode {
 
         private boolean DEBUG = false;
+
+        private double MOVE_INDEX = 2;
+        private double MOVE_MIDDLE = 0.7;
+        private double MOVE_LEFT = 2;
+        private double MOVE_RIGHT = 2;
 
         static final double     FORWARD_SPEED = 0.2;
         static final double     TURN_SPEED    = 0.2;
@@ -40,6 +46,12 @@ public class VisionLFM {
         private DcMotor backLeftMotor = null;
         private DcMotor frontRightMotor = null;
         private DcMotor backRightMotor = null;
+
+        private Servo leftGripper;
+        private Servo rightGripper;
+
+        private Servo wrist;
+
 
         private enum PixelPosition {
             UNKNOWN,
@@ -84,12 +96,24 @@ public class VisionLFM {
 
             initTfod();
 
+            leftGripper = hardwareMap.get(Servo.class, "leftGripper");
+            rightGripper = hardwareMap.get(Servo.class, "rightGripper");
+            wrist = hardwareMap.servo.get("wristServo");
+            wrist.setPosition(.4);
+            leftGripper.setPosition(1); // Adjust the position value as needed
+            rightGripper.setPosition(0); // Adjust the position value as needed
+
+            justWait(1000);
+
+            leftGripper.setPosition(1); // Adjust the position value as needed
+            rightGripper.setPosition(0); // Adjust the position value as needed
+
             // Wait for the DS start button to be touched.
             telemetry.addData("DS preview on/off", "3 dots, Camera Stream");
             telemetry.addData(">", "Touch Play to start OpMode");
             telemetry.update();
             waitForStart();
-
+            moveRobot("", 1);
             if (opModeIsActive()) {
                 while (opModeIsActive()) {
 
@@ -169,14 +193,11 @@ public class VisionLFM {
             PixelPosition pPosition;
             boolean pixelFound = false;
 
-            //Move arm to field inspection location
-            moveArm(1);
-
             List<Recognition> currentRecognitions = tfod.getRecognitions();
             telemetry.addData("# Objects Detected", currentRecognitions.size());
 
             //Quickly search and see if we found a Pixel
-            if(currentRecognitions.contains("Blue Horseshoe") || ((List<?>) currentRecognitions).contains("Red Horseshoe")) {
+            if(currentRecognitions.contains("Blue Horseshoe") || currentRecognitions.contains("Red Horseshoe")) {
                 pixelFound = true;
                 telemetry.addData("Object Found %s", " Horseshoe");
                 telemetry.update();
@@ -193,14 +214,14 @@ public class VisionLFM {
                 telemetry.addData("- Position", "%.0f / %.0f", x, y);
                 telemetry.addData("- Size", "%.0f x %.0f", recognition.getWidth(), recognition.getHeight());
                 //telemetry.addData("- Color", "%s", recognition.get)
-                justWait(10000);
+                justWait(1000);
 
                 // Asuming a configuration of 640x480 pixels
                 // Pixel/Prop found with x < 214 = Pixel/Prop on left strike line
                 // Pixel/Prop found with 214 < x < 428 = Pixel/Prop on middle strike line
                 // Pixel/Prop found with 428 < x = Pixel/Prop on right strike line
                 telemetry.addData("", " ");
-                if (x < 214) {
+                if (x < 100) {
                     pPosition = PixelPosition.LEFT;
                     telemetry.addData("Pixel Position: ", "Left Line");
                     telemetry.update();
@@ -209,35 +230,38 @@ public class VisionLFM {
                     pPosition = PixelPosition.RIGHT;
                     telemetry.addData("Pixel Position: ", "Right Line");
                     telemetry.update();
-                    justWait(10000);
+                    justWait(1000);
                 } else {
                     pPosition = PixelPosition.MIDDLE;
                     telemetry.addData("Pixel Position: ", "Middle Line");
                     telemetry.update();
-                    justWait(10000);
+                    justWait(1000);
                 }
 
                 //index to center of strike lines
-                moveRobot("Index To Strike Lines", 3);
+                moveRobot("Index To Strike Lines", MOVE_INDEX);
 
                 switch(pPosition) {
                     case LEFT:
-                        turnRobot("left", .2);
+                        turnRobot("left", MOVE_LEFT);
                         telemetry.addData("Turn: Left", "");
                         telemetry.update();
-                        justWait(10000);
+                        justWait(1000);
+                        moveArm();
                         break;
                     case RIGHT:
-                        turnRobot("right", .2);
+                        turnRobot("right", MOVE_RIGHT);
                         telemetry.addData("Turn: Right", "");
                         telemetry.update();
-                        justWait(10000);
+                        justWait(1000);
+                        moveArm();
                         break;
                     case MIDDLE:
-                        moveRobot("Center Line", .5);
+                        moveRobot("Center Line", MOVE_MIDDLE);
                         telemetry.addData("Move: Forward", "");
                         telemetry.update();
-                        justWait(10000);
+                        justWait(1000);
+                        moveArm();
                         break;
                     case UNKNOWN:
                         break;
@@ -251,10 +275,10 @@ public class VisionLFM {
         }   // end method telemetryTfod()
 
         private void moveRobot(String path, double time) {
-            frontLeftMotor.setPower(FORWARD_SPEED);
-            backLeftMotor.setPower(FORWARD_SPEED);
-            frontRightMotor.setPower(FORWARD_SPEED);
-            backRightMotor.setPower(FORWARD_SPEED);
+            frontLeftMotor.setPower(-FORWARD_SPEED);
+            backLeftMotor.setPower(-FORWARD_SPEED);
+            frontRightMotor.setPower(-FORWARD_SPEED);
+            backRightMotor.setPower(-FORWARD_SPEED);
             runtime.reset();
             while (opModeIsActive() && (runtime.seconds() < time)) {
                 telemetry.addData("Path", "%s: %4.1f S Elapsed", path, runtime.seconds());
@@ -272,34 +296,48 @@ public class VisionLFM {
         private void turnRobot(String direction, double time) {
             switch(direction.toLowerCase(Locale.ROOT)) {
                 case "left":
-                    frontLeftMotor.setPower(-TURN_SPEED);
-                    backLeftMotor.setPower(-TURN_SPEED);
-                    frontRightMotor.setPower(TURN_SPEED);
-                    backRightMotor.setPower(TURN_SPEED);
+                    frontLeftMotor.setPower(TURN_SPEED);
+                    backLeftMotor.setPower(TURN_SPEED);
+                    frontRightMotor.setPower(-TURN_SPEED);
+                    backRightMotor.setPower(-TURN_SPEED);
                     runtime.reset();
 
                     while (opModeIsActive() && (runtime.seconds() < time)) {
                         telemetry.addData("Path", "%s: %4.1f S Elapsed", direction, runtime.seconds());
                         telemetry.update();
                     }
+                    frontLeftMotor.setPower(0);
+                    backLeftMotor.setPower(0);
+                    frontRightMotor.setPower(0);
+                    backRightMotor.setPower(0);
                     break;
                 case "right":
-                    frontLeftMotor.setPower(TURN_SPEED);
-                    backLeftMotor.setPower(TURN_SPEED);
-                    frontRightMotor.setPower(-TURN_SPEED);
-                    backRightMotor.setPower(-TURN_SPEED);
+                    frontLeftMotor.setPower(-TURN_SPEED);
+                    backLeftMotor.setPower(-TURN_SPEED);
+                    frontRightMotor.setPower(TURN_SPEED);
+                    backRightMotor.setPower(TURN_SPEED);
                     runtime.reset();
                     while (opModeIsActive() && (runtime.seconds() < time)) {
                         telemetry.addData("Path", "%s: %4.1f S Elapsed", direction, runtime.seconds());
                         telemetry.update();
                     }
+                    frontLeftMotor.setPower(0);
+                    backLeftMotor.setPower(0);
+                    frontRightMotor.setPower(0);
+                    backRightMotor.setPower(0);
                     break;
             }
         }
 
         // 1 = camera position
         // 2 = pixel drop position
-        private void moveArm(int position) {
+        private void moveArm() {
+            telemetry.addData("Dropping Pixel", "");
+            telemetry.update();
+            leftGripper.setPosition(0.9); // Adjust the position value as needed
+            rightGripper.setPosition(0.1); // Adjust the position value as needed
+            telemetry.addData("Pixel Dropped", "");
+            telemetry.update();
 
         }
 
@@ -312,10 +350,3 @@ public class VisionLFM {
         }
 
     }   // end class
-
-    private double getRuntime() {
-    }
-
-    private boolean opModeIsActive() {
-    }
-}

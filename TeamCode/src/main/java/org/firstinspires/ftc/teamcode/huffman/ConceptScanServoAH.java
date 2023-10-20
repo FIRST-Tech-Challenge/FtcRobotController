@@ -48,7 +48,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
  */
 @TeleOp(name = "Concept: Ramp Motor Speed2", group = "Concept")
 @Disabled
-public class ConceptRampMotorSpeedAH extends LinearOpMode {
+public class ConceptScanServoAH extends LinearOpMode {
 
     static final double INCREMENT   = 0.01;     // amount to ramp motor each CYCLE_MS cycle
     static final int    CYCLE_MS    =   50;     // period of each cycle
