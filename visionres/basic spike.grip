@@ -14,7 +14,7 @@
         <value>640.0</value>
       </grip:Input>
       <grip:Input step="0" socket="2">
-        <value>480</value>
+        <value>480.0</value>
       </grip:Input>
       <grip:Input step="0" socket="3">
         <value>LINEAR</value>
@@ -61,6 +61,22 @@
       <grip:Input step="3" socket="1"/>
       <grip:Output step="3" socket="0" previewed="true"/>
     </grip:Step>
+    <grip:Step name="Find Blobs">
+      <grip:Input step="4" socket="0"/>
+      <grip:Input step="4" socket="1">
+        <value>100.0</value>
+      </grip:Input>
+      <grip:Input step="4" socket="2">
+        <value>
+          <double>0.0</double>
+          <double>1.0</double>
+        </value>
+      </grip:Input>
+      <grip:Input step="4" socket="3">
+        <value>false</value>
+      </grip:Input>
+      <grip:Output step="4" socket="0" previewed="true"/>
+    </grip:Step>
   </steps>
   <connections>
     <grip:Connection>
@@ -72,16 +88,20 @@
       <grip:Input step="3" socket="1"/>
     </grip:Connection>
     <grip:Connection>
-      <grip:Output source="1" socket="0" previewed="true"/>
-      <grip:Input step="0" socket="0"/>
-    </grip:Connection>
-    <grip:Connection>
       <grip:Output step="0" socket="0" previewed="false"/>
       <grip:Input step="3" socket="0"/>
     </grip:Connection>
     <grip:Connection>
+      <grip:Output step="2" socket="0" previewed="true"/>
+      <grip:Input step="4" socket="0"/>
+    </grip:Connection>
+    <grip:Connection>
       <grip:Output step="0" socket="0" previewed="false"/>
       <grip:Input step="1" socket="0"/>
+    </grip:Connection>
+    <grip:Connection>
+      <grip:Output source="1" socket="0" previewed="true"/>
+      <grip:Input step="0" socket="0"/>
     </grip:Connection>
   </connections>
   <settings>
