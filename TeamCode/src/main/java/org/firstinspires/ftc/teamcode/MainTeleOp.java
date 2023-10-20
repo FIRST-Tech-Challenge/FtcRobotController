@@ -5,35 +5,25 @@ import com.arcrobotics.ftclib.gamepad.GamepadEx;
 import com.arcrobotics.ftclib.gamepad.GamepadKeys;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.hardware.IMU;
-
-import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 
 
 @TeleOp
 public class MainTeleOp extends LinearOpMode {
 
 
-    private IMU imu;
-    //robot centric orientation
     private GamepadEx gp1, gp2;
-    private double distanceFromObject;
 
-    //do we ever initialize bot? Like with the opMode?
-    Bot bot;
+    Bot bot= Bot.getInstance(this);
     private boolean isAutomatic;
-
     private double driveSpeed=1;
+
 
     @Override
     public void runOpMode() throws InterruptedException {
-
-        //shouldn't imu be in Bot?
-        imu = hardwareMap.get(IMU.class, "IMU?");
+        bot.initializeImus();
         gp2 = new GamepadEx(gamepad2);
         gp1 = new GamepadEx(gamepad1);
 
-        distanceFromObject = bot.distanceSensor.getDistance(DistanceUnit.CM);
         telemetry.addData("teleOp is ", "initialized");
 
         waitForStart();
@@ -67,13 +57,13 @@ public class MainTeleOp extends LinearOpMode {
 
                 //slide movement (automatic stages)
                 if (gp2.wasJustPressed(GamepadKeys.Button.DPAD_UP)) {
-                    bot.outtake(3,bot.distanceSensor,false);
+                    bot.outtake(3, Bot.distanceSensor,false);
                 } else if (gp2.wasJustPressed(GamepadKeys.Button.DPAD_LEFT)) {
-                    bot.outtake(2,bot.distanceSensor,false);
+                    bot.outtake(2, Bot.distanceSensor,false);
                 } else if (gp2.wasJustPressed(GamepadKeys.Button.DPAD_RIGHT)) {
-                    bot.outtake(4,bot.distanceSensor,false);
+                    bot.outtake(4, Bot.distanceSensor,false);
                 } else if (gp2.wasJustPressed(GamepadKeys.Button.DPAD_DOWN)) {
-                    bot.outtake(1,bot.distanceSensor,false);
+                    bot.outtake(1, Bot.distanceSensor,false);
                 }
 
                 //keeping second pixel deposit manual for reasons
