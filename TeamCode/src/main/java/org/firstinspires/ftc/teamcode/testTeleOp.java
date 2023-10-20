@@ -38,15 +38,10 @@ import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.Range;
 
 /*
- * This OpMode executes a POV Game style Teleop for a direct drive robot
- * The code is structured as a LinearOpMode
+ * This OpMode is copied from the POV Game style Teleop for a direct drive robot
  *
- * In this mode the left stick moves the robot FWD and back, the Right stick turns left and right.
- * It raises and lowers the arm using the Gamepad Y and A buttons respectively.
- * It also opens and closes the claws slowly using the left and right Bumper buttons.
- *
- * Use Android Studio to Copy this Class, and Paste it into your team's code folder with a new name.
- * Remove or comment out the @Disabled line to add this OpMode to the Driver Station OpMode list
+ * Need to confirm the drive system and add the drone servo to have a full test case (Dev)
+ * Also need the telemetry to read all sensor values
  */
 
 @TeleOp(name="testTeleOp", group="teleOp")
@@ -137,16 +132,14 @@ public class testTeleOp extends LinearOpMode {
                 rightFront.setPower(frontRightPower);
                 rightRear.setPower(backRightPower);
 
-                if (gamepad2.dpad_down) {
+                // Controlling the pixel pick-up with the dpad
+                while (gamepad2.dpad_down) {
                     LWPower = -0.2;
                     RWPower = -0.2;
-                } else if (gamepad2.dpad_up) {
-
+                }
+                while (gamepad2.dpad_up) {
                     LWPower = 0.2;
                     RWPower = 0.2;
-//                } else
-                    //                  LWPower = 0.0;
-                    //                RWPower = 0.0;
                 }
                 leftWheel.setPower(LWPower);
                 rightWheel.setPower(RWPower);
