@@ -38,7 +38,8 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
-import org.firstinspires.ftc.teamcode.Sensor.VisionProcessorCustom;
+import org.firstinspires.ftc.teamcode.Utility.Drivetrain;
+import org.firstinspires.ftc.teamcode.Utility.VisionProcessorCustom;
 import org.firstinspires.ftc.teamcode.Utility.Datalogger;
 import org.firstinspires.ftc.vision.VisionPortal;
 
@@ -97,9 +98,9 @@ import org.firstinspires.ftc.vision.VisionPortal;
 
 @Autonomous(name="CENTERSTAGE: Meet 1 Auto", group="Concept", preselectTeleOp = "CENTERSTAGE: Meet 1 TeleOp")
 //@Disabled
-public class DriveToTeamProp extends LinearOpMode {
+public class ToTeamProp extends LinearOpMode {
 
-    private static final String TAG = DriveToTeamProp.class.getSimpleName(); // for use in logging
+    private static final String TAG = ToTeamProp.class.getSimpleName(); // for use in logging
     // Declare OpMode members
     //Datalog datalog = new Datalog(TAG);
 
@@ -129,8 +130,10 @@ public class DriveToTeamProp extends LinearOpMode {
      * https://first-tech-challenge.github.io/SkyStone/org/firstinspires/ftc/robotcore/external/tfod/TFObjectDetector.html
      */
     private ElapsedTime runtime = new ElapsedTime();
-    IMU imu;                            // universal interface for BNO055 or BHI260
+    IMU imu;    // universal interface for BNO055 or BHI260
     YawPitchRollAngles lastAngles, globalAngles;
+
+    Drivetrain drivetrain = new Drivetrain(this, imu);//imu, hardwareMap);
 
     @Override
     public void runOpMode() {
@@ -138,7 +141,6 @@ public class DriveToTeamProp extends LinearOpMode {
         telemetry.addData("Status", "Initialized");
         telemetry.update();
 
-        //drawRectangleProcessor = new DrawRectangleProcessor();
         visionProcessorCustom = new VisionProcessorCustom();
         visionPortal = VisionPortal.easyCreateWithDefaults(
                 hardwareMap.get(WebcamName.class, webcamName),
@@ -169,10 +171,35 @@ public class DriveToTeamProp extends LinearOpMode {
             teamPropPosition = visionProcessorCustom.getSelection();
         }
         visionPortal.stopStreaming();
+        telemetry.addData("Position", teamPropPosition);
+        telemetry.update();
         runtime.reset();    // reset the timer counter
 
-
-        while (opModeIsActive()) {  // run until the Driver presses the STOP button
+        if (opModeIsActive()) {  // run until the Driver presses the STOP button
+            drivetrain.Forward(12.0);
+            switch (teamPropPosition) {
+                // drive forward
+                case LEFT:
+                    // rotation angle -90
+                    break;
+                case CENTER:
+                    // rotation angle 0
+                    break;
+                case RIGHT:
+                    // rotation angle 90
+                    break;
+                default:
+                    break;
+            }
+            // perform rotation by set angle
+            // deliver purple pixel
+            // perform rotation by reverse of set angle
+            // drive backward
+            // if blue alliance
+            // then set rotation angle to -90
+            // else set rotation angle to 90
+            // perform rotation
+            // drive forward
 
             // Show the elapsed game time and wheel power.
             telemetry.addData("Status", "Run Time: " + runtime.toString());
@@ -250,12 +277,6 @@ public class DriveToTeamProp extends LinearOpMode {
         public Datalogger.GenericField motor1       = new Datalogger.GenericField("Motor1");
         public Datalogger.GenericField motor2       = new Datalogger.GenericField("Motor2");
         public Datalogger.GenericField motor3       = new Datalogger.GenericField("Motor3");
-        /*
-            telemetry.addData("4 Current ticks:", motorTicks[0]);
-            telemetry.addData("5 Travel length:", travelLength);
-            telemetry.addData("7 Motor power:", motor[0].getPower());
-            telemetry.addData("8 Travel power:", travelPower);
-         */
 
         public Datalog(String name)
         {

@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.Sensor;
+package org.firstinspires.ftc.teamcode.Utility;
 
 import android.graphics.Canvas;
 import android.graphics.Color;
@@ -42,13 +42,14 @@ public class VisionProcessorCustom implements VisionProcessor {
     Mat submat = new Mat();
     Mat hsvMat = new Mat();
 
-    @Override
+
     /**
      * initialization of the OpMode
      * @param width in pixels
      * @param height in pixels
      * @param calibration camera calibration parameters
      */
+    @Override
     public void init(int width, int height, CameraCalibration calibration) {
         // Set exposure.  Make sure we are in Manual Mode for these values to take effect.
         ExposureControl exposureControl = visionPortal.getCameraControl(ExposureControl.class);
@@ -62,12 +63,13 @@ public class VisionProcessorCustom implements VisionProcessor {
         gainControl.setGain(20);
     }
 
-    @Override
+
     /**
      * process a single frame of the captured image stream
      * @param frame the matrix
      * @param captureTimeNanos capture time in nanoseconds
      */
+    @Override
     public Object processFrame(Mat frame, long captureTimeNanos) {
         /*
          * convert the colorspace
@@ -100,9 +102,9 @@ public class VisionProcessorCustom implements VisionProcessor {
 
     /**
      * helper function to estimate the saturation value of a rectangle in a frame
-     * @param input
-     * @param rect
-     * @return
+     * @param input input
+     * @param rect rect
+     * @return return
      * - create a sub-matrix from the image frame based on the rectangle of interest
      * - obtain the average (or mean) for the pixels in the rectangle
      */
@@ -114,9 +116,9 @@ public class VisionProcessorCustom implements VisionProcessor {
 
     /**
      * convert from OpenCV camera rectangle to an android.graphics.Rect entity in screen coordinates
-     * @param rect
-     * @param scaleBmpPxToCanvasPx
-     * @return
+     * @param rect rect
+     * @param scaleBmpPxToCanvasPx scale
+     * @return return
      */
     private android.graphics.Rect makeGraphicsRect(
             Rect rect, float scaleBmpPxToCanvasPx) {
@@ -130,12 +132,12 @@ public class VisionProcessorCustom implements VisionProcessor {
 
     /**
      * setup the rectPaint variable
-     * @param canvas
-     * @param onscreenWidth
-     * @param onscreenHeight
-     * @param scaleBmpPxToCanvasPx
-     * @param scaleCanvasDensity
-     * @param userContext
+     * @param canvas canvas
+     * @param onscreenWidth        0n
+     * @param onscreenHeight on
+     * @param scaleBmpPxToCanvasPx scale
+     * @param scaleCanvasDensity scale
+     * @param userContext user
      */
     @Override
     public void onDrawFrame(Canvas canvas,  int  onscreenWidth, int onscreenHeight,

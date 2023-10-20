@@ -34,11 +34,9 @@ import static com.sun.tools.doclint.Entity.or;
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.hardware.IMU;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
@@ -142,17 +140,8 @@ public class ByEncoder_Linear extends LinearOpMode {
         // Now initialize the IMU with this mounting orientation
         // Note: if you choose two conflicting directions, this initialization will cause a code exception.
         imu.initialize(new IMU.Parameters(orientationOnRobot));
-        YawPitchRollAngles orientation = imu.getRobotYawPitchRollAngles();
+        YawPitchRollAngles orientation;
 
-        // The strings used here must correspond
-        // to the names assigned during the robot configuration step on the DS or RC devices.
-        for (int i = 0; i < motor.length; i++) {
-            motor[i] = hardwareMap.get(DcMotorEx.class, motorLabels[i]);
-            // motor stops and then brakes actively resisting any external force which attempts to turn the motor
-            motor[i].setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
-            motor[i].setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
-            motor[i].setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
-        }
 
         motor[0].setDirection(DcMotorEx.Direction.REVERSE); // motorLeftFront
         motor[1].setDirection(DcMotorEx.Direction.REVERSE); // motorLeftBack
