@@ -13,11 +13,17 @@ import java.util.concurrent.TimeUnit;
 
 public abstract class RobotOpMode extends OpMode {
 
-    // Used in the endTime parameter in moveRobot()
+    /**
+     * Used in the endTime parameter in moveRobot()
+     */
     public static long STOP_NEVER = Long.MAX_VALUE;
     DcMotor leftFrontDrive, leftBackDrive, rightFrontDrive, rightBackDrive;
     BNO055IMU imu;
     ElapsedTime elapsedTime;
+    /**
+     * A initializer for FTCDashboardPackets(), which can be used to show telemetry on the dashboard
+     */
+    public final FTCDashboardPackets dbp = new FTCDashboardPackets();
 
 
     @Override
