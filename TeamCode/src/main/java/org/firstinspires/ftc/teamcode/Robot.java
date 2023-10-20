@@ -22,8 +22,7 @@ public class Robot {
         //linear slides motors
         SLIDES         ("slides_motor",         DcMotor.Direction.FORWARD, DcMotor.ZeroPowerBehavior.BRAKE),
 
-        COMPLIANT_MOTOR_LEFT ("compliant_motor_left", DcMotor.Direction.FORWARD, DcMotor.ZeroPowerBehavior.FLOAT),
-        COMPLIANT_MOTOR_RIGHT ("compliant_motor_right", DcMotor.Direction.FORWARD, DcMotor.ZeroPowerBehavior.FLOAT);
+        FUZZY_MOTOR ("fuzzy_motor", DcMotor.Direction.FORWARD, DcMotor.ZeroPowerBehavior.FLOAT);
 
         private final String name;
         private final DcMotor.Direction direction;
@@ -135,8 +134,8 @@ public class Robot {
     public enum CompartmentState       {OPEN, CLOSED};
     public CompartmentState desiredCompartmentLeftState = CompartmentState.CLOSED;
     public CompartmentState desiredCompartmentRightState = CompartmentState.CLOSED;
-    public enum CompliantWheelsState   {ON, OFF};
-    public CompliantWheelsState desiredCompliantWheelsState = CompliantWheelsState.OFF;
+    public enum FuzzyMotorState   {ON, OFF};
+    public FuzzyMotorState desiredFuzzyMotorState = FuzzyMotorState.OFF;
     public enum PlaneSpringState       {UNRELEASED, RELEASED};
     public PlaneSpringState desiredPlaneStringState = PlaneSpringState.UNRELEASED;
     enum MovementMode                  {NORMAL, FINE, ULTRA_FINE}
@@ -145,7 +144,7 @@ public class Robot {
     boolean wheelSpeedAdjustment = false;
     
     // Hardware
-    public DcMotor slides, compliantWheelLeft, compliantWheelRight;
+    public DcMotor slides, fuzzyMotor;
     public DcMotor frontLeft, frontRight, rearLeft, rearRight;
     public Servo planeSpring, compartmentLeft, compartmentRight;
 
@@ -178,8 +177,7 @@ public class Robot {
         resetEncoder(rearRight);
 
         slides            = Robot.MotorConfigs.initialize(Robot.MotorConfigs.SLIDES, hardwareMap);
-        compliantWheelLeft            = Robot.MotorConfigs.initialize(Robot.MotorConfigs.COMPLIANT_MOTOR_LEFT, hardwareMap);
-        compliantWheelRight            = Robot.MotorConfigs.initialize(Robot.MotorConfigs.COMPLIANT_MOTOR_RIGHT, hardwareMap);
+        fuzzyMotor            = Robot.MotorConfigs.initialize(Robot.MotorConfigs.FUZZY_MOTOR, hardwareMap);
         planeSpring     = Robot.ServoConfigs.initialize(Robot.ServoConfigs.PLANE_SPRING, hardwareMap);
         compartmentLeft     = Robot.ServoConfigs.initialize(Robot.ServoConfigs.COMPARTMENT_LEFT, hardwareMap);
         compartmentRight     = Robot.ServoConfigs.initialize(Robot.ServoConfigs.COMPARTMENT_RIGHT, hardwareMap);
