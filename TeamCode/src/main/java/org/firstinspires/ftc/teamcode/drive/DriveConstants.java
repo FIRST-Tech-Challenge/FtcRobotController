@@ -35,7 +35,7 @@ public class DriveConstants {
      * from DriveVelocityPIDTuner.
      */
     public static final boolean RUN_USING_ENCODER = true;
-    public static PIDFCoefficients MOTOR_VELO_PID = new PIDFCoefficients(9, 0, 4,
+    public static PIDFCoefficients MOTOR_VELO_PID = new PIDFCoefficients(9, 0, 1,
             getMotorVelocityF(MAX_RPM / 60 * TICKS_PER_REV));
 
     /*
@@ -48,7 +48,7 @@ public class DriveConstants {
      */
     public static double WHEEL_RADIUS = 1.4763; // in
     public static double GEAR_RATIO = 0.66 * 1.25; // output (wheel) speed / input (motor) speed
-    public static double TRACK_WIDTH = 14.20; // in
+    public static double TRACK_WIDTH = 14.02; // in
 
     /*
      * These are the feedforward parameters used to model the drive motor behavior. If you are using
@@ -89,9 +89,9 @@ public class DriveConstants {
 
      */
     public static double MAX_VEL = 49.47254984116122;
-    public static double MAX_ACCEL = 49.47254984116122;
-    public static double MAX_ANG_VEL = Math.toRadians(108.20001006880145);
-    public static double MAX_ANG_ACCEL = Math.toRadians(108.20001006880145);
+    public static double MAX_ACCEL = 60;
+    public static double MAX_ANG_VEL = Math.toRadians(132.60000300691226);
+    public static double MAX_ANG_ACCEL = Math.toRadians(140);
 
     public static RevHubOrientationOnRobot.LogoFacingDirection LOGO_FACING_DIR =
             RevHubOrientationOnRobot.LogoFacingDirection.UP;
