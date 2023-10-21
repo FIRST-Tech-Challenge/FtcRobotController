@@ -112,6 +112,8 @@ public class testAuto extends LinearOpMode {
              */
             //opencvBlue.processFrame(opencvBlue.maskedInputMat);
             String result = pipeline.getResult();
+
+
             //telemetry.addData("result", result);
 //            telemetry.addData("Frame Count", webcam.getFrameCount());
 //            telemetry.addData("FPS", String.format("%.2f", webcam.getFps()));

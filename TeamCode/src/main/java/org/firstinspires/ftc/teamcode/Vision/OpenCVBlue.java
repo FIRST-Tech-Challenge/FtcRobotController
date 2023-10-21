@@ -29,6 +29,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.opencv.core.Core;
 import org.opencv.core.Mat;
+import org.opencv.core.Point;
 import org.opencv.core.Scalar;
 import org.opencv.imgproc.Imgproc;
 import org.openftc.easyopencv.OpenCvPipeline;
@@ -115,6 +116,8 @@ public class OpenCVBlue extends OpenCvPipeline {
     }
 
 
+
+
     public String getResult()
     {
         return result;
@@ -157,6 +160,10 @@ public class OpenCVBlue extends OpenCvPipeline {
 
 
         int output = Imgproc.connectedComponentsWithStats(binaryMat, dest_matrix, stats_mat, cens_mat);
+        int lineLeftX = 529;
+
+        int lineRightX = 1270;
+
 
         double currentmax = 0;
         double bestmax = 0;
@@ -202,6 +209,8 @@ public class OpenCVBlue extends OpenCvPipeline {
         /**
          * Add some nice and informative telemetry messages
          */
+
+
         telemetry.addData("place", result);
         telemetry.addData("output", output);
         telemetry.addData("stats", stats_mat);
@@ -218,6 +227,10 @@ public class OpenCVBlue extends OpenCvPipeline {
         telemetry.addData("[Lower Scalar]", lower);
         telemetry.addData("[Upper Scalar]", upper);
         telemetry.update();
+
+        Imgproc.line(maskedInputMat, new Point(lineLeftX, 0), new Point(lineLeftX, input.rows()), new Scalar(0, 255, 0), 20);
+        //Imgproc.line(input, new Point(lineMiddleX, 0), new Point(lineMiddleX, input.rows()), new Scalar(0, 255, 0), 20);
+        Imgproc.line(maskedInputMat, new Point(lineRightX, 0), new Point(lineRightX, input.rows()), new Scalar(0, 255, 0), 20);
 
         /*
          * The Mat returned from this method is the

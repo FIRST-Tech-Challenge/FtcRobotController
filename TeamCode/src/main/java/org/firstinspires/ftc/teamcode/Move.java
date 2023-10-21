@@ -199,16 +199,12 @@ public class Move extends OpMode {
                 extend = extend - 5;
             }
 
-
             extendmove = 1f;
-
 
             extendpower = extendmove;
         }
         else if(gamepad1.b)
         {
-
-
             if(Extend.getCurrentPosition() < -1)
             {
                 Extend.setTargetPosition(extend);
@@ -217,16 +213,12 @@ public class Move extends OpMode {
                 extend = extend + 5;
                 extendmove = -1f;
             }
-
-
             extendpower = extendmove;
         }
         else
         {
             extendpower = 0;
         }
-
-
 
         // Set motor powers to updated power
         leftFrontDrive.setPower(leftFrontPower);
@@ -235,8 +227,6 @@ public class Move extends OpMode {
         rightBackDrive.setPower(rightBackPower);
         Arm.setPower(armPower);
         Extend.setPower(extendpower);
-
-
 
 
     }
