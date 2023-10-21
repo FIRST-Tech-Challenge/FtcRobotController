@@ -105,10 +105,10 @@ public class Move extends OpMode {
         double turn = gamepad1.right_stick_x;
 
         // Set motor power
-        leftFrontPower = Range.clip(drive + turn + strafe, -0.35, 0.35);
-        rightFrontPower = Range.clip(drive - turn - strafe, -0.35, 0.35);
-        leftBackPower = Range.clip(drive + turn - strafe, -0.35, 0.35);
-        rightBackPower = Range.clip(drive - turn + strafe, -0.35, 0.35);
+        leftFrontPower = Range.clip(drive + turn + strafe, -0.6, 0.6);
+        rightFrontPower = Range.clip(drive - turn - strafe, -0.6, 0.6);
+        leftBackPower = Range.clip(drive + turn - strafe, -0.6, 0.6);
+        rightBackPower = Range.clip(drive - turn + strafe, -0.6, 0.6);
 
         // Telemetry
         telemetry.addData("Speed: ", (leftFrontPower + leftBackPower + rightBackPower + rightFrontPower) / 4);
@@ -116,8 +116,8 @@ public class Move extends OpMode {
         telemetry.addData("Left Stick Y: ", -gamepad1.left_stick_y);
         telemetry.addData("Right Stick X: ", gamepad1.right_stick_x);
         telemetry.addData("Right Stick Y: ", -gamepad1.right_stick_y);
-        telemetry.addData("Lift Encoder Ticks: ", Arm.getCurrentPosition());
-        telemetry.addData("Turret Encoder Ticks", Extend.getCurrentPosition());
+        telemetry.addData("Arm Encoder Ticks: ", Arm.getCurrentPosition());
+        telemetry.addData("Extend Encoder Ticks", Extend.getCurrentPosition());
         telemetry.addData("arm", arm);
         telemetry.update();
 
