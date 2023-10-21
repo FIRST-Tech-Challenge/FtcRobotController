@@ -24,6 +24,9 @@ public class tele extends OpMode {
 
     public void loop() {
 
+        double speedLimit = 80;
+        double speedLimitValue = speedLimit/100;
+
         double y = -gamepad1.left_stick_y; // Remember, this is reversed!
         double x = gamepad1.left_stick_x * 1.1; // Counteract imperfect strafing
         double rx = gamepad1.right_stick_x;
@@ -34,10 +37,10 @@ public class tele extends OpMode {
         double backLeftPower = (y - x + rx) / denominator;
         double backRightPower = (y + x - rx) / denominator;
 
-        robot.leftDrive.setPower(frontLeftPower);
-        robot.leftBackDrive.setPower(backLeftPower);
-        robot.rightDrive.setPower(frontRightPower);
-        robot.rightBackDrive.setPower(backRightPower);
+        robot.leftDrive.setPower(frontLeftPower * speedLimitValue);
+        robot.leftBackDrive.setPower(backLeftPower * speedLimitValue);
+        robot.rightDrive.setPower(frontRightPower * speedLimitValue);
+        robot.rightBackDrive.setPower(backRightPower * speedLimitValue);
 
     }
 
