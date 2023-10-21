@@ -21,7 +21,17 @@ public class RedLeftAuto extends LinearOpMode {
         TrajectorySequence[] spikePosition = new TrajectorySequence[3];
         spikePosition[0] = robot.roadrun.trajectorySequenceBuilder(new Pose2d(-38.5, -63.25, Math.toRadians(-90)))
                 .setReversed(true)
-                .lineToLinearHeading(new Pose2d(-46, -37, toRadians(90)))
+                .lineToLinearHeading(new Pose2d(-46, -37, toRadians(-90)))
+                .addTemporalMarker(robot::done)
+                .build();
+        spikePosition[1] = robot.roadrun.trajectorySequenceBuilder(new Pose2d(-38.5, -63.5, Math.toRadians(-90)))
+                .setReversed(true)
+                .lineToLinearHeading(new Pose2d(-35.5, -33, toRadians(-90)))
+                .addTemporalMarker(robot::done)
+                .build();
+        spikePosition[2] = robot.roadrun.trajectorySequenceBuilder(new Pose2d(-38.5, -63.5, Math.toRadians(-90)))
+                .setReversed(true)
+                .lineToLinearHeading(new Pose2d(-38.5, -34, toRadians(-90)))
                 .addTemporalMarker(robot::done)
                 .build();
         TrajectorySequence throughTruss = robot.roadrun.trajectorySequenceBuilder(new Pose2d(-46,-37, toRadians(90)))
@@ -32,9 +42,21 @@ public class RedLeftAuto extends LinearOpMode {
                 .build();
         TrajectorySequence[] dropAndPark = new TrajectorySequence[3];
         dropAndPark[0]= robot.roadrun.trajectorySequenceBuilder(new Pose2d(10,-58, toRadians(0)))
-                .splineTo(new Vector2d(48, -30.5), toRadians(0))
-                .lineToLinearHeading(new Pose2d(48, -10, toRadians(0)))
-                .lineToLinearHeading(new Pose2d(53, -10, toRadians(0)))
+                .splineTo(new Vector2d(51, -30.5), toRadians(0))
+                .lineToLinearHeading(new Pose2d(51, -60, toRadians(0)))
+                .lineToLinearHeading(new Pose2d(60, -60, toRadians(0)))
+                .addTemporalMarker(robot::done)
+                .build();
+        dropAndPark[1]= robot.roadrun.trajectorySequenceBuilder(new Pose2d(10,-58,toRadians(0)))
+                .splineTo(new Vector2d(51,-35.5), toRadians(0))
+                .lineToLinearHeading(new Pose2d(51, -60, toRadians(0)))
+                .lineToLinearHeading(new Pose2d(60, -60, toRadians(0)))
+                .addTemporalMarker(robot::done)
+                .build();
+        dropAndPark[2] = robot.roadrun.trajectorySequenceBuilder(new Pose2d(10,-58,toRadians(0)))
+                .splineTo(new Vector2d(51, -41.5), toRadians(0))
+                .lineToLinearHeading(new Pose2d(51, -60, toRadians(0)))
+                .lineToLinearHeading(new Pose2d(60, -60, toRadians(0)))
                 .addTemporalMarker(robot::done)
                 .build();
         waitForStart();
