@@ -10,36 +10,16 @@ import com.qualcomm.robotcore.hardware.Servo;
 
 @TeleOp(name = "Tele", group = "Pushbot")
 public class tele extends OpMode {
-    private DcMotor leftDrive = null;
-    private DcMotor rightDrive = null;
-    private DcMotor leftBackDrive = null;
-    private DcMotor rightBackDrive = null;
-
-    private Servo servo = null;
+    Hardware robot = new Hardware();
 
     public void init() {
-        leftDrive = hardwareMap.get(DcMotor.class, "fl");
-        rightDrive = hardwareMap.get(DcMotor.class, "fr");
-        rightBackDrive = hardwareMap.get(DcMotor.class, "br");
-        leftBackDrive = hardwareMap.get(DcMotor.class, "bl");
 
-        servo = hardwareMap.get(Servo.class, "servo");
-
-        leftDrive.setDirection(DcMotorSimple.Direction.REVERSE);
-        leftBackDrive.setDirection(DcMotorSimple.Direction.REVERSE);
-        rightDrive.setDirection(DcMotorSimple.Direction.FORWARD);
-        rightBackDrive.setDirection(DcMotorSimple.Direction.FORWARD);
-
-        leftDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        leftBackDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        rightDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        rightBackDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-
+        robot.init(hardwareMap);
 
     }
 
     public void start() {
-        servo.setPosition(.5);
+
     }
 
     public void loop() {
@@ -54,16 +34,10 @@ public class tele extends OpMode {
         double backLeftPower = (y - x + rx) / denominator;
         double backRightPower = (y + x - rx) / denominator;
 
-        leftDrive.setPower(frontLeftPower);
-        leftBackDrive.setPower(backLeftPower);
-        rightDrive.setPower(frontRightPower);
-        rightBackDrive.setPower(backRightPower);
-
-        if (gamepad1.x) {
-            servo.setPosition(0.1);
-        } else if (gamepad1.b) {
-            servo.setPosition(0.9);
-        }
+        robot.leftDrive.setPower(frontLeftPower);
+        robot.leftBackDrive.setPower(backLeftPower);
+        robot.rightDrive.setPower(frontRightPower);
+        robot.rightBackDrive.setPower(backRightPower);
 
     }
 
