@@ -2,12 +2,12 @@ package org.firstinspires.ftc.teamcode.Components;
 
 import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.LOGGER;
 import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.dashboard;
-import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.logger;
 import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.op;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
+import org.firstinspires.ftc.teamcode.Components.CV.Pipelines.BlueSpikeObserverPipeline;
 import org.firstinspires.ftc.teamcode.Components.CV.Pipelines.RFAprilCam;
-import org.firstinspires.ftc.teamcode.Components.CV.Pipelines.SpikeObserverPipeline;
+import org.firstinspires.ftc.teamcode.Components.CV.Pipelines.RedSpikeObserverPipeline;
 import org.firstinspires.ftc.teamcode.Components.RFModules.System.RFLogger;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
@@ -21,11 +21,15 @@ import org.openftc.easyopencv.OpenCvWebcam;
 public class CVMaster {
     private OpenCvWebcam webcam;
     private RFAprilCam cam;
-    private SpikeObserverPipeline openSleevi = null;
+    private RedSpikeObserverPipeline openSleevi = null;
+
+    private BlueSpikeObserverPipeline openSleeve = null;
 
     private boolean isObservingPole = false,isObservingCone=false;
 
     private boolean isStreaming = false;
+
+    private boolean isRed = true;
 
     /**
      * initializes opencv webcam, starts observing spike
@@ -33,9 +37,13 @@ public class CVMaster {
      * logs that opencv webcam is initialized and recording spike pipeline to general surface log
      */
     public CVMaster() {
-        LOGGER.log(RFLogger.Severity.INFO, "CVMaster() : intializing OpenCV");
+        LOGGER.log(RFLogger.Severity.INFO, "intializing OpenCV");
         webcam = OpenCvCameraFactory.getInstance().createWebcam(op.hardwareMap.get(WebcamName.class, "Webcam 1"));
         observeSpike();
+    }
+
+    public void setRed(boolean p_isRed){
+        isRed = p_isRed;
     }
 
     /**
@@ -43,8 +51,14 @@ public class CVMaster {
      * logs that spike is being observed general surface log
      */
     public void observeSpike() {
-        openSleevi = new SpikeObserverPipeline();
-        webcam.setPipeline(openSleevi);
+        if(isRed) {
+            openSleevi = new RedSpikeObserverPipeline();
+            webcam.setPipeline(openSleevi);
+        }
+        else{
+            openSleeve = new BlueSpikeObserverPipeline();
+            webcam.setPipeline(openSleeve);
+        }
         isObservingPole = true;
         webcam.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener()
         {
@@ -67,7 +81,12 @@ public class CVMaster {
                  * For a rear facing camera or a webcam, rotation is defined assuming the camera is facing
                  * away from the user.
                  */
-                webcam.setPipeline(openSleevi);
+                if (isRed) {
+                    webcam.setPipeline(openSleevi);
+                } else {
+                    webcam.setPipeline(openSleeve);
+                }
+
                 webcam.startStreaming(640, 480, OpenCvCameraRotation.UPRIGHT);
                 dashboard.startCameraStream(webcam, 10);
 
@@ -102,6 +121,11 @@ public class CVMaster {
         cam = new RFAprilCam();
         isStreaming=false;
     }
+    public void stop(){
+        webcam.stopStreaming();
+        webcam.closeCameraDevice();
+        cam.stop();
+    }
 
     /**
      * updates the aprilTag info if you are currently on aprilTag mode
@@ -109,7 +133,7 @@ public class CVMaster {
      */
     public void update(){
         LOGGER.setLogLevel(RFLogger.Severity.FINEST);
-        LOGGER.log("CVMaster.update() : updating camera info");
+        LOGGER.log("updating camera info");
         if(op.isStarted()&&isStreaming){
             switchToApril();
         }

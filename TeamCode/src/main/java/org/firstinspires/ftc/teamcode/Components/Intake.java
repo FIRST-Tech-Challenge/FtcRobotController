@@ -1,8 +1,14 @@
 package org.firstinspires.ftc.teamcode.Components;
 
 
+import static org.apache.commons.math3.util.FastMath.abs;
 import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.LOGGER;
+import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.op;
 import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.packet;
+
+import com.arcrobotics.ftclib.hardware.motors.Motor;
+import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorEx;
 
 import org.firstinspires.ftc.teamcode.Components.RFModules.Devices.RFBreakBeam;
 import org.firstinspires.ftc.teamcode.Components.RFModules.Devices.RFLimitSwitch;
@@ -25,14 +31,18 @@ public class Intake extends RFMotor {
 
     private boolean full = false;
     private double pixelCount =0;
+    private double HALF_TICKS_PER_REV = 537.6;
+    DcMotorEx encoder;
 
     /**
      * initializes all the hardware, logs that hardware has been initialized
      */
     public Intake(){
         super("intakeMotor",true);
+        encoder = op.hardwareMap.get(DcMotorEx.class, "motorRightBack");
+        super.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         LOGGER.setLogLevel(RFLogger.Severity.INFO);
-        LOGGER.log("Intake() : Initializing Intake Motor and intake sensors!");
+        LOGGER.log("Initializing Intake Motor and intake sensors!");
 //        breakBeam = new RFBreakBeam();
 //        limitSwitch = new RFLimitSwitch("intakeSwitch");
     }
@@ -60,7 +70,7 @@ public class Intake extends RFMotor {
                     IntakeStates.values()[i].state = false;
                 }
                 LOGGER.setLogLevel(RFLogger.Severity.INFO);
-                LOGGER.log("IntakeStates.setStateTrue() : Intake state changed to: " + this.name());
+                LOGGER.log("Intake state changed to: " + this.name());
                 this.state = true;
             }
         }
@@ -74,24 +84,41 @@ public class Intake extends RFMotor {
      */
     public void intake(){
         LOGGER.setLogLevel(RFLogger.Severity.INFO);
-        LOGGER.log("Intake.intake() : starting intake, power : "+INTAKE_POWER);
+        LOGGER.log("starting intake, power : "+INTAKE_POWER);
         setPower(INTAKE_POWER);
+        IntakeStates.INTAKING.setStateTrue();
+
     }
     /**
      * Sets intake power to REVERSE_POWER, logs that the robot is reversing to general and intake surface level
      */
     public void reverseIntake(){
         LOGGER.setLogLevel(RFLogger.Severity.INFO);
-        LOGGER.log("Intake.reverseIntake() : reversing intake, power : "+REVERSE_POWER);
+        LOGGER.log("reversing intake, power : "+REVERSE_POWER);
         setPower(REVERSE_POWER);
+        IntakeStates.REVERSING.setStateTrue();
+
     }
     /**
      * Sets intake power 0, logs that intake is stopped to general and intake surface level
      */
     public void stopIntake(){
-        LOGGER.setLogLevel(RFLogger.Severity.INFO);
-        LOGGER.log("Intake.stopIntake() : stopping intake, power : "+0);
-        setPower(0);
+        if(abs(encoder.getVelocity())>10) {
+            double pos = encoder.getCurrentPosition();
+            double vel = encoder.getVelocity();
+            double res = (pos + vel * 0.1) % HALF_TICKS_PER_REV;
+            if (res > HALF_TICKS_PER_REV / 2) {
+                res -= HALF_TICKS_PER_REV;
+            }
+            if (abs(res) < 20) {
+                LOGGER.setLogLevel(RFLogger.Severity.INFO);
+                LOGGER.log("stopping intake, power : " + 0);
+                setPower(0);
+            } else {
+                LOGGER.log("trying to stop, too far" + res);
+            }
+            IntakeStates.STOPPED.setStateTrue();
+        }
     }
 
     /**
@@ -123,27 +150,16 @@ public class Intake extends RFMotor {
      * updates sensor information, triggers following action to reverse/stop intaking
      */
     public void update(){
-        LOGGER.setLogLevel(RFLogger.Severity.FINEST);
-        LOGGER.log("Intake.update()");
         double power = this.getPower();
         LOGGER.setLogLevel(RFLogger.Severity.FINEST);
         LOGGER.log("intake power:" + power);
-        if(power>0){
-            IntakeStates.INTAKING.setStateTrue();
-        }
-        else if(power<0){
-            IntakeStates.REVERSING.setStateTrue();
-        }else{
-            IntakeStates.STOPPED.setStateTrue();
-        }
-        if(countPixels()==2 && IntakeStates.INTAKING.state){
-            LOGGER.setLogLevel(RFLogger.Severity.INFO);
-            LOGGER.log("2 PIXELS REACHED STOPPING INTAKE");
-            stopIntake();
-        }
         for(var i : IntakeStates.values()) {
             if(i.state)
                 packet.put("IntakeState",i.name());
         }
+        if(IntakeStates.STOPPED.state){
+            stopIntake();
+        }
+
     }
 }

@@ -105,7 +105,7 @@ public class Queuer {
             if (queueElements.get(p_ind).startCondition != recalcStartPosSkipOptional(p_ind, queueElements.get(p_ind).isAsynchronous(), queueElements.get(p_ind).isOptional())) {
                 queueElements.get(p_ind).setStartCondition(recalcStartPosSkipOptional(p_ind, queueElements.get(p_ind).isAsynchronous(), queueElements.get(p_ind).isOptional()));
                 LOGGER.setLogLevel(RFLogger.Severity.FINE);
-                LOGGER.log( "Queuer.updateStartConditions() : Event: "+ p_ind +" StartCondition: " + queueElements.get(p_ind).startCondition);
+                LOGGER.log( "Event: "+ p_ind +" StartCondition: " + queueElements.get(p_ind).startCondition);
                 updateStartConditions(p_ind + 1);
                 updateStartConditions(p_ind + 2);
                 updateStartConditions(p_ind + 3);
@@ -208,7 +208,7 @@ public class Queuer {
         done();
         currentEvent = queueElements.get(currentlyQueueing).startCondition;
         LOGGER.setLogLevel(RFLogger.Severity.INFO);
-        LOGGER.log( "Queuer.setToNow() : currentEvent :" + currentEvent);
+        LOGGER.log( "currentEvent :" + currentEvent);
     }
 
     /**
@@ -217,7 +217,7 @@ public class Queuer {
      */
     public void reset() {
         LOGGER.setLogLevel(RFLogger.Severity.INFO);
-        LOGGER.log( "Queuer.reset() : reset queuer");
+        LOGGER.log( "reset queuer");
         queueElements.clear();
         firstLoop = true;
         mustFinish = false;
@@ -236,7 +236,7 @@ public class Queuer {
         var newFulfilled = !queueElements.isEmpty() && currentEvent == queueElements.size() - 1;
         if(isFulfilled!=newFulfilled&&newFulfilled){
             LOGGER.setLogLevel(RFLogger.Severity.INFO);
-            LOGGER.log( "Queuer.isFullfilled() : queue finished!");
+            LOGGER.log( "queue finished!");
         }
         isFulfilled=newFulfilled;
         return isFulfilled;
@@ -294,13 +294,13 @@ public class Queuer {
             startCondition = recalcStartPosSkipOptional(queueElements.size(), p_asynchrnous, p_isOptional);
             queueElements.add(new QueueElement(queueElements.size(), p_asynchrnous, startCondition, mustFinish, false, p_isOptional));
             LOGGER.setLogLevel(RFLogger.Severity.INFO);
-            LOGGER.log( "Queuer.createQueueElement(): event# : " + (queueElements.size() - 1) + ", StartCondition : " + startCondition);
+            LOGGER.log( "event# : " + (queueElements.size() - 1) + ", StartCondition : " + startCondition);
         } else {
             mustFinish = false;
             startCondition = mustStartCondition;
             queueElements.add(new QueueElement(queueElements.size(), p_asynchrnous, startCondition, true));
             LOGGER.setLogLevel(RFLogger.Severity.INFO);
-            LOGGER.log( "Queuer.createQueueElement(): event# : " + (queueElements.size() - 1) + ", StartCondition : " + startCondition);
+            LOGGER.log( "event# : " + (queueElements.size() - 1) + ", StartCondition : " + startCondition);
         }
     }
 
@@ -324,10 +324,10 @@ public class Queuer {
                 if (p_done_condition) {
                     calculateCompleteCurrentEvent();
                     LOGGER.setLogLevel(RFLogger.Severity.INFO);
-                    LOGGER.log( "Queuer.updateQueuer(): currenty Queueing event# : " + currentlyQueueing + "is Done, " + "completeEvents" + completeCurrentEvent);
+                    LOGGER.log( "currently Queueing event# : " + currentlyQueueing + "is Done, " + "completeEvents" + completeCurrentEvent);
                     if (currentlyQueueing > currentEvent && !queueElements.get(currentlyQueueing).isAsynchronous()) {
                         currentEvent = currentlyQueueing;
-                        LOGGER.log( "Queuer.updateQueuer(): currenty finished event# : " + currentEvent + "is Done, " + "completeEvents" + completeCurrentEvent);
+                        LOGGER.log( "currenty finished event# : " + currentEvent + "is Done, " + "completeEvents" + completeCurrentEvent);
                     }
                 }
             }

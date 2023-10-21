@@ -1,7 +1,10 @@
 package org.firstinspires.ftc.teamcode.Components.RFModules.Devices;
 
+import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.LOGGER;
 import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.logger;
 import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.op;
+
+import org.firstinspires.ftc.teamcode.Components.RFModules.System.RFLogger;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -54,19 +57,21 @@ public class RFGamepad {
 
     /**
      * readgamepad for floats, logs & changes corresponding element in hashmap
+     *
      * @param value
      * @param name
      * @param action
      */
     public void readGamepad(float value, String name, String action) {
         if (value != floatMap.get(name)) {
-            logger.log("/RobotLogs/GeneralRobot", "Gamepad," + name + "," + action + ": " + value, true);
+            LOGGER.log(name + " pressed, " + action);
             floatMap.replace(name, value);
         }
     }
 
     /**
      * readgamepad for floats, logs & changes corresponding element in hashmap
+     *
      * @param value
      * @param name
      * @param action
@@ -74,84 +79,20 @@ public class RFGamepad {
      */
     public boolean readGamepad(boolean value, String name, String action) {
         if (value != booleanMap.get(name)) {
-            logger.log("/RobotLogs/GeneralRobot", "Gamepad," + name + "," + action + ": " + value, true);
+            if (value)
+                LOGGER.log(name + " pressed, " + action);
+            else
+                LOGGER.log(name + " released, " + action);
             booleanMap.replace(name, value);
             return value;
         }
         return false;
     }
 
-    /**
-     * a lot of if statements to check if buttons have been let go
-     * @return
-     */
-    public boolean updateSequence() {
-        boolean updated = false;
-        if (op.gamepad1.dpad_down) {
-            if (!booleanMap.get("gamepad1_dpad_down")) {
-                seq.add(3);
-                booleanMap.replace("gamepad1_dpad_down", true);
-                updated = true;
-            }
-        }
-        else if (!op.gamepad1.dpad_down) {
-            booleanMap.replace("gamepad1_dpad_down", false);
-        }
-        if (op.gamepad1.dpad_right) {
-            if (!booleanMap.get("gamepad1_dpad_right")) {
-                seq.add(2);
-                booleanMap.replace("gamepad1_dpad_right", true);
-                updated = true;
-            }
-        }
-        else if (!op.gamepad1.dpad_right) {
-            booleanMap.replace("gamepad1_dpad_right", false);
-        }
-        if (op.gamepad1.dpad_up) {
-            if (!booleanMap.get("gamepad1_dpad_up")) {
-                seq.add(1);
-                booleanMap.replace("gamepad1_dpad_up", true);
-                updated = true;
-            }
-        }
-        else if (!op.gamepad1.dpad_up) {
-            booleanMap.replace("gamepad1_dpad_up", false);
-        }
-        if (op.gamepad1.dpad_left) {
-            if (!booleanMap.get("gamepad1_dpad_left")) {
-                seq.add(4);
-                booleanMap.replace("gamepad1_dpad_left", true);
-                updated = true;
-            }
-        }
-        else if (!op.gamepad1.dpad_left) {
-            booleanMap.put("gamepad1_dpad_left", false);
-        }
-        if (op.gamepad1.x) {
-            if (!booleanMap.get("gamepad1_x")) {
-                seq.add(5);
-                booleanMap.replace("gamepad1_x", true);
-                updated = true;
-            }
-        }
-        else if (!op.gamepad1.x) {
-            booleanMap.replace("gamepad1_x", false);
-        }
-        if (op.gamepad1.b) {
-            if (!booleanMap.get("gamepad1_b")) {
-                seq.add(6);
-                booleanMap.replace("gamepad1_b", true);
-                updated = true;
-            }
-        }
-        else if (!op.gamepad1.b) {
-            booleanMap.replace("gamepad1_b", false);
-        }
-        return updated;
-    }
 
     /**
      * returns sequence of key presses
+     *
      * @return
      */
     public ArrayList<Integer> getSequence() {
@@ -162,7 +103,7 @@ public class RFGamepad {
      * get rid of first element in arraylist
      */
     public void removeSequenceElement() {
-        if(!seq.isEmpty()) {
+        if (!seq.isEmpty()) {
             seq.remove(0);
         }
     }
@@ -170,7 +111,7 @@ public class RFGamepad {
     /**
      * clear arraylist
      */
-    public void clearSequence(){
+    public void clearSequence() {
         seq.clear();
     }
 }

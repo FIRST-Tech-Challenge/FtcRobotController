@@ -17,16 +17,10 @@ import java.util.ArrayList;
  * This is the pipeline that is activated when the robot is initializing, it will determine which position the team prop is in
  */
 @Config
-public class SpikeObserverPipeline extends OpenCvPipeline {
+public class RedSpikeObserverPipeline extends OpenCvPipeline {
     ArrayList<double[]> frameList;
     public static double p1x = 280, p1y =390, p2x = 380, p2y =475, p21x = 280, p21y =390, p22x = 380, p22y =475,
             p31x = 280, p31y =390, p32x = 380, p32y =475,
-            h1 = 120,s1 = 0, v1 =0,
-            h1u = 160,s1u = 255, v1u =255,
-            h2 = 0,s2 = 0, v2 =0,
-            h2u =10,s2u = 255, v2u =255,
-            h3 = 45,s3 = 60, v3 =0,
-            h3u = 60,s3u = 255, v3u =255,
 
     //h3u and s3u: 71 and 90
     colour = 1;
@@ -35,7 +29,7 @@ public class SpikeObserverPipeline extends OpenCvPipeline {
     /**
      * This will construct the pipeline
      */
-    public SpikeObserverPipeline() {
+    public RedSpikeObserverPipeline() {
         frameList=new ArrayList<>();
     }
 
@@ -47,22 +41,27 @@ public class SpikeObserverPipeline extends OpenCvPipeline {
      */
     @Override
     public Mat processFrame(Mat input) {
-        Rect ROI = new Rect( //130 x 210, 60 x 120
+        Rect ROI1 = new Rect( //130 x 210, 60 x 120
                 new Point(p1x,p1y),
                 new Point(p2x,p2y));
+        Rect ROI2 = new Rect( //130 x 210, 60 x 120
+                new Point(p21x,p21y),
+                new Point(p22x,p22y));
+        Rect ROI3 = new Rect( //130 x 210, 60 x 120
+                new Point(p31x,p31y),
+                new Point(p32x,p32y));
 
 
-        Mat cone = input.submat(ROI);
-        double redValue = Core.sumElems(cone).val[0]/ROI.area()/255;
-
-        double greenValue = Core.sumElems(cone).val[1]/ROI.area()/255;
-
-        double blueValue = Core.sumElems(cone).val[2]/ROI.area()/255;
-        frameList.add(new double[]{redValue, greenValue, blueValue});
+        Mat cone = input.submat(ROI1);
+        double redValue = Core.sumElems(cone).val[0]/ROI1.area()/255;
+        cone = input.submat(ROI2);
+        double redValue2 = Core.sumElems(cone).val[0]/ROI2.area()/255;
+        cone = input.submat(ROI3);
+        double redValue3 = Core.sumElems(cone).val[0]/ROI3.area()/255;
+        frameList.add(new double[]{redValue, redValue2, redValue3});
         if(frameList.size()>5) {
             frameList.remove(0);
         }
-
         cone.release();
 
 
@@ -72,8 +71,9 @@ public class SpikeObserverPipeline extends OpenCvPipeline {
 //        input.release();
 //        mat.release();
         Scalar color = new Scalar(255,0,0);
-        Imgproc.rectangle(input, ROI, color, 5);
-
+        Imgproc.rectangle(input, ROI1, color, 5);
+        Imgproc.rectangle(input, ROI2, color, 5);
+        Imgproc.rectangle(input, ROI3, color, 5);
         return input;
     }
 
@@ -89,10 +89,6 @@ public class SpikeObserverPipeline extends OpenCvPipeline {
             sums[1]+=frameList.get(i)[1];
             sums[2]+=frameList.get(i)[2];
         }
-//        op.telemetry.addData("sums0",sums[0]);
-//       op.telemetry.addData("sums1",sums[1]);
-//       op.telemetry.addData("sums2",sums[2]);
-//       op.telemetry.update();
         if(sums[0]>sums[1]&&sums[0]>sums[2]){
             return 1;
         }else if(sums[1]>sums[2]){

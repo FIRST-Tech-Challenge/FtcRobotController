@@ -286,7 +286,7 @@ public class SampleMecanumDrive extends MecanumDrive {
 
     public void followTrajectorySequenceAsync(TrajectorySequence trajectorySequence) {
         LOGGER.setLogLevel(RFLogger.Severity.INFO);
-        LOGGER.log("BradBot.followTrajSeq(): going from: " +trajectorySequence.start() +" to: " + trajectorySequence.end());
+        LOGGER.log("going from: " +trajectorySequence.start() +" to: " + trajectorySequence.end());
         trajectorySequenceRunner.followTrajectorySequenceAsync(trajectorySequence);
         trajectorySeq = trajectorySequence;
         endPose = trajectorySequence.end();
@@ -395,7 +395,7 @@ public class SampleMecanumDrive extends MecanumDrive {
         if(isFieldCentric&&isButtered){
             toggleButtered();
         }
-        LOGGER.log(RFLogger.Severity.INFO, "SampleMecanumDrive.toggleFieldCentric(): fieldCentric: "+isFieldCentric);
+        LOGGER.log(RFLogger.Severity.INFO, "fieldCentric: "+isFieldCentric);
     }
     public void toggleButtered(){
         isButtered=!isButtered;
@@ -403,7 +403,7 @@ public class SampleMecanumDrive extends MecanumDrive {
             toggleFieldCentric();
         }
         toggleServos();
-        LOGGER.log(RFLogger.Severity.INFO, "SampleMecanumDrive.toggleButtered(): isButtered: "+isButtered);
+        LOGGER.log(RFLogger.Severity.INFO, "isButtered: "+isButtered);
     }
 
     public boolean isButtered(){

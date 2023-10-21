@@ -42,7 +42,7 @@ public class BasicRobot{
         op = opMode;
         LOGGER = new RFLogger("Robot");
         LOGGER.setLogLevel(RFLogger.Severity.ALL);
-        LOGGER.log("BasicRobot() : Creating Robot!");
+        LOGGER.log("Creating Robot!");
         logger = new Logger();
         logger.createFile("/RobotLogs/GeneralRobot", "Runtime    Component               " +
                 "Function                        Action");
@@ -65,8 +65,7 @@ public class BasicRobot{
      */
 
     public void update(){
-        LOGGER.setLogLevel(RFLogger.Severity.FINEST);
-        LOGGER.log("BasicRobot.update()");
+
         time = op.getRuntime();
         dashboard.sendTelemetryPacket(packet);
         packet = new TelemetryPacket();
@@ -78,8 +77,8 @@ public class BasicRobot{
      * logs that this function is being called to general surface
      */
     public void resetQueuer() {
-        LOGGER.setLogLevel(RFLogger.Severity.ALL);
-        LOGGER.log("BasicRobot.resetQueuer() : queuer reset");
+        LOGGER.setLogLevel(RFLogger.Severity.INFO);
+        LOGGER.log("queuer reset");
         queuer.reset();
     }
 
@@ -90,8 +89,8 @@ public class BasicRobot{
      */
     public double getVoltage(){
         double voltage = voltageSensor.getVoltage();
-        LOGGER.setLogLevel(RFLogger.Severity.ALL);
-        LOGGER.log("BasicRobot.getVoltage(): voltage = "+voltage);
+        LOGGER.setLogLevel(RFLogger.Severity.INFO);
+        LOGGER.log("voltage = "+voltage);
         return voltage;
     }
 }
