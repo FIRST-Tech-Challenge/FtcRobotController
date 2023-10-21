@@ -5,8 +5,8 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
-@Autonomous(name = "V1 Auton Test 10-21-2023")
-public class V1_2023_10_21_01 extends LinearOpMode {
+@Autonomous(name = "V1 Auton Methods 10-21-2023")
+public class V1_2023_10_21_Methods extends LinearOpMode {
 
     private DcMotor leftFrontDrive   = null;  //  Used to control the left front drive wheel
     private DcMotor rightFrontDrive  = null;  //  Used to control the right front drive wheel
