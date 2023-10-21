@@ -92,6 +92,48 @@ public class RobotDriver {
         return successful;
     }
 
+    public final void gyroSlide(double speed,
+                                double distance,
+                                double angle,
+                                double timeoutS,
+                                IObjectDetector<Boolean> objectDetector) {
+
+        // Ensure that the opmode is still active
+        if (_opMode.opModeIsActive()) {
+            // Set Target and Turn On RUN_TO_POSITION
+            _robot.setDriveTarget(distance, true);
+            _robot.setDriveMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+            // start motion.
+            double counter = 0d;
+            _runtime.reset();
+            double powerToSet = Math.max(speed, 0.2d);
+            _robot.setDriveVelocity(powerToSet, powerToSet, powerToSet, powerToSet);
+            ElapsedTime driveTime = new ElapsedTime();
+
+            // keep looping while we are still active, and BOTH motors are running.
+            while (_opMode.opModeIsActive() &&
+                    _runtime.seconds() < timeoutS &&
+                    _robot.isDriveBusy()) {
+                _opMode.idle();
+
+                if (objectDetector != null && objectDetector.objectDetected()) {
+                    _robot.beep();
+                    break;
+                }
+
+                _opMode.telemetry.update();
+            }
+
+            // Stop all motion;
+            _robot.setDrivePower(0d, 0d, 0d, 0d);
+
+            // Turn off RUN_TO_POSITION
+            _robot.setDriveMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            _robot.setDriveMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        }
+    }
+
     public final void gyroTurn(double speed, double angle, double timeoutS) {
 
         _runtime.reset();
