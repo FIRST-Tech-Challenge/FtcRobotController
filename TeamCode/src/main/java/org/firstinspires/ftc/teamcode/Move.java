@@ -100,15 +100,17 @@ public class Move extends OpMode {
         double rightBackPower; // Declare motor power variables
 
         // Set drive controls
-        double drive = -gamepad1.left_stick_y;
-        double strafe = -gamepad1.left_stick_x;
-        double turn = gamepad1.right_stick_x;
+        double drive = -gamepad1.left_stick_x;
+        double strafe = -gamepad1.left_stick_y;
+        double turn = 1.66666666666666 * gamepad1.right_stick_x;
 
         // Set motor power
         leftFrontPower = Range.clip(drive + turn + strafe, -0.6, 0.6);
         rightFrontPower = Range.clip(drive - turn - strafe, -0.6, 0.6);
         leftBackPower = Range.clip(drive + turn - strafe, -0.6, 0.6);
         rightBackPower = Range.clip(drive - turn + strafe, -0.6, 0.6);
+
+
 
         // Telemetry
         telemetry.addData("Speed: ", (leftFrontPower + leftBackPower + rightBackPower + rightFrontPower) / 4);
@@ -145,11 +147,13 @@ public class Move extends OpMode {
 //
 //        }
 
+
+
         if(gamepad1.right_bumper) {
-            leftFrontPower /= 4;
-            leftBackPower /= 4;
-            rightFrontPower /= 4;
-            rightBackPower /= 4;
+            leftFrontPower /= 3.5;
+            leftBackPower /= 3.5;
+            rightFrontPower /= 3.5;
+            rightBackPower /= 3.5;
         }
 
         if(gamepad1.dpad_up)
@@ -167,6 +171,17 @@ public class Move extends OpMode {
             }
 
         }
+
+        else if(gamepad2.dpad_right) {
+
+            arm = arm + 5;
+            armPower = armmove;
+
+            Arm.setTargetPosition(arm);
+            Arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            Arm.setPower(2);
+        }
+
         else if(gamepad1.dpad_down)
         {
 
@@ -186,6 +201,17 @@ public class Move extends OpMode {
         else
         {
             armPower = 0;
+        }
+
+
+        if(gamepad1.share) {
+            Extend.setTargetPosition(0);
+            Extend.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            Extend.setPower(2);
+
+            Arm.setTargetPosition(0);
+            Arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            Arm.setPower(2);
         }
         if(gamepad1.a)
         {
@@ -233,6 +259,9 @@ public class Move extends OpMode {
 
     @Override
     public void stop() {
+
+
+
         // Stop all motors if no input
         leftFrontDrive.setPower(0);
         rightFrontDrive.setPower(0);
