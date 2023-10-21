@@ -67,11 +67,12 @@ public class vvAutoDriveByTime_IsaKai extends LinearOpMode {
     public void runOpMode() {
 
         // Initialize the drive system variables.
-        leftUp  = hardwareMap.get(DcMotor.class, "left_Up");
+
+        leftUp  = hardwareMap.get(DcMotor.class, "FLM");
         rightUp = hardwareMap.get(DcMotor.class, "right_Up");
         leftDown = hardwareMap.get(DcMotor.class,"left_Down");
         rightDown = hardwareMap.get(DcMotor.class,"right_Down");
-        
+
         // To drive forward, most robots need the motor on one side to be reversed, because the axles point in opposite directions.
         // When run, this OpMode should start both motors driving forward. So adjust these two lines based on your first test drive.
         // Note: The settings here assume direct drive on left and right wheels.  Gear Reduction or 90 Deg drives may require direction flips
