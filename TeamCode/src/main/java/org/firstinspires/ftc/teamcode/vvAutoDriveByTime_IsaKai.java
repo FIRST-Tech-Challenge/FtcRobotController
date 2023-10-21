@@ -48,7 +48,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
  */
 
 @Autonomous(name="Robot: Auto Drive By Time", group="Auton")
-@Disabled
+
 public class vvAutoDriveByTime_IsaKai extends LinearOpMode {
 
     /* Declare OpMode members. */
@@ -69,8 +69,8 @@ public class vvAutoDriveByTime_IsaKai extends LinearOpMode {
         // Initialize the drive system variables.
         leftUp  = hardwareMap.get(DcMotor.class, "left_Up");
         rightUp = hardwareMap.get(DcMotor.class, "right_Up");
-        leftDown = hardwareMap.get(DcMotor.class,"left_Down); 
-        rightDown = hardwareMap.get(DcMotor.class,"right_Down); 
+        leftDown = hardwareMap.get(DcMotor.class,"left_Down");
+        rightDown = hardwareMap.get(DcMotor.class,"right_Down");
         
         // To drive forward, most robots need the motor on one side to be reversed, because the axles point in opposite directions.
         // When run, this OpMode should start both motors driving forward. So adjust these two lines based on your first test drive.
@@ -115,7 +115,7 @@ public class vvAutoDriveByTime_IsaKai extends LinearOpMode {
         leftUp.setPower(-FORWARD_SPEED);
         rightUp.setPower(-FORWARD_SPEED);
         leftDown.setPower(-FORWARD_SPEED);
-        rightDownrightUp.setPower(-FORWARD_SPEED);
+        rightDown.setPower(-FORWARD_SPEED);
         runtime.reset();
         while (opModeIsActive() && (runtime.seconds() < 1.0)) {
             telemetry.addData("Path", "Leg 3: %4.1f S Elapsed", runtime.seconds());
