@@ -4,49 +4,77 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
 
+@com.qualcomm.robotcore.eventloop.opmode.TeleOp(name="TeleOp")
 public class TeleOp extends LinearOpMode {
-    DcMotor frontLeft;
-    DcMotor backLeft;
-    DcMotor frontRight;
-    DcMotor backRight;
+
 
     @Override
     public void runOpMode() throws InterruptedException {
         Hardware hw = new Hardware();
         hw.init(hardwareMap);
 
-        telemetry.addData("Init >> ", "Ready for start");
+        telemetry.addData("TeleOp Init: ", "Ready for start");
         telemetry.update();
 
         waitForStart();
 
+        telemetry.addData("TeleOp: ", "starting...");
+        telemetry.update();
+
         while (opModeIsActive()) {
             //temporary code
-            double drive = curveInput(gamepad1.left_stick_y);
+            telemetry.addData("Teleop: ", "working");
+            telemetry.update();
+            /*double drive = curveInput(gamepad1.left_stick_y);
             double turn = curveInput(gamepad1.right_stick_x);
-            double strafe = curveInput(gamepad1.left_stick_x);
+            double strafe = curveInput(gamepad1.left_stick_x);*/
+
+            double drive = -gamepad1.left_stick_y;
+            double turn = gamepad1.right_stick_x;
+            double strafe = gamepad1.left_stick_x;
 
             double maxPower = Math.max(Math.abs(drive) + Math.abs(turn) + Math.abs(strafe), 1);
 
 
             //to do: verify this works
-            if (turn >= 0) { //forward and backward with turning and strafing || positive strafe/turn = strafe/turn right
-                frontRight.setPower((drive - turn + strafe) / maxPower);
-                backRight.setPower((drive - turn + strafe) / maxPower);
-            } else {
-                frontLeft.setPower((drive - turn - strafe) / maxPower);
-                backLeft.setPower((drive - turn - strafe) / maxPower);
-            }
+//            if (turn > 0) { //forward and backward with turning and strafing || positive strafe/turn = strafe/turn right
+                //hw.frontLeft.setPower((drive - turn + strafe) / maxPower);
+                telemetry.addData("Teleop:", "test");
+                telemetry.update();
+//                hw.backRight.setPower(0.25);
+//                telemetry.addData("TeleOp: ", hw.backRight.getPower());
+                //hw.backRight.setPower((drive - turn + strafe) / maxPower);
+//            } else if(turn < 0){
+
+                hw.frontLeft.setPower((drive + turn ) / maxPower);
+                telemetry.addData("frontLeft: ", hw.frontLeft.getPower());
+
+                hw.frontRight.setPower((drive - turn) / maxPower);
+                telemetry.addData("frontRight: ", hw.frontRight.getPower());
+
+                hw.backRight.setPower((drive + turn) / maxPower);
+                telemetry.addData("backRight: ", hw.backRight.getPower());
+
+                hw.backLeft.setPower((drive - turn) / maxPower);
+                telemetry.addData("backLeft: ", hw.backLeft.getPower());
+
+                telemetry.update();
+//            } else {
+//                hw.frontLeft.setPower(drive + strafe);
+//                hw.frontRight.setPower(drive - strafe);
+//                hw.backLeft.setPower(drive + strafe);
+//                hw.backRight.setPower(drive - strafe);
+//            }
 
             //cycle every 50 milliseconds, to prevent memory death --> 20 cycles/s
             sleep(50);
         }
 
         //end TeleOp
-        frontLeft.setPower(0);
-        backLeft.setPower(0);
-        frontRight.setPower(0);
-        backRight.setPower(0);
+        hw.frontLeft.setPower(0);
+        hw.backLeft.setPower(0);
+        hw.frontRight.setPower(0);
+        hw.backRight.setPower(0);
     }
 
     public double curveInput(double input) {
