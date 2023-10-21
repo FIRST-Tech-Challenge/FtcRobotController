@@ -56,8 +56,8 @@ public class testTeleOp extends LinearOpMode {
     public CRServo rightWheel;
     public CRServo leftWheel;
     public Servo drone;
-    double RWPower;
-    double LWPower;
+    public double RWPower;
+    public double LWPower;
 
     double clawOffset = 0;
 
@@ -126,11 +126,11 @@ public class testTeleOp extends LinearOpMode {
                 double backLeftPower = (driveY - strafe + turn) / denominator;
                 double frontRightPower = (driveY - strafe - turn) / denominator;
                 double backRightPower = (driveY + strafe - turn) / denominator;
-
+                // Remember that the right is opposite of the left
                 leftFront.setPower(frontLeftPower);
                 leftRear.setPower(backLeftPower);
-                rightFront.setPower(frontRightPower);
-                rightRear.setPower(backRightPower);
+                rightFront.setPower(-frontRightPower);
+                rightRear.setPower(-backRightPower);
 
                 // Controlling the pixel pick-up with the dpad
                 while (gamepad2.dpad_down) {

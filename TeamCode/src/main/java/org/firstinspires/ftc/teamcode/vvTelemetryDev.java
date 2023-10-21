@@ -47,8 +47,7 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
  *
  * Dev, we want to include an appropriate amount of feedback for our coaches during the game
  */
-@TeleOp(name = "Concept: Telemetry", group = "Concept")
-@Disabled
+
 public class vvTelemetryDev extends LinearOpMode  {
     /** Keeps track of the line of the poem which is to be emitted next */
     int poemLine = 0;
