@@ -12,8 +12,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 public class fieldCentric extends LinearOpMode {
 
     // declare buttons
-    Button driverButtonLeftBumper;
-    Button driverButtonRightBumper;
+    Button driverButtonB;
     @Override
     public void runOpMode() throws InterruptedException {
         // Declare our motors
@@ -24,8 +23,7 @@ public class fieldCentric extends LinearOpMode {
         DcMotor backRightMotor = hardwareMap.dcMotor.get("backRightMotor");
 
         // map buttons
-        driverButtonLeftBumper = new Button(gamepad1, Button.NAME.LEFT_BUMPER);
-        driverButtonRightBumper = new Button(gamepad1, Button.NAME.RIGHT_BUMPER);
+        driverButtonB = new Button(gamepad1, Button.NAME.B);
 
         // Reverse the right side motors. This may be wrong for your setup.
         // If your robot moves backwards when commanded to go forwards,
@@ -47,7 +45,17 @@ public class fieldCentric extends LinearOpMode {
 
         if (isStopRequested()) return;
 
+        double motorPower = 0.6;
+
         while (opModeIsActive()) {
+            updateButtons();
+
+            while (driverButtonB.Pressed()){
+                frontLeftMotor.setPower(motorPower);
+                backLeftMotor.setPower(motorPower);
+                frontRightMotor.setPower(-motorPower);
+                backRightMotor.setPower(-motorPower);
+            }
             double y = -gamepad1.left_stick_y; // Remember, Y stick value is reversed
             double x = gamepad1.left_stick_x;
             double rx = -gamepad1.right_stick_x;
@@ -58,13 +66,6 @@ public class fieldCentric extends LinearOpMode {
             if (gamepad1.options) {
                 imu.resetYaw(); // Reset the IMU yaw angle when the 'options' button is pressed.
             }
-
-            // Strafe
-            /*if (driverButtonLeftBumper.Pressed()) {
-                x = -1.0; // Strafe left
-            } else if (driverButtonRightBumper.Pressed()) {
-                x = 1.0; // Strafe right
-            }*/
 
             // gets the angle of the robot via the imu and gets the yaw
             double botHeading = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS) + Math.PI;
@@ -86,11 +87,20 @@ public class fieldCentric extends LinearOpMode {
             double frontRightPower = (rotY - rotX - rx) / denominator;
             double backRightPower = (rotY + rotX - rx) / denominator;
 
+            telemetry.addData("Is it pressed before adding power: ", driverButtonB.Pressed());
+
+
             // Set motor power based on the calculated values
             frontLeftMotor.setPower(frontLeftPower);
             backLeftMotor.setPower(backLeftPower);
             frontRightMotor.setPower(frontRightPower);
             backRightMotor.setPower(backRightPower);
+
+            telemetry.addData("Is it pressed after adding power: ", driverButtonB.Pressed());
         }
+        telemetry.update();
+    }
+    private void updateButtons() {
+        driverButtonB.updateButton(gamepad1);
     }
 }
