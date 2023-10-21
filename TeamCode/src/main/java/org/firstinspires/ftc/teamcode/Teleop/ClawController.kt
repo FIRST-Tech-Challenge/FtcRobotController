@@ -23,23 +23,25 @@ class ClawControl: DriveMethods() {
         waitForStart()
         var changed1 = false;
         var changed2= false;
+        servo1!!.position = 0.3
+        servo2!!.position = 0.871
         while (opModeIsActive()) {
-          telemetry.addLine(" Thang: "+servo1!!.position+" Thangy: "+servo2!!.getPosition())
+          telemetry.addLine(" Thang: "+servo1!!.position+" Thangy: "+servo2!!.position)
             telemetry.update()
-          if(gamepad1.dpad_down&&!changed1){
-              servo1!!.position-=0.01;
+          if(gamepad1.dpad_down&&!changed1&& servo1!!.position>0.21){
+              servo1!!.position-=0.02;
               changed1=true;
-          }else if(gamepad1.dpad_up&&!changed1){
-                servo1!!.position+=0.01;
+          }else if(gamepad1.dpad_up&&!changed1&&servo1!!.position<0.57){
+                servo1!!.position+=0.02;
               changed1=true;
           }else if(!gamepad1.dpad_down&&!gamepad1.dpad_up){
               changed1=false;
           }
 
-          if(gamepad1.dpad_left&&!changed2){
+          if(gamepad1.dpad_left&&!changed2&&servo2!!.position>0.6){
             servo2!!.position-=0.01;
               changed2=true;
-          }else if(gamepad1.dpad_right&&!changed2){
+          }else if(gamepad1.dpad_right&&!changed2&&servo2!!.position<0.87){
             servo2!!.position+=0.01;
               changed2=true;
           }else if(!gamepad1.dpad_left&&!gamepad1.dpad_right){
