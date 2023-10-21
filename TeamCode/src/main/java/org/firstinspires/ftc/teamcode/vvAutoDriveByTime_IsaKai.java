@@ -60,8 +60,8 @@ public class vvAutoDriveByTime_IsaKai extends LinearOpMode {
     private ElapsedTime     runtime = new ElapsedTime();
 
 
-    static final double     FORWARD_SPEED = 0.6;
-    static final double     TURN_SPEED    = 0.5;
+    static final double     FORWARD_SPEED = 0.3;
+    static final double     TURN_SPEED    = 0.5; 
 
     @Override
     public void runOpMode() {
@@ -69,9 +69,9 @@ public class vvAutoDriveByTime_IsaKai extends LinearOpMode {
         // Initialize the drive system variables.
 
         leftUp  = hardwareMap.get(DcMotor.class, "FLM");
-        rightUp = hardwareMap.get(DcMotor.class, "right_Up");
-        leftDown = hardwareMap.get(DcMotor.class,"left_Down");
-        rightDown = hardwareMap.get(DcMotor.class,"right_Down");
+        rightUp = hardwareMap.get(DcMotor.class, "FRM");
+        leftDown = hardwareMap.get(DcMotor.class,"RLM");
+        rightDown = hardwareMap.get(DcMotor.class,"RRM");
 
         // To drive forward, most robots need the motor on one side to be reversed, because the axles point in opposite directions.
         // When run, this OpMode should start both motors driving forward. So adjust these two lines based on your first test drive.
@@ -84,7 +84,7 @@ public class vvAutoDriveByTime_IsaKai extends LinearOpMode {
         // Send telemetry message to signify robot waiting;
         telemetry.addData("Status", "Ready to run");    //
         telemetry.update();
-
+    
         // Wait for the game to start (driver presses PLAY)
         waitForStart();
 
@@ -99,7 +99,7 @@ public class vvAutoDriveByTime_IsaKai extends LinearOpMode {
         while (opModeIsActive() && (runtime.seconds() < 3.0)) {
             telemetry.addData("Path", "Leg 1: %4.1f S Elapsed", runtime.seconds());
             telemetry.update();
-        }
+            }
 
         // Step 2:  Spin right for 1.3 seconds
         leftUp.setPower(TURN_SPEED);
@@ -124,10 +124,10 @@ public class vvAutoDriveByTime_IsaKai extends LinearOpMode {
         }
 
         // Step 4:  Stop
-        leftUp.setPower(0);
-        rightUp.setPower(0);
-        leftDown.setPower(0);
-        rightDown.setPower(0);
+        leftUp.setPower(0.3);
+        rightUp.setPower(0.3);
+        leftDown.setPower(0.3);
+        rightDown.setPower(0.3);
 
         telemetry.addData("Path", "Complete");
         telemetry.update();
