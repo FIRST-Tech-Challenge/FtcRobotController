@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode;
 
+import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.opencv.core.Core;
 import org.opencv.core.Mat;
 import org.opencv.core.Rect;
@@ -17,13 +18,13 @@ public class MarkerDetector extends OpenCvPipeline {
     double leftCrTotal;
     private static final int SUBMAT_WIDTH = 80;
     private static final int SUBMAT_HEIGHT = 80;
-
+    private Telemetry telemetry;
     public enum MARKER_POSITION {
         LEFT, RIGHT, CENTER, UNDETECTED, UNKNOWN;
     }
 
-    public MarkerDetector() {
-
+    public MarkerDetector(Telemetry telemetry) {
+        this.telemetry = telemetry;
     }
 
     @Override
@@ -31,8 +32,13 @@ public class MarkerDetector extends OpenCvPipeline {
         input.copyTo(workingMatrix);
 
         if (workingMatrix.empty()) {
+            telemetry.addLine("working matrix is empty");
+            telemetry.update();
             return input;
         }
+        telemetry.addLine("working matrix is not empty -- drawing");
+        telemetry.update();
+
 
         Imgproc.cvtColor(workingMatrix, workingMatrix, Imgproc.COLOR_RGB2YCrCb);
 

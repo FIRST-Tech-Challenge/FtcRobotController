@@ -1,10 +1,7 @@
 package org.firstinspires.ftc.teamcode;
 
-import android.util.Log;
-
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
@@ -32,7 +29,7 @@ public class TestAuto extends LinearOpMode {
         robot.setUpDrivetrainMotors();
         boolean movedToMarker = false;
 
-        detector = new MarkerDetector();
+        detector = new MarkerDetector(telemetry);
         webcam.setPipeline(detector);
         webcam.openCameraDevice();
         webcam.startStreaming(320, 240, OpenCvCameraRotation.UPRIGHT);

@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode;
 
+import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.internal.camera.calibration.CameraCalibration;
 import org.firstinspires.ftc.vision.VisionProcessor;
 import org.opencv.core.Core;
@@ -18,6 +19,20 @@ public class MarkerProcessor implements VisionProcessor {
 
     public enum MARKER_POSITION {
         LEFT, RIGHT, CENTER, UNDETECTED, UNKNOWN
+    }
+
+    private Telemetry telemetry;
+
+    public MarkerProcessor(Telemetry telemetry) {
+        this.telemetry = telemetry;
+        detector = new MarkerDetector(telemetry);
+    }
+
+    private final MarkerDetector detector;
+
+
+    public MarkerDetector.MARKER_POSITION getPosition() {
+        return detector.position;
     }
 
     @Override
