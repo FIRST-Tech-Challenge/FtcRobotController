@@ -18,7 +18,7 @@ public class Lift extends RFMotor {
      * Constructor
      */
     public Lift() {
-        super("liftMotor", true);
+        super("leftLiftMotor", true);
     }
 
     /**

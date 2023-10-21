@@ -2,22 +2,24 @@ package org.firstinspires.ftc.teamcode.Components.RFModules.Devices;
 
 import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.op;
 
+import com.qualcomm.robotcore.hardware.AnalogInput;
+import com.qualcomm.robotcore.hardware.AnalogSensor;
 import com.qualcomm.robotcore.hardware.UltrasonicSensor;
 
 /**
  * William
  */
 public class RFUltrasonic {
-    private UltrasonicSensor ultrasonic;
+    private AnalogInput ultrasonic;
 
-    private double MAX_RANGE = 30;
+    double MAX_RANGE = 254;
 
     /**
      * Constructor
      * @param p_ultraName name of the ultrasonic in the hardware map
      */
     public RFUltrasonic(String p_ultraName){
-        ultrasonic = op.hardwareMap.get(UltrasonicSensor.class, p_ultraName);
+        ultrasonic = op.hardwareMap.get(AnalogInput.class, p_ultraName);
     }
 
     /**
@@ -27,15 +29,15 @@ public class RFUltrasonic {
      * Logs to least fine level.
      * Does not update a state machine.
      */
-    public boolean check() {
-        return checkDist() < MAX_RANGE;
+    public boolean check(Line p_targetLine) {
+        return ultrasonic.getVoltage() * MAX_RANGE < p_targetLine.distToLine();
     }
 
-    public double checkDist() {
-        return ultrasonic.getUltrasonicLevel();
+    public double getDist() {
+        return ultrasonic.getVoltage() * MAX_RANGE;
     }
 
-    public void flipPin() {
-        ultrasonic.close();
+    public double getVoltage() {
+        return ultrasonic.getVoltage();
     }
 }

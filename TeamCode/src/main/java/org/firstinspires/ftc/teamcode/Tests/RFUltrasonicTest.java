@@ -1,19 +1,20 @@
 package org.firstinspires.ftc.teamcode.Tests;
 
+import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.LOGGER;
 import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.op;
-
+import static org.firstinspires.ftc.teamcode.roadrunner.drive.PoseStorage.currentPose;
 import static java.lang.Math.toRadians;
 
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
+import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.hardware.DigitalChannel;
-import com.qualcomm.robotcore.hardware.DigitalChannelController;
 import com.qualcomm.robotcore.hardware.LED;
-import com.qualcomm.robotcore.util.SerialNumber;
 
-import org.firstinspires.ftc.teamcode.Components.RFModules.Devices.RFLEDStrip;
 import org.firstinspires.ftc.teamcode.Components.RFModules.Devices.RFUltrasonic;
+import org.firstinspires.ftc.teamcode.Components.RFModules.System.RFLogger;
+import org.firstinspires.ftc.teamcode.Components.Ultrasonics;
+import org.firstinspires.ftc.teamcode.Robots.BasicRobot;
 import org.firstinspires.ftc.teamcode.Robots.BradBot;
 import org.firstinspires.ftc.teamcode.roadrunner.trajectorysequence.TrajectorySequence;
 
@@ -21,97 +22,69 @@ import org.firstinspires.ftc.teamcode.roadrunner.trajectorysequence.TrajectorySe
  * William
  * Program to tune the constants of an RFUltrasonic(x,y,a offset), must have inputable expected obstacle in the form of a linear equation
  */
+@Autonomous
 public class RFUltrasonicTest extends LinearOpMode {
-    DigitalChannelController controller = new DigitalChannelController() {
-        @Override
-        public SerialNumber getSerialNumber() {
-            return null;
-        }
-
-        @Override
-        public DigitalChannel.Mode getDigitalChannelMode(int channel) {
-            return null;
-        }
-
-        @Override
-        public void setDigitalChannelMode(int channel, DigitalChannel.Mode mode) {
-
-        }
-
-        @Override
-        public void setDigitalChannelMode(int channel, Mode mode) {
-
-        }
-
-        @Override
-        public boolean getDigitalChannelState(int channel) {
-            return false;
-        }
-
-        @Override
-        public void setDigitalChannelState(int channel, boolean state) {
-
-        }
-
-        @Override
-        public Manufacturer getManufacturer() {
-            return null;
-        }
-
-        @Override
-        public String getDeviceName() {
-            return null;
-        }
-
-        @Override
-        public String getConnectionInfo() {
-            return null;
-        }
-
-        @Override
-        public int getVersion() {
-            return 0;
-        }
-
-        @Override
-        public void resetDeviceConfigurationForOpMode() {
-
-        }
-
-        @Override
-        public void close() {
-
-        }
-    };
-    LED ultras = new LED(controller,0);
-
-    BradBot robot = new BradBot(this, false);
-
-    double loopNum = 0;
-
     public void runOpMode() {
-        loopNum++;
-        if (loopNum % 10 == 0) {
-            ultras.enable(!ultras.isLightOn());
+        BasicRobot robot = new BasicRobot(this, false);
+        LED ultras = op.hardwareMap.get(LED.class, "ultras");
+        RFUltrasonic ultra = new RFUltrasonic("ultra");
+
+        double lastEnabled = 0;
+        waitForStart();
+        ultras.enable(ultras.isLightOn());
+        sleep(50);
+        while(!isStopRequested()&&opModeIsActive()) {
+            if (op.getRuntime() - lastEnabled >= 0.15) {
+                ultras.enable(ultras.isLightOn());
+            }
+
+            if (op.getRuntime() - lastEnabled >= 0.2) {
+
+                if (!ultras.isLightOn()) {
+                    LOGGER.log(RFLogger.Severity.INFO, "enabled");
+                    LOGGER.log(RFLogger.Severity.INFO, ultra.getDist() + "");
+                }
+                else {
+                    LOGGER.log(RFLogger.Severity.INFO, "disabled");
+                    op.telemetry.addData("dist: ", ultra.getDist());
+                    op.telemetry.update();
+                }
+                ultras.enable(ultras.isLightOn());
+
+//                op.telemetry.addData("voltage: ", ultra.getVoltage());
+//                LOGGER.log(RFLogger.Severity.INFO, currentPose.getX() + "");
+//                LOGGER.log(RFLogger.Severity.INFO, currentPose.getY() + "");
+
+                lastEnabled = op.getRuntime();
+            }
+
+            robot.update();
         }
 
+//        robot.roadrun.followTrajectorySequence(backdrop);
+//        if (realUltras.checkAlliance()) {
+//            robot.roadrun.followTrajectorySequence(deposit);
+//        }
+//        else {
+//            robot.roadrun.followTrajectorySequence(wait);
+//        }
     }
 
-    TrajectorySequence backdrop = robot.roadrun.trajectorySequenceBuilder(new Pose2d(-38.5, -63.25, Math.toRadians(-90)))
-            .setReversed(true)
-            .lineToLinearHeading(new Pose2d(-46, -37, toRadians(90)))
-            .addTemporalMarker(robot::done)
-            .build();
-
-    TrajectorySequence backUp = robot.roadrun.trajectorySequenceBuilder(new Pose2d(-38.5, -63.25, Math.toRadians(-90)))
-            .setReversed(true)
-            .lineToLinearHeading(new Pose2d(-46, -37, toRadians(90)))
-            .addTemporalMarker(robot::done)
-            .build();
-
-    TrajectorySequence deposit = robot.roadrun.trajectorySequenceBuilder(new Pose2d(-38.5, -63.25, Math.toRadians(-90)))
-            .setReversed(true)
-            .lineToLinearHeading(new Pose2d(-46, -37, toRadians(90)))
-            .addTemporalMarker(robot::done)
-            .build();
+//    TrajectorySequence backdrop = robot.roadrun.trajectorySequenceBuilder(new Pose2d(-38.5, -63.25, Math.toRadians(270)))
+//            .setReversed(true)
+//            .lineToLinearHeading(new Pose2d(-46, -37, toRadians(90)))
+//            .setReversed(false)
+//            .lineToLinearHeading(new Pose2d(10, -35, toRadians(0)))
+//            .addTemporalMarker(robot::done)
+//            .build();
+//
+//    TrajectorySequence wait = robot.roadrun.trajectorySequenceBuilder(new Pose2d(-38.5, -63.25, Math.toRadians(0)))
+//            .lineToConstantHeading(new Vector2d(20, -60))
+//            .addTemporalMarker(robot::done)
+//            .build();
+//
+//    TrajectorySequence deposit = robot.roadrun.trajectorySequenceBuilder(new Pose2d(-38.5, -63.25, Math.toRadians(0)))
+//            .lineToLinearHeading(new Pose2d(45, -35, toRadians(0)))
+//            .addTemporalMarker(robot::done)
+//            .build();
 }
