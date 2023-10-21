@@ -70,7 +70,7 @@ public class Robot {
     public void setUpVisionProcessing() {
 
 //        aprilTag = new AprilTagProcessor.Builder().build();
-        markerProcessor = new MarkerProcessor();
+        markerProcessor = new MarkerProcessor(telemetry);
 
         visionPortal = new VisionPortal.Builder()
             .setCamera(hardwareMap.get(WebcamName.class, "Webcam 1"))
