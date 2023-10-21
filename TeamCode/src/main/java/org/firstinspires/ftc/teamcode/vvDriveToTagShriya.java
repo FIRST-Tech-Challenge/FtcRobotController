@@ -98,8 +98,10 @@ public class vvDriveToTagShriya extends LinearOpMode
     final double MAX_AUTO_SPEED = 0.5;   //  Clip the approach speed to this max value (adjust for your robot)
     final double MAX_AUTO_TURN  = 0.25;  //  Clip the turn speed to this max value (adjust for your robot)
 
-    private DcMotor leftDrive   = null;  //  Used to control the left drive wheel
-    private DcMotor rightDrive  = null;  //  Used to control the right drive wheel
+    private DcMotor leftUp  = null;  //  Used to control the left up wheel
+    private DcMotor rightUp = null;  //  Used to control the right up wheel
+    private DcMotor leftDowm   = null;  //  Used to control the left down wheel
+    private DcMotor rightDown = null;  //  Used to control the right down wheel
 
     private static final boolean USE_WEBCAM = true;  // Set true to use a webcam, or false for a phone camera
     private static final int DESIRED_TAG_ID = -1;    // Choose the tag you want to approach or set to -1 for ANY tag.
@@ -119,14 +121,18 @@ public class vvDriveToTagShriya extends LinearOpMode
         // Initialize the hardware variables. Note that the strings used here as parameters
         // to 'get' must match the names assigned during the robot configuration.
         // step (using the FTC Robot Controller app on the phone).
-        leftDrive  = hardwareMap.get(DcMotor.class, "left_drive");
-        rightDrive = hardwareMap.get(DcMotor.class, "right_drive");
+        leftUp  = hardwareMap.get(DcMotor.class, "left_Up");
+        rightUp = hardwareMap.get(DcMotor.class, "right_Up");
+        leftDown  = hardwareMap.get(DcMotor.class, "left_Down");
+        rightDown = hardwareMap.get(DcMotor.class, "right_Down");
 
         // To drive forward, most robots need the motor on one side to be reversed because the axles point in opposite directions.
         // When run, this OpMode should start both motors driving forward. So adjust these two lines based on your first test drive.
         // Note: The settings here assume direct drive on left and right wheels.  Single Gear Reduction or 90 Deg drives may require direction flips
-        leftDrive.setDirection(DcMotor.Direction.REVERSE);
-        rightDrive.setDirection(DcMotor.Direction.FORWARD);
+        leftUp.setDirection(DcMotor.Direction.REVERSE);
+        rightUp.setDirection(DcMotor.Direction.FORWARD);
+        leftDown.setDirection(DcMotor.Direction.REVERSE);
+        rightDown.setDirection(DcMotor.Direction.FORWARD);
 
         if (USE_WEBCAM)
             setManualExposure(6, 250);  // Use low exposure time to reduce motion blur
