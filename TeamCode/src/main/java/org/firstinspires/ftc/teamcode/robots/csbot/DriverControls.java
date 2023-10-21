@@ -63,6 +63,13 @@ public class DriverControls {
                 )
         );
 
+        if(gamepad1.right_bumper)
+                robot.outtake.moveSlide(1);
+        if(gamepad1.left_bumper)
+            robot.outtake.moveSlide(-1);
+        if(gamepad1.y)
+            robot.outtake.flip();
+
     }
 
     public void handleStateSwitch() {
