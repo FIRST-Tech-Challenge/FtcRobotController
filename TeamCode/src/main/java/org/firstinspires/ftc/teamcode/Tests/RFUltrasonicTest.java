@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.Tests;
 
 import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.LOGGER;
 import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.op;
+import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.packet;
 import static org.firstinspires.ftc.teamcode.roadrunner.drive.PoseStorage.currentPose;
 import static java.lang.Math.toRadians;
 
@@ -11,11 +12,13 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.LED;
 
+import org.firstinspires.ftc.teamcode.Components.RFModules.Devices.Line;
 import org.firstinspires.ftc.teamcode.Components.RFModules.Devices.RFUltrasonic;
 import org.firstinspires.ftc.teamcode.Components.RFModules.System.RFLogger;
 import org.firstinspires.ftc.teamcode.Components.Ultrasonics;
 import org.firstinspires.ftc.teamcode.Robots.BasicRobot;
 import org.firstinspires.ftc.teamcode.Robots.BradBot;
+import org.firstinspires.ftc.teamcode.roadrunner.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.roadrunner.trajectorysequence.TrajectorySequence;
 
 /**
@@ -26,19 +29,21 @@ import org.firstinspires.ftc.teamcode.roadrunner.trajectorysequence.TrajectorySe
 public class RFUltrasonicTest extends LinearOpMode {
     public void runOpMode() {
         BasicRobot robot = new BasicRobot(this, false);
+        SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
         LED ultras = op.hardwareMap.get(LED.class, "ultras");
         RFUltrasonic ultra = new RFUltrasonic("ultra");
 
         double lastEnabled = 0;
+        drive.setPoseEstimate(new Pose2d(40, 24, toRadians(90)));
         waitForStart();
-//        ultras.enable(ultras.isLightOn());
+        ultras.enable(ultras.isLightOn());
         sleep(50);
         while(!isStopRequested()&&opModeIsActive()) {
-            if (op.getRuntime() - lastEnabled >= 0.15) {
-//                ultras.enable(ultras.isLightOn());
+            if (op.getRuntime() - lastEnabled >= 0.05) {
+                ultras.enable(ultras.isLightOn());
             }
 
-            if (op.getRuntime() - lastEnabled >= 0.2) {
+            if (op.getRuntime() - lastEnabled >= 0.1) {
 
                 if (!ultras.isLightOn()) {
                     LOGGER.log(RFLogger.Severity.INFO, "enabled");
@@ -46,10 +51,15 @@ public class RFUltrasonicTest extends LinearOpMode {
                 }
                 else {
                     LOGGER.log(RFLogger.Severity.INFO, "disabled");
-                    op.telemetry.addData("dist: ", ultra.getDist());
-                    op.telemetry.update();
+                    LOGGER.log("dist: " + ultra.getDist());
+                    packet.put("dist: ", ultra.getDist());
+                    packet.put("posx", drive.getPoseEstimate().getX());
+                    packet.put("posy", drive.getPoseEstimate().getY());
+                    packet.put("checked?: >_< <3", ultra.check(new Line(1,1,24,
+                            new Vector2d(-72,24), new Vector2d(0,96))));
+
                 }
-//                ultras.enable(ultras.isLightOn());
+                ultras.enable(ultras.isLightOn());
 
 //                op.telemetry.addData("voltage: ", ultra.getVoltage());
 //                LOGGER.log(RFLogger.Severity.INFO, currentPose.getX() + "");
@@ -57,7 +67,7 @@ public class RFUltrasonicTest extends LinearOpMode {
 
                 lastEnabled = op.getRuntime();
             }
-
+            drive.update();
             robot.update();
         }
 

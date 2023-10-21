@@ -231,10 +231,10 @@ public class SampleMecanumDrive extends MecanumDrive {
         trajectorySequenceRunner = new TrajectorySequenceRunner(follower, HEADING_PID);
         trajectorySeq = trajectorySequenceBuilder(getPoseEstimate()).lineTo(new Vector2d(10, 0)).build();
         servos = new ArrayList<>();
-        servos.add(hardwareMap.servo.get("servoLeftFront"));
-        servos.add(hardwareMap.servo.get("servoLeftBack"));
-        servos.add(hardwareMap.servo.get("servoRightFront"));
-        servos.add(hardwareMap.servo.get("servoRightBack"));
+//        servos.add(hardwareMap.servo.get("servoLeftFront"));
+//        servos.add(hardwareMap.servo.get("servoLeftBack"));
+//        servos.add(hardwareMap.servo.get("servoRightFront"));
+//        servos.add(hardwareMap.servo.get("servoRightBack"));
     }
 
     public TrajectoryBuilder trajectoryBuilder(Pose2d startPose) {

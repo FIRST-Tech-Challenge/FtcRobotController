@@ -16,10 +16,10 @@ public class Ultrasonics {
 
     private double lastFlipTime = 0;
 
-    Line allianceLine = new Line(1, 0, 56, new Pose2d(56, 24), new Vector2d(24, 0),
+    Line allianceLine = new Line(1, 0, 56, new Vector2d(24, 0),
             new Vector2d(0, 0));
 
-    Line oppLine = new Line(1, 0, 56, new Pose2d(56, 24), new Vector2d(24, 0),
+    Line oppLine = new Line(1, 0, 56, new Vector2d(24, 0),
             new Vector2d(0, 0));
 
     /**

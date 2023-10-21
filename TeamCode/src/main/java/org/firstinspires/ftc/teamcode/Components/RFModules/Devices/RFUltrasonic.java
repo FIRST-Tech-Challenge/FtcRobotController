@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.Components.RFModules.Devices;
 
 import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.op;
+import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.packet;
 
 import com.qualcomm.robotcore.hardware.AnalogInput;
 
@@ -31,11 +32,13 @@ public class RFUltrasonic {
      * Does not update a state machine.
      */
     public boolean check(Line p_targetLine) {
-        return ultrasonic.getVoltage() * ULTRA_FACTOR - ULTRA_ADJUSTMENT < p_targetLine.distToLine();
+        double dist = p_targetLine.distToLine();
+        packet.put("distTOline", dist);
+        return ultrasonic.getVoltage() * ULTRA_FACTOR - ULTRA_ADJUSTMENT < dist;
     }
 
     public double getDist() {
-        return ultrasonic.getVoltage();
+        return ultrasonic.getVoltage()*ULTRA_FACTOR - ULTRA_ADJUSTMENT;
     }
 
     public double getVoltage() {
