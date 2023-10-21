@@ -20,7 +20,7 @@ public class MarkerDetector extends OpenCvPipeline {
     private static final int SUBMAT_HEIGHT = 80;
     private Telemetry telemetry;
     public enum MARKER_POSITION {
-        LEFT, RIGHT, CENTER, UNDETECTED, UNKNOWN;
+        LEFT, RIGHT, CENTER, UNDETECTED, UNKNOWN
     }
 
     public MarkerDetector(Telemetry telemetry) {
