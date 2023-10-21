@@ -21,8 +21,8 @@ public class Robot implements Subsystem{
     //components and subsystems
     public Subsystem[] subsystems;
     public CSDriveTrain driveTrain;
-    //TODO - implement subsystems that build team comes up with
     public Intake intake;
+    public Outtake outtake;
     //TODO - create a field
 //    public Field field;
 
@@ -65,6 +65,7 @@ public class Robot implements Subsystem{
         //TODO - THIS IS FOR MANUAL ONLY
         driveTrain.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         intake = new Intake(hardwareMap, this);
+        outtake = new Outtake(hardwareMap, this);
 
         subsystems = new Subsystem[] {driveTrain, intake}; //{driveTrain, turret, crane};
         subsystemUpdateTimes = new long[subsystems.length];
