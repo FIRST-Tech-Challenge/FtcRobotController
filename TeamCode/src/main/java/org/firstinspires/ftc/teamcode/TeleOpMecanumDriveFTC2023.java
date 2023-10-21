@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.Servo;
 
 /*
  * This OpMode executes a Tank Drive control TeleOp a direct drive robot
@@ -26,8 +27,11 @@ public class TeleOpMecanumDriveFTC2023 extends OpMode{
     public DcMotor  frontRight = null;
     public DcMotor  backLeft = null;
     public DcMotor  backRight = null;
+    public Servo  claw = null;
+    public Servo arm1 = null;
+    public Servo arm2 = null;
 
-    double clawOffset = 0;
+    //double clawOffset = 0;
 
     //public static final double MID_SERVO   =  0.5 ;
    // public static final double CLAW_SPEED  = 0.02 ;        // sets rate to move servo
@@ -44,6 +48,9 @@ public class TeleOpMecanumDriveFTC2023 extends OpMode{
         backLeft  = hardwareMap.get(DcMotor.class, "LB");
         frontRight = hardwareMap.get(DcMotor.class, "RF");
         backRight  = hardwareMap.get(DcMotor.class, "RB");
+        claw = hardwareMap.get(Servo.class, "Claw");
+        arm1  = hardwareMap.get(Servo.class, "Arm1");
+        arm2  = hardwareMap.get(Servo.class, "Arm2");
         //leftArm    = hardwareMap.get(DcMotor.class, "left_arm");
 
         // To drive forward, most robots need the motor on one side to be reversed, because the axles point in opposite directions.
@@ -115,22 +122,25 @@ public class TeleOpMecanumDriveFTC2023 extends OpMode{
         lefty = gamepad1.left_stick_y;
         leftx = gamepad1.left_stick_x;
         rightx = gamepad1.right_stick_x;
-
+        double baseSpeed = 1;
+        if (gamepad1.a){
+            baseSpeed = 0.5;
+        }
         if (lefty >= 0) {
-            driveStraight(lefty,1);
+            driveStraight(lefty*baseSpeed,1);
 
         } else if(lefty < 0) {
-            driveStraight(-1*lefty,-1);
+            driveStraight(-1*lefty*baseSpeed,-1);
         }
         if (leftx >= 0) {
-            driveSide(leftx,-1);
+            driveSide(leftx*baseSpeed,-1);
 
         } else if(leftx < 0) {
-            driveSide(-1*leftx,1);
+            driveSide(-1*leftx*baseSpeed,1);
         } else if(rightx < 0) {
-            driveTurn(rightx, -1);
+            driveTurn(rightx*baseSpeed, -1);
         } else if(rightx >= 0) {
-            driveTurn(rightx, 1);
+            driveTurn(rightx*baseSpeed, 1);
         }
 
 //        frontLeft.setPower(lefty - leftx + right);
