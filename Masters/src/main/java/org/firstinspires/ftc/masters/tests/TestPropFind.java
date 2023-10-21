@@ -14,10 +14,16 @@ import org.openftc.easyopencv.OpenCvPipeline;
 
 public class TestPropFind extends OpenCvPipeline {
 
-    private final Rect interestLeft = new Rect(254, 231, 32, 50);
-    private final Rect interestMid = new Rect(304, 231, 32, 50);
-    private final Rect interestRight = new Rect(354, 231, 32, 50);
+    private final Rect interestMid = new Rect(178, 180, 32, 50);
+    private final Rect interestRight = new Rect(460, 230, 32, 50);
 
+    private enum pos {
+        LEFT,
+        MID,
+        RIGHT,
+    }
+
+    public pos position = pos.LEFT;
 
     Telemetry telemetry;
     private final TelemetryPacket packet;
@@ -30,15 +36,11 @@ public class TestPropFind extends OpenCvPipeline {
     Mat LAB = new Mat(), dst = new Mat();
     Mat A = new Mat();
     Mat B = new Mat();
-    Mat region_a_left = new Mat();
-    Mat region_b_left = new Mat();
     Mat region_a_mid = new Mat();
     Mat region_b_mid = new Mat();
     Mat region_a_right = new Mat();
     Mat region_b_right = new Mat();
 
-    int avg_a_left = 0;
-    int avg_b_left = 0;
     int avg_a_mid = 0;
     int avg_b_mid = 0;
     int avg_a_right = 0;
@@ -52,37 +54,17 @@ public class TestPropFind extends OpenCvPipeline {
 
     void inputToLAB(Mat input) {
 
-        Imgproc.cvtColor(input, LAB, Imgproc.COLOR_RGB2HSV);
+        Imgproc.cvtColor(input, LAB, Imgproc.COLOR_RGB2Lab);
         Core.extractChannel(LAB, A, 0);
         Core.extractChannel(LAB, B, 1);
     }
 
     @Override
     public Mat processFrame(Mat input) {
-        inputToLAB(dst);
 
-        region_a_left = A.submat(interestLeft);
-        region_b_left = B.submat(interestLeft);
-        region_a_mid = A.submat(interestMid);
-        region_b_mid = B.submat(interestMid);
-        region_a_right = A.submat(interestRight);
-        region_b_right = B.submat(interestRight);
+        inputToLAB(input);
 
-        avg_a_left = (int) Core.mean(region_a_left).val[0];
-        avg_b_left = (int) Core.mean(region_b_left).val[0];
-        avg_a_mid = (int) Core.mean(region_a_left).val[0];
-        avg_b_mid = (int) Core.mean(region_b_left).val[0];
-        avg_a_right = (int) Core.mean(region_a_left).val[0];
-        avg_b_right = (int) Core.mean(region_b_left).val[0];
-
-        packet.put("avg a left", avg_a_left);
-        packet.put("avg b left", avg_b_left);
-        packet.put("avg a mid", avg_a_mid);
-        packet.put("avg b mid", avg_b_mid);
-        packet.put("avg a right", avg_a_right);
-        packet.put("avg b right", avg_b_right);
-
-        Core.inRange(LAB, new Scalar(0,0,0), new Scalar(250,250,250), mask);
+        Core.inRange(LAB, new Scalar(0,0,0), new Scalar(240,150,255), mask); //Black out Red
 
         diff_im = new Mat();
         Core.add(diff_im, Scalar.all(0), diff_im);
@@ -91,12 +73,41 @@ public class TestPropFind extends OpenCvPipeline {
         diff_im.copyTo(input);
         diff_im.release();
 
-        dashboard.sendTelemetryPacket(packet);
+        Core.extractChannel(LAB, A, 0);
 
+        inputToLAB(input);
+
+        region_a_mid = A.submat(interestMid);
+        region_b_mid = B.submat(interestMid);
+        region_a_right = A.submat(interestRight);
+        region_b_right = B.submat(interestRight);
+
+        avg_a_mid = (int) Core.mean(region_a_mid).val[0];
+        avg_b_mid = (int) Core.mean(region_b_mid).val[0];
+        avg_a_right = (int) Core.mean(region_a_right).val[0];
+        avg_b_right = (int) Core.mean(region_b_right).val[0];
+
+        if (avg_a_mid<5) {
+            position = pos.MID;
+        } else if (avg_a_right<5) {
+            position = pos.RIGHT;
+        } else {
+            position = pos.LEFT;
+        }
+
+        packet.put("avg a mid", avg_a_mid);
+        packet.put("avg b mid", avg_b_mid);
+        packet.put("avg a right", avg_a_right);
+        packet.put("avg b right", avg_b_right);
+        packet.put("pos: ", position);
+
+        dashboard.sendTelemetryPacket(packet);
         telemetry.update();
 
-        Imgproc.rectangle(dst, new Point(interestLeft.x, interestLeft.y), new Point(interestLeft.x + interestLeft.width, interestLeft.y+ interestLeft.height), new Scalar(0,255,0),1 );
+        Imgproc.rectangle(input, new Point(interestMid.x, interestMid.y), new Point(interestMid.x + interestMid.width, interestMid.y+ interestMid.height), new Scalar(0,255,0),1 );
+        Imgproc.rectangle(input, new Point(interestRight.x, interestRight.y), new Point(interestRight.x + interestRight.width, interestRight.y+ interestRight.height), new Scalar(0,255,0),1 );
 
-        return dst;
+
+        return input; //dst
     }
 }
