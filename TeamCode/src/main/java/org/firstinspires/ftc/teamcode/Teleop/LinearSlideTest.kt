@@ -78,7 +78,7 @@ class LinearSlideTest: DriveMethods() {
             }
             if (gamepad1.y) {
                 if (closeToBoard) {
-                    t += .26
+                    t = .26
                     linearSlideCalc()
                     target = (slideLength / 3.3) * encoders
                 } else {
@@ -88,7 +88,7 @@ class LinearSlideTest: DriveMethods() {
             }
             if (gamepad1.x) {
                 if (closeToBoard) {
-                    t += .78
+                    t = .78
                     linearSlideCalc()
                     target = (slideLength / 3.3) * encoders
                 } else {
