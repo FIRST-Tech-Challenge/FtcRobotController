@@ -52,9 +52,11 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 public class vvAutoDriveByTime_IsaKai extends LinearOpMode {
 
     /* Declare OpMode members. */
-    private DcMotor         leftDrive   = null;
-    private DcMotor         rightDrive  = null;
-
+    private DcMotor         leftUp   = null;
+    private DcMotor         rightUp= null;
+    private DcMotor         leftDown = null;
+    private DcMotor         rightDown = null;
+    
     private ElapsedTime     runtime = new ElapsedTime();
 
 
@@ -65,14 +67,18 @@ public class vvAutoDriveByTime_IsaKai extends LinearOpMode {
     public void runOpMode() {
 
         // Initialize the drive system variables.
-        leftDrive  = hardwareMap.get(DcMotor.class, "left_drive");
-        rightDrive = hardwareMap.get(DcMotor.class, "right_drive");
-
+        leftUp  = hardwareMap.get(DcMotor.class, "left_Up");
+        rightUp = hardwareMap.get(DcMotor.class, "right_Up");
+        leftDown = hardwareMap.get(DcMotor.class,"left_Down); 
+        rightDown = hardwareMap.get(DcMotor.class,"right_Down); 
+        
         // To drive forward, most robots need the motor on one side to be reversed, because the axles point in opposite directions.
         // When run, this OpMode should start both motors driving forward. So adjust these two lines based on your first test drive.
         // Note: The settings here assume direct drive on left and right wheels.  Gear Reduction or 90 Deg drives may require direction flips
-        leftDrive.setDirection(DcMotor.Direction.REVERSE);
-        rightDrive.setDirection(DcMotor.Direction.FORWARD);
+        leftUp.setDirection(DcMotor.Direction.REVERSE);
+        rightUp.setDirection(DcMotor.Direction.FORWARD);
+        leftDown.setDirection(DcMotor.Direction.REVERSE);
+        rightDown.setDirection(DcMotor.Direction.FORWARD);
 
         // Send telemetry message to signify robot waiting;
         telemetry.addData("Status", "Ready to run");    //
@@ -84,8 +90,10 @@ public class vvAutoDriveByTime_IsaKai extends LinearOpMode {
         // Step through each leg of the path, ensuring that the Auto mode has not been stopped along the way
 
         // Step 1:  Drive forward for 3 seconds
-        leftDrive.setPower(FORWARD_SPEED);
-        rightDrive.setPower(FORWARD_SPEED);
+        leftUp.setPower(FORWARD_SPEED);
+        rightUp.setPower(FORWARD_SPEED);
+        leftDown.setPower(FORWARD_SPEED);
+        rightDown.setPower(FORWARD_SPEED);
         runtime.reset();
         while (opModeIsActive() && (runtime.seconds() < 3.0)) {
             telemetry.addData("Path", "Leg 1: %4.1f S Elapsed", runtime.seconds());
@@ -93,8 +101,10 @@ public class vvAutoDriveByTime_IsaKai extends LinearOpMode {
         }
 
         // Step 2:  Spin right for 1.3 seconds
-        leftDrive.setPower(TURN_SPEED);
-        rightDrive.setPower(-TURN_SPEED);
+        leftUp.setPower(TURN_SPEED);
+        rightUp.setPower(-TURN_SPEED);
+        leftDown.setPower(TURN_SPEED);
+        rightDown.setPower(-TURN_SPEED);
         runtime.reset();
         while (opModeIsActive() && (runtime.seconds() < 1.3)) {
             telemetry.addData("Path", "Leg 2: %4.1f S Elapsed", runtime.seconds());
@@ -102,8 +112,10 @@ public class vvAutoDriveByTime_IsaKai extends LinearOpMode {
         }
 
         // Step 3:  Drive Backward for 1 Second
-        leftDrive.setPower(-FORWARD_SPEED);
-        rightDrive.setPower(-FORWARD_SPEED);
+        leftUp.setPower(-FORWARD_SPEED);
+        rightUp.setPower(-FORWARD_SPEED);
+        leftDown.setPower(-FORWARD_SPEED);
+        rightDownrightUp.setPower(-FORWARD_SPEED);
         runtime.reset();
         while (opModeIsActive() && (runtime.seconds() < 1.0)) {
             telemetry.addData("Path", "Leg 3: %4.1f S Elapsed", runtime.seconds());
@@ -111,8 +123,10 @@ public class vvAutoDriveByTime_IsaKai extends LinearOpMode {
         }
 
         // Step 4:  Stop
-        leftDrive.setPower(0);
-        rightDrive.setPower(0);
+        leftUp.setPower(0);
+        rightUp.setPower(0);
+        leftDown.setPower(0);
+        rightDown.setPower(0);
 
         telemetry.addData("Path", "Complete");
         telemetry.update();
