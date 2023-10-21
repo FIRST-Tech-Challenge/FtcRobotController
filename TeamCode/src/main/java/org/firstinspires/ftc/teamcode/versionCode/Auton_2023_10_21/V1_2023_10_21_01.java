@@ -5,7 +5,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
-@Autonomous(name = "Encoder Drive Test 4 Lateral + CW 3K Steps Rev.2")
+@Autonomous(name = "V1 Auton Test 10-21-2023")
 public class V1_2023_10_21_01 extends LinearOpMode {
 
     private DcMotor leftFrontDrive   = null;  //  Used to control the left front drive wheel
@@ -183,9 +183,6 @@ public class V1_2023_10_21_01 extends LinearOpMode {
         int rightFrontDriveTargetTicks = rightFrontDriveNecessaryTicks;
         int leftBackDriveTargetTicks = leftBackDriveNecessaryTicks;
         int rightBackDriveTargetTicks = rightBackDriveNecessaryTicks;
-
-
-
 
         SetFrontLeftDriveDirection("forward");
         SetFrontRightDriveDirection("forward");
