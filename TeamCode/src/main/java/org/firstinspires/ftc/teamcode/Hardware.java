@@ -14,10 +14,10 @@ public class Hardware {
     final private double TICKS_PER_INCH = (TICKS_PER_MOTOR_REV * DRIVE_GEAR_REDUCTION)/ (WHEEL_DIAMETER_INCHES * 3.1415);
     final private double DRIVE_SPEED = 0.6;
 //    final private double TURN_SPEED = 0.5;
-    public static DcMotor frontLeft;
-    public static DcMotor frontRight;
-    public static DcMotor backLeft;
-    public static DcMotor backRight;
+    public DcMotor frontLeft;
+    public DcMotor frontRight;
+    public DcMotor backLeft;
+    public DcMotor backRight;
 
     public void init(HardwareMap hardwareMap) {
         try {
@@ -60,7 +60,13 @@ public class Hardware {
             telemetry.addData("BackLeftMotor: ", "Error");
             telemetry.update();
         }
+
         // Have to test this when the drive train is created
+        frontLeft.setTargetPosition(0);
+        frontRight.setTargetPosition(0);
+        backLeft.setTargetPosition(0);
+        backRight.setTargetPosition(0);
+
         frontLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         frontRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         backLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
