@@ -6,22 +6,16 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp
 import com.qualcomm.robotcore.hardware.DcMotor
 import com.qualcomm.robotcore.hardware.TouchSensor
 import org.firstinspires.ftc.teamcode.DriveMethods
+import org.firstinspires.ftc.teamcode.Variables.rMotorL
+import org.firstinspires.ftc.teamcode.Variables.rMotorR
+import org.firstinspires.ftc.teamcode.Variables.touchyL
+import org.firstinspires.ftc.teamcode.Variables.touchyR
 
 @TeleOp(name = "RackAndPain", group = "AprilTag")
 class RackAndPain: DriveMethods() {
-    var rMotorR: DcMotor? = null;
-    var rMotorL: DcMotor? = null;
-    var touchyR: TouchSensor? = null
-    var touchyL: TouchSensor? = null
-
-
     override fun runOpMode() {
-        //init
-//        initMotorsSecondBot()
-        rMotorR = hardwareMap.get<DcMotor>(DcMotor::class.java, "rMotorR");
-        rMotorL = hardwareMap.get<DcMotor>(DcMotor::class.java, "rMotorL");
-        touchyR = hardwareMap.get<TouchSensor>(TouchSensor::class.java, "touchyR")
-        touchyL = hardwareMap.get<TouchSensor>(TouchSensor::class.java, "touchyL")
+        initMotorsSecondBot()
+
         var lClick =0;
         var rClick = 0;
         var lPower = 0.2
