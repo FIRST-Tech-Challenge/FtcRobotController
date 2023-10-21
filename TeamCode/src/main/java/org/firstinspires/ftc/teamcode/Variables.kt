@@ -49,7 +49,7 @@ object Variables {
     }
     var t = 0.0;
     var slideToBoard = 0.0;
-    var clawToBoard = 0.0;
+    var clawToBoard = 0.1;
     var x =  0.0;
     var y = 0.0;
     var slideLength = 0.0;

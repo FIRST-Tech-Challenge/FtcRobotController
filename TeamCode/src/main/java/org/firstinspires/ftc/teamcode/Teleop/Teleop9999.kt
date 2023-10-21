@@ -81,7 +81,6 @@ class Teleop9999: DriveMethods() {
                     var poseY = detection.rawPose.y;
 
                     slideToBoard = poseY + .05
-                    clawToBoard = .01
                     linearSlideCalc()
 
                 }
