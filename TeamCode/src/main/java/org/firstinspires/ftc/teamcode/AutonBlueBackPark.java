@@ -1,12 +1,12 @@
-package org.firstinspires.ftc.teamcode.versionCode.Auton_2023_10_21;
+package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
-@Autonomous(name = "V3 Auton No Methods 10-21-2023")
-public class V3_2023_10_21_NoMethods extends LinearOpMode {
+@Autonomous(name = "Auton Blue Front Park")
+public class AutonBlueBackPark extends LinearOpMode {
 
     private DcMotor leftFrontDrive   = null;  //  Used to control the left front drive wheel
     private DcMotor rightFrontDrive  = null;  //  Used to control the right front drive wheel
@@ -90,10 +90,10 @@ public class V3_2023_10_21_NoMethods extends LinearOpMode {
             leftBackDrive.setPower(0);
             }
 
-            int leftFrontDriveNecessaryTicks = calculateTicksForLateralMovement(30); //2000
-            int rightFrontDriveNecessaryTicks = calculateTicksForLateralMovement(30);
-            int leftBackDriveNecessaryTicks = calculateTicksForLateralMovement(30);
-            int rightBackDriveNecessaryTicks = calculateTicksForLateralMovement(30);
+            int leftFrontDriveNecessaryTicks = calculateTicksForLateralMovement(48); //2000
+            int rightFrontDriveNecessaryTicks = calculateTicksForLateralMovement(48);
+            int leftBackDriveNecessaryTicks = calculateTicksForLateralMovement(48);
+            int rightBackDriveNecessaryTicks = calculateTicksForLateralMovement(48);
 
             int leftFrontDriveTargetTicks =  leftFrontDriveNecessaryTicks;
             int rightFrontDriveTargetTicks = rightFrontDriveNecessaryTicks;

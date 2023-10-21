@@ -1,12 +1,12 @@
-package org.firstinspires.ftc.teamcode.versionCode.Auton_2023_10_21;
+package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
-@Autonomous(name = "V3 Auton No Methods 10-21-2023")
-public class V3_2023_10_21_NoMethods extends LinearOpMode {
+@Autonomous(name = "Auton Blue Front Park")
+public class AutonBlueFrontPark extends LinearOpMode {
 
     private DcMotor leftFrontDrive   = null;  //  Used to control the left front drive wheel
     private DcMotor rightFrontDrive  = null;  //  Used to control the right front drive wheel

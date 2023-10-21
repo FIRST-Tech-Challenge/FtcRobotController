@@ -110,6 +110,14 @@ public class V4_2023_10_21_NoMethodsNoExit extends LinearOpMode {
             leftBackDrive.setPower(0.5);
             leftBackDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
+            rightBackDrive.setTargetPosition(Rounded_Encoder_Ticks);
+            rightBackDrive.setPower(0.5);
+            rightBackDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+            leftFrontDrive.setTargetPosition(Rounded_Encoder_Ticks);
+            leftFrontDrive.setPower(0.5);
+            leftFrontDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
             telemetry.addData("Front Left Target Position",leftFrontDrive.getTargetPosition());
             telemetry.addData("Front Left Current Position Position",leftFrontDrive.getCurrentPosition());
 
@@ -124,7 +132,7 @@ public class V4_2023_10_21_NoMethodsNoExit extends LinearOpMode {
 
             telemetry.update();
 
-            while (leftFrontDrive.isBusy() && rightFrontDrive.isBusy() && leftBackDrive.isBusy() && rightBackDrive.isBusy()) {}
+            while (leftFrontDrive.isBusy() || rightFrontDrive.isBusy() || leftBackDrive.isBusy() || rightBackDrive.isBusy()) {}
             rightFrontDrive.setPower(0);
             leftFrontDrive.setPower(0);
             rightBackDrive.setPower(0);

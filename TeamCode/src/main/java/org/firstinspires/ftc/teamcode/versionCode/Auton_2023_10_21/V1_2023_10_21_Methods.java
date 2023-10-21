@@ -115,7 +115,7 @@ public class V1_2023_10_21_Methods extends LinearOpMode {
 
         motionTelemetry();
 
-        while (leftFrontDrive.isBusy() && rightFrontDrive.isBusy() && leftBackDrive.isBusy() && rightBackDrive.isBusy()) {}
+        while (leftFrontDrive.isBusy() || rightFrontDrive.isBusy() || leftBackDrive.isBusy() || rightBackDrive.isBusy()) {}
         rightFrontDrive.setPower(0);
         leftFrontDrive.setPower(0);
         rightBackDrive.setPower(0);
