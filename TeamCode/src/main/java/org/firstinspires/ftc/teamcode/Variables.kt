@@ -27,8 +27,9 @@ object Variables {
     var touchyR: TouchSensor? = null
     var touchyL: TouchSensor? = null
     var motorSlideRotate: DcMotor? = null
-
-
+    var motorSlideLeft: DcMotor? = null
+    var motorSlideRight: DcMotor? = null
+    
     var blinkinLedDriver: RevBlinkinLedDriver? = null
     var pattern: BlinkinPattern? = null
 
@@ -56,7 +57,7 @@ object Variables {
     }
     var t = 0.0;
     var slideToBoard = 0.0;
-    var clawToBoard = 0.0;
+    var clawToBoard = 0.1;
     var x =  0.0;
     var y = 0.0;
     var slideLength = 0.0;

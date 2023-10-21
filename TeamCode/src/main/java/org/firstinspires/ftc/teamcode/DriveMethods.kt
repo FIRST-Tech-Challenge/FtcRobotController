@@ -6,6 +6,9 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode
 import com.qualcomm.robotcore.hardware.DcMotor
 import com.qualcomm.robotcore.hardware.Servo
 import com.qualcomm.robotcore.hardware.TouchSensor
+import com.qualcomm.robotcore.hardware.DcMotorSimple
+import com.qualcomm.robotcore.hardware.HardwareDevice
+import com.qualcomm.robotcore.hardware.HardwareMap
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName
 import org.firstinspires.ftc.robotcore.external.hardware.camera.controls.ExposureControl
 import org.firstinspires.ftc.robotcore.external.hardware.camera.controls.GainControl
@@ -19,6 +22,8 @@ import org.firstinspires.ftc.teamcode.Variables.motorFL
 import org.firstinspires.ftc.teamcode.Variables.motorFR
 import org.firstinspires.ftc.teamcode.Variables.rMotorL
 import org.firstinspires.ftc.teamcode.Variables.rMotorR
+import org.firstinspires.ftc.teamcode.Variables.motorSlideLeft
+import org.firstinspires.ftc.teamcode.Variables.motorSlideRight
 import org.firstinspires.ftc.teamcode.Variables.slideAngle
 import org.firstinspires.ftc.teamcode.Variables.slideGate
 import org.firstinspires.ftc.teamcode.Variables.slideLength
@@ -36,6 +41,7 @@ import java.io.FileReader
 import java.util.concurrent.TimeUnit
 import kotlin.math.atan
 import kotlin.math.pow
+import kotlin.math.abs
 import kotlin.math.sqrt
 
 
@@ -283,6 +289,10 @@ open class DriveMethods: LinearOpMode() {
         touchyL = hardwareMap.get<TouchSensor>(TouchSensor::class.java, "touchyL")
         slideGate = hardwareMap.get<Servo>(Servo::class.java, "slideGate")
     }
+
+    open fun initSlideMotors() {
+        motorSlideLeft = hardwareMap.get<DcMotor>(DcMotor::class.java, "motorSlideLeft")
+    }
     fun setManualExposure(exposureMS: Int, gain: Int) {
         // Wait for the camera to be open, then use the controls
         if (visionPortalLeft == null) {
@@ -337,6 +347,10 @@ open class DriveMethods: LinearOpMode() {
         y = sqrt(3.0) /2 * Variables.t;
         slideLength = sqrt(x.pow(2.0) + y.pow(2.0));
         slideAngle = atan(y/x);
+        x =  abs(Variables.slideToBoard) - Variables.clawToBoard + .5* Variables.t;
+        y = sqrt(3.0) /2 * Variables.t;
+        slideLength = Math.sqrt(Math.pow(x, 2.0) + Math.pow(y, 2.0));
+        slideAngle = Math.atan(y/x);
         clawAngle = 60 - slideAngle;
     }
 
