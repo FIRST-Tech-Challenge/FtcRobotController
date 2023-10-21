@@ -14,10 +14,10 @@ public class Hardware {
     final private double TICKS_PER_INCH = (TICKS_PER_MOTOR_REV * DRIVE_GEAR_REDUCTION)/ (WHEEL_DIAMETER_INCHES * 3.1415);
     final private double DRIVE_SPEED = 0.6;
 //    final private double TURN_SPEED = 0.5;
-    public DcMotor frontLeft;
-    public DcMotor frontRight;
-    public DcMotor backLeft;
-    public DcMotor backRight;
+    public static DcMotor frontLeft;
+    public static DcMotor frontRight;
+    public static DcMotor backLeft;
+    public static DcMotor backRight;
 
     public void init(HardwareMap hardwareMap) {
         try {

@@ -5,10 +5,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 
 
 public class TeleOp extends LinearOpMode {
-    DcMotor frontLeft;
-    DcMotor backLeft;
-    DcMotor frontRight;
-    DcMotor backRight;
+
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -31,11 +28,11 @@ public class TeleOp extends LinearOpMode {
 
             //to do: verify this works
             if (turn >= 0) { //forward and backward with turning and strafing || positive strafe/turn = strafe/turn right
-                frontRight.setPower((drive - turn + strafe) / maxPower);
-                backRight.setPower((drive - turn + strafe) / maxPower);
+                Hardware.frontLeft.setPower((drive - turn + strafe) / maxPower);
+                Hardware.backRight.setPower((drive - turn + strafe) / maxPower);
             } else {
-                frontLeft.setPower((drive - turn - strafe) / maxPower);
-                backLeft.setPower((drive - turn - strafe) / maxPower);
+                Hardware.frontLeft.setPower((drive - turn - strafe) / maxPower);
+                Hardware.backLeft.setPower((drive - turn - strafe) / maxPower);
             }
 
             //cycle every 50 milliseconds, to prevent memory death --> 20 cycles/s
@@ -43,10 +40,10 @@ public class TeleOp extends LinearOpMode {
         }
 
         //end TeleOp
-        frontLeft.setPower(0);
-        backLeft.setPower(0);
-        frontRight.setPower(0);
-        backRight.setPower(0);
+        Hardware.frontLeft.setPower(0);
+        Hardware.backLeft.setPower(0);
+        Hardware.frontRight.setPower(0);
+        Hardware.backRight.setPower(0);
     }
 
     public double curveInput(double input) {
