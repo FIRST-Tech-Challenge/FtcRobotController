@@ -1,13 +1,15 @@
 package org.firstinspires.ftc.teamcode.swift;
-import com.qualcomm.robotcore.hardware.Servo;
+
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.Range;
 
+
 @TeleOp
-public class TELEOPtest1 extends LinearOpMode {
+public class TELEOPtest1_ONE_DRIVER extends LinearOpMode {
     private Servo launcherServo = null;
 
 
@@ -101,13 +103,14 @@ public class TELEOPtest1 extends LinearOpMode {
             telemetry.addData("Mode", "waiting");
 
 
-            leftY = gamepad2.left_stick_y * -1;
-            rightY = gamepad2.right_stick_y * -1;
+            leftY = gamepad1.left_trigger * -1;
+            rightY = gamepad1.right_trigger * 1;
 
             armMotor.setPower(Range.clip(leftY, -1.0, 1.0));
+            armMotor.setPower(Range.clip(rightY, -1.0, 1.0));
 
             telemetry.addData("Mode", "running");
-            telemetry.addData("sticks", "  left=" + leftY + "  right=" + rightY);
+            telemetry.addData("Triggers", "  left=" + leftY + "  right=" + rightY);
 
             // check the gamepad buttons and if pressed, increment the appropriate position
             // variable to change the servo location.
@@ -117,28 +120,28 @@ public class TELEOPtest1 extends LinearOpMode {
             leftGripper = hardwareMap.get(Servo.class, "leftGripper");
             rightGripper = hardwareMap.get(Servo.class, "rightGripper");
 
-            if (gamepad2.y) {
+            if (gamepad1.y) {
                 // Move servos in opposite directions when "y" is pressed
                 leftGripper.setPosition(1); // Adjust the position value as needed
                 rightGripper.setPosition(0); // Adjust the position value as needed
-            } else if (gamepad2.x) {
+            } else if (gamepad1.x) {
                 // Return servos to the center position when "x" is pressed
                 leftGripper.setPosition(0.9); // Adjust the position value for the center position
                 rightGripper.setPosition(0.1); // Adjust the position value for the center position
             }
-                if (gamepad2.b) {
-                    // Move servo in opposite directions when "y" is pressed
-                    wristServo.setPosition(.4 ); // Adjust the position value as needed
+            if (gamepad1.b) {
+                // Move servo in opposite directions when "y" is pressed
+                wristServo.setPosition(.4 ); // Adjust the position value as needed
 
-                } else if (gamepad2.a) {
-                    // Return servos to the center position when "x" is pressed
-                    wristServo.setPosition(0); // Adjust the position value for the center position
+            } else if (gamepad1.a) {
+                // Return servos to the center position when "x" is pressed
+                wristServo.setPosition(0); // Adjust the position value for the center position
 
-                    telemetry.update();
-                }
+                telemetry.update();
             }
         }
     }
+}
 
 
 
