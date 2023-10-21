@@ -32,6 +32,8 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 /*
@@ -62,9 +64,9 @@ import com.qualcomm.robotcore.util.ElapsedTime;
  * Remove or comment out the @Disabled line to add this OpMode to the Driver Station OpMode list
  */
 
-@TeleOp(name="KushaalDriverOpMode", group="Linear OpMode")
+@TeleOp(name="KushaalOpMode", group="Linear OpMode")
 // @Disabled
-public class KushaalDriverOpMode extends LinearOpMode {
+public class KushaalOpMode extends LinearOpMode {
 
     // Declare OpMode members for each of the 4 motors.
     private ElapsedTime runtime = new ElapsedTime();
@@ -72,6 +74,11 @@ public class KushaalDriverOpMode extends LinearOpMode {
     private DcMotor leftBackDrive = null;
     private DcMotor rightFrontDrive = null;
     private DcMotor rightBackDrive = null;
+    private Servo dronelaunch = null;
+
+    Arm arm = new Arm(this);
+    Claw claw       = new Claw(this);
+    Wrist wrist = new Wrist(this);
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -82,6 +89,7 @@ public class KushaalDriverOpMode extends LinearOpMode {
         leftBackDrive = hardwareMap.get(DcMotor.class, "left_back_drive");
         rightFrontDrive = hardwareMap.get(DcMotor.class, "right_front_drive");
         rightBackDrive = hardwareMap.get(DcMotor.class, "right_back_drive");
+        dronelaunch  = hardwareMap.get(Servo.class, "drone_launcher");
 
         // ########################################################################################
         // !!!            IMPORTANT Drive Information. Test your motor directions.            !!!!!
@@ -98,6 +106,10 @@ public class KushaalDriverOpMode extends LinearOpMode {
         rightFrontDrive.setDirection(DcMotor.Direction.FORWARD);
         rightBackDrive.setDirection(DcMotor.Direction.FORWARD);
 
+        arm.init();
+        claw.init();
+        wrist.init();
+
         // Wait for the game to start (driver presses PLAY)
         telemetry.addData("Status", "Initialized");
         telemetry.update();
@@ -107,16 +119,18 @@ public class KushaalDriverOpMode extends LinearOpMode {
 
         double strafe = 0;
         double max;
+        double drone_launcher_pos = 0.6;
         String StrafeToString = null;
         // run until the end of the match (driver presses STOP)
         while (opModeIsActive()) {
-
+            arm.listen();
+            claw.listen();
+            wrist.listen();
 
             if (gamepad1.left_bumper) {
                 strafe = -1;
                 StrafeToString = "Left";
             }
-
             if (gamepad1.right_bumper) {
                 strafe = 1;
                 StrafeToString = "Right";
@@ -125,6 +139,14 @@ public class KushaalDriverOpMode extends LinearOpMode {
                 strafe = 0;
                 StrafeToString = "Idle";
             }
+
+            if (gamepad2.x) {
+                drone_launcher_pos = 1;
+            }
+            if (gamepad2.b) {
+                drone_launcher_pos = 0.6;
+            }
+            dronelaunch.setPosition(drone_launcher_pos);
 
 
             // POV Mode uses left joystick to go forward & strafe, and right joystick to rotate.
@@ -180,6 +202,7 @@ public class KushaalDriverOpMode extends LinearOpMode {
             telemetry.addData("Front left/Right", "%4.2f, %4.2f", leftFrontPower, rightFrontPower);
             telemetry.addData("Back  left/Right", "%4.2f, %4.2f", leftBackPower, rightBackPower);
             telemetry.addData("Strafe Value", StrafeToString);
+            telemetry.addData("Drone Launcher Value:", drone_launcher_pos);
             telemetry.update();
         }
     }
