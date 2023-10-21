@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.drive.opmode;
 
+import com.acmerobotics.roadrunner.control.PIDCoefficients;
+import com.acmerobotics.roadrunner.control.PIDFController;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -31,6 +33,10 @@ public class LocalizationTest extends LinearOpMode {
             return mLastValue;
         }
     }
+
+    Pose2d headingToHold = new Pose2d();
+    boolean isHolding = false;
+
     @Override
     public void runOpMode() throws InterruptedException {
         SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
@@ -42,8 +48,39 @@ public class LocalizationTest extends LinearOpMode {
         // Ramping for x and y motion
         Ewma statsX = new Ewma(0.3); // Raising alpha will make the ramp more drastic but more potentially create slip
         Ewma statsY = new Ewma(0.3); // Decreasing alpha will reduce slip
-
+        PIDFController ctrl = new PIDFController(new PIDCoefficients(.01, 0, 0), 0, 0);
+        ctrl.setInputBounds(0, 360);
         while (!isStopRequested()) {
+            double turnCommand = -gamepad1.right_stick_x;
+
+
+            if (!isHolding && Math.abs(turnCommand) < 0.03) {
+                headingToHold = new Pose2d(0 , 0, Math.toRadians(drive.getExternalHeading()));
+                isHolding = true;
+            } else if (Math.abs(turnCommand) >= 0.03){
+                isHolding = false;
+            }
+
+            if (isHolding) {
+                if (gamepad1.x) {
+                    headingToHold = new Pose2d(0, 0, Math.toRadians(90));
+                } else if (gamepad1.a) {
+                    headingToHold = new Pose2d(0, 0, Math.toRadians(180));
+                } else if (gamepad1.b) {
+                    headingToHold = new Pose2d(0, 0, Math.toRadians(-90));
+                } else if (gamepad1.y) {
+                    headingToHold = new Pose2d(0, 0, Math.toRadians(0));
+                }
+                double turnErrorDeg = Math.toDegrees(headingToHold.getHeading()) - drive.getExternalHeading();
+                double target = (Math.toDegrees(headingToHold.getHeading()));
+                target = target % 360.0;
+                if (target < 0) {
+                    target += 360.0;
+                }
+                ctrl.setTargetPosition(target);
+                turnCommand = ctrl.update(Math.toDegrees(drive.getExternalHeading()));
+            }
+
             double powX = statsX.update(-gamepad1.left_stick_y);
             double powY = statsY.update(-gamepad1.left_stick_x);
 
@@ -58,7 +95,7 @@ public class LocalizationTest extends LinearOpMode {
                     new Pose2d(
                             input.getX(),
                             input.getY(),
-                            -gamepad1.right_stick_x
+                            turnCommand
                     )
             );
 
@@ -67,6 +104,7 @@ public class LocalizationTest extends LinearOpMode {
             telemetry.addData("x", poseEstimate.getX());
             telemetry.addData("y", poseEstimate.getY());
             telemetry.addData("heading", poseEstimate.getHeading());
+            telemetry.addData("isHolding", isHolding);
             telemetry.update();
         }
     }
