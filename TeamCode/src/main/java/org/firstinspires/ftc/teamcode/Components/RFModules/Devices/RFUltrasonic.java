@@ -3,8 +3,6 @@ package org.firstinspires.ftc.teamcode.Components.RFModules.Devices;
 import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.op;
 
 import com.qualcomm.robotcore.hardware.AnalogInput;
-import com.qualcomm.robotcore.hardware.AnalogSensor;
-import com.qualcomm.robotcore.hardware.UltrasonicSensor;
 
 /**
  * William
@@ -13,6 +11,9 @@ public class RFUltrasonic {
     private AnalogInput ultrasonic;
 
     double MAX_RANGE = 254;
+
+    double ULTRA_FACTOR = 90.48337;
+    double ULTRA_ADJUSTMENT = 12.62465;
 
     /**
      * Constructor
@@ -30,11 +31,11 @@ public class RFUltrasonic {
      * Does not update a state machine.
      */
     public boolean check(Line p_targetLine) {
-        return ultrasonic.getVoltage() * MAX_RANGE < p_targetLine.distToLine();
+        return ultrasonic.getVoltage() * ULTRA_FACTOR - ULTRA_ADJUSTMENT < p_targetLine.distToLine();
     }
 
     public double getDist() {
-        return ultrasonic.getVoltage() * MAX_RANGE;
+        return ultrasonic.getVoltage();
     }
 
     public double getVoltage() {

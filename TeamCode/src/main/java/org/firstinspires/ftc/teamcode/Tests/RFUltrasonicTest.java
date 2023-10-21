@@ -31,11 +31,11 @@ public class RFUltrasonicTest extends LinearOpMode {
 
         double lastEnabled = 0;
         waitForStart();
-        ultras.enable(ultras.isLightOn());
+//        ultras.enable(ultras.isLightOn());
         sleep(50);
         while(!isStopRequested()&&opModeIsActive()) {
             if (op.getRuntime() - lastEnabled >= 0.15) {
-                ultras.enable(ultras.isLightOn());
+//                ultras.enable(ultras.isLightOn());
             }
 
             if (op.getRuntime() - lastEnabled >= 0.2) {
@@ -49,7 +49,7 @@ public class RFUltrasonicTest extends LinearOpMode {
                     op.telemetry.addData("dist: ", ultra.getDist());
                     op.telemetry.update();
                 }
-                ultras.enable(ultras.isLightOn());
+//                ultras.enable(ultras.isLightOn());
 
 //                op.telemetry.addData("voltage: ", ultra.getVoltage());
 //                LOGGER.log(RFLogger.Severity.INFO, currentPose.getX() + "");
