@@ -14,16 +14,17 @@ public class Hardware {
     final private double TICKS_PER_INCH = (TICKS_PER_MOTOR_REV * DRIVE_GEAR_REDUCTION)/ (WHEEL_DIAMETER_INCHES * 3.1415);
     final private double DRIVE_SPEED = 0.6;
 //    final private double TURN_SPEED = 0.5;
-    public DcMotor frontLeft;
-    public DcMotor frontRight;
-    public DcMotor backLeft;
-    public DcMotor backRight;
+    public DcMotor frontLeft = null;
+    public DcMotor frontRight = null;
+    public DcMotor backLeft = null;
+    public DcMotor backRight = null;
 
     public void init(HardwareMap hardwareMap) {
         try {
             frontLeft = hardwareMap.dcMotor.get("frontLeftMotor");
             frontLeft.setDirection(DcMotor.Direction.FORWARD);
             frontLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            frontLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
             frontLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
             frontLeft.setPower(0);
         } catch (Exception e) {
@@ -73,17 +74,46 @@ public class Hardware {
         backRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
     }
 
-    public void drive(double power){
+    public void drive(double power, double inches){
+        frontLeft.setTargetPosition((int)(inches*TICKS_PER_INCH));
+        frontRight.setTargetPosition((int)(inches*TICKS_PER_INCH));
+        backLeft.setTargetPosition((int)(inches*TICKS_PER_INCH));
+        backRight.setTargetPosition((int)(inches*TICKS_PER_INCH));
+
         frontLeft.setPower(power);
         frontRight.setPower(power);
         backLeft.setPower(power);
         backRight.setPower(power);
+        while(frontLeft.getCurrentPosition() <= frontRight.getCurrentPosition() &&
+                frontRight.getCurrentPosition() <= backRight.getCurrentPosition() &&
+                backLeft.getCurrentPosition() <= frontRight.getCurrentPosition() &&
+                frontLeft.getCurrentPosition() <= frontRight.getCurrentPosition());
+
+        frontLeft.setPower(0);
+        frontRight.setPower(0);
+        backLeft.setPower(0);
+        backRight.setPower(0);
+
     }
-    public void drive(double frontLeftPower, double frontRightPower, double backLeftPower, double backRightPower){
+    public void drive(double frontLeftPower, double frontRightPower, double backLeftPower, double backRightPower, double inches){
+        frontLeft.setTargetPosition((int)(inches*TICKS_PER_INCH));
+        frontRight.setTargetPosition((int)(inches*TICKS_PER_INCH));
+        backLeft.setTargetPosition((int)(inches*TICKS_PER_INCH));
+        backRight.setTargetPosition((int)(inches*TICKS_PER_INCH));
+
         frontLeft.setPower(frontLeftPower);
         frontRight.setPower(frontRightPower);
         backLeft.setPower(backLeftPower);
         backRight.setPower(backRightPower);
+        while(frontLeft.getCurrentPosition() <= frontRight.getCurrentPosition() &&
+                frontRight.getCurrentPosition() <= backRight.getCurrentPosition() &&
+                backLeft.getCurrentPosition() <= frontRight.getCurrentPosition() &&
+                frontLeft.getCurrentPosition() <= frontRight.getCurrentPosition());
+
+        frontLeft.setPower(0);
+        frontRight.setPower(0);
+        backLeft.setPower(0);
+        backRight.setPower(0);
     }
     // for distance: right is positive, left is negative
     public void strafe(double distance, double power) {
