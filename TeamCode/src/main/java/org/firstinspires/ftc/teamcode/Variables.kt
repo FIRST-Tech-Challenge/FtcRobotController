@@ -3,6 +3,8 @@ package org.firstinspires.ftc.teamcode
 import com.qualcomm.hardware.rev.RevBlinkinLedDriver
 import com.qualcomm.hardware.rev.RevBlinkinLedDriver.BlinkinPattern
 import com.qualcomm.robotcore.hardware.DcMotor
+import com.qualcomm.robotcore.hardware.Servo
+import com.qualcomm.robotcore.hardware.TouchSensor
 import org.firstinspires.ftc.vision.apriltag.AprilTagDetection
 
 
@@ -19,6 +21,13 @@ object Variables {
     var motorBL: DcMotor? = null
     var motorFR: DcMotor? = null
     var motorBR: DcMotor? = null
+    var slideGate: Servo? = null
+    var rMotorR: DcMotor? = null;
+    var rMotorL: DcMotor? = null;
+    var touchyR: TouchSensor? = null
+    var touchyL: TouchSensor? = null
+    var motorSlideRotate: DcMotor? = null
+
 
     var blinkinLedDriver: RevBlinkinLedDriver? = null
     var pattern: BlinkinPattern? = null
