@@ -34,23 +34,23 @@ public class TestTeleOp extends LinearOpMode {
         //double armPos = 0.5;
 
         while (opModeIsActive()) {
-            if (gamepad1.a == true) {
+            if (gamepad1.a) {
                 intake.setPower(0.6);
-            } else if (gamepad1.b == true) {
+            } else if (gamepad1.b) {
                 intake.setPower(-0.6);
             } else {
                 intake.setPower(0);
             }
 
-            if(gamepad1.left_bumper == true) {
+            if(gamepad1.left_bumper) {
                 holderClampPos += 0.0025;
-            } else if (gamepad1.right_bumper == true) {
+            } else if (gamepad1.right_bumper) {
                 holderClampPos -= 0.0025;
             }
 
-            if(gamepad1.x == true) {
+            if(gamepad1.x) {
                 //armPos += 0.025;
-            } else if (gamepad1.y == true) {
+            } else if (gamepad1.y) {
                 //armPos -= 0.025;
             }
 

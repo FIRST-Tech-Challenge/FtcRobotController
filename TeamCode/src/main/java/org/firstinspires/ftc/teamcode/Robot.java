@@ -9,6 +9,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.IMU;
+import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
 
@@ -33,7 +34,15 @@ public class Robot {
     DcMotor fRight;
     DcMotor bLeft;
     DcMotor bRight;
-    DcMotor arm;
+    DcMotor intake;
+    DcMotor lsBack;
+    DcMotor lsFront;
+    Servo arm;
+    Servo flipper;
+
+
+    //arm motor is not used
+    DcMotor armMotor;
     IMU imu;
 
     ElapsedTime elapsedTime;
@@ -212,14 +221,10 @@ public class Robot {
         Log.d("vision", "april tag range" + aprilTagRange);
         Log.d("vision", "move distance" + moveDistanceInches);
         if (moveDistanceInches > 0.5 || moveDistanceInches < -0.5) {
-            if (moveDistanceInches > 0) {
-                //robot is backward
-                //move closer to april tag
-                straightBlocking(Math.abs(moveDistanceInches), false);
-            } else {
-                //move away from april tag
-                straightBlocking(Math.abs(moveDistanceInches), true);
-            }
+            //robot is backward
+            //move closer to april tag
+            //move away from april tag
+            straightBlocking(Math.abs(moveDistanceInches), !(moveDistanceInches > 0));
         } else if (aprilTagRange == 0){
 
             setMotorPower(stopPower);
@@ -291,7 +296,27 @@ public class Robot {
         fLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
     }
 
-    private double maxAbsValueDouble(double[] values) {
+    public void setUpIntakeOuttake() {
+        intake = hardwareMap.dcMotor.get("intake");
+        lsBack = hardwareMap.dcMotor.get("lsBack");
+        lsFront = hardwareMap.dcMotor.get("lsFront");
+
+        intake.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        lsFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        lsBack.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
+        intake.setDirection(DcMotorSimple.Direction.REVERSE);
+        lsFront.setDirection(DcMotorSimple.Direction.REVERSE);
+        lsBack.setDirection(DcMotorSimple.Direction.REVERSE);
+
+        lsFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        lsFront.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+
+        arm = hardwareMap.servo.get("arm");
+        flipper = hardwareMap.servo.get("flipper");
+    }
+
+    public double maxAbsValueDouble(double[] values) {
 
         double max = -Double.MIN_VALUE;
 
@@ -306,7 +331,7 @@ public class Robot {
         return Math.abs(max);
     }
 
-    private double[] scalePowers(double[] powers) {
+    public double[] scalePowers(double[] powers) {
         double maxPower = maxAbsValueDouble(powers);
 
         if (maxPower < 1) {
@@ -344,14 +369,14 @@ public class Robot {
     } //IMU
 
     public void setUpArmMotor() {
-        arm = hardwareMap.dcMotor.get("arm");
+        armMotor = hardwareMap.dcMotor.get("arm");
 
-        arm.setDirection(DcMotorSimple.Direction.FORWARD);
+        armMotor.setDirection(DcMotorSimple.Direction.FORWARD);
 
-        arm.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        armMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
-        arm.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        arm.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        armMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        armMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
     }
 
     /*
@@ -558,13 +583,9 @@ public class Robot {
         double ERROR_TOLERANCE = 0.5;
         double currentHeading = getCurrentHeading();
         double deltaHeading = Math.abs(targetHeading - currentHeading);
-        if (deltaHeading <= ERROR_TOLERANCE) {
-            //telemetry.addLine("within error, return true");
-            return true;
-        } else {
-            //telemetry.addLine("not within error, return false");
-            return false;
-        }
+        //telemetry.addLine("within error, return true");
+        //telemetry.addLine("not within error, return false");
+        return deltaHeading <= ERROR_TOLERANCE;
     }
 
     public void autoForward(double targetDistanceInMM) throws InterruptedException {
@@ -747,8 +768,8 @@ public class Robot {
 
         double error = targetTick - currentTick;
 
-        telemetry.addLine("current ticks: " + String.valueOf(currentTick));
-        telemetry.addLine("target ticks: " + String.valueOf(targetTick));
+        telemetry.addLine("current ticks: " + currentTick);
+        telemetry.addLine("target ticks: " + targetTick);
         telemetry.addLine("delta: " + error);
         telemetry.update();
 
