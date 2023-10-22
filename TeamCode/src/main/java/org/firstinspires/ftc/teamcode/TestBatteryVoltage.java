@@ -21,7 +21,7 @@ public class TestBatteryVoltage extends RobotOpMode {
     public void init() {
         super.init();
 
-        moveArm(1, -90);
+        moveArm(1, armZeroPosition - 90);
     }
 
     @Override

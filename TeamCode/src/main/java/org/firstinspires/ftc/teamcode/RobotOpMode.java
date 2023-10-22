@@ -18,13 +18,15 @@ public abstract class RobotOpMode extends OpMode {
      * Used in the endTime parameter in moveRobot()
      */
     public static long STOP_NEVER = Long.MAX_VALUE;
-    DcMotor leftFrontDrive, leftBackDrive, rightFrontDrive, rightBackDrive, armMotor;
+    public DcMotor leftFrontDrive, leftBackDrive, rightFrontDrive, rightBackDrive, armMotor;
     BNO055IMU imu;
     ElapsedTime elapsedTime;
     /**
      * A initializer for FTCDashboardPackets(), which can be used to show telemetry on the dashboard
      */
     public final FTCDashboardPackets dbp = new FTCDashboardPackets();
+
+    public int armZeroPosition = 0;
 
 
     @Override
@@ -43,7 +45,8 @@ public abstract class RobotOpMode extends OpMode {
         rightBackDrive.setDirection(DcMotor.Direction.FORWARD);
         armMotor.setDirection(DcMotorSimple.Direction.FORWARD);
 
-        armMotor.setTargetPosition(0);
+        armZeroPosition = initArm();
+        armMotor.setTargetPosition(armZeroPosition);
         armMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         try {
             imu = hardwareMap.get(BNO055IMU.class, "imu");
@@ -119,6 +122,28 @@ public abstract class RobotOpMode extends OpMode {
         leftBackDrive.setPower(leftBackPower);
         rightBackDrive.setPower(rightBackPower);
         return true;
+    }
+
+    public int initArm() {
+        dbp.createNewTelePacket();
+        dbp.put("Initializing", "Starting up");
+        dbp.send(true);
+
+        armMotor.setTargetPosition(270);
+        armMotor.setPower(0.5);
+
+        double startTime = elapsedTime.seconds();
+
+        int previousPosition = armMotor.getCurrentPosition();
+        while (armMotor.isBusy()) {
+            if (elapsedTime.seconds() >= (startTime + 2.0f)) {
+                if ((armMotor.getCurrentPosition() - previousPosition) < 3) {
+                    armMotor.setPower(0);
+                    return armMotor.getCurrentPosition();
+                }
+            }
+        }
+        return 0;
     }
 
     public void moveArm(float power, int position) {
