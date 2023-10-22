@@ -186,7 +186,6 @@ public class AutoMode extends LinearOpMode {
         waitForStart();
 
         while (opModeIsActive()) {
-            robot.moveToApril();
 /*
             robot.straightBlocking(28, true);
             sleep(100);
