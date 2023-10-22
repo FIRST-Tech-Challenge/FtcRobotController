@@ -9,6 +9,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.internal.ui.GamepadUser;
 
+import java.util.Locale;
 import java.util.concurrent.TimeUnit;
 
 public abstract class RobotOpMode extends OpMode {
@@ -41,10 +42,14 @@ public abstract class RobotOpMode extends OpMode {
         try {
             imu = hardwareMap.get(BNO055IMU.class, "imu");
         } catch(Exception e) {
-            telemetry.addData("IMU WARNING (error initializing IMU) ", e.getMessage());
+            dbp.createNewTelePacket();
+            dbp.put("IMU WARNING (error initializing IMU) ", e.getMessage());
+            dbp.send(true);
         }
         if(imu != null) {
-            telemetry.addLine("IMU Connection Successful!");
+            dbp.createNewTelePacket();
+            dbp.put("IMU Connected Successfully", "!");
+            dbp.send(true);
         }
         BNO055IMU.Parameters paramaters = new BNO055IMU.Parameters();
         paramaters.temperatureUnit = BNO055IMU.TempUnit.CELSIUS;
@@ -56,10 +61,11 @@ public abstract class RobotOpMode extends OpMode {
     @Override
     public final void loop() {
         robotloop();
-        telemetry.update();
     }
 
     public abstract void robotloop();
+
+    // UTILITY METHODS:
 
     public boolean moveRobot(double axial, double lateral, double yaw) {
         return moveRobot(axial, lateral, yaw, STOP_NEVER);
