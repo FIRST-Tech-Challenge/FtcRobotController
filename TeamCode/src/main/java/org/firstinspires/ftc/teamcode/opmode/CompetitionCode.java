@@ -9,13 +9,14 @@ import org.firstinspires.ftc.teamcode.mechanism.*;
 public class CompetitionCode extends OpMode {
 
     Traction DriveTrain = new Traction();
+    ProgrammingBoard Board = new ProgrammingBoard();
     double axial   = -gamepad1.left_stick_y;  // Note: pushing stick forward gives negative value
     double lateral =  gamepad1.left_stick_x;
     double yaw     =  gamepad1.right_stick_x;
 
     @Override
     public void init(){
-        DriveTrain.init(hardwareMap);
+        Board.init(hardwareMap);
         telemetry.addLine("Initialized");
         telemetry.update();
     }
