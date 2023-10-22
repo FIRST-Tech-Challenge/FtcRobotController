@@ -51,7 +51,7 @@ public class BaseTeleOp extends BaseOpMode {
     public double curveStick(double rawSpeed) {
         double logSpeed;
         if (rawSpeed >= 0) {
-            logSpeed = Math.pow(rawSpeed, 2);
+            logSpeed = -Math.pow(rawSpeed, 2);
         } else {
             logSpeed = Math.pow(rawSpeed, 2);
         }

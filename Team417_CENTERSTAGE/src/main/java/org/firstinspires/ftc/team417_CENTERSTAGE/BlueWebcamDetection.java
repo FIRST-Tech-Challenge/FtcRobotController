@@ -27,14 +27,12 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.opencv.core.Core;
 import org.opencv.core.Mat;
-import org.opencv.core.Size;
-import org.opencv.core.Point;
 import org.opencv.core.Scalar;
+import org.opencv.core.Size;
 import org.opencv.imgproc.Imgproc;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
-import org.openftc.easyopencv.OpenCvInternalCamera;
 import org.openftc.easyopencv.OpenCvPipeline;
 
 /*
@@ -45,16 +43,16 @@ import org.openftc.easyopencv.OpenCvPipeline;
  * the edge detected image on the phone screen.
  */
 
-@TeleOp(name = "Concept: OpenCV Edge Detection", group = "Concept")
+@TeleOp(name = "Concept: OpenCV Blue Detection", group = "Concept")
 // @Disabled
-public class WebcamDetection extends LinearOpMode {
+public class BlueWebcamDetection extends LinearOpMode {
     OpenCvCamera robotCamera;
 
     @Override
     public void runOpMode()
     {
         //int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
-        robotCamera = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "RobotCamera"));
+        robotCamera = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "webcam"));
 
         // OR...  Do Not Activate the Camera Monitor View
         //phoneCam = OpenCvCameraFactory.getInstance().createInternalCamera(OpenCvInternalCamera.CameraDirection.BACK);
@@ -99,8 +97,8 @@ public class WebcamDetection extends LinearOpMode {
         }
     }
 
-    public static final Scalar LOWER_RED = new Scalar(0, 150, 0);
-    public static final Scalar UPPER_RED = new Scalar(179, 255, 255);
+    public static final Scalar LOWER_BLUE = new Scalar(100, 50, 50);
+    public static final Scalar UPPER_BLUE = new Scalar(130, 255, 255);
 
     class SamplePipeline extends OpenCvPipeline
     {
@@ -115,11 +113,10 @@ public class WebcamDetection extends LinearOpMode {
             Imgproc.cvtColor(input, hsv, Imgproc.COLOR_BGR2HSV);
             // blur the image to reduce the impact of noisy pixels
             Imgproc.GaussianBlur(hsv, hsv, new Size(7,7),0);
-            Core.inRange(hsv, LOWER_RED, UPPER_RED, hsv);
+            Core.inRange(hsv, LOWER_BLUE, UPPER_BLUE, hsv);
             Imgproc.threshold(hsv,output, 1, 255,Imgproc.THRESH_BINARY);
             return output;
         }
-
 
         @Override
         public void onViewportTapped()
