@@ -5,15 +5,8 @@ import android.util.Log;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
-import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.vision.VisionPortal;
-import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
 import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
-import org.openftc.easyopencv.OpenCvCameraFactory;
-import org.openftc.easyopencv.OpenCvCameraRotation;
-import org.openftc.easyopencv.OpenCvWebcam;
-
-import java.util.List;
 
 @Autonomous
 public class LongRedAuto extends LinearOpMode {
@@ -23,30 +16,14 @@ public class LongRedAuto extends LinearOpMode {
 
         int idNumber = 0;
 
-       /* int cameraMonitorViewId =
-                hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
-        OpenCvWebcam webcam = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "Webcam 1"), cameraMonitorViewId);
-    */
        Robot robot = new Robot(hardwareMap, this, telemetry);
        robot.setUpDrivetrainMotors();
 
-        // Initializing marker and apriltag processors and setting them with visionportal
-        /*MarkerProcessor markerProcessor = new MarkerProcessor(telemetry);
-        AprilTagProcessor aprilTagProcessor = AprilTagProcessor.easyCreateWithDefaults();
-        VisionPortal visionPortal = VisionPortal.easyCreateWithDefaults
-                (hardwareMap.get(WebcamName.class, "Webcam 1"),
-                        aprilTagProcessor,
-                        markerProcessor);*/
-        robot.setUpVisionProcessing();
+        robot.initVisionProcessing();
         VisionPortal visionPortal = robot.getVisionPortal();
         MarkerProcessor markerProcessor = robot.getMarkerProcessor();
         AprilTagProcessor aprilTagProcessor = robot.getAprilTagProcessor();
 
-
-        //MarkerDetector detector = new MarkerDetector(telemetry);
-        //webcam.setPipeline(detector);
-        //webcam.openCameraDevice();
-        //webcam.startStreaming(320, 240, OpenCvCameraRotation.UPRIGHT);
         MarkerDetector.MARKER_POSITION position;
 
         waitForStart();
@@ -62,14 +39,11 @@ public class LongRedAuto extends LinearOpMode {
             }
 
             Log.d("vision", "detected position: " + position);
-
-            idNumber = robot.detectAndMoveToMarker();
-
+           // idNumber = robot.detectAndMoveToMarker();
             Log.d("vision", "Done moving, now apriltag");
-
             robot.waitFor(0.75);
 
-
+/*
             robot.straightBlocking(15, false);
             robot.waitFor(0.1);
             robot.setHeading(0);
@@ -87,9 +61,12 @@ public class LongRedAuto extends LinearOpMode {
             robot.setHeading(-90);
             robot.waitFor(0.1);
             robot.mecanumBlocking(28, false);
-
+*/
+            /*
             //TODO: APRILTAG GOES HERE !!!!!!
             robot.aprilTagFnaggling(idNumber, 300, 0);
+            */
+
             break;
             /*while (opModeIsActive() && !isDoneWithAprilTagX) {
 

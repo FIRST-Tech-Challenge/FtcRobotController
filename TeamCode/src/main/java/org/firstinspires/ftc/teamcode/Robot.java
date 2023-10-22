@@ -66,16 +66,16 @@ public class Robot {
     }
 
 //vision processing setup
-    public void setUpVisionProcessing() {
+    public void initVisionProcessing() {
 
+        // Initializing marker and apriltag processors and setting them with visionportal
         markerProcessor = new MarkerProcessor(telemetry);
         aprilTagProcessor = AprilTagProcessor.easyCreateWithDefaults();
         visionPortal = VisionPortal.easyCreateWithDefaults
                 (hardwareMap.get(WebcamName.class, "Webcam 1"),
                         aprilTagProcessor,
                         markerProcessor);
-//        visionPortal.setProcessorEnabled(markerProcessor, false);
-//        visionPortal.setProcessorEnabled(aprilTag, false);
+
     }
 
     public VisionPortal getVisionPortal() {
@@ -240,27 +240,20 @@ public class Robot {
         boolean isDoneWithAprilTagX = false;
         boolean isDoneWithAprilTagRange = false;
         while (opMode.opModeIsActive() && !isDoneWithAprilTagX) {
-
-
-            isDoneWithAprilTagX = moveRelativeToAprilTagX(xAxisFromAprilTag, idNumber);
-
-
-            telemetry.addData("x", isDoneWithAprilTagX);
-
+            isDoneWithAprilTagX = moveRelativeToAprilTagX(xAxisFromAprilTag, idNumber); //method returns boolean
+            telemetry.addData("x value: ", isDoneWithAprilTagX);
             telemetry.update();
         }
-        telemetry.addLine("got out");
+
+        telemetry.addLine("done with aprtag x");
+
         while (opMode.opModeIsActive() && !isDoneWithAprilTagRange) {
-
-
-            isDoneWithAprilTagRange = moveRelativeToAprilTagRange(rangeFromAprilTagMM, idNumber);
-
-
-            telemetry.addData("range", isDoneWithAprilTagRange);
-
+            isDoneWithAprilTagRange = moveRelativeToAprilTagRange(rangeFromAprilTagMM, idNumber); //method returns boolean
+            telemetry.addData("range: ", isDoneWithAprilTagRange);
             telemetry.update();
         }
     }
+
     public void setUpImu() {
 
         this.imu = hardwareMap.get(IMU.class, "imu");
