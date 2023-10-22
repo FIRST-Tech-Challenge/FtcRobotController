@@ -26,17 +26,19 @@ public class TestBatteryVoltage extends RobotOpMode {
 
     @Override
     public void robotloop() {
-        runtime.reset();
         moveRobot(1, 0, 0);
         double voltage = getBatteryVoltage();
         dbp.createNewTelePacket();
 
-        while ((runtime.seconds() < VOLTAGE_CONSTANTS.VOLTAGE_POLL_RATE) || shouldStop) {
+        if ((runtime.seconds() < VOLTAGE_CONSTANTS.VOLTAGE_POLL_RATE) || shouldStop) {
             dbp.put("Battery Voltage", String.format(Locale.ENGLISH,
                     "%f s : Current Voltage: %.1f v",
                     batteryTestTime.seconds(), voltage));
             dbp.send(true);
+            return;
         }
+
+        runtime.reset();
 
         try {
             FileWriter myWriter = new FileWriter("batteryVoltage.csv");
