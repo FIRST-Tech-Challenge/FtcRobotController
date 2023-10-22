@@ -128,7 +128,71 @@ public class Navigation {
         return path.get(pathIndex - 1); //Return the point where the robot is currently at
     }
 
+    /**
+     * Updates the strafe power according to movement mode and gamepad 1 left trigger.
+     * @param hasMovementDirection
+     * @param gamepads
+     * @param robot
+     */
+    public void updateStrafePower(boolean hasMovementDirection, GamepadWrapper gamepads, Robot robot){
+        if(!hasMovementDirection){ //If there is no movement direction, (or, not equal to), the strafePower will be set to 0.
+            strafePower = 0;
+            return;
+        }
 
+        AnalogValues analogValues = gamepads.getAnalogValues();
+        //Limits the output values between 0 - 1. 0 = no power, 1 = full power
+        double distance = Range.clip(Math.sqrt(Math.pow(analogValues.gamepad1LeftStickX, 2) + Math.pow(analogValues.gamepad1LeftStickY, 2)), 0, 1);
+
+
+        if(distance <= RobotManager.JOYSTICK_DEAD_ZONE_SIZE){
+            strafePower = SLOW_MOVEMENT_SCALE_FACTOR; //Set as 0.3 (3/10th full power)
+        } else {
+            strafePower = distance + MOVEMENT_MAX_POWER; //Set as 1 (full power)
+        }
+        //Pre-sets robot slide states at what speed.
+        if(robot.desiredSlidesState == Robot.SlidesState.HIGH && robot.slidesMotor1.getPower() == 0){
+            strafePower *= SLOW_MOVEMENT_SCALE_FACTOR; //Set as o.3
+        } else if (robot.desiredSlidesState == Robot.SlidesState.MEDIUM && robot.slidesMotor1.getPower() == 0){
+            strafePower *= SLOW_MOVEMENT_SCALE_FACTOR; //Set as o.3
+        } else if (robot.desiredSlidesState == Robot.SlidesState.LOW && robot.slideMotor1.getPower() == 0) {
+            strafePower *= SLOW_MOVEMENT_SCALE_FACTOR; //Set as o.3
+        }
+    }
+
+    /** DEGREE      ALT + 2 4 8
+     * Moves the robot straight in one of the cardinal directions or at a 45 degree angle.
+     * NOTE: ALL CONTROLLER MOVEMENTS ARE USING A PS5 CONTROLLER.
+     * @param forward moving robot forward. Using the UP arrow on the DPAD
+     * @param backward moving robot backwards. Using the DOWN arrow on the DPAD
+     * @param left moving robot to the left. Using the LEFT arrow on the DPAD
+     * @param right moving robot to the right. Using the RIGHT arrow on the DPAD
+     * @param robot
+     * @return whether any of the DPAD buttons were pressed
+     */
+    public boolean moveRobot(boolean forward, boolean backward, boolean left, boolean right, Robot robot) {
+        double direction;
+        if (forward || backward) {
+            if (left) {//moves left at 45° (or Northwest)
+                direction = -Math.PI * 0.25;
+            } else if (right) { //moves right at 45° (or Northeast)
+                direction = Math.PI * 0.75;
+            } else {//moving forward
+                direction = -Math.PI * 0.5;
+            }
+            if (backward) { //invert the forward to just backwards
+                direction *= -1;
+            }
+        } else if (left) { //default direction. Set as 0
+            direction = 0;
+        } else if (right) {
+            direction = Math.PI;
+        } else {
+            return false;
+        }
+    setDriveMotorPowers(direction, strafePower, 0.0, robot, false);
+        return true;
+    }
 }
 //Coders: Tyler M.
 //Alumni Help: Stephen D.
