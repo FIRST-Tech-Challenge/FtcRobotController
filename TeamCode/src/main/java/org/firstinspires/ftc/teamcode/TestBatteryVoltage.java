@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode;
 import android.annotation.SuppressLint;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.VoltageSensor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
@@ -14,19 +15,23 @@ import java.util.Locale;
 public class TestBatteryVoltage extends RobotOpMode {
     private ElapsedTime runtime = new ElapsedTime();
     private ElapsedTime batteryTestTime = new ElapsedTime();
+    private boolean shouldStop = false;
+    DcMotor arm;
     @Override
     public void init() {
         super.init();
+
+        moveArm(1, -90);
     }
 
     @Override
     public void robotloop() {
         runtime.reset();
-        leftBackDrive.setPower(1);
+        moveRobot(1, 0, 0);
         double voltage = getBatteryVoltage();
         dbp.createNewTelePacket();
 
-        while (runtime.seconds() < VOLTAGE_CONSTANTS.VOLTAGE_POLL_RATE) {
+        while ((runtime.seconds() < VOLTAGE_CONSTANTS.VOLTAGE_POLL_RATE) || shouldStop) {
             dbp.put("Battery Voltage", String.format(Locale.ENGLISH,
                     "%f s : Current Voltage: %.1f v",
                     batteryTestTime.seconds(), voltage));
@@ -62,5 +67,10 @@ public class TestBatteryVoltage extends RobotOpMode {
             }
         }
         return result;
+    }
+
+    @Override
+    public void stop() {
+        shouldStop = true;
     }
 }

@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.IMU;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -17,7 +18,7 @@ public abstract class RobotOpMode extends OpMode {
      * Used in the endTime parameter in moveRobot()
      */
     public static long STOP_NEVER = Long.MAX_VALUE;
-    DcMotor leftFrontDrive, leftBackDrive, rightFrontDrive, rightBackDrive;
+    DcMotor leftFrontDrive, leftBackDrive, rightFrontDrive, rightBackDrive, armMotor;
     BNO055IMU imu;
     ElapsedTime elapsedTime;
     /**
@@ -32,12 +33,18 @@ public abstract class RobotOpMode extends OpMode {
         leftBackDrive = hardwareMap.get(DcMotor.class, "bl_drv");
         rightFrontDrive = hardwareMap.get(DcMotor.class, "fr_drv");
         rightBackDrive = hardwareMap.get(DcMotor.class, "br_drv");
+        armMotor = hardwareMap.get(DcMotor.class, "arm");
+
         elapsedTime = new ElapsedTime(ElapsedTime.Resolution.MILLISECONDS);
 
         leftFrontDrive.setDirection(DcMotor.Direction.REVERSE);
         leftBackDrive.setDirection(DcMotor.Direction.REVERSE);
         rightFrontDrive.setDirection(DcMotor.Direction.FORWARD);
         rightBackDrive.setDirection(DcMotor.Direction.FORWARD);
+        armMotor.setDirection(DcMotorSimple.Direction.FORWARD);
+
+        armMotor.setTargetPosition(0);
+        armMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         try {
             imu = hardwareMap.get(BNO055IMU.class, "imu");
         } catch(Exception e) {
@@ -61,8 +68,15 @@ public abstract class RobotOpMode extends OpMode {
 
     public abstract void robotloop();
 
-    public boolean moveRobot(double axial, double lateral, double yaw) {
-        return moveRobot(axial, lateral, yaw, STOP_NEVER);
+    /**
+     * Sets the power of the robot's drive motors according to the parameters
+     *
+     * @param axial FORWARD AND BACKWARD
+     * @param lateral STRAFING, SIDE TO SIDE
+     * @param yaw ROTATION
+     */
+    public void moveRobot(double axial, double lateral, double yaw) {
+        moveRobot(axial, lateral, yaw, STOP_NEVER);
     }
 
     /**
@@ -102,6 +116,19 @@ public abstract class RobotOpMode extends OpMode {
         leftBackDrive.setPower(leftBackPower);
         rightBackDrive.setPower(rightBackPower);
         return true;
+    }
+
+    public void moveArm(float power, int position) {
+        dbp.createNewTelePacket();
+        armMotor.setTargetPosition(position);
+
+        armMotor.setPower(power);
+
+        while (armMotor.isBusy()) {
+            dbp.put("Waiting", "...");
+            dbp.send(true);
+        }
+        armMotor.setPower(0);
     }
 
     public void resetDriveMotors() {
