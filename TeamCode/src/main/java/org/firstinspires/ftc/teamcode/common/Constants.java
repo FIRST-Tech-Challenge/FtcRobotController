@@ -15,7 +15,11 @@ public class Constants {
         put("left_back", Direction.FORWARD);
         put("right_back", Direction.FORWARD);
     }};
-
-    public static final int ArmCountsPerRev = 560;
-
+    public static final int ArmCountsPerRev = 420;
+    public static final double ArmCountsPerDegree = 7.0/6;
+    public static final double ServoUnitsPerDegree = 1.0/135;
+    public static final double ServoOffsetDegrees = 30; // not for sure
+    public static double NormalDegreesToServoUnits(double normalDegrees) {
+        return (normalDegrees - ServoOffsetDegrees)*ServoUnitsPerDegree;
+    }
 }

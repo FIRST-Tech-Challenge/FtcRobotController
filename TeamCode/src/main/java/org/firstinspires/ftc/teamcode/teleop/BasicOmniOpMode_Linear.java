@@ -28,6 +28,7 @@ public class BasicOmniOpMode_Linear extends LinearOpMode {
     private IMU imu = null;
     private DcMotor intake = null;
     private Servo servo = null;
+    double powercoef = 0.5;
 
     @Override
     public void runOpMode() {
@@ -38,9 +39,12 @@ public class BasicOmniOpMode_Linear extends LinearOpMode {
         leftBackDrive = hardwareMap.get(DcMotorEx.class, "left_back");
         rightFrontDrive = hardwareMap.get(DcMotorEx.class, "right_front");
         rightBackDrive = hardwareMap.get(DcMotorEx.class, "right_back");
+
         imu = hardwareMap.get(IMU.class, "imu");
+
         arm = hardwareMap.get(DcMotorEx.class, "arm");
         intake = hardwareMap.get(DcMotor.class, "intake");
+
         servo = hardwareMap.get(Servo.class, "servo");
 
         leftFrontDrive.setDirection(Constants.motorDirections.get("left_front"));
@@ -53,83 +57,127 @@ public class BasicOmniOpMode_Linear extends LinearOpMode {
         rightFrontDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         rightBackDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
-        // Wait for the game to start (driver presses PLAY)
-        telemetry.addData("Status", "Initialized");
-        telemetry.update();
+        arm.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
-        waitForStart();
+        // Wait for the game to start (driver presses PLAY)
+        double position = 0;
+        while(!isStarted() && !isStopRequested()) {
+            position += gamepad2.right_stick_y/50;
+            telemetry.addData("servo target position: ", position);
+            telemetry.addData("Arm position: ", arm.getCurrentPosition());
+            servo.setPosition(position);
+            telemetry.update();
+        }
+
         runtime.reset();
 
-        double powercoef = 0.5;
+        double armSetpoint = 0;
 
         // run until the end of the match (driver presses STOP)
         while (opModeIsActive()) {
-            if(gamepad1.right_bumper) powercoef = 1;
-            else powercoef = 0.4;
-            double max;
 
-            // POV Mode uses left joystick to go forward & strafe, and right joystick to rotate.
-            double forward = -gamepad1.left_stick_y; /* Invert stick Y axis */
-            double strafe = gamepad1.left_stick_x;
-            double yaw = gamepad1.right_stick_x;
+            // setpoint code. assumes arm position 0 is when arm is horizontal, and servo angle increases when angle between top of arm and top of pan decreases
+            /*
+                                   _____
+           armSetPoint, in degrees ->◟/| (this angle is negative)
+                                     / |
+                                    /  |
+                                ___/   |
+         servo pos, in degrees ->◟/    | (this angle is positive)
+                                 /     |
+             */
 
-            double gyro_radians = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS);
-            double temp = forward * cos(gyro_radians) +
-                    strafe * sin(gyro_radians);
-            strafe = -forward * sin(gyro_radians) +
-                    strafe * cos(gyro_radians);
-            forward = temp;
-
-            /* At this point, Joystick X/Y (strafe/forwrd) vectors have been */
-            /* rotated by the gyro angle, and can be sent to drive system */
-
-            // Combine the joystick requests for each axis-motion to determine each wheel's power.
-            // Set up a variable for each drive wheel to save the power level for telemetry.
-            double leftFrontPower = powercoef * (forward + strafe + yaw);
-            double rightFrontPower = powercoef * (forward - strafe - yaw);
-            double leftBackPower = powercoef * (forward - strafe + yaw);
-            double rightBackPower = powercoef * (forward + strafe - yaw);
-
-            // Normalize the values so no wheel power exceeds 100%
-            // This ensures that the robot maintains the desired motion.
-            max = Math.max(Math.abs(leftFrontPower), Math.abs(rightFrontPower));
-            max = Math.max(max, Math.abs(leftBackPower));
-            max = Math.max(max, Math.abs(rightBackPower));
-
-            if (max > 1.0) {
-                leftFrontPower /= max;
-                rightFrontPower /= max;
-                leftBackPower /= max;
-                rightBackPower /= max;
+            // Calculate arm setpoint
+            /*
+            // safety limits
+            if (armSetpoint < -15 && -gamepad2.right_stick_y < 0 ||
+                armSetpoint > 120 && -gamepad2.right_stick_y > 0) { // we're up to no good, cautiously proceed
+                armSetpoint += gamepad2.right_stick_y/20;
+            } else {
+                armSetpoint += gamepad2.right_stick_y/200;
             }
+             */
 
-            // Other subsystems. Could be refined a lot.
-            double desiredArm = gamepad2.right_stick_y;
-            arm.setPower(desiredArm/3);
+            /* fancier controls
+            // Score, intake, or raise arm to setpoint
+            if(gamepad2.right_trigger > 0.5) {
+                arm.setTargetPosition((int) (-15 * Constants.ArmCountsPerDegree)); // intaking
+                intake.setPower(1);
+                servo.setPosition(Constants.NormalDegreesToServoUnits(15));
+            }
+            else if (gamepad2.x) servo.setPosition(Constants.NormalDegreesToServoUnits(15)); // scoring
+            else {
+                arm.setTargetPosition((int) armSetpoint*Constants.ArmCountsPerRev);
+                servo.setPosition(-Constants.NormalDegreesToServoUnits(armSetpoint));
+            }
+             */
 
-            double desiredIntake = gamepad2.left_stick_y;
-            intake.setPower(desiredIntake);
-            double desiredSos = gamepad2.left_trigger;
-            servo.setPosition(desiredSos);
+            armSetpoint += gamepad2.right_stick_y/200;
+            telemetry.addData("Arm Setpoint: ", armSetpoint);
+            servo.setPosition(Constants.NormalDegreesToServoUnits(armSetpoint));
+            arm.setTargetPosition((int) (armSetpoint * Constants.ArmCountsPerDegree));
+            arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            arm.setPower(0.5);
 
-            // possible setpoint code. assumes position 0 is when arm is horizontal.
-            if(gamepad2.right_stick_y < -0.1) arm.setTargetPosition(-Constants.ArmCountsPerRev/24); // intaking
-            else if (gamepad2.right_stick_y > 0.1) arm.setTargetPosition(Constants.ArmCountsPerRev/3); //scoring
-            else arm.setTargetPosition(0); //carrying
-            arm.setPower(1);
+            HandleDrivetrain();
 
-            // Send calculated power to wheels
-            leftFrontDrive.setPower(leftFrontPower);
-            rightFrontDrive.setPower(rightFrontPower);
-            leftBackDrive.setPower(leftBackPower);
-            rightBackDrive.setPower(rightBackPower);
-
-            // Show the elapsed game time and wheel power.
-            telemetry.addData("Status", "Run Time: " + runtime.toString());
-            telemetry.addData("Front left/Right", "%4.2f, %4.2f", leftFrontPower, rightFrontPower);
-            telemetry.addData("Back  left/Right", "%4.2f, %4.2f", leftBackPower, rightBackPower);
             telemetry.addData("Arm position: ", arm.getCurrentPosition());
+            telemetry.addData("Servo position: ", servo.getPosition());
             telemetry.update();
         }
+    }
+
+    public void HandleDrivetrain() {
+        // POV Mode uses left joystick to go forward & strafe, and right joystick to rotate.
+        if(gamepad1.right_bumper) powercoef = 1;
+        else powercoef = 0.4;
+
+        double forward = -gamepad1.left_stick_y; /* Invert stick Y axis */
+        double strafe = gamepad1.left_stick_x;
+        double yaw = gamepad1.right_stick_x;
+
+        double gyro_radians = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS);
+        double temp = forward * cos(gyro_radians) +
+                strafe * sin(gyro_radians);
+        strafe = -forward * sin(gyro_radians) +
+                strafe * cos(gyro_radians);
+        forward = temp;
+
+        /* At this point, Joystick X/Y (strafe/forwrd) vectors have been */
+        /* rotated by the gyro angle, and can be sent to drive system */
+
+        // Combine the joystick requests for each axis-motion to determine each wheel's power.
+        // Set up a variable for each drive wheel to save the power level for telemetry.
+        double leftFrontPower = powercoef * (forward + strafe + yaw);
+        double rightFrontPower = powercoef * (forward - strafe - yaw);
+        double leftBackPower = powercoef * (forward - strafe + yaw);
+        double rightBackPower = powercoef * (forward + strafe - yaw);
+
+        // Normalize the values so no wheel power exceeds 100%
+        // This ensures that the robot maintains the desired motion.
+        double max = Math.max(Math.abs(leftFrontPower), Math.abs(rightFrontPower));
+        max = Math.max(max, Math.abs(leftBackPower));
+        max = Math.max(max, Math.abs(rightBackPower));
+
+        if (max > 1.0) {
+            leftFrontPower /= max;
+            rightFrontPower /= max;
+            leftBackPower /= max;
+            rightBackPower /= max;
+        }
+        // Send calculated power to wheels
+        leftFrontDrive.setPower(leftFrontPower);
+        rightFrontDrive.setPower(rightFrontPower);
+        leftBackDrive.setPower(leftBackPower);
+        rightBackDrive.setPower(rightBackPower);
+
+        // Show the elapsed game time and wheel power.
+        telemetry.addData("Status", "Run Time: " + runtime.toString());
+        telemetry.addData("Front left/Right", "%4.2f, %4.2f", leftFrontPower, rightFrontPower);
+        telemetry.addData("Back  left/Right", "%4.2f, %4.2f", leftBackPower, rightBackPower);
+    }
+
+    public void HandleTelemetry() {
+
     }
 }

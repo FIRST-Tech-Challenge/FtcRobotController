@@ -22,20 +22,45 @@ public class Autonomous extends LinearOpMode {
         left_front.setDirection(DcMotorSimple.Direction.REVERSE);
         left_back.setDirection(DcMotorSimple.Direction.REVERSE);
 
-        waitForStart();
+        left_front.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        left_back.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        right_front.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        right_back.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
-        right_front.setPower(1);
-        left_front.setPower(1);
-        right_back.setPower(1);
-        left_back.setPower(1);
-        right_front.setPower(0);
-        left_front.setPower(0);
-        right_back.setPower(0);
-        left_back.setPower(0);
         waitForStart();
 
         moveForward(1, 1);
 
+    }
+
+    public void CoolestDrive(double forward, double strafe, double yaw, double speed){
+        left_front.setTargetPosition((int) (forward + strafe + yaw));
+        left_front.setTargetPosition((int) (forward - strafe - yaw));
+        left_front.setTargetPosition((int) (forward - strafe + yaw));
+        left_front.setTargetPosition((int) (forward + strafe - yaw));
+
+        left_front.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        left_back.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        right_front.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        right_back.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+        double leftFrontPower = speed * (forward + strafe + yaw);
+        double rightFrontPower = speed * (forward - strafe - yaw);
+        double leftBackPower = speed * (forward - strafe + yaw);
+        double rightBackPower = speed * (forward + strafe - yaw);
+
+        // Normalize the values so no wheel power exceeds 100%
+        // This ensures that the robot maintains the desired motion.
+        double max = Math.max(Math.abs(leftFrontPower), Math.abs(rightFrontPower));
+        max = Math.max(max, Math.abs(leftBackPower));
+        max = Math.max(max, Math.abs(rightBackPower));
+
+        if (max > 1.0) {
+            leftFrontPower /= max;
+            rightFrontPower /= max;
+            leftBackPower /= max;
+            rightBackPower /= max;
+        }
     }
 
     public void moveForward(int power, int time) {
