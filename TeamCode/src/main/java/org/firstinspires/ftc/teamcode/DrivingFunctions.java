@@ -27,7 +27,7 @@ public class DrivingFunctions {
     static final double     COUNTS_PER_INCH         = (COUNTS_PER_MOTOR_REV * DRIVE_GEAR_REDUCTION) /
             (WHEEL_DIAMETER_INCHES * 3.1415);
     static final double     HEADING_THRESHOLD       = 1.0 ;    // How close must the heading get to the target before moving to next step.
-    static final double     P_TURN_GAIN            = 0.035;     // Larger is more responsive, but also less stable
+    static final double     P_TURN_GAIN            = 0.04;     // Larger is more responsive, but also less stable
     static final double     P_DRIVE_GAIN           = 0.03;     // Larger is more responsive, but also less stable
     public DrivingFunctions(LinearOpMode l)
     {
@@ -66,10 +66,10 @@ public class DrivingFunctions {
         // Without this, the REV Hub's orientation is assumed to be logo up / USB forward
         imu.initialize(parameters);
 
-        leftFrontDrive.setDirection(isRobotA ? DcMotor.Direction.REVERSE : DcMotor.Direction.FORWARD);
+        leftFrontDrive.setDirection(isRobotA ? DcMotor.Direction.REVERSE : DcMotor.Direction.REVERSE);
         leftBackDrive.setDirection(isRobotA ? DcMotor.Direction.FORWARD: DcMotor.Direction.REVERSE);
         rightFrontDrive.setDirection(DcMotor.Direction.FORWARD);
-        rightBackDrive.setDirection(isRobotA ? DcMotor.Direction.FORWARD: DcMotor.Direction.REVERSE);
+        rightBackDrive.setDirection(isRobotA ? DcMotor.Direction.FORWARD: DcMotor.Direction.FORWARD);
 
         // Ensure the robot is stationary.  Reset the encoders and set the motors to BRAKE mode
         leftFrontDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -116,7 +116,7 @@ public class DrivingFunctions {
     public void DriveStraight(double maxDriveSpeed, double distance, double heading, boolean strafe)
     {
         CalculateHeadingError(heading);
-        if (Math.abs(this.headingError) > 2.0)
+        if (Math.abs(this.headingError) > 4.0)
             TurnToHeading(maxDriveSpeed, heading);
         // Determine new target position, and pass to motor controller
         int moveCounts = (int)(distance * COUNTS_PER_INCH);
@@ -193,10 +193,11 @@ public class DrivingFunctions {
 
         double startTime = runtime.milliseconds();
         // Run getSteeringCorrection() once to pre-calculate the current error
-        GetSteeringCorrection(heading, P_DRIVE_GAIN);
+        CalculateHeadingError(heading);
+        int timeout = Math.abs(this.headingError) < 90 ? TURN_TIMEOUT_MILLISECONDS / 2 : TURN_TIMEOUT_MILLISECONDS;
 
         // keep looping while we are still active, and not on heading.
-        while ((runtime.milliseconds() - startTime) < TURN_TIMEOUT_MILLISECONDS &&
+        while ((runtime.milliseconds() - startTime) < timeout &&
                 lom.opModeIsActive() &&
                 ((Math.abs(this.headingError) > HEADING_THRESHOLD) || Math.abs(GetRotatingSpeed()) > 2.0))
         {
