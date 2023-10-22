@@ -43,7 +43,7 @@ import java.util.List;
 /*
  * This OpMode illustrates the basics of AprilTag recognition and pose estimation, using
  * the easy way.
- *ccz
+ *
  * For an introduction to AprilTags, see the FTC-DOCS link below:
  * https://ftc-docs.firstinspires.org/en/latest/apriltag/vision_portal/apriltag_intro/apriltag-intro.html
  *
@@ -96,7 +96,7 @@ public class ConceptAprilTagEasy extends LinearOpMode {
                 // Push telemetry to the Driver Station.
                 telemetry.update();
 
-                // Save CPU resources; can raesume streaming when needed.
+                // Save CPU resources; can resume streaming when needed.
                 if (gamepad1.dpad_down) {
                     visionPortal.stopStreaming();
                 } else if (gamepad1.dpad_up) {
