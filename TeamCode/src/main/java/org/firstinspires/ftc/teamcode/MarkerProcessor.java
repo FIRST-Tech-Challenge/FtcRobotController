@@ -21,7 +21,7 @@ public class MarkerProcessor implements VisionProcessor {
         LEFT, RIGHT, CENTER, UNDETECTED, UNKNOWN
     }
 
-    private Telemetry telemetry;
+    private final Telemetry telemetry;
     private final MarkerDetector detector;
 
     public MarkerProcessor(Telemetry telemetry) {

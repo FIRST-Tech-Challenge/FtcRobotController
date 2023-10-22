@@ -15,7 +15,6 @@ public class EthanDrive extends LinearOpMode {
 
     @Override
     public void runOpMode() {
-        waitForStart();
 
         DcMotor lFront = hardwareMap.dcMotor.get("fLeft");
         DcMotor rFront = hardwareMap.dcMotor.get("fRight");
@@ -43,6 +42,7 @@ public class EthanDrive extends LinearOpMode {
         rFront.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         rBack.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
+        waitForStart();
 
         while (opModeIsActive()) {
             /*

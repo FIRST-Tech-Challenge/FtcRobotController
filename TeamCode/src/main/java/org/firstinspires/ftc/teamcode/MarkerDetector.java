@@ -11,13 +11,13 @@ import org.opencv.imgproc.Imgproc;
 import org.openftc.easyopencv.OpenCvPipeline;
 
 public class MarkerDetector extends OpenCvPipeline {
-    private Mat workingMatrix = new Mat();
+    private final Mat workingMatrix = new Mat();
 
     public MARKER_POSITION position = MARKER_POSITION.UNKNOWN;
     double leftRedAvg;
     private static final int SUBMAT_WIDTH = 80;
     private static final int SUBMAT_HEIGHT = 80;
-    private Telemetry telemetry;
+    private final Telemetry telemetry;
     public enum MARKER_POSITION {
         LEFT, RIGHT, CENTER, UNDETECTED, UNKNOWN
     }
