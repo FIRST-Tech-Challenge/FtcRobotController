@@ -24,7 +24,7 @@ public class AutonomousOpenCV extends LinearOpMode {
     protected boolean runEncoderTest = false;
     protected boolean runAutoDrivingTest = false;
     static final double DRIVE_SPEED = 0.35;
-    static final double TURN_SPEED = 0.6;
+    static final double TURN_SPEED = 0.5;
 
     private void RunBallDetectionTest() {
         while (opModeIsActive()) {
