@@ -110,7 +110,7 @@ public class BlueWebcamDetection extends LinearOpMode {
         public Mat processFrame(Mat input)
         {
             // convert image to grayscale
-            Imgproc.cvtColor(input, hsv, Imgproc.COLOR_BGR2HSV);
+            Imgproc.cvtColor(input, hsv, Imgproc.COLOR_RGB2HSV);
             // blur the image to reduce the impact of noisy pixels
             Imgproc.GaussianBlur(hsv, hsv, new Size(7,7),0);
             Core.inRange(hsv, LOWER_BLUE, UPPER_BLUE, hsv);

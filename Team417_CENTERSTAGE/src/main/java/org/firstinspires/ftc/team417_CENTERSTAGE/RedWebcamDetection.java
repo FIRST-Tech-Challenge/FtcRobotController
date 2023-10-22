@@ -97,8 +97,8 @@ public class RedWebcamDetection extends LinearOpMode {
         }
     }
 
-    public static final Scalar LOWER_RED = new Scalar(0, 150, 0);
-    public static final Scalar UPPER_RED = new Scalar(179, 255, 255);
+    public static final Scalar LOWER_RED = new Scalar(100, 100, 50);
+    public static final Scalar UPPER_RED = new Scalar(130, 255, 255);
 
     class SamplePipeline extends OpenCvPipeline
     {
