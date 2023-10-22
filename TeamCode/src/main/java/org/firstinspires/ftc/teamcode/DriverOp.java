@@ -22,7 +22,7 @@ public class DriverOp extends RobotOpMode {
         gamePadMoveRobot();
         int direction = 0;
         if (gamepad1.dpad_up) {
-            int position = positionFromAngle(20+90, AngleUnit.DEGREES);
+            int position = positionFromAngle(-110, AngleUnit.DEGREES);
             armMotor.setTargetPosition(position);
             armMotor.setPower(1);
         }
