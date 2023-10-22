@@ -24,13 +24,13 @@ public class lift {
         pos = lift1.getCurrentPosition();
     }
     public void setHeight(int ticks){
-        pidf.setSetPoint(ticks);
-        pos = lift1.getCurrentPosition();
+
+    }
+    public void setTilt(int ticks){
+
     }
     public void run(){
-        lift1.setPower(pidf.calculate(lift1.getCurrentPosition()));
-        lift2.setPower(lift1.getPower());
-        pos = lift1.getCurrentPosition();
+
     }
 
 }
