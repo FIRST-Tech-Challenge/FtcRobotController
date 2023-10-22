@@ -11,30 +11,50 @@ public class BaseTeleOp extends BaseOpMode {
         waitForStart();
 
         while (opModeIsActive()) {
-            drive();
+            driveUsingControllers(true);
         }
     }
 
-    public void drive() {
-        double sensitivity = 0.5;
-        double rotSensitivity = 0.8;
+    public void driveUsingControllers() {
+        double sensitivity = 1;
+        double rotSensitivity = 1;
         double strafeConstant = 1.1;
 
-        double y = -gamepad1.left_stick_y * sensitivity;
-        double x = gamepad1.left_stick_x * strafeConstant * sensitivity;
-        double rotX = gamepad1.right_stick_x * rotSensitivity;
+        double x = curveStick(gamepad1.left_stick_x) * strafeConstant * sensitivity;
+        double y = -curveStick(gamepad1.left_stick_y) * sensitivity;
+        double rot = curveStick(gamepad1.right_stick_x) * rotSensitivity;
 
-        double denominator = Math.max(Math.abs(y) + Math.abs(x) + Math.abs(rotX), 1);
+        mecanumDrive(x, y, rot);
+    }
 
-        double frontLeftPower = (y + x + rotX) / denominator;
-        double frontRightPower = (y - x - rotX) / denominator;
-        double backLeftPower = (y - x + rotX) / denominator;
-        double backRightPower = (y + x - rotX) / denominator;
+    public void driveUsingControllers(boolean curve) {
+        double sensitivity, rotSensitivity;
+        double strafeConstant = 1.1;
+        double x, y, rot;
+        if (curve) {
+            sensitivity = 1;
+            rotSensitivity = 1;
+            x = curveStick(gamepad1.left_stick_x) * strafeConstant * sensitivity;
+            y = -curveStick(gamepad1.left_stick_y) * sensitivity;
+            rot = curveStick(gamepad1.right_stick_x) * rotSensitivity;
+        } else {
+            sensitivity = 0.5;
+            rotSensitivity = 0.8;
+            x = gamepad1.left_stick_x * strafeConstant * sensitivity;
+            y = -gamepad1.left_stick_y * sensitivity;
+            rot = gamepad1.right_stick_x * rotSensitivity;
+        }
+        mecanumDrive(x, y, rot);
+    }
 
-        FL.setPower(frontLeftPower);
-        FR.setPower(frontRightPower);
-        BL.setPower(backLeftPower);
-        BR.setPower(backRightPower);
-
+    //Adds stick curve to the drive joysticks
+    public double curveStick(double rawSpeed) {
+        double logSpeed;
+        if (rawSpeed >= 0) {
+            logSpeed = Math.pow(rawSpeed, 2);
+        } else {
+            logSpeed = Math.pow(rawSpeed, 2);
+        }
+        return logSpeed;
     }
 }

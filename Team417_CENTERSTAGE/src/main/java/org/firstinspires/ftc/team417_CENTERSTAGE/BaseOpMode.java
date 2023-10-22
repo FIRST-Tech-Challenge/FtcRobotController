@@ -61,4 +61,18 @@ abstract class BaseOpMode extends LinearOpMode {
         // Waits so the imu can process
         sleep(2000);
     }
+
+    public void mecanumDrive(double x, double y, double rot) {
+        double denominator = Math.max(Math.abs(y) + Math.abs(x) + Math.abs(rot), 1);
+
+        double frontLeftPower = (y + x + rot) / denominator;
+        double frontRightPower = (y - x - rot) / denominator;
+        double backLeftPower = (y - x + rot) / denominator;
+        double backRightPower = (y + x - rot) / denominator;
+
+        FL.setPower(frontLeftPower);
+        FR.setPower(frontRightPower);
+        BL.setPower(backLeftPower);
+        BR.setPower(backRightPower);
+    }
 }
