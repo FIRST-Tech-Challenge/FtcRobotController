@@ -9,7 +9,7 @@ public class AlternativeRedRightPark extends BaseAutonomous {
     public void runOpMode() {
         initAuto();
         waitForStart();
-        // go forward then strafe to backstage
+        // right one tile, forward three, left one
         driveInches(24, 0);
         driveInches(0, 54);
         driveInches(26, 0);
