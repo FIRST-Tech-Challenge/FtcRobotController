@@ -21,7 +21,7 @@ public class LongRedAuto extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
 
-        int idNumber = 1;
+        int idNumber = 0;
 
        /* int cameraMonitorViewId =
                 hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
@@ -31,13 +31,16 @@ public class LongRedAuto extends LinearOpMode {
        robot.setUpDrivetrainMotors();
 
         // Initializing marker and apriltag processors and setting them with visionportal
-        MarkerProcessor markerProcessor = new MarkerProcessor(telemetry);
+        /*MarkerProcessor markerProcessor = new MarkerProcessor(telemetry);
         AprilTagProcessor aprilTagProcessor = AprilTagProcessor.easyCreateWithDefaults();
         VisionPortal visionPortal = VisionPortal.easyCreateWithDefaults
                 (hardwareMap.get(WebcamName.class, "Webcam 1"),
                         aprilTagProcessor,
-                        markerProcessor);
-
+                        markerProcessor);*/
+        robot.setUpVisionProcessing();
+        VisionPortal visionPortal = robot.getVisionPortal();
+        MarkerProcessor markerProcessor = robot.getMarkerProcessor();
+        AprilTagProcessor aprilTagProcessor = robot.getAprilTagProcessor();
 
 
         //MarkerDetector detector = new MarkerDetector(telemetry);
@@ -86,7 +89,8 @@ public class LongRedAuto extends LinearOpMode {
             robot.mecanumBlocking(28, false);
 
             //TODO: APRILTAG GOES HERE !!!!!!
-
+            robot.aprilTagFnaggling(idNumber, 300, 0);
+            break;
             /*while (opModeIsActive() && !isDoneWithAprilTagX) {
 
 
@@ -108,8 +112,6 @@ public class LongRedAuto extends LinearOpMode {
 
                 telemetry.update();
             }*/
-
-            robot.aprilTagFnaggling(idNumber, 300, 0);
 
 
         /*robot.waitFor(2);
@@ -150,10 +152,8 @@ public class LongRedAuto extends LinearOpMode {
 
 
         }
-        sleep(100);
-        robot.setHeading(0);
-        //robot.straightBlocking(27, false);
-        sleep(100);
+
+
 
 
         //robot.setUpVisionProcessing();

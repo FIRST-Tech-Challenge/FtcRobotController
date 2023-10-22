@@ -48,7 +48,7 @@ public class Robot {
     MarkerDetector.MARKER_POSITION position;
     private MarkerDetector detector;
     private MarkerProcessor markerProcessor;
-    private AprilTagProcessor aprilTag;
+    private AprilTagProcessor aprilTagProcessor;
     private VisionPortal visionPortal;
 
 
@@ -58,26 +58,37 @@ public class Robot {
         this.hardwareMap = hardwareMap;
         this.opMode = opMode;
         this.telemetry = telemetry;
+        AprilTagProcessor aprilTagProcessor = AprilTagProcessor.easyCreateWithDefaults();
         setUpDrivetrainMotors();
         setUpImu();
         //int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
         //webcam = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "Webcam 1"), cameraMonitorViewId);
     }
 
-
+//vision processing setup
     public void setUpVisionProcessing() {
 
-//        aprilTag = new AprilTagProcessor.Builder().build();
         markerProcessor = new MarkerProcessor(telemetry);
-
-        visionPortal = new VisionPortal.Builder()
-            .setCamera(hardwareMap.get(WebcamName.class, "Webcam 1"))
-            .addProcessors(markerProcessor, aprilTag)
-            .build();
+        aprilTagProcessor = AprilTagProcessor.easyCreateWithDefaults();
+        visionPortal = VisionPortal.easyCreateWithDefaults
+                (hardwareMap.get(WebcamName.class, "Webcam 1"),
+                        aprilTagProcessor,
+                        markerProcessor);
 //        visionPortal.setProcessorEnabled(markerProcessor, false);
 //        visionPortal.setProcessorEnabled(aprilTag, false);
     }
 
+    public VisionPortal getVisionPortal() {
+        return visionPortal;
+    }
+
+    public MarkerProcessor getMarkerProcessor() {
+        return markerProcessor;
+    }
+
+    public AprilTagProcessor getAprilTagProcessor() {
+        return aprilTagProcessor;
+    }
 
 //    public double getAprilY(int idNumber) {
 //        List<AprilTagDetection> currentDetections = aprilTag.getDetections();
@@ -100,22 +111,27 @@ public class Robot {
 //        visionPortal.setProcessorEnabled(markerProcessor, false);
 
         double xValue = 0;
-        List<AprilTagDetection> currentDetections = aprilTag.getDetections();
-        Log.d("vision", "num of detections" + currentDetections.size());
-        for (AprilTagDetection detection : currentDetections) {
-            Log.d("vision", "id detections" + detection.metadata.id);
-            if (detection.metadata.id == idNumber) {
-                xValue = detection.ftcPose.x;
-                telemetry.addData("id detected", idNumber);
-                break;
+        List<AprilTagDetection> currentDetections = aprilTagProcessor.getDetections();
+        if (currentDetections != null) {
+            Log.d("vision", "num of detections" + currentDetections.size());
+            for (AprilTagDetection detection : currentDetections) {
+                Log.d("vision", "id detections" + detection.metadata.id);
+                if (detection.metadata.id == idNumber) {
+                    xValue = detection.ftcPose.x;
+                    telemetry.addData("id detected", idNumber);
+                    break;
+                }
             }
+        } else {
             telemetry.addLine("not detected");
+            Log.d("vision", "detected");
+            return 0;
         }
         return -xValue;
     }
 
     public double getAprilZ(int idNumber) {
-        List<AprilTagDetection> currentDetections = aprilTag.getDetections();
+        List<AprilTagDetection> currentDetections = aprilTagProcessor.getDetections();
 
         double yawAprilTag = 0;
 
@@ -132,7 +148,7 @@ public class Robot {
 //        visionPortal.setProcessorEnabled(markerProcessor, false);
 //        m.setProcessorEnabled(aprilTag, true);
 
-        List<AprilTagDetection> currentDetections = aprilTag.getDetections();
+        List<AprilTagDetection> currentDetections = aprilTagProcessor.getDetections();
 
         double range = 0;
         for (AprilTagDetection detection : currentDetections) {
@@ -142,25 +158,27 @@ public class Robot {
             }
 
         }
-        return -range;
+        return range;
     }
 
     public boolean moveRelativeToAprilTagX(double mmFromAprilTag, int idNumber) {
         double inchesFromAprilTag = mmFromAprilTag / 25.4;
         boolean done = false;
 
-        double[] powerMoveNegative = calculateMecanumPower((inchesFromAprilTag - getAprilTagXPos(idNumber)));
-        double[] powerMovePositive = calculateMecanumPower(-(inchesFromAprilTag - getAprilTagXPos(idNumber)));
+        double aprilTagXPos = getAprilTagXPos(idNumber);
+
+        double[] powerMoveNegative = calculateMecanumPower((inchesFromAprilTag - aprilTagXPos));
+        double[] powerMovePositive = calculateMecanumPower(-(inchesFromAprilTag - aprilTagXPos));
 
         double[] stopPower = {0, 0, 0, 0};
 
-        if (!(getAprilTagXPos(idNumber) > inchesFromAprilTag - 0.5 &&
-                getAprilTagXPos(idNumber) < inchesFromAprilTag + 0.5)) {
-            if (getAprilTagXPos(idNumber) < inchesFromAprilTag) {
-                powerMovePositive = calculateMecanumPower(-25.4 * (inchesFromAprilTag - getAprilTagXPos(idNumber)));
+        if (!(aprilTagXPos > inchesFromAprilTag - 0.5 &&
+                aprilTagXPos < inchesFromAprilTag + 0.5)) {
+            if (aprilTagXPos < inchesFromAprilTag) {
+                powerMovePositive = calculateMecanumPower(-25.4 * (inchesFromAprilTag - aprilTagXPos));
                 setMotorPower(powerMovePositive);
             } else {
-                powerMoveNegative = calculateMecanumPower(-25.4 * (inchesFromAprilTag - getAprilTagXPos(idNumber)));
+                powerMoveNegative = calculateMecanumPower(-25.4 * (inchesFromAprilTag - aprilTagXPos));
                 setMotorPower(powerMoveNegative);
             }
         } else {
@@ -170,44 +188,55 @@ public class Robot {
 
         telemetry.addData("power", powerMovePositive);
         telemetry.addData("power 2", powerMoveNegative);
-        telemetry.addData("x ", getAprilTagXPos(idNumber));
-        telemetry.addData("left range", getAprilTagXPos(idNumber) > inchesFromAprilTag - 0.5);
-        telemetry.addData("right range", getAprilTagXPos(idNumber) < inchesFromAprilTag + 0.5);
+        telemetry.addData("x ", aprilTagXPos);
+        telemetry.addData("left range", aprilTagXPos > inchesFromAprilTag - 0.5);
+        telemetry.addData("right range", aprilTagXPos < inchesFromAprilTag + 0.5);
 
         return done;
     }
 
     public boolean moveRelativeToAprilTagRange(double mmFromAprilTag, int idNumber) {
-        double inchesFromAprilTag = mmFromAprilTag / 25.4;
+        double targetFromAprilTagInches = mmFromAprilTag / 25.4;
         boolean done = false;
+        double aprilTagRange = getAprilTagRange(idNumber);
+        double moveDistanceInches ;
 
-        double[] powerMoveNegative = calculateDrivetrainPower((inchesFromAprilTag - getAprilTagRange(idNumber)));
-        double[] powerMovePositive = calculateDrivetrainPower(-(inchesFromAprilTag - getAprilTagRange(idNumber)));
+        if (aprilTagRange == 0) {
+            moveDistanceInches = targetFromAprilTagInches;
+        } else {
+            moveDistanceInches = ((aprilTagRange - targetFromAprilTagInches));
+        }
 
         double[] stopPower = {0, 0, 0, 0};
-
-        if (!(getAprilTagRange(idNumber) > inchesFromAprilTag - 0.5 &&
-                getAprilTagRange(idNumber) < inchesFromAprilTag + 0.5)) {
-            if (getAprilTagRange(idNumber) < inchesFromAprilTag) {
-                powerMovePositive = calculateDrivetrainPower(-25.4 * (inchesFromAprilTag - getAprilTagRange(idNumber)));
-                setMotorPower(powerMovePositive);
+        telemetry.addData("april tag range", aprilTagRange);
+        Log.d("vision", "april tag range" + aprilTagRange);
+        Log.d("vision", "move distance" + moveDistanceInches);
+        if (moveDistanceInches > 0.5 || moveDistanceInches < -0.5) {
+            if (moveDistanceInches > 0) {
+                //robot is backward
+                //move closer to april tag
+                straightBlocking(Math.abs(moveDistanceInches), false);
             } else {
-                powerMoveNegative = calculateDrivetrainPower(-25.4 * (inchesFromAprilTag - getAprilTagRange(idNumber)));
-                setMotorPower(powerMoveNegative);
+                //move away from april tag
+                straightBlocking(Math.abs(moveDistanceInches), true);
             }
+        } else if (aprilTagRange == 0){
+
+            setMotorPower(stopPower);
+            telemetry.addLine("not seeing april tag, not moving");
+            Log.d("vision", "not seeing april tag not moving");
+            done = true;
         } else {
             setMotorPower(stopPower);
             done = true;
         }
 
-        telemetry.addData("power", powerMovePositive);
-        telemetry.addData("power 2", powerMoveNegative);
         telemetry.addData("range", getAprilTagRange(idNumber));
 
         return done;
     }
 
-    public void aprilTagFnaggling(int idNumber, double rangeFromAprilTag, double xAxisFromAprilTag) {
+    public void aprilTagFnaggling(int idNumber, double rangeFromAprilTagMM, double xAxisFromAprilTag) {
         boolean isDoneWithAprilTagX = false;
         boolean isDoneWithAprilTagRange = false;
         while (opMode.opModeIsActive() && !isDoneWithAprilTagX) {
@@ -224,7 +253,7 @@ public class Robot {
         while (opMode.opModeIsActive() && !isDoneWithAprilTagRange) {
 
 
-            isDoneWithAprilTagRange = moveRelativeToAprilTagRange(rangeFromAprilTag, idNumber);
+            isDoneWithAprilTagRange = moveRelativeToAprilTagRange(rangeFromAprilTagMM, idNumber);
 
 
             telemetry.addData("range", isDoneWithAprilTagRange);
