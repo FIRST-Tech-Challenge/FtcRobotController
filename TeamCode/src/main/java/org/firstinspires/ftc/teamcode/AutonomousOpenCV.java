@@ -20,6 +20,8 @@ public class AutonomousOpenCV extends LinearOpMode {
     protected ServoFunctions sf;
     protected boolean isRed = false; // whether to detect a red ball (if false detects blue)
     protected boolean isNear = false; // whether we start from the near side of the backboard
+    protected boolean centerCross = false;
+    protected boolean cornerPark = true;
     protected boolean runBallDetectionTest = false;
     protected boolean runEncoderTest = false;
     protected boolean runAutoDrivingTest = false;
@@ -92,26 +94,38 @@ public class AutonomousOpenCV extends LinearOpMode {
             ballPosition = "left";
             PushPixelSide(false);
             strafeCorrection = isNear ? -1.5 : -1.5;
-            aimingDistance = isRed ? 12 : 0;
+            aimingDistance = isRed ? -23 : 0;
         }
         else if(circleDetection.GetBallPosition() == CircleDetection.BallPosition.CENTER)
         {
             ballPosition = "center";
             PushPixelCenter();
-            aimingDistance = 6;
-            strafeCorrection = isNear ? 0 : -3;
+            aimingDistance = centerCross ? -27.5 : 6;
+            strafeCorrection = centerCross ? -2 : isNear ? -1.5 : -1.5;
         }
         else if(circleDetection.GetBallPosition() == CircleDetection.BallPosition.RIGHT)
         {
             ballPosition = "right";
             PushPixelSide(true);
-            strafeCorrection = isNear ? -1.5 : -1.5;
-            aimingDistance = isRed ? 0 : 12;
+
+            strafeCorrection = centerCross ? 8 : isNear ? -1.5 : -1.5;
+            aimingDistance = isRed ? -40 : 12;
         }
-        if(!isNear)
-            CrossField();
-        DeliverPixel(aimingDistance, strafeCorrection);
-        ParkRobot();
+        if(!isNear) {
+            if (centerCross) {
+                CrossField(true);
+            }
+            else{
+                CrossField(false);
+            }
+            DeliverPixel(aimingDistance, strafeCorrection);
+            if (cornerPark) {
+                ParkRobot(true);
+            }
+            else{
+                ParkRobot(false);
+            }
+        }
     }
 
     protected void PushPixelSide(boolean isRight)
@@ -138,11 +152,19 @@ public class AutonomousOpenCV extends LinearOpMode {
         df.DriveStraight(DRIVE_SPEED, 34, 0, false);
         df.DriveStraight(DRIVE_SPEED, -17, 0, false);
     }
-    private void CrossField()
+    private void CrossField(boolean centerCross)
     {
-        df.DriveStraight(DRIVE_SPEED, -13, 0, false);
-        df.DriveStraight(DRIVE_SPEED * 1.5, isRed ? 60 : -60, 0, true);
-        df.DriveStraight(DRIVE_SPEED, 13, 0, false);
+        if (!centerCross) {
+            df.DriveStraight(DRIVE_SPEED, -13, 0, false);
+            df.DriveStraight(DRIVE_SPEED * 1.5, isRed ? 60 : -60, 0, true);
+            df.DriveStraight(DRIVE_SPEED, 13, 0, false);
+        }
+        else{
+            df.DriveStraight(DRIVE_SPEED, -13, 0, false);
+            df.DriveStraight(DRIVE_SPEED * 1.5, isRed ?  26: -26, 0, true);
+            df.DriveStraight(DRIVE_SPEED, 46, 0, false);
+            df.DriveStraight(DRIVE_SPEED * 1.5, isRed ? 30 : -30, 0, true);
+        }
     }
     protected void DeliverPixel(double aimingDistance, double strafeCorrection)
     {
@@ -161,14 +183,22 @@ public class AutonomousOpenCV extends LinearOpMode {
         // Gets away from the board after delivering pixel
         df.DriveStraight(DRIVE_SPEED, -6, deliveryHeading, true);
         // Moves the aiming distance towards the wall, so the robot ends up in the same place regardless of where it delivered the pixel
-        df.DriveStraight(DRIVE_SPEED, isRed ? -aimingDistance : aimingDistance , deliveryHeading, false);
+        if(cornerPark)
+            df.DriveStraight(DRIVE_SPEED, isRed ? aimingDistance : -aimingDistance, deliveryHeading, false);
+        else
+            df.DriveStraight(DRIVE_SPEED, isRed ? -aimingDistance : aimingDistance, deliveryHeading, false);
     }
 
-    protected void ParkRobot()
+    protected void ParkRobot( boolean cornerPark)
     {
         int deliveryHeading = isRed ? 0 : 180;
-        df.DriveStraight(DRIVE_SPEED, isRed ? -26 : 14, deliveryHeading, false);
-        df.DriveStraight(DRIVE_SPEED, 18, deliveryHeading, true);
+        if (!cornerPark) {
+            df.DriveStraight(DRIVE_SPEED, isRed ? 0 : 0, deliveryHeading, false);
+        }
+        else{
+            df.DriveStraight(DRIVE_SPEED, isRed ? -26 : 14, deliveryHeading, false);
+        }
+        df.DriveStraight(DRIVE_SPEED, 12, deliveryHeading, true);
     }
     private void RunEncoderTest()
     {
