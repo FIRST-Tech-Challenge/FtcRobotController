@@ -14,7 +14,7 @@ abstract public class BaseOpMode extends LinearOpMode {
     DcMotor motorBR;
 
     // constants
-    static final double TICKS_PER_REVOLUTION = 537.6; // Neverest orbital 20, 7 pulse per revolution
+    static final double TICKS_PER_REVOLUTION = 537.6; // Neverest orbital 20, 7 pulse per revolution, 4 * 7 * 19.2 (the calculations)
     static final double GEAR_RATIO = 1.0;
     static final double WHEEL_DIAMETER = 4.0; // inches
     static final double TICKS_PER_INCH =  (TICKS_PER_REVOLUTION * GEAR_RATIO) / (WHEEL_DIAMETER * Math.PI);
