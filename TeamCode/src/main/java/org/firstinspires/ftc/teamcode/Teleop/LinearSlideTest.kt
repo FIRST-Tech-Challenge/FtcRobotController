@@ -7,7 +7,6 @@ import org.firstinspires.ftc.teamcode.DriveMethods
 import org.firstinspires.ftc.teamcode.Variables
 import org.firstinspires.ftc.teamcode.Variables.encoders
 import org.firstinspires.ftc.teamcode.Variables.motorSlideLeft
-import org.firstinspires.ftc.teamcode.Variables.motorSlideRight
 import org.firstinspires.ftc.teamcode.Variables.rotationsPerMeter
 import org.firstinspires.ftc.teamcode.Variables.slideLength
 import org.firstinspires.ftc.teamcode.Variables.slideToBoard

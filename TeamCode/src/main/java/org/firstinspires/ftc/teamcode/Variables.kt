@@ -26,9 +26,24 @@ object Variables {
     var rMotorL: DcMotor? = null;
     var touchyR: TouchSensor? = null
     var touchyL: TouchSensor? = null
-    var motorSlideRotate: DcMotor? = null
+    var slideRotationMotor: DcMotor? = null
     var motorSlideLeft: DcMotor? = null
-    var motorSlideRight: DcMotor? = null
+    var clawRotation: Servo? = null
+    var clawMotor: Servo? = null
+
+    var closedClaw = 0.87
+    var openClaw = 0.8
+    var bottom = 0
+    var low = 0 //unknown
+    var mid = 0 //unknown
+    var high = 1600
+    var speed = 400
+    var lPower = 0.2
+    var rPower = -0.22280685416
+    var lMax = 100 //unknown
+    var rMax = 100 //unknown
+    var lMin = 0 //unknown
+    var rMin = 0 //unknown
     
     var blinkinLedDriver: RevBlinkinLedDriver? = null
     var pattern: BlinkinPattern? = null

@@ -19,7 +19,7 @@ class RackAndPain: DriveMethods() {
         var lClick =0;
         var rClick = 0;
         var lPower = 0.2
-        var rPower = 0.2 * 1.26923076923 * 0.87772397094
+        var rPower = 0.22280685416
         var leftRack = 1;
         var rightRack = -1;
         telemetry.addData("Initiating", "Rack Motor Init");

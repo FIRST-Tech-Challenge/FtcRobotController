@@ -15,6 +15,8 @@ import org.firstinspires.ftc.robotcore.external.hardware.camera.controls.GainCon
 import org.firstinspires.ftc.robotcore.external.tfod.Recognition
 import org.firstinspires.ftc.teamcode.Variables.VisionProcessors
 import org.firstinspires.ftc.teamcode.Variables.clawAngle
+import org.firstinspires.ftc.teamcode.Variables.clawMotor
+import org.firstinspires.ftc.teamcode.Variables.clawRotation
 import org.firstinspires.ftc.teamcode.Variables.desiredTag
 import org.firstinspires.ftc.teamcode.Variables.motorBL
 import org.firstinspires.ftc.teamcode.Variables.motorBR
@@ -23,10 +25,10 @@ import org.firstinspires.ftc.teamcode.Variables.motorFR
 import org.firstinspires.ftc.teamcode.Variables.rMotorL
 import org.firstinspires.ftc.teamcode.Variables.rMotorR
 import org.firstinspires.ftc.teamcode.Variables.motorSlideLeft
-import org.firstinspires.ftc.teamcode.Variables.motorSlideRight
 import org.firstinspires.ftc.teamcode.Variables.slideAngle
 import org.firstinspires.ftc.teamcode.Variables.slideGate
 import org.firstinspires.ftc.teamcode.Variables.slideLength
+import org.firstinspires.ftc.teamcode.Variables.slideRotationMotor
 import org.firstinspires.ftc.teamcode.Variables.targetFound
 import org.firstinspires.ftc.teamcode.Variables.touchyL
 import org.firstinspires.ftc.teamcode.Variables.touchyR
@@ -287,11 +289,14 @@ open class DriveMethods: LinearOpMode() {
         rMotorL = hardwareMap.get<DcMotor>(DcMotor::class.java, "rMotorL");
         touchyR = hardwareMap.get<TouchSensor>(TouchSensor::class.java, "touchyR")
         touchyL = hardwareMap.get<TouchSensor>(TouchSensor::class.java, "touchyL")
-        slideGate = hardwareMap.get<Servo>(Servo::class.java, "slideGate")
     }
 
     open fun initSlideMotors() {
         motorSlideLeft = hardwareMap.get<DcMotor>(DcMotor::class.java, "motorSlideLeft")
+        slideRotationMotor = hardwareMap.get<DcMotor>(DcMotor::class.java, "slideRotationMotor")
+        clawRotation = hardwareMap.get<Servo>(Servo::class.java, "clawRotation")
+        clawMotor = hardwareMap.get<Servo>(Servo::class.java, "clawMotor")
+        slideGate = hardwareMap.get<Servo>(Servo::class.java, "slideGate")
     }
     fun setManualExposure(exposureMS: Int, gain: Int) {
         // Wait for the camera to be open, then use the controls
