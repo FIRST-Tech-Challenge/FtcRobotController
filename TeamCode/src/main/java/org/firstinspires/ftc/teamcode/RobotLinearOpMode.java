@@ -128,10 +128,10 @@ public abstract class RobotLinearOpMode extends LinearOpMode {
         if (movement_direction == MOVEMENT_DIRECTION.STRAFE_RIGHT) {
 
             //Sets the target # of ticks to the target position of the motors
-            leftFrontDriveMotor.setTargetPosition(-leftFrontTarget * 2);
-            rightFrontDriveMotor.setTargetPosition(rightFrontTarget * 2);
-            leftBackDriveMotor.setTargetPosition(leftBackTarget * 2);
-            rightBackDriveMotor.setTargetPosition(-rightBackTarget * 2);
+            leftFrontDriveMotor.setTargetPosition(leftFrontTarget * 2);
+            rightFrontDriveMotor.setTargetPosition(-rightFrontTarget * 2);
+            leftBackDriveMotor.setTargetPosition(-leftBackTarget * 2);
+            rightBackDriveMotor.setTargetPosition(rightBackTarget * 2);
 
 
             //Tells the motors to drive until they reach the target position
@@ -160,10 +160,10 @@ public abstract class RobotLinearOpMode extends LinearOpMode {
         if (movement_direction == MOVEMENT_DIRECTION.STRAFE_LEFT) {
 
             //Sets the target # of ticks to the target position of the motors
-            leftFrontDriveMotor.setTargetPosition(leftFrontTarget * 2);
-            rightFrontDriveMotor.setTargetPosition(-rightFrontTarget * 2);
-            leftBackDriveMotor.setTargetPosition(-leftBackTarget * 2);
-            rightBackDriveMotor.setTargetPosition(rightBackTarget * 2);
+            leftFrontDriveMotor.setTargetPosition(-leftFrontTarget * 2);
+            rightFrontDriveMotor.setTargetPosition(rightFrontTarget * 2);
+            leftBackDriveMotor.setTargetPosition(leftBackTarget * 2);
+            rightBackDriveMotor.setTargetPosition(-rightBackTarget * 2);
 
             //Tells the motors to drive until they reach the target position
             leftFrontDriveMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
@@ -174,7 +174,7 @@ public abstract class RobotLinearOpMode extends LinearOpMode {
             //Sets the motor powers to the power entered on use
             leftFrontDriveMotor.setPower(power);
             rightFrontDriveMotor.setPower(power);
-            leftBackDriveMotor.setPower(power);
+            leftBackDriveMotor.setPower(.97 * power);
             rightBackDriveMotor.setPower(power);
 
             while (leftFrontDriveMotor.isBusy() && opModeIsActive()) {
@@ -338,10 +338,10 @@ public abstract class RobotLinearOpMode extends LinearOpMode {
         rightBackDriveMotor = hardwareMap.get(DcMotor.class, "backright");
         leftBackDriveMotor = hardwareMap.get(DcMotor.class, "backleft");
 
-        rightFrontDriveMotor.setDirection(DcMotorEx.Direction.FORWARD);
         leftFrontDriveMotor.setDirection(DcMotorEx.Direction.REVERSE);
+        leftBackDriveMotor.setDirection(DcMotorEx.Direction.REVERSE);
+        rightFrontDriveMotor.setDirection(DcMotorEx.Direction.FORWARD);
         rightBackDriveMotor.setDirection(DcMotorEx.Direction.FORWARD);
-        leftBackDriveMotor.setDirection(DcMotorEx.Direction.FORWARD);
     }
 
     enum MOVEMENT_DIRECTION {

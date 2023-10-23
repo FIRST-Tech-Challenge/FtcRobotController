@@ -21,7 +21,6 @@
 
 package org.firstinspires.ftc.teamcode;
 
-import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
@@ -30,20 +29,18 @@ import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
 import org.openftc.easyopencv.OpenCvWebcam;
-import org.opencv.core.Mat;
 
 /*
  * This sample demonstrates how to run analysis during INIT
  * and then snapshot that value for later use when the START
  * command is issued. The pipeline is re-used from SkystoneDeterminationExample
  */
-@Autonomous(name = "Camera Test", group = "Linear AutoMode")
+@TeleOp
 public class AutoCameraTest extends LinearOpMode
 {
     OpenCvWebcam webcam;
     SkystoneDeterminationExample.SkystoneDeterminationPipeline pipeline;
     SkystoneDeterminationExample.SkystoneDeterminationPipeline.SkystonePosition snapshotAnalysis = SkystoneDeterminationExample.SkystoneDeterminationPipeline.SkystonePosition.LEFT; // default
-
 
     @Override
     public void runOpMode()
@@ -65,7 +62,7 @@ public class AutoCameraTest extends LinearOpMode
             @Override
             public void onOpened()
             {
-                webcam.startStreaming(320,240, OpenCvCameraRotation.SIDEWAYS_RIGHT);
+                webcam.startStreaming(320,240, OpenCvCameraRotation.UPRIGHT);
             }
 
             @Override
@@ -103,25 +100,19 @@ public class AutoCameraTest extends LinearOpMode
             case LEFT:
             {
                 /* Your autonomous code */
-                telemetry.addData("Where?: ", "Left");
-                telemetry.update();
-
+                break;
             }
 
             case RIGHT:
             {
                 /* Your autonomous code */
-                telemetry.addData("Where?: ", "Right");
-                telemetry.update();
-
+                break;
             }
 
             case CENTER:
             {
                 /* Your autonomous code*/
-                telemetry.addData("Where?: ", "Center");
-                telemetry.update();
-
+                break;
             }
         }
 
