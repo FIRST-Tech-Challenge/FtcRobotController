@@ -7,8 +7,10 @@ import com.qualcomm.robotcore.util.Range;
 public class ServoFunctions {
     private LinearOpMode lom = null;
     private Servo pixelReleaseServo = null;
-    static final double   PIXEL_RELEASE_SERVO_INIT_POS   = 0.0;
-    static final int     SERVO_SMOOTH_MOVE_STEPS   = 40;     // Larger is smoother, but potentially slower
+    private Servo shoulderServo = null;
+    private Servo elbowServo = null;
+    private Servo clawServo = null;
+    static final int     SERVO_SMOOTH_MOVE_STEPS   = 30;     // Larger is smoother, but potentially slower
     public ServoFunctions(LinearOpMode l)
     {
         lom = l;
@@ -17,10 +19,21 @@ public class ServoFunctions {
     private void Initialize()
     {
         pixelReleaseServo = lom.hardwareMap.get(Servo .class, "PixelReleaseServo");
+        shoulderServo = lom.hardwareMap.get(Servo .class, "shoulder");
+        elbowServo = lom.hardwareMap.get(Servo .class, "elbow");
+        clawServo = lom.hardwareMap.get(Servo .class, "claw");
+
         pixelReleaseServo.scaleRange(0.35, 0.85);
-        pixelReleaseServo.setPosition(PIXEL_RELEASE_SERVO_INIT_POS);
+        shoulderServo.scaleRange(0.35, 0.9494);
+        elbowServo.scaleRange(0.1244, 0.8050);
+        clawServo.scaleRange(0.35, 0.85);
+
+        pixelReleaseServo.setPosition(0.0);
+        shoulderServo.setPosition(0.0);
+        elbowServo.setPosition(1.0);
+        clawServo.setPosition(0.0);
     }
-    public void PutPixelInBackBoard()
+      public void PutPixelInBackBoard()
     {
         MoveServoSmoothly(pixelReleaseServo, 1.0, 800);
         lom.sleep(300);
@@ -40,12 +53,37 @@ public class ServoFunctions {
         }
         s.setPosition(endPosition);
     }
-    public void MovePixelReleaseServoRelative(double deltaMove)
+    public void MoveShoulderRelative(double move)
     {
-        pixelReleaseServo.setPosition(pixelReleaseServo.getPosition() + deltaMove);
+        MoveServoSmoothly(shoulderServo, shoulderServo.getPosition() + move, 10);
+    }
+    public void MoveElbowRelative(double move)
+    {
+        MoveServoSmoothly(elbowServo, elbowServo.getPosition() + move, 10);
+    }
+    public void MoveClawRelative(double move)
+    {
+        MoveServoSmoothly(clawServo, clawServo.getPosition() + move, 10);
+    }
+
+    public void MovePixelReleaseServoRelative(double move)
+    {
+        MoveServoSmoothly(pixelReleaseServo, pixelReleaseServo.getPosition() + move, 100);
     }
     public double GetPixelReleaseServoPosition()
     {
         return pixelReleaseServo.getPosition();
+    }
+    public double GetShoulderServoPosition()
+    {
+        return shoulderServo.getPosition();
+    }
+    public double GetElbowServoPosition()
+    {
+        return elbowServo.getPosition();
+    }
+    public double GetClawServoPosition()
+    {
+        return clawServo.getPosition();
     }
 }
