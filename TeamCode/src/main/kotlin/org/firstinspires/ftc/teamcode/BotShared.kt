@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode
 
+import com.acmerobotics.roadrunner.Pose2d
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot.UsbFacingDirection
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot.LogoFacingDirection
@@ -20,22 +21,21 @@ import org.firstinspires.ftc.teamcode.roadrunner.MecanumDrive
 @Suppress("MemberVisibilityCanBePrivate", "RedundantSuppression")
 class BotShared(opMode: OpMode) {
 
-    // Get stuff from the hardware map (HardwareMap.get() can be shorthanded to HardwareMap[] in Kotlin)
+    // Get stuff from the hardware map (HardwareMap.get() can be HardwareMap[] in kt)
     @JvmField var imu: IMU =                        opMode.hardwareMap[IMU::class.java,         "imu"]
-    @JvmField var camera: WebcamName? =       try { opMode.hardwareMap[WebcamName::class.java,  "Webcam 1"]  } catch (_: Exception) { null }
-    @JvmField var motorLeftFront: DcMotorEx =       opMode.hardwareMap[DcMotorEx::class.java,   "mlf"]
-    @JvmField var motorRightFront: DcMotorEx =      opMode.hardwareMap[DcMotorEx::class.java,   "mrf"]
-    @JvmField var motorLeftBack: DcMotorEx =        opMode.hardwareMap[DcMotorEx::class.java,   "mlb"]
-    @JvmField var motorRightBack: DcMotorEx =       opMode.hardwareMap[DcMotorEx::class.java,   "mrb"]
-    @JvmField var motorSlide: DcMotorEx =           opMode.hardwareMap[DcMotorEx::class.java,   "ms"]
-    @JvmField var motorIntakeSpin: DcMotorEx =      opMode.hardwareMap[DcMotorEx::class.java,   "mis"]
-    @JvmField var motorIntakeLift: DcMotorEx =      opMode.hardwareMap[DcMotorEx::class.java,   "mil"]
+    @JvmField var camera: WebcamName? =         try {   opMode.hardwareMap[WebcamName::class.java,  "Webcam 1"]  } catch (_: Exception) { null }
+    @JvmField var motorLeftFront: DcMotorEx =           opMode.hardwareMap[DcMotorEx::class.java,   "mlf"]
+    @JvmField var motorRightFront: DcMotorEx =          opMode.hardwareMap[DcMotorEx::class.java,   "mrf"]
+    @JvmField var motorLeftBack: DcMotorEx =            opMode.hardwareMap[DcMotorEx::class.java,   "mlb"]
+    @JvmField var motorRightBack: DcMotorEx =           opMode.hardwareMap[DcMotorEx::class.java,   "mrb"]
+    @JvmField var motorSlide: DcMotorEx? =      try {   opMode.hardwareMap[DcMotorEx::class.java,   "ms"] } catch (_: Exception) { null }
+    @JvmField var motorIntakeSpin: DcMotorEx =          opMode.hardwareMap[DcMotorEx::class.java,   "mis"]
+    @JvmField var motorIntakeLift: DcMotorEx? = try {   opMode.hardwareMap[DcMotorEx::class.java,   "mil"] } catch (_: Exception) { null }
 
     @JvmField var drive: MecanumDrive? = null
 
-    @JvmField var lsd =                             LSD(opMode, motorSlide)
-    @JvmField var outtake =           camera?.let { PixelPlacer(opMode, it) }
-    @JvmField var intake =                          PixelIntake(opMode, motorIntakeLift, motorIntakeSpin)
+    @JvmField var lsd =               motorSlide?.let { LSD(opMode, it) }
+    @JvmField var intake =       motorIntakeLift?.let { PixelIntake(opMode, it, motorIntakeSpin) }
 
     init {
         // IMU orientation/calibration
@@ -45,7 +45,7 @@ class BotShared(opMode: OpMode) {
         imu.initialize(IMU.Parameters(orientationOnRobot))
         imu.resetYaw()
 
-        // MecanumDrive (roadrunner) rotations
+        // Motor rotations (DO NOT CHANGE THESE!!!)
         motorLeftFront. direction = REVERSE
         motorLeftBack.  direction = REVERSE
         motorRightFront.direction = FORWARD
@@ -57,6 +57,12 @@ class BotShared(opMode: OpMode) {
      */
     fun update() {
         drive?.updatePoseEstimate()
+    }
+
+    /** RoadRunner Pose Storage */
+    companion object {
+        @JvmStatic
+        var storedPose: Pose2d = Pose2d(0.0, 0.0, 0.0);
     }
 
 }

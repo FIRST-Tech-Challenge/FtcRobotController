@@ -8,17 +8,21 @@ import org.firstinspires.ftc.teamcode.roadrunner.MecanumDrive
 import java.lang.Thread.sleep
 
 @Autonomous(name = "Kotlin Auto (Blue Left)", group = "Kt")
-class AutoBlueLeft: AutoSuper(  AutoSuper.Alliance.BLUE,    AutoSuper.AllianceSide.LEFT,    Pose2d(0.0, 0.0, 0.0))
+class AutoBlueLeft : AutoSuper(  AutoSuper.Alliance.BLUE,    AutoSuper.AllianceSide.LEFT,    Pose2d(0.0, 0.0, 0.0))
 @Autonomous(name = "Kotlin Auto (Blue Right)", group = "Kt")
-class AutoBlueRight: AutoSuper( AutoSuper.Alliance.BLUE,    AutoSuper.AllianceSide.RIGHT,   Pose2d(0.0, 0.0, 0.0))
+class AutoBlueRight : AutoSuper(AutoSuper.Alliance.BLUE,    AutoSuper.AllianceSide.RIGHT,   Pose2d(0.0, 0.0, 0.0))
 @Autonomous(name = "Kotlin Auto (Red Left)", group = "Kt")
-class AutoRedLeft: AutoSuper(   AutoSuper.Alliance.RED,     AutoSuper.AllianceSide.LEFT,    Pose2d(0.0, 0.0, 0.0))
+class AutoRedLeft : AutoSuper(  AutoSuper.Alliance.RED,     AutoSuper.AllianceSide.LEFT,    Pose2d(0.0, 0.0, 0.0))
 @Autonomous(name = "Kotlin Auto (Red Right)", group = "Kt")
-class AutoRedRight: AutoSuper(  AutoSuper.Alliance.RED,     AutoSuper.AllianceSide.RIGHT,   Pose2d(0.0, 0.0, 0.0))
+class AutoRedRight : AutoSuper( AutoSuper.Alliance.RED,     AutoSuper.AllianceSide.RIGHT,   Pose2d(0.0, 0.0, 0.0))
 
 //@Disabled
 // TODO: can replace super constructor with open and override
-open class AutoSuper(private val alliance: Alliance, private val side: AllianceSide, private val initialPose: Pose2d = Pose2d(0.0, 0.0, 0.0)) : OpMode() {
+open class AutoSuper(
+    private val alliance: Alliance,
+    private val side: AllianceSide,
+    private val initialPose: Pose2d
+) : OpMode() {
     enum class Alliance {
         RED,
         BLUE
@@ -45,13 +49,18 @@ open class AutoSuper(private val alliance: Alliance, private val side: AllianceS
         // - Do other stuff (we're working on it!)
 
         // alias using JVM references
-        val drive: MecanumDrive = shared.drive!!
-        drive.actionBuilder(drive.pose).splineToConstantHeading(Vector2d(0.0, 0.0), 0.0)
+        val drive = shared.drive!!
+//        val lsd = shared.lsd!!
+        drive.actionBuilder(drive.pose).splineToConstantHeading(Vector2d(0.0, 0.0), 0.0).build()
         sleep(5000)
-        shared.lsd.setHeight(LSD.SlideHeight.TOP.height)
+//        lsd.setHeight(LSD.SlideHeight.TOP.height)
 
 //        TODO("Not yet implemented")
 
+    }
+
+    override fun stop() {
+        BotShared.storedPose = shared.drive?.pose!!
     }
 
 }

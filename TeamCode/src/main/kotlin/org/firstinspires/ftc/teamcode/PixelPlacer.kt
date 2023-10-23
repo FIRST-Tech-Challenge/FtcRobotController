@@ -6,11 +6,12 @@ import org.firstinspires.ftc.robotcore.external.hardware.camera.CameraName
 import org.firstinspires.ftc.vision.VisionPortal
 import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor
 
+// TODO: scrap a bunch of this
 class PixelPlacer<T : CameraName>(val opMode: OpMode, private val camera: T) {
     /**
      * The variable to store our instance of the AprilTag processor.
      */
-    private lateinit var aprilTag: AprilTagProcessor
+    private var aprilTag: AprilTagProcessor
 
     /**
      * The variable to store our instance of the vision portal.
