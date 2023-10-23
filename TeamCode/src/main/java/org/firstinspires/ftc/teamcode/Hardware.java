@@ -24,6 +24,8 @@ public class Hardware {
     public DcMotor leftBackDrive = null;
     public DcMotor rightBackDrive = null;
 
+    //public DcMotor winch = null;
+
     HardwareMap hwMap = null;
 
     public Hardware() {
@@ -40,6 +42,9 @@ public class Hardware {
         rightBackDrive = hwMap.get(DcMotor.class, "br");
         leftBackDrive = hwMap.get(DcMotor.class, "bl");
 
+        //winch = hwMap.get(DcMotor.class, "winch");
+
+
         leftDrive.setDirection(DcMotorSimple.Direction.REVERSE);
         leftBackDrive.setDirection(DcMotorSimple.Direction.REVERSE);
         rightDrive.setDirection(DcMotorSimple.Direction.FORWARD);
@@ -49,6 +54,8 @@ public class Hardware {
         leftBackDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         rightDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         rightBackDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
+        //winch.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
 
     }
 }

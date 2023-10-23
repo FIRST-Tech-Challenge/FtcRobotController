@@ -2,19 +2,55 @@ package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
-import com.qualcomm.robotcore.hardware.HardwareMap;
-import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.hardware.Gamepad;
 
 
 @TeleOp(name = "Tele", group = "Pushbot")
 public class tele extends OpMode {
     Hardware robot = new Hardware();
 
+    Gamepad.LedEffect gamepadLaunchSequenceLed = new Gamepad.LedEffect.Builder()
+            .addStep(100, 0, 0, 2000)
+            .addStep(0,100,0,200)
+            .addStep(100,0,0,200)
+            .addStep(0,100,0,200)
+            .addStep(100,0,0,200)
+            .addStep(0,100,0,200)
+            .addStep(100,0,0,200)
+            .addStep(0,100,0,200)
+            .addStep(100,0,0,200)
+            .addStep(0,100,0,200)
+            .addStep(100,0,0,200)
+            .addStep(0,100,0,200)
+            .addStep(100,0,0,200)
+            .addStep(0,100,0,200)
+            .addStep(100,0,0,200)
+            .addStep(100,0,100,5000)
+            .build();
+    Gamepad.RumbleEffect  gamepadLaunchSequenceRumble = new Gamepad.RumbleEffect.Builder()
+            .addStep(.3,.3,2000)
+            .addStep(.5,0,200)
+            .addStep(0,.5,200)
+            .addStep(.5,0,200)
+            .addStep(0,.5,200)
+            .addStep(.5,0,200)
+            .addStep(0,.5,200)
+            .addStep(.5,0,200)
+            .addStep(0,.5,200)
+            .addStep(.5,0,200)
+            .addStep(0,.5,200)
+            .addStep(.5,0,200)
+            .addStep(0,.5,200)
+            .addStep(.5,0,200)
+            .addStep(0,.5,200)
+            .build();
+
+
+
     public void init() {
 
         robot.init(hardwareMap);
+
 
     }
 
@@ -41,6 +77,15 @@ public class tele extends OpMode {
         robot.leftBackDrive.setPower(backLeftPower * speedLimitValue);
         robot.rightDrive.setPower(frontRightPower * speedLimitValue);
         robot.rightBackDrive.setPower(backRightPower * speedLimitValue);
+
+        //robot.winch.setPower(gamepad2.left_stick_y);
+
+        if (gamepad2.right_bumper && gamepad1.left_bumper) {
+            gamepad1.runLedEffect(gamepadLaunchSequenceLed);
+            gamepad2.runLedEffect(gamepadLaunchSequenceLed);
+            gamepad1.runRumbleEffect(gamepadLaunchSequenceRumble);
+            gamepad2.runRumbleEffect(gamepadLaunchSequenceRumble);
+        }
 
     }
 
