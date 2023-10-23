@@ -61,7 +61,11 @@ public class Arm {
         if (power > 0) {
             motor.setPower(power * POWER_UP_MUL);
         } else {
-            motor.setPower(power * POWER_DOWN_MUL);
+            if (myOpMode.gamepad2.right_bumper) {
+                motor.setPower(power);
+            } else {
+                motor.setPower(power * POWER_DOWN_MUL);
+            }
         }
 
     }
