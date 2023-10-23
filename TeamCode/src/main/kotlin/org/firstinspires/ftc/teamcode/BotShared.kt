@@ -4,6 +4,7 @@ import com.qualcomm.hardware.rev.RevHubOrientationOnRobot
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot.UsbFacingDirection
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot.LogoFacingDirection
 import com.qualcomm.robotcore.eventloop.opmode.OpMode
+import com.qualcomm.robotcore.hardware.DcMotor
 import com.qualcomm.robotcore.hardware.DcMotorEx
 import com.qualcomm.robotcore.hardware.DcMotorSimple.Direction.FORWARD
 import com.qualcomm.robotcore.hardware.DcMotorSimple.Direction.REVERSE
@@ -26,16 +27,15 @@ class BotShared(opMode: OpMode) {
     @JvmField var motorRightFront: DcMotorEx =      opMode.hardwareMap[DcMotorEx::class.java,   "mrf"]
     @JvmField var motorLeftBack: DcMotorEx =        opMode.hardwareMap[DcMotorEx::class.java,   "mlb"]
     @JvmField var motorRightBack: DcMotorEx =       opMode.hardwareMap[DcMotorEx::class.java,   "mrb"]
-    @JvmField var motorIntake: DcMotorEx =          opMode.hardwareMap[DcMotorEx::class.java,   "mi"]
     @JvmField var motorSlide: DcMotorEx =           opMode.hardwareMap[DcMotorEx::class.java,   "ms"]
-    @JvmField var servoIntakeLeft: Servo =          opMode.hardwareMap[Servo::class.java,       "sil"]
-    @JvmField var servoIntakeRight: Servo =         opMode.hardwareMap[Servo::class.java,       "sir"]
+    @JvmField var motorIntakeSpin: DcMotorEx =      opMode.hardwareMap[DcMotorEx::class.java,   "mis"]
+    @JvmField var motorIntakeLift: DcMotorEx =      opMode.hardwareMap[DcMotorEx::class.java,   "mil"]
 
     @JvmField var drive: MecanumDrive? = null
 
     @JvmField var lsd =                             LSD(opMode, motorSlide)
     @JvmField var outtake =           camera?.let { PixelPlacer(opMode, it) }
-    @JvmField var intake =                          PixelIntake(opMode, servoIntakeLeft, servoIntakeRight, motorIntake)
+    @JvmField var intake =                          PixelIntake(opMode, motorIntakeLift, motorIntakeSpin)
 
     init {
         // IMU orientation/calibration
@@ -46,10 +46,17 @@ class BotShared(opMode: OpMode) {
         imu.resetYaw()
 
         // MecanumDrive (roadrunner) rotations
-        motorLeftFront.direction = REVERSE
-        motorLeftBack.direction = REVERSE
+        motorLeftFront. direction = REVERSE
+        motorLeftBack.  direction = REVERSE
         motorRightFront.direction = FORWARD
-        motorRightBack.direction = FORWARD
+        motorRightBack. direction = FORWARD
+    }
+    /**
+     * Should be called every update.
+     * Place any reusable update functions here (i.e. for MecanumDrive)
+     */
+    fun update() {
+        drive?.updatePoseEstimate()
     }
 
 }

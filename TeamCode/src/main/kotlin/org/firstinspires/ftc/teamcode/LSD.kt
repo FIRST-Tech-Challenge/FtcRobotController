@@ -6,7 +6,6 @@ import com.qualcomm.robotcore.hardware.DcMotor.RunMode.RUN_TO_POSITION
 import com.qualcomm.robotcore.hardware.DcMotorEx
 import com.qualcomm.robotcore.hardware.MotorControlAlgorithm
 import com.qualcomm.robotcore.hardware.PIDFCoefficients
-import com.qualcomm.robotcore.hardware.Servo
 
 /**
  * Linear Slide Driver
@@ -21,9 +20,23 @@ class LSD(private val opMode: OpMode, private val slide: DcMotorEx) {
         MotorControlAlgorithm.PIDF
     )
 
+    // Enum for the position of the slide
+    enum class SlideHeight(val height: Double) {
+        UNKNOWN(0),
+        PRECISE(1),
+        BOTTOM(270),  // bottom, stop here
+        LOW(-1350),
+        MIDDLE(-2133),
+//        HIGH(-2133),
+        TOP(-2375);
+
+        constructor(stopPower: Int): this(stopPower.toDouble())
+    }
+
     init {
         slide.mode = RUN_TO_POSITION
         slide.zeroPowerBehavior = DcMotor.ZeroPowerBehavior.BRAKE
+        slide.power = 1.0
 //        slide.targetPositionTolerance = 1
         slide.setPIDFCoefficients(RUN_TO_POSITION, coefficients)
     }
@@ -45,7 +58,7 @@ class LSD(private val opMode: OpMode, private val slide: DcMotorEx) {
         TODO()
     }
 
-    fun setHeight(row: Int): Unit {
+    fun setRow(row: Int): Unit {
         useManual = false
         TODO("automatically set the slide to be aligned with a row (0 to 10, -1 for retracted)")
     }

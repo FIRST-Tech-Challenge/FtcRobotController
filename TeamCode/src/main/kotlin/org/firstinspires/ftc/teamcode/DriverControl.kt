@@ -39,7 +39,7 @@ class DriverControl: OpMode() {
     }
 
     /** true for lowered, false for raised */
-    var lastIntakeStatus = false
+    private var lastIntakeStatus = false
 
     override fun loop() {
 
@@ -115,5 +115,7 @@ class DriverControl: OpMode() {
             }
         }
         shared.intake.active = control.intake
+
+        shared.update()
     }
 }
