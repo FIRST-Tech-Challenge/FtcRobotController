@@ -6,10 +6,12 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.IMU;
+import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.internal.ui.GamepadUser;
 
+import java.util.Locale;
 import java.util.concurrent.TimeUnit;
 
 public abstract class RobotOpMode extends OpMode {
@@ -19,6 +21,9 @@ public abstract class RobotOpMode extends OpMode {
      */
     public static long STOP_NEVER = Long.MAX_VALUE;
     public DcMotor leftFrontDrive, leftBackDrive, rightFrontDrive, rightBackDrive, armMotor;
+    public DcMotor armExtensionMotor;
+    public Servo armCatcherServo, wristServo, fingerServo;
+    public float armCatcherServoPosition;
     BNO055IMU imu;
     ElapsedTime elapsedTime;
     /**
@@ -36,6 +41,13 @@ public abstract class RobotOpMode extends OpMode {
         rightFrontDrive = hardwareMap.get(DcMotor.class, "fr_drv");
         rightBackDrive = hardwareMap.get(DcMotor.class, "br_drv");
         armMotor = hardwareMap.get(DcMotor.class, "arm");
+        //armExtensionMotor = hardwareMap.get(DcMotor.class, "arm_extension");
+
+        armCatcherServo = hardwareMap.get(Servo.class, "arm_servo");
+        armCatcherServoPosition = (float) armCatcherServo.getPosition();
+
+        //fingerServo = hardwareMap.get(Servo.class, "finger_servo");
+        //wristServo = hardwareMap.get(Servo.class, "wrist_servo");
 
         elapsedTime = new ElapsedTime(ElapsedTime.Resolution.MILLISECONDS);
 
@@ -43,11 +55,12 @@ public abstract class RobotOpMode extends OpMode {
         leftBackDrive.setDirection(DcMotor.Direction.REVERSE);
         rightFrontDrive.setDirection(DcMotor.Direction.FORWARD);
         rightBackDrive.setDirection(DcMotor.Direction.FORWARD);
+
         armMotor.setDirection(DcMotorSimple.Direction.FORWARD);
 
-        armZeroPosition = initArm();
-        armMotor.setTargetPosition(armZeroPosition);
+        armMotor.setTargetPosition(0);
         armMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
         try {
             imu = hardwareMap.get(BNO055IMU.class, "imu");
         } catch(Exception e) {
@@ -130,20 +143,99 @@ public abstract class RobotOpMode extends OpMode {
         dbp.send(true);
 
         armMotor.setTargetPosition(270);
-        armMotor.setPower(0.5);
+        armMotor.setPower(0.1);
 
-        double startTime = elapsedTime.seconds();
+        elapsedTime.reset();
+
+        double startTime = 0;
+        final double GRACE_PERIOD_LENGTH = 2.0f;
+        final int POWER_ROC_CUTOFF = 3;
+        boolean gracePeriod = true;
 
         int previousPosition = armMotor.getCurrentPosition();
         while (armMotor.isBusy()) {
-            if (elapsedTime.seconds() >= (startTime + 2.0f)) {
-                if ((armMotor.getCurrentPosition() - previousPosition) < 3) {
+            if (gracePeriod) {
+                dbp.put("Grace Period", "Waiting...");
+                if (elapsedTime.seconds() >= GRACE_PERIOD_LENGTH) {
+                    dbp.put("Grace Period", "Exiting...");
+                    dbp.send(true);
+                    gracePeriod = false;
+                    elapsedTime.reset();
+                } else {
+                    dbp.put("Grace Period", "Continuing...");
+                    dbp.send(true);
+                    continue;
+                }
+            }
+            final double PRESENT_GRACE_PERIOD = (startTime + GRACE_PERIOD_LENGTH);
+            final boolean HAS_GRACE_PERIOD_PASSED =
+                    (elapsedTime.seconds() >= PRESENT_GRACE_PERIOD);
+
+            dbp.put("Elapsed Time", String.valueOf(elapsedTime.seconds()));
+            dbp.put("Start time + Grace Period Length", String.valueOf(PRESENT_GRACE_PERIOD));
+            dbp.put("HAS GRACE PERIOD PASSED", HAS_GRACE_PERIOD_PASSED ? "YES" : "NO");
+
+            if (HAS_GRACE_PERIOD_PASSED) {
+                dbp.put("Init Testing", "Checking if ROC hit cutoff...");
+                final int CURRENT_ROC = (armMotor.getCurrentPosition() - previousPosition);
+                dbp.put("CURRENT ROC", String.valueOf(CURRENT_ROC));
+                final boolean CUTOFF_REACHED = (CURRENT_ROC < POWER_ROC_CUTOFF);
+                dbp.put("CUTOFF REACHED", CUTOFF_REACHED ? "YES" : "NO");
+                if (CUTOFF_REACHED)  {
+                    dbp.send(false);
                     armMotor.setPower(0);
                     return armMotor.getCurrentPosition();
                 }
+                dbp.send(true);
+                previousPosition = armMotor.getCurrentPosition();
             }
+            dbp.send(true);
+            //startTime = elapsedTime.seconds();
         }
         return 0;
+    }
+
+    /**
+     * Moves a specified servo to the inputted degrees
+     * @param servo The servo to move
+     * @param position The position, in degrees, to move the servo
+     */
+    public void moveServo(Servo servo, int position) {
+        dbp.createNewTelePacket();
+
+        if (position > 180) {
+            position = 180;
+        }
+        if (position < 0) {
+            position = 0;
+        }
+
+        final float POSITION_TO_ANALOG = ( (float) position)/180;
+
+        dbp.put("Move Servo", String.format(Locale.ENGLISH,
+                "Moving servo to: %f", POSITION_TO_ANALOG));
+        servo.setPosition(POSITION_TO_ANALOG);
+        dbp.send(false);
+
+        armCatcherServoPosition = POSITION_TO_ANALOG;
+    }
+
+    public void moveServo(Servo servo, float position) {
+        dbp.createNewTelePacket();
+
+        if (position > 1) {
+            position = 1;
+        }
+        if (position < 0) {
+            position = 0;
+        }
+
+        dbp.put("Move Servo", String.format(Locale.ENGLISH,
+                "Moving servo to: %f", position));
+        servo.setPosition(position);
+        dbp.send(false);
+
+        armCatcherServoPosition = position;
     }
 
     public void moveArm(float power, int position) {
@@ -177,5 +269,20 @@ public abstract class RobotOpMode extends OpMode {
         // sets the power of the motors accordingly
         moveRobot(axial, lateral, yaw, Long.MAX_VALUE);
     }
-}
 
+    public enum ArmServoPosition {
+        OPEN(0),
+        CLOSED(180);
+
+        final int position;
+
+        ArmServoPosition(int position) {
+            this.position = position;
+        }
+
+        public int getPosition() {
+            return position;
+        }
+
+    }
+}

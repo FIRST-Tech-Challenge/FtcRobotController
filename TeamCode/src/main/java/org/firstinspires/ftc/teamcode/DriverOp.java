@@ -34,6 +34,8 @@ public class DriverOp extends RobotOpMode {
         if(!armMotor.isBusy()) {
             armMotor.setPower(0);
         }
+
+        //armExtensionMotor.setPower(gamepad1.right_stick_y);
     }
 
     public int positionFromAngle(double angle, AngleUnit angleUnit) {
