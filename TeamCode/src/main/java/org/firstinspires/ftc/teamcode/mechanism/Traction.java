@@ -9,6 +9,9 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 
 public class Traction {
     ProgrammingBoard Board = new ProgrammingBoard();
+
+    // We have to go through "Board" to use the motors.
+
 //    private DcMotor leftFrontMotor_0 = null;
 //    private DcMotor leftBackMotor_1 = null;
 //    private DcMotor rightBackMotor_2 = null;
@@ -34,14 +37,19 @@ public class Traction {
 //    }
 
     public void controllerDrive(double axial, double lateral, double yaw){
+        // Function takes in desired directions as parameters.
+
         double leftFrontPower  = axial + lateral + yaw;
         double rightFrontPower = axial - lateral - yaw;
         double leftBackPower   = axial - lateral + yaw;
         double rightBackPower  = axial + lateral - yaw;
+        // Calculates necessary motor speeds.
 
         double max = Math.max(Math.abs(leftFrontPower), Math.abs(rightFrontPower));
         max = Math.max(max, Math.abs(leftBackPower));
         max = Math.max(max, Math.abs(rightBackPower));
+        // Finds max value.
+
 
         if (max > 1.0) {
             leftFrontPower  /= max;
@@ -49,8 +57,10 @@ public class Traction {
             leftBackPower   /= max;
             rightBackPower  /= max;
         }
+        // Readjusts for max value to preserve the intention of the controller.
 
         Board.setMotorPower(leftFrontPower, leftBackPower, rightFrontPower, rightBackPower);
+        // Sends the desired inputs over to the Board class.
 
 //        leftFrontMotor_0.setPower(leftFrontPower);
 //        leftBackMotor_1.setPower(leftBackPower);
