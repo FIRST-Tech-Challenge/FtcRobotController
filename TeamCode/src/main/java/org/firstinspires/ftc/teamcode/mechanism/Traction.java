@@ -1,12 +1,6 @@
 package org.firstinspires.ftc.teamcode.mechanism;
 
 
-
-import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
-import com.qualcomm.robotcore.hardware.HardwareMap;
-
-
 public class Traction {
     ProgrammingBoard Board = new ProgrammingBoard();
 
@@ -59,7 +53,7 @@ public class Traction {
         }
         // Readjusts for max value to preserve the intention of the controller.
 
-        Board.setMotorPower(leftFrontPower, leftBackPower, rightFrontPower, rightBackPower);
+        Board.setDCMotorPower(leftFrontPower, leftBackPower, rightFrontPower, rightBackPower);
         // Sends the desired inputs over to the Board class.
 
 //        leftFrontMotor_0.setPower(leftFrontPower);

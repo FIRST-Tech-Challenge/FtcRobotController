@@ -14,6 +14,7 @@ public class ServoTest extends OpMode {
     @Override
     public void init(){
         telemetry.addData("Initiated", "True");
+        intakeServo = hardwareMap.get(Servo.class, "intakeServo");
     }
 
     @Override
