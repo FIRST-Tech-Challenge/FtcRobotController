@@ -14,7 +14,7 @@ public class AutoBlueClose extends RobotLinearOpMode {
     private DcMotor rightFront = null;
     private DcMotor rightBack = null;
     private double speed;
-    private final int oneRotaion = 540;
+    private final int oneRotation = 540;
     private int newLFTarget;
     private int newLBTarget;
     private int newRFTarget;
