@@ -100,7 +100,7 @@ public class vvDriveToTagShriya extends LinearOpMode
 
     private DcMotor leftUp  = null;  //  Used to control the left up wheel
     private DcMotor rightUp = null;  //  Used to control the right up wheel
-    private DcMotor leftDowm   = null;  //  Used to control the left down wheel
+    private DcMotor leftDown   = null;  //  Used to control the left down wheel
     private DcMotor rightDown = null;  //  Used to control the right down wheel
 
     private static final boolean USE_WEBCAM = true;  // Set true to use a webcam, or false for a phone camera
@@ -123,7 +123,7 @@ public class vvDriveToTagShriya extends LinearOpMode
         // step (using the FTC Robot Controller app on the phone).
         leftUp  = hardwareMap.get(DcMotor.class, "left_Up");
         rightUp = hardwareMap.get(DcMotor.class, "right_Up");
-        leftDown  = hardwareMap.get(DcMotor.class, "left_Down");
+        leftDown = hardwareMap.get(DcMotor.class, "left_Down");
         rightDown = hardwareMap.get(DcMotor.class, "right_Down");
 
         // To drive forward, most robots need the motor on one side to be reversed because the axles point in opposite directions.
@@ -226,8 +226,8 @@ public class vvDriveToTagShriya extends LinearOpMode
         }
 
         // Send powers to the wheels.
-        leftDrive.setPower(leftPower);
-        rightDrive.setPower(rightPower);
+        //leftFront.setPower(leftPower);
+        //rightDrive.setPower(rightPower);
     }
 
     /**

@@ -53,7 +53,6 @@ import com.qualcomm.robotcore.hardware.ColorSensor;
  * I2C Bus 1:
  * Port3 CLR: Color Sensor: colorSensor
  */
-@TeleOp(name = "Sensor: MR Color", group = "Sensor")
 
 public class vvColorSensor extends LinearOpMode {
 
