@@ -43,7 +43,7 @@ class DriverControl: OpMode() {
 
     override fun loop() {
 
-        // TODO: test driver relative, check
+        // TODO: test driver relative, check servos
 
         val gyroRotation = shared.imu.robotYawPitchRollAngles
         val gyroYaw = -gyroRotation.getYaw(AngleUnit.RADIANS)
@@ -62,9 +62,7 @@ class DriverControl: OpMode() {
             val intake = gamepad1.a
         }
 
-        //
-
-        // NOTE: This code is bot-relative
+        // NOTE: This code is(?) bot-relative
 
         var powerMax: Double
         // Note: pushing stick forward gives negative value
@@ -104,7 +102,7 @@ class DriverControl: OpMode() {
         telemetry.addLine("Gyro Yaw: " + gyroRotation.getYaw(AngleUnit.DEGREES))
         telemetry.update()
 
-
+        // Intake controls
         if (control.intake != lastIntakeStatus) {
             lastIntakeStatus = if (control.intake) {
                 shared.intake.lower()
