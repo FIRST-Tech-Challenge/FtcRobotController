@@ -21,6 +21,8 @@ public class TestBatteryVoltage extends RobotOpMode {
     public void init() {
         super.init();
 
+        telemetry.addData("Arm Zero Position: ", String.valueOf(armZeroPosition));
+
         moveArm(1, armZeroPosition - 90);
     }
 

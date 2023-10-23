@@ -130,18 +130,30 @@ public abstract class RobotOpMode extends OpMode {
         dbp.send(true);
 
         armMotor.setTargetPosition(270);
-        armMotor.setPower(0.5);
+        armMotor.setPower(0.3);
 
         double startTime = elapsedTime.seconds();
+        final double GRACE_PERIOD_LENGTH = 5.0f;
+        boolean gracePeriod = true;
 
         int previousPosition = armMotor.getCurrentPosition();
         while (armMotor.isBusy()) {
+            if (gracePeriod) {
+                if (elapsedTime.seconds() >= (startTime + GRACE_PERIOD_LENGTH)) {
+                    gracePeriod = false;
+                    startTime = elapsedTime.seconds();
+                } else {
+                    continue;
+                }
+            }
+
             if (elapsedTime.seconds() >= (startTime + 2.0f)) {
-                if ((armMotor.getCurrentPosition() - previousPosition) < 3) {
+                if ((armMotor.getCurrentPosition() - previousPosition) < 1) {
                     armMotor.setPower(0);
                     return armMotor.getCurrentPosition();
                 }
             }
+            startTime = elapsedTime.seconds();
         }
         return 0;
     }
