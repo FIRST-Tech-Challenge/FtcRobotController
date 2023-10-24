@@ -60,7 +60,8 @@ public class TeleOpMecanumDriveFTC2023 extends OpMode{
         frontRight.setDirection(DcMotor.Direction.REVERSE);
         backLeft.setDirection(DcMotor.Direction.FORWARD);
         backRight.setDirection(DcMotor.Direction.REVERSE);
-
+        arm1.setDirection(Servo.Direction.REVERSE);
+        arm2.setDirection(Servo.Direction.FORWARD);
         // If there are encoders connected, switch to RUN_USING_ENCODER mode for greater accuracy
         // leftDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         // rightDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -106,6 +107,10 @@ public class TeleOpMecanumDriveFTC2023 extends OpMode{
         backLeft.setPower(pwr*-1*dir);
         backRight.setPower(pwr*dir);
     }
+    public void driveArm(double pos) {
+        arm1.setPosition(pos);
+        arm2.setPosition(pos);
+    }
     public void start() {
     }
 
@@ -114,35 +119,48 @@ public class TeleOpMecanumDriveFTC2023 extends OpMode{
      */
 
     public void loop() {
-        double lefty;
-        double leftx;
-        double rightx;
+        double left1y;
+        double left1x;
+        double right1x;
+        double left2y;
 
         // Run wheels in tank mode (note: The joystick goes negative when pushed forward, so negate it)
-        lefty = gamepad1.left_stick_y;
-        leftx = gamepad1.left_stick_x;
-        rightx = gamepad1.right_stick_x;
+        left1y = gamepad1.left_stick_y;
+        left1x = gamepad1.left_stick_x;
+        right1x = gamepad1.right_stick_x;
+        left2y = gamepad2.left_stick_y;
+
         double baseSpeed = 1;
         if (gamepad1.a){
             baseSpeed = 0.5;
         }
-        if (lefty >= 0) {
-            driveStraight(lefty*baseSpeed,1);
+        if (left1y >= 0) {
+            driveStraight(left1y*baseSpeed,1);
 
-        } else if(lefty < 0) {
-            driveStraight(-1*lefty*baseSpeed,-1);
+        } else if(left1y < 0) {
+            driveStraight(-1*left1y*baseSpeed,-1);
         }
-        if (leftx >= 0) {
-            driveSide(leftx*baseSpeed,-1);
+        if (left1x >= 0) {
+            driveSide(left1x*baseSpeed,-1);
 
-        } else if(leftx < 0) {
-            driveSide(-1*leftx*baseSpeed,1);
-        } else if(rightx < 0) {
-            driveTurn(rightx*baseSpeed, -1);
-        } else if(rightx >= 0) {
-            driveTurn(rightx*baseSpeed, 1);
+        } else if(left1x < 0) {
+            driveSide(-1*left1x*baseSpeed,1);
+        } else if(right1x < 0) {
+            driveTurn(right1x*baseSpeed, -1);
+        } else if(right1x >= 0) {
+            driveTurn(right1x*baseSpeed, 1);
         }
-
+        if (left2y != 0) {
+            driveArm(left2y);
+        }
+        // 1 = open
+        // 0 = close
+        if (gamepad2.a) {
+            claw.setPosition(1);
+        }
+        if (gamepad2.x) {
+            claw.setPosition(0);
+        }
 //        frontLeft.setPower(lefty - leftx + right);
 //        frontRight.setPower(lefty + leftx + right);
 //        backLeft.setPower(lefty - leftx - right);
@@ -167,10 +185,10 @@ public class TeleOpMecanumDriveFTC2023 extends OpMode{
         //    leftArm.setPower(0.0);
 
         // Send telemetry message to signify robot running;
-        telemetry.addData("claw",  "Offset = %.2f", clawOffset);
-        telemetry.addData("left",  "%.2f", lefty);
-        telemetry.addData("left",  "%.2f", leftx);
-        telemetry.addData("right", "%.2f", rightx);
+        //telemetry.addData("claw",  "Offset = %.2f", clawOffset);
+        telemetry.addData("left",  "%.2f", left1y);
+        telemetry.addData("left",  "%.2f", left1x);
+        telemetry.addData("right", "%.2f", right1x);
     }
 
     /*
