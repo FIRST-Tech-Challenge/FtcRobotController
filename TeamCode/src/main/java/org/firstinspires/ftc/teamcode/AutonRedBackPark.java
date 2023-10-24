@@ -53,19 +53,19 @@ public class AutonRedBackPark extends LinearOpMode {
             rightFrontDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
             rightBackDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
-            rightFrontDrive.setTargetPosition(1680);
+            rightFrontDrive.setTargetPosition(1500);
             rightFrontDrive.setPower(0.5);
             rightFrontDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
-            leftBackDrive.setTargetPosition(1680);
+            leftBackDrive.setTargetPosition(1500);
             leftBackDrive.setPower(0.5);
             leftBackDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
-            leftFrontDrive.setTargetPosition(-1680);
+            leftFrontDrive.setTargetPosition(-1500);
             leftFrontDrive.setPower(0.5);
             leftFrontDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
-            rightBackDrive.setTargetPosition(-1680);
+            rightBackDrive.setTargetPosition(-1500);
             rightBackDrive.setPower(0.5);
             rightBackDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
