@@ -21,6 +21,7 @@ import org.firstinspires.ftc.teamcode.Variables.motorFR
 import org.firstinspires.ftc.teamcode.Variables.motorSlideLeft
 import org.firstinspires.ftc.teamcode.Variables.openClaw
 import org.firstinspires.ftc.teamcode.Variables.rMax
+import org.firstinspires.ftc.teamcode.Variables.rMin
 import org.firstinspires.ftc.teamcode.Variables.rMotorL
 import org.firstinspires.ftc.teamcode.Variables.rMotorR
 import org.firstinspires.ftc.teamcode.Variables.rPower
@@ -49,6 +50,7 @@ class TeleopFromHell: DriveMethods() {
         var leftYGPadTwo: Double
         var leftX: Double
         var rightX: Double
+        var upOrDown = "Up"
         var slideTarget = bottom
         var targetHeight = 0
         var slidePos = 0
@@ -106,24 +108,38 @@ class TeleopFromHell: DriveMethods() {
 
             //rack & pinion control
             if (gamepad2.right_bumper) {
-                if (rMotorL?.currentPosition!! < lMax) {
-                    rMotorL!!.power = lPower
+                if (upOrDown == "Up") {
+                    if (rMotorL?.currentPosition!! < lMax) {
+                        rMotorL!!.power = lPower
+                    }
+                } else {
+                    if (rMotorL?.currentPosition!! > lMin) {
+                        rMotorL!!.power = -lPower
+                    }
                 }
             }
             if (gamepad2.right_trigger >= 0.5) {
-                if (rMotorR?.currentPosition!! < rMax) {
-                    rMotorR!!.power = rPower
+                if (upOrDown == "Up") {
+                    if (rMotorR?.currentPosition!! < rMax) {
+                        rMotorR!!.power = rPower
+                    }
+                } else {
+                    if (rMotorR?.currentPosition!! > rMin) {
+                        rMotorR!!.power = -rPower
+                    }
                 }
             }
             if (gamepad2.x) {
-                if (rMotorL?.currentPosition!! > lMin) {
-                    rMotorL!!.power = -lPower
+                if (upOrDown == "Up") {
+                    upOrDown == "Down"
+                } else {
+                    upOrDown == "Up"
                 }
             }
+
+            //claw stuff
             if (gamepad2.y) {
-                if (rMotorR?.currentPosition!! > lMin) {
-                    rMotorR!!.power = -rPower
-                }
+                //swap between intake and place claw rotation
             }
         }
     }
