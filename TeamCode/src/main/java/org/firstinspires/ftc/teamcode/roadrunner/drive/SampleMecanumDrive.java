@@ -39,6 +39,7 @@ import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.IMU;
 import com.qualcomm.robotcore.hardware.PIDFCoefficients;
@@ -100,6 +101,8 @@ public class SampleMecanumDrive extends MecanumDrive {
     private final double INIT_POSITION = 1.0;
 
     private final double FIELD_CENTRIC_DOWNSCALE = 0.3;
+    public static double INITIAL1 = 0.005, INITIAL2 = 0.005,INITIAL3 = .01, INITIAL4 = 0.9;
+    public static double FINAL1 = 1.00, FINAL2 = 0.605,FINAL3 = .601, FINAL4 = 0.20;
 
 
     private boolean isButtered = false, isFieldCentric = false;
@@ -168,13 +171,12 @@ public class SampleMecanumDrive extends MecanumDrive {
         leftRear = hardwareMap.get(DcMotorEx.class, "motorLeftBack");
         rightRear = hardwareMap.get(DcMotorEx.class, "motorRightBack");
         rightFront = hardwareMap.get(DcMotorEx.class, "motorRightFront");
-        DcMotorEx backEncoder = hardwareMap.get(DcMotorEx.class, "motorRightFront");
-        DcMotorEx leftEncoder = hardwareMap.get(DcMotorEx.class, "motorLeftFront");
-        DcMotorEx rightEncoder = hardwareMap.get(DcMotorEx.class, "motorRightBack");
+        DcMotorEx backEncoder = hardwareMap.get(DcMotorEx.class, "motorLeftFront");
+        DcMotorEx leftEncoder = hardwareMap.get(DcMotorEx.class, "leftEncoder");
+        DcMotorEx rightEncoder = hardwareMap.get(DcMotorEx.class, "motorRightFront");
         leftEncoder.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         rightEncoder.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         backEncoder.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        backEncoder.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 //        leftFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 //        leftRear.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 //        rightFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -205,10 +207,10 @@ public class SampleMecanumDrive extends MecanumDrive {
         }
 
         // TODO: reverse any motors using DcMotor.setDirection()
-        rightFront.setDirection(DcMotor.Direction.FORWARD);
+        rightFront.setDirection(DcMotor.Direction.REVERSE);
         leftFront.setDirection(DcMotor.Direction.REVERSE);
         leftRear.setDirection(DcMotor.Direction.FORWARD);
-        rightRear.setDirection(DcMotor.Direction.REVERSE);
+        rightRear.setDirection(DcMotor.Direction.FORWARD);
         // TODO: if desired, use setLocalizer() to change the localization method
         // for instance, setLocalizer(new ThreeTrackingWheelLocalizer(...));
         if (trackType == Tracker.TrackType.ROADRUN_ODOMETRY) {
@@ -412,16 +414,21 @@ public class SampleMecanumDrive extends MecanumDrive {
 
 
     public void toggleServos(){
-        if(isButtered){
-            for(int i=0;i<4;i++){
-                servos.get(i).setPosition(BUTTERED_POSITION +OFFSETS[i]);
+            if(isButtered){
+                servos.get(0).setPosition(INITIAL1);
+                servos.get(1).setPosition(INITIAL2);
+                servos.get(2).setPosition(INITIAL3);
+                servos.get(3).setPosition(INITIAL4);
+//            isButtered = false;
             }
-        }
-        else{
-            for(int i=0;i<4;i++){
-                servos.get(i).setPosition(INIT_POSITION);
+            else{
+                servos.get(0).setPosition(FINAL1);
+                servos.get(1).setPosition(FINAL2);
+                servos.get(2).setPosition(FINAL3);
+                servos.get(3).setPosition(FINAL4);
+//                isButtered = true;
             }
-        }
+
     }
 
     @NonNull

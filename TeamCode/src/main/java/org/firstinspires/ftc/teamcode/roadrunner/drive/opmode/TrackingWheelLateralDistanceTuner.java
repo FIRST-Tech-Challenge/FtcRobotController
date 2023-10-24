@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.roadrunner.drive.opmode;
 
+import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.op;
+
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
@@ -121,8 +123,9 @@ public class TrackingWheelLateralDistanceTuner extends LinearOpMode {
             telemetry.addLine();
             telemetry.addLine("Press Y/△ to conclude routine");
             telemetry.update();
+            drive.update();
 
-            if (gamepad1.y)
+            if (gamepad1.y||op.gamepad1.b)
                 tuningFinished = true;
         }
 

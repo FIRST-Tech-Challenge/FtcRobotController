@@ -125,6 +125,10 @@ public class RFLogger {
         logLevelSet = true;
     }
 
+    /**
+     * Logs an inputted string using to the default file(general) at the default verbosity level(info)
+     * @param info what string you want to be logged
+     */
     public void log(String info) {
         Severity severity = Severity.INFO;
         if (logLevelSet) {

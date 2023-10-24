@@ -50,7 +50,7 @@ public class BradBot extends BasicRobot{
         LOGGER.setLogLevel(RFLogger.Severity.INFO);
         LOGGER.log("Initializing Components!");
         arm = new Arm();
-        cv = new CVMaster();
+//        cv = new CVMaster();
         clamp = new Clamp();
         intake = new Intake();
         launcher = new Launcher();
@@ -212,7 +212,7 @@ public class BradBot extends BasicRobot{
         LOGGER.log("updating each component");
         super.update();
         arm.update();
-        cv.update();
+//        cv.update();
         intake.update();
         lift.update();
         roadrun.update();
