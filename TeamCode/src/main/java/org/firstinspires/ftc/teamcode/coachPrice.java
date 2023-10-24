@@ -37,6 +37,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.Servo;
 
@@ -81,15 +82,16 @@ public class coachPrice extends LinearOpMode {
     */
 
     public void runOpMode() throws InterruptedException {
-        double driveY;
-        double strafe;
-        double turn;
+        double driveY = 0;
+        double strafe = 0;
+        double turn = 0;
         double RWPower = 0;
-        double LWPower;
+        double LWPower = 0;
+        double drivePower = 0.5; //global drive power level
 
-    // hsvValues is an array that will hold the hue, saturation, and value information.
-        float hsvValues[] = {0F,0F,0F};
-    // values is a reference to the hsvValues array.
+        // hsvValues is an array that will hold the hue, saturation, and value information.
+        float hsvValues[] = {0F, 0F, 0F};
+        // values is a reference to the hsvValues array.
         final float values[] = hsvValues;
 
         // Define and Initialize Motors
@@ -121,16 +123,16 @@ public class coachPrice extends LinearOpMode {
         // To drive forward, most robots need the motor on one side to be reversed, because the axles point in opposite directions.
         // Pushing the left stick forward MUST make robot go forward. So adjust these two lines based on your first test drive.
         // Note: The settings here assume direct drive on left and right wheels.  Gear Reduction or 90 Deg drives may require direction flips
-        leftFront.setDirection(DcMotor.Direction.FORWARD);
-        rightFront.setDirection(DcMotor.Direction.REVERSE);
-        rightRear.setDirection(DcMotor.Direction.REVERSE);
-        leftRear.setDirection(DcMotor.Direction.FORWARD);
+        leftFront.setDirection(DcMotor.Direction.REVERSE);
+        rightFront.setDirection(DcMotor.Direction.FORWARD);
+        rightRear.setDirection(DcMotor.Direction.FORWARD);
+        leftRear.setDirection(DcMotor.Direction.REVERSE);
         // If there are encoders connected, switch to RUN_USING_ENCODER mode for greater accuracy
         // leftDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         // rightDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         // Define and initialize ALL installed servos.
-       /* leftClaw  = hardwareMap.get(Servo.class, "left_hand");
+        /* leftClaw  = hardwareMap.get(Servo.class, "left_hand");
         rightClaw = hardwareMap.get(Servo.class, "right_hand");
         leftClaw.setPosition(MID_SERVO);
         rightClaw.setPosition(MID_SERVO);
@@ -160,29 +162,20 @@ public class coachPrice extends LinearOpMode {
                 double frontRightPower = (driveY - strafe - turn) / denominator;
                 double backRightPower = (driveY + strafe - turn) / denominator;
                 // Remember that the right is opposite of the left
-                if (distFront.getDistance(DistanceUnit.CM)<10) {
-                    leftFront.setPower(0.2 * frontLeftPower);
-                    leftRear.setPower(0.2 * backLeftPower);
-                    rightFront.setPower(0.2 * frontRightPower);
-                    rightRear.setPower(0.2 * backRightPower);
-                }
-                else {
-                    leftFront.setPower(frontLeftPower);
-                    leftRear.setPower(backLeftPower);
-                    rightFront.setPower(frontRightPower);
-                    rightRear.setPower(backRightPower);
-                }
 
-                // Controlling the pixel pick-up with the dpad
+                leftFront.setPower(drivePower * frontLeftPower);
+                leftRear.setPower(drivePower * backLeftPower);
+                rightFront.setPower(drivePower * frontRightPower);
+                rightRear.setPower(drivePower * backRightPower);
+
+                // Controlling the pixel pick-up with the dpad and buttons (individual)
                 if (gamepad2.dpad_left) {
                     LWPower = 0.2;
                     RWPower = -0.2;
-                }
-                else if (gamepad2.dpad_right) {
+                } else if (gamepad2.dpad_right) {
                     LWPower = -0.2;
                     RWPower = 0.2;
-                }
-                else if (gamepad2.y)
+                } else if (gamepad2.y)
                     LWPower = -0.2;
                 else if (gamepad2.x)
                     LWPower = 0.2;
@@ -193,50 +186,50 @@ public class coachPrice extends LinearOpMode {
 
                 leftWheel.setPower(LWPower);
                 rightWheel.setPower(RWPower);
-                
+
 // Adding telemetry readouts
-            telemetry.addData(">", "Robot Running");
-            telemetry.addData("Y", driveY);
-            telemetry.addData("strafe", strafe);
-            telemetry.addData("turn", turn);
+                telemetry.addData(">", "Robot Running");
+                telemetry.addData("Y", driveY);
+                telemetry.addData("strafe", strafe);
+                telemetry.addData("turn", turn);
 // check the status of the x button on either gamepad.
-            bCurrState = gamepad1.x;
+                bCurrState = gamepad1.x;
 
-            // check for button state transitions.
-            if (bCurrState && (bCurrState != bPrevState))  {
+                // check for button state transitions.
+                if (bCurrState && (bCurrState != bPrevState)) {
 
-                // button is transitioning to a pressed state. So Toggle LED
-                bLedOn = !bLedOn;
-                colorSensor.enableLed(bLedOn);
-            }
+                    // button is transitioning to a pressed state. So Toggle LED
+                    bLedOn = !bLedOn;
+                    colorSensor.enableLed(bLedOn);
+                }
 
-            // update previous state variable.
-            bPrevState = bCurrState;
+                // update previous state variable.
+                bPrevState = bCurrState;
 
-            // convert the RGB values to HSV values.
-            Color.RGBToHSV(colorSensor.red() * 8, colorSensor.green() * 8, colorSensor.blue() * 8, hsvValues);
+                // convert the RGB values to HSV values.
+                Color.RGBToHSV(colorSensor.red() * 8, colorSensor.green() * 8, colorSensor.blue() * 8, hsvValues);
 
-            // send the info back to driver station using telemetry function.
-            telemetry.addData("LED", bLedOn ? "On" : "Off");
-            telemetry.addData("Clear", colorSensor.alpha());
-            telemetry.addData("Red  ", colorSensor.red());
-            telemetry.addData("Green", colorSensor.green());
-            telemetry.addData("Blue ", colorSensor.blue());
-            telemetry.addData("Hue", hsvValues[0]);
+                // send the info back to driver station using telemetry function.
+                telemetry.addData("LED", bLedOn ? "On" : "Off");
+                telemetry.addData("Clear", colorSensor.alpha());
+                telemetry.addData("Red  ", colorSensor.red());
+                telemetry.addData("Green", colorSensor.green());
+                telemetry.addData("Blue ", colorSensor.blue());
+                telemetry.addData("Hue", hsvValues[0]);
 
-            telemetry.addData("FDS", distFront.getDeviceName() );
-            telemetry.addData("range", String.format("%.01f cm", distFront.getDistance(DistanceUnit.CM)));
-            telemetry.addData("range", String.format("%.01f in", distFront.getDistance(DistanceUnit.INCH)));
+                telemetry.addData("FDS", distFront.getDeviceName());
+                telemetry.addData("range", String.format("%.01f cm", distFront.getDistance(DistanceUnit.CM)));
+                telemetry.addData("range", String.format("%.01f in", distFront.getDistance(DistanceUnit.INCH)));
 
-            telemetry.addData("RDS", distRear.getDeviceName() );
-            telemetry.addData("range", String.format("%.01f cm", distRear.getDistance(DistanceUnit.CM)));
-            telemetry.addData("range", String.format("%.01f in", distRear.getDistance(DistanceUnit.INCH)));
+                telemetry.addData("RDS", distRear.getDeviceName());
+                telemetry.addData("range", String.format("%.01f cm", distRear.getDistance(DistanceUnit.CM)));
+                telemetry.addData("range", String.format("%.01f in", distRear.getDistance(DistanceUnit.INCH)));
 
-            // Rev2mDistanceSensor specific methods.
-            telemetry.addData("ID", String.format("%x", sensorTimeOfFlight.getModelID()));
-            telemetry.addData("did time out", Boolean.toString(sensorTimeOfFlight.didTimeoutOccur()));
+                // Rev2mDistanceSensor specific methods.
+                telemetry.addData("ID", String.format("%x", sensorTimeOfFlight.getModelID()));
+                telemetry.addData("did time out", Boolean.toString(sensorTimeOfFlight.didTimeoutOccur()));
 
-            telemetry.update();
+                telemetry.update();
 
                 // Use gamepad buttons to move arm up (Y) and down (A)
             /*if (gamepad1.y)
@@ -245,7 +238,7 @@ public class coachPrice extends LinearOpMode {
                 leftArm.setPower(ARM_DOWN_POWER);
             else
                 leftArm.setPower(0.0);
-*/
+            */
                 // Send telemetry message to signify robot running;
                /* telemetry.addData("claw", "Offset = %.2f", clawOffset);
                 telemetry.addData("left", "%.2f", left);
