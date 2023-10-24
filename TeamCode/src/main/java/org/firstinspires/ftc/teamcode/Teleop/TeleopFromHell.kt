@@ -35,7 +35,33 @@ class TeleopFromHell: DriveMethods() {
         initMotorsSecondBot() //init rack and pinion & wheel motors
         initSlideMotors() //init claw/slide motors
 
-        telemetry.addLine("good luck buddy")
+        when ((0..25).random()) {
+            1 -> telemetry.addLine("good luck buddy")
+            2 -> telemetry.addLine("\"what spectrum?\"")
+            3 -> telemetry.addLine("MostlyOp >>> AHoT")
+            4 -> telemetry.addLine("01101011 01101001 01101100 01101100 00100000 01111001 01101111 01110101 01110010 01110011 01100101 01101100 01100110")
+            5 -> telemetry.addLine("I LOVE ULTRAKILL!!!!!!!!!!!!")
+            6 -> telemetry.addLine("\"just hit clean build\"")
+            7 -> telemetry.addLine("this match is gonna be ghoulish green")
+            8 -> telemetry.addLine("we are so back")
+            9 -> telemetry.addLine("ok so would you rather have a 1% chance of becoming a turkey everyday or...")
+            10 -> telemetry.addLine("RIP damien mode 2022-2023")
+            11 -> telemetry.addLine("ok programming, you have one week to do vision, rack and pinions that move at different speeds, a slide and claw with slippage, oh yeah and we need drive practice. Sounds good?")
+            12 -> telemetry.addLine("\"who unqueued my song?\"")
+            13 -> telemetry.addLine("at least we don't have a pushbot! (not confirmed, pushbot still possible)")
+            14 -> telemetry.addLine("whoever set continuous rotation as the default is my #1 opp")
+            15 -> telemetry.addLine("shoutout to Huy for being our insider <3")
+            16 -> telemetry.addLine("why does jack always come to TR3? Is he stupid?")
+            17 -> telemetry.addLine("Nick, I need you to sand this.")
+            18 -> telemetry.addLine("I wish fame and good fortune upon Sachals bloodline")
+            19 -> telemetry.addLine("-((2 / (1 + (exp(-(target - Pos) / speed)))) - 1) * max")
+            20 -> telemetry.addLine("\"the grid system is stupid.\" *starts pointing at poles*")
+            21 -> telemetry.addLine("James, how many orange cups have you eaten today?")
+            22 -> telemetry.addLine("Tennisball is the newest sport sweeping the nation!")
+            23 -> telemetry.addLine("our robot has been too big for the bounding box on 3 different occasions.")
+            24 -> telemetry.addLine("build freezes are not real")
+            25 -> telemetry.addLine("in Raytheon we trust")
+        }
         telemetry.update()
 
         waitForStart()
