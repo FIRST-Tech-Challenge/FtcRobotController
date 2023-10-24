@@ -12,16 +12,7 @@ public class Outtake {
         outtakeMotor.setDirection(DcMotor.Direction.FORWARD);
     }
 
-    public void driveLift(boolean up, boolean down) {
-        if (up) {
-            outtakeMotor.setPower(1.0);
-        }
-        else if (down) {
-            outtakeMotor.setPower(-1.0);
-        }
-        else {
-            outtakeMotor.setPower(0.0);
+    public void driveLift(double power) {
+        outtakeMotor.setPower(power);
         }
     }
-
-}
