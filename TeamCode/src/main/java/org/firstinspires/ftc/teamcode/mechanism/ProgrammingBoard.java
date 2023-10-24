@@ -16,7 +16,7 @@ public class ProgrammingBoard {
     private static DcMotor leftBackMotor_1;
     private static DcMotor rightBackMotor_2;
     private static DcMotor rightFrontMotor_3;
-//    private static CRServo intakeServo;
+    private static CRServo intakeServo;
 
     // Defines the motors.
 
@@ -24,7 +24,7 @@ public class ProgrammingBoard {
     public void init(HardwareMap hwMap) {
         // Function runs during init phase of robot.
 
-//        intakeServo = hwMap.get(CRServo.class, "intakeServo");
+        intakeServo = hwMap.get(CRServo.class, "intakeServo");
 
         leftFrontMotor_0 = hwMap.get(DcMotor.class, "leftFrontMotor_0");
         leftBackMotor_1 = hwMap.get(DcMotor.class, "leftBackMotor_1");
@@ -54,9 +54,9 @@ public class ProgrammingBoard {
         // Method allows for other classes to set the speed of each motor.
     }
     
-//    public void setIntakePower(double servoPower){
-//        intakeServo.setPower(servoPower);
-//    }
+    public void setIntakePower(double servoPower){
+        intakeServo.setPower(servoPower);
+    }
 
 
 

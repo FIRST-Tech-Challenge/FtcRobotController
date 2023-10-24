@@ -31,7 +31,7 @@ public class CompetitionCode extends OpMode {
         yaw     =  gamepad1.right_stick_x;
 
         DriveTrain.controllerDrive(axial, lateral, yaw);
-        // Board.setIntakePower(gamepad1.left_trigger);
+        Board.setIntakePower(gamepad1.left_trigger);
         // This function sends the game pad inputs to the Traction class.
 
 
