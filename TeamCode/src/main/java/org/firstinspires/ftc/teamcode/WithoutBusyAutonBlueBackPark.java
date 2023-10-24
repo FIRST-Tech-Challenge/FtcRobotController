@@ -5,8 +5,8 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
-@Autonomous(name = "Auton Blue Back Park")
-public class AutonBlueBackPark extends LinearOpMode {
+@Autonomous(name = "Without Busy Auton Blue Back Park")
+public class WithoutBusyAutonBlueBackPark extends LinearOpMode {
 
     private DcMotor leftFrontDrive   = null;  //  Used to control the left front drive wheel
     private DcMotor rightFrontDrive  = null;  //  Used to control the right front drive wheel
@@ -53,19 +53,19 @@ public class AutonBlueBackPark extends LinearOpMode {
             rightFrontDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
             rightBackDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
-            rightFrontDrive.setTargetPosition(-1500);
+            rightFrontDrive.setTargetPosition(-1680);
             rightFrontDrive.setPower(0.5);
             rightFrontDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
-            leftBackDrive.setTargetPosition(-1500);
+            leftBackDrive.setTargetPosition(-1680);
             leftBackDrive.setPower(0.5);
             leftBackDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
-            leftFrontDrive.setTargetPosition(1500);
+            leftFrontDrive.setTargetPosition(1680);
             leftFrontDrive.setPower(0.5);
             leftFrontDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
-            rightBackDrive.setTargetPosition(1500);
+            rightBackDrive.setTargetPosition(1680);
             rightBackDrive.setPower(0.5);
             rightBackDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
@@ -82,14 +82,7 @@ public class AutonBlueBackPark extends LinearOpMode {
             telemetry.addData("Back Right Current Position Position",rightBackDrive.getCurrentPosition());
 
             telemetry.update();
-
-            while (leftFrontDrive.isBusy() || rightFrontDrive.isBusy() || leftBackDrive.isBusy() || rightBackDrive.isBusy()) {}
-            rightFrontDrive.setPower(0);
-            leftFrontDrive.setPower(0);
-            rightBackDrive.setPower(0);
-            leftBackDrive.setPower(0);
             }
-
 
             int leftFrontDriveNecessaryTicks = calculateTicksForLateralMovement(80); //2000
             int rightFrontDriveNecessaryTicks = calculateTicksForLateralMovement(80);
@@ -105,11 +98,6 @@ public class AutonBlueBackPark extends LinearOpMode {
             rightBackDrive.setDirection(DcMotorSimple.Direction.FORWARD);
             leftFrontDrive.setDirection(DcMotorSimple.Direction.REVERSE);
             leftBackDrive.setDirection(DcMotorSimple.Direction.REVERSE);
-
-            leftFrontDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-            leftBackDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-            rightFrontDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-            rightBackDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
             leftFrontDrive.setTargetPosition(leftFrontDrive.getCurrentPosition() + leftFrontDriveTargetTicks);
             leftFrontDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
@@ -140,14 +128,6 @@ public class AutonBlueBackPark extends LinearOpMode {
             telemetry.addData("Back Right Current Position Position",rightBackDrive.getCurrentPosition());
 
             telemetry.update();
-
-            while (leftFrontDrive.isBusy() && rightFrontDrive.isBusy() && leftBackDrive.isBusy() && rightBackDrive.isBusy()) {}
-
-            rightFrontDrive.setPower(0);
-            leftFrontDrive.setPower(0);
-            rightBackDrive.setPower(0);
-            leftBackDrive.setPower(0);
-
 
     }
 

@@ -48,6 +48,9 @@ public class V1_NewArmClawDrivebase extends LinearOpMode {
         droneServo.scaleRange(0, 1);
         droneServo.setPosition(0.85);
 
+        clawLeft.scaleRange(0, 1);
+        clawRight.scaleRange(0, 1);
+
         int liftTargetPosition = 5;
         double openClaw = 0;
         double closeClaw = 0.5;
@@ -87,10 +90,6 @@ public class V1_NewArmClawDrivebase extends LinearOpMode {
             backLeftMotor.setPower(backLeftPower*0.65);
             frontRightMotor.setPower(frontRightPower*0.65);
             backRightMotor.setPower(backRightPower*0.65);
-
-
-            //gamepad 2 - mechanisms
-            //lift code
 
             double liftPower = arm.getPower();
 
