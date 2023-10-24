@@ -301,15 +301,28 @@ public class AutonomousCENTERSTAGE extends LinearOpMode {
     }   // end method telemetryTfod()
 
     private void move(double distanceft) {
-        leftFrontDrive.setPower(1);
-        rightBackDrive.setPower(1);
-        rightFrontDrive.setPower(1);
-        leftBackDrive.setPower(1);
+        leftFrontDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        rightBackDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        rightFrontDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        leftBackDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+        leftFrontDrive.setTargetPosition(leftFrontDrive.getCurrentPosition() + 1000);
+        leftBackDrive.setTargetPosition(leftBackDrive.getCurrentPosition() + 1000);
+        rightFrontDrive.setTargetPosition(rightFrontDrive.getCurrentPosition() + 1000);
+        rightBackDrive.setTargetPosition(rightBackDrive.getCurrentPosition() + 1000);
+
+        leftFrontDrive.setPower(0.1);
+        rightBackDrive.setPower(0.1);
+        rightFrontDrive.setPower(0.1);
+        leftBackDrive.setPower(0.1);
+
         sleep(250);
+
         leftFrontDrive.setPower(0);
         rightBackDrive.setPower(0);
         rightFrontDrive.setPower(0);
         leftBackDrive.setPower(0);
+
         leftBackDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         leftFrontDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         rightFrontDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
