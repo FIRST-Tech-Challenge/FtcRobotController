@@ -95,9 +95,9 @@ public class V1_NewArmClawDrivebase extends LinearOpMode {
 
             double liftPower = arm.getPower();
 
-            if (gamepad2.right_trigger > 0) {
+            if (gamepad1.right_trigger > 0) {
                 liftTargetPosition += 5;
-            }else if (gamepad2.left_trigger > 0) {
+            }else if (gamepad1.left_trigger > 0) {
                 liftTargetPosition -= 5;
             }
             if (liftTargetPosition > 962) {
@@ -113,11 +113,11 @@ public class V1_NewArmClawDrivebase extends LinearOpMode {
 
             //wrist code
 
-            if (gamepad2.dpad_up) {
+            if (gamepad1.dpad_up) {
                 clawLeft.setPosition(-closeClaw);
                 clawRight.setPosition(closeClaw);
             }
-            if (gamepad2.dpad_down) {
+            if (gamepad1.dpad_down) {
                 clawLeft.setPosition(-openClaw);
                 clawRight.setPosition(openClaw);
             }
@@ -127,7 +127,7 @@ public class V1_NewArmClawDrivebase extends LinearOpMode {
 
             double droneServoPosition = droneServo.getPosition();
 
-            if (gamepad2.a) {
+            if (gamepad1.a) {
                 droneServo.setPosition(1);
                 sleep(1500);
                 droneServo.setPosition(0.85);
