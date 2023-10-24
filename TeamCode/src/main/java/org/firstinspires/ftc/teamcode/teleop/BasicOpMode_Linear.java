@@ -151,10 +151,13 @@ public class BasicOpMode_Linear extends LinearOpMode {
             }
 
             //if (hasReachedZero) {
-            if (location + outputServo <= 1.0 && waitTime == 0) {
-                location += outputServo/2;
+            if (location + outputServo <= 1.0 && waitTime == 0 ) {
+                location += outputServo/40;
                 waitTime = 1;
             }
+
+            if (location < -1.0)
+                location = -1.0;
 
             if (waitTime != 0)
                 waitTime++;
