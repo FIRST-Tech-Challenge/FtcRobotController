@@ -33,9 +33,15 @@ import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.util.ElapsedTime;
+import com.qualcomm.robotcore.util.Range;
+
+import org.firstinspires.ftc.teamcode.subsystems.Base;
+import org.firstinspires.ftc.teamcode.subsystems.extension;
 
 
-/**
+/*
  * This file contains an minimal example of a Linear "OpMode". An OpMode is a 'program' that runs in either
  * the autonomous or the teleop period of an FTC match. The names of OpModes appear on the menu
  * of the FTC Driver Station. When a selection is made from the menu, the corresponding OpMode
@@ -45,66 +51,56 @@ import com.qualcomm.robotcore.hardware.DcMotor;
  * It includes all the skeletal structure that all linear OpModes contain.
  *
  * Use Android Studio to Copy this Class, and Paste it into your team's code folder with a new name.
- * Remove or comment out the @Disabled line to add this opmode to the Driver Station OpMode list
+ * Remove or comment out the @Disabled line to add this OpMode to the Driver Station OpMode list
  */
-@Disabled
-@TeleOp(name="mainteleOp")
 
-public class mainteleOp extends LinearOpMode {
-    //RevColorSensorV3 dc;
+@TeleOp(name="lm1drive", group="Linear OpMode")
+
+public class lm1teleop extends LinearOpMode {
+
     // Declare OpMode members.
- DcMotor leftMotor;
-
+    private ElapsedTime runtime = new ElapsedTime();
+    extension extend = new extension(hardwareMap);
+    Feildcentricdrive drive = new Feildcentricdrive();
 
     @Override
     public void runOpMode() {
-        //dc=hardwareMap.get(RevColorSensorV3.class, "dc");
-        Feildcentricdrive dt = new Feildcentricdrive();
-        dt.init(hardwareMap,0);
+        boolean reset = false;
+        boolean slowturn=false;
+        double rx;
         telemetry.addData("Status", "Initialized");
         telemetry.update();
-        boolean reset = false;
-
-
+        drive.init(hardwareMap, 0);
         // Initialize the hardware variables. Note that the strings used here as parameters
         // to 'get' must correspond to the names assigned during the robot configuration
         // step (using the FTC Robot Controller app on the phone).
+      extend.setStowPos();
 
 
-        // To drive forward, most robots need the motor on one side to be reversed, because the axles point in opposite directions.
-        // Pushing the left stick forward MUST make robot go forward. So adjust these two lines based on your first test drive.
-        // Note: The settings here assume direct drive on left and right wheels.  Gear Reduction or 90 Deg drives may require direction flips
-
-
-        // Wait for the game to start (driver presses PLAY)
         waitForStart();
+        runtime.reset();
 
-        boolean slowturn=false;
-        double rx;
         // run until the end of the match (driver presses STOP)
         while (opModeIsActive()) {
-            //double d= dc.getDistance(DistanceUnit.CM);
-//            double r= dc.red();
-//            double g=dc.green();
-//            double b = dc.blue();
             if(gamepad1.a){
                 slowturn=true;
             }if(gamepad1.b){
                 slowturn=false;
             }
-            if(slowturn){rx=gamepad1.right_stick_x*0.7;} else{rx=gamepad1.right_stick_x;}
+            if(slowturn){rx=gamepad1.right_stick_x*0.5;} else{rx=gamepad1.right_stick_x;}
             if(gamepad1.left_bumper){
-                dt.run(gamepad1.left_stick_y,gamepad1.left_stick_x,rx,0.5,true);
+                drive.run(gamepad1.left_stick_y,gamepad1.left_stick_x,rx,0.5,true);
             }else {
-                dt.run(gamepad1.left_stick_y, gamepad1.left_stick_x, rx, 1, true, gamepad1.back);
+                drive.run(gamepad1.left_stick_y, gamepad1.left_stick_x, rx, 1, true, gamepad1.back);
             }
-            // Setup a variable for each drive wheel to save power level for telemetry
-            // telemetry.addData("distance",d);
-//            telemetry.addData("r",r);
-//            telemetry.addData("g",g);
-//            telemetry.addData("b",b);
-            // Show the elapsed game time and wheel power.
-            //telemetry.update();
+            if(gamepad2.dpad_up) extend.setPlaceHigh();
+            else if(gamepad2.dpad_left) extend.setPlaceMid();
+            else if(gamepad2.dpad_down) extend.setPlaceLow();
+            else if(gamepad2.x) extend.setStowPos();
+            else if(gamepad2.a) extend.setIntakeClosePos();
+            else if(gamepad2.y) extend.setIntakeFarPos();
+
+
         }
     }
 }
