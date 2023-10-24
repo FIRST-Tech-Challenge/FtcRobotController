@@ -117,7 +117,6 @@ public class PachetelNouOpenCV extends OpenCvPipeline {
 
             //asta declara o lista de contururi;
             List<MatOfPoint> contours = new ArrayList<>();
-
             //input e imaginea, contours este lista de contururi, retr_list doar da toate contururile, chain_approx_simple face ca formele sa fie facute numai din varfurile lor
             Imgproc.findContours(input, contours, new Mat(), Imgproc.RETR_LIST, Imgproc.CHAIN_APPROX_SIMPLE);
             //Aici se sorteaza contururile in mod descrescator;
@@ -131,7 +130,9 @@ public class PachetelNouOpenCV extends OpenCvPipeline {
             if (!contours.isEmpty()) {
                 setRect(Imgproc.boundingRect(contours.get(0)));
             }
-
+            else{
+                setRect(new Rect());
+            }
             //aici se converteste imaginea de la alb-negru la  color inapoi
             Imgproc.cvtColor(input, input, Imgproc.COLOR_GRAY2RGBA);
 
