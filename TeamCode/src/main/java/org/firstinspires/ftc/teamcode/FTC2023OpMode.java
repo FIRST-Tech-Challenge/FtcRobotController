@@ -71,9 +71,9 @@ public class FTC2023OpMode extends LinearOpMode {
         rightFrontDrive = hardwareMap.get(DcMotor.class, "rightFront_drive");
         rightRearDrive = hardwareMap.get(DcMotor.class, "rightRear_drive");
 
-        // Assuming that to drive forward, the motors on the left need to be reversed.
-        leftFrontDrive.setDirection(DcMotor.Direction.REVERSE);
-        leftRearDrive.setDirection(DcMotor.Direction.REVERSE);
+        // Assuming that to drive forward, all four wheels roll forward.
+        leftFrontDrive.setDirection(DcMotor.Direction.FORWARD);
+        leftRearDrive.setDirection(DcMotor.Direction.FORWARD);
         rightFrontDrive.setDirection(DcMotor.Direction.FORWARD);
         rightRearDrive.setDirection(DcMotor.Direction.FORWARD);
 
