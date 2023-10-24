@@ -36,13 +36,12 @@ public class RobotClass {
     public DcMotor backRight = null;
     public BNO055IMU imu = null;
     public Orientation angles = null;
-    public Acceleration gravity = null;
 
     public RobotClass(LinearOpMode opmode) {
         myOpMode = opmode;
     }
 
-    public void init(HardwareMap ahsMap) {
+    public void init(HardwareMap ahsMap) throws InterruptedException {
         //assigning motor variables to configuration name
         frontLeft = ahsMap.get(DcMotor.class, "frontLeft");
         frontRight = ahsMap.get(DcMotor.class, "frontRight");
@@ -55,8 +54,14 @@ public class RobotClass {
         frontLeft.setDirection(DcMotorSimple.Direction.FORWARD);
         backLeft.setDirection(DcMotorSimple.Direction.REVERSE);
 
+        //setting zero power behavior to brake
+        frontLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        frontRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        backRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        backLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
         //initializing imu
-        // Set up the parameters with which we will use our IMU.
+            // Set up the parameters with which we will use our IMU.
             BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
             parameters.angleUnit           = BNO055IMU.AngleUnit.DEGREES;
             parameters.accelUnit           = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
@@ -68,8 +73,9 @@ public class RobotClass {
         //hardware mapping and initializing imu
         imu = ahsMap.get(BNO055IMU.class, "imu");
         imu.initialize(parameters);
-        if (!imu.isGyroCalibrated()){
-            imu.initialize(parameters);
+
+        while(!imu.isGyroCalibrated()){
+            sleep(10);
         }
     }
 
@@ -145,30 +151,27 @@ public class RobotClass {
 
     //turning with gyro code
     public void gyroTurning(double targetAngle, double buffer) throws InterruptedException{
-        while (targetAngle < targetAngle-buffer || targetAngle > targetAngle+buffer) {
-            //getting angle in degrees
-            double angle = angles.firstAngle;
+        angles = imu.getAngularOrientation();
+        //getting angle in degrees
+        double angle = angles.firstAngle;
+        while (angle < targetAngle-buffer || angle > targetAngle+buffer) {
+            //getting angle
+            angle = angles.firstAngle;
 
             //setting power of motors
             if (targetAngle-angle < 0){
-                frontLeft.setPower(-0.5);
-                frontRight.setPower(0.5);
-                backLeft.setPower(-0.5);
-                backRight.setPower(0.5);
+                frontLeft.setPower(-0.25);
+                frontRight.setPower(0.25);
+                backLeft.setPower(-0.25);
+                backRight.setPower(0.25);
             }else {
-                frontLeft.setPower(0.5);
-                frontRight.setPower(-0.5);
-                backLeft.setPower(0.5);
-                backRight.setPower(-0.5);
+                frontLeft.setPower(0.25);
+                frontRight.setPower(-0.25);
+                backLeft.setPower(0.25);
+                backRight.setPower(-0.25);
             }
-
-            //getting angle
-            angles = imu.getAngularOrientation();
-
-            //printing angle
-            myOpMode.telemetry.addData("angle", angle);
-            myOpMode.telemetry.update();
         }
+        stopMotors();
     }
 
     //strafing class with power and direction as parameters
