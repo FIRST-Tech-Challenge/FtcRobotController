@@ -215,14 +215,18 @@ public class vvDriveToTagShriya extends LinearOpMode
      */
     public void moveRobot(double x, double yaw) {
         // Calculate left and right wheel powers.
-        double leftPower    = x - yaw;
-        double rightPower   = x + yaw;
+        double leftUpPower    = x - yaw;
+        double rightUpPower   = x + yaw;
+        double leftDownPower    = x - yaw;
+        double rightDownPower   = x + yaw;
 
         // Normalize wheel powers to be less than 1.0
         double max = Math.max(Math.abs(leftPower), Math.abs(rightPower));
         if (max >1.0) {
-            leftPower /= max;
-            rightPower /= max;
+            leftUpPower /= max;
+            rightUpPower /= max;
+            leftDownPower /= max;
+            rightDownPower /= max;
         }
 
         // Send powers to the wheels.
