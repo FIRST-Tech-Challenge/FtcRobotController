@@ -65,7 +65,7 @@ import com.qualcomm.robotcore.hardware.CRServo;
  * Remove or comment out the @Disabled line to add this OpMode to the Driver Station OpMode list
  */
 
-@TeleOp(name="Basic: Omni Linear OpMode", group="Linear OpMode")
+@TeleOp(name = "Basic: Omni Linear OpMode", group = "Linear OpMode")
 public class BasicOpMode_Linear extends LinearOpMode {
 
     // Declare OpMode members for each of the 4 motors.
@@ -83,8 +83,8 @@ public class BasicOpMode_Linear extends LinearOpMode {
         // Initialize the hardware variables. Note that the strings used here must correspond
         // to the names assigned during the robot configuration step on the DS or RC devices.
 
-        leftFrontDrive  = hardwareMap.get(DcMotor.class, "left_front_drive");
-        leftBackDrive  = hardwareMap.get(DcMotor.class, "left_back_drive");
+        leftFrontDrive = hardwareMap.get(DcMotor.class, "left_front_drive");
+        leftBackDrive = hardwareMap.get(DcMotor.class, "left_back_drive");
         rightFrontDrive = hardwareMap.get(DcMotor.class, "right_front_drive");
         rightBackDrive = hardwareMap.get(DcMotor.class, "right_back_drive");
         armExtendMotor = hardwareMap.get(DcMotor.class, "armExtendMotor");
@@ -115,27 +115,45 @@ public class BasicOpMode_Linear extends LinearOpMode {
         waitForStart();
         runtime.reset();
 
+        double location = -10;
+
         // run until the end of the match (driver presses STOP)
         while (opModeIsActive()) {
             double max;
+            double lastPosition = -10;
+            boolean hasReachedZero = false;
 
             // POV Mode uses left joystick to go forward & strafe, and right joystick to rotate.
-            double axial   = -gamepad1.left_stick_y;  // Note: pushing stick forward gives negative value
-            double lateral =  gamepad1.left_stick_x;
-            double yaw     =  gamepad1.right_stick_x;
+            double axial = -gamepad1.left_stick_y;  // Note: pushing stick forward gives negative value
+            double lateral = gamepad1.left_stick_x;
+            double yaw = gamepad1.right_stick_x;
 
             double arm = -gamepad2.left_stick_y;
             double outputServo = gamepad2.right_stick_y;
 
             // Combine the joystick requests for each axis-motion to determine each wheel's power.
             // Set up a variable for each drive wheel to save the power level for telemetry.
-            double leftFrontPower  = axial - lateral + yaw;
+            double leftFrontPower = axial - lateral + yaw;
             double rightFrontPower = axial - lateral - yaw;
-            double leftBackPower   = axial + lateral + yaw;
-            double rightBackPower  = axial + lateral - yaw;
+            double leftBackPower = axial + lateral + yaw;
+            double rightBackPower = axial + lateral - yaw;
 
             double armPower = arm;
             double outputServoPower = outputServo;
+
+            if (outputServo == 0) {
+                hasReachedZero = true;
+            }
+
+            if (location == -10) {
+                location = outputServo;
+            } 
+
+            //if (hasReachedZero) {
+                if (location + outputServo <= 1.0)
+                    location += outputServo;
+                //hasReachedZero = false;
+            //}
 
             // Normalize the values so no wheel power exceeds 100%
             // This ensures that the robot maintains the desired motion.
@@ -144,11 +162,11 @@ public class BasicOpMode_Linear extends LinearOpMode {
             max = Math.max(max, Math.abs(rightBackPower));
 
             if (max > 1.0) {
-                leftFrontPower  /= max;
+                leftFrontPower /= max;
                 rightFrontPower /= max;
-                leftBackPower   /= max;
-                rightBackPower  /= max;
-                armPower        /= max;
+                leftBackPower /= max;
+                rightBackPower /= max;
+                armPower /= max;
             }
 
             // This is test code:
@@ -175,13 +193,15 @@ public class BasicOpMode_Linear extends LinearOpMode {
             rightBackDrive.setPower(rightBackPower);
             armExtendMotor.setPower(armPower);
 
-            if (outputServo != 0)
-                outputServoMotor.setPower(outputServoPower);
+            outputServoMotor.setPower(location);
 
             // Show the elapsed game time and wheel power.
             telemetry.addData("Status", "Run Time: " + runtime.toString());
             telemetry.addData("Front left/Right", "%4.2f, %4.2f", leftFrontPower, rightFrontPower);
             telemetry.addData("Back  left/Right", "%4.2f, %4.2f", leftBackPower, rightBackPower);
+            telemetry.addData("location", location);
+            telemetry.addData("power", outputServo);
             telemetry.update();
         }
-    }}
+    }
+}
