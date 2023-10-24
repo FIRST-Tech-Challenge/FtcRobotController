@@ -116,6 +116,7 @@ public class BasicOpMode_Linear extends LinearOpMode {
         runtime.reset();
 
         double location = -10;
+        int waitTime = 0;
 
         // run until the end of the match (driver presses STOP)
         while (opModeIsActive()) {
@@ -147,12 +148,19 @@ public class BasicOpMode_Linear extends LinearOpMode {
 
             if (location == -10) {
                 location = outputServo;
-            } 
+            }
 
             //if (hasReachedZero) {
-                if (location + outputServo <= 1.0)
-                    location += outputServo;
-                //hasReachedZero = false;
+            if (location + outputServo <= 1.0 && waitTime == 0) {
+                location += outputServo/2;
+                waitTime = 1;
+            }
+
+            if (waitTime != 0)
+                waitTime++;
+            if (waitTime == 25)
+                waitTime = 0;
+            //hasReachedZero = false;
             //}
 
             // Normalize the values so no wheel power exceeds 100%
@@ -200,7 +208,8 @@ public class BasicOpMode_Linear extends LinearOpMode {
             telemetry.addData("Front left/Right", "%4.2f, %4.2f", leftFrontPower, rightFrontPower);
             telemetry.addData("Back  left/Right", "%4.2f, %4.2f", leftBackPower, rightBackPower);
             telemetry.addData("location", location);
-            telemetry.addData("power", outputServo);
+            telemetry.addData("power", outputServo/2);
+            telemetry.addData("wait time", waitTime);
             telemetry.update();
         }
     }
