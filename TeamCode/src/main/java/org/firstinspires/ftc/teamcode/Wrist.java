@@ -31,49 +31,38 @@ package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.Servo;
 
-public class Arm {
+public class Wrist {
 
-    static final double ARM_UP_POS = -1;
-    static final double ARM_DOWN_POS = 1;
-    static final int SLEEP_TIME = 500;
 
-    static final double  POWER_UP_MUL = 0.5;
-    static final double  POWER_DOWN_MUL = 0.05;
     // Define class members
 
 
     private LinearOpMode myOpMode;   // gain access to methods in the calling OpMode.
 
-    DcMotor motor = null;
-    public Arm (LinearOpMode opmode) {
+    Servo servo = null;
+    public Wrist(LinearOpMode opmode) {
         myOpMode = opmode;
     }
 
     public void init() {
         // Define and Initialize Motors (note: need to use reference to actual OpMode).
-        motor = myOpMode.hardwareMap.get(DcMotor.class, "arm");
-        motor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        servo = myOpMode.hardwareMap.get(Servo.class, "left_hand");
     }
 
 
-    public void moveArmByPower(double power) {
-        if (power > 0) {
-            motor.setPower(power * POWER_UP_MUL);
-        } else {
-            if (myOpMode.gamepad2.right_bumper) {
-                motor.setPower(power);
-            } else {
-                motor.setPower(power * POWER_DOWN_MUL);
-            }
-        }
 
-    }
 
     public void listen() {
 
         // move arm according to the right stick y
-        moveArmByPower(-myOpMode.gamepad2.right_stick_y);
+        if (myOpMode.gamepad2.dpad_up) {
+            servo.setPosition(0.0);
+
+        } else if (myOpMode.gamepad2.dpad_down) {
+            servo.setPosition(1.0);
+        }
 
     }
 }

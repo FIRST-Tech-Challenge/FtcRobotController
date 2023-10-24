@@ -29,7 +29,6 @@
 
 package org.firstinspires.ftc.teamcode;
 
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.Servo;
@@ -50,7 +49,7 @@ import com.qualcomm.robotcore.hardware.Servo;
  */
 @TeleOp(name = "Concept: WristClaw", group = "Concept")
 //@Disabled
-public class WristClaw extends LinearOpMode {
+public class TestWrist extends LinearOpMode {
 
          // amount to slew servo each CYCLE_MS cycle
     static final int    CYCLE_MS    =   50;     // period of each cycle
