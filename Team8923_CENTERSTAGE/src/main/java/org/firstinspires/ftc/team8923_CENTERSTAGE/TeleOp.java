@@ -18,6 +18,7 @@ public class TeleOp extends BaseTeleOp {
             double pivot = gamepad1.right_stick_x;
 
             driveMecanum(x, y, pivot);
+            driveMechanism();
 
             idle();
         }

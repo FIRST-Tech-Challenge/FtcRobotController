@@ -6,6 +6,10 @@ abstract public class BaseTeleOp extends BaseOpMode {
     double slidesSpeed = 0.6;
     double releaseSpeed = 0.9;
 
+    private boolean pixelReleaseOpen = false;
+
+    private Toggle pressToggle = new Toggle();
+
     public void driveMechanism() {
         /* controls:
         hold left bumper: compliant wheels rotate in
@@ -15,6 +19,7 @@ abstract public class BaseTeleOp extends BaseOpMode {
         B button: gondola release
         press left joystick down: release drone
          */
+
         if (gamepad2.left_bumper) {
             motorIntakeWheels.setPower(1.0);
         } else if (gamepad2.right_bumper) {
@@ -33,11 +38,21 @@ abstract public class BaseTeleOp extends BaseOpMode {
             servoLeftFlipGondola.setPosition(1);
             servoRightFlipGondola.setPosition(1);
         }
+
+        // PLEASE READ THIS!!!!!!!!!!!!!!!!!! PLEASE!!!!!!!!!!!!!!!!!!!!!!!!
+        // TEST THIS WHEN PIXEL MECHANISM IS FUNCTIONAL!!!!!!!!!!!!!!!
+        pixelReleaseOpen = pressToggle.toggle(gamepad2.b);
+        if (pixelReleaseOpen) {
+            servoReleasePixel.setPosition(1.0);
+        } else {
+            servoReleasePixel.setPosition(0.0);
+        }
+
         // THIS IS PROBABLY WRONG
-        if (gamepad2.b) {
+        /*if (gamepad2.b) {
             servoReleasePixel.setPosition(1);
         } else if (gamepad2.b) {
             servoReleasePixel.setPosition(0);
-        }
+        }*/
     }
 }
