@@ -118,32 +118,36 @@ public class PracticeCodeAH extends LinearOpMode {
             rightGripper = hardwareMap.get(Servo.class, "rightGripper");
 
             if (gamepad2.left_bumper) {
-                // Move servos in opposite directions when "y" is pressed
+                // Move servos to the closed position when bumpers are pressed
                 leftGripper.setPosition(1); // Adjust the position value as needed
 
             } if (gamepad2.right_bumper) {
                 rightGripper.setPosition(0); // Adjust the position value as needed
 
-            } else if (gamepad2.left_trigger) {
-                // Return servos to the center position when "x" is pressed
+            } else if (gamepad2.left_trigger>0.5) {
+                // Return servos to the open position when triggers are pressed
                 leftGripper.setPosition(0.9); // Adjust the position value for the center position
 
-            } else if (gamepad2.right_trigger) {
+            } else if (gamepad2.right_trigger>0.5) {
                 rightGripper.setPosition(0.1); // Adjust the position value for the center position
             }
             if (gamepad2.b) {
-                // Move servo in opposite directions when "y" is pressed
-                wristServo.setPosition(.4 ); // Adjust the position value as needed
+                // Moves wrist to place position when b is pressed
+                wristServo.setPosition(.4); // Adjust the position value as needed
 
             } else if (gamepad2.a) {
-                // Return servos to the center position when "x" is pressed
-                wristServo.setPosition(0); // Adjust the position value for the center position
+                // Moves wrist to grip position when a is pressed
+                wristServo.setPosition(0.05); // Adjust the position value for the center position
 
             } if (gamepad2.x) {
-            armMotor.setTargetPosition(0);
+                // Moves arm to grip position when x is pressed
+            armMotor.setTargetPosition(-1);
 
-            } else if (gamepad2.y) {}
-                
+            } else if (gamepad2.y) {
+                //Moves arm to place position when y is pressed
+                armMotor.setTargetPosition(1);
+            }
+
                 telemetry.update();
 
         }
