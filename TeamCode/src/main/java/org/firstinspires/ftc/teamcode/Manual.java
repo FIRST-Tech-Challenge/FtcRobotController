@@ -29,13 +29,20 @@ public class Manual  extends LinearOpMode{
             telemetry.addData("Status", "Ready to run...");
             telemetry.update();
 
-            //manageDriveMotors(); //TODO: enable this for driving
+            manageDriveMotors();
             manageLauncher();
             manageArm();
-            manageGrabber();
+            //manageGrabber();
+
+            //temp code
+            if (robot.getDistanceFromObject() < 5){
+                //robot.driveRobot(0,1);
+            }
+            telemetry.addData("Distance Sensor",  robot.getDistanceFromObject());
+
 
             // April Tag detection call
-            telemetryAprilTag();
+            //telemetryAprilTag();
 
             // Pace this loop so hands move at a reasonable speed.
             sleep(50);
@@ -48,8 +55,8 @@ public class Manual  extends LinearOpMode{
         // Run wheels in POV mode (note: The joystick goes negative when pushed forward, so negate it)
         // In this mode the Left stick moves the robot fwd and back, the Right stick turns left and right.
         // This way it's also easy to just drive straight, or just turn.
-        drive = gamepad1.right_stick_y;
-        turn  = gamepad1.right_stick_x;
+        drive = gamepad2.right_stick_y;
+        turn  = gamepad2.right_stick_x;
 
         // Combine drive and turn for blended motion. Use RobotHardware class
         robot.driveRobot(drive, turn);
@@ -73,11 +80,26 @@ public class Manual  extends LinearOpMode{
         }
     }
     private void manageArm(){
-        double armDrive;
-
-        armDrive = gamepad1.right_stick_y;
+        double armDrive = gamepad1.right_stick_y;
+        double elbowDrive = gamepad1.left_stick_y;
+        double grabberDrive =  gamepad1.left_stick_x;
 
         robot.moveArm(armDrive);
+
+        if (elbowDrive < 0){
+            robot.moveElbow(true);
+        }
+        else if (elbowDrive > 0) {
+            robot.moveElbow(false);
+        }
+
+        if (grabberDrive < 0) {
+            robot.moveGrabber(true);
+        }
+        else if (grabberDrive > 0) {
+            robot.moveGrabber(false);
+        }
+        /*
         if (gamepad1.dpad_up) {
             robot.moveElbow(true);
         }
@@ -87,7 +109,7 @@ public class Manual  extends LinearOpMode{
         else{
             //robot.stopElbow();
         }
-
+        */
 
         /*
         if (gamepad1.dpad_up) {
@@ -107,7 +129,7 @@ public class Manual  extends LinearOpMode{
     }
 
     private void manageGrabber(){
-
+        /*
         if (gamepad1.dpad_left) {
             robot.moveGrabber(true);
         }
@@ -117,6 +139,7 @@ public class Manual  extends LinearOpMode{
         else{
             //robot.stopElbow();
         }
+        */
     }
 
     private void telemetryAprilTag(){
