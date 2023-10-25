@@ -22,7 +22,7 @@ public class TestEOCV extends OpMode {
     OpenCvCamera webcam1 = null;
     @Override
     public void init() {
-        WebcamName webcamName = hardwareMap.get(WebcamName.class, "Webcam Tiny");
+        WebcamName webcamName = hardwareMap.get(WebcamName.class, "Webcam 1");
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
         webcam1 = OpenCvCameraFactory.getInstance().createWebcam(webcamName, cameraMonitorViewId);
         webcam1.setPipeline(new examplePipeline());
