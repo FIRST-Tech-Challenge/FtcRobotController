@@ -11,10 +11,10 @@ import java.util.HashMap;
 
 import org.opencv.core.*;
 import org.opencv.core.Core.*;
-import org.opencv.features2d.FeatureDetector;
 import org.opencv.imgcodecs.Imgcodecs;
 import org.opencv.imgproc.*;
 import org.opencv.objdetect.*;
+import org.openftc.easyopencv.OpenCvPipeline;
 
 /**
 * GripPipelineTwoBlueRGB class.
@@ -23,7 +23,7 @@ import org.opencv.objdetect.*;
 *
 * @author GRIP
 */
-public class GripPipelineTwoBlueRGB {
+class GripPipelineTwoBlueRGB  extends OpenCvPipeline {
 
 	//Outputs
 	private Mat cvResizeOutput = new Mat();
@@ -39,7 +39,7 @@ public class GripPipelineTwoBlueRGB {
 	/**
 	 * This is the primary method that runs the entire pipeline and updates the outputs.
 	 */
-	public void process(Mat source0) {
+	public Mat processFrame(Mat source0) {
 		// Step CV_resize0:
 		Mat cvResizeSrc = source0;
 		Size cvResizeDsize = new Size(0, 0);
@@ -72,7 +72,7 @@ public class GripPipelineTwoBlueRGB {
 		// Step Find_Lines0:
 		Mat findLinesInput = maskOutput;
 		findLines(findLinesInput, findLinesOutput);
-
+		return findLinesInput;
 	}
 
 	/**
