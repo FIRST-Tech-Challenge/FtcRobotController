@@ -5,6 +5,7 @@ import com.qualcomm.hardware.rev.Rev2mDistanceSensor;
 import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.NormalizedColorSensor;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
+import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
 import org.firstinspires.ftc.vision.tfod.TfodProcessor;
 import org.firstinspires.ftc.vision.VisionPortal;
@@ -122,6 +123,8 @@ public class RobotHardware {
         armMotorR       = myOpMode.hardwareMap.get(DcMotor.class, "motorrighthex");
         elbowServo      = myOpMode.hardwareMap.get(Servo.class, "elbow");
         grabberServo    = myOpMode.hardwareMap.get(Servo.class, "grabber");
+        elbowServo.resetDeviceConfigurationForOpMode();
+        grabberServo.resetDeviceConfigurationForOpMode();
         armMotorL.setDirection(DcMotor.Direction.REVERSE);
 
         // If there are encoders connected, switch to RUN_USING_ENCODER mode for greater accuracy
@@ -144,14 +147,11 @@ public class RobotHardware {
         rightColorSensor = myOpMode.hardwareMap.get(NormalizedColorSensor.class, "color_right");
         */
 
-        // when ready to use distance sensor
         // you can use this as a regular DistanceSensor.
         sensorDistance = myOpMode.hardwareMap.get(DistanceSensor.class, "distance_sensor");
 
-        /* you can also cast this to a Rev2mDistanceSensor if you want to use added
         // methods associated with the Rev2mDistanceSensor class.
         Rev2mDistanceSensor sensorTimeOfFlight = (Rev2mDistanceSensor) sensorDistance;
-        */
 
         myOpMode.telemetry.addData("Status", "Hardware Initialized");
         myOpMode.telemetry.update();
@@ -298,5 +298,9 @@ public class RobotHardware {
 
     public void resetLaunch(){
         launcher.setPosition(LAUNCHER_MIN);
+    }
+
+    public double getDistanceFromObject(){
+        return sensorDistance.getDistance(DistanceUnit.INCH);
     }
 }
