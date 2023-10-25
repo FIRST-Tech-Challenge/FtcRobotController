@@ -15,11 +15,20 @@
 apply from: '../build.common.gradle'
 apply from: '../build.dependencies.gradle'
 
+
+// added for ftclib gamepad extensions
+repositories {
+    mavenCentral()
+}
 android {
     namespace = 'org.firstinspires.ftc.teamcode'
 
     packagingOptions {
         jniLibs.useLegacyPackaging true
+    }
+
+    defaultConfig {
+        multiDexEnabled true
     }
 }
 
@@ -29,5 +38,7 @@ dependencies {
     annotationProcessor files('lib/OpModeAnnotationProcessor.jar')
     implementation "com.acmerobotics.roadrunner:ftc:0.1.7"
     implementation "com.acmerobotics.dashboard:dashboard:0.4.13"
-}
 
+    // added for ftclib gamepad extensions
+    implementation 'org.ftclib.ftclib:core:2.1.1' // core
+}
