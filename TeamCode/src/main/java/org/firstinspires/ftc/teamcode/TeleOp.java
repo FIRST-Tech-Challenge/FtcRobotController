@@ -10,6 +10,7 @@ public class TeleOp extends LinearOpMode {
 
     @Override
     public void runOpMode() throws InterruptedException {
+        //err: motors do not move
         Hardware hw = new Hardware();
         hw.init(hardwareMap);
 
@@ -20,6 +21,11 @@ public class TeleOp extends LinearOpMode {
 
         telemetry.addData("TeleOp: ", "starting...");
         telemetry.update();
+
+        hw.frontLeft.setPower(0);
+        hw.backLeft.setPower(0);
+        hw.frontRight.setPower(0);
+        hw.backRight.setPower(0);
 
         while (opModeIsActive()) {
             //temporary code
@@ -37,34 +43,18 @@ public class TeleOp extends LinearOpMode {
 
 
             //to do: verify this works
-//            if (turn > 0) { //forward and backward with turning and strafing || positive strafe/turn = strafe/turn right
-                //hw.frontLeft.setPower((drive - turn + strafe) / maxPower);
-                telemetry.addData("Teleop:", "test");
-                telemetry.update();
-//                hw.backRight.setPower(0.25);
-//                telemetry.addData("TeleOp: ", hw.backRight.getPower());
-                //hw.backRight.setPower((drive - turn + strafe) / maxPower);
-//            } else if(turn < 0){
+            hw.frontLeft.setPower((drive + turn ) / maxPower);
+            telemetry.addData("frontLeft: ", hw.frontLeft.getPower());
 
-                hw.frontLeft.setPower((drive + turn ) / maxPower);
-                telemetry.addData("frontLeft: ", hw.frontLeft.getPower());
+            hw.frontRight.setPower((drive - turn) / maxPower);
+            telemetry.addData("frontRight: ", hw.frontRight.getPower());
 
-                hw.frontRight.setPower((drive - turn) / maxPower);
-                telemetry.addData("frontRight: ", hw.frontRight.getPower());
+            hw.backRight.setPower((drive + turn) / maxPower);
+            telemetry.addData("backRight: ", hw.backRight.getPower());
 
-                hw.backRight.setPower((drive + turn) / maxPower);
-                telemetry.addData("backRight: ", hw.backRight.getPower());
+            hw.backLeft.setPower((drive - turn) / maxPower);
+            telemetry.addData("backLeft: ", hw.backLeft.getPower());
 
-                hw.backLeft.setPower((drive - turn) / maxPower);
-                telemetry.addData("backLeft: ", hw.backLeft.getPower());
-
-                telemetry.update();
-//            } else {
-//                hw.frontLeft.setPower(drive + strafe);
-//                hw.frontRight.setPower(drive - strafe);
-//                hw.backLeft.setPower(drive + strafe);
-//                hw.backRight.setPower(drive - strafe);
-//            }
 
             //cycle every 50 milliseconds, to prevent memory death --> 20 cycles/s
             sleep(50);

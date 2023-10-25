@@ -119,13 +119,13 @@ public class Hardware {
     public void strafe(double distance, double power) {
         frontLeft.setTargetPosition((int) (distance * TICKS_PER_INCH));
         frontRight.setTargetPosition((int) (-distance * TICKS_PER_INCH));
-        backLeft.setTargetPosition((int) (distance * TICKS_PER_INCH));
-        backRight.setTargetPosition((int) (-distance * TICKS_PER_INCH));
+        backLeft.setTargetPosition((int) (-distance * TICKS_PER_INCH));
+        backRight.setTargetPosition((int) (distance * TICKS_PER_INCH));
 
         frontLeft.setPower(power);
         frontRight.setPower(-power);
-        backLeft.setPower(power);
-        backRight.setPower(-power);
+        backLeft.setPower(-power);
+        backRight.setPower(power);
         while (!(frontLeft.getCurrentPosition() <= frontLeft.getTargetPosition() &&
                 frontRight.getCurrentPosition() <= frontRight.getTargetPosition() &&
                 backRight.getCurrentPosition() <= backRight.getTargetPosition() &&
@@ -139,17 +139,15 @@ public class Hardware {
 
     //positive power -> turn right, negative power -> turn left
     public void turn(double distance, double power){
-        if(power > 0){
-            frontLeft.setPower(power);
-            backLeft.setPower(power);
-            frontLeft.setTargetPosition((int) (distance * TICKS_PER_INCH));
-            backLeft.setTargetPosition((int) (distance * TICKS_PER_INCH));
-        } else {
-            frontRight.setPower(power);
-            backRight.setPower(power);
-            frontRight.setTargetPosition((int) (distance * TICKS_PER_INCH));
-            backRight.setTargetPosition((int) (distance * TICKS_PER_INCH));
-        }
+        frontLeft.setPower(power);
+        backLeft.setPower(power);
+        frontRight.setPower(-power);
+        backRight.setPower(-power);
+
+        frontLeft.setTargetPosition((int) (distance * TICKS_PER_INCH));
+        backLeft.setTargetPosition((int) (distance * TICKS_PER_INCH));
+        frontRight.setTargetPosition((int) (-distance * TICKS_PER_INCH));
+        backRight.setTargetPosition((int) (-distance * TICKS_PER_INCH));
 
         while (!(frontLeft.getCurrentPosition() <= frontLeft.getTargetPosition() &&
                 backLeft.getCurrentPosition() <= backLeft.getTargetPosition() &&
