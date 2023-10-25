@@ -32,56 +32,35 @@ package org.firstinspires.ftc.teamcode;
 import android.graphics.Color;
 
 import com.qualcomm.hardware.rev.Rev2mDistanceSensor;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.Servo;
 
-import org.firstinspires.ftc.robotcontroller.external.samples.RobotHardware;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 
 /**
- * Mr. Price's teleOp for test and explanation
+ * Mr. Price's teleOp for test and explanation - this one uses a Hardware Class structure
  *
  * Need to confirm the drive system and add the drone servo to have a full test case
  * Also need the telemetry to read all sensor values
- *
- * I2C Bus 1: Port 1: FDS Rev 2m Distance sensor:  distFront
- * Port2 RDS: Rev 2m Distance sensor: distRear
- * See the sensor's product page: https://www.revrobotics.com/rev-31-1505/
  */
 
-@TeleOp(name="coachTeleOp", group="TeleOp")
+@TeleOp(name="coachMap", group="TeleOp")
+@Disabled
+public class coachMapped extends LinearOpMode {
 
-public class coachPrice extends LinearOpMode {
-
-    /* Declare OpMode members. */
-    public DcMotor leftFront;
-    public DcMotor rightFront;
-    public DcMotor rightRear;
-    public DcMotor leftRear;
-    public DcMotor leftArm;
-    public DcMotor rightArm;
-    public CRServo rightWheel;
-    public CRServo leftWheel;
-    public Servo drone;
+    //vvHardware class external pull
+    vvHardware   robot       = new vvHardware(this);
 
     public ColorSensor colorSensor;
     public DistanceSensor distFront;
     public DistanceSensor distRear;
-
-    double clawOffset = 0;
-
-    /*public static final double MID_SERVO   =  0.5 ;
-    public static final double CLAW_SPEED  = 0.02 ;                 // sets rate to move servo
-    public static final double ARM_UP_POWER    =  0.45 ;
-    public static final double ARM_DOWN_POWER  = -0.45 ;
-    */
-
+@Override
     public void runOpMode() throws InterruptedException {
         double driveY = 0;
         double strafe = 0;
@@ -95,13 +74,8 @@ public class coachPrice extends LinearOpMode {
         // values is a reference to the hsvValues array.
         final float values[] = hsvValues;
 
-        // Define and Initialize Motors
-        leftFront = hardwareMap.get(DcMotor.class, "FLM");
-        rightFront = hardwareMap.get(DcMotor.class, "FRM");
-        rightRear = hardwareMap.get(DcMotor.class, "RRM");
-        leftRear = hardwareMap.get(DcMotor.class, "RLM");
-        rightWheel = hardwareMap.crservo.get("RSW");
-        leftWheel = hardwareMap.crservo.get("LSW");
+        // initialize all the hardware, using the hardware class. See how clean and simple this is?
+        robot.init();
 
         // bPrevState and bCurrState represent the previous and current state of the button.
         boolean bPrevState = false;
@@ -109,7 +83,6 @@ public class coachPrice extends LinearOpMode {
 
         // bLedOn represents the state of the LED.
         boolean bLedOn = true;
-
         // get a reference to our ColorSensor object.
         colorSensor = hardwareMap.get(ColorSensor.class, "CLR");
 
@@ -120,24 +93,6 @@ public class coachPrice extends LinearOpMode {
         distRear = hardwareMap.get(DistanceSensor.class, "RDS");
 
         Rev2mDistanceSensor sensorTimeOfFlight = (Rev2mDistanceSensor) distFront;
-
-        // To drive forward, most robots need the motor on one side to be reversed, because the axles point in opposite directions.
-        // Pushing the left stick forward MUST make robot go forward. So adjust these two lines based on your first test drive.
-        // Note: The settings here assume direct drive on left and right wheels.  Gear Reduction or 90 Deg drives may require direction flips
-        leftFront.setDirection(DcMotor.Direction.REVERSE);
-        rightFront.setDirection(DcMotor.Direction.FORWARD);
-        rightRear.setDirection(DcMotor.Direction.FORWARD);
-        leftRear.setDirection(DcMotor.Direction.REVERSE);
-        // If there are encoders connected, switch to RUN_USING_ENCODER mode for greater accuracy
-        // leftDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        // rightDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-
-        // Define and initialize ALL installed servos.
-        /* leftClaw  = hardwareMap.get(Servo.class, "left_hand");
-        rightClaw = hardwareMap.get(Servo.class, "right_hand");
-        leftClaw.setPosition(MID_SERVO);
-        rightClaw.setPosition(MID_SERVO);
-        */
 
         // Send telemetry message to signify robot waiting;
         telemetry.addData(">", "Robot Ready.  Press Play.");
@@ -154,21 +109,6 @@ public class coachPrice extends LinearOpMode {
                 strafe = gamepad1.left_stick_x * 1.1;
                 turn = gamepad1.right_stick_x;
 
-                // Denominator is the largest motor power (absolute value) or 1
-                // This ensures all the powers maintain the same ratio,
-                // but only if at least one is out of the range [-1, 1]
-                double denominator = Math.max(Math.abs(driveY) + Math.abs(strafe) + Math.abs(turn), 1);
-                double frontLeftPower = (driveY + strafe + turn) / denominator;
-                double backLeftPower = (driveY - strafe + turn) / denominator;
-                double frontRightPower = (driveY - strafe - turn) / denominator;
-                double backRightPower = (driveY + strafe - turn) / denominator;
-                // Remember that the right is opposite of the left
-
-                leftFront.setPower(drivePower * frontLeftPower);
-                leftRear.setPower(drivePower * backLeftPower);
-                rightFront.setPower(drivePower * frontRightPower);
-                rightRear.setPower(drivePower * backRightPower);
-
                 // Controlling the pixel pick-up with the dpad and buttons (individual)
                 if (gamepad2.dpad_left) {
                     LWPower = 0.2;
@@ -184,9 +124,6 @@ public class coachPrice extends LinearOpMode {
                     LWPower = 0;
                     RWPower = 0;
                 }
-
-                leftWheel.setPower(LWPower);
-                rightWheel.setPower(RWPower);
 
 // Adding telemetry readouts
                 telemetry.addData(">", "Robot Running");

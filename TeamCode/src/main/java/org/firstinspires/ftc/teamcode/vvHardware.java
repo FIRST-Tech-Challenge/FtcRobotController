@@ -29,16 +29,17 @@
 
 package org.firstinspires.ftc.teamcode;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.hardware.CRServo;
+import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.OpticalDistanceSensor;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.Range;
 
 /*
- * This file works in conjunction with the External Hardware Class sample called: ConceptExternalHardwareClass.java
- * Please read the explanations in that Sample about how to use this class definition.
- *
  * This file defines a Java Class that performs all the setup and configuration for a sample robot's hardware (motors and sensors).
  * It assumes four motors (left_front, right_front, left_back, right_back)
  * Sensors three (2M distance x2, color)
@@ -50,7 +51,7 @@ import com.qualcomm.robotcore.util.Range;
  *
  */
 
-
+@Disabled
 public class vvHardware {
 
     /* Declare OpMode members. */
@@ -59,10 +60,18 @@ public class vvHardware {
     // Define Motor and Servo objects  (Make them private so they can't be accessed externally)
     public DcMotor leftFront;
     public DcMotor rightFront;
-    public DcMotor leftBack;
-    public DcMotor rightBack;
+    public DcMotor rightRear;
+    public DcMotor leftRear;
+    public DcMotor leftArm;
+    public DcMotor rightArm;
+    public CRServo rightWheel;
+    public CRServo leftWheel;
+    public Servo drone;
 
-    public OpticalDistanceSensor distFront;
+    public ColorSensor colorSensor;
+    public DistanceSensor distFront;
+    public DistanceSensor distRear;
+
 
     // Define Drive constants.  Make them public so they CAN be used by the calling OpMode
     public static final double MID_SERVO       =  0.5 ;
@@ -82,13 +91,92 @@ public class vvHardware {
      * All of the hardware devices are accessed via the hardware map, and initialized.
      */
     public void init() {
+
         // Define and Initialize Motors (note: need to use reference to actual OpMode).
         leftFront = myOpMode.hardwareMap.get(DcMotor.class, "FLM");
         rightFront = myOpMode.hardwareMap.get(DcMotor.class, "FRM");
-        leftBack = myOpMode.hardwareMap.get(DcMotor.class, "RLM");
-        rightBack = myOpMode.hardwareMap.get(DcMotor.class, "RRM");
+        rightRear = myOpMode.hardwareMap.get(DcMotor.class, "RRM");
+        leftRear = myOpMode.hardwareMap.get(DcMotor.class, "RLM");
+
+        // Define Servos
+        rightWheel = myOpMode.hardwareMap.crservo.get("RSW");
+        leftWheel = myOpMode.hardwareMap.crservo.get("LSW");
 
         //define and initialize sensors
-        distFront = myOpMode.hardwareMap.get(OpticalDistanceSensor.class, "FDS");
+        colorSensor = myOpMode.hardwareMap.get(ColorSensor.class, "CLR");
+
+        distFront = myOpMode.hardwareMap.get(DistanceSensor.class, "FDS");
+        distRear = myOpMode.hardwareMap.get(DistanceSensor.class, "RDS");
+
+        //Set the motor directions
+        leftFront.setDirection(DcMotor.Direction.REVERSE);
+        rightFront.setDirection(DcMotor.Direction.FORWARD);
+        rightRear.setDirection(DcMotor.Direction.FORWARD);
+        leftRear.setDirection(DcMotor.Direction.REVERSE);
+
+        myOpMode.telemetry.addData(">", "Hardware Initialized");
+        myOpMode.telemetry.update();
+    }
+    /**
+     * Calculates the left/right motor powers required to achieve the requested
+     * robot motions: Drive (Axial motion) and Turn (Yaw motion).
+     * Then sends these power levels to the motors.
+     *
+     * @param Drive     Fwd/Rev driving power (-1.0 to 1.0) +ve is forward
+     * @param Turn      Right/Left turning power (-1.0 to 1.0) +ve is CW
+     */
+    public void driveRobot(double Drive, double Turn) {
+        double driveY = 0;
+        double strafe = 0;
+        double turn = 0;
+        double RWPower = 0;
+        double LWPower = 0;
+        double drivePower = 0.5; //global drive power level
+
+        double denominator = Math.max(Math.abs(driveY) + Math.abs(strafe) + Math.abs(turn), 1);
+        double frontLeftPower = (driveY + strafe + turn) / denominator;
+        double backLeftPower = (driveY - strafe + turn) / denominator;
+        double frontRightPower = (driveY - strafe - turn) / denominator;
+        double backRightPower = (driveY + strafe - turn) / denominator;
+    }
+    /**
+     * Pass the requested wheel motor powers to the appropriate hardware drive motors.
+     *
+     */
+    public void setDrivePower(double frontLeftPower, double backLeftPower, double frontRightPower, double backRightPower, double drivePower) {
+        // Output the values to the motor drives.
+        leftFront.setPower(drivePower * frontLeftPower);
+        leftRear.setPower(drivePower * backLeftPower);
+        rightFront.setPower(drivePower * frontRightPower);
+        rightRear.setPower(drivePower * backRightPower);
+    }
+    /**
+     * Pass the requested arm power to the appropriate hardware drive motor
+     *
+     * @param armPower driving power (-1.0 to 1.0)
+     */
+    public void setArmPower(double armPower) {
+        leftArm.setPower(armPower);
+        rightArm.setPower(armPower);
+    }
+
+    /**
+     * Set the pickup servo powers
+     *
+     * @param LWPower
+     * @param RWPower
+     */
+    public void setPickupPower(double LWPower, double RWPower) {
+        leftWheel.setPower(LWPower);
+        rightWheel.setPower(RWPower);
+    }
+
+    /**
+     * Set the drone servo
+     *
+     * @param droneSet
+     */
+    public void setDronePosition(double droneSet) {
+        drone.setPosition(droneSet);
     }
 }
