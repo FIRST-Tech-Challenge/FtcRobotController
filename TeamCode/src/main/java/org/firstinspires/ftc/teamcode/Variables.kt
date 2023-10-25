@@ -29,7 +29,7 @@ object Variables {
     var motorSlideRotate: DcMotor? = null
     var motorSlideLeft: DcMotor? = null
     var motorSlideRight: DcMotor? = null
-    
+
     var blinkinLedDriver: RevBlinkinLedDriver? = null
     var pattern: BlinkinPattern? = null
 
