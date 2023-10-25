@@ -117,11 +117,11 @@ public class SkystoneDeterminationExample extends LinearOpMode
         /*
          * The core values which define the location and size of the sample regions
          */
-        static final Point REGION1_TOPLEFT_ANCHOR_POINT = new Point(181,98);
-        static final Point REGION2_TOPLEFT_ANCHOR_POINT = new Point(188,98);
-        static final Point REGION3_TOPLEFT_ANCHOR_POINT = new Point(295,98);
-        static final int REGION_WIDTH = 20;
-        static final int REGION_HEIGHT = 20;
+        static final Point REGION1_TOPLEFT_ANCHOR_POINT = new Point(0,40);
+        static final Point REGION2_TOPLEFT_ANCHOR_POINT = new Point(107,40);
+        static final Point REGION3_TOPLEFT_ANCHOR_POINT = new Point(213,40);
+        static final int REGION_WIDTH = 106;
+        static final int REGION_HEIGHT = 80;
 
         /*
          * Points which actually define the sample region rectangles, derived from above values
@@ -168,7 +168,7 @@ public class SkystoneDeterminationExample extends LinearOpMode
         int avg1, avg2, avg3;
 
         // Volatile since accessed by OpMode thread w/o synchronization
-        private volatile SkystonePosition position = SkystonePosition.LEFT;
+        private volatile SkystonePosition position = SkystonePosition.RIGHT;
 
         /*
          * This function takes the RGB frame, converts to YCrCb,
@@ -295,7 +295,7 @@ public class SkystoneDeterminationExample extends LinearOpMode
             /*
              * Find the max of the 3 averages
              */
-            int maxOneTwo = Math.min(avg1, avg2);
+            int maxOneTwo = Math.max(avg1, avg2);
             int max = Math.max(maxOneTwo, avg3);
 
             /*
