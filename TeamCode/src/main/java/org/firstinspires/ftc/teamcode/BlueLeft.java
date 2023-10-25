@@ -1,13 +1,11 @@
 package org.firstinspires.ftc.teamcode;
 
-import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
-import com.qualcomm.robotcore.util.ElapsedTime;
 
-@TeleOp(name="Basic Mecanum OpMode", group="Basic")
-public class BasicMecanumDrive extends LinearOpMode{
+@Autonomous(name="BlueLeft", group="Auto")
+public class BlueLeft extends LinearOpMode {
     DcMotor m_frontLeft;
     DcMotor m_frontRight;
     DcMotor m_rearLeft;
@@ -31,6 +29,10 @@ public class BasicMecanumDrive extends LinearOpMode{
 
         // Wait for the game to start (driver presses PLAY)
         waitForStart();
+        drive(0,-1,0);
+        sleep(1400);
+        Stop();
+
 
         // run until the end of the match (driver presses STOP)
         while (opModeIsActive()) {
@@ -38,12 +40,34 @@ public class BasicMecanumDrive extends LinearOpMode{
             double x = gamepad1.left_stick_x;
             double rotation = gamepad1.right_stick_x;
 
-            m_frontLeft.setPower(y + x + rotation); // Note: pushing stick forward gives negative value
-            m_rearLeft.setPower(y - x + rotation);
-            m_frontRight.setPower(y - x - rotation);
-            m_rearRight.setPower(y + x - rotation);
+
         }
 
     }
+    public void drive(double y, double x, double rotation){
+        m_frontLeft.setPower(y + x + rotation); // Note: pushing stick forward gives negative value
+        m_rearLeft.setPower(y - x + rotation);
+        m_frontRight.setPower(y - x - rotation);
+        m_rearRight.setPower(y + x - rotation);
+    }
+    private void Right(){
+        m_frontLeft.setPower(1);
+        m_frontRight.setPower(-1);
+        m_rearLeft.setPower(-1);
+        m_rearRight.setPower(1);
+    }
+    private void Stop(){
+        m_frontLeft.setPower(0);
+        m_frontRight.setPower(0);
+        m_rearLeft.setPower(0);
+        m_rearRight.setPower(0);
+    }
+    private void Left(){
+        m_frontLeft.setPower(-1);
+        m_frontRight.setPower(1);
+        m_rearLeft.setPower(-1);
+        m_rearRight.setPower(1);
+    }
 
 }
+
