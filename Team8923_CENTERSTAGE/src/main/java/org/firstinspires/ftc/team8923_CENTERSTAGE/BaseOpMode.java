@@ -13,6 +13,18 @@ abstract public class BaseOpMode extends LinearOpMode {
     DcMotor motorBL;
     DcMotor motorBR;
 
+    DcMotor motorSlideLeft;
+    DcMotor motorSlideRight;
+
+    DcMotor motorIntakeWheels;
+
+    Servo servoLeftFlipGondola;
+    Servo servoRightFlipGondola;
+
+    Servo servoReleasePixel;
+
+    Servo servoReleaseDrone;
+
     // constants
     static final double TICKS_PER_REVOLUTION = 537.6; // Neverest orbital 20, 7 pulse per revolution
     static final double GEAR_RATIO = 1.0;
@@ -28,6 +40,18 @@ abstract public class BaseOpMode extends LinearOpMode {
         motorFR = hardwareMap.dcMotor.get("motorFR");
         motorBL = hardwareMap.dcMotor.get("motorBL");
         motorBR = hardwareMap.dcMotor.get("motorBR");
+
+        motorSlideLeft = hardwareMap.dcMotor.get("motorSlideLeft");
+        motorSlideRight = hardwareMap.dcMotor.get("motorSlideRight");
+
+        motorIntakeWheels = hardwareMap.dcMotor.get("motorIntakeWheels");
+
+        servoLeftFlipGondola = hardwareMap.servo.get("servoLeftFlipGondola");
+        servoRightFlipGondola = hardwareMap.servo.get("servoRightFlipGondola");
+
+        servoReleasePixel = hardwareMap.servo.get("servoReleasePixel");
+
+        servoReleaseDrone = hardwareMap.servo.get("servoReleaseDrone");
 
         motorFL.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         motorFR.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -49,6 +73,16 @@ abstract public class BaseOpMode extends LinearOpMode {
         motorBL.setDirection(DcMotor.Direction.REVERSE);
         motorBR.setDirection(DcMotor.Direction.REVERSE);
 
+        motorSlideLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        motorSlideRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        motorSlideLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        motorSlideRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        motorSlideLeft.setDirection(DcMotorSimple.Direction.FORWARD);
+        motorSlideRight.setDirection(DcMotorSimple.Direction.REVERSE);
+
+        motorIntakeWheels.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        motorIntakeWheels.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        motorIntakeWheels.setDirection(DcMotor.Direction.FORWARD);
     }
 
     // mecanum drive method
