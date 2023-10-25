@@ -21,6 +21,7 @@
 
 package org.firstinspires.ftc.teamcode;
 
+import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
@@ -35,7 +36,7 @@ import org.openftc.easyopencv.OpenCvWebcam;
  * and then snapshot that value for later use when the START
  * command is issued. The pipeline is re-used from SkystoneDeterminationExample
  */
-@TeleOp
+@Autonomous(name = "CameraTest", group = "linear autoMode")
 public class AutoCameraTest extends LinearOpMode
 {
     OpenCvWebcam webcam;
@@ -100,19 +101,22 @@ public class AutoCameraTest extends LinearOpMode
             case LEFT:
             {
                 /* Your autonomous code */
-                break;
+                telemetry.addData("Where", "Left");
+                telemetry.update();
             }
 
             case RIGHT:
             {
                 /* Your autonomous code */
-                break;
+                telemetry.addData("Where", "Right");
+                telemetry.update();
             }
 
             case CENTER:
             {
                 /* Your autonomous code*/
-                break;
+                telemetry.addData("Where", "Center");
+                telemetry.update();
             }
         }
 
