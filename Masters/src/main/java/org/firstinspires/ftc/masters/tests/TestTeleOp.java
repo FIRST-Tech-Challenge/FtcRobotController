@@ -62,8 +62,8 @@ public class TestTeleOp extends LinearOpMode {
 
             y = -gamepad1.left_stick_y;
             x = gamepad1.left_stick_x;
-            //rx = gamepad1.right_stick_x;
-            rx = (gamepad1.right_trigger - gamepad1.left_trigger);
+            rx = gamepad1.right_stick_x;
+            //rx = (gamepad1.right_trigger - gamepad1.left_trigger);
 
             if (Math.abs(y) < 0.2) {
                 y = 0;
@@ -120,9 +120,9 @@ public class TestTeleOp extends LinearOpMode {
                 clawServo.setPosition(.61); //close
             }
 
-            if (gamepad1.right_stick_y>0 && v4bPos < 1) {
+            if (gamepad1.right_bumper && v4bPos < 1) {
                 v4bPos+=.005;
-            } else if (gamepad1.right_stick_y<0 && v4bPos > 0) {
+            } else if (gamepad1.left_bumper  && v4bPos > 0) {
                 v4bPos-=.005;
             }
             v4b.setPosition(v4bPos);
