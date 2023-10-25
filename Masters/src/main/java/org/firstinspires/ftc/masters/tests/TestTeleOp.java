@@ -19,8 +19,10 @@ public class TestTeleOp extends LinearOpMode {
 
     Servo clawServo = null;
     Servo heightControl = null;
+    Servo v4b= null;
 
     double servoPos = .5;
+    double v4bPos = .5;
 
 
     @Override
@@ -32,6 +34,8 @@ public class TestTeleOp extends LinearOpMode {
 
         clawServo = hardwareMap.servo.get("servo");
         heightControl = hardwareMap.servo.get("intake");
+        v4b = hardwareMap.servo.get("v4b");
+
 
         leftFrontMotor.setDirection(DcMotor.Direction.REVERSE);
         rightFrontMotor.setDirection(DcMotor.Direction.FORWARD);
@@ -116,6 +120,13 @@ public class TestTeleOp extends LinearOpMode {
                 clawServo.setPosition(.61); //close
             }
 
+            if (gamepad1.right_stick_y>0 && v4bPos < 1) {
+                v4bPos+=.005;
+            } else if (gamepad1.right_stick_y<0 && v4bPos > 0) {
+                v4bPos-=.005;
+            }
+            v4b.setPosition(v4bPos);
+            telemetry.addData("v4b", v4bPos);
             telemetry.addData("servo pos: ", servoPos);
             telemetry.update();
 
