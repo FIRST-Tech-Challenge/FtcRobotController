@@ -24,6 +24,7 @@ import org.firstinspires.ftc.teamcode.Variables.rMotorL
 import org.firstinspires.ftc.teamcode.Variables.rMotorR
 import org.firstinspires.ftc.teamcode.Variables.motorSlideLeft
 import org.firstinspires.ftc.teamcode.Variables.motorSlideRight
+import org.firstinspires.ftc.teamcode.Variables.motorSlideRotate
 import org.firstinspires.ftc.teamcode.Variables.slideAngle
 import org.firstinspires.ftc.teamcode.Variables.slideGate
 import org.firstinspires.ftc.teamcode.Variables.slideLength
@@ -288,6 +289,8 @@ open class DriveMethods: LinearOpMode() {
         touchyR = hardwareMap.get<TouchSensor>(TouchSensor::class.java, "touchyR")
         touchyL = hardwareMap.get<TouchSensor>(TouchSensor::class.java, "touchyL")
         slideGate = hardwareMap.get<Servo>(Servo::class.java, "slideGate")
+        motorSlideRotate = hardwareMap.get<DcMotor>(DcMotor::class.java, "motorSlideRotate")
+        motorSlideLeft = hardwareMap.get<DcMotor>(DcMotor::class.java, "motorSlideLeft")
     }
 
     open fun initSlideMotors() {
