@@ -6,7 +6,7 @@ import com.qualcomm.robotcore.hardware.DistanceSensor;
 
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 
-@TeleOp(name="Distance Sensor")
+@TeleOp(name="Distance Sensor", group="Demo")
 public class DistanceSensorTest extends LinearOpMode{
     // Definitions
     DistanceSensor s_distance;

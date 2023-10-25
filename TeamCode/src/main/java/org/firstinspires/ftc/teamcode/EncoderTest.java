@@ -4,7 +4,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 
-@TeleOp(name="Encoder Test")
+@TeleOp(name="Encoder Test", group="Demo")
 public class EncoderTest extends LinearOpMode{
     // Definitions
     DcMotorEx yLeftEncoder;
