@@ -22,10 +22,10 @@ public class Hardware {
     public void init(HardwareMap hardwareMap) {
         try {
             frontLeft = hardwareMap.dcMotor.get("frontLeftMotor");
-            frontLeft.setDirection(DcMotor.Direction.FORWARD);
+//            frontLeft.setDirection(DcMotor.Direction.FORWARD);
             frontLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-            frontLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-            frontLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+//            frontLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+//            frontLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
             frontLeft.setPower(0);
         } catch (Exception e) {
             telemetry.addData("FrontLeftMotor: ", "Error");
@@ -34,8 +34,8 @@ public class Hardware {
         try {
             frontRight = hardwareMap.dcMotor.get("frontRightMotor");
             frontRight.setDirection(DcMotor.Direction.FORWARD);
-            frontRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-            frontRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+//            frontRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+//            frontRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
             frontRight.setPower(0);
         } catch (Exception e) {
             telemetry.addData("FrontRightMotor: ", "Error");
@@ -43,9 +43,9 @@ public class Hardware {
         }
         try {
             backRight = hardwareMap.dcMotor.get("backRightMotor");
-            backRight.setDirection(DcMotor.Direction.FORWARD);
-            backRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-            backRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+//            backRight.setDirection(DcMotor.Direction.FORWARD);
+//            backRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+//            backRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
             backRight.setPower(0);
         } catch (Exception e) {
             telemetry.addData("BackRightMotor: ", "Error");

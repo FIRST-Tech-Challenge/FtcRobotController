@@ -31,7 +31,7 @@ public class TeleOp extends LinearOpMode {
             //temporary code
             telemetry.addData("Teleop: ", "working");
             telemetry.update();
-            /*double drive = curveInput(gamepad1.left_stick_y);
+            /*double drive = curveInput(-gamepad1.left_stick_y);
             double turn = curveInput(gamepad1.right_stick_x);
             double strafe = curveInput(gamepad1.left_stick_x);*/
 
@@ -41,8 +41,13 @@ public class TeleOp extends LinearOpMode {
 
             double maxPower = Math.max(Math.abs(drive) + Math.abs(turn) + Math.abs(strafe), 1);
 
-
+            //test motors:
+            hw.frontLeft.setPower(0.25); //set runmode
+            hw.frontRight.setPower(0.25); //set direction
+            hw.backLeft.setPower(0.25); //set nothing
+            hw.backRight.setPower(0.25); //set everything
             //to do: verify this works
+            /*
             hw.frontLeft.setPower((drive + turn ) / maxPower);
             telemetry.addData("frontLeft: ", hw.frontLeft.getPower());
 
@@ -53,7 +58,7 @@ public class TeleOp extends LinearOpMode {
             telemetry.addData("backRight: ", hw.backRight.getPower());
 
             hw.backLeft.setPower((drive - turn) / maxPower);
-            telemetry.addData("backLeft: ", hw.backLeft.getPower());
+            telemetry.addData("backLeft: ", hw.backLeft.getPower());*/
 
 
             //cycle every 50 milliseconds, to prevent memory death --> 20 cycles/s
