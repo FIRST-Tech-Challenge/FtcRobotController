@@ -35,7 +35,7 @@ class TeleopFromHell: DriveMethods() {
         initMotorsSecondBot() //init rack and pinion & wheel motors
         initSlideMotors() //init claw/slide motors
 
-        when ((0..30).random()) {
+        when ((0..31).random()) {
             1 -> telemetry.addLine("good luck buddy")
             2 -> telemetry.addLine("\"what spectrum?\"")
             3 -> telemetry.addLine("MostlyOp >>> AHoT")
@@ -66,6 +66,7 @@ class TeleopFromHell: DriveMethods() {
             28 -> telemetry.addLine("this is the abyss of our hero's journey.")
             29 -> telemetry.addLine("beware the FTC to Raytheon pipeline")
             30 -> telemetry.addLine("when build says 15 minutes, expect 30. When programming says 15 minutes, expect 2-60.")
+            31 -> telemetry.addLine("99% of programmers quit right before the working push")
         }
         telemetry.update()
 
