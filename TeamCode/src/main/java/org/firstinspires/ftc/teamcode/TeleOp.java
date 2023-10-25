@@ -41,24 +41,19 @@ public class TeleOp extends LinearOpMode {
 
             double maxPower = Math.max(Math.abs(drive) + Math.abs(turn) + Math.abs(strafe), 1);
 
-            //test motors:
-            hw.frontLeft.setPower(0.25); //set runmode
-            hw.frontRight.setPower(0.25); //set direction
-            hw.backLeft.setPower(0.25); //set nothing
-            hw.backRight.setPower(0.25); //set everything
             //to do: verify this works
-            /*
-            hw.frontLeft.setPower((drive + turn ) / maxPower);
+
+            hw.frontLeft.setPower((drive) / maxPower);
             telemetry.addData("frontLeft: ", hw.frontLeft.getPower());
 
-            hw.frontRight.setPower((drive - turn) / maxPower);
+            hw.frontRight.setPower((drive) / maxPower);
             telemetry.addData("frontRight: ", hw.frontRight.getPower());
 
-            hw.backRight.setPower((drive + turn) / maxPower);
+            hw.backRight.setPower((drive) / maxPower);
             telemetry.addData("backRight: ", hw.backRight.getPower());
 
-            hw.backLeft.setPower((drive - turn) / maxPower);
-            telemetry.addData("backLeft: ", hw.backLeft.getPower());*/
+            hw.backLeft.setPower((drive) / maxPower);
+            telemetry.addData("backLeft: ", hw.backLeft.getPower());
 
 
             //cycle every 50 milliseconds, to prevent memory death --> 20 cycles/s
