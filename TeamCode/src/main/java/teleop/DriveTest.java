@@ -1,10 +1,12 @@
-package org.firstinspires.ftc.teamcode;
+package teleop;
 
 import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.arcrobotics.ftclib.gamepad.GamepadEx;
 import com.arcrobotics.ftclib.gamepad.GamepadKeys;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
+
+import org.firstinspires.ftc.teamcode.Bot;
 
 public class DriveTest extends LinearOpMode{
 
@@ -14,6 +16,8 @@ public class DriveTest extends LinearOpMode{
 
     @Override
     public void runOpMode() throws InterruptedException {
+
+        //need to add motorTest
         DcMotorEx motor_fr = hardwareMap.get(DcMotorEx.class, "fr");
         DcMotorEx motor_fl = hardwareMap.get(DcMotorEx.class, "fl");
         DcMotorEx motor_br = hardwareMap.get(DcMotorEx.class, "br");

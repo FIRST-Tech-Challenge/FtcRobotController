@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode;
+package org.firstinspires.ftc.teamcode.autonomous;
 
 import androidx.annotation.Nullable;
 
@@ -16,11 +16,12 @@ import com.acmerobotics.roadrunner.trajectory.Trajectory;
 import com.acmerobotics.roadrunner.trajectory.TrajectoryMarker;
 import com.acmerobotics.roadrunner.util.NanoClock;
 
-import org.firstinspires.ftc.teamcode.SequenceSegment;
-import org.firstinspires.ftc.teamcode.TrajectorySegment;
-import org.firstinspires.ftc.teamcode.TurnSegment;
-import org.firstinspires.ftc.teamcode.WaitSegment;
-import org.firstinspires.ftc.teamcode.DashboardUtil;
+import org.firstinspires.ftc.teamcode.autonomous.DashboardUtil;
+import org.firstinspires.ftc.teamcode.autonomous.SequenceSegment;
+import org.firstinspires.ftc.teamcode.autonomous.TrajectorySegment;
+import org.firstinspires.ftc.teamcode.autonomous.TrajectorySequence;
+import org.firstinspires.ftc.teamcode.autonomous.TurnSegment;
+import org.firstinspires.ftc.teamcode.autonomous.WaitSegment;
 
 import java.util.ArrayList;
 import java.util.Collections;

@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode;
+package org.firstinspires.ftc.teamcode.autonomous;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.opencv.core.Core;
@@ -25,7 +25,7 @@ public class TeamPropDetectionPipeline extends OpenCvPipeline {
     public enum TeamProp{
         ONLEFT,
         ONRIGHT,
-        INFRONT,
+        MIDDLE,
         NOTDETECTED
     }
     public static TeamProp teamPropLocation= TeamProp.NOTDETECTED;

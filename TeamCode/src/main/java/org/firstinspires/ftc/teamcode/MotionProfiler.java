@@ -5,7 +5,7 @@ public class MotionProfiler {
 
     double maxVelocity, maxAccel, distance, totalDt, accelerationDt, halfwayDist, accelerationDistance, deaccelerationDt, cruiseDistance, cruiseDt, deaccelerationTime;
     double cruiseCurrentDt;
-    boolean isDone=false;
+    public boolean isDone=false;
 
 
     public MotionProfiler(double maxVelocity, double maxAcceleration, double distance){

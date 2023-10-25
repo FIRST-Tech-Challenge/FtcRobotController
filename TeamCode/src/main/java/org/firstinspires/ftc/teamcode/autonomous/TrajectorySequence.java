@@ -1,6 +1,9 @@
-package org.firstinspires.ftc.teamcode;
+package org.firstinspires.ftc.teamcode.autonomous;
 
 import com.acmerobotics.roadrunner.geometry.Pose2d;
+
+import org.firstinspires.ftc.teamcode.autonomous.EmptySequenceException;
+import org.firstinspires.ftc.teamcode.autonomous.SequenceSegment;
 
 import java.util.Collections;
 import java.util.List;

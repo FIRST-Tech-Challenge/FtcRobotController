@@ -1,17 +1,19 @@
-package org.firstinspires.ftc.teamcode;
+package org.firstinspires.ftc.teamcode.autonomous;
 
 import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.telemetry;
 
+import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
+import org.firstinspires.ftc.teamcode.autonomous.AprilTagsPipeline;
 import org.openftc.apriltag.AprilTagDetection;
 
 import java.util.ArrayList;
 
 @TeleOp
-public class AprilTagsDetection {
+public class AprilTagsDetection{
 
-    static AprilTagsPipeline AprilTagsPipeline;
+    static AprilTagsPipeline pipeline;
 
     static final double FEET_PER_METER = 3.28084;
 
@@ -37,7 +39,7 @@ public class AprilTagsDetection {
         telemetry.setMsTransmissionInterval(50);
 
 
-            ArrayList<AprilTagDetection> currentDetections = AprilTagsPipeline.getLatestDetections();
+            ArrayList<AprilTagDetection> currentDetections = pipeline.getLatestDetections();
 
             if(currentDetections.size() != 0){
                 boolean tagFound = false;

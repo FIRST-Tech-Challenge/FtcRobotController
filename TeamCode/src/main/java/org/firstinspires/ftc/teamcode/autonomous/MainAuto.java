@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode;
+package org.firstinspires.ftc.teamcode.autonomous;
 
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
@@ -9,7 +9,8 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
-import org.firstinspires.ftc.teamcode.TeamPropDetectionPipeline.TeamProp;
+import org.firstinspires.ftc.teamcode.Bot;
+import org.firstinspires.ftc.teamcode.autonomous.TeamPropDetectionPipeline.TeamProp;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
@@ -145,15 +146,15 @@ public class MainAuto extends LinearOpMode{
             //creating Trajectories/Paths
             TrajectorySequence blueAllianceFar = drive.trajectorySequenceBuilder(startPoseBlueFar)
                     //go to the position (-36,-36) from startPoseBlueFar => do not turn and keep constant acceleration
-                    .splineTo(new Vector2d(-36,-36), Math.toRadians(0))
+                    .splineTo(new Vector2d(-34,10), Math.toRadians(90))
                     //perform dropPurplePixel() at this moment
                     .addTemporalMarker(this::dropPurplePixel)
                     //go to position (-36,48) and turn 90 degrees
-                    .splineTo(new Vector2d(-36,48), Math.toRadians(90))
+                    .splineTo(new Vector2d(42,38), Math.toRadians(0))
                     //perform moveBasedOnSpikeMark() 0.5 seconds before this moment
                     .UNSTABLE_addTemporalMarkerOffset(-0.5,this::moveBasedOnTeamProp)
                     .UNSTABLE_addTemporalMarkerOffset(-0.5, () -> bot.outtake(1, bot.distanceSensor,true))
-                    .splineTo(new Vector2d(-72,48), Math.toRadians(90))
+                    .splineTo(new Vector2d(56,56), Math.toRadians(0))
                     .build();
 
             TrajectorySequence redAllianceFar= drive.trajectorySequenceBuilder(startPoseRedFar)
@@ -204,11 +205,11 @@ public class MainAuto extends LinearOpMode{
                     .build();
 
             TrajectorySequence blueAllianceFarNoSense = drive.trajectorySequenceBuilder(startPoseBlueFar)
-                    .splineTo(new Vector2d(-36,-36), Math.toRadians(0))
+                    .splineTo(new Vector2d(-34,10), Math.toRadians(90))
                     .addTemporalMarker(this::dropPurplePixel)
-                    .splineTo(new Vector2d(-36,48), Math.toRadians(90))
+                    .splineTo(new Vector2d(42,38), Math.toRadians(0))
                     .UNSTABLE_addTemporalMarkerOffset(-0.5, () -> bot.outtake(1, Bot.distanceSensor,true))
-                    .splineTo(new Vector2d(-72,48), Math.toRadians(90))
+                    .splineTo(new Vector2d(56,56), Math.toRadians(0))
                     .build();
 
             TrajectorySequence redAllianceFarNoSense= drive.trajectorySequenceBuilder(startPoseRedFar)
@@ -283,8 +284,8 @@ public class MainAuto extends LinearOpMode{
         else if(TeamPropDetectionPipeline.teamPropLocation== TeamProp.ONRIGHT){
             teamPropLocation= TeamProp.ONRIGHT;
         }
-        else if(TeamPropDetectionPipeline.teamPropLocation== TeamProp.INFRONT){
-            teamPropLocation= TeamProp.INFRONT;
+        else if(TeamPropDetectionPipeline.teamPropLocation== TeamProp.MIDDLE){
+            teamPropLocation= TeamProp.MIDDLE;
         }
         else{
             teamPropLocation= TeamProp.NOTDETECTED;
