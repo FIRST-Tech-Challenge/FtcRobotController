@@ -40,10 +40,10 @@ object Variables {
     var speed = 400
     var lPower = 0.2
     var rPower = -0.22280685416
-    var lMax = 100 //unknown
-    var rMax = 100 //unknown
-    var lMin = 0 //unknown
-    var rMin = 0 //unknown
+    var lMax = -10500
+    var rMax = 10000
+    var lMin = 0
+    var rMin = 0
     
     var blinkinLedDriver: RevBlinkinLedDriver? = null
     var pattern: BlinkinPattern? = null

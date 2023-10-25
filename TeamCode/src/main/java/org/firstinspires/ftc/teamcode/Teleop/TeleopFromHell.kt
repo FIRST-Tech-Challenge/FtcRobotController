@@ -35,7 +35,7 @@ class TeleopFromHell: DriveMethods() {
         initMotorsSecondBot() //init rack and pinion & wheel motors
         initSlideMotors() //init claw/slide motors
 
-        when ((0..25).random()) {
+        when ((0..30).random()) {
             1 -> telemetry.addLine("good luck buddy")
             2 -> telemetry.addLine("\"what spectrum?\"")
             3 -> telemetry.addLine("MostlyOp >>> AHoT")
@@ -46,9 +46,9 @@ class TeleopFromHell: DriveMethods() {
             8 -> telemetry.addLine("we are so back")
             9 -> telemetry.addLine("ok so would you rather have a 1% chance of becoming a turkey everyday or...")
             10 -> telemetry.addLine("RIP damien mode 2022-2023")
-            11 -> telemetry.addLine("ok programming, you have one week to do vision, rack and pinions that move at different speeds, a slide and claw with slippage, oh yeah and we need drive practice. Sounds good?")
+            11 -> telemetry.addLine("build freeze at 3 AM challenge (GONE WRONG)")
             12 -> telemetry.addLine("\"who unqueued my song?\"")
-            13 -> telemetry.addLine("at least we don't have a pushbot! (not confirmed, pushbot still possible)")
+            13 -> telemetry.addLine("at least we don't have a pushbot! (not confirmed, high likelyhood of pushbot)")
             14 -> telemetry.addLine("whoever set continuous rotation as the default is my #1 opp")
             15 -> telemetry.addLine("shoutout to Huy for being our insider <3")
             16 -> telemetry.addLine("why does jack always come to TR3? Is he stupid?")
@@ -57,10 +57,15 @@ class TeleopFromHell: DriveMethods() {
             19 -> telemetry.addLine("-((2 / (1 + (exp(-(target - Pos) / speed)))) - 1) * max")
             20 -> telemetry.addLine("\"the grid system is stupid.\" *starts pointing at poles*")
             21 -> telemetry.addLine("James, how many orange cups have you eaten today?")
-            22 -> telemetry.addLine("Tennisball is the newest sport sweeping the nation!")
+            22 -> telemetry.addLine("Tennisball is the newest sport sweeping across the nation!")
             23 -> telemetry.addLine("our robot has been too big for the bounding box on 3 different occasions.")
-            24 -> telemetry.addLine("build freezes are not real")
+            24 -> telemetry.addLine("cord control is not real")
             25 -> telemetry.addLine("in Raytheon we trust")
+            26 -> telemetry.addLine("drive practice is for nerds.")
+            27 -> telemetry.addLine("Sebastian (yum)")
+            28 -> telemetry.addLine("this is the abyss of our hero's journey.")
+            29 -> telemetry.addLine("beware the FTC to Raytheon pipeline")
+            30 -> telemetry.addLine("when build says 15 minutes, expect 30. When programming says 15 minutes, expect 2-60.")
         }
         telemetry.update()
 
@@ -71,29 +76,31 @@ class TeleopFromHell: DriveMethods() {
         //reset motors
         motorSlideLeft!!.mode = DcMotor.RunMode.STOP_AND_RESET_ENCODER
         motorSlideLeft!!.mode = DcMotor.RunMode.RUN_USING_ENCODER;
+        slideRotationMotor!!.mode = DcMotor.RunMode.STOP_AND_RESET_ENCODER
+        slideRotationMotor!!.mode = DcMotor.RunMode.RUN_USING_ENCODER;
         //set up variables
         var leftY: Double
         var leftYGPadTwo: Double
         var leftX: Double
         var rightX: Double
-        var upOrDown = "Up"
+        var upOrDown = true
         var slideTarget = bottom
         var targetHeight = 0
         var slidePos = 0
-        var speedDiv = 1.66
+        var speedDiv = 2
         while (opModeIsActive()) {
             //set gamepad inputs
             leftY = (-gamepad1.left_stick_y).toDouble()
-            leftYGPadTwo = (-gamepad2.left_stick_y).toDouble()
-            leftX = gamepad1.left_stick_x.toDouble()
-            rightX = gamepad1.right_stick_x.toDouble()
+            leftYGPadTwo = (gamepad2.left_stick_y).toDouble()
+            leftX = -gamepad1.left_stick_x.toDouble()
+            rightX = -gamepad1.right_stick_x.toDouble()
 
             //set motor speeds
-            slideRotationMotor?.power = leftYGPadTwo //not confirmed, could be wrong direction
-            motorFL?.power = (leftY + leftX + rightX) / speedDiv
-            motorBL?.power = (leftY - leftX + rightX) / speedDiv
-            motorFR?.power = (leftY - leftX - rightX) / speedDiv
-            motorBR?.power = (leftY + leftX - rightX) / speedDiv
+            slideRotationMotor?.power = leftYGPadTwo
+            motorFL?.power = -(leftY - leftX - rightX) / speedDiv
+            motorBL?.power = -(leftY + leftX - rightX) / speedDiv
+            motorFR?.power = (leftY + leftX + rightX) / speedDiv
+            motorBR?.power = (leftY - leftX + rightX) / speedDiv
 
             //open/close claw
             if (gamepad2.b) {
@@ -134,39 +141,48 @@ class TeleopFromHell: DriveMethods() {
 
             //rack & pinion control
             if (gamepad2.right_bumper) {
-                if (upOrDown == "Up") {
-                    if (rMotorL?.currentPosition!! < lMax) {
+                if (upOrDown) {
+                    if (rMotorL?.currentPosition!! >= lMax) {
+                        telemetry.addLine("LUp")
                         rMotorL!!.power = lPower
                     }
                 } else {
-                    if (rMotorL?.currentPosition!! > lMin) {
+                    if (rMotorL?.currentPosition!! >= lMin) {
+                        telemetry.addLine("LDown")
                         rMotorL!!.power = -lPower
                     }
                 }
+            } else {
+                rMotorL!!.power = 0.0
             }
             if (gamepad2.right_trigger >= 0.5) {
-                if (upOrDown == "Up") {
-                    if (rMotorR?.currentPosition!! < rMax) {
+                if (upOrDown) {
+                    if (rMotorR?.currentPosition!! <= rMax) {
+                        telemetry.addLine("RUp")
                         rMotorR!!.power = rPower
                     }
                 } else {
-                    if (rMotorR?.currentPosition!! > rMin) {
+                    if (rMotorR?.currentPosition!! <= rMin) {
+                        telemetry.addLine("RDown")
                         rMotorR!!.power = -rPower
                     }
                 }
+            } else {
+                rMotorR!!.power = 0.0
             }
             if (gamepad2.x) {
-                if (upOrDown == "Up") {
-                    upOrDown == "Down"
-                } else {
-                    upOrDown == "Up"
-                }
+                telemetry.addData("upOrDown", upOrDown)
+                upOrDown = !upOrDown
+                sleep(150)
             }
 
             //claw stuff
             if (gamepad2.y) {
                 //swap between intake and place claw rotation
             }
+            telemetry.addData("LRack", rMotorL?.currentPosition)
+            telemetry.addData("RRack", rMotorR?.currentPosition)
+            telemetry.update()
         }
     }
 }

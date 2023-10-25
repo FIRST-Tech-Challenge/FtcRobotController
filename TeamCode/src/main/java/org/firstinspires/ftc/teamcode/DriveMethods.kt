@@ -296,7 +296,7 @@ open class DriveMethods: LinearOpMode() {
         slideRotationMotor = hardwareMap.get<DcMotor>(DcMotor::class.java, "slideRotationMotor")
         clawRotation = hardwareMap.get<Servo>(Servo::class.java, "clawRotation")
         clawMotor = hardwareMap.get<Servo>(Servo::class.java, "clawMotor")
-        slideGate = hardwareMap.get<Servo>(Servo::class.java, "slideGate")
+        //slideGate = hardwareMap.get<Servo>(Servo::class.java, "slideGate")
     }
     fun setManualExposure(exposureMS: Int, gain: Int) {
         // Wait for the camera to be open, then use the controls
