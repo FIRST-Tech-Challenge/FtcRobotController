@@ -16,9 +16,9 @@ abstract public class BaseTeleOp extends BaseOpMode {
         press left joystick down: release drone
          */
         if (gamepad2.left_bumper) {
-            motorIntakeWheels.setPower(1);
+            motorIntakeWheels.setPower(1.0);
         } else if (gamepad2.right_bumper) {
-            motorIntakeWheels.setPower(-1);
+            motorIntakeWheels.setPower(-1.0);
         }
 
         if (gamepad2.dpad_up) {
