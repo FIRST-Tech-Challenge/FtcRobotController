@@ -19,19 +19,19 @@ public class ServoFunctions {
     private void Initialize()
     {
         pixelReleaseServo = lom.hardwareMap.get(Servo .class, "PixelReleaseServo");
-        shoulderServo = lom.hardwareMap.get(Servo .class, "shoulder");
-        elbowServo = lom.hardwareMap.get(Servo .class, "elbow");
-        clawServo = lom.hardwareMap.get(Servo .class, "claw");
+        //shoulderServo = lom.hardwareMap.get(Servo .class, "shoulder");
+        //elbowServo = lom.hardwareMap.get(Servo .class, "elbow");
+        //clawServo = lom.hardwareMap.get(Servo .class, "claw");
 
         pixelReleaseServo.scaleRange(0.35, 0.85);
-        shoulderServo.scaleRange(0.35, 0.9494);
-        elbowServo.scaleRange(0.1244, 0.8050);
-        clawServo.scaleRange(0.35, 0.85);
+        //shoulderServo.scaleRange(0.35, 0.9494);
+        //elbowServo.scaleRange(0.1244, 0.8050);
+        //clawServo.scaleRange(0.35, 0.85);
 
         pixelReleaseServo.setPosition(0.0);
-        shoulderServo.setPosition(0.0);
-        elbowServo.setPosition(1.0);
-        clawServo.setPosition(0.0);
+        //shoulderServo.setPosition(0.0);
+        //elbowServo.setPosition(1.0);
+        //clawServo.setPosition(0.0);
     }
       public void PutPixelInBackBoard()
     {

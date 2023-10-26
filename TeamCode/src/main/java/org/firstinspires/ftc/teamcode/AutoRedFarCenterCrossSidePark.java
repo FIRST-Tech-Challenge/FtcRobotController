@@ -9,7 +9,7 @@ public class AutoRedFarCenterCrossSidePark extends AutonomousOpenCV {
     {
         isRed = true;
         isNear = false;
-        centerCross = true;
+        //centerCross = true;
         cornerPark = false;
         super.runOpMode();
     }
