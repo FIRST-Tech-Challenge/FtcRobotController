@@ -1,6 +1,9 @@
 package org.firstinspires.ftc.teamcode.teleop;
 
+import static java.lang.Math.copySign;
 import static java.lang.Math.cos;
+import static java.lang.Math.max;
+import static java.lang.Math.min;
 import static java.lang.Math.sin;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -24,7 +27,7 @@ public class BasicOmniOpMode_Linear extends LinearOpMode {
     private DcMotor leftBackDrive = null;
     private DcMotor rightFrontDrive = null;
     private DcMotor rightBackDrive = null;
-    private DcMotor arm = null;
+    private DcMotorEx arm = null;
     private IMU imu = null;
     private DcMotor intake = null;
     private Servo servo = null;
@@ -58,15 +61,15 @@ public class BasicOmniOpMode_Linear extends LinearOpMode {
         rightBackDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
         arm.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        arm.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
 
         // Wait for the game to start (driver presses PLAY)
         double position = 0;
+        double armposition = 0;
+        boolean prev_bumper;
+        boolean two_prev_bumper;
         while(!isStarted() && !isStopRequested()) {
-            position += gamepad2.right_stick_y/50;
-            telemetry.addData("servo target position: ", position);
-            telemetry.addData("Arm position: ", arm.getCurrentPosition());
-            servo.setPosition(position);
-            telemetry.update();
         }
 
         runtime.reset();
@@ -112,12 +115,26 @@ public class BasicOmniOpMode_Linear extends LinearOpMode {
             }
              */
 
-            armSetpoint += gamepad2.right_stick_y/200;
-            telemetry.addData("Arm Setpoint: ", armSetpoint);
-            servo.setPosition(Constants.NormalDegreesToServoUnits(armSetpoint));
-            arm.setTargetPosition((int) (armSetpoint * Constants.ArmCountsPerDegree));
-            arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            arm.setPower(0.5);
+            position += gamepad2.left_stick_y/200;
+            if(gamepad2.right_trigger > 0.5){
+                arm.setTargetPosition(0);
+                arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                arm.setVelocity(200);
+                servo.setPosition(0.3);
+            } else {
+                arm.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+                // arm.setVelocity(200*gamepad2.right_stick_y);
+                arm.setPower(gamepad2.right_stick_y * 1/4);
+                servo.setPosition(position);
+            }
+            intake.setPower(-gamepad2.right_trigger);
+            // 0.3 is flat, 0.67 is 90 degrees.
+            telemetry.addData("servo target position: ", position);
+            telemetry.addData("arm setpoint: ", armposition);
+            telemetry.addData("Arm position: ", arm.getCurrentPosition()/Constants.ArmCountsPerDegree);
+            telemetry.addData("PIDF coefficients: ", arm.getPIDFCoefficients(DcMotor.RunMode.RUN_TO_POSITION));
+            servo.setPosition(position);
+            telemetry.update();
 
             HandleDrivetrain();
 
@@ -175,9 +192,5 @@ public class BasicOmniOpMode_Linear extends LinearOpMode {
         telemetry.addData("Status", "Run Time: " + runtime.toString());
         telemetry.addData("Front left/Right", "%4.2f, %4.2f", leftFrontPower, rightFrontPower);
         telemetry.addData("Back  left/Right", "%4.2f, %4.2f", leftBackPower, rightBackPower);
-    }
-
-    public void HandleTelemetry() {
-
     }
 }
