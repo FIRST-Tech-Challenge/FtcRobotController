@@ -67,13 +67,14 @@ class TeleopFromHell: DriveMethods() {
             29 -> telemetry.addLine("beware the FTC to Raytheon pipeline")
             30 -> telemetry.addLine("when build says 15 minutes, expect 30. When programming says 15 minutes, expect 2-60.")
             31 -> telemetry.addLine("99% of programmers quit right before the working push")
+            32 -> telemetry.addLine("Tiger Woods PGA tour 2005 has always been there")
         }
         telemetry.update()
 
         waitForStart()
         //set claw position into bounds
         clawRotation!!.position = 0.3
-        clawMotor!!.position = closedClaw
+        //clawMotor!!.position = closedClaw it broke womp womp
         //reset motors
         motorSlideLeft!!.mode = DcMotor.RunMode.STOP_AND_RESET_ENCODER
         motorSlideLeft!!.mode = DcMotor.RunMode.RUN_USING_ENCODER;
@@ -105,10 +106,10 @@ class TeleopFromHell: DriveMethods() {
 
             //open/close claw
             if (gamepad2.b) {
-                clawMotor!!.position = closedClaw
+                //clawMotor!!.position = closedClaw
             }
             if (gamepad2.a) {
-                clawMotor!!.position = openClaw
+                //clawMotor!!.position = openClaw
             }
 
             //raise/lower slide

@@ -11,8 +11,11 @@ class MotorTester: DriveMethods() {
         initSlideMotors()
         var motorBeingTested = slideRotationMotor
 
+        waitForStart()
+
         while (opModeIsActive()) {
-            motorBeingTested?.power = gamepad2.left_stick_y.toDouble()/10
+            motorBeingTested?.power = gamepad2.left_stick_y.toDouble()/4
+
             telemetry.addData("Motor Value: ", motorBeingTested?.currentPosition)
             telemetry.update()
         }
