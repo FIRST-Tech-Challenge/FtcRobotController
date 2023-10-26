@@ -14,17 +14,14 @@ import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
-
+import org.firstinspires.ftc.teamcode.autonomous.AprilTagsDetection;
 import org.firstinspires.ftc.teamcode.autonomous.AprilTagsPipeline;
 import org.firstinspires.ftc.teamcode.subsystems.Box;
 import org.firstinspires.ftc.teamcode.subsystems.Drone;
 import org.firstinspires.ftc.teamcode.subsystems.Fourbar;
 import org.firstinspires.ftc.teamcode.subsystems.Noodles;
 import org.firstinspires.ftc.teamcode.subsystems.Slides;
-import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.openftc.easyopencv.OpenCvCamera;
-import org.openftc.easyopencv.OpenCvCameraFactory;
-import org.openftc.easyopencv.OpenCvCameraRotation;
 
 
 public class Bot {
@@ -50,12 +47,10 @@ public class Bot {
     public static Fourbar fourbar;
     public static Box box;
 
-    //moved distance sensor into the Bot class (instead of two separate distance sensors in MainTeleop and MainAuto)
     public static DistanceSensor distanceSensor;
 
     private final DcMotorEx fl, fr, bl, br, susMotor, slidesMotor;
     private final Servo droneServo, fourBarServo_1, fourBarServo_2;
-
 
 
 
@@ -388,7 +383,8 @@ public class Bot {
     }
 
     public void aprilTagTuning(){
-        detections.detectTag();
+        AprilTagsDetection.detectTag();
+        distanceFromBackdrop = detections.calcDistToTag();
         double diffy = this.distanceFromBackdrop - optimalDistanceFromBackdrop;
         boolean inRange = Math.abs(diffy) <= 5;
         while(!inRange){
@@ -400,7 +396,6 @@ public class Bot {
             distanceFromBackdrop = detections.calcDistToTag();
             diffy = distanceFromBackdrop - optimalDistanceFromBackdrop;
             inRange = Math.abs(diffy) <= 5;
-            aprilTagTuning();
         }
     }
 }

@@ -5,8 +5,6 @@ import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.arcrobotics.ftclib.gamepad.GamepadEx;
 import com.arcrobotics.ftclib.gamepad.GamepadKeys;
-import com.arcrobotics.ftclib.kotlin.extensions.geometry.Vector2dExtKt;
-import com.fasterxml.jackson.databind.annotation.JsonAppend;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
@@ -16,8 +14,6 @@ import org.firstinspires.ftc.teamcode.autonomous.TeamPropDetectionPipeline.TeamP
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
-
-import java.util.Vector;
 
 
 /*
@@ -29,9 +25,6 @@ To Do:
 3) odometry
 
  */
-
-//*** Note: I created two pipelines, and assigned the camera to different pipeline at different times => this may create error
-
 
 @Config
 @Autonomous(name = "MainAutonomous")
@@ -169,8 +162,7 @@ public class MainAuto extends LinearOpMode{
             //creating Trajectories/Paths
             TrajectorySequence blueAllianceFarRobotFail = drive.trajectorySequenceBuilder(startPoseBlueFar)
                     .splineTo(new Vector2d(-34,38), Math.toRadians(0))
-                    .addTemporalMarker(this::dropPurplePixel)
-                    .addTemporalMarker(this::stopNoodles)
+                    .UNSTABLE_addTemporalMarkerOffset(-0.3, this::dropPurplePixel)
                     .splineTo(scoreBlue,Math.toRadians(0))
                     .addTemporalMarker(this::stageScore)
                     .addTemporalMarker(this::stopNoodles)
@@ -179,8 +171,7 @@ public class MainAuto extends LinearOpMode{
 
             TrajectorySequence blueAllianceCloseRobotFail = drive.trajectorySequenceBuilder(startPoseBlueClose)
                     .splineTo(new Vector2d(10,25),Math.toRadians(0))
-                    .addTemporalMarker(this::dropPurplePixel)
-                    .addTemporalMarker(this::stopNoodles)
+                    .UNSTABLE_addTemporalMarkerOffset(-0.3, this::dropPurplePixel)
                     .splineTo(scoreBlue,Math.toRadians(0))
                     .addTemporalMarker(this::stageScore)
                     .addTemporalMarker(this::stopNoodles)
@@ -189,8 +180,7 @@ public class MainAuto extends LinearOpMode{
 
             TrajectorySequence redAllianceFarRobotFail = drive.trajectorySequenceBuilder(startPoseRedFar)
                     .splineTo(new Vector2d(-34,-34),Math.toRadians(0))
-                    .addTemporalMarker(this::dropPurplePixel)
-                    .addTemporalMarker(this::stopNoodles)
+                    .UNSTABLE_addTemporalMarkerOffset(-0.3, this::dropPurplePixel)
                     .splineTo(scoreRed,Math.toRadians(0))
                     .addTemporalMarker(this::stageScore)
                     .addTemporalMarker(this::stopNoodles)
@@ -199,8 +189,7 @@ public class MainAuto extends LinearOpMode{
 
             TrajectorySequence redAllianceCloseRobotFail = drive.trajectorySequenceBuilder(startPoseRedClose)
                     .splineTo(new Vector2d(10,-34),Math.toRadians(0))
-                    .addTemporalMarker(this::dropPurplePixel)
-                    .addTemporalMarker(this::stopNoodles)
+                    .UNSTABLE_addTemporalMarkerOffset(-0.3, this::dropPurplePixel)
                     .splineTo(scoreRed,Math.toRadians(0))
                     .addTemporalMarker(this::stageScore)
                     .addTemporalMarker(this::stopNoodles)
@@ -208,22 +197,16 @@ public class MainAuto extends LinearOpMode{
                     .build();
 
             TrajectorySequence blueAllianceFar = drive.trajectorySequenceBuilder(startPoseBlueFar)
-                    //go to the position (-36,-36) from startPoseBlueFar => do not turn and keep constant acceleration
                     .splineTo(new Vector2d(-30,38), Math.toRadians(0))
-                    //perform dropPurplePixel() at this moment
-                    .addTemporalMarker(this::dropPurplePixel)
-                    .addTemporalMarker(this::stopNoodles)
-                    //go to position (-36,48) and turn 90 degrees
+                    .UNSTABLE_addTemporalMarkerOffset(-0.3, this::dropPurplePixel)
                     .splineTo(scoreBlue, Math.toRadians(0))
-                    //perform stageScoreSensing() 0.5 seconds before this moment
                     .UNSTABLE_addTemporalMarkerOffset(-0.5,this::senseAndScore)
                     .splineTo(parkingPosBlue, Math.toRadians(0))
                     .build();
 
             TrajectorySequence redAllianceFar= drive.trajectorySequenceBuilder(startPoseRedFar)
                     .splineTo(new Vector2d(-48,-34), Math.toRadians(0))
-                    .addTemporalMarker(this::dropPurplePixel)
-                    .addTemporalMarker(this::stopNoodles)
+                    .UNSTABLE_addTemporalMarkerOffset(-0.3, this::dropPurplePixel)
                     .splineTo(scoreRed, Math.toRadians(0))
                     .UNSTABLE_addTemporalMarkerOffset(-0.5,this::senseAndScore)
                     .splineTo(parkingPosRed, Math.toRadians(-90))
@@ -232,8 +215,7 @@ public class MainAuto extends LinearOpMode{
             TrajectorySequence blueAllianceClose = drive.trajectorySequenceBuilder(startPoseBlueClose)
                     .splineTo(new Vector2d(10,56), Math.toRadians(0))
                     .splineTo(new Vector2d(10,38), Math.toRadians(0))
-                    .addTemporalMarker(this::dropPurplePixel)
-                    .addTemporalMarker(this::stopNoodles)
+                    .UNSTABLE_addTemporalMarkerOffset(-0.3, this::dropPurplePixel)
                     .splineTo(scoreBlue, Math.toRadians(0))
                     .UNSTABLE_addTemporalMarkerOffset(-0.5,this::senseAndScore)
                     .splineTo(parkingPosBlue, Math.toRadians(90))
@@ -241,8 +223,7 @@ public class MainAuto extends LinearOpMode{
 
             TrajectorySequence redAllianceClose= drive.trajectorySequenceBuilder(startPoseRedClose)
                     .splineTo(new Vector2d(15,-34), Math.toRadians(0))
-                    .addTemporalMarker(this::dropPurplePixel)
-                    .addTemporalMarker(this::stopNoodles)
+                    .UNSTABLE_addTemporalMarkerOffset(-0.3, this::dropPurplePixel)
                     .splineTo(scoreRed, Math.toRadians(0))
                     .UNSTABLE_addTemporalMarkerOffset(-0.5,this::senseAndScore)
                     .splineTo(parkingPosRed, Math.toRadians(0))
@@ -250,8 +231,7 @@ public class MainAuto extends LinearOpMode{
 
             TrajectorySequence redAllianceCloseNoSense = drive.trajectorySequenceBuilder(startPoseRedClose)
                     .splineTo(new Vector2d(15,-34), Math.toRadians(0))
-                    .addTemporalMarker(this::dropPurplePixel)
-                    .addTemporalMarker(this::stopNoodles)
+                    .UNSTABLE_addTemporalMarkerOffset(-0.3, this::dropPurplePixel)
                     .splineTo(scoreRed, Math.toRadians(0))
                     .UNSTABLE_addTemporalMarkerOffset(-0.5, this::senseAndScore)
                     .splineTo(parkingPosRed, Math.toRadians(0))
@@ -260,8 +240,7 @@ public class MainAuto extends LinearOpMode{
             TrajectorySequence blueAllianceCloseNoSense = drive.trajectorySequenceBuilder(startPoseBlueClose)
                     .splineTo(new Vector2d(10,56), Math.toRadians(0))
                     .splineTo(new Vector2d(10,38), Math.toRadians(0))
-                    .addTemporalMarker(this::dropPurplePixel)
-                    .addTemporalMarker(this::stopNoodles)
+                    .UNSTABLE_addTemporalMarkerOffset(-0.3, this::dropPurplePixel)
                     .splineTo(scoreBlue, Math.toRadians(0))
                     .UNSTABLE_addTemporalMarkerOffset(-0.5, this::senseAndScore)
                     .splineTo(parkingPosBlue, Math.toRadians(90))
@@ -269,8 +248,7 @@ public class MainAuto extends LinearOpMode{
 
             TrajectorySequence blueAllianceFarNoSense = drive.trajectorySequenceBuilder(startPoseBlueFar)
                     .splineTo(new Vector2d(-30,38), Math.toRadians(0))
-                    .addTemporalMarker(this::dropPurplePixel)
-                    .addTemporalMarker(this::stopNoodles)
+                    .UNSTABLE_addTemporalMarkerOffset(-0.3, this::dropPurplePixel)
                     .splineTo(scoreBlue, Math.toRadians(0))
                     .UNSTABLE_addTemporalMarkerOffset(-0.5, this::senseAndScore)
                     .splineTo(parkingPosBlue, Math.toRadians(0))
@@ -278,8 +256,7 @@ public class MainAuto extends LinearOpMode{
 
             TrajectorySequence redAllianceFarNoSense= drive.trajectorySequenceBuilder(startPoseRedFar)
                     .splineTo(new Vector2d(-48,-34), Math.toRadians(0))
-                    .addTemporalMarker(this::dropPurplePixel)
-                    .addTemporalMarker(this::stopNoodles)
+                    .UNSTABLE_addTemporalMarkerOffset(-0.3, this::dropPurplePixel)
                     .splineTo(scoreRed, Math.toRadians(0))
                     .UNSTABLE_addTemporalMarkerOffset(-0.5, this::senseAndScore)
                     .splineTo(parkingPosRed, Math.toRadians(-90))
@@ -349,11 +326,13 @@ public class MainAuto extends LinearOpMode{
             bot.forward();
         }
         Bot.noodles.reverseIntake();
+        Bot.noodles.stop();
     }
 
     public void stopNoodles(){
         Bot.noodles.stop();
     }
+
 
     private void findTeamPropLocation(){
         if(TeamPropDetectionPipeline.teamPropLocation== TeamProp.ONLEFT){
