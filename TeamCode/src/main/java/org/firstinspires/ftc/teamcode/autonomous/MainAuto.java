@@ -76,10 +76,11 @@ public class MainAuto extends LinearOpMode{
         GamepadEx gp1 = new GamepadEx(gamepad1);
 
         //different start positions depending on alliance and distance from backdrop
-        Pose2d startPoseBlueFar = new Pose2d(-54, -36, 0);
-        Pose2d startPoseBlueClose = new Pose2d(-54, 36, 0);
-        Pose2d startPoseRedClose = new Pose2d(54, 36, 0);
-        Pose2d startPoseRedFar = new Pose2d(54, -36, 0);
+        Pose2d startPoseBlueFar = new Pose2d(-52, 52, 0);
+        Pose2d startPoseBlueClose = new Pose2d(38, 56, 0);
+        Pose2d startPoseRedFar = new Pose2d(-52, -48, 0);
+        Pose2d startPoseRedClose = new Pose2d(10, -52, 0);
+
 
 
         //CAMERA STUFF =====================
@@ -146,66 +147,64 @@ public class MainAuto extends LinearOpMode{
             //creating Trajectories/Paths
             TrajectorySequence blueAllianceFar = drive.trajectorySequenceBuilder(startPoseBlueFar)
                     //go to the position (-36,-36) from startPoseBlueFar => do not turn and keep constant acceleration
-                    .splineTo(new Vector2d(-34,10), Math.toRadians(90))
+                    .splineTo(new Vector2d(-30,38), Math.toRadians(0))
                     //perform dropPurplePixel() at this moment
                     .addTemporalMarker(this::dropPurplePixel)
                     //go to position (-36,48) and turn 90 degrees
                     .splineTo(new Vector2d(42,38), Math.toRadians(0))
                     //perform moveBasedOnSpikeMark() 0.5 seconds before this moment
                     .UNSTABLE_addTemporalMarkerOffset(-0.5,this::moveBasedOnTeamProp)
-                    .UNSTABLE_addTemporalMarkerOffset(-0.5, () -> bot.outtake(1, bot.distanceSensor,true))
+                    .UNSTABLE_addTemporalMarkerOffset(-0.5, () -> bot.outtake(1, Bot.distanceSensor,true))
                     .splineTo(new Vector2d(56,56), Math.toRadians(0))
                     .build();
 
             TrajectorySequence redAllianceFar= drive.trajectorySequenceBuilder(startPoseRedFar)
-                    .splineTo(new Vector2d(36,-36), Math.toRadians(0))
+                    .splineTo(new Vector2d(-48,-34), Math.toRadians(0))
                     .addTemporalMarker(this::dropPurplePixel)
-                    .splineTo(new Vector2d(36,48), Math.toRadians(-90))
+                    .splineTo(new Vector2d(38,-34), Math.toRadians(0))
                     .UNSTABLE_addTemporalMarkerOffset(-0.5,this::moveBasedOnTeamProp)
                     .UNSTABLE_addTemporalMarkerOffset(-0.5, () -> bot.outtake(1, Bot.distanceSensor,true))
-                    .splineTo(new Vector2d(72,48), Math.toRadians(-90))
+                    .splineTo(new Vector2d(56,-60), Math.toRadians(-90))
                     .build();
 
             TrajectorySequence blueAllianceClose = drive.trajectorySequenceBuilder(startPoseBlueClose)
-                    .splineTo(new Vector2d(-54,20), Math.toRadians(0))
-                    .splineTo(new Vector2d(-36,20), Math.toRadians(90))
+                    .splineTo(new Vector2d(10,56), Math.toRadians(0))
+                    .splineTo(new Vector2d(10,38), Math.toRadians(0))
                     .addTemporalMarker(this::dropPurplePixel)
-                    .splineTo(new Vector2d(-36,48), Math.toRadians(90))
+                    .splineTo(new Vector2d(40,38), Math.toRadians(0))
                     .UNSTABLE_addTemporalMarkerOffset(-0.5,this::moveBasedOnTeamProp)
                     .UNSTABLE_addTemporalMarkerOffset(-0.5, () -> bot.outtake(1, Bot.distanceSensor,true))
-                    .splineTo(new Vector2d(-72,48), Math.toRadians(90))
+                    .splineTo(new Vector2d(56,56), Math.toRadians(90))
                     .build();
 
             TrajectorySequence redAllianceClose= drive.trajectorySequenceBuilder(startPoseRedClose)
-                    .splineTo(new Vector2d(54,12), Math.toRadians(0))
-                    .splineTo(new Vector2d(36,12), Math.toRadians(-90))
+                    .splineTo(new Vector2d(15,-34), Math.toRadians(0))
                     .addTemporalMarker(this::dropPurplePixel)
-                    .splineTo(new Vector2d(36,48), Math.toRadians(-90))
+                    .splineTo(new Vector2d(50,-34), Math.toRadians(0))
                     .UNSTABLE_addTemporalMarkerOffset(-0.5,this::moveBasedOnTeamProp)
                     .UNSTABLE_addTemporalMarkerOffset(-0.5, () -> bot.outtake(1, Bot.distanceSensor,true))
-                    .splineTo(new Vector2d(72,48), Math.toRadians(90))
+                    .splineTo(new Vector2d(50,-60), Math.toRadians(0))
                     .build();
 
             TrajectorySequence redAllianceCloseNoSense = drive.trajectorySequenceBuilder(startPoseRedClose)
-                    .splineTo(new Vector2d(54,12), Math.toRadians(0))
-                    .splineTo(new Vector2d(36,12), Math.toRadians(-90))
+                    .splineTo(new Vector2d(15,-34), Math.toRadians(0))
                     .addTemporalMarker(this::dropPurplePixel)
-                    .splineTo(new Vector2d(36,48), Math.toRadians(-90))
+                    .splineTo(new Vector2d(50,-34), Math.toRadians(0))
                     .UNSTABLE_addTemporalMarkerOffset(-0.5, () -> bot.outtake(1, Bot.distanceSensor,true))
-                    .splineTo(new Vector2d(72,48), Math.toRadians(90))
+                    .splineTo(new Vector2d(50,-60), Math.toRadians(0))
                     .build();
 
             TrajectorySequence blueAllianceCloseNoSense = drive.trajectorySequenceBuilder(startPoseBlueClose)
-                    .splineTo(new Vector2d(-54,20), Math.toRadians(0))
-                    .splineTo(new Vector2d(-36,20), Math.toRadians(90))
+                    .splineTo(new Vector2d(10,56), Math.toRadians(0))
+                    .splineTo(new Vector2d(10,38), Math.toRadians(0))
                     .addTemporalMarker(this::dropPurplePixel)
-                    .splineTo(new Vector2d(-36,48), Math.toRadians(90))
+                    .splineTo(new Vector2d(40,38), Math.toRadians(0))
                     .UNSTABLE_addTemporalMarkerOffset(-0.5, () -> bot.outtake(1, Bot.distanceSensor,true))
-                    .splineTo(new Vector2d(-72,48), Math.toRadians(90))
+                    .splineTo(new Vector2d(56,56), Math.toRadians(90))
                     .build();
 
             TrajectorySequence blueAllianceFarNoSense = drive.trajectorySequenceBuilder(startPoseBlueFar)
-                    .splineTo(new Vector2d(-34,10), Math.toRadians(90))
+                    .splineTo(new Vector2d(-30,38), Math.toRadians(0))
                     .addTemporalMarker(this::dropPurplePixel)
                     .splineTo(new Vector2d(42,38), Math.toRadians(0))
                     .UNSTABLE_addTemporalMarkerOffset(-0.5, () -> bot.outtake(1, Bot.distanceSensor,true))
@@ -213,11 +212,11 @@ public class MainAuto extends LinearOpMode{
                     .build();
 
             TrajectorySequence redAllianceFarNoSense= drive.trajectorySequenceBuilder(startPoseRedFar)
-                    .splineTo(new Vector2d(36,-36), Math.toRadians(0))
+                    .splineTo(new Vector2d(-48,-34), Math.toRadians(0))
                     .addTemporalMarker(this::dropPurplePixel)
-                    .splineTo(new Vector2d(36,48), Math.toRadians(-90))
+                    .splineTo(new Vector2d(38,-34), Math.toRadians(0))
                     .UNSTABLE_addTemporalMarkerOffset(-0.5, () -> bot.outtake(1, Bot.distanceSensor,true))
-                    .splineTo(new Vector2d(72,48), Math.toRadians(-90))
+                    .splineTo(new Vector2d(56,-60), Math.toRadians(-90))
                     .build();
 
 
