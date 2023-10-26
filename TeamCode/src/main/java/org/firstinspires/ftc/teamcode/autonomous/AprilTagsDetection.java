@@ -16,6 +16,7 @@ public class AprilTagsDetection{
     static AprilTagsPipeline pipeline;
 
     static final double FEET_PER_METER = 3.28084;
+    static final double PIXELS_PER_METER = 3779.5275591;
 
     //will have to change this with the webcam
     double fx = 1078.03779;
@@ -94,6 +95,12 @@ public class AprilTagsDetection{
             telemetry.addLine("No tag snapshot available, it was never sighted during the init loop :(");
             telemetry.update();
         }
+    }
+
+     public double calcDistToTag(){
+        detectTag();
+        double distance = (tagsize * Math.sqrt(fx*fy))/(2*tagsize*PIXELS_PER_METER);
+        return distance;
     }
 
 

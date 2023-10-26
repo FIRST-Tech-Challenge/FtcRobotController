@@ -19,10 +19,13 @@ public class MeepMeepTesting {
                 // Set bot constraints: maxVel, maxAccel, maxAngVel, maxAngAccel, track width
                 .setConstraints(60, 60, Math.toRadians(180), Math.toRadians(180), 15)
                 .followTrajectorySequence(drive ->
-                        drive.trajectorySequenceBuilder(startPoseRedFar)
-                                .splineTo(new Vector2d(-48,-34), Math.toRadians(0))
-                                .splineTo(new Vector2d(38,-34), Math.toRadians(0))
-                                .splineTo(new Vector2d(56,-60), Math.toRadians(-90))
+                        drive.trajectorySequenceBuilder(startPoseRedClose)
+                                .splineTo(new Vector2d(10,-34),Math.toRadians(0))
+                                //.addTemporalMarker(this::dropPurplePixel)
+                                .splineTo(new Vector2d(42,-34),Math.toRadians(0))
+                                //.addTemporalMarker(this::stageScore)
+                                //.addTemporalMarker(this::stopNoodles)
+                                .splineTo(new Vector2d(56,-56),Math.toRadians(0))
                                 .build()
                 );
 

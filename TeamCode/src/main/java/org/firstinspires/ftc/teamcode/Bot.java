@@ -35,6 +35,8 @@ public class Bot {
     public static BotState currentState = STORAGE_NOT_FULL;
     public static Bot instance;
 
+    public static org.firstinspires.ftc.teamcode.autonomous.AprilTagsDetection detections;
+
     public static Slides slides;
     public static Noodles noodles;
     public static Drone drone;
@@ -123,7 +125,7 @@ public class Bot {
     // must be combined with bot.slide.run___() in MainTeleOp
     public void outtake(int stage, DistanceSensor sensor,boolean pixelTwo) {
         currentState = BotState.OUTTAKE;
-        distanceTuning(sensor);
+        aprilTagTuning();
         slides.runTo(stage);
         fourbar.outtake();
         box.depositFirstPixel();
@@ -375,6 +377,23 @@ public class Bot {
             diffy = distanceFromBackdrop - optimalDistanceFromBackdrop;
             inRange = Math.abs(diffy) <= 5;
             distanceTuning(sensor);
+        }
+    }
+
+    public void aprilTagTuning(){
+        detections.detectTag();
+        double diffy = this.distanceFromBackdrop - optimalDistanceFromBackdrop;
+        boolean inRange = Math.abs(diffy) <= 5;
+        while(!inRange){
+            if(diffy<0){
+                back();
+            }else{
+                forward();
+            }
+            distanceFromBackdrop = detections.calcDistToTag();
+            diffy = distanceFromBackdrop - optimalDistanceFromBackdrop;
+            inRange = Math.abs(diffy) <= 5;
+            aprilTagTuning();
         }
     }
 }
