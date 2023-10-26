@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode;
 
 import android.os.SystemClock;
 import android.util.Log;
+import android.util.Size;
 
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -80,11 +81,15 @@ public class Robot {
         // Initializing marker and apriltag processors and setting them with visionportal
         markerProcessor = new MarkerProcessor(telemetry);
         aprilTagProcessor = AprilTagProcessor.easyCreateWithDefaults();
-        visionPortal = VisionPortal.easyCreateWithDefaults
-                (hardwareMap.get(WebcamName.class, "Webcam 1"),
-                        aprilTagProcessor,
-                        markerProcessor);
-
+        VisionPortal visionPortal = new VisionPortal.Builder()
+                .setLiveViewContainerId(VisionPortal.DEFAULT_VIEW_CONTAINER_ID)
+                .setCameraResolution(new Size(320, 240))
+                .setStreamFormat(VisionPortal.StreamFormat.YUY2)
+                .setAutoStopLiveView(true)
+                .setCamera(hardwareMap.get(WebcamName.class, "Webcam 1"))
+                .addProcessor(aprilTagProcessor)
+                .addProcessor(markerProcessor)
+                .build();
     }
 
     public VisionPortal getVisionPortal() {

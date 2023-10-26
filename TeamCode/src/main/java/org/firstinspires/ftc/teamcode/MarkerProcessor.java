@@ -10,24 +10,18 @@ import org.opencv.core.Scalar;
 import org.opencv.imgproc.Imgproc;
 
 public class MarkerProcessor implements VisionProcessor {
-    private final Mat workingMatrix = new Mat();
-    private static final int SUBMAT_WIDTH = 80;
-    private static final int SUBMAT_HEIGHT = 80;
-    public MARKER_POSITION position = MARKER_POSITION.UNKNOWN;
-    double avgLeftCr;
-    double leftCrTotal;
 
-    public enum MARKER_POSITION {
-        LEFT, RIGHT, CENTER, UNDETECTED, UNKNOWN
-    }
-
-    private final Telemetry telemetry;
-    private final MarkerDetector detector;
+    private Telemetry telemetry;
+    private Mat workingMatrix;
 
     public MarkerProcessor(Telemetry telemetry) {
+
         this.telemetry = telemetry;
         detector = new MarkerDetector(telemetry);
     }
+
+    private final MarkerDetector detector;
+
 
     public MarkerDetector.MARKER_POSITION getPosition() {
         return detector.position;
@@ -40,13 +34,17 @@ public class MarkerProcessor implements VisionProcessor {
 
     @Override
     public Object processFrame(final Mat input, long captureTimeNanos) {
-        input.copyTo(workingMatrix);
-        return detector.processFrame(input);
+        telemetry.addLine("process frame");
+        telemetry.update();
+        workingMatrix = detector.processFrame(input);
+        return workingMatrix;
     }
 
     @Override
     public void onDrawFrame(final android.graphics.Canvas canvas, int onscreenWidth, int onscreenHeight,
                             float scaleBmpPxToCanvasPx, float scaleCanvasDensity, final Object userContext) {
+        int SUBMAT_WIDTH = 80;
+        int SUBMAT_HEIGHT = 80;
         // draw nothing
         Imgproc.rectangle(workingMatrix, new Rect(0, 80, SUBMAT_WIDTH, SUBMAT_HEIGHT), new Scalar(0, 255, 0));
         Imgproc.rectangle(workingMatrix, new Rect(120, 80, SUBMAT_WIDTH, SUBMAT_HEIGHT), new Scalar(0, 255, 0));

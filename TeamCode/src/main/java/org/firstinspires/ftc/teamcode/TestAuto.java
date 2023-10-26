@@ -40,7 +40,7 @@ public class TestAuto extends LinearOpMode {
 
         while (!isStarted() || opModeIsActive()) {
             position = detector.position;
-            LEFT_CR_AVG = detector.leftRedAvg;
+//          LEFT_CR_AVG = detector.leftRedAvg;
 //            telemetry.addData("position: ", position);
 //            telemetry.update();
 //            telemetry.addLine(String.valueOf(LEFT_CR_AVG));
