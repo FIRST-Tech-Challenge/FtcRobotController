@@ -144,7 +144,7 @@ public abstract class RobotLinearOpMode extends LinearOpMode {
             leftFrontDriveMotor.setPower(power);
             rightFrontDriveMotor.setPower(power);
             leftBackDriveMotor.setPower(power);
-            rightBackDriveMotor.setPower(power);
+            rightBackDriveMotor.setPower(.97*power);
 
             while (leftFrontDriveMotor.isBusy() && opModeIsActive()) {
 

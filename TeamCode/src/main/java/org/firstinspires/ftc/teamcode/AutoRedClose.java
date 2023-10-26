@@ -24,6 +24,8 @@ public class AutoRedClose extends RobotLinearOpMode {
     public void runOpMode() {
         declareHardwareProperties();
         waitForStart();
+        encoderDrive(0.5, 20, MOVEMENT_DIRECTION.FORWARD);
+        encoderDrive(0.5, 20, MOVEMENT_DIRECTION.REVERSE);
         encoderDrive(0.6, 35, MOVEMENT_DIRECTION.STRAFE_RIGHT);
         encoderDrive(0.5, 5, MOVEMENT_DIRECTION.STRAFE_LEFT);
     }

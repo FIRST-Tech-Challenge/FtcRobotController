@@ -117,11 +117,11 @@ public class SkystoneDeterminationExample extends LinearOpMode
         /*
          * The core values which define the location and size of the sample regions
          */
-        static final Point REGION1_TOPLEFT_ANCHOR_POINT = new Point(0,40);
-        static final Point REGION2_TOPLEFT_ANCHOR_POINT = new Point(107,40);
-        static final Point REGION3_TOPLEFT_ANCHOR_POINT = new Point(213,40);
+        static final Point REGION1_TOPLEFT_ANCHOR_POINT = new Point(0,80);
+        static final Point REGION2_TOPLEFT_ANCHOR_POINT = new Point(107,80);
+        static final Point REGION3_TOPLEFT_ANCHOR_POINT = new Point(213,80);
         static final int REGION_WIDTH = 106;
-        static final int REGION_HEIGHT = 80;
+        static final int REGION_HEIGHT = 40;
 
         /*
          * Points which actually define the sample region rectangles, derived from above values
