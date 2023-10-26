@@ -106,3 +106,13 @@ public class TeamPropDetectionPipeline extends OpenCvPipeline {
         return input;
     }
 }
+
+class PropException extends Exception{
+    public PropException(){
+    }
+
+    public PropException(String message)
+    {
+        super(message);
+    }
+}

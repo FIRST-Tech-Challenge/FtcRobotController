@@ -1,12 +1,24 @@
 package teleop;
 
+import static org.firstinspires.ftc.teamcode.autonomous.MainAuto.cx;
+import static org.firstinspires.ftc.teamcode.autonomous.MainAuto.cy;
+import static org.firstinspires.ftc.teamcode.autonomous.MainAuto.fx;
+import static org.firstinspires.ftc.teamcode.autonomous.MainAuto.fy;
+import static org.firstinspires.ftc.teamcode.autonomous.MainAuto.tagSize;
+
 import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.arcrobotics.ftclib.gamepad.GamepadEx;
 import com.arcrobotics.ftclib.gamepad.GamepadKeys;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
+import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.teamcode.Bot;
+import org.firstinspires.ftc.teamcode.autonomous.AprilTagsPipeline;
+import org.firstinspires.ftc.teamcode.autonomous.TeamPropDetectionPipeline;
+import org.openftc.easyopencv.OpenCvCamera;
+import org.openftc.easyopencv.OpenCvCameraFactory;
+import org.openftc.easyopencv.OpenCvCameraRotation;
 
 
 @TeleOp
@@ -25,6 +37,27 @@ public class MainTeleOp extends LinearOpMode {
         bot.initializeImus();
         gp2 = new GamepadEx(gamepad2);
         gp1 = new GamepadEx(gamepad1);
+
+        //Camera Stuff
+        WebcamName camName = hardwareMap.get(WebcamName.class, "Webcam 1");
+        bot.camera = OpenCvCameraFactory.getInstance().createWebcam(camName);
+        TeamPropDetectionPipeline teamPropDetectionPipeline = new TeamPropDetectionPipeline(telemetry);
+        bot.aprilTagsPipeline = new AprilTagsPipeline(tagSize, fx, fy, cx, cy);
+
+
+        bot.camera.setPipeline(teamPropDetectionPipeline);
+        bot.camera.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
+
+            @Override
+            public void onOpened() {
+                bot.camera.startStreaming(1280, 720, OpenCvCameraRotation.UPRIGHT);
+            }
+
+            @Override
+            public void onError(int errorCode) {
+
+            }
+        });
 
         telemetry.addData("teleOp is ", "initialized");
 
@@ -59,13 +92,13 @@ public class MainTeleOp extends LinearOpMode {
 
                 //slide movement (automatic stages)
                 if (gp2.wasJustPressed(GamepadKeys.Button.DPAD_UP)) {
-                    bot.outtake(3, Bot.distanceSensor,false);
+                    bot.outtake(3,false);
                 } else if (gp2.wasJustPressed(GamepadKeys.Button.DPAD_LEFT)) {
-                    bot.outtake(2, Bot.distanceSensor,false);
+                    bot.outtake(2,false);
                 } else if (gp2.wasJustPressed(GamepadKeys.Button.DPAD_RIGHT)) {
-                    bot.outtake(4, Bot.distanceSensor,false);
+                    bot.outtake(4, false);
                 } else if (gp2.wasJustPressed(GamepadKeys.Button.DPAD_DOWN)) {
-                    bot.outtake(1, Bot.distanceSensor,false);
+                    bot.outtake(1, false);
                 }
 
                 //keeping second pixel deposit manual for reasons

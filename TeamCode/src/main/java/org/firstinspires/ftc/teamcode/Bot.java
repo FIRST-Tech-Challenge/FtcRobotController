@@ -15,11 +15,16 @@ import com.qualcomm.robotcore.hardware.Servo;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 
+import org.firstinspires.ftc.teamcode.autonomous.AprilTagsPipeline;
 import org.firstinspires.ftc.teamcode.subsystems.Box;
 import org.firstinspires.ftc.teamcode.subsystems.Drone;
 import org.firstinspires.ftc.teamcode.subsystems.Fourbar;
 import org.firstinspires.ftc.teamcode.subsystems.Noodles;
 import org.firstinspires.ftc.teamcode.subsystems.Slides;
+import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
+import org.openftc.easyopencv.OpenCvCamera;
+import org.openftc.easyopencv.OpenCvCameraFactory;
+import org.openftc.easyopencv.OpenCvCameraRotation;
 
 
 public class Bot {
@@ -34,6 +39,8 @@ public class Bot {
     public OpMode opMode;
     public static BotState currentState = STORAGE_NOT_FULL;
     public static Bot instance;
+    public OpenCvCamera camera;
+    public AprilTagsPipeline aprilTagsPipeline;
 
     public static org.firstinspires.ftc.teamcode.autonomous.AprilTagsDetection detections;
 
@@ -43,7 +50,7 @@ public class Bot {
     public static Fourbar fourbar;
     public static Box box;
 
-    //I moved distance sensor into the Bot class (instead of two separate distance sensors in MainTeleop and MainAuto)
+    //moved distance sensor into the Bot class (instead of two separate distance sensors in MainTeleop and MainAuto)
     public static DistanceSensor distanceSensor;
 
     private final DcMotorEx fl, fr, bl, br, susMotor, slidesMotor;
@@ -123,7 +130,7 @@ public class Bot {
     }
 
     // must be combined with bot.slide.run___() in MainTeleOp
-    public void outtake(int stage, DistanceSensor sensor,boolean pixelTwo) {
+    public void outtake(int stage, boolean pixelTwo) {
         currentState = BotState.OUTTAKE;
         aprilTagTuning();
         slides.runTo(stage);
