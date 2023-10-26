@@ -27,7 +27,7 @@ public class AutoBlueFar extends RobotLinearOpMode {
         encoderDrive(0.5, 20, MOVEMENT_DIRECTION.FORWARD);
         encoderDrive(0.5, 15, MOVEMENT_DIRECTION.REVERSE);
         encoderDrive(0.6, 60, MOVEMENT_DIRECTION.STRAFE_LEFT);
-        encoderDrive(0.5, 6, MOVEMENT_DIRECTION.STRAFE_RIGHT);
-
+        encoderDrive(0.5, 3, MOVEMENT_DIRECTION.STRAFE_RIGHT);
+        encoderDrive(0.5, 6, MOVEMENT_DIRECTION.REVERSE);
     }
 }
