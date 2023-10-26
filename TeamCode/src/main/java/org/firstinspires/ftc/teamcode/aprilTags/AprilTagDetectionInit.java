@@ -21,8 +21,12 @@
 
 package org.firstinspires.ftc.teamcode.aprilTags;
 
+import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.IMU;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
@@ -35,6 +39,8 @@ import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
 
 import java.util.ArrayList;
+
+import roadRunner.drive.SampleMecanumDrive;
 
 @TeleOp
 public class AprilTagDetectionInit extends LinearOpMode
@@ -64,17 +70,37 @@ public class AprilTagDetectionInit extends LinearOpMode
     @Override
     public void runOpMode()
     {
+        IMU imu = hardwareMap.get(IMU.class, "imu");
+        // Adjust the orientation parameters to match your robot
+        IMU.Parameters parameters = new IMU.Parameters(new RevHubOrientationOnRobot(
+                RevHubOrientationOnRobot.LogoFacingDirection.UP,
+                RevHubOrientationOnRobot.UsbFacingDirection.LEFT));
+        // Without this, the REV Hub's orientation is assumed to be logo up / USB forward
+        imu.initialize(parameters);
+
+        DcMotor frontLeftMotor = hardwareMap.dcMotor.get("frontLeftMotor");
+        DcMotor backLeftMotor = hardwareMap.dcMotor.get("backLeftMotor");
+        DcMotor frontRightMotor = hardwareMap.dcMotor.get("frontRightMotor");
+        DcMotor backRightMotor = hardwareMap.dcMotor.get("backRightMotor");
+
+        frontRightMotor.setDirection(DcMotorSimple.Direction.REVERSE);
+        backRightMotor.setDirection(DcMotorSimple.Direction.REVERSE);
+
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
-        camera = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "Webcam B"), cameraMonitorViewId); // Webcam Back
+        WebcamName webcamName = hardwareMap.get(WebcamName.class, "Webcam B");
+        camera = OpenCvCameraFactory.getInstance().createWebcam(webcamName, cameraMonitorViewId);
+
+        //camera = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "Webcam B"), cameraMonitorViewId); // Webcam Back
         aprilTagDetectionPipeline = new AprilTagDetectionPipeline(tagsize, fx, fy, cx, cy);
 
         camera.setPipeline(aprilTagDetectionPipeline);
         camera.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener()
+
         {
             @Override
             public void onOpened()
             {
-                camera.startStreaming(800,600, OpenCvCameraRotation.SIDEWAYS_LEFT);
+                camera.startStreaming(800,600, OpenCvCameraRotation.UPRIGHT);
             }
 
             @Override
@@ -90,8 +116,13 @@ public class AprilTagDetectionInit extends LinearOpMode
          * The INIT-loop:
          * This REPLACES waitForStart!
          */
+
+        /*** THE FOLLOWING BLOCK OF CODE IS MADE USING GPT-3.5
+         *   Link to the conversation: https://chat.openai.com/share/3e90d1e3-a23f-4298-8352-5d2a92c58c75 ***/
         while (!isStarted() && !isStopRequested())
         {
+
+            telemetry.addData("cameraMonitorViewId", cameraMonitorViewId);
             ArrayList<AprilTagDetection> currentDetections = aprilTagDetectionPipeline.getLatestDetections();
 
             if(currentDetections.size() != 0)
@@ -100,7 +131,19 @@ public class AprilTagDetectionInit extends LinearOpMode
 
                 for(AprilTagDetection tag : currentDetections)
                 {
-                    if(tag.id == ID_TAG_OF_INTEREST_LEFT || tag.id == ID_TAG_OF_INTEREST_MIDDLE || tag.id == ID_TAG_OF_INTEREST_RIGHT)
+                    if(tag.id == ID_TAG_OF_INTEREST_LEFT)
+                    {
+                        tagOfInterest = tag;
+                        tagFound = true;
+                        break;
+                    }
+                    else if(tag.id == ID_TAG_OF_INTEREST_MIDDLE)
+                    {
+                        tagOfInterest = tag;
+                        tagFound = true;
+                        break;
+                    }
+                    else if(tag.id == ID_TAG_OF_INTEREST_RIGHT)
                     {
                         tagOfInterest = tag;
                         tagFound = true;
@@ -155,17 +198,78 @@ public class AprilTagDetectionInit extends LinearOpMode
          */
 
         /* Update the telemetry */
-        if(tagOfInterest != null)
+        // ... (existing code)
+
+        if (tagOfInterest != null)
         {
             telemetry.addLine("Tag snapshot:\n");
             tagToTelemetry(tagOfInterest);
-            telemetry.update();
+
+            // Calculate the left-to-right alignment error
+            double centerX = 800 / 2.0; // Half of the camera width
+            double pixelError = centerX - tagOfInterest.pose.x; // X-coordinate of the tag center
+            double feetError = pixelError * (tagsize / 800.0); // Convert to feet
+
+            // Calculate the required rotation angle to align with the tag's orientation
+            Orientation rot = Orientation.getOrientation(tagOfInterest.pose.R, AxesReference.INTRINSIC, AxesOrder.YXZ, AngleUnit.RADIANS);
+
+            double tagOrientation = rot.firstAngle; // this is the yaw offset from the robot
+            double botHeading = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS);
+            double rotationAngle = tagOrientation - botHeading;
+
+            // Constants for alignment and rotation adjustments
+            double alignmentPower = 0.1; // Adjust as needed
+            double rotationPower = 0.5; // Adjust as needed
+            double alignmentTolerance = 0.1; // Tolerance for alignment error
+
+            // Perform alignment and rotation adjustments
+            while (Math.abs(feetError) > alignmentTolerance || Math.abs(rotationAngle) > 0.05)
+            {
+                // Recalculate alignment error, rotation angle, and robot heading
+                pixelError = centerX - tagOfInterest.pose.x;
+                feetError = pixelError * (tagsize / 800.0);
+
+                Orientation rot2 = Orientation.getOrientation(tagOfInterest.pose.R, AxesReference.INTRINSIC, AxesOrder.YXZ, AngleUnit.RADIANS);
+
+                tagOrientation = rot2.firstAngle;
+                rotationAngle = tagOrientation - botHeading;
+
+                // Calculate powers for alignment and rotation
+                double alignPower = feetError * alignmentPower;
+                double rotatePower = rotationAngle * rotationPower;
+
+                // Adjust the robot's orientation for both alignment and rotation
+                double frontLeftPower = -alignPower + rotatePower;
+                double backLeftPower = -alignPower + rotatePower;
+                double frontRightPower = alignPower + rotatePower;
+                double backRightPower = alignPower + rotatePower;
+
+                // Set motor powers
+                frontLeftMotor.setPower(frontLeftPower);
+                backLeftMotor.setPower(backLeftPower);
+                frontRightMotor.setPower(frontRightPower);
+                backRightMotor.setPower(backRightPower);
+
+                // Update bot heading
+                botHeading = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS);
+
+                telemetry.addData("Alignment Error (Feet)", feetError);
+                telemetry.addData("Rotation Angle", rotationAngle);
+                telemetry.addData("Bot Heading", botHeading);
+                telemetry.update();
+            }
+
+            // Stop the robot's movement
+            frontLeftMotor.setPower(0);
+            backLeftMotor.setPower(0);
+            frontRightMotor.setPower(0);
+            backRightMotor.setPower(0);
+
+            // Now your robot is both aligned left-to-right and perpendicular to the tag
         }
-        else
-        {
-            telemetry.addLine("No tag snapshot available, it was never sighted during the init loop :(");
-            telemetry.update();
-        }
+
+// ... (remaining code)
+
 
         /* Actually do something useful */
         if(tagOfInterest == null)
@@ -177,23 +281,8 @@ public class AprilTagDetectionInit extends LinearOpMode
         }
         else
         {
-            /*
-             * Insert your autonomous code here, probably using the tag pose to decide your configuration.
-             */
 
-            // e.g.
-            if(tagOfInterest.pose.x <= 20)
-            {
-                // do something
-            }
-            else if(tagOfInterest.pose.x >= 20 && tagOfInterest.pose.x <= 50)
-            {
-                // do something else
-            }
-            else if(tagOfInterest.pose.x >= 50)
-            {
-                // do something else
-            }
+
         }
 
 
