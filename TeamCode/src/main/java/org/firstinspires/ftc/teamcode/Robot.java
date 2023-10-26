@@ -81,7 +81,7 @@ public class Robot {
         // Initializing marker and apriltag processors and setting them with visionportal
         markerProcessor = new MarkerProcessor(telemetry);
         aprilTagProcessor = AprilTagProcessor.easyCreateWithDefaults();
-        VisionPortal visionPortal = new VisionPortal.Builder()
+        visionPortal = new VisionPortal.Builder()
                 .setLiveViewContainerId(VisionPortal.DEFAULT_VIEW_CONTAINER_ID)
                 .setCameraResolution(new Size(320, 240))
                 .setStreamFormat(VisionPortal.StreamFormat.YUY2)
