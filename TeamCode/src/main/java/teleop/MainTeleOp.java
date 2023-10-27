@@ -79,13 +79,13 @@ public class MainTeleOp extends LinearOpMode {
             if(isAutomatic) {
                 //noodle intake
                 if(gp2.wasJustPressed(GamepadKeys.Button.Y)) {
-                    Bot.noodles.Intake();
-                    while(!Bot.box.getIsFull()) {
-                        Bot.box.checkBeam();
-                        Bot.noodles.Intake();
+                    bot.noodles.Intake();
+                    while(!bot.box.getIsFull()) {
+                        bot.box.checkBeam();
+                        bot.noodles.Intake();
                     }
-                    if(Bot.box.getIsFull()) {
-                        Bot.noodles.stop();
+                    if(bot.box.getIsFull()) {
+                        bot.noodles.stop();
                         bot.prepForOuttake();
                     }
                 }
@@ -102,15 +102,15 @@ public class MainTeleOp extends LinearOpMode {
                 }
 
                 //keeping second pixel deposit manual for reasons
-                if(gp2.wasJustPressed(GamepadKeys.Button.A) && Bot.box.getNumPixelsDeposited()==1) {
-                    Bot.box.depositSecondPixel();
-                    Bot.resetOuttake();
+                if(gp2.wasJustPressed(GamepadKeys.Button.A) && bot.box.getNumPixelsDeposited()==1) {
+                    bot.box.depositSecondPixel();
+                    bot.resetOuttake();
                 }
 
                 //drone + sus code
                 if(gp2.wasJustPressed(GamepadKeys.Button.B)) {
                 //  Bot.suspension.hang();
-                    Bot.drone.shoot();
+                    bot.drone.shoot();
                 }
             }
 
@@ -118,8 +118,8 @@ public class MainTeleOp extends LinearOpMode {
             if(!isAutomatic){
                 //drone movement
                 if(gp2.wasJustPressed(GamepadKeys.Button.X)){
-                    Bot.drone.shoot();
-                    Bot.drone.reset();
+                    bot.drone.shoot();
+                    bot.drone.reset();
                 }
 
                 //suspension
@@ -129,7 +129,7 @@ public class MainTeleOp extends LinearOpMode {
 
                 //Box movement
                 if(gp2.wasJustPressed(GamepadKeys.Button.Y)){
-                    Bot.box.resetBox();
+                    bot.box.resetBox();
                 }
                 if(gp2.wasJustPressed(GamepadKeys.Button.A)){
                     bot.outtakeBox();

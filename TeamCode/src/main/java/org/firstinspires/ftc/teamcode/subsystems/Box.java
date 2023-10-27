@@ -76,7 +76,7 @@ public class Box {
             telemetry.addData("Status", "No object detected");
         }
         if(timesBroken ==2){
-            Bot.box.setIsFull(true);
+           setIsFull(true);
         }
     }
 

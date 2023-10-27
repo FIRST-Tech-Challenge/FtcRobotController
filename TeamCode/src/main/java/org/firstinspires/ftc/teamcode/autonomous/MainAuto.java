@@ -391,13 +391,13 @@ public class MainAuto extends LinearOpMode{
         else{
             bot.forward();
         }
-        Bot.noodles.reverseIntake();
+        bot.noodles.reverseIntake();
         //note: java code execution happens very fast, so having .reverseIntake()
         // immediately followed by .stop() in the same method will not be effective.
     }
 
     public void stopNoodles(){
-        Bot.noodles.stop();
+        bot.noodles.stop();
     }
 
 
@@ -419,7 +419,7 @@ public class MainAuto extends LinearOpMode{
 
     private void stageScore(){
         //score in stage area (lit just reversing intake)
-        Bot.noodles.reverseIntake();
+        bot.noodles.reverseIntake();
     }
 
 

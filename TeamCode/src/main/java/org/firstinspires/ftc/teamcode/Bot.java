@@ -34,22 +34,22 @@ public class Bot {
     }
 
     public OpMode opMode;
-    public static BotState currentState = STORAGE_NOT_FULL;
+    public BotState currentState = STORAGE_NOT_FULL;
     public static Bot instance;
     public OpenCvCamera camera;
     public AprilTagsPipeline aprilTagsPipeline;
 
     public static org.firstinspires.ftc.teamcode.autonomous.AprilTagsDetection detections;
 
-    public static Slides slides;
-    public static Noodles noodles;
-    public static Drone drone;
-    public static Fourbar fourbar;
-    public static Box box;
+    public Slides slides;
+    public Noodles noodles;
+    public Drone drone;
+    public Fourbar fourbar;
+    public Box box;
 
     public static DistanceSensor distanceSensor;
 
-    private final DcMotorEx fl, fr, bl, br, susMotor, slidesMotor;
+    private final DcMotorEx FL, FR, BL, BR, susMotor, slidesMotor;
     private final Servo droneServo, fourBarServo_1, fourBarServo_2;
 
 
@@ -90,10 +90,10 @@ public class Bot {
 
         }
 
-        fl = opMode.hardwareMap.get(DcMotorEx.class, "fl");
-        fr = opMode.hardwareMap.get(DcMotorEx.class, "fr");
-        bl = opMode.hardwareMap.get(DcMotorEx.class, "bl");
-        br = opMode.hardwareMap.get(DcMotorEx.class, "br");
+        FL = opMode.hardwareMap.get(DcMotorEx.class, "FL");
+        FR = opMode.hardwareMap.get(DcMotorEx.class, "FR");
+        BL = opMode.hardwareMap.get(DcMotorEx.class, "BL");
+        BR = opMode.hardwareMap.get(DcMotorEx.class, "BR");
         droneServo= opMode.hardwareMap.get(Servo.class, "droneServo");;
         fourBarServo_1= opMode.hardwareMap.get(Servo.class, "fourBarServo_1");
         fourBarServo_2= opMode.hardwareMap.get(Servo.class, "fourBarServo_2");
@@ -102,10 +102,10 @@ public class Bot {
         distanceSensor = opMode.hardwareMap.get(DistanceSensor.class, "distanceSensor");
 
 
-        fl.setMode(RUN_USING_ENCODER);
-        fr.setMode(RUN_USING_ENCODER);
-        bl.setMode(RUN_USING_ENCODER);
-        br.setMode(RUN_USING_ENCODER);
+        FL.setMode(RUN_USING_ENCODER);
+        FR.setMode(RUN_USING_ENCODER);
+        BL.setMode(RUN_USING_ENCODER);
+        BR.setMode(RUN_USING_ENCODER);
 
 
         slides = new Slides(opMode);
@@ -162,27 +162,27 @@ public class Bot {
         resetIMU();
     }
 
-    public static void storageSlides(){
+    public void storageSlides(){
         slides.runTo(1);
     }
 
-    public static void resetOuttake(){
-        Bot.box.resetBox();
-        Bot.storageSlides();
-        Bot.fourbar.storage();
+    public void resetOuttake(){
+        box.resetBox();
+        storageSlides();
+        fourbar.storage();
     }
 
 
     public void fixMotors(double velocity) {
-        fl.setDirection(DcMotorEx.Direction.REVERSE); //invert
-        fr.setVelocity(velocity);
-        bl.setDirection(DcMotorEx.Direction.REVERSE); // invert
-        br.setVelocity(velocity);
+        FL.setDirection(DcMotorEx.Direction.REVERSE); //invert
+        FR.setVelocity(velocity);
+        BL.setDirection(DcMotorEx.Direction.REVERSE); // invert
+        BR.setVelocity(velocity);
 
-        fl.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
-        fr.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
-        bl.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
-        br.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
+        FL.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
+        FR.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
+        BL.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
+        BR.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
     }
 
     public void driveRobotCentric(double strafeSpeed, double forwardBackSpeed, double turnSpeed) {
@@ -201,10 +201,10 @@ public class Bot {
                 speeds[i] /= maxSpeed;
             }
         }
-        fl.setPower(speeds[0]);
-        fr.setPower(speeds[1]);
-        bl.setPower(speeds[2]);
-        br.setPower(speeds[3]);
+        FL.setPower(speeds[0]);
+        FR.setPower(speeds[1]);
+        BL.setPower(speeds[2]);
+        BR.setPower(speeds[3]);
     }
 
     //cope no one uses field centric
@@ -235,10 +235,10 @@ public class Bot {
         //        }
         // manually invert the left side
 
-        fl.setPower(speeds[0]);
-        fr.setPower(speeds[1]);
-        bl.setPower(speeds[2]);
-        br.setPower(speeds[3]);
+        FL.setPower(speeds[0]);
+        FR.setPower(speeds[1]);
+        BL.setPower(speeds[2]);
+        BR.setPower(speeds[3]);
     }
 
     private void enableAutoBulkRead() {
@@ -280,10 +280,10 @@ public class Bot {
 
 
     public void resetEncoder() {
-        fl.setMode(STOP_AND_RESET_ENCODER);
-        fr.setMode(STOP_AND_RESET_ENCODER);
-        br.setMode(STOP_AND_RESET_ENCODER);
-        bl.setMode(STOP_AND_RESET_ENCODER);
+        FL.setMode(STOP_AND_RESET_ENCODER);
+        FR.setMode(STOP_AND_RESET_ENCODER);
+        BR.setMode(STOP_AND_RESET_ENCODER);
+        BL.setMode(STOP_AND_RESET_ENCODER);
         //slides.resetEncoder(); code this in slides subsystems
         //reset encoder in slides
 
@@ -313,65 +313,65 @@ public class Bot {
     public void turn(double power){
         if(power>0) {
             //turn right
-            fl.setPower(power);
+            FL.setPower(power);
         }
         if(power<0){
             //turn left
-            fr.setPower(-power);
+            FR.setPower(-power);
         }
     }
     public void strafeRight(){
-        fl.setDirection(DcMotorSimple.Direction.REVERSE);
-        br.setDirection(DcMotorSimple.Direction.REVERSE);
-        fl.setPower(0.1);
-        fr.setPower(0.1);
-        br.setPower(0.1);
-        bl.setPower(0.1);
-        fl.setDirection(DcMotorSimple.Direction.FORWARD);
-        br.setDirection(DcMotorSimple.Direction.FORWARD);
-        fl.setPower(0);
-        fr.setPower(0);
-        br.setPower(0);
-        bl.setPower(0);
+        FL.setDirection(DcMotorSimple.Direction.REVERSE);
+        BR.setDirection(DcMotorSimple.Direction.REVERSE);
+        FL.setPower(0.1);
+        FR.setPower(0.1);
+        BR.setPower(0.1);
+        BL.setPower(0.1);
+        FL.setDirection(DcMotorSimple.Direction.FORWARD);
+        BR.setDirection(DcMotorSimple.Direction.FORWARD);
+        FL.setPower(0);
+        FR.setPower(0);
+        BR.setPower(0);
+        BL.setPower(0);
     }
     public void strafeLeft(){
-        bl.setDirection(DcMotorSimple.Direction.REVERSE);
-        fr.setDirection(DcMotorSimple.Direction.REVERSE);
-        fl.setPower(0.1);
-        fr.setPower(0.1);
-        br.setPower(0.1);
-        bl.setPower(0.1);
-        bl.setDirection(DcMotorSimple.Direction.FORWARD);
-        fr.setDirection(DcMotorSimple.Direction.FORWARD);
-        fl.setPower(0);
-        fr.setPower(0);
-        br.setPower(0);
-        bl.setPower(0);
+        BL.setDirection(DcMotorSimple.Direction.REVERSE);
+        FR.setDirection(DcMotorSimple.Direction.REVERSE);
+        FL.setPower(0.1);
+        FR.setPower(0.1);
+        BR.setPower(0.1);
+        BL.setPower(0.1);
+        BL.setDirection(DcMotorSimple.Direction.FORWARD);
+        FR.setDirection(DcMotorSimple.Direction.FORWARD);
+        FL.setPower(0);
+        FR.setPower(0);
+        BR.setPower(0);
+        BL.setPower(0);
     }
     public void back(){
-        bl.setDirection(DcMotorSimple.Direction.REVERSE);
-        fr.setDirection(DcMotorSimple.Direction.REVERSE);
-        fl.setDirection(DcMotorSimple.Direction.REVERSE);
-        br.setDirection(DcMotorSimple.Direction.REVERSE);
-        fl.setPower(0.1);
-        fr.setPower(0.1);
-        br.setPower(0.1);
-        bl.setPower(0.1);
-        bl.setDirection(DcMotorSimple.Direction.FORWARD);
-        fr.setDirection(DcMotorSimple.Direction.FORWARD);
-        fl.setDirection(DcMotorSimple.Direction.FORWARD);
-        br.setDirection(DcMotorSimple.Direction.FORWARD);
-        fl.setPower(0);
-        fr.setPower(0);
-        br.setPower(0);
-        bl.setPower(0);
+        BL.setDirection(DcMotorSimple.Direction.REVERSE);
+        FR.setDirection(DcMotorSimple.Direction.REVERSE);
+        FL.setDirection(DcMotorSimple.Direction.REVERSE);
+        BR.setDirection(DcMotorSimple.Direction.REVERSE);
+        FL.setPower(0.1);
+        FR.setPower(0.1);
+        BR.setPower(0.1);
+        BL.setPower(0.1);
+        BL.setDirection(DcMotorSimple.Direction.FORWARD);
+        FR.setDirection(DcMotorSimple.Direction.FORWARD);
+        FL.setDirection(DcMotorSimple.Direction.FORWARD);
+        BR.setDirection(DcMotorSimple.Direction.FORWARD);
+        FL.setPower(0);
+        FR.setPower(0);
+        BR.setPower(0);
+        BL.setPower(0);
 
     }
     public void forward(){
-        fl.setPower(0.1);
-        fr.setPower(0.1);
-        br.setPower(0.1);
-        bl.setPower(0.1);
+        FL.setPower(0.1);
+        FR.setPower(0.1);
+        BR.setPower(0.1);
+        BL.setPower(0.1);
     }
 
     public void distanceTuning(DistanceSensor sensor){
