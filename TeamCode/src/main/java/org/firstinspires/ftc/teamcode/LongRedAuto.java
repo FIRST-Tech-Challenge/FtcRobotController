@@ -58,7 +58,7 @@ public class LongRedAuto extends LinearOpMode {
             sleep(1000);
             robot.setHeading(0);
             sleep(1000);
-            robot.mecanumBlocking(18, true);
+            robot.mecanumBlocking(20, true);
             sleep(1000);
             robot.setHeading(0);
             sleep(1000);
@@ -138,8 +138,11 @@ public class LongRedAuto extends LinearOpMode {
                             Log.d("vision", "runOpMode: bearing is " + detection.ftcPose.bearing);
                         }
 
-                        double distanceToBoard = detection.ftcPose.range - 2;
+                        double distanceToBoard = detection.ftcPose.range - 5;
+                        Log.d("vision", "runOpMode: distance is " + distanceToBoard);
                         robot.straightBlocking(distanceToBoard, false);
+                        sleep(1000);
+                        break;
                     }
                 }
             }
