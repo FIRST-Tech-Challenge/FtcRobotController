@@ -16,6 +16,8 @@ public class TestTeleOp extends LinearOpMode {
         DcMotor intake = hardwareMap.dcMotor.get("intake");
         Servo holderClamp = hardwareMap.servo.get("holderClamp");
         Servo arm = hardwareMap.servo.get("arm");
+        DcMotor lsBack = hardwareMap.dcMotor.get("lsBack");
+        DcMotor lsFront = hardwareMap.dcMotor.get("lsFront");
 
         DcMotor lFront = hardwareMap.dcMotor.get("fLeft");
         DcMotor rFront = hardwareMap.dcMotor.get("fRight");
@@ -27,19 +29,63 @@ public class TestTeleOp extends LinearOpMode {
         lBack.setDirection(DcMotorSimple.Direction.REVERSE);
         rFront.setDirection(DcMotorSimple.Direction.FORWARD);
         lFront.setDirection(DcMotorSimple.Direction.REVERSE);
+        lsFront.setDirection(DcMotorSimple.Direction.REVERSE);
+        lsBack.setDirection(DcMotorSimple.Direction.REVERSE);
+
+        lsFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        lsBack.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
+        lsFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        lsFront.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
         waitForStart();
 
         double holderClampPos = 0.5;
-        double armPos = 0.95;
+        double armPos = 0.594; //down position
 
         while (opModeIsActive()) {
-<<<<<<< HEAD
-            if (gamepad1.a) {
-                intake.setPower(0.6);
-            } else if (gamepad1.b) {
-                intake.setPower(-0.6);
-=======
+
+            double remainingDistanceHigh = 300 - lsFront.getCurrentPosition();
+            double remainingDistanceMid = 200 - lsFront.getCurrentPosition();
+            double remainingDistanceLow = 100 - lsFront.getCurrentPosition();
+            double remainingDistanceZero = -lsFront.getCurrentPosition();
+
+            if (gamepad1.dpad_up && remainingDistanceHigh > 10) {
+
+                lsFront.setPower(remainingDistanceHigh*0.002);
+                lsBack.setPower(remainingDistanceHigh*0.002);
+
+            } else if (gamepad1.dpad_right && remainingDistanceMid > 10) {
+
+                lsFront.setPower(remainingDistanceMid*0.002);
+                lsBack.setPower(remainingDistanceMid*0.002);
+
+            } else if (gamepad1.dpad_left && remainingDistanceLow > 10) {
+
+                lsFront.setPower(remainingDistanceLow*0.002);
+                lsBack.setPower(remainingDistanceLow*0.002);
+
+            } else if (gamepad1.dpad_down && remainingDistanceZero > 10) {
+
+                lsFront.setPower(remainingDistanceZero*0.002);
+                lsBack.setPower(remainingDistanceZero*0.002);
+
+            }
+
+            if (-gamepad2.left_stick_y > 0) {
+                lsBack.setPower(0.5);
+                lsFront.setPower(0.5);
+            } else if (-gamepad2.left_stick_y < 0) {
+                lsBack.setPower(-0.5);
+                lsFront.setPower(-0.5);
+            } else {
+                lsBack.setPower(0);
+                lsFront.setPower(0);
+            }
+
+            telemetry.addLine(String.valueOf(armPos));
+            telemetry.addLine(String.valueOf(lsFront.getCurrentPosition()));
+
             //intake
             if (gamepad2.left_trigger > 0) {
                 intake.setPower(1);
@@ -48,7 +94,6 @@ public class TestTeleOp extends LinearOpMode {
                 //reversed intake
                 intake.setPower(-1);
                 holderClampPos = 0.3;
->>>>>>> 338a830 (idk)
             } else {
                 if (Math.abs(gamepad1.left_stick_x) > 0.1 || Math.abs(gamepad1.left_stick_y) >0.1 || Math.abs(gamepad1.right_stick_x) >0.1) {
                     holderClampPos = 0.5;
@@ -56,16 +101,9 @@ public class TestTeleOp extends LinearOpMode {
                 intake.setPower(0);
             }
 
-<<<<<<< HEAD
-            if(gamepad1.left_bumper) {
-                holderClampPos += 0.0025;
-            } else if (gamepad1.right_bumper) {
-=======
-            //open close clamp
             if(gamepad2.right_bumper == true) {
->>>>>>> 338a830 (idk)
-                holderClampPos -= 0.0025;
-                //open
+                    holderClampPos -= 0.0025;
+                    //open
             } else if (gamepad2.right_trigger > 0) {
                 holderClampPos += 0.0025;
                 //close
@@ -89,7 +127,12 @@ public class TestTeleOp extends LinearOpMode {
                 armPos=0;
             }
 
-            //TODO LINEAR SLIDES CONTROLS (GAMEPAD 2, LEFT STICK Y)
+            if(gamepad2.a == true) {
+                armPos = 0.594; //down position
+            }
+            if(gamepad2.y == true) {
+                armPos = 0.845; //up position
+            }
 
             //0.46 open
             //0.5
