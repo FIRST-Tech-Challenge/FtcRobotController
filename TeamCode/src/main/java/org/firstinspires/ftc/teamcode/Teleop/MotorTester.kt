@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.Teleop
 
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp
+import com.qualcomm.robotcore.hardware.DcMotor
 import org.firstinspires.ftc.teamcode.DriveMethods
 import org.firstinspires.ftc.teamcode.Variables.slideRotationMotor
 
@@ -11,6 +12,8 @@ class MotorTester: DriveMethods() {
         initSlideMotors()
         var motorBeingTested = slideRotationMotor
 
+        motorBeingTested!!.mode = DcMotor.RunMode.STOP_AND_RESET_ENCODER
+        motorBeingTested!!.mode = DcMotor.RunMode.RUN_USING_ENCODER
         waitForStart()
 
         while (opModeIsActive()) {

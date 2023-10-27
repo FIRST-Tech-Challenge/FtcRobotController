@@ -7,11 +7,13 @@ import org.firstinspires.ftc.teamcode.Variables
 import org.firstinspires.ftc.teamcode.Variables.bottom
 import org.firstinspires.ftc.teamcode.Variables.clawMotor
 import org.firstinspires.ftc.teamcode.Variables.clawRotation
+import org.firstinspires.ftc.teamcode.Variables.click2Degree
 import org.firstinspires.ftc.teamcode.Variables.closedClaw
 import org.firstinspires.ftc.teamcode.Variables.high
 import org.firstinspires.ftc.teamcode.Variables.lMax
 import org.firstinspires.ftc.teamcode.Variables.lMin
 import org.firstinspires.ftc.teamcode.Variables.lPower
+import org.firstinspires.ftc.teamcode.Variables.length
 import org.firstinspires.ftc.teamcode.Variables.low
 import org.firstinspires.ftc.teamcode.Variables.mid
 import org.firstinspires.ftc.teamcode.Variables.motorBL
@@ -25,8 +27,11 @@ import org.firstinspires.ftc.teamcode.Variables.rMin
 import org.firstinspires.ftc.teamcode.Variables.rMotorL
 import org.firstinspires.ftc.teamcode.Variables.rMotorR
 import org.firstinspires.ftc.teamcode.Variables.rPower
+import org.firstinspires.ftc.teamcode.Variables.slideRotMax
+import org.firstinspires.ftc.teamcode.Variables.slideRotMin
 import org.firstinspires.ftc.teamcode.Variables.slideRotationMotor
 import org.firstinspires.ftc.teamcode.Variables.speed
+import kotlin.math.abs
 import kotlin.math.exp
 
 @TeleOp(name = "TeleopFromHell", group = "TeleopFinal")
@@ -89,7 +94,11 @@ class TeleopFromHell: DriveMethods() {
         var slideTarget = bottom
         var targetHeight = 0
         var slidePos = 0
+        var slideRotPos = 0
         var speedDiv = 2
+        var slideDeg = 0.0
+        var angleFromSlideToClaw = 0.0
+        var slideRottarget = 25.0
         while (opModeIsActive()) {
             //set gamepad inputs
             leftY = (-gamepad1.left_stick_y).toDouble()
@@ -98,7 +107,6 @@ class TeleopFromHell: DriveMethods() {
             rightX = -gamepad1.right_stick_x.toDouble()
 
             //set motor speeds
-            slideRotationMotor?.power = leftYGPadTwo
             motorFL?.power = -(leftY - leftX - rightX) / speedDiv
             motorBL?.power = -(leftY + leftX - rightX) / speedDiv
             motorFR?.power = (leftY + leftX + rightX) / speedDiv
@@ -182,8 +190,21 @@ class TeleopFromHell: DriveMethods() {
             if (gamepad2.y) {
                 //swap between intake and place claw rotation
             }
-            telemetry.addData("LRack", rMotorL?.currentPosition)
-            telemetry.addData("RRack", rMotorR?.currentPosition)
+
+            //rotation
+            slideRotationMotor?.currentPosition?.times(length)
+            if (slideRottarget + leftYGPadTwo > slideRotMin && slideRottarget + leftYGPadTwo < slideRotMax) {
+                slideRottarget += leftYGPadTwo
+            }
+
+            slideRotPos = slideRotationMotor?.let { -(it.currentPosition) }!!
+            slideDeg = abs(slideRotPos - slideRotMax) * click2Degree
+            angleFromSlideToClaw = (150 - slideDeg)
+
+            slideRotationMotor?.power = -((2 / (1 + (exp((-(slideRottarget - slideRotPos) / 100))))) - 1)
+            telemetry.addData("RotTarg", slideRottarget)
+            telemetry.addData("Angle from slide to claw I think???", angleFromSlideToClaw)
+            telemetry.addData("slideDeg", slideDeg)
             telemetry.update()
         }
     }

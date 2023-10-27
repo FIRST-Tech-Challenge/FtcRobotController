@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode
 
+import androidx.core.graphics.rotationMatrix
 import com.qualcomm.hardware.rev.RevBlinkinLedDriver
 import com.qualcomm.hardware.rev.RevBlinkinLedDriver.BlinkinPattern
 import com.qualcomm.robotcore.hardware.DcMotor
@@ -44,6 +45,13 @@ object Variables {
     var rMax = 10000
     var lMin = 0
     var rMin = 0
+    var slideRotMin = -147
+    var slideRotMax = 404
+    var slideGateClosed = 0.61
+    var slideGateOpen = 0.55
+    var length = (13.5 + (35.3 * Math.PI))/encoders
+    var click2Degree = 0.154265
+    var degree2Click = encoders/360
     
     var blinkinLedDriver: RevBlinkinLedDriver? = null
     var pattern: BlinkinPattern? = null
