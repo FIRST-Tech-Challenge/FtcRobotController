@@ -30,10 +30,10 @@ class DriveTrain {
         this.hardwareMap = hardwareMap;
     }
     public void resetMotors() {
-        motorFrontLeft.setPower(0);
-        motorBackLeft.setPower(0);
-        motorBackRight.setPower(0);
-        motorFrontRight.setPower(0);
+        motorFrontLeft.setPower(1);
+        motorBackLeft.setPower(1);
+        motorBackRight.setPower(1);
+        motorFrontRight.setPower(1);
         motorFrontLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         motorBackLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         motorFrontRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
