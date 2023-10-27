@@ -33,8 +33,7 @@ public class DriveConstants {
      * from DriveVelocityPIDTuner.
      */
     public static final boolean RUN_USING_ENCODER = true;
-    public static PIDFCoefficients MOTOR_VELO_PID = new PIDFCoefficients(0, 0, 0,
-            getMotorVelocityF(MAX_RPM / 60 * TICKS_PER_REV));
+    public static PIDFCoefficients MOTOR_VELO_PID = new PIDFCoefficients(13, 0, 0, 12.8);
 
     /*
      * These are physical constants that can be determined from your robot (including the track
@@ -45,8 +44,8 @@ public class DriveConstants {
      * convenience. Make sure to exclude any gear ratio included in MOTOR_CONFIG from GEAR_RATIO.
      */
     public static double WHEEL_RADIUS = 2; // in
-    public static double GEAR_RATIO = 1; // output (wheel) speed / input (motor) speed
-    public static double TRACK_WIDTH = 14; // in
+    public static double GEAR_RATIO = 0.968; // output (wheel) speed / input (motor) speed
+    public static double TRACK_WIDTH = 14.03; // in
 
     /*
      * These are the feedforward parameters used to model the drive motor behavior. If you are using
@@ -65,9 +64,9 @@ public class DriveConstants {
      * small and gradually increase them later after everything is working. All distance units are
      * inches.
      */
-    public static double MAX_VEL = 0.4 * (MAX_RPM * 2 * Math.PI * WHEEL_RADIUS);
+    public static double MAX_VEL = 50;
     public static double MAX_ACCEL = 30;
-    public static double MAX_ANG_VEL = Math.toRadians(60);
+    public static double MAX_ANG_VEL = Math.toRadians(179.375);
     public static double MAX_ANG_ACCEL = Math.toRadians(60);
 
     /*
@@ -76,7 +75,7 @@ public class DriveConstants {
     public static RevHubOrientationOnRobot.LogoFacingDirection LOGO_FACING_DIR =
             RevHubOrientationOnRobot.LogoFacingDirection.UP;
     public static RevHubOrientationOnRobot.UsbFacingDirection USB_FACING_DIR =
-            RevHubOrientationOnRobot.UsbFacingDirection.FORWARD;
+            RevHubOrientationOnRobot.UsbFacingDirection.RIGHT;
 
 
     public static double encoderTicksToInches(double ticks) {
