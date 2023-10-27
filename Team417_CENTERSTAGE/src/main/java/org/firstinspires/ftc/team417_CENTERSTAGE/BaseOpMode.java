@@ -2,6 +2,7 @@ package org.firstinspires.ftc.team417_CENTERSTAGE;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.Servo;
 
 abstract class BaseOpMode extends LinearOpMode {
     //Declares drive-motors
@@ -10,11 +11,15 @@ abstract class BaseOpMode extends LinearOpMode {
     public DcMotor BR;
     public DcMotor BL;
 
+    public DcMotor intakeMotor;
+    public Servo outputMotor;
+
     //Declares IMU
     //public BNO055IMU imu;
 
     //Initializes motors, servos, and sensors
     public void initializeHardware() {
+        //Drive Motors
         FL = hardwareMap.get(DcMotor.class, "FLMotor");
         FR = hardwareMap.get(DcMotor.class, "FRMotor");
         BL = hardwareMap.get(DcMotor.class, "BLMotor");
@@ -39,6 +44,19 @@ abstract class BaseOpMode extends LinearOpMode {
         FR.setDirection(DcMotor.Direction.REVERSE);
         BL.setDirection(DcMotor.Direction.FORWARD);
         BR.setDirection(DcMotor.Direction.REVERSE);
+
+        //Mechanism Motors
+        intakeMotor = hardwareMap.get(DcMotor.class, "IntakeMotor");
+
+        intakeMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
+        intakeMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+        intakeMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
+        intakeMotor.setDirection(DcMotor.Direction.FORWARD);
+
+        outputMotor = hardwareMap.get(Servo.class, "OutputMotor");
 
         /*
         // Sets up the parameters with which we will use our IMU. Note that integration
@@ -74,5 +92,14 @@ abstract class BaseOpMode extends LinearOpMode {
         FR.setPower(frontRightPower);
         BL.setPower(backLeftPower);
         BR.setPower(backRightPower);
+    }
+
+    public void runIntakeMechanism() {
+        double speed = 0.5;
+        intakeMotor.setPower(speed);
+    }
+
+    public void moveOutputMechanism(double position) {
+        outputMotor.setPosition(position);
     }
 }

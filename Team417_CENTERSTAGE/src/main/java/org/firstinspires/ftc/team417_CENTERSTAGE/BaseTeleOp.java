@@ -12,6 +12,8 @@ public class BaseTeleOp extends BaseOpMode {
 
         while (opModeIsActive()) {
             driveUsingControllers(true);
+            outputUsingControllers();
+            runIntakeMechanism();
         }
     }
 
@@ -47,7 +49,11 @@ public class BaseTeleOp extends BaseOpMode {
         mecanumDrive(x, y, rot);
     }
 
-    //Adds stick curve to the drive joysticks
+    public void outputUsingControllers() {
+        moveOutputMechanism(gamepad1.right_trigger);
+    }
+
+    //Adds stick curve to the joysticks
     public double curveStick(double rawSpeed) {
         double logSpeed;
         if (rawSpeed >= 0) {
