@@ -15,17 +15,27 @@ public class MeepMeepTesting {
         Pose2d startPoseRedClose = new Pose2d(10, -52, 0);
         Pose2d startPoseRedFar = new Pose2d(-52, -48, 0);
 
+        Vector2d parkingPosBlue = new Vector2d(56,56);
+        Vector2d parkingPosRed = new Vector2d(56,-56);
+        Vector2d scoreBlue = new Vector2d(42,38);
+        Vector2d scoreRed = new Vector2d(42,-34);
+
         RoadRunnerBotEntity myBot = new DefaultBotBuilder(meepMeep)
                 // Set bot constraints: maxVel, maxAccel, maxAngVel, maxAngAccel, track width
                 .setConstraints(60, 60, Math.toRadians(180), Math.toRadians(180), 15)
                 .followTrajectorySequence(drive ->
-                        drive.trajectorySequenceBuilder(startPoseRedClose)
-                                .splineTo(new Vector2d(10,-34),Math.toRadians(0))
-                                //.addTemporalMarker(this::dropPurplePixel)
-                                .splineTo(new Vector2d(42,-34),Math.toRadians(0))
-                                //.addTemporalMarker(this::stageScore)
-                                //.addTemporalMarker(this::stopNoodles)
-                                .splineTo(new Vector2d(56,-56),Math.toRadians(0))
+                        drive.trajectorySequenceBuilder(startPoseBlueFar)
+                                .splineTo(new Vector2d(-34,38), Math.toRadians(0))
+                                .turn(Math.toRadians(-90))
+                                //.UNSTABLE_addTemporalMarkerOffset(-0.3, this::dropPurplePixel)
+                                .waitSeconds(1.5)
+                                .turn(Math.toRadians(90))
+                                //.UNSTABLE_addTemporalMarkerOffset(0,this::stopNoodles)
+                                .splineTo(scoreBlue,Math.toRadians(0))
+                                //.UNSTABLE_addTemporalMarkerOffset(-0.1,this::stageScore)
+                                .waitSeconds(1.5)
+                                //.UNSTABLE_addTemporalMarkerOffset(0,this::stopNoodles)
+                                .splineTo(parkingPosBlue,Math.toRadians(0))
                                 .build()
                 );
 

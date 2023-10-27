@@ -117,3 +117,13 @@ public class AprilTagsDetection{
         //telemetry.addLine(String.format("Rotation Roll: %.2f degrees", Math.toDegrees(detection.pose.roll)));
     }
 }
+
+class AprilTagException extends Exception{
+    public AprilTagException(){
+    }
+
+    public AprilTagException(String message)
+    {
+        super(message);
+    }
+}

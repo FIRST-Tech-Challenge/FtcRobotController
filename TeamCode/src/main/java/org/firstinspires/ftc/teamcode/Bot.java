@@ -137,6 +137,17 @@ public class Bot {
         }
     }
 
+    public void outtake(boolean pixelTwo, int stage){
+        currentState = BotState.OUTTAKE;
+        slides.runTo(stage);
+        fourbar.outtake();
+        box.depositFirstPixel();
+        if(pixelTwo){
+            box.depositSecondPixel();
+            resetOuttake();
+        }
+    }
+
 
     public void initializeImus() {
         imu = opMode.hardwareMap.get(BNO055IMU.class, "imu");
