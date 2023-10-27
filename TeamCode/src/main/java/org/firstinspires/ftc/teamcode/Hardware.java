@@ -1,10 +1,11 @@
 package org.firstinspires.ftc.teamcode;
 
-import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.telemetry;
-import com.qualcomm.robotcore.hardware.Gamepad;
+import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.util.ElapsedTime;
+
+import org.checkerframework.checker.index.qual.LTEqLengthOf;
 
 public class Hardware {
     final public ElapsedTime timePassed = new ElapsedTime();
@@ -18,7 +19,10 @@ public class Hardware {
     public DcMotor frontRight = null;
     public DcMotor backLeft = null;
     public DcMotor backRight = null;
-
+    private final OpMode opMode;
+    public Hardware(OpMode opMode1){
+        opMode = opMode1;
+    }
     public void init(HardwareMap hardwareMap) {
         try {
             frontLeft = hardwareMap.dcMotor.get("frontLeftMotor");
@@ -28,8 +32,9 @@ public class Hardware {
             frontLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
             frontLeft.setPower(0);
         } catch (Exception e) {
-            telemetry.addData("FrontLeftMotor: ", "Error");
-            telemetry.update();
+            opMode.telemetry.addData("FrontLeftMotor: ", "Error");
+        } finally{
+            opMode.telemetry.addData("FrontLeftMotor: ", "Started.");
         }
         try {
             frontRight = hardwareMap.dcMotor.get("frontRightMotor");
@@ -37,9 +42,9 @@ public class Hardware {
             frontRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
             frontRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
             frontRight.setPower(0);
+            opMode.telemetry.addData("FrontRightMotor: ", "Started.");
         } catch (Exception e) {
-            telemetry.addData("FrontRightMotor: ", "Error");
-            telemetry.update();
+            opMode.telemetry.addData("FrontRightMotor: ", "Error");
         }
         try {
             backRight = hardwareMap.dcMotor.get("backRightMotor");
@@ -47,9 +52,9 @@ public class Hardware {
             backRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
             backRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
             backRight.setPower(0);
+            opMode.telemetry.addData("BackRightMotor: ", "Started.");
         } catch (Exception e) {
-            telemetry.addData("BackRightMotor: ", "Error");
-            telemetry.update();
+            opMode.telemetry.addData("BackRightMotor: ", "Error");
         }
         try {
             backLeft = hardwareMap.dcMotor.get("backLeftMotor");
@@ -57,28 +62,31 @@ public class Hardware {
             backLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
             backLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
             backLeft.setPower(0);
+            opMode.telemetry.addData("BackLeftMotor: ", "Started.");
         } catch (Exception e) {
-            telemetry.addData("BackLeftMotor: ", "Error");
-            telemetry.update();
+            opMode.telemetry.addData("BackLeftMotor: ", "Error");
         }
+        opMode.telemetry.update();
 
         // Have to test this when the drive train is created
-        frontLeft.setTargetPosition(0);
-        frontRight.setTargetPosition(0);
-        backLeft.setTargetPosition(0);
-        backRight.setTargetPosition(0);
-
-        frontLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        frontRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        backLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        backRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+//        frontLeft.setTargetPosition(0);
+//        frontRight.setTargetPosition(0);
+//        backLeft.setTargetPosition(0);
+//        backRight.setTargetPosition(0);
+//
+//        frontLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+//        frontRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+//        backLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+//        backRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
     }
 
     public void drive(double power, double inches){
-        frontLeft.setTargetPosition((int)(inches*TICKS_PER_INCH));
-        frontRight.setTargetPosition((int)(inches*TICKS_PER_INCH));
-        backLeft.setTargetPosition((int)(inches*TICKS_PER_INCH));
-        backRight.setTargetPosition((int)(inches*TICKS_PER_INCH));
+        int targetPosition = (int)(inches*TICKS_PER_INCH);
+        opMode.telemetry.addData("targetPosition linear drive: ", targetPosition);
+        frontLeft.setTargetPosition(targetPosition);
+        frontRight.setTargetPosition(targetPosition);
+        backLeft.setTargetPosition(targetPosition);
+        backRight.setTargetPosition(targetPosition);
 
         frontLeft.setPower(power);
         frontRight.setPower(power);
@@ -87,19 +95,28 @@ public class Hardware {
         while(frontLeft.getCurrentPosition() <= frontRight.getCurrentPosition() &&
                 frontRight.getCurrentPosition() <= backRight.getCurrentPosition() &&
                 backLeft.getCurrentPosition() <= frontRight.getCurrentPosition() &&
-                frontLeft.getCurrentPosition() <= frontRight.getCurrentPosition());
+                frontLeft.getCurrentPosition() <= frontRight.getCurrentPosition()){
+            opMode.telemetry.addData("Moving in drive: ", frontLeft.getCurrentPosition());
+            opMode.telemetry.update();
+        }
 
         frontLeft.setPower(0);
         frontRight.setPower(0);
         backLeft.setPower(0);
         backRight.setPower(0);
 
+        opMode.telemetry.addData("Linear Drive complete.", "");
+        opMode.telemetry.update();
     }
     public void drive(double frontLeftPower, double frontRightPower, double backLeftPower, double backRightPower, double inches){
-        frontLeft.setTargetPosition((int)(inches*TICKS_PER_INCH));
-        frontRight.setTargetPosition((int)(inches*TICKS_PER_INCH));
-        backLeft.setTargetPosition((int)(inches*TICKS_PER_INCH));
-        backRight.setTargetPosition((int)(inches*TICKS_PER_INCH));
+        int targetPosition = (int)(inches*TICKS_PER_INCH);
+        opMode.telemetry.addData("targetPosition for linear drive: ", targetPosition);
+        opMode.telemetry.update();
+
+        frontLeft.setTargetPosition(targetPosition);
+        frontRight.setTargetPosition(targetPosition);
+        backLeft.setTargetPosition(targetPosition);
+        backRight.setTargetPosition(targetPosition);
 
         frontLeft.setPower(frontLeftPower);
         frontRight.setPower(frontRightPower);
@@ -108,12 +125,18 @@ public class Hardware {
         while(frontLeft.getCurrentPosition() <= frontRight.getCurrentPosition() &&
                 frontRight.getCurrentPosition() <= backRight.getCurrentPosition() &&
                 backLeft.getCurrentPosition() <= frontRight.getCurrentPosition() &&
-                frontLeft.getCurrentPosition() <= frontRight.getCurrentPosition());
+                frontLeft.getCurrentPosition() <= frontRight.getCurrentPosition()){
+            opMode.telemetry.addData("Moving in drive: ", frontLeft.getCurrentPosition());
+            opMode.telemetry.update();
+        }
 
         frontLeft.setPower(0);
         frontRight.setPower(0);
         backLeft.setPower(0);
         backRight.setPower(0);
+
+        opMode.telemetry.addData("Linear Drive complete.", "");
+        opMode.telemetry.update();
     }
     // for distance: right is positive, left is negative
     public void strafe(double distance, double power) {

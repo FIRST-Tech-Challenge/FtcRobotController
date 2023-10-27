@@ -10,7 +10,7 @@ public class TeleOp extends LinearOpMode {
 
     @Override
     public void runOpMode() throws InterruptedException {
-        Hardware hw = new Hardware();
+        Hardware hw = new Hardware(this);
         hw.init(hardwareMap);
 
         telemetry.addData("TeleOp Init: ", "Ready for start");
