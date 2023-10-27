@@ -41,6 +41,7 @@ public class MarkerDetector extends OpenCvPipeline {
             telemetry.update();
             return input;
         }
+
         telemetry.update();
 
         Imgproc.cvtColor(workingMatrix, workingMatrix, Imgproc.COLOR_RGB2YCrCb);

@@ -30,8 +30,7 @@ public class LongRedAuto extends LinearOpMode {
         MarkerDetector.MARKER_POSITION position;
 
         waitForStart();
-        telemetry.addData("camera state", String.valueOf(visionPortal.getCameraState()));
-        telemetry.update();
+        Log.d("vision", "camera state: " + visionPortal.getCameraState());
 
         while (opModeIsActive()) {
 
@@ -50,78 +49,34 @@ public class LongRedAuto extends LinearOpMode {
             robot.setMarkerPos(position);
             robot.setWantedAprTagId(position, true);
 
-            /*
-
             //move to marker
             robot.moveToMarker();
+            sleep(1000);
 
             //move to board from spike marks
             robot.straightBlocking(15, false);
-            robot.waitFor(0.1);
+            sleep(1000);
             robot.setHeading(0);
-            robot.waitFor(0.1);
-            robot.mecanumBlocking(20, true);
-            robot.waitFor(0.1);
+            sleep(1000);
+            robot.mecanumBlocking(18, true);
+            sleep(1000);
             robot.setHeading(0);
-            robot.waitFor(0.1);
+            sleep(1000);
             robot.straightBlocking(38, false);
-            robot.waitFor(0.1);
+            sleep(1000);
             robot.setHeading(-90);
-            robot.waitFor(0.1);
-            robot.straightBlocking(88, false);
-            robot.waitFor(0.1);
+            sleep(1000);
+            robot.straightBlocking(90, false);
+            sleep(1000);
             robot.setHeading(-90);
-            robot.waitFor(0.1);
+            sleep(1000);
             robot.mecanumBlocking(28, false);
-            */
+            sleep(1000);
+            robot.setHeading(-90);
 
-            /*
-            //TODO: APRILTAG GOES HERE !!!!!!
-            robot.aprilTagFnaggling(idNumber, 300, 0);
-            */
+            sleep (2000);
 
-            /*while (opModeIsActive() && !isDoneWithAprilTagX) {
-
-
-                isDoneWithAprilTagX = robot.moveRelativeToAprilTagX(0, idNumber);
-
-
-                telemetry.addData("x", isDoneWithAprilTagX);
-
-                telemetry.update();
-            }
-            telemetry.addLine("got out");
-            while (opModeIsActive() && !isDoneWithAprilTagRange) {
-
-
-                isDoneWithAprilTagRange = robot.moveRelativeToAprilTagRange(10, idNumber);
-
-
-                telemetry.addData("range", isDoneWithAprilTagRange);
-
-                telemetry.update();
-            }*/
-
-
-        /*robot.waitFor(2);
-        robot.setHeading(0);
-        robot.waitFor(0.1);
-        robot.straightBlocking(24, true);
-        robot.waitFor(0.1);
-        robot.setHeading(90);
-        robot.waitFor(0.1);
-        robot.straightBlocking(84, true);
-        robot.waitFor(0.1);
-        robot.setHeading(-90);
-        robot.waitFor(0.1);
-        robot.straightBlocking(84, true);
-        robot.waitFor(0.1);
-        robot.setHeading(-90);
-        robot.waitFor(0.1);
-        robot.mecanumBlocking(25, true);
-        robot.waitFor(0.1);*/
-
-            int desiredAprTagId = 5; //test 5
+            int desiredAprTagId = robot.wantedAprTagId; //test 5
             boolean tagVisible = false;
             boolean aligned = false;
             List<AprilTagDetection> myAprilTagDetections;
@@ -144,7 +99,7 @@ public class LongRedAuto extends LinearOpMode {
                             telemetry.addLine(String.format("RBE %6.1f %6.1f %6.1f  (inch, deg, deg)", detection.ftcPose.range, detection.ftcPose.bearing, detection.ftcPose.elevation));
 
                             if (detection.id == desiredAprTagId) {
-                                Log.d("vision", "runOpMode: tag visible");
+                                Log.d("vision", "runOpMode: tag visible - this one " + desiredAprTagId);
                                 tagVisible = true;
 
                                 if (detection.ftcPose.bearing > 1) {
@@ -182,6 +137,9 @@ public class LongRedAuto extends LinearOpMode {
                         if (detection.id == desiredAprTagId) {
                             Log.d("vision", "runOpMode: bearing is " + detection.ftcPose.bearing);
                         }
+
+                        double distanceToBoard = detection.ftcPose.range - 2;
+                        robot.straightBlocking(distanceToBoard, false);
                     }
                 }
             }
