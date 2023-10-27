@@ -50,7 +50,7 @@ public class Bot {
     public static DistanceSensor distanceSensor;
 
     private final DcMotorEx FL, FR, BL, BR, susMotor, slidesMotor;
-    private final Servo droneServo, fourBarServo_1, fourBarServo_2;
+    private final Servo droneServo, fourBarServo;
 
 
 
@@ -95,8 +95,7 @@ public class Bot {
         BL = opMode.hardwareMap.get(DcMotorEx.class, "BL");
         BR = opMode.hardwareMap.get(DcMotorEx.class, "BR");
         droneServo= opMode.hardwareMap.get(Servo.class, "droneServo");;
-        fourBarServo_1= opMode.hardwareMap.get(Servo.class, "fourBarServo_1");
-        fourBarServo_2= opMode.hardwareMap.get(Servo.class, "fourBarServo_2");
+        fourBarServo= opMode.hardwareMap.get(Servo.class, "fourBarServo");
         susMotor = opMode.hardwareMap.get(DcMotorEx.class, "susMotor");
         slidesMotor = opMode.hardwareMap.get(DcMotorEx.class, "slidesMotor");
         distanceSensor = opMode.hardwareMap.get(DistanceSensor.class, "distanceSensor");
