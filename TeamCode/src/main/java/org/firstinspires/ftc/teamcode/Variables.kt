@@ -55,6 +55,15 @@ object Variables {
     enum class BlinkinColor {
         RAINBOW, RED, RED_PULSE, ORANGE, ORANGE_PULSE, BLUE, GREEN, GREEN_PULSE, YELLOW, PURPLE, PINK
     }
+
+    enum class Detection {
+        LEFT, CENTER, RIGHT, UNKNOWN
+    }
+
+    enum class CameraSide {
+        LEFT, RIGHT
+    }
+
     var t = 0.0;
     var slideToBoard = 0.0;
     var clawToBoard = 0.1;
