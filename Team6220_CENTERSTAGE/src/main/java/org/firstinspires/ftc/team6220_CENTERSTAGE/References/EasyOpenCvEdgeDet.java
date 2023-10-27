@@ -41,7 +41,7 @@ import org.openftc.easyopencv.OpenCvPipeline;
  * the edge detected image on the phone screen.
  */
 
-@TeleOp(name = "Concept: OpenCV Edge Detection", group = "Concept")
+@TeleOp(name = "OpenCV Test A", group = "Concept")
 // @Disabled
 public class EasyOpenCvEdgeDet extends LinearOpMode
 {

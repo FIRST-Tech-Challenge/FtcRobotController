@@ -1,4 +1,6 @@
-package org.firstinspires.ftc.team6220_CENTERSTAGE.References;
+/*package org.firstinspires.ftc.team6220_CENTERSTAGE.References;
+
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 
 import org.firstinspires.ftc.team6220_CENTERSTAGE.Constants;
 import org.opencv.core.Core;
@@ -13,6 +15,8 @@ import org.openftc.easyopencv.OpenCvPipeline;
 import java.util.ArrayList;
 import java.util.List;
 
+
+@Disabled
 public class RobotCameraPipeline extends OpenCvPipeline {
     public double xPosition = Constants.CAMERA_CENTER_X;
     public double width = 0.0;
@@ -30,7 +34,7 @@ public class RobotCameraPipeline extends OpenCvPipeline {
 
     /**
      * method used to set the ranges for the pipeline
-     */
+     */ /*
     public void setRanges(Scalar lowerRange, Scalar upperRange) {
         this.lowerRange = lowerRange;
         this.upperRange = upperRange;
@@ -105,4 +109,4 @@ public class RobotCameraPipeline extends OpenCvPipeline {
         return mat;
     }
 }
-
+*/
