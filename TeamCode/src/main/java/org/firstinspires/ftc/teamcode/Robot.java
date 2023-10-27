@@ -101,6 +101,7 @@ public class Robot {
                     wantedAprTagId = 4;
                     break;
                 default:
+                    Log.d("vision", "setWantedAprTagId: enter default");
                     wantedAprTagId = 5;
             }
         } else {
@@ -115,6 +116,7 @@ public class Robot {
                     wantedAprTagId = 1;
                     break;
                 default:
+                    Log.d("vision", "setWantedAprTagId: enter default");
                     wantedAprTagId = 2;
             }
         }
@@ -919,13 +921,13 @@ public class Robot {
             straightBlocking(18, false);
             setHeading(30);
             sleep(100);
-            straightBlocking(3, false);
+            straightBlocking(4, false);
             sleep(100);
-            straightBlocking(3, true);
+            straightBlocking(4, true);
             setHeading(0);
             sleep(100);
             straightBlocking(17, true);
-        } else if (markerPos == MarkerDetector.MARKER_POSITION.RIGHT) {
+        } else { //right or other
             straightBlocking(14, false);
             setHeading(-45);
             sleep(100);
@@ -934,7 +936,7 @@ public class Robot {
             straightBlocking(11, true);
             setHeading(0);
             sleep(100);
-            straightBlocking(12, true);
+            straightBlocking(13, true);
         }
     }
 
