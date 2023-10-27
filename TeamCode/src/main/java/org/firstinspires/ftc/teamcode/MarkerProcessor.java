@@ -43,11 +43,12 @@ public class MarkerProcessor implements VisionProcessor {
     @Override
     public void onDrawFrame(final android.graphics.Canvas canvas, int onscreenWidth, int onscreenHeight,
                             float scaleBmpPxToCanvasPx, float scaleCanvasDensity, final Object userContext) {
-        int SUBMAT_WIDTH = 80;
-        int SUBMAT_HEIGHT = 80;
+        int SUBMAT_WIDTH = 160;
+        int SUBMAT_HEIGHT = 160;
+
         // draw nothing
-        Imgproc.rectangle(workingMatrix, new Rect(0, 80, SUBMAT_WIDTH, SUBMAT_HEIGHT), new Scalar(0, 255, 0));
-        Imgproc.rectangle(workingMatrix, new Rect(120, 80, SUBMAT_WIDTH, SUBMAT_HEIGHT), new Scalar(0, 255, 0));
-        Imgproc.rectangle(workingMatrix, new Rect(240, 80, SUBMAT_WIDTH, SUBMAT_HEIGHT), new Scalar(0, 255, 0));
+        Imgproc.rectangle(workingMatrix, new Rect(0, 160, SUBMAT_WIDTH, SUBMAT_HEIGHT), new Scalar(0, 255, 0));
+        Imgproc.rectangle(workingMatrix, new Rect(240, 160, SUBMAT_WIDTH, SUBMAT_HEIGHT), new Scalar(0, 255, 0));
+        Imgproc.rectangle(workingMatrix, new Rect(480, 160, SUBMAT_WIDTH, SUBMAT_HEIGHT), new Scalar(0, 255, 0));
     }
 }

@@ -35,7 +35,6 @@ public class LongRedAuto extends LinearOpMode {
 
         while (opModeIsActive()) {
 
-            /*
             //detect marker position FIX RESOLUTION IN DETECTOR BOXES
             position = markerProcessor.getPosition();
 
@@ -51,11 +50,12 @@ public class LongRedAuto extends LinearOpMode {
             robot.setMarkerPos(position);
             robot.setWantedAprTagId(position, true);
 
+            /*
+
             //move to marker
             robot.moveToMarker();
 
             //move to board from spike marks
-
             robot.straightBlocking(15, false);
             robot.waitFor(0.1);
             robot.setHeading(0);

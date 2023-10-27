@@ -19,8 +19,8 @@ public class MarkerDetector extends OpenCvPipeline {
     double avgLeftCr;
 
     double leftCrTotal;
-    private static final int SUBMAT_WIDTH = 80;
-    private static final int SUBMAT_HEIGHT = 80;
+    private static final int SUBMAT_WIDTH = 160;
+    private static final int SUBMAT_HEIGHT = 160;
     private Telemetry telemetry;
 
     public enum MARKER_POSITION {
@@ -45,13 +45,13 @@ public class MarkerDetector extends OpenCvPipeline {
 
         Imgproc.cvtColor(workingMatrix, workingMatrix, Imgproc.COLOR_RGB2YCrCb);
 
-        Mat matLeft = workingMatrix.submat(80, 160, 0, 80); //frame is 240x320
-        Mat matCenter = workingMatrix.submat(80, 160, 120, 200);
-        Mat matRight = workingMatrix.submat(80, 160, 240, 320);
+        Mat matLeft = workingMatrix.submat(160, 320, 0, 160); //frame is 240x320 480x640
+        Mat matCenter = workingMatrix.submat(160, 320, 240, 400);
+        Mat matRight = workingMatrix.submat(160, 320, 480, 640);
 
-        Imgproc.rectangle(workingMatrix, new Rect(00, 80, SUBMAT_WIDTH, SUBMAT_HEIGHT), new Scalar(0, 255, 0));
-        Imgproc.rectangle(workingMatrix, new Rect(120, 80, SUBMAT_WIDTH, SUBMAT_HEIGHT), new Scalar(0, 255, 0));
-        Imgproc.rectangle(workingMatrix, new Rect(240, 80, SUBMAT_WIDTH, SUBMAT_HEIGHT), new Scalar(0, 255, 0));
+        Imgproc.rectangle(workingMatrix, new Rect(0, 160, SUBMAT_WIDTH, SUBMAT_HEIGHT), new Scalar(0, 255, 0));
+        Imgproc.rectangle(workingMatrix, new Rect(240, 160, SUBMAT_WIDTH, SUBMAT_HEIGHT), new Scalar(0, 255, 0));
+        Imgproc.rectangle(workingMatrix, new Rect(480, 160, SUBMAT_WIDTH, SUBMAT_HEIGHT), new Scalar(0, 255, 0));
 
         leftCrTotal = Core.sumElems(matLeft).val[1];
         double rightCrTotal = Core.sumElems(matRight).val[1];
