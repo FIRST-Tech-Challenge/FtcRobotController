@@ -93,6 +93,7 @@ public class lm1teleop extends LinearOpMode {
             }else {
                 drive.run(gamepad1.left_stick_y, gamepad1.left_stick_x, rx, 1, true, gamepad1.back);
             }
+            //need to add wrist when mechanical is done
             if(gamepad2.dpad_up) extend.setPlaceHigh();
             else if(gamepad2.dpad_left) extend.setPlaceMid();
             else if(gamepad2.dpad_down) extend.setPlaceLow();

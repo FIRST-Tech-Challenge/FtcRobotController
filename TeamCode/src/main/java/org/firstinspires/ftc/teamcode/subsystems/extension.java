@@ -33,6 +33,23 @@ public class extension {
 //        pidf.setPIDF(0.004,0,0.005,0.00000001);
         Liftpos = lift1.getCurrentPosition();
     }
+    public static boolean laststate=false;
+    public void move_with_hands(boolean yes){
+        if(yes==false&&laststate!=false) {
+            tilt.setPower(1);
+            tilt.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+            tilt.setTargetPosition(tilt.getCurrentPosition());
+            tilt.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        }else if(yes) {
+            tilt.setPower(0);
+            tilt.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+            tilt.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        }
+        laststate=yes;
+    }
+    //add wrist commands here probably
+    //tune all values when stringed and intake is done
+    //
     public void setHeight(int ticks){
         lift1.setTargetPosition(ticks);
         lift2.setTargetPosition(ticks);
