@@ -36,7 +36,7 @@ public class robotCentricDrive extends LinearOpMode {
     frontRightMotor = hardwareMap.get(DcMotor.class, "frontRightMotor");
     backRightMotor = hardwareMap.get(DcMotor.class, "backRightMotor");
 
-    // Put initialization blocks here.
+
     leftGrip.setDirection(Servo.Direction.REVERSE);
     rightGrip.setDirection(Servo.Direction.FORWARD);
     leftGrip.setPosition(0.75);
@@ -44,17 +44,23 @@ public class robotCentricDrive extends LinearOpMode {
     rotation = 0;
     ext = 0;
     waitForStart();
+
+
     if (opModeIsActive()) {
+
       armRotate.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
       armExt.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
       armExt.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-      // Put run blocks here.
+
+
       while (opModeIsActive()) {
-        // Put loop blocks here.
+
         ext = armExt.getCurrentPosition();
         rotation = armRotate.getCurrentPosition();
         y = -1 * -gamepad1.left_stick_y;
         x = -0.5 * gamepad1.right_stick_x;
+
+
         frontLeftMotor.setPower(y);
         backLeftMotor.setPower(-y);
         frontRightMotor.setPower(y);
@@ -63,6 +69,8 @@ public class robotCentricDrive extends LinearOpMode {
         backRightMotor.setPower(-x);
         frontLeftMotor.setPower(-x);
         backLeftMotor.setPower(-x);
+
+
         if (gamepad1.right_bumper) {
           armRotate.setPower(0.4);
         } else if (gamepad1.left_bumper) {
@@ -70,6 +78,8 @@ public class robotCentricDrive extends LinearOpMode {
         } else {
           armRotate.setPower(0);
         }
+
+
         if (ext > 350 && ext < 2900) {
           if (gamepad1.x) {
             armExt.setPower(1);
@@ -93,6 +103,8 @@ public class robotCentricDrive extends LinearOpMode {
         } else {
           armExt.setPower(null);
         }
+
+
         if (gamepad1.a) {
           leftGrip.setPosition(0.75);
           rightGrip.setPosition(0.75);
@@ -100,6 +112,8 @@ public class robotCentricDrive extends LinearOpMode {
           leftGrip.setPosition(1);
           rightGrip.setPosition(1);
         }
+
+
         telemetry.addData("Current Arm Extension", ext);
         telemetry.addData("Current Arm Rotation", rotation);
         telemetry.update();
