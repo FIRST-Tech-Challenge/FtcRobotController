@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode;
 
+import static android.os.SystemClock.sleep;
+
 import android.os.SystemClock;
 import android.util.Log;
 import android.util.Size;
@@ -55,12 +57,14 @@ public class Robot {
 
 
     OpenCvWebcam webcam;
-    MarkerDetector.MARKER_POSITION position;
+    MarkerDetector.MARKER_POSITION markerPos;
+
+    int wantedAprTagId;
+
     private MarkerDetector detector;
     private MarkerProcessor markerProcessor;
     private AprilTagProcessor aprilTagProcessor;
     private VisionPortal visionPortal;
-
 
 
     //CONSTRUCTOR
@@ -73,6 +77,51 @@ public class Robot {
         setUpImu();
         //int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
         //webcam = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "Webcam 1"), cameraMonitorViewId);
+    }
+
+    public void setMarkerPos (MarkerDetector.MARKER_POSITION position) {
+        markerPos = position;
+    }
+
+    public MarkerDetector.MARKER_POSITION getMarkerPos () {
+        return markerPos;
+    }
+
+    //change boolean to enum later
+    public void setWantedAprTagId (MarkerDetector.MARKER_POSITION position, boolean redAlliance) {
+        if (redAlliance) {
+            switch (position) {
+                case CENTER:
+                    wantedAprTagId = 5;
+                    break;
+                case RIGHT:
+                    wantedAprTagId = 6;
+                    break;
+                case LEFT:
+                    wantedAprTagId = 4;
+                    break;
+                default:
+                    wantedAprTagId = 5;
+            }
+        } else {
+            switch (position) {
+                case CENTER:
+                    wantedAprTagId = 2;
+                    break;
+                case RIGHT:
+                    wantedAprTagId = 3;
+                    break;
+                case LEFT:
+                    wantedAprTagId = 1;
+                    break;
+                default:
+                    wantedAprTagId = 2;
+            }
+        }
+    }
+
+    public int getWantedAprTagId () {
+        return wantedAprTagId;
     }
 
 //vision processing setup
@@ -853,61 +902,40 @@ public class Robot {
      *
      * @return
      */
-    public int detectAndMoveToMarker() {
-
-//        elapsedTime = new ElapsedTime();
-
-        /*webcam.setPipeline(detector);
-        webcam.openCameraDevice();*/
-//        visionPortal.setProcessorEnabled(aprilTag, false);
-//       visionPortal.setProcessorEnabled(markerProcessor, true);
-//        position = detector.position;
-
-
-        //if seeing nothing then make center
-        /*if (position == null) {
-            telemetry.addLine("im seeing nothing forcing to be center");
-            Log.d("vision", "im not seeing anything forcing to be center");
-            position = MarkerDetector.MARKER_POSITION.CENTER;
-        }*/
-            int idNumber = 5;
-            if (position == MarkerDetector.MARKER_POSITION.CENTER) {
-                straightBlocking(20, false);
-                setHeading(15);
-                waitFor(0.1);
-                straightBlocking(6, false);
-                waitFor(1.5);
-                straightBlocking(6, true);
-                setHeading(0);
-                waitFor(0.1);
-                straightBlocking(19, true);
-                idNumber = 5;
-            } else if (position == MarkerDetector.MARKER_POSITION.LEFT) {
-                straightBlocking(18, false);
-                setHeading(30);
-                waitFor(0.1);
-                straightBlocking(3, false);
-                waitFor(1.5);
-                straightBlocking(3, true);
-                setHeading(0);
-                waitFor(0.1);
-                straightBlocking(17, true);
-                idNumber = 4;
-            } else if (position == MarkerDetector.MARKER_POSITION.RIGHT) {
-                straightBlocking(14, false);
-                setHeading(-45);
-                waitFor(0.1);
-                straightBlocking(11, false);
-                waitFor(1.5);
-                straightBlocking(11, true);
-                setHeading(0);
-                waitFor(0.1);
-                straightBlocking(12, true);
-                idNumber = 6;
-            }
-
-            return idNumber;
-
+    public void moveToMarker() {
+        Log.d("vision", "moveToMarker: Pos " + markerPos);
+        Log.d("vision", "moveToMarker: Tag " + wantedAprTagId);
+        if (markerPos == MarkerDetector.MARKER_POSITION.CENTER) {
+            straightBlocking(20, false);
+            setHeading(15);
+            sleep(100);
+            straightBlocking(6, false);
+            sleep(100);
+            straightBlocking(6, true);
+            setHeading(0);
+            sleep(100);
+            straightBlocking(19, true);
+        } else if (markerPos == MarkerDetector.MARKER_POSITION.LEFT) {
+            straightBlocking(18, false);
+            setHeading(30);
+            sleep(100);
+            straightBlocking(3, false);
+            sleep(100);
+            straightBlocking(3, true);
+            setHeading(0);
+            sleep(100);
+            straightBlocking(17, true);
+        } else if (markerPos == MarkerDetector.MARKER_POSITION.RIGHT) {
+            straightBlocking(14, false);
+            setHeading(-45);
+            sleep(100);
+            straightBlocking(11, false);
+            sleep(100);
+            straightBlocking(11, true);
+            setHeading(0);
+            sleep(100);
+            straightBlocking(12, true);
+        }
     }
 
     public void waitFor(double seconds) {

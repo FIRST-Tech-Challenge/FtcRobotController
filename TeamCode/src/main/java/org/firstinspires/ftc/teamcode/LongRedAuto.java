@@ -31,6 +31,8 @@ public class LongRedAuto extends LinearOpMode {
         telemetry.update();
 
         while (opModeIsActive()) {
+
+            //detect marker position
             position = markerProcessor.getPosition();
 
             while (position == MarkerDetector.MARKER_POSITION.UNDETECTED) {
@@ -38,12 +40,18 @@ public class LongRedAuto extends LinearOpMode {
                 position = markerProcessor.getPosition();
             }
 
+            //print position
             Log.d("vision", "detected position: " + position);
-           // idNumber = robot.detectAndMoveToMarker();
-            Log.d("vision", "Done moving, now apriltag");
-            robot.waitFor(0.75);
 
-/*
+            //save marker position, apriltag position
+            robot.setMarkerPos(position);
+            robot.setWantedAprTagId(position, true);
+
+            //move to marker
+            robot.moveToMarker();
+
+            //move to board from spike marks
+            /*
             robot.straightBlocking(15, false);
             robot.waitFor(0.1);
             robot.setHeading(0);
@@ -61,7 +69,8 @@ public class LongRedAuto extends LinearOpMode {
             robot.setHeading(-90);
             robot.waitFor(0.1);
             robot.mecanumBlocking(28, false);
-*/
+            */
+
             /*
             //TODO: APRILTAG GOES HERE !!!!!!
             robot.aprilTagFnaggling(idNumber, 300, 0);
