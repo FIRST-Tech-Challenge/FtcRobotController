@@ -71,10 +71,7 @@ public class TeleOp extends LinearOpMode {
         }
 
         //end TeleOp
-        hw.frontLeft.setPower(0);
-        hw.backLeft.setPower(0);
-        hw.frontRight.setPower(0);
-        hw.backRight.setPower(0);
+        hw.drive(0,0);
     }
 
     public double curveInput(double input) {
