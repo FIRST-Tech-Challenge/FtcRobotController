@@ -22,8 +22,13 @@ public class robotCentricDrive extends LinearOpMode {
    */
   @Override
   public void runOpMode() {
+
+    //Initialize Variables
+    //Tracks rotation of the arm's motor
     int rotation;
+    //Tracks the extension of the arm
     int ext;
+    //X and Y values of stick inputs to compile drive outputs
     float y;
     double x;
 
@@ -36,31 +41,38 @@ public class robotCentricDrive extends LinearOpMode {
     frontRightMotor = hardwareMap.get(DcMotor.class, "frontRightMotor");
     backRightMotor = hardwareMap.get(DcMotor.class, "backRightMotor");
 
-
+    //Sets initial positions and directions for grip servos
     leftGrip.setDirection(Servo.Direction.REVERSE);
     rightGrip.setDirection(Servo.Direction.FORWARD);
     leftGrip.setPosition(0.75);
     rightGrip.setPosition(0.75);
+
+    //Sets variables to 0 on initialization
     rotation = 0;
     ext = 0;
     waitForStart();
 
-
     if (opModeIsActive()) {
 
+      //Sets behaviors and modes for motors
+        //ArmExtension and ArmRotate are set to brake when receiving zero power
+        //Arm Extension is set to run using encoder outputs and inputs
       armRotate.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
       armExt.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
       armExt.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
-
       while (opModeIsActive()) {
 
+        //Assigns variables to inputs
+          //Ext and Rotation are set to receive inputs from encoders
         ext = armExt.getCurrentPosition();
         rotation = armRotate.getCurrentPosition();
+        //Multipliers are applied to X and Y and they are tied to sticks on the gamepads
         y = -1 * -gamepad1.left_stick_y;
         x = -0.5 * gamepad1.right_stick_x;
 
 
+        //Sets power for driving wheels
         frontLeftMotor.setPower(y);
         backLeftMotor.setPower(-y);
         frontRightMotor.setPower(y);
@@ -70,7 +82,10 @@ public class robotCentricDrive extends LinearOpMode {
         frontLeftMotor.setPower(-x);
         backLeftMotor.setPower(-x);
 
-
+        //Arm rotation controls
+          //Rotates up when Right Bumper is pressed
+          //Rotates down when Left Bumper is pressed
+          //Otherwise power is set to 0 (BRAKE)
         if (gamepad1.right_bumper) {
           armRotate.setPower(0.4);
         } else if (gamepad1.left_bumper) {
@@ -79,7 +94,13 @@ public class robotCentricDrive extends LinearOpMode {
           armRotate.setPower(0);
         }
 
-
+        //Arm extension controls
+          //Moves up when X is pressed
+          //Moves down when B is pressed
+          //Otherwise set power to 0 (BRAKE)
+        //Limiters are applied if the motors position is less than 350° or greater than 2900°
+          //If the position is less than 350°, the arm can only extend forward
+          //If the position is greater than 2900°, the arm can only retract
         if (ext > 350 && ext < 2900) {
           if (gamepad1.x) {
             armExt.setPower(1);
@@ -100,11 +121,11 @@ public class robotCentricDrive extends LinearOpMode {
           } else {
             armExt.setPower(0);
           }
-        } else {
-          armExt.setPower(null);
         }
 
-
+        //Inputs for claw grip
+          //When A is pressed, the claw releases its grip
+          //When Y is pressed, the claw moves to a full grip position
         if (gamepad1.a) {
           leftGrip.setPosition(0.75);
           rightGrip.setPosition(0.75);
@@ -113,7 +134,7 @@ public class robotCentricDrive extends LinearOpMode {
           rightGrip.setPosition(1);
         }
 
-
+        //Telemetry for debugging
         telemetry.addData("Current Arm Extension", ext);
         telemetry.addData("Current Arm Rotation", rotation);
         telemetry.update();
