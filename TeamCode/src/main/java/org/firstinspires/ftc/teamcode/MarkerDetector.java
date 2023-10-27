@@ -37,11 +37,10 @@ public class MarkerDetector extends OpenCvPipeline {
         input.copyTo(workingMatrix);
 
         if (workingMatrix.empty()) {
-            telemetry.addLine("working matrix is empty");
+            Log.d("vision", "processFrame: empty working matrix");
             telemetry.update();
             return input;
         }
-        telemetry.addLine("working matrix is not empty -- drawing");
         telemetry.update();
 
         Imgproc.cvtColor(workingMatrix, workingMatrix, Imgproc.COLOR_RGB2YCrCb);
