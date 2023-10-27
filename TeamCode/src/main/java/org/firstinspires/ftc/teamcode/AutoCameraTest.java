@@ -37,11 +37,11 @@ import org.openftc.easyopencv.OpenCvWebcam;
  * command is issued. The pipeline is re-used from SkystoneDeterminationExample
  */
 @Autonomous(name = "CameraTest", group = "linear autoMode")
-public class AutoCameraTest extends LinearOpMode
+public class AutoCameraTest extends RobotLinearOpMode
 {
     OpenCvWebcam webcam;
-    SkystoneDeterminationExample.SkystoneDeterminationPipeline pipeline;
-    SkystoneDeterminationExample.SkystoneDeterminationPipeline.SkystonePosition snapshotAnalysis = SkystoneDeterminationExample.SkystoneDeterminationPipeline.SkystonePosition.LEFT; // default
+    RedPropDetector.SkystoneDeterminationPipeline pipeline;
+    RedPropDetector.SkystoneDeterminationPipeline.SkystonePosition snapshotAnalysis = RedPropDetector.SkystoneDeterminationPipeline.SkystonePosition.LEFT; // default
 
     @Override
     public void runOpMode()
@@ -55,8 +55,9 @@ public class AutoCameraTest extends LinearOpMode
 
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
         webcam = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "Webcam 1"), cameraMonitorViewId);
-        pipeline = new SkystoneDeterminationExample.SkystoneDeterminationPipeline();
+        pipeline = new RedPropDetector.SkystoneDeterminationPipeline();
         webcam.setPipeline(pipeline);
+        declareHardwareProperties();
 
         webcam.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener()
         {
@@ -88,6 +89,7 @@ public class AutoCameraTest extends LinearOpMode
          * for later use. We must do this because the analysis will continue
          * to change as the camera view changes once the robot starts moving!
          */
+        sleep(2000);
         snapshotAnalysis = pipeline.getAnalysis();
 
         /*
@@ -101,22 +103,21 @@ public class AutoCameraTest extends LinearOpMode
             case LEFT:
             {
                 /* Your autonomous code */
-                telemetry.addData("Where", "Left");
-                telemetry.update();
+                encoderDrive(0.5, 20, MOVEMENT_DIRECTION.FORWARD);
+                encoderDrive(0.5, 5, MOVEMENT_DIRECTION.STRAFE_LEFT);
             }
 
             case RIGHT:
             {
                 /* Your autonomous code */
-                telemetry.addData("Where", "Right");
-                telemetry.update();
+                encoderDrive(0.5, 20, MOVEMENT_DIRECTION.FORWARD);
+                encoderDrive(0.5, 5, MOVEMENT_DIRECTION.STRAFE_RIGHT);
             }
 
             case CENTER:
             {
                 /* Your autonomous code*/
-                telemetry.addData("Where", "Center");
-                telemetry.update();
+                encoderDrive(0.5, 25, MOVEMENT_DIRECTION.FORWARD);
             }
         }
 

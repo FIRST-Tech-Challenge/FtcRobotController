@@ -42,7 +42,7 @@ import org.openftc.easyopencv.OpenCvPipeline;
  * the sample regions over the first 3 stones.
  */
 @TeleOp
-public class SkystoneDeterminationExample extends LinearOpMode
+public class BluePropDetector extends LinearOpMode
 {
     OpenCvInternalCamera phoneCam;
     SkystoneDeterminationPipeline pipeline;
@@ -118,10 +118,10 @@ public class SkystoneDeterminationExample extends LinearOpMode
          * The core values which define the location and size of the sample regions
          */
         static final Point REGION1_TOPLEFT_ANCHOR_POINT = new Point(0,80);
-        static final Point REGION2_TOPLEFT_ANCHOR_POINT = new Point(107,80);
+        static final Point REGION2_TOPLEFT_ANCHOR_POINT = new Point(107,60);
         static final Point REGION3_TOPLEFT_ANCHOR_POINT = new Point(213,80);
         static final int REGION_WIDTH = 106;
-        static final int REGION_HEIGHT = 40;
+        static final int REGION_HEIGHT = 60;
 
         /*
          * Points which actually define the sample region rectangles, derived from above values
