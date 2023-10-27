@@ -56,10 +56,9 @@ public class League1_TeleOp extends LinearOpMode {
     final double TURN_STICK_DEADZONE = 0.01;
     final double TURN_POWER_MULTIPLIER = 1.0;
     final double DRIVE_POWER_X_MULTIPLIER = 1.0;
-    final double DRIVE_POWER_Y_MULTIPLIER = 1.0;
-    final double HEADING_CORRECTION_POWER = 1.0;
-    final double MIN_HEADING_ACCURACY = 3.0; // degrees off from target
-    final double SLOWMODE_MULTIPLIER = 0.5;
+    final double DRIVE_POWER_Y_MULTIPLIER = 0.7;
+    final double MIN_HEADING_ACCURACY = 5.0; // degrees off from target
+    final double SLOWMODE_MULTIPLIER = 0.3;
 
     // useful groups of keycodes
     final GamepadKeys.Button[] BUMPER_KEYCODES = {
@@ -72,9 +71,6 @@ public class League1_TeleOp extends LinearOpMode {
             GamepadKeys.Button.DPAD_DOWN,
             GamepadKeys.Button.DPAD_RIGHT
     };
-
-    // NOTE /!\ temporary for testing
-    int[] flipPowers = {-1,-1,-1}; // x, y, turn
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -133,10 +129,9 @@ public class League1_TeleOp extends LinearOpMode {
                 case TURNING_90:
                     // falls through to field centric
                 case TURNING_FIELD_CENTRIC:
-                    // https://www.desmos.com/calculator/dsbme0par2
-                    double angleDiff = shortestDifference(currentHeading, targetHeading);
-                    turnPower = Math.signum(angleDiff) * Math.pow(Math.abs(angleDiff) / 180.0, HEADING_CORRECTION_POWER);
-                    // NOTE /!\ currently this is just linear
+                    // https://www.desmos.com/calculator/zdsmmtbnwf (updated)
+                    // flips difference so that it mimics turn stick directions
+                    turnPower = clamp(-shortestDifference(currentHeading, targetHeading) / 90.0);
             }
 
             // check for slowmode
@@ -152,21 +147,12 @@ public class League1_TeleOp extends LinearOpMode {
             drivePowerY = clamp(drivePowerY);
             turnPower = clamp(turnPower);
 
-            // NOTE /!\ for some reason all inputs were originally inverted when given to drive method?
-            //          not sure why yet, will test it to see if it's necessary to have:
-            if (gp1.wasJustPressed(GamepadKeys.Button.X)) flipPowers[0] = -flipPowers[0];
-            if (gp1.wasJustPressed(GamepadKeys.Button.Y)) flipPowers[1] = -flipPowers[1];
-            if (gp1.wasJustPressed(GamepadKeys.Button.A)) flipPowers[2] = -flipPowers[2];
-            drivePowerX *= flipPowers[0];
-            drivePowerY *= flipPowers[1];
-            turnPower *= flipPowers[2];
-
             drive.setDrivePowers(new PoseVelocity2d(
                     new Vector2d(
-                            drivePowerY,
-                            drivePowerX
+                            -drivePowerY,
+                            -drivePowerX
                     ),
-                    turnPower
+                    -turnPower
             ));
 
             // NOTE /!\ this doesn't work yet as we haven't set it up
@@ -180,7 +166,6 @@ public class League1_TeleOp extends LinearOpMode {
             telemetry.addData("turn power", turnPower);
             telemetry.addData("drive power X", drivePowerX);
             telemetry.addData("drive power Y", drivePowerY);
-            telemetry.addData("flip powers [x,y,turn(a)]", flipPowers);
 
             //telemetry.addData("x", drive.pose.position.x);
             //telemetry.addData("y", drive.pose.position.y);
