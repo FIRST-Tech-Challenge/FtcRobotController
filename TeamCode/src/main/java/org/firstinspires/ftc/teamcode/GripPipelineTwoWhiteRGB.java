@@ -32,9 +32,9 @@ class GripPipelineTwoWhiteRGB   extends OpenCvPipeline {
 	private Mat maskOutput = new Mat();
 	private ArrayList<Line> findLinesOutput = new ArrayList<Line>();
 
-	static {
-		System.loadLibrary(Core.NATIVE_LIBRARY_NAME);
-	}
+//	static {
+//		System.loadLibrary(Core.NATIVE_LIBRARY_NAME);
+//	}
 
 	/**
 	 * This is the primary method that runs the entire pipeline and updates the outputs.

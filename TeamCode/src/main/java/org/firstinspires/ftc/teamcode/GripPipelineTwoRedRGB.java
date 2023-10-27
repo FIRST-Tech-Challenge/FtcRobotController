@@ -31,14 +31,14 @@ public class GripPipelineTwoRedRGB {
 	private Mat maskOutput = new Mat();
 	private ArrayList<Line> findLinesOutput = new ArrayList<Line>();
 
-	static {
-		System.loadLibrary(Core.NATIVE_LIBRARY_NAME);
-	}
+//	static {
+//		System.loadLibrary(Core.NATIVE_LIBRARY_NAME);
+//	}
 
 	/**
 	 * This is the primary method that runs the entire pipeline and updates the outputs.
 	 */
-	public void process(Mat source0) {
+	public Mat processFrame(Mat source0) {
 		// Step CV_resize0:
 		Mat cvResizeSrc = source0;
 		Size cvResizeDsize = new Size(0, 0);
@@ -71,7 +71,7 @@ public class GripPipelineTwoRedRGB {
 		// Step Find_Lines0:
 		Mat findLinesInput = maskOutput;
 		findLines(findLinesInput, findLinesOutput);
-
+		return findLinesInput;
 	}
 
 	/**
