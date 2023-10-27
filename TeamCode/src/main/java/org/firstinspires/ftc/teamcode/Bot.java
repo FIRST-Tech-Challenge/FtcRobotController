@@ -4,14 +4,12 @@ import static com.qualcomm.robotcore.hardware.DcMotor.RunMode.RUN_USING_ENCODER;
 import static com.qualcomm.robotcore.hardware.DcMotor.RunMode.STOP_AND_RESET_ENCODER;
 import static org.firstinspires.ftc.teamcode.Bot.BotState.STORAGE_NOT_FULL;
 
-import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.DistanceSensor;
 
-import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.teamcode.autonomous.AprilTagsDetection;
 import org.firstinspires.ftc.teamcode.autonomous.AprilTagsPipeline;
@@ -52,10 +50,10 @@ public class Bot {
 
 
 
-    public BNO055IMU imu;
+
     public boolean fieldCentricRunMode = false;
 
-    private double imuOffset = 0;
+
     private double distanceFromBackdrop;
     private final double optimalDistanceFromBackdrop = 10;
     //arbitrary number for now
@@ -80,10 +78,8 @@ public class Bot {
         enableAutoBulkRead();
         //what is this
         try {
-            this.initializeImus();
             fieldCentricRunMode = false;
         } catch (Exception e) {
-            imu = null;
             fieldCentricRunMode = false;
 
         }
@@ -143,18 +139,6 @@ public class Bot {
     }
 
 
-    public void initializeImus() {
-        imu = opMode.hardwareMap.get(BNO055IMU.class, "imu");
-        final BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
-
-        parameters.mode = BNO055IMU.SensorMode.IMU;
-        parameters.angleUnit = BNO055IMU.AngleUnit.DEGREES;
-        parameters.accelUnit = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
-        parameters.loggingEnabled = false;
-
-        imu.initialize(parameters);
-        resetIMU();
-    }
 
     public void storageSlides(){
         slides.runTo(1);
@@ -283,21 +267,11 @@ public class Bot {
 
     }
 
-    public void setImuOffset(double offset) {
-        imuOffset += offset;
-    }
 
-    public void resetIMU() {
-        imuOffset += getIMU();
-    }
 
-    public double getIMU() {
-        double angle = (imu.getAngularOrientation().toAngleUnit(AngleUnit.DEGREES).firstAngle - imuOffset) % 360;
-        if (angle > 180) {
-            angle = angle - 360;
-        }
-        return angle;
-    }
+
+
+
 
     public void resetProfiler() {
         //slides.resetProfiler(); code in slides subsystem

@@ -11,7 +11,6 @@ import com.qualcomm.robotcore.hardware.Servo;
 public class Box {
     private final Servo wheelServo;
     private final Servo flapServo;
-    private final Servo angleServo;
     private int numPixelsDeposited;
     private final DigitalChannel breakbeamSensor;
     private boolean boxFull;
@@ -27,27 +26,20 @@ public class Box {
     public Box(OpMode opMode) {
         wheelServo = opMode.hardwareMap.servo.get("wheel servo");
         flapServo = opMode.hardwareMap.servo.get("flap servo");
-        angleServo = opMode.hardwareMap.servo.get("angle servo");
         breakbeamSensor = hardwareMap.get(DigitalChannel.class, "breakbeamSensor");
         breakbeamSensor.setMode(DigitalChannel.Mode.INPUT);
     }
 
     public void depositFirstPixel(){
-        //purely gravity, open the flap
-        angleServo.setPosition(anglePosition);
         flapServo.setPosition(flapOpen);
         runWheel(10);
         numPixelsDeposited = 1;
     }
 
     public void depositSecondPixel(){
-        angleServo.setPosition(anglePosition);
         flapServo.setPosition(flapOpen);
         runWheel(1);
         numPixelsDeposited = 2;
-    }
-    public void adjustAngle(double position){
-        angleServo.setPosition(position);
     }
 
 
@@ -61,7 +53,6 @@ public class Box {
     public void resetBox(){
         timesBroken= 0;
         numPixelsDeposited = 0;
-        angleServo.setPosition(0);
         flapServo.setPosition(flapClosed);
         wheelServo.setPosition(0);
     }

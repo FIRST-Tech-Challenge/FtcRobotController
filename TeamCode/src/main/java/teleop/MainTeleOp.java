@@ -137,14 +137,6 @@ public class MainTeleOp extends LinearOpMode {
                 if(gp2.wasJustPressed(GamepadKeys.Button.A)){
                     bot.outtakeBox();
                 }
-                if(gp2.getTrigger(GamepadKeys.Trigger.LEFT_TRIGGER)>0.1){
-                    double power = gp2.getTrigger(GamepadKeys.Trigger.LEFT_TRIGGER);
-                    while(gp2.getTrigger(GamepadKeys.Trigger.LEFT_TRIGGER)>0.1){
-                        bot.box.adjustAngle(power);
-                        power = gp2.getTrigger(GamepadKeys.Trigger.LEFT_TRIGGER);
-                    }
-                    bot.intake(0);
-                }
 
                 //intake
                 if(gp2.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER)>0.1){
