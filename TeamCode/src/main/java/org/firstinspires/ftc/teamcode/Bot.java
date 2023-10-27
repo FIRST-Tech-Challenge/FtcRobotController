@@ -10,7 +10,6 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.DistanceSensor;
-import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
@@ -49,8 +48,7 @@ public class Bot {
 
     public static DistanceSensor distanceSensor;
 
-    private final DcMotorEx FL, FR, BL, BR, susMotor, slidesMotor;
-    private final Servo droneServo, fourBarServo;
+    private final DcMotorEx FL, FR, BL, BR;
 
 
 
@@ -94,10 +92,7 @@ public class Bot {
         FR = opMode.hardwareMap.get(DcMotorEx.class, "FR");
         BL = opMode.hardwareMap.get(DcMotorEx.class, "BL");
         BR = opMode.hardwareMap.get(DcMotorEx.class, "BR");
-        droneServo= opMode.hardwareMap.get(Servo.class, "droneServo");;
-        fourBarServo= opMode.hardwareMap.get(Servo.class, "fourBarServo");
-        susMotor = opMode.hardwareMap.get(DcMotorEx.class, "susMotor");
-        slidesMotor = opMode.hardwareMap.get(DcMotorEx.class, "slidesMotor");
+
         distanceSensor = opMode.hardwareMap.get(DistanceSensor.class, "distanceSensor");
 
 

@@ -137,6 +137,14 @@ public class MainTeleOp extends LinearOpMode {
                 if(gp2.wasJustPressed(GamepadKeys.Button.A)){
                     bot.outtakeBox();
                 }
+                if(gp2.getTrigger(GamepadKeys.Trigger.LEFT_TRIGGER)>0.1){
+                    double power = gp2.getTrigger(GamepadKeys.Trigger.LEFT_TRIGGER);
+                    while(gp2.getTrigger(GamepadKeys.Trigger.LEFT_TRIGGER)>0.1){
+                        bot.box.adjustAngle(power);
+                        power = gp2.getTrigger(GamepadKeys.Trigger.LEFT_TRIGGER);
+                    }
+                    bot.intake(0);
+                }
 
                 //intake
                 if(gp2.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER)>0.1){
@@ -173,7 +181,7 @@ public class MainTeleOp extends LinearOpMode {
         if (gp1.wasJustReleased(GamepadKeys.Button.LEFT_STICK_BUTTON)) {
             bot.resetIMU();
         }
-        driveSpeed *= 1 - 0.5 * gp1.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER);
+     //   driveSpeed *= 1 - 0.5 * gp1.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER);
         driveSpeed = Math.max(0, driveSpeed);
 
         Vector2d driveVector = new Vector2d(gp1.getLeftX(), -gp1.getLeftY()),
