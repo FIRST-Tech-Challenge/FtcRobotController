@@ -22,15 +22,15 @@ import org.firstinspires.ftc.teamcode.roadrunner.MecanumDrive
 class BotShared(opMode: OpMode) {
 
     // Get stuff from the hardware map (HardwareMap.get() can be HardwareMap[] in kt)
-    @JvmField var imu: IMU =                        opMode.hardwareMap[IMU::class.java,         "imu"]
+    @JvmField var imu: IMU =                            opMode.hardwareMap[IMU::class.java,         "imu"]
     @JvmField var camera: WebcamName? =         try {   opMode.hardwareMap[WebcamName::class.java,  "Webcam 1"]  } catch (_: Exception) { null }
-    @JvmField var motorLeftFront: DcMotorEx =           opMode.hardwareMap[DcMotorEx::class.java,   "mlf"]
-    @JvmField var motorRightFront: DcMotorEx =          opMode.hardwareMap[DcMotorEx::class.java,   "mrf"]
-    @JvmField var motorLeftBack: DcMotorEx =            opMode.hardwareMap[DcMotorEx::class.java,   "mlb"]
-    @JvmField var motorRightBack: DcMotorEx =           opMode.hardwareMap[DcMotorEx::class.java,   "mrb"]
-    @JvmField var motorSlide: DcMotorEx? =      try {   opMode.hardwareMap[DcMotorEx::class.java,   "ms"] } catch (_: Exception) { null }
-    @JvmField var motorIntakeSpin: DcMotorEx =          opMode.hardwareMap[DcMotorEx::class.java,   "mis"]
-    @JvmField var motorIntakeLift: DcMotorEx? = try {   opMode.hardwareMap[DcMotorEx::class.java,   "mil"] } catch (_: Exception) { null }
+    @JvmField var motorLeftFront: DcMotorEx =           opMode.hardwareMap[DcMotorEx::class.java,   "fl"]
+    @JvmField var motorRightFront: DcMotorEx =          opMode.hardwareMap[DcMotorEx::class.java,   "fr"]
+    @JvmField var motorLeftBack: DcMotorEx =            opMode.hardwareMap[DcMotorEx::class.java,   "bl"]
+    @JvmField var motorRightBack: DcMotorEx =           opMode.hardwareMap[DcMotorEx::class.java,   "br"]
+    @JvmField var motorSlide: DcMotorEx? =      try {   opMode.hardwareMap[DcMotorEx::class.java,   "lsd"] } catch (_: Exception) { null }
+    @JvmField var motorIntakeSpin: DcMotorEx =          opMode.hardwareMap[DcMotorEx::class.java,   "inspin"]
+    @JvmField var motorIntakeLift: DcMotorEx? = try {   opMode.hardwareMap[DcMotorEx::class.java,   "inlift"] } catch (_: Exception) { null }
 
     @JvmField var drive: MecanumDrive? = null
 
@@ -40,7 +40,7 @@ class BotShared(opMode: OpMode) {
     init {
         // IMU orientation/calibration
         val logo = LogoFacingDirection.UP
-        val usb = UsbFacingDirection.FORWARD
+        val usb = UsbFacingDirection.RIGHT
         val orientationOnRobot = RevHubOrientationOnRobot(logo, usb)
         imu.initialize(IMU.Parameters(orientationOnRobot))
         imu.resetYaw()
@@ -50,6 +50,10 @@ class BotShared(opMode: OpMode) {
         motorLeftBack.  direction = REVERSE
         motorRightFront.direction = FORWARD
         motorRightBack. direction = FORWARD
+        motorLeftFront.zeroPowerBehavior = DcMotor.ZeroPowerBehavior.BRAKE
+        motorLeftBack.zeroPowerBehavior = DcMotor.ZeroPowerBehavior.BRAKE
+        motorRightFront.zeroPowerBehavior = DcMotor.ZeroPowerBehavior.BRAKE
+        motorRightBack.zeroPowerBehavior = DcMotor.ZeroPowerBehavior.BRAKE
     }
     /**
      * Should be called every update.

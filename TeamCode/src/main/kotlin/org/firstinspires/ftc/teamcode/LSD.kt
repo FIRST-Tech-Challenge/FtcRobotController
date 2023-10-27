@@ -36,6 +36,7 @@ class LSD(private val opMode: OpMode, private val slide: DcMotorEx) {
     init {
         slide.mode = RUN_TO_POSITION
         slide.zeroPowerBehavior = DcMotor.ZeroPowerBehavior.BRAKE
+        slide.power = 0.0
         slide.power = 1.0
 //        slide.targetPositionTolerance = 1
         slide.setPIDFCoefficients(RUN_TO_POSITION, coefficients)

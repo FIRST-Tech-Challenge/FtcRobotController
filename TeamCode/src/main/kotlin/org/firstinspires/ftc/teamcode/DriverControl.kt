@@ -46,6 +46,8 @@ open class DriverControlBase(private val initialPose: Pose2d) : OpMode() {
 
     /** true for lowered, false for raised */
     private var lastIntakeStatus = false
+    private var hasToggledManual = false
+    private var useManual = false
 
     override fun loop() {
 
@@ -58,18 +60,18 @@ open class DriverControlBase(private val initialPose: Pose2d) : OpMode() {
         val gyroYaw = shared.imu.robotYawPitchRollAngles.getYaw(AngleUnit.RADIANS)
 
         // +X = forward
-        // +Y = right
+        // +Y = left
         val inputVector = Vector2d(
             // up
             -gamepad1.left_stick_y.toDouble(),
-            // this SHOULDN'T be left, but there is no cohesion between coordinate systems here, so it's left.
-            // TODO: +180 degrees and swap it or something
             -gamepad1.left_stick_x.toDouble(),
         )
 
         // angle of the stick
         val inputTheta = atan2(inputVector.y, inputVector.x)
-        val driveTheta = inputTheta - gyroYaw
+        // evaluated theta
+        val driveTheta = inputTheta - gyroYaw // + PI
+        // magnitude of inputVector clamped to [0, 1]
         val inputPower = clamp(sqrt(
             (inputVector.x * inputVector.x) +
             (inputVector.y * inputVector.y)
@@ -78,18 +80,28 @@ open class DriverControlBase(private val initialPose: Pose2d) : OpMode() {
         val driveRelativeX = cos(driveTheta) * inputPower
         val driveRelativeY = sin(driveTheta) * inputPower
 
+        if (gamepad1.x) {
+            if (!hasToggledManual) {
+                useManual = !useManual
+                hasToggledManual = true
+            }
+        } else hasToggledManual = false
+
         // Most values are [-1.0, 1.0]
 
         val control = object {
 //            val movement = outputVector
             val rotation = -gamepad1.right_stick_x.toDouble()
+            val useManual = !gamepad1.x
             val intake = gamepad1.a
         }
 
+        // +X = forward, +Y = left
         drive.setDrivePowers(PoseVelocity2d(
-            Vector2d(
+            if (useManual) inputVector
+            else Vector2d(
                 driveRelativeX,
-                driveRelativeY,
+                driveRelativeY
             ),
             control.rotation
         ))
@@ -100,6 +112,7 @@ open class DriverControlBase(private val initialPose: Pose2d) : OpMode() {
 
         telemetry.addLine("Left Stick X: " + gamepad1.left_stick_x)
         telemetry.addLine("Left Stick Y: " + gamepad1.left_stick_y)
+        telemetry.addLine("Manual Controls: " + (if (useManual) "EN" else "DIS") + "ABLED")
         telemetry.update()
 
         // Intake controls
