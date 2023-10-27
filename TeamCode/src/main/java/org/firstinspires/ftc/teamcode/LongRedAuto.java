@@ -6,7 +6,10 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.vision.VisionPortal;
+import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
 import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
+
+import java.util.List;
 
 @Autonomous
 public class LongRedAuto extends LinearOpMode {
@@ -16,8 +19,8 @@ public class LongRedAuto extends LinearOpMode {
 
         int idNumber = 0;
 
-       Robot robot = new Robot(hardwareMap, this, telemetry);
-       robot.setUpDrivetrainMotors();
+        Robot robot = new Robot(hardwareMap, this, telemetry);
+        robot.setUpDrivetrainMotors();
 
         robot.initVisionProcessing();
         VisionPortal visionPortal = robot.getVisionPortal();
@@ -32,7 +35,8 @@ public class LongRedAuto extends LinearOpMode {
 
         while (opModeIsActive()) {
 
-            //detect marker position
+            /*
+            //detect marker position FIX RESOLUTION IN DETECTOR BOXES
             position = markerProcessor.getPosition();
 
             while (position == MarkerDetector.MARKER_POSITION.UNDETECTED) {
@@ -51,7 +55,7 @@ public class LongRedAuto extends LinearOpMode {
             robot.moveToMarker();
 
             //move to board from spike marks
-            /*
+
             robot.straightBlocking(15, false);
             robot.waitFor(0.1);
             robot.setHeading(0);
@@ -76,7 +80,6 @@ public class LongRedAuto extends LinearOpMode {
             robot.aprilTagFnaggling(idNumber, 300, 0);
             */
 
-            break;
             /*while (opModeIsActive() && !isDoneWithAprilTagX) {
 
 
@@ -118,26 +121,73 @@ public class LongRedAuto extends LinearOpMode {
         robot.mecanumBlocking(25, true);
         robot.waitFor(0.1);*/
 
-        /*while (opModeIsActive()) {
-            List<AprilTagDetection> myAprilTagDetections = aprilTagProcessor.getDetections();
-            telemetry.addLine(String.valueOf(myAprilTagDetections.size()));
-            telemetry.update();
+            int desiredAprTagId = 5; //test 5
+            boolean tagVisible = false;
+            boolean aligned = false;
+            List<AprilTagDetection> myAprilTagDetections;
 
-            // Cycle through through the list and process each AprilTag
-            for (AprilTagDetection detection : myAprilTagDetections) {
-                if (detection.metadata != null) {  // This check for non-null Metadata is not needed for reading only ID code.
-                    // Now take action based on this tag's ID code, or store info for later action.
-                    telemetry.addData("ID", "%d (%s)", detection.id, detection.metadata.name);
-                    telemetry.addLine(String.format("\n==== (ID %d) %s", detection.id, detection.metadata.name));
-                    telemetry.addLine(String.format("PRY %6.1f %6.1f %6.1f  (deg)", detection.ftcPose.pitch, detection.ftcPose.roll, detection.ftcPose.yaw));
-                    telemetry.addLine(String.format("RBE %6.1f %6.1f %6.1f  (inch, deg, deg)", detection.ftcPose.range, detection.ftcPose.bearing, detection.ftcPose.elevation));
+            while (opModeIsActive()) {
+
+                while (!aligned) {
+
+                    myAprilTagDetections = aprilTagProcessor.getDetections();
+
+                    // Cycle through through the list and process each AprilTag
+
+                    for (AprilTagDetection detection : myAprilTagDetections) {
+                        if (detection.metadata != null) {  // This check for non-null Metadata is not needed for reading only ID code.
+                            // Now store info for later action.
+                            telemetry.addLine(String.valueOf(myAprilTagDetections.size()));
+                            telemetry.addData("ID", "%d (%s)", detection.id, detection.metadata.name);
+                            telemetry.addLine(String.format("\n==== (ID %d) %s", detection.id, detection.metadata.name));
+                            telemetry.addLine(String.format("PRY %6.1f %6.1f %6.1f  (deg)", detection.ftcPose.pitch, detection.ftcPose.roll, detection.ftcPose.yaw));
+                            telemetry.addLine(String.format("RBE %6.1f %6.1f %6.1f  (inch, deg, deg)", detection.ftcPose.range, detection.ftcPose.bearing, detection.ftcPose.elevation));
+
+                            if (detection.id == desiredAprTagId) {
+                                Log.d("vision", "runOpMode: tag visible");
+                                tagVisible = true;
+
+                                if (detection.ftcPose.bearing > 1) {
+                                    Log.d("vision", "runOpMode: bearing > 1, move left");
+                                    robot.mecanumBlocking(1, true);
+                                    sleep(100);
+                                } else if (detection.ftcPose.bearing < -1) {
+                                    Log.d("vision", "runOpMode: bearing < -1, move right");
+                                    robot.mecanumBlocking(1, false);
+                                    sleep(100);
+                                } else {
+                                    Log.d("vision", "runOpMode: aligned");
+                                    aligned = true;
+                                }
+
+                                break;
+                            }
+                            telemetry.update();
+                        }
+
+                        if (!tagVisible) {
+                            Log.d("vision", "runOpMode: tag not visible, move back");
+                            robot.straightBlocking(1, true);
+                            sleep(100);
+                        }
+                    }
                 }
-                telemetry.update();
+
+                sleep(100);
+
+                myAprilTagDetections = aprilTagProcessor.getDetections();
+                for (AprilTagDetection detection : myAprilTagDetections) {
+                    if (detection.metadata != null) {  // This check for non-null Metadata is not needed for reading only ID code.
+                        // Now store info for later action.
+                        if (detection.id == desiredAprTagId) {
+                            Log.d("vision", "runOpMode: bearing is " + detection.ftcPose.bearing);
+                        }
+                    }
+                }
             }
-        }*/
-
-
         }
+    }
+}
 
 
 
@@ -209,6 +259,3 @@ public class LongRedAuto extends LinearOpMode {
         robot.mecanumBlocking(25, true);
         robot.waitFor(0.1);
 */
-
-    }
-}
