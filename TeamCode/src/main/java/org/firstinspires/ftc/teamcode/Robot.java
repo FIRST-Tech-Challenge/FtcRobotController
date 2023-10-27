@@ -13,7 +13,6 @@ public class Robot {
         driveTrain = new DriveTrain(hwMap);
         intake = new Intake(hwMap);
         outtake = new Outtake(hwMap);
-
     }
 
 }
