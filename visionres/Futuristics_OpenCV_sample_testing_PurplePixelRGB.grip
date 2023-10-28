@@ -69,19 +69,19 @@
     <grip:Step name="Filter Contours">
       <grip:Input step="5" socket="0"/>
       <grip:Input step="5" socket="1">
-        <value>0</value>
+        <value>0.0</value>
       </grip:Input>
       <grip:Input step="5" socket="2">
-        <value>0</value>
+        <value>0.0</value>
       </grip:Input>
       <grip:Input step="5" socket="3">
-        <value>0</value>
+        <value>0.0</value>
       </grip:Input>
       <grip:Input step="5" socket="4">
-        <value>1000</value>
+        <value>1000.0</value>
       </grip:Input>
       <grip:Input step="5" socket="5">
-        <value>0</value>
+        <value>0.0</value>
       </grip:Input>
       <grip:Input step="5" socket="6">
         <value>20.0</value>
@@ -93,16 +93,16 @@
         </value>
       </grip:Input>
       <grip:Input step="5" socket="8">
-        <value>1000000</value>
+        <value>1000000.0</value>
       </grip:Input>
       <grip:Input step="5" socket="9">
-        <value>0</value>
+        <value>0.0</value>
       </grip:Input>
       <grip:Input step="5" socket="10">
-        <value>0</value>
+        <value>0.0</value>
       </grip:Input>
       <grip:Input step="5" socket="11">
-        <value>1000</value>
+        <value>1000.0</value>
       </grip:Input>
       <grip:Output step="5" socket="0" previewed="false"/>
     </grip:Step>
@@ -113,28 +113,28 @@
       <grip:Input step="1" socket="0"/>
     </grip:Connection>
     <grip:Connection>
-      <grip:Output step="2" socket="0" previewed="true"/>
-      <grip:Input step="3" socket="1"/>
+      <grip:Output source="0" socket="0" previewed="false"/>
+      <grip:Input step="0" socket="0"/>
     </grip:Connection>
     <grip:Connection>
       <grip:Output step="2" socket="0" previewed="true"/>
       <grip:Input step="4" socket="0"/>
     </grip:Connection>
     <grip:Connection>
-      <grip:Output step="1" socket="0" previewed="true"/>
-      <grip:Input step="2" socket="0"/>
+      <grip:Output step="2" socket="0" previewed="true"/>
+      <grip:Input step="3" socket="1"/>
     </grip:Connection>
     <grip:Connection>
       <grip:Output step="4" socket="0" previewed="true"/>
       <grip:Input step="5" socket="0"/>
     </grip:Connection>
     <grip:Connection>
-      <grip:Output source="0" socket="0" previewed="false"/>
-      <grip:Input step="0" socket="0"/>
-    </grip:Connection>
-    <grip:Connection>
       <grip:Output step="0" socket="0" previewed="true"/>
       <grip:Input step="3" socket="0"/>
+    </grip:Connection>
+    <grip:Connection>
+      <grip:Output step="1" socket="0" previewed="true"/>
+      <grip:Input step="2" socket="0"/>
     </grip:Connection>
   </connections>
   <settings>
@@ -148,10 +148,10 @@
   </settings>
   <codeGenerationSettings>
     <language>Java</language>
-    <className>GripPipeline</className>
+    <className>GripPipelinePurplePixelRGB</className>
     <implementWpilibPipeline>false</implementWpilibPipeline>
-    <saveDir>C:\Users\npodr\GRIP</saveDir>
-    <packageName></packageName>
+    <saveDir>C:\Users\npodr\StudioProjects\CenterStage_FtcRobotController\TeamCode\src\main\java\org\firstinspires\ftc\teamcode</saveDir>
+    <packageName>org.firstinspires.ftc.teamcode</packageName>
     <moduleName>grip</moduleName>
   </codeGenerationSettings>
 </grip:Pipeline>
