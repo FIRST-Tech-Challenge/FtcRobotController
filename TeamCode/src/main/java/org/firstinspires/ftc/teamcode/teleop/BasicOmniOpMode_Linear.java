@@ -116,13 +116,23 @@ public class BasicOmniOpMode_Linear extends LinearOpMode {
              */
 
             position += gamepad2.left_stick_y/200;
-            arm.setPower(gamepad2.right_stick_y * 1/4);
-            // servo.setPosition(position);
+            if(gamepad2.right_trigger > 0.5){
+                arm.setTargetPosition(0);
+                arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                arm.setVelocity(200);
+                servo.setPosition(0.3);
+            } else {
+                arm.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+                // arm.setVelocity(200*gamepad2.right_stick_y);
+                arm.setPower(gamepad2.right_stick_y * 1/4);
+                servo.setPosition(position);
+            }
             intake.setPower(-gamepad2.right_trigger);
             // 0.3 is flat, 0.67 is 90 degrees.
             telemetry.addData("servo target position: ", position);
             telemetry.addData("arm setpoint: ", armposition);
             telemetry.addData("Arm position: ", arm.getCurrentPosition()/Constants.ArmCountsPerDegree);
+            telemetry.addData("PIDF coefficients: ", arm.getPIDFCoefficients(DcMotor.RunMode.RUN_TO_POSITION));
             servo.setPosition(position);
             telemetry.update();
 
