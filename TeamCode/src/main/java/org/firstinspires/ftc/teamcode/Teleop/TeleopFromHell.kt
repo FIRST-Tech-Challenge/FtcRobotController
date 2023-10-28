@@ -14,6 +14,9 @@ import org.firstinspires.ftc.teamcode.Variables.high
 import org.firstinspires.ftc.teamcode.Variables.lMax
 import org.firstinspires.ftc.teamcode.Variables.lMin
 import org.firstinspires.ftc.teamcode.Variables.lPower
+import org.firstinspires.ftc.teamcode.Variables.lPowerSlow
+import org.firstinspires.ftc.teamcode.Variables.lSpeedMax
+import org.firstinspires.ftc.teamcode.Variables.lSpeedMin
 import org.firstinspires.ftc.teamcode.Variables.length
 import org.firstinspires.ftc.teamcode.Variables.low
 import org.firstinspires.ftc.teamcode.Variables.mid
@@ -28,6 +31,9 @@ import org.firstinspires.ftc.teamcode.Variables.rMin
 import org.firstinspires.ftc.teamcode.Variables.rMotorL
 import org.firstinspires.ftc.teamcode.Variables.rMotorR
 import org.firstinspires.ftc.teamcode.Variables.rPower
+import org.firstinspires.ftc.teamcode.Variables.rPowerSlow
+import org.firstinspires.ftc.teamcode.Variables.rSpeedMax
+import org.firstinspires.ftc.teamcode.Variables.rSpeedMin
 import org.firstinspires.ftc.teamcode.Variables.slideGate
 import org.firstinspires.ftc.teamcode.Variables.slideRotMax
 import org.firstinspires.ftc.teamcode.Variables.slideRotMin
@@ -160,29 +166,46 @@ class TeleopFromHell: DriveMethods() {
             //rack & pinion control
             if (gamepad2.right_bumper) {
                 if (upOrDown) {
-                    if (rMotorL?.currentPosition!! >= lMax) {
-                        telemetry.addLine("LUp")
-                        rMotorL!!.power = lPower
+                    if (rMotorL?.currentPosition!! <= lMax) {
+                        if (rMotorL?.currentPosition!! in lSpeedMin..lSpeedMax) {
+                            telemetry.addLine("LUp")
+                            rMotorL!!.power = lPower
+                        } else {
+                            rMotorL!!.power = lPowerSlow
+                        }
                     }
                 } else {
                     if (rMotorL?.currentPosition!! >= lMin) {
-                        telemetry.addLine("LDown")
-                        rMotorL!!.power = -lPower
+                        if (rMotorL?.currentPosition!! in lSpeedMin..lSpeedMax) {
+                            telemetry.addLine("LUp")
+                            rMotorL!!.power = -lPower
+                        } else {
+                            rMotorL!!.power = -lPowerSlow
+                        }
                     }
                 }
             } else {
                 rMotorL!!.power = 0.0
             }
             if (gamepad2.right_trigger >= 0.5) {
+               // telemetry.addLine("edrgthgj")
                 if (upOrDown) {
-                    if (rMotorR?.currentPosition!! <= rMax) {
-                        telemetry.addLine("RUp")
-                        rMotorR!!.power = rPower
+                    if (rMotorR?.currentPosition!! >= rMax) {
+                        if (rMotorR?.currentPosition!! in rSpeedMax..rSpeedMin) {
+                            rMotorR!!.power = rPower
+                        } else {
+                            rMotorR!!.power = rPowerSlow
+                        }
+                        telemetry.addLine("RMAX")
                     }
                 } else {
                     if (rMotorR?.currentPosition!! <= rMin) {
-                        telemetry.addLine("RDown")
-                        rMotorR!!.power = -rPower
+                        if (rMotorR?.currentPosition!! in rSpeedMax..rSpeedMin) {
+                            rMotorR!!.power = -rPower
+                        } else {
+                            rMotorR!!.power = -rPowerSlow
+                        }
+                        telemetry.addLine("RMIN")
                     }
                 }
             } else {
@@ -237,6 +260,8 @@ class TeleopFromHell: DriveMethods() {
                 sleep(200)
             }
             telemetry.addData("Claw Clamped: ", clawClamp)
+            telemetry.addData("Right rack: ", rMotorR?.currentPosition)
+            telemetry.addData("Left rack: ", rMotorL?.currentPosition)
             telemetry.update()
         }
     }

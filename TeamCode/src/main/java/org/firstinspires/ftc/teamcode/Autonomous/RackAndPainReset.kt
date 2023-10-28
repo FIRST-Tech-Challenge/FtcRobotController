@@ -45,6 +45,8 @@ class RackAndPainReset: DriveMethods() {
                 telemetry.addLine("R Sensor Detected")
                 endR=true;
                 ending = true;
+                rMotorR!!.mode = DcMotor.RunMode.STOP_AND_RESET_ENCODER
+                rMotorR!!.mode = DcMotor.RunMode.RUN_USING_ENCODER;
             }else if(!endR){
             rMotorR!!.setPower(-0.4*rightRack)
             }
@@ -53,6 +55,8 @@ class RackAndPainReset: DriveMethods() {
                 telemetry.addLine("L Sensor Detected")
                 endL=true;
                 ending = true;
+                rMotorL!!.mode = DcMotor.RunMode.STOP_AND_RESET_ENCODER
+                rMotorL!!.mode = DcMotor.RunMode.RUN_USING_ENCODER;
             }else if(!endL){
             rMotorL!!.setPower(-0.4*leftRack)
             }
