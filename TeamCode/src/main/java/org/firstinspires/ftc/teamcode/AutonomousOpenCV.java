@@ -92,7 +92,7 @@ public class AutonomousOpenCV extends LinearOpMode {
         {
             PushPixelSide(false);
             strafeCorrection = isNear ? -1.5 : -1.5;
-            aimingDistance = isRed ? 12 : 0;
+            aimingDistance = isRed ? 12.5 : -3;
         }
         else if(circleDetection.GetBallPosition() == CircleDetection.BallPosition.CENTER)
         {
@@ -104,12 +104,7 @@ public class AutonomousOpenCV extends LinearOpMode {
         {
             PushPixelSide(true);
             strafeCorrection = isNear ? -1.5 : -1.5;
-            if (centerCross) {
-                aimingDistance = isRed ? 0 : 12;
-            }
-            else{
-                aimingDistance = isRed ? 0 : 12;
-            }
+            aimingDistance = isRed ? -3 : 12.5;
         }
         if(!isNear)
             CrossField();
@@ -174,7 +169,7 @@ public class AutonomousOpenCV extends LinearOpMode {
             df.DriveStraight(DRIVE_SPEED, isRed ? -26 : 14, deliveryHeading, false);
         }
         else{
-            df.DriveStraight(DRIVE_SPEED, isRed ? 16 : -35, deliveryHeading, false);
+            df.DriveStraight(DRIVE_SPEED, isRed ? 18 : -37, deliveryHeading, false);
         }
         df.DriveStraight(DRIVE_SPEED, 18, deliveryHeading, true);
     }
