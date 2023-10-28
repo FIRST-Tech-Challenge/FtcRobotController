@@ -108,7 +108,7 @@ public class AutoRedFarMiddle extends RobotLinearOpMode
                 encoderDrive(0.5, 9, MOVEMENT_DIRECTION.REVERSE);
                 sleep(5000);
                 encoderDrive(0.5, 50, MOVEMENT_DIRECTION.STRAFE_RIGHT);
-                encoderDrive(0.5, 5, MOVEMENT_DIRECTION.STRAFE_LEFT);
+                encoderDrive(0.5, 15, MOVEMENT_DIRECTION.STRAFE_LEFT);
                 encoderDrive(0.5, 40, MOVEMENT_DIRECTION.FORWARD);
                 encoderDrive(0.5, 5, MOVEMENT_DIRECTION.STRAFE_RIGHT);
             }
@@ -123,7 +123,7 @@ public class AutoRedFarMiddle extends RobotLinearOpMode
                 encoderDrive(0.5, 16, MOVEMENT_DIRECTION.REVERSE);
                 sleep(5000);
                 encoderDrive(0.5, 50, MOVEMENT_DIRECTION.STRAFE_RIGHT);
-                encoderDrive(0.5, 5, MOVEMENT_DIRECTION.STRAFE_LEFT);
+                encoderDrive(0.5, 15, MOVEMENT_DIRECTION.STRAFE_LEFT);
                 encoderDrive(0.5, 40, MOVEMENT_DIRECTION.FORWARD);
                 encoderDrive(0.5, 5, MOVEMENT_DIRECTION.STRAFE_RIGHT);
             }
@@ -137,7 +137,7 @@ public class AutoRedFarMiddle extends RobotLinearOpMode
                 encoderDrive(0.5, 21, MOVEMENT_DIRECTION.REVERSE);
                 sleep(5000);
                 encoderDrive(0.5, 50, MOVEMENT_DIRECTION.STRAFE_RIGHT);
-                encoderDrive(0.5, 5, MOVEMENT_DIRECTION.STRAFE_LEFT);
+                encoderDrive(0.5, 15, MOVEMENT_DIRECTION.STRAFE_LEFT);
                 encoderDrive(0.5, 40, MOVEMENT_DIRECTION.FORWARD);
                 encoderDrive(0.5, 5, MOVEMENT_DIRECTION.STRAFE_RIGHT);
             }
