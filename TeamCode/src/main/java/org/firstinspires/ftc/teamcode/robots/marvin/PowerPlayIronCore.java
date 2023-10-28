@@ -284,10 +284,10 @@ public class PowerPlayIronCore extends OpMode {
         double r = Math.hypot(strafe, forward);
         double robotAngle = Math.atan2(forward, strafe) - Math.PI / 4;
         double rightX = rotation;
-        final double v1 = r * Math.cos(robotAngle) - rightX;
-        final double v2 = r * Math.sin(robotAngle) + rightX;
-        final double v3 = r * Math.sin(robotAngle) - rightX;
-        final double v4 = r * Math.cos(robotAngle) + rightX;
+        final double v1 = r * Math.cos(robotAngle) * 1.7 - rightX;
+        final double v2 = r * Math.sin(robotAngle) * 1.7 + rightX;
+        final double v3 = r * Math.sin(robotAngle) * 1.7 - rightX;
+        final double v4 = r * Math.cos(robotAngle) * 1.7 + rightX;
         motorFrontLeft.setPower(v1);
         motorFrontRight.setPower(v2);
         motorBackLeft.setPower(v3);
