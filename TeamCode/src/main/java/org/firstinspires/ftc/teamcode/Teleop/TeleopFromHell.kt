@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.Teleop
 
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp
 import com.qualcomm.robotcore.hardware.DcMotor
+import com.qualcomm.robotcore.hardware.Servo
 import org.firstinspires.ftc.teamcode.DriveMethods
 import org.firstinspires.ftc.teamcode.Variables
 import org.firstinspires.ftc.teamcode.Variables.bottom
@@ -32,6 +33,7 @@ import org.firstinspires.ftc.teamcode.Variables.slideRotMax
 import org.firstinspires.ftc.teamcode.Variables.slideRotMin
 import org.firstinspires.ftc.teamcode.Variables.slideRotationMotor
 import org.firstinspires.ftc.teamcode.Variables.speed
+import org.firstinspires.ftc.teamcode.Variables.t
 import kotlin.math.abs
 import kotlin.math.exp
 
@@ -104,6 +106,7 @@ class TeleopFromHell: DriveMethods() {
         var slideDeg = 0.0
         var angleFromSlideToClaw = 0.0
         var slideRottarget = 25.0
+        var clawClamp = false
         while (opModeIsActive()) {
             //set gamepad inputs
             leftY = (-gamepad1.left_stick_y).toDouble()
@@ -216,6 +219,24 @@ class TeleopFromHell: DriveMethods() {
          //   slideRotationMotor?.power = -(slideRotPos - abs(slideRottarget))/1000
           //  telemetry.addData("pos", slideRotationMotor!!.currentPosition)
          //   telemetry.addData("Tpos", slideRottarget)
+            telemetry.update()
+
+
+//            All Stuff for Temp Passive intake claw
+
+            var passiveServo = hardwareMap.get(Servo::class.java, "passiveServo")
+            if(gamepad2.a) {
+                if (clawClamp) {
+                    clawClamp = !clawClamp
+                    passiveServo.position = 0.72;
+                }
+                else {
+                    clawClamp = !clawClamp
+                    passiveServo.position = .5
+                }
+                sleep(200)
+            }
+            telemetry.addData("Claw Clamped: ", clawClamp)
             telemetry.update()
         }
     }
