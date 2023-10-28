@@ -11,7 +11,7 @@ import org.firstinspires.ftc.teamcode.Components.RFModules.System.RFLogger;
  * Class to contain all Arm functions
  */
 public class Arm extends RFServo {
-    private final double LOWER_LIMIT = 0.0, UPPER_LIMIT = 1.0;
+    private final double LOWER_LIMIT = 0.28, UPPER_LIMIT = 0.98;
     private double lastTime = 0, FLIP_TIME = 0.4;
 
     /**
