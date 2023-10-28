@@ -25,14 +25,14 @@ public class OpenCVExampleOpMode extends OpMode {
     static final int STREAM_WIDTH = 1280; // modify for your camera
     static final int STREAM_HEIGHT = 960; // modify for your camera
     OpenCvWebcam webcam;
-    SamplePipeline pipeline;
+    GripPipelineTwoBlueRGB pipeline;
     @Override
     public void init() {
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
         WebcamName webcamName = null;
         webcamName = hardwareMap.get(WebcamName.class, "TinyCam"); // put your camera's name here
         webcam = OpenCvCameraFactory.getInstance().createWebcam(webcamName, cameraMonitorViewId);
-        pipeline = new SamplePipeline();
+        pipeline = new GripPipelineTwoBlueRGB();
         webcam.setPipeline(pipeline);
         webcam.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener()
         {
@@ -53,7 +53,7 @@ public class OpenCVExampleOpMode extends OpMode {
 
     @Override
     public void loop() {
-        telemetry.addData("Image Analysis:",pipeline.getRectA_Analysis());
+       // telemetry.addData("Image Analysis:",pipeline.getRectA_Analysis());
         //telemetry.addData("working?","");
         telemetry.update();
     }
