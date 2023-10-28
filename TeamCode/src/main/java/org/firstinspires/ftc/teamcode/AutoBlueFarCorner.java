@@ -22,8 +22,6 @@
 package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.openftc.easyopencv.OpenCvCamera;
@@ -36,12 +34,12 @@ import org.openftc.easyopencv.OpenCvWebcam;
  * and then snapshot that value for later use when the START
  * command is issued. The pipeline is re-used from SkystoneDeterminationExample
  */
-@Autonomous(name = "AutoRedFar", group = "linear autoMode")
-public class AutoRedFar extends RobotLinearOpMode
+@Autonomous(name = "AutoBlueFarCorner", group = "linear autoMode")
+public class AutoBlueFarCorner extends RobotLinearOpMode
 {
     OpenCvWebcam webcam;
-    RedPropDetector.SkystoneDeterminationPipeline pipeline;
-    RedPropDetector.SkystoneDeterminationPipeline.SkystonePosition snapshotAnalysis = RedPropDetector.SkystoneDeterminationPipeline.SkystonePosition.LEFT; // default
+    BluePropDetector.SkystoneDeterminationPipeline pipeline;
+    BluePropDetector.SkystoneDeterminationPipeline.SkystonePosition snapshotAnalysis = BluePropDetector.SkystoneDeterminationPipeline.SkystonePosition.LEFT; // default
 
     @Override
     public void runOpMode()
@@ -55,7 +53,7 @@ public class AutoRedFar extends RobotLinearOpMode
 
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
         webcam = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "Webcam 1"), cameraMonitorViewId);
-        pipeline = new RedPropDetector.SkystoneDeterminationPipeline();
+        pipeline = new BluePropDetector.SkystoneDeterminationPipeline();
         webcam.setPipeline(pipeline);
         declareHardwareProperties();
 
@@ -103,31 +101,39 @@ public class AutoRedFar extends RobotLinearOpMode
             case LEFT:
             {
                 /* Your autonomous code */
-                encoderDrive(0.5, 20, MOVEMENT_DIRECTION.FORWARD);
+                encoderDrive(0.5, 23, MOVEMENT_DIRECTION.FORWARD);
                 encoderDrive(0.5, 10, MOVEMENT_DIRECTION.STRAFE_LEFT);
-                encoderDrive(0.5, 20, MOVEMENT_DIRECTION.STRAFE_RIGHT);
+                encoderDrive(0.5, 3, MOVEMENT_DIRECTION.REVERSE);
+                encoderDrive(0.5, 12, MOVEMENT_DIRECTION.STRAFE_RIGHT);
                 encoderDrive(0.5, 16, MOVEMENT_DIRECTION.REVERSE);
-                encoderDrive(0.5, 55, MOVEMENT_DIRECTION.STRAFE_RIGHT);
-                encoderDrive(0.5, 5, MOVEMENT_DIRECTION.REVERSE);
+                sleep(5000);
+                encoderDrive(0.5, 65, MOVEMENT_DIRECTION.STRAFE_LEFT);
+                encoderDrive(0.5, 5, MOVEMENT_DIRECTION.STRAFE_RIGHT);
             }
 
             case RIGHT:
             {
                 /* Your autonomous code */
-                encoderDrive(0.5, 20, MOVEMENT_DIRECTION.FORWARD);
+                encoderDrive(0.5, 23, MOVEMENT_DIRECTION.FORWARD);
                 encoderDrive(0.5, 10, MOVEMENT_DIRECTION.STRAFE_RIGHT);
-                encoderDrive(0.5, 16, MOVEMENT_DIRECTION.REVERSE);
-                encoderDrive(0.5, 55, MOVEMENT_DIRECTION.STRAFE_RIGHT);
-                encoderDrive(0.5, 5, MOVEMENT_DIRECTION.REVERSE);
+                encoderDrive(0.5, 10, MOVEMENT_DIRECTION.REVERSE);
+                encoderDrive(0.5, 8, MOVEMENT_DIRECTION.STRAFE_LEFT);
+                encoderDrive(0.5, 9, MOVEMENT_DIRECTION.REVERSE);
+                sleep(5000);
+                encoderDrive(0.5, 65, MOVEMENT_DIRECTION.STRAFE_LEFT);
+                encoderDrive(0.5, 5, MOVEMENT_DIRECTION.STRAFE_RIGHT);
             }
 
             case CENTER:
             {
                 /* Your autonomous code*/
-                encoderDrive(0.5, 25, MOVEMENT_DIRECTION.FORWARD);
+                encoderDrive(0.5, 34, MOVEMENT_DIRECTION.FORWARD);
+                encoderDrive(0.5, 10, MOVEMENT_DIRECTION.REVERSE);
+                encoderDrive(0.5, 3, MOVEMENT_DIRECTION.STRAFE_RIGHT);
                 encoderDrive(0.5, 21, MOVEMENT_DIRECTION.REVERSE);
-                encoderDrive(0.5, 65, MOVEMENT_DIRECTION.STRAFE_RIGHT);
-                encoderDrive(0.5, 5, MOVEMENT_DIRECTION.REVERSE);
+                sleep(5000);
+                encoderDrive(0.5, 65, MOVEMENT_DIRECTION.STRAFE_LEFT);
+                encoderDrive(0.5, 5, MOVEMENT_DIRECTION.STRAFE_RIGHT);
             }
         }
 

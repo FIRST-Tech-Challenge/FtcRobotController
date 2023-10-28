@@ -22,8 +22,6 @@
 package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.openftc.easyopencv.OpenCvCamera;
@@ -36,8 +34,8 @@ import org.openftc.easyopencv.OpenCvWebcam;
  * and then snapshot that value for later use when the START
  * command is issued. The pipeline is re-used from SkystoneDeterminationExample
  */
-@Autonomous(name = "AutoBlueClose", group = "linear autoMode")
-public class AutoBlueClose extends RobotLinearOpMode
+@Autonomous(name = "AutoBlueFarMiddle", group = "linear autoMode")
+public class AutoBlueFarMiddle extends RobotLinearOpMode
 {
     OpenCvWebcam webcam;
     BluePropDetector.SkystoneDeterminationPipeline pipeline;
@@ -103,31 +101,45 @@ public class AutoBlueClose extends RobotLinearOpMode
             case LEFT:
             {
                 /* Your autonomous code */
-                encoderDrive(0.5, 20, MOVEMENT_DIRECTION.FORWARD);
+                encoderDrive(0.5, 23, MOVEMENT_DIRECTION.FORWARD);
                 encoderDrive(0.5, 10, MOVEMENT_DIRECTION.STRAFE_LEFT);
+                encoderDrive(0.5, 3, MOVEMENT_DIRECTION.REVERSE);
+                encoderDrive(0.5, 12, MOVEMENT_DIRECTION.STRAFE_RIGHT);
                 encoderDrive(0.5, 16, MOVEMENT_DIRECTION.REVERSE);
-                encoderDrive(0.5, 25, MOVEMENT_DIRECTION.STRAFE_LEFT);
-                encoderDrive(0.5, 5, MOVEMENT_DIRECTION.REVERSE);
+                sleep(5000);
+                encoderDrive(0.5, 50, MOVEMENT_DIRECTION.STRAFE_LEFT);
+                encoderDrive(0.5, 5, MOVEMENT_DIRECTION.STRAFE_RIGHT);
+                encoderDrive(0.5, 40, MOVEMENT_DIRECTION.FORWARD);
+                encoderDrive(0.5, 5, MOVEMENT_DIRECTION.STRAFE_LEFT);
             }
 
             case RIGHT:
             {
                 /* Your autonomous code */
-                encoderDrive(0.5, 20, MOVEMENT_DIRECTION.FORWARD);
+                encoderDrive(0.5, 23, MOVEMENT_DIRECTION.FORWARD);
                 encoderDrive(0.5, 10, MOVEMENT_DIRECTION.STRAFE_RIGHT);
-                encoderDrive(0.5, 20, MOVEMENT_DIRECTION.STRAFE_LEFT);
-                encoderDrive(0.5, 16, MOVEMENT_DIRECTION.REVERSE);
-                encoderDrive(0.5, 25, MOVEMENT_DIRECTION.STRAFE_LEFT);
-                encoderDrive(0.5, 5, MOVEMENT_DIRECTION.REVERSE);
+                encoderDrive(0.5, 10, MOVEMENT_DIRECTION.REVERSE);
+                encoderDrive(0.5, 8, MOVEMENT_DIRECTION.STRAFE_LEFT);
+                encoderDrive(0.5, 9, MOVEMENT_DIRECTION.REVERSE);
+                sleep(5000);
+                encoderDrive(0.5, 50, MOVEMENT_DIRECTION.STRAFE_LEFT);
+                encoderDrive(0.5, 5, MOVEMENT_DIRECTION.STRAFE_RIGHT);
+                encoderDrive(0.5, 40, MOVEMENT_DIRECTION.FORWARD);
+                encoderDrive(0.5, 5, MOVEMENT_DIRECTION.STRAFE_LEFT);
             }
 
             case CENTER:
             {
                 /* Your autonomous code*/
-                encoderDrive(0.5, 25, MOVEMENT_DIRECTION.FORWARD);
+                encoderDrive(0.5, 34, MOVEMENT_DIRECTION.FORWARD);
+                encoderDrive(0.5, 10, MOVEMENT_DIRECTION.REVERSE);
+                encoderDrive(0.5, 3, MOVEMENT_DIRECTION.STRAFE_RIGHT);
                 encoderDrive(0.5, 21, MOVEMENT_DIRECTION.REVERSE);
-                encoderDrive(0.5, 35, MOVEMENT_DIRECTION.STRAFE_LEFT);
-                encoderDrive(0.5, 5, MOVEMENT_DIRECTION.REVERSE);
+                sleep(5000);
+                encoderDrive(0.5, 50, MOVEMENT_DIRECTION.STRAFE_LEFT);
+                encoderDrive(0.5, 5, MOVEMENT_DIRECTION.STRAFE_RIGHT);
+                encoderDrive(0.5, 40, MOVEMENT_DIRECTION.FORWARD);
+                encoderDrive(0.5, 5, MOVEMENT_DIRECTION.STRAFE_LEFT);
             }
         }
 

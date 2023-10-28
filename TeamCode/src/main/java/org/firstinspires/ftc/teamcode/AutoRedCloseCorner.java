@@ -22,8 +22,6 @@
 package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.openftc.easyopencv.OpenCvCamera;
@@ -36,12 +34,12 @@ import org.openftc.easyopencv.OpenCvWebcam;
  * and then snapshot that value for later use when the START
  * command is issued. The pipeline is re-used from SkystoneDeterminationExample
  */
-@Autonomous(name = "AutoBlueFar", group = "linear autoMode")
-public class AutoBlueFar extends RobotLinearOpMode
+@Autonomous(name = "AutoRedCloseCorner", group = "linear autoMode")
+public class AutoRedCloseCorner extends RobotLinearOpMode
 {
     OpenCvWebcam webcam;
-    BluePropDetector.SkystoneDeterminationPipeline pipeline;
-    BluePropDetector.SkystoneDeterminationPipeline.SkystonePosition snapshotAnalysis = BluePropDetector.SkystoneDeterminationPipeline.SkystonePosition.LEFT; // default
+    RedPropDetector.SkystoneDeterminationPipeline pipeline;
+    RedPropDetector.SkystoneDeterminationPipeline.SkystonePosition snapshotAnalysis = RedPropDetector.SkystoneDeterminationPipeline.SkystonePosition.LEFT; // default
 
     @Override
     public void runOpMode()
@@ -55,7 +53,7 @@ public class AutoBlueFar extends RobotLinearOpMode
 
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
         webcam = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "Webcam 1"), cameraMonitorViewId);
-        pipeline = new BluePropDetector.SkystoneDeterminationPipeline();
+        pipeline = new RedPropDetector.SkystoneDeterminationPipeline();
         webcam.setPipeline(pipeline);
         declareHardwareProperties();
 
@@ -89,7 +87,7 @@ public class AutoBlueFar extends RobotLinearOpMode
          * for later use. We must do this because the analysis will continue
          * to change as the camera view changes once the robot starts moving!
          */
-        sleep(5000);
+        sleep(2000);
         snapshotAnalysis = pipeline.getAnalysis();
 
         /*
@@ -103,31 +101,36 @@ public class AutoBlueFar extends RobotLinearOpMode
             case LEFT:
             {
                 /* Your autonomous code */
-                encoderDrive(0.5, 20, MOVEMENT_DIRECTION.FORWARD);
+                encoderDrive(0.5, 23, MOVEMENT_DIRECTION.FORWARD);
                 encoderDrive(0.5, 10, MOVEMENT_DIRECTION.STRAFE_LEFT);
+                encoderDrive(0.5, 3, MOVEMENT_DIRECTION.REVERSE);
+                encoderDrive(0.5, 8, MOVEMENT_DIRECTION.STRAFE_RIGHT);
                 encoderDrive(0.5, 16, MOVEMENT_DIRECTION.REVERSE);
-                encoderDrive(0.5, 55, MOVEMENT_DIRECTION.STRAFE_LEFT);
-                encoderDrive(0.5, 5, MOVEMENT_DIRECTION.REVERSE);
+                encoderDrive(0.5, 25, MOVEMENT_DIRECTION.STRAFE_RIGHT);
+                encoderDrive(0.5, 5, MOVEMENT_DIRECTION.STRAFE_LEFT);
             }
 
             case RIGHT:
             {
                 /* Your autonomous code */
-                encoderDrive(0.5, 20, MOVEMENT_DIRECTION.FORWARD);
+                encoderDrive(0.5, 23, MOVEMENT_DIRECTION.FORWARD);
                 encoderDrive(0.5, 10, MOVEMENT_DIRECTION.STRAFE_RIGHT);
-                encoderDrive(0.5, 20, MOVEMENT_DIRECTION.STRAFE_LEFT);
-                encoderDrive(0.5, 16, MOVEMENT_DIRECTION.REVERSE);
-                encoderDrive(0.5, 55, MOVEMENT_DIRECTION.STRAFE_LEFT);
-                encoderDrive(0.5, 5, MOVEMENT_DIRECTION.REVERSE);
+                encoderDrive(0.5, 10, MOVEMENT_DIRECTION.REVERSE);
+                encoderDrive(0.5, 12, MOVEMENT_DIRECTION.STRAFE_LEFT);
+                encoderDrive(0.5, 9, MOVEMENT_DIRECTION.REVERSE);
+                encoderDrive(0.5, 25, MOVEMENT_DIRECTION.STRAFE_RIGHT);
+                encoderDrive(0.5, 5, MOVEMENT_DIRECTION.STRAFE_LEFT);
             }
 
             case CENTER:
             {
                 /* Your autonomous code*/
                 encoderDrive(0.5, 34, MOVEMENT_DIRECTION.FORWARD);
-                encoderDrive(0.5, 31, MOVEMENT_DIRECTION.REVERSE);
-                encoderDrive(0.5, 65, MOVEMENT_DIRECTION.STRAFE_LEFT);
-                encoderDrive(0.5, 5, MOVEMENT_DIRECTION.REVERSE);
+                encoderDrive(0.5, 10, MOVEMENT_DIRECTION.REVERSE);
+                encoderDrive(0.5, 3, MOVEMENT_DIRECTION.STRAFE_LEFT);
+                encoderDrive(0.5, 21, MOVEMENT_DIRECTION.REVERSE);
+                encoderDrive(0.5, 25, MOVEMENT_DIRECTION.STRAFE_RIGHT);
+                encoderDrive(0.5, 5, MOVEMENT_DIRECTION.STRAFE_LEFT);
             }
         }
 
