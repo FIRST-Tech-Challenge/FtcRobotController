@@ -31,7 +31,7 @@ public class Tele extends LinearOpMode {
 
         // Adjust the orientation parameters to match your robot
         IMU.Parameters parameters = new IMU.Parameters(new RevHubOrientationOnRobot(
-                RevHubOrientationOnRobot.LogoFacingDirection.RIGHT,
+                RevHubOrientationOnRobot.LogoFacingDirection.LEFT,
                 RevHubOrientationOnRobot.UsbFacingDirection.UP));
         // Without this, the REV Hub's orientation is assumed to be logo up / USB forward
         imu.initialize(parameters);
@@ -47,6 +47,7 @@ public class Tele extends LinearOpMode {
             // it can be freely changed based on preference.
             // The equivalent button is start on Xbox-style controllers.
             if (gamepad1.x) {
+                telemetry.addLine("Reset yaw");
                 imu.resetYaw();
             }
 
@@ -71,6 +72,9 @@ public class Tele extends LinearOpMode {
             leftBackDrive.setPower(backLeftPower);
             rightFrontDrive.setPower(frontRightPower);
             rightBackDrive.setPower(backRightPower);
+
+            telemetry.addData("Heading", imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES));
+            telemetry.update();
         }
     }
 }
