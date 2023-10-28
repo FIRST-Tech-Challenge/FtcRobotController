@@ -70,6 +70,7 @@ public class TeleOp extends LinearOpMode {
             remainingDistanceLow = 100 - robot.lsFront.getCurrentPosition();
             remainingDistanceZero = -robot.lsFront.getCurrentPosition();
 
+            telemetry.addData("current pos for linear slide", robot.lsFront.getCurrentPosition());
 
             if (gamepad1.dpad_up && remainingDistanceHigh > 10) {
 
