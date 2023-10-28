@@ -64,7 +64,7 @@ public class Robot {
     private MarkerDetector detector;
     private MarkerProcessor markerProcessor;
     private AprilTagProcessor aprilTagProcessor;
-    private VisionPortal visionPortal;
+    public VisionPortal visionPortal;
 
 
     //CONSTRUCTOR
@@ -904,6 +904,25 @@ public class Robot {
      *
      * @return
      */
+
+    public void detectMarkerPosition () {
+
+        //detect marker position
+        MarkerDetector.MARKER_POSITION position = markerProcessor.getPosition();
+
+        while (position == MarkerDetector.MARKER_POSITION.UNDETECTED) {
+            Log.d("vision", "undetected marker, keep looking");
+            position = markerProcessor.getPosition();
+        }
+
+        //print position
+        Log.d("vision", "detected position: " + position);
+
+        //save marker position, apriltag position
+        setMarkerPos(position);
+        setWantedAprTagId(position, true);
+
+    }
 
     //contains most opencv logic
     public void moveToMarker() {
