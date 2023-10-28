@@ -13,7 +13,7 @@ import org.openftc.easyopencv.OpenCvCameraRotation;
 
 import java.util.ArrayList;
 
-@Autonomous(name="Iron Core OpMode", group="Challenge")
+@Autonomous(name="Iron Core OpMode Golden Duck", group="Challenge")
 public class PowerPlayIronCore extends OpMode {
     //variable setup
     private DcMotor motorFrontRight = null;
@@ -86,7 +86,10 @@ public class PowerPlayIronCore extends OpMode {
         wristPosition = wrist.getPosition();
         wrist.setPosition(0);
 
+        setupArm(true);
+
         //AprilTag stuff
+        /*
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
         camera = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "Webcam 1"), cameraMonitorViewId);
         aprilTagDetectionPipeline = new AprilTagDetectionPipeline(tagsize, fx, fy, cx, cy);
@@ -107,6 +110,8 @@ public class PowerPlayIronCore extends OpMode {
             }
         });
         tagCount=0;
+
+         */
     }
     public void setupArm(boolean init){
         if(init) {
@@ -124,6 +129,7 @@ public class PowerPlayIronCore extends OpMode {
 
     @Override
     public void init_loop(){
+        /*
         ArrayList<AprilTagDetection> currentDetections = aprilTagDetectionPipeline.getLatestDetections();
 
         if (gamepad1.a) {
@@ -190,14 +196,15 @@ public class PowerPlayIronCore extends OpMode {
 
         }
         telemetry.addLine(String.format("\nRunAuton=%b", runAuton));
+
+         */
         telemetry.update();
     }
 
-    public boolean runAuton = true;
+    public boolean runAuton = false;
     public AprilTagDetection tagOfInterestCache;
     @Override
     public void loop() {
-        updateSensors();
         //tankDrive();
         //process drive inputs
         if (runAuton){
@@ -208,6 +215,7 @@ public class PowerPlayIronCore extends OpMode {
         }
         //joystick processing
         presets();
+        updateSensors();
         armMove();
         clawMove();
         updateMotors();
@@ -288,6 +296,7 @@ public class PowerPlayIronCore extends OpMode {
     public void armMove()
     {
         telemetry.addData("arm position: ", armPosition);
+        telemetry.addData("arm target position: ", targetArmPos);
         telemetry.addData("elbow position: ", elbowPosition);
         telemetry.addData("wrist position: ", wristPosition);
         if(gamepad1.dpad_down) //manually lower arm - shoulder joint
