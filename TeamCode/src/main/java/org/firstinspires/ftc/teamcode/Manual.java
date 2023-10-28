@@ -12,6 +12,7 @@ public class Manual  extends LinearOpMode{
 
     private RobotHardware robot = new RobotHardware(this);
     private double elbowPosition= 0;
+    private boolean isSlow = false;
 
     @Override
     public void runOpMode() {
@@ -57,6 +58,20 @@ public class Manual  extends LinearOpMode{
         // This way it's also easy to just drive straight, or just turn.
         drive = gamepad2.right_stick_y;
         turn  = gamepad2.right_stick_x;
+
+        //if button on gamepad2 is pressed
+        //then drive and turn should be half
+        if (gamepad2.a){
+            isSlow = true;
+        }
+        if (gamepad2.b){
+            isSlow = false;
+        }
+
+        if (isSlow){
+            drive = drive / 2;
+            turn = turn / 2;
+        }
 
         // Combine drive and turn for blended motion. Use RobotHardware class
         robot.driveRobot(drive, turn);
