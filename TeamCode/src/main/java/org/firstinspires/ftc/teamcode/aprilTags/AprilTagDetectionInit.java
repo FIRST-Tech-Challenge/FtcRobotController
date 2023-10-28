@@ -65,6 +65,7 @@ public class AprilTagDetectionInit extends LinearOpMode
     int ID_TAG_OF_INTEREST_LEFT= 1; // Tag ID 1 from the 36h11 family
     int ID_TAG_OF_INTEREST_MIDDLE = 2; // Tag ID 2 from the 36h11 family
     int ID_TAG_OF_INTEREST_RIGHT = 3; // Tag ID 3 from the 36h11 family
+
     AprilTagDetection tagOfInterest = null;
 
     @Override
@@ -117,6 +118,18 @@ public class AprilTagDetectionInit extends LinearOpMode
          * This REPLACES waitForStart!
          */
 
+        /* TODO:
+            1. currentDetections array with all detections from Pipeline
+            2. If the array is not empty, for each tag (tagOfInterest), get its id and perform actions.
+            3. Calculate the alignment error (method) taking in parameters detectedTag and tag we want to align to.
+                - if the detected tag == alignment tag, then the error calculates as normal.
+                - if the detected tag.id == alignment tag + 1, then add +6 inches (1/2 feet of error)
+                - if the detected tag.id == alignment tag - 1, then subtract -6 inches (1/2 feet of error)
+                - if the detected tag.id == alignment tag + 2, then add +12 inches (1 foot of error)
+                - if the detected tag.id == alignment tag - 2, then subtract -12 inches (1 foot of error)
+            4. Continue alignment actions
+         */
+
         /*** THE FOLLOWING BLOCK OF CODE IS MADE USING GPT-3.5
          *   Link to the conversation: https://chat.openai.com/share/3e90d1e3-a23f-4298-8352-5d2a92c58c75 ***/
         while (!isStarted() && !isStopRequested())
@@ -125,25 +138,13 @@ public class AprilTagDetectionInit extends LinearOpMode
             telemetry.addData("cameraMonitorViewId", cameraMonitorViewId);
             ArrayList<AprilTagDetection> currentDetections = aprilTagDetectionPipeline.getLatestDetections();
 
-            if(currentDetections.size() != 0)
+            if(!currentDetections.isEmpty())
             {
                 boolean tagFound = false;
 
                 for(AprilTagDetection tag : currentDetections)
                 {
-                    if(tag.id == ID_TAG_OF_INTEREST_LEFT)
-                    {
-                        tagOfInterest = tag;
-                        tagFound = true;
-                        break;
-                    }
-                    else if(tag.id == ID_TAG_OF_INTEREST_MIDDLE)
-                    {
-                        tagOfInterest = tag;
-                        tagFound = true;
-                        break;
-                    }
-                    else if(tag.id == ID_TAG_OF_INTEREST_RIGHT)
+                    if(tag.id == ID_TAG_OF_INTEREST_LEFT || tag.id == ID_TAG_OF_INTEREST_MIDDLE || tag.id == ID_TAG_OF_INTEREST_RIGHT)
                     {
                         tagOfInterest = tag;
                         tagFound = true;
@@ -206,56 +207,40 @@ public class AprilTagDetectionInit extends LinearOpMode
             tagToTelemetry(tagOfInterest);
 
             // Calculate the left-to-right alignment error
+            double distanceOffset = 6.0; // Measured distance between April Tags in feet
             double centerX = 800 / 2.0; // Half of the camera width
             double pixelError = centerX - tagOfInterest.pose.x; // X-coordinate of the tag center
             double feetError = pixelError * (tagsize / 800.0); // Convert to feet
 
-            // Calculate the required rotation angle to align with the tag's orientation
-            Orientation rot = Orientation.getOrientation(tagOfInterest.pose.R, AxesReference.INTRINSIC, AxesOrder.YXZ, AngleUnit.RADIANS);
-
-            double tagOrientation = rot.firstAngle; // this is the yaw offset from the robot
-            double botHeading = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS);
-            double rotationAngle = tagOrientation - botHeading;
-
             // Constants for alignment and rotation adjustments
             double alignmentPower = 0.1; // Adjust as needed
-            double rotationPower = 0.5; // Adjust as needed
             double alignmentTolerance = 0.1; // Tolerance for alignment error
 
             // Perform alignment and rotation adjustments
-            while (Math.abs(feetError) > alignmentTolerance || Math.abs(rotationAngle) > 0.05)
+            while (Math.abs(feetError) > alignmentTolerance)
             {
+                // TODO: create a control loop between all detected tags,
+                //  as to align in the event that current one being used is no longer detected.
                 // Recalculate alignment error, rotation angle, and robot heading
                 pixelError = centerX - tagOfInterest.pose.x;
                 feetError = pixelError * (tagsize / 800.0);
 
-                Orientation rot2 = Orientation.getOrientation(tagOfInterest.pose.R, AxesReference.INTRINSIC, AxesOrder.YXZ, AngleUnit.RADIANS);
-
-                tagOrientation = rot2.firstAngle;
-                rotationAngle = tagOrientation - botHeading;
-
                 // Calculate powers for alignment and rotation
                 double alignPower = feetError * alignmentPower;
-                double rotatePower = rotationAngle * rotationPower;
 
                 // Adjust the robot's orientation for both alignment and rotation
-                double frontLeftPower = -alignPower + rotatePower;
-                double backLeftPower = -alignPower + rotatePower;
-                double frontRightPower = alignPower + rotatePower;
-                double backRightPower = alignPower + rotatePower;
+                double rightPower = alignPower;
+                double leftPower = -alignPower;
 
                 // Set motor powers
-                frontLeftMotor.setPower(frontLeftPower);
-                backLeftMotor.setPower(backLeftPower);
-                frontRightMotor.setPower(frontRightPower);
-                backRightMotor.setPower(backRightPower);
+                frontLeftMotor.setPower(leftPower);
+                backLeftMotor.setPower(leftPower);
+                frontRightMotor.setPower(rightPower);
+                backRightMotor.setPower(rightPower);
 
                 // Update bot heading
-                botHeading = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS);
 
                 telemetry.addData("Alignment Error (Feet)", feetError);
-                telemetry.addData("Rotation Angle", rotationAngle);
-                telemetry.addData("Bot Heading", botHeading);
                 telemetry.update();
             }
 
@@ -278,12 +263,13 @@ public class AprilTagDetectionInit extends LinearOpMode
              * Insert your autonomous code here, presumably running some default configuration
              * since the tag was never sighted during INIT
              */
+            telemetry.addLine("AprilTag not detected.");
         }
-        else
-        {
-
-
-        }
+//        else
+//        {
+//
+//
+//        }
 
 
         /* You wouldn't have this in your autonomous, this is just to prevent the sample from ending */
