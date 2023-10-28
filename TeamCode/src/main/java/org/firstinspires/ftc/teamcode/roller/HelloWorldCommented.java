@@ -1,10 +1,12 @@
 package org.firstinspires.ftc.teamcode.roller;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 @Autonomous
+@Disabled
 public class HelloWorldCommented extends OpMode {
     /**
      * This is called when the driver presses INIT

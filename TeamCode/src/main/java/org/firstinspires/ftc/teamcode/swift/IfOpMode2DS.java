@@ -1,9 +1,11 @@
 package org.firstinspires.ftc.teamcode.swift;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 @TeleOp
+@Disabled
 public class IfOpMode2DS extends OpMode {
     @Override
     public void init() {
