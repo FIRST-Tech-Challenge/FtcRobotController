@@ -6,7 +6,7 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 public class RFMotorAutoTuneTest extends AutoRFMotorTest{
     @Override
     public void runOpMode() throws InterruptedException {
-        initialize("motorRightFront", 3000, 0, DcMotorSimple.Direction.REVERSE);
+        initialize("leftLiftMotor", 1000, 0, DcMotorSimple.Direction.REVERSE);
         waitForStart();
         auto();
     }
