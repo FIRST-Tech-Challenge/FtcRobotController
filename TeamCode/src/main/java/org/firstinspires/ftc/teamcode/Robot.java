@@ -904,6 +904,8 @@ public class Robot {
      *
      * @return
      */
+
+    //contains most opencv logic
     public void moveToMarker() {
         Log.d("vision", "moveToMarker: Pos " + markerPos);
         Log.d("vision", "moveToMarker: Tag " + wantedAprTagId);
@@ -940,16 +942,65 @@ public class Robot {
         }
     }
 
-    public void waitFor(double seconds) {
-        elapsedTime = new ElapsedTime();
-        elapsedTime.reset();
-        while (opMode.opModeIsActive()) {
+    //contains most apriltag logic
+    public void moveToBoard () {
 
-            if (elapsedTime.milliseconds() >= seconds*1000) {
-                break;
+        boolean tagVisible = false;
+        boolean aligned = false;
+        List<AprilTagDetection> myAprilTagDetections;
 
+        while (opMode.opModeIsActive() && !aligned) {
+
+            //get detections
+            myAprilTagDetections = aprilTagProcessor.getDetections();
+
+            //process detection list
+            for (AprilTagDetection detection : myAprilTagDetections) {
+
+                if (detection.metadata != null) {
+
+                    if (detection.id == wantedAprTagId) {
+                        Log.d("vision", "runOpMode: tag visible - this one " + wantedAprTagId);
+                        tagVisible = true;
+
+                        if (detection.ftcPose.bearing > 1) {
+                            Log.d("vision", "runOpMode: bearing > 1, move left");
+                            mecanumBlocking(1, true);
+                        } else if (detection.ftcPose.bearing < -1) {
+                            Log.d("vision", "runOpMode: bearing < -1, move right");
+                            mecanumBlocking(1, false);
+                        } else {
+                            Log.d("vision", "runOpMode: aligned");
+                            aligned = true;
+                        }
+
+                        sleep(100);
+                    }
+                }
+
+                if (!tagVisible) {
+                    Log.d("vision", "runOpMode: tag not visible, move back");
+                    straightBlocking(1, true);
+                    sleep(100);
+                }
             }
+        }
 
+        if (aligned) {
+
+            myAprilTagDetections = aprilTagProcessor.getDetections();
+            for (AprilTagDetection detection : myAprilTagDetections) {
+                if (detection.metadata != null) {
+                    if (detection.id == wantedAprTagId) {
+                        Log.d("vision", "runOpMode: bearing is " + detection.ftcPose.bearing);
+                        double distanceToBoard = detection.ftcPose.range - 5;
+                        Log.d("vision", "runOpMode: distance to travel is " + distanceToBoard);
+                        straightBlocking(distanceToBoard, false);
+                        sleep(100);
+                        break;
+                    }
+                }
+            }
         }
     }
 
