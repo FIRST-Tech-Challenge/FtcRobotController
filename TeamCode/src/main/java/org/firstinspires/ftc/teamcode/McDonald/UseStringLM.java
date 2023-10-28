@@ -1,11 +1,13 @@
 package org.firstinspires.ftc.teamcode.McDonald;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 
 
 
 @TeleOp
+@Disabled
 public class UseStringLM extends OpMode {
     @Override
     public void init() {

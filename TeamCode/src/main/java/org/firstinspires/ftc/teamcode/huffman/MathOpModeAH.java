@@ -1,9 +1,11 @@
 package org.firstinspires.ftc.teamcode.huffman;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 @TeleOp() //assigns OpMode to TeleOp dropdown on driver station
+@Disabled
 public class MathOpModeAH extends OpMode {
     @Override
     public void init() { //required even if empty

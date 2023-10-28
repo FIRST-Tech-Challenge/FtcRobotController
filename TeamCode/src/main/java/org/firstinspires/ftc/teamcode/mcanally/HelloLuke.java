@@ -1,9 +1,11 @@
 package org.firstinspires.ftc.teamcode.mcanally;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 //comment
 @Autonomous()
+@Disabled
 /*
 fhsdjvsdf
 

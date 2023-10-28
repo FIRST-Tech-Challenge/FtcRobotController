@@ -1,9 +1,11 @@
 package org.firstinspires.ftc.teamcode.roller;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 @TeleOp //Assigns OpMode to the Teleop dropdown on DriverStation
+@Disabled
 public class PrimitiveTypesMrR extends OpMode {
     @Override
     public void init () {

@@ -1,9 +1,11 @@
 package org.firstinspires.ftc.teamcode.swift;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
  import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 //pulls package from main
 
  @TeleOp()
+ @Disabled
  public class GamepadOpMode extends OpMode {
  @Override
  public void init() {
