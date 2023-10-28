@@ -129,10 +129,11 @@ public class AutoRedCloseMiddle extends RobotLinearOpMode
             case CENTER:
             {
                 /* Your autonomous code*/
-                encoderDrive(0.5, 34, MOVEMENT_DIRECTION.FORWARD);
+                encoderDrive(0.5, 33.5, MOVEMENT_DIRECTION.FORWARD);
                 encoderDrive(0.5, 10, MOVEMENT_DIRECTION.REVERSE);
                 encoderDrive(0.5, 3, MOVEMENT_DIRECTION.STRAFE_LEFT);
-                encoderDrive(0.5, 21, MOVEMENT_DIRECTION.REVERSE);
+                encoderDrive(0.5, 25, MOVEMENT_DIRECTION.REVERSE);
+                encoderDrive(0.5, 4, MOVEMENT_DIRECTION.FORWARD);
                 encoderDrive(0.5, 25, MOVEMENT_DIRECTION.STRAFE_RIGHT);
                 encoderDrive(0.5, 15, MOVEMENT_DIRECTION.STRAFE_LEFT);
                 encoderDrive(0.5, 40, MOVEMENT_DIRECTION.FORWARD);

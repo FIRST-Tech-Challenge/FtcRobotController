@@ -117,11 +117,11 @@ public class BluePropDetector extends LinearOpMode
         /*
          * The core values which define the location and size of the sample regions
          */
-        static final Point REGION1_TOPLEFT_ANCHOR_POINT = new Point(0,80);
+        static final Point REGION1_TOPLEFT_ANCHOR_POINT = new Point(0,60);
         static final Point REGION2_TOPLEFT_ANCHOR_POINT = new Point(107,60);
-        static final Point REGION3_TOPLEFT_ANCHOR_POINT = new Point(213,80);
+        static final Point REGION3_TOPLEFT_ANCHOR_POINT = new Point(213,60);
         static final int REGION_WIDTH = 106;
-        static final int REGION_HEIGHT = 60;
+        static final int REGION_HEIGHT = 100;
 
         /*
          * Points which actually define the sample region rectangles, derived from above values
