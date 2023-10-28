@@ -5,20 +5,21 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.util.Range;
 
-import static org.firstinspires.ftc.team15091.Robot.grabberPosition;
-
 @TeleOp(name = "Gamepad")
 public class GamepadOpmode extends OpModeBase {
     @Override
     public void runOpMode() throws InterruptedException {
         int currentTarget = 0;
         boolean holdPosition = false;
-        int highPolePos = 1950;
+        int armLimit = 4500;
+        double rollerVelocity = 0d;
 
         robot.init(hardwareMap);
 
         //region telemetry setup
         telemetry.addData(">", "Press Play to start op mode");
+        telemetry.addData("roller", () -> String.format("%.1f", robot.rollerMotor.getVelocity()));
+        telemetry.addData("arm", () -> String.format("%d", robot.armMotor.getCurrentPosition()));
         telemetry.update();
         //endregion
 
@@ -31,40 +32,59 @@ public class GamepadOpmode extends OpModeBase {
             int currentArmPosition = robot.armMotor.getCurrentPosition();
 
             if (gamepad1.left_trigger > 0d) { // raise lift
-                robot.armMotor.setTargetPosition(highPolePos);
+                robot.armMotor.setTargetPosition(armLimit);
                 robot.setArmMode(DcMotor.RunMode.RUN_TO_POSITION);
                 robot.armMotor.setPower(gamepad1.left_trigger);
-                currentTarget = currentArmPosition;
-            } else if (gamepad1.right_trigger > 0d && // lower lift
-                    robot.limitSwitch.getState() == true) { // when limit sensor not pressed
-                double powerScale = currentArmPosition > 800 ? 1d : 0.4d;
+            } else if (gamepad1.right_trigger > 0d) { // lower lift
+                double powerScale = currentArmPosition > 0 ? 1d : 0.02d;
                 robot.setArmMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
                 robot.armMotor.setPower(-gamepad1.right_trigger * powerScale);
-                currentTarget = currentArmPosition;
-                holdPosition = false;
             } else { // stop lift
-                if (holdPosition == false && robot.limitSwitch.getState() == false) { // limit sensor pressed
-                    robot.setArmMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-                    currentTarget = 0;
-                } else {
-                    robot.armMotor.setTargetPosition(currentTarget);
-                    robot.setArmMode(DcMotorEx.RunMode.RUN_TO_POSITION);
-                    robot.armMotor.setPower(currentArmPosition > 100 ? 0.8d : 0.3d);
-                }
+                robot.armMotor.setPower(0d);
             }
             //endregion
 
-            //region grabber servo control
+            //region a button
             if (gamepad1.a && !a_pressed) {
-                // close grabber
-                robot.setGrabber(grabberPosition == 1 ? 0 : 1);
             }
+            //endregion
+
+            //region roller
+            if (gamepad1.left_bumper && !lb_pressed) {
+                rollerVelocity = rollerVelocity == 0d ? 2700d : 0d;
+            }
+
+            if (gamepad1.right_bumper && !rb_pressed) {
+                rollerVelocity = rollerVelocity == 0d ? -2000d : 0d;
+            }
+            robot.rollerMotor.setVelocity(rollerVelocity);
             //endregion
 
             //region drivetrain control
+            double sensitivity = 2.0; // Adjust the sensitivity value as needed
+            double deadzone = 0.1; // Adjust the deadzone value as needed
+
             double drive = -gamepad1.left_stick_y - gamepad1.right_stick_y;
             double turn = gamepad1.left_stick_x;
             double side = gamepad1.right_stick_x;
+
+            // Apply deadzone to the input values
+            if (Math.abs(drive) < deadzone) {
+                drive = 0.0;
+            }
+
+            if (Math.abs(turn) < deadzone) {
+                turn = 0.0;
+            }
+
+            if (Math.abs(side) < deadzone) {
+                side = 0.0;
+            }
+
+            // Apply the power function to the input values
+            drive = Math.signum(drive) * Math.pow(Math.abs(drive), sensitivity);
+            turn = Math.signum(turn) * Math.pow(Math.abs(turn), sensitivity);
+            side = Math.signum(side) * Math.pow(Math.abs(side), sensitivity);
 
             double pLeftFront = Range.clip(drive + turn + side, -1.0d, 1.0d);
             double pLeftRear = Range.clip(drive + turn - side, -1.0d, 1.0d);
