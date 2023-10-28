@@ -6,10 +6,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.vision.VisionPortal;
-import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
 import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
-
-import java.util.List;
 
 @Autonomous
 public class LongRedAuto extends LinearOpMode {
@@ -19,9 +16,11 @@ public class LongRedAuto extends LinearOpMode {
 
         int idNumber = 0;
 
+        //robot, dt motors
         Robot robot = new Robot(hardwareMap, this, telemetry);
         robot.setUpDrivetrainMotors();
 
+        //vision processing
         robot.initVisionProcessing();
         VisionPortal visionPortal = robot.getVisionPortal();
         MarkerProcessor markerProcessor = robot.getMarkerProcessor();
@@ -74,8 +73,11 @@ public class LongRedAuto extends LinearOpMode {
             sleep(1000);
             robot.setHeading(-90);
 
-            sleep (2000);
+            sleep(2000);
 
+            robot.moveToBoard();
+
+            /*
             int desiredAprTagId = robot.wantedAprTagId; //test 5
             boolean tagVisible = false;
             boolean aligned = false;
@@ -146,6 +148,7 @@ public class LongRedAuto extends LinearOpMode {
                     }
                 }
             }
+            */
         }
     }
 }
