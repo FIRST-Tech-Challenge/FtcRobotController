@@ -33,9 +33,7 @@ public class GripPipelineGreenPixelRGB  extends OpenCvPipeline {
 	private ArrayList<MatOfPoint> findContoursOutput = new ArrayList<MatOfPoint>();
 	private ArrayList<MatOfPoint> filterContoursOutput = new ArrayList<MatOfPoint>();
 
-	static {
-		System.loadLibrary(Core.NATIVE_LIBRARY_NAME);
-	}
+
 
 	/**
 	 * This is the primary method that runs the entire pipeline and updates the outputs.
