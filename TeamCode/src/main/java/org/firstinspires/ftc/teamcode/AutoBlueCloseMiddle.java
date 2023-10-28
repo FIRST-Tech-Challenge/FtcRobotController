@@ -102,7 +102,7 @@ public class AutoBlueCloseMiddle extends RobotLinearOpMode
             {
                 /* Your autonomous code */
                 encoderDrive(0.5, 23, MOVEMENT_DIRECTION.FORWARD);
-                encoderDrive(0.5, 10, MOVEMENT_DIRECTION.STRAFE_LEFT);
+                encoderDrive(0.5, 9.5, MOVEMENT_DIRECTION.STRAFE_LEFT);
                 encoderDrive(0.5, 10, MOVEMENT_DIRECTION.REVERSE);
                 encoderDrive(0.5, 12, MOVEMENT_DIRECTION.STRAFE_RIGHT);
                 encoderDrive(0.5, 14, MOVEMENT_DIRECTION.REVERSE);
@@ -111,6 +111,7 @@ public class AutoBlueCloseMiddle extends RobotLinearOpMode
                 encoderDrive(0.5, 15, MOVEMENT_DIRECTION.STRAFE_RIGHT);
                 encoderDrive(0.5, 40, MOVEMENT_DIRECTION.FORWARD);
                 encoderDrive(0.5, 5, MOVEMENT_DIRECTION.STRAFE_LEFT);
+                sleep(25000);
             }
 
             case RIGHT:
@@ -126,6 +127,7 @@ public class AutoBlueCloseMiddle extends RobotLinearOpMode
                 encoderDrive(0.5, 15, MOVEMENT_DIRECTION.STRAFE_RIGHT);
                 encoderDrive(0.5, 40, MOVEMENT_DIRECTION.FORWARD);
                 encoderDrive(0.5, 5, MOVEMENT_DIRECTION.STRAFE_LEFT);
+                sleep(25000);
             }
 
             case CENTER:
@@ -140,6 +142,7 @@ public class AutoBlueCloseMiddle extends RobotLinearOpMode
                 encoderDrive(0.5, 15, MOVEMENT_DIRECTION.STRAFE_RIGHT);
                 encoderDrive(0.5, 40, MOVEMENT_DIRECTION.FORWARD);
                 encoderDrive(0.5, 5, MOVEMENT_DIRECTION.STRAFE_LEFT);
+                sleep(25000);
             }
         }
 

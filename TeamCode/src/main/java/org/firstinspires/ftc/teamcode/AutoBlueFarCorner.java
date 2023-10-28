@@ -102,13 +102,14 @@ public class AutoBlueFarCorner extends RobotLinearOpMode
             {
                 /* Your autonomous code */
                 encoderDrive(0.5, 23, MOVEMENT_DIRECTION.FORWARD);
-                encoderDrive(0.5, 10, MOVEMENT_DIRECTION.STRAFE_LEFT);
+                encoderDrive(0.5, 9.5, MOVEMENT_DIRECTION.STRAFE_LEFT);
                 encoderDrive(0.5, 3, MOVEMENT_DIRECTION.REVERSE);
                 encoderDrive(0.5, 12, MOVEMENT_DIRECTION.STRAFE_RIGHT);
                 encoderDrive(0.5, 16, MOVEMENT_DIRECTION.REVERSE);
                 sleep(5000);
                 encoderDrive(0.5, 65, MOVEMENT_DIRECTION.STRAFE_LEFT);
                 encoderDrive(0.5, 5, MOVEMENT_DIRECTION.STRAFE_RIGHT);
+                sleep(25000);
             }
 
             case RIGHT:
@@ -123,6 +124,7 @@ public class AutoBlueFarCorner extends RobotLinearOpMode
                 sleep(5000);
                 encoderDrive(0.5, 65, MOVEMENT_DIRECTION.STRAFE_LEFT);
                 encoderDrive(0.5, 5, MOVEMENT_DIRECTION.STRAFE_RIGHT);
+                sleep(25000);
             }
 
             case CENTER:
@@ -136,6 +138,7 @@ public class AutoBlueFarCorner extends RobotLinearOpMode
                 sleep(5000);
                 encoderDrive(0.5, 65, MOVEMENT_DIRECTION.STRAFE_LEFT);
                 encoderDrive(0.5, 5, MOVEMENT_DIRECTION.STRAFE_RIGHT);
+                sleep(25000);
             }
         }
 
