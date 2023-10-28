@@ -113,20 +113,6 @@ public class SampleMecanumDrive extends MecanumDrive {
                 TRACK_WIDTH,
                 TRACK_WIDTH,
                 LATERAL_MULTIPLIER);
-        initializeDrive(hardwareMap, trackType);
-    }
-
-    public SampleMecanumDrive(HardwareMap hardwareMap) {
-        super(kV,
-                kA,
-                kStatic,
-                TRACK_WIDTH,
-                TRACK_WIDTH,
-                LATERAL_MULTIPLIER);
-        initializeDrive(hardwareMap, Tracker.TrackType.ROADRUN_ODOMETRY);
-    }
-
-    public void initializeDrive(HardwareMap hardwareMap, Tracker.TrackType trackType) {
         follower = new RFHolonomicPIDVAFollower(TRANSLATIONAL_PID, TRANSLATIONAL_PID, HEADING_PID,
                 new Pose2d(0.5, 0.5, Math.toRadians(5.0)), 0.5);
 
@@ -220,7 +206,7 @@ public class SampleMecanumDrive extends MecanumDrive {
         } else {
             setLocalizer(new StandardTrackingWheelLocalizer(hardwareMap));
         }
-        
+
         imu = hardwareMap.get(IMU.class, "imu");
 
         imu.initialize(new IMU.Parameters(new RevHubOrientationOnRobot(RevHubOrientationOnRobot.LogoFacingDirection.LEFT,
@@ -235,7 +221,13 @@ public class SampleMecanumDrive extends MecanumDrive {
 //        servos.add(hardwareMap.servo.get("servoLeftBack"));
 //        servos.add(hardwareMap.servo.get("servoRightFront"));
 //        servos.add(hardwareMap.servo.get("servoRightBack"));
+//
     }
+
+    public SampleMecanumDrive(HardwareMap hardwareMap) {
+        this(hardwareMap, Tracker.TrackType.ROADRUN_ODOMETRY);
+    }
+
 
     public TrajectoryBuilder trajectoryBuilder(Pose2d startPose) {
         return new TrajectoryBuilder(startPose, VEL_CONSTRAINT, ACCEL_CONSTRAINT);
