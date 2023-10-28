@@ -25,6 +25,10 @@ import java.util.List;
  *    \--------------/
  *
  */
+
+//0.0817202794375923
+//0.0625999337082004
+//
 @Config
 public class StandardTrackingWheelLocalizer extends ThreeTrackingWheelLocalizer {
     public static double TICKS_PER_REV = 537.7;
@@ -48,8 +52,8 @@ public class StandardTrackingWheelLocalizer extends ThreeTrackingWheelLocalizer 
         lastEncPositions = lastTrackingEncPositions;
         lastEncVels = lastTrackingEncVels;
 
-        leftEncoder = new Encoder(hardwareMap.get(DcMotorEx.class, "RF"));
-        rightEncoder = new Encoder(hardwareMap.get(DcMotorEx.class, "LB"));
+        leftEncoder = new Encoder(hardwareMap.get(DcMotorEx.class, "LB"));
+        rightEncoder = new Encoder(hardwareMap.get(DcMotorEx.class, "RF"));
         frontEncoder = new Encoder(hardwareMap.get(DcMotorEx.class, "LF"));
 
         // TODO: reverse any encoders using Encoder.setDirection(Encoder.Direction.REVERSE)
