@@ -109,7 +109,7 @@ public class Move extends OpMode {
 
         // Set drive controls
         double drive = -gamepad1.left_stick_x;
-        double strafe = -gamepad1.left_stick_y;
+        double strafe = gamepad1.left_stick_y;
         double turn = 1.66666666666666 * gamepad1.right_stick_x;
 
         // Set motor power
