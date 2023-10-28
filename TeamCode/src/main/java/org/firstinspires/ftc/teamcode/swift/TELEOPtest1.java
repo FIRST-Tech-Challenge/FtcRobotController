@@ -30,7 +30,7 @@ public class TELEOPtest1 extends LinearOpMode {
             // check to see if we need to move the servo.
             if (gamepad1.left_bumper) {
                 // move to 0 degrees.
-                launcherServo.setPosition(0.5);
+                launcherServo.setPosition(0.3);
             } else if (gamepad1.right_bumper || gamepad1.left_bumper) {
                 // move to 90 degrees.
                 launcherServo.setPosition(1);
