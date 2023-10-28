@@ -112,6 +112,7 @@ public class testAuto extends LinearOpMode {
              */
             //opencvBlue.processFrame(opencvBlue.maskedInputMat);
             String result = pipeline.getResult();
+            
 
 
             //telemetry.addData("result", result);

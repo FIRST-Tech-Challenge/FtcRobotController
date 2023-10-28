@@ -6,6 +6,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 //import com.qualcomm.robotcore.hardware.Gamepad;
 //import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
 //import com.qualcomm.robotcore.hardware.configuration.annotations.DeviceProperties;
@@ -23,6 +24,9 @@ public class Move extends OpMode {
     private DcMotor leftBackDrive = null;
     private DcMotor rightBackDrive = null;
 
+    //public Servo fire = null;
+
+
     private DcMotor Arm = null;
 
     private DcMotor Extend = null;
@@ -31,12 +35,13 @@ public class Move extends OpMode {
     public boolean Endgametrue = false;
     public boolean Parktrue = false;
 
-    //ElapsedTime Runtime
+    //floats Runtime
     public float armmove;
     public float extendmove;
     public float extendpower;
     public float armPower = 0;
 
+    //ints
     public int arm = 0;
     public int extend = 0;
     ElapsedTime runtime = new ElapsedTime();
@@ -63,11 +68,14 @@ public class Move extends OpMode {
         rightFrontDrive = hardwareMap.get(DcMotor.class, "RF");
         leftBackDrive = hardwareMap.get(DcMotor.class, "LB");
         rightBackDrive = hardwareMap.get(DcMotor.class, "RB");
+        //fire = hardwareMap.get(Servo.class, "Fire");
 
         Arm = hardwareMap.get(DcMotor.class, "ARM");
 
         Extend = hardwareMap.get(DcMotor.class, "EX");
+        //-------------------------------------------------------
 
+        //set direction for motors not servos(servos do not need pos set)
         Arm.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         Arm.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
         Extend.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -85,7 +93,7 @@ public class Move extends OpMode {
     @Override
     //Start fuction
     public void start() {
-        //restes all telemitry
+        //reset
         telemetry.clearAll();
         Endgametrue = false;
         Parktrue = false;
@@ -100,7 +108,7 @@ public class Move extends OpMode {
         double rightBackPower; // Declare motor power variables
 
         // Set drive controls
-        double drive = gamepad1.left_stick_x;
+        double drive = -gamepad1.left_stick_x;
         double strafe = -gamepad1.left_stick_y;
         double turn = 1.66666666666666 * gamepad1.right_stick_x;
 
@@ -114,41 +122,17 @@ public class Move extends OpMode {
 
         // Telemetry
         telemetry.addData("Speed: ", (leftFrontPower + leftBackPower + rightBackPower + rightFrontPower) / 4);
-        telemetry.addData("Left Stick X: ", gamepad1.left_stick_x);
-        telemetry.addData("Left Stick Y: ", -gamepad1.left_stick_y);
-        telemetry.addData("Right Stick X: ", gamepad1.right_stick_x);
-        telemetry.addData("Right Stick Y: ", -gamepad1.right_stick_y);
+        telemetry.addData("Left Stick X Input: ", gamepad1.left_stick_x);
+        telemetry.addData("Left Stick Y Input: ", -gamepad1.left_stick_y);
+        telemetry.addData("Right Stick X Input: ", gamepad1.right_stick_x);
+        telemetry.addData("Right Stick Y Input: ", -gamepad1.right_stick_y);
         telemetry.addData("Arm Encoder Ticks: ", Arm.getCurrentPosition());
         telemetry.addData("Extend Encoder Ticks", Extend.getCurrentPosition());
         telemetry.addData("arm", arm);
         telemetry.update();
+        //------------------
 
-
-        //backup
-
-
-        // Slow movement + Fast movement
-
-
-//        else if(gamepad1.a)
-//        {
-//            armmove = armmove + 0.05f;
-//            armPower = armmove;
-//
-//        }
-//        else if(gamepad1.b)
-//        {
-////            if(armmove != 10)
-////            {
-//                armmove = armmove - 0.05f;
-//                armPower = armmove;
-////            }
-//
-//
-//        }
-
-
-
+        //slow speed
         if(gamepad1.right_bumper) {
             leftFrontPower /= 3.5;
             leftBackPower /= 3.5;
@@ -156,6 +140,8 @@ public class Move extends OpMode {
             rightBackPower /= 3.5;
         }
 
+
+        //armmovepower
         if(gamepad1.dpad_up)
         {
 
@@ -172,6 +158,8 @@ public class Move extends OpMode {
 
         }
 
+        //    |
+        //arm V
         else if(gamepad2.dpad_right) {
 
             arm = arm + 5;
@@ -241,6 +229,15 @@ public class Move extends OpMode {
             }
             extendpower = extendmove;
         }
+        else if(gamepad1.right_bumper)
+        {
+            //fire.setPosition(0.60);
+        }
+        else if(gamepad1.left_bumper)
+        {
+            //fire.setPosition(0.0);
+
+        }
         else
         {
             extendpower = 0;
@@ -260,9 +257,7 @@ public class Move extends OpMode {
     @Override
     public void stop() {
 
-
-
-        // Stop all motors if no input
+        // Stop all motors if no input and if gamestop
         leftFrontDrive.setPower(0);
         rightFrontDrive.setPower(0);
         leftBackDrive.setPower(0);

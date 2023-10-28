@@ -28,6 +28,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.opencv.core.Core;
 import org.opencv.core.Mat;
+import org.opencv.core.Point;
 import org.opencv.core.Scalar;
 import org.opencv.imgproc.Imgproc;
 import org.openftc.easyopencv.OpenCvPipeline;
@@ -49,14 +50,15 @@ public class OpenCVRed extends OpenCvPipeline  {
      * min and max values here for now, meaning
      * that all pixels will be shown.
      */
-    private Scalar lower = new Scalar(0f, 144.5f, 36.8);
-    private Scalar upper = new Scalar(202.6f, 255, 255);
+    private volatile String result = "start";
+    private Scalar lower = new Scalar(96.3f, 73.7f, 0);
+    private Scalar upper = new Scalar(147.3f, 255, 199.8f);
     /**
      * This will allow us to choose the color
      * space we want to use on the live field
      * tuner instead of hardcoding it
      */
-    private OpenCVRed.ColorSpace colorSpace = ColorSpace.Lab;
+    private OpenCVBlue.ColorSpace colorSpace = OpenCVBlue.ColorSpace.HSV;
 
     /*
      * A good practice when typing EOCV pipelines is
@@ -70,7 +72,7 @@ public class OpenCVRed extends OpenCvPipeline  {
      */
     private Mat ycrcbMat       = new Mat();
     private Mat binaryMat      = new Mat();
-    private Mat maskedInputMat = new Mat();
+    public Mat maskedInputMat = new Mat();
 
     Mat dest_matrix = new Mat();
     Mat stats_mat = new Mat();
@@ -94,6 +96,8 @@ public class OpenCVRed extends OpenCvPipeline  {
         YCrCb(Imgproc.COLOR_RGB2YCrCb),
         Lab(Imgproc.COLOR_RGB2Lab);
 
+
+
         //store cvtCode in a public var
         public int cvtCode = 0;
 
@@ -107,7 +111,14 @@ public class OpenCVRed extends OpenCvPipeline  {
         this.telemetry = telemetry;
     }
 
-    @Override
+
+
+
+    public String getResult()
+    {
+        return result;
+    }
+
     public Mat processFrame(Mat input) {
         /*
          * Converts our input mat from RGB to
@@ -145,6 +156,10 @@ public class OpenCVRed extends OpenCvPipeline  {
 
 
         int output = Imgproc.connectedComponentsWithStats(binaryMat, dest_matrix, stats_mat, cens_mat);
+        int lineLeftX = 529;
+
+        int lineRightX = 1270;
+
 
         double currentmax = 0;
         double bestmax = 0;
@@ -162,7 +177,7 @@ public class OpenCVRed extends OpenCvPipeline  {
 
         double x_pos = cens_mat.get(bestmaxblob, 0)[0];
         double y_pos = cens_mat.get(bestmaxblob, 1)[0];
-        String result = "";
+
 
         if(x_pos > 1270)
         {
@@ -190,6 +205,8 @@ public class OpenCVRed extends OpenCvPipeline  {
         /**
          * Add some nice and informative telemetry messages
          */
+
+
         telemetry.addData("place", result);
         telemetry.addData("output", output);
         telemetry.addData("stats", stats_mat);
@@ -206,6 +223,12 @@ public class OpenCVRed extends OpenCvPipeline  {
         telemetry.addData("[Lower Scalar]", lower);
         telemetry.addData("[Upper Scalar]", upper);
         telemetry.update();
+
+        Imgproc.line(maskedInputMat, new Point(lineLeftX, 0), new Point(lineLeftX, input.rows()), new Scalar(0, 255, 0), 20);
+        //Imgproc.line(input, new Point(lineMiddleX, 0), new Point(lineMiddleX, input.rows()), new Scalar(0, 255, 0), 20);
+        Imgproc.line(maskedInputMat, new Point(lineRightX, 0), new Point(lineRightX, input.rows()), new Scalar(0, 255, 0), 20);
+
+
 
         /*
          * The Mat returned from this method is the

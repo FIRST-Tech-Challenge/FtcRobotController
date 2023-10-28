@@ -38,7 +38,7 @@ import org.openftc.easyopencv.OpenCvPipeline;
 //@TeleOp
 public class OpenCVBlue extends OpenCvPipeline {
 
-    public volatile String result = "start";
+    private volatile String result = "start";
 
     /*
      * These are our variables that will be

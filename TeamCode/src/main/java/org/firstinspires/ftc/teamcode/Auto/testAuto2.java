@@ -4,7 +4,8 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
-import org.firstinspires.ftc.teamcode.Vision.OpenCVBlue;
+
+import org.firstinspires.ftc.teamcode.Vision.OpenCVRed;
 import org.opencv.core.Mat;
 import org.opencv.core.Point;
 import org.opencv.core.Scalar;
@@ -20,7 +21,7 @@ public class testAuto2 extends LinearOpMode {
 
     OpenCvWebcam webcam;
 
-    OpenCVBlue pipeline = new OpenCVBlue(telemetry);
+    OpenCVRed pipeline = new OpenCVRed(telemetry);
 
 
 
