@@ -36,6 +36,7 @@ import java.util.Locale;
         private double MOVE_MIDDLE = 0.7;
         private double MOVE_LEFT = 2;
         private double MOVE_RIGHT = 2;
+        private double MOVE_FORWARD = 2;
 
         static final double     FORWARD_SPEED = 0.2;
         static final double     TURN_SPEED    = 0.2;
@@ -301,6 +302,10 @@ import java.util.Locale;
                     frontRightMotor.setPower(-TURN_SPEED);
                     backRightMotor.setPower(-TURN_SPEED);
                     runtime.reset();
+                    //frontLeftMotor.setPower(FORWARD_SPEED);
+                    //frontRightMotor.setPower(FORWARD_SPEED);
+                    //backLeftMotor.setPower(FORWARD_SPEED);
+                    //backRightMotor.setPower(FORWARD_SPEED);
 
                     while (opModeIsActive() && (runtime.seconds() < time)) {
                         telemetry.addData("Path", "%s: %4.1f S Elapsed", direction, runtime.seconds());
@@ -317,6 +322,11 @@ import java.util.Locale;
                     frontRightMotor.setPower(TURN_SPEED);
                     backRightMotor.setPower(TURN_SPEED);
                     runtime.reset();
+                    //frontRightMotor.setPower(TURN_SPEED);
+                    //backRightMotor.setPower(TURN_SPEED);
+                    //frontLeftMotor.setPower(-TURN_SPEED);
+                    //backLeftMotor.setPower(-TURN_SPEED);
+
                     while (opModeIsActive() && (runtime.seconds() < time)) {
                         telemetry.addData("Path", "%s: %4.1f S Elapsed", direction, runtime.seconds());
                         telemetry.update();
@@ -326,6 +336,7 @@ import java.util.Locale;
                     frontRightMotor.setPower(0);
                     backRightMotor.setPower(0);
                     break;
+
             }
         }
 
