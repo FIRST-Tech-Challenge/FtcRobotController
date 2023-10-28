@@ -40,13 +40,15 @@ import org.openftc.easyopencv.OpenCvCameraRotation;
 
 import java.util.ArrayList;
 
-import roadRunner.drive.SampleMecanumDrive;
-
 @TeleOp
 public class AprilTagDetectionInit extends LinearOpMode
 {
     OpenCvCamera camera;
     AprilTagDetectionPipeline aprilTagDetectionPipeline;
+
+    static final int CAMERA_WIDTH = 800;
+    static final int CAMERA_HEIGHT = 600;
+    static final double CAMERA_OFFSET = 00000.0 / 12; // in feet
 
     static final double FEET_PER_METER = 3.28084;
 
@@ -59,8 +61,9 @@ public class AprilTagDetectionInit extends LinearOpMode
     double cx = 402.145;
     double cy = 221.506;
 
-    // UNITS ARE METERS
-    double tagsize = 0.166;
+
+    double tagsize_meters = 2.0; // In meters
+    double tagsize_feet = tagsize_meters * FEET_PER_METER;
 
     int ID_TAG_OF_INTEREST_LEFT= 1; // Tag ID 1 from the 36h11 family
     int ID_TAG_OF_INTEREST_MIDDLE = 2; // Tag ID 2 from the 36h11 family
@@ -92,7 +95,7 @@ public class AprilTagDetectionInit extends LinearOpMode
         camera = OpenCvCameraFactory.getInstance().createWebcam(webcamName, cameraMonitorViewId);
 
         //camera = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "Webcam B"), cameraMonitorViewId); // Webcam Back
-        aprilTagDetectionPipeline = new AprilTagDetectionPipeline(tagsize, fx, fy, cx, cy);
+        aprilTagDetectionPipeline = new AprilTagDetectionPipeline(tagsize_meters, fx, fy, cx, cy);
 
         camera.setPipeline(aprilTagDetectionPipeline);
         camera.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener()
@@ -101,7 +104,7 @@ public class AprilTagDetectionInit extends LinearOpMode
             @Override
             public void onOpened()
             {
-                camera.startStreaming(800,600, OpenCvCameraRotation.UPRIGHT);
+                camera.startStreaming(CAMERA_WIDTH,CAMERA_HEIGHT, OpenCvCameraRotation.UPRIGHT);
             }
 
             @Override
@@ -207,10 +210,11 @@ public class AprilTagDetectionInit extends LinearOpMode
             tagToTelemetry(tagOfInterest);
 
             // Calculate the left-to-right alignment error
-            double distanceOffset = 6.0; // Measured distance between April Tags in feet
-            double centerX = 800 / 2.0; // Half of the camera width
+            // double distanceOffset = 6.0; // Measured distance between April Tags in feet
+            double centerX = CAMERA_WIDTH / 2.0; // Half of the camera width
             double pixelError = centerX - tagOfInterest.pose.x; // X-coordinate of the tag center
-            double feetError = pixelError * (tagsize / 800.0); // Convert to feet
+            double pixelError_to_feetError_proportion = (tagsize_feet / CAMERA_WIDTH) - CAMERA_OFFSET;
+            double feetError = pixelError * pixelError_to_feetError_proportion; // Convert to feet
 
             // Constants for alignment and rotation adjustments
             double alignmentPower = 0.1; // Adjust as needed
@@ -223,7 +227,7 @@ public class AprilTagDetectionInit extends LinearOpMode
                 //  as to align in the event that current one being used is no longer detected.
                 // Recalculate alignment error, rotation angle, and robot heading
                 pixelError = centerX - tagOfInterest.pose.x;
-                feetError = pixelError * (tagsize / 800.0);
+                feetError = pixelError * pixelError_to_feetError_proportion;
 
                 // Calculate powers for alignment and rotation
                 double alignPower = feetError * alignmentPower;
@@ -282,6 +286,8 @@ public class AprilTagDetectionInit extends LinearOpMode
 
         telemetry.addLine(String.format("\nDetected tag ID=%d", detection.id));
         telemetry.addLine(String.format("Translation X: %.2f feet", detection.pose.x*FEET_PER_METER));
+        telemetry.addLine(String.format("Translation X: %.2f pixels", detection.pose.x));
+
         telemetry.addLine(String.format("Translation Y: %.2f feet", detection.pose.y*FEET_PER_METER));
         telemetry.addLine(String.format("Translation Z: %.2f feet", detection.pose.z*FEET_PER_METER));
         telemetry.addLine(String.format("Rotation Yaw: %.2f degrees", rot.firstAngle));
