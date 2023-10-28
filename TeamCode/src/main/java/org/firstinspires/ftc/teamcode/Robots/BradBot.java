@@ -9,12 +9,14 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import org.firstinspires.ftc.teamcode.Components.Arm;
 import org.firstinspires.ftc.teamcode.Components.Arm.ArmStates;
 import org.firstinspires.ftc.teamcode.Components.CVMaster;
+import org.firstinspires.ftc.teamcode.Components.Clamp;
 import org.firstinspires.ftc.teamcode.Components.FutureComponents.Extendo;
 import org.firstinspires.ftc.teamcode.Components.FutureComponents.FlippingIntake;
 import org.firstinspires.ftc.teamcode.Components.Hopper;
 import org.firstinspires.ftc.teamcode.Components.Intake;
 import org.firstinspires.ftc.teamcode.Components.Launcher;
 import org.firstinspires.ftc.teamcode.Components.Lift;
+import org.firstinspires.ftc.teamcode.Components.Preloader;
 import org.firstinspires.ftc.teamcode.Components.RFModules.System.RFLogger;
 import org.firstinspires.ftc.teamcode.Components.Ultrasonics;
 import org.firstinspires.ftc.teamcode.Components.Wrist;
@@ -27,10 +29,12 @@ import org.firstinspires.ftc.teamcode.roadrunner.trajectorysequence.TrajectorySe
  */
 public class BradBot extends BasicRobot{
     Arm arm;
+    Clamp clamp;
     CVMaster cv;
     Intake intake;
     Launcher launcher;
     Lift lift;
+    Preloader preloader;
     public SampleMecanumDrive roadrun;
     Ultrasonics ultras;
     Wrist wrist;
@@ -46,10 +50,12 @@ public class BradBot extends BasicRobot{
         LOGGER.setLogLevel(RFLogger.Severity.INFO);
         LOGGER.log("Initializing Components!");
         arm = new Arm();
-        cv = new CVMaster();
+//        cv = new CVMaster();
+        clamp = new Clamp();
         intake = new Intake();
         launcher = new Launcher();
         lift = new Lift();
+        preloader = new Preloader();
         roadrun = new SampleMecanumDrive(p_op.hardwareMap);
 //        ultras = new Ultrasonics();
         wrist = new Wrist();
@@ -206,7 +212,7 @@ public class BradBot extends BasicRobot{
         LOGGER.log("updating each component");
         super.update();
         arm.update();
-        cv.update();
+//        cv.update();
         intake.update();
         lift.update();
         roadrun.update();

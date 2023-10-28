@@ -9,6 +9,7 @@ import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.packet;
 import com.arcrobotics.ftclib.hardware.motors.Motor;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
 import org.firstinspires.ftc.teamcode.Components.RFModules.Devices.RFBreakBeam;
 import org.firstinspires.ftc.teamcode.Components.RFModules.Devices.RFLimitSwitch;
@@ -31,7 +32,7 @@ public class Intake extends RFMotor {
 
     private boolean full = false;
     private double pixelCount =0;
-    private double HALF_TICKS_PER_REV = 537.6;
+    private double HALF_TICKS_PER_REV = 537.6/2;
     DcMotorEx encoder;
 
     /**
@@ -41,6 +42,7 @@ public class Intake extends RFMotor {
         super("intakeMotor",true);
         encoder = op.hardwareMap.get(DcMotorEx.class, "motorRightBack");
         super.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        super.setDirection(DcMotorSimple.Direction.REVERSE);
         LOGGER.setLogLevel(RFLogger.Severity.INFO);
         LOGGER.log("Initializing Intake Motor and intake sensors!");
 //        breakBeam = new RFBreakBeam();
@@ -87,7 +89,6 @@ public class Intake extends RFMotor {
         LOGGER.log("starting intake, power : "+INTAKE_POWER);
         setPower(INTAKE_POWER);
         IntakeStates.INTAKING.setStateTrue();
-
     }
     /**
      * Sets intake power to REVERSE_POWER, logs that the robot is reversing to general and intake surface level
@@ -117,8 +118,8 @@ public class Intake extends RFMotor {
             } else {
                 LOGGER.log("trying to stop, too far" + res);
             }
-            IntakeStates.STOPPED.setStateTrue();
         }
+        IntakeStates.STOPPED.setStateTrue();
     }
 
     /**
