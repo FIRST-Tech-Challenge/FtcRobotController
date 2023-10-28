@@ -222,7 +222,7 @@ public class BradBot extends BasicRobot{
 
     public void stop(){
         LOGGER.log("the program has stopped normally");
-        cv.stop();
+//        cv.stop();
         op.stop();
     }
 }
