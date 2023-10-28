@@ -13,6 +13,8 @@ public class TestTeleOp extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
 
+        Robot robot = new Robot(hardwareMap, this, telemetry);
+
         DcMotor intake = hardwareMap.dcMotor.get("intake");
         Servo holderClamp = hardwareMap.servo.get("holderClamp");
         Servo arm = hardwareMap.servo.get("arm");
@@ -155,6 +157,8 @@ public class TestTeleOp extends LinearOpMode {
                 armPos = 0.845; //up (outtake) position
             }
 
+            holderClamp.setPosition(holderClampPos);
+            arm.setPosition(armPos);
             //GAMEPAD 1 CONTROLS
 
             double forwardBackward = gamepad1.left_stick_y * -0.5;
@@ -182,8 +186,54 @@ public class TestTeleOp extends LinearOpMode {
             lBack.setPower(bLeftPower);
             rBack.setPower(bRightPower);
 
-            holderClamp.setPosition(holderClampPos);
-            arm.setPosition(armPos);
+            double[] power = {
+                    fLeftPower,
+                    fRightPower,
+                    bLeftPower,
+                    bRightPower
+            };
+
+
+
+            telemetry.addData("fleft", power[0]);
+            telemetry.addData("fright", power[1]);
+            telemetry.addData("bleft", power[2]);
+            telemetry.addData("bright", power[3]);
+
+            power = robot.scalePowers(power);
+
+            robot.setMotorPower(power);
+
+            remainingDistanceHigh = 300 - robot.lsFront.getCurrentPosition();
+            remainingDistanceMid = 200 - robot.lsFront.getCurrentPosition();
+            remainingDistanceLow = 100 - robot.lsFront.getCurrentPosition();
+            remainingDistanceZero = -robot.lsFront.getCurrentPosition();
+
+            telemetry.addData("current pos for linear slide", robot.lsFront.getCurrentPosition());
+
+            if (gamepad1.dpad_up && remainingDistanceHigh > 10) {
+
+                robot.lsFront.setPower(remainingDistanceHigh*0.002);
+                robot.lsBack.setPower(remainingDistanceHigh*0.002);
+
+            } else if (gamepad1.dpad_right && remainingDistanceMid > 10) {
+
+                robot.lsFront.setPower(remainingDistanceMid*0.002);
+                robot.lsBack.setPower(remainingDistanceMid*0.002);
+
+            } else if (gamepad1.dpad_left && remainingDistanceLow > 10) {
+
+                robot.lsFront.setPower(remainingDistanceLow*0.002);
+                robot.lsBack.setPower(remainingDistanceLow*0.002);
+
+            } else if (gamepad1.dpad_down && remainingDistanceZero > 10) {
+
+                robot.lsFront.setPower(remainingDistanceZero*0.002);
+                robot.lsBack.setPower(remainingDistanceZero*0.002);
+
+            }
+
+            //TODO AANYA LAUNCHER GOES HERE!!!!!!
 
             telemetry.addLine(String.valueOf(holderClampPos));
             telemetry.update();

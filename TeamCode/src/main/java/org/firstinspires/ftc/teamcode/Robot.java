@@ -321,7 +321,7 @@ public class Robot {
 
         imu.initialize(new IMU.Parameters(
                 new RevHubOrientationOnRobot(
-                        RevHubOrientationOnRobot.LogoFacingDirection.UP,
+                        RevHubOrientationOnRobot.LogoFacingDirection.LEFT,
                         RevHubOrientationOnRobot.UsbFacingDirection.FORWARD
                 )
         ));
