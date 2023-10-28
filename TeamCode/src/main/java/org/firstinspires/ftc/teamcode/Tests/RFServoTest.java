@@ -4,6 +4,7 @@ import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.LOGGER;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import org.firstinspires.ftc.teamcode.Components.RFModules.Devices.RFServo;
 import org.firstinspires.ftc.teamcode.Components.RFModules.System.RFLogger;
+import org.firstinspires.ftc.teamcode.Robots.BasicRobot;
 
 /**
  * William
@@ -12,6 +13,7 @@ import org.firstinspires.ftc.teamcode.Components.RFModules.System.RFLogger;
 
 public abstract class RFServoTest extends LinearOpMode {
     RFServo testServo;
+    BasicRobot robot;
     double lastTime = 0;
     boolean flipped = false;
     double FLIP_TIME;
@@ -19,15 +21,18 @@ public abstract class RFServoTest extends LinearOpMode {
     double SERVO_LOWER_LIMIT;
     double SERVO_UPPER_LIMIT;
 
+
     /**
-     * Constructs RFServoTest class
-     * @param p_testServo RFServo that needs to be tested
+     * Initalizes RFServoTest class
+     * @param p_testServoName name of RFServo that needs to be tested
      * @param p_FLIP_TIME time it takes for servo to flip from lower limit to upper limit
      * @param p_SERVO_LOWER_LIMIT lower limit of servo
      * @param p_SERVO_UPPER_LIMIT upper limit of servo
      */
-    public RFServoTest(RFServo p_testServo, double p_FLIP_TIME, double p_SERVO_LOWER_LIMIT, double p_SERVO_UPPER_LIMIT) {
-        testServo = p_testServo;
+    public void initialize(String p_testServoName, double p_FLIP_TIME, double p_SERVO_LOWER_LIMIT,
+                       double p_SERVO_UPPER_LIMIT) {
+        robot = new BasicRobot(this, false);
+        testServo = new RFServo(p_testServoName, p_SERVO_UPPER_LIMIT);
         FLIP_TIME = p_FLIP_TIME;
         SERVO_LOWER_LIMIT = p_SERVO_LOWER_LIMIT;
         SERVO_UPPER_LIMIT = p_SERVO_UPPER_LIMIT;
@@ -53,5 +58,6 @@ public abstract class RFServoTest extends LinearOpMode {
             }
             lastTime = time;
         }
+        robot.update();
     }
 }

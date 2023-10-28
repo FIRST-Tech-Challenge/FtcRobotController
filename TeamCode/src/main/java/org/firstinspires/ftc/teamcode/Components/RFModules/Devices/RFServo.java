@@ -1,6 +1,8 @@
 package org.firstinspires.ftc.teamcode.Components.RFModules.Devices;
+import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import static org.firstinspires.ftc.teamcode.Components.RFModules.System.Logger.df;
+import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.LOGGER;
 import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.op;
 import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.logger;
 import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.time;
@@ -8,6 +10,8 @@ import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.time;
 
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.ServoController;
+
+import org.firstinspires.ftc.teamcode.Components.RFModules.System.RFLogger;
 
 /**
  * William
@@ -82,6 +86,7 @@ public class RFServo implements Servo {
                         + df.format(p_position), true);
             rfServo.setPosition(p_position);
             lastTime = time;
+            LOGGER.log(RFLogger.Severity.INFO, "POGGERS?");
         }
     }
 
