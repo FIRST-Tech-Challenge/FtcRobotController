@@ -13,7 +13,6 @@ import org.openftc.easyopencv.OpenCvWebcam;
 @Autonomous(name="Autonomous - Generic", group="Linear Opmode")
 @Disabled
 public class AutonomousOpenCV extends LinearOpMode {
-    public String ballPosition;
     private OpenCvWebcam webcam;
     protected CircleDetection circleDetection;
     protected DrivingFunctions df;
@@ -91,21 +90,18 @@ public class AutonomousOpenCV extends LinearOpMode {
 
         if(circleDetection.GetBallPosition() == CircleDetection.BallPosition.LEFT)
         {
-            ballPosition = "left";
             PushPixelSide(false);
             strafeCorrection = isNear ? -1.5 : -1.5;
             aimingDistance = isRed ? 12 : 0;
         }
         else if(circleDetection.GetBallPosition() == CircleDetection.BallPosition.CENTER)
         {
-            ballPosition = "center";
             PushPixelCenter();
             aimingDistance = 6;
             strafeCorrection = isNear ? 0 : -3;
         }
         else if(circleDetection.GetBallPosition() == CircleDetection.BallPosition.RIGHT)
         {
-            ballPosition = "right";
             PushPixelSide(true);
             strafeCorrection = isNear ? -1.5 : -1.5;
             if (centerCross) {
@@ -115,15 +111,10 @@ public class AutonomousOpenCV extends LinearOpMode {
                 aimingDistance = isRed ? 0 : 12;
             }
         }
-        if(!isNear) {
+        if(!isNear)
             CrossField();
-            DeliverPixel(aimingDistance, strafeCorrection);
-            ParkRobot(false);
-        }
-        else{
-            DeliverPixel(aimingDistance, strafeCorrection);
-            ParkRobot(true);
-        }
+        DeliverPixel(aimingDistance, strafeCorrection);
+        ParkRobot();
     }
 
     protected void PushPixelSide(boolean isRight)
@@ -176,17 +167,16 @@ public class AutonomousOpenCV extends LinearOpMode {
         df.DriveStraight(DRIVE_SPEED, isRed ? -aimingDistance : aimingDistance , deliveryHeading, false);
     }
 
-    protected void ParkRobot(boolean cornerPark)
+    protected void ParkRobot()
     {
         int deliveryHeading = isRed ? 0 : 180;
-        if (cornerPark){
+        if (this.cornerPark){
             df.DriveStraight(DRIVE_SPEED, isRed ? -26 : 14, deliveryHeading, false);
-            df.DriveStraight(DRIVE_SPEED, 18, deliveryHeading, true);
         }
         else{
-            df.DriveStraight(DRIVE_SPEED, isRed ? 14 : -35, deliveryHeading, false);
-            df.DriveStraight(DRIVE_SPEED, 18, deliveryHeading, true);
+            df.DriveStraight(DRIVE_SPEED, isRed ? 16 : -35, deliveryHeading, false);
         }
+        df.DriveStraight(DRIVE_SPEED, 18, deliveryHeading, true);
     }
     private void RunEncoderTest()
     {
@@ -221,19 +211,9 @@ public class AutonomousOpenCV extends LinearOpMode {
     }
     protected void RunAutoDrivingTest()
     {
-        //df.DriveStraight(DRIVE_SPEED, 24, 0, false);
-        //df.DriveStraight(DRIVE_SPEED, 24, 0, true);
-        //df.DriveStraight(DRIVE_SPEED, 10, 90, false);
-        //df.DriveStraight(DRIVE_SPEED, 10, -90, true);
-
-        //df.DriveStraight(DRIVE_SPEED, -20, 0, false);
-
         df.TurnToHeading(TURN_SPEED, -90); // Positive angles turn to the left
         df.TurnToHeading(0.7, 90); // Positive angles turn to the left
         df.TurnToHeading(0.8, 180); // Positive angles turn to the left
         df.TurnToHeading(1.0, 0); // Positive angles turn to the left
-
-        //df.DriveStraight(DRIVE_SPEED, 10, -60, false);
-        //df.DriveStraight(DRIVE_SPEED, -12, -60, false);
     }
 }

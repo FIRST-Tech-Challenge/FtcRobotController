@@ -27,15 +27,18 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package org.firstinspires.ftc.teamcode;
+package org.firstinspires.ftc.teamcode.TestPrograms;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-@TeleOp(name="Test Servos Teleop", group="Linear Opmode")
-//@Disabled
+import org.firstinspires.ftc.teamcode.ServoFunctions;
+
+@TeleOp(name="Test Servos Teleop", group="Teleop Test")
+@Disabled
 public class TestServosTeleop extends LinearOpMode {
     private ServoFunctions sf = null;
     @Override
