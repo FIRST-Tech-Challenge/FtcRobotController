@@ -30,6 +30,7 @@ public class TeleOpMecanumDriveFTC2023 extends OpMode{
     public Servo  claw = null;
     public Servo arm1 = null;
     public Servo arm2 = null;
+    double position = 0;
 
     //double clawOffset = 0;
 
@@ -108,8 +109,9 @@ public class TeleOpMecanumDriveFTC2023 extends OpMode{
         backRight.setPower(pwr*dir);
     }
     public void driveArm(double pos) {
-        arm1.setPosition(pos);
-        arm2.setPosition(pos);
+        position = position+ pos /10;
+        arm1.setPosition(position);
+        arm2.setPosition(position);
     }
     public void start() {
     }
@@ -124,6 +126,7 @@ public class TeleOpMecanumDriveFTC2023 extends OpMode{
         double right1x;
         double left2y;
 
+
         // Run wheels in tank mode (note: The joystick goes negative when pushed forward, so negate it)
         left1y = gamepad1.left_stick_y;
         left1x = gamepad1.left_stick_x;
@@ -131,6 +134,7 @@ public class TeleOpMecanumDriveFTC2023 extends OpMode{
         left2y = gamepad2.left_stick_y;
 
         double baseSpeed = 1;
+
         if (gamepad1.a){
             baseSpeed = 0.5;
         }

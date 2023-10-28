@@ -128,9 +128,9 @@ public class StephieTest extends LinearOpMode {
         // Step through each leg of the path,
         // Note: Reverse movement is obtained by setting a negative distance (not speed)
 
-        encoderDrive(DRIVE_SPEED, 42, 42, 20.0);
+        encoderDrive(DRIVE_SPEED, -42, -42, 20.0);
         // insert turning things later. screetch
-        encoderDrive(DRIVE_SPEED, 55,55, 20.0);
+        //encoderDrive(DRIVE_SPEED, 55,55, 20.0);
         telemetry.addData("Path", "Complete");
         telemetry.update();
         sleep(1000);  // pause to display final telemetry message.
