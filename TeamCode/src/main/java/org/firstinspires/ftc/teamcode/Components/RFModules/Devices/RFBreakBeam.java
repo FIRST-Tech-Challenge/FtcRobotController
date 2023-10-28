@@ -1,8 +1,11 @@
 package org.firstinspires.ftc.teamcode.Components.RFModules.Devices;
 
+import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.LOGGER;
 import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.op;
 
 import com.qualcomm.hardware.rev.RevTouchSensor;
+
+import org.firstinspires.ftc.teamcode.Components.RFModules.System.RFLogger;
 
 /**
  * William
@@ -22,6 +25,7 @@ public class RFBreakBeam {
      * Does not update a state machine.
      */
     public boolean check() {
+        LOGGER.log(RFLogger.Severity.INFO, "RFBreakBeam.check(): detected object: " + breakBeam.isPressed());
         return (breakBeam.isPressed());
     }
 }
