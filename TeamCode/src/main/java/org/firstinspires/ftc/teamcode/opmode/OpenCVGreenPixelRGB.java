@@ -48,6 +48,16 @@ public class OpenCVGreenPixelRGB extends OpMode {
         //telemetry.addData("working?","");
         telemetry.update();
     }
+/*
+MatOfPoint mop = new MatOfPoint();
+mop.fromList(contour);
 
+Moments moments = Imgproc.moments(mop);
 
+Point centroid = new Point();
+
+centroid.x = moments.get_m10() / moments.get_m00();
+centroid.y = moments.get_m01() / moments.get_m00();
+
+ */
 }
