@@ -17,7 +17,7 @@ public class Wrist extends RFServo {
     public enum WristStates {
         FLAT(0.0, true),
         HOLD(0.2, false),
-        DROP(0.6, false);
+        DROP(0.65, false);
         double position;
         boolean state;
 

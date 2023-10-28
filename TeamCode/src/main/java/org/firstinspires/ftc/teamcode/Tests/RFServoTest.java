@@ -50,13 +50,22 @@ public abstract class RFServoTest extends LinearOpMode {
             if (flipped) {
                 testServo.setPosition(SERVO_LOWER_LIMIT);
                 LOGGER.log(RFLogger.Severity.INFO, "RFServoTest.autoLoop(): flipped servo to position: " + SERVO_LOWER_LIMIT);
-                flipped = false;
             } else {
                 testServo.setPosition(SERVO_UPPER_LIMIT);
                 LOGGER.log(RFLogger.Severity.INFO, "RFServoTest.autoLoop(): flipped servo to position: " + SERVO_UPPER_LIMIT);
-                flipped = true;
             }
+            flipped = !flipped;
             lastTime = time;
+        }
+        robot.update();
+    }
+
+    public void flipTo(double p_targetPos) {
+        if (time - lastTime > FLIP_TIME) {
+            testServo.setPosition(p_targetPos);
+            LOGGER.log(RFLogger.Severity.INFO, "RFServoTest.flipTo(): flipped servo to position: " + p_targetPos);
+            lastTime = time;
+            flipped = !flipped;
         }
         robot.update();
     }
