@@ -7,9 +7,9 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 public class Intake {
     DcMotor intakeMotor;
     public Intake(HardwareMap hwMap) {
-        //intakeMotor = hwMap.get(DcMotor.class, "intakeMotor");
+        intakeMotor = hwMap.get(DcMotor.class, "intakeMotor");
 
-        //intakeMotor.setDirection(DcMotor.Direction.FORWARD);
+        intakeMotor.setDirection(DcMotor.Direction.REVERSE);
     }
 
     public void driveIntake(boolean powered) {

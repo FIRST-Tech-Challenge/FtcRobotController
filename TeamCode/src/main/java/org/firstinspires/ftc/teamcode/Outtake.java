@@ -9,7 +9,7 @@ public class Outtake {
     public Outtake(HardwareMap hwMap) {
         outtakeMotor = hwMap.get(DcMotor.class, "outtakeMotor");
 
-        outtakeMotor.setDirection(DcMotor.Direction.FORWARD);
+        outtakeMotor.setDirection(DcMotor.Direction.REVERSE);
     }
 
     public void driveLift(double power) {
