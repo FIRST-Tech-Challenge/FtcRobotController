@@ -27,6 +27,7 @@ import org.firstinspires.ftc.teamcode.Variables.rMin
 import org.firstinspires.ftc.teamcode.Variables.rMotorL
 import org.firstinspires.ftc.teamcode.Variables.rMotorR
 import org.firstinspires.ftc.teamcode.Variables.rPower
+import org.firstinspires.ftc.teamcode.Variables.slideGate
 import org.firstinspires.ftc.teamcode.Variables.slideRotMax
 import org.firstinspires.ftc.teamcode.Variables.slideRotMin
 import org.firstinspires.ftc.teamcode.Variables.slideRotationMotor
@@ -76,20 +77,24 @@ class TeleopFromHell: DriveMethods() {
         }
         telemetry.update()
 
+        //slideGate?.position = 0.59
+
         waitForStart()
+        //slideGate?.position = 0.55
         //set claw position into bounds
-        clawRotation!!.position = 0.3
+        //clawRotation!!.position = 0.3
         //clawMotor!!.position = closedClaw it broke womp womp
         //reset motors
-        motorSlideLeft!!.mode = DcMotor.RunMode.STOP_AND_RESET_ENCODER
-        motorSlideLeft!!.mode = DcMotor.RunMode.RUN_USING_ENCODER;
-        slideRotationMotor!!.mode = DcMotor.RunMode.STOP_AND_RESET_ENCODER
-        slideRotationMotor!!.mode = DcMotor.RunMode.RUN_USING_ENCODER;
+       // motorSlideLeft!!.mode = DcMotor.RunMode.STOP_AND_RESET_ENCODER
+        //motorSlideLeft!!.mode = DcMotor.RunMode.RUN_USING_ENCODER;
+        //slideRotationMotor!!.mode = DcMotor.RunMode.STOP_AND_RESET_ENCODER
+        //slideRotationMotor!!.mode = DcMotor.RunMode.RUN_USING_ENCODER;
         //set up variables
         var leftY: Double
         var leftYGPadTwo: Double
         var leftX: Double
         var rightX: Double
+        var placeOrCollect = true
         var upOrDown = true
         var slideTarget = bottom
         var targetHeight = 0
@@ -121,33 +126,33 @@ class TeleopFromHell: DriveMethods() {
             }
 
             //raise/lower slide
-            if (gamepad2.left_trigger >= 0.8) {
-                if (targetHeight < 3) {
-                    targetHeight++
-                }
-                sleep(150)
-            }
-            if (gamepad2.left_bumper) {
-                if (targetHeight > 0) {
-                    targetHeight--
-                }
-                sleep(150)
-            }
+            //if (gamepad2.left_trigger >= 0.8) {
+            //    if (targetHeight < 3) {
+               //     targetHeight++
+           //     }
+            //    sleep(150)
+           // }
+            //if (gamepad2.left_bumper) {
+           //     if (targetHeight > 0) {
+           //         targetHeight--
+            //    }
+           //     sleep(150)
+          //  }
 
-            when (targetHeight) {
-                0 -> {slideTarget = bottom}
-                1 -> {slideTarget = low}
-                2 -> {slideTarget = mid}
-                3 -> {slideTarget = high}
-            }
+            //when (targetHeight) {
+          //      0 -> {slideTarget = bottom}
+          //      1 -> {slideTarget = low}
+          //      2 -> {slideTarget = mid}
+         //       3 -> {slideTarget = high}
+          //  }
 
-            slidePos = motorSlideLeft?.let { -(it.currentPosition) }!!
-            speed = if (slideTarget < slidePos!!) {
-                50
-            } else {
-                300
-            }
-            motorSlideLeft?.power = -((2 / (1 + (exp((-(slideTarget - slidePos) / speed).toDouble())))) - 1)
+         //   slidePos = motorSlideLeft?.let { -(it.currentPosition) }!!
+        //    speed = if (slideTarget < slidePos!!) {
+         //       50
+         //   } else {
+         //       300
+         //   }
+            //motorSlideLeft?.power = -((2 / (1 + (exp((-(slideTarget - slidePos) / speed).toDouble())))) - 1)
 
             //rack & pinion control
             if (gamepad2.right_bumper) {
@@ -183,28 +188,34 @@ class TeleopFromHell: DriveMethods() {
             if (gamepad2.x) {
                 telemetry.addData("upOrDown", upOrDown)
                 upOrDown = !upOrDown
-                sleep(150)
+                sleep(500)
             }
 
             //claw stuff
-            if (gamepad2.y) {
-                //swap between intake and place claw rotation
-            }
+           // if (gamepad2.y) {
+           //     if (placeOrCollect) {
+           //         placeOrCollect = !placeOrCollect
+          //      }
+//
+         //       sleep(500)
+         //   }
 
             //rotation
-            slideRotationMotor?.currentPosition?.times(length)
-            if (slideRottarget + leftYGPadTwo > slideRotMin && slideRottarget + leftYGPadTwo < slideRotMax) {
-                slideRottarget += leftYGPadTwo
-            }
+        //    slideRotationMotor?.currentPosition?.times(length)
 
-            slideRotPos = slideRotationMotor?.let { -(it.currentPosition) }!!
-            slideDeg = abs(slideRotPos - slideRotMax) * click2Degree
-            angleFromSlideToClaw = (150 - slideDeg)
 
-            slideRotationMotor?.power = -((2 / (1 + (exp((-(slideRottarget - slideRotPos) / 100))))) - 1)
-            telemetry.addData("RotTarg", slideRottarget)
-            telemetry.addData("Angle from slide to claw I think???", angleFromSlideToClaw)
-            telemetry.addData("slideDeg", slideDeg)
+         //   slideRotPos = slideRotationMotor?.let { -(it.currentPosition) }!!
+         //   slideDeg = abs(slideRotPos - slideRotMax) * click2Degree
+         //   angleFromSlideToClaw = 90.0 - (slideRotationMotor?.currentPosition!! + 113.0) * 0.157116
+
+          //  if (placeOrCollect) {
+          //      slideRottarget = 0.0
+          //  } else {
+          //      slideRottarget = 176.0
+          //  }
+         //   slideRotationMotor?.power = -(slideRotPos - abs(slideRottarget))/1000
+          //  telemetry.addData("pos", slideRotationMotor!!.currentPosition)
+         //   telemetry.addData("Tpos", slideRottarget)
             telemetry.update()
         }
     }

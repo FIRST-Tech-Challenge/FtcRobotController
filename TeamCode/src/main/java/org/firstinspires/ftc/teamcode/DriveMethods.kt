@@ -292,11 +292,11 @@ open class DriveMethods: LinearOpMode() {
     }
 
     open fun initSlideMotors() {
-        motorSlideLeft = hardwareMap.get<DcMotor>(DcMotor::class.java, "motorSlideLeft")
-        slideRotationMotor = hardwareMap.get<DcMotor>(DcMotor::class.java, "slideRotationMotor")
-        clawRotation = hardwareMap.get<Servo>(Servo::class.java, "clawRotation")
-        clawMotor = hardwareMap.get<Servo>(Servo::class.java, "clawMotor")
-        slideGate = hardwareMap.get<Servo>(Servo::class.java, "slideGate")
+     //   motorSlideLeft = hardwareMap.get<DcMotor>(DcMotor::class.java, "motorSlideLeft")
+    //    slideRotationMotor = hardwareMap.get<DcMotor>(DcMotor::class.java, "slideRotationMotor")
+      //  clawRotation = hardwareMap.get<Servo>(Servo::class.java, "clawRotation")
+      //  clawMotor = hardwareMap.get<Servo>(Servo::class.java, "clawMotor")
+     //   slideGate = hardwareMap.get<Servo>(Servo::class.java, "slideGate")
     }
     fun setManualExposure(exposureMS: Int, gain: Int) {
         // Wait for the camera to be open, then use the controls
@@ -354,8 +354,8 @@ open class DriveMethods: LinearOpMode() {
         slideAngle = atan(y/x);
         x =  abs(Variables.slideToBoard) - Variables.clawToBoard + .5* Variables.t;
         y = sqrt(3.0) /2 * Variables.t;
-        slideLength = Math.sqrt(Math.pow(x, 2.0) + Math.pow(y, 2.0));
-        slideAngle = Math.atan(y/x);
+        slideLength = sqrt(x.pow(2.0) + y.pow(2.0));
+        slideAngle = atan(y/x);
         clawAngle = 60 - slideAngle;
     }
 
