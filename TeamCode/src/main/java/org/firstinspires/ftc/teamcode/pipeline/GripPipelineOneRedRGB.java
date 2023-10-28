@@ -23,7 +23,7 @@ import org.openftc.easyopencv.OpenCvPipeline;
 *
 * @author GRIP
 */
-class GripPipelineOneRedRGB  extends OpenCvPipeline {
+public class GripPipelineOneRedRGB  extends OpenCvPipeline {
 
 	//Outputs
 	private Mat cvResizeOutput = new Mat();
