@@ -132,11 +132,11 @@ public class PowerPlayIronCore extends OpMode {
         /*
         ArrayList<AprilTagDetection> currentDetections = aprilTagDetectionPipeline.getLatestDetections();
 
-        if (gamepad1.a) {
+        if  {
             runAuton = true;
             setupArm(true); //reset encoders
         }
-        if (gamepad1.b) {
+        if  {
             runAuton = false;
             setupArm(false);
         }
