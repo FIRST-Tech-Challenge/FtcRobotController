@@ -30,7 +30,7 @@ CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR
 TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
 THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
-package org.firstinspires.ftc.robotcontroller.external.samples;
+package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.hardware.dfrobot.HuskyLens;
 import com.qualcomm.hardware.rev.Rev2mDistanceSensor;
@@ -60,16 +60,20 @@ import java.util.concurrent.TimeUnit;
  * Remove or comment out the @Disabled line to add this OpMode to the Driver Station OpMode list
  */
 @TeleOp(name = "Sensor: HuskyLens", group = "Sensor")
-@Disabled
 public class SensorHuskyLens extends LinearOpMode {
 
     private final int READ_PERIOD = 1;
 
     private HuskyLens huskyLens;
 
+    boolean toggle = true;
+    String mode = "TAG";
+
+    String pos;
+
     @Override
-    public void runOpMode()
-    {
+    public void runOpMode() throws InterruptedException {
+
         huskyLens = hardwareMap.get(HuskyLens.class, "huskylens");
 
         /*
@@ -137,11 +141,33 @@ public class SensorHuskyLens extends LinearOpMode {
              *
              * Returns an empty array if no objects are seen.
              */
+            if (gamepad1.a) {
+                if (toggle) {
+                    huskyLens.selectAlgorithm(HuskyLens.Algorithm.TAG_RECOGNITION);
+                    mode = "TAG";
+                    TimeUnit.MILLISECONDS.sleep(150);
+                    toggle = false;
+                } else {
+                    huskyLens.selectAlgorithm(HuskyLens.Algorithm.OBJECT_TRACKING);
+                    mode = "OBJECT";
+                    TimeUnit.MILLISECONDS.sleep(150);
+                    toggle = true;
+                }
+            }
             HuskyLens.Block[] blocks = huskyLens.blocks();
             telemetry.addData("Block count", blocks.length);
             for (int i = 0; i < blocks.length; i++) {
                 telemetry.addData("Block", blocks[i].toString());
+                if (blocks[i].x <= 100) {
+                    telemetry.addData("Pos:", "Left");
+                } else if (blocks[i].x > 100 && blocks[i].x <= 200) {
+                    telemetry.addData("Pos:", "Middle");
+                } else if (blocks[i].x >200) {
+                    telemetry.addData("Pos:", "Right");
+                }
             }
+
+            telemetry.addData("Mode:", mode);
 
             telemetry.update();
         }
