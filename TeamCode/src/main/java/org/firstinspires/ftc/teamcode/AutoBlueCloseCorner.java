@@ -108,8 +108,6 @@ public class AutoBlueCloseCorner extends RobotLinearOpMode
                 encoderDrive(0.5, 9, MOVEMENT_DIRECTION.REVERSE);
                 encoderDrive(0.5, 25, MOVEMENT_DIRECTION.STRAFE_LEFT);
                 encoderDrive(0.5, 5, MOVEMENT_DIRECTION.STRAFE_RIGHT);
-                encoderDrive(0.5, 40, MOVEMENT_DIRECTION.FORWARD);
-                encoderDrive(0.5, 5, MOVEMENT_DIRECTION.STRAFE_LEFT);
             }
 
             case RIGHT:
@@ -122,8 +120,6 @@ public class AutoBlueCloseCorner extends RobotLinearOpMode
                 encoderDrive(0.5, 16, MOVEMENT_DIRECTION.REVERSE);
                 encoderDrive(0.5, 25, MOVEMENT_DIRECTION.STRAFE_LEFT);
                 encoderDrive(0.5, 5, MOVEMENT_DIRECTION.STRAFE_RIGHT);
-                encoderDrive(0.5, 40, MOVEMENT_DIRECTION.FORWARD);
-                encoderDrive(0.5, 5, MOVEMENT_DIRECTION.STRAFE_LEFT);
             }
 
             case CENTER:
@@ -135,8 +131,6 @@ public class AutoBlueCloseCorner extends RobotLinearOpMode
                 encoderDrive(0.5, 21, MOVEMENT_DIRECTION.REVERSE);
                 encoderDrive(0.5, 25, MOVEMENT_DIRECTION.STRAFE_LEFT);
                 encoderDrive(0.5, 5, MOVEMENT_DIRECTION.STRAFE_RIGHT);
-                encoderDrive(0.5, 40, MOVEMENT_DIRECTION.FORWARD);
-                encoderDrive(0.5, 5, MOVEMENT_DIRECTION.STRAFE_LEFT);
             }
         }
 

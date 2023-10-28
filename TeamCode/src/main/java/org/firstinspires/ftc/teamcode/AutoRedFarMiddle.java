@@ -110,7 +110,7 @@ public class AutoRedFarMiddle extends RobotLinearOpMode
                 encoderDrive(0.5, 50, MOVEMENT_DIRECTION.STRAFE_RIGHT);
                 encoderDrive(0.5, 5, MOVEMENT_DIRECTION.STRAFE_LEFT);
                 encoderDrive(0.5, 40, MOVEMENT_DIRECTION.FORWARD);
-                encoderDrive(0.5, 5, MOVEMENT_DIRECTION.STRAFE_LEFT);
+                encoderDrive(0.5, 5, MOVEMENT_DIRECTION.STRAFE_RIGHT);
             }
 
             case RIGHT:
@@ -125,7 +125,7 @@ public class AutoRedFarMiddle extends RobotLinearOpMode
                 encoderDrive(0.5, 50, MOVEMENT_DIRECTION.STRAFE_RIGHT);
                 encoderDrive(0.5, 5, MOVEMENT_DIRECTION.STRAFE_LEFT);
                 encoderDrive(0.5, 40, MOVEMENT_DIRECTION.FORWARD);
-                encoderDrive(0.5, 5, MOVEMENT_DIRECTION.STRAFE_LEFT);
+                encoderDrive(0.5, 5, MOVEMENT_DIRECTION.STRAFE_RIGHT);
             }
 
             case CENTER:
@@ -139,7 +139,7 @@ public class AutoRedFarMiddle extends RobotLinearOpMode
                 encoderDrive(0.5, 50, MOVEMENT_DIRECTION.STRAFE_RIGHT);
                 encoderDrive(0.5, 5, MOVEMENT_DIRECTION.STRAFE_LEFT);
                 encoderDrive(0.5, 40, MOVEMENT_DIRECTION.FORWARD);
-                encoderDrive(0.5, 5, MOVEMENT_DIRECTION.STRAFE_LEFT);
+                encoderDrive(0.5, 5, MOVEMENT_DIRECTION.STRAFE_RIGHT);
             }
         }
 
