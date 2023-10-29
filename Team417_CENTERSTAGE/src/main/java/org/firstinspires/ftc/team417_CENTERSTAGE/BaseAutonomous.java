@@ -34,6 +34,11 @@ abstract public class BaseAutonomous extends BaseOpMode {
     int LEFT = 1;
     int MIDDLE = 2;
     int RIGHT = 3;
+    AprilTagDetection tagOfInterest = null;
+
+    static final double HOLD_ARM_AT_MID_OR_LOW_POS_POWER = 0.005;
+    static final double HOLD_ARM_AT_GROUND_POS_POWER = 0.01;
+    static final double ARM_RAISE_POWER = 1.0 / 800.0;
 
     public void initializeAuto() {
         initializeHardware();
