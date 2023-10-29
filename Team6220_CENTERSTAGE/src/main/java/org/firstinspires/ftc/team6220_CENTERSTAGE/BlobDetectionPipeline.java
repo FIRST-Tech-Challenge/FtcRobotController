@@ -58,9 +58,9 @@ public class BlobDetectionPipeline extends LinearOpMode {
     public void runOpMode()
     {
 
-        //uncomment to use scrcpy
+        //you gotta have cameraMonitorViewId in robotCamera to use scrcpy
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
-        robotCamera = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "RobotCamera"));
+        robotCamera = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "RobotCamera"), cameraMonitorViewId);
 
         // OR...  Do Not Activate the Camera Monitor View
         //phoneCam = OpenCvCameraFactory.getInstance().createInternalCamera(OpenCvInternalCamera.CameraDirection.BACK);
@@ -128,18 +128,22 @@ public class BlobDetectionPipeline extends LinearOpMode {
             Imgproc.findContours(threshold, contours, contourMask, Imgproc.RETR_TREE, Imgproc.CHAIN_APPROX_SIMPLE);
             if (contours.size() > 1) {
                 double maxArea = 0;
-                int maxAreaContour = -1;
+                int maxAreaContourIndex = -1;
                 for (int i = 0; i < contours.size(); i++) {
                     if (Imgproc.contourArea(contours.get(i)) > maxArea) {
                         maxArea = Imgproc.contourArea(contours.get(i));
-                        maxAreaContour = i;
+                        maxAreaContourIndex = i;
                     }
                 }
 
-                Rect boundingRect = Imgproc.boundingRect(contours.get(maxAreaContour));
-                double boundHeightX = boundingRect.x + boundingRect.height;
-                double boundHeightY = boundingRect.y + boundingRect.width;
-                Point circlePoint = new Point(((int)boundHeightX/2), ((int)boundHeightY/2));
+                Imgproc.drawContours(input, contours, maxAreaContourIndex, Constants.borderColors, 2, -1);
+
+                Rect boundingRect = Imgproc.boundingRect(contours.get(maxAreaContourIndex));
+                double boundHeightX = boundingRect.x + boundingRect.width;
+                double boundHeightY = boundingRect.y + boundingRect.height;
+                double circlePosX = (int)boundingRect.width/2 + boundingRect.x;
+                double circlePosY= (int)boundingRect.height/2 + boundingRect.y;
+                Point circlePoint = new Point((circlePosX), (circlePosY));
                 Imgproc.rectangle(input, new Point(boundingRect.x, boundingRect.y), new Point(boundHeightX, boundHeightY), Constants.borderColors, 1, Imgproc.LINE_8, 0);
                 Imgproc.circle(input, circlePoint , 10, Constants.borderColors , Imgproc.LINE_8, -1);
             }
