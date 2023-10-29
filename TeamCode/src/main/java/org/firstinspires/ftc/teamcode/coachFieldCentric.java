@@ -1,31 +1,3 @@
-/* Copyright (c) 2017 FIRST. All rights reserved.
- *
- * Redistribution and use in source and binary forms, with or without modification,
- * are permitted (subject to the limitations in the disclaimer below) provided that
- * the following conditions are met:
- *
- * Redistributions of source code must retain the above copyright notice, this list
- * of conditions and the following disclaimer.
- *
- * Redistributions in binary form must reproduce the above copyright notice, this
- * list of conditions and the following disclaimer in the documentation and/or
- * other materials provided with the distribution.
- *
- * Neither the name of FIRST nor the names of its contributors may be used to endorse or
- * promote products derived from this software without specific prior written permission.
- *
- * NO EXPRESS OR IMPLIED LICENSES TO ANY PARTY'S PATENT RIGHTS ARE GRANTED BY THIS
- * LICENSE. THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
- * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
- * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
- * ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE
- * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
- * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
- * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
- * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
- * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
- */
 
 package org.firstinspires.ftc.teamcode;
 
@@ -35,24 +7,25 @@ import com.qualcomm.hardware.rev.Rev2mDistanceSensor;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.ColorSensor;
-import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DistanceSensor;
-import com.qualcomm.robotcore.hardware.Servo;
-
+import com.qualcomm.robotcore.hardware.IMU;
+import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.AngularVelocity;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
 
 /**
- * Mr. Price's teleOp for test and explanation - this one uses a Hardware Class structure
+ * Mr. Price's field centric teleOp for test and explanation - this one uses a Hardware Class structure
  *
  * Need to confirm the drive system and add the drone servo to have a full test case
  * Also need the telemetry to read all sensor values
  */
 
-@TeleOp(name="coachMap", group="TeleOp")
+@TeleOp(name="coachFC", group="TeleOp")
 
-public class coachMapped extends LinearOpMode {
+public class coachFieldCentric extends LinearOpMode {
 
     //vvHardware class external pull
     vvHardware   robot       = new vvHardware(this);
@@ -62,12 +35,23 @@ public class coachMapped extends LinearOpMode {
     public DistanceSensor distRear;
 @Override
     public void runOpMode() throws InterruptedException {
-        double driveY = 0;
-        double strafe = 0;
+        //double driveY = 0;
+        //double strafe = 0;
         double turn = 0;
         double RWPower = 0;
         double LWPower = 0;
         double drivePower = 0.5; //global drive power level
+        double driveYfc = 0;
+        double strafeFC = 0;
+
+        // Retrieve the IMU from the hardware map
+        IMU imu = hardwareMap.get(IMU.class, "imu");
+        // Adjust the orientation parameters to match your robot
+        IMU.Parameters parameters = new IMU.Parameters(new RevHubOrientationOnRobot(
+                RevHubOrientationOnRobot.LogoFacingDirection.LEFT,
+                RevHubOrientationOnRobot.UsbFacingDirection.UP));
+        // Without this, the REV Hub's orientation is assumed to be logo up / USB forward
+        imu.initialize(parameters);
 
         // hsvValues is an array that will hold the hue, saturation, and value information.
         float hsvValues[] = {0F, 0F, 0F};
@@ -77,17 +61,8 @@ public class coachMapped extends LinearOpMode {
         // initialize all the hardware, using the hardware class. See how clean and simple this is?
         robot.init();
 
-        // bPrevState and bCurrState represent the previous and current state of the button.
-        boolean bPrevState = false;
-        boolean bCurrState = false;
-
-        // bLedOn represents the state of the LED.
-        boolean bLedOn = true;
         // get a reference to our ColorSensor object.
         colorSensor = hardwareMap.get(ColorSensor.class, "CLR");
-
-        // Set the LED in the beginning
-        colorSensor.enableLed(bLedOn);
 
         distFront = hardwareMap.get(DistanceSensor.class, "FDS");
         distRear = hardwareMap.get(DistanceSensor.class, "RDS");
@@ -105,9 +80,24 @@ public class coachMapped extends LinearOpMode {
         while (opModeIsActive()) {
 
             while (opModeIsActive()) {
-                driveY = -gamepad1.left_stick_y;
-                strafe = gamepad1.left_stick_x * 1.1;
-                turn = gamepad1.right_stick_x;
+                driveYfc = -gamepad1.left_stick_y;
+                strafeFC = gamepad1.left_stick_x;
+                turn = gamepad1.right_stick_x * 0.9; //slow turns
+
+                // This button choice was made so that it is hard to hit on accident,
+                // it can be freely changed based on preference.
+                // The equivalent button is start on Xbox-style controllers.
+                if (gamepad1.options) {
+                    imu.resetYaw();
+                }
+
+                double botHeading = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS);
+
+                // Rotate the movement direction counter to the bot's rotation
+                double driveY = driveYfc * Math.cos(botHeading) - strafeFC * Math.sin(botHeading);
+                double strafe = driveYfc * Math.sin(botHeading) + strafeFC * Math.cos(botHeading);
+
+                strafe = strafe * 1.1;  // Counteract imperfect strafing
 
                 // Combine drive and turn for blended motion. Use RobotHardware class
                 robot.driveRobot(0.5, driveY, strafe, turn);
@@ -133,25 +123,22 @@ public class coachMapped extends LinearOpMode {
                 telemetry.addData("Y", driveY);
                 telemetry.addData("strafe", strafe);
                 telemetry.addData("turn", turn);
-// check the status of the x button on either gamepad.
-                bCurrState = gamepad1.x;
 
-                // check for button state transitions.
-                if (bCurrState && (bCurrState != bPrevState)) {
+                // Retrieve Rotational Angles and Velocities
+                YawPitchRollAngles orientation = imu.getRobotYawPitchRollAngles();
+                AngularVelocity angularVelocity = imu.getRobotAngularVelocity(AngleUnit.DEGREES);
 
-                    // button is transitioning to a pressed state. So Toggle LED
-                    bLedOn = !bLedOn;
-                    colorSensor.enableLed(bLedOn);
-                }
-
-                // update previous state variable.
-                bPrevState = bCurrState;
+                telemetry.addData("Yaw (Z)", "%.2f Deg. (Heading)", orientation.getYaw(AngleUnit.DEGREES));
+                telemetry.addData("Pitch (X)", "%.2f Deg.", orientation.getPitch(AngleUnit.DEGREES));
+                telemetry.addData("Roll (Y)", "%.2f Deg.\n", orientation.getRoll(AngleUnit.DEGREES));
+                telemetry.addData("Yaw (Z) velocity", "%.2f Deg/Sec", angularVelocity.zRotationRate);
+                telemetry.addData("Pitch (X) velocity", "%.2f Deg/Sec", angularVelocity.xRotationRate);
+                telemetry.addData("Roll (Y) velocity", "%.2f Deg/Sec", angularVelocity.yRotationRate);
 
                 // convert the RGB values to HSV values.
                 Color.RGBToHSV(colorSensor.red() * 8, colorSensor.green() * 8, colorSensor.blue() * 8, hsvValues);
 
                 // send the info back to driver station using telemetry function.
-                telemetry.addData("LED", bLedOn ? "On" : "Off");
                 telemetry.addData("Clear", colorSensor.alpha());
                 telemetry.addData("Red  ", colorSensor.red());
                 telemetry.addData("Green", colorSensor.green());
@@ -160,11 +147,9 @@ public class coachMapped extends LinearOpMode {
 
                 telemetry.addData("FDS", distFront.getDeviceName());
                 telemetry.addData("range", String.format("%.01f cm", distFront.getDistance(DistanceUnit.CM)));
-                telemetry.addData("range", String.format("%.01f in", distFront.getDistance(DistanceUnit.INCH)));
 
                 telemetry.addData("RDS", distRear.getDeviceName());
                 telemetry.addData("range", String.format("%.01f cm", distRear.getDistance(DistanceUnit.CM)));
-                telemetry.addData("range", String.format("%.01f in", distRear.getDistance(DistanceUnit.INCH)));
 
                 // Rev2mDistanceSensor specific methods.
                 telemetry.addData("ID", String.format("%x", sensorTimeOfFlight.getModelID()));

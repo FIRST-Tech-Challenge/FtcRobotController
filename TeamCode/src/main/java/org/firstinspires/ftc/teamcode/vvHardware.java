@@ -121,30 +121,18 @@ public class vvHardware {
      * Calculates the left/right motor powers required to achieve the requested
      * robot motions: Drive (Axial motion) and Turn (Yaw motion).
      * Then sends these power levels to the motors.
-     *
-     * @param Drive     Fwd/Rev driving power (-1.0 to 1.0) +ve is forward
-     * @param Turn      Right/Left turning power (-1.0 to 1.0) +ve is CW
+     * @param drivePower Global variable to set total drive power
+     * @param driveY    Fwd/Rev driving power (-1.0 to 1.0) +ve is forward
+     * @param strafe    Side to side driving power (-1.0 to 1.0) +ve is left
+     * @param turn      Right/Left turning power (-1.0 to 1.0) +ve is CW
      */
-    public void driveRobot(double Drive, double Turn) {
-        double driveY = 0;
-        double strafe = 0;
-        double turn = 0;
-        double RWPower = 0;
-        double LWPower = 0;
-        double drivePower = 0.5; //global drive power level
-
+    public void driveRobot(double drivePower, double driveY, double strafe, double turn) {
         double denominator = Math.max(Math.abs(driveY) + Math.abs(strafe) + Math.abs(turn), 1);
         double frontLeftPower = (driveY + strafe + turn) / denominator;
         double backLeftPower = (driveY - strafe + turn) / denominator;
         double frontRightPower = (driveY - strafe - turn) / denominator;
         double backRightPower = (driveY + strafe - turn) / denominator;
-    }
-    /**
-     * Pass the requested wheel motor powers to the appropriate hardware drive motors.
-     *
-     */
-    public void setDrivePower(double frontLeftPower, double backLeftPower, double frontRightPower, double backRightPower, double drivePower) {
-        // Output the values to the motor drives.
+
         leftFront.setPower(drivePower * frontLeftPower);
         leftRear.setPower(drivePower * backLeftPower);
         rightFront.setPower(drivePower * frontRightPower);
