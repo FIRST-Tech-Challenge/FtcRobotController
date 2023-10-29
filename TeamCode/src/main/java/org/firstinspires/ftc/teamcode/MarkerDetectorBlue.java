@@ -10,14 +10,10 @@ import org.opencv.core.Scalar;
 import org.opencv.imgproc.Imgproc;
 import org.openftc.easyopencv.OpenCvPipeline;
 
-public class MarkerDetector extends OpenCvPipeline {
+public class MarkerDetectorBlue extends OpenCvPipeline {
     private Mat workingMatrix = new Mat();
 
     public MARKER_POSITION position = MARKER_POSITION.UNKNOWN;
-
-    double avgLeftCr;
-
-    double leftCrTotal;
     private static final int SUBMAT_WIDTH = 160;
     private static final int SUBMAT_HEIGHT = 160;
     private Telemetry telemetry;
@@ -26,7 +22,7 @@ public class MarkerDetector extends OpenCvPipeline {
         LEFT, RIGHT, CENTER, UNDETECTED, UNKNOWN;
     }
 
-    public MarkerDetector(Telemetry telemetry) {
+    public MarkerDetectorBlue(Telemetry telemetry) {
 
         this.telemetry = telemetry;
     }
@@ -53,7 +49,7 @@ public class MarkerDetector extends OpenCvPipeline {
         Imgproc.rectangle(workingMatrix, new Rect(240, 160, SUBMAT_WIDTH, SUBMAT_HEIGHT), new Scalar(0, 255, 0));
         Imgproc.rectangle(workingMatrix, new Rect(480, 160, SUBMAT_WIDTH, SUBMAT_HEIGHT), new Scalar(0, 255, 0));
 
-        leftCrTotal = Core.sumElems(matLeft).val[1];
+        double leftCrTotal = Core.sumElems(matLeft).val[1];
         double rightCrTotal = Core.sumElems(matRight).val[1];
         double centerCrTotal = Core.sumElems(matCenter).val[1];
 
@@ -61,7 +57,7 @@ public class MarkerDetector extends OpenCvPipeline {
         double rightCbTotal = Core.sumElems(matRight).val[2];
         double centerCbTotal = Core.sumElems(matCenter).val[2];
 
-        avgLeftCr = leftCrTotal / (SUBMAT_WIDTH * SUBMAT_HEIGHT);
+        double avgLeftCr = leftCrTotal / (SUBMAT_WIDTH * SUBMAT_HEIGHT);
         double avgRightCr = rightCrTotal / (SUBMAT_WIDTH * SUBMAT_HEIGHT);
         double avgCenterCr = centerCrTotal / (SUBMAT_WIDTH * SUBMAT_HEIGHT);
 
@@ -72,25 +68,23 @@ public class MarkerDetector extends OpenCvPipeline {
         position = MARKER_POSITION.UNDETECTED;
 
         // Log.d("vision", "Avg  left = " + avgLeftCr + " center = " + avgCenterCr + " right = " + avgRightCr);
-
-        //for blue all cr is cb and cb is cr
-        if (avgLeftCr > avgCenterCr) {
-            if (avgLeftCr > avgRightCr) {
-                if (((160 <= avgLeftCr) && (avgLeftCr <= 240)) && ((avgLeftCb >= 16) && (avgLeftCb <= 128))) {
+        if (avgLeftCb > avgCenterCb) {
+            if (avgLeftCb > avgRightCb) {
+                if (((160 <= avgLeftCb) && (avgLeftCb <= 240)) && ((avgLeftCr >= 16) && (avgLeftCr <= 128))) {
                     position = MARKER_POSITION.LEFT;
                 }
             } else {
-                if (((160 <= avgRightCr) && (avgRightCr <= 240)) && ((avgRightCb >= 16) && (avgRightCb <= 128))) {
+                if (((160 <= avgRightCb) && (avgRightCb <= 240)) && ((avgRightCr >= 16) && (avgRightCr <= 128))) {
                     position = MARKER_POSITION.RIGHT;
                 }
             }
         } else {
-            if (avgCenterCr > avgRightCr) {
-                if (((160 <= avgCenterCr) && (avgCenterCr <= 240)) && ((avgCenterCb >= 16) && (avgCenterCb <= 128))) {
+            if (avgCenterCb > avgRightCb) {
+                if (((160 <= avgCenterCb) && (avgCenterCb <= 240)) && ((avgCenterCr >= 16) && (avgCenterCr <= 128))) {
                     position = MARKER_POSITION.CENTER;
                 }
             } else {
-                if (((160 <= avgRightCr) && (avgRightCr <= 240)) && ((avgRightCb >= 16) && (avgRightCb <= 128))) {
+                if (((160 <= avgRightCb) && (avgRightCb <= 240)) && ((avgRightCr >= 16) && (avgRightCr <= 128))) {
                     position = MARKER_POSITION.RIGHT;
                 }
             }
@@ -99,6 +93,7 @@ public class MarkerDetector extends OpenCvPipeline {
         //return workingMatrix;
     }
 }
+
 
 
 

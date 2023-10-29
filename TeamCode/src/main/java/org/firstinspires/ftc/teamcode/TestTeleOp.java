@@ -122,20 +122,24 @@ public class TestTeleOp extends LinearOpMode {
                 }
             }
 
+            if (lsFront.getCurrentPosition() < 4) {
+                armPos = 0.594;
+            }
+
             telemetry.addLine(String.valueOf(armPos));
             telemetry.addLine(String.valueOf(lsFront.getCurrentPosition()));
 
             //intake
             if (gamepad2.left_trigger > 0) {
-                intake.setPower(1);
-                holderClampPos = 0.3;
+                intake.setPower(0.6);
+                holderClampPos = 0.4;
                 //if intake button held, keep holder open
             } else if (gamepad2.left_bumper == true) {
                 //reversed intake
-                intake.setPower(-1);
-                holderClampPos = 0.3;
+                intake.setPower(-0.6);
+                holderClampPos = 0.4;
             } else {
-                if (Math.abs(gamepad1.left_stick_x) > 0.1 || Math.abs(gamepad1.left_stick_y) >0.1 || Math.abs(gamepad1.right_stick_x) >0.1) {
+                if ((Math.abs(gamepad1.left_stick_x) > 0.1 || Math.abs(gamepad1.left_stick_y) >0.1 || Math.abs(gamepad1.right_stick_x) >0.1) && !gamepad2.left_bumper) {
                     //if robot moving, keep holder closed
                     holderClampPos = 0.5;
                 }
@@ -159,8 +163,8 @@ public class TestTeleOp extends LinearOpMode {
             //set limits for the holder clamp
             if(holderClampPos>1) {
                 holderClampPos = 1;
-            } else if (holderClampPos<0.3) {
-                holderClampPos = 0.3;
+            } else if (holderClampPos<0.4) {
+                holderClampPos = 0.4;
             }
 
             //set limits for the arm rotation position
