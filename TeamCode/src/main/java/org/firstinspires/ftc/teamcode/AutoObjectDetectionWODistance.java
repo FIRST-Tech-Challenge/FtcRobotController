@@ -1,8 +1,6 @@
 package org.firstinspires.ftc.teamcode;
 
 //.robotcontroller.external.samples
-import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DistanceSensor;
@@ -11,8 +9,6 @@ import org.firstinspires.ftc.robotcore.external.hardware.camera.BuiltinCameraDir
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.robotcore.external.tfod.Recognition;
-import org.firstinspires.ftc.teamcode.HornetSquadObject;
-import org.firstinspires.ftc.teamcode.RobotHardware;
 import org.firstinspires.ftc.vision.VisionPortal;
 import org.firstinspires.ftc.vision.tfod.TfodProcessor;
 
@@ -26,8 +22,9 @@ import java.util.List;
  * Remove or comment out the @Disabled line to add this OpMode to the Driver Station OpMode list.
  */
 //@Autonomous(name = "Concept: Automatic Object Detection", group = "Concept")
-@TeleOp(name = "HornetSquad Object Detection", group = "Concept")
-public class AutoObjectDetection extends LinearOpMode {
+@TeleOp(name = "HornetSquad Object Detection WO Distance Sensor" +
+        "", group = "Concept")
+public class AutoObjectDetectionWODistance extends LinearOpMode {
 
     private static final boolean USE_WEBCAM = true;  // true for webcam, false for phone camera
 
@@ -86,15 +83,17 @@ public class AutoObjectDetection extends LinearOpMode {
             while (opModeIsActive()) {
                 if (!telemetryTfod()) { //object detected = false
                     //keep moving for 23inches/rotations and then increment in 5 inches
-                    if (hasReached(targetDistanceInInches))
-                    {
+                    //if (hasReached(targetDistanceInInches))
+                   // {
                         //tilt right to see object is detected
                         //tilt left to see object is detected
-                        targetDistanceInInches += 5;
-                    }
+                        //targetDistanceInInches += 5;
+                    //}
                     MoveRobo();
                 }
                 else {
+                    telemetry.addData("Stop the Robo", "");
+                    StopRobo();
                     //move the arm and release gripper to place pixel
                     telemetry.addData("Move Arm to drop the pixel", "");
                 }
@@ -203,7 +202,9 @@ public class AutoObjectDetection extends LinearOpMode {
             telemetry.addData("- Position", "%.0f / %.0f", x, y);
             telemetry.addData("- Size", "%.0f x %.0f", recognition.getWidth(), recognition.getHeight());
 
-            if (IsItHornetSquadObject(recognition))
+            if (IsItHornetSquadObject(recognition)
+            //&& IsItHornetSquadInPosition(recognition)
+            )
             {
                 telemetry.addData("Found Hornet Squad Object","");
                 objectDetected = true;
@@ -230,34 +231,44 @@ public class AutoObjectDetection extends LinearOpMode {
         */
     }
 
+    private void StopRobo()
+    {
+
+        robot.setDrivePower(0, 0);
+        telemetry.addData("Robo stopped", "");
+       /*
+            robot.driveRobot(0, FORWARD_SPEED);
+            sleep(500);
+            robot.driveRobot(FORWARD_SPEED, 0);
+            sleep(500);
+            robot.driveRobot(0, FORWARD_SPEED);
+            sleep(500);
+        */
+    }
     private boolean IsItHornetSquadObject(Recognition recognition)
     {
         double objectDetectedWidth = recognition.getWidth();
         double objectDetectedHeight = recognition.getHeight();
 
-        if (HornetSquadObject.WIDTH == objectDetectedWidth &&
-                HornetSquadObject.HEIGHT == objectDetectedHeight )
+        if (objectDetectedWidth >= HornetSquadObject.WIDTH - HornetSquadObject.BUFFER
+                && objectDetectedWidth <= HornetSquadObject.WIDTH + HornetSquadObject.BUFFER
+                && objectDetectedHeight >= HornetSquadObject.HEIGHT - HornetSquadObject.BUFFER
+                && objectDetectedHeight <= HornetSquadObject.HEIGHT + HornetSquadObject.BUFFER
+                )
             return  true;
         return false;
     }
 
-    private boolean hasReached(double distanceInInches)
+    private boolean IsItHornetSquadInPosition(Recognition recognition)
     {
-        // generic DistanceSensor methods.
-        telemetry.addData("deviceName", sensorDistance.getDeviceName() );
-        telemetry.addData("range", String.format("%.01f mm", sensorDistance.getDistance(DistanceUnit.MM)));
-        telemetry.addData("range", String.format("%.01f cm", sensorDistance.getDistance(DistanceUnit.CM)));
-        telemetry.addData("range", String.format("%.01f m", sensorDistance.getDistance(DistanceUnit.METER)));
-        telemetry.addData("range", String.format("%.01f in", sensorDistance.getDistance(DistanceUnit.INCH)));
+        //objectDetected = true;
+        double x = (recognition.getLeft() + recognition.getRight()) / 2 ;
+        double y = (recognition.getTop()  + recognition.getBottom()) / 2 ;
 
-        // Rev2mDistanceSensor specific methods.
-        //telemetry.addData("ID", String.format("%x", sensorTimeOfFlight.getModelID()));
-        //telemetry.addData("did time out", Boolean.toString(sensorTimeOfFlight.didTimeoutOccur()));
-
-        telemetry.update();
-        if (sensorDistance.getDistance(DistanceUnit.INCH) == distanceInInches)
+        if ( y >= 100 && y <= 115)
             return true;
         return false;
+
     }
 
 }   // end class
