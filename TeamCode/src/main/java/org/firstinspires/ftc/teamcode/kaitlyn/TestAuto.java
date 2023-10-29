@@ -53,31 +53,31 @@ public class TestAuto extends LinearOpMode {
 //            telemetry.update();
 
             if (position == MarkerDetector.MARKER_POSITION.CENTER) {
-                robot.straightBlocking(20, false);
-                robot.setHeading(15);
-                robot.straightBlocking(6, false);
+                robot.straightBlocking(20, false, 0.75);
+                robot.setHeading(15, 1);
+                robot.straightBlocking(6, false, 0.75);
                 wait(3);
-                robot.straightBlocking(6, true);
-                robot.setHeading(0);
-                robot.straightBlocking(19, true);
+                robot.straightBlocking(6, true, 0.75);
+                robot.setHeading(0, 1);
+                robot.straightBlocking(19, true, 0.75);
                 break;
             } else if (position == MarkerDetector.MARKER_POSITION.LEFT) {
-                robot.straightBlocking(18, false);
-                robot.setHeading(30);
-                robot.straightBlocking(3, false);
+                robot.straightBlocking(18, false, 0.75);
+                robot.setHeading(30, 1);
+                robot.straightBlocking(3, false, 0.75);
                 wait(3);
-                robot.straightBlocking(3, true);
-                robot.setHeading(0);
-                robot.straightBlocking(17, true);
+                robot.straightBlocking(3, true, 0.75);
+                robot.setHeading(0, 1);
+                robot.straightBlocking(17, true, 0.75);
                 break;
             } else if (position == MarkerDetector.MARKER_POSITION.RIGHT) {
-                robot.straightBlocking(14, false);
-                robot.setHeading(-45);
-                robot.straightBlocking(11, false);
+                robot.straightBlocking(14, false, 0.75);
+                robot.setHeading(-45, 1);
+                robot.straightBlocking(11, false, 0.75);
                 wait(3);
-                robot.straightBlocking(11, true);
-                robot.setHeading(0);
-                robot.straightBlocking(12, true);
+                robot.straightBlocking(11, true, 0.75);
+                robot.setHeading(0, 1);
+                robot.straightBlocking(12, true, 0.75);
                 break;
             }
         }
