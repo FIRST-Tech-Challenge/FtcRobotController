@@ -29,32 +29,31 @@
 
 package org.firstinspires.ftc.teamcode.TeleOp;
 
-import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Gamepad;
-import com.qualcomm.robotcore.hardware.IMU;
-import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.firstinspires.ftc.teamcode.DrivingFunctions;
-import org.firstinspires.ftc.teamcode.ServoFunctions;
-import org.opencv.core.Core;
+import org.firstinspires.ftc.teamcode.Common.AprilTagsFunctions;
+import org.firstinspires.ftc.teamcode.Common.DrivingFunctions;
+import org.firstinspires.ftc.teamcode.Common.ServoFunctions;
 
-import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
-import org.opencv.core.Size;
-
-@TeleOp(name="Omni TeleOp Auto-Turn", group="Wire Fire TeleOp")
+@TeleOp(name="Wire Fire TeleOp", group="TeleOp")
 //@Disabled
-public class WF_DriveTrain_AutoTurn extends LinearOpMode {
+public class WireFireTeleOp extends LinearOpMode {
+    private final double DESIRED_DISTANCE_TO_APRIL_TAG_INCHES = 12.0;
+    private final double SPEED_GAIN  =  0.08  ;   //  Forward Speed Control "Gain". eg: Ramp up to 50% power at a 25 inch error.   (0.50 / 25.0)
+    private final double STRAFE_GAIN =  0.1 ;   //  Strafe Speed Control "Gain".  eg: Ramp up to 25% power at a 25 degree Yaw error.   (0.25 / 25.0)
+    private final double TURN_GAIN   =  0.025  ;   //  Turn Control "Gain".  eg: Ramp up to 25% power at a 25 degree error. (0.25 / 25.0)
     private final ElapsedTime runtime = new ElapsedTime();
     private DrivingFunctions df = null;
     private ServoFunctions sf = null;
+    private AprilTagsFunctions aprilTagsFunctions = null;
     @Override
     public void runOpMode() {
         df = new DrivingFunctions(this);
         sf = new ServoFunctions(this);
+        aprilTagsFunctions = new AprilTagsFunctions(this);
 
         Gamepad currentGamepad1 = new Gamepad();
         Gamepad previousGamepad1 = new Gamepad();
@@ -65,6 +64,7 @@ public class WF_DriveTrain_AutoTurn extends LinearOpMode {
         double speedFactor = 0.5; // Speed factor to slow down the robot, goes from 0.1 to 1.0
         double kp = -0.033;
         boolean isAutoTurning = false;
+        boolean isAutoDrivingToAprilTag = false;
         double autoTurningStart = 0.0;
         double autoTurningTarget = 0.0;
 
@@ -102,9 +102,6 @@ public class WF_DriveTrain_AutoTurn extends LinearOpMode {
             if (currentGamepad1.start)
                 sf.PutPixelInBackBoard();
 
-            if (currentGamepad1.right_trigger > 0.5)
-                sf.MovePixelReleaseServoRelative(0.01);
-
             if (currentGamepad1.left_trigger > 0.5)
                 sf.MovePixelReleaseServoRelative(-0.01);
 
@@ -128,12 +125,27 @@ public class WF_DriveTrain_AutoTurn extends LinearOpMode {
                 }
             }
 
-            df.MoveRobot(x, y, yaw, speedFactor);
+            isAutoDrivingToAprilTag = false;
+            if(aprilTagsFunctions.DetectAprilTag(aprilTagsFunctions.TAG_RED_CENTER))
+            {
+                telemetry.addData("Found", "ID %d (%s)", aprilTagsFunctions.detectedTag.id, aprilTagsFunctions.detectedTag.metadata.name);
+                telemetry.addData("Range",  "%5.1f inches", aprilTagsFunctions.detectedTag.ftcPose.range);
+                telemetry.addData("Bearing","%3.0f degrees", aprilTagsFunctions.detectedTag.ftcPose.bearing);
+                telemetry.addData("Yaw","%3.0f degrees", aprilTagsFunctions.detectedTag.ftcPose.yaw);
+                telemetry.addData("X delta","%3.0f inches", aprilTagsFunctions.detectedTag.ftcPose.x);
+
+                if (currentGamepad1.right_trigger > 0.5) {
+                    y      = SPEED_GAIN * (aprilTagsFunctions.detectedTag.ftcPose.range - DESIRED_DISTANCE_TO_APRIL_TAG_INCHES);
+                    yaw    = -TURN_GAIN * aprilTagsFunctions.detectedTag.ftcPose.yaw;
+                    x      = STRAFE_GAIN * aprilTagsFunctions.detectedTag.ftcPose.x;
+                    isAutoDrivingToAprilTag = true;
+                }
+            }
+
+            df.MoveRobot(x, y, yaw, isAutoDrivingToAprilTag ? 0.45 : speedFactor);
 
             telemetry.addData("Speed Factor", "%4.2f", speedFactor);
-            telemetry.addData("Pixel Release Servo Position", "%4.2f", sf.GetPixelReleaseServoPosition());
             telemetry.addData("Bot Heading", "%4.2f", botHeading);
-            telemetry.addData("X/Y/Yaw", "%4.2f, %4.2f, %4.2f", x, y, yaw);
             telemetry.update();
         }
     }

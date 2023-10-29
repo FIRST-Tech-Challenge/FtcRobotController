@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode;
+package org.firstinspires.ftc.teamcode.Common;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.opencv.core.Core;
@@ -10,7 +10,7 @@ import org.opencv.imgproc.Imgproc;
 import org.openftc.easyopencv.OpenCvPipeline;
 
 public class CircleDetection extends OpenCvPipeline {
-    enum BallPosition {LEFT, CENTER, RIGHT, UNDEFINED};
+    public enum BallPosition {LEFT, CENTER, RIGHT, UNDEFINED};
     private BallPosition ballPosition = BallPosition.UNDEFINED;
     private boolean detectionRed = true;
     private Mat grayMat = new Mat();
