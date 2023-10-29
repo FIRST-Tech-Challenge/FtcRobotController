@@ -3,7 +3,7 @@ package org.firstinspires.ftc.teamcode.Components;
 import org.firstinspires.ftc.teamcode.Components.RFModules.Devices.RFServo;
 
 public class Clamp extends RFServo {
-    public static double CLAMP = 0.15, UNCLAMP = 0.5;
+    public static double CLAMP = 0.2, UNCLAMP = 0.5;
     boolean clamped;
 
     public Clamp() {
