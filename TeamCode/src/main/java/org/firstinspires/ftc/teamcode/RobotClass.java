@@ -52,7 +52,7 @@ public class RobotClass {
         frontRight.setDirection(DcMotorSimple.Direction.FORWARD);
         backRight.setDirection(DcMotorSimple.Direction.FORWARD);
         frontLeft.setDirection(DcMotorSimple.Direction.FORWARD);
-        backLeft.setDirection(DcMotorSimple.Direction.REVERSE);
+        backLeft.setDirection(DcMotorSimple.Direction.FORWARD);
 
         //setting zero power behavior to brake
         frontLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -77,6 +77,8 @@ public class RobotClass {
         while(!imu.isGyroCalibrated()){
             sleep(10);
         }
+        myOpMode.telemetry.addData("Status", imu.isGyroCalibrated());
+        myOpMode.telemetry.update();
     }
 
     public void resetEncoders() {
@@ -150,25 +152,42 @@ public class RobotClass {
     }
 
     //turning with gyro code
-    public void gyroTurning(double targetAngle, double buffer) throws InterruptedException{
+    public void gyroTurning(double targetAngle) throws InterruptedException{
         angles = imu.getAngularOrientation();
-        //getting angle in degrees
-        double angle = angles.firstAngle;
-        while (angle < targetAngle-buffer || angle > targetAngle+buffer) {
-            //getting angle
-            angle = angles.firstAngle;
-
-            //setting power of motors
-            if (targetAngle-angle < 0){
-                frontLeft.setPower(-0.25);
-                frontRight.setPower(0.25);
-                backLeft.setPower(-0.25);
-                backRight.setPower(0.25);
+        //using gyro
+        if (angles.firstAngle >= targetAngle-0.5 && angles.firstAngle <= targetAngle+0.5){
+            frontLeft.setPower(0);
+            frontRight.setPower(0);
+            backLeft.setPower(0);
+            backRight.setPower(0);
+            sleep(500);
+            if (angles.firstAngle >= targetAngle-0.5 && angles.firstAngle <= targetAngle + 0.5) {
+                return;
+            }
+        }else if (angles.firstAngle >= targetAngle){
+            if (angles.firstAngle <= targetAngle+10){
+                frontLeft.setPower(0.15);
+                frontRight.setPower(-0.15);
+                backLeft.setPower(0.15);
+                backRight.setPower(-0.15);
             }else {
                 frontLeft.setPower(0.25);
                 frontRight.setPower(-0.25);
                 backLeft.setPower(0.25);
                 backRight.setPower(-0.25);
+            }
+        }else if (angles.firstAngle <= targetAngle) {
+            if (angles.firstAngle >= targetAngle - 10) {
+                frontLeft.setPower(-0.15);
+                frontRight.setPower(0.15);
+                backLeft.setPower(-0.15);
+                backRight.setPower(0.15);
+
+            } else {
+                frontLeft.setPower(-0.25);
+                frontRight.setPower(0.25);
+                backLeft.setPower(-0.25);
+                backRight.setPower(0.25);
             }
         }
         stopMotors();
