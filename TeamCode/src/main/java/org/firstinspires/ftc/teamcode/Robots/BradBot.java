@@ -149,6 +149,7 @@ public class BradBot extends BasicRobot{
         boolean up = gampad.readGamepad(op.gamepad1.dpad_up, "gamepad1_dpad_up", "lift Up");
         boolean down = gampad.readGamepad(op.gamepad1.dpad_down, "gamepad1_dpad_down", "lift down");
         boolean right = gampad.readGamepad(op.gamepad1.dpad_right, "gamepad1_dpad_right", "toggleButterfly");
+        boolean left = gampad.readGamepad(op.gamepad1.dpad_left, "gamepad1_dpad_left", "toggleClamp");
         float manualUp = op.gamepad1.right_trigger;
         float manualDown = op.gamepad1.left_trigger;
         if(isA){
@@ -158,11 +159,19 @@ public class BradBot extends BasicRobot{
         }
         if(rightBumper){
             if(Intake.IntakeStates.STOPPED.getState()) {
+                clamp.unclamp();
                 intake.intake();
             }
             else{
+                clamp.clamp();
                 intake.stopIntake();
             }
+        }
+        if(left){
+            if(clamp.getClamped())
+                clamp.unclamp();
+            else
+                clamp.clamp();
         }
         if(leftBumper){
             intake.reverseIntake();

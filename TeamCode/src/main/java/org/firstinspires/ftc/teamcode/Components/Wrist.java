@@ -94,7 +94,15 @@ public class Wrist extends RFServo {
                     super.setPosition(p_state.position);
                     target = p_state.position;
                 } else
-                    LOGGER.log("arm not in right position, can't flip to drop");
+                    LOGGER.log("lift not in right position, can't flip to drop");
+            }
+            else if (p_state == WristTargetStates.FLIP) {
+                if (!Lift.LiftPositionStates.AT_ZERO.state) {
+                    LOGGER.log("flipping to : " + p_state.name() + ", " + p_state.position);
+                    super.setPosition(p_state.position);
+                    target = p_state.position;
+                } else
+                    LOGGER.log("lift not in right position, can't flip to flip");
             }
             p_state.setStateTrue();
         }
@@ -108,7 +116,6 @@ public class Wrist extends RFServo {
         }
         for (var i : WristTargetStates.values()) {
             if (i.state && target != i.position) {
-                LOGGER.log("FLIPPingToHold:" + WristTargetStates.HOLD.state);
                 flipTo(i);
             }
         }
