@@ -10,11 +10,6 @@ public class PullUp extends LinearOpMode {
     public void runOpMode() throws InterruptedException {
         DcMotor pullUpMotor = hardwareMap.dcMotor.get("motor1");
         pullUpMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-
-        waitForStart();
-
-        if (isStopRequested()) return;
-
         while (opModeIsActive()) {
             if (gamepad1.x) {
                 pullUpMotor.setPower(1);
