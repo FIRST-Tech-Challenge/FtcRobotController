@@ -15,5 +15,7 @@ public class BaseAutonomous extends BaseOpMode {
         }
     }
 
-    
+    public void data() {
+        
+    }
 }
