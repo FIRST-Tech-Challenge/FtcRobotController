@@ -64,10 +64,10 @@ public class Move extends OpMode {
 
 
         // Initialize DcMotors
-        leftFrontDrive = hardwareMap.get(DcMotor.class, "LF");
+        leftFrontDrive = hardwareMap.get(DcMotor.class, "RB");
         rightFrontDrive = hardwareMap.get(DcMotor.class, "RF");
         leftBackDrive = hardwareMap.get(DcMotor.class, "LB");
-        rightBackDrive = hardwareMap.get(DcMotor.class, "RB");
+        rightBackDrive = hardwareMap.get(DcMotor.class, "LF");
         //fire = hardwareMap.get(Servo.class, "Fire");
 
         Arm = hardwareMap.get(DcMotor.class, "ARM");
