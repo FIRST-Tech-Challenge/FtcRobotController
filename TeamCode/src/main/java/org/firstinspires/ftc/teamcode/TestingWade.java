@@ -14,11 +14,11 @@ public class TestingWade extends LinearOpMode {
         waitForStart();
 
         while (opModeIsActive()) {
-            robot.straightBlocking(24, true);
+            robot.straightBlocking(24, true, 0.75);
             sleep(100);
-            robot.setHeading(0);
+            robot.setHeading(0, 1);
             sleep(1000);
-            robot.setHeading(90);
+            robot.setHeading(90, 1);
             sleep(1000);
             break;
         }

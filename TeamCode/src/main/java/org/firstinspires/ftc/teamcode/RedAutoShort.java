@@ -12,7 +12,7 @@ public class RedAutoShort extends LinearOpMode {
         robot.setUpDrivetrainMotors();
         robot.autoForward(660.4);
         robot.autoForward(-609.6);
-        robot.setHeading(90);
+        robot.setHeading(90, 1);
         robot.autoForward(1219.2);
 
     }

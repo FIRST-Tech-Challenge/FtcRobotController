@@ -64,7 +64,7 @@ public class Robot {
     private MarkerDetector detector;
     private MarkerProcessor markerProcessor;
     private AprilTagProcessor aprilTagProcessor;
-    public VisionPortal visionPortal;
+    private VisionPortal visionPortal;
 
 
     //CONSTRUCTOR
@@ -280,7 +280,7 @@ public class Robot {
             //robot is backward
             //move closer to april tag
             //move away from april tag
-            straightBlocking(Math.abs(moveDistanceInches), !(moveDistanceInches > 0));
+            straightBlocking(Math.abs(moveDistanceInches), !(moveDistanceInches > 0), 0.75);
         } else if (aprilTagRange == 0){
 
             setMotorPower(stopPower);
@@ -584,14 +584,14 @@ public class Robot {
 
     //the desired heading must be relative to last imu reset
     //-180 < desired heading <= 180
-    public void setHeading(double targetAbsDegrees) {
+    public void setHeading(double targetAbsDegrees, double maxPower) {
     /*
         assert(targetAbsDegrees > 180);
         assert(targetAbsDegrees <= -180);
 
      */
         if (targetAbsDegrees == 180) {
-            setHeading(179.5);
+            setHeading(179.5, maxPower);
         } else {
 
             YawPitchRollAngles robotOrientation;
@@ -624,7 +624,7 @@ public class Robot {
                 }
 
                 //cap power
-                power = Range.clip(power, -1, 1);
+                power = Range.clip(power, -1 * maxPower, maxPower);
 
                 setMotorPower(-1 * power, power, -1 * power, power);
 
@@ -805,7 +805,7 @@ public class Robot {
         }
     }
 
-    public void mecanumBlocking(double inches, boolean right) {
+    public void mecanumBlocking(double inches, boolean right, double maxPower) {
 
         double ERROR_TOLERANCE = 10;
         double power;
@@ -839,7 +839,7 @@ public class Robot {
             }
 
             //cap power
-            power = Range.clip(power, -1, 1);
+            power = Range.clip(power, -1 * maxPower, maxPower);
 
             setMotorPower(power, -1 * power, -1 * power, power);
 
@@ -848,55 +848,55 @@ public class Robot {
         setMotorPower(0, 0, 0, 0);
     }
 
-    public void straightBlocking(double inches, boolean forward) {
+    public void straightBlocking(double inches, boolean forward, double maxPower) {
 
-            double ERROR_TOLERANCE = 10;
-            double power;
-            double endTick;
-            final double KP = 0.01;
-            final double KD = 500_000;
-            final double minPower = 0.2;
-            double currentTick = fLeft.getCurrentPosition();
-            double errorDer;
-            double currentTime;
+        double ERROR_TOLERANCE = 10;
+        double power;
+        double endTick;
+        final double KP = 0.01;
+        final double KD = 500_000;
+        final double minPower = 0.2;
+        double currentTick = fLeft.getCurrentPosition();
+        double errorDer;
+        double currentTime;
 
-            //inch to tick
-            final double wheelDiaMm = 96;
-            final double PI = 3.14159;
-            final double wheelCircIn = wheelDiaMm * PI / 25.4; //~11.87
-            final double IN_TO_TICK = 537 / wheelCircIn;
+        //inch to tick
+        final double wheelDiaMm = 96;
+        final double PI = 3.14159;
+        final double wheelCircIn = wheelDiaMm * PI / 25.4; //~11.87
+        final double IN_TO_TICK = 537 / wheelCircIn;
 
-            if (forward) {
-                endTick = currentTick + inches * IN_TO_TICK;
-            } else {
-                endTick = currentTick - inches * IN_TO_TICK;
+        if (forward) {
+            endTick = currentTick + inches * IN_TO_TICK;
+        } else {
+            endTick = currentTick - inches * IN_TO_TICK;
+        }
+
+        double error = endTick - currentTick;
+
+        while (Math.abs(error) >= ERROR_TOLERANCE && opMode.opModeIsActive()) {
+
+            currentTime = SystemClock.elapsedRealtimeNanos();
+            error = endTick - currentTick;
+            errorDer = (error - prevError) / (currentTime - prevTime);
+            power = (KP * error) + (KD * errorDer);
+
+            if (power > 0 && power < minPower) {
+                power += minPower;
+            } else if (power < 0 && power > -1 * minPower) {
+                power -= minPower;
             }
 
-            double error = endTick - currentTick;
+            //cap power
+            power = Range.clip(power, -1 * maxPower, maxPower);
 
-            while (Math.abs(error) >= ERROR_TOLERANCE && opMode.opModeIsActive()) {
+            setMotorPower(power, power, power, power);
 
-                currentTime = SystemClock.elapsedRealtimeNanos();
-                error = endTick - currentTick;
-                errorDer = (error - prevError) / (currentTime - prevTime);
-                power = (KP * error) + (KD * errorDer);
-
-                if (power > 0 && power < minPower) {
-                    power += minPower;
-                } else if (power < 0 && power > -1 * minPower) {
-                    power -= minPower;
-                }
-
-                //cap power
-                power = Range.clip(power, -0.7, 0.7);
-
-                setMotorPower(power, power, power, power);
-
-                currentTick = fLeft.getCurrentPosition();
-                prevTime = currentTime;
-                prevError = error;
-            }
-            setMotorPower(0, 0, 0, 0);
+            currentTick = fLeft.getCurrentPosition();
+            prevTime = currentTime;
+            prevError = error;
+        }
+        setMotorPower(0, 0, 0, 0);
     }
 
     /**
@@ -911,7 +911,7 @@ public class Robot {
         MarkerDetector.MARKER_POSITION position = markerProcessor.getPosition();
 
         while (position == MarkerDetector.MARKER_POSITION.UNDETECTED) {
-            Log.d("vision", "undetected marker, keep looking");
+            Log.d("vision", "undetected marker, keep looking" + visionPortal.getCameraState());
             position = markerProcessor.getPosition();
         }
 
@@ -928,36 +928,39 @@ public class Robot {
     public void moveToMarker() {
         Log.d("vision", "moveToMarker: Pos " + markerPos);
         Log.d("vision", "moveToMarker: Tag " + wantedAprTagId);
-        if (markerPos == MarkerDetector.MARKER_POSITION.CENTER) {
-            straightBlocking(20, false);
-            setHeading(15);
+        if (markerPos == MarkerDetector.MARKER_POSITION.RIGHT) {
+            straightBlocking(14, false, 0.5);
+            setHeading(-45, 0.5);
             sleep(100);
-            straightBlocking(6, false);
+            straightBlocking(11, false, 0.5);
             sleep(100);
-            straightBlocking(6, true);
-            setHeading(0);
+            straightBlocking(11, true, 0.5);
+            setHeading(0, 0.5);
             sleep(100);
-            straightBlocking(19, true);
+            straightBlocking(13, true, 0.5);
         } else if (markerPos == MarkerDetector.MARKER_POSITION.LEFT) {
-            straightBlocking(18, false);
-            setHeading(30);
+            straightBlocking(19, false, 0.5);
             sleep(100);
-            straightBlocking(4, false);
+            setHeading(45, 0.25);
             sleep(100);
-            straightBlocking(4, true);
-            setHeading(0);
+            straightBlocking(5, false, 0.7);
             sleep(100);
-            straightBlocking(17, true);
-        } else { //right or other
-            straightBlocking(14, false);
-            setHeading(-45);
+            straightBlocking(5, true, 0.7);
             sleep(100);
-            straightBlocking(11, false);
+            setHeading(0, 0.25);
             sleep(100);
-            straightBlocking(11, true);
-            setHeading(0);
+            straightBlocking(6, true, 0.7);
+        } else { //center, default
+            Log.d("vision", "moveToMarker: center or default");
+            straightBlocking(20, false, 0.5);
+            setHeading(15, 1);
             sleep(100);
-            straightBlocking(13, true);
+            straightBlocking(6, false, 0.5);
+            sleep(100);
+            straightBlocking(6, true, 0.5);
+            setHeading(0, 1);
+            sleep(100);
+            straightBlocking(19, true, 0.5);
         }
     }
 
@@ -984,10 +987,10 @@ public class Robot {
 
                         if (detection.ftcPose.bearing > 1) {
                             Log.d("vision", "runOpMode: bearing > 1, move left");
-                            mecanumBlocking(1, true);
+                            mecanumBlocking(1, true, 0.5);
                         } else if (detection.ftcPose.bearing < -1) {
                             Log.d("vision", "runOpMode: bearing < -1, move right");
-                            mecanumBlocking(1, false);
+                            mecanumBlocking(1, false, 0.5);
                         } else {
                             Log.d("vision", "runOpMode: aligned");
                             aligned = true;
@@ -999,7 +1002,7 @@ public class Robot {
 
                 if (!tagVisible) {
                     Log.d("vision", "runOpMode: tag not visible, move back");
-                    straightBlocking(1, true);
+                    straightBlocking(1, true, 0.75);
                     sleep(100);
                 }
             }
@@ -1014,7 +1017,7 @@ public class Robot {
                         Log.d("vision", "runOpMode: bearing is " + detection.ftcPose.bearing);
                         double distanceToBoard = detection.ftcPose.range - 5;
                         Log.d("vision", "runOpMode: distance to travel is " + distanceToBoard);
-                        straightBlocking(distanceToBoard, false);
+                        straightBlocking(distanceToBoard, false, 0.75);
                         sleep(100);
                         break;
                     }

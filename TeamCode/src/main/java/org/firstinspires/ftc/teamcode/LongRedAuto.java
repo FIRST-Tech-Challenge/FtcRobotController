@@ -31,8 +31,8 @@ public class LongRedAuto extends LinearOpMode {
         MarkerDetector.MARKER_POSITION position;
         */
 
+        sleep(3000);
         waitForStart();
-        Log.d("vision", "camera state: " + robot.visionPortal.getCameraState());
 
         while (opModeIsActive()) {
 
@@ -59,32 +59,31 @@ public class LongRedAuto extends LinearOpMode {
 
             sleep(1000);
 
-            //move to board from spike marks
-            robot.straightBlocking(15, false);
-            sleep(1000);
-            robot.setHeading(0);
-            sleep(1000);
-            robot.mecanumBlocking(20, true);
-            sleep(1000);
-            robot.setHeading(0);
-            sleep(1000);
-            robot.straightBlocking(38, false);
-            sleep(1000);
-            robot.setHeading(-90);
-            sleep(1000);
-            robot.straightBlocking(90, false);
-            sleep(1000);
-            robot.setHeading(-90);
-            sleep(1000);
-            robot.mecanumBlocking(28, false);
-            sleep(1000);
-            robot.setHeading(-90);
+            //move to backdrop from spike marks
+            robot.setHeading(0, 0.75);
+            sleep(100);
+            robot.mecanumBlocking(20, true, 0.5);
+            sleep(100);
+            robot.setHeading(0, 0.75);
+            sleep(100);
+            robot.straightBlocking(35, false, 0.7);
+            sleep(100);
+            robot.setHeading(-90, 0.75);
+            sleep(100);
+            robot.straightBlocking(90, false, 0.7);
+            sleep(100);
+            robot.setHeading(-90, 0.5);
+            sleep(100);
+            robot.mecanumBlocking(28, false, 0.5);
+            sleep(100);
+            robot.setHeading(-90, 0.75);
 
             sleep(2000);
 
             robot.moveToBoard();
-
             sleep(100);
+            robot.setHeading(-90, 0.75);
+
             break;
 
             //movetoboard() code commented below
