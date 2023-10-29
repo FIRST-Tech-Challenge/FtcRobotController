@@ -61,12 +61,12 @@ public abstract class RFServoTest extends LinearOpMode {
     }
 
     public void flipTo(double p_targetPos) {
-        if (time - lastTime > FLIP_TIME) {
+//        if (time - lastTime > FLIP_TIME) {
             testServo.setPosition(p_targetPos);
             LOGGER.log(RFLogger.Severity.INFO, "RFServoTest.flipTo(): flipped servo to position: " + p_targetPos);
             lastTime = time;
             flipped = !flipped;
-        }
+//        }
         robot.update();
     }
 }

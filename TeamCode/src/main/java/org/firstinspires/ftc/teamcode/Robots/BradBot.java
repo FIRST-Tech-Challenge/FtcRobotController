@@ -50,7 +50,7 @@ public class BradBot extends BasicRobot{
         LOGGER.setLogLevel(RFLogger.Severity.INFO);
         LOGGER.log("Initializing Components!");
         arm = new Arm();
-//        cv = new CVMaster();
+        cv = new CVMaster();
         clamp = new Clamp();
         intake = new Intake();
         launcher = new Launcher();
@@ -149,6 +149,7 @@ public class BradBot extends BasicRobot{
         boolean up = gampad.readGamepad(op.gamepad1.dpad_up, "gamepad1_dpad_up", "lift Up");
         boolean down = gampad.readGamepad(op.gamepad1.dpad_down, "gamepad1_dpad_down", "lift down");
         boolean right = gampad.readGamepad(op.gamepad1.dpad_right, "gamepad1_dpad_right", "toggleButterfly");
+        boolean left = gampad.readGamepad(op.gamepad1.dpad_left, "gamepad1_dpad_left", "toggleClamp");
         float manualUp = op.gamepad1.right_trigger;
         float manualDown = op.gamepad1.left_trigger;
         if(isA){
@@ -158,11 +159,19 @@ public class BradBot extends BasicRobot{
         }
         if(rightBumper){
             if(Intake.IntakeStates.STOPPED.getState()) {
+                clamp.unclamp();
                 intake.intake();
             }
             else{
+                clamp.clamp();
                 intake.stopIntake();
             }
+        }
+        if(left){
+            if(clamp.getClamped())
+                clamp.unclamp();
+            else
+                clamp.clamp();
         }
         if(leftBumper){
             intake.reverseIntake();
@@ -212,7 +221,7 @@ public class BradBot extends BasicRobot{
         LOGGER.log("updating each component");
         super.update();
         arm.update();
-//        cv.update();
+        cv.update();
         intake.update();
         lift.update();
         roadrun.update();
@@ -222,7 +231,8 @@ public class BradBot extends BasicRobot{
 
     public void stop(){
         LOGGER.log("the program has stopped normally");
-//        cv.stop();
+        cv.stop();
+        op.sleep(100);
         op.stop();
     }
 }

@@ -6,7 +6,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import org.firstinspires.ftc.teamcode.Components.RFModules.Devices.RFServo;
 import org.firstinspires.ftc.teamcode.Robots.BradBot;
 
-@Autonomous
+@Autonomous(name = "ClampTest")
 @Config
 public class ClampTest extends RFServoTest{
 
