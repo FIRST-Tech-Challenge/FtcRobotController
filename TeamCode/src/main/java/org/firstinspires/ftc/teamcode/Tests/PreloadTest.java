@@ -10,9 +10,9 @@ import org.firstinspires.ftc.teamcode.Robots.BradBot;
 @Config
 public class PreloadTest extends RFServoTest{
 
-    static double FLIP_TIME = 0.5;
-    public static double SERVO_LOWER_LIMIT = 0.15;
-    public static double SERVO_UPPER_LIMIT = 0.5;
+    static double FLIP_TIME = 5;
+    public static double SERVO_LOWER_LIMIT = 0.0;
+    public static double SERVO_UPPER_LIMIT = 1.0;
     /**
      * Calls autoLoop() function from RFServoTest (see RFServoTest class).
      */
@@ -21,7 +21,6 @@ public class PreloadTest extends RFServoTest{
         waitForStart();
         while (opModeIsActive()) {
             autoLoop();
-            sleep(10000);
         }
     }
 }

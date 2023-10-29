@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.Tests;
 
+import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.packet;
+
 import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
@@ -10,21 +12,23 @@ import org.firstinspires.ftc.teamcode.Robots.BradBot;
 @Config
 public class ArmTest extends RFServoTest{
 
-    static double FLIP_TIME = 0.5;
+    public static double LOAD = 0.28, SHOOT = 0.98;
+    public static int target = 0;
+    private int atTarg = 0;
 
-    //clamp: lower 0.15, upper 0.5
-    //wrist: lower 0.0, upper 0.65
-    //arm: lower 0.28, upper 0.98
-    public static double SERVO_LOWER_LIMIT = 0.28;
-    public static double SERVO_UPPER_LIMIT = 0.98;
-    /**
-     * Calls autoLoop() function from RFServoTest (see RFServoTest class).
-     */
-    public void runOpMode() {
-        initialize("armServo", FLIP_TIME, SERVO_LOWER_LIMIT, SERVO_UPPER_LIMIT);
+    @Override
+    public void runOpMode() throws InterruptedException {
+        initialize("armServo", 0.5, LOAD, SHOOT);
         waitForStart();
         while (opModeIsActive()) {
-            autoLoop();
+            double[] pussitions = {LOAD, SHOOT};
+
+            if (target != atTarg) {
+                flipTo(pussitions[target]);
+                atTarg = target;
+            }
+            packet.put("atTarg", atTarg);
+            robot.update();
         }
     }
 }
