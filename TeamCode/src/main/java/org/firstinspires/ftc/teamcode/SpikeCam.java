@@ -56,14 +56,20 @@ public class SpikeCam {
     class spikePipeline extends OpenCvPipeline {
 
         Mat mat = new Mat();
-        double percent_color_threshold = 0.04;
         Scalar rectColor1 = new Scalar(255.0, 0.0, 0.0);
         Rect cropped = new Rect(1, 260, 639, 479);
 
         public Mat processFrame(Mat input){
             Imgproc.cvtColor(input, mat, Imgproc.COLOR_RGB2HSV);
+
+            //Red
             Scalar lowHSV = new Scalar(150, 50, 70);
             Scalar highHSV = new Scalar(179, 255, 255);
+
+            /*Blue
+            Scalar lowHSV = new Scalar(105, 50, 70);
+            Scalar highHSV = new Scalar(135, 255, 255);
+             */
 
             Core.inRange(mat, lowHSV, highHSV, mat);
 
