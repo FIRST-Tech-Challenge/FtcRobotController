@@ -15,17 +15,16 @@ public class ArmTest extends RFServoTest{
     //clamp: lower 0.15, upper 0.5
     //wrist: lower 0.0, upper 0.65
     //arm: lower 0.28, upper 0.98
-    public static double SERVO_LOWER_LIMIT = 0;
-    public static double SERVO_UPPER_LIMIT = 0.0;
+    public static double SERVO_LOWER_LIMIT = 0.28;
+    public static double SERVO_UPPER_LIMIT = 0.98;
     /**
      * Calls autoLoop() function from RFServoTest (see RFServoTest class).
      */
     public void runOpMode() {
-        initialize("wristServo", FLIP_TIME, SERVO_LOWER_LIMIT, SERVO_UPPER_LIMIT);
+        initialize("armServo", FLIP_TIME, SERVO_LOWER_LIMIT, SERVO_UPPER_LIMIT);
         waitForStart();
         while (opModeIsActive()) {
-//            autoLoop();
-            flipTo(SERVO_UPPER_LIMIT);
+            autoLoop();
         }
     }
 }
