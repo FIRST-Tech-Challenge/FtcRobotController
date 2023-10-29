@@ -6,14 +6,13 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 
 @Disabled
-<<<<<<< HEAD
+
 @Autonomous (name="RIGHT SIDE")
 public class BlueCloseAuto extends BaseAutonomous {
-=======
+
 @Autonomous (name="Blue Close ")
 
 public class LowJunctionParkRightSide extends BaseAutonomous {
->>>>>>> df5fd88d01499846b8bdecb7f23d254a034f6d28
 
     @Override
     public void runOpMode() {
