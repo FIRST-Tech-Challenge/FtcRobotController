@@ -121,7 +121,12 @@ public class RobotOrientedDrive extends LinearOpMode {
             motorFrontRight.setPower(frontRightPower);
             motorBackRight.setPower(backRightPower);
 
+            telemetry.addData("odometer middle pos", motorBackRight.getCurrentPosition());
+            telemetry.addData("odometer right pos", motorFrontRight.getCurrentPosition());
+            telemetry.addData("odometer left pos", motorBackLeft.getCurrentPosition());
+            telemetry.update();
 
+1
 //// Viper Slide Code:
 //
 //
