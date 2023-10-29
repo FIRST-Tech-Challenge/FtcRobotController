@@ -4,7 +4,11 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
 
+import drive.SampleMecanumDrive;
+
 abstract class BaseOpMode extends LinearOpMode {
+    SampleMecanumDrive drive;
+
     //Declares drive-motors
     public DcMotor FR;
     public DcMotor FL;
