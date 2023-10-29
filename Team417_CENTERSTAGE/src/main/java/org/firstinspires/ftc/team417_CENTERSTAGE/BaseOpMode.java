@@ -18,6 +18,13 @@ abstract class BaseOpMode extends LinearOpMode {
     public DcMotor intakeMotor;
     public Servo outputMotor;
 
+    static final double TICKS_PER_REVOLUTION = 5281.1; // 5203 Series Yellow Jacket Motor
+    static final double GEAR_RATIO = 1.0;
+    static final double WHEEL_DIAMETER = 3.7; // inches
+    static final double TICKS_PER_INCH =  (TICKS_PER_REVOLUTION * GEAR_RATIO) / (WHEEL_DIAMETER * Math.PI);
+    static final double INCHES_PER_REVOLUTION = Math.PI * WHEEL_DIAMETER;
+    static final double INCHES_PER_TICK = INCHES_PER_REVOLUTION / TICKS_PER_REVOLUTION;
+
     //Declares IMU
     //public BNO055IMU imu;
 

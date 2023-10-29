@@ -37,24 +37,24 @@ abstract public class BaseAutonomous extends BaseOpMode {
     }
 
     public void driveInches(double x, double y) {
-        //double xTicks = x * TICKS_PER_INCH;
-        //double yTicks = y * TICKS_PER_INCH;
+        double xTicks = x * TICKS_PER_INCH;
+        double yTicks = y * TICKS_PER_INCH;
 
-//        double targetFL = xTicks + yTicks;
-//        double targetFR = yTicks - xTicks;
-//        double targetBL = yTicks - xTicks;
-//        double targetBR = yTicks + xTicks;
+        double targetFL = xTicks + yTicks;
+        double targetFR = yTicks - xTicks;
+        double targetBL = yTicks - xTicks;
+        double targetBR = yTicks + xTicks;
 
-        // Determine new target position, and pass to motor controller
-//        targetFL += FL.getCurrentPosition();
-//        targetFR += FR.getCurrentPosition();
-//        targetBL += BL.getCurrentPosition();
-//        targetBR += BR.getCurrentPosition();
-//
-//        FL.setTargetPosition((int) targetFL);
-//        FR.setTargetPosition((int) targetFR);
-//        BL.setTargetPosition((int) targetBL);
-//        BR.setTargetPosition((int) targetBR);
+        //Determine new target position, and pass to motor controller
+        targetFL += FL.getCurrentPosition();
+        targetFR += FR.getCurrentPosition();
+        targetBL += BL.getCurrentPosition();
+        targetBR += BR.getCurrentPosition();
+
+        FL.setTargetPosition((int) targetFL);
+        FR.setTargetPosition((int) targetFR);
+        BL.setTargetPosition((int) targetBL);
+        BR.setTargetPosition((int) targetBR);
 
         // Turn On RUN_TO_POSITION
         FL.setMode(DcMotor.RunMode.RUN_TO_POSITION);
