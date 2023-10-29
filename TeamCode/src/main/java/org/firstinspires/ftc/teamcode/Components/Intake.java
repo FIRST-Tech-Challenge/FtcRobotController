@@ -34,7 +34,7 @@ public class Intake extends RFMotor {
 
     private boolean full = false;
     private double pixelCount =0;
-    public static double HALF_TICKS_PER_REV = 13463.0/21;
+    public static double HALF_TICKS_PER_REV = 26213.0/39.0747;
 
     /**
      * initializes all the hardware, logs that hardware has been initialized
