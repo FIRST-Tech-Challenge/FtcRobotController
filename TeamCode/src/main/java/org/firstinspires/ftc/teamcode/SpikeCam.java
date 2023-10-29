@@ -19,7 +19,13 @@ import org.openftc.easyopencv.OpenCvCameraRotation;
 import org.openftc.easyopencv.OpenCvPipeline;
 public class SpikeCam {
     OpenCvCamera webcam1 = null;
-    public int spikeLocation = 0;
+    public enum location{
+        LEFT,
+        MIDDLE,
+        RIGHT,
+        NOT_FOUND
+    }
+    location spikeLocation = location.NOT_FOUND;
     private LinearOpMode myOpMode;
 
     public void initialize(LinearOpMode currentOp) {
@@ -90,12 +96,19 @@ public class SpikeCam {
             myOpMode.telemetry.addData("mid %", Math.round(midval * 100));
             myOpMode.telemetry.addData("right %", Math.round(rightval * 100));
 
-            if (leftval > rightval && leftval > midval) spikeLocation = 1;
-            else if (midval > leftval && midval > rightval) spikeLocation = 2;
-            else if (rightval > leftval && rightval > midval) spikeLocation = 3;
-            else spikeLocation = 0;
+            if (leftval > rightval && leftval > midval) spikeLocation = location.LEFT;
+            else if (midval > leftval && midval > rightval) spikeLocation = location.MIDDLE;
+            else if (rightval > leftval && rightval > midval) spikeLocation = location.RIGHT;
+            else spikeLocation = location.NOT_FOUND;
 
-            /*
+
+            return(mat);
+        }
+    }
+
+}
+
+         /*
             boolean posleft  = leftval > percent_color_threshold;
             boolean posmid  = midval > percent_color_threshold;
             boolean posright  = rightval > percent_color_threshold;
@@ -105,8 +118,3 @@ public class SpikeCam {
             else if (posright) telemetry.addData("right position", "Yes");
             else telemetry.addData("not found", "bruh");
             */
-            return(mat);
-        }
-    }
-
-}
