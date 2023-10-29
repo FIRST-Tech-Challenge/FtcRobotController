@@ -149,7 +149,7 @@ public class League1_TeleOp extends LinearOpMode {
 
             drive.setDrivePowers(new PoseVelocity2d(
                     new Vector2d(
-                            -drivePowerY,
+                            drivePowerY, // not negative so it goes the right direction
                             -drivePowerX
                     ),
                     -turnPower
