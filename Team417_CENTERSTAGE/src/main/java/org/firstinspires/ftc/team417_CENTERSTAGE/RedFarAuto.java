@@ -17,6 +17,8 @@ public class RedFarAuto extends BaseAutonomous {
 
         initializeAuto();
 
+        waitForStart();
+
         Pose2d startPose = new Pose2d(-36.00, -60.00, Math.toRadians(90.00));
         TrajectorySequence goToParking = drive.trajectorySequenceBuilder(startPose)
                 .splineTo(new Vector2d(-36.00, -37.00), Math.toRadians(90.00))
