@@ -108,7 +108,7 @@ class TeleopFromHell: DriveMethods() {
         var targetHeight = 0
         var slidePos = 0
         var slideRotPos = 0
-        var speedDiv = 2
+        var speedDiv = 3.0
         var slideDeg = 0.0
         var angleFromSlideToClaw = 0.0
         var slideRottarget = 25.0
@@ -132,6 +132,28 @@ class TeleopFromHell: DriveMethods() {
             }
             if (gamepad2.a) {
                 //clawMotor!!.position = openClaw
+            }
+
+            if (gamepad1.left_bumper) {
+                motorFL?.power = 1.0/speedDiv
+                motorBL?.power = -1.0/speedDiv
+                motorFR?.power = 1.0/speedDiv
+                motorBR?.power = -1.0/speedDiv
+            }
+
+            if (gamepad1.right_bumper) {
+                motorFL?.power = -1.0/speedDiv
+                motorBL?.power = 1.0/speedDiv
+                motorFR?.power = -1.0/speedDiv
+                motorBR?.power = 1.0/speedDiv
+            }
+
+            if (gamepad1.a) {
+                if (speedDiv == 3.0) {
+                    speedDiv = 1.5
+                } else {
+                    speedDiv = 3.0
+                }
             }
 
             //raise/lower slide
