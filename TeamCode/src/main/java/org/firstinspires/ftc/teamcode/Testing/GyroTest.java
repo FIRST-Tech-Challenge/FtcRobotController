@@ -14,7 +14,7 @@ import org.firstinspires.ftc.teamcode.RobotClass;
 @TeleOp
 public class GyroTest extends LinearOpMode {
 //    flags for testing
-    public boolean runTurnCode = false;
+    public boolean runTurnCode = true;
 
     RobotClass robot = new RobotClass(this);
     public Orientation angles = null;
@@ -22,54 +22,53 @@ public class GyroTest extends LinearOpMode {
     public void runOpMode() throws InterruptedException {
         robot.init(hardwareMap);
 
-        //hardware mapping and initializing imu
-        while(!robot.imu.isGyroCalibrated()){
-            sleep(10);
-        }
-
         waitForStart();
 
         while (opModeIsActive()) {
             angles = robot.imu.getAngularOrientation();
             telemetry.addData("heading", angles.firstAngle);
+            telemetry.addData("power", robot.frontLeft.getPower());
             telemetry.update();
 
             if (runTurnCode) {
                 //turn 90 degrees using gyro
-                double targetAngle = -90;
+                double targetAngle = -145;
                 if (angles.firstAngle >= targetAngle-0.5 && angles.firstAngle <= targetAngle+0.5){
                     robot.frontLeft.setPower(0);
                     robot.frontRight.setPower(0);
                     robot.backLeft.setPower(0);
                     robot.backRight.setPower(0);
-                    sleep(1000);
-                    if (angles.firstAngle >= targetAngle-0.5 && angles.firstAngle <= targetAngle+0.5) {
-                        break;
+                    telemetry.addLine("1");
+                    sleep(500);
+                    telemetry.addLine("2");
+                    if (angles.firstAngle >= targetAngle-0.5 && angles.firstAngle <= targetAngle + 0.5) {
+                        telemetry.addLine("3");
+                        gamepad1.rumble(1000);
                     }
-                }else if (angles.firstAngle >= targetAngle+0.5){
+                }else if (angles.firstAngle >= targetAngle){
                     if (angles.firstAngle <= targetAngle+10){
-                        robot.frontLeft.setPower(-0.15);
-                        robot.frontRight.setPower(0.15);
-                        robot.backLeft.setPower(-0.15);
-                        robot.backRight.setPower(0.15);
-                    }else {
-                        robot.frontLeft.setPower(-0.5);
-                        robot.frontRight.setPower(0.5);
-                        robot.backLeft.setPower(-0.5);
-                        robot.backRight.setPower(0.5);
-                    }
-                }else if (angles.firstAngle <= targetAngle-0.5){
-                    if (angles.firstAngle >= targetAngle-10){
                         robot.frontLeft.setPower(0.15);
                         robot.frontRight.setPower(-0.15);
                         robot.backLeft.setPower(0.15);
                         robot.backRight.setPower(-0.15);
+                    }else {
+                        robot.frontLeft.setPower(0.25);
+                        robot.frontRight.setPower(-0.25);
+                        robot.backLeft.setPower(0.25);
+                        robot.backRight.setPower(-0.25);
+                    }
+                }else if (angles.firstAngle <= targetAngle){
+                    if (angles.firstAngle >= targetAngle-10){
+                        robot.frontLeft.setPower(-0.15);
+                        robot.frontRight.setPower(0.15);
+                        robot.backLeft.setPower(-0.15);
+                        robot.backRight.setPower(0.15);
 
                     }else{
-                        robot.frontLeft.setPower(0.5);
-                        robot.frontRight.setPower(-0.5);
-                        robot.backLeft.setPower(0.5);
-                        robot.backRight.setPower(-0.5);
+                        robot.frontLeft.setPower(-0.25);
+                        robot.frontRight.setPower(0.25);
+                        robot.backLeft.setPower(-0.25);
+                        robot.backRight.setPower(0.25);
                     }
                 }
             }
