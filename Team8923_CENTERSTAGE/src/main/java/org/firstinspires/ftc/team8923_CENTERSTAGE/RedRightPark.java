@@ -9,8 +9,11 @@ public class RedRightPark extends BaseAutonomous {
     public void runOpMode() {
         initAuto();
         waitForStart();
-        // go forward then strafe to backstage
+        // move forward from red alliance right side then strafe to backstage
+
+        // move forward 4 inches to get off the wall
         driveInches(0, 4);
+        // strafe right 61 inches to get to backstage
         driveInches(61, 0);
     }
 }

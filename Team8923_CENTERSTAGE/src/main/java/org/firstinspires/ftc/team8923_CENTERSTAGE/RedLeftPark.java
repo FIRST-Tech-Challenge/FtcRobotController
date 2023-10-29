@@ -9,8 +9,11 @@ public class RedLeftPark extends BaseAutonomous {
     public void runOpMode() {
         initAuto();
         waitForStart();
-        // go forward then strafe to backstage
+        // go forward from red alliance left side then strafe to backstage
+
+        // move forward 4 inches to get off the wall
         driveInches(0, 4);
+        // strafe right 105 inches to get to the backstage
         driveInches(105, 0);
     }
 }
