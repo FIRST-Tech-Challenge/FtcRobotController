@@ -20,6 +20,8 @@ public class TeachingClass extends LinearOpMode {
     DcMotor backRight;
     //Initializing frontLeft motor variable
 
+    //DcMotor intakeMotor;
+
     //DO NOT CHANGE FOLLOWING LINES OF CODE
 
     public void runOpMode(){
@@ -40,6 +42,8 @@ public class TeachingClass extends LinearOpMode {
         backRight.setDirection(DcMotorSimple.Direction.FORWARD);
         //Setting the direction of backLeft to FORWARD
 
+        //intakeMotor.setDirection(DcMotorSimple.Direction.FORWARD);
+
         //Waiting for Start button to be pressed
         waitForStart();
 
@@ -49,6 +53,7 @@ public class TeachingClass extends LinearOpMode {
             double throttle = -gamepad1.left_stick_y;
             double turn = gamepad1.right_stick_x;
             double strafe = gamepad1.left_stick_x;
+            //double intake = gamepad2.a;
 
             //setting power for forward-backward movement
             frontLeft.setPower(throttle);
@@ -75,6 +80,11 @@ public class TeachingClass extends LinearOpMode {
             backLeft.setPower(turn);
             frontRight.setPower(-turn);
             backRight.setPower(-turn);
+
+            //setting up intake (collecting pixels)
+            /*
+            intakeMotor.setPower(intake);
+            */
         }
     }
 }
