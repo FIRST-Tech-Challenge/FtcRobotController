@@ -1,81 +1,79 @@
-package org.firstinspires.ftc.teamcode;
+package org.firstinspires.ftc.teamcode.Toros;
+
+import android.util.Size;
+
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.Servo;
-import org.firstinspires.ftc.robotcore.external.hardware.camera.BuiltinCameraDirection;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.robotcore.external.tfod.Recognition;
 import org.firstinspires.ftc.vision.VisionPortal;
 import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
+import org.firstinspires.ftc.vision.apriltag.AprilTagGameDatabase;
 import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
 import org.firstinspires.ftc.vision.tfod.TfodProcessor;
 
 import java.util.List;
+@Autonomous(name = "Autonomus")
 
-@Autonomous(name = "Automus")
-@Disabled
-public class Autonomus extends LinearOpMode {
-    private DcMotor FrontLeftMotor;
-    private DcMotor BackLeftMotor;
-    private DcMotor FrontRightMotor;
-    private DcMotor BackRightMotor;
-    private Servo Claw1;
-    private Servo Claw2;
-    private TfodProcessor tfod;
-    private VisionPortal visionPortal;
-    private AprilTagProcessor aprilTag;
+public class Autonomus extends LinearOpMode{
+
     private static final boolean USE_WEBCAM = true;
 
-    private static final String MODEL = "";
+    private static final String Model = "Mymodel.tflite";
 
-    private static final String[] LABELS = new String[]{""};
+    private static final String[] Labels = {
+            "Cone"
+    };
+
+    private TfodProcessor tfod;
+    private AprilTagProcessor aprilTag;
+
+    private VisionPortal visionPortal;
 
     @Override
     public void runOpMode() throws InterruptedException {
-        initVision();
-        initTfod();
-        initAprilTag();
-        telemetryTfod();
+        initvision();
+        waitForStart();
+        if(opModeIsActive()){
+            while(opModeIsActive()){
+                telemetry();
 
-    }
-
-    private void initTfod() {
+            }
+        } sleep(20);
+        visionPortal.close();
+    } private void initvision(){
         tfod = new TfodProcessor.Builder()
-                .setModelFileName(MODEL)
+                .setModelAssetName(Model)
+                .setModelLabels(Labels)
                 .setIsModelTensorFlow2(true)
-                .setModelLabels(LABELS)
-                .setModelInputSize(300)
                 .setIsModelQuantized(true)
-                .setModelAspectRatio(16.0 / 9.0)
+                .setModelInputSize(300)
+                .setModelAspectRatio(16.0/9.0)
                 .build();
-
-    }
-
-    private void initAprilTag() {
         aprilTag = new AprilTagProcessor.Builder()
+                .setDrawAxes(false)
+                .setDrawCubeProjection(false)
+                .setDrawTagOutline(true)
+                .setDrawTagID(true)
+                .setTagFamily(AprilTagProcessor.TagFamily.TAG_36h11)
+                .setTagLibrary(AprilTagGameDatabase.getCenterStageTagLibrary())
+                .setOutputUnits(DistanceUnit.INCH, AngleUnit.DEGREES)
                 .build();
-
-    }
-
-    private void initVision() {
         VisionPortal.Builder builder = new VisionPortal.Builder();
 
-
-        if (USE_WEBCAM) {
-            builder.setCamera(hardwareMap.get(WebcamName.class, "Webcam 1"));
-        } else {
-            builder.setCamera(BuiltinCameraDirection.BACK);
-
-        }
-
-        builder.addProcessors(tfod, aprilTag);
+        builder.setCamera(hardwareMap.get(WebcamName.class, "Camera"));
+        builder.setCameraResolution(new Size(640,480));
+        builder.enableLiveView(true);
+        builder.setStreamFormat(VisionPortal.StreamFormat.YUY2);
+        builder.setAutoStopLiveView(true);
+        builder.addProcessors(tfod,aprilTag);
+        visionPortal = builder.build();
+        tfod.setMinResultConfidence(0.75f);
 
     }
-
-    private void telemetryAprilTag() {
-
+    private void telemetry(){
         List<AprilTagDetection> currentDetections = aprilTag.getDetections();
         telemetry.addData("# AprilTags Detected", currentDetections.size());
 
@@ -97,26 +95,20 @@ public class Autonomus extends LinearOpMode {
         telemetry.addLine("PRY = Pitch, Roll & Yaw (XYZ Rotation)");
         telemetry.addLine("RBE = Range, Bearing & Elevation");
 
-    }
-
-    private void telemetryTfod() {
-
         List<Recognition> currentRecognitions = tfod.getRecognitions();
         telemetry.addData("# Objects Detected", currentRecognitions.size());
 
         // Step through the list of recognitions and display info for each one.
         for (Recognition recognition : currentRecognitions) {
-            double x = (recognition.getLeft() + recognition.getRight()) / 2;
-            double y = (recognition.getTop() + recognition.getBottom()) / 2;
+            double x = (recognition.getLeft() + recognition.getRight()) / 2 ;
+            double y = (recognition.getTop()  + recognition.getBottom()) / 2 ;
 
-            telemetry.addData("", " ");
+            telemetry.addData(""," ");
             telemetry.addData("Image", "%s (%.0f %% Conf.)", recognition.getLabel(), recognition.getConfidence() * 100);
             telemetry.addData("- Position", "%.0f / %.0f", x, y);
             telemetry.addData("- Size", "%.0f x %.0f", recognition.getWidth(), recognition.getHeight());
-        }
+        }   // end for() loop
+
     }
 }
-
-
-
 

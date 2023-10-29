@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode;
+package org.firstinspires.ftc.teamcode.Toros;
 
 import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.hardwareMap;
 import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.telemetry;
@@ -22,7 +22,7 @@ public class ArmPID extends LinearOpMode {
     public static double f = -.05;
 
     public static int target = 0;
-    private final double ticks_in_degrees = 8;
+    private final double ticks_in_degrees = 1440/180;
     private DcMotorEx Arm;
 
     @Override
