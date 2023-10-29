@@ -125,7 +125,7 @@ public class vvDriveToTagShriya extends LinearOpMode
         rightUp = hardwareMap.get(DcMotor.class, "right_Up");
         leftDown = hardwareMap.get(DcMotor.class, "left_Down");
         rightDown = hardwareMap.get(DcMotor.class, "right_Down");
-    `   webcam1 = hardwareMap.get(WebcamName.class, "Webcam1");
+        // webcam = hardwareMap.get(WebcamName.class, "Webcam1");
         // To drive forward, most robots need the motor on one side to be reversed because the axles point in opposite directions.
         // When run, this OpMode should start both motors driving forward. So adjust these two lines based on your first test drive.
         // Note: The settings here assume direct drive on left and right wheels.  Single Gear Reduction or 90 Deg drives may require direction flips

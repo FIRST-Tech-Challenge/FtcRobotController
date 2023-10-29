@@ -61,6 +61,8 @@ public class coachFieldCentric extends LinearOpMode {
         // initialize all the hardware, using the hardware class. See how clean and simple this is?
         robot.init();
 
+        imu.resetYaw(); //reset the imu during initialization
+
         // get a reference to our ColorSensor object.
         colorSensor = hardwareMap.get(ColorSensor.class, "CLR");
 
