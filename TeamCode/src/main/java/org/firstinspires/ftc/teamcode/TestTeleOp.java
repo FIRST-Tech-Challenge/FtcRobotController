@@ -18,6 +18,8 @@ public class TestTeleOp extends LinearOpMode {
         DcMotor intake = hardwareMap.dcMotor.get("intake");
         Servo holderClamp = hardwareMap.servo.get("holderClamp");
         Servo arm = hardwareMap.servo.get("arm");
+        Servo planeLauncher = hardwareMap.servo.get("planeLauncher");
+        Servo linearLocker = hardwareMap.servo.get("linearLocker");
         DcMotor lsBack = hardwareMap.dcMotor.get("lsBack");
         DcMotor lsFront = hardwareMap.dcMotor.get("lsFront");
         DcMotor lFront = hardwareMap.dcMotor.get("fLeft");
@@ -46,7 +48,11 @@ public class TestTeleOp extends LinearOpMode {
 
         boolean hangingMode = false;
 
+        planeLauncher.setPosition(0.5);
+        linearLocker.setPosition(0.5);
+
         while (opModeIsActive()) {
+
 
             //GAMEPAD 2 CONTROLS
 
@@ -55,19 +61,37 @@ public class TestTeleOp extends LinearOpMode {
             double remainingDistanceLow = 100 - lsFront.getCurrentPosition();
             double remainingDistanceZero = -lsFront.getCurrentPosition();
 
-            //set linear slide modes
-            if (gamepad2.dpad_up && remainingDistanceHigh > 10) {
-                lsFront.setPower(remainingDistanceHigh*0.002);
-                lsBack.setPower(remainingDistanceHigh*0.002);
-            } else if (gamepad2.dpad_right && remainingDistanceMid > 10) {
-                lsFront.setPower(remainingDistanceMid*0.002);
-                lsBack.setPower(remainingDistanceMid*0.002);
-            } else if (gamepad2.dpad_left && remainingDistanceLow > 10) {
-                lsFront.setPower(remainingDistanceLow*0.002);
-                lsBack.setPower(remainingDistanceLow*0.002);
-            } else if (gamepad2.dpad_down && remainingDistanceZero > 10) {
-                lsFront.setPower(remainingDistanceZero*0.002);
-                lsBack.setPower(remainingDistanceZero*0.002);
+            /*if (gamepad1.dpad_up && remainingDistanceHigh > 10) {
+
+                robot.lsFront.setPower(remainingDistanceHigh*0.002);
+                robot.lsBack.setPower(remainingDistanceHigh*0.002);
+
+            } else if (gamepad1.dpad_right && remainingDistanceMid > 10) {
+
+                robot.lsFront.setPower(remainingDistanceMid*0.002);
+                robot.lsBack.setPower(remainingDistanceMid*0.002);
+
+            } else if (gamepad1.dpad_left && remainingDistanceLow > 10) {
+
+                robot.lsFront.setPower(remainingDistanceLow*0.002);
+                robot.lsBack.setPower(remainingDistanceLow*0.002);
+
+            } else if (gamepad1.dpad_down && remainingDistanceZero > 10) {
+
+                robot.lsFront.setPower(remainingDistanceZero*0.002);
+                robot.lsBack.setPower(remainingDistanceZero*0.002);
+
+            }*/
+
+
+
+
+            telemetry.addData("linear locker Servo pos", linearLocker.getPosition());
+
+            if(gamepad2.dpad_up) {
+                linearLocker.setPosition(0.3);
+            } else if(gamepad2.dpad_down) {
+                linearLocker.setPosition(0.5);
             }
 
             if(gamepad2.b == true) {
@@ -159,7 +183,13 @@ public class TestTeleOp extends LinearOpMode {
 
             holderClamp.setPosition(holderClampPos);
             arm.setPosition(armPos);
+
             //GAMEPAD 1 CONTROLS
+
+            telemetry.addData("plane launcher Servo pos", planeLauncher.getPosition());
+            if (gamepad1.right_bumper) {
+                planeLauncher.setPosition(0.1);
+            }
 
             double forwardBackward = gamepad1.left_stick_y * -0.5;
             double turning = gamepad1.right_stick_x * 0.5;
@@ -204,36 +234,12 @@ public class TestTeleOp extends LinearOpMode {
 
             robot.setMotorPower(power);
 
-            remainingDistanceHigh = 300 - robot.lsFront.getCurrentPosition();
+            /*remainingDistanceHigh = 300 - robot.lsFront.getCurrentPosition();
             remainingDistanceMid = 200 - robot.lsFront.getCurrentPosition();
             remainingDistanceLow = 100 - robot.lsFront.getCurrentPosition();
-            remainingDistanceZero = -robot.lsFront.getCurrentPosition();
+            remainingDistanceZero = -robot.lsFront.getCurrentPosition();*/
 
-            telemetry.addData("current pos for linear slide", robot.lsFront.getCurrentPosition());
-
-            if (gamepad1.dpad_up && remainingDistanceHigh > 10) {
-
-                robot.lsFront.setPower(remainingDistanceHigh*0.002);
-                robot.lsBack.setPower(remainingDistanceHigh*0.002);
-
-            } else if (gamepad1.dpad_right && remainingDistanceMid > 10) {
-
-                robot.lsFront.setPower(remainingDistanceMid*0.002);
-                robot.lsBack.setPower(remainingDistanceMid*0.002);
-
-            } else if (gamepad1.dpad_left && remainingDistanceLow > 10) {
-
-                robot.lsFront.setPower(remainingDistanceLow*0.002);
-                robot.lsBack.setPower(remainingDistanceLow*0.002);
-
-            } else if (gamepad1.dpad_down && remainingDistanceZero > 10) {
-
-                robot.lsFront.setPower(remainingDistanceZero*0.002);
-                robot.lsBack.setPower(remainingDistanceZero*0.002);
-
-            }
-
-            //TODO AANYA LAUNCHER GOES HERE!!!!!!
+            //telemetry.addData("current pos for linear slide", robot.lsFront.getCurrentPosition());
 
             telemetry.addLine(String.valueOf(holderClampPos));
             telemetry.update();
