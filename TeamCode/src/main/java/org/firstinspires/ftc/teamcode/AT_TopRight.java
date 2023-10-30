@@ -48,13 +48,13 @@ public class AT_TopRight extends LinearOpMode {
                 sleep(11 * 1000);
 
                 robot.driveRobot(0, -TURNSPEED);
-                sleep(4500);
+                sleep(4550);
 
                 robot.driveRobot(FORWARD_SPEED, 0);
                 sleep(20 * 1000);
 
                 robot.driveRobot(0, -TURNSPEED);
-                sleep(4500);
+                sleep(4550);
 
                 break;
             }
