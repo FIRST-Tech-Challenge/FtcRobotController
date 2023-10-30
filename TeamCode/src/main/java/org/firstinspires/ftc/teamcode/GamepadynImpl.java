@@ -8,11 +8,7 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import java.util.Arrays;
-import java.util.EnumMap;
-import java.util.Map;
 
-import computer.living.gamepadyn.ActionDescriptor;
-import computer.living.gamepadyn.ActionType;
 import computer.living.gamepadyn.Gamepadyn;
 import computer.living.gamepadyn.Tak;
 

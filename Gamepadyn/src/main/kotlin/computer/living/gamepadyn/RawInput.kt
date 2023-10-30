@@ -1,8 +1,8 @@
 package computer.living.gamepadyn
 
-import computer.living.gamepadyn.ActionType.*;
+import computer.living.gamepadyn.InputType.*;
 
-enum class RawInput(val type: ActionType, val axes: Int = 0) {
+enum class RawInput(val type: InputType, val axes: Int = 0) {
     FACE_DOWN           (DIGITAL), // Generic face button (= A)
     FACE_RIGHT          (DIGITAL), // Generic face button (= B)
     FACE_LEFT           (DIGITAL), // Generic face button (= X)

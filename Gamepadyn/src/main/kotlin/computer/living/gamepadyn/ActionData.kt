@@ -5,13 +5,13 @@ package computer.living.gamepadyn
 /**
  * The state of any action is representable by an implementation of this interface.
  */
-sealed interface ActionData { val type: ActionType }
+sealed interface ActionData { val type: InputType }
 
 /**
  * Represents the value of a digital action.
  * This is effectively a Boolean that implements ActionData.
  */
-data class ActionDataDigital(var digitalData: Boolean = false): ActionData { override val type = ActionType.DIGITAL  }
+data class ActionDataDigital(var digitalData: Boolean = false): ActionData { override val type = InputType.DIGITAL  }
 
 /**
  * Represents the value of an analog action.
@@ -20,7 +20,7 @@ data class ActionDataDigital(var digitalData: Boolean = false): ActionData { ove
 class ActionDataAnalog(
     vararg val analogData: Float
 ): ActionData {
-    override val type = ActionType.ANALOG
+    override val type = InputType.ANALOG
 
     val axes: Int get() { return analogData.size; }
 

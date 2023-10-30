@@ -13,7 +13,22 @@ sealed class Player<T: Enum<T>> private constructor(
     /**
      * The current state of the Player
      */
-    internal var state: MutableMap<T, ActionData> = mutableMapOf()
+    internal var state: MutableMap<T, ActionData> = parent.actions.entries.associate {
+        // these statements proves why Kotlin is a top-tier language. or maybe it just proves that my code is bad? idk
+        when (it.value!!.type) {
+            InputType.ANALOG ->    (it.key to ActionDataAnalog())
+            InputType.DIGITAL ->   (it.key to ActionDataDigital())
+        }
+    }.toMutableMap()
+
+    private val events: Map<T, Event<out ActionData>> = parent.actions.entries.associate {
+        when (it.value!!.type) {
+            InputType.ANALOG ->    (it.key to Event<ActionDataAnalog>())
+            InputType.DIGITAL ->   (it.key to Event<ActionDataDigital>())
+        }
+    }
+
+    var getEvent = { action: T -> events[action]}
 
     /**
      * The player's configuration.
