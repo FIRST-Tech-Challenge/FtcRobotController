@@ -120,32 +120,29 @@ public class Robot {
     }
 
     public void setServoPosBlocking(Servo servo, double targetServoPos) {
-        telemetry.addData("servo pos" + servo.getDeviceName(), servo.getPosition());
+        telemetry.addData("not started, servo pos" + servo.getDeviceName(), servo.getPosition());
         telemetry.update();
         servo.setPosition(targetServoPos);
-       /* while (Math.abs(servo.getPosition() - targetServoPos) > 0.1) {
-            sleep(10);
-        }*/
-        telemetry.addData("servo pos" + servo.getDeviceName(), servo.getPosition());
+        sleep(500);
+        telemetry.addData("done, servo pos" + servo.getDeviceName(), servo.getPosition());
         telemetry.update();
     }
     public void autoOuttake() {
         double armPos = 0.594; //down position
-        double holderClampPos = 0.5;
+        setServoPosBlocking(arm, armPos);
+        double holderClampClosed = 0.5; //closed
+        setServoPosBlocking(holderClamp, holderClampClosed);
 
-
-        //moveLinearSlideByTicks(-2400);
+        moveLinearSlideByTicks(-2400);
 
         armPos = 0.845; //up (outtake) position
-        arm.setPosition(armPos);
-        //setServoPosBlocking(arm, armPos);
-
-        holderClampPos = 0.3;
-        setServoPosBlocking(holderClamp, holderClampPos);
+        setServoPosBlocking(arm, armPos);
+        double holderClampOpen = 0.3;
+        setServoPosBlocking(holderClamp, holderClampOpen);
 
         armPos = 0.594; //down (intake) position
-        //setServoPosBlocking(arm, armPos);
-        //moveLinearSlideByTicks(0);
+        setServoPosBlocking(arm, armPos);
+        moveLinearSlideByTicks(0);
     }
 
     public void setMarkerPos (MarkerDetector.MARKER_POSITION position) {
