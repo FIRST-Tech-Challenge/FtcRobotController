@@ -128,8 +128,8 @@ public class AutoCenterStage_Linear extends LinearOpMode {
 
     // These constants define the desired driving/control characteristics
     // They can/should be tweaked to suit the specific robot drive train.
-    static final double     DRIVE_SPEED             = 0.4;     // Max driving speed for better distance accuracy.
-    static final double     TURN_SPEED              = 0.2;     // Max Turn speed to limit turn rate
+    static final double     DRIVE_SPEED             = 0.2;     // Max driving speed for better distance accuracy.
+    static final double     TURN_SPEED              = 0.1;     // Max Turn speed to limit turn rate
     static final double     HEADING_THRESHOLD       = 1.0 ;    // How close must the heading get to the target before moving to next step.
                                                                // Requiring more accuracy (a smaller number) will often make the turn take longer to get into the final position.
     // Define the Proportional control coefficient (or GAIN) for "heading control".
@@ -164,8 +164,10 @@ public class AutoCenterStage_Linear extends LinearOpMode {
         // when you first test your robot, push the left joystick forward and observe the direction the wheels turn.
         // Reverse the direction (flip FORWARD <-> REVERSE ) of any wheel that runs backward
         // Keep testing until ALL the wheels move the robot forward when you push the left joystick forward.
-        leftFrontDrive.setDirection(DcMotor.Direction.REVERSE);
-        rightFrontDrive.setDirection(DcMotor.Direction.FORWARD);
+        leftFrontDrive.setDirection(DcMotor.Direction.FORWARD);
+        leftBackDrive.setDirection(DcMotor.Direction.FORWARD);
+        rightFrontDrive.setDirection(DcMotor.Direction.REVERSE);
+        rightBackDrive.setDirection(DcMotor.Direction.REVERSE);
 
         arm.init();
         claw.init();
@@ -187,7 +189,11 @@ public class AutoCenterStage_Linear extends LinearOpMode {
 
         // Ensure the robot is stationary.  Reset the encoders and set the motors to BRAKE mode
         leftFrontDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        leftBackDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
         rightFrontDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        rightBackDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
         leftFrontDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         rightFrontDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         leftBackDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
@@ -202,6 +208,10 @@ public class AutoCenterStage_Linear extends LinearOpMode {
         // Set the encoders for closed loop speed control, and reset the heading.
         leftFrontDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         rightFrontDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+        leftBackDrive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        rightBackDrive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+
         imu.resetYaw();
 
         // Step through each leg of the path,
@@ -238,6 +248,22 @@ public class AutoCenterStage_Linear extends LinearOpMode {
     // **********  HIGH Level driving functions.  ********************
 
     /**
+     * Drive in a straight line, on a fixed compass heading (angle), based on encoder counts.
+     * Move will stop if either of these conditions occur:
+     * 1) Move gets to the desired position
+     * 2) Driver stops the OpMode running.
+     *
+     * @param maxDriveSpeed MAX Speed for forward/rev motion (range 0 to +1.0) .
+     * @param distance      Distance (in inches) to move from current position.  Negative distance means move backward.
+     * @param heading       Absolute Heading Angle (in Degrees) relative to last gyro reset.
+     *                      0 = fwd. +ve is CCW from fwd. -ve is CW from forward.
+     *                      If a relative angle is required, add/subtract from the current robotHeading.
+     */
+    public void driveStraight(double maxDriveSpeed, double distance, double heading ) {
+        driveStraight(maxDriveSpeed, distance, heading, true);
+    }
+
+    /**
     *  Drive in a straight line, on a fixed compass heading (angle), based on encoder counts.
     *  Move will stop if either of these conditions occur:
     *  1) Move gets to the desired position
@@ -249,9 +275,7 @@ public class AutoCenterStage_Linear extends LinearOpMode {
     *                   0 = fwd. +ve is CCW from fwd. -ve is CW from forward.
     *                   If a relative angle is required, add/subtract from the current robotHeading.
     */
-    public void driveStraight(double maxDriveSpeed,
-                              double distance,
-                              double heading) {
+    public void driveStraight(double maxDriveSpeed, double distance, double heading, boolean applyCorrection) {
 
         // Ensure that the OpMode is still active
         if (opModeIsActive()) {
@@ -262,6 +286,7 @@ public class AutoCenterStage_Linear extends LinearOpMode {
             rightTarget = rightFrontDrive.getCurrentPosition() + moveCounts;
 
             // Set Target FIRST, then turn on RUN_TO_POSITION
+
             leftFrontDrive.setTargetPosition(leftTarget);
             rightFrontDrive.setTargetPosition(rightTarget);
 
@@ -277,15 +302,17 @@ public class AutoCenterStage_Linear extends LinearOpMode {
             while (opModeIsActive() &&
                    (leftFrontDrive.isBusy() && rightFrontDrive.isBusy())) {
 
-                // Determine required steering to keep on heading
-                turnSpeed = getSteeringCorrection(heading, P_DRIVE_GAIN);
+                if (applyCorrection) {
+                    // Determine required steering to keep on heading
+                    turnSpeed = getSteeringCorrection(heading, P_DRIVE_GAIN);
 
-                // if driving in reverse, the motor correction also needs to be reversed
-                if (distance < 0)
-                    turnSpeed *= -1.0;
+                    // if driving in reverse, the motor correction also needs to be reversed
+                    if (distance < 0)
+                        turnSpeed *= -1.0;
 
-                // Apply the turning correction to the current driving speed.
-                moveRobot(driveSpeed, turnSpeed);
+                    // Apply the turning correction to the current driving speed.
+                    moveRobot(driveSpeed, turnSpeed);
+                }
 
                 // Display drive status for the driver.
                 sendTelemetry(true);
@@ -295,6 +322,8 @@ public class AutoCenterStage_Linear extends LinearOpMode {
             moveRobot(0, 0);
             leftFrontDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
             rightFrontDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            leftBackDrive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+            rightBackDrive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         }
     }
 
@@ -419,7 +448,9 @@ public class AutoCenterStage_Linear extends LinearOpMode {
         }
 
         leftFrontDrive.setPower(leftSpeed);
+        leftBackDrive.setPower(0);
         rightFrontDrive.setPower(rightSpeed);
+        rightBackDrive.setPower(0);
     }
 
     /**
