@@ -54,37 +54,34 @@ public class TestTeleOp extends LinearOpMode {
         while (opModeIsActive()) {
 
 
-            //GAMEPAD 2 CONTROLS
+            //GAME PAD 2 CONTROLS NOT DRIVER
 
             double remainingDistanceHigh = 300 - lsFront.getCurrentPosition();
             double remainingDistanceMid = 200 - lsFront.getCurrentPosition();
             double remainingDistanceLow = 100 - lsFront.getCurrentPosition();
             double remainingDistanceZero = -lsFront.getCurrentPosition();
 
-            /*if (gamepad1.dpad_up && remainingDistanceHigh > 10) {
+            if (gamepad1.dpad_up && remainingDistanceHigh > 10) {
 
-                robot.lsFront.setPower(remainingDistanceHigh*0.002);
-                robot.lsBack.setPower(remainingDistanceHigh*0.002);
+                lsFront.setPower(remainingDistanceHigh*0.002);
+                lsBack.setPower(remainingDistanceHigh*0.002);
 
             } else if (gamepad1.dpad_right && remainingDistanceMid > 10) {
 
-                robot.lsFront.setPower(remainingDistanceMid*0.002);
-                robot.lsBack.setPower(remainingDistanceMid*0.002);
+                lsFront.setPower(remainingDistanceMid*0.002);
+                lsBack.setPower(remainingDistanceMid*0.002);
 
             } else if (gamepad1.dpad_left && remainingDistanceLow > 10) {
 
-                robot.lsFront.setPower(remainingDistanceLow*0.002);
-                robot.lsBack.setPower(remainingDistanceLow*0.002);
+                lsFront.setPower(remainingDistanceLow*0.002);
+                lsBack.setPower(remainingDistanceLow*0.002);
 
             } else if (gamepad1.dpad_down && remainingDistanceZero > 10) {
 
-                robot.lsFront.setPower(remainingDistanceZero*0.002);
-                robot.lsBack.setPower(remainingDistanceZero*0.002);
+                lsFront.setPower(remainingDistanceZero*0.002);
+                lsBack.setPower(remainingDistanceZero*0.002);
 
-            }*/
-
-
-
+            }
 
             telemetry.addData("linear locker Servo pos", linearLocker.getPosition());
 
@@ -184,7 +181,7 @@ public class TestTeleOp extends LinearOpMode {
             holderClamp.setPosition(holderClampPos);
             arm.setPosition(armPos);
 
-            //GAMEPAD 1 CONTROLS
+            //GAMEPAD 1 CONTROLS DRIVER
 
             telemetry.addData("plane launcher Servo pos", planeLauncher.getPosition());
             if (gamepad1.right_bumper) {
