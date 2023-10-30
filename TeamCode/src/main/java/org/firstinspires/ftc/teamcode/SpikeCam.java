@@ -23,8 +23,14 @@ public class SpikeCam {
     private LinearOpMode myOpMode;
 
     public void initialize(LinearOpMode currentOp) {
+
+
         myOpMode = currentOp;
         HardwareMap hardwareMap = myOpMode.hardwareMap;
+
+        myOpMode.telemetry.addLine("Made it to SpikeCam Initialize");
+        myOpMode.telemetry.update();
+
 
         WebcamName webcamName = hardwareMap.get(WebcamName.class, "Webcam 1");
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
@@ -94,7 +100,7 @@ public class SpikeCam {
             else if (midval > leftval && midval > rightval) spikeLocation = 2;
             else if (rightval > leftval && rightval > midval) spikeLocation = 3;
             else spikeLocation = 0;
-
+            myOpMode.telemetry.addData("Spike Location", spikeLocation);
             /*
             boolean posleft  = leftval > percent_color_threshold;
             boolean posmid  = midval > percent_color_threshold;

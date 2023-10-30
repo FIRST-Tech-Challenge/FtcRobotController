@@ -14,6 +14,8 @@ public class CyDogsChassis {
     private DcMotor BackRightWheel;
 
     private LinearOpMode myOpMode;
+    public enum Direction {LEFT, CENTER, RIGHT}
+
 
     public CyDogsChassis(LinearOpMode currentOp){
         // INITIALIZATION BLOCKS:
@@ -90,6 +92,31 @@ public class CyDogsChassis {
         FrontRightWheel.setTargetPosition((int) (FrontRightWheel.getCurrentPosition() + TicksToTarget));
         BackLeftWheel.setTargetPosition((int) (BackLeftWheel.getCurrentPosition() + TicksToTarget));
         BackRightWheel.setTargetPosition((int) (BackRightWheel.getCurrentPosition() + TicksToTarget));
+        ((DcMotorEx) FrontLeftWheel).setVelocity(TicksPerSecond);
+        ((DcMotorEx) FrontRightWheel).setVelocity(TicksPerSecond);
+        ((DcMotorEx) BackLeftWheel).setVelocity(TicksPerSecond);
+        ((DcMotorEx) BackRightWheel).setVelocity(TicksPerSecond);
+        while (myOpMode.opModeIsActive() && FrontLeftWheel.isBusy() && FrontRightWheel.isBusy() && BackLeftWheel.isBusy() && BackRightWheel.isBusy()) {
+            // Do nothing until at least 1 wheel reaches TargetPosition
+        }
+        myOpMode.sleep(WaitTime);
+    }
+
+    /**
+     * Rotate right(+) or left(-) until reaching Position
+     */
+    public void Rotate(int degree, double VelocityPercentage, int WaitTime) {
+        int mmToTarget;
+        double TicksToTarget;
+        double TicksPerSecond;
+
+        mmToTarget = degree * (560 / 90);
+        TicksToTarget = (mmToTarget / (96 * Math.PI)) * 537.7;
+        TicksPerSecond = ((VelocityPercentage * 312) / 60) * 537.7;
+        FrontLeftWheel.setTargetPosition((int) (FrontLeftWheel.getCurrentPosition() + TicksToTarget));
+        FrontRightWheel.setTargetPosition((int) (FrontRightWheel.getCurrentPosition() - TicksToTarget));
+        BackLeftWheel.setTargetPosition((int) (BackLeftWheel.getCurrentPosition() + TicksToTarget));
+        BackRightWheel.setTargetPosition((int) (BackRightWheel.getCurrentPosition() - TicksToTarget));
         ((DcMotorEx) FrontLeftWheel).setVelocity(TicksPerSecond);
         ((DcMotorEx) FrontRightWheel).setVelocity(TicksPerSecond);
         ((DcMotorEx) BackLeftWheel).setVelocity(TicksPerSecond);

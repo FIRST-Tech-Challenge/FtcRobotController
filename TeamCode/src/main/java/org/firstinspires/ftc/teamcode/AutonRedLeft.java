@@ -3,14 +3,11 @@ package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-import java.util.concurrent.TimeUnit;
-
 @Autonomous
-public class JoesAuto extends LinearOpMode {
-
+public class AutonRedLeft extends LinearOpMode {
+// This is a LONG side Auton
     @Override
     public void runOpMode() {
 
@@ -23,8 +20,8 @@ public class JoesAuto extends LinearOpMode {
         mySparky.initializeDevices();
         mySparky.initializePositions();
 
-     //   parkingSpot = mySparky.askParkingSpot();
-     //   drivePath = mySparky.askDrivePath();
+        parkingSpot = mySparky.askParkingSpot();
+        drivePath = mySparky.askDrivePath();
 
         telemetry.addData("SpikeValue", mySparky.spikeCam.spikeLocation);
         telemetry.addData("ParkingSpot", parkingSpot.toString());
@@ -33,17 +30,19 @@ public class JoesAuto extends LinearOpMode {
 
         // Wait for the start button to be pressed on the driver station
         waitForStart();
-        //mySparky.Strafe( 200, 0.5, 500);
-        //mySparky.MoveStraight(100,.5,500);
+
 
         if(opModeIsActive()){
-        //    mySparky.MoveStraight(-635,.5,500);
-        //    mySparky.Rotate(-90,.5,500);
-        //    mySparky.dropPurplePixel();
-        //    mySparky.returnLiftForDriving();
-        //    mySparky.MoveStraight(200,.5,500);
+            mySparky.MoveStraight(-745,.5,500);
+            mySparky.Rotate(-90,.5,500);
+            mySparky.dropPurplePixel();
+            mySparky.returnLiftForDriving();
+            mySparky.Strafe(-690,.5,500);
+            mySparky.MoveStraight(1940,.5,500);
+            mySparky.Strafe(525,.5,500);
+            mySparky.MoveStraight(260,.5,500);
             mySparky.scoreFromDrivingPositionAndReturn(CyDogsSparky.ArmLow);
-
+            mySparky.Strafe(-565,.5,500);
         }
         sleep(5000);
     }
