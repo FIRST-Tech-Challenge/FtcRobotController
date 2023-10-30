@@ -35,6 +35,7 @@ public class AT_TopRight extends LinearOpMode {
 
         // initialize all the hardware, using the hardware class. See how clean and simple this is?
         robot.init();
+        robot.reverseMotors();
 
         // Send telemetry message to signify robot waiting;
         // Wait for the game to start (driver presses PLAY)
@@ -44,19 +45,19 @@ public class AT_TopRight extends LinearOpMode {
             while (opModeIsActive() && !isStopRequested()) {
 
                 robot.driveRobot(FORWARD_SPEED, 0);
-
-                // Pace this loop so hands move at a reasonable speed.
-                sleep(50);
+                sleep(11 * 1000);
 
                 robot.driveRobot(0, -TURNSPEED);
-                // Pace this loop so hands move at a reasonable speed.
-                sleep(50);
+                sleep(4500);
 
-                robot.driveRobot(FORWARD_SPEED*4, 0);
+                robot.driveRobot(FORWARD_SPEED, 0);
+                sleep(20 * 1000);
+
+                robot.driveRobot(0, -TURNSPEED);
+                sleep(4500);
+
+                break;
             }
         }
-
-
     }
-
 }
