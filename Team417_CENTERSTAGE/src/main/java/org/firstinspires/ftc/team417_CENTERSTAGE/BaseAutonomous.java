@@ -1,5 +1,8 @@
 package org.firstinspires.ftc.team417_CENTERSTAGE;
 
+import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.util.ElapsedTime;
+
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.opencv.core.Core;
 import org.opencv.core.Mat;
@@ -19,40 +22,22 @@ import java.util.ArrayList;
 import java.util.List;
 
 abstract public class BaseAutonomous extends BaseOpMode {
-    OpenCvCamera camera; // calls camera
 
-    static final double FEET_PER_METER = 3.28084;
-    static final int CAMERA_WIDTH_PIXELS = 800;
-    static final int CAMERA_HEIGHT_PIXELS = 448;
+    private ElapsedTime runtime = new ElapsedTime();
 
-    // Lens intrinsics
-    // UNITS ARE PIXELS
-    // NOTE: this calibration is for the C920 webcam at 800x448.
-    // You will need to do your own calibration for other configurations!
-    double fx = 578.272;
-    double fy = 578.272;
-    double cx = 402.145;
-    double cy = 221.506;
+    int lastEncoderFL = 0;
+    int lastEncoderFR = 0;
+    int lastEncoderBL = 0;
+    int lastEncoderBR = 0;
 
-    // UNITS ARE METERS
-    double tagSize = 0.166;
-
-    // Tag ID 1, 2, 3 from the 36h11 family
-    int LEFT = 1;
-    int MIDDLE = 2;
-    int RIGHT = 3;
-    AprilTagDetection tagOfInterest = null;
-
-    static final double HOLD_ARM_AT_MID_OR_LOW_POS_POWER = 0.005;
-    static final double HOLD_ARM_AT_GROUND_POS_POWER = 0.01;
-    static final double ARM_RAISE_POWER = 1.0 / 800.0;
-
-    public void initializeAuto() {
+    public void initAuto() {
+        telemetry.addData("Init State", "Init Started");
+        telemetry.update();
         initializeHardware();
 
-        int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
-        camera = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "Webcam 1"), cameraMonitorViewId);
+        telemetry.addData("Init State", "Init Finished");
 
+<<<<<<< HEAD
         camera.setPipeline(new PropDetectionPipeline());
 
         camera.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
@@ -60,14 +45,20 @@ abstract public class BaseAutonomous extends BaseOpMode {
             public void onOpened() {
                 camera.startStreaming(CAMERA_WIDTH_PIXELS, CAMERA_HEIGHT_PIXELS, OpenCvCameraRotation.UPRIGHT);
             }
+=======
+        // Set last know encoder values
+        lastEncoderFR = FR.getCurrentPosition();
+        lastEncoderFL = FL.getCurrentPosition();
+        lastEncoderBL = BL.getCurrentPosition();
+        lastEncoderBR = BR.getCurrentPosition();
+>>>>>>> 290e2436fadb1fed07ecb06b6913c22a513bed5d
 
-            @Override
-            public void onError(int errorCode) { }
-        });
-
-        telemetry.setMsTransmissionInterval(50);
+        telemetry.clear();
+        telemetry.addLine("Initialized. Ready to start!");
+        telemetry.update();
     }
 
+<<<<<<< HEAD
     public static final Scalar LOWER_BLUE_OR_RED = new Scalar(100, 50, 50);
     public static final Scalar UPPER_BLUE_OR_RED = new Scalar(130, 255, 255);
 
@@ -174,6 +165,66 @@ abstract public class BaseAutonomous extends BaseOpMode {
         } else {
             telemetry.addLine("No tag snapshot available, it was never sighted during the init loop :(");
             telemetry.update();
+=======
+    public void driveInches(double x, double y) {
+        double xTicks = x * TICKS_PER_INCH;
+        double yTicks = y * TICKS_PER_INCH;
+
+        double targetFL = xTicks + yTicks;
+        double targetFR = yTicks - xTicks;
+        double targetBL = yTicks - xTicks;
+        double targetBR = yTicks + xTicks;
+
+        //Determine new target position, and pass to motor controller
+        targetFL += FL.getCurrentPosition();
+        targetFR += FR.getCurrentPosition();
+        targetBL += BL.getCurrentPosition();
+        targetBR += BR.getCurrentPosition();
+
+        FL.setTargetPosition((int) targetFL);
+        FR.setTargetPosition((int) targetFR);
+        BL.setTargetPosition((int) targetBL);
+        BR.setTargetPosition((int) targetBR);
+
+        // Turn On RUN_TO_POSITION
+        FL.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        FR.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        BL.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        BR.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+        // reset the timeout time and start motion.
+        runtime.reset();
+        FL.setPower(0.5);
+        FR.setPower(0.5);
+        BL.setPower(0.5);
+        BR.setPower(0.5);
+
+        // keep looping while we are still active, and there is time left, and both motors are running.
+        // Note: We use (isBusy() && isBusy()) in the loop test, which means that when EITHER motor hits
+        // its target position, the motion will stop.  This is "safer" in the event that the robot will
+        // always end the motion as soon as possible.
+        // However, if you require that BOTH motors have finished their moves before the robot continues
+        // onto the next step, use (isBusy() || isBusy()) in the loop test.
+        while (opModeIsActive() &&
+                (runtime.seconds() < 30) &&
+                (FL.isBusy() && FR.isBusy() && BL.isBusy() && BR.isBusy())) {
+>>>>>>> 290e2436fadb1fed07ecb06b6913c22a513bed5d
         }
+
+        // Stop all motion;
+        stopDriving();
+
+        // Turn off RUN_TO_POSITION
+        FL.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        FR.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        BL.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        BR.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+    }
+
+    private void stopDriving() {
+        FL.setPower(0.0);
+        FR.setPower(0.0);
+        BL.setPower(0.0);
+        BR.setPower(0.0);
     }
 }
