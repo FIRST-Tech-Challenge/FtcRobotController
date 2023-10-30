@@ -96,25 +96,25 @@ public class Manual  extends LinearOpMode{
     }
     private void manageArm(){
         double armDrive = gamepad1.right_stick_y;
-        double elbowDrive = gamepad1.left_stick_y;
+        //double elbowDrive = gamepad1.left_stick_y;
         double grabberDrive =  gamepad1.left_stick_x;
 
         robot.moveArm(armDrive);
-
+        /*
         if (elbowDrive < 0){
             robot.moveElbow(true);
         }
         else if (elbowDrive > 0) {
             robot.moveElbow(false);
         }
-
+        */
         if (grabberDrive < 0) {
             robot.moveGrabber(true);
         }
         else if (grabberDrive > 0) {
             robot.moveGrabber(false);
         }
-        /*
+
         if (gamepad1.dpad_up) {
             robot.moveElbow(true);
         }
@@ -124,7 +124,7 @@ public class Manual  extends LinearOpMode{
         else{
             //robot.stopElbow();
         }
-        */
+
 
         /*
         if (gamepad1.dpad_up) {
