@@ -19,8 +19,24 @@ public class RedFarAuto extends BaseAutonomous {
 
         waitForStart();
 
+        detectingBlue = false;
+
+        switch (detectTeamProp()) {
+            case LEFT:
+                telemetry.addData("Side", "Left");
+                break;
+            case CENTER:
+                telemetry.addData("Side", "Center");
+                break;
+            case RIGHT:
+                telemetry.addData("Side", "Right");
+                break;
+            default:
+                telemetry.addData("Side", "Unsure");
+        }
+
         Pose2d startPose = new Pose2d(-36.00, -60.00, Math.toRadians(90.00));
-        TrajectorySequence goToParking = drive.trajectorySequenceBuilder(startPose)
+        TrajectorySequence goToParkingRedFar = drive.trajectorySequenceBuilder(startPose)
                 .splineTo(new Vector2d(-36.00, -37.00), Math.toRadians(90.00))
                 .splineTo(new Vector2d(-36.00, -60.00), Math.toRadians(105.00))
                 .splineTo(new Vector2d(-58.56, -35.09), Math.toRadians(90.00))
@@ -28,6 +44,6 @@ public class RedFarAuto extends BaseAutonomous {
                 .splineTo(new Vector2d(60.00, -12.00), Math.toRadians(360.00))
                 .build();
 
-        drive.followTrajectorySequence(goToParking);
+        drive.followTrajectorySequence(goToParkingRedFar);
     }
 }

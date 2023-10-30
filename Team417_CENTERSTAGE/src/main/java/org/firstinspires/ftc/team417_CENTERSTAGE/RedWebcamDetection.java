@@ -46,35 +46,13 @@ import org.openftc.easyopencv.OpenCvPipeline;
 @TeleOp(name = "Concept: OpenCV Red Detection", group = "Concept")
 // @Disabled
 public class RedWebcamDetection extends LinearOpMode {
+
     OpenCvCamera robotCamera;
 
     @Override
     public void runOpMode()
     {
-        //int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
-        robotCamera = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "webcam"));
-
-        // OR...  Do Not Activate the Camera Monitor View
-        //phoneCam = OpenCvCameraFactory.getInstance().createInternalCamera(OpenCvInternalCamera.CameraDirection.BACK);
-
-        robotCamera.setPipeline(new SamplePipeline());
-
-        robotCamera.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener()
-        {
-            @Override
-            public void onOpened()
-            {
-                robotCamera.startStreaming(640, 480, OpenCvCameraRotation.UPRIGHT);
-            }
-
-            @Override
-            public void onError(int errorCode)
-            {
-            }
-        });
-
-        telemetry.addLine("Waiting for start");
-        telemetry.update();
+        robotCamera = initializeCamera();
 
         waitForStart();
 
@@ -91,14 +69,42 @@ public class RedWebcamDetection extends LinearOpMode {
             {
 
                 robotCamera.stopStreaming();
-                //robotCamera.closeCameraDevice();+
+                //robotCamera.closeCameraDevice();
             }
             sleep(100);
         }
     }
 
-    public static final Scalar LOWER_RED = new Scalar(100, 100, 50);
-    public static final Scalar UPPER_RED = new Scalar(130, 255, 255);
+    public OpenCvCamera initializeCamera() {
+        OpenCvCamera camera;
+
+        //int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
+        camera = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "webcam"));
+
+        // OR...  Do Not Activate the Camera Monitor View
+        //phoneCam = OpenCvCameraFactory.getInstance().createInternalCamera(OpenCvInternalCamera.CameraDirection.BACK);
+
+        camera.setPipeline(new SamplePipeline());
+
+        camera.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener()
+        {
+            @Override
+            public void onOpened()
+            {
+                camera.startStreaming(640, 480, OpenCvCameraRotation.UPRIGHT);
+            }
+
+            @Override
+            public void onError(int errorCode)
+            {
+            }
+        });
+
+        return camera;
+    }
+
+    public static final Scalar LOWER_BLUE = new Scalar(100, 50, 50);
+    public static final Scalar UPPER_BLUE = new Scalar(130, 255, 255);
 
     class SamplePipeline extends OpenCvPipeline
     {
@@ -113,11 +119,10 @@ public class RedWebcamDetection extends LinearOpMode {
             Imgproc.cvtColor(input, hsv, Imgproc.COLOR_BGR2HSV);
             // blur the image to reduce the impact of noisy pixels
             Imgproc.GaussianBlur(hsv, hsv, new Size(7,7),0);
-            Core.inRange(hsv, LOWER_RED, UPPER_RED, hsv);
+            Core.inRange(hsv, LOWER_BLUE, UPPER_BLUE, hsv);
             Imgproc.threshold(hsv,output, 1, 255,Imgproc.THRESH_BINARY);
             return output;
         }
-
 
         @Override
         public void onViewportTapped()
