@@ -14,7 +14,8 @@ public class Teleop extends LinearOpMode {
     private DcMotor driveFL, driveFR, driveBL, driveBR, takingInRingsMotor, ringShooterMotor1, ringShooterMotor2;
     Servo wobbleGoalServo, ringFeederServo, wobbleGoalReleaseServo;
     Orientation angles;
-    double towerGoalRingMotorSpeed = -0.85, powerShotRingMotorSpeed = -0.7;
+   // double towerGoalRingMotorSpeed = -0.85, powerShotRingMotorSpeed = -0.7;
+    double towerGoalRingMotorSpeed = -0.40, powerShotRingMotorSpeed = -0.30;
     double wobbleGoalVerticalPosition = 0.22, wobbleGoalReleasePosition = 0.5;
 
     // creates variables for drive inputs from controllers
