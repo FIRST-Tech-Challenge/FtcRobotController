@@ -1,9 +1,7 @@
 package org.firstinspires.ftc.team417_CENTERSTAGE;
 
-import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.opencv.core.Core;
 import org.opencv.core.Mat;
 import org.opencv.core.MatOfPoint;
@@ -12,9 +10,7 @@ import org.opencv.core.Rect;
 import org.opencv.core.Scalar;
 import org.opencv.core.Size;
 import org.opencv.imgproc.Imgproc;
-import org.openftc.apriltag.AprilTagDetection;
 import org.openftc.easyopencv.OpenCvCamera;
-import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
 import org.openftc.easyopencv.OpenCvPipeline;
 
@@ -22,7 +18,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 abstract public class BaseAutonomous extends BaseOpMode {
-
     private ElapsedTime runtime = new ElapsedTime();
 
     int lastEncoderFL = 0;
@@ -30,14 +25,16 @@ abstract public class BaseAutonomous extends BaseOpMode {
     int lastEncoderBL = 0;
     int lastEncoderBR = 0;
 
-    public void initAuto() {
+    private int CAMERA_WIDTH_PIXELS = 640;
+    private int CAMERA_HEIGHT_PIXELS = 480;
+
+    public void initializeAuto() {
         telemetry.addData("Init State", "Init Started");
         telemetry.update();
         initializeHardware();
 
         telemetry.addData("Init State", "Init Finished");
 
-<<<<<<< HEAD
         camera.setPipeline(new PropDetectionPipeline());
 
         camera.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
@@ -45,20 +42,23 @@ abstract public class BaseAutonomous extends BaseOpMode {
             public void onOpened() {
                 camera.startStreaming(CAMERA_WIDTH_PIXELS, CAMERA_HEIGHT_PIXELS, OpenCvCameraRotation.UPRIGHT);
             }
-=======
+
+            @Override
+            public void onError(int errorCode) {
+            }
+        });
+
         // Set last know encoder values
         lastEncoderFR = FR.getCurrentPosition();
         lastEncoderFL = FL.getCurrentPosition();
         lastEncoderBL = BL.getCurrentPosition();
         lastEncoderBR = BR.getCurrentPosition();
->>>>>>> 290e2436fadb1fed07ecb06b6913c22a513bed5d
 
         telemetry.clear();
         telemetry.addLine("Initialized. Ready to start!");
         telemetry.update();
     }
 
-<<<<<<< HEAD
     public static final Scalar LOWER_BLUE_OR_RED = new Scalar(100, 50, 50);
     public static final Scalar UPPER_BLUE_OR_RED = new Scalar(130, 255, 255);
 
@@ -153,72 +153,6 @@ abstract public class BaseAutonomous extends BaseOpMode {
 
     public SideDetected detectTeamProp() {
         return sideDetected;
-    }
-
-    /**
-     * Updates telemetry: updates the id if no april tag is sighted
-     */
-    public void updateTelemetryAfterStart() {
-        if (tagOfInterest != null) {
-            telemetry.addLine("Tag snapshot:\n");
-            telemetry.update();
-        } else {
-            telemetry.addLine("No tag snapshot available, it was never sighted during the init loop :(");
-            telemetry.update();
-=======
-    public void driveInches(double x, double y) {
-        double xTicks = x * TICKS_PER_INCH;
-        double yTicks = y * TICKS_PER_INCH;
-
-        double targetFL = xTicks + yTicks;
-        double targetFR = yTicks - xTicks;
-        double targetBL = yTicks - xTicks;
-        double targetBR = yTicks + xTicks;
-
-        //Determine new target position, and pass to motor controller
-        targetFL += FL.getCurrentPosition();
-        targetFR += FR.getCurrentPosition();
-        targetBL += BL.getCurrentPosition();
-        targetBR += BR.getCurrentPosition();
-
-        FL.setTargetPosition((int) targetFL);
-        FR.setTargetPosition((int) targetFR);
-        BL.setTargetPosition((int) targetBL);
-        BR.setTargetPosition((int) targetBR);
-
-        // Turn On RUN_TO_POSITION
-        FL.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        FR.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        BL.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        BR.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-
-        // reset the timeout time and start motion.
-        runtime.reset();
-        FL.setPower(0.5);
-        FR.setPower(0.5);
-        BL.setPower(0.5);
-        BR.setPower(0.5);
-
-        // keep looping while we are still active, and there is time left, and both motors are running.
-        // Note: We use (isBusy() && isBusy()) in the loop test, which means that when EITHER motor hits
-        // its target position, the motion will stop.  This is "safer" in the event that the robot will
-        // always end the motion as soon as possible.
-        // However, if you require that BOTH motors have finished their moves before the robot continues
-        // onto the next step, use (isBusy() || isBusy()) in the loop test.
-        while (opModeIsActive() &&
-                (runtime.seconds() < 30) &&
-                (FL.isBusy() && FR.isBusy() && BL.isBusy() && BR.isBusy())) {
->>>>>>> 290e2436fadb1fed07ecb06b6913c22a513bed5d
-        }
-
-        // Stop all motion;
-        stopDriving();
-
-        // Turn off RUN_TO_POSITION
-        FL.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        FR.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        BL.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        BR.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
     }
 
     private void stopDriving() {

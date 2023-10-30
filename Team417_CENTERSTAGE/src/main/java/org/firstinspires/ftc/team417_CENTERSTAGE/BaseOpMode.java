@@ -4,9 +4,13 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
 
+import org.openftc.easyopencv.OpenCvCamera;
+
 import drive.SampleMecanumDrive;
 
 abstract class BaseOpMode extends LinearOpMode {
+    OpenCvCamera camera;
+
     SampleMecanumDrive drive;
 
     //Declares drive-motors
