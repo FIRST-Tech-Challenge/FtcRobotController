@@ -48,7 +48,7 @@ public class TestTeleOp extends LinearOpMode {
 
         boolean hangingMode = false;
 
-        planeLauncher.setPosition(0.5);
+        planeLauncher.setPosition(0.25);
         linearLocker.setPosition(0.5);
 
         while (opModeIsActive()) {
@@ -189,7 +189,7 @@ public class TestTeleOp extends LinearOpMode {
 
             telemetry.addData("plane launcher Servo pos", planeLauncher.getPosition());
             if (gamepad1.right_bumper) {
-                planeLauncher.setPosition(0.1);
+                planeLauncher.setPosition(0.7);
             }
 
             double forwardBackward = gamepad1.left_stick_y * -0.5;
