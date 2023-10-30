@@ -19,18 +19,18 @@ import org.openftc.easyopencv.OpenCvCameraRotation;
 import org.openftc.easyopencv.OpenCvPipeline;
 public class SpikeCam {
     OpenCvCamera webcam1 = null;
-    public int spikeLocation = 0;
+    public enum location{
+        LEFT,
+        MIDDLE,
+        RIGHT,
+        NOT_FOUND
+    }
+    location spikeLocation = location.NOT_FOUND;
     private LinearOpMode myOpMode;
 
     public void initialize(LinearOpMode currentOp) {
-
-
         myOpMode = currentOp;
         HardwareMap hardwareMap = myOpMode.hardwareMap;
-
-        myOpMode.telemetry.addLine("Made it to SpikeCam Initialize");
-        myOpMode.telemetry.update();
-
 
         WebcamName webcamName = hardwareMap.get(WebcamName.class, "Webcam 1");
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
@@ -56,14 +56,20 @@ public class SpikeCam {
     class spikePipeline extends OpenCvPipeline {
 
         Mat mat = new Mat();
-        double percent_color_threshold = 0.04;
         Scalar rectColor1 = new Scalar(255.0, 0.0, 0.0);
         Rect cropped = new Rect(1, 260, 639, 479);
 
         public Mat processFrame(Mat input){
             Imgproc.cvtColor(input, mat, Imgproc.COLOR_RGB2HSV);
+
+            //Red
             Scalar lowHSV = new Scalar(150, 50, 70);
             Scalar highHSV = new Scalar(179, 255, 255);
+
+            /*Blue
+            Scalar lowHSV = new Scalar(105, 50, 70);
+            Scalar highHSV = new Scalar(135, 255, 255);
+             */
 
             Core.inRange(mat, lowHSV, highHSV, mat);
 
@@ -96,12 +102,19 @@ public class SpikeCam {
             myOpMode.telemetry.addData("mid %", Math.round(midval * 100));
             myOpMode.telemetry.addData("right %", Math.round(rightval * 100));
 
-            if (leftval > rightval && leftval > midval) spikeLocation = 1;
-            else if (midval > leftval && midval > rightval) spikeLocation = 2;
-            else if (rightval > leftval && rightval > midval) spikeLocation = 3;
-            else spikeLocation = 0;
-            myOpMode.telemetry.addData("Spike Location", spikeLocation);
-            /*
+            if (leftval > rightval && leftval > midval) spikeLocation = location.LEFT;
+            else if (midval > leftval && midval > rightval) spikeLocation = location.MIDDLE;
+            else if (rightval > leftval && rightval > midval) spikeLocation = location.RIGHT;
+            else spikeLocation = location.NOT_FOUND;
+
+
+            return(mat);
+        }
+    }
+
+}
+
+         /*
             boolean posleft  = leftval > percent_color_threshold;
             boolean posmid  = midval > percent_color_threshold;
             boolean posright  = rightval > percent_color_threshold;
@@ -111,8 +124,3 @@ public class SpikeCam {
             else if (posright) telemetry.addData("right position", "Yes");
             else telemetry.addData("not found", "bruh");
             */
-            return(mat);
-        }
-    }
-
-}
