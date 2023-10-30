@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.hardware.rev.Rev2mDistanceSensor;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.NormalizedColorSensor;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
@@ -59,10 +60,10 @@ public class RobotHardware {
 
     public static final double LAUNCHER_MIN     = 0.0;
     public static final double LAUNCHER_MAX     = 0.4;
-    public static final double ELBOW_MIN        = 0.0;
-    public static final double ELBOW_MAX        = 1.0;
-    public static final double GRABBER_MIN        = 0.0;
-    public static final double GRABBER_MAX        = 1.0;
+    public static final double ELBOW_MIN        = 0.05;
+    public static final double ELBOW_MAX        = 0.80;
+    public static final double GRABBER_MIN        = 0.25;
+    public static final double GRABBER_MAX        = 0.60;
 
     private static double elbowDrive           = 0.5;
     private static double grabberDrive         = 0.0;
@@ -198,6 +199,14 @@ public class RobotHardware {
     public AprilTagProcessor getAprilTag(){
         return aprilTag;
     }
+
+    public void reverseMotors(){
+        lfMotor.setDirection(DcMotor.Direction.FORWARD);
+        lbMotor.setDirection(DcMotor.Direction.FORWARD);
+        rfMotor.setDirection(DcMotor.Direction.REVERSE);
+        rbMotor.setDirection(DcMotor.Direction.REVERSE);
+    }
+
 
     /**
      * Calculates the left/right motor powers required to achieve the requested
