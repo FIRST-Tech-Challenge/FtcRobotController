@@ -75,6 +75,7 @@ public class BasicOpMode_Linear extends LinearOpMode {
     private DcMotor rightFrontDrive = null;
     private DcMotor rightBackDrive = null;
     private DcMotor armExtendMotor = null;
+    private DcMotor armRotator = null;
     private CRServo outputServoMotor = null;
 
     @Override
@@ -88,6 +89,7 @@ public class BasicOpMode_Linear extends LinearOpMode {
         rightFrontDrive = hardwareMap.get(DcMotor.class, "right_front_drive");
         rightBackDrive = hardwareMap.get(DcMotor.class, "right_back_drive");
         armExtendMotor = hardwareMap.get(DcMotor.class, "armExtendMotor");
+        armRotator = hardwareMap.get(DcMotor.class, "armRotator");
         outputServoMotor = hardwareMap.get(CRServo.class, "outputServo");
 
         // ########################################################################################
@@ -104,6 +106,8 @@ public class BasicOpMode_Linear extends LinearOpMode {
         leftBackDrive.setDirection(DcMotor.Direction.REVERSE);
         rightFrontDrive.setDirection(DcMotor.Direction.FORWARD);
         rightBackDrive.setDirection(DcMotor.Direction.FORWARD);
+
+        armRotator.setDirection(DcMotor.Direction.FORWARD);
 
         armExtendMotor.setDirection(DcMotor.Direction.REVERSE);
         outputServoMotor.setDirection(CRServo.Direction.REVERSE);
@@ -148,6 +152,10 @@ public class BasicOpMode_Linear extends LinearOpMode {
 
             if (location == -10) {
                 location = outputServo;
+            }
+
+            if (gamepad2.a) {
+
             }
 
             //if (hasReachedZero) {
