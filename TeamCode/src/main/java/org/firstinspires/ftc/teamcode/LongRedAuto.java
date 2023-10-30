@@ -50,6 +50,7 @@ public class LongRedAuto extends LinearOpMode {
 
         while (opModeIsActive()) {
             robot.autoOuttake();
+            Thread.sleep(10000);
             //detectmarkerposition() code commented below
             /*
             //detect marker position
