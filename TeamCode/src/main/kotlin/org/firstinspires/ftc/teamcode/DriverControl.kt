@@ -1,12 +1,21 @@
 package org.firstinspires.ftc.teamcode
 
 import com.acmerobotics.roadrunner.Pose2d
+import com.acmerobotics.roadrunner.PoseVelocity2d
 import com.acmerobotics.roadrunner.Vector2d
+import com.acmerobotics.roadrunner.clamp
+import com.acmerobotics.roadrunner.lerp
 import com.qualcomm.robotcore.eventloop.opmode.OpMode
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit
 import org.firstinspires.ftc.teamcode.roadrunner.MecanumDrive
+import kotlin.math.PI
 import kotlin.math.abs
+import kotlin.math.atan2
+import kotlin.math.cos
 import kotlin.math.max
+import kotlin.math.sin
+import kotlin.math.sqrt
 
 /*
     CONTROL IDEAS:
@@ -16,64 +25,112 @@ import kotlin.math.max
         b. Use the onboard gyroscope for this
     2.
  */
-
+@TeleOp(name = "STANDALONE Kotlin Driver Control", group = "Kt")
+class StandaloneDriverControl : DriverControlBase(Pose2d(0.0, 0.0, 0.0))
 @TeleOp(name = "Kotlin Driver Control", group = "Kt")
-class DriverControl: OpMode() {
+class DriverControl : DriverControlBase(BotShared.storedPose)
+
+open class DriverControlBase(private val initialPose: Pose2d) : OpMode() {
 
     private lateinit var shared: BotShared
 
     override fun init() {
 //        val setter = DriverControl::tagCamera.setter
         shared = BotShared(this)
-        shared.drive = MecanumDrive(hardwareMap, Pose2d(0.0, 0.0, 0.0))
+        shared.drive = MecanumDrive(hardwareMap, initialPose)
     }
+
+    override fun start() {
+        super.start()
+//        shared.intake.raise()
+    }
+
+    /** true for lowered, false for raised */
+    private var lastIntakeStatus = false
+    private var hasToggledManual = false
+    private var useManual = false
 
     override fun loop() {
 
+        val drive = shared.drive!!
+//        val lsd = shared.lsd!!
+
+        // TODO: test driver relative, check servos, add it to setDrivePowers()
+
+        // counter-clockwise
+        val gyroYaw = shared.imu.robotYawPitchRollAngles.getYaw(AngleUnit.RADIANS)
+
+        // +X = forward
+        // +Y = left
+        val inputVector = Vector2d(
+            // up
+            -gamepad1.left_stick_y.toDouble(),
+            -gamepad1.left_stick_x.toDouble(),
+        )
+
+        // angle of the stick
+        val inputTheta = atan2(inputVector.y, inputVector.x)
+        // evaluated theta
+        val driveTheta = inputTheta - gyroYaw // + PI
+        // magnitude of inputVector clamped to [0, 1]
+        val inputPower = clamp(sqrt(
+            (inputVector.x * inputVector.x) +
+            (inputVector.y * inputVector.y)
+        ), 0.0, 1.0)
+
+        val driveRelativeX = cos(driveTheta) * inputPower
+        val driveRelativeY = sin(driveTheta) * inputPower
+
+        // \frac{1}{1+\sqrt{2\left(1-\frac{\operatorname{abs}\left(\operatorname{mod}\left(a,90\right)-45\right)}{45}\right)\ }}
+        val powerModifier = 1.0 // 1.0 / (1.0 + sqrt(2.0 * (1.0 - (((abs(gyroYaw) % (PI / 2)) - (PI / 4)) / (PI / 4)))))
+
+        if (gamepad1.x) {
+            if (!hasToggledManual) {
+                useManual = !useManual
+                hasToggledManual = true
+            }
+        } else hasToggledManual = false
+
         // Most values are [-1.0, 1.0]
+
         val control = object {
-            val movement = Vector2d(gamepad1.left_stick_x.toDouble(), -gamepad1.left_stick_y.toDouble())
-            val rotation = gamepad1.right_stick_x.toDouble();
+//            val movement = outputVector
+            val rotation = -gamepad1.right_stick_x.toDouble()
+            val useManual = !gamepad1.x
+            val intake = gamepad1.a
         }
 
-        val gyroRotation = shared.imu.robotYawPitchRollAngles
-        // gyroRotation.getYaw(AngleUnit.DEGREES)
+        // +X = forward, +Y = left
+        drive.setDrivePowers(PoseVelocity2d(
+            if (useManual) inputVector
+            else Vector2d(
+                driveRelativeX,
+                driveRelativeY
+            ) * powerModifier,
+            control.rotation
+        ))
 
-        // NOTE: This code is bot-relative
+        telemetry.addLine("Gyro Yaw: " + shared.imu.robotYawPitchRollAngles.getYaw(AngleUnit.DEGREES))
+        telemetry.addLine("Input Yaw: " + inputTheta * 180.0 / PI)
+//        telemetry.addLine("Yaw Difference (bot - input): " + )
 
-        var powerMax: Double
-        // Note: pushing stick forward gives negative value
-        // Addie's NOTE: ^ BUT WHY????
-        val axial =     control.movement.y
-        val lateral =   control.movement.x
-        val yaw =       control.rotation
+        telemetry.addLine("Left Stick X: " + gamepad1.left_stick_x)
+        telemetry.addLine("Left Stick Y: " + gamepad1.left_stick_y)
+        telemetry.addLine("Manual Controls: " + (if (useManual) "EN" else "DIS") + "ABLED")
+        telemetry.update()
 
-        // Combine the joystick requests for each axis-motion to determine each wheel's power.
-        // Set up a variable for each drive wheel to save the power level for telemetry.
-        var leftFrontPower =    axial + lateral + yaw
-        var rightFrontPower =   axial - lateral - yaw
-        var leftBackPower =     axial - lateral + yaw
-        var rightBackPower =    axial + lateral - yaw
-
-
-        // Normalize the values so no wheel power exceeds 100%
-        // This ensures that the robot maintains the desired motion.
-        // NOTE: is this really "normalization?" I need to rework this.
-        powerMax = max(abs(leftFrontPower), abs(rightFrontPower))
-        powerMax = max(powerMax, abs(leftBackPower))
-        powerMax = max(powerMax, abs(rightBackPower))
-
-        if (powerMax > 1.0) {
-            leftFrontPower /=   powerMax
-            rightFrontPower /=  powerMax
-            leftBackPower /=    powerMax
-            rightBackPower /=   powerMax
+        // Intake controls
+        if (control.intake != lastIntakeStatus) {
+            lastIntakeStatus = if (control.intake) {
+                shared.intake?.lower()
+                true
+            } else {
+                shared.intake?.raise()
+                false
+            }
         }
+        shared.intake?.active = control.intake
 
-        // Send calculated power to wheels
-        shared.motorFrontLeft.power =   leftFrontPower
-        shared.motorFrontRight.power =  rightFrontPower
-        shared.motorBackLeft.power =    leftBackPower
-        shared.motorBackRight.power =   rightBackPower
+        shared.update()
     }
 }
