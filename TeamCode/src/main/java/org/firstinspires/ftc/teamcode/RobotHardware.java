@@ -1,3 +1,7 @@
+/*
+ * Base code to manage the robot. Baseline copied from FtcRobotController sample code
+ */
+
 package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
