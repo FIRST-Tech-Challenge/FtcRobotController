@@ -41,6 +41,7 @@ public class Robot {
     DcMotor lsBack;
     DcMotor lsFront;
     Servo arm;
+    Servo holderClamp;
     Servo flipper;
 
 
@@ -75,8 +76,76 @@ public class Robot {
         AprilTagProcessor aprilTagProcessor = AprilTagProcessor.easyCreateWithDefaults();
         setUpDrivetrainMotors();
         setUpImu();
+        lsFront = hardwareMap.dcMotor.get("lsFront");
+        lsFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        lsBack = hardwareMap.dcMotor.get("lsBack");
+        lsBack.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
+        arm = hardwareMap.servo.get("arm");
+        holderClamp = hardwareMap.servo.get("holderClamp");
         //int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
         //webcam = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "Webcam 1"), cameraMonitorViewId);
+    }
+
+    public void resetLinearSlideEncoder() {
+        lsFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        lsFront.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+    }
+
+    public void moveLinearSlideByTicks(double targetDistanceInTicks) {
+
+        //target distance negative when going up
+        double remainingDistanceLow = targetDistanceInTicks - lsFront.getCurrentPosition();
+        double remainingDistanceZero = -lsFront.getCurrentPosition();
+
+        while (opMode.opModeIsActive() && Math.abs(targetDistanceInTicks - lsFront.getCurrentPosition()) > 100) {
+            remainingDistanceLow = targetDistanceInTicks - lsFront.getCurrentPosition();
+            remainingDistanceZero = -lsFront.getCurrentPosition();
+
+            telemetry.addData("linear slide pos in ticks", lsFront.getCurrentPosition());
+
+            lsFront.setPower(remainingDistanceLow * 0.002);
+            lsBack.setPower(remainingDistanceLow * 0.002);
+
+            telemetry.update();
+
+            sleep(100);
+        }
+
+        lsFront.setPower(0);
+        lsBack.setPower(0);
+
+
+        telemetry.update();
+    }
+
+    public void setServoPosBlocking(Servo servo, double targetServoPos) {
+        telemetry.addData("servo pos" + servo.getDeviceName(), servo.getPosition());
+        telemetry.update();
+        servo.setPosition(targetServoPos);
+       /* while (Math.abs(servo.getPosition() - targetServoPos) > 0.1) {
+            sleep(10);
+        }*/
+        telemetry.addData("servo pos" + servo.getDeviceName(), servo.getPosition());
+        telemetry.update();
+    }
+    public void autoOuttake() {
+        double armPos = 0.594; //down position
+        double holderClampPos = 0.5;
+
+
+        //moveLinearSlideByTicks(-2400);
+
+        armPos = 0.845; //up (outtake) position
+        arm.setPosition(armPos);
+        //setServoPosBlocking(arm, armPos);
+
+        holderClampPos = 0.3;
+        setServoPosBlocking(holderClamp, holderClampPos);
+
+        armPos = 0.594; //down (intake) position
+        //setServoPosBlocking(arm, armPos);
+        //moveLinearSlideByTicks(0);
     }
 
     public void setMarkerPos (MarkerDetector.MARKER_POSITION position) {

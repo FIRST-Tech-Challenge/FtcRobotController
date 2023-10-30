@@ -4,6 +4,8 @@ import android.util.Log;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.vision.VisionPortal;
 import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
@@ -18,8 +20,18 @@ public class LongRedAuto extends LinearOpMode {
 
         //robot, dt motors, vision processing setup
         Robot robot = new Robot(hardwareMap, this, telemetry);
+        //TODO uncomment
         robot.setUpDrivetrainMotors();
-        robot.initVisionProcessing();
+        //robot.initVisionProcessing();
+        Servo holderClamp = hardwareMap.servo.get("holderClamp");
+
+        robot.resetLinearSlideEncoder();
+
+        double armPos = 0.594; //down position
+        double holderClampPos = 0.5;
+
+        double remainingDistanceLow = 100 - robot.lsFront.getCurrentPosition();
+        double remainingDistanceZero = -robot.lsFront.getCurrentPosition();
 
         //vision processing stuff
         /*
@@ -34,8 +46,10 @@ public class LongRedAuto extends LinearOpMode {
         sleep(3000);
         waitForStart();
 
-        while (opModeIsActive()) {
 
+
+        while (opModeIsActive()) {
+            robot.autoOuttake();
             //detectmarkerposition() code commented below
             /*
             //detect marker position
@@ -54,13 +68,15 @@ public class LongRedAuto extends LinearOpMode {
             robot.setWantedAprTagId(position, true);
             */
 
-            robot.detectMarkerPosition();
-            robot.moveToMarker();
+            //TODO Uncomment
+           /* robot.detectMarkerPosition();
+            robot.moveToMarker();*/
 
-            sleep(1000);
+            //sleep(1000);
 
             //move to backdrop from spike marks
-            robot.setHeading(0, 0.75);
+            //TODO uncomment
+            /*robot.setHeading(0, 0.75);
             sleep(100);
             robot.mecanumBlocking(20, true, 0.5);
             sleep(100);
@@ -83,11 +99,48 @@ public class LongRedAuto extends LinearOpMode {
             robot.moveToBoard();
             sleep(100);
             robot.setHeading(-90, 0.75);
+*/
+          /*  double targetDistanceInTicks = 350;
 
-            break;
+            remainingDistanceLow = targetDistanceInTicks - robot.lsFront.getCurrentPosition();
+            remainingDistanceZero = -robot.lsFront.getCurrentPosition();
+
+            telemetry.addData("linear slide pos in ticks", robot.lsFront.getCurrentPosition());
+
+            if (robot.lsFront.getCurrentPosition() > -10) {
+                robot.lsFront.setPower(remainingDistanceLow * -0.002);
+                robot.lsBack.setPower(remainingDistanceLow * -0.002);
+            } else if (robot.lsFront.getCurrentPosition() < -targetDistanceInTicks) {
+                robot.lsFront.setPower(0);
+                robot.lsBack.setPower(0);
+            }
+
+
+
+            armPos = 0.845; //up (outtake) position
+            robot.arm.setPosition(armPos);
+
+            holderClampPos = 0.3;
+            holderClamp.setPosition(holderClampPos);
+
+            armPos = 0.594; //down (inttake) position
+            robot.arm.setPosition(armPos);
+*/
+            /*if (robot.lsFront.getCurrentPosition() < 10) {
+                robot.lsFront.setPower(remainingDistanceZero * 0.002);
+                robot.lsBack.setPower(remainingDistanceZero * 0.002);
+            } else {
+                robot.lsFront.setPower(0);
+                robot.lsBack.setPower(0);
+            }*/
+
+            telemetry.update();
+            //break;
 
             //movetoboard() code commented below
+            break;
         }
+
     }
 }
 
