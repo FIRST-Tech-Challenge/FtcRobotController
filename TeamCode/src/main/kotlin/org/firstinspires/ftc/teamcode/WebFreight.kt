@@ -10,18 +10,7 @@ import org.firstinspires.ftc.ftccommon.external.OnCreateEventLoop
 import org.firstinspires.ftc.ftccommon.external.OnDestroy
 import org.firstinspires.ftc.ftccommon.external.WebHandlerRegistrar
 
-//class Trickster(activity: Activity?, hardwareMap: HardwareMap?) : OpModeManagerImpl(activity, hardwareMap) {
-//    public fun getContext(impl: OpModeManagerImpl): Context? {
-//        return this.context
-////        fun setActiveOpMode(opMode: OpMode?, activeOpModeName: String?) {
-////            synchronized(listeners) {
-////
-////                this.activeOpModeName = activeOpModeName
-////            }
-////        }
-//    }
-//}
-
+// Sorta like the FTC-Dashboard library, but this is custom-made
 class WebFreight(private val server: WebServer) {
     private var opModeManager: OpModeManagerImpl? = null
     private var context: Context? = null

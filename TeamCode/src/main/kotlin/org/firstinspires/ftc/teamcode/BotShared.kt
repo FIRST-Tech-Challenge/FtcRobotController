@@ -10,7 +10,6 @@ import com.qualcomm.robotcore.hardware.DcMotorEx
 import com.qualcomm.robotcore.hardware.DcMotorSimple.Direction.FORWARD
 import com.qualcomm.robotcore.hardware.DcMotorSimple.Direction.REVERSE
 import com.qualcomm.robotcore.hardware.IMU
-import com.qualcomm.robotcore.hardware.Servo
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName
 import org.firstinspires.ftc.teamcode.roadrunner.MecanumDrive
 
@@ -34,6 +33,7 @@ class BotShared(opMode: OpMode) {
 
     @JvmField var drive: MecanumDrive? = null
 
+    @JvmField var march =                 camera?.let { March(opMode, it) }
     @JvmField var lsd =               motorSlide?.let { LSD(opMode, it) }
     @JvmField var intake =       motorIntakeLift?.let { PixelIntake(opMode, it, motorIntakeSpin) }
 

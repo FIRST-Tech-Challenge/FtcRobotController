@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode
 
+import com.acmerobotics.dashboard.telemetry.TelemetryPacket
 import com.acmerobotics.roadrunner.Pose2d
 import com.acmerobotics.roadrunner.Vector2d
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous
@@ -51,12 +52,14 @@ open class AutoSuper(
         // alias using JVM references
         val drive = shared.drive!!
 //        val lsd = shared.lsd!!
-        drive.actionBuilder(drive.pose).splineToConstantHeading(Vector2d(0.0, 0.0), 0.0).build()
-        sleep(5000)
+        val march = shared.march!!
+        val testAction = drive.actionBuilder(drive.pose).splineToConstantHeading(Vector2d(10.0, 0.0), 0.0).build()
+        val packet = TelemetryPacket()
+        testAction.run(packet)
+//        sleep(5000)
 //        lsd.setHeight(LSD.SlideHeight.TOP.height)
-
+//        march
 //        TODO("Not yet implemented")
-
     }
 
     override fun stop() {
