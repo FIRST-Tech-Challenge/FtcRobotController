@@ -1,10 +1,10 @@
 package org.firstinspires.ftc.teamcode
 
+import Ternary
 import com.acmerobotics.roadrunner.Pose2d
 import com.acmerobotics.roadrunner.PoseVelocity2d
 import com.acmerobotics.roadrunner.Vector2d
 import com.acmerobotics.roadrunner.clamp
-import com.acmerobotics.roadrunner.lerp
 import com.qualcomm.robotcore.eventloop.opmode.OpMode
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit
@@ -13,7 +13,6 @@ import kotlin.math.PI
 import kotlin.math.abs
 import kotlin.math.atan2
 import kotlin.math.cos
-import kotlin.math.max
 import kotlin.math.sin
 import kotlin.math.sqrt
 
@@ -45,14 +44,19 @@ open class DriverControlBase(private val initialPose: Pose2d) : OpMode() {
 //        shared.intake.raise()
     }
 
+    // these variables can be deleted when Gamepadyn is finished (state transitions cause headaches)
     /** true for lowered, false for raised */
     private var lastIntakeStatus = false
-    private var hasToggledManual = false
-    private var useManual = false
+    private var hasToggledDriveRelativity = false
+    private var hasToggledIntakeLift = false
+    private var useBotRelative = false
+    private var isIntakeLiftRaised = true
 
     override fun loop() {
 
+        // nullables
         val drive = shared.drive!!
+        val intake = shared.intake!!
 //        val lsd = shared.lsd!!
 
         // TODO: test driver relative, check servos, add it to setDrivePowers()
@@ -82,14 +86,7 @@ open class DriverControlBase(private val initialPose: Pose2d) : OpMode() {
         val driveRelativeY = sin(driveTheta) * inputPower
 
         // \frac{1}{1+\sqrt{2\left(1-\frac{\operatorname{abs}\left(\operatorname{mod}\left(a,90\right)-45\right)}{45}\right)\ }}
-        val powerModifier = 1.0 // 1.0 / (1.0 + sqrt(2.0 * (1.0 - (((abs(gyroYaw) % (PI / 2)) - (PI / 4)) / (PI / 4)))))
-
-        if (gamepad1.x) {
-            if (!hasToggledManual) {
-                useManual = !useManual
-                hasToggledManual = true
-            }
-        } else hasToggledManual = false
+        val powerModifier = 1.0 / (1.0 + sqrt(2.0 * (1.0 - (((abs(gyroYaw) % (PI / 2)) - (PI / 4)) / (PI / 4)))))
 
         // Most values are [-1.0, 1.0]
 
@@ -97,12 +94,32 @@ open class DriverControlBase(private val initialPose: Pose2d) : OpMode() {
 //            val movement = outputVector
             val rotation = -gamepad1.right_stick_x.toDouble()
             val useManual = !gamepad1.x
-            val intake = gamepad1.a
+            val relativityToggle = gamepad1.x
+            val intakeHeightToggle = gamepad1.a
         }
+
+        if (gamepad1.right_bumper) intake.active = Ternary.B; else if (gamepad1.left_bumper) Ternary.C else intake.active = Ternary.A
+
+        // toggle driver-relative controls
+        if (control.relativityToggle) {
+            if (!hasToggledDriveRelativity) {
+                useBotRelative = !useBotRelative
+                hasToggledDriveRelativity = true
+            }
+        } else hasToggledDriveRelativity = false
+
+        // toggle lift
+        if (control.intakeHeightToggle) {
+            if (!hasToggledIntakeLift) {
+                isIntakeLiftRaised = !isIntakeLiftRaised
+                if (isIntakeLiftRaised) intake.raise() else
+                hasToggledIntakeLift = true
+            }
+        } else hasToggledIntakeLift = false
 
         // +X = forward, +Y = left
         drive.setDrivePowers(PoseVelocity2d(
-            if (useManual) inputVector
+            if (useBotRelative) inputVector
             else Vector2d(
                 driveRelativeX,
                 driveRelativeY
@@ -116,20 +133,20 @@ open class DriverControlBase(private val initialPose: Pose2d) : OpMode() {
 
         telemetry.addLine("Left Stick X: " + gamepad1.left_stick_x)
         telemetry.addLine("Left Stick Y: " + gamepad1.left_stick_y)
-        telemetry.addLine("Manual Controls: " + (if (useManual) "EN" else "DIS") + "ABLED")
+        telemetry.addLine("Manual Controls: " + (if (useBotRelative) "EN" else "DIS") + "ABLED")
         telemetry.update()
 
-        // Intake controls
-        if (control.intake != lastIntakeStatus) {
-            lastIntakeStatus = if (control.intake) {
-                shared.intake?.lower()
-                true
-            } else {
-                shared.intake?.raise()
-                false
-            }
-        }
-        shared.intake?.active = control.intake
+//        // Intake controls
+//        if (control.intakeHeightToggle != lastIntakeStatus) {
+//            lastIntakeStatus = if (control.intakeHeightToggle) {
+//                shared.intake?.lower()
+//                true
+//            } else {
+//                shared.intake?.raise()
+//                false
+//            }
+//        }
+//        shared.intake?.active = control.intakeHeightToggle
 
         shared.update()
     }

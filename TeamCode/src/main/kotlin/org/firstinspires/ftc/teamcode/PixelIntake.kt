@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode
 
+import Ternary
 import com.qualcomm.robotcore.eventloop.opmode.OpMode
 import com.qualcomm.robotcore.hardware.DcMotor
 import com.qualcomm.robotcore.hardware.DcMotorEx
@@ -14,11 +15,17 @@ class PixelIntake(private val opMode: OpMode, private val motorLift: DcMotorEx, 
 //        servoRight
     }
 
-    var active: Boolean = false
+    // A is off, B is inwards, C is outwards
+    var active: Ternary = Ternary.A
         set(status) {
             field = status
-            motorSpin.power = if (status) 1.0 else 0.0
+            motorSpin.power = when (status) {
+                Ternary.A -> 0.0
+                Ternary.B -> 1.0
+                Ternary.C -> -1.0
+            }
         }
+//    var isRaised: Boolean = false;
 
     fun lower(): Unit {
         motorLift.targetPosition = 10
