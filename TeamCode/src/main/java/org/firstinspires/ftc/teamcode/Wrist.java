@@ -51,8 +51,12 @@ public class Wrist {
         servo = myOpMode.hardwareMap.get(Servo.class, "left_hand");
     }
 
-
-
+    public void wristDown() {
+        servo.setPosition(1.0);
+    }
+    public void wristUp() {
+        servo.setPosition(0.0);
+    }
 
     public void listen() {
 
