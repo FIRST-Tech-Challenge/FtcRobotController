@@ -37,7 +37,6 @@ public class MarkerDetector extends OpenCvPipeline {
 
         if (workingMatrix.empty()) {
             Log.d("vision", "processFrame: empty working matrix");
-            telemetry.update();
             return input;
         }
 
@@ -74,6 +73,7 @@ public class MarkerDetector extends OpenCvPipeline {
         // Log.d("vision", "Avg  left = " + avgLeftCr + " center = " + avgCenterCr + " right = " + avgRightCr);
 
         //for blue all cr is cb and cb is cr
+
         if (avgLeftCr > avgCenterCr) {
             if (avgLeftCr > avgRightCr) {
                 if (((160 <= avgLeftCr) && (avgLeftCr <= 240)) && ((avgLeftCb >= 16) && (avgLeftCb <= 128))) {

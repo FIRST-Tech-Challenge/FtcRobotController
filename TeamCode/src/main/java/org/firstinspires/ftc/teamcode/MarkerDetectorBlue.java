@@ -33,7 +33,6 @@ public class MarkerDetectorBlue extends OpenCvPipeline {
 
         if (workingMatrix.empty()) {
             Log.d("vision", "processFrame: empty working matrix");
-            telemetry.update();
             return input;
         }
 
