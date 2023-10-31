@@ -42,9 +42,9 @@ import org.firstinspires.ftc.teamcode.Common.ServoFunctions;
 //@Disabled
 public class WireFireTeleOp extends LinearOpMode {
     private final double DESIRED_DISTANCE_TO_APRIL_TAG_INCHES = 12.0;
-    private final double SPEED_GAIN  =  0.08  ;   //  Forward Speed Control "Gain". eg: Ramp up to 50% power at a 25 inch error.   (0.50 / 25.0)
-    private final double STRAFE_GAIN =  0.1 ;   //  Strafe Speed Control "Gain".  eg: Ramp up to 25% power at a 25 degree Yaw error.   (0.25 / 25.0)
-    private final double TURN_GAIN   =  0.025  ;   //  Turn Control "Gain".  eg: Ramp up to 25% power at a 25 degree error. (0.25 / 25.0)
+    private final double SPEED_GAIN  =  0.06  ;   //  Forward Speed Control "Gain". eg: Ramp up to 50% power at a 25 inch error.   (0.50 / 25.0)
+    private final double STRAFE_GAIN =  0.08 ;   //  Strafe Speed Control "Gain".  eg: Ramp up to 25% power at a 25 degree Yaw error.   (0.25 / 25.0)
+    private final double TURN_GAIN   =  0.035  ;   //  Turn Control "Gain".  eg: Ramp up to 25% power at a 25 degree error. (0.25 / 25.0)
     private final ElapsedTime runtime = new ElapsedTime();
     private DrivingFunctions df = null;
     private ServoFunctions sf = null;
@@ -130,19 +130,18 @@ public class WireFireTeleOp extends LinearOpMode {
             {
                 telemetry.addData("Found", "ID %d (%s)", aprilTagsFunctions.detectedTag.id, aprilTagsFunctions.detectedTag.metadata.name);
                 telemetry.addData("Range",  "%5.1f inches", aprilTagsFunctions.detectedTag.ftcPose.range);
-                telemetry.addData("Bearing","%3.0f degrees", aprilTagsFunctions.detectedTag.ftcPose.bearing);
-                telemetry.addData("Yaw","%3.0f degrees", aprilTagsFunctions.detectedTag.ftcPose.yaw);
-                telemetry.addData("X delta","%3.0f inches", aprilTagsFunctions.detectedTag.ftcPose.x);
+                telemetry.addData("Bearing","%3.2f degrees", aprilTagsFunctions.detectedTag.ftcPose.bearing);
+                telemetry.addData("Yaw","%3.2f degrees", aprilTagsFunctions.detectedTag.ftcPose.yaw);
 
                 if (currentGamepad1.right_trigger > 0.5) {
                     y      = SPEED_GAIN * (aprilTagsFunctions.detectedTag.ftcPose.range - DESIRED_DISTANCE_TO_APRIL_TAG_INCHES);
-                    yaw    = -TURN_GAIN * aprilTagsFunctions.detectedTag.ftcPose.yaw;
-                    x      = STRAFE_GAIN * aprilTagsFunctions.detectedTag.ftcPose.x;
+                    yaw    = -TURN_GAIN * aprilTagsFunctions.detectedTag.ftcPose.bearing;
+                    x      = -STRAFE_GAIN * aprilTagsFunctions.detectedTag.ftcPose.yaw;
                     isAutoDrivingToAprilTag = true;
                 }
             }
 
-            df.MoveRobot(x, y, yaw, isAutoDrivingToAprilTag ? 0.45 : speedFactor);
+            df.MoveRobot(x, y, yaw, isAutoDrivingToAprilTag ? 0.55 : speedFactor);
 
             telemetry.addData("Speed Factor", "%4.2f", speedFactor);
             telemetry.addData("Bot Heading", "%4.2f", botHeading);
