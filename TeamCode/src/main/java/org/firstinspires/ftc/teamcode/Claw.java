@@ -34,8 +34,8 @@ import com.qualcomm.robotcore.hardware.Servo;
 
 public class Claw {
 
-    static final double CLAW_CLOSE_POS = 0;
-    static final double CLAW_OPEN_POS = 1;
+    static final double CLAW_CLOSE_POS = 1;
+    static final double CLAW_OPEN_POS = 0;
 
 
     // Define class members
