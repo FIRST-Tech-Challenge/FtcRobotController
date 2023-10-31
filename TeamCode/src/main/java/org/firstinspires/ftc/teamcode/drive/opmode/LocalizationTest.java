@@ -48,8 +48,11 @@ public class LocalizationTest extends LinearOpMode {
         // Ramping for x and y motion
         Ewma statsX = new Ewma(0.3); // Raising alpha will make the ramp more drastic but more potentially create slip
         Ewma statsY = new Ewma(0.3); // Decreasing alpha will reduce slip
+
+        // PID controller for heading
         PIDFController ctrl = new PIDFController(new PIDCoefficients(.01, 0, 0), 0, 0);
         ctrl.setInputBounds(0, 360);
+
         while (!isStopRequested()) {
             double turnCommand = -gamepad1.right_stick_x;
 
