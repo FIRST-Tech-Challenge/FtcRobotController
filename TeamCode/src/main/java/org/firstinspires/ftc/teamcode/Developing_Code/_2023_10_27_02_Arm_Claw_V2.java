@@ -149,6 +149,13 @@ public class _2023_10_27_02_Arm_Claw_V2 extends LinearOpMode {
                 clawRight.setPosition(openClaw);
             }
 
+            if (gamepad1.dpad_up) {
+                axle.setPosition(1);
+            }
+            if (gamepad1.dpad_down) {
+                axle.setPosition(0);
+            }
+
             telemetry.addData("Claw Left Target: ", clawLeftTarget);
             telemetry.addData("Claw Right Target: ", closeClaw);
 
@@ -166,6 +173,8 @@ public class _2023_10_27_02_Arm_Claw_V2 extends LinearOpMode {
             telemetry.addData("Claw Left Position: ", clawLeft.getPosition());
             telemetry.addData("Claw Right Position: ", clawRight.getPosition());
             //telemetry.addData("Claw Target: ", claw);555 iirj dc
+
+            telemetry.addData("Axle Position:", axle.getPosition());
 
             telemetry.addData("Arm position: ", arm.getCurrentPosition());
             telemetry.addData("Arm power: ", liftPower);
