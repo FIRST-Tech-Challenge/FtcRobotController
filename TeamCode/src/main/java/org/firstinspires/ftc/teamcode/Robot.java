@@ -993,44 +993,92 @@ public class Robot {
 
     }
 
-    //contains most opencv logic
-    public void moveToMarker() {
+    public void longRedMoveToBoard() {
         Log.d("vision", "moveToMarker: Pos " + markerPos);
         Log.d("vision", "moveToMarker: Tag " + wantedAprTagId);
         if (markerPos == MarkerDetector.MARKER_POSITION.RIGHT) {
-            straightBlocking(14, false, 0.5);
-            sleep(100);
-            setHeading(-45, 0.5);
-            sleep(100);
-            straightBlocking(11, false, 0.5);
-            sleep(100);
-            straightBlocking(11, true, 0.5);
-            setHeading(0, 0.5);
-            sleep(100);
-            straightBlocking(13, true, 0.5);
+            straightBlocking(19, false, 0.5);
+            setHeading(-45, 0.25);
+            straightBlocking(5, false, 0.7);
+            setHeading(-45, 0.25);
+            straightBlocking(5, true, 0.7);
+            setHeading(0, 0.25);
+            straightBlocking(33, false, 0.7);
+            setHeading(-90, 0.25);
+            straightBlocking(72, false, 0.7);
+            setHeading(-90, 0.25);
+            mecanumBlocking(24, false, 0.25);
+            setHeading(-90, 0.25);
         } else if (markerPos == MarkerDetector.MARKER_POSITION.LEFT) {
             straightBlocking(19, false, 0.5);
-            sleep(100);
             setHeading(45, 0.25);
-            sleep(100);
             straightBlocking(5, false, 0.7);
-            sleep(100);
+            setHeading(45, 0.25);
             straightBlocking(5, true, 0.7);
-            sleep(100);
             setHeading(0, 0.25);
-            sleep(100);
-            straightBlocking(6, true, 0.7);
+            straightBlocking(33, false, 0.7);
+            setHeading(-90, 0.25);
+            straightBlocking(72, false, 0.7);
+            setHeading(-90, 0.25);
+            mecanumBlocking(24, false, 0.25);
+            setHeading(-90, 0.25);
         } else { //center, default
             Log.d("vision", "moveToMarker: center or default");
             straightBlocking(20, false, 0.5);
-            setHeading(15, 1);
-            sleep(100);
-            straightBlocking(6, false, 0.5);
-            sleep(100);
-            straightBlocking(6, true, 0.5);
-            setHeading(0, 1);
-            sleep(100);
-            straightBlocking(19, true, 0.5);
+            setHeading(0, 0.7);
+            mecanumBlocking(4, true, 0.25);
+            setHeading(0, 0.7);
+            straightBlocking(12, false, 0.5);
+            setHeading(0, 0.7);
+            straightBlocking(5, true, 0.7);
+            setHeading(0, 0.7);
+            mecanumBlocking(8, true, 0.25);
+            setHeading(0, 0.7);
+            straightBlocking(25, false, 0.7);
+            setHeading(-90, 0.25);
+            straightBlocking(84, false, 0.7);
+            setHeading(-90, 0.25);
+            mecanumBlocking(24, false, 0.25);
+            setHeading(-90, 0.25);
+        }
+    }
+
+    public void shortRedMoveToBoard () {
+        Log.d("vision", "moveToMarker: Pos " + markerPos);
+        Log.d("vision", "moveToMarker: Tag " + wantedAprTagId);
+        if (markerPos == MarkerDetector.MARKER_POSITION.RIGHT) {
+            straightBlocking(19, false, 0.5);
+            setHeading(-45, 0.25);
+            straightBlocking(5, false, 0.7);
+            setHeading(-45, 0.25);
+            straightBlocking(5, true, 0.7);
+            setHeading(-90, 0.25);
+            straightBlocking(24, false, 0.7);
+            setHeading(-90, 0.25);
+            mecanumBlocking(9, true, 0.25);
+        } else if (markerPos == MarkerDetector.MARKER_POSITION.LEFT) {
+            straightBlocking(19, false, 0.5);
+            setHeading(45, 0.25);
+            straightBlocking(5, false, 0.7);
+            setHeading(45, 0.25);
+            straightBlocking(5, true, 0.7);
+            setHeading(0, 0.25);
+            straightBlocking(9, false, 0.7);
+            setHeading(-90, 0.25);
+            straightBlocking(24, false, 0.7);
+            setHeading(-90, 0.25);
+        } else { //center, default
+            Log.d("vision", "moveToMarker: center or default");
+            straightBlocking(20, false, 0.5);
+            setHeading(0, 0.7);
+            mecanumBlocking(4, true, 0.25);
+            setHeading(0, 0.7);
+            straightBlocking(12, false, 0.7);
+            setHeading(0, 0.7);
+            straightBlocking(5, true, 0.7);
+            setHeading(-90, 0.25);
+            straightBlocking(24, false, 0.7);
+            setHeading(-90, 0.25);
         }
     }
 
