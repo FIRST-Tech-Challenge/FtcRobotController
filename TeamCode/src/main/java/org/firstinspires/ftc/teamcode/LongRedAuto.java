@@ -1,14 +1,7 @@
 package org.firstinspires.ftc.teamcode;
 
-import android.util.Log;
-
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.Servo;
-
-import org.firstinspires.ftc.vision.VisionPortal;
-import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
 
 @Autonomous
 public class LongRedAuto extends LinearOpMode {
@@ -22,7 +15,9 @@ public class LongRedAuto extends LinearOpMode {
         Robot robot = new Robot(hardwareMap, this, telemetry);
         //TODO uncomment
         robot.setUpDrivetrainMotors();
-        //robot.initVisionProcessing();
+        robot.initVisionProcessing();
+
+        /*
         Servo holderClamp = hardwareMap.servo.get("holderClamp");
 
         robot.resetLinearSlideEncoder();
@@ -32,65 +27,18 @@ public class LongRedAuto extends LinearOpMode {
 
         double remainingDistanceLow = 100 - robot.lsFront.getCurrentPosition();
         double remainingDistanceZero = -robot.lsFront.getCurrentPosition();
-
-        //vision processing stuff
-        /*
-        VisionPortal visionPortal = robot.getVisionPortal();
-
-        MarkerProcessor markerProcessor = robot.getMarkerProcessor();
-        AprilTagProcessor aprilTagProcessor = robot.getAprilTagProcessor();
-
-        MarkerDetector.MARKER_POSITION position;
         */
 
-        sleep(3000);
         waitForStart();
 
-
-
         while (opModeIsActive()) {
+
+            /*
             robot.autoOuttake();
             Thread.sleep(10000);
-            //detectmarkerposition() code commented below
-            /*
-            //detect marker position
-            position = markerProcessor.getPosition();
-
-            while (position == MarkerDetector.MARKER_POSITION.UNDETECTED) {
-                Log.d("vision", "undetected marker, keep looking");
-                position = markerProcessor.getPosition();
-            }
-
-            //print position
-            Log.d("vision", "detected position: " + position);
-
-            //save marker position, apriltag position
-            robot.setMarkerPos(position);
-            robot.setWantedAprTagId(position, true);
             */
 
             //TODO Uncomment
-           /* robot.detectMarkerPosition();
-            robot.moveToMarker();*/
-
-            //sleep(1000);
-
-            //move to backdrop from spike marks
-            /*robot.setHeading(0, 0.75);
-            robot.mecanumBlocking(20, true, 0.5);
-            robot.setHeading(0, 0.75);
-            robot.straightBlocking(35, false, 0.7);
-            robot.setHeading(-90, 0.75);
-            robot.straightBlocking(90, false, 0.7);
-            robot.setHeading(-90, 0.5);
-            robot.mecanumBlocking(28, false, 0.5);
-            robot.setHeading(-90, 0.75);
-
-            sleep(2000);
-
-            robot.moveToBoard();
-            robot.setHeading(-90, 0.75);
-*/
           /*  double targetDistanceInTicks = 350;
 
             remainingDistanceLow = targetDistanceInTicks - robot.lsFront.getCurrentPosition();
@@ -125,13 +73,19 @@ public class LongRedAuto extends LinearOpMode {
                 robot.lsBack.setPower(0);
             }*/
 
-            telemetry.update();
-            //break;
+            //telemetry.update();
 
-            //movetoboard() code commented below
+
+            //enable THIS to test longredauto
+            /*
+            robot.detectMarkerPosition();
+            robot.longRedMoveToBoard();
+            robot.alignToBoard();
+            robot.setHeading(-90, 0.75);
+            */
+
             break;
         }
-
     }
 }
 

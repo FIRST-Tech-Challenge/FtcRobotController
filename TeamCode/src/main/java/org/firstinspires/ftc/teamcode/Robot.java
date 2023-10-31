@@ -127,6 +127,7 @@ public class Robot {
         telemetry.addData("done, servo pos" + servo.getDeviceName(), servo.getPosition());
         telemetry.update();
     }
+
     public void autoOuttake() {
         double armPos = 0.594; //down position
         setServoPosBlocking(arm, armPos);
@@ -145,16 +146,16 @@ public class Robot {
         moveLinearSlideByTicks(0);
     }
 
-    public void setMarkerPos (MarkerDetector.MARKER_POSITION position) {
+    public void setMarkerPos(MarkerDetector.MARKER_POSITION position) {
         markerPos = position;
     }
 
-    public MarkerDetector.MARKER_POSITION getMarkerPos () {
+    public MarkerDetector.MARKER_POSITION getMarkerPos() {
         return markerPos;
     }
 
     //change boolean to enum later
-    public void setWantedAprTagId (MarkerDetector.MARKER_POSITION position, boolean redAlliance) {
+    public void setWantedAprTagId(MarkerDetector.MARKER_POSITION position, boolean redAlliance) {
         if (redAlliance) {
             switch (position) {
                 case CENTER:
@@ -188,11 +189,11 @@ public class Robot {
         }
     }
 
-    public int getWantedAprTagId () {
+    public int getWantedAprTagId() {
         return wantedAprTagId;
     }
 
-//vision processing setup
+    //vision processing setup
     public void initVisionProcessing() {
 
         // Initializing marker and apriltag processors and setting them with visionportal
@@ -330,7 +331,7 @@ public class Robot {
         double targetFromAprilTagInches = mmFromAprilTag / 25.4;
         boolean done = false;
         double aprilTagRange = getAprilTagRange(idNumber);
-        double moveDistanceInches ;
+        double moveDistanceInches;
 
         if (aprilTagRange == 0) {
             moveDistanceInches = targetFromAprilTagInches;
@@ -347,7 +348,7 @@ public class Robot {
             //move closer to april tag
             //move away from april tag
             straightBlocking(Math.abs(moveDistanceInches), !(moveDistanceInches > 0), 0.75);
-        } else if (aprilTagRange == 0){
+        } else if (aprilTagRange == 0) {
 
             setMotorPower(stopPower);
             telemetry.addLine("not seeing april tag, not moving");
@@ -974,7 +975,7 @@ public class Robot {
      * @return
      */
 
-    public void detectMarkerPosition () {
+    public void detectMarkerPosition() {
 
         //detect marker position
         MarkerDetector.MARKER_POSITION position = markerProcessor.getPosition();
@@ -999,29 +1000,29 @@ public class Robot {
         if (markerPos == MarkerDetector.MARKER_POSITION.RIGHT) {
             straightBlocking(19, false, 0.5);
             setHeading(-45, 0.25);
-            straightBlocking(5, false, 0.7);
+            straightBlocking(6, false, 0.7);
             setHeading(-45, 0.25);
-            straightBlocking(5, true, 0.7);
-            setHeading(0, 0.25);
+            straightBlocking(12, true, 0.7);
+            setHeading(0, 0.7);
             straightBlocking(33, false, 0.7);
-            setHeading(-90, 0.25);
+            setHeading(-90, 0.7);
             straightBlocking(72, false, 0.7);
-            setHeading(-90, 0.25);
-            mecanumBlocking(24, false, 0.25);
-            setHeading(-90, 0.25);
+            setHeading(180, 0.75);
+            straightBlocking(30, false, 0.7);
+            setHeading(-90, 0.7);
         } else if (markerPos == MarkerDetector.MARKER_POSITION.LEFT) {
             straightBlocking(19, false, 0.5);
             setHeading(45, 0.25);
             straightBlocking(5, false, 0.7);
             setHeading(45, 0.25);
-            straightBlocking(5, true, 0.7);
-            setHeading(0, 0.25);
+            straightBlocking(6, true, 0.7);
+            setHeading(0, 0.7);
             straightBlocking(33, false, 0.7);
-            setHeading(-90, 0.25);
+            setHeading(-90, 0.7);
             straightBlocking(72, false, 0.7);
-            setHeading(-90, 0.25);
-            mecanumBlocking(24, false, 0.25);
-            setHeading(-90, 0.25);
+            setHeading(-179.5, 0.75);
+            straightBlocking(24, false, 0.7);
+            setHeading(-90, 0.7);
         } else { //center, default
             Log.d("vision", "moveToMarker: center or default");
             straightBlocking(20, false, 0.5);
@@ -1037,13 +1038,13 @@ public class Robot {
             straightBlocking(25, false, 0.7);
             setHeading(-90, 0.25);
             straightBlocking(84, false, 0.7);
-            setHeading(-90, 0.25);
-            mecanumBlocking(24, false, 0.25);
-            setHeading(-90, 0.25);
+            setHeading(-179.5, 0.75);
+            straightBlocking(24, false, 0.7);
+            setHeading(-90, 0.7);
         }
     }
 
-    public void shortRedMoveToBoard () {
+    public void shortRedMoveToBoard() {
         Log.d("vision", "moveToMarker: Pos " + markerPos);
         Log.d("vision", "moveToMarker: Tag " + wantedAprTagId);
         if (markerPos == MarkerDetector.MARKER_POSITION.RIGHT) {
@@ -1083,11 +1084,12 @@ public class Robot {
     }
 
     //contains most apriltag logic
-    public void moveToBoard () {
+    public void alignToBoard() {
 
         boolean tagVisible = false;
         boolean aligned = false;
         List<AprilTagDetection> myAprilTagDetections;
+        double distanceToBoard = 0;
 
         while (opMode.opModeIsActive() && !aligned) {
 
@@ -1105,44 +1107,29 @@ public class Robot {
 
                         if (detection.ftcPose.bearing > 1) {
                             Log.d("vision", "runOpMode: bearing > 1, move left");
-                            mecanumBlocking(1, true, 0.5);
+                            mecanumBlocking(1, true, 0.75);
                         } else if (detection.ftcPose.bearing < -1) {
                             Log.d("vision", "runOpMode: bearing < -1, move right");
-                            mecanumBlocking(1, false, 0.5);
+                            mecanumBlocking(1, false, 0.75);
                         } else {
                             Log.d("vision", "runOpMode: aligned");
+                            distanceToBoard = detection.ftcPose.range - 5;
                             aligned = true;
                         }
-
                         sleep(100);
                     }
                 }
 
                 if (!tagVisible) {
                     Log.d("vision", "runOpMode: tag not visible, move back");
-                    straightBlocking(1, true, 0.75);
-                    sleep(100);
+                    straightBlocking(1, true, 0.6);
                 }
             }
         }
 
+        Log.d("vision", "alignToBoard: broken out of !aligned while loop");
         if (aligned) {
-
-            myAprilTagDetections = aprilTagProcessor.getDetections();
-            for (AprilTagDetection detection : myAprilTagDetections) {
-                if (detection.metadata != null) {
-                    if (detection.id == wantedAprTagId) {
-                        Log.d("vision", "runOpMode: bearing is " + detection.ftcPose.bearing);
-                        double distanceToBoard = detection.ftcPose.range - 5;
-                        Log.d("vision", "runOpMode: distance to travel is " + distanceToBoard);
-                        straightBlocking(distanceToBoard, false, 0.75);
-                        sleep(100);
-                        break;
-                    }
-                }
-            }
+            straightBlocking(distanceToBoard, false, 0.75);
         }
     }
-
 }
-
