@@ -3,7 +3,6 @@ package org.firstinspires.ftc.teamcode;
 import static org.firstinspires.ftc.teamcode.ActualRobotDanceOpMode.STATE_OF_ROBOT.*;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import java.util.concurrent.TimeUnit;
 
@@ -19,7 +18,7 @@ public class ActualRobotDanceOpMode extends RobotOpMode {
     }
 
     @Override
-    public void robotloop() {
+    public void robotLoop() {
         if(currentState == null) {
             currentState = START;
         }
