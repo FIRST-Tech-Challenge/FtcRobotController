@@ -14,7 +14,7 @@ public class TestingStuff extends RobotOpMode {
         moveServo(armCatcherServo, NEW_SERVO_POSITION);
     }
     @Override
-    public void robotloop() {
+    public void robotLoop() {
         float ArmServoPositionModifier = 0;
         if (gamepad1.dpad_left) {
             ArmServoPositionModifier += 0.1;

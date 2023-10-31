@@ -18,7 +18,7 @@ public class DriverOp extends RobotOpMode {
     }
 
     @Override
-    public void robotloop() {
+    public void robotLoop() {
         gamePadMoveRobot();
         int direction = 0;
         if (gamepad1.dpad_up) {

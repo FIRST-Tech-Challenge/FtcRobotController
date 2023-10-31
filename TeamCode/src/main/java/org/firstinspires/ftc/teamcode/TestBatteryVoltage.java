@@ -1,7 +1,5 @@
 package org.firstinspires.ftc.teamcode;
 
-import android.annotation.SuppressLint;
-
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.VoltageSensor;
@@ -27,8 +25,8 @@ public class TestBatteryVoltage extends RobotOpMode {
     }
 
     @Override
-    public void robotloop() {
-        moveRobot(1, 0, 0);
+    public void robotLoop() {
+        linearMoveRobot(1, 0, 0);
         double voltage = getBatteryVoltage();
         dbp.createNewTelePacket();
 
