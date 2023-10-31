@@ -106,10 +106,13 @@ public class Arm {
     }
 
     public void moveArmByPower(double power) {
+        motor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+
         if (power > 0) {
             motor.setPower(power * POWER_UP_MUL);
         } else {
             if (myOpMode.gamepad2.right_bumper) {
+                
                 motor.setPower(power);
             } else {
                 motor.setPower(power * POWER_DOWN_MUL);
