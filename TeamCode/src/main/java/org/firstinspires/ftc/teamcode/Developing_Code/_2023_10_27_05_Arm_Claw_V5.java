@@ -9,8 +9,8 @@ import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 
-@com.qualcomm.robotcore.eventloop.opmode.TeleOp(name = "V2 Arm Claw")
-public class _2023_10_27_02_Arm_Claw_V2 extends LinearOpMode {
+@com.qualcomm.robotcore.eventloop.opmode.TeleOp(name = "V5 Arm Claw")
+public class _2023_10_27_05_Arm_Claw_V5 extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
         DcMotor frontLeftMotor = hardwareMap.dcMotor.get("motorFL");
@@ -47,13 +47,11 @@ public class _2023_10_27_02_Arm_Claw_V2 extends LinearOpMode {
         // Without this, the REV Hub's orientation is assumed to be logo up / USB backward
         imu.initialize(parameters);
         droneServo.scaleRange(0, 1);
-        droneServo.setPosition(0.85);
 
         clawLeft.scaleRange(0, 1);
         clawRight.scaleRange(0, 1);
         
         axle.scaleRange(0, 1);
-        axle.setPosition(0.7);
 
         //clawRight.setPosition(0);
         //clawLeft.setPosition(0);
@@ -63,6 +61,11 @@ public class _2023_10_27_02_Arm_Claw_V2 extends LinearOpMode {
         double closeClaw = 0.2; //decrease to close more
 
         waitForStart();
+
+        axle.setPosition(0.7);
+        droneServo.setPosition(0.85);
+        clawLeft.setPosition(openClaw);
+        clawRight.setPosition(openClaw);
 
         while (opModeIsActive()) {
             //gamepad 1 - drive base
@@ -111,6 +114,14 @@ public class _2023_10_27_02_Arm_Claw_V2 extends LinearOpMode {
             }
 
             if (gamepad1.right_bumper) {
+                for (int liftPos = 0; liftPos <= 500; liftPos = liftPos + 4) {
+                    liftTargetPosition = liftPos;
+                    arm.setTargetPosition(liftTargetPosition);
+                    arm.setPower(0.7);
+                    arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                    sleep(10);
+                }
+
                 clawLeft.setPosition(openClaw);
                 clawRight.setPosition(openClaw);
                 
@@ -118,20 +129,19 @@ public class _2023_10_27_02_Arm_Claw_V2 extends LinearOpMode {
                 axle.setPosition(0);
             }
             if (gamepad1.left_bumper) {
-                liftTargetPosition = 5;
+                liftTargetPosition = 10;
                 arm.setTargetPosition(liftTargetPosition);
-                arm.setPower(0.1);
+                arm.setPower(0.05);
                 arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 
                 axle.setPosition(0.7);
-
-                while (arm.isBusy()) {}
-                arm.setPower(0);
             }
-            
-            arm.setTargetPosition(liftTargetPosition);
-            arm.setPower(0.7);
-            arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+            if (arm.isBusy() == false) {
+                arm.setTargetPosition(liftTargetPosition);
+                arm.setPower(0.7);
+                arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            }
 
             double clawLeftTarget = 0;
 

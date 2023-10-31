@@ -9,8 +9,8 @@ import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 
-@com.qualcomm.robotcore.eventloop.opmode.TeleOp(name = "V2 Arm Claw")
-public class _2023_10_27_02_Arm_Claw_V2 extends LinearOpMode {
+@com.qualcomm.robotcore.eventloop.opmode.TeleOp(name = "V3 Arm Claw")
+public class _2023_10_27_03_Arm_Claw_V3 extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
         DcMotor frontLeftMotor = hardwareMap.dcMotor.get("motorFL");
@@ -111,6 +111,14 @@ public class _2023_10_27_02_Arm_Claw_V2 extends LinearOpMode {
             }
 
             if (gamepad1.right_bumper) {
+                for (int liftPos = 0; liftPos <= 500; liftPos = liftPos + 3) {
+                    liftTargetPosition = liftPos;
+                    arm.setTargetPosition(liftTargetPosition);
+                    arm.setPower(0.7);
+                    arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                    sleep(15);
+                }
+
                 clawLeft.setPosition(openClaw);
                 clawRight.setPosition(openClaw);
                 
@@ -118,20 +126,17 @@ public class _2023_10_27_02_Arm_Claw_V2 extends LinearOpMode {
                 axle.setPosition(0);
             }
             if (gamepad1.left_bumper) {
-                liftTargetPosition = 5;
+                liftTargetPosition = 10;
                 arm.setTargetPosition(liftTargetPosition);
-                arm.setPower(0.1);
+                arm.setPower(0.05);
                 arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 
                 axle.setPosition(0.7);
 
-                while (arm.isBusy()) {}
-                arm.setPower(0);
+                while (arm.isBusy()) {
+                    arm.setPower(0.05);
+                }
             }
-            
-            arm.setTargetPosition(liftTargetPosition);
-            arm.setPower(0.7);
-            arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
             double clawLeftTarget = 0;
 
