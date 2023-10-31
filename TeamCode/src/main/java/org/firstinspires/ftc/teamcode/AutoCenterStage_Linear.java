@@ -114,6 +114,8 @@ public class AutoCenterStage_Linear extends LinearOpMode {
     private int     leftTarget    = 0;
     private int     rightTarget   = 0;
 
+    private ElapsedTime runtime = new ElapsedTime();
+
     // Calculate the COUNTS_PER_INCH for your specific drive train.
     // Go to your motor vendor website to determine your motor's COUNTS_PER_MOTOR_REV
     // For external drive gearing, set DRIVE_GEAR_REDUCTION as needed.
@@ -233,6 +235,28 @@ public class AutoCenterStage_Linear extends LinearOpMode {
 
         driveStraight(DRIVE_SPEED,-48.0, 0.0);    // Drive in Reverse 48" (should return to approx. staring position)
 
+        // demonstrate picking up pixel
+        claw.openClaw();
+        waitRuntime(1.0);
+
+        wrist.wristDown();
+        waitRuntime(1.0);
+
+        claw.closeClaw();
+        waitRuntime(1.0);
+
+        wrist.wristUp();
+        waitRuntime(1.0);
+
+        arm.moveArmUp();
+        waitRuntime(1.0);
+
+        claw.openClaw();
+        waitRuntime(1.0);
+
+        arm.moveArmDown();
+        waitRuntime(1.0);
+
         telemetry.addData("Path", "Complete");
         telemetry.update();
         sleep(1000);  // Pause to display last telemetry message.
@@ -261,6 +285,13 @@ public class AutoCenterStage_Linear extends LinearOpMode {
      */
     public void driveStraight(double maxDriveSpeed, double distance, double heading ) {
         driveStraight(maxDriveSpeed, distance, heading, true);
+    }
+
+    public void waitRuntime(double sec) {
+        runtime.reset();
+        while (opModeIsActive() && (runtime.seconds() < sec)) {
+            telemetry.update();
+        }
     }
 
     /**
