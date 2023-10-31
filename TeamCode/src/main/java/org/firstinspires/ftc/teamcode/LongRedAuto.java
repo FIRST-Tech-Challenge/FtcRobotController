@@ -76,29 +76,19 @@ public class LongRedAuto extends LinearOpMode {
             //sleep(1000);
 
             //move to backdrop from spike marks
-            //TODO uncomment
             /*robot.setHeading(0, 0.75);
-            sleep(100);
             robot.mecanumBlocking(20, true, 0.5);
-            sleep(100);
             robot.setHeading(0, 0.75);
-            sleep(100);
             robot.straightBlocking(35, false, 0.7);
-            sleep(100);
             robot.setHeading(-90, 0.75);
-            sleep(100);
             robot.straightBlocking(90, false, 0.7);
-            sleep(100);
             robot.setHeading(-90, 0.5);
-            sleep(100);
             robot.mecanumBlocking(28, false, 0.5);
-            sleep(100);
             robot.setHeading(-90, 0.75);
 
             sleep(2000);
 
             robot.moveToBoard();
-            sleep(100);
             robot.setHeading(-90, 0.75);
 */
           /*  double targetDistanceInTicks = 350;

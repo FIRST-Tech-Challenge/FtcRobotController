@@ -698,6 +698,7 @@ public class Robot {
                 prevTime = currentTime;
             }
             setMotorPower(0, 0, 0, 0);
+            sleep(100);
         }
     }
 
@@ -912,6 +913,7 @@ public class Robot {
             error = targetTick - fLeft.getCurrentPosition();
         }
         setMotorPower(0, 0, 0, 0);
+        sleep(100);
     }
 
     public void straightBlocking(double inches, boolean forward, double maxPower) {
@@ -963,6 +965,7 @@ public class Robot {
             prevError = error;
         }
         setMotorPower(0, 0, 0, 0);
+        sleep(100);
     }
 
     /**
@@ -996,6 +999,7 @@ public class Robot {
         Log.d("vision", "moveToMarker: Tag " + wantedAprTagId);
         if (markerPos == MarkerDetector.MARKER_POSITION.RIGHT) {
             straightBlocking(14, false, 0.5);
+            sleep(100);
             setHeading(-45, 0.5);
             sleep(100);
             straightBlocking(11, false, 0.5);
