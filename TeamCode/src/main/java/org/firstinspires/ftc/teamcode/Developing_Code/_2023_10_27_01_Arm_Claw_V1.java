@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.versionCode;
+package org.firstinspires.ftc.teamcode.Developing_Code;
 
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -9,8 +9,8 @@ import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 
-@com.qualcomm.robotcore.eventloop.opmode.TeleOp(name = "V2 Newer Arm Claw w/ Drivebase")
-public class _20231027_cindyTeleOpCode extends LinearOpMode {
+@com.qualcomm.robotcore.eventloop.opmode.TeleOp(name = "V1 Arm Claw")
+public class _2023_10_27_01_Arm_Claw_V1 extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
         DcMotor frontLeftMotor = hardwareMap.dcMotor.get("motorFL");
@@ -54,11 +54,9 @@ public class _20231027_cindyTeleOpCode extends LinearOpMode {
         //clawRight.setPosition(0);
         //clawLeft.setPosition(0);
 
-        int liftTargetPosition = 5;
+        int liftTargetPosition = 0;
         double openClaw = 0.4; //increase to open more
         double closeClaw = 0.2; //decrease to close more
-
-
 
         waitForStart();
 
@@ -126,20 +124,14 @@ public class _20231027_cindyTeleOpCode extends LinearOpMode {
             if (gamepad1.b) {
                 clawLeft.setPosition(closeClaw);
                 clawRight.setPosition(closeClaw);
-
-
             }
-
             if (gamepad1.y) {
                 clawLeft.setPosition(openClaw);
                 clawRight.setPosition(openClaw);
-
             }
+
             telemetry.addData("Claw Left Target: ", clawLeftTarget);
             telemetry.addData("Claw Right Target: ", closeClaw);
-
-
-            //drone launcher code
 
             double droneServoPosition = droneServo.getPosition();
 
@@ -160,7 +152,6 @@ public class _20231027_cindyTeleOpCode extends LinearOpMode {
             telemetry.addData("Arm power: ", liftPower);
             telemetry.addData("Arm Target Position Requested: ", liftTargetPosition);
             telemetry.addData("Arm Actual Target Position: ", arm.getTargetPosition());
-
 
             telemetry.update();
         }
