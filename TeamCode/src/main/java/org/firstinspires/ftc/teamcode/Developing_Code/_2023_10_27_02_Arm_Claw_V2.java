@@ -172,7 +172,6 @@ public class _2023_10_27_02_Arm_Claw_V2 extends LinearOpMode {
 
             telemetry.addData("Claw Left Position: ", clawLeft.getPosition());
             telemetry.addData("Claw Right Position: ", clawRight.getPosition());
-            //telemetry.addData("Claw Target: ", claw);555 iirj dc
 
             telemetry.addData("Axle Position:", axle.getPosition());
 
