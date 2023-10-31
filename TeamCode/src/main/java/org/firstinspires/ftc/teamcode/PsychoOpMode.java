@@ -32,7 +32,6 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
@@ -64,9 +63,9 @@ import com.qualcomm.robotcore.util.ElapsedTime;
  * Remove or comment out the @Disabled line to add this OpMode to the Driver Station OpMode list
  */
 
-@TeleOp(name="KushaalOpMode", group="Linear OpMode")
+@TeleOp(name="Psycho OpMode", group="Linear OpMode")
 // @Disabled
-public class KushaalOpMode extends LinearOpMode {
+public class PsychoOpMode extends LinearOpMode {
 
     // Declare OpMode members for each of the 4 motors.
     private ElapsedTime runtime = new ElapsedTime();
@@ -132,17 +131,30 @@ public class KushaalOpMode extends LinearOpMode {
             claw.listen();
             wrist.listen();
 
-            if (gamepad1.left_bumper) {
-                strafe = -1;
-                StrafeToString = "Left";
-            }
-            if (gamepad1.right_bumper) {
-                strafe = 1;
-                StrafeToString = "Right";
-            }
-            if (!(gamepad1.right_bumper || gamepad1.left_bumper)){
-                strafe = 0;
-                StrafeToString = "Idle";
+            double axial_left   = -gamepad1.left_stick_y;  // Note: pushing stick forward gives negative value
+            double axial_right   = -gamepad1.right_stick_y;  // Note: pushing stick forward gives negative value
+            double yaw     =  gamepad1.right_stick_x;
+            double lateral_left     =  gamepad1.left_trigger;
+            double lateral_right    = gamepad1.right_trigger;
+
+            // Combine the joystick requests for each axis-motion to determine each wheel's power.
+            // Set up a variable for each drive wheel to save the power level for telemetry.
+            double leftFrontPower  = axial_left + lateral_right - lateral_left + yaw;
+            double rightFrontPower = axial_right - lateral_right + lateral_left - yaw;
+            double leftBackPower   = axial_left - lateral_right + lateral_left + yaw;
+            double rightBackPower  = axial_right + lateral_right - lateral_left- yaw;
+
+            // Normalize the values so no wheel power exceeds 100%
+            // This ensures that the robot maintains the desired motion.
+            max = Math.max(Math.abs(leftFrontPower), Math.abs(rightFrontPower));
+            max = Math.max(max, Math.abs(leftBackPower));
+            max = Math.max(max, Math.abs(rightBackPower));
+
+            if (max > 1.0) {
+                leftFrontPower  /= max;
+                rightFrontPower /= max;
+                leftBackPower   /= max;
+                rightBackPower  /= max;
             }
 
             if (gamepad2.x) {
@@ -153,30 +165,6 @@ public class KushaalOpMode extends LinearOpMode {
             }
             dronelaunch.setPosition(drone_launcher_pos);
 
-
-            // POV Mode uses left joystick to go forward & strafe, and right joystick to rotate.
-            double axial = -gamepad1.left_stick_y;
-            double yaw = -gamepad1.right_stick_y;
-
-            // Combine the joystick requests for each axis-motion to determine each wheel's power.
-            // Set up a variable for each drive wheel to save the power level for telemetry.
-            double leftFrontPower = strafe + axial;
-            double rightFrontPower = -strafe + yaw;
-            double leftBackPower = -strafe + axial;
-            double rightBackPower = strafe + yaw;
-
-            // Normalize the values so no wheel power exceeds 100%
-            // This ensures that the robot maintains the desired motion.
-            max = Math.max(Math.abs(leftFrontPower), Math.abs(rightFrontPower));
-            max = Math.max(max, Math.abs(leftBackPower));
-            max = Math.max(max, Math.abs(rightBackPower));
-
-            if (max > 1.0) {
-                leftFrontPower /= max;
-                rightFrontPower /= max;
-                leftBackPower /= max;
-                rightBackPower /= max;
-            }
 
             // This is test code:
             //
@@ -195,12 +183,17 @@ public class KushaalOpMode extends LinearOpMode {
             rightBackPower  = gamepad1.b ? 1.0 : 0.0;  // B gamepad
             */
 
+            double mul = 1.0;
+            if (gamepad1.left_bumper) {
+                mul = 0.3;
+            }
+
             // Send calculated power to wheels
             if (!gamepad1.y) {
-                leftFrontDrive.setPower(leftFrontPower);
-                rightFrontDrive.setPower(rightFrontPower);
-                leftBackDrive.setPower(leftBackPower);
-                rightBackDrive.setPower(rightBackPower);
+                leftFrontDrive.setPower(mul * leftFrontPower);
+                rightFrontDrive.setPower(mul * rightFrontPower);
+                leftBackDrive.setPower(mul * leftBackPower);
+                rightBackDrive.setPower(mul * rightBackPower);
 
             } else {
                 // braking here by setPower to zero;
