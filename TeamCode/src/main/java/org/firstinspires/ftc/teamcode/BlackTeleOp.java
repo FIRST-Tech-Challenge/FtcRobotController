@@ -15,6 +15,8 @@ public class BlackTeleOp extends LinearOpMode{
     DcMotor m_elevator;
     Servo m_pixspinner;
     Servo m_pixgrabber;
+    boolean pixelspinnerval = true;
+    boolean previousBumper = false;
 
     @Override
     public void runOpMode() {
@@ -32,7 +34,7 @@ public class BlackTeleOp extends LinearOpMode{
         m_frontRight.setDirection(DcMotor.Direction.FORWARD);
         m_rearRight.setDirection(DcMotor.Direction.FORWARD);
 
-        boolean pixelspinnerval = false;
+
 
 
         telemetry.addData("Status", "Initialized");
@@ -57,31 +59,32 @@ public class BlackTeleOp extends LinearOpMode{
 
 
             if (gamepad2.right_bumper){
-                m_pixgrabber.setPosition(.5);
+                m_pixgrabber.setPosition(.54);
             }
             else {
-                m_pixgrabber.setPosition(0);
+                m_pixgrabber.setPosition(.4);
             }
 
 
             //toggle code
-
-            if (pixelspinnerval = true){
-                if (gamepad2.left_bumper){
-                    m_pixspinner.setPosition(.5);
-                    pixelspinnerval = false;
-                }
+            if(gamepad2.left_bumper && !previousBumper){
+                pixelspinnerval = !pixelspinnerval;
             }
-            else if (pixelspinnerval = false) {
-                if (gamepad2.left_bumper){
-                    m_pixspinner.setPosition(0);
-                    pixelspinnerval = true;
-                }
-            }
+            previousBumper = gamepad2.left_bumper;
 
+            if (pixelspinnerval){
+                m_pixspinner.setPosition(.94);
+                telemetry.addData("PixSpin","Down");
+            }
+            else{
+                m_pixspinner.setPosition(0);
+                telemetry.addData("PixSpin", "Up");
+            }
+            telemetry.update();
 
         }
 
     }
+
 
 }
