@@ -21,6 +21,7 @@ public class testAuto extends LinearOpMode {
 
     OpenCVBlue pipeline = new OpenCVBlue(telemetry);
 
+    float test = 1;
 
 
 
@@ -112,8 +113,14 @@ public class testAuto extends LinearOpMode {
              */
             //opencvBlue.processFrame(opencvBlue.maskedInputMat);
             String result = pipeline.getResult();
-            
 
+            try {
+                Thread.sleep (5000); // 5000 milliseconds = 5 seconds
+            } catch (InterruptedException e) {
+                e.printStackTrace ();
+            }
+
+            if(result == "RIGHT") { test = 1; } else if(result == "LEFT") { test = 2; } else if(result == "MIDDLE") { test = 3; }
 
             //telemetry.addData("result", result);
 //            telemetry.addData("Frame Count", webcam.getFrameCount());

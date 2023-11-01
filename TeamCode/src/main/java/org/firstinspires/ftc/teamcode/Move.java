@@ -35,11 +35,15 @@ public class Move extends OpMode {
     public boolean Endgametrue = false;
     public boolean Parktrue = false;
 
+    public boolean Grab = false;
+
     //floats Runtime
     public float armmove;
     public float extendmove;
     public float extendpower;
     public float armPower = 0;
+
+    public float movedown;
 
     //ints
     public int arm = 0;
@@ -160,7 +164,16 @@ public class Move extends OpMode {
 
         //    |
         //arm V
-        else if(gamepad2.dpad_right) {
+        else if(gamepad1.dpad_right) {
+
+            arm = arm + 5;
+            armPower = armmove;
+
+            Arm.setTargetPosition(arm);
+            Arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            Arm.setPower(2);
+        }
+        else if(gamepad1.dpad_left) {
 
             arm = arm + 5;
             armPower = armmove;
@@ -229,8 +242,23 @@ public class Move extends OpMode {
             }
             extendpower = extendmove;
         }
-        else if(gamepad1.right_bumper)
+        else if(gamepad2.b || Grab )
         {
+            Grab = true;
+            movedown++;
+
+            Extend.setTargetPosition(0);
+            Extend.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            Extend.setPower(2);
+
+            if(Extend.getCurrentPosition() == 0)
+            {
+                Grab = false;
+            }
+
+
+
+
             //fire.setPosition(0.60);
         }
         else if(gamepad1.left_bumper)
