@@ -20,12 +20,12 @@ abstract class BaseOpMode extends LinearOpMode {
     public DcMotor BR = null;
     public DcMotor BL = null;
 
-    public DcMotor intakeMotor;
-    public DcMotor armMotor;
+    public DcMotor intakeMotor = null;
+    public DcMotor armMotor = null;
     final public int ARM_MOTOR_MIN_POSITION = 0;
     final public int ARM_MOTOR_MAX_POSITION = 480;
-    public Servo dumperServo;
-    public Servo gateServo;
+    public Servo dumperServo = null;
+    public Servo gateServo = null;
 
     static final double TICKS_PER_REVOLUTION = 5281.1; // 5203 Series Yellow Jacket Motor
     static final double GEAR_RATIO = 1.0;
