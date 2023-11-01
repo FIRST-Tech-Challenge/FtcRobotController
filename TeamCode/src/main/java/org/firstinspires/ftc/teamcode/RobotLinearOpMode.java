@@ -1,6 +1,9 @@
 package org.firstinspires.ftc.teamcode;
 
+import android.app.Activity;
+import android.graphics.Color;
 import android.text.method.MovementMethod;
+import android.view.View;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -8,7 +11,13 @@ import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.DistanceSensor;
+import com.qualcomm.robotcore.hardware.NormalizedColorSensor;
+import com.qualcomm.robotcore.hardware.NormalizedRGBA;
 import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.hardware.SwitchableLight;
+
+import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 
 
 /**
@@ -30,8 +39,7 @@ public abstract class RobotLinearOpMode extends LinearOpMode {
     DcMotor leftFrontDriveMotor;
     DcMotor rightBackDriveMotor;
     DcMotor leftBackDriveMotor;
-
-
+    NormalizedColorSensor colorSensor;
 
     public void encoderDrive(double power, double inches, MOVEMENT_DIRECTION movement_direction) {
 
@@ -329,6 +337,55 @@ public abstract class RobotLinearOpMode extends LinearOpMode {
         rightBackDriveMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
     }
 */
+
+    public void placePixel(){
+        //multiply sensor value by gain
+        float gain = 10;
+
+        // Once per loop, we will update this hsvValues array. The first element (0) will contain the
+        // hue, the second element (1) will contain the saturation, and the third element (2) will
+        // contain the value.
+        final float[] hsvValues = new float[3];
+
+        colorSensor = hardwareMap.get(NormalizedColorSensor.class, "sensor_color");
+
+//        // If possible, turn the light on in the beginning (it might already be on anyway,
+//        // we just make sure it is if we can).
+//        if (colorSensor instanceof SwitchableLight) {
+//            ((SwitchableLight)colorSensor).enableLight(true);
+//        }
+
+        // Wait for the start button to be pressed.
+        waitForStart();
+
+        // Loop until we are asked to stop
+        while (opModeIsActive()) {
+            colorSensor.setGain(gain);
+
+            // Get the normalized colors from the sensor
+            NormalizedRGBA colors = colorSensor.getNormalizedColors();
+
+            // Update the hsvValues array by passing it to Color.colorToHSV()
+            Color.colorToHSV(colors.toColor(), hsvValues);
+
+            if (colorSensor instanceof DistanceSensor) {
+                telemetry.addData("Distance (cm)", "%.3f", ((DistanceSensor) colorSensor).getDistance(DistanceUnit.CM));
+            }
+
+            //red
+            if (hsvValues[2] > .07){
+                telemetry.addData("Color ", "blue");
+            }
+            //blue
+            else if (hsvValues[2] > .06) {
+                telemetry.addData("Color", "red");
+            }
+
+            telemetry.update();
+
+            // Change the Robot Controller's background color to match the color detected by the color sensor.
+        }
+    }
 
     public void declareHardwareProperties() {
 
