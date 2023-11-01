@@ -62,8 +62,8 @@ public class _2023_10_27_05_Arm_Claw_V5 extends LinearOpMode {
 
         waitForStart();
 
-        axle.setPosition(0.7);
-        droneServo.setPosition(0.85);
+        axle.setPosition(0.8);
+        droneServo.setPosition(0.7);
         clawLeft.setPosition(openClaw);
         clawRight.setPosition(openClaw);
 
@@ -134,7 +134,7 @@ public class _2023_10_27_05_Arm_Claw_V5 extends LinearOpMode {
                 arm.setPower(0.05);
                 arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 
-                axle.setPosition(0.7);
+                axle.setPosition(0.8);
             }
 
             if (arm.isBusy() == false) {
@@ -148,7 +148,7 @@ public class _2023_10_27_05_Arm_Claw_V5 extends LinearOpMode {
             if (gamepad1.b) {
                 clawLeft.setPosition(closeClaw);
                 clawRight.setPosition(closeClaw);
-                axle.setPosition(0.7);
+                axle.setPosition(1);
             }
             if (gamepad1.a) {
                 clawLeft.setPosition(openClaw);
@@ -159,7 +159,7 @@ public class _2023_10_27_05_Arm_Claw_V5 extends LinearOpMode {
                 axle.setPosition(0);
             }
             if (gamepad1.dpad_down) {
-                axle.setPosition(0.7);
+                axle.setPosition(0.8);
             }
 
             telemetry.addData("Claw Left Target: ", clawLeftTarget);
@@ -170,7 +170,7 @@ public class _2023_10_27_05_Arm_Claw_V5 extends LinearOpMode {
             if (gamepad1.y) {
                 droneServo.setPosition(1);
                 sleep(1500);
-                droneServo.setPosition(0.85);
+                droneServo.setPosition(0.7);
             }
 
             // ADDED CODE - sends info about current servo position to driver station
