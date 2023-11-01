@@ -17,6 +17,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 
 import org.firstinspires.ftc.teamcode.common.Constants;
+import org.firstinspires.ftc.teamcode.common.Button;
 
 @TeleOp(name="Basic: Omni Linear OpMode", group="Linear OpMode")
 public class BasicOmniOpMode_Linear extends LinearOpMode {
@@ -31,7 +32,14 @@ public class BasicOmniOpMode_Linear extends LinearOpMode {
     private IMU imu = null;
     private DcMotor intake = null;
     private Servo servo = null;
+    private Button intakeButton = new Button();
     double powercoef = 0.5;
+    enum scoringPosition {
+        INTAKE,
+        LOW,
+        MID,
+        HIGH
+    }
 
     @Override
     public void runOpMode() {
@@ -116,32 +124,55 @@ public class BasicOmniOpMode_Linear extends LinearOpMode {
              */
 
             position += gamepad2.left_stick_y/200;
-            if(gamepad2.right_trigger > 0.5){
-                arm.setTargetPosition(0);
-                arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                arm.setVelocity(200);
-                servo.setPosition(0.3);
-            } else {
-                arm.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-                // arm.setVelocity(200*gamepad2.right_stick_y);
-                arm.setPower(gamepad2.right_stick_y * 1/4);
-                servo.setPosition(position);
-            }
-            intake.setPower(-gamepad2.right_trigger);
+            // arm.setPower(gamepad2.right_stick_y * 1/4);
+            // servo.setPosition(position);
+            // intake.setPower(-gamepad2.right_trigger);
+            handleArm();
             // 0.3 is flat, 0.67 is 90 degrees.
             telemetry.addData("servo target position: ", position);
             telemetry.addData("arm setpoint: ", armposition);
             telemetry.addData("Arm position: ", arm.getCurrentPosition()/Constants.ArmCountsPerDegree);
-            telemetry.addData("PIDF coefficients: ", arm.getPIDFCoefficients(DcMotor.RunMode.RUN_TO_POSITION));
+            telemetry.addData("Servo position: ", servo.getPosition());
             servo.setPosition(position);
             telemetry.update();
 
             HandleDrivetrain();
-
-            telemetry.addData("Arm position: ", arm.getCurrentPosition());
-            telemetry.addData("Servo position: ", servo.getPosition());
-            telemetry.update();
         }
+    }
+
+
+    /*
+
+    if trigger held set arm position to -33 and servo position to 0.84
+    if joystick up and position between than -33 and 0, set servo to 0.95
+    when position greater than 0 set servo to 0.15
+    when scoring set position to 0.7
+    */
+
+    public void handleArm(){
+        double servoSetpoint;
+        intakeButton.update(gamepad2.right_trigger > 0.5);
+        if(intakeButton.is(Button.State.TAP)) {
+            servoSetpoint = 0.84;
+            arm.setTargetPosition(-33);
+            arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            arm.setPower(0.3);
+            intake.setPower(1);
+        } else if (intakeButton.is(Button.State.OFF)) {
+            servoSetpoint = 0.95;
+            arm.setTargetPosition(0);
+            arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            arm.setPower(0.3);
+            intake.setPower(0);
+        } else if (gamepad2.x) {
+            servoSetpoint = 0.7;
+            arm.setPower(gamepad2.right_stick_y * 1/4);
+        } else {
+            servoSetpoint = 0.15;
+            arm.setPower(gamepad2.right_stick_y * 1/4);
+        }
+
+        if(servoSetpoint != servo.getPosition()) servo.setPosition(servoSetpoint);
     }
 
     public void HandleDrivetrain() {
@@ -154,6 +185,7 @@ public class BasicOmniOpMode_Linear extends LinearOpMode {
         double yaw = gamepad1.right_stick_x;
 
         double gyro_radians = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS);
+        telemetry.addData("gyro angle: ", gyro_radians);
         double temp = forward * cos(gyro_radians) +
                 strafe * sin(gyro_radians);
         strafe = -forward * sin(gyro_radians) +
@@ -188,9 +220,5 @@ public class BasicOmniOpMode_Linear extends LinearOpMode {
         leftBackDrive.setPower(leftBackPower);
         rightBackDrive.setPower(rightBackPower);
 
-        // Show the elapsed game time and wheel power.
-        telemetry.addData("Status", "Run Time: " + runtime.toString());
-        telemetry.addData("Front left/Right", "%4.2f, %4.2f", leftFrontPower, rightFrontPower);
-        telemetry.addData("Back  left/Right", "%4.2f, %4.2f", leftBackPower, rightBackPower);
     }
 }

@@ -17,10 +17,7 @@ public class Autonomous extends LinearOpMode {
         left_front = hardwareMap.get(DcMotor.class, "left_front");
         right_front = hardwareMap.get(DcMotor.class, "right_front");
         left_back = hardwareMap.get(DcMotor.class, "left_back");
-        right_back = hardwareMap.get(DcMotor.class, "right-back");
-
-        left_front.setDirection(DcMotorSimple.Direction.REVERSE);
-        left_back.setDirection(DcMotorSimple.Direction.REVERSE);
+        right_back = hardwareMap.get(DcMotor.class, "right_back");
 
         left_front.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         left_back.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -29,8 +26,11 @@ public class Autonomous extends LinearOpMode {
 
         waitForStart();
 
-        moveForward(1, 1);
-
+        right_front.setPower(1);
+        left_front.setPower(1);
+        right_back.setPower(1);
+        left_back.setPower(1);
+        sleep(10000);
     }
 
     public void CoolestDrive(double forward, double strafe, double yaw, double speed){
@@ -68,7 +68,7 @@ public class Autonomous extends LinearOpMode {
         left_front.setPower(power);
         right_back.setPower(power);
         left_back.setPower(power);
-        sleep( time);
+        sleep(time);
         right_front.setPower(0);
         left_front.setPower(0);
         right_back.setPower(0);
