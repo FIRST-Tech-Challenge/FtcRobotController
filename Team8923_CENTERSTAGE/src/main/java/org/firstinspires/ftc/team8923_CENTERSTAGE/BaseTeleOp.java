@@ -6,7 +6,7 @@ abstract public class BaseTeleOp extends BaseOpMode {
     double slidesSpeed = 0.6;
     double releaseSpeed = 0.9;
 
-    private boolean pixelReleaseOpen = false;
+    private boolean flipGondola = false;
 
     private Toggle pressToggle = new Toggle();
 
@@ -22,8 +22,10 @@ abstract public class BaseTeleOp extends BaseOpMode {
 
         if (gamepad2.left_bumper) {
             motorIntakeWheels.setPower(1.0);
+            servoReleasePixel.setPower(1.0);
         } else if (gamepad2.right_bumper) {
             motorIntakeWheels.setPower(-1.0);
+            servoReleasePixel.setPower(-1.0);
         }
 
         if (gamepad2.dpad_up) {
@@ -39,20 +41,24 @@ abstract public class BaseTeleOp extends BaseOpMode {
             servoRightFlipGondola.setPosition(1);
         }
 
-        // PLEASE READ THIS!!!!!!!!!!!!!!!!!! PLEASE!!!!!!!!!!!!!!!!!!!!!!!!
-        // TEST THIS WHEN PIXEL MECHANISM IS FUNCTIONAL!!!!!!!!!!!!!!!
-        pixelReleaseOpen = pressToggle.toggle(gamepad2.b);
-        if (pixelReleaseOpen) {
-            servoReleasePixel.setPosition(1.0);
-        } else {
-            servoReleasePixel.setPosition(0.0);
+        // THIS IS PROBABLY WRONG
+        flipGondola = pressToggle.toggle(gamepad2.a);
+        if (flipGondola) {
+            servoLeftFlipGondola.setPosition(1.0);
+            servoRightFlipGondola.setPosition(1.0);
+        } else if (flipGondola) {
+            servoLeftFlipGondola.setPosition(0.0);
+            servoRightFlipGondola.setPosition((0.0));
         }
 
-        // THIS IS PROBABLY WRONG
-        /*if (gamepad2.b) {
-            servoReleasePixel.setPosition(1);
-        } else if (gamepad2.b) {
-            servoReleasePixel.setPosition(0);
+        // PLEASE READ THIS!!!!!!!!!!!!!!!!!! PLEASE!!!!!!!!!!!!!!!!!!!!!!!!
+        // TEST THIS WHEN PIXEL MECHANISM IS FUNCTIONAL!!!!!!!!!!!!!!!
+        /*pixelReleaseOpen = pressToggle.toggle(gamepad2.b);
+        if (pixelReleaseOpen) {
+            servoReleasePixel.setPower(0.75);
+        } else {
+            servoReleasePixel.setPower(0.75);
         }*/
+
     }
 }

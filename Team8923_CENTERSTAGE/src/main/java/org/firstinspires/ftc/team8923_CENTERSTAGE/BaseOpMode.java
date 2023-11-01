@@ -5,6 +5,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.hardware.CRServo;
 
 
 abstract public class BaseOpMode extends LinearOpMode {
@@ -21,7 +22,7 @@ abstract public class BaseOpMode extends LinearOpMode {
     Servo servoLeftFlipGondola;
     Servo servoRightFlipGondola;
 
-    Servo servoReleasePixel;
+    CRServo servoReleasePixel;
 
     Servo servoReleaseDrone;
 
@@ -49,7 +50,7 @@ abstract public class BaseOpMode extends LinearOpMode {
         servoLeftFlipGondola = hardwareMap.servo.get("servoLeftFlipGondola");
         servoRightFlipGondola = hardwareMap.servo.get("servoRightFlipGondola");
 
-        servoReleasePixel = hardwareMap.servo.get("servoReleasePixel");
+        servoReleasePixel = hardwareMap.crservo.get("servoReleasePixel");
 
         servoReleaseDrone = hardwareMap.servo.get("servoReleaseDrone");
 
