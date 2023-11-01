@@ -14,15 +14,15 @@ abstract class BaseOpMode extends LinearOpMode {
     SampleMecanumDrive drive;
 
     //Declares drive-motors
-    public DcMotor FR;
-    public DcMotor FL;
-    public DcMotor BR;
-    public DcMotor BL;
+    public DcMotor FR = null; // null because of DevBot
+    public DcMotor FL = null;
+    public DcMotor BR = null;
+    public DcMotor BL = null;
 
-    public DcMotor intakeMotor;
-    public DcMotor armMotor;
-    public Servo dumperServo;
-    public Servo gateServo;
+    public DcMotor intakeMotor = null; // null because of DevBot
+    public DcMotor armMotor = null;
+    public Servo dumperServo = null;
+    public Servo gateServo = null;
 
     static final double TICKS_PER_REVOLUTION = 5281.1; // 5203 Series Yellow Jacket Motor
     static final double GEAR_RATIO = 1.0;
@@ -43,7 +43,7 @@ abstract class BaseOpMode extends LinearOpMode {
         BR = initializeMotor("BRMotor", DcMotor.Direction.REVERSE);
 
         //Mechanism Motors
-        intakeMotor = initializeMotor("IntakeMotor");
+        // intakeMotor = initializeMotor("IntakeMotor");
 
         intakeMotor = hardwareMap.get(DcMotor.class, "IntakeMotor");
         armMotor = hardwareMap.get(DcMotor.class, "ArmMotor");
