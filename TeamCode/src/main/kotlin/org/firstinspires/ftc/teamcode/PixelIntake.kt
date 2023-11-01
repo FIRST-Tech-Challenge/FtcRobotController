@@ -1,10 +1,10 @@
 package org.firstinspires.ftc.teamcode
 
-import Ternary
 import com.qualcomm.robotcore.eventloop.opmode.OpMode
 import com.qualcomm.robotcore.hardware.DcMotor
 import com.qualcomm.robotcore.hardware.DcMotorEx
 
+@Suppress("unused")
 class PixelIntake(private val opMode: OpMode, private val motorLift: DcMotorEx, private val motorSpin: DcMotorEx) {
     init {
         motorLift.targetPosition = 0
@@ -27,11 +27,11 @@ class PixelIntake(private val opMode: OpMode, private val motorLift: DcMotorEx, 
         }
 //    var isRaised: Boolean = false;
 
-    fun lower(): Unit {
+    fun lower() {
         motorLift.targetPosition = 10
     }
 
-    fun raise(): Unit {
+    fun raise() {
         motorLift.targetPosition = 0
     }
 }

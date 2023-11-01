@@ -1,6 +1,5 @@
 package org.firstinspires.ftc.teamcode
 
-import Ternary
 import com.acmerobotics.roadrunner.Pose2d
 import com.acmerobotics.roadrunner.PoseVelocity2d
 import com.acmerobotics.roadrunner.Vector2d
@@ -98,8 +97,6 @@ open class DriverControlBase(private val initialPose: Pose2d) : OpMode() {
             val intakeHeightToggle = gamepad1.a
         }
 
-        if (gamepad1.right_bumper) intake.active = Ternary.B; else if (gamepad1.left_bumper) Ternary.C else intake.active = Ternary.A
-
         // toggle driver-relative controls
         if (control.relativityToggle) {
             if (!hasToggledDriveRelativity) {
@@ -108,14 +105,20 @@ open class DriverControlBase(private val initialPose: Pose2d) : OpMode() {
             }
         } else hasToggledDriveRelativity = false
 
-        // toggle lift
+        // (intake) hold right bumper to rotate forward, left bumper to rotate backward
+        if (gamepad1.right_bumper) intake.active = Ternary.B; else if (gamepad1.left_bumper) Ternary.C else intake.active = Ternary.A
+
+        // toggle intake lift
         if (control.intakeHeightToggle) {
             if (!hasToggledIntakeLift) {
                 isIntakeLiftRaised = !isIntakeLiftRaised
-                if (isIntakeLiftRaised) intake.raise() else
+                // kotlin noticed I forgot to finish this line BECAUSE OF ITS INDENTATION!!! HOW?!?! thanks compiler
+                if (isIntakeLiftRaised) intake.raise() else intake.lower()
                 hasToggledIntakeLift = true
             }
         } else hasToggledIntakeLift = false
+
+        shared.motorTruss?.power = if (gamepad1.dpad_up) 1.0 else if (gamepad1.dpad_down) -1.0 else 0.0
 
         // +X = forward, +Y = left
         drive.setDrivePowers(PoseVelocity2d(
