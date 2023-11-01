@@ -166,7 +166,6 @@ public class CenterStageAuto1 extends LinearOpMode {
 
             while (opModeIsActive() &&
                    (runtime.seconds() < timeoutS)
-
             )
             sleep(250);
         }
