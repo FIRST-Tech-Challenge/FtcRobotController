@@ -2,7 +2,6 @@ package org.firstinspires.ftc.team417_CENTERSTAGE;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 
 import org.openftc.easyopencv.OpenCvCamera;
@@ -40,11 +39,12 @@ abstract class BaseOpMode extends LinearOpMode {
     //Initializes motors, servos, and sensors
     public void initializeHardware() {
         //Drive Motors
-        FL = initializeMotor("FLMotor", DcMotor.Direction.FORWARD);
-        FR = initializeMotor("FRMotor", DcMotor.Direction.REVERSE);
-        BL = initializeMotor("BLMotor", DcMotor.Direction.FORWARD);
-        BR = initializeMotor("BRMotor", DcMotor.Direction.REVERSE);
+        FL = initializeMotor("FLMotor", DcMotor.Direction.REVERSE);
+        FR = initializeMotor("FRMotor", DcMotor.Direction.FORWARD);
+        BL = initializeMotor("BLMotor", DcMotor.Direction.REVERSE);
+        BR = initializeMotor("BRMotor", DcMotor.Direction.FORWARD);
 
+        /*
         //Mechanism Motors
         intakeMotor = initializeMotor("IntakeMotor", DcMotorSimple.Direction.FORWARD);
         armMotor = initializeMotor("ArmMotor", DcMotorSimple.Direction.FORWARD);
@@ -52,6 +52,7 @@ abstract class BaseOpMode extends LinearOpMode {
         //Mechanism Servos
         dumperServo = initializeServo("DumperServo", Servo.Direction.FORWARD);
         gateServo = initializeServo("GateServo", Servo.Direction.FORWARD);
+        */
 
         /*
         // Sets up the parameters with which we will use our IMU. Note that integration
