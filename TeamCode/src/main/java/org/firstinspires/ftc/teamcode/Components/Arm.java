@@ -111,22 +111,22 @@ public class Arm extends RFServo {
     public void flipTo(ArmStates p_state) {
         if (!p_state.state) {
             if (!(Lift.LiftMovingStates.AT_ZERO.state || Lift.LiftPositionStates.AT_ZERO.state) && !Wrist.WristStates.FLAT.state) {
-                if (p_state==ArmStates.UNFLIPPED&&!ArmStates.UNFLIPPED.state) {
+                if (p_state == ArmStates.UNFLIPPED && !ArmStates.UNFLIPPED.state) {
                     super.setPosition(LOWER_LIMIT);
                     Wrist.WristTargetStates.FLIP.setStateTrue();
-                    LOGGER.log(RFLogger.Severity.INFO, "flipping up");
+                    LOGGER.log(RFLogger.Severity.INFO, "flipping down");
                     ArmTargetStates.UNFLIPPED.setStateTrue();
                     lastTime = time;
-                } else if (p_state==ArmStates.FLIPPED&&!ArmStates.FLIPPED.state) {
+                } else if (p_state == ArmStates.FLIPPED && !ArmStates.FLIPPED.state) {
                     super.setPosition(UPPER_LIMIT);
                     Wrist.WristTargetStates.FLIP.setStateTrue();
-                    LOGGER.log(RFLogger.Severity.INFO, "flipping down");
+                    LOGGER.log(RFLogger.Severity.INFO, "flipping up");
                     ArmTargetStates.FLIPPED.setStateTrue();
                     lastTime = time;
+                } else {
+                    ArmTargetStates.values()[p_state.ordinal()].setStateTrue();
+                    LOGGER.log("LIFT AT DANGER ZONE, can't flip!");
                 }
-            } else {
-                ArmTargetStates.values()[p_state.ordinal()].setStateTrue();
-                LOGGER.log("LIFT AT DANGER ZONE, can't flip!");
             }
         }
     }
