@@ -70,7 +70,7 @@ public class SampleMecanumDrive extends MecanumDrive {
 
     private TrajectoryFollower follower;
 
-    private DcMotorEx motorFL, motorBL, motorBR, FR;
+    private DcMotorEx motorFL, motorBL, motorBR, motorFR;
     private List<DcMotorEx> motors;
 
     private BNO055IMU imu;
@@ -89,13 +89,19 @@ public class SampleMecanumDrive extends MecanumDrive {
         for (LynxModule module : hardwareMap.getAll(LynxModule.class)) {
             module.setBulkCachingMode(LynxModule.BulkCachingMode.AUTO);
         }
+        if(DriveConstants.isDevBot) {
+            motorFL = hardwareMap.get(DcMotorEx.class, "leftFront");
+            motorBL = hardwareMap.get(DcMotorEx.class, "leftBack");
+            motorBR = hardwareMap.get(DcMotorEx.class, "rightBack");
+            motorFR = hardwareMap.get(DcMotorEx.class, "rightFront");
 
-        motorFL = hardwareMap.get(DcMotorEx.class, "motorFL");
-        motorBL = hardwareMap.get(DcMotorEx.class, "motorBL");
-        motorBR = hardwareMap.get(DcMotorEx.class, "motorBR");
-        FR = hardwareMap.get(DcMotorEx.class, "FR");
-
-        motors = Arrays.asList(motorFL, motorBL, motorBR, FR);
+        } else {
+            motorFL = hardwareMap.get(DcMotorEx.class, "motorFL");
+            motorBL = hardwareMap.get(DcMotorEx.class, "motorBL");
+            motorBR = hardwareMap.get(DcMotorEx.class, "motorBR");
+            motorFR = hardwareMap.get(DcMotorEx.class, "motorFR");
+        }
+        motors = Arrays.asList(motorFL, motorBL, motorBR, motorFR);
 
         for (DcMotorEx motor : motors) {
             MotorConfigurationType motorConfigurationType = motor.getMotorType().clone();
@@ -115,7 +121,7 @@ public class SampleMecanumDrive extends MecanumDrive {
 
         motorFL.setDirection(DcMotor.Direction.REVERSE);
         motorBL.setDirection(DcMotor.Direction.REVERSE);
-        FR.setDirection(DcMotor.Direction.FORWARD);
+        motorFR.setDirection(DcMotor.Direction.FORWARD);
         motorBR.setDirection(DcMotor.Direction.FORWARD);
 
         // for instance, setLocalizer(new ThreeTrackingWheelLocalizer(...));
@@ -265,7 +271,7 @@ public class SampleMecanumDrive extends MecanumDrive {
         motorFL.setPower(powerFL);
         motorBL.setPower(powerBL);
         motorBR.setPower(powerBR);
-        FR.setPower(powerFR);
+        motorFR.setPower(powerFR);
     }
 
     @Override
@@ -292,8 +298,12 @@ public class SampleMecanumDrive extends MecanumDrive {
         // Adjust the axis rotation rate as necessary
         // Rotate about the z axis is the default assuming your REV Hub/Control Hub is laying
         // flat on a surface
+        if(DriveConstants.isDevBot) {
+            return (double) imu.getAngularVelocity().zRotationRate;
+        } else {
+            return (double) imu.getAngularVelocity().xRotationRate;
+        }
 
-        return (double) imu.getAngularVelocity().zRotationRate;
     }
 
     public static TrajectoryVelocityConstraint getVelocityConstraint(double maxVel, double maxAngularVel, double trackWidth) {

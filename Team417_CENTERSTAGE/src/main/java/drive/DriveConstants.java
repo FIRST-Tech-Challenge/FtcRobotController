@@ -1,7 +1,13 @@
 package drive;
 
+import android.util.Log;
+
 import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.hardware.PIDFCoefficients;
+
+import org.firstinspires.inspection.InspectionState;
+
+import java.util.Objects;
 
 /*
  * Constants shared between multiple drive types.
@@ -16,6 +22,15 @@ import com.qualcomm.robotcore.hardware.PIDFCoefficients;
  */
 @Config
 public class DriveConstants {
+
+    public static String getBotName() {
+        InspectionState inspection=new InspectionState();
+        inspection.initializeLocal();
+        Log.d("roadrunner", String.format("Device name:" + inspection.deviceName));
+        return inspection.deviceName;
+    }
+
+    public static boolean isDevBot = (Objects.equals(getBotName(), "DevBot"));
 
     /*
      * These are motor constants that should be listed online for your motors.
@@ -45,9 +60,9 @@ public class DriveConstants {
      * angular distances although most angular parameters are wrapped in Math.toRadians() for
      * convenience. Make sure to exclude any gear ratio included in MOTOR_CONFIG from GEAR_RATIO.
      */
-    public static double WHEEL_RADIUS = 50.0 / MM_TO_INCHES; // in
+    public static double WHEEL_RADIUS = 48.0 / MM_TO_INCHES; // in
     public static double GEAR_RATIO = 1; // output (wheel) speed / input (motor) speed
-    public static double TRACK_WIDTH = 15.5; // in
+    public static double TRACK_WIDTH = isDevBot ? 16.5 : 13.5; // in
 
     /*
      * These are the feedforward parameters used to model the drive motor behavior. If you are using
@@ -55,9 +70,9 @@ public class DriveConstants {
      * motor encoders or have elected not to use them for velocity control, these values should be
      * empirically tuned.
      */
-    public static double kV = 1.0 / rpmToVelocity(MAX_RPM);
-    public static double kA = 0;
-    public static double kStatic = 0;
+    public static double kV = isDevBot ? 1.0 / rpmToVelocity(MAX_RPM) : 1 ;
+    public static double kA = isDevBot ? 0 : 0;
+    public static double kStatic = isDevBot ? 0 : 0;
 
     /*
      * These values are used to generate the trajectories for your robot. To ensure proper operation,
