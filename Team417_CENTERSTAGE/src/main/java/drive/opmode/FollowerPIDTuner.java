@@ -6,6 +6,11 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
+<<<<<<< HEAD
+=======
+import trajectorysequence.TrajectorySequence;
+
+>>>>>>> 604e7419c52c710cadf0b92578b0603c62bfbab0
 import drive.SampleMecanumDrive;
 import trajectorysequence.TrajectorySequence;
 
