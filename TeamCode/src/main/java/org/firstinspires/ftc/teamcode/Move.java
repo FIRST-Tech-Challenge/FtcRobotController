@@ -146,7 +146,7 @@ public class Move extends OpMode {
 
 
         //armmovepower
-        if(gamepad1.dpad_up)
+        if(gamepad2.dpad_up)
         {
 
             armmove = -1f;
@@ -164,7 +164,7 @@ public class Move extends OpMode {
 
         //    |
         //arm V
-        else if(gamepad1.dpad_right) {
+        else if(gamepad2.dpad_right) {
 
             arm = arm + 5;
             armPower = armmove;
@@ -173,9 +173,9 @@ public class Move extends OpMode {
             Arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             Arm.setPower(2);
         }
-        else if(gamepad1.dpad_left) {
+        else if(gamepad2.dpad_left) {
 
-            arm = arm + 5;
+            arm = arm - 5;
             armPower = armmove;
 
             Arm.setTargetPosition(arm);
@@ -183,7 +183,7 @@ public class Move extends OpMode {
             Arm.setPower(2);
         }
 
-        else if(gamepad1.dpad_down)
+        else if(gamepad2.dpad_down)
         {
 
             armmove = 1f;
@@ -214,7 +214,7 @@ public class Move extends OpMode {
             Arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             Arm.setPower(2);
         }
-        if(gamepad1.a)
+        if(gamepad2.x)
         {
             if(Extend.getCurrentPosition() > -3235)
             {
@@ -230,7 +230,7 @@ public class Move extends OpMode {
 
             extendpower = extendmove;
         }
-        else if(gamepad1.b)
+        else if(gamepad2.y)
         {
             if(Extend.getCurrentPosition() < -1)
             {
@@ -242,7 +242,7 @@ public class Move extends OpMode {
             }
             extendpower = extendmove;
         }
-        else if(gamepad2.b || Grab )
+        else if(gamepad2.a || Grab )
         {
             Grab = true;
             movedown++;
