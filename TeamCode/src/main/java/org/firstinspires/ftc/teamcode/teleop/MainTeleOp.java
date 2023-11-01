@@ -1,3 +1,4 @@
+/*
 package org.firstinspires.ftc.teamcode.teleop;
 
 import static org.firstinspires.ftc.teamcode.Bot.detections;
@@ -175,3 +176,6 @@ public class MainTeleOp extends LinearOpMode {
         );
     }
 }
+
+
+ */

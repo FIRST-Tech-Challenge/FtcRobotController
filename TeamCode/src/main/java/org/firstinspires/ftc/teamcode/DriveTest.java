@@ -6,6 +6,7 @@ import com.arcrobotics.ftclib.gamepad.GamepadEx;
 import com.arcrobotics.ftclib.gamepad.GamepadKeys;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
 @TeleOp
 public class DriveTest extends LinearOpMode {
@@ -20,23 +21,25 @@ public class DriveTest extends LinearOpMode {
         waitForStart();
 
         while(opModeIsActive() && !isStopRequested()){
+            bot.reverseMotors();
             drive();
         }
 
     }
 
     private void drive() {
-        if (gp1.wasJustReleased(GamepadKeys.Button.LEFT_STICK_BUTTON)) {
-        }
-        //   driveSpeed *= 1 - 0.5 * gp1.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER);
+        driveSpeed = 1;
+
+        driveSpeed *= 1 - 0.5 * gp1.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER);
         driveSpeed = Math.max(0, driveSpeed);
 
         Vector2d driveVector = new Vector2d(gp1.getLeftX(), -gp1.getLeftY()),
                 turnVector = new Vector2d(
                         gp1.getRightX(), 0);
-        bot.driveRobotCentric(driveVector.getX() * driveSpeed,
-                driveVector.getY() * driveSpeed,
-                turnVector.getX() * driveSpeed / 1.7
-        );
+
+            bot.driveRobotCentric(driveVector.getX() * driveSpeed,
+                    -driveVector.getY() * driveSpeed,
+                    turnVector.getX() * driveSpeed / 1.7
+            );
     }
 }

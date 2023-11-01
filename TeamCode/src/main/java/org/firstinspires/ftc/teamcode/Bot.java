@@ -31,18 +31,18 @@ public class Bot {
     public OpMode opMode;
     public BotState currentState = STORAGE_NOT_FULL;
     public static Bot instance;
-    public OpenCvCamera camera;
-    public AprilTagsPipeline aprilTagsPipeline;
+   // public OpenCvCamera camera;
+   // public AprilTagsPipeline aprilTagsPipeline;
 
-    public static AprilTagsDetection detections;
+   // public static AprilTagsDetection detections;
 
-    public Slides slides;
-    public Noodles noodles;
-    public Drone drone;
-    public Fourbar fourbar;
-    public Box box;
+   // public Slides slides;
+    //public Noodles noodles;
+  //  public Drone drone;
+  //  public Fourbar fourbar;
+  //  public Box box;
 
-    public static DistanceSensor distanceSensor;
+   // public static DistanceSensor distanceSensor;
 
     private final DcMotorEx FL, FR, BL, BR;
 
@@ -82,12 +82,12 @@ public class Bot {
 
         }
 
-        FL = opMode.hardwareMap.get(DcMotorEx.class, "FL");
-        FR = opMode.hardwareMap.get(DcMotorEx.class, "FR");
-        BL = opMode.hardwareMap.get(DcMotorEx.class, "BL");
-        BR = opMode.hardwareMap.get(DcMotorEx.class, "BR");
+        FL = opMode.hardwareMap.get(DcMotorEx.class, "fl");
+        FR = opMode.hardwareMap.get(DcMotorEx.class, "fr");
+        BL = opMode.hardwareMap.get(DcMotorEx.class, "bl");
+        BR = opMode.hardwareMap.get(DcMotorEx.class, "br");
 
-        distanceSensor = opMode.hardwareMap.get(DistanceSensor.class, "distanceSensor");
+       // distanceSensor = opMode.hardwareMap.get(DistanceSensor.class, "distanceSensor");
 
 
         FL.setMode(RUN_USING_ENCODER);
@@ -96,14 +96,18 @@ public class Bot {
         BR.setMode(RUN_USING_ENCODER);
 
 
-        slides = new Slides(opMode);
+       /* slides = new Slides(opMode);
         noodles = new Noodles(opMode);
         drone= new Drone(opMode);
         fourbar = new Fourbar(opMode);
         box= new Box(opMode);
+
+        */
     }
 
 
+
+    /*
 
     public void prepForOuttake() {
         currentState = BotState.STORAGE_FULL;
@@ -147,6 +151,7 @@ public class Bot {
     }
 
 
+*/
     public void fixMotors(double velocity) {
         FL.setDirection(DcMotorEx.Direction.REVERSE); //invert
         FR.setVelocity(velocity);
@@ -157,6 +162,11 @@ public class Bot {
         FR.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
         BL.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
         BR.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
+    }
+
+    public void reverseMotors(){
+        FL.setDirection(DcMotorSimple.Direction.REVERSE);
+        BL.setDirection(DcMotorSimple.Direction.REVERSE);
     }
 
     public void driveRobotCentric(double strafeSpeed, double forwardBackSpeed, double turnSpeed) {
@@ -180,6 +190,7 @@ public class Bot {
         BL.setPower(speeds[2]);
         BR.setPower(speeds[3]);
     }
+    /*
 
     //cope no one uses field centric
     public void driveFieldCentric(double strafeSpeed, double forwardBackSpeed, double turnSpeed, double heading) {
@@ -214,12 +225,14 @@ public class Bot {
         BL.setPower(speeds[2]);
         BR.setPower(speeds[3]);
     }
+    */
 
     private void enableAutoBulkRead() {
         for (LynxModule mod : opMode.hardwareMap.getAll(LynxModule.class)) {
             mod.setBulkCachingMode(LynxModule.BulkCachingMode.AUTO);
         }
     }
+    /*
 
     public void intake(double power){
         currentState = BotState.INTAKE;
@@ -239,7 +252,6 @@ public class Bot {
         }
     }
 
-
     public void outtakeSlides(double target){
         currentState = BotState.OUTTAKE;
         slides.runTo(target);
@@ -250,6 +262,8 @@ public class Bot {
             fourbar.runManualOuttake(input);
         }
     }
+
+     */
 
 
 
@@ -356,7 +370,7 @@ public class Bot {
             distanceTuning(sensor);
         }
     }
-
+/*
     public void aprilTagTuning(){
         AprilTagsDetection.detectTag();
         distanceFromBackdrop = detections.calcDistToTag();
@@ -373,4 +387,8 @@ public class Bot {
             inRange = Math.abs(diffy) <= 5;
         }
     }
+
+ */
+
+
 }
