@@ -1,15 +1,18 @@
-package org.firstinspires.ftc.teamcode;
+package org.firstinspires.ftc.teamcode.autonomous;
 
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.arcrobotics.ftclib.gamepad.GamepadEx;
+
 import com.arcrobotics.ftclib.gamepad.GamepadKeys;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.teamcode.Bot;
+import org.firstinspires.ftc.teamcode.subsystems.odometry.StandardTrackingWheelLocalizer;
+//import org.firstinspires.ftc.teamcode.autonomous.TeamPropDetectionPipeline.TeamProp;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
@@ -112,6 +115,7 @@ public class MainAuto extends LinearOpMode{
 
         while (!isStarted() && !isStopRequested()) {
             gp1.readButtons();
+            drive.setLocalizer(new StandardTrackingWheelLocalizer(hardwareMap));
 
             //Set distance, side, and auto type
             /*
