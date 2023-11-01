@@ -7,6 +7,7 @@ import java.util.List;
 
 public abstract class SequenceSegment {
     private final double duration;
+    //aaaaaaaa
     private final Pose2d startPose;
     private final Pose2d endPose;
     private final List<TrajectoryMarker> markers;

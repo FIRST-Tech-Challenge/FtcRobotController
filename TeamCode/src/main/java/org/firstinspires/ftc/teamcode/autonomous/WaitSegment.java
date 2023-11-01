@@ -8,6 +8,7 @@ import org.firstinspires.ftc.teamcode.autonomous.SequenceSegment;
 import java.util.List;
 
 public final class WaitSegment extends SequenceSegment {
+    //aaaaaaaa
     public WaitSegment(Pose2d pose, double seconds, List<TrajectoryMarker> markers) {
         super(seconds, pose, pose, markers);
     }

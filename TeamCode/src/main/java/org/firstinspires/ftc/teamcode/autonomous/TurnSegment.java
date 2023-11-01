@@ -10,6 +10,7 @@ import org.firstinspires.ftc.teamcode.autonomous.SequenceSegment;
 import java.util.List;
 
 public final class TurnSegment extends SequenceSegment {
+    //aaaaaaaa
     private final double totalRotation;
     private final MotionProfile motionProfile;
 

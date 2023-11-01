@@ -27,6 +27,7 @@ public class TrajectorySequenceBuilder {
     private final double resolution = 0.25;
 
     private final TrajectoryVelocityConstraint baseVelConstraint;
+    //aaaaaaaa
     private final TrajectoryAccelerationConstraint baseAccelConstraint;
 
     private TrajectoryVelocityConstraint currentVelConstraint;

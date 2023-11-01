@@ -1,3 +1,5 @@
 package org.firstinspires.ftc.teamcode.autonomous;
 
-public class EmptySequenceException extends RuntimeException { }
+public class EmptySequenceException extends RuntimeException {
+    //aaaaaaaa
+}

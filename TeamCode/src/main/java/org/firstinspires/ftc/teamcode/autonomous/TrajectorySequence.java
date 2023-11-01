@@ -10,6 +10,7 @@ import java.util.List;
 
 public class TrajectorySequence {
     private final List<SequenceSegment> sequenceList;
+    //aaaaaaaa
 
     public TrajectorySequence(List<SequenceSegment> sequenceList) {
         if (sequenceList.size() == 0) throw new EmptySequenceException();
