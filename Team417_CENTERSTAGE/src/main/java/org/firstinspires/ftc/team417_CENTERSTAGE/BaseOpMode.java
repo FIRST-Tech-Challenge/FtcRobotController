@@ -20,19 +20,12 @@ abstract class BaseOpMode extends LinearOpMode {
     public DcMotor BR = null;
     public DcMotor BL = null;
 
-<<<<<<< HEAD
     public DcMotor intakeMotor;
     public DcMotor armMotor;
     final public int ARM_MOTOR_MIN_POSITION = 0;
     final public int ARM_MOTOR_MAX_POSITION = 480;
     public Servo dumperServo;
     public Servo gateServo;
-=======
-    public DcMotor intakeMotor = null; // null because of DevBot
-    public DcMotor armMotor = null;
-    public Servo dumperServo = null;
-    public Servo gateServo = null;
->>>>>>> 6779d31f374820a6fe8236f6b069abcb1131601c
 
     static final double TICKS_PER_REVOLUTION = 5281.1; // 5203 Series Yellow Jacket Motor
     static final double GEAR_RATIO = 1.0;
@@ -53,12 +46,8 @@ abstract class BaseOpMode extends LinearOpMode {
         BR = initializeMotor("BRMotor", DcMotor.Direction.REVERSE);
 
         //Mechanism Motors
-<<<<<<< HEAD
         intakeMotor = initializeMotor("IntakeMotor", DcMotorSimple.Direction.FORWARD);
         armMotor = initializeMotor("ArmMotor", DcMotorSimple.Direction.FORWARD);
-=======
-        // intakeMotor = initializeMotor("IntakeMotor");
->>>>>>> 6779d31f374820a6fe8236f6b069abcb1131601c
 
         //Mechanism Servos
         dumperServo = initializeServo("DumperServo", Servo.Direction.FORWARD);
