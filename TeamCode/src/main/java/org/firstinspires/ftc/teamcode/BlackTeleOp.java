@@ -32,6 +32,8 @@ public class BlackTeleOp extends LinearOpMode{
         m_frontRight.setDirection(DcMotor.Direction.FORWARD);
         m_rearRight.setDirection(DcMotor.Direction.FORWARD);
 
+        boolean pixelspinnerval = false;
+
 
         telemetry.addData("Status", "Initialized");
         telemetry.update();
@@ -52,20 +54,30 @@ public class BlackTeleOp extends LinearOpMode{
             m_intake.setPower(gamepad2.left_trigger + -gamepad2.right_trigger);
             m_elevator.setPower(-gamepad2.left_stick_y);
 
-            if (gamepad2.left_bumper){
-                m_pixspinner.setPosition(.5);
-            }
-            else {
-                m_pixspinner.setPosition(0);
-            }
 
-            if (gamepad2.a){
+
+            if (gamepad2.right_bumper){
                 m_pixgrabber.setPosition(.5);
             }
             else {
                 m_pixgrabber.setPosition(0);
             }
 
+
+            //toggle code
+
+            if (pixelspinnerval = true){
+                if (gamepad2.left_bumper){
+                    m_pixspinner.setPosition(.5);
+                    pixelspinnerval = false;
+                }
+            }
+            else if (pixelspinnerval = false) {
+                if (gamepad2.left_bumper){
+                    m_pixspinner.setPosition(0);
+                    pixelspinnerval = true;
+                }
+            }
 
 
         }
