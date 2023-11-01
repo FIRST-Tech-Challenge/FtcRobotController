@@ -2,6 +2,7 @@ package org.firstinspires.ftc.team417_CENTERSTAGE;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 
 import org.openftc.easyopencv.OpenCvCamera;
@@ -21,6 +22,8 @@ abstract class BaseOpMode extends LinearOpMode {
 
     public DcMotor intakeMotor;
     public DcMotor armMotor;
+    final public int ARM_MOTOR_MIN_POSITION = 0;
+    final public int ARM_MOTOR_MAX_POSITION = 480;
     public Servo dumperServo;
     public Servo gateServo;
 
@@ -43,24 +46,12 @@ abstract class BaseOpMode extends LinearOpMode {
         BR = initializeMotor("BRMotor", DcMotor.Direction.REVERSE);
 
         //Mechanism Motors
-        intakeMotor = initializeMotor("IntakeMotor");
+        intakeMotor = initializeMotor("IntakeMotor", DcMotorSimple.Direction.FORWARD);
+        armMotor = initializeMotor("ArmMotor", DcMotorSimple.Direction.FORWARD);
 
-        intakeMotor = hardwareMap.get(DcMotor.class, "IntakeMotor");
-        armMotor = hardwareMap.get(DcMotor.class, "ArmMotor");
-
-        intakeMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        armMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-
-        intakeMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        armMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-
-        intakeMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        intakeMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-
-        intakeMotor.setDirection(DcMotor.Direction.FORWARD);
-
-        dumperServo = hardwareMap.get(Servo.class, "DumperServo");
-        gateServo = hardwareMap.get(Servo.class, "GateServo");
+        //Mechanism Servos
+        dumperServo = initializeServo("DumperServo", Servo.Direction.FORWARD);
+        gateServo = initializeServo("GateServo", Servo.Direction.FORWARD);
 
         /*
         // Sets up the parameters with which we will use our IMU. Note that integration
@@ -93,6 +84,12 @@ abstract class BaseOpMode extends LinearOpMode {
         return motor;
     }
 
+    public Servo initializeServo(String servoName, Servo.Direction direction) {
+        Servo servo = hardwareMap.get(Servo.class, servoName);
+        servo.setDirection(direction);
+        return servo;
+    }
+
     public void mecanumDrive(double x, double y, double rot) {
         double denominator = Math.max(Math.abs(y) + Math.abs(x) + Math.abs(rot), 1);
 
@@ -111,7 +108,58 @@ abstract class BaseOpMode extends LinearOpMode {
         intakeMotor.setPower(speed);
     }
 
-    public void moveOutputMechanism(double position) {
-        dumperServo.setPosition(position);
+    public void dumpDumper() {
+        dumperServo.setPosition(1);
+    }
+
+    public void resetDumper() {
+        dumperServo.setPosition(0);
+    }
+
+    enum DumperAction {
+        DUMPING,
+        RESETTING,
+        STOPPING
+    }
+    public void moveDumper(DumperAction dumperAction) {
+        switch (dumperAction) {
+            case DUMPING:
+                dumperServo.setPosition(1);
+            case RESETTING:
+                dumperServo.setPosition(0);
+            case STOPPING:
+                dumperServo.setPosition(dumperServo.getPosition());
+            default:
+        }
+    }
+
+    public void openGate() {
+        gateServo.setPosition(1);
+    }
+
+    public void closeGate() {
+        gateServo.setPosition(0);
+    }
+
+    public int[] armPositions = new int[] {ARM_MOTOR_MIN_POSITION, ARM_MOTOR_MIN_POSITION + ((ARM_MOTOR_MAX_POSITION - ARM_MOTOR_MIN_POSITION) / 2), ARM_MOTOR_MAX_POSITION};
+
+    public void positionArm(int armPositionIndex) {
+        if (armPositionIndex >= 0 && armPositionIndex <= armPositions.length - 1) {
+            armMotor.setTargetPosition(armPositions[armPositionIndex]);
+        }
+    }
+
+    public void moveArm(double speed) {
+        if (armMotor.getCurrentPosition() > ARM_MOTOR_MAX_POSITION) {
+            speed = -0.1;
+        } else if (armMotor.getCurrentPosition() < ARM_MOTOR_MIN_POSITION) {
+            speed = 0.1;
+        }
+        armMotor.setPower(speed);
+    }
+
+    public double epsilon = 0.0001;
+    public boolean isEpsilonEquals(double a, double b) {
+        return (Math.abs(a) + epsilon >= Math.abs(b) && Math.abs(a) - epsilon <= Math.abs(b));
     }
 }
