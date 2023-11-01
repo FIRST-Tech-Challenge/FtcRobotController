@@ -16,16 +16,16 @@ import com.acmerobotics.roadrunner.trajectory.Trajectory;
 import com.acmerobotics.roadrunner.trajectory.TrajectoryMarker;
 import com.acmerobotics.roadrunner.util.NanoClock;
 
-import org.firstinspires.ftc.team417_PowerPlay.trajectorysequence.sequencesegment.SequenceSegment;
-import org.firstinspires.ftc.team417_PowerPlay.trajectorysequence.sequencesegment.TrajectorySegment;
-import org.firstinspires.ftc.team417_PowerPlay.trajectorysequence.sequencesegment.TurnSegment;
-import org.firstinspires.ftc.team417_PowerPlay.trajectorysequence.sequencesegment.WaitSegment;
-import org.firstinspires.ftc.team417_PowerPlay.util.DashboardUtil;
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
+
+import trajectorysequence.sequencesegment.SequenceSegment;
+import trajectorysequence.sequencesegment.TrajectorySegment;
+import trajectorysequence.sequencesegment.TurnSegment;
+import trajectorysequence.sequencesegment.WaitSegment;
+import util.DashboardUtil;
 
 @Config
 public class TrajectorySequenceRunner {

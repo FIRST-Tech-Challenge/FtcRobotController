@@ -9,10 +9,10 @@ import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
-import org.firstinspires.ftc.team417_PowerPlay.util.Encoder;
-
 import java.util.Arrays;
 import java.util.List;
+
+import util.Encoder;
 
 /*
  * Sample tracking wheel localizer implementation assuming the standard configuration:

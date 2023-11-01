@@ -2,10 +2,10 @@ package trajectorysequence;
 
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 
-import org.firstinspires.ftc.team417_PowerPlay.trajectorysequence.sequencesegment.SequenceSegment;
-
 import java.util.Collections;
 import java.util.List;
+
+import trajectorysequence.sequencesegment.SequenceSegment;
 
 public class TrajectorySequence {
     private final List<SequenceSegment> sequenceList;

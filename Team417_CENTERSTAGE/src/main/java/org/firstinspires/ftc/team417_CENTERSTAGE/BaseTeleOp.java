@@ -1,7 +1,6 @@
 package org.firstinspires.ftc.team417_CENTERSTAGE;
 
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.hardware.DcMotor;
 
 @TeleOp(name = "TeleOp League 1")
 public class BaseTeleOp extends BaseOpMode {
@@ -12,21 +11,9 @@ public class BaseTeleOp extends BaseOpMode {
         waitForStart();
 
         while (opModeIsActive()) {
-            debugMotor(gamepad1.a, FR);
-            debugMotor(gamepad1.b, BR);
-            debugMotor(gamepad1.x, FL);
-            debugMotor(gamepad1.y, BL);
-            //driveUsingControllers(true);
-            //outputUsingControllers();
-            //intakeUsingControllers();
-        }
-    }
-
-    public void debugMotor(boolean button, DcMotor motor) {
-        if (button) {
-            motor.setPower(1);
-        } else {
-            motor.setPower(0);
+            driveUsingControllers(true);
+            outputUsingControllers();
+            intakeUsingControllers();
         }
     }
 

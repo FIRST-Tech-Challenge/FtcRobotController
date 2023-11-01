@@ -6,7 +6,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
-import org.firstinspires.ftc.team417_PowerPlay.trajectorysequence.TrajectorySequence;
+import trajectorysequence.TrajectorySequence;
 
 import drive.SampleMecanumDrive;
 
