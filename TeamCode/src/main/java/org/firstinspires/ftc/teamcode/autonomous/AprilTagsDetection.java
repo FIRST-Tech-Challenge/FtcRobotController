@@ -10,7 +10,7 @@ import org.openftc.apriltag.AprilTagDetection;
 
 import java.util.ArrayList;
 
-@TeleOp
+
 public class AprilTagsDetection{
 
     static AprilTagsPipeline pipeline;
@@ -126,4 +126,6 @@ class AprilTagException extends Exception{
     {
         super(message);
     }
+
+
 }
