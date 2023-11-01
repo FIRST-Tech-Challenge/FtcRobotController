@@ -70,7 +70,7 @@ public class SampleMecanumDrive extends MecanumDrive {
 
     private TrajectoryFollower follower;
 
-    private DcMotorEx motorFL, motorBL, motorBR, motorFR;
+    private DcMotorEx motorFL, motorBL, motorBR, FR;
     private List<DcMotorEx> motors;
 
     private BNO055IMU imu;
@@ -93,9 +93,9 @@ public class SampleMecanumDrive extends MecanumDrive {
         motorFL = hardwareMap.get(DcMotorEx.class, "motorFL");
         motorBL = hardwareMap.get(DcMotorEx.class, "motorBL");
         motorBR = hardwareMap.get(DcMotorEx.class, "motorBR");
-        motorFR = hardwareMap.get(DcMotorEx.class, "motorFR");
+        FR = hardwareMap.get(DcMotorEx.class, "FR");
 
-        motors = Arrays.asList(motorFL, motorBL, motorBR, motorFR);
+        motors = Arrays.asList(motorFL, motorBL, motorBR, FR);
 
         for (DcMotorEx motor : motors) {
             MotorConfigurationType motorConfigurationType = motor.getMotorType().clone();
@@ -115,7 +115,7 @@ public class SampleMecanumDrive extends MecanumDrive {
 
         motorFL.setDirection(DcMotor.Direction.REVERSE);
         motorBL.setDirection(DcMotor.Direction.REVERSE);
-        motorFR.setDirection(DcMotor.Direction.FORWARD);
+        FR.setDirection(DcMotor.Direction.FORWARD);
         motorBR.setDirection(DcMotor.Direction.FORWARD);
 
         // for instance, setLocalizer(new ThreeTrackingWheelLocalizer(...));
@@ -265,7 +265,7 @@ public class SampleMecanumDrive extends MecanumDrive {
         motorFL.setPower(powerFL);
         motorBL.setPower(powerBL);
         motorBR.setPower(powerBR);
-        motorFR.setPower(powerFR);
+        FR.setPower(powerFR);
     }
 
     @Override
