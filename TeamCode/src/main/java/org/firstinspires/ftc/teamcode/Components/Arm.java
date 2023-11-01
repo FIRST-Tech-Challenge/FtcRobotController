@@ -111,13 +111,13 @@ public class Arm extends RFServo {
     public void flipTo(ArmStates p_state) {
         if (!p_state.state) {
             if (!(Lift.LiftMovingStates.AT_ZERO.state || Lift.LiftPositionStates.AT_ZERO.state) && !Wrist.WristStates.FLAT.state) {
-                if (p_state == ArmStates.UNFLIPPED && !ArmStates.UNFLIPPED.state) {
+                if (p_state == ArmStates.UNFLIPPED&& super.getTarget()!=LOWER_LIMIT) {
                     super.setPosition(LOWER_LIMIT);
                     Wrist.WristTargetStates.FLIP.setStateTrue();
                     LOGGER.log(RFLogger.Severity.INFO, "flipping down");
                     ArmTargetStates.UNFLIPPED.setStateTrue();
                     lastTime = time;
-                } else if (p_state == ArmStates.FLIPPED && !ArmStates.FLIPPED.state) {
+                } else if (p_state == ArmStates.FLIPPED && super.getTarget()!=UPPER_LIMIT) {
                     super.setPosition(UPPER_LIMIT);
                     Wrist.WristTargetStates.FLIP.setStateTrue();
                     LOGGER.log(RFLogger.Severity.INFO, "flipping up");

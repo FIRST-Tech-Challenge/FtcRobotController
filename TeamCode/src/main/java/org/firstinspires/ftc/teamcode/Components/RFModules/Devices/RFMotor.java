@@ -101,18 +101,7 @@ public class RFMotor {
      * @param p_mintick   minimum allowed tick position of the motor
      */
     public RFMotor(String p_motorName, boolean p_resetPos, double p_maxtick, double p_mintick) {
-        rfMotor = (DcMotorEx) op.hardwareMap.dcMotor.get(p_motorName);
-        rfMotorName = p_motorName;
-        if (p_resetPos) {
-            rfMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        }
-        maxtickcount = p_maxtick;
-        mintickcount = p_mintick;
-
-        logger.createFile("/MotorLogs/RFMotor" + rfMotorName, "Runtime    Component               " +
-                "Function               Action");
-        rfMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-
+        this(p_motorName, DcMotorSimple.Direction.FORWARD, p_resetPos, p_maxtick, p_mintick);
     }
 
     /**
@@ -122,15 +111,7 @@ public class RFMotor {
      * @param p_resetPos  if true, motor encoder is reset to 0; if false, nothing happens
      */
     public RFMotor(String p_motorName, boolean p_resetPos) {
-        rfMotor = (DcMotorEx) op.hardwareMap.dcMotor.get(p_motorName);
-        rfMotorName = p_motorName;
-        if (p_resetPos) {
-            rfMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        }
-
-        logger.createFile("/MotorLogs/RFMotor" + p_motorName, "Runtime    Component               " +
-                "Function               Action");
-        rfMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        this(p_motorName, DcMotorSimple.Direction.FORWARD,p_resetPos, 1000,0);
     }
 
     /**

@@ -123,7 +123,6 @@ public class CVMaster {
     }
     public void stop(){
         webcam.stopStreaming();
-        webcam.closeCameraDevice();
         cam.stop();
     }
 

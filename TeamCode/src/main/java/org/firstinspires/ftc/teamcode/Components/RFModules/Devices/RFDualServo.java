@@ -53,14 +53,7 @@ public class RFDualServo implements Servo {
      * Does not update any state machines.
      */
     public RFDualServo(String p_dualServoName, String p_deviceName1, String p_deviceName2, double limit) {
-        dualServo1 = op.hardwareMap.servo.get(p_deviceName1);
-        dualServo2 = op.hardwareMap.servo.get(p_deviceName2);
-        servoLimit = limit;
-
-        rfDualServoName = p_dualServoName;
-
-        logger.createFile("/DualServoLogs/RFDualServo", "Runtime    Component               " +
-                "Function               Action");
+        this(p_dualServoName, FORWARD, p_deviceName1,p_deviceName2,limit);
     }
 
     /**

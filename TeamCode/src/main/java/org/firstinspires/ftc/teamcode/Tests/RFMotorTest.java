@@ -10,6 +10,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
+import org.firstinspires.ftc.teamcode.Components.RFModules.Devices.RFDualMotor;
 import org.firstinspires.ftc.teamcode.Components.RFModules.Devices.RFMotor;
 import org.firstinspires.ftc.teamcode.Robots.BasicRobot;
 
@@ -27,13 +28,21 @@ public abstract class RFMotorTest extends LinearOpMode {
     DcMotorSimple.Direction direction = DcMotorSimple.Direction.FORWARD;
     double kS = 0, kV = 0, kA = 0, maxUpVelo, maxDownVelo, maxAccel, maxDecel, resistance, kP, kD;
 
-    public void initialize(String p_name, int p_max, int p_min, DcMotorSimple.Direction p_direction) {
+    public void initialize(String p_name, int p_max, int p_min, DcMotorSimple.Direction p_direction){
+        initialize(p_name,"placehold", p_max, p_min, p_direction, false);
+    }
+
+    public void initialize(String p_name, String p_name2, int p_max, int p_min, DcMotorSimple.Direction p_direction, boolean dualMotor) {
         name = p_name;
         max = p_max;
         min = p_min;
         direction = p_direction;
         robot = new BasicRobot(this, false);
-        motor = new RFMotor(p_name, true);
+        if(dualMotor){
+            motor = new RFDualMotor(p_name, p_name2, true);
+    } else {
+      motor = new RFMotor(p_name, true);
+        }
         motor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         motor.setDirection(direction);
         motor.setConstants(p_max, p_min, resistance, kS, kV, kA, maxUpVelo, maxDownVelo, maxAccel, maxDecel, kP, kD);

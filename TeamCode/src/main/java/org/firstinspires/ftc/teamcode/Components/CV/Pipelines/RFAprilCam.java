@@ -160,7 +160,6 @@ public class RFAprilCam {
     }
     public void stop(){
         visionPortal.stopStreaming();
-        visionPortal.close();
     }
 
     /**
