@@ -38,13 +38,15 @@ public class Bot {
 
     public static org.firstinspires.ftc.teamcode.autonomous.AprilTagsDetection detections;
 
-    public Slides slides;
+   /* public Slides slides;
     public Noodles noodles;
     public Drone drone;
     public Fourbar fourbar;
     public Box box;
 
-    public static DistanceSensor distanceSensor;
+    */
+
+    //public static DistanceSensor distanceSensor;
 
     private final DcMotorEx FL, FR, BL, BR;
 
@@ -89,7 +91,7 @@ public class Bot {
         BL = opMode.hardwareMap.get(DcMotorEx.class, "BL");
         BR = opMode.hardwareMap.get(DcMotorEx.class, "BR");
 
-        distanceSensor = opMode.hardwareMap.get(DistanceSensor.class, "distanceSensor");
+        //distanceSensor = opMode.hardwareMap.get(DistanceSensor.class, "distanceSensor");
 
 
         FL.setMode(RUN_USING_ENCODER);
@@ -97,18 +99,23 @@ public class Bot {
         BL.setMode(RUN_USING_ENCODER);
         BR.setMode(RUN_USING_ENCODER);
 
+        FL.setDirection(DcMotorSimple.Direction.REVERSE);
+        BL.setDirection(DcMotorSimple.Direction.REVERSE);
 
+        /*
         slides = new Slides(opMode);
         noodles = new Noodles(opMode);
         drone= new Drone(opMode);
         fourbar = new Fourbar(opMode);
         box= new Box(opMode);
 
+         */
+
 
     }
 
 
-
+/*
     public void prepForOuttake() {
         currentState = BotState.STORAGE_FULL;
         resetOuttake();
@@ -150,6 +157,8 @@ public class Bot {
         fourbar.storage();
     }
 
+
+ */
 
     public void fixMotors(double velocity) {
         FL.setDirection(DcMotorEx.Direction.REVERSE); //invert
@@ -224,6 +233,7 @@ public class Bot {
             mod.setBulkCachingMode(LynxModule.BulkCachingMode.AUTO);
         }
     }
+    /*
 
     public void intake(double power){
         currentState = BotState.INTAKE;
@@ -270,6 +280,8 @@ public class Bot {
         //figure this out
 
     }
+
+     */
     public void turn(double power){
         if(power>0) {
             //turn right
@@ -334,6 +346,7 @@ public class Bot {
         BL.setPower(0.1);
     }
 
+    /*
     public void distanceTuning(DistanceSensor sensor){
         double diffy = this.distanceFromBackdrop - optimalDistanceFromBackdrop;
         boolean inRange = Math.abs(diffy) <= 5;
@@ -352,6 +365,8 @@ public class Bot {
             distanceTuning(sensor);
         }
     }
+
+     */
 
     public void aprilTagTuning(){
         AprilTagsDetection.detectTag();

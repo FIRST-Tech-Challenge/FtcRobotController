@@ -29,6 +29,7 @@ To Do:
 
 @Config
 @Autonomous(name = "MainAutonomous")
+
 public class MainAuto extends LinearOpMode{
 
     SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
@@ -49,7 +50,7 @@ public class MainAuto extends LinearOpMode{
     }
 
     private TeamProp teamPropLocation = TeamProp.NOTDETECTED;
-
+    //change based on what we're detecting
 
     Side side = Side.NULL;
     DistanceToBackdrop dtb= DistanceToBackdrop.NULL;
@@ -86,6 +87,7 @@ public class MainAuto extends LinearOpMode{
 
         //CAMERA STUFF =====================
 
+        /*
         WebcamName camName = hardwareMap.get(WebcamName.class, "Webcam 1");
         bot.camera = OpenCvCameraFactory.getInstance().createWebcam(camName);
         TeamPropDetectionPipeline teamPropDetectionPipeline = new TeamPropDetectionPipeline(telemetry);
@@ -105,6 +107,8 @@ public class MainAuto extends LinearOpMode{
 
             }
         });
+
+         */
 
 
 
@@ -384,7 +388,7 @@ public class MainAuto extends LinearOpMode{
 
     private void dropPurplePixel(){
 
-        if(teamPropLocation==TeamProp.ONLEFT){
+        /*if(teamPropLocation==TeamProp.ONLEFT){
             bot.turn(-0.25);
         }
         else if(teamPropLocation==TeamProp.ONRIGHT){
@@ -396,15 +400,24 @@ public class MainAuto extends LinearOpMode{
         bot.noodles.reverseIntake();
         //note: java code execution happens very fast, so having .reverseIntake()
         // immediately followed by .stop() in the same method will not be effective.
+
+         */
+
+        telemetry.addData("purple pixel is currently being dropped",".");
+        telemetry.update();
     }
 
     public void stopNoodles(){
-        bot.noodles.stop();
+       /* bot.noodles.stop();
+
+        */
+        telemetry.addData("noodles are stopped",".");
+        telemetry.update();
     }
 
 
     private void findTeamPropLocation(){
-        if(TeamPropDetectionPipeline.teamPropLocation== TeamProp.ONLEFT){
+        /*if(TeamPropDetectionPipeline.teamPropLocation== TeamProp.ONLEFT){
             teamPropLocation= TeamProp.ONLEFT;
         }
 
@@ -417,18 +430,23 @@ public class MainAuto extends LinearOpMode{
         else{
             teamPropLocation= TeamProp.NOTDETECTED;
         }
+
+         */
+        telemetry.addData("Team prop should be located here",".");
     }
 
     private void stageScore(){
         //score in stage area (lit just reversing intake)
-        bot.noodles.reverseIntake();
+        //bot.noodles.reverseIntake();
+        telemetry.addData("Scoring in stage area should occur right now",".");
+        telemetry.update();
     }
 
 
     private void senseAndScore(){
         //locates and moves to corresponding position on Backdrop based on april tags
         //switch to aprilTagsPipeline => looking for AprilTags
-        bot.camera.setPipeline(bot.aprilTagsPipeline);
+       /* bot.camera.setPipeline(bot.aprilTagsPipeline);
         int counter=0;
 
         //based on where team prop is, move to the corresponding position on the backdrop
@@ -463,9 +481,15 @@ public class MainAuto extends LinearOpMode{
         }catch(Exception e){
             e.printStackTrace();
         }
+
+        */
+        telemetry.addData("Sensing and scoring should occur right now", ".");
+        telemetry.update();
     }
 
     private void scoreNoSense(){
-        bot.outtake(true,1);
+        //bot.outtake(true,1);
+        telemetry.addData("Scoring with no sensing should occur right now",".");
+        telemetry.update();
     }
 }
