@@ -13,8 +13,12 @@ public class BaseTeleOp extends BaseOpMode {
         while (opModeIsActive()) {
             driveUsingControllers(true);
             outputUsingControllers();
-            runIntakeMechanism();
+            intakeUsingControllers();
         }
+    }
+
+    public void intakeUsingControllers() {
+        runIntakeMechanism(0.5);
     }
 
     public void driveUsingControllers() {

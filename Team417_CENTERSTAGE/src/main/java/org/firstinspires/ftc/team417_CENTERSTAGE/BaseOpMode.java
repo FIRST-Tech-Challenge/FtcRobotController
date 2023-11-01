@@ -20,12 +20,14 @@ abstract class BaseOpMode extends LinearOpMode {
     public DcMotor BL;
 
     public DcMotor intakeMotor;
-    public Servo outputMotor;
+    public DcMotor armMotor;
+    public Servo dumperServo;
+    public Servo gateServo;
 
     static final double TICKS_PER_REVOLUTION = 5281.1; // 5203 Series Yellow Jacket Motor
     static final double GEAR_RATIO = 1.0;
     static final double WHEEL_DIAMETER = 3.7; // inches
-    static final double TICKS_PER_INCH =  (TICKS_PER_REVOLUTION * GEAR_RATIO) / (WHEEL_DIAMETER * Math.PI);
+    static final double TICKS_PER_INCH = (TICKS_PER_REVOLUTION * GEAR_RATIO) / (WHEEL_DIAMETER * Math.PI);
     static final double INCHES_PER_REVOLUTION = Math.PI * WHEEL_DIAMETER;
     static final double INCHES_PER_TICK = INCHES_PER_REVOLUTION / TICKS_PER_REVOLUTION;
 
@@ -35,43 +37,30 @@ abstract class BaseOpMode extends LinearOpMode {
     //Initializes motors, servos, and sensors
     public void initializeHardware() {
         //Drive Motors
-        FL = hardwareMap.get(DcMotor.class, "FLMotor");
-        FR = hardwareMap.get(DcMotor.class, "FRMotor");
-        BL = hardwareMap.get(DcMotor.class, "BLMotor");
-        BR = hardwareMap.get(DcMotor.class, "BRMotor");
-
-        FL.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        FR.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        BL.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        BR.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-
-        FL.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        FR.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        BL.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        BR.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-
-        FL.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        FR.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        BL.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        BR.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-
-        FL.setDirection(DcMotor.Direction.FORWARD);
-        FR.setDirection(DcMotor.Direction.REVERSE);
-        BL.setDirection(DcMotor.Direction.FORWARD);
-        BR.setDirection(DcMotor.Direction.REVERSE);
+        FL = initializeMotor("FLMotor", DcMotor.Direction.FORWARD);
+        FR = initializeMotor("FRMotor", DcMotor.Direction.REVERSE);
+        BL = initializeMotor("BLMotor", DcMotor.Direction.FORWARD);
+        BR = initializeMotor("BRMotor", DcMotor.Direction.REVERSE);
 
         //Mechanism Motors
+        intakeMotor = initializeMotor("IntakeMotor");
+
         intakeMotor = hardwareMap.get(DcMotor.class, "IntakeMotor");
+        armMotor = hardwareMap.get(DcMotor.class, "ArmMotor");
 
         intakeMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        armMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
         intakeMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        armMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
+        intakeMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         intakeMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
         intakeMotor.setDirection(DcMotor.Direction.FORWARD);
 
-        outputMotor = hardwareMap.get(Servo.class, "OutputMotor");
+        dumperServo = hardwareMap.get(Servo.class, "DumperServo");
+        gateServo = hardwareMap.get(Servo.class, "GateServo");
 
         /*
         // Sets up the parameters with which we will use our IMU. Note that integration
@@ -95,6 +84,15 @@ abstract class BaseOpMode extends LinearOpMode {
         sleep(2000);
     }
 
+    public DcMotor initializeMotor(String motorName, DcMotor.Direction direction) {
+        DcMotor motor = hardwareMap.get(DcMotor.class, motorName);
+        motor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        motor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        motor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        motor.setDirection(direction);
+        return motor;
+    }
+
     public void mecanumDrive(double x, double y, double rot) {
         double denominator = Math.max(Math.abs(y) + Math.abs(x) + Math.abs(rot), 1);
 
@@ -109,12 +107,11 @@ abstract class BaseOpMode extends LinearOpMode {
         BR.setPower(backRightPower);
     }
 
-    public void runIntakeMechanism() {
-        double speed = 0.5;
+    public void runIntakeMechanism(double speed) {
         intakeMotor.setPower(speed);
     }
 
     public void moveOutputMechanism(double position) {
-        outputMotor.setPosition(position);
+        dumperServo.setPosition(position);
     }
 }
