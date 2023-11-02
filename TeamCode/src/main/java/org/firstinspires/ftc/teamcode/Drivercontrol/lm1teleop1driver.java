@@ -29,15 +29,10 @@
 
 package org.firstinspires.ftc.teamcode.Drivercontrol;
 
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.util.ElapsedTime;
-import com.qualcomm.robotcore.util.Range;
 
-import org.firstinspires.ftc.teamcode.subsystems.Base;
 import org.firstinspires.ftc.teamcode.subsystems.extension;
 
 
@@ -54,9 +49,9 @@ import org.firstinspires.ftc.teamcode.subsystems.extension;
  * Remove or comment out the @Disabled line to add this OpMode to the Driver Station OpMode list
  */
 
-@TeleOp(name="lm1drive", group="Linear OpMode")
+@TeleOp(name="lm1drive1driver", group="Linear OpMode")
 
-public class lm1teleop extends LinearOpMode {
+public class lm1teleop1driver extends LinearOpMode {
 
     // Declare OpMode members.
     private ElapsedTime runtime = new ElapsedTime();
@@ -88,18 +83,19 @@ public class lm1teleop extends LinearOpMode {
                 slowturn=false;
             }
             if(slowturn){rx=gamepad1.right_stick_x*0.5;} else{rx=gamepad1.right_stick_x;}
-            if(gamepad1.left_bumper){
+            if(gamepad1.y){
                 drive.run(gamepad1.left_stick_y,gamepad1.left_stick_x,rx,0.5,true);
             }else {
                 drive.run(gamepad1.left_stick_y, gamepad1.left_stick_x, rx, 1, true, gamepad1.back);
             }
             //need to add wrist when mechanical is done
-            if(gamepad2.dpad_up) extend.setPlaceHigh();
+            //if(gamepad1.dpad_up) extend.setPlaceHigh();
            // else if(gamepad2.dpad_left) extend.setPlaceMid();
            // else if(gamepad2.dpad_down) extend.setPlaceLow();
-            else if(gamepad2.b) extend.setStowPos();
-            else if(gamepad2.a) extend.setIntake();
-            else if(gamepad2.y) extend.setPlace();
+           // else
+            if(gamepad1.right_bumper) extend.setStowPos();
+            else if(gamepad1.left_trigger>=0.5) extend.setIntake();
+            else if(gamepad1.right_trigger>=0.5) extend.setPlace();
 
 
         }
