@@ -47,6 +47,13 @@ public class extension {
         }
         laststate=yes;
     }
+
+    public int getTilt(){
+        return tilt.getCurrentPosition();
+    }
+    public void release(){
+        tilt.setPower(0);
+    }
     //add wrist commands here probably
     //tune all values when stringed and intake is done
     //
