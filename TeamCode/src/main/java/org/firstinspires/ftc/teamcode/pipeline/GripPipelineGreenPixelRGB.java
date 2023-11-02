@@ -53,9 +53,9 @@ public class GripPipelineGreenPixelRGB  extends OpenCvPipeline {
 
 		// Step RGB_Threshold0:
 		Mat rgbThresholdInput = cvResizeOutput;
-		double[] rgbThresholdRed = {0.0, 92.54265104951307};
-		double[] rgbThresholdGreen = {99.37050942894366, 204.2320929777907};
-		double[] rgbThresholdBlue = {0.0, 195.528996405748};
+		double[] rgbThresholdRed = {0.0, 127.54265104951307};
+		double[] rgbThresholdGreen = {136.37050942894366, 255};
+		double[] rgbThresholdBlue = {0.0, 105.528996405748};
 		rgbThreshold(rgbThresholdInput, rgbThresholdRed, rgbThresholdGreen, rgbThresholdBlue, rgbThresholdOutput);
 
 		// Step CV_erode0:

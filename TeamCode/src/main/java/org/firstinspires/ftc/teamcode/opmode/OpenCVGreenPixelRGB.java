@@ -5,6 +5,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.teamcode.pipeline.GripPipelineGreenPixelRGB;
+import org.opencv.core.Point;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
@@ -25,6 +26,8 @@ public class OpenCVGreenPixelRGB extends OpMode {
         webcam = OpenCvCameraFactory.getInstance().createWebcam(webcamName, cameraMonitorViewId);
         pipeline = new GripPipelineGreenPixelRGB();
         webcam.setPipeline(pipeline);
+
+
         webcam.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener()
         {
             @Override
@@ -41,23 +44,23 @@ public class OpenCVGreenPixelRGB extends OpMode {
         });
 
     }
+    @Override
+    public void init_loop(){
+        Point avgLoc = pipeline.avgContourCoord();
+        telemetry.addData("AvgContour.x",avgLoc.x);
+        telemetry.addData("AvgContour.y",avgLoc.y);
+        telemetry.update();
+    }
 
     @Override
     public void loop() {
        // telemetry.addData("Image Analysis:",pipeline.getRectA_Analysis());
         //telemetry.addData("working?","");
+        Point avgLoc = pipeline.avgContourCoord();
+        telemetry.addData("AvgContour.x",avgLoc.x);
+        telemetry.addData("AvgContour.y",avgLoc.y);
+
         telemetry.update();
     }
-/*
-MatOfPoint mop = new MatOfPoint();
-mop.fromList(contour);
 
-Moments moments = Imgproc.moments(mop);
-
-Point centroid = new Point();
-
-centroid.x = moments.get_m10() / moments.get_m00();
-centroid.y = moments.get_m01() / moments.get_m00();
-
- */
 }
