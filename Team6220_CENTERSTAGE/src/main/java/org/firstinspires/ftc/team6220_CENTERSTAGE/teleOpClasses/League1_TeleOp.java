@@ -40,8 +40,17 @@ public class League1_TeleOp extends LinearOpMode {
         OUTTAKE_DROP_2
     }
 
+    IntakeStates curIntakeState = IntakeStates.INTAKE_INPUT;
+    enum IntakeStates {
+        INTAKE_INPUT,
+        INTAKE_OUTPUT
+    }
+
     // toggle for tilting outtake forward and back
     boolean outtakeTiltedForward = false;
+
+    // intakepower, like the ones below it but jankier because its written by gavin
+    double intakePower = 0.0;
 
     // drive powers, read from input and then manipulated every loop
     double drivePowerX = 0.0;
@@ -91,6 +100,7 @@ public class League1_TeleOp extends LinearOpMode {
             drivePowerX = gp1.getLeftX() * DRIVE_POWER_X_MULTIPLIER;
             drivePowerY = gp1.getLeftY() * DRIVE_POWER_Y_MULTIPLIER;
             turnPower = gp1.getRightX();
+            
 
             // get heading from imu in degrees
             currentHeading = drive.imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES);

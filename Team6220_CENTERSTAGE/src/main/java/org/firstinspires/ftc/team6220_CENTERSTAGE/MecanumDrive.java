@@ -95,7 +95,7 @@ public final class MecanumDrive {
     public final AccelConstraint defaultAccelConstraint =
             new ProfileAccelConstraint(PARAMS.minProfileAccel, PARAMS.maxProfileAccel);
 
-    public final DcMotorEx leftFront, leftBack, rightBack, rightFront;
+    public final DcMotorEx leftFront, leftBack, rightBack, rightFront, intakeMotor;
 
     public final VoltageSensor voltageSensor;
 
@@ -182,6 +182,7 @@ public final class MecanumDrive {
         leftBack = hardwareMap.get(DcMotorEx.class, "motBL");
         rightBack = hardwareMap.get(DcMotorEx.class, "motBR");
         rightFront = hardwareMap.get(DcMotorEx.class, "motFR");
+        intakeMotor = hardwareMap.get(DcMotorEx.class, "intakeMotor");
 
         // reverse fr and br motors so that it drives correctly
         rightFront.setDirection(DcMotorEx.Direction.REVERSE);
@@ -191,14 +192,14 @@ public final class MecanumDrive {
         leftBack.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         rightBack.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         rightFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        intakeMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
-        /* disabled for now, as of 10/29 the motor encoder cables are not working for FL and BR
+        // now has been enabled, encoders are goodge :D
         leftFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         leftBack.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         rightBack.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         rightFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        */
-
+        intakeMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         imu = hardwareMap.get(IMU.class, "imu");
         IMU.Parameters parameters = new IMU.Parameters(new RevHubOrientationOnRobot(
