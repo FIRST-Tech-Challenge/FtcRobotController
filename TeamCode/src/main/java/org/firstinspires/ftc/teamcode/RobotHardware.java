@@ -282,6 +282,11 @@ public class RobotHardware {
         elbowServo.setPosition(Range.clip(elbowDrive, ELBOW_MIN, ELBOW_MAX));
     }
 
+    public void moveElbowToPosition(double elbowDrive){
+
+        elbowServo.setPosition(Range.clip(elbowDrive, ELBOW_MIN, ELBOW_MAX));
+    }
+
     public void moveGrabber(boolean closeGrabber){
         if (closeGrabber && grabberDrive > GRABBER_MIN) grabberDrive -= .01;
 

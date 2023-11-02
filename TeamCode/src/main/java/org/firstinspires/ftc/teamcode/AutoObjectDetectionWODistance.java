@@ -95,6 +95,7 @@ public class AutoObjectDetectionWODistance extends LinearOpMode {
                     telemetry.addData("Stop the Robo", "");
                     StopRobo();
                     //move the arm and release gripper to place pixel
+                    robot.moveGrabber(false); //release grabber to drop pixel
                     telemetry.addData("Move Arm to drop the pixel", "");
                 }
                 // Push telemetry to the Driver Station.
@@ -234,7 +235,7 @@ public class AutoObjectDetectionWODistance extends LinearOpMode {
     private void StopRobo()
     {
 
-        robot.setDrivePower(0, 0);
+        robot.driveRobot(0, 0);
         telemetry.addData("Robo stopped", "");
        /*
             robot.driveRobot(0, FORWARD_SPEED);
