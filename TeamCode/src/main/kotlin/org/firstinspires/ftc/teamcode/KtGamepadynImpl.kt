@@ -45,7 +45,7 @@ class KtGamepadynImpl : OpMode() {
     override fun init() {
         gamepadyn = Gamepadyn(this, false, testActionDescription)
 
-        gamepadyn.p0().configuration = Configuration(
+        gamepadyn.p0.configuration = Configuration(
             TestActionBind(),
             TestActionBind(),
             TestActionBind()
@@ -55,10 +55,8 @@ class KtGamepadynImpl : OpMode() {
     override fun start() {
         super.start()
 
-
-
-        gamepadyn.p0().getEvent(TOGGLE_RELATIVITY)?.addListener {
-            if ((it as ActionDataDigital).digitalData) {
+        gamepadyn.p0.getEventDigital(TOGGLE_RELATIVITY)!!.addListener {
+            if (it.digitalData) {
                 useBotRelativity = !useBotRelativity
             }
         }

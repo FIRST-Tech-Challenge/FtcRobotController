@@ -78,17 +78,17 @@ class Gamepadyn<T: Enum<T>> @JvmOverloads constructor(
     internal lateinit var player1: Player<T>
 
     // TODO: multithread input (remove this line)
-    init { if (useInputThread) throw Error("Gamepadyn has no multithreading implementation yet!") }
+    init { if (useInputThread) throw Exception("Gamepadyn has no multithreading implementation yet!") }
 
     /**
      * Alias for Player 0
      */
-    fun p0(): Player<T> = player0 // getPlayer(0)!!
+    val p0: Player<T> = player0 // getPlayer(0)!!
 
     /**
      * Alias for Player 1
      */
-    fun p1(): Player<T> = player1// getPlayer(1)!!
+    val p1: Player<T> = player1// getPlayer(1)!!
 
     /**
      * Returns a reference to the player (virtual device controlled by one person) at the specified index, returning null if

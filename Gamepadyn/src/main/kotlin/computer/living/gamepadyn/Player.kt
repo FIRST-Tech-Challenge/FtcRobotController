@@ -2,6 +2,9 @@
 
 package computer.living.gamepadyn
 
+import computer.living.gamepadyn.InputType.ANALOG
+import computer.living.gamepadyn.InputType.DIGITAL
+
 sealed class Player<T: Enum<T>> private constructor(
     internal val parent: Gamepadyn<T>
 ) {
@@ -16,19 +19,35 @@ sealed class Player<T: Enum<T>> private constructor(
     internal var state: MutableMap<T, ActionData> = parent.actions.entries.associate {
         // these statements proves why Kotlin is a top-tier language. or maybe it just proves that my code is bad? idk
         when (it.value!!.type) {
-            InputType.ANALOG ->    (it.key to ActionDataAnalog())
-            InputType.DIGITAL ->   (it.key to ActionDataDigital())
+            ANALOG ->    (it.key to ActionDataAnalog())
+            DIGITAL ->   (it.key to ActionDataDigital())
         }
     }.toMutableMap()
 
-    private val events: Map<T, Event<out ActionData>> = parent.actions.entries.associate {
+    private val events: Map<T, ActionEvent<out ActionData>> = parent.actions.entries.associate {
         when (it.value!!.type) {
-            InputType.ANALOG ->    (it.key to Event<ActionDataAnalog>())
-            InputType.DIGITAL ->   (it.key to Event<ActionDataDigital>())
+            ANALOG ->    (it.key to ActionEvent<ActionDataAnalog>(ANALOG))
+            DIGITAL ->   (it.key to ActionEvent<ActionDataDigital>(DIGITAL))
         }
     }
 
-    var getEvent = { action: T -> events[action]}
+    // look up "elvis operator kotlin"
+    fun getEventAnalog(action: T): ActionEvent<ActionDataAnalog>? {
+        val ev = events[action] ?: return null
+        val shouldBe = ev.type
+        val actuallyIs = parent.actions[action]!!.type
+        if (shouldBe != actuallyIs) throw BadInputTypeException(shouldBe, actuallyIs)
+        @Suppress("UNCHECKED_CAST")
+        return ev as ActionEvent<ActionDataAnalog>
+    }
+    fun getEventDigital(action: T): ActionEvent<ActionDataDigital>? {
+        val ev = events[action] ?: return null
+        val shouldBe = ev.type
+        val actuallyIs = parent.actions[action]!!.type
+        if (shouldBe != actuallyIs) throw BadInputTypeException(shouldBe, actuallyIs)
+        @Suppress("UNCHECKED_CAST")
+        return ev as ActionEvent<ActionDataDigital>
+    }
 
     /**
      * The player's configuration.
