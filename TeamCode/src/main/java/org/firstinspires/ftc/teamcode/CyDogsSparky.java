@@ -52,9 +52,9 @@ public class CyDogsSparky extends CyDogsChassis{
         myOpMode = currentOp;
     }
 
-    public void initializeSpikeCam(){
+    public void initializeSpikeCam(SpikeCam.TargetColor targetColor){
         spikeCam = new SpikeCam();
-        spikeCam.initialize(myOpMode);
+        spikeCam.initialize(myOpMode, targetColor);
     }
 
     public void initializeDevices() {

@@ -16,7 +16,7 @@ public class AutonBlueRight extends LinearOpMode {
         CyDogsChassis.Direction drivePath = CyDogsChassis.Direction.CENTER;
 
         CyDogsSparky mySparky = new CyDogsSparky(this);
-        mySparky.initializeSpikeCam();
+        mySparky.initializeSpikeCam(SpikeCam.TargetColor.BLUE);
         mySparky.initializeDevices();
         mySparky.initializePositions();
 
@@ -34,7 +34,7 @@ public class AutonBlueRight extends LinearOpMode {
 
         if(opModeIsActive()){
             mySparky.MoveStraight(-635,.5,500);
-            mySparky.Rotate(-90,.5,500);
+            mySparky.RotateLeft(90,.5,500);
             mySparky.dropPurplePixel();
             mySparky.returnLiftForDriving();
             mySparky.MoveStraight(200,.5,500);

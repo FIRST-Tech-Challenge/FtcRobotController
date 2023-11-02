@@ -18,7 +18,7 @@ public class AutonRedLeft extends LinearOpMode {
         CyDogsChassis.Direction drivePath = CyDogsChassis.Direction.CENTER;
 
         CyDogsSparky mySparky = new CyDogsSparky(this);
-        mySparky.initializeSpikeCam();
+        mySparky.initializeSpikeCam(SpikeCam.TargetColor.RED);
         mySparky.initializeDevices();
         mySparky.initializePositions();
 

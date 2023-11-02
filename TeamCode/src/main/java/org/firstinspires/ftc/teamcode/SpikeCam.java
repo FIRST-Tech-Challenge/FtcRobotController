@@ -17,6 +17,9 @@ import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
 import org.openftc.easyopencv.OpenCvPipeline;
+
+import java.lang.annotation.Target;
+
 public class SpikeCam {
     OpenCvCamera webcam1 = null;
     public enum location{
@@ -25,12 +28,19 @@ public class SpikeCam {
         RIGHT,
         NOT_FOUND
     }
+
+    public enum TargetColor{
+        BLUE,RED
+    }
+
+    private TargetColor myColor;
     location spikeLocation = location.NOT_FOUND;
     private LinearOpMode myOpMode;
 
-    public void initialize(LinearOpMode currentOp) {
+    public void initialize(LinearOpMode currentOp, TargetColor targetColor) {
         myOpMode = currentOp;
         HardwareMap hardwareMap = myOpMode.hardwareMap;
+        myColor = targetColor;
 
         WebcamName webcamName = hardwareMap.get(WebcamName.class, "Webcam 1");
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
@@ -66,15 +76,16 @@ public class SpikeCam {
         public Mat processFrame(Mat input){
             Imgproc.cvtColor(input, mat, Imgproc.COLOR_RGB2HSV);
 
-            //Red
             Scalar lowHSV = new Scalar(150, 50, 70);
             Scalar highHSV = new Scalar(179, 255, 255);
 
-            /*Blue
-            Scalar lowHSV = new Scalar(105, 50, 70);
-            Scalar highHSV = new Scalar(135, 255, 255);
-             */
-
+            if(myColor == TargetColor.RED) {
+                lowHSV = new Scalar(150, 50, 70);
+                highHSV = new Scalar(179, 255, 255);
+            } else {
+                lowHSV = new Scalar(105, 50, 70);
+                highHSV = new Scalar(135, 255, 255);
+            }
             Core.inRange(mat, lowHSV, highHSV, mat);
 
             Rect leftRect = new Rect(1, 260, 159, 219);
