@@ -33,6 +33,9 @@ public class CyDogsSparky extends CyDogsChassis{
     public static final int BackUpDistanceFromSpike = 20;
     public static final int DistanceBetweenScoreBoardAprilTags = 50;
 
+    public static final int StandardAutonWaitTime = 500;
+
+
     public Servo Wrist;
     public DcMotor ArmLift;
     public Servo DroneReleaseServo;
@@ -157,7 +160,7 @@ public class CyDogsSparky extends CyDogsChassis{
     public void dropPurplePixel(){
         Intake1.setPower(-0.2);
         Intake2.setPower(-0.2);
-        this.MoveStraight(BackUpDistanceFromSpike,0.5,500);
+        this.MoveStraight(BackUpDistanceFromSpike,0.5,StandardAutonWaitTime);
         Intake1.setPower(0);
         Intake2.setPower(0);
     }
@@ -287,13 +290,13 @@ public class CyDogsSparky extends CyDogsChassis{
 
     public void AutonPlacePurplePixel(SpikeCam.location mySpike){
         if(mySpike== SpikeCam.location.LEFT){
-            RotateRight(90,.5,500);
+            RotateRight(90,.5,StandardAutonWaitTime);
             dropPurplePixel();
             returnLiftForDriving();
         } else if (mySpike==SpikeCam.location.MIDDLE) {
-            MoveStraight(50,.5,500);
+            MoveStraight(50,.5,StandardAutonWaitTime);
         } else {
-            RotateLeft(90,.5,500);
+            RotateLeft(90,.5,StandardAutonWaitTime);
             dropPurplePixel();
             returnLiftForDriving();
         }
@@ -312,23 +315,23 @@ public class CyDogsSparky extends CyDogsChassis{
             //We're 'BackUpDistanceFromSpike' closer to scoreboard
             adjustVerticalDistance = -BackUpDistanceFromSpike;
         } else if (mySpike==SpikeCam.location.MIDDLE) {
-            RotateLeft(90,.5,500);
+            RotateLeft(90,.5,StandardAutonWaitTime);
             // We're 50mm further away from start position
             adjustHorizontalDistance = -50;
         } else {
-            RotateRight(180,.5,500);
+            RotateRight(180,.5,StandardAutonWaitTime);
             // We're 'BackUpDistanceFromSpike' further from scoreboard
             adjustVerticalDistance = -BackUpDistanceFromSpike;
         }
-        MoveStraight(adjustVerticalDistance,.5,500);
+        MoveStraight(adjustVerticalDistance,.5,StandardAutonWaitTime);
 
         // we want to go left by default
         if(myPath==Direction.RIGHT) {
-            StrafeRight(OneTileMM+adjustHorizontalDistance,.5,500);
+            StrafeRight(OneTileMM+adjustHorizontalDistance,.5,StandardAutonWaitTime);
         } else if (myPath==Direction.CENTER) {
             // Should be aligned in the center already
         } else {
-            StrafeLeft(OneTileMM-adjustHorizontalDistance,.5,500);
+            StrafeLeft(OneTileMM-adjustHorizontalDistance,.5,StandardAutonWaitTime);
         }
     }
 
@@ -344,25 +347,25 @@ public class CyDogsSparky extends CyDogsChassis{
             //We're 'BackUpDistanceFromSpike' closer to scoreboard
             adjustVerticalDistance = -BackUpDistanceFromSpike;
         } else if (mySpike == SpikeCam.location.MIDDLE) {
-            RotateLeft(90, .5, 500);
+            RotateLeft(90, .5, StandardAutonWaitTime);
             // We're 50mm further away from start position
             adjustHorizontalDistance = -50;
         } else {
-            RotateRight(180, .5, 500);
+            RotateRight(180, .5, StandardAutonWaitTime);
             // We're 'BackUpDistanceFromSpike' further from scoreboard
             adjustVerticalDistance = -BackUpDistanceFromSpike;
         }
 
-        StrafeRight(adjustHorizontalDistance,.5,500);
-        MoveStraight(adjustVerticalDistance,.5,500);
+        StrafeRight(adjustHorizontalDistance,.5,StandardAutonWaitTime);
+        MoveStraight(adjustVerticalDistance,.5,StandardAutonWaitTime);
     }
     public void AutonCenterOnScoreboardBasedOnPath(Direction myPath) {
         if(myPath==Direction.LEFT) {
-            StrafeRight(OneTileMM,.5,500);
+            StrafeRight(OneTileMM,.5,StandardAutonWaitTime);
         } else if (myPath==Direction.CENTER) {
             // Should be aligned in the center already
         } else {
-            StrafeLeft(OneTileMM,.5,500);
+            StrafeLeft(OneTileMM,.5,StandardAutonWaitTime);
         }
     }
 
@@ -382,11 +385,11 @@ public class CyDogsSparky extends CyDogsChassis{
         }
 
         if(myParkingSpot==Direction.LEFT){
-            StrafeLeft(OneTileMM+leftAdjustment,.5,500);
+            StrafeLeft(OneTileMM+leftAdjustment,.5,StandardAutonWaitTime);
         } else if (myParkingSpot==Direction.CENTER) {
             // really shouldn't park in center, but if so, I guess we're here
         } else {
-            StrafeRight(OneTileMM+rightAdjustment,.5,500);
+            StrafeRight(OneTileMM+rightAdjustment,.5,StandardAutonWaitTime);
         }
     }
 }

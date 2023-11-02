@@ -36,10 +36,10 @@ public class AutonRedRight extends LinearOpMode {
 
 
         if(opModeIsActive()){
-            mySparky.MoveStraight(-745,.5,500);
+            mySparky.MoveStraight(-745,.5,CyDogsSparky.StandardAutonWaitTime);
             mySparky.AutonPlacePurplePixel(mySpikeLocation);
             mySparky.AutonShortSideCenterOnScoreBoard(mySpikeLocation);
-            mySparky.MoveStraight(200,.5,500);
+            mySparky.MoveStraight(200,.5,CyDogsSparky.StandardAutonWaitTime);
             mySparky.AutonCenterOnScoreboardBasedOnPath(drivePath);
             mySparky.scoreFromDrivingPositionAndReturn(CyDogsSparky.ArmLow);
             mySparky.AutonParkInCorrectSpot(mySpikeLocation, parkingSpot);
