@@ -997,50 +997,54 @@ public class Robot {
     public void longRedMoveToBoard() {
         Log.d("vision", "moveToMarker: Pos " + markerPos);
         Log.d("vision", "moveToMarker: Tag " + wantedAprTagId);
-        if (markerPos == MarkerDetector.MARKER_POSITION.RIGHT) {
-            straightBlocking(19, false, 0.5);
-            setHeading(-45, 0.25);
-            straightBlocking(6, false, 0.7);
-            setHeading(-45, 0.25);
-            straightBlocking(12, true, 0.7);
-            setHeading(0, 0.7);
-            straightBlocking(33, false, 0.7);
-            setHeading(-90, 0.7);
-            straightBlocking(72, false, 0.7);
-            setHeading(180, 0.75);
-            straightBlocking(30, false, 0.7);
-            setHeading(-90, 0.7);
-        } else if (markerPos == MarkerDetector.MARKER_POSITION.LEFT) {
-            straightBlocking(19, false, 0.5);
-            setHeading(45, 0.25);
-            straightBlocking(5, false, 0.7);
-            setHeading(45, 0.25);
-            straightBlocking(6, true, 0.7);
-            setHeading(0, 0.7);
-            straightBlocking(33, false, 0.7);
-            setHeading(-90, 0.7);
-            straightBlocking(72, false, 0.7);
-            setHeading(-179.5, 0.75);
-            straightBlocking(24, false, 0.7);
-            setHeading(-90, 0.7);
-        } else { //center, default
-            Log.d("vision", "moveToMarker: center or default");
-            straightBlocking(20, false, 0.5);
-            setHeading(0, 0.7);
-            mecanumBlocking(4, true, 0.25);
-            setHeading(0, 0.7);
-            straightBlocking(12, false, 0.5);
-            setHeading(0, 0.7);
-            straightBlocking(5, true, 0.7);
-            setHeading(0, 0.7);
-            mecanumBlocking(8, true, 0.25);
-            setHeading(0, 0.7);
-            straightBlocking(25, false, 0.7);
-            setHeading(-90, 0.25);
-            straightBlocking(84, false, 0.7);
-            setHeading(-179.5, 0.75);
-            straightBlocking(24, false, 0.7);
-            setHeading(-90, 0.7);
+        while (opMode.opModeIsActive()) {
+            if (markerPos == MarkerDetector.MARKER_POSITION.RIGHT) {
+                straightBlocking(19, false, 0.5);
+                setHeading(-45, 0.25);
+                straightBlocking(6, false, 0.7);
+                setHeading(-45, 0.25);
+                straightBlocking(12, true, 0.7);
+                setHeading(0, 0.7);
+                straightBlocking(39, false, 0.7);
+                setHeading(-90, 0.7);
+                straightBlocking(77, false, 0.7);
+                setHeading(-90, 0.75);
+                mecanumBlocking(38, false, 0.7);
+                setHeading(-90, 0.7);
+                break;
+            } else if (markerPos == MarkerDetector.MARKER_POSITION.LEFT) {
+                straightBlocking(19, false, 0.5);
+                setHeading(45, 0.25);
+                straightBlocking(5, false, 0.7);
+                setHeading(45, 0.25);
+                straightBlocking(6, true, 0.7);
+                setHeading(0, 0.7);
+                straightBlocking(33, false, 0.7);
+                setHeading(-90, 0.7);
+                straightBlocking(72, false, 0.7);
+                setHeading(-179.5, 0.75);
+                straightBlocking(24, false, 0.7);
+                setHeading(-90, 0.7);
+                break;
+            } else { //center, default
+                Log.d("vision", "moveToMarker: center or default");
+                straightBlocking(20, false, 0.5);
+                setHeading(0, 0.7);
+                mecanumBlocking(8, true, 0.5);
+                setHeading(0, 0.7);
+                straightBlocking(12, false, 0.5);
+                setHeading(0, 0.7);
+                straightBlocking(5, true, 0.7);
+                setHeading(0, 0.7);
+                mecanumBlocking(8, true, 0.25);
+                setHeading(0, 0.7);
+                straightBlocking(25, false, 0.7);
+                setHeading(-90, 0.7);
+                straightBlocking(84, false, 0.7);
+                mecanumBlocking(24, false,  0.5);
+                setHeading(-90, 0.7);
+                break;
+            }
         }
     }
 
@@ -1091,7 +1095,7 @@ public class Robot {
         List<AprilTagDetection> myAprilTagDetections;
         double distanceToBoard = 0;
 
-        while (opMode.opModeIsActive() && !aligned) {
+        while (opMode.opModeIsActive() && !aligned) { //while robot isnt aligned to tag
 
             //get detections
             myAprilTagDetections = aprilTagProcessor.getDetections();
@@ -1099,37 +1103,49 @@ public class Robot {
             //process detection list
             for (AprilTagDetection detection : myAprilTagDetections) {
 
-                if (detection.metadata != null) {
+                if (detection.metadata != null) { //if there's an apriltag
 
-                    if (detection.id == wantedAprTagId) {
+                    if (detection.id == wantedAprTagId) { //check if its desired
                         Log.d("vision", "runOpMode: tag visible - this one " + wantedAprTagId);
-                        tagVisible = true;
+                        tagVisible = true; //if it is, the desired tag is visible
 
+                        //alignment based on bearing
                         if (detection.ftcPose.bearing > 1) {
                             Log.d("vision", "runOpMode: bearing > 1, move left");
                             mecanumBlocking(1, true, 0.75);
+                            sleep(100);
+                            tagVisible = false;
+                            aligned = false;
                         } else if (detection.ftcPose.bearing < -1) {
                             Log.d("vision", "runOpMode: bearing < -1, move right");
                             mecanumBlocking(1, false, 0.75);
+                            sleep(100);
+                            tagVisible = false;
+                            aligned = false;
                         } else {
                             Log.d("vision", "runOpMode: aligned");
                             distanceToBoard = detection.ftcPose.range - 5;
+                            tagVisible = true;
                             aligned = true;
                         }
-                        sleep(100);
                     }
                 }
 
-                if (!tagVisible) {
+                if (!tagVisible) { //if tag isnt visible
                     Log.d("vision", "runOpMode: tag not visible, move back");
-                    straightBlocking(1, true, 0.6);
+                    straightBlocking(1, true, 0.6); //V IMP: should NOT go back into partner's space
+                    tagVisible = false;
+                    aligned = false;
                 }
             }
         }
 
         Log.d("vision", "alignToBoard: broken out of !aligned while loop");
         if (aligned) {
+            Log.d("vision", "alignToBoard: aligned is true");
             straightBlocking(distanceToBoard, false, 0.75);
+        } else {
+            Log.d("vision", "alignToBoard: not aligned, still broke out of !aligned. should not be happening");
         }
     }
 }

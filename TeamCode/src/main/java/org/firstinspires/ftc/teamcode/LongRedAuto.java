@@ -77,12 +77,10 @@ public class LongRedAuto extends LinearOpMode {
 
 
             //enable THIS to test longredauto
-            /*
             robot.detectMarkerPosition();
             robot.longRedMoveToBoard();
-            robot.alignToBoard();
-            robot.setHeading(-90, 0.75);
-            */
+            //robot.alignToBoard();
+            //robot.setHeading(-90, 0.75);
 
             break;
         }
