@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode;
 
+import com.acmerobotics.dashboard.message.redux.ReceiveOpModeList;
+import com.qualcomm.hardware.ams.AMSColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -16,6 +18,7 @@ public class CyDogsChassis {
     private LinearOpMode myOpMode;
     public enum Direction {LEFT, CENTER, RIGHT}
 
+    public static final int OneTileMM = 457;
 
     public CyDogsChassis(LinearOpMode currentOp){
         // INITIALIZATION BLOCKS:
@@ -54,10 +57,14 @@ public class CyDogsChassis {
 
     }
 
+
+    public void StrafeLeft(int mmToTarget, double VelocityPercentage, int WaitTime){
+        StrafeRight(-mmToTarget, VelocityPercentage, WaitTime);
+    }
     /**
      * Strafe right(+) or left(-) until reaching Position
      */
-    public void Strafe(int mmToTarget, double VelocityPercentage, int WaitTime) {
+    public void StrafeRight(int mmToTarget, double VelocityPercentage, int WaitTime) {
         double TicksToTarget;
         double TicksPerSecond;
 
@@ -102,10 +109,10 @@ public class CyDogsChassis {
         myOpMode.sleep(WaitTime);
     }
 
-    /**
-     * Rotate right(+) or left(-) until reaching Position
-     */
-    public void Rotate(int degree, double VelocityPercentage, int WaitTime) {
+    public void RotateLeft(int degree, double VelocityPercentage, int WaitTime){
+        RotateRight(-degree, VelocityPercentage, WaitTime);
+    }
+    public void RotateRight(int degree, double VelocityPercentage, int WaitTime) {
         int mmToTarget;
         double TicksToTarget;
         double TicksPerSecond;

@@ -7,7 +7,9 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 @Autonomous
 public class AutonRedRight extends LinearOpMode {
-// This is a SHORT side Auton
+    SpikeCam.location mySpikeLocation;
+
+    // This is a SHORT side Auton
     @Override
     public void runOpMode() {
 
@@ -22,6 +24,7 @@ public class AutonRedRight extends LinearOpMode {
 
         parkingSpot = mySparky.askParkingSpot();
         drivePath = mySparky.askDrivePath();
+        mySpikeLocation = mySparky.spikeCam.getSpikeLocation();
 
         telemetry.addData("SpikeValue", mySparky.spikeCam.spikeLocation);
         telemetry.addData("ParkingSpot", parkingSpot.toString());
@@ -33,16 +36,16 @@ public class AutonRedRight extends LinearOpMode {
 
 
         if(opModeIsActive()){
-            mySparky.MoveStraight(-635,.5,500);
-            mySparky.Rotate(-90,.5,500);
-            mySparky.dropPurplePixel();
-            mySparky.returnLiftForDriving();
+            mySparky.MoveStraight(-745,.5,500);
+            mySparky.AutonPlacePurplePixel(mySpikeLocation);
+            mySparky.AutonShortSideCenterOnScoreBoard(mySpikeLocation);
             mySparky.MoveStraight(200,.5,500);
+            mySparky.AutonCenterOnScoreboardBasedOnPath(drivePath);
             mySparky.scoreFromDrivingPositionAndReturn(CyDogsSparky.ArmLow);
-
+            mySparky.AutonParkInCorrectSpot(mySpikeLocation, parkingSpot);
         }
         sleep(5000);
     }
-    }
+}
 
 

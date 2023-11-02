@@ -30,6 +30,9 @@ public class CyDogsSparky extends CyDogsChassis{
     public static final double CaptainReachHeight = 4000;
     public static final double CaptainPullHeight = 2000;
 
+    public static final int BackUpDistanceFromSpike = 20;
+    public static final int DistanceBetweenScoreBoardAprilTags = 50;
+
     public Servo Wrist;
     public DcMotor ArmLift;
     public Servo DroneReleaseServo;
@@ -152,9 +155,9 @@ public class CyDogsSparky extends CyDogsChassis{
         returnLiftForDriving();
     }
     public void dropPurplePixel(){
-        Intake1.setPower(-0.1);
-        Intake2.setPower(-0.1);
-        this.MoveStraight(20,0.5,500);
+        Intake1.setPower(-0.2);
+        Intake2.setPower(-0.2);
+        this.MoveStraight(BackUpDistanceFromSpike,0.5,500);
         Intake1.setPower(0);
         Intake2.setPower(0);
     }
@@ -268,7 +271,7 @@ public class CyDogsSparky extends CyDogsChassis{
                     myOpMode.telemetry.update();
                     myOpMode.sleep(1000);
                 } else {
-                    myOpMode.telemetry.addLine("Driving under nopt selected.");
+                    myOpMode.telemetry.addLine("Driving under not selected.");
                     myOpMode.telemetry.update();
                 }
                 if (drivePath != null) {
@@ -280,5 +283,110 @@ public class CyDogsSparky extends CyDogsChassis{
         }
         return drivePath;
 
+    }
+
+    public void AutonPlacePurplePixel(SpikeCam.location mySpike){
+        if(mySpike== SpikeCam.location.LEFT){
+            RotateRight(90,.5,500);
+            dropPurplePixel();
+            returnLiftForDriving();
+        } else if (mySpike==SpikeCam.location.MIDDLE) {
+            MoveStraight(50,.5,500);
+        } else {
+            RotateLeft(90,.5,500);
+            dropPurplePixel();
+            returnLiftForDriving();
+        }
+    }
+
+    public void AutonPrepareToTravelThroughCenter(SpikeCam.location mySpike, CyDogsChassis.Direction myPath) {
+        // this complex function determines where it is based on spike location and sets it up
+        //   in front of the right path through center
+        int adjustHorizontalDistance = 0;
+        int adjustVerticalDistance = 0;
+
+        // First, let's get ourselves straight facing scoring area
+        //   Then, adjust position.  Remember dropping purple pixel moved us back from spike 20mm
+        if(mySpike== SpikeCam.location.LEFT){
+            //Already facing the correct way
+            //We're 'BackUpDistanceFromSpike' closer to scoreboard
+            adjustVerticalDistance = -BackUpDistanceFromSpike;
+        } else if (mySpike==SpikeCam.location.MIDDLE) {
+            RotateLeft(90,.5,500);
+            // We're 50mm further away from start position
+            adjustHorizontalDistance = -50;
+        } else {
+            RotateRight(180,.5,500);
+            // We're 'BackUpDistanceFromSpike' further from scoreboard
+            adjustVerticalDistance = -BackUpDistanceFromSpike;
+        }
+        MoveStraight(adjustVerticalDistance,.5,500);
+
+        // we want to go left by default
+        if(myPath==Direction.RIGHT) {
+            StrafeRight(OneTileMM+adjustHorizontalDistance,.5,500);
+        } else if (myPath==Direction.CENTER) {
+            // Should be aligned in the center already
+        } else {
+            StrafeLeft(OneTileMM-adjustHorizontalDistance,.5,500);
+        }
+    }
+
+    public void AutonShortSideCenterOnScoreBoard(SpikeCam.location mySpike) {
+        // this centers us on the scoreboard on the short side auton
+        int adjustHorizontalDistance = 0;
+        int adjustVerticalDistance = 0;
+
+        // First, let's get ourselves straight facing scoring area
+        //   Then, adjust position.  Remember dropping purple pixel moved us back from spike 20mm
+        if (mySpike == SpikeCam.location.LEFT) {
+            //Already facing the correct way
+            //We're 'BackUpDistanceFromSpike' closer to scoreboard
+            adjustVerticalDistance = -BackUpDistanceFromSpike;
+        } else if (mySpike == SpikeCam.location.MIDDLE) {
+            RotateLeft(90, .5, 500);
+            // We're 50mm further away from start position
+            adjustHorizontalDistance = -50;
+        } else {
+            RotateRight(180, .5, 500);
+            // We're 'BackUpDistanceFromSpike' further from scoreboard
+            adjustVerticalDistance = -BackUpDistanceFromSpike;
+        }
+
+        StrafeRight(adjustHorizontalDistance,.5,500);
+        MoveStraight(adjustVerticalDistance,.5,500);
+    }
+    public void AutonCenterOnScoreboardBasedOnPath(Direction myPath) {
+        if(myPath==Direction.LEFT) {
+            StrafeRight(OneTileMM,.5,500);
+        } else if (myPath==Direction.CENTER) {
+            // Should be aligned in the center already
+        } else {
+            StrafeLeft(OneTileMM,.5,500);
+        }
+    }
+
+    public void AutonParkInCorrectSpot(SpikeCam.location mySpike, Direction myParkingSpot){
+        int leftAdjustment = 0;
+        int rightAdjustment = 0;
+
+        // need to adjust distance based on which april tag we're in front of
+        if(mySpike==SpikeCam.location.LEFT) {
+            leftAdjustment = -DistanceBetweenScoreBoardAprilTags;
+            rightAdjustment = DistanceBetweenScoreBoardAprilTags;
+        } else if (mySpike==SpikeCam.location.MIDDLE) {
+            // no adjustments needed
+        } else {
+            leftAdjustment = DistanceBetweenScoreBoardAprilTags;
+            rightAdjustment = -DistanceBetweenScoreBoardAprilTags;
+        }
+
+        if(myParkingSpot==Direction.LEFT){
+            StrafeLeft(OneTileMM+leftAdjustment,.5,500);
+        } else if (myParkingSpot==Direction.CENTER) {
+            // really shouldn't park in center, but if so, I guess we're here
+        } else {
+            StrafeRight(OneTileMM+rightAdjustment,.5,500);
+        }
     }
 }

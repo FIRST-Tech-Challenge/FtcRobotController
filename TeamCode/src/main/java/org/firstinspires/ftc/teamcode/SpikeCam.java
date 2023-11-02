@@ -53,6 +53,10 @@ public class SpikeCam {
 
     }
 
+    public location getSpikeLocation() {
+        return spikeLocation;
+    }
+
     class spikePipeline extends OpenCvPipeline {
 
         Mat mat = new Mat();

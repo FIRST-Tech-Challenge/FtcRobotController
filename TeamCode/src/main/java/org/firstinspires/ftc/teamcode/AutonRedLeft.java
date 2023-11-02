@@ -7,6 +7,8 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 @Autonomous
 public class AutonRedLeft extends LinearOpMode {
+    SpikeCam.location mySpikeLocation;
+
 // This is a LONG side Auton
     @Override
     public void runOpMode() {
@@ -22,6 +24,7 @@ public class AutonRedLeft extends LinearOpMode {
 
         parkingSpot = mySparky.askParkingSpot();
         drivePath = mySparky.askDrivePath();
+        mySpikeLocation = mySparky.spikeCam.getSpikeLocation();
 
         telemetry.addData("SpikeValue", mySparky.spikeCam.spikeLocation);
         telemetry.addData("ParkingSpot", parkingSpot.toString());
@@ -34,18 +37,15 @@ public class AutonRedLeft extends LinearOpMode {
 
         if(opModeIsActive()){
             mySparky.MoveStraight(-745,.5,500);
-            mySparky.Rotate(-90,.5,500);
-            mySparky.dropPurplePixel();
-            mySparky.returnLiftForDriving();
-            mySparky.Strafe(-690,.5,500);
+            mySparky.AutonPlacePurplePixel(mySpikeLocation);
+            mySparky.AutonPrepareToTravelThroughCenter(mySpikeLocation, drivePath);
             mySparky.MoveStraight(1940,.5,500);
-            mySparky.Strafe(525,.5,500);
-            mySparky.MoveStraight(260,.5,500);
+            mySparky.AutonCenterOnScoreboardBasedOnPath(drivePath);
             mySparky.scoreFromDrivingPositionAndReturn(CyDogsSparky.ArmLow);
-            mySparky.Strafe(-565,.5,500);
+            mySparky.AutonParkInCorrectSpot(mySpikeLocation, parkingSpot);
         }
         sleep(5000);
     }
-    }
+}
 
 
