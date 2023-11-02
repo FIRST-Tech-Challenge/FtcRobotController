@@ -42,9 +42,9 @@ import org.firstinspires.ftc.teamcode.Common.ServoFunctions;
 //@Disabled
 public class WireFireTeleOp extends LinearOpMode {
     private final double DESIRED_DISTANCE_TO_APRIL_TAG_INCHES = 12.0;
-    private final double SPEED_GAIN  =  0.06  ;   //  Forward Speed Control "Gain". eg: Ramp up to 50% power at a 25 inch error.   (0.50 / 25.0)
-    private final double STRAFE_GAIN =  0.08 ;   //  Strafe Speed Control "Gain".  eg: Ramp up to 25% power at a 25 degree Yaw error.   (0.25 / 25.0)
-    private final double TURN_GAIN   =  0.035  ;   //  Turn Control "Gain".  eg: Ramp up to 25% power at a 25 degree error. (0.25 / 25.0)
+    private final double SPEED_GAIN  =  0.045  ;   //  Forward Speed Control "Gain". eg: Ramp up to 50% power at a 25 inch error.   (0.50 / 25.0)
+    private final double STRAFE_GAIN =  0.025 ;   //  Strafe Speed Control "Gain".  eg: Ramp up to 25% power at a 25 degree Yaw error.   (0.25 / 25.0)
+    private final double TURN_GAIN   =  0.025  ;   //  Turn Control "Gain".  eg: Ramp up to 25% power at a 25 degree error. (0.25 / 25.0)
     private final ElapsedTime runtime = new ElapsedTime();
     private DrivingFunctions df = null;
     private ServoFunctions sf = null;
@@ -136,12 +136,12 @@ public class WireFireTeleOp extends LinearOpMode {
                 if (currentGamepad1.right_trigger > 0.5) {
                     y      = SPEED_GAIN * (aprilTagsFunctions.detectedTag.ftcPose.range - DESIRED_DISTANCE_TO_APRIL_TAG_INCHES);
                     yaw    = -TURN_GAIN * aprilTagsFunctions.detectedTag.ftcPose.bearing;
-                    x      = -STRAFE_GAIN * aprilTagsFunctions.detectedTag.ftcPose.yaw;
+                    x      = STRAFE_GAIN * aprilTagsFunctions.detectedTag.ftcPose.yaw;
                     isAutoDrivingToAprilTag = true;
                 }
             }
 
-            df.MoveRobot(x, y, yaw, isAutoDrivingToAprilTag ? 0.55 : speedFactor);
+            df.MoveRobot(x, y, yaw, isAutoDrivingToAprilTag ? 0.65 : speedFactor);
 
             telemetry.addData("Speed Factor", "%4.2f", speedFactor);
             telemetry.addData("Bot Heading", "%4.2f", botHeading);
