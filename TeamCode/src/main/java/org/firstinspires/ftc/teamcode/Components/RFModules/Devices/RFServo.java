@@ -23,6 +23,8 @@ public class RFServo implements Servo {
 
     private double lastTime = -100;
 
+    private double target = 0;
+
     final double SERVO_LIMIT;
 
     final double FLIP_TIME = 0.2;
@@ -87,7 +89,12 @@ public class RFServo implements Servo {
             rfServo.setPosition(p_position);
             lastTime = time;
             LOGGER.log(RFLogger.Severity.INFO, "POGGERS?");
+            target = p_position;
         }
+    }
+
+    public double getTarget() {
+        return target;
     }
 
     /**

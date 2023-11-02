@@ -20,9 +20,6 @@ apply plugin: 'kotlin-android'
 android {
     namespace = 'org.firstinspires.ftc.teamcode'
 
-    packagingOptions {
-        jniLibs.useLegacyPackaging true
-    }
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_17
         targetCompatibility JavaVersion.VERSION_17

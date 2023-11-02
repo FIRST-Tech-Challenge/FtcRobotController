@@ -24,6 +24,7 @@ public class RedSpikeObserverPipeline extends OpenCvPipeline {
 
     //h3u and s3u: 71 and 90
     colour = 1;
+    
 
 
     /**

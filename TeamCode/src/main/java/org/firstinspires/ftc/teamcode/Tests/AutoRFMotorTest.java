@@ -44,28 +44,30 @@ public abstract class AutoRFMotorTest extends LinearOpMode {
         data2 = new ArrayList<>();
     }
     public void auto(){
-        while(motor.getVelocity()<5){
+        kG=0.2;
+        while(motor.getVelocity()<5&&motor.getCurrentPosition()<10){
             motor.setPower(kG);
-            kG+=0.0005;
+            kG+=0.002;
             LOGGER.log("kG: "+kG+ " velo: " + motor.getVelocity());
             robot.update();
         }
-        while(motor.getCurrentPosition()<300){
-            robot.update();
-        }
-        double lastV = motor.getVelocity();
-        while(motor.getVelocity()>lastV){
-            kG-=0.00001;
-            kS+=0.00001;
-            motor.setPower(kG);
-            lastV = motor.getVelocity();
-            LOGGER.log("kG: "+kG +" kS: "+ kS+ "  velo: " + motor.getVelocity());
-            robot.update();
-        }
-        while(motor.getCurrentPosition()>10){
-            motor.setPower(-0.2+kG);
-            robot.update();
-        }
+//        while(motor.getCurrentPosition()<200){
+//            motor.setPower(kG);
+//            robot.update();
+//        }
+//        double lastV = motor.getVelocity();
+//        while(motor.getVelocity()>lastV){
+//            kG-=0.00001;
+//            kS+=0.00001;
+//            motor.setPower(kG);
+//            lastV = motor.getVelocity();
+//            LOGGER.log("kG: "+kG +" kS: "+ kS+ "  velo: " + motor.getVelocity());
+//            robot.update();
+//        }
+//        while(motor.getCurrentPosition()>10){
+//            motor.setPower(-0.2+kG);
+//            robot.update();
+//        }
         double addedPower = min(1-kG,0.8);
         while(motor.getCurrentPosition()<max-20){
             motor.setPower(kG+0.8);

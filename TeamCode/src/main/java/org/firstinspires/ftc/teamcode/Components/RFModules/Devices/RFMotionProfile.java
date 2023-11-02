@@ -75,7 +75,6 @@ public class RFMotionProfile {
         packet.put("decelDist", decelDist);
         packet.put("dist", dist);
         packet.put("projectedVel", projectedVelo);
-        LOGGER.log("decelDist" + decelDist +" dist" + dist);
         double velo = projectedVelo;
 
         if (dist <= ((decelDist)) + 2) {

@@ -140,7 +140,7 @@ public class RFMotor {
      * @param p_curve     desired curviness of S-Curve
      */
     public void setPosition(double p_targetPos, double p_curve) {
-        if (abs(targetPos - p_targetPos) < 5) {
+        if (abs(targetPos - p_targetPos) < 15) {
             sameTarget = true;
         } else {
             sameTarget = false;
@@ -158,7 +158,7 @@ public class RFMotor {
         acceleration = rfMotor.getVelocity() - velocity;
         velocity += acceleration;
         acceleration /= (time - lastTime);
-        if (!sameTarget || profile == null) {
+        if (!sameTarget) {
             direction = Math.signum(targetPos - position);
 //            LOGGER.log("target" + p_targetPos + ", lastTarg" + targetPos + " profile is null:" + String.valueOf(profile == null) + " sameTarget:" + sameTarget);
             profile = new RFMotionProfile(direction*velocity, 0, 0, MAX_ACCELERATION_UP, MAX_VELOCITY_UP);
@@ -166,10 +166,17 @@ public class RFMotor {
             startPosition=position;
 
         }
+        if(profile==null){
+            position=-3;
+            direction = Math.signum(targetPos - position);
+//            LOGGER.log("target" + p_targetPos + ", lastTarg" + targetPos + " profile is null:" + String.valueOf(profile == null) + " sameTarget:" + sameTarget);
+            profile = new RFMotionProfile(direction*velocity, 0, 0, MAX_ACCELERATION_UP, MAX_VELOCITY_UP);
+            profile.calculateTList(abs(targetPos - position));
+            startPosition=position;        }
         double[] targetMotion = new double[]{velocity, direction * profile.getInstantaneousTargetAcceleration(direction
                         * (targetPos - position), direction * velocity, 0)};
 //        LOGGER.log("kA:"+ kA+" kV:"+kV);
-        LOGGER.log("targetMotion[0]:"+ targetMotion[0]+" targetMotion[1]:"+targetMotion[1]);
+//        LOGGER.log("targetMotion[0]:"+ targetMotion[0]+" targetMotion[1]:"+targetMotion[1]);
         double power = (kV * targetMotion[0] + kA * targetMotion[1] +
                 kP * (profile.motionProfileTimeToDist(time) - position) + kD * (profile.calculateTargetVelocity(time) - velocity) + resistance * kV);
         if (abs(targetPos - position) > TICK_BOUNDARY_PADDING && abs(velocity) < 3) {
@@ -179,7 +186,7 @@ public class RFMotor {
                 power += kS;
             }
         }
-        LOGGER.log("motor power :" + power+" pos " + position + " targetPos " + targetPos);
+//        LOGGER.log("motor power :" + power+" pos " + position + " targetPos " + targetPos);
         setRawPower(power);
         lastTime = time;
     }
@@ -653,6 +660,9 @@ public class RFMotor {
      * @return same as above ^
      */
     public int getCurrentPosition() {
+        if(profile==null){
+            position = rfMotor.getCurrentPosition();
+        }
         return /*rfMotor.getCurrentPosition()*/(int) position + (int) additionalTicks;
     }
 
@@ -677,6 +687,9 @@ public class RFMotor {
      * @return current motor velocity
      */
     public double getVelocity() {
+        if(profile==null){
+            velocity = rfMotor.getVelocity();
+        }
         return velocity;
     }
 

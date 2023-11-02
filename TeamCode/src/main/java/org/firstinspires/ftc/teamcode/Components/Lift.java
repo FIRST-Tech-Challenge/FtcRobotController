@@ -14,7 +14,7 @@ import org.firstinspires.ftc.teamcode.Components.RFModules.System.RFLogger;
 /**
  * William
  */
-public class Lift extends RFDualMotor {
+public class Lift extends RFMotor {
     private double lastPower = 0.0;
     private double target = 0.0;
     private double MIN_VELOCITY = 20, MANUAL_TIME = 0.2, lastManualTime = -1.0;
@@ -24,9 +24,9 @@ public class Lift extends RFDualMotor {
      * Constructor
      */
     public Lift() {
-        super("leftLiftMotor", "rightLiftMotor",true);
-        super.setDirection(DcMotorSimple.Direction.REVERSE);
-        super.setConstants(4000,0,134, 0.0, 3.2786E-4, 7.286E-4, 2440, -2280, 1097, -66974, 0, 0);
+        super("leftLiftMotor",true);
+        super.setDirection(DcMotorSimple.Direction.FORWARD);
+        super.setConstants(2000,0,134, 0.0, 3.2786E-4, 7.286E-4, 2440, -2280, 1097, -66974, 0, 0);
     }
 
     /**
@@ -110,11 +110,11 @@ public class Lift extends RFDualMotor {
         }
         for(var i : LiftMovingStates.values()){
             if(i.state&&super.getTarget()!=LiftPositionStates.values()[i.ordinal()].position){
-                setPosition(LiftPositionStates.values()[i.ordinal()]);
+//                setPosition(LiftPositionStates.values()[i.ordinal()]);
             }
         }
         if(time-lastManualTime>MANUAL_TIME){
-            super.setPosition(super.getTarget(),0);
+//            super.setPosition(super.getTarget(),0);
         }
         else{
             super.setTarget(super.getCurrentPosition());
