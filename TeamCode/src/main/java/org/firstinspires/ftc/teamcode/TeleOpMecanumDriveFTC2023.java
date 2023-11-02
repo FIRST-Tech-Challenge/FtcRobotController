@@ -133,26 +133,27 @@ public class TeleOpMecanumDriveFTC2023 extends OpMode{
         right1x = gamepad1.right_stick_x;
         left2y = gamepad2.left_stick_y;
 
-        double baseSpeed = 1;
+        double baseSpeed = 0.25;
 
         if (gamepad1.a){
-            baseSpeed = 0.5;
+            baseSpeed = 0.125;
         }
-        if (left1y >= 0) {
+        if (left1y > 0) {
             driveStraight(left1y*baseSpeed,1);
 
         } else if(left1y < 0) {
             driveStraight(-1*left1y*baseSpeed,-1);
         }
-        if (left1x >= 0) {
+        if (left1x > 0) {
             driveSide(left1x*baseSpeed,-1);
 
         } else if(left1x < 0) {
             driveSide(-1*left1x*baseSpeed,1);
+        } 
+        if(right1x > 0) {
+            driveTurn(right1x*baseSpeed, 1);
         } else if(right1x < 0) {
             driveTurn(right1x*baseSpeed, -1);
-        } else if(right1x >= 0) {
-            driveTurn(right1x*baseSpeed, 1);
         }
         if (left2y != 0) {
             driveArm(left2y);
