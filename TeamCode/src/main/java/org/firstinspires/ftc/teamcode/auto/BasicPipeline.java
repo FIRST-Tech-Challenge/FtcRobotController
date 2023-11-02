@@ -29,8 +29,16 @@ public class BasicPipeline extends OpenCvPipeline {
     double junctionDistanceAttr = 0;
 
     public Mat processFrame(Mat input) {
+
+        // crop out parts we're not concerned about
+        Rect cropRectangle = new Rect(100, 100, 100, 100);
+        Mat cropped = new Mat(input, cropRectangle);
+
         // Convert image to HSV
-        Imgproc.cvtColor(input, rawHSV, Imgproc.COLOR_RGB2HSV);
+        Imgproc.cvtColor(cropped, rawHSV, Imgproc.COLOR_RGB2HSV);
+
+        // avoid memory leaks
+        cropped.release();
 
         // Blur image to lessen noise
         Imgproc.GaussianBlur(rawHSV, blurredHSV, new Size(15, 15), 0); // increase blur?

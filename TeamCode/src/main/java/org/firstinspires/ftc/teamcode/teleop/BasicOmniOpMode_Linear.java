@@ -73,70 +73,24 @@ public class BasicOmniOpMode_Linear extends LinearOpMode {
 
 
         // Wait for the game to start (driver presses PLAY)
-        double position = 0;
-        double armposition = 0;
-        boolean prev_bumper;
-        boolean two_prev_bumper;
         while(!isStarted() && !isStopRequested()) {
+            telemetry.addData("Arm position: ", arm.getCurrentPosition());
+            telemetry.addData("Arm joystick position: ", gamepad2.right_stick_y);
         }
 
         runtime.reset();
 
-        double armSetpoint = 0;
-
         // run until the end of the match (driver presses STOP)
         while (opModeIsActive()) {
-
-            // setpoint code. assumes arm position 0 is when arm is horizontal, and servo angle increases when angle between top of arm and top of pan decreases
-            /*
-                                   _____
-           armSetPoint, in degrees ->◟/| (this angle is negative)
-                                     / |
-                                    /  |
-                                ___/   |
-         servo pos, in degrees ->◟/    | (this angle is positive)
-                                 /     |
-             */
-
-            // Calculate arm setpoint
-            /*
-            // safety limits
-            if (armSetpoint < -15 && -gamepad2.right_stick_y < 0 ||
-                armSetpoint > 120 && -gamepad2.right_stick_y > 0) { // we're up to no good, cautiously proceed
-                armSetpoint += gamepad2.right_stick_y/20;
-            } else {
-                armSetpoint += gamepad2.right_stick_y/200;
-            }
-             */
-
-            /* fancier controls
-            // Score, intake, or raise arm to setpoint
-            if(gamepad2.right_trigger > 0.5) {
-                arm.setTargetPosition((int) (-15 * Constants.ArmCountsPerDegree)); // intaking
-                intake.setPower(1);
-                servo.setPosition(Constants.NormalDegreesToServoUnits(15));
-            }
-            else if (gamepad2.x) servo.setPosition(Constants.NormalDegreesToServoUnits(15)); // scoring
-            else {
-                arm.setTargetPosition((int) armSetpoint*Constants.ArmCountsPerRev);
-                servo.setPosition(-Constants.NormalDegreesToServoUnits(armSetpoint));
-            }
-             */
-
-            position += gamepad2.left_stick_y/200;
             // arm.setPower(gamepad2.right_stick_y * 1/4);
             // servo.setPosition(position);
             // intake.setPower(-gamepad2.right_trigger);
             handleArm();
             // 0.3 is flat, 0.67 is 90 degrees.
-            telemetry.addData("servo target position: ", position);
-            telemetry.addData("arm setpoint: ", armposition);
-            telemetry.addData("Arm position: ", arm.getCurrentPosition()/Constants.ArmCountsPerDegree);
-            telemetry.addData("Servo position: ", servo.getPosition());
-            servo.setPosition(position);
-            telemetry.update();
 
             HandleDrivetrain();
+            if(gamepad2.y) servo.setPosition(0.1);
+            telemetry.update();
         }
     }
 
@@ -150,8 +104,8 @@ public class BasicOmniOpMode_Linear extends LinearOpMode {
     */
 
     public void handleArm(){
-        double servoSetpoint;
-        intakeButton.update(gamepad2.right_trigger > 0.5);
+        double servoSetpoint = 0;
+        /*
         if(intakeButton.is(Button.State.TAP)) {
             servoSetpoint = 0.84;
             arm.setTargetPosition(-33);
@@ -171,6 +125,60 @@ public class BasicOmniOpMode_Linear extends LinearOpMode {
             servoSetpoint = 0.15;
             arm.setPower(gamepad2.right_stick_y * 1/4);
         }
+
+         */
+        telemetry.addData("Trigger: ", gamepad2.right_trigger);
+        intakeButton.update(gamepad2.right_trigger > 0.5);
+        telemetry.addData("Arm position: ", arm.getCurrentPosition());
+        telemetry.addData("Arm joystick position: ", gamepad2.right_stick_y);
+
+        if(intakeButton.is(Button.State.TAP)) {
+            // Intaking- make sure the pan doesn't have to clear the intake because the pan will be lowered to ground level.
+            telemetry.addLine("Beginning intaking");
+            // servoSetpoint = 0.84;
+            servo.setPosition(0.84);
+            arm.setTargetPosition(-207);
+            arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            arm.setPower(0.25);
+            intake.setPower(-1);
+            while (arm.isBusy()) telemetry.addLine("Arm moving");
+        } else if(intakeButton.is(Button.State.HELD)) {
+            servoSetpoint = 0.84;
+        } else if (intakeButton.is(Button.State.UP)){
+            telemetry.addLine("Finishing intaking");
+            // We just finished intaking, so set motors to how they should be
+            arm.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            intake.setPower(0);
+        } else if (gamepad2.x) {
+            telemetry.addLine("Scoring");
+            // Scoring
+            servoSetpoint = 0.7;
+            arm.setPower(gamepad2.right_stick_y * 1/4);
+        } else if (arm.getCurrentPosition() > 0 && gamepad2.right_stick_y > 0) {
+            servoSetpoint = 0.15;
+            arm.setPower(gamepad2.right_stick_y * 1 / 4 + 0.01);
+        } else if (arm.getCurrentPosition() < 400) { // if it's negative we're going down
+            telemetry.addLine("Stowing/intake clearing mode- downward");
+            // Stowed position that can also clear the intake. TODO: tune feedforward
+            servoSetpoint = 0.95;
+            arm.setPower(gamepad2.right_stick_y * 1/4 + 0.002);
+        /*
+        } else if (arm.getCurrentPosition() < 0) {
+            telemetry.addLine("Stowing/intake clearing mode- nominal/upward");
+            servoSetpoint = 0.95;
+            arm.setPower(gamepad2.right_stick_y * 1 / 4 + 0.01);
+
+         */
+        } else {
+            telemetry.addLine("Scoring mode");
+            // Scoring mode- getting ready to score. The servo will tip to hold the pixel when the
+            // arm is out, so move the arm quickly.
+            servoSetpoint = 0.15;
+            arm.setPower (gamepad2.right_stick_y * 1/4);
+        }
+
+        telemetry.addData("Servo setpoint: ", servoSetpoint);
+        telemetry.addData("Servo position: ", servo.getPosition());
 
         if(servoSetpoint != servo.getPosition()) servo.setPosition(servoSetpoint);
     }
