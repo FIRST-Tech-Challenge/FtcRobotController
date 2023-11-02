@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -33,6 +34,9 @@ public class GripPipelineGreenPixelRGB  extends OpenCvPipeline {
 	private ArrayList<MatOfPoint> findContoursOutput = new ArrayList<MatOfPoint>();
 	private ArrayList<MatOfPoint> filterContoursOutput = new ArrayList<MatOfPoint>();
 
+	private Point avgCentroid = new Point();
+	private Point maxCentroid = new Point();
+	private Point minCentroid = new Point();
 
 
 	/**
@@ -88,7 +92,61 @@ public class GripPipelineGreenPixelRGB  extends OpenCvPipeline {
 		double filterContoursMaxRatio = 1000.0;
 		filterContours(filterContoursContours, filterContoursMinArea, filterContoursMinPerimeter, filterContoursMinWidth, filterContoursMaxWidth, filterContoursMinHeight, filterContoursMaxHeight, filterContoursSolidity, filterContoursMaxVertices, filterContoursMinVertices, filterContoursMinRatio, filterContoursMaxRatio, filterContoursOutput);
 
+		ArrayList<Point> allCentroids = new ArrayList<Point>();
+		Iterator<MatOfPoint> contourIterator = filterContoursOutput.iterator();
+		while(contourIterator.hasNext()) {
+			// calculate the moments of all the contours
+			// a moment is just the x,y coordinates of the 'centre of the contour'
+
+			Moments moments = Imgproc.moments(contourIterator.next());
+
+			Point centroid = new Point();
+
+			centroid.x = moments.get_m10() / moments.get_m00();
+			centroid.y = moments.get_m01() / moments.get_m00();
+
+			allCentroids.add(centroid);
+		}
+
+		// calculate the average of the centroids, this should be the centre of the collection of
+		// contours that make up the pixel
+		avgCentroid.x = allCentroids.stream()
+				.mapToInt((p -> (int) p.x))
+				.average()
+				.orElse(0);
+
+
+		avgCentroid.y = allCentroids.stream()
+				.mapToInt((p -> (int) p.y))
+				.average()
+				.orElse(0);
+
+		maxCentroid.x = allCentroids.stream()
+				.mapToInt((p -> (int) p.x))
+				.max()
+				.orElse(0);
+
+
+		maxCentroid.y = allCentroids.stream()
+				.mapToInt((p -> (int) p.y))
+				.max()
+				.orElse(0);
+
+		minCentroid.x = allCentroids.stream()
+				.mapToInt((p -> (int) p.x))
+				.min()
+				.orElse(0);
+
+
+		minCentroid.y = allCentroids.stream()
+				.mapToInt((p -> (int) p.y))
+				.min()
+				.orElse(0);
+
+		//double sizeFact = Core.norm(new Mat(minCentroid), new Mat(maxCentroid));
+
 		return findContoursInput;
+
 	}
 
 	/**
@@ -138,6 +196,18 @@ public class GripPipelineGreenPixelRGB  extends OpenCvPipeline {
 	public ArrayList<MatOfPoint> filterContoursOutput() {
 		return filterContoursOutput;
 	}
+
+	public Point avgContourCoord() {
+		return avgCentroid;
+	}
+
+	public Point maxContourCoord() {
+		return maxCentroid;
+	}
+	public Point minContourCoord() {
+		return minCentroid;
+	}
+
 
 
 	/**
