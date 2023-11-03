@@ -42,10 +42,10 @@ public class TeleOp2 extends LinearOpMode {
 
         //13784
         leftFrontDrive.setDirection(DcMotor.Direction.REVERSE);
-        leftBackDrive.setDirection(DcMotor.Direction.REVERSE);
-        rightFrontDrive.setDirection(DcMotor.Direction.FORWARD);
-        rightBackDrive.setDirection(DcMotor.Direction.FORWARD);
-        liftMotor.setDirection(DcMotor.Direction.FORWARD);
+        leftBackDrive.setDirection(DcMotor.Direction.FORWARD);
+        rightFrontDrive.setDirection(DcMotor.Direction.REVERSE);
+        rightBackDrive.setDirection(DcMotor.Direction.REVERSE);
+        liftMotor.setDirection(DcMotor.Direction.REVERSE);
 
         //7604
 //        leftFrontDrive.setDirection(DcMotor.Direction.FORWARD);
@@ -76,8 +76,8 @@ public class TeleOp2 extends LinearOpMode {
             double leftBackPower   = axial - lateral + yaw;
             double rightBackPower  = axial + lateral - yaw;
             double liftMotorPower = 0;
-            liftMotorPower += gamepad1.right_trigger /2;
-            liftMotorPower += (gamepad1.left_trigger /2) * -1;
+            liftMotorPower += gamepad1.right_trigger /3;
+            liftMotorPower += (gamepad1.left_trigger /3) * -1;
 
             // Normalize the values so no wheel power exceeds 100%
             // This ensures that the robot maintains the desired motion.
@@ -114,7 +114,7 @@ public class TeleOp2 extends LinearOpMode {
                 leftFrontPower += -.12;
             }
             if (leftBackPower >= .05){
-                leftFrontPower += .12;
+                leftBackPower += .12;
             }
             if (rightFrontPower >= .05){
                 rightFrontPower += .12;
@@ -133,6 +133,7 @@ public class TeleOp2 extends LinearOpMode {
             telemetry.addData("Status", "Run Time: " + runtime.toString());
             telemetry.addData("Front left/Right", "%4.2f, %4.2f", leftFrontPower, rightFrontPower);
             telemetry.addData("Back  left/Right", "%4.2f, %4.2f", leftBackPower, rightBackPower);
+            telemetry.addData("lifter power:", "%4.2f,", liftMotorPower);
             telemetry.update();
         }
     }
