@@ -3,27 +3,26 @@ package org.firstinspires.ftc.teamcode;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.internal.camera.calibration.CameraCalibration;
 import org.firstinspires.ftc.vision.VisionProcessor;
-import org.opencv.core.Core;
 import org.opencv.core.Mat;
 import org.opencv.core.Rect;
 import org.opencv.core.Scalar;
 import org.opencv.imgproc.Imgproc;
 
-public class MarkerProcessor implements VisionProcessor {
+public class MarkerProcessorRed implements VisionProcessor {
 
     private Telemetry telemetry;
     private Mat workingMatrix;
 
-    public MarkerProcessor(Telemetry telemetry) {
+    public MarkerProcessorRed(Telemetry telemetry) {
 
         this.telemetry = telemetry;
-        detector = new MarkerDetector(telemetry);
+        detector = new MarkerDetectorRed(telemetry);
     }
 
-    private final MarkerDetector detector;
+    private final MarkerDetectorRed detector;
 
 
-    public MarkerDetector.MARKER_POSITION getPosition() {
+    public MarkerDetectorRed.MARKER_POSITION getPosition() {
         return detector.position;
     }
 

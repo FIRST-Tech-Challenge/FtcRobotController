@@ -29,7 +29,6 @@ import java.util.List;
 
 public class Robot {
 
-
     HardwareMap hardwareMap;
     Telemetry telemetry;
     LinearOpMode opMode;
@@ -58,12 +57,14 @@ public class Robot {
 
 
     OpenCvWebcam webcam;
-    MarkerDetector.MARKER_POSITION markerPos;
+    MarkerDetectorRed.MARKER_POSITION markerPosRed;
+    MarkerDetectorBlue.MARKER_POSITION markerPosBlue;
 
     int wantedAprTagId;
 
-    private MarkerDetector detector;
-    private MarkerProcessor markerProcessor;
+    //private MarkerDetector detector;
+    private MarkerProcessorRed markerProcessorRed;
+    private MarkerProcessorBlue markerProcessorBlue;
     private AprilTagProcessor aprilTagProcessor;
     private VisionPortal visionPortal;
 
@@ -146,16 +147,20 @@ public class Robot {
         moveLinearSlideByTicks(0);
     }
 
-    public void setMarkerPos(MarkerDetector.MARKER_POSITION position) {
-        markerPos = position;
+    public void setMarkerPosRed(MarkerDetectorRed.MARKER_POSITION position) {
+        markerPosRed = position;
     }
 
-    public MarkerDetector.MARKER_POSITION getMarkerPos() {
-        return markerPos;
+    public void setMarkerPosBlue(MarkerDetectorBlue.MARKER_POSITION position) {
+        markerPosBlue = position;
+    }
+
+    public MarkerDetectorRed.MARKER_POSITION getMarkerPos() {
+        return markerPosRed;
     }
 
     //change boolean to enum later
-    public void setWantedAprTagId(MarkerDetector.MARKER_POSITION position, boolean redAlliance) {
+    public void setWantedAprTagIdRed(MarkerDetectorRed.MARKER_POSITION position, boolean redAlliance) {
         if (redAlliance) {
             switch (position) {
                 case CENTER:
@@ -189,15 +194,49 @@ public class Robot {
         }
     }
 
+    public void setWantedAprTagIdBlue(MarkerDetectorBlue.MARKER_POSITION position, boolean blueAlliance) {
+        if (blueAlliance) {
+            switch (position) {
+                case CENTER:
+                    wantedAprTagId = 2;
+                    break;
+                case RIGHT:
+                    wantedAprTagId = 3;
+                    break;
+                case LEFT:
+                    wantedAprTagId = 1;
+                    break;
+                default:
+                    Log.d("vision", "setWantedAprTagId: enter default");
+                    wantedAprTagId = 2;
+            }
+        } else {
+            switch (position) {
+                case CENTER:
+                    wantedAprTagId = 5;
+                    break;
+                case RIGHT:
+                    wantedAprTagId = 6;
+                    break;
+                case LEFT:
+                    wantedAprTagId = 4;
+                    break;
+                default:
+                    Log.d("vision", "setWantedAprTagId: enter default");
+                    wantedAprTagId = 5;
+            }
+        }
+    }
+
     public int getWantedAprTagId() {
         return wantedAprTagId;
     }
 
     //vision processing setup
-    public void initVisionProcessing() {
+    public void initVisionProcessingRed() {
 
         // Initializing marker and apriltag processors and setting them with visionportal
-        markerProcessor = new MarkerProcessor(telemetry);
+        markerProcessorRed = new MarkerProcessorRed(telemetry);
         aprilTagProcessor = AprilTagProcessor.easyCreateWithDefaults();
         visionPortal = new VisionPortal.Builder()
                 .setLiveViewContainerId(VisionPortal.DEFAULT_VIEW_CONTAINER_ID)
@@ -206,7 +245,23 @@ public class Robot {
                 .setAutoStopLiveView(true)
                 .setCamera(hardwareMap.get(WebcamName.class, "Webcam 1"))
                 .addProcessor(aprilTagProcessor)
-                .addProcessor(markerProcessor)
+                .addProcessor(markerProcessorRed)
+                .build();
+    }
+
+    public void initVisionProcessingBlue() {
+
+        // Initializing marker and apriltag processors and setting them with visionportal
+        markerProcessorRed = new MarkerProcessorRed(telemetry);
+        aprilTagProcessor = AprilTagProcessor.easyCreateWithDefaults();
+        visionPortal = new VisionPortal.Builder()
+                .setLiveViewContainerId(VisionPortal.DEFAULT_VIEW_CONTAINER_ID)
+                .setCameraResolution(new Size(640, 480))
+                .setStreamFormat(VisionPortal.StreamFormat.YUY2)
+                .setAutoStopLiveView(true)
+                .setCamera(hardwareMap.get(WebcamName.class, "Webcam 1"))
+                .addProcessor(aprilTagProcessor)
+                .addProcessor(markerProcessorBlue)
                 .build();
     }
 
@@ -214,8 +269,8 @@ public class Robot {
         return visionPortal;
     }
 
-    public MarkerProcessor getMarkerProcessor() {
-        return markerProcessor;
+    public MarkerProcessorRed getMarkerProcessor() {
+        return markerProcessorRed;
     }
 
     public AprilTagProcessor getAprilTagProcessor() {
@@ -975,30 +1030,49 @@ public class Robot {
      * @return
      */
 
-    public void detectMarkerPosition() {
+    public void detectMarkerPositionRed() {
 
         //detect marker position
-        MarkerDetector.MARKER_POSITION position = markerProcessor.getPosition();
+        MarkerDetectorRed.MARKER_POSITION position = markerProcessorRed.getPosition();
 
-        while (position == MarkerDetector.MARKER_POSITION.UNDETECTED) {
+        while (position == MarkerDetectorRed.MARKER_POSITION.UNDETECTED) {
             Log.d("vision", "undetected marker, keep looking" + visionPortal.getCameraState());
-            position = markerProcessor.getPosition();
+            position = markerProcessorRed.getPosition();
         }
 
         //print position
         Log.d("vision", "detected position: " + position);
 
         //save marker position, apriltag position
-        setMarkerPos(position);
-        setWantedAprTagId(position, true);
+        setMarkerPosRed(position);
+        setWantedAprTagIdRed(position, true);
+
+    }
+
+    public void detectMarkerPositionBlue() {
+
+        //detect marker position
+        MarkerDetectorBlue.MARKER_POSITION position = markerProcessorBlue.getPosition();
+
+        while (position == MarkerDetectorBlue.MARKER_POSITION.UNDETECTED) {
+            Log.d("vision", "undetected marker, keep looking" + visionPortal.getCameraState());
+            position = markerProcessorBlue.getPosition();
+        }
+
+        //print position
+        Log.d("vision", "detected position: " + position);
+
+        //save marker position, apriltag position
+        setMarkerPosBlue(position);
+        setWantedAprTagIdBlue(position, true);
 
     }
 
     public void longRedMoveToBoard() {
-        Log.d("vision", "moveToMarker: Pos " + markerPos);
+        Log.d("vision", "moveToMarker: Pos " + markerPosRed);
         Log.d("vision", "moveToMarker: Tag " + wantedAprTagId);
         while (opMode.opModeIsActive()) {
-            if (markerPos == MarkerDetector.MARKER_POSITION.RIGHT) {
+            if (markerPosRed == MarkerDetectorRed.MARKER_POSITION.RIGHT) {
                 straightBlocking(19, false, 0.5);
                 setHeading(-45, 0.25);
                 straightBlocking(6, false, 0.7);
@@ -1012,7 +1086,7 @@ public class Robot {
                 mecanumBlocking(38, false, 0.7);
                 setHeading(-90, 0.7);
                 break;
-            } else if (markerPos == MarkerDetector.MARKER_POSITION.LEFT) {
+            } else if (markerPosRed == MarkerDetectorRed.MARKER_POSITION.LEFT) {
                 straightBlocking(19, false, 0.5);
                 setHeading(45, 0.25);
                 straightBlocking(5, false, 0.7);
@@ -1049,9 +1123,9 @@ public class Robot {
     }
 
     public void shortRedMoveToBoard() {
-        Log.d("vision", "moveToMarker: Pos " + markerPos);
+        Log.d("vision", "moveToMarker: Pos " + markerPosRed);
         Log.d("vision", "moveToMarker: Tag " + wantedAprTagId);
-        if (markerPos == MarkerDetector.MARKER_POSITION.RIGHT) {
+        if (markerPosRed == MarkerDetectorRed.MARKER_POSITION.RIGHT) {
             straightBlocking(19, false, 0.5);
             setHeading(-45, 0.25);
             straightBlocking(5, false, 0.7);
@@ -1061,7 +1135,7 @@ public class Robot {
             straightBlocking(24, false, 0.7);
             setHeading(-90, 0.25);
             mecanumBlocking(9, true, 0.25);
-        } else if (markerPos == MarkerDetector.MARKER_POSITION.LEFT) {
+        } else if (markerPosRed == MarkerDetectorRed.MARKER_POSITION.LEFT) {
             straightBlocking(19, false, 0.5);
             setHeading(45, 0.25);
             straightBlocking(5, false, 0.7);
@@ -1084,6 +1158,60 @@ public class Robot {
             setHeading(-90, 0.25);
             straightBlocking(24, false, 0.7);
             setHeading(-90, 0.25);
+        }
+    }
+
+    public void longBlueMoveToBoard() {
+        Log.d("vision", "moveToMarker: Pos " + markerPosBlue);
+        Log.d("vision", "moveToMarker: Tag " + wantedAprTagId);
+        while (opMode.opModeIsActive()) {
+            if (markerPosBlue == MarkerDetectorBlue.MARKER_POSITION.RIGHT) {
+                straightBlocking(19, false, 0.5);
+                setHeading(-45, 0.25);
+                straightBlocking(6, false, 0.7);
+                setHeading(-45, 0.25);
+                straightBlocking(12, true, 0.7);
+                setHeading(0, 0.7);
+                straightBlocking(39, false, 0.7);
+                setHeading(-90, 0.7);
+                straightBlocking(77, false, 0.7);
+                setHeading(-90, 0.75);
+                mecanumBlocking(38, false, 0.7);
+                setHeading(-90, 0.7);
+                break;
+            } else if (markerPosBlue == MarkerDetectorBlue.MARKER_POSITION.LEFT) {
+                straightBlocking(19, false, 0.5);
+                setHeading(45, 0.25);
+                straightBlocking(5, false, 0.7);
+                setHeading(45, 0.25);
+                straightBlocking(6, true, 0.7);
+                setHeading(0, 0.7);
+                straightBlocking(33, false, 0.7);
+                setHeading(-90, 0.7);
+                straightBlocking(72, false, 0.7);
+                setHeading(-179.5, 0.75);
+                straightBlocking(24, false, 0.7);
+                setHeading(-90, 0.7);
+                break;
+            } else { //center, default
+                Log.d("vision", "moveToMarker: center or default");
+                straightBlocking(20, false, 0.5);
+                setHeading(0, 0.7);
+                mecanumBlocking(8, true, 0.5);
+                setHeading(0, 0.7);
+                straightBlocking(12, false, 0.5);
+                setHeading(0, 0.7);
+                straightBlocking(5, true, 0.7);
+                setHeading(0, 0.7);
+                mecanumBlocking(8, true, 0.25);
+                setHeading(0, 0.7);
+                straightBlocking(25, false, 0.7);
+                setHeading(-90, 0.7);
+                straightBlocking(84, false, 0.7);
+                mecanumBlocking(24, false,  0.5);
+                setHeading(-90, 0.7);
+                break;
+            }
         }
     }
 

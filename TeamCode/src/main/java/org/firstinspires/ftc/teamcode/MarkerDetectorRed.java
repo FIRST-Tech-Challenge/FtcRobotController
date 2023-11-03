@@ -10,7 +10,7 @@ import org.opencv.core.Scalar;
 import org.opencv.imgproc.Imgproc;
 import org.openftc.easyopencv.OpenCvPipeline;
 
-public class MarkerDetector extends OpenCvPipeline {
+public class MarkerDetectorRed extends OpenCvPipeline {
     private Mat workingMatrix = new Mat();
 
     public MARKER_POSITION position = MARKER_POSITION.UNKNOWN;
@@ -26,7 +26,7 @@ public class MarkerDetector extends OpenCvPipeline {
         LEFT, RIGHT, CENTER, UNDETECTED, UNKNOWN;
     }
 
-    public MarkerDetector(Telemetry telemetry) {
+    public MarkerDetectorRed(Telemetry telemetry) {
 
         this.telemetry = telemetry;
     }
