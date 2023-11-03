@@ -133,16 +133,15 @@ public class PsychoOpMode extends LinearOpMode {
 
             double axial_left   = -gamepad1.left_stick_y;  // Note: pushing stick forward gives negative value
             double axial_right   = -gamepad1.right_stick_y;  // Note: pushing stick forward gives negative value
-            double yaw     =  gamepad1.right_stick_x;
             double lateral_left     =  gamepad1.left_trigger;
             double lateral_right    = gamepad1.right_trigger;
 
             // Combine the joystick requests for each axis-motion to determine each wheel's power.
             // Set up a variable for each drive wheel to save the power level for telemetry.
-            double leftFrontPower  = axial_left + lateral_right - lateral_left + yaw;
-            double rightFrontPower = axial_right - lateral_right + lateral_left - yaw;
-            double leftBackPower   = axial_left - lateral_right + lateral_left + yaw;
-            double rightBackPower  = axial_right + lateral_right - lateral_left- yaw;
+            double leftFrontPower  = axial_left + lateral_right - lateral_left;
+            double rightFrontPower = axial_right - lateral_right + lateral_left;
+            double leftBackPower   = axial_left - lateral_right + lateral_left;
+            double rightBackPower  = axial_right + lateral_right - lateral_left;
 
             // Normalize the values so no wheel power exceeds 100%
             // This ensures that the robot maintains the desired motion.
