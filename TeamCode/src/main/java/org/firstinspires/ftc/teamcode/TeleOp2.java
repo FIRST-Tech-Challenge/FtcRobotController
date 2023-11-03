@@ -114,7 +114,7 @@ public class TeleOp2 extends LinearOpMode {
                 leftFrontPower += -.12;
             }
             if (leftBackPower >= .05){
-                leftFrontPower += .12;
+                leftBackPower += .12;
             }
             if (rightFrontPower >= .05){
                 rightFrontPower += .12;
