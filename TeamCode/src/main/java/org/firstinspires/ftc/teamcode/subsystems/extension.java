@@ -13,7 +13,7 @@ public class extension {
     public extension(HardwareMap hwmap){
 //        lift1=hwmap.get(DcMotor.class,"lift1");
 //        lift2=hwmap.get(DcMotor.class,"lift2");
-        tilt=hwmap.get(DcMotor.class,"tilt");
+        tilt=hwmap.dcMotor.get("tilt");
 //        lift1.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 //      lift2.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         tilt.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
