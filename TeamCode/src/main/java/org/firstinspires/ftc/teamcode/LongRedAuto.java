@@ -31,7 +31,6 @@ public class LongRedAuto extends LinearOpMode {
 
         waitForStart();
 
-        while (opModeIsActive()) {
 
             /*
             robot.autoOuttake();
@@ -79,11 +78,10 @@ public class LongRedAuto extends LinearOpMode {
             //enable THIS to test longredauto
             robot.detectMarkerPositionRed();
             robot.longRedMoveToBoard();
+            robot.autoOuttake();
             //robot.alignToBoard();
             //robot.setHeading(-90, 0.75);
 
-            break;
-        }
     }
 }
 
