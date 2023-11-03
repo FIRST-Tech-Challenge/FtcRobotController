@@ -8,6 +8,13 @@ public class BlueCloseAutoBackup extends BaseAutonomous {
     public void runOpMode() {
         initializeAuto();
         waitForStart();
+
+        detectingBlue = true;
+
+        while (opModeIsActive()) {
+
+        }
+
         // move forward from the wall
     }
 }
