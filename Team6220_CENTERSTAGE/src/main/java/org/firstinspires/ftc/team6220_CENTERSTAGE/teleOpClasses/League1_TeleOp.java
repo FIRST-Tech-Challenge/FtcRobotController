@@ -172,12 +172,12 @@ public class League1_TeleOp extends LinearOpMode {
             // check for intake inwards
             if (gp2.getTrigger(GamepadKeys.Trigger.LEFT_TRIGGER) > 0.0 ||
                     gp2.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER) > 0.0) {
-                drive.intakeMotor.setPower(1 * INTAKE_POWER_MULTIPLIER);
+                drive.intakeMotor.setPower(-1 * INTAKE_POWER_MULTIPLIER);
 
             // else check for intaking reversed
             } else if (gp2.getButton(GamepadKeys.Button.LEFT_BUMPER) ||
                     gp2.getButton(GamepadKeys.Button.RIGHT_BUMPER)) {
-                drive.intakeMotor.setPower(-1 * INTAKE_POWER_MULTIPLIER);
+                drive.intakeMotor.setPower(1 * INTAKE_POWER_MULTIPLIER);
             }
 
 
