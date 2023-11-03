@@ -12,6 +12,7 @@ public class RedCloseAutoBackup extends BaseAutonomous {
 
         detectingBlue = false;
 
+<<<<<<< HEAD
         sleep(3000);
 
         switch (detectTeamProp()) {
@@ -32,6 +33,8 @@ public class RedCloseAutoBackup extends BaseAutonomous {
         }
         telemetry.update();
 
+=======
+>>>>>>> 061aedadfc98461096b0e2f5f61b2ae85397ee5e
         while (opModeIsActive()) {
 
         }
