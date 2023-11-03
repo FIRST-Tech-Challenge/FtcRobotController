@@ -6,14 +6,16 @@ import org.firstinspires.ftc.teamcode.DriveMethods;
 import org.firstinspires.ftc.teamcode.RoadRunner.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.RoadRunner.util.trajectorysequence.TrajectorySequence;
 import org.firstinspires.ftc.teamcode.RoadRunner.util.trajectorysequence.sequencesegment.SequenceSegment;
-
+import org.firstinspires.ftc.teamcode.Variables.*;
 import java.util.ArrayList;
 
 public class RandomAutoTest extends MeepMeepBoilerplate {
     @Override
     public void runOpMode() {
-        Detection detection = Detection.RIGHT;
         drive = new SampleMecanumDrive(hardwareMap);
+        initVision(VisionProcessors.TFOD);
+        Detection detection = getDetectionsSingleTFOD();
+
 
         waitForStart();
 
