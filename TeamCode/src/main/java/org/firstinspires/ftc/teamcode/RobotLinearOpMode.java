@@ -39,7 +39,10 @@ public abstract class RobotLinearOpMode extends LinearOpMode {
     DcMotor leftFrontDriveMotor;
     DcMotor rightBackDriveMotor;
     DcMotor leftBackDriveMotor;
-    NormalizedColorSensor colorSensor;
+    NormalizedColorSensor colorSensor1;
+    NormalizedColorSensor colorSensor2;
+    boolean placingPixel = false;
+    boolean searching;
 
     public void encoderDrive(double power, double inches, MOVEMENT_DIRECTION movement_direction) {
 
@@ -345,9 +348,11 @@ public abstract class RobotLinearOpMode extends LinearOpMode {
         // Once per loop, we will update this hsvValues array. The first element (0) will contain the
         // hue, the second element (1) will contain the saturation, and the third element (2) will
         // contain the value.
-        final float[] hsvValues = new float[3];
+        final float[] hsvValues1 = new float[3];
+        final float[] hsvValues2 = new float[3];
 
-        colorSensor = hardwareMap.get(NormalizedColorSensor.class, "sensor_color");
+        colorSensor1 = hardwareMap.get(NormalizedColorSensor.class, "sensor_color1");
+        colorSensor2 = hardwareMap.get(NormalizedColorSensor.class, "sensor_color2");
 
 //        // If possible, turn the light on in the beginning (it might already be on anyway,
 //        // we just make sure it is if we can).
@@ -360,30 +365,95 @@ public abstract class RobotLinearOpMode extends LinearOpMode {
 
         // Loop until we are asked to stop
         while (opModeIsActive()) {
-            colorSensor.setGain(gain);
+            colorSensor1.setGain(gain);
+            colorSensor2.setGain(gain);
 
             // Get the normalized colors from the sensor
-            NormalizedRGBA colors = colorSensor.getNormalizedColors();
+            NormalizedRGBA colors1 = colorSensor1.getNormalizedColors();
+            NormalizedRGBA colors2 = colorSensor2.getNormalizedColors();
 
             // Update the hsvValues array by passing it to Color.colorToHSV()
-            Color.colorToHSV(colors.toColor(), hsvValues);
+            Color.colorToHSV(colors1.toColor(), hsvValues1);
+            Color.colorToHSV(colors2.toColor(), hsvValues2);
 
-            if (colorSensor instanceof DistanceSensor) {
-                telemetry.addData("Distance (cm)", "%.3f", ((DistanceSensor) colorSensor).getDistance(DistanceUnit.CM));
+            if (colorSensor1 instanceof DistanceSensor) {
+                telemetry.addData("Distance (cm)", "%.3f", ((DistanceSensor) colorSensor1).getDistance(DistanceUnit.CM));
             }
+            if (colorSensor2 instanceof DistanceSensor) {
+                telemetry.addData("Distance (cm)", "%.3f", ((DistanceSensor) colorSensor1).getDistance(DistanceUnit.CM));
+            }
+
+            telemetry.addLine()
+                    .addData("Red", "%.3f", colors1.red)
+                    .addData("Green", "%.3f", colors1.green)
+                    .addData("Blue", "%.3f", colors1.blue);
+            telemetry.addLine()
+                    .addData("Hue", "%.3f", hsvValues1[0])
+                    .addData("Saturation", "%.3f", hsvValues1[1])
+                    .addData("Value", "%.3f", hsvValues1[2]);
+            telemetry.addData("Alpha", "%.3f", colors1.alpha);
+
+            telemetry.addLine()
+                    .addData("Red 2", "%.3f", colors2.red)
+                    .addData("Green 2", "%.3f", colors2.green)
+                    .addData("Blue 2", "%.3f", colors2.blue);
+            telemetry.addLine()
+                    .addData("Hue 2", "%.3f", hsvValues2[0])
+                    .addData("Saturation 2", "%.3f", hsvValues2[1])
+                    .addData("Value 2", "%.3f", hsvValues2[2]);
+            telemetry.addData("Alpha 2", "%.3f", colors2.alpha);
 
             //red
-            if (hsvValues[2] > .07){
-                telemetry.addData("Color ", "blue");
+            if (hsvValues1[2] > .07){
+                telemetry.addData("Color 1 ", "blue");
             }
             //blue
-            else if (hsvValues[2] > .06) {
-                telemetry.addData("Color", "red");
+            else if (hsvValues1[2] > .06) {
+                telemetry.addData("Color 1 ", "red");
+            }
+
+            if (hsvValues2[2] > .07){
+                telemetry.addData("Color 1 ", "blue");
+            }
+            //blue
+            else if (hsvValues2[2] > .06) {
+                telemetry.addData("Color 1 ", "red");
+            }
+
+            if (gamepad1.a){
+                placingPixel = true;
+            }
+
+            while (placingPixel){
+                if (gamepad1.b){
+                    placingPixel = false;
+                    break;
+                }
+                searching = true;
+                leftFrontDriveMotor.setPower(0.2);
+                leftBackDriveMotor.setPower(0.2);
+                rightFrontDriveMotor.setPower(0.2);
+                rightBackDriveMotor.setPower(0.2);
+                while (searching) {
+                    if (hsvValues1[2] > 0.03) {
+                        leftFrontDriveMotor.setPower(0);
+                        leftBackDriveMotor.setPower(0);
+                    }
+                    if (hsvValues2[2] > 0.03) {
+                        rightFrontDriveMotor.setPower(0);
+                        rightBackDriveMotor.setPower(0);
+                    }
+                    if (hsvValues1[2] > .03 && hsvValues2[2] > .03) {
+                        searching = false;
+                    }
+                }
+                telemetry.addData("Status: ", "Done");
+                placingPixel = false;
             }
 
             telemetry.update();
 
-            // Change the Robot Controller's background color to match the color detected by the color sensor.
+
         }
     }
 
