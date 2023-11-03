@@ -11,7 +11,6 @@ public class BlueCloseAutoBackup extends BaseAutonomous {
 
         detectingBlue = true;
 
-<<<<<<< HEAD
         switch (detectTeamProp()) {
             case LEFT:
                 telemetry.addData("Side", "Left");
@@ -30,12 +29,7 @@ public class BlueCloseAutoBackup extends BaseAutonomous {
         while (opModeIsActive()) {
 
         }
-=======
-        while (opModeIsActive()) {
 
-        }
-
->>>>>>> 061aedadfc98461096b0e2f5f61b2ae85397ee5e
         // move forward from the wall
     }
 }
