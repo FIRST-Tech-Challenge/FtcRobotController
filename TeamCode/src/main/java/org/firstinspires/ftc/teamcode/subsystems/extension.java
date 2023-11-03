@@ -1,12 +1,15 @@
 package org.firstinspires.ftc.teamcode.subsystems;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.DcMotorImpl;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.arcrobotics.ftclib.controller.PIDFController;
 public class extension {
     public PIDFController pidf;
     public static int Liftpos;
-
+    public static int tiltpos;
     public DcMotor lift1;
     public DcMotor tilt;
     public DcMotor lift2;
@@ -28,9 +31,14 @@ public class extension {
         tilt.setPower(1);
 //        lift1.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 //        lift2.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+
+        ((DcMotorEx) tilt).setVelocityPIDFCoefficients(10, 0, 11, 10);
+
+        ((DcMotorEx) tilt).setPositionPIDFCoefficients(11);
         tilt.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-//        pidf.setTolerance(5);
-//        pidf.setPIDF(0.004,0,0.005,0.00000001);
+        //    pidf.setTolerance(5);
+  //      pidf.setPIDF(0.004,0,0.005,0.00000001);
      //   Liftpos = lift1.getCurrentPosition();
     }
     public static boolean laststate=false;
@@ -65,7 +73,7 @@ public class extension {
         setTilt(0);
     }
     public void setPlace() {
-        setTilt(0);
+        setTilt(228);
     }
     public void setIntakeClosePos(){
 
@@ -85,7 +93,7 @@ public class extension {
     public void setStowPos(){
         //setHeight(0);
         //if((lift1.getCurrentPosition())<(lift1.getTargetPosition()*(3.0 / 4.0))){
-            setTilt(0);
+            setTilt(45);
         //}
 
     }
@@ -104,7 +112,10 @@ public class extension {
     }
 
     public void setTilt(int ticks){
-        tilt.setTargetPosition(ticks);
+        tiltpos=ticks;
+        tilt.setTargetPosition(tiltpos);
+        tilt.setPower(1);
+        tilt.setMode(DcMotor.RunMode.RUN_TO_POSITION);
     }
     public void run(){
 

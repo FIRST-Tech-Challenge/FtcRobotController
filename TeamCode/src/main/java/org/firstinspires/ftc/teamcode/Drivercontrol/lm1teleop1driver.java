@@ -55,11 +55,12 @@ public class lm1teleop1driver extends LinearOpMode {
 
     // Declare OpMode members.
     private ElapsedTime runtime = new ElapsedTime();
-    extension extend = new extension(hardwareMap);
+
     Feildcentricdrive drive = new Feildcentricdrive();
 
     @Override
     public void runOpMode() {
+        extension extend = new extension(hardwareMap);
         boolean reset = false;
         boolean slowturn=false;
         double rx;
