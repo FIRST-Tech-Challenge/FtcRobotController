@@ -4,7 +4,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 @Autonomous
-public class LongRedAuto extends LinearOpMode {
+public class LongBlueAuto extends LinearOpMode {
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -15,7 +15,7 @@ public class LongRedAuto extends LinearOpMode {
         Robot robot = new Robot(hardwareMap, this, telemetry);
         //TODO uncomment
         robot.setUpDrivetrainMotors();
-        robot.initVisionProcessingRed();
+        robot.initVisionProcessingBlue();
 
         /*
         Servo holderClamp = hardwareMap.servo.get("holderClamp");
@@ -77,7 +77,7 @@ public class LongRedAuto extends LinearOpMode {
 
 
             //enable THIS to test longredauto
-            robot.detectMarkerPositionRed();
+            robot.detectMarkerPositionBlue();
             robot.longRedMoveToBoard();
             //robot.alignToBoard();
             //robot.setHeading(-90, 0.75);

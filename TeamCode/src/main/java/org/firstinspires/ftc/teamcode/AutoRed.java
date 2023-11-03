@@ -12,7 +12,7 @@ public class AutoRed extends LinearOpMode {
         robot.setUpDrivetrainMotors();
 //        robot.setUpArmMotor();
 
-        robot.initVisionProcessing();
+        robot.initVisionProcessingRed();
         waitForStart();
 
 
