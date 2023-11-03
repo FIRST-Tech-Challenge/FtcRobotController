@@ -161,7 +161,7 @@ open class DriveMethods: LinearOpMode() {
                     .build()
 
                 tfod.setZoom(zoom)
-                tfod.setMinResultConfidence(0.5F)
+                tfod.setMinResultConfidence(0.3F)
                 if (useRightCam) tfod.setZoom(zoom)
                 if (useRightCam) tfod.setMinResultConfidence(0.5F)
                 // Add TensorFlow Processor to VisionPortal builder
