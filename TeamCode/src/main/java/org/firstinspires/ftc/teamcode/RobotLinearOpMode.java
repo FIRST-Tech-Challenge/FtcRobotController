@@ -425,25 +425,29 @@ public abstract class RobotLinearOpMode extends LinearOpMode {
             }
 
             while (placingPixel){
-                if (gamepad1.b){
-                    placingPixel = false;
-                    break;
-                }
                 searching = true;
                 leftFrontDriveMotor.setPower(0.2);
                 leftBackDriveMotor.setPower(0.2);
                 rightFrontDriveMotor.setPower(0.2);
                 rightBackDriveMotor.setPower(0.2);
                 while (searching) {
-                    if (hsvValues1[2] > 0.03) {
+                    if (gamepad1.b){
+                        leftFrontDriveMotor.setPower(0);
+                        leftBackDriveMotor.setPower(0);
+                        rightFrontDriveMotor.setPower(0);
+                        rightBackDriveMotor.setPower(0);
+                        searching = false;
+                        break;
+                    }
+                    if (hsvValues1[2] > 0.1) {
                         leftFrontDriveMotor.setPower(0);
                         leftBackDriveMotor.setPower(0);
                     }
-                    if (hsvValues2[2] > 0.03) {
+                    if (hsvValues2[2] > 0.1) {
                         rightFrontDriveMotor.setPower(0);
                         rightBackDriveMotor.setPower(0);
                     }
-                    if (hsvValues1[2] > .03 && hsvValues2[2] > .03) {
+                    if (hsvValues1[2] > .1 && hsvValues2[2] > .03) {
                         searching = false;
                     }
                 }
