@@ -222,17 +222,21 @@ public class FirstAutonomousIteration extends LinearOpMode {
 
         driveStraight(DRIVE_SPEED, 10.1, 0.0);    // Drive Forward 24"
         turnToHeading( TURN_SPEED, 15.0);               // Turn  CW to -45 Degrees
-        holdHeading( TURN_SPEED, 15.0, 0.2);   // Hold -45 Deg heading for a 1/2 second
+        holdHeading( TURN_SPEED, 15.0, 0.05);   // Hold -45 Deg heading for a 1/2 second
         turnToHeading( TURN_SPEED, 0.0);               // Turn  CW to -45 Degrees
-        holdHeading( TURN_SPEED, 0.0, 0.2);   // Hold -45 Deg heading for a 1/2 second
+        holdHeading( TURN_SPEED, 0.0, 0.05);   // Hold -45 Deg heading for a 1/2 second
         turnToHeading( TURN_SPEED, -20.0);               // Turn  CW to -45 Degrees
-        holdHeading( TURN_SPEED, -20.0, 0.2);   // Hold -45 Deg heading for a 1/2 second
+        holdHeading( TURN_SPEED, -20.0, 0.05);   // Hold -45 Deg heading for a 1/2 second
         // insert tensorflow code here
-        turnToHeading( TURN_SPEED, -90.0);               // Turn  CW to -45 Degrees
-        holdHeading(TURN_SPEED, -90.0, 0.2);
-        driveStraight(DRIVE_SPEED, -36.0, 0.0);
-        turnToHeading(TURN_SPEED, 0);
-        holdHeading(TURN_SPEED, 0, 0.2);
+        turnToHeading( TURN_SPEED, 0.0);               // Turn  CW to -45 Degrees
+        holdHeading( TURN_SPEED, 0.0, 0.05);   // Hold -45 Deg heading for a 1/2 second
+        driveStraight(DRIVE_SPEED, 1.9, 0.0);
+        turnToHeading(TURN_SPEED, 90);
+        holdHeading(TURN_SPEED, 0.0, 0.05);
+        driveStraight(DRIVE_SPEED, 24.0, 0.0);
+        turnToHeading(TURN_SPEED, 0.0);
+        holdHeading(TURN_SPEED, 0.0, 0.05);
+        driveStraight(DRIVE_SPEED, 22.0, 0.0);
 
 
 
