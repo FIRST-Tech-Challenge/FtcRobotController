@@ -3,6 +3,7 @@ package org.firstinspires.ftc.team417_CENTERSTAGE;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.opencv.core.Core;
 import org.opencv.core.Mat;
 import org.opencv.core.MatOfPoint;
@@ -12,6 +13,7 @@ import org.opencv.core.Scalar;
 import org.opencv.core.Size;
 import org.opencv.imgproc.Imgproc;
 import org.openftc.easyopencv.OpenCvCamera;
+import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
 import org.openftc.easyopencv.OpenCvPipeline;
 
@@ -109,6 +111,12 @@ abstract public class BaseAutonomous extends BaseOpMode {
 
         telemetry.addData("Init State", "Init Finished");
 
+        //int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
+        camera = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "webcam"));
+
+        // OR...  Do Not Activate the Camera Monitor View
+        //phoneCam = OpenCvCameraFactory.getInstance().createInternalCamera(OpenCvInternalCamera.CameraDirection.BACK);
+
         camera.setPipeline(new PropDetectionPipeline());
 
         camera.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
@@ -139,12 +147,13 @@ abstract public class BaseAutonomous extends BaseOpMode {
     boolean detectingBlue;
 
     enum SideDetected {
+        INITIALIZED,
         LEFT,
         CENTER,
         RIGHT
     }
 
-    SideDetected sideDetected;
+    public SideDetected sideDetected = SideDetected.INITIALIZED;
 
     class PropDetectionPipeline extends OpenCvPipeline {
         boolean viewportPaused = false;
@@ -165,7 +174,7 @@ abstract public class BaseAutonomous extends BaseOpMode {
             Imgproc.threshold(hsv, output, 1, 255, Imgproc.THRESH_BINARY);
             // Resize the binary mask
             Mat resizedMask = new Mat();
-            Imgproc.resize(output, resizedMask, new Size(0, 0), 0.7, 0.7, Imgproc.INTER_AREA);
+            Imgproc.resize(output, resizedMask, new Size(0, 0), 1, 1, Imgproc.INTER_AREA);
 
             // Find contours
             List<MatOfPoint> contours = new ArrayList<>();
@@ -209,6 +218,8 @@ abstract public class BaseAutonomous extends BaseOpMode {
                 } else {
                     sideDetected = SideDetected.CENTER;
                 }
+                telemetry.addLine("SIDE UPDATED");
+                telemetry.update();
             }
             return input;
         }
