@@ -1085,6 +1085,9 @@ public class Robot {
                 setHeading(-90, 0.75);
                 mecanumBlocking(38, false, 0.7);
                 setHeading(-90, 0.7);
+                mecanumBlocking(15.5, true, 0.5);
+                setHeading(-90, 0.7);
+                straightBlocking(14, false, 0.5);
                 break;
             } else if (markerPosRed == MarkerDetectorRed.MARKER_POSITION.LEFT) {
                 straightBlocking(19, false, 0.5);
@@ -1099,6 +1102,9 @@ public class Robot {
                 setHeading(-179.5, 0.75);
                 straightBlocking(24, false, 0.7);
                 setHeading(-90, 0.7);
+                mecanumBlocking(4, true, 0.5);
+                setHeading(-90, 0.7);
+                straightBlocking(14, false, 0.5);
                 break;
             } else { //center, default
                 Log.d("vision", "moveToMarker: center or default");
@@ -1115,8 +1121,9 @@ public class Robot {
                 straightBlocking(25, false, 0.7);
                 setHeading(-90, 0.7);
                 straightBlocking(84, false, 0.7);
-                mecanumBlocking(24, false,  0.5);
+                mecanumBlocking(33, false,  0.5);
                 setHeading(-90, 0.7);
+                straightBlocking(14, false, 0.5);
                 break;
             }
         }
