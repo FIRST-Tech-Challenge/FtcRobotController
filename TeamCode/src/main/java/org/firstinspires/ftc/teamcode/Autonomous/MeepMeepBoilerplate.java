@@ -10,12 +10,6 @@ import org.firstinspires.ftc.teamcode.RoadRunner.util.trajectorysequence.sequenc
 import java.util.ArrayList;
 
 public class MeepMeepBoilerplate extends DriveMethods {
-    enum Detection {
-        LEFT,
-        CENTER,
-        RIGHT
-    }
-
     SampleMecanumDrive drive;
 
     public final Pose2d STARTING_POSE = new Pose2d(-36, 61.5, Math.toRadians(-90));

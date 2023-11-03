@@ -10,7 +10,6 @@ import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName
 import org.firstinspires.ftc.robotcore.external.hardware.camera.controls.ExposureControl
 import org.firstinspires.ftc.robotcore.external.hardware.camera.controls.GainControl
 import org.firstinspires.ftc.robotcore.external.tfod.Recognition
-import org.firstinspires.ftc.teamcode.Autonomous.MeepMeepBoilerplate
 import org.firstinspires.ftc.teamcode.Variables.VisionProcessors
 import org.firstinspires.ftc.teamcode.Variables.clawAngle
 import org.firstinspires.ftc.teamcode.Variables.desiredTag
@@ -18,19 +17,19 @@ import org.firstinspires.ftc.teamcode.Variables.motorBL
 import org.firstinspires.ftc.teamcode.Variables.motorBR
 import org.firstinspires.ftc.teamcode.Variables.motorFL
 import org.firstinspires.ftc.teamcode.Variables.motorFR
-import org.firstinspires.ftc.teamcode.Variables.rMotorL
-import org.firstinspires.ftc.teamcode.Variables.rMotorR
 import org.firstinspires.ftc.teamcode.Variables.motorSlideLeft
 import org.firstinspires.ftc.teamcode.Variables.motorSlideRotate
+import org.firstinspires.ftc.teamcode.Variables.rMotorL
+import org.firstinspires.ftc.teamcode.Variables.rMotorR
 import org.firstinspires.ftc.teamcode.Variables.slideAngle
 import org.firstinspires.ftc.teamcode.Variables.slideGate
 import org.firstinspires.ftc.teamcode.Variables.slideLength
+import org.firstinspires.ftc.teamcode.Variables.t
 import org.firstinspires.ftc.teamcode.Variables.targetFound
 import org.firstinspires.ftc.teamcode.Variables.touchyL
 import org.firstinspires.ftc.teamcode.Variables.touchyR
 import org.firstinspires.ftc.teamcode.Variables.x
 import org.firstinspires.ftc.teamcode.Variables.y
-import org.firstinspires.ftc.teamcode.Variables.t
 import org.firstinspires.ftc.vision.VisionPortal
 import org.firstinspires.ftc.vision.apriltag.AprilTagDetection
 import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor
@@ -38,9 +37,9 @@ import org.firstinspires.ftc.vision.tfod.TfodProcessor
 import java.io.BufferedReader
 import java.io.FileReader
 import java.util.concurrent.TimeUnit
+import kotlin.math.abs
 import kotlin.math.atan
 import kotlin.math.pow
-import kotlin.math.abs
 import kotlin.math.sqrt
 
 
@@ -50,12 +49,10 @@ open class DriveMethods: LinearOpMode() {
     lateinit var visionPortal: VisionPortal
 
     lateinit var tfod: TfodProcessor
-    lateinit var tfodRight: TfodProcessor
 
     lateinit var aprilTag: AprilTagProcessor
 
     lateinit var visionProcessor: VisionProcessors
-    var useRightcam: Boolean = false
 
     fun initVision(processorType: VisionProcessors) {
         initVision(processorType, 1.0, "/sdcard/FIRST/models/ssd_mobilenet_v2_320x320_coco17_tpu_8.tflite", readLabels("/sdcard/FIRST/models/ssd_mobilenet_v2_label_map.txt"))
@@ -67,6 +64,28 @@ open class DriveMethods: LinearOpMode() {
 
     fun initVision(processorType: VisionProcessors, zoom: Double) {
         initVision(processorType, zoom, "/sdcard/FIRST/models/ssd_mobilenet_v2_320x320_coco17_tpu_8.tflite", readLabels("/sdcard/FIRST/models/ssd_mobilenet_v2_label_map.txt"))
+    }
+
+    fun getDetectionsSingleTFOD(): Variables.Detection {
+        val webcam = hardwareMap.get(WebcamName::class.java, "Webcam 1")
+        // Ensure the Webcam is correct
+        if (visionPortal.activeCamera != webcam) visionPortal.activeCamera = webcam
+        // Wait for recognitions
+        sleep(3000)
+
+        val recognitions = tfod.recognitions
+
+        // Convert it to a Position (real)
+        if (includesCup(recognitions)) {
+            val cup = getCup(recognitions) ?: return Variables.Detection.UNKNOWN
+
+            return if (cup.right < 214) Variables.Detection.LEFT
+            else if (cup.right > 214 && cup.right < 428) Variables.Detection.CENTER
+            else if (cup.right > 428) Variables.Detection.RIGHT
+            else Variables.Detection.UNKNOWN
+        } else {
+            return Variables.Detection.UNKNOWN
+        }
     }
 
     fun getDetectionsMultiTFOD(): Variables.Detection {
@@ -140,12 +159,6 @@ open class DriveMethods: LinearOpMode() {
                     .setModelFileName(model)
                     .setModelLabels(labelMap)
                     .build()
-                if (useRightCam) {
-                    tfodRight = TfodProcessor.Builder()
-                        .setModelFileName(model)
-                        .setModelLabels(labelMap)
-                        .build()
-                }
 
                 tfod.setZoom(zoom)
                 tfod.setMinResultConfidence(0.5F)
@@ -171,7 +184,6 @@ open class DriveMethods: LinearOpMode() {
         }
         // Build the VisionPortal and set visionPortal to it
         visionPortal = builder.build()
-        this.useRightcam = useRightcam
 
         visionProcessor = processorType
     }
@@ -310,17 +322,17 @@ open class DriveMethods: LinearOpMode() {
         motorBR!!.power = x - y + yaw
     }
     open fun initMotorsSecondBot() {
-        motorFL = hardwareMap.get<DcMotor>(DcMotor::class.java, "motorFL")
-        motorBL = hardwareMap.get<DcMotor>(DcMotor::class.java, "motorBL")
-        motorFR = hardwareMap.get<DcMotor>(DcMotor::class.java, "motorFR")
-        motorBR = hardwareMap.get<DcMotor>(DcMotor::class.java, "motorBR")
-        rMotorR = hardwareMap.get<DcMotor>(DcMotor::class.java, "rMotorR");
-        rMotorL = hardwareMap.get<DcMotor>(DcMotor::class.java, "rMotorL");
-        touchyR = hardwareMap.get<TouchSensor>(TouchSensor::class.java, "touchyR")
-        touchyL = hardwareMap.get<TouchSensor>(TouchSensor::class.java, "touchyL")
-        slideGate = hardwareMap.get<Servo>(Servo::class.java, "slideGate")
-        motorSlideRotate = hardwareMap.get<DcMotor>(DcMotor::class.java, "motorSlideRotate")
-        motorSlideLeft = hardwareMap.get<DcMotor>(DcMotor::class.java, "motorSlideLeft")
+        motorFL = hardwareMap.get(DcMotor::class.java, "motorFL")
+        motorBL = hardwareMap.get(DcMotor::class.java, "motorBL")
+        motorFR = hardwareMap.get(DcMotor::class.java, "motorFR")
+        motorBR = hardwareMap.get(DcMotor::class.java, "motorBR")
+        rMotorR = hardwareMap.get(DcMotor::class.java, "rMotorR");
+        rMotorL = hardwareMap.get(DcMotor::class.java, "rMotorL");
+        touchyR = hardwareMap.get(TouchSensor::class.java, "touchyR")
+        touchyL = hardwareMap.get(TouchSensor::class.java, "touchyL")
+        slideGate = hardwareMap.get(Servo::class.java, "slideGate")
+        motorSlideRotate = hardwareMap.get(DcMotor::class.java, "motorSlideRotate")
+        motorSlideLeft = hardwareMap.get(DcMotor::class.java, "motorSlideLeft")
     }
 
     open fun initSlideMotors() {
