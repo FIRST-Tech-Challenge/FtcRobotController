@@ -1,17 +1,16 @@
-package org.firstinspires.ftc.teamcode.Camera;
+package org.firstinspires.ftc.teamcode.Camera.Childrens.PipeLines;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.teamcode.Camera.Parents.Pipeline;
 import org.opencv.core.Core;
 import org.opencv.core.Mat;
 import org.opencv.core.Rect;
-import org.opencv.core.Scalar;
 import org.opencv.imgproc.Imgproc;
 import org.openftc.easyopencv.OpenCvCamera;
-import org.openftc.easyopencv.OpenCvPipeline;
 
-public class PipelineBlue extends Pipeline{
+public class PipelineBluELeft extends Pipeline {
 
-    PipelineBlue (OpenCvCamera webcam, Telemetry telemetry){
+    public PipelineBluELeft(OpenCvCamera webcam, Telemetry telemetry){
         super(webcam, telemetry);
             this.webcam = webcam;
             this.telemetry = telemetry;
@@ -23,7 +22,7 @@ public class PipelineBlue extends Pipeline{
             Imgproc.cvtColor(input, YCbCr, Imgproc.COLOR_RGB2YCrCb);//из RGB в YCrCb
             telemetry.addLine("Pipeline running");
 
-            Rect leftRect = new Rect(0,280, 100, 100);
+            Rect leftRect = new Rect(200,240, 100, 100);
             Rect midleRect = new Rect(240,280, 300, 100);
 
             Core.extractChannel(YCbCr, YCbCr, 1);//оставляем только СИНИЙ цвет по политре YCbCr

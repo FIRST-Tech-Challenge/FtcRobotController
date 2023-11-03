@@ -1,4 +1,4 @@
-cd c:\ftc\sdk\platform-tools
+cd C:\Users\user\AndroidStudioProjects\Sdk\platform-tools
 
 
 cd C:\Users\Vladimir\StudioProjects\ftc\sdk\platform-tools

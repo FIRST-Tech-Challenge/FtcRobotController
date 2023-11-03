@@ -1,13 +1,12 @@
-package org.firstinspires.ftc.teamcode.Camera;
+package org.firstinspires.ftc.teamcode.Camera.Childrens.PipeLines;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.teamcode.Camera.Parents.Pipeline;
 import org.opencv.core.Core;
 import org.opencv.core.Mat;
 import org.opencv.core.Rect;
-import org.opencv.core.Scalar;
 import org.opencv.imgproc.Imgproc;
 import org.openftc.easyopencv.OpenCvCamera;
-import org.openftc.easyopencv.OpenCvPipeline;
 
 /*
  * Пример конвейера обработки изображений, который будет запускаться при получении каждого кадра с камеры.
@@ -24,8 +23,8 @@ import org.openftc.easyopencv.OpenCvPipeline;
  * если вы делаете что-то странное и вам нужно синхронизировать это с потоком OpMode,
  * тогда вам нужно будет это учитывать соответствующим образом.
  */
-public class PipelineRed extends Pipeline {
-    PipelineRed(OpenCvCamera webcam, Telemetry telemetry){
+public class PipelineReDRight extends Pipeline {
+    public PipelineReDRight(OpenCvCamera webcam, Telemetry telemetry){
         super(webcam, telemetry);
         this.webcam = webcam;
         this.telemetry = telemetry;

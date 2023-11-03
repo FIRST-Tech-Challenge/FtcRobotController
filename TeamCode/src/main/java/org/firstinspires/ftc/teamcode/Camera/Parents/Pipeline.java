@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.Camera;
+package org.firstinspires.ftc.teamcode.Camera.Parents;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.opencv.core.Mat;
@@ -7,18 +7,18 @@ import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvPipeline;
 
 public class Pipeline extends OpenCvPipeline {
-    OpenCvCamera webcam;
-    Telemetry telemetry;
-    Mat YCbCr = new Mat();
-    Mat leftCrop;
-    Mat midleCrop;
-    Mat rightCrop;
-    double leftavgfin;
-    double midleavgfin;
-    double rightavgfin;
-    Mat output = new Mat();
-    Scalar rectColor = new Scalar(255, 255, 255);
-    Pipeline (OpenCvCamera webcam, Telemetry telemetry){
+    protected OpenCvCamera webcam;
+    protected Telemetry telemetry;
+    protected Mat YCbCr = new Mat();
+    protected Mat leftCrop;
+    protected Mat midleCrop;
+    protected Mat rightCrop;
+    protected double leftavgfin;
+    protected double midleavgfin;
+    protected double rightavgfin;
+    protected  Mat output = new Mat();
+    protected Scalar rectColor = new Scalar(255, 255, 255);
+    protected Pipeline (OpenCvCamera webcam, Telemetry telemetry){
         this.webcam = webcam;
         this.telemetry = telemetry;
     }
@@ -37,7 +37,7 @@ public class Pipeline extends OpenCvPipeline {
             webcam.resumeViewport();
         }
     }
-    public Telemetry tel1 (Telemetry tel1, Scalar lefavg, Scalar midleavg){
+    protected Telemetry tel1 (Telemetry tel1, Scalar lefavg, Scalar midleavg){
         tel1.addData("leftavgfin",lefavg.val[0]);
         tel1.addData("midleavgfin",midleavg.val[0]);
         return tel1;

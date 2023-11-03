@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.Camera;
+package org.firstinspires.ftc.teamcode.Camera.Parents;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
@@ -10,7 +10,7 @@ import org.openftc.easyopencv.OpenCvCameraRotation;
 
 
 public class Webcam extends LinearOpMode {
-    OpenCvCamera webcam;
+    protected OpenCvCamera webcam;
 
     @Override
     public void runOpMode() throws InterruptedException {
