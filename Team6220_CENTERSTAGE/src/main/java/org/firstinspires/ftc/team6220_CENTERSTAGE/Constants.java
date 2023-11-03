@@ -12,6 +12,9 @@ public class Constants {
     public static final Scalar BLUE_COLOR_DETECT_MIN_HSV = new Scalar(90, 65, 25);
     public static final Scalar borderColors = new Scalar(255,0,0);
     public static final int CAMERA_WIDTH = 1920;
+    public static final int CAMERA_HEIGHT = 1080;
+    //public static final int CAMERA_WIDTH = 1280; // << for smol camera
+    //public static final int CAMERA_HEIGHT = 960;
 
     // Sets blur size for gaussian blur in color detection
     public static final Size BLUR_SIZE = new Size(5, 5);
