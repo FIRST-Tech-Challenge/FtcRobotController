@@ -68,6 +68,7 @@ public class League1_TeleOp extends LinearOpMode {
     final double DRIVE_POWER_Y_MULTIPLIER = 0.7;
     final double MIN_HEADING_ACCURACY = 5.0; // degrees off from target
     final double SLOWMODE_MULTIPLIER = 0.3;
+    final double INTAKE_POWER_MULTIPLIER = 1.0;
 
     // useful groups of keycodes
     final GamepadKeys.Button[] BUMPER_KEYCODES = {
@@ -168,6 +169,18 @@ public class League1_TeleOp extends LinearOpMode {
             // NOTE /!\ this doesn't work yet as we haven't set it up
             drive.updatePoseEstimate();
 
+            // check for intake inwards
+            if (gp2.getTrigger(GamepadKeys.Trigger.LEFT_TRIGGER) > 0.0 ||
+                    gp2.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER) > 0.0) {
+                drive.intakeMotor.setPower(1 * INTAKE_POWER_MULTIPLIER);
+
+            // else check for intaking reversed
+            } else if (gp2.getButton(GamepadKeys.Button.LEFT_BUMPER) ||
+                    gp2.getButton(GamepadKeys.Button.RIGHT_BUMPER)) {
+                drive.intakeMotor.setPower(-1 * INTAKE_POWER_MULTIPLIER);
+            }
+
+
             // telemetry
 
             telemetry.addData("current turning state", curTurningState);
@@ -209,7 +222,11 @@ public class League1_TeleOp extends LinearOpMode {
      * @return equivalent angle between -180 and 180
      */
     private static double limitAngle(double angle) {
-        return ((angle + 180.0) % 360.0) - 180.0;
+        return gooderMod((angle + 180.0), 360.0) - 180.0;
+    }
+    // does modulus similar to desmos mod function, normal java % is different and doesn't work
+    private static double gooderMod(double a, double b) {
+        return a - Math.floor(a / b) * b;
     }
 
     /**
