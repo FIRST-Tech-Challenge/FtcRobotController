@@ -8,11 +8,10 @@ public class RedCloseAutoBackup extends BaseAutonomous {
     public void runOpMode() {
         initializeAuto();
 
+
         waitForStart();
 
         detectingBlue = false;
-
-        sleep(3000);
 
         switch (detectTeamProp()) {
             case INITIALIZED:

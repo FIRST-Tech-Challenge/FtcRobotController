@@ -29,24 +29,6 @@ abstract public class BaseAutonomous extends BaseOpMode {
     int lastEncoderBL = 0;
     int lastEncoderBR = 0;
 
-    public void initAuto() {
-        telemetry.addData("Init State", "Init Started");
-        telemetry.update();
-        initializeHardware();
-
-        telemetry.addData("Init State", "Init Finished");
-
-        // Set last know encoder values
-        lastEncoderFR = FR.getCurrentPosition();
-        lastEncoderFL = FL.getCurrentPosition();
-        lastEncoderBL = BL.getCurrentPosition();
-        lastEncoderBR = BR.getCurrentPosition();
-
-        telemetry.clear();
-        telemetry.addLine("Initialized. Ready to start!");
-        telemetry.update();
-    }
-
     public void driveInches(double x, double y) {
         double xTicks = x * TICKS_PER_INCH;
         double yTicks = y * TICKS_PER_INCH;
@@ -136,6 +118,8 @@ abstract public class BaseAutonomous extends BaseOpMode {
         lastEncoderBL = BL.getCurrentPosition();
         lastEncoderBR = BR.getCurrentPosition();
 
+        sleep(5000);
+
         telemetry.clear();
         telemetry.addLine("Initialized. Ready to start!");
         telemetry.update();
@@ -218,8 +202,6 @@ abstract public class BaseAutonomous extends BaseOpMode {
                 } else {
                     sideDetected = SideDetected.CENTER;
                 }
-                telemetry.addLine("SIDE UPDATED");
-                telemetry.update();
             }
             return input;
         }
