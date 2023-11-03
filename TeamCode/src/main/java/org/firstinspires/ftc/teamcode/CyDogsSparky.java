@@ -30,7 +30,7 @@ public class CyDogsSparky extends CyDogsChassis{
     public static final double CaptainReachHeight = 4000;
     public static final double CaptainPullHeight = 2000;
 
-    public static final int BackUpDistanceFromSpike = 20;
+    public static final int BackUpDistanceFromSpike = 30;
     public static final int DistanceBetweenScoreBoardAprilTags = 50;
 
     public static final int StandardAutonWaitTime = 500;
@@ -160,7 +160,7 @@ public class CyDogsSparky extends CyDogsChassis{
     public void dropPurplePixel(){
         Intake1.setPower(-0.2);
         Intake2.setPower(-0.2);
-        this.MoveStraight(BackUpDistanceFromSpike,0.5,StandardAutonWaitTime);
+        this.MoveStraight(BackUpDistanceFromSpike,0.5,500);
         Intake1.setPower(0);
         Intake2.setPower(0);
     }
@@ -231,7 +231,7 @@ public class CyDogsSparky extends CyDogsChassis{
                 while (drivePath==null) {
                     myOpMode.telemetry.addLine("Driver,");
                     myOpMode.telemetry.addLine("To drive through left, press DPAD LEFT");
-                    myOpMode.telemetry.addLine("To drive through center, press DPAD UP");
+             //       myOpMode.telemetry.addLine("To drive through center, press DPAD UP");
                     myOpMode.telemetry.addLine("To drive through right, press DPAD RIGHT");
                     myOpMode.telemetry.update();
                     if (myOpMode.gamepad1.dpad_right) {
@@ -242,10 +242,11 @@ public class CyDogsSparky extends CyDogsChassis{
                         drivePath = Direction.LEFT;
                         break;
                     }
-                    if (myOpMode.gamepad1.dpad_up) {
-                        drivePath = Direction.CENTER;
-                        break;
-                    }               }
+                //    if (myOpMode.gamepad1.dpad_up) {
+                //        drivePath = Direction.CENTER;
+                //        break;
+                 //   }
+                }
                 while (!myOpMode.gamepad1.dpad_down) {
                     if (drivePath==Direction.LEFT) {
                         myOpMode.telemetry.addLine("Driving under LEFT, Press Dpad Down to Confirm.");
@@ -291,12 +292,16 @@ public class CyDogsSparky extends CyDogsChassis{
     public void AutonPlacePurplePixel(SpikeCam.location mySpike){
         if(mySpike== SpikeCam.location.LEFT){
             RotateRight(90,.5,StandardAutonWaitTime);
+            MoveStraight(-17,.5,200);
             dropPurplePixel();
             returnLiftForDriving();
         } else if (mySpike==SpikeCam.location.MIDDLE) {
             MoveStraight(50,.5,StandardAutonWaitTime);
+            dropPurplePixel();
+            returnLiftForDriving();
         } else {
             RotateLeft(90,.5,StandardAutonWaitTime);
+            MoveStraight(-17,.5,200);
             dropPurplePixel();
             returnLiftForDriving();
         }

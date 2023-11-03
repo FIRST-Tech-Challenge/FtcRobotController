@@ -35,14 +35,52 @@ public class AutonRedLeft extends LinearOpMode {
         waitForStart();
 
 
-        if(opModeIsActive()){
-            mySparky.MoveStraight(-745,.5,CyDogsSparky.StandardAutonWaitTime);
+        if(opModeIsActive()) {
+            mySparky.MoveStraight(-745, .5, CyDogsSparky.StandardAutonWaitTime);
             mySparky.AutonPlacePurplePixel(mySpikeLocation);
-            mySparky.AutonPrepareToTravelThroughCenter(mySpikeLocation, drivePath);
-            mySparky.MoveStraight(1940,.5,CyDogsSparky.StandardAutonWaitTime);
-            mySparky.AutonCenterOnScoreboardBasedOnPath(drivePath);
-            mySparky.scoreFromDrivingPositionAndReturn(CyDogsSparky.ArmLow);
-            mySparky.AutonParkInCorrectSpot(mySpikeLocation, parkingSpot);
+            switch (mySpikeLocation) {
+                case LEFT:
+                    mySparky.MoveStraight(mySparky.BackUpDistanceFromSpike,.5,mySparky.StandardAutonWaitTime);
+                    switch (drivePath) {
+                        case LEFT:
+                            mySparky.StrafeLeft(CyDogsSparky.OneTileMM, .5, CyDogsSparky.StandardAutonWaitTime);
+                            break;
+                        case RIGHT:
+                            mySparky.StrafeRight(CyDogsSparky.OneTileMM, .5, CyDogsSparky.StandardAutonWaitTime);
+                            break;
+                    }
+                case MIDDLE:
+                    mySparky.MoveStraight(50,.5,mySparky.StandardAutonWaitTime);
+                    mySparky.RotateLeft(90,.5,mySparky.StandardAutonWaitTime);
+                    switch (drivePath) {
+                        case LEFT:
+                            mySparky.MoveStraight(-CyDogsChassis.OneTileMM,.5,mySparky.StandardAutonWaitTime);
+                            mySparky.StrafeLeft(CyDogsSparky.OneTileMM,.5,CyDogsSparky.StandardAutonWaitTime);
+                            mySparky.MoveStraight(CyDogsChassis.OneTileMM,.5,mySparky.StandardAutonWaitTime);
+                            break;
+                        case RIGHT:
+                            mySparky.StrafeRight(CyDogsSparky.OneTileMM,.5,CyDogsSparky.StandardAutonWaitTime);
+                            break;
+                    }
+                    break;
+                case RIGHT:
+                    mySparky.RotateRight(180,.5,mySparky.StandardAutonWaitTime);
+                    mySparky.MoveStraight(-mySparky.BackUpDistanceFromSpike,.5,mySparky.StandardAutonWaitTime);
+                    switch (drivePath) {
+                        case LEFT:
+                            mySparky.StrafeLeft(CyDogsSparky.OneTileMM,.5,CyDogsSparky.StandardAutonWaitTime);
+                            break;
+                        case RIGHT:
+                            mySparky.StrafeRight(CyDogsSparky.OneTileMM,.5,CyDogsSparky.StandardAutonWaitTime);
+                            break;
+                    }
+                    break;
+            }
+        //    mySparky.AutonPrepareToTravelThroughCenter(mySpikeLocation, drivePath);
+        //    mySparky.MoveStraight(1940,.5,CyDogsSparky.StandardAutonWaitTime);
+        //    mySparky.AutonCenterOnScoreboardBasedOnPath(drivePath);
+        //    mySparky.scoreFromDrivingPositionAndReturn(CyDogsSparky.ArmLow);
+        //   mySparky.AutonParkInCorrectSpot(mySpikeLocation, parkingSpot);
         }
         sleep(5000);
     }

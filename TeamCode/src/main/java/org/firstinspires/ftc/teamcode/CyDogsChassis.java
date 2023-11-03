@@ -18,7 +18,7 @@ public class CyDogsChassis {
     private LinearOpMode myOpMode;
     public enum Direction {LEFT, CENTER, RIGHT}
 
-    public static final int OneTileMM = 457;
+    public static final int OneTileMM = 610;
 
     public CyDogsChassis(LinearOpMode currentOp){
         // INITIALIZATION BLOCKS:
@@ -58,13 +58,13 @@ public class CyDogsChassis {
     }
 
 
-    public void StrafeLeft(int mmToTarget, double VelocityPercentage, int WaitTime){
-        StrafeRight(-mmToTarget, VelocityPercentage, WaitTime);
+    public void StrafeRight(int mmToTarget, double VelocityPercentage, int WaitTime){
+        StrafeLeft(-mmToTarget, VelocityPercentage, WaitTime);
     }
     /**
      * Strafe right(+) or left(-) until reaching Position
      */
-    public void StrafeRight(int mmToTarget, double VelocityPercentage, int WaitTime) {
+    public void StrafeLeft(int mmToTarget, double VelocityPercentage, int WaitTime) {
         double TicksToTarget;
         double TicksPerSecond;
 
