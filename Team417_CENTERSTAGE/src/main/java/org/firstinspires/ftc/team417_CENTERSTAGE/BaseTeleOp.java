@@ -11,9 +11,18 @@ public class BaseTeleOp extends BaseOpMode {
         waitForStart();
 
         while (opModeIsActive()) {
-            driveUsingControllers(true);
-            //outputUsingControllers();
-            //intakeUsingControllers();
+            driveUsingControllers(false);
+            outputUsingControllers();
+            intakeUsingControllers();
+            telemetry.addData("FRMotor", FR.getCurrentPosition());
+            telemetry.addData("FRMotor", FR.getPowerFloat());
+            telemetry.addData("FLMotor", FL.getCurrentPosition());
+            telemetry.addData("FLMotor", FL.getPowerFloat());
+            telemetry.addData("BRMotor", BR.getCurrentPosition());
+            telemetry.addData("BRMotor", BR.getPowerFloat());
+            telemetry.addData("BLMotor", BL.getCurrentPosition());
+            telemetry.addData("BLMotor", BL.getPowerFloat());
+            telemetry.update();
         }
     }
 
@@ -51,6 +60,9 @@ public class BaseTeleOp extends BaseOpMode {
 
     public void intakeUsingControllers() {
         double speed = gamepad1.left_trigger - gamepad1.right_trigger;
+        telemetry.addData("Left Trigger", gamepad1.left_trigger);
+        telemetry.addData("Right Trigger", gamepad1.right_trigger);
+        telemetry.addData("Intake Speed", speed);
         runIntakeMechanism(speed);
     }
 
