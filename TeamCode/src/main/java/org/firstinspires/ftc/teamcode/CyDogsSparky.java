@@ -20,7 +20,7 @@ public class CyDogsSparky extends CyDogsChassis{
     public static final double ArmRaiseBeforeElbowMovement = 150;
     public static final double WristForIntake = 0.03;
     public static final double WristForDriving = 0.08;
-    public static final double WristForScoring = 0.45;
+    public static final double WristForScoring = 0.25;
     public static final double ElbowHomePosition = 0.49;
     public static final double ElbowScoringPosition = 0.23;
     public static final double FingerOpen = 0.8;
@@ -31,7 +31,7 @@ public class CyDogsSparky extends CyDogsChassis{
     public static final double CaptainPullHeight = 2000;
 
     public static final int BackUpDistanceFromSpike = 30;
-    public static final int DistanceBetweenScoreBoardAprilTags = 50;
+    public static final int DistanceBetweenScoreBoardAprilTags = 150;
 
     public static final int StandardAutonWaitTime = 500;
 
@@ -148,14 +148,27 @@ public class CyDogsSparky extends CyDogsChassis{
 
     public void scoreFromDrivingPositionAndReturn(int armHeight){
         raiseArmToScore(armHeight);
-        myOpMode.sleep(1000);
+        myOpMode.sleep(1500);
         SwingElbow();
-        myOpMode.sleep(2500);
+        myOpMode.sleep(1500);
+        raiseArmToScore(100);
+        myOpMode.sleep(2000);
         openFinger();
         myOpMode.sleep(500);
+        raiseArmToScore(600);
+        myOpMode.sleep(2000);
         SwingElbow();
         myOpMode.sleep(1500);
         returnLiftForDriving();
+    }
+
+    public void AdjustToAprilTag(SpikeCam.location mySpike)
+    {
+        if(mySpike==SpikeCam.location.LEFT) {
+            StrafeLeft(DistanceBetweenScoreBoardAprilTags, .5, 500);
+        } else if (mySpike==SpikeCam.location.RIGHT) {
+            StrafeRight(DistanceBetweenScoreBoardAprilTags,.5,500);
+        }
     }
     public void dropPurplePixel(){
         Intake1.setPower(-0.2);
@@ -290,7 +303,7 @@ public class CyDogsSparky extends CyDogsChassis{
     }
 
     public void AutonPlacePurplePixel(SpikeCam.location mySpike){
-        if(mySpike== SpikeCam.location.LEFT){
+        if(mySpike==SpikeCam.location.LEFT){
             RotateRight(90,.5,StandardAutonWaitTime);
             MoveStraight(-17,.5,200);
             dropPurplePixel();
@@ -300,7 +313,7 @@ public class CyDogsSparky extends CyDogsChassis{
             dropPurplePixel();
             returnLiftForDriving();
         } else {
-            RotateLeft(90,.5,StandardAutonWaitTime);
+            RotateLeft(-90,.5,StandardAutonWaitTime);
             MoveStraight(-17,.5,200);
             dropPurplePixel();
             returnLiftForDriving();
@@ -390,11 +403,11 @@ public class CyDogsSparky extends CyDogsChassis{
         }
 
         if(myParkingSpot==Direction.LEFT){
-            StrafeLeft(OneTileMM+leftAdjustment,.5,StandardAutonWaitTime);
+            StrafeLeft(OneTileMM+leftAdjustment+45,.5,StandardAutonWaitTime);
         } else if (myParkingSpot==Direction.CENTER) {
             // really shouldn't park in center, but if so, I guess we're here
         } else {
-            StrafeRight(OneTileMM+rightAdjustment,.5,StandardAutonWaitTime);
+            StrafeRight(OneTileMM+rightAdjustment+45,.5,StandardAutonWaitTime);
         }
     }
 }

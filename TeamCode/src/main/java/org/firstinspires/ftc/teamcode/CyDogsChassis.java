@@ -95,6 +95,8 @@ public class CyDogsChassis {
 
         TicksToTarget = (mmToTarget / (96 * Math.PI)) * 537.7;
         TicksPerSecond = ((VelocityPercentage * 312) / 60) * 537.7;
+        myOpMode.telemetry.addData("ticksToTarget", TicksToTarget);
+        myOpMode.telemetry.update();
         FrontLeftWheel.setTargetPosition((int) (FrontLeftWheel.getCurrentPosition() + TicksToTarget));
         FrontRightWheel.setTargetPosition((int) (FrontRightWheel.getCurrentPosition() + TicksToTarget));
         BackLeftWheel.setTargetPosition((int) (BackLeftWheel.getCurrentPosition() + TicksToTarget));
@@ -109,17 +111,36 @@ public class CyDogsChassis {
         myOpMode.sleep(WaitTime);
     }
 
-    public void RotateLeft(int degree, double VelocityPercentage, int WaitTime){
-        RotateRight(-degree, VelocityPercentage, WaitTime);
+    public void RotateRight(int degree, double VelocityPercentage, int WaitTime){
+        myOpMode.telemetry.addData("in Rotate Right", "now");
+        myOpMode.telemetry.addData("degree", degree);
+        myOpMode.telemetry.addData("velocity percentage", VelocityPercentage);
+        myOpMode.telemetry.addData("Wait Time", WaitTime);
+        myOpMode.telemetry.update();
+
+        RotateLeft(-1*degree, VelocityPercentage, WaitTime);
     }
-    public void RotateRight(int degree, double VelocityPercentage, int WaitTime) {
+    public void RotateLeft(int degree, double VelocityPercentage, int WaitTime) {
         int mmToTarget;
         double TicksToTarget;
         double TicksPerSecond;
 
+        myOpMode.telemetry.addData("in Rotate Left", "now");
+        myOpMode.telemetry.addData("degree", degree);
+        myOpMode.telemetry.addData("velocity percentage", VelocityPercentage);
+        myOpMode.telemetry.addData("Wait Time", WaitTime);
+        myOpMode.telemetry.update();
+
         mmToTarget = degree * (560 / 90);
+        myOpMode.telemetry.addData("mmToTarget", mmToTarget);
         TicksToTarget = (mmToTarget / (96 * Math.PI)) * 537.7;
+        myOpMode.telemetry.addData("TicksToTarget", TicksToTarget);
         TicksPerSecond = ((VelocityPercentage * 312) / 60) * 537.7;
+        myOpMode.telemetry.addData("FrontLeftWheel.getCurrentPosition()", FrontLeftWheel.getCurrentPosition());
+        myOpMode.telemetry.addData("FrontRightWheel.getCurrentPosition()", FrontRightWheel.getCurrentPosition());
+        myOpMode.telemetry.addData("BackLeftWheel.getCurrentPosition()", BackLeftWheel.getCurrentPosition());
+        myOpMode.telemetry.addData("BackRightWheel.getCurrentPosition()", BackRightWheel.getCurrentPosition());
+        myOpMode.telemetry.update();
         FrontLeftWheel.setTargetPosition((int) (FrontLeftWheel.getCurrentPosition() + TicksToTarget));
         FrontRightWheel.setTargetPosition((int) (FrontRightWheel.getCurrentPosition() - TicksToTarget));
         BackLeftWheel.setTargetPosition((int) (BackLeftWheel.getCurrentPosition() + TicksToTarget));

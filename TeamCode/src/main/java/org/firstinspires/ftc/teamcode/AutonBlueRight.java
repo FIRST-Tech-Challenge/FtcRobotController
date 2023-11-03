@@ -33,12 +33,13 @@ public class AutonBlueRight extends LinearOpMode {
 
 
         if(opModeIsActive()){
-            mySparky.MoveStraight(-635,.5,500);
-            mySparky.RotateLeft(90,.5,500);
-            mySparky.dropPurplePixel();
-            mySparky.returnLiftForDriving();
-            mySparky.MoveStraight(200,.5,500);
-            mySparky.scoreFromDrivingPositionAndReturn(CyDogsSparky.ArmLow);
+            //mySparky.MoveStraight(-635,.5,500);
+            mySparky.RotateLeft(90,.5,2000);
+            mySparky.RotateRight(90, .5, 2000);
+           // mySparky.dropPurplePixel();
+           // mySparky.returnLiftForDriving();
+            //mySparky.MoveStraight(200,.5,500);
+            //mySparky.scoreFromDrivingPositionAndReturn(CyDogsSparky.ArmLow);
 
         }
         sleep(5000);
