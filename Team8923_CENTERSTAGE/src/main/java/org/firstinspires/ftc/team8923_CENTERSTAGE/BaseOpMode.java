@@ -14,8 +14,8 @@ abstract public class BaseOpMode extends LinearOpMode {
     DcMotor motorBL;
     DcMotor motorBR;
 
-    DcMotor motorSlideLeft;
-    DcMotor motorSlideRight;
+    CRServo servoSlideLeft;
+    CRServo servoSlideRight;
 
     DcMotor motorIntakeWheels;
 
@@ -42,8 +42,8 @@ abstract public class BaseOpMode extends LinearOpMode {
         motorBL = hardwareMap.dcMotor.get("motorBL");
         motorBR = hardwareMap.dcMotor.get("motorBR");
 
-        motorSlideLeft = hardwareMap.dcMotor.get("motorSlideLeft");
-        motorSlideRight = hardwareMap.dcMotor.get("motorSlideRight");
+        servoSlideLeft = hardwareMap.crservo.get("servoSlideLeft");
+        servoSlideRight = hardwareMap.crservo.get("servoSlideRight");
 
         motorIntakeWheels = hardwareMap.dcMotor.get("motorIntakeWheels");
 
@@ -71,15 +71,8 @@ abstract public class BaseOpMode extends LinearOpMode {
 
         motorFL.setDirection(DcMotor.Direction.FORWARD);
         motorFR.setDirection(DcMotor.Direction.REVERSE);
-        motorBL.setDirection(DcMotor.Direction.REVERSE);
+        motorBL.setDirection(DcMotor.Direction.FORWARD);
         motorBR.setDirection(DcMotor.Direction.REVERSE);
-
-        motorSlideLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        motorSlideRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        motorSlideLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        motorSlideRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        motorSlideLeft.setDirection(DcMotorSimple.Direction.FORWARD);
-        motorSlideRight.setDirection(DcMotorSimple.Direction.REVERSE);
 
         motorIntakeWheels.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         motorIntakeWheels.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
