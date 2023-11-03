@@ -148,7 +148,7 @@ public class _2023_10_27_05_Arm_Claw_V5 extends LinearOpMode {
             if (gamepad1.b) {
                 clawLeft.setPosition(closeClaw);
                 clawRight.setPosition(closeClaw);
-                axle.setPosition(1);
+                axle.setPosition(0.8);
             }
             if (gamepad1.a) {
                 clawLeft.setPosition(openClaw);
