@@ -7,7 +7,15 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 public class RedCloseAutoBackup extends BaseAutonomous {
     public void runOpMode() {
         initializeAuto();
+
         waitForStart();
+
+        detectingBlue = false;
+
+        while (opModeIsActive()) {
+
+        }
+
         // move forward from the wall
     }
 }

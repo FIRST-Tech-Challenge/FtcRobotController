@@ -12,8 +12,8 @@ public class BaseTeleOp extends BaseOpMode {
 
         while (opModeIsActive()) {
             driveUsingControllers(true);
-            outputUsingControllers();
-            intakeUsingControllers();
+            //outputUsingControllers();
+            //intakeUsingControllers();
         }
     }
 
@@ -23,7 +23,7 @@ public class BaseTeleOp extends BaseOpMode {
         double strafeConstant = 1.1;
 
         double x = curveStick(gamepad1.left_stick_x) * strafeConstant * sensitivity;
-        double y = -curveStick(gamepad1.left_stick_y) * sensitivity;
+        double y = curveStick(-gamepad1.left_stick_y) * sensitivity;
         double rot = curveStick(gamepad1.right_stick_x) * rotSensitivity;
 
         mecanumDrive(x, y, rot);
@@ -37,7 +37,7 @@ public class BaseTeleOp extends BaseOpMode {
             sensitivity = 1;
             rotSensitivity = 1;
             x = curveStick(gamepad1.left_stick_x) * strafeConstant * sensitivity;
-            y = -curveStick(gamepad1.left_stick_y) * sensitivity;
+            y = curveStick(-gamepad1.left_stick_y) * sensitivity;
             rot = curveStick(gamepad1.right_stick_x) * rotSensitivity;
         } else {
             sensitivity = 0.5;
@@ -132,9 +132,9 @@ public class BaseTeleOp extends BaseOpMode {
     public double curveStick(double rawSpeed) {
         double logSpeed;
         if (rawSpeed >= 0) {
-            logSpeed = -Math.pow(rawSpeed, 2);
-        } else {
             logSpeed = Math.pow(rawSpeed, 2);
+        } else {
+            logSpeed = -Math.pow(rawSpeed, 2);
         }
         return logSpeed;
     }
