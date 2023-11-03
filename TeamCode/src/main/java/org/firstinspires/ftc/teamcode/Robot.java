@@ -1110,10 +1110,10 @@ public class Robot {
                 Log.d("vision", "moveToMarker: center or default");
                 straightBlocking(20, false, 0.5);
                 setHeading(0, 0.7);
-                mecanumBlocking(8, true, 0.5);
-                setHeading(0, 0.7);
-                straightBlocking(12, false, 0.5);
-                setHeading(0, 0.7);
+                mecanumBlocking(18, true, 0.5);
+                setHeading(-45, 0.7);
+                straightBlocking(10, false, 0.5);
+                setHeading(-45, 0.7);
                 straightBlocking(5, true, 0.7);
                 setHeading(0, 0.7);
                 mecanumBlocking(8, true, 0.25);
