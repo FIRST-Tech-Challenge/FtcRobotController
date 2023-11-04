@@ -67,7 +67,7 @@ open class DriveMethods: LinearOpMode() {
     fun getDetectionsSingleTFOD(): Variables.Detection {
         val webcam = hardwareMap.get(WebcamName::class.java, "Webcam 1")
         // Ensure the Webcam is correct
-        if (visionPortal.activeCamera != webcam) visionPortal.activeCamera = webcam
+//        if (visionPortal.activeCamera != webcam) visionPortal.activeCamera = webcam
         // Wait for recognitions
         sleep(3000)
 
