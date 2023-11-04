@@ -34,21 +34,18 @@ public class LongRedAuto extends LinearOpMode {
         Log.d("vision", "moveToMarker: Tag " + robot.wantedAprTagId);
         while (opModeIsActive()) {
             if (robot.markerPosRed == MarkerDetectorRed.MARKER_POSITION.RIGHT) { //RIGHT
-                robot.straightBlocking(19, false, 0.25);
+                robot.straightBlocking(19, false, 0.25); //forward
+                robot.setHeading(-45, 0.25); //turn right
+                robot.straightBlocking(8, false, 0.7); //forward
                 robot.setHeading(-45, 0.25);
-                robot.straightBlocking(8, false, 0.7);
-                robot.setHeading(-45, 0.25);
-                robot.straightBlocking(12, true, 0.7);
-                robot.setHeading(0, 0.7);
-                robot.straightBlocking(39, false, 0.7);
-                robot.setHeading(-90, 0.7);
-                robot.straightBlocking(77, false, 0.7);
+                robot.straightBlocking(12, true, 0.7); //dropoff, back
+                robot.setHeading(0, 0.7); //turn back
+                robot.straightBlocking(39, false, 0.7); //forward past spike
+                robot.setHeading(-90, 0.7); //turn right toward truss
+                robot.straightBlocking(77, false, 0.7); //forward under truss
                 robot.setHeading(-90, 0.75);
-                robot.mecanumBlocking(38, false, 0.7);
+                robot.mecanumBlocking(38, false, 0.7); //mecaum directly in front of board
                 robot.setHeading(-90, 0.7);
-                robot.mecanumBlocking(15.5, true, 0.5);
-                robot.setHeading(-90, 0.7);
-                robot.straightBlocking(14, false, 0.5);
                 break;
             } else if (robot.markerPosRed == MarkerDetectorRed.MARKER_POSITION.LEFT) { //LEFT
                 robot.straightBlocking(18, false, 0.25); //forward
