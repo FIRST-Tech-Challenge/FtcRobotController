@@ -25,7 +25,7 @@ public class LongRedAuto extends LinearOpMode {
         robot.detectMarkerPositionRed();
         longRedMoveToBoard();
         robot.alignToBoard();
-        robot.setHeading(-90, 0.75);
+        robot.setHeading(-90, 0.75); //move to aligntoboard()
         robot.autoOuttake();
     }
 
@@ -45,7 +45,7 @@ public class LongRedAuto extends LinearOpMode {
                 robot.setHeading(-90, 0.7); //turn right toward truss
                 robot.straightBlocking(77, false, 0.7); //forward under truss
                 robot.setHeading(-90, 0.75);
-                robot.mecanumBlocking(34, false, 0.7); //mecaum directly in front of board
+                robot.mecanumBlocking(34, false, 0.7); //mecanum directly in front of board
                 robot.setHeading(-90, 0.7);
                 break;
             } else if (robot.markerPosRed == MarkerDetectorRed.MARKER_POSITION.LEFT) { //LEFT
