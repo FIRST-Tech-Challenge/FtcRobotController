@@ -44,15 +44,10 @@ public class AT_TopLeft extends LinearOpMode {
             while (opModeIsActive() && !isStopRequested()) {
 
                 robot.driveRobot(FORWARD_SPEED, 0);
+                sleep(4 * 1000);
+                robot.driveRobot(0, -TURNSPEED);
+                sleep(2000);
 
-                // Pace this loop so hands move at a reasonable speed.
-                sleep(50);
-
-                robot.driveRobot(0, TURNSPEED);
-                // Pace this loop so hands move at a reasonable speed.
-                sleep(50);
-
-                robot.driveRobot(FORWARD_SPEED*4, 0);
             }
         }
 

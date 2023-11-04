@@ -44,17 +44,28 @@ public class AT_TopRight extends LinearOpMode {
         if (opModeIsActive()) {
             while (opModeIsActive() && !isStopRequested()) {
 
-                robot.driveRobot(FORWARD_SPEED, 0);
+             robot.driveRobot(FORWARD_SPEED, 0);
                 sleep(11 * 1000);
 
                 robot.driveRobot(0, -TURNSPEED);
                 sleep(4550);
+                //robot.driveRobot(0, 0);
+                //telemetry.addData("Reached Target Distance, Drop pixel", "");
+                robot.moveElbowToPosition(0.40);
+                sleep(300);//Move Elbow all the way down
+                //robot.moveGrabber(false); //release grabber to drop pixel
+
 
                 robot.driveRobot(FORWARD_SPEED, 0);
-                sleep(20 * 1000);
+                sleep(12 * 1000);
 
                 robot.driveRobot(0, -TURNSPEED);
-                sleep(4550);
+                sleep(2500);
+                robot.driveRobot(FORWARD_SPEED, 0);
+                sleep(7 * 1000);
+
+                robot.driveRobot(0, -TURNSPEED);
+                sleep(8000);
 
                 break;
             }
