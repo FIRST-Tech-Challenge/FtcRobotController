@@ -13,6 +13,9 @@ public class TeleopDrive extends LinearOpMode {
     private TouchSensor touchDown;
 
     private SlideLift slideLiftObj = new SlideLift();
+    private Intake intakeObj = new Intake();
+
+    private Button buttonA;
 
     public void Setup(){
         setDriveMotorsObj = new SetDriveMotors(hardwareMap, gamepad1);
@@ -47,6 +50,8 @@ public class TeleopDrive extends LinearOpMode {
 
             slideLiftObj.setLiftPower(gamepad2.left_stick_y, touchDown);
 
+            intakeObj.setIntakePower(buttonA);
+            buttonA.updateButton(gamepad2);
         }
     }
 }
