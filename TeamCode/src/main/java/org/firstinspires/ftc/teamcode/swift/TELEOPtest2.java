@@ -17,8 +17,7 @@ public class TELEOPtest2 extends LinearOpMode {
     static final double MAX_FWD = 1.0;     // Maximum FWD power applied to motor
     static final double MAX_REV = -1.0;     // Maximum REV power applied to motor
 
-    private Servo leftGripper;
-    private Servo rightGripper;
+    private Servo intakeServo;
 
     @Override
     public void runOpMode() {
@@ -115,17 +114,14 @@ public class TELEOPtest2 extends LinearOpMode {
 
             // move arm down on A button if not already at lowest position.
 
-            leftGripper = hardwareMap.get(Servo.class, "leftGripper");
-            rightGripper = hardwareMap.get(Servo.class, "rightGripper");
+            intakeServo = hardwareMap.get(Servo.class, "intakeServo");
 
             if (gamepad2.y) {
                 // Move servos in opposite directions when "y" is pressed
-                leftGripper.setPosition(1); // Adjust the position value as needed
-                rightGripper.setPosition(0); // Adjust the position value as needed
+                intakeServo.setPosition(0); // Adjust the position value as needed
             } else if (gamepad2.x) {
                 // Return servos to the center position when "x" is pressed
-                leftGripper.setPosition(0.9); // Adjust the position value for the center position
-                rightGripper.setPosition(0.1); // Adjust the position value for the center position
+                intakeServo.setPosition(10); // Adjust the position value for the center position
             }
             if (gamepad2.b) {
                 // Move servo in opposite directions when "y" is pressed
