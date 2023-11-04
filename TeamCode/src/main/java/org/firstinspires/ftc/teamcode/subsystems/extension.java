@@ -23,7 +23,7 @@ public class extension {
 //        lift1.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 //        lift2.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         tilt.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-//        lift1.setTargetPosition(0);
+//        lift1.setTargetPosition(0);+-++++++++++++++++++
 //        lift2.setTargetPosition(0);
         tilt.setTargetPosition(0);
 //        lift1.setPower(1);
@@ -33,9 +33,9 @@ public class extension {
 //        lift2.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
 
-        ((DcMotorEx) tilt).setVelocityPIDFCoefficients(10, 0, 11, 10);
+      //  ((DcMotorEx) tilt).setVelocityPIDFCoefficients(10, 0, 11, 10);
 
-        ((DcMotorEx) tilt).setPositionPIDFCoefficients(11);
+        ((DcMotorEx) tilt).setPositionPIDFCoefficients(4.5);
         tilt.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         //    pidf.setTolerance(5);
   //      pidf.setPIDF(0.004,0,0.005,0.00000001);
