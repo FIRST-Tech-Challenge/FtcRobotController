@@ -36,11 +36,11 @@ public class AutonRedBackParkNoEncoders extends LinearOpMode {
         waitForStart();
 
         if (opModeIsActive()) {
-            backLeftMotor.setPower(-0.7);
-            backRightMotor.setPower(0.7);
-            frontLeftMotor.setPower(0.7);
-            frontRightMotor.setPower(-0.7);
-            sleep(1000);
+            backLeftMotor.setPower(-0.5);
+            backRightMotor.setPower(0.5);
+            frontLeftMotor.setPower(0.5);
+            frontRightMotor.setPower(-0.5);
+            sleep(1500);
             backLeftMotor.setPower(0);
             backRightMotor.setPower(0);
             frontLeftMotor.setPower(0);

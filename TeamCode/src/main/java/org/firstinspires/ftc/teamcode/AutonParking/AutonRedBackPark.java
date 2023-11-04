@@ -4,6 +4,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.Servo;
 
 @Autonomous(name = "Auton Red Back Park")
 public class AutonRedBackPark extends LinearOpMode {
@@ -43,29 +44,53 @@ public class AutonRedBackPark extends LinearOpMode {
         leftBackDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         rightBackDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
+        DcMotor arm = hardwareMap.dcMotor.get("arm");
+        Servo clawLeft = hardwareMap.servo.get("clawLeft");
+        Servo clawRight = hardwareMap.servo.get("clawRight");
+        Servo axle = hardwareMap.servo.get("axle");
+
+        arm.setDirection(DcMotorSimple.Direction.REVERSE);
+        clawLeft.setDirection(Servo.Direction.FORWARD);
+        clawRight.setDirection(Servo.Direction.REVERSE);
+
+        arm.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        arm.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+        clawLeft.scaleRange(0, 1);
+        clawRight.scaleRange(0, 1);
+
+        axle.scaleRange(0, 1);
+
+        int liftTargetPosition = 0;
+        double openClaw = 0.4; //increase to open more
+        double closeClaw = 0.2;
+
+
         waitForStart();
 
         if (opModeIsActive()) {
-            int Rounded_Encoder_Ticks = calculateTicksForLateralMovement(3);
+            clawLeft.setPosition(closeClaw);
+            clawRight.setPosition(closeClaw);
+            axle.setPosition(0.8);
 
             leftFrontDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
             leftBackDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
             rightFrontDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
             rightBackDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
-            rightFrontDrive.setTargetPosition(1470);
+            rightFrontDrive.setTargetPosition(-1450);
             rightFrontDrive.setPower(0.5);
             rightFrontDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
-            leftBackDrive.setTargetPosition(1470);
+            leftBackDrive.setTargetPosition(-1450);
             leftBackDrive.setPower(0.5);
             leftBackDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
-            leftFrontDrive.setTargetPosition(-1470);
+            leftFrontDrive.setTargetPosition(1450);
             leftFrontDrive.setPower(0.5);
             leftFrontDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
-            rightBackDrive.setTargetPosition(-1470);
+            rightBackDrive.setTargetPosition(1450);
             rightBackDrive.setPower(0.5);
             rightBackDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
@@ -90,10 +115,10 @@ public class AutonRedBackPark extends LinearOpMode {
             leftBackDrive.setPower(0);
             }
 
-            int leftFrontDriveNecessaryTicks = calculateTicksForLateralMovement(80); //2000
-            int rightFrontDriveNecessaryTicks = calculateTicksForLateralMovement(80);
-            int leftBackDriveNecessaryTicks = calculateTicksForLateralMovement(80);
-            int rightBackDriveNecessaryTicks = calculateTicksForLateralMovement(80);
+            int leftFrontDriveNecessaryTicks = calculateTicksForLateralMovement(81); //2000
+            int rightFrontDriveNecessaryTicks = calculateTicksForLateralMovement(81);
+            int leftBackDriveNecessaryTicks = calculateTicksForLateralMovement(81);
+            int rightBackDriveNecessaryTicks = calculateTicksForLateralMovement(81);
 
             int leftFrontDriveTargetTicks =  leftFrontDriveNecessaryTicks;
             int rightFrontDriveTargetTicks = rightFrontDriveNecessaryTicks;
@@ -105,19 +130,19 @@ public class AutonRedBackPark extends LinearOpMode {
             leftFrontDrive.setDirection(DcMotorSimple.Direction.REVERSE);
             leftBackDrive.setDirection(DcMotorSimple.Direction.REVERSE);
 
-            leftFrontDrive.setTargetPosition(leftFrontDrive.getCurrentPosition() + leftFrontDriveTargetTicks);
+            leftFrontDrive.setTargetPosition(leftFrontDrive.getCurrentPosition() - leftFrontDriveTargetTicks);
             leftFrontDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             leftFrontDrive.setPower(0.5);
 
-            rightFrontDrive.setTargetPosition(rightFrontDrive.getCurrentPosition() + rightFrontDriveTargetTicks);
+            rightFrontDrive.setTargetPosition(rightFrontDrive.getCurrentPosition() - rightFrontDriveTargetTicks);
             rightFrontDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             rightFrontDrive.setPower(0.5);
 
-            leftBackDrive.setTargetPosition(leftBackDrive.getCurrentPosition() + leftBackDriveTargetTicks);
+            leftBackDrive.setTargetPosition(leftBackDrive.getCurrentPosition() - leftBackDriveTargetTicks);
             leftBackDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             leftBackDrive.setPower(0.5);
 
-            rightBackDrive.setTargetPosition(rightBackDrive.getCurrentPosition() + rightBackDriveTargetTicks);
+            rightBackDrive.setTargetPosition(rightBackDrive.getCurrentPosition() - rightBackDriveTargetTicks);
             rightBackDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             rightBackDrive.setPower(0.5);
 
@@ -141,6 +166,32 @@ public class AutonRedBackPark extends LinearOpMode {
             leftFrontDrive.setPower(0);
             rightBackDrive.setPower(0);
             leftBackDrive.setPower(0);
+
+            for (int liftPos = 0; liftPos <= 500; liftPos = liftPos + 5) {
+                liftTargetPosition = liftPos;
+                arm.setTargetPosition(liftTargetPosition);
+                arm.setPower(0.7);
+                arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                sleep(15);
+            }
+
+            clawLeft.setPosition(openClaw);
+            clawRight.setPosition(openClaw);
+
+            sleep(200);
+            axle.setPosition(0);
+            sleep(1000);
+
+            liftTargetPosition = 10;
+            arm.setTargetPosition(liftTargetPosition);
+            arm.setPower(0.05);
+            arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+            sleep(500);
+            axle.setPosition(0.8);
+
+            while (arm.isBusy()) {}
+            arm.setPower(0);
 
 
     }
