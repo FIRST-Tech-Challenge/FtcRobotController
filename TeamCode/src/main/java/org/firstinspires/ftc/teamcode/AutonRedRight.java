@@ -15,15 +15,16 @@ public class AutonRedRight extends LinearOpMode {
 
         ElapsedTime runtime = new ElapsedTime();
         CyDogsChassis.Direction parkingSpot = CyDogsChassis.Direction.LEFT;
-        CyDogsChassis.Direction drivePath = CyDogsChassis.Direction.CENTER;
+        CyDogsChassis.Direction drivePath = CyDogsChassis.Direction.RIGHT;
 
         CyDogsSparky mySparky = new CyDogsSparky(this);
         mySparky.initializeSpikeCam(SpikeCam.TargetColor.RED);
+        sleep(3000);
         mySparky.initializeDevices();
         mySparky.initializePositions();
 
         parkingSpot = mySparky.askParkingSpot();
-        drivePath = mySparky.askDrivePath();
+        //drivePath = mySparky.askDrivePath();
         mySpikeLocation = mySparky.spikeCam.getSpikeLocation();
 
         telemetry.addData("SpikeValue", mySparky.spikeCam.spikeLocation);
@@ -35,17 +36,24 @@ public class AutonRedRight extends LinearOpMode {
         waitForStart();
 
 
-        if(opModeIsActive()){
-            mySparky.MoveStraight(-745,.5,CyDogsSparky.StandardAutonWaitTime);
+        if (opModeIsActive()) {
+            mySparky.MoveStraight(-745, .5, CyDogsSparky.StandardAutonWaitTime);
             mySparky.AutonPlacePurplePixel(mySpikeLocation);
+            mySparky.MoveStraight(40, .5, CyDogsSparky.StandardAutonWaitTime);
             mySparky.AutonShortSideCenterOnScoreBoard(mySpikeLocation);
-            mySparky.MoveStraight(200,.5,CyDogsSparky.StandardAutonWaitTime);
-            mySparky.AutonCenterOnScoreboardBasedOnPath(drivePath);
+            if(mySpikeLocation== SpikeCam.location.RIGHT) {
+                mySparky.MoveStraight(170, .5, CyDogsSparky.StandardAutonWaitTime);
+            } else {
+                mySparky.MoveStraight(900, .5, CyDogsSparky.StandardAutonWaitTime);
+            }
+            mySparky.StrafeLeft(20, .5, 500);
+            mySparky.AdjustToAprilTag(mySpikeLocation);
             mySparky.scoreFromDrivingPositionAndReturn(CyDogsSparky.ArmLow);
             mySparky.AutonParkInCorrectSpot(mySpikeLocation, parkingSpot);
+            sleep(5000);
         }
-        sleep(5000);
     }
 }
+
 
 

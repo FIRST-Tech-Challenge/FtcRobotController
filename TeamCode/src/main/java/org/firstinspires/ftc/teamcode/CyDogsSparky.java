@@ -304,7 +304,7 @@ public class CyDogsSparky extends CyDogsChassis{
 
     public void AutonPlacePurplePixel(SpikeCam.location mySpike){
         if(mySpike==SpikeCam.location.LEFT){
-            RotateRight(90,.5,StandardAutonWaitTime);
+            RotateLeft(94,.5,StandardAutonWaitTime);
             MoveStraight(-17,.5,200);
             dropPurplePixel();
             returnLiftForDriving();
@@ -363,13 +363,17 @@ public class CyDogsSparky extends CyDogsChassis{
         if (mySpike == SpikeCam.location.LEFT) {
             //Already facing the correct way
             //We're 'BackUpDistanceFromSpike' closer to scoreboard
-            adjustVerticalDistance = -BackUpDistanceFromSpike;
+            adjustHorizontalDistance = 40;
+            adjustVerticalDistance = -BackUpDistanceFromSpike-20;
         } else if (mySpike == SpikeCam.location.MIDDLE) {
             RotateLeft(90, .5, StandardAutonWaitTime);
             // We're 50mm further away from start position
             adjustHorizontalDistance = -50;
         } else {
-            RotateRight(180, .5, StandardAutonWaitTime);
+            StrafeLeft(CyDogsChassis.OneTileMM, .5, CyDogsSparky.StandardAutonWaitTime);
+            MoveStraight(-CyDogsChassis.OneTileMM-160, .5, CyDogsSparky.StandardAutonWaitTime);
+            StrafeRight(CyDogsChassis.OneTileMM, .5, CyDogsSparky.StandardAutonWaitTime);
+            RotateRight(188, .5, StandardAutonWaitTime);
             // We're 'BackUpDistanceFromSpike' further from scoreboard
             adjustVerticalDistance = -BackUpDistanceFromSpike;
         }
@@ -383,7 +387,7 @@ public class CyDogsSparky extends CyDogsChassis{
         } else if (myPath==Direction.CENTER) {
             // Should be aligned in the center already
         } else {
-            StrafeLeft(OneTileMM,.5,StandardAutonWaitTime);
+            StrafeLeft(OneTileMM+70,.5,StandardAutonWaitTime);
         }
     }
 
@@ -403,11 +407,11 @@ public class CyDogsSparky extends CyDogsChassis{
         }
 
         if(myParkingSpot==Direction.LEFT){
-            StrafeLeft(OneTileMM+leftAdjustment+45,.5,StandardAutonWaitTime);
+            StrafeLeft(OneTileMM+leftAdjustment+75,.5,StandardAutonWaitTime);
         } else if (myParkingSpot==Direction.CENTER) {
             // really shouldn't park in center, but if so, I guess we're here
         } else {
-            StrafeRight(OneTileMM+rightAdjustment+45,.5,StandardAutonWaitTime);
+            StrafeRight(OneTileMM+rightAdjustment+65,.5,StandardAutonWaitTime);
         }
     }
 }
