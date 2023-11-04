@@ -1,11 +1,13 @@
 package org.firstinspires.ftc.team15091;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.Servo;
 
 @Autonomous(name = "Example", preselectTeleOp = "Gamepad")
+@Disabled
 public class Example extends AutonomousBase {
     DcMotor armMotor;
     Servo grabberServo;

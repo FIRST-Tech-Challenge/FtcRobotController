@@ -11,10 +11,11 @@ import com.qualcomm.robotcore.hardware.DcMotor.RunMode;
 import com.qualcomm.robotcore.hardware.DcMotor.ZeroPowerBehavior;
 import com.qualcomm.robotcore.hardware.DcMotorSimple.Direction;
 import com.qualcomm.robotcore.hardware.DigitalChannel;
-import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.IMU;
+import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
@@ -26,8 +27,10 @@ import java.util.List;
 public class Robot {
     public DcMotorEx armMotor, rollerMotor;
     public DcMotorEx leftFront, leftRear, rightRear, rightFront;
+    public Servo armServo, bowlServo;
     private List<DcMotorEx> motors;
     public DigitalChannel limitSwitch;
+    public DistanceSensor frontSensor;
     private Context _appContext;
     private int[] beepSoundID = new int[2];
     IMU imu;
@@ -38,6 +41,7 @@ public class Robot {
     static final double COUNTS_PER_INCH = (COUNTS_PER_MOTOR_REV * DRIVE_GEAR_REDUCTION) /
             (WHEEL_DIAMETER_INCHES * 3.14159265359d);
     private RunMode armMode;
+    double armPosition, bowlPosition;
 
     public void init(HardwareMap hardwareMap) {
         leftFront = hardwareMap.get(DcMotorEx.class, "left_front");
@@ -54,13 +58,22 @@ public class Robot {
         armMotor = hardwareMap.get(DcMotorEx.class, "arm_motor");
         armMotor.setDirection(Direction.FORWARD);
         armMotor.setCurrentAlert(1d, CurrentUnit.AMPS);
-        armMotor.setPositionPIDFCoefficients(5d);
+        armMotor.setPositionPIDFCoefficients(6d);
         armMotor.setTargetPositionTolerance(2);
         armMotor.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
         setArmMode(RunMode.STOP_AND_RESET_ENCODER);
 
         rollerMotor = hardwareMap.get(DcMotorEx.class, "roller_motor");
         rollerMotor.setMode(RunMode.STOP_AND_RESET_ENCODER);
+        rollerMotor.setMode(RunMode.RUN_USING_ENCODER);
+
+        limitSwitch = hardwareMap.get(DigitalChannel.class, "limit_sensor");
+        frontSensor = hardwareMap.get(DistanceSensor.class, "sensor_front");
+
+        armServo = hardwareMap.servo.get("servo_arm");
+        armPosition = armServo.getPosition();
+        bowlServo = hardwareMap.servo.get("servo_bowl");
+        bowlPosition = bowlServo.getPosition();
 
         imu = hardwareMap.get(IMU.class, "imu");
         imu.initialize(new IMU.Parameters(new RevHubOrientationOnRobot(LogoFacingDirection.RIGHT, UsbFacingDirection.FORWARD)));
@@ -154,6 +167,36 @@ public class Robot {
         if (armMode != newMode) {
             armMotor.setMode(newMode);
             armMode = newMode;
+        }
+    }
+
+    public void setArmPosition(double newArmPosition) {
+        if (armPosition != newArmPosition) {
+            armPosition = newArmPosition;
+            armServo.setPosition(armPosition);
+        }
+    }
+
+    public void toggleArm() {
+        if (armPosition == 0.8d) {
+            setArmPosition(0d);
+        } else {
+            setArmPosition(0.8d);
+        }
+    }
+
+    public void setBowlPosition(double newBowlPosition) {
+        if (bowlPosition != newBowlPosition) {
+            bowlPosition = newBowlPosition;
+            bowlServo.setPosition(bowlPosition);
+        }
+    }
+
+    public void toggleBowl() {
+        if (bowlPosition == 0d) {
+            setBowlPosition(1d);
+        } else {
+            setBowlPosition(0d);
         }
     }
 }

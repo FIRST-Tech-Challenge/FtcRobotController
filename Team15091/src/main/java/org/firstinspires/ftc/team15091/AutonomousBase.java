@@ -2,13 +2,19 @@ package org.firstinspires.ftc.team15091;
 
 public abstract class AutonomousBase extends OpModeBase {
     protected RobotDriver robotDriver;
+    protected YellowDetector pixelDetector;
+    protected PixelPosition pixelPos = PixelPosition.Left;
     protected long delay_start = 0;
 
     final protected void setupAndWait() {
         robot.init(hardwareMap);
         robotDriver = new RobotDriver(robot, this);
+        pixelDetector = new YellowDetector(hardwareMap);
 
         telemetry.addData("Heading", "%.4f", () -> robot.getHeading());
+        telemetry.addLine("Pixel | ")
+                .addData("pos", "%s", () -> pixelPos.toString())
+                .addData("debug", "%s", () -> pixelDetector.debug());
 
         // Wait for the game to start (driver presses PLAY)
         // Abort this loop is started or stopped.
