@@ -1,9 +1,11 @@
 package org.firstinspires.ftc.teamcode.Sophia;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.Servo;
 
+@Disabled
 @TeleOp(name = "ServoTeleOp", group = "TeleOp")
 public class ServoTest extends OpMode {
 
