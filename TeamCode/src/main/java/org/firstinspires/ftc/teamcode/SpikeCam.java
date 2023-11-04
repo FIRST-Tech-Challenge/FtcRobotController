@@ -108,14 +108,18 @@ public class SpikeCam {
             mid.release();
             right.release();
 
-        /*    myOpMode.telemetry.addData("left raw: ", leftval * leftRect.area() * 255);
+      /*      myOpMode.telemetry.addData("left raw: ", leftval * leftRect.area() * 255);
             myOpMode.telemetry.addData("mid raw: ", midval * midRect.area() * 255);
             myOpMode.telemetry.addData("right raw: ", rightval * rightRect.area() * 255);
 
             myOpMode.telemetry.addData("left %", Math.round(leftval * 100));
             myOpMode.telemetry.addData("mid %", Math.round(midval * 100));
             myOpMode.telemetry.addData("right %", Math.round(rightval * 100));
+
+            myOpMode.telemetry.update();
 */
+
+
             if (leftval > rightval && leftval > midval) spikeLocation = location.LEFT;
             else if (midval > leftval && midval > rightval) spikeLocation = location.MIDDLE;
             else if (rightval > leftval && rightval > midval) spikeLocation = location.RIGHT;

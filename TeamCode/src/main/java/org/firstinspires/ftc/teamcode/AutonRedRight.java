@@ -29,7 +29,7 @@ public class AutonRedRight extends LinearOpMode {
 
         telemetry.addData("SpikeValue", mySparky.spikeCam.spikeLocation);
         telemetry.addData("ParkingSpot", parkingSpot.toString());
-        telemetry.addData("DrivePath", drivePath.toString());
+  //      telemetry.addData("DrivePath", drivePath.toString());
         telemetry.update();
 
         // Wait for the start button to be pressed on the driver station
@@ -40,7 +40,7 @@ public class AutonRedRight extends LinearOpMode {
             mySparky.MoveStraight(-745, .5, CyDogsSparky.StandardAutonWaitTime);
             mySparky.AutonPlacePurplePixel(mySpikeLocation);
             mySparky.MoveStraight(40, .5, CyDogsSparky.StandardAutonWaitTime);
-            mySparky.AutonShortSideCenterOnScoreBoard(mySpikeLocation);
+            mySparky.AutonShortSideCenterOnScoreBoardRed(mySpikeLocation);
             if(mySpikeLocation== SpikeCam.location.RIGHT) {
                 mySparky.MoveStraight(170, .5, CyDogsSparky.StandardAutonWaitTime);
             } else {

@@ -353,7 +353,7 @@ public class CyDogsSparky extends CyDogsChassis{
         }
     }
 
-    public void AutonShortSideCenterOnScoreBoard(SpikeCam.location mySpike) {
+    public void AutonShortSideCenterOnScoreBoardRed(SpikeCam.location mySpike) {
         // this centers us on the scoreboard on the short side auton
         int adjustHorizontalDistance = 0;
         int adjustVerticalDistance = 0;
@@ -379,6 +379,35 @@ public class CyDogsSparky extends CyDogsChassis{
         }
 
         StrafeRight(adjustHorizontalDistance,.5,StandardAutonWaitTime);
+        MoveStraight(adjustVerticalDistance,.5,StandardAutonWaitTime);
+    }
+
+    public void AutonShortSideCenterOnScoreBoardBlue(SpikeCam.location mySpike) {
+        // this centers us on the scoreboard on the short side auton
+        int adjustHorizontalDistance = 0;
+        int adjustVerticalDistance = 0;
+
+        // First, let's get ourselves straight facing scoring area
+        //   Then, adjust position.  Remember dropping purple pixel moved us back from spike 20mm
+        if (mySpike == SpikeCam.location.RIGHT) {
+            //Already facing the correct way
+            //We're 'BackUpDistanceFromSpike' closer to scoreboard
+            adjustHorizontalDistance = 40;
+            adjustVerticalDistance = -BackUpDistanceFromSpike-20;
+        } else if (mySpike == SpikeCam.location.MIDDLE) {
+            RotateRight(90, .5, StandardAutonWaitTime);
+            // We're 50mm further away from start position
+            adjustHorizontalDistance = -50;
+        } else {
+            StrafeRight(CyDogsChassis.OneTileMM, .5, CyDogsSparky.StandardAutonWaitTime);
+            MoveStraight(-CyDogsChassis.OneTileMM-160, .5, CyDogsSparky.StandardAutonWaitTime);
+            StrafeLeft(CyDogsChassis.OneTileMM, .5, CyDogsSparky.StandardAutonWaitTime);
+            RotateLeft(188, .5, StandardAutonWaitTime);
+            // We're 'BackUpDistanceFromSpike' further from scoreboard
+            adjustVerticalDistance = -BackUpDistanceFromSpike;
+        }
+
+        StrafeLeft(adjustHorizontalDistance,.5,StandardAutonWaitTime);
         MoveStraight(adjustVerticalDistance,.5,StandardAutonWaitTime);
     }
     public void AutonCenterOnScoreboardBasedOnPath(Direction myPath) {
