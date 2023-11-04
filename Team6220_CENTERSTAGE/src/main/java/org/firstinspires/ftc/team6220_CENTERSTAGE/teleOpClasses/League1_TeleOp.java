@@ -66,7 +66,7 @@ public class League1_TeleOp extends LinearOpMode {
     final double DRIVE_POWER_Y_MULTIPLIER = 0.7;
     final double MIN_HEADING_ACCURACY = 5.0; // degrees off from target
     final double SLOWMODE_MULTIPLIER = 0.3;
-    final double INTAKE_POWER_MULTIPLIER = 0.5;
+    final double INTAKE_POWER_MULTIPLIER = 0.8;
 
     // useful groups of keycodes
     final GamepadKeys.Button[] BUMPER_KEYCODES = {
