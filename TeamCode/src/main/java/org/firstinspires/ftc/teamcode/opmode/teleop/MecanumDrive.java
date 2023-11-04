@@ -63,10 +63,11 @@ public class MecanumDrive extends LinearOpMode {
             // This ensures all the powers maintain the same ratio,
             // but only if at least one is out of the range [-1, 1]
             double denominator = Math.max(Math.abs(rotY) + Math.abs(rotX) + Math.abs(rx), 1);
-            double frontLeftPower = (rotY + rotX + rx) / denominator;
-            double backLeftPower = (rotY - rotX + rx) / denominator;
-            double frontRightPower = (rotY - rotX - rx) / denominator;
-            double backRightPower = (rotY + rotX - rx) / denominator;
+            double powerFactor = 0.5;
+            double frontLeftPower = (rotY + rotX + rx) / denominator*powerFactor;
+            double backLeftPower = (rotY - rotX + rx) / denominator*powerFactor;
+            double frontRightPower = (rotY - rotX - rx) / denominator*powerFactor;
+            double backRightPower = (rotY + rotX - rx) / denominator*powerFactor;
 
             frontLeftMotor.setPower(frontLeftPower);
             backLeftMotor.setPower(backLeftPower);
