@@ -39,7 +39,7 @@ public class RedTeleOp extends LinearOpMode{
         while (opModeIsActive()) {
             double y = -gamepad1.left_stick_y;// Note: pushing stick forward gives negative value
             double x = gamepad1.left_stick_x;
-            double rotation = gamepad1.right_stick_x;
+            double rotation = Math.pow(gamepad1.right_stick_x,3)/1.5;
 
             m_frontLeft.setPower(y + x + rotation); // Note: pushing stick forward gives negative value
             m_rearLeft.setPower(y - x + rotation);
