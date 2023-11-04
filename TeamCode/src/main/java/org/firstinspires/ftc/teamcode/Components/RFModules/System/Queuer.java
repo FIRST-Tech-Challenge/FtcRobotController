@@ -284,7 +284,6 @@ public class Queuer {
     /**
      * create new queueElement
      * logs which event was queued
-     *
      * @param p_asynchrnous is the function asynchronous
      * @param p_isOptional  is the function optional
      */

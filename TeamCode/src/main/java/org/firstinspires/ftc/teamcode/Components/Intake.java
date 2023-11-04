@@ -6,9 +6,11 @@ import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.LOGGER;
 import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.op;
 import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.packet;
 
+import com.acmerobotics.dashboard.config.Config;
 import com.arcrobotics.ftclib.hardware.motors.Motor;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
 import org.firstinspires.ftc.teamcode.Components.RFModules.Devices.RFBreakBeam;
 import org.firstinspires.ftc.teamcode.Components.RFModules.Devices.RFLimitSwitch;
@@ -22,6 +24,7 @@ import org.openftc.easyopencv.LIFO_OpModeCallbackDelegate;
  * Warren
  * Class to contain flipping intake and associated functions
  */
+@Config
 public class Intake extends RFMotor {
     RFBreakBeam breakBeam;
     RFLimitSwitch limitSwitch;
@@ -31,16 +34,15 @@ public class Intake extends RFMotor {
 
     private boolean full = false;
     private double pixelCount =0;
-    private double HALF_TICKS_PER_REV = 537.6;
-    DcMotorEx encoder;
+    public static double HALF_TICKS_PER_REV = 26213.0/39.0747;
 
     /**
      * initializes all the hardware, logs that hardware has been initialized
      */
     public Intake(){
         super("intakeMotor",true);
-        encoder = op.hardwareMap.get(DcMotorEx.class, "motorRightBack");
         super.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        super.setDirection(DcMotorSimple.Direction.REVERSE);
         LOGGER.setLogLevel(RFLogger.Severity.INFO);
         LOGGER.log("Initializing Intake Motor and intake sensors!");
 //        breakBeam = new RFBreakBeam();
@@ -87,7 +89,6 @@ public class Intake extends RFMotor {
         LOGGER.log("starting intake, power : "+INTAKE_POWER);
         setPower(INTAKE_POWER);
         IntakeStates.INTAKING.setStateTrue();
-
     }
     /**
      * Sets intake power to REVERSE_POWER, logs that the robot is reversing to general and intake surface level
@@ -103,22 +104,23 @@ public class Intake extends RFMotor {
      * Sets intake power 0, logs that intake is stopped to general and intake surface level
      */
     public void stopIntake(){
-        if(abs(encoder.getVelocity())>10) {
-            double pos = encoder.getCurrentPosition();
-            double vel = encoder.getVelocity();
-            double res = (pos + vel * 0.1) % HALF_TICKS_PER_REV;
-            if (res > HALF_TICKS_PER_REV / 2) {
+        double vel = super.getVelocity();
+//        if(abs(vel)>10) {
+            double pos = super.getCurrentPosition();
+            double res = (pos) % HALF_TICKS_PER_REV;
+            if (res > HALF_TICKS_PER_REV / 2.0) {
                 res -= HALF_TICKS_PER_REV;
             }
             if (abs(res) < 20) {
                 LOGGER.setLogLevel(RFLogger.Severity.INFO);
-                LOGGER.log("stopping intake, power : " + 0);
+                LOGGER.log("stopping intake, power : " + 0 +", "+ res);
                 setPower(0);
             } else {
                 LOGGER.log("trying to stop, too far" + res);
             }
-            IntakeStates.STOPPED.setStateTrue();
-        }
+//        }
+//        LOGGER.log("position" + pos);
+        IntakeStates.STOPPED.setStateTrue();
     }
 
     /**
@@ -160,6 +162,10 @@ public class Intake extends RFMotor {
         if(IntakeStates.STOPPED.state){
             stopIntake();
         }
+        double pos = super.getCurrentPosition();
+        packet.put("intakePos", pos);
+        packet.put("intakeRevs", pos/HALF_TICKS_PER_REV);
+        packet.put("intakeMod", pos%HALF_TICKS_PER_REV);
 
     }
 }
