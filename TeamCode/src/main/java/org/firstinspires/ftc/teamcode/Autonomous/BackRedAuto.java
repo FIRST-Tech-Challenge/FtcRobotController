@@ -32,12 +32,12 @@ public class BackRedAuto extends MeepMeepBoilerplate {
                 .forward(28.0)
                 .build();
 
-        assert getCurrentTrajectorySequence(drive) != null;
+        followTrajectorySequence(traj1);
 
         switch (detection) {
             case LEFT:
                 followTrajectorySequence(
-                        drive.trajectorySequenceBuilder(getCurrentTrajectorySequence(drive).end())
+                        drive.trajectorySequenceBuilder(getCurrentPosition(drive))
                                 .turn(Math.toRadians(90))
                                 .forward(2)
                                 .build()
@@ -47,7 +47,7 @@ public class BackRedAuto extends MeepMeepBoilerplate {
                 break;
             case RIGHT:
                 followTrajectorySequence(
-                        drive.trajectorySequenceBuilder(getCurrentTrajectorySequence(drive).end())
+                        drive.trajectorySequenceBuilder(getCurrentPosition(drive))
                                 .turn(Math.toRadians(-90))
                                 .forward(2)
                                 .build()
@@ -55,6 +55,6 @@ public class BackRedAuto extends MeepMeepBoilerplate {
                 break;
         }
 
-        drive.followTrajectorySequence(mergeSequences(sequences));
+//        drive.followTrajectorySequence(mergeSequences(sequences));
     }
 }

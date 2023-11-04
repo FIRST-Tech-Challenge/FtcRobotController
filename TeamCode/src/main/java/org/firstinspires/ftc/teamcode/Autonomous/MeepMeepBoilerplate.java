@@ -36,7 +36,12 @@ public class MeepMeepBoilerplate extends DriveMethods {
     }
 
     public TrajectorySequence getCurrentTrajectorySequence(SampleMecanumDrive drive) {
+        if (sequences.size()==0) return null;
         return sequences.get(sequences.size() - 1);
+    }
+
+    public Pose2d getCurrentPosition(SampleMecanumDrive drive) {
+        return drive.getPoseEstimate();
     }
 
     //    private static void followTrajectorySequence(TrajectorySequence trajectorySequence) {

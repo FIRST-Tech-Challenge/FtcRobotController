@@ -24,16 +24,14 @@ public class FrontRedAuto extends MeepMeepBoilerplate {
 
         while (opModeInInit()) sleep(20);
 
-        TrajectorySequence traj1 = drive.trajectorySequenceBuilder(new Pose2d())
+        followTrajectorySequence(drive.trajectorySequenceBuilder(new Pose2d())
                         .forward(28.0)
-                        .build();
-
-        assert getCurrentTrajectorySequence(drive) != null; // Null Pointer Protection
+                        .build());
 
         switch (detection) {
             case LEFT:
                 followTrajectorySequence(
-                        drive.trajectorySequenceBuilder(getCurrentTrajectorySequence(drive).end())
+                        drive.trajectorySequenceBuilder(getCurrentPosition(drive))
                                 .turn(Math.toRadians(90))
                                 .forward(2)
                                 .build()
@@ -43,7 +41,7 @@ public class FrontRedAuto extends MeepMeepBoilerplate {
                 break;
             case RIGHT:
                 followTrajectorySequence(
-                        drive.trajectorySequenceBuilder(getCurrentTrajectorySequence(drive).end())
+                        drive.trajectorySequenceBuilder(getCurrentPosition(drive))
                                 .turn(Math.toRadians(-90))
                                 .forward(2)
                                 .build()
@@ -51,6 +49,6 @@ public class FrontRedAuto extends MeepMeepBoilerplate {
                 break;
         }
 
-        drive.followTrajectorySequence(mergeSequences(sequences));
+//        drive.followTrajectorySequence(mergeSequences(sequences));
     }
 }

@@ -16,8 +16,6 @@ import org.firstinspires.ftc.teamcode.Variables.motorBL
 import org.firstinspires.ftc.teamcode.Variables.motorBR
 import org.firstinspires.ftc.teamcode.Variables.motorFL
 import org.firstinspires.ftc.teamcode.Variables.motorFR
-import org.firstinspires.ftc.teamcode.Variables.motorSlideLeft
-import org.firstinspires.ftc.teamcode.Variables.motorSlideRotate
 import org.firstinspires.ftc.teamcode.Variables.rMotorL
 import org.firstinspires.ftc.teamcode.Variables.rMotorR
 import org.firstinspires.ftc.teamcode.Variables.slideAngle
@@ -68,6 +66,7 @@ open class DriveMethods: LinearOpMode() {
         val webcam = hardwareMap.get(WebcamName::class.java, "Webcam 1")
         // Ensure the Webcam is correct
 //        if (visionPortal.activeCamera != webcam) visionPortal.activeCamera = webcam
+        tfod.setZoom(1.0);
         // Wait for recognitions
         sleep(3000)
 
@@ -75,14 +74,14 @@ open class DriveMethods: LinearOpMode() {
 
         // Convert it to a Position (real)
         if (includesCup(recognitions)) {
-            val cup = getCup(recognitions) ?: return Variables.Detection.UNKNOWN
+            val cup = getCup(recognitions) ?: return Variables.Detection.CENTER
 
             return if (cup.right < 214) Variables.Detection.LEFT
             else if (cup.right > 214 && cup.right < 428) Variables.Detection.CENTER
             else if (cup.right > 428) Variables.Detection.RIGHT
-            else Variables.Detection.UNKNOWN
+            else Variables.Detection.CENTER
         } else {
-            return Variables.Detection.UNKNOWN
+            return Variables.Detection.CENTER
         }
     }
 
@@ -117,7 +116,7 @@ open class DriveMethods: LinearOpMode() {
 
     fun includesCup(recognitions: List<Recognition>): Boolean {
         for (recognition in recognitions) {
-            if (recognition.label == "cup") return true
+            if (recognition.label == "cup" || recognition.label == "parking meter" ||  recognition.label == "airplane") return true
         }
 
         return false
@@ -125,7 +124,7 @@ open class DriveMethods: LinearOpMode() {
 
     fun getCup(recognitions: List<Recognition>): Recognition? {
         for (recognition in recognitions) {
-            if (recognition.label == "cup") return recognition
+            if (recognition.label == "cup" || recognition.label == "parking meter"||  recognition.label == "airplane") return recognition
         }
         return null
     }

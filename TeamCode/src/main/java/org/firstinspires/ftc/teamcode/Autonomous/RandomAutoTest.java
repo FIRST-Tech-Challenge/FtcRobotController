@@ -25,8 +25,6 @@ public class RandomAutoTest extends MeepMeepBoilerplate {
                         .build()
         );
 
-        assert getCurrentTrajectorySequence(drive) != null; // Null Pointer Protection
-
         switch (detection) {
             case LEFT:
                 followTrajectorySequence(
