@@ -49,13 +49,11 @@ public class League1_TeleOp extends LinearOpMode {
     // toggle for tilting outtake forward and back
     boolean outtakeTiltedForward = false;
 
-    // intakepower, like the ones below it but jankier because its written by gavin
-    double intakePower = 0.0;
-
     // drive powers, read from input and then manipulated every loop
     double drivePowerX = 0.0;
     double drivePowerY = 0.0;
     double turnPower = 0.0;
+    double intakePower = 0.0;
 
     // holds heading from imu read which is done in roadrunner's mecanum drive class for us
     double currentHeading = 0.0;
@@ -68,7 +66,7 @@ public class League1_TeleOp extends LinearOpMode {
     final double DRIVE_POWER_Y_MULTIPLIER = 0.7;
     final double MIN_HEADING_ACCURACY = 5.0; // degrees off from target
     final double SLOWMODE_MULTIPLIER = 0.3;
-    final double INTAKE_POWER_MULTIPLIER = 1.0;
+    final double INTAKE_POWER_MULTIPLIER = 0.5;
 
     // useful groups of keycodes
     final GamepadKeys.Button[] BUMPER_KEYCODES = {
@@ -101,6 +99,10 @@ public class League1_TeleOp extends LinearOpMode {
             drivePowerX = gp1.getLeftX() * DRIVE_POWER_X_MULTIPLIER;
             drivePowerY = gp1.getLeftY() * DRIVE_POWER_Y_MULTIPLIER;
             turnPower = gp1.getRightX();
+
+            intakePower = Math.max(gp2.getTrigger(GamepadKeys.Trigger.LEFT_TRIGGER),
+                                   gp2.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER))
+                                * INTAKE_POWER_MULTIPLIER;
             
 
             // get heading from imu in degrees
@@ -169,18 +171,15 @@ public class League1_TeleOp extends LinearOpMode {
             // NOTE /!\ this doesn't work yet as we haven't set it up
             drive.updatePoseEstimate();
 
-            // check for intake inwards
-            if (gp2.getTrigger(GamepadKeys.Trigger.LEFT_TRIGGER) > 0.0 ||
-                    gp2.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER) > 0.0) {
-                drive.intakeMotor.setPower(1 * INTAKE_POWER_MULTIPLIER);
 
-            // else check for intaking reversed
-            } else if (gp2.getButton(GamepadKeys.Button.LEFT_BUMPER) ||
+            // reverse if bumpers are held
+            if (gp2.getButton(GamepadKeys.Button.LEFT_BUMPER) ||
                     gp2.getButton(GamepadKeys.Button.RIGHT_BUMPER)) {
-                drive.intakeMotor.setPower(-1 * INTAKE_POWER_MULTIPLIER);
-            } else {
-                drive.intakeMotor.setPower(0);
+                intakePower = -Math.abs(intakePower);
             }
+
+            // apply clamped intakePower
+            drive.intakeMotor.setPower(clamp(intakePower));
 
 
             // telemetry
@@ -191,6 +190,7 @@ public class League1_TeleOp extends LinearOpMode {
             telemetry.addData("turn power", turnPower);
             telemetry.addData("drive power X", drivePowerX);
             telemetry.addData("drive power Y", drivePowerY);
+            telemetry.addData("intake power", intakePower);
 
             //telemetry.addData("x", drive.pose.position.x);
             //telemetry.addData("y", drive.pose.position.y);
