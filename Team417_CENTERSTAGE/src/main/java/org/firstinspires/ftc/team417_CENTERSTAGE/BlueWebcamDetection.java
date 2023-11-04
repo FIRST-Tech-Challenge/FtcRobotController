@@ -21,6 +21,7 @@
 
 package org.firstinspires.ftc.team417_CENTERSTAGE;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
@@ -48,7 +49,7 @@ import java.util.List;
  * Run this program on an Android phone.  It uses the phone's back camera, and displays
  * the edge detected image on the phone screen.
  */
-
+@Disabled
 @TeleOp(name = "Concept: OpenCV Blue Detection", group = "Concept")
 // @Disabled
 public class BlueWebcamDetection extends LinearOpMode {
