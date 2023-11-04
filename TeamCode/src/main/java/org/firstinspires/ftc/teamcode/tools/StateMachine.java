@@ -45,7 +45,6 @@ public class StateMachine {
                 return trigger.getAsBoolean();
             }
             public boolean transitionComplete(){
-                //add return
                 for (currentActionIndex = 0; currentActionIndex < actions.size(); currentActionIndex++)
                 {
                     if (!(actions.get(currentActionIndex).actionComplete())) { return false;}
