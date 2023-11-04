@@ -9,8 +9,8 @@ import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 
-@com.qualcomm.robotcore.eventloop.opmode.TeleOp(name = "V5 Arm Claw")
-public class _2023_10_27_05_Arm_Claw_V5 extends LinearOpMode {
+@com.qualcomm.robotcore.eventloop.opmode.TeleOp(name = "V6 Arm Claw")
+public class _2023_11_03_06_Arm_Claw_V6 extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
         DcMotor frontLeftMotor = hardwareMap.dcMotor.get("motorFL");
@@ -114,12 +114,13 @@ public class _2023_10_27_05_Arm_Claw_V5 extends LinearOpMode {
             }
 
             if (gamepad1.right_bumper) {
-                for (int liftPos = 0; liftPos <= 500; liftPos = liftPos + 5) {
+                axle.setPosition(0.8);
+                for (int liftPos = 0; liftPos <= 500; liftPos = liftPos + 4) {
                     liftTargetPosition = liftPos;
                     arm.setTargetPosition(liftTargetPosition);
                     arm.setPower(0.7);
                     arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                    sleep(15);
+                    sleep(12);
                 }
 
                 clawLeft.setPosition(openClaw);
@@ -131,7 +132,7 @@ public class _2023_10_27_05_Arm_Claw_V5 extends LinearOpMode {
             if (gamepad1.left_bumper) {
                 liftTargetPosition = 10;
                 arm.setTargetPosition(liftTargetPosition);
-                arm.setPower(0.1);
+                arm.setPower(0.07);
                 arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 
                 axle.setPosition(0.8);
@@ -160,6 +161,35 @@ public class _2023_10_27_05_Arm_Claw_V5 extends LinearOpMode {
             }
             if (gamepad1.dpad_down) {
                 axle.setPosition(0.8);
+            }
+            if (gamepad1.dpad_left) {
+                axle.setPosition(0.8);
+                clawLeft.setPosition(openClaw);
+                clawRight.setPosition(openClaw);
+                sleep(200);
+
+                backLeftMotor.setPower(0.3);
+                backRightMotor.setPower(0.3);
+                frontLeftMotor.setPower(0.3);
+                frontRightMotor.setPower(0.3);
+                sleep(200);
+                backLeftMotor.setPower(0);
+                backRightMotor.setPower(0);
+                frontLeftMotor.setPower(0);
+                frontRightMotor.setPower(0);
+
+                clawLeft.setPosition(closeClaw);
+                clawRight.setPosition(closeClaw);
+
+                backLeftMotor.setPower(-0.3);
+                backRightMotor.setPower(-0.3);
+                frontLeftMotor.setPower(-0.3);
+                frontRightMotor.setPower(-0.3);
+                sleep(200);
+                backLeftMotor.setPower(0);
+                backRightMotor.setPower(0);
+                frontLeftMotor.setPower(0);
+                frontRightMotor.setPower(0);
             }
 
             telemetry.addData("Claw Left Target: ", clawLeftTarget);
