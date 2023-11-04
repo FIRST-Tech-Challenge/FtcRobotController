@@ -16,47 +16,51 @@ public class BlueLeftAuto extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
         BradBot robot = new BradBot(this, false);
-        robot.roadrun.setPoseEstimate(new Pose2d(-38.5,63.25, Math.toRadians(90)));
+        robot.roadrun.setPoseEstimate(new Pose2d(-38.5,63.25, Math.toRadians(-90)));
         int pos = 0;
         TrajectorySequence[] spikePosition = new TrajectorySequence[3];
         spikePosition[0] = robot.roadrun.trajectorySequenceBuilder(new Pose2d(-38.5, 63.25, Math.toRadians(-90)))
-                .setReversed(true)
-                .lineToLinearHeading(new Pose2d(-46, 37, toRadians(-90)))
+                .setReversed(true) //spike 1
+                .lineToLinearHeading(new Pose2d(-38.5, 34, toRadians(90))) //m1
+                .lineToLinearHeading(new Pose2d(-34.5, 34, toRadians(0))) //m1
+                .lineToLinearHeading((new Pose2d(-46,58,toRadians(0)))) //m1
                 .addTemporalMarker(robot::done)
                 .build();
         spikePosition[1] = robot.roadrun.trajectorySequenceBuilder(new Pose2d(-38.5, 63.5, Math.toRadians(-90)))
-                .setReversed(true)
-                .lineToLinearHeading(new Pose2d(-35.5, 33, toRadians(-90)))
+                .setReversed(true) //spike 2
+                .lineToLinearHeading(new Pose2d(-35.5, 33, toRadians(-90))) //m1
+                .setReversed(false) //m1
+                .lineToLinearHeading(new Pose2d(-46, 58, toRadians(0))) //m1
                 .addTemporalMarker(robot::done)
                 .build();
         spikePosition[2] = robot.roadrun.trajectorySequenceBuilder(new Pose2d(-38.5, 63.5, Math.toRadians(-90)))
-                .setReversed(true)
-                .lineToLinearHeading(new Pose2d(-38.5, 34, toRadians(-90)))
+                .setReversed(true) //spike 3
+                .lineToLinearHeading(new Pose2d(-38.5, 34, toRadians(0))) //m1
+                .lineToLinearHeading(new Pose2d(-46, 58, toRadians(0))) //m1
                 .addTemporalMarker(robot::done)
                 .build();
-        TrajectorySequence throughTruss = robot.roadrun.trajectorySequenceBuilder(new Pose2d(-46,37, toRadians(90)))
-                .setReversed(false)
-                .lineToLinearHeading(new Pose2d(-46, 58, toRadians(0)))
-                .splineTo(new Vector2d(10, 58), toRadians(0))
+        TrajectorySequence throughTruss = robot.roadrun.trajectorySequenceBuilder(new Pose2d(-46,58, toRadians(0)))
+                .setReversed(false) //truss
+                .splineTo(new Vector2d(10, 58), toRadians(0)) //truss
                 .addTemporalMarker(robot::done)
                 .build();
         TrajectorySequence[] dropAndPark = new TrajectorySequence[3];
         dropAndPark[0]= robot.roadrun.trajectorySequenceBuilder(new Pose2d(10,58, toRadians(0)))
-                .splineTo(new Vector2d(51, 30.5), toRadians(0))
-                .lineToLinearHeading(new Pose2d(51, 60, toRadians(0)))
-                .lineToLinearHeading(new Pose2d(60, 60, toRadians(0)))
+                .splineTo(new Vector2d(51, 41.5), toRadians(0)) //dp
+                .lineToLinearHeading(new Pose2d(51, 60, toRadians(0))) //dp
+                .lineToLinearHeading(new Pose2d(60, 60, toRadians(0))) //dp
                 .addTemporalMarker(robot::done)
                 .build();
         dropAndPark[1]= robot.roadrun.trajectorySequenceBuilder(new Pose2d(10,58,toRadians(0)))
-                .splineTo(new Vector2d(51,35.5), toRadians(0))
-                .lineToLinearHeading(new Pose2d(51, 60, toRadians(0)))
-                .lineToLinearHeading(new Pose2d(60, 60, toRadians(0)))
+                .splineTo(new Vector2d(51,35.5), toRadians(0)) //dp
+                .lineToLinearHeading(new Pose2d(51, 60, toRadians(0))) //dp
+                .lineToLinearHeading(new Pose2d(60, 60, toRadians(0))) //dp
                 .addTemporalMarker(robot::done)
                 .build();
         dropAndPark[2] = robot.roadrun.trajectorySequenceBuilder(new Pose2d(10,58,toRadians(0)))
-                .splineTo(new Vector2d(51, 41.5), toRadians(0))
-                .lineToLinearHeading(new Pose2d(51, 60, toRadians(0)))
-                .lineToLinearHeading(new Pose2d(60, 60, toRadians(0)))
+                .splineTo(new Vector2d(51, 41.5), toRadians(0)) //dp
+                .lineToLinearHeading(new Pose2d(51, 60, toRadians(0))) //dp
+                .lineToLinearHeading(new Pose2d(60, 60, toRadians(0))) //dp
                 .addTemporalMarker(robot::done)
                 .build();
         waitForStart();
