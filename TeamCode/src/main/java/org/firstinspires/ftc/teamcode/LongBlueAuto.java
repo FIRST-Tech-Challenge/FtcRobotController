@@ -78,7 +78,7 @@ public class LongBlueAuto extends LinearOpMode {
 
             //enable THIS to test longredauto
             robot.detectMarkerPositionBlue();
-            robot.longRedMoveToBoard();
+            //longRedMoveToBoard();
             //robot.alignToBoard();
             //robot.setHeading(-90, 0.75);
 
