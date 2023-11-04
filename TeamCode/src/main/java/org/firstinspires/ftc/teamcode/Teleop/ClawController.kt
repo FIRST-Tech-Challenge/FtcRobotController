@@ -24,7 +24,7 @@ class ClawControl: DriveMethods() {
         var changed1 = false;
         var changed2= false;
         servo1!!.position = 0.3
-        servo2!!.position = 0.871
+        servo2!!.position = 0.87
         while (opModeIsActive()) {
           telemetry.addLine(" Thang: "+servo1!!.position+" Thangy: "+servo2!!.position)
             telemetry.update()

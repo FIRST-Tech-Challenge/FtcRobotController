@@ -4,7 +4,6 @@ import android.util.Size
 import com.google.blocks.ftcrobotcontroller.util.CurrentGame
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode
 import com.qualcomm.robotcore.hardware.DcMotor
-import com.qualcomm.robotcore.hardware.Servo
 import com.qualcomm.robotcore.hardware.TouchSensor
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName
 import org.firstinspires.ftc.robotcore.external.hardware.camera.controls.ExposureControl
@@ -22,7 +21,6 @@ import org.firstinspires.ftc.teamcode.Variables.motorSlideRotate
 import org.firstinspires.ftc.teamcode.Variables.rMotorL
 import org.firstinspires.ftc.teamcode.Variables.rMotorR
 import org.firstinspires.ftc.teamcode.Variables.slideAngle
-import org.firstinspires.ftc.teamcode.Variables.slideGate
 import org.firstinspires.ftc.teamcode.Variables.slideLength
 import org.firstinspires.ftc.teamcode.Variables.t
 import org.firstinspires.ftc.teamcode.Variables.targetFound
@@ -322,21 +320,22 @@ open class DriveMethods: LinearOpMode() {
         motorBR!!.power = x - y + yaw
     }
     open fun initMotorsSecondBot() {
-        motorFL = hardwareMap.get(DcMotor::class.java, "motorFL")
-        motorBL = hardwareMap.get(DcMotor::class.java, "motorBL")
-        motorFR = hardwareMap.get(DcMotor::class.java, "motorFR")
-        motorBR = hardwareMap.get(DcMotor::class.java, "motorBR")
-        rMotorR = hardwareMap.get(DcMotor::class.java, "rMotorR");
-        rMotorL = hardwareMap.get(DcMotor::class.java, "rMotorL");
-        touchyR = hardwareMap.get(TouchSensor::class.java, "touchyR")
-        touchyL = hardwareMap.get(TouchSensor::class.java, "touchyL")
-        slideGate = hardwareMap.get(Servo::class.java, "slideGate")
-        motorSlideRotate = hardwareMap.get(DcMotor::class.java, "motorSlideRotate")
-        motorSlideLeft = hardwareMap.get(DcMotor::class.java, "motorSlideLeft")
+        motorFL = hardwareMap.get<DcMotor>(DcMotor::class.java, "motorFL")
+        motorBL = hardwareMap.get<DcMotor>(DcMotor::class.java, "motorBL")
+        motorFR = hardwareMap.get<DcMotor>(DcMotor::class.java, "motorFR")
+        motorBR = hardwareMap.get<DcMotor>(DcMotor::class.java, "motorBR")
+        rMotorR = hardwareMap.get<DcMotor>(DcMotor::class.java, "rMotorR");
+        rMotorL = hardwareMap.get<DcMotor>(DcMotor::class.java, "rMotorL");
+        touchyR = hardwareMap.get<TouchSensor>(TouchSensor::class.java, "touchyR")
+        touchyL = hardwareMap.get<TouchSensor>(TouchSensor::class.java, "touchyL")
     }
 
     open fun initSlideMotors() {
-        motorSlideLeft = hardwareMap.get<DcMotor>(DcMotor::class.java, "motorSlideLeft")
+     //   motorSlideLeft = hardwareMap.get<DcMotor>(DcMotor::class.java, "motorSlideLeft")
+    //    slideRotationMotor = hardwareMap.get<DcMotor>(DcMotor::class.java, "slideRotationMotor")
+      //  clawRotation = hardwareMap.get<Servo>(Servo::class.java, "clawRotation")
+      //  clawMotor = hardwareMap.get<Servo>(Servo::class.java, "clawMotor")
+     //   slideGate = hardwareMap.get<Servo>(Servo::class.java, "slideGate")
     }
     fun setManualExposure(exposureMS: Int, gain: Int) {
         // Wait for the camera to be open, then use the controls
