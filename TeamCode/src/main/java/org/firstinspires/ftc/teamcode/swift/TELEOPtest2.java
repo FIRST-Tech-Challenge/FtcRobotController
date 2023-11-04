@@ -18,14 +18,33 @@ public class TELEOPtest2 extends LinearOpMode {
     static final double MAX_REV = -1.0;     // Maximum REV power applied to motor
 
     private Servo intakeServo;
+    // Set the target position in encoder counts
+    int upPosition = 650;
+    int homePosition = 0;
 
     @Override
     public void runOpMode() {
 
         waitForStart();
+
+        //Define variables for arm, wrist, gripper, and launcher
+        Servo wristServo;
+        DcMotor armMotor;
+        armMotor = hardwareMap.get(DcMotor.class, "armMotor");
+        wristServo = hardwareMap.servo.get("wristServo");
+
         launcherServo = hardwareMap.get(Servo.class, "launcherServo");
+        armMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        armMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         while (opModeIsActive()) {
+
+            // called when init button is  pressed.
+
+            telemetry.addData("Mode", "waiting");
+
+
+
             // check to see if we need to move the servo.
             if (gamepad1.left_bumper) {
                 // move to 0 degrees.
@@ -78,36 +97,27 @@ public class TELEOPtest2 extends LinearOpMode {
 
             //start Asher
 
-            // Define class members
-            DcMotor motor;
-            double power = 0;
-            boolean rampUp = true;
 
+            // Run the motor to the target position
+            if (gamepad2.right_trigger>.5) {
+                armMotor.setTargetPosition(upPosition);
+                armMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                armMotor.setPower(0.2); // Set the motor power (adjust as needed)
+            } else if (gamepad2.left_trigger>.5) {
+                armMotor.setTargetPosition(homePosition);
+                armMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                armMotor.setPower(0.2); // Set the motor power (adjust as needed)
+            }
 
-            //Define variables for arm, wrist, and gripper
-            Servo wristServo, leftGripper, rightGripper;
-            DcMotor armMotor;
-            //CRServo contServo;
-            float leftY, rightY;
-            double armPosition, gripPosition, contPower;
-            double MIN_POSITION = 0, MAX_POSITION = 1;
+            while (armMotor.isBusy()) {
+                // Wait for the motor to reach the target position
+                telemetry.addData("Current Position", armMotor.getCurrentPosition());
+                telemetry.update();
+            }
 
-            // called when init button is  pressed.
-
-
-            armMotor = hardwareMap.get(DcMotor.class, "armMotor");
-            wristServo = hardwareMap.servo.get("wristServo");
-
-            telemetry.addData("Mode", "waiting");
-
-
-            leftY = gamepad2.left_stick_y * -1;
-            rightY = gamepad2.right_stick_y * -1;
-
-            armMotor.setPower(Range.clip(leftY, -1.0, 1.0));
-
-            telemetry.addData("Mode", "running");
-            telemetry.addData("sticks", "  left=" + leftY + "  right=" + rightY);
+            // Stop the motor after reaching the target position
+            armMotor.setPower(0);
+            armMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
             // check the gamepad buttons and if pressed, increment the appropriate position
             // variable to change the servo location.
@@ -121,15 +131,15 @@ public class TELEOPtest2 extends LinearOpMode {
                 intakeServo.setPosition(0); // Adjust the position value as needed
             } else if (gamepad2.x) {
                 // Return servos to the center position when "x" is pressed
-                intakeServo.setPosition(10); // Adjust the position value for the center position
+                intakeServo.setPosition(1); // Adjust the position value for the center position
             }
             if (gamepad2.b) {
                 // Move servo in opposite directions when "y" is pressed
-                wristServo.setPosition(.4 ); // Adjust the position value as needed
+                wristServo.setPosition(.8 ); // Adjust the position value as needed
 
             } else if (gamepad2.a) {
                 // Return servos to the center position when "x" is pressed
-                wristServo.setPosition(0); // Adjust the position value for the center position
+                wristServo.setPosition(1); // Adjust the position value for the center position
 
                 telemetry.update();
             }
