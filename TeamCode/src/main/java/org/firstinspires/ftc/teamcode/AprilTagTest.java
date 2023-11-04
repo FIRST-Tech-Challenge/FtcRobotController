@@ -14,7 +14,6 @@ import org.firstinspires.ftc.vision.VisionPortal;
 import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
 import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
 
-//import virtual_robot.util.AngleUtils;
 
 @Autonomous
 public class AprilTagTest extends LinearOpMode {
