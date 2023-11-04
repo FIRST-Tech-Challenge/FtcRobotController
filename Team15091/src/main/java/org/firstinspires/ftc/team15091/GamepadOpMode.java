@@ -9,7 +9,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 
 @TeleOp(name = "Gamepad")
-public class GamepadOpmode extends OpModeBase {
+public class GamepadOpMode extends OpModeBase {
     @Override
     public void runOpMode() throws InterruptedException {
         int armLimit = 2000;
@@ -120,6 +120,11 @@ public class GamepadOpmode extends OpModeBase {
             }
             //endregion
 
+            if (gamepad1.y) {
+                if (!y_pressed) {
+                    y_pressed = true;
+                }
+            }
             //region roller
             if (gamepad1.left_bumper) {
                 if (!lb_pressed) {

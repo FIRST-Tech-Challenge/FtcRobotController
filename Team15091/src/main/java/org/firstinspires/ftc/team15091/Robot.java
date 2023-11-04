@@ -199,4 +199,8 @@ public class Robot {
             setBowlPosition(0d);
         }
     }
+
+    public void togglePixelHolder(boolean release) {
+
+    }
 }

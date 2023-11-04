@@ -1,10 +1,13 @@
 package org.firstinspires.ftc.team15091;
 
+import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
+
 public abstract class AutonomousBase extends OpModeBase {
     protected RobotDriver robotDriver;
     protected YellowDetector pixelDetector;
     protected PixelPosition pixelPos = PixelPosition.Left;
     protected long delay_start = 0;
+    public boolean should_park = true;
 
     final protected void setupAndWait() {
         robot.init(hardwareMap);
@@ -15,6 +18,7 @@ public abstract class AutonomousBase extends OpModeBase {
         telemetry.addLine("Pixel | ")
                 .addData("pos", "%s", () -> pixelPos.toString())
                 .addData("debug", "%s", () -> pixelDetector.debug());
+        telemetry.addLine("Front Distance ").addData("", "%.4f", () -> robot.frontSensor.getDistance(DistanceUnit.CM));
 
         // Wait for the game to start (driver presses PLAY)
         // Abort this loop is started or stopped.
@@ -30,10 +34,13 @@ public abstract class AutonomousBase extends OpModeBase {
                         delay_start -= 100;
                     }
                 }
+                if (gamepad1.x) {
+                    should_park = false;
+                }
             }
 
             gamepadUpdate();
-
+            pixelPos = pixelDetector.objectDetected();
             telemetry.update();
             idle();
         }
