@@ -1,35 +1,48 @@
 package org.firstinspires.ftc.team6220_CENTERSTAGE.autoClasses;
 
 import com.acmerobotics.dashboard.config.Config;
-import com.acmerobotics.roadrunner.Pose2d;
-import com.acmerobotics.roadrunner.ftc.Actions;
-import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 
-import org.firstinspires.ftc.team6220_CENTERSTAGE.MecanumDrive;
-
 @Config
 
-@Autonomous(name="League1_AutoDriveInchesTest", group ="amogus2")
-public class League1_AutoDriveInchesTest extends LinearOpMode {
+abstract public class League1_AutoFramework extends LinearOpMode {
 
-    public static double driveX = 0.0, driveY = 0.0;
+    public enum AutoAlliance {
+        BLUE,
+        RED
+    }
+    public enum AutoType {
+        SHORT,
+        LONG
+    }
 
-    @Override
-    public void runOpMode() throws InterruptedException {
+    public void doAutoDriveInches(AutoAlliance autoAlliance, AutoType autoType) throws InterruptedException {
 
         initHardware();
 
         waitForStart();
 
-        driveInches(driveX, driveY); // forward 48 inches
+        // strafe right on red is +x, -x on blue
+        double strafeSignFlip = autoAlliance == AutoAlliance.BLUE ? -1 : 1;
 
-        /*while (opModeIsActive()) {
+        switch (autoType) {
 
-            telemetry.update();
-        }*/
+            case SHORT:
+
+                driveInches(-24 * 2 * strafeSignFlip, 0); // strafe to parking spot, front facing wall
+
+                break;
+
+            case LONG:
+
+                driveInches(0, -3); // back away from the wall 3 inches
+                driveInches(-24 * 4 * strafeSignFlip, 0); // strafe to parking spot, front facing wall
+
+                break;
+        }
+
     }
 
 
