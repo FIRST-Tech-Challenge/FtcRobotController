@@ -4,7 +4,10 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.Servo;
-@TeleOp
+
+import java.util.concurrent.TimeUnit;
+
+@TeleOp(group = "ZTest")
 public class servoTest extends LinearOpMode{
     public void runOpMode() throws InterruptedException {
         Servo servo = hardwareMap.servo.get("servo1");
@@ -13,9 +16,9 @@ public class servoTest extends LinearOpMode{
         while (opModeIsActive()) {
             while (gamepad1.a) {
                 servo.setPosition(0);
-                wait(1);
+                TimeUnit.MILLISECONDS.sleep(1000);
                 servo.setPosition(1);
-                wait(1);
+                TimeUnit.MILLISECONDS.sleep(1000);
             }
         }
     }

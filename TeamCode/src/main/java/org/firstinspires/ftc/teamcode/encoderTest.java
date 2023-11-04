@@ -8,7 +8,7 @@ import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.teamcode.util.Encoder;
 
-@TeleOp
+@TeleOp(group="ZTest")
 public class encoderTest extends LinearOpMode {
     public void runOpMode() throws InterruptedException{
         DcMotor testEncoder = hardwareMap.dcMotor.get("motor4");

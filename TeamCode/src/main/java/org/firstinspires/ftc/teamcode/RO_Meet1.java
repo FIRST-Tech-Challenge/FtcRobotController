@@ -3,14 +3,10 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorEx;
-import com.qualcomm.robotcore.hardware.Servo;
-
-import java.util.concurrent.TimeUnit;
 
 
 @TeleOp(group = "FINALCODE")
-public class RobotOrientedDrive extends LinearOpMode {
+public class RO_Meet1 extends LinearOpMode {
 
 
     @Override
@@ -19,21 +15,17 @@ public class RobotOrientedDrive extends LinearOpMode {
 
         // Declare our motors
         // Make sure your ID's match your configuration
-//        DcMotor motorBackLeft = hardwareMap.dcMotor.get("backLeft");
-//        DcMotor motorFrontLeft = hardwareMap.dcMotor.get("frontLeft");
-//        DcMotor motorBackRight = hardwareMap.dcMotor.get("backRight");
-//        DcMotor motorFrontRight = hardwareMap.dcMotor.get("frontRight");
 
 
         DcMotor motorBackLeft = hardwareMap.dcMotor.get("motor3");
         DcMotor motorFrontLeft = hardwareMap.dcMotor.get("motor4");
         DcMotor motorBackRight = hardwareMap.dcMotor.get("motor1");
         DcMotor motorFrontRight = hardwareMap.dcMotor.get("motor2");
+
 //        DcMotorEx RightViperSlide = hardwareMap.get(DcMotorEx.class, "vpRight");
-//
-////        DcMotorEx RightViperSlide = hardwareMap.get(DcMotorEx.class, "viperSlideRight");
+
 //        DcMotorEx LeftViperSlide = hardwareMap.get(DcMotorEx.class, "vpLeft");
-        // Servo servo3 = hardwareMap.servo.get("servo 3");
+
         motorBackLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         motorBackRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         motorFrontLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -44,19 +36,7 @@ public class RobotOrientedDrive extends LinearOpMode {
 //
 //
 //        RightViperSlide.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-//
-////        Servo clawLeft = hardwareMap.servo.get("clwleft");
-//        Servo clawRight = hardwareMap.servo.get("clwright");
-////        Servo clawLeft = hardwareMap.servo.get("clawLeft");
-////        Servo clawRight = hardwareMap.servo.get("clawRight");
-//        clawRight.setDirection(Servo.Direction.REVERSE);
 
-
-//        clawLeft.setPosition(0.1);
-//        clawRight.setPosition(0.9);
-
-//        double lPosition = 0.1;
-//        double rPosition = 0.9;
 
         /*
          Reverse the right side motors
