@@ -6,15 +6,6 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
 public class BlueFarAutoBackup extends BaseAutonomous {
     public void runOpMode() {
-        initializeAuto();
-        waitForStart();
-
-        detectingBlue = true;
-
-        while (opModeIsActive()) {
-
-        }
-
-        // move forward from the wall
+        runSimpleInchesAuto(false, false);
     }
 }
