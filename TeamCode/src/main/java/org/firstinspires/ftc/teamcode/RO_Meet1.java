@@ -26,6 +26,8 @@ public class RO_Meet1 extends LinearOpMode {
         DcMotor motorFrontRight = hardwareMap.dcMotor.get("motor2");
         DcMotor motorLauncher = hardwareMap.dcMotor.get("motor5");
         DcMotor motorPullUp = hardwareMap.dcMotor.get("motor6");
+        DcMotor motorIntake = hardwareMap.dcMotor.get("motor7");
+
 
         Servo servoROT = hardwareMap.servo.get("servo1");
         servoROT.setDirection(Servo.Direction.REVERSE);
@@ -117,8 +119,9 @@ public class RO_Meet1 extends LinearOpMode {
             telemetry.update();
 
 
-            //Outake 2 Servos      servoROT = "servo1"      servoLOT = "servo2"
-            if (gamepad1.a) {
+            //Outtake 2 Servos
+            //Top of D Pad - servoROT = "servo1" & servoLOT = "servo2"
+            if (gamepad1.dpad_up) {
                 if (servoROT.getPosition() > 0.7 && servoLOT.getPosition() > 0.7) {
                     servoROT.setPosition(0.1);
                     servoLOT.setPosition(0.1);
@@ -129,13 +132,33 @@ public class RO_Meet1 extends LinearOpMode {
                     TimeUnit.MILLISECONDS.sleep(350);
                 }
             }
-            telemetry.addData("servo pos.", servoROT.getPosition());
-            telemetry.addData("servo pos.", servoLOT.getPosition());
-            telemetry.update();
+
+            
+            //Left of D Pad - servoLOT = "servo2"
+            if (gamepad1.dpad_left) {
+                if (servoLOT.getPosition() > 0.7) {
+                    servoLOT.setPosition(0.1);
+                    TimeUnit.MILLISECONDS.sleep(350);
+                } else {
+                    servoLOT.setPosition(0.75);
+                    TimeUnit.MILLISECONDS.sleep(350);
+                }
+            }
 
 
+            //Right of D Pad - servoROT = "servo1"
+            if (gamepad1.dpad_right) {
+                if (servoROT.getPosition() > 0.7) {
+                    servoROT.setPosition(0.1);
+                    TimeUnit.MILLISECONDS.sleep(350);
+                } else {
+                    servoROT.setPosition(0.75);
+                    TimeUnit.MILLISECONDS.sleep(350);
+                }
+            }
 
-            //Flight Launcher       motorLauncher = "motor6"
+
+            //Flight Launcher - motorLauncher = "motor6"
             if (gamepad1.a) {
                 motorLauncher.setPower(1);
             } else {
@@ -143,8 +166,7 @@ public class RO_Meet1 extends LinearOpMode {
             }
 
 
-
-            //Pull Up       motorPullUp = "motor6"
+            //Pull Up - motorPullUp = "motor6"
             if (gamepad1.x) {
                 motorPullUp.setPower(1);
             } else if (gamepad1.y) {
@@ -154,9 +176,12 @@ public class RO_Meet1 extends LinearOpMode {
             }
 
 
-
-            //Viper Slides
-
+            //Intake - motorIntake = "motor7"
+            if (gamepad1.left_trigger > 0) {
+                motorIntake.setPower(gamepad1.left_trigger);
+            } else {
+                motorIntake.setPower(0);
+            }
         }
     }
 }
