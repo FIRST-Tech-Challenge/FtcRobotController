@@ -22,7 +22,7 @@ import java.util.List;
 
 public abstract class BaseOpMode extends LinearOpMode {
     // motors
-    public static DcMotorEx FL;
+    public static DcMotorEx motorFL;
     public static DcMotorEx motorFR;
     public static DcMotorEx motorBL;
     public static DcMotorEx motorBR;
@@ -64,19 +64,19 @@ public abstract class BaseOpMode extends LinearOpMode {
         }
 
         // motors
-        FL = (DcMotorEx) hardwareMap.get(DcMotor.class, "FL");
+        motorFL = (DcMotorEx) hardwareMap.get(DcMotor.class, "FL");
         motorFR = (DcMotorEx) hardwareMap.get(DcMotor.class, "motorFR");
         motorBL = (DcMotorEx) hardwareMap.get(DcMotor.class, "motorBL");
         motorBR = (DcMotorEx) hardwareMap.get(DcMotor.class, "motorBR");
         motorLeftSlides = (DcMotorEx) hardwareMap.get(DcMotor.class, "motorLeftSlides");
         motorRightSlides = (DcMotorEx) hardwareMap.get(DcMotor.class, "motorRightSlides");
 
-        FL.setDirection(DcMotorEx.Direction.FORWARD);
+        motorFL.setDirection(DcMotorEx.Direction.FORWARD);
         motorFR.setDirection(DcMotorEx.Direction.REVERSE);
         motorBL.setDirection(DcMotorEx.Direction.FORWARD);
         motorBR.setDirection(DcMotorEx.Direction.REVERSE);
 
-        FL.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
+        motorFL.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
         motorFR.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
         motorBL.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
         motorBR.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
