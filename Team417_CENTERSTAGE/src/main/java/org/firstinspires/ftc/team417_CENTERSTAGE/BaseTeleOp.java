@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.team417_CENTERSTAGE;
 
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.DcMotor;
 
 @TeleOp(name = "TeleOp League 1")
 public class BaseTeleOp extends BaseOpMode {
@@ -22,6 +23,8 @@ public class BaseTeleOp extends BaseOpMode {
             telemetry.addData("BRMotor", BR.getPowerFloat());
             telemetry.addData("BLMotor", BL.getCurrentPosition());
             telemetry.addData("BLMotor", BL.getPowerFloat());
+            telemetry.addData("ArmMotor", armMotor.getCurrentPosition());
+            telemetry.addData("DumperServo", dumperServo.getPosition());
             telemetry.update();
         }
     }
@@ -67,9 +70,55 @@ public class BaseTeleOp extends BaseOpMode {
     }
 
     public void outputUsingControllers() {
-        controlArmUsingControllers();
+        //controlArmUsingControllers();
         controlDumperUsingControllers();
         controlGateUsingControllers();
+        armControlBackup();
+    }
+
+    private double armLocation = 0;  //where the arm should currently move to.
+    private void armControlBackup(){
+        double rStickSensitivity = 20; //how much moving right stick will effect the movement of the arm.
+        double armVelocity = -gamepad2.right_stick_y * rStickSensitivity; //how fast the arm moves based off of the right stick and sensitivity.
+        double[] backupArmPositions = new double[] {ARM_MOTOR_MIN_POSITION, ARM_MOTOR_MAX_POSITION / 2.0,
+                                                    ARM_MOTOR_MAX_POSITION * (3.0/4.0), ARM_MOTOR_MAX_POSITION}; //array of arm positions the dpad can move to.
+        armLocation += armVelocity; //change the current arm position by the velocity.
+
+        /*if (armLocation < ARM_MOTOR_MIN_POSITION) {
+            armLocation = ARM_MOTOR_MIN_POSITION;
+        }
+        if (armLocation > ARM_MOTOR_MAX_POSITION) {
+            armLocation = ARM_MOTOR_MAX_POSITION;
+        }*/
+
+        if (gamepad2.dpad_up && gamepad2.dpad_down); //if both dpad buttons are being pressed do nothing.
+        else if (gamepad2.dpad_up){ //if dpad up is being pressed change the arm location to the next location in the arm positions array.
+            for (int i = 0; i < backupArmPositions.length; i ++) {
+                if (armLocation > backupArmPositions[i] && i + 1 < backupArmPositions.length) {
+                    armLocation = backupArmPositions[i + 1];
+                }
+            }
+        } else if (gamepad2.dpad_down){ //if dpad down is being pressed change the arm location to the last location in the arm positions array.
+            for (int i = backupArmPositions.length - 1; i >= 0; i -= 1) {
+                if (armLocation > backupArmPositions[i] && i - 1 >= 0) {
+                    armLocation = backupArmPositions[i - 1];
+                    telemetry.addData("down", i);
+                }
+            }
+        }
+
+
+        if (armMotor.getCurrentPosition() < armLocation + 50 && armMotor.getCurrentPosition() > armLocation - 50) {
+            armMotor.setPower(0);
+        } else if (armMotor.getCurrentPosition() > armLocation) {
+            armMotor.setPower(-0.5);
+        } else if (armMotor.getCurrentPosition() < armLocation) {
+            armMotor.setPower(0.5);
+        }
+
+        telemetry.addData("arm target position", armLocation);
+        //armMotor.setTargetPosition((int) Math.round(armLocation)); //tell the motor to move to arm location.
+        //armMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
     }
 
     public double armPositionIndex;
@@ -102,9 +151,12 @@ public class BaseTeleOp extends BaseOpMode {
         }
     }
 
+    public boolean dumperDumped = true;
+
     public boolean bIsPressed = false;
 
     public void controlDumperUsingControllers() {
+        /*
         double dumperSpeed = -gamepad2.right_stick_y;
 
         if (isEpsilonEquals(dumperSpeed, 0)) {
@@ -114,13 +166,15 @@ public class BaseTeleOp extends BaseOpMode {
         } else if (dumperSpeed < 0) {
             moveDumper(DumperAction.RESETTING);
         }
+        */
 
         if (!bIsPressed && gamepad2.b) {
-            if (!isEpsilonEquals(dumperServo.getPosition(), 1.0)) {
-                dumpDumper();
-            } else {
+            if (dumperDumped) {
                 resetDumper();
+            } else {
+                dumpDumper();
             }
+            dumperDumped = !dumperDumped;
         }
         bIsPressed = gamepad2.b;
     }

@@ -2,6 +2,7 @@ package org.firstinspires.ftc.team417_CENTERSTAGE;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 
 import org.openftc.easyopencv.OpenCvCamera;
@@ -22,7 +23,7 @@ abstract class BaseOpMode extends LinearOpMode {
     public DcMotor intakeMotor = null;
     public DcMotor armMotor = null;
     final public int ARM_MOTOR_MIN_POSITION = 0;
-    final public int ARM_MOTOR_MAX_POSITION = 480;
+    final public int ARM_MOTOR_MAX_POSITION = 4200;
     public Servo dumperServo = null;
     public Servo gateServo = null;
 
@@ -40,13 +41,13 @@ abstract class BaseOpMode extends LinearOpMode {
     public void initializeHardware() {
         //Drive Motors
         FL = initializeMotor("FLMotor", DcMotor.Direction.REVERSE);
-        FR = initializeMotor("FRMotor", DcMotor.Direction.REVERSE);
+        FR = initializeMotor("FRMotor", DcMotor.Direction.FORWARD);
         BL = initializeMotor("BLMotor", DcMotor.Direction.REVERSE);
         BR = initializeMotor("BRMotor", DcMotor.Direction.FORWARD);
 
         //Mechanism Motors
         intakeMotor = initializeMotor("IntakeMotor", DcMotor.Direction.FORWARD);
-        armMotor = initializeMotor("ArmMotor", DcMotor.Direction.FORWARD);
+        armMotor = initializeMotor("ArmMotor", DcMotor.Direction.FORWARD);//DcMotor.RunMode.RUN_TO_POSITION);
 
         //Mechanism Servos
         dumperServo = initializeServo("DumperServo", Servo.Direction.FORWARD);
@@ -72,6 +73,15 @@ abstract class BaseOpMode extends LinearOpMode {
 
         // Waits so the imu can process
         sleep(2000);
+    }
+
+    public DcMotor initializeMotor(String motorName, DcMotorSimple.Direction direction, DcMotor.RunMode mode) {
+        DcMotor motor = hardwareMap.get(DcMotor.class, motorName);
+        motor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        motor.setMode(mode);
+        motor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        motor.setDirection(direction);
+        return motor;
     }
 
     public DcMotor initializeMotor(String motorName, DcMotor.Direction direction) {
@@ -108,11 +118,11 @@ abstract class BaseOpMode extends LinearOpMode {
     }
 
     public void dumpDumper() {
-        dumperServo.setPosition(1);
+        dumperServo.setPosition(0.36);
     }
 
     public void resetDumper() {
-        dumperServo.setPosition(0);
+        dumperServo.setPosition(0.1);
     }
 
     enum DumperAction {
@@ -133,11 +143,11 @@ abstract class BaseOpMode extends LinearOpMode {
     }
 
     public void openGate() {
-        gateServo.setPosition(1);
+        gateServo.setPosition(0.5);
     }
 
     public void closeGate() {
-        gateServo.setPosition(0);
+        gateServo.setPosition(1);
     }
 
     public int[] armPositions = new int[] {ARM_MOTOR_MIN_POSITION, ARM_MOTOR_MIN_POSITION + ((ARM_MOTOR_MAX_POSITION - ARM_MOTOR_MIN_POSITION) / 2), ARM_MOTOR_MAX_POSITION};
