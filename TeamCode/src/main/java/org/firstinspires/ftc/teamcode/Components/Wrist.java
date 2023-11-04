@@ -76,12 +76,11 @@ public class Wrist extends RFServo {
     if (target != p_state.position) {
       if (p_state == WristTargetStates.FLAT) {
         if (Arm.ArmStates.UNFLIPPED.state
-            && UNFLIPPED.getState()
             && Lift.LiftPositionStates.AT_ZERO.state) {
           LOGGER.log("flipping to : " + p_state.name() + ", " + p_state.position);
           super.setPosition(p_state.position);
           target = super.getTarget();
-        } else if (Arm.ArmStates.UNFLIPPED.state && UNFLIPPED.getState()) {
+        } else if (Arm.ArmStates.UNFLIPPED.state) {
           LOGGER.log(
               "flipping to : "
                   + WristTargetStates.HOLD.name()

@@ -168,16 +168,22 @@ public class Queuer {
             updateStartConditions(currentlyQueueing);
             //calculate if event should run
             isReady = queueElements.get(currentlyQueueing).isReady(currentEvent, p_extra_condition);
+            if(currentlyQueueing>0)
+                isReady = isReady&&(!queueElements.get(currentlyQueueing-1).isMustFinish()||queueElements.get(currentlyQueueing-1).isDone());
         }
         //if current event has normal start condition
         else if (!queueElements.get(currentlyQueueing).isMustFinish() && !queueElements.get(currentlyQueueing).isShouldFinish()) {
             //calculate if event should run
             isReady = queueElements.get(currentlyQueueing).isReady(currentEvent, p_extra_condition);
+            if(currentlyQueueing>0)
+                isReady = isReady&&(!queueElements.get(currentlyQueueing-1).isMustFinish()||queueElements.get(currentlyQueueing-1).isDone());
         }
         //if current event must wait for all previous events to finsih
         else {
             //calculate if event should run
             isReady = queueElements.get(currentlyQueueing).isReady(completeCurrentEvent, p_extra_condition);
+            if(currentlyQueueing>0)
+                isReady = isReady&&(!queueElements.get(currentlyQueueing-1).isMustFinish()||queueElements.get(currentlyQueueing-1).isDone());
         }
 
         //set queueElement internal value

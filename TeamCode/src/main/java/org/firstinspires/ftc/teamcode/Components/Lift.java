@@ -118,7 +118,7 @@ public class Lift extends RFDualMotor {
 //            super.setPosition(super.getTarget(),0);
         }
         else{
-            super.setTarget(super.getCurrentPosition());
+//            super.setTarget(super.getCurrentPosition());
         }
 //        LOGGER.log("currentPos: "+super.getCurrentPosition());
         packet.put("liftPos", super.getCurrentPosition());

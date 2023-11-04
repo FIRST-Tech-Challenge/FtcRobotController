@@ -12,64 +12,80 @@ import org.firstinspires.ftc.teamcode.roadrunner.trajectorysequence.TrajectorySe
 import org.firstinspires.ftc.teamcode.roadrunner.trajectorysequence.TrajectorySequenceBuilder;
 @Autonomous(name = "BlueLeftPreParkAuto")
 public class BlueLeftAuto extends LinearOpMode {
+        public static int pos = 1;
 
-    @Override
-    public void runOpMode() throws InterruptedException {
-        BradBot robot = new BradBot(this, false);
-        robot.roadrun.setPoseEstimate(new Pose2d(-38.5,63.25, Math.toRadians(-90)));
-        int pos = 0;
-        TrajectorySequence[] spikePosition = new TrajectorySequence[3];
-        spikePosition[0] = robot.roadrun.trajectorySequenceBuilder(new Pose2d(-38.5, 63.25, Math.toRadians(-90)))
-                .setReversed(true) //spike 1
-                .lineToLinearHeading(new Pose2d(-38.5, 34, toRadians(90))) //m1
-                .lineToLinearHeading(new Pose2d(-34.5, 34, toRadians(0))) //m1
-                .lineToLinearHeading((new Pose2d(-46,58,toRadians(0)))) //m1
-                .addTemporalMarker(robot::done)
-                .build();
-        spikePosition[1] = robot.roadrun.trajectorySequenceBuilder(new Pose2d(-38.5, 63.5, Math.toRadians(-90)))
-                .setReversed(true) //spike 2
-                .lineToLinearHeading(new Pose2d(-35.5, 33, toRadians(-90))) //m1
-                .setReversed(false) //m1
-                .lineToLinearHeading(new Pose2d(-46, 58, toRadians(0))) //m1
-                .addTemporalMarker(robot::done)
-                .build();
-        spikePosition[2] = robot.roadrun.trajectorySequenceBuilder(new Pose2d(-38.5, 63.5, Math.toRadians(-90)))
-                .setReversed(true) //spike 3
-                .lineToLinearHeading(new Pose2d(-38.5, 34, toRadians(0))) //m1
-                .lineToLinearHeading(new Pose2d(-46, 58, toRadians(0))) //m1
-                .addTemporalMarker(robot::done)
-                .build();
-        TrajectorySequence throughTruss = robot.roadrun.trajectorySequenceBuilder(new Pose2d(-46,58, toRadians(0)))
-                .setReversed(false) //truss
-                .splineTo(new Vector2d(10, 58), toRadians(0)) //truss
-                .addTemporalMarker(robot::done)
-                .build();
-        TrajectorySequence[] dropAndPark = new TrajectorySequence[3];
-        dropAndPark[0]= robot.roadrun.trajectorySequenceBuilder(new Pose2d(10,58, toRadians(0)))
-                .splineTo(new Vector2d(51, 41.5), toRadians(0)) //dp
-                .lineToLinearHeading(new Pose2d(51, 60, toRadians(0))) //dp
-                .lineToLinearHeading(new Pose2d(60, 60, toRadians(0))) //dp
-                .addTemporalMarker(robot::done)
-                .build();
-        dropAndPark[1]= robot.roadrun.trajectorySequenceBuilder(new Pose2d(10,58,toRadians(0)))
-                .splineTo(new Vector2d(51,35.5), toRadians(0)) //dp
-                .lineToLinearHeading(new Pose2d(51, 60, toRadians(0))) //dp
-                .lineToLinearHeading(new Pose2d(60, 60, toRadians(0))) //dp
-                .addTemporalMarker(robot::done)
-                .build();
-        dropAndPark[2] = robot.roadrun.trajectorySequenceBuilder(new Pose2d(10,58,toRadians(0)))
-                .splineTo(new Vector2d(51, 41.5), toRadians(0)) //dp
-                .lineToLinearHeading(new Pose2d(51, 60, toRadians(0))) //dp
-                .lineToLinearHeading(new Pose2d(60, 60, toRadians(0))) //dp
-                .addTemporalMarker(robot::done)
-                .build();
-        waitForStart();
-        while(!isStopRequested()&&opModeIsActive()&&!robot.queuer.isFullfilled()){
-            robot.followTrajSeq(spikePosition[pos]);
-            robot.followTrajSeq(throughTruss);
-            robot.followTrajSeq(dropAndPark[pos]);
-            robot.queuer.setFirstLoop(false);
-            robot.update();
-        }
+        @Override
+        public void runOpMode() throws InterruptedException {
+            BradBot robot = new BradBot(this, false);
+            robot.roadrun.setPoseEstimate(new Pose2d(-38.5,56, Math.toRadians(90)));
+            TrajectorySequence[] spikePosition = new TrajectorySequence[3];
+
+            spikePosition[0] = robot.roadrun.trajectorySequenceBuilder(new Pose2d(-38.5, 56, Math.toRadians(90)))
+                    .setReversed(true)
+                    .lineToLinearHeading(new Pose2d(-49, 37, toRadians(90)))
+                    .addTemporalMarker(robot::done)
+                    .build();
+            spikePosition[1] = robot.roadrun.trajectorySequenceBuilder(new Pose2d(-38.5, 56, Math.toRadians(90)))
+                    .setReversed(true)
+                    .lineToLinearHeading(new Pose2d(-35.5, 30, toRadians(90)))
+                    .addTemporalMarker(robot::done)
+                    .build();
+            spikePosition[2] = robot.roadrun.trajectorySequenceBuilder(new Pose2d(-38.5, 56, Math.toRadians(90)))
+                    .setReversed(true)
+                    .lineToLinearHeading(new Pose2d(-38.5, 34, toRadians(180)))
+                    .addTemporalMarker(robot::done)
+                    .build();
+            TrajectorySequence[] throughTruss = new TrajectorySequence[3];
+            throughTruss[0] = robot.roadrun.trajectorySequenceBuilder(spikePosition[0].end())
+                    .setReversed(true)
+                    .lineToLinearHeading(new Pose2d(-46, 59, toRadians(180)))
+                    .setReversed(true)
+                    .splineTo(new Vector2d(25, 59), toRadians(0))
+                    .splineTo(new Vector2d(56, 40.5), toRadians(0))
+                    .addTemporalMarker(robot::done)
+                    .build();
+            throughTruss[1] = robot.roadrun.trajectorySequenceBuilder(spikePosition[1].end())
+                    .setReversed(true)
+                    .lineToLinearHeading(new Pose2d(-46, 59, toRadians(180)))
+                    .setReversed(true)
+                    .splineTo(new Vector2d(25, 59), toRadians(0))
+                    .splineTo(new Vector2d(56, 35.5), toRadians(0))
+                    .addTemporalMarker(robot::done)
+                    .build();
+            throughTruss[2] = robot.roadrun.trajectorySequenceBuilder(spikePosition[2].end())
+                    .setReversed(true)
+                    .lineToLinearHeading(new Pose2d(-46, 59, toRadians(180)))
+                    .setReversed(true)
+                    .splineTo(new Vector2d(25, 59), toRadians(0))
+                    .splineTo(new Vector2d(56, 30.5), toRadians(0))
+                    .addTemporalMarker(robot::done)
+                    .build();
+            TrajectorySequence[] dropAndPark = new TrajectorySequence[3];
+            dropAndPark[0]= robot.roadrun.trajectorySequenceBuilder(throughTruss[0].end())
+                    .lineToLinearHeading(new Pose2d(56, 60, toRadians(180)))
+                    .lineToLinearHeading(new Pose2d(60, 60, toRadians(180)))
+                    .addTemporalMarker(robot::done)
+                    .build();
+            dropAndPark[1]= robot.roadrun.trajectorySequenceBuilder(throughTruss[1].end())
+                    .lineToLinearHeading(new Pose2d(56, 60, toRadians(180)))
+                    .lineToLinearHeading(new Pose2d(60, 60, toRadians(180)))
+                    .addTemporalMarker(robot::done)
+                    .build();
+            dropAndPark[2] = robot.roadrun.trajectorySequenceBuilder(throughTruss[2].end())
+                    .lineToLinearHeading(new Pose2d(56, 60, toRadians(180)))
+                    .lineToLinearHeading(new Pose2d(60, 60, toRadians(180)))
+                    .addTemporalMarker(robot::done)
+                    .build();
+            while(!isStarted()){
+//            pos=0;
+            }
+            while(!isStopRequested()&&opModeIsActive()&&!robot.queuer.isFullfilled()){
+                robot.followTrajSeq(spikePosition[pos]);
+                robot.preloadAuto();
+                robot.followTrajSeq(throughTruss[pos]);
+                robot.followTrajSeq(dropAndPark[pos]);
+                robot.queuer.setFirstLoop(false);
+                robot.update();
+            }
     }
 }
