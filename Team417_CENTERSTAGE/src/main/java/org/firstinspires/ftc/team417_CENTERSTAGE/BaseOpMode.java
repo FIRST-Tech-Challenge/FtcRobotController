@@ -26,7 +26,8 @@ abstract class BaseOpMode extends LinearOpMode {
     public Servo dumperServo = null;
     public Servo gateServo = null;
 
-    static final double TICKS_PER_REVOLUTION = 5281.1; // 5203 Series Yellow Jacket Motor
+    static final double TICKS_PER_REVOLUTION = 537.7 * (24.0/27); // 5203 Series Yellow Jacket Motor, robot was overshooting so
+    static final double STRAFE_FACTOR = 24.0/22;
     static final double GEAR_RATIO = 1.0;
     static final double WHEEL_DIAMETER = 3.7; // inches
     static final double TICKS_PER_INCH = (TICKS_PER_REVOLUTION * GEAR_RATIO) / (WHEEL_DIAMETER * Math.PI);

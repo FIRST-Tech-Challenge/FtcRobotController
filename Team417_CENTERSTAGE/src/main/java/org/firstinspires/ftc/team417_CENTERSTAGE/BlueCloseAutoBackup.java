@@ -8,6 +8,7 @@ public class BlueCloseAutoBackup extends BaseAutonomous {
     public void runOpMode() {
         initializeAuto();
         waitForStart();
+        driveInches(24,0);
 
         detectingBlue = true;
 

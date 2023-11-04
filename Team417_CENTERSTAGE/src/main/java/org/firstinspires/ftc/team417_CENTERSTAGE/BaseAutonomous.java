@@ -48,7 +48,7 @@ abstract public class BaseAutonomous extends BaseOpMode {
     }
 
     public void driveInches(double x, double y) {
-        double xTicks = x * TICKS_PER_INCH;
+        double xTicks = x * TICKS_PER_INCH * STRAFE_FACTOR;
         double yTicks = y * TICKS_PER_INCH;
 
         double targetFL = xTicks + yTicks;
