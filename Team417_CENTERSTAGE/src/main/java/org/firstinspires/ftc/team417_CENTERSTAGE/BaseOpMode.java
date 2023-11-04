@@ -1,11 +1,14 @@
 package org.firstinspires.ftc.team417_CENTERSTAGE;
 
+import com.acmerobotics.roadrunner.drive.Drive;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 
 import org.openftc.easyopencv.OpenCvCamera;
 
+import drive.DriveConstants;
 import drive.SampleMecanumDrive;
 
 abstract class BaseOpMode extends LinearOpMode {
@@ -39,19 +42,26 @@ abstract class BaseOpMode extends LinearOpMode {
     //Initializes motors, servos, and sensors
     public void initializeHardware() {
         //Drive Motors
-        FL = initializeMotor("FLMotor", DcMotor.Direction.REVERSE);
-        FR = initializeMotor("FRMotor", DcMotor.Direction.REVERSE);
-        BL = initializeMotor("BLMotor", DcMotor.Direction.REVERSE);
-        BR = initializeMotor("BRMotor", DcMotor.Direction.FORWARD);
+        if(DriveConstants.isDevBot) {
+            FL = initializeMotor("leftFront", DcMotor.Direction.REVERSE);
+            FR = initializeMotor("rightFront", DcMotor.Direction.FORWARD);
+            BL = initializeMotor("leftBack", DcMotor.Direction.REVERSE);
+            BR = initializeMotor("rightBack", DcMotor.Direction.FORWARD);
+        } else {
+            FL = initializeMotor("FLMotor", DcMotor.Direction.REVERSE);
+            FR = initializeMotor("FRMotor", DcMotor.Direction.REVERSE);
+            BL = initializeMotor("BLMotor", DcMotor.Direction.REVERSE);
+            BR = initializeMotor("BRMotor", DcMotor.Direction.FORWARD);
 
-        //Mechanism Motors
-        intakeMotor = initializeMotor("IntakeMotor", DcMotor.Direction.FORWARD);
-        armMotor = initializeMotor("ArmMotor", DcMotor.Direction.FORWARD);
 
-        //Mechanism Servos
-        dumperServo = initializeServo("DumperServo", Servo.Direction.FORWARD);
-        gateServo = initializeServo("GateServo", Servo.Direction.FORWARD);
+            //Mechanism Motors
+            intakeMotor = initializeMotor("IntakeMotor", DcMotor.Direction.FORWARD);
+            armMotor = initializeMotor("ArmMotor", DcMotor.Direction.FORWARD);
 
+            //Mechanism Servos
+            dumperServo = initializeServo("DumperServo", Servo.Direction.FORWARD);
+            gateServo = initializeServo("GateServo", Servo.Direction.FORWARD);
+        }
         /*
         // Sets up the parameters with which we will use our IMU. Note that integration
         // algorithm here just reports accelerations to the logcat log; it doesn't actually

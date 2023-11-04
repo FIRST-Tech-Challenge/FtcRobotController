@@ -33,10 +33,10 @@ abstract public class BaseAutonomous extends BaseOpMode {
     int lastEncoderBL = 0;
     int lastEncoderBR = 0;
 
-    public static double LEFT_Y = 24.0;
-    public static double LEFT_X = -10.0;
-    public static double RIGHT_Y = 24.0;
-    public static double RIGHT_X = 10.0;
+    public static double LEFT_Y = 26.0;
+    public static double LEFT_X = -12.0;
+    public static double RIGHT_Y = 26.0;
+    public static double RIGHT_X = 12.0;
     public static double CENTER_Y = 26.0;
     public static double CENTER_X = 3.0;
     public static double INTAKE_SPEED = -0.5;
@@ -284,9 +284,13 @@ abstract public class BaseAutonomous extends BaseOpMode {
         telemetry.update();
         driveInches(0, y);
         driveInches(x, 0);
-        intakeMotor.setPower(INTAKE_SPEED);
-        sleep((long) INTAKE_TIME);
-        intakeMotor.setPower(0);
+        if(intakeMotor != null) {
+              intakeMotor.setPower(INTAKE_SPEED);
+              sleep((long) INTAKE_TIME);
+              intakeMotor.setPower(0);
+        } else {
+            sleep(5000); 
+        }
         driveInches(-x, 0);
         driveInches(0, -y);
         driveInches(0, MOVING_FROM_WALL);
