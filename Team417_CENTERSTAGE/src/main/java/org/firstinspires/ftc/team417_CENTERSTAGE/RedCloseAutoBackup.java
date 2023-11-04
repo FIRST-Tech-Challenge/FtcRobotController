@@ -6,34 +6,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
 public class RedCloseAutoBackup extends BaseAutonomous {
     public void runOpMode() {
-        initializeAuto();
-
-
-        waitForStart();
-
-        detectingBlue = false;
-
-        switch (detectTeamProp()) {
-            case INITIALIZED:
-                telemetry.addData("Side", "Just Initialized");
-                break;
-            case LEFT:
-                telemetry.addData("Side", "Left");
-                break;
-            case CENTER:
-                telemetry.addData("Side", "Center");
-                break;
-            case RIGHT:
-                telemetry.addData("Side", "Right");
-                break;
-            default:
-                telemetry.addData("Side", "Unsure");
-        }
-        telemetry.update();
-
-        while (opModeIsActive()) {
-
-        }
+      runSimpleInchesAuto(true, true);
 
         // move forward from the wall
     }

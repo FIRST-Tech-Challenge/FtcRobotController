@@ -1,8 +1,12 @@
 package org.firstinspires.ftc.team417_CENTERSTAGE;
 
+import android.util.Log;
+
+import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.firstinspires.ftc.robotcontroller.external.samples.RobotAutoDriveByTime_Linear;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.opencv.core.Core;
 import org.opencv.core.Mat;
@@ -19,7 +23,7 @@ import org.openftc.easyopencv.OpenCvPipeline;
 
 import java.util.ArrayList;
 import java.util.List;
-
+@Config
 abstract public class BaseAutonomous extends BaseOpMode {
 
     private ElapsedTime runtime = new ElapsedTime();
@@ -29,8 +33,23 @@ abstract public class BaseAutonomous extends BaseOpMode {
     int lastEncoderBL = 0;
     int lastEncoderBR = 0;
 
+    public static double LEFT_Y = 26.0;
+    public static double LEFT_X = -12.0;
+    public static double RIGHT_Y = 26.0;
+    public static double RIGHT_X = 12.0;
+    public static double CENTER_Y = 26.0;
+    public static double CENTER_X = 3.0;
+    public static double INTAKE_SPEED = -0.5;
+    public static double INTAKE_TIME = 2000; // in milliseconds
+    public static double MOVING_FROM_WALL = 2;
+    public static double FAR_PARKING = 96;
+    public static double CLOSE_PARKING = 48;
+    public static double ROBOT_SPEED = 0.5;
+    public static double STRAFE_FACTOR = 24.0/22;
+
+
     public void driveInches(double x, double y) {
-        double xTicks = x * TICKS_PER_INCH;
+        double xTicks = x * TICKS_PER_INCH * STRAFE_FACTOR;
         double yTicks = y * TICKS_PER_INCH;
 
         double targetFL = xTicks + yTicks;
@@ -57,10 +76,10 @@ abstract public class BaseAutonomous extends BaseOpMode {
 
         // reset the timeout time and start motion.
         runtime.reset();
-        FL.setPower(0.5);
-        FR.setPower(0.5);
-        BL.setPower(0.5);
-        BR.setPower(0.5);
+        FL.setPower(ROBOT_SPEED);
+        FR.setPower(ROBOT_SPEED);
+        BL.setPower(ROBOT_SPEED);
+        BR.setPower(ROBOT_SPEED);
 
         // keep looping while we are still active, and there is time left, and both motors are running.
         // Note: We use (isBusy() && isBusy()) in the loop test, which means that when EITHER motor hits
@@ -227,5 +246,96 @@ abstract public class BaseAutonomous extends BaseOpMode {
         FR.setPower(0.0);
         BL.setPower(0.0);
         BR.setPower(0.0);
+    }
+
+    public void runSimpleInchesAuto(boolean red, boolean close) {
+        initializeAuto();
+        waitForStart();
+        Log.d("skid", toString());
+
+        if (red == false) {
+            detectingBlue = true;
+            //telemetry.addData("Blue")
+        } else {
+            detectingBlue = false;
+        }
+
+        double x = 0;
+        double y = 0;
+        switch (detectTeamProp()) {
+            case LEFT:
+                telemetry.addData("Side", "Left");
+                x = LEFT_X;
+                y = LEFT_Y;
+                break;
+            case CENTER:
+                telemetry.addData("Side", "Center");
+                x = CENTER_X;
+                y = CENTER_Y;
+                break;
+            case RIGHT:
+                telemetry.addData("Side", "Right");
+                x = RIGHT_X;
+                y = RIGHT_Y;
+                break;
+            default:
+                telemetry.addData("Side", "Unsure");
+        }
+        telemetry.update();
+        driveInches(0, y);
+        driveInches(x, 0);
+        if(intakeMotor != null) {
+              intakeMotor.setPower(INTAKE_SPEED);
+              sleep((long) INTAKE_TIME);
+              intakeMotor.setPower(0);
+        } else {
+            sleep(5000); 
+        }
+        driveInches(-x, 0);
+        driveInches(0, -y);
+        driveInches(0, MOVING_FROM_WALL);
+
+        if (close) {
+            if (red) {
+                driveInches(CLOSE_PARKING, 0);
+            } else {
+                driveInches(-CLOSE_PARKING, 0);
+            }
+        } else {
+            if (red) {
+                driveInches(FAR_PARKING,0);
+            } else {
+
+                driveInches(-FAR_PARKING, 0);
+            }
+        }
+    }
+
+    @Override
+    public String toString() {
+        return "BaseAutonomous{" +
+                "runtime=" + runtime +
+                ", lastEncoderFL=" + lastEncoderFL +
+                ", lastEncoderFR=" + lastEncoderFR +
+                ", lastEncoderBL=" + lastEncoderBL +
+                ", lastEncoderBR=" + lastEncoderBR +
+                ", LEFT_Y=" + LEFT_Y +
+                ", LEFT_X=" + LEFT_X +
+                ", RIGHT_Y=" + RIGHT_Y +
+                ", RIGHT_X=" + RIGHT_X +
+                ", CENTER_Y=" + CENTER_Y +
+                ", CENTER_X=" + CENTER_X +
+                ", INTAKE_SPEED=" + INTAKE_SPEED +
+                ", INTAKE_TIME=" + INTAKE_TIME +
+                ", MOVING_FROM_WALL=" + MOVING_FROM_WALL +
+                ", FAR_PARKING=" + FAR_PARKING +
+                ", CLOSE_PARKING=" + CLOSE_PARKING +
+                ", CAMERA_WIDTH_PIXELS=" + CAMERA_WIDTH_PIXELS +
+                ", CAMERA_HEIGHT_PIXELS=" + CAMERA_HEIGHT_PIXELS +
+                ", LOWER_BLUE_OR_RED=" + LOWER_BLUE_OR_RED +
+                ", UPPER_BLUE_OR_RED=" + UPPER_BLUE_OR_RED +
+                ", detectingBlue=" + detectingBlue +
+                ", sideDetected=" + sideDetected +
+                '}';
     }
 }
