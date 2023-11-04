@@ -15,23 +15,30 @@ public class StateMachine {
         {
             transitions.add(transition);
         }
-
         // Manages the transition from one state to another
         public class Transition
         {
-            private BooleanSupplier trigger;
-            private State nextState;
+            public Transition(State nextState, BooleanSupplier trigger, ArrayList<Action> actions){
+                this.nextState = nextState;
+                this.trigger = trigger;
+                this.actions = actions;
+            }
+            private final BooleanSupplier trigger;
+            private final State nextState;
 
             // The current action in your transition
             public class Action
             {
-                private BooleanSupplier performAction;
+                public Action(BooleanSupplier performAction){
+                    this.performAction = performAction;
+                }
+                private final BooleanSupplier performAction;
                 public boolean actionComplete(){
                     return performAction.getAsBoolean();
                 }
 
             }
-            ArrayList<Action> actions = new ArrayList<>();
+            ArrayList<Action> actions;
             int currentActionIndex;
 
             public boolean triggered(){
@@ -50,9 +57,9 @@ public class StateMachine {
                 return nextState;
             }
         }
-        private ArrayList<Transition> transitions = new ArrayList<>();
+        private final ArrayList<Transition> transitions = new ArrayList<>();
         private Transition currentTransition = null;
-        public String name = new String();
+        public String name;
         State update() {
             // If no transition to new state, return this; otherwise return new state.
             if (currentTransition == null){
@@ -75,7 +82,7 @@ public class StateMachine {
 
     }
 
-    private ArrayList<State> states = new ArrayList<>();
+    private final ArrayList<State> states = new ArrayList<>();
     private State currentState = null;
     public void addState(State state) {
         states.add(state);
