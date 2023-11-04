@@ -11,7 +11,7 @@ import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
 import org.openftc.easyopencv.OpenCvWebcam;
 
-@Autonomous
+
 public class TestAuto extends LinearOpMode {
     OpenCvWebcam webcam;
     private MarkerDetectorRed detector;

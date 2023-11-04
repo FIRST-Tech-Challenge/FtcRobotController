@@ -1,4 +1,4 @@
 
-@Autonomous
+
 public class TestAuto {
 }
