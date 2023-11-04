@@ -43,31 +43,19 @@ public class Robot {
     Servo holderClamp;
     Servo flipper;
 
-
     //arm motor is not used
     DcMotor armMotor;
     IMU imu;
-
-    ElapsedTime elapsedTime;
-
     double yaw;
-
     double prevError = 0;
     double prevTime = 0;
-
-
-    OpenCvWebcam webcam;
     MarkerDetectorRed.MARKER_POSITION markerPosRed;
     MarkerDetectorBlue.MARKER_POSITION markerPosBlue;
-
     int wantedAprTagId;
-
-    //private MarkerDetector detector;
-    private MarkerProcessorRed markerProcessorRed;
+    private MarkerProcessorRed markerProcessorRed; //TODO: COMBINE THESE AND ALL METHODS USING THEM
     private MarkerProcessorBlue markerProcessorBlue;
     private AprilTagProcessor aprilTagProcessor;
     private VisionPortal visionPortal;
-
 
     //CONSTRUCTOR
     public Robot(HardwareMap hardwareMap, LinearOpMode opMode, Telemetry telemetry) {
@@ -86,11 +74,6 @@ public class Robot {
         holderClamp = hardwareMap.servo.get("holderClamp");
         //int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
         //webcam = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "Webcam 1"), cameraMonitorViewId);
-    }
-
-    public void resetLinearSlideEncoder() {
-        lsFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        lsFront.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
     }
 
     public void moveLinearSlideByTicks(double targetDistanceInTicks) {
@@ -162,10 +145,6 @@ public class Robot {
         markerPosBlue = position;
     }
 
-    public MarkerDetectorRed.MARKER_POSITION getMarkerPos() {
-        return markerPosRed;
-    }
-
     //change boolean to enum later
     public void setWantedAprTagIdRed(MarkerDetectorRed.MARKER_POSITION position, boolean redAlliance) {
         if (redAlliance) {
@@ -235,10 +214,6 @@ public class Robot {
         }
     }
 
-    public int getWantedAprTagId() {
-        return wantedAprTagId;
-    }
-
     //vision processing setup
     public void initVisionProcessingRed() {
 
@@ -272,37 +247,7 @@ public class Robot {
                 .build();
     }
 
-    public VisionPortal getVisionPortal() {
-        return visionPortal;
-    }
-
-    public MarkerProcessorRed getMarkerProcessor() {
-        return markerProcessorRed;
-    }
-
-    public AprilTagProcessor getAprilTagProcessor() {
-        return aprilTagProcessor;
-    }
-
-//    public double getAprilY(int idNumber) {
-//        List<AprilTagDetection> currentDetections = aprilTag.getDetections();
-//
-//        double yValue = 0;
-//
-//        for (AprilTagDetection detection : currentDetections) {
-//            if (detection.metadata != null) {
-//                yValue = detection.ftcPose.y;
-//            }
-//
-//        }
-//
-//        return yValue;
-//    }
-
     public double getAprilTagXPos(int idNumber) {
-
-//        visionPortal.setProcessorEnabled(aprilTag, true);
-//        visionPortal.setProcessorEnabled(markerProcessor, false);
 
         double xValue = 0;
         List<AprilTagDetection> currentDetections = aprilTagProcessor.getDetections();
@@ -324,23 +269,7 @@ public class Robot {
         return -xValue;
     }
 
-    public double getAprilZ(int idNumber) {
-        List<AprilTagDetection> currentDetections = aprilTagProcessor.getDetections();
-
-        double yawAprilTag = 0;
-
-        for (AprilTagDetection detection : currentDetections) {
-            if (detection.metadata != null) {
-                yawAprilTag = detection.ftcPose.yaw;
-            }
-
-        }
-        return yawAprilTag;
-    }
-
     public double getAprilTagRange(int idNumber) {
-//        visionPortal.setProcessorEnabled(markerProcessor, false);
-//        m.setProcessorEnabled(aprilTag, true);
 
         List<AprilTagDetection> currentDetections = aprilTagProcessor.getDetections();
 
@@ -424,24 +353,6 @@ public class Robot {
         telemetry.addData("range", getAprilTagRange(idNumber));
 
         return done;
-    }
-
-    public void aprilTagFnaggling(int idNumber, double rangeFromAprilTagMM, double xAxisFromAprilTag) {
-        boolean isDoneWithAprilTagX = false;
-        boolean isDoneWithAprilTagRange = false;
-        while (opMode.opModeIsActive() && !isDoneWithAprilTagX) {
-            isDoneWithAprilTagX = moveRelativeToAprilTagX(xAxisFromAprilTag, idNumber); //method returns boolean
-            telemetry.addData("x value: ", isDoneWithAprilTagX);
-            telemetry.update();
-        }
-
-        telemetry.addLine("done with aprtag x");
-
-        while (opMode.opModeIsActive() && !isDoneWithAprilTagRange) {
-            isDoneWithAprilTagRange = moveRelativeToAprilTagRange(rangeFromAprilTagMM, idNumber); //method returns boolean
-            telemetry.addData("range: ", isDoneWithAprilTagRange);
-            telemetry.update();
-        }
     }
 
     public void setUpImu() {
@@ -553,69 +464,6 @@ public class Robot {
 
     } //IMU
 
-    public void setUpArmMotor() {
-        armMotor = hardwareMap.dcMotor.get("arm");
-
-        armMotor.setDirection(DcMotorSimple.Direction.FORWARD);
-
-        armMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-
-        armMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        armMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-    }
-
-    /*
-        public double calculateArmPower(int targetAngleInDegrees) {
-
-            final double P_VALUE = 0.006;
-
-            double remainingDistance = getRemainingTicksForArm(targetAngleInDegrees);
-            if (remainingDistance < 10){
-                return 0;
-            }
-            double proportionalPower = P_VALUE*remainingDistance;
-            return proportionalPower;
-
-        }
-    */
-    /*
-    public void setArmPower(double armPower) {
-        arm.setPower(armPower);
-    }
-    */
-    /*
-        public boolean checkArmPos(int targetAngleInDegrees) {
-
-            boolean doneArm = false;
-            double remainingDistance = getRemainingTicksForArm(targetAngleInDegrees);
-
-            if (remainingDistance < 10) {
-                setArmPower(0);
-                doneArm = true;
-            }
-            return doneArm;
-        }
-    */
-    /*
-    public double getRemainingTicksForArm(double targetDistanceInDegrees) {
-        double targetDistanceInTicks = convertDegreesToTicks(targetDistanceInDegrees);
-        double remainingDistance = targetDistanceInTicks - arm.getCurrentPosition();
-
-        return remainingDistance;
-    }
-    */
-
-    public double convertDegreesToTicks(double targetDistanceInDegrees) {
-
-        //537.7, ticks per motor revolution
-        //1.4, gear ratio
-        //converting mm to ticks
-        final double Degrees_TO_TICKS = 537.7 / 15;
-
-        return targetDistanceInDegrees * Degrees_TO_TICKS;
-
-    }//Arm
-
     public void setMotorPower(double lFront, double rFront, double lBack, double rBack) {
         this.fLeft.setPower(lFront);
         this.fRight.setPower(rFront);
@@ -628,79 +476,6 @@ public class Robot {
         this.fRight.setPower(powers[1]);
         this.bLeft.setPower(powers[2]);
         this.bRight.setPower(powers[3]);
-    }
-
-    public double convertMMToTicks(double targetDistanceInMM) {
-
-        //301 = circumference mm
-        //537.7, ticks per motor revolution
-        //converting mm to ticks
-        final double MM_TO_TICKS = (537.7 / 301.59);
-
-        return targetDistanceInMM * MM_TO_TICKS;
-
-    }
-
-    public boolean checkReachedDistance(double targetDistanceInMM) {
-
-        boolean done = false;
-        double remainingDistance = Math.abs(getRemainingTicksForDrivetrain(targetDistanceInMM));
-
-
-        //telemetry.addData("remainig distance for ffowrard and backeward", remainingDistance);
-
-        if (remainingDistance < 30 && -yaw < 5 && -yaw > -5) {
-            done = true;
-        }
-        return done;
-    }
-
-    public double getRemainingTicksForDrivetrain(double targetDistanceInMM) {
-        double targetDistanceInTicks = convertMMToTicks(targetDistanceInMM);
-        return targetDistanceInTicks - fLeft.getCurrentPosition();
-    }
-
-    public void resetEncoder() {
-        fLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        fLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-    }
-
-    public double[] calculateDrivetrainPower(double targetDistanceInMM) {
-        final double P_VALUE = 0.001;
-
-        if (checkReachedDistance(targetDistanceInMM)) {
-            return new double[]{0, 0, 0, 0};
-        }
-
-        double remainingDistance = getRemainingTicksForDrivetrain(targetDistanceInMM);
-
-        double proportionalPower = P_VALUE * remainingDistance;
-        double scaleImu = 0;
-        return scalePowers(new double[]{
-                proportionalPower + calculateImuPower(0) * scaleImu,
-                proportionalPower - calculateImuPower(0) * scaleImu,
-                proportionalPower + calculateImuPower(0) * scaleImu,
-                proportionalPower - calculateImuPower(0) * scaleImu
-        });
-    }
-
-    public double[] calculateDrivetrainPowerWithTurning(double targetDistanceInMM, int angleToTurn) {
-        final double P_VALUE = 0.0015;
-
-        if (checkReachedDistance(targetDistanceInMM)) {
-            return new double[]{0, 0, 0, 0};
-        }
-
-        double remainingDistance = getRemainingTicksForDrivetrain(targetDistanceInMM);
-
-        double proportionalPower = P_VALUE * remainingDistance;
-        double scaleImu = 1.5;
-        return scalePowers(new double[]{
-                proportionalPower + calculateImuPower(angleToTurn) * scaleImu,
-                proportionalPower - calculateImuPower(angleToTurn) * scaleImu,
-                proportionalPower + calculateImuPower(angleToTurn) * scaleImu,
-                proportionalPower - calculateImuPower(angleToTurn) * scaleImu
-        });
     }
 
     public double getCurrentHeading() {
@@ -763,15 +538,6 @@ public class Robot {
             setMotorPower(0, 0, 0, 0);
             sleep(100);
         }
-    }
-
-    public boolean isHeadingWithinError(double targetHeading) {
-        double ERROR_TOLERANCE = 0.5;
-        double currentHeading = getCurrentHeading();
-        double deltaHeading = Math.abs(targetHeading - currentHeading);
-        //telemetry.addLine("within error, return true");
-        //telemetry.addLine("not within error, return false");
-        return deltaHeading <= ERROR_TOLERANCE;
     }
 
     public void autoForward(double targetDistanceInMM) throws InterruptedException {
@@ -882,57 +648,6 @@ public class Robot {
                 -proportionalPower + calculateImuPower(0) * scaleImu,
                 proportionalPower - calculateImuPower(0) * scaleImu
         });
-    }
-
-    public void autoMecanuming(double targetMecanumDistance) {
-        final double P_VALUE = 0.004;
-
-        //301 = circumference mm
-        //537.7, ticks per motor revolution
-        //1.4, gear ratio
-        //converting mm to ticks
-
-        final double MM_TO_TICKS = 537.7 / 301.59;
-
-        double targetPos = targetMecanumDistance * MM_TO_TICKS * (1.225);
-        double error = targetPos - fLeft.getCurrentPosition();
-
-        final double PROPORTIONAL_POWER = P_VALUE * error;
-
-
-        long lastCheckMillis = System.currentTimeMillis();
-        long millis = System.currentTimeMillis();
-
-        double oldTick = fLeft.getCurrentPosition();
-
-        boolean isStopped = false;
-
-
-        millis = System.currentTimeMillis();
-
-
-        error = targetPos - fLeft.getCurrentPosition();
-
-        double imuPower = calculateImuPower(0);
-
-        setMotorPower(
-                PROPORTIONAL_POWER + imuPower,
-                -PROPORTIONAL_POWER + imuPower,
-                -PROPORTIONAL_POWER + imuPower,
-                PROPORTIONAL_POWER + imuPower
-        );
-
-        if (millis > lastCheckMillis + 500) {
-            lastCheckMillis = millis;
-            double newTicks = fLeft.getCurrentPosition();
-
-            if (oldTick == newTicks) {
-                isStopped = true;
-            }
-
-            oldTick = newTicks;
-
-        }
     }
 
     public void mecanumBlocking(double inches, boolean right, double maxPower) {
