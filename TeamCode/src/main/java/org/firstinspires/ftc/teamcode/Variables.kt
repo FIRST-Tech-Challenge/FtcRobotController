@@ -28,6 +28,7 @@ object Variables {
     var touchyR: TouchSensor? = null
     var touchyL: TouchSensor? = null
     var slideRotationMotor: DcMotor? = null
+    var motorSlideRotate: DcMotor? = null
     var motorSlideLeft: DcMotor? = null
     var motorSlideRight: DcMotor? = null
     var clawRotation: Servo? = null
