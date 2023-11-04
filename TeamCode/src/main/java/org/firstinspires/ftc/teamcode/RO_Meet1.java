@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.Servo;
 
 
 @TeleOp(group = "FINALCODE")
@@ -21,6 +22,12 @@ public class RO_Meet1 extends LinearOpMode {
         DcMotor motorFrontLeft = hardwareMap.dcMotor.get("motor4");
         DcMotor motorBackRight = hardwareMap.dcMotor.get("motor1");
         DcMotor motorFrontRight = hardwareMap.dcMotor.get("motor2");
+        DcMotor motorLauncher = hardwareMap.dcMotor.get("motor5");
+        
+
+        Servo servoROT = hardwareMap.servo.get("servo1");
+        Servo servoLOT = hardwareMap.servo.get("servo2");
+
 
 //        DcMotorEx RightViperSlide = hardwareMap.get(DcMotorEx.class, "vpRight");
 
@@ -107,97 +114,6 @@ public class RO_Meet1 extends LinearOpMode {
             telemetry.update();
 
 
-//// Viper Slide Code:
-//
-//
-//            if(gamepad1.x && useButtons){
-//                position = 1200;
-//                goSlow = false;
-//
-//            }
-//            if(gamepad1.y && useButtons) {
-//                position =  2023;
-//                goSlow = false;
-//
-//            }
-//            if(gamepad1.b && useButtons) {
-//                position = 2850;
-//                goSlow = false;
-//
-//            }
-//            if(gamepad1.a && useButtons) {
-//                goSlow = false;
-//                position = 0;
-//            }
-//
-//            if (prevposition != position) {
-//                RightViperSlide.setTargetPosition(position);
-//                LeftViperSlide.setTargetPosition(-position);
-//                RightViperSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-//                LeftViperSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-//                prevposition = position;
-//                RightViperSlide.setVelocity(4000);
-//                LeftViperSlide.setVelocity(4000);
-//            }
-//
-//
-//            if (gamepad1.dpad_down) {
-//                position = 100;
-//                goSlow = true;
-//            }
-//            if (gamepad1.dpad_left) {
-//                position = 200;
-//                goSlow = true;
-//            }
-//            if (gamepad1.dpad_up) {
-//                position = 300;
-//                goSlow = true;
-//            }
-//            if (gamepad1.dpad_right) {
-//                position = 420;
-//                goSlow = true;
-//            }
-//
-//            //Servo Code
-//            if (gamepad1.right_bumper) {
-//                if (clawOpen) {
-//                    clawLeft.setPosition(0.0);
-//                    clawRight.setPosition(0.7);
-//                    if (position < 75) {
-//                        position = 75;
-//                    }
-//                    TimeUnit.MILLISECONDS.sleep(500);
-//                    clawOpen = false;
-//                } else {
-//                    clawLeft.setPosition(0.5);
-//                    clawRight.setPosition(0.2);
-//                    if (position <= 75) {
-//                        position = 0;
-//                    }
-//                    TimeUnit.MILLISECONDS.sleep(500);
-//                    clawOpen = true;
-//                }
-//            }
-//        }
-//        if (gamepad1.left_bumper) {
-//            if (clawOpen) {
-//                clawLeft.setPosition(1.1);
-//                clawRight.setPosition(0.8);
-//                if (position < 75) {
-//                    position = 75;
-//                }
-//                TimeUnit.MILLISECONDS.sleep(500);
-//                clawOpen = false;
-//            } else {
-//                clawLeft.setPosition(0.5);
-//                clawRight.setPosition(0.2);
-//                if (position <= 75) {
-//                    position = 0;
-//                }
-//                TimeUnit.MILLISECONDS.sleep(500);
-//                clawOpen = true;
-//            }
-//        }
 
 
         }

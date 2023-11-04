@@ -15,10 +15,17 @@ public class servoTest extends LinearOpMode{
         waitForStart();
         if (isStopRequested()) return;
         while (opModeIsActive()) {
-            while (gamepad1.a) {
-                servo.setPosition(servo.getPosition()+0.05);
-                TimeUnit.MILLISECONDS.sleep(250);
+            if (gamepad1.a) {
+                if (servo.getPosition()>0.7) {
+                    servo.setPosition(0.1);
+                    TimeUnit.MILLISECONDS.sleep(350);
+                } else {
+                    servo.setPosition(0.75);
+                    TimeUnit.MILLISECONDS.sleep(350);
+                }
             }
+            telemetry.addData("servo pos.", servo.getPosition());
+            telemetry.update();
         }
     }
 }
