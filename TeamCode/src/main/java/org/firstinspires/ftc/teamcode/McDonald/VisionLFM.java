@@ -35,10 +35,11 @@ import java.util.Locale;
 
 
         private double MOVE_INDEX = 2;
-        private double MOVE_MIDDLE = 0.4;
-        private double MOVE_LEFT = 2;
-        private double MOVE_RIGHT = 2;
-        private double MOVE_FORWARD = 2;
+        private double MOVE_MIDDLE = 0.2;
+        private double MOVE_LEFT = 1.8;
+
+        private double MOVE_RIGHT = 1.8;
+        private double MOVE_FORWARD = 1.8;
 
         static final double     FORWARD_SPEED = 0.2;
         static final double     TURN_SPEED    = 0.2;
