@@ -13,7 +13,7 @@ public class StateMachine {
         public String name; // Name identifier for the state
 
         // Constructor that sets the name of the state
-        public State(String name){
+        public State(String name) {
             this.name = name;
         }
 
@@ -30,7 +30,7 @@ public class StateMachine {
             int currentActionIndex; // Index to keep track of the current action
 
             // Constructor that initializes a transition
-            public Transition(State nextState, BooleanSupplier trigger, ArrayList<Action> actions){
+            public Transition(State nextState, BooleanSupplier trigger, ArrayList<Action> actions) {
                 this.nextState = nextState;
                 this.trigger = trigger;
                 this.actions = actions;
@@ -41,33 +41,35 @@ public class StateMachine {
                 private final BooleanSupplier performAction; // A function that performs the action and returns true if the action is complete
 
                 // Constructor that sets the action
-                public Action(BooleanSupplier performAction){
+                public Action(BooleanSupplier performAction) {
                     this.performAction = performAction;
                 }
 
                 // Method to determine if the action is complete based on the BooleanSupplier
-                public boolean actionComplete(){
+                public boolean actionComplete() {
                     return performAction.getAsBoolean();
                 }
             }
 
             // Method to determine if this transition's condition is met
-            public boolean triggered(){
+            public boolean triggered() {
                 return trigger.getAsBoolean();
             }
 
             // Method to determine if all actions for this transition are complete
-            public boolean transitionComplete(){
+            public boolean transitionComplete() {
                 // Iterate through all actions to see if they are complete
                 for (currentActionIndex = 0; currentActionIndex < actions.size(); currentActionIndex++) {
-                    if (!(actions.get(currentActionIndex).actionComplete())) { return false; }
+                    if (!(actions.get(currentActionIndex).actionComplete())) {
+                        return false;
+                    }
                 }
                 currentActionIndex = 0; // Reset the action index
                 return true; // All actions are complete
             }
 
             // Method to get the state that this transition leads to
-            public State getDestinationState(){
+            public State getDestinationState() {
                 return nextState;
             }
         }
@@ -75,9 +77,9 @@ public class StateMachine {
         // Method called every update cycle to determine if the state should transition
         State update() {
             // If there is no active transition, check for a triggered transition
-            if (currentTransition == null){
-                for (Transition t : transitions){
-                    if (t.triggered()){
+            if (currentTransition == null) {
+                for (Transition t : transitions) {
+                    if (t.triggered()) {
                         currentTransition = t;
                         break;
                     }
@@ -85,7 +87,7 @@ public class StateMachine {
                 return this; // No transition triggered, stay in this state
             }
             // If the current transition is complete, move to the next state
-            if (currentTransition.transitionComplete()){
+            if (currentTransition.transitionComplete()) {
                 State destinationState = currentTransition.getDestinationState();
                 currentTransition = null;
                 return destinationState; // Transition to the next state
@@ -103,7 +105,7 @@ public class StateMachine {
     }
 
     // Method to set the initial state of the state machine. Can only be done once.
-    public void setInitialState(State state){
+    public void setInitialState(State state) {
         assert currentState == null : "cannot set initial state twice"; // Ensure initial state is not already set
         currentState = state;
     }
