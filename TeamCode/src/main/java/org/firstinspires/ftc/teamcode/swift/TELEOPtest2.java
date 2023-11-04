@@ -128,10 +128,14 @@ public class TELEOPtest2 extends LinearOpMode {
 
             if (gamepad2.y) {
                 // Move servos in opposite directions when "y" is pressed
-                intakeServo.setPosition(0); // Adjust the position value as needed
+               // intakeServo.setPosition(0); // Adjust the position value as needed
+                intakeServo.setDirection(Servo.Direction.FORWARD);
+                sleep(CYCLE_MS);
             } else if (gamepad2.x) {
                 // Return servos to the center position when "x" is pressed
-                intakeServo.setPosition(1); // Adjust the position value for the center position
+               // intakeServo.setPosition(1); // Adjust the position value for the center position
+                intakeServo.setDirection(Servo.Direction.REVERSE);
+                sleep(CYCLE_MS);
             }
             if (gamepad2.b) {
                 // Move servo in opposite directions when "y" is pressed
