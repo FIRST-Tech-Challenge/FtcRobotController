@@ -197,7 +197,7 @@ public class _2023_11_04_06_Meet1_TeleOp extends LinearOpMode {
 
             double droneServoPosition = droneServo.getPosition();
 
-            if (gamepad1.y) {
+            if (gamepad2.y) {
                 droneServo.setPosition(1);
                 sleep(1500);
                 droneServo.setPosition(0.7);
