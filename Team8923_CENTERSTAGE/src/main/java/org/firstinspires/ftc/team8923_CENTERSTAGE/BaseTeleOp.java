@@ -50,7 +50,7 @@ abstract public class BaseTeleOp extends BaseOpMode {
         // release drone
         if (gamepad2.right_stick_button) {
             servoReleaseDrone.setPosition(0.5);
+            servoReleaseDrone.setPosition(0.0);
         }
-
     }
 }
