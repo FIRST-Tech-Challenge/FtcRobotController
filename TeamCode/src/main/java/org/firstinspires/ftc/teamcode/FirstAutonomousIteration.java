@@ -232,8 +232,9 @@ public class FirstAutonomousIteration extends LinearOpMode {
         holdHeading( TURN_SPEED, 0.0, 0.05);   // Hold -45 Deg heading for a 1/2 second
         driveStraight(DRIVE_SPEED, 1.9, 0.0);
         turnToHeading(TURN_SPEED, 90);
-        holdHeading(TURN_SPEED, 0.0, 0.05);
-        driveStraight(DRIVE_SPEED, 24.0, 0.0);
+        holdHeading(TURN_SPEED, 90.0, 0.05);
+        driveStraight(DRIVE_SPEED, 24.0, 90.0);
+
         turnToHeading(TURN_SPEED, 0.0);
         holdHeading(TURN_SPEED, 0.0, 0.05);
         driveStraight(DRIVE_SPEED, 22.0, 0.0);
