@@ -5,6 +5,8 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
 
+import java.util.concurrent.TimeUnit;
+
 
 @TeleOp(group = "FINALCODE")
 public class RO_Meet1 extends LinearOpMode {
@@ -23,9 +25,10 @@ public class RO_Meet1 extends LinearOpMode {
         DcMotor motorBackRight = hardwareMap.dcMotor.get("motor1");
         DcMotor motorFrontRight = hardwareMap.dcMotor.get("motor2");
         DcMotor motorLauncher = hardwareMap.dcMotor.get("motor5");
-        
+        DcMotor motorPullUp = hardwareMap.dcMotor.get("motor6");
 
         Servo servoROT = hardwareMap.servo.get("servo1");
+        servoROT.setDirection(Servo.Direction.REVERSE);
         Servo servoLOT = hardwareMap.servo.get("servo2");
 
 
@@ -114,7 +117,45 @@ public class RO_Meet1 extends LinearOpMode {
             telemetry.update();
 
 
+            //Outake 2 Servos      servoROT = "servo1"      servoLOT = "servo2"
+            if (gamepad1.a) {
+                if (servoROT.getPosition() > 0.7 && servoLOT.getPosition() > 0.7) {
+                    servoROT.setPosition(0.1);
+                    servoLOT.setPosition(0.1);
+                    TimeUnit.MILLISECONDS.sleep(350);
+                } else {
+                    servoROT.setPosition(0.75);
+                    servoLOT.setPosition(0.75);
+                    TimeUnit.MILLISECONDS.sleep(350);
+                }
+            }
+            telemetry.addData("servo pos.", servoROT.getPosition());
+            telemetry.addData("servo pos.", servoLOT.getPosition());
+            telemetry.update();
 
+
+
+            //Flight Launcher       motorLauncher = "motor6"
+            if (gamepad1.a) {
+                motorLauncher.setPower(1);
+            } else {
+                motorLauncher.setPower(0);
+            }
+
+
+
+            //Pull Up       motorPullUp = "motor6"
+            if (gamepad1.x) {
+                motorPullUp.setPower(1);
+            } else if (gamepad1.y) {
+                motorPullUp.setPower(-1);
+            } else {
+                motorPullUp.setPower(0);
+            }
+
+
+
+            //Viper Slides
 
         }
     }
