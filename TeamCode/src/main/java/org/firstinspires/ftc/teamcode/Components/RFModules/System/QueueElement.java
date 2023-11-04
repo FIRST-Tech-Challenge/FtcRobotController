@@ -24,9 +24,9 @@ public class QueueElement {
     //should it wait for everything else to finish
     private final boolean mustFinish;
     //should it wait for everything else to finish
-    private boolean shouldFinish = false;
+    private final boolean shouldFinish;
     //is it an optional event
-    private boolean isOptional = false;
+    private final boolean isOptional;
     //is it skippable right now
     private boolean option = false;
 
@@ -40,10 +40,7 @@ public class QueueElement {
      * @param p_mustFinish does the event need to finish
      */
     public QueueElement(int p_queuePos, boolean p_asynchronous, int p_startCondition, boolean p_mustFinish) {
-        queuePos = p_queuePos;
-        asynchronous = p_asynchronous;
-        startCondition = p_startCondition;
-        mustFinish = p_mustFinish;
+        this(p_queuePos, p_asynchronous, p_startCondition,p_mustFinish,false,false);
     }
 
     /**

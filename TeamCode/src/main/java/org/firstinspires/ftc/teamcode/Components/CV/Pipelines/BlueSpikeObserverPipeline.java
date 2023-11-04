@@ -8,10 +8,9 @@ import static org.firstinspires.ftc.teamcode.Components.CV.Pipelines.RedSpikeObs
 import static org.firstinspires.ftc.teamcode.Components.CV.Pipelines.RedSpikeObserverPipeline.p22y;
 import static org.firstinspires.ftc.teamcode.Components.CV.Pipelines.RedSpikeObserverPipeline.p2x;
 import static org.firstinspires.ftc.teamcode.Components.CV.Pipelines.RedSpikeObserverPipeline.p2y;
-import static org.firstinspires.ftc.teamcode.Components.CV.Pipelines.RedSpikeObserverPipeline.p31x;
-import static org.firstinspires.ftc.teamcode.Components.CV.Pipelines.RedSpikeObserverPipeline.p31y;
-import static org.firstinspires.ftc.teamcode.Components.CV.Pipelines.RedSpikeObserverPipeline.p32x;
-import static org.firstinspires.ftc.teamcode.Components.CV.Pipelines.RedSpikeObserverPipeline.p32y;
+import static org.firstinspires.ftc.teamcode.Components.CV.Pipelines.RedSpikeObserverPipeline.threshhold;
+import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.packet;
+
 
 import com.acmerobotics.dashboard.config.Config;
 
@@ -48,7 +47,6 @@ public class BlueSpikeObserverPipeline extends OpenCvPipeline {
      * @param input inputted fram from camera
      * @return outputted frame from this function
      */
-    @Override
     public Mat processFrame(Mat input) {
         Rect ROI1 = new Rect( //130 x 210, 60 x 120
                 new Point(p1x,p1y),
@@ -56,19 +54,11 @@ public class BlueSpikeObserverPipeline extends OpenCvPipeline {
         Rect ROI2 = new Rect( //130 x 210, 60 x 120
                 new Point(p21x,p21y),
                 new Point(p22x,p22y));
-        Rect ROI3 = new Rect( //130 x 210, 60 x 120
-                new Point(p31x,p31y),
-                new Point(p32x,p32y));
-
-
         Mat cone = input.submat(ROI1);
-        //these are blue
-        double redValue = Core.sumElems(cone).val[2]/ROI1.area()/255;
+        double redValue = Core.sumElems(cone).val[0]/ROI1.area()/255;
         cone = input.submat(ROI2);
-        double redValue2 = Core.sumElems(cone).val[2]/ROI2.area()/255;
-        cone = input.submat(ROI3);
-        double redValue3 = Core.sumElems(cone).val[2]/ROI3.area()/255;
-        frameList.add(new double[]{redValue, redValue2, redValue3});
+        double redValue2 = Core.sumElems(cone).val[0]/ROI2.area()/255;
+        frameList.add(new double[]{redValue, redValue2});
         if(frameList.size()>5) {
             frameList.remove(0);
         }
@@ -83,7 +73,6 @@ public class BlueSpikeObserverPipeline extends OpenCvPipeline {
         Scalar color = new Scalar(255,0,0);
         Imgproc.rectangle(input, ROI1, color, 5);
         Imgproc.rectangle(input, ROI2, color, 5);
-        Imgproc.rectangle(input, ROI3, color, 5);
         return input;
     }
 
@@ -97,12 +86,19 @@ public class BlueSpikeObserverPipeline extends OpenCvPipeline {
         for(int i=0;i<frameList.size()-1;i++){
             sums[0]+=frameList.get(i)[0];
             sums[1]+=frameList.get(i)[1];
-            sums[2]+=frameList.get(i)[2];
         }
-        if(sums[0]>sums[1]&&sums[0]>sums[2]){
-            return 1;
-        }else if(sums[1]>sums[2]){
+        packet.put("cvThresh0", sums[0]);
+        if(sums[0]>threshhold&&sums[1]>threshhold){
+            if(sums[0]>sums[1]){
+                return 1;
+            }
+            else{
+                return 2;
+            }
+        }else if(sums[1]>threshhold){
             return 2;
+        } else if(sums[0]>threshhold){
+            return 1;
         }else{
             return 3;
         }

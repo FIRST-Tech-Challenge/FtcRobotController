@@ -57,13 +57,7 @@ public class RFServo implements Servo {
      * @param p_limit physical limit of servo
      */
     public RFServo (String p_deviceName, double p_limit) {
-        rfServo = op.hardwareMap.get(Servo.class, p_deviceName);
-        rfServoName = p_deviceName;
-
-        logger.createFile("/ServoLogs/RFServo", "Runtime    Component               " +
-                "Function               Action");
-
-        SERVO_LIMIT = p_limit;
+       this(p_deviceName, Direction.FORWARD, p_limit);
     }
 
     /* Updating the last time the servo flipped */

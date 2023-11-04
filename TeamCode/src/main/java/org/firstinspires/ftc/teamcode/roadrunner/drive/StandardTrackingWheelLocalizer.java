@@ -65,7 +65,7 @@ public class StandardTrackingWheelLocalizer implements Localizer {
     private final Encoder frontEncoder;
 
     public StandardTrackingWheelLocalizer(HardwareMap hardwareMap) {
-        leftEncoder = new Encoder(hardwareMap.get(DcMotorEx.class, "leftEncoder"));
+        leftEncoder = new Encoder(hardwareMap.get(DcMotorEx.class, "hangerMotor"));
         rightEncoder = new Encoder(hardwareMap.get(DcMotorEx.class, "motorRightFront"));
         frontEncoder = new Encoder(hardwareMap.get(DcMotorEx.class, "motorLeftFront"));
         frontEncoder.setDirection(Encoder.Direction.REVERSE);
