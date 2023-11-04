@@ -31,6 +31,7 @@ public class RedFarAuto extends BaseAutonomous {
             default:
                 telemetry.addData("Side", "Unsure");
         }
+        telemetry.update();
 
         Pose2d startPose = new Pose2d(-36.00, -60.00, Math.toRadians(90.00));
         TrajectorySequence goToParkingRedFar = drive.trajectorySequenceBuilder(startPose)

@@ -29,24 +29,6 @@ abstract public class BaseAutonomous extends BaseOpMode {
     int lastEncoderBL = 0;
     int lastEncoderBR = 0;
 
-    public void initAuto() {
-        telemetry.addData("Init State", "Init Started");
-        telemetry.update();
-        initializeHardware();
-
-        telemetry.addData("Init State", "Init Finished");
-
-        // Set last know encoder values
-        lastEncoderFR = FR.getCurrentPosition();
-        lastEncoderFL = FL.getCurrentPosition();
-        lastEncoderBL = BL.getCurrentPosition();
-        lastEncoderBR = BR.getCurrentPosition();
-
-        telemetry.clear();
-        telemetry.addLine("Initialized. Ready to start!");
-        telemetry.update();
-    }
-
     public void driveInches(double x, double y) {
         double xTicks = x * TICKS_PER_INCH * STRAFE_FACTOR;
         double yTicks = y * TICKS_PER_INCH;
@@ -136,6 +118,8 @@ abstract public class BaseAutonomous extends BaseOpMode {
         lastEncoderBL = BL.getCurrentPosition();
         lastEncoderBR = BR.getCurrentPosition();
 
+        sleep(5000);
+
         telemetry.clear();
         telemetry.addLine("Initialized. Ready to start!");
         telemetry.update();
@@ -147,12 +131,13 @@ abstract public class BaseAutonomous extends BaseOpMode {
     boolean detectingBlue;
 
     enum SideDetected {
+        INITIALIZED,
         LEFT,
         CENTER,
         RIGHT
     }
 
-    SideDetected sideDetected;
+    public SideDetected sideDetected = SideDetected.INITIALIZED;
 
     class PropDetectionPipeline extends OpenCvPipeline {
         boolean viewportPaused = false;
@@ -173,7 +158,7 @@ abstract public class BaseAutonomous extends BaseOpMode {
             Imgproc.threshold(hsv, output, 1, 255, Imgproc.THRESH_BINARY);
             // Resize the binary mask
             Mat resizedMask = new Mat();
-            Imgproc.resize(output, resizedMask, new Size(0, 0), 0.7, 0.7, Imgproc.INTER_AREA);
+            Imgproc.resize(output, resizedMask, new Size(0, 0), 1, 1, Imgproc.INTER_AREA);
 
             // Find contours
             List<MatOfPoint> contours = new ArrayList<>();

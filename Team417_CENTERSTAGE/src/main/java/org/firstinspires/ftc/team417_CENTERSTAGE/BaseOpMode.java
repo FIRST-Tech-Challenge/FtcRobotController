@@ -41,19 +41,17 @@ abstract class BaseOpMode extends LinearOpMode {
     public void initializeHardware() {
         //Drive Motors
         FL = initializeMotor("FLMotor", DcMotor.Direction.REVERSE);
-        FR = initializeMotor("FRMotor", DcMotor.Direction.FORWARD);
+        FR = initializeMotor("FRMotor", DcMotor.Direction.REVERSE);
         BL = initializeMotor("BLMotor", DcMotor.Direction.REVERSE);
         BR = initializeMotor("BRMotor", DcMotor.Direction.FORWARD);
 
-        /*
         //Mechanism Motors
-        intakeMotor = initializeMotor("IntakeMotor", DcMotorSimple.Direction.FORWARD);
-        armMotor = initializeMotor("ArmMotor", DcMotorSimple.Direction.FORWARD);
+        intakeMotor = initializeMotor("IntakeMotor", DcMotor.Direction.FORWARD);
+        armMotor = initializeMotor("ArmMotor", DcMotor.Direction.FORWARD);
 
         //Mechanism Servos
         dumperServo = initializeServo("DumperServo", Servo.Direction.FORWARD);
         gateServo = initializeServo("GateServo", Servo.Direction.FORWARD);
-        */
 
         /*
         // Sets up the parameters with which we will use our IMU. Note that integration
