@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.Autonomous;
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.teamcode.Variables.VisionProcessors;
 import org.firstinspires.ftc.teamcode.Variables.Detection;
@@ -16,6 +17,7 @@ public class BackBlueAuto extends MeepMeepBoilerplate{
     @Override
     public void runOpMode() {
         SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
+        var passiveServo = hardwareMap.get(Servo.class, "passiveServo");
         initVision(VisionProcessors.TFOD);
         Detection detection = getDetectionsSingleTFOD();
         waitForStart();
@@ -46,6 +48,8 @@ public class BackBlueAuto extends MeepMeepBoilerplate{
                 );
                 break;
         }
+
+        passiveServo.setPosition(0.72);
 
 //        drive.followTrajectorySequence(mergeSequences(sequences));
     }
