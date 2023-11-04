@@ -130,21 +130,28 @@ public class Robot {
     }
 
     public void autoOuttake() {
+        Log.d("vision", "autoOuttake: in autoouttake()");
         double armPos = 0.594; //down position
         setServoPosBlocking(arm, armPos);
+        Log.d("vision", "autoOuttake: servo to down");
         double holderClampClosed = 0.5; //closed
         setServoPosBlocking(holderClamp, holderClampClosed);
+        Log.d("vision", "autoOuttake: holder closed");
 
         moveLinearSlideByTicks(-2400);
+        Log.d("vision", "autoOuttake: move lin s");
 
         armPos = 0.845; //up (outtake) position
         setServoPosBlocking(arm, armPos);
+        Log.d("vision", "autoOuttake: servo to up");
         double holderClampOpen = 0.3;
         setServoPosBlocking(holderClamp, holderClampOpen);
+        Log.d("vision", "autoOuttake: holder open");
 
         armPos = 0.594; //down (intake) position
         setServoPosBlocking(arm, armPos);
         moveLinearSlideByTicks(0);
+        Log.d("vision", "autoOuttake: move lin s again");
     }
 
     public void setMarkerPosRed(MarkerDetectorRed.MARKER_POSITION position) {
@@ -1072,10 +1079,10 @@ public class Robot {
         Log.d("vision", "moveToMarker: Pos " + markerPosRed);
         Log.d("vision", "moveToMarker: Tag " + wantedAprTagId);
         while (opMode.opModeIsActive()) {
-            if (markerPosRed == MarkerDetectorRed.MARKER_POSITION.RIGHT) {
-                straightBlocking(19, false, 0.5);
+            if (markerPosRed == MarkerDetectorRed.MARKER_POSITION.RIGHT) { //RIGHT
+                straightBlocking(19, false, 0.25);
                 setHeading(-45, 0.25);
-                straightBlocking(6, false, 0.7);
+                straightBlocking(8, false, 0.7);
                 setHeading(-45, 0.25);
                 straightBlocking(12, true, 0.7);
                 setHeading(0, 0.7);
@@ -1089,25 +1096,43 @@ public class Robot {
                 setHeading(-90, 0.7);
                 straightBlocking(14, false, 0.5);
                 break;
-            } else if (markerPosRed == MarkerDetectorRed.MARKER_POSITION.LEFT) {
-                straightBlocking(19, false, 0.5);
+            } else if (markerPosRed == MarkerDetectorRed.MARKER_POSITION.LEFT) { //LEFT
+                straightBlocking(18, false, 0.25); //forward
+                setHeading(45, 0.25); //turn
+                straightBlocking(7, false, 0.7); //forward
                 setHeading(45, 0.25);
-                straightBlocking(5, false, 0.7);
-                setHeading(45, 0.25);
-                straightBlocking(6, true, 0.7);
+                straightBlocking(8, true, 0.7); //dropoff, backward
+                setHeading(0, 0.7); //turn
+                mecanumBlocking(1, false, 0.5); //mecanum right
                 setHeading(0, 0.7);
-                straightBlocking(33, false, 0.7);
+                straightBlocking(33, false, 0.7); //forward to truss
+                setHeading(-90, 0.7); //turn
+                straightBlocking(72, false, 0.7); //forward to red line
                 setHeading(-90, 0.7);
-                straightBlocking(72, false, 0.7);
-                setHeading(-179.5, 0.75);
-                straightBlocking(24, false, 0.7);
+                mecanumBlocking(24, false, 0.7); //mecanum directly in front of board
                 setHeading(-90, 0.7);
-                mecanumBlocking(4, true, 0.5);
-                setHeading(-90, 0.7);
-                straightBlocking(14, false, 0.5);
                 break;
             } else { //center, default
                 Log.d("vision", "moveToMarker: center or default");
+
+
+                mecanumBlocking(4, true, 0.5); //go left
+                setHeading(0, 0.6);
+                straightBlocking(28.5, false, 0.5); //go forward
+                setHeading(0, 0.6);
+                straightBlocking(6, true, 0.7); //dropoff & move back
+                setHeading(0, 0.6);
+                mecanumBlocking(12, true, 0.25); //move left
+                setHeading(0, 0.7);
+                straightBlocking(24, false, 0.7); //go forward & around marker
+                setHeading(-90, 0.7); //turn
+                straightBlocking(84, false, 0.7); //forward to red line
+                setHeading(-90, 0.7);
+                mecanumBlocking(29, false,  0.5); //mecanum directly in front of board
+                setHeading(-90, 0.7);
+
+
+/*
                 straightBlocking(20, false, 0.5);
                 setHeading(0, 0.7);
                 mecanumBlocking(18, true, 0.5);
@@ -1124,6 +1149,8 @@ public class Robot {
                 mecanumBlocking(33, false,  0.5);
                 setHeading(-90, 0.7);
                 straightBlocking(14, false, 0.5);
+*/
+
                 break;
             }
         }
@@ -1249,13 +1276,11 @@ public class Robot {
                             Log.d("vision", "runOpMode: bearing > 1, move left");
                             mecanumBlocking(1, true, 0.75);
                             sleep(100);
-                            tagVisible = false;
                             aligned = false;
                         } else if (detection.ftcPose.bearing < -1) {
                             Log.d("vision", "runOpMode: bearing < -1, move right");
                             mecanumBlocking(1, false, 0.75);
                             sleep(100);
-                            tagVisible = false;
                             aligned = false;
                         } else {
                             Log.d("vision", "runOpMode: aligned");
