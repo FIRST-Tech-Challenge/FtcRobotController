@@ -53,19 +53,19 @@ public class AutonRedBackPlacePark extends LinearOpMode {
             rightFrontDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
             rightBackDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
-            rightFrontDrive.setTargetPosition(1500);
+            rightFrontDrive.setTargetPosition(-1480);
             rightFrontDrive.setPower(0.5);
             rightFrontDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
-            leftBackDrive.setTargetPosition(1500);
+            leftBackDrive.setTargetPosition(-1480);
             leftBackDrive.setPower(0.5);
             leftBackDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
-            leftFrontDrive.setTargetPosition(-1500);
+            leftFrontDrive.setTargetPosition(1480);
             leftFrontDrive.setPower(0.5);
             leftFrontDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
-            rightBackDrive.setTargetPosition(-1500);
+            rightBackDrive.setTargetPosition(1480);
             rightBackDrive.setPower(0.5);
             rightBackDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
@@ -90,10 +90,10 @@ public class AutonRedBackPlacePark extends LinearOpMode {
             leftBackDrive.setPower(0);
             }
 
-            int leftFrontDriveNecessaryTicks = calculateTicksForLateralMovement(80); //2000
-            int rightFrontDriveNecessaryTicks = calculateTicksForLateralMovement(80);
-            int leftBackDriveNecessaryTicks = calculateTicksForLateralMovement(80);
-            int rightBackDriveNecessaryTicks = calculateTicksForLateralMovement(80);
+            int leftFrontDriveNecessaryTicks = calculateTicksForLateralMovement(85); //2000
+            int rightFrontDriveNecessaryTicks = calculateTicksForLateralMovement(85);
+            int leftBackDriveNecessaryTicks = calculateTicksForLateralMovement(85);
+            int rightBackDriveNecessaryTicks = calculateTicksForLateralMovement(85);
 
             int leftFrontDriveTargetTicks =  leftFrontDriveNecessaryTicks;
             int rightFrontDriveTargetTicks = rightFrontDriveNecessaryTicks;
@@ -105,19 +105,19 @@ public class AutonRedBackPlacePark extends LinearOpMode {
             leftFrontDrive.setDirection(DcMotorSimple.Direction.REVERSE);
             leftBackDrive.setDirection(DcMotorSimple.Direction.REVERSE);
 
-            leftFrontDrive.setTargetPosition(leftFrontDrive.getCurrentPosition() + leftFrontDriveTargetTicks);
+            leftFrontDrive.setTargetPosition(leftFrontDrive.getCurrentPosition() - leftFrontDriveTargetTicks);
             leftFrontDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             leftFrontDrive.setPower(0.5);
 
-            rightFrontDrive.setTargetPosition(rightFrontDrive.getCurrentPosition() + rightFrontDriveTargetTicks);
+            rightFrontDrive.setTargetPosition(rightFrontDrive.getCurrentPosition() - rightFrontDriveTargetTicks);
             rightFrontDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             rightFrontDrive.setPower(0.5);
 
-            leftBackDrive.setTargetPosition(leftBackDrive.getCurrentPosition() + leftBackDriveTargetTicks);
+            leftBackDrive.setTargetPosition(leftBackDrive.getCurrentPosition() - leftBackDriveTargetTicks);
             leftBackDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             leftBackDrive.setPower(0.5);
 
-            rightBackDrive.setTargetPosition(rightBackDrive.getCurrentPosition() + rightBackDriveTargetTicks);
+            rightBackDrive.setTargetPosition(rightBackDrive.getCurrentPosition() - rightBackDriveTargetTicks);
             rightBackDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             rightBackDrive.setPower(0.5);
 
