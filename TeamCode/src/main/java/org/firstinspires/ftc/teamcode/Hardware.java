@@ -24,7 +24,13 @@ public class Hardware {
     public DcMotor leftBackDrive = null;
     public DcMotor rightBackDrive = null;
 
-    //public DcMotor winch = null;
+    public DcMotor winch = null;
+
+    public Servo hook = null;
+    public Servo gripper = null;
+    public Servo arm = null;
+    public Servo launcherRelease = null;
+    public Servo droneAngle = null;
 
     HardwareMap hwMap = null;
 
@@ -42,7 +48,13 @@ public class Hardware {
         rightBackDrive = hwMap.get(DcMotor.class, "br");
         leftBackDrive = hwMap.get(DcMotor.class, "bl");
 
-        //winch = hwMap.get(DcMotor.class, "winch");
+        winch = hwMap.get(DcMotor.class, "winch");
+
+        hook = hwMap.get(Servo.class, "hook");
+        gripper = hwMap.get(Servo.class, "grip");
+        arm = hwMap.get(Servo.class, "arm");
+        launcherRelease = hwMap.get(Servo.class, "release");
+        droneAngle = hwMap.get(Servo.class, "angle");
 
 
         leftDrive.setDirection(DcMotorSimple.Direction.REVERSE);

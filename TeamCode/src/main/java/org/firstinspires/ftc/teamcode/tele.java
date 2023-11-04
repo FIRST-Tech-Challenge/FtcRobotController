@@ -78,7 +78,37 @@ public class tele extends OpMode {
         robot.rightDrive.setPower(frontRightPower * speedLimitValue);
         robot.rightBackDrive.setPower(backRightPower * speedLimitValue);
 
-        //robot.winch.setPower(gamepad2.left_stick_y);
+        robot.winch.setPower(-gamepad2.right_stick_y);
+
+        if (gamepad2.dpad_up) {
+            robot.hook.setPosition(0.0);
+        } else if (gamepad2.dpad_down) {
+            robot.hook.setPosition(1);
+        }
+
+        if (gamepad2.y) {
+            robot.droneAngle.setPosition(.5);
+        } else if (gamepad2.a) {
+            robot.droneAngle.setPosition(.17);
+        }
+
+        if (gamepad2.x && gamepad2.b) {
+            robot.launcherRelease.setPosition(0.85);
+        } else {
+            robot.launcherRelease.setPosition(0.6);
+        }
+
+        if (gamepad2.right_bumper) {
+            robot.arm.setPosition(.4);
+        } else if (gamepad2.left_bumper) {
+            robot.arm.setPosition(0);
+        }
+
+        if (gamepad2.right_trigger > 0.5) {
+            robot.gripper.setPosition(0);
+        } else if (gamepad2.left_trigger > 0.5) {
+            robot.gripper.setPosition(0.5);
+        }
 
         if (gamepad2.right_bumper && gamepad1.left_bumper) {
             gamepad1.runLedEffect(gamepadLaunchSequenceLed);
