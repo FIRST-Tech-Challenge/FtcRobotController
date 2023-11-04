@@ -48,6 +48,7 @@ public class Navigation {
     // The number of frames to wait after a rotate or travelLinear call in order to check for movement from momentum.
     static final int NUM_CHECK_FRAMES = 5;
     static final double JOYSTICK_DEAD_ZONE_SIZE = 0.08; //Sets the joystick deadzone to 0.08.
+    static final double EPSILON_LOC = 10;
 
 
     //**TELEOP CONSTANTS**
@@ -93,9 +94,8 @@ public class Navigation {
         setParkingLocation(startingSide, parkingPosition);
     }
 
-    /**
-     * Makes the robot travel along the pth until it reaches a POI (Position of Interest)
-     *
+    /**Makes the robot travel along the pth until it reaches a POI (Position of Interest)
+     * |Auton| |Blocking|
      * @param robotManager the robot manager of the robot
      * @param robot        the physical robot itself
      */
@@ -141,10 +141,8 @@ public class Navigation {
         return path.get(pathIndex - 1); //Return the point where the robot is currently at
     }
 
-    /**
-     * Updates the strafe power according to movement mode and gamepad 1 left trigger.
-     *
-     * @param hasMovementDirection
+    /** Updates the strafe power according to movement mode and gamepad 1 left trigger.
+     * |Teleop| |Non Blocking|
      * @param gamepads
      * @param robot
      */
@@ -174,6 +172,7 @@ public class Navigation {
      * DEGREE      ALT + 2 4 8
      * Moves the robot straight in one of the cardinal directions or at a 45 degree angle.
      * NOTE: ALL CONTROLLER MOVEMENTS ARE USING A PS5 CONTROLLER.
+     * |Teleop| |Non Blocking|
      *
      * @param forward  moving robot forward. Using the UP arrow on the DPAD
      * @param backward moving robot backwards. Using the DOWN arrow on the DPAD
@@ -183,7 +182,6 @@ public class Navigation {
      * @return whether any of the DPAD buttons were pressed
      */
     public boolean moveStraight(GamepadWrapper gamepads, Robot robot) {
-        //TODO RECODE THE FORWARD BACKWARD RIGHT AND LEFT FUNCTIONS
         double direction;
         if (forward || backward) {
             if (left) {//moves left at 45° (or Northwest)
@@ -207,9 +205,8 @@ public class Navigation {
         return true;
     }
 
-    /**
-     * Changes drivetrain motor inputs based off the controller inputs
-     *
+    /** Changes drivetrain motor inputs based off the controller inputs
+     * |Teleop| |Non Blocking|
      * @param gamepads
      * @param robot
      */
@@ -249,14 +246,13 @@ public class Navigation {
 
 
 
-    /**
+    /*
      *****AUTONOMOUS FUNCTIONS*****
      -All the functions here below are Autonomous functions.
      * */
 
-    /**
-     * Rotates the robot a number of degrees.
-     *
+    /** Rotates the robot a number of degrees.
+     * |Auton| |Blocking|
      * @param target        The orientation the robot should assume once this method exits. (Within the interval (-pi, pi].)
      * @param constantPower A hard-coded power value for the method to use instead of ramping. Ignored if set to zero.
      * @param robot
@@ -378,7 +374,150 @@ public class Navigation {
         } else {
             power = MIN_STRAFE_POWER;
         }
-        //TODO START ON LINE CODE 399 IN THE 2022 - 2023 NISKY TEAM CODE.
+
+        double distanceTraveled = getEuclideanDistance(startPosition, currentPosition);
+        double distanceRemaining = getEuclideanDistance(currentPosition, target);
+        boolean finishedTravel = false;
+        double numFramesSinceLastFailure = 0;
+        boolean checkFrames = false;
+        double timeElapsed = 0;
+        double timeRemaining = 2 * halfStrafeTime - timeElapsed;
+
+        while (distanceRemaining > EPSILON_LOC){
+            robot.positionManager.updatePosition(robot);
+            if(ramping){
+                if(timeElapsed < halfStrafeTime){ //Ramping up
+                    power = Range.clip((timeElapsed / halfStrafeTime) * MAX_STRAFE_POWER, MIN_STRAFE_POWER, MAX_STRAFE_POWER);
+                } else { //Ramping down
+                    power = Range.clip((timeRemaining / halfStrafeTime) * MAX_STRAFE_POWER, MIN_STRAFE_POWER, MAX_STRAFE_POWER);
+                }
+            }
+
+        if(checkFrames){
+            power = STRAFE_CORRECITON_POWER;
+        }
+        if (distanceRemaining < 15){
+            power = STRAFE_SLOW;
+        }
+
+        double strafeAngle = getStrafeAngle(robot.getPosition(), target);
+        robot.telemetry.addData("Starting Rotation", robot.getPosition().getRotation());
+        robot.telemetry.addData("Used Strafe Angle", strafeAngle);
+        setDriveMotorPowers(strafeAngle, power, 0.0, robot, false);
+        robot.positionManager.updatePosition(robot);
+        currentPosition = robot.getPosition();
+        distanceTraveled = getEuclideanDistance(startPosition, currentPosition);
+        distanceRemaining = getEuclideanDistance(currentPosition, target);
+        timeElapsed = robot.elapsedTime.milliseconds() - startingTime;
+        timeRemaining = 2 * halfStrafeTime - timeElapsed;
+
+        robot.telemetry.addData("Start X:", startPosition.getX());
+        robot.telemetry.addData("Start Y:", startPosition.getY());
+        robot.telemetry.addData("Current X:", currentPosition.getX());
+        robot.telemetry.addData("Current Y:", currentPosition.getY());
+        robot.telemetry.addData("Target X:", target.x);
+        robot.telemetry.addData("Target Y:", target.y);
+        robot.telemetry.addData("getAngleBetween():", getAngleBetween(currentPosition, target));
+
+        if (distanceRemaining > EPSILON_LOC){
+            numFramesSinceLastFailure = 0;
+        } else {
+            checkFrames = true;
+            numFramesSinceLastFailure++; //Adds an integer to the numFramesSinceLastFailure
+            if(numFramesSinceLastFailure >= NUM_CHECK_FRAMES){
+                finishedTravel = true;
+            }
+        }
+        }
+        stopMovement(robot); //Stops the robot
+    }
+
+    /** Calculates the anlge at which the robot must strafe in order to get to a target location
+     * @param currentLoc The current position of the robot
+     * @param target The desired position of the robot
+     * @return ducks
+     */
+    private double getStrafeAngle(Position currentLoc, Position target){
+        double strafeAngle = getAngleBetween(currentLoc, target) - currentLoc.getRotation();
+        //normalize the resultant angle to between -PI and PI
+        if(strafeAngle > Math.PI){
+            strafeAngle -= 2 * Math.PI;
+        } else if(strafeAngle < -Math.PI){
+            strafeAngle += 2 * Math.PI;
+        }
+        return strafeAngle;
+    }
+
+    /** Calculates the speed of the robot when strafing given the direction of strafing and the strafing speed
+     * @param strafeAngle The direction (angle) in which the robot should strafe
+     * @param power The strafing speed of the Robot
+     * @return ducks
+     */
+    private double getRobotSpeed(double strafeAngle, double power){
+        double powerSet1 = Math.sin(strafeAngle) + Math.cos(strafeAngle);
+        double powerSet2 = Math.sin(strafeAngle) - Math.cos(strafeAngle);
+        double[] rawPowers = scaleRange(powerSet1, powerSet2);
+
+        if(strafeAngle > -Math.PI/2 && strafeAngle < Math.PI/2){
+            return (SPEED_FACTOR * power * Math.sqrt(2 * Math.pow(rawPowers[1]/rawPowers[0], 2)) / 2);
+        } else {
+            return (SPEED_FACTOR * power * Math.sqrt(2 * Math.pow(rawPowers[0]/rawPowers[1], 2)) / 2);
+        }
+    }
+
+    /** Calculates half the amount of time it is estimated for a linear strafe to take
+     * @param distance The distance of the strafe
+     * @param strafeAngle The angle of the strafe
+     * @return half the ammount of time to strafe a distance
+     */
+    private double getHalfStrafeTime(double distance, double strafeAngle){
+        //Inches per second
+        double minStrafeSpeed = getRobotSpeed(strafeAngle, MIN_STRAFE_POWER);
+        double maxStrafeSpeed = getRobotSpeed(strafeAngle, MAX_STRAFE_POWER);
+        double rampDistance = (maxStrafeSpeed + minStrafeSpeed) / 2 * (maxStrafeSpeed - minStrafeSpeed) / STRAFE_ACCELERATION;
+
+        if(distance / 2 >= rampDistance){
+            return(distance / 2 - rampDistance) / maxStrafeSpeed;
+        } else { //We never get to maxStrafeSpeed
+            return(-minStrafeSpeed + Math.sqrt(Math.pow(minStrafeSpeed, 2) + distance * STRAFE_ACCELERATION)) / 0.5 * STRAFE_ACCELERATION;
+        }
+    }
+
+    /** Determines the angle between the horizontal axis  (currently left side of the robot) and the segment connecting A and B
+     * Currently being negated so that the tangent values are positive for the robot moving away from the wall
+     * @param a The starting position
+     * @param b The desired position
+     * @return the angle between 2 positions
+     */
+    private double getAngleBetween(Position a, Position b){
+        return -Math.atan2((b.y - a.y), (b.x - a.x));
+    }
+
+    /** Calculates the Euclidean distance between 2 points
+     * @param a The starting position
+     * @param b The desired position
+     * @return a^2 + b^2 = c^2
+     */
+    private double getEuclideanDistance(Position a, Position b){
+        return Math.sqrt(Math.pow(a.x - b.x, 2) + Math.pow(a.y - b.y, 2));
+    }
+
+
+
+    /**preserves the ratio between a and b while restricting them to the range [-1, 1]
+    *Method By: Stephen Duffy 2022
+    * @param a value to be scaled
+    * @param b value to be scaled
+    * @return an array containing the scaled versions of a and b
+    */
+    double[] scaleRange(double a,double b){
+      double max;
+      if(Math.abs(a)>Math.abs(b)){
+        max=Math.abs(a);
+      }else{
+        max=Math.abs(b);
+      }
+      return new double[]{a/max,b/max};
     }
 
 
