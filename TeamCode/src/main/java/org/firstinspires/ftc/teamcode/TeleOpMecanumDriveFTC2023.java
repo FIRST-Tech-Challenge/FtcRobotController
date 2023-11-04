@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DigitalChannelImpl;
 import com.qualcomm.robotcore.hardware.Servo;
 
 /*
@@ -32,6 +33,8 @@ public class TeleOpMecanumDriveFTC2023 extends OpMode{
     public Servo arm2 = null;
     double position = 0;
 
+    public DigitalChannelImpl mySwitch = null;
+
     //double clawOffset = 0;
 
     //public static final double MID_SERVO   =  0.5 ;
@@ -52,6 +55,8 @@ public class TeleOpMecanumDriveFTC2023 extends OpMode{
         claw = hardwareMap.get(Servo.class, "Claw");
         arm1  = hardwareMap.get(Servo.class, "Arm1");
         arm2  = hardwareMap.get(Servo.class, "Arm2");
+        mySwitch = hardwareMap.get(DigitalChannelImpl.class, "Touch Switch");
+
         //leftArm    = hardwareMap.get(DcMotor.class, "left_arm");
 
         // To drive forward, most robots need the motor on one side to be reversed, because the axles point in opposite directions.
@@ -109,9 +114,7 @@ public class TeleOpMecanumDriveFTC2023 extends OpMode{
         backRight.setPower(pwr*dir);
     }
     public void driveArm(double pos) {
-        position = position+ pos /10;
-        arm1.setPosition(position);
-        arm2.setPosition(position);
+        arm1.setPosition(pos);
     }
     public void start() {
     }
@@ -124,47 +127,59 @@ public class TeleOpMecanumDriveFTC2023 extends OpMode{
         double left1y;
         double left1x;
         double right1x;
-        double left2y;
-
+        double right2y;
+        double servoValue;
+        boolean limitSwitchOne;
 
         // Run wheels in tank mode (note: The joystick goes negative when pushed forward, so negate it)
         left1y = gamepad1.left_stick_y;
         left1x = gamepad1.left_stick_x;
         right1x = gamepad1.right_stick_x;
-        left2y = gamepad2.left_stick_y;
+        right2y = gamepad2.right_stick_y;
 
         double baseSpeed = 0.25;
 
         if (gamepad1.a){
             baseSpeed = 0.125;
         }
-        if (left1y > 0) {
+        if (left1y > 0.1) {
             driveStraight(left1y*baseSpeed,1);
 
-        } else if(left1y < 0) {
+        } else if(left1y < -0.1) {
             driveStraight(-1*left1y*baseSpeed,-1);
         }
-        if (left1x > 0) {
+        if (left1x > 0.1) {
             driveSide(left1x*baseSpeed,-1);
 
-        } else if(left1x < 0) {
+        } else if(left1x < -0.1) {
             driveSide(-1*left1x*baseSpeed,1);
-        } 
-        if(right1x > 0) {
+        }
+        if(right1x > 0.1) {
             driveTurn(right1x*baseSpeed, 1);
-        } else if(right1x < 0) {
-            driveTurn(right1x*baseSpeed, -1);
+        } else if(right1x < -0.1) {
+            driveTurn(right1x*baseSpeed, 1);
         }
-        if (left2y != 0) {
-            driveArm(left2y);
+        if (mySwitch.getState()) {
+            telemetry.addData("switch", mySwitch);
         }
-        // 1 = open
-        // 0 = close
-        if (gamepad2.a) {
+        if (right2y > 0.1) {
+            driveArm(right2y);
+        } else if (right2y < -0.1) {
+            driveArm(right2y/2);
+        } else {
+            driveArm(0.55);
+        }
+
+        // "0" position is at the closed poesition
+        // furthest right is to the side of robot
+        // furthest left is a small part past 0 position
+
+        if (gamepad2.b) {
             claw.setPosition(1);
         }
-        if (gamepad2.x) {
-            claw.setPosition(0);
+        if (gamepad2.a) {
+            claw.setPosition(0.4);
+
         }
 //        frontLeft.setPower(lefty - leftx + right);
 //        frontRight.setPower(lefty + leftx + right);
