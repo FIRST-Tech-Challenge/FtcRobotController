@@ -9,22 +9,18 @@ import org.checkerframework.checker.units.qual.A;
 import org.firstinspires.ftc.teamcode.RoadRunner.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.RoadRunner.util.trajectorysequence.TrajectorySequence;
 import org.firstinspires.ftc.teamcode.RoadRunner.util.trajectorysequence.sequencesegment.SequenceSegment;
-
+import org.firstinspires.ftc.teamcode.Variables.Detection;
+import org.firstinspires.ftc.teamcode.Variables.VisionProcessors;
 import java.util.ArrayList;
 
 @Config
 @Autonomous(name = "FrontBlueAuto", group = "Linear Opmode")
 public class FrontBlueAuto extends MeepMeepBoilerplate{
-    enum Detection {
-        LEFT,
-        CENTER,
-        RIGHT
-    }
-
     @Override
     public void runOpMode() {
-        BackBlueAuto.Detection detection = BackBlueAuto.Detection.RIGHT;
         SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
+        initVision(VisionProcessors.TFOD);
+        Detection detection = getDetectionsSingleTFOD();
 
         waitForStart();
 

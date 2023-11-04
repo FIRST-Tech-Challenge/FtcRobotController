@@ -29,6 +29,7 @@ object Variables {
     var touchyL: TouchSensor? = null
     var slideRotationMotor: DcMotor? = null
     var motorSlideLeft: DcMotor? = null
+    var motorSlideRight: DcMotor? = null
     var clawRotation: Servo? = null
     var clawMotor: Servo? = null
 
@@ -58,7 +59,6 @@ object Variables {
     var length = (13.5 + (35.3 * Math.PI))/encoders
     var click2Degree = 0.154265
     var degree2Click = encoders/360
-    
     var blinkinLedDriver: RevBlinkinLedDriver? = null
     var pattern: BlinkinPattern? = null
 
@@ -84,6 +84,15 @@ object Variables {
     enum class BlinkinColor {
         RAINBOW, RED, RED_PULSE, ORANGE, ORANGE_PULSE, BLUE, GREEN, GREEN_PULSE, YELLOW, PURPLE, PINK
     }
+
+    enum class Detection {
+        LEFT, CENTER, RIGHT, UNKNOWN
+    }
+
+    enum class CameraSide {
+        LEFT, RIGHT
+    }
+
     var t = 0.0;
     var slideToBoard = 0.0;
     var clawToBoard = 0.1;

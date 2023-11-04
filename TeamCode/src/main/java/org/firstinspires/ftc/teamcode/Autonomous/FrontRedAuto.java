@@ -8,24 +8,21 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import org.firstinspires.ftc.teamcode.RoadRunner.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.RoadRunner.util.trajectorysequence.TrajectorySequence;
 import org.firstinspires.ftc.teamcode.RoadRunner.util.trajectorysequence.sequencesegment.SequenceSegment;
-
-import java.util.ArrayList;
+import org.firstinspires.ftc.teamcode.Variables.Detection;
+import org.firstinspires.ftc.teamcode.Variables.VisionProcessors;
+import org.firstinspires.ftc.teamcode.Variables;
 
 @Config
 @Autonomous(name = "FrontRedAuto", group = "Linear Opmode")
 public class FrontRedAuto extends MeepMeepBoilerplate {
-    enum Detection {
-        LEFT,
-        CENTER,
-        RIGHT
-    }
 
     @Override
     public void runOpMode() {
-        Detection detection = Detection.RIGHT;
         SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
+        initVision(VisionProcessors.TFOD);
+        Detection detection = getDetectionsMultiTFOD();
 
-        waitForStart();
+        while (opModeInInit()) sleep(20);
 
         TrajectorySequence traj1 = drive.trajectorySequenceBuilder(new Pose2d())
                         .forward(28.0)
