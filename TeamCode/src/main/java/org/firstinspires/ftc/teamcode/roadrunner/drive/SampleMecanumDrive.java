@@ -158,7 +158,7 @@ public class SampleMecanumDrive extends MecanumDrive {
         rightRear = hardwareMap.get(DcMotorEx.class, "motorRightBack");
         rightFront = hardwareMap.get(DcMotorEx.class, "motorRightFront");
         DcMotorEx backEncoder = hardwareMap.get(DcMotorEx.class, "motorLeftFront");
-        DcMotorEx leftEncoder = hardwareMap.get(DcMotorEx.class, "leftEncoder");
+        DcMotorEx leftEncoder = hardwareMap.get(DcMotorEx.class, "hangerMotor");
         DcMotorEx rightEncoder = hardwareMap.get(DcMotorEx.class, "motorRightFront");
         leftEncoder.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         rightEncoder.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);

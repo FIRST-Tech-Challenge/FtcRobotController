@@ -60,7 +60,7 @@ public class BradBot extends BasicRobot {
   }
 
   public int getSpikePos() {
-    return cv.getPosition();
+    return cv.getPosition()-1;
   }
 
   /**
@@ -72,6 +72,22 @@ public class BradBot extends BasicRobot {
       if (!queuer.isExecuted()) {
         LOGGER.setLogLevel(RFLogger.Severity.INFO);
         LOGGER.log("intaking until 2 pixels are stored");
+      }
+    }
+  }
+  public void preloadAuto() {
+    if (queuer.queue(true, !preloader.getLoaded())) {
+      if (!queuer.isExecuted()) {
+        preloader.deposit();
+        LOGGER.log("depositing preload");
+      }
+    }
+  }
+  public void loadAuto() {
+    if (queuer.queue(true, preloader.getLoaded())) {
+      if (!queuer.isExecuted()) {
+        preloader.load();
+        LOGGER.log("loading preload");
       }
     }
   }

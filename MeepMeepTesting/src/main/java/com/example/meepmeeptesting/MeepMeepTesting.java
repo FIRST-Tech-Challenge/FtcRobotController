@@ -18,11 +18,20 @@ public class MeepMeepTesting {
         MeepMeep meepMeep = new MeepMeep(600);
 
         RoadRunnerBotEntity myBot = new DefaultBotBuilder(meepMeep)
-                .setDimensions(15.5,16.5)
+                .setDimensions(15.5,18)
                 .setConstraints(50, 40, 4 * PI, 2 * PI, 11)
                 .setConstraints(60, 60, toRadians(180), toRadians(180), 15)
                 .followTrajectorySequence(drive ->
-                                drive.trajectorySequenceBuilder(new Pose2d(-38.5, 63.25, Math.toRadians(90)))
+                                drive.trajectorySequenceBuilder(new Pose2d(-38.5, -58, Math.toRadians(-90)))
+                                        .setReversed(true)
+                                        .lineToLinearHeading(new Pose2d(-38.5, -30, toRadians(180)))
+                                        .setReversed(true)
+                                        .lineToLinearHeading(new Pose2d(-46, -58, toRadians(180)))
+                                        .setReversed(true)
+                                        .splineTo(new Vector2d(10, -58), toRadians(0))
+                                        .splineTo(new Vector2d(49, -30.5), toRadians(0))
+                                        .lineToLinearHeading(new Pose2d(49, -60, toRadians(180)))
+                                        .lineToLinearHeading(new Pose2d(60, -60, toRadians(180)))
                                         //BLUEBACK
 //                                        .setReversed(true) //spike 1
 //                                        .lineToLinearHeading(new Pose2d(31,31,toRadians(0)))
@@ -63,17 +72,6 @@ public class MeepMeepTesting {
 //                                        .splineTo(new Vector2d(51,35.5), toRadians(0))
 //                                        .lineToLinearHeading(new Pose2d(51, 60, toRadians(0)))
 //                                        .lineToLinearHeading(new Pose2d(60, 60, toRadians(0)))
-
-                                        .setReversed(true)
-                                        .lineToLinearHeading(new Pose2d(-38.5, 34, toRadians(90)))
-//                                        .setReversed(false)
-                                        .lineToLinearHeading(new Pose2d(-34.5, 34, toRadians(0)))
-                                        .lineToLinearHeading((new Pose2d(-46,58,toRadians(0))))
-                                        .setReversed(false)
-                                        .splineTo(new Vector2d(10, 58), toRadians(0))
-                                        .splineTo(new Vector2d(51, 41.5), toRadians(0))
-                                        .lineToLinearHeading(new Pose2d(51, 60, toRadians(0)))
-                                        .lineToLinearHeading(new Pose2d(60, 60, toRadians(0)))
                                         .build()
                 );
 
