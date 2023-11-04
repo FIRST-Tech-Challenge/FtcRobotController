@@ -37,7 +37,7 @@ public class LongRedAuto extends LinearOpMode {
             Thread.sleep(10000);
             */
 
-            //TODO Uncomment
+        //TODO Uncomment
           /*  double targetDistanceInTicks = 350;
 
             remainingDistanceLow = targetDistanceInTicks - robot.lsFront.getCurrentPosition();
@@ -72,16 +72,15 @@ public class LongRedAuto extends LinearOpMode {
                 robot.lsBack.setPower(0);
             }*/
 
-            //telemetry.update();
-
+        //telemetry.update();
 
             //enable THIS to test longredauto
+            //clamp down
             robot.detectMarkerPositionRed();
             robot.longRedMoveToBoard();
+            robot.alignToBoard();
+            robot.setHeading(-90, 0.75);
             robot.autoOuttake();
-            //robot.alignToBoard();
-            //robot.setHeading(-90, 0.75);
-
     }
 }
 
