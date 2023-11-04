@@ -2,9 +2,15 @@ package org.firstinspires.ftc.teamcode.tools;
 
 import java.util.ArrayList;
 import java.util.function.BooleanSupplier;
+import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.eventloop.opmode.OpMode;
+import org.firstinspires.ftc.robotcore.external.Telemetry;
+
+
 
 // StateMachine class that handles state management and transitions
 public class StateMachine {
+    Telemetry telemetry;
 
     // Inner State class representing an individual state within the StateMachine
     public class State {
@@ -114,5 +120,23 @@ public class StateMachine {
     public void updateState() {
         assert currentState != null : "initial state undefined"; // Ensure that there is a current state to update from
         currentState = currentState.update(); // Update the current state, which may cause a state transition
+    }
+
+
+    // method for a servo to correct itself if it is not within one degree of the desired position
+    public void setPosServo(Servo servo, int pos) {
+        int tolerance = 1;
+        servo.setPosition(pos);
+        int counter = 0; // counts the number of times the correctional loop runs
+        // is my error greater or less than error
+        while (Math.abs(pos - servo.getPosition()) >= tolerance && counter <= 5) {
+            telemetry.addLine(servo + " correction started");
+            // divide by two on the correctional value so that it does not overshoot by too much
+            if (pos - servo.getPosition() > 0) {servo.setPosition(pos + (pos - servo.getPosition()) / 2);}
+            if (pos - servo.getPosition() < 0) {servo.setPosition(pos + (servo.getPosition() - pos) / 2);}
+            counter++;
+            telemetry.addLine(servo + " corrected " + counter + " times");
+        }
+        telemetry.addLine(servo + " correction finished");
     }
 }
