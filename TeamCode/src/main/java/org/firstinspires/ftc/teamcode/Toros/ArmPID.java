@@ -18,8 +18,8 @@ public class ArmPID extends LinearOpMode {
     private PIDController controller;
 
 
-    public static double p = 0.03, i = 0, d = 0.0001;
-    public static double f = -.05;
+    public static double p = 0.03, i = 0, d = -0.0001;
+    public static double f = -0.05;
 
     public static int target = 0;
     private final double ticks_in_degrees = 1440/180;

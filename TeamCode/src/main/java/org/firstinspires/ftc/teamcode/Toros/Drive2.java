@@ -10,6 +10,8 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.util.ElapsedTime;
+
 
 @TeleOp(name = "MainDrive")
 @Config
@@ -21,7 +23,7 @@ public class Drive2 extends LinearOpMode {
 
     public static double p = 0.03, i = 0, d = -0.0001;
     public static double f = -0.05;
-    public static int target = 0;
+    public static int target = -100;
     private final double ticks_in_degrees = 1440 / 180;
 
     //Motors
@@ -36,6 +38,7 @@ public class Drive2 extends LinearOpMode {
     private Servo Claw2;
     private Servo Claw3;
 
+    double speed = 100;
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -45,6 +48,7 @@ public class Drive2 extends LinearOpMode {
 
         //Initializing Hardware in method down below called initHardware();
         initHardware();
+
         waitForStart();
 
         if (opModeIsActive()) {
@@ -54,8 +58,9 @@ public class Drive2 extends LinearOpMode {
                 double y = -gamepad1.left_stick_y;
                 double turn = gamepad1.right_stick_x;
 
+
                 //Drive variables used in the calculations to run our motors
-                double speed = 1;
+
                 double theta = Math.atan2(y, x);
                 double power = Math.hypot(x, y);
                 double sin = Math.sin(theta - Math.PI / 4);
@@ -81,37 +86,64 @@ public class Drive2 extends LinearOpMode {
                 telemetry.addData("Target Position", target);
 
                 //Motor Drive
-                FrontLeftMotor.setPower(fl * speed);
-                FrontRightMotor.setPower(fr * speed);
-                BackLeftMotor.setPower(bl * speed);
-                BackRightMotor.setPower(br * speed);
+                FrontLeftMotor.setPower(fl * (speed/100));
+                FrontRightMotor.setPower(fr * (speed/100));
+                BackLeftMotor.setPower(bl * (speed/100));
+                BackRightMotor.setPower(br * (speed/100));
 
                 //Servo Control
                 Claw1.setPosition((gamepad2.right_stick_y * 180));
                 Claw2.setPosition((gamepad2.right_stick_y * 180));
                 Claw3.setPosition(gamepad2.left_stick_x * 0.5);
-
+                Arm1.setPower(gamepad2.left_stick_y);
                 //Servo Control for Intake and controlling Speed of Motors
                 if (gamepad2.left_bumper) {
                     Claw3.setPosition(180);
                 } else if (gamepad2.right_bumper) {
                     Claw3.setPosition(0);
                 } else if (gamepad1.dpad_down) {
-                    speed -= .2;
+                    speed -= 2;
                 } else if (gamepad1.dpad_up) {
-                    speed += .2;
+                    speed += 2;
                 } else if (gamepad1.dpad_left) {
-                    speed = 1;
+                    speed = 100;
+                } if (speed > 100){
+                    speed = 100;
+                } else if (speed < -100){
+                    speed = -100;
                 }
+                controller.setPID(p, i, d);
+                int armPos = Arm1.getCurrentPosition();
+                double pid = controller.calculate(armPos, target);
+                double ff = Math.cos(Math.toRadians(target / ticks_in_degrees)) * f;
+
+                double powerA = pid + ff;
+
+                Arm1.setPower(powerA);
 
                 //ArmControl
                 if (gamepad2.y) {
-                    pidf(700);
-                } else if(gamepad2.x){
-                    pidf(1251);
+                    target = -1300;
+                } else if (gamepad2.x) {
+                    target = -1900;
+                } else if (gamepad2.b){
+                    target = -75;
+                } else if(gamepad2.a){
+                    target =-3250;
+                }
+
+                if (gamepad2.left_stick_y <= 1.0 && gamepad2.left_stick_y != 0.0|| gamepad2.left_stick_y >= -1.0 && gamepad2.left_stick_y != 0 ){
+                    target = (int) (target + 10 * gamepad2.left_stick_y);
+                    if (target  > -75) {
+                        target = -75;
+                    } else if (target <-4300) {
+                        target = -4300;
+                    }
                 }
                 //Telemetry under iniTelemetry();
+                telemetry.addData("Speed", speed);
                 initTelemetry();
+
             }
         }
     }
@@ -140,29 +172,18 @@ public class Drive2 extends LinearOpMode {
         Claw1.setPosition(0);
         Claw2.setPosition(0);
         Claw3.setPosition(0);
-    }
-    //PIDF control method for controlling the arm
-    private void pidf(int targetPOS){
-        controller.setPID(p,i,d);
-        int armPos = Arm1.getCurrentPosition();
-        double pid = controller.calculate(armPos, targetPOS);
-        double ff = Math.cos(Math.toRadians(targetPOS / ticks_in_degrees)) * f;
 
-        double powerA = pid + ff;
-        Arm1.setPower(powerA);
     }
+    //PIDF control method for controlling the
 
     private void initTelemetry() {
-        //telemetry.addData("Powerfl", String.valueOf(fl));
-        //telemetry.addData("Powerfr", String.valueOf(fr));
-        //telemetry.addData("Powerbl", String.valueOf(bl));
-        //telemetry.addData("Powerbr", String.valueOf(br));
+
         telemetry.addData("claw angle", Claw1.getPosition() * 180);
         telemetry.addData("claw open or closed", Claw3.getPosition());
         telemetry.addData("Target", target);
         //telemetry.addData("ArmPosition", Arm1.getCurrentPosition());
         telemetry.addData("Pos", Arm1.getCurrentPosition());
-
+        telemetry.addData("Speed", speed);
         telemetry.update();
     }
 }
