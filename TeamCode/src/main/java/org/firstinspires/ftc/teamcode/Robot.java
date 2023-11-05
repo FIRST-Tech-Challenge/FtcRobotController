@@ -45,10 +45,8 @@ public class Robot {
     double prevError = 0;
     double prevTime = 0;
     MarkerDetector.MARKER_POSITION markerPosRed;
-    MarkerDetectorBlue.MARKER_POSITION markerPosBlue;
     int wantedAprTagId;
     private MarkerProcessor markerProcessor; //TODO: COMBINE THESE AND ALL METHODS USING THEM
-    private MarkerProcessorBlue markerProcessorBlue;
     private AprilTagProcessor aprilTagProcessor;
     private VisionPortal visionPortal;
     boolean redAlliance;
@@ -137,10 +135,6 @@ public class Robot {
 
     public void setMarkerPosRed(MarkerDetector.MARKER_POSITION position) {
         markerPosRed = position;
-    }
-
-    public void setMarkerPosBlue(MarkerDetectorBlue.MARKER_POSITION position) {
-        markerPosBlue = position;
     }
 
     //TODO: change boolean to enum later
@@ -471,25 +465,6 @@ public class Robot {
 
     }
 
-    public void detectMarkerPositionBlue() {
-
-        //detect marker position
-        MarkerDetectorBlue.MARKER_POSITION position = markerProcessorBlue.getPosition();
-
-        while (position == MarkerDetectorBlue.MARKER_POSITION.UNDETECTED) {
-            Log.d("vision", "undetected marker, keep looking" + visionPortal.getCameraState());
-            position = markerProcessorBlue.getPosition();
-        }
-
-        //print position
-        Log.d("vision", "detected position: " + position);
-
-        //save marker position, apriltag position
-        setMarkerPosBlue(position);
-        // TODO: fix this stuff
-        // setWantedAprTagId(position, false);
-
-    }
 
     public void shortRedMoveToBoard() {
         Log.d("vision", "moveToMarker: Pos " + markerPosRed);

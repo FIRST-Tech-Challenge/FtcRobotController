@@ -11,22 +11,15 @@ public class FredTeleOp extends LinearOpMode {
 
     @Override
     public void runOpMode() throws InterruptedException {
-
         DcMotor fLeft = hardwareMap.dcMotor.get("fLeft");
         DcMotor fRight = hardwareMap.dcMotor.get("fRight");
         DcMotor bLeft = hardwareMap.dcMotor.get("bLeft");
         DcMotor bRight = hardwareMap.dcMotor.get("bRight");
-        //DcMotor arm = hardwareMap.dcMotor.get("arm");
-        //Servo servo1 = hardwareMap.servo.get("servo1");
-        //Servo servo2 = hardwareMap.servo.get("servo2");
 
         fLeft.setDirection(DcMotorSimple.Direction.REVERSE);
         fRight.setDirection(DcMotorSimple.Direction.FORWARD);
         bLeft.setDirection(DcMotorSimple.Direction.REVERSE);
         bRight.setDirection(DcMotorSimple.Direction.FORWARD);
-        //arm.setDirection(DcMotorSimple.Direction.FORWARD);
-        //double servoOnePos = 0.5;
-        //double servoTwoPos = 0.5;
 
         waitForStart();
 
