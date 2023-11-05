@@ -36,7 +36,7 @@ public class BlueNearBackboard extends AutonomousBase{
     @Override
     public void runOpMode() throws InterruptedException {
         setupAndWait();
-        DistanceDetector frontDistance = new DistanceDetector((DistanceSensor)(hardwareMap.get("sensor_front")), 10, false);
+        DistanceDetector frontDistance = new DistanceDetector((DistanceSensor)(hardwareMap.get("sensor_front")), 7, false);
         DistanceDetector frontDistanceShort = new DistanceDetector((DistanceSensor)(hardwareMap.get("sensor_front")), 5, false);
         PixelPosition initialPos = pixelDetector.objectDetected();
         robot.setArmPosition(0.7);

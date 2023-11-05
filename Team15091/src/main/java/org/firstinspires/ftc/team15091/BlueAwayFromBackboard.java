@@ -12,28 +12,27 @@ public class BlueAwayFromBackboard extends AutonomousBase{
         DistanceDetector frontDistance = new DistanceDetector((DistanceSensor)(hardwareMap.get("sensor_front")), 10, false);
         PixelPosition initialPos = pixelDetector.objectDetected();
         if (initialPos == PixelPosition.Left) {
-            robotDriver.gyroDrive(0.3d, 25.5, 0, 3, null); // move forward to the center of the second tile
-            robotDriver.gyroTurn(0.1d, 90, 5); // turn left 90 deg
-            robotDriver.gyroDrive(0.3d, 6, 90, 3, null); // move forward, placing the pixel on the spike mark
+            robotDriver.gyroDrive(0.3d, 12d, 0, 3, null);
+            robotDriver.gyroDrive(0.2d, 24d, 45, 3, null);
             robot.togglePixelHolder(true); // release pixel
-            sleep(500);
             if (should_park) {
-                robotDriver.gyroDrive(0.3d, -6, 90, 3, null); // move back, resetting the robot position to the center of the second tile
-                robotDriver.gyroSlide(0.3d, -25.5, 90, 3, null); // slide right one tile (adjusted by +3 due to hitting the metal bar)
+                sleep(500);
+                robotDriver.gyroDrive(0.3, -10, 45, 3, null); // move backward
+                robotDriver.gyroTurn(0.2, 90, 3);
+                robotDriver.gyroSlide(0.2, -37.5, 90, 5, null);
                 robotDriver.gyroDrive(0.3d, 90, 90, 10, frontDistance); // move forward and park
             }
-
         }
         else if (initialPos == PixelPosition.Right) {
-            robotDriver.gyroDrive(0.3d, 25.5, 0, 3, null); // move forward to the center of the second tile
-            robotDriver.gyroTurn(0.1d, -90, 5); // turn right 90 deg
-            robotDriver.gyroDrive(0.3d, 6, -90, 3, null); // move forward, placing the pixel on the spike mark
+            robotDriver.gyroDrive(0.3d, 12d, 0, 3, null);
+            robotDriver.gyroDrive(0.2d, 25d, -45, 3, null);
             robot.togglePixelHolder(true); // release pixel
-            sleep(500);
             if (should_park) {
-                robotDriver.gyroDrive(0.3d, -4, -90, 3, null); // move back, resetting the robot position to the center of the second tile
-                robotDriver.gyroTurn(0.15d, 0, 5); // turn left 90 deg
-                robotDriver.gyroDrive(0.3d, 22.5, 0, 3, null); // drive forward one tile
+                sleep(500);
+                robotDriver.gyroDrive(0.3, -10, 45, 3, null); // move backward
+                robotDriver.gyroTurn(0.15d, 0, 5); // turn left
+                robotDriver.gyroSlide(0.2, 4, 0, 3, null);
+                robotDriver.gyroDrive(0.3d, 37.5, 0, 3, null); // drive forward one tile
                 robotDriver.gyroTurn(0.15d, 90, 5); // turn left another 90 deg
                 robotDriver.gyroDrive(0.3d, 90, 90, 10, frontDistance); // move forward and park
             }
@@ -44,7 +43,7 @@ public class BlueAwayFromBackboard extends AutonomousBase{
             sleep(500);
             if (should_park) {
                 robotDriver.gyroDrive(0.3d, -6, 0, 3, null); // move back, releasing the pixel
-                robotDriver.gyroSlide(0.3d, -22.5, 0, 3, null); // slide one tile to the right
+                robotDriver.gyroSlide(0.3d, -27.5, 0, 3, null); // slide one tile to the right
                 robotDriver.gyroDrive(0.3d, 22.5, 0, 3, null); // drive one tile forward
                 robotDriver.gyroTurn(0.15d, 90, 5); // turn left
                 robotDriver.gyroDrive(0.3d, 115, 90, 10, frontDistance); // move forward and park

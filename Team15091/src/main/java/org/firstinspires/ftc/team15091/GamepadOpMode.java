@@ -111,7 +111,7 @@ public class GamepadOpMode extends OpModeBase {
             if (gamepad1.b) {
                 if (!b_pressed) {
                     b_pressed = true;
-                    if (limitSwitch) {
+                    if (limitSwitch && robot.armPosition == 0) {
                         robot.toggleBowl();
                     }
                 }
@@ -137,6 +137,7 @@ public class GamepadOpMode extends OpModeBase {
                         // If the roller is stopped, start it with positive velocity
                         rollerVelocity = 2500.0;
                         isRollerRunning = true;
+                        robot.setArmPosition(1);
                     }
                     lb_pressed = true;
                 }
