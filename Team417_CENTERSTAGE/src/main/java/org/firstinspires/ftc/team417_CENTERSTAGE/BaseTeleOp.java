@@ -1,7 +1,6 @@
 package org.firstinspires.ftc.team417_CENTERSTAGE;
 
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.hardware.DcMotor;
 
 @TeleOp(name = "TeleOp League 1")
 public class BaseTeleOp extends BaseOpMode {
@@ -29,8 +28,14 @@ public class BaseTeleOp extends BaseOpMode {
         }
     }
 
+    public boolean sensitive = false;
+    public boolean rightBumperIsPressed = false;
+
     public void driveUsingControllers() {
-        boolean sensitive = gamepad1.right_bumper;
+        if (!rightBumperIsPressed && gamepad1.right_bumper) {
+            sensitive = !sensitive;
+        }
+        rightBumperIsPressed = gamepad1.right_bumper;
 
         double sensitivity, rotSensitivity;
         double strafeConstant = 1.1;
@@ -51,7 +56,10 @@ public class BaseTeleOp extends BaseOpMode {
     }
 
     public void driveUsingControllers(boolean curve) {
-        boolean sensitive = gamepad1.right_bumper;
+        if (!rightBumperIsPressed && gamepad1.right_bumper) {
+            sensitive = !sensitive;
+        }
+        rightBumperIsPressed = gamepad1.right_bumper;
 
         double sensitivity, rotSensitivity;
         double strafeConstant = 1.1;
