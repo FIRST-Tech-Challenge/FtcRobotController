@@ -19,8 +19,12 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
+import org.firstinspires.ftc.robotcore.external.hardware.camera.BuiltinCameraDirection;
+import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.robotcore.external.navigation.Acceleration;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
+import org.firstinspires.ftc.vision.VisionPortal;
+import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
 
 public class RobotClass {
 
@@ -36,6 +40,9 @@ public class RobotClass {
     public DcMotor backRight = null;
     public BNO055IMU imu = null;
     public Orientation angles = null;
+
+    public AprilTagProcessor aprilTag;
+    public VisionPortal visionPortal;
 
     public RobotClass(LinearOpMode opmode) {
         myOpMode = opmode;
@@ -59,6 +66,14 @@ public class RobotClass {
         frontRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         backRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         backLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
+        // Create the AprilTag processor the easy way.
+        aprilTag = AprilTagProcessor.easyCreateWithDefaults();
+
+        // Create the vision portal the easy way.
+        visionPortal = VisionPortal.easyCreateWithDefaults(
+                ahsMap.get(WebcamName.class, "Webcam 1"), aprilTag);
+
 
         //initializing imu
             // Set up the parameters with which we will use our IMU.
