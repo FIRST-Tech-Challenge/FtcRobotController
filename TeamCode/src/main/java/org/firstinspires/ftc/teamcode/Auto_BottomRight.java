@@ -25,11 +25,11 @@ import java.util.List;
  * Remove or comment out the @Disabled line to add this OpMode to the Driver Station OpMode list.
  */
 
-@TeleOp(name = "HornetSquad: AT Top Left", group = "Auto")
+@TeleOp(name = "HornetSquad: Auto Bottom Left", group = "Auto")
 public class Auto_BottomRight extends LinearOpMode {
     private RobotHardware robot = new RobotHardware(this);
     static final double FORWARD_SPEED = 0.2;
-    static final double TURNSPEED = 0.2;
+    static final double TURNSPEED = -0.2;
     @Override
     public void runOpMode() {
 
@@ -43,11 +43,19 @@ public class Auto_BottomRight extends LinearOpMode {
         if (opModeIsActive()) {
             while (opModeIsActive() && !isStopRequested()) {
 
-                robot.driveRobot(0, -TURNSPEED);
-                sleep(2000);
+                robot.driveRobot(-FORWARD_SPEED, 0);
+                sleep(5700);
                 robot.driveRobot(FORWARD_SPEED, 0);
-                sleep(4 * 1000);
-
+                sleep(5700);
+                robot.driveRobot(0,TURNSPEED);
+                sleep(4500);
+                robot.driveRobot(5.2,0);
+                robot.moveElbowToPosition(0.40);
+                sleep(300);
+                robot.moveGrabberToPosition(RobotHardware.GRABBER_MAX);
+                sleep(500);
+                robot.moveGrabberToPosition(RobotHardware.GRABBER_MIN);
+                sleep(500);
                 break;
 
             }

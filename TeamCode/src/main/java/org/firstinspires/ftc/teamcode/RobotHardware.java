@@ -14,6 +14,8 @@ import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
 import org.firstinspires.ftc.vision.tfod.TfodProcessor;
 import org.firstinspires.ftc.vision.VisionPortal;
+
+import com.qualcomm.robotcore.hardware.NormalizedRGBA;
 import com.qualcomm.robotcore.hardware.Servo;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.Camera;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -146,11 +148,10 @@ public class RobotHardware {
         // Get a reference to our sensor object. It's recommended to use NormalizedColorSensor over
         // ColorSensor, because NormalizedColorSensor consistently gives values between 0 and 1, while
         // the values you get from ColorSensor are dependent on the specific sensor you're using.
-        /* when ready to use the left/right color sensor
-        leftColorSensor =
-        .hardwareMap.get(NormalizedColorSensor.class, "color_left");
+        /* when ready to use the left/right color sensor*/
+        leftColorSensor = myOpMode.hardwareMap.get(NormalizedColorSensor.class, "color_left");
         rightColorSensor = myOpMode.hardwareMap.get(NormalizedColorSensor.class, "color_right");
-        */
+
 
         // you can use this as a regular DistanceSensor.
         sensorDistance = myOpMode.hardwareMap.get(DistanceSensor.class, "distance_sensor");
@@ -295,6 +296,10 @@ public class RobotHardware {
         grabberServo.setPosition(Range.clip(grabberDrive, GRABBER_MIN, GRABBER_MAX));
     }
 
+    public void moveGrabberToPosition(double position){
+        grabberServo.setPosition(Range.clip(position, GRABBER_MIN, GRABBER_MAX));
+    }
+
     /**
      * Send the two hand-servos to opposing (mirrored) positions, based on the passed offset.
      *
@@ -320,5 +325,13 @@ public class RobotHardware {
 
     public double getDistanceFromObject(){
         return sensorDistance.getDistance(DistanceUnit.INCH);
+    }
+
+    public NormalizedRGBA getRightColorSensorData(){
+        return rightColorSensor.getNormalizedColors();
+    }
+
+    public NormalizedRGBA getLeftColorSensorData(){
+        return leftColorSensor.getNormalizedColors();
     }
 }
