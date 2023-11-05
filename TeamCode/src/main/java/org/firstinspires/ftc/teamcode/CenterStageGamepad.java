@@ -155,6 +155,9 @@ public class CenterStageGamepad extends LinearOpMode {
                 carWashMotor.setPower(-carWashPower);
             }
 
+            if (!gamepad1.x && !gamepad1.b){
+                carWashMotor.setPower(0);
+            }
             telemetry.addData("Status", "Run Time: " + runtime.toString());
             telemetry.update();
 
