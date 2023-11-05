@@ -33,24 +33,33 @@ abstract public class BaseAutonomous extends BaseOpMode {
     int lastEncoderBL = 0;
     int lastEncoderBR = 0;
 
+    // Prop detection variables
+    Rect boundingRect;
+    Point center;
+
+    // Auton tuning constants
     public static double LEFT_Y = 26.0;
     public static double LEFT_X = -12.0;
     public static double RIGHT_Y = 26.0;
     public static double RIGHT_X = 12.0;
-    public static double CENTER_Y = 26.0;
-    public static double CENTER_X = 3.0;
+    public static double CENTER_Y = 29.0;
+    public static double CENTER_X = 4.5;
     public static double INTAKE_SPEED = -0.5;
     public static double INTAKE_TIME = 2000; // in milliseconds
-    public static double MOVING_FROM_WALL = 2;
+
+    public static double INTAKE_SPEED2 = -0.5;
+    public static double INTAKE_TIME2 = 2000; // in milliseconds
+    public static double MOVING_FROM_WALL = 3;
     public static double FAR_PARKING = 96;
     public static double CLOSE_PARKING = 48;
     public static double ROBOT_SPEED = 0.5;
-    public static double STRAFE_FACTOR = 24.0/22;
+    public static double STRAFE_FACTOR = 1.210719915922228;
+    public static double DISTANCE_FACTOR = 1.032258064516129;
 
 
     public void driveInches(double x, double y) {
         double xTicks = x * TICKS_PER_INCH * STRAFE_FACTOR;
-        double yTicks = y * TICKS_PER_INCH;
+        double yTicks = y * TICKS_PER_INCH * DISTANCE_FACTOR;
 
         double targetFL = xTicks + yTicks;
         double targetFR = yTicks - xTicks;
@@ -197,12 +206,12 @@ abstract public class BaseAutonomous extends BaseOpMode {
                 }
 
                 MatOfPoint largestContour = contours.get(maxAreaIndex);
-                Rect boundingRect = Imgproc.boundingRect(largestContour);
+                boundingRect = Imgproc.boundingRect(largestContour);
                 // Draw a rectangle around the largest contour on the frame
                 Imgproc.rectangle(input, boundingRect.tl(), boundingRect.br(), new Scalar(0, 255, 0), 2);
 
                 // Calculate the center of the bounding rectangle
-                Point center = new Point(boundingRect.x + (boundingRect.width * 0.5), boundingRect.y + (boundingRect.height * 0.5));
+                center = new Point(boundingRect.x + (boundingRect.width * 0.5), boundingRect.y + (boundingRect.height * 0.5));
 
                 // Draw the largest contour
                 Imgproc.drawContours(input, contours, maxAreaIndex, new Scalar(0, 255, 0));
@@ -238,6 +247,7 @@ abstract public class BaseAutonomous extends BaseOpMode {
     }
 
     public SideDetected detectTeamProp() {
+        Log.d("skid prop", sideDetected + " " + boundingRect.toString() + " " + center.toString());
         return sideDetected;
     }
 
@@ -305,9 +315,16 @@ abstract public class BaseAutonomous extends BaseOpMode {
             if (red) {
                 driveInches(FAR_PARKING,0);
             } else {
-
                 driveInches(-FAR_PARKING, 0);
             }
+        }
+
+        if(intakeMotor != null) {
+            intakeMotor.setPower(INTAKE_SPEED2);
+            sleep((long) INTAKE_TIME2);
+            intakeMotor.setPower(0);
+        } else {
+            sleep(5000);
         }
     }
 
@@ -330,6 +347,9 @@ abstract public class BaseAutonomous extends BaseOpMode {
                 ", MOVING_FROM_WALL=" + MOVING_FROM_WALL +
                 ", FAR_PARKING=" + FAR_PARKING +
                 ", CLOSE_PARKING=" + CLOSE_PARKING +
+                ", ROBOT_SPEED=" + ROBOT_SPEED +
+                ", STRAFE_FACTOR=" + STRAFE_FACTOR +
+                ", DISTANCE_FACTOR=" + DISTANCE_FACTOR +
                 ", CAMERA_WIDTH_PIXELS=" + CAMERA_WIDTH_PIXELS +
                 ", CAMERA_HEIGHT_PIXELS=" + CAMERA_HEIGHT_PIXELS +
                 ", LOWER_BLUE_OR_RED=" + LOWER_BLUE_OR_RED +
