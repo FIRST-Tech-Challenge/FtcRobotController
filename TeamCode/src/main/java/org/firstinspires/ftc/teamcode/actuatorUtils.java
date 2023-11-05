@@ -13,6 +13,7 @@ public class actuatorUtils {
     private static DcMotor RB = null; //declare right back motor
     private static DcMotor arm = null; //declare arm
     private static Servo gripper = null; //declare gripper
+    private static Servo dump = null; //declare dump
     //test
     private static int maxEncode = 4200; //4200 for higher, 2175 for lower-- Max so arm won't overextend and position 3
     private static int minEncode = 300; //Minimum so string on arm lift doesn't break and position 0
@@ -40,9 +41,16 @@ public class actuatorUtils {
     }
 
     //Initialize actuators
+    public static void initializeActuator(DcMotor arm, Servo gripper, Servo dump) {
+        actuatorUtils.arm = arm;
+        actuatorUtils.gripper = gripper;
+        actuatorUtils.dump = dump;
+
+    }
     public static void initializeActuator(DcMotor arm, Servo gripper) {
         actuatorUtils.arm = arm;
         actuatorUtils.gripper = gripper;
+        actuatorUtils.dump = null;
 
     }
 
@@ -117,6 +125,16 @@ public class actuatorUtils {
         }
     }
 
+    public static void dumpClose() throws InterruptedException {
+        dump.setPosition(1); //Position that grabs cone tightly
+
+    }
+
+    //Method to open gripper
+
+    public static void dumpOpen() throws InterruptedException {
+        dump.setPosition(0.21); //Position to open gripper
+    }
     //Method to move arm to pole heights
     public static void armPole(ArmLevel desiredHeight) throws InterruptedException {
         armPole(desiredHeight, true);

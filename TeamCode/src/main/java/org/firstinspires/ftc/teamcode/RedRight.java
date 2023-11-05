@@ -5,7 +5,6 @@ import static org.firstinspires.ftc.robotcore.external.navigation.AngleUnit.DEGR
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
@@ -23,14 +22,15 @@ import org.openftc.easyopencv.OpenCvCameraRotation;
 
 import java.util.Locale;
 
-@Autonomous(name = "PipelineTest", group = "")
-public class PipelineTest extends LinearOpMode {
+@Autonomous(name = "RedRight", group = "")
+public class RedRight extends LinearOpMode {
     //test1
     private DcMotor LF = null;
     private DcMotor RF = null;
     private DcMotor LB = null;
     private DcMotor RB = null;
     private Servo gripper = null; //Located on Expansion Hub- Servo port 0
+    private Servo dump = null; //Located on Expansion Hub- Servo port 0
     private DcMotor arm = null;
 
     static final float MAX_SPEED = 1.0f;
@@ -41,7 +41,7 @@ public class PipelineTest extends LinearOpMode {
     private PIDController pidRotate;
     private  OpenCvCamera webCam;
     private boolean isCameraStreaming = false;
-    Pipeline2023 modifyPipeline = new Pipeline2023(true);
+    Pipeline2023 modifyPipeline = new Pipeline2023(false);
 
 
     BNO055IMU imu;
@@ -74,6 +74,8 @@ public class PipelineTest extends LinearOpMode {
 
         arm = hardwareMap.get(DcMotor.class, "arm");
         gripper = hardwareMap.get(Servo.class, "gripper");
+        dump = hardwareMap.get(Servo.class, "Dump");
+
 
         LF.setDirection(DcMotor.Direction.REVERSE);  // motor direction set for mecanum wheels with mitre gears
         RF.setDirection(DcMotor.Direction.FORWARD);
@@ -107,7 +109,7 @@ public class PipelineTest extends LinearOpMode {
         moveUtils.initialize(LF, RF, LB, RB, imu, desiredHeading, pidRotate);
         moveUtils.resetEncoders();
 
-        actuatorUtils.initializeActuator(arm, gripper);
+        actuatorUtils.initializeActuator(arm, gripper, dump);
 
 
         Long startTime = System.currentTimeMillis();
