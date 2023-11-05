@@ -43,10 +43,10 @@ abstract public class BaseAutonomous extends BaseOpMode {
     public static double RIGHT_X = 12.0;
     public static double CENTER_Y = 29.0;
     public static double CENTER_X = 4.5;
-    public static double INTAKE_SPEED = 0.5;
+    public static double INTAKE_SPEED = 0.7;
     public static double INTAKE_TIME = 2000; // in milliseconds
 
-    public static double INTAKE_SPEED2 = 0.5;
+    public static double INTAKE_SPEED2 = 0.7;
     public static double INTAKE_TIME2 = 2000; // in milliseconds
     public static double MOVING_FROM_WALL = 2.0;
     public static double FAR_PARKING = 96;

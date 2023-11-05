@@ -17,6 +17,8 @@ public class CalibrateIntake extends BaseAutonomous {
             sleep(5000);
         }
 
+        sleep(5000);
+
         if(intakeMotor != null) {
             intakeMotor.setPower(INTAKE_SPEED2);
             sleep((long) INTAKE_TIME2);
