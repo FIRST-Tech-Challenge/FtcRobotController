@@ -129,7 +129,7 @@ abstract class BaseOpMode extends LinearOpMode {
     }
 
     public void resetDumper() {
-        dumperServo.setPosition(0.3);
+        dumperServo.setPosition(0.48);
     }
 
     public void dumpDumper() {
