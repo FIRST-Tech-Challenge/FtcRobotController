@@ -44,10 +44,10 @@ public class Robot {
     IMU imu;
     double prevError = 0;
     double prevTime = 0;
-    MarkerDetectorRed.MARKER_POSITION markerPosRed;
+    MarkerDetector.MARKER_POSITION markerPosRed;
     MarkerDetectorBlue.MARKER_POSITION markerPosBlue;
     int wantedAprTagId;
-    private MarkerProcessorRed markerProcessorRed; //TODO: COMBINE THESE AND ALL METHODS USING THEM
+    private MarkerProcessor markerProcessor; //TODO: COMBINE THESE AND ALL METHODS USING THEM
     private MarkerProcessorBlue markerProcessorBlue;
     private AprilTagProcessor aprilTagProcessor;
     private VisionPortal visionPortal;
@@ -135,7 +135,7 @@ public class Robot {
         Log.d("vision", "autoOuttake: move lin s again");
     }
 
-    public void setMarkerPosRed(MarkerDetectorRed.MARKER_POSITION position) {
+    public void setMarkerPosRed(MarkerDetector.MARKER_POSITION position) {
         markerPosRed = position;
     }
 
@@ -144,8 +144,8 @@ public class Robot {
     }
 
     //TODO: change boolean to enum later
-    public void setWantedAprTagId (MarkerDetectorRed.MARKER_POSITION position, boolean redAlliance) {
-        if (redAlliance) {
+    public void setWantedAprTagId (MarkerDetector.MARKER_POSITION position, MarkerDetector.ALLIANCE_COLOR allianceColor) {
+        if (allianceColor == MarkerDetector.ALLIANCE_COLOR.RED) {
             switch (position) {
                 case CENTER:
                     wantedAprTagId = 5;
@@ -178,11 +178,9 @@ public class Robot {
         }
     }
 
-    //vision processing setup
-    public void initVisionProcessingRed() {
-
+    public void initVisionProcessing(MarkerDetector.ALLIANCE_COLOR allianceColor) {
         // Initializing marker and apriltag processors and setting them with visionportal
-        markerProcessorRed = new MarkerProcessorRed(telemetry);
+        markerProcessor = new MarkerProcessor(telemetry, allianceColor);
         aprilTagProcessor = AprilTagProcessor.easyCreateWithDefaults();
         visionPortal = new VisionPortal.Builder()
                 .setLiveViewContainerId(VisionPortal.DEFAULT_VIEW_CONTAINER_ID)
@@ -191,23 +189,7 @@ public class Robot {
                 .setAutoStopLiveView(true)
                 .setCamera(hardwareMap.get(WebcamName.class, "Webcam 1"))
                 .addProcessor(aprilTagProcessor)
-                .addProcessor(markerProcessorRed)
-                .build();
-    }
-
-    public void initVisionProcessingBlue() {
-
-        // Initializing marker and apriltag processors and setting them with visionportal
-        markerProcessorRed = new MarkerProcessorRed(telemetry);
-        aprilTagProcessor = AprilTagProcessor.easyCreateWithDefaults();
-        visionPortal = new VisionPortal.Builder()
-                .setLiveViewContainerId(VisionPortal.DEFAULT_VIEW_CONTAINER_ID)
-                .setCameraResolution(new Size(640, 480))
-                .setStreamFormat(VisionPortal.StreamFormat.YUY2)
-                .setAutoStopLiveView(true)
-                .setCamera(hardwareMap.get(WebcamName.class, "Webcam 1"))
-                .addProcessor(aprilTagProcessor)
-                .addProcessor(markerProcessorBlue)
+                .addProcessor(markerProcessor)
                 .build();
     }
 
@@ -470,14 +452,14 @@ public class Robot {
         sleep(100);
     }
 
-    public void detectMarkerPositionRed() {
+    public void detectMarkerPosition() {
 
         //detect marker position
-        MarkerDetectorRed.MARKER_POSITION position = markerProcessorRed.getPosition();
+        MarkerDetector.MARKER_POSITION position = markerProcessor.getPosition();
 
-        while (position == MarkerDetectorRed.MARKER_POSITION.UNDETECTED) {
+        while (position == MarkerDetector.MARKER_POSITION.UNDETECTED) {
             Log.d("vision", "undetected marker, keep looking" + visionPortal.getCameraState());
-            position = markerProcessorRed.getPosition();
+            position = markerProcessor.getPosition();
         }
 
         //print position
@@ -485,7 +467,7 @@ public class Robot {
 
         //save marker position, apriltag position
         setMarkerPosRed(position);
-        setWantedAprTagId(position, true);
+        setWantedAprTagId(position, MarkerDetector.ALLIANCE_COLOR.RED);
 
     }
 
@@ -512,7 +494,7 @@ public class Robot {
     public void shortRedMoveToBoard() {
         Log.d("vision", "moveToMarker: Pos " + markerPosRed);
         Log.d("vision", "moveToMarker: Tag " + wantedAprTagId);
-        if (markerPosRed == MarkerDetectorRed.MARKER_POSITION.RIGHT) {
+        if (markerPosRed == MarkerDetector.MARKER_POSITION.RIGHT) {
             straightBlocking(19, false, 0.5);
             setHeading(-45, 0.25);
             straightBlocking(5, false, 0.7);
@@ -522,7 +504,7 @@ public class Robot {
             straightBlocking(24, false, 0.7);
             setHeading(-90, 0.25);
             mecanumBlocking(9, true, 0.25);
-        } else if (markerPosRed == MarkerDetectorRed.MARKER_POSITION.LEFT) {
+        } else if (markerPosRed == MarkerDetector.MARKER_POSITION.LEFT) {
             straightBlocking(19, false, 0.5);
             setHeading(45, 0.25);
             straightBlocking(5, false, 0.7);
@@ -629,7 +611,7 @@ public class Robot {
         while (opMode.opModeIsActive()) {
             setServoPosBlocking(holderClamp, 0.5);
             setServoPosBlocking(hook, 0.5);
-            if (markerPosRed == MarkerDetectorRed.MARKER_POSITION.RIGHT) { //RIGHT
+            if (markerPosRed == MarkerDetector.MARKER_POSITION.RIGHT) { //RIGHT
                 straightBlocking(20, false, 0.25); //forward
                 setHeading(45 * polarity, 0.25); //turn right
                 straightBlocking(8, false, 0.7); //forward
@@ -643,7 +625,7 @@ public class Robot {
                 mecanumBlocking(34, false, 0.7); //mecanum directly in front of board
                 setHeading(90 * polarity, 0.7);
                 break;
-            } else if (markerPosRed == MarkerDetectorRed.MARKER_POSITION.LEFT) { //LEFT
+            } else if (markerPosRed == MarkerDetector.MARKER_POSITION.LEFT) { //LEFT
                 straightBlocking(18, false, 0.25); //forward
                 setHeading(-45 * polarity, 0.25); //turn
                 straightBlocking(7, false, 0.7); //forward

@@ -8,21 +8,21 @@ import org.opencv.core.Rect;
 import org.opencv.core.Scalar;
 import org.opencv.imgproc.Imgproc;
 
-public class MarkerProcessorRed implements VisionProcessor {
+public class MarkerProcessor implements VisionProcessor {
 
     private Telemetry telemetry;
     private Mat workingMatrix;
 
-    public MarkerProcessorRed(Telemetry telemetry) {
+    public MarkerProcessor(Telemetry telemetry, MarkerDetector.ALLIANCE_COLOR allianceColor) {
 
         this.telemetry = telemetry;
-        detector = new MarkerDetectorRed(telemetry, MarkerDetectorRed.ALLIANCE_COLOR.RED);
+        detector = new MarkerDetector(telemetry, allianceColor);
     }
 
-    private final MarkerDetectorRed detector;
+    private final MarkerDetector detector;
 
 
-    public MarkerDetectorRed.MARKER_POSITION getPosition() {
+    public MarkerDetector.MARKER_POSITION getPosition() {
         return detector.position;
     }
 

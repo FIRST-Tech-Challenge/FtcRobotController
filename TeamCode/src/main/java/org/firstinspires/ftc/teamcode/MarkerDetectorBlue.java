@@ -10,6 +10,7 @@ import org.opencv.core.Scalar;
 import org.opencv.imgproc.Imgproc;
 import org.openftc.easyopencv.OpenCvPipeline;
 
+//TODO: get rid of this class & refactor markerdetectorred
 public class MarkerDetectorBlue extends OpenCvPipeline {
     private Mat workingMatrix = new Mat();
 

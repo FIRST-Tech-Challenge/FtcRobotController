@@ -1,7 +1,5 @@
 package org.firstinspires.ftc.teamcode;
 
-import android.util.Log;
-
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
@@ -14,13 +12,13 @@ public class LongRedAuto extends LinearOpMode {
         //robot, dt motors, vision processing setup
         Robot robot = new Robot(hardwareMap, this, telemetry, true);
         robot.setUpDrivetrainMotors();
-        robot.initVisionProcessingRed();
+        robot.initVisionProcessing(MarkerDetector.ALLIANCE_COLOR.RED);
 
         waitForStart();
 
         //TODO: unlock slide, clamp down, slide down (not nec in that order)
 
-        robot.detectMarkerPositionRed();
+        robot.detectMarkerPosition();
         robot.moveToBoard();
         robot.alignToBoard();
         robot.autoOuttake();

@@ -8,6 +8,7 @@ import org.opencv.core.Rect;
 import org.opencv.core.Scalar;
 import org.opencv.imgproc.Imgproc;
 
+//TODO: get rid of this class and refactor markerprocessorred
 public class MarkerProcessorBlue implements VisionProcessor {
 
     private Telemetry telemetry;

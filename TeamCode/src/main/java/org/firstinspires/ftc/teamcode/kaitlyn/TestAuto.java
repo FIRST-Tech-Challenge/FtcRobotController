@@ -1,11 +1,10 @@
 package org.firstinspires.ftc.teamcode.kaitlyn;
 
-import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
-import org.firstinspires.ftc.teamcode.MarkerDetectorRed;
+import org.firstinspires.ftc.teamcode.MarkerDetector;
 import org.firstinspires.ftc.teamcode.Robot;
 import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
@@ -14,8 +13,8 @@ import org.openftc.easyopencv.OpenCvWebcam;
 
 public class TestAuto extends LinearOpMode {
     OpenCvWebcam webcam;
-    private MarkerDetectorRed detector;
-    private MarkerDetectorRed.MARKER_POSITION position;
+    private MarkerDetector detector;
+    private MarkerDetector.MARKER_POSITION position;
     private double LEFT_CR_AVG;
 
     Robot robot;
@@ -31,7 +30,7 @@ public class TestAuto extends LinearOpMode {
         robot.setUpDrivetrainMotors();
         boolean movedToMarker = false;
 
-        detector = new MarkerDetectorRed(telemetry, MarkerDetectorRed.ALLIANCE_COLOR.RED);
+        detector = new MarkerDetector(telemetry, MarkerDetector.ALLIANCE_COLOR.RED);
         webcam.setPipeline(detector);
         webcam.openCameraDevice();
         webcam.startStreaming(320, 240, OpenCvCameraRotation.UPRIGHT);
@@ -52,7 +51,7 @@ public class TestAuto extends LinearOpMode {
 //            telemetry.addLine("true");
 //            telemetry.update();
 
-            if (position == MarkerDetectorRed.MARKER_POSITION.CENTER) {
+            if (position == MarkerDetector.MARKER_POSITION.CENTER) {
                 robot.straightBlocking(20, false, 0.75);
                 robot.setHeading(15, 1);
                 robot.straightBlocking(6, false, 0.75);
@@ -61,7 +60,7 @@ public class TestAuto extends LinearOpMode {
                 robot.setHeading(0, 1);
                 robot.straightBlocking(19, true, 0.75);
                 break;
-            } else if (position == MarkerDetectorRed.MARKER_POSITION.LEFT) {
+            } else if (position == MarkerDetector.MARKER_POSITION.LEFT) {
                 robot.straightBlocking(18, false, 0.75);
                 robot.setHeading(30, 1);
                 robot.straightBlocking(3, false, 0.75);
@@ -70,7 +69,7 @@ public class TestAuto extends LinearOpMode {
                 robot.setHeading(0, 1);
                 robot.straightBlocking(17, true, 0.75);
                 break;
-            } else if (position == MarkerDetectorRed.MARKER_POSITION.RIGHT) {
+            } else if (position == MarkerDetector.MARKER_POSITION.RIGHT) {
                 robot.straightBlocking(14, false, 0.75);
                 robot.setHeading(-45, 1);
                 robot.straightBlocking(11, false, 0.75);
