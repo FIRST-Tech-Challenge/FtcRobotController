@@ -64,7 +64,6 @@ import com.qualcomm.robotcore.util.ElapsedTime;
  */
 
 @TeleOp(name="Center Stage Gamepad", group="Linear Opmode")
-//@Disabled
 public class CenterStageGamepad extends LinearOpMode {
 
     // Declare OpMode members for each of the 4 motors.

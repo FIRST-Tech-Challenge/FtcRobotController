@@ -68,7 +68,6 @@ import java.util.List;
  */
 
 @Autonomous
-//@Disabled
 public class CenterStageAuto1 extends LinearOpMode {
 
     private static final boolean USE_WEBCAM = true;
@@ -96,7 +95,6 @@ public class CenterStageAuto1 extends LinearOpMode {
     static final double     TURN_SPEED              = 0.5;
     private VisionPortal visionPortal;
 
-    //@Override
     public void runOpMode() {
 
         // Initialize the drive system variables.
