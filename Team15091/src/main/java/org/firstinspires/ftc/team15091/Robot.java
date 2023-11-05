@@ -25,7 +25,7 @@ import java.util.Arrays;
 import java.util.List;
 
 public class Robot {
-    public DcMotorEx armMotor, rollerMotor;
+    public DcMotorEx liftMotor, rollerMotor;
     public DcMotorEx leftFront, leftRear, rightRear, rightFront;
     public Servo armServo, bowlServo;
     private List<DcMotorEx> motors;
@@ -40,7 +40,7 @@ public class Robot {
     private static final double WHEEL_DIAMETER_INCHES = 2.953d;     // For figuring circumference
     static final double COUNTS_PER_INCH = (COUNTS_PER_MOTOR_REV * DRIVE_GEAR_REDUCTION) /
             (WHEEL_DIAMETER_INCHES * 3.14159265359d);
-    private RunMode armMode;
+    private RunMode liftMode;
     double armPosition, bowlPosition;
 
     public void init(HardwareMap hardwareMap) {
@@ -55,13 +55,13 @@ public class Robot {
         rightFront.setDirection(Direction.FORWARD);
         rightRear.setDirection(Direction.FORWARD);
 
-        armMotor = hardwareMap.get(DcMotorEx.class, "arm_motor");
-        armMotor.setDirection(Direction.FORWARD);
-        armMotor.setCurrentAlert(1d, CurrentUnit.AMPS);
-        armMotor.setPositionPIDFCoefficients(6d);
-        armMotor.setTargetPositionTolerance(2);
-        armMotor.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
-        setArmMode(RunMode.STOP_AND_RESET_ENCODER);
+        liftMotor = hardwareMap.get(DcMotorEx.class, "arm_motor");
+        liftMotor.setDirection(Direction.FORWARD);
+        liftMotor.setCurrentAlert(1d, CurrentUnit.AMPS);
+        liftMotor.setPositionPIDFCoefficients(6d);
+        liftMotor.setTargetPositionTolerance(2);
+        liftMotor.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
+        setLiftMode(RunMode.STOP_AND_RESET_ENCODER);
 
         rollerMotor = hardwareMap.get(DcMotorEx.class, "roller_motor");
         rollerMotor.setMode(RunMode.STOP_AND_RESET_ENCODER);
@@ -164,10 +164,10 @@ public class Robot {
                 rightFront.isBusy() && rightRear.isBusy();
     }
 
-    public void setArmMode(DcMotor.RunMode newMode) {
-        if (armMode != newMode) {
-            armMotor.setMode(newMode);
-            armMode = newMode;
+    public void setLiftMode(DcMotor.RunMode newMode) {
+        if (liftMode != newMode) {
+            liftMotor.setMode(newMode);
+            liftMode = newMode;
         }
     }
 
