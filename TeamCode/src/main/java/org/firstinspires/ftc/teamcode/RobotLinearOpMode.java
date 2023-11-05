@@ -432,10 +432,6 @@ public abstract class RobotLinearOpMode extends LinearOpMode {
                 rightBackDriveMotor.setPower(0.2);
                 while (searching) {
                     if (gamepad1.b){
-                        leftFrontDriveMotor.setPower(0);
-                        leftBackDriveMotor.setPower(0);
-                        rightFrontDriveMotor.setPower(0);
-                        rightBackDriveMotor.setPower(0);
                         searching = false;
                         break;
                     }
@@ -452,6 +448,10 @@ public abstract class RobotLinearOpMode extends LinearOpMode {
                     }
                 }
                 telemetry.addData("Status: ", "Done");
+                leftFrontDriveMotor.setPower(0);
+                leftBackDriveMotor.setPower(0);
+                rightFrontDriveMotor.setPower(0);
+                rightBackDriveMotor.setPower(0);
                 placingPixel = false;
             }
 
