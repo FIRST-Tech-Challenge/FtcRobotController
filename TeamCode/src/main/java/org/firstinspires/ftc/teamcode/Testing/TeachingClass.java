@@ -20,16 +20,26 @@ public class TeachingClass extends LinearOpMode {
     DcMotor backRight;
     //Initializing frontLeft motor variable
 
-    //DcMotor intakeMotor;
+    // DcMotor intakeMotor;
+
+    // Servo pixelClaw;
+
+    //public static final double clawOpenPos = 0.02;
+    //public static final double clawClosePos = 0.5;
 
     //DO NOT CHANGE FOLLOWING LINES OF CODE
 
     public void runOpMode(){
-        //Assigning configuration name to variable (for frontLeft, backLeft, frontRight, backRight)
+        // Assigning configuration name to variable (for frontLeft, backLeft, frontRight,
+        // backRight, intakeMotor)
         frontLeft = hardwareMap.get(DcMotor.class, "frontLeft");
         backLeft = hardwareMap.get(DcMotor.class, "backLeft");
         frontRight = hardwareMap.get(DcMotor.class, "frontRight");
         backRight = hardwareMap.get(DcMotor.class, "backRight");
+
+        //intakeMotor = hardwareMap.get(DcMotor.class, "intakeMotor");
+        //pixelClaw = hardwareMap.get(Servo.class, "pixelClaw");
+
 
         //Setting Direction of Motors
         //TODO: Fix directions
@@ -53,7 +63,10 @@ public class TeachingClass extends LinearOpMode {
             double throttle = -gamepad1.left_stick_y;
             double turn = gamepad1.right_stick_x;
             double strafe = gamepad1.left_stick_x;
-            //double intake = gamepad2.a;
+            // double intake = gamepad2.right_trigger;
+            // boolean pixelClaw = gamepad2.a;
+            // double clawOpenPos = 0.02;
+            // double clawClosePos = 0.5;
 
             //setting power for forward-backward movement
             frontLeft.setPower(throttle);
@@ -82,9 +95,16 @@ public class TeachingClass extends LinearOpMode {
             backRight.setPower(-turn);
 
             //setting up intake (collecting pixels)
+            // intakeMotor.setPower(intake);
+
+            //setting up claw power
             /*
-            intakeMotor.setPower(intake);
+            if (gamepad2.a)
+                pixelClaw.setTargetPosition(clawOpenPos);
+            else if (gamepad1.b)
+                pixelClaw.setTargetPosition(clawClosePos);
             */
+
         }
     }
 }
