@@ -15,7 +15,7 @@ public class LongBlueAuto extends LinearOpMode {
         Robot robot = new Robot(hardwareMap, this, telemetry, true);
         //TODO uncomment
         robot.setUpDrivetrainMotors();
-        robot.initVisionProcessingBlue();
+        //robot.initVisionProcessingBlue();
 
         /*
         Servo holderClamp = hardwareMap.servo.get("holderClamp");
