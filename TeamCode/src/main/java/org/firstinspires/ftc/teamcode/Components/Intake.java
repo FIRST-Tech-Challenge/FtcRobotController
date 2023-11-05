@@ -28,13 +28,14 @@ import org.openftc.easyopencv.LIFO_OpModeCallbackDelegate;
 public class Intake extends RFMotor {
     RFBreakBeam breakBeam;
     RFLimitSwitch limitSwitch;
+    Motor motor;
 
     private final double INTAKE_POWER = 0.6;
     private final double REVERSE_POWER=-0.3;
 
     private boolean full = false;
     private double pixelCount =0;
-    public static double HALF_TICKS_PER_REV = 537.6/2;
+    public static double HALF_TICKS_PER_REV = 383.6/2;
 
     /**
      * initializes all the hardware, logs that hardware has been initialized
