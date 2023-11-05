@@ -140,23 +140,26 @@ public class CenterStageGamepad extends LinearOpMode {
                 rightBackPower  /= max;
             }
 
+            // Send calculated power to wheels
+            leftFrontDrive.setPower(leftFrontPower);
+            rightFrontDrive.setPower(rightFrontPower);
+            leftBackDrive.setPower(leftBackPower);
+            rightBackDrive.setPower(rightBackPower);
 
+            if (gamepad1.x) {
+                carWashMotor.setPower(carWashPower);
+            }
+
+
+            if (gamepad1.b) {
+                carWashMotor.setPower(-carWashPower);
+            }
+
+            telemetry.addData("Status", "Run Time: " + runtime.toString());
+            telemetry.update();
 
             sleep(250);
         }
 
-        if (gamepad1.x) {
-            carWashMotor.setPower(carWashPower);
-        }
-
-
-        if (gamepad1.b) {
-            carWashMotor.setPower(-carWashPower);
-        }
-
-        telemetry.addData("Status", "Run Time: " + runtime.toString());
-        telemetry.addData("Status", "Target Encoder Value: " + targetEncoderValue);
-        telemetry.addData("lift", " Encoder: " + carWashMotor.getCurrentPosition());
-        telemetry.update();
-    }
+            }
 }
