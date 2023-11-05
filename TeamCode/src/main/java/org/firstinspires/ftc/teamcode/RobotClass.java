@@ -138,7 +138,7 @@ public class RobotClass {
     //Moving using encoders
     public void move(double power, double cm) throws InterruptedException{
         //setting number of ticks per 10 cm to get number of ticks per cm
-        int ticksPer10cm = 0;
+        int ticksPer10cm = 64;
         int ticksPerCm = ticksPer10cm / 10;
         int target = (int) Math.round(cm * ticksPerCm);
 
