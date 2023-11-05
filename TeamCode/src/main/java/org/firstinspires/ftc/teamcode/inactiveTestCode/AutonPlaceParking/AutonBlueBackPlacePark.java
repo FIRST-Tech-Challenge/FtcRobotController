@@ -1,12 +1,14 @@
-package org.firstinspires.ftc.teamcode.AutonPlaceParking;
+package org.firstinspires.ftc.teamcode.inactiveTestCode.AutonPlaceParking;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
-@Autonomous(name = "Auton Red Front Place Park")
-public class AutonRedFrontPlacePark extends LinearOpMode {
+@Autonomous(name = "Auton Blue Back Place Park")
+@Disabled
+public class AutonBlueBackPlacePark extends LinearOpMode {
 
     private DcMotor leftFrontDrive   = null;  //  Used to control the left front drive wheel
     private DcMotor rightFrontDrive  = null;  //  Used to control the right front drive wheel
@@ -53,19 +55,19 @@ public class AutonRedFrontPlacePark extends LinearOpMode {
             rightFrontDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
             rightBackDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
-            rightFrontDrive.setTargetPosition(250);
+            rightFrontDrive.setTargetPosition(-1500);
             rightFrontDrive.setPower(0.5);
             rightFrontDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
-            leftBackDrive.setTargetPosition(250);
+            leftBackDrive.setTargetPosition(-1500);
             leftBackDrive.setPower(0.5);
             leftBackDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
-            leftFrontDrive.setTargetPosition(-250);
+            leftFrontDrive.setTargetPosition(1500);
             leftFrontDrive.setPower(0.5);
             leftFrontDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
-            rightBackDrive.setTargetPosition(-250);
+            rightBackDrive.setTargetPosition(1500);
             rightBackDrive.setPower(0.5);
             rightBackDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
@@ -90,10 +92,11 @@ public class AutonRedFrontPlacePark extends LinearOpMode {
             leftBackDrive.setPower(0);
             }
 
-            int leftFrontDriveNecessaryTicks = calculateTicksForLateralMovement(30); //2000
-            int rightFrontDriveNecessaryTicks = calculateTicksForLateralMovement(30);
-            int leftBackDriveNecessaryTicks = calculateTicksForLateralMovement(30);
-            int rightBackDriveNecessaryTicks = calculateTicksForLateralMovement(30);
+
+            int leftFrontDriveNecessaryTicks = calculateTicksForLateralMovement(80); //2000
+            int rightFrontDriveNecessaryTicks = calculateTicksForLateralMovement(80);
+            int leftBackDriveNecessaryTicks = calculateTicksForLateralMovement(80);
+            int rightBackDriveNecessaryTicks = calculateTicksForLateralMovement(80);
 
             int leftFrontDriveTargetTicks =  leftFrontDriveNecessaryTicks;
             int rightFrontDriveTargetTicks = rightFrontDriveNecessaryTicks;
@@ -104,6 +107,11 @@ public class AutonRedFrontPlacePark extends LinearOpMode {
             rightBackDrive.setDirection(DcMotorSimple.Direction.FORWARD);
             leftFrontDrive.setDirection(DcMotorSimple.Direction.REVERSE);
             leftBackDrive.setDirection(DcMotorSimple.Direction.REVERSE);
+
+            leftFrontDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            leftBackDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            rightFrontDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            rightBackDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
             leftFrontDrive.setTargetPosition(leftFrontDrive.getCurrentPosition() + leftFrontDriveTargetTicks);
             leftFrontDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);

@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.developingTestCode;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
@@ -18,6 +19,7 @@ import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 @Autonomous(name = "TEST Disalign Turn Auton Blue Back Align")
+@Disabled
 public class V3AutonBlueBackAlign extends LinearOpMode {
 
     private DcMotor leftFrontDrive   = null;  //  Used to control the left front drive wheel

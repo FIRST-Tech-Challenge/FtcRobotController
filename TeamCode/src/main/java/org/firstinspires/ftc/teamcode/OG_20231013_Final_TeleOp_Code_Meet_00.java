@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
@@ -10,6 +11,7 @@ import com.qualcomm.robotcore.hardware.Servo;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 
 @com.qualcomm.robotcore.eventloop.opmode.TeleOp(name = "Original TeleOp Meet 0 Final")
+@Disabled
 public class OG_20231013_Final_TeleOp_Code_Meet_00 extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {

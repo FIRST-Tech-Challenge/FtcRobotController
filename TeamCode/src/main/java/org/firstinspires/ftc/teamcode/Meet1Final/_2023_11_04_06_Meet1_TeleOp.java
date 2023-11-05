@@ -216,6 +216,8 @@ public class _2023_11_04_06_Meet1_TeleOp extends LinearOpMode {
             telemetry.addData("Arm Target Position Requested: ", liftTargetPosition);
             telemetry.addData("Arm Actual Target Position: ", arm.getTargetPosition());
 
+            telemetry.addData("Imu Heading:", imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS));
+
             telemetry.update();
         }
     }

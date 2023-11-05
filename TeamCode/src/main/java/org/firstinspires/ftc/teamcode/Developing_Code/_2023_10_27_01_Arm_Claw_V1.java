@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.Developing_Code;
 
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
@@ -10,6 +11,7 @@ import com.qualcomm.robotcore.hardware.Servo;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 
 @com.qualcomm.robotcore.eventloop.opmode.TeleOp(name = "V1 Arm Claw")
+@Disabled
 public class _2023_10_27_01_Arm_Claw_V1 extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
