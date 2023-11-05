@@ -13,7 +13,6 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.IMU;
 import com.qualcomm.robotcore.hardware.Servo;
-import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
@@ -23,7 +22,6 @@ import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
 import org.firstinspires.ftc.vision.VisionPortal;
 import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
 import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
-import org.openftc.easyopencv.OpenCvWebcam;
 
 import java.util.List;
 
@@ -59,7 +57,7 @@ public class Robot {
     boolean redAlliance;
 
     //CONSTRUCTOR
-    public Robot(HardwareMap hardwareMap, LinearOpMode opMode, Telemetry telemetry, boolean redAlliance) {
+    public Robot(HardwareMap hardwareMap, LinearOpMode opMode, Telemetry telemetry, boolean red) {
         this.hardwareMap = hardwareMap;
         this.opMode = opMode;
         this.telemetry = telemetry;
@@ -70,6 +68,8 @@ public class Robot {
         lsFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         lsBack = hardwareMap.dcMotor.get("lsBack");
         lsBack.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
+        redAlliance = red;
 
         arm = hardwareMap.servo.get("arm");
         holderClamp = hardwareMap.servo.get("holderClamp");
@@ -146,8 +146,8 @@ public class Robot {
         markerPosBlue = position;
     }
 
-    //change boolean to enum later
-    public void setWantedAprTagIdRed(MarkerDetectorRed.MARKER_POSITION position, boolean redAlliance) {
+    //TODO: change boolean to enum later
+    public void setWantedAprTagId (MarkerDetectorRed.MARKER_POSITION position, boolean redAlliance) {
         if (redAlliance) {
             switch (position) {
                 case CENTER:
@@ -177,40 +177,6 @@ public class Robot {
                 default:
                     Log.d("vision", "setWantedAprTagId: enter default");
                     wantedAprTagId = 2;
-            }
-        }
-    }
-
-    public void setWantedAprTagIdBlue(MarkerDetectorBlue.MARKER_POSITION position, boolean blueAlliance) {
-        if (blueAlliance) {
-            switch (position) {
-                case CENTER:
-                    wantedAprTagId = 2;
-                    break;
-                case RIGHT:
-                    wantedAprTagId = 3;
-                    break;
-                case LEFT:
-                    wantedAprTagId = 1;
-                    break;
-                default:
-                    Log.d("vision", "setWantedAprTagId: enter default");
-                    wantedAprTagId = 2;
-            }
-        } else {
-            switch (position) {
-                case CENTER:
-                    wantedAprTagId = 5;
-                    break;
-                case RIGHT:
-                    wantedAprTagId = 6;
-                    break;
-                case LEFT:
-                    wantedAprTagId = 4;
-                    break;
-                default:
-                    Log.d("vision", "setWantedAprTagId: enter default");
-                    wantedAprTagId = 5;
             }
         }
     }
@@ -246,114 +212,6 @@ public class Robot {
                 .addProcessor(aprilTagProcessor)
                 .addProcessor(markerProcessorBlue)
                 .build();
-    }
-
-    public double getAprilTagXPos(int idNumber) {
-
-        double xValue = 0;
-        List<AprilTagDetection> currentDetections = aprilTagProcessor.getDetections();
-        if (currentDetections != null) {
-            Log.d("vision", "num of detections" + currentDetections.size());
-            for (AprilTagDetection detection : currentDetections) {
-                Log.d("vision", "id detections" + detection.metadata.id);
-                if (detection.metadata.id == idNumber) {
-                    xValue = detection.ftcPose.x;
-                    telemetry.addData("id detected", idNumber);
-                    break;
-                }
-            }
-        } else {
-            telemetry.addLine("not detected");
-            Log.d("vision", "detected");
-            return 0;
-        }
-        return -xValue;
-    }
-
-    public double getAprilTagRange(int idNumber) {
-
-        List<AprilTagDetection> currentDetections = aprilTagProcessor.getDetections();
-
-        double range = 0;
-        for (AprilTagDetection detection : currentDetections) {
-            if (detection.metadata.id == idNumber) {
-                range = detection.ftcPose.range;
-                break;
-            }
-
-        }
-        return range;
-    }
-
-    public boolean moveRelativeToAprilTagX(double mmFromAprilTag, int idNumber) {
-        double inchesFromAprilTag = mmFromAprilTag / 25.4;
-        boolean done = false;
-
-        double aprilTagXPos = getAprilTagXPos(idNumber);
-
-        double[] powerMoveNegative = calculateMecanumPower((inchesFromAprilTag - aprilTagXPos));
-        double[] powerMovePositive = calculateMecanumPower(-(inchesFromAprilTag - aprilTagXPos));
-
-        double[] stopPower = {0, 0, 0, 0};
-
-        if (!(aprilTagXPos > inchesFromAprilTag - 0.5 &&
-                aprilTagXPos < inchesFromAprilTag + 0.5)) {
-            if (aprilTagXPos < inchesFromAprilTag) {
-                powerMovePositive = calculateMecanumPower(-25.4 * (inchesFromAprilTag - aprilTagXPos));
-                setMotorPower(powerMovePositive);
-            } else {
-                powerMoveNegative = calculateMecanumPower(-25.4 * (inchesFromAprilTag - aprilTagXPos));
-                setMotorPower(powerMoveNegative);
-            }
-        } else {
-            setMotorPower(stopPower);
-            done = true;
-        }
-
-        telemetry.addData("power", powerMovePositive);
-        telemetry.addData("power 2", powerMoveNegative);
-        telemetry.addData("x ", aprilTagXPos);
-        telemetry.addData("left range", aprilTagXPos > inchesFromAprilTag - 0.5);
-        telemetry.addData("right range", aprilTagXPos < inchesFromAprilTag + 0.5);
-
-        return done;
-    }
-
-    public boolean moveRelativeToAprilTagRange(double mmFromAprilTag, int idNumber) {
-        double targetFromAprilTagInches = mmFromAprilTag / 25.4;
-        boolean done = false;
-        double aprilTagRange = getAprilTagRange(idNumber);
-        double moveDistanceInches;
-
-        if (aprilTagRange == 0) {
-            moveDistanceInches = targetFromAprilTagInches;
-        } else {
-            moveDistanceInches = ((aprilTagRange - targetFromAprilTagInches));
-        }
-
-        double[] stopPower = {0, 0, 0, 0};
-        telemetry.addData("april tag range", aprilTagRange);
-        Log.d("vision", "april tag range" + aprilTagRange);
-        Log.d("vision", "move distance" + moveDistanceInches);
-        if (moveDistanceInches > 0.5 || moveDistanceInches < -0.5) {
-            //robot is backward
-            //move closer to april tag
-            //move away from april tag
-            straightBlocking(Math.abs(moveDistanceInches), !(moveDistanceInches > 0), 0.75);
-        } else if (aprilTagRange == 0) {
-
-            setMotorPower(stopPower);
-            telemetry.addLine("not seeing april tag, not moving");
-            Log.d("vision", "not seeing april tag not moving");
-            done = true;
-        } else {
-            setMotorPower(stopPower);
-            done = true;
-        }
-
-        telemetry.addData("range", getAprilTagRange(idNumber));
-
-        return done;
     }
 
     public void setUpImu() {
@@ -443,28 +301,6 @@ public class Robot {
         };
     }
 
-    public double calculateImuPower(int degrees) {
-
-
-        final double P_VALUE_FOR_TURNING_IMU = 0.002;
-
-        yaw = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES);
-
-        double proportionalPowerForImu;
-
-        yaw = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES);
-
-
-        double angleError = degrees - yaw;
-
-        proportionalPowerForImu = P_VALUE_FOR_TURNING_IMU * angleError;
-
-        //telemetry.addData("yaw", yaw);
-
-        return proportionalPowerForImu;
-
-    } //IMU
-
     public void setMotorPower(double lFront, double rFront, double lBack, double rBack) {
         this.fLeft.setPower(lFront);
         this.fRight.setPower(rFront);
@@ -539,116 +375,6 @@ public class Robot {
             setMotorPower(0, 0, 0, 0);
             sleep(100);
         }
-    }
-
-    public void autoForward(double targetDistanceInMM) throws InterruptedException {
-
-
-        final double P_VALUE = 0.006;
-
-        //301 = circumference mm
-        //537.7, ticks per motor revolution
-        //1.4, gear ratio
-        //converting mm to ticks
-        final double MM_TO_TICKS = (537.7 / 1.4) / 301.59;
-
-        double targetPos = targetDistanceInMM * MM_TO_TICKS + fLeft.getCurrentPosition();
-        double error = targetPos - fLeft.getCurrentPosition();
-
-        final double PROPORTIONAL_POWER = P_VALUE * error;
-
-
-        long lastCheckMillis = System.currentTimeMillis();
-        long millis = System.currentTimeMillis();
-
-        double oldTick = fLeft.getCurrentPosition();
-
-        boolean isStopped = false;
-
-        while (!(error <= 10 && isStopped) && opMode.opModeIsActive()) {
-
-            millis = System.currentTimeMillis();
-
-
-            error = targetPos - fLeft.getCurrentPosition();
-
-            fLeft.setPower(PROPORTIONAL_POWER);
-            bLeft.setPower(PROPORTIONAL_POWER);
-            fRight.setPower(PROPORTIONAL_POWER);
-            bRight.setPower(PROPORTIONAL_POWER);
-
-
-            if (millis > lastCheckMillis + 500) {
-                lastCheckMillis = millis;
-                double newTicks = fLeft.getCurrentPosition();
-
-                if (oldTick == newTicks) {
-                    isStopped = true;
-                }
-
-                oldTick = newTicks;
-
-
-            }
-
-        }
-
-        fLeft.setPower(0);
-        bLeft.setPower(0);
-        fRight.setPower(0);
-        bRight.setPower(0);
-
-    }//Auto Forward but Better
-
-    public double convertMMToTicksForMecanum(double targetDistanceInMM) {
-
-        //301 = circumference mm
-        //537.7, ticks per motor revolution
-        //converting mm to ticks
-        final double MM_TO_TICKS = (537.7 / 301.59) * 1.2;
-
-        return targetDistanceInMM * MM_TO_TICKS;
-    }
-
-    public double getRemainingTicksForDrivetrainMecanum(double targetDistanceInMM) {
-        double targetDistanceInTicks = convertMMToTicksForMecanum(targetDistanceInMM);
-        return targetDistanceInTicks - fLeft.getCurrentPosition();
-    }
-
-    //TODO document for notebook
-
-    public boolean checkReachedDistanceForMecanum(double targetDistanceInMM) {
-
-        boolean done = false;
-        double remainingDistance = Math.abs(getRemainingTicksForDrivetrainMecanum(targetDistanceInMM));
-
-
-        //telemetry.addData("remaining distance in ticks for mecananamasm", remainingDistance);
-
-        if (remainingDistance < 30 && -yaw < 5 && -yaw > -5) {
-            done = true;
-        }
-        return done;
-    }
-
-    public double[] calculateMecanumPower(double targetDistanceInMM) {
-        final double P_VALUE_FOR_MECANUM = 0.002;
-
-        if (checkReachedDistanceForMecanum(targetDistanceInMM)) {
-            return new double[]{0, 0, 0, 0};
-        }
-
-        double remainingDistance = getRemainingTicksForDrivetrainMecanum(targetDistanceInMM);
-        double proportionalPower = P_VALUE_FOR_MECANUM * remainingDistance;
-
-        double scaleImu = 0; //8.15;
-
-        return scalePowers(new double[]{
-                proportionalPower + calculateImuPower(0) * scaleImu,
-                -proportionalPower - calculateImuPower(0) * scaleImu,
-                -proportionalPower + calculateImuPower(0) * scaleImu,
-                proportionalPower - calculateImuPower(0) * scaleImu
-        });
     }
 
     public void mecanumBlocking(double inches, boolean right, double maxPower) {
@@ -768,7 +494,7 @@ public class Robot {
 
         //save marker position, apriltag position
         setMarkerPosRed(position);
-        setWantedAprTagIdRed(position, true);
+        setWantedAprTagId(position, true);
 
     }
 
@@ -787,7 +513,8 @@ public class Robot {
 
         //save marker position, apriltag position
         setMarkerPosBlue(position);
-        setWantedAprTagIdBlue(position, true);
+        // TODO: fix this stuff
+        // setWantedAprTagId(position, false);
 
     }
 
@@ -827,60 +554,6 @@ public class Robot {
             setHeading(-90, 0.25);
             straightBlocking(24, false, 0.7);
             setHeading(-90, 0.25);
-        }
-    }
-
-    public void longBlueMoveToBoard() {
-        Log.d("vision", "moveToMarker: Pos " + markerPosBlue);
-        Log.d("vision", "moveToMarker: Tag " + wantedAprTagId);
-        while (opMode.opModeIsActive()) {
-            if (markerPosBlue == MarkerDetectorBlue.MARKER_POSITION.RIGHT) {
-                straightBlocking(19, false, 0.5);
-                setHeading(-45, 0.25);
-                straightBlocking(6, false, 0.7);
-                setHeading(-45, 0.25);
-                straightBlocking(12, true, 0.7);
-                setHeading(0, 0.7);
-                straightBlocking(39, false, 0.7);
-                setHeading(-90, 0.7);
-                straightBlocking(77, false, 0.7);
-                setHeading(-90, 0.75);
-                mecanumBlocking(38, false, 0.7);
-                setHeading(-90, 0.7);
-                break;
-            } else if (markerPosBlue == MarkerDetectorBlue.MARKER_POSITION.LEFT) {
-                straightBlocking(19, false, 0.5);
-                setHeading(45, 0.25);
-                straightBlocking(5, false, 0.7);
-                setHeading(45, 0.25);
-                straightBlocking(6, true, 0.7);
-                setHeading(0, 0.7);
-                straightBlocking(33, false, 0.7);
-                setHeading(-90, 0.7);
-                straightBlocking(72, false, 0.7);
-                setHeading(-179.5, 0.75);
-                straightBlocking(24, false, 0.7);
-                setHeading(-90, 0.7);
-                break;
-            } else { //center, default
-                Log.d("vision", "moveToMarker: center or default");
-                straightBlocking(20, false, 0.5);
-                setHeading(0, 0.7);
-                mecanumBlocking(8, true, 0.5);
-                setHeading(0, 0.7);
-                straightBlocking(12, false, 0.5);
-                setHeading(0, 0.7);
-                straightBlocking(5, true, 0.7);
-                setHeading(0, 0.7);
-                mecanumBlocking(8, true, 0.25);
-                setHeading(0, 0.7);
-                straightBlocking(25, false, 0.7);
-                setHeading(-90, 0.7);
-                straightBlocking(84, false, 0.7);
-                mecanumBlocking(24, false,  0.5);
-                setHeading(-90, 0.7);
-                break;
-            }
         }
     }
 
