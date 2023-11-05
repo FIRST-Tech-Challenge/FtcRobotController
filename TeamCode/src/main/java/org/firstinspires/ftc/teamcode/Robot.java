@@ -56,9 +56,10 @@ public class Robot {
     private MarkerProcessorBlue markerProcessorBlue;
     private AprilTagProcessor aprilTagProcessor;
     private VisionPortal visionPortal;
+    boolean redAlliance;
 
     //CONSTRUCTOR
-    public Robot(HardwareMap hardwareMap, LinearOpMode opMode, Telemetry telemetry) {
+    public Robot(HardwareMap hardwareMap, LinearOpMode opMode, Telemetry telemetry, boolean redAlliance) {
         this.hardwareMap = hardwareMap;
         this.opMode = opMode;
         this.telemetry = telemetry;
@@ -938,8 +939,79 @@ public class Robot {
         if (aligned) {
             Log.d("vision", "alignToBoard: aligned is true");
             straightBlocking(distanceToBoard, false, 0.75);
+
+            if (redAlliance) {
+                setHeading(-90, 0.75);
+            } else {
+                setHeading(90, 0.75);
+            }
+
         } else {
             Log.d("vision", "alignToBoard: not aligned, still broke out of !aligned. should not be happening");
+        }
+    }
+
+    public void moveToBoard () {
+        Log.d("vision", "moveToMarker: Pos " + markerPosRed);
+        Log.d("vision", "moveToMarker: Tag " + wantedAprTagId);
+
+        int polarity;
+        if (redAlliance) {
+            polarity = -1;
+        } else {
+            polarity = 1;
+        }
+
+        while (opMode.opModeIsActive()) {
+            setServoPosBlocking(holderClamp, 0.5);
+            if (markerPosRed == MarkerDetectorRed.MARKER_POSITION.RIGHT) { //RIGHT
+                straightBlocking(20, false, 0.25); //forward
+                setHeading(45 * polarity, 0.25); //turn right
+                straightBlocking(8, false, 0.7); //forward
+                setHeading(45 * polarity, 0.25);
+                straightBlocking(12, true, 0.7); //dropoff, back
+                setHeading(0, 0.7); //turn back
+                straightBlocking(34, false, 0.7); //forward past spike
+                setHeading(90 * polarity, 0.7); //turn right toward truss
+                straightBlocking(77, false, 0.7); //forward under truss
+                setHeading(90 * polarity, 0.75);
+                mecanumBlocking(34, false, 0.7); //mecanum directly in front of board
+                setHeading(90 * polarity, 0.7);
+                break;
+            } else if (markerPosRed == MarkerDetectorRed.MARKER_POSITION.LEFT) { //LEFT
+                straightBlocking(18, false, 0.25); //forward
+                setHeading(-45 * polarity, 0.25); //turn
+                straightBlocking(7, false, 0.7); //forward
+                setHeading(-45 * polarity, 0.25);
+                straightBlocking(8, true, 0.7); //dropoff, backward
+                setHeading(0, 0.7); //turn
+                mecanumBlocking(1, false, 0.5); //mecanum right
+                setHeading(0, 0.7);
+                straightBlocking(33, false, 0.7); //forward to truss
+                setHeading(90 * polarity, 0.7); //turn
+                straightBlocking(72, false, 0.7); //forward to red line
+                setHeading(90 * polarity, 0.7);
+                mecanumBlocking(24, false, 0.7); //mecanum directly in front of board
+                setHeading(90 * polarity, 0.7);
+                break;
+            } else { //center, default
+                Log.d("vision", "moveToMarker: center or default");
+                mecanumBlocking(4, true, 0.5); //go left
+                setHeading(0, 0.6);
+                straightBlocking(28.5, false, 0.5); //go forward
+                setHeading(0, 0.6);
+                straightBlocking(6, true, 0.7); //dropoff & move back
+                setHeading(0, 0.6);
+                mecanumBlocking(12, true, 0.25); //move left
+                setHeading(0, 0.7);
+                straightBlocking(24, false, 0.7); //go forward & around marker
+                setHeading(90 * polarity, 0.7); //turn
+                straightBlocking(84, false, 0.7); //forward to red line
+                setHeading(90 * polarity, 0.7);
+                mecanumBlocking(29, false,  0.5); //mecanum directly in front of board
+                setHeading(90 * polarity, 0.7);
+                break;
+            }
         }
     }
 }
