@@ -34,6 +34,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.BuiltinCameraDirection;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
+import org.firstinspires.ftc.teamcode.RobotClass;
 import org.firstinspires.ftc.vision.VisionPortal;
 import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
 import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
@@ -56,9 +57,11 @@ public class AprilTagTesting extends LinearOpMode {
     private VisionPortal visionPortal;
 
     @Override
-    public void runOpMode() {
+    public void runOpMode() throws InterruptedException {
 
-        initAprilTag();
+        RobotClass robot = new RobotClass(this);
+
+        robot.init(hardwareMap);
 
         // Wait for the DS start button to be touched.
         telemetry.addData("DS preview on/off", "3 dots, Camera Stream");
@@ -70,7 +73,23 @@ public class AprilTagTesting extends LinearOpMode {
             while (opModeIsActive()) {
 
                 telemetryAprilTag();
+                double throttle = -gamepad1.left_stick_y;
+                double turn = gamepad1.right_stick_x;
 
+                //setting power for forward-backward movement
+                robot.frontLeft.setPower(throttle);
+                //setting the power for frontLeft
+                robot.backLeft.setPower(throttle);
+                //setting the power for backLeft
+                robot.frontRight.setPower(throttle);
+                //setting the power for frontRight
+                robot.backRight.setPower(throttle);
+                //setting the power for backRight
+
+                robot.frontLeft.setPower(turn);
+                robot.backLeft.setPower(turn);
+                robot.frontRight.setPower(-turn);
+                robot.backRight.setPower(-turn);
                 // Push telemetry to the Driver Station.
                 telemetry.update();
 
@@ -113,7 +132,9 @@ public class AprilTagTesting extends LinearOpMode {
     /**
      * Add telemetry about AprilTag detections.
      */
-    private void telemetryAprilTag() {
+    private void telemetryAprilTag(){
+
+        AprilTagDetection currentDetection = null;
 
         List<AprilTagDetection> currentDetections = aprilTag.getDetections();
         telemetry.addData("# AprilTags Detected", currentDetections.size());
