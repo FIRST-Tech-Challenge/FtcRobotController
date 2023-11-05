@@ -2,6 +2,8 @@ package org.firstinspires.ftc.teamcode;
 
 import static org.firstinspires.ftc.robotcore.external.navigation.AngleUnit.DEGREES;
 
+import static java.lang.Thread.sleep;
+
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
@@ -16,14 +18,18 @@ import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
+import org.firstinspires.ftc.teamcode.PIDController;
+import org.firstinspires.ftc.teamcode.Pipeline2023;
+import org.firstinspires.ftc.teamcode.actuatorUtils;
+import org.firstinspires.ftc.teamcode.moveUtils;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
 
 import java.util.Locale;
 
-@Autonomous(name = "RedRight", group = "")
-public class RedRight extends LinearOpMode {
+@Autonomous(name = "DumpTest", group = "")
+public class DumpTest extends LinearOpMode {
     //test1
     private DcMotor LF = null;
     private DcMotor RF = null;
@@ -73,7 +79,7 @@ public class RedRight extends LinearOpMode {
         RB = hardwareMap.get(DcMotor.class, "RB");
 
         arm = hardwareMap.get(DcMotor.class, "arm");
-        gripper = hardwareMap.get(Servo.class, "gripper");
+        //gripper = hardwareMap.get(Servo.class, "gripper");
         dump = hardwareMap.get(Servo.class, "Dump");
 
 
@@ -123,10 +129,14 @@ public class RedRight extends LinearOpMode {
 
             tfod.setZoom(1.5, 16.0 / 9.0);
         }*/
-        actuatorUtils.gripperClose(false);
+        //actuatorUtils.gripperClose(false);
+        actuatorUtils.dumpClose();
 
 
         waitForStart();
+        actuatorUtils.dumpOpen();
+        sleep(2000);
+        actuatorUtils.dumpClose();
         currTime=System.currentTimeMillis();
         startTime=currTime;
         if (resultROI == 3) {
@@ -200,7 +210,7 @@ public class RedRight extends LinearOpMode {
         moveUtils.turnCW(56);
         actuatorUtils.armPole(actuatorUtils.ArmLevel.CONE1);
         moveUtils.goStraight(10f,MAX_SPEED,MIN_SPEED,ACCEL);
-        actuatorUtils.gripperOpen(true);
+        //actuatorUtils.gripperOpen(true);
         moveUtils.goStraight(-12f,MAX_SPEED,MIN_SPEED,ACCEL);
         moveUtils.turnCCW(56);
     }
