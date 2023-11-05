@@ -118,6 +118,7 @@ public class BasicOmniOpMode_Linear extends LinearOpMode {
 
         if (!manualMode) {
             // Automatic servo control
+            telemetry.addLine("Automatic servo positioning");
             if (intakeButton.is(Button.State.TAP)) {
                 // Intaking- make sure the pan doesn't have to clear the intake because the pan will be lowered to ground level.
                 telemetry.addLine("Beginning intaking");
@@ -168,6 +169,7 @@ public class BasicOmniOpMode_Linear extends LinearOpMode {
 
         } else {
             // Manual mode in case the calibration is crashing and burning
+            telemetry.addLine("Manual servo positioning");
             intake.setPower(-gamepad2.right_trigger);
             if (intakeButton.is(Button.State.HELD)) servoSetpoint = 0.84;
             else if (gamepad1.x) servoSetpoint = 0.15;
