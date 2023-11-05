@@ -40,11 +40,8 @@ public class Robot {
     Servo arm;
     Servo holderClamp;
     Servo flipper;
-
-    //arm motor is not used
-    DcMotor armMotor;
+    Servo hook;
     IMU imu;
-    double yaw;
     double prevError = 0;
     double prevTime = 0;
     MarkerDetectorRed.MARKER_POSITION markerPosRed;
@@ -70,9 +67,9 @@ public class Robot {
         lsBack.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
         redAlliance = red;
-
         arm = hardwareMap.servo.get("arm");
         holderClamp = hardwareMap.servo.get("holderClamp");
+        hook = hardwareMap.servo.get("linearLocker");
         //int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
         //webcam = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "Webcam 1"), cameraMonitorViewId);
     }
@@ -473,12 +470,6 @@ public class Robot {
         sleep(100);
     }
 
-    /**
-     * Detects the T-marker and move this marker.
-     *
-     * @return
-     */
-
     public void detectMarkerPositionRed() {
 
         //detect marker position
@@ -637,6 +628,7 @@ public class Robot {
 
         while (opMode.opModeIsActive()) {
             setServoPosBlocking(holderClamp, 0.5);
+            setServoPosBlocking(hook, 0.5);
             if (markerPosRed == MarkerDetectorRed.MARKER_POSITION.RIGHT) { //RIGHT
                 straightBlocking(20, false, 0.25); //forward
                 setHeading(45 * polarity, 0.25); //turn right

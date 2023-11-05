@@ -8,7 +8,7 @@ public class TeleOp extends LinearOpMode {
 
     @Override
     public void runOpMode() throws InterruptedException {
-        Robot robot = new Robot(hardwareMap, this, telemetry);
+        Robot robot = new Robot(hardwareMap, this, telemetry, true);
 
         robot.setUpDrivetrainMotors();
         double forwardBackward = gamepad1.left_stick_y * -0.5;

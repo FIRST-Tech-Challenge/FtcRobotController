@@ -1,14 +1,12 @@
 package org.firstinspires.ftc.teamcode;
 
-import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 
 public class AutoRed extends LinearOpMode {
-
     @Override
     public void runOpMode() throws InterruptedException {
-        Robot robot = new Robot(hardwareMap, this, telemetry);
+        Robot robot = new Robot(hardwareMap, this, telemetry, true);
         robot.setUpDrivetrainMotors();
 //        robot.setUpArmMotor();
 
@@ -48,7 +46,7 @@ public class AutoRed extends LinearOpMode {
 
 //        double[] powerMoveCloser = robot.calculateDrivetrainPower(25.4 * (targetDistanceFromAprilTag - robot.getAprilTagRange(idNumber)));
 //        double[] powerMoveAway = robot.calculateDrivetrainPower(-25.4 * (targetDistanceFromAprilTag - robot.getAprilTagRange(idNumber)));
-
+/*
 
 //        double[] stopPower = {0, 0, 0, 0};
         boolean isDone = false;
@@ -81,4 +79,7 @@ public class AutoRed extends LinearOpMode {
         }
 
     }
+
+ */
+}
 }
