@@ -12,6 +12,7 @@ import com.arcrobotics.ftclib.gamepad.GamepadEx;
 import com.arcrobotics.ftclib.gamepad.GamepadKeys;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.team6220_CENTERSTAGE.Utilities;
 
 @TeleOp(name="League1_TeleOp", group ="amogus")
 public class League1_TeleOp extends LinearOpMode {
@@ -118,7 +119,7 @@ public class League1_TeleOp extends LinearOpMode {
                 // sets target to 90 added to current heading
                 // if already turning 90, add to target instead of current
                 // also limits target angle between -180 and 180
-                targetHeading = limitAngle(
+                targetHeading = Utilities.limitAngle(
                     (curTurningState == TurnStates.TURNING_90 ? targetHeading : currentHeading) +
                     (gp1.wasJustPressed(GamepadKeys.Button.LEFT_BUMPER) ? 90 : -90)
                 );
@@ -127,10 +128,10 @@ public class League1_TeleOp extends LinearOpMode {
             } else if (justPressedAny(gp1, DPAD_KEYCODES) > -1) {
                 // find which dpad button was pressed, use its index * 90 degrees as target
                 // up: 0*90=0, left: 1*90=90, down: 2*90=180, right: 3*90=270 (-> -90)
-                targetHeading = limitAngle(justPressedAny(gp1, DPAD_KEYCODES) * 90.0);
+                targetHeading = Utilities.limitAngle(justPressedAny(gp1, DPAD_KEYCODES) * 90.0);
                 curTurningState = TurnStates.TURNING_FIELD_CENTRIC;
 
-            } else if (Math.abs(currentHeading - targetHeading) < MIN_HEADING_ACCURACY) {
+            } else if (Math.abs(Utilities.shortestDifference(currentHeading, targetHeading)) < MIN_HEADING_ACCURACY) {
                 curTurningState = TurnStates.TURNING_MANUAL;
             }
 
@@ -144,7 +145,7 @@ public class League1_TeleOp extends LinearOpMode {
                 case TURNING_FIELD_CENTRIC:
                     // https://www.desmos.com/calculator/zdsmmtbnwf (updated)
                     // flips difference so that it mimics turn stick directions
-                    turnPower = clamp(-shortestDifference(currentHeading, targetHeading) / 90.0);
+                    turnPower = Utilities.clamp(-Utilities.shortestDifference(currentHeading, targetHeading) / 90.0);
             }
 
             // check for slowmode
@@ -156,9 +157,9 @@ public class League1_TeleOp extends LinearOpMode {
                 turnPower *= SLOWMODE_MULTIPLIER;
             }
             // clamp powers between -1.0 and 1.0
-            drivePowerX = clamp(drivePowerX);
-            drivePowerY = clamp(drivePowerY);
-            turnPower = clamp(turnPower);
+            drivePowerX = Utilities.clamp(drivePowerX);
+            drivePowerY = Utilities.clamp(drivePowerY);
+            turnPower = Utilities.clamp(turnPower);
 
             drive.setDrivePowers(new PoseVelocity2d(
                     new Vector2d(
@@ -179,7 +180,7 @@ public class League1_TeleOp extends LinearOpMode {
             }
 
             // apply clamped intakePower
-            drive.intakeMotor.setPower(clamp(intakePower));
+            drive.intakeMotor.setPower(Utilities.clamp(intakePower));
 
 
             // telemetry
@@ -215,49 +216,5 @@ public class League1_TeleOp extends LinearOpMode {
             }
         }
         return -1;
-    }
-
-    /**
-     * keeps angles between [-180,180] so that it does not exceed possible imu readings
-     * tested in https://www.desmos.com/calculator/igccxromri
-     * @param angle angle to limit (degrees)
-     * @return equivalent angle between -180 and 180
-     */
-    private static double limitAngle(double angle) {
-        return gooderMod((angle + 180.0), 360.0) - 180.0;
-    }
-    // does modulus similar to desmos mod function, normal java % is different and doesn't work
-    private static double gooderMod(double a, double b) {
-        return a - Math.floor(a / b) * b;
-    }
-
-    /**
-     * finds the shortest distance between two angles in the imu range (-180 to 180)
-     * tested in https://www.desmos.com/calculator/bsw432fulz
-     * @param current current heading
-     * @param target destination heading
-     * @return shortest difference current -> target
-     */
-    private static double shortestDifference(double current, double target) {
-        return limitAngle(target - current);
-    }
-
-    /**
-     * clamp value between a minimum and maximum value
-     * @param val value to clamp
-     * @param min minimum value allowed
-     * @param max maximum value allowed
-     * @return clamped value
-     */
-    private static double clamp(double val, double min, double max) {
-        return Math.max(min, Math.min(max, val));
-    }
-    /**
-     * shortcut for clamping between -1.0 and 1.0
-     * @param val value to clamp
-     * @return clamped value
-     */
-    private static double clamp(double val) {
-        return clamp(val, -1.0, 1.0);
     }
 }

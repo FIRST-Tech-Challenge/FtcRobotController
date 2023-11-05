@@ -1,9 +1,14 @@
 package org.firstinspires.ftc.team6220_CENTERSTAGE.autoClasses;
 
 import com.acmerobotics.dashboard.config.Config;
+import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.IMU;
+
+import org.firstinspires.ftc.team6220_CENTERSTAGE.Utilities;
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 
 @Config
 
@@ -31,14 +36,16 @@ abstract public class League1_AutoFramework extends LinearOpMode {
 
             case SHORT:
 
-                driveInches(-24 * 2 * strafeSignFlip, 0); // strafe to parking spot, front facing wall
+                driveInches(0, 24 * 2); // drive forward to parking spot
 
                 break;
 
             case LONG:
 
-                driveInches(0, -3); // back away from the wall 3 inches
-                driveInches(-24 * 4 * strafeSignFlip, 0); // strafe to parking spot, front facing wall
+                sleep(15000); // wait for 15 seconds so alliance an finish
+
+                driveInches(-3 * strafeSignFlip, 0); // strafe away from the wall 3 inches
+                driveInches(0, 24 * 4); // drive forward to parking spot
 
                 break;
         }
@@ -91,11 +98,11 @@ abstract public class League1_AutoFramework extends LinearOpMode {
         BR.setPower(ROBOT_SPEED);
 
         // keep looping while we are still active, and there is time left, and both motors are running.
-        // Note: We use (isBusy() && isBusy()) in the loop test, which means that when EITHER motor hits
+        // Note: We use (isBusy() || isBusy()) in the loop test, which means that when EITHER motor hits
         // its target position, the motion will stop.  This is "safer" in the event that the robot will
         // always end the motion as soon as possible.
         // However, if you require that BOTH motors have finished their moves before the robot continues
-        // onto the next step, use (isBusy() || isBusy()) in the loop test.
+        // onto the next step, use (isBusy() && isBusy()) in the loop test.
         while (opModeIsActive() &&
                 //(runtime.seconds() < 30) &&
                 (FL.isBusy() && FR.isBusy() && BL.isBusy() && BR.isBusy())) {
@@ -111,6 +118,42 @@ abstract public class League1_AutoFramework extends LinearOpMode {
         BR.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
     }
 
+    public static double MIN_HEADING_ACCURACY = 5.0; // degrees off from target
+
+    // turn to angle -180 to 180
+    public void turnToAngle(double targetHeading) {
+        targetHeading = Utilities.limitAngle(targetHeading);
+
+        double turnPower = 0.0;
+        double currentHeading = 0.0;
+
+        // turn until roughly the right angle
+        while (Math.abs(Utilities.shortestDifference(currentHeading, targetHeading)) > MIN_HEADING_ACCURACY) {
+
+            // get heading from imu in degrees
+            currentHeading = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES);
+
+            turnPower = Utilities.clamp(-Utilities.shortestDifference(currentHeading, targetHeading) / 90.0);
+
+            turnInPlaceWithPower(turnPower);
+
+            telemetry.addData("currentHeading", currentHeading);
+            telemetry.addData("targetHeading", targetHeading);
+            telemetry.addData("turnPower", turnPower);
+            telemetry.update();
+
+        }
+
+        stopDriving();
+    }
+
+    public void turnInPlaceWithPower(double turnPower) {
+        FL.setPower(turnPower);
+        FR.setPower(-turnPower);
+        BL.setPower(turnPower);
+        BR.setPower(-turnPower);
+    }
+
     private void stopDriving() {
         FL.setPower(0.0);
         FR.setPower(0.0);
@@ -119,6 +162,7 @@ abstract public class League1_AutoFramework extends LinearOpMode {
     }
     
     DcMotorEx FL, BL, BR, FR, intakeMotor;
+    IMU imu;
     
     public void initHardware() {
         // stolen from roadrunner mecanum drive class
@@ -145,5 +189,13 @@ abstract public class League1_AutoFramework extends LinearOpMode {
         FR.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         intakeMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+
+
+
+        imu = hardwareMap.get(IMU.class, "imu");
+        IMU.Parameters parameters = new IMU.Parameters(new RevHubOrientationOnRobot(
+                RevHubOrientationOnRobot.LogoFacingDirection.RIGHT,
+                RevHubOrientationOnRobot.UsbFacingDirection.UP));
+        imu.initialize(parameters);
     }
 }
