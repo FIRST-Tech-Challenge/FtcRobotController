@@ -34,8 +34,8 @@ public class CostaNewTest extends LinearOpMode {
 
         waitForStart();
 
-        double xSpeed = -gamepad1.left_stick_x;
-        double ySpeed = gamepad1.left_stick_y;
+        double xSpeed = gamepad1.left_stick_x;
+        double ySpeed = -gamepad1.left_stick_y;
         double rotation = gamepad1.right_stick_x;
 
         frontLeft.setPower(xSpeed + ySpeed + rotation);
