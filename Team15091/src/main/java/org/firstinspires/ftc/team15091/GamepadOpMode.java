@@ -125,6 +125,7 @@ public class GamepadOpMode extends OpModeBase {
                     y_pressed = true;
                 }
             }
+
             //region roller
             if (gamepad1.left_bumper) {
                 if (!lb_pressed) {
@@ -132,9 +133,9 @@ public class GamepadOpMode extends OpModeBase {
                         // If the roller is running, stop it
                         rollerVelocity = 0.0;
                         isRollerRunning = false;
-                    } else {
+                    } else if (!limitSwitch) {
                         // If the roller is stopped, start it with positive velocity
-                        rollerVelocity = 2700.0;
+                        rollerVelocity = 2500.0;
                         isRollerRunning = true;
                     }
                     lb_pressed = true;
@@ -151,7 +152,7 @@ public class GamepadOpMode extends OpModeBase {
                         isRollerRunning = false;
                     } else {
                         // If the roller is stopped, start it with negative velocity
-                        rollerVelocity = -2000.0;
+                        rollerVelocity = -1000.0;
                         isRollerRunning = true;
                     }
                     rb_pressed = true;
@@ -164,8 +165,8 @@ public class GamepadOpMode extends OpModeBase {
             //endregion
 
             //region drivetrain control
-            double sensitivity = 2.0; // Adjust the sensitivity value as needed
-            double deadzone = 0.1; // Adjust the deadzone value as needed
+            double sensitivity = 1.5; // Adjust the sensitivity value as needed
+            double deadzone = 0.08d; // Adjust the deadzone value as needed
             double drive = -gamepad1.left_stick_y - gamepad1.right_stick_y;
             double turn = gamepad1.left_stick_x;
             double side = gamepad1.right_stick_x;
@@ -192,7 +193,7 @@ public class GamepadOpMode extends OpModeBase {
                 maxPower = 0.6;
             }
 
-            if (drive > 0d && frontDistance < 15d) {
+            if (drive > 0d && frontDistance < 10d) {
                 maxPower = Range.scale(frontDistance, 2d, 15d, 0.05d, 0.2d);
             }
 
