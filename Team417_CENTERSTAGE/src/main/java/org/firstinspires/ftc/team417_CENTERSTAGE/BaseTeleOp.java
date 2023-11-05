@@ -184,8 +184,9 @@ public class BaseTeleOp extends BaseOpMode {
         }
     }
 
-    public boolean dumperDumped = true;
-
+    public boolean dumperTilted = false;
+    public boolean xIsPressed = false;
+    public boolean dumperDumped = false;
     public boolean bIsPressed = false;
 
     public void controlDumperUsingControllers() {
@@ -204,12 +205,26 @@ public class BaseTeleOp extends BaseOpMode {
         if (!bIsPressed && gamepad2.b) {
             if (dumperDumped) {
                 resetDumper();
+                dumperTilted = false;
             } else {
                 dumpDumper();
+                dumperTilted = true;
             }
             dumperDumped = !dumperDumped;
         }
         bIsPressed = gamepad2.b;
+
+        if (!xIsPressed && gamepad2.x) {
+            if (dumperTilted) {
+                resetDumper();
+                dumperDumped = false;
+            } else {
+                dumpDumper();
+                dumperDumped = true;
+            }
+            dumperTilted = !dumperTilted;
+        }
+        xIsPressed = gamepad2.x;
     }
 
     public boolean gateOpen = false;

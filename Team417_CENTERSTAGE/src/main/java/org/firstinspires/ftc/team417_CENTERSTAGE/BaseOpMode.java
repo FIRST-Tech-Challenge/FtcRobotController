@@ -1,6 +1,5 @@
 package org.firstinspires.ftc.team417_CENTERSTAGE;
 
-import com.acmerobotics.roadrunner.drive.Drive;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
@@ -123,6 +122,10 @@ abstract class BaseOpMode extends LinearOpMode {
 
     public void runIntakeMechanism(double speed) {
         intakeMotor.setPower(speed);
+    }
+
+    public void tiltDumper() {
+        dumperServo.setPosition(0.14);
     }
 
     public void dumpDumper() {
