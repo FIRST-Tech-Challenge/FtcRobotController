@@ -8,7 +8,7 @@ public class TestingWade extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
 
-        Robot robot = new Robot(hardwareMap, this, telemetry);
+        Robot robot = new Robot(hardwareMap, this, telemetry, true);
         robot.setUpDrivetrainMotors();
         waitForStart();
 

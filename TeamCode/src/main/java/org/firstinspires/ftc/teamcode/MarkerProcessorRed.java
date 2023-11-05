@@ -16,7 +16,7 @@ public class MarkerProcessorRed implements VisionProcessor {
     public MarkerProcessorRed(Telemetry telemetry) {
 
         this.telemetry = telemetry;
-        detector = new MarkerDetectorRed(telemetry);
+        detector = new MarkerDetectorRed(telemetry, MarkerDetectorRed.ALLIANCE_COLOR.RED);
     }
 
     private final MarkerDetectorRed detector;

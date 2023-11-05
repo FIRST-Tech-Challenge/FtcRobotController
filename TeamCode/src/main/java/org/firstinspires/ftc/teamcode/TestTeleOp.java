@@ -13,7 +13,7 @@ public class TestTeleOp extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
 
-        Robot robot = new Robot(hardwareMap, this, telemetry);
+        Robot robot = new Robot(hardwareMap, this, telemetry, true);
 
         DcMotor intake = hardwareMap.dcMotor.get("intake");
         Servo holderClamp = hardwareMap.servo.get("holderClamp");

@@ -27,11 +27,11 @@ public class TestAuto extends LinearOpMode {
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
         webcam = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "Webcam 1"), cameraMonitorViewId);
         elapsedTime = new ElapsedTime();
-        robot = new Robot(hardwareMap, this, telemetry);
+        robot = new Robot(hardwareMap, this, telemetry, true);
         robot.setUpDrivetrainMotors();
         boolean movedToMarker = false;
 
-        detector = new MarkerDetectorRed(telemetry);
+        detector = new MarkerDetectorRed(telemetry, MarkerDetectorRed.ALLIANCE_COLOR.RED);
         webcam.setPipeline(detector);
         webcam.openCameraDevice();
         webcam.startStreaming(320, 240, OpenCvCameraRotation.UPRIGHT);

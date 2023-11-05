@@ -21,12 +21,15 @@ public class MarkerDetectorRed extends OpenCvPipeline {
     private static final int SUBMAT_WIDTH = 120;
     private static final int SUBMAT_HEIGHT = 120;
     private Telemetry telemetry;
+    public enum ALLIANCE_COLOR {
+        RED, BLUE;
+    }
 
     public enum MARKER_POSITION {
         LEFT, RIGHT, CENTER, UNDETECTED, UNKNOWN;
     }
 
-    public MarkerDetectorRed(Telemetry telemetry) {
+    public MarkerDetectorRed(Telemetry telemetry, ALLIANCE_COLOR color) {
 
         this.telemetry = telemetry;
     }
@@ -95,6 +98,8 @@ public class MarkerDetectorRed extends OpenCvPipeline {
                 }
             }
         }
+
+
         return input;
         //return workingMatrix;
     }

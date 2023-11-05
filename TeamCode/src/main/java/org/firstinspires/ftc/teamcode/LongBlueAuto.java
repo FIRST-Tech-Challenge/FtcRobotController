@@ -12,7 +12,7 @@ public class LongBlueAuto extends LinearOpMode {
         int idNumber = 0;
 
         //robot, dt motors, vision processing setup
-        Robot robot = new Robot(hardwareMap, this, telemetry);
+        Robot robot = new Robot(hardwareMap, this, telemetry, true);
         //TODO uncomment
         robot.setUpDrivetrainMotors();
         robot.initVisionProcessingBlue();
