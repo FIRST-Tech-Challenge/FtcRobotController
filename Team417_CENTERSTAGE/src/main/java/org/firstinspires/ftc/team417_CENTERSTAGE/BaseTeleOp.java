@@ -30,9 +30,18 @@ public class BaseTeleOp extends BaseOpMode {
     }
 
     public void driveUsingControllers() {
-        double sensitivity = 1;
-        double rotSensitivity = 1;
+        boolean sensitive = gamepad1.right_bumper;
+
+        double sensitivity, rotSensitivity;
         double strafeConstant = 1.1;
+
+        if (sensitive) {
+            sensitivity = 0.5;
+            rotSensitivity = 0.8;
+        } else {
+            sensitivity = 1;
+            rotSensitivity = 1;
+        }
 
         double x = curveStick(gamepad1.left_stick_x) * strafeConstant * sensitivity;
         double y = curveStick(-gamepad1.left_stick_y) * sensitivity;
@@ -42,18 +51,25 @@ public class BaseTeleOp extends BaseOpMode {
     }
 
     public void driveUsingControllers(boolean curve) {
+        boolean sensitive = gamepad1.right_bumper;
+
         double sensitivity, rotSensitivity;
         double strafeConstant = 1.1;
-        double x, y, rot;
-        if (curve) {
+
+        if (sensitive) {
+            sensitivity = 0.5;
+            rotSensitivity = 0.8;
+        } else {
             sensitivity = 1;
             rotSensitivity = 1;
+        }
+
+        double x, y, rot;
+        if (curve) {
             x = curveStick(gamepad1.left_stick_x) * strafeConstant * sensitivity;
             y = curveStick(-gamepad1.left_stick_y) * sensitivity;
             rot = curveStick(gamepad1.right_stick_x) * rotSensitivity;
         } else {
-            sensitivity = 0.5;
-            rotSensitivity = 0.8;
             x = gamepad1.left_stick_x * strafeConstant * sensitivity;
             y = -gamepad1.left_stick_y * sensitivity;
             rot = gamepad1.right_stick_x * rotSensitivity;
