@@ -104,7 +104,7 @@ public class BaseTeleOp extends BaseOpMode {
     private boolean dpadDownPressed = false;
     private boolean dpadUpPressed = false;
     private void armControlBackup(){
-        double rStickSensitivity = 20; //how much moving right stick will effect the movement of the arm.
+        double rStickSensitivity = 28; //how much moving right stick will effect the movement of the arm.
         double armVelocity = -gamepad2.right_stick_y * rStickSensitivity; //how fast the arm moves based off of the right stick and sensitivity.
         double[] backupArmPositions = new double[] {ARM_MOTOR_MIN_POSITION, ARM_MOTOR_MAX_POSITION / 2.0,
                                                     ARM_MOTOR_MAX_POSITION * (3.0/4.0), ARM_MOTOR_MAX_POSITION}; //array of arm positions the dpad can move to.
@@ -144,9 +144,9 @@ public class BaseTeleOp extends BaseOpMode {
         if (armMotor.getCurrentPosition() < armLocation + 50 && armMotor.getCurrentPosition() > armLocation - 50) {
             armMotor.setPower(0);
         } else if (armMotor.getCurrentPosition() > armLocation) {
-            armMotor.setPower(-0.5);
+            armMotor.setPower(-0.7);
         } else if (armMotor.getCurrentPosition() < armLocation) {
-            armMotor.setPower(0.5);
+            armMotor.setPower(0.7);
         }
 
         telemetry.addData("arm target position", armLocation);
@@ -205,26 +205,27 @@ public class BaseTeleOp extends BaseOpMode {
         if (!bIsPressed && gamepad2.b) {
             if (dumperDumped) {
                 resetDumper();
-                dumperTilted = false;
-            } else {
-                dumpDumper();
-                dumperTilted = true;
-            }
-            dumperDumped = !dumperDumped;
-        }
-        bIsPressed = gamepad2.b;
-
-        if (!xIsPressed && gamepad2.x) {
-            if (dumperTilted) {
-                resetDumper();
                 dumperDumped = false;
             } else {
                 dumpDumper();
                 dumperDumped = true;
             }
+        }
+        bIsPressed = gamepad2.b;
+
+        /*
+        if (!xIsPressed && gamepad2.x) {
+            if (dumperTilted) {
+                resetDumper();
+                dumperDumped = false;
+            } else {
+                tiltDumper();
+                dumperDumped = true;
+            }
             dumperTilted = !dumperTilted;
         }
         xIsPressed = gamepad2.x;
+        */
     }
 
     public boolean gateOpen = false;
