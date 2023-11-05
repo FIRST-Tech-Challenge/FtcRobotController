@@ -190,6 +190,9 @@ abstract public class BaseAutonomous extends BaseOpMode {
             Mat cropped = new Mat(input, roi);
             cropped.copyTo(input);
 
+            newFrame.release();
+            cropped.release();
+
             // convert image to grayscale
             if (detectingBlue) {
                 Imgproc.cvtColor(input, hsv, Imgproc.COLOR_RGB2HSV);
@@ -246,7 +249,12 @@ abstract public class BaseAutonomous extends BaseOpMode {
                 } else {
                     sideDetected = SideDetected.CENTER;
                 }
+
+                largestContour.release();
             }
+            resizedMask.release();
+            hierarchy.release();
+
             return input;
         }
 
