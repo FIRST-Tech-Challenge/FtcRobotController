@@ -32,6 +32,8 @@ THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 package org.firstinspires.ftc.teamcode;
 
+import static org.firstinspires.ftc.teamcode.AutoPixelPlacementByTime.Stages.*;
+
 import com.qualcomm.hardware.rev.Rev2mDistanceSensor;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
@@ -59,6 +61,15 @@ public class AutoPixelPlacementByTime extends LinearOpMode {
     static final double TARGET_DISTANCE_INCHES = 2590;
     private ElapsedTime runtime = new ElapsedTime();
 
+    public enum Stages {
+        ROBOT_READY_TO_FORWARD_MOVE,
+        ELBOW_READY_TO_MOVE_DOWW,
+        ELBOW_STOPPED,
+        GRABBER_READY_TO_OPEN
+    }
+
+    private Stages CurrentStatus = ROBOT_READY_TO_FORWARD_MOVE;
+
     static final int forwardPeriod = 5500; //in milli seconds
     @Override
     public void runOpMode() {
@@ -76,29 +87,60 @@ public class AutoPixelPlacementByTime extends LinearOpMode {
 
         waitForStart();
         while(opModeIsActive() ) {
-            if ( runtime.milliseconds() <forwardPeriod) {
-                robot.driveRobot(FORWARD_SPEED, 0);
-                // generic DistanceSensor methods.
-                telemetry.addData("run time ", runtime.milliseconds());
-                telemetry.addData("deviceName", sensorDistance.getDeviceName());
-                telemetry.addData("range", String.format("%.01f mm", sensorDistance.getDistance(DistanceUnit.MM)));
-                telemetry.addData("range", String.format("%.01f cm", sensorDistance.getDistance(DistanceUnit.CM)));
-                telemetry.addData("range", String.format("%.01f m", sensorDistance.getDistance(DistanceUnit.METER)));
-                telemetry.addData("range", String.format("%.01f in", sensorDistance.getDistance(DistanceUnit.INCH)));
 
-                // Rev2mDistanceSensor specific methods.
-                telemetry.addData("ID", String.format("%x", sensorTimeOfFlight.getModelID()));
-                telemetry.addData("did time out", Boolean.toString(sensorTimeOfFlight.didTimeoutOccur()));
+            switch(CurrentStatus){
+                case ROBOT_READY_TO_FORWARD_MOVE:
+                    moveRobotToPosition();
+                    break;
+                case ELBOW_READY_TO_MOVE_DOWW:
+                    moveElbowToPosition();
+                    break;
+                case GRABBER_READY_TO_OPEN:
 
+                    break;
+                default:
+                    break;
             }
-            else
-            {
-                robot.driveRobot(0, 0);
-                telemetry.addData("Reached Target Distance, Drop pixel", "");
-                robot.moveElbowToPosition(0.80); //Move Elbow all the way down
-                robot.moveGrabber(false); //release grabber to drop pixel
-            }
+
+
+
             telemetry.update();
+        }
+    }
+
+    private void moveElbowToPosition(){
+        //
+        //move the elbow till it gets to a specific position
+        if (robot.getGrabberPoistion() < 0.80) {
+            telemetry.addData("Reached Target Distance, Drop pixel", "");
+            robot.moveElbow(false);
+            //robot.moveElbowToPosition(0.80); //Move Elbow all the way down
+            //robot.moveGrabber(true); //release grabber to drop pixel
+            telemetry.addData("Status", "In else condition");
+            sleep(10);
+        }
+        else{
+            CurrentStatus = ELBOW_STOPPED;
+        }
+    }
+    private void moveRobotToPosition(){
+        if ( runtime.milliseconds() <forwardPeriod) {
+            robot.driveRobot(FORWARD_SPEED, 0);
+            // generic DistanceSensor methods.
+            telemetry.addData("run time ", runtime.milliseconds());
+            telemetry.addData("deviceName", sensorDistance.getDeviceName());
+            telemetry.addData("range", String.format("%.01f mm", sensorDistance.getDistance(DistanceUnit.MM)));
+            telemetry.addData("range", String.format("%.01f cm", sensorDistance.getDistance(DistanceUnit.CM)));
+            telemetry.addData("range", String.format("%.01f m", sensorDistance.getDistance(DistanceUnit.METER)));
+            telemetry.addData("range", String.format("%.01f in", sensorDistance.getDistance(DistanceUnit.INCH)));
+
+            // Rev2mDistanceSensor specific methods.
+            //telemetry.addData("ID", String.format("%x", sensorTimeOfFlight.getModelID()));
+            //telemetry.addData("did time out", Boolean.toString(sensorTimeOfFlight.didTimeoutOccur()));
+        }
+        else{
+            robot.driveRobot(0, 0);
+            CurrentStatus = ELBOW_READY_TO_MOVE_DOWW;
         }
     }
     private boolean hasReachedTargetDistance(DistanceSensor sensorDistance){
