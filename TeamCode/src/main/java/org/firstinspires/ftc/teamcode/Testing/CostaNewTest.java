@@ -9,11 +9,17 @@ import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.teamcode.Testing.TeachingClass;
 
+/*
+    //Why are you setting the name to the name of the class? (redundant code)
+    //Change name of class to something more descriptive and meaningful
+ */
 @TeleOp(name = "CostaNewTest", group = "TeleOp")
 
 public class CostaNewTest extends LinearOpMode {
 
-
+    /*
+        //What is clawExtender?
+     */
     private DcMotor frontLeft, frontRight, backLeft, backRight;
     private DcMotor intakeMotor;
     private DcMotor clawExtender;
@@ -27,11 +33,14 @@ public class CostaNewTest extends LinearOpMode {
         frontRight = hardwareMap.get(DcMotor.class, "frontRight");
         backLeft = hardwareMap.get(DcMotor.class, "backLeft");
         backRight = hardwareMap.get(DcMotor.class, "backRight");
-        intakeMotor = hardwareMap.get(DcMotor.class, "intakeMotor");
-        clawExtender = hardwareMap.get(DcMotor.class, "claw_extend_motor");
-        clawServo = hardwareMap.get(Servo.class, "claw_servo");
-        droneLauncher = hardwareMap.get(Servo.class, "drone_launcher");
+//        intakeMotor = hardwareMap.get(DcMotor.class, "intakeMotor");
+//        clawExtender = hardwareMap.get(DcMotor.class, "claw_extend_motor");
+//        clawServo = hardwareMap.get(Servo.class, "claw_servo");
+//        droneLauncher = hardwareMap.get(Servo.class, "drone_launcher");
 
+        /*
+            //Why are you setting the direction of the motors? We can change the bullet connectors
+         */
         frontLeft.setDirection(DcMotorSimple.Direction.REVERSE);
         backLeft.setDirection(DcMotorSimple.Direction.REVERSE);
         frontRight.setDirection(DcMotorSimple.Direction.FORWARD);
@@ -40,9 +49,19 @@ public class CostaNewTest extends LinearOpMode {
 
         waitForStart();
         while(opModeIsActive()){
+			/*
+				//move variable declaration outside of while loop
+			 */
             double xSpeed = gamepad1.left_stick_x;
             double ySpeed = -gamepad1.left_stick_y;
             double rotation = gamepad1.right_stick_x;
+
+			/*
+				// change order of motors so that back motors get power first
+				//remove redundant comments
+				//comments should be used to explain why something is done, not what is done
+					(why have everything in different blocks when you have the math commented out ln 107-110)
+			 */
 
             //setting power for forward-backward movement
             frontLeft.setPower(-ySpeed);
