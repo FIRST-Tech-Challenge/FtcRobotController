@@ -29,13 +29,9 @@ public class BaseTeleOp extends BaseOpMode {
     }
 
     public boolean sensitive = false;
-    public boolean rightBumperIsPressed = false;
 
     public void driveUsingControllers() {
-        if (!rightBumperIsPressed && gamepad1.right_bumper) {
-            sensitive = !sensitive;
-        }
-        rightBumperIsPressed = gamepad1.right_bumper;
+        sensitive = gamepad1.right_bumper;
 
         double sensitivity, rotSensitivity;
         double strafeConstant = 1.1;
@@ -56,10 +52,7 @@ public class BaseTeleOp extends BaseOpMode {
     }
 
     public void driveUsingControllers(boolean curve) {
-        if (!rightBumperIsPressed && gamepad1.right_bumper) {
-            sensitive = !sensitive;
-        }
-        rightBumperIsPressed = gamepad1.right_bumper;
+        sensitive = gamepad1.right_bumper;
 
         double sensitivity, rotSensitivity;
         double strafeConstant = 1.1;
@@ -104,7 +97,7 @@ public class BaseTeleOp extends BaseOpMode {
     private boolean dpadDownPressed = false;
     private boolean dpadUpPressed = false;
     private void armControlBackup(){
-        double rStickSensitivity = 28; //how much moving right stick will effect the movement of the arm.
+        double rStickSensitivity = 35; //how much moving right stick will effect the movement of the arm.
         double armVelocity = -gamepad2.right_stick_y * rStickSensitivity; //how fast the arm moves based off of the right stick and sensitivity.
         double[] backupArmPositions = new double[] {ARM_MOTOR_MIN_POSITION, ARM_MOTOR_MAX_POSITION / 2.0,
                                                     ARM_MOTOR_MAX_POSITION * (3.0/4.0), ARM_MOTOR_MAX_POSITION}; //array of arm positions the dpad can move to.

@@ -8,7 +8,7 @@ public class CalibrateIntake extends BaseAutonomous {
     public void runOpMode() throws InterruptedException {
         initializeHardware();
         waitForStart();
-
+        /*
         if(intakeMotor != null) {
             intakeMotor.setPower(INTAKE_SPEED);
             sleep((long) INTAKE_TIME);
@@ -18,6 +18,7 @@ public class CalibrateIntake extends BaseAutonomous {
         }
 
         sleep(5000);
+        */
 
         if(intakeMotor != null) {
             intakeMotor.setPower(INTAKE_SPEED2);
