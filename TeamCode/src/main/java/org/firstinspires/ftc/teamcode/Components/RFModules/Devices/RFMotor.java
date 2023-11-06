@@ -90,6 +90,7 @@ public class RFMotor {
                 "Function               Action");
         rfMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         additionalTicks = 0;
+        resistance= RESISTANCE;
     }
 
     /**
@@ -159,7 +160,9 @@ public class RFMotor {
 //        LOGGER.log("kA:"+ kA+" kV:"+kV);
 //        LOGGER.log("targetMotion[0]:"+ targetMotion[0]+" targetMotion[1]:"+targetMotion[1]);
         double power = (kV * targetMotion[0] + kA * targetMotion[1] +
-                kP * (profile.motionProfileTimeToDist(time) - position) + kD * (profile.calculateTargetVelocity(time) - velocity) + resistance * kV);
+                kP * (profile.motionProfileTimeToDist(time) - position)
+                + kD * (profile.calculateTargetVelocity(time) - velocity)
+                - resistance * kV);
         if (abs(targetPos - position) > TICK_BOUNDARY_PADDING && abs(velocity) < 3) {
             if (power < 0) {
                 power -= kS;
@@ -411,6 +414,7 @@ public class RFMotor {
         maxtickcount = p_max;
         mintickcount = p_min;
         RESISTANCE = p_resistance;
+        resistance=RESISTANCE;
         kS = p_kS;
         kV = p_kV;
         kA = p_kA;
@@ -594,6 +598,11 @@ public class RFMotor {
      */
     public void setCurrentPosition(double p_position) {
         additionalTicks = p_position - rfMotor.getCurrentPosition();
+    }
+
+    public void resetPosition(){
+        rfMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        rfMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
     }
 
     /**

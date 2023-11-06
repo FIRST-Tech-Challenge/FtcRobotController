@@ -19,15 +19,16 @@ public class Lift extends RFDualMotor {
     private double lastPower = 0.0;
     private double target = 0.0;
     private double MIN_VELOCITY = 20, MANUAL_TIME = 0.2, lastManualTime = -1.0;
-
+    public static double max = 1500, min =0 , RESISTANCE = -350, kS = 0.03,kV =  3.2786E-4,kA= 3E-5,
+            MAX_UP_VELO= 3000, MAX_DOWN_VELO=-2280,MAX_ACCEL =  10000, MAX_DECEL = -66974,kP= 0,kD= 0;
 
     /**
      * Constructor
      */
     public Lift() {
-        super("leftLiftMotor", "rightLiftMotor",true);
-        super.setDirection(DcMotorSimple.Direction.FORWARD);
-        super.setConstants(2000,0,134, 0.0, 3.2786E-4, 7.286E-4, 2440, -2280, 1097, -66974, 0, 0);
+        super("rightLiftMotor", "leftLiftMotor",true);
+        super.setDirection(DcMotorSimple.Direction.REVERSE);
+        setConstants(max, min , RESISTANCE, kS, kV,kA,MAX_UP_VELO, MAX_DOWN_VELO, MAX_ACCEL, MAX_DECEL, kP, kD);
     }
 
     /**
@@ -111,16 +112,16 @@ public class Lift extends RFDualMotor {
         }
         for(var i : LiftMovingStates.values()){
             if(i.state&&super.getTarget()!=LiftPositionStates.values()[i.ordinal()].position){
-//                setPosition(LiftPositionStates.values()[i.ordinal()]);
+                setPosition(LiftPositionStates.values()[i.ordinal()]);
             }
         }
         if(time-lastManualTime>MANUAL_TIME){
-//            super.setPosition(super.getTarget(),0);
+            super.setPosition(super.getTarget(),0);
         }
         else{
-//            super.setTarget(super.getCurrentPosition());
+            super.setTarget(super.getCurrentPosition());
         }
-//        LOGGER.log("currentPos: "+super.getCurrentPosition());
+        LOGGER.log("currentPos: "+super.getCurrentPosition());
         packet.put("liftPos", super.getCurrentPosition());
 
 
@@ -151,19 +152,19 @@ public class Lift extends RFDualMotor {
 
     public void setPosition(LiftPositionStates p_state) {
         if(!Wrist.WristStates.FLAT.state&&!p_state.equals(LiftPositionStates.AT_ZERO)) {
-//            super.setPosition(p_state.position, 0);
-//            if (target != p_state.position) {
+            super.setPosition(p_state.position, 0);
+            if (target != p_state.position) {
                 LOGGER.setLogLevel(RFLogger.Severity.INFO);
                 LOGGER.log("lifting to: " + p_state.position);
                 target = p_state.position;
-//            }
+            }
         }
         else if(p_state.equals(LiftPositionStates.AT_ZERO)){
             if(Arm.ArmStates.UNFLIPPED.getState()&&Arm.ArmTargetStates.UNFLIPPED.getState()&& Wrist.WristStates.HOLD.state){
-//                super.setPosition(p_state.position,0);
+                super.setPosition(p_state.position,0);
             }
             else{
-//                setPosition(LiftPositionStates.LOW_SET_LINE);
+                setPosition(LiftPositionStates.LOW_SET_LINE);
             }
         }
         else{

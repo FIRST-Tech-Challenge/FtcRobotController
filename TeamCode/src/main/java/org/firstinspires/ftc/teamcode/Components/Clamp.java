@@ -9,6 +9,7 @@ public class Clamp extends RFServo {
     public Clamp() {
         super("clampServo", 1.0);
         clamped = false;
+        super.setLastTime(-100);
         super.setPosition(UNCLAMP);
     }
 

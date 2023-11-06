@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.Components;
 import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.LOGGER;
 import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.dashboard;
 import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.op;
+import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.packet;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.teamcode.Components.CV.Pipelines.BlueSpikeObserverPipeline;
@@ -109,7 +110,14 @@ public class CVMaster {
      * @return position from spike pipeline
      */
     public int getPosition() {
-        return openSleevi.getPosition();
+
+        int pos = 0;
+        if(isRed)
+            pos = openSleevi.getPosition();
+        else
+            pos = openSleeve.getPosition();
+        packet.put("cvPosition", pos);
+        return pos;
     }
 
     /**
