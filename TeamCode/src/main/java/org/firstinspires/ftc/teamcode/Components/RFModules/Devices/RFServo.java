@@ -27,7 +27,7 @@ public class RFServo implements Servo {
 
     final double SERVO_LIMIT;
 
-    final double FLIP_TIME = 0.2;
+    double FLIP_TIME = 0.2;
 
     boolean flipped = false;
 
@@ -49,6 +49,7 @@ public class RFServo implements Servo {
                 "Function               Action");
 
         SERVO_LIMIT = p_limit;
+        setLastTime(-100);
     }
 
     /**
@@ -68,7 +69,7 @@ public class RFServo implements Servo {
      */
 
     public void setFlipTime(double p_flipTime){
-        lastTime=p_flipTime;
+        FLIP_TIME=p_flipTime;
     }
 
     /**

@@ -79,7 +79,8 @@ public class RedLeftAuto extends LinearOpMode {
                 .addTemporalMarker(robot::done)
                 .build();
         while(!isStarted()){
-//            pos=0;
+            robot.getSpikePos();
+            robot.update();
         }
         while(!isStopRequested()&&opModeIsActive()&&!robot.queuer.isFullfilled()){
             robot.followTrajSeq(spikePosition[pos]);

@@ -19,6 +19,7 @@ public class Arm extends RFServo {
      */
     public Arm() {
         super("armServo", 1.0);
+        super.setLastTime(-100);
     }
 
     /**

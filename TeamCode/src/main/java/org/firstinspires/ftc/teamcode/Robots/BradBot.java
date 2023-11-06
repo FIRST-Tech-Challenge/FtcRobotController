@@ -168,11 +168,15 @@ public class BradBot extends BasicRobot {
     boolean left = gampad.readGamepad(op.gamepad1.dpad_left, "gamepad1_dpad_left", "toggleClamp");
     float manualUp = op.gamepad1.right_trigger;
     float manualDown = op.gamepad1.left_trigger;
+    boolean isX2 = gampad.readGamepad(op.gamepad2.b, "gamepad2_b", "resetSlideTicks");
     if (isA) {
       arm.flipTo(UNFLIPPED);
       wrist.update();
       wrist.flipTo(Wrist.WristTargetStates.FLAT);
       lift.setPosition(Lift.LiftPositionStates.AT_ZERO);
+    }
+    if(isX2){
+      lift.resetPosition();
     }
     if (rightBumper) {
       if (Intake.IntakeStates.STOPPED.getState()) {
@@ -235,11 +239,12 @@ public class BradBot extends BasicRobot {
     LOGGER.log("updating each component");
     super.update();
     arm.update();
-    cv.update();
+    if (!isTeleop) {
+      cv.update();
+    }
     intake.update();
     lift.update();
     roadrun.update();
-    //        ultras.update();
     wrist.update();
   }
 

@@ -12,7 +12,7 @@ public class Wrist extends RFServo {
   public Wrist() {
     super("wristServo", 1.0);
     target = WristStates.FLAT.position;
-    super.setPosition(WristStates.FLAT.position);
+    flipTo(WristTargetStates.FLAT);
     LOGGER.log("initializing hardware");
   }
 

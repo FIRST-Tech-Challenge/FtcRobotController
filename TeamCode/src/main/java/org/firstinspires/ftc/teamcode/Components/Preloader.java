@@ -11,6 +11,7 @@ public class Preloader extends RFServo {
     boolean isLoaded = true;
     public Preloader(){
         super("preloadServo",1.0);
+        super.setLastTime(-100);
         load();
     }
     public void load(){

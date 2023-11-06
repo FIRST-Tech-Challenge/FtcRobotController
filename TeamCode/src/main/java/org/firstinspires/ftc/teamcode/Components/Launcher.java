@@ -23,6 +23,7 @@ public class Launcher extends RFServo {
         LOGGER.log("initializing hardware, setting position to OTHER_POSITION : " +OTHER_POSITION);
         setPosition(OTHER_POSITION);
         isLoaded=true;
+        super.setLastTime(-100);
     }
 
     /**
