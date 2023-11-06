@@ -223,16 +223,17 @@ public class CenterStageAuto1 extends LinearOpMode {
             leftFrontDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
             rightFrontDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
-            sleep(250);   // optional pause after each move.
+            //sleep(250);   // optional pause after each move.
         }
     }
 
     public void turn(double degrees) {
+        double TURN_ACCURACY = 1.0;
         if (false) { // Boolean determines the method the robot takes to turn x degrees
             encoderDrive(TURN_SPEED, degrees / 7.5, -degrees / 7.5, degrees / 36);
         } else {
-            Orientation startAngle = imu.getRobotOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
-            while (imu.getRobotOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle - startAngle.firstAngle < degrees) {
+            double startAngle = imu.getRobotOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle;
+            while (imu.getRobotOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle - startAngle < degrees - TURN_ACCURACY || imu.getRobotOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle - startAngle > degrees + TURN_ACCURACY) {
                 leftBackDrive.setPower(degrees / Math.abs(degrees) * TURN_SPEED);
                 rightBackDrive.setPower(-degrees / Math.abs(degrees) * TURN_SPEED);
                 leftFrontDrive.setPower(degrees / Math.abs(degrees) * TURN_SPEED);
@@ -243,7 +244,12 @@ public class CenterStageAuto1 extends LinearOpMode {
     }
 
     public void drive(double inches) {
-        encoderDrive(DRIVE_SPEED, inches, inches, inches / 7.5 + 1);
+        double startAngle = imu.getRobotOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle;
+        int checks = 5; // Number of times the robot will check its orientation during a single drive movement and correct itself
+        for(int i = 0; i < checks; i++) {
+            encoderDrive(DRIVE_SPEED, inches / checks, inches / checks, inches / checks / 7.5 + 1);
+            turn(startAngle - imu.getRobotOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle);
+        }
     }
 
     public void ejectPixel() {
