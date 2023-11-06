@@ -30,6 +30,8 @@ public class TELEOPtest2 extends LinearOpMode {
         //Define variables for arm, wrist, gripper, and launcher
         Servo wristServo;
         DcMotor armMotor;
+        DcMotor armMotor2;
+        armMotor2 = hardwareMap.get(DcMotor.class, "armMotor2");
         armMotor = hardwareMap.get(DcMotor.class, "armMotor");
         wristServo = hardwareMap.servo.get("wristServo");
 
@@ -103,10 +105,18 @@ public class TELEOPtest2 extends LinearOpMode {
                 armMotor.setTargetPosition(upPosition);
                 armMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 armMotor.setPower(0.2); // Set the motor power (adjust as needed)
+
+                armMotor2.setTargetPosition(upPosition);
+                armMotor2.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                armMotor2.setPower(0.2); // Set the motor power (adjust as needed)
             } else if (gamepad2.left_trigger>.5) {
                 armMotor.setTargetPosition(homePosition);
                 armMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 armMotor.setPower(0.2); // Set the motor power (adjust as needed)
+
+                armMotor2.setTargetPosition(homePosition);
+                armMotor2.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                armMotor2.setPower(0.2); // Set the motor power (adjust as needed)
             }
 
             while (armMotor.isBusy()) {
@@ -130,12 +140,12 @@ public class TELEOPtest2 extends LinearOpMode {
                 // Move servos in opposite directions when "y" is pressed
                // intakeServo.setPosition(0); // Adjust the position value as needed
                 intakeServo.setDirection(Servo.Direction.FORWARD);
-                sleep(CYCLE_MS);
+
             } else if (gamepad2.x) {
                 // Return servos to the center position when "x" is pressed
                // intakeServo.setPosition(1); // Adjust the position value for the center position
                 intakeServo.setDirection(Servo.Direction.REVERSE);
-                sleep(CYCLE_MS);
+
             }
             if (gamepad2.b) {
                 // Move servo in opposite directions when "y" is pressed
@@ -143,7 +153,7 @@ public class TELEOPtest2 extends LinearOpMode {
 
             } else if (gamepad2.a) {
                 // Return servos to the center position when "x" is pressed
-                wristServo.setPosition(1); // Adjust the position value for the center position
+                wristServo.setPosition(.2); // Adjust the position value for the center position
 
                 telemetry.update();
             }

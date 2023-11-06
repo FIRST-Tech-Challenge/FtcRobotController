@@ -8,7 +8,7 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.util.Range;
 
 @TeleOp
-public class TELEOPtest1 extends LinearOpMode {
+public class TELEOPtest3 extends LinearOpMode {
     static final double INCREMENT = 0.01;     // amount to ramp motor each CYCLE_MS cycle
     static final int CYCLE_MS = 50;     // period of each cycle
     static final double MAX_FWD = 1.0;     // Maximum FWD power applied to motor
@@ -34,7 +34,6 @@ public class TELEOPtest1 extends LinearOpMode {
         double armPosition, gripPosition, contPower;
         double MIN_POSITION = 0, MAX_POSITION = 1;
         // called when init button is  pressed.
-
 
         armMotor = hardwareMap.get(DcMotor.class, "armMotor");
         wristServo = hardwareMap.servo.get("wristServo");
@@ -103,19 +102,19 @@ public class TELEOPtest1 extends LinearOpMode {
                 leftGripper.setPosition(0.9); // Adjust the position value for the center position
                 rightGripper.setPosition(0.1); // Adjust the position value for the center position
             }
-                if (gamepad2.b) {
-                    // Move servo in opposite directions when "y" is pressed
-                    wristServo.setPosition(.4 ); // Adjust the position value as needed
+            if (gamepad2.b) {
+                // Move servo in opposite directions when "y" is pressed
+                wristServo.setPosition(.4 ); // Adjust the position value as needed
 
-                } else if (gamepad2.a) {
-                    // Return servos to the center position when "x" is pressed
-                    wristServo.setPosition(0); // Adjust the position value for the center position
+            } else if (gamepad2.a) {
+                // Return servos to the center position when "x" is pressed
+                wristServo.setPosition(0); // Adjust the position value for the center position
 
-                    telemetry.update();
-                }
+                telemetry.update();
             }
         }
     }
+}
 
 
 
