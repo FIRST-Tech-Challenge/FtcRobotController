@@ -37,7 +37,7 @@ class BotShared(opMode: OpMode) {
 
     @JvmField var march =                 camera?.let { March(opMode, it) }
     @JvmField var lsd =               motorSlide?.let { LSD(opMode, it) }
-    @JvmField var intake =       motorIntakeLift?.let { PixelIntake(opMode, it, motorIntakeSpin) }
+    @JvmField var intake =       motorIntakeLift?.let { Intake(opMode, it, motorIntakeSpin) }
 
     init {
         // IMU orientation/calibration

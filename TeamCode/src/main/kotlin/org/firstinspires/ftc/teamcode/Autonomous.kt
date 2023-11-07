@@ -53,7 +53,12 @@ open class AutoSuper(
         val drive = shared.drive!!
 //        val lsd = shared.lsd!!
         val march = shared.march!!
-        val testAction = drive.actionBuilder(drive.pose).splineToConstantHeading(Vector2d(10.0, 0.0), 0.0).build()
+
+        while (march.detections.isEmpty()) sleep(march.aprilTag.perTagAvgPoseSolveTime.toLong())
+//            e.ftcPose.x
+        val detectionPose = march.detections[0].ftcPose
+        val a = drive.pose.position + ((drive.pose.heading + detectionPose.yaw) * Vector2d(detectionPose.x, detectionPose.y))
+        val testAction = drive.actionBuilder(drive.pose).splineToConstantHeading(a, 0.0).build()
         val packet = TelemetryPacket()
         testAction.run(packet)
 //        sleep(5000)

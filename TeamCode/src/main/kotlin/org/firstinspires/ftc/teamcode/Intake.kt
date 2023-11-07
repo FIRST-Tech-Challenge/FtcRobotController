@@ -5,7 +5,7 @@ import com.qualcomm.robotcore.hardware.DcMotor
 import com.qualcomm.robotcore.hardware.DcMotorEx
 
 @Suppress("unused")
-class PixelIntake(private val opMode: OpMode, private val motorLift: DcMotorEx, private val motorSpin: DcMotorEx) {
+class Intake(private val opMode: OpMode, private val motorLift: DcMotorEx, private val motorSpin: DcMotorEx) {
     init {
         motorLift.targetPosition = 0
         motorLift.mode = DcMotor.RunMode.RUN_TO_POSITION
