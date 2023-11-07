@@ -25,23 +25,17 @@ public class DriveControlled446 extends LinearOpMode {
     @Override
     public void runOpMode() {
 
-        //region Driving motors
+        //region Dc Motors
         motorFL = hardwareMap.get(DcMotor.class, "motorFrontLeft");
         motorBL = hardwareMap.get(DcMotor.class, "motorBackLeft");
         motorFR = hardwareMap.get(DcMotor.class, "motorFrontRight");
         motorBR = hardwareMap.get(DcMotor.class, "motorBackRight");
-        
+        intakeMotor = hardwareMap.get(DcMotor.class, "intakeMotor");
+
         //Reverse left side motors
         motorFL.setDirection(DcMotorSimple.Direction.REVERSE);
         motorBL.setDirection(DcMotorSimple.Direction.REVERSE);
         //endregion
-
-
-        // region Dc Motors
-        intakeMotor = hardwareMap.get(DcMotor.class, "intakeMotor");
-        intakeMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        // endregion
-
 
         // region Servos
         frontIntake1 = hardwareMap.get(Servo.class, "frontIntake1");
@@ -58,7 +52,6 @@ public class DriveControlled446 extends LinearOpMode {
         while (opModeIsActive()) {
 
             // region Mecanum Drive
-
             // Gamepad inputs
             double y = -gamepad1.left_stick_y; // Reverse the y-axis (if needed)
             double x = gamepad1.left_stick_x;
@@ -81,7 +74,32 @@ public class DriveControlled446 extends LinearOpMode {
             motorFR.setPower(frontRightPower);
             motorBL.setPower(backLeftPower);
             motorBR.setPower(backRightPower);
+            // endregion
             
+            // region intake
+            // This is just a test
+            if (gamepad1.a) {
+                intakeMotor.setPower(1);
+                outtake.setPosition(1);
+            }
+            if (gamepad2.b) {
+                frontIntake1.setPosition(1);
+                frontIntake2.setPosition(1);
+            }
+            if (gamepad2.x) {
+                frontIntake1.setPosition(0);
+                frontIntake2.setPosition(0);
+                outtake.setPosition(0);
+            }
+            boolean isFlipperOpen = false;
+            if (gamepad2.y) {
+                if (!isFlipperOpen) {
+                    flipper.setPosition(1);
+                }
+                else {
+                    flipper.setPosition(0);
+                }
+            }
             // endregion
 
             // region Telemetry
