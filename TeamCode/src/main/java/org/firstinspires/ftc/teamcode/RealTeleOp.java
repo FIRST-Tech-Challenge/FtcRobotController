@@ -131,7 +131,7 @@ public class TestTeleOp extends LinearOpMode {
 
             //intake
             if (gamepad2.left_trigger > 0) {
-                intake.setPower(0.6);
+                intake.setPower(0.4);
                 holderClampPos = 0.4;
                 //if intake button held, keep holder open
             } else if (gamepad2.left_bumper == true) {
