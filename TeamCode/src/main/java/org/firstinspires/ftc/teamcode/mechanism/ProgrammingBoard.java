@@ -16,15 +16,15 @@ public class ProgrammingBoard {
     private static DcMotor leftBackMotor_1;
     private static DcMotor rightBackMotor_2;
     private static DcMotor rightFrontMotor_3;
-    private static CRServo intakeServo;
+    private static DcMotor intakeMotor;
 
     // Defines the motors.
+
+    // private static CRServo intakeServo;
 
 
     public void init(HardwareMap hwMap) {
         // Function runs during init phase of robot.
-
-        intakeServo = hwMap.get(CRServo.class, "intakeServo");
 
         leftFrontMotor_0 = hwMap.get(DcMotor.class, "leftFrontMotor_0");
         leftBackMotor_1 = hwMap.get(DcMotor.class, "leftBackMotor_1");
@@ -44,6 +44,12 @@ public class ProgrammingBoard {
         rightFrontMotor_3.setDirection(DcMotor.Direction.REVERSE);
         // Sets the direction.
 
+        intakeMotor = hwMap.get(DcMotor.class, "intakeMotor");
+        intakeMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        intakeMotor.setDirection(DcMotorSimple.Direction.REVERSE);
+
+        // intakeServo = hwMap.get(CRServo.class, "intakeServo");
+
     }
 
     public void setDCMotorPower(double leftFrontPower, double leftBackPower, double rightFrontPower, double rightBackPower){
@@ -53,10 +59,14 @@ public class ProgrammingBoard {
         rightFrontMotor_3.setPower(rightFrontPower);
         // Method allows for other classes to set the speed of each motor.
     }
-    
-    public void setIntakePower(double servoPower){
-        intakeServo.setPower(servoPower);
+
+    public void setIntakePower(double intakePower){
+        intakeMotor.setPower(intakePower);
     }
+//    public void setIntakePower(double servoPower){
+//        intakeServo.setPower(servoPower);
+//    }
+//    Used for testing the servo originally.
 
 
 

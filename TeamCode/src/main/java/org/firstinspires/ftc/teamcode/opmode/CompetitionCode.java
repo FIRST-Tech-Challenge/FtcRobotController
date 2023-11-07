@@ -15,6 +15,7 @@ public class CompetitionCode extends OpMode {
     double axial;
     double lateral;
     double yaw;
+    double intakePower;
 
     @Override
     public void init(){
@@ -29,10 +30,16 @@ public class CompetitionCode extends OpMode {
         axial   = -gamepad1.left_stick_y;  // Note: pushing stick forward gives negative value
         lateral =  gamepad1.left_stick_x;
         yaw     =  gamepad1.right_stick_x;
+        intakePower = gamepad1.right_trigger - gamepad1.left_trigger;
+
+        Board.setIntakePower(intakePower);
 
         DriveTrain.controllerDrive(axial, lateral, yaw);
-        Board.setIntakePower(gamepad1.left_trigger);
         // This function sends the game pad inputs to the Traction class.
+
+//        Board.setIntakePower(gamepad1.left_trigger);
+        // We used this to test the CRServo.
+
 
 
 
