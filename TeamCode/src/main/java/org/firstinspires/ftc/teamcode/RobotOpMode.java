@@ -24,6 +24,7 @@ public abstract class RobotOpMode extends OpMode {
     public Servo armCatcherServo, wristServo, fingerServo;
     @Deprecated
     public float armCatcherServoPosition;
+    public double wristServoPosition;
     BNO055IMU imu;
     ElapsedTime elapsedTime;
     /**
@@ -61,6 +62,7 @@ public abstract class RobotOpMode extends OpMode {
 
             fingerServo = hardwareMap.get(Servo.class, "finger_servo");
             wristServo = hardwareMap.get(Servo.class, "wrist_servo");
+            wristServoPosition = wristServo.getPosition();
             setTargetHandState(HandState.RELEASE);
         } catch(Exception e) {
             log(ERROR, "Error initializing arm and wrist motors: "+e.getMessage());
@@ -78,27 +80,28 @@ public abstract class RobotOpMode extends OpMode {
         try {
             armMotor.setDirection(DcMotorSimple.Direction.FORWARD);
             armMotor.setTargetPosition(0);
-            armMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            initArm();
+            //armMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+            armExtensionMotor.setDirection(DcMotorSimple.Direction.FORWARD);
+            //initArm();
         } catch(Exception e) {
             log(ERROR, "Error initializing arm motor: "+e.getMessage());
         }
 
-
         try {
             imu = hardwareMap.get(BNO055IMU.class, "imu");
+
+            BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
+            parameters.temperatureUnit = BNO055IMU.TempUnit.CELSIUS;
+            parameters.accelUnit = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
+            parameters.angleUnit = BNO055IMU.AngleUnit.RADIANS;
+            imu.initialize(parameters);
         } catch(Exception e) {
             log(WARNING, "Error initializing IMU: "+e.getMessage());
         }
         if(imu != null) {
             log(INFO, "IMU connected successfully!");
         }
-
-        BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
-        parameters.temperatureUnit = BNO055IMU.TempUnit.CELSIUS;
-        parameters.accelUnit = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
-        parameters.angleUnit = BNO055IMU.AngleUnit.RADIANS;
-        imu.initialize(parameters);
         sendTelemetryPacket(true);
     }
 
@@ -245,7 +248,11 @@ public abstract class RobotOpMode extends OpMode {
 
         log("Move Servo", String.format(Locale.ENGLISH,
                 "Moving servo to: %f", POSITION_TO_ANALOG));
-        servo.setPosition(POSITION_TO_ANALOG);
+        try {
+            servo.setPosition(POSITION_TO_ANALOG);
+        } catch (Exception e) {
+            dbp.put("Error", e.getMessage());
+        }
         sendTelemetryPacket(false);
     }
 
@@ -261,7 +268,12 @@ public abstract class RobotOpMode extends OpMode {
 
         log("Move Servo", String.format(Locale.ENGLISH,
                 "Moving servo to: %f", position));
-        servo.setPosition(position);
+        try {
+            servo.setPosition(position);
+        } catch (Exception e) {
+            dbp.put("Error", e.getMessage());
+        }
+
         sendTelemetryPacket(false);
     }
 
@@ -401,8 +413,8 @@ public abstract class RobotOpMode extends OpMode {
     }
 
     public enum ArmServoPosition {
-        OPEN(0),
-        CLOSED(180);
+        OPEN(-45),
+        CLOSED(45);
 
         final int position;
 

@@ -21,18 +21,19 @@ public class DriverOp extends RobotOpMode {
     public void robotLoop() {
         gamePadMoveRobot();
         int direction = 0;
-        if (gamepad1.dpad_up) {
-            int position = positionFromAngle(-110, AngleUnit.DEGREES);
-            armMotor.setTargetPosition(position);
-            armMotor.setPower(1);
-        }
-        else if (gamepad1.dpad_down) {
-            int position = positionFromAngle(0, AngleUnit.DEGREES);
-            armMotor.setTargetPosition(position);
-            armMotor.setPower(1);
-        }
-        if(!armMotor.isBusy()) {
-            armMotor.setPower(0);
+        if(armMotor!= null) {
+            if (gamepad1.dpad_up) {
+                int position = positionFromAngle(-110, AngleUnit.DEGREES);
+                armMotor.setTargetPosition(position);
+                armMotor.setPower(1);
+            } else if (gamepad1.dpad_down) {
+                int position = positionFromAngle(0, AngleUnit.DEGREES);
+                armMotor.setTargetPosition(position);
+                armMotor.setPower(1);
+            }
+            if (!armMotor.isBusy()) {
+                armMotor.setPower(0);
+            }
         }
 
         //armExtensionMotor.setPower(gamepad1.right_stick_y);
