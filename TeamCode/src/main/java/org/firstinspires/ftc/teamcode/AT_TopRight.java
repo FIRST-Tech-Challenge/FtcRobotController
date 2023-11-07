@@ -29,7 +29,7 @@ import java.util.List;
 public class AT_TopRight extends LinearOpMode {
     private RobotHardware robot = new RobotHardware(this);
     static final double FORWARD_SPEED = 0.2;
-    static final double TURNSPEED = 0.2;
+    static final double TURNSPEED = -0.2;
     @Override
     public void runOpMode() {
 
@@ -44,11 +44,22 @@ public class AT_TopRight extends LinearOpMode {
         if (opModeIsActive()) {
             while (opModeIsActive() && !isStopRequested()) {
 
-             robot.driveRobot(FORWARD_SPEED, 0);
-                sleep(11 * 1000);
-
+                robot.driveRobot(FORWARD_SPEED, 0);
+                sleep(5700);
+                robot.driveRobot(FORWARD_SPEED, 0);
+                sleep(5500);
                 robot.driveRobot(0, -TURNSPEED);
-                sleep(4550);
+                sleep(4600);
+                robot.driveRobot(FORWARD_SPEED, 0);
+                sleep(4500);
+                robot.driveRobot(0, TURNSPEED);
+                sleep(4500);
+                robot.driveRobot(FORWARD_SPEED, 0);
+                sleep(5*1000);
+                robot.driveRobot(0, TURNSPEED);
+                sleep(5700);
+                robot.driveRobot(FORWARD_SPEED, 0);
+                sleep(5700);
                 //robot.driveRobot(0, 0);
                 //telemetry.addData("Reached Target Distance, Drop pixel", "");
                 robot.moveElbowToPosition(0.40);
@@ -56,16 +67,15 @@ public class AT_TopRight extends LinearOpMode {
                 //robot.moveGrabber(false); //release grabber to drop pixel
 
 
-                robot.driveRobot(FORWARD_SPEED, 0);
+
+                robot.driveRobot(-FORWARD_SPEED, 0);
                 sleep(12 * 1000);
 
-                robot.driveRobot(0, -TURNSPEED);
+                robot.driveRobot(0, TURNSPEED);
                 sleep(2500);
-                robot.driveRobot(FORWARD_SPEED, 0);
+                robot.driveRobot(-FORWARD_SPEED, 0);
                 sleep(7 * 1000);
 
-                robot.driveRobot(0, -TURNSPEED);
-                sleep(8000);
 
                 break;
             }

@@ -44,18 +44,23 @@ public class Auto_BottomRight extends LinearOpMode {
             while (opModeIsActive() && !isStopRequested()) {
 
                 robot.driveRobot(-FORWARD_SPEED, 0);
-                sleep(5700);
+                sleep(6100);
                 robot.driveRobot(FORWARD_SPEED, 0);
-                sleep(5700);
+                sleep(4900);
                 robot.driveRobot(0,TURNSPEED);
-                sleep(4500);
-                robot.driveRobot(5.2,0);
-                robot.moveElbowToPosition(0.40);
-                sleep(300);
+                sleep(4800);
+                robot.driveRobot(FORWARD_SPEED,0);
+                sleep(8000);
+                robot.moveElbowToPosition(0.30);
+                sleep(200);
                 robot.moveGrabberToPosition(RobotHardware.GRABBER_MAX);
                 sleep(500);
                 robot.moveGrabberToPosition(RobotHardware.GRABBER_MIN);
                 sleep(500);
+                robot.moveElbowToPosition(0.30);
+                sleep(200);
+                robot.driveRobot(FORWARD_SPEED,0);
+                sleep(1000);
                 break;
 
             }
