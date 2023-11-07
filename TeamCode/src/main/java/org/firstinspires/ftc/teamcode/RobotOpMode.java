@@ -80,7 +80,8 @@ public abstract class RobotOpMode extends OpMode {
         try {
             armMotor.setDirection(DcMotorSimple.Direction.FORWARD);
             armMotor.setTargetPosition(0);
-            //armMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            //armMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            armMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
             armExtensionMotor.setDirection(DcMotorSimple.Direction.FORWARD);
             //initArm();
@@ -299,7 +300,30 @@ public abstract class RobotOpMode extends OpMode {
      * @param position The target position of the arm motor
      * @return if the arm motor has successfully reached the position
      */
-    public boolean linearMoveArm(float power, ArmServoPosition position) {
+    public boolean linearMoveArm(float power, int position) {
+        armMotor.setTargetPosition(getArmPosition(position));
+        armMotor.setPower(power);
+        boolean busy = armMotor.isBusy();
+        // FIXME: I am unsure of how the isBusy method works. Make sure it doesn't return true when setting position.
+        // It may calculate how busy the motor is based on velocity OR it may determine it by position.
+        // For the first scenario, manually check the position of the robot and apply changes accordingly.
+        // For the second scenario, this should work perfectly fine
+        if(!busy) {
+            armMotor.setPower(MIN_POWER);
+        }
+        return !busy;
+    }
+
+    /**
+     * Moves the arm according to the parameters. This should be used in any
+     * {@link com.qualcomm.robotcore.eventloop.opmode.LinearOpMode} that extends {@link RobotOpMode}
+     *
+     * @param power The power of the arm motor
+     * @param position The target position of the arm motor
+     * @return if the arm motor has successfully reached the position
+     */
+    @Deprecated // We would rather have analog input rather than states
+    public boolean linearMoveArm(float power, ArmHingePosition position) {
         armMotor.setTargetPosition(getArmPosition(position));
         armMotor.setPower(power);
         boolean busy = armMotor.isBusy();
@@ -393,8 +417,17 @@ public abstract class RobotOpMode extends OpMode {
      * @param position The position of the arm servo
      * @return The target position variable that can be used by the arm motor.
      */
-    public int getArmPosition(ArmServoPosition position) {
+    public int getArmPosition(ArmHingePosition position) {
         return position.getPosition()-armZeroPosition;
+    }
+
+    /**
+     * Obtains the position of the arm relative to the generated zero position
+     * @param position The position of the arm servo
+     * @return The target position variable that can be used by the arm motor.
+     */
+    public int getArmPosition(int position) {
+        return position-armZeroPosition;
     }
 
     public static final String ERROR = "ERROR";
@@ -412,13 +445,14 @@ public abstract class RobotOpMode extends OpMode {
         telemetry.addData(header, message);
     }
 
-    public enum ArmServoPosition {
+    @Deprecated // We would like to use analog rather than states for the arm
+    public enum ArmHingePosition {
         OPEN(-45),
         CLOSED(45);
 
         final int position;
 
-        ArmServoPosition(int position) {
+        ArmHingePosition(int position) {
             this.position = position;
         }
 

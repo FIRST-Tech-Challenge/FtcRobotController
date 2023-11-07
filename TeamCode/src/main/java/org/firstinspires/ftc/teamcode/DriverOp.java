@@ -20,7 +20,7 @@ public class DriverOp extends RobotOpMode {
     @Override
     public void robotLoop() {
         gamePadMoveRobot();
-        int direction = 0;
+        /*int direction = 0;
         if(armMotor!= null) {
             if (gamepad1.dpad_up) {
                 int position = positionFromAngle(-110, AngleUnit.DEGREES);
@@ -34,6 +34,13 @@ public class DriverOp extends RobotOpMode {
             if (!armMotor.isBusy()) {
                 armMotor.setPower(0);
             }
+        }*/
+        if(gamepad1.dpad_up) {
+
+        } else if(gamepad1.dpad_down) {
+
+        } else {
+
         }
 
         //armExtensionMotor.setPower(gamepad1.right_stick_y);
