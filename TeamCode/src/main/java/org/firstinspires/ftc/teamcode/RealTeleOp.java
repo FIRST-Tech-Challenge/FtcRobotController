@@ -8,7 +8,7 @@ import com.qualcomm.robotcore.hardware.Servo;
 
 //add any test stuff you need to do here
 @TeleOp
-public class TestTeleOp extends LinearOpMode {
+public class RealTeleOp extends LinearOpMode {
 
     @Override
     public void runOpMode() throws InterruptedException {
