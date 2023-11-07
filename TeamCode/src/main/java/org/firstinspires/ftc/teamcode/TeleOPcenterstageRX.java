@@ -19,10 +19,8 @@ import com.qualcomm.robotcore.hardware.AnalogInput;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.Servo;
-import com.qualcomm.robotcore.hardware.TouchSensor;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.controls.ExposureControl;
@@ -36,7 +34,7 @@ import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 @TeleOp
-public class centerstageRX extends OpMode {
+public class TeleOPcenterstageRX extends OpMode {
     public Switch swish;
     public DcMotorEx motorBR,motorBL,motorFL,motorFR,slider,melcsus,melcjos;
     public Servo gherutaL,gherutaR,plauncher;
@@ -65,7 +63,7 @@ public class centerstageRX extends OpMode {
     /*Functia de init se ruleaza numai o data, se folosete pentru initializarea motoarelor si chestii :)*/
     @Override
     public void init() {
-
+        c.init(hardwareMap);
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
         /* Liniile astea de cod fac ca motoarele sa corespunda cu cele din configuratie, cu numele dintre ghilimele.*/
         potentiometru = hardwareMap.get(AnalogInput.class,"potentiometru");
@@ -110,10 +108,10 @@ public class centerstageRX extends OpMode {
         melcsus.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         slider.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
 
-        motorFR.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
-        motorFL.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
-        motorBR.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
-        motorBL.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
+        motorFR.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
+        motorFL.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
+        motorBR.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
+        motorBL.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
 
         slider.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
         melcjos.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
@@ -267,12 +265,12 @@ public class centerstageRX extends OpMode {
                     slowl = 1;
                     slowr = 1;
                 }*/
-                POWER(pmotorFR / sm / slowr, pmotorFL / sm / slowl, pmotorBR / sm / slowr, pmotorBL / sm / slowl);
+                POWER(pmotorFR/sm,pmotorFL/sm,pmotorBR/sm, pmotorBL/sm);
             }
         }
     });
     public void POWER(double df1, double sf1, double ds1, double ss1){
-        motorFR.setPower(df1);;
+        motorFR.setPower(df1);
         motorBL.setPower(ss1);
         motorFL.setPower(sf1);
         motorBR.setPower(ds1);
@@ -282,7 +280,7 @@ public class centerstageRX extends OpMode {
         public void run() {
             while(!stop){
                 //pid.setPID(kp,ki,kd);
-                if (gamepad2.left_trigger > 0) {
+                if (gamepad2.right_trigger > 0) {
                     slow = 2;
                 }
                 else {
@@ -320,7 +318,7 @@ public class centerstageRX extends OpMode {
     private final Thread Systems = new Thread(new Runnable() {
         @Override
         public void run() {
-            while (!stop) {
+            while (!stop){
                 if (gamepad2.dpad_down) {
                     maceta.setPower(1);
                 }
@@ -385,10 +383,13 @@ public class centerstageRX extends OpMode {
         telemetry.addData("melcjos:", melcjos.getCurrentPosition());
         telemetry.addData("melcsus:", melcsus.getCurrentPosition());
         telemetry.addData("ghearaPoz:", ghearaPoz);
-        telemetry.addData("macetaPow:", macetaPow);
+        telemetry.addData("macetaPow:", maceta.getPower());
         telemetry.addData("bval:", bval);
         telemetry.addData("xval:", xval);
         telemetry.addData("bl:", bl);
+        telemetry.addData("rb",rb);
+        telemetry.addData("lb",lb);
+        telemetry.addData("sm",sm);
         telemetry.addData("gamepad2.b:", gamepad2.b);
         telemetry.addData("potentiometru:",potentiometru.getVoltage());
         telemetry.addData("distanceL:",distanceL.getDistance(DistanceUnit.CM));

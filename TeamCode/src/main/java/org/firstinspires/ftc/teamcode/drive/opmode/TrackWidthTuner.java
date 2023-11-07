@@ -35,6 +35,7 @@ public class TrackWidthTuner extends LinearOpMode {
         Telemetry telemetry = new MultipleTelemetry(this.telemetry, FtcDashboard.getInstance().getTelemetry());
 
         SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
+        // TODO: if you haven't already, set the localizer to something that doesn't depend on
         // drive encoders for computing the heading
 
         telemetry.addLine("Press play to begin the track width tuner routine");

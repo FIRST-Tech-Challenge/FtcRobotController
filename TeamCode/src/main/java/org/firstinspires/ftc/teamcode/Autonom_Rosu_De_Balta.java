@@ -26,7 +26,7 @@ public class Autonom_Rosu_De_Balta extends LinearOpMode {
     public void runOpMode() throws InterruptedException {
         c.init(hardwareMap);
         CV_detectionType = Var.DetectionTypes.DAY;
-        telemetry = new MultipleTelemetry(FtcDashboard.getInstance().getTelemetry(), telemetry);
+        //telemetry = new MultipleTelemetry(FtcDashboard.getInstance().getTelemetry(), telemetry);
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
         webcam = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "Webcam 2"), cameraMonitorViewId);
         webcam.setPipeline(pipeline);

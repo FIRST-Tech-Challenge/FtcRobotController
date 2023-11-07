@@ -6,20 +6,14 @@ import static java.lang.Math.abs;
 import static java.lang.Math.addExact;
 import static java.lang.Math.floorDiv;
 
-import android.util.Log;
 import android.widget.Switch;
 
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.hardware.CRServo;
-import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
-import com.qualcomm.robotcore.hardware.Servo;
-import com.qualcomm.robotcore.hardware.TouchSensor;
 
 @TeleOp
-public class SasiuAL extends OpMode {
+public class SasiuTeleOP extends OpMode {
     public Switch swish;
     public DcMotorEx motorBR,motorBL,motorFL,motorFR;
     double sm = 1, slow = 1, lb = 1, rb = 1;
