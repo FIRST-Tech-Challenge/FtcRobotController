@@ -345,6 +345,7 @@ public abstract class RobotOpMode extends OpMode {
     public void analogMoveArm(float power, boolean setArmModeToRunToPosition) {
         armMotor.setPower(power);
         if (setArmModeToRunToPosition) {
+            armMotor.setTargetPosition(armMotor.getCurrentPosition());
             armMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         }
     }
