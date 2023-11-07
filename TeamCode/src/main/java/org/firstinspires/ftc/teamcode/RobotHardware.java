@@ -300,6 +300,10 @@ public class RobotHardware {
         grabberServo.setPosition(Range.clip(position, GRABBER_MIN, GRABBER_MAX));
     }
 
+    public double getGrabberPoistion(){
+        return grabberServo.getPosition();
+    }
+
     /**
      * Send the two hand-servos to opposing (mirrored) positions, based on the passed offset.
      *

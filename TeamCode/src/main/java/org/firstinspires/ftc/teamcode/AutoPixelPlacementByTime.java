@@ -52,10 +52,10 @@ import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
  *
  * See the sensor's product page: https://www.revrobotics.com/rev-31-1505/
  */
-/* @TeleOp(name = "Hornet Pixel Placement", group = "Sensor")
+@TeleOp(name = "HornetSquad: Pixel Placement", group = "Auto")
 public class AutoPixelPlacementByTime extends LinearOpMode {
 
-    /* private DistanceSensor sensorDistance;
+    private DistanceSensor sensorDistance;
     private RobotHardware robot = new RobotHardware(this);
     static final double FORWARD_SPEED = 0.2;
     static final double TARGET_DISTANCE_INCHES = 2590;
@@ -68,7 +68,7 @@ public class AutoPixelPlacementByTime extends LinearOpMode {
         GRABBER_READY_TO_OPEN
     }
 
-    private Stages CurrentStatus = ROBOT_READY_TO_FORWARD_MOVE;
+    private Stages CurrentStatus = Stages.ROBOT_READY_TO_FORWARD_MOVE;
 
     static final int forwardPeriod = 5500; //in milli seconds
     @Override
@@ -120,7 +120,7 @@ public class AutoPixelPlacementByTime extends LinearOpMode {
             sleep(10);
         }
         else{
-            CurrentStatus = ELBOW_STOPPED;
+            CurrentStatus = Stages.ELBOW_STOPPED;
         }
     }
     private void moveRobotToPosition(){
@@ -140,7 +140,7 @@ public class AutoPixelPlacementByTime extends LinearOpMode {
         }
         else{
             robot.driveRobot(0, 0);
-            CurrentStatus = ELBOW_READY_TO_MOVE_DOWW;
+            CurrentStatus = Stages.ELBOW_READY_TO_MOVE_DOWW;
         }
     }
     private boolean hasReachedTargetDistance(DistanceSensor sensorDistance){
@@ -149,4 +149,3 @@ public class AutoPixelPlacementByTime extends LinearOpMode {
         return false;
     }
 }
-*/
