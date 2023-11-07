@@ -66,24 +66,23 @@ public class lm1teleop1driver extends LinearOpMode {
 
         boolean open = false;
         boolean state = false;
-        boolean lastState = false;
+        boolean lastState = false;// claw booleans
         wrist = hardwareMap.get(Servo.class, "wrist");
-        claw = hardwareMap.get(Servo.class, "claw");
-        extension extend = new extension(hardwareMap);
-        extend.release();
-        boolean reset = false;
-        boolean slowturn = false;
-        double rx;
+        claw = hardwareMap.get(Servo.class, "claw");//hardwaremap claw and tilt
+        extension extend = new extension(hardwareMap);//tilt object made
+        extend.release();//releases the tilt to move into start pos
+        boolean reset = false;//boolean for reset heading
+        boolean slowturn = false;//boolean for slowturn mode
+        double rx;//right x
         telemetry.addData("Status", "Initialized");
         telemetry.update();
-        drive.init(hardwareMap, 0);
-        // Initialize the hardware variables. Note that the strings used here as parameters
-        // to 'get' must correspond to the names assigned during the robot configuration
-        // step (using the FTC Robot Controller app on the phone).
-        extend.setStowPos();
-        boolean y = false;
+        drive.init(hardwareMap, 0);//init dt
+        //extend.setStowPos();//for when auto is ready
         while(opModeInInit()){
-            extend.hold();
+            if(gamepad1.a){
+                extend.hold();//hold init pos
+                break;
+            }
         }
         waitForStart();
         runtime.reset();
@@ -96,11 +95,11 @@ public class lm1teleop1driver extends LinearOpMode {
             if (gamepad1.b) {
                 slowturn = false;
             }
+            rx = gamepad1.right_stick_x;
             if (slowturn) {
-                rx = gamepad1.right_stick_x * 0.7;
-            } else {
-                rx = gamepad1.right_stick_x;
-            }
+                rx *=0.7;
+            } //could be more compact
+
             if (gamepad1.y) {//slow speed mode
                 drive.run(gamepad1.left_stick_y, gamepad1.left_stick_x, rx, 0.5, true);
             } else {
