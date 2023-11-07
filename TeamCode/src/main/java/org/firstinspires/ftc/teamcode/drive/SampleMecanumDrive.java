@@ -237,7 +237,7 @@ public class SampleMecanumDrive extends MecanumDrive {
         }
     }
 
-    public void setWeightedDrivePower(Pose2d drivePower) {
+    public void setWeightedDrivePower(@NonNull Pose2d drivePower) {
         Pose2d vel = drivePower;
 
         if (Math.abs(drivePower.getX()) + Math.abs(drivePower.getY())
