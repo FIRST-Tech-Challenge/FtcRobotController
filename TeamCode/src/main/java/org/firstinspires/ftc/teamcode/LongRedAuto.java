@@ -19,7 +19,7 @@ public class LongRedAuto extends LinearOpMode {
         //TODO: unlock slide, clamp down, slide down (not nec in that order)
 
         robot.detectMarkerPosition();
-        robot.moveToBoard();
+        robot.longMoveToBoard();
         robot.alignToBoard();
         robot.autoOuttake();
     }
