@@ -30,6 +30,26 @@ public class FTCDashboardPackets {
     }
 
     /**
+     * Takes in an exception and puts it into the current packet.
+     * @param e The exception to be put into the packet
+     */
+    public void error(Exception e) {
+        packet.put("Error", e.getMessage());
+    }
+
+    /**
+     * Takes in an exception and puts it into the current packet.
+     * @param e The exception to be put into the packet
+     * @param sendPacket A boolean of whether or not to send the packet after the exception is put in
+     * @param reinitializePacket A boolean of whether or not to reinitialize the packet after it is sent
+     */
+    public void error(Exception e, boolean sendPacket, boolean reinitializePacket) {
+        error(e);
+        if (sendPacket)
+            send(reinitializePacket);
+    }
+
+    /**
      * Sends the current packet to the dashboard
      * @param reinitializePacket A boolean of whether or not to reinitialize the packet after it is sent.
      */
@@ -37,5 +57,10 @@ public class FTCDashboardPackets {
         DASHBOARD.sendTelemetryPacket(packet);
         if (reinitializePacket)
             createNewTelePacket();
+    }
+
+    public enum CommonPackets {
+        START,
+        CONTINUE
     }
 }
