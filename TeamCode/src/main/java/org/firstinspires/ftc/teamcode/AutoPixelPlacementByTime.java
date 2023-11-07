@@ -32,7 +32,7 @@ THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 package org.firstinspires.ftc.teamcode;
 
-import static org.firstinspires.ftc.teamcode.AutoPixelPlacementByTime.Stages.*;
+//import static org.firstinspires.ftc.teamcode.AutoPixelPlacementByTime.Stages.*;
 
 import com.qualcomm.hardware.rev.Rev2mDistanceSensor;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -52,10 +52,10 @@ import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
  *
  * See the sensor's product page: https://www.revrobotics.com/rev-31-1505/
  */
-@TeleOp(name = "Hornet Pixel Placement", group = "Sensor")
+/* @TeleOp(name = "Hornet Pixel Placement", group = "Sensor")
 public class AutoPixelPlacementByTime extends LinearOpMode {
 
-    private DistanceSensor sensorDistance;
+    /* private DistanceSensor sensorDistance;
     private RobotHardware robot = new RobotHardware(this);
     static final double FORWARD_SPEED = 0.2;
     static final double TARGET_DISTANCE_INCHES = 2590;
@@ -149,3 +149,4 @@ public class AutoPixelPlacementByTime extends LinearOpMode {
         return false;
     }
 }
+*/
