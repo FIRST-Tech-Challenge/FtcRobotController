@@ -6,6 +6,7 @@ import com.qualcomm.hardware.rev.RevHubOrientationOnRobot.UsbFacingDirection
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot.LogoFacingDirection
 import com.qualcomm.robotcore.eventloop.opmode.OpMode
 import com.qualcomm.robotcore.hardware.DcMotor
+import com.qualcomm.robotcore.hardware.DcMotor.ZeroPowerBehavior.BRAKE
 import com.qualcomm.robotcore.hardware.DcMotorEx
 import com.qualcomm.robotcore.hardware.DcMotorSimple.Direction.FORWARD
 import com.qualcomm.robotcore.hardware.DcMotorSimple.Direction.REVERSE
@@ -30,30 +31,37 @@ class BotShared(opMode: OpMode) {
     @JvmField var motorSlide: DcMotorEx? =      try {   opMode.hardwareMap[DcMotorEx::class.java,   "lsd"] } catch (_: Exception) { null }
     @JvmField var motorIntakeSpin: DcMotorEx =          opMode.hardwareMap[DcMotorEx::class.java,   "inspin"]
     @JvmField var motorIntakeLift: DcMotorEx? = try {   opMode.hardwareMap[DcMotorEx::class.java,   "inlift"] } catch (_: Exception) { null }
+    @JvmField var motorTruss: DcMotorEx? =      try {   opMode.hardwareMap[DcMotorEx::class.java,   "truss"] } catch (_: Exception) { null }
 
     @JvmField var drive: MecanumDrive? = null
 
     @JvmField var march =                 camera?.let { March(opMode, it) }
     @JvmField var lsd =               motorSlide?.let { LSD(opMode, it) }
-    @JvmField var intake =       motorIntakeLift?.let { PixelIntake(opMode, it, motorIntakeSpin) }
+    @JvmField var intake =       motorIntakeLift?.let { Intake(opMode, it, motorIntakeSpin) }
 
     init {
         // IMU orientation/calibration
         val logo = LogoFacingDirection.UP
-        val usb = UsbFacingDirection.RIGHT
+        val usb = UsbFacingDirection.LEFT
         val orientationOnRobot = RevHubOrientationOnRobot(logo, usb)
         imu.initialize(IMU.Parameters(orientationOnRobot))
         imu.resetYaw()
 
-        // Motor rotations (DO NOT CHANGE THESE!!!)
+        // Motor directions (DO NOT CHANGE THESE!!!)
         motorLeftFront. direction = REVERSE
         motorLeftBack.  direction = REVERSE
         motorRightFront.direction = FORWARD
         motorRightBack. direction = FORWARD
-        motorLeftFront.zeroPowerBehavior = DcMotor.ZeroPowerBehavior.BRAKE
-        motorLeftBack.zeroPowerBehavior = DcMotor.ZeroPowerBehavior.BRAKE
-        motorRightFront.zeroPowerBehavior = DcMotor.ZeroPowerBehavior.BRAKE
-        motorRightBack.zeroPowerBehavior = DcMotor.ZeroPowerBehavior.BRAKE
+
+        // Modes
+        motorTruss?.mode = DcMotor.RunMode.RUN_WITHOUT_ENCODER
+
+        // Break, break!
+        motorLeftFront.zeroPowerBehavior =  BRAKE
+        motorLeftBack.zeroPowerBehavior =   BRAKE
+        motorRightFront.zeroPowerBehavior = BRAKE
+        motorRightBack.zeroPowerBehavior =  BRAKE
+        motorTruss?.zeroPowerBehavior =     BRAKE
     }
     /**
      * Should be called every update.
@@ -66,7 +74,7 @@ class BotShared(opMode: OpMode) {
     /** RoadRunner Pose Storage */
     companion object {
         @JvmStatic
-        var storedPose: Pose2d = Pose2d(0.0, 0.0, 0.0);
+        var storedPose: Pose2d = Pose2d(0.0, 0.0, 0.0)
     }
 
 }
