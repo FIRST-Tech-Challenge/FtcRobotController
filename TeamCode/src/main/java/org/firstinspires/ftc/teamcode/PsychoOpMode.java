@@ -182,8 +182,12 @@ public class PsychoOpMode extends LinearOpMode {
             rightBackPower  = gamepad1.b ? 1.0 : 0.0;  // B gamepad
             */
 
+            boolean toggle = false;
+            if (gamepad1.left_bumper){
+                toggle = !toggle;
+            }
             double mul = 1.0;
-            if (gamepad1.left_bumper) {
+            if (toggle) {
                 mul = 0.3;
             }
 
