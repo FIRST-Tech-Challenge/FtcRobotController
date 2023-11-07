@@ -63,12 +63,14 @@ public class lm1teleop1driver extends LinearOpMode {
 
     @Override
     public void runOpMode() {
+
         boolean open = false;
         boolean state = false;
         boolean lastState = false;
         wrist = hardwareMap.get(Servo.class, "wrist");
         claw = hardwareMap.get(Servo.class, "claw");
         extension extend = new extension(hardwareMap);
+        extend.release();
         boolean reset = false;
         boolean slowturn = false;
         double rx;
@@ -80,7 +82,9 @@ public class lm1teleop1driver extends LinearOpMode {
         // step (using the FTC Robot Controller app on the phone).
         extend.setStowPos();
         boolean y = false;
-
+        while(opModeInInit()){
+            extend.hold();
+        }
         waitForStart();
         runtime.reset();
 
@@ -105,9 +109,9 @@ public class lm1teleop1driver extends LinearOpMode {
 
             state = gamepad1.left_bumper;//state for claw
 
-            if (gamepad1.left_trigger >= 0.5) {extend.setIntake();wrist.setPosition(0.01);}//set posistions
-            else if (gamepad1.right_bumper) {extend.setIntake();wrist.setPosition(1);}
-            else if (gamepad1.right_trigger >= 0.5) {extend.setPlace();wrist.setPosition(1);}
+            if (gamepad1.left_trigger >= 0.5) {extend.setIntake();wrist.setPosition(1);}//set posistions
+            else if (gamepad1.right_bumper) {extend.setIntake();wrist.setPosition(0.13);}
+            else if (gamepad1.right_trigger >= 0.5) {extend.setPlace();wrist.setPosition(0.9);}
 
             if (gamepad1.left_bumper && state != lastState) {//new claw code for easier driving
                 if (open) {claw.setPosition(0.2);open = false;}

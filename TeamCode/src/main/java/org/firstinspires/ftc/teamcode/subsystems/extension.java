@@ -35,26 +35,26 @@ public class extension {
 
       //  ((DcMotorEx) tilt).setVelocityPIDFCoefficients(10, 0, 11, 10);
 
-        ((DcMotorEx) tilt).setPositionPIDFCoefficients(4.5);
+        ((DcMotorEx) tilt).setPositionPIDFCoefficients(4.75);
         tilt.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         //    pidf.setTolerance(5);
   //      pidf.setPIDF(0.004,0,0.005,0.00000001);
      //   Liftpos = lift1.getCurrentPosition();
     }
     public static boolean laststate=false;
-    public void move_with_hands(boolean yes){
-        if(!yes&&laststate) {
-            tilt.setPower(1);
-            tilt.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-            tilt.setTargetPosition(tilt.getCurrentPosition());
-            tilt.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        }else if(yes) {
-            tilt.setPower(0);
-            tilt.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
-            tilt.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        }
-        laststate=yes;
-    }
+//    public void move_with_hands(boolean yes){
+//        if(!yes&&laststate) {
+//            tilt.setPower(1);
+//            tilt.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+//            tilt.setTargetPosition(tilt.getCurrentPosition());
+//            tilt.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+//        }else if(yes) {
+//            tilt.setPower(0);
+//            tilt.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+//            tilt.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+//        }
+//        laststate=yes;
+//    }
 
     public int getTilt(){
         return tilt.getCurrentPosition();
@@ -62,6 +62,7 @@ public class extension {
     public void release(){
         tilt.setPower(0);
     }
+    public void hold(){tilt.setTargetPosition(tilt.getCurrentPosition()); tilt.setPower(1);}
     //add wrist commands here probably
     //tune all values when stringed and intake is done
     //
@@ -72,11 +73,8 @@ public class extension {
     public void setIntake() {
         setTilt(0);
     }
-    public void setPlace() {
-        setTilt(228);
-    }
+    public void setPlace() {setTilt(650);}
     public void setIntakeClosePos(){
-
         setTilt(0);
         setHeight(0);
         if((tilt.getCurrentPosition())<(tilt.getTargetPosition()*((double) 3.0 / 4.0))){
@@ -93,7 +91,7 @@ public class extension {
     public void setStowPos(){
         //setHeight(0);
         //if((lift1.getCurrentPosition())<(lift1.getTargetPosition()*(3.0 / 4.0))){
-            setTilt(45);
+            setTilt(228);
         //}
 
     }
