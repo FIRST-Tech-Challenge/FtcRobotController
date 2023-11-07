@@ -14,9 +14,10 @@ public class TestingStuff extends RobotOpMode {
 
         //moveServo(armCatcherServo, NEW_SERVO_POSITION);
     }
+
     @Override
-    public void robotLoop() {
-        //gamePadMoveRobot();
+    public void gamePadMoveRobot() {
+        super.gamePadMoveRobot();
         float ArmServoPositionModifier = 0;
         if (gamepad1.dpad_left) {
             ArmServoPositionModifier += 0.1;
@@ -38,7 +39,7 @@ public class TestingStuff extends RobotOpMode {
         }
 
         //moveServo(armCatcherServo, (armCatcherServoPosition + ArmServoPositionModifier));
-        moveServo(wristServo, (int) (wristServoPosition + WristServoPositionModifier));
+        moveServo(wristServo, (float)(wristServoPosition + WristServoPositionModifier));
 
         if (gamepad1.a) {
             armExtensionMotor.setPower(1);
@@ -47,6 +48,7 @@ public class TestingStuff extends RobotOpMode {
         } else {
             armExtensionMotor.setPower(0);
         }
+        
         final float ARM_POWER = gamepad1.left_trigger - gamepad1.right_trigger;
         if (ARM_POWER == 0) {
             armMotor.setTargetPosition(armMotor.getCurrentPosition());
@@ -68,5 +70,10 @@ public class TestingStuff extends RobotOpMode {
             armMotor.setPower(0);
         }
         */
+    }
+
+    @Override
+    public void robotLoop() {
+        gamePadMoveRobot();
     }
 }
