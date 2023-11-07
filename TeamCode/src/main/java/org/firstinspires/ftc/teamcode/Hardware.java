@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -14,10 +15,6 @@ public class Hardware
     public DcMotorEx frontRight;
     public DcMotorEx backLeft;
     public DcMotorEx backRight;
-
-    //servo declaration
-    public Servo depositServoOne;
-    public Servo depositServoTwo;
 
     //helper class variables
     public double x = 0, y = 0, theta = 0;
@@ -35,22 +32,39 @@ public class Hardware
     public static final double ODOM_TICKS_PER_IN = 1831.471685;
     public static double trackwidth = 10.976;
 
+    //intake motor
+    public DcMotorEx intakeMotor;
+
+    //counterrolled
+    public CRServo counteroller;
+
+    //deposit servo declaration
+    public Servo depositServoOne;
+    public Servo depositServoTwo;
+
     public Hardware(HardwareMap hardwareMap)
     {
-        //Deposit servo config
-        depositServoOne = hardwareMap.get(Servo.class, "Left Deposit");
-        depositServoTwo = hardwareMap.get(Servo.class, "Right Deposit");
-
         //drive motor initialization
         frontLeft = hardwareMap.get(DcMotorEx.class, "Front Left");
         frontRight = hardwareMap.get(DcMotorEx.class, "Front Right");
         backLeft = hardwareMap.get(DcMotorEx.class, "Back Left");
         backRight = hardwareMap.get(DcMotorEx.class, "Back Right");
 
+        frontRight.setDirection(DcMotorSimple.Direction.REVERSE);
+        backRight.setDirection(DcMotorSimple.Direction.REVERSE);
+
         //odom
         leftOdom = hardwareMap.get(DcMotorEx.class, "Front Left");
         rightOdom = hardwareMap.get(DcMotorEx.class, "Front Right");
         centerOdom = hardwareMap.get(DcMotorEx.class, "Back Right");
+
+        //Intake
+        intakeMotor = hardwareMap.get(DcMotorEx.class, "Intake Motor");
+        counteroller = hardwareMap.get(CRServo.class, "Intake Servo");
+
+        //Deposit servo config
+        depositServoOne = hardwareMap.get(Servo.class, "Left Deposit");
+        depositServoTwo = hardwareMap.get(Servo.class, "Right Deposit");
     }
 
     //robot-oriented drive method
