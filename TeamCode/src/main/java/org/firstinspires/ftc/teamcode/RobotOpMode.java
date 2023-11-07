@@ -342,8 +342,11 @@ public abstract class RobotOpMode extends OpMode {
      * @param power The power of the arm motor
      */
 
-    public void analogMoveArm(float power) {
+    public void analogMoveArm(float power, boolean setArmModeToRunToPosition) {
         armMotor.setPower(power);
+        if (setArmModeToRunToPosition) {
+            armMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        }
     }
 
     public static enum HandState {
