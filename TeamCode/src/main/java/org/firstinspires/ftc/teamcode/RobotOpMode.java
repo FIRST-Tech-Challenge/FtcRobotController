@@ -326,15 +326,24 @@ public abstract class RobotOpMode extends OpMode {
     public boolean linearMoveArm(float power, ArmHingePosition position) {
         armMotor.setTargetPosition(getArmPosition(position));
         armMotor.setPower(power);
-        boolean busy = armMotor.isBusy();
+        final boolean BUSY = armMotor.isBusy();
         // FIXME: I am unsure of how the isBusy method works. Make sure it doesn't return true when setting position.
         // It may calculate how busy the motor is based on velocity OR it may determine it by position.
         // For the first scenario, manually check the position of the robot and apply changes accordingly.
         // For the second scenario, this should work perfectly fine
-        if(!busy) {
+        if(!BUSY) {
             armMotor.setPower(MIN_POWER);
         }
-        return !busy;
+        return !BUSY;
+    }
+
+    /**
+     * Moves the arm according to the parameters.
+     * @param power The power of the arm motor
+     */
+
+    public void analogMoveArm(float power) {
+        armMotor.setPower(power);
     }
 
     public static enum HandState {
