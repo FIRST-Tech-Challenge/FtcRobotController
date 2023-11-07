@@ -51,10 +51,10 @@ public class Auto_BottomLeft extends LinearOpMode {
                 sleep(4900);
 
                 robot.driveRobot(0,TURNSPEED);
-                sleep(5200);
+                sleep(5600);
 
                 robot.driveRobot(FORWARD_SPEED,0);
-                sleep(8000);
+                sleep(7800);
 
                 robot.moveElbowToPosition(0.3);
                 sleep(1000);
