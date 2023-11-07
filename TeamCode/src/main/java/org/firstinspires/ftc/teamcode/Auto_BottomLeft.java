@@ -48,9 +48,7 @@ public class Auto_BottomLeft extends LinearOpMode {
                 sleep(6900);
 
                 robot.driveRobot(FORWARD_SPEED, 0);
-                sleep(4800);
-
-                /* Turning the robot for pixel-placing on the board */
+                sleep(4900);
 
                 robot.driveRobot(0,TURNSPEED);
                 sleep(5200);
@@ -61,13 +59,13 @@ public class Auto_BottomLeft extends LinearOpMode {
                 robot.moveElbowToPosition(0.3);
                 sleep(1000);
 
-                robot.moveGrabberToPosition(RobotHardware.GRABBER_MAX);
-                sleep(500);
-
                 robot.moveGrabberToPosition(RobotHardware.GRABBER_MIN);
                 sleep(500);
 
-                robot.moveElbowToPosition(0.30);
+                robot.moveElbowToPosition(-0.3);
+                sleep(1000);
+
+                robot.driveRobot(FORWARD_SPEED,0);
                 sleep(1000);
 
                 break;
