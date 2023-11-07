@@ -1,7 +1,5 @@
 package org.firstinspires.ftc.teamcode;
 
-// FINALIZED DRIVE CONTROLLED, DO NOT TOUCH ANYTHING HERE //
-
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -9,10 +7,10 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.util.Range;
 import com.qualcomm.robotcore.hardware.Servo;
 
-
 @TeleOp
-public class driveControlled446 extends LinearOpMode {
+public class DriveControlled446 extends LinearOpMode {
 
+    // region variables
     private DcMotor motorFL;
     private DcMotor motorFR;
     private DcMotor motorBL;
@@ -22,27 +20,35 @@ public class driveControlled446 extends LinearOpMode {
     private Servo frontIntake2;
     private Servo outtake;
     private Servo flipper;
+
+    // endregion
     @Override
     public void runOpMode() {
 
-        // Driving motors
+        //region Driving motors
         motorFL = hardwareMap.get(DcMotor.class, "motorFrontLeft");
         motorBL = hardwareMap.get(DcMotor.class, "motorBackLeft");
         motorFR = hardwareMap.get(DcMotor.class, "motorFrontRight");
         motorBR = hardwareMap.get(DcMotor.class, "motorBackRight");
-
+        
         //Reverse left side motors
         motorFL.setDirection(DcMotorSimple.Direction.REVERSE);
         motorBL.setDirection(DcMotorSimple.Direction.REVERSE);
+        //endregion
 
-        // Intake
+
+        // region Dc Motors
         intakeMotor = hardwareMap.get(DcMotor.class, "intakeMotor");
         intakeMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        // endregion
 
-        // Servos
+
+        // region Servos
         frontIntake1 = hardwareMap.get(Servo.class, "frontIntake1");
         frontIntake2 = hardwareMap.get(Servo.class, "frontIntake2");
-
+        outtake = hardwareMap.get(Servo.class, "outtake");
+        flipper = hardwareMap.get(Servo.class, "flipper");
+        // endregion
 
         waitForStart();
 
@@ -51,7 +57,7 @@ public class driveControlled446 extends LinearOpMode {
 
         while (opModeIsActive()) {
 
-            // Mecanum Drive
+            // region Mecanum Drive
 
             // Gamepad inputs
             double y = -gamepad1.left_stick_y; // Reverse the y-axis (if needed)
@@ -75,8 +81,10 @@ public class driveControlled446 extends LinearOpMode {
             motorFR.setPower(frontRightPower);
             motorBL.setPower(backLeftPower);
             motorBR.setPower(backRightPower);
+            
+            // endregion
 
-            // Telemetry
+            // region Telemetry
             telemetry.addData("LF Power:", motorFL.getPower());
             telemetry.addData("LB Power:", motorBL.getPower());
             telemetry.addData("RF Power:", motorFR.getPower());
@@ -86,6 +94,7 @@ public class driveControlled446 extends LinearOpMode {
             telemetry.addData("RF Position:", motorFR.getCurrentPosition());
             telemetry.addData("RB Position:", motorBR.getCurrentPosition());
             telemetry.update();
+            //endregion
         }
     }
 }
