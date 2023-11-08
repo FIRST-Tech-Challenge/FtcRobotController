@@ -31,7 +31,7 @@ public class EncoderDrive extends LinearOpMode {
 
     @Override
     public void runOpMode() {
-        // Initialize your motors
+        // Initialize your motors and other hardware components
         motorFrontLeft = hardwareMap.get(DcMotor.class, "motorFrontLeft");
         motorFrontRight = hardwareMap.get(DcMotor.class, "motorFrontRight");
         motorBackLeft = hardwareMap.get(DcMotor.class, "motorBackLeft");
@@ -48,9 +48,25 @@ public class EncoderDrive extends LinearOpMode {
         motorBackRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         waitForStart();
+        // Drive forward 1 tile
+        drive(1440);
 
-        // Your autonomous actions after reaching the target position
+        // Turn 90 degrees right 
+        turn(90);
+
+        // Drive backward for 2 tiles
+        drive(-2880); 
+
+        // Drive forward for half a tile
+        drive(720); 
+
+        // Turn 90 degrees
+        turn(90);
+
+        // Drive forward for 1 tile 
+        drive(1440); 
     }
+
 
     public void drive(int target) {
         // Calculate the target encoder ticks based on distance
