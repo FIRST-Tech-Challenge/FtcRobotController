@@ -31,7 +31,7 @@ class BotShared(opMode: OpMode) {
     @JvmField var motorSlide: DcMotorEx? =      try {   opMode.hardwareMap[DcMotorEx::class.java,   "lsd"] } catch (_: Exception) { null }
     @JvmField var motorIntakeSpin: DcMotorEx =          opMode.hardwareMap[DcMotorEx::class.java,   "inspin"]
     @JvmField var motorIntakeLift: DcMotorEx? = try {   opMode.hardwareMap[DcMotorEx::class.java,   "inlift"] } catch (_: Exception) { null }
-    @JvmField var motorTruss: DcMotorEx? =      try {   opMode.hardwareMap[DcMotorEx::class.java,   "truss"] } catch (_: Exception) { null }
+    @JvmField var motorTruss: DcMotorEx? =      try {   opMode.hardwareMap[DcMotorEx::class.java,   "hang"] } catch (_: Exception) { null }
 
     @JvmField var drive: MecanumDrive? = null
 
