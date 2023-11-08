@@ -19,10 +19,9 @@ import java.util.Optional;
 
 public class BasicPipeline extends OpenCvPipeline {
 
-    public Scalar darkestJunctions = new Scalar(80, 60, 100);
+    public Scalar darkestJunctions = new Scalar(80, 100, 100);
     public Scalar lightestJunctions = new Scalar(120, 255, 255);
     public double smallestArea = 4000;
-    public double epsilon = 60;
     List<Mat> channels = new ArrayList<>();
     Mat rawHSV = new Mat();
     Mat blurredHSV = new Mat();
@@ -59,19 +58,16 @@ public class BasicPipeline extends OpenCvPipeline {
         Imgproc.findContours(thresholded, contours, new Mat(), Imgproc.RETR_EXTERNAL, Imgproc.CHAIN_APPROX_SIMPLE);
 
         // Get distance and centroid of biggest junction
-        List<MatOfPoint> rectangularContours = new ArrayList<>();
-
+        List<MatOfPoint> bigContours = new ArrayList<>();
         if (!contours.isEmpty()) {
             MatOfPoint biggestContour = contours.get(0);
-            MatOfPoint2f polygonalContour = new MatOfPoint2f(contours.get(0).toArray());
 
             for (MatOfPoint curContour : contours) {
                 if (Imgproc.contourArea(curContour) > Imgproc.contourArea(biggestContour)) {
                     biggestContour = curContour;
                 }
-                Imgproc.approxPolyDP(new MatOfPoint2f(curContour.toArray()), polygonalContour, epsilon, true);
-                if (polygonalContour.total() == 4) rectangularContours.add(new MatOfPoint(polygonalContour.toArray()));
             }
+            bigContours.add(biggestContour);
 
             // Find centroid
             Moments moments = Imgproc.moments(biggestContour);
@@ -84,7 +80,7 @@ public class BasicPipeline extends OpenCvPipeline {
         }
 
         Imgproc.drawContours(input, contours, -1, new Scalar(0,255,0), 3);
-        Imgproc.drawContours(input, rectangularContours, -1, new Scalar(255,0,0), 3);
+        Imgproc.drawContours(input, bigContours, -1, new Scalar(255,0,0), 3);
 
         return input;
     }
