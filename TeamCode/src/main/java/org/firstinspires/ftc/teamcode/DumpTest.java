@@ -2,10 +2,11 @@ package org.firstinspires.ftc.teamcode;
 
 import static org.firstinspires.ftc.robotcore.external.navigation.AngleUnit.DEGREES;
 
+import static java.lang.Thread.sleep;
+
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
@@ -17,20 +18,25 @@ import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
+import org.firstinspires.ftc.teamcode.PIDController;
+import org.firstinspires.ftc.teamcode.Pipeline2023;
+import org.firstinspires.ftc.teamcode.actuatorUtils;
+import org.firstinspires.ftc.teamcode.moveUtils;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
 
 import java.util.Locale;
 
-@Autonomous(name = "PipelineTest", group = "")
-public class PipelineTest extends LinearOpMode {
+@Autonomous(name = "DumpTest", group = "")
+public class DumpTest extends LinearOpMode {
     //test1
     private DcMotor LF = null;
     private DcMotor RF = null;
     private DcMotor LB = null;
     private DcMotor RB = null;
     private Servo gripper = null; //Located on Expansion Hub- Servo port 0
+    private Servo dump = null; //Located on Expansion Hub- Servo port 0
     private DcMotor arm = null;
 
     static final float MAX_SPEED = 1.0f;
@@ -41,7 +47,7 @@ public class PipelineTest extends LinearOpMode {
     private PIDController pidRotate;
     private  OpenCvCamera webCam;
     private boolean isCameraStreaming = false;
-    Pipeline2023 modifyPipeline = new Pipeline2023(true);
+    Pipeline2023 modifyPipeline = new Pipeline2023(false);
 
 
     BNO055IMU imu;
@@ -73,7 +79,9 @@ public class PipelineTest extends LinearOpMode {
         RB = hardwareMap.get(DcMotor.class, "RB");
 
         arm = hardwareMap.get(DcMotor.class, "arm");
-        gripper = hardwareMap.get(Servo.class, "gripper");
+        //gripper = hardwareMap.get(Servo.class, "gripper");
+        dump = hardwareMap.get(Servo.class, "Dump");
+
 
         LF.setDirection(DcMotor.Direction.REVERSE);  // motor direction set for mecanum wheels with mitre gears
         RF.setDirection(DcMotor.Direction.FORWARD);
@@ -107,7 +115,7 @@ public class PipelineTest extends LinearOpMode {
         moveUtils.initialize(LF, RF, LB, RB, imu, desiredHeading, pidRotate);
         moveUtils.resetEncoders();
 
-        actuatorUtils.initializeActuator(arm, gripper);
+        actuatorUtils.initializeActuator(arm, gripper, dump);
 
 
         Long startTime = System.currentTimeMillis();
@@ -121,10 +129,14 @@ public class PipelineTest extends LinearOpMode {
 
             tfod.setZoom(1.5, 16.0 / 9.0);
         }*/
-        actuatorUtils.gripperClose(false);
+        //actuatorUtils.gripperClose(false);
+        actuatorUtils.dumpClose();
 
 
         waitForStart();
+        actuatorUtils.dumpOpen();
+        sleep(2000);
+        actuatorUtils.dumpClose();
         currTime=System.currentTimeMillis();
         startTime=currTime;
         if (resultROI == 3) {
@@ -198,7 +210,7 @@ public class PipelineTest extends LinearOpMode {
         moveUtils.turnCW(56);
         actuatorUtils.armPole(actuatorUtils.ArmLevel.CONE1);
         moveUtils.goStraight(10f,MAX_SPEED,MIN_SPEED,ACCEL);
-        actuatorUtils.gripperOpen(true);
+        //actuatorUtils.gripperOpen(true);
         moveUtils.goStraight(-12f,MAX_SPEED,MIN_SPEED,ACCEL);
         moveUtils.turnCCW(56);
     }

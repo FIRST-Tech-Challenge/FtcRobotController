@@ -5,7 +5,6 @@ import static org.firstinspires.ftc.robotcore.external.navigation.AngleUnit.DEGR
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
@@ -23,8 +22,8 @@ import org.openftc.easyopencv.OpenCvCameraRotation;
 
 import java.util.Locale;
 
-@Autonomous(name = "PipelineTest", group = "")
-public class PipelineTest extends LinearOpMode {
+@Autonomous(name = "BlueLeft", group = "")
+public class BlueLeft extends LinearOpMode {
     //test1
     private DcMotor LF = null;
     private DcMotor RF = null;
