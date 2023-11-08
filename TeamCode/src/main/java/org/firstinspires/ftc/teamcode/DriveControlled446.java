@@ -77,7 +77,7 @@ public class DriveControlled446 extends LinearOpMode {
             // endregion
             
             // region intake
-            // This is just a test
+            // This is just a test. Will change in the future
             if (gamepad1.a) {
                 intakeMotor.setPower(1);
                 outtake.setPosition(1);
@@ -111,8 +111,15 @@ public class DriveControlled446 extends LinearOpMode {
             telemetry.addData("LB Position:", motorBL.getCurrentPosition());
             telemetry.addData("RF Position:", motorFR.getCurrentPosition());
             telemetry.addData("RB Position:", motorBR.getCurrentPosition());
+            telemetry.addData("Intake Motor Power: ", intakeMotor.getPower());
+            telemetry.addData("Intake Motor Position: ", intakeMotor.getCurrentPosition());
+            telemetry.addData("FrontIntake1 Position: ", frontIntake1.getCurrentPosition());
+            telemetry.addData("FrontIntake2 Position: ", frontIntake2.getCurrentPosition());
+            telemetry.addData("Outtake Position: ", outtake.getCurrentPosition());
+            telemetry.addData("Flipper position: ", flipper.getCurrentPosition());
             telemetry.update();
             //endregion
         }
     }
 }
+
