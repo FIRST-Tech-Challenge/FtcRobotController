@@ -6,7 +6,6 @@ import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.firstinspires.ftc.robotcontroller.external.samples.RobotAutoDriveByTime_Linear;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.opencv.core.Core;
 import org.opencv.core.Mat;
@@ -44,17 +43,20 @@ abstract public class BaseAutonomous extends BaseOpMode {
     public static double RIGHT_X = 12.0;
     public static double CENTER_Y = 29.0;
     public static double CENTER_X = 4.5;
-    public static double INTAKE_SPEED = -0.5;
-    public static double INTAKE_TIME = 2000; // in milliseconds
+    public static double INTAKE_SPEED = 1;
+    public static double INTAKE_TIME = 3000; // in milliseconds
 
-    public static double INTAKE_SPEED2 = -0.5;
-    public static double INTAKE_TIME2 = 2000; // in milliseconds
-    public static double MOVING_FROM_WALL = 3;
+    public static double INTAKE_SPEED2 = 1;
+    public static double INTAKE_TIME2 = 10000; // in milliseconds
+    public static double MOVING_FROM_WALL = 3.0;
     public static double FAR_PARKING = 96;
     public static double CLOSE_PARKING = 48;
     public static double ROBOT_SPEED = 0.5;
     public static double STRAFE_FACTOR = 1.210719915922228;
     public static double DISTANCE_FACTOR = 1.032258064516129;
+
+    public static double Y_CALIBRATION_RIGHT = -2.0;
+    public static double Y_CALIBRATION_LEFT = 1.0;
 
 
     public void driveInches(double x, double y) {
@@ -174,6 +176,24 @@ abstract public class BaseAutonomous extends BaseOpMode {
 
         @Override
         public Mat processFrame(Mat input) {
+            int rows = input.rows();
+            int cols = input.cols();
+
+            int newRows = rows - rows / 2; // Calculate the new number of rows
+
+            // Create a new Mat to store the bottom half
+            Mat newFrame = new Mat(newRows, cols, input.type());
+
+            // Define the region of interest (ROI) for the bottom half
+            Rect roi = new Rect(0, rows / 2, cols, newRows);
+
+            // Crop the bottom half and copy it to 'newFrame'
+            Mat cropped = new Mat(input, roi);
+            cropped.copyTo(input);
+
+            newFrame.release();
+            cropped.release();
+
             // convert image to grayscale
             if (detectingBlue) {
                 Imgproc.cvtColor(input, hsv, Imgproc.COLOR_RGB2HSV);
@@ -230,7 +250,12 @@ abstract public class BaseAutonomous extends BaseOpMode {
                 } else {
                     sideDetected = SideDetected.CENTER;
                 }
+
+                largestContour.release();
             }
+            resizedMask.release();
+            hierarchy.release();
+
             return input;
         }
 
@@ -292,8 +317,9 @@ abstract public class BaseAutonomous extends BaseOpMode {
                 telemetry.addData("Side", "Unsure");
         }
         telemetry.update();
-        driveInches(0, y);
+        /* driveInches(0, y);
         driveInches(x, 0);
+
         if(intakeMotor != null) {
               intakeMotor.setPower(INTAKE_SPEED);
               sleep((long) INTAKE_TIME);
@@ -301,21 +327,23 @@ abstract public class BaseAutonomous extends BaseOpMode {
         } else {
             sleep(5000); 
         }
+
         driveInches(-x, 0);
         driveInches(0, -y);
+        */
         driveInches(0, MOVING_FROM_WALL);
 
         if (close) {
             if (red) {
-                driveInches(CLOSE_PARKING, 0);
+                driveInches(CLOSE_PARKING, Y_CALIBRATION_RIGHT);
             } else {
-                driveInches(-CLOSE_PARKING, 0);
+                driveInches(-CLOSE_PARKING, Y_CALIBRATION_LEFT);
             }
         } else {
             if (red) {
-                driveInches(FAR_PARKING,0);
+                driveInches(FAR_PARKING,Y_CALIBRATION_RIGHT);
             } else {
-                driveInches(-FAR_PARKING, 0);
+                driveInches(-FAR_PARKING, Y_CALIBRATION_LEFT);
             }
         }
 

@@ -125,15 +125,15 @@ abstract class BaseOpMode extends LinearOpMode {
     }
 
     public void tiltDumper() {
-        dumperServo.setPosition(0.14);
-    }
-
-    public void dumpDumper() {
-        dumperServo.setPosition(0.36);
+        dumperServo.setPosition(0.32);
     }
 
     public void resetDumper() {
-        dumperServo.setPosition(0.1);
+        dumperServo.setPosition(0.48);
+    }
+
+    public void dumpDumper() {
+        dumperServo.setPosition(0);
     }
 
     enum DumperAction {
