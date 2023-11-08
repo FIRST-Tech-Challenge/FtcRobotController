@@ -1,10 +1,10 @@
 package org.firstinspires.ftc.teamcode.drive.opmode;
 
-import static org.firstinspires.ftc.teamcode.drive.DriveConstants.MAX_ACCEL;
-import static org.firstinspires.ftc.teamcode.drive.DriveConstants.MAX_VEL;
-import static org.firstinspires.ftc.teamcode.drive.DriveConstants.MOTOR_VELO_PID;
-import static org.firstinspires.ftc.teamcode.drive.DriveConstants.RUN_USING_ENCODER;
-import static org.firstinspires.ftc.teamcode.drive.DriveConstants.kV;
+import static org.firstinspires.ftc.teamcode.drive.DriveConstants2024.MAX_ACCEL;
+import static org.firstinspires.ftc.teamcode.drive.DriveConstants2024.MAX_VEL;
+import static org.firstinspires.ftc.teamcode.drive.DriveConstants2024.MOTOR_VELO_PID;
+import static org.firstinspires.ftc.teamcode.drive.DriveConstants2024.RUN_USING_ENCODER;
+import static org.firstinspires.ftc.teamcode.drive.DriveConstants2024.kV;
 
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
@@ -20,7 +20,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.RobotLog;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
-import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
+import org.firstinspires.ftc.teamcode.drive.MecanumDrive2024;
 
 import java.util.List;
 
@@ -73,7 +73,7 @@ public class DriveVelocityPIDTuner extends LinearOpMode {
 
         Telemetry telemetry = new MultipleTelemetry(this.telemetry, FtcDashboard.getInstance().getTelemetry());
 
-        SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
+        MecanumDrive2024 drive = new MecanumDrive2024(hardwareMap);
 
         Mode mode = Mode.TUNING_MODE;
 
