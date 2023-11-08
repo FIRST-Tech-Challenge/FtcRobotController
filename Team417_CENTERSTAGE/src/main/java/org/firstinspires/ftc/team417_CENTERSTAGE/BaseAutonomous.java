@@ -153,7 +153,7 @@ abstract public class BaseAutonomous extends BaseOpMode {
         telemetry.update();
     }
 
-    public static final Scalar LOWER_BLUE_OR_RED = new Scalar(100, 50, 50);
+    public static final Scalar LOWER_BLUE_OR_RED = new Scalar(100, 150, 100);
     public static final Scalar UPPER_BLUE_OR_RED = new Scalar(130, 255, 255);
 
     boolean detectingBlue;
@@ -320,7 +320,7 @@ abstract public class BaseAutonomous extends BaseOpMode {
         }
 
         if(intakeMotor != null) {
-            intakeMotor.setPower(INTAKE_SPEED2);
+            intakeMotor.setPower(-INTAKE_SPEED2);
             sleep((long) INTAKE_TIME2);
             intakeMotor.setPower(0);
         } else {
