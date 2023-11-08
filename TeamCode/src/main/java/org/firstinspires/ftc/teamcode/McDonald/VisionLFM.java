@@ -70,11 +70,12 @@ import java.util.Locale;
         private static final String TFOD_MODEL_ASSET = "model_20231015_125021.tflite";
         // TFOD_MODEL_FILE points to a model file stored onboard the Robot Controller's storage,
         // this is used when uploading models directly to the RC using the model upload interface.
-        private static final String TFOD_MODEL_FILE = "/sdcard/FIRST/tflitemodels/model_20231015_125021.tflite";
+        private static final String TFOD_MODEL_FILE = "model_cube_props-102823.tflite";
+                //"/sdcard/FIRST/tflitemodels/model_20231015_125021.tflite";
         // Define the labels recognized in the model for TFOD (must be in training order!)
         private static final String[] LABELS = {
-                "Red Horseshoe",
-                "Blue Horseshoe"
+                "RED CUBE",
+                "BLUE CUBE"
         };
 
 
@@ -340,6 +341,35 @@ import java.util.Locale;
                     backRightMotor.setPower(0);
                     break;
 
+            }
+        }
+
+        private void park(PixelPosition pos) {
+            switch(pos) {
+                case LEFT:
+                    turnRobot("left", MOVE_RIGHT);
+                    telemetry.addData("Turn: Left", "");
+                    telemetry.update();
+                    justWait(1000);
+                    break;
+                case RIGHT:
+                    turnRobot("right", MOVE_LEFT);
+                    telemetry.addData("Turn: Right", "");
+                    telemetry.update();
+                    justWait(1000);
+                    break;
+                case MIDDLE:
+                    moveRobot("Center Line", 2);
+                    turnRobot("left", MOVE_RIGHT);
+                    moveRobot("Center Line", 2);
+                    turnRobot("left", MOVE_RIGHT);
+                    moveRobot("Center Line", 1);
+                    telemetry.addData("Move: Forward", "");
+                    telemetry.update();
+                    justWait(1000);
+                    break;
+                case UNKNOWN:
+                    break;
             }
         }
 
