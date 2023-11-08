@@ -144,7 +144,6 @@ public class TeleOp extends LinearOpMode {
             } else if (gamepad2.left_bumper) {
                 //reversed intake
                 intake.setPower(-0.6);
-                holderClampPos = 0.4;
             } else {
                 if ((Math.abs(gamepad1.left_stick_x) > 0.1 || Math.abs(gamepad1.left_stick_y) >0.1 || Math.abs(gamepad1.right_stick_x) >0.1) && !gamepad2.left_bumper) {
                     //if robot moving, keep holder closed
