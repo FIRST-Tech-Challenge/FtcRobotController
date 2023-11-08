@@ -86,7 +86,6 @@ public class RedLeftAuto extends LinearOpMode {
             robot.followTrajSeq(spikePosition[pos]);
             robot.queuer.waitForFinish();
             robot.preloadAuto();
-            robot.queuer.waitForFinish();
             robot.followTrajSeq(throughTruss[pos]);
             robot.followTrajSeq(dropAndPark[pos]);
             robot.queuer.setFirstLoop(false);

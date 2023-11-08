@@ -23,6 +23,9 @@ public class MeepMeepTesting {
                 .setConstraints(60, 60, toRadians(180), toRadians(180), 15)
                 .followTrajectorySequence(drive ->
                                 drive.trajectorySequenceBuilder(new Pose2d(15.5, -56, Math.toRadians(-90)))
+                                        .lineToLinearHeading(new Pose2d(25.5, -50, Math.toRadians(180)))
+                                        .lineToLinearHeading(new Pose2d(55.5, -60, Math.toRadians(180)))
+                                        .build()
                                         //BLUEBACK
 //                                        .setReversed(true) //spike 1
 //                                        .lineToLinearHeading(new Pose2d(31,31,toRadians(0)))
@@ -115,31 +118,28 @@ public class MeepMeepTesting {
 //                                        .lineToLinearHeading(new Pose2d(60, -60, toRadians(180)))
 
 
-                                        .setReversed(true) //spike1
-                                        .lineToLinearHeading(new Pose2d(16, -35+2, toRadians(0)))
-                                        .splineTo(new Vector2d(8,-35 + 2), toRadians(-180))
-                                        .setReversed(false)
-                                        .splineTo(new Vector2d(51 + 4, -30.5 + 2), toRadians(0))
-                                        .lineToLinearHeading(new Pose2d(51 + 4, -60, toRadians(0)))
-                                        .lineToLinearHeading(new Pose2d(60 + 4, -60, toRadians(0)))
+//                                        .setReversed(true) //spike1
+//                                        .lineToLinearHeading(new Pose2d(16, -35+2, toRadians(0)))
+//                                        .splineTo(new Vector2d(8,-35 + 2), toRadians(-180))
+//                                        .setReversed(false)
+//                                        .splineTo(new Vector2d(51 + 4, -30.5 + 2), toRadians(0))
+//                                        .lineToLinearHeading(new Pose2d(51 + 4, -60, toRadians(0)))
+//                                        .lineToLinearHeading(new Pose2d(60 + 4, -60, toRadians(0)))
+//
+//                                        .setReversed(true) //spike2
+//                                        .lineToLinearHeading(new Pose2d(12.5, -33-2, toRadians(-90)))
+//                                        .lineToLinearHeading(new Pose2d(12.5, -58, toRadians(-180)))
+//                                        .splineTo(new Vector2d(51 + 4, -35.5 + 2), toRadians(0))
+//                                        .lineToLinearHeading(new Pose2d(51 + 4, -60, toRadians(180)))
+//                                        .lineToLinearHeading(new Pose2d(60 + 4, -60, toRadians(180)))
+//
+//                                        .setReversed(true) //spike3
+//                                        .lineToLinearHeading(new Pose2d(35,-31,toRadians(0)))
+//                                        .setReversed(false)
+//                                        .lineToLinearHeading(new Pose2d(51+4, -41.5 + 2,toRadians(0)))
+//                                        .lineToLinearHeading(new Pose2d(51+4, -60, toRadians(0)))
+//                                        .lineToLinearHeading(new Pose2d(60+4, -60, toRadians(0)))
 
-                                        .setReversed(true) //spike2
-                                        .lineToLinearHeading(new Pose2d(12.5, -33-2, toRadians(-90)))
-                                        .lineToLinearHeading(new Pose2d(12.5, -58, toRadians(-180)))
-                                        .splineTo(new Vector2d(51 + 4, -35.5 + 2), toRadians(0))
-                                        .lineToLinearHeading(new Pose2d(51 + 4, -60, toRadians(180)))
-                                        .lineToLinearHeading(new Pose2d(60 + 4, -60, toRadians(180)))
-
-                                        .setReversed(true) //spike3
-                                        .lineToLinearHeading(new Pose2d(35,-31,toRadians(0)))
-                                        .setReversed(false)
-                                        .lineToLinearHeading(new Pose2d(51+4, -41.5 + 2,toRadians(0)))
-                                        .lineToLinearHeading(new Pose2d(51+4, -60, toRadians(0)))
-                                        .lineToLinearHeading(new Pose2d(60+4, -60, toRadians(0)))
-
-
-
-                                        .build()
                 );
 
         meepMeep.setBackground(MeepMeep.Background.FIELD_CENTERSTAGE_OFFICIAL)

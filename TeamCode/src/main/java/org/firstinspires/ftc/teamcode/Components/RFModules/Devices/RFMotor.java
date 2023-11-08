@@ -58,7 +58,7 @@ public class RFMotor {
     private final double lastError = 0;
     private double lastTime = 0;
     private double additionalTicks = 0;
-    private double TICK_BOUNDARY_PADDING = 10, TICK_STOP_PADDING = 20;
+    private double TICK_BOUNDARY_PADDING = 20, TICK_STOP_PADDING = 20;
 
     private double currentAcceleration, currentPos, currentTickPos;
     private double power = 0, position = 0, velocity = 0, targetPos = 0, resistance = 0, acceleration = 0;
@@ -122,7 +122,7 @@ public class RFMotor {
      * @param p_curve     desired curviness of S-Curve
      */
     public void setPosition(double p_targetPos, double p_curve) {
-        if (abs(targetPos - p_targetPos) < 15) {
+        if (abs(targetPos - p_targetPos) < 25) {
             sameTarget = true;
         } else {
             sameTarget = false;
@@ -162,13 +162,16 @@ public class RFMotor {
         double power = (kV * targetMotion[0] + kA * targetMotion[1] +
                 kP * (profile.motionProfileTimeToDist(time) - position)
                 + kD * (profile.calculateTargetVelocity(time) - velocity)
-                - resistance * kV);
+                + resistance * kV);
         if (abs(targetPos - position) > TICK_BOUNDARY_PADDING && abs(velocity) < 3) {
             if (power < 0) {
                 power -= kS;
             } else {
                 power += kS;
             }
+        }
+        if(abs(targetPos - position)<TICK_BOUNDARY_PADDING){
+            power = resistance*kV;
         }
 //        LOGGER.log("motor power :" + power+" pos " + position + " targetPos " + targetPos);
         setRawPower(power);

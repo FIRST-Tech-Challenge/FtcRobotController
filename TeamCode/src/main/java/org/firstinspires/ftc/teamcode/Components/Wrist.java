@@ -14,12 +14,14 @@ public class Wrist extends RFServo {
     target = WristStates.FLAT.position;
     flipTo(WristTargetStates.FLAT);
     LOGGER.log("initializing hardware");
+    super.setLastTime(-100);
+    lastTime=-100;
   }
 
   public enum WristStates {
     FLAT(1.0, true),
-    HOLD(0.7, false),
-    FLIP(0.23, false),
+    HOLD(0.55, false),
+    FLIP(0.21, false),
 
     DROP(0.0, false);
     double position;
@@ -48,7 +50,7 @@ public class Wrist extends RFServo {
     FLAT(1.0, true),
     FLIP(0.23, false),
 
-    HOLD(0.7, false),
+    HOLD(0.55, false),
     DROP(0.0, false);
     double position;
     boolean state;

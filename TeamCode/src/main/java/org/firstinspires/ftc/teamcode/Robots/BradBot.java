@@ -12,6 +12,7 @@ import org.firstinspires.ftc.teamcode.Components.CVMaster;
 import org.firstinspires.ftc.teamcode.Components.Clamp;
 import org.firstinspires.ftc.teamcode.Components.FutureComponents.Extendo;
 import org.firstinspires.ftc.teamcode.Components.FutureComponents.FlippingIntake;
+import org.firstinspires.ftc.teamcode.Components.Hanger;
 import org.firstinspires.ftc.teamcode.Components.Hopper;
 import org.firstinspires.ftc.teamcode.Components.Intake;
 import org.firstinspires.ftc.teamcode.Components.Launcher;
@@ -28,6 +29,7 @@ public class BradBot extends BasicRobot {
   Arm arm;
   Clamp clamp;
   CVMaster cv;
+  Hanger hanger;
   Intake intake;
   Launcher launcher;
   Lift lift;
@@ -50,6 +52,7 @@ public class BradBot extends BasicRobot {
     arm = new Arm();
     cv = new CVMaster();
     clamp = new Clamp();
+    hanger = new Hanger();
     intake = new Intake();
     launcher = new Launcher();
     lift = new Lift();
@@ -168,9 +171,12 @@ public class BradBot extends BasicRobot {
     boolean left = gampad.readGamepad(op.gamepad1.dpad_left, "gamepad1_dpad_left", "toggleClamp");
     float manualUp = op.gamepad1.right_trigger;
     float manualDown = op.gamepad1.left_trigger;
+    float hangUp = op.gamepad2.right_trigger;
+    float hangDown = op.gamepad2.left_trigger;
     boolean isX2 = gampad.readGamepad(op.gamepad2.b, "gamepad2_b", "resetSlideTicks");
     if (isA) {
       arm.flipTo(UNFLIPPED);
+      lift.update();
       wrist.update();
       wrist.flipTo(Wrist.WristTargetStates.FLAT);
       lift.setPosition(Lift.LiftPositionStates.AT_ZERO);
@@ -210,6 +216,9 @@ public class BradBot extends BasicRobot {
     }
     if (abs(manualUp - manualDown) > 0.05) {
       lift.manualExtend(manualUp - manualDown);
+    }
+    if (abs(hangUp - hangDown) > 0.05) {
+      hanger.setPower(hangUp-hangDown);
     }
     if (isY) {
       wrist.flipTo(Wrist.WristTargetStates.DROP);

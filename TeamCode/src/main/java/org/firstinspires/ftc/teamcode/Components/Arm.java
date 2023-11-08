@@ -11,15 +11,18 @@ import org.firstinspires.ftc.teamcode.Components.RFModules.System.RFLogger;
  * Class to contain all Arm functions
  */
 public class Arm extends RFServo {
-    private final double LOWER_LIMIT = 0.28, UPPER_LIMIT = 0.98;
-    private double lastTime = 0, FLIP_TIME = 0.4;
+    static double LOWER_LIMIT = 0.28;
+    static double UPPER_LIMIT = 0.98;
+    private double lastTime = 0, FLIP_TIME = 1.0;
 
     /**
      * constructs arm servo, logs to general with CONFIG severity
      */
     public Arm() {
         super("armServo", 1.0);
+        super.setPosition(LOWER_LIMIT);
         super.setLastTime(-100);
+        lastTime = -100;
     }
 
     /**
@@ -55,13 +58,15 @@ public class Arm extends RFServo {
     }
 
     public enum ArmTargetStates {
-        UNFLIPPED(true),
-        FLIPPED(false);
+        UNFLIPPED(true, LOWER_LIMIT),
+        FLIPPED(false, UPPER_LIMIT);
 
         boolean state = false;
+        double position;
 
-        ArmTargetStates(boolean p_state) {
+        ArmTargetStates(boolean p_state, double p_position) {
             state = p_state;
+            p_position = position;
         }
 
         void setStateTrue() {
@@ -92,37 +97,44 @@ public class Arm extends RFServo {
                 super.setPosition(LOWER_LIMIT);
                 LOGGER.log(RFLogger.Severity.INFO, "flipping up");
                 ArmTargetStates.UNFLIPPED.setStateTrue();
+                Lift.LiftMovingStates.LOW.setStateTrue();
                 lastTime = time;
             } else if (!ArmTargetStates.FLIPPED.state) {
                 super.setPosition(LOWER_LIMIT);
                 LOGGER.log(RFLogger.Severity.INFO, "flipping down");
                 ArmTargetStates.FLIPPED.setStateTrue();
+                Lift.LiftMovingStates.LOW.setStateTrue();
                 lastTime = time;
             }
         } else {
             if (ArmTargetStates.UNFLIPPED.getState()) {
                 ArmTargetStates.FLIPPED.setStateTrue();
+                Lift.LiftMovingStates.LOW.setStateTrue();
             } else {
                 ArmTargetStates.UNFLIPPED.setStateTrue();
+                Lift.LiftMovingStates.LOW.setStateTrue();
             }
             LOGGER.log("LIFT AT DANGER ZONE, can't flip!");
         }
     }
 
     public void flipTo(ArmStates p_state) {
-        if (!p_state.state) {
+        if (!p_state.state&&time-lastTime>FLIP_TIME) {
             if (!(Lift.LiftMovingStates.AT_ZERO.state || Lift.LiftPositionStates.AT_ZERO.state) && !Wrist.WristStates.FLAT.state) {
                 if (p_state == ArmStates.UNFLIPPED&& super.getTarget()!=LOWER_LIMIT) {
                     super.setPosition(LOWER_LIMIT);
                     Wrist.WristTargetStates.FLIP.setStateTrue();
                     LOGGER.log(RFLogger.Severity.INFO, "flipping down");
                     ArmTargetStates.UNFLIPPED.setStateTrue();
+                    Lift.LiftMovingStates.MID.setStateTrue();
                     lastTime = time;
                 } else if (p_state == ArmStates.FLIPPED && super.getTarget()!=UPPER_LIMIT) {
                     super.setPosition(UPPER_LIMIT);
                     Wrist.WristTargetStates.FLIP.setStateTrue();
                     LOGGER.log(RFLogger.Severity.INFO, "flipping up");
                     ArmTargetStates.FLIPPED.setStateTrue();
+                    Lift.LiftMovingStates.MID.setStateTrue();
+
                     lastTime = time;
                 } else {
                     ArmTargetStates.values()[p_state.ordinal()].setStateTrue();
@@ -152,8 +164,11 @@ public class Arm extends RFServo {
         } else if (super.getPosition() == UPPER_LIMIT && time - lastTime > FLIP_TIME) {
             ArmStates.FLIPPED.setStateTrue();
         }
+        else{
+            LOGGER.log("bruh" + (super.getPosition() == LOWER_LIMIT) + super.getPosition());
+        }
         for (var i : ArmTargetStates.values()) {
-            if (i.state && !ArmStates.values()[i.ordinal()].state) {
+            if (i.state && super.getPosition()!=i.position) {
                 flipTo(ArmStates.values()[i.ordinal()]);
             }
         }
