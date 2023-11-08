@@ -273,11 +273,11 @@ class TeleopFromHell: DriveMethods() {
             if(gamepad2.a) {
                 if (clawClamp) {
                     clawClamp = !clawClamp
-                    passiveServo.position = 0.72;
+                    passiveServo.position = 0.1;
                 }
                 else {
                     clawClamp = !clawClamp
-                    passiveServo.position = .5
+                    passiveServo.position = .37
                 }
                 sleep(200)
             }

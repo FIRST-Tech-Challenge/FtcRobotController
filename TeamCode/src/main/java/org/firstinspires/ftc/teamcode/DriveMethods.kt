@@ -63,7 +63,7 @@ open class DriveMethods: LinearOpMode() {
     }
 
     fun getDetectionsSingleTFOD(): Variables.Detection {
-        val webcam = hardwareMap.get(WebcamName::class.java, "Webcam 1")
+        val webcam = hardwareMap.get(WebcamName::class.java, "Webcam")
         // Ensure the Webcam is correct
 //        if (visionPortal.activeCamera != webcam) visionPortal.activeCamera = webcam
         tfod.setZoom(1.0);
@@ -86,7 +86,7 @@ open class DriveMethods: LinearOpMode() {
     }
 
     fun getDetectionsMultiTFOD(): Variables.Detection {
-        val webcamL = hardwareMap.get(WebcamName::class.java, "Webcam 1")
+        val webcamL = hardwareMap.get(WebcamName::class.java, "Webcam")
         val webcamR = hardwareMap.get(WebcamName::class.java, "Webcam 2")
 
         // Ensure we are using Left Cam
@@ -136,7 +136,7 @@ open class DriveMethods: LinearOpMode() {
         val builder: VisionPortal.Builder = VisionPortal.Builder()
 
         // Set the camera of the new VisionPortal to the webcam mounted to the robot
-        builder.setCamera(hardwareMap.get(WebcamName::class.java, "Webcam 1"))
+        builder.setCamera(hardwareMap.get(WebcamName::class.java, "Webcam"))
 
         // Enable Live View for debugging purposes
         builder.enableLiveView(true)
