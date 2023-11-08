@@ -109,8 +109,8 @@ public class lm1teleop1driver extends LinearOpMode {
             state = gamepad1.left_bumper;//state for claw
 
             if (gamepad1.left_trigger >= 0.5) {extend.setIntake();wrist.setPosition(1);}//set posistions
-            else if (gamepad1.right_bumper) {extend.setIntake();wrist.setPosition(0.13);}
-            else if (gamepad1.right_trigger >= 0.5) {extend.setPlace();wrist.setPosition(0.9);}
+            else if (gamepad1.right_bumper) {extend.setIntake();wrist.setPosition(0.3);}
+            else if (gamepad1.right_trigger >= 0.5) {extend.setPlace();wrist.setPosition(1);}
 
             if (gamepad1.left_bumper && state != lastState) {//new claw code for easier driving
                 if (open) {claw.setPosition(0.2);open = false;}

@@ -73,7 +73,7 @@ public class extension {
     public void setIntake() {
         setTilt(0);
     }
-    public void setPlace() {setTilt(650);}
+    public void setPlace() {setTilt(680);}
     public void setIntakeClosePos(){
         setTilt(0);
         setHeight(0);

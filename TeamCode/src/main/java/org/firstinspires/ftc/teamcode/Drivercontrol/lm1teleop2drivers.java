@@ -29,15 +29,11 @@
 
 package org.firstinspires.ftc.teamcode.Drivercontrol;
 
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
-import com.qualcomm.robotcore.util.Range;
 
-import org.firstinspires.ftc.teamcode.subsystems.Base;
 import org.firstinspires.ftc.teamcode.subsystems.extension;
 
 
@@ -54,54 +50,82 @@ import org.firstinspires.ftc.teamcode.subsystems.extension;
  * Remove or comment out the @Disabled line to add this OpMode to the Driver Station OpMode list
  */
 
-@TeleOp(name="lm1drive", group="Linear OpMode")
+@TeleOp(name="lm1drive2drivers", group="Linear OpMode")
 
-public class lm1teleop extends LinearOpMode {
+public class lm1teleop2drivers extends LinearOpMode {
 
     // Declare OpMode members.
     private ElapsedTime runtime = new ElapsedTime();
-    extension extend = new extension(hardwareMap);
+    Servo wrist;
+    Servo claw;
+
     Feildcentricdrive drive = new Feildcentricdrive();
 
     @Override
     public void runOpMode() {
-        boolean reset = false;
-        boolean slowturn=false;
-        double rx;
+
+        boolean open = false;
+        boolean state = false;
+        boolean lastState = false;// claw booleans
+        wrist = hardwareMap.get(Servo.class, "wrist");
+        claw = hardwareMap.get(Servo.class, "claw");//hardwaremap claw and tilt
+        extension extend = new extension(hardwareMap);//tilt object made
+        extend.release();//releases the tilt to move into start pos
+        boolean reset = false;//boolean for reset heading
+        boolean slowturn = false;//boolean for slowturn mode
+        double rx;//right x
         telemetry.addData("Status", "Initialized");
         telemetry.update();
-        drive.init(hardwareMap, 0);
-        // Initialize the hardware variables. Note that the strings used here as parameters
-        // to 'get' must correspond to the names assigned during the robot configuration
-        // step (using the FTC Robot Controller app on the phone).
-      extend.setStowPos();
-
-
+        drive.init(hardwareMap, 0);//init dt
+        //extend.setStowPos();//for when auto is ready
+        while(opModeInInit()){
+            if(gamepad1.a){
+                extend.hold();//hold init pos
+                break;
+            }
+        }
         waitForStart();
         runtime.reset();
 
         // run until the end of the match (driver presses STOP)
         while (opModeIsActive()) {
-            if(gamepad1.a){
-                slowturn=true;
-            }if(gamepad1.b){
-                slowturn=false;
+            if (gamepad1.a) {//slow turn mode
+                slowturn = true;
             }
-            if(slowturn){rx=gamepad1.right_stick_x*0.5;} else{rx=gamepad1.right_stick_x;}
-            if(gamepad1.left_bumper){
-                drive.run(gamepad1.left_stick_y,gamepad1.left_stick_x,rx,0.5,true);
-            }else {
+            if (gamepad1.b) {
+                slowturn = false;
+            }
+            rx = gamepad1.right_stick_x;
+            if (slowturn) {
+                rx *=0.7;
+            } //could be more compact
+
+            if (gamepad1.y) {//slow speed mode
+                drive.run(gamepad1.left_stick_y, gamepad1.left_stick_x, rx, 0.5, true);
+            } else {
                 drive.run(gamepad1.left_stick_y, gamepad1.left_stick_x, rx, 1, true, gamepad1.back);
             }
-            //need to add wrist when mechanical is done
-            if(gamepad2.dpad_up) extend.setPlaceHigh();
-           // else if(gamepad2.dpad_left) extend.setPlaceMid();
-           // else if(gamepad2.dpad_down) extend.setPlaceLow();
-            else if(gamepad2.b) extend.setStowPos();
-            else if(gamepad2.a) extend.setIntake();
-            else if(gamepad2.y) extend.setPlace();
 
+            state = gamepad2.left_bumper;//state for claw
 
+            if (gamepad2.left_trigger >= 0.5) {extend.setIntake();wrist.setPosition(1);}//set posistions
+            else if (gamepad1.right_bumper) {extend.setIntake();wrist.setPosition(0.15);}
+            else if (gamepad1.right_trigger >= 0.5) {extend.setPlace();wrist.setPosition(0.9);}
+
+            if (gamepad1.left_bumper && state != lastState) {//new claw code for easier driving
+                if (open) {claw.setPosition(0.2);open = false;}
+                else {claw.setPosition(1);open = true;}
+            }
+//            if(gamepad1.dpad_up) {//old claw code
+//                claw.setPosition(0.2);
+//
+//            }else if(gamepad1.dpad_down)
+//                claw.setPosition(1);
+//
+//            }
+
+            lastState = state;//set last state to the state at end of loop
         }
     }
 }
+
