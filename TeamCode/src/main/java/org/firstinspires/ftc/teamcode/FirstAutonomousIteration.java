@@ -38,8 +38,15 @@ import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
 
+import org.firstinspires.ftc.robotcore.external.hardware.camera.BuiltinCameraDirection;
+import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
+import org.firstinspires.ftc.robotcore.external.tfod.Recognition;
+import org.firstinspires.ftc.vision.VisionPortal;
+import org.firstinspires.ftc.vision.tfod.TfodProcessor;
+
+import java.util.List;
 
 /*
  *  This OpMode illustrates the concept of driving an autonomous path based on Gyro (IMU) heading and encoder counts.
@@ -144,9 +151,33 @@ public class FirstAutonomousIteration extends LinearOpMode {
     Claw claw       = new Claw(this);
     Wrist wrist = new Wrist(this);
 
-    @Override
-    public void runOpMode() {
+    // This is needed for TFOD
 
+    private static final boolean USE_WEBCAM = true;  // true for webcam, false for phone camera
+
+    // TFOD_MODEL_ASSET points to a model file stored in the project Asset location,
+    // this is only used for Android Studio when using models in Assets.
+    private static final String TFOD_MODEL_ASSET = "prop_cube_v2.tflite";
+    // TFOD_MODEL_FILE points to a model file stored onboard the Robot Controller's storage,
+    // this is used when uploading models directly to the RC using the model upload interface.
+    private static final String TFOD_MODEL_FILE = "/sdcard/FIRST/tflitemodels/myCustomModel.tflite";
+    // Define the labels recognized in the model for TFOD (must be in training order!)
+    private static final String[] LABELS = {
+            "Cube"
+    };
+
+    /**
+     * The variable to store our instance of the TensorFlow Object Detection processor.
+     */
+    private TfodProcessor tfod;
+
+    /**
+     * The variable to store our instance of the vision portal.
+     */
+    private VisionPortal visionPortal;
+
+
+    public void initHardware() {
         // Initialize the hardware variables. Note that the strings used here must correspond
         // to the names assigned during the robot configuration step on the DS or RC devices.
         leftFrontDrive = hardwareMap.get(DcMotor.class, "left_front_drive");
@@ -200,16 +231,6 @@ public class FirstAutonomousIteration extends LinearOpMode {
         leftBackDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
         rightBackDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
 
-        claw.openClaw();
-        waitRuntime(3);
-        claw.closeClaw();
-
-        // Wait for the game to start (Display Gyro value while waiting)
-        while (opModeInInit()) {
-            telemetry.addData(">", "Robot Heading = %4.0f", getHeading());
-            telemetry.update();
-        }
-
         // Set the encoders for closed loop speed control, and reset the heading.
         leftFrontDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         rightFrontDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -219,29 +240,147 @@ public class FirstAutonomousIteration extends LinearOpMode {
 
         imu.resetYaw();
 
-        // Step through each leg of the path,
-        // Notes:   Reverse movement is obtained by setting a negative distance (not speed)
-        //          holdHeading() is used after turns to let the heading stabilize
-        //          Add a sleep(2000) after any step to keep the telemetry data visible for review
+        // initialize the TFOD
+        initTfod();
+    }
 
-        driveStraight(DRIVE_SPEED, 10.1, 0.0);    // Drive Forward 24"
-        turnToHeading( TURN_SPEED, 15.0);               // Turn  CW to -45 Degrees
-        holdHeading( TURN_SPEED, 15.0, 0.05);   // Hold -45 Deg heading for a 1/2 second
-        turnToHeading( TURN_SPEED, 0.0);               // Turn  CW to -45 Degrees
-        holdHeading( TURN_SPEED, 0.0, 0.05);   // Hold -45 Deg heading for a 1/2 second
-        turnToHeading( TURN_SPEED, -20.0);               // Turn  CW to -45 Degrees
-        holdHeading( TURN_SPEED, -20.0, 0.05);   // Hold -45 Deg heading for a 1/2 second
-        // insert tensorflow code here
-        turnToHeading( TURN_SPEED, 0.0);               // Turn  CW to -45 Degrees
-        holdHeading( TURN_SPEED, 0.0, 0.05);   // Hold -45 Deg heading for a 1/2 second
-        driveStraight(DRIVE_SPEED, 1.9, 0.0);
-        turnToHeading(TURN_SPEED, 90);
-        holdHeading(TURN_SPEED, 90.0, 0.05);
-        driveStraight(DRIVE_SPEED, 24.0, 90.0);
+    private void initTfod() {
 
-        turnToHeading(TURN_SPEED, 0.0);
-        holdHeading(TURN_SPEED, 0.0, 0.05);
-        driveStraight(DRIVE_SPEED, 22.0, 0.0);
+        // Create the TensorFlow processor by using a builder.
+        tfod = new TfodProcessor.Builder()
+
+                // With the following lines commented out, the default TfodProcessor Builder
+                // will load the default model for the season. To define a custom model to load,
+                // choose one of the following:
+                //   Use setModelAssetName() if the custom TF Model is built in as an asset (AS only).
+                //   Use setModelFileName() if you have downloaded a custom team model to the Robot Controller.
+                .setModelAssetName(TFOD_MODEL_ASSET)
+                //.setModelFileName(TFOD_MODEL_FILE)
+
+                // The following default settings are available to un-comment and edit as needed to
+                // set parameters for custom models.
+                .setModelLabels(LABELS)
+                //.setIsModelTensorFlow2(true)
+                //.setIsModelQuantized(true)
+                //.setModelInputSize(300)
+                //.setModelAspectRatio(16.0 / 9.0)
+
+                .build();
+
+        // Create the vision portal by using a builder.
+        VisionPortal.Builder builder = new VisionPortal.Builder();
+
+        // Set the camera (webcam vs. built-in RC phone camera).
+        if (USE_WEBCAM) {
+            builder.setCamera(hardwareMap.get(WebcamName.class, "Webcam 1"));
+        } else {
+            builder.setCamera(BuiltinCameraDirection.BACK);
+        }
+
+        // Choose a camera resolution. Not all cameras support all resolutions.
+        //builder.setCameraResolution(new Size(640, 480));
+
+        // Enable the RC preview (LiveView).  Set "false" to omit camera monitoring.
+        //builder.enableLiveView(true);
+
+        // Set the stream format; MJPEG uses less bandwidth than default YUY2.
+        //builder.setStreamFormat(VisionPortal.StreamFormat.YUY2);
+
+        // Choose whether or not LiveView stops if no processors are enabled.
+        // If set "true", monitor shows solid orange screen if no processors enabled.
+        // If set "false", monitor shows camera view without annotations.
+        //builder.setAutoStopLiveView(false);
+
+        // Set and enable the processor.
+        builder.addProcessor(tfod);
+
+        // Build the Vision Portal, using the above settings.
+        visionPortal = builder.build();
+
+        // Set confidence threshold for TFOD recognitions, at any time.
+        //tfod.setMinResultConfidence(0.75f);
+
+        // Disable or re-enable the TFOD processor at any time.
+        //visionPortal.setProcessorEnabled(tfod, true);
+
+    }   // end method initTfod()
+
+
+    public void dropTwoPickOne() {
+        double currentHeading = getHeading();
+        wrist.wristDown();
+        waitRuntime(1);
+        claw.openClaw();
+        waitRuntime(1);
+        wrist.wristUp();
+        waitRuntime(1);
+        driveStraight(0.5, -3.25, currentHeading);
+        wrist.wristDown();
+        waitRuntime(1);
+        claw.closeClaw();
+        waitRuntime(1);
+        wrist.wristUp();
+        waitRuntime(1);
+    }
+
+    public boolean isCubeThere() {
+        List<Recognition> currentRecognitions = tfod.getRecognitions();
+        if (currentRecognitions.size() > 0) {
+            return true;
+        }
+        return false;
+    }
+
+    @Override
+    public void runOpMode() {
+        initHardware();
+
+        waitRuntime(3);
+        claw.closeClaw();
+
+        // Wait for the game to start (Display Gyro value while waiting)
+        while (opModeInInit()) {
+            telemetry.addData(">", "Robot Heading = %4.0f", getHeading());
+            telemetry.update();
+        }
+
+        //dropTwoPickOne();
+        turnToHeading( TURN_SPEED *3, 15.0);
+        waitRuntime(0.1);
+        driveStraight(DRIVE_SPEED *3 , 7, 15.0);    // Drive Forward 24"
+        waitRuntime(0.1);
+        if (isCubeThere()) {
+            driveStraight(DRIVE_SPEED, 8, 15.0);
+            waitRuntime(0.1);
+            dropTwoPickOne();
+        }
+
+
+
+//
+//        // Step through each leg of the path,
+//        // Notes:   Reverse movement is obtained by setting a negative distance (not speed)
+//        //          holdHeading() is used after turns to let the heading stabilize
+//        //          Add a sleep(2000) after any step to keep the telemetry data visible for review
+//
+//        driveStraight(DRIVE_SPEED, 10.1, 0.0);    // Drive Forward 24"
+//        turnToHeading( TURN_SPEED, 15.0);               // Turn  CW to -45 Degrees
+//        holdHeading( TURN_SPEED, 15.0, 0.05);   // Hold -45 Deg heading for a 1/2 second
+//        turnToHeading( TURN_SPEED, 0.0);               // Turn  CW to -45 Degrees
+//        holdHeading( TURN_SPEED, 0.0, 0.05);   // Hold -45 Deg heading for a 1/2 second
+//        turnToHeading( TURN_SPEED, -20.0);               // Turn  CW to -45 Degrees
+//        holdHeading( TURN_SPEED, -20.0, 0.05);   // Hold -45 Deg heading for a 1/2 second
+//        // insert tensorflow code here
+//        turnToHeading( TURN_SPEED, 0.0);               // Turn  CW to -45 Degrees
+//        holdHeading( TURN_SPEED, 0.0, 0.05);   // Hold -45 Deg heading for a 1/2 second
+//        driveStraight(DRIVE_SPEED, 1.9, 0.0);
+//        turnToHeading(TURN_SPEED, 90);
+//        holdHeading(TURN_SPEED, 90.0, 0.05);
+//        driveStraight(DRIVE_SPEED, 24.0, 90.0);
+//
+//        turnToHeading(TURN_SPEED, 0.0);
+//        holdHeading(TURN_SPEED, 0.0, 0.05);
+//        driveStraight(DRIVE_SPEED, 22.0, 0.0);
 
 
 
