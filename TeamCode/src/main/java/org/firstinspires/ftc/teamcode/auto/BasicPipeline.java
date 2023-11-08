@@ -19,10 +19,14 @@ import java.util.Optional;
 
 public class BasicPipeline extends OpenCvPipeline {
 
-    Scalar darkestJunctions = new Scalar(15, 100, 100);
-    Scalar lightestJunctions = new Scalar(60, 255, 255);
+    public Scalar darkestJunctions = new Scalar(80, 60, 100);
+    public Scalar lightestJunctions = new Scalar(120, 255, 255);
+    public double smallestArea = 4000;
+    public double epsilon = 60;
+    List<Mat> channels = new ArrayList<>();
     Mat rawHSV = new Mat();
     Mat blurredHSV = new Mat();
+    Mat blueMat = new Mat();
     Mat thresholded = new Mat();
     int junctionNumAttr = 0;
     Point junctionPointAttr = new Point();
@@ -31,33 +35,42 @@ public class BasicPipeline extends OpenCvPipeline {
     public Mat processFrame(Mat input) {
 
         // crop out parts we're not concerned about
-        Rect cropRectangle = new Rect(100, 100, 100, 100);
-        Mat cropped = new Mat(input, cropRectangle);
 
         // Convert image to HSV
-        Imgproc.cvtColor(cropped, rawHSV, Imgproc.COLOR_RGB2HSV);
+        Imgproc.cvtColor(input, rawHSV, Imgproc.COLOR_RGB2HSV);
 
-        // avoid memory leaks
-        cropped.release();
 
         // Blur image to lessen noise
         Imgproc.GaussianBlur(rawHSV, blurredHSV, new Size(15, 15), 0); // increase blur?
 
-        // Threshold image, turning it into binary (only black and white). Now openCV knows what to get the contour, or shape, of.
         Core.inRange(blurredHSV, darkestJunctions, lightestJunctions, thresholded);
+
+        /*
+        Core.split(input, channels);
+        blueMat = channels.get(0);
+
+        // Threshold image, turning it into binary (only black and white). Now openCV knows what to get the contour, or shape, of.
+        Core.inRange(blueMat, darkestJunctions, lightestJunctions, thresholded);
+        */
+
 
         // Find contours
         List<MatOfPoint> contours = new ArrayList<>();
         Imgproc.findContours(thresholded, contours, new Mat(), Imgproc.RETR_EXTERNAL, Imgproc.CHAIN_APPROX_SIMPLE);
 
         // Get distance and centroid of biggest junction
+        List<MatOfPoint> rectangularContours = new ArrayList<>();
+
         if (!contours.isEmpty()) {
             MatOfPoint biggestContour = contours.get(0);
+            MatOfPoint2f polygonalContour = new MatOfPoint2f(contours.get(0).toArray());
 
             for (MatOfPoint curContour : contours) {
                 if (Imgproc.contourArea(curContour) > Imgproc.contourArea(biggestContour)) {
                     biggestContour = curContour;
                 }
+                Imgproc.approxPolyDP(new MatOfPoint2f(curContour.toArray()), polygonalContour, epsilon, true);
+                if (polygonalContour.total() == 4) rectangularContours.add(new MatOfPoint(polygonalContour.toArray()));
             }
 
             // Find centroid
@@ -71,6 +84,7 @@ public class BasicPipeline extends OpenCvPipeline {
         }
 
         Imgproc.drawContours(input, contours, -1, new Scalar(0,255,0), 3);
+        Imgproc.drawContours(input, rectangularContours, -1, new Scalar(255,0,0), 3);
 
         return input;
     }

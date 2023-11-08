@@ -32,6 +32,7 @@ public class BasicOmniOpMode_Linear extends LinearOpMode {
     private IMU imu = null;
     private DcMotor intake = null;
     private Servo servo = null;
+    private Servo crossbow = null;
     private Button intakeButton = new Button();
     double powercoef = 0.5;
     boolean manualMode = false;
@@ -52,6 +53,7 @@ public class BasicOmniOpMode_Linear extends LinearOpMode {
         intake = hardwareMap.get(DcMotor.class, "intake");
 
         servo = hardwareMap.get(Servo.class, "servo");
+        crossbow = hardwareMap.get(Servo.class, "crossbow");
 
         leftFrontDrive.setDirection(Constants.motorDirections.get("left_front"));
         leftBackDrive.setDirection(Constants.motorDirections.get("left_back"));
@@ -65,6 +67,8 @@ public class BasicOmniOpMode_Linear extends LinearOpMode {
 
         arm.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         arm.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+        crossbow.setPosition(0);
 
 
         // Wait for the game to start (driver presses PLAY)
@@ -87,6 +91,7 @@ public class BasicOmniOpMode_Linear extends LinearOpMode {
             HandleDrivetrain();
             if(gamepad2.y) servo.setPosition(0.1);
             telemetry.update();
+            if (gamepad2.start && servo.getPosition() != 1) servo.setPosition(1);
         }
     }
 

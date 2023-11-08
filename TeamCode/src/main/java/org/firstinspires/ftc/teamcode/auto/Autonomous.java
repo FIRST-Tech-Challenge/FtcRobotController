@@ -1,16 +1,24 @@
-package org.firstinspires.ftc.teamcode.auto;
+package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import org.firstinspires.ftc.teamcode.auto.BasicPipeline;
+import org.openftc.easyopencv.OpenCvCamera;
+import org.openftc.easyopencv.OpenCvCameraFactory;
+import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
+import org.openftc.easyopencv.OpenCvCameraRotation;
 
-@com.qualcomm.robotcore.eventloop.opmode.Autonomous (name = "name")
+@com.qualcomm.robotcore.eventloop.opmode.Autonomous (name = "da not a moose")
 public class Autonomous extends LinearOpMode {
 
     protected DcMotor left_front;
     protected DcMotor right_front;
     protected DcMotor left_back;
     protected DcMotor right_back;
+    OpenCvCamera camera;
+    BasicPipeline pipeline = new BasicPipeline();
+
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -18,26 +26,39 @@ public class Autonomous extends LinearOpMode {
         right_front = hardwareMap.get(DcMotor.class, "right_front");
         left_back = hardwareMap.get(DcMotor.class, "left_back");
         right_back = hardwareMap.get(DcMotor.class, "right_back");
+        int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
+        camera = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "camera"), cameraMonitorViewId);
+
+        camera.setPipeline(pipeline);
+        camera.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
+            @Override
+            public void onOpened() {
+                camera.startStreaming(1280, 720, OpenCvCameraRotation.UPRIGHT);
+            }
+
+            @Override
+            public void onError(int errorCode) {
+
+            }
+        });
 
         left_front.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         left_back.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         right_front.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         right_back.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        left_front.setDirection(DcMotorSimple.Direction.REVERSE);
+        left_back.setDirection(DcMotorSimple.Direction.REVERSE);
 
         waitForStart();
 
-        right_front.setPower(1);
-        left_front.setPower(1);
-        right_back.setPower(1);
-        left_back.setPower(1);
-        sleep(10000);
+        CoolestDrive(1000, 1000, 0, 1, true);
     }
 
-    public void CoolestDrive(double forward, double strafe, double yaw, double speed){
+    public void CoolestDrive(double forward, double strafe, double yaw, double speed, boolean waitToFinish){
         left_front.setTargetPosition((int) (forward + strafe + yaw));
-        left_front.setTargetPosition((int) (forward - strafe - yaw));
-        left_front.setTargetPosition((int) (forward - strafe + yaw));
-        left_front.setTargetPosition((int) (forward + strafe - yaw));
+        left_back.setTargetPosition((int) (forward - strafe - yaw));
+        right_front.setTargetPosition((int) (forward - strafe + yaw));
+        right_back.setTargetPosition((int) (forward + strafe - yaw));
 
         left_front.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         left_back.setMode(DcMotor.RunMode.RUN_TO_POSITION);
@@ -61,6 +82,13 @@ public class Autonomous extends LinearOpMode {
             leftBackPower /= max;
             rightBackPower /= max;
         }
+
+        left_front.setPower(leftFrontPower);
+        left_back.setPower(leftBackPower);
+        right_front.setPower(rightFrontPower);
+        right_back.setPower(rightBackPower);
+
+        if (waitToFinish) while (left_front.isBusy()) telemetry.addLine("Running coolest drive"); telemetry.update();
     }
 
     public void moveForward(int power, int time) {
