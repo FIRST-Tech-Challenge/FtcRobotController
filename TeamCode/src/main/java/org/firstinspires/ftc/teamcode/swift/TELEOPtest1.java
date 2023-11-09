@@ -47,10 +47,7 @@ public class TELEOPtest1 extends LinearOpMode {
         DcMotor backRightMotor = hardwareMap.dcMotor.get("backRightMotor");
         frontRightMotor.setDirection(DcMotorSimple.Direction.REVERSE);
         backRightMotor.setDirection(DcMotorSimple.Direction.REVERSE);
-        leftY = gamepad2.left_stick_y * -1;
-        rightY = gamepad2.right_stick_y * -1;
-        armMotor.setPower(Range.clip(leftY, -1.0, 1.0));
-        telemetry.addData("sticks", "  left=" + leftY + "  right=" + rightY);
+
 
         // check the gamepad buttons and if pressed, increment the appropriate position
         // variable to change the servo location.
@@ -94,6 +91,12 @@ public class TELEOPtest1 extends LinearOpMode {
 
             //start Asher
             // move arm down on A button if not already at lowest position.
+
+            leftY = gamepad2.left_stick_y * -1;
+            rightY = gamepad2.right_stick_y * -1;
+            armMotor.setPower(Range.clip(leftY, -1.0, 1.0));
+            telemetry.addData("sticks", "  left=" + leftY + "  right=" + rightY);
+
             if (gamepad2.y) {
                 // Move servos in opposite directions when "y" is pressed
                 leftGripper.setPosition(1); // Adjust the position value as needed
