@@ -77,7 +77,7 @@ public class LocalizationTest extends LinearOpMode {
 
             double turnCommand = -gamepad1.right_stick_x;
 
-            if ((gamepad1.a || gamepad1.b || gamepad1.x || gamepad1.y) && Math.abs(turnCommand) <= 0.03) {
+            if ((gamepad1.a || gamepad1.b || gamepad1.x || gamepad1.y) && Math.abs(turnCommand) <= 0.03 ) {
                 isHolding = true;
                 snapToButtons(); // Josh recommended that we make a separate method for just the a/b/x/y buttons
             } else if (Math.abs(turnCommand) >= 0.03) {
