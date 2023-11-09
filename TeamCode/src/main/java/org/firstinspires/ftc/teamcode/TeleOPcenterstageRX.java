@@ -191,7 +191,7 @@ public class TeleOPcenterstageRX extends OpMode {
                 }
 
             }
-        return  0;
+        return 0;
     }
     /*Aici se declara thread-ul cu numele chassis, pentru ca contine partea de program care se ocupa de sasiu*/
     private final Thread Chassis = new Thread(new Runnable() {
@@ -375,10 +375,10 @@ public class TeleOPcenterstageRX extends OpMode {
     @Override
 
     public void loop() {
-        telemetry.addData("motorBL", motorBL.getCurrentPosition());
-        telemetry.addData("motorFL", motorFL.getCurrentPosition());
-        telemetry.addData("motorBR", motorBR.getCurrentPosition());
-        telemetry.addData("motorFR", motorFR.getCurrentPosition());
+        telemetry.addData("motorBL", motorBL.getPower());
+        telemetry.addData("motorFL", motorFL.getPower());
+        telemetry.addData("motorBR", motorBR.getPower());
+        telemetry.addData("motorFR", motorFR.getPower());
         telemetry.addData("slider:", slider.getCurrentPosition());
         telemetry.addData("melcjos:", melcjos.getCurrentPosition());
         telemetry.addData("melcsus:", melcsus.getCurrentPosition());
