@@ -31,7 +31,7 @@ public class Hardware
     //used in our odo but not RoadRunner classes
     public static final double ODOM_TICKS_PER_IN = 1831.471685;
     public static double trackwidth = 10.976;
-
+ 
     //intake motor
     public DcMotorEx intakeMotor;
 
@@ -56,7 +56,7 @@ public class Hardware
         //odom
         leftOdom = hardwareMap.get(DcMotorEx.class, "Front Left");
         rightOdom = hardwareMap.get(DcMotorEx.class, "Front Right");
-        centerOdom = hardwareMap.get(DcMotorEx.class, "Back Right");
+        centerOdom = hardwareMap.get(DcMotorEx.class, "Back Left");
 
         //Intake
         intakeMotor = hardwareMap.get(DcMotorEx.class, "Intake Motor");

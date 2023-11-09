@@ -42,6 +42,9 @@ public class Teleop extends LinearOpMode
                 robot.counteroller.setPower(-gamepad1.left_trigger);
             }
 
+
+
+        //deposit
             //a button logic
             if (gamepad1.a && !aPressed)
             {

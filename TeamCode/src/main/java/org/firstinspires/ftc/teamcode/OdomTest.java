@@ -38,17 +38,6 @@ public class OdomTest extends LinearOpMode
             telemetry.addData("y", robot.y);
             telemetry.addData("theta", robot.theta);
             telemetry.addLine();
-            /*telemetry.addData("left red", robot.leftLineSensor.red());
-            telemetry.addData("left blue", robot.leftLineSensor.blue());
-            telemetry.addData("left green", robot.leftLineSensor.green());
-            telemetry.addData("left luminosity", robot.leftLineSensor.alpha());
-            telemetry.addData("left all", robot.leftLineSensor.argb());
-            telemetry.addLine();
-            telemetry.addData("right red", robot.rightLineSensor.red());
-            telemetry.addData("right blue", robot.rightLineSensor.blue());
-            telemetry.addData("right green", robot.rightLineSensor.green());
-            telemetry.addData("right luminosity", robot.rightLineSensor.alpha());
-            telemetry.addData("right all", robot.rightLineSensor.argb());*/
             telemetry.update();
         }
     }
