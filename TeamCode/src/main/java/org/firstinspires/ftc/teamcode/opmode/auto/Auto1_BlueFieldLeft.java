@@ -27,13 +27,12 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package org.firstinspires.ftc.teamcode.opmode.teleop;
+package org.firstinspires.ftc.teamcode.opmode.auto;
 
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
+import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 /*
@@ -64,9 +63,9 @@ import com.qualcomm.robotcore.util.ElapsedTime;
  * Remove or comment out the @Disabled line to add this OpMode to the Driver Station OpMode list
  */
 
-@TeleOp(name="Basic: Omni Linear OpMode", group="Linear OpMode")
+@Autonomous(name="BlueFieldLeft", group="Linear OpMode")
 //@Disabled
-public class Gge_BasicOmniOpMode_Linear extends LinearOpMode {
+public class Auto1_BlueFieldLeft extends LinearOpMode {
 
     // Declare OpMode members for each of the 4 motors.
     private ElapsedTime runtime = new ElapsedTime();
@@ -113,17 +112,7 @@ public class Gge_BasicOmniOpMode_Linear extends LinearOpMode {
         // run until the end of the match (driver presses STOP)
         while (opModeIsActive()) {
 
-            //adjust drive speed limiter
-            if (gamepad1.back){
-                if (gamepad1.a){
-                    powerFactor = 0.50;
-                } else if (gamepad1.b) {
-                    powerFactor = 0.25;
-                } else if (gamepad1.y) {
-                    powerFactor = 0.70;
-                } else if (gamepad1.x) {
-                    powerFactor = 0.60;
-                }
+
             }
             double max;
 
