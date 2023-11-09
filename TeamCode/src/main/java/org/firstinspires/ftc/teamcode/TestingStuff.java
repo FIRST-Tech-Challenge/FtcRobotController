@@ -1,11 +1,14 @@
 package org.firstinspires.ftc.teamcode;
 
+import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+@Config
 @Autonomous(name = "Testing")
 public class TestingStuff extends RobotOpMode {
+    public float MINIMUM_TRIGGER_PRESS = 0.2f;
     @Override
     public void init() {
         super.init();
@@ -17,19 +20,20 @@ public class TestingStuff extends RobotOpMode {
 
     @Override
     public void gamePadMoveRobot() {
+        fingerServoPosition = fingerServo.getPosition();
         super.gamePadMoveRobot();
-        float ArmServoPositionModifier = 0;
-        if (gamepad1.dpad_left) {
-            ArmServoPositionModifier += 0.1;
+        float FingerPositionModfier = 0;
+        if (gamepad1.left_bumper) {
+            FingerPositionModfier += 0.1;
         }
-        if (gamepad1.dpad_right) {
-            ArmServoPositionModifier -= 0.1;
+        else if (gamepad1.right_bumper) {
+            FingerPositionModfier -= 0.1;
         }
         double WristServoPositionModifier = 0;
-        if (gamepad1.dpad_up) {
+        if (gamepad1.y) {
             WristServoPositionModifier += 0.1;
         }
-        if (gamepad1.dpad_down) {
+        if (gamepad1.x) {
             WristServoPositionModifier -= 0.1;
         }
 
@@ -38,7 +42,8 @@ public class TestingStuff extends RobotOpMode {
             dbp.put("robotLoop", "Waiting");
         }
 
-        //moveServo(armCatcherServo, (armCatcherServoPosition + ArmServoPositionModifier));
+        moveServo(fingerServo, (float)(fingerServoPosition + FingerPositionModfier));
+        fingerServoPosition += FingerPositionModfier;
         moveServo(wristServo, (float)(wristServoPosition + WristServoPositionModifier));
 
         if (gamepad1.a) {
@@ -50,7 +55,9 @@ public class TestingStuff extends RobotOpMode {
         }
         
         final float ARM_POWER = gamepad1.left_trigger - gamepad1.right_trigger;
-        if (ARM_POWER == 0) {
+        final float MAX_CLAMPED_ARM_POWER = Math.min(ARM_POWER, MAX_ARM_POWER);
+        final float MIN_CLAMPED_ARM_POWER = (MAX_CLAMPED_ARM_POWER < MINIMUM_TRIGGER_PRESS) ? 0 : MAX_CLAMPED_ARM_POWER;
+        if (MIN_CLAMPED_ARM_POWER == 0) {
             armMotor.setTargetPosition(armMotor.getCurrentPosition());
             armMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         }
@@ -58,18 +65,6 @@ public class TestingStuff extends RobotOpMode {
             armMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
             armMotor.setPower(ARM_POWER);
         }
-
-        /*
-        if(gamepad1.left_bumper) {
-            linearMoveArm(1f, -45);
-        } else if(gamepad1.right_bumper) {
-            linearMoveArm(1f, 45);
-        }
-
-        if(!armMotor.isBusy()) {
-            armMotor.setPower(0);
-        }
-        */
     }
 
     @Override

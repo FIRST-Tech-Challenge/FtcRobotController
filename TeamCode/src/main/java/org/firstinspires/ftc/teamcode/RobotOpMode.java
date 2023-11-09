@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode;
 
+import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -10,6 +11,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import java.util.Locale;
 import java.util.concurrent.TimeUnit;
 
+@Config
 public abstract class RobotOpMode extends OpMode {
 
     /**
@@ -18,6 +20,7 @@ public abstract class RobotOpMode extends OpMode {
     public static long STOP_NEVER = Long.MAX_VALUE;
     public static float MIN_POWER = 0;
     public static float MAX_POWER = 1;
+    public static float MAX_ARM_POWER = 0.7f;
 
     public DcMotor leftFrontDrive, leftBackDrive, rightFrontDrive, rightBackDrive;
     public DcMotor armMotor, armExtensionMotor;
@@ -25,6 +28,7 @@ public abstract class RobotOpMode extends OpMode {
     @Deprecated
     public float armCatcherServoPosition;
     public double wristServoPosition;
+    public double fingerServoPosition;
     BNO055IMU imu;
     ElapsedTime elapsedTime;
     /**
@@ -169,7 +173,7 @@ public abstract class RobotOpMode extends OpMode {
         rightBackDrive.setPower(rightBackPower);
         return true;
     }
-    @deprecated
+    @Deprecated
     public int initArm() {
         createTelemetryPacket();
         log("Initializing", "Starting up...");
