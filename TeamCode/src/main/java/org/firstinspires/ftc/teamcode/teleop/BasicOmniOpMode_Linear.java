@@ -70,6 +70,7 @@ public class BasicOmniOpMode_Linear extends LinearOpMode {
 
         crossbow.setPosition(0);
 
+        imu.resetYaw();
 
         // Wait for the game to start (driver presses PLAY)
         while(!isStarted() && !isStopRequested()) {
@@ -82,16 +83,26 @@ public class BasicOmniOpMode_Linear extends LinearOpMode {
 
         // run until the end of the match (driver presses STOP)
         while (opModeIsActive()) {
+            // arm servo debug code
             // arm.setPower(gamepad2.right_stick_y * 1/4);
             // servo.setPosition(position);
             // intake.setPower(-gamepad2.right_trigger);
+
+            // crossbow
+            double crossbowSetpoint;
+            if (gamepad2.left_stick_button && gamepad2.right_stick_button) {
+                telemetry.addLine("crossbowing!!");
+                crossbowSetpoint = 0.1;
+            } else {
+                crossbowSetpoint = 0.2;
+            }
+            telemetry.addData("crossbow setpoint", crossbowSetpoint);
+            if (crossbowSetpoint != crossbow.getPosition()) crossbow.setPosition(crossbowSetpoint);
+
             handleArm();
-            // 0.3 is flat, 0.67 is 90 degrees.
 
             HandleDrivetrain();
-            if(gamepad2.y) servo.setPosition(0.1);
             telemetry.update();
-            if (gamepad2.start && servo.getPosition() != 1) servo.setPosition(1);
         }
     }
 
@@ -193,7 +204,7 @@ public class BasicOmniOpMode_Linear extends LinearOpMode {
         else powercoef = 0.4;
 
         double forward = -gamepad1.left_stick_y; /* Invert stick Y axis */
-        double strafe = gamepad1.left_stick_x;
+        double strafe = -gamepad1.left_stick_x;
         double yaw = gamepad1.right_stick_x;
 
         double gyro_radians = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS);
@@ -202,6 +213,7 @@ public class BasicOmniOpMode_Linear extends LinearOpMode {
                 strafe * sin(gyro_radians);
         strafe = -forward * sin(gyro_radians) +
                 strafe * cos(gyro_radians);
+        strafe *= -1;
         forward = temp;
 
         /* At this point, Joystick X/Y (strafe/forwrd) vectors have been */

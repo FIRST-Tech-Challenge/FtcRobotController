@@ -16,8 +16,15 @@ public class Autonomous extends LinearOpMode {
     protected DcMotor right_front;
     protected DcMotor left_back;
     protected DcMotor right_back;
+    private DcMotor intake = null;
     OpenCvCamera camera;
     BasicPipeline pipeline = new BasicPipeline();
+
+    enum propPosition {
+            LEFT,
+            MIDDLE,
+            RIGHT
+    }
 
 
     @Override
@@ -26,6 +33,9 @@ public class Autonomous extends LinearOpMode {
         right_front = hardwareMap.get(DcMotor.class, "right_front");
         left_back = hardwareMap.get(DcMotor.class, "left_back");
         right_back = hardwareMap.get(DcMotor.class, "right_back");
+
+        intake = hardwareMap.get(DcMotor.class, "intake");
+
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
         camera = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "camera"), cameraMonitorViewId);
 
@@ -46,19 +56,35 @@ public class Autonomous extends LinearOpMode {
         left_back.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         right_front.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         right_back.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        left_front.setDirection(DcMotorSimple.Direction.REVERSE);
-        left_back.setDirection(DcMotorSimple.Direction.REVERSE);
 
-        waitForStart();
+        while (!isStarted() && !isStopRequested()) {
+            telemetry.addData("Prop x value: ", pipeline.getJunctionPoint().x);
+            telemetry.update();
+        }
 
-        CoolestDrive(1000, 1000, 0, 1, true);
+        CoolestDrive(1000, 0, 0, 1, true);
+
+        if (pipeline.getJunctionPoint().x < 400) CoolestDrive(0, 0, -100, 1, true);
+        else if (pipeline.getJunctionPoint().x > 800) CoolestDrive(0, 0, 100, 1, true);
+        else CoolestDrive(1000, 0, 0, 1, true);
+        intake.setPower(1);
+        sleep(500);
+        intake.setPower(0);
+
+
     }
 
     public void CoolestDrive(double forward, double strafe, double yaw, double speed, boolean waitToFinish){
+
         left_front.setTargetPosition((int) (forward + strafe + yaw));
         left_back.setTargetPosition((int) (forward - strafe - yaw));
         right_front.setTargetPosition((int) (forward - strafe + yaw));
         right_back.setTargetPosition((int) (forward + strafe - yaw));
+
+        left_front.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        left_back.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        right_front.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        right_back.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
         left_front.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         left_back.setMode(DcMotor.RunMode.RUN_TO_POSITION);
@@ -66,8 +92,8 @@ public class Autonomous extends LinearOpMode {
         right_back.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
         double leftFrontPower = speed * (forward + strafe + yaw);
-        double rightFrontPower = speed * (forward - strafe - yaw);
         double leftBackPower = speed * (forward - strafe + yaw);
+        double rightFrontPower = speed * (forward - strafe - yaw);
         double rightBackPower = speed * (forward + strafe - yaw);
 
         // Normalize the values so no wheel power exceeds 100%
