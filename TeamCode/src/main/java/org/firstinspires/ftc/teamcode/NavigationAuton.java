@@ -1,30 +1,18 @@
 package org.firstinspires.ftc.teamcode;
-
-import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.Gamepad;
-import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Objects;
 
+public class NavigationAuton {
+    public enum rotationDirection {CLOCKWISE, COUNTERCLOCKWISE};
 
-/** Keeps track of the robot's desired path and makes it follow it accurately.
- */
-public class Navigation {
-    public enum rotationDirection {CLOCKWISE, COUNTERCLOCKWISE}
-
-    ;
-
-    public static enum Action {NONE, SLIDES_LOW, SLIDES_HIGH,}
-
-    ; //Makes actions of the Robot that can be used anywhere within the folder.
+    public static enum Action {NONE, SLIDES_LOW, SLIDES_HIGH,};
+    //Makes actions of the Robot that can be used anywhere within the folder.
 
     //**AUTONOMOUS CONSTANTS**
-    public enum MovementMode {FORWARD_ONLY, BACKWARD_ONLY, STRAFE_LEFT, STRAFE_RIGHT}
+    public enum MovementMode {FORWARD_ONLY, BACKWARD_ONLY, STRAFE_LEFT, STRAFE_RIGHT};
 
-    ; //Movements within the robot Autonomous Mode
+    //Movements within the robot Autonomous Mode
     public final double STRAFE_ACCELERATION = 0.1; //Number indicated Inches per second squared
     public final double ROTATE_ACCELERATION = 0.1; //Number indicated Radians per second squared
     public final double SPEED_FACTOR = 0.7; //Speed of the robot when all motors are set to full power
@@ -72,17 +60,9 @@ public class Navigation {
     public ArrayList<Position> path; //List of positions that the robot will go into WHEN IT IS IN AUTOMOTOUS MODE.
     public int pathIndex; //Index of the path array list.
 
-    /**
-     * @param path          positions of where the robot is traveling to in auton
-     * @param allianceColor alliance color on what team we are on (which is either red or blue)
-     * @param startingSide  the starting side on where our robot is starting from (on the field)
-     * @param movementMode  the movement within the robot
-     */
-    public Navigation(ArrayList<Position> path, RobotManager.AllianceColor allianceColor, RobotManager.StartingSide startingSide, MovementMode movementMode) {
-        this.path = path;
-        this.movementMode = movementMode;
-        pathIndex = 0;
-    }
+    public void Navigation() {
+        
+    };
 
     /**
      * @param startingSide    where the robot starts in auton mode on the field
@@ -109,7 +89,7 @@ public class Navigation {
         robot.telemetry.addData("Going to", target.getX() + ", " + target.getY()); //Updating the X and Y value to the driver station (AKA: the phone)
         robot.telemetry.addData("name", target.getName()); //Gets the name.
 
-        switch (movementMode) {
+        switch (robotManager.movementMode) {
             case FORWARD_ONLY: //Robot moving forward ONLY (if equal with movementMode)
                 rotate(getAngleBetween(robot.getPosition(), target) - Math.PI / 2, target.rotatePower, robot);
                 travelLinear(target, target.getStrafePower(), robot);
@@ -130,126 +110,16 @@ public class Navigation {
                 //deadReckoningRotation(robotManager, robot, difference, target.rotatePower);
                 break;
 
-            case BACKWARD_ONLY: //Robot moving backward ONLY (if equal with movementMode)
-                rotate(getAngleBetween(robot.getPosition(), target) - Math.PI * 3 / 2, target.rotatePower, robot);
-                travelLinaer(target, target.getStrafePower(), robot);
-                rotate(target.getRotation(), target.getRotatePower(), robot);
-                break;
+//            case BACKWARD_ONLY: //Robot moving backward ONLY (if equal with movementMode)
+//                rotate(getAngleBetween(robot.getPosition(), target) - Math.PI * 3 / 2, target.rotatePower, robot);
+//                travelLinaer(target, target.getStrafePower(), robot);
+//                rotate(target.getRotation(), target.getRotatePower(), robot);
+//                break;
         }
         pathIndex++; //increments path index to the next value...
         robot.telemetry.addData("Got to", target.name); //debug thingy for auton (since there were fun times with it...)
         return path.get(pathIndex - 1); //Return the point where the robot is currently at
     }
-
-    /** Updates the strafe power according to movement mode and gamepad 1 left trigger.
-     * |Teleop| |Non Blocking|
-     * @param gamepads
-     * @param robot
-     */
-    public void updateStrafePower(GamepadWrapper gamepads, Robot robot) {
-
-        AnalogValues analogValues = gamepads.getAnalogValues();
-        //Limits the output values between 0 - 1. 0 = no power, 1 = full power
-        double distance = Range.clip(Math.sqrt(Math.pow(analogValues.gamepad1LeftStickX, 2) + Math.pow(analogValues.gamepad1LeftStickY, 2)), 0, 1);
-
-
-        if (distance <= JOYSTICK_DEAD_ZONE_SIZE) {
-            strafePower = SLOW_MOVEMENT_SCALE_FACTOR; //Set as 0.3 (3/10th full power)
-        } else {
-            strafePower = distance + MOVEMENT_MAX_POWER; //Set as 1 (full power)
-        }
-        //Pre-sets robot slide states at what speed.
-        if (robot.desiredSlidesState == Robot.SlidesState.HIGH && robot.slidesMotor1.getPower() == 0) {
-            strafePower *= SLOW_MOVEMENT_SCALE_FACTOR; //Set as o.3
-        } else if (robot.desiredSlidesState == Robot.SlidesState.MEDIUM && robot.slidesMotor1.getPower() == 0) {
-            strafePower *= SLOW_MOVEMENT_SCALE_FACTOR; //Set as o.3
-        } else if (robot.desiredSlidesState == Robot.SlidesState.LOW && robot.slideMotor1.getPower() == 0) {
-            strafePower *= SLOW_MOVEMENT_SCALE_FACTOR; //Set as o.3
-        }
-    }
-
-    /**
-     * DEGREE      ALT + 2 4 8
-     * Moves the robot straight in one of the cardinal directions or at a 45 degree angle.
-     * NOTE: ALL CONTROLLER MOVEMENTS ARE USING A PS5 CONTROLLER.
-     * |Teleop| |Non Blocking|
-     *
-     * @param forward  moving robot forward. Using the UP arrow on the DPAD
-     * @param backward moving robot backwards. Using the DOWN arrow on the DPAD
-     * @param left     moving robot to the left. Using the LEFT arrow on the DPAD
-     * @param right    moving robot to the right. Using the RIGHT arrow on the DPAD
-     * @param robot
-     * @return whether any of the DPAD buttons were pressed
-     */
-    public boolean moveStraight(GamepadWrapper gamepads, Robot robot) {
-        double direction;
-        if (forward || backward) {
-            if (left) {//moves left at 45° (or Northwest)
-                direction = -Math.PI * 0.25;
-            } else if (right) { //moves right at 45° (or Northeast)
-                direction = Math.PI * 0.75;
-            } else {//moving forward
-                direction = -Math.PI * 0.5;
-            }
-            if (backward) { //invert the forward to just backwards
-                direction *= -1;
-            }
-        } else if (left) { //default direction. Set as 0
-            direction = 0;
-        } else if (right) {
-            direction = Math.PI;
-        } else {
-            return false;
-        }
-        setDriveMotorPowers(direction, strafePower, 0.0, robot, false);
-        return true;
-    }
-
-    /** Changes drivetrain motor inputs based off the controller inputs
-     * |Teleop| |Non Blocking|
-     * @param gamepads
-     * @param robot
-     */
-    public void moveJoystick(GamepadWrapper gamepads, Robot robot) {
-        //Uses left joystick to go forward, and right joystick to turn.
-        // NOTE: right-side drivetrain motor inputs don't have to be negated because their directions will be reversed
-        //       upon initialization.
-
-        double turn = analogValues.gamepad1RightStickX;
-        double rotationPower = ROTATION_POWER;
-        if (Math.abs(turn) < JOYSTICK_DEAD_ZONE_SIZE) {
-            turn = 0;
-        }
-        if (gamepads.getButtonState(GamepadWrapper.DriverAction.REDUCED_CLOCKWISE)) {
-            rotationPower = REDUCED_ROTATION_POWER;
-            turn = -1;
-        }
-        if (gamepads.getButtonState(GamepadWrapper.DriverAction.REDUCED_COUNTER_CLOCKWISE)) {
-            rotationPower = REDUCED_ROTATION_POWER;
-            turn = -1;
-        }
-        double moveDirection = Math.atan2(analogValues.gamepad1LeftStickY, analogValues.gamepad1LeftStickX);
-        if (Math.abs(moveDirection) < Math.PI / 12) {
-            moveDirection = 0;
-        } else if (Math.abs(moveDirection - Math.PI / 2) < Math.PI / 12) {
-            moveDirection = Math.PI / 2;
-        } else if (Math.abs(moveDirection - Math.PI) % Math.PI < Math.PI / 12) {
-            moveDirection = Math.PI;
-        } else if (Math.abs(moveDirection + Math.PI / 2) < Math.PI / 12) {
-            moveDirection = Math.PI / 2;
-        } else {
-            moveDirection = moveDirection;
-        }
-
-        setDriveMotorPowers(moveDirection, strafePower, turn * rotationPower, robot, false);
-    }
-
-
-
-    /*
-     *****AUTONOMOUS FUNCTIONS*****
-     -All the functions here below are Autonomous functions.
-     * */
 
     /** Rotates the robot a number of degrees.
      * |Auton| |Blocking|
@@ -331,12 +201,12 @@ public class Navigation {
      * @param target The desired oreintation
      * @return ducks
      */
-    private rotationDirection getRotationDirection(double theta, double target) {
+    private NavigationTeleOP.rotationDirection getRotationDirection(double theta, double target) {
         double angleDiff = target - theta; //Counterclockwise distance to target
         if ((angleDiff >= -Math.PI && angleDiff < 0) || (angleDiff > Math.PI)) {
-            return rotationDirection.CLOCKWISE;
+            return NavigationTeleOP.rotationDirection.CLOCKWISE;
         }
-        return rotationDirection.COUNTERCLOCKWISE;
+        return NavigationTeleOP.rotationDirection.COUNTERCLOCKWISE;
     }
 
     /**
@@ -393,41 +263,41 @@ public class Navigation {
                 }
             }
 
-        if(checkFrames){
-            power = STRAFE_CORRECITON_POWER;
-        }
-        if (distanceRemaining < 15){
-            power = STRAFE_SLOW;
-        }
-
-        double strafeAngle = getStrafeAngle(robot.getPosition(), target);
-        robot.telemetry.addData("Starting Rotation", robot.getPosition().getRotation());
-        robot.telemetry.addData("Used Strafe Angle", strafeAngle);
-        setDriveMotorPowers(strafeAngle, power, 0.0, robot, false);
-        robot.positionManager.updatePosition(robot);
-        currentPosition = robot.getPosition();
-        distanceTraveled = getEuclideanDistance(startPosition, currentPosition);
-        distanceRemaining = getEuclideanDistance(currentPosition, target);
-        timeElapsed = robot.elapsedTime.milliseconds() - startingTime;
-        timeRemaining = 2 * halfStrafeTime - timeElapsed;
-
-        robot.telemetry.addData("Start X:", startPosition.getX());
-        robot.telemetry.addData("Start Y:", startPosition.getY());
-        robot.telemetry.addData("Current X:", currentPosition.getX());
-        robot.telemetry.addData("Current Y:", currentPosition.getY());
-        robot.telemetry.addData("Target X:", target.x);
-        robot.telemetry.addData("Target Y:", target.y);
-        robot.telemetry.addData("getAngleBetween():", getAngleBetween(currentPosition, target));
-
-        if (distanceRemaining > EPSILON_LOC){
-            numFramesSinceLastFailure = 0;
-        } else {
-            checkFrames = true;
-            numFramesSinceLastFailure++; //Adds an integer to the numFramesSinceLastFailure
-            if(numFramesSinceLastFailure >= NUM_CHECK_FRAMES){
-                finishedTravel = true;
+            if(checkFrames){
+                power = STRAFE_CORRECITON_POWER;
             }
-        }
+            if (distanceRemaining < 15){
+                power = STRAFE_SLOW;
+            }
+
+            double strafeAngle = getStrafeAngle(robot.getPosition(), target);
+            robot.telemetry.addData("Starting Rotation", robot.getPosition().getRotation());
+            robot.telemetry.addData("Used Strafe Angle", strafeAngle);
+            setDriveMotorPowers(strafeAngle, power, 0.0, robot, false);
+            robot.positionManager.updatePosition(robot);
+            currentPosition = robot.getPosition();
+            distanceTraveled = getEuclideanDistance(startPosition, currentPosition);
+            distanceRemaining = getEuclideanDistance(currentPosition, target);
+            timeElapsed = robot.elapsedTime.milliseconds() - startingTime;
+            timeRemaining = 2 * halfStrafeTime - timeElapsed;
+
+            robot.telemetry.addData("Start X:", startPosition.getX());
+            robot.telemetry.addData("Start Y:", startPosition.getY());
+            robot.telemetry.addData("Current X:", currentPosition.getX());
+            robot.telemetry.addData("Current Y:", currentPosition.getY());
+            robot.telemetry.addData("Target X:", target.x);
+            robot.telemetry.addData("Target Y:", target.y);
+            robot.telemetry.addData("getAngleBetween():", getAngleBetween(currentPosition, target));
+
+            if (distanceRemaining > EPSILON_LOC){
+                numFramesSinceLastFailure = 0;
+            } else {
+                checkFrames = true;
+                numFramesSinceLastFailure++; //Adds an integer to the numFramesSinceLastFailure
+                if(numFramesSinceLastFailure >= NUM_CHECK_FRAMES){
+                    finishedTravel = true;
+                }
+            }
         }
         stopMovement(robot); //Stops the robot
     }
@@ -499,29 +369,40 @@ public class Navigation {
      * @return a^2 + b^2 = c^2
      */
     private double getEuclideanDistance(Position a, Position b){
-        return Math.sqrt(Math.pow(a.x - b.x, 2) + Math.pow(a.y - b.y, 2));
+        return Math.hypot(a.x - b.x, a.y - b.y);
+        //return Math.sqrt(Math.pow(a.x - b.x, 2) + Math.pow(a.y - b.y, 2));
     }
 
 
 
     /**preserves the ratio between a and b while restricting them to the range [-1, 1]
-    *Method By: Stephen Duffy 2022
-    * @param a value to be scaled
-    * @param b value to be scaled
-    * @return an array containing the scaled versions of a and b
-    */
+     *Method By: Stephen Duffy 2022
+     * @param a value to be scaled
+     * @param b value to be scaled
+     * @return an array containing the scaled versions of a and b
+     */
     double[] scaleRange(double a,double b){
-      double max;
-      if(Math.abs(a)>Math.abs(b)){
-        max=Math.abs(a);
-      }else{
-        max=Math.abs(b);
-      }
-      return new double[]{a/max,b/max};
+        double max = Math.max(Math.abs(a), Math.abs(b));
+        return new double[]{a/max, b/max};
+        //double max;
+        //if(Math.abs(a)>Math.abs(b)){
+        //  max=Math.abs(a);
+        //}else{
+        //  max=Math.abs(b);
+        //}
+        //return new double[]{a/max,b/max};
+    } //TODO LINE 670
+
+    /** Hardcoded paths through the playing field during the Autonomous period.*/
+    public static class AutonomousPaths{
+        public static final double TILE_SIZE = 24;
+        // These two constants aren't used but store the offsets from the center of the tile to the real starting position
+        public static final double Y_OFFSET = -0.25;
+        public static final double X_OFFSET = -0.15;
+
+        //Junctions
+        //Leaving this up to the Autonomous team. Not gonna do anything else beyond this point
+
+
     }
-
-
-
 }
-//Coders: Tyler M.
-//Alumni Help: Stephen D.
