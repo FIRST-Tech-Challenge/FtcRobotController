@@ -134,11 +134,9 @@ public class DumpTest extends LinearOpMode {
 
 
         waitForStart();
-        actuatorUtils.dumpOpen();
-        sleep(2000);
-        actuatorUtils.dumpClose();
         currTime=System.currentTimeMillis();
         startTime=currTime;
+        resultROI = 0;
         if (resultROI == 3) {
 
             // getUpdatedRecognitions() will return null if no new information is available since
@@ -172,11 +170,11 @@ public class DumpTest extends LinearOpMode {
         telemetry.update();
         done = true;
         //lift arm up
-        actuatorUtils.armPole(actuatorUtils.ArmLevel.LOW_POLE);
+        //actuatorUtils.armPole(actuatorUtils.ArmLevel.LOW_POLE);
         while (((currTime - startTime) < 30000)&& !done && opModeIsActive()) {
 
             switch (resultROI) {
-                case 1:
+                case 0:
                     // Far left
                     beginAuto();
                     moveUtils.strafeBuddy(-23);
@@ -184,14 +182,14 @@ public class DumpTest extends LinearOpMode {
                     actuatorUtils.armPole(actuatorUtils.ArmLevel.CONE1);
                     done=true;
                     break;
-                case 2:
+                case 1:
                     // Middle
                     beginAuto();
                     moveUtils.goStraight(20f,MAX_SPEED,MIN_SPEED,ACCEL);
                     actuatorUtils.armPole(actuatorUtils.ArmLevel.CONE1);
                     done=true;
                     break;
-                case 3:
+                case 2:
                     // Far right
                     beginAuto();
                     moveUtils.strafeBuddy(24);
