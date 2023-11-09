@@ -92,8 +92,8 @@ public class TELEOPtest1 extends LinearOpMode {
             //start Asher
             // move arm down on A button if not already at lowest position.
 
-            leftY = gamepad2.left_stick_y * -1;
-            rightY = gamepad2.right_stick_y * -1;
+            leftY = gamepad2.left_stick_y * 1;
+            rightY = gamepad2.right_stick_y * 1;
             armMotor.setPower(Range.clip(leftY, -1.0, 1.0));
             telemetry.addData("sticks", "  left=" + leftY + "  right=" + rightY);
 
