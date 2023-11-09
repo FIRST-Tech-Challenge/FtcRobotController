@@ -85,7 +85,8 @@ open class DriverControlBase(private val initialPose: Pose2d) : OpMode() {
         val driveRelativeY = sin(driveTheta) * inputPower
 
         // \frac{1}{1+\sqrt{2\left(1-\frac{\operatorname{abs}\left(\operatorname{mod}\left(a,90\right)-45\right)}{45}\right)\ }}
-        val powerModifier = 1.0 / (1.0 + sqrt(2.0 * (1.0 - (((abs(gyroYaw) % (PI / 2)) - (PI / 4)) / (PI / 4)))))
+//        val powerModifier = 1.0 / (1.0 + sqrt(2.0 * (1.0 - abs((gyroYaw % (PI / 2)) - (PI / 4)) / (PI / 4))))
+        val powerModifier = 1.0
 
         // Most values are [-1.0, 1.0]
 
