@@ -46,6 +46,7 @@ import org.firstinspires.ftc.robotcore.external.tfod.Recognition;
 import org.firstinspires.ftc.vision.VisionPortal;
 import org.firstinspires.ftc.vision.tfod.TfodProcessor;
 
+import java.util.Arrays;
 import java.util.List;
 
 /*
@@ -96,9 +97,15 @@ import java.util.List;
  *  Remove or comment out the @Disabled line to add this OpMode to the Driver Station OpMode list
  */
 
+
 @Autonomous(name="Robot: Auto V0.2", group="Robot")
 //@Disabled
+
 public class FirstAutonomousIteration extends LinearOpMode {
+
+    public enum FoundTeamProp {
+        FOUND_NONE, FOUND_LEFT, FOUND_MIDDLE, FOUND_RIGHT;
+    }
 
     /* Declare OpMode members. */
     private DcMotor         leftFrontDrive   = null;
@@ -136,8 +143,8 @@ public class FirstAutonomousIteration extends LinearOpMode {
 
     // These constants define the desired driving/control characteristics
     // They can/should be tweaked to suit the specific robot drive train.
-    static final double     DRIVE_SPEED             = 0.2;     // Max driving speed for better distance accuracy.
-    static final double     TURN_SPEED              = 0.1;     // Max Turn speed to limit turn rate
+    static final double     DRIVE_SPEED             = 0.2/DRIVE_GEAR_REDUCTION;     // Max driving speed for better distance accuracy.
+    static final double     TURN_SPEED              = 0.1/DRIVE_GEAR_REDUCTION;     // Max Turn speed to limit turn rate
     static final double     HEADING_THRESHOLD       = 1.0 ;    // How close must the heading get to the target before moving to next step.
                                                                // Requiring more accuracy (a smaller number) will often make the turn take longer to get into the final position.
     // Define the Proportional control coefficient (or GAIN) for "heading control".
@@ -150,6 +157,8 @@ public class FirstAutonomousIteration extends LinearOpMode {
     Arm arm = new Arm(this);
     Claw claw       = new Claw(this);
     Wrist wrist = new Wrist(this);
+
+    String msg = "";
 
     // This is needed for TFOD
 
@@ -235,8 +244,8 @@ public class FirstAutonomousIteration extends LinearOpMode {
         leftFrontDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         rightFrontDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
-        leftBackDrive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        rightBackDrive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        leftBackDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        rightBackDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         imu.resetYaw();
 
@@ -309,23 +318,25 @@ public class FirstAutonomousIteration extends LinearOpMode {
     public void dropTwoPickOne() {
         double currentHeading = getHeading();
         wrist.wristDown();
-        waitRuntime(1);
+        waitRuntime(.5);
         claw.openClaw();
-        waitRuntime(1);
+        waitRuntime(.5);
         wrist.wristUp();
-        waitRuntime(1);
-        driveStraight(0.5, -3.25, currentHeading);
+        waitRuntime(.5);
+        driveStraight(DRIVE_SPEED, -2, currentHeading);
         wrist.wristDown();
-        waitRuntime(1);
+        waitRuntime(.5);
         claw.closeClaw();
-        waitRuntime(1);
+        waitRuntime(.5);
         wrist.wristUp();
-        waitRuntime(1);
+        waitRuntime(.5);
     }
 
     public boolean isCubeThere() {
         List<Recognition> currentRecognitions = tfod.getRecognitions();
         if (currentRecognitions.size() > 0) {
+            msg = currentRecognitions.get(0).getLabel();
+            sendTelemetry(true);
             return true;
         }
         return false;
@@ -338,6 +349,7 @@ public class FirstAutonomousIteration extends LinearOpMode {
         waitRuntime(3);
         claw.closeClaw();
 
+
         // Wait for the game to start (Display Gyro value while waiting)
         while (opModeInInit()) {
             telemetry.addData(">", "Robot Heading = %4.0f", getHeading());
@@ -345,14 +357,60 @@ public class FirstAutonomousIteration extends LinearOpMode {
         }
 
         //dropTwoPickOne();
-        turnToHeading( TURN_SPEED *3, 15.0);
+        FoundTeamProp cubeIsFound = FoundTeamProp.FOUND_NONE;
+
+        List<Integer> headingsToCheck = Arrays.asList(-5, 30, -45);
+
+        driveStraight(DRIVE_SPEED, 11, 0.0);
         waitRuntime(0.1);
-        driveStraight(DRIVE_SPEED *3 , 7, 15.0);    // Drive Forward 24"
-        waitRuntime(0.1);
-        if (isCubeThere()) {
-            driveStraight(DRIVE_SPEED, 8, 15.0);
+        for (int heading: headingsToCheck) {
+            targetHeading = heading;
+            msg = "detecting cube";
+            sendTelemetry(true);
+
+            turnToHeading( TURN_SPEED, heading);
+
+            // pre-detect
+            // -- add code here
+
+            if (isCubeThere()) {
+                msg = "Cube Found!!!";
+                sendTelemetry(true);
+
+                if (heading > 0) {
+                    cubeIsFound = FoundTeamProp.FOUND_LEFT;
+                } else if (heading < -20) {
+                    cubeIsFound = FoundTeamProp.FOUND_RIGHT;
+                } else {
+                    cubeIsFound = FoundTeamProp.FOUND_MIDDLE;
+                }
+                holdHeading(TURN_SPEED, heading, 0.05);
+
+                break;
+            }
+
+            // post-detect
+            // -- add code here
+            waitRuntime(0.2);
+        }
+
+
+        if (cubeIsFound == FoundTeamProp.FOUND_MIDDLE) {
+            turnToHeading(TURN_SPEED, -15);
+            holdHeading(TURN_SPEED, -15, 0.05);
+
+            driveStraight(DRIVE_SPEED, 11, -15.0);
             waitRuntime(0.1);
             dropTwoPickOne();
+
+        } else if (cubeIsFound == FoundTeamProp.FOUND_LEFT) {
+
+            // TODO: fill in code here
+
+        } else {
+
+            // TODO: assume if not found middle or left, it is on te right
+
         }
 
 
@@ -457,6 +515,13 @@ public class FirstAutonomousIteration extends LinearOpMode {
     */
     public void driveStraight(double maxDriveSpeed, double distance, double heading, boolean applyCorrection) {
 
+        leftFrontDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        rightFrontDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+        leftBackDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        rightBackDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+
         // Ensure that the OpMode is still active
         if (opModeIsActive()) {
 
@@ -469,9 +534,13 @@ public class FirstAutonomousIteration extends LinearOpMode {
 
             leftFrontDrive.setTargetPosition(leftTarget);
             rightFrontDrive.setTargetPosition(rightTarget);
+            leftBackDrive.setTargetPosition(leftBackDrive.getCurrentPosition() + moveCounts);
+            rightBackDrive.setTargetPosition(rightBackDrive.getCurrentPosition() + moveCounts);
 
             leftFrontDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             rightFrontDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            leftBackDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            rightBackDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
             // Set the required driving speed  (must be positive for RUN_TO_POSITION)
             // Start driving straight, and then enter the control loop
@@ -502,8 +571,8 @@ public class FirstAutonomousIteration extends LinearOpMode {
             moveRobot(0, 0);
             leftFrontDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
             rightFrontDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-            leftBackDrive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-            rightBackDrive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+            leftBackDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            rightBackDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         }
     }
 
@@ -627,10 +696,10 @@ public class FirstAutonomousIteration extends LinearOpMode {
             rightSpeed /= max;
         }
 
+        leftBackDrive.setPower(leftSpeed);
+        rightBackDrive.setPower(rightSpeed);
         leftFrontDrive.setPower(leftSpeed);
-        leftBackDrive.setPower(0);
         rightFrontDrive.setPower(rightSpeed);
-        rightBackDrive.setPower(0);
     }
 
     /**
@@ -638,8 +707,9 @@ public class FirstAutonomousIteration extends LinearOpMode {
      *
      * @param straight  Set to true if we are driving straight, and the encoder positions should be included in the telemetry.
      */
-    private void sendTelemetry(boolean straight) {
 
+    private void sendTelemetry(boolean straight) {
+        telemetry.addData(msg, "");
         if (straight) {
             telemetry.addData("Motion", "Drive Straight");
             telemetry.addData("Target Pos L:R",  "%7d:%7d",      leftTarget,  rightTarget);
