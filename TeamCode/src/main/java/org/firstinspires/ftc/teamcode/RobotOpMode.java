@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode;
 
+import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -18,13 +19,15 @@ public abstract class RobotOpMode extends OpMode {
     public static long STOP_NEVER = Long.MAX_VALUE;
     public static float MIN_POWER = 0;
     public static float MAX_POWER = 1;
+    public static float MAX_ARM_POWER = 0.5f;
 
     public DcMotor leftFrontDrive, leftBackDrive, rightFrontDrive, rightBackDrive;
     public DcMotor armMotor, armExtensionMotor;
     public Servo armCatcherServo, wristServo, fingerServo;
     @Deprecated
     public float armCatcherServoPosition;
-    public double wristServoPosition;
+    public float wristServoPosition;
+    public float fingerServoPosition;
     BNO055IMU imu;
     ElapsedTime elapsedTime;
     /**
@@ -57,12 +60,13 @@ public abstract class RobotOpMode extends OpMode {
             armMotor = hardwareMap.get(DcMotor.class, "arm");
             armExtensionMotor = hardwareMap.get(DcMotor.class, "arm_extension");
 
-            armCatcherServo = hardwareMap.get(Servo.class, "arm_servo");
+            //armCatcherServo = hardwareMap.get(Servo.class, "arm_servo");
             //armCatcherServoPosition = (float) armCatcherServo.getPosition();
 
             fingerServo = hardwareMap.get(Servo.class, "finger_servo");
             wristServo = hardwareMap.get(Servo.class, "wrist_servo");
-            wristServoPosition = wristServo.getPosition();
+            wristServoPosition = (float) wristServo.getPosition();
+            fingerServoPosition = (float) fingerServo.getPosition();
             setTargetHandState(HandState.RELEASE);
         } catch(Exception e) {
             log(ERROR, "Error initializing arm and wrist motors: "+e.getMessage());
@@ -169,7 +173,7 @@ public abstract class RobotOpMode extends OpMode {
         rightBackDrive.setPower(rightBackPower);
         return true;
     }
-    @deprecated
+    @Deprecated
     public int initArm() {
         createTelemetryPacket();
         log("Initializing", "Starting up...");
@@ -258,8 +262,6 @@ public abstract class RobotOpMode extends OpMode {
     }
 
     public void moveServo(Servo servo, float position) {
-        createTelemetryPacket();
-
         if (position > 1) {
             position = 1;
         }
@@ -272,10 +274,8 @@ public abstract class RobotOpMode extends OpMode {
         try {
             servo.setPosition(position);
         } catch (Exception e) {
-            dbp.put("Error", e.getMessage());
+            log("Error", e.getMessage());
         }
-
-        sendTelemetryPacket(false);
     }
 
     public void moveArm(float power, int position) {
@@ -341,7 +341,6 @@ public abstract class RobotOpMode extends OpMode {
      * Moves the arm according to the parameters.
      * @param power The power of the arm motor
      */
-
     public void analogMoveArm(float power, boolean setArmModeToRunToPosition) {
         armMotor.setPower(power);
         if (setArmModeToRunToPosition) {
@@ -430,6 +429,7 @@ public abstract class RobotOpMode extends OpMode {
      * @param position The position of the arm servo
      * @return The target position variable that can be used by the arm motor.
      */
+    @Deprecated
     public int getArmPosition(ArmHingePosition position) {
         return position.getPosition()-armZeroPosition;
     }
@@ -439,6 +439,7 @@ public abstract class RobotOpMode extends OpMode {
      * @param position The position of the arm servo
      * @return The target position variable that can be used by the arm motor.
      */
+    @Deprecated
     public int getArmPosition(int position) {
         return position-armZeroPosition;
     }

@@ -9,7 +9,7 @@ public class FTCDashboardPackets {
      * The key to be used when putting a value into a packet.
      * Should be set as the name of the class that is using this.
      */
-    public static final String CONTEXT;
+    public static String CONTEXT = null;
     private static TelemetryPacket packet;
 
     public FTCDashboardPackets() {
