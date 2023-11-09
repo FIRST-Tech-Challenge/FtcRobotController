@@ -45,13 +45,13 @@ public class Auto_BottomLeft extends LinearOpMode {
                 /* Code for forward/backward placing pixels */
 
                 robot.driveRobot(-FORWARD_SPEED, 0);
-                sleep(6900);
+                sleep(6700);
 
                 robot.driveRobot(FORWARD_SPEED, 0);
-                sleep(4900);
+                sleep(5100);
 
                 robot.driveRobot(0,TURNSPEED);
-                sleep(5600);
+                sleep(5400);
 
                 robot.driveRobot(FORWARD_SPEED,0);
                 sleep(7800);
