@@ -94,7 +94,47 @@ public class BradBot extends BasicRobot {
       }
     }
   }
-
+  public void flipAuto(){
+    if(queuer.queue(true, ArmStates.FLIPPED.getState())){
+      if(!queuer.isExecuted()){
+        clamp.clamp();
+        wrist.flipTo(Wrist.WristTargetStates.HOLD);
+        arm.flipTo(FLIPPED);
+        lift.setPosition(Lift.LiftPositionStates.LOW_SET_LINE);
+      }
+    }
+  }
+  public void resetAuto(){
+    if(queuer.queue(true, !FLIPPED.getState())){
+      if (!queuer.isExecuted()) {
+        lift.setPosition(Lift.LiftPositionStates.LOW_SET_LINE);
+        arm.flipTo(UNFLIPPED);
+        wrist.update();
+        wrist.flipTo(Wrist.WristTargetStates.FLAT);
+        }
+    }
+  }
+  public void resetLift(){
+    if(queuer.queue(true, lift.isDone())){
+        lift.setPosition(0);
+    }
+  }
+  public void dropWrist(){
+    if(queuer.queue(false, Wrist.WristStates.DROP.getState())){
+      if (!queuer.isExecuted()) {
+        wrist.flipTo(Wrist.WristTargetStates.DROP);
+//        clamp.unclamp();
+      }
+    }
+  }
+  public void drop(){
+    if(queuer.queue(false, !clamp.getClamped())){
+      if (!queuer.isExecuted()) {
+//        wrist.flipTo(Wrist.WristTargetStates.DROP);
+        clamp.unclamp();
+      }
+    }
+  }
   /**
    * Empties the hopper in auto, hopper.update() will handle the rest Logs that this function called
    * to general surface
@@ -217,9 +257,9 @@ public class BradBot extends BasicRobot {
     if (abs(manualUp - manualDown) > 0.05) {
       lift.manualExtend(manualUp - manualDown);
     }
-    if (abs(hangUp - hangDown) > 0.05) {
+//    if (abs(hangUp - hangDown) > 0.05) {
       hanger.setPower(hangUp-hangDown);
-    }
+//    }
     if (isY) {
       wrist.flipTo(Wrist.WristTargetStates.DROP);
     }

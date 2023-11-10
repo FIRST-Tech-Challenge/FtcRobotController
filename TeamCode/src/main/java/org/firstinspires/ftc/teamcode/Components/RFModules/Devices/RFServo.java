@@ -51,7 +51,7 @@ public class RFServo implements Servo {
                 "Function               Action");
 
         SERVO_LIMIT = p_limit;
-        setLastTime(-100);
+        plastTime = -100;
     }
 
     /**
@@ -89,6 +89,13 @@ public class RFServo implements Servo {
             target = p_position;
             position = p_position;
         }
+    }
+    public void superSetPosition(double p_position){
+        rfServo.setPosition(p_position);
+        plastTime= time;
+        LOGGER.log(RFLogger.Severity.INFO, "POGGERS?");
+        target = p_position;
+        position = p_position;
     }
 
     public double getTarget() {
