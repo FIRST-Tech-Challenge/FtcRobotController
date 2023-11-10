@@ -73,12 +73,12 @@ public class TELEOPtest1 extends LinearOpMode {
 
             telemetry.addData("Mode", "running");
             // check to see if we need to move the servo.
-            if (gamepad1.dpad_right) {
+            if (gamepad1.dpad_left) {
                 // move to 0 degrees.
                 DroneCoverServo.setPosition(0.3);
-            } else if (gamepad1.dpad_left) {
+            } else if (gamepad1.dpad_right) {
                 // move to 90 degrees.
-                DroneCoverServo.setPosition(1);
+                DroneCoverServo.setPosition(.7);
             }
             telemetry.addData("Servo Position", DroneCoverServo.getPosition());
             telemetry.addData("Status", "Running");
