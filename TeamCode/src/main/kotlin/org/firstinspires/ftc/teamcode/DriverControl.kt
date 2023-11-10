@@ -6,6 +6,7 @@ import com.acmerobotics.roadrunner.Vector2d
 import com.acmerobotics.roadrunner.clamp
 import com.qualcomm.robotcore.eventloop.opmode.OpMode
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp
+import com.qualcomm.robotcore.hardware.DcMotor.RunMode.RUN_WITHOUT_ENCODER
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit
 import org.firstinspires.ftc.teamcode.roadrunner.MecanumDrive
 import kotlin.math.PI
@@ -15,13 +16,22 @@ import kotlin.math.cos
 import kotlin.math.sin
 import kotlin.math.sqrt
 
-/*
-    CONTROL IDEAS:
-
-    1. Driver-relative control *by default*
-        a. Hold some button down to use bot-relative (for precise movements)
-        b. Use the onboard gyroscope for this
-    2.
+/**
+ * CURRENT CONTROLS:
+ *
+ * Gamepad 1: Movement
+ *  - Left Stick X/Y: Movement
+ *  - Right Stick X: Rotation
+ *  - X (face left): Toggle driver-relative controls (ON by default)
+ * Gamepad 2: Objective
+ *  - Left Stick Y: Manual Slide
+ *  - Left Trigger: Close(?) Arm
+ *  - Right Trigger: Open(?) Arm
+ *  - Right Bumper: Retract(?) truss pulley
+ *  - Left Bumper: Extend(?) truss pulley
+ *  - D-Pad Up: Spin intake inwards
+ *  - D-Pad Down: Spin intake outwards
+ *  - A (face down): Toggle intake height
  */
 @TeleOp(name = "STANDALONE Kotlin Driver Control", group = "Kt")
 class StandaloneDriverControl : DriverControlBase(Pose2d(0.0, 0.0, 0.0))
@@ -50,6 +60,34 @@ open class DriverControlBase(private val initialPose: Pose2d) : OpMode() {
     private var hasToggledIntakeLift = false
     private var useBotRelative = false
     private var isIntakeLiftRaised = true
+
+    // TODO: replace this function
+    private fun prototypeInput() {
+        val drive = shared.drive!!
+//        val spinner = shared.motorIntakeSpin
+        val intake = shared.intake
+        // TODO: replace with Linear Slide Driver
+        val slide = shared.motorSlide!!
+        val hang = shared.motorTruss!!
+        val arm = shared.servoArm!!
+
+        // arm
+        if (gamepad2.left_trigger > 0.1) arm.position += 0.001
+        else if (gamepad2.right_trigger > 0.1) arm.position -= 0.001
+
+        // TODO: should this be locked until endgame?
+        //       we could use (timer > xx.xx) or something
+        // truss hang
+        shared.motorTruss?.power = if (gamepad2.right_bumper) 1.0 else if (gamepad2.left_bumper) -1.0 else 0.0
+
+        // lift
+        slide.mode = RUN_WITHOUT_ENCODER
+        slide.power = if (abs(gamepad2.left_stick_y) > 0.1) -gamepad2.left_stick_y.toDouble() else 0.0
+
+        // (intake) hold right bumper to rotate forward, left bumper to rotate backward
+        if (gamepad2.dpad_up) intake?.active = Ternary.B; else if (gamepad2.dpad_down) Ternary.C else intake?.active = Ternary.A
+    }
+
 
     override fun loop() {
 
@@ -93,9 +131,8 @@ open class DriverControlBase(private val initialPose: Pose2d) : OpMode() {
         val control = object {
 //            val movement = outputVector
             val rotation = -gamepad1.right_stick_x.toDouble()
-            val useManual = !gamepad1.x
             val relativityToggle = gamepad1.x
-            val intakeHeightToggle = gamepad1.a
+            val intakeHeightToggle = gamepad2.a
         }
 
         // toggle driver-relative controls
@@ -105,9 +142,6 @@ open class DriverControlBase(private val initialPose: Pose2d) : OpMode() {
                 hasToggledDriveRelativity = true
             }
         } else hasToggledDriveRelativity = false
-
-        // (intake) hold right bumper to rotate forward, left bumper to rotate backward
-        if (gamepad1.right_bumper) intake.active = Ternary.B; else if (gamepad1.left_bumper) Ternary.C else intake.active = Ternary.A
 
         // toggle intake lift
         if (control.intakeHeightToggle) {
@@ -119,7 +153,6 @@ open class DriverControlBase(private val initialPose: Pose2d) : OpMode() {
             }
         } else hasToggledIntakeLift = false
 
-        shared.motorTruss?.power = if (gamepad1.dpad_up) 1.0 else if (gamepad1.dpad_down) -1.0 else 0.0
 
         // +X = forward, +Y = left
         drive.setDrivePowers(PoseVelocity2d(
@@ -131,14 +164,7 @@ open class DriverControlBase(private val initialPose: Pose2d) : OpMode() {
             control.rotation
         ))
 
-        telemetry.addLine("Gyro Yaw: " + shared.imu.robotYawPitchRollAngles.getYaw(AngleUnit.DEGREES))
-        telemetry.addLine("Input Yaw: " + inputTheta * 180.0 / PI)
-//        telemetry.addLine("Yaw Difference (bot - input): " + )
-
-        telemetry.addLine("Left Stick X: " + gamepad1.left_stick_x)
-        telemetry.addLine("Left Stick Y: " + gamepad1.left_stick_y)
-        telemetry.addLine("Manual Controls: " + (if (useBotRelative) "EN" else "DIS") + "ABLED")
-        telemetry.update()
+        prototypeInput();
 
 //        // Intake controls
 //        if (control.intakeHeightToggle != lastIntakeStatus) {
@@ -151,6 +177,15 @@ open class DriverControlBase(private val initialPose: Pose2d) : OpMode() {
 //            }
 //        }
 //        shared.intake?.active = control.intakeHeightToggle
+
+        telemetry.addLine("Gyro Yaw: " + shared.imu.robotYawPitchRollAngles.getYaw(AngleUnit.DEGREES))
+        telemetry.addLine("Input Yaw: " + inputTheta * 180.0 / PI)
+//        telemetry.addLine("Yaw Difference (bot - input): " + )
+
+        telemetry.addLine("Left Stick X: " + gamepad1.left_stick_x)
+        telemetry.addLine("Left Stick Y: " + gamepad1.left_stick_y)
+        telemetry.addLine("Manual Controls: " + (if (useBotRelative) "EN" else "DIS") + "ABLED")
+        telemetry.update()
 
         shared.update()
     }
