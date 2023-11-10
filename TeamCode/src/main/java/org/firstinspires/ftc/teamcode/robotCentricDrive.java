@@ -121,7 +121,7 @@ public class robotCentricDrive extends LinearOpMode {
           } else {
             armExt.setPower(0);
           }
-        } if(gamepad2.right_stick_button && gamepad2.left_stick_button){
+        } if(gamepad1.right_trigger > 0.5 && gamepad1.left_trigger > 0.5){
           armExt.setPower(-1);
           sleep(100000);
         }
