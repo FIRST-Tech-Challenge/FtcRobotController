@@ -1,17 +1,13 @@
 package org.firstinspires.ftc.teamcode.tools;
 
+import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.Servo;
+
 import java.util.ArrayList;
 import java.util.function.BooleanSupplier;
-import com.qualcomm.robotcore.hardware.Servo;
-import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.eventloop.opmode.OpMode;
-import org.firstinspires.ftc.robotcore.external.Telemetry;
-
-
 
 // StateMachine class that handles state management and transitions
 public class StateMachine {
-
 
     // Inner State class representing an individual state within the StateMachine
     public class State {
@@ -32,7 +28,7 @@ public class StateMachine {
         // Inner Transition class representing a possible change from the current state to another
         public class Transition {
             private final BooleanSupplier trigger; // The condition under which this transition will occur
-            private final State nextState; // The state to transition to
+            private final State nextState; // The state to transit=ion to
             ArrayList<Action> actions; // List of actions to be performed during the transition
             int currentActionIndex; // Index to keep track of the current action
 
@@ -79,6 +75,18 @@ public class StateMachine {
             public State getDestinationState() {
                 return nextState;
             }
+            private State.Transition.Action setMotor(DcMotor motor, int position){
+                return new State.Transition.Action(()->{motor.setTargetPosition(position);
+                    return true;
+                });
+            }
+
+            private State.Transition.Action setServo(Servo servo, int position){
+                return new State.Transition.Action(()->{servo.setPosition(position);
+                    return true;
+                });
+            }
+
         }
 
         // Method called every update cycle to determine if the state should transition
@@ -122,60 +130,5 @@ public class StateMachine {
         assert currentState != null : "initial state undefined"; // Ensure that there is a current state to update from
         currentState = currentState.update(); // Update the current state, which may cause a state transition
     }
-
-
-    // method for a servo to correct itself if it is not within one degree of the desired position
-    public void setPosServo(Servo servo, int pos, Telemetry telemetry) {
-        int tolerance = 1;
-        servo.setPosition(pos);
-        int counter = 0; // counts the number of times the correctional loop runs
-        // is my error greater or less than error
-        while (Math.abs(pos - servo.getPosition()) >= tolerance && counter <= 5) {
-            telemetry.addLine(servo + " correction started");
-            // divide by two on the correctional value so that it does not overshoot by too much
-            if (pos - servo.getPosition() > 0) {servo.setPosition(pos + (pos - servo.getPosition()) / 2);}
-            if (pos - servo.getPosition() < 0) {servo.setPosition(pos + (servo.getPosition() - pos) / 2);}
-            counter++;
-            telemetry.addLine(servo + " corrected " + counter + " times");
-        }
-        telemetry.addLine(servo + " correction finished");
-        telemetry.update();
-    }
-
-    public void setPosMotor(DcMotor motor, int pos, Telemetry telemetry) {
-        int tolerance = 1;
-        motor.setTargetPosition(pos);
-        motor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        motor.setPower(0.5); // Set some default power
-
-        int counter = 0; // Counts the number of times the correctional loop runs
-
-        while (/*opModeIsActive() &&**/ Math.abs(pos - motor.getCurrentPosition()) > tolerance && counter <= 5) {
-            telemetry.addLine(motor + " correction started");
-            telemetry.update();
-
-            int currentPosition = motor.getCurrentPosition();
-            int error = pos - currentPosition;
-            int halfError = error / 2;
-
-            motor.setTargetPosition(currentPosition + halfError);
-
-            while (/*opModeIsActive() &&**/motor.isBusy()) {
-                // Optionally include idle() if in LinearOpMode
-                telemetry.addData("Encoder Target", pos);
-                telemetry.addData("Current Position", currentPosition);
-                telemetry.update();
-            }
-            motor.setPower(0);
-
-            counter++;
-            telemetry.addData(motor + " corrected ", counter + " times");
-            telemetry.update();
-        }
-
-        motor.setPower(0); // Ensure the motor is stopped at the end
-        telemetry.addLine(motor + " correction finished");
-        telemetry.update();
-    }
-
 }
+
