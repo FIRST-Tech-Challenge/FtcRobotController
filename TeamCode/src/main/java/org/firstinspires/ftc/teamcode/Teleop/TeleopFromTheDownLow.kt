@@ -104,7 +104,8 @@ class TeleopFromTheDownLow: DriveMethods() {
             commandList.add("motorFR.power:"+((leftY + leftX + rightX) / speedDiv));
             motorBR?.power = (leftY - leftX + rightX) / speedDiv
             commandList.add("motorBR.power:"+((leftY - leftX + rightX) / speedDiv));
-
+            
+            //Claw not supported
             //open/close claw
             if (gamepad2.b) {
                 //clawMotor!!.position = closedClaw
@@ -236,7 +237,7 @@ class TeleopFromTheDownLow: DriveMethods() {
         }
         var outputWriter: BufferedWriter? = null
         outputWriter = BufferedWriter(FileWriter("/sdcard/FIRST/training/test.txt"));
-        for (i in 0..<commandList.size) {
+        for (i in 0 .. commandList.size-1) {
             outputWriter.write(commandList[i]);
             outputWriter.newLine();
         }
