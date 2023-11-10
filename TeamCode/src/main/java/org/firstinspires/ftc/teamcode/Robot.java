@@ -41,6 +41,7 @@ public class Robot {
     Servo holderClamp;
     Servo flipper;
     Servo hook;
+    Servo spikeServo;
     IMU imu;
     double prevError = 0;
     double prevTime = 0;
@@ -68,6 +69,7 @@ public class Robot {
         arm = hardwareMap.servo.get("arm");
         holderClamp = hardwareMap.servo.get("holderClamp");
         hook = hardwareMap.servo.get("linearLocker");
+        spikeServo = hardwareMap.servo.get("spikeServo");
         //int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
         //webcam = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "Webcam 1"), cameraMonitorViewId);
     }
@@ -229,6 +231,7 @@ public class Robot {
         intake = hardwareMap.dcMotor.get("intake");
         lsBack = hardwareMap.dcMotor.get("lsBack");
         lsFront = hardwareMap.dcMotor.get("lsFront");
+        spikeServo = hardwareMap.servo.get("spikeServo");
 
         intake.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         lsFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -297,8 +300,7 @@ public class Robot {
         return currentYaw;
     }
 
-    //the desired heading must be relative to last imu reset
-    //-180 < desired heading <= 180
+    //the desired heading must be relative to last imu reset. also, REMEMBER -180 < desired heading <= 180.
     public void setHeading(double targetAbsDegrees, double maxPower) {
     /*
         assert(targetAbsDegrees > 180);
@@ -465,7 +467,6 @@ public class Robot {
         setWantedAprTagId(position, MarkerDetector.ALLIANCE_COLOR.RED);
 
     }
-
 
     public void shortMoveToBoard() { //TODO: add polarity, use in ShortRedAuto.java, and TEST
         Log.d("vision", "moveToMarker: Pos " + markerPosRed);

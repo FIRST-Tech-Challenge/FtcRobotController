@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
+@Autonomous
 public class TestingWade extends LinearOpMode {
 
     @Override
@@ -13,7 +14,9 @@ public class TestingWade extends LinearOpMode {
         waitForStart();
 
         while (opModeIsActive()) {
-            robot.straightBlocking(72, false, 0.7);
+
+            robot.setServoPosBlocking(robot.spikeServo, 0);
+            sleep(10000);
             break;
         }
     }
