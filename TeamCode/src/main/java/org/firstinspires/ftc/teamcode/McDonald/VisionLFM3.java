@@ -28,8 +28,8 @@ import java.util.Locale;
  * Remove or comment out the @Disabled line to add this OpMode to the Driver Station OpMode list.
  */
 @Config
-@Autonomous(name = "Auto w/Park LFM (by time)", group = "Auto")
-public class VisionLFM2 extends LinearOpMode {
+@Autonomous(name = "Auto w/Park LFM (by time) 3", group = "Auto")
+public class VisionLFM3 extends LinearOpMode {
 
     public static boolean DEBUG = false;
 
@@ -55,7 +55,7 @@ public class VisionLFM2 extends LinearOpMode {
     public static final double     FORWARD_SPEED = 0.4;
     public static final double     TURN_SPEED    = 0.4;
 
-    public static double detectWait = 6.0;
+    public static double detectWait = 3.0;
 
     private ElapsedTime runtime = new ElapsedTime();
 
@@ -151,7 +151,7 @@ public class VisionLFM2 extends LinearOpMode {
                 telemetry.update();
 
                 // Go Park
-                //park(pPosition);
+                park(pPosition);
                 telemetry.update();
 
                 // Save CPU resources; can resume streaming when needed.
@@ -244,22 +244,21 @@ public class VisionLFM2 extends LinearOpMode {
                         double x = (recognition.getLeft() + recognition.getRight()) / 2 ;
                         double y = (recognition.getTop()  + recognition.getBottom()) / 2 ;
 
-                        if (x < 300) {
+                        if (x < 100) {
                             telemetry.addData("Prop Left", "");
                             telemetry.update();
                             debugWait();
                             return PropPosition.LEFT;
-                        } else if (x > 300) {
+                        } else if (x > 428) {
                             telemetry.addData("Prop Right", "");
                             telemetry.update();
                             debugWait();
-                            //return PropPosition.RIGHT;
-                            return PropPosition.MIDDLE;
+                            return PropPosition.RIGHT;
                         } else {
                             telemetry.addData("Prop Middle", "");
                             telemetry.update();
                             debugWait();
-                            return PropPosition.RIGHT;
+                            return PropPosition.MIDDLE;
                         }
                     }
                 }
@@ -278,14 +277,13 @@ public class VisionLFM2 extends LinearOpMode {
             case LEFT:
                 moveRobot("", MOVE_MIDDLE);
                 turnRobot("left", MOVE_LEFT_LINE);
-                moveRobot("", MOVE_MIDDLE);
                 telemetry.addData("Turn: Left", "");
                 telemetry.update();
                 debugWait();
                 dropProp();
                 break;
             case RIGHT:
-                moveRobot("", MOVE_MIDDLE-.2);
+                moveRobot("", MOVE_MIDDLE);
                 turnRobot("right", MOVE_RIGHT_LINE);
                 moveRobot("", .2);
                 telemetry.addData("Turn: Right", "");
@@ -294,17 +292,16 @@ public class VisionLFM2 extends LinearOpMode {
                 dropProp();
                 break;
             case MIDDLE:
-                moveRobot("Center Line", MOVE_MIDDLE+.1);
+                moveRobot("Center Line", MOVE_MIDDLE);
                 telemetry.addData("Move: Forward", "");
                 telemetry.update();
                 debugWait();
                 dropProp();
                 break;
             case UNKNOWN:
-                moveRobot("", MOVE_MIDDLE-.2);
-                turnRobot("right", MOVE_RIGHT_LINE);
-                moveRobot("", .2);
-                telemetry.addData("Turn: Right", "");
+                moveRobot("", MOVE_MIDDLE);
+                turnRobot("left", MOVE_LEFT_LINE);
+                telemetry.addData("Turn: Left", "");
                 telemetry.update();
                 debugWait();
                 dropProp();
