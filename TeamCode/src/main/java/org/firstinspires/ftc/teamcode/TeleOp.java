@@ -128,8 +128,7 @@ public class TeleOp extends LinearOpMode {
                 }
             }
 
-            //if linear slide motor's # of ticks is under 4, set it to down
-            if (lsFront.getCurrentPosition() < 4) {
+            if (lsFront.getCurrentPosition() < 60) {
                 armPos = 0.594;
             }
 
@@ -138,8 +137,8 @@ public class TeleOp extends LinearOpMode {
 
             //intake
             if (gamepad2.left_trigger > 0) {
-                intake.setPower(0.4);
-                holderClampPos = 0.4;
+                intake.setPower(0.55);
+                holderClampPos = 0.43;
                 //if intake button held, keep holder open
             } else if (gamepad2.left_bumper) {
                 //reversed intake
@@ -157,7 +156,7 @@ public class TeleOp extends LinearOpMode {
                 holderClampPos -= 0.025;
                 //open
             } else if (gamepad2.right_trigger > 0) {
-                holderClampPos += 0.025;
+                holderClampPos += 0.05;
                 //close
             }
 
@@ -169,8 +168,8 @@ public class TeleOp extends LinearOpMode {
             //set limits on the holder clamp
             if (holderClampPos > 1) {
                 holderClampPos = 1;
-            } else if (holderClampPos < 0.4) {
-                holderClampPos = 0.4;
+            } else if (holderClampPos<0.43) {
+                holderClampPos = 0.43;
             }
 
             //set limits on how much the tray can pivot
@@ -184,8 +183,9 @@ public class TeleOp extends LinearOpMode {
             if (gamepad2.a) {
                 armPos = 0.594; //down (intake) position
             }
-            if (gamepad2.y) {
-                armPos = 0.845; //up (outtake) position
+
+            if(gamepad2.y == true) {
+                armPos = 0.855; //up (outtake) position
             }
 
             //the earlier conditionals set variables based on what was pressed
@@ -201,9 +201,9 @@ public class TeleOp extends LinearOpMode {
             }
 
             //doubles for amount of input for straight, turning, and mecanuming variables
-            double forwardBackward = gamepad1.left_stick_y * -0.5;
-            double turning = gamepad1.right_stick_x * 0.5;
-            double mecanuming = gamepad1.left_stick_x * 0.5;
+            double forwardBackward = gamepad1.left_stick_y * -0.75;
+            double turning = gamepad1.right_stick_x * 0.75;
+            double mecanuming = gamepad1.left_stick_x * 0.75;
 
             //set powers using this input
             double fLeftPower = forwardBackward + turning + mecanuming;
