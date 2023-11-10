@@ -3,79 +3,75 @@ import com.arcrobotics.ftclib.controller.PIDFController;
 
 public class MotionProfiler {
 
-    double maxVelocity, maxAccel, distance, totalDt, accelerationDt, halfwayDist, accelerationDistance, deaccelerationDt, cruiseDistance, cruiseDt, deaccelerationTime;
+    double max_v, max_a, new_max_v, start_pos, end_pos, distance, total_dt, accel_dt, accel_dist, cruise_dist, cruise_dt,
+            decel_time;
     double cruiseCurrentDt;
     public boolean isDone=false;
+    public MotionProfiler(double max_v, double max_a, double start_pos, double end_pos) {
+        this.max_v = max_v;
+        this.max_a = max_a;
+        this.start_pos = start_pos;
+        this.end_pos=end_pos;
+        distance =Math.abs(end_pos-start_pos);
 
-
-    public MotionProfiler(double maxVelocity, double maxAcceleration, double distance){
-        this.maxVelocity = maxVelocity;
-        this.maxAccel = maxAcceleration;
-        this.distance= distance;
-    }
-
-    public MotionProfiler(double maxVelocity, double maxAccel){
-        this.maxVelocity = maxVelocity;
-        this.maxAccel = maxAccel;
-    }
-
-    public void updateDistance(double distance){
-        this.distance = distance;
-    }
-
-        public double profileMotion(double timeElapsed){
-
-        //accelDt = time to accelerate to max velocity
-        accelerationDt = maxVelocity/maxAccel;
-        halfwayDist = distance/2;
-        accelerationDistance = 0.5 * maxAccel * Math.pow(accelerationDt,2);
-        //distance of acceleration: 1/2 a delta t^2 (more kinematic equations!!!!)
-        if((accelerationDistance)>halfwayDist){
-            accelerationDt = Math.sqrt(halfwayDist/(0.5*maxAccel));
-            //If we can't accelerate to max velocity in given distance, will accelerate as much as possible
+        if(end_pos-start_pos<0) {
+            this.max_v= -this.max_v;
+            this.max_a = -this.max_a;
         }
-        maxVelocity = maxAccel * accelerationDt;
-        deaccelerationDt = accelerationDt;
-        //acceleration time is same as deacceleration time
+    }
 
-        cruiseDistance = distance - 2 * accelerationDistance;
-        //cruising distance is twice as much as acceleration distance
-        cruiseDt = cruiseDistance / maxVelocity;
-        deaccelerationTime = accelerationDt + cruiseDt;
+    public void init() {
+        /*acceleration starts at the beginning of the trajectory.
+        cruising starts at accel_dt seconds, ends at cruise_dt seconds
+        decel starts at decel_time seconds.
+        */
 
-        totalDt = accelerationDt + cruiseDt + deaccelerationDt;
-        if (timeElapsed > totalDt) {
+        distance = end_pos-start_pos;
+
+        // calculate the time it takes to accelerate to max velocity
+        accel_dt = max_v / max_a;
+
+        // If we can't accelerate to max velocity in the given distance, we'll accelerate as much as possible
+        double halfway_distance = distance / 2;
+        accel_dist = 0.5 * max_a * Math.pow(accel_dt,2);
+
+        if (accel_dist > halfway_distance)
+            accel_dt = Math.sqrt(halfway_distance / (0.5 * max_a));
+
+        accel_dist = 0.5 * max_a * Math.pow(accel_dt,2);
+
+        // recalculate max velocity based on the time we have to accelerate and decelerate
+        new_max_v = max_a * accel_dt;
+
+        //calculate the distance and time that we're cruising at max velocity
+        cruise_dist = distance - 2 * accel_dist;
+        cruise_dt = cruise_dist / new_max_v;
+        decel_time = accel_dt + cruise_dt;
+        //we should be at decel_time seconds when deceleration starts.
+
+        total_dt = 2*accel_dt + cruise_dt;
+    }
+
+    public double profile_pos(double current_dt) {
+        //Returns where the mechanism should be based on the profile
+
+        if(current_dt>total_dt) {
             isDone = true;
-            return 0;
+            return end_pos;
         }
 
-        if (timeElapsed < accelerationDt)
-            // use the kinematic equation for acceleration
-            return 0.5 * maxAccel * Math.pow(timeElapsed,2);
+        //if we're accelerating:
+        if(current_dt < accel_dt) return start_pos + 0.5 *max_a * Math.pow(current_dt,2);
 
-        else if (timeElapsed < deaccelerationTime) {
-            accelerationDistance = 0.5 * maxAccel * Math.pow(accelerationDt,2);
-            cruiseCurrentDt = timeElapsed - accelerationDt;
-
-            //constant velocity
-            return accelerationDistance + maxVelocity * cruiseCurrentDt;
-
-    } // deacceleration
-        else{
-            accelerationDistance = 0.5 * maxAccel * Math.pow(accelerationDt,2);
-            cruiseDistance = maxVelocity * cruiseDt;
-            deaccelerationTime = timeElapsed - deaccelerationTime;
-
-            // use the kinematic equations to calculate the instantaneous desired position
-            return accelerationDistance + cruiseDistance + maxVelocity * deaccelerationTime - 0.5 * maxAccel * Math.pow(deaccelerationTime,2);
+        //cruising:
+        if(current_dt < decel_time) {
+            double cruising_dt = current_dt - accel_dt;
+            return start_pos + accel_dist + new_max_v * cruising_dt;
         }
 
-        //method returns the distance you need to go to reach next target
+        //decelerating:
+        return start_pos + accel_dist + cruise_dist + new_max_v * decel_time - 0.5 * max_a * Math.pow(decel_time,2);
 
     }
-
-
 
 }
-
-

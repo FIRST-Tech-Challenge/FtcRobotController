@@ -31,27 +31,24 @@ public class Bot {
     public OpMode opMode;
     public BotState currentState = STORAGE_NOT_FULL;
     public static Bot instance;
-   // public OpenCvCamera camera;
+
+    //public OpenCvCamera camera;
    // public AprilTagsPipeline aprilTagsPipeline;
 
    // public static AprilTagsDetection detections;
 
-   // public Slides slides;
-    //public Noodles noodles;
-  //  public Drone drone;
-  //  public Fourbar fourbar;
-  //  public Box box;
+      public Slides slides;
+      private final DcMotorEx slidesMotor = slides.slidesMotor;
+     // public Noodles noodles;
+     // public Drone drone;
+     // public Fourbar fourbar;
+    //  public Box box;
 
    // public static DistanceSensor distanceSensor;
 
-    private final DcMotorEx FL, FR, BL, BR;
-
-
-
+    //private final DcMotorEx FL, FR, BL, BR;
 
     public boolean fieldCentricRunMode = false;
-
-
     private double distanceFromBackdrop;
     private final double optimalDistanceFromBackdrop = 10;
     //arbitrary number for now
@@ -82,18 +79,22 @@ public class Bot {
 
         }
 
-        FL = opMode.hardwareMap.get(DcMotorEx.class, "fl");
+       /* FL = opMode.hardwareMap.get(DcMotorEx.class, "fl");
         FR = opMode.hardwareMap.get(DcMotorEx.class, "fr");
         BL = opMode.hardwareMap.get(DcMotorEx.class, "bl");
         BR = opMode.hardwareMap.get(DcMotorEx.class, "br");
 
+        */
+
        // distanceSensor = opMode.hardwareMap.get(DistanceSensor.class, "distanceSensor");
 
-
+/*
         FL.setMode(RUN_USING_ENCODER);
         FR.setMode(RUN_USING_ENCODER);
         BL.setMode(RUN_USING_ENCODER);
         BR.setMode(RUN_USING_ENCODER);
+
+ */
 
 
        /* slides = new Slides(opMode);
@@ -153,7 +154,7 @@ public class Bot {
 
 */
     public void fixMotors(double velocity) {
-        FL.setDirection(DcMotorEx.Direction.REVERSE); //invert
+        /*FL.setDirection(DcMotorEx.Direction.REVERSE); //invert
         FR.setVelocity(velocity);
         BL.setDirection(DcMotorEx.Direction.REVERSE); // invert
         BR.setVelocity(velocity);
@@ -162,11 +163,15 @@ public class Bot {
         FR.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
         BL.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
         BR.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
+
+         */
     }
 
     public void reverseMotors(){
-        FL.setDirection(DcMotorSimple.Direction.REVERSE);
+       /* FL.setDirection(DcMotorSimple.Direction.REVERSE);
         BL.setDirection(DcMotorSimple.Direction.REVERSE);
+
+        */
     }
 
     public void driveRobotCentric(double strafeSpeed, double forwardBackSpeed, double turnSpeed) {
@@ -185,10 +190,12 @@ public class Bot {
                 speeds[i] /= maxSpeed;
             }
         }
-        FL.setPower(speeds[0]);
+        /*FL.setPower(speeds[0]);
         FR.setPower(speeds[1]);
         BL.setPower(speeds[2]);
         BR.setPower(speeds[3]);
+
+         */
     }
     /*
 
@@ -268,10 +275,12 @@ public class Bot {
 
 
     public void resetEncoder() {
-        FL.setMode(STOP_AND_RESET_ENCODER);
+        /*FL.setMode(STOP_AND_RESET_ENCODER);
         FR.setMode(STOP_AND_RESET_ENCODER);
         BR.setMode(STOP_AND_RESET_ENCODER);
         BL.setMode(STOP_AND_RESET_ENCODER);
+
+         */
         //slides.resetEncoder(); code this in slides subsystems
         //reset encoder in slides
 
@@ -291,15 +300,15 @@ public class Bot {
     public void turn(double power){
         if(power>0) {
             //turn right
-            FL.setPower(power);
+            //FL.setPower(power);
         }
         if(power<0){
             //turn left
-            FR.setPower(-power);
+          //  FR.setPower(-power);
         }
     }
     public void strafeRight(){
-        FL.setDirection(DcMotorSimple.Direction.REVERSE);
+       /* FL.setDirection(DcMotorSimple.Direction.REVERSE);
         BR.setDirection(DcMotorSimple.Direction.REVERSE);
         FL.setPower(0.1);
         FR.setPower(0.1);
@@ -311,8 +320,11 @@ public class Bot {
         FR.setPower(0);
         BR.setPower(0);
         BL.setPower(0);
+
+        */
     }
     public void strafeLeft(){
+       /*
         BL.setDirection(DcMotorSimple.Direction.REVERSE);
         FR.setDirection(DcMotorSimple.Direction.REVERSE);
         FL.setPower(0.1);
@@ -325,9 +337,11 @@ public class Bot {
         FR.setPower(0);
         BR.setPower(0);
         BL.setPower(0);
+
+        */
     }
     public void back(){
-        BL.setDirection(DcMotorSimple.Direction.REVERSE);
+        /*BL.setDirection(DcMotorSimple.Direction.REVERSE);
         FR.setDirection(DcMotorSimple.Direction.REVERSE);
         FL.setDirection(DcMotorSimple.Direction.REVERSE);
         BR.setDirection(DcMotorSimple.Direction.REVERSE);
@@ -344,12 +358,16 @@ public class Bot {
         BR.setPower(0);
         BL.setPower(0);
 
+         */
+
     }
     public void forward(){
-        FL.setPower(0.1);
+        /*FL.setPower(0.1);
         FR.setPower(0.1);
         BR.setPower(0.1);
         BL.setPower(0.1);
+
+         */
     }
 
     public void distanceTuning(DistanceSensor sensor){
