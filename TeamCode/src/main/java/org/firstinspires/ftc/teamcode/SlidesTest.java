@@ -24,10 +24,15 @@ public class SlidesTest extends LinearOpMode {
         waitForStart();
 
         while (opModeIsActive() && !isStopRequested()) {
+
             gp1.readButtons();
             gp2.readButtons();
 
+
+
             telemetry.addData("TeleOp has started","wheeeee");
+
+            drive();
 
             bot.slides.runToManual(gp2.getLeftY());
 /*
@@ -54,7 +59,7 @@ public class SlidesTest extends LinearOpMode {
                 telemetry.addData("fourbar should be in storage pos",bot.fourbar.getStoragePos());
             }
 
-            drive();
+
         }
 
 

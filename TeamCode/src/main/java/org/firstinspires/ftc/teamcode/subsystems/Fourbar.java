@@ -9,10 +9,10 @@ public class Fourbar {
 
     //values need to be changed
     private static double outtakeBox=0.5;
-    private static double outtake = -0.5;
+    private static double outtake = 0.2;
 
     //approximating angle as 180 degrees
-    public static double storage = 0;
+    public static double storage = 0.9;
     //storage position is GOOOOD
     public static boolean isOuttakePosition;
 
