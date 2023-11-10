@@ -40,8 +40,7 @@ public class Bot {
 
       public Slides slides;
       public Fourbar fourbar;
-      private final DcMotorEx slidesMotor = slides.slidesMotor;
-      private final Servo fourbarServo = fourbar.fourbar;
+
      // public Noodles noodles;
      // public Drone drone;
      // public Fourbar fourbar;
@@ -49,7 +48,8 @@ public class Bot {
 
    // public static DistanceSensor distanceSensor;
 
-    //private final DcMotorEx FL, FR, BL, BR;
+    private final DcMotorEx FL, FR, BL, BR;
+
 
     public boolean fieldCentricRunMode = false;
     private double distanceFromBackdrop;
@@ -82,26 +82,26 @@ public class Bot {
 
         }
 
-       /* FL = opMode.hardwareMap.get(DcMotorEx.class, "fl");
+        FL = opMode.hardwareMap.get(DcMotorEx.class, "fl");
         FR = opMode.hardwareMap.get(DcMotorEx.class, "fr");
         BL = opMode.hardwareMap.get(DcMotorEx.class, "bl");
         BR = opMode.hardwareMap.get(DcMotorEx.class, "br");
 
-        */
+
 
        // distanceSensor = opMode.hardwareMap.get(DistanceSensor.class, "distanceSensor");
 
-/*
+
         FL.setMode(RUN_USING_ENCODER);
         FR.setMode(RUN_USING_ENCODER);
         BL.setMode(RUN_USING_ENCODER);
         BR.setMode(RUN_USING_ENCODER);
 
- */
 
 
-       slides = new Slides(opMode);
-       fourbar = new Fourbar(opMode);
+        this.slides = new Slides(opMode);
+        this.fourbar = new Fourbar(opMode);
+
 
        /*noodles = new Noodles(opMode);
         drone= new Drone(opMode);

@@ -96,6 +96,11 @@ public class Slides {
         slidesMotor.setPower(0);
     }
 
+    public void runToManual(double target){
+        slidesMotor.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
+        slidesMotor.setPower(target);
+    }
+
     public void runTo(double target) {
         slidesMotor.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
 

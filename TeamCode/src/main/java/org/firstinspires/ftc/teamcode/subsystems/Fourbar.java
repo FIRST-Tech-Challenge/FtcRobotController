@@ -9,16 +9,17 @@ public class Fourbar {
 
     //values need to be changed
     private static double outtakeBox=0.5;
-    private static double outtake = 1;
+    private static double outtake = -0.5;
 
     //approximating angle as 180 degrees
     public static double storage = 0;
+    //storage position is GOOOOD
     public static boolean isOuttakePosition;
 
 
     public Fourbar(OpMode opMode) {
         fourbar = opMode.hardwareMap.servo.get("fourBarServo");
-        angleBoxServo= opMode.hardwareMap.servo.get("boxAngle servo");
+        angleBoxServo= opMode.hardwareMap.servo.get("boxAngleServo");
         fourbar.setDirection(Servo.Direction.FORWARD);
         isOuttakePosition= false;
     }
@@ -27,6 +28,14 @@ public class Fourbar {
         angleBoxServo.setPosition(outtakeBox);
         fourbar.setPosition(outtake);
         isOuttakePosition = true;
+    }
+    public void outtakeTest(){
+        fourbar.setPosition(outtake);
+        isOuttakePosition = true;
+    }
+    public void storageTest(){
+        fourbar.setPosition(storage);
+        isOuttakePosition = false;
     }
 
     public void storage(){
@@ -49,6 +58,14 @@ public class Fourbar {
 
     public boolean getIsOuttakePos(){
         return isOuttakePosition;
+    }
+
+    public double getStoragePos(){
+        return storage;
+    }
+
+    public double getOuttakePos(){
+        return outtake;
     }
 
 }
