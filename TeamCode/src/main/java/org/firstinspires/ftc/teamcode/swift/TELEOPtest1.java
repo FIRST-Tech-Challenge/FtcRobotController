@@ -16,6 +16,7 @@ public class TELEOPtest1 extends LinearOpMode {
     private Servo leftGripper;
     private Servo rightGripper;
     private Servo launcherServo = null;
+    private Servo DroneCoverServo = null;
 
     @Override
     public void runOpMode() {
@@ -39,6 +40,7 @@ public class TELEOPtest1 extends LinearOpMode {
         armMotor = hardwareMap.get(DcMotor.class, "armMotor");
         wristServo = hardwareMap.servo.get("wristServo");
         launcherServo = hardwareMap.get(Servo.class, "launcherServo");
+        DroneCoverServo = hardwareMap.get(Servo.class, "DroneCoverServo");
         leftGripper = hardwareMap.get(Servo.class, "leftGripper");
         rightGripper = hardwareMap.get(Servo.class, "rightGripper");
         DcMotor frontLeftMotor = hardwareMap.dcMotor.get("frontLeftMotor");
@@ -69,6 +71,19 @@ public class TELEOPtest1 extends LinearOpMode {
             telemetry.addData("Status", "Running");
             telemetry.update();
 
+            telemetry.addData("Mode", "running");
+            // check to see if we need to move the servo.
+            if (gamepad1.dpad_right) {
+                // move to 0 degrees.
+                DroneCoverServo.setPosition(0.3);
+            } else if (gamepad1.dpad_left) {
+                // move to 90 degrees.
+                DroneCoverServo.setPosition(1);
+            }
+            telemetry.addData("Servo Position", DroneCoverServo.getPosition());
+            telemetry.addData("Status", "Running");
+            telemetry.update();
+            
             // Declare Motors
 
             double y = gamepad1.left_stick_y; // Remember, Y stick value is reversed
