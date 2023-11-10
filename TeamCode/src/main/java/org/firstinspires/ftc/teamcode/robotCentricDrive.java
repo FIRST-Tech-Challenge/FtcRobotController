@@ -5,7 +5,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
 
-@TeleOp(name = "robotCentricDrive (Blocks to Java)")
+@TeleOp(name = "robotCentricDrive (Scorpion)")
 public class robotCentricDrive extends LinearOpMode {
 
   private Servo leftGrip;
@@ -86,9 +86,9 @@ public class robotCentricDrive extends LinearOpMode {
           //Rotates up when Right Bumper is pressed
           //Rotates down when Left Bumper is pressed
           //Otherwise power is set to 0 (BRAKE)
-        if (gamepad1.right_bumper) {
+        if (gamepad2.right_bumper) {
           armRotate.setPower(0.4);
-        } else if (gamepad1.left_bumper) {
+        } else if (gamepad2.left_bumper) {
           armRotate.setPower(-0.2);
         } else {
           armRotate.setPower(0);
@@ -102,37 +102,42 @@ public class robotCentricDrive extends LinearOpMode {
           //If the position is less than 350°, the arm can only extend forward
           //If the position is greater than 2900°, the arm can only retract
         if (ext > 350 && ext < 2900) {
-          if (gamepad1.x) {
+          if (gamepad2.dpad_up) {
             armExt.setPower(1);
-          } else if (gamepad1.b) {
+          } else if (gamepad2.dpad_down) {
             armExt.setPower(-1);
           } else {
             armExt.setPower(0);
           }
         } else if (ext < 350 && ext < 2900) {
-          if (gamepad1.x) {
+          if (gamepad2.dpad_up) {
             armExt.setPower(1);
           } else {
             armExt.setPower(0);
           }
         } else if (ext > 2900 && ext > 350) {
-          if (gamepad1.b) {
+          if (gamepad2.dpad_down) {
             armExt.setPower(-1);
           } else {
             armExt.setPower(0);
           }
+        } if(gamepad2.right_stick_button && gamepad2.left_stick_button){
+          armExt.setPower(-1);
+          sleep(100000);
         }
 
         //Inputs for claw grip
           //When A is pressed, the claw releases its grip
           //When Y is pressed, the claw moves to a full grip position
-        if (gamepad1.a) {
+        if (gamepad2.a) {
           leftGrip.setPosition(0.75);
           rightGrip.setPosition(0.75);
-        } else if (gamepad1.y) {
+        } else if (gamepad2.b) {
           leftGrip.setPosition(1);
           rightGrip.setPosition(1);
         }
+
+
 
         //Telemetry for debugging
         telemetry.addData("Current Arm Extension", ext);
