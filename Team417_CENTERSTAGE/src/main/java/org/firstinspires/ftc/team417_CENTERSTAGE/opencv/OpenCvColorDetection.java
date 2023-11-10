@@ -57,7 +57,7 @@ public class OpenCvColorDetection {
         RED
     }
 
-    detectColorType myColor;
+    public detectColorType myColor;
 
     // coordinates of largest detected image
     Point targetPoint = new Point(0, 0);
@@ -81,7 +81,7 @@ public class OpenCvColorDetection {
         //   for easy debugging
         //   You can disable it after testing completes
         int cameraMonitorViewId = myOpMode.hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", myOpMode.hardwareMap.appContext.getPackageName());
-        robotCamera = OpenCvCameraFactory.getInstance().createWebcam(myOpMode.hardwareMap.get(WebcamName.class, "RobotCamera"), cameraMonitorViewId);
+        robotCamera = OpenCvCameraFactory.getInstance().createWebcam(myOpMode.hardwareMap.get(WebcamName.class, "webcam"), cameraMonitorViewId);
 
         // OR...  Do Not Activate the Camera Monitor View
         // robotCamera = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "RobotCamera"));

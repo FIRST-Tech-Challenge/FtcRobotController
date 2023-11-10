@@ -6,18 +6,8 @@ import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.firstinspires.ftc.team417_CENTERSTAGE.opencv.Constants;
 import org.firstinspires.ftc.team417_CENTERSTAGE.opencv.OpenCvColorDetection;
-import org.opencv.core.Core;
-import org.opencv.core.Mat;
-import org.opencv.core.MatOfPoint;
-import org.opencv.core.Point;
-import org.opencv.core.Rect;
-import org.opencv.core.Scalar;
-import org.opencv.core.Size;
-import org.opencv.imgproc.Imgproc;
-import org.openftc.easyopencv.OpenCvPipeline;
-
-import java.util.ArrayList;
 
 @Config
 abstract public class BaseAutonomous extends BaseOpMode {
@@ -29,11 +19,7 @@ abstract public class BaseAutonomous extends BaseOpMode {
     int lastEncoderBL = 0;
     int lastEncoderBR = 0;
 
-    // Prop detection variables
-    Rect boundingRect;
-    Point center;
-
-    // Auton tuning constants
+    // Autonomous tuning constants
     public static double LEFT_Y = 26.0;
     public static double LEFT_X = -12.0;
     public static double RIGHT_Y = 26.0;
@@ -120,35 +106,6 @@ abstract public class BaseAutonomous extends BaseOpMode {
 
         telemetry.addData("Init State", "Init Finished");
 
-        //int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
-        //camera = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "webcam"));
-
-        // cameraMonitorViewId allows us to see the image pipeline using scrcpy
-        //   for easy debugging
-        //   You can disable it after testing completes
-        //int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
-        //camera = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "webcam"), cameraMonitorViewId);
-
-
-        // OR...  Do Not Activate the Camera Monitor View
-        //phoneCam = OpenCvCameraFactory.getInstance().createInternalCamera(OpenCvInternalCamera.CameraDirection.BACK);
-
-
-        //camera.setPipeline(new PropDetectionPipeline());
-
-        /*
-        camera.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
-            @Override
-            public void onOpened() {
-                camera.startStreaming(CAMERA_WIDTH_PIXELS, CAMERA_HEIGHT_PIXELS, OpenCvCameraRotation.UPRIGHT);
-            }
-
-            @Override
-            public void onError(int errorCode) {
-            }
-        });
-        */
-
         // Set last know encoder values
         lastEncoderFR = FR.getCurrentPosition();
         lastEncoderFL = FL.getCurrentPosition();
@@ -161,110 +118,6 @@ abstract public class BaseAutonomous extends BaseOpMode {
         telemetry.addLine("Initialized. Ready to start!");
         telemetry.update();
     }
-
-    public static final Scalar LOWER_BLUE = new Scalar(100, 150, 100);
-    public static final Scalar UPPER_BLUE = new Scalar(130, 255, 255);
-
-    public static final Scalar LOWER_RED = new Scalar(10, 150, 100);
-    public static final Scalar UPPER_RED = new Scalar(40, 255, 255);
-
-    boolean detectingBlue;
-
-    class PropDetectionPipeline extends OpenCvPipeline {
-        boolean viewportPaused = false;
-        Mat hsv = new Mat();
-        Mat output = new Mat();
-        Mat resizedMask = new Mat();
-        Mat hierarchy = new Mat();
-        ArrayList<MatOfPoint> contours = new ArrayList<>();
-        MatOfPoint largestContour = new MatOfPoint();
-        Size gaussianBlurSize = new Size(7, 7);
-        Size binaryMaskSize = new Size(0, 0);
-        Point center = new Point();
-        Scalar markingColor = new Scalar(0, 255, 0);
-
-
-        @Override
-        public Mat processFrame(Mat input) {
-            int rows = input.rows();
-            int cols = input.cols();
-
-            // calculate the new top of region
-            int newTop = rows / 2;
-
-            // crop image to region of interest
-            input.adjustROI(newTop, cols + 1, 0, rows + 1);
-
-            // convert image to hsv
-            Imgproc.cvtColor(input, hsv, Imgproc.COLOR_RGB2HSV);
-
-            // blur the image to reduce the impact of noisy pixels
-            Imgproc.GaussianBlur(hsv, hsv, gaussianBlurSize, 0);
-            if (detectingBlue) {
-                Core.inRange(hsv, LOWER_BLUE, UPPER_BLUE, hsv);
-            } else {
-                Core.inRange(hsv, LOWER_RED, UPPER_RED, hsv);
-            }
-            Imgproc.threshold(hsv, output, 1, 255, Imgproc.THRESH_BINARY);
-            // Resize the binary mask
-            Imgproc.resize(output, resizedMask, binaryMaskSize, 1, 1, Imgproc.INTER_AREA);
-
-            // Find contours
-            Imgproc.findContours(resizedMask, contours, hierarchy, Imgproc.RETR_TREE, Imgproc.CHAIN_APPROX_SIMPLE);
-
-            if (contours.size() > 1) {
-                // Find the largest contour
-                double maxArea = -1;
-                int maxAreaIndex = -1;
-                for (int i = 0; i < contours.size(); i++) {
-                    double area = Imgproc.contourArea(contours.get(i));
-                    if (area > maxArea) {
-                        maxArea = area;
-                        maxAreaIndex = i;
-                    }
-                }
-
-                largestContour = contours.get(maxAreaIndex);
-                boundingRect = Imgproc.boundingRect(largestContour);
-                // Draw a rectangle around the largest contour on the frame
-                Imgproc.rectangle(input, boundingRect.tl(), boundingRect.br(), markingColor, 2);
-
-                // Calculate the center of the bounding rectangle
-                center.x = boundingRect.x + (boundingRect.width * 0.5);
-                center.y = boundingRect.y + (boundingRect.height * 0.5);
-
-                // Draw the largest contour
-                Imgproc.drawContours(input, contours, maxAreaIndex, markingColor);
-
-                // Draw a circle at the center
-                Imgproc.circle(input, center, 2, markingColor, 2);
-
-                int width = input.width();
-                int contourX = (int) center.x;
-
-                // Determine position based on the X coordinate of the center
-
-
-                largestContour.release();
-            }
-            resizedMask.release();
-            hierarchy.release();
-
-            return input;
-        }
-
-        @Override
-        public void onViewportTapped() {
-            viewportPaused = !viewportPaused;
-
-            if (viewportPaused) {
-                camera.pauseViewport();
-            } else {
-                camera.resumeViewport();
-            }
-        }
-    }
-
     private void stopDriving() {
         FL.setPower(0.0);
         FR.setPower(0.0);
@@ -307,7 +160,7 @@ abstract public class BaseAutonomous extends BaseOpMode {
                 telemetry.addData("Side", "Unsure");
         }
         telemetry.update();
-        /* driveInches(0, y);
+        driveInches(0, y);
         driveInches(x, 0);
 
         if(intakeMotor != null) {
@@ -320,7 +173,6 @@ abstract public class BaseAutonomous extends BaseOpMode {
 
         driveInches(-x, 0);
         driveInches(0, -y);
-        */
         driveInches(0, MOVING_FROM_WALL);
 
         if (close) {
@@ -368,11 +220,11 @@ abstract public class BaseAutonomous extends BaseOpMode {
                 ", ROBOT_SPEED=" + ROBOT_SPEED +
                 ", STRAFE_FACTOR=" + STRAFE_FACTOR +
                 ", DISTANCE_FACTOR=" + DISTANCE_FACTOR +
-                ", LOWER_BLUE=" + LOWER_BLUE +
-                ", UPPER_BLUE=" + UPPER_BLUE +
-                ", LOWER_RED=" + LOWER_RED +
-                ", UPPER_RED=" + UPPER_RED +
-                ", detectingBlue=" + detectingBlue +
+                ", LOWER_BLUE=" + Constants.BLUE_COLOR_DETECT_MIN_HSV +
+                ", UPPER_BLUE=" + Constants.BLUE_COLOR_DETECT_MAX_HSV +
+                ", LOWER_RED=" + Constants.RED_COLOR_DETECT_MIN_HSV +
+                ", UPPER_RED=" + Constants.RED_COLOR_DETECT_MAX_HSV +
+                ", detectingBlue=" + myColorDetection.myColor +
                 ", sideDetected=" + myColorDetection.sideDetected +
                 '}';
     }
