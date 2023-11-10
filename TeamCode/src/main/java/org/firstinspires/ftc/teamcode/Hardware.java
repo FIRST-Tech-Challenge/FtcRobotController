@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.hardware.bosch.BNO055IMU;
+import com.qualcomm.hardware.rev.Rev2mDistanceSensor;
 import com.qualcomm.hardware.rev.RevColorSensorV3;
 import com.qualcomm.robotcore.hardware.AnalogInput;
 import com.qualcomm.robotcore.hardware.CRServo;
@@ -32,6 +33,9 @@ public class Hardware {
     public Servo launcherRelease = null;
     public Servo droneAngle = null;
 
+    public Rev2mDistanceSensor rightDistance = null;
+    public Rev2mDistanceSensor leftDistance = null;
+
     HardwareMap hwMap = null;
 
     public Hardware() {
@@ -56,6 +60,10 @@ public class Hardware {
         launcherRelease = hwMap.get(Servo.class, "release");
         droneAngle = hwMap.get(Servo.class, "angle");
 
+        rightDistance = hwMap.get(Rev2mDistanceSensor.class, "rdist");
+        leftDistance = hwMap.get(Rev2mDistanceSensor.class, "ldist");
+
+
 
         leftDrive.setDirection(DcMotorSimple.Direction.REVERSE);
         leftBackDrive.setDirection(DcMotorSimple.Direction.REVERSE);
@@ -67,7 +75,12 @@ public class Hardware {
         rightDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         rightBackDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
-        //winch.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+        leftDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        leftBackDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        rightDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        rightBackDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+        winch.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
     }
 }

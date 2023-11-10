@@ -4,6 +4,8 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.Gamepad;
 
+import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
+
 
 @TeleOp(name = "Tele", group = "Pushbot")
 public class tele extends OpMode {
@@ -60,7 +62,7 @@ public class tele extends OpMode {
 
     public void loop() {
 
-        double speedLimit = 80;
+        double speedLimit = 90;
         double speedLimitValue = speedLimit/100;
 
         double y = -gamepad1.left_stick_y; // Remember, this is reversed!
@@ -81,13 +83,13 @@ public class tele extends OpMode {
         robot.winch.setPower(-gamepad2.right_stick_y);
 
         if (gamepad2.dpad_up) {
-            robot.hook.setPosition(0.0);
+            robot.hook.setPosition(1.0);
         } else if (gamepad2.dpad_down) {
-            robot.hook.setPosition(1);
+            robot.hook.setPosition(0);
         }
 
         if (gamepad2.y) {
-            robot.droneAngle.setPosition(.5);
+            robot.droneAngle.setPosition(.32);
         } else if (gamepad2.a) {
             robot.droneAngle.setPosition(.17);
         }
@@ -101,13 +103,13 @@ public class tele extends OpMode {
         if (gamepad2.right_bumper) {
             robot.arm.setPosition(.4);
         } else if (gamepad2.left_bumper) {
-            robot.arm.setPosition(0);
+            robot.arm.setPosition(0.02);
         }
 
         if (gamepad2.right_trigger > 0.5) {
-            robot.gripper.setPosition(0);
+            robot.gripper.setPosition(0.55);
         } else if (gamepad2.left_trigger > 0.5) {
-            robot.gripper.setPosition(0.5);
+            robot.gripper.setPosition(1);
         }
 
         if (gamepad2.right_bumper && gamepad1.left_bumper) {
@@ -116,6 +118,10 @@ public class tele extends OpMode {
             gamepad1.runRumbleEffect(gamepadLaunchSequenceRumble);
             gamepad2.runRumbleEffect(gamepadLaunchSequenceRumble);
         }
+
+        telemetry.addData("Right Distance", robot.rightDistance.getDistance(DistanceUnit.CM));
+        telemetry.addData("Left Distance", robot.leftDistance.getDistance(DistanceUnit.CM));
+        telemetry.update();
 
     }
 
