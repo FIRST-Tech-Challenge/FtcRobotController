@@ -83,7 +83,7 @@ public class TELEOPtest1 extends LinearOpMode {
             telemetry.addData("Servo Position", DroneCoverServo.getPosition());
             telemetry.addData("Status", "Running");
             telemetry.update();
-            
+
             // Declare Motors
 
             double y = gamepad1.left_stick_y; // Remember, Y stick value is reversed
