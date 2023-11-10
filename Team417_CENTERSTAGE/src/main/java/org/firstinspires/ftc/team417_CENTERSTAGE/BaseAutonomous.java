@@ -21,7 +21,6 @@ import org.openftc.easyopencv.OpenCvCameraRotation;
 import org.openftc.easyopencv.OpenCvPipeline;
 
 import java.util.ArrayList;
-import java.util.List;
 @Config
 abstract public class BaseAutonomous extends BaseOpMode {
 
@@ -124,7 +123,14 @@ abstract public class BaseAutonomous extends BaseOpMode {
         telemetry.addData("Init State", "Init Finished");
 
         //int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
-        camera = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "webcam"));
+        //camera = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "webcam"));
+
+        // cameraMonitorViewId allows us to see the image pipeline using scrcpy
+        //   for easy debugging
+        //   You can disable it after testing completes
+        int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
+        camera = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "webcam"), cameraMonitorViewId);
+
 
         // OR...  Do Not Activate the Camera Monitor View
         //phoneCam = OpenCvCameraFactory.getInstance().createInternalCamera(OpenCvInternalCamera.CameraDirection.BACK);
@@ -155,8 +161,11 @@ abstract public class BaseAutonomous extends BaseOpMode {
         telemetry.update();
     }
 
-    public static final Scalar LOWER_BLUE_OR_RED = new Scalar(100, 150, 100);
-    public static final Scalar UPPER_BLUE_OR_RED = new Scalar(130, 255, 255);
+    public static final Scalar LOWER_BLUE = new Scalar(100, 150, 100);
+    public static final Scalar UPPER_BLUE = new Scalar(130, 255, 255);
+
+    public static final Scalar LOWER_RED = new Scalar(10, 150, 100);
+    public static final Scalar UPPER_RED = new Scalar(40, 255, 255);
 
     boolean detectingBlue;
 
@@ -173,44 +182,42 @@ abstract public class BaseAutonomous extends BaseOpMode {
         boolean viewportPaused = false;
         Mat hsv = new Mat();
         Mat output = new Mat();
+        Mat resizedMask = new Mat();
+        Mat hierarchy = new Mat();
+        ArrayList<MatOfPoint> contours= new ArrayList<>();
+        MatOfPoint largestContour = new MatOfPoint();
+        Size gaussianBlurSize = new Size(7, 7);
+        Size binaryMaskSize = new Size(0, 0);
+        Point center = new Point();
+        Scalar markingColor = new Scalar(0, 255, 0);
+
 
         @Override
         public Mat processFrame(Mat input) {
             int rows = input.rows();
             int cols = input.cols();
 
-            int newRows = rows - rows / 2; // Calculate the new number of rows
+            // calculate the new top of region
+            int newTop = rows / 2;
 
-            // Create a new Mat to store the bottom half
-            Mat newFrame = new Mat(newRows, cols, input.type());
+            // crop image to region of interest
+            input.adjustROI(newTop, cols + 1, 0, rows + 1);
 
-            // Define the region of interest (ROI) for the bottom half
-            Rect roi = new Rect(0, rows / 2, cols, newRows);
+            // convert image to hsv
+            Imgproc.cvtColor(input, hsv, Imgproc.COLOR_RGB2HSV);
 
-            // Crop the bottom half and copy it to 'newFrame'
-            Mat cropped = new Mat(input, roi);
-            cropped.copyTo(input);
-
-            newFrame.release();
-            cropped.release();
-
-            // convert image to grayscale
-            if (detectingBlue) {
-                Imgproc.cvtColor(input, hsv, Imgproc.COLOR_RGB2HSV);
-            } else {
-                Imgproc.cvtColor(input, hsv, Imgproc.COLOR_BGR2HSV);
-            }
             // blur the image to reduce the impact of noisy pixels
-            Imgproc.GaussianBlur(hsv, hsv, new Size(7, 7), 0);
-            Core.inRange(hsv, LOWER_BLUE_OR_RED, UPPER_BLUE_OR_RED, hsv);
+            Imgproc.GaussianBlur(hsv, hsv, gaussianBlurSize, 0);
+            if (detectingBlue) {
+                Core.inRange(hsv, LOWER_BLUE, UPPER_BLUE, hsv);
+            } else {
+                Core.inRange(hsv, LOWER_RED, UPPER_RED, hsv);
+            }
             Imgproc.threshold(hsv, output, 1, 255, Imgproc.THRESH_BINARY);
             // Resize the binary mask
-            Mat resizedMask = new Mat();
-            Imgproc.resize(output, resizedMask, new Size(0, 0), 1, 1, Imgproc.INTER_AREA);
+            Imgproc.resize(output, resizedMask, binaryMaskSize, 1, 1, Imgproc.INTER_AREA);
 
             // Find contours
-            List<MatOfPoint> contours = new ArrayList<>();
-            Mat hierarchy = new Mat();
             Imgproc.findContours(resizedMask, contours, hierarchy, Imgproc.RETR_TREE, Imgproc.CHAIN_APPROX_SIMPLE);
 
             if (contours.size() > 0) {
@@ -218,26 +225,29 @@ abstract public class BaseAutonomous extends BaseOpMode {
                 double maxArea = -1;
                 int maxAreaIndex = -1;
                 for (int i = 0; i < contours.size(); i++) {
-                    double area = Imgproc.contourArea(contours.get(i));
-                    if (area > maxArea) {
-                        maxArea = area;
-                        maxAreaIndex = i;
+                    if (contours.get(i)) {
+                        double area = Imgproc.contourArea(contours.get(i));
+                        if (area > maxArea) {
+                            maxArea = area;
+                            maxAreaIndex = i;
+                        }
                     }
                 }
 
-                MatOfPoint largestContour = contours.get(maxAreaIndex);
+                largestContour = contours.get(maxAreaIndex);
                 boundingRect = Imgproc.boundingRect(largestContour);
                 // Draw a rectangle around the largest contour on the frame
-                Imgproc.rectangle(input, boundingRect.tl(), boundingRect.br(), new Scalar(0, 255, 0), 2);
+                Imgproc.rectangle(input, boundingRect.tl(), boundingRect.br(), markingColor, 2);
 
                 // Calculate the center of the bounding rectangle
-                center = new Point(boundingRect.x + (boundingRect.width * 0.5), boundingRect.y + (boundingRect.height * 0.5));
+                center.x = boundingRect.x + (boundingRect.width * 0.5);
+                center.y = boundingRect.y + (boundingRect.height * 0.5);
 
                 // Draw the largest contour
-                Imgproc.drawContours(input, contours, maxAreaIndex, new Scalar(0, 255, 0));
+                Imgproc.drawContours(input, contours, maxAreaIndex, markingColor);
 
                 // Draw a circle at the center
-                Imgproc.circle(input, center, 2, new Scalar(0, 255, 0), 2);
+                Imgproc.circle(input, center, 2, markingColor, 2);
 
                 int width = input.width();
                 int contourX = (int) center.x;
@@ -284,16 +294,17 @@ abstract public class BaseAutonomous extends BaseOpMode {
     }
 
     public void runSimpleInchesAuto(boolean red, boolean close) {
-        initializeAuto();
-        waitForStart();
-        Log.d("skid", toString());
-
         if (red == false) {
             detectingBlue = true;
             //telemetry.addData("Blue")
         } else {
             detectingBlue = false;
         }
+
+        initializeAuto();
+
+        waitForStart();
+        Log.d("skid", toString());
 
         double x = 0;
         double y = 0;
@@ -380,8 +391,10 @@ abstract public class BaseAutonomous extends BaseOpMode {
                 ", DISTANCE_FACTOR=" + DISTANCE_FACTOR +
                 ", CAMERA_WIDTH_PIXELS=" + CAMERA_WIDTH_PIXELS +
                 ", CAMERA_HEIGHT_PIXELS=" + CAMERA_HEIGHT_PIXELS +
-                ", LOWER_BLUE_OR_RED=" + LOWER_BLUE_OR_RED +
-                ", UPPER_BLUE_OR_RED=" + UPPER_BLUE_OR_RED +
+                ", LOWER_BLUE=" + LOWER_BLUE +
+                ", UPPER_BLUE=" + UPPER_BLUE +
+                ", LOWER_RED=" + LOWER_RED +
+                ", UPPER_RED=" + UPPER_RED +
                 ", detectingBlue=" + detectingBlue +
                 ", sideDetected=" + sideDetected +
                 '}';
