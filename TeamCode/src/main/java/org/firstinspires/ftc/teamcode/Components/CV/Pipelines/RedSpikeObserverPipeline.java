@@ -21,10 +21,10 @@ import java.util.ArrayList;
 @Config
 public class RedSpikeObserverPipeline extends OpenCvPipeline {
     ArrayList<double[]> frameList;
-    public static double p1x = 0, p1y =230, p2x = 80, p2y =380, p21x = 230, p21y =200, p22x = 420, p22y =370, threshhold = 0.6,
+    public static double p1x = 0, p1y =230, p2x = 80, p2y =380, p21x = 230, p21y =200, p22x = 420, p22y =370, threshhold = 1.3,
 
     //h3u and s3u: 71 and 90
-    colour = 1;
+    colour = 1, h1 = 0, h1H = 20, h2 =160, h2H = 180;
     
 
 
@@ -43,6 +43,7 @@ public class RedSpikeObserverPipeline extends OpenCvPipeline {
      */
     @Override
     public Mat processFrame(Mat input) {
+
         Rect ROI1 = new Rect( //130 x 210, 60 x 120
                 new Point(p1x,p1y),
                 new Point(p2x,p2y));
@@ -50,9 +51,26 @@ public class RedSpikeObserverPipeline extends OpenCvPipeline {
                 new Point(p21x,p21y),
                 new Point(p22x,p22y));
         Mat cone = input.submat(ROI1);
-        double redValue = Core.sumElems(cone).val[0]/ROI1.area()/255;
+        Mat newCone = new Mat();
+        Imgproc.cvtColor(cone, newCone, Imgproc.COLOR_RGB2HSV);
+        Scalar thresh1 = new Scalar(h1,59,0), hthresh1 = new Scalar(h1H,255,255);
+    Scalar thresh2 = new Scalar(h2,59,0), hthresh2 = new Scalar(h2H,255,255);
+        Mat filtered = new Mat(), filtered1 = new Mat();
+        Core.inRange(newCone, thresh1, hthresh1, filtered);
+        Core.inRange(newCone, thresh2, hthresh2, filtered1);
+        Mat thresh = new Mat();
+        Core.add(filtered1, filtered, thresh);
+        double redValue = Core.sumElems(thresh).val[0]/ROI1.area()/255;
         cone = input.submat(ROI2);
-        double redValue2 = Core.sumElems(cone).val[0]/ROI2.area()/255;
+        newCone = new Mat();
+        Imgproc.cvtColor(cone, newCone, Imgproc.COLOR_RGB2HSV);
+         filtered = new Mat();
+         filtered1 = new Mat();
+        Core.inRange(newCone, thresh1, hthresh1, filtered);
+        Core.inRange(newCone, thresh2, hthresh2, filtered1);
+        thresh = new Mat();
+        Core.add(filtered1, filtered, thresh);
+        double redValue2 = Core.sumElems(thresh).val[0]/ROI2.area()/255;
         frameList.add(new double[]{redValue, redValue2});
         if(frameList.size()>5) {
             frameList.remove(0);
@@ -82,7 +100,10 @@ public class RedSpikeObserverPipeline extends OpenCvPipeline {
             sums[0]+=frameList.get(i)[0];
             sums[1]+=frameList.get(i)[1];
         }
+        packet.put("frameListSize", frameList.size());
         packet.put("cvThresh0", sums[0]);
+        packet.put("cvThresh1", sums[1]);
+
         if(sums[0]>threshhold&&sums[1]>threshhold){
             if(sums[0]>sums[1]){
                 return 1;

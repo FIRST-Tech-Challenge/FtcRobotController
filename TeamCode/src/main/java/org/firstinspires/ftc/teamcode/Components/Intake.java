@@ -72,7 +72,6 @@ public class Intake extends RFMotor {
                 for (int i = 0; i < IntakeStates.values().length; i++) {
                     IntakeStates.values()[i].state = false;
                 }
-                LOGGER.setLogLevel(RFLogger.Severity.INFO);
                 LOGGER.log("Intake state changed to: " + this.name());
                 this.state = true;
             }
@@ -107,17 +106,15 @@ public class Intake extends RFMotor {
     public void stopIntake(){
         double vel = super.getVelocity();
 //        if(abs(vel)>10) {
-            double pos = super.getCurrentPosition();
+            double pos = super.getCurrentPosition()-20;
             double res = (pos) % HALF_TICKS_PER_REV;
             if (res > HALF_TICKS_PER_REV / 2.0) {
                 res -= HALF_TICKS_PER_REV;
             }
             if (abs(res) < 20) {
-                LOGGER.setLogLevel(RFLogger.Severity.INFO);
-                LOGGER.log("stopping intake, power : " + 0 +", "+ res);
+                LOGGER.log(RFLogger.Severity.FINE, "stopping intake, power : " + 0 +", "+ res);
                 setPower(0);
             } else {
-                LOGGER.log("trying to stop, too far" + res);
             }
 //        }
 //        LOGGER.log("position" + pos);

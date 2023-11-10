@@ -34,13 +34,14 @@ public class RedLeftAuto extends LinearOpMode {
                 .build();
         spikePosition[2] = robot.roadrun.trajectorySequenceBuilder(new Pose2d(-38.5, -56, Math.toRadians(-90)))
                 .setReversed(true)
-                .lineToLinearHeading(new Pose2d(-38.5, -34, toRadians(180)))
+                .lineToLinearHeading(new Pose2d(-38.5, -32, toRadians(180)))
+                .lineToLinearHeading(new Pose2d(-29.5, -32, toRadians(180)))
                 .addTemporalMarker(robot::done)
                 .build();
         TrajectorySequence[] throughTruss = new TrajectorySequence[3];
         throughTruss[0] = robot.roadrun.trajectorySequenceBuilder(spikePosition[0].end())
                 .setReversed(true)
-                .lineToLinearHeading(new Pose2d(-46, -59, toRadians(180)))
+                .lineToLinearHeading(new Pose2d(-40, -59, toRadians(180)))
                 .setReversed(true)
                 .splineTo(new Vector2d(10, -56), toRadians(0))
                 .splineTo(new Vector2d(56, -30.5), toRadians(0))
@@ -48,18 +49,18 @@ public class RedLeftAuto extends LinearOpMode {
                 .build();
         throughTruss[1] = robot.roadrun.trajectorySequenceBuilder(spikePosition[1].end())
                 .setReversed(true)
-                .lineToLinearHeading(new Pose2d(-46, -59, toRadians(180)))
+                .lineToLinearHeading(new Pose2d(-40, -59, toRadians(180)))
                 .setReversed(true)
                 .splineTo(new Vector2d(10, -56), toRadians(0))
-                .splineTo(new Vector2d(56, -35.5), toRadians(0))
+                .splineTo(new Vector2d(56, -32.5), toRadians(0))
                 .addTemporalMarker(robot::done)
                 .build();
         throughTruss[2] = robot.roadrun.trajectorySequenceBuilder(spikePosition[2].end())
                 .setReversed(true)
-                .lineToLinearHeading(new Pose2d(-46, -59, toRadians(180)))
+                .lineToLinearHeading(new Pose2d(-40, -58.5, toRadians(180)))
                 .setReversed(true)
-                .splineTo(new Vector2d(10, -56), toRadians(0))
-                .splineTo(new Vector2d(56, -41.5), toRadians(0))
+                .splineTo(new Vector2d(10, -56.5), toRadians(5))
+                .splineTo(new Vector2d(57, -39.5), toRadians(0))
                 .addTemporalMarker(robot::done)
                 .build();
         TrajectorySequence[] dropAndPark = new TrajectorySequence[3];
@@ -74,20 +75,32 @@ public class RedLeftAuto extends LinearOpMode {
                 .addTemporalMarker(robot::done)
                 .build();
         dropAndPark[2] = robot.roadrun.trajectorySequenceBuilder(throughTruss[2].end())
-                .lineToLinearHeading(new Pose2d(56, -60, toRadians(180)))
-                .lineToLinearHeading(new Pose2d(60, -60, toRadians(180)))
+                .lineToLinearHeading(new Pose2d(56, -52, toRadians(180)))
                 .addTemporalMarker(robot::done)
                 .build();
         while(!isStarted()){
-//            pos=0;
+            pos = robot.getSpikePos();
+            robot.update();
         }
         while(!isStopRequested()&&opModeIsActive()&&!robot.queuer.isFullfilled()){
             robot.followTrajSeq(spikePosition[pos]);
-            robot.queuer.waitForFinish();
+            robot.queuer.addDelay(0.5);
             robot.preloadAuto();
-            robot.queuer.waitForFinish();
+            robot.queuer.addDelay(1.5);
             robot.followTrajSeq(throughTruss[pos]);
+            robot.queuer.addDelay(5.5);
+            robot.flipAuto();
+            robot.loadAuto();
+            robot.queuer.addDelay(1.2);
+            robot.dropWrist();
+            robot.queuer.addDelay(1.9);
+            robot.drop();
+            robot.queuer.addDelay(2.5);
             robot.followTrajSeq(dropAndPark[pos]);
+            robot.queuer.addDelay(1.0);
+            robot.resetAuto();
+            robot.queuer.addDelay(5);
+            robot.resetLift();
             robot.queuer.setFirstLoop(false);
             robot.update();
         }

@@ -11,7 +11,7 @@ import org.firstinspires.ftc.teamcode.Robots.BasicRobot;
  * Launcher class, shoot plane, pls zone 1
  */
 public class Launcher extends RFServo {
-    private final double SHOOT_POSITION = 0.0, OTHER_POSITION = 1.0;
+    private final double SHOOT_POSITION = 1.0, OTHER_POSITION = 0.0;
     boolean isLoaded = false;
 
     /**
@@ -21,8 +21,9 @@ public class Launcher extends RFServo {
         super("launcherServo", 1.0);
         LOGGER.setLogLevel(RFLogger.Severity.INFO);
         LOGGER.log("initializing hardware, setting position to OTHER_POSITION : " +OTHER_POSITION);
-        setPosition(OTHER_POSITION);
+        super.setPosition(OTHER_POSITION);
         isLoaded=true;
+        super.setLastTime(-100);
     }
 
     /**
@@ -31,7 +32,7 @@ public class Launcher extends RFServo {
     public void shoot(){
         LOGGER.setLogLevel(RFLogger.Severity.INFO);
         LOGGER.log("shooting, setting position to SHOOT_POSITION : " + SHOOT_POSITION);
-        setPosition(SHOOT_POSITION);
+        super.setPosition(SHOOT_POSITION);
         isLoaded = false;
     }
 
@@ -41,7 +42,7 @@ public class Launcher extends RFServo {
     public void load(){
         LOGGER.setLogLevel(RFLogger.Severity.INFO);
         LOGGER.log("loading, setting position to OTHER_POSITIOn : " + OTHER_POSITION);
-        setPosition(OTHER_POSITION);
+        super.setPosition(OTHER_POSITION);
         isLoaded = true;
     }
     public boolean getLoaded(){

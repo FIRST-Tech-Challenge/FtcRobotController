@@ -1,5 +1,8 @@
 package org.firstinspires.ftc.teamcode.Components;
 
+import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.LOGGER;
+import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.isTeleop;
+
 import org.firstinspires.ftc.teamcode.Components.RFModules.Devices.RFServo;
 
 public class Clamp extends RFServo {
@@ -9,18 +12,32 @@ public class Clamp extends RFServo {
     public Clamp() {
         super("clampServo", 1.0);
         clamped = false;
-        super.setPosition(UNCLAMP);
+        super.setFlipTime(0.1);
+        if(isTeleop)
+            super.setPosition(UNCLAMP);
+        else
+            super.setPosition(CLAMP);
+        super.setLastTime(-100);
+
+
     }
 
     public void clamp() {
+        LOGGER.log("clamped");
         super.setPosition(CLAMP);
-        clamped = true;
+        if (super.getTarget()== CLAMP) {
+      clamped = true;
+        }
     }
 
     public void unclamp() {
+        LOGGER.log("unclamped");
         super.setPosition(UNCLAMP);
-        clamped = false;
+        if (super.getTarget()!= CLAMP) {
+            clamped = false;
+        }
     }
+
 
     public boolean getClamped() {
         return clamped;
