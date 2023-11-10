@@ -2,12 +2,10 @@
 */
 package org.firstinspires.ftc.teamcode;
 
+import android.util.Size;
+
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.util.ElapsedTime;
-
-import org.openftc.easyopencv.OpenCvCamera;
-import org.openftc.easyopencv.OpenCvCameraFactory;
-import org.openftc.easyopencv.OpenCvCameraRotation;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 
 /**
@@ -39,14 +37,6 @@ public class AutonomousLeft extends AutonomousBase {
     // The can/should be tweaked to suite the specific robot drivetrain.
     static final boolean DRIVE_Y = true;    // Drive forward/backward
     static final boolean DRIVE_X = false;   // Drive right/left (not DRIVE_Y)
-    boolean lowCameraInitialized = false;
-    boolean backCameraInitialized = false;
-    boolean frontCameraInitialized = false;
-
-    OpenCvCamera webcamLow;
-    OpenCvCamera webcamFront;
-    OpenCvCamera webcamBack;
-    public int signalZone = 0;   // dynamic (gets updated every cycle during INIT)
 
     ElapsedTime intakeTimer = new ElapsedTime();
 
@@ -62,91 +52,31 @@ public class AutonomousLeft extends AutonomousBase {
         // Initialize webcams using OpenCV
         telemetry.addData("State", "Initializing webcam (please wait)");
         telemetry.update();
-        int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
-        int[] viewportContainerIds = OpenCvCameraFactory.getInstance()
-                .splitLayoutForMultipleViewports(
-                        cameraMonitorViewId, //The container we're splitting
-                        2, //The number of sub-containers to create
-                        OpenCvCameraFactory.ViewportSplitMethod.VERTICALLY); //Whether to split the container vertically or horizontally
 
-        if(alignToFront) {
-            webcamFront = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class,
-                    "Webcam Front"), viewportContainerIds[0]);
-            webcamFront.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
-                @Override
-                public void onOpened() {
-                    pipelineFront = new PowerPlaySuperPipeline(false, true, false, false, 164.0);
-                    webcamFront.setPipeline(pipelineFront);
-                    webcamFront.startStreaming(320, 240, OpenCvCameraRotation.UPRIGHT);
-                    frontCameraInitialized = true;
-                }
-
-                @Override
-                public void onError(int errorCode) {
-                    // This will be called if the camera could not be opened
-                }
-            });
-            webcamFront.showFpsMeterOnViewport(false);
-        } else {
-            webcamBack = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class,
-                    "Webcam Back"), viewportContainerIds[0]);
-            webcamBack.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
-                @Override
-                public void onOpened() {
-                    pipelineBack = new PowerPlaySuperPipeline(false, true, false, false, 156.0);
-                    webcamBack.setPipeline(pipelineBack);
-                    webcamBack.startStreaming(320, 240, OpenCvCameraRotation.UPRIGHT);
-                    backCameraInitialized = true;
-                }
-
-                @Override
-                public void onError(int errorCode) {
-                    // This will be called if the camera could not be opened
-                }
-            });
-            webcamBack.showFpsMeterOnViewport(false);
-        }
-
-        webcamLow = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class,
-                "Webcam Low"), viewportContainerIds[1]);
-        webcamLow.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener()
-        {
-            @Override
-            public void onOpened()
-            {
-                pipelineLow = new PowerPlaySuperPipeline(true, false,
-                        false, false, 160.0);
-                webcamLow.setPipeline(pipelineLow);
-                webcamLow.startStreaming(320, 240, OpenCvCameraRotation.UPRIGHT);
-                lowCameraInitialized = true;
-            }
-
-            @Override
-            public void onError(int errorCode)
-            {
-                // This will be called if the camera could not be opened
-            }
-        });
-        webcamLow.showFpsMeterOnViewport(false);
-
-        while(!(lowCameraInitialized && (backCameraInitialized || frontCameraInitialized))) {
-            sleep(100);
-        }
-        telemetry.addData("State", "Webcam Initialized");
-        telemetry.update();
-        pipelineLow.overrideSide(true);  // LEFT
+        pipelineLeft = new CenterstageSuperPipeline(true, false);
+        pipelineRight = new CenterstageSuperPipeline(true, false);
+        pipelineBack = new CenterstageSuperPipeline(true, false);
+        webcamLeft.setCamera(hardwareMap.get(WebcamName.class, "Webcam Left"));
+        webcamLeft.setCameraResolution(new Size(320, 240));
+        webcamLeft.addProcessor(pipelineLeft);
+        webcamRight.setCamera(hardwareMap.get(WebcamName.class, "Webcam Right"));
+        webcamRight.setCameraResolution(new Size(320, 240));
+        webcamRight.addProcessor(pipelineRight);
+        webcamBack.setCamera(hardwareMap.get(WebcamName.class, "Webcam Back"));
+        webcamBack.setCameraResolution(new Size(320, 240));
+        webcamBack.addProcessor(pipelineBack);
 
         // Wait for the game to start (driver presses PLAY).  While waiting, poll for options
         while (!isStarted()) {
             telemetry.addData("ALLIANCE", "%s %c (X=blue O=red)",
-                    ((blueAlliance)? "BLUE":"RED"), ((forceAlliance)? '*':' '));
-            // If vision pipeline diagrees with forced alliance setting, report it
-            if( forceAlliance && (blueAlliance != pipelineLow.isBlueAlliance) )
-               telemetry.addData("WARNING!!", "vision pipeline thinks %s !!!", (pipelineLow.isBlueAlliance)? "BLUE":"RED");
+                    ((redAlliance)? "RED":"BLUE"), ((forceAlliance)? '*':' '));
+            // If vision pipeline disagrees with forced alliance setting, report it
+            if( forceAlliance && (redAlliance != pipelineLeft.redAlliance) )
+               telemetry.addData("WARNING!!", "vision pipeline thinks %s !!!", (pipelineLeft.redAlliance)? "RED":"BLUE");
             telemetry.addData("STARTING", "%s", "LEFT");
-            telemetry.addData("Signal Detect", "R: " + pipelineLow.avgRL + " G: " +
-                    pipelineLow.avgGL + " B: " + pipelineLow.avgBL + " Zone: " +
-                    pipelineLow.signalZoneL);
+            telemetry.addData("Spike Mark Detect", "L: " + pipelineLeft.avg1 + " C: " +
+                    pipelineLeft.avg2 + " R: " + pipelineLeft.avg3 + " Zone: " +
+                    pipelineLeft.spikeMark);
             telemetry.addData("5-stack cycles", "%d", fiveStackCycles );
             telemetry.addLine("   use LEFT/RIGHT bumpers to modify");
             telemetry.addLine("Set " + (coneNumber == 0 ? "Preload" : "Stack cone " + coneNumber) +
@@ -165,17 +95,17 @@ public class AutonomousLeft extends AutonomousBase {
             captureGamepad1Buttons();
             // Force RED alliance?
             if( gamepad1_circle_now && !gamepad1_circle_last ) {
-                blueAlliance = false;  // gamepad circle is colored RED
+                redAlliance = true;  // gamepad circle is colored RED
                 forceAlliance = true;
             }
             // Force BLUE alliance?
             else if( gamepad1_cross_now && !gamepad1_cross_last ) {
-                blueAlliance = true;   // gamepad cross is colored BLUE
+                redAlliance = false;   // gamepad cross is colored BLUE
                 forceAlliance = true;
             }
             // Accept what the vision pipeline detects? (changes real-time!)
             if( !forceAlliance ) {
-                blueAlliance = pipelineLow.isBlueAlliance;
+                redAlliance = pipelineLeft.redAlliance;
             }
             // Change number of 5-stack to attempt?
             if( gamepad1_l_bumper_now && !gamepad1_l_bumper_last ) {
@@ -218,24 +148,8 @@ public class AutonomousLeft extends AutonomousBase {
         // Only do these steps if we didn't hit STOP
         if( opModeIsActive() ) {
             coneNumber = 0;
-            createAutoStorageFolder(blueAlliance, true);
-            pipelineLow.setStorageFolder(storageDir);
-            if(alignToFront) {
-                pipelineFront.setStorageFolder(storageDir);
-            } else {
-                pipelineBack.setStorageFolder(storageDir);
-            }
-            signalZone = pipelineLow.signalZoneL;
-            pipelineLow.overrideAlliance(blueAlliance);
-            pipelineLow.saveSignalAutoImage( );
-        }
-        // Turn off detecting the signal.
-        pipelineLow.signalDetection(false);
-        // Enable object detection of objects we are interested in
-        if(blueAlliance) {
-            pipelineLow.blueConeDetection(true);
-        } else {
-            pipelineLow.redConeDetection(true);
+            createAutoStorageFolder(redAlliance, true);
+            spikeMark = pipelineLeft.spikeMark;
         }
 
         //---------------------------------------------------------------------------------
@@ -339,7 +253,6 @@ public class AutonomousLeft extends AutonomousBase {
             telemetry.update();
             // Perform the pole-alignment task
             anglePole0[timeIndex] = robot.turretAngle;
-            alignToPole(true, false, scoreHighGoal[coneNumber] );
             updatePoleAlignInstrumentation();
         }
 
@@ -392,7 +305,6 @@ public class AutonomousLeft extends AutonomousBase {
                 }
                 telemetry.addData("Skill", "alignToConeStack (%.1f)", timeNow );
                 telemetry.update();
-                alignToConeStack(blueAlliance, cycleDistance);
                 updateStackAlignInstrumentation();
             }
 
@@ -423,7 +335,6 @@ public class AutonomousLeft extends AutonomousBase {
                 // (otherwise just drop it and park)
                 if(( autonomousTimer.milliseconds() <= poleAlignTimeout ) && !noTimeToScore ){
                     anglePole0[timeIndex] = robot.turretAngle;
-                    alignToPole(true, true, scoreHighGoal[coneNumber] );
                     updatePoleAlignInstrumentation();
                 }
             }
@@ -449,7 +360,7 @@ public class AutonomousLeft extends AutonomousBase {
             timeNow = autonomousTimer.milliseconds()/1000.0;
             telemetry.addData("Motion", "signalZoneParking (%.1f)", timeNow );
             telemetry.update();
-            signalZoneParking( signalZone, noTimeToScore );
+            signalZoneParking(spikeMark, noTimeToScore );
         }
 
         // Ensure both lift and turret are stopped

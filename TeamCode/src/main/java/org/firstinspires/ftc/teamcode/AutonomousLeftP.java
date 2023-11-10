@@ -2,6 +2,8 @@
 */
 package org.firstinspires.ftc.teamcode;
 
+import android.util.Size;
+
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -22,11 +24,6 @@ public class AutonomousLeftP extends AutonomousBase {
     boolean backCameraInitialized = false;
     boolean frontCameraInitialized = false;
 
-    OpenCvCamera webcamLow;
-    OpenCvCamera webcamFront;
-    OpenCvCamera webcamBack;
-    public int signalZone = 0;   // dynamic (gets updated every cycle during INIT)
-
     ElapsedTime intakeTimer = new ElapsedTime();
 
     @Override
@@ -41,92 +38,46 @@ public class AutonomousLeftP extends AutonomousBase {
         // Initialize webcams using OpenCV
         telemetry.addData("State", "Initializing webcam (please wait)");
         telemetry.update();
-        int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
-        int[] viewportContainerIds = OpenCvCameraFactory.getInstance()
-                .splitLayoutForMultipleViewports(
-                        cameraMonitorViewId, //The container we're splitting
-                        2, //The number of sub-containers to create
-                        OpenCvCameraFactory.ViewportSplitMethod.VERTICALLY); //Whether to split the container vertically or horizontally
-
-                // This will be called if the camera could not be opened
-
-        webcamBack = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class,
-                "Webcam Back"), viewportContainerIds[0]);
-        webcamBack.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener()
-        {
-            @Override
-            public void onOpened()
-            {
-                pipelineBack = new PowerPlaySuperPipeline(false, true, false, false, 144.0);
-                webcamBack.setPipeline(pipelineBack);
-                webcamBack.startStreaming(320, 240, OpenCvCameraRotation.UPRIGHT);
-                backCameraInitialized = true;
-            }
-
-            @Override
-            public void onError(int errorCode)
-            {
-                // This will be called if the camera could not be opened
-            }
-        });
-        webcamBack.showFpsMeterOnViewport(false);
-
-        webcamLow = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class,
-                "Webcam Low"), viewportContainerIds[1]);
-        webcamLow.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener()
-        {
-            @Override
-            public void onOpened()
-            {
-                pipelineLow = new PowerPlaySuperPipeline(true, false,
-                        false, false, 160.0);
-                webcamLow.setPipeline(pipelineLow);
-                webcamLow.startStreaming(320, 240, OpenCvCameraRotation.UPRIGHT);
-                lowCameraInitialized = true;
-            }
-
-            @Override
-            public void onError(int errorCode)
-            {
-                // This will be called if the camera could not be opened
-            }
-        });
-        webcamLow.showFpsMeterOnViewport(false);
-
-        while(!(lowCameraInitialized && backCameraInitialized)) {
-            sleep(100);
-        }
-        telemetry.addData("State", "Webcam Initialized");
-        telemetry.update();
-        pipelineLow.overrideSide(true);  // LEFT
+        pipelineLeft = new CenterstageSuperPipeline(true, false);
+        pipelineRight = new CenterstageSuperPipeline(true, false);
+        pipelineBack = new CenterstageSuperPipeline(true, false);
+        webcamLeft.setCamera(hardwareMap.get(WebcamName.class, "Webcam Left"));
+        webcamLeft.setCameraResolution(new Size(320, 240));
+        webcamLeft.addProcessor(pipelineLeft);
+        webcamRight.setCamera(hardwareMap.get(WebcamName.class, "Webcam Right"));
+        webcamRight.setCameraResolution(new Size(320, 240));
+        webcamRight.addProcessor(pipelineRight);
+        webcamBack.setCamera(hardwareMap.get(WebcamName.class, "Webcam Back"));
+        webcamBack.setCameraResolution(new Size(320, 240));
+        webcamBack.addProcessor(pipelineBack);
 
         // Wait for the game to start (driver presses PLAY).  While waiting, poll for options
         while (!isStarted()) {
             telemetry.addData("ALLIANCE", "%s %c (X=blue O=red)",
-                    ((blueAlliance)? "BLUE":"RED"), ((forceAlliance)? '*':' '));
-            // If vision pipeline diagrees with forced alliance setting, report it
-            if( forceAlliance && (blueAlliance != pipelineLow.isBlueAlliance) )
-               telemetry.addData("WARNING!!", "vision pipeline thinks %s !!!", (pipelineLow.isBlueAlliance)? "BLUE":"RED");
+                    ((redAlliance)? "RED":"BLUE"), ((forceAlliance)? '*':' '));
+            // If vision pipeline disagrees with forced alliance setting, report it
+            if( forceAlliance && (redAlliance != pipelineLeft.redAlliance) )
+               telemetry.addData("WARNING!!", "vision pipeline thinks %s !!!", (pipelineLeft.redAlliance)? "RED":"BLUE");
             telemetry.addData("STARTING", "%s", "LEFT");
-            telemetry.addData("Signal Detect", "R: " + pipelineLow.avgRL + " G: " +
-                    pipelineLow.avgGL + " B: " + pipelineLow.avgBL + " Zone: " +
-                    pipelineLow.signalZoneL);
+            telemetry.addData("Spike Mark Detect", "L: " + pipelineLeft.avg1 + " C: " +
+                    pipelineLeft.avg2 + " R: " + pipelineLeft.avg3 + " Zone: " +
+                    pipelineLeft.spikeMark);
             telemetry.update();
             // Check for operator input that changes Autonomous options
             captureGamepad1Buttons();
             // Force RED alliance?
             if( gamepad1_circle_now && !gamepad1_circle_last ) {
-                blueAlliance = false;  // gamepad circle is colored RED
+                redAlliance = true;  // gamepad circle is colored RED
                 forceAlliance = true;
             }
             // Force BLUE alliance?
             else if( gamepad1_cross_now && !gamepad1_cross_last ) {
-                blueAlliance = true;   // gamepad cross is colored BLUE
+                redAlliance = false;   // gamepad cross is colored BLUE
                 forceAlliance = true;
             }
             // Accept what the vision pipeline detects? (changes real-time!)
             if( !forceAlliance ) {
-                blueAlliance = pipelineLow.isBlueAlliance;
+                redAlliance = pipelineLeft.redAlliance;
             }
             // Pause briefly before looping
             idle();
@@ -137,13 +88,9 @@ public class AutonomousLeftP extends AutonomousBase {
         
         // Only do these steps if we didn't hit STOP
         if( opModeIsActive() ) {
-            createAutoStorageFolder(blueAlliance, true);
-            pipelineLow.setStorageFolder(storageDir);
-            signalZone = pipelineLow.signalZoneL;
-            pipelineLow.saveSignalAutoImage( );
+            createAutoStorageFolder(redAlliance, true);
+            spikeMark = pipelineLeft.spikeMark;
         }
-        // Turn off detecting the signal.
-        pipelineLow.signalDetection(false);
 
         //---------------------------------------------------------------------------------
         // AUTONOMOUS ROUTINE:  The following method is our main autonomous.
@@ -162,7 +109,7 @@ public class AutonomousLeftP extends AutonomousBase {
         if( opModeIsActive() ) {
             telemetry.addData("Motion", "signalZoneParking");
             telemetry.update();
-            signalZoneParking( signalZone );
+            signalZoneParking( spikeMark );
         }
 
     } // mainAutonomous

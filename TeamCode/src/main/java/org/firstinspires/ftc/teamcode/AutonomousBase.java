@@ -16,6 +16,7 @@ import com.qualcomm.robotcore.util.Range;
 import com.qualcomm.robotcore.util.ReadWriteFile;
 
 import org.firstinspires.ftc.robotcore.internal.system.AppUtil;
+import org.firstinspires.ftc.vision.VisionPortal;
 
 import java.io.File;
 import java.text.SimpleDateFormat;
@@ -87,7 +88,7 @@ public abstract class AutonomousBase extends LinearOpMode {
 
     String      storageDir;
     boolean     alignToFront    = true;  // Use front facing camera or back facing
-    boolean     blueAlliance    = true;  // Is alliance BLUE (true) or RED (false)?
+    boolean     redAlliance    = true;  // Is alliance BLUE (true) or RED (false)?
     boolean     forceAlliance   = false; // Override vision pipeline? (toggled during init phase of autonomous)
     int         fiveStackHeight = 5;     // Number of cones remaining on the 5-stack (always starts at 5)
     int         fiveStackCycles = 5;     // How many we want to attempt to collect/score? (adjustable during init)
@@ -130,9 +131,23 @@ public abstract class AutonomousBase extends LinearOpMode {
     boolean gamepad1_dpad_right_last, gamepad1_dpad_right_now = false;
 
     // Vision stuff
-    PowerPlaySuperPipeline pipelineLow;
-    PowerPlaySuperPipeline pipelineFront;
-    PowerPlaySuperPipeline pipelineBack;
+    boolean leftCameraInitialized = false;
+    boolean backCameraInitialized = false;
+    boolean rightCameraInitialized = false;
+
+    VisionPortal.Builder webcamLeft = new VisionPortal.Builder();
+    VisionPortal.Builder webcamRight = new VisionPortal.Builder();
+    VisionPortal.Builder webcamBack = new VisionPortal.Builder();
+    /**
+     * The variable to store our instance of the vision portal.
+     */
+    protected VisionPortal visionPortalLeft;
+    protected CenterstageSuperPipeline pipelineLeft;
+    protected VisionPortal visionPortalRight;
+    protected CenterstageSuperPipeline pipelineRight;
+    protected VisionPortal visionPortalBack;
+    protected CenterstageSuperPipeline pipelineBack;
+    public int spikeMark = 0;   // dynamic (gets updated every cycle during INIT)
 
     int coneNumber = 0;
     boolean scoreHighGoal[] = {true, true, true, true, true, true};
@@ -153,8 +168,6 @@ public abstract class AutonomousBase extends LinearOpMode {
     public void performEveryLoop() {
         robot.readBulkData();
         globalCoordinatePositionUpdate();
-        robot.liftPIDPosRun(false);
-        robot.turretPIDPosRun(false);
     } // performEveryLoop
 
     // Create a time stamped folder in
@@ -277,213 +290,6 @@ public abstract class AutonomousBase extends LinearOpMode {
         robot.turretMotorSetPower(turretPower);
     } // driveAndRotateTurretAngle
 
-    void alignToPole(boolean turretFacingFront, boolean fromStack, boolean highJunction ) {
-        PowerPlaySuperPipeline alignmentPipeline;
-        PowerPlaySuperPipeline.AnalyzedPole theLocalPole;
-        final double DRIVE_SLOPE  = 0.004187;
-        final double DRIVE_OFFSET = 0.04522;
-        final int CYCLES_AT_ANGLE    = 4;
-        final int CYCLES_AT_DISTANCE = 3;
-
-        PIDControllerTurret pidController = new PIDControllerTurret(0.00008,0.0, 0.0, 0.070 );
-
-        double turretPower;
-        double turretPowerMax = 0.10;  // maximum we don't want the PID to exceed
-        double drivePower;
-
-        double startTime = autonomousTimer.milliseconds();
-        double abortTime = startTime + 2500.0;  // abort after 2.5 seconds
-
-        // If we add back front camera, use boolean to determine which pipeline to use.
-        alignmentPipeline = turretFacingFront ? pipelineFront : pipelineBack;
-        theLocalPole = alignmentPipeline.getDetectedPole();
-
-        // Save the starting image we have to correct for
-        alignmentPipeline.savePoleAutoImage();
-        int properDistanceCount;
-        boolean properDistance;
-        double offset;
-
-        if( highJunction ) {
-            if( fromStack ) {
-                properDistanceCount = theLocalPole.properDistanceHighStackCount;
-                properDistance = theLocalPole.properDistanceStackHigh;
-                offset = theLocalPole.highDistanceStackOffset;
-            } else {
-                properDistanceCount = theLocalPole.properDistanceHighCount;
-                properDistance = theLocalPole.properDistanceHigh;
-                offset = theLocalPole.highDistanceOffset;
-            }
-        } else {
-            if( fromStack ) {
-                properDistanceCount = theLocalPole.properDistanceMedStackCount;
-                properDistance = theLocalPole.properDistanceStackMed;
-                offset = theLocalPole.medDistanceStackOffset;
-            } else {
-                properDistanceCount = theLocalPole.properDistanceMedCount;
-                properDistance = theLocalPole.properDistanceMed;
-                offset = theLocalPole.medDistanceOffset;
-            }
-        }
-
-        // Log our STARTING x/y/angle position
-        beforeXpos = (robotGlobalXCoordinatePosition / robot.COUNTS_PER_INCH2);
-        beforeYpos = (robotGlobalYCoordinatePosition / robot.COUNTS_PER_INCH2);
-        beforeAngle = Math.toDegrees(robotOrientationRadians);
-
-        while (opModeIsActive() && ((theLocalPole.alignedCount <= CYCLES_AT_ANGLE) ||
-                properDistanceCount <= CYCLES_AT_DISTANCE)) {
-            performEveryLoop();
-            turretPower = pidController.update(0.0, theLocalPole.centralOffset);
-            // Ensure we never exceed a safe power
-            if( turretPower > +turretPowerMax ) turretPower = +turretPowerMax;
-            if( turretPower < -turretPowerMax ) turretPower = -turretPowerMax;
-
-            if(properDistance) {
-                drivePower = 0.0;
-            } else {
-                // Need to calculate the drive power based on pixel offset
-                // Maximum number of pixels off would be in the order of 30ish.
-                // This is a first guess that will have to be experimented on.
-                // Go 1.0 to 0.08 from 30 pixels to 2.
-                drivePower = (offset > 0 )?
-                        (offset * DRIVE_SLOPE + DRIVE_OFFSET) :
-                        (offset * DRIVE_SLOPE - DRIVE_OFFSET);
-            }
-
-            telemetry.addData("alignToPole", "ang=%d (%.1f) dist=%d (%.1f)",
-                    theLocalPole.alignedCount, theLocalPole.centralOffset,
-                    properDistanceCount, offset );
-            telemetry.update();
-
-            if(abs(drivePower) < 0.01 && abs(turretPower) < 0.01) {
-                robot.stopMotion();
-                robot.turretMotorSetPower(0);
-            } else {
-                driveAndRotateTurretAngle(drivePower, turretPower, turretFacingFront);
-            }
-
-            // Do we need to abort due to timeout?
-            if( autonomousTimer.milliseconds() >= abortTime )
-                break;
-
-            // update the image for the next loop
-            theLocalPole = alignmentPipeline.getDetectedPole();
-            if( highJunction ) {
-                if( fromStack ) {
-                    properDistanceCount = theLocalPole.properDistanceHighStackCount;
-                    properDistance = theLocalPole.properDistanceStackHigh;
-                    offset = theLocalPole.highDistanceStackOffset;
-                } else {
-                    properDistanceCount = theLocalPole.properDistanceHighCount;
-                    properDistance = theLocalPole.properDistanceHigh;
-                    offset = theLocalPole.highDistanceOffset;
-                }
-            } else {
-                if( fromStack ) {
-                    properDistanceCount = theLocalPole.properDistanceMedStackCount;
-                    properDistance = theLocalPole.properDistanceStackMed;
-                    offset = theLocalPole.medDistanceStackOffset;
-                } else {
-                    properDistanceCount = theLocalPole.properDistanceMedCount;
-                    properDistance = theLocalPole.properDistanceMed;
-                    offset = theLocalPole.medDistanceOffset;
-                }
-            }
-        }
-        robot.stopMotion();
-        robot.turretMotorSetPower(0.0);
-        // Save the final image after our adjustments
-        alignmentPipeline.savePoleAutoImage();
-        
-        // Log our FINAL x/y/angle position
-        afterXpos = (robotGlobalXCoordinatePosition / robot.COUNTS_PER_INCH2);
-        afterYpos = (robotGlobalYCoordinatePosition / robot.COUNTS_PER_INCH2);
-        afterAngle = Math.toDegrees(robotOrientationRadians);
-        
-    } // alignToPole
-
-    /*
-     * @param blueCone - true = blue cone stack, false = red cone stack.
-     * @param targetDistance - distance in cm from the cone stack to line up.
-     */
-    void alignToConeStack(boolean blueCone, int targetDistance) {
-        PowerPlaySuperPipeline.AnalyzedCone theLocalCone;
-        final double DRIVE_SLOPE  = 0.004187;
-        final double DRIVE_OFFSET = 0.04522;
-        final double TURN_SLOPE   = 0.004187;
-        final double TURN_OFFSET  = 0.04522;
-        double drivePower;
-        double turnPower;
-        int coneDistance;
-        int distanceError;
-        int properDistanceCount = 0;
-        // This is in CM
-        final int MAX_DISTANCE_ERROR = 1;
-
-        // Save a STARTING image (what did the camera see for the alignment task?)
-        if( blueCone ) {
-            theLocalCone = pipelineLow.getDetectedBlueCone();
-            pipelineLow.saveBlueConeAutoImage();
-        }
-        else {
-            theLocalCone = pipelineLow.getDetectedRedCone();
-            pipelineLow.saveRedConeAutoImage();
-        }
-        // This first reading just triggers the ultrasonic to send out its first ping, need to wait
-        // 50 msec for it to get a result.
-        robot.fastSonarRange(SONIC_RANGE_FRONT, SONIC_FIRST_PING);
-        sleep(50);
-
-        double startTime = autonomousTimer.milliseconds();
-        double abortTime = startTime + 7000.0;  // abort after 7.0 seconds
-
-        // Log our STARTING x/y/angle position
-        beforeXpos = (robotGlobalXCoordinatePosition / robot.COUNTS_PER_INCH2);
-        beforeYpos = (robotGlobalYCoordinatePosition / robot.COUNTS_PER_INCH2);
-        beforeAngle = Math.toDegrees(robotOrientationRadians);
-
-        while (opModeIsActive() && ((theLocalCone.alignedCount <= 3) ||
-                properDistanceCount <= 3)) {
-            theLocalCone = blueCone ? pipelineLow.getDetectedBlueCone() : pipelineLow.getDetectedRedCone();
-            coneDistance = robot.fastSonarRange(SONIC_RANGE_FRONT, SONIC_MOST_RECENT);
-            distanceError = targetDistance - coneDistance;
-            if(abs(distanceError) <= MAX_DISTANCE_ERROR) {
-                properDistanceCount++;
-            } else {
-                properDistanceCount = 0;
-            }
-            drivePower = (distanceError > 0) ? (-distanceError * DRIVE_SLOPE - DRIVE_OFFSET) :
-                                               (-distanceError * DRIVE_SLOPE + DRIVE_OFFSET);
-            turnPower = (theLocalCone.centralOffset > 0) ?
-                    (theLocalCone.centralOffset * TURN_SLOPE + TURN_OFFSET) :
-                    (theLocalCone.centralOffset * TURN_SLOPE - TURN_OFFSET);
-            driveAndRotate(drivePower, turnPower);
-            telemetry.addData("Cone Data", "drvPwr %.2f turnPwr %.2f", drivePower, turnPower);
-            telemetry.addData("Cone Data", "coneDst %d dstErr %d offset %.2f", coneDistance,
-                    distanceError, theLocalCone.centralOffset);
-            telemetry.update();
-            // Do we need to abort?
-            if( autonomousTimer.milliseconds() >= abortTime )
-                break;
-        }
-        robot.stopMotion();
-        
-        // Save the ENDING image (now that we've aligned)
-        if( blueCone ) {
-            pipelineLow.saveBlueConeAutoImage();
-        }
-        else {
-            pipelineLow.saveRedConeAutoImage();
-        }
-
-        // Log our FINAL x/y/angle position
-        afterXpos = (robotGlobalXCoordinatePosition / robot.COUNTS_PER_INCH2);
-        afterYpos = (robotGlobalYCoordinatePosition / robot.COUNTS_PER_INCH2);
-        afterAngle = Math.toDegrees(robotOrientationRadians);
-
-    } // alignToConeStack
-
     /*---------------------------------------------------------------------------------*/
     void driveAndRotate(double drivePower, double turnPower) {
         double frontRight, frontLeft, rearRight, rearLeft, maxPower;
@@ -506,24 +312,6 @@ public abstract class AutonomousBase extends LinearOpMode {
         // Update motor power settings:
         robot.driveTrainMotors( frontLeft, frontRight, rearLeft, rearRight );
     } // driveAndRotate
-
-    /*---------------------------------------------------------------------------------*/
-    void rotateToCenterPole() {
-        PowerPlaySuperPipeline.AnalyzedPole theLocalPole;
-        theLocalPole = pipelineLow.getDetectedPole();
-        while (opModeIsActive() && (theLocalPole.alignedCount < 2)) {
-            performEveryLoop();
-            if(theLocalPole.aligned) {
-                robot.stopMotion();
-            } else {
-                robot.driveTrainTurn((theLocalPole.centralOffset > 0) ? +0.085 : -0.085);
-            }
-            theLocalPole = pipelineLow.getDetectedPole();
-        }
-        robot.stopMotion();
-        // TODO: can we use this aligned position along the tape to update our known
-        // odometry world position? (offsetting any drift-error that has accumulated?
-    } // rotateToCenterPole
 
     /*---------------------------------------------------------------------------------------------
      * getAngle queries the current gyro angle
