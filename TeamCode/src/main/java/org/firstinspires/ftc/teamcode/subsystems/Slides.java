@@ -43,6 +43,7 @@ public class Slides {
 
     public Slides(OpMode opMode){
         this.opMode = opMode;
+        time = new ElapsedTime();
         slidesMotor = opMode.hardwareMap.get(DcMotorEx.class, "slides motor");
         slidesMotor.setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER, pidfcoeff);
         slidesMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
