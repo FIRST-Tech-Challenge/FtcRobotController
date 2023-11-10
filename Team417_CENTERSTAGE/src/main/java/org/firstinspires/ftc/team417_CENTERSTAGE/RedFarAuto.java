@@ -20,7 +20,7 @@ public class RedFarAuto extends BaseAutonomous {
 
         detectingBlue = false;
 
-        switch (detectTeamProp()) {
+        switch (myColorDetection.detectTeamProp()) {
             case LEFT:
                 telemetry.addData("Side", "Left");
                 break;

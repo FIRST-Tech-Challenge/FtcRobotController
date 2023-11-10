@@ -6,7 +6,7 @@ import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
+import org.firstinspires.ftc.team417_CENTERSTAGE.opencv.OpenCvColorDetection;
 import org.opencv.core.Core;
 import org.opencv.core.Mat;
 import org.opencv.core.MatOfPoint;
@@ -15,12 +15,10 @@ import org.opencv.core.Rect;
 import org.opencv.core.Scalar;
 import org.opencv.core.Size;
 import org.opencv.imgproc.Imgproc;
-import org.openftc.easyopencv.OpenCvCamera;
-import org.openftc.easyopencv.OpenCvCameraFactory;
-import org.openftc.easyopencv.OpenCvCameraRotation;
 import org.openftc.easyopencv.OpenCvPipeline;
 
 import java.util.ArrayList;
+
 @Config
 abstract public class BaseAutonomous extends BaseOpMode {
 
@@ -112,13 +110,13 @@ abstract public class BaseAutonomous extends BaseOpMode {
         BR.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
     }
 
-    private int CAMERA_WIDTH_PIXELS = 640;
-    private int CAMERA_HEIGHT_PIXELS = 480;
+    OpenCvColorDetection myColorDetection = new OpenCvColorDetection(this);
 
     public void initializeAuto() {
         telemetry.addData("Init State", "Init Started");
         telemetry.update();
         initializeHardware();
+        myColorDetection.init();
 
         telemetry.addData("Init State", "Init Finished");
 
@@ -128,15 +126,17 @@ abstract public class BaseAutonomous extends BaseOpMode {
         // cameraMonitorViewId allows us to see the image pipeline using scrcpy
         //   for easy debugging
         //   You can disable it after testing completes
-        int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
-        camera = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "webcam"), cameraMonitorViewId);
+        //int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
+        //camera = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "webcam"), cameraMonitorViewId);
 
 
         // OR...  Do Not Activate the Camera Monitor View
         //phoneCam = OpenCvCameraFactory.getInstance().createInternalCamera(OpenCvInternalCamera.CameraDirection.BACK);
 
-        camera.setPipeline(new PropDetectionPipeline());
 
+        //camera.setPipeline(new PropDetectionPipeline());
+
+        /*
         camera.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
             @Override
             public void onOpened() {
@@ -147,6 +147,7 @@ abstract public class BaseAutonomous extends BaseOpMode {
             public void onError(int errorCode) {
             }
         });
+        */
 
         // Set last know encoder values
         lastEncoderFR = FR.getCurrentPosition();
@@ -169,22 +170,13 @@ abstract public class BaseAutonomous extends BaseOpMode {
 
     boolean detectingBlue;
 
-    enum SideDetected {
-        INITIALIZED,
-        LEFT,
-        CENTER,
-        RIGHT
-    }
-
-    public SideDetected sideDetected = SideDetected.INITIALIZED;
-
     class PropDetectionPipeline extends OpenCvPipeline {
         boolean viewportPaused = false;
         Mat hsv = new Mat();
         Mat output = new Mat();
         Mat resizedMask = new Mat();
         Mat hierarchy = new Mat();
-        ArrayList<MatOfPoint> contours= new ArrayList<>();
+        ArrayList<MatOfPoint> contours = new ArrayList<>();
         MatOfPoint largestContour = new MatOfPoint();
         Size gaussianBlurSize = new Size(7, 7);
         Size binaryMaskSize = new Size(0, 0);
@@ -220,17 +212,15 @@ abstract public class BaseAutonomous extends BaseOpMode {
             // Find contours
             Imgproc.findContours(resizedMask, contours, hierarchy, Imgproc.RETR_TREE, Imgproc.CHAIN_APPROX_SIMPLE);
 
-            if (contours.size() > 0) {
+            if (contours.size() > 1) {
                 // Find the largest contour
                 double maxArea = -1;
                 int maxAreaIndex = -1;
                 for (int i = 0; i < contours.size(); i++) {
-                    if (contours.get(i)) {
-                        double area = Imgproc.contourArea(contours.get(i));
-                        if (area > maxArea) {
-                            maxArea = area;
-                            maxAreaIndex = i;
-                        }
+                    double area = Imgproc.contourArea(contours.get(i));
+                    if (area > maxArea) {
+                        maxArea = area;
+                        maxAreaIndex = i;
                     }
                 }
 
@@ -253,13 +243,7 @@ abstract public class BaseAutonomous extends BaseOpMode {
                 int contourX = (int) center.x;
 
                 // Determine position based on the X coordinate of the center
-                if (contourX < width / 3) {
-                    sideDetected = SideDetected.LEFT;
-                } else if (contourX > (2 * width) / 3) {
-                    sideDetected = SideDetected.RIGHT;
-                } else {
-                    sideDetected = SideDetected.CENTER;
-                }
+
 
                 largestContour.release();
             }
@@ -281,11 +265,6 @@ abstract public class BaseAutonomous extends BaseOpMode {
         }
     }
 
-    public SideDetected detectTeamProp() {
-        Log.d("skid prop", sideDetected + " " + boundingRect.toString() + " " + center.toString());
-        return sideDetected;
-    }
-
     private void stopDriving() {
         FL.setPower(0.0);
         FR.setPower(0.0);
@@ -294,11 +273,11 @@ abstract public class BaseAutonomous extends BaseOpMode {
     }
 
     public void runSimpleInchesAuto(boolean red, boolean close) {
-        if (red == false) {
-            detectingBlue = true;
+        if (red) {
+            myColorDetection.setDetectColor(OpenCvColorDetection.detectColorType.RED);
             //telemetry.addData("Blue")
         } else {
-            detectingBlue = false;
+            myColorDetection.setDetectColor(OpenCvColorDetection.detectColorType.BLUE);
         }
 
         initializeAuto();
@@ -308,7 +287,7 @@ abstract public class BaseAutonomous extends BaseOpMode {
 
         double x = 0;
         double y = 0;
-        switch (detectTeamProp()) {
+        switch (myColorDetection.detectTeamProp()) {
             case LEFT:
                 telemetry.addData("Side", "Left");
                 x = LEFT_X;
@@ -352,13 +331,13 @@ abstract public class BaseAutonomous extends BaseOpMode {
             }
         } else {
             if (red) {
-                driveInches(FAR_PARKING,Y_CALIBRATION_RIGHT);
+                driveInches(FAR_PARKING, Y_CALIBRATION_RIGHT);
             } else {
                 driveInches(-FAR_PARKING, Y_CALIBRATION_LEFT);
             }
         }
 
-        if(intakeMotor != null) {
+        if (intakeMotor != null) {
             intakeMotor.setPower(-INTAKE_SPEED2);
             sleep((long) INTAKE_TIME2);
             intakeMotor.setPower(0);
@@ -389,14 +368,12 @@ abstract public class BaseAutonomous extends BaseOpMode {
                 ", ROBOT_SPEED=" + ROBOT_SPEED +
                 ", STRAFE_FACTOR=" + STRAFE_FACTOR +
                 ", DISTANCE_FACTOR=" + DISTANCE_FACTOR +
-                ", CAMERA_WIDTH_PIXELS=" + CAMERA_WIDTH_PIXELS +
-                ", CAMERA_HEIGHT_PIXELS=" + CAMERA_HEIGHT_PIXELS +
                 ", LOWER_BLUE=" + LOWER_BLUE +
                 ", UPPER_BLUE=" + UPPER_BLUE +
                 ", LOWER_RED=" + LOWER_RED +
                 ", UPPER_RED=" + UPPER_RED +
                 ", detectingBlue=" + detectingBlue +
-                ", sideDetected=" + sideDetected +
+                ", sideDetected=" + myColorDetection.sideDetected +
                 '}';
     }
 }
