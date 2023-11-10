@@ -13,7 +13,10 @@ public class BasicGoBildaStraferOp extends LinearOpMode {
     private DcMotor leftFrontDrive;
 
     /**
-     * Adjust power based on power and percent value
+     * powerAdjust - Adjust the power based on the percent passed in.
+     * @param power - Power value to adjust
+     * @param percent - Percent to adjust power by
+     * @return - Adjusted power value
      */
     private double powerAdjust(float power, double percent) {
         double result;
@@ -44,20 +47,20 @@ public class BasicGoBildaStraferOp extends LinearOpMode {
         rightRearDrive.setDirection(DcMotor.Direction.REVERSE);
         leftRearDrive.setDirection(DcMotor.Direction.FORWARD);
         leftFrontDrive.setDirection(DcMotor.Direction.FORWARD);
-        // Drive speed power as a percent.
+        // Drive speed as a percent.
         // Set to 100 for full power.
         drivePercentage = 75;
-        // Drive speed power as a percent.
+        // Strafe speed as a percent.
         // Set to 100 for full power.
         strafePercentage = 75;
-        // Drive speed power as a percent.
+        // Rotate speed as a percent.
         // Set to 100 for full power.
         rotatePercentage = 45;
 
         waitForStart();
         if (opModeIsActive()) {
-            // Put run blocks here.
             while (opModeIsActive()) {
+
                 // Read Values
                 driveValue = powerAdjust(-gamepad1.left_stick_y, drivePercentage);
                 strafeValue = powerAdjust(-gamepad1.right_stick_x, strafePercentage);
@@ -68,8 +71,10 @@ public class BasicGoBildaStraferOp extends LinearOpMode {
                 } else {
                     rotateValue = powerAdjust(0, rotatePercentage);
                 }
+
                 // Execute Actions
-                drivePower(driveValue, strafeValue, rotateValue);
+                moveRobot(driveValue, strafeValue, rotateValue);
+
                 // Telemetry Data
                 telemetry.addData("drive", driveValue);
                 telemetry.addData("strafe", strafeValue);
@@ -80,9 +85,24 @@ public class BasicGoBildaStraferOp extends LinearOpMode {
     }
 
     /**
-     * Set motor drive power based on drive, strafe, and rotate inputs
+     * moveRobot - Move the robot based on the power values passed in.
+     * @param drive - Drive power value
+     *              Positive values = forward
+     *              Negative values = backward
+     *              Range -1.0 to 1.0
+     *              0 = no drive
+     * @param strafe - Strafe power value
+     *               Positive values = right
+     *               Negative values = left
+     *               Range -1.0 to 1.0
+     *               0 = no strafe
+     * @param rotate - Rotate power value
+     *               Positive values = clockwise
+     *               Negative values = counter clockwise
+     *               Range -1.0 to 1.0
+     *               0 = no rotate
      */
-    private void drivePower(double drive, double strafe, double rotate) {
+   private void moveRobot(double drive, double strafe, double rotate) {
         leftFrontDrive.setPower((drive + rotate) - strafe);
         rightFrontDrive.setPower((drive - rotate) + strafe);
         leftRearDrive.setPower(drive + rotate + strafe);
