@@ -8,7 +8,7 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.PIDFCoefficients;
-
+import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.teamcode.MotionProfiler;
 import org.firstinspires.ftc.teamcode.PIDController;
 
@@ -23,6 +23,8 @@ public class Slides {
     private double maxVelocity, maxAcceleration;
     private MotionProfiler profiler;
     private PIDFController controller;
+    private ElapsedTime time;
+
 
     public enum slidesPosition{
         GROUND,
@@ -67,22 +69,26 @@ public class Slides {
                 telemetry.addData("WRong value entered bruh cope", stage);
         }
 
-        if(position.equals(slidesPosition.GROUND)){
-            start_pos = 0;
-        }else if(position.equals(slidesPosition.LOW)){
-            start_pos = low;
-        }else if(position.equals(slidesPosition.MID)){
-            start_pos = mid;
-        }else if(position.equals(slidesPosition.HIGH)){
-            start_pos = top;
+        switch(position){
+            case GROUND:
+                start_pos = 0;
+                break;
+            case LOW:
+                start_pos = low;
+                break;
+            case MID:
+                start_pos = mid;
+                break;
+            case HIGH:
+                start_pos = top;
         }
 
-        //sets initial values for controller and profiler
+        //sets initial values for profiler
         profiler = new MotionProfiler(maxVelocity, maxAcceleration, start_pos, final_pos);
         profiler.init();
-        elapsedTime = opMode.time;
-
+        time.reset();
         while(!profiler.isDone){
+            elapsedTime = time.seconds();
            double nextTargetPos = profiler.profile_pos(elapsedTime);
            slidesMotor.setPower(controller.update(nextTargetPos));
         }
@@ -91,23 +97,31 @@ public class Slides {
 
     public void runTo(double target) {
         slidesMotor.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
-        if(position.equals(slidesPosition.GROUND)){
-            start_pos = 0;
-        }else if(position.equals(slidesPosition.LOW)){
-            start_pos = low;
-        }else if(position.equals(slidesPosition.MID)){
-            start_pos = mid;
-        }else if(position.equals(slidesPosition.HIGH)){
-            start_pos = top;
+
+        switch(position){
+            case GROUND:
+                start_pos = 0;
+                break;
+            case LOW:
+                start_pos = low;
+                break;
+            case MID:
+                start_pos = mid;
+                break;
+            case HIGH:
+                start_pos = top;
         }
+
         final_pos = target;
 
         profiler = new MotionProfiler(maxVelocity, maxAcceleration, start_pos, final_pos);
-        elapsedTime = opMode.time;
+
+        profiler.init();
+        time.reset();
         while(!profiler.isDone){
-            elapsedTime = opMode.time;
-            double targetPos = profiler.profile_pos(elapsedTime);
-            slidesMotor.setPower(controller.update(targetPos));
+            elapsedTime = time.seconds();
+            double nextTargetPos = profiler.profile_pos(elapsedTime);
+            slidesMotor.setPower(controller.update(nextTargetPos));
         }
         slidesMotor.setPower(0);
     }

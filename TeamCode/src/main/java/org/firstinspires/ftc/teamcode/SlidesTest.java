@@ -23,6 +23,8 @@ public class SlidesTest extends LinearOpMode {
             bot.slides.runTo(4);
         }
 
+        //add fourbar testing code once slides work
+
     }
 
     public void slidesRunToManual(double raw){

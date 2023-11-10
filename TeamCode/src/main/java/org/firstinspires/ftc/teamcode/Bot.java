@@ -9,6 +9,7 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.DistanceSensor;
+import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.teamcode.subsystems.Box;
@@ -38,7 +39,9 @@ public class Bot {
    // public static AprilTagsDetection detections;
 
       public Slides slides;
+      public Fourbar fourbar;
       private final DcMotorEx slidesMotor = slides.slidesMotor;
+      private final Servo fourbarServo = fourbar.fourbar;
      // public Noodles noodles;
      // public Drone drone;
      // public Fourbar fourbar;
@@ -97,12 +100,13 @@ public class Bot {
  */
 
 
-       /* slides = new Slides(opMode);
-        noodles = new Noodles(opMode);
+       slides = new Slides(opMode);
+       fourbar = new Fourbar(opMode);
+
+       /*noodles = new Noodles(opMode);
         drone= new Drone(opMode);
         fourbar = new Fourbar(opMode);
         box= new Box(opMode);
-
         */
     }
 

@@ -4,7 +4,7 @@ import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 
 public class Fourbar {
-    private final Servo fourbar;
+    public final Servo fourbar;
     private final Servo angleBoxServo;
 
     //values need to be changed
