@@ -41,45 +41,43 @@ public class RedLeftAuto extends LinearOpMode {
         TrajectorySequence[] throughTruss = new TrajectorySequence[3];
         throughTruss[0] = robot.roadrun.trajectorySequenceBuilder(spikePosition[0].end())
                 .setReversed(true)
-                .lineToLinearHeading(new Pose2d(-40, -59, toRadians(180)))
+                .lineToLinearHeading(new Pose2d(-40, -58.5, toRadians(180)))
                 .setReversed(true)
-                .splineTo(new Vector2d(10, -56), toRadians(0))
-                .splineTo(new Vector2d(56, -30.5), toRadians(0))
+                .splineTo(new Vector2d(10, -56.5), toRadians(5))
+                .splineTo(new Vector2d(56, -24.5), toRadians(0))
                 .addTemporalMarker(robot::done)
                 .build();
         throughTruss[1] = robot.roadrun.trajectorySequenceBuilder(spikePosition[1].end())
                 .setReversed(true)
-                .lineToLinearHeading(new Pose2d(-40, -59, toRadians(180)))
+                .lineToLinearHeading(new Pose2d(-40, -58.5, toRadians(180)))
                 .setReversed(true)
-                .splineTo(new Vector2d(10, -56), toRadians(0))
-                .splineTo(new Vector2d(56, -32.5), toRadians(0))
+                .splineTo(new Vector2d(10, -56.5), toRadians(5))
+                .splineTo(new Vector2d(59, -27.5), toRadians(0))
                 .addTemporalMarker(robot::done)
                 .build();
         throughTruss[2] = robot.roadrun.trajectorySequenceBuilder(spikePosition[2].end())
                 .setReversed(true)
-                .lineToLinearHeading(new Pose2d(-40, -58.5, toRadians(180)))
+                .lineToLinearHeading(new Pose2d(-40, -57.5, toRadians(180)))
                 .setReversed(true)
-                .splineTo(new Vector2d(10, -56.5), toRadians(5))
-                .splineTo(new Vector2d(57, -39.5), toRadians(0))
+                .splineTo(new Vector2d(10, -54.5), toRadians(5))
+                .splineTo(new Vector2d(59, -33.5), toRadians(0))
                 .addTemporalMarker(robot::done)
                 .build();
         TrajectorySequence[] dropAndPark = new TrajectorySequence[3];
         dropAndPark[0]= robot.roadrun.trajectorySequenceBuilder(throughTruss[0].end())
-                .lineToLinearHeading(new Pose2d(56, -60, toRadians(180)))
-                .lineToLinearHeading(new Pose2d(60, -60, toRadians(180)))
-                .addTemporalMarker(robot::done)
-                .build();
-        dropAndPark[1]= robot.roadrun.trajectorySequenceBuilder(throughTruss[1].end())
-                .lineToLinearHeading(new Pose2d(56, -60, toRadians(180)))
-                .lineToLinearHeading(new Pose2d(60, -60, toRadians(180)))
-                .addTemporalMarker(robot::done)
-                .build();
-        dropAndPark[2] = robot.roadrun.trajectorySequenceBuilder(throughTruss[2].end())
                 .lineToLinearHeading(new Pose2d(56, -52, toRadians(180)))
                 .addTemporalMarker(robot::done)
                 .build();
+        dropAndPark[1]= robot.roadrun.trajectorySequenceBuilder(throughTruss[1].end())
+                .lineToLinearHeading(new Pose2d(56, -52, toRadians(180)))
+                .addTemporalMarker(robot::done)
+                .build();
+        dropAndPark[2] = robot.roadrun.trajectorySequenceBuilder(throughTruss[2].end())
+                .lineToLinearHeading(new Pose2d(52, -45, toRadians(180)))
+                    .addTemporalMarker(robot::done)
+                .build();
         while(!isStarted()){
-            pos = robot.getSpikePos();
+            pos = robot.getSpikePos(); //willy negligible cock length
             robot.update();
         }
         while(!isStopRequested()&&opModeIsActive()&&!robot.queuer.isFullfilled()){
@@ -99,10 +97,12 @@ public class RedLeftAuto extends LinearOpMode {
             robot.followTrajSeq(dropAndPark[pos]);
             robot.queuer.addDelay(1.0);
             robot.resetAuto();
-            robot.queuer.addDelay(5);
+            robot.queuer.addDelay(7);
             robot.resetLift();
             robot.queuer.setFirstLoop(false);
             robot.update();
         }
+        robot.stop();
+        stop();
     }
 }

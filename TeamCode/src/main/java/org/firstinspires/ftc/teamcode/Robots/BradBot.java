@@ -98,9 +98,9 @@ public class BradBot extends BasicRobot {
     if(queuer.queue(true, ArmStates.FLIPPED.getState())){
       if(!queuer.isExecuted()){
         clamp.clamp();
-        wrist.flipTo(Wrist.WristTargetStates.HOLD);
         arm.flipTo(FLIPPED);
-        lift.setPosition(Lift.LiftPositionStates.LOW_SET_LINE);
+        wrist.flipTo(Wrist.WristTargetStates.HOLD);
+        lift.iterateUp();
       }
     }
   }
@@ -111,12 +111,13 @@ public class BradBot extends BasicRobot {
         arm.flipTo(UNFLIPPED);
         wrist.update();
         wrist.flipTo(Wrist.WristTargetStates.FLAT);
-        }
+      }
     }
   }
   public void resetLift(){
     if(queuer.queue(true, lift.isDone())){
-        lift.setPosition(0);
+        lift.setPosition(Lift.LiftPositionStates.AT_ZERO);
+      lift.setPosition(0);
     }
   }
   public void dropWrist(){
@@ -197,16 +198,18 @@ public class BradBot extends BasicRobot {
 
   /** What is run each loop in teleOp Logs that this function is being called to general surface */
   public void teleOp() {
-    boolean isA = gampad.readGamepad(op.gamepad1.a, "gamepad1_a", "resetOuttake");
+    boolean isA = gampad.readGamepad(op.gamepad2.a, "gamepad1_a", "resetOuttake");
     boolean rightBumper =
         gampad.readGamepad(op.gamepad1.right_bumper, "gamepad1_right_bumper", "startIntake");
     boolean leftBumper =
         gampad.readGamepad(op.gamepad1.left_bumper, "gamepad1_left_bumper", "reverseIntake");
     boolean isB = gampad.readGamepad(op.gamepad1.b, "gamepad1_b", "shoot");
+    boolean isB2 = gampad.readGamepad(op.gamepad2.b, "gamepad2_b", "lockPower");
+
     boolean isX = gampad.readGamepad(op.gamepad1.x, "gamepad1_x", "toggleFieldCentricSlow");
     boolean isY = gampad.readGamepad(op.gamepad1.y, "gamepad1_y", "deposit");
-    boolean up = gampad.readGamepad(op.gamepad1.dpad_up, "gamepad1_dpad_up", "lift Up");
-    boolean down = gampad.readGamepad(op.gamepad1.dpad_down, "gamepad1_dpad_down", "lift down");
+    boolean up = gampad.readGamepad(op.gamepad2.dpad_up, "gamepad2_dpad_up", "lift Up");
+    boolean down = gampad.readGamepad(op.gamepad2.dpad_down, "gamepad2_dpad_down", "lift down");
     boolean right = gampad.readGamepad(op.gamepad1.dpad_right, "gamepad1_dpad_right", "toggleButterfly");
     boolean left = gampad.readGamepad(op.gamepad1.dpad_left, "gamepad1_dpad_left", "toggleClamp");
     float manualUp = op.gamepad1.right_trigger;
@@ -220,16 +223,17 @@ public class BradBot extends BasicRobot {
       wrist.update();
       wrist.flipTo(Wrist.WristTargetStates.FLAT);
       lift.setPosition(Lift.LiftPositionStates.AT_ZERO);
+      intake.stopIntake();
     }
     if(isX2){
       lift.resetPosition();
     }
     if (rightBumper) {
       if (Intake.IntakeStates.STOPPED.getState()) {
-        clamp.unclamp();
+        if(Wrist.WristTargetStates.FLAT.state)clamp.unclamp();wrist.flatten();
         intake.intake();
       } else {
-        clamp.clamp();
+        if(Wrist.WristTargetStates.FLAT.state)clamp.clamp();wrist.unflatten();
         intake.stopIntake();
       }
     }
@@ -245,14 +249,20 @@ public class BradBot extends BasicRobot {
       else launcher.load();
     }
     if (up) {
-      arm.flipTo(FLIPPED);
-      wrist.flipTo(Wrist.WristTargetStates.HOLD);
+      if (!FLIPPED.getState()) {
+        arm.flipTo(FLIPPED);
+        wrist.flipTo(Wrist.WristTargetStates.HOLD);
+      }
       lift.iterateUp();
+      intake.stopIntake();
     }
     if (down) {
-      arm.flipTo(FLIPPED);
-      wrist.flipTo(Wrist.WristTargetStates.HOLD);
+      if (!FLIPPED.getState()) {
+        arm.flipTo(FLIPPED);
+        wrist.flipTo(Wrist.WristTargetStates.HOLD);
+      }
       lift.iterateDown();
+      intake.stopIntake();
     }
     if (abs(manualUp - manualDown) > 0.05) {
       lift.manualExtend(manualUp - manualDown);
@@ -262,6 +272,9 @@ public class BradBot extends BasicRobot {
 //    }
     if (isY) {
       wrist.flipTo(Wrist.WristTargetStates.DROP);
+    }
+    if(isB2){
+      hanger.setPermaPower(manualUp-manualDown);
     }
     if (right) {
       roadrun.toggleButtered();
@@ -300,7 +313,5 @@ public class BradBot extends BasicRobot {
   public void stop() {
     LOGGER.log("the program has stopped normally");
     cv.stop();
-    op.sleep(100);
-    op.stop();
   }
 }

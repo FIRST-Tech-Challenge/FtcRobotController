@@ -9,9 +9,9 @@ import org.firstinspires.ftc.teamcode.Components.RFModules.System.RFLogger;
 
 /** Harry Class to contain all Arm functions */
 public class Arm extends RFServo {
-  static double LOWER_LIMIT = 0.28;
-  static double UPPER_LIMIT = 0.98;
-  private double lastTime = 0, FLIP_TIME = 0.8;
+  static double LOWER_LIMIT = 0.35;
+  static double UPPER_LIMIT = 1.0;
+  private double lastTime = 0, FLIP_TIME = 0.6;
 
   /** constructs arm servo, logs to general with CONFIG severity */
   public Arm() {
@@ -116,9 +116,9 @@ public class Arm extends RFServo {
 
   public void flipTo(ArmStates p_state) {
     if (!p_state.state && time - lastTime > FLIP_TIME) {
-      if (!(Lift.LiftMovingStates.AT_ZERO.state || Lift.LiftPositionStates.AT_ZERO.state)
+      if (!(Lift.LiftMovingStates.AT_ZERO.state||Lift.LiftPositionStates.AT_ZERO.state)
           && !Wrist.WristStates.FLAT.state) {
-        if (p_state == ArmStates.UNFLIPPED) {
+        if (p_state == ArmStates.UNFLIPPED && super.getPosition()!=LOWER_LIMIT) {
           super.setPosition(LOWER_LIMIT);
           if (Wrist.WristTargetStates.DROP.state || Wrist.WristTargetStates.FLAT.state)
             Wrist.WristTargetStates.FLIP.setStateTrue();
@@ -126,7 +126,7 @@ public class Arm extends RFServo {
           ArmTargetStates.UNFLIPPED.setStateTrue();
           Lift.LiftMovingStates.LOW.setStateTrue();
           lastTime = time;
-        } else if (p_state == ArmStates.FLIPPED) {
+        } else if (p_state == ArmStates.FLIPPED && super.getPosition()==LOWER_LIMIT) {
           super.setPosition(UPPER_LIMIT);
           if(Wrist.WristTargetStates.HOLD.state||Wrist.WristTargetStates.FLAT.state)Wrist.WristTargetStates.FLIP.setStateTrue();
           LOGGER.log(RFLogger.Severity.INFO, "flipping up");
@@ -182,6 +182,7 @@ public class Arm extends RFServo {
       ArmStates.UNFLIPPED.setStateTrue();
     } else if (super.getPosition() == UPPER_LIMIT && time - super.getLastTime() > FLIP_TIME) {
       ArmStates.FLIPPED.setStateTrue();
+      Wrist.WristTargetStates.DROP.setStateTrue();
     } else {
       LOGGER.log("bruh" + (super.getPosition() == LOWER_LIMIT) + super.getPosition());
     }

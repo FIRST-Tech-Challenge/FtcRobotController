@@ -37,14 +37,17 @@ public class Lift extends RFDualMotor {
     setConstants(
         max, min, RESISTANCE, kS, kV, kA, MAX_UP_VELO, MAX_DOWN_VELO, MAX_ACCEL, MAX_DECEL, kP, kD);
     super.setTarget(0);
+    lastPower = 0;
+    lastManualTime=-100;
     target = 0;
+    super.resetPosition();
   }
 
   /** Stores different states of lift. */
   public enum LiftPositionStates {
-    HIGH_SET_LINE(1200, false),
-    MID_SET_LINE(400, false),
-    LOW_SET_LINE(300, false),
+    HIGH_SET_LINE(1400, false),
+    MID_SET_LINE(800, false),
+    LOW_SET_LINE(400, false),
     AT_ZERO(0, true);
 
     double position;
@@ -121,9 +124,9 @@ public class Lift extends RFDualMotor {
         i.setStateTrue();
       }
     }
-    if (super.getCurrentPosition() < 250) {
+    if (super.getCurrentPosition() < 350)
       LiftPositionStates.AT_ZERO.setStateTrue();
-      }
+
     for (var i : LiftMovingStates.values()) {
       if (i.state && super.getTarget() != LiftPositionStates.values()[i.ordinal()].position) {
         setPosition(LiftPositionStates.values()[i.ordinal()]);
@@ -151,7 +154,7 @@ public class Lift extends RFDualMotor {
    *     state machine.
    */
   public void setPosition(double p_target) {
-    if (!Wrist.WristStates.FLAT.state || super.getCurrentPosition()>15) {
+    if (!Wrist.WristStates.FLAT.state || super.getCurrentPosition()>5 ) {
       super.setPosition(p_target, 0);
       if (target != p_target) {
         LOGGER.setLogLevel(RFLogger.Severity.INFO);
@@ -159,7 +162,7 @@ public class Lift extends RFDualMotor {
         target = p_target;
       }
     } else {
-        super.setRawPower(0);
+      super.setRawPower(0);
       LOGGER.log(RFLogger.Severity.SEVERE, "Wrist state FLAT, can't move");
     }
   }
@@ -170,7 +173,7 @@ public class Lift extends RFDualMotor {
         if (Arm.ArmStates.UNFLIPPED.getState()
             && Arm.ArmTargetStates.UNFLIPPED.getState()
             && Wrist.WristStates.HOLD.state) {
-          super.setPosition(p_state.position-5, 0);
+          super.setPosition(p_state.position-15, 0);
         } else {
           super.setPosition(LiftPositionStates.LOW_SET_LINE.position,0);
         }
