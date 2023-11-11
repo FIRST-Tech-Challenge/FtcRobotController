@@ -2,7 +2,6 @@ package org.firstinspires.ftc.teamcode.tools;
 
 
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
-import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Gamepad;
@@ -15,7 +14,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 
 @TeleOp
 @Disabled
-public class SetMotors extends OpMode {
+public class SetDriveMotors extends OpMode {
 
     public final double DEADZONE_MIN_Y = 0.1;
     public final double DEADZONE_MIN_X = 0.25;
@@ -32,7 +31,7 @@ public class SetMotors extends OpMode {
     public double powerValues[] = new double[4];
 
     //map the motors and run the op mode
-    public SetMotors(HardwareMap hardwareMap, Gamepad gamepad1) {
+    public SetDriveMotors(HardwareMap hardwareMap, Gamepad gamepad1) {
         this.gamepad1 = gamepad1;
         // Retrieve the IMU from the hardware map
         imu = hardwareMap.get(IMU.class, "imu");
