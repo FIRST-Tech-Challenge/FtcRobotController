@@ -28,6 +28,7 @@ public class DriveTest extends LinearOpMode {
     }
 
     private void drive() {
+
         driveSpeed = 1;
 
         driveSpeed *= 1 - 0.5 * gp1.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER);
@@ -37,9 +38,9 @@ public class DriveTest extends LinearOpMode {
                 turnVector = new Vector2d(
                         gp1.getRightX(), 0);
 
-            bot.driveRobotCentric(driveVector.getX() * driveSpeed,
-                    -driveVector.getY() * driveSpeed,
-                    turnVector.getX() * driveSpeed / 1.7
-            );
+        bot.driveRobotCentric(-driveVector.getX() * driveSpeed,
+                -driveVector.getY() * driveSpeed,
+                turnVector.getX() * driveSpeed / 1.7
+        );
     }
 }

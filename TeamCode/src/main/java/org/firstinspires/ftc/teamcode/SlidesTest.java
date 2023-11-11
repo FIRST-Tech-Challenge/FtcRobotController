@@ -20,22 +20,19 @@ public class SlidesTest extends LinearOpMode {
         gp1 = new GamepadEx(gamepad1);
         gp2 = new GamepadEx(gamepad2);
         bot.reverseMotors();
-
+        bot.slides.resetEncoder();
 
         waitForStart();
 
         while (opModeIsActive() && !isStopRequested()) {
-
-            gp1.readButtons();
             gp2.readButtons();
 
             telemetry.addData("TeleOp has started","wheeeee");
 
             drive();
+            runSlides();
 
-            bot.slides.runToManual(gp2.getLeftY());
-/*
-            slidesRunToManual(gp2.getLeftY());
+            /*
 
             if(gp2.wasJustPressed(GamepadKeys.Button.DPAD_DOWN)){
                 bot.slides.runTo(1);
@@ -49,6 +46,8 @@ public class SlidesTest extends LinearOpMode {
 
 
  */
+
+
             if(gp2.wasJustPressed(GamepadKeys.Button.A)){
                 bot.fourbar.outtakeTest();
                 telemetry.addData("fourbar should be in outtake position",bot.fourbar.getOuttakePos());
@@ -65,22 +64,27 @@ public class SlidesTest extends LinearOpMode {
 
     }
 
-    public void slidesRunToManual(double raw){
-        bot.slides.runTo(raw*1800);
-    }
-
     private void drive() {
         gp1.readButtons();
         driveSpeed = 1;
+
         driveSpeed *= 1 - 0.5 * gp1.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER);
         driveSpeed = Math.max(0, driveSpeed);
+
         Vector2d driveVector = new Vector2d(gp1.getLeftX(), -gp1.getLeftY()),
                 turnVector = new Vector2d(
                         gp1.getRightX(), 0);
+
         bot.driveRobotCentric(-driveVector.getX() * driveSpeed,
                 -driveVector.getY() * driveSpeed,
                 turnVector.getX() * driveSpeed / 1.7
         );
+    }
+
+    private void runSlides(){
+        gp2.readButtons();
+        double power = gp2.getLeftY();
+        bot.slides.runToManual(power);
     }
 
 }

@@ -15,14 +15,14 @@ import org.firstinspires.ftc.teamcode.PIDController;
 
 public class Slides {
     public final DcMotorEx slidesMotor;
-    private final static double p = 0.015, i = 0 , d = 0, f = 0, kA = 0.5, kV =0.5;
+    private final static double p = 0.015, i = 0 , d = 0;
     //ABSOLUTELY HAVE TO TUNE!!!!
-    private final PIDCoefficients coeff = new PIDCoefficients(p,i,d);
-    private final PIDFCoefficients pidfcoeff = new PIDFCoefficients(p,i,d,f);
     private double final_pos, start_pos;
-    private double maxVelocity, maxAcceleration;
+
+    private final double min_power = 0.1;
+    public static final double MAX_VELOCITY = 1150 * 5.2, MAX_ACCELERATION = 30, TICKS_PER_REV = 145.1;
     private MotionProfiler profiler;
-    private PIDFController controller;
+    private PIDController controller;
     private ElapsedTime time;
 
 
@@ -45,9 +45,9 @@ public class Slides {
         this.opMode = opMode;
         time = new ElapsedTime();
         slidesMotor = opMode.hardwareMap.get(DcMotorEx.class, "slides motor");
-        slidesMotor.setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER, pidfcoeff);
+        slidesMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         slidesMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        controller = new PIDFController(coeff, kV, kA, 0);
+        controller = new PIDController(p,i,d);
     }
 
     public void runTo(int stage){
@@ -85,20 +85,21 @@ public class Slides {
         }
 
         //sets initial values for profiler
-        profiler = new MotionProfiler(maxVelocity, maxAcceleration, start_pos, final_pos);
+        profiler = new MotionProfiler(MAX_VELOCITY, MAX_ACCELERATION, start_pos, final_pos);
         profiler.init();
         time.reset();
         while(!profiler.isDone){
             elapsedTime = time.seconds();
            double nextTargetPos = profiler.profile_pos(elapsedTime);
-           slidesMotor.setPower(controller.update(nextTargetPos));
+           slidesMotor.setPower(controller.calculatePower(slidesMotor, nextTargetPos));
         }
         slidesMotor.setPower(0);
     }
 
-    public void runToManual(double target){
+    public void runToManual(double power){
         slidesMotor.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
-        slidesMotor.setPower(target);
+        if(power > min_power || power < -min_power) slidesMotor.setPower(power);
+        else slidesMotor.setPower(min_power);
     }
 
     public void runTo(double target) {
@@ -120,14 +121,14 @@ public class Slides {
 
         final_pos = target;
 
-        profiler = new MotionProfiler(maxVelocity, maxAcceleration, start_pos, final_pos);
+        profiler = new MotionProfiler(MAX_VELOCITY, MAX_ACCELERATION, start_pos, final_pos);
 
         profiler.init();
         time.reset();
         while(!profiler.isDone){
             elapsedTime = time.seconds();
             double nextTargetPos = profiler.profile_pos(elapsedTime);
-            slidesMotor.setPower(controller.update(nextTargetPos));
+            slidesMotor.setPower(controller.calculatePower(slidesMotor, nextTargetPos));
         }
         slidesMotor.setPower(0);
     }
