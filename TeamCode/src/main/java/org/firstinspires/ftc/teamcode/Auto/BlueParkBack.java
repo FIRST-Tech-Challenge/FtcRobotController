@@ -41,7 +41,7 @@ public class BlueParkBack extends LinearOpMode {
 
         while (opModeIsActive()) {
 
-            strafeMotorsRight(0.25, 1300);
+            runMotorsTime(-0.25, 1300);
             brakeMotors();
 
             telemetry.update();

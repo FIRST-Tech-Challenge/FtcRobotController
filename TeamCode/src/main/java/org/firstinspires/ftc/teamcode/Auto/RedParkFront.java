@@ -41,7 +41,7 @@ public class RedParkFront extends LinearOpMode {
 
         while (opModeIsActive()) {
 
-            runMotorsTime(0.5, 1250);
+            runMotorsTime(-0.5, 3000);
 
             brakeMotors();
 
