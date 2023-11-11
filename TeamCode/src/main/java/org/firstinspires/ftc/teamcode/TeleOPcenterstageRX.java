@@ -19,6 +19,7 @@ import com.qualcomm.robotcore.hardware.AnalogInput;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.Servo;
 
@@ -38,7 +39,7 @@ public class TeleOPcenterstageRX extends OpMode {
     public Switch swish;
     public DcMotorEx motorBR,motorBL,motorFL,motorFR,slider,melcsus,melcjos;
     public Servo gherutaL,gherutaR,plauncher;
-    public CRServo maceta;
+    public CRServo maceta,extensorL,extensorR;
     double sm = 1, slow = 1, lb = 1, rb = 1,bval=0,xval=0,rt=0,rtval=0,slowl=1,slowr=1,distL,distR,pidResult;
     boolean dpd,dpu,enter = false,bl,xl,aprins1 = false,aprins2 = false;
     double y, x, rx, ghearaPoz=0.5, macetaPow=0;
@@ -82,13 +83,17 @@ public class TeleOPcenterstageRX extends OpMode {
 
         gherutaL = hardwareMap.get(Servo.class,"gherutaL");
         gherutaR = hardwareMap.get(Servo.class,"gherutaR");
-        maceta = hardwareMap.get(CRServo.class,"maceta");
         plauncher = hardwareMap.get(Servo.class,"plauncher");
+
+        maceta = hardwareMap.get(CRServo.class,"maceta");
+        extensorL = hardwareMap.get(CRServo.class,"extensorL");
+        extensorR = hardwareMap.get(CRServo.class,"extensorR");
 
         motorBL.setDirection(DcMotorEx.Direction.REVERSE);
         motorFL.setDirection(DcMotorEx.Direction.REVERSE);
         slider.setDirection(DcMotorEx.Direction.REVERSE);
         melcsus.setDirection(DcMotorEx.Direction.REVERSE);
+        extensorR.setDirection(DcMotorEx.Direction.REVERSE);
 
         motorBL.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
         motorBR.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
@@ -339,6 +344,10 @@ public class TeleOPcenterstageRX extends OpMode {
                     }
                 }
                 bl = gamepad2.b;
+
+                extensorL.setPower(gamepad2.left_stick_x);
+                extensorR.setPower(gamepad2.left_stick_x);
+
                 if (bval == 0.5 && gamepad2.b) {
                     bval += 0.0001;
                     gherutaR.setPosition(0.15);

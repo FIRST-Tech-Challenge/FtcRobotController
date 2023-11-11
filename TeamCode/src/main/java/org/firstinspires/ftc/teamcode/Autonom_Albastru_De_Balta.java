@@ -5,7 +5,6 @@ import static org.firstinspires.ftc.teamcode.Var.Webcam_h;
 import static org.firstinspires.ftc.teamcode.Var.Webcam_w;
 
 import com.acmerobotics.dashboard.FtcDashboard;
-import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
@@ -15,7 +14,7 @@ import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
 @Autonomous
-public class Autonom_Rosu_De_Balta extends LinearOpMode {
+public class Autonom_Albastru_De_Balta extends LinearOpMode {
     double rectx, recty, hperw,x;
     public DcMotorEx motorBR,motorBL,motorFR,motorFL;
     int varrez = 2;

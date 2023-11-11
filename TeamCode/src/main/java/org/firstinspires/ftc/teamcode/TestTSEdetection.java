@@ -18,13 +18,13 @@ public class TestTSEdetection extends LinearOpMode {
     double rectx, recty, hperw;
     int varrez = 2;
     public OpenCvCamera webcam;
-    public PachetelNouOpenCV pipeline = new PachetelNouOpenCV();
+    public PipelineRosu pipelineRed = new PipelineRosu();
     @Override
     public void runOpMode() throws InterruptedException {
-        //telemetry = new MultipleTelemetry(FtcDashboard.getInstance().getTelemetry(), telemetry);
+        telemetry = new MultipleTelemetry(FtcDashboard.getInstance().getTelemetry(), telemetry);
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
         webcam = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "Webcam 2"), cameraMonitorViewId);
-        webcam.setPipeline(pipeline);
+        webcam.setPipeline(pipelineRed);
         webcam.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
             @Override
             public void onOpened() {
@@ -41,8 +41,8 @@ public class TestTSEdetection extends LinearOpMode {
         FtcDashboard.getInstance().startCameraStream(webcam, 60);
         while (!isStopRequested()) {
             try {
-                rectx = pipeline.getRect().width;
-                recty = pipeline.getRect().height;
+                rectx = pipelineRed.getRect().width;
+                recty = pipelineRed.getRect().height;
                 hperw = recty / rectx;
                 telemetry.addData("rectangle width:", rectx);
                 telemetry.addData("rectangle height:", recty);
