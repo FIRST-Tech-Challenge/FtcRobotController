@@ -73,6 +73,7 @@ public class CenterStageGamepad extends LinearOpMode {
     private DcMotor rightFrontDrive = null;
     private DcMotor rightBackDrive = null;
     private DcMotor carWashMotor = null;
+    private Servo droneServo = null;
     //private DigitalChannel touch;
 
     //declare servos for clasper, as looking down on robot from behind, servoCW is the servo on the
