@@ -37,15 +37,20 @@ public class LocalizationTest extends LinearOpMode {
     Pose2d headingToHold = new Pose2d();
     boolean isHolding = false;
 
-    public void snapToButtons() {
+    public void snapToButtons(double externalHeading) {
+        double relative = 0; // Rad
+        if (gamepad1.start) {
+            relative = externalHeading;
+        }
+
         if (gamepad1.x) {
-            headingToHold = new Pose2d(0, 0, Math.toRadians(90));
+            headingToHold = new Pose2d(0, 0, Math.toRadians(90) + relative);
         } else if (gamepad1.a) {
-            headingToHold = new Pose2d(0, 0, Math.toRadians(180));
+            headingToHold = new Pose2d(0, 0, Math.toRadians(180) + relative);
         } else if (gamepad1.b) {
-            headingToHold = new Pose2d(0, 0, Math.toRadians(-90));
+            headingToHold = new Pose2d(0, 0, Math.toRadians(-90) + relative);
         } else if (gamepad1.y) {
-            headingToHold = new Pose2d(0, 0, Math.toRadians(0));
+            headingToHold = new Pose2d(0, 0, Math.toRadians(0) + relative);
         }
     }
 
@@ -69,17 +74,17 @@ public class LocalizationTest extends LinearOpMode {
         while (!isStopRequested()) {
 
             // Reset heading button
-            if (gamepad1.start)
-            {
-                drive.setExternalHeading(0);
-                // set heading zero
-            }
+//            if (gamepad1.start)
+//            {
+//                drive.setExternalHeading(Math.toRadians(0.0));
+//                // set heading zero
+//            }
 
             double turnCommand = -gamepad1.right_stick_x;
 
             if ((gamepad1.a || gamepad1.b || gamepad1.x || gamepad1.y) && Math.abs(turnCommand) <= 0.03 ) {
                 isHolding = true;
-                snapToButtons(); // Josh recommended that we make a separate method for just the a/b/x/y buttons
+                snapToButtons(drive.getExternalHeading()); // Josh recommended that we make a separate method for just the a/b/x/y buttons
             } else if (Math.abs(turnCommand) >= 0.03) {
                 isHolding = false;
             }
@@ -95,6 +100,7 @@ public class LocalizationTest extends LinearOpMode {
                 turnCommand = ctrl.update(Math.toDegrees(drive.getExternalHeading()));
             }
 
+            // TODO WHY????????????????????????????
             double powX = statsX.update(-gamepad1.left_stick_y);
             double powY = statsY.update(-gamepad1.left_stick_x);
 
@@ -117,8 +123,8 @@ public class LocalizationTest extends LinearOpMode {
 
             telemetry.addData("x", poseEstimate.getX());
             telemetry.addData("y", poseEstimate.getY());
-            telemetry.addData("heading", poseEstimate.getHeading());
-            telemetry.addData("headingToHold", headingToHold.getHeading());
+            telemetry.addData("heading", Math.toDegrees(poseEstimate.getHeading()));
+            telemetry.addData("headingToHold", Math.toDegrees(headingToHold.getHeading()));
             telemetry.addData("isHolding", isHolding);
             telemetry.addData("joystick", -gamepad1.right_stick_x);
             telemetry.update();
