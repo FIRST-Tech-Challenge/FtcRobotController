@@ -13,8 +13,10 @@ public class RealTeleOp extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
 
+        //initialize robot class
         Robot robot = new Robot(hardwareMap, this, telemetry, true);
 
+        //getting motors and servos from config
         DcMotor intake = hardwareMap.dcMotor.get("intake");
         Servo holderClamp = hardwareMap.servo.get("holderClamp");
         Servo arm = hardwareMap.servo.get("arm");
@@ -27,6 +29,7 @@ public class RealTeleOp extends LinearOpMode {
         DcMotor lBack = hardwareMap.dcMotor.get("bLeft");
         DcMotor rBack = hardwareMap.dcMotor.get("bRight");
 
+        //setting motor direction
         intake.setDirection(DcMotorSimple.Direction.REVERSE);
         rBack.setDirection(DcMotorSimple.Direction.FORWARD);
         lBack.setDirection(DcMotorSimple.Direction.REVERSE);
@@ -35,19 +38,22 @@ public class RealTeleOp extends LinearOpMode {
         lsFront.setDirection(DcMotorSimple.Direction.REVERSE);
         lsBack.setDirection(DcMotorSimple.Direction.REVERSE);
 
+        //set motor zero power behavior
         lsFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         lsBack.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
+        //set run mode
         lsFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         lsFront.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
         waitForStart();
 
         double holderClampPos = 0.5;
-        double armPos = 0.594; //down position
+        double armPos = 0.594; //down
 
         boolean hangingMode = false;
 
+        //set launcher and lock positions at start
         planeLauncher.setPosition(0.25);
         linearLocker.setPosition(0.5);
 
@@ -59,8 +65,9 @@ public class RealTeleOp extends LinearOpMode {
             double remainingDistanceHigh = 300 - lsFront.getCurrentPosition();
             double remainingDistanceMid = 200 - lsFront.getCurrentPosition();
             double remainingDistanceLow = 100 - lsFront.getCurrentPosition();
-            double remainingDistanceZero = -lsFront.getCurrentPosition();
+            double remainingDistanceZero = -1 * lsFront.getCurrentPosition();
 
+            //gamepad 1 dpad moves linear slide to a set position
             if (gamepad1.dpad_up && remainingDistanceHigh > 10) {
 
                 lsFront.setPower(remainingDistanceHigh*0.002);
@@ -83,20 +90,20 @@ public class RealTeleOp extends LinearOpMode {
 
             }
 
-            telemetry.addData("linear locker Servo pos", linearLocker.getPosition());
-
-            if(gamepad2.dpad_up) {
+            //gamepad 2 dpad locks and unlocks the lock
+            if (gamepad2.dpad_up) {
                 linearLocker.setPosition(0.3);
             } else if(gamepad2.dpad_down) {
                 linearLocker.setPosition(0.5);
             }
 
-            if(gamepad2.b == true) {
+            //gamepad 2 B changes amount of linear slide motor power (for endgame hanging)
+            if (gamepad2.b) {
                 hangingMode = true;
                 //turn on hanging mode to increase power for linear slides
             }
 
-            if(hangingMode == false) {
+            if (!hangingMode) {
                 //if not hanging, power less
                 if (-gamepad2.left_stick_y > 0) {
                     lsBack.setPower(0.5);
@@ -108,7 +115,7 @@ public class RealTeleOp extends LinearOpMode {
                     lsBack.setPower(0);
                     lsFront.setPower(0);
                 }
-            } else if (hangingMode == true) {
+            } else if (hangingMode) {
                 //if hanging, power more
                 if (-gamepad2.left_stick_y > 0) {
                     lsBack.setPower(1);
@@ -122,6 +129,7 @@ public class RealTeleOp extends LinearOpMode {
                 }
             }
 
+            //if linear slide motor's # of ticks is under 4, set it to down
             if (lsFront.getCurrentPosition() < 4) {
                 armPos = 0.594;
             }
@@ -134,7 +142,7 @@ public class RealTeleOp extends LinearOpMode {
                 intake.setPower(0.4);
                 holderClampPos = 0.4;
                 //if intake button held, keep holder open
-            } else if (gamepad2.left_bumper == true) {
+            } else if (gamepad2.left_bumper) {
                 //reversed intake
                 intake.setPower(-0.6);
                 holderClampPos = 0.4;
@@ -146,7 +154,8 @@ public class RealTeleOp extends LinearOpMode {
                 intake.setPower(0);
             }
 
-            if(gamepad2.right_bumper == true) {
+            //right bumper and trigger of gamepad 2 open and close clamp
+            if (gamepad2.right_bumper) {
                 holderClampPos -= 0.025;
                 //open
             } else if (gamepad2.right_trigger > 0) {
@@ -154,64 +163,68 @@ public class RealTeleOp extends LinearOpMode {
                 //close
             }
 
-
-            //pivot arm
-            if(Math.abs(gamepad2.right_stick_y) > 0.1) {
+            //gamepad 2 right stick manually pivots tray
+            if (Math.abs(gamepad2.right_stick_y) > 0.1) {
                 armPos -= -(gamepad2.right_stick_y / (1 / 0.004));
             }
 
-            //set limits for the holder clamp
-            if(holderClampPos>1) {
+            //set limits on the holder clamp
+            if (holderClampPos > 1) {
                 holderClampPos = 1;
-            } else if (holderClampPos<0.4) {
+            } else if (holderClampPos < 0.4) {
                 holderClampPos = 0.4;
             }
 
-            //set limits for the arm rotation position
-            if(armPos>1) {
+            //set limits on how much the tray can pivot
+            if (armPos > 1) {
                 armPos = 1;
-            } else if (armPos<0) {
-                armPos=0;
+            } else if (armPos < 0) {
+                armPos = 0;
             }
 
-            //automatically move arm to intake and outtake position
-            if(gamepad2.a == true) {
-                armPos = 0.594; //down (inttake) position
+            //set intake/outtake positions for arm
+            if (gamepad2.a) {
+                armPos = 0.594; //down (intake) position
             }
-            if(gamepad2.y == true) {
+            if (gamepad2.y) {
                 armPos = 0.845; //up (outtake) position
             }
 
+            //the earlier conditionals set variables based on what was pressed
+            //here the servos are actually set to those variables
             holderClamp.setPosition(holderClampPos);
             arm.setPosition(armPos);
 
             //GAMEPAD 1 CONTROLS DRIVER
 
-            telemetry.addData("plane launcher Servo pos", planeLauncher.getPosition());
+            //gamepad 1 right bumper launches drone
             if (gamepad1.right_bumper) {
                 planeLauncher.setPosition(0.7);
             }
 
+            //doubles for amount of input for straight, turning, and mecanuming variables
             double forwardBackward = gamepad1.left_stick_y * -0.5;
             double turning = gamepad1.right_stick_x * 0.5;
             double mecanuming = gamepad1.left_stick_x * 0.5;
 
+            //set powers using this input
             double fLeftPower = forwardBackward + turning + mecanuming;
             double fRightPower = forwardBackward - turning - mecanuming;
             double bLeftPower = forwardBackward + turning - mecanuming;
             double bRightPower = forwardBackward - turning + mecanuming;
 
+            //scale powers
             double maxPower = maxAbsValueDouble(fLeftPower, bLeftPower, fRightPower, bRightPower);
 
             if (Math.abs(maxPower) > 1) {
                 double scale = Math.abs(maxPower);
-
                 fLeftPower /= scale;
                 bLeftPower /= scale;
                 fRightPower /= scale;
                 bRightPower /= scale;
             }
 
+            //TODO: this looks duplicate
             lFront.setPower(fLeftPower);
             rFront.setPower(fRightPower);
             lBack.setPower(bLeftPower);
@@ -224,26 +237,8 @@ public class RealTeleOp extends LinearOpMode {
                     bRightPower
             };
 
-
-
-            telemetry.addData("fleft", power[0]);
-            telemetry.addData("fright", power[1]);
-            telemetry.addData("bleft", power[2]);
-            telemetry.addData("bright", power[3]);
-
             power = robot.scalePowers(power);
-
             robot.setMotorPower(power);
-
-            /*remainingDistanceHigh = 300 - robot.lsFront.getCurrentPosition();
-            remainingDistanceMid = 200 - robot.lsFront.getCurrentPosition();
-            remainingDistanceLow = 100 - robot.lsFront.getCurrentPosition();
-            remainingDistanceZero = -robot.lsFront.getCurrentPosition();*/
-
-            //telemetry.addData("current pos for linear slide", robot.lsFront.getCurrentPosition());
-
-            telemetry.addLine(String.valueOf(holderClampPos));
-            telemetry.update();
         }
     }
 
