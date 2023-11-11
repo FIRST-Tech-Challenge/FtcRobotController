@@ -31,7 +31,7 @@ public class CurtisMove extends OpMode {
     public void init() {
 
         //Telemetry
-        telemetry.addLine(">> Press Start Button");
+        telemetry.addLine(">> Welcome :)");
         telemetry.update();
 
         // Initialize DcMotors
