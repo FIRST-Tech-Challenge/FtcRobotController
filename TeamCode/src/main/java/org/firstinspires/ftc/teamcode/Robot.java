@@ -46,7 +46,7 @@ public class Robot {
     IMU imu;
     double prevError = 0;
     double prevTime = 0;
-    MarkerDetector.MARKER_POSITION markerPosRed;
+    MarkerDetector.MARKER_POSITION markerPos;
     int wantedAprTagId;
     private MarkerProcessor markerProcessor; //TODO: COMBINE THESE AND ALL METHODS USING THEM
     private AprilTagProcessor aprilTagProcessor;
@@ -121,10 +121,11 @@ public class Robot {
         setServoPosBlocking(clamp, 0.5); //close clamp
         setServoPosBlocking(tray, 0.594); //tray down
         moveLinearSlideByTicks(0); //linear slide down
+        sleep(100);
     }
 
-    public void setMarkerPosRed(MarkerDetector.MARKER_POSITION position) {
-        markerPosRed = position;
+    public void setMarkerPos(MarkerDetector.MARKER_POSITION position) {
+        markerPos = position;
     }
 
     //TODO: change boolean to enum later
@@ -450,21 +451,19 @@ public class Robot {
         Log.d("vision", "detected position: " + position);
 
         //save marker position, apriltag position
-        setMarkerPosRed(position);
+        setMarkerPos(position);
         setWantedAprTagId(position, MarkerDetector.ALLIANCE_COLOR.RED);
 
     }
 
     public void shortMoveToBoard() { //TODO: add polarity, use in ShortRedAuto.java, and TEST
-        Log.d("vision", "moveToMarker: Pos " + markerPosRed);
+        Log.d("vision", "moveToMarker: Pos " + markerPos);
         Log.d("vision", "moveToMarker: Tag " + wantedAprTagId);
         while (opMode.opModeIsActive()) {
             setServoPosBlocking(clamp, 0.5);
             setServoPosBlocking(hook, 0.5);
             setServoPosBlocking(spikeServo, 0.45);
-
-            if (markerPosRed == MarkerDetector.MARKER_POSITION.RIGHT) {
-                Log.d("vision", "shortMoveToBoard: right");
+            if (markerPos == MarkerDetector.MARKER_POSITION.RIGHT) {
                 mecanumBlocking(10, false, 0.5);
                 setHeading(0, 0.25);
                 straightBlocking(18, false, 0.5);
@@ -477,7 +476,7 @@ public class Robot {
                 mecanumBlocking(10, true, 0.7);
                 setHeading(-90, 0.7);
                 break;
-            } else if (markerPosRed == MarkerDetector.MARKER_POSITION.LEFT) {
+            } else if (markerPos == MarkerDetector.MARKER_POSITION.LEFT) {
                 Log.d("vision", "shortMoveToBoard: left");
                 straightBlocking(16, false, 0.25); //forward
                 setHeading(45, 0.25); //turn
@@ -492,7 +491,7 @@ public class Robot {
                 setHeading(-90, 0.7);
                 break;
             } else { //center, default
-                Log.d("vision", "shortMoveToBoard: " + markerPosRed);
+                Log.d("vision", "shortMoveToBoard: " + markerPos);
                 mecanumBlocking(3, false, 0.5); //go left
                 setHeading(0, 0.25);
                 straightBlocking(32, false, 0.25); //go forward
@@ -577,7 +576,7 @@ public class Robot {
     }
 
     public void longMoveToBoard() {
-        Log.d("vision", "moveToMarker: Pos " + markerPosRed);
+        Log.d("vision", "moveToMarker: Pos " + markerPos);
         Log.d("vision", "moveToMarker: Tag " + wantedAprTagId);
 
         int polarity;
@@ -591,7 +590,7 @@ public class Robot {
             setServoPosBlocking(clamp, 0.5);
             setServoPosBlocking(hook, 0.5);
             setServoPosBlocking(spikeServo, 0.45);
-            if (markerPosRed == MarkerDetector.MARKER_POSITION.RIGHT) { //RIGHT
+            if (markerPos == MarkerDetector.MARKER_POSITION.RIGHT) { //RIGHT
                 straightBlocking(20, false, 0.25); //forward
                 setHeading(45 * polarity, 0.25); //turn right
                 straightBlocking(8, false, 0.7); //forward
@@ -606,7 +605,7 @@ public class Robot {
                 mecanumBlocking(34, false, 0.7); //mecanum directly in front of board
                 setHeading(90 * polarity, 0.7);
                 break;
-            } else if (markerPosRed == MarkerDetector.MARKER_POSITION.LEFT) { //LEFT
+            } else if (markerPos == MarkerDetector.MARKER_POSITION.LEFT) { //LEFT
                 straightBlocking(18, false, 0.25); //forward
                 setHeading(-45 * polarity, 0.25); //turn
                 straightBlocking(7, false, 0.7); //forward
@@ -642,6 +641,28 @@ public class Robot {
                 setHeading(90 * polarity, 0.7);
                 break;
             }
+        }
+    }
+
+    public void parkLeft() {
+        straightBlocking(2, true, 0.7);
+        if (markerPos == MarkerDetector.MARKER_POSITION.LEFT) {
+            mecanumBlocking(20, true, 0.5);
+        } else if (markerPos == MarkerDetector.MARKER_POSITION.RIGHT) {
+            mecanumBlocking(30, true, 0.5);
+        } else {
+            mecanumBlocking(35, true, 0.5);
+        }
+    }
+
+    public void parkRight() {
+        straightBlocking(2, true, 0.7);
+        if (markerPos == MarkerDetector.MARKER_POSITION.LEFT) {
+            mecanumBlocking(35, false, 0.5);
+        } else if (markerPos == MarkerDetector.MARKER_POSITION.RIGHT) {
+            mecanumBlocking(30, false, 0.5);
+        } else {
+            mecanumBlocking(20, false, 0.5);
         }
     }
 }

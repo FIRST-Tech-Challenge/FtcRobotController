@@ -20,6 +20,7 @@ public class ShortRedAuto extends LinearOpMode {
         robot.shortMoveToBoard();
         robot.alignToBoard();
         robot.autoOuttake();
+        robot.parkLeft();
 
     }
 }
