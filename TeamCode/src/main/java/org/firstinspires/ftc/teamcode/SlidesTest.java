@@ -21,14 +21,13 @@ public class SlidesTest extends LinearOpMode {
         gp2 = new GamepadEx(gamepad2);
         bot.reverseMotors();
 
+
         waitForStart();
 
         while (opModeIsActive() && !isStopRequested()) {
 
             gp1.readButtons();
             gp2.readButtons();
-
-
 
             telemetry.addData("TeleOp has started","wheeeee");
 
@@ -60,6 +59,7 @@ public class SlidesTest extends LinearOpMode {
             }
 
 
+            telemetry.update();
         }
 
 
@@ -70,16 +70,13 @@ public class SlidesTest extends LinearOpMode {
     }
 
     private void drive() {
-
+        gp1.readButtons();
         driveSpeed = 1;
-
         driveSpeed *= 1 - 0.5 * gp1.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER);
         driveSpeed = Math.max(0, driveSpeed);
-
         Vector2d driveVector = new Vector2d(gp1.getLeftX(), -gp1.getLeftY()),
                 turnVector = new Vector2d(
                         gp1.getRightX(), 0);
-
         bot.driveRobotCentric(-driveVector.getX() * driveSpeed,
                 -driveVector.getY() * driveSpeed,
                 turnVector.getX() * driveSpeed / 1.7

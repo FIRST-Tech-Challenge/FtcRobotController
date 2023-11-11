@@ -19,8 +19,7 @@ public class Drone {
     }
 
     public void reset(){
-        droneServo.setDirection(Servo.Direction.REVERSE);
-        droneServo.setPosition(shoot);
+        droneServo.setPosition(0);
     }
 
 }
