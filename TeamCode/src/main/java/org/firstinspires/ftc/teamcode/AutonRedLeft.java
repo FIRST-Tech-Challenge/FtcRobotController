@@ -25,9 +25,9 @@ public class AutonRedLeft extends LinearOpMode {
 
         parkingSpot = mySparky.askParkingSpot();
         //drivePath = mySparky.askDrivePath();
-        mySpikeLocation = mySparky.spikeCam.getSpikeLocation();
+     //   mySpikeLocation = mySparky.spikeCam.getSpikeLocation();
 
-        telemetry.addData("SpikeValue", mySparky.spikeCam.spikeLocation);
+    //    telemetry.addData("SpikeValue", mySparky.spikeCam.spikeLocation);
         telemetry.addData("ParkingSpot", parkingSpot.toString());
         telemetry.addData("DrivePath", drivePath.toString());
         telemetry.update();
@@ -37,7 +37,9 @@ public class AutonRedLeft extends LinearOpMode {
 
 
         if(opModeIsActive()) {
+
             int extraVerticalMovement=0;
+            mySpikeLocation = mySparky.spikeCam.getSpikeLocation();
             mySparky.MoveStraight(-745, .5, 500);
             mySparky.AutonPlacePurplePixel(mySpikeLocation);
             switch (mySpikeLocation) {
@@ -49,7 +51,7 @@ public class AutonRedLeft extends LinearOpMode {
                             mySparky.StrafeLeft(CyDogsSparky.OneTileMM, .5, CyDogsSparky.StandardAutonWaitTime);
                             break;
                         case RIGHT:
-                            mySparky.StrafeRight(CyDogsSparky.OneTileMM+170, .5, CyDogsSparky.StandardAutonWaitTime);
+                            mySparky.StrafeRight(CyDogsSparky.OneTileMM+180, .5, CyDogsSparky.StandardAutonWaitTime);
                             break;
                     }
                     break;
@@ -84,10 +86,10 @@ public class AutonRedLeft extends LinearOpMode {
                     }
                     break;
             }
-
-            mySparky.MoveStraight(2100+extraVerticalMovement,.5,CyDogsSparky.StandardAutonWaitTime);
+            // We move not all the way so we don't crash into a parker, then after strafe move the rest
+            mySparky.MoveStraight(1900+extraVerticalMovement,.5,CyDogsSparky.StandardAutonWaitTime);
             mySparky.AutonCenterOnScoreboardBasedOnPath(drivePath);
-            mySparky.MoveStraight(75,.5,CyDogsSparky.StandardAutonWaitTime);
+            mySparky.MoveStraight(275,.5,CyDogsSparky.StandardAutonWaitTime);
             mySparky.AdjustToAprilTag(mySpikeLocation);
             mySparky.scoreFromDrivingPositionAndReturn(CyDogsSparky.ArmLow);
             mySparky.AutonParkInCorrectSpot(mySpikeLocation, parkingSpot);

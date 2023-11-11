@@ -17,8 +17,10 @@ public class CyDogsChassis {
 
     private LinearOpMode myOpMode;
     public enum Direction {LEFT, CENTER, RIGHT}
+    public enum Alliance {BLUE, RED}
 
     public static final int OneTileMM = 610;
+
 
     public CyDogsChassis(LinearOpMode currentOp){
         // INITIALIZATION BLOCKS:
@@ -58,13 +60,13 @@ public class CyDogsChassis {
     }
 
 
-    public void StrafeRight(int mmToTarget, double VelocityPercentage, int WaitTime){
-        StrafeLeft(-mmToTarget, VelocityPercentage, WaitTime);
+    public void StrafeLeft(int mmToTarget, double VelocityPercentage, int WaitTime){
+        StrafeRight(-mmToTarget, VelocityPercentage, WaitTime);
     }
     /**
      * Strafe right(+) or left(-) until reaching Position
      */
-    public void StrafeLeft(int mmToTarget, double VelocityPercentage, int WaitTime) {
+    public void StrafeRight(int mmToTarget, double VelocityPercentage, int WaitTime) {
         double TicksToTarget;
         double TicksPerSecond;
 
@@ -119,6 +121,36 @@ public class CyDogsChassis {
         myOpMode.telemetry.update();
 
         RotateLeft(-1*degree, VelocityPercentage, WaitTime);
+    }
+    public void moveRobot(double x, double y, double yaw) {
+        // Calculate wheel powers.
+//        double leftFrontPower    =  x -y -yaw;
+//        double rightFrontPower   =  x +y +yaw;
+//        double leftBackPower     =  x +y -yaw;
+//        double rightBackPower    =  x -y +yaw;
+//
+//        // Normalize wheel powers to be less than 1.0
+//        double max = Math.max(Math.abs(leftFrontPower), Math.abs(rightFrontPower));
+//        max = Math.max(max, Math.abs(leftBackPower));
+//        max = Math.max(max, Math.abs(rightBackPower));
+//
+//        if (max > 1.0) {
+//            leftFrontPower /= max;
+//            rightFrontPower /= max;
+//            leftBackPower /= max;
+//            rightBackPower /= max;
+//        }
+//
+//        // Send powers to the wheels.
+//        FrontLeftWheel.setPower(leftFrontPower);
+//        FrontRightWheel.setPower(rightFrontPower);
+//        BackLeftWheel.setPower(leftBackPower);
+//        BackRightWheel.setPower(rightBackPower);
+        RotateRight((int)(yaw), .5, 10);
+        StrafeRight((int)(x*25.4), .5,10); //inches -> mm
+        MoveStraight((int)(y*25.4), .5, 10);
+
+
     }
     public void RotateLeft(int degree, double VelocityPercentage, int WaitTime) {
         int mmToTarget;

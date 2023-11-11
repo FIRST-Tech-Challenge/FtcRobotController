@@ -25,9 +25,9 @@ public class AutonBlueRight extends LinearOpMode {
 
         parkingSpot = mySparky.askParkingSpot();
         //drivePath = mySparky.askDrivePath();
-        mySpikeLocation = mySparky.spikeCam.getSpikeLocation();
 
-        telemetry.addData("SpikeValue", mySparky.spikeCam.spikeLocation);
+
+      //  telemetry.addData("SpikeValue", mySparky.spikeCam.spikeLocation);
         telemetry.addData("ParkingSpot", parkingSpot.toString());
         telemetry.addData("DrivePath", drivePath.toString());
         telemetry.update();
@@ -42,6 +42,7 @@ public class AutonBlueRight extends LinearOpMode {
 
 
         if(opModeIsActive()) {
+            mySpikeLocation = mySparky.spikeCam.getSpikeLocation();
             int extraVerticalMovement=0;
             mySparky.MoveStraight(-745, .5, 500);
             mySparky.AutonPlacePurplePixel(mySpikeLocation);

@@ -5,6 +5,10 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.util.Range;
+
+import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
+import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
 
 public class CyDogsSparky extends CyDogsChassis{
 
@@ -33,7 +37,7 @@ public class CyDogsSparky extends CyDogsChassis{
     public static final int BackUpDistanceFromSpike = 30;
     public static final int DistanceBetweenScoreBoardAprilTags = 150;
 
-    public static final int StandardAutonWaitTime = 500;
+    public static final int StandardAutonWaitTime = 450;
 
 
     public Servo Wrist;
@@ -44,6 +48,14 @@ public class CyDogsSparky extends CyDogsChassis{
     public DcMotor Intake1;
     public DcMotor Intake2;
     public DcMotor TheCaptain;
+    final double DESIRED_DISTANCE = 12.0;
+    final double SPEED_GAIN  =  0.02  ;
+    final double STRAFE_GAIN =  0.015 ;
+    final double TURN_GAIN   =  0.01  ;
+    final double MAX_AUTO_SPEED = 0.5;
+    final double MAX_AUTO_STRAFE= 0.5;
+    final double MAX_AUTO_TURN  = 0.3;
+    private static int targetTag =0;
 
 
 
@@ -100,7 +112,7 @@ public class CyDogsSparky extends CyDogsChassis{
     }
 
     public void initializePositions() {
-        DroneReleaseServo.setPosition(DroneSecure);
+        //DroneReleaseServo.setPosition(DroneSecure);
         Wrist.setPosition(WristForDriving);
         Elbow.setPosition(ElbowHomePosition);
         ArmLift.setTargetPosition(ArmHomePosition);
@@ -130,7 +142,10 @@ public class CyDogsSparky extends CyDogsChassis{
         Finger.setPosition(FingerClosed);
     }
 
-
+    public void SetLiftToZero() {
+        ArmLift.setPower(0.6);
+        ArmLift.setTargetPosition(0);
+    }
     public void SwingElbow() {
         if (ArmLift.getCurrentPosition() > 590) {
             if (!isElbowOpen) {
@@ -148,15 +163,15 @@ public class CyDogsSparky extends CyDogsChassis{
 
     public void scoreFromDrivingPositionAndReturn(int armHeight){
         raiseArmToScore(armHeight);
-        myOpMode.sleep(1500);
+        myOpMode.sleep(1000);
         SwingElbow();
         myOpMode.sleep(1500);
         raiseArmToScore(100);
-        myOpMode.sleep(2000);
+        myOpMode.sleep(800);
         openFinger();
-        myOpMode.sleep(500);
+        myOpMode.sleep(400);
         raiseArmToScore(600);
-        myOpMode.sleep(2000);
+        myOpMode.sleep(1700);
         SwingElbow();
         myOpMode.sleep(1500);
         returnLiftForDriving();
@@ -165,11 +180,57 @@ public class CyDogsSparky extends CyDogsChassis{
     public void AdjustToAprilTag(SpikeCam.location mySpike)
     {
         if(mySpike==SpikeCam.location.LEFT) {
-            StrafeLeft(DistanceBetweenScoreBoardAprilTags, .5, 500);
+            StrafeLeft(DistanceBetweenScoreBoardAprilTags, .5, 400);
         } else if (mySpike==SpikeCam.location.RIGHT) {
-            StrafeRight(DistanceBetweenScoreBoardAprilTags,.5,500);
+            StrafeRight(DistanceBetweenScoreBoardAprilTags,.5,400);
         }
     }
+
+    public void AdjustToAprilTag2(SpikeCam.location mySpike, CyDogsAprilTags myTagReader, CyDogsChassis.Alliance alliance)
+    {
+        //int targetTag;
+
+        if(mySpike==SpikeCam.location.LEFT) {
+            StrafeLeft(DistanceBetweenScoreBoardAprilTags, .5, 400);
+        } else if (mySpike==SpikeCam.location.RIGHT) {
+            StrafeRight(DistanceBetweenScoreBoardAprilTags,.5,400);
+        }
+
+        if(alliance==Alliance.BLUE) {
+                if(mySpike== SpikeCam.location.LEFT) {targetTag=1;}
+                else if (mySpike== SpikeCam.location.MIDDLE) {targetTag=2;}
+                else {targetTag=3;}
+        } else {
+            if(mySpike== SpikeCam.location.LEFT) {targetTag=4;}
+            else if (mySpike== SpikeCam.location.MIDDLE) {targetTag=5;}
+            else {targetTag=6;}
+        }
+
+        AprilTagDetection myDetection = myTagReader.GetAprilTag(targetTag);
+        double  drive           = 0;        // Desired forward power/speed (-1 to +1)
+        double  strafe          = 0;        // Desired strafe power/speed (-1 to +1)
+        double  turn            = 0;
+        // now what?
+
+        if(myDetection.id==targetTag) {
+            // Determine heading, range and Yaw (tag image rotation) error so we can use them to control the robot automatically.
+            double  rangeError      = (myDetection.ftcPose.range - DESIRED_DISTANCE);
+            double  headingError    = myDetection.ftcPose.bearing;
+            double  yawError        = myDetection.ftcPose.yaw;
+
+            // Use the speed and turn "gains" to calculate how we want the robot to move.
+            drive  = Range.clip(rangeError * SPEED_GAIN, -MAX_AUTO_SPEED, MAX_AUTO_SPEED);
+            turn   = Range.clip(headingError * TURN_GAIN, -MAX_AUTO_TURN, MAX_AUTO_TURN) ;
+            strafe = Range.clip(-yawError * STRAFE_GAIN, -MAX_AUTO_STRAFE, MAX_AUTO_STRAFE);
+        }
+
+        //moveRobot(drive, strafe, turn);
+        myOpMode.telemetry.addData("Manual","Drive %5.2f, Strafe %5.2f, Turn %5.2f ", drive, strafe, turn);
+        myOpMode.telemetry.addData("Manual", "x&5.2f","y&5.2f", myDetection.ftcPose.x, myDetection.ftcPose.y);
+        myOpMode.telemetry.update();
+
+    }
+
     public void dropPurplePixel(){
         Intake1.setPower(-0.2);
         Intake2.setPower(-0.2);
@@ -353,63 +414,6 @@ public class CyDogsSparky extends CyDogsChassis{
         }
     }
 
-    public void AutonShortSideCenterOnScoreBoardRed(SpikeCam.location mySpike) {
-        // this centers us on the scoreboard on the short side auton
-        int adjustHorizontalDistance = 0;
-        int adjustVerticalDistance = 0;
-
-        // First, let's get ourselves straight facing scoring area
-        //   Then, adjust position.  Remember dropping purple pixel moved us back from spike 20mm
-        if (mySpike == SpikeCam.location.LEFT) {
-            //Already facing the correct way
-            //We're 'BackUpDistanceFromSpike' closer to scoreboard
-            adjustHorizontalDistance = 40;
-            adjustVerticalDistance = -BackUpDistanceFromSpike-20;
-        } else if (mySpike == SpikeCam.location.MIDDLE) {
-            RotateLeft(90, .5, StandardAutonWaitTime);
-            // We're 50mm further away from start position
-            adjustHorizontalDistance = -50;
-        } else {
-            StrafeLeft(CyDogsChassis.OneTileMM, .5, CyDogsSparky.StandardAutonWaitTime);
-            MoveStraight(-CyDogsChassis.OneTileMM-160, .5, CyDogsSparky.StandardAutonWaitTime);
-            StrafeRight(CyDogsChassis.OneTileMM, .5, CyDogsSparky.StandardAutonWaitTime);
-            RotateRight(188, .5, StandardAutonWaitTime);
-            // We're 'BackUpDistanceFromSpike' further from scoreboard
-            adjustVerticalDistance = -BackUpDistanceFromSpike;
-        }
-
-        StrafeRight(adjustHorizontalDistance,.5,StandardAutonWaitTime);
-        MoveStraight(adjustVerticalDistance,.5,StandardAutonWaitTime);
-    }
-
-    public void AutonShortSideCenterOnScoreBoardBlue(SpikeCam.location mySpike) {
-        // this centers us on the scoreboard on the short side auton
-        int adjustHorizontalDistance = 0;
-        int adjustVerticalDistance = 0;
-
-        // First, let's get ourselves straight facing scoring area
-        //   Then, adjust position.  Remember dropping purple pixel moved us back from spike 20mm
-        if (mySpike == SpikeCam.location.RIGHT) {
-            //Already facing the correct way
-            //We're 'BackUpDistanceFromSpike' closer to scoreboard
-            adjustHorizontalDistance = 40;
-            adjustVerticalDistance = -BackUpDistanceFromSpike-20;
-        } else if (mySpike == SpikeCam.location.MIDDLE) {
-            RotateRight(90, .5, StandardAutonWaitTime);
-            // We're 50mm further away from start position
-            adjustHorizontalDistance = -50;
-        } else {
-            StrafeRight(CyDogsChassis.OneTileMM, .5, CyDogsSparky.StandardAutonWaitTime);
-            MoveStraight(-CyDogsChassis.OneTileMM-160, .5, CyDogsSparky.StandardAutonWaitTime);
-            StrafeLeft(CyDogsChassis.OneTileMM, .5, CyDogsSparky.StandardAutonWaitTime);
-            RotateLeft(188, .5, StandardAutonWaitTime);
-            // We're 'BackUpDistanceFromSpike' further from scoreboard
-            adjustVerticalDistance = -BackUpDistanceFromSpike;
-        }
-
-        StrafeLeft(adjustHorizontalDistance,.5,StandardAutonWaitTime);
-        MoveStraight(adjustVerticalDistance,.5,StandardAutonWaitTime);
-    }
     public void AutonCenterOnScoreboardBasedOnPath(Direction myPath) {
         if(myPath==Direction.LEFT) {
             StrafeRight(OneTileMM,.5,StandardAutonWaitTime);
