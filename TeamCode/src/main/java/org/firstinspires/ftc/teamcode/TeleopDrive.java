@@ -9,19 +9,24 @@ import com.qualcomm.robotcore.hardware.TouchSensor;
 @TeleOp(name = "FC_square_TO_drive", group = "Testing")
 public class TeleopDrive extends LinearOpMode {
     private SetDriveMotors setDriveMotorsObj;
-    //private SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
-    private TouchSensor touchDown;
 
-    private SlideLift slideLiftObj = new SlideLift();
-    private Intake intakeObj = new Intake();
-    private Hanger hangerObj = new Hanger();
-
-    private Button buttonA;
-    private Button buttonB;
+    private SlideLift slideLiftObj;
+    private Intake intakeObj;
+    private Hanger hangerObj;
+    private Button driverButtonA;
+    private Button driverButtonB;
 
     public void Setup(){
         setDriveMotorsObj = new SetDriveMotors(hardwareMap, gamepad1);
-        touchDown = hardwareMap.touchSensor.get("touchDown");
+        //private SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
+        TouchSensor touchDown = hardwareMap.touchSensor.get("touchDown");
+
+        slideLiftObj = new SlideLift(hardwareMap);
+        intakeObj = new Intake(hardwareMap);
+        hangerObj = new Hanger(hardwareMap);
+
+        driverButtonA = new Button(gamepad2, Button.NAME.A);
+        driverButtonB = new Button(gamepad2, Button.NAME.B);
     }
 
     public boolean atRest(){
@@ -34,7 +39,7 @@ public class TeleopDrive extends LinearOpMode {
     }
 
     @Override
-    public void runOpMode(){
+    public void runOpMode() throws InterruptedException {
         Setup();
         waitForStart();
         while(opModeIsActive()){
@@ -50,12 +55,15 @@ public class TeleopDrive extends LinearOpMode {
 //            }
             setDriveMotorsObj.driveCommands(horizontal, vertical, turn, goFast);
 
-            //slideLiftObj.setLiftPower(gamepad2.left_stick_y, touchDown); not ready to test yet
+            //slideLiftObj.setLiftPower(gamepad2.left_stick_y, touchDown); //not ready to test yet
 
-            intakeObj.setIntakePower(buttonA);
-            buttonA.updateButton(gamepad2);
-            hangerObj.setHangerPower(buttonB);
-            buttonB.updateButton(gamepad2);
+            intakeObj.setIntakePower(driverButtonA);
+            hangerObj.setHangerPower(driverButtonB);
+            updateButtons();
         }
+    }
+    private void updateButtons(){
+        driverButtonA.updateButton(gamepad2);
+        driverButtonB.updateButton(gamepad2);
     }
 }

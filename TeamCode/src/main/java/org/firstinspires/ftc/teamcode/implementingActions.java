@@ -30,30 +30,30 @@ public class implementingActions {
                 .getList();
     }
 
-    public static void main(String[] args) {
-        // Write your code here
-        System.out.println("Hello alex!");
-        Motor myMotor = new Motor(hardwareMap, "lift", 0);
-        Timer myTimer = new Timer("time to lunch");
-        ArrayList<Action> stuff;
-        if (false)
-            stuff = buildFirstMethod(myMotor);
-        else
-            stuff = buildSecondMethod(myMotor, myTimer);
-
-        int i = 0;
-        for (int step = 0; i < stuff.size(); step++) {
-            System.err.println("Step " + step + " with stuff action " + i);
-            if (stuff.get(i).performAction()) {
-                System.err.println("  SUCCESS, go to next stuff");
-                i++;
-            } else {
-                System.err.println("  failure, go on");
-            }
-            myMotor.updatePosition();
-            myTimer.updateTime();
-        }
-        System.err.println("Bravo Alex, we are done");
-    }
+//    public static void main(String[] args) {
+//        // Write your code here
+//        System.out.println("Hello alex!");
+//        Motor myMotor = new Motor(hardwareMap, "lift", 0);
+//        Timer myTimer = new Timer("time to lunch");
+//        ArrayList<Action> stuff;
+//        if (false)
+//            stuff = buildFirstMethod(myMotor);
+//        else
+//            stuff = buildSecondMethod(myMotor, myTimer);
+//
+//        int i = 0;
+//        for (int step = 0; i < stuff.size(); step++) {
+//            System.err.println("Step " + step + " with stuff action " + i);
+//            if (stuff.get(i).performAction()) {
+//                System.err.println("  SUCCESS, go to next stuff");
+//                i++;
+//            } else {
+//                System.err.println("  failure, go on");
+//            }
+//            myMotor.updatePosition();
+//            myTimer.updateTime();
+//        }
+//        System.err.println("Bravo Alex, we are done");
+//    }
 }
 

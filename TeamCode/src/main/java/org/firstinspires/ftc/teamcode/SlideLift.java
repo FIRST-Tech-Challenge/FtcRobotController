@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode;
 import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.hardwareMap;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.TouchSensor;
 
 import org.firstinspires.ftc.teamcode.tools.DeadzoneSquare;
@@ -13,7 +14,7 @@ public class SlideLift {
     private final double MAX_LIFT_POWER = 0.5;
     private final DeadzoneSquare deadzoneObj = new DeadzoneSquare(0.1, 0.25, MAX_LIFT_POWER);
 
-    public SlideLift() {
+    public SlideLift(HardwareMap hardwareMap) {
         slideMotor = hardwareMap.dcMotor.get("slideMotor");
     }
 

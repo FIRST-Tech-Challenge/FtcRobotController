@@ -1,8 +1,8 @@
 package org.firstinspires.ftc.teamcode;
 
-import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.hardwareMap;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.HardwareMap;
 
 public class Hanger {
     private final DcMotor hangerMotor;
@@ -10,7 +10,7 @@ public class Hanger {
     private final double HANGER_REVOLUTIONS = 0.2; //need to test to see how many revolutions
 
 
-    public Hanger() {
+    public Hanger(HardwareMap hardwareMap) {
         hangerMotor = hardwareMap.dcMotor.get("hangerMotor");
         hangerMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         hangerMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);

@@ -1,15 +1,15 @@
 package org.firstinspires.ftc.teamcode;
 
-import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.hardwareMap;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.HardwareMap;
 
 public class Intake {
     private final DcMotor intakeMotor;
     private double INTAKE_POWER;
     private boolean runIntake = false;
 
-    public Intake() {
+    public Intake(HardwareMap hardwareMap) {
         intakeMotor = hardwareMap.dcMotor.get("intakeMotor");
     }
 
