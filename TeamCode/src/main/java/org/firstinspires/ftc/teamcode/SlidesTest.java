@@ -19,6 +19,8 @@ public class SlidesTest extends LinearOpMode {
         bot = Bot.getInstance(this);
         gp1 = new GamepadEx(gamepad1);
         gp2 = new GamepadEx(gamepad2);
+
+
         bot.reverseMotors();
         bot.slides.resetEncoder();
 
@@ -31,6 +33,7 @@ public class SlidesTest extends LinearOpMode {
 
             drive();
             runSlides();
+            telemetry.addData("slide position:",gp2.getLeftY());
 
             /*
 
