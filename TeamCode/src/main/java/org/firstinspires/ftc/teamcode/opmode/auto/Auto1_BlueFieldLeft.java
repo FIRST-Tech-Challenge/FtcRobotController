@@ -35,8 +35,14 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
+import org.firstinspires.ftc.teamcode.pipeline.GripPipelineGreenPixelRGB;
 import org.firstinspires.ftc.teamcode.utility.GamepiecePosition;
 import org.opencv.core.Point;
+import org.openftc.easyopencv.OpenCvCamera;
+import org.openftc.easyopencv.OpenCvCameraFactory;
+import org.openftc.easyopencv.OpenCvCameraRotation;
+import org.openftc.easyopencv.OpenCvWebcam;
 
 /*
  * This file contains an example of a Linear "OpMode".
@@ -76,15 +82,44 @@ public class Auto1_BlueFieldLeft extends OpMode {
     private DcMotor rightFrontDrive = null;
     private DcMotor rightBackDrive = null;
 
+    static final int STREAM_WIDTH = 1280; // modify for your camera
+    static final int STREAM_HEIGHT = 960; // modify for your camera
+    OpenCvWebcam webcam;
+    GripPipelineGreenPixelRGB pipeline;
 
     @Override
     public void init_loop(){
-        GamepiecePosition gamepiecePOS = new GamepiecePosition(new Point(0, 20));
+        GamepiecePosition gamepiecePOS = new GamepiecePosition(pipeline.avgContourCoord());
+        Point avgLoc = pipeline.avgContourCoord();
+        telemetry.addData("AvgContour.x",avgLoc.x);
+        telemetry.addData("AvgContour.y",avgLoc.y);
         telemetry.addData("location", gamepiecePOS.getPOS());
+        telemetry.update();
     }
     @Override
     public void init() {
 
+        int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
+        WebcamName webcamName = null;
+        webcamName = hardwareMap.get(WebcamName.class, "TinyCam"); // put your camera's name here
+        webcam = OpenCvCameraFactory.getInstance().createWebcam(webcamName, cameraMonitorViewId);
+        pipeline = new GripPipelineGreenPixelRGB();
+        webcam.setPipeline(pipeline);
+
+        webcam.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener()
+        {
+            @Override
+            public void onOpened()
+            {
+                webcam.startStreaming(STREAM_WIDTH, STREAM_HEIGHT, OpenCvCameraRotation.UPRIGHT);
+            }
+
+            @Override
+            public void onError(int errorCode) {
+                telemetry.addData("Camera Failed","");
+                telemetry.update();
+            }
+        });
 
         // Initialize the hardware variables. Note that the strings used here must correspond
         // to the names assigned during the robot configuration step on the DS or RC devices.

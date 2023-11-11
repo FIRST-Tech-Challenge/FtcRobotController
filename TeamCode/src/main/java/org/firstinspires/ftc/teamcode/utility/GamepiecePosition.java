@@ -12,7 +12,7 @@ public class GamepiecePosition {
         String location;
         if (gamepieceLocation.x <60 && gamepieceLocation.x > 0 ){
             location = "left";
-        } else if (gamepieceLocation.x > 60) {
+        } else if (gamepieceLocation.x >= 60) {
             location = "center";
         }else{
             location = "right";
