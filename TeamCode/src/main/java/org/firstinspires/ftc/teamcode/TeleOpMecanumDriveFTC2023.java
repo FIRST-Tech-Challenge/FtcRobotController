@@ -148,6 +148,7 @@ public class TeleOpMecanumDriveFTC2023 extends OpMode{
         } else if(left1y < -0.1) {
             driveStraight(-1*left1y*baseSpeed,-1);
         }
+        //-1 = left 1 = right
         if (left1x > 0.1) {
             driveSide(left1x*baseSpeed,-1);
 
@@ -165,7 +166,9 @@ public class TeleOpMecanumDriveFTC2023 extends OpMode{
         if (right2y > 0.1) {
             driveArm(right2y);
         } else if (right2y < -0.1) {
-            driveArm(right2y/2);
+            driveArm(0.2);
+        } else if (limitSwitchOne = true) {
+            driveArm(1);
         } else {
             driveArm(0.55);
         }
@@ -181,6 +184,8 @@ public class TeleOpMecanumDriveFTC2023 extends OpMode{
             claw.setPosition(0.4);
 
         }
+
+
 //        frontLeft.setPower(lefty - leftx + right);
 //        frontRight.setPower(lefty + leftx + right);
 //        backLeft.setPower(lefty - leftx - right);

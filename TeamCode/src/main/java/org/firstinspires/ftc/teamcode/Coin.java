@@ -94,7 +94,7 @@ public class Coin extends OpMode{
         double lefty;
         double leftx;
         double right;
-
+        boolean limitSwitchOne;
         // Run wheels in tank mode (note: The joystick goes negative when pushed forward, so negate it)
         lefty = gamepad1.left_stick_y;
         leftx = gamepad1.left_stick_x;
