@@ -14,8 +14,10 @@ public class TeleopDrive extends LinearOpMode {
 
     private SlideLift slideLiftObj = new SlideLift();
     private Intake intakeObj = new Intake();
+    private Hanger hangerObj = new Hanger();
 
     private Button buttonA;
+    private Button buttonB;
 
     public void Setup(){
         setDriveMotorsObj = new SetDriveMotors(hardwareMap, gamepad1);
@@ -48,10 +50,12 @@ public class TeleopDrive extends LinearOpMode {
 //            }
             setDriveMotorsObj.driveCommands(horizontal, vertical, turn, goFast);
 
-            slideLiftObj.setLiftPower(gamepad2.left_stick_y, touchDown);
+            //slideLiftObj.setLiftPower(gamepad2.left_stick_y, touchDown); not ready to test yet
 
             intakeObj.setIntakePower(buttonA);
             buttonA.updateButton(gamepad2);
+            hangerObj.setHangerPower(buttonB);
+            buttonB.updateButton(gamepad2);
         }
     }
 }
