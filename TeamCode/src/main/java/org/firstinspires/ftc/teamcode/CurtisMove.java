@@ -79,10 +79,10 @@ public class CurtisMove extends OpMode {
         turn = gamepad1.right_stick_x;
 
         // Set motor power
-        leftFrontPower = Range.clip(drive + turn + strafe, -MAXDRIVEPOWER, MAXDRIVEPOWER);
-        rightFrontPower = Range.clip(drive - turn - strafe, -MAXDRIVEPOWER, MAXDRIVEPOWER);
-        leftBackPower = Range.clip(drive + turn - strafe, -MAXDRIVEPOWER, MAXDRIVEPOWER);
-        rightBackPower = Range.clip(drive - turn + strafe, -MAXDRIVEPOWER, MAXDRIVEPOWER);
+        leftFrontPower = Range.clip(drive - turn - strafe, -MAXDRIVEPOWER, MAXDRIVEPOWER);
+        rightFrontPower = Range.clip(drive + turn + strafe, -MAXDRIVEPOWER, MAXDRIVEPOWER);
+        leftBackPower = Range.clip(drive - turn + strafe, -MAXDRIVEPOWER, MAXDRIVEPOWER);
+        rightBackPower = Range.clip(drive + turn - strafe, -MAXDRIVEPOWER, MAXDRIVEPOWER);
 
 
         // arm
