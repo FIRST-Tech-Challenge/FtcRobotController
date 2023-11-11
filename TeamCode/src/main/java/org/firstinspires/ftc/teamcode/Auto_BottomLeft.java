@@ -42,16 +42,20 @@ public class Auto_BottomLeft extends LinearOpMode {
 
         if (opModeIsActive()) {
             while (opModeIsActive() && !isStopRequested()) {
-                /* Code for forward/backward placing pixels */
 
                 robot.driveRobot(-FORWARD_SPEED, 0);
-                sleep(6700);
+                sleep(6100);
+                robot.driveRobot(0,0);
+
+                robot.moveArmFullSpeed(RobotHardware.ARM_DOWN_POWER);
+                sleep(2700);
+                robot.stopArm();
 
                 robot.driveRobot(FORWARD_SPEED, 0);
-                sleep(5100);
+                sleep(4500);
 
                 robot.driveRobot(0,TURNSPEED);
-                sleep(5400);
+                sleep(5600);
 
                 robot.driveRobot(FORWARD_SPEED,0);
                 sleep(7800);
