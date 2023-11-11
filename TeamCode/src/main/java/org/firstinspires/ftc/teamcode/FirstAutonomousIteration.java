@@ -154,6 +154,8 @@ public class FirstAutonomousIteration extends LinearOpMode {
     static final double     P_TURN_GAIN            = 0.02;     // Larger is more responsive, but also less stable
     static final double     P_DRIVE_GAIN           = 0.03;     // Larger is more responsive, but also less stable
 
+    static final boolean TEST_ONLY = false;
+
     Arm arm = new Arm(this);
     Claw claw       = new Claw(this);
     Wrist wrist = new Wrist(this);
@@ -174,6 +176,8 @@ public class FirstAutonomousIteration extends LinearOpMode {
     private static final String[] LABELS = {
             "Cube"
     };
+
+    private static final int MOVE_BACK_AFTER_DROP = 3;
 
     /**
      * The variable to store our instance of the TensorFlow Object Detection processor.
@@ -317,23 +321,30 @@ public class FirstAutonomousIteration extends LinearOpMode {
 
     public void dropTwoPickOne() {
         double currentHeading = getHeading();
+        arm.moveArmDown();
         wrist.wristDown();
-        waitRuntime(.5);
+        waitRuntime(1);
         claw.openClaw();
-        waitRuntime(.5);
+        waitRuntime(1);
         wrist.wristUp();
-        waitRuntime(.5);
-        driveStraight(DRIVE_SPEED, -2, currentHeading);
+        waitRuntime(1);
+        driveStraight(DRIVE_SPEED, -MOVE_BACK_AFTER_DROP, currentHeading);
         wrist.wristDown();
-        waitRuntime(.5);
+        waitRuntime(1);
         claw.closeClaw();
-        waitRuntime(.5);
+        waitRuntime(1);
         wrist.wristUp();
-        waitRuntime(.5);
+        waitRuntime(1);
     }
 
     public boolean isCubeThere() {
+
         List<Recognition> currentRecognitions = tfod.getRecognitions();
+
+        if (TEST_ONLY) {
+            return true;
+        }
+
         if (currentRecognitions.size() > 0) {
             msg = currentRecognitions.get(0).getLabel();
             sendTelemetry(true);
@@ -347,6 +358,8 @@ public class FirstAutonomousIteration extends LinearOpMode {
         initHardware();
 
         waitRuntime(3);
+        arm.moveArmDown();
+        wrist.wristUp();
         claw.closeClaw();
 
 
@@ -359,7 +372,7 @@ public class FirstAutonomousIteration extends LinearOpMode {
         //dropTwoPickOne();
         FoundTeamProp cubeIsFound = FoundTeamProp.FOUND_NONE;
 
-        List<Integer> headingsToCheck = Arrays.asList(-5, 30, -45);
+        List<Integer> headingsToCheck = Arrays.asList(-5, -45, 20);
 
         driveStraight(DRIVE_SPEED, 11, 0.0);
         waitRuntime(0.1);
@@ -396,24 +409,49 @@ public class FirstAutonomousIteration extends LinearOpMode {
 
 
         if (cubeIsFound == FoundTeamProp.FOUND_MIDDLE) {
-            turnToHeading(TURN_SPEED, -15);
-            holdHeading(TURN_SPEED, -15, 0.05);
+            turnToHeading(TURN_SPEED, -14);
+            holdHeading(TURN_SPEED, -14, 0.05);
 
-            driveStraight(DRIVE_SPEED, 11, -15.0);
+            driveStraight(DRIVE_SPEED, 10, -14.0);
             waitRuntime(0.1);
             dropTwoPickOne();
+            driveStraight(DRIVE_SPEED, -(10-MOVE_BACK_AFTER_DROP), -14.0);
+
+
+
 
         } else if (cubeIsFound == FoundTeamProp.FOUND_LEFT) {
-
-            // TODO: fill in code here
+            turnToHeading(TURN_SPEED, 90);
+            holdHeading(TURN_SPEED, 90, 0.05);
+            driveStraight(DRIVE_SPEED, -2, 90);
+            dropTwoPickOne();
+            driveStraight(DRIVE_SPEED, -(-2-MOVE_BACK_AFTER_DROP), 90);
 
         } else {
 
-            // TODO: assume if not found middle or left, it is on te right
-
+            turnToHeading(TURN_SPEED, -45);
+            holdHeading(TURN_SPEED, -45, 0.05);
+            driveStraight(DRIVE_SPEED, 3.5, -45);
+            dropTwoPickOne();
+            driveStraight(DRIVE_SPEED, -(3.5-MOVE_BACK_AFTER_DROP), -45);
         }
 
 
+        turnToHeading(TURN_SPEED, 0);
+
+
+        driveStraight(DRIVE_SPEED, -14, 0);
+        turnToHeading(TURN_SPEED, 95);
+        holdHeading(TURN_SPEED, 95, 0.05);
+
+        driveStraight(0.1, 56, 90);
+
+        waitRuntime(0.1);
+        turnToHeading(TURN_SPEED, 0);
+        waitRuntime(0.1);
+        driveStraight(DRIVE_SPEED, 15, 0);
+        waitRuntime(0.1);
+        turnToHeading(TURN_SPEED, -90);
 
 //
 //        // Step through each leg of the path,
