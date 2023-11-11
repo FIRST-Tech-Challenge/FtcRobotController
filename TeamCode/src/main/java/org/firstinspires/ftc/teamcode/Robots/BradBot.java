@@ -212,11 +212,15 @@ public class BradBot extends BasicRobot {
     boolean down = gampad.readGamepad(op.gamepad2.dpad_down, "gamepad2_dpad_down", "lift down");
     boolean right = gampad.readGamepad(op.gamepad1.dpad_right, "gamepad1_dpad_right", "toggleButterfly");
     boolean left = gampad.readGamepad(op.gamepad1.dpad_left, "gamepad1_dpad_left", "toggleClamp");
+
+    boolean isX2 = gampad.readGamepad(op.gamepad2.x, "gamepad2_x", "toggleFieldCentricSlow");
+    boolean isY2 = gampad.readGamepad(op.gamepad2.y, "gamepad2_y", "toggleFieldCentricSlow");
+
+
     float manualUp = op.gamepad1.right_trigger;
     float manualDown = op.gamepad1.left_trigger;
     float hangUp = op.gamepad2.right_trigger;
     float hangDown = op.gamepad2.left_trigger;
-    boolean isX2 = gampad.readGamepad(op.gamepad2.b, "gamepad2_b", "resetSlideTicks");
     if (isA) {
       arm.flipTo(UNFLIPPED);
       lift.update();
@@ -245,8 +249,7 @@ public class BradBot extends BasicRobot {
       intake.reverseIntake();
     }
     if (isB) {
-      if (launcher.getLoaded()) launcher.shoot();
-      else launcher.load();
+      wrist.flipTo(Wrist.WristTargetStates.HOLD);
     }
     if (up) {
       if (!FLIPPED.getState()) {
@@ -282,6 +285,13 @@ public class BradBot extends BasicRobot {
     if (isX) {
       roadrun.toggleFieldCentric();
     }
+    if (isX2) {
+      preloader.deposit();
+    }
+    if (isY2) {
+      preloader.load();
+    }
+
     roadrun.setWeightedDrivePower(
         new Pose2d(
             -op.gamepad1.left_stick_y, -op.gamepad1.left_stick_x, -op.gamepad1.right_stick_x));

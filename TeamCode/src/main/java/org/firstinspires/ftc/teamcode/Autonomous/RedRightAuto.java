@@ -59,7 +59,7 @@ public class RedRightAuto extends LinearOpMode {
                 .build();
         while(!isStarted()){
 //            pos=0;
-        } //willy phone password 272714
+        }
         while(!isStopRequested()&&opModeIsActive()&&!robot.queuer.isFullfilled()){
             robot.followTrajSeq(preload[pos]);
             robot.preloadAuto();
