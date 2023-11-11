@@ -41,6 +41,7 @@ public class Robot {
     Servo holderClamp;
     Servo flipper;
     Servo hook;
+    Servo planeLauncher;
     Servo spikeServo;
     IMU imu;
     double prevError = 0;
@@ -69,6 +70,7 @@ public class Robot {
         arm = hardwareMap.servo.get("arm");
         holderClamp = hardwareMap.servo.get("holderClamp");
         hook = hardwareMap.servo.get("linearLocker");
+        planeLauncher = hardwareMap.servo.get("planeLauncher");
         spikeServo = hardwareMap.servo.get("spikeServo");
         //int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
         //webcam = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "Webcam 1"), cameraMonitorViewId);
@@ -119,7 +121,7 @@ public class Robot {
         setServoPosBlocking(holderClamp, holderClampClosed);
         Log.d("vision", "autoOuttake: holder closed");
 
-        moveLinearSlideByTicks(-2400);
+        moveLinearSlideByTicks(-2600);
         Log.d("vision", "autoOuttake: move lin s");
 
         armPos = 0.845; //up (outtake) position
@@ -474,11 +476,15 @@ public class Robot {
         while (opMode.opModeIsActive()) {
             setServoPosBlocking(holderClamp, 0.5);
             setServoPosBlocking(hook, 0.5);
+            setServoPosBlocking(spikeServo, 0.45);
+
             if (markerPosRed == MarkerDetector.MARKER_POSITION.RIGHT) {
-                mecanumBlocking(11, false, 0.5);
+                Log.d("vision", "shortMoveToBoard: right");
+                mecanumBlocking(10, false, 0.5);
                 setHeading(0, 0.25);
                 straightBlocking(18, false, 0.5);
                 setHeading(0, 0.7);
+                setServoPosBlocking(spikeServo, 0.2);
                 straightBlocking(8, true, 0.7);
                 setHeading(-90, 0.7);
                 straightBlocking(19, false, 0.7);
@@ -487,11 +493,13 @@ public class Robot {
                 setHeading(-90, 0.7);
                 break;
             } else if (markerPosRed == MarkerDetector.MARKER_POSITION.LEFT) {
-                straightBlocking(18, false, 0.25); //forward
+                Log.d("vision", "shortMoveToBoard: left");
+                straightBlocking(16, false, 0.25); //forward
                 setHeading(45, 0.25); //turn
-                straightBlocking(7, false, 0.25); //forward
+                straightBlocking(10, false, 0.25); //forward
                 setHeading(45, 0.25);
-                straightBlocking(12, true, 0.7); //dropoff, backward
+                setServoPosBlocking(spikeServo, 0.2);
+                straightBlocking(15, true, 0.9); //dropoff, backward
                 setHeading(-90, 0.7); //turn
                 straightBlocking(24, false, 0.7);
                 setHeading(-90, 0.7);
@@ -499,11 +507,13 @@ public class Robot {
                 setHeading(-90, 0.7);
                 break;
             } else { //center, default
-                mecanumBlocking(7, false, 0.3); //go left
+                Log.d("vision", "shortMoveToBoard: " + markerPosRed);
+                mecanumBlocking(3, false, 0.5); //go left
                 setHeading(0, 0.25);
-                straightBlocking(28.5, false, 0.25); //go forward
+                straightBlocking(32, false, 0.25); //go forward
                 setHeading(0, 0.25);
-                straightBlocking(6, true, 0.7); //dropoff & move back
+                setServoPosBlocking(spikeServo, 0.2);
+                straightBlocking(9.5, true, 0.7); //dropoff & move back
                 setHeading(-90, 0.7);
                 straightBlocking(22, false, 0.7);
                 mecanumBlocking(4, true, 0.4);
@@ -595,11 +605,13 @@ public class Robot {
         while (opMode.opModeIsActive()) {
             setServoPosBlocking(holderClamp, 0.5);
             setServoPosBlocking(hook, 0.5);
+            setServoPosBlocking(spikeServo, 0.45);
             if (markerPosRed == MarkerDetector.MARKER_POSITION.RIGHT) { //RIGHT
                 straightBlocking(20, false, 0.25); //forward
                 setHeading(45 * polarity, 0.25); //turn right
                 straightBlocking(8, false, 0.7); //forward
                 setHeading(45 * polarity, 0.25);
+                setServoPosBlocking(spikeServo,0.2);
                 straightBlocking(12, true, 0.7); //dropoff, back
                 setHeading(0, 0.7); //turn back
                 straightBlocking(34, false, 0.7); //forward past spike
@@ -614,6 +626,7 @@ public class Robot {
                 setHeading(-45 * polarity, 0.25); //turn
                 straightBlocking(7, false, 0.7); //forward
                 setHeading(-45 * polarity, 0.25);
+                setServoPosBlocking(spikeServo,0.2);
                 straightBlocking(8, true, 0.7); //dropoff, backward
                 setHeading(0, 0.7); //turn
                 mecanumBlocking(1, false, 0.5); //mecanum right
@@ -627,17 +640,18 @@ public class Robot {
                 break;
             } else { //center, default
                 Log.d("vision", "moveToMarker: center or default");
-                mecanumBlocking(4, true, 0.5); //go left
+                mecanumBlocking(8, true, 0.5); //go left
                 setHeading(0, 0.6);
                 straightBlocking(28.5, false, 0.5); //go forward
                 setHeading(0, 0.6);
-                straightBlocking(6, true, 0.7); //dropoff & move back
+                setServoPosBlocking(spikeServo,0.2);
+                straightBlocking(6, true, 0.9); //dropoff & move back
                 setHeading(0, 0.6);
                 mecanumBlocking(12, true, 0.25); //move left
                 setHeading(0, 0.7);
                 straightBlocking(24, false, 0.7); //go forward & around marker
                 setHeading(90 * polarity, 0.7); //turn
-                straightBlocking(84, false, 0.7); //forward to red line
+                straightBlocking(80, false, 0.7); //forward to red line
                 setHeading(90 * polarity, 0.7);
                 mecanumBlocking(29, false,  0.5); //mecanum directly in front of board
                 setHeading(90 * polarity, 0.7);
