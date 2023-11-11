@@ -69,7 +69,6 @@ public class Autonomous extends LinearOpMode {
         left_back.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         right_front.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         right_back.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        arm.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
         left_front.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         left_back.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
@@ -90,10 +89,14 @@ public class Autonomous extends LinearOpMode {
         arm.setPower(0.075);
 
         while (!isStarted() && !isStopRequested()) {
+            telemetry.addLine("Ensure pixel is in right side of box!!");
             telemetry.addData("Prop x value: ", pipeline.getJunctionPoint().x);
             telemetry.addData("Prop area: ", pipeline.getPropAreaAttr());
             telemetry.update();
         }
+        arm.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        arm.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        arm.setPower(0.075);
         double propX = pipeline.getJunctionPoint().x;
         double propArea = pipeline.getPropAreaAttr();
 
@@ -131,14 +134,16 @@ public class Autonomous extends LinearOpMode {
         } else { // middle spike mark
             telemetry.addLine("Middle spike mark");
             telemetry.update();
+            moveForward(0.25, 400);
             moveForward(-0.25, 400);
             // eject pixel- we're already there
-            intake.setPower(-1);
+            intake.setPower(-0.25);
             sleep(1000);
             intake.setPower(0);
-            moveForward(-0.25, 400);
+            moveForward(0.25, 100);
             // go to backboard
-            moveTurning(0.25, 2200);
+            moveForward(-0.25, 400);
+            moveTurning(0.25, 2500);
             moveForward(-0.25, 3200);
         }
 
