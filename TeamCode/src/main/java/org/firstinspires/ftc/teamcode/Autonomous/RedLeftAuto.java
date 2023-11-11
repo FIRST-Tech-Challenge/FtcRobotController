@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.Autonomous;
 
+import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.op;
 import static java.lang.Math.toRadians;
 
 import com.acmerobotics.dashboard.config.Config;
@@ -24,18 +25,18 @@ public class RedLeftAuto extends LinearOpMode {
 
         spikePosition[0] = robot.roadrun.trajectorySequenceBuilder(new Pose2d(-38.5, -56, Math.toRadians(-90)))
                 .setReversed(true)
-                .lineToLinearHeading(new Pose2d(-49, -37, toRadians(-90)))
+                .lineToLinearHeading(new Pose2d(-50, -37, toRadians(-90)))
                 .addTemporalMarker(robot::done)
                 .build();
         spikePosition[1] = robot.roadrun.trajectorySequenceBuilder(new Pose2d(-38.5, -56, Math.toRadians(-90)))
                 .setReversed(true)
-                .lineToLinearHeading(new Pose2d(-35.5, -30, toRadians(-90)))
+                .lineToLinearHeading(new Pose2d(-35.5, -29, toRadians(-90)))
                 .addTemporalMarker(robot::done)
                 .build();
         spikePosition[2] = robot.roadrun.trajectorySequenceBuilder(new Pose2d(-38.5, -56, Math.toRadians(-90)))
                 .setReversed(true)
                 .lineToLinearHeading(new Pose2d(-38.5, -32, toRadians(180)))
-                .lineToLinearHeading(new Pose2d(-29.5, -32, toRadians(180)))
+                .lineToLinearHeading(new Pose2d(-29, -32, toRadians(190)))
                 .addTemporalMarker(robot::done)
                 .build();
         TrajectorySequence[] throughTruss = new TrajectorySequence[3];
@@ -44,7 +45,7 @@ public class RedLeftAuto extends LinearOpMode {
                 .lineToLinearHeading(new Pose2d(-40, -58.5, toRadians(180)))
                 .setReversed(true)
                 .splineTo(new Vector2d(10, -56.5), toRadians(5))
-                .splineTo(new Vector2d(56, -24.5), toRadians(0))
+                .splineTo(new Vector2d(54, -24.5), toRadians(0))
                 .addTemporalMarker(robot::done)
                 .build();
         throughTruss[1] = robot.roadrun.trajectorySequenceBuilder(spikePosition[1].end())
@@ -52,7 +53,7 @@ public class RedLeftAuto extends LinearOpMode {
                 .lineToLinearHeading(new Pose2d(-40, -58.5, toRadians(180)))
                 .setReversed(true)
                 .splineTo(new Vector2d(10, -56.5), toRadians(5))
-                .splineTo(new Vector2d(59, -27.5), toRadians(0))
+                .splineTo(new Vector2d(54, -27.5), toRadians(0))
                 .addTemporalMarker(robot::done)
                 .build();
         throughTruss[2] = robot.roadrun.trajectorySequenceBuilder(spikePosition[2].end())
@@ -60,24 +61,26 @@ public class RedLeftAuto extends LinearOpMode {
                 .lineToLinearHeading(new Pose2d(-40, -57.5, toRadians(180)))
                 .setReversed(true)
                 .splineTo(new Vector2d(10, -54.5), toRadians(5))
-                .splineTo(new Vector2d(59, -33.5), toRadians(0))
+                .splineTo(new Vector2d(54, -35.5), toRadians(0))
                 .addTemporalMarker(robot::done)
                 .build();
         TrajectorySequence[] dropAndPark = new TrajectorySequence[3];
         dropAndPark[0]= robot.roadrun.trajectorySequenceBuilder(throughTruss[0].end())
-                .lineToLinearHeading(new Pose2d(56, -52, toRadians(180)))
+                .lineToLinearHeading(new Pose2d(54, -52, toRadians(180)))
                 .addTemporalMarker(robot::done)
                 .build();
         dropAndPark[1]= robot.roadrun.trajectorySequenceBuilder(throughTruss[1].end())
-                .lineToLinearHeading(new Pose2d(56, -52, toRadians(180)))
+                .lineToLinearHeading(new Pose2d(54, -52, toRadians(180)))
                 .addTemporalMarker(robot::done)
                 .build();
         dropAndPark[2] = robot.roadrun.trajectorySequenceBuilder(throughTruss[2].end())
-                .lineToLinearHeading(new Pose2d(52, -45, toRadians(180)))
+                .lineToLinearHeading(new Pose2d(52, -52, toRadians(180)))
                     .addTemporalMarker(robot::done)
                 .build();
         while(!isStarted()){
             pos = robot.getSpikePos(); //willy negligible cock length
+            op.telemetry.addData("spike pos", pos);
+            op.telemetry.update();
             robot.update();
         }
         while(!isStopRequested()&&opModeIsActive()&&!robot.queuer.isFullfilled()){
