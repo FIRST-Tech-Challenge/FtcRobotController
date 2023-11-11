@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode;
+package org.firstinspires.ftc.teamcode.Auto;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
@@ -54,12 +54,6 @@ public class Opsareautonomousnow extends LinearOpMode {
         drive(-2000, 2000, 0.5);
     }
 
-    private void stop() {
-        leftFront.setPower(0);
-        leftBack.setPower(0);
-        rightFront.setPower(0);
-        rightBack.setPower(0);
-    }
     
     private void drive(int leftTarget, int rightTarget, double speed) {
 
