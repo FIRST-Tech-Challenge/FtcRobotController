@@ -266,6 +266,11 @@ public class RobotHardware {
         armMotorR.setPower(power * 0.25);
     }
 
+    public void moveArmFullSpeed(double power){
+        armMotorL.setPower(power);
+        armMotorR.setPower(power);
+    }
+
     /**
      * Stop the arm from moving
      *
