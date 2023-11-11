@@ -24,13 +24,16 @@ public class Auto_BottomRight extends LinearOpMode {
         waitForStart();
         if (opModeIsActive()) {
             while (opModeIsActive() && !isStopRequested()) {
+                robot.driveRobot(-FORWARD_SPEED, 0);
+                sleep(6000);
+                robot.driveRobot(0,0);
+
                 robot.moveArmFullSpeed(RobotHardware.ARM_DOWN_POWER);
                 sleep(2700);
                 robot.stopArm();
-                robot.driveRobot(-FORWARD_SPEED, 0);
-                sleep(6000);
+
                 robot.driveRobot(FORWARD_SPEED, 0);
-                sleep(4900);
+                sleep(4400);
                 robot.driveRobot(0,TURNSPEED);
                 sleep(5200);
                 robot.driveRobot(FORWARD_SPEED,0);
