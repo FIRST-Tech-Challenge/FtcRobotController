@@ -7,12 +7,13 @@ import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.time;
 import org.firstinspires.ftc.teamcode.Components.RFModules.Devices.RFServo;
 
 public class Wrist extends RFServo {
-  double target = 0, lastTime = 0.0, FLIP_TIME = 0.6;
+  double target = 0, lastTime = 0.0, FLIP_TIME = 0.4;
 
   public Wrist() {
     super("wristServo", 1.0);
     target = WristStates.FLAT.position;
     flipTo(WristTargetStates.FLAT);
+    super.setPosition(WristTargetStates.FLAT.position);
     LOGGER.log("initializing hardware");
     super.setFlipTime(FLIP_TIME);
     super.setLastTime(-100);
@@ -21,11 +22,11 @@ public class Wrist extends RFServo {
   }
 
   public enum WristStates {
-    FLAT(1.0, true),
-    HOLD(0.7, false),
-    FLIP(0.21, false),
+    FLAT(0.88, true),
+    HOLD(0.8, false),
+    FLIP(0.5, false),
 
-    DROP(0.0, false);
+    DROP(0.00, false);
     double position;
     boolean state;
 
@@ -52,13 +53,13 @@ public class Wrist extends RFServo {
   }
 
   public enum WristTargetStates {
-    FLAT(1.0, true),
-    FLIP(0.21, false),
+    FLAT(.88, true),
+    HOLD(0.8, false),
+    FLIP(0.5, false),
 
-    HOLD(0.7, false),
-    DROP(0.0, false);
+    DROP(0.00, false);
     double position;
-    boolean state;
+    public boolean state;
 
     WristTargetStates(double p_position, boolean p_state) {
       position = p_position;
@@ -77,6 +78,12 @@ public class Wrist extends RFServo {
         LOGGER.log(this.name() + " target set to : true");
       }
     }
+  }
+  public void flatten(){
+    super.superSetPosition(0.98);
+  }
+  public void unflatten(){
+    super.superSetPosition(0.88);
   }
 
   public void flipTo(WristTargetStates p_state) {
