@@ -44,7 +44,7 @@ public class Auto_BottomLeft extends LinearOpMode {
             while (opModeIsActive() && !isStopRequested()) {
 
                 robot.driveRobot(-FORWARD_SPEED, 0);
-                sleep(6100);
+                sleep(5900);
                 robot.driveRobot(0,0);
 
                 robot.moveArmFullSpeed(RobotHardware.ARM_DOWN_POWER);
@@ -52,13 +52,13 @@ public class Auto_BottomLeft extends LinearOpMode {
                 robot.stopArm();
 
                 robot.driveRobot(FORWARD_SPEED, 0);
-                sleep(4500);
+                sleep(4200);
 
                 robot.driveRobot(0,TURNSPEED);
-                sleep(5600);
+                sleep(5200);
 
                 robot.driveRobot(FORWARD_SPEED,0);
-                sleep(7800);
+                sleep(8000);
 
                 robot.moveElbowToPosition(0.3);
                 sleep(1000);
