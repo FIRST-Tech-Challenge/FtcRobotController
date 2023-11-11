@@ -128,7 +128,7 @@ public class FakeTeleOp extends LinearOpMode {
             }
 
             robot.flipper.setPosition(flipperPos);
-            robot.arm.setPosition(-armPos);
+            robot.tray.setPosition(-armPos);
 
 
 

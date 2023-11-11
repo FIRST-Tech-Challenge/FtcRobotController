@@ -37,8 +37,8 @@ public class Robot {
     DcMotor intake;
     DcMotor lsBack;
     DcMotor lsFront;
-    Servo arm;
-    Servo holderClamp;
+    Servo tray;
+    Servo clamp;
     Servo flipper;
     Servo hook;
     Servo planeLauncher;
@@ -67,8 +67,8 @@ public class Robot {
         lsBack.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
         redAlliance = red;
-        arm = hardwareMap.servo.get("arm");
-        holderClamp = hardwareMap.servo.get("holderClamp");
+        tray = hardwareMap.servo.get("arm");
+        clamp = hardwareMap.servo.get("holderClamp");
         hook = hardwareMap.servo.get("linearLocker");
         planeLauncher = hardwareMap.servo.get("planeLauncher");
         spikeServo = hardwareMap.servo.get("spikeServo");
@@ -113,29 +113,14 @@ public class Robot {
     }
 
     public void autoOuttake() {
-        Log.d("vision", "autoOuttake: in autoouttake()");
-        double armPos = 0.594; //down position
-        setServoPosBlocking(arm, armPos);
-        Log.d("vision", "autoOuttake: servo to down");
-        double holderClampClosed = 0.5; //closed
-        setServoPosBlocking(holderClamp, holderClampClosed);
-        Log.d("vision", "autoOuttake: holder closed");
-
-        moveLinearSlideByTicks(-2600);
-        Log.d("vision", "autoOuttake: move lin s");
-
-        armPos = 0.845; //up (outtake) position
-        setServoPosBlocking(arm, armPos);
-        Log.d("vision", "autoOuttake: servo to up");
-        double holderClampOpen = 0.3;
-        setServoPosBlocking(holderClamp, holderClampOpen);
-        Log.d("vision", "autoOuttake: holder open");
-
-        armPos = 0.594; //down (intake) position
-        setServoPosBlocking(holderClamp, holderClampClosed);
-        setServoPosBlocking(arm, armPos);
-        moveLinearSlideByTicks(0);
-        Log.d("vision", "autoOuttake: move lin s again");
+        setServoPosBlocking(tray, 0.594); //tray to down position
+        setServoPosBlocking(clamp, 0.5); //close clamp
+        moveLinearSlideByTicks(-2600); //move linear slide up
+        setServoPosBlocking(tray, 0.845); //tray up
+        setServoPosBlocking(clamp, 0.3); //open clamp
+        setServoPosBlocking(clamp, 0.5); //close clamp
+        setServoPosBlocking(tray, 0.594); //tray down
+        moveLinearSlideByTicks(0); //linear slide down
     }
 
     public void setMarkerPosRed(MarkerDetector.MARKER_POSITION position) {
@@ -246,7 +231,7 @@ public class Robot {
         lsFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         lsFront.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
-        arm = hardwareMap.servo.get("arm");
+        tray = hardwareMap.servo.get("arm");
         flipper = hardwareMap.servo.get("flipper");
     }
 
@@ -474,7 +459,7 @@ public class Robot {
         Log.d("vision", "moveToMarker: Pos " + markerPosRed);
         Log.d("vision", "moveToMarker: Tag " + wantedAprTagId);
         while (opMode.opModeIsActive()) {
-            setServoPosBlocking(holderClamp, 0.5);
+            setServoPosBlocking(clamp, 0.5);
             setServoPosBlocking(hook, 0.5);
             setServoPosBlocking(spikeServo, 0.45);
 
@@ -603,7 +588,7 @@ public class Robot {
         }
 
         while (opMode.opModeIsActive()) {
-            setServoPosBlocking(holderClamp, 0.5);
+            setServoPosBlocking(clamp, 0.5);
             setServoPosBlocking(hook, 0.5);
             setServoPosBlocking(spikeServo, 0.45);
             if (markerPosRed == MarkerDetector.MARKER_POSITION.RIGHT) { //RIGHT
