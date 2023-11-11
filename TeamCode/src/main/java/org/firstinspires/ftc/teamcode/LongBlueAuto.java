@@ -16,6 +16,7 @@ public class LongBlueAuto extends LinearOpMode {
 
         waitForStart();
 
+
         //TODO: unlock slide, clamp down, slide down (not nec in that order)
 
         robot.detectMarkerPosition();
