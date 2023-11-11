@@ -20,14 +20,12 @@ class LinearSlideTest: DriveMethods() {
     override fun runOpMode() {
 
         initSlideMotors()
-        initVision(Variables.VisionProcessors.APRILTAG)
+        //initVision(Variables.VisionProcessors.APRILTAG)
 
         waitForStart()
-        var speed = 400;
+        var speed = 500;
         var max = 1.0;
         var target = 0.0
-        var posY = 0.0
-        var closeToBoard = false;
         motorSlideLeft!!.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER)
         sleep(100)
         motorSlideLeft!!.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -43,62 +41,35 @@ class LinearSlideTest: DriveMethods() {
             }
             motorSlideLeft?.power = -((2 / (1 + (exp(-(target - Pos) / speed)))) - 1) * max
             if (gamepad1.x) {
-                if (!closeToBoard) {
-                    closeToBoard = true
-                    for (detection in aprilTag.getDetections()) {
-                        // Original source data
-                        posY = detection.rawPose.y;
-                        slideToBoard = posY + .05
-                    }
-                } else {
-                    !closeToBoard
-                }
                 sleep(200)
             }
             if (gamepad1.a && target<1600) {
-                if (closeToBoard) {
-                    t = .05
-                    linearSlideCalc()
-                    target = (slideLength / 3.3) * encoders
-                } else {
                     target += 100
-                }
+
                 sleep(200)
             }
             if (gamepad1.b && target>+0) {
-                if (closeToBoard) {
-                    t -= .05
-                    linearSlideCalc()
-                    target = (slideLength / 3.3) * encoders
-                } else {
                     target -= 100
-                }
+
                 sleep(200)
             }
             if (gamepad1.y) {
-                if (closeToBoard) {
-                    t = .26
-                    linearSlideCalc()
-                    target = (slideLength / 3.3) * encoders
-                } else {
+
                     target = 500.0
-                }
+
                 sleep(200)
             }
             if (gamepad1.x) {
-                if (closeToBoard) {
-                    t = .78
-                    linearSlideCalc()
-                    target = (slideLength / 3.3) * encoders
-                } else {
                     target = 1500.0
-                }
+
                 sleep(200)
             }
             if (gamepad1.left_bumper) {
                 target = 0.0
                 sleep(200)
             }
+
+
             if (true) {
                 telemetry.addData("Target:", target)
                 telemetry.addData("Position: ", Pos)
