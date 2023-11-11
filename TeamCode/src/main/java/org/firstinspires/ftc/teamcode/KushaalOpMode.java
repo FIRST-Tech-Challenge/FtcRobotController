@@ -75,7 +75,7 @@
      private DcMotor rightFrontDrive = null;
      private DcMotor rightBackDrive = null;
      private Servo dronelaunch = null;
-     private double mulPower = 1.0;
+     private double mulPower = 0.5;
  
      Arm arm = new Arm(this);
      Claw claw       = new Claw(this);
