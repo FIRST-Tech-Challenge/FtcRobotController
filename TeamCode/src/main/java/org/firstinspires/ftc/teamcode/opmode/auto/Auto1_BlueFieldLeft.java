@@ -30,10 +30,13 @@
 package org.firstinspires.ftc.teamcode.opmode.auto;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
+
+import org.firstinspires.ftc.teamcode.utility.GamepiecePosition;
+import org.opencv.core.Point;
 
 /*
  * This file contains an example of a Linear "OpMode".
@@ -63,10 +66,9 @@ import com.qualcomm.robotcore.util.ElapsedTime;
  * Remove or comment out the @Disabled line to add this OpMode to the Driver Station OpMode list
  */
 
-@Autonomous(name="BlueFieldLeft", group="Linear OpMode")
+@Autonomous(name="BlueFieldLeft", group="OpMode")
 //@Disabled
-public class Auto1_BlueFieldLeft extends LinearOpMode {
-
+public class Auto1_BlueFieldLeft extends OpMode {
     // Declare OpMode members for each of the 4 motors.
     private ElapsedTime runtime = new ElapsedTime();
     private DcMotor leftFrontDrive = null;
@@ -74,13 +76,20 @@ public class Auto1_BlueFieldLeft extends LinearOpMode {
     private DcMotor rightFrontDrive = null;
     private DcMotor rightBackDrive = null;
 
+
     @Override
-    public void runOpMode() {
+    public void init_loop(){
+        GamepiecePosition gamepiecePOS = new GamepiecePosition(new Point(0, 20));
+        telemetry.addData("location", gamepiecePOS.getPOS());
+    }
+    @Override
+    public void init() {
+
 
         // Initialize the hardware variables. Note that the strings used here must correspond
         // to the names assigned during the robot configuration step on the DS or RC devices.
-        leftFrontDrive  = hardwareMap.get(DcMotor.class, "left_front_drive");
-        leftBackDrive  = hardwareMap.get(DcMotor.class, "left_back_drive");
+        leftFrontDrive = hardwareMap.get(DcMotor.class, "left_front_drive");
+        leftBackDrive = hardwareMap.get(DcMotor.class, "left_back_drive");
         rightFrontDrive = hardwareMap.get(DcMotor.class, "right_front_drive");
         rightBackDrive = hardwareMap.get(DcMotor.class, "right_back_drive");
 
@@ -100,20 +109,20 @@ public class Auto1_BlueFieldLeft extends LinearOpMode {
         rightBackDrive.setDirection(DcMotor.Direction.FORWARD);
 
         //drive speed limiter
-        double powerFactor = 0.25;
+        //double powerFactor = 0.25;
 
         // Wait for the game to start (driver presses PLAY)
         telemetry.addData("Status", "Initialized");
         telemetry.update();
 
-        waitForStart();
+
         runtime.reset();
-
+    }
         // run until the end of the match (driver presses STOP)
-        while (opModeIsActive()) {
+        public void loop(){
 
 
-            }
+
             double max;
 
             // POV Mode uses left joystick to go forward & strafe, and right joystick to rotate.
@@ -159,7 +168,7 @@ public class Auto1_BlueFieldLeft extends LinearOpMode {
             */
 
             // Scale the Power down for the 12:1 ultraplanetary setup
-            //double powerFactor = 0.25;
+            double powerFactor = 0.25;
             leftFrontPower = leftFrontPower * powerFactor;
             leftBackPower = leftBackPower * powerFactor;
             rightFrontPower = rightFrontPower * powerFactor;
@@ -178,4 +187,4 @@ public class Auto1_BlueFieldLeft extends LinearOpMode {
             telemetry.addData("Drive Power multiplier", powerFactor);
             telemetry.update();
         }
-    }}
+    }
