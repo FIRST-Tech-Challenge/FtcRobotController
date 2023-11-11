@@ -20,12 +20,8 @@ public class LongRedAuto extends LinearOpMode {
         robot.longMoveToBoard();
         robot.alignToBoard();
         robot.autoOuttake();
+        robot.parkLeft();
 
-        //left mecanum 20
-        //center mecanum 26
-        //right mecanum 32
-
-        //TODO: write this for shortauto (parkright)
     }
 }
 
