@@ -58,7 +58,7 @@ public class CurtisMove extends OpMode {
         leftBackDrive.setDirection(DcMotorSimple.Direction.FORWARD);
         rightBackDrive.setDirection(DcMotorSimple.Direction.REVERSE);
 
-        Arm.setDirection(DcMotorSimple.Direction.FORWARD);
+        Arm.setDirection(DcMotorSimple.Direction.REVERSE);
         Slides.setDirection(DcMotorSimple.Direction.FORWARD);
     }
 
