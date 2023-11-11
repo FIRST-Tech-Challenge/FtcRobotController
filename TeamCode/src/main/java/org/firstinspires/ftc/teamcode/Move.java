@@ -73,10 +73,9 @@ public class Move extends OpMode {
         leftBackDrive = hardwareMap.get(DcMotor.class, "LB");
         rightBackDrive = hardwareMap.get(DcMotor.class, "LF");
         //fire = hardwareMap.get(Servo.class, "Fire");
+        Arm = hardwareMap.get(DcMotor.class, "AE");
 
-        Arm = hardwareMap.get(DcMotor.class, "ARM");
-
-        Extend = hardwareMap.get(DcMotor.class, "EX");
+        Extend = hardwareMap.get(DcMotor.class, "SE");
         //-------------------------------------------------------
 
         //set direction for motors not servos(servos do not need pos set)
@@ -86,7 +85,7 @@ public class Move extends OpMode {
         Extend.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
 
         //Sets em to back or forward
-        leftFrontDrive.setDirection(DcMotorSimple.Direction.REVERSE);
+        leftFrontDrive.setDirection(DcMotorSimple.Direction.FORWARD);
         rightFrontDrive.setDirection(DcMotorSimple.Direction.FORWARD);
         leftBackDrive.setDirection(DcMotorSimple.Direction.REVERSE);
         rightBackDrive.setDirection(DcMotorSimple.Direction.FORWARD);
@@ -112,8 +111,8 @@ public class Move extends OpMode {
         double rightBackPower; // Declare motor power variables
 
         // Set drive controls
-        double drive = -gamepad1.left_stick_x;
-        double strafe = gamepad1.left_stick_y;
+        double drive = -gamepad1.left_stick_y;
+        double strafe = gamepad1.left_stick_x;
         double turn = 1.66666666666666 * gamepad1.right_stick_x;
 
         // Set motor power
@@ -281,6 +280,7 @@ public class Move extends OpMode {
 
 
     }
+
 
     @Override
     public void stop() {
