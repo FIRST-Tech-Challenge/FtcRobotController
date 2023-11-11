@@ -16,12 +16,16 @@ public class LongRedAuto extends LinearOpMode {
 
         waitForStart();
 
-        //TODO: unlock slide, clamp down, slide down (not nec in that order)
-
         robot.detectMarkerPosition();
         robot.longMoveToBoard();
         robot.alignToBoard();
         robot.autoOuttake();
+
+        //left mecanum 20
+        //center mecanum 26
+        //right mecanum 32
+
+        //TODO: write this for shortauto (parkright)
     }
 }
 
