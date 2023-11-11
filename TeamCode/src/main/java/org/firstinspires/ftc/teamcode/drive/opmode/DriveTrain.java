@@ -70,6 +70,7 @@ public class DriveTrain extends OpMode
     /*
      * Code to run ONCE when the driver hits INIT
      */
+
     @Override
     public void init() {
         telemetry.addData("Status", "Initialized");
@@ -84,7 +85,7 @@ public class DriveTrain extends OpMode
         liftMotor1 = hardwareMap.get(DcMotor.class, "liftMotor1");
         liftMotor2 = hardwareMap.get(DcMotor.class, "liftMotor2");
         intakeMotor = hardwareMap.get(DcMotor.class, "intakeMotor");
-        clawServo = hardwareMap.servo.get("claw");
+//        clawServo = hardwareMap.servo.get("claw");
 
         // To drive forward, most robots need the motor on one side to be reversed, because the axles point in opposite directions.
         // Pushing the left stick forward MUST make robot go forward. So adjust these two lines based on your first test drive.
@@ -138,7 +139,7 @@ public class DriveTrain extends OpMode
         frontRightPower = (-pivot+y-x);
         rearRightPower = (-pivot+y+x);
 
-        intakeMotor.setPower(0.5);
+        intakeMotor.setPower(0);
 
         // gamepad 1 controls
         if(gamepad1.left_bumper) {
@@ -167,23 +168,25 @@ public class DriveTrain extends OpMode
             rearLeft.setPower(-0.5);
         }
 
+        liftMotor1.setPower(0);
+        liftMotor2.setPower(0);
         // gamepad 1 controls
         double power = 0;
-        if(gamepad1.a) {
-            //power = pid.PIDControl(1000, liftMotor.getCurrentPosition());
-            liftMotor1.setPower(power);
-            liftMotor2.setPower(power);
-        }
-        if(gamepad1.x) {
-            //power = pid.PIDControl(2000, liftMotor.getCurrentPosition());
-            liftMotor1.setPower(power);
-            liftMotor2.setPower(power);
-        }
-        if(gamepad1.y) {
-            //power = pid.PIDControl(3000, liftMotor.getCurrentPosition());
-            liftMotor1.setPower(power);
-            liftMotor2.setPower(power);
-        }
+//        if(gamepad1.a) {
+//            //power = pid.PIDControl(1000, liftMotor.getCurrentPosition());
+//            liftMotor1.setPower(power);
+//            liftMotor2.setPower(power);
+//        }
+//        if(gamepad1.x) {
+//            //power = pid.PIDControl(2000, liftMotor.getCurrentPosition());
+//            liftMotor1.setPower(power);
+//            liftMotor2.setPower(power);
+//        }
+//        if(gamepad1.y) {
+//            //power = pid.PIDControl(3000, liftMotor.getCurrentPosition());
+//            liftMotor1.setPower(power);
+//            liftMotor2.setPower(power);
+//        }
 
         // gamepad 2 controls
         if(gamepad2.y) {
@@ -201,17 +204,18 @@ public class DriveTrain extends OpMode
         } else if (gamepad2.left_bumper && gamepad2.a) {
             liftMotor1.setPower(-.4);
             liftMotor2.setPower(-.4);
-        } else {
-            liftMotor1.setPower(Kg);
-            liftMotor2.setPower(Kg);
         }
+//        else {
+//            liftMotor1.setPower(Kg);
+//            liftMotor2.setPower(Kg);
+//        }
 
 
-        if(gamepad2.left_bumper) {
-            clawServo.setPosition(0.26);
-        } else if (gamepad2.right_bumper) {
-            clawServo.setPosition(0.5);
-        }
+//        if(gamepad2.left_bumper) {
+//            clawServo.setPosition(0.26);
+//        } else if (gamepad2.right_bumper) {
+//            clawServo.setPosition(0.5);
+//        }
 
         // Show the elapsed game time and wheel power.
         telemetry.addData("Status", "Run Time: " + runtime.toString());
@@ -220,22 +224,22 @@ public class DriveTrain extends OpMode
         telemetry.update();
     }
 
-    public void liftToPosition(int target) {
-        int currentPosition1 = liftMotor1.getCurrentPosition();
-        int currentPosition2 = liftMotor2.getCurrentPosition();
-        while(Math.abs(currentPosition1 - target) > 6 && Math.abs(currentPosition2 - target) > 6) {
-            currentPosition1 = liftMotor1.getCurrentPosition();
-            currentPosition2 = liftMotor2.getCurrentPosition();
-            int targetPosition = target;
-            double power1 = returnPower(targetPosition, liftMotor1.getCurrentPosition());
-            double power2 = returnPower(targetPosition, liftMotor2.getCurrentPosition());
-            liftMotor1.setPower(power1);
-            liftMotor2.setPower(power2);
-            telemetry.addData("current position", currentPosition1);
-            telemetry.addData("targetPosition", targetPosition);
-            telemetry.update();
-        }
-    }
+//    public void liftToPosition(int target) {
+//        int currentPosition1 = liftMotor1.getCurrentPosition();
+//        int currentPosition2 = liftMotor2.getCurrentPosition();
+//        while(Math.abs(currentPosition1 - target) > 6 && Math.abs(currentPosition2 - target) > 6) {
+//            currentPosition1 = liftMotor1.getCurrentPosition();
+//            currentPosition2 = liftMotor2.getCurrentPosition();
+//            int targetPosition = target;
+//            double power1 = returnPower(targetPosition, liftMotor1.getCurrentPosition());
+//            double power2 = returnPower(targetPosition, liftMotor2.getCurrentPosition());
+//            liftMotor1.setPower(power1);
+//            liftMotor2.setPower(power2);
+//            telemetry.addData("current position", currentPosition1);
+//            telemetry.addData("targetPosition", targetPosition);
+//            telemetry.update();
+//        }
+//    }
 
     public double returnPower(double reference, double state) {
         double error = reference - state;
