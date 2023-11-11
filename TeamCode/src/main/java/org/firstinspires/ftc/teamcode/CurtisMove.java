@@ -56,7 +56,7 @@ public class CurtisMove extends OpMode {
         rightFrontDrive.setDirection(DcMotorSimple.Direction.FORWARD);
 
         leftBackDrive.setDirection(DcMotorSimple.Direction.REVERSE);
-        rightBackDrive.setDirection(DcMotorSimple.Direction.FORWARD);
+        rightBackDrive.setDirection(DcMotorSimple.Direction.REVERSE);
 
         Arm.setDirection(DcMotorSimple.Direction.FORWARD);
         Slides.setDirection(DcMotorSimple.Direction.FORWARD);
@@ -74,8 +74,8 @@ public class CurtisMove extends OpMode {
     public void loop() {
 
         // Set drive controls
-        drive = gamepad1.left_stick_x;
-        strafe = gamepad1.left_stick_y;
+        drive = gamepad1.left_stick_y;
+        strafe = gamepad1.left_stick_x;
         turn = gamepad1.right_stick_x;
 
         // Set motor power
@@ -89,7 +89,6 @@ public class CurtisMove extends OpMode {
         armPower = gamepad1.dpad_up ? MAXARMPOWER : gamepad1.dpad_down ? -MAXARMPOWER : 0;
         // slides
         slidesPower = gamepad1.dpad_right ? MAXSLIDEPOWER : gamepad1.dpad_left ? -MAXSLIDEPOWER : 0;
-
 
 
         // Set motor powers to updated power
