@@ -30,8 +30,13 @@ public class BasicPipeline extends OpenCvPipeline {
     int junctionNumAttr = 0;
     Point junctionPointAttr = new Point();
     double junctionDistanceAttr = 0;
+    double propAreaAttr = 0;
 
     public Mat processFrame(Mat input) {
+        // on middle spike mark x = 300. don't think it'll be more than 350
+        // on right spike value is 800
+        // right between middle and right is 636. possible boundary.
+
 
         // crop out parts we're not concerned about
 
@@ -75,6 +80,7 @@ public class BasicPipeline extends OpenCvPipeline {
 
             //Assign attributes
             junctionNumAttr = contours.size();
+            propAreaAttr = Imgproc.contourArea(biggestContour);
             junctionDistanceAttr = 240000/Imgproc.contourArea(biggestContour);
             junctionPointAttr = junctionPoint;
         }
@@ -88,7 +94,7 @@ public class BasicPipeline extends OpenCvPipeline {
     public Point getJunctionPoint() {
         return junctionPointAttr;
     }
-
+    public double getPropAreaAttr() {return propAreaAttr;}
     public int getJunctionNum() {return junctionNumAttr;}
     public double getJunctionDistance() {
         return junctionDistanceAttr; // this is in inches
