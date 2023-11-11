@@ -6,10 +6,10 @@ import org.opencv.core.Size;
 public class Constants {
 
     // Color ranges for OpenCV detection
-    public static final Scalar RED_COLOR_DETECT_MAX_HSV = new Scalar(10, 255, 255);
+    public static final Scalar RED_COLOR_DETECT_MAX_HSV = new Scalar(4, 255, 255);
     public static final Scalar RED_COLOR_DETECT_MIN_HSV = new Scalar(0, 65, 95);
-    public static final Scalar BLUE_COLOR_DETECT_MAX_HSV = new Scalar(120, 255, 255);
-    public static final Scalar BLUE_COLOR_DETECT_MIN_HSV = new Scalar(103, 60, 50);
+    public static final Scalar BLUE_COLOR_DETECT_MAX_HSV = new Scalar(55, 255, 255);
+    public static final Scalar BLUE_COLOR_DETECT_MIN_HSV = new Scalar(60, 60, 50);
     public static final Scalar borderColor = new Scalar(0, 255, 0);  // green
     public static final int CAMERA_IMAGE_WIDTH = 640;
     public static final int CAMERA_IMAGE_HEIGHT = 480;
