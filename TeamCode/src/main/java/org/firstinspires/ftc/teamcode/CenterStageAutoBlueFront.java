@@ -99,7 +99,7 @@ public class CenterStageAutoBlueFront extends LinearOpMode {
 
 
         // Main code
-
+        dropCarWash();
         drive(14);
         List<Recognition> pixels = telemetryTfod();
         if (pixels.size() > 0) {
@@ -260,6 +260,11 @@ public class CenterStageAutoBlueFront extends LinearOpMode {
         leftFrontDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         rightFrontDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
+    }
+
+    public void dropCarWash() {
+        drive(15);
+        drive(-15);
     }
 
     public void initTfod() {

@@ -130,13 +130,15 @@ public class CenterStageGamepad extends LinearOpMode {
 
             if ((gamepad2.left_trigger > 0.85) && (gamepad2.right_trigger > 0.85) && runtime.seconds() > 80) {
                 droneServo.setPosition(1);
+            } else if ((gamepad2.left_trigger > 0.85) && (gamepad2.right_trigger > 0.85) && gamepad2.left_bumper && gamepad2.right_bumper) {
+                droneServo.setPosition(1);
             }
 
             if (!gamepad2.a && !gamepad2.b){
                 carWashMotor.setPower(0);
             }
             telemetry.addData("Status", "Run Time: " + runtime.toString());
-            if (runtime.seconds() > 805){
+            if (runtime.seconds() > 80){
                 telemetry.addData("Game Phase","End Game");
             }else {
                 telemetry.addData("Game Phase", "Driver Controlled");
