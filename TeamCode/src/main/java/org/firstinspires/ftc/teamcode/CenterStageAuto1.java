@@ -249,8 +249,8 @@ public class CenterStageAuto1 extends LinearOpMode {
         for(int i = 0; i < checks; i++) {
             encoderDrive(DRIVE_SPEED, inches / checks, inches / checks, inches / checks / 7.5 + 1);
             turn(startAngle - imu.getRobotOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle);
-            stopRobot();
         }
+        stopRobot();
     }
 
     public void ejectPixel() {
