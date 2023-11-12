@@ -83,10 +83,10 @@ public class CenterStageGamepad extends LinearOpMode {
             double max;
             if (gamepad1.right_trigger > 0.7) {
                 slow = 0.25;
-                strafeSlow = 0.3525;
+                strafeSlow = 0.5;
             } else {
                 slow = 0.5;
-                strafeSlow = 0.5;
+                strafeSlow = 1.0;
             }
 
             double axial   = -gamepad1.left_stick_y;  // Note: pushing stick forward gives negative value
@@ -128,7 +128,7 @@ public class CenterStageGamepad extends LinearOpMode {
                 carWashMotor.setPower(-carWashPower);
             }
 
-            if ((gamepad2.left_trigger > 0.75) && (gamepad2.right_trigger > 0.75)) {
+            if ((gamepad2.left_trigger > 0.85) && (gamepad2.right_trigger > 0.85) && runtime.seconds() > 80) {
                 droneServo.setPosition(1);
             }
 
@@ -136,15 +136,10 @@ public class CenterStageGamepad extends LinearOpMode {
                 carWashMotor.setPower(0);
             }
             telemetry.addData("Status", "Run Time: " + runtime.toString());
-            if (gamepad2.left_trigger > 0.75){
-                telemetry.addData("Left Trigger", "Activated - " + gamepad2.left_trigger);
-            } else{
-                telemetry.addData("Left Trigger", gamepad2.left_trigger);
-            }
-            if (gamepad2.right_trigger > 0.75){
-                telemetry.addData("Right Trigger", "Activated - " + gamepad2.right_trigger);
+            if (runtime.seconds() > 805){
+                telemetry.addData("Game Phase","End Game");
             }else {
-                telemetry.addData("Right Trigger", gamepad2.right_trigger);
+                telemetry.addData("Game Phase", "Driver Controlled");
             }
             telemetry.update();
 
