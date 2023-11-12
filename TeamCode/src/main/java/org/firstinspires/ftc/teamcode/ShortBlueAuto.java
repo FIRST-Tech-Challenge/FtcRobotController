@@ -4,7 +4,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 @Autonomous
-public class LongRedAuto extends LinearOpMode {
+public class ShortBlueAuto extends LinearOpMode {
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -18,10 +18,10 @@ public class LongRedAuto extends LinearOpMode {
 
         while (opModeIsActive()) {
             robot.detectMarkerPosition();
-            robot.longMoveToBoard();
+            robot.shortMoveToBoard();
             robot.alignToBoard();
             robot.autoOuttake();
-            robot.parkLeft();
+            robot.parkRight();
         }
     }
 }

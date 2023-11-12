@@ -12,16 +12,17 @@ public class ShortRedAuto extends LinearOpMode {
         //robot, dt motors, vision processing setup
         Robot robot = new Robot(hardwareMap, this, telemetry, true);
         robot.setUpDrivetrainMotors();
-        robot.initVisionProcessing(MarkerDetector.ALLIANCE_COLOR.RED);
+        robot.initVisionProcessing();
 
         waitForStart();
 
-        robot.detectMarkerPosition();
-        robot.shortMoveToBoard();
-        robot.alignToBoard();
-        robot.autoOuttake();
-        robot.parkRight();
-
+        while (opModeIsActive()) {
+            robot.detectMarkerPosition();
+            robot.shortMoveToBoard();
+            robot.alignToBoard();
+            robot.autoOuttake();
+            robot.parkRight();
+        }
     }
 }
 
