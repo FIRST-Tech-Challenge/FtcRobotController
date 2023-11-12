@@ -117,12 +117,14 @@ public class Robot {
         sleep(100);
         setServoPosBlocking(clamp, 0.5); // close clamp
         sleep(100);
-        moveLinearSlideByTicks(-1700); // move linear slide up
+        moveLinearSlideByTicks(-1400); // move linear slide up
         sleep(100);
         setServoPosBlocking(tray, 1); // tray up
         sleep(100);
-        setServoPosBlocking(clamp, 0.4); // open clamp
+        setServoPosBlocking(clamp, 0.45); // open clamp
         sleep(1000);
+        moveLinearSlideByTicks(-2000);// raise slide up
+        sleep(500);
         setServoPosBlocking(clamp, 0.5); // close clamp
         sleep(100);
         setServoPosBlocking(tray, 0.594); // tray down
