@@ -23,8 +23,16 @@ public class MeepMeepTesting {
                 .setConstraints(60, 60, toRadians(180), toRadians(180), 15)
                 .followTrajectorySequence(drive ->
                                 drive.trajectorySequenceBuilder(new Pose2d(15.5, -56, Math.toRadians(-90)))
-                                        .lineToLinearHeading(new Pose2d(25.5, -50, Math.toRadians(180)))
-                                        .lineToLinearHeading(new Pose2d(55.5, -60, Math.toRadians(180)))
+                                        .setReversed(true)
+                                        .splineTo(new Vector2d(36,-30),toRadians(0))
+                                        .lineToLinearHeading(new Pose2d(33,-30, toRadians(0)))
+                                        .setReversed(true)
+                                        .lineToLinearHeading(new Pose2d(45,-40, toRadians(180)))
+                                        .waitSeconds(1.0)
+                                        .lineToLinearHeading(new Pose2d(51.5, -41, toRadians(181)))
+                                        .lineToLinearHeading(new Pose2d(49, -20, toRadians(180)))
+//                                        .lineToLinearHeading(new Pose2d(25.5, -50, Math.toRadians(180)))
+//                                        .lineToLinearHeading(new Pose2d(55.5, -60, Math.toRadians(180)))
                                         .build()
                                         //BLUEBACK
 //                                        .setReversed(true) //spike 1

@@ -24,15 +24,15 @@ public class RedRightAuto extends LinearOpMode {
                 .splineTo(new Vector2d(7, -41.5), toRadians(155))
                 .addTemporalMarker(robot::done)
                 .build();
-        preload[1] = robot.roadrun.trajectorySequenceBuilder(new Pose2d(15.5, -63.25, Math.toRadians(-90)))
-                .setReversed(true) //spike2
-                .lineToLinearHeading(new Pose2d(12.5, -33-2, toRadians(-90)))
-                .lineToLinearHeading(new Pose2d(12.5, -58, toRadians(-180)))
+        preload[1] = robot.roadrun.trajectorySequenceBuilder(new Pose2d(15.5, -56, Math.toRadians(-90)))
+                .setReversed(true)
+                .splineTo(new Vector2d(11, -33), toRadians(90))
                 .addTemporalMarker(robot::done)
                 .build();
-        preload[2] = robot.roadrun.trajectorySequenceBuilder(new Pose2d(15.5, -63.25, Math.toRadians(-90)))
-                .setReversed(true) //spike3
-                .lineToLinearHeading(new Pose2d(35,-31,toRadians(0)))
+        preload[2] = robot.roadrun.trajectorySequenceBuilder(new Pose2d(15.5, -56, Math.toRadians(-90)))
+                .setReversed(true)
+                .splineTo(new Vector2d(37,-30),toRadians(0))
+                .lineToLinearHeading(new Pose2d(30,-30, toRadians(0)))
                 .setReversed(false)
                 .addTemporalMarker(robot::done)
                 .build();
@@ -54,7 +54,7 @@ public class RedRightAuto extends LinearOpMode {
                         .setReversed(true)
                         .lineToLinearHeading(new Pose2d(45,-40, toRadians(180)))
                         .waitSeconds(1.0)
-                        .splineTo(new Vector2d(51.5, -34), toRadians(180))
+                        .lineToLinearHeading(new Pose2d(51.5, -36, toRadians(181)))
                         .addTemporalMarker(robot::done)
                         .build();
         throughTruss[2] =
@@ -62,9 +62,9 @@ public class RedRightAuto extends LinearOpMode {
                         .roadrun
                         .trajectorySequenceBuilder(preload[2].end())
                         .setReversed(true)
-                        .lineToLinearHeading(new Pose2d(45,-40, toRadians(180)))
+                        .lineToLinearHeading(new Pose2d(45,-44, toRadians(180)))
                         .waitSeconds(1.0)
-                        .lineToLinearHeading(new Pose2d(51.5, -43, toRadians(181)))
+                        .lineToLinearHeading(new Pose2d(51.5, -42.5, toRadians(181)))
                         .addTemporalMarker(robot::done)
                         .build();
         TrajectorySequence[] dropAndPark = new TrajectorySequence[3];
