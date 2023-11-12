@@ -478,9 +478,8 @@ public class Robot {
             if (markerPos == MarkerDetector.MARKER_POSITION.RIGHT) {
                 mecanumBlocking(10, false, 0.5);
                 setHeading(0, 0.25);
-                straightBlocking(18, false, 0.5);
-                setHeading(0, 0.7);
                 setServoPosBlocking(spikeServo, 0.2);
+                sleeplessStraightBlocking(18, false, 0.7);
                 straightBlocking(8, true, 0.7);
                 setHeading(-90, 0.7);
                 straightBlocking(19, false, 0.7);
@@ -694,12 +693,13 @@ public class Robot {
     public void parkRight() {
         straightBlocking(2, true, 0.7);
         if (markerPos == MarkerDetector.MARKER_POSITION.LEFT) {
-            mecanumBlocking(35, false, 0.5);
+            mecanumBlocking(30, false, 0.5);
         } else if (markerPos == MarkerDetector.MARKER_POSITION.RIGHT) {
             mecanumBlocking(20, false, 0.5);
         } else {
             mecanumBlocking(23, false, 0.5);
         }
+        straightBlocking(7, false, 0.7);
     }
 
     public void sleeplessStraightBlocking(double inches, boolean forward, double maxPower) {
