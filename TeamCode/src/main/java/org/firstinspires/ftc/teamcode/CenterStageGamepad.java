@@ -88,6 +88,7 @@ public class CenterStageGamepad extends LinearOpMode {
                 slow = 0.5;
                 strafeSlow = 2.5;
             }
+            strafeSlow = 2.5 * (1 - gamepad1.right_trigger);
 
             double axial   = -gamepad1.left_stick_y;  // Note: pushing stick forward gives negative value
             double lateral =  gamepad1.left_stick_x;
