@@ -122,7 +122,7 @@ public class CenterStageAutoBlueBack extends LinearOpMode {
                 turn(-30);
             }
         }
-        turn(90);
+        turn(-90);
         drive(24);
         ejectPixel();
 
