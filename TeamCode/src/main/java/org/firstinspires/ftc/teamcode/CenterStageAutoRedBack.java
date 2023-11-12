@@ -43,7 +43,7 @@ import java.util.List;
  */
 
 @Autonomous
-public class CenterStageAuto1 extends LinearOpMode {
+public class CenterStageAutoRedBack extends LinearOpMode {
 
     private static final boolean USE_WEBCAM = true;
 
