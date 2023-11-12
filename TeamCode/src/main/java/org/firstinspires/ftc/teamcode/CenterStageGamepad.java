@@ -136,6 +136,16 @@ public class CenterStageGamepad extends LinearOpMode {
                 carWashMotor.setPower(0);
             }
             telemetry.addData("Status", "Run Time: " + runtime.toString());
+            if (gamepad2.left_trigger > 0.75){
+                telemetry.addData("Left Trigger", "Activated - " + gamepad2.left_trigger);
+            } else{
+                telemetry.addData("Left Trigger", gamepad2.left_trigger);
+            }
+            if (gamepad2.right_trigger > 0.75){
+                telemetry.addData("Right Trigger", "Activated - " + gamepad2.right_trigger);
+            }else {
+                telemetry.addData("Right Trigger", gamepad2.right_trigger);
+            }
             telemetry.update();
 
             sleep(250);
