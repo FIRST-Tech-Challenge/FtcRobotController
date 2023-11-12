@@ -254,10 +254,10 @@ public class CenterStageAuto1 extends LinearOpMode {
     }
 
     public void ejectPixel() {
-        ElapsedTime t = runtime;
+        int t = (int) runtime.milliseconds() + 500;
         carWashMotor.setPower(carWashPower);
         while(true) {
-            if (!((int) t.milliseconds() + 500 > (int) runtime.milliseconds())){
+            if (!(t > ((int) runtime.milliseconds()))){
                 break;
             }
         }
