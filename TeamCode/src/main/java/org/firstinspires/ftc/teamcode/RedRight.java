@@ -18,8 +18,8 @@ import org.openftc.easyopencv.OpenCvCameraRotation;
 
 import java.util.Locale;
 
-@Autonomous(name = "RedLeft", group = "")
-public class RedLeft extends LinearOpMode {
+@Autonomous(name = "RedRight", group = "")
+public class RedRight extends LinearOpMode {
     private static final int NUMLOOPS = 3 ;
     //test1
 
@@ -50,7 +50,7 @@ public class RedLeft extends LinearOpMode {
         utils = new actuatorUtils();
         arm = hardwareMap.get(DcMotor.class, "arm");
         dump = hardwareMap.get(Servo.class, "Dump");
-        Pose2d startPose = new Pose2d(-55, 37,0);
+        Pose2d startPose = new Pose2d(-55, -12,0);
         drive.setPoseEstimate(startPose);
         //TrajectorySequence aSeq = autoSeq(startPose);
 
@@ -203,7 +203,7 @@ public class RedLeft extends LinearOpMode {
     }
     private void RightPath() {
         Pose2d pose = drive.getPoseEstimate();
-        pose = new Pose2d(-36,36,Math.toRadians(0));
+        pose = new Pose2d(-36,-12,Math.toRadians(0));
         TrajectorySequence seq = drive.trajectorySequenceBuilder(drive.getPoseEstimate())
                 .lineToLinearHeading(pose)
                 .build();
@@ -211,7 +211,7 @@ public class RedLeft extends LinearOpMode {
         sleep(1000);
         utils.dumpOpen();
         sleep(1000);
-        pose = new Pose2d(-36, 39, Math.toRadians(0));
+        pose = new Pose2d(-36, -9, Math.toRadians(0));
         seq = drive.trajectorySequenceBuilder(drive.getPoseEstimate())
                 .lineToLinearHeading(pose)
                 .build();
@@ -219,7 +219,7 @@ public class RedLeft extends LinearOpMode {
         sleep(1000);
         utils.dumpClose();
         sleep(1000);
-        pose = new Pose2d(-5, 39, Math.toRadians(0));
+        pose = new Pose2d(-36, -12, Math.toRadians(0));
         seq = drive.trajectorySequenceBuilder(drive.getPoseEstimate())
                 .lineToLinearHeading(pose)
                 .build();
