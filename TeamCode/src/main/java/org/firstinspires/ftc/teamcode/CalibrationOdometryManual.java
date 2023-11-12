@@ -25,7 +25,7 @@ public class CalibrationOdometryManual extends LinearOpMode {
     double  elapsedTime, elapsedHz;
 
     /* Declare OpMode members. */
-    HardwareSlimbot robot = new HardwareSlimbot();
+    HardwarePixelbot robot = new HardwarePixelbot();
 
     //Files to access the algorithm constants
     File wheelBaseSeparationFile  = AppUtil.getInstance().getSettingsFile("wheelBaseSeparation.txt");
