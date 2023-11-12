@@ -11,18 +11,21 @@ import org.firstinspires.ftc.robotcore.external.tfod.Recognition;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 @Autonomous(name = "blue-far-auto")
-public class BlueDistanceAutonomous extends LinearOpMode{
+public class BlueDistanceTest extends LinearOpMode{
     private static final boolean USE_WEBCAM = true;  // true for webcam, false for phone camera
     private DcMotor leftFrontDrive = null;
     private DcMotor leftBackDrive = null;
     private DcMotor rightFrontDrive = null;
     private DcMotor rightBackDrive = null;
-    private DcMotor linearSlide = null;
-    private CRServo intake = null;
+    //private DcMotor linearSlide = null;
+    //private CRServo intake = null;
     double integralSum = 0;
     double Kp = 0.1;
-    double Ki = 0.0;
-    double Kd = 0.0;
+    double Ki = 0;
+    double Kd = 0;
+    // double Kp = 0.05;
+    // double Ki = 0.0150;
+    // double Kd = 0.000001;
     ElapsedTime timer = new ElapsedTime();
 
     /**
@@ -39,13 +42,8 @@ public class BlueDistanceAutonomous extends LinearOpMode{
         leftBackDrive = hardwareMap.get(DcMotor.class, "left_back_drive");
         rightFrontDrive = hardwareMap.get(DcMotor.class, "right_front_drive");
         rightBackDrive = hardwareMap.get(DcMotor.class, "right_back_drive");
-        linearSlide = hardwareMap.get(DcMotor.class, "outputslide");
-        intake = hardwareMap.crservo.get("outputservo");
-
-        //  leftFrontDrive.setDirection(DcMotor.Direction.REVERSE);
-        //  leftBackDrive.setDirection(DcMotor.Direction.REVERSE);
-        //  rightFrontDrive.setDirection(DcMotor.Direction.FORWARD);
-        //  rightBackDrive.setDirection(DcMotor.Direction.FORWARD);
+        //linearSlide = hardwareMap.get(DcMotor.class, "outputslide");
+        //intake = hardwareMap.crservo.get("outputservo");
 
         leftFrontDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         rightFrontDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -57,6 +55,11 @@ public class BlueDistanceAutonomous extends LinearOpMode{
         leftBackDrive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODERS);
         rightBackDrive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODERS);
 
+        rightFrontDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        leftFrontDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        rightBackDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        leftBackDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
         // Wait for the DS start button to be touched.
         telemetry.addData("DS preview on/off", "3 dots, Camera Stream");
         telemetry.addData(">", "Touch Play to start OpMode");
@@ -65,111 +68,14 @@ public class BlueDistanceAutonomous extends LinearOpMode{
 
         if (opModeIsActive()) {
             while (opModeIsActive()) {
-                // turn left
-                // PIDControl(leftFrontDrive, 100, leftFrontDrive.getCurrentPosition());
-                // PIDControl(rightFrontDrive, 100, rightFrontDrive.getCurrentPosition());
-                // PIDControl(leftBackDrive, 100, leftBackDrive.getCurrentPosition());
-                // PIDControl(rightBackDrive, 100, rightBackDrive.getCurrentPosition());
-                //moveToPosition(-1500);
-                //sleep(4000);
-                //linearSlide.setPower(0.1);
                 moveForwardToThree();
                 resetPower();
-                //turnLeft();
                 strafeLeft();
-                //resetPower();
-                //             telemetryTfod();
-                //             if(telemetryTfod() > 0) {
-                //                 telemetry.addData("???????????", 0);
-                //                 // pick up pixel
-                //             }else {
-                //                 //move backwards
-                //                  PIDControl(leftFrontDrive, -100, leftFrontDrive.getCurrentPosition());
-                //                 PIDControl(rightFrontDrive, -100, rightFrontDrive.getCurrentPosition());
-                //                 PIDControl(leftBackDrive, -100, leftFrontDrive.getCurrentPosition());
-                //                 PIDControl(rightBackDrive, -100, leftFrontDrive.getCurrentPosition());
-                //                 //turn right
-                //                 PIDControl(leftFrontDrive, 100, leftFrontDrive.getCurrentPosition());
-                //                 PIDControl(rightFrontDrive, -100, rightFrontDrive.getCurrentPosition());
-                //                 PIDControl(leftBackDrive, 100, leftFrontDrive.getCurrentPosition());
-                //                 PIDControl(rightBackDrive, -100, leftFrontDrive.getCurrentPosition());
-                //                 //move forward
-                //                 PIDControl(leftFrontDrive, 100, leftFrontDrive.getCurrentPosition());
-                //                 PIDControl(rightFrontDrive, 100, rightFrontDrive.getCurrentPosition());
-                //                 PIDControl(leftBackDrive, 100, leftFrontDrive.getCurrentPosition());
-                //                 PIDControl(rightBackDrive, 100, leftFrontDrive.getCurrentPosition());
-                //                 //check for pixel
-                //                 telemetryTfod();
-                //                 if(telemetryTfod() > 0) {
-                //                     telemetry.addData("???????????", 0);
-                //                     // pick up pixel
-                //                 }else {
-                //                 //move backwards
-                //                     PIDControl(leftFrontDrive, -100, leftFrontDrive.getCurrentPosition());
-                //                     PIDControl(rightFrontDrive, -100, rightFrontDrive.getCurrentPosition());
-                //                     PIDControl(leftBackDrive, -100, leftFrontDrive.getCurrentPosition());
-                //                     PIDControl(rightBackDrive, -100, leftFrontDrive.getCurrentPosition());
-                //                     //turn right
-                //                     PIDControl(leftFrontDrive, 100, leftFrontDrive.getCurrentPosition());
-                //                     PIDControl(rightFrontDrive, -100, rightFrontDrive.getCurrentPosition());
-                //                     PIDControl(leftBackDrive, 100, leftFrontDrive.getCurrentPosition());
-                //                     PIDControl(rightBackDrive, -100, leftFrontDrive.getCurrentPosition());
-                //                     //move forward
-                //                     PIDControl(leftFrontDrive, 100, leftFrontDrive.getCurrentPosition());
-                //                     PIDControl(rightFrontDrive, 100, rightFrontDrive.getCurrentPosition());
-                //                     PIDControl(leftBackDrive, 100, leftFrontDrive.getCurrentPosition());
-                //                     PIDControl(rightBackDrive, 100, leftFrontDrive.getCurrentPosition());
-                //                     //check for pixel
-                //                     telemetryTfod();
-                //                     if(telemetryTfod() > 0) {
-                //                         telemetry.addData("???????????", 0);
-                //                         // pick up pixel
-                //                     }
-                //                     //turn left
-                //                     PIDControl(leftFrontDrive, -100, leftFrontDrive.getCurrentPosition());
-                //                     PIDControl(rightFrontDrive, 100, rightFrontDrive.getCurrentPosition());
-                //                     PIDControl(leftBackDrive, -100, leftFrontDrive.getCurrentPosition());
-                //                     PIDControl(rightBackDrive, 100, leftFrontDrive.getCurrentPosition());
-                //                 }
-                //             }
-                //             // moving to the board:
-                //             // turn left
-                //             PIDControl(leftFrontDrive, -100, leftFrontDrive.getCurrentPosition());
-                //             PIDControl(rightFrontDrive, 100, rightFrontDrive.getCurrentPosition());
-                //             PIDControl(leftBackDrive, -100, leftFrontDrive.getCurrentPosition());
-                //             PIDControl(rightBackDrive, 100, leftFrontDrive.getCurrentPosition());
-                //             //go forward
-                //             PIDControl(leftFrontDrive, 500, leftFrontDrive.getCurrentPosition());
-                //             PIDControl(rightFrontDrive, 500, rightFrontDrive.getCurrentPosition());
-                //             PIDControl(leftBackDrive, 500, leftFrontDrive.getCurrentPosition());
-                //             PIDControl(rightBackDrive, 500, leftFrontDrive.getCurrentPosition());
-                //             //raise linear slide
-                //             PIDControl(linearSlide, 500, linearSlide.getCurrentPosition());
-                //             //empty pixel on to board
-                //             //TODO: FIND OUT HOW TO USE PID ON A SERVO
-                //             // Push telemetry to the Driver Station.
-                //             telemetry.update();
-
-                //             // Save CPU resources; can resume streaming when needed.
-                //             // Share the CPU.
-                //             sleep(20);
-                //         }
-                //     }
-
-                // }   // end runOpMode()
-
-                // /**
-                //  * Initialize the TensorFlow Object Detection processor.
-                //  */
-
-                // /**
-                // *// Add telemetry about TensorFlow Object Detection (TFOD) recognitions.
-                // */
                 telemetry.addData("leftfront", leftFrontDrive.getCurrentPosition());
                 telemetry.addData("rightfront", rightFrontDrive.getCurrentPosition());
                 telemetry.addData("leftback", leftBackDrive.getCurrentPosition());
                 telemetry.addData("rightback", rightBackDrive.getCurrentPosition());
-                telemetry.addData("linearslide", linearSlide.getCurrentPosition());
+                //telemetry.addData("linearslide", linearSlide.getCurrentPosition());
                 telemetry.update();
             }}}
     public void moveToPosition(double reference, DcMotor motor) {
@@ -198,10 +104,10 @@ public class BlueDistanceAutonomous extends LinearOpMode{
         return out;
     }
     public void moveForwardToThree() {
-        int variance = -100;
+        int variance = 100;
         int desiredLoc = -1700;
-        while(leftFrontDrive.getCurrentPosition() > -1600
-                || leftFrontDrive.getCurrentPosition() < -1710) {
+        while(leftFrontDrive.getCurrentPosition() > desiredLoc + variance
+                || leftFrontDrive.getCurrentPosition() < desiredLoc - variance) {
             double power = PIDControl(desiredLoc, desiredLoc, leftFrontDrive);
             leftFrontDrive.setPower(power * 0.5);
             rightFrontDrive.setPower(-power * 0.5);
@@ -217,15 +123,15 @@ public class BlueDistanceAutonomous extends LinearOpMode{
         rightBackDrive.setPower(0);
     }
     public void strafeLeft() {
-        int desiredLoc = -1500;
+        int desiredLoc = 2000;
         int variance = -25;
         while(leftFrontDrive.getCurrentPosition() > desiredLoc - variance
                 || leftFrontDrive.getCurrentPosition() < desiredLoc + variance
         ) {
             double power = PIDControl(desiredLoc, desiredLoc, leftFrontDrive);
             leftFrontDrive.setPower(power);
-            rightFrontDrive.setPower(-power);
-            rightBackDrive.setPower(power);
+            rightFrontDrive.setPower(power);
+            rightBackDrive.setPower(-power);
             leftBackDrive.setPower(-power);
         }
     }
