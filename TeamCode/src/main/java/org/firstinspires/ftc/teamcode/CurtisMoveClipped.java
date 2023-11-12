@@ -12,7 +12,7 @@ import com.qualcomm.robotcore.util.Range;
 //import com.qualcomm.robotcore.hardware.configuration.annotations.I2cDeviceType;
 
 @TeleOp
-@I2cDeviceType()
+//@I2cDeviceType()
 
 public class CurtisMoveClipped extends OpMode {
     //Motors
@@ -53,10 +53,10 @@ public class CurtisMoveClipped extends OpMode {
 
         //Sets em to back or forward
         leftFrontDrive.setDirection(DcMotorSimple.Direction.REVERSE);
-        rightFrontDrive.setDirection(DcMotorSimple.Direction.REVERSE);
+        rightFrontDrive.setDirection(DcMotorSimple.Direction.FORWARD);
 
-        leftBackDrive.setDirection(DcMotorSimple.Direction.FORWARD);
-        rightBackDrive.setDirection(DcMotorSimple.Direction.REVERSE);
+        leftBackDrive.setDirection(DcMotorSimple.Direction.REVERSE);
+        rightBackDrive.setDirection(DcMotorSimple.Direction.FORWARD);
 
         Arm.setDirection(DcMotorSimple.Direction.REVERSE);
         Slides.setDirection(DcMotorSimple.Direction.FORWARD);
@@ -79,10 +79,10 @@ public class CurtisMoveClipped extends OpMode {
         turn = gamepad1.right_stick_x;
 
         // Set motor power
-        leftFrontPower = Range.clip(drive - turn - strafe, -MAXDRIVEPOWER, MAXDRIVEPOWER);
-        rightFrontPower = Range.clip(drive + turn + strafe, -MAXDRIVEPOWER, MAXDRIVEPOWER);
-        leftBackPower = Range.clip(drive - turn + strafe, -MAXDRIVEPOWER, MAXDRIVEPOWER);
-        rightBackPower = Range.clip(drive + turn - strafe, -MAXDRIVEPOWER, MAXDRIVEPOWER);
+        leftFrontPower = Range.clip(-drive + turn + strafe, -MAXDRIVEPOWER, MAXDRIVEPOWER);
+        rightFrontPower = Range.clip(-drive - turn - strafe, -MAXDRIVEPOWER, MAXDRIVEPOWER);
+        leftBackPower = Range.clip(-drive + turn - strafe, -MAXDRIVEPOWER, MAXDRIVEPOWER);
+        rightBackPower = Range.clip(-drive - turn + strafe, -MAXDRIVEPOWER, MAXDRIVEPOWER);
 
 
         // arm
