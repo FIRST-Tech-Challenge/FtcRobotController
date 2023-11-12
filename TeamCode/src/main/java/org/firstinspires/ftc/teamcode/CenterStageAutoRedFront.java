@@ -217,10 +217,10 @@ public class CenterStageAutoRedFront extends LinearOpMode {
 
     public void drive(double inches) {
         double startAngle = imu.getRobotOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle;
-        int checks = 5; // Number of times the robot will check its orientation during a single drive movement and correct itself
+        int checks = 1; // Number of times the robot will check its orientation during a single drive movement and correct itself
         for(int i = 0; i < checks; i++) {
             encoderDrive(DRIVE_SPEED, inches / checks, inches / checks, inches / checks / 7.5 + 1);
-            turn(startAngle - imu.getRobotOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle);
+            //turn(startAngle - imu.getRobotOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle);
         }
         stopRobot();
     }

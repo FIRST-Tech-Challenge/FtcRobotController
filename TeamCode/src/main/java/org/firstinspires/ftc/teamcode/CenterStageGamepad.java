@@ -148,7 +148,7 @@ public class CenterStageGamepad extends LinearOpMode {
             }
             telemetry.update();
 
-            sleep(250);
+            sleep(50);
         }
 
             }
