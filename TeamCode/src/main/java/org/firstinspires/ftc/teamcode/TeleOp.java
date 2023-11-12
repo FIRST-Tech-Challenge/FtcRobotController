@@ -31,6 +31,7 @@ public class TeleOp extends LinearOpMode {
         Servo tray = hardwareMap.servo.get("arm");
         Servo launcher = hardwareMap.servo.get("planeLauncher");
         Servo lock = hardwareMap.servo.get("linearLocker");
+        Servo spikeServo = hardwareMap.servo.get("spikeServo");
 
         //setting motor direction
         intake.setDirection(DcMotorSimple.Direction.REVERSE);
@@ -203,6 +204,12 @@ public class TeleOp extends LinearOpMode {
             tray.setPosition(trayPos);
 
             //GAMEPAD 1 CONTROLS DRIVER
+            if (gamepad1.a) {
+                spikeServo.setPosition(0.4);
+            }
+            if (gamepad1.b) {
+                spikeServo.setPosition(0.2);
+            }
 
             //gamepad 1 right bumper launches drone
             if (gamepad1.right_bumper) {
