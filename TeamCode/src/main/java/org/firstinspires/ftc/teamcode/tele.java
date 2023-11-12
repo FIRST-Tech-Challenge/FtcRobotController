@@ -61,8 +61,14 @@ public class tele extends OpMode {
     }
 
     public void loop() {
+        double speedLimit;
 
-        double speedLimit = 90;
+        if (gamepad1.right_trigger > .5) {
+            speedLimit = 50;
+        } else {
+            speedLimit = 90;
+        }
+
         double speedLimitValue = speedLimit/100;
 
         double y = -gamepad1.left_stick_y; // Remember, this is reversed!
@@ -81,6 +87,8 @@ public class tele extends OpMode {
         robot.rightBackDrive.setPower(backRightPower * speedLimitValue);
 
         robot.winch.setPower(-gamepad2.right_stick_y);
+
+
 
         if (gamepad2.dpad_up) {
             robot.hook.setPosition(1.0);
@@ -103,7 +111,7 @@ public class tele extends OpMode {
         if (gamepad2.right_bumper) {
             robot.arm.setPosition(.4);
         } else if (gamepad2.left_bumper) {
-            robot.arm.setPosition(0.02);
+            robot.arm.setPosition(0);
         }
 
         if (gamepad2.right_trigger > 0.5) {

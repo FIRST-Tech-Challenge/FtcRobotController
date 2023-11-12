@@ -86,6 +86,7 @@ public class blueAuto extends LinearOpMode {
                 sleep(2000);
                 robot.arm.setPosition(1);
                 sleep(2000);
+                robot.gripper.setPosition(0.7);
                 return;
             }
             case RIGHT: {
@@ -96,6 +97,7 @@ public class blueAuto extends LinearOpMode {
                 sleep(2000);
                 robot.arm.setPosition(1);
                 sleep(2000);
+                robot.gripper.setPosition(0.7);
                 return;
             }
             case CENTER: {
@@ -106,6 +108,7 @@ public class blueAuto extends LinearOpMode {
                 sleep(2000);
                 robot.arm.setPosition(1);
                 sleep(2000);
+                robot.gripper.setPosition(0.7);
                 return;
             }
         }
