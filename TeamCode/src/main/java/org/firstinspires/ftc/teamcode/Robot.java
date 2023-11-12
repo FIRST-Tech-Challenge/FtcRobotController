@@ -113,15 +113,22 @@ public class Robot {
     }
 
     public void autoOuttake() {
-        setServoPosBlocking(tray, 0.594); //tray to down position
-        setServoPosBlocking(clamp, 0.5); //close clamp
-        moveLinearSlideByTicks(-2600); //move linear slide up
-        setServoPosBlocking(tray, 0.845); //tray up
-        setServoPosBlocking(clamp, 0.3); //open clamp
-        setServoPosBlocking(clamp, 0.5); //close clamp
-        setServoPosBlocking(tray, 0.594); //tray down
-        moveLinearSlideByTicks(0); //linear slide down
+        setServoPosBlocking(tray, 0.594); // tray to down position
         sleep(100);
+        setServoPosBlocking(clamp, 0.5); // close clamp
+        sleep(100);
+        moveLinearSlideByTicks(-1700); // move linear slide up
+        sleep(100);
+        setServoPosBlocking(tray, 1); // tray up
+        sleep(100);
+        setServoPosBlocking(clamp, 0.4); // open clamp
+        sleep(1000);
+        setServoPosBlocking(clamp, 0.5); // close clamp
+        sleep(100);
+        setServoPosBlocking(tray, 0.594); // tray down
+        sleep(100);
+        moveLinearSlideByTicks(0); // linear slide down
+        sleep(500);
     }
 
     public void setMarkerPos(MarkerDetector.MARKER_POSITION position) {
@@ -492,12 +499,12 @@ public class Robot {
                 break;
             } else { //center, default
                 Log.d("vision", "shortMoveToBoard: " + markerPos);
-                mecanumBlocking(3, false, 0.5); //go left
-                setHeading(0, 0.25);
-                straightBlocking(32, false, 0.25); //go forward
+                straightBlocking(2, false, 0.25);
+                mecanumBlocking(3, false, 0.25); //go left
                 setHeading(0, 0.25);
                 setServoPosBlocking(spikeServo, 0.2);
-                straightBlocking(9.5, true, 0.7); //dropoff & move back
+                sleeplessStraightBlocking(26, false, 0.7); //go forward FAST
+                straightBlocking(10, true, 0.7); //dropoff & move back
                 setHeading(-90, 0.7);
                 straightBlocking(22, false, 0.7);
                 mecanumBlocking(4, true, 0.4);
@@ -565,7 +572,9 @@ public class Robot {
             straightBlocking(distanceToBoard, false, 0.75);
 
             if (redAlliance) {
-                setHeading(-90, 0.75);
+                Log.d("vision", "alignToBoard: THIS THIS THIS THIS THIS");
+                setHeading(-90, 0.75); //THIS
+                Log.d("vision", "alignToBoard: DONE DONE DONE DONE DONE");
             } else {
                 setHeading(90, 0.75);
             }
@@ -573,6 +582,7 @@ public class Robot {
         } else {
             Log.d("vision", "alignToBoard: not aligned, still broke out of !aligned. should not be happening");
         }
+        //TODO: do things based on apriltag id
     }
 
     public void longMoveToBoard() {
@@ -590,56 +600,61 @@ public class Robot {
             setServoPosBlocking(clamp, 0.5);
             setServoPosBlocking(hook, 0.5);
             setServoPosBlocking(spikeServo, 0.45);
-            if (markerPos == MarkerDetector.MARKER_POSITION.RIGHT) { //RIGHT
+            if (markerPos == MarkerDetector.MARKER_POSITION.RIGHT) {
+                //TODO: RIGHT RIGHT RIGHT RIGHT RIGHT
                 straightBlocking(20, false, 0.25); //forward
                 setHeading(45 * polarity, 0.25); //turn right
-                straightBlocking(8, false, 0.7); //forward
-                setHeading(45 * polarity, 0.25);
                 setServoPosBlocking(spikeServo,0.2);
+                sleeplessStraightBlocking(8, false, 0.25); //forward
                 straightBlocking(12, true, 0.7); //dropoff, back
                 setHeading(0, 0.7); //turn back
                 straightBlocking(34, false, 0.7); //forward past spike
                 setHeading(90 * polarity, 0.7); //turn right toward truss
                 straightBlocking(77, false, 0.7); //forward under truss
                 setHeading(90 * polarity, 0.75);
-                mecanumBlocking(34, false, 0.7); //mecanum directly in front of board
+                mecanumBlocking(35, false, 0.7); //mecanum directly in front of board
                 setHeading(90 * polarity, 0.7);
                 break;
-            } else if (markerPos == MarkerDetector.MARKER_POSITION.LEFT) { //LEFT
-                straightBlocking(18, false, 0.25); //forward
-                setHeading(-45 * polarity, 0.25); //turn
-                straightBlocking(7, false, 0.7); //forward
-                setHeading(-45 * polarity, 0.25);
+                //TODO: RIGHT RIGHT RIGHT RIGHT RIGHT
+            } else if (markerPos == MarkerDetector.MARKER_POSITION.LEFT) {
+                //TODO: LEFT LEFT LEFT LEFT LEFT
+                straightBlocking(2, false, 0.25);
+                setHeading(0, 0.25);
+                mecanumBlocking(14, true, 0.25);
+                setHeading(0, 0.25);
+                sleeplessStraightBlocking(20, false, 0.7);
                 setServoPosBlocking(spikeServo,0.2);
-                straightBlocking(8, true, 0.7); //dropoff, backward
+                straightBlocking(10, true, 0.75); //dropoff, backward
                 setHeading(0, 0.7); //turn
-                mecanumBlocking(1, false, 0.5); //mecanum right
+                mecanumBlocking(12, false, 0.5); //mecanum right
                 setHeading(0, 0.7);
-                straightBlocking(33, false, 0.7); //forward to truss
+                straightBlocking(36, false, 0.7); //forward to truss
                 setHeading(90 * polarity, 0.7); //turn
-                straightBlocking(72, false, 0.7); //forward to red line
+                straightBlocking(67, false, 0.7); //forward to red line
                 setHeading(90 * polarity, 0.7);
-                mecanumBlocking(24, false, 0.7); //mecanum directly in front of board
+                mecanumBlocking(23, false, 0.7); //mecanum directly in front of board
                 setHeading(90 * polarity, 0.7);
                 break;
+                //TODO: LEFT LEFT LEFT LEFT LEFT
             } else { //center, default
+                //TODO: DEFAULT DEFAULT DEFAULT DEFAULT DEFAULT
                 Log.d("vision", "moveToMarker: center or default");
-                mecanumBlocking(8, true, 0.5); //go left
+                mecanumBlocking(7, true, 0.5); //go left
                 setHeading(0, 0.6);
-                straightBlocking(28.5, false, 0.5); //go forward
-                setHeading(0, 0.6);
-                setServoPosBlocking(spikeServo,0.2);
-                straightBlocking(6, true, 0.9); //dropoff & move back
-                setHeading(0, 0.6);
-                mecanumBlocking(12, true, 0.25); //move left
+                setServoPosBlocking(spikeServo,0.2); //lift finger - speed dependent dropoff next
+                sleeplessStraightBlocking(27, false, 0.7); //go forward FAST
+                straightBlocking(6, true, 1); //move back FAST
                 setHeading(0, 0.7);
-                straightBlocking(24, false, 0.7); //go forward & around marker
+                mecanumBlocking(8, true, 0.25); //move left
+                setHeading(0, 0.7);
+                straightBlocking(23, false, 0.7); //go forward & around marker
                 setHeading(90 * polarity, 0.7); //turn
-                straightBlocking(80, false, 0.7); //forward to red line
+                straightBlocking(90, false, 0.7); //forward to red line
                 setHeading(90 * polarity, 0.7);
-                mecanumBlocking(29, false,  0.5); //mecanum directly in front of board
+                mecanumBlocking(27, false,  0.5); //mecanum directly in front of board
                 setHeading(90 * polarity, 0.7);
                 break;
+                //TODO: DEFAULT DEFAULT DEFAULT DEFAULT DEFAULT
             }
         }
     }
@@ -649,10 +664,11 @@ public class Robot {
         if (markerPos == MarkerDetector.MARKER_POSITION.LEFT) {
             mecanumBlocking(20, true, 0.5);
         } else if (markerPos == MarkerDetector.MARKER_POSITION.RIGHT) {
-            mecanumBlocking(30, true, 0.5);
+            mecanumBlocking(34, true, 0.5);
         } else {
-            mecanumBlocking(35, true, 0.5);
+            mecanumBlocking(26, true, 0.5);
         }
+        straightBlocking(7,false, 0.7);
     }
 
     public void parkRight() {
@@ -660,9 +676,60 @@ public class Robot {
         if (markerPos == MarkerDetector.MARKER_POSITION.LEFT) {
             mecanumBlocking(35, false, 0.5);
         } else if (markerPos == MarkerDetector.MARKER_POSITION.RIGHT) {
-            mecanumBlocking(30, false, 0.5);
-        } else {
             mecanumBlocking(20, false, 0.5);
+        } else {
+            mecanumBlocking(26, false, 0.5);
         }
+    }
+
+    public void sleeplessStraightBlocking(double inches, boolean forward, double maxPower) {
+
+        double ERROR_TOLERANCE = 10;
+        double power;
+        double endTick;
+        final double KP = 0.01;
+        final double KD = 500_000;
+        final double minPower = 0.2;
+        double currentTick = fLeft.getCurrentPosition();
+        double errorDer;
+        double currentTime;
+
+        //inch to tick
+        final double wheelDiaMm = 96;
+        final double PI = 3.14159;
+        final double wheelCircIn = wheelDiaMm * PI / 25.4; //~11.87
+        final double IN_TO_TICK = 537 / wheelCircIn;
+
+        if (forward) {
+            endTick = currentTick + inches * IN_TO_TICK;
+        } else {
+            endTick = currentTick - inches * IN_TO_TICK;
+        }
+
+        double error = endTick - currentTick;
+
+        while (Math.abs(error) >= ERROR_TOLERANCE && opMode.opModeIsActive()) {
+
+            currentTime = SystemClock.elapsedRealtimeNanos();
+            error = endTick - currentTick;
+            errorDer = (error - prevError) / (currentTime - prevTime);
+            power = (KP * error) + (KD * errorDer);
+
+            if (power > 0 && power < minPower) {
+                power += minPower;
+            } else if (power < 0 && power > -1 * minPower) {
+                power -= minPower;
+            }
+
+            //cap power
+            power = Range.clip(power, -1 * maxPower, maxPower);
+
+            setMotorPower(power, power, power, power);
+
+            currentTick = fLeft.getCurrentPosition();
+            prevTime = currentTime;
+            prevError = error;
+        }
+        setMotorPower(0, 0, 0, 0);
     }
 }
