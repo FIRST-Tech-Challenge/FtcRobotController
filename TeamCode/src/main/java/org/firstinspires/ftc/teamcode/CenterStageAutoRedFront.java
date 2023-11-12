@@ -123,7 +123,7 @@ public class CenterStageAutoRedFront extends LinearOpMode {
             }
         }
         turn(90);
-        drive(24);
+        drive(40);
         ejectPixel();
 
         telemetry.addData("Path", "Complete");

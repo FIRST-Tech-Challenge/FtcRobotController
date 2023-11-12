@@ -122,8 +122,8 @@ public class CenterStageAutoBlueFront extends LinearOpMode {
                 turn(-30);
             }
         }
-        turn(90);
-        drive(24);
+        turn(-90);
+        drive(40);
         ejectPixel();
 
         telemetry.addData("Path", "Complete");
