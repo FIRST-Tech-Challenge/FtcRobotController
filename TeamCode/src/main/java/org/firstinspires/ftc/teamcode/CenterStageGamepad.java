@@ -118,7 +118,7 @@ public class CenterStageGamepad extends LinearOpMode {
             leftBackDrive.setPower(leftBackPower);
             rightBackDrive.setPower(rightBackPower);
 
-            if (gamepad1.x) {
+            if (gamepad1.a) {
                 carWashMotor.setPower(carWashPower);
             }
 
@@ -127,7 +127,7 @@ public class CenterStageGamepad extends LinearOpMode {
                 carWashMotor.setPower(-carWashPower);
             }
 
-            if (!gamepad1.x && !gamepad1.b){
+            if (!gamepad1.a && !gamepad1.b){
                 carWashMotor.setPower(0);
             }
             telemetry.addData("Status", "Run Time: " + runtime.toString());
