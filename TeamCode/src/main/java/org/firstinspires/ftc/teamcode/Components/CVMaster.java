@@ -120,6 +120,17 @@ public class CVMaster {
         return pos;
     }
 
+    public int getRightPosition(){
+        int pos = 0;
+    if (isRed) {
+      isRed = false;
+      observeSpike();
+        }
+        pos = openSleeve.getPosition();
+        packet.put("cvPosition", pos);
+        return pos;
+    }
+
     /**
      * switches to apriltag camera
      * logs to general surface log
@@ -143,6 +154,7 @@ public class CVMaster {
         LOGGER.log("updating camera info");
         if(op.isStarted()&&isStreaming){
             switchToApril();
+            isStreaming = false;
         }
         if(!isStreaming){
             cam.update();

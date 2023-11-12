@@ -47,7 +47,7 @@ public class Lift extends RFDualMotor {
   public enum LiftPositionStates {
     HIGH_SET_LINE(1400, false),
     MID_SET_LINE(800, false),
-    LOW_SET_LINE(400, false),
+    LOW_SET_LINE(375, false),
     AT_ZERO(0, true);
 
     double position;

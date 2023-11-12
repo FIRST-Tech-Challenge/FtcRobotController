@@ -41,7 +41,7 @@ import java.util.concurrent.TimeUnit;
  */
 @Config
 public class RFAprilCam {
-    public static double X_OFFSET = 0, Y_OFFSET = 0, UPSAMPLE_THRESHOLD=30, NUMBER_OF_SAMPLES=40;
+    public static double X_OFFSET = -3, Y_OFFSET = 0, UPSAMPLE_THRESHOLD=30, NUMBER_OF_SAMPLES=40;
     public static int EXPOSURE_MS=7, GAIN = 200;
     public static double DOWNSAMPLE = 2, UPSAMPLE = 6;
     private AprilTagProcessor aprilTag;
@@ -122,9 +122,11 @@ public class RFAprilCam {
                     int p_ind = detection.id;
                     AprilTagMetadata tagData = aprilTagGameDatabase.lookupTag(p_ind);
                     VectorF values = tagData.fieldPosition;
-                    Vector2d pos = new Vector2d(-values.get(0), -values.get(1));
-                    Pose2d camPose = new Pose2d(pos.plus(new Vector2d((p_x - X_OFFSET) * directions[p_ind][0], (p_y - Y_OFFSET) * directions[p_ind][1])),
-                            directions[p_ind][0] * poseFtc.yaw * PI / 180);
+                    Vector2d pos = new Vector2d(values.get(0), values.get(1));
+                    Vector2d offset = new Vector2d(X_OFFSET, Y_OFFSET);
+                    offset = offset.rotated(currentPose.getHeading());
+                    Pose2d camPose = new Pose2d(pos.plus(new Vector2d(-(p_x) * directions[p_ind][0] - offset.getX(), -(p_y) * directions[p_ind][1] - offset.getY())),
+                            -directions[p_ind][0] * poseFtc.yaw * PI / 180 +PI );
                     if (poseFtc.range < UPSAMPLE_THRESHOLD) {
                         if (!upsample) {
                             aprilTag.setDecimation((float) UPSAMPLE);
@@ -146,6 +148,7 @@ public class RFAprilCam {
                 if (upsample && poseCount >= NUMBER_OF_SAMPLES) {
                     LOGGER.setLogLevel(RFLogger.Severity.FINE);
                     LOGGER.log("avgAprilError" + camPoseError.div(poseCount));
+                    camPoseError = new Pose2d(camPoseError.getX(), camPoseError.getY(),0);
                     currentPose = currentPose.plus(camPoseError.div(poseCount));
                     LOGGER.log("newPose" + currentPose);
                     poseCount = 0;

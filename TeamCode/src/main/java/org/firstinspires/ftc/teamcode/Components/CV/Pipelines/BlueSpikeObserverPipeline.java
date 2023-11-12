@@ -1,16 +1,10 @@
 package org.firstinspires.ftc.teamcode.Components.CV.Pipelines;
 
-import static org.firstinspires.ftc.teamcode.Components.CV.Pipelines.RedSpikeObserverPipeline.p1x;
-import static org.firstinspires.ftc.teamcode.Components.CV.Pipelines.RedSpikeObserverPipeline.p1y;
-import static org.firstinspires.ftc.teamcode.Components.CV.Pipelines.RedSpikeObserverPipeline.p21x;
-import static org.firstinspires.ftc.teamcode.Components.CV.Pipelines.RedSpikeObserverPipeline.p21y;
-import static org.firstinspires.ftc.teamcode.Components.CV.Pipelines.RedSpikeObserverPipeline.p22x;
-import static org.firstinspires.ftc.teamcode.Components.CV.Pipelines.RedSpikeObserverPipeline.p22y;
-import static org.firstinspires.ftc.teamcode.Components.CV.Pipelines.RedSpikeObserverPipeline.p2x;
-import static org.firstinspires.ftc.teamcode.Components.CV.Pipelines.RedSpikeObserverPipeline.p2y;
+import static org.firstinspires.ftc.teamcode.Components.CV.Pipelines.RedSpikeObserverPipeline.h1;
+import static org.firstinspires.ftc.teamcode.Components.CV.Pipelines.RedSpikeObserverPipeline.h1H;
+import static org.firstinspires.ftc.teamcode.Components.CV.Pipelines.RedSpikeObserverPipeline.h2H;
 import static org.firstinspires.ftc.teamcode.Components.CV.Pipelines.RedSpikeObserverPipeline.threshhold;
 import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.packet;
-
 
 import com.acmerobotics.dashboard.config.Config;
 
@@ -31,6 +25,7 @@ import java.util.ArrayList;
 @Config
 public class BlueSpikeObserverPipeline extends OpenCvPipeline {
     ArrayList<double[]> frameList;
+    public static double p1x = 500, p1y =230, p2x = 640, p2y =380, p21x = 150, p21y =200, p22x = 350, p22y =370;
 
 
 
@@ -47,7 +42,9 @@ public class BlueSpikeObserverPipeline extends OpenCvPipeline {
      * @param input inputted fram from camera
      * @return outputted frame from this function
      */
+    @Override
     public Mat processFrame(Mat input) {
+
         Rect ROI1 = new Rect( //130 x 210, 60 x 120
                 new Point(p1x,p1y),
                 new Point(p2x,p2y));
@@ -55,9 +52,26 @@ public class BlueSpikeObserverPipeline extends OpenCvPipeline {
                 new Point(p21x,p21y),
                 new Point(p22x,p22y));
         Mat cone = input.submat(ROI1);
-        double redValue = Core.sumElems(cone).val[0]/ROI1.area()/255;
+        Mat newCone = new Mat();
+        Imgproc.cvtColor(cone, newCone, Imgproc.COLOR_RGB2HSV);
+        Scalar thresh1 = new Scalar(h1,59,0), hthresh1 = new Scalar(h1H,255,255);
+        Scalar thresh2 = new Scalar(RedSpikeObserverPipeline.h2,59,0), hthresh2 = new Scalar(h2H,255,255);
+        Mat filtered = new Mat(), filtered1 = new Mat();
+        Core.inRange(newCone, thresh1, hthresh1, filtered);
+        Core.inRange(newCone, thresh2, hthresh2, filtered1);
+        Mat thresh = new Mat();
+        Core.add(filtered1, filtered, thresh);
+        double redValue = Core.sumElems(thresh).val[0]/ROI1.area()/255;
         cone = input.submat(ROI2);
-        double redValue2 = Core.sumElems(cone).val[0]/ROI2.area()/255;
+        newCone = new Mat();
+        Imgproc.cvtColor(cone, newCone, Imgproc.COLOR_RGB2HSV);
+        filtered = new Mat();
+        filtered1 = new Mat();
+        Core.inRange(newCone, thresh1, hthresh1, filtered);
+        Core.inRange(newCone, thresh2, hthresh2, filtered1);
+        thresh = new Mat();
+        Core.add(filtered1, filtered, thresh);
+        double redValue2 = Core.sumElems(thresh).val[0]/ROI2.area()/255;
         frameList.add(new double[]{redValue, redValue2});
         if(frameList.size()>5) {
             frameList.remove(0);
@@ -87,10 +101,13 @@ public class BlueSpikeObserverPipeline extends OpenCvPipeline {
             sums[0]+=frameList.get(i)[0];
             sums[1]+=frameList.get(i)[1];
         }
+        packet.put("frameListSize", frameList.size());
         packet.put("cvThresh0", sums[0]);
-        if(sums[0]>threshhold&&sums[1]>threshhold){
+        packet.put("cvThresh1", sums[1]);
+
+        if(sums[0]> threshhold&&sums[1]>threshhold){
             if(sums[0]>sums[1]){
-                return 1;
+                return 3;
             }
             else{
                 return 2;
@@ -98,9 +115,9 @@ public class BlueSpikeObserverPipeline extends OpenCvPipeline {
         }else if(sums[1]>threshhold){
             return 2;
         } else if(sums[0]>threshhold){
-            return 1;
-        }else{
             return 3;
+        }else{
+            return 1;
         }
     }
 }

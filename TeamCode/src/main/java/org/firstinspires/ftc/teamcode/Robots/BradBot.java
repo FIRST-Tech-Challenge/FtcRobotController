@@ -65,6 +65,9 @@ public class BradBot extends BasicRobot {
   public int getSpikePos() {
     return cv.getPosition()-1;
   }
+  public int getRightSpikePos() {
+    return cv.getRightPosition()-1;
+  }
 
   /**
    * starts the intake, for autonomous, intake.update() will handle the rest Logs that this function
