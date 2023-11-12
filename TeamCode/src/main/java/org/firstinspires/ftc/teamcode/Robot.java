@@ -487,9 +487,9 @@ public class Robot {
                 Log.d("vision", "shortMoveToBoard: left");
                 straightBlocking(16, false, 0.25); //forward
                 setHeading(45, 0.25); //turn
+                setServoPosBlocking(spikeServo, 0.2);
                 straightBlocking(10, false, 0.25); //forward
                 setHeading(45, 0.25);
-                setServoPosBlocking(spikeServo, 0.2);
                 straightBlocking(15, true, 0.9); //dropoff, backward
                 setHeading(-90, 0.7); //turn
                 straightBlocking(24, false, 0.7);
@@ -678,7 +678,7 @@ public class Robot {
         } else if (markerPos == MarkerDetector.MARKER_POSITION.RIGHT) {
             mecanumBlocking(20, false, 0.5);
         } else {
-            mecanumBlocking(26, false, 0.5);
+            mecanumBlocking(23, false, 0.5);
         }
     }
 
