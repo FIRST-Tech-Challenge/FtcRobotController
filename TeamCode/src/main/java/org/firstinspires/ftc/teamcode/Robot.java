@@ -51,7 +51,7 @@ public class Robot {
     private MarkerProcessor markerProcessor; //TODO: COMBINE THESE AND ALL METHODS USING THEM
     private AprilTagProcessor aprilTagProcessor;
     private VisionPortal visionPortal;
-    boolean redAlliance;
+    boolean isRedAlliance;
 
     //CONSTRUCTOR
     public Robot(HardwareMap hardwareMap, LinearOpMode opMode, Telemetry telemetry, boolean red) {
@@ -66,7 +66,7 @@ public class Robot {
         lsBack = hardwareMap.dcMotor.get("lsBack");
         lsBack.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
-        redAlliance = red;
+        isRedAlliance = red;
         tray = hardwareMap.servo.get("arm");
         clamp = hardwareMap.servo.get("holderClamp");
         hook = hardwareMap.servo.get("linearLocker");
@@ -172,9 +172,9 @@ public class Robot {
         }
     }
 
-    public void initVisionProcessing(MarkerDetector.ALLIANCE_COLOR allianceColor) {
+    public void initVisionProcessing() {
         // Initializing marker and apriltag processors and setting them with visionportal
-        markerProcessor = new MarkerProcessor(telemetry, allianceColor);
+        markerProcessor = new MarkerProcessor(telemetry, isRedAlliance? MarkerDetector.ALLIANCE_COLOR.RED:MarkerDetector.ALLIANCE_COLOR.BLUE);
         aprilTagProcessor = AprilTagProcessor.easyCreateWithDefaults();
         visionPortal = new VisionPortal.Builder()
                 .setLiveViewContainerId(VisionPortal.DEFAULT_VIEW_CONTAINER_ID)
@@ -451,7 +451,9 @@ public class Robot {
         //detect marker position
         MarkerDetector.MARKER_POSITION position = markerProcessor.getPosition();
 
-        while (position == MarkerDetector.MARKER_POSITION.UNDETECTED) {
+        int count = 0;
+        while (position == MarkerDetector.MARKER_POSITION.UNDETECTED && opMode.opModeIsActive() && count <= 30) {
+            count ++;
             Log.d("vision", "undetected marker, keep looking" + visionPortal.getCameraState());
             position = markerProcessor.getPosition();
         }
@@ -461,7 +463,7 @@ public class Robot {
 
         //save marker position, apriltag position
         setMarkerPos(position);
-        setWantedAprTagId(position, MarkerDetector.ALLIANCE_COLOR.RED);
+        setWantedAprTagId(position, isRedAlliance? MarkerDetector.ALLIANCE_COLOR.RED:MarkerDetector.ALLIANCE_COLOR.BLUE);
 
     }
 
@@ -573,7 +575,7 @@ public class Robot {
             Log.d("vision", "alignToBoard: aligned is true");
             straightBlocking(distanceToBoard, false, 0.75);
 
-            if (redAlliance) {
+            if (isRedAlliance) {
                 Log.d("vision", "alignToBoard: THIS THIS THIS THIS THIS");
                 setHeading(-90, 0.75); //THIS
                 Log.d("vision", "alignToBoard: DONE DONE DONE DONE DONE");
@@ -592,7 +594,7 @@ public class Robot {
         Log.d("vision", "moveToMarker: Tag " + wantedAprTagId);
 
         int polarity;
-        if (redAlliance) {
+        if (isRedAlliance) {
             polarity = -1;
         } else {
             polarity = 1;
