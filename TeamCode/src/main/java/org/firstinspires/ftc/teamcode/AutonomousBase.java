@@ -1,8 +1,8 @@
 package org.firstinspires.ftc.teamcode;
 
-import static org.firstinspires.ftc.teamcode.HardwareSlimbot.UltrasonicsInstances.SONIC_RANGE_FRONT;
-import static org.firstinspires.ftc.teamcode.HardwareSlimbot.UltrasonicsModes.SONIC_FIRST_PING;
-import static org.firstinspires.ftc.teamcode.HardwareSlimbot.UltrasonicsModes.SONIC_MOST_RECENT;
+import static org.firstinspires.ftc.teamcode.HardwarePixelbot.UltrasonicsInstances.SONIC_RANGE_FRONT;
+import static org.firstinspires.ftc.teamcode.HardwarePixelbot.UltrasonicsModes.SONIC_FIRST_PING;
+import static org.firstinspires.ftc.teamcode.HardwarePixelbot.UltrasonicsModes.SONIC_MOST_RECENT;
 import static java.lang.Math.abs;
 import static java.lang.Math.toRadians;
 
@@ -25,7 +25,7 @@ import java.util.Locale;
 
 public abstract class AutonomousBase extends LinearOpMode {
     /* Declare OpMode members. */
-    HardwareSlimbot robot = new HardwareSlimbot();
+    HardwarePixelbot robot = new HardwarePixelbot();
 
     static final int     DRIVE_TO             = 1;       // ACCURACY: tighter tolerances, and slows then stops at final position
     static final int     DRIVE_THRU           = 2;       // SPEED: looser tolerances, and leave motors running (ready for next command)
@@ -137,20 +137,19 @@ public abstract class AutonomousBase extends LinearOpMode {
 
     VisionPortal.Builder webcamLeft = new VisionPortal.Builder();
     VisionPortal.Builder webcamRight = new VisionPortal.Builder();
-    VisionPortal.Builder webcamBack = new VisionPortal.Builder();
+//  VisionPortal.Builder webcamBack = new VisionPortal.Builder();
     /**
      * The variable to store our instance of the vision portal.
      */
     protected VisionPortal visionPortalLeft;
     protected CenterstageSuperPipeline pipelineLeft;
-    protected VisionPortal visionPortalRight;
-    protected CenterstageSuperPipeline pipelineRight;
-    protected VisionPortal visionPortalBack;
-    protected CenterstageSuperPipeline pipelineBack;
+//    protected VisionPortal visionPortalRight;
+//    protected CenterstageSuperPipeline pipelineRight;
+ // protected VisionPortal visionPortalBack;
+ // protected CenterstageSuperPipeline pipelineBack;
     public int spikeMark = 0;   // dynamic (gets updated every cycle during INIT)
 
-    int coneNumber = 0;
-    boolean scoreHighGoal[] = {true, true, true, true, true, true};
+    int pixelNumber = 0;
 
     /*---------------------------------------------------------------------------------*/
     void captureGamepad1Buttons() {
@@ -228,7 +227,7 @@ public abstract class AutonomousBase extends LinearOpMode {
         // NOTE: sonar ranges only update every 50 msec (no matter how much faster we loop
         // than that.  That implies fast control loops will have multiple cycles that use
         // the same range value before a new/different "most recent" ultrasonic range occurs.
-        robot.fastSonarRange( HardwareSlimbot.UltrasonicsInstances.SONIC_RANGE_FRONT, HardwareSlimbot.UltrasonicsModes.SONIC_FIRST_PING );
+        robot.fastSonarRange( HardwarePixelbot.UltrasonicsInstances.SONIC_RANGE_FRONT, HardwarePixelbot.UltrasonicsModes.SONIC_FIRST_PING );
         // Wait 50 msec (DEFAULT_SONAR_PROPAGATION_DELAY_MS)
         sleep( 50 );
         // Begin the control loop.  We use a for() loop to avoid looping forever.  Be
@@ -239,7 +238,7 @@ public abstract class AutonomousBase extends LinearOpMode {
             // Handle background tasks
             performEveryLoop();
             // Query the current distance
-            int currDistance = robot.fastSonarRange( HardwareSlimbot.UltrasonicsInstances.SONIC_RANGE_FRONT, HardwareSlimbot.UltrasonicsModes.SONIC_MOST_RECENT );
+            int currDistance = robot.fastSonarRange( HardwarePixelbot.UltrasonicsInstances.SONIC_RANGE_FRONT, HardwarePixelbot.UltrasonicsModes.SONIC_MOST_RECENT );
             // Compute the range error
             int rangeErr = currDistance - desiredDistance;
             telemetry.addData("Sonar Range (F)", "Set: %d  Range: %d Err: %d", desiredDistance, currDistance, rangeErr);
@@ -255,40 +254,6 @@ public abstract class AutonomousBase extends LinearOpMode {
         robot.stopMotion();
     } // distanceFromFront
 
-    /*---------------------------------------------------------------------------------*/
-    /*  AUTO: Drive at specified angle and power while turning at specified power.     */
-    /*---------------------------------------------------------------------------------*/
-    void driveAndRotateTurretAngle(double drivePower, double turretPower, boolean turretFacingFront) {
-        double frontRight, frontLeft, rearRight, rearLeft, maxPower, xTranslation, yTranslation;
-        double turretAngle = robot.turretAngle;
-
-        // Correct the angle for the turret being in the back.
-        if(!turretFacingFront) {
-            turretAngle = AngleWrapDegrees(turretAngle + 180.0);
-        }
-
-        yTranslation = drivePower * Math.cos(toRadians(turretAngle));
-        xTranslation = drivePower * Math.sin(toRadians(turretAngle));
-
-        frontLeft  = yTranslation + xTranslation;
-        frontRight = yTranslation - xTranslation;
-        rearLeft   = yTranslation - xTranslation;
-        rearRight  = yTranslation + xTranslation;
-
-        // Normalize the values so none exceed +/- 1.0
-        maxPower = Math.max( Math.max( Math.abs(rearLeft),  Math.abs(rearRight)  ),
-                Math.max( Math.abs(frontLeft), Math.abs(frontRight) ) );
-        if (maxPower > 1.0)
-        {
-            rearLeft   /= maxPower;
-            rearRight  /= maxPower;
-            frontLeft  /= maxPower;
-            frontRight /= maxPower;
-        }
-        // Update motor power settings:
-        robot.driveTrainMotors( frontLeft, frontRight, rearLeft, rearRight );
-        robot.turretMotorSetPower(turretPower);
-    } // driveAndRotateTurretAngle
 
     /*---------------------------------------------------------------------------------*/
     void driveAndRotate(double drivePower, double turnPower) {
@@ -645,6 +610,7 @@ public abstract class AutonomousBase extends LinearOpMode {
             robot.stopMotion();
         }
     }
+
 
     //============================ IMU/GYRO-BASED NAVIGATION FUNCTIONS ============================
 

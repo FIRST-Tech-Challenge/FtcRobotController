@@ -15,7 +15,7 @@ import java.io.File;
 @Disabled
 public class CalibrationOdometryAuto extends LinearOpMode {
 
-    HardwareSlimbot robot = new HardwareSlimbot();
+    HardwarePixelbot robot = new HardwarePixelbot();
 
     //Text files to write the values to. The files are stored in the robot controller under Internal Storage\FIRST\settings
     File wheelBaseSeparationFile  = AppUtil.getInstance().getSettingsFile("wheelBaseSeparation.txt");

@@ -38,7 +38,7 @@ public class TeleopDrivetrainOnly extends LinearOpMode {
     double    elapsedTime, elapsedHz;
 
     /* Declare OpMode members. */
-    HardwareSlimbot robot = new HardwareSlimbot();
+    HardwarePixelbot robot = new HardwarePixelbot();
     @Override
     public void runOpMode() throws InterruptedException {
 
@@ -99,7 +99,7 @@ public class TeleopDrivetrainOnly extends LinearOpMode {
             if( processDpadDriveMode() == false ) {
                 // Control based on joystick; report the sensed values
                 telemetry.addData("Joystick", "x=%.3f, y=%.3f spin=%.3f",
-                        -gamepad1.left_stick_x, gamepad1.left_stick_y, gamepad1.right_stick_x );
+                        gamepad1.left_stick_x, -gamepad1.left_stick_y, gamepad1.right_stick_x );
                 switch( driverMode ) {
                     case DRIVER_MODE_SINGLE_WHEEL :
                        telemetry.addData("Driver Mode", "SINGLE-WHEEL (tri)" );
@@ -181,17 +181,17 @@ public class TeleopDrivetrainOnly extends LinearOpMode {
         }
         else if( gamepad1.dpad_left ) {
             telemetry.addData("Dpad","LEFT");
-            frontLeft  = -fineControlSpeed;
-            frontRight =  fineControlSpeed;
-            rearLeft   =  fineControlSpeed;
-            rearRight  = -fineControlSpeed;
-        }
-        else if( gamepad1.dpad_right ) {
-            telemetry.addData("Dpad","RIGHT");
             frontLeft  =  fineControlSpeed;
             frontRight = -fineControlSpeed;
             rearLeft   = -fineControlSpeed;
             rearRight  =  fineControlSpeed;
+        }
+        else if( gamepad1.dpad_right ) {
+            telemetry.addData("Dpad","RIGHT");
+            frontLeft  = -fineControlSpeed;
+            frontRight =  fineControlSpeed;
+            rearLeft   =  fineControlSpeed;
+            rearRight  = -fineControlSpeed;
         }
         else {
             dPadMode = false;
@@ -292,8 +292,8 @@ public class TeleopDrivetrainOnly extends LinearOpMode {
     /*---------------------------------------------------------------------------------*/
     void processSingleWheelControl() {
         // Use the motor-power variables so our telemetry updates correctly
-        frontLeft  = minThreshold( gamepad1.left_stick_y  );
-        frontRight = minThreshold( gamepad1.right_stick_y );
+        frontLeft  = minThreshold( -gamepad1.left_stick_y  );
+        frontRight = minThreshold( -gamepad1.right_stick_y );
         rearLeft   = minThreshold( gamepad1.left_stick_x  );
         rearRight  = minThreshold( gamepad1.right_stick_x );
 

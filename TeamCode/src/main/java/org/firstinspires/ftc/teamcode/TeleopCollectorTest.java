@@ -1,102 +1,52 @@
-/* FTC Team 7572 - Version 1.0 (11/10/2023)
+/* FTC Team 7572 - Version 1.0 (10/01/2022)
 */
 package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.util.ReadWriteFile;
-import org.firstinspires.ftc.robotcore.internal.system.AppUtil;
-
-import java.io.File;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 
 /**
- * TeleOp Full Control.
+ * TeleOp DriveTrain Only (with test modes).
  */
-//@Disabled
-public abstract class Teleop extends LinearOpMode {
-    boolean gamepad1_triangle_last,   gamepad1_triangle_now   = false;  // 
-    boolean gamepad1_circle_last,     gamepad1_circle_now     = false;  // 
-    boolean gamepad1_cross_last,      gamepad1_cross_now      = false;  // 
-    boolean gamepad1_square_last,     gamepad1_square_now     = false;  // 
-    boolean gamepad1_dpad_up_last,    gamepad1_dpad_up_now    = false;  // gamepad1.dpad_up used live/realtime
-    boolean gamepad1_dpad_down_last,  gamepad1_dpad_down_now  = false;  //   (see processDpadDriveMode() below)
+@TeleOp(name="Teleop-Collector Test", group="7592")
+@Disabled
+public class TeleopCollectorTest extends LinearOpMode {
+    boolean gamepad1_triangle_last,   gamepad1_triangle_now   = false;  // Single Wheel Control
+    boolean gamepad1_circle_last,     gamepad1_circle_now     = false;  // Backwards Drive mode (also turns off driver-centric mode)
+    boolean gamepad1_cross_last,      gamepad1_cross_now      = false;  // UNUSED
+    boolean gamepad1_square_last,     gamepad1_square_now     = false;  // Enables/calibrates driver-centric mode
+    boolean gamepad1_dpad_up_last,    gamepad1_dpad_up_now    = false;
+    boolean gamepad1_dpad_down_last,  gamepad1_dpad_down_now  = false;
     boolean gamepad1_dpad_left_last,  gamepad1_dpad_left_now  = false;
     boolean gamepad1_dpad_right_last, gamepad1_dpad_right_now = false;
-    boolean gamepad1_l_bumper_last,   gamepad1_l_bumper_now   = false;
-    boolean gamepad1_r_bumper_last,   gamepad1_r_bumper_now   = false;
-    boolean gamepad1_touchpad_last,   gamepad1_touchpad_now   = false;  
-    boolean gamepad1_l_trigger_last,  gamepad1_l_trigger_now  = false;
-    boolean gamepad1_r_trigger_last,  gamepad1_r_trigger_now  = false;
-
-    boolean gamepad2_triangle_last,   gamepad2_triangle_now   = false;  // Lower lift to collect from current stack height
-    boolean gamepad2_circle_last,     gamepad2_circle_now     = false;  // Flip intake (toggle)
-    boolean gamepad2_cross_last,      gamepad2_cross_now      = false;  // Lower lift to COLLECT position
-    boolean gamepad2_square_last,     gamepad2_square_now     = false;  // Raise lift to TRANSPORT position
-    boolean gamepad2_dpad_up_last,    gamepad2_dpad_up_now    = false;  // Lift to HIGH junction
-    boolean gamepad2_dpad_down_last,  gamepad2_dpad_down_now  = false;  // Lift to MEDIUM junction
-    boolean gamepad2_dpad_left_last,  gamepad2_dpad_left_now  = false;  // Lift to LOW junction
-    boolean gamepad2_dpad_right_last, gamepad2_dpad_right_now = false;  // Lower to GROUND junction
-    boolean gamepad2_l_bumper_last,   gamepad2_l_bumper_now   = false;  // Collect cone (intake cone)
-    boolean gamepad2_r_bumper_last,   gamepad2_r_bumper_now   = false;  // Deposit cone (eject cone)
-    boolean gamepad2_touchpad_last,   gamepad2_touchpad_now   = false;  // UNUSED
-    boolean gamepad2_share_last,      gamepad2_share_now      = false;  // UNUSED
+    boolean gamepad1_l_bumper_last,   gamepad1_l_bumper_now   = false;  // UNUSED
+    boolean gamepad1_r_bumper_last,   gamepad1_r_bumper_now   = false;  // UNUSED
 
     double  yTranslation, xTranslation, rotation;                  /* Driver control inputs */
     double  rearLeft, rearRight, frontLeft, frontRight, maxPower;  /* Motor power levels */
     boolean backwardDriveControl = false; // drive controls backward (other end of robot becomes "FRONT")
     boolean controlMultSegLinear = true;
 
+    final int DRIVER_MODE_SINGLE_WHEEL = 1;
     final int DRIVER_MODE_STANDARD     = 2;
     final int DRIVER_MODE_DRV_CENTRIC  = 3;
     int       driverMode               = DRIVER_MODE_STANDARD;
     double    driverAngle              = 0.0;  /* for DRIVER_MODE_DRV_CENTRIC */
-
-    boolean   batteryVoltsEnabled = false;  // enable only during testing (takes time!)
 
     long      nanoTimeCurr=0, nanoTimePrev=0;
     double    elapsedTime, elapsedHz;
 
     /* Declare OpMode members. */
     HardwarePixelbot robot = new HardwarePixelbot();
-
-    //Files to access the algorithm constants
-    File wheelBaseSeparationFile  = AppUtil.getInstance().getSettingsFile("wheelBaseSeparation.txt");
-    File horizontalTickOffsetFile = AppUtil.getInstance().getSettingsFile("horizontalTickOffset.txt");
-
-    double robotEncoderWheelDistance            = Double.parseDouble(ReadWriteFile.readFile(wheelBaseSeparationFile).trim()) * robot.COUNTS_PER_INCH2;
-    double horizontalEncoderTickPerDegreeOffset = Double.parseDouble(ReadWriteFile.readFile(horizontalTickOffsetFile).trim());
-    double robotGlobalXCoordinatePosition       = 0.0;   // in odometer counts
-    double robotGlobalYCoordinatePosition       = 0.0;
-    double robotOrientationRadians              = 0.0;   // 0deg (straight forward)
-
-    boolean leftAlliance = true;  // overriden in setAllianceSpecificBehavior()
-
-    Gamepad.RumbleEffect coneRumbleEffect1;    // Use to build a custom rumble sequence.
-    Gamepad.RumbleEffect coneRumbleEffect2;    // Use to build a custom rumble sequence.
-
-    // sets unique behavior based on alliance
-    public abstract void setAllianceSpecificBehavior();
-
     @Override
     public void runOpMode() throws InterruptedException {
 
         telemetry.addData("State", "Initializing (please wait)");
         telemetry.update();
 
-        coneRumbleEffect1 = new Gamepad.RumbleEffect.Builder()
-                .addStep(1.0, 1.0, 500)  //  Rumble left/right motors 100% for 500 mSec
-                .build();
-        coneRumbleEffect2 = new Gamepad.RumbleEffect.Builder()
-                .addStep(0.0, 1.0, 250)  //  Rumble right motor 100% for 500 mSec
-                .addStep(0.0, 0.0, 250)  //  Pause for 300 mSec
-                .addStep(1.0, 0.0, 250)  //  Rumble left motor 100% for 500 mSec
-                .build();
-
         // Initialize robot hardware
         robot.init(hardwareMap,false);
-
-        setAllianceSpecificBehavior();
 
         // Send telemetry message to signify robot waiting;
         telemetry.addData("State", "Ready");
@@ -110,18 +60,14 @@ public abstract class Teleop extends LinearOpMode {
         {
             // Refresh gamepad button status
             captureGamepad1Buttons();
-            captureGamepad2Buttons();
 
-            // Bulk-refresh the Control/Expansion Hub device status (motor status, digital I/O) -- FASTER!
+            // Bulk-refresh the Hub1/Hub2 device status (motor status, digital I/O) -- FASTER!
             robot.readBulkData();
-            globalCoordinatePositionUpdate();
 
-            ProcessCollectorControls();
-
-            // Check for an OFF-to-ON toggle of the gamepad1 TRIANGLE button
+            // Check for an OFF-to-ON toggle of the gamepad1 TRIANGLE button (toggles SINGLE-MOTOR drive control)
             if( gamepad1_triangle_now && !gamepad1_triangle_last)
             {
-
+                driverMode = DRIVER_MODE_SINGLE_WHEEL; // allow control of individual drive motors
             }
 
             // Check for an OFF-to-ON toggle of the gamepad1 SQUARE button (toggles DRIVER-CENTRIC drive control)
@@ -129,6 +75,75 @@ public abstract class Teleop extends LinearOpMode {
             {
                 driverMode = DRIVER_MODE_DRV_CENTRIC;
             }
+
+            // Check for an OFF-to-ON toggle of the gamepad1 CROSS button (turns off collector motor)
+            if( gamepad1_cross_now && !gamepad1_cross_last)
+            {
+                robot.collectorMotor.setPower(0.0);
+            }
+
+            if( gamepad1_l_bumper_now && !gamepad1_l_bumper_last)
+            {
+                robot.collectorMotor.setPower(-robot.COLLECTOR_MOTOR_POWER);
+            }
+
+            if( gamepad1_r_bumper_now && !gamepad1_r_bumper_last)
+            {
+                robot.collectorMotor.setPower(robot.COLLECTOR_MOTOR_POWER);
+            }
+
+            if( gamepad1_dpad_left_now && !gamepad1_dpad_left_last)
+            {
+                robot.collectorServoSetPoint -= 0.05;
+                robot.collectorServo.setPosition(robot.collectorServoSetPoint);
+            }
+
+            if( gamepad1_dpad_right_now && !gamepad1_dpad_right_last)
+            {
+                robot.collectorServoSetPoint += 0.05;
+                robot.collectorServo.setPosition(robot.collectorServoSetPoint);
+            }
+
+            if( gamepad1_dpad_up_now && !gamepad1_dpad_up_last)
+            {
+                if(robot.collectorServoIndex < 6) {
+                    robot.collectorServoIndex += 1;
+                    robot.collectorServoChanged = true;
+                }
+            }
+
+            if( gamepad1_dpad_down_now && !gamepad1_dpad_down_last)
+            {
+                if(robot.collectorServoIndex > 1) {
+                    robot.collectorServoIndex -= 1;
+                    robot.collectorServoChanged = true;
+                }
+            }
+            if(robot.collectorServoChanged) {
+                switch (robot.collectorServoIndex) {
+                    case 1:
+                        robot.collectorServo.setPosition(robot.COLLECTOR_SERVO_GROUND);
+                        break;
+                    case 2:
+                        robot.collectorServo.setPosition(robot.COLLECTOR_SERVO_STACK2);
+                        break;
+                    case 3:
+                        robot.collectorServo.setPosition(robot.COLLECTOR_SERVO_STACK3);
+                        break;
+                    case 4:
+                        robot.collectorServo.setPosition(robot.COLLECTOR_SERVO_STACK4);
+                        break;
+                    case 5:
+                        robot.collectorServo.setPosition(robot.COLLECTOR_SERVO_STACK5);
+                        break;
+                    case 6:
+                        robot.collectorServo.setPosition(robot.COLLECTOR_SERVO_STORED);
+                        break;
+
+                } // switch
+                robot.collectorServoChanged = false;
+            }
+
 
             // Check for an OFF-to-ON toggle of the gamepad1 CIRCLE button (toggles STANDARD/BACKWARD drive control)
             if( gamepad1_circle_now && !gamepad1_circle_last)
@@ -144,16 +159,21 @@ public abstract class Teleop extends LinearOpMode {
                 }
             }
 
+            telemetry.addData("triangle","Single Wheel Control");
             telemetry.addData("circle","Robot-centric (fwd/back modes)");
             telemetry.addData("square","Driver-centric (set joystick!)");
             telemetry.addData("d-pad","Fine control (30%)");
             telemetry.addData(" "," ");
-
+/*
             if( processDpadDriveMode() == false ) {
                 // Control based on joystick; report the sensed values
                 telemetry.addData("Joystick", "x=%.3f, y=%.3f spin=%.3f",
                         -gamepad1.left_stick_x, gamepad1.left_stick_y, gamepad1.right_stick_x );
                 switch( driverMode ) {
+                    case DRIVER_MODE_SINGLE_WHEEL :
+                       telemetry.addData("Driver Mode", "SINGLE-WHEEL (tri)" );
+                       processSingleWheelControl();
+                       break;
                     case DRIVER_MODE_STANDARD :
                         telemetry.addData("Driver Mode", "STD-%s (cir)",
                                 (backwardDriveControl)? "BACKWARD":"FORWARD" );
@@ -168,8 +188,8 @@ public abstract class Teleop extends LinearOpMode {
                         driverMode = DRIVER_MODE_STANDARD;
                         break;
                 } // switch()
-            } // processDpadDriveMode
-
+            }
+*/
             // Compute current cycle time
             nanoTimePrev = nanoTimeCurr;
             nanoTimeCurr = System.nanoTime();
@@ -178,24 +198,18 @@ public abstract class Teleop extends LinearOpMode {
 
             // Update telemetry data
             telemetry.addData("Servo", "%.3f (%d)", robot.collectorServoSetPoint, robot.collectorServoIndex);
-            telemetry.addData("Front", "%.2f (%d cts) %.2f (%d cts)",
-                    frontLeft, robot.frontLeftMotorPos, frontRight, robot.frontRightMotorPos );
-            telemetry.addData("Rear ", "%.2f (%d cts) %.2f (%d cts)",
-                    rearLeft,  robot.rearLeftMotorPos,  rearRight,  robot.rearRightMotorPos );
-            telemetry.addData("Odometry (L/R/S)", "%d %d %d cts",
-                    robot.leftOdometerCount, robot.rightOdometerCount, robot.strafeOdometerCount );
-            telemetry.addData("World X",     "%.2f in", (robotGlobalYCoordinatePosition / robot.COUNTS_PER_INCH2) );
-            telemetry.addData("World Y",     "%.2f in", (robotGlobalXCoordinatePosition / robot.COUNTS_PER_INCH2) );
+            telemetry.addData("Front", "%.2f (%.0f cts/sec) %.2f (%.0f cts/sec)",
+                    frontLeft, robot.frontLeftMotorVel, frontRight, robot.frontRightMotorVel );
+            telemetry.addData("Back ", "%.2f (%.0f cts/sec) %.2f (%.0f cts/sec)",
+                    rearLeft,  robot.rearLeftMotorVel,  rearRight,  robot.rearRightMotorVel );
+            telemetry.addData("Front", "%d %d counts", robot.frontLeftMotorPos, robot.frontRightMotorPos );
+            telemetry.addData("Back ", "%d %d counts", robot.rearLeftMotorPos,  robot.rearRightMotorPos );
             telemetry.addData("Gyro Angle", "%.1f degrees", robot.headingIMU() );
             telemetry.addData("CycleTime", "%.1f msec (%.1f Hz)", elapsedTime, elapsedHz );
-            if( batteryVoltsEnabled ) {
-               telemetry.addData("Batteries", "CtlHub=%.3f V, ExHub=%.3f V",
-                    robot.readBatteryControlHub()/1000.0, robot.readBatteryExpansionHub()/1000.0 );
-            }
             telemetry.update();
 
             // Pause for metronome tick.  40 mS each cycle = update 25 times a second.
-//          robot.waitForTick(40);
+            robot.waitForTick(40);
         } // opModeIsActive
 
     } // runOpMode
@@ -212,125 +226,43 @@ public abstract class Teleop extends LinearOpMode {
         gamepad1_dpad_right_last = gamepad1_dpad_right_now;  gamepad1_dpad_right_now = gamepad1.dpad_right;
         gamepad1_l_bumper_last   = gamepad1_l_bumper_now;    gamepad1_l_bumper_now   = gamepad1.left_bumper;
         gamepad1_r_bumper_last   = gamepad1_r_bumper_now;    gamepad1_r_bumper_now   = gamepad1.right_bumper;
-//      gamepad1_touchpad_last   = gamepad1_touchpad_now;    gamepad1_touchpad_now   = gamepad1.touchpad;
-        gamepad1_l_trigger_last  = gamepad1_l_trigger_now;   gamepad1_l_trigger_now  = (gamepad1.left_trigger >= 0.5);
-        gamepad1_r_trigger_last  = gamepad1_r_trigger_now;   gamepad1_r_trigger_now  = (gamepad1.right_trigger >= 0.5);
     } // captureGamepad1Buttons
-
-    /*---------------------------------------------------------------------------------*/
-    void captureGamepad2Buttons() {
-        gamepad2_triangle_last   = gamepad2_triangle_now;    gamepad2_triangle_now   = gamepad2.triangle;
-        gamepad2_circle_last     = gamepad2_circle_now;      gamepad2_circle_now     = gamepad2.circle;
-        gamepad2_cross_last      = gamepad2_cross_now;       gamepad2_cross_now      = gamepad2.cross;
-        gamepad2_square_last     = gamepad2_square_now;      gamepad2_square_now     = gamepad2.square;
-        gamepad2_dpad_up_last    = gamepad2_dpad_up_now;     gamepad2_dpad_up_now    = gamepad2.dpad_up;
-        gamepad2_dpad_down_last  = gamepad2_dpad_down_now;   gamepad2_dpad_down_now  = gamepad2.dpad_down;
-        gamepad2_dpad_left_last  = gamepad2_dpad_left_now;   gamepad2_dpad_left_now  = gamepad2.dpad_left;
-        gamepad2_dpad_right_last = gamepad2_dpad_right_now;  gamepad2_dpad_right_now = gamepad2.dpad_right;
-        gamepad2_l_bumper_last   = gamepad2_l_bumper_now;    gamepad2_l_bumper_now   = gamepad2.left_bumper;
-        gamepad2_r_bumper_last   = gamepad2_r_bumper_now;    gamepad2_r_bumper_now   = gamepad2.right_bumper;
-  //    gamepad2_touchpad_last   = gamepad2_touchpad_now;    gamepad2_touchpad_now   = gamepad2.touchpad;
-  //    gamepad2_share_last      = gamepad2_share_now;       gamepad2_share_now      = gamepad2.share;
-    } // captureGamepad2Buttons
-
-    void ProcessCollectorControls() {
-        // Check for an OFF-to-ON toggle of the gamepad2 CROSS button (turns off collector motor)
-        if( gamepad2_cross_now && !gamepad2_cross_last)
-        {
-            robot.collectorMotor.setPower(0.0);
-            robot.collectorServo.setPosition(robot.COLLECTOR_SERVO_RAISED);
-        }
-
-        if( gamepad2_l_bumper_now && !gamepad2_l_bumper_last)
-        {
-            robot.collectorMotor.setPower(-robot.COLLECTOR_MOTOR_POWER);
-        }
-
-        if( gamepad2_r_bumper_now && !gamepad2_r_bumper_last)
-        {
-            robot.collectorMotor.setPower(robot.COLLECTOR_MOTOR_POWER);
-        }
-
-        // Check for an OFF-to-ON toggle of the gamepad2 CIRCLE button
-        if( gamepad2_circle_now && !gamepad2_circle_last)
-        {
-            robot.collectorServo.setPosition(robot.COLLECTOR_SERVO_GROUND);
-        }
-
-        // Check for an OFF-to-ON toggle of the gamepad2 TRIANGLE button
-        if( gamepad2_triangle_now && !gamepad2_triangle_last)
-        {
-            robot.collectorServo.setPosition(robot.COLLECTOR_SERVO_RAISED);
-        }
-
-    }  // processCollectorControls
 
     /*---------------------------------------------------------------------------------*/
     /*  TELE-OP: Mecanum-wheel drive control using Dpad (slow/fine-adjustment mode)    */
     /*---------------------------------------------------------------------------------*/
     boolean processDpadDriveMode() {
-        double fineDriveSpeed  = 0.50;
-        double fineStrafeSpeed = 0.50;
-        double autoDriveSpeed  = 0.56;
-        double fineTurnSpeed   = 0.05;
+        double fineControlSpeed = 1.00;
         boolean dPadMode = true;
         // Only process 1 Dpad button at a time
         if( gamepad1.dpad_up ) {
             telemetry.addData("Dpad","FORWARD");
-            frontLeft  = fineDriveSpeed;
-            frontRight = fineDriveSpeed;
-            rearLeft   = fineDriveSpeed;
-            rearRight  = fineDriveSpeed;
+            frontLeft  = fineControlSpeed;
+            frontRight = fineControlSpeed;
+            rearLeft   = fineControlSpeed;
+            rearRight  = fineControlSpeed;
         }
         else if( gamepad1.dpad_down ) {
             telemetry.addData("Dpad","BACKWARD");
-            frontLeft  = -fineDriveSpeed;
-            frontRight = -fineDriveSpeed;
-            rearLeft   = -fineDriveSpeed;
-            rearRight  = -fineDriveSpeed;
+            frontLeft  = -fineControlSpeed;
+            frontRight = -fineControlSpeed;
+            rearLeft   = -fineControlSpeed;
+            rearRight  = -fineControlSpeed;
         }
         else if( gamepad1.dpad_left ) {
             telemetry.addData("Dpad","LEFT");
-            frontLeft  =  fineStrafeSpeed;
-            frontRight = -fineStrafeSpeed;
-            rearLeft   = -fineStrafeSpeed;
-            rearRight  =  fineStrafeSpeed;
+            frontLeft  = -fineControlSpeed;
+            frontRight =  fineControlSpeed;
+            rearLeft   =  fineControlSpeed;
+            rearRight  = -fineControlSpeed;
         }
         else if( gamepad1.dpad_right ) {
             telemetry.addData("Dpad","RIGHT");
-            frontLeft  = -fineStrafeSpeed;
-            frontRight =  fineStrafeSpeed;
-            rearLeft   =  fineStrafeSpeed;
-            rearRight  = -fineStrafeSpeed;
+            frontLeft  =  fineControlSpeed;
+            frontRight = -fineControlSpeed;
+            rearLeft   = -fineControlSpeed;
+            rearRight  =  fineControlSpeed;
         }
-
-/*  INSTEAD USE LEFT/RIGHT FOR FINE-TURNING CONTROL
-        else if( gamepad1.dpad_left ) {
-            telemetry.addData("Dpad","TURN");
-            frontLeft  = -fineTurnSpeed;
-            frontRight =  fineTurnSpeed;
-            rearLeft   = -fineTurnSpeed;
-            rearRight  =  fineTurnSpeed;
-        }
-        else if( gamepad1.dpad_right ) {
-            telemetry.addData("Dpad","TURN");
-            frontLeft  =  fineTurnSpeed;
-            frontRight = -fineTurnSpeed;
-            rearLeft   =  fineTurnSpeed;
-            rearRight  = -fineTurnSpeed;
-        }
- */
-
- /* TOUCHPAD CONTROL FOR AUTO-DRIVE NOT USED FOR TELEOP THIS YEAR
-       else if( autoDrive || (gamepad1_touchpad_now && !gamepad1_touchpad_last) ) {
-            telemetry.addData("Touchpad","FORWARD");
-            frontLeft  = autoDriveSpeed;
-            frontRight = autoDriveSpeed;
-            rearLeft   = autoDriveSpeed;
-            rearRight  = autoDriveSpeed;
-            autoDrive = true;
-        }
-  */
         else {
             dPadMode = false;
         }
@@ -357,7 +289,7 @@ public abstract class Teleop extends LinearOpMode {
         double valueOut;
 
         //========= NO JOYSTICK INPUT =========
-        if( Math.abs( valueIn) < 0.05 ) {
+        if( Math.abs( valueIn) < 0.02 ) {
             valueOut = 0.0;
         }
         //========= POSITIVE JOYSTICK INPUTS =========
@@ -389,37 +321,37 @@ public abstract class Teleop extends LinearOpMode {
                 valueOut = (6.00 * valueIn) + 4.8925;
         }
 
-        return valueOut/2.0;
+        return valueOut;
     } // multSegLinearRot
 
     private double multSegLinearXY( double valueIn ) {
         double valueOut;
 
         //========= NO JOYSTICK INPUT =========
-        if( Math.abs( valueIn) < 0.05 ) {
+        if( Math.abs( valueIn) < 0.02 ) {
             valueOut = 0.0;
         }
         //========= POSITIVE JOYSTICK INPUTS =========
         else if( valueIn > 0.0 ) {
-            if( valueIn < 0.50 ) {                       // NOTE: approx 0.06 required to **initiate** rotation
-                valueOut = (0.25 * valueIn) + 0.040;     // 0.01=0.0425   0.50=0.1650
+            if( valueIn < 0.33 ) {                       // NOTE: approx 0.06 required to **initiate** rotation
+                valueOut = (0.25 * valueIn) + 0.0550;    // 0.01=0.060   0.33=0.1375
             }
             else if( valueIn < 0.90 ) {
-                valueOut = (0.75 * valueIn) - 0.210;     // 0.50=0.1650   0.90=0.4650
+                valueOut = (1.00 * valueIn) - 0.1925;   // 0.33=0.1375   0.90=0.7075
             }
             else
-                valueOut = (8.0 * valueIn) - 6.735;      // 0.90=0.4650   1.00=1.265 (clipped)
+                valueOut = (14.0 * valueIn) - 11.8925;  // 0.90=0.7075   1.00=2.1075 (clipped)
         }
         //========= NEGATIVE JOYSTICK INPUTS =========
         else { // valueIn < 0.0
-            if( valueIn > -0.50 ) {
-                valueOut = (0.25 * valueIn) - 0.040;
+            if( valueIn > -0.33 ) {
+                valueOut = (0.25 * valueIn) - 0.0550;
             }
             else if( valueIn > -0.90 ) {
-                valueOut = (0.75 * valueIn) + 0.210;
+                valueOut = (1.00 * valueIn) + 0.1925;
             }
             else
-                valueOut = (8.0 * valueIn) + 6.735;
+                valueOut = (14.0 * valueIn) + 11.8925;
         }
 
         return valueOut;
@@ -446,13 +378,13 @@ public abstract class Teleop extends LinearOpMode {
         // Retrieve X/Y and ROTATION joystick input
         if( controlMultSegLinear ) {
             yTranslation = multSegLinearXY( -gamepad1.left_stick_y );
-            xTranslation = multSegLinearXY( -gamepad1.left_stick_x );
-            rotation     = multSegLinearRot( gamepad1.right_stick_x );
+            xTranslation = multSegLinearXY(  gamepad1.left_stick_x );
+            rotation     = multSegLinearRot( -gamepad1.right_stick_x );
         }
         else {
-            yTranslation = -gamepad1.left_stick_y * 1.00;
-            xTranslation =  gamepad1.left_stick_x * 1.25;
-            rotation     = -gamepad1.right_stick_x * 0.50;
+            yTranslation = -gamepad1.left_stick_y;
+            xTranslation = gamepad1.left_stick_x;
+            rotation = -gamepad1.right_stick_x;
         }
         // If BACKWARD drive control, reverse the operator inputs
         if( backwardDriveControl ) {
@@ -550,41 +482,4 @@ public abstract class Teleop extends LinearOpMode {
 
     } // processDriverCentricDriveMode
 
-
-    /**
-     * Ensure angle is in the range of -PI to +PI (-180 to +180 deg)
-     * @param angleRadians
-     * @return
-     */
-    public double AngleWrapRadians( double angleRadians ){
-        while( angleRadians < -Math.PI ) {
-            angleRadians += 2.0*Math.PI;
-        }
-        while( angleRadians > Math.PI ){
-            angleRadians -= 2.0*Math.PI;
-        }
-        return angleRadians;
-    }
-
-    /**
-     * Updates the global (x, y, theta) coordinate position of the robot using the odometry encoders
-     */
-    private void globalCoordinatePositionUpdate(){
-        //Get Current Positions
-        int leftChange  = robot.leftOdometerCount  - robot.leftOdometerPrev;
-        int rightChange = robot.rightOdometerCount - robot.rightOdometerPrev;
-        //Calculate Angle
-        double changeInRobotOrientation = (leftChange - rightChange) / (robotEncoderWheelDistance);
-        robotOrientationRadians += changeInRobotOrientation;
-        robotOrientationRadians = AngleWrapRadians( robotOrientationRadians );   // Keep between -PI and +PI
-        //Get the components of the motion
-        int rawHorizontalChange = robot.strafeOdometerCount - robot.strafeOdometerPrev;
-        double horizontalChange = rawHorizontalChange - (changeInRobotOrientation*horizontalEncoderTickPerDegreeOffset);
-        double p = ((rightChange + leftChange) / 2.0);
-        double n = horizontalChange;
-        //Calculate and update the position values
-        robotGlobalXCoordinatePosition += (p*Math.sin(robotOrientationRadians) + n*Math.cos(robotOrientationRadians));
-        robotGlobalYCoordinatePosition += (p*Math.cos(robotOrientationRadians) - n*Math.sin(robotOrientationRadians));
-    } // globalCoordinatePositionUpdate
-	
-} // Teleop
+} // TeleopDrivetrainOnly
