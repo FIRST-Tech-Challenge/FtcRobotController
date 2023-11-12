@@ -61,6 +61,7 @@ public class CenterStageGamepad extends LinearOpMode {
         rightFrontDrive = hardwareMap.get(DcMotor.class, "rightFront");
         rightBackDrive = hardwareMap.get(DcMotor.class, "rightBack");
         carWashMotor = hardwareMap.get(DcMotor.class, "liftMotor");
+        droneServo = hardwareMap.get(Servo.class, "droneServo");
 
         leftFrontDrive.setDirection(DcMotor.Direction.REVERSE);
         leftBackDrive.setDirection(DcMotor.Direction.REVERSE);
@@ -74,7 +75,7 @@ public class CenterStageGamepad extends LinearOpMode {
         runtime.reset();
 
         double slow = 1.0;
-        double strafeslow = 1.0;
+        double strafeSlow = 1.0;
         int targetEncoderValue = 0;
         double carWashPower = 1.0;
 
@@ -82,10 +83,10 @@ public class CenterStageGamepad extends LinearOpMode {
             double max;
             if (gamepad1.right_trigger > 0.7) {
                 slow = 0.25;
-                strafeslow = 0.3525;
+                strafeSlow = 0.3525;
             } else {
                 slow = 0.5;
-                strafeslow = 0.5;
+                strafeSlow = 0.5;
             }
 
             double axial   = -gamepad1.left_stick_y;  // Note: pushing stick forward gives negative value
@@ -94,7 +95,7 @@ public class CenterStageGamepad extends LinearOpMode {
 
             axial = -gamepad1.left_stick_y * slow;
             lateral = gamepad1.left_stick_x * 0.75 * slow;
-            yaw = gamepad1.right_stick_x * strafeslow;
+            yaw = gamepad1.right_stick_x * strafeSlow;
 
             double leftFrontPower  = axial + lateral + yaw;
             double rightFrontPower = axial - lateral - yaw;
@@ -118,16 +119,20 @@ public class CenterStageGamepad extends LinearOpMode {
             leftBackDrive.setPower(leftBackPower);
             rightBackDrive.setPower(rightBackPower);
 
-            if (gamepad1.a) {
+            if (gamepad2.a) {
                 carWashMotor.setPower(carWashPower);
             }
 
 
-            if (gamepad1.b) {
+            if (gamepad2.b) {
                 carWashMotor.setPower(-carWashPower);
             }
 
-            if (!gamepad1.a && !gamepad1.b){
+            if ((gamepad2.left_trigger > 0.75) && (gamepad2.right_trigger > 0.75)) {
+                droneServo.setPosition(1);
+            }
+
+            if (!gamepad2.a && !gamepad2.b){
                 carWashMotor.setPower(0);
             }
             telemetry.addData("Status", "Run Time: " + runtime.toString());
