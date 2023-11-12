@@ -139,7 +139,6 @@ public class DriveTrain extends OpMode
         frontRightPower = (-pivot+y-x);
         rearRightPower = (-pivot+y+x);
 
-        intakeMotor.setPower(0);
 
         // gamepad 1 controls
         if(gamepad1.left_bumper) {
@@ -154,7 +153,6 @@ public class DriveTrain extends OpMode
             rearLeft.setPower(rearLeftPower * .85);
             rearRight.setPower(rearRightPower * .85);
         }
-
         if(gamepad1.dpad_left) {
             frontLeft.setPower(-0.5);
             rearRight.setPower(-0.5);
@@ -166,6 +164,13 @@ public class DriveTrain extends OpMode
             rearRight.setPower(0.5);
             frontRight.setPower(-0.5);
             rearLeft.setPower(-0.5);
+        }
+
+        if(gamepad1.right_bumper) {
+            intakeMotor.setPower(1);
+        }
+        else {
+            intakeMotor.setPower(0);
         }
 
         liftMotor1.setPower(0);
