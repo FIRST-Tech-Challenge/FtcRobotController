@@ -76,10 +76,9 @@ public class RedSpikeObserverPipeline extends OpenCvPipeline {
             frameList.remove(0);
         }
         cone.release();
-
-
-
-
+        newCone.release();
+        filtered.release();
+        filtered1.release();
         //release all the data
 //        input.release();
 //        mat.release();

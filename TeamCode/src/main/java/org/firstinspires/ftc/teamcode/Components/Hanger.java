@@ -1,5 +1,8 @@
 package org.firstinspires.ftc.teamcode.Components;
 
+
+import static java.lang.Double.min;
+
 import org.firstinspires.ftc.teamcode.Components.RFModules.Devices.RFMotor;
 
 public class Hanger extends RFMotor {
@@ -8,7 +11,7 @@ public class Hanger extends RFMotor {
         super("hangerMotor", true);
     }
     public void setPermaPower(double p_permaPower){
-        permaPower=p_permaPower;
+        permaPower=min(p_permaPower, 0.3);
     }
     @Override
     public void setPower(double p_power){

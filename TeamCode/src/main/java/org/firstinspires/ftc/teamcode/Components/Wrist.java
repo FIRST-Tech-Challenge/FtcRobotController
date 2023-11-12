@@ -83,7 +83,7 @@ public class Wrist extends RFServo {
     super.superSetPosition(0.98);
   }
   public void unflatten(){
-    super.superSetPosition(0.88);
+    super.superSetPosition(0.87);
   }
 
   public void flipTo(WristTargetStates p_state) {
@@ -132,7 +132,6 @@ public class Wrist extends RFServo {
           i.setStateTrue();
       }
       else{
-        LOGGER.log(i.name() + ": "+i.state + ", "+ i.position + " vs" + super.getTarget());
       }
     }
     for (var i : WristTargetStates.values()) {

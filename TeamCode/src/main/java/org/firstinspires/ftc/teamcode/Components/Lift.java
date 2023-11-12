@@ -11,6 +11,7 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import org.firstinspires.ftc.teamcode.Components.RFModules.Devices.RFDualMotor;
 import org.firstinspires.ftc.teamcode.Components.RFModules.Devices.RFMotor;
 import org.firstinspires.ftc.teamcode.Components.RFModules.System.RFLogger;
+import org.firstinspires.ftc.teamcode.Robots.BasicRobot;
 
 /** William */
 public class Lift extends RFDualMotor {
@@ -18,7 +19,7 @@ public class Lift extends RFDualMotor {
   private double target = 0.0;
   private double MIN_VELOCITY = 20, MANUAL_TIME = 0.2, lastManualTime = -1.0;
   public static double max = 1500,
-      min = 0,
+      min = -10,
       RESISTANCE = 450,
       kS = 0.03,
       kV = 3.2786E-4,
@@ -32,15 +33,17 @@ public class Lift extends RFDualMotor {
 
   /** Constructor */
   public Lift() {
-    super("rightLiftMotor", "leftLiftMotor", true);
+    super("rightLiftMotor", "leftLiftMotor", !isTeleop);
     super.setDirection(DcMotorSimple.Direction.REVERSE);
     setConstants(
         max, min, RESISTANCE, kS, kV, kA, MAX_UP_VELO, MAX_DOWN_VELO, MAX_ACCEL, MAX_DECEL, kP, kD);
     super.setTarget(0);
     lastPower = 0;
-    lastManualTime=-100;
+    lastManualTime = -100;
     target = 0;
-    super.resetPosition();
+    if(!isTeleop){
+      super.resetPosition();
+    }
   }
 
   /** Stores different states of lift. */
@@ -71,7 +74,8 @@ public class Lift extends RFDualMotor {
         LOGGER.log(RFLogger.Severity.INFO, "assigned true to position state: " + this.name());
       }
     }
-    public boolean getState(){
+
+    public boolean getState() {
       return this.state;
     }
 
@@ -104,8 +108,15 @@ public class Lift extends RFDualMotor {
         LOGGER.log(RFLogger.Severity.INFO, "assigned true to target state: " + this.name());
       }
     }
-    public boolean getState(){
+
+    public boolean getState() {
       return this.state;
+    }
+
+    public void clearTargets() {
+      for (LiftMovingStates i : LiftMovingStates.values()) {
+        i.state = false;
+      }
     }
   }
 
@@ -124,25 +135,25 @@ public class Lift extends RFDualMotor {
         i.setStateTrue();
       }
     }
-    if (super.getCurrentPosition() < 350)
-      LiftPositionStates.AT_ZERO.setStateTrue();
+    if (super.getCurrentPosition() < 350) LiftPositionStates.AT_ZERO.setStateTrue();
 
     for (var i : LiftMovingStates.values()) {
-      if (i.state && super.getTarget() != LiftPositionStates.values()[i.ordinal()].position) {
+      if (i.state
+          && abs(super.getTarget() - LiftPositionStates.values()[i.ordinal()].position) > 30) {
         setPosition(LiftPositionStates.values()[i.ordinal()]);
       }
     }
     if (isTeleop) {
       if (time - lastManualTime > MANUAL_TIME) {
-        setPosition(super.getTarget());
+        setPosition(super.getTarget(),0);
       } else {
         setTarget(super.getCurrentPosition());
+        LiftMovingStates.LOW.clearTargets();
       }
-    }
-    else{
+    } else {
       setPosition(super.getTarget());
     }
-    LOGGER.log(RFLogger.Severity.FINE,"currentPos: " + super.getCurrentPosition());
+    LOGGER.log(RFLogger.Severity.FINE, "currentPos: " + super.getCurrentPosition());
     packet.put("liftPos", super.getCurrentPosition());
   }
 
@@ -154,7 +165,7 @@ public class Lift extends RFDualMotor {
    *     state machine.
    */
   public void setPosition(double p_target) {
-    if (!Wrist.WristStates.FLAT.state || super.getCurrentPosition()>5 ) {
+    if (!Wrist.WristStates.FLAT.state) {
       super.setPosition(p_target, 0);
       if (target != p_target) {
         LOGGER.setLogLevel(RFLogger.Severity.INFO);
@@ -162,7 +173,7 @@ public class Lift extends RFDualMotor {
         target = p_target;
       }
     } else {
-      super.setRawPower(0);
+      super.setRawPower(-0.2);
       LOGGER.log(RFLogger.Severity.SEVERE, "Wrist state FLAT, can't move");
     }
   }
@@ -173,13 +184,12 @@ public class Lift extends RFDualMotor {
         if (Arm.ArmStates.UNFLIPPED.getState()
             && Arm.ArmTargetStates.UNFLIPPED.getState()
             && Wrist.WristStates.HOLD.state) {
-          super.setPosition(p_state.position-15, 0);
+          super.setPosition(p_state.position - 10, 0);
         } else {
-          super.setPosition(LiftPositionStates.LOW_SET_LINE.position,0);
+          super.setPosition(LiftPositionStates.LOW_SET_LINE.position, 0);
         }
-      }
-      else{
-          super.setPosition(p_state.position,0);
+      } else {
+        super.setPosition(p_state.position, 0);
       }
     } else {
       LOGGER.log(RFLogger.Severity.SEVERE, "Wrist state FLAT, can't move");

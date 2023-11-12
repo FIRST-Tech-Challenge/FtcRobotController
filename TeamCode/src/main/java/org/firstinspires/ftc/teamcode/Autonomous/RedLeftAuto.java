@@ -37,7 +37,7 @@ public class RedLeftAuto extends LinearOpMode {
             .roadrun
             .trajectorySequenceBuilder(new Pose2d(-38.5, -56, Math.toRadians(-90)))
             .setReversed(true)
-            .lineToLinearHeading(new Pose2d(-35.5, -33, toRadians(-90)))
+            .lineToLinearHeading(new Pose2d(-38.5, -30.5, toRadians(-90)))
             .addTemporalMarker(robot::done)
             .build();
     spikePosition[2] =
@@ -59,7 +59,7 @@ public class RedLeftAuto extends LinearOpMode {
             .splineTo(new Vector2d(10, -56.5), toRadians(5))
             .splineTo(new Vector2d(45, -30), toRadians(0))
             .waitSeconds(1.0)
-            .lineToLinearHeading(new Pose2d(51.5, -28, toRadians(181)))
+            .lineToLinearHeading(new Pose2d(52, -28, toRadians(181)))
             .addTemporalMarker(robot::done)
             .build();
     throughTruss[1] =
@@ -72,7 +72,7 @@ public class RedLeftAuto extends LinearOpMode {
             .splineTo(new Vector2d(10, -55.5), toRadians(5))
             .splineTo(new Vector2d(45, -30), toRadians(0))
             .waitSeconds(1.0)
-            .splineTo(new Vector2d(51.5, -34), toRadians(180))
+            .lineToLinearHeading(new Pose2d(52, -35, toRadians(180)))
             .addTemporalMarker(robot::done)
             .build();
     throughTruss[2] =
@@ -85,7 +85,7 @@ public class RedLeftAuto extends LinearOpMode {
             .splineTo(new Vector2d(10, -55.5), toRadians(5))
             .splineTo(new Vector2d(45, -30), toRadians(0))
             .waitSeconds(1.0)
-            .lineToLinearHeading(new Pose2d(51.75, -43, toRadians(181)))
+            .lineToLinearHeading(new Pose2d(52, -43, toRadians(181)))
             .addTemporalMarker(robot::done)
             .build();
     TrajectorySequence[] dropAndPark = new TrajectorySequence[3];

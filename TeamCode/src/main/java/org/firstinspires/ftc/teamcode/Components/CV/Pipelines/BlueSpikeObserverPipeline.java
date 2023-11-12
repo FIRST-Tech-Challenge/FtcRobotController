@@ -77,13 +77,16 @@ public class BlueSpikeObserverPipeline extends OpenCvPipeline {
             frameList.remove(0);
         }
         cone.release();
+        newCone.release();
+        filtered.release();
+        filtered1.release();
 
 
 
 
         //release all the data
 //        input.release();
-//        mat.release();
+        thresh.release();
         Scalar color = new Scalar(255,0,0);
         Imgproc.rectangle(input, ROI1, color, 5);
         Imgproc.rectangle(input, ROI2, color, 5);

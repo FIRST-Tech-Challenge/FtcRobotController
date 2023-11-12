@@ -32,7 +32,7 @@ public class Launcher extends RFServo {
     public void shoot(){
         LOGGER.setLogLevel(RFLogger.Severity.INFO);
         LOGGER.log("shooting, setting position to SHOOT_POSITION : " + SHOOT_POSITION);
-        super.setPosition(SHOOT_POSITION);
+        super.superSetPosition(SHOOT_POSITION);
         isLoaded = false;
     }
 
@@ -42,7 +42,7 @@ public class Launcher extends RFServo {
     public void load(){
         LOGGER.setLogLevel(RFLogger.Severity.INFO);
         LOGGER.log("loading, setting position to OTHER_POSITIOn : " + OTHER_POSITION);
-        super.setPosition(OTHER_POSITION);
+        super.superSetPosition(OTHER_POSITION);
         isLoaded = true;
     }
     public boolean getLoaded(){
