@@ -25,7 +25,7 @@ import java.util.List;
 
 public class Robot {
 
-    public static final int CHUNK_DISTANCE_INCHES = 48;
+    public static final int CHUNK_DISTANCE_INCHES = 24;
     HardwareMap hardwareMap;
     Telemetry telemetry;
     LinearOpMode opMode;
@@ -524,7 +524,7 @@ public class Robot {
         boolean tagVisible = false;
         boolean aligned = false;
         List<AprilTagDetection> myAprilTagDetections;
-        double distanceToBoard = 0;
+        double distanceToBoard = -1;//bc camera behind robot
 
         while (opMode.opModeIsActive() && !aligned) { //while robot isnt aligned to tag
 
@@ -619,8 +619,8 @@ public class Robot {
             //TODO: RIGHT RIGHT RIGHT RIGHT RIGHT
             straightBlocking(20, false, 0.25); //forward
             setHeading(45 * polarity, 0.25); //turn right
-            setServoPosBlocking(spikeServo, 0.2);
             sleeplessStraightBlocking(8, false, 0.25); //forward
+            setServoPosBlocking(spikeServo, 0.2);
             straightBlocking(12, true, 0.7); //dropoff, back
             setHeading(0, 0.7); //turn back
             straightBlocking(34, false, 0.7); //forward past spike
@@ -651,21 +651,29 @@ public class Robot {
             //TODO: LEFT LEFT LEFT LEFT LEFT
         } else { //center, default
             //TODO: DEFAULT DEFAULT DEFAULT DEFAULT DEFAULT
+            double vertical1 = 7;
+            double vertical4 = 10;
+            double VERTICAL_TOTAL = 108;
+            double vertical6 = VERTICAL_TOTAL - vertical1 - vertical4;
+            double horizontal2 = 26;
+            double horizontal3 = 6;
+            double HORIZONTAL_TOTAL_BEFORE_CHUNKING = 45;
+            double horizontal5 = HORIZONTAL_TOTAL_BEFORE_CHUNKING - horizontal2 + horizontal3;
+            double horizontal7 = HORIZONTAL_TOTAL_BEFORE_CHUNKING - 32;
             Log.d("vision", "moveToMarker: center or default");
-            mecanumBlocking(7, polarity == -1, 0.5); //go left if red, go right if blue
+            mecanumBlocking(vertical1, polarity == -1, 0.5); //go left if blue, go right if red
             setHeading(0, 0.6);
+            sleeplessStraightBlocking(horizontal2, false, 0.7); //go forward FAST
             setServoPosBlocking(spikeServo, 0.2); //lift finger - speed dependent dropoff next
-            sleeplessStraightBlocking(27, false, 0.7); //go forward FAST
-            straightBlocking(6, true, 1); //move back FAST
+            straightBlocking(horizontal3, true, 1); //move back FAST
             setHeading(0, 0.7);
-            mecanumBlocking(9, polarity == -1, 0.25); //move left if red
+            mecanumBlocking(vertical4, polarity == -1, 0.25); //move left if red
             setHeading(0, 0.7);
-            straightBlocking(23, false, 0.7); //go forward & around marker
+            straightBlocking(horizontal5, false, 0.7); //go forward & around marker
             setHeading(90 * polarity, 0.7); //turn
-            //split straight into 2 pieces for more accuracy
-            moveStraightChunkingDONT_USE_NEGATIVE(90, false, 0.7, 90 * polarity, 0.7);
+            moveStraightChunkingDONT_USE_NEGATIVE(vertical6, false, 0.7, 90 * polarity, 0.7);
             setHeading(90 * polarity, 0.7);
-            mecanumBlocking(24, polarity == 1, 0.5); //mecanum directly in front of board left if blue
+            mecanumBlocking(horizontal7, polarity == 1, 0.5); //mecanum directly in front of board left if blue
             setHeading(90 * polarity, 0.7);
             //TODO: DEFAULT DEFAULT DEFAULT DEFAULT DEFAULT
         }
