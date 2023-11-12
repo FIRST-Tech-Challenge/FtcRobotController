@@ -232,15 +232,21 @@ public class BradBot extends BasicRobot {
       lift.setPosition(Lift.LiftPositionStates.AT_ZERO);
       intake.stopIntake();
     }
+    if(isB){
+      if(launcher.getLoaded())
+        launcher.shoot();
+      else
+        launcher.load();
+    }
     if(isX2){
       lift.resetPosition();
     }
     if (rightBumper) {
       if (Intake.IntakeStates.STOPPED.getState()) {
-        if(Wrist.WristTargetStates.FLAT.state)clamp.unclamp();wrist.flatten();
+        if (Wrist.WristTargetStates.FLAT.state && Lift.LiftMovingStates.AT_ZERO.getState()) wrist.flatten(); arm.flatten();clamp.unclamp();
         intake.intake();
       } else {
-        if(Wrist.WristTargetStates.FLAT.state)clamp.clamp();wrist.unflatten();
+        if(Wrist.WristTargetStates.FLAT.state && Lift.LiftMovingStates.AT_ZERO.getState())clamp.clamp();wrist.unflatten();arm.unflatten();
         intake.stopIntake();
       }
     }
@@ -251,11 +257,8 @@ public class BradBot extends BasicRobot {
     if (leftBumper) {
       intake.reverseIntake();
     }
-    if (isB) {
-      wrist.flipTo(Wrist.WristTargetStates.HOLD);
-    }
     if (up) {
-      if (!FLIPPED.getState()) {
+      if (Wrist.WristTargetStates.FLAT.state) {
         arm.flipTo(FLIPPED);
         wrist.flipTo(Wrist.WristTargetStates.HOLD);
       }
@@ -263,15 +266,15 @@ public class BradBot extends BasicRobot {
       intake.stopIntake();
     }
     if (down) {
-      if (!FLIPPED.getState()) {
+      if (Wrist.WristTargetStates.FLAT.state) {
         arm.flipTo(FLIPPED);
         wrist.flipTo(Wrist.WristTargetStates.HOLD);
       }
       lift.iterateDown();
       intake.stopIntake();
     }
-    if (abs(manualUp - manualDown) > 0.05) {
-      lift.manualExtend(manualUp - manualDown);
+    if (abs(op.gamepad2.left_stick_y) > 0.05) {
+      lift.manualExtend(-op.gamepad2.left_stick_y);
     }
 //    if (abs(hangUp - hangDown) > 0.05) {
       hanger.setPower(hangUp-hangDown);
@@ -280,7 +283,7 @@ public class BradBot extends BasicRobot {
       wrist.flipTo(Wrist.WristTargetStates.DROP);
     }
     if(isB2){
-      hanger.setPermaPower(manualUp-manualDown);
+      hanger.setPermaPower(hangUp-hangDown);
     }
     if (right) {
       roadrun.toggleButtered();

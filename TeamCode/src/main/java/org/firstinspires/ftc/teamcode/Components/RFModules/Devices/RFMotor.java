@@ -687,7 +687,7 @@ public class RFMotor {
     }
 
     public void setTarget(double p_target) {
-//        targetPos = p_target;
+        targetPos = p_target;
     }
 
     //Below functions are used for simulation

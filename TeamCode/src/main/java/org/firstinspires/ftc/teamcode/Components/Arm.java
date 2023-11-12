@@ -56,7 +56,7 @@ public class Arm extends RFServo {
     UNFLIPPED(true, LOWER_LIMIT),
     FLIPPED(false, UPPER_LIMIT);
 
-    boolean state = false;
+    public boolean state = false;
     double position;
 
     ArmTargetStates(boolean p_state, double p_position) {
@@ -162,6 +162,13 @@ public class Arm extends RFServo {
       }
     }
     ArmTargetStates.values()[p_state.ordinal()].setStateTrue();
+  }
+
+  public void flatten(){
+    super.superSetPosition(LOWER_LIMIT-0.05);
+  }
+  public void unflatten(){
+    super.superSetPosition(LOWER_LIMIT);
   }
 
   /**
