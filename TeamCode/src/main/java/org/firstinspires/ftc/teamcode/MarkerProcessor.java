@@ -33,8 +33,8 @@ public class MarkerProcessor implements VisionProcessor {
 
     @Override
     public Object processFrame(final Mat input, long captureTimeNanos) {
-        telemetry.addLine("process frame");
-        telemetry.update();
+//        telemetry.addLine("process frame");
+//        telemetry.update();
         workingMatrix = detector.processFrame(input);
         return workingMatrix;
     }
