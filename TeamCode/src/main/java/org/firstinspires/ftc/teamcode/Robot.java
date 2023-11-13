@@ -11,6 +11,7 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.IMU;
 import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
@@ -45,6 +46,7 @@ public class Robot {
     IMU imu;
     double prevError = 0;
     double prevTime = 0;
+    ElapsedTime elapsedTime = new ElapsedTime();
     MarkerDetector.MARKER_POSITION markerPos;
     int wantedAprTagId;
     private MarkerProcessor markerProcessor; //TODO: COMBINE THESE AND ALL METHODS USING THEM
@@ -355,8 +357,10 @@ public class Robot {
         double power;
         double targetTick;
         final double KP_MECANUM = 0.002;
-        final double minPower = 0.15;
+        final double minPower = 0.3;
         final double IN_TO_TICK = 56.3;
+
+        assert maxPower >= minPower;
 
         double currentTick = fLeft.getCurrentPosition();
 
@@ -377,9 +381,9 @@ public class Robot {
             power = KP_MECANUM * error;
 
             if (power > 0 && power < minPower) {
-                power += minPower;
+                power = minPower;
             } else if (power < 0 && power > -1 * minPower) {
-                power -= minPower;
+                power = -1 * minPower;
             }
 
             //cap power
@@ -450,20 +454,23 @@ public class Robot {
 
         //detect marker position
         MarkerDetector.MARKER_POSITION position = markerProcessor.getPosition();
-
-        int count = 0;
-        while (position == MarkerDetector.MARKER_POSITION.UNDETECTED && opMode.opModeIsActive() && count <= 300) {
-            count++;
+        elapsedTime.reset();
+        double time = elapsedTime.seconds();
+        while (position == MarkerDetector.MARKER_POSITION.UNDETECTED && opMode.opModeIsActive()) {
             Log.d("vision", "undetected marker, keep looking" + visionPortal.getCameraState());
             position = markerProcessor.getPosition();
+            if (elapsedTime.seconds() > time + 3) {
+                position = MarkerDetector.MARKER_POSITION.CENTER;
+                break;
+            }
         }
 
         //print position
         Log.d("vision", "detected position: " + position);
 
         //save marker position, apriltag position
-        //setMarkerPos(position);
-        setMarkerPos(MarkerDetector.MARKER_POSITION.CENTER);
+        setMarkerPos(position);
+
         setWantedAprTagId(position, isRedAlliance ? MarkerDetector.ALLIANCE_COLOR.RED : MarkerDetector.ALLIANCE_COLOR.BLUE);
 
     }
@@ -504,7 +511,7 @@ public class Robot {
             } else { //center, default
                 Log.d("vision", "shortMoveToBoard: " + markerPos);
                 straightBlocking(2, false, 0.25);
-                mecanumBlocking(3, false, 0.25); //go left
+                mecanumBlocking(3, false, 0.7); //go left
                 setHeading(0, 0.25);
                 setServoPosBlocking(spikeServo, 0.2);
                 sleeplessStraightBlocking(26, false, 0.7); //go forward FAST
@@ -554,7 +561,7 @@ public class Robot {
                             aligned = false;
                         } else {
                             Log.d("vision", "runOpMode: aligned");
-                            distanceToBoard = detection.ftcPose.range - 4;
+                            distanceToBoard = detection.ftcPose.range - 4; //TODO: this 4 is arbitrary
                             tagVisible = true;
                             aligned = true;
                         }
@@ -591,7 +598,7 @@ public class Robot {
 
     public void moveStraightChunkingDONT_USE_NEGATIVE(double inches, boolean forward, double maxPower, double globalHeading, double globalHeadingPower) {
         assert inches > 0;
-        int chunkNumber = (int)Math.floor(inches/ CHUNK_DISTANCE_INCHES);
+        int chunkNumber = (int)Math.floor(inches/CHUNK_DISTANCE_INCHES);
         for (int i = 0; i < chunkNumber; i++) {
             straightBlocking(CHUNK_DISTANCE_INCHES, forward, maxPower);
             setHeading(globalHeading, globalHeadingPower);
@@ -608,19 +615,48 @@ public class Robot {
             polarity = -1;
 
         } else {
+            //TODO: THE MARKERPOS = IS FOR DEBUGGING. DELETE IT.
+            markerPos = MarkerDetector.MARKER_POSITION.RIGHT;
             polarity = 1;
         }
 
         setServoPosBlocking(clamp, 0.5);
         setServoPosBlocking(hook, 0.5);
         setServoPosBlocking(spikeServo, 0.4);
-        if (markerPos == MarkerDetector.MARKER_POSITION.RIGHT) {
+        if ((markerPos == MarkerDetector.MARKER_POSITION.RIGHT && isRedAlliance)
+                || (markerPos == MarkerDetector.MARKER_POSITION.LEFT && !isRedAlliance)) {
             //TODO: RIGHT RIGHT RIGHT RIGHT RIGHT
+            double vertical1 = 14;
+            double vertical4 = 14; //adjust for left
+            double VERTICAL_TOTAL = 75;
+            double vertical6 = VERTICAL_TOTAL + vertical1 - vertical4;
+            double horizontal2 = 20;
+            double horizontal3 = 0;
+            double HORIZONTAL_TOTAL_BEFORE_CHUNKING = 48;
+            double horizontal5 = HORIZONTAL_TOTAL_BEFORE_CHUNKING - horizontal2 + horizontal3;
+            double horizontal7 = HORIZONTAL_TOTAL_BEFORE_CHUNKING - 24;
+            Log.d("vision", "moveToMarker: center or default");
+            mecanumBlocking(vertical1, polarity == -1, 0.5); //go left if blue, go right if red
+            setHeading(0, 0.6);
+            straightBlocking(horizontal2, false, 0.7); //go forward FAST
+            setServoPosBlocking(spikeServo, 0.2); //lift finger
+            straightBlocking(horizontal3, true, 1); //move back FAST
+            setHeading(0, 0.7);
+            mecanumBlocking(vertical4, polarity == 1, 0.7); //move left if red
+            setHeading(0, 0.7);
+            straightBlocking(horizontal5, false, 0.7); //go forward & around marker
+            setHeading(90 * polarity, 0.7); //turn
+            moveStraightChunkingDONT_USE_NEGATIVE(vertical6, false, 0.7, 90 * polarity, 0.7);
+            setHeading(90 * polarity, 0.7);
+            mecanumBlocking(horizontal7, polarity == 1, 0.5); //mecanum directly in front of board left if blue
+            setHeading(90 * polarity, 0.7);
+
+            /*
             straightBlocking(20, false, 0.25); //forward
             setHeading(45 * polarity, 0.25); //turn right
             sleeplessStraightBlocking(8, false, 0.25); //forward
             setServoPosBlocking(spikeServo, 0.2);
-            straightBlocking(12, true, 0.7); //dropoff, back
+            straightBlocking(8, true, 0.7); //dropoff, back
             setHeading(0, 0.7); //turn back
             straightBlocking(34, false, 0.7); //forward past spike
             setHeading(90 * polarity, 0.7); //turn right toward truss
@@ -628,9 +664,36 @@ public class Robot {
             setHeading(90 * polarity, 0.75);
             mecanumBlocking(35, false, 0.7); //mecanum directly in front of board
             setHeading(90 * polarity, 0.7);
+            */
             //TODO: RIGHT RIGHT RIGHT RIGHT RIGHT
-        } else if (markerPos == MarkerDetector.MARKER_POSITION.LEFT) {
+        } else if ((markerPos == MarkerDetector.MARKER_POSITION.LEFT && isRedAlliance)
+                || (markerPos == MarkerDetector.MARKER_POSITION.RIGHT && !isRedAlliance)) {
             //TODO: LEFT LEFT LEFT LEFT LEFT
+            double vertical1 = 11;
+            double vertical4 = vertical1; //adjust for left
+            double VERTICAL_TOTAL = 75;
+            double vertical6 = VERTICAL_TOTAL + vertical1 - vertical4;
+            double horizontal2 = 16;
+            double horizontal3 = 10;
+            double HORIZONTAL_TOTAL_BEFORE_CHUNKING = 48;
+            double horizontal5 = HORIZONTAL_TOTAL_BEFORE_CHUNKING - horizontal2 + horizontal3;
+            double horizontal7 = HORIZONTAL_TOTAL_BEFORE_CHUNKING - 24;
+            Log.d("vision", "moveToMarker: center or default");
+            mecanumBlocking(vertical1, polarity == -1, 0.5); //go left if blue, go right if red
+            setHeading(0, 0.6);
+            straightBlocking(horizontal2, false, 0.7); //go forward FAST
+            setServoPosBlocking(spikeServo, 0.2); //lift finger
+            straightBlocking(horizontal3, true, 1); //move back FAST
+            setHeading(0, 0.7);
+            mecanumBlocking(vertical4, polarity == 1, 0.7); //move left if red
+            setHeading(0, 0.7);
+            straightBlocking(horizontal5, false, 0.7); //go forward & around marker
+            setHeading(90 * polarity, 0.7); //turn
+            moveStraightChunkingDONT_USE_NEGATIVE(vertical6, false, 0.7, 90 * polarity, 0.7);
+            setHeading(90 * polarity, 0.7);
+            mecanumBlocking(horizontal7, polarity == 1, 0.5); //mecanum directly in front of board left if blue
+            setHeading(90 * polarity, 0.7);
+            /*
             straightBlocking(2, false, 0.25);
             setHeading(0, 0.25);
             mecanumBlocking(14, true, 0.25);
@@ -647,26 +710,27 @@ public class Robot {
             setHeading(90 * polarity, 0.7);
             mecanumBlocking(23, false, 0.7); //mecanum directly in front of board
             setHeading(90 * polarity, 0.7);
+            */
             //TODO: LEFT LEFT LEFT LEFT LEFT
         } else { //center, default
-            //TODO: DEFAULT DEFAULT DEFAULT DEFAULT DEFAULT
+            //TODO: CENTER DEFAULT DEFAULT DEFAULT DEFAULT
             double vertical1 = 7;
             double vertical4 = 10;
-            double VERTICAL_TOTAL = 108;
-            double vertical6 = VERTICAL_TOTAL - vertical1 - vertical4;
+            double VERTICAL_TOTAL = 75;
+            double vertical6 = VERTICAL_TOTAL + vertical1 + vertical4;
             double horizontal2 = 26;
             double horizontal3 = 6;
-            double HORIZONTAL_TOTAL_BEFORE_CHUNKING = 45;
+            double HORIZONTAL_TOTAL_BEFORE_CHUNKING = 48;
             double horizontal5 = HORIZONTAL_TOTAL_BEFORE_CHUNKING - horizontal2 + horizontal3;
-            double horizontal7 = HORIZONTAL_TOTAL_BEFORE_CHUNKING - 32;
+            double horizontal7 = HORIZONTAL_TOTAL_BEFORE_CHUNKING - 30;
             Log.d("vision", "moveToMarker: center or default");
             mecanumBlocking(vertical1, polarity == -1, 0.5); //go left if blue, go right if red
             setHeading(0, 0.6);
-            sleeplessStraightBlocking(horizontal2, false, 0.7); //go forward FAST
-            setServoPosBlocking(spikeServo, 0.2); //lift finger - speed dependent dropoff next
+            straightBlocking(horizontal2, false, 0.7); //go forward FAST
+            setServoPosBlocking(spikeServo, 0.2); //lift finger
             straightBlocking(horizontal3, true, 1); //move back FAST
             setHeading(0, 0.7);
-            mecanumBlocking(vertical4, polarity == -1, 0.25); //move left if red
+            mecanumBlocking(vertical4, polarity == -1, 0.7); //move left if red
             setHeading(0, 0.7);
             straightBlocking(horizontal5, false, 0.7); //go forward & around marker
             setHeading(90 * polarity, 0.7); //turn
@@ -674,7 +738,7 @@ public class Robot {
             setHeading(90 * polarity, 0.7);
             mecanumBlocking(horizontal7, polarity == 1, 0.5); //mecanum directly in front of board left if blue
             setHeading(90 * polarity, 0.7);
-            //TODO: DEFAULT DEFAULT DEFAULT DEFAULT DEFAULT
+            //TODO: CENTER DEFAULT DEFAULT DEFAULT DEFAULT
         }
     }
 
