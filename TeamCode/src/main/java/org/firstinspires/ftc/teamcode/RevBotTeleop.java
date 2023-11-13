@@ -34,7 +34,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 @TeleOp(name="Starter Bot V2", group="Iterative Opmode")
 
-public class StarterBot2024TeleopV2 extends OpMode
+public class RevBotTeleop extends OpMode
 {
     RevStarterRobotHardware robot       = new RevStarterRobotHardware(this);
 
