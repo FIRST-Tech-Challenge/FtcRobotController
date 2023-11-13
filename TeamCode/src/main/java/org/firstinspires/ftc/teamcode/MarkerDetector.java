@@ -117,7 +117,7 @@ public class MarkerDetector extends OpenCvPipeline {
                         position = MARKER_POSITION.CENTER;
                     }
                 } else {
-                    if (((120 <= avgRightCb) && (avgRightCb <= 240)) && ((avgRightCr >= 16) && (avgRightCr <= 32))) {
+                    if (((120 <= avgRightCb) && (avgRightCb <= 240)) && ((avgRightCr >= 16) && (avgRightCr <= 132))) {
                         position = MARKER_POSITION.RIGHT;
                     }
                 }
