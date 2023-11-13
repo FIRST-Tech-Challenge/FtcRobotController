@@ -52,12 +52,13 @@ public class OpenCvColorDetection {
     /* Declare OpMode members. */
     private LinearOpMode myOpMode = null;   // gain access to methods in the calling OpMode.
 
-    public enum detectColorType{
+    public enum detectColorType {
         BLUE,
-        RED
+        RED,
+        UNSET,
     }
 
-    public detectColorType myColor;
+    public detectColorType myColor = detectColorType.UNSET;
 
     // coordinates of largest detected image
     Point targetPoint = new Point(0, 0);
@@ -76,7 +77,6 @@ public class OpenCvColorDetection {
 
     // initialize the camera and openCV pipeline
     public void init() {
-
         // cameraMonitorViewId allows us to see the image pipeline using scrcpy
         //   for easy debugging
         //   You can disable it after testing completes
@@ -88,17 +88,14 @@ public class OpenCvColorDetection {
         // OR... use internal phone camera
         // phoneCam = OpenCvCameraFactory.getInstance().createInternalCamera(OpenCvInternalCamera.CameraDirection.BACK);
 
-        setDetectColor(detectColorType.BLUE);
         robotCamera.setPipeline(new ColorDetectPipeline());
 
         robotCamera.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
-            public void onOpened()
-            {
+            public void onOpened() {
                 startStreaming();
             }
 
-            public void onError(int errorCode)
-            {
+            public void onError(int errorCode) {
             }
         });
     }
@@ -127,11 +124,16 @@ public class OpenCvColorDetection {
         boolean viewportPaused = false;
 
         // matrices in the processing pipeline
+        Mat roiMat = new Mat();
         Mat blurredMat = new Mat();
         Mat hsvMat = new Mat();
         Mat filteredMat = new Mat();
         Mat contourMask = new Mat();
         Mat outputMat = new Mat();
+        List<MatOfPoint> contoursList = new ArrayList<>();
+        MatOfPoint currentContour = new MatOfPoint();
+        List<MatOfPoint> offsetContoursList = new ArrayList<>();
+        MatOfPoint offsetContour = new MatOfPoint();
 
         @Override
         public Mat processFrame(Mat inputMat) {
@@ -189,14 +191,16 @@ public class OpenCvColorDetection {
 
                 double width = inputMat.size().width;
 
-                if (targetPoint.x < width / 3) {
+                if (targetPoint.x < width / 4) {
                     sideDetected = SideDetected.LEFT;
-                } else if (targetPoint.x > (2 * width) / 3) {
+                } else if (targetPoint.x > (3 * width) / 4) {
                     sideDetected = SideDetected.RIGHT;
                 } else {
                     sideDetected = SideDetected.CENTER;
                 }
             }
+
+            roiMat.release();
 
             // See this image on the computer using scrcpy
             return outputMat;
@@ -206,10 +210,9 @@ public class OpenCvColorDetection {
         public void onViewportTapped() {
             viewportPaused = !viewportPaused;
 
-            if(viewportPaused) {
+            if (viewportPaused) {
                 robotCamera.pauseViewport();
-            }
-            else {
+            } else {
                 robotCamera.resumeViewport();
             }
         }

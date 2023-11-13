@@ -118,6 +118,7 @@ abstract public class BaseAutonomous extends BaseOpMode {
         telemetry.addLine("Initialized. Ready to start!");
         telemetry.update();
     }
+
     private void stopDriving() {
         FL.setPower(0.0);
         FR.setPower(0.0);
@@ -126,11 +127,13 @@ abstract public class BaseAutonomous extends BaseOpMode {
     }
 
     public void runSimpleInchesAuto(boolean red, boolean close) {
+
         if (red) {
             myColorDetection.setDetectColor(OpenCvColorDetection.detectColorType.RED);
-            //telemetry.addData("Blue")
+            telemetry.addLine("Looking for red");
         } else {
             myColorDetection.setDetectColor(OpenCvColorDetection.detectColorType.BLUE);
+            telemetry.addLine("Looking for blue");
         }
 
         initializeAuto();
@@ -163,12 +166,12 @@ abstract public class BaseAutonomous extends BaseOpMode {
         driveInches(0, y);
         driveInches(x, 0);
 
-        if(intakeMotor != null) {
-              intakeMotor.setPower(INTAKE_SPEED);
-              sleep((long) INTAKE_TIME);
-              intakeMotor.setPower(0);
+        if (intakeMotor != null) {
+            intakeMotor.setPower(INTAKE_SPEED);
+            sleep((long) INTAKE_TIME);
+            intakeMotor.setPower(0);
         } else {
-            sleep(5000); 
+            sleep(5000);
         }
 
         driveInches(-x, 0);
