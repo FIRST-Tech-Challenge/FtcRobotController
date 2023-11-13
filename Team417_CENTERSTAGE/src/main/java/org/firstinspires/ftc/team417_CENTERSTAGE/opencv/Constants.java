@@ -10,7 +10,11 @@ public class Constants {
     public static final int CAMERA_IMAGE_HEIGHT = 480;
 
     // Roi (region of interest) for OpenCV detection
-    public static final Rect roi = new Rect(0, CAMERA_IMAGE_HEIGHT / 2, CAMERA_IMAGE_WIDTH, CAMERA_IMAGE_HEIGHT / 2);
+    public static final double xLowerBound = 0;
+    public static final double xUpperBound = 1;
+    public static final double yLowerBound = 2.0 / 3;
+    public static final double yUpperBound = 1;
+    public static final Rect roi = new Rect(0, (int) ((2 * CAMERA_IMAGE_HEIGHT) / 3.0), CAMERA_IMAGE_WIDTH, (int) (CAMERA_IMAGE_HEIGHT / 3.0));
     public static final Scalar roiColor = new Scalar(0, 255, 255); // cyan
 
     // Color ranges for OpenCV detection

@@ -138,8 +138,7 @@ public class OpenCvColorDetection {
         @Override
         public Mat processFrame(Mat inputMat) {
             // resize the image to the roi so that stuff like volunteer's shirts aren't detected (doesn't work currently)
-            //roiMat = inputMat.rowRange(Constants.roi.x, Constants.roi.x + Constants.roi.width - 1).colRange(Constants.roi.y, Constants.roi.y + Constants.roi.height - 1);
-            inputMat.copyTo(roiMat);
+            roiMat = inputMat.rowRange((int) Constants.xLowerBound * inputMat.width(), (int) Constants.xUpperBound * inputMat.width()).colRange((int) Constants.yLowerBound * inputMat.height(), (int) Constants.yUpperBound * inputMat.height());
 
             // blur the image to reduce the impact of noisy pixels
             //   each pixel is "averaged" with its neighboring pixels
