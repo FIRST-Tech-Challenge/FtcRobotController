@@ -459,7 +459,7 @@ public class Robot {
         while (position == MarkerDetector.MARKER_POSITION.UNDETECTED && opMode.opModeIsActive()) {
             Log.d("vision", "undetected marker, keep looking" + visionPortal.getCameraState());
             position = markerProcessor.getPosition();
-            if (elapsedTime.seconds() > time + 3) {
+            if (elapsedTime.seconds() > time + 2) {
                 position = MarkerDetector.MARKER_POSITION.CENTER;
                 break;
             }
@@ -467,6 +467,8 @@ public class Robot {
 
         //print position
         Log.d("vision", "detected position: " + position);
+
+        position = MarkerDetector.MARKER_POSITION.RIGHT; //TODO: DELETE
 
         //save marker position, apriltag position
         setMarkerPos(position);
@@ -537,6 +539,13 @@ public class Robot {
             //get detections
             myAprilTagDetections = aprilTagProcessor.getDetections();
 
+            int polarity;
+            if (isRedAlliance) {
+                polarity = -1;
+            } else {
+                polarity = 1;
+            }
+
             //process detection list
             for (AprilTagDetection detection : myAprilTagDetections) {
 
@@ -547,16 +556,16 @@ public class Robot {
                         tagVisible = true; //if it is, the desired tag is visible
 
                         //alignment based on bearing
-                        if (detection.ftcPose.bearing > 1) {
-                            Log.d("vision", "runOpMode: bearing > 1, move left");
+                        if (detection.ftcPose.bearing > 5) {
+                            Log.d("vision", "runOpMode: bearing > 5, move left");
                             mecanumBlocking(1, true, 0.75);
-                            setHeading(-90, 0.7);
+                            setHeading(90 * polarity, 0.7);
                             opMode.sleep(100);
                             aligned = false;
-                        } else if (detection.ftcPose.bearing < -1) {
-                            Log.d("vision", "runOpMode: bearing < -1, move right");
+                        } else if (detection.ftcPose.bearing < -5) {
+                            Log.d("vision", "runOpMode: bearing < -5, move right");
                             mecanumBlocking(1, false, 0.75);
-                            setHeading(-90, 0.7);
+                            setHeading(90 * polarity, 0.7);
                             opMode.sleep(100);
                             aligned = false;
                         } else {
@@ -615,8 +624,6 @@ public class Robot {
             polarity = -1;
 
         } else {
-            //TODO: THE MARKERPOS = IS FOR DEBUGGING. DELETE IT.
-            markerPos = MarkerDetector.MARKER_POSITION.RIGHT;
             polarity = 1;
         }
 
@@ -677,7 +684,7 @@ public class Robot {
             double horizontal3 = 10;
             double HORIZONTAL_TOTAL_BEFORE_CHUNKING = 48;
             double horizontal5 = HORIZONTAL_TOTAL_BEFORE_CHUNKING - horizontal2 + horizontal3;
-            double horizontal7 = HORIZONTAL_TOTAL_BEFORE_CHUNKING - 24;
+            double horizontal7 = HORIZONTAL_TOTAL_BEFORE_CHUNKING - 27;
             Log.d("vision", "moveToMarker: center or default");
             mecanumBlocking(vertical1, polarity == -1, 0.5); //go left if blue, go right if red
             setHeading(0, 0.6);
@@ -758,7 +765,7 @@ public class Robot {
         straightBlocking(2, true, 0.7);
         if (markerPos == MarkerDetector.MARKER_POSITION.LEFT) {
             mecanumBlocking(30, false, 0.5);
-        } else if (markerPos == MarkerDetector.MARKER_POSITION.RIGHT) {
+        } else if (markerPos == MarkerDetector.MARKER_POITION.RIGHT) {
             mecanumBlocking(20, false, 0.5);
         } else {
             mecanumBlocking(23, false, 0.5);
