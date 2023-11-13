@@ -20,8 +20,8 @@ public class MechanismTest extends OpMode
     boolean xPressed = false;
 
     //servo variable declarations
-    boolean leftUp = true;
-    boolean rightUp = true;
+    boolean leftUp = false;
+    boolean rightUp = false;
 
     static final double MAX_POS = 1.0;
     static final double MIN_POS = 0.0;
@@ -77,7 +77,7 @@ public class MechanismTest extends OpMode
         if (rightUp == true)
             depositServoOne.setPosition (1);
         else if (rightUp == false)
-            depositServoTwo.setPosition (0);
+            depositServoOne.setPosition (0);
 
         telemetry.addData("left up", leftUp);
         telemetry.addData("right up", rightUp);
