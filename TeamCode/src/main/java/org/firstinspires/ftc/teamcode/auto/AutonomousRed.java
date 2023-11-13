@@ -1,18 +1,16 @@
-package org.firstinspires.ftc.teamcode;
+package org.firstinspires.ftc.teamcode.auto;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 
-import org.firstinspires.ftc.teamcode.auto.BasicPipeline;
+import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
-import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.openftc.easyopencv.OpenCvCameraRotation;
 
-@com.qualcomm.robotcore.eventloop.opmode.Autonomous (name = "da not a moose")
-public class Autonomous extends LinearOpMode {
+@com.qualcomm.robotcore.eventloop.opmode.Autonomous (name = "red auto")
+public class AutonomousRed extends LinearOpMode {
 
     protected DcMotor left_front;
     protected DcMotor right_front;
@@ -22,7 +20,7 @@ public class Autonomous extends LinearOpMode {
     protected Servo servo;
     private DcMotor intake = null;
     OpenCvCamera camera;
-    BasicPipeline pipeline = new BasicPipeline();
+    PipelineRed pipeline = new PipelineRed();
 
     enum propPosition {
             LEFT,
@@ -100,7 +98,7 @@ public class Autonomous extends LinearOpMode {
         double propX = pipeline.getJunctionPoint().x;
         double propArea = pipeline.getPropAreaAttr();
 
-        moveForward(0.25, 2400);
+        moveForward(0.25, 2200);
 
         if (propArea < 10000) { // none detected we assume left spike mark
             telemetry.addLine("Left spike mark");
@@ -113,6 +111,8 @@ public class Autonomous extends LinearOpMode {
             intake.setPower(0);
             moveForward(0.25, 100);
             moveForward(-0.25, 100);
+            // go to backboard and score, evading pixel
+
 
         } else if (propX > 600) { // right spike mark
             telemetry.addLine("Right spike mark");
@@ -126,8 +126,8 @@ public class Autonomous extends LinearOpMode {
             intake.setPower(0);
             //in case it falls vertically
             moveForward(0.25, 100);
+            moveForward(-0.25, 100);
             // go to backboard and score
-            moveForward(-0.25, 4000);
         } else { // middle spike mark
             telemetry.addLine("Middle spike mark");
             telemetry.update();
@@ -138,10 +138,8 @@ public class Autonomous extends LinearOpMode {
             sleep(1000);
             intake.setPower(0);
             moveForward(0.25, 100);
+            moveForward(-0.25, 100);
             // go to backboard
-            moveForward(-0.25, 400);
-            moveTurning(0.25, 2500);
-            moveForward(-0.25, 3200);
         }
 
         servo.setPosition(0);
@@ -152,8 +150,6 @@ public class Autonomous extends LinearOpMode {
         arm.setPower(1.0/8);
         sleep(1000);
         servo.setPosition(0.7);
-
-
 
         sleep(100000);
     }

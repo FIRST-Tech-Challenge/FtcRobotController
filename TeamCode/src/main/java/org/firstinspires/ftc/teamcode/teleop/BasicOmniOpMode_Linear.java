@@ -68,8 +68,6 @@ public class BasicOmniOpMode_Linear extends LinearOpMode {
         arm.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         arm.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
-        crossbow.setPosition(0);
-
         imu.resetYaw();
 
         // Wait for the game to start (driver presses PLAY)
@@ -98,6 +96,8 @@ public class BasicOmniOpMode_Linear extends LinearOpMode {
             }
             telemetry.addData("crossbow setpoint", crossbowSetpoint);
             if (crossbowSetpoint != crossbow.getPosition()) crossbow.setPosition(crossbowSetpoint);
+
+            if (gamepad1.b) imu.resetYaw();
 
             handleArm();
 
@@ -204,9 +204,10 @@ public class BasicOmniOpMode_Linear extends LinearOpMode {
         else powercoef = 0.4;
 
         double forward = -gamepad1.left_stick_y; /* Invert stick Y axis */
-        double strafe = -gamepad1.left_stick_x;
+        double strafe = gamepad1.left_stick_x;
         double yaw = gamepad1.right_stick_x;
 
+        /*
         double gyro_radians = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS);
         telemetry.addData("gyro angle: ", gyro_radians);
         double temp = forward * cos(gyro_radians) +
@@ -215,6 +216,8 @@ public class BasicOmniOpMode_Linear extends LinearOpMode {
                 strafe * cos(gyro_radians);
         strafe *= -1;
         forward = temp;
+
+         */
 
         /* At this point, Joystick X/Y (strafe/forwrd) vectors have been */
         /* rotated by the gyro angle, and can be sent to drive system */
