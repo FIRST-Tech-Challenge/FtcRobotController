@@ -3,7 +3,6 @@ package org.firstinspires.ftc.team15091;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
-import com.qualcomm.robotcore.util.Range;
 
 import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
@@ -12,29 +11,17 @@ import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 public class GamepadOpMode extends OpModeBase {
     @Override
     public void runOpMode() throws InterruptedException {
-        int armLimit = 2000;
+        int armLimit = 2400;
 
         double rollerVelocity = 0.0; // Initial velocity
         boolean isRollerRunning = false; // Track whether the roller is running
         boolean loweringInProgress = false; // Initialize a flag to track lowering state
-        boolean isTimerRunning = false;
-        long startTime = System.currentTimeMillis();
-        double timeToFullPower = 2.0; // Time (in seconds) to reach full power
-        double maxPower = 0.6d;
+        long liftStartTime = System.currentTimeMillis();
 
         robot.init(hardwareMap);
 
-        double bowlPosition = robot.bowlServo.getPosition();
-
         //region telemetry setup
         telemetry.addData(">", "Press Play to start op mode");
-        telemetry.addData("roller", () -> String.format("%.1f", robot.rollerMotor.getVelocity()));
-        telemetry.addLine("arm | ")
-                .addData("pos", () -> String.format("%d", robot.liftMotor.getCurrentPosition()))
-                .addData("amp", () -> String.format("%.1f", robot.liftMotor.getCurrent(CurrentUnit.AMPS)));
-        telemetry.addLine("sensor | ")
-                .addData("limit", () -> String.format("%s", robot.limitSwitch.getState()))
-                .addData("front", () -> String.format("%.1f cm", robot.frontSensor.getDistance(DistanceUnit.CM)));
         telemetry.update();
         //endregion
 
@@ -48,9 +35,9 @@ public class GamepadOpMode extends OpModeBase {
             boolean limitSwitch = robot.limitSwitch.getState();
 
             if (gamepad1.left_trigger > 0d) { // raise lift
-                if (limitSwitch) { // not touch
-
-                    robot.setArmPosition(0.8d);
+                if (!limitSwitch) { // touched
+                    robot.setArmPosition(0.7d);
+                } else {
                     rollerVelocity = 0;
                     isRollerRunning = false;
                 }
@@ -68,8 +55,9 @@ public class GamepadOpMode extends OpModeBase {
                 if (!loweringInProgress) { // stop lift
                     robot.liftMotor.setPower(0d);
                 } else {
+                    double elapsedTime = (System.currentTimeMillis() - liftStartTime) / 1000.0; // Convert to seconds
                     robot.setLiftMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
-                    robot.liftMotor.setPower(-0.4d);
+                    robot.liftMotor.setPower(elapsedTime > 1d ? -0.8d : -0.1d);
                 }
 
                 if (!limitSwitch) {
@@ -84,10 +72,10 @@ public class GamepadOpMode extends OpModeBase {
             if (gamepad1.x) {
                 if (!x_pressed) {
                     x_pressed = true;
-                    robot.beep();
-                    robot.setArmPosition(0.8d);
                     robot.setBowlPosition(0d);
+                    robot.setArmPosition(0.7d);
                     loweringInProgress = !loweringInProgress;
+                    liftStartTime = System.currentTimeMillis();
                 }
             } else { // Reset the 'X' button press flag
                 x_pressed = false;
@@ -120,11 +108,13 @@ public class GamepadOpMode extends OpModeBase {
             }
             //endregion
 
+            //region y button
             if (gamepad1.y) {
                 if (!y_pressed) {
                     y_pressed = true;
                 }
             }
+            //endregion
 
             //region roller
             if (gamepad1.left_bumper) {
@@ -135,9 +125,10 @@ public class GamepadOpMode extends OpModeBase {
                         isRollerRunning = false;
                     } else if (!limitSwitch) {
                         // If the roller is stopped, start it with positive velocity
-                        rollerVelocity = 2500.0;
+                        rollerVelocity = 1200.0;
+
                         isRollerRunning = true;
-                        robot.setArmPosition(1);
+                        robot.setArmPosition(0.9);
                     }
                     lb_pressed = true;
                 }
@@ -166,12 +157,25 @@ public class GamepadOpMode extends OpModeBase {
             //endregion
 
             //region drivetrain control
-            double sensitivity = 1.4d; // Adjust the sensitivity value as needed
-            double deadzone = 0.05d; // Adjust the deadzone value as needed
-            double drive = (-gamepad1.left_stick_y - gamepad1.right_stick_y) * 0.6d;
+            double leftStickY = -gamepad1.left_stick_y;  // Invert if necessary
+            double rightStickY = -gamepad1.right_stick_y;  // Invert if necessary
+            double drive;
+
+            if (leftStickY >= 0 && rightStickY >= 0) {
+                // Both inputs are positive, so choose the maximum positive value.
+                drive = Math.max(leftStickY, rightStickY);
+            } else if (leftStickY <= 0 && rightStickY <= 0) {
+                // Both inputs are negative, so choose the minimum negative value.
+                drive = Math.min(leftStickY, rightStickY);
+            } else {
+                // The inputs have different signs, so set drive to the sum of both.
+                drive = leftStickY + rightStickY;
+            }
+
+            // Apply the scaling factor (0.6 in this case):
+            drive *= 0.6;
             double turn = gamepad1.left_stick_x * 0.6d;
-            double side = gamepad1.right_stick_x;
-            double frontDistance = robot.frontSensor.getDistance(DistanceUnit.CM);
+            double side = gamepad1.right_stick_x * 0.8d;
 
             if (gamepad1.dpad_up) {
                 drive = 0.2d;
@@ -182,79 +186,58 @@ public class GamepadOpMode extends OpModeBase {
             } else if (gamepad1.dpad_right) {
                 turn = 0.2d;
             }
-            // Check if any stick's x or y value is greater than 0.6
-//            boolean isStickGreaterThan0_6 = Math.abs(drive) > 0.6 || Math.abs(turn) > 0.6 || Math.abs(side) > 0.6;
 
-            // Calculate the elapsed time (in seconds) based on the condition
-//            double elapsedTime = 0.0;
-//            if (isStickGreaterThan0_6) {
-//                // Implement a mechanism to start or update a timer when a stick value exceeds 0.6
-//                if (!isTimerRunning) {
-//                    startTime = System.currentTimeMillis();
-//                    isTimerRunning = true;
-//                }
-//                elapsedTime = (System.currentTimeMillis() - startTime) / 1000.0; // Convert to seconds
-//
-//                // Gradually increase maxPower from 0.6 to 1
-//                maxPower = 0.6 + elapsedTime * (1.0 - 0.6) / timeToFullPower;
-//            } else {
-//                // Reset the timer and maxPower when no stick value is greater than 0.6
-//                isTimerRunning = false;
-//                maxPower = 0.6d;
-//            }
+            double leftFrontPower = drive + turn + side;
+            double leftBackPower = drive + turn - side;
+            double rightFrontPower = drive - turn - side;
+            double rightBackPower = drive - turn + side;
 
-            //            if (drive > 0d && frontDistance < 10d) {
-            //                maxPower = Range.scale(frontDistance, 2d, 15d, 0.05d, 0.2d);
-            //            }
+            // Normalize wheel powers to be less than 1.0
+            double max = Math.max(Math.abs(leftFrontPower), Math.abs(rightFrontPower));
+            max = Math.max(max, Math.abs(leftBackPower));
+            max = Math.max(max, Math.abs(rightBackPower));
 
-            // Apply deadzone to the input values
-//            if (Math.abs(drive) < deadzone) {
-//                drive = 0.0;
-//            }
-//
-//            if (Math.abs(turn) < deadzone) {
-//                turn = 0.0;
-//            }
-//
-//            if (Math.abs(side) < deadzone) {
-//                side = 0.0;
-//            }
-
-            // Apply the power function to the input values
-//            drive = Math.signum(drive) * Math.pow(Math.abs(drive), sensitivity);
-//            turn = Math.signum(turn) * Math.pow(Math.abs(turn), sensitivity);
-//            side = Math.signum(side) * Math.pow(Math.abs(side), sensitivity);
-
-            double pLeftFront = Range.clip(drive + turn + side, -1.0, 1.0);
-            double pLeftRear = Range.clip(drive + turn - side, -1.0, 1.0);
-            double pRightFront = Range.clip(drive - turn - side, -1.0, 1.0);
-            double pRightRear = Range.clip(drive - turn + side, -1.0, 1.0);
-
-            // Scale the power values based on maxPower
-//            pLeftFront = Range.scale(pLeftFront, -1.0, 1.0, -maxPower, maxPower);
-//            pLeftRear = Range.scale(pLeftRear, -1.0, 1.0, -maxPower, maxPower);
-//            pRightFront = Range.scale(pRightFront, -1.0, 1.0, -maxPower, maxPower);
-//            pRightRear = Range.scale(pRightRear, -1.0, 1.0, -maxPower, maxPower);
+            if (max > 1.0) {
+                leftFrontPower /= max;
+                rightFrontPower /= max;
+                leftBackPower /= max;
+                rightBackPower /= max;
+            }
 
             // Send calculated power to wheels
-            robot.setDrivePower(pLeftFront, pLeftRear, pRightFront, pRightRear);
+            robot.setDrivePower(leftFrontPower, leftBackPower, rightFrontPower, rightBackPower);
             //endregion
 
-            gamepadUpdate();
-            telemetry.addLine("motor | ")
-                    .addData("lf", String.format("%.1f", pLeftFront))
-                    .addData("lr", String.format("%.1f", pLeftRear))
-                    .addData("rf", String.format("%.1f", pRightFront))
-                    .addData("rr", String.format("%.1f", pRightRear));
-            telemetry.addLine("control | ")
-                    .addData("drive", String.format("%.1f", drive))
-                    .addData("turn", String.format("%.1f", turn))
-                    .addData("side", String.format("%.1f", side));
-            telemetry.addLine("servo | ")
-                    .addData("bowl", String.format("%.1f", bowlPosition))
-                    .addData("arm", String.format("%.1f", robot.armPosition));
-            telemetry.addData("timer", isTimerRunning);
-            telemetry.update();
+            // region guide button
+            if (gamepad1.guide) {
+                if (!guide_pressed) {
+                    guide_pressed = true;
+
+                    telemetry.addLine("motor | ")
+                            .addData("lf", String.format("%.1f", leftFrontPower))
+                            .addData("lr", String.format("%.1f", leftBackPower))
+                            .addData("rf", String.format("%.1f", rightFrontPower))
+                            .addData("rr", String.format("%.1f", rightBackPower));
+                    telemetry.addLine("control | ")
+                            .addData("drive", String.format("%.1f", drive))
+                            .addData("turn", String.format("%.1f", turn))
+                            .addData("side", String.format("%.1f", side));
+                    telemetry.addLine("servo | ")
+                            .addData("bowl", String.format("%.1f", robot.bowlPosition))
+                            .addData("arm", String.format("%.1f", robot.armPosition));
+                    telemetry.addData("roller", () -> String.format("%.1f", robot.rollerMotor.getVelocity()));
+                    telemetry.addLine("arm | ")
+                            .addData("pos", () -> String.format("%d", robot.liftMotor.getCurrentPosition()))
+                            .addData("amp", () -> String.format("%.1f", robot.liftMotor.getCurrent(CurrentUnit.AMPS)));
+                    telemetry.addLine("sensor | ")
+                            .addData("limit", () -> String.format("%s", robot.limitSwitch.getState()))
+                            .addData("front", () -> String.format("%.1f cm", robot.frontSensor.getDistance(DistanceUnit.CM)));
+                    telemetry.update();
+                }
+            } else {
+                guide_pressed = false;
+            }
+            // endregion
         }
     }
 }

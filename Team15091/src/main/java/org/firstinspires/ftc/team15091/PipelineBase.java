@@ -42,7 +42,7 @@ public abstract class PipelineBase extends OpenCvPipeline {
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
         WebcamName webcamName = hardwareMap.get(WebcamName.class, "Webcam 1");
         webcam = OpenCvCameraFactory.getInstance().createWebcam(webcamName, cameraMonitorViewId);
-        webcam.setViewportRenderer(OpenCvCamera.ViewportRenderer.GPU_ACCELERATED);
+        webcam.setViewportRenderer(OpenCvCamera.ViewportRenderer.NATIVE_VIEW);
 
         webcam.setPipeline(this);
         webcam.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {

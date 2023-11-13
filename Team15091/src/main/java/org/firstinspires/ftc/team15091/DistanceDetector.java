@@ -13,6 +13,10 @@ public class DistanceDetector implements IObjectDetector<Boolean> {
     private boolean detected = false;
     private boolean away = false;
 
+    // Initialize variables for filtering
+    private double filteredDistance = 0.0;
+    private double alpha = 0.2; // Adjust this value based on your needs
+
     /**
      * Set distance detector
      *
@@ -39,10 +43,14 @@ public class DistanceDetector implements IObjectDetector<Boolean> {
     @Override
     public Boolean objectDetected() {
         double currentDistance = sensorRange.getDistance(DistanceUnit.CM);
+
+        // Apply exponential moving average filter
+        filteredDistance = alpha * currentDistance + (1 - alpha) * filteredDistance;
+
         detected = false;
 
-        if ((away && currentDistance > threshold) || (!away && currentDistance < threshold)) {
-            //if the detection last for 3 millisesoncds then sounds like real
+        if ((away && filteredDistance > threshold) || (!away && filteredDistance < threshold)) {
+            //if the detection last for 3 milliseconds then sounds like real
             if (runtime.milliseconds() > 3d) {
                 detected = true;
             }
@@ -54,7 +62,12 @@ public class DistanceDetector implements IObjectDetector<Boolean> {
     }
 
     public double getCurrentDistance() {
-        return sensorRange.getDistance(DistanceUnit.CM);
+        double currentDistance = sensorRange.getDistance(DistanceUnit.CM);
+
+        // Apply exponential moving average filter
+        filteredDistance = alpha * currentDistance + (1 - alpha) * filteredDistance;
+
+        return filteredDistance;
     }
 
     public void setThreshold(double threshold) {

@@ -19,6 +19,7 @@ import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
 
 import java.util.Arrays;
@@ -32,7 +33,15 @@ public class Robot {
     public DigitalChannel limitSwitch;
     public DistanceSensor frontSensor;
     private Context _appContext;
-    private int[] beepSoundID = new int[2];
+    private int[] beepSoundID = new int[3];
+    volatile boolean soundPlaying = false;
+    // create a sound parameter that holds the desired player parameters.
+    SoundPlayer.PlaySoundParams soundParams = new SoundPlayer.PlaySoundParams(false);
+
+    // Initialize variables for filtering
+    private volatile double filteredDistance = 0.0;
+    private double alpha = 0.2; // Adjust this value based on your needs
+
     IMU imu;
     private static final double MAX_VELOCITY = 2800d;
     private static final double COUNTS_PER_MOTOR_REV = 529.2d;    // eg: HD Hex Motor 20:1 560, core hex 288, 40:1 1120
@@ -83,6 +92,7 @@ public class Robot {
         _appContext = hardwareMap.appContext;
         beepSoundID[0] = hardwareMap.appContext.getResources().getIdentifier("beep", "raw", hardwareMap.appContext.getPackageName());
         beepSoundID[1] = hardwareMap.appContext.getResources().getIdentifier("ss_laser", "raw", hardwareMap.appContext.getPackageName());
+        beepSoundID[2] = hardwareMap.appContext.getResources().getIdentifier("ss_bb8_up", "raw", hardwareMap.appContext.getPackageName());
 
         setDriveZeroPowerBehavior(ZeroPowerBehavior.FLOAT);
 
@@ -94,7 +104,15 @@ public class Robot {
     }
 
     final void beep(int beepType) {
-        new Thread(() -> SoundPlayer.getInstance().startPlaying(_appContext, beepSoundID[beepType])).start();
+        if (!soundPlaying) {
+            soundPlaying = true;
+            SoundPlayer.getInstance().startPlaying(
+                    _appContext,
+                    beepSoundID[beepType],
+                    soundParams,
+                    null,
+                    () -> soundPlaying = false);
+        }
     }
 
     double getHeading() {
@@ -179,10 +197,10 @@ public class Robot {
     }
 
     public void toggleArm() {
-        if (armPosition == 0.8d) {
+        if (armPosition == 0.7d) {
             setArmPosition(0d);
         } else {
-            setArmPosition(0.8d);
+            setArmPosition(0.7d);
         }
     }
 
@@ -203,5 +221,14 @@ public class Robot {
 
     public void togglePixelHolder(boolean release) {
 
+    }
+
+    double getFilteredDistance() {
+        double rawDistance = frontSensor.getDistance(DistanceUnit.CM);
+
+        // Apply exponential moving average filter
+        filteredDistance = alpha * rawDistance + (1 - alpha) * filteredDistance;
+
+        return filteredDistance;
     }
 }
