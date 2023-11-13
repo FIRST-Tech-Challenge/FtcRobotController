@@ -19,12 +19,13 @@ public class Wrist extends RFServo {
     super.setLastTime(-100);
     lastTime=-100;
     WristTargetStates.FLAT.setStateTrue();
+    WristStates.FLAT.setStateTrue();
   }
 
   public enum WristStates {
     FLAT(0.88, true),
-    HOLD(0.8, false),
-    FLIP(0.5, false),
+    HOLD(1-0.2*24/26, false),
+    FLIP(0.5*26/24, false),
 
     DROP(0.00, false);
     double position;
@@ -53,9 +54,9 @@ public class Wrist extends RFServo {
   }
 
   public enum WristTargetStates {
-    FLAT(.88, true),
-    HOLD(0.8, false),
-    FLIP(0.5, false),
+    FLAT(0.88, true),
+    HOLD(1-0.2*24/26, false),
+    FLIP(0.5*26/24, false),
 
     DROP(0.00, false);
     double position;

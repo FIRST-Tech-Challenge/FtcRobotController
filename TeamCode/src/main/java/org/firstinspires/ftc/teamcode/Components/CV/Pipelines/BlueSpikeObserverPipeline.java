@@ -25,8 +25,8 @@ import java.util.ArrayList;
 @Config
 public class BlueSpikeObserverPipeline extends OpenCvPipeline {
     ArrayList<double[]> frameList;
-    public static double p1x = 500, p1y =230, p2x = 640, p2y =380, p21x = 150, p21y =200, p22x = 350, p22y =370;
-
+    public double p1x = 500, p1y =230, p2x = 640, p2y =380, p21x = 150, p21y =200, p22x = 350, p22y =370;
+    public static double h1=100, h1H=130;
 
 
     /**
@@ -55,23 +55,24 @@ public class BlueSpikeObserverPipeline extends OpenCvPipeline {
         Mat newCone = new Mat();
         Imgproc.cvtColor(cone, newCone, Imgproc.COLOR_RGB2HSV);
         Scalar thresh1 = new Scalar(h1,59,0), hthresh1 = new Scalar(h1H,255,255);
-        Scalar thresh2 = new Scalar(RedSpikeObserverPipeline.h2,59,0), hthresh2 = new Scalar(h2H,255,255);
-        Mat filtered = new Mat(), filtered1 = new Mat();
+//        Scalar thresh2 = new Scalar(RedSpikeObserverPipeline.h2,59,0), hthresh2 = new Scalar(h2H,255,255);
+        Mat filtered = new Mat();
+//        filtered1 = new Mat();
         Core.inRange(newCone, thresh1, hthresh1, filtered);
-        Core.inRange(newCone, thresh2, hthresh2, filtered1);
-        Mat thresh = new Mat();
-        Core.add(filtered1, filtered, thresh);
-        double redValue = Core.sumElems(thresh).val[0]/ROI1.area()/255;
+//        Core.inRange(newCone, thresh2, hthresh2, filtered1);
+//        Mat thresh = new Mat();
+//        Core.add(filtered1, filtered, thresh);
+        double redValue = Core.sumElems(filtered).val[0]/ROI1.area()/255;
         cone = input.submat(ROI2);
         newCone = new Mat();
         Imgproc.cvtColor(cone, newCone, Imgproc.COLOR_RGB2HSV);
         filtered = new Mat();
-        filtered1 = new Mat();
+//        filtered1 = new Mat();
         Core.inRange(newCone, thresh1, hthresh1, filtered);
-        Core.inRange(newCone, thresh2, hthresh2, filtered1);
-        thresh = new Mat();
-        Core.add(filtered1, filtered, thresh);
-        double redValue2 = Core.sumElems(thresh).val[0]/ROI2.area()/255;
+//        Core.inRange(newCone, thresh2, hthresh2, filtered1);
+//        thresh = new Mat();
+//        Core.add(filtered1, filtered, thresh);
+        double redValue2 = Core.sumElems(filtered).val[0]/ROI2.area()/255;
         frameList.add(new double[]{redValue, redValue2});
         if(frameList.size()>5) {
             frameList.remove(0);
@@ -79,14 +80,14 @@ public class BlueSpikeObserverPipeline extends OpenCvPipeline {
         cone.release();
         newCone.release();
         filtered.release();
-        filtered1.release();
+//        filtered1.release();
 
 
 
 
         //release all the data
 //        input.release();
-        thresh.release();
+//        thresh.release();
         Scalar color = new Scalar(255,0,0);
         Imgproc.rectangle(input, ROI1, color, 5);
         Imgproc.rectangle(input, ROI2, color, 5);

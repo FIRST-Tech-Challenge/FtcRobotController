@@ -106,7 +106,7 @@ public class Intake extends RFMotor {
   public void stopIntake() {
     double vel = super.getVelocity();
     //        if(abs(vel)>10) {
-    double pos = super.getCurrentPosition() - 30;
+    double pos = super.getCurrentPosition() - 10;
     double res = (pos) % HALF_TICKS_PER_REV;
     if (res > HALF_TICKS_PER_REV / 2.0) {
       res -= HALF_TICKS_PER_REV;

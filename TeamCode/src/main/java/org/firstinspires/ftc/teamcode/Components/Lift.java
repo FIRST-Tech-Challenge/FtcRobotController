@@ -38,6 +38,7 @@ public class Lift extends RFDualMotor {
     setConstants(
         max, min, RESISTANCE, kS, kV, kA, MAX_UP_VELO, MAX_DOWN_VELO, MAX_ACCEL, MAX_DECEL, kP, kD);
     super.setTarget(0);
+    LiftMovingStates.AT_ZERO.setStateTrue();
     lastPower = 0;
     lastManualTime = -100;
     target = 0;
