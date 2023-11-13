@@ -4,6 +4,8 @@ import android.graphics.Canvas;
 
 
 import org.firstinspires.ftc.robotcore.internal.camera.calibration.CameraCalibration;
+import org.firstinspires.ftc.teamcode.Alliance;
+import org.firstinspires.ftc.teamcode.ScoringElementLocation;
 import org.firstinspires.ftc.vision.VisionProcessor;
 import org.opencv.core.Core;
 import org.opencv.core.CvType;
@@ -13,11 +15,14 @@ import org.opencv.core.Scalar;
 import org.opencv.imgproc.Imgproc;
 
 public class FirstVisionProcessor implements VisionProcessor {
-    Selected selection = Selected.NONE;
+    ScoringElementLocation selection = ScoringElementLocation.UNKNOWN;
 
-    // Define lower and upper HSV values for the red color range
+    // Define lower and upper HSV values for the red and blue color ranges
     public Scalar lowerRed = new Scalar(0, 100, 100);
     public Scalar upperRed = new Scalar(10, 255, 255);
+    public Scalar lowerBlue = new Scalar(100, 100, 100);
+    public Scalar upperBlue = new Scalar(140, 255, 255);
+
     private Mat hsvImage;
     private Mat mask;
 
@@ -37,11 +42,26 @@ public class FirstVisionProcessor implements VisionProcessor {
     }
     @Override
     public Object processFrame(Mat frame, long captureTimeNanos) {
+        Scalar lowerHsv = lowerRed;
+        Scalar upperHsv = upperRed;
+        switch (_alliance){
+            case UNKNOWN:
+                return ScoringElementLocation.UNKNOWN;
+            case RED:
+                lowerHsv = lowerRed;
+                upperHsv = upperRed;
+                break;
+            case BLUE:
+                lowerHsv = lowerBlue;
+                upperHsv = upperBlue;
+                break;
+        }
+
         // Convert the image to HSV format
         Imgproc.cvtColor(frame, hsvImage, Imgproc.COLOR_BGR2HSV);
 
         // Create a mask to extract red-colored pixels
-        Core.inRange(hsvImage, lowerRed, upperRed, mask);
+        Core.inRange(hsvImage, lowerHsv, upperHsv, mask);
 
         Mat leftMask = new Mat(mask, leftRegion);
         Mat centerMask = new Mat(mask, centerRegion);
@@ -53,11 +73,13 @@ public class FirstVisionProcessor implements VisionProcessor {
         int rightCount = Core.countNonZero(rightMask);
 
         if (leftCount > centerCount && leftCount > rightCount){
-            return Selected.LEFT;
+            selection =  ScoringElementLocation.LEFT;
         } else if (centerCount > leftCount && centerCount > rightCount){
-            return Selected.MIDDLE;
+            selection =  ScoringElementLocation.CENTER;
+        } else {
+            selection = ScoringElementLocation.RIGHT;
         }
-        return Selected.RIGHT;
+        return selection;
     }
 
 
@@ -66,11 +88,14 @@ public class FirstVisionProcessor implements VisionProcessor {
     public void onDrawFrame(Canvas canvas, int onscreenWidth, int onscreenHeight, float scaleBmpPxToCanvasPx, float scaleCanvasDensity, Object userContext) {
     }
 
-    public Selected getSelection() { return selection;
+    public ScoringElementLocation getSelection() { return selection;
     }
 
-    public enum Selected {
-        NONE,
-        LEFT, MIDDLE, RIGHT
+    public void SetAlliance(Alliance alliance){
+        _alliance = alliance;
     }
+
+
+    private Alliance _alliance = Alliance.UNKNOWN;
+
 }

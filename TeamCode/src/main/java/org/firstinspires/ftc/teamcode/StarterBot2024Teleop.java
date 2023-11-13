@@ -61,10 +61,10 @@ public class StarterBot2024Teleop extends OpMode
 
     private final int armHomePosition = 0;
     private final int armIntakePosition = 10;
-    private final int armScorePosition = 300;
+    private final int armScorePosition = -120;
     private final int armShutdownThreshold = 5;
 
-    private final double armPower = 0.1;
+    private final double armPower = 1.0;
 
     /*
      * Code to run ONCE when the driver hits INIT
