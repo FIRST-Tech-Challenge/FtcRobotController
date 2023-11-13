@@ -16,9 +16,17 @@ public class MarkerDetector extends OpenCvPipeline {
     public MARKER_POSITION position = MARKER_POSITION.UNKNOWN;
 
     double avgLeftCr;
+    double avgCenterCr;
+    double avgRightCr;
     ALLIANCE_COLOR markerColor;
 
     double leftCrTotal;
+    double avgLeftCb;
+    double avgRightCb;
+    double avgCenterCb;
+    double avgLeftY;
+    double avgCenterY;
+    double avgRightY;
     private static final int SUBMAT_WIDTH = 120;
     private static final int SUBMAT_HEIGHT = 120;
     private Telemetry telemetry;
@@ -56,21 +64,17 @@ public class MarkerDetector extends OpenCvPipeline {
         Imgproc.rectangle(workingMatrix, new Rect(260, 180, SUBMAT_WIDTH, SUBMAT_HEIGHT), new Scalar(0, 255, 0));
         Imgproc.rectangle(workingMatrix, new Rect(520, 180, SUBMAT_WIDTH, SUBMAT_HEIGHT), new Scalar(0, 255, 0));
 
-        leftCrTotal = Core.sumElems(matLeft).val[1];
-        double rightCrTotal = Core.sumElems(matRight).val[1];
-        double centerCrTotal = Core.sumElems(matCenter).val[1];
+        avgLeftY = (Core.sumElems(matLeft).val[0]) / (SUBMAT_WIDTH * SUBMAT_HEIGHT);
+        avgCenterY = Core.sumElems(matCenter).val[0] / (SUBMAT_WIDTH * SUBMAT_HEIGHT);
+        avgRightY = Core.sumElems(matRight).val[0] / (SUBMAT_WIDTH * SUBMAT_HEIGHT);
 
-        double leftCbTotal = Core.sumElems(matLeft).val[2];
-        double rightCbTotal = Core.sumElems(matRight).val[2];
-        double centerCbTotal = Core.sumElems(matCenter).val[2];
+        avgLeftCr = (Core.sumElems(matLeft).val[1]) / (SUBMAT_WIDTH * SUBMAT_HEIGHT);
+        avgCenterCr = Core.sumElems(matCenter).val[1] / (SUBMAT_WIDTH * SUBMAT_HEIGHT);
+        avgRightCr = Core.sumElems(matRight).val[1] / (SUBMAT_WIDTH * SUBMAT_HEIGHT);
 
-        avgLeftCr = leftCrTotal / (SUBMAT_WIDTH * SUBMAT_HEIGHT);
-        double avgRightCr = rightCrTotal / (SUBMAT_WIDTH * SUBMAT_HEIGHT);
-        double avgCenterCr = centerCrTotal / (SUBMAT_WIDTH * SUBMAT_HEIGHT);
-
-        double avgLeftCb = leftCbTotal / (SUBMAT_WIDTH * SUBMAT_HEIGHT);
-        double avgRightCb = rightCbTotal / (SUBMAT_WIDTH * SUBMAT_HEIGHT);
-        double avgCenterCb = centerCbTotal / (SUBMAT_WIDTH * SUBMAT_HEIGHT);
+        avgLeftCb = (Core.sumElems(matLeft).val[2]) / (SUBMAT_WIDTH * SUBMAT_HEIGHT);
+        avgCenterCb = Core.sumElems(matCenter).val[2] / (SUBMAT_WIDTH * SUBMAT_HEIGHT);
+        avgRightCb = Core.sumElems(matRight).val[2] / (SUBMAT_WIDTH * SUBMAT_HEIGHT);
 
         position = MARKER_POSITION.UNDETECTED;
 
@@ -99,21 +103,21 @@ public class MarkerDetector extends OpenCvPipeline {
         } else {
             if (avgLeftCb > avgCenterCb) {
                 if (avgLeftCb > avgRightCb) {
-                    if (((160 <= avgLeftCb) && (avgLeftCb <= 240)) && ((avgLeftCr >= 16) && (avgLeftCr <= 128))) {
+                    if (((120 <= avgLeftCb) && (avgLeftCb <= 240)) && ((avgLeftCr >= 16) && (avgLeftCr <= 132))) {
                         position = MARKER_POSITION.LEFT;
                     }
                 } else {
-                    if (((160 <= avgRightCb) && (avgRightCb <= 240)) && ((avgRightCr >= 16) && (avgRightCr <= 128))) {
+                    if (((120 <= avgRightCb) && (avgRightCb <= 240)) && ((avgRightCr >= 16) && (avgRightCr <= 132))) {
                         position = MARKER_POSITION.RIGHT;
                     }
                 }
             } else {
                 if (avgCenterCb > avgRightCb) {
-                    if (((160 <= avgCenterCb) && (avgCenterCb <= 240)) && ((avgCenterCr >= 16) && (avgCenterCr <= 128))) {
+                    if (((120 <= avgCenterCb) && (avgCenterCb <= 240)) && ((avgCenterCr >= 16) && (avgCenterCr <= 132))) {
                         position = MARKER_POSITION.CENTER;
                     }
                 } else {
-                    if (((160 <= avgRightCb) && (avgRightCb <= 240)) && ((avgRightCr >= 16) && (avgRightCr <= 128))) {
+                    if (((120 <= avgRightCb) && (avgRightCb <= 240)) && ((avgRightCr >= 16) && (avgRightCr <= 32))) {
                         position = MARKER_POSITION.RIGHT;
                     }
                 }
