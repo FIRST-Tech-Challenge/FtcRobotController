@@ -67,6 +67,7 @@ public class WireFireTeleOp extends LinearOpMode {
         boolean isAutoDrivingToAprilTag = false;
         double autoTurningStart = 0.0;
         double autoTurningTarget = 0.0;
+        double timeoutMilliseconds = 0;
 
         // run until the end of the match (driver presses STOP)
         while (opModeIsActive()) {
@@ -111,13 +112,15 @@ public class WireFireTeleOp extends LinearOpMode {
                 isAutoTurning = true;
                 autoTurningTarget = currentGamepad1.y ? 0.0 : currentGamepad1.x ? 90.0 : currentGamepad1.b ? -90.0 : 179.9;
                 autoTurningStart = runtime.milliseconds();
+                double totalDeltaDegrees = (autoTurningTarget - botHeading + 540) % 360 - 180;
+                timeoutMilliseconds = Math.abs(totalDeltaDegrees) / 180 * 3000 + 1000;
             }
 
             if (isAutoTurning)
             {
                 double currentTime = runtime.milliseconds();
                 double deltaDegrees = (autoTurningTarget - botHeading + 540) % 360 - 180;
-                if ((Math.abs(deltaDegrees) < 1.0 && Math.abs(rotatingSpeed) < 2.0) || (currentTime - autoTurningStart > 1300.0)) {
+                if ((Math.abs(deltaDegrees) < 1.0 && Math.abs(rotatingSpeed) < 2.0) || (currentTime - autoTurningStart > timeoutMilliseconds)) {
                     isAutoTurning = false;
                 }
                 else {

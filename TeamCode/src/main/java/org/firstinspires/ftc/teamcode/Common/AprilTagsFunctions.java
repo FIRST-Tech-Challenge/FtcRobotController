@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.Common;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.controls.ExposureControl;
@@ -87,11 +88,14 @@ public class AprilTagsFunctions {
         if (visionPortal == null) {
             return;
         }
+        ElapsedTime runtime = new ElapsedTime();
         // Make sure camera is streaming before we try to set the exposure controls
         if (visionPortal.getCameraState() != VisionPortal.CameraState.STREAMING) {
             lom.telemetry.addData("Camera", "Waiting");
             lom.telemetry.update();
-            while (!lom.isStopRequested() && (visionPortal.getCameraState() != VisionPortal.CameraState.STREAMING)) {
+            double startTime = runtime.milliseconds();
+            while (!lom.isStopRequested() && ((runtime.milliseconds() - startTime) < 4000) &&
+                    (visionPortal.getCameraState() != VisionPortal.CameraState.STREAMING)) {
                 lom.sleep(20);
             }
             lom.telemetry.addData("Camera", "Ready");

@@ -94,8 +94,8 @@ public class AutonomousOpenCV extends LinearOpMode {
         if(circleDetection.GetBallPosition() == CircleDetection.BallPosition.LEFT)
         {
             PushPixelSide(false);
-            strafeCorrection = isNear ? -1.5 : -1.5;
-            aimingDistance = isRed ? 12.5 : -3;
+            strafeCorrection = isNear ? 0.5 : -5.5;
+            aimingDistance = isRed ? 12 : 0;
         }
         else if(circleDetection.GetBallPosition() == CircleDetection.BallPosition.CENTER)
         {
@@ -106,12 +106,12 @@ public class AutonomousOpenCV extends LinearOpMode {
         else if(circleDetection.GetBallPosition() == CircleDetection.BallPosition.RIGHT)
         {
             PushPixelSide(true);
-            strafeCorrection = isNear ? -1.5 : -1.5;
-            aimingDistance = isRed ? -3 : 12.5;
+            strafeCorrection = isNear ? -1 : -6;
+            aimingDistance = isRed ? -3 : 12;
         }
         if(!isNear)
-            CrossField();
-        DeliverPixel(aimingDistance, strafeCorrection);
+            CrossField(strafeCorrection);
+        DeliverPixel(centerCross ? aimingDistance : aimingDistance - 6, isNear ? strafeCorrection : (centerCross ? 17 : 0));
         ParkRobot();
     }
 
@@ -139,11 +139,19 @@ public class AutonomousOpenCV extends LinearOpMode {
         df.DriveStraight(DRIVE_SPEED, 34, 0, false);
         df.DriveStraight(DRIVE_SPEED, -17, 0, false);
     }
-    private void CrossField()
+    private void CrossField(double strafeCorrection)
     {
         df.DriveStraight(DRIVE_SPEED, -13, 0, false);
-        df.DriveStraight(DRIVE_SPEED * 1.5, isRed ? 60 : -60, 0, true);
-        df.DriveStraight(DRIVE_SPEED, 13, 0, false);
+        if (!centerCross) {
+            df.DriveStraight(DRIVE_SPEED * 1.5, isRed ? 54 - strafeCorrection: -54 + strafeCorrection, 0, true);
+            df.DriveStraight(DRIVE_SPEED, isRed ? 13 : 14, 0, false);
+        }
+        else {
+            df.DriveStraight(DRIVE_SPEED * 1.5, isRed ? 22 - strafeCorrection: -22 + strafeCorrection, 0, true);
+            df.DriveStraight(DRIVE_SPEED, 48, 0, false);
+            df.DriveStraight(DRIVE_SPEED, isRed ? 54 : -54, 0, true);
+            df.DriveStraight(DRIVE_SPEED, -24, 0, false);
+        }
     }
     protected void DeliverPixel(double aimingDistance, double strafeCorrection)
     {
