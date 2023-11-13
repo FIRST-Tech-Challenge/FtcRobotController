@@ -15,8 +15,9 @@ public class TestingWade extends LinearOpMode {
 
         while (opModeIsActive()) {
 
-            robot.setServoPosBlocking(robot.spikeServo, 0);
-            sleep(10000);
+            robot.mecanumBlocking(2, true, 0.75);
+            this.sleep(2000);
+            robot.mecanumBlocking(2, false, 0.75);
             break;
         }
     }
