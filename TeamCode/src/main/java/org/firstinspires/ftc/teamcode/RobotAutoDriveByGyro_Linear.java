@@ -41,6 +41,14 @@ import com.qualcomm.robotcore.util.Range;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
 
+import org.firstinspires.ftc.robotcore.external.hardware.camera.BuiltinCameraDirection;
+import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
+import org.firstinspires.ftc.robotcore.external.tfod.Recognition;
+import org.firstinspires.ftc.vision.VisionPortal;
+import org.firstinspires.ftc.vision.tfod.TfodProcessor;
+
+import java.util.List;
+
 /*
  *  This OpMode illustrates the concept of driving an autonomous path based on Gyro (IMU) heading and encoder counts.
  *  The code is structured as a LinearOpMode
@@ -92,6 +100,12 @@ import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
 @Autonomous(name="Robot: Auto Drive By Gyro", group="Robot")
 
 public class RobotAutoDriveByGyro_Linear extends LinearOpMode {
+    int driveforward = 7;
+    int driveturn = -45;
+    int zone=3;
+    private static final boolean USE_WEBCAM = true;
+    private TfodProcessor tfod;
+    private VisionPortal visionPortal;
 
     /* Declare OpMode members. */
     private DcMotor         leftFront   = null;
@@ -102,6 +116,7 @@ public class RobotAutoDriveByGyro_Linear extends LinearOpMode {
     private IMU             imu         = null;      // Control/Expansion Hub IMU
 
     private double          headingError  = 0;
+    static boolean isrecodnized=false;
 
     // These variable are declared here (as class members) so they can be updated in various methods,
     // but still be displayed by sendTelemetry()
@@ -145,7 +160,12 @@ public class RobotAutoDriveByGyro_Linear extends LinearOpMode {
 
     @Override
     public void runOpMode() {
+        initTfod();
 
+        // Wait for the DS start button to be touched.
+        telemetry.addData("DS preview on/off", "3 dots, Camera Stream");
+        telemetry.addData(">", "Touch Play to start OpMode");
+        telemetry.update();
         // Initialize the drive system variables.
         leftFront  = hardwareMap.get(DcMotor.class, "leftFront");
         rightFront = hardwareMap.get(DcMotor.class, "rightFront");
@@ -202,10 +222,21 @@ public class RobotAutoDriveByGyro_Linear extends LinearOpMode {
         //          holdHeading() is used after turns to let the heading stabilize
         //          Add a sleep(2000) after any step to keep the telemetry data visible for review
 
-        driveStraight(DRIVE_SPEED, 19.0, 0.0);
-        holdHeading( TURN_SPEED, 0, 5);
-        turnToHeading( TURN_SPEED, 45.0);               // Turn  CW to -45 Degrees
-        holdHeading( TURN_SPEED, 45.0, 0.5);   // Hold -45 Deg heading for a 1/2 second
+        driveStraight(DRIVE_SPEED, 25.0, 0.0);
+        holdHeadingandscan( TURN_SPEED, 0, 3);
+        turnToHeading( TURN_SPEED, -45.0);
+        holdHeadingandscan1( TURN_SPEED, -45.0, 3);
+
+        turnToHeading( TURN_SPEED, 0);
+        holdHeading(turnSpeed,0,0.5);
+        driveStraight(DRIVE_SPEED, driveforward,0);
+        turnToHeading( TURN_SPEED, driveturn);
+        holdHeadingandplace(turnSpeed,driveturn,3);
+
+        turnToHeading( TURN_SPEED, 0);
+        holdHeading(turnSpeed,0,0.5);
+        driveStraight(DRIVE_SPEED,5,0);
+        holdHeading(turnSpeed,0,0.5);
         telemetry.addData("Path", "Complete");
         telemetry.update();
         sleep(1000);  // Pause to display last telemetry message.
@@ -232,6 +263,7 @@ public class RobotAutoDriveByGyro_Linear extends LinearOpMode {
     *                   0 = fwd. +ve is CCW from fwd. -ve is CW from forward.
     *                   If a relative angle is required, add/subtract from the current robotHeading.
     */
+
     public void driveStraight(double maxDriveSpeed,
                               double distance,
                               double heading) {
@@ -363,6 +395,131 @@ public class RobotAutoDriveByGyro_Linear extends LinearOpMode {
 
         // Stop all motion;
         moveRobot(0, 0);
+    }
+    public void holdHeadingandplace(double maxTurnSpeed, double heading, double holdTime) {
+
+        ElapsedTime holdTimer = new ElapsedTime();
+        holdTimer.reset();
+        double order=0;
+        // keep looping while we have time remaining.
+        while (opModeIsActive() && (holdTimer.time() < holdTime)) {
+            // Determine required steering to keep on heading
+            turnSpeed = getSteeringCorrection(heading, P_TURN_GAIN);
+
+            // Clip the speed to the maximum permitted value.
+            turnSpeed = Range.clip(turnSpeed, -maxTurnSpeed, maxTurnSpeed);
+
+            // Pivot in place by applying the turning correction
+            moveRobot(0, turnSpeed);
+
+            // Display drive status for the driver.
+            sendTelemetry(false);
+
+            if (order==0&&(holdTimer.time()>holdTime*0.1)){
+                telemetry.addData("order", order);
+                order++;
+            }else if (order==1&&(holdTimer.time()>holdTime*0.5)){
+                telemetry.addData("order", order);
+                order++;
+            } else if (order==2&&(holdTimer.time()>holdTime*0.75)){
+                telemetry.addData("order", order);
+                order++;
+            }
+        }
+
+        // Stop all motion;
+        moveRobot(0, 0);
+    }
+    public void holdHeadingandscan1(double maxTurnSpeed, double heading, double holdTime) {
+        visionPortal.resumeStreaming();
+        ElapsedTime holdTimer = new ElapsedTime();
+        holdTimer.reset();
+
+        // keep looping while we have time remaining.
+        while (opModeIsActive() && (holdTimer.time() < holdTime)) {
+            // Determine required steering to keep on heading
+            turnSpeed = getSteeringCorrection(heading, P_TURN_GAIN);
+            telemetryTfod();
+            if(isrecodnized=true){
+                zone=1;
+                driveforward=7;
+                driveturn=45;
+            }
+            // Clip the speed to the maximum permitted value.
+            turnSpeed = Range.clip(turnSpeed, -maxTurnSpeed, maxTurnSpeed);
+
+            // Pivot in place by applying the turning correction
+            moveRobot(0, turnSpeed);
+
+            // Display drive status for the driver.
+            sendTelemetry(false);
+        }
+        visionPortal.stopStreaming();
+        // Stop all motion;
+        moveRobot(0, 0);
+    }
+    public void holdHeadingandscan(double maxTurnSpeed, double heading, double holdTime) {
+        visionPortal.resumeStreaming();
+        ElapsedTime holdTimer = new ElapsedTime();
+        holdTimer.reset();
+
+        // keep looping while we have time remaining.
+        while ((opModeIsActive() && (holdTimer.time() < holdTime)&&!isrecodnized)) {
+            // Determine required steering to keep on heading
+            turnSpeed = getSteeringCorrection(heading, P_TURN_GAIN);
+            telemetryTfod();
+            if(isrecodnized=true){
+                zone=2;
+                driveforward=10;
+                driveturn=0;
+            }
+            // Clip the speed to the maximum permitted value.
+            turnSpeed = Range.clip(turnSpeed, -maxTurnSpeed, maxTurnSpeed);
+
+            // Pivot in place by applying the turning correction
+            moveRobot(0, turnSpeed);
+
+            // Display drive status for the driver.
+            sendTelemetry(false);
+        }
+        visionPortal.stopStreaming();
+        // Stop all motion;
+        moveRobot(0, 0);
+    }
+    private void initTfod() {
+
+        // Create the TensorFlow processor the easy way.
+        tfod = TfodProcessor.easyCreateWithDefaults();
+
+        // Create the vision portal the easy way.
+        if (USE_WEBCAM) {
+            visionPortal = VisionPortal.easyCreateWithDefaults(
+                    hardwareMap.get(WebcamName.class, "Webcam 1"), tfod);
+        } else {
+            visionPortal = VisionPortal.easyCreateWithDefaults(
+                    BuiltinCameraDirection.BACK, tfod);
+        }
+
+    }
+
+    private void telemetryTfod() {
+
+        List<Recognition> currentRecognitions = tfod.getRecognitions();
+        telemetry.addData("# Objects Detected", currentRecognitions.size());
+
+        // Step through the list of recognitions and display info for each one.
+        for (Recognition recognition : currentRecognitions) {
+            if(currentRecognitions.size()>=1) {
+                isrecodnized = true;}
+            double x = (recognition.getLeft() + recognition.getRight()) / 2 ;
+            double y = (recognition.getTop()  + recognition.getBottom()) / 2 ;
+
+            telemetry.addData(""," ");
+            telemetry.addData("Image", "%s (%.0f %% Conf.)", recognition.getLabel(), recognition.getConfidence() * 100);
+            telemetry.addData("- Position", "%.0f / %.0f", x, y);
+            telemetry.addData("- Size", "%.0f x %.0f", recognition.getWidth(), recognition.getHeight());
+        }   // end for() loop
+
     }
 
     // **********  LOW Level driving functions.  ********************
