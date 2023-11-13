@@ -32,8 +32,11 @@ public class Robot {
     public DigitalChannel limitSwitch;
     private Context _appContext;
     private int[] beepSoundID = new int[2];
+    boolean soundPlaying = false;
+    // create a sound parameter that holds the desired player parameters.
+    SoundPlayer.PlaySoundParams soundParams = new SoundPlayer.PlaySoundParams(false);
     IMU imu;
-    public static volatile double grabberPosition;
+    private static volatile double grabberPosition;
     private static volatile boolean frontServoPosition;
     private static final double MAX_VELOCITY = 2800d;
     private static final double COUNTS_PER_MOTOR_REV = 560d;    // eg: HD Hex Motor 20:1 560, core hex 288, 40:1 1120
@@ -88,7 +91,15 @@ public class Robot {
     }
 
     final void beep(int beepType) {
-        new Thread(() -> SoundPlayer.getInstance().startPlaying(_appContext, beepSoundID[beepType])).start();
+        if (!soundPlaying) {
+            soundPlaying = true;
+            SoundPlayer.getInstance().startPlaying(
+                    _appContext,
+                    beepSoundID[beepType],
+                    soundParams,
+                    null,
+                    () -> soundPlaying = false);
+        }
     }
 
     double getHeading() {
@@ -165,6 +176,14 @@ public class Robot {
         if (grabberPosition != newPosition) {
             grabberServo.setPosition(newPosition);
             grabberPosition = newPosition;
+        }
+    }
+
+    public void toggleGrabber() {
+        if (grabberPosition != 0d) {
+            setGrabber(0d);
+        } else {
+            setGrabber(1d);
         }
     }
 

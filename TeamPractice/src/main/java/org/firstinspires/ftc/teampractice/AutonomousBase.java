@@ -26,8 +26,6 @@ public abstract class AutonomousBase extends OpModeBase {
                 }
             }
 
-            gamepadUpdate();
-
             telemetry.update();
             idle();
         }

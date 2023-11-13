@@ -5,8 +5,6 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.util.Range;
 
-import static org.firstinspires.ftc.teampractice.Robot.grabberPosition;
-
 @TeleOp(name = "Gamepad")
 public class GamepadOpmode extends OpModeBase {
     @Override
@@ -55,27 +53,65 @@ public class GamepadOpmode extends OpModeBase {
             //endregion
 
             //region grabber servo control
-            if (gamepad1.a && !a_pressed) {
-                // close grabber
-                robot.setGrabber(grabberPosition == 1 ? 0 : 1);
+            if (gamepad1.a) {
+                if (!a_pressed) {
+                    a_pressed = true;
+                    robot.toggleGrabber();
+                }
+            } else {
+                a_pressed = false;
             }
             //endregion
 
             //region drivetrain control
-            double drive = -gamepad1.left_stick_y - gamepad1.right_stick_y;
+            double leftStickY = -gamepad1.left_stick_y;  // Invert if necessary
+            double rightStickY = -gamepad1.right_stick_y;  // Invert if necessary
+            double drive;
+
+            if (leftStickY >= 0 && rightStickY >= 0) {
+                // Both inputs are positive, so choose the maximum positive value.
+                drive = Math.max(leftStickY, rightStickY);
+            } else if (leftStickY <= 0 && rightStickY <= 0) {
+                // Both inputs are negative, so choose the minimum negative value.
+                drive = Math.min(leftStickY, rightStickY);
+            } else {
+                // The inputs have different signs, so set drive to the sum of both.
+                drive = leftStickY + rightStickY;
+            }
             double turn = gamepad1.left_stick_x;
             double side = gamepad1.right_stick_x;
 
-            double pLeftFront = Range.clip(drive + turn + side, -1.0d, 1.0d);
-            double pLeftRear = Range.clip(drive + turn - side, -1.0d, 1.0d);
-            double pRightFront = Range.clip(drive - turn - side, -1.0d, 1.0d);
-            double pRightRear = Range.clip(drive - turn + side, -1.0d, 1.0d);
+            if (gamepad1.dpad_up) {
+                drive = 0.2d;
+            } else if (gamepad1.dpad_down) {
+                drive = -0.2d;
+            } else if (gamepad1.dpad_left) {
+                turn = -0.2d;
+            } else if (gamepad1.dpad_right) {
+                turn = 0.2d;
+            }
+
+            double leftFrontPower = drive + turn + side;
+            double leftBackPower = drive + turn - side;
+            double rightFrontPower = drive - turn - side;
+            double rightBackPower = drive - turn + side;
+
+            // Normalize wheel powers to be less than 1.0
+            double max = Math.max(Math.abs(leftFrontPower), Math.abs(rightFrontPower));
+            max = Math.max(max, Math.abs(leftBackPower));
+            max = Math.max(max, Math.abs(rightBackPower));
+
+            if (max > 1.0) {
+                leftFrontPower /= max;
+                rightFrontPower /= max;
+                leftBackPower /= max;
+                rightBackPower /= max;
+            }
 
             // Send calculated power to wheels
-            robot.setDrivePower(pLeftFront, pLeftRear, pRightFront, pRightRear);
+            robot.setDrivePower(leftFrontPower, leftBackPower, rightFrontPower, rightBackPower);
             //endregion
 
-            gamepadUpdate();
             telemetry.update();
         }
     }
