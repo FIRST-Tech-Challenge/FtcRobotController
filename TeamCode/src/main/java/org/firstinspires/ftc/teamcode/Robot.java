@@ -765,7 +765,7 @@ public class Robot {
         straightBlocking(2, true, 0.7);
         if (markerPos == MarkerDetector.MARKER_POSITION.LEFT) {
             mecanumBlocking(30, false, 0.5);
-        } else if (markerPos == MarkerDetector.MARKER_POITION.RIGHT) {
+        } else if (markerPos == MarkerDetector.MARKER_POSITION.RIGHT) {
             mecanumBlocking(20, false, 0.5);
         } else {
             mecanumBlocking(23, false, 0.5);

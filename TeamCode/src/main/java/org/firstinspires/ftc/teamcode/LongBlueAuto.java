@@ -21,7 +21,7 @@ public class LongBlueAuto extends LinearOpMode {
             robot.longMoveToBoard();
             robot.alignToBoard();
             robot.autoOuttake();
-            robot.parkLeft();
+            //robot.parkLeft();
         }
     }
 }
