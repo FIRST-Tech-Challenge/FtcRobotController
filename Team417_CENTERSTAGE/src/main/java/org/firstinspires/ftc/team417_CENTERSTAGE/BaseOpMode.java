@@ -5,14 +5,10 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 
-import org.openftc.easyopencv.OpenCvCamera;
-
 import drive.DriveConstants;
 import drive.SampleMecanumDrive;
 
-abstract class BaseOpMode extends LinearOpMode {
-    OpenCvCamera camera;
-
+public abstract class BaseOpMode extends LinearOpMode {
     SampleMecanumDrive drive;
 
     //Declares drive-motors

@@ -52,12 +52,13 @@ public class OpenCvColorDetection {
     /* Declare OpMode members. */
     private LinearOpMode myOpMode = null;   // gain access to methods in the calling OpMode.
 
-    public enum detectColorType{
+    public enum detectColorType {
         BLUE,
-        RED
+        RED,
+        UNSET,
     }
 
-    public detectColorType myColor;
+    public detectColorType myColor = detectColorType.UNSET;
 
     // coordinates of largest detected image
     Point targetPoint = new Point(0, 0);
@@ -76,7 +77,6 @@ public class OpenCvColorDetection {
 
     // initialize the camera and openCV pipeline
     public void init() {
-
         // cameraMonitorViewId allows us to see the image pipeline using scrcpy
         //   for easy debugging
         //   You can disable it after testing completes
@@ -88,17 +88,14 @@ public class OpenCvColorDetection {
         // OR... use internal phone camera
         // phoneCam = OpenCvCameraFactory.getInstance().createInternalCamera(OpenCvInternalCamera.CameraDirection.BACK);
 
-        setDetectColor(detectColorType.BLUE);
         robotCamera.setPipeline(new ColorDetectPipeline());
 
         robotCamera.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
-            public void onOpened()
-            {
+            public void onOpened() {
                 startStreaming();
             }
 
-            public void onError(int errorCode)
-            {
+            public void onError(int errorCode) {
             }
         });
     }
@@ -127,17 +124,26 @@ public class OpenCvColorDetection {
         boolean viewportPaused = false;
 
         // matrices in the processing pipeline
+        Mat roiMat = new Mat();
         Mat blurredMat = new Mat();
         Mat hsvMat = new Mat();
         Mat filteredMat = new Mat();
         Mat contourMask = new Mat();
         Mat outputMat = new Mat();
+        List<MatOfPoint> contoursList = new ArrayList<>();
+        MatOfPoint currentContour = new MatOfPoint();
+        List<MatOfPoint> offsetContoursList = new ArrayList<>();
+        MatOfPoint offsetContour = new MatOfPoint();
 
         @Override
         public Mat processFrame(Mat inputMat) {
+            // resize the image to the roi so that stuff like volunteer's shirts aren't detected (doesn't work currently)
+            //roiMat = inputMat.rowRange(Constants.roi.x, Constants.roi.x + Constants.roi.width - 1).colRange(Constants.roi.y, Constants.roi.y + Constants.roi.height - 1);
+            inputMat.copyTo(roiMat);
+
             // blur the image to reduce the impact of noisy pixels
             //   each pixel is "averaged" with its neighboring pixels
-            Imgproc.GaussianBlur(inputMat, blurredMat, Constants.BLUR_SIZE, 0);
+            Imgproc.GaussianBlur(roiMat, blurredMat, Constants.BLUR_SIZE, 0);
 
             // convert image to HSV color space, which is better for detecting red and blue colors
             Imgproc.cvtColor(blurredMat, hsvMat, Imgproc.COLOR_RGB2HSV);
@@ -145,58 +151,86 @@ public class OpenCvColorDetection {
             // filter out the range of blue or red colors defined in
             //   Constants.BLUE_COLOR_DETECT_MIN_HSV and Constants.BLUE_COLOR_DETECT_MAX_HSV
             //   or Constants.RED_COLOR_DETECT_MIN_HSV and Constants.RED_COLOR_DETECT_MAX_HSV
-            if (myColor == detectColorType.BLUE) {
-                Core.inRange(hsvMat, Constants.BLUE_COLOR_DETECT_MIN_HSV, Constants.BLUE_COLOR_DETECT_MAX_HSV, filteredMat);
-            }
-            else {
-                Core.inRange(hsvMat, Constants.RED_COLOR_DETECT_MIN_HSV, Constants.RED_COLOR_DETECT_MAX_HSV, filteredMat);
+            switch (myColor) {
+                case BLUE:
+                    Core.inRange(hsvMat, Constants.BLUE_COLOR_DETECT_MIN_HSV, Constants.BLUE_COLOR_DETECT_MAX_HSV, filteredMat);
+                    break;
+                case RED:
+                    Core.inRange(hsvMat, Constants.RED_COLOR_DETECT_MIN_HSV, Constants.RED_COLOR_DETECT_MAX_HSV, filteredMat);
+                    break;
+                default:
             }
 
             // create a list of contours surrounding groups of contiguous pixels that were filtered
-            List<MatOfPoint> contoursList = new ArrayList<>();
             Imgproc.findContours(filteredMat, contoursList, contourMask, Imgproc.RETR_TREE, Imgproc.CHAIN_APPROX_SIMPLE);
 
             // copy original image to output image for drawing overlay on
-            inputMat.copyTo(outputMat);
+            roiMat.copyTo(outputMat);
 
             //   iterate through list of contours, find max area contour
             int maxAreaContourIndex = -1;
             targetPoint.x = -1;
             targetPoint.y = -1;
             targetDetected = false;
-            if (contoursList.size() > 1) {
+            if (contoursList.size() > 0) {
+                // Code for offsetting the contours if full image is relayed to scrcpy
+                //    (doesn't work and throws an exception)
+                /*
+                offsetContoursList.clear();
+                for (int i = 0; i < contoursList.size(); i++) {
+                    currentContour = contoursList.get(i);
+                    Point[] currentContourArray = currentContour.toArray();
+                    for (Point point : currentContourArray) {
+                        point.x += Constants.roi.x;
+                        point.y += Constants.roi.y;
+                    }
+                    offsetContour.fromArray(currentContourArray);
+                    offsetContoursList.add(offsetContour);
+                }
+
+                contoursList = offsetContoursList;
+                */
+
                 double maxArea = 0.0;
                 maxAreaContourIndex = 0;
                 for (int i = 0; i < contoursList.size(); i++) {
-                    if (Imgproc.contourArea(contoursList.get(i)) > maxArea) {
-                        maxArea = Imgproc.contourArea(contoursList.get(i));
+                    currentContour = contoursList.get(i);
+                    double contourArea = Imgproc.contourArea(currentContour);
+                    if (contourArea > maxArea) {
+                        maxArea = contourArea;
                         maxAreaContourIndex = i;
                     }
                 }
                 targetDetected = true;
+
                 // Draw the max area contour at index maxAreaContourIndex for debugging in scrcpy
                 Imgproc.drawContours(outputMat, contoursList, maxAreaContourIndex, Constants.borderColor, 2, -1);
 
-                // draw rectangular bounding box around the max area contour
+                // draw rectangular bounding box around roi (use if using full image)
+                //Imgproc.rectangle(outputMat, Constants.roi, Constants.roiColor);
+
+                //   draw rectangular bounding box around the max area contour
                 //   and draw circle at the center of rectangular bounding box
                 Rect boundingRect = Imgproc.boundingRect(contoursList.get(maxAreaContourIndex));
                 double boundHeightX = boundingRect.x + boundingRect.width;
                 double boundHeightY = boundingRect.y + boundingRect.height;
                 Imgproc.rectangle(outputMat, new Point(boundingRect.x, boundingRect.y), new Point(boundHeightX, boundHeightY), Constants.borderColor, 3, Imgproc.LINE_8, 0);
-                targetPoint.x = (int)boundingRect.width/2.0 + boundingRect.x;
-                targetPoint.y = (int)boundingRect.height/2.0 + boundingRect.y;
-                Imgproc.circle(outputMat, targetPoint , 10, Constants.borderColor , Imgproc.LINE_4, -1);
+                targetPoint.x = (int) boundingRect.width / 2.0 + boundingRect.x;
+                targetPoint.y = (int) boundingRect.height / 2.0 + boundingRect.y;
+                Imgproc.circle(outputMat, targetPoint, 10, Constants.borderColor, Imgproc.LINE_4, -1);
 
                 double width = inputMat.size().width;
 
-                if (targetPoint.x < width / 3) {
+                if (targetPoint.x < width / 4) {
                     sideDetected = SideDetected.LEFT;
-                } else if (targetPoint.x > (2 * width) / 3) {
+                } else if (targetPoint.x > (3 * width) / 4) {
                     sideDetected = SideDetected.RIGHT;
                 } else {
                     sideDetected = SideDetected.CENTER;
                 }
             }
+
+            roiMat.release();
 
             // See this image on the computer using scrcpy
             return outputMat;
@@ -206,10 +240,9 @@ public class OpenCvColorDetection {
         public void onViewportTapped() {
             viewportPaused = !viewportPaused;
 
-            if(viewportPaused) {
+            if (viewportPaused) {
                 robotCamera.pauseViewport();
-            }
-            else {
+            } else {
                 robotCamera.resumeViewport();
             }
         }
