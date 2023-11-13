@@ -13,6 +13,17 @@ public class MarkerProcessor implements VisionProcessor {
     private Telemetry telemetry;
     private Mat workingMatrix;
 
+    double avgLeftCb;
+    double avgRightCb;
+    double avgCenterCb;
+
+    double avgLeftCr;
+    double avgCenterCr;
+    double avgRightCr;
+    double avgLeftY;
+    double avgCenterY;
+    double avgRightY;
+
     public MarkerProcessor(Telemetry telemetry, MarkerDetector.ALLIANCE_COLOR allianceColor) {
 
         this.telemetry = telemetry;
@@ -33,6 +44,15 @@ public class MarkerProcessor implements VisionProcessor {
 
     @Override
     public Object processFrame(final Mat input, long captureTimeNanos) {
+        avgLeftCb = detector.avgLeftCb;
+        avgCenterCb = detector.avgCenterCb;
+        avgRightCb = detector.avgRightCb;
+        avgLeftCr = detector.avgLeftCr;
+        avgCenterCr = detector.avgCenterCr;
+        avgRightCr = detector.avgRightCr;
+        avgLeftY = detector.avgLeftY;
+        avgCenterY = detector.avgCenterY;
+        avgRightY = detector.avgRightY;
 //        telemetry.addLine("process frame");
 //        telemetry.update();
         workingMatrix = detector.processFrame(input);

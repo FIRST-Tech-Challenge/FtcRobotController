@@ -47,12 +47,23 @@ public class Robot {
     double prevError = 0;
     double prevTime = 0;
     ElapsedTime elapsedTime = new ElapsedTime();
-    MarkerDetector.MARKER_POSITION markerPos;
+    public MarkerDetector.MARKER_POSITION markerPos;
     int wantedAprTagId;
     private MarkerProcessor markerProcessor; //TODO: COMBINE THESE AND ALL METHODS USING THEM
     private AprilTagProcessor aprilTagProcessor;
     private VisionPortal visionPortal;
     boolean isRedAlliance;
+
+    //for debugging :)
+    double avgLeftCb;
+    double avgRightCb;
+    double avgCenterCb;
+    double avgLeftCr;
+    double avgCenterCr;
+    double avgRightCr;
+    double avgLeftY;
+    double avgCenterY;
+    double avgRightY;
 
     //CONSTRUCTOR
     public Robot(HardwareMap hardwareMap, LinearOpMode opMode, Telemetry telemetry, boolean red) {
@@ -457,6 +468,26 @@ public class Robot {
         MarkerDetector.MARKER_POSITION position = markerProcessor.getPosition();
         elapsedTime.reset();
         double time = elapsedTime.seconds();
+        avgLeftCb = markerProcessor.avgLeftCb;
+        avgCenterCb = markerProcessor.avgCenterCb;
+        avgRightCb = markerProcessor.avgRightCb;
+        avgLeftCr = markerProcessor.avgLeftCr;
+        avgCenterCr = markerProcessor.avgCenterCr;
+        avgRightCr = markerProcessor.avgRightCr;
+        avgLeftY = markerProcessor.avgLeftY;
+        avgCenterY = markerProcessor.avgCenterY;
+        avgRightY = markerProcessor.avgRightY;
+        telemetry.addData("left Y average", avgLeftY);
+        telemetry.addData("center Y average", avgCenterY);
+        telemetry.addData("right Y average", avgRightY);
+        telemetry.addData("left blue average", avgLeftCb);
+        telemetry.addData("center blue average", avgCenterCb);
+        telemetry.addData("right blue average", avgRightCb);
+        telemetry.addData("left red average", avgLeftCr);
+        telemetry.addData("center red average", avgCenterCr);
+        telemetry.addData("right red average", avgRightCr);
+
+
         while (position == MarkerDetector.MARKER_POSITION.UNDETECTED && opMode.opModeIsActive()) {
             Log.d("vision", "undetected marker, keep looking" + visionPortal.getCameraState());
             position = markerProcessor.getPosition();
@@ -469,11 +500,13 @@ public class Robot {
         //print position
         Log.d("vision", "detected position: " + position);
 
-        position = MarkerDetector.MARKER_POSITION.RIGHT; //TODO: DELETE
 
         //save marker position, apriltag position
         setMarkerPos(position);
+        telemetry.addData("position", markerPos);
+        telemetry.update();
 
+        opMode.sleep(15000); //TODO DELETE (WAS FOR DEBUG)
         setWantedAprTagId(position, isRedAlliance ? MarkerDetector.ALLIANCE_COLOR.RED : MarkerDetector.ALLIANCE_COLOR.BLUE);
 
     }
