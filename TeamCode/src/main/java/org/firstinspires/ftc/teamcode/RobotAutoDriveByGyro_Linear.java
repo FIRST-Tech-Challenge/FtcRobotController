@@ -35,6 +35,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.IMU;
+import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
 
@@ -44,9 +45,11 @@ import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.BuiltinCameraDirection;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.robotcore.external.tfod.Recognition;
+import org.firstinspires.ftc.teamcode.subsystems.extension;
 import org.firstinspires.ftc.vision.VisionPortal;
 import org.firstinspires.ftc.vision.tfod.TfodProcessor;
 
+import java.security.cert.Extension;
 import java.util.List;
 
 /*
@@ -149,19 +152,24 @@ public class RobotAutoDriveByGyro_Linear extends LinearOpMode {
     static final double     DRIVE_SPEED             = 0.4;     // Max driving speed for better distance accuracy.
     static final double     TURN_SPEED              = 0.2;     // Max Turn speed to limit turn rate
     static final double     HEADING_THRESHOLD       = 1.0 ;    // How close must the heading get to the target before moving to next step.
-                                                               // Requiring more accuracy (a smaller number) will often make the turn take longer to get into the final position.
+    Servo wrist;
+    Servo claw;                                         // Requiring more accuracy (a smaller number) will often make the turn take longer to get into the final position.
     // Define the Proportional control coefficient (or GAIN) for "heading control".
     // We define one value when Turning (larger errors), and the other is used when Driving straight (smaller errors).
     // Increase these numbers if the heading does not corrects strongly enough (eg: a heavy robot or using tracks)
     // Decrease these numbers if the heading does not settle on the correct value (eg: very agile robot with omni wheels)
     static final double     P_TURN_GAIN            = 0.02;     // Larger is more responsive, but also less stable
     static final double     P_DRIVE_GAIN           = 0.03;     // Larger is more responsive, but also less stable
-
+    extension ex=null;
 
     @Override
     public void runOpMode() {
+        ex= new extension(hardwareMap);
+        wrist = hardwareMap.get(Servo.class, "wrist");
+        claw = hardwareMap.get(Servo.class, "claw");//hardwaremap claw and tilt
         initTfod();
-
+        ex.setStowPos();
+        claw.setPosition(1);
         // Wait for the DS start button to be touched.
         telemetry.addData("DS preview on/off", "3 dots, Camera Stream");
         telemetry.addData(">", "Touch Play to start OpMode");
@@ -222,20 +230,20 @@ public class RobotAutoDriveByGyro_Linear extends LinearOpMode {
         //          holdHeading() is used after turns to let the heading stabilize
         //          Add a sleep(2000) after any step to keep the telemetry data visible for review
 
-        driveStraight(DRIVE_SPEED, 25.0, 0.0);
+        driveStraight(DRIVE_SPEED, 25.0, 0.0,true);
         holdHeadingandscan( TURN_SPEED, 0, 3);
         turnToHeading( TURN_SPEED, -45.0);
         holdHeadingandscan1( TURN_SPEED, -45.0, 3);
 
         turnToHeading( TURN_SPEED, 0);
         holdHeading(turnSpeed,0,0.5);
-        driveStraight(DRIVE_SPEED, driveforward,0);
+        driveStraight(DRIVE_SPEED, driveforward,0,false);
         turnToHeading( TURN_SPEED, driveturn);
         holdHeadingandplace(turnSpeed,driveturn,3);
 
         turnToHeading( TURN_SPEED, 0);
         holdHeading(turnSpeed,0,0.5);
-        driveStraight(DRIVE_SPEED,5,0);
+        driveStraight(DRIVE_SPEED,5,0,false);
         holdHeading(turnSpeed,0,0.5);
         telemetry.addData("Path", "Complete");
         telemetry.update();
@@ -266,11 +274,10 @@ public class RobotAutoDriveByGyro_Linear extends LinearOpMode {
 
     public void driveStraight(double maxDriveSpeed,
                               double distance,
-                              double heading) {
+                              double heading,boolean hi) {
 
         // Ensure that the OpMode is still active
         if (opModeIsActive()) {
-
             // Determine new target position, and pass to motor controller
             int moveCounts = (int)(distance * COUNTS_PER_INCH);
             leftTarget = leftFront.getCurrentPosition() + moveCounts;
@@ -297,7 +304,7 @@ public class RobotAutoDriveByGyro_Linear extends LinearOpMode {
             // keep looping while we are still active, and BOTH motors are running.
             while (opModeIsActive() &&
                    (leftFront.isBusy() && rightFront.isBusy()&&rightRear.isBusy()&&leftRear.isBusy())) {
-
+                if(hi&&rightFront.getCurrentPosition()>rightTarget*0.5){ex.setIntake();  wrist.setPosition(1);}
                 // Determine required steering to keep on heading
                 turnSpeed = getSteeringCorrection(heading, P_DRIVE_GAIN);
 
@@ -416,12 +423,15 @@ public class RobotAutoDriveByGyro_Linear extends LinearOpMode {
             sendTelemetry(false);
 
             if (order==0&&(holdTimer.time()>holdTime*0.1)){
+                wrist.setPosition(0.32);
                 telemetry.addData("order", order);
                 order++;
             }else if (order==1&&(holdTimer.time()>holdTime*0.5)){
                 telemetry.addData("order", order);
+                claw.setPosition(0.2);
                 order++;
             } else if (order==2&&(holdTimer.time()>holdTime*0.75)){
+                wrist.setPosition(1);
                 telemetry.addData("order", order);
                 order++;
             }

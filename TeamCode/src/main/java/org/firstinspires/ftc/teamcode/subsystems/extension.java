@@ -91,7 +91,7 @@ public class extension {
     public void setStowPos(){
         //setHeight(0);
         //if((lift1.getCurrentPosition())<(lift1.getTargetPosition()*(3.0 / 4.0))){
-            setTilt(228);
+            setTilt(300);
         //}
 
     }
