@@ -18,7 +18,7 @@ public class Lift extends RFDualMotor {
   private double lastPower = 0.0;
   private double target = 0.0;
   private double MIN_VELOCITY = 20, MANUAL_TIME = 0.2, lastManualTime = -1.0;
-  public static double max = 1500,
+  public static double max = 2200,
       min = -10,
       RESISTANCE = 450,
       kS = 0.03,
@@ -49,7 +49,7 @@ public class Lift extends RFDualMotor {
 
   /** Stores different states of lift. */
   public enum LiftPositionStates {
-    HIGH_SET_LINE(1400, false),
+    HIGH_SET_LINE(1800, false),
     MID_SET_LINE(800, false),
     LOW_SET_LINE(375, false),
     AT_ZERO(0, true);

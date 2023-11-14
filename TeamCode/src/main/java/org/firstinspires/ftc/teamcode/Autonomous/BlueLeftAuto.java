@@ -23,21 +23,23 @@ public class BlueLeftAuto extends LinearOpMode {
 
             spikePosition[0] = robot.roadrun.trajectorySequenceBuilder(new Pose2d(-38.5, 56, Math.toRadians(90)))
                     .setReversed(true)
-                    .splineTo(new Vector2d(-29.5, 43),toRadians(295))
+                    .splineTo(new Vector2d(-29.5, 43),toRadians(320))
                     .addTemporalMarker(robot::done)
                     .build();
             spikePosition[1] = robot.roadrun.trajectorySequenceBuilder(new Pose2d(-38.5, 56, Math.toRadians(90)))
                     .setReversed(true)
-                    .lineToLinearHeading(new Pose2d(-35.5, 32.5, toRadians(90)))
+                    .lineToLinearHeading(new Pose2d(-33.5, 32.5, toRadians(90)))
                     .addTemporalMarker(robot::done)
                     .build();
             spikePosition[2] = robot.roadrun.trajectorySequenceBuilder(new Pose2d(-38.5, 56, Math.toRadians(90)))
                     .setReversed(true)
-                    .lineToLinearHeading(new Pose2d(-43.5, 38, toRadians(90)))
+                    .lineToLinearHeading(new Pose2d(-43.5, 40, toRadians(90)))
                     .addTemporalMarker(robot::done)
                     .build();
 
+
             TrajectorySequence[] throughTruss = new TrajectorySequence[3];
+
             throughTruss[0] =
                     robot
                             .roadrun
@@ -46,22 +48,22 @@ public class BlueLeftAuto extends LinearOpMode {
                             .lineToLinearHeading(new Pose2d(-40, 58, toRadians(180)))
                             .setReversed(true)
                             .splineTo(new Vector2d(10, 56.5), toRadians(5))
-                            .splineTo(new Vector2d(45, 30), toRadians(0))
-                            .waitSeconds(1.0)
-                            .lineToLinearHeading(new Pose2d(53, -8, toRadians(181)))
+                            .splineTo(new Vector2d(45, 32), toRadians(0))
+                            .waitSeconds(2)
+                            .lineToLinearHeading(new Pose2d(52.5, 28, toRadians(181)))
                             .addTemporalMarker(robot::done)
                             .build();
             throughTruss[1] =
                     robot
                             .roadrun
                             .trajectorySequenceBuilder(spikePosition[1].end())
+                            .lineToLinearHeading(new Pose2d(-39.5, 29.5, toRadians(90)))
                             .setReversed(true)
                             .lineToLinearHeading(new Pose2d(-40, 57.5, toRadians(180)))
-                            .setReversed(true)
                             .splineTo(new Vector2d(10, 55.5), toRadians(5))
-                            .splineTo(new Vector2d(45, 30), toRadians(0))
-                            .waitSeconds(1.0)
-                            .lineToLinearHeading(new Pose2d(53, 35, toRadians(180)))
+                            .splineTo(new Vector2d(40, 32), toRadians(0))
+                            .waitSeconds(2)
+                            .lineToLinearHeading(new Pose2d(52.5, 37, toRadians(180)))
                             .addTemporalMarker(robot::done)
                             .build();
             throughTruss[2] =
@@ -72,9 +74,9 @@ public class BlueLeftAuto extends LinearOpMode {
                             .lineToLinearHeading(new Pose2d(-40, 57.5, toRadians(180)))
                             .setReversed(true)
                             .splineTo(new Vector2d(10, 55.5), toRadians(5))
-                            .splineTo(new Vector2d(45, 30), toRadians(0))
-                            .waitSeconds(1.0)
-                            .lineToLinearHeading(new Pose2d(53, 43, toRadians(181)))
+                            .splineTo(new Vector2d(45, 28), toRadians(0))
+                            .waitSeconds(2)
+                            .lineToLinearHeading(new Pose2d(52.5, 43, toRadians(181)))
                             .addTemporalMarker(robot::done)
                             .build();
             TrajectorySequence[] dropAndPark = new TrajectorySequence[3];
@@ -111,7 +113,7 @@ public class BlueLeftAuto extends LinearOpMode {
                 robot.preloadAuto();
                 robot.queuer.addDelay(1.5);
                 robot.followTrajSeq(throughTruss[pos]);
-                robot.queuer.addDelay(5.5);
+                robot.queuer.addDelay(6.5);
                 robot.flipAuto();
                 robot.loadAuto();
                 robot.queuer.addDelay(1.2);
@@ -122,10 +124,12 @@ public class BlueLeftAuto extends LinearOpMode {
                 robot.followTrajSeq(dropAndPark[pos]);
                 robot.queuer.addDelay(1.0);
                 robot.resetAuto();
-                robot.queuer.addDelay(7);
+                robot.queuer.addDelay(3.5);
                 robot.resetLift();
                 robot.queuer.setFirstLoop(false);
                 robot.update();
             }
+            robot.stop();
+            stop();
     }
 }

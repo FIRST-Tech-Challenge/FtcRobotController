@@ -50,7 +50,9 @@ public class BradBot extends BasicRobot {
     LOGGER.setLogLevel(RFLogger.Severity.INFO);
     LOGGER.log("Initializing Components!");
     arm = new Arm();
-    cv = new CVMaster();
+    if (!isTeleop) {
+      cv = new CVMaster();
+    }
     clamp = new Clamp();
     hanger = new Hanger();
     intake = new Intake();
@@ -273,11 +275,11 @@ public class BradBot extends BasicRobot {
       }
     }
     if (left) {
-      if (clamp.getClamped()) clamp.unclamp();
-      else clamp.clamp();
+      if (clamp.getClamped()) clamp.unclamp();else clamp.clamp();
     }
     if (leftBumper) {
       intake.reverseIntake();
+      clamp.clamp();
     }
     if (up) {
       if (Wrist.WristTargetStates.FLAT.state) {

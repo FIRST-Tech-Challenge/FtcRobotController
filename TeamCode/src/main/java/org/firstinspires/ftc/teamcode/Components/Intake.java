@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.Components;
 
 import static org.apache.commons.math3.util.FastMath.abs;
 import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.LOGGER;
+import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.isTeleop;
 import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.op;
 import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.packet;
 import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.time;
@@ -37,11 +38,12 @@ public class Intake extends RFMotor {
 
   /** initializes all the hardware, logs that hardware has been initialized */
   public Intake() {
-    super("intakeMotor", true);
+    super("intakeMotor", !isTeleop);
     super.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
     super.setDirection(DcMotorSimple.Direction.REVERSE);
     LOGGER.setLogLevel(RFLogger.Severity.INFO);
     LOGGER.log("Initializing Intake Motor and intake sensors!");
+
     //        breakBeam = new RFBreakBeam();
     //        limitSwitch = new RFLimitSwitch("intakeSwitch");
   }

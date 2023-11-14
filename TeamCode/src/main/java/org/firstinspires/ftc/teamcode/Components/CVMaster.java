@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.Components;
 
 import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.LOGGER;
 import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.dashboard;
+import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.isTeleop;
 import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.op;
 import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.packet;
 
@@ -178,9 +179,12 @@ public class CVMaster {
   public void update() {
     LOGGER.setLogLevel(RFLogger.Severity.FINEST);
     LOGGER.log("updating camera info");
-    if (op.isStarted() && isStreaming) {
+    if (!isTeleop && op.isStarted() && isStreaming) {
       switchToApril();
       isStreaming = false;
+    }
+    if(isTeleop&&isStreaming){
+      stop();
     }
     if (!isStreaming) {
       cam.update();

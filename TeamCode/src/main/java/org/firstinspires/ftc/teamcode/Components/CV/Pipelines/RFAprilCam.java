@@ -41,9 +41,9 @@ import java.util.concurrent.TimeUnit;
  */
 @Config
 public class RFAprilCam {
-    public static double X_OFFSET = -3, Y_OFFSET = 0, UPSAMPLE_THRESHOLD=30, NUMBER_OF_SAMPLES=40;
-    public static int EXPOSURE_MS=7, GAIN = 200;
-    public static double DOWNSAMPLE = 2, UPSAMPLE = 6;
+    public static double X_OFFSET = -3, Y_OFFSET = 0, UPSAMPLE_THRESHOLD=30, NUMBER_OF_SAMPLES=25;
+    public static int EXPOSURE_MS= 10, GAIN = 40;
+    public static double DOWNSAMPLE = 6, UPSAMPLE = 6;
     private AprilTagProcessor aprilTag;
     public RFVisionPortal visionPortal;
     boolean upsample=false;
@@ -113,7 +113,7 @@ public class RFAprilCam {
 
         ArrayList<AprilTagDetection> detections = aprilTag.getFreshDetections();
         //if close start upsampling
-        upsample=false;
+//        aprilTag.setDecimation((float) UPSAMPLE);
         if(detections!=null) {
             for (AprilTagDetection detection : detections) {
                 AprilTagPoseFtc poseFtc = detection.ftcPose;
@@ -127,19 +127,19 @@ public class RFAprilCam {
                     offset = offset.rotated(currentPose.getHeading());
                     Pose2d camPose = new Pose2d(pos.plus(new Vector2d(-(p_x) * directions[p_ind][0] - offset.getX(), -(p_y) * directions[p_ind][1] - offset.getY())),
                             -directions[p_ind][0] * poseFtc.yaw * PI / 180 +PI );
-                    if (poseFtc.range < UPSAMPLE_THRESHOLD) {
-                        if (!upsample) {
-                            aprilTag.setDecimation((float) UPSAMPLE);
-                        }
-                        upsample = true;
-                        camPoseError = camPoseError.plus(camPose).minus(currentPose);
-                        poseCount++;
-                    } else {
-                        if (upsample) {
-                            aprilTag.setDecimation((float) DOWNSAMPLE);
-                        }
-                        upsample = false;
-                    }
+//                    if (poseFtc.range < UPSAMPLE_THRESHOLD) {
+//                        if (!upsample) {
+//                            aprilTag.setDecimation((float) UPSAMPLE);
+//                        }
+//                        upsample = true;
+//                        camPoseError = camPoseError.plus(camPose).minus(currentPose);
+//                        poseCount++;
+//                    } else {
+//                        if (upsample) {
+//                            aprilTag.setDecimation((float) DOWNSAMPLE);
+//                        }
+//                        upsample = false;
+//                    }
                     LOGGER.setLogLevel(RFLogger.Severity.FINER);
                     LOGGER.log("id: " + p_ind + " aprilPos = " + camPose + ", dist:" + poseFtc.range + " p_x, p_y: " + p_x + ',' + p_y);
                     LOGGER.log("poseCount" + poseCount + ", upsample: " + upsample);
@@ -158,7 +158,7 @@ public class RFAprilCam {
         }
         else if(upsample){
             upsample=false;
-                aprilTag.setDecimation((float)DOWNSAMPLE);
+//                aprilTag.setDecimation((float)DOWNSAMPLE);
         }
     }
     public void stop(){
