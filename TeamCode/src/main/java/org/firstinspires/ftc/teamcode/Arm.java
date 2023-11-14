@@ -65,7 +65,7 @@ public class Arm {
     }
 
     public void moveArmUp() {
-        moveToDegree(110);
+        moveToDegree(-110);
     }
 
     public void moveArmDown() {
@@ -107,24 +107,24 @@ public class Arm {
 
     public void moveArmByPower(double power) {
         motor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        if (myOpMode.gamepad2.right_bumper) {
 
-        if (power > 0) {
-            motor.setPower(power * POWER_UP_MUL);
+            motor.setPower(power);
         } else {
-            if (myOpMode.gamepad2.right_bumper) {
-                
-                motor.setPower(power);
-            } else {
+            if (power > 0) {
                 motor.setPower(power * POWER_DOWN_MUL);
+            } else {
+                motor.setPower(power * POWER_UP_MUL);
             }
         }
+
 
     }
 
     public void listen() {
 
         // move arm according to the right stick y
-        moveArmByPower(-myOpMode.gamepad2.right_stick_y);
+        moveArmByPower(myOpMode.gamepad2.right_stick_y);
 
     }
 }
