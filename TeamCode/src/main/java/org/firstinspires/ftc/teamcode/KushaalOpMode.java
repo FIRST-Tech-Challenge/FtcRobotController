@@ -180,11 +180,11 @@
     
                 }
     
-            if(gamepad1.Dpad_right){
+            if(gamepad1.dpad_right){
                 mulPower+=0.1;
             }
     // This part of this code is to increase the speed of the motor a little.
-            if(gamepad1.Dpad_left){
+            if(gamepad1.dpad_left){
                 mulPower-=0.1;
             }
     
