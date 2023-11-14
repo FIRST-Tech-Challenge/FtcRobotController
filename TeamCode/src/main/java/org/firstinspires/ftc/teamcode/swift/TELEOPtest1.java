@@ -107,30 +107,32 @@ public class TELEOPtest1 extends LinearOpMode {
             //start Asher
             // move arm down on A button if not already at lowest position.
 
-            leftY = gamepad2.left_stick_y * 1;
-            rightY = gamepad2.right_stick_y * 1;
+            leftY = gamepad2.left_stick_y * -1;
+            rightY = gamepad2.right_stick_y * -1;
             armMotor.setPower(Range.clip(leftY, -1.0, 1.0));
             telemetry.addData("sticks", "  left=" + leftY + "  right=" + rightY);
 
-            if (gamepad2.y) {
+            if (gamepad2.left_trigger>5) {
                 // Move servos in opposite directions when "y" is pressed
                 leftGripper.setPosition(1); // Adjust the position value as needed
-                rightGripper.setPosition(0); // Adjust the position value as needed
-            } else if (gamepad2.x) {
+
+            } else if (gamepad2.left_bumper) {
                 // Return servos to the center position when "x" is pressed
                 leftGripper.setPosition(0.9); // Adjust the position value for the center position
-                rightGripper.setPosition(0.1); // Adjust the position value for the center position
             }
-                if (gamepad2.b) {
+                if (gamepad2.right_trigger>5) {
                     // Move servo in opposite directions when "y" is pressed
-                    wristServo.setPosition(.4 ); // Adjust the position value as needed
-
-                } else if (gamepad2.a) {
+                    rightGripper.setPosition(0); // Adjust the position value as needed
+                } else if (gamepad2.right_bumper) {
                     // Return servos to the center position when "x" is pressed
-                    wristServo.setPosition(0); // Adjust the position value for the center position
-
-                    telemetry.update();
+                    rightGripper.setPosition(0.1); // Adjust the position value for the center position
                 }
+                if (gamepad2.a) {
+                    wristServo.setPosition(.4 ); // Adjust the position value as needed
+                } else if (gamepad2.b) {
+                    wristServo.setPosition(0); // Adjust the position value for the center position
+                }
+            telemetry.update();
             }
         }
     }
