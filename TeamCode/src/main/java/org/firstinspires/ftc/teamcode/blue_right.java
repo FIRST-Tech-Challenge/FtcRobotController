@@ -38,11 +38,10 @@ import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
 
-import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
-import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
-
 import org.firstinspires.ftc.robotcore.external.hardware.camera.BuiltinCameraDirection;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
 import org.firstinspires.ftc.robotcore.external.tfod.Recognition;
 import org.firstinspires.ftc.teamcode.subsystems.extension;
 import org.firstinspires.ftc.vision.VisionPortal;
@@ -98,9 +97,9 @@ import java.util.List;
  *  Remove or comment out the @Disabled line to add this OpMode to the Driver Station OpMode list
  */
 
-@Autonomous(name="blue_left", group="Robot")
+@Autonomous(name="Blue_right(needs test)", group="Robot")
 
-public class blue_left extends LinearOpMode {
+public class blue_right extends LinearOpMode {
     int bruhwhy = 0;
     boolean stoooooopppp = false;
     int drive3=7;
@@ -108,7 +107,7 @@ public class blue_left extends LinearOpMode {
     int drive2=0;
     int drive2t=0;
     int driveforward = 17;
-    int driveturn = -45;
+    int driveturn = 45;
     int zone=3;
     private static final boolean USE_WEBCAM = true;
     private TfodProcessor tfod;
@@ -237,8 +236,8 @@ public class blue_left extends LinearOpMode {
 
         driveStraight(DRIVE_SPEED, 25.0, 0.0,true);
         holdHeadingandscan( TURN_SPEED, 0, 4);
-        turnToHeading( TURN_SPEED, -45.0);
-        holdHeadingandscan1( TURN_SPEED, -45.0, 4);
+        turnToHeading( TURN_SPEED, 45.0);
+        holdHeadingandscan1( TURN_SPEED, 45.0, 4);
 
         turnToHeading( TURN_SPEED, 0);
         holdHeading(TURN_SPEED,0,0.5);
@@ -254,7 +253,7 @@ public class blue_left extends LinearOpMode {
         holdHeading(TURN_SPEED,0,0.5);
         turnToHeading( TURN_SPEED, -90);
         holdHeading(TURN_SPEED,-90,0.5);
-        driveStraight(DRIVE_SPEED,95,-90,false);
+        driveStraight(DRIVE_SPEED,40,-90,false);
        // turnToHeading( TURN_SPEED, -110);
         //driveStraight(DRIVE_SPEED,80,-110,false);
 
@@ -466,7 +465,7 @@ public class blue_left extends LinearOpMode {
             if(idk>=1){
                 zone=1;
                 driveforward=29;
-                driveturn=-17;
+                driveturn=17;
                 drive3=0;
                 stoooooopppp = true;
             }
@@ -501,9 +500,9 @@ public class blue_left extends LinearOpMode {
             if(bruhwhy>=2){
                 zone=2;
                 driveforward=13;
-                driveturn=45;
+                driveturn=-45;
                 drive2=3;
-                drive2t=90;
+                drive2t=-90;
                 drive3=9;
                 break;
             }
@@ -522,6 +521,7 @@ public class blue_left extends LinearOpMode {
         moveRobot(0, 0);
     }
     private void initTfod() {
+
 
         // Create the TensorFlow processor the easy way.
         tfod = TfodProcessor.easyCreateWithDefaults();

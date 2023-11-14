@@ -97,7 +97,7 @@ import java.util.List;
  *  Remove or comment out the @Disabled line to add this OpMode to the Driver Station OpMode list
  */
 
-@Autonomous(name="Red_left(not tested yet)", group="Robot")
+@Autonomous(name="red_left(untested)", group="Robot")
 
 public class red_left extends LinearOpMode {
     int bruhwhy = 0;
@@ -106,8 +106,8 @@ public class red_left extends LinearOpMode {
     int idk=0;
     int drive2=0;
     int drive2t=0;
-    int driveforward = 16;
-    int driveturn = 45;
+    int driveforward = 17;
+    int driveturn = -45;
     int zone=3;
     private static final boolean USE_WEBCAM = true;
     private TfodProcessor tfod;
@@ -236,8 +236,8 @@ public class red_left extends LinearOpMode {
 
         driveStraight(DRIVE_SPEED, 25.0, 0.0,true);
         holdHeadingandscan( TURN_SPEED, 0, 4);
-        turnToHeading( TURN_SPEED, 45.0);
-        holdHeadingandscan1( TURN_SPEED, 45.0, 4);
+        turnToHeading( TURN_SPEED, -45.0);
+        holdHeadingandscan1( TURN_SPEED, -45.0, 4);
 
         turnToHeading( TURN_SPEED, 0);
         holdHeading(TURN_SPEED,0,0.5);
@@ -253,7 +253,7 @@ public class red_left extends LinearOpMode {
         holdHeading(TURN_SPEED,0,0.5);
         turnToHeading( TURN_SPEED, 90);
         holdHeading(TURN_SPEED,90,0.5);
-        driveStraight(DRIVE_SPEED,95,90,false);
+        driveStraight(DRIVE_SPEED,40,90,false);
        // turnToHeading( TURN_SPEED, -110);
         //driveStraight(DRIVE_SPEED,80,-110,false);
 
@@ -465,7 +465,7 @@ public class red_left extends LinearOpMode {
             if(idk>=1){
                 zone=1;
                 driveforward=29;
-                driveturn=17;
+                driveturn=-17;
                 drive3=0;
                 stoooooopppp = true;
             }
@@ -500,9 +500,9 @@ public class red_left extends LinearOpMode {
             if(bruhwhy>=2){
                 zone=2;
                 driveforward=13;
-                driveturn=-45;
+                driveturn=45;
                 drive2=3;
-                drive2t=-90;
+                drive2t=90;
                 drive3=9;
                 break;
             }
@@ -521,7 +521,6 @@ public class red_left extends LinearOpMode {
         moveRobot(0, 0);
     }
     private void initTfod() {
-
 
         // Create the TensorFlow processor the easy way.
         tfod = TfodProcessor.easyCreateWithDefaults();
