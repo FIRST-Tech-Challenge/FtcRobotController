@@ -50,7 +50,9 @@ public class BradBot extends BasicRobot {
     LOGGER.setLogLevel(RFLogger.Severity.INFO);
     LOGGER.log("Initializing Components!");
     arm = new Arm();
-    cv = new CVMaster();
+    if (!isTeleop) {
+      cv = new CVMaster();
+    }
     clamp = new Clamp();
     hanger = new Hanger();
     intake = new Intake();
@@ -63,10 +65,18 @@ public class BradBot extends BasicRobot {
   }
 
   public int getSpikePos() {
-    return cv.getPosition()-1;
+    return cv.getPosition() - 1;
   }
+
   public int getRightSpikePos() {
-    return cv.getRightPosition()-1;
+    return cv.getRightPosition() - 1;
+  }
+
+  public int getBlueSpikePos(){
+    return cv.getBluePosition() -1;
+  }
+  public int getBlueRightSpikePos(){
+    return cv.getBlueRightPosition()-1;
   }
 
   /**
@@ -81,6 +91,7 @@ public class BradBot extends BasicRobot {
       }
     }
   }
+
   public void preloadAuto() {
     if (queuer.queue(false, !preloader.getLoaded())) {
       if (!queuer.isExecuted()) {
@@ -89,6 +100,7 @@ public class BradBot extends BasicRobot {
       }
     }
   }
+
   public void loadAuto() {
     if (queuer.queue(true, preloader.getLoaded())) {
       if (!queuer.isExecuted()) {
@@ -97,9 +109,10 @@ public class BradBot extends BasicRobot {
       }
     }
   }
-  public void flipAuto(){
-    if(queuer.queue(true, ArmStates.FLIPPED.getState())){
-      if(!queuer.isExecuted()){
+
+  public void flipAuto() {
+    if (queuer.queue(true, ArmStates.FLIPPED.getState())) {
+      if (!queuer.isExecuted()) {
         clamp.clamp();
         arm.flipTo(FLIPPED);
         wrist.flipTo(Wrist.WristTargetStates.HOLD);
@@ -107,8 +120,9 @@ public class BradBot extends BasicRobot {
       }
     }
   }
-  public void resetAuto(){
-    if(queuer.queue(true, !FLIPPED.getState())){
+
+  public void resetAuto() {
+    if (queuer.queue(true, !FLIPPED.getState())) {
       if (!queuer.isExecuted()) {
         lift.setPosition(Lift.LiftPositionStates.LOW_SET_LINE);
         arm.flipTo(UNFLIPPED);
@@ -117,28 +131,32 @@ public class BradBot extends BasicRobot {
       }
     }
   }
-  public void resetLift(){
-    if(queuer.queue(true, lift.isDone())){
-        lift.setPosition(Lift.LiftPositionStates.AT_ZERO);
+
+  public void resetLift() {
+    if (queuer.queue(true, lift.getCurrentPosition() < 5)) {
+      lift.setPosition(Lift.LiftPositionStates.AT_ZERO);
       lift.setPosition(0);
     }
   }
-  public void dropWrist(){
-    if(queuer.queue(false, Wrist.WristStates.DROP.getState())){
+
+  public void dropWrist() {
+    if (queuer.queue(false, Wrist.WristStates.DROP.getState())) {
       if (!queuer.isExecuted()) {
         wrist.flipTo(Wrist.WristTargetStates.DROP);
-//        clamp.unclamp();
+        //        clamp.unclamp();
       }
     }
   }
-  public void drop(){
-    if(queuer.queue(false, !clamp.getClamped())){
+
+  public void drop() {
+    if (queuer.queue(false, !clamp.getClamped())) {
       if (!queuer.isExecuted()) {
-//        wrist.flipTo(Wrist.WristTargetStates.DROP);
+        //        wrist.flipTo(Wrist.WristTargetStates.DROP);
         clamp.unclamp();
       }
     }
   }
+
   /**
    * Empties the hopper in auto, hopper.update() will handle the rest Logs that this function called
    * to general surface
@@ -213,12 +231,12 @@ public class BradBot extends BasicRobot {
     boolean isY = gampad.readGamepad(op.gamepad1.y, "gamepad1_y", "deposit");
     boolean up = gampad.readGamepad(op.gamepad2.dpad_up, "gamepad2_dpad_up", "lift Up");
     boolean down = gampad.readGamepad(op.gamepad2.dpad_down, "gamepad2_dpad_down", "lift down");
-    boolean right = gampad.readGamepad(op.gamepad1.dpad_right, "gamepad1_dpad_right", "toggleButterfly");
+    boolean right =
+        gampad.readGamepad(op.gamepad1.dpad_right, "gamepad1_dpad_right", "toggleButterfly");
     boolean left = gampad.readGamepad(op.gamepad1.dpad_left, "gamepad1_dpad_left", "toggleClamp");
 
     boolean isX2 = gampad.readGamepad(op.gamepad2.x, "gamepad2_x", "toggleFieldCentricSlow");
     boolean isY2 = gampad.readGamepad(op.gamepad2.y, "gamepad2_y", "toggleFieldCentricSlow");
-
 
     float manualUp = op.gamepad1.right_trigger;
     float manualDown = op.gamepad1.left_trigger;
@@ -232,30 +250,36 @@ public class BradBot extends BasicRobot {
       lift.setPosition(Lift.LiftPositionStates.AT_ZERO);
       intake.stopIntake();
     }
-    if(isB){
-      if(launcher.getLoaded())
-        launcher.shoot();
-      else
-        launcher.load();
+    if (isB) {
+      if (launcher.getLoaded()) launcher.shoot();
+      else launcher.load();
     }
-    if(isX2){
+    if (isX2) {
       lift.resetPosition();
     }
     if (rightBumper) {
       if (Intake.IntakeStates.STOPPED.getState()) {
-        if (Wrist.WristTargetStates.FLAT.state && Lift.LiftMovingStates.AT_ZERO.getState()) wrist.flatten(); arm.flatten();clamp.unclamp();
+        if (Wrist.WristTargetStates.FLAT.state && Lift.LiftMovingStates.AT_ZERO.getState()) {
+          wrist.flatten();
+          arm.flatten();
+          clamp.unclamp();
+        }
         intake.intake();
       } else {
-        if(Wrist.WristTargetStates.FLAT.state && Lift.LiftMovingStates.AT_ZERO.getState())clamp.clamp();wrist.unflatten();arm.unflatten();
+        if (Wrist.WristTargetStates.FLAT.state && Lift.LiftMovingStates.AT_ZERO.getState()) {
+          clamp.clamp();
+          wrist.unflatten();
+          arm.unflatten();
+        }
         intake.stopIntake();
       }
     }
     if (left) {
-      if (clamp.getClamped()) clamp.unclamp();
-      else clamp.clamp();
+      if (clamp.getClamped()) clamp.unclamp();else clamp.clamp();
     }
     if (leftBumper) {
       intake.reverseIntake();
+      clamp.clamp();
     }
     if (up) {
       if (Wrist.WristTargetStates.FLAT.state) {
@@ -276,14 +300,14 @@ public class BradBot extends BasicRobot {
     if (abs(op.gamepad2.left_stick_y) > 0.05) {
       lift.manualExtend(-op.gamepad2.left_stick_y);
     }
-//    if (abs(hangUp - hangDown) > 0.05) {
-      hanger.setPower(hangUp-hangDown);
-//    }
+    //    if (abs(hangUp - hangDown) > 0.05) {
+    hanger.setPower(hangUp - hangDown);
+    //    }
     if (isY) {
       wrist.flipTo(Wrist.WristTargetStates.DROP);
     }
-    if(isB2){
-      hanger.setPermaPower(hangUp-hangDown);
+    if (isB2) {
+      hanger.setPermaPower(hangUp - hangDown);
     }
     if (right) {
       roadrun.toggleButtered();

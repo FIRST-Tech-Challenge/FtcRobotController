@@ -1,5 +1,9 @@
 package org.firstinspires.ftc.teamcode.Components.CV.Pipelines;
 
+import static org.firstinspires.ftc.teamcode.Components.CV.Pipelines.RedSpikeObserverPipeline.h1;
+import static org.firstinspires.ftc.teamcode.Components.CV.Pipelines.RedSpikeObserverPipeline.h1H;
+import static org.firstinspires.ftc.teamcode.Components.CV.Pipelines.RedSpikeObserverPipeline.h2H;
+import static org.firstinspires.ftc.teamcode.Components.CV.Pipelines.RedSpikeObserverPipeline.threshhold;
 import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.packet;
 
 import com.acmerobotics.dashboard.config.Config;
@@ -19,19 +23,16 @@ import java.util.ArrayList;
  * This is the pipeline that is activated when the robot is initializing, it will determine which position the team prop is in
  */
 @Config
-public class RedSpikeObserverPipeline extends OpenCvPipeline {
+public class RedRightSpikeObserverPipeline extends OpenCvPipeline {
     ArrayList<double[]> frameList;
-    public static double p1x = 0, p1y =230, p2x = 80, p2y =380, p21x = 260, p21y =200, p22x = 420, p22y =370, threshhold = 1.0,
+    double p1x = 500, p1y =230, p2x = 640, p2y =380, p21x = 150, p21y =200, p22x = 350, p22y =370;
 
-    //h3u and s3u: 71 and 90
-    colour = 1, h1 = 0, h1H = 30, h2 =160, h2H = 180;
-    
 
 
     /**
      * This will construct the pipeline
      */
-    public RedSpikeObserverPipeline() {
+    public RedRightSpikeObserverPipeline() {
         frameList=new ArrayList<>();
     }
 
@@ -54,7 +55,7 @@ public class RedSpikeObserverPipeline extends OpenCvPipeline {
         Mat newCone = new Mat();
         Imgproc.cvtColor(cone, newCone, Imgproc.COLOR_RGB2HSV);
         Scalar thresh1 = new Scalar(h1,59,0), hthresh1 = new Scalar(h1H,255,255);
-    Scalar thresh2 = new Scalar(h2,59,0), hthresh2 = new Scalar(h2H,255,255);
+        Scalar thresh2 = new Scalar(RedSpikeObserverPipeline.h2,59,0), hthresh2 = new Scalar(h2H,255,255);
         Mat filtered = new Mat(), filtered1 = new Mat();
         Core.inRange(newCone, thresh1, hthresh1, filtered);
         Core.inRange(newCone, thresh2, hthresh2, filtered1);
@@ -64,8 +65,8 @@ public class RedSpikeObserverPipeline extends OpenCvPipeline {
         cone = input.submat(ROI2);
         newCone = new Mat();
         Imgproc.cvtColor(cone, newCone, Imgproc.COLOR_RGB2HSV);
-         filtered = new Mat();
-         filtered1 = new Mat();
+        filtered = new Mat();
+        filtered1 = new Mat();
         Core.inRange(newCone, thresh1, hthresh1, filtered);
         Core.inRange(newCone, thresh2, hthresh2, filtered1);
         thresh = new Mat();
@@ -79,13 +80,21 @@ public class RedSpikeObserverPipeline extends OpenCvPipeline {
         newCone.release();
         filtered.release();
         filtered1.release();
-        thresh.release();
+
+
+
+
         //release all the data
 //        input.release();
-//        mat.release();
+        thresh.release();
         Scalar color = new Scalar(255,0,0);
         Imgproc.rectangle(input, ROI1, color, 5);
         Imgproc.rectangle(input, ROI2, color, 5);
+        cone.release();
+        newCone.release();
+        filtered.release();
+        filtered1.release();
+        thresh.release();
         return input;
     }
 
@@ -104,9 +113,9 @@ public class RedSpikeObserverPipeline extends OpenCvPipeline {
         packet.put("cvThresh0", sums[0]);
         packet.put("cvThresh1", sums[1]);
 
-        if(sums[0]>threshhold&&sums[1]>threshhold){
+        if(sums[0]> threshhold&&sums[1]>threshhold){
             if(sums[0]>sums[1]){
-                return 1;
+                return 3;
             }
             else{
                 return 2;
@@ -114,9 +123,9 @@ public class RedSpikeObserverPipeline extends OpenCvPipeline {
         }else if(sums[1]>threshhold){
             return 2;
         } else if(sums[0]>threshhold){
-            return 1;
-        }else{
             return 3;
+        }else{
+            return 1;
         }
     }
 }
