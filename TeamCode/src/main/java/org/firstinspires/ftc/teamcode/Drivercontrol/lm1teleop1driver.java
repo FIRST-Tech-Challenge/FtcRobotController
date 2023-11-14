@@ -63,7 +63,7 @@ public class lm1teleop1driver extends LinearOpMode {
 
     @Override
     public void runOpMode() {
-
+        boolean half = false;//half speed
         boolean open = false;
         boolean state = false;
         boolean lastState = false;// claw booleans
@@ -101,14 +101,16 @@ public class lm1teleop1driver extends LinearOpMode {
             } //could be more compact
 
             if (gamepad1.y) {//slow speed mode
-                drive.run(gamepad1.left_stick_y, gamepad1.left_stick_x, rx, 0.5, true);
-            } else {
-                drive.run(gamepad1.left_stick_y, gamepad1.left_stick_x, rx, 1, true, gamepad1.back);
+                half = true;
+            } else if(gamepad1.x){
+                half=false;
             }
+            if(half)drive.run(gamepad1.left_stick_y, gamepad1.left_stick_x, rx, 0.5, true);
+            else if(!half)drive.run(gamepad1.left_stick_y, gamepad1.left_stick_x, rx, 1, true, gamepad1.back);
 
             state = gamepad1.left_bumper;//state for claw
 
-            if (gamepad1.left_trigger >= 0.5) {extend.setIntake();wrist.setPosition(1);}//set posistions
+            if (gamepad1.left_trigger >= 0.5) {extend.setIntake();wrist.setPosition(1);}//set positions
             else if (gamepad1.right_bumper) {extend.setIntake();wrist.setPosition(0.32);}
             else if (gamepad1.right_trigger >= 0.5) {extend.setPlace();wrist.setPosition(0.95);}
 
@@ -116,6 +118,9 @@ public class lm1teleop1driver extends LinearOpMode {
                 if (open) {claw.setPosition(0.2);open = false;}
                 else {claw.setPosition(1);open = true;}
             }
+            if(gamepad1.dpad_down)extend.makelesstilt();//place pos over-rides
+            else if(gamepad1.dpad_up)extend.makemoretilt();
+
 //            if(gamepad1.dpad_up) {//old claw code
 //                claw.setPosition(0.2);
 //

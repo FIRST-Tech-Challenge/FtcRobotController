@@ -106,7 +106,7 @@ public class red_left extends LinearOpMode {
     int idk=0;
     int drive2=0;
     int drive2t=0;
-    int driveforward = 18;
+    int driveforward = 16;
     int driveturn = 45;
     int zone=3;
     private static final boolean USE_WEBCAM = true;
@@ -499,11 +499,11 @@ public class red_left extends LinearOpMode {
             }
             if(bruhwhy>=2){
                 zone=2;
-                driveforward=14;
+                driveforward=13;
                 driveturn=-45;
-                drive2=4;
+                drive2=3;
                 drive2t=-90;
-                drive3=5;
+                drive3=9;
                 break;
             }
             // Clip the speed to the maximum permitted value.
@@ -521,6 +521,7 @@ public class red_left extends LinearOpMode {
         moveRobot(0, 0);
     }
     private void initTfod() {
+
 
         // Create the TensorFlow processor the easy way.
         tfod = TfodProcessor.easyCreateWithDefaults();

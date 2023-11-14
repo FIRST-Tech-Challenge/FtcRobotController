@@ -500,11 +500,11 @@ public class blue_left extends LinearOpMode {
             }
             if(bruhwhy>=2){
                 zone=2;
-                driveforward=14;
+                driveforward=13;
                 driveturn=45;
-                drive2=4;
+                drive2=3;
                 drive2t=90;
-                drive3=5;
+                drive3=9;
                 break;
             }
             // Clip the speed to the maximum permitted value.
