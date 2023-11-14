@@ -13,7 +13,6 @@ public class LongRedAuto extends LinearOpMode {
         Robot robot = new Robot(hardwareMap, this, telemetry, true);
         robot.setUpDrivetrainMotors();
         robot.initVisionProcessing();
-
         waitForStart();
 
         while (opModeIsActive()) {
@@ -22,6 +21,7 @@ public class LongRedAuto extends LinearOpMode {
             robot.alignToBoard();
             robot.autoOuttake();
             robot.parkBot();
+            break;
         }
     }
 }

@@ -22,6 +22,7 @@ public class ShortRedAuto extends LinearOpMode {
             robot.alignToBoard();
             robot.autoOuttake();
             robot.parkBot();
+            break;
         }
     }
 }
