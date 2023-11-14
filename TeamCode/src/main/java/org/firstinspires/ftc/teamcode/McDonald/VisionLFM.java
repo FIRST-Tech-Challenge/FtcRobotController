@@ -6,6 +6,7 @@ import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.tel
 import android.util.Size;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
@@ -27,6 +28,7 @@ import java.util.Locale;
      * Use Android Studio to Copy this Class, and Paste it into your team's code folder with a new name.
      * Remove or comment out the @Disabled line to add this OpMode to the Driver Station OpMode list.
      */
+    @Disabled
     @Autonomous(name = "Auto Mode LFM (by time)", group = "Auto")
     public class VisionLFM extends LinearOpMode {
 
