@@ -73,6 +73,7 @@ public class HydrAuton extends LinearOpMode {
     double cDriveNormal;
     double cDriveSlow;
     int cXvalueForLeftToCenterObject;
+    private long pixelDropTimeStart;
 
     /**
      * This function is executed when this OpMode is selected from the Driver Station.
@@ -1395,8 +1396,6 @@ public class HydrAuton extends LinearOpMode {
      * Describe this function...
      */
     private void PixelDrop() {
-        //long pixelDropTimeStart;
-
         // Drop the pixel on the spike
         if (autonState == 100) {
             // Reverse the intake
