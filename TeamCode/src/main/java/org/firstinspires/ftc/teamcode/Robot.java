@@ -508,7 +508,7 @@ public class Robot {
         telemetry.addData("position", markerPos);
         telemetry.update();
 
-        opMode.sleep(15000); //TODO DELETE (WAS FOR DEBUG)
+        //opMode.sleep(15000); //TODO DELETE (WAS FOR DEBUG)
         setWantedAprTagId(position, isRedAlliance ? MarkerDetector.ALLIANCE_COLOR.RED : MarkerDetector.ALLIANCE_COLOR.BLUE);
 
     }
