@@ -44,6 +44,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
 import org.firstinspires.ftc.robotcore.external.tfod.Recognition;
 import org.firstinspires.ftc.vision.VisionPortal;
+import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
 import org.firstinspires.ftc.vision.tfod.TfodProcessor;
 
 import java.util.Arrays;
@@ -124,8 +125,10 @@ public class FirstAutonomousIteration extends LinearOpMode {
     private double  turnSpeed     = 0;
     private double  leftSpeed     = 0;
     private double  rightSpeed    = 0;
-    private int     leftTarget    = 0;
-    private int     rightTarget   = 0;
+    private int leftFrontTarget = 0;
+    private int rightFrontTarget = 0;
+    private int leftBackTarget = 0;
+    private int rightBackTarget = 0;
 
     private ElapsedTime runtime = new ElapsedTime();
 
@@ -179,6 +182,7 @@ public class FirstAutonomousIteration extends LinearOpMode {
      * The variable to store our instance of the TensorFlow Object Detection processor.
      */
     private TfodProcessor tfod;
+    private AprilTagProcessor aprilTag;
 
     /**
      * The variable to store our instance of the vision portal.
@@ -255,36 +259,63 @@ public class FirstAutonomousIteration extends LinearOpMode {
 
     private void initTfod() {
 
-        // Create the TensorFlow processor by using a builder.
-        tfod = new TfodProcessor.Builder()
+//        // Create the TensorFlow processor by using a builder.
+//        tfod = new TfodProcessor.Builder()
+//
+//                // With the following lines commented out, the default TfodProcessor Builder
+//                // will load the default model for the season. To define a custom model to load,
+//                // choose one of the following:
+//                //   Use setModelAssetName() if the custom TF Model is built in as an asset (AS only).
+//                //   Use setModelFileName() if you have downloaded a custom team model to the Robot Controller.
+////                .setModelAssetName(TFOD_MODEL_ASSET)
+//                //.setModelFileName(TFOD_MODEL_FILE)
+//
+//                // The following default settings are available to un-comment and edit as needed to
+//                // set parameters for custom models.
+////                .setModelLabels(LABELS)
+//                //.setIsModelTensorFlow2(true)
+//                //.setIsModelQuantized(true)
+//                //.setModelInputSize(300)
+//                //.setModelAspectRatio(16.0 / 9.0)
+//                .build();
 
-                // With the following lines commented out, the default TfodProcessor Builder
-                // will load the default model for the season. To define a custom model to load,
-                // choose one of the following:
-                //   Use setModelAssetName() if the custom TF Model is built in as an asset (AS only).
-                //   Use setModelFileName() if you have downloaded a custom team model to the Robot Controller.
-                .setModelAssetName(TFOD_MODEL_ASSET)
-                //.setModelFileName(TFOD_MODEL_FILE)
+        tfod = TfodProcessor.easyCreateWithDefaults();
 
-                // The following default settings are available to un-comment and edit as needed to
-                // set parameters for custom models.
-                .setModelLabels(LABELS)
-                //.setIsModelTensorFlow2(true)
-                //.setIsModelQuantized(true)
-                //.setModelInputSize(300)
-                //.setModelAspectRatio(16.0 / 9.0)
+
+        // add the april tag
+        aprilTag = new AprilTagProcessor.Builder()
+
+                // The following default settings are available to un-comment and edit as needed.
+                //.setDrawAxes(false)
+                //.setDrawCubeProjection(false)
+                //.setDrawTagOutline(true)
+                //.setTagFamily(AprilTagProcessor.TagFamily.TAG_36h11)
+                //.setTagLibrary(AprilTagGameDatabase.getCenterStageTagLibrary())
+                //.setOutputUnits(DistanceUnit.INCH, AngleUnit.DEGREES)
+
+                // == CAMERA CALIBRATION ==
+                // If you do not manually specify calibration parameters, the SDK will attempt
+                // to load a predefined calibration for your camera.
+                //.setLensIntrinsics(578.272, 578.272, 402.145, 221.506)
+                // ... these parameters are fx, fy, cx, cy.
 
                 .build();
 
-        // Create the vision portal by using a builder.
-        VisionPortal.Builder builder = new VisionPortal.Builder();
 
-        // Set the camera (webcam vs. built-in RC phone camera).
+
         if (USE_WEBCAM) {
-            builder.setCamera(hardwareMap.get(WebcamName.class, "Webcam 1"));
+            visionPortal = new VisionPortal.Builder()
+                    .setCamera(hardwareMap.get(WebcamName.class, "Webcam 1"))
+                    .addProcessors(tfod, aprilTag)
+                    .build();
         } else {
-            builder.setCamera(BuiltinCameraDirection.BACK);
+            visionPortal = new VisionPortal.Builder()
+                    .setCamera(BuiltinCameraDirection.BACK)
+                    .addProcessors(tfod, aprilTag)
+
+                    .build();
         }
+
 
         // Choose a camera resolution. Not all cameras support all resolutions.
         //builder.setCameraResolution(new Size(640, 480));
@@ -300,11 +331,7 @@ public class FirstAutonomousIteration extends LinearOpMode {
         // If set "false", monitor shows camera view without annotations.
         //builder.setAutoStopLiveView(false);
 
-        // Set and enable the processor.
-        builder.addProcessor(tfod);
 
-        // Build the Vision Portal, using the above settings.
-        visionPortal = builder.build();
 
         // Set confidence threshold for TFOD recognitions, at any time.
         //tfod.setMinResultConfidence(0.75f);
@@ -323,7 +350,7 @@ public class FirstAutonomousIteration extends LinearOpMode {
         waitRuntime(.5);
         wrist.wristUp();
         waitRuntime(.5);
-        driveStraight(DRIVE_SPEED, -2, currentHeading);
+        driveStraight(DRIVE_SPEED*5, -3, currentHeading);
         wrist.wristDown();
         waitRuntime(.5);
         claw.closeClaw();
@@ -333,7 +360,10 @@ public class FirstAutonomousIteration extends LinearOpMode {
     }
 
     public boolean isCubeThere() {
-        List<Recognition> currentRecognitions = tfod.getRecognitions();
+        List<Recognition> currentRecognitions;
+
+        waitRuntime(1);
+        currentRecognitions = tfod.getRecognitions();
         if (currentRecognitions.size() > 0) {
             msg = currentRecognitions.get(0).getLabel();
             sendTelemetry(true);
@@ -359,16 +389,17 @@ public class FirstAutonomousIteration extends LinearOpMode {
         //dropTwoPickOne();
         FoundTeamProp cubeIsFound = FoundTeamProp.FOUND_NONE;
 
-        List<Integer> headingsToCheck = Arrays.asList(-5, 30, -45);
+        List<Integer> headingsToCheck = Arrays.asList(-12, 30, -45);
 
-        driveStraight(DRIVE_SPEED, 11, 0.0);
-        waitRuntime(0.1);
+        driveStraight(DRIVE_SPEED*3, 22, 0.0);
+        holdHeading(TURN_SPEED, 0, 0.1);
         for (int heading: headingsToCheck) {
             targetHeading = heading;
             msg = "detecting cube";
             sendTelemetry(true);
 
-            turnToHeading( TURN_SPEED, heading);
+            turnToHeading( TURN_SPEED*5, heading);
+            holdHeading(TURN_SPEED, heading, 0.1);
 
             // pre-detect
             // -- add code here
@@ -396,24 +427,23 @@ public class FirstAutonomousIteration extends LinearOpMode {
 
 
         if (cubeIsFound == FoundTeamProp.FOUND_MIDDLE) {
-            turnToHeading(TURN_SPEED, -15);
-            holdHeading(TURN_SPEED, -15, 0.05);
+            driveStraight(DRIVE_SPEED, 3, getHeading());
 
-            driveStraight(DRIVE_SPEED, 11, -15.0);
-            waitRuntime(0.1);
             dropTwoPickOne();
 
         } else if (cubeIsFound == FoundTeamProp.FOUND_LEFT) {
 
-            // TODO: fill in code here
+            // TODO: assume if not found middle or left, it is on te right
+            dropTwoPickOne();
 
         } else {
 
             // TODO: assume if not found middle or left, it is on te right
+            dropTwoPickOne();
 
         }
 
-
+        driveStraight(DRIVE_SPEED, 10, getHeading(), true, true);
 
 //
 //        // Step through each leg of the path,
@@ -491,7 +521,11 @@ public class FirstAutonomousIteration extends LinearOpMode {
      *                      If a relative angle is required, add/subtract from the current robotHeading.
      */
     public void driveStraight(double maxDriveSpeed, double distance, double heading ) {
-        driveStraight(maxDriveSpeed, distance, heading, true);
+        driveStraight(maxDriveSpeed, distance, heading, true, false);
+    }
+
+    public void driveLateral(double maxDriveSpeed, double distance, double heading ) {
+        driveStraight(maxDriveSpeed, distance, heading, true, true);
     }
 
     public void waitRuntime(double sec) {
@@ -513,7 +547,7 @@ public class FirstAutonomousIteration extends LinearOpMode {
     *                   0 = fwd. +ve is CCW from fwd. -ve is CW from forward.
     *                   If a relative angle is required, add/subtract from the current robotHeading.
     */
-    public void driveStraight(double maxDriveSpeed, double distance, double heading, boolean applyCorrection) {
+    public void driveStraight(double maxDriveSpeed, double distance, double heading, boolean applyCorrection, boolean lateral) {
 
         leftFrontDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         rightFrontDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -527,15 +561,26 @@ public class FirstAutonomousIteration extends LinearOpMode {
 
             // Determine new target position, and pass to motor controller
             int moveCounts = (int)(distance * COUNTS_PER_INCH);
-            leftTarget = leftFrontDrive.getCurrentPosition() + moveCounts;
-            rightTarget = rightFrontDrive.getCurrentPosition() + moveCounts;
+            if (lateral) {
+                leftFrontTarget = leftFrontDrive.getCurrentPosition() + moveCounts;
+                rightFrontTarget = rightFrontDrive.getCurrentPosition() - moveCounts;
+                leftBackTarget = leftBackDrive.getCurrentPosition() - moveCounts;
+                rightBackTarget = rightBackDrive.getCurrentPosition() + moveCounts;
+
+            } else {
+                leftFrontTarget = leftFrontDrive.getCurrentPosition() + moveCounts;
+                rightFrontTarget = rightFrontDrive.getCurrentPosition() + moveCounts;
+                leftBackTarget = leftBackDrive.getCurrentPosition() + moveCounts;
+                rightBackTarget = rightBackDrive.getCurrentPosition() + moveCounts;
+
+            }
 
             // Set Target FIRST, then turn on RUN_TO_POSITION
 
-            leftFrontDrive.setTargetPosition(leftTarget);
-            rightFrontDrive.setTargetPosition(rightTarget);
-            leftBackDrive.setTargetPosition(leftBackDrive.getCurrentPosition() + moveCounts);
-            rightBackDrive.setTargetPosition(rightBackDrive.getCurrentPosition() + moveCounts);
+            leftFrontDrive.setTargetPosition(leftFrontTarget);
+            rightFrontDrive.setTargetPosition(rightFrontTarget);
+            leftBackDrive.setTargetPosition(leftBackTarget);
+            rightBackDrive.setTargetPosition(rightBackTarget);
 
             leftFrontDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             rightFrontDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
@@ -549,7 +594,9 @@ public class FirstAutonomousIteration extends LinearOpMode {
 
             // keep looping while we are still active, and BOTH motors are running.
             while (opModeIsActive() &&
-                   (leftFrontDrive.isBusy() && rightFrontDrive.isBusy())) {
+                   (leftFrontDrive.isBusy() && rightFrontDrive.isBusy()
+                           && leftBackDrive.isBusy()
+                           && rightBackDrive.isBusy())) {
 
                 if (applyCorrection) {
                     // Determine required steering to keep on heading
@@ -712,7 +759,7 @@ public class FirstAutonomousIteration extends LinearOpMode {
         telemetry.addData(msg, "");
         if (straight) {
             telemetry.addData("Motion", "Drive Straight");
-            telemetry.addData("Target Pos L:R",  "%7d:%7d",      leftTarget,  rightTarget);
+            telemetry.addData("Target Pos L:R",  "%7d:%7d", leftFrontTarget, rightFrontTarget);
             telemetry.addData("Actual Pos L:R",  "%7d:%7d",      leftFrontDrive.getCurrentPosition(),
                     rightFrontDrive.getCurrentPosition());
         } else {
