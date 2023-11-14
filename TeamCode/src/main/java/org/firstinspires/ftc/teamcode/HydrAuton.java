@@ -2,7 +2,6 @@ package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -26,10 +25,7 @@ public class HydrAuton extends LinearOpMode {
     private IMU imu;
     private DcMotor MotLwrArm;
     private DcMotor MotUprArm;
-    private DcMotor MotDrFrLt;
-    private DcMotor MotDrBkLt;
-    private DcMotor MotDrFrRt;
-    private DcMotor MotDrBkRt;
+    private HydraDrive Drive;
     private Servo SrvPxlPos1;
     private Servo SrvPxlPos2;
     private ColorSensor SenColPxlPos1;
@@ -107,10 +103,6 @@ public class HydrAuton extends LinearOpMode {
         imu = hardwareMap.get(IMU.class, "imu");
         MotLwrArm = hardwareMap.get(DcMotor.class, "MotLwrArm");
         MotUprArm = hardwareMap.get(DcMotor.class, "MotUprArm");
-        MotDrFrLt = hardwareMap.get(DcMotor.class, "MotDrFrLt");
-        MotDrBkLt = hardwareMap.get(DcMotor.class, "MotDrBkLt");
-        MotDrFrRt = hardwareMap.get(DcMotor.class, "MotDrFrRt");
-        MotDrBkRt = hardwareMap.get(DcMotor.class, "MotDrBkRt");
         SrvPxlPos1 = hardwareMap.get(Servo.class, "SrvPxlPos1");
         SrvPxlPos2 = hardwareMap.get(Servo.class, "SrvPxlPos2");
         SenColPxlPos1 = hardwareMap.get(ColorSensor.class, "SenColPxlPos1");
@@ -124,12 +116,11 @@ public class HydrAuton extends LinearOpMode {
         SenColPxlPos2_DistanceSensor = hardwareMap.get(DistanceSensor.class, "SenColPxlPos2");
 
         // Initialize Constant Variables
+        // Wheel constants
         cWheelDiameter = 3.78;
         cWheelCircumference = cWheelDiameter * Math.PI;
         cCountsPerWheelRevolution = 537.6;
         cCountsPerInch = cCountsPerWheelRevolution / cWheelCircumference;
-        // Trigger button deadband for any trigger press
-        // Controller joystick deadband for the arm motors
         // Drive motor power level scaling [max 1]
         cDriveBoosted = 1;
         cDriveNormal = 0.9;
@@ -202,7 +193,8 @@ public class HydrAuton extends LinearOpMode {
         // the REV Robotics logo is facing and the direction that the USB ports are facing.
         imu.initialize(new IMU.Parameters(new RevHubOrientationOnRobot(RevHubOrientationOnRobot.LogoFacingDirection.RIGHT, RevHubOrientationOnRobot.UsbFacingDirection.UP)));
         InitArm();
-        InitDrive();
+        Drive.Init("MotDrFrLt", "MotDrFrRt", "MotDrBkLt",
+                "MotDrBkRt", cCountsPerInch, cDriveBoosted, cDriveNormal, cDriveSlow);
         InitCassette();
         InitIntake();
         // This 2023-2024 OpMode illustrates the basics of TensorFlow Object Detection.
@@ -268,25 +260,6 @@ public class HydrAuton extends LinearOpMode {
     /**
      * Describe this function...
      */
-    private void InitDrive() {
-        // Set motor directions. Right side motors are reversed
-        MotDrFrLt.setDirection(DcMotor.Direction.REVERSE);
-        MotDrBkLt.setDirection(DcMotor.Direction.REVERSE);
-        MotDrFrRt.setDirection(DcMotor.Direction.FORWARD);
-        MotDrBkRt.setDirection(DcMotor.Direction.FORWARD);
-        MotDrFrLt.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        MotDrBkLt.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        MotDrFrRt.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        MotDrBkRt.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        MotDrFrLt.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        MotDrBkLt.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        MotDrFrRt.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        MotDrBkRt.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-    }
-
-    /**
-     * Describe this function...
-     */
     private void ProcessArm() {
         double nextArmPosition;
 
@@ -329,62 +302,6 @@ public class HydrAuton extends LinearOpMode {
         // Send power to the motor based on the input
         MotPxlIntk.setPower(inIntakeDir);
         telemetry.addData("intake", inIntakeDir);
-    }
-
-    /**
-     * Describe this function...
-     */
-    private void ProcessDrive(int inDrive, int inStrafe, int inRotate) {
-        int frontLeftTarget;
-        int rearLeftTarget;
-        int frontRightTarget;
-        int rearRightTarget;
-
-        if (true) {
-            MotDrBkLt.setPower(0);
-            MotDrBkRt.setPower(0);
-            MotDrFrLt.setPower(0);
-            MotDrFrRt.setPower(0);
-            MotDrBkLt.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-            MotDrBkRt.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-            MotDrFrLt.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-            MotDrFrRt.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        }
-        frontLeftTarget = inDrive + inStrafe;
-        frontLeftTarget = frontLeftTarget + inRotate;
-        frontLeftTarget = (int) (frontLeftTarget * cCountsPerInch);
-        MotDrFrLt.setTargetPosition(frontLeftTarget);
-        // Rear left power
-        rearLeftTarget = inDrive - inStrafe;
-        rearLeftTarget = rearLeftTarget + inRotate;
-        rearLeftTarget = (int) (rearLeftTarget * cCountsPerInch);
-        MotDrBkLt.setTargetPosition(rearLeftTarget);
-        // Front right power
-        frontRightTarget = inDrive - inStrafe;
-        frontRightTarget = frontRightTarget - inRotate;
-        frontRightTarget = (int) (frontRightTarget * cCountsPerInch);
-        MotDrFrRt.setTargetPosition(frontRightTarget);
-        // Rear right power
-        rearRightTarget = inDrive + inStrafe;
-        rearRightTarget = rearRightTarget - inRotate;
-        rearRightTarget = (int) (rearRightTarget * cCountsPerInch);
-        MotDrBkRt.setTargetPosition(rearRightTarget);
-        // Set power to the motors
-        if (inRotate) {
-            MotDrBkLt.setPower(cDriveSlow);
-            MotDrBkRt.setPower(cDriveSlow);
-            MotDrFrLt.setPower(cDriveSlow);
-            MotDrFrRt.setPower(cDriveSlow);
-        } else {
-            MotDrBkLt.setPower(cDriveNormal);
-            MotDrBkRt.setPower(cDriveNormal);
-            MotDrFrLt.setPower(cDriveNormal);
-            MotDrFrRt.setPower(cDriveNormal);
-        }
-        MotDrBkLt.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        MotDrBkRt.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        MotDrFrLt.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        MotDrFrRt.setMode(DcMotor.RunMode.RUN_TO_POSITION);
     }
 
     /**
@@ -625,26 +542,6 @@ public class HydrAuton extends LinearOpMode {
     /**
      * Describe this function...
      */
-    private boolean DriveIsBusy() {
-        if (MotDrBkLt.isBusy() || MotDrBkRt.isBusy() || MotDrFrLt.isBusy() || MotDrFrRt.isBusy()) {
-            return true;
-        }
-        if (false) {
-            MotDrBkLt.setPower(0);
-            MotDrBkRt.setPower(0);
-            MotDrFrLt.setPower(0);
-            MotDrFrRt.setPower(0);
-            MotDrBkLt.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-            MotDrBkRt.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-            MotDrFrLt.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-            MotDrFrRt.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        }
-        return false;
-    }
-
-    /**
-     * Describe this function...
-     */
     private void BadState() {
         telemetry.addData("InvalidState", autonState);
     }
@@ -686,12 +583,12 @@ public class HydrAuton extends LinearOpMode {
                 if (autonState == 10) {
                     // This is the first state for the left spike
                     if (true) {
-                        ProcessDrive(16, -14, 0);
+                        Drive.Start(16, -14, 0);
                         autonState += 1;
                     }
                 } else if (autonState == 11) {
                     // This is the last state for the left spike
-                    if (!DriveIsBusy()) {
+                    if (!Drive.Busy()) {
                         autonState = 100;
                     }
                 } else {
@@ -702,23 +599,23 @@ public class HydrAuton extends LinearOpMode {
                 if (autonState == 20) {
                     // This is the first state for the center spike
                     if (true) {
-                        ProcessDrive(24, 0, 0);
+                        Drive.Start(24, 0, 0);
                         autonState += 1;
                     }
                 } else if (autonState == 21) {
-                    if (!DriveIsBusy()) {
-                        ProcessDrive(0, 0, 20);
+                    if (!Drive.Busy()) {
+                        Drive.Start(0, 0, 20);
                         autonState += 1;
                     }
                 } else if (autonState == 22) {
-                    if (!DriveIsBusy()) {
-                        ProcessDrive(-14, 0, 0);
+                    if (!Drive.Busy()) {
+                        Drive.Start(-14, 0, 0);
                         autonState += 1;
                     }
                 } else if (autonState == 23) {
                     // This is the last state for the center spike
-                    if (!DriveIsBusy()) {
-                        ProcessDrive(0, -16, 0);
+                    if (!Drive.Busy()) {
+                        Drive.Start(0, -16, 0);
                         autonState = 100;
                     }
                 } else {
@@ -729,13 +626,13 @@ public class HydrAuton extends LinearOpMode {
                 if (autonState == 30) {
                     // This is the first state for the right spike
                     if (true) {
-                        ProcessDrive(30, -3, 0);
+                        Drive.Start(30, -3, 0);
                         autonState += 1;
                     }
                 } else if (autonState == 31) {
                     // This is the last state for the right spike
-                    if (!DriveIsBusy()) {
-                        ProcessDrive(0, 0, 20);
+                    if (!Drive.Busy()) {
+                        Drive.Start(0, 0, 20);
                         autonState = 100;
                     }
                 } else {
@@ -748,7 +645,7 @@ public class HydrAuton extends LinearOpMode {
             }
         } else if (autonState < 200) {
             // These 100 level states handle dropping the pixel on the spike. this is the same for all autons
-            if (!DriveIsBusy()) {
+            if (!Drive.Busy()) {
                 PixelDrop();
             }
         } else if (autonState < 300) {
@@ -765,29 +662,29 @@ public class HydrAuton extends LinearOpMode {
             } else if (autonState < 220) {
                 if (autonState == 210) {
                     // This is the first state for the left spike
-                    if (!DriveIsBusy()) {
-                        ProcessDrive(0, 12, 0);
+                    if (!Drive.Busy()) {
+                        Drive.Start(0, 12, 0);
                         autonState += 1;
                     }
                 } else if (autonState == 211) {
-                    if (!DriveIsBusy()) {
-                        ProcessDrive(34, 0, 0);
+                    if (!Drive.Busy()) {
+                        Drive.Start(34, 0, 0);
                         autonState += 1;
                     }
                 } else if (autonState == 212) {
-                    if (!DriveIsBusy()) {
-                        ProcessDrive(0, 0, 20);
+                    if (!Drive.Busy()) {
+                        Drive.Start(0, 0, 20);
                         autonState += 1;
                     }
                 } else if (autonState == 213) {
-                    if (!DriveIsBusy()) {
-                        ProcessDrive(76, 0, 0);
+                    if (!Drive.Busy()) {
+                        Drive.Start(76, 0, 0);
                         autonState += 1;
                     }
                 } else if (autonState == 214) {
                     // This is the last state for the left spike
-                    if (!DriveIsBusy()) {
-                        ProcessDrive(0, 27, 0);
+                    if (!Drive.Busy()) {
+                        Drive.Start(0, 27, 0);
                         autonState = 300;
                     }
                 } else {
@@ -797,19 +694,19 @@ public class HydrAuton extends LinearOpMode {
             } else if (autonState < 230) {
                 if (autonState == 220) {
                     // This is the first state for the center spike
-                    if (!DriveIsBusy()) {
-                        ProcessDrive(0, -19, 0);
+                    if (!Drive.Busy()) {
+                        Drive.Start(0, -19, 0);
                         autonState += 1;
                     }
                 } else if (autonState == 221) {
-                    if (!DriveIsBusy()) {
-                        ProcessDrive(87, 0, 0);
+                    if (!Drive.Busy()) {
+                        Drive.Start(87, 0, 0);
                         autonState += 1;
                     }
                 } else if (autonState == 222) {
                     // This is the last state for the center spike
-                    if (!DriveIsBusy()) {
-                        ProcessDrive(0, 24, 0);
+                    if (!Drive.Busy()) {
+                        Drive.Start(0, 24, 0);
                         autonState = 300;
                     }
                 } else {
@@ -819,19 +716,19 @@ public class HydrAuton extends LinearOpMode {
             } else if (autonState < 240) {
                 if (autonState == 230) {
                     // This is the first state for the right spike
-                    if (!DriveIsBusy()) {
-                        ProcessDrive(0, -22, 0);
+                    if (!Drive.Busy()) {
+                        Drive.Start(0, -22, 0);
                         autonState += 1;
                     }
                 } else if (autonState == 231) {
-                    if (!DriveIsBusy()) {
-                        ProcessDrive(76, 0, 0);
+                    if (!Drive.Busy()) {
+                        Drive.Start(76, 0, 0);
                         autonState += 1;
                     }
                 } else if (autonState == 232) {
                     // This is the last state for the right spike
-                    if (!DriveIsBusy()) {
-                        ProcessDrive(0, 29, 0);
+                    if (!Drive.Busy()) {
+                        Drive.Start(0, 29, 0);
                         autonState = 300;
                     }
                 }
@@ -841,12 +738,12 @@ public class HydrAuton extends LinearOpMode {
             }
         } else if (autonState < 400) {
             // These 300 level states handle scoring forwards at the backdrop. this is the same for two autons
-            if (!DriveIsBusy()) {
+            if (!Drive.Busy()) {
                 ScoreFront();
             }
         } else if (autonState < 500) {
             // These 400 level states handle returning the arm home. this is the same for all autons
-            if (!DriveIsBusy()) {
+            if (!Drive.Busy()) {
                 ArmToHome();
             }
         } else if (autonState == 500) {
@@ -883,12 +780,12 @@ public class HydrAuton extends LinearOpMode {
                 if (autonState == 10) {
                     // This is the first state for the right spike
                     if (true) {
-                        ProcessDrive(16, 14, 0);
+                        Drive.Start(16, 14, 0);
                         autonState += 1;
                     }
                 } else if (autonState == 11) {
                     // This is the last state for the right spike
-                    if (!DriveIsBusy()) {
+                    if (!Drive.Busy()) {
                         autonState = 100;
                     }
                 } else {
@@ -899,23 +796,23 @@ public class HydrAuton extends LinearOpMode {
                 if (autonState == 20) {
                     // This is the first state for the center spike
                     if (true) {
-                        ProcessDrive(24, 0, 0);
+                        Drive.Start(24, 0, 0);
                         autonState += 1;
                     }
                 } else if (autonState == 21) {
-                    if (!DriveIsBusy()) {
-                        ProcessDrive(0, 0, 20);
+                    if (!Drive.Busy()) {
+                        Drive.Start(0, 0, 20);
                         autonState += 1;
                     }
                 } else if (autonState == 22) {
-                    if (!DriveIsBusy()) {
-                        ProcessDrive(-14, 0, 0);
+                    if (!Drive.Busy()) {
+                        Drive.Start(-14, 0, 0);
                         autonState += 1;
                     }
                 } else if (autonState == 23) {
                     // This is the last state for the center spike
-                    if (!DriveIsBusy()) {
-                        ProcessDrive(0, 15, 0);
+                    if (!Drive.Busy()) {
+                        Drive.Start(0, 15, 0);
                         autonState = 100;
                     }
                 } else {
@@ -926,13 +823,13 @@ public class HydrAuton extends LinearOpMode {
                 if (autonState == 30) {
                     // This is the first state for the left spike
                     if (true) {
-                        ProcessDrive(30, 3, 0);
+                        Drive.Start(30, 3, 0);
                         autonState += 1;
                     }
                 } else if (autonState == 31) {
                     // This is the last state for the left spike
-                    if (!DriveIsBusy()) {
-                        ProcessDrive(0, 0, -20);
+                    if (!Drive.Busy()) {
+                        Drive.Start(0, 0, -20);
                         autonState = 100;
                     }
                 } else {
@@ -945,7 +842,7 @@ public class HydrAuton extends LinearOpMode {
             }
         } else if (autonState < 200) {
             // These 100 level states handle dropping the pixel on the spike. this is the same for all autons
-            if (!DriveIsBusy()) {
+            if (!Drive.Busy()) {
                 PixelDrop();
             }
         } else if (autonState < 300) {
@@ -962,29 +859,29 @@ public class HydrAuton extends LinearOpMode {
             } else if (autonState < 220) {
                 if (autonState == 210) {
                     // This is the first state for the right spike
-                    if (!DriveIsBusy()) {
-                        ProcessDrive(0, -12, 0);
+                    if (!Drive.Busy()) {
+                        Drive.Start(0, -12, 0);
                         autonState += 1;
                     }
                 } else if (autonState == 211) {
-                    if (!DriveIsBusy()) {
-                        ProcessDrive(30, 0, 0);
+                    if (!Drive.Busy()) {
+                        Drive.Start(30, 0, 0);
                         autonState += 1;
                     }
                 } else if (autonState == 212) {
-                    if (!DriveIsBusy()) {
-                        ProcessDrive(0, 0, -20);
+                    if (!Drive.Busy()) {
+                        Drive.Start(0, 0, -20);
                         autonState += 1;
                     }
                 } else if (autonState == 213) {
-                    if (!DriveIsBusy()) {
-                        ProcessDrive(73, 0, 0);
+                    if (!Drive.Busy()) {
+                        Drive.Start(73, 0, 0);
                         autonState += 1;
                     }
                 } else if (autonState == 214) {
                     // This is the last state for the right spike
-                    if (!DriveIsBusy()) {
-                        ProcessDrive(0, -24, 0);
+                    if (!Drive.Busy()) {
+                        Drive.Start(0, -24, 0);
                         autonState = 300;
                     }
                 } else {
@@ -994,19 +891,19 @@ public class HydrAuton extends LinearOpMode {
             } else if (autonState < 230) {
                 if (autonState == 220) {
                     // This is the first state for the center spike
-                    if (!DriveIsBusy()) {
-                        ProcessDrive(0, 19, 0);
+                    if (!Drive.Busy()) {
+                        Drive.Start(0, 19, 0);
                         autonState += 1;
                     }
                 } else if (autonState == 221) {
-                    if (!DriveIsBusy()) {
-                        ProcessDrive(87, 0, 0);
+                    if (!Drive.Busy()) {
+                        Drive.Start(87, 0, 0);
                         autonState += 1;
                     }
                 } else if (autonState == 222) {
                     // This is the last state for the center spike
-                    if (!DriveIsBusy()) {
-                        ProcessDrive(0, -24, 0);
+                    if (!Drive.Busy()) {
+                        Drive.Start(0, -24, 0);
                         autonState = 300;
                     }
                 } else {
@@ -1016,19 +913,19 @@ public class HydrAuton extends LinearOpMode {
             } else if (autonState < 240) {
                 if (autonState == 230) {
                     // This is the first state for the left spike
-                    if (!DriveIsBusy()) {
-                        ProcessDrive(0, 22, 0);
+                    if (!Drive.Busy()) {
+                        Drive.Start(0, 22, 0);
                         autonState += 1;
                     }
                 } else if (autonState == 231) {
-                    if (!DriveIsBusy()) {
-                        ProcessDrive(76, 0, 0);
+                    if (!Drive.Busy()) {
+                        Drive.Start(76, 0, 0);
                         autonState += 1;
                     }
                 } else if (autonState == 232) {
                     // This is the last state for the left spike
-                    if (!DriveIsBusy()) {
-                        ProcessDrive(0, -29, 0);
+                    if (!Drive.Busy()) {
+                        Drive.Start(0, -29, 0);
                         autonState = 300;
                     }
                 }
@@ -1038,12 +935,12 @@ public class HydrAuton extends LinearOpMode {
             }
         } else if (autonState < 400) {
             // These 300 level states handle scoring forwards at the backdrop. this is the same for two autons
-            if (!DriveIsBusy()) {
+            if (!Drive.Busy()) {
                 ScoreFront();
             }
         } else if (autonState < 500) {
             // These 400 level states handle returning the arm home. this is the same for all autons
-            if (!DriveIsBusy()) {
+            if (!Drive.Busy()) {
                 ArmToHome();
             }
         } else if (autonState == 500) {
@@ -1080,12 +977,12 @@ public class HydrAuton extends LinearOpMode {
                 if (autonState == 10) {
                     // This is the first state for the right spike
                     if (true) {
-                        ProcessDrive(16, 14, 0);
+                        Drive.Start(16, 14, 0);
                         autonState += 1;
                     }
                 } else if (autonState == 11) {
                     // This is the last state for the right spike
-                    if (!DriveIsBusy()) {
+                    if (!Drive.Busy()) {
                         autonState = 100;
                     }
                 } else {
@@ -1096,23 +993,23 @@ public class HydrAuton extends LinearOpMode {
                 if (autonState == 20) {
                     // This is the first state for the center spike
                     if (true) {
-                        ProcessDrive(24, 0, 0);
+                        Drive.Start(24, 0, 0);
                         autonState += 1;
                     }
                 } else if (autonState == 21) {
-                    if (!DriveIsBusy()) {
-                        ProcessDrive(0, 0, -20);
+                    if (!Drive.Busy()) {
+                        Drive.Start(0, 0, -20);
                         autonState += 1;
                     }
                 } else if (autonState == 22) {
-                    if (!DriveIsBusy()) {
-                        ProcessDrive(-14, 0, 0);
+                    if (!Drive.Busy()) {
+                        Drive.Start(-14, 0, 0);
                         autonState += 1;
                     }
                 } else if (autonState == 23) {
                     // This is the last state for the center spike
-                    if (!DriveIsBusy()) {
-                        ProcessDrive(0, 15, 0);
+                    if (!Drive.Busy()) {
+                        Drive.Start(0, 15, 0);
                         autonState = 100;
                     }
                 } else {
@@ -1123,13 +1020,13 @@ public class HydrAuton extends LinearOpMode {
                 if (autonState == 30) {
                     // This is the first state for the left spike
                     if (true) {
-                        ProcessDrive(28, 3, 0);
+                        Drive.Start(28, 3, 0);
                         autonState += 1;
                     }
                 } else if (autonState == 31) {
                     // This is the last state for the left spike
-                    if (!DriveIsBusy()) {
-                        ProcessDrive(0, 0, -20);
+                    if (!Drive.Busy()) {
+                        Drive.Start(0, 0, -20);
                         autonState = 100;
                     }
                 } else {
@@ -1142,7 +1039,7 @@ public class HydrAuton extends LinearOpMode {
             }
         } else if (autonState < 200) {
             // These 100 level states handle dropping the pixel on the spike. this is the same for all autons
-            if (!DriveIsBusy()) {
+            if (!Drive.Busy()) {
                 PixelDrop();
             }
         } else if (autonState < 300) {
@@ -1159,51 +1056,51 @@ public class HydrAuton extends LinearOpMode {
             } else if (autonState < 220) {
                 if (autonState == 210) {
                     // This is the first state for the right spike
-                    if (!DriveIsBusy()) {
-                        ProcessDrive(0, 0, -20);
+                    if (!Drive.Busy()) {
+                        Drive.Start(0, 0, -20);
                         autonState += 1;
                     }
                 } else if (autonState == 211) {
-                    if (!DriveIsBusy()) {
-                        ProcessDrive(-20, 0, 0);
+                    if (!Drive.Busy()) {
+                        Drive.Start(-20, 0, 0);
                         autonState += 1;
                     }
                 } else if (autonState == 212) {
-                    if (!DriveIsBusy()) {
-                        ProcessDrive(0, 12, 0);
+                    if (!Drive.Busy()) {
+                        Drive.Start(0, 12, 0);
                         autonState += 1;
                     }
                 } else if (autonState == 213) {
                     autonState += 1;
                 } else if (autonState == 214) {
                     // This is the last state for the right spike
-                    if (!DriveIsBusy()) {
+                    if (!Drive.Busy()) {
                         autonState = 300;
                     }
                 }
             } else if (autonState < 230) {
                 if (autonState == 220) {
                     // This is the first state for the center spike
-                    if (!DriveIsBusy()) {
-                        ProcessDrive(0, -8, 0);
+                    if (!Drive.Busy()) {
+                        Drive.Start(0, -8, 0);
                         autonState += 1;
                     }
                 } else if (autonState == 221) {
-                    if (!DriveIsBusy()) {
-                        ProcessDrive(-17, 0, 0);
+                    if (!Drive.Busy()) {
+                        Drive.Start(-17, 0, 0);
                         autonState += 1;
                     }
                 } else if (autonState == 222) {
                     // This is the last state for the center spike
-                    if (!DriveIsBusy()) {
+                    if (!Drive.Busy()) {
                         autonState = 300;
                     }
                 }
             } else if (autonState < 240) {
                 if (autonState == 230) {
                     // This is the first state for the left spike
-                    if (!DriveIsBusy()) {
-                        ProcessDrive(-28, 0, 0);
+                    if (!Drive.Busy()) {
+                        Drive.Start(-28, 0, 0);
                         autonState += 1;
                     }
                 } else if (autonState == 231) {
@@ -1223,12 +1120,12 @@ public class HydrAuton extends LinearOpMode {
             // These 400 level states handle returning the arm home. this is the same for all autons
             ArmToHome();
         } else if (autonState < 600) {
-            if (!DriveIsBusy()) {
-                ProcessDrive(0, -36, 0);
+            if (!Drive.Busy()) {
+                Drive.Start(0, -36, 0);
                 autonState = 600;
             }
         } else if (autonState == 600) {
-            if (!DriveIsBusy()) {
+            if (!Drive.Busy()) {
                 return true;
             }
         } else {
@@ -1261,13 +1158,13 @@ public class HydrAuton extends LinearOpMode {
                 if (autonState == 10) {
                     // This is the first state for the left spike
                     if (true) {
-                        ProcessDrive(13, 0, 0);
+                        Drive.Start(13, 0, 0);
                         autonState += 1;
                     }
                 } else if (autonState == 11) {
                     // This is the last state for the left spike
-                    if (!DriveIsBusy()) {
-                        ProcessDrive(0, -15, 0);
+                    if (!Drive.Busy()) {
+                        Drive.Start(0, -15, 0);
                         autonState = 100;
                     }
                 } else {
@@ -1278,23 +1175,23 @@ public class HydrAuton extends LinearOpMode {
                 if (autonState == 20) {
                     // This is the first state for the center spike
                     if (true) {
-                        ProcessDrive(24, 0, 0);
+                        Drive.Start(24, 0, 0);
                         autonState += 1;
                     }
                 } else if (autonState == 21) {
-                    if (!DriveIsBusy()) {
-                        ProcessDrive(0, 0, 20);
+                    if (!Drive.Busy()) {
+                        Drive.Start(0, 0, 20);
                         autonState += 1;
                     }
                 } else if (autonState == 22) {
-                    if (!DriveIsBusy()) {
-                        ProcessDrive(-14, 0, 0);
+                    if (!Drive.Busy()) {
+                        Drive.Start(-14, 0, 0);
                         autonState += 1;
                     }
                 } else if (autonState == 23) {
                     // This is the last state for the center spike
-                    if (!DriveIsBusy()) {
-                        ProcessDrive(0, -16, 0);
+                    if (!Drive.Busy()) {
+                        Drive.Start(0, -16, 0);
                         autonState = 100;
                     }
                 } else {
@@ -1305,13 +1202,13 @@ public class HydrAuton extends LinearOpMode {
                 if (autonState == 30) {
                     // This is the first state for the right spike
                     if (true) {
-                        ProcessDrive(30, 0, 0);
+                        Drive.Start(30, 0, 0);
                         autonState += 1;
                     }
                 } else if (autonState == 31) {
                     // This is the last state for the right spike
-                    if (!DriveIsBusy()) {
-                        ProcessDrive(0, 0, 20);
+                    if (!Drive.Busy()) {
+                        Drive.Start(0, 0, 20);
                         autonState = 100;
                     }
                 } else {
@@ -1324,7 +1221,7 @@ public class HydrAuton extends LinearOpMode {
             }
         } else if (autonState < 200) {
             // These 100 level states handle dropping the pixel on the spike. this is the same for all autons
-            if (!DriveIsBusy()) {
+            if (!Drive.Busy()) {
                 PixelDrop();
             }
         } else if (autonState < 300) {
@@ -1341,51 +1238,51 @@ public class HydrAuton extends LinearOpMode {
             } else if (autonState < 220) {
                 if (autonState == 210) {
                     // This is the first state for the left spike
-                    if (!DriveIsBusy()) {
-                        ProcessDrive(0, 0, 20);
+                    if (!Drive.Busy()) {
+                        Drive.Start(0, 0, 20);
                         autonState += 1;
                     }
                 } else if (autonState == 211) {
-                    if (!DriveIsBusy()) {
-                        ProcessDrive(-22, 0, 0);
+                    if (!Drive.Busy()) {
+                        Drive.Start(-22, 0, 0);
                         autonState += 1;
                     }
                 } else if (autonState == 212) {
-                    if (!DriveIsBusy()) {
-                        ProcessDrive(0, -12, 0);
+                    if (!Drive.Busy()) {
+                        Drive.Start(0, -12, 0);
                         autonState += 1;
                     }
                 } else if (autonState == 213) {
                     autonState += 1;
                 } else if (autonState == 214) {
                     // This is the last state for the right spike
-                    if (!DriveIsBusy()) {
+                    if (!Drive.Busy()) {
                         autonState = 300;
                     }
                 }
             } else if (autonState < 230) {
                 if (autonState == 220) {
                     // This is the first state for the center spike
-                    if (!DriveIsBusy()) {
-                        ProcessDrive(0, 8, 0);
+                    if (!Drive.Busy()) {
+                        Drive.Start(0, 8, 0);
                         autonState += 1;
                     }
                 } else if (autonState == 221) {
-                    if (!DriveIsBusy()) {
-                        ProcessDrive(-17, 0, 0);
+                    if (!Drive.Busy()) {
+                        Drive.Start(-17, 0, 0);
                         autonState += 1;
                     }
                 } else if (autonState == 222) {
                     // This is the last state for the center spike
-                    if (!DriveIsBusy()) {
+                    if (!Drive.Busy()) {
                         autonState = 300;
                     }
                 }
             } else if (autonState < 240) {
                 if (autonState == 230) {
                     // This is the first state for the right spike
-                    if (!DriveIsBusy()) {
-                        ProcessDrive(-31, 0, 0);
+                    if (!Drive.Busy()) {
+                        Drive.Start(-31, 0, 0);
                         autonState += 1;
                     }
                 } else if (autonState == 231) {
@@ -1405,12 +1302,12 @@ public class HydrAuton extends LinearOpMode {
             // These 400 level states handle returning the arm home. this is the same for all autons
             ArmToHome();
         } else if (autonState < 600) {
-            if (!DriveIsBusy()) {
-                ProcessDrive(0, 32, 0);
+            if (!Drive.Busy()) {
+                Drive.Start(0, 32, 0);
                 autonState = 600;
             }
         } else if (autonState == 600) {
-            if (!DriveIsBusy()) {
+            if (!Drive.Busy()) {
                 return true;
             }
         } else {
@@ -1435,12 +1332,12 @@ public class HydrAuton extends LinearOpMode {
                 autonState += 1;
             }
         } else if (autonState == 302) {
-            if (!DriveIsBusy()) {
-                ProcessDrive(-6, 0, 0);
+            if (!Drive.Busy()) {
+                Drive.Start(-6, 0, 0);
                 autonState += 1;
             }
         } else if (autonState == 303) {
-            if (!DriveIsBusy()) {
+            if (!Drive.Busy()) {
                 foo = ProcessCassette(cCasBackToFront, cCasBackToFront, true);
                 pixelDropTimer.reset();
                 autonState += 1;
@@ -1448,7 +1345,7 @@ public class HydrAuton extends LinearOpMode {
         } else if (autonState == 304) {
             if (pixelDropTimer.milliseconds() >= cPixelFrontScoreRunTimeMs) {
                 foo = ProcessCassette(cCasStop, cCasStop, false);
-                ProcessDrive(4, 0, 0);
+                Drive.Start(4, 0, 0);
                 autonState = 400;
             }
         } else {
@@ -1472,12 +1369,12 @@ public class HydrAuton extends LinearOpMode {
                 autonState += 1;
             }
         } else if (autonState == 302) {
-            if (!DriveIsBusy()) {
-                ProcessDrive(8, 0, 0);
+            if (!Drive.Busy()) {
+                Drive.Start(8, 0, 0);
                 autonState += 1;
             }
         } else if (autonState == 303) {
-            if (!DriveIsBusy()) {
+            if (!Drive.Busy()) {
                 foo = ProcessCassette(cCasFrontToBack, cCasFrontToBack, true);
                 pixelDropTimer.reset();
                 autonState += 1;
@@ -1485,7 +1382,7 @@ public class HydrAuton extends LinearOpMode {
         } else if (autonState == 304) {
             if (pixelDropTimer.milliseconds() >= cPixelFrontScoreRunTimeMs) {
                 foo = ProcessCassette(cCasStop, cCasStop, false);
-                ProcessDrive(-6, 0, 0);
+                Drive.Start(-6, 0, 0);
                 autonState = 400;
             }
         } else {
@@ -1498,7 +1395,7 @@ public class HydrAuton extends LinearOpMode {
      * Describe this function...
      */
     private void PixelDrop() {
-        long pixelDropTimeStart;
+        //long pixelDropTimeStart;
 
         // Drop the pixel on the spike
         if (autonState == 100) {

@@ -22,8 +22,8 @@ public class HydraDrive extends BlocksOpModeCompanion {
             tooltip = "Initialize the drive",
             parameterLabels = {"FLmotor", "FRmotor", "BLmotor", "BRmotor", "PwrFast", "PwrNormal", "PwrSlow"}
     )
-    public void HydraDrive_Init(String frontLeft, String frontRight, String backLeft, String backRight,
-                         double countsPerInch, double driveBoosted, double driveNormal, double driveSlow) {
+    public void Init(String frontLeft, String frontRight, String backLeft, String backRight,
+                     double countsPerInch, double driveBoosted, double driveNormal, double driveSlow) {
         // grab the motors out of the hardware map
         mMotDrFrLt = hardwareMap.get(DcMotor.class, frontLeft);
         mMotDrFrRt = hardwareMap.get(DcMotor.class, frontRight);
@@ -55,14 +55,14 @@ public class HydraDrive extends BlocksOpModeCompanion {
             tooltip = "Go, robot, go!",
             parameterLabels = {"Drive", "Strafe", "Rotate"}
     )
-    public boolean HydraDrive_Process(int inDrive, int inStrafe, int inRotate) {
+    public boolean Start(int inDrive, int inStrafe, int inRotate) {
         int frontLeftTarget;
         int rearLeftTarget;
         int frontRightTarget;
         int rearRightTarget;
 
         // wait for the last requested drive to complete
-        if (HydraDrive_IsBusy()) {
+        if (Busy()) {
             return false;
         }
         // clean up the last drive to prepare for the next one
@@ -117,7 +117,7 @@ public class HydraDrive extends BlocksOpModeCompanion {
             comment = "This function returns whether a previous drive action is completed",
             tooltip = "Is the robot still driving?"
     )
-    public boolean HydraDrive_IsBusy() {
+    public boolean Busy() {
         if (mMotDrBkLt.isBusy() || mMotDrBkRt.isBusy() || mMotDrFrLt.isBusy() || mMotDrFrRt.isBusy()) {
             return true;
         }
