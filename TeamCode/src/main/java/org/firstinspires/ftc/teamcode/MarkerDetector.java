@@ -103,21 +103,21 @@ public class MarkerDetector extends OpenCvPipeline {
         } else {
             if (avgLeftCb > avgCenterCb) {
                 if (avgLeftCb > avgRightCb) {
-                    if (((120 <= avgLeftCb) && (avgLeftCb <= 240)) && ((avgLeftCr >= 16) && (avgLeftCr <= 132))) {
+                    if (((120 <= avgLeftCb) && (avgLeftCb <= 240)) && ((avgLeftCr >= 16) && (avgLeftCr <= 128))) {
                         position = MARKER_POSITION.LEFT;
                     }
                 } else {
-                    if (((120 <= avgRightCb) && (avgRightCb <= 240)) && ((avgRightCr >= 16) && (avgRightCr <= 132))) {
+                    if (((120 <= avgRightCb) && (avgRightCb <= 240)) && ((avgRightCr >= 16) && (avgRightCr <= 128))) {
                         position = MARKER_POSITION.RIGHT;
                     }
                 }
             } else {
                 if (avgCenterCb > avgRightCb) {
-                    if (((120 <= avgCenterCb) && (avgCenterCb <= 240)) && ((avgCenterCr >= 16) && (avgCenterCr <= 132))) {
+                    if (((120 <= avgCenterCb) && (avgCenterCb <= 240)) && ((avgCenterCr >= 16) && (avgCenterCr <= 128))) {
                         position = MARKER_POSITION.CENTER;
                     }
                 } else {
-                    if (((120 <= avgRightCb) && (avgRightCb <= 240)) && ((avgRightCr >= 16) && (avgRightCr <= 132))) {
+                    if (((120 <= avgRightCb) && (avgRightCb <= 240)) && ((avgRightCr >= 16) && (avgRightCr <= 128))) {
                         position = MARKER_POSITION.RIGHT;
                     }
                 }
