@@ -30,7 +30,7 @@ public class HydrAuton extends LinearOpMode {
     private Servo SrvPxlPos2;
     private ColorSensor SenColPxlPos1;
     private ColorSensor SenColPxlPos2;
-    private DcMotor MotPxlIntk;
+    private HydraIntake Intake;
     private LED LED4;
     private LED LED3;
     private LED LED2;
@@ -61,11 +61,9 @@ public class HydrAuton extends LinearOpMode {
     double cCasBackToFront;
     double cCasStop;
     double cCasFrontToBack;
-    int cIntakeOut;
     List cUpperArmPositions;
     int cPixelDropRunTimeMs;
     List cArmPositionNames;
-    int cIntakeStop;
     int objectLocation;
     int cObjectLocationLeft;
     int cObjectLocationCenter;
@@ -97,6 +95,7 @@ public class HydrAuton extends LinearOpMode {
         int cLowerArmPos5Hang;
         int cUpperArmPos5Hang;
         int cIntakeIn;
+        int cIntakeOut;
         int cMaxObjectSearchTimeMs;
         ElapsedTime opModeTimer;
         boolean autonAbort;
@@ -108,7 +107,6 @@ public class HydrAuton extends LinearOpMode {
         SrvPxlPos2 = hardwareMap.get(Servo.class, "SrvPxlPos2");
         SenColPxlPos1 = hardwareMap.get(ColorSensor.class, "SenColPxlPos1");
         SenColPxlPos2 = hardwareMap.get(ColorSensor.class, "SenColPxlPos2");
-        MotPxlIntk = hardwareMap.get(DcMotor.class, "MotPxlIntk");
         LED4 = hardwareMap.get(LED.class, "LED4");
         LED3 = hardwareMap.get(LED.class, "LED3");
         LED2 = hardwareMap.get(LED.class, "LED2");
@@ -166,7 +164,6 @@ public class HydrAuton extends LinearOpMode {
         // Intake motor speeds
         cIntakeIn = -1;
         cIntakeOut = 1;
-        cIntakeStop = 0;
         // Object location enumerations
         cObjectLocationUnknown = 0;
         cObjectLocationLeft = 1;
@@ -197,7 +194,7 @@ public class HydrAuton extends LinearOpMode {
         Drive.Init("MotDrFrLt", "MotDrFrRt", "MotDrBkLt",
                 "MotDrBkRt", cCountsPerInch, cDriveBoosted, cDriveNormal, cDriveSlow);
         InitCassette();
-        InitIntake();
+        Intake.Init("MotPxlIntk", cIntakeIn, cIntakeOut);
         // This 2023-2024 OpMode illustrates the basics of TensorFlow Object Detection.
         USE_WEBCAM = true;
         initTfod2();
@@ -209,9 +206,9 @@ public class HydrAuton extends LinearOpMode {
                 if (ProcessCassette(cCasFrontToBack, cCasFrontToBack, false) == 3) {
                     break;
                 }
-                ProcessIntake(cIntakeIn);
+                Intake.StartIn();
             }
-            ProcessIntake(cIntakeStop);
+            Intake.Stop();
         }
         opModeTimer.reset();
         // Find the object so we can drive to it
@@ -288,21 +285,6 @@ public class HydrAuton extends LinearOpMode {
         // Ensure the servos are stopped
         SetPixelPos1Dir(cCasStop);
         SetPixelPos2Dir(cCasStop);
-    }
-
-    /**
-     * Describe this function...
-     */
-    private void InitIntake() {
-    }
-
-    /**
-     * Describe this function...
-     */
-    private void ProcessIntake(double inIntakeDir) {
-        // Send power to the motor based on the input
-        MotPxlIntk.setPower(inIntakeDir);
-        telemetry.addData("intake", inIntakeDir);
     }
 
     /**
@@ -1399,7 +1381,7 @@ public class HydrAuton extends LinearOpMode {
         // Drop the pixel on the spike
         if (autonState == 100) {
             // Reverse the intake
-            ProcessIntake(cIntakeOut);
+            Intake.StartOut();
             // Run one pixel out of the cassette
             foo = ProcessCassette(cCasBackToFront, cCasStop, false);
             // Start a timer since we can't easily detect whether a pixel has exited the intake
@@ -1414,7 +1396,7 @@ public class HydrAuton extends LinearOpMode {
             // the number of milliseconds since midnight, January 1, 1970 UTC.
             if (System.currentTimeMillis() - pixelDropTimeStart >= cPixelDropRunTimeMs) {
                 // Stop the intake and cassette
-                ProcessIntake(cIntakeStop);
+                Intake.Stop();
                 foo = ProcessCassette(cCasStop, cCasStop, false);
                 // Go to the next major step in the auton
                 autonState = 200;
@@ -1423,7 +1405,7 @@ public class HydrAuton extends LinearOpMode {
             // some bad state. stop everything and move on
             BadState();
             autonState = 200;
-            ProcessIntake(cIntakeStop);
+            Intake.Stop();
             foo = ProcessCassette(cCasStop, cCasStop, false);
         }
     }
