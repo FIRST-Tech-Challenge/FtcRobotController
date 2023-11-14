@@ -4,7 +4,6 @@ import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.ColorSensor;
-import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.IMU;
 import com.qualcomm.robotcore.hardware.LED;
@@ -23,8 +22,7 @@ import org.firstinspires.ftc.vision.tfod.TfodProcessor;
 public class HydrAuton extends LinearOpMode {
 
     private IMU imu;
-    private DcMotor MotLwrArm;
-    private DcMotor MotUprArm;
+    HydraArm Arm;
     private HydraDrive Drive;
     private Servo SrvPxlPos1;
     private Servo SrvPxlPos2;
@@ -37,14 +35,8 @@ public class HydrAuton extends LinearOpMode {
     private LED LED1;
     private DistanceSensor SenColPxlPos1_DistanceSensor;
     private DistanceSensor SenColPxlPos2_DistanceSensor;
-
-    int armPositionState;
     ElapsedTime pixelDropTimer;
     TfodProcessor myTfodProcessor;
-    boolean armMoveToHome;
-    boolean armMoveToBack;
-    boolean armMoveToFront;
-    boolean armMoveToHang;
     int autonState;
     int cObjectLocationUnknown;
     int foo;
@@ -54,22 +46,16 @@ public class HydrAuton extends LinearOpMode {
     int cPixelPos1Dist;
     int cPixelPos2Dist;
     int cPixelFrontScoreRunTimeMs;
-    double cCountsPerInch;
-    List cLowerArmPositions;
     boolean USE_WEBCAM;
     VisionPortal myVisionPortal;
     double cCasBackToFront;
     double cCasStop;
     double cCasFrontToBack;
-    List cUpperArmPositions;
     int cPixelDropRunTimeMs;
-    List cArmPositionNames;
     int objectLocation;
     int cObjectLocationLeft;
     int cObjectLocationCenter;
     int cObjectLocationRight;
-    double cDriveNormal;
-    double cDriveSlow;
     int cXvalueForLeftToCenterObject;
     private long pixelDropTimeStart;
 
@@ -81,19 +67,10 @@ public class HydrAuton extends LinearOpMode {
         double cWheelDiameter;
         double cWheelCircumference;
         double cCountsPerWheelRevolution;
-        int cDriveBoosted;
-        int cLowerArmPos0Home;
-        int cUpperArmPos0Home;
-        int cLowerArmPos1LiftBox;
-        int cUpperArmPos1LiftBox;
-        int cLowerArmPos2LiftArm;
-        int cUpperArmPos2LiftArm;
-        int cLowerArmPos3BackScore;
-        int cUpperArmPos3BackScore;
-        int cLowerArmPos4FrontScore;
-        int cUpperArmPos4FrontScore;
-        int cLowerArmPos5Hang;
-        int cUpperArmPos5Hang;
+        double cCountsPerInch;
+        double cDriveBoosted;
+        double cDriveNormal;
+        double cDriveSlow;
         int cIntakeIn;
         int cIntakeOut;
         int cMaxObjectSearchTimeMs;
@@ -101,8 +78,6 @@ public class HydrAuton extends LinearOpMode {
         boolean autonAbort;
 
         imu = hardwareMap.get(IMU.class, "imu");
-        MotLwrArm = hardwareMap.get(DcMotor.class, "MotLwrArm");
-        MotUprArm = hardwareMap.get(DcMotor.class, "MotUprArm");
         SrvPxlPos1 = hardwareMap.get(Servo.class, "SrvPxlPos1");
         SrvPxlPos2 = hardwareMap.get(Servo.class, "SrvPxlPos2");
         SenColPxlPos1 = hardwareMap.get(ColorSensor.class, "SenColPxlPos1");
@@ -127,33 +102,6 @@ public class HydrAuton extends LinearOpMode {
         // Arm motor power scaling
         cLowerArmAutoMotorPwr = 0.5;
         cUpperArmAutoMotorPwr = 0.4;
-        // Arm position constants
-        armPositionState = 0;
-        //
-        cLowerArmPos0Home = 0;
-        cUpperArmPos0Home = 0;
-        //
-        cLowerArmPos1LiftBox = 0;
-        cUpperArmPos1LiftBox = -120;
-        //
-        cLowerArmPos2LiftArm = -450;
-        cUpperArmPos2LiftArm = -120;
-        //
-        cLowerArmPos3BackScore = -1500;
-        cUpperArmPos3BackScore = -440;
-        //
-        cLowerArmPos4FrontScore = -700;
-        cUpperArmPos4FrontScore = 750;
-        //
-        cLowerArmPos5Hang = -1200;
-        cUpperArmPos5Hang = 850;
-        cLowerArmPositions = JavaUtil.createListWith(cLowerArmPos0Home, cLowerArmPos1LiftBox, cLowerArmPos2LiftArm, cLowerArmPos3BackScore, cLowerArmPos4FrontScore, cLowerArmPos5Hang);
-        cUpperArmPositions = JavaUtil.createListWith(cUpperArmPos0Home, cUpperArmPos1LiftBox, cUpperArmPos2LiftArm, cUpperArmPos3BackScore, cUpperArmPos4FrontScore, cUpperArmPos5Hang);
-        cArmPositionNames = JavaUtil.makeListFromText("Home,Lift Box,Lift Arm,Back Score, Front Score,Hang", ",");
-        armMoveToHome = false;
-        armMoveToFront = false;
-        armMoveToBack = false;
-        armMoveToHang = false;
         // Servo speeds for the cassette
         cCasFrontToBack = 0.8;
         cCasBackToFront = 0.2;
@@ -190,9 +138,11 @@ public class HydrAuton extends LinearOpMode {
         // Expansion Hub, specifying the hub's orientation on the robot via the direction that
         // the REV Robotics logo is facing and the direction that the USB ports are facing.
         imu.initialize(new IMU.Parameters(new RevHubOrientationOnRobot(RevHubOrientationOnRobot.LogoFacingDirection.RIGHT, RevHubOrientationOnRobot.UsbFacingDirection.UP)));
-        InitArm();
+        Arm = new HydraArm();
+        Drive = new HydraDrive();
         Drive.Init("MotDrFrLt", "MotDrFrRt", "MotDrBkLt",
                 "MotDrBkRt", cCountsPerInch, cDriveBoosted, cDriveNormal, cDriveSlow);
+        Arm.Init("MotUprArm", "MotLwrArm", cUpperArmAutoMotorPwr, cLowerArmAutoMotorPwr);
         InitCassette();
         Intake.Init("MotPxlIntk", cIntakeIn, cIntakeOut);
         // This 2023-2024 OpMode illustrates the basics of TensorFlow Object Detection.
@@ -242,34 +192,6 @@ public class HydrAuton extends LinearOpMode {
             // Share the CPU.
             sleep(20);
         }
-    }
-
-    /**
-     * Describe this function...
-     */
-    private void InitArm() {
-        // Brake the motors when power is zero. This keeps the arm from falling
-        MotLwrArm.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        MotUprArm.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        MotLwrArm.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        MotUprArm.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-    }
-
-    /**
-     * Describe this function...
-     */
-    private void ProcessArm() {
-        double nextArmPosition;
-
-        if (AllowArmChange()) {
-            nextArmPosition = ArmControlSM();
-            SetLwrArmPos(((Integer) JavaUtil.inListGet(cLowerArmPositions, JavaUtil.AtMode.FROM_START, ((nextArmPosition + 1) - 1), false)).intValue());
-            SetUprArmPos(((Integer) JavaUtil.inListGet(cUpperArmPositions, JavaUtil.AtMode.FROM_START, ((nextArmPosition + 1) - 1), false)).intValue());
-            telemetry.addData("ArmPos", ((Double) JavaUtil.inListGet(cArmPositionNames, JavaUtil.AtMode.FROM_START, ((nextArmPosition + 1) - 1), false)).doubleValue());
-        }
-        telemetry.addData("LrArm", MotLwrArm.getCurrentPosition());
-        telemetry.addData("UprArm", MotUprArm.getCurrentPosition());
-        telemetry.addData("Manual Arm", 123);
     }
 
     /**
@@ -329,15 +251,6 @@ public class HydrAuton extends LinearOpMode {
     }
 
     /**
-     * Describe this function...
-     */
-    private void SetLwrArmPos(int inLwrArmPos) {
-        MotLwrArm.setTargetPosition(inLwrArmPos);
-        MotLwrArm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        MotLwrArm.setPower(cLowerArmAutoMotorPwr);
-    }
-
-    /**
      * Initialize TensorFlow Object Detection.
      */
     private void initTfod2() {
@@ -367,47 +280,6 @@ public class HydrAuton extends LinearOpMode {
         myVisionPortalBuilder.addProcessor(myTfodProcessor);
         // Create a VisionPortal by calling build.
         myVisionPortal = myVisionPortalBuilder.build();
-    }
-
-    /**
-     * Describe this function...
-     */
-    private void SetUprArmPos(int inUprArmPos) {
-        MotUprArm.setTargetPosition(inUprArmPos);
-        MotUprArm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        MotUprArm.setPower(cUpperArmAutoMotorPwr);
-    }
-
-    /**
-     * Describe this function...
-     */
-    private int ArmControlSM() {
-        if (armMoveToHome) {
-            if (armPositionState > 2) {
-                armPositionState = 2;
-            } else if (armPositionState) {
-                armPositionState += -1;
-            }
-        } else if (armMoveToBack) {
-            if (armPositionState < 2) {
-                armPositionState += 1;
-            } else {
-                armPositionState = 3;
-            }
-        } else if (armMoveToFront) {
-            if (armPositionState < 2) {
-                armPositionState += 1;
-            } else {
-                armPositionState = 4;
-            }
-        } else if (armMoveToHang) {
-            if (armPositionState < 2) {
-                armPositionState += 1;
-            } else {
-                armPositionState = 5;
-            }
-        }
-        return armPositionState;
     }
 
     /**
@@ -478,24 +350,6 @@ public class HydrAuton extends LinearOpMode {
         inDirection = Math.min(Math.max(inDirection, 0), 1);
         SrvPxlPos1.setPosition(inDirection);
         telemetry.addData("PixelPos1Servo", inDirection);
-    }
-
-    /**
-     * Describe this function...
-     */
-    private boolean AllowArmChange() {
-        int upperArmError;
-        int lowerArmError;
-
-        upperArmError = Math.abs(MotUprArm.getTargetPosition() - MotUprArm.getCurrentPosition());
-        lowerArmError = Math.abs(MotLwrArm.getTargetPosition() - MotLwrArm.getCurrentPosition());
-        if (lowerArmError <= 15 && upperArmError <= 15) {
-            return true;
-        }
-        if (!(MotLwrArm.isBusy() || MotUprArm.isBusy())) {
-            return true;
-        }
-        return false;
     }
 
     /**
@@ -1305,13 +1159,11 @@ public class HydrAuton extends LinearOpMode {
      */
     private void ScoreBack() {
         if (autonState == 300) {
-            armMoveToBack = true;
-            ProcessArm();
-            autonState += 1;
+            if (Arm.RunAction(HydraArmMovements.ArmMoveToBack)) {
+                autonState += 1;
+            }
         } else if (autonState == 301) {
-            ProcessArm();
-            if (armPositionState == 3 && AllowArmChange()) {
-                armMoveToBack = false;
+            if (Arm.RunAction(HydraArmMovements.ArmMoveToBack)) {
                 autonState += 1;
             }
         } else if (autonState == 302) {
@@ -1342,13 +1194,11 @@ public class HydrAuton extends LinearOpMode {
      */
     private void ScoreFront() {
         if (autonState == 300) {
-            armMoveToFront = true;
-            ProcessArm();
-            autonState += 1;
+            if (Arm.RunAction(HydraArmMovements.ArmMoveToFront)) {
+                autonState += 1;
+            }
         } else if (autonState == 301) {
-            ProcessArm();
-            if (armPositionState == 4 && AllowArmChange()) {
-                armMoveToFront = false;
+            if (Arm.RunAction(HydraArmMovements.ArmMoveToFront)) {
                 autonState += 1;
             }
         } else if (autonState == 302) {
@@ -1415,13 +1265,11 @@ public class HydrAuton extends LinearOpMode {
      */
     private void ArmToHome() {
         if (autonState == 400) {
-            armMoveToHome = true;
-            ProcessArm();
-            autonState += 1;
+            if (Arm.RunAction(HydraArmMovements.ArmMoveToHome)) {
+                autonState += 1;
+            }
         } else if (autonState == 401) {
-            ProcessArm();
-            if (armPositionState == 0 && AllowArmChange()) {
-                armMoveToHome = false;
+            if (Arm.RunAction(HydraArmMovements.ArmMoveToHome)) {
                 autonState = 500;
             }
         } else {
