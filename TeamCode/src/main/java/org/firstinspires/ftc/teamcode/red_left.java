@@ -31,7 +31,6 @@ package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.IMU;
@@ -39,17 +38,15 @@ import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
 
-import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
-import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
-
 import org.firstinspires.ftc.robotcore.external.hardware.camera.BuiltinCameraDirection;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
 import org.firstinspires.ftc.robotcore.external.tfod.Recognition;
 import org.firstinspires.ftc.teamcode.subsystems.extension;
 import org.firstinspires.ftc.vision.VisionPortal;
 import org.firstinspires.ftc.vision.tfod.TfodProcessor;
 
-import java.security.cert.Extension;
 import java.util.List;
 
 /*
@@ -100,16 +97,17 @@ import java.util.List;
  *  Remove or comment out the @Disabled line to add this OpMode to the Driver Station OpMode list
  */
 
-@Autonomous(name="Robot: Auto Drive By Gyro", group="Robot")
+@Autonomous(name="Red_left(not tested yet)", group="Robot")
 
-public class RobotAutoDriveByGyro_Linear extends LinearOpMode {
+public class red_left extends LinearOpMode {
+    int bruhwhy = 0;
     boolean stoooooopppp = false;
     int drive3=7;
     int idk=0;
     int drive2=0;
     int drive2t=0;
     int driveforward = 18;
-    int driveturn = -45;
+    int driveturn = 45;
     int zone=3;
     private static final boolean USE_WEBCAM = true;
     private TfodProcessor tfod;
@@ -238,8 +236,8 @@ public class RobotAutoDriveByGyro_Linear extends LinearOpMode {
 
         driveStraight(DRIVE_SPEED, 25.0, 0.0,true);
         holdHeadingandscan( TURN_SPEED, 0, 4);
-        turnToHeading( TURN_SPEED, -45.0);
-        holdHeadingandscan1( TURN_SPEED, -45.0, 4);
+        turnToHeading( TURN_SPEED, 45.0);
+        holdHeadingandscan1( TURN_SPEED, 45.0, 4);
 
         turnToHeading( TURN_SPEED, 0);
         holdHeading(TURN_SPEED,0,0.5);
@@ -253,9 +251,9 @@ public class RobotAutoDriveByGyro_Linear extends LinearOpMode {
         holdHeading(TURN_SPEED,0,0.5);
         driveStraight(DRIVE_SPEED,drive3,0,false);
         holdHeading(TURN_SPEED,0,0.5);
-        turnToHeading( TURN_SPEED, -90);
-        holdHeading(TURN_SPEED,-90,0.5);
-        driveStraight(DRIVE_SPEED,95,-90,false);
+        turnToHeading( TURN_SPEED, 90);
+        holdHeading(TURN_SPEED,90,0.5);
+        driveStraight(DRIVE_SPEED,95,90,false);
        // turnToHeading( TURN_SPEED, -110);
         //driveStraight(DRIVE_SPEED,80,-110,false);
 
@@ -467,7 +465,7 @@ public class RobotAutoDriveByGyro_Linear extends LinearOpMode {
             if(idk>=1){
                 zone=1;
                 driveforward=29;
-                driveturn=-17;
+                driveturn=17;
                 drive3=0;
                 stoooooopppp = true;
             }
@@ -491,16 +489,20 @@ public class RobotAutoDriveByGyro_Linear extends LinearOpMode {
 
         // keep looping while we have time remaining.
         while ((opModeIsActive() && (holdTimer.time() < holdTime))&& zone!=1) {
-            if(holdTimer.time()>holdTime*0.2)telemetryTfod();
+            if((holdTimer.time()>holdTime*0.2)&&(holdTimer.time()<holdTime*0.8))telemetryTfod();
             // Determine required steering to keep on heading
             turnSpeed = getSteeringCorrection(heading, P_TURN_GAIN);
             telemetryTfod();
+
             if(idk>=1){
+                bruhwhy++;
+            }
+            if(bruhwhy>=2){
                 zone=2;
                 driveforward=14;
-                driveturn=45;
+                driveturn=-45;
                 drive2=4;
-                drive2t=90;
+                drive2t=-90;
                 drive3=5;
                 break;
             }
@@ -514,6 +516,7 @@ public class RobotAutoDriveByGyro_Linear extends LinearOpMode {
             sendTelemetry(false);
         }
         visionPortal.stopStreaming();
+        bruhwhy=0;
         // Stop all motion;
         moveRobot(0, 0);
     }
