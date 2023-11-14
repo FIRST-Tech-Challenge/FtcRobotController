@@ -554,7 +554,7 @@ public class Robot {
         boolean tagVisible = false;
         boolean aligned = false;
         List<AprilTagDetection> myAprilTagDetections;
-        double distanceToBoard = 15;
+        double distanceToBoard = 14;
         int polarity = isRedAlliance ? -1 : 1;
         int PIXEL_SIZE = 4;
         int visionTimeout = 4; // timeout detection after 4 seconds
@@ -659,51 +659,28 @@ public class Robot {
                 Log.d("vision", "moveToMarker: Inner Spike");
 
                 // Calculate distances
-                vertical1 = 14;
+                vertical1 = 0;
                 horizontal2 = 20;
                 horizontal3 = 0;
-                vertical4 = 14; //adjust for left
+                vertical4 = 0; //adjust for left
                 horizontal5 = HORIZONTAL_TOTAL_BEFORE_CHUNKING - horizontal2 + horizontal3;
                 vertical6 = VERTICAL_TOTAL + vertical1 - vertical4;
                 horizontal7 = HORIZONTAL_TOTAL_BEFORE_CHUNKING - 15;
 
                 // Start moving
-                mecanumBlocking(vertical1, isRedAlliance, 0.5); //go left if blue, go right if red
-                setHeading(0, 0.7);
-                opMode.sleep(5000);
                 straightBlocking(horizontal2, false, 0.7); //go forward FAST
+                setHeading(45 * polarity, 0.25); //turn right
+                sleeplessStraightBlocking(7, false, 0.25); //forward
                 setServoPosBlocking(spikeServo, 0.2); //lift finger
-                opMode.sleep(5000);
-                straightBlocking(horizontal3, true, 1); //move back FAST
-                setHeading(0, 0.7);
-                opMode.sleep(5000);
-                mecanumBlocking(vertical4, !isRedAlliance, 0.5); //move left if red
-                setHeading(0, 0.7);
-                opMode.sleep(5000);
+                straightBlocking(7, true, 0.7); //dropoff, back
+                setHeading(0, 0.7); //turn back
                 straightBlocking(horizontal5, false, 0.7); //go forward & around marker
                 setHeading(90 * polarity, 0.7); //turn
-                opMode.sleep(5000);
                 moveStraightChunkingDONT_USE_NEGATIVE(vertical6, false, 0.7, 90 * polarity, 0.7);
                 setHeading(90 * polarity, 0.7);
-                opMode.sleep(5000);
-                mecanumBlocking(horizontal7, polarity == 1, 0.5); //mecanum directly in front of board left if blue
+                mecanumBlocking(horizontal7, !isRedAlliance, 0.5); //mecanum directly in front of board left if blue
                 setHeading(90 * polarity, 0.7);
                 break;
-
-            /*
-            straightBlocking(20, false, 0.25); //forward
-            setHeading(45 * polarity, 0.25); //turn right
-            sleeplessStraightBlocking(8, false, 0.25); //forward
-            setServoPosBlocking(spikeServo, 0.2);
-            straightBlocking(8, true, 0.7); //dropoff, back
-            setHeading(0, 0.7); //turn back
-            straightBlocking(34, false, 0.7); //forward past spike
-            setHeading(90 * polarity, 0.7); //turn right toward truss
-            straightBlocking(77, false, 0.7); //forward under truss
-            setHeading(90 * polarity, 0.75);
-            mecanumBlocking(35, false, 0.7); //mecanum directly in front of board
-            setHeading(90 * polarity, 0.7);
-            */
             } else if ((markerPos == MarkerDetector.MARKER_POSITION.LEFT && isRedAlliance)
                     || (markerPos == MarkerDetector.MARKER_POSITION.RIGHT && !isRedAlliance)) {
                 Log.d("vision", "moveToMarker: Outer Spike");
