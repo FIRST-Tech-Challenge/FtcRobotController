@@ -53,7 +53,7 @@ public class MarkerProcessor implements VisionProcessor {
         avgLeftY = detector.avgLeftY;
         avgCenterY = detector.avgCenterY;
         avgRightY = detector.avgRightY;
-//        telemetry.addLine("process frame");
+        telemetry.addLine("process frame");
 //        telemetry.update();
         workingMatrix = detector.processFrame(input);
         return workingMatrix;
