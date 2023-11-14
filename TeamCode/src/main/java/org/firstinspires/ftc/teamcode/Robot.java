@@ -487,6 +487,8 @@ public class Robot {
         telemetry.addData("center red average", avgCenterCr);
         telemetry.addData("right red average", avgRightCr);
 
+        //opMode.sleep(20000);
+
 
         while (position == MarkerDetector.MARKER_POSITION.UNDETECTED && opMode.opModeIsActive()) {
             Log.d("vision", "undetected marker, keep looking" + visionPortal.getCameraState());
@@ -498,7 +500,7 @@ public class Robot {
         }
 
         //print position
-        Log.d("vision", "detected position: " + position);
+        //Log.d("vision", "detected position: " + position);
 
 
         //save marker position, apriltag position
