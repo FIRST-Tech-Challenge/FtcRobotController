@@ -9,15 +9,17 @@ public class TestingWade extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
 
-        Robot robot = new Robot(hardwareMap, this, telemetry, true);
+        Robot robot = new Robot(hardwareMap, this, telemetry, false);
         robot.setUpDrivetrainMotors();
+        robot.initVisionProcessing();
         waitForStart();
 
         while (opModeIsActive()) {
-
-            robot.mecanumBlocking(2, true, 0.75);
-            this.sleep(2000);
-            robot.mecanumBlocking(2, false, 0.75);
+            robot.setMarkerPos(MarkerDetector.MARKER_POSITION.RIGHT);
+            robot.setWantedAprTagId(MarkerDetector.MARKER_POSITION.RIGHT, MarkerDetector.ALLIANCE_COLOR.BLUE);
+            robot.setHeading(90, 0.7);
+            robot.alignToBoard();
+            this.sleep(100);
             break;
         }
     }

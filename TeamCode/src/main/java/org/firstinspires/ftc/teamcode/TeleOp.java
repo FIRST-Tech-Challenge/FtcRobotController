@@ -204,17 +204,28 @@ public class TeleOp extends LinearOpMode {
             tray.setPosition(trayPos);
 
             //GAMEPAD 1 CONTROLS DRIVER
+
+            /*
             if (gamepad1.a) {
                 spikeServo.setPosition(0.4);
             }
             if (gamepad1.b) {
                 spikeServo.setPosition(0.2);
-            }
+            }*/
 
             //gamepad 1 right bumper launches drone
             if (gamepad1.right_bumper) {
                 launcher.setPosition(0.7);
             }
+
+            if (gamepad1.x) {
+                if (robot.isRedAlliance) {
+                    robot.setHeading(-90, 0.75);
+                } else {
+                    robot.setHeading(90, 0.75);
+                }
+            }
+
 
             //y is intake at back, a is intake at front
             //TODO: test this and all polarity logic

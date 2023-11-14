@@ -10,18 +10,19 @@ public class ShortBlueAuto extends LinearOpMode {
     public void runOpMode() throws InterruptedException {
 
         //robot, dt motors, vision processing setup
-        Robot robot = new Robot(hardwareMap, this, telemetry, true);
+        Robot robot = new Robot(hardwareMap, this, telemetry, false);
         robot.setUpDrivetrainMotors();
         robot.initVisionProcessing();
 
         waitForStart();
 
-        if (opModeIsActive()) {
+        while (opModeIsActive()) {
             robot.detectMarkerPosition();
             robot.shortMoveToBoard();
             robot.alignToBoard();
             robot.autoOuttake();
-            robot.parkRight();
+            robot.parkBot();
+            break;
         }
     }
 }

@@ -16,12 +16,13 @@ public class LongBlueAuto extends LinearOpMode {
 
         waitForStart();
 
-        if (opModeIsActive()) {
+        while (opModeIsActive()) {
             robot.detectMarkerPosition();
             robot.longMoveToBoard();
             robot.alignToBoard();
             robot.autoOuttake();
-            //robot.parkLeft();
+            robot.parkBot();
+            break;
         }
     }
 }
