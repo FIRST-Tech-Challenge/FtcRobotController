@@ -16,12 +16,13 @@ class ServoTester: DriveMethods() {
         ServoBeingTested?.position = 0.55
         while (opModeIsActive()) {
             if (gamepad2.y) {
-                ServoBeingTested?.position = ServoBeingTested?.position?.plus(0.2)!!
+                ServoBeingTested?.position = ServoBeingTested?.position?.plus(0.05)!!
                 sleep(150)
             }
 
             if (gamepad2.x) {
-                ServoBeingTested?.position = ServoBeingTested?.position?.minus(0.2)!!
+                ServoBeingTested?.position = ServoBeingTested?.position?.minus(0.05
+                )!!
                 sleep(150)
             }
             telemetry.addData("Servo Value: ", ServoBeingTested?.position)

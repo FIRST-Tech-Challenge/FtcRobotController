@@ -116,7 +116,7 @@ open class DriveMethods: LinearOpMode() {
 
     fun includesCup(recognitions: List<Recognition>): Boolean {
         for (recognition in recognitions) {
-            if (recognition.label == "cup" || recognition.label == "parking meter" ||  recognition.label == "airplane") return true
+            if (recognition.label == "cup" || recognition.label == "parking meter" ||  recognition.label == "airplane" ||recognition.label == "suitcase"||recognition.label == "fire hydrant") return true
         }
 
         return false
@@ -124,7 +124,7 @@ open class DriveMethods: LinearOpMode() {
 
     fun getCup(recognitions: List<Recognition>): Recognition? {
         for (recognition in recognitions) {
-            if (recognition.label == "cup" || recognition.label == "parking meter"||  recognition.label == "airplane") return recognition
+            if (recognition.label == "cup" || recognition.label == "parking meter"||  recognition.label == "airplane"||recognition.label == "suitcase"||recognition.label == "fire hydrant") return recognition
         }
         return null
     }

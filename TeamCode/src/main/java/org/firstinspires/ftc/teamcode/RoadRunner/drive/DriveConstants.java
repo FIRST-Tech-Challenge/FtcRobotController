@@ -45,8 +45,8 @@ public class DriveConstants {
      * convenience. Make sure to exclude any gear ratio included in MOTOR_CONFIG from GEAR_RATIO.
      */
     public static double WHEEL_RADIUS = 1.889765; // in
-    public static double GEAR_RATIO = 1; // output (wheel) speed / input (motor) speed
-    public static double TRACK_WIDTH = 17.5; // in
+    public static double GEAR_RATIO = 1.0406; // output (wheel) speed / input (motor) speed
+    public static double TRACK_WIDTH = 17.33; // in
 
     /*
      * These are the feedforward parameters used to model the drive motor behavior. If you are using
@@ -67,8 +67,8 @@ public class DriveConstants {
      */
     public static double MAX_VEL = 48;
     public static double MAX_ACCEL = 48;
-    public static double MAX_ANG_VEL = 3;
-    public static double MAX_ANG_ACCEL = Math.toRadians(180);
+    public static double MAX_ANG_VEL = 2;
+    public static double MAX_ANG_ACCEL = 1.5;
 
     /*
      * Adjust the orientations here to match your robot. See the FTC SDK documentation for details.
