@@ -150,36 +150,41 @@ public class Robot {
         markerPos = position;
     }
 
-    //TODO: change boolean to enum later
     public void setWantedAprTagId(MarkerDetector.MARKER_POSITION position, MarkerDetector.ALLIANCE_COLOR allianceColor) {
         if (allianceColor == MarkerDetector.ALLIANCE_COLOR.RED) {
             switch (position) {
                 case CENTER:
+                    Log.d("vision", "setWantedAprTagId: tag = " + 5);
                     wantedAprTagId = 5;
                     break;
                 case RIGHT:
+                    Log.d("vision", "setWantedAprTagId: tag = " + 6);
                     wantedAprTagId = 6;
                     break;
                 case LEFT:
+                    Log.d("vision", "setWantedAprTagId: tag = " + 4);
                     wantedAprTagId = 4;
                     break;
                 default:
-                    Log.d("vision", "setWantedAprTagId: enter default");
+                    Log.d("vision", "setWantedAprTagId: enter default. tag = " + 5);
                     wantedAprTagId = 5;
             }
         } else {
             switch (position) {
                 case CENTER:
+                    Log.d("vision", "setWantedAprTagId: tag = " + 2);
                     wantedAprTagId = 2;
                     break;
                 case RIGHT:
+                    Log.d("vision", "setWantedAprTagId: tag = " + 3);
                     wantedAprTagId = 3;
                     break;
                 case LEFT:
+                    Log.d("vision", "setWantedAprTagId: tag = " + 1);
                     wantedAprTagId = 1;
                     break;
                 default:
-                    Log.d("vision", "setWantedAprTagId: enter default");
+                    Log.d("vision", "setWantedAprTagId: enter default. tag = " + 2);
                     wantedAprTagId = 2;
             }
         }
@@ -464,53 +469,34 @@ public class Robot {
 
     public void detectMarkerPosition() {
 
+        int visionTimeout = 2; // timeout detection after 2 seconds
+        double time;
+
         //detect marker position
         MarkerDetector.MARKER_POSITION position = markerProcessor.getPosition();
         elapsedTime.reset();
-        double time = elapsedTime.seconds();
-        avgLeftCb = markerProcessor.avgLeftCb;
-        avgCenterCb = markerProcessor.avgCenterCb;
-        avgRightCb = markerProcessor.avgRightCb;
-        avgLeftCr = markerProcessor.avgLeftCr;
-        avgCenterCr = markerProcessor.avgCenterCr;
-        avgRightCr = markerProcessor.avgRightCr;
-        avgLeftY = markerProcessor.avgLeftY;
-        avgCenterY = markerProcessor.avgCenterY;
-        avgRightY = markerProcessor.avgRightY;
-        telemetry.addData("left Y average", avgLeftY);
-        telemetry.addData("center Y average", avgCenterY);
-        telemetry.addData("right Y average", avgRightY);
-        telemetry.addData("left blue average", avgLeftCb);
-        telemetry.addData("center blue average", avgCenterCb);
-        telemetry.addData("right blue average", avgRightCb);
-        telemetry.addData("left red average", avgLeftCr);
-        telemetry.addData("center red average", avgCenterCr);
-        telemetry.addData("right red average", avgRightCr);
+        time = elapsedTime.seconds();
 
-        //opMode.sleep(20000);
-
-
-        while (position == MarkerDetector.MARKER_POSITION.UNDETECTED && opMode.opModeIsActive()) {
-            Log.d("vision", "undetected marker, keep looking" + visionPortal.getCameraState());
-            position = markerProcessor.getPosition();
-            if (elapsedTime.seconds() > time + 2) {
-                position = MarkerDetector.MARKER_POSITION.CENTER;
-                break;
+        while (opMode.opModeIsActive()) {
+            while (position == MarkerDetector.MARKER_POSITION.UNDETECTED) {
+                Log.d("vision", "undetected marker, keep looking" + visionPortal.getCameraState());
+                position = markerProcessor.getPosition();
+                if (elapsedTime.seconds() > time + visionTimeout) {
+                    position = MarkerDetector.MARKER_POSITION.CENTER;
+                    Log.d("vision", "detected time out. Picking CENTER");
+                    break;
+                }
             }
+            break;
         }
-
-        //print position
-        //Log.d("vision", "detected position: " + position);
-
-
-        //save marker position, apriltag position
+        //save marker position and Apriltag position in robot class
         setMarkerPos(position);
-        telemetry.addData("position", markerPos);
-        telemetry.update();
-
-        //opMode.sleep(15000); //TODO DELETE (WAS FOR DEBUG)
         setWantedAprTagId(position, isRedAlliance ? MarkerDetector.ALLIANCE_COLOR.RED : MarkerDetector.ALLIANCE_COLOR.BLUE);
 
+        //print position
+        Log.d("vision", "detected position: " + position);
+        telemetry.addData("position ", markerPos);
+        telemetry.update();
     }
 
     public void shortMoveToBoard() { //TODO: add polarity, use in ShortRedAuto.java, and TEST
@@ -568,77 +554,67 @@ public class Robot {
         boolean tagVisible = false;
         boolean aligned = false;
         List<AprilTagDetection> myAprilTagDetections;
-        double distanceToBoard = -1;//bc camera behind robot
+        double distanceToBoard = 15;
+        int polarity = isRedAlliance ? -1 : 1;
+        int PIXEL_SIZE = 3;
+        int visionTimeout = 4; // timeout detection after 4 seconds
+        elapsedTime.reset();
+        double startingTime = elapsedTime.seconds();
 
-        while (opMode.opModeIsActive() && !aligned) { //while robot isnt aligned to tag
-
-            //get detections
-            myAprilTagDetections = aprilTagProcessor.getDetections();
-
-            int polarity;
-            if (isRedAlliance) {
-                polarity = -1;
-            } else {
-                polarity = 1;
-            }
-
-            //process detection list
-            for (AprilTagDetection detection : myAprilTagDetections) {
-
-                if (detection.metadata != null) { //if there's an apriltag
-
-                    if (detection.id == wantedAprTagId) { //check if its desired
-                        Log.d("vision", "runOpMode: tag visible - this one " + wantedAprTagId);
-                        tagVisible = true; //if it is, the desired tag is visible
-
-                        //alignment based on bearing
-                        if (detection.ftcPose.bearing > 5) {
-                            Log.d("vision", "runOpMode: bearing > 5, move left");
-                            mecanumBlocking(1, true, 0.75);
-                            setHeading(90 * polarity, 0.7);
-                            opMode.sleep(100);
-                            aligned = false;
-                        } else if (detection.ftcPose.bearing < -5) {
-                            Log.d("vision", "runOpMode: bearing < -5, move right");
-                            mecanumBlocking(1, false, 0.75);
-                            setHeading(90 * polarity, 0.7);
-                            opMode.sleep(100);
-                            aligned = false;
-                        } else {
-                            Log.d("vision", "runOpMode: aligned");
-                            distanceToBoard = detection.ftcPose.range - 4; //TODO: this 4 is arbitrary
-                            tagVisible = true;
-                            aligned = true;
+        while (opMode.opModeIsActive()) { //while robot isnt aligned to tag
+            while (!aligned) {
+                //get detections
+                myAprilTagDetections = aprilTagProcessor.getDetections();
+                //process detection list
+                for (AprilTagDetection detection : myAprilTagDetections) {
+                    if (detection.metadata != null) { //if there's an apriltag
+                        if (detection.id == wantedAprTagId) { //check if its desired tag
+                            Log.d("vision", "runOpMode: tag visible - this one " + wantedAprTagId);
+                            tagVisible = true; //if it is, the desired tag is visible
+                            //alignment based on bearing
+                            if (Math.abs(detection.ftcPose.bearing) > 5) {
+                                Log.d("vision", "runOpMode: bearing > +/-5, move left");
+                                mecanumBlocking(1, (detection.ftcPose.bearing > 0), 0.75);
+                                setHeading(90 * polarity, 0.7);
+                                opMode.sleep(100);
+                                aligned = false;
+                            } else {
+                                Log.d("vision", "runOpMode: aligned");
+                                Log.d("vision", "alignToBoard: Range is " + detection.ftcPose.range);
+                                Log.d("vision", "Bearing is " + detection.ftcPose.bearing);
+                                double absBearing = Math.abs(detection.ftcPose.bearing);
+                                distanceToBoard = Math.abs(detection.ftcPose.range) - PIXEL_SIZE;
+                                Log.d("vision", "alignToBoard: distanceToBoard is " + distanceToBoard);
+                                tagVisible = true;
+                                aligned = true;
+                            }
                         }
                     }
-                }
 
-                if (!tagVisible) { //if tag isnt visible
-                    Log.d("vision", "runOpMode: tag not visible, move back");
-                    straightBlocking(1, true, 0.6); //V IMP: should NOT go back into partner's space
-                    tagVisible = false;
-                    aligned = false;
+                    if (!tagVisible) { //if tag isnt visible
+                        Log.d("vision", "runOpMode: tag not visible, move back");
+                        straightBlocking(1, true, 0.6); //V IMP: should NOT go back into partner's space
+                        tagVisible = false;
+                        aligned = false;
+                    }
+                }
+                if (!aligned && elapsedTime.seconds() > startingTime + visionTimeout) { //TIMEOUT SITUATION
+                    Log.d("vision", "alignToBoard: apriltag detection timed out");
+                    distanceToBoard = 15;
+                    break;
                 }
             }
-        }
 
-        Log.d("vision", "alignToBoard: broken out of !aligned while loop");
-        if (aligned) {
-            Log.d("vision", "alignToBoard: aligned is true");
+            Log.d("vision", "alignToBoard: broken out of !aligned while loop");
             straightBlocking(distanceToBoard, false, 0.75);
-
             if (isRedAlliance) {
-                Log.d("vision", "alignToBoard: THIS THIS THIS THIS THIS");
-                setHeading(-90, 0.75); //THIS
-                Log.d("vision", "alignToBoard: DONE DONE DONE DONE DONE");
+                setHeading(-90, 0.75);
             } else {
                 setHeading(90, 0.75);
             }
-
-        } else {
-            Log.d("vision", "alignToBoard: not aligned, still broke out of !aligned. should not be happening");
+            //TODO: do things based on apriltag id
+            break;
         }
-        //TODO: do things based on apriltag id
     }
 
     public void moveStraightChunkingDONT_USE_NEGATIVE(double inches, boolean forward, double maxPower, double globalHeading, double globalHeadingPower) {
@@ -652,47 +628,67 @@ public class Robot {
     }
 
     public void longMoveToBoard() {
-        Log.d("vision", "moveToMarker: Pos " + markerPos);
-        Log.d("vision", "moveToMarker: Tag " + wantedAprTagId);
-
         int polarity;
-        if (isRedAlliance) {
-            polarity = -1;
+        double VERTICAL_TOTAL;
+        double vertical1;
+        double vertical4;
+        double vertical6;
+        double horizontal2;
+        double horizontal3;
+        double HORIZONTAL_TOTAL_BEFORE_CHUNKING;
+        double horizontal5;
+        double horizontal7;
 
-        } else {
-            polarity = 1;
-        }
+        while (opMode.opModeIsActive()) {
+            if (isRedAlliance) {
+                polarity = -1;
+            } else {
+                polarity = 1;
+            }
 
-        setServoPosBlocking(clamp, 0.5);
-        setServoPosBlocking(hook, 0.5);
-        setServoPosBlocking(spikeServo, 0.4);
-        if ((markerPos == MarkerDetector.MARKER_POSITION.RIGHT && isRedAlliance)
-                || (markerPos == MarkerDetector.MARKER_POSITION.LEFT && !isRedAlliance)) {
-            //TODO: RIGHT RIGHT RIGHT RIGHT RIGHT
-            double vertical1 = 14;
-            double vertical4 = 14; //adjust for left
-            double VERTICAL_TOTAL = 75;
-            double vertical6 = VERTICAL_TOTAL + vertical1 - vertical4;
-            double horizontal2 = 20;
-            double horizontal3 = 0;
-            double HORIZONTAL_TOTAL_BEFORE_CHUNKING = 48;
-            double horizontal5 = HORIZONTAL_TOTAL_BEFORE_CHUNKING - horizontal2 + horizontal3;
-            double horizontal7 = HORIZONTAL_TOTAL_BEFORE_CHUNKING - 24;
-            Log.d("vision", "moveToMarker: center or default");
-            mecanumBlocking(vertical1, polarity == -1, 0.5); //go left if blue, go right if red
-            setHeading(0, 0.6);
-            straightBlocking(horizontal2, false, 0.7); //go forward FAST
-            setServoPosBlocking(spikeServo, 0.2); //lift finger
-            straightBlocking(horizontal3, true, 1); //move back FAST
-            setHeading(0, 0.7);
-            mecanumBlocking(vertical4, polarity == 1, 0.7); //move left if red
-            setHeading(0, 0.7);
-            straightBlocking(horizontal5, false, 0.7); //go forward & around marker
-            setHeading(90 * polarity, 0.7); //turn
-            moveStraightChunkingDONT_USE_NEGATIVE(vertical6, false, 0.7, 90 * polarity, 0.7);
-            setHeading(90 * polarity, 0.7);
-            mecanumBlocking(horizontal7, polarity == 1, 0.5); //mecanum directly in front of board left if blue
-            setHeading(90 * polarity, 0.7);
+            setServoPosBlocking(clamp, 0.5);
+            setServoPosBlocking(hook, 0.5);
+            setServoPosBlocking(spikeServo, 0.5);
+
+            Log.d("vision", "moveToMarker: Pos " + markerPos);
+            Log.d("vision", "moveToMarker: Tag " + wantedAprTagId);
+            VERTICAL_TOTAL = 68;
+            HORIZONTAL_TOTAL_BEFORE_CHUNKING = 48;
+            if ((markerPos == MarkerDetector.MARKER_POSITION.RIGHT && isRedAlliance)
+                    || (markerPos == MarkerDetector.MARKER_POSITION.LEFT && !isRedAlliance)) {
+                Log.d("vision", "moveToMarker: Inner Spike");
+
+                // Calculate distances
+                vertical1 = 14;
+                horizontal2 = 20;
+                horizontal3 = 0;
+                vertical4 = 14; //adjust for left
+                horizontal5 = HORIZONTAL_TOTAL_BEFORE_CHUNKING - horizontal2 + horizontal3;
+                vertical6 = VERTICAL_TOTAL + vertical1 - vertical4;
+                horizontal7 = HORIZONTAL_TOTAL_BEFORE_CHUNKING - 24;
+
+                // Start moving
+                mecanumBlocking(vertical1, isRedAlliance, 0.5); //go left if blue, go right if red
+                setHeading(0, 0.7);
+                opMode.sleep(5000);
+                straightBlocking(horizontal2, false, 0.7); //go forward FAST
+                setServoPosBlocking(spikeServo, 0.2); //lift finger
+                opMode.sleep(5000);
+                straightBlocking(horizontal3, true, 1); //move back FAST
+                setHeading(0, 0.7);
+                opMode.sleep(5000);
+                mecanumBlocking(vertical4, !isRedAlliance, 0.5); //move left if red
+                setHeading(0, 0.7);
+                opMode.sleep(5000);
+                straightBlocking(horizontal5, false, 0.7); //go forward & around marker
+                setHeading(90 * polarity, 0.7); //turn
+                opMode.sleep(5000);
+                moveStraightChunkingDONT_USE_NEGATIVE(vertical6, false, 0.7, 90 * polarity, 0.7);
+                setHeading(90 * polarity, 0.7);
+                opMode.sleep(5000);
+                mecanumBlocking(horizontal7, polarity == 1, 0.5); //mecanum directly in front of board left if blue
+                setHeading(90 * polarity, 0.7);
+                break;
 
             /*
             straightBlocking(20, false, 0.25); //forward
@@ -708,105 +704,110 @@ public class Robot {
             mecanumBlocking(35, false, 0.7); //mecanum directly in front of board
             setHeading(90 * polarity, 0.7);
             */
-            //TODO: RIGHT RIGHT RIGHT RIGHT RIGHT
-        } else if ((markerPos == MarkerDetector.MARKER_POSITION.LEFT && isRedAlliance)
-                || (markerPos == MarkerDetector.MARKER_POSITION.RIGHT && !isRedAlliance)) {
-            //TODO: LEFT LEFT LEFT LEFT LEFT
-            double vertical1 = 11;
-            double vertical4 = vertical1; //adjust for left
-            double VERTICAL_TOTAL = 75;
-            double vertical6 = VERTICAL_TOTAL + vertical1 - vertical4;
-            double horizontal2 = 16;
-            double horizontal3 = 10;
-            double HORIZONTAL_TOTAL_BEFORE_CHUNKING = 48;
-            double horizontal5 = HORIZONTAL_TOTAL_BEFORE_CHUNKING - horizontal2 + horizontal3;
-            double horizontal7 = HORIZONTAL_TOTAL_BEFORE_CHUNKING - 27;
-            Log.d("vision", "moveToMarker: center or default");
-            mecanumBlocking(vertical1, polarity == -1, 0.5); //go left if blue, go right if red
-            setHeading(0, 0.6);
-            straightBlocking(horizontal2, false, 0.7); //go forward FAST
-            setServoPosBlocking(spikeServo, 0.2); //lift finger
-            straightBlocking(horizontal3, true, 1); //move back FAST
-            setHeading(0, 0.7);
-            mecanumBlocking(vertical4, polarity == 1, 0.7); //move left if red
-            setHeading(0, 0.7);
-            straightBlocking(horizontal5, false, 0.7); //go forward & around marker
-            setHeading(90 * polarity, 0.7); //turn
-            moveStraightChunkingDONT_USE_NEGATIVE(vertical6, false, 0.7, 90 * polarity, 0.7);
-            setHeading(90 * polarity, 0.7);
-            mecanumBlocking(horizontal7, polarity == 1, 0.5); //mecanum directly in front of board left if blue
-            setHeading(90 * polarity, 0.7);
-            /*
-            straightBlocking(2, false, 0.25);
-            setHeading(0, 0.25);
-            mecanumBlocking(14, true, 0.25);
-            setHeading(0, 0.25);
-            sleeplessStraightBlocking(20, false, 0.7);
-            setServoPosBlocking(spikeServo, 0.2);
-            straightBlocking(10, true, 0.75); //dropoff, backward
-            setHeading(0, 0.7); //turn
-            mecanumBlocking(12, false, 0.5); //mecanum right
-            setHeading(0, 0.7);
-            straightBlocking(36, false, 0.7); //forward to truss
-            setHeading(90 * polarity, 0.7); //turn
-            straightBlocking(67, false, 0.7); //forward to red line
-            setHeading(90 * polarity, 0.7);
-            mecanumBlocking(23, false, 0.7); //mecanum directly in front of board
-            setHeading(90 * polarity, 0.7);
-            */
-            //TODO: LEFT LEFT LEFT LEFT LEFT
-        } else { //center, default
-            //TODO: CENTER DEFAULT DEFAULT DEFAULT DEFAULT
-            double vertical1 = 7;
-            double vertical4 = 10;
-            double VERTICAL_TOTAL = 75;
-            double vertical6 = VERTICAL_TOTAL + vertical1 + vertical4;
-            double horizontal2 = 26;
-            double horizontal3 = 6;
-            double HORIZONTAL_TOTAL_BEFORE_CHUNKING = 48;
-            double horizontal5 = HORIZONTAL_TOTAL_BEFORE_CHUNKING - horizontal2 + horizontal3;
-            double horizontal7 = HORIZONTAL_TOTAL_BEFORE_CHUNKING - 30;
-            Log.d("vision", "moveToMarker: center or default");
-            mecanumBlocking(vertical1, polarity == -1, 0.5); //go left if blue, go right if red
-            setHeading(0, 0.6);
-            straightBlocking(horizontal2, false, 0.7); //go forward FAST
-            setServoPosBlocking(spikeServo, 0.2); //lift finger
-            straightBlocking(horizontal3, true, 1); //move back FAST
-            setHeading(0, 0.7);
-            mecanumBlocking(vertical4, polarity == -1, 0.7); //move left if red
-            setHeading(0, 0.7);
-            straightBlocking(horizontal5, false, 0.7); //go forward & around marker
-            setHeading(90 * polarity, 0.7); //turn
-            moveStraightChunkingDONT_USE_NEGATIVE(vertical6, false, 0.7, 90 * polarity, 0.7);
-            setHeading(90 * polarity, 0.7);
-            mecanumBlocking(horizontal7, polarity == 1, 0.5); //mecanum directly in front of board left if blue
-            setHeading(90 * polarity, 0.7);
-            //TODO: CENTER DEFAULT DEFAULT DEFAULT DEFAULT
+            } else if ((markerPos == MarkerDetector.MARKER_POSITION.LEFT && isRedAlliance)
+                    || (markerPos == MarkerDetector.MARKER_POSITION.RIGHT && !isRedAlliance)) {
+                Log.d("vision", "moveToMarker: Outer Spike");
+
+                // Calculate distances
+                vertical1 = 11;
+                horizontal2 = 16;
+                horizontal3 = 10;
+                vertical4 = vertical1; //adjust for left
+                horizontal5 = HORIZONTAL_TOTAL_BEFORE_CHUNKING - horizontal2 + horizontal3;
+                vertical6 = VERTICAL_TOTAL + vertical1 - vertical4;
+                horizontal7 = HORIZONTAL_TOTAL_BEFORE_CHUNKING - 27;
+
+                // Start moving
+                mecanumBlocking(vertical1, isRedAlliance, 0.5); //go left if blue, go right if red
+                setHeading(0, 0.6);
+                straightBlocking(horizontal2, false, 0.7); //go forward FAST
+                setServoPosBlocking(spikeServo, 0.2); //lift finger
+                straightBlocking(horizontal3, true, 1); //move back FAST
+                setHeading(0, 0.7);
+                mecanumBlocking(vertical4, !isRedAlliance, 0.7); //move left if red
+                setHeading(0, 0.7);
+                straightBlocking(horizontal5, false, 0.7); //go forward & around marker
+                setHeading(90 * polarity, 0.7); //turn
+                moveStraightChunkingDONT_USE_NEGATIVE(vertical6, false, 0.7, 90 * polarity, 0.7);
+                setHeading(90 * polarity, 0.7);
+                mecanumBlocking(horizontal7, !isRedAlliance, 0.5); //mecanum directly in front of board left if blue
+                setHeading(90 * polarity, 0.7);
+                break;
+            } else { //center, default
+                Log.d("vision", "moveToMarker: Center Spike");
+
+                // Calculate distances
+                vertical1 = 7;
+                horizontal2 = 26;
+                horizontal3 = 6;
+                vertical4 = 10;
+                horizontal5 = HORIZONTAL_TOTAL_BEFORE_CHUNKING - horizontal2 + horizontal3;
+                vertical6 = VERTICAL_TOTAL + vertical1 + vertical4;
+                horizontal7 = HORIZONTAL_TOTAL_BEFORE_CHUNKING - 30;
+
+                // Start moving
+                mecanumBlocking(vertical1, isRedAlliance, 0.5); //go left if blue, go right if red
+                setHeading(0, 0.6);
+                opMode.sleep(5000);
+                straightBlocking(horizontal2, false, 0.7); //go forward FAST
+                setServoPosBlocking(spikeServo, 0.2); //lift finger
+                opMode.sleep(5000);
+                straightBlocking(horizontal3, true, 1); //move back FAST
+                setHeading(0, 0.7);
+                opMode.sleep(5000);
+                mecanumBlocking(vertical4, isRedAlliance, 0.7); //move left if red
+                setHeading(0, 0.7);
+                opMode.sleep(5000);
+                straightBlocking(horizontal5, false, 0.7); //go forward & around marker
+                setHeading(90 * polarity, 0.7); //turn
+                opMode.sleep(5000);
+                moveStraightChunkingDONT_USE_NEGATIVE(vertical6, false, 0.7, 90 * polarity, 0.7);
+                setHeading(90 * polarity, 0.7);
+                opMode.sleep(5000);
+                mecanumBlocking(horizontal7, !isRedAlliance, 0.5); //mecanum directly in front of board left if blue
+                setHeading(90 * polarity, 0.7);
+                opMode.sleep(5000);
+                break;
+            }
         }
     }
 
-    public void parkLeft() {
-        straightBlocking(2, true, 0.7);
-        if (markerPos == MarkerDetector.MARKER_POSITION.LEFT) {
-            mecanumBlocking(20, true, 0.5);
-        } else if (markerPos == MarkerDetector.MARKER_POSITION.RIGHT) {
-            mecanumBlocking(34, true, 0.5);
-        } else {
-            mecanumBlocking(26, true, 0.5);
+    public void parkBot() {
+        /*
+         * Where to park depends on 3 factors
+         * long or short run  (not optimized for combining this yet)
+         * Red or blue alliance
+         * position of april tag
+         * There are two options to park
+         * Park near wall
+         * Park near center
+         */
+        int parkDistance = 26; // distance from center tag in inches
+        int distanceBetweenTags = 6; // inches
+        while (opMode.opModeIsActive()) {
+            straightBlocking(2, true, 0.7);
+            if (isRedAlliance) {
+                // move left to park
+                if (markerPos == MarkerDetector.MARKER_POSITION.LEFT) {
+                    mecanumBlocking(parkDistance - distanceBetweenTags, true, 0.5);
+                } else if (markerPos == MarkerDetector.MARKER_POSITION.RIGHT) {
+                    mecanumBlocking(parkDistance + distanceBetweenTags, true, 0.5);
+                } else { // center tag
+                    mecanumBlocking(parkDistance, true, 0.5);
+                }
+            } else {
+                // move right to park
+                if (markerPos == MarkerDetector.MARKER_POSITION.LEFT) {
+                    mecanumBlocking(parkDistance + distanceBetweenTags, false, 0.5);
+                } else if (markerPos == MarkerDetector.MARKER_POSITION.RIGHT) {
+                    mecanumBlocking(parkDistance - distanceBetweenTags, false, 0.5);
+                } else { // center tag
+                    mecanumBlocking(parkDistance, false, 0.5);
+                }
+            }
+            straightBlocking(7, false, 0.7);
+            break;
         }
-        straightBlocking(7, false, 0.7);
-    }
-
-    public void parkRight() {
-        straightBlocking(2, true, 0.7);
-        if (markerPos == MarkerDetector.MARKER_POSITION.LEFT) {
-            mecanumBlocking(30, false, 0.5);
-        } else if (markerPos == MarkerDetector.MARKER_POSITION.RIGHT) {
-            mecanumBlocking(20, false, 0.5);
-        } else {
-            mecanumBlocking(23, false, 0.5);
-        }
-        straightBlocking(7, false, 0.7);
     }
 
     public void sleeplessStraightBlocking(double inches, boolean forward, double maxPower) {
