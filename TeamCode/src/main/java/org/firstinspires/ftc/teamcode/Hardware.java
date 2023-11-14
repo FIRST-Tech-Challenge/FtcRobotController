@@ -16,6 +16,21 @@ public class Hardware
     public DcMotorEx backLeft;
     public DcMotorEx backRight;
 
+    //intake declaration
+    public CRServo counteroller;
+    public DcMotor intakeMotor;
+
+    //deposit servo declaration
+    public Servo depositServoOne;
+    public Servo depositServoTwo;
+
+    public Servo leftDeposit;
+    public Servo rightDeposit;
+
+    public boolean leftUp;
+
+    public boolean rightUp;
+
     //helper class variables
     public double x = 0, y = 0, theta = 0;
     public static LinearOpMode currentOpMode;
@@ -31,16 +46,6 @@ public class Hardware
     //used in our odo but not RoadRunner classes
     public static final double ODOM_TICKS_PER_IN = 1831.471685;
     public static double trackwidth = 10.976;
- 
-    //intake motor
-    public DcMotorEx intakeMotor;
-
-    //counterrolled
-    public CRServo counteroller;
-
-    //deposit servo declaration
-    public Servo depositServoOne;
-    public Servo depositServoTwo;
 
     public Hardware(HardwareMap hardwareMap)
     {
@@ -50,21 +55,18 @@ public class Hardware
         backLeft = hardwareMap.get(DcMotorEx.class, "Back Left");
         backRight = hardwareMap.get(DcMotorEx.class, "Back Right");
 
-        frontRight.setDirection(DcMotorSimple.Direction.REVERSE);
-        backRight.setDirection(DcMotorSimple.Direction.REVERSE);
-
         //odom
         leftOdom = hardwareMap.get(DcMotorEx.class, "Front Left");
         rightOdom = hardwareMap.get(DcMotorEx.class, "Front Right");
-        centerOdom = hardwareMap.get(DcMotorEx.class, "Back Left");
+        centerOdom = hardwareMap.get(DcMotorEx.class, "Back Right");
 
-        //Intake
-        intakeMotor = hardwareMap.get(DcMotorEx.class, "Intake Motor");
+        //intake servo config
         counteroller = hardwareMap.get(CRServo.class, "Intake Servo");
+        intakeMotor = hardwareMap.get(DcMotor.class, "Intake Motor");
 
         //Deposit servo config
-        depositServoOne = hardwareMap.get(Servo.class, "Left Deposit");
-        depositServoTwo = hardwareMap.get(Servo.class, "Right Deposit");
+        depositServoOne = hardwareMap.get(Servo.class, "Right Deposit");
+        depositServoTwo = hardwareMap.get(Servo.class, "Left Deposit");
     }
 
     //robot-oriented drive method
@@ -86,4 +88,5 @@ public class Hardware
         frontRight.setPower(forward + rotation + sideways);
         backRight.setPower(forward + rotation - sideways);
     }
+
 }
