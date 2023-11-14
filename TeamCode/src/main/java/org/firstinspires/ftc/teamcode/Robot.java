@@ -556,7 +556,7 @@ public class Robot {
         List<AprilTagDetection> myAprilTagDetections;
         double distanceToBoard = 15;
         int polarity = isRedAlliance ? -1 : 1;
-        int PIXEL_SIZE = 3;
+        int PIXEL_SIZE = 4;
         int visionTimeout = 4; // timeout detection after 4 seconds
         elapsedTime.reset();
         double startingTime = elapsedTime.seconds();
@@ -665,7 +665,7 @@ public class Robot {
                 vertical4 = 14; //adjust for left
                 horizontal5 = HORIZONTAL_TOTAL_BEFORE_CHUNKING - horizontal2 + horizontal3;
                 vertical6 = VERTICAL_TOTAL + vertical1 - vertical4;
-                horizontal7 = HORIZONTAL_TOTAL_BEFORE_CHUNKING - 24;
+                horizontal7 = HORIZONTAL_TOTAL_BEFORE_CHUNKING - 15;
 
                 // Start moving
                 mecanumBlocking(vertical1, isRedAlliance, 0.5); //go left if blue, go right if red
@@ -724,7 +724,7 @@ public class Robot {
                 setServoPosBlocking(spikeServo, 0.2); //lift finger
                 straightBlocking(horizontal3, true, 1); //move back FAST
                 setHeading(0, 0.7);
-                mecanumBlocking(vertical4, !isRedAlliance, 0.7); //move left if red
+                mecanumBlocking(vertical4, !isRedAlliance, 0.5); //move left if red
                 setHeading(0, 0.7);
                 straightBlocking(horizontal5, false, 0.7); //go forward & around marker
                 setHeading(90 * polarity, 0.7); //turn
@@ -737,36 +737,29 @@ public class Robot {
                 Log.d("vision", "moveToMarker: Center Spike");
 
                 // Calculate distances
-                vertical1 = 7;
+                vertical1 = 6;
                 horizontal2 = 26;
                 horizontal3 = 6;
                 vertical4 = 10;
                 horizontal5 = HORIZONTAL_TOTAL_BEFORE_CHUNKING - horizontal2 + horizontal3;
                 vertical6 = VERTICAL_TOTAL + vertical1 + vertical4;
-                horizontal7 = HORIZONTAL_TOTAL_BEFORE_CHUNKING - 30;
+                horizontal7 = HORIZONTAL_TOTAL_BEFORE_CHUNKING - 21;
 
                 // Start moving
                 mecanumBlocking(vertical1, isRedAlliance, 0.5); //go left if blue, go right if red
-                setHeading(0, 0.6);
-                opMode.sleep(5000);
+                setHeading(0, 0.7);
                 straightBlocking(horizontal2, false, 0.7); //go forward FAST
                 setServoPosBlocking(spikeServo, 0.2); //lift finger
-                opMode.sleep(5000);
                 straightBlocking(horizontal3, true, 1); //move back FAST
                 setHeading(0, 0.7);
-                opMode.sleep(5000);
-                mecanumBlocking(vertical4, isRedAlliance, 0.7); //move left if red
+                mecanumBlocking(vertical4, isRedAlliance, 0.5); //move left if red
                 setHeading(0, 0.7);
-                opMode.sleep(5000);
                 straightBlocking(horizontal5, false, 0.7); //go forward & around marker
                 setHeading(90 * polarity, 0.7); //turn
-                opMode.sleep(5000);
                 moveStraightChunkingDONT_USE_NEGATIVE(vertical6, false, 0.7, 90 * polarity, 0.7);
                 setHeading(90 * polarity, 0.7);
-                opMode.sleep(5000);
                 mecanumBlocking(horizontal7, !isRedAlliance, 0.5); //mecanum directly in front of board left if blue
                 setHeading(90 * polarity, 0.7);
-                opMode.sleep(5000);
                 break;
             }
         }
@@ -783,7 +776,7 @@ public class Robot {
          * Park near center
          */
         int parkDistance = 26; // distance from center tag in inches
-        int distanceBetweenTags = 6; // inches
+        int distanceBetweenTags = 3; // inches
         while (opMode.opModeIsActive()) {
             straightBlocking(2, true, 0.7);
             if (isRedAlliance) {
