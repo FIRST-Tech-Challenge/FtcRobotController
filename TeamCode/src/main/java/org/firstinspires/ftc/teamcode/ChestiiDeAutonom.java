@@ -113,11 +113,6 @@ public class ChestiiDeAutonom extends LinearOpMode {
     public void init(HardwareMap hard) {
         potentiometru = hard.get(AnalogInput.class,"potentiometru");
 
-        motorBL = hard.get(DcMotorEx.class, "motorBL"); // Motor Back-Left
-        motorBR = hard.get(DcMotorEx.class, "motorBR"); // Motor Back-Right
-        motorFL = hard.get(DcMotorEx.class, "motorFL"); // Motor Front-Left
-        motorFR = hard.get(DcMotorEx.class, "motorFR"); // Motor Front-Right
-
         melcjos = hard.get(DcMotorEx.class, "melcjos");
         melcsus = hard.get(DcMotorEx.class, "melcsus");
         slider = hard.get(DcMotorEx.class, "slider");
@@ -127,33 +122,16 @@ public class ChestiiDeAutonom extends LinearOpMode {
         maceta = hard.get(CRServo.class,"maceta");
         plauncher = hard.get(Servo.class,"plauncher");
 
-        motorBL.setDirection(DcMotorEx.Direction.REVERSE);
-        motorFL.setDirection(DcMotorEx.Direction.REVERSE);
         slider.setDirection(DcMotorEx.Direction.REVERSE);
         melcsus.setDirection(DcMotorEx.Direction.REVERSE);
-
-        motorBL.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
-        motorBR.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
-        motorFL.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
-        motorFR.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
         
         melcjos.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         melcsus.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         slider.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         
-        motorFL.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        motorBL.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        motorBR.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        motorFR.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        
         melcjos.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         melcsus.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         slider.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-
-        motorFR.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
-        motorFL.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
-        motorBR.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
-        motorBL.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
         
         melcjos.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         melcsus.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);

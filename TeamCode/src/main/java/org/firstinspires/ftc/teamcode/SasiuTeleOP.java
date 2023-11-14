@@ -17,7 +17,6 @@ public class SasiuTeleOP extends OpMode {
     public Switch swish;
     public DcMotorEx motorBR,motorBL,motorFL,motorFR;
     double sm = 1, slow = 1, lb = 1, rb = 1;
-
     double y, x, rx, ghearaPoz=0.5, macetaPow=0;
     double max = 0;
     double pmotorBL;
@@ -50,10 +49,10 @@ public class SasiuTeleOP extends OpMode {
         motorBL.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
 
 
-        motorFR.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
-        motorFL.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
-        motorBR.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
-        motorBL.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
+        motorFR.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
+        motorFL.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
+        motorBR.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
+        motorBL.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
 
     }
     public void start(){
