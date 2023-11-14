@@ -295,6 +295,7 @@ public class VisionLFM2 extends LinearOpMode {
                 break;
             case MIDDLE:
                 moveRobot("Center Line", .06);
+                moveRobot("Center Line", MOVE_MIDDLE);
                 telemetry.addData("Move: Forward", "");
                 telemetry.update();
                 debugWait();
