@@ -16,6 +16,7 @@ import org.firstinspires.ftc.teamcode.Variables.motorBL
 import org.firstinspires.ftc.teamcode.Variables.motorBR
 import org.firstinspires.ftc.teamcode.Variables.motorFL
 import org.firstinspires.ftc.teamcode.Variables.motorFR
+import org.firstinspires.ftc.teamcode.Variables.motorSlideLeft
 import org.firstinspires.ftc.teamcode.Variables.rMotorL
 import org.firstinspires.ftc.teamcode.Variables.rMotorR
 import org.firstinspires.ftc.teamcode.Variables.slideAngle
@@ -330,7 +331,7 @@ open class DriveMethods: LinearOpMode() {
     }
 
     open fun initSlideMotors() {
-     //   motorSlideLeft = hardwareMap.get<DcMotor>(DcMotor::class.java, "motorSlideLeft")
+        motorSlideLeft = hardwareMap.get<DcMotor>(DcMotor::class.java, "motorSlideLeft")
     //    slideRotationMotor = hardwareMap.get<DcMotor>(DcMotor::class.java, "slideRotationMotor")
       //  clawRotation = hardwareMap.get<Servo>(Servo::class.java, "clawRotation")
       //  clawMotor = hardwareMap.get<Servo>(Servo::class.java, "clawMotor")
