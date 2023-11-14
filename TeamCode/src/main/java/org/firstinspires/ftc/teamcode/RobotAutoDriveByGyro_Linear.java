@@ -103,7 +103,12 @@ import java.util.List;
 @Autonomous(name="Robot: Auto Drive By Gyro", group="Robot")
 
 public class RobotAutoDriveByGyro_Linear extends LinearOpMode {
-    int driveforward = 7;
+    boolean stoooooopppp = false;
+    int drive3=7;
+    int idk=0;
+    int drive2=0;
+    int drive2t=0;
+    int driveforward = 18;
     int driveturn = -45;
     int zone=3;
     private static final boolean USE_WEBCAM = true;
@@ -119,7 +124,7 @@ public class RobotAutoDriveByGyro_Linear extends LinearOpMode {
     private IMU             imu         = null;      // Control/Expansion Hub IMU
 
     private double          headingError  = 0;
-    static boolean isrecodnized=false;
+    boolean isrecodnized=false;
 
     // These variable are declared here (as class members) so they can be updated in various methods,
     // but still be displayed by sendTelemetry()
@@ -149,8 +154,8 @@ public class RobotAutoDriveByGyro_Linear extends LinearOpMode {
 
     // These constants define the desired driving/control characteristics
     // They can/should be tweaked to suit the specific robot drive train.
-    static final double     DRIVE_SPEED             = 0.4;     // Max driving speed for better distance accuracy.
-    static final double     TURN_SPEED              = 0.2;     // Max Turn speed to limit turn rate
+    static final double     DRIVE_SPEED             = 0.5;     // Max driving speed for better distance accuracy.
+    static final double     TURN_SPEED              = 0.3;     // Max Turn speed to limit turn rate
     static final double     HEADING_THRESHOLD       = 1.0 ;    // How close must the heading get to the target before moving to next step.
     Servo wrist;
     Servo claw;                                         // Requiring more accuracy (a smaller number) will often make the turn take longer to get into the final position.
@@ -164,12 +169,13 @@ public class RobotAutoDriveByGyro_Linear extends LinearOpMode {
 
     @Override
     public void runOpMode() {
-        ex= new extension(hardwareMap);
+        //
+        // ex= new extension(hardwareMap);
         wrist = hardwareMap.get(Servo.class, "wrist");
         claw = hardwareMap.get(Servo.class, "claw");//hardwaremap claw and tilt
         initTfod();
-        ex.setStowPos();
-        claw.setPosition(1);
+        //ex.setStowPos();
+        claw.setPosition(0.2);
         // Wait for the DS start button to be touched.
         telemetry.addData("DS preview on/off", "3 dots, Camera Stream");
         telemetry.addData(">", "Touch Play to start OpMode");
@@ -231,20 +237,28 @@ public class RobotAutoDriveByGyro_Linear extends LinearOpMode {
         //          Add a sleep(2000) after any step to keep the telemetry data visible for review
 
         driveStraight(DRIVE_SPEED, 25.0, 0.0,true);
-        holdHeadingandscan( TURN_SPEED, 0, 3);
+        holdHeadingandscan( TURN_SPEED, 0, 4);
         turnToHeading( TURN_SPEED, -45.0);
-        holdHeadingandscan1( TURN_SPEED, -45.0, 3);
+        holdHeadingandscan1( TURN_SPEED, -45.0, 4);
 
         turnToHeading( TURN_SPEED, 0);
-        holdHeading(turnSpeed,0,0.5);
+        holdHeading(TURN_SPEED,0,0.5);
         driveStraight(DRIVE_SPEED, driveforward,0,false);
         turnToHeading( TURN_SPEED, driveturn);
-        holdHeadingandplace(turnSpeed,driveturn,3);
+        driveStraight(DRIVE_SPEED, drive2,driveturn,false);
+        turnToHeading( TURN_SPEED, drive2t);
+        holdHeadingandplace(TURN_SPEED,driveturn,4);
 
         turnToHeading( TURN_SPEED, 0);
-        holdHeading(turnSpeed,0,0.5);
-        driveStraight(DRIVE_SPEED,5,0,false);
-        holdHeading(turnSpeed,0,0.5);
+        holdHeading(TURN_SPEED,0,0.5);
+        driveStraight(DRIVE_SPEED,drive3,0,false);
+        holdHeading(TURN_SPEED,0,0.5);
+        turnToHeading( TURN_SPEED, -90);
+        holdHeading(TURN_SPEED,-90,0.5);
+        driveStraight(DRIVE_SPEED,95,-90,false);
+       // turnToHeading( TURN_SPEED, -110);
+        //driveStraight(DRIVE_SPEED,80,-110,false);
+
         telemetry.addData("Path", "Complete");
         telemetry.update();
         sleep(1000);  // Pause to display last telemetry message.
@@ -304,7 +318,7 @@ public class RobotAutoDriveByGyro_Linear extends LinearOpMode {
             // keep looping while we are still active, and BOTH motors are running.
             while (opModeIsActive() &&
                    (leftFront.isBusy() && rightFront.isBusy()&&rightRear.isBusy()&&leftRear.isBusy())) {
-                if(hi&&rightFront.getCurrentPosition()>rightTarget*0.5){ex.setIntake();  wrist.setPosition(1);}
+                if(hi&&rightFront.getCurrentPosition()>rightTarget*0.5){/*ex.setIntake();*/  wrist.setPosition(1);}
                 // Determine required steering to keep on heading
                 turnSpeed = getSteeringCorrection(heading, P_DRIVE_GAIN);
 
@@ -428,7 +442,7 @@ public class RobotAutoDriveByGyro_Linear extends LinearOpMode {
                 order++;
             }else if (order==1&&(holdTimer.time()>holdTime*0.5)){
                 telemetry.addData("order", order);
-                claw.setPosition(0.2);
+                claw.setPosition(0.9);
                 order++;
             } else if (order==2&&(holdTimer.time()>holdTime*0.75)){
                 wrist.setPosition(1);
@@ -440,7 +454,7 @@ public class RobotAutoDriveByGyro_Linear extends LinearOpMode {
         // Stop all motion;
         moveRobot(0, 0);
     }
-    public void holdHeadingandscan1(double maxTurnSpeed, double heading, double holdTime) {
+    public void holdHeadingandscan(double maxTurnSpeed, double heading, double holdTime) {
         visionPortal.resumeStreaming();
         ElapsedTime holdTimer = new ElapsedTime();
         holdTimer.reset();
@@ -449,11 +463,13 @@ public class RobotAutoDriveByGyro_Linear extends LinearOpMode {
         while (opModeIsActive() && (holdTimer.time() < holdTime)) {
             // Determine required steering to keep on heading
             turnSpeed = getSteeringCorrection(heading, P_TURN_GAIN);
-            telemetryTfod();
-            if(isrecodnized=true){
+            if(holdTimer.time()>holdTime*0.2)telemetryTfod();
+            if(idk>=1){
                 zone=1;
-                driveforward=7;
-                driveturn=45;
+                driveforward=29;
+                driveturn=-17;
+                drive3=0;
+                stoooooopppp = true;
             }
             // Clip the speed to the maximum permitted value.
             turnSpeed = Range.clip(turnSpeed, -maxTurnSpeed, maxTurnSpeed);
@@ -468,20 +484,25 @@ public class RobotAutoDriveByGyro_Linear extends LinearOpMode {
         // Stop all motion;
         moveRobot(0, 0);
     }
-    public void holdHeadingandscan(double maxTurnSpeed, double heading, double holdTime) {
+    public void holdHeadingandscan1(double maxTurnSpeed, double heading, double holdTime) {
         visionPortal.resumeStreaming();
         ElapsedTime holdTimer = new ElapsedTime();
         holdTimer.reset();
 
         // keep looping while we have time remaining.
-        while ((opModeIsActive() && (holdTimer.time() < holdTime)&&!isrecodnized)) {
+        while ((opModeIsActive() && (holdTimer.time() < holdTime))&& zone!=1) {
+            if(holdTimer.time()>holdTime*0.2)telemetryTfod();
             // Determine required steering to keep on heading
             turnSpeed = getSteeringCorrection(heading, P_TURN_GAIN);
             telemetryTfod();
-            if(isrecodnized=true){
+            if(idk>=1){
                 zone=2;
-                driveforward=10;
-                driveturn=0;
+                driveforward=14;
+                driveturn=45;
+                drive2=4;
+                drive2t=90;
+                drive3=5;
+                break;
             }
             // Clip the speed to the maximum permitted value.
             turnSpeed = Range.clip(turnSpeed, -maxTurnSpeed, maxTurnSpeed);
@@ -519,8 +540,7 @@ public class RobotAutoDriveByGyro_Linear extends LinearOpMode {
 
         // Step through the list of recognitions and display info for each one.
         for (Recognition recognition : currentRecognitions) {
-            if(currentRecognitions.size()>=1) {
-                isrecodnized = true;}
+            idk=currentRecognitions.size();
             double x = (recognition.getLeft() + recognition.getRight()) / 2 ;
             double y = (recognition.getTop()  + recognition.getBottom()) / 2 ;
 
