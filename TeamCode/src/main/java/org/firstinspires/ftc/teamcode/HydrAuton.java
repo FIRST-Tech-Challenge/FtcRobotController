@@ -21,20 +21,12 @@ public class HydrAuton extends LinearOpMode {
     private HydraDrive Drive;
     HydraPixelPalace PixelPalace;
     private HydraIntake Intake;
+    private HydraObjectDetect ObjDet;
+    private HydraObjectLocations ObjLoc;
     ElapsedTime pixelDropTimer;
-    TfodProcessor myTfodProcessor;
     int autonState;
-    int cObjectLocationUnknown;
-    String modelFilename;
     int cPixelFrontScoreRunTimeMs;
-    boolean USE_WEBCAM;
-    VisionPortal myVisionPortal;
     int cPixelDropRunTimeMs;
-    int objectLocation;
-    int cObjectLocationLeft;
-    int cObjectLocationCenter;
-    int cObjectLocationRight;
-    int cXvalueForLeftToCenterObject;
     private long pixelDropTimeStart;
 
     /**
@@ -53,6 +45,7 @@ public class HydrAuton extends LinearOpMode {
         double cCasFrontToBack;
         double cLowerArmAutoMotorPwr;
         double cUpperArmAutoMotorPwr;
+        float cXvalueForLeftToCenterObject;
         int cIntakeIn;
         int cIntakeOut;
         int cPixelPos1Dist;
@@ -85,11 +78,6 @@ public class HydrAuton extends LinearOpMode {
         // Intake motor speeds
         cIntakeIn = -1;
         cIntakeOut = 1;
-        // Object location enumerations
-        cObjectLocationUnknown = 0;
-        cObjectLocationLeft = 1;
-        cObjectLocationCenter = 2;
-        cObjectLocationRight = 3;
         // Max x value for an object on the left spike
         cXvalueForLeftToCenterObject = 200;
         // Maximum time to run image recognition to discover the prop
@@ -99,11 +87,10 @@ public class HydrAuton extends LinearOpMode {
         cPixelFrontScoreRunTimeMs = 2000;
         // Initialize Local Variables
         autonState = 0;
-        objectLocation = cObjectLocationUnknown;
+        ObjLoc = HydraObjectLocations.ObjLocUnknown;
         pixelDropTimer = new ElapsedTime();
         opModeTimer = new ElapsedTime();
         autonAbort = false;
-        modelFilename = "Blue_Prop.tflite";
         // Initialization Routines
         // Initialize the IMU with non-default settings. To use this block,
         // plug one of the "new IMU.Parameters" blocks into the parameters socket.
@@ -119,9 +106,7 @@ public class HydrAuton extends LinearOpMode {
                 "LED2", "LED3", "LED4", "SenColPxlPos1", "SenColPxlPos2",
                 cCasFrontToBack, cCasBackToFront, cPixelPos1Dist, cPixelPos2Dist);
         Intake = new HydraIntake("MotPxlIntk", cIntakeIn, cIntakeOut);
-        // This 2023-2024 OpMode illustrates the basics of TensorFlow Object Detection.
-        USE_WEBCAM = true;
-        initTfod2();
+        ObjDet = new HydraObjectDetect("Blue_Prop.tflite", cXvalueForLeftToCenterObject);
         // Wait for the match to begin.
         waitForStart();
         // Useful code to load pixels before we run. DISABLE FOR COMPETITION
@@ -137,10 +122,19 @@ public class HydrAuton extends LinearOpMode {
         }*/
         opModeTimer.reset();
         // Find the object so we can drive to it
-        objectLocation = GetObjectLocation(cMaxObjectSearchTimeMs);
+        while (opModeIsActive()) {
+            ObjLoc = ObjDet.GetObjectLocation();
+            if (ObjLoc != HydraObjectLocations.ObjLocUnknown ||
+                    opModeTimer.milliseconds() >= cMaxObjectSearchTimeMs) {
+                break;
+            }
+            // Push telemetry to the Driver Station.
+            telemetry.update();
+            sleep(20);
+        }
         // If we did not find it, we have no choice but to assume that it was in the position we can't see
-        if (objectLocation == cObjectLocationUnknown) {
-            objectLocation = cObjectLocationRight;
+        if (ObjLoc == HydraObjectLocations.ObjLocUnknown) {
+            ObjLoc = HydraObjectLocations.ObjLocRightSpike;
         }
         while (opModeIsActive()) {
             if (AutonBlueWing()) {
@@ -170,100 +164,6 @@ public class HydrAuton extends LinearOpMode {
     }
 
     /**
-     * Initialize TensorFlow Object Detection.
-     */
-    private void initTfod2() {
-        TfodProcessor.Builder myTfodProcessorBuilder;
-        VisionPortal.Builder myVisionPortalBuilder;
-
-        // First, create a TfodProcessor.Builder.
-        myTfodProcessorBuilder = new TfodProcessor.Builder();
-        // Set the name of the file where the model can be found.
-        myTfodProcessorBuilder.setModelFileName(modelFilename);
-        // Set the full ordered list of labels the model is trained to recognize.
-        myTfodProcessorBuilder.setModelLabels(JavaUtil.createListWith("prop"));
-        // Set the aspect ratio for the images used when the model was created.
-        myTfodProcessorBuilder.setModelAspectRatio(16 / 9);
-        // Create a TfodProcessor by calling build.
-        myTfodProcessor = myTfodProcessorBuilder.build();
-        // Next, create a VisionPortal.Builder and set attributes related to the camera.
-        myVisionPortalBuilder = new VisionPortal.Builder();
-        if (USE_WEBCAM) {
-            // Use a webcam.
-            myVisionPortalBuilder.setCamera(hardwareMap.get(WebcamName.class, "Webcam 1"));
-        } else {
-            // Use the device's back camera.
-            myVisionPortalBuilder.setCamera(BuiltinCameraDirection.BACK);
-        }
-        // Add myTfodProcessor to the VisionPortal.Builder.
-        myVisionPortalBuilder.addProcessor(myTfodProcessor);
-        // Create a VisionPortal by calling build.
-        myVisionPortal = myVisionPortalBuilder.build();
-    }
-
-    /**
-     * Describe this function...
-     */
-    private int GetObjectLocation(int inSearchTimeMs) {
-        int detectedLocation;
-        long timer;
-        List<Recognition> myTfodRecognitions;
-        Recognition myTfodRecognition;
-        float x;
-        float y;
-
-        // Useful way to skip over object detection for testing
-        /*{
-            return cObjectLocationUnknown;
-        }*/
-        // Set a timer so we don't do this forever
-        // Get the current time in milliseconds. The value returned represents
-        // the number of milliseconds since midnight, January 1, 1970 UTC.
-        timer = System.currentTimeMillis();
-        detectedLocation = cObjectLocationUnknown;
-        boolean foundSomething = false;
-        while (opModeIsActive()) {
-            // Get a list of recognitions from TFOD.
-            myTfodRecognitions = myTfodProcessor.getRecognitions();
-            telemetry.addData("# Objects Detected", JavaUtil.listLength(myTfodRecognitions));
-            // Iterate through list and call a function to display info for each recognized object.
-            for (Recognition myTfodRecognition_item : myTfodRecognitions) {
-                foundSomething = true;
-                myTfodRecognition = myTfodRecognition_item;
-                // Display info about the recognition.
-                telemetry.addLine("");
-                // Display label and confidence.
-                // Display the label and confidence for the recognition.
-                telemetry.addData("Image", myTfodRecognition.getLabel() + " (" + JavaUtil.formatNumber(myTfodRecognition.getConfidence() * 100, 0) + " % Conf.)");
-                // Display position.
-                x = (myTfodRecognition.getLeft() + myTfodRecognition.getRight()) / 2;
-                y = (myTfodRecognition.getTop() + myTfodRecognition.getBottom()) / 2;
-                if (x < cXvalueForLeftToCenterObject) {
-                    detectedLocation = cObjectLocationLeft;
-                } else {
-                    detectedLocation = cObjectLocationCenter;
-                }
-                // Display the position of the center of the detection boundary for the recognition
-                telemetry.addData("- Position", JavaUtil.formatNumber(x, 0) + ", " + JavaUtil.formatNumber(y, 0));
-            }
-            // Push telemetry to the Driver Station.
-            telemetry.update();
-            // See if we found the object. If we found something, determine which spike it is on and leave
-            if (foundSomething) {
-                break;
-            }
-            // Get the current time in milliseconds. The value returned represents
-            // the number of milliseconds since midnight, January 1, 1970 UTC.
-            if (System.currentTimeMillis() - timer >= inSearchTimeMs) {
-                break;
-            }
-            // Share the CPU.
-            sleep(20);
-        }
-        return detectedLocation;
-    }
-
-    /**
      * Describe this function...
      */
     private void BadState() {
@@ -279,11 +179,11 @@ public class HydrAuton extends LinearOpMode {
             // These states all handle driving to the object spike location
             if (autonState == 0) {
                 // Jump to the correct state based on the location
-                if (objectLocation == cObjectLocationLeft) {
+                if (ObjLoc == HydraObjectLocations.ObjLocLeftSpike) {
                     autonState = 10;
-                } else if (objectLocation == cObjectLocationCenter) {
+                } else if (ObjLoc == HydraObjectLocations.ObjLocCenterSpike) {
                     autonState = 20;
-                } else if (objectLocation == cObjectLocationRight) {
+                } else if (ObjLoc == HydraObjectLocations.ObjLocRightSpike) {
                     autonState = 30;
                 } else {
                     BadState();
@@ -362,9 +262,9 @@ public class HydrAuton extends LinearOpMode {
             // These 200 level states handle driving to the backdrop
             if (autonState == 200) {
                 // Jump to the correct state based on the location
-                if (objectLocation == cObjectLocationLeft) {
+                if (ObjLoc == HydraObjectLocations.ObjLocLeftSpike) {
                     autonState = 210;
-                } else if (objectLocation == cObjectLocationCenter) {
+                } else if (ObjLoc == HydraObjectLocations.ObjLocCenterSpike) {
                     autonState = 220;
                 } else {
                     autonState = 230;
@@ -476,11 +376,11 @@ public class HydrAuton extends LinearOpMode {
             // These states all handle driving to the object spike location
             if (autonState == 0) {
                 // Jump to the correct state based on the location
-                if (objectLocation == cObjectLocationRight) {
+                if (ObjLoc == HydraObjectLocations.ObjLocRightSpike) {
                     autonState = 10;
-                } else if (objectLocation == cObjectLocationCenter) {
+                } else if (ObjLoc == HydraObjectLocations.ObjLocCenterSpike) {
                     autonState = 20;
-                } else if (objectLocation == cObjectLocationLeft) {
+                } else if (ObjLoc == HydraObjectLocations.ObjLocLeftSpike) {
                     autonState = 30;
                 } else {
                     BadState();
@@ -559,9 +459,9 @@ public class HydrAuton extends LinearOpMode {
             // These 200 level states handle driving to the backdrop
             if (autonState == 200) {
                 // Jump to the correct state based on the location
-                if (objectLocation == cObjectLocationRight) {
+                if (ObjLoc == HydraObjectLocations.ObjLocRightSpike) {
                     autonState = 210;
-                } else if (objectLocation == cObjectLocationCenter) {
+                } else if (ObjLoc == HydraObjectLocations.ObjLocCenterSpike) {
                     autonState = 220;
                 } else {
                     autonState = 230;
@@ -673,11 +573,11 @@ public class HydrAuton extends LinearOpMode {
             // These states all handle driving to the object spike location
             if (autonState == 0) {
                 // Jump to the correct state based on the location
-                if (objectLocation == cObjectLocationRight) {
+                if (ObjLoc == HydraObjectLocations.ObjLocRightSpike) {
                     autonState = 10;
-                } else if (objectLocation == cObjectLocationCenter) {
+                } else if (ObjLoc == HydraObjectLocations.ObjLocCenterSpike) {
                     autonState = 20;
-                } else if (objectLocation == cObjectLocationLeft) {
+                } else if (ObjLoc == HydraObjectLocations.ObjLocLeftSpike) {
                     autonState = 30;
                 } else {
                     BadState();
@@ -756,9 +656,9 @@ public class HydrAuton extends LinearOpMode {
             // These 200 level states handle driving to the backdrop
             if (autonState == 200) {
                 // Jump to the correct state based on the location
-                if (objectLocation == cObjectLocationRight) {
+                if (ObjLoc == HydraObjectLocations.ObjLocRightSpike) {
                     autonState = 210;
-                } else if (objectLocation == cObjectLocationCenter) {
+                } else if (ObjLoc == HydraObjectLocations.ObjLocCenterSpike) {
                     autonState = 220;
                 } else {
                     autonState = 230;
@@ -854,11 +754,11 @@ public class HydrAuton extends LinearOpMode {
             // These states all handle driving to the object spike location
             if (autonState == 0) {
                 // Jump to the correct state based on the location
-                if (objectLocation == cObjectLocationLeft) {
+                if (ObjLoc == HydraObjectLocations.ObjLocLeftSpike) {
                     autonState = 10;
-                } else if (objectLocation == cObjectLocationCenter) {
+                } else if (ObjLoc == HydraObjectLocations.ObjLocCenterSpike) {
                     autonState = 20;
-                } else if (objectLocation == cObjectLocationRight) {
+                } else if (ObjLoc == HydraObjectLocations.ObjLocRightSpike) {
                     autonState = 30;
                 } else {
                     BadState();
@@ -938,9 +838,9 @@ public class HydrAuton extends LinearOpMode {
             // These 200 level states handle driving to the backdrop
             if (autonState == 200) {
                 // Jump to the correct state based on the location
-                if (objectLocation == cObjectLocationLeft) {
+                if (ObjLoc == HydraObjectLocations.ObjLocLeftSpike) {
                     autonState = 210;
-                } else if (objectLocation == cObjectLocationCenter) {
+                } else if (ObjLoc == HydraObjectLocations.ObjLocCenterSpike) {
                     autonState = 220;
                 } else {
                     autonState = 230;
