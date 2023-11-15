@@ -4,10 +4,10 @@ import org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
 public class HydraArm extends BlocksOpModeCompanion {
-    private DcMotor mMotLwrArm;
-    private DcMotor mMotUprArm;
-    private double mLowerArmAutoMotorPwr;
-    private double mUpperArmAutoMotorPwr;
+    private final DcMotor mMotLwrArm;
+    private final DcMotor mMotUprArm;
+    private final double mLowerArmAutoMotorPwr;
+    private final double mUpperArmAutoMotorPwr;
     HydraArmPositions mArmPositionState;
     private final int cLowerArmPos0Home = 0;
     private final int cUpperArmPos0Home = 0;
@@ -37,7 +37,7 @@ public class HydraArm extends BlocksOpModeCompanion {
     private final String[] mArmPositionNames = {"Home", "Lift Box", "Lift Arm", "Back Score", "Front Score",
             "Hang", "Hang End"};
 
-    public void Init(String uprArm, String lwrArm, double uprArmPwr, double lwrArmPwr) {
+    public HydraArm(String uprArm, String lwrArm, double uprArmPwr, double lwrArmPwr) {
         mMotUprArm = hardwareMap.get(DcMotor.class, uprArm);
         mMotLwrArm = hardwareMap.get(DcMotor.class, lwrArm);
         mLowerArmAutoMotorPwr = lwrArmPwr;

@@ -3,26 +3,18 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
 import org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion;
-import org.firstinspires.ftc.robotcore.external.ExportClassToBlocks;
-import org.firstinspires.ftc.robotcore.external.ExportToBlocks;
 
-@ExportClassToBlocks
 public class HydraDrive extends BlocksOpModeCompanion {
-    private DcMotor mMotDrFrLt;
-    private DcMotor mMotDrFrRt;
-    private DcMotor mMotDrBkLt;
-    private DcMotor mMotDrBkRt;
-    private double mBoostedPower;
-    private double mNormalPower;
-    private double mSlowPower;
-    private double mCountsPerInch;
+    private final DcMotor mMotDrFrLt;
+    private final DcMotor mMotDrFrRt;
+    private final DcMotor mMotDrBkLt;
+    private final DcMotor mMotDrBkRt;
+    private final double mBoostedPower;
+    private final double mNormalPower;
+    private final double mSlowPower;
+    private final double mCountsPerInch;
 
-    @ExportToBlocks(
-            comment = "This function initializes the drive class by finding the motor objects and taking in the max drive power",
-            tooltip = "Initialize the drive",
-            parameterLabels = {"FLmotor", "FRmotor", "BLmotor", "BRmotor", "PwrFast", "PwrNormal", "PwrSlow"}
-    )
-    public void Init(String frontLeft, String frontRight, String backLeft, String backRight,
+    public HydraDrive(String frontLeft, String frontRight, String backLeft, String backRight,
                      double countsPerInch, double driveBoosted, double driveNormal, double driveSlow) {
         // grab the motors out of the hardware map
         mMotDrFrLt = hardwareMap.get(DcMotor.class, frontLeft);
@@ -50,21 +42,13 @@ public class HydraDrive extends BlocksOpModeCompanion {
         mMotDrFrRt.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         mMotDrBkRt.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
     }
-    @ExportToBlocks(
-            comment = "This function initiates driving, strafing or rotating",
-            tooltip = "Go, robot, go!",
-            parameterLabels = {"Drive", "Strafe", "Rotate"}
-    )
+
     public boolean Start(int inDrive, int inStrafe, int inRotate) {
         int frontLeftTarget;
         int rearLeftTarget;
         int frontRightTarget;
         int rearRightTarget;
 
-        // wait for the last requested drive to complete
-        if (Busy()) {
-            return false;
-        }
         // clean up the last drive to prepare for the next one
         mMotDrBkLt.setPower(0);
         mMotDrBkRt.setPower(0);
@@ -113,10 +97,7 @@ public class HydraDrive extends BlocksOpModeCompanion {
         mMotDrFrRt.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         return true;
     }
-    @ExportToBlocks(
-            comment = "This function returns whether a previous drive action is completed",
-            tooltip = "Is the robot still driving?"
-    )
+
     public boolean Busy() {
         if (mMotDrBkLt.isBusy() || mMotDrBkRt.isBusy() || mMotDrFrLt.isBusy() || mMotDrFrRt.isBusy()) {
             return true;

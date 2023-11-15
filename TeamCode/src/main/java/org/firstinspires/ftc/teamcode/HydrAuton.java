@@ -3,17 +3,12 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.hardware.ColorSensor;
-import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.IMU;
-import com.qualcomm.robotcore.hardware.LED;
-import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import java.util.List;
 import org.firstinspires.ftc.robotcore.external.JavaUtil;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.BuiltinCameraDirection;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
-import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.robotcore.external.tfod.Recognition;
 import org.firstinspires.ftc.vision.VisionPortal;
 import org.firstinspires.ftc.vision.tfod.TfodProcessor;
@@ -24,33 +19,16 @@ public class HydrAuton extends LinearOpMode {
     private IMU imu;
     HydraArm Arm;
     private HydraDrive Drive;
-    private Servo SrvPxlPos1;
-    private Servo SrvPxlPos2;
-    private ColorSensor SenColPxlPos1;
-    private ColorSensor SenColPxlPos2;
+    HydraPixelPalace PixelPalace;
     private HydraIntake Intake;
-    private LED LED4;
-    private LED LED3;
-    private LED LED2;
-    private LED LED1;
-    private DistanceSensor SenColPxlPos1_DistanceSensor;
-    private DistanceSensor SenColPxlPos2_DistanceSensor;
     ElapsedTime pixelDropTimer;
     TfodProcessor myTfodProcessor;
     int autonState;
     int cObjectLocationUnknown;
-    int foo;
-    double cLowerArmAutoMotorPwr;
     String modelFilename;
-    double cUpperArmAutoMotorPwr;
-    int cPixelPos1Dist;
-    int cPixelPos2Dist;
     int cPixelFrontScoreRunTimeMs;
     boolean USE_WEBCAM;
     VisionPortal myVisionPortal;
-    double cCasBackToFront;
-    double cCasStop;
-    double cCasFrontToBack;
     int cPixelDropRunTimeMs;
     int objectLocation;
     int cObjectLocationLeft;
@@ -71,23 +49,19 @@ public class HydrAuton extends LinearOpMode {
         double cDriveBoosted;
         double cDriveNormal;
         double cDriveSlow;
+        double cCasBackToFront;
+        double cCasFrontToBack;
+        double cLowerArmAutoMotorPwr;
+        double cUpperArmAutoMotorPwr;
         int cIntakeIn;
         int cIntakeOut;
+        int cPixelPos1Dist;
+        int cPixelPos2Dist;
         int cMaxObjectSearchTimeMs;
         ElapsedTime opModeTimer;
         boolean autonAbort;
 
         imu = hardwareMap.get(IMU.class, "imu");
-        SrvPxlPos1 = hardwareMap.get(Servo.class, "SrvPxlPos1");
-        SrvPxlPos2 = hardwareMap.get(Servo.class, "SrvPxlPos2");
-        SenColPxlPos1 = hardwareMap.get(ColorSensor.class, "SenColPxlPos1");
-        SenColPxlPos2 = hardwareMap.get(ColorSensor.class, "SenColPxlPos2");
-        LED4 = hardwareMap.get(LED.class, "LED4");
-        LED3 = hardwareMap.get(LED.class, "LED3");
-        LED2 = hardwareMap.get(LED.class, "LED2");
-        LED1 = hardwareMap.get(LED.class, "LED1");
-        SenColPxlPos1_DistanceSensor = hardwareMap.get(DistanceSensor.class, "SenColPxlPos1");
-        SenColPxlPos2_DistanceSensor = hardwareMap.get(DistanceSensor.class, "SenColPxlPos2");
 
         // Initialize Constant Variables
         // Wheel constants
@@ -105,7 +79,6 @@ public class HydrAuton extends LinearOpMode {
         // Servo speeds for the cassette
         cCasFrontToBack = 0.8;
         cCasBackToFront = 0.2;
-        cCasStop = 0.5;
         // Distance to detect pixels in the cassette (cm)
         cPixelPos1Dist = 1;
         cPixelPos2Dist = 10;
@@ -138,28 +111,30 @@ public class HydrAuton extends LinearOpMode {
         // Expansion Hub, specifying the hub's orientation on the robot via the direction that
         // the REV Robotics logo is facing and the direction that the USB ports are facing.
         imu.initialize(new IMU.Parameters(new RevHubOrientationOnRobot(RevHubOrientationOnRobot.LogoFacingDirection.RIGHT, RevHubOrientationOnRobot.UsbFacingDirection.UP)));
-        Arm = new HydraArm();
-        Drive = new HydraDrive();
-        Drive.Init("MotDrFrLt", "MotDrFrRt", "MotDrBkLt",
+        Arm = new HydraArm("MotUprArm", "MotLwrArm", cUpperArmAutoMotorPwr,
+                cLowerArmAutoMotorPwr);
+        Drive = new HydraDrive("MotDrFrLt", "MotDrFrRt", "MotDrBkLt",
                 "MotDrBkRt", cCountsPerInch, cDriveBoosted, cDriveNormal, cDriveSlow);
-        Arm.Init("MotUprArm", "MotLwrArm", cUpperArmAutoMotorPwr, cLowerArmAutoMotorPwr);
-        InitCassette();
-        Intake.Init("MotPxlIntk", cIntakeIn, cIntakeOut);
+        PixelPalace = new HydraPixelPalace("SrvPxlPos1", "SrvPxlPos2", "LED1",
+                "LED2", "LED3", "LED4", "SenColPxlPos1", "SenColPxlPos2",
+                cCasFrontToBack, cCasBackToFront, cPixelPos1Dist, cPixelPos2Dist);
+        Intake = new HydraIntake("MotPxlIntk", cIntakeIn, cIntakeOut);
         // This 2023-2024 OpMode illustrates the basics of TensorFlow Object Detection.
         USE_WEBCAM = true;
         initTfod2();
         // Wait for the match to begin.
         waitForStart();
         // Useful code to load pixels before we run. DISABLE FOR COMPETITION
-        if (false) {
+        /*{
             while (opModeIsActive()) {
-                if (ProcessCassette(cCasFrontToBack, cCasFrontToBack, false) == 3) {
+                if (PixelPalace.Start(HydraPixelPalaceActions.PixelPalaceFrontToBack,
+                        HydraPixelPalaceActions.PixelPalaceFrontToBack, false) == 3) {
                     break;
                 }
                 Intake.StartIn();
             }
             Intake.Stop();
-        }
+        }*/
         opModeTimer.reset();
         // Find the object so we can drive to it
         objectLocation = GetObjectLocation(cMaxObjectSearchTimeMs);
@@ -192,62 +167,6 @@ public class HydrAuton extends LinearOpMode {
             // Share the CPU.
             sleep(20);
         }
-    }
-
-    /**
-     * Describe this function...
-     */
-    private void InitCassette() {
-        // Set servo direction. Position 2 is reversed
-        SrvPxlPos1.setDirection(Servo.Direction.FORWARD);
-        SrvPxlPos2.setDirection(Servo.Direction.REVERSE);
-        // Disable the LEDs since we only need distance measurements
-        SenColPxlPos1.enableLed(false);
-        SenColPxlPos2.enableLed(false);
-        // Ensure the servos are stopped
-        SetPixelPos1Dir(cCasStop);
-        SetPixelPos2Dir(cCasStop);
-    }
-
-    /**
-     * Describe this function...
-     */
-    private int ProcessCassette(double inCassetteDirPos1, double inCassetteDirPos2, boolean inScore) {
-        int procCasReturn;
-        boolean pixelInPos1;
-        boolean pixelInPos2;
-
-        // Are there pixels in the cassette?
-        pixelInPos1 = DetectPixelPos1();
-        pixelInPos2 = DetectPixelPos2();
-        // Return a bitfield for which pixels are present
-        procCasReturn = 0;
-        if (pixelInPos2) {
-            // Set bit 1
-            procCasReturn += 2;
-            if (inCassetteDirPos2 == cCasFrontToBack && !inScore) {
-                // Don't run off the end unless we are scoring on the backdrop
-                inCassetteDirPos2 = cCasStop;
-            } else if (inCassetteDirPos2 == cCasBackToFront && inCassetteDirPos1 != cCasBackToFront) {
-                // Don't push into position 1 if it's not moving in the same direction
-                inCassetteDirPos2 = cCasStop;
-            }
-        }
-        if (pixelInPos1) {
-            // Set bit 0
-            procCasReturn += 1;
-            if (inCassetteDirPos1 == cCasFrontToBack && pixelInPos2) {
-                // Don't run a pixel into another pixel
-                inCassetteDirPos1 = cCasStop;
-            }
-        }
-        LED4.enable(pixelInPos2);
-        LED3.enable(!pixelInPos2);
-        LED2.enable(pixelInPos1);
-        LED1.enable(!pixelInPos1);
-        SetPixelPos1Dir(inCassetteDirPos1);
-        SetPixelPos2Dir(inCassetteDirPos2);
-        return procCasReturn;
     }
 
     /**
@@ -294,20 +213,22 @@ public class HydrAuton extends LinearOpMode {
         float y;
 
         // Useful way to skip over object detection for testing
-        if (false) {
+        /*{
             return cObjectLocationUnknown;
-        }
+        }*/
         // Set a timer so we don't do this forever
         // Get the current time in milliseconds. The value returned represents
         // the number of milliseconds since midnight, January 1, 1970 UTC.
         timer = System.currentTimeMillis();
         detectedLocation = cObjectLocationUnknown;
+        boolean foundSomething = false;
         while (opModeIsActive()) {
             // Get a list of recognitions from TFOD.
             myTfodRecognitions = myTfodProcessor.getRecognitions();
             telemetry.addData("# Objects Detected", JavaUtil.listLength(myTfodRecognitions));
             // Iterate through list and call a function to display info for each recognized object.
             for (Recognition myTfodRecognition_item : myTfodRecognitions) {
+                foundSomething = true;
                 myTfodRecognition = myTfodRecognition_item;
                 // Display info about the recognition.
                 telemetry.addLine("");
@@ -317,18 +238,18 @@ public class HydrAuton extends LinearOpMode {
                 // Display position.
                 x = (myTfodRecognition.getLeft() + myTfodRecognition.getRight()) / 2;
                 y = (myTfodRecognition.getTop() + myTfodRecognition.getBottom()) / 2;
+                if (x < cXvalueForLeftToCenterObject) {
+                    detectedLocation = cObjectLocationLeft;
+                } else {
+                    detectedLocation = cObjectLocationCenter;
+                }
                 // Display the position of the center of the detection boundary for the recognition
                 telemetry.addData("- Position", JavaUtil.formatNumber(x, 0) + ", " + JavaUtil.formatNumber(y, 0));
             }
             // Push telemetry to the Driver Station.
             telemetry.update();
             // See if we found the object. If we found something, determine which spike it is on and leave
-            if (JavaUtil.listLength(myTfodRecognitions) > 0) {
-                if (x < cXvalueForLeftToCenterObject) {
-                    detectedLocation = cObjectLocationLeft;
-                } else {
-                    detectedLocation = cObjectLocationCenter;
-                }
+            if (foundSomething) {
                 break;
             }
             // Get the current time in milliseconds. The value returned represents
@@ -345,56 +266,8 @@ public class HydrAuton extends LinearOpMode {
     /**
      * Describe this function...
      */
-    private void SetPixelPos1Dir(double inDirection) {
-        // Keep Servo position in valid range
-        inDirection = Math.min(Math.max(inDirection, 0), 1);
-        SrvPxlPos1.setPosition(inDirection);
-        telemetry.addData("PixelPos1Servo", inDirection);
-    }
-
-    /**
-     * Describe this function...
-     */
-    private void SetPixelPos2Dir(double inDirection) {
-        // Keep Servo position in valid range
-        inDirection = Math.min(Math.max(inDirection, 0), 1);
-        SrvPxlPos2.setPosition(inDirection);
-        telemetry.addData("PixelPos2Servo", inDirection);
-    }
-
-    /**
-     * Describe this function...
-     */
-    private boolean DetectPixelPos1() {
-        double distPixelPos1;
-        boolean detPixelPos1;
-
-        distPixelPos1 = SenColPxlPos1_DistanceSensor.getDistance(DistanceUnit.CM);
-        detPixelPos1 = distPixelPos1 < cPixelPos1Dist;
-        telemetry.addData("PixelPos1Dist", distPixelPos1);
-        telemetry.addData("Pixel1Detect", detPixelPos1);
-        return detPixelPos1;
-    }
-
-    /**
-     * Describe this function...
-     */
     private void BadState() {
         telemetry.addData("InvalidState", autonState);
-    }
-
-    /**
-     * Describe this function...
-     */
-    private boolean DetectPixelPos2() {
-        double distPixelPos2;
-        boolean detPixelPos2;
-
-        distPixelPos2 = SenColPxlPos2_DistanceSensor.getDistance(DistanceUnit.CM);
-        detPixelPos2 = distPixelPos2 < cPixelPos2Dist;
-        telemetry.addData("PixelPos2Dist", distPixelPos2);
-        telemetry.addData("Pixel2Detect", detPixelPos2);
-        return detPixelPos2;
     }
 
     /**
@@ -1173,13 +1046,14 @@ public class HydrAuton extends LinearOpMode {
             }
         } else if (autonState == 303) {
             if (!Drive.Busy()) {
-                foo = ProcessCassette(cCasBackToFront, cCasBackToFront, true);
+                PixelPalace.Start(HydraPixelPalaceActions.PixelPalaceBackToFront,
+                        HydraPixelPalaceActions.PixelPalaceBackToFront, true);
                 pixelDropTimer.reset();
                 autonState += 1;
             }
         } else if (autonState == 304) {
             if (pixelDropTimer.milliseconds() >= cPixelFrontScoreRunTimeMs) {
-                foo = ProcessCassette(cCasStop, cCasStop, false);
+                PixelPalace.Stop();
                 Drive.Start(4, 0, 0);
                 autonState = 400;
             }
@@ -1208,13 +1082,14 @@ public class HydrAuton extends LinearOpMode {
             }
         } else if (autonState == 303) {
             if (!Drive.Busy()) {
-                foo = ProcessCassette(cCasFrontToBack, cCasFrontToBack, true);
+                PixelPalace.Start(HydraPixelPalaceActions.PixelPalaceFrontToBack,
+                        HydraPixelPalaceActions.PixelPalaceFrontToBack, true);
                 pixelDropTimer.reset();
                 autonState += 1;
             }
         } else if (autonState == 304) {
             if (pixelDropTimer.milliseconds() >= cPixelFrontScoreRunTimeMs) {
-                foo = ProcessCassette(cCasStop, cCasStop, false);
+                PixelPalace.Stop();
                 Drive.Start(-6, 0, 0);
                 autonState = 400;
             }
@@ -1233,7 +1108,8 @@ public class HydrAuton extends LinearOpMode {
             // Reverse the intake
             Intake.StartOut();
             // Run one pixel out of the cassette
-            foo = ProcessCassette(cCasBackToFront, cCasStop, false);
+            PixelPalace.Start(HydraPixelPalaceActions.PixelPalaceBackToFront,
+                    HydraPixelPalaceActions.PixelPalaceStop, false);
             // Start a timer since we can't easily detect whether a pixel has exited the intake
             pixelDropTimer.reset();
             // Get the current time in milliseconds. The value returned represents
@@ -1247,7 +1123,7 @@ public class HydrAuton extends LinearOpMode {
             if (System.currentTimeMillis() - pixelDropTimeStart >= cPixelDropRunTimeMs) {
                 // Stop the intake and cassette
                 Intake.Stop();
-                foo = ProcessCassette(cCasStop, cCasStop, false);
+                PixelPalace.Stop();
                 // Go to the next major step in the auton
                 autonState = 200;
             }
@@ -1256,7 +1132,7 @@ public class HydrAuton extends LinearOpMode {
             BadState();
             autonState = 200;
             Intake.Stop();
-            foo = ProcessCassette(cCasStop, cCasStop, false);
+            PixelPalace.Stop();
         }
     }
 
