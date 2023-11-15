@@ -169,6 +169,7 @@ public class HydrAuton extends HydrAuton_Base {
             case 10:
                 // LEFT RIGGING RIGHT SPIKE
                 // RIGHT RIGGING LEFT SPIKE
+                // todo this is a 13 drive and -15 strafe in blue backstage blocks
                 Drive.Start(16, 14 * flip, 0);
                 autonState = 99;
                 break;
@@ -181,7 +182,7 @@ public class HydrAuton extends HydrAuton_Base {
             case 21:
                 // CENTER SPIKE
                 if (!Drive.Busy()) {
-                    Drive.Start(0, 0, 20 * flip);
+                    Drive.Start(0, 0, -20 * flip);
                     autonState += 1;
                 }
                 break;
@@ -194,6 +195,7 @@ public class HydrAuton extends HydrAuton_Base {
                 break;
             case 23:
                 // CENTER SPIKE
+                // todo this strafe is 16 for some blocks and 15 for others
                 if (!Drive.Busy()) {
                     Drive.Start(0, 15 * flip, 0);
                     autonState = 99;
@@ -203,7 +205,8 @@ public class HydrAuton extends HydrAuton_Base {
             case 30:
                 // LEFT RIGGING LEFT SPIKE
                 // RIGHT RIGGING RIGHT SPIKE
-                Drive.Start(30, 3, 0);
+                // todo this is 28 and 3 for blue backstage
+                Drive.Start(30, 3 * flip, 0);
                 autonState += 1;
                 break;
             case 31:
@@ -292,6 +295,7 @@ public class HydrAuton extends HydrAuton_Base {
             case 213:
                 // BLUE RIGHT
                 // RED LEFT
+                // todo this drive is 73 in blue wing blocks and 76 in red wing blocks
                 if (!Drive.Busy()) {
                     Drive.Start(73, 0, 0);
                     autonState += 1;
@@ -300,6 +304,7 @@ public class HydrAuton extends HydrAuton_Base {
             case 214:
                 // BLUE RIGHT
                 // RED LEFT
+                // todo this strafe is 24 in blue wing blocks and 27 in red wing blocks
                 if (!Drive.Busy()) {
                     Drive.Start(0, -24 * flip, 0);
                     Arm.RunAction(HydraArmMovements.ArmMoveToFront);
@@ -418,6 +423,7 @@ public class HydrAuton extends HydrAuton_Base {
                 // BLUE LEFT SPIKE
                 // RED RIGHT SPIKE
                 if (!Drive.Busy()) {
+                    // todo this was -22 for blue backstage
                     Drive.Start(-20, 0, 0);
                     autonState += 1;
                 }
@@ -426,7 +432,8 @@ public class HydrAuton extends HydrAuton_Base {
                 // BLUE LEFT SPIKE
                 // RED RIGHT SPIKE
                 if (!Drive.Busy()) {
-                    Drive.Start(0, -12 * flip, 0);
+                    // todo negative or positive?
+                    Drive.Start(0, 12 * flip, 0);
                     Arm.RunAction(HydraArmMovements.ArmMoveToBack);
                     autonState = 299;
                 }
@@ -435,13 +442,16 @@ public class HydrAuton extends HydrAuton_Base {
             case 220:
                 // CENTER SPIKE
                 if (!Drive.Busy()) {
-                    Drive.Start(0, 8 * flip, 0);
+                    // todo this was 12 for blue backstage
+                    Drive.Start(0, -8 * flip, 0);
                     autonState += 1;
                 }
                 break;
             case 221:
+                // CENTER SPIKE
                 if (!Drive.Busy()) {
                     Drive.Start(-17, 0, 0);
+                    Arm.RunAction(HydraArmMovements.ArmMoveToBack);
                     autonState = 299;
                 }
                 break;
@@ -450,6 +460,7 @@ public class HydrAuton extends HydrAuton_Base {
                 // BLUE RIGHT SPIKE
                 // RED LEFT SPIKE
                 if (!Drive.Busy()) {
+                    // todo this was -31 for blue backstage
                     Drive.Start(-28, 0, 0);
                     Arm.RunAction(HydraArmMovements.ArmMoveToBack);
                     autonState = 299;
