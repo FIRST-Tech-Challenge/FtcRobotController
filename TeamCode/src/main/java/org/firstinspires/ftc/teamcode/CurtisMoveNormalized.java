@@ -16,6 +16,12 @@ import com.qualcomm.robotcore.util.Range;
 
 public class CurtisMoveNormalized extends OpMode {
     //Motors
+    float up = 1;
+    boolean isArmUp = false;
+
+    float pressdown = -45;
+
+    float pressup = 45;
     private double MAXARMPOWER = 0.5;
     private double MAXSLIDEPOWER = 0.5;
     private DcMotor leftFrontDrive, rightFrontDrive, leftBackDrive, rightBackDrive, Arm, Slides = null;
@@ -100,11 +106,33 @@ public class CurtisMoveNormalized extends OpMode {
         telemetry.addData("Slides Encoder Ticks", Slides.getCurrentPosition());
 
         // arm
-        if (gamepad2.dpad_up && Arm.getCurrentPosition() >= -2100) armPower = MAXARMPOWER;
+        if (gamepad2.dpad_up && Arm.getCurrentPosition() <= -2100) armPower = MAXARMPOWER;
         else if (gamepad2.dpad_down && Arm.getCurrentPosition() <= 10) armPower = -MAXARMPOWER;
         else armPower = 0;
         // slides
-        slidesPower = gamepad1.dpad_right ? MAXSLIDEPOWER : gamepad1.dpad_left ? -MAXSLIDEPOWER : 0;
+        if (gamepad2.dpad_right) {
+            slidesPower = MAXSLIDEPOWER;
+        } else if (gamepad2.dpad_left) {
+            slidesPower = -MAXSLIDEPOWER;
+        } else {
+            slidesPower = 0;
+        }
+
+        if (gamepad2.a) {
+            if (!isArmUp) {
+                // Move the arm up
+                armPower = pressup ;
+                isArmUp = true;
+            } else {
+                // Move the arm down
+                armPower = pressdown;
+                isArmUp = false;
+            }
+        } else {
+            armPower = 0;
+        }
+
+
 
         // Set motor powers to updated power
         leftFrontDrive.setPower(speeds[0]);
