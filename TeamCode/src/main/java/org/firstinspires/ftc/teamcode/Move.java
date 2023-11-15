@@ -68,10 +68,10 @@ public class Move extends OpMode {
 
 
         // Initialize DcMotors
-        leftFrontDrive = hardwareMap.get(DcMotor.class, "RB");
+        leftFrontDrive = hardwareMap.get(DcMotor.class, "LF");
         rightFrontDrive = hardwareMap.get(DcMotor.class, "RF");
         leftBackDrive = hardwareMap.get(DcMotor.class, "LB");
-        rightBackDrive = hardwareMap.get(DcMotor.class, "LF");
+        rightBackDrive = hardwareMap.get(DcMotor.class, "RF");
         //fire = hardwareMap.get(Servo.class, "Fire");
         Arm = hardwareMap.get(DcMotor.class, "AE");
 
@@ -85,11 +85,11 @@ public class Move extends OpMode {
         Extend.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
 
         //Sets em to back or forward
-        leftFrontDrive.setDirection(DcMotorSimple.Direction.FORWARD);
-        rightFrontDrive.setDirection(DcMotorSimple.Direction.FORWARD);
-        leftBackDrive.setDirection(DcMotorSimple.Direction.REVERSE);
-        rightBackDrive.setDirection(DcMotorSimple.Direction.FORWARD);
-        Arm.setDirection(DcMotorSimple.Direction.FORWARD);
+        leftFrontDrive.setDirection(DcMotorSimple.Direction.REVERSE);
+        rightFrontDrive.setDirection(DcMotorSimple.Direction.REVERSE);
+        leftBackDrive.setDirection(DcMotorSimple.Direction.FORWARD);
+        rightBackDrive.setDirection(DcMotorSimple.Direction.REVERSE);
+        Arm.setDirection(DcMotorSimple.Direction.REVERSE);
         Extend.setDirection(DcMotorSimple.Direction.FORWARD);
     }
 
@@ -113,13 +113,13 @@ public class Move extends OpMode {
         // Set drive controls
         double drive = -gamepad1.left_stick_y;
         double strafe = gamepad1.left_stick_x;
-        double turn = 1.66666666666666 * gamepad1.right_stick_x;
+        double turn =  gamepad1.right_stick_x;
 
         // Set motor power
-        leftFrontPower = Range.clip(drive + turn + strafe, -0.6, 0.6);
-        rightFrontPower = Range.clip(drive - turn - strafe, -0.6, 0.6);
-        leftBackPower = Range.clip(drive + turn - strafe, -0.6, 0.6);
-        rightBackPower = Range.clip(drive - turn + strafe, -0.6, 0.6);
+        leftFrontPower = Range.clip(drive - turn - strafe, -0.6, 0.6);
+        rightFrontPower = Range.clip(drive + turn + strafe, -0.6, 0.6);
+        leftBackPower = Range.clip(drive - turn + strafe, -0.6, 0.6);
+        rightBackPower = Range.clip(drive + turn - strafe, -0.6, 0.6);
 
 
 
@@ -160,10 +160,15 @@ public class Move extends OpMode {
             }
 
         }
+        else
+        {
+            armPower = 0;
+        }
+
 
         //    |
         //arm V
-        else if(gamepad2.dpad_right) {
+         if(gamepad2.dpad_right) {
 
             arm = arm + 5;
             armPower = armmove;
@@ -172,7 +177,12 @@ public class Move extends OpMode {
             Arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             Arm.setPower(2);
         }
-        else if(gamepad2.dpad_left) {
+         else
+         {
+             armPower = 0;
+         }
+
+        if(gamepad2.dpad_left) {
 
             arm = arm - 5;
             armPower = armmove;
@@ -181,8 +191,13 @@ public class Move extends OpMode {
             Arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             Arm.setPower(2);
         }
+        else
+        {
+            armPower = 0;
+        }
 
-        else if(gamepad2.dpad_down)
+
+        if(gamepad2.dpad_down)
         {
 
             armmove = 1f;

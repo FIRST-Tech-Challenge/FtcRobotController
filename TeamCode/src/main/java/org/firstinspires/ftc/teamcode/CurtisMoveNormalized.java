@@ -18,7 +18,6 @@ public class CurtisMoveNormalized extends OpMode {
     //Motors
     private double MAXARMPOWER = 0.5;
     private double MAXSLIDEPOWER = 0.5;
-
     private DcMotor leftFrontDrive, rightFrontDrive, leftBackDrive, rightBackDrive, Arm, Slides = null;
 
     private double drive, strafe, turn, armPower, slidesPower = 0.0;
@@ -96,12 +95,16 @@ public class CurtisMoveNormalized extends OpMode {
             for (int i = 0; i < speeds.length; ++i) speeds[i] /= max;
         }
 
+        //get Encoder ticks :)
+        telemetry.addData("Arm Encoder Ticks: ", Arm.getCurrentPosition());
+        telemetry.addData("Slides Encoder Ticks", Slides.getCurrentPosition());
 
         // arm
-        armPower = gamepad1.dpad_up ? MAXARMPOWER : gamepad1.dpad_down ? -MAXARMPOWER : 0;
+        if (gamepad2.dpad_up && Arm.getCurrentPosition() >= -2100) armPower = MAXARMPOWER;
+        else if (gamepad2.dpad_down && Arm.getCurrentPosition() <= 10) armPower = -MAXARMPOWER;
+        else armPower = 0;
         // slides
         slidesPower = gamepad1.dpad_right ? MAXSLIDEPOWER : gamepad1.dpad_left ? -MAXSLIDEPOWER : 0;
-
 
         // Set motor powers to updated power
         leftFrontDrive.setPower(speeds[0]);
