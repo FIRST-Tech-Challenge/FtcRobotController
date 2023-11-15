@@ -1,32 +1,3 @@
-/* Copyright (c) 2017 FIRST. All rights reserved.
- *
- * Redistribution and use in source and binary forms, with or without modification,
- * are permitted (subject to the limitations in the disclaimer below) provided that
- * the following conditions are met:
- *
- * Redistributions of source code must retain the above copyright notice, this list
- * of conditions and the following disclaimer.
- *
- * Redistributions in binary form must reproduce the above copyright notice, this
- * list of conditions and the following disclaimer in the documentation and/or
- * other materials provided with the distribution.
- *
- * Neither the name of FIRST nor the names of its contributors may be used to endorse or
- * promote products derived from this software without specific prior written permission.
- *
- * NO EXPRESS OR IMPLIED LICENSES TO ANY PARTY'S PATENT RIGHTS ARE GRANTED BY THIS
- * LICENSE. THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
- * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
- * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
- * ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE
- * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
- * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
- * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
- * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
- * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
- */
-
 package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
@@ -43,12 +14,12 @@ import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
 import java.util.List;
 
 /*
- * Demonstrates an empty iterative OpMode
+ * RevBot Autonomous code
  */
 @Autonomous(name = "RevBot Autonomous", group = "Auto")
 public class RevBotAuto extends OpMode {
 
-  RevStarterRobotHardware robot       = new RevStarterRobotHardware(this);
+  RevStarterRobotHardware robot = new RevStarterRobotHardware(this);
 
   private ElapsedTime runtime = new ElapsedTime();
   private FirstVisionProcessor visionProcessor;
@@ -56,6 +27,7 @@ public class RevBotAuto extends OpMode {
 
   // Used to hold the data for a detected AprilTag
   private AprilTagDetection desiredTag = null;
+
   private VisionPortal visionPortal;
 
   private ScoringElementLocation selectedSide = ScoringElementLocation.UNKNOWN;
@@ -67,6 +39,7 @@ public class RevBotAuto extends OpMode {
   private Alliance alliance = Alliance.UNKNOWN;
 
   private FieldPosition fieldPosition = FieldPosition.UNKNOWN;
+
   private int desiredTagId;
 
   final double DESIRED_DISTANCE = 12.0; //  this is how close the camera should get to the target (inches)
@@ -81,13 +54,21 @@ public class RevBotAuto extends OpMode {
 
   /// State machine
   enum State {
+    // Initialize
     START,
+    // Determine alliance and near/far side using gamepad entry
     DETERMINE_ALLIANCE,
+    // Identify if the custom game element is placed on left/center/right using computer vision
     IDENTIFY_SPIKE,
+    // Drive the robot to drag the pixel with it to be placed on the correct spike mark (red/blue tape)
     PLACE_PIXEL_ON_SPIKE,
+    // Move the robot towards scoreboard
     MOVE_TO_SCOREBOARD,
+    //
     SCORE_PIXEL,
+    //
     PARK,
+    //
     END
   }
   /**
@@ -113,8 +94,8 @@ public class RevBotAuto extends OpMode {
     // Determine near or far position from the scoring board
     fieldPosition = getFieldPositionFromKeyEntry();
 
+    // Check if we know both alliance and field position
     if (alliance != Alliance.UNKNOWN && fieldPosition != FieldPosition.UNKNOWN) {
-      // We know both alliance and field position
       state = State.IDENTIFY_SPIKE;
     }
   }
@@ -146,15 +127,22 @@ public class RevBotAuto extends OpMode {
         break;
       case IDENTIFY_SPIKE:
         selectedSide = visionProcessor.getSelection();
-        if (selectedSide != ScoringElementLocation.UNKNOWN){
-          visionPortal.stopStreaming();
-          visionPortal.setProcessorEnabled(visionProcessor, false);
-          telemetry.addData("selectedSide: " , selectedSide.toString());
-          state = State.PLACE_PIXEL_ON_SPIKE;
-          lastTime = getRuntime();
+        if (selectedSide == ScoringElementLocation.UNKNOWN){
+          break;
         }
+        visionPortal.stopStreaming();
+        visionPortal.setProcessorEnabled(visionProcessor, false);
+        telemetry.addData("selectedSide: " , selectedSide.toString());
+        state = State.PLACE_PIXEL_ON_SPIKE;
+        lastTime = getRuntime();
         break;
       case PLACE_PIXEL_ON_SPIKE:
+        // TODO: Depending on selectedSide, move left, straight, right.
+        //  Since we are dragging the pixel there is nothing to drop.
+
+        //  Move back a little so that we don't drag the pixel away from the desired location.
+
+
         state = State.MOVE_TO_SCOREBOARD;
         lastTime = getRuntime();
 
@@ -163,6 +151,7 @@ public class RevBotAuto extends OpMode {
         desiredTagId = getDesiredTagId(alliance, selectedSide);
         visionPortal.setProcessorEnabled(aprilTag, true);
         // TODO: Step 1: Move based on approximation - time/ encoder / gyro.
+        // Determine which direction to turn. Plan trajectory based on initial location and the goal location.
         // Keep looking for the desired aprilTag
         boolean targetFound = findDesiredAprilTag(desiredTagId);
 
@@ -180,11 +169,14 @@ public class RevBotAuto extends OpMode {
         visionPortal.setProcessorEnabled(aprilTag, false);
         break;
       case SCORE_PIXEL:
+        // TODO: raise arm / wrist to the scoring position, open gripper
         state = State.PARK;
         lastTime = getRuntime();
 
         break;
       case PARK:
+        // If we started on the near side, move towards the corner.
+        // If we started on the far side, move to towards the center
         state = State.END;
         lastTime = getRuntime();
         break;
