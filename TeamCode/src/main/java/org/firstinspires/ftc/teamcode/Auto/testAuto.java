@@ -1,10 +1,13 @@
 package org.firstinspires.ftc.teamcode.Auto;
 
+import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.teamcode.Vision.OpenCVBlue;
+import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
+import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequence;
 import org.opencv.core.Mat;
 import org.opencv.core.Point;
 import org.opencv.core.Scalar;
@@ -70,6 +73,8 @@ public class testAuto extends LinearOpMode {
             @Override
             public void onOpened()
             {
+
+
                 /*
                  * Tell the webcam to start streaming images to us! Note that you must make sure
                  * the resolution you specify is supported by the camera. If it is not, an exception
@@ -109,6 +114,15 @@ public class testAuto extends LinearOpMode {
 
         while (opModeIsActive())
         {
+            SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
+
+            TrajectorySequence Left = drive.trajectorySequenceBuilder(new Pose2d())
+                    .forward(5)
+                    .strafeLeft(16)
+                    .forward(19)
+                    .back(20)
+                    .strafeLeft(20)
+                    .build();
             /*
              * Send some stats to the telemetry
              */
@@ -123,13 +137,7 @@ public class testAuto extends LinearOpMode {
 
             if(result == "RIGHT") { test = 1; } else if(result == "LEFT") { test = 2; } else if(result == "MIDDLE") { test = 3; }
 
-            //telemetry.addData("result", result);
-//            telemetry.addData("Frame Count", webcam.getFrameCount());
-//            telemetry.addData("FPS", String.format("%.2f", webcam.getFps()));
-//            telemetry.addData("Total frame time ms", webcam.getTotalFrameTimeMs());
-//            telemetry.addData("Pipeline time ms", webcam.getPipelineTimeMs());
-//            telemetry.addData("Overhead time ms", webcam.getOverheadTimeMs());
-//            telemetry.addData("Theoretical max FPS", webcam.getCurrentPipelineMaxFps());
+            if(test==1) {drive.followTrajectorySequence(Left);};
             telemetry.update();
 
             /*

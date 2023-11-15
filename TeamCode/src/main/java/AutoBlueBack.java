@@ -26,7 +26,7 @@ public class AutoBlueBack extends LinearOpMode {
         SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
 
         TrajectorySequence myTrajectory = drive.trajectorySequenceBuilder(new Pose2d())
-                .strafeRight(10)
+                .strafeLeft(12)
                 .forward(5)
                 .build();
 
