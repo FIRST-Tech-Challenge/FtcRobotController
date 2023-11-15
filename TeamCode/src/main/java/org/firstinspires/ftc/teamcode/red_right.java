@@ -168,11 +168,11 @@ public class red_right extends LinearOpMode {
     @Override
     public void runOpMode() {
         //
-        // ex= new extension(hardwareMap);
+        ex= new extension(hardwareMap);
         wrist = hardwareMap.get(Servo.class, "wrist");
         claw = hardwareMap.get(Servo.class, "claw");//hardwaremap claw and tilt
         initTfod();
-        //ex.setStowPos();
+        ex.setStowPos();
         claw.setPosition(0.2);
         // Wait for the DS start button to be touched.
         telemetry.addData("DS preview on/off", "3 dots, Camera Stream");
@@ -220,6 +220,7 @@ public class red_right extends LinearOpMode {
         while (opModeInInit()) {
             telemetry.addData(">", "Robot Heading = %4.0f", getHeading());
             telemetry.update();
+            if(gamepad1.a)imu.resetYaw();
         }
 
         // Set the encoders for closed loop speed control, and reset the heading.

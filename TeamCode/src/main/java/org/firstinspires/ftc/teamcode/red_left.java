@@ -106,8 +106,8 @@ public class red_left extends LinearOpMode {
     int idk=0;
     int drive2=0;
     int drive2t=0;
-    int driveforward = 17;
-    int driveturn = -45;
+    int driveforward = 18;
+    int driveturn = -30;
     int zone=3;
     private static final boolean USE_WEBCAM = true;
     private TfodProcessor tfod;
@@ -168,11 +168,11 @@ public class red_left extends LinearOpMode {
     @Override
     public void runOpMode() {
         //
-        // ex= new extension(hardwareMap);
+         ex= new extension(hardwareMap);
         wrist = hardwareMap.get(Servo.class, "wrist");
         claw = hardwareMap.get(Servo.class, "claw");//hardwaremap claw and tilt
         initTfod();
-        //ex.setStowPos();
+        ex.setStowPos();
         claw.setPosition(0.2);
         // Wait for the DS start button to be touched.
         telemetry.addData("DS preview on/off", "3 dots, Camera Stream");
@@ -220,6 +220,7 @@ public class red_left extends LinearOpMode {
         while (opModeInInit()) {
             telemetry.addData(">", "Robot Heading = %4.0f", getHeading());
             telemetry.update();
+            if(gamepad1.a)imu.resetYaw();
         }
 
         // Set the encoders for closed loop speed control, and reset the heading.
