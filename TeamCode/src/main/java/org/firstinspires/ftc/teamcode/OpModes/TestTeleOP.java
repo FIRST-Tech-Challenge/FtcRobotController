@@ -29,37 +29,42 @@
 
 package org.firstinspires.ftc.teamcode.OpModes;
 
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.IMU;
+import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.hardware.TouchSensor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
+import org.firstinspires.ftc.teamcode.Subsystems.ArmSubsystem;
 import org.firstinspires.ftc.teamcode.Subsystems.DrivetrainSubsystem;
+import org.firstinspires.ftc.teamcode.Subsystems.ExtenderSubsystem;
+import org.firstinspires.ftc.teamcode.Subsystems.IntakeSubsystem;
+import org.firstinspires.ftc.teamcode.Subsystems.VisionSubsystem;
+import org.firstinspires.ftc.teamcode.Subsystems.WristSubsystem;
 import org.firstinspires.ftc.teamcode.Utilities.Constants;
 
-
-@TeleOp(name="Subsystem Test", group="Linear OpMode")
-@Disabled
-public class SubsystemTest extends LinearOpMode {
+@TeleOp(name="Test TeleOp", group="Linear OpMode")
+//@Disabled
+public class TestTeleOP extends LinearOpMode {
 
     // Declare OpMode members.
-    public ElapsedTime runtime = new ElapsedTime();
+    private ElapsedTime runtime = new ElapsedTime();
 
     @Override
     public void runOpMode() {
         telemetry.addData("Status", "Initialized");
         telemetry.update();
 
-        // Initialize the hardware variables.
+        //Initialize Subsystems
         DrivetrainSubsystem drivetrainSubsystem = new DrivetrainSubsystem(
                 hardwareMap.get(DcMotor.class, Constants.backLeftDriveID),
                 hardwareMap.get(DcMotor.class, Constants.backRightDriveID),
                 hardwareMap.get(DcMotor.class, Constants.frontLeftDriveID),
                 hardwareMap.get(DcMotor.class, Constants.frontRightDriveID),
                 hardwareMap.get(IMU.class, "imu"));
-        drivetrainSubsystem.initialize();
 
         // Wait for the game to start (driver presses PLAY)
         waitForStart();
@@ -68,10 +73,7 @@ public class SubsystemTest extends LinearOpMode {
         // run until the end of the match (driver presses STOP)
         while (opModeIsActive()) {
 
-            //Drive Code
-            drivetrainSubsystem.teleOPDrive(gamepad1.left_stick_y, gamepad1.left_stick_x, gamepad1.right_stick_x);
-            drivetrainSubsystem.autoShuffle(DrivetrainSubsystem.Directions.SHUFFLE_LEFT, 24);
-            drivetrainSubsystem.autoTurnOld(DrivetrainSubsystem.Directions.TURN_RIGHT, 90);
+            drivetrainSubsystem.teleOPDrive(gamepad1.left_stick_y / 2, gamepad1.left_stick_x / 2, gamepad1.right_stick_x / 2);
 
             // Show the elapsed game time and wheel power.
             telemetry.addData("Status", "Run Time: " + runtime.toString());

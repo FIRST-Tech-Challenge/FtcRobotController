@@ -7,10 +7,12 @@ import com.qualcomm.robotcore.hardware.Gamepad;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.IMU;
+import com.qualcomm.robotcore.hardware.configuration.typecontainers.MotorConfigurationType;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
 
 import org.firstinspires.ftc.robotcore.external.Const;
+import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.teamcode.Utilities.Constants;
 import org.firstinspires.ftc.teamcode.Utilities.MiniPID;
@@ -59,16 +61,21 @@ public class DrivetrainSubsystem {
         backRightDrive.setDirection(DcMotor.Direction.FORWARD);
         frontRightDrive.setDirection(DcMotor.Direction.FORWARD);
 
+        backLeftDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        frontLeftDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        backRightDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        frontRightDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
         //PIDs
         drivePID = new MiniPID(Constants.driveP, Constants.driveI, Constants.driveD);
-        drivePID.setOutputLimits(-1.0, 1.0);
+        drivePID.setOutputLimits(-0.2, 0.2);
 
         turnPID = new MiniPID(Constants.turnP, Constants.turnI, Constants.turnD);
-        turnPID.setOutputLimits(-1.0, 1.0);
+        turnPID.setOutputLimits(-0.2, 0.2);
 
         //IMU
-        RevHubOrientationOnRobot.LogoFacingDirection logoFacingDirection = RevHubOrientationOnRobot.LogoFacingDirection.UP;
-        RevHubOrientationOnRobot.UsbFacingDirection usbFacingDirection = RevHubOrientationOnRobot.UsbFacingDirection.FORWARD;
+        RevHubOrientationOnRobot.LogoFacingDirection logoFacingDirection = RevHubOrientationOnRobot.LogoFacingDirection.RIGHT;
+        RevHubOrientationOnRobot.UsbFacingDirection usbFacingDirection = RevHubOrientationOnRobot.UsbFacingDirection.DOWN;
         RevHubOrientationOnRobot orientationOnRobot = new RevHubOrientationOnRobot(logoFacingDirection, usbFacingDirection);
         imu.initialize(new IMU.Parameters(orientationOnRobot));
 
@@ -95,11 +102,11 @@ public class DrivetrainSubsystem {
     //Utilizes the drive PID and a target position to drive forwards or backwards. Ends when the distance between positions becomes minimal.
     public void autoDrive(double targetPositionInches) {
         Long targetPositionLong = Math.round(Constants.driveMotorCPI * targetPositionInches);
-        double targetPosition = targetPositionLong.doubleValue();
+        double targetPosition = targetPositionLong.doubleValue() + frontLeftDrive.getCurrentPosition();
 
         boolean inRange = false;
 
-        android.util.Range<Double> endRange = android.util.Range.create(-0.05, 0.05);
+        android.util.Range<Double> endRange = android.util.Range.create(-0.005, 0.005);
 
         //Runs when target position is not within the motor stop range.
         while (!inRange) {
@@ -200,8 +207,112 @@ public class DrivetrainSubsystem {
         }
     }
 
-    //Autonomously turns the robot a degree amount in the provided direction. Utilizes a PID on inputted IMU gyroscope angles.
     public void autoTurn(Directions direction, double turnAngle) {
+        double leftDriveInput, rightDriveInput;
+        double currentAngle, targetAngle, distance, lastDistance;
+        double lastTime = System.currentTimeMillis();
+        boolean inRange = false;
+
+        switch (direction) {
+            case TURN_RIGHT:
+                currentAngle = -imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES);
+                targetAngle = (currentAngle + turnAngle) % 360;
+                if (targetAngle > 180) {
+                    targetAngle -= 360;
+                }
+
+                distance = calculateLargeAngleDistance(currentAngle, targetAngle);
+                lastDistance = distance;
+                turnPID.setSetpoint(0);
+
+                while (!inRange) {
+                    if (distance > 20) {
+                        leftDriveInput = -turnPID.getOutput(distance);
+                        rightDriveInput = turnPID.getOutput(distance);
+
+                        frontLeftDrive.setPower(leftDriveInput);
+                        backLeftDrive.setPower(leftDriveInput);
+                        frontRightDrive.setPower(rightDriveInput);
+                        backRightDrive.setPower(rightDriveInput);
+
+                        currentAngle = -imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES);
+                        lastDistance = distance;
+                        distance = calculateLargeAngleDistance(currentAngle, targetAngle);
+                        lastTime = System.currentTimeMillis();
+
+                    }
+
+                    else if (distance <= 20 && distance > 5) {
+                        leftDriveInput = -turnPID.getOutput(distance);
+                        rightDriveInput = turnPID.getOutput(distance);
+
+                        frontLeftDrive.setPower(leftDriveInput);
+                        backLeftDrive.setPower(leftDriveInput);
+                        frontRightDrive.setPower(rightDriveInput);
+                        backRightDrive.setPower(rightDriveInput);
+
+                        currentAngle = -imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES);
+                        lastDistance = distance;
+                        distance = calculateSmallAngleDistance(currentAngle, targetAngle);
+                        lastTime = System.currentTimeMillis();
+                    }
+
+                    else {
+                        inRange = true;
+                        /*
+                        double deltaDistance = distance - lastDistance;
+                        double timeElapsed = System.currentTimeMillis() - lastTime;
+                        double dSdT = deltaDistance / timeElapsed;
+
+                        if (-0.05 < dSdT && dSdT < 0.05) {
+                            inRange = true;
+                        }
+
+                        leftDriveInput = -turnPID.getOutput(distance);
+                        rightDriveInput = turnPID.getOutput(distance);
+
+                        frontLeftDrive.setPower(leftDriveInput);
+                        backLeftDrive.setPower(leftDriveInput);
+                        frontRightDrive.setPower(rightDriveInput);
+                        backRightDrive.setPower(rightDriveInput);
+
+                        currentAngle = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES);
+                        lastDistance = distance;
+                        distance = calculateSmallAngleDistance(currentAngle, targetAngle);
+                        lastTime = System.currentTimeMillis();
+                         */
+                    }
+                }
+
+                frontLeftDrive.setPower(0);
+                backLeftDrive.setPower(0);
+                frontRightDrive.setPower(0);
+                backRightDrive.setPower(0);
+        }
+    }
+
+    private double calculateLargeAngleDistance(double currentAngle, double targetAngle) {
+        if (currentAngle > targetAngle) {
+            return (180 - currentAngle) + (180 + targetAngle);
+        }
+        else if (currentAngle < targetAngle) {
+            return (180 + targetAngle) - (180 + currentAngle);
+        }
+        else {
+            return 0;
+        }
+    }
+
+    private double calculateSmallAngleDistance(double currentAngle, double targetAngle) {
+        double distance = Math.abs(targetAngle - currentAngle);
+        if (distance > 20) {
+            distance =  Math.abs(distance - 360);
+        }
+        return distance;
+    }
+
+    //Autonomously turns the robot a degree amount in the provided direction. Utilizes a PID on inputted IMU gyroscope angles.
+    public void autoTurnOld(Directions direction, double turnAngle) {
         //Variable Declaration
         double leftDriveInput;
         double rightDriveInput;
@@ -334,6 +445,10 @@ public class DrivetrainSubsystem {
 
     public double getFrontRightPower() {
         return frontRightDrive.getPower();
+    }
+
+    public double getAngle() {
+        return -imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES);
     }
 
     //Directions for Autonomous Commands

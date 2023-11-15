@@ -29,9 +29,8 @@
 
 package org.firstinspires.ftc.teamcode.OpModes;
 
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
+import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.IMU;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -39,41 +38,55 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.teamcode.Subsystems.DrivetrainSubsystem;
 import org.firstinspires.ftc.teamcode.Utilities.Constants;
 
-
-@TeleOp(name="Subsystem Test", group="Linear OpMode")
-@Disabled
-public class SubsystemTest extends LinearOpMode {
+@Autonomous(name="Test Auto", group="Linear OpMode")
+//@Disabled
+public class TestAuto extends LinearOpMode {
 
     // Declare OpMode members.
-    public ElapsedTime runtime = new ElapsedTime();
+    private ElapsedTime runtime = new ElapsedTime();
 
     @Override
     public void runOpMode() {
         telemetry.addData("Status", "Initialized");
         telemetry.update();
 
-        // Initialize the hardware variables.
+        //Initialize Subsystems
         DrivetrainSubsystem drivetrainSubsystem = new DrivetrainSubsystem(
                 hardwareMap.get(DcMotor.class, Constants.backLeftDriveID),
                 hardwareMap.get(DcMotor.class, Constants.backRightDriveID),
                 hardwareMap.get(DcMotor.class, Constants.frontLeftDriveID),
                 hardwareMap.get(DcMotor.class, Constants.frontRightDriveID),
                 hardwareMap.get(IMU.class, "imu"));
-        drivetrainSubsystem.initialize();
 
         // Wait for the game to start (driver presses PLAY)
         waitForStart();
         runtime.reset();
 
         // run until the end of the match (driver presses STOP)
-        while (opModeIsActive()) {
 
-            //Drive Code
-            drivetrainSubsystem.teleOPDrive(gamepad1.left_stick_y, gamepad1.left_stick_x, gamepad1.right_stick_x);
-            drivetrainSubsystem.autoShuffle(DrivetrainSubsystem.Directions.SHUFFLE_LEFT, 24);
-            drivetrainSubsystem.autoTurnOld(DrivetrainSubsystem.Directions.TURN_RIGHT, 90);
+        drivetrainSubsystem.autoDrive(12);
+        sleep(2000);
+        //drivetrainSubsystem.autoShuffle(DrivetrainSubsystem.Directions.SHUFFLE_LEFT, 12);
+        //sleep(4000);
+        telemetry.addData("angle", drivetrainSubsystem.getAngle());
+        telemetry.update();
+        drivetrainSubsystem.autoTurn(DrivetrainSubsystem.Directions.TURN_RIGHT, 90);
+        sleep(2000);
+        telemetry.addData("angle", drivetrainSubsystem.getAngle());
+        telemetry.update();
+        drivetrainSubsystem.autoTurn(DrivetrainSubsystem.Directions.TURN_RIGHT, 90);
+        sleep(2000);
+        telemetry.addData("angle", drivetrainSubsystem.getAngle());
+        telemetry.update();
+        drivetrainSubsystem.autoTurn(DrivetrainSubsystem.Directions.TURN_RIGHT, 180);
+        sleep(2000);
+        telemetry.addData("angle", drivetrainSubsystem.getAngle());
+        telemetry.update();
+        drivetrainSubsystem.autoTurn(DrivetrainSubsystem.Directions.TURN_RIGHT, 540);
+
 
             // Show the elapsed game time and wheel power.
+        while (opModeIsActive()) {
             telemetry.addData("Status", "Run Time: " + runtime.toString());
             telemetry.addData("Drive Motors", "frontLeft (%.2f), backLeft (%.2f), frontRight (%.2f), backRight (%.2f)",
                     drivetrainSubsystem.getFrontLeftPower(),
@@ -82,5 +95,6 @@ public class SubsystemTest extends LinearOpMode {
                     drivetrainSubsystem.getBackRightPower());
             telemetry.update();
         }
+
     }
 }

@@ -92,7 +92,7 @@ public class MainTeleOp extends LinearOpMode {
 
             drivetrainSubsystem.teleOPDrive(gamepad1.left_stick_y, gamepad1.left_stick_x, gamepad1.right_stick_y);
             armSubsystem.ManualPositionArm(gamepad2.dpad_left, gamepad2.dpad_right);
-            //erectorSubsystem.teleOPErect(gamepad2.dpad_down, gamepad2.dpad_up);
+            //ErectorSubsystem.teleOPErect(gamepad2.dpad_down, gamepad2.dpad_up);
             intakeSubsystem.teleOPIntake(gamepad2.right_trigger, gamepad2.left_trigger);
             wristSubsystem.manualAngleWrist(gamepad2.right_bumper, gamepad2.left_bumper);
 

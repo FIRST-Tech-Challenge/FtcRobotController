@@ -27,59 +27,82 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package org.firstinspires.ftc.teamcode.OpModes;
+package org.firstinspires.ftc.teamcode.Tests;
 
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.IMU;
+import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.firstinspires.ftc.teamcode.Subsystems.DrivetrainSubsystem;
-import org.firstinspires.ftc.teamcode.Utilities.Constants;
 
+/*
+ * This file contains an minimal example of a Linear "OpMode". An OpMode is a 'program' that runs in either
+ * the autonomous or the teleop period of an FTC match. The names of OpModes appear on the menu
+ * of the FTC Driver Station. When a selection is made from the menu, the corresponding OpMode
+ * class is instantiated on the Robot Controller and executed.
+ *
+ * This particular OpMode just executes a basic Tank Drive Teleop for a two wheeled robot
+ * It includes all the skeletal structure that all linear OpModes contain.
+ *
+ * Use Android Studio to Copy this Class, and Paste it into your team's code folder with a new name.
+ * Remove or comment out the @Disabled line to add this OpMode to the Driver Station OpMode list
+ */
 
-@TeleOp(name="Subsystem Test", group="Linear OpMode")
-@Disabled
-public class SubsystemTest extends LinearOpMode {
+@TeleOp(name="Servo Test", group="Linear OpMode")
+//@Disabled
+public class ServoTest extends LinearOpMode {
 
     // Declare OpMode members.
-    public ElapsedTime runtime = new ElapsedTime();
+    private ElapsedTime runtime = new ElapsedTime();
+    private Servo servoOne;
+    private Servo servoTwo;
 
     @Override
     public void runOpMode() {
         telemetry.addData("Status", "Initialized");
         telemetry.update();
 
-        // Initialize the hardware variables.
-        DrivetrainSubsystem drivetrainSubsystem = new DrivetrainSubsystem(
-                hardwareMap.get(DcMotor.class, Constants.backLeftDriveID),
-                hardwareMap.get(DcMotor.class, Constants.backRightDriveID),
-                hardwareMap.get(DcMotor.class, Constants.frontLeftDriveID),
-                hardwareMap.get(DcMotor.class, Constants.frontRightDriveID),
-                hardwareMap.get(IMU.class, "imu"));
-        drivetrainSubsystem.initialize();
+        servoOne = hardwareMap.get(Servo.class, "Servo One");
+        servoTwo = hardwareMap.get(Servo.class, "Servo Two");
 
-        // Wait for the game to start (driver presses PLAY)
+        servoOne.setDirection(Servo.Direction.FORWARD);
+        servoTwo.setDirection(Servo.Direction.REVERSE);
+
+        double servoOnePower = 0.0;
+        double servoTwoPower = 0.0;
+
+                // Wait for the game to start (driver presses PLAY)
         waitForStart();
         runtime.reset();
 
         // run until the end of the match (driver presses STOP)
         while (opModeIsActive()) {
 
-            //Drive Code
-            drivetrainSubsystem.teleOPDrive(gamepad1.left_stick_y, gamepad1.left_stick_x, gamepad1.right_stick_x);
-            drivetrainSubsystem.autoShuffle(DrivetrainSubsystem.Directions.SHUFFLE_LEFT, 24);
-            drivetrainSubsystem.autoTurnOld(DrivetrainSubsystem.Directions.TURN_RIGHT, 90);
+            if (gamepad1.left_bumper) {
+                servoOnePower = -1.0;
+            }
+            else if (gamepad1.right_bumper) {
+                servoOnePower = 1.0;
+            }
+            else {
+                servoOnePower = 0.0;
+            }
 
-            // Show the elapsed game time and wheel power.
+            if (gamepad2.left_bumper) {
+                servoTwoPower = -1.0;
+            }
+            else if (gamepad2.right_bumper) {
+                servoTwoPower = 1.0;
+            }
+            else {
+                servoTwoPower = 0.0;
+            }
+
+            servoOne.setPosition(servoOnePower);
+            servoTwo.setPosition(servoTwoPower);
+
             telemetry.addData("Status", "Run Time: " + runtime.toString());
-            telemetry.addData("Drive Motors", "frontLeft (%.2f), backLeft (%.2f), frontRight (%.2f), backRight (%.2f)",
-                    drivetrainSubsystem.getFrontLeftPower(),
-                    drivetrainSubsystem.getBackLeftPower(),
-                    drivetrainSubsystem.getFrontRightPower(),
-                    drivetrainSubsystem.getBackRightPower());
+            telemetry.addData("Servos", "One (%.2f), Two (%.2f)", servoOnePower, servoTwoPower);
             telemetry.update();
         }
     }

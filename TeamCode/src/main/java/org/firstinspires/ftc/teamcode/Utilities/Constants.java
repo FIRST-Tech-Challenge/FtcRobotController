@@ -69,7 +69,7 @@ public class Constants {
     public static double flywheelVelocity = 1;
 
     //PID Values
-    public static double driveP = 0.1;
+    public static double driveP = 0.01;
     public static double driveI = 0.0;
     public static double driveD = 0.0;
 
