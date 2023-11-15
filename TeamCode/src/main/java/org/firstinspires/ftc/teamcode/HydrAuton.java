@@ -15,7 +15,6 @@ public class HydrAuton extends HydrAuton_Base {
     protected HydraObjectLocations ObjLoc;
     protected ElapsedTime pixelDropTimer;
     protected int autonState;
-    protected long pixelDropTimeStart;
 
     /**
      * This function is executed when this OpMode is selected from the Driver Station.
@@ -112,203 +111,6 @@ public class HydrAuton extends HydrAuton_Base {
         telemetry.addData("InvalidState", autonState);
     }
 
-    /**
-     * Describe this function...
-     */
-    private boolean AutonRedWing() {
-        // Need to nest a couple of ifs because this app can't handle huge if-else trees
-        if (autonState < 100) {
-            // These states all handle driving to the object spike location
-            if (autonState == 0) {
-                // Jump to the correct state based on the location
-                if (ObjLoc == HydraObjectLocations.ObjLocLeftSpike) {
-                    autonState = 10;
-                } else if (ObjLoc == HydraObjectLocations.ObjLocCenterSpike) {
-                    autonState = 20;
-                } else if (ObjLoc == HydraObjectLocations.ObjLocRightSpike) {
-                    autonState = 30;
-                } else {
-                    BadState();
-                    autonState = 500;
-                }
-            } else if (autonState < 20) {
-                if (autonState == 10) {
-                    // This is the first state for the left spike
-                    if (true) {
-                        Drive.Start(16, -14, 0);
-                        autonState += 1;
-                    }
-                } else if (autonState == 11) {
-                    // This is the last state for the left spike
-                    if (!Drive.Busy()) {
-                        autonState = 100;
-                    }
-                } else {
-                    BadState();
-                    autonState = 500;
-                }
-            } else if (autonState < 30) {
-                if (autonState == 20) {
-                    // This is the first state for the center spike
-                    if (true) {
-                        Drive.Start(24, 0, 0);
-                        autonState += 1;
-                    }
-                } else if (autonState == 21) {
-                    if (!Drive.Busy()) {
-                        Drive.Start(0, 0, 20);
-                        autonState += 1;
-                    }
-                } else if (autonState == 22) {
-                    if (!Drive.Busy()) {
-                        Drive.Start(-14, 0, 0);
-                        autonState += 1;
-                    }
-                } else if (autonState == 23) {
-                    // This is the last state for the center spike
-                    if (!Drive.Busy()) {
-                        Drive.Start(0, -16, 0);
-                        autonState = 100;
-                    }
-                } else {
-                    BadState();
-                    autonState = 500;
-                }
-            } else if (autonState < 40) {
-                if (autonState == 30) {
-                    // This is the first state for the right spike
-                    if (true) {
-                        Drive.Start(30, -3, 0);
-                        autonState += 1;
-                    }
-                } else if (autonState == 31) {
-                    // This is the last state for the right spike
-                    if (!Drive.Busy()) {
-                        Drive.Start(0, 0, 20);
-                        autonState = 100;
-                    }
-                } else {
-                    BadState();
-                    autonState = 500;
-                }
-            } else {
-                BadState();
-                autonState = 500;
-            }
-        } else if (autonState < 200) {
-            // These 100 level states handle dropping the pixel on the spike. this is the same for all autons
-            if (!Drive.Busy()) {
-                PixelDrop();
-            }
-        } else if (autonState < 300) {
-            // These 200 level states handle driving to the backdrop
-            if (autonState == 200) {
-                // Jump to the correct state based on the location
-                if (ObjLoc == HydraObjectLocations.ObjLocLeftSpike) {
-                    autonState = 210;
-                } else if (ObjLoc == HydraObjectLocations.ObjLocCenterSpike) {
-                    autonState = 220;
-                } else {
-                    autonState = 230;
-                }
-            } else if (autonState < 220) {
-                if (autonState == 210) {
-                    // This is the first state for the left spike
-                    if (!Drive.Busy()) {
-                        Drive.Start(0, 12, 0);
-                        autonState += 1;
-                    }
-                } else if (autonState == 211) {
-                    if (!Drive.Busy()) {
-                        Drive.Start(34, 0, 0);
-                        autonState += 1;
-                    }
-                } else if (autonState == 212) {
-                    if (!Drive.Busy()) {
-                        Drive.Start(0, 0, 20);
-                        autonState += 1;
-                    }
-                } else if (autonState == 213) {
-                    if (!Drive.Busy()) {
-                        Drive.Start(76, 0, 0);
-                        autonState += 1;
-                    }
-                } else if (autonState == 214) {
-                    // This is the last state for the left spike
-                    if (!Drive.Busy()) {
-                        Drive.Start(0, 27, 0);
-                        autonState = 300;
-                    }
-                } else {
-                    BadState();
-                    autonState = 500;
-                }
-            } else if (autonState < 230) {
-                if (autonState == 220) {
-                    // This is the first state for the center spike
-                    if (!Drive.Busy()) {
-                        Drive.Start(0, -19, 0);
-                        autonState += 1;
-                    }
-                } else if (autonState == 221) {
-                    if (!Drive.Busy()) {
-                        Drive.Start(87, 0, 0);
-                        autonState += 1;
-                    }
-                } else if (autonState == 222) {
-                    // This is the last state for the center spike
-                    if (!Drive.Busy()) {
-                        Drive.Start(0, 24, 0);
-                        autonState = 300;
-                    }
-                } else {
-                    BadState();
-                    autonState = 500;
-                }
-            } else if (autonState < 240) {
-                if (autonState == 230) {
-                    // This is the first state for the right spike
-                    if (!Drive.Busy()) {
-                        Drive.Start(0, -22, 0);
-                        autonState += 1;
-                    }
-                } else if (autonState == 231) {
-                    if (!Drive.Busy()) {
-                        Drive.Start(76, 0, 0);
-                        autonState += 1;
-                    }
-                } else if (autonState == 232) {
-                    // This is the last state for the right spike
-                    if (!Drive.Busy()) {
-                        Drive.Start(0, 29, 0);
-                        autonState = 300;
-                    }
-                }
-            } else {
-                BadState();
-                autonState = 500;
-            }
-        } else if (autonState < 400) {
-            // These 300 level states handle scoring forwards at the backdrop. this is the same for two autons
-            if (!Drive.Busy()) {
-                ScoreFront();
-            }
-        } else if (autonState < 500) {
-            // These 400 level states handle returning the arm home. this is the same for all autons
-            if (!Drive.Busy()) {
-                ArmToHome();
-            }
-        } else if (autonState == 500) {
-            if (true) {
-                return true;
-            }
-        } else {
-            BadState();
-            autonState = 500;
-        }
-        return false;
-    }
-
     protected boolean AutonDriveToSpike(boolean flipWhenRiggingIsRight) {
         int flip = 1;
         if (flipWhenRiggingIsRight) {
@@ -402,7 +204,7 @@ public class HydrAuton extends HydrAuton_Base {
         return true;
     }
 
-    protected boolean AutonDriveToBackDropFromWing(boolean flipWhenRed) {
+    protected boolean AutonDriveToBackdropFromWing(boolean flipWhenRed) {
         int flip = 1;
         if (flipWhenRed) {
             flip = -1;
@@ -537,400 +339,132 @@ public class HydrAuton extends HydrAuton_Base {
     /**
      * Describe this function...
      */
-    private boolean AutonRedBackstage() {
-        // Need to nest a couple of ifs because this app can't handle huge if-else trees
-        if (autonState < 100) {
-            // These states all handle driving to the object spike location
-            if (autonState == 0) {
-                // Jump to the correct state based on the location
-                if (ObjLoc == HydraObjectLocations.ObjLocRightSpike) {
-                    autonState = 10;
-                } else if (ObjLoc == HydraObjectLocations.ObjLocCenterSpike) {
-                    autonState = 20;
-                } else if (ObjLoc == HydraObjectLocations.ObjLocLeftSpike) {
-                    autonState = 30;
-                } else {
-                    BadState();
-                    autonState = 600;
+    protected boolean AutonDriveToBackdropFromBackstage(boolean flipForRed) {
+        int flip = 1;
+        if (flipForRed) {
+            flip = -1;
+        }
+        switch (autonState) {
+            case 200:
+                switch (ObjLoc) {
+                    case ObjLocRightSpike:
+                        if (flipForRed) {
+                            autonState = 210;
+                        } else {
+                            autonState = 230;
+                        }
+                        break;
+                    case ObjLocCenterSpike:
+                        autonState = 220;
+                        break;
+                    case ObjLocLeftSpike:
+                        if (flipForRed) {
+                            autonState = 230;
+                        } else {
+                            autonState = 210;
+                        }
+                        break;
+                    default:
+                        return false;
                 }
-            } else if (autonState < 20) {
-                if (autonState == 10) {
-                    // This is the first state for the right spike
-                    if (true) {
-                        Drive.Start(16, 14, 0);
-                        autonState += 1;
-                    }
-                } else if (autonState == 11) {
-                    // This is the last state for the right spike
-                    if (!Drive.Busy()) {
-                        autonState = 100;
-                    }
-                } else {
-                    BadState();
-                    autonState = 600;
-                }
-            } else if (autonState < 30) {
-                if (autonState == 20) {
-                    // This is the first state for the center spike
-                    if (true) {
-                        Drive.Start(24, 0, 0);
-                        autonState += 1;
-                    }
-                } else if (autonState == 21) {
-                    if (!Drive.Busy()) {
-                        Drive.Start(0, 0, -20);
-                        autonState += 1;
-                    }
-                } else if (autonState == 22) {
-                    if (!Drive.Busy()) {
-                        Drive.Start(-14, 0, 0);
-                        autonState += 1;
-                    }
-                } else if (autonState == 23) {
-                    // This is the last state for the center spike
-                    if (!Drive.Busy()) {
-                        Drive.Start(0, 15, 0);
-                        autonState = 100;
-                    }
-                } else {
-                    BadState();
-                    autonState = 600;
-                }
-            } else if (autonState < 40) {
-                if (autonState == 30) {
-                    // This is the first state for the left spike
-                    if (true) {
-                        Drive.Start(28, 3, 0);
-                        autonState += 1;
-                    }
-                } else if (autonState == 31) {
-                    // This is the last state for the left spike
-                    if (!Drive.Busy()) {
-                        Drive.Start(0, 0, -20);
-                        autonState = 100;
-                    }
-                } else {
-                    BadState();
-                    autonState = 600;
-                }
-            } else {
-                BadState();
-                autonState = 600;
-            }
-        } else if (autonState < 200) {
-            // These 100 level states handle dropping the pixel on the spike. this is the same for all autons
-            if (!Drive.Busy()) {
-                PixelDrop();
-            }
-        } else if (autonState < 300) {
-            // These 200 level states handle driving to the backdrop
-            if (autonState == 200) {
-                // Jump to the correct state based on the location
-                if (ObjLoc == HydraObjectLocations.ObjLocRightSpike) {
-                    autonState = 210;
-                } else if (ObjLoc == HydraObjectLocations.ObjLocCenterSpike) {
-                    autonState = 220;
-                } else {
-                    autonState = 230;
-                }
-            } else if (autonState < 220) {
-                if (autonState == 210) {
-                    // This is the first state for the right spike
-                    if (!Drive.Busy()) {
-                        Drive.Start(0, 0, -20);
-                        autonState += 1;
-                    }
-                } else if (autonState == 211) {
-                    if (!Drive.Busy()) {
-                        Drive.Start(-20, 0, 0);
-                        autonState += 1;
-                    }
-                } else if (autonState == 212) {
-                    if (!Drive.Busy()) {
-                        Drive.Start(0, 12, 0);
-                        autonState += 1;
-                    }
-                } else if (autonState == 213) {
+                break;
+            ////////////////////////////////////////////////////////////////////////////////////////
+            case 210:
+                // BLUE LEFT SPIKE
+                // RED RIGHT SPIKE
+                if (!Drive.Busy()) {
+                    Drive.Start(0, 0, 20 * flip);
                     autonState += 1;
-                } else if (autonState == 214) {
-                    // This is the last state for the right spike
-                    if (!Drive.Busy()) {
-                        autonState = 300;
-                    }
                 }
-            } else if (autonState < 230) {
-                if (autonState == 220) {
-                    // This is the first state for the center spike
-                    if (!Drive.Busy()) {
-                        Drive.Start(0, -8, 0);
-                        autonState += 1;
-                    }
-                } else if (autonState == 221) {
-                    if (!Drive.Busy()) {
-                        Drive.Start(-17, 0, 0);
-                        autonState += 1;
-                    }
-                } else if (autonState == 222) {
-                    // This is the last state for the center spike
-                    if (!Drive.Busy()) {
-                        autonState = 300;
-                    }
-                }
-            } else if (autonState < 240) {
-                if (autonState == 230) {
-                    // This is the first state for the left spike
-                    if (!Drive.Busy()) {
-                        Drive.Start(-28, 0, 0);
-                        autonState += 1;
-                    }
-                } else if (autonState == 231) {
+                break;
+            case 211:
+                // BLUE LEFT SPIKE
+                // RED RIGHT SPIKE
+                if (!Drive.Busy()) {
+                    Drive.Start(-20, 0, 0);
                     autonState += 1;
-                } else if (autonState == 232) {
-                    // This is the last state for the left spike
+                }
+                break;
+            case 212:
+                // BLUE LEFT SPIKE
+                // RED RIGHT SPIKE
+                if (!Drive.Busy()) {
+                    Drive.Start(0, -12 * flip, 0);
+                    Arm.RunAction(HydraArmMovements.ArmMoveToBack);
+                    autonState = 299;
+                }
+                break;
+            ////////////////////////////////////////////////////////////////////////////////////////
+            case 220:
+                // CENTER SPIKE
+                if (!Drive.Busy()) {
+                    Drive.Start(0, 8 * flip, 0);
+                    autonState += 1;
+                }
+                break;
+            case 221:
+                if (!Drive.Busy()) {
+                    Drive.Start(-17, 0, 0);
+                    autonState = 299;
+                }
+                break;
+            ////////////////////////////////////////////////////////////////////////////////////////
+            case 230:
+                // BLUE RIGHT SPIKE
+                // RED LEFT SPIKE
+                if (!Drive.Busy()) {
+                    Drive.Start(-28, 0, 0);
+                    Arm.RunAction(HydraArmMovements.ArmMoveToBack);
+                    autonState = 299;
+                }
+                break;
+            ///////////////////////////////////////////////////////////////////////////////////////
+            case 299:
+                if (!Drive.Busy() && Arm.RunAction(HydraArmMovements.ArmMoveToBack)) {
                     autonState = 300;
                 }
-            } else {
-                BadState();
-                autonState = 600;
-            }
-        } else if (autonState < 400) {
-            // These 300 level states handle scoring forwards at the backdrop. this is the same for two autons
-            ScoreBack();
-        } else if (autonState < 500) {
-            // These 400 level states handle returning the arm home. this is the same for all autons
-            ArmToHome();
-        } else if (autonState < 600) {
-            if (!Drive.Busy()) {
-                Drive.Start(0, -36, 0);
-                autonState = 600;
-            }
-        } else if (autonState == 600) {
-            if (!Drive.Busy()) {
-                return true;
-            }
-        } else {
-            BadState();
-            autonState = 600;
+                break;
+            default:
+                return false;
         }
-        return false;
+        return true;
     }
 
     /**
      * Describe this function...
      */
-    private boolean AutonBlueBackstage() {
-        // Need to nest a couple of ifs because this app can't handle huge if-else trees
-        if (autonState < 100) {
-            // These states all handle driving to the object spike location
-            if (autonState == 0) {
-                // Jump to the correct state based on the location
-                if (ObjLoc == HydraObjectLocations.ObjLocLeftSpike) {
-                    autonState = 10;
-                } else if (ObjLoc == HydraObjectLocations.ObjLocCenterSpike) {
-                    autonState = 20;
-                } else if (ObjLoc == HydraObjectLocations.ObjLocRightSpike) {
-                    autonState = 30;
-                } else {
-                    BadState();
-                    autonState = 600;
-                }
-            } else if (autonState < 20) {
-                if (autonState == 10) {
-                    // This is the first state for the left spike
-                    if (true) {
-                        Drive.Start(13, 0, 0);
-                        autonState += 1;
-                    }
-                } else if (autonState == 11) {
-                    // This is the last state for the left spike
-                    if (!Drive.Busy()) {
-                        Drive.Start(0, -15, 0);
-                        autonState = 100;
-                    }
-                } else {
-                    BadState();
-                    autonState = 600;
-                }
-            } else if (autonState < 30) {
-                if (autonState == 20) {
-                    // This is the first state for the center spike
-                    if (true) {
-                        Drive.Start(24, 0, 0);
-                        autonState += 1;
-                    }
-                } else if (autonState == 21) {
-                    if (!Drive.Busy()) {
-                        Drive.Start(0, 0, 20);
-                        autonState += 1;
-                    }
-                } else if (autonState == 22) {
-                    if (!Drive.Busy()) {
-                        Drive.Start(-14, 0, 0);
-                        autonState += 1;
-                    }
-                } else if (autonState == 23) {
-                    // This is the last state for the center spike
-                    if (!Drive.Busy()) {
-                        Drive.Start(0, -16, 0);
-                        autonState = 100;
-                    }
-                } else {
-                    BadState();
-                    autonState = 600;
-                }
-            } else if (autonState < 40) {
-                if (autonState == 30) {
-                    // This is the first state for the right spike
-                    if (true) {
-                        Drive.Start(30, 0, 0);
-                        autonState += 1;
-                    }
-                } else if (autonState == 31) {
-                    // This is the last state for the right spike
-                    if (!Drive.Busy()) {
-                        Drive.Start(0, 0, 20);
-                        autonState = 100;
-                    }
-                } else {
-                    BadState();
-                    autonState = 600;
-                }
-            } else {
-                BadState();
-                autonState = 600;
-            }
-        } else if (autonState < 200) {
-            // These 100 level states handle dropping the pixel on the spike. this is the same for all autons
-            if (!Drive.Busy()) {
-                PixelDrop();
-            }
-        } else if (autonState < 300) {
-            // These 200 level states handle driving to the backdrop
-            if (autonState == 200) {
-                // Jump to the correct state based on the location
-                if (ObjLoc == HydraObjectLocations.ObjLocLeftSpike) {
-                    autonState = 210;
-                } else if (ObjLoc == HydraObjectLocations.ObjLocCenterSpike) {
-                    autonState = 220;
-                } else {
-                    autonState = 230;
-                }
-            } else if (autonState < 220) {
-                if (autonState == 210) {
-                    // This is the first state for the left spike
-                    if (!Drive.Busy()) {
-                        Drive.Start(0, 0, 20);
-                        autonState += 1;
-                    }
-                } else if (autonState == 211) {
-                    if (!Drive.Busy()) {
-                        Drive.Start(-22, 0, 0);
-                        autonState += 1;
-                    }
-                } else if (autonState == 212) {
-                    if (!Drive.Busy()) {
-                        Drive.Start(0, -12, 0);
-                        autonState += 1;
-                    }
-                } else if (autonState == 213) {
+    protected boolean ScoreBack() {
+        switch (autonState) {
+            case 300:
+                if (Arm.RunAction(HydraArmMovements.ArmMoveToBack)) {
                     autonState += 1;
-                } else if (autonState == 214) {
-                    // This is the last state for the right spike
-                    if (!Drive.Busy()) {
-                        autonState = 300;
-                    }
                 }
-            } else if (autonState < 230) {
-                if (autonState == 220) {
-                    // This is the first state for the center spike
-                    if (!Drive.Busy()) {
-                        Drive.Start(0, 8, 0);
-                        autonState += 1;
-                    }
-                } else if (autonState == 221) {
-                    if (!Drive.Busy()) {
-                        Drive.Start(-17, 0, 0);
-                        autonState += 1;
-                    }
-                } else if (autonState == 222) {
-                    // This is the last state for the center spike
-                    if (!Drive.Busy()) {
-                        autonState = 300;
-                    }
-                }
-            } else if (autonState < 240) {
-                if (autonState == 230) {
-                    // This is the first state for the right spike
-                    if (!Drive.Busy()) {
-                        Drive.Start(-31, 0, 0);
-                        autonState += 1;
-                    }
-                } else if (autonState == 231) {
+                break;
+            case 301:
+                if (!Drive.Busy()) {
+                    Drive.Start(-6, 0, 0);
                     autonState += 1;
-                } else if (autonState == 232) {
-                    // This is the last state for the left spike
-                    autonState = 300;
                 }
-            } else {
-                BadState();
-                autonState = 600;
-            }
-        } else if (autonState < 400) {
-            // These 300 level states handle scoring forwards at the backdrop. this is the same for two autons
-            ScoreBack();
-        } else if (autonState < 500) {
-            // These 400 level states handle returning the arm home. this is the same for all autons
-            ArmToHome();
-        } else if (autonState < 600) {
-            if (!Drive.Busy()) {
-                Drive.Start(0, 32, 0);
-                autonState = 600;
-            }
-        } else if (autonState == 600) {
-            if (!Drive.Busy()) {
-                return true;
-            }
-        } else {
-            BadState();
-            autonState = 600;
+                break;
+            case 302:
+                if (!Drive.Busy()) {
+                    PixelPalace.Start(HydraPixelPalaceActions.PixelPalaceBackToFront,
+                            HydraPixelPalaceActions.PixelPalaceBackToFront, true);
+                    pixelDropTimer.reset();
+                    autonState += 1;
+                }
+                break;
+            case 303:
+                if (pixelDropTimer.milliseconds() >= cPixelFrontScoreRunTimeMs) {
+                    PixelPalace.Stop();
+                    Drive.Start(4, 0, 0);
+                    autonState = 400;
+                }
+                break;
+            default:
+                return false;
         }
-        return false;
-    }
-
-    /**
-     * Describe this function...
-     */
-    private void ScoreBack() {
-        if (autonState == 300) {
-            if (Arm.RunAction(HydraArmMovements.ArmMoveToBack)) {
-                autonState += 1;
-            }
-        } else if (autonState == 301) {
-            if (Arm.RunAction(HydraArmMovements.ArmMoveToBack)) {
-                autonState += 1;
-            }
-        } else if (autonState == 302) {
-            if (!Drive.Busy()) {
-                Drive.Start(-6, 0, 0);
-                autonState += 1;
-            }
-        } else if (autonState == 303) {
-            if (!Drive.Busy()) {
-                PixelPalace.Start(HydraPixelPalaceActions.PixelPalaceBackToFront,
-                        HydraPixelPalaceActions.PixelPalaceBackToFront, true);
-                pixelDropTimer.reset();
-                autonState += 1;
-            }
-        } else if (autonState == 304) {
-            if (pixelDropTimer.milliseconds() >= cPixelFrontScoreRunTimeMs) {
-                PixelPalace.Stop();
-                Drive.Start(4, 0, 0);
-                autonState = 400;
-            }
-        } else {
-            BadState();
-            autonState = 400;
-        }
+        return true;
     }
 
     /**
