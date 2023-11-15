@@ -14,11 +14,12 @@ public class HydraObjectDetect extends BlocksOpModeCompanion {
     private final VisionPortal myVisionPortal;
     private final TfodProcessor myTfodProcessor;
     private final float mXValueForLeftToCenter;
+
     public HydraObjectDetect(String modelFilename, float xValueForLeftToCenter) {
+        // this is the delineator between left and center
         mXValueForLeftToCenter = xValueForLeftToCenter;
         TfodProcessor.Builder myTfodProcessorBuilder;
         VisionPortal.Builder myVisionPortalBuilder;
-
         // First, create a TfodProcessor.Builder.
         myTfodProcessorBuilder = new TfodProcessor.Builder();
         // Set the name of the file where the model can be found.
@@ -39,6 +40,10 @@ public class HydraObjectDetect extends BlocksOpModeCompanion {
         myVisionPortal = myVisionPortalBuilder.build();
     }
 
+    /**
+     * Finds and returns the location of an object using the provided model
+     * @return unknown if we saw nothing, left or center if we detected an object
+     */
     public HydraObjectLocations GetObjectLocation() {
         HydraObjectLocations detectedLocation = HydraObjectLocations.ObjLocUnknown;
         List<Recognition> myTfodRecognitions;

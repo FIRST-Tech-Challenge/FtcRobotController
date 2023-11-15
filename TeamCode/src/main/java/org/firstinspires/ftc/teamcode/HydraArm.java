@@ -38,11 +38,15 @@ public class HydraArm extends BlocksOpModeCompanion {
             "Hang", "Hang End"};
 
     public HydraArm(String uprArm, String lwrArm, double uprArmPwr, double lwrArmPwr) {
+        // get the motor objects
         mMotUprArm = hardwareMap.get(DcMotor.class, uprArm);
         mMotLwrArm = hardwareMap.get(DcMotor.class, lwrArm);
+        // power levels for the motors
         mLowerArmAutoMotorPwr = lwrArmPwr;
         mUpperArmAutoMotorPwr = uprArmPwr;
+        // initialize the arm state to the home position
         mArmPositionState = HydraArmPositions.ArmPosition0Home;
+        // brake the motors when power is not applied and reset the encoders
         mMotLwrArm.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         mMotUprArm.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         mMotLwrArm.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -50,7 +54,8 @@ public class HydraArm extends BlocksOpModeCompanion {
     }
 
     /**
-     * Describe this function...
+     * Sets the position for the lower arm motor
+     * @param inLwrArmPos the desired position in motor encoder ticks
      */
     private void SetLwrArmPos(int inLwrArmPos) {
         mMotLwrArm.setTargetPosition(inLwrArmPos);
@@ -59,7 +64,8 @@ public class HydraArm extends BlocksOpModeCompanion {
     }
 
     /**
-     * Describe this function...
+     * Sets the position for the upper arm motor
+     * @param inUprArmPos the desired position in motor encoder ticks
      */
     private void SetUprArmPos(int inUprArmPos) {
         mMotUprArm.setTargetPosition(inUprArmPos);
@@ -67,6 +73,12 @@ public class HydraArm extends BlocksOpModeCompanion {
         mMotUprArm.setPower(mUpperArmAutoMotorPwr);
     }
 
+    /**
+     * Runs the caller's desired action based on the current state
+     * This needs to be called continuously until it returns true!
+     * @param action the desired action to perform
+     * @return true when the current position matches the passed in action
+     */
     public boolean RunAction(HydraArmMovements action) {
         if (Busy()) {
             return false;
@@ -177,6 +189,7 @@ public class HydraArm extends BlocksOpModeCompanion {
                 }
                 break;
         }
+        // set the motor positions from our arrays of static values
         SetLwrArmPos(mLowerArmPositions[mArmPositionState.ordinal()]);
         SetUprArmPos(mUpperArmPositions[mArmPositionState.ordinal()]);
         telemetry.addData("ArmPos", mArmPositionNames[mArmPositionState.ordinal()]);
@@ -186,7 +199,8 @@ public class HydraArm extends BlocksOpModeCompanion {
     }
 
     /**
-     * Describe this function...
+     * Use this to wait for the arm to be done moving. This does not advance the state machine.
+     * @return true if the arm is in the desired position set in RunAction
      */
     private boolean Busy() {
         int upperArmError = Math.abs(mMotUprArm.getTargetPosition() - mMotUprArm.getCurrentPosition());

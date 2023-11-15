@@ -43,12 +43,14 @@ public class HydraDrive extends BlocksOpModeCompanion {
         mMotDrBkRt.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
     }
 
-    public boolean Start(int inDrive, int inStrafe, int inRotate) {
-        int frontLeftTarget;
-        int rearLeftTarget;
-        int frontRightTarget;
-        int rearRightTarget;
-
+    /**
+     * Start a drive action. This function does not check whether the last requested action has completed
+     * Drive.Busy MUST be checked if it is necessary to do so
+     * @param inDrive the distance to drive forward or backward
+     * @param inStrafe the distance to strafe left or right
+     * @param inRotate the amount to rotate in either direction
+     */
+    public void Start(int inDrive, int inStrafe, int inRotate) {
         // clean up the last drive to prepare for the next one
         mMotDrBkLt.setPower(0);
         mMotDrBkRt.setPower(0);
@@ -59,22 +61,22 @@ public class HydraDrive extends BlocksOpModeCompanion {
         mMotDrFrLt.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         mMotDrFrRt.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         // Front left target position
-        frontLeftTarget = inDrive + inStrafe;
+        int frontLeftTarget = inDrive + inStrafe;
         frontLeftTarget = frontLeftTarget + inRotate;
         frontLeftTarget = (int) (frontLeftTarget * mCountsPerInch);
         mMotDrFrLt.setTargetPosition(frontLeftTarget);
         // Rear left target position
-        rearLeftTarget = inDrive - inStrafe;
+        int rearLeftTarget = inDrive - inStrafe;
         rearLeftTarget = rearLeftTarget + inRotate;
         rearLeftTarget = (int) (rearLeftTarget * mCountsPerInch);
         mMotDrBkLt.setTargetPosition(rearLeftTarget);
         // Front right target position
-        frontRightTarget = inDrive - inStrafe;
+        int frontRightTarget = inDrive - inStrafe;
         frontRightTarget = frontRightTarget - inRotate;
         frontRightTarget = (int) (frontRightTarget * mCountsPerInch);
         mMotDrFrRt.setTargetPosition(frontRightTarget);
         // Rear right target position
-        rearRightTarget = inDrive + inStrafe;
+        int rearRightTarget = inDrive + inStrafe;
         rearRightTarget = rearRightTarget - inRotate;
         rearRightTarget = (int) (rearRightTarget * mCountsPerInch);
         mMotDrBkRt.setTargetPosition(rearRightTarget);
@@ -95,22 +97,16 @@ public class HydraDrive extends BlocksOpModeCompanion {
         mMotDrBkRt.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         mMotDrFrLt.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         mMotDrFrRt.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        return true;
     }
 
+    /**
+     * Are we busy driving?
+     * @return true if the motors have reached position
+     */
     public boolean Busy() {
+        // if either motor is still active, we are still busy
         if (mMotDrBkLt.isBusy() || mMotDrBkRt.isBusy() || mMotDrFrLt.isBusy() || mMotDrFrRt.isBusy()) {
             return true;
-        }
-        if (false) {
-            mMotDrBkLt.setPower(0);
-            mMotDrBkRt.setPower(0);
-            mMotDrFrLt.setPower(0);
-            mMotDrFrRt.setPower(0);
-            mMotDrBkLt.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-            mMotDrBkRt.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-            mMotDrFrLt.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-            mMotDrFrRt.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         }
         return false;
     }

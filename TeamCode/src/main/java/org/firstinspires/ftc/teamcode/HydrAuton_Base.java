@@ -22,4 +22,5 @@ public abstract class HydrAuton_Base extends LinearOpMode {
     protected final int cMaxObjectSearchTimeMs = 2000;
     protected final int cPixelDropRunTimeMs = 2000;
     protected final int cPixelFrontScoreRunTimeMs = 2000;
+    protected final int cAutonAbortTimeMs = 27000;
 }

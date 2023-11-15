@@ -5,7 +5,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.hardware.IMU;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-@Autonomous(name = "HydrAuton", preselectTeleOp = "HyDrive")
+//@Autonomous(name = "HydrAuton", preselectTeleOp = "HyDrive")
 public class HydrAuton extends HydrAuton_Base {
     protected IMU imu;
     protected HydraArm Arm;
@@ -21,7 +21,6 @@ public class HydrAuton extends HydrAuton_Base {
      */
     @Override
     public void runOpMode() {
-        // Initialize Constant Variables
         // Initialize Local Variables
         autonState = 0;
         ObjLoc = HydraObjectLocations.ObjLocUnknown;
@@ -58,28 +57,35 @@ public class HydrAuton extends HydrAuton_Base {
             }
             Intake.Stop();
         }*/
+        // Use this timer for time elapsed in the opmode. Do not reset it
         opModeTimer.reset();
         // Find the object so we can drive to it
         while (opModeIsActive()) {
+            // Run tensorflow to see if we can find the object
             ObjLoc = ObjDet.GetObjectLocation();
+            // Push telemetry to the Driver Station.
+            telemetry.update();
+            // If we found the device or if we have been searching for a long time, leave
             if (ObjLoc != HydraObjectLocations.ObjLocUnknown ||
                     opModeTimer.milliseconds() >= cMaxObjectSearchTimeMs) {
                 break;
             }
-            // Push telemetry to the Driver Station.
-            telemetry.update();
             sleep(20);
         }
         // If we did not find it, we have no choice but to assume that it was in the position we can't see
         if (ObjLoc == HydraObjectLocations.ObjLocUnknown) {
             ObjLoc = HydraObjectLocations.ObjLocRightSpike;
         }
+        // Run the proper auton for the object location
         while (opModeIsActive()) {
+            // The auton returns true when it's done
             if (RunAuton()) {
                 break;
             }
-            if (opModeTimer.milliseconds() >= 27000) {
+            // If we have been running for too long, we need to stop and get ready for the drive period
+            if (opModeTimer.milliseconds() >= cAutonAbortTimeMs) {
                 autonAbort = true;
+                // this is the initial state for bringing the Arm home in all autons
                 autonState = 400;
                 ArmToHome();
                 break;
@@ -89,6 +95,7 @@ public class HydrAuton extends HydrAuton_Base {
             // Share the CPU.
             sleep(20);
         }
+        // if we had to abort, we allow the arm to return home
         while (autonAbort && opModeIsActive()) {
             ArmToHome();
             if (autonState >= 500) {
@@ -99,19 +106,34 @@ public class HydrAuton extends HydrAuton_Base {
             // Share the CPU.
             sleep(20);
         }
+        // wait for the opmode to time out
+        while (opModeIsActive() && opModeTimer.milliseconds() < 30000) {
+            sleep(20);
+        }
     }
 
+    /**
+     * This function runs the auton. This base class has no implementation of its own
+     * @return true when the auton is completed
+     */
     protected boolean RunAuton() {
         return true;
     }
     /**
-     * Describe this function...
+     * Logs the current auton state to the telemetry for debugging
      */
     protected void BadState() {
         telemetry.addData("InvalidState", autonState);
     }
 
+    /**
+     * Drive the robot to the detected object location [ObjLoc]
+     * This function is used for all 4 auton op modes
+     * @param flipWhenRiggingIsRight is set to true if the rigging is to the robots right at start
+     * @return false iff there is a problem
+     */
     protected boolean AutonDriveToSpike(boolean flipWhenRiggingIsRight) {
+        // multiply strafes and rotates by -1 based on the starting orientation
         int flip = 1;
         if (flipWhenRiggingIsRight) {
             flip = -1;
@@ -199,12 +221,20 @@ public class HydrAuton extends HydrAuton_Base {
                     autonState = 100;
                 }
             default:
+                // Something unexpected happened
                 return false;
         }
         return true;
     }
 
+    /**
+     * Drive the robot to the backdrop from the wing based on which spike we delivered at [ObjLoc]
+     * This function is used for both wing or audience side auton op modes
+     * @param flipWhenRed is set to true if we are running a red team auton
+     * @return false iff there is a problem
+     */
     protected boolean AutonDriveToBackdropFromWing(boolean flipWhenRed) {
+        // multiply strafes and rotates by -1 based on the starting orientation
         int flip = 1;
         if (flipWhenRed) {
             flip = -1;
@@ -212,6 +242,7 @@ public class HydrAuton extends HydrAuton_Base {
         switch (autonState) {
             case 200:
                 switch (ObjLoc) {
+                    // jump to the correct state based on the detected location
                     case ObjLocRightSpike:
                         if (flipWhenRed) {
                             autonState = 230;
@@ -331,21 +362,27 @@ public class HydrAuton extends HydrAuton_Base {
                 }
                 break;
             default:
+                // something bad happened
                 return false;
         }
         return false;
     }
 
     /**
-     * Describe this function...
+     * Drive the robot to the backdrop from the backstage based on which spike we delivered at [ObjLoc]
+     * This function is used for both backstage side auton op modes
+     * @param flipForRed is set to true if we are running a red team auton
+     * @return false iff there is a problem
      */
     protected boolean AutonDriveToBackdropFromBackstage(boolean flipForRed) {
+        // multiply strafes and rotates by -1 based on the starting orientation
         int flip = 1;
         if (flipForRed) {
             flip = -1;
         }
         switch (autonState) {
             case 200:
+                // jump to the correct state based on which spike we are at
                 switch (ObjLoc) {
                     case ObjLocRightSpike:
                         if (flipForRed) {
@@ -425,13 +462,15 @@ public class HydrAuton extends HydrAuton_Base {
                 }
                 break;
             default:
+                // something bad happened
                 return false;
         }
         return true;
     }
 
     /**
-     * Describe this function...
+     * Score a pixel on the backdrop from the back of the robot
+     * @return false iff something bad happens
      */
     protected boolean ScoreBack() {
         switch (autonState) {
@@ -468,7 +507,8 @@ public class HydrAuton extends HydrAuton_Base {
     }
 
     /**
-     * Describe this function...
+     * Score a pixel on the backdrop from the front of the robot
+     * @return false iff something bad happens
      */
     protected boolean ScoreFront() {
         switch (autonState) {
@@ -504,13 +544,15 @@ public class HydrAuton extends HydrAuton_Base {
                 }
                 break;
             default:
+                // something bad happened
                 return false;
         }
         return true;
     }
 
     /**
-     * Describe this function...
+     * Drop a pixel at the current location
+     * @return false iff something bad happens
      */
     protected boolean PixelDrop() {
         // Drop the pixel on the spike
@@ -544,21 +586,22 @@ public class HydrAuton extends HydrAuton_Base {
         return true;
     }
 
+
     /**
-     * Describe this function...
+     * Bring the arm home from any position
+     * @return false iff something bad happens
      */
-    protected void ArmToHome() {
-        if (autonState == 400) {
-            if (Arm.RunAction(HydraArmMovements.ArmMoveToHome)) {
-                autonState += 1;
-            }
-        } else if (autonState == 401) {
-            if (Arm.RunAction(HydraArmMovements.ArmMoveToHome)) {
-                autonState = 500;
-            }
-        } else {
-            BadState();
-            autonState = 500;
+    protected boolean ArmToHome() {
+        switch (autonState) {
+            case 400:
+                if (Arm.RunAction(HydraArmMovements.ArmMoveToHome)) {
+                    autonState = 500;
+                }
+                break;
+            default:
+                // something bad happened
+                return false;
         }
+        return true;
     }
 }
