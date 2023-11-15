@@ -11,27 +11,25 @@ import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 public class HydraPixelPalace extends BlocksOpModeCompanion {
     private final Servo mSrvPxlPos1;
     private final Servo mSrvPxlPos2;
-    private final ColorSensor mSenColPxlPos1;
-    private final ColorSensor mSenColPxlPos2;
     private final DistanceSensor mSenColPxlPos1_DistanceSensor;
     private final DistanceSensor mSenColPxlPos2_DistanceSensor;
     private final LED mLED1;
     private final LED mLED2;
     private final LED mLED3;
     private final LED mLED4;
-    final double mPxlSrvSpeedFrontToBack;
-    final double mPxlSrvSpeedBackToFront;
-    final double mPxlPos1DetDist;
-    final double mPxlPos2DetDist;
+    private final double mPxlSrvSpeedFrontToBack;
+    private final double mPxlSrvSpeedBackToFront;
+    private final double mPxlPos1DetDist;
+    private final double mPxlPos2DetDist;
 
     public HydraPixelPalace(String srvPos1, String srvPos2, String led1, String led2, String led3,
                             String led4, String snsPos1, String snsPos2, double srvSpeedFrontToBack,
                             double srvSpeedBackToFront, double pixelDistPos1, double pixelDistPos2) {
         mSrvPxlPos1 = hardwareMap.get(Servo.class, srvPos1);
         mSrvPxlPos2 = hardwareMap.get(Servo.class, srvPos2);
-        mSenColPxlPos1 = hardwareMap.get(ColorSensor.class, snsPos1);
+        ColorSensor mSenColPxlPos1 = hardwareMap.get(ColorSensor.class, snsPos1);
         mSenColPxlPos1_DistanceSensor = hardwareMap.get(DistanceSensor.class, snsPos1);
-        mSenColPxlPos2 = hardwareMap.get(ColorSensor.class, snsPos2);
+        ColorSensor mSenColPxlPos2 = hardwareMap.get(ColorSensor.class, snsPos2);
         mSenColPxlPos2_DistanceSensor = hardwareMap.get(DistanceSensor.class, snsPos2);
         mLED1 = hardwareMap.get(LED.class, led1);
         mLED2 = hardwareMap.get(LED.class, led2);
