@@ -5,6 +5,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
+import org.firstinspires.ftc.teamcode.Common.AprilTagsFunctions;
 import org.firstinspires.ftc.teamcode.Common.CircleDetection;
 import org.firstinspires.ftc.teamcode.Common.DrivingFunctions;
 import org.firstinspires.ftc.teamcode.Common.ServoFunctions;
@@ -19,34 +20,19 @@ public class AutonomousOpenCV extends LinearOpMode {
     private OpenCvWebcam webcam;
     protected CircleDetection circleDetection;
     protected DrivingFunctions df;
+    protected AprilTagsFunctions aprilTagsFunctions;
     protected ServoFunctions sf;
     protected boolean isRed = false; // whether to detect a red ball (if false detects blue)
     protected boolean isNear = false; // whether we start from the near side of the backboard
     protected boolean cornerPark = true;
     protected boolean centerCross = false;
+    protected boolean useAprilTagsToDeliverPixel = false;
     protected boolean runBallDetectionTest = false;
     protected boolean runEncoderTest = false;
     protected boolean runAutoDrivingTest = false;
     static final double DRIVE_SPEED = 0.35;
     static final double TURN_SPEED = 0.5;
-
-    private void RunBallDetectionTest() {
-        while (opModeIsActive()) {
-            sleep(100);
-            UpdateCircleDetectionTelemetry(0);
-        }
-    }
-
-    private void DetectBallPosition(int timeoutInSeconds) {
-        int tries = 0;
-        while (opModeIsActive() && !circleDetection.CircleFound() && tries < timeoutInSeconds * 10) {
-            sleep(100);
-            tries++;
-            UpdateCircleDetectionTelemetry(tries);
-        }
-        if (!circleDetection.CircleFound())
-            circleDetection.SetBallPosition(CircleDetection.BallPosition.LEFT); // Ball not found, makes a guess to the left
-    }
+    private int desiredTag = 0;
 
     private void Initialize() {
         df = new DrivingFunctions(this);
@@ -67,54 +53,60 @@ public class AutonomousOpenCV extends LinearOpMode {
             }
         });
     }
+
+    private void DetectBallPosition(int timeoutInSeconds) {
+        int tries = 0;
+        while (opModeIsActive() && !circleDetection.CircleFound() && tries < timeoutInSeconds * 10) {
+            sleep(100);
+            tries++;
+            UpdateCircleDetectionTelemetry(tries);
+        }
+        // After we are done detecting the ball, we switch the camera to use the AprilTags
+        StopStreaming();
+        if(useAprilTagsToDeliverPixel)
+            aprilTagsFunctions = new AprilTagsFunctions(this);
+        if (!circleDetection.CircleFound())
+            circleDetection.SetBallPosition(CircleDetection.BallPosition.LEFT); // Ball not found, makes a guess to the left
+    }
+
     @Override
     public void runOpMode() {
         Initialize();
         waitForStart();
-
-        if (runAutoDrivingTest) {
-            RunAutoDrivingTest();
+        if(RunningTests())
             return;
-        }
-
-        if (runBallDetectionTest) {
-            RunBallDetectionTest();
-            return;
-        }
-        if (runEncoderTest) {
-            RunEncoderTest();
-            return;
-        }
 
         DetectBallPosition(5);
 
         double aimingDistance = 0; // if the ball is left, then this is 0, center is 6, right is 12
-        double strafeCorrection = 0; // adds removes 2 extra inches depending on what side the ball was
+        double strafeCorrection = 0; // adds or removes some inches depending on what side the ball was
 
         if(circleDetection.GetBallPosition() == CircleDetection.BallPosition.LEFT)
         {
+            desiredTag = isRed ? AprilTagsFunctions.TAG_RED_LEFT : AprilTagsFunctions.TAG_BLUE_LEFT;
             PushPixelSide(false);
             strafeCorrection = isNear ? 0.5 : -5.5;
             aimingDistance = isRed ? 12 : 0;
         }
         else if(circleDetection.GetBallPosition() == CircleDetection.BallPosition.CENTER)
         {
+            desiredTag = isRed ? AprilTagsFunctions.TAG_RED_CENTER : AprilTagsFunctions.TAG_BLUE_CENTER;
             PushPixelCenter();
-            aimingDistance = 6;
             strafeCorrection = isNear ? 0 : -3;
+            aimingDistance = 6;
         }
         else if(circleDetection.GetBallPosition() == CircleDetection.BallPosition.RIGHT)
         {
+            desiredTag = isRed ? AprilTagsFunctions.TAG_RED_RIGHT : AprilTagsFunctions.TAG_BLUE_RIGHT;
             PushPixelSide(true);
             strafeCorrection = isNear ? -1 : -6;
             aimingDistance = isRed ? -3 : 12;
         }
         if(!isNear)
             CrossField(strafeCorrection);
-        DeliverPixel(centerCross ? aimingDistance : aimingDistance - 6, isNear ? strafeCorrection : (centerCross ? 17 : 0));
+        DeliverPixel(aimingDistance, isNear ? strafeCorrection : 0);
         ParkRobot();
     }
-
     protected void PushPixelSide(boolean isRight)
     {
         double angle = 0;
@@ -147,23 +139,38 @@ public class AutonomousOpenCV extends LinearOpMode {
             df.DriveStraight(DRIVE_SPEED, isRed ? 13 : 14, 0, false);
         }
         else {
-            df.DriveStraight(DRIVE_SPEED * 1.5, isRed ? 22 - strafeCorrection: -22 + strafeCorrection, 0, true);
-            df.DriveStraight(DRIVE_SPEED, 48, 0, false);
-            df.DriveStraight(DRIVE_SPEED, isRed ? 54 : -54, 0, true);
-            df.DriveStraight(DRIVE_SPEED, -24, 0, false);
+            df.DriveStraight(DRIVE_SPEED, isRed ? 22 - strafeCorrection: -22 + strafeCorrection, 0, true);
+            df.DriveStraight(DRIVE_SPEED * 1.5, 48, 0, false);
+            df.DriveStraight(DRIVE_SPEED * 1.5, isRed ? 54 : -54, 0, true);
+            df.DriveStraight(DRIVE_SPEED, -30, 0, false);
         }
     }
     protected void DeliverPixel(double aimingDistance, double strafeCorrection)
     {
-        // Strafe towards the backboard
-        df.DriveStraight(DRIVE_SPEED, isRed ? 32 + strafeCorrection : -32 + strafeCorrection, 0, true);
+        if(useAprilTagsToDeliverPixel)
+        {
+            // Face to backboard to see the destination AprilTag
+            df.TurnToHeading(TURN_SPEED, isRed ? -90 : 90);
+            if(!df.DriveToAprilTag(aprilTagsFunctions, desiredTag, 20, DRIVE_SPEED)) {
+                // if it fails to see the AprilTag, it defaults to the old way of delivering (based on encoder only)
+                useAprilTagsToDeliverPixel = false;
+                df.TurnToHeading(TURN_SPEED, 0);
+            }
+        }
+        if(!useAprilTagsToDeliverPixel) {
+            // Strafe towards the backboard
+            df.DriveStraight(DRIVE_SPEED, isRed ? 32 + strafeCorrection : -32 + strafeCorrection, 0, true);
+        }
         // In the blue case we need to turn around 180 degrees to deliver the pixel (delivery is on the right of the robot)
         if (!isRed)
             df.TurnToHeading(TURN_SPEED, 180);
 
         int deliveryHeading = isRed ? 0 : 180;
         // Moves forward or backwards to align with the destination on the board
-        df.DriveStraight(DRIVE_SPEED, isRed ? 12 + aimingDistance : 3 - aimingDistance, deliveryHeading, false);
+        if (!useAprilTagsToDeliverPixel)
+            df.DriveStraight(DRIVE_SPEED, isRed ? 12 + aimingDistance : 3 - aimingDistance, deliveryHeading, false);
+        else
+            df.DriveStraight(DRIVE_SPEED, 6, deliveryHeading, false);
         // Strafes right towards the backboard (almost touching it)
         df.DriveStraight(DRIVE_SPEED * 0.6, 11, deliveryHeading, true);
         sf.PutPixelInBackBoard();
@@ -221,5 +228,27 @@ public class AutonomousOpenCV extends LinearOpMode {
         df.TurnToHeading(0.7, 90); // Positive angles turn to the left
         df.TurnToHeading(0.8, 180); // Positive angles turn to the left
         df.TurnToHeading(1.0, 0); // Positive angles turn to the left
+    }
+    private void RunBallDetectionTest() {
+        while (opModeIsActive()) {
+            sleep(100);
+            UpdateCircleDetectionTelemetry(0);
+        }
+    }
+    private boolean RunningTests()
+    {
+        if (runAutoDrivingTest) {
+            RunAutoDrivingTest();
+            return true;
+        }
+        if (runBallDetectionTest) {
+            RunBallDetectionTest();
+            return true;
+        }
+        if (runEncoderTest) {
+            RunEncoderTest();
+            return true;
+        }
+        return false;
     }
 }

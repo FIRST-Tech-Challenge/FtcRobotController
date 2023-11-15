@@ -214,6 +214,36 @@ public class DrivingFunctions {
         StopMotors();
     }
 
+    /* Assumes that the robot is in a position to see the desired tag. It tries seeing it for 2 seconds. If it can't it returns false.
+    After successfully driving to the desired tag (aligning perfectly so it is facing it directly at the desired distance, it returns true
+     */
+    public boolean DriveToAprilTag(AprilTagsFunctions atf, int desiredTag, double desiredDistanceFromTagInches, double speedFactor)
+    {
+        double x = 0, y = 0, yaw = 0;
+        double startTime = runtime.milliseconds();
+        // tries to find the desired tag for 2 seconds, if it can't it returns false
+        while(!atf.DetectAprilTag(desiredTag)) {
+            if(runtime.milliseconds() - startTime > 2000.0)
+                return false;
+        }
+
+        startTime = runtime.milliseconds();
+        while(runtime.milliseconds() - startTime < 3000.0)
+        {
+            atf.DetectAprilTag(desiredTag);
+            y      = 0.045 * (atf.detectedTag.ftcPose.range - desiredDistanceFromTagInches);
+            yaw    = -0.025 * atf.detectedTag.ftcPose.bearing;
+            x      = 0.025 * atf.detectedTag.ftcPose.yaw;
+            MoveRobot(x, y, yaw, speedFactor);
+            // checks if it finished moving
+            if(Math.abs(atf.detectedTag.ftcPose.range - desiredDistanceFromTagInches) < 0.5 &&
+                    Math.abs(atf.detectedTag.ftcPose.bearing) < 3 && Math.abs(atf.detectedTag.ftcPose.yaw) < 2)
+                break;
+        }
+
+        return true;
+    }
+
     // **********  LOW Level driving functions.  ********************
 
     /**
