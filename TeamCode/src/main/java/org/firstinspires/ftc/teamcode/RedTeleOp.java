@@ -54,6 +54,14 @@ public class RedTeleOp extends LinearOpMode{
                 m_Servo.setPosition(0.3);
             }
 
+            //change this to allow airplane launch
+            if (gamepad2.y){
+                m_Servo.setPosition(1);
+            }
+            else {
+                m_Servo.setPosition(0.3);
+            }
+
 
 
         }
