@@ -199,8 +199,8 @@
                 mulPower = 1;
             }
     
-            if (mulPower < 0.1) {
-                mulPower = 0.1;
+            if (mulPower < 0.2) {
+                mulPower = 0.2;
          }
  
              
