@@ -38,8 +38,16 @@ import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
 
+import org.firstinspires.ftc.robotcore.external.hardware.camera.BuiltinCameraDirection;
+import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
+import org.firstinspires.ftc.robotcore.external.tfod.Recognition;
+import org.firstinspires.ftc.vision.VisionPortal;
+import org.firstinspires.ftc.vision.tfod.TfodProcessor;
+
+import java.util.Arrays;
+import java.util.List;
 
 /*
  *  This OpMode illustrates the concept of driving an autonomous path based on Gyro (IMU) heading and encoder counts.
@@ -89,9 +97,15 @@ import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
  *  Remove or comment out the @Disabled line to add this OpMode to the Driver Station OpMode list
  */
 
+
 @Autonomous(name="Robot: Auto V0.2", group="Robot")
 //@Disabled
+
 public class FirstAutonomousIteration extends LinearOpMode {
+
+    public enum FoundTeamProp {
+        FOUND_NONE, FOUND_LEFT, FOUND_MIDDLE, FOUND_RIGHT;
+    }
 
     /* Declare OpMode members. */
     private DcMotor         leftFrontDrive   = null;
@@ -129,8 +143,8 @@ public class FirstAutonomousIteration extends LinearOpMode {
 
     // These constants define the desired driving/control characteristics
     // They can/should be tweaked to suit the specific robot drive train.
-    static final double     DRIVE_SPEED             = 0.2;     // Max driving speed for better distance accuracy.
-    static final double     TURN_SPEED              = 0.1;     // Max Turn speed to limit turn rate
+    static final double     DRIVE_SPEED             = 0.2/DRIVE_GEAR_REDUCTION;     // Max driving speed for better distance accuracy.
+    static final double     TURN_SPEED              = 0.1/DRIVE_GEAR_REDUCTION;     // Max Turn speed to limit turn rate
     static final double     HEADING_THRESHOLD       = 1.0 ;    // How close must the heading get to the target before moving to next step.
                                                                // Requiring more accuracy (a smaller number) will often make the turn take longer to get into the final position.
     // Define the Proportional control coefficient (or GAIN) for "heading control".
@@ -140,13 +154,43 @@ public class FirstAutonomousIteration extends LinearOpMode {
     static final double     P_TURN_GAIN            = 0.02;     // Larger is more responsive, but also less stable
     static final double     P_DRIVE_GAIN           = 0.03;     // Larger is more responsive, but also less stable
 
+    static final boolean TEST_ONLY = false;
+
     Arm arm = new Arm(this);
     Claw claw       = new Claw(this);
     Wrist wrist = new Wrist(this);
 
-    @Override
-    public void runOpMode() {
+    String msg = "";
 
+    // This is needed for TFOD
+
+    private static final boolean USE_WEBCAM = true;  // true for webcam, false for phone camera
+
+    // TFOD_MODEL_ASSET points to a model file stored in the project Asset location,
+    // this is only used for Android Studio when using models in Assets.
+    private static final String TFOD_MODEL_ASSET = "prop_cube_v2.tflite";
+    // TFOD_MODEL_FILE points to a model file stored onboard the Robot Controller's storage,
+    // this is used when uploading models directly to the RC using the model upload interface.
+    private static final String TFOD_MODEL_FILE = "/sdcard/FIRST/tflitemodels/myCustomModel.tflite";
+    // Define the labels recognized in the model for TFOD (must be in training order!)
+    private static final String[] LABELS = {
+            "Cube"
+    };
+
+    private static final int MOVE_BACK_AFTER_DROP = 3;
+
+    /**
+     * The variable to store our instance of the TensorFlow Object Detection processor.
+     */
+    private TfodProcessor tfod;
+
+    /**
+     * The variable to store our instance of the vision portal.
+     */
+    private VisionPortal visionPortal;
+
+
+    public void initHardware() {
         // Initialize the hardware variables. Note that the strings used here must correspond
         // to the names assigned during the robot configuration step on the DS or RC devices.
         leftFrontDrive = hardwareMap.get(DcMotor.class, "left_front_drive");
@@ -200,9 +244,124 @@ public class FirstAutonomousIteration extends LinearOpMode {
         leftBackDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
         rightBackDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
 
+        // Set the encoders for closed loop speed control, and reset the heading.
+        leftFrontDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        rightFrontDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+        leftBackDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        rightBackDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+        imu.resetYaw();
+
+        // initialize the TFOD
+        initTfod();
+    }
+
+    private void initTfod() {
+
+        // Create the TensorFlow processor by using a builder.
+        tfod = new TfodProcessor.Builder()
+
+                // With the following lines commented out, the default TfodProcessor Builder
+                // will load the default model for the season. To define a custom model to load,
+                // choose one of the following:
+                //   Use setModelAssetName() if the custom TF Model is built in as an asset (AS only).
+                //   Use setModelFileName() if you have downloaded a custom team model to the Robot Controller.
+                .setModelAssetName(TFOD_MODEL_ASSET)
+                //.setModelFileName(TFOD_MODEL_FILE)
+
+                // The following default settings are available to un-comment and edit as needed to
+                // set parameters for custom models.
+                .setModelLabels(LABELS)
+                //.setIsModelTensorFlow2(true)
+                //.setIsModelQuantized(true)
+                //.setModelInputSize(300)
+                //.setModelAspectRatio(16.0 / 9.0)
+
+                .build();
+
+        // Create the vision portal by using a builder.
+        VisionPortal.Builder builder = new VisionPortal.Builder();
+
+        // Set the camera (webcam vs. built-in RC phone camera).
+        if (USE_WEBCAM) {
+            builder.setCamera(hardwareMap.get(WebcamName.class, "Webcam 1"));
+        } else {
+            builder.setCamera(BuiltinCameraDirection.BACK);
+        }
+
+        // Choose a camera resolution. Not all cameras support all resolutions.
+        //builder.setCameraResolution(new Size(640, 480));
+
+        // Enable the RC preview (LiveView).  Set "false" to omit camera monitoring.
+        //builder.enableLiveView(true);
+
+        // Set the stream format; MJPEG uses less bandwidth than default YUY2.
+        //builder.setStreamFormat(VisionPortal.StreamFormat.YUY2);
+
+        // Choose whether or not LiveView stops if no processors are enabled.
+        // If set "true", monitor shows solid orange screen if no processors enabled.
+        // If set "false", monitor shows camera view without annotations.
+        //builder.setAutoStopLiveView(false);
+
+        // Set and enable the processor.
+        builder.addProcessor(tfod);
+
+        // Build the Vision Portal, using the above settings.
+        visionPortal = builder.build();
+
+        // Set confidence threshold for TFOD recognitions, at any time.
+        //tfod.setMinResultConfidence(0.75f);
+
+        // Disable or re-enable the TFOD processor at any time.
+        //visionPortal.setProcessorEnabled(tfod, true);
+
+    }   // end method initTfod()
+
+
+    public void dropTwoPickOne() {
+        double currentHeading = getHeading();
+        arm.moveArmDown();
+        wrist.wristDown();
+        waitRuntime(1);
         claw.openClaw();
-        waitRuntime(3);
+        waitRuntime(1);
+        wrist.wristUp();
+        waitRuntime(1);
+        driveStraight(DRIVE_SPEED, -MOVE_BACK_AFTER_DROP, currentHeading);
+        wrist.wristDown();
+        waitRuntime(1);
         claw.closeClaw();
+        waitRuntime(1);
+        wrist.wristUp();
+        waitRuntime(1);
+    }
+
+    public boolean isCubeThere() {
+
+        List<Recognition> currentRecognitions = tfod.getRecognitions();
+
+        if (TEST_ONLY) {
+            return true;
+        }
+
+        if (currentRecognitions.size() > 0) {
+            msg = currentRecognitions.get(0).getLabel();
+            sendTelemetry(true);
+            return true;
+        }
+        return false;
+    }
+
+    @Override
+    public void runOpMode() {
+        initHardware();
+
+        waitRuntime(3);
+        arm.moveArmDown();
+        wrist.wristUp();
+        claw.closeClaw();
+
 
         // Wait for the game to start (Display Gyro value while waiting)
         while (opModeInInit()) {
@@ -210,38 +369,114 @@ public class FirstAutonomousIteration extends LinearOpMode {
             telemetry.update();
         }
 
-        // Set the encoders for closed loop speed control, and reset the heading.
-        leftFrontDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        rightFrontDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        //dropTwoPickOne();
+        FoundTeamProp cubeIsFound = FoundTeamProp.FOUND_NONE;
 
-        leftBackDrive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        rightBackDrive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        List<Integer> headingsToCheck = Arrays.asList(-5, -45, 20);
 
-        imu.resetYaw();
+        driveStraight(DRIVE_SPEED, 11, 0.0);
+        waitRuntime(0.1);
+        for (int heading: headingsToCheck) {
+            targetHeading = heading;
+            msg = "detecting cube";
+            sendTelemetry(true);
 
-        // Step through each leg of the path,
-        // Notes:   Reverse movement is obtained by setting a negative distance (not speed)
-        //          holdHeading() is used after turns to let the heading stabilize
-        //          Add a sleep(2000) after any step to keep the telemetry data visible for review
+            turnToHeading( TURN_SPEED, heading);
 
-        driveStraight(DRIVE_SPEED, 10.1, 0.0);    // Drive Forward 24"
-        turnToHeading( TURN_SPEED, 15.0);               // Turn  CW to -45 Degrees
-        holdHeading( TURN_SPEED, 15.0, 0.05);   // Hold -45 Deg heading for a 1/2 second
-        turnToHeading( TURN_SPEED, 0.0);               // Turn  CW to -45 Degrees
-        holdHeading( TURN_SPEED, 0.0, 0.05);   // Hold -45 Deg heading for a 1/2 second
-        turnToHeading( TURN_SPEED, -20.0);               // Turn  CW to -45 Degrees
-        holdHeading( TURN_SPEED, -20.0, 0.05);   // Hold -45 Deg heading for a 1/2 second
-        // insert tensorflow code here
-        turnToHeading( TURN_SPEED, 0.0);               // Turn  CW to -45 Degrees
-        holdHeading( TURN_SPEED, 0.0, 0.05);   // Hold -45 Deg heading for a 1/2 second
-        driveStraight(DRIVE_SPEED, 1.9, 0.0);
-        turnToHeading(TURN_SPEED, 90);
-        holdHeading(TURN_SPEED, 90.0, 0.05);
-        driveStraight(DRIVE_SPEED, 24.0, 90.0);
+            // pre-detect
+            // -- add code here
 
-        turnToHeading(TURN_SPEED, 0.0);
-        holdHeading(TURN_SPEED, 0.0, 0.05);
-        driveStraight(DRIVE_SPEED, 22.0, 0.0);
+            if (isCubeThere()) {
+                msg = "Cube Found!!!";
+                sendTelemetry(true);
+
+                if (heading > 0) {
+                    cubeIsFound = FoundTeamProp.FOUND_LEFT;
+                } else if (heading < -20) {
+                    cubeIsFound = FoundTeamProp.FOUND_RIGHT;
+                } else {
+                    cubeIsFound = FoundTeamProp.FOUND_MIDDLE;
+                }
+                holdHeading(TURN_SPEED, heading, 0.05);
+
+                break;
+            }
+
+            // post-detect
+            // -- add code here
+            waitRuntime(0.2);
+        }
+
+
+        if (cubeIsFound == FoundTeamProp.FOUND_MIDDLE) {
+            turnToHeading(TURN_SPEED, -14);
+            holdHeading(TURN_SPEED, -14, 0.05);
+
+            driveStraight(DRIVE_SPEED, 10, -14.0);
+            waitRuntime(0.1);
+            dropTwoPickOne();
+            driveStraight(DRIVE_SPEED, -(10-MOVE_BACK_AFTER_DROP), -14.0);
+
+
+
+
+        } else if (cubeIsFound == FoundTeamProp.FOUND_LEFT) {
+            turnToHeading(TURN_SPEED, 90);
+            holdHeading(TURN_SPEED, 90, 0.05);
+            driveStraight(DRIVE_SPEED, -2, 90);
+            dropTwoPickOne();
+            driveStraight(DRIVE_SPEED, -(-2-MOVE_BACK_AFTER_DROP), 90);
+
+        } else {
+
+            turnToHeading(TURN_SPEED, -45);
+            holdHeading(TURN_SPEED, -45, 0.05);
+            driveStraight(DRIVE_SPEED, 3.5, -45);
+            dropTwoPickOne();
+            driveStraight(DRIVE_SPEED, -(3.5-MOVE_BACK_AFTER_DROP), -45);
+        }
+
+
+        turnToHeading(TURN_SPEED, 0);
+
+
+        driveStraight(DRIVE_SPEED, -14, 0);
+        turnToHeading(TURN_SPEED, 95);
+        holdHeading(TURN_SPEED, 95, 0.05);
+
+        driveStraight(0.1, 56, 90);
+
+        waitRuntime(0.1);
+        turnToHeading(TURN_SPEED, 0);
+        waitRuntime(0.1);
+        driveStraight(DRIVE_SPEED, 15, 0);
+        waitRuntime(0.1);
+        turnToHeading(TURN_SPEED, -90);
+
+//
+//        // Step through each leg of the path,
+//        // Notes:   Reverse movement is obtained by setting a negative distance (not speed)
+//        //          holdHeading() is used after turns to let the heading stabilize
+//        //          Add a sleep(2000) after any step to keep the telemetry data visible for review
+//
+//        driveStraight(DRIVE_SPEED, 10.1, 0.0);    // Drive Forward 24"
+//        turnToHeading( TURN_SPEED, 15.0);               // Turn  CW to -45 Degrees
+//        holdHeading( TURN_SPEED, 15.0, 0.05);   // Hold -45 Deg heading for a 1/2 second
+//        turnToHeading( TURN_SPEED, 0.0);               // Turn  CW to -45 Degrees
+//        holdHeading( TURN_SPEED, 0.0, 0.05);   // Hold -45 Deg heading for a 1/2 second
+//        turnToHeading( TURN_SPEED, -20.0);               // Turn  CW to -45 Degrees
+//        holdHeading( TURN_SPEED, -20.0, 0.05);   // Hold -45 Deg heading for a 1/2 second
+//        // insert tensorflow code here
+//        turnToHeading( TURN_SPEED, 0.0);               // Turn  CW to -45 Degrees
+//        holdHeading( TURN_SPEED, 0.0, 0.05);   // Hold -45 Deg heading for a 1/2 second
+//        driveStraight(DRIVE_SPEED, 1.9, 0.0);
+//        turnToHeading(TURN_SPEED, 90);
+//        holdHeading(TURN_SPEED, 90.0, 0.05);
+//        driveStraight(DRIVE_SPEED, 24.0, 90.0);
+//
+//        turnToHeading(TURN_SPEED, 0.0);
+//        holdHeading(TURN_SPEED, 0.0, 0.05);
+//        driveStraight(DRIVE_SPEED, 22.0, 0.0);
 
 
 
@@ -318,6 +553,13 @@ public class FirstAutonomousIteration extends LinearOpMode {
     */
     public void driveStraight(double maxDriveSpeed, double distance, double heading, boolean applyCorrection) {
 
+        leftFrontDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        rightFrontDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+        leftBackDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        rightBackDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+
         // Ensure that the OpMode is still active
         if (opModeIsActive()) {
 
@@ -330,9 +572,13 @@ public class FirstAutonomousIteration extends LinearOpMode {
 
             leftFrontDrive.setTargetPosition(leftTarget);
             rightFrontDrive.setTargetPosition(rightTarget);
+            leftBackDrive.setTargetPosition(leftBackDrive.getCurrentPosition() + moveCounts);
+            rightBackDrive.setTargetPosition(rightBackDrive.getCurrentPosition() + moveCounts);
 
             leftFrontDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             rightFrontDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            leftBackDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            rightBackDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
             // Set the required driving speed  (must be positive for RUN_TO_POSITION)
             // Start driving straight, and then enter the control loop
@@ -363,8 +609,8 @@ public class FirstAutonomousIteration extends LinearOpMode {
             moveRobot(0, 0);
             leftFrontDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
             rightFrontDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-            leftBackDrive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-            rightBackDrive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+            leftBackDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            rightBackDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         }
     }
 
@@ -488,10 +734,10 @@ public class FirstAutonomousIteration extends LinearOpMode {
             rightSpeed /= max;
         }
 
+        leftBackDrive.setPower(leftSpeed);
+        rightBackDrive.setPower(rightSpeed);
         leftFrontDrive.setPower(leftSpeed);
-        leftBackDrive.setPower(0);
         rightFrontDrive.setPower(rightSpeed);
-        rightBackDrive.setPower(0);
     }
 
     /**
@@ -499,8 +745,9 @@ public class FirstAutonomousIteration extends LinearOpMode {
      *
      * @param straight  Set to true if we are driving straight, and the encoder positions should be included in the telemetry.
      */
-    private void sendTelemetry(boolean straight) {
 
+    private void sendTelemetry(boolean straight) {
+        telemetry.addData(msg, "");
         if (straight) {
             telemetry.addData("Motion", "Drive Straight");
             telemetry.addData("Target Pos L:R",  "%7d:%7d",      leftTarget,  rightTarget);
