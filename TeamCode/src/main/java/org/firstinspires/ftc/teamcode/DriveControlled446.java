@@ -75,29 +75,61 @@ public class DriveControlled446 extends LinearOpMode {
             motorBL.setPower(backLeftPower);
             motorBR.setPower(backRightPower);
             // endregion
-            
-            // region intake
-            // This is just a test. Will change in the future
+
+
+            // region Intake & Servos
+
+            // Intake motor
+            // Gamepad1 a toggles on and off the motor
+            boolean isIntakeRunning = false;
             if (gamepad1.a) {
-                intakeMotor.setPower(1);
-                outtake.setPosition(1);
+                if (!isIntakeRunning) {
+                    intakeMotor.setPower(1);
+                    isIntakeRunning = true;
+                }
+                else {
+                    flipper.setPosition(0);
+                    isIntakeRunning = false;
+                }
             }
-            if (gamepad2.b) {
+            // If you press the left trigger then the intake motor direction is reversed
+            boolean intakeDirectionForwards = true;
+            if (gamepad1.left_trigger == 1) {
+                if (intakeDirectionForwards) {
+                    intakeMotor.setDirection(DcMotorSimple.Direction.REVERSE);
+                    intakeDirectionForwards = false;
+                } else {
+                    intakeMotor.setDirection(DcMotorSimple.Direction.FORWARD);
+                    intakeDirectionForwards = true;
+                }
+            }
+            // Pressing the left trigger will also spin the intake
+            double intakePower = gamepad1.right_trigger;
+            intakeMotor.setPower(intakePower);
+
+            // Intake servos
+            if (gamepad2.dpad_up) {
                 frontIntake1.setPosition(1);
                 frontIntake2.setPosition(1);
             }
-            if (gamepad2.x) {
+            if (gamepad2.dpad_down) {
                 frontIntake1.setPosition(0);
                 frontIntake2.setPosition(0);
                 outtake.setPosition(0);
             }
+            frontIntake1.setPosition(gamepad2.left_stick_y);
+            frontIntake2.setPosition(gamepad2.left_stick_y);
+            
+            // Flipper
             boolean isFlipperOpen = false;
             if (gamepad2.y) {
                 if (!isFlipperOpen) {
                     flipper.setPosition(1);
+                    isFlipperOpen = true;
                 }
                 else {
                     flipper.setPosition(0);
+                    isFlipperOpen = false;
                 }
             }
             // endregion
