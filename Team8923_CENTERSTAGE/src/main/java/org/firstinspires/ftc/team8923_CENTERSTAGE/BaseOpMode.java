@@ -19,10 +19,11 @@ abstract public class BaseOpMode extends LinearOpMode {
 
     DcMotor motorIntakeWheels;
 
-    Servo servoLeftFlipGondola;
-    Servo servoRightFlipGondola;
+    Servo servoFlipGondola;
 
     CRServo servoReleasePixel;
+
+    Servo servoRotateGondola;
 
     Servo servoReleaseDrone;
 
@@ -47,12 +48,13 @@ abstract public class BaseOpMode extends LinearOpMode {
 
         motorIntakeWheels = hardwareMap.dcMotor.get("motorIntakeWheels");
 
-        servoLeftFlipGondola = hardwareMap.servo.get("servoLeftFlipGondola");
-        servoRightFlipGondola = hardwareMap.servo.get("servoRightFlipGondola");
+        servoFlipGondola = hardwareMap.servo.get("servoFlipGondola");
 
-        servoReleasePixel = hardwareMap.crservo.get("servoReleasePixel");
+        // servoReleasePixel = hardwareMap.crservo.get("servoReleasePixel");
 
         servoReleaseDrone = hardwareMap.servo.get("servoReleaseDrone");
+
+        // servoRotateGondola = hardwareMap.servo.get("servoRotateGondola");
 
         motorFL.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         motorFR.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -77,6 +79,13 @@ abstract public class BaseOpMode extends LinearOpMode {
         motorIntakeWheels.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         motorIntakeWheels.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         motorIntakeWheels.setDirection(DcMotor.Direction.FORWARD);
+
+        servoFlipGondola.setPosition(0.98);
+
+        // servoRotateGondola.setPosition(0.0);
+
+        // initializes position of drone launcher servo. careful!
+        servoReleaseDrone.setPosition(0.5);
     }
 
     // mecanum drive method
