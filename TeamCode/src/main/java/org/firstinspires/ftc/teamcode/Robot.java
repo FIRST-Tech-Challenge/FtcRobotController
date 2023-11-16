@@ -531,8 +531,6 @@ public class Robot {
             if ((markerPos == MarkerDetector.MARKER_POSITION.RIGHT && isRedAlliance)
                     || (markerPos == MarkerDetector.MARKER_POSITION.LEFT && !isRedAlliance)) {
 
-                Log.d("vision", "moveToMarker: Inner Spike");
-
                 // Calculate distances
 
                 HORIZONTAL_TOTAL = 17; //h1-h2+h3
@@ -556,33 +554,27 @@ public class Robot {
 
             } else if ((markerPos == MarkerDetector.MARKER_POSITION.LEFT && isRedAlliance)
                     || (markerPos == MarkerDetector.MARKER_POSITION.RIGHT && !isRedAlliance)) {
-                Log.d("vision", "moveToMarker: Outer Spike");
 
-                // Calculate distances
+                HORIZONTAL_TOTAL = 17;
+                VERTICAL_TOTAL = 26;
+                horizontal1 = 17;
                 vertical1 = 11;
-                horizontal1 = 16;
-                horizontal2 = 10;
-                vertical4 = vertical1; //adjust for left
-                horizontal5 = HORIZONTAL_TOTAL - horizontal1 + horizontal2;
-                vertical6 = VERTICAL_TOTAL + vertical1 - vertical4;
-                horizontal7 = HORIZONTAL_TOTAL - 27;
+                horizontal2 = 13;
+                double slantDistance = 7;
 
                 // Start moving
-                mecanumBlocking(vertical1, isRedAlliance, 0.5); //go left if blue, go right if red
-                setHeading(0, 0.6);
-                straightBlocking(horizontal1, false, 0.7); //go forward FAST
-                setServoPosBlocking(spikeServo, 0.2); //lift finger
-                straightBlocking(horizontal2, true, 1); //move back FAST
-                setHeading(0, 0.7);
-                mecanumBlocking(vertical4, !isRedAlliance, 0.5); //move left if red
-                setHeading(0, 0.7);
-                straightBlocking(horizontal5, false, 0.7); //go forward & around marker
-                setHeading(90 * polarity, 0.7); //turn
-                moveStraightChunkingDONT_USE_NEGATIVE(vertical6, false, 0.7, 90 * polarity, 0.7);
-                setHeading(90 * polarity, 0.7);
-                mecanumBlocking(horizontal7, !isRedAlliance, 0.5); //mecanum directly in front of board left if blue
-                setHeading(90 * polarity, 0.7);
+
+                straightBlocking(horizontal1, false, 0.7);
+                setHeading(45 * polarity, 0.7);
+                straightBlocking(slantDistance, false, 0.7);
+                setServoPosBlocking(spikeServo, 0.2);
+                straightBlocking(slantDistance, true, 0.7);
+                setHeading(-90 * polarity, 0.7);
+                straightBlocking(vertical1, false, 0.7);
+                setHeading(-90 * polarity, 0.7);
+                mecanumBlocking(horizontal2, !isRedAlliance, 0.7);
                 break;
+
             } else { //center, default
                 Log.d("vision", "moveToMarker: Center Spike");
 
