@@ -883,7 +883,7 @@ public class Robot {
          * Park near center
          */
         int parkDistance = 23; // distance from center tag in inches
-        int distanceBetweenTags = 3; // inches
+        int distanceBetweenTags = 6; // inches
         while (opMode.opModeIsActive()) {
             straightBlocking(2, true, 0.7);
             if (longPath && isRedAlliance || !longPath && !isRedAlliance) {
