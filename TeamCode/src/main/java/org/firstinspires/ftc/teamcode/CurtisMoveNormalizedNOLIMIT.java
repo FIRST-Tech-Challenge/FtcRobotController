@@ -1,7 +1,6 @@
 package org.firstinspires.ftc.teamcode;
 //package org.openftc.i2cdrivers;
 
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -13,20 +12,22 @@ import com.qualcomm.robotcore.util.Range;
 //import com.qualcomm.robotcore.hardware.configuration.annotations.I2cDeviceType;
 
 @TeleOp
-@Disabled
 //@I2cDeviceType()
 
-public class CurtisMoveClipped extends OpMode {
+public class CurtisMoveNormalizedNOLIMIT extends OpMode {
     //Motors
-    private double MAXDRIVEPOWER = 1.0;
     private double MAXARMPOWER = 0.5;
     private double MAXSLIDEPOWER = 0.5;
 
     private DcMotor leftFrontDrive, rightFrontDrive, leftBackDrive, rightBackDrive, Arm, Slides = null;
 
-    private double drive, strafe, turn, leftFrontPower, leftBackPower, rightFrontPower, rightBackPower, armPower, slidesPower = 0.0;
+    private double drive, strafe, turn, armPower, slidesPower = 0.0;
 
     ElapsedTime runtime = new ElapsedTime();
+    // don't change
+    double max;
+    double[] speeds = new double[4];
+
 
 
     @Override
@@ -65,7 +66,7 @@ public class CurtisMoveClipped extends OpMode {
     }
 
     @Override
-    //Start fuction
+    //Start function
     public void start() {
         //reset
         telemetry.clearAll();
@@ -81,10 +82,19 @@ public class CurtisMoveClipped extends OpMode {
         turn = gamepad1.right_stick_x;
 
         // Set motor power
-        leftFrontPower = Range.clip(-drive + turn + strafe, -MAXDRIVEPOWER, MAXDRIVEPOWER);
-        rightFrontPower = Range.clip(-drive - turn - strafe, -MAXDRIVEPOWER, MAXDRIVEPOWER);
-        leftBackPower = Range.clip(-drive + turn - strafe, -MAXDRIVEPOWER, MAXDRIVEPOWER);
-        rightBackPower = Range.clip(-drive - turn + strafe, -MAXDRIVEPOWER, MAXDRIVEPOWER);
+        speeds[0] = -drive + turn + strafe;
+        speeds[1] = -drive - turn - strafe;
+        speeds[2] = -drive + turn - strafe;
+        speeds[3] = -drive - turn + strafe;
+
+        max = Math.abs(speeds[0]);
+        for(int i = 1; i < speeds.length; ++i) {
+            if ( max < Math.abs(speeds[i]) ) max = Math.abs(speeds[i]);
+        }
+
+        if (max > 1) {
+            for (int i = 0; i < speeds.length; ++i) speeds[i] /= max;
+        }
 
 
         // arm
@@ -94,10 +104,10 @@ public class CurtisMoveClipped extends OpMode {
 
 
         // Set motor powers to updated power
-        leftFrontDrive.setPower(leftFrontPower);
-        rightFrontDrive.setPower(rightFrontPower);
-        leftBackDrive.setPower(leftBackPower);
-        rightBackDrive.setPower(rightBackPower);
+        leftFrontDrive.setPower(speeds[0]);
+        rightFrontDrive.setPower(speeds[1]);
+        leftBackDrive.setPower(speeds[2]);
+        rightBackDrive.setPower(speeds[3]);
 
         Arm.setPower(armPower);
         Slides.setPower(slidesPower);
@@ -115,4 +125,3 @@ public class CurtisMoveClipped extends OpMode {
         Slides.setPower(0);
     }
 }
-

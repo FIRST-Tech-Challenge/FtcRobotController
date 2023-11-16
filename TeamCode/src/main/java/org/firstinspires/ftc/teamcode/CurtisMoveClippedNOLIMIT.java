@@ -1,22 +1,19 @@
 package org.firstinspires.ftc.teamcode;
 //package org.openftc.i2cdrivers;
 
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
-import com.qualcomm.robotcore.hardware.configuration.annotations.I2cDeviceType;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
 //import com.qualcomm.robotcore.hardware.configuration.annotations.DeviceProperties;
 //import com.qualcomm.robotcore.hardware.configuration.annotations.I2cDeviceType;
 
 @TeleOp
-@Disabled
 //@I2cDeviceType()
 
-public class CurtisMoveClipped extends OpMode {
+public class CurtisMoveClippedNOLIMIT extends OpMode {
     //Motors
     private double MAXDRIVEPOWER = 1.0;
     private double MAXARMPOWER = 0.5;
