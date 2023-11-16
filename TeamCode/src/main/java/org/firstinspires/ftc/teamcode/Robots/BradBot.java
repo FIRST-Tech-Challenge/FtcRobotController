@@ -224,7 +224,7 @@ public class BradBot extends BasicRobot {
         gampad.readGamepad(op.gamepad1.right_bumper, "gamepad1_right_bumper", "startIntake");
     boolean leftBumper =
         gampad.readGamepad(op.gamepad1.left_bumper, "gamepad1_left_bumper", "reverseIntake");
-    boolean isB = gampad.readGamepad(op.gamepad1.b, "gamepad1_b", "shoot");
+    boolean isB = gampad.readGamepad(op.gamepad1.x, "gamepad1_x", "shoot");
     boolean isB2 = gampad.readGamepad(op.gamepad2.b, "gamepad2_b", "lockPower");
 
     boolean isX = gampad.readGamepad(op.gamepad1.x, "gamepad1_x", "toggleFieldCentricSlow");

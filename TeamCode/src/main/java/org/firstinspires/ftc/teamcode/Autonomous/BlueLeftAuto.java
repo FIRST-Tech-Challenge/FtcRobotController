@@ -39,7 +39,6 @@ public class BlueLeftAuto extends LinearOpMode {
 
 
             TrajectorySequence[] throughTruss = new TrajectorySequence[3];
-
             throughTruss[0] =
                     robot
                             .roadrun
@@ -50,7 +49,7 @@ public class BlueLeftAuto extends LinearOpMode {
                             .splineTo(new Vector2d(10, 56.5), toRadians(5))
                             .splineTo(new Vector2d(45, 32), toRadians(0))
                             .waitSeconds(2)
-                            .lineToLinearHeading(new Pose2d(52.5, 28, toRadians(181)))
+                            .lineToLinearHeading(new Pose2d(52.5, 27, toRadians(181)))
                             .addTemporalMarker(robot::done)
                             .build();
             throughTruss[1] =
@@ -60,10 +59,10 @@ public class BlueLeftAuto extends LinearOpMode {
                             .lineToLinearHeading(new Pose2d(-39.5, 29.5, toRadians(90)))
                             .setReversed(true)
                             .lineToLinearHeading(new Pose2d(-40, 57.5, toRadians(180)))
-                            .splineTo(new Vector2d(10, 55.5), toRadians(5))
+                            .splineTo(new Vector2d(10, 55.5), toRadians(-5))
                             .splineTo(new Vector2d(40, 32), toRadians(0))
                             .waitSeconds(2)
-                            .lineToLinearHeading(new Pose2d(52.5, 37, toRadians(180)))
+                            .lineToLinearHeading(new Pose2d(52.5, 36, toRadians(180)))
                             .addTemporalMarker(robot::done)
                             .build();
             throughTruss[2] =
@@ -73,10 +72,10 @@ public class BlueLeftAuto extends LinearOpMode {
                             .setReversed(true)
                             .lineToLinearHeading(new Pose2d(-40, 57.5, toRadians(180)))
                             .setReversed(true)
-                            .splineTo(new Vector2d(10, 55.5), toRadians(5))
+                            .splineTo(new Vector2d(10, 55.5), toRadians(-5))
                             .splineTo(new Vector2d(45, 28), toRadians(0))
                             .waitSeconds(2)
-                            .lineToLinearHeading(new Pose2d(52.5, 43, toRadians(181)))
+                            .lineToLinearHeading(new Pose2d(53, 43, toRadians(181)))
                             .addTemporalMarker(robot::done)
                             .build();
             TrajectorySequence[] dropAndPark = new TrajectorySequence[3];
