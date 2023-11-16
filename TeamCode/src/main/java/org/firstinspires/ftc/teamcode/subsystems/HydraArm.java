@@ -1,9 +1,12 @@
-package org.firstinspires.ftc.teamcode;
+package org.firstinspires.ftc.teamcode.subsystems;
 
-import org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion;
+import org.firstinspires.ftc.teamcode.HydraArmMovements;
+import org.firstinspires.ftc.teamcode.HydraArmPositions;
+
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.HardwareMap;
 
-public class HydraArm extends BlocksOpModeCompanion {
+public class HydraArm {
     private final DcMotor mMotLwrArm;
     private final DcMotor mMotUprArm;
     private final double mLowerArmAutoMotorPwr;
@@ -37,7 +40,7 @@ public class HydraArm extends BlocksOpModeCompanion {
     private final String[] mArmPositionNames = {"Home", "Lift Box", "Lift Arm", "Back Score", "Front Score",
             "Hang", "Hang End"};
 
-    public HydraArm(String uprArm, String lwrArm, double uprArmPwr, double lwrArmPwr) {
+    public HydraArm(HardwareMap hardwareMap, String uprArm, String lwrArm, double uprArmPwr, double lwrArmPwr) {
         // get the motor objects
         mMotUprArm = hardwareMap.get(DcMotor.class, uprArm);
         mMotLwrArm = hardwareMap.get(DcMotor.class, lwrArm);
@@ -192,9 +195,9 @@ public class HydraArm extends BlocksOpModeCompanion {
         // set the motor positions from our arrays of static values
         SetLwrArmPos(mLowerArmPositions[mArmPositionState.ordinal()]);
         SetUprArmPos(mUpperArmPositions[mArmPositionState.ordinal()]);
-        telemetry.addData("ArmPos", mArmPositionNames[mArmPositionState.ordinal()]);
-        telemetry.addData("LrArm", mMotLwrArm.getCurrentPosition());
-        telemetry.addData("UprArm", mMotUprArm.getCurrentPosition());
+        //telemetry.addData("ArmPos", mArmPositionNames[mArmPositionState.ordinal()]);
+        //telemetry.addData("LrArm", mMotLwrArm.getCurrentPosition());
+        //telemetry.addData("UprArm", mMotUprArm.getCurrentPosition());
         return actionComplete;
     }
 

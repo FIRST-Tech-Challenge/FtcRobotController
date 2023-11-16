@@ -1,14 +1,16 @@
-package org.firstinspires.ftc.teamcode;
+package org.firstinspires.ftc.teamcode.subsystems;
 
 import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DistanceSensor;
+import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.LED;
 import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
+import org.firstinspires.ftc.teamcode.HydraPixelPalaceActions;
 
-public class HydraPixelPalace extends BlocksOpModeCompanion {
+public class HydraPixelPalace {
     private final Servo mSrvPxlPos1;
     private final Servo mSrvPxlPos2;
     private final DistanceSensor mSenColPxlPos1_DistanceSensor;
@@ -22,7 +24,7 @@ public class HydraPixelPalace extends BlocksOpModeCompanion {
     private final double mPxlPos1DetDist;
     private final double mPxlPos2DetDist;
 
-    public HydraPixelPalace(String srvPos1, String srvPos2, String led1, String led2, String led3,
+    public HydraPixelPalace(HardwareMap hardwareMap, String srvPos1, String srvPos2, String led1, String led2, String led3,
                             String led4, String snsPos1, String snsPos2, double srvSpeedFrontToBack,
                             double srvSpeedBackToFront, double pixelDistPos1, double pixelDistPos2) {
         mSrvPxlPos1 = hardwareMap.get(Servo.class, srvPos1);
@@ -117,7 +119,7 @@ public class HydraPixelPalace extends BlocksOpModeCompanion {
         }
         direction = Math.min(Math.max(direction, 0), 1);
         srv.setPosition(direction);
-        telemetry.addData("PixelServo", direction);
+        //telemetry.addData("PixelServo", direction);
     }
 
     /**
@@ -129,8 +131,8 @@ public class HydraPixelPalace extends BlocksOpModeCompanion {
 
         distPixelPos1 = mSenColPxlPos1_DistanceSensor.getDistance(DistanceUnit.CM);
         detPixelPos1 = distPixelPos1 < mPxlPos1DetDist;
-        telemetry.addData("PixelPos1Dist", distPixelPos1);
-        telemetry.addData("Pixel1Detect", detPixelPos1);
+        //telemetry.addData("PixelPos1Dist", distPixelPos1);
+        //telemetry.addData("Pixel1Detect", detPixelPos1);
         return detPixelPos1;
     }
 
@@ -143,8 +145,8 @@ public class HydraPixelPalace extends BlocksOpModeCompanion {
 
         distPixelPos2 = mSenColPxlPos2_DistanceSensor.getDistance(DistanceUnit.CM);
         detPixelPos2 = distPixelPos2 < mPxlPos2DetDist;
-        telemetry.addData("PixelPos2Dist", distPixelPos2);
-        telemetry.addData("Pixel2Detect", detPixelPos2);
+        //telemetry.addData("PixelPos2Dist", distPixelPos2);
+        //telemetry.addData("Pixel2Detect", detPixelPos2);
         return detPixelPos2;
     }
 }

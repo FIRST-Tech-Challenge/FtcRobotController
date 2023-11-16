@@ -1,10 +1,11 @@
-package org.firstinspires.ftc.teamcode;
+package org.firstinspires.ftc.teamcode.subsystems;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion;
 
-public class HydraDrive extends BlocksOpModeCompanion {
+public class HydraDrive {
     private final DcMotor mMotDrFrLt;
     private final DcMotor mMotDrFrRt;
     private final DcMotor mMotDrBkLt;
@@ -14,7 +15,7 @@ public class HydraDrive extends BlocksOpModeCompanion {
     private final double mSlowPower;
     private final double mCountsPerInch;
 
-    public HydraDrive(String frontLeft, String frontRight, String backLeft, String backRight,
+    public HydraDrive(HardwareMap hardwareMap, String frontLeft, String frontRight, String backLeft, String backRight,
                      double countsPerInch, double driveBoosted, double driveNormal, double driveSlow) {
         // grab the motors out of the hardware map
         mMotDrFrLt = hardwareMap.get(DcMotor.class, frontLeft);

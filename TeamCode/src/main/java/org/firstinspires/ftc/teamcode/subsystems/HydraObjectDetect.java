@@ -1,21 +1,24 @@
-package org.firstinspires.ftc.teamcode;
+package org.firstinspires.ftc.teamcode.subsystems;
+
+import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion;
 import org.firstinspires.ftc.robotcore.external.JavaUtil;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.BuiltinCameraDirection;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.robotcore.external.tfod.Recognition;
+import org.firstinspires.ftc.teamcode.HydraObjectLocations;
 import org.firstinspires.ftc.vision.VisionPortal;
 import org.firstinspires.ftc.vision.tfod.TfodProcessor;
 
 import java.util.List;
 
-public class HydraObjectDetect extends BlocksOpModeCompanion {
+public class HydraObjectDetect {
     private final VisionPortal myVisionPortal;
     private final TfodProcessor myTfodProcessor;
     private final float mXValueForLeftToCenter;
 
-    public HydraObjectDetect(String modelFilename, float xValueForLeftToCenter) {
+    public HydraObjectDetect(HardwareMap hardwareMap, String modelFilename, float xValueForLeftToCenter) {
         // this is the delineator between left and center
         mXValueForLeftToCenter = xValueForLeftToCenter;
         TfodProcessor.Builder myTfodProcessorBuilder;
@@ -56,15 +59,15 @@ public class HydraObjectDetect extends BlocksOpModeCompanion {
         }*/
         // Get a list of recognitions from TFOD.
         myTfodRecognitions = myTfodProcessor.getRecognitions();
-        telemetry.addData("# Objects Detected", JavaUtil.listLength(myTfodRecognitions));
+        //telemetry.addData("# Objects Detected", JavaUtil.listLength(myTfodRecognitions));
         // Iterate through list and call a function to display info for each recognized object.
         for (Recognition myTfodRecognition_item : myTfodRecognitions) {
             myTfodRecognition = myTfodRecognition_item;
             // Display info about the recognition.
-            telemetry.addLine("");
+            //telemetry.addLine("");
             // Display label and confidence.
             // Display the label and confidence for the recognition.
-            telemetry.addData("Image", myTfodRecognition.getLabel() + " (" + JavaUtil.formatNumber(myTfodRecognition.getConfidence() * 100, 0) + " % Conf.)");
+            //telemetry.addData("Image", myTfodRecognition.getLabel() + " (" + JavaUtil.formatNumber(myTfodRecognition.getConfidence() * 100, 0) + " % Conf.)");
             // Display position.
             x = (myTfodRecognition.getLeft() + myTfodRecognition.getRight()) / 2;
             y = (myTfodRecognition.getTop() + myTfodRecognition.getBottom()) / 2;
@@ -74,7 +77,7 @@ public class HydraObjectDetect extends BlocksOpModeCompanion {
                 detectedLocation = HydraObjectLocations.ObjLocCenterSpike;
             }
             // Display the position of the center of the detection boundary for the recognition
-            telemetry.addData("- Position", JavaUtil.formatNumber(x, 0) + ", " + JavaUtil.formatNumber(y, 0));
+            //telemetry.addData("- Position", JavaUtil.formatNumber(x, 0) + ", " + JavaUtil.formatNumber(y, 0));
         }
         return detectedLocation;
     }

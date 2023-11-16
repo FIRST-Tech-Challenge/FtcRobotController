@@ -1,14 +1,16 @@
-package org.firstinspires.ftc.teamcode;
+package org.firstinspires.ftc.teamcode.subsystems;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.HardwareMap;
+
 import org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion;
 
-public class HydraIntake extends BlocksOpModeCompanion {
+public class HydraIntake {
     private final DcMotor mMotPxlIntk;
     private final double mPwrIn;
     private final double mPwrOut;
 
-    public HydraIntake(String motor, double pwrIn, double pwrOut) {
+    public HydraIntake(HardwareMap hardwareMap, String motor, double pwrIn, double pwrOut) {
         // initialize the motor object
         mMotPxlIntk = hardwareMap.get(DcMotor.class, motor);
         // power values

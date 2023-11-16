@@ -5,7 +5,13 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.hardware.IMU;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-//@Autonomous(name = "HydrAuton", preselectTeleOp = "HyDrive")
+import org.firstinspires.ftc.teamcode.subsystems.HydraArm;
+import org.firstinspires.ftc.teamcode.subsystems.HydraDrive;
+import org.firstinspires.ftc.teamcode.subsystems.HydraIntake;
+import org.firstinspires.ftc.teamcode.subsystems.HydraObjectDetect;
+import org.firstinspires.ftc.teamcode.subsystems.HydraPixelPalace;
+
+@Autonomous(name = "HydrAutonJava", preselectTeleOp = "HyDrive")
 public class HydrAuton extends HydrAuton_Base {
     protected IMU imu;
     protected HydraArm Arm;
@@ -35,15 +41,15 @@ public class HydrAuton extends HydrAuton_Base {
         // the REV Robotics logo is facing and the direction that the USB ports are facing.
         imu = hardwareMap.get(IMU.class, "imu");
         imu.initialize(new IMU.Parameters(new RevHubOrientationOnRobot(RevHubOrientationOnRobot.LogoFacingDirection.RIGHT, RevHubOrientationOnRobot.UsbFacingDirection.UP)));
-        Arm = new HydraArm("MotUprArm", "MotLwrArm", cUpperArmAutoMotorPwr,
+        Arm = new HydraArm(hardwareMap,"MotUprArm", "MotLwrArm", cUpperArmAutoMotorPwr,
                 cLowerArmAutoMotorPwr);
-        Drive = new HydraDrive("MotDrFrLt", "MotDrFrRt", "MotDrBkLt",
+        Drive = new HydraDrive(hardwareMap,"MotDrFrLt", "MotDrFrRt", "MotDrBkLt",
                 "MotDrBkRt", cCountsPerInch, cDriveBoosted, cDriveNormal, cDriveSlow);
-        PixelPalace = new HydraPixelPalace("SrvPxlPos1", "SrvPxlPos2", "LED1",
+        PixelPalace = new HydraPixelPalace(hardwareMap, "SrvPxlPos1", "SrvPxlPos2", "LED1",
                 "LED2", "LED3", "LED4", "SenColPxlPos1", "SenColPxlPos2",
                 cCasFrontToBack, cCasBackToFront, cPixelPos1Dist, cPixelPos2Dist);
-        Intake = new HydraIntake("MotPxlIntk", cIntakeIn, cIntakeOut);
-        HydraObjectDetect ObjDet = new HydraObjectDetect("Blue_Prop.tflite", cXvalueForLeftToCenterObject);
+        Intake = new HydraIntake(hardwareMap, "MotPxlIntk", cIntakeIn, cIntakeOut);
+        HydraObjectDetect ObjDet = new HydraObjectDetect(hardwareMap, "Blue_Prop.tflite", cXvalueForLeftToCenterObject);
         // Wait for the match to begin.
         waitForStart();
         // Useful code to load pixels before we run. DISABLE FOR COMPETITION
