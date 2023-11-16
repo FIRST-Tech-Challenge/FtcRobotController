@@ -59,7 +59,7 @@ public class RedLeftAuto extends LinearOpMode {
             .splineTo(new Vector2d(10, -56.5), toRadians(5))
             .splineTo(new Vector2d(45, -32), toRadians(0))
             .waitSeconds(2)
-            .lineToLinearHeading(new Pose2d(52.5, -28, toRadians(181)))
+            .lineToLinearHeading(new Pose2d(52.5, -27, toRadians(181)))
             .addTemporalMarker(robot::done)
             .build();
     throughTruss[1] =
@@ -72,7 +72,7 @@ public class RedLeftAuto extends LinearOpMode {
             .splineTo(new Vector2d(10, -55.5), toRadians(5))
             .splineTo(new Vector2d(40, -32), toRadians(0))
             .waitSeconds(2)
-            .lineToLinearHeading(new Pose2d(52.5, -37, toRadians(180)))
+            .lineToLinearHeading(new Pose2d(52.5, -36, toRadians(180)))
             .addTemporalMarker(robot::done)
             .build();
     throughTruss[2] =
@@ -85,7 +85,7 @@ public class RedLeftAuto extends LinearOpMode {
             .splineTo(new Vector2d(10, -55.5), toRadians(5))
             .splineTo(new Vector2d(45, -28), toRadians(0))
             .waitSeconds(2)
-            .lineToLinearHeading(new Pose2d(52.5, -43, toRadians(181)))
+            .lineToLinearHeading(new Pose2d(53, -43, toRadians(181)))
             .addTemporalMarker(robot::done)
             .build();
     TrajectorySequence[] dropAndPark = new TrajectorySequence[3];
@@ -122,7 +122,7 @@ public class RedLeftAuto extends LinearOpMode {
       robot.preloadAuto();
       robot.queuer.addDelay(1.5);
       robot.followTrajSeq(throughTruss[pos]);
-      robot.queuer.addDelay(5.5);
+      robot.queuer.addDelay(6.5);
       robot.flipAuto();
       robot.loadAuto();
       robot.queuer.addDelay(1.2);

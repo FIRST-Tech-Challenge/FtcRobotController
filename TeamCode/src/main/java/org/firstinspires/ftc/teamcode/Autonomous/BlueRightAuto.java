@@ -51,7 +51,7 @@ public class BlueRightAuto extends LinearOpMode {
                         .setReversed(true)
                         .lineToLinearHeading(new Pose2d(45,39, toRadians(180)))
                         .waitSeconds(2.0)
-                        .lineToLinearHeading(new Pose2d(56, 28, toRadians(181)))
+                        .lineToLinearHeading(new Pose2d(52.5, 27, toRadians(181)))
                         .addTemporalMarker(robot::done)
                         .build();
         throughTruss[1] =
@@ -61,7 +61,7 @@ public class BlueRightAuto extends LinearOpMode {
                         .setReversed(true)
                         .lineToLinearHeading(new Pose2d(45,39, toRadians(180)))
                         .waitSeconds(2.0)
-                        .lineToLinearHeading(new Pose2d(56, 36, toRadians(181)))
+                        .lineToLinearHeading(new Pose2d(52.5, 36, toRadians(181)))
                         .addTemporalMarker(robot::done)
                         .build();
         throughTruss[2] =
@@ -74,7 +74,7 @@ public class BlueRightAuto extends LinearOpMode {
                         .setReversed(true)
                         .lineToLinearHeading(new Pose2d(45,42, toRadians(180)))
                         .waitSeconds(2.0)
-                        .lineToLinearHeading(new Pose2d(56, 41, toRadians(180)))
+                        .lineToLinearHeading(new Pose2d(53,     43, toRadians(180)))
                         .addTemporalMarker(robot::done)
                         .build();
         TrajectorySequence[] dropAndPark = new TrajectorySequence[3];

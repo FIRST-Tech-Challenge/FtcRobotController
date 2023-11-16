@@ -165,7 +165,7 @@ public class Arm extends RFServo {
   }
 
   public void flatten(){
-    super.superSetPosition(LOWER_LIMIT-0.05);
+    super.superSetPosition(LOWER_LIMIT-0.06);
   }
   public void unflatten(){
     super.superSetPosition(LOWER_LIMIT);

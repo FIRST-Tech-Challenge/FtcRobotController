@@ -653,7 +653,7 @@ public class RFMotor {
      * @return same as above ^
      */
     public int getCurrentPosition() {
-        if(profile==null){
+        if(profile==null || profile.isProfileDone(time)){
             position = rfMotor.getCurrentPosition();
         }
         return /*rfMotor.getCurrentPosition()*/(int) position + (int) additionalTicks;

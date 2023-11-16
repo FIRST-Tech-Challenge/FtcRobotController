@@ -114,6 +114,7 @@ public class RFAprilCam {
         ArrayList<AprilTagDetection> detections = aprilTag.getFreshDetections();
         //if close start upsampling
 //        aprilTag.setDecimation((float) UPSAMPLE);
+        upsample = true;
         if(detections!=null) {
             for (AprilTagDetection detection : detections) {
                 AprilTagPoseFtc poseFtc = detection.ftcPose;
@@ -132,8 +133,8 @@ public class RFAprilCam {
 //                            aprilTag.setDecimation((float) UPSAMPLE);
 //                        }
 //                        upsample = true;
-//                        camPoseError = camPoseError.plus(camPose).minus(currentPose);
-//                        poseCount++;
+                        camPoseError = camPoseError.plus(camPose).minus(currentPose);
+                        poseCount++;
 //                    } else {
 //                        if (upsample) {
 //                            aprilTag.setDecimation((float) DOWNSAMPLE);

@@ -81,7 +81,7 @@ public class Wrist extends RFServo {
     }
   }
   public void flatten(){
-    super.superSetPosition(0.98);
+    super.superSetPosition(1);
   }
   public void unflatten(){
     super.superSetPosition(0.87);
