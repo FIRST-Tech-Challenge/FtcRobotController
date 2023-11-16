@@ -38,11 +38,10 @@ import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
 
-import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
-import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
-
 import org.firstinspires.ftc.robotcore.external.hardware.camera.BuiltinCameraDirection;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
 import org.firstinspires.ftc.robotcore.external.tfod.Recognition;
 import org.firstinspires.ftc.teamcode.subsystems.extension;
 import org.firstinspires.ftc.vision.VisionPortal;
@@ -98,9 +97,9 @@ import java.util.List;
  *  Remove or comment out the @Disabled line to add this OpMode to the Driver Station OpMode list
  */
 
-@Autonomous(name="blue_left", group="Robot")
+@Autonomous(name="red_leftcloselm1", group="Robot")
 
-public class blue_left extends LinearOpMode {
+public class red_leftblm1 extends LinearOpMode {
     int bruhwhy = 0;
     boolean stoooooopppp = false;
     int drive3=7;
@@ -174,7 +173,7 @@ public class blue_left extends LinearOpMode {
         claw = hardwareMap.get(Servo.class, "claw");//hardwaremap claw and tilt
         initTfod();
         ex.setStowPos();
-        claw.setPosition(0.2);
+        //claw.setPosition(0.2);
         // Wait for the DS start button to be touched.
         telemetry.addData("DS preview on/off", "3 dots, Camera Stream");
         telemetry.addData(">", "Touch Play to start OpMode");
@@ -240,31 +239,32 @@ public class blue_left extends LinearOpMode {
 //        holdHeadingandscan( TURN_SPEED, 0, 4);
 //        turnToHeading( TURN_SPEED, -45.0);
 //        holdHeadingandscan1( TURN_SPEED, -45.0, 4);
-        driveStraight(DRIVE_SPEED, -15, 0.0,true);
-        holdHeading( TURN_SPEED, 0, 0.5);
-        turnToHeading( TURN_SPEED, 180);
-        holdHeading( TURN_SPEED, 180, 0.5);
+//        driveStraight(DRIVE_SPEED, -50, 0.0,true);
+//        holdHeading( TURN_SPEED, 0, 0.5);
+//        turnToHeading( TURN_SPEED, 90);
+        driveStraight(DRIVE_SPEED, 35, 0.0,true);
+        //holdHeading( TURN_SPEED, 180, 0.5);
 
-        holdHeadingandscan( TURN_SPEED, 0, 4);
-        turnToHeading( TURN_SPEED, -45.0);
-        holdHeadingandscan1( TURN_SPEED, -45.0, 4);
-
-        turnToHeading( TURN_SPEED, 0);
-        holdHeading(TURN_SPEED,0,0.5);
-        driveStraight(DRIVE_SPEED, driveforward,0,false);
-        turnToHeading( TURN_SPEED, driveturn);
-        driveStraight(DRIVE_SPEED, drive2,driveturn,false);
-        turnToHeading( TURN_SPEED, drive2t);
-        holdHeadingandplace(TURN_SPEED,driveturn,4);
-
-        turnToHeading( TURN_SPEED, 0);
-        holdHeading(TURN_SPEED,0,0.5);
-        driveStraight(DRIVE_SPEED,drive3,0,false);
-        holdHeading(TURN_SPEED,0,0.5);
-        turnToHeading( TURN_SPEED, -90);
-        holdHeading(TURN_SPEED,-90,0.5);
-        driveStraight(DRIVE_SPEED,95,-90,false);
-       // turnToHeading( TURN_SPEED, -110);
+//        holdHeadingandscan( TURN_SPEED, 0, 4);
+//        turnToHeading( TURN_SPEED, -45.0);
+//        holdHeadingandscan1( TURN_SPEED, -45.0, 4);
+//
+//        turnToHeading( TURN_SPEED, 0);
+//        holdHeading(TURN_SPEED,0,0.5);
+//        driveStraight(DRIVE_SPEED, driveforward,0,false);
+//        turnToHeading( TURN_SPEED, driveturn);
+//        driveStraight(DRIVE_SPEED, drive2,driveturn,false);
+//        turnToHeading( TURN_SPEED, drive2t);
+        holdHeadingandplace(TURN_SPEED,0,4);
+//
+//        turnToHeading( TURN_SPEED, 0);
+//        holdHeading(TURN_SPEED,0,0.5);
+//        driveStraight(DRIVE_SPEED,drive3,0,false);
+//        holdHeading(TURN_SPEED,0,0.5);
+//        turnToHeading( TURN_SPEED, -90);
+//        holdHeading(TURN_SPEED,-90,0.5);
+//        driveStraight(DRIVE_SPEED,95,-90,false);
+//       // turnToHeading( TURN_SPEED, -110);
         //driveStraight(DRIVE_SPEED,80,-110,false);
 
         telemetry.addData("Path", "Complete");
@@ -326,7 +326,7 @@ public class blue_left extends LinearOpMode {
             // keep looping while we are still active, and BOTH motors are running.
             while (opModeIsActive() &&
                    (leftFront.isBusy() && rightFront.isBusy()&&rightRear.isBusy()&&leftRear.isBusy())) {
-                if(hi&&rightFront.getCurrentPosition()>rightTarget*0.5){/*ex.setIntake();*/  wrist.setPosition(1);}
+                if(hi&&rightFront.getCurrentPosition()>rightTarget*0.5){ex.setIntake();  wrist.setPosition(0.5);}
                 // Determine required steering to keep on heading
                 turnSpeed = getSteeringCorrection(heading, P_DRIVE_GAIN);
 
@@ -443,20 +443,21 @@ public class blue_left extends LinearOpMode {
 
             // Display drive status for the driver.
             sendTelemetry(false);
-
-            if (order==0&&(holdTimer.time()>holdTime*0.1)){
-                wrist.setPosition(0.32);
-                telemetry.addData("order", order);
-                order++;
-            }else if (order==1&&(holdTimer.time()>holdTime*0.5)){
-                telemetry.addData("order", order);
-                claw.setPosition(0.9);
-                order++;
-            } else if (order==2&&(holdTimer.time()>holdTime*0.75)){
-                wrist.setPosition(1);
-                telemetry.addData("order", order);
-                order++;
-            }
+                if(order==0&&holdTimer.time()>holdTime*0.25){ex.setPlace();order++;wrist.setPosition(0.5);}
+            if(order==1&&holdTimer.time()>holdTime*0.75){ex.setIntake();order++;}
+//            if (order==0&&(holdTimer.time()>holdTime*0.1)){
+//                wrist.setPosition(0.32);
+//                telemetry.addData("order", order);
+//                order++;
+//            }else if (order==1&&(holdTimer.time()>holdTime*0.5)){
+//                telemetry.addData("order", order);
+//                claw.setPosition(0.9);
+//                order++;
+//            } else if (order==2&&(holdTimer.time()>holdTime*0.75)){
+//                wrist.setPosition(1);
+//                telemetry.addData("order", order);
+//                order++;
+//            }
         }
 
         // Stop all motion;

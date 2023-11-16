@@ -9,7 +9,7 @@ import com.arcrobotics.ftclib.controller.PIDFController;
 public class extension {
     public PIDFController pidf;
     public static int Liftpos;
-    public static int tiltplacepos=670;
+    public static int tiltplacepos=660;
     public static int tiltpos;
     public DcMotor lift1;
     public DcMotor tilt;
@@ -96,7 +96,7 @@ public class extension {
     public void setStowPos(){
         //setHeight(0);
         //if((lift1.getCurrentPosition())<(lift1.getTargetPosition()*(3.0 / 4.0))){
-            setTilt(230);
+            setTilt(320);
         //}
 
     }
