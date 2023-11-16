@@ -224,7 +224,7 @@ public class DrivingFunctions {
         // tries to find the desired tag for 2 seconds, if it can't it returns false
         while(!atf.DetectAprilTag(desiredTag)) {
             if(runtime.milliseconds() - startTime > 2000.0)
-                return false;
+                return false; // did not find the desired tag
         }
 
         startTime = runtime.milliseconds();
@@ -240,7 +240,6 @@ public class DrivingFunctions {
                     Math.abs(atf.detectedTag.ftcPose.bearing) < 3 && Math.abs(atf.detectedTag.ftcPose.yaw) < 2)
                 break;
         }
-
         return true;
     }
 

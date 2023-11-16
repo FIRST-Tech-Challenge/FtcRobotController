@@ -30,7 +30,7 @@ public class AutonomousOpenCV extends LinearOpMode {
     protected boolean runBallDetectionTest = false;
     protected boolean runEncoderTest = false;
     protected boolean runAutoDrivingTest = false;
-    static final double DRIVE_SPEED = 0.35;
+    static final double DRIVE_SPEED = 0.45;
     static final double TURN_SPEED = 0.5;
     private int desiredTag = 0;
 
@@ -61,12 +61,13 @@ public class AutonomousOpenCV extends LinearOpMode {
             tries++;
             UpdateCircleDetectionTelemetry(tries);
         }
+        if (!circleDetection.CircleFound())
+            circleDetection.SetBallPosition(CircleDetection.BallPosition.LEFT); // Ball not found, makes a guess to the left
+
         // After we are done detecting the ball, we switch the camera to use the AprilTags
         StopStreaming();
         if(useAprilTagsToDeliverPixel)
             aprilTagsFunctions = new AprilTagsFunctions(this);
-        if (!circleDetection.CircleFound())
-            circleDetection.SetBallPosition(CircleDetection.BallPosition.LEFT); // Ball not found, makes a guess to the left
     }
 
     @Override
@@ -104,6 +105,7 @@ public class AutonomousOpenCV extends LinearOpMode {
         }
         if(!isNear)
             CrossField(strafeCorrection);
+
         DeliverPixel(aimingDistance, isNear ? strafeCorrection : 0);
         ParkRobot();
     }
@@ -150,16 +152,19 @@ public class AutonomousOpenCV extends LinearOpMode {
         if(useAprilTagsToDeliverPixel)
         {
             // Face to backboard to see the destination AprilTag
-            df.TurnToHeading(TURN_SPEED, isRed ? -90 : 90);
-            if(!df.DriveToAprilTag(aprilTagsFunctions, desiredTag, 20, DRIVE_SPEED)) {
+            df.TurnToHeading(TURN_SPEED * 1.5, isRed ? -90 : 90);
+            if(!df.DriveToAprilTag(aprilTagsFunctions, desiredTag, 20, DRIVE_SPEED * 1.7)) {
                 // if it fails to see the AprilTag, it defaults to the old way of delivering (based on encoder only)
                 useAprilTagsToDeliverPixel = false;
-                df.TurnToHeading(TURN_SPEED, 0);
             }
+            df.TurnToHeading(TURN_SPEED * 1.5, 0);
         }
         if(!useAprilTagsToDeliverPixel) {
             // Strafe towards the backboard
-            df.DriveStraight(DRIVE_SPEED, isRed ? 32 + strafeCorrection : -32 + strafeCorrection, 0, true);
+            if(!centerCross)
+                df.DriveStraight(DRIVE_SPEED, isRed ? 32 + strafeCorrection : -32 + strafeCorrection, 0, true);
+            else
+                df.DriveStraight(DRIVE_SPEED, isRed ? 6 + strafeCorrection : -6 + strafeCorrection, 0, true);
         }
         // In the blue case we need to turn around 180 degrees to deliver the pixel (delivery is on the right of the robot)
         if (!isRed)
@@ -167,10 +172,16 @@ public class AutonomousOpenCV extends LinearOpMode {
 
         int deliveryHeading = isRed ? 0 : 180;
         // Moves forward or backwards to align with the destination on the board
-        if (!useAprilTagsToDeliverPixel)
-            df.DriveStraight(DRIVE_SPEED, isRed ? 12 + aimingDistance : 3 - aimingDistance, deliveryHeading, false);
-        else
-            df.DriveStraight(DRIVE_SPEED, 6, deliveryHeading, false);
+        if (!useAprilTagsToDeliverPixel) {
+            if(!centerCross)
+                df.DriveStraight(DRIVE_SPEED, isRed ? 12 + aimingDistance : 3 - aimingDistance, deliveryHeading, false);
+            else
+                df.DriveStraight(DRIVE_SPEED, isRed ? 2 + aimingDistance : 3 - aimingDistance, deliveryHeading, false);
+        }
+        else {
+            df.DriveStraight(DRIVE_SPEED, 7.5, deliveryHeading, false);
+        }
+
         // Strafes right towards the backboard (almost touching it)
         df.DriveStraight(DRIVE_SPEED * 0.6, 11, deliveryHeading, true);
         sf.PutPixelInBackBoard();
@@ -187,7 +198,7 @@ public class AutonomousOpenCV extends LinearOpMode {
             df.DriveStraight(DRIVE_SPEED, isRed ? -26 : 14, deliveryHeading, false);
         }
         else{
-            df.DriveStraight(DRIVE_SPEED, isRed ? 18 : -37, deliveryHeading, false);
+            df.DriveStraight(DRIVE_SPEED, isRed ? 20 : -37, deliveryHeading, false);
         }
         df.DriveStraight(DRIVE_SPEED, 18, deliveryHeading, true);
     }

@@ -144,7 +144,7 @@ public class WireFireTeleOp extends LinearOpMode {
                 }
             }
 
-            df.MoveRobot(x, y, yaw, isAutoDrivingToAprilTag ? 0.65 : speedFactor);
+            df.MoveRobot(x, y, yaw, isAutoDrivingToAprilTag ? 0.7 : speedFactor);
 
             telemetry.addData("Speed Factor", "%4.2f", speedFactor);
             telemetry.addData("Bot Heading", "%4.2f", botHeading);
