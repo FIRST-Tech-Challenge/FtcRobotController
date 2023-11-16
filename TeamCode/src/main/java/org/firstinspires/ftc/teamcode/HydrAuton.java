@@ -11,7 +11,7 @@ import org.firstinspires.ftc.teamcode.subsystems.HydraIntake;
 import org.firstinspires.ftc.teamcode.subsystems.HydraObjectDetect;
 import org.firstinspires.ftc.teamcode.subsystems.HydraPixelPalace;
 
-@Autonomous(name = "HydrAutonJava", preselectTeleOp = "HyDrive")
+//@Autonomous(name = "HydrAutonJava", preselectTeleOp = "HyDrive")
 public class HydrAuton extends HydrAuton_Base {
     protected IMU imu;
     protected HydraArm Arm;
