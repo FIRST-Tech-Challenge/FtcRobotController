@@ -104,10 +104,20 @@ public class CurtisMoveNormalizedNOLIMIT extends OpMode {
 
 
         // Set motor powers to updated power
-        leftFrontDrive.setPower(speeds[0]);
-        rightFrontDrive.setPower(speeds[1]);
-        leftBackDrive.setPower(speeds[2]);
-        rightBackDrive.setPower(speeds[3]);
+
+        if (gamepad1.right_bumper) {
+            leftFrontDrive.setPower(speeds[0]/3);
+            rightFrontDrive.setPower(speeds[1]/3);
+            leftBackDrive.setPower(speeds[2]/3);
+            rightBackDrive.setPower(speeds[3]/3);
+        }
+        else {
+            leftFrontDrive.setPower(speeds[0]);
+            rightFrontDrive.setPower(speeds[1]);
+            leftBackDrive.setPower(speeds[2]);
+            rightBackDrive.setPower(speeds[3]);
+        }
+
 
         Arm.setPower(armPower);
         Slides.setPower(slidesPower);
