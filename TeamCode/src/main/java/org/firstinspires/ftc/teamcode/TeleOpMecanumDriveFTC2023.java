@@ -179,10 +179,16 @@ public class TeleOpMecanumDriveFTC2023 extends OpMode{
         // 0.5 is arm up
         // 0.7 is arm down
         if (gamepad2.x) {
-            arm1.setPosition(0.7);
+            arm1.setPosition(0.75);
+        }
+        if (gamepad2.right_bumper) {
+            arm1.setPosition(0.6);
+        }
+        if (gamepad2.left_bumper) {
+            arm1.setPosition(0.8);
         }
         if (gamepad2.y) {
-            arm1.setPosition(0.5);
+            arm1.setPosition(0.4);
 
         }
         // "0" position is at the closed poesition
@@ -190,7 +196,7 @@ public class TeleOpMecanumDriveFTC2023 extends OpMode{
         // furthest left is a small part past 0 position
 
         if (gamepad2.b) {
-            claw.setPosition(0.8);
+            claw.setPosition(0.7);
         }
         if (gamepad2.a) {
             claw.setPosition(0.5);
