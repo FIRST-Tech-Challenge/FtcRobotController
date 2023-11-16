@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.DigitalChannelImpl;
 import com.qualcomm.robotcore.hardware.Servo;
 
@@ -56,7 +57,10 @@ public class TeleOpMecanumDriveFTC2023 extends OpMode{
         arm1  = hardwareMap.get(Servo.class, "Arm1");
         arm2  = hardwareMap.get(Servo.class, "Arm2");
         mySwitch = hardwareMap.get(DigitalChannelImpl.class, "Touch Switch");
-
+        frontLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        frontRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        backLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        backRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         //leftArm    = hardwareMap.get(DcMotor.class, "left_arm");
 
         // To drive forward, most robots need the motor on one side to be reversed, because the axles point in opposite directions.
@@ -67,7 +71,15 @@ public class TeleOpMecanumDriveFTC2023 extends OpMode{
         backLeft.setDirection(DcMotor.Direction.FORWARD);
         backRight.setDirection(DcMotor.Direction.REVERSE);
         arm1.setDirection(Servo.Direction.REVERSE);
+        arm1.scaleRange(0,1);
         arm2.setDirection(Servo.Direction.FORWARD);
+        frontLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        frontRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        backLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        backRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
+
+
         // If there are encoders connected, switch to RUN_USING_ENCODER mode for greater accuracy
         // leftDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         // rightDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -117,6 +129,7 @@ public class TeleOpMecanumDriveFTC2023 extends OpMode{
         arm1.setPosition(pos);
     }
     public void start() {
+        telemetry.clear();
     }
 
     /*
@@ -127,93 +140,70 @@ public class TeleOpMecanumDriveFTC2023 extends OpMode{
         double left1y;
         double left1x;
         double right1x;
-        double right2y;
         double servoValue;
         boolean limitSwitchOne;
 
         // Run wheels in tank mode (note: The joystick goes negative when pushed forward, so negate it)
         left1y = gamepad1.left_stick_y;
-        left1x = gamepad1.left_stick_x;
-        right1x = gamepad1.right_stick_x;
-        right2y = gamepad2.right_stick_y;
+        left1x = -gamepad1.left_stick_x * 1.1;
+        right1x = -gamepad1.right_stick_x;
 
-        double baseSpeed = 0.25;
+        double baseSpeed = 0.3;
 
         if (gamepad1.a){
-            baseSpeed = 0.125;
+            baseSpeed = 0.25;
         }
-        if (left1y > 0.1) {
-            driveStraight(left1y*baseSpeed,1);
 
-        } else if(left1y < -0.1) {
-            driveStraight(-1*left1y*baseSpeed,-1);
-        }
-        //-1 = left 1 = right
-        if (left1x > 0.1) {
-            driveSide(left1x*baseSpeed,-1);
+        double denominator = Math.max(Math.abs(left1y) + Math.abs(left1x) + Math.abs(right1x), 1);
+        double frontLeftPower = (left1y + left1x + right1x) / denominator;
+        double backLeftPower = (left1y - left1x + right1x) / denominator;
+        double frontRightPower = (left1y - left1x - right1x) / denominator;
+        double backRightPower = (left1y + left1x - right1x) / denominator;
+        frontLeft.setPower(frontLeftPower*baseSpeed);
+        frontRight.setPower(frontRightPower*baseSpeed);
+        backLeft.setPower(backLeftPower*baseSpeed);
+        backRight.setPower(backRightPower*baseSpeed);
+        telemetry.addData("FL",  "%.2f", frontLeftPower);
+        telemetry.addData("FR",  "%.2f", frontRightPower);
+        telemetry.addData("BL",  "%.2f", backLeftPower);
+        telemetry.addData("BR",  "%.2f", backRightPower);
 
-        } else if(left1x < -0.1) {
-            driveSide(-1*left1x*baseSpeed,1);
-        }
-        if(right1x > 0.1) {
-            driveTurn(right1x*baseSpeed, 1);
-        } else if(right1x < -0.1) {
-            driveTurn(right1x*baseSpeed, 1);
-        }
+        telemetry.addData("FLspeed",  "%.2f", frontLeft.getPower());
+        telemetry.addData("FRspeed",  "%.2f", frontRight.getPower());
+        telemetry.addData("BLspeed",  "%.2f", backLeft.getPower());
+        telemetry.addData("BRspeed",  "%.2f", backRight.getPower());
+
         if (mySwitch.getState()) {
-            telemetry.addData("switch", mySwitch);
+            telemetry.addData("switch", mySwitch.getState());
         }
-        if (right2y > 0.1) {
-            driveArm(right2y);
-        } else if (right2y < -0.1) {
-            driveArm(0.2);
-        } else if (limitSwitchOne = true) {
-            driveArm(1);
-        } else {
-            driveArm(0.55);
+        // 0.5 is arm up
+        // 0.7 is arm down
+        if (gamepad2.x) {
+            arm1.setPosition(0.7);
         }
+        if (gamepad2.y) {
+            arm1.setPosition(0.5);
 
+        }
         // "0" position is at the closed poesition
         // furthest right is to the side of robot
         // furthest left is a small part past 0 position
 
         if (gamepad2.b) {
-            claw.setPosition(1);
+            claw.setPosition(0.8);
         }
         if (gamepad2.a) {
-            claw.setPosition(0.4);
+            claw.setPosition(0.5);
 
         }
-
-
-//        frontLeft.setPower(lefty - leftx + right);
-//        frontRight.setPower(lefty + leftx + right);
-//        backLeft.setPower(lefty - leftx - right);
-//        backRight.setPower(lefty + leftx - right);
-        // Use gamepad left & right Bumpers to open and close the claw
-        //if (gamepad1.right_bumper)
-        //    clawOffset += CLAW_SPEED;
-        //else if (gamepad1.left_bumper)
-        //    clawOffset -= CLAW_SPEED;
-
-        // Move both servos to new position.  Assume servos are mirror image of each other.
-        //clawOffset = Range.clip(clawOffset, -0.5, 0.5);
-        //leftClaw.setPosition(MID_SERVO + clawOffset);
-        //rightClaw.setPosition(MID_SERVO - clawOffset);
-
-        // Use gamepad buttons to move the arm up (Y) and down (A)
-        //if (gamepad1.y)
-        //    leftArm.setPower(ARM_UP_POWER);
-        //else if (gamepad1.a)
-        //    leftArm.setPower(ARM_DOWN_POWER);
-        //else
-        //    leftArm.setPower(0.0);
+//
 
         // Send telemetry message to signify robot running;
         //telemetry.addData("claw",  "Offset = %.2f", clawOffset);
-        telemetry.addData("left",  "%.2f", left1y);
-        telemetry.addData("left",  "%.2f", left1x);
+        telemetry.addData("lefty",  "%.2f", left1y);
+        telemetry.addData("leftx",  "%.2f", left1x);
         telemetry.addData("right", "%.2f", right1x);
+        telemetry.update();
     }
 
     /*
