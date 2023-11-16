@@ -43,9 +43,9 @@ public class MyTeleOp extends CommandOpMode {
         y.whenPressed(new MovePosition(shooter,800));
 
         Button lb = new GamepadButton(new GamepadEx(gamepad1), GamepadKeys.Button.LEFT_BUMPER);
-        lb.whenPressed(new AlignAprilTag(dashboardTelemetry, gamepad1, drive, myCamera, 10.0, 13.216, -0.3125, -0.34));
+        lb.whenPressed(new AlignAprilTag(dashboardTelemetry, gamepad1, drive, myCamera, 1, 10.0, 5.0, 0.0));
         Button rb = new GamepadButton(new GamepadEx(gamepad1), GamepadKeys.Button.RIGHT_BUMPER);
-        rb.whenPressed(new AlignAprilTag(dashboardTelemetry, gamepad1, drive, myCamera, 10.0, 20.0, 0.0, 0.0));
+        rb.whenPressed(new AlignAprilTag(dashboardTelemetry, gamepad1, drive, myCamera, 5, 7.0, 0.0, 0.0));
 
     }
 }

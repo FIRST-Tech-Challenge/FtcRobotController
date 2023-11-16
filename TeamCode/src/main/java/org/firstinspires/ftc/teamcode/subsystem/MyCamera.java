@@ -26,7 +26,7 @@ public class MyCamera extends SubsystemBase {
     private VisionPortal visionPortal;
     private VisionPortal myVisionPortal;
     private final Telemetry telemetry;
-    private static final String TFOD_MODEL_ASSET = "PowerPlay.tflite";
+    private static final String TFOD_MODEL_ASSET = "CDCenterStage.tflite";
 //    private static final String TFOD_MODEL_FILE = "model1a.tflite";
 //    private static final String[] CustomLabeles = {"BlueStack", "Pole", "RedStack", "Z1", "Z2", "Z3"};
     public MyCamera(HardwareMap hardwareMap, Telemetry telemetry) {

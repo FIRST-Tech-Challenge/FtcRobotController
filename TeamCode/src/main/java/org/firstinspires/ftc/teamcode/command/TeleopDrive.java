@@ -32,10 +32,13 @@ public class TeleopDrive  extends CommandBase {
 //        mDrive.mecanumCentricDrive(mGamepad.left_stick_x * driveKp
 //                                 , mGamepad.left_stick_y * driveKp
 //                                 , mGamepad.right_stick_x * driveKp, false);
-//        mDrive.driveJoy(-mGamepad.left_stick_y, mGamepad.left_stick_x, mGamepad.right_stick_x);
+
+        mDrive.driveJoy(-mGamepad.left_stick_x, -mGamepad.left_stick_y, mGamepad.right_stick_x);
+//        mDrive.driveJoy(-mGamepad.left_stick_y, mGamepad.left_stick_x, mGamepad.right_stick_x);//normal drive
 
 //        mDrive.driveField(mGamepad.left_stick_y, mGamepad.left_stick_x, mGamepad.right_stick_x);
-        mDrive.autoMoveXY(timer.milliseconds());
+
+//        mDrive.autoMoveXY(timer.milliseconds());
 
 //        double[] id = myCamera.getAprilTagIDData(10);
 //        mDrive.driveAlign(id[0], id[1], id[2], id[3]);

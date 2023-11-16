@@ -14,15 +14,15 @@ public class AlignAprilTag extends CommandBase {
     private MyCamera myCamera;
     private double[] tag = new double[4];
     private double translation, strafe, rotation;
-    private double id, translationVal, strafeVal, rotationVal, translationFriction, strafeFriction, rotationFriction;
+    private double translationVal, strafeVal, rotationVal, translationFriction, strafeFriction, rotationFriction;
     private double lastX, lastY;
     private boolean  isHasTarget, tolerance, standStill;
-    private int invalidNo, runNo;
+    private int id, invalidNo, runNo;
     private RollingAverage rollAverX = new RollingAverage(5);
     private RollingAverage rollAverY = new RollingAverage(5);
     private Telemetry telemetry;
 
-    public AlignAprilTag(Telemetry telemetry, Gamepad gamepad, DrivePose drive, MyCamera myCamera, double id, double strafe, double translation, double rotation) {
+    public AlignAprilTag(Telemetry telemetry, Gamepad gamepad, DrivePose drive, MyCamera myCamera, int id, double strafe, double translation, double rotation) {
         this.telemetry = telemetry;
         this.gamepad = gamepad;
         this.drive = drive;
@@ -44,8 +44,8 @@ public class AlignAprilTag extends CommandBase {
 
     @Override
     public void execute() {
-        tag = myCamera.getAprilTagIDData(10);
-        if (tag[0] == 10) {
+        tag = myCamera.getAprilTagIDData(id);
+        if (tag[0] == id) {
             isHasTarget = true;
         } else {
             isHasTarget = false;
@@ -62,17 +62,22 @@ public class AlignAprilTag extends CommandBase {
             //Move left and right
             double dist = Math.abs(tag[1] - strafe);
             double kp2 = dist > 4.0 ? dist / 3.0 * dist / 3.0 : 1.0;
-            translationVal = MathUtils.clamp((tag[2] - translation) * 0.6 * kp2, -0.32, 0.32);
-            translationFriction = Math.signum(translationVal) * 0.03;
+            translationVal = MathUtils.clamp((tag[2] - translation) * 0.35 * kp2, -0.32, 0.32);
+            translationFriction = Math.signum(translationVal) * 0.006;
             //move rotate
             double kp3 = dist > 4.0 ? 1.3 : 1.0;
             rotationVal = MathUtils.clamp((rotation - tag[3]) * 0.2 * kp3, -0.13, 0.13);
             rotationFriction = Math.signum(rotationVal) * 0.01;
-
-            drive.driveJoy(strafeVal * 0.5 + strafeFriction, //forward and backward
-                                translationVal * 0.5 + translationFriction, //left and right
-                                rotationVal * 0.5 + rotationFriction); //rotate left and right
-            tolerance = (Math.abs(strafeVal) < 0.01) && (Math.abs(translationVal) < 0.025) && (Math.abs(rotationVal) < 0.015);
+            //Normal drive use rear camera track Tag
+            drive.driveJoy(-(strafeVal * 0.5 + strafeFriction), //forward and backward
+                           -(translationVal * 0.5 + translationFriction), //left and right
+                            (rotationVal * 0.5 + rotationFriction)); //rotate left and right
+            //Rotate drive use rear camera track Tag
+//            drive.driveJoy(
+//                    -(translationVal * 0.5 + translationFriction), //left and right
+//                    (strafeVal * 0.5 + strafeFriction), //forward and backward
+//                    (rotationVal * 0.5 + rotationFriction)); //rotate left and right
+            tolerance = (Math.abs(strafeVal) < 0.02) && (Math.abs(translationVal) < 0.035) && (Math.abs(rotationVal) < 0.025);
 
             telemetry.addData("Error1", strafeVal);
             telemetry.addData("Error2", translationVal);

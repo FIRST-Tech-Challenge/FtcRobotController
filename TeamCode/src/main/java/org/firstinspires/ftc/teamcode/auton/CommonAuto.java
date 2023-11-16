@@ -119,6 +119,7 @@ public class CommonAuto extends LinearOpMode {
         while (!isStarted() && !isStopRequested()) {
             dashboardTelemetry.addLine("Robot is (!isStarted() && !isStopRequested())");
 //            dashboardTelemetry.addData("minT", dashboardTelemetry.getMsTransmissionInterval());
+            dashboardTelemetry.addData("Error0", 0.0);
             dashboardTelemetry.addData("Error1", 0.0);
             dashboardTelemetry.addData("Error2", 0.0);
             dashboardTelemetry.addData("Error3", 0.0);
@@ -165,7 +166,7 @@ public class CommonAuto extends LinearOpMode {
                             break;
                         case execute:
                             double[] idData = myCamera.getAprilTagIDData(10);
-                            drive.alignAprilTag(18.0, 0.0, 0.0, idData[0], idData[1], idData[2], idData[3]);
+                            drive.alignAprilTag(25.0, 0.0, 0.0, idData[0], idData[1], idData[2], idData[3]);
                             cState = Command_State.isFinish;
                             break;
                         case end:

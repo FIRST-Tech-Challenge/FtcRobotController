@@ -94,11 +94,12 @@ public class SampleMecanumFaster extends MecanumDrive {
         imu = hardwareMap.get(BHI260IMU.class, "imu");
         IMU.Parameters parameters = new IMU.Parameters(
                 new RevHubOrientationOnRobot(
-                        RevHubOrientationOnRobot.LogoFacingDirection.UP,
-                        RevHubOrientationOnRobot.UsbFacingDirection.LEFT
+                        RevHubOrientationOnRobot.LogoFacingDirection.BACKWARD,
+                        RevHubOrientationOnRobot.UsbFacingDirection.RIGHT
                 )
         );
         imu.initialize(parameters);
+        imu.resetYaw();
 
         // TODO: If the hub containing the IMU you are using is mounted so that the "REV" logo does
         // not face up, remap the IMU axes so that the z-axis points upward (normal to the floor.)
@@ -126,10 +127,16 @@ public class SampleMecanumFaster extends MecanumDrive {
 //        leftRear = hardwareMap.get(DcMotorEx.class, "leftRear");
 //        rightRear = hardwareMap.get(DcMotorEx.class, "rightFront");
 //        rightFront = hardwareMap.get(DcMotorEx.class, "rightRear");
+        //Normal drive use rear camera track Tag
         leftFront = hardwareMap.get(DcMotorEx.class, "motorTest0");
         leftRear = hardwareMap.get(DcMotorEx.class, "motorTest1");
         rightRear = hardwareMap.get(DcMotorEx.class, "motorTest2");
         rightFront = hardwareMap.get(DcMotorEx.class, "motorTest3");
+        //Rotate drive use rear camera track Tag
+//        leftFront = hardwareMap.get(DcMotorEx.class, "motorTest3");
+//        leftRear = hardwareMap.get(DcMotorEx.class, "motorTest0");
+//        rightRear = hardwareMap.get(DcMotorEx.class, "motorTest1");
+//        rightFront = hardwareMap.get(DcMotorEx.class, "motorTest2");
 
         motors = Arrays.asList(leftFront, leftRear, rightRear, rightFront);
 
@@ -170,10 +177,10 @@ public class SampleMecanumFaster extends MecanumDrive {
         double strafeVal = 0, xError = 0, yError = 0, zError = 0.0, translationVal = 0.0;
         //move forward and backward -------------------------------------------//
         xError = xDist - tWheelPos.get(1);
-        if (Math.abs(xError) < brakeDist) {//Start decrease speed and stop
+        if (Math.abs(xError) < brakeDist && runTime > 500.0) {//Start decrease speed and stop
             strafeVal = MathUtils.clamp(xError/brakeDist*xK*0.6, -speedLimit, speedLimit);
         } else {//Increase speed until speedLimit
-            strafeVal = MathUtils.clamp( Math.signum(xError) * (runTime/1000.0) * xK, -speedLimit, speedLimit);
+            strafeVal = MathUtils.clamp( Math.signum(xError) * (runTime/500.0) * xK, -speedLimit, speedLimit);
         }
         double strafeFriction = Math.abs(xError) < 0.02 ? 0.0 : Math.signum(strafeVal) * 0.055;
         //Move left and right -------------------------------------------------//
@@ -181,7 +188,7 @@ public class SampleMecanumFaster extends MecanumDrive {
         if (Math.abs(yError) < brakeDist) {//Start decrease speed and stop
             translationVal = MathUtils.clamp(yError/brakeDist*yK, -speedLimit, speedLimit);
         } else {//Increase speed until speedLimit
-            translationVal = MathUtils.clamp( Math.signum(yError) * runTime/1000.0 * yK, -speedLimit, speedLimit);
+            translationVal = MathUtils.clamp( Math.signum(yError) * runTime/500.0 * yK, -speedLimit, speedLimit);
         }
         double transFriction = Math.abs(yError) < 0.02 ? 0.0 : Math.signum(translationVal) * 0.055;
         //move rotate ---------------------------------------------------------//
@@ -217,21 +224,25 @@ public class SampleMecanumFaster extends MecanumDrive {
     public void alignAprilTag(double x, double y, double r, double id, double X, double Y, double R) {
         double strafeVal = 0.0, strafeFriction;
         //move forward and backward
-        if (X - x < 30.0) {
+        if (Math.abs(X - x) < 30.0) {
             strafeVal = MathUtils.clamp((X - x) * 0.1, -0.4, 0.4);
-            strafeFriction = Math.signum(strafeVal) * 0.01;
+            strafeFriction = Math.abs(strafeVal) < 0.01 ? 0.0 :  Math.signum(strafeVal) * 0.035;
         } else {
             strafeFriction = 0.0;
         }
         //Move left and right
         double dist = Math.abs(X - x);
-        double kp2 = dist > 4.0 ? dist / 3.0 * dist / 3.0 : 1.0;
-        double translationVal = MathUtils.clamp((y - Y) * 0.6 * kp2, -0.32, 0.32);
-        double translationFriction = Math.signum(translationVal) * 0.037;
+
+        double kp2 = dist > 5.0 ? dist / 5.0 : 1.0;
+        double errorY = MathUtils.clamp(y - Y, -1.0, 1.0);
+        errorY = Math.abs(errorY) > 0.25 ? errorY * Math.abs(errorY) : errorY;
+        double translationVal = MathUtils.clamp(errorY * 0.3 * kp2, -0.32, 0.32);
+        double translationFriction = Math.abs(translationVal) < 0.01 ? 0.0 :  Math.signum(translationVal) * 0.04;
         //move rotate
         double kp3 = dist > 4.0 ? 1.3 : 1.0;
         double rotationVal = MathUtils.clamp((R - r) * 0.2 * kp3, -0.13, 0.13);
-        double rotationFriction = Math.signum(rotationVal) * 0.012;
+        double rotationFriction = Math.abs(rotationVal) < 0.01 ? 0.0 :  Math.signum(rotationVal) * 0.012;
+        telemetry.addData("Error0", y - Y);
         telemetry.addData("Error1", strafeVal);
         telemetry.addData("Error2", translationVal);
         telemetry.addData("Error3", rotationVal);
@@ -264,7 +275,7 @@ public class SampleMecanumFaster extends MecanumDrive {
 //        telemetry.addData("TWLPoseY", poseEstimate.getY());
 //        telemetry.addData("TWLPoseH", Math.toDegrees(poseEstimate.getHeading()));
         telemetry.addData("ImuHeading", Math.toDegrees(getRawExternalHeading()));
-//        telemetry.update();
+        telemetry.update();
 //        DriveSignal signal = trajectorySequenceRunner.update(getPoseEstimate(), getPoseVelocity());
 //        if (signal != null) setDriveSignal(signal);
     }
