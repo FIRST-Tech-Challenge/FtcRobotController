@@ -27,7 +27,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package org.firstinspires.ftc.teamcode;
+package org.firstinspires.ftc.teamcode.autos;
 
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
@@ -97,9 +97,9 @@ import java.util.List;
  *  Remove or comment out the @Disabled line to add this OpMode to the Driver Station OpMode list
  */
 
-@Autonomous(name="blue_leftlm1", group="Robot")
+@Autonomous(name="red_rightlm1", group="Robot")
 
-public class blue_leftlm1 extends LinearOpMode {
+public class right_redlm1 extends LinearOpMode {
     int bruhwhy = 0;
     boolean stoooooopppp = false;
     int drive3=7;
@@ -241,8 +241,8 @@ public class blue_leftlm1 extends LinearOpMode {
 //        holdHeadingandscan1( TURN_SPEED, -45.0, 4);
         driveStraight(DRIVE_SPEED, -50, 0.0,true);
         holdHeading( TURN_SPEED, 0, 0.5);
-        turnToHeading( TURN_SPEED, 90);
-        driveStraight(DRIVE_SPEED, 80, 90.0,true);
+        turnToHeading( TURN_SPEED, -90);
+        driveStraight(DRIVE_SPEED, 80, -90.0,true);
         //holdHeading( TURN_SPEED, 180, 0.5);
 
 //        holdHeadingandscan( TURN_SPEED, 0, 4);
@@ -255,7 +255,7 @@ public class blue_leftlm1 extends LinearOpMode {
 //        turnToHeading( TURN_SPEED, driveturn);
 //        driveStraight(DRIVE_SPEED, drive2,driveturn,false);
 //        turnToHeading( TURN_SPEED, drive2t);
-        holdHeadingandplace(TURN_SPEED,45,4);
+        holdHeadingandplace(TURN_SPEED,-45,4);
 //
 //        turnToHeading( TURN_SPEED, 0);
 //        holdHeading(TURN_SPEED,0,0.5);

@@ -27,7 +27,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package org.firstinspires.ftc.teamcode;
+package org.firstinspires.ftc.teamcode.autos;
 
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
@@ -97,17 +97,17 @@ import java.util.List;
  *  Remove or comment out the @Disabled line to add this OpMode to the Driver Station OpMode list
  */
 
-@Autonomous(name="Blue_right(needs test)", group="Robot")
+@Autonomous(name="red_leftcloselm1", group="Robot")
 
-public class blue_right extends LinearOpMode {
+public class red_leftblm1 extends LinearOpMode {
     int bruhwhy = 0;
     boolean stoooooopppp = false;
     int drive3=7;
     int idk=0;
     int drive2=0;
     int drive2t=0;
-    int driveforward = 17;
-    int driveturn = 45;
+    int driveforward = 18;
+    int driveturn = -30;
     int zone=3;
     private static final boolean USE_WEBCAM = true;
     private TfodProcessor tfod;
@@ -168,12 +168,12 @@ public class blue_right extends LinearOpMode {
     @Override
     public void runOpMode() {
         //
-         ex= new extension(hardwareMap);
+        ex= new extension(hardwareMap);
         wrist = hardwareMap.get(Servo.class, "wrist");
         claw = hardwareMap.get(Servo.class, "claw");//hardwaremap claw and tilt
         initTfod();
         ex.setStowPos();
-        claw.setPosition(0.2);
+        //claw.setPosition(0.2);
         // Wait for the DS start button to be touched.
         telemetry.addData("DS preview on/off", "3 dots, Camera Stream");
         telemetry.addData(">", "Touch Play to start OpMode");
@@ -222,7 +222,7 @@ public class blue_right extends LinearOpMode {
             telemetry.update();
             if(gamepad1.a)imu.resetYaw();
         }
-
+        //ex.release();
         // Set the encoders for closed loop speed control, and reset the heading.
         leftFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         rightFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -235,27 +235,36 @@ public class blue_right extends LinearOpMode {
         //          holdHeading() is used after turns to let the heading stabilize
         //          Add a sleep(2000) after any step to keep the telemetry data visible for review
 
-        driveStraight(DRIVE_SPEED, 25.0, 0.0,true);
-        holdHeadingandscan( TURN_SPEED, 0, 4);
-        turnToHeading( TURN_SPEED, 45.0);
-        holdHeadingandscan1( TURN_SPEED, 45.0, 4);
+//        driveStraight(DRIVE_SPEED, 25.0, 0.0,true);
+//        holdHeadingandscan( TURN_SPEED, 0, 4);
+//        turnToHeading( TURN_SPEED, -45.0);
+//        holdHeadingandscan1( TURN_SPEED, -45.0, 4);
+//        driveStraight(DRIVE_SPEED, -50, 0.0,true);
+//        holdHeading( TURN_SPEED, 0, 0.5);
+//        turnToHeading( TURN_SPEED, 90);
+        driveStraight(DRIVE_SPEED, 35, 0.0,true);
+        //holdHeading( TURN_SPEED, 180, 0.5);
 
-        turnToHeading( TURN_SPEED, 0);
-        holdHeading(TURN_SPEED,0,0.5);
-        driveStraight(DRIVE_SPEED, driveforward,0,false);
-        turnToHeading( TURN_SPEED, driveturn);
-        driveStraight(DRIVE_SPEED, drive2,driveturn,false);
-        turnToHeading( TURN_SPEED, drive2t);
-        holdHeadingandplace(TURN_SPEED,driveturn,4);
-
-        turnToHeading( TURN_SPEED, 0);
-        holdHeading(TURN_SPEED,0,0.5);
-        driveStraight(DRIVE_SPEED,drive3,0,false);
-        holdHeading(TURN_SPEED,0,0.5);
-        turnToHeading( TURN_SPEED, -90);
-        holdHeading(TURN_SPEED,-90,0.5);
-        driveStraight(DRIVE_SPEED,40,-90,false);
-       // turnToHeading( TURN_SPEED, -110);
+//        holdHeadingandscan( TURN_SPEED, 0, 4);
+//        turnToHeading( TURN_SPEED, -45.0);
+//        holdHeadingandscan1( TURN_SPEED, -45.0, 4);
+//
+//        turnToHeading( TURN_SPEED, 0);
+//        holdHeading(TURN_SPEED,0,0.5);
+//        driveStraight(DRIVE_SPEED, driveforward,0,false);
+//        turnToHeading( TURN_SPEED, driveturn);
+//        driveStraight(DRIVE_SPEED, drive2,driveturn,false);
+//        turnToHeading( TURN_SPEED, drive2t);
+        holdHeadingandplace(TURN_SPEED,0,4);
+//
+//        turnToHeading( TURN_SPEED, 0);
+//        holdHeading(TURN_SPEED,0,0.5);
+//        driveStraight(DRIVE_SPEED,drive3,0,false);
+//        holdHeading(TURN_SPEED,0,0.5);
+//        turnToHeading( TURN_SPEED, -90);
+//        holdHeading(TURN_SPEED,-90,0.5);
+//        driveStraight(DRIVE_SPEED,95,-90,false);
+//       // turnToHeading( TURN_SPEED, -110);
         //driveStraight(DRIVE_SPEED,80,-110,false);
 
         telemetry.addData("Path", "Complete");
@@ -317,7 +326,7 @@ public class blue_right extends LinearOpMode {
             // keep looping while we are still active, and BOTH motors are running.
             while (opModeIsActive() &&
                    (leftFront.isBusy() && rightFront.isBusy()&&rightRear.isBusy()&&leftRear.isBusy())) {
-                if(hi&&rightFront.getCurrentPosition()>rightTarget*0.5){/*ex.setIntake();*/  wrist.setPosition(1);}
+                if(hi&&rightFront.getCurrentPosition()>rightTarget*0.5){ex.setIntake();  wrist.setPosition(0.5);}
                 // Determine required steering to keep on heading
                 turnSpeed = getSteeringCorrection(heading, P_DRIVE_GAIN);
 
@@ -434,20 +443,21 @@ public class blue_right extends LinearOpMode {
 
             // Display drive status for the driver.
             sendTelemetry(false);
-
-            if (order==0&&(holdTimer.time()>holdTime*0.1)){
-                wrist.setPosition(0.32);
-                telemetry.addData("order", order);
-                order++;
-            }else if (order==1&&(holdTimer.time()>holdTime*0.5)){
-                telemetry.addData("order", order);
-                claw.setPosition(0.9);
-                order++;
-            } else if (order==2&&(holdTimer.time()>holdTime*0.75)){
-                wrist.setPosition(1);
-                telemetry.addData("order", order);
-                order++;
-            }
+                if(order==0&&holdTimer.time()>holdTime*0.25){ex.setPlace();order++;wrist.setPosition(0.5);}
+            if(order==1&&holdTimer.time()>holdTime*0.75){ex.setIntake();order++;}
+//            if (order==0&&(holdTimer.time()>holdTime*0.1)){
+//                wrist.setPosition(0.32);
+//                telemetry.addData("order", order);
+//                order++;
+//            }else if (order==1&&(holdTimer.time()>holdTime*0.5)){
+//                telemetry.addData("order", order);
+//                claw.setPosition(0.9);
+//                order++;
+//            } else if (order==2&&(holdTimer.time()>holdTime*0.75)){
+//                wrist.setPosition(1);
+//                telemetry.addData("order", order);
+//                order++;
+//            }
         }
 
         // Stop all motion;
@@ -466,7 +476,7 @@ public class blue_right extends LinearOpMode {
             if(idk>=1){
                 zone=1;
                 driveforward=29;
-                driveturn=17;
+                driveturn=-17;
                 drive3=0;
                 stoooooopppp = true;
             }
@@ -501,9 +511,9 @@ public class blue_right extends LinearOpMode {
             if(bruhwhy>=2){
                 zone=2;
                 driveforward=13;
-                driveturn=-45;
+                driveturn=45;
                 drive2=3;
-                drive2t=-90;
+                drive2t=90;
                 drive3=9;
                 break;
             }
@@ -522,7 +532,6 @@ public class blue_right extends LinearOpMode {
         moveRobot(0, 0);
     }
     private void initTfod() {
-
 
         // Create the TensorFlow processor the easy way.
         tfod = TfodProcessor.easyCreateWithDefaults();
