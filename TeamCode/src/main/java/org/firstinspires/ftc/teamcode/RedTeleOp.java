@@ -12,6 +12,7 @@ public class RedTeleOp extends LinearOpMode{
     DcMotor m_rearLeft;
     DcMotor m_rearRight;
     Servo m_Servo;
+    Servo m_airServo;
     DcMotor m_climber;
 
     @Override
@@ -22,6 +23,7 @@ public class RedTeleOp extends LinearOpMode{
         m_rearRight = hardwareMap.get(DcMotor.class, "rearRight");
         m_climber = hardwareMap.get(DcMotor.class,"Climber");
         m_Servo = hardwareMap.get(Servo.class,"Servo");
+        m_airServo = hardwareMap.get(Servo.class,"airServo");
 
         m_frontLeft.setDirection(DcMotor.Direction.REVERSE);
         m_rearLeft.setDirection(DcMotor.Direction.REVERSE);
@@ -56,11 +58,12 @@ public class RedTeleOp extends LinearOpMode{
 
             //change this to allow airplane launch
             if (gamepad2.y){
-                m_Servo.setPosition(1);
+                m_airServo.setPosition(0.3);
             }
             else {
-                m_Servo.setPosition(0.3);
+                m_airServo.setPosition(0); 
             }
+
 
 
 

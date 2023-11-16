@@ -34,27 +34,29 @@ public class basicautonomous1 extends LinearOpMode{
         waitForStart();
 
         //drive sideways
-        drive(0, -1, 0,0.3);
+        drive(0, -0.7, 0,0.3);
         sleep(1500);
         drive(0,0,0,0.3);
 
         //drive forward
-        drive(1, 0, 0,0.3);
-        sleep(1200);
+        drive(0.7, 0, 0,0.3);
+        sleep(1650);
         drive(0,0,0,0.3);
 
         sleep(1100);
 
         //drive backwards
-        drive(-1, 0, 0,1);
+        drive(-0.7, 0, 0,1);
         sleep(350);
         drive(0,0,0,0.3);
 
-        //drive sideways
-        drive(0, 1, 0,0.3);
-        sleep(700);
+        //drive forward
+        drive(0.7, 0, 0,0.3);
+        sleep(400);
         drive(0,0,0,0.3);
         }
+
+
 
 
     public void drive(double y, double x, double rotation, double gate){
