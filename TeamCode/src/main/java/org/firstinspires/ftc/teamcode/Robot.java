@@ -505,12 +505,11 @@ public class Robot {
         double vertical1;
         double vertical2;
         double horizontal3;
-        double HORIZONTAL_TOTAL = 23;
+        double HORIZONTAL_TOTAL;
         double vertical4;
         double vertical6;
         double horizontal1;
         double horizontal2;
-        double HORIZONTAL_TOTAL_BEFORE_CHUNKING;
         double horizontal5;
         double horizontal7;
 
@@ -528,28 +527,33 @@ public class Robot {
             Log.d("vision", "moveToMarker: Pos " + markerPos);
             Log.d("vision", "moveToMarker: Tag " + wantedAprTagId);
             VERTICAL_TOTAL = 68;
-            HORIZONTAL_TOTAL_BEFORE_CHUNKING = 48;
+            HORIZONTAL_TOTAL = 48;
             if ((markerPos == MarkerDetector.MARKER_POSITION.RIGHT && isRedAlliance)
                     || (markerPos == MarkerDetector.MARKER_POSITION.LEFT && !isRedAlliance)) {
+
                 Log.d("vision", "moveToMarker: Inner Spike");
 
                 // Calculate distances
+
+                HORIZONTAL_TOTAL = 17; //h1-h2+h3
+                VERTICAL_TOTAL = 26; //v1+v2
                 vertical1 = 11;
-                horizontal1 = 16;
+                horizontal1 = 17;
                 horizontal2 = 10;
-                vertical4 = vertical1; //adjust for left
-                horizontal5 = HORIZONTAL_TOTAL_BEFORE_CHUNKING - horizontal1 + horizontal2;
-                vertical6 = VERTICAL_TOTAL + vertical1 - vertical4;
+                vertical2 = VERTICAL_TOTAL - vertical1; //adjust for left
+                horizontal3 = HORIZONTAL_TOTAL - horizontal1 + horizontal2;
 
                 // Start moving
-                mecanumBlocking(vertical1, isRedAlliance, 0.5); //go left if blue, go right if red
-                setHeading(0, 0.6);
+                mecanumBlocking(vertical1, !isRedAlliance, 0.5); //go right if blue, go left if red
+                setHeading(0, 0.7);
                 straightBlocking(horizontal1, false, 0.7); //go forward FAST
                 setServoPosBlocking(spikeServo, 0.2); //lift finger
                 straightBlocking(horizontal2, true, 1); //move back FAST
-
-
+                setHeading(90 * polarity, 0.7); //turn
+                straightBlocking(vertical2, false, 0.7);
+                mecanumBlocking(horizontal3, isRedAlliance, 0.7);
                 break;
+
             } else if ((markerPos == MarkerDetector.MARKER_POSITION.LEFT && isRedAlliance)
                     || (markerPos == MarkerDetector.MARKER_POSITION.RIGHT && !isRedAlliance)) {
                 Log.d("vision", "moveToMarker: Outer Spike");
@@ -559,9 +563,9 @@ public class Robot {
                 horizontal1 = 16;
                 horizontal2 = 10;
                 vertical4 = vertical1; //adjust for left
-                horizontal5 = HORIZONTAL_TOTAL_BEFORE_CHUNKING - horizontal1 + horizontal2;
+                horizontal5 = HORIZONTAL_TOTAL - horizontal1 + horizontal2;
                 vertical6 = VERTICAL_TOTAL + vertical1 - vertical4;
-                horizontal7 = HORIZONTAL_TOTAL_BEFORE_CHUNKING - 27;
+                horizontal7 = HORIZONTAL_TOTAL - 27;
 
                 // Start moving
                 mecanumBlocking(vertical1, isRedAlliance, 0.5); //go left if blue, go right if red
@@ -868,7 +872,7 @@ public class Robot {
         }
     }
 
-    public void parkBot(boolean shortPath) {
+    public void parkBot(boolean longPath) {
         /*
          * Where to park depends on 3 factors
          * long or short run  (not optimized for combining this yet)
@@ -878,11 +882,11 @@ public class Robot {
          * Park near wall
          * Park near center
          */
-        int parkDistance = 26; // distance from center tag in inches
+        int parkDistance = 23; // distance from center tag in inches
         int distanceBetweenTags = 3; // inches
         while (opMode.opModeIsActive()) {
             straightBlocking(2, true, 0.7);
-            if (!shortPath) {
+            if (longPath && isRedAlliance || !longPath && !isRedAlliance) {
                 // move left to park
                 if (markerPos == MarkerDetector.MARKER_POSITION.LEFT) {
                     mecanumBlocking(parkDistance - distanceBetweenTags, true, 0.5);

@@ -20,7 +20,7 @@ public class LongRedAuto extends LinearOpMode {
             robot.longMoveToBoard();
             robot.alignToBoard();
             robot.autoOuttake();
-            robot.parkBot(false);
+            robot.parkBot(true);
             break;
         }
     }
