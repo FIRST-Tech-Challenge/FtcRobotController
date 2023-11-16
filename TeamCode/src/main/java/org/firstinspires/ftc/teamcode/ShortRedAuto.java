@@ -18,10 +18,9 @@ public class ShortRedAuto extends LinearOpMode {
 
         while (opModeIsActive()) {
             robot.detectMarkerPosition();
-            robot.shortMoveToBoard();
-            robot.alignToBoard();
+            robot.shortMoveToBoard();robot.alignToBoard();
             robot.autoOuttake();
-            robot.parkBot();
+            robot.parkBot(true);
             break;
         }
     }
