@@ -21,7 +21,7 @@ public class ShortBlueAuto extends LinearOpMode {
             robot.shortMoveToBoard();
             robot.alignToBoard();
             robot.autoOuttake();
-            robot.parkBot(true);
+            robot.parkBot(false);
             break;
         }
     }
