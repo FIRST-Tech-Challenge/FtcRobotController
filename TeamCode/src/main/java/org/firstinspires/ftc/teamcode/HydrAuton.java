@@ -21,6 +21,7 @@ public class HydrAuton extends HydrAuton_Base {
     protected HydraObjectLocations ObjLoc;
     protected ElapsedTime pixelDropTimer;
     protected int autonState;
+    protected String modelFilename = "Blue_Prop.tflite";
 
     /**
      * This function is executed when this OpMode is selected from the Driver Station.
@@ -49,7 +50,7 @@ public class HydrAuton extends HydrAuton_Base {
                 "LED2", "LED3", "LED4", "SenColPxlPos1", "SenColPxlPos2",
                 cCasFrontToBack, cCasBackToFront, cPixelPos1Dist, cPixelPos2Dist);
         Intake = new HydraIntake(hardwareMap, "MotPxlIntk", cIntakeIn, cIntakeOut);
-        HydraObjectDetect ObjDet = new HydraObjectDetect(hardwareMap, "Blue_Prop.tflite", cXvalueForLeftToCenterObject);
+        HydraObjectDetect ObjDet = new HydraObjectDetect(hardwareMap, modelFilename, cXvalueForLeftToCenterObject);
         // Wait for the match to begin.
         waitForStart();
         // Useful code to load pixels before we run. DISABLE FOR COMPETITION
@@ -229,6 +230,7 @@ public class HydrAuton extends HydrAuton_Base {
                 if (!Drive.Busy()) {
                     autonState = 100;
                 }
+                break;
             default:
                 // Something unexpected happened
                 return false;
@@ -376,7 +378,7 @@ public class HydrAuton extends HydrAuton_Base {
                 // something bad happened
                 return false;
         }
-        return false;
+        return true;
     }
 
     /**
@@ -439,7 +441,7 @@ public class HydrAuton extends HydrAuton_Base {
                 // RED RIGHT SPIKE
                 if (!Drive.Busy()) {
                     // todo negative or positive?
-                    Drive.Start(0, 12 * flip, 0);
+                    Drive.Start(0, -12 * flip, 0);
                     Arm.RunAction(HydraArmMovements.ArmMoveToBack);
                     autonState = 299;
                 }

@@ -7,5 +7,6 @@ public class HydrAuton_RedWing extends HydrAuton_Wing {
     public HydrAuton_RedWing() {
         setTrueForRed = true;
         setTrueForRiggingOnRight = true;
+        modelFilename = "Red_Prop.tflite";
     }
 }

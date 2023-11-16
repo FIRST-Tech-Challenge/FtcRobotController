@@ -47,7 +47,7 @@ public class HydrAuton_Backdrop extends HydrAuton {
                         if (setTrueForRed) {
                             flip = -1;
                         }
-                        Drive.Start(0, -20 * flip, 0);
+                        Drive.Start(0, 26 * flip, 0);
                         autonState += 501;
                     }
                     break;

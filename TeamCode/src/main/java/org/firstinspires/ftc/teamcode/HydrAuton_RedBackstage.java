@@ -7,5 +7,6 @@ public class HydrAuton_RedBackstage extends HydrAuton_Backdrop {
     public HydrAuton_RedBackstage() {
         setTrueForRed = true;
         setTrueForRiggingOnRight = false;
+        modelFilename = "Red_Prop.tflite";
     }
 }

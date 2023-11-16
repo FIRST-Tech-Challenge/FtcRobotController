@@ -102,7 +102,7 @@ public class HydraDrive {
 
     /**
      * Are we busy driving?
-     * @return true if the motors have reached position
+     * @return true if the motors have not reached position
      */
     public boolean Busy() {
         // if either motor is still active, we are still busy
