@@ -27,17 +27,6 @@ public class ArcadeRowan extends LinearOpMode {
         frontRight = hardwareMap.get(DcMotor.class, "frontRight");
         backRight = hardwareMap.get(DcMotor.class, "backRight");
 
-        //Setting Direction of Motors
-        //TODO: Fix directions
-        frontLeft.setDirection(DcMotorSimple.Direction.FORWARD);
-        //Setting the direction of frontLeft to FORWARD
-        backLeft.setDirection(DcMotorSimple.Direction.FORWARD);
-        //Setting the direction of backLeft to FORWARD
-        frontRight.setDirection(DcMotorSimple.Direction.FORWARD);
-        //Setting the direction of frontRight to FORWARD
-        backRight.setDirection(DcMotorSimple.Direction.FORWARD);
-        //Setting the direction of backLeft to FORWARD
-
         //Waiting for Start button to be pressed
         waitForStart();
 
