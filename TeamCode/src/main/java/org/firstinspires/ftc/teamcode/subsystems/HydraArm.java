@@ -1,7 +1,9 @@
 package org.firstinspires.ftc.teamcode.subsystems;
 
-import org.firstinspires.ftc.teamcode.HydraArmMovements;
-import org.firstinspires.ftc.teamcode.HydraArmPositions;
+import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.teamcode.objects.HydraOpMode;
+import org.firstinspires.ftc.teamcode.types.HydraArmMovements;
+import org.firstinspires.ftc.teamcode.types.HydraArmPositions;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
@@ -39,11 +41,12 @@ public class HydraArm {
             cUpperArmPos3BackScore, cUpperArmPos4FrontScore, cUpperArmPos5Hang, cUpperArmPos6Hang};
     private final String[] mArmPositionNames = {"Home", "Lift Box", "Lift Arm", "Back Score", "Front Score",
             "Hang", "Hang End"};
-
-    public HydraArm(HardwareMap hardwareMap, String uprArm, String lwrArm, double uprArmPwr, double lwrArmPwr) {
+    private HydraOpMode mOp;
+    public HydraArm(HydraOpMode op, String uprArm, String lwrArm, double uprArmPwr, double lwrArmPwr) {
+        mOp = op;
         // get the motor objects
-        mMotUprArm = hardwareMap.get(DcMotor.class, uprArm);
-        mMotLwrArm = hardwareMap.get(DcMotor.class, lwrArm);
+        mMotUprArm = mOp.mHardwareMap.get(DcMotor.class, uprArm);
+        mMotLwrArm = mOp.mHardwareMap.get(DcMotor.class, lwrArm);
         // power levels for the motors
         mLowerArmAutoMotorPwr = lwrArmPwr;
         mUpperArmAutoMotorPwr = uprArmPwr;
@@ -195,9 +198,9 @@ public class HydraArm {
         // set the motor positions from our arrays of static values
         SetLwrArmPos(mLowerArmPositions[mArmPositionState.ordinal()]);
         SetUprArmPos(mUpperArmPositions[mArmPositionState.ordinal()]);
-        //telemetry.addData("ArmPos", mArmPositionNames[mArmPositionState.ordinal()]);
-        //telemetry.addData("LrArm", mMotLwrArm.getCurrentPosition());
-        //telemetry.addData("UprArm", mMotUprArm.getCurrentPosition());
+        mOp.mTelemetry.addData("ArmPos", mArmPositionNames[mArmPositionState.ordinal()]);
+        mOp.mTelemetry.addData("LrArm", mMotLwrArm.getCurrentPosition());
+        mOp.mTelemetry.addData("UprArm", mMotUprArm.getCurrentPosition());
         return actionComplete;
     }
 

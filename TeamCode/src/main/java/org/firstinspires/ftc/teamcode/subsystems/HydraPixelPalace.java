@@ -6,9 +6,9 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.LED;
 import com.qualcomm.robotcore.hardware.Servo;
 
-import org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
-import org.firstinspires.ftc.teamcode.HydraPixelPalaceActions;
+import org.firstinspires.ftc.teamcode.objects.HydraOpMode;
+import org.firstinspires.ftc.teamcode.types.HydraPixelPalaceActions;
 
 public class HydraPixelPalace {
     private final Servo mSrvPxlPos1;
@@ -23,25 +23,25 @@ public class HydraPixelPalace {
     private final double mPxlSrvSpeedBackToFront;
     private final double mPxlPos1DetDist;
     private final double mPxlPos2DetDist;
-
-    public HydraPixelPalace(HardwareMap hardwareMap, String srvPos1, String srvPos2, String led1, String led2, String led3,
+    private HydraOpMode mOp;
+    public HydraPixelPalace(HydraOpMode op, String srvPos1, String srvPos2, String led1, String led2, String led3,
                             String led4, String snsPos1, String snsPos2, double srvSpeedFrontToBack,
                             double srvSpeedBackToFront, double pixelDistPos1, double pixelDistPos2) {
-        mSrvPxlPos1 = hardwareMap.get(Servo.class, srvPos1);
-        mSrvPxlPos2 = hardwareMap.get(Servo.class, srvPos2);
-        ColorSensor mSenColPxlPos1 = hardwareMap.get(ColorSensor.class, snsPos1);
-        mSenColPxlPos1_DistanceSensor = hardwareMap.get(DistanceSensor.class, snsPos1);
-        ColorSensor mSenColPxlPos2 = hardwareMap.get(ColorSensor.class, snsPos2);
-        mSenColPxlPos2_DistanceSensor = hardwareMap.get(DistanceSensor.class, snsPos2);
-        mLED1 = hardwareMap.get(LED.class, led1);
-        mLED2 = hardwareMap.get(LED.class, led2);
-        mLED3 = hardwareMap.get(LED.class, led3);
-        mLED4 = hardwareMap.get(LED.class, led4);
+        mOp = op;
+        mSrvPxlPos1 = mOp.mHardwareMap.get(Servo.class, srvPos1);
+        mSrvPxlPos2 = mOp.mHardwareMap.get(Servo.class, srvPos2);
+        ColorSensor mSenColPxlPos1 = mOp.mHardwareMap.get(ColorSensor.class, snsPos1);
+        mSenColPxlPos1_DistanceSensor = mOp.mHardwareMap.get(DistanceSensor.class, snsPos1);
+        ColorSensor mSenColPxlPos2 = mOp.mHardwareMap.get(ColorSensor.class, snsPos2);
+        mSenColPxlPos2_DistanceSensor = mOp.mHardwareMap.get(DistanceSensor.class, snsPos2);
+        mLED1 = mOp.mHardwareMap.get(LED.class, led1);
+        mLED2 = mOp.mHardwareMap.get(LED.class, led2);
+        mLED3 = mOp.mHardwareMap.get(LED.class, led3);
+        mLED4 = mOp.mHardwareMap.get(LED.class, led4);
         mPxlSrvSpeedBackToFront = srvSpeedBackToFront;
         mPxlSrvSpeedFrontToBack = srvSpeedFrontToBack;
         mPxlPos1DetDist = pixelDistPos1;
         mPxlPos2DetDist = pixelDistPos2;
-
         // Set servo direction. Position 2 is reversed
         mSrvPxlPos1.setDirection(Servo.Direction.FORWARD);
         mSrvPxlPos2.setDirection(Servo.Direction.REVERSE);

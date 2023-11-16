@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode;
+package org.firstinspires.ftc.teamcode.types;
 
 /**
  * Potential object locations to use with object detection

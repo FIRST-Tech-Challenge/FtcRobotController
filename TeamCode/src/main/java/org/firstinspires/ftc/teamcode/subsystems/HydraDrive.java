@@ -4,6 +4,8 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion;
+import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.teamcode.objects.HydraOpMode;
 
 public class HydraDrive {
     private final DcMotor mMotDrFrLt;
@@ -14,14 +16,16 @@ public class HydraDrive {
     private final double mNormalPower;
     private final double mSlowPower;
     private final double mCountsPerInch;
+    private HydraOpMode mOp;
 
-    public HydraDrive(HardwareMap hardwareMap, String frontLeft, String frontRight, String backLeft, String backRight,
+    public HydraDrive(HydraOpMode op, String frontLeft, String frontRight, String backLeft, String backRight,
                      double countsPerInch, double driveBoosted, double driveNormal, double driveSlow) {
+        mOp = op;
         // grab the motors out of the hardware map
-        mMotDrFrLt = hardwareMap.get(DcMotor.class, frontLeft);
-        mMotDrFrRt = hardwareMap.get(DcMotor.class, frontRight);
-        mMotDrBkLt = hardwareMap.get(DcMotor.class, backLeft);
-        mMotDrBkRt = hardwareMap.get(DcMotor.class, backRight);
+        mMotDrFrLt = mOp.mHardwareMap.get(DcMotor.class, frontLeft);
+        mMotDrFrRt = mOp.mHardwareMap.get(DcMotor.class, frontRight);
+        mMotDrBkLt = mOp.mHardwareMap.get(DcMotor.class, backLeft);
+        mMotDrBkRt = mOp.mHardwareMap.get(DcMotor.class, backRight);
         // store the user values for the various drive speeds
         mBoostedPower = driveBoosted;
         mNormalPower = driveNormal;
@@ -105,10 +109,12 @@ public class HydraDrive {
      * @return true if the motors have not reached position
      */
     public boolean Busy() {
+        boolean ret = false;
         // if either motor is still active, we are still busy
         if (mMotDrBkLt.isBusy() || mMotDrBkRt.isBusy() || mMotDrFrLt.isBusy() || mMotDrFrRt.isBusy()) {
-            return true;
+            ret = true;
         }
-        return false;
+        mOp.mTelemetry.addData("Driving", ret);
+        return ret;
     }
 }

@@ -1,15 +1,18 @@
 package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
-import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.hardware.IMU;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.firstinspires.ftc.teamcode.objects.HydraOpMode;
 import org.firstinspires.ftc.teamcode.subsystems.HydraArm;
 import org.firstinspires.ftc.teamcode.subsystems.HydraDrive;
 import org.firstinspires.ftc.teamcode.subsystems.HydraIntake;
 import org.firstinspires.ftc.teamcode.subsystems.HydraObjectDetect;
 import org.firstinspires.ftc.teamcode.subsystems.HydraPixelPalace;
+import org.firstinspires.ftc.teamcode.types.HydraArmMovements;
+import org.firstinspires.ftc.teamcode.types.HydraObjectLocations;
+import org.firstinspires.ftc.teamcode.types.HydraPixelPalaceActions;
 
 //@Autonomous(name = "HydrAutonJava", preselectTeleOp = "HyDrive")
 public class HydrAuton extends HydrAuton_Base {
@@ -22,6 +25,7 @@ public class HydrAuton extends HydrAuton_Base {
     protected ElapsedTime pixelDropTimer;
     protected int autonState;
     protected String modelFilename = "Blue_Prop.tflite";
+    protected HydraOpMode mOp;
 
     /**
      * This function is executed when this OpMode is selected from the Driver Station.
@@ -31,9 +35,10 @@ public class HydrAuton extends HydrAuton_Base {
         // Initialize Local Variables
         autonState = 0;
         ObjLoc = HydraObjectLocations.ObjLocUnknown;
-        pixelDropTimer = new ElapsedTime();
-        ElapsedTime opModeTimer = new ElapsedTime();
+        pixelDropTimer = new ElapsedTime(ElapsedTime.Resolution.MILLISECONDS);
+        ElapsedTime opModeTimer = new ElapsedTime(ElapsedTime.Resolution.MILLISECONDS);
         boolean autonAbort = false;
+        mOp = new HydraOpMode(telemetry, hardwareMap);
         // Initialization Routines
         // Initialize the IMU with non-default settings. To use this block,
         // plug one of the "new IMU.Parameters" blocks into the parameters socket.
@@ -42,15 +47,15 @@ public class HydrAuton extends HydrAuton_Base {
         // the REV Robotics logo is facing and the direction that the USB ports are facing.
         imu = hardwareMap.get(IMU.class, "imu");
         imu.initialize(new IMU.Parameters(new RevHubOrientationOnRobot(RevHubOrientationOnRobot.LogoFacingDirection.RIGHT, RevHubOrientationOnRobot.UsbFacingDirection.UP)));
-        Arm = new HydraArm(hardwareMap,"MotUprArm", "MotLwrArm", cUpperArmAutoMotorPwr,
+        Arm = new HydraArm(mOp,"MotUprArm", "MotLwrArm", cUpperArmAutoMotorPwr,
                 cLowerArmAutoMotorPwr);
-        Drive = new HydraDrive(hardwareMap,"MotDrFrLt", "MotDrFrRt", "MotDrBkLt",
+        Drive = new HydraDrive(mOp,"MotDrFrLt", "MotDrFrRt", "MotDrBkLt",
                 "MotDrBkRt", cCountsPerInch, cDriveBoosted, cDriveNormal, cDriveSlow);
-        PixelPalace = new HydraPixelPalace(hardwareMap, "SrvPxlPos1", "SrvPxlPos2", "LED1",
+        PixelPalace = new HydraPixelPalace(mOp, "SrvPxlPos1", "SrvPxlPos2", "LED1",
                 "LED2", "LED3", "LED4", "SenColPxlPos1", "SenColPxlPos2",
                 cCasFrontToBack, cCasBackToFront, cPixelPos1Dist, cPixelPos2Dist);
-        Intake = new HydraIntake(hardwareMap, "MotPxlIntk", cIntakeIn, cIntakeOut);
-        HydraObjectDetect ObjDet = new HydraObjectDetect(hardwareMap, modelFilename, cXvalueForLeftToCenterObject);
+        Intake = new HydraIntake(mOp, "MotPxlIntk", cIntakeIn, cIntakeOut);
+        HydraObjectDetect ObjDet = new HydraObjectDetect(mOp, modelFilename, cXvalueForLeftToCenterObject);
         // Wait for the match to begin.
         waitForStart();
         // Useful code to load pixels before we run. DISABLE FOR COMPETITION

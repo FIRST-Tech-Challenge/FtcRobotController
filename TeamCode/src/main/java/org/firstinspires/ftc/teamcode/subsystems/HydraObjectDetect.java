@@ -2,12 +2,12 @@ package org.firstinspires.ftc.teamcode.subsystems;
 
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
-import org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion;
 import org.firstinspires.ftc.robotcore.external.JavaUtil;
-import org.firstinspires.ftc.robotcore.external.hardware.camera.BuiltinCameraDirection;
+import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.robotcore.external.tfod.Recognition;
-import org.firstinspires.ftc.teamcode.HydraObjectLocations;
+import org.firstinspires.ftc.teamcode.objects.HydraOpMode;
+import org.firstinspires.ftc.teamcode.types.HydraObjectLocations;
 import org.firstinspires.ftc.vision.VisionPortal;
 import org.firstinspires.ftc.vision.tfod.TfodProcessor;
 
@@ -17,8 +17,10 @@ public class HydraObjectDetect {
     private final VisionPortal myVisionPortal;
     private final TfodProcessor myTfodProcessor;
     private final float mXValueForLeftToCenter;
+    private HydraOpMode mOp;
 
-    public HydraObjectDetect(HardwareMap hardwareMap, String modelFilename, float xValueForLeftToCenter) {
+    public HydraObjectDetect(HydraOpMode op, String modelFilename, float xValueForLeftToCenter) {
+        mOp = op;
         // this is the delineator between left and center
         mXValueForLeftToCenter = xValueForLeftToCenter;
         TfodProcessor.Builder myTfodProcessorBuilder;
@@ -36,7 +38,7 @@ public class HydraObjectDetect {
         // Next, create a VisionPortal.Builder and set attributes related to the camera.
         myVisionPortalBuilder = new VisionPortal.Builder();
         // Use a webcam.
-        myVisionPortalBuilder.setCamera(hardwareMap.get(WebcamName.class, "Webcam 1"));
+        myVisionPortalBuilder.setCamera(mOp.mHardwareMap.get(WebcamName.class, "Webcam 1"));
         // Add myTfodProcessor to the VisionPortal.Builder.
         myVisionPortalBuilder.addProcessor(myTfodProcessor);
         // Create a VisionPortal by calling build.
@@ -64,10 +66,10 @@ public class HydraObjectDetect {
         for (Recognition myTfodRecognition_item : myTfodRecognitions) {
             myTfodRecognition = myTfodRecognition_item;
             // Display info about the recognition.
-            //telemetry.addLine("");
+            mOp.mTelemetry.addLine("");
             // Display label and confidence.
             // Display the label and confidence for the recognition.
-            //telemetry.addData("Image", myTfodRecognition.getLabel() + " (" + JavaUtil.formatNumber(myTfodRecognition.getConfidence() * 100, 0) + " % Conf.)");
+            mOp.mTelemetry.addData("Image", myTfodRecognition.getLabel() + " (" + JavaUtil.formatNumber(myTfodRecognition.getConfidence() * 100, 0) + " % Conf.)");
             // Display position.
             x = (myTfodRecognition.getLeft() + myTfodRecognition.getRight()) / 2;
             y = (myTfodRecognition.getTop() + myTfodRecognition.getBottom()) / 2;
@@ -77,7 +79,7 @@ public class HydraObjectDetect {
                 detectedLocation = HydraObjectLocations.ObjLocCenterSpike;
             }
             // Display the position of the center of the detection boundary for the recognition
-            //telemetry.addData("- Position", JavaUtil.formatNumber(x, 0) + ", " + JavaUtil.formatNumber(y, 0));
+            mOp.mTelemetry.addData("- Position", JavaUtil.formatNumber(x, 0) + ", " + JavaUtil.formatNumber(y, 0));
         }
         return detectedLocation;
     }

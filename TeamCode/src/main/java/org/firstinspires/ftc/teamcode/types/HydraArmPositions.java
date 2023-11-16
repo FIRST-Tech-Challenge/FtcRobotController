@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode;
+package org.firstinspires.ftc.teamcode.types;
 
 /**
  * These are the individual waypoints within all arm movements
