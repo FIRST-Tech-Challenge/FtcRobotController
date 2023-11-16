@@ -12,12 +12,13 @@ import org.firstinspires.ftc.teamcode.RobotContainer;
 
 @TeleOp
 public class teleOp extends OpMode {
-    RobotContainer robot =new RobotContainer(hardwareMap);
+    RobotContainer robot;
     AnalogInput pot;
     Gamepad gamepad = new Gamepad();
 
     @Override
     public void init() {
+        robot=new RobotContainer(hardwareMap);
         robot.bindCommands(gamepad);
         pot=hardwareMap.analogInput.get("pot");
 
