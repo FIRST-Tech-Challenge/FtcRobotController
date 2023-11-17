@@ -38,7 +38,7 @@ public class RedLeft extends LinearOpMode {
     Acceleration gravity;
     private OpenCvCamera webCam;
     private boolean isCameraStreaming = false;
-    Pipeline modifyPipeline = new Pipeline();
+    Pipeline2023 modifyPipeline = new Pipeline2023(false);
 
     private int resultROI = 3;
 
@@ -72,6 +72,7 @@ public class RedLeft extends LinearOpMode {
         waitForStart();
         currTime = System.currentTimeMillis();
         startTime = currTime;
+        sleep(5000);
         if (resultROI == 3) {
 
             // getUpdatedRecognitions() will return null if no new information is available since
@@ -82,8 +83,7 @@ public class RedLeft extends LinearOpMode {
                 //    telemetry.addData("Camera: ", "Waiting to make sure valid data is incoming");
                 //} else {
                 telemetry.addData("Time Delta: ", (currTime - startTime));
-                //resultROI = modifyPipeline.getResultROI();
-                resultROI = 0;
+                resultROI = modifyPipeline.getResultROI();
                 if (resultROI == 0) {
                     telemetry.addData("Resulting ROI: ", "Left");
                     done = true;
@@ -96,6 +96,9 @@ public class RedLeft extends LinearOpMode {
                 } else {
                     telemetry.addData("Resulting ROI: ", "Something went wrong.");
                 }
+                telemetry.addData("Middle Result; ", modifyPipeline.getMiddleResult());
+                telemetry.addData("Right Result; ", modifyPipeline.getRightResult());
+
                 //}
                 telemetry.update();
                 currTime = System.currentTimeMillis();
@@ -170,6 +173,11 @@ public class RedLeft extends LinearOpMode {
                 .lineToLinearHeading(pose)
                 .build();
         drive.followTrajectorySequence(seq);
+        pose = new Pose2d(-5, 36, Math.toRadians(90));
+        seq = drive.trajectorySequenceBuilder(drive.getPoseEstimate())
+                .lineToLinearHeading(pose)
+                .build();
+        drive.followTrajectorySequence(seq);
         pose = new Pose2d(-5, -60, Math.toRadians(90));
         seq = drive.trajectorySequenceBuilder(drive.getPoseEstimate())
                 .lineToLinearHeading(pose)
@@ -179,7 +187,7 @@ public class RedLeft extends LinearOpMode {
     }
     private void MiddlePath() {
         Pose2d pose = drive.getPoseEstimate();
-        pose = new Pose2d(-12,48,Math.toRadians(0));
+        pose = new Pose2d(-18,48,Math.toRadians(0));
         TrajectorySequence seq = drive.trajectorySequenceBuilder(drive.getPoseEstimate())
                 .lineToLinearHeading(pose)
                 .build();
@@ -187,13 +195,18 @@ public class RedLeft extends LinearOpMode {
         sleep(1000);
         utils.dumpOpen();
         sleep(1000);
-        pose = new Pose2d(-12, 51, Math.toRadians(0));
+        pose = new Pose2d(-12, 53, Math.toRadians(0));
         seq = drive.trajectorySequenceBuilder(drive.getPoseEstimate())
                 .lineToLinearHeading(pose)
                 .build();
         drive.followTrajectorySequence(seq);
         sleep(1000);
         utils.dumpClose();
+        pose = new Pose2d(-3, 53, Math.toRadians(90));
+        seq = drive.trajectorySequenceBuilder(drive.getPoseEstimate())
+                .lineToLinearHeading(pose)
+                .build();
+        drive.followTrajectorySequence(seq);
         pose = new Pose2d(-5, -60, Math.toRadians(90));
         seq = drive.trajectorySequenceBuilder(drive.getPoseEstimate())
                 .lineToLinearHeading(pose)
@@ -203,7 +216,7 @@ public class RedLeft extends LinearOpMode {
     }
     private void RightPath() {
         Pose2d pose = drive.getPoseEstimate();
-        pose = new Pose2d(-36,36,Math.toRadians(0));
+        pose = new Pose2d(-27,31,Math.toRadians(0));
         TrajectorySequence seq = drive.trajectorySequenceBuilder(drive.getPoseEstimate())
                 .lineToLinearHeading(pose)
                 .build();
@@ -211,7 +224,7 @@ public class RedLeft extends LinearOpMode {
         sleep(1000);
         utils.dumpOpen();
         sleep(1000);
-        pose = new Pose2d(-36, 39, Math.toRadians(0));
+        pose = new Pose2d(-28, 39, Math.toRadians(0));
         seq = drive.trajectorySequenceBuilder(drive.getPoseEstimate())
                 .lineToLinearHeading(pose)
                 .build();
@@ -220,6 +233,11 @@ public class RedLeft extends LinearOpMode {
         utils.dumpClose();
         sleep(1000);
         pose = new Pose2d(-5, 39, Math.toRadians(0));
+        seq = drive.trajectorySequenceBuilder(drive.getPoseEstimate())
+                .lineToLinearHeading(pose)
+                .build();
+        drive.followTrajectorySequence(seq);
+        pose = new Pose2d(-5, 39, Math.toRadians(90));
         seq = drive.trajectorySequenceBuilder(drive.getPoseEstimate())
                 .lineToLinearHeading(pose)
                 .build();
@@ -245,7 +263,7 @@ public class RedLeft extends LinearOpMode {
         webCam.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
             @Override
             public void onOpened() {
-                webCam.startStreaming(320, 240, OpenCvCameraRotation.UPRIGHT);
+                webCam.startStreaming(960, 544, OpenCvCameraRotation.UPRIGHT);
                 telemetry.addData("Pipeline: ", "Initialized");
                 telemetry.update();
                 isCameraStreaming = true;
