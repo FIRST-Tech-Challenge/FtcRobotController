@@ -74,7 +74,7 @@ public abstract class BaseOpMode extends LinearOpMode {
         imu.initialize(parameters);
         */
 
-        // Waits so the imu can process
+        // Waits so the imu can process 
         sleep(2000);
     }
 
