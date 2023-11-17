@@ -1,12 +1,12 @@
-package org.firstinspires.ftc.teamcode.Auto;
+package org.firstinspires.ftc.teamcode;
 
 import com.acmerobotics.roadrunner.geometry.Pose2d;
+import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import org.firstinspires.ftc.teamcode.drive.DriveConstants;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
-import org.firstinspires.ftc.teamcode.Vision.OpenCVBlue;
+import org.firstinspires.ftc.teamcode.Vision.OpenCVRed;
+import org.firstinspires.ftc.teamcode.drive.DriveConstants;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequence;
 import org.opencv.core.Mat;
@@ -18,13 +18,13 @@ import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
 import org.openftc.easyopencv.OpenCvPipeline;
 import org.openftc.easyopencv.OpenCvWebcam;
-import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-@Autonomous (name = "testAuto")
-public class testAuto extends LinearOpMode {
+
+@Autonomous (name = "Red Backstage")
+public class RedBackstage extends LinearOpMode {
 
     OpenCvWebcam webcam;
 
-    OpenCVBlue pipeline = new OpenCVBlue(telemetry);
+    OpenCVRed pipeline = new OpenCVRed(telemetry);
 
     float test = 1;
 
@@ -115,6 +115,41 @@ public class testAuto extends LinearOpMode {
 
         while (opModeIsActive())
         {
+            SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
+
+            TrajectorySequence Left = drive.trajectorySequenceBuilder(new Pose2d())
+                    .lineToLinearHeading(new Pose2d(25, 13, Math.toRadians(0)),
+                            SampleMecanumDrive.getVelocityConstraint(DriveConstants.MAX_VEL / 2, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
+                            SampleMecanumDrive.getAccelerationConstraint(DriveConstants.MAX_ACCEL / 2))
+                    .back(20,
+                            SampleMecanumDrive.getVelocityConstraint(DriveConstants.MAX_VEL / 2, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
+                            SampleMecanumDrive.getAccelerationConstraint(DriveConstants.MAX_ACCEL / 2))
+                    .strafeLeft(20,
+                            SampleMecanumDrive.getVelocityConstraint(DriveConstants.MAX_VEL / 2, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
+                            SampleMecanumDrive.getAccelerationConstraint(DriveConstants.MAX_ACCEL / 2))
+                    .build();
+            TrajectorySequence Middle = drive.trajectorySequenceBuilder(new Pose2d())
+                    .lineToLinearHeading(new Pose2d(31, 0, Math.toRadians(0)),
+                            SampleMecanumDrive.getVelocityConstraint(DriveConstants.MAX_VEL / 2, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
+                            SampleMecanumDrive.getAccelerationConstraint(DriveConstants.MAX_ACCEL / 2))
+                    .back(26,
+                            SampleMecanumDrive.getVelocityConstraint(DriveConstants.MAX_VEL / 2, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
+                            SampleMecanumDrive.getAccelerationConstraint(DriveConstants.MAX_ACCEL / 2))
+                    .strafeRight(35,
+                            SampleMecanumDrive.getVelocityConstraint(DriveConstants.MAX_VEL / 2, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
+                            SampleMecanumDrive.getAccelerationConstraint(DriveConstants.MAX_ACCEL / 2))
+                    .build();
+            TrajectorySequence Right = drive.trajectorySequenceBuilder(new Pose2d())
+                    .lineToLinearHeading(new Pose2d(25, -13, Math.toRadians(0)),
+                            SampleMecanumDrive.getVelocityConstraint(DriveConstants.MAX_VEL / 2, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
+                            SampleMecanumDrive.getAccelerationConstraint(DriveConstants.MAX_ACCEL / 2))
+                    .back(20,
+                            SampleMecanumDrive.getVelocityConstraint(DriveConstants.MAX_VEL / 2, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
+                            SampleMecanumDrive.getAccelerationConstraint(DriveConstants.MAX_ACCEL / 2))
+                    .strafeRight(20,
+                            SampleMecanumDrive.getVelocityConstraint(DriveConstants.MAX_VEL / 2, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
+                            SampleMecanumDrive.getAccelerationConstraint(DriveConstants.MAX_ACCEL / 2))
+                    .build();
             /*
              * Send some stats to the telemetry
              */
@@ -128,6 +163,11 @@ public class testAuto extends LinearOpMode {
             }
 
             if(result == "RIGHT") { test = 1; } else if(result == "LEFT") { test = 2; } else if(result == "MIDDLE") { test = 3; }
+
+            if(test==2) {drive.followTrajectorySequence(Left);};
+            if(test==3) {drive.followTrajectorySequence(Middle);};
+            if(test==1) {drive.followTrajectorySequence(Right);};
+            telemetry.update();
 
             /*
              * NOTE: stopping the stream from the camera early (before the end of the OpMode

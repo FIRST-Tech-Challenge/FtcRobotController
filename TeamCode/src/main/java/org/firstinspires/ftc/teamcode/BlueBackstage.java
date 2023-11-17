@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.Auto;
+package org.firstinspires.ftc.teamcode;
 
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -19,8 +19,8 @@ import org.openftc.easyopencv.OpenCvCameraRotation;
 import org.openftc.easyopencv.OpenCvPipeline;
 import org.openftc.easyopencv.OpenCvWebcam;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-@Autonomous (name = "testAuto")
-public class testAuto extends LinearOpMode {
+@Autonomous (name = "Blue Backstage")
+public class BlueBackstage extends LinearOpMode {
 
     OpenCvWebcam webcam;
 
@@ -68,7 +68,6 @@ public class testAuto extends LinearOpMode {
          *
          * If you really want to open synchronously, the old method is still available.
          */
-        webcam.setMillisecondsPermissionTimeout(5000); // Timeout for obtaining permission is configurable. Set before opening.
         webcam.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener()
         {
             @Override
@@ -113,29 +112,93 @@ public class testAuto extends LinearOpMode {
          */
         waitForStart();
 
-        while (opModeIsActive())
-        {
-            /*
-             * Send some stats to the telemetry
-             */
-            //opencvBlue.processFrame(opencvBlue.maskedInputMat);
-            String result = pipeline.getResult();
+        SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
 
-            try {
-                Thread.sleep (5000); // 5000 milliseconds = 5 seconds
-            } catch (InterruptedException e) {
-                e.printStackTrace ();
-            }
+        TrajectorySequence Left = drive.trajectorySequenceBuilder(new Pose2d())
+                .lineToLinearHeading(new Pose2d(25, 13, Math.toRadians(0)),
+                        SampleMecanumDrive.getVelocityConstraint(DriveConstants.MAX_VEL / 2, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
+                        SampleMecanumDrive.getAccelerationConstraint(DriveConstants.MAX_ACCEL / 2))
+                .back(20,
+                        SampleMecanumDrive.getVelocityConstraint(DriveConstants.MAX_VEL / 2, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
+                        SampleMecanumDrive.getAccelerationConstraint(DriveConstants.MAX_ACCEL / 2))
+                .strafeLeft(20,
+                        SampleMecanumDrive.getVelocityConstraint(DriveConstants.MAX_VEL / 2, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
+                        SampleMecanumDrive.getAccelerationConstraint(DriveConstants.MAX_ACCEL / 2))
+                .build();
+        TrajectorySequence Middle = drive.trajectorySequenceBuilder(new Pose2d())
+                .lineToLinearHeading(new Pose2d(31, 0, Math.toRadians(0)),
+                        SampleMecanumDrive.getVelocityConstraint(DriveConstants.MAX_VEL / 2, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
+                        SampleMecanumDrive.getAccelerationConstraint(DriveConstants.MAX_ACCEL / 2))
+                .back(26,
+                        SampleMecanumDrive.getVelocityConstraint(DriveConstants.MAX_VEL / 2, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
+                        SampleMecanumDrive.getAccelerationConstraint(DriveConstants.MAX_ACCEL / 2))
+                .strafeLeft(35,
+                        SampleMecanumDrive.getVelocityConstraint(DriveConstants.MAX_VEL / 2, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
+                        SampleMecanumDrive.getAccelerationConstraint(DriveConstants.MAX_ACCEL / 2))
+                .build();
+        TrajectorySequence Right = drive.trajectorySequenceBuilder(new Pose2d())
+                .lineToLinearHeading(new Pose2d(24, 0, Math.toRadians(0)),
+                        SampleMecanumDrive.getVelocityConstraint(DriveConstants.MAX_VEL / 2, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
+                        SampleMecanumDrive.getAccelerationConstraint(DriveConstants.MAX_ACCEL / 2))
+                .back(4,
+                        SampleMecanumDrive.getVelocityConstraint(DriveConstants.MAX_VEL / 2, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
+                        SampleMecanumDrive.getAccelerationConstraint(DriveConstants.MAX_ACCEL / 2))
+                .strafeLeft(14,
+                        SampleMecanumDrive.getVelocityConstraint(DriveConstants.MAX_VEL / 2, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
+                        SampleMecanumDrive.getAccelerationConstraint(DriveConstants.MAX_ACCEL / 2))
+                .turn(Math.toRadians(-90))
+                .strafeLeft(6,
+                        SampleMecanumDrive.getVelocityConstraint(DriveConstants.MAX_VEL / 3, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
+                        SampleMecanumDrive.getAccelerationConstraint(DriveConstants.MAX_ACCEL / 3))
+                .forward(18,
+                        SampleMecanumDrive.getVelocityConstraint(DriveConstants.MAX_VEL / 3, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
+                        SampleMecanumDrive.getAccelerationConstraint(DriveConstants.MAX_ACCEL / 3))
+                .back(40,
+                        SampleMecanumDrive.getVelocityConstraint(DriveConstants.MAX_VEL / 2, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
+                        SampleMecanumDrive.getAccelerationConstraint(DriveConstants.MAX_ACCEL / 2))
+                .build();
+        /*
+         * Send some stats to the telemetry
+         */
+        //opencvBlue.processFrame(opencvBlue.maskedInputMat);
+        String result = pipeline.getResult();
 
-            if(result == "RIGHT") { test = 1; } else if(result == "LEFT") { test = 2; } else if(result == "MIDDLE") { test = 3; }
+        try {
+            Thread.sleep(5000); // 5000 milliseconds = 5 seconds
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+        if (result == "RIGHT") {
+            test = 1;
+        } else if (result == "LEFT") {
+            test = 2;
+        } else if (result == "MIDDLE") {
+            test = 3;
+        }
+
+        if (test == 2) {
+            drive.followTrajectorySequence(Left);
+        }
+        ;
+        if (test == 3) {
+            drive.followTrajectorySequence(Middle);
+        }
+        ;
+        if (test == 1) {
+            drive.followTrajectorySequence(Right);
+        }
+        ;
+        while (opModeIsActive()) {
+
+            telemetry.update();
 
             /*
              * NOTE: stopping the stream from the camera early (before the end of the OpMode
              * when it will be automatically stopped for you) *IS* supported. The "if" statement
              * below will stop streaming from the camera when the "A" button on gamepad 1 is pressed.
              */
-            if(gamepad1.a)
-            {
+            if (gamepad1.a) {
                 /*
                  * IMPORTANT NOTE: calling stopStreaming() will indeed stop the stream of images
                  * from the camera (and, by extension, stop calling your vision pipeline). HOWEVER,
