@@ -192,10 +192,9 @@ public class TeleOp extends LinearOpMode {
 
             //set intake/outtake positions for tray
             if (gamepad2.a) {
-                trayPos = 0.594; //down (intake) position
-            }
-            if (gamepad2.y) {
-                trayPos = 0.855; //up (outtake) position
+                robot.trayToIntakePos(); //down (intake) position
+            } else if (gamepad2.y) {
+                robot.trayToOuttakePos(); //up (outtake) position
             }
 
             //the earlier conditionals set variables based on what was pressed
