@@ -166,7 +166,7 @@ public class OpenCvColorDetection {
             Imgproc.findContours(filteredMat, contoursList, contourMask, Imgproc.RETR_TREE, Imgproc.CHAIN_APPROX_SIMPLE);
 
             // copy original image to output image for drawing overlay on
-            inputMat.copyTo(outputMat);
+            roiMat.copyTo(outputMat);
 
             // if no contours are detected, do nothing
             int maxAreaContourIndex;
