@@ -59,7 +59,7 @@ public class RedLeftAuto extends LinearOpMode {
             .splineTo(new Vector2d(10, -56.5), toRadians(5))
             .splineTo(new Vector2d(45, -32), toRadians(0))
             .waitSeconds(2)
-            .lineToLinearHeading(new Pose2d(52.5, -27, toRadians(181)))
+            .lineToLinearHeading(new Pose2d(52.5, -28, toRadians(181)))
             .addTemporalMarker(robot::done)
             .build();
     throughTruss[1] =

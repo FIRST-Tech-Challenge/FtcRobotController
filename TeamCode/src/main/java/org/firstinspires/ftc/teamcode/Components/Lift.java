@@ -19,7 +19,7 @@ public class Lift extends RFDualMotor {
   private double target = 0.0;
   private double MIN_VELOCITY = 20, MANUAL_TIME = 0.2, lastManualTime = -1.0;
   public static double max = 2200,
-      min = -10,
+      min = -15,
       RESISTANCE = 450,
       kS = 0.03,
       kV = 3.2786E-4,
@@ -185,7 +185,7 @@ public class Lift extends RFDualMotor {
         if (Arm.ArmStates.UNFLIPPED.getState()
             && Arm.ArmTargetStates.UNFLIPPED.getState()
             && Wrist.WristStates.HOLD.state) {
-          super.setPosition(p_state.position - 10, 0);
+          super.setPosition(p_state.position - 15, 0);
         } else {
           super.setPosition(LiftPositionStates.LOW_SET_LINE.position, 0);
         }

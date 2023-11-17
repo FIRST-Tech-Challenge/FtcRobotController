@@ -8,7 +8,7 @@ import com.acmerobotics.dashboard.config.Config;
 import org.firstinspires.ftc.teamcode.Components.RFModules.Devices.RFServo;
 @Config
 public class Clamp extends RFServo {
-    public static double CLAMP = 0.18, UNCLAMP = 0.26;
+    public static double CLAMP = 0.18, UNCLAMP = 0.28;
     boolean clamped;
 
     public Clamp() {
