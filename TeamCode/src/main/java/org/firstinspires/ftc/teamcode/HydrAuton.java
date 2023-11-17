@@ -190,21 +190,21 @@ public class HydrAuton extends HydrAuton_Base {
             ////////////////////////////////////////////////////////////////////////////////////////
             case 20:
                 // CENTER SPIKE
-                Drive.Start(24, 0, 0);
+                Drive.Start(34, 20 * flip, 0);
                 autonState += 1;
                 break;
             case 21:
                 // CENTER SPIKE
                 if (!Drive.Busy()) {
                     Drive.Start(0, 0, -20 * flip);
-                    autonState += 1;
+                    autonState = 99;//+= 1;
                 }
                 break;
             case 22:
                 // CENTER SPIKE
                 if (!Drive.Busy()) {
-                    Drive.Start(-14, 0, 0);
-                    autonState += 1;
+                    Drive.Start(0, 7 * flip, 0);
+                    autonState = 99;//+= 1;
                 }
                 break;
             case 23:
