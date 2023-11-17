@@ -149,6 +149,7 @@ public class RevBotAuto extends OpMode {
         break;
       case MOVE_TO_SCOREBOARD:
         desiredTagId = getDesiredTagId(alliance, selectedSide);
+        telemetry.addData("desiredTagId " , desiredTagId);
         visionPortal.setProcessorEnabled(aprilTag, true);
         // TODO: Step 1: Move based on approximation - time/ encoder / gyro.
         // Determine which direction to turn. Plan trajectory based on initial location and the goal location.
@@ -223,8 +224,26 @@ public class RevBotAuto extends OpMode {
     if (alliance == Alliance.UNKNOWN || selectedSide == ScoringElementLocation.UNKNOWN){
       return -1;
     }
+    if (alliance == Alliance.BLUE) {
+      if (selectedSide == ScoringElementLocation.LEFT) {
+        return 1;
+      } else if (selectedSide == ScoringElementLocation.CENTER) {
+        return 2;
+      } else if (selectedSide == ScoringElementLocation.RIGHT) {
+        return 3;
+      }
+    }
+    if (alliance == Alliance.RED){
+      if (selectedSide == ScoringElementLocation.LEFT){
+        return 4;
+      } else if (selectedSide == ScoringElementLocation.CENTER) {
+        return 5;
+      }else if (selectedSide == ScoringElementLocation.RIGHT){
+        return 6;
+      }
+    }
 
-    return 5;
+    return -1;
   }
 
   // TODO: Implement this
