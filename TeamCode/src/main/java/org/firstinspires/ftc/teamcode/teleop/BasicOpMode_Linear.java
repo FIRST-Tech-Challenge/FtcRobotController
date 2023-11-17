@@ -130,9 +130,11 @@ public class BasicOpMode_Linear extends LinearOpMode {
         runtime.reset();
 
         boolean open = true;
-        hand.setPower(1.3);
+        //hand.setPower(1);
 
         int waitTime = 0;
+
+        int timeToMove = 0;
 
         // run until the end of the match (driver presses STOP)
         while (opModeIsActive()) {
@@ -171,35 +173,43 @@ public class BasicOpMode_Linear extends LinearOpMode {
 
             if (gamepad2.a) {
                 if (armRotator.getCurrentPosition() < 5) {
-                    armRotator.setTargetPosition(100);
-                    armRotator.setMode(DcMotor.RunMode.RUN_TO_POSITION);//537.7
-                    armRotator.setPower(0.05);
+                    armRotator.setTargetPosition(50);
+                    armRotator.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                    armRotator.setPower(0.03);
                 } else {
+                    //537.7
                     armRotator.setTargetPosition(0);
-                    armRotator.setMode(DcMotor.RunMode.RUN_TO_POSITION);//537.7
-                    armRotator.setPower(0.05);
+                    armRotator.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                    armRotator.setPower(0.03);
+                }
+            }
+
+            if (gamepad2.b) {
+                if (wrist.getPower() == 1) {
+                    wrist.setPower(-0.5);
+                    timeToMove++;
+                } else {
+                    wrist.setPower(0.5);
+                    timeToMove++;
                 }
                 //telemetry.addData("stuff", armRotator.getCurrentPosition())
                 //armRotator.setTargetPosition(armRotator.getCurrentPosition());
                 //243
             }
 
-            if (gamepad2.b) {
-                if (wrist.getPower() == 1)
-                    wrist.setPower(-0.5);
-                else
-                    wrist.setPower(1);
-                //telemetry.addData("stuff", armRotator.getCurrentPosition())
-                //armRotator.setTargetPosition(armRotator.getCurrentPosition());
-                //243
+            if (timeToMove > 250) {
+                wrist.setPower(0);
+                timeToMove = 0;
+            } else if (timeToMove > 0){
+                timeToMove++;
             }
 
             if (gamepad2.x && waitTime == 0) {
                 if (open) {
-                    hand.setPower(0.5);
+                    hand.setPower(-0.27); //-0.27
                     open = false;
                 } else {
-                    hand.setPower(1.3);
+                    hand.setPower(0.3);
                     open = true;
                 }
                 waitTime++;
@@ -207,7 +217,7 @@ public class BasicOpMode_Linear extends LinearOpMode {
 
             if (waitTime != 0)
                 waitTime++;
-            if (waitTime > 1500)
+            if (waitTime > 250)
                 waitTime = 0;
 
             // Send calculated power to wheels
@@ -218,15 +228,21 @@ public class BasicOpMode_Linear extends LinearOpMode {
 
             armExtendMotor.setPower(armPower);
 
-            //intakeSystem.setPower(-gamepad2.right_stick_y);
+            intakeSystem.setPower(-gamepad2.right_stick_y);
 
-            //wrist.setPower(-0.3);
+            //if (-gamepad2.right_stick_y > 0) {
+            //armRotator.setPower(0.5);
+
+            int x = Math.abs(150- armRotator.getCurrentPosition());
 
             // Show the elapsed game time and wheel power.
             telemetry.addData("Status", "Run Time: " + runtime.toString());
             telemetry.addData("Front left/Right", "%4.2f, %4.2f", leftFrontPower, rightFrontPower);
             telemetry.addData("Back  left/Right", "%4.2f, %4.2f", leftBackPower, rightBackPower);
             telemetry.addData("waitTime: ", waitTime);
+            telemetry.addData("arm rotator: ", armRotator.getCurrentPosition());
+            telemetry.addData("timeToMove: ", timeToMove);
+            telemetry.addData("target position ", armRotator.getTargetPosition());
             telemetry.update();
         }
 }}
