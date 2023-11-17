@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode;
 
+import com.acmerobotics.dashboard.FtcDashboard;
+import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.hardware.IMU;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -26,6 +28,7 @@ public class HydrAuton extends HydrAuton_Base {
     protected int autonState;
     protected String modelFilename = "Blue_Prop.tflite";
     protected HydraOpMode mOp;
+    protected MultipleTelemetry dashboard;
 
     /**
      * This function is executed when this OpMode is selected from the Driver Station.
@@ -38,6 +41,7 @@ public class HydrAuton extends HydrAuton_Base {
         pixelDropTimer = new ElapsedTime(ElapsedTime.Resolution.MILLISECONDS);
         ElapsedTime opModeTimer = new ElapsedTime(ElapsedTime.Resolution.MILLISECONDS);
         boolean autonAbort = false;
+        telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
         mOp = new HydraOpMode(telemetry, hardwareMap);
         // Initialization Routines
         // Initialize the IMU with non-default settings. To use this block,
