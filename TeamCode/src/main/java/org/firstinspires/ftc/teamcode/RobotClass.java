@@ -172,45 +172,49 @@ public class RobotClass {
     }
 
     //turning with gyro code
-    public void gyroTurning(double targetAngle) throws InterruptedException{
-        angles = imu.getAngularOrientation();
-        //using gyro
-        if (angles.firstAngle >= targetAngle-0.5 && angles.firstAngle <= targetAngle+0.5){
-            frontLeft.setPower(0);
-            frontRight.setPower(0);
-            backLeft.setPower(0);
-            backRight.setPower(0);
-            sleep(500);
-            if (angles.firstAngle >= targetAngle-0.5 && angles.firstAngle <= targetAngle + 0.5) {
-                return;
-            }
-        }else if (angles.firstAngle >= targetAngle){
-            if (angles.firstAngle <= targetAngle+10){
-                frontLeft.setPower(0.15);
-                frontRight.setPower(-0.15);
-                backLeft.setPower(0.15);
-                backRight.setPower(-0.15);
-            }else {
-                frontLeft.setPower(0.25);
-                frontRight.setPower(-0.25);
-                backLeft.setPower(0.25);
-                backRight.setPower(-0.25);
-            }
-        }else if (angles.firstAngle <= targetAngle) {
-            if (angles.firstAngle >= targetAngle - 10) {
-                frontLeft.setPower(-0.15);
-                frontRight.setPower(0.15);
-                backLeft.setPower(-0.15);
-                backRight.setPower(0.15);
+    public void gyroTurning(double targetAngleDeg) throws InterruptedException{
+        boolean run = true;
+        while (run) {
+            angles = imu.getAngularOrientation();
+            //using gyro
+            if (angles.firstAngle >= targetAngleDeg - 0.5 && angles.firstAngle <= targetAngleDeg + 0.5) {
+                frontLeft.setPower(0);
+                frontRight.setPower(0);
+                backLeft.setPower(0);
+                backRight.setPower(0);
+                sleep(500);
+                if (angles.firstAngle >= targetAngleDeg - 0.5 && angles.firstAngle <= targetAngleDeg + 0.5) {
+                    run = false;
+                    return;
+                }
+            } else if (angles.firstAngle >= targetAngleDeg) {
+                if (angles.firstAngle <= targetAngleDeg + 10) {
+                    frontLeft.setPower(0.15);
+                    frontRight.setPower(-0.15);
+                    backLeft.setPower(0.15);
+                    backRight.setPower(-0.15);
+                } else {
+                    frontLeft.setPower(0.25);
+                    frontRight.setPower(-0.25);
+                    backLeft.setPower(0.25);
+                    backRight.setPower(-0.25);
+                }
+            } else if (angles.firstAngle <= targetAngleDeg) {
+                if (angles.firstAngle >= targetAngleDeg - 10) {
+                    frontLeft.setPower(-0.15);
+                    frontRight.setPower(0.15);
+                    backLeft.setPower(-0.15);
+                    backRight.setPower(0.15);
 
-            } else {
-                frontLeft.setPower(-0.25);
-                frontRight.setPower(0.25);
-                backLeft.setPower(-0.25);
-                backRight.setPower(0.25);
+                } else {
+                    frontLeft.setPower(-0.25);
+                    frontRight.setPower(0.25);
+                    backLeft.setPower(-0.25);
+                    backRight.setPower(0.25);
+                }
             }
+            stopMotors();
         }
-        stopMotors();
     }
 
     //strafing class with power and direction as parameters
