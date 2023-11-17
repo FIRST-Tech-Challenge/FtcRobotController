@@ -1,17 +1,20 @@
 package org.firstinspires.ftc.teamcode.subsystems;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.hardware.PIDCoefficients;
+import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 
 import org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.objects.HydraOpMode;
 
 public class HydraDrive {
-    private final DcMotor mMotDrFrLt;
-    private final DcMotor mMotDrFrRt;
-    private final DcMotor mMotDrBkLt;
-    private final DcMotor mMotDrBkRt;
+    private final DcMotorEx mMotDrFrLt;
+    private final DcMotorEx mMotDrFrRt;
+    private final DcMotorEx mMotDrBkLt;
+    private final DcMotorEx mMotDrBkRt;
     private final double mBoostedPower;
     private final double mNormalPower;
     private final double mSlowPower;
@@ -22,10 +25,18 @@ public class HydraDrive {
                      double countsPerInch, double driveBoosted, double driveNormal, double driveSlow) {
         mOp = op;
         // grab the motors out of the hardware map
-        mMotDrFrLt = mOp.mHardwareMap.get(DcMotor.class, frontLeft);
-        mMotDrFrRt = mOp.mHardwareMap.get(DcMotor.class, frontRight);
-        mMotDrBkLt = mOp.mHardwareMap.get(DcMotor.class, backLeft);
-        mMotDrBkRt = mOp.mHardwareMap.get(DcMotor.class, backRight);
+        mMotDrFrLt = (DcMotorEx)mOp.mHardwareMap.get(DcMotor.class, frontLeft);
+        mMotDrFrRt = (DcMotorEx)mOp.mHardwareMap.get(DcMotor.class, frontRight);
+        mMotDrBkLt = (DcMotorEx)mOp.mHardwareMap.get(DcMotor.class, backLeft);
+        mMotDrBkRt = (DcMotorEx)mOp.mHardwareMap.get(DcMotor.class, backRight);
+        PIDFCoefficients pid = mMotDrFrLt.getPIDFCoefficients(DcMotor.RunMode.RUN_TO_POSITION);
+        mOp.mTelemetry.addData("FrLft PID", pid.toString());
+        pid = mMotDrFrRt.getPIDFCoefficients(DcMotor.RunMode.RUN_TO_POSITION);
+        mOp.mTelemetry.addData("FrRt PID", pid.toString());
+        pid = mMotDrBkLt.getPIDFCoefficients(DcMotor.RunMode.RUN_TO_POSITION);
+        mOp.mTelemetry.addData("BkLft PID", pid.toString());
+        pid = mMotDrBkRt.getPIDFCoefficients(DcMotor.RunMode.RUN_TO_POSITION);
+        mOp.mTelemetry.addData("BkRt PID", pid.toString());
         // store the user values for the various drive speeds
         mBoostedPower = driveBoosted;
         mNormalPower = driveNormal;
