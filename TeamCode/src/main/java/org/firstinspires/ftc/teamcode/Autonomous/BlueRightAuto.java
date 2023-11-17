@@ -72,7 +72,7 @@ public class BlueRightAuto extends LinearOpMode {
                         .lineToLinearHeading(new Pose2d(40.5, 45, toRadians(180)))
 
                         .setReversed(true)
-                        .lineToLinearHeading(new Pose2d(45,42, toRadians(180)))
+                        .lineToLinearHeading(new Pose2d(45,40, toRadians(180)))
                         .waitSeconds(2.0)
                         .lineToLinearHeading(new Pose2d(53,     43, toRadians(180)))
                         .addTemporalMarker(robot::done)
