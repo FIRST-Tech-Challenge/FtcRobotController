@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.Auto;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import org.firstinspires.ftc.teamcode.drive.DriveConstants;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.teamcode.Vision.OpenCVBlue;
@@ -117,11 +118,21 @@ public class testAuto extends LinearOpMode {
             SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
 
             TrajectorySequence Left = drive.trajectorySequenceBuilder(new Pose2d())
-                    .forward(5)
-                    .strafeLeft(16)
-                    .forward(19)
-                    .back(20)
-                    .strafeLeft(20)
+                    .forward(5,
+                            SampleMecanumDrive.getVelocityConstraint(DriveConstants.MAX_VEL / 2, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
+                            SampleMecanumDrive.getAccelerationConstraint(DriveConstants.MAX_ACCEL / 2))
+                    .strafeLeft(16,
+                            SampleMecanumDrive.getVelocityConstraint(DriveConstants.MAX_VEL / 2, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
+                            SampleMecanumDrive.getAccelerationConstraint(DriveConstants.MAX_ACCEL / 2))
+                    .forward(19,
+                            SampleMecanumDrive.getVelocityConstraint(DriveConstants.MAX_VEL / 2, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
+                            SampleMecanumDrive.getAccelerationConstraint(DriveConstants.MAX_ACCEL / 2))
+                    .back(20,
+                            SampleMecanumDrive.getVelocityConstraint(DriveConstants.MAX_VEL / 2, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
+                            SampleMecanumDrive.getAccelerationConstraint(DriveConstants.MAX_ACCEL / 2))
+                    .strafeLeft(20,
+                            SampleMecanumDrive.getVelocityConstraint(DriveConstants.MAX_VEL / 2, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
+                            SampleMecanumDrive.getAccelerationConstraint(DriveConstants.MAX_ACCEL / 2))
                     .build();
             /*
              * Send some stats to the telemetry
@@ -137,7 +148,7 @@ public class testAuto extends LinearOpMode {
 
             if(result == "RIGHT") { test = 1; } else if(result == "LEFT") { test = 2; } else if(result == "MIDDLE") { test = 3; }
 
-            if(test==1) {drive.followTrajectorySequence(Left);};
+            if(test==2) {drive.followTrajectorySequence(Left);};
             telemetry.update();
 
             /*
