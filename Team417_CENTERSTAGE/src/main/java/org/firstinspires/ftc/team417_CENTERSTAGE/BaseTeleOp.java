@@ -90,18 +90,18 @@ public class BaseTeleOp extends BaseOpMode {
         //controlArmUsingControllers();
         controlDumperUsingControllers();
         controlGateUsingControllers();
-        armControlBackup();
+        controlArmUsingControllers();
     }
 
-    private double armLocation = 0;  //where the arm should currently move to.
+    private double armTargetLocation = 0;  //where the arm should currently move to.
     private boolean dpadDownPressed = false;
     private boolean dpadUpPressed = false;
-    private void armControlBackup(){
+    private void controlArmUsingControllers(){
         double rStickSensitivity = 35; //how much moving right stick will effect the movement of the arm.
         double armVelocity = -gamepad2.right_stick_y * rStickSensitivity; //how fast the arm moves based off of the right stick and sensitivity.
-        double[] backupArmPositions = new double[] {ARM_MOTOR_MIN_POSITION, ARM_MOTOR_MAX_POSITION / 2.0,
+        double[] armPositions = new double[] {ARM_MOTOR_MIN_POSITION, ARM_MOTOR_MAX_POSITION / 2.0,
                                                     ARM_MOTOR_MAX_POSITION * (3.0/4.0), ARM_MOTOR_MAX_POSITION}; //array of arm positions the dpad can move to.
-        armLocation += armVelocity; //change the current arm position by the velocity.
+        armTargetLocation += armVelocity; //change the current arm position by the velocity.
 
         /*if (armLocation < ARM_MOTOR_MIN_POSITION) {
             armLocation = ARM_MOTOR_MIN_POSITION;
@@ -113,18 +113,18 @@ public class BaseTeleOp extends BaseOpMode {
         if (gamepad2.dpad_up && gamepad2.dpad_down)
             ; //if both dpad buttons are being pressed do nothing.
         else if (gamepad2.dpad_up && !dpadUpPressed){ //if dpad up is being pressed change the arm location to the next location in the arm positions array.
-            for (int i = 0; i < backupArmPositions.length; i++)
+            for (int i = 0; i < armPositions.length; i++)
             {
-                if (backupArmPositions[i] > armLocation) {
-                    armLocation = backupArmPositions[i];
+                if (armPositions[i] > armTargetLocation) {
+                    armTargetLocation = armPositions[i];
                     break;
                 }
             }
         } else if (gamepad2.dpad_down && !dpadDownPressed){ //if dpad down is being pressed change the arm location to the last location in the arm positions array.
-            for (int i = backupArmPositions.length - 1; i >= 0; i--)
+            for (int i = armPositions.length - 1; i >= 0; i--)
             {
-                if (backupArmPositions[i] > armLocation) {
-                    armLocation = backupArmPositions[i];
+                if (armPositions[i] > armTargetLocation) {
+                    armTargetLocation = armPositions[i];
                     break;
                 }
             }
@@ -134,51 +134,19 @@ public class BaseTeleOp extends BaseOpMode {
         dpadUpPressed = gamepad2.dpad_up;
 
 
-        if (armMotor.getCurrentPosition() < armLocation + 50 && armMotor.getCurrentPosition() > armLocation - 50) {
+        if (armMotor.getCurrentPosition() < armTargetLocation + 50 && armMotor.getCurrentPosition() > armTargetLocation - 50) {
             armMotor.setPower(0);
-        } else if (armMotor.getCurrentPosition() > armLocation) {
+        } else if (armMotor.getCurrentPosition() > armTargetLocation) {
             armMotor.setPower(-0.7);
-        } else if (armMotor.getCurrentPosition() < armLocation) {
+        } else if (armMotor.getCurrentPosition() < armTargetLocation) {
             armMotor.setPower(0.7);
         }
 
-        telemetry.addData("arm target position", armLocation);
+        telemetry.addData("arm target position", armTargetLocation);
         //armMotor.setTargetPosition((int) Math.round(armLocation)); //tell the motor to move to arm location.
         //armMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
     }
 
-    public double armPositionIndex;
-
-    public void controlArmUsingControllers() {
-        moveArm(-gamepad2.right_stick_y);
-
-        for (int i = 0; i < armPositions.length; i++) {
-            if (armMotor.getCurrentPosition() < armPositions[i]) {
-                armPositionIndex = i - 0.5;
-            } else if (isEpsilonEquals(armMotor.getCurrentPosition(), armPositions[i])) {
-                armPositionIndex = i;
-            }
-        }
-
-        if (isEpsilonEquals(armPositionIndex % 1.0, 0) || isEpsilonEquals(armPositionIndex % 1.0, 1)) {
-            if (gamepad2.dpad_up && gamepad2.dpad_down) {
-            } else if (gamepad2.dpad_up) {
-                positionArm(((int) Math.round(armPositionIndex)) + 1);
-            } else if (gamepad2.dpad_down) {
-                positionArm(((int) Math.round(armPositionIndex)) - 1);
-            }
-        } else {
-            if (gamepad2.dpad_up && gamepad2.dpad_down) {
-            } else if (gamepad2.dpad_up) {
-                positionArm((int) Math.ceil(armPositionIndex));
-            } else if (gamepad2.dpad_down) {
-                positionArm((int) Math.floor(armPositionIndex));
-            }
-        }
-    }
-
-    public boolean dumperTilted = false;
-    public boolean xIsPressed = false;
     public boolean dumperDumped = false;
     public boolean bIsPressed = false;
 
@@ -194,6 +162,16 @@ public class BaseTeleOp extends BaseOpMode {
             moveDumper(DumperAction.RESETTING);
         }
         */
+
+        if (armMotor.getCurrentPosition() >= ARM_MOTOR_DUMPER_HITTING_INTAKE_LOWER_BOUND && armMotor.getCurrentPosition() <= ARM_MOTOR_DUMPER_HITTING_INTAKE_UPPER_BOUND) {
+            if (dumperServo.getPosition() > DUMPER_SERVO_TILT_POSITION) {
+                tiltDumper();
+            }
+        } else if (armMotor.getCurrentPosition() < ARM_MOTOR_DUMPER_HITTING_INTAKE_LOWER_BOUND) {
+            if (dumperServo.getPosition() < DUMPER_SERVO_RESET_POSITION) {
+                resetDumper();
+            }
+        }
 
         if (!bIsPressed && gamepad2.b) {
             if (dumperDumped) {

@@ -21,8 +21,15 @@ public abstract class BaseOpMode extends LinearOpMode {
     public DcMotor armMotor = null;
     final public int ARM_MOTOR_MIN_POSITION = 0;
     final public int ARM_MOTOR_MAX_POSITION = 4200;
+    final public int ARM_MOTOR_DUMPER_HITTING_INTAKE_LOWER_BOUND = 100;
+    final public int ARM_MOTOR_DUMPER_HITTING_INTAKE_UPPER_BOUND = 200;
     public Servo dumperServo = null;
+    public final double DUMPER_SERVO_TILT_POSITION = 0.32;
+    public final double DUMPER_SERVO_RESET_POSITION = 0.48;
+    public final double DUMPER_SERVO_DUMP_POSITION = 0;
     public Servo gateServo = null;
+    public final double GATE_SERVO_OPEN_POSITION = 0.5;
+    public final double GATE_SERVO_CLOSE_POSITION = 1;
 
     static final double TICKS_PER_REVOLUTION = 537.7 * (24.0/27); // 5203 Series Yellow Jacket Motor, robot was overshooting so
     static final double GEAR_RATIO = 1.0;
@@ -120,16 +127,18 @@ public abstract class BaseOpMode extends LinearOpMode {
         intakeMotor.setPower(speed);
     }
 
+
+
     public void tiltDumper() {
-        dumperServo.setPosition(0.32);
+        dumperServo.setPosition(DUMPER_SERVO_TILT_POSITION);
     }
 
     public void resetDumper() {
-        dumperServo.setPosition(0.48);
+        dumperServo.setPosition(DUMPER_SERVO_RESET_POSITION);
     }
 
     public void dumpDumper() {
-        dumperServo.setPosition(0);
+        dumperServo.setPosition(DUMPER_SERVO_DUMP_POSITION);
     }
 
     enum DumperAction {
@@ -150,11 +159,11 @@ public abstract class BaseOpMode extends LinearOpMode {
     }
 
     public void openGate() {
-        gateServo.setPosition(0.5);
+        gateServo.setPosition(GATE_SERVO_OPEN_POSITION);
     }
 
     public void closeGate() {
-        gateServo.setPosition(1);
+        gateServo.setPosition(GATE_SERVO_CLOSE_POSITION);
     }
 
     public int[] armPositions = new int[] {ARM_MOTOR_MIN_POSITION, ARM_MOTOR_MIN_POSITION + ((ARM_MOTOR_MAX_POSITION - ARM_MOTOR_MIN_POSITION) / 2), ARM_MOTOR_MAX_POSITION};
