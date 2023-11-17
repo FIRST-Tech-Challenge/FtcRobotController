@@ -175,7 +175,7 @@ public class Auto1_BlueFieldLeft extends OpMode {
 
 
         if (gamepieceLocation == "left" && state == 0){
-            moveTo.Forward(200);
+            moveTo.Forward(1440);
             telemetry.addData("run", state);
             telemetry.update();
 
@@ -189,6 +189,10 @@ public class Auto1_BlueFieldLeft extends OpMode {
 
             // Show the elapsed game time and wheel power.
             telemetry.addData("Status", "Run Time: " + runtime.toString());
+            telemetry.addData("encoders", leftFrontDrive.getCurrentPosition());
+            telemetry.addData("encoders", rightFrontDrive.getCurrentPosition());
+            telemetry.addData("encoders", leftBackDrive.getCurrentPosition());
+            telemetry.addData("encoders", rightBackDrive.getCurrentPosition());
             telemetry.addData("state", state);
             telemetry.addData("location", gamepieceLocation);
             telemetry.update();
