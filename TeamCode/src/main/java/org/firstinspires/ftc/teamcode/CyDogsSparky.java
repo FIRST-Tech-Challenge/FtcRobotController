@@ -132,6 +132,15 @@ public class CyDogsSparky extends CyDogsChassis{
         ArmLift.setTargetPosition(ArmHomePosition);
     }
 
+    public void LowerArmAtAutonEnd()
+    {
+        ArmLift.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        ArmLift.setPower(-0.4);
+        myOpMode.sleep(1000);
+        ArmLift.setPower(0);
+
+    }
+
     public void openFinger()
     {
         Finger.setPosition(FingerOpen);

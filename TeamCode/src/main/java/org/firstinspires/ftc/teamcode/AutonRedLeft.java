@@ -94,7 +94,7 @@ public class AutonRedLeft extends LinearOpMode {
             mySparky.scoreFromDrivingPositionAndReturn(CyDogsSparky.ArmLow);
             mySparky.AutonParkInCorrectSpot(mySpikeLocation, parkingSpot);
         }
-        sleep(5000);
+        mySparky.LowerArmAtAutonEnd();
     }
 }
 

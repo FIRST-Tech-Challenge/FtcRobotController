@@ -75,7 +75,7 @@ public class AutonBlueLeft extends LinearOpMode {
                 mySparky.MoveStraight(170, .5, CyDogsSparky.StandardAutonWaitTime);
             }
 
-
+            mySparky.LowerArmAtAutonEnd();
         }
 
     }

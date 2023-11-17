@@ -100,7 +100,7 @@ public class AutonBlueRight extends LinearOpMode {
        */ }
 
 
-        sleep(5000);
+        mySparky.LowerArmAtAutonEnd();
     }
 }
 
