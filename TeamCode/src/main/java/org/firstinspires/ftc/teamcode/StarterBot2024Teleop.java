@@ -57,6 +57,9 @@ public class StarterBot2024Teleop extends OpMode
     private final double gripperClosedPosition = 1.0;
     private final double gripperOpenPosition = 0.5;
     private final double wristUpPosition = 1.0;
+
+    private final double wristMiddlePosition = 0.5;
+
     private final double wristDownPosition = 0.0;
 
     private final int armHomePosition = 0;
@@ -64,7 +67,7 @@ public class StarterBot2024Teleop extends OpMode
     private final int armScorePosition = 300;
     private final int armShutdownThreshold = 5;
 
-    private final double armPower = 0.1;
+    private final double armPower = 0.8;
 
     /*
      * Code to run ONCE when the driver hits INIT
@@ -173,7 +176,7 @@ public class StarterBot2024Teleop extends OpMode
                 armRight.setPower(armPower);
                 armLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 armRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                wrist.setPosition(wristUpPosition);
+                //wrist.setPosition(wristUpPosition);
             }
             else if (gamepad1.b) {
                 armLeft.setTargetPosition(armIntakePosition);
@@ -182,7 +185,7 @@ public class StarterBot2024Teleop extends OpMode
                 armRight.setPower(armPower);
                 armLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 armRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                wrist.setPosition(wristDownPosition);
+                //wrist.setPosition(wristDownPosition);
             }
             else if (gamepad1.y) {
                 armLeft.setTargetPosition(armScorePosition);
@@ -191,7 +194,19 @@ public class StarterBot2024Teleop extends OpMode
                 armRight.setPower(armPower);
                 armLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 armRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                //wrist.setPosition(wristUpPosition);
+            }
+            else if (gamepad2.y) {
                 wrist.setPosition(wristUpPosition);
+                telemetry.addData("Gamepad2.y---------", manualArmPower);
+            }
+            else if (gamepad2.a) {
+                wrist.setPosition(wristDownPosition);
+                telemetry.addData("Gamepad2.a---------", manualArmPower);
+            }
+            else if (gamepad2.b) {
+                wrist.setPosition(wristMiddlePosition);
+                telemetry.addData("Gamepad2.b---------", manualArmPower);
             }
         }
 
@@ -217,7 +232,7 @@ public class StarterBot2024Teleop extends OpMode
         }
 
         //GRIPPER
-        if (gamepad1.left_bumper || gamepad1.right_bumper) {
+        if (gamepad2.left_bumper || gamepad2.right_bumper) {
             gripper.setPosition(gripperOpenPosition);
         }
         else {
@@ -227,7 +242,7 @@ public class StarterBot2024Teleop extends OpMode
         telemetry.addData("Status", "Run Time: " + runtime.toString());
         telemetry.addData("Gamepad", "drive (%.2f), turn (%.2f)", drive, turn);
         telemetry.addData("Motors", "left (%.2f), right (%.2f)", leftPower, rightPower);
-        telemetry.addData("Manual Power", manualArmPower);
+        telemetry.addData("P3 Manual Power", manualArmPower);
         telemetry.addData("Arm Pos:",
                 "left = " +
                         ((Integer)armLeft.getCurrentPosition()).toString() +
