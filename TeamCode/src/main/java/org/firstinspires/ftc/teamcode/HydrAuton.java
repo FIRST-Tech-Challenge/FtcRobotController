@@ -56,6 +56,8 @@ public class HydrAuton extends HydrAuton_Base {
                 cCasFrontToBack, cCasBackToFront, cPixelPos1Dist, cPixelPos2Dist);
         Intake = new HydraIntake(mOp, "MotPxlIntk", cIntakeIn, cIntakeOut);
         HydraObjectDetect ObjDet = new HydraObjectDetect(mOp, modelFilename, cXvalueForLeftToCenterObject);
+        // print any telemetry that came from initialization of the subsystems
+        mOp.mTelemetry.update();
         // Wait for the match to begin.
         waitForStart();
         // Useful code to load pixels before we run. DISABLE FOR COMPETITION
