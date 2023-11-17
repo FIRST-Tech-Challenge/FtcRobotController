@@ -90,9 +90,16 @@ public class RevBotAuto extends OpMode {
   @Override
   public void init_loop() {
     // Determine blue vs. red alliance
-    alliance = getAllianceFromKeyEntry();
+    if (alliance == Alliance.UNKNOWN){
+      alliance = getAllianceFromKeyEntry();
+    }
+    telemetry.addData("Alliance", alliance.toString());
     // Determine near or far position from the scoring board
     fieldPosition = getFieldPositionFromKeyEntry();
+    if (fieldPosition == FieldPosition.UNKNOWN){
+      fieldPosition = getFieldPositionFromKeyEntry();
+    }
+    telemetry.addData( "FieldPosition" , fieldPosition.toString());
 
     // Check if we know both alliance and field position
     if (alliance != Alliance.UNKNOWN && fieldPosition != FieldPosition.UNKNOWN) {
@@ -248,14 +255,31 @@ public class RevBotAuto extends OpMode {
 
   // TODO: Implement this
   private Alliance getAllianceFromKeyEntry(){
+    // red button
+    if(gamepad1.b){
+      return Alliance.RED;
+    }
+    if(gamepad1.x) {
+      // blue button
+      return Alliance.BLUE;
+    }
+
     return Alliance.UNKNOWN;
   }
 
 
   // TODO: Implement this
   private FieldPosition getFieldPositionFromKeyEntry(){
+    // green button
+    if(gamepad1.a){
+      return FieldPosition.NEAR;
+    }
+    if(gamepad1.y){
+      return FieldPosition.FAR;
+    }
     return FieldPosition.UNKNOWN;
   }
+
 
   boolean findDesiredAprilTag(int desiredTagId){
     boolean targetFound = false;
