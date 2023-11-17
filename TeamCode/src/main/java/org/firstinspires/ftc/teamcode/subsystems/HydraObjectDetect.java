@@ -32,7 +32,7 @@ public class HydraObjectDetect {
         // Set the full ordered list of labels the model is trained to recognize.
         myTfodProcessorBuilder.setModelLabels(JavaUtil.createListWith("prop"));
         // Set the aspect ratio for the images used when the model was created.
-        myTfodProcessorBuilder.setModelAspectRatio(16 / 9);
+        myTfodProcessorBuilder.setModelAspectRatio(4 / 3);
         // Create a TfodProcessor by calling build.
         myTfodProcessor = myTfodProcessorBuilder.build();
         // Next, create a VisionPortal.Builder and set attributes related to the camera.
