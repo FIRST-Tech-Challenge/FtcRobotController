@@ -125,6 +125,13 @@ public class Robot {
         telemetry.update();
     }
 
+    public void trayToIntakePos() {
+        setServoPosBlocking(tray, 0.4);
+    }
+    public void trayToOuttakePos() {
+        setServoPosBlocking(tray, 0.7);
+    }
+
     public void autoOuttake() {
         setServoPosBlocking(tray, 0.594); // tray to down position
         opMode.sleep(100);
@@ -136,8 +143,8 @@ public class Robot {
         opMode.sleep(100);
         setServoPosBlocking(clamp, 0.45); // open clamp
         opMode.sleep(1000);
-        moveLinearSlideByTicks(-2000);// raise slide up
-        opMode.sleep(500);
+        straightBlocking(2, true, 0.7);
+        opMode.sleep(100);
         setServoPosBlocking(clamp, 0.5); // close clamp
         opMode.sleep(100);
         setServoPosBlocking(tray, 0.594); // tray down
@@ -893,7 +900,7 @@ public class Robot {
                     mecanumBlocking(parkDistance, false, 0.5);
                 }
             }
-            straightBlocking(7, false, 0.7);
+            straightBlocking(9, false, 0.7);
             break;
         }
     }
