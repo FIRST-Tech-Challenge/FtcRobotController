@@ -90,13 +90,13 @@ public class RevBotAuto extends OpMode {
   @Override
   public void init_loop() {
     // Determine blue vs. red alliance
-    if (alliance != Alliance.UNKNOWN){
+    if (alliance == Alliance.UNKNOWN){
       alliance = getAllianceFromKeyEntry();
     }
     telemetry.addData("Alliance", alliance.toString());
     // Determine near or far position from the scoring board
     fieldPosition = getFieldPositionFromKeyEntry();
-    if (fieldPosition != FieldPosition.UNKNOWN){
+    if (fieldPosition == FieldPosition.UNKNOWN){
       fieldPosition = getFieldPositionFromKeyEntry();
     }
     telemetry.addData( "FieldPosition" , fieldPosition.toString());
