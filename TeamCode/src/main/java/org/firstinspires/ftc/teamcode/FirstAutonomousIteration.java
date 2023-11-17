@@ -108,6 +108,22 @@ public class FirstAutonomousIteration extends LinearOpMode {
         FOUND_NONE, FOUND_LEFT, FOUND_MIDDLE, FOUND_RIGHT;
     }
 
+    public enum FSMState {
+        UNINITIALIZED,
+        // initial state
+        START_TO_DETECT_POS,
+        DETECT_LEFT, DETECT_MIDDLE, ASSUME_RIGHT,
+
+        // all TEST states
+        TEST_DRAW_TWO_PICK_ONE,
+        TEST_LATERAL_RIGHT,
+        DONE;
+    }
+
+    private FSMState currState = FSMState.UNINITIALIZED;
+    private FSMState prevState = FSMState.UNINITIALIZED;
+    private FSMState nextState = FSMState.UNINITIALIZED;
+
     /* Declare OpMode members. */
     private DcMotor         leftFrontDrive   = null;
     private DcMotor         leftBackDrive   = null;
@@ -180,7 +196,7 @@ public class FirstAutonomousIteration extends LinearOpMode {
             "Cube"
     };
 
-    private static final int MOVE_BACK_AFTER_DROP = 3;
+    private static final double MOVE_BACK_AFTER_DROP = 2.5;
 
     /**
      * The variable to store our instance of the TensorFlow Object Detection processor.
@@ -351,16 +367,20 @@ public class FirstAutonomousIteration extends LinearOpMode {
         arm.moveArmDown();
         wrist.wristDown();
         waitRuntime(1);
+
         claw.openClaw();
         waitRuntime(1);
-        wrist.wristUp();
 
-        waitRuntime(.5);
-        driveStraight(DRIVE_SPEED*5, -3, currentHeading);
+        wrist.wristUp();
+        driveStraight(DRIVE_SPEED*5, -MOVE_BACK_AFTER_DROP, currentHeading);
+        waitRuntime(1);
+
         wrist.wristDown();
         waitRuntime(1);
+
         claw.closeClaw();
         waitRuntime(1);
+
         wrist.wristUp();
         waitRuntime(1);
     }
@@ -395,69 +415,146 @@ public class FirstAutonomousIteration extends LinearOpMode {
             telemetry.update();
         }
 
-        //dropTwoPickOne();
-        FoundTeamProp cubeIsFound = FoundTeamProp.FOUND_NONE;
+        nextState = FSMState.START_TO_DETECT_POS;
+//        nextState = FSMState.TEST_DRAW_TWO_PICK_ONE;
 
+        while (nextState != FSMState.DONE) {
+            prevState = currState;
+            currState = nextState;
 
-        List<Integer> headingsToCheck = Arrays.asList(-12, 30, -45);
+            switch (currState) {
+                case START_TO_DETECT_POS:
+                    driveStraight(DRIVE_SPEED*3, 22, 0.0);
+                    holdHeading(TURN_SPEED, 0, 0.1);
+                    nextState = FSMState.DETECT_MIDDLE;
+                    break;
 
-        driveStraight(DRIVE_SPEED*3, 22, 0.0);
-        holdHeading(TURN_SPEED, 0, 0.1);
-        for (int heading: headingsToCheck) {
-            targetHeading = heading;
-            msg = "detecting cube";
-            sendTelemetry(true);
+                case DETECT_MIDDLE:
+                    targetHeading = -12;
+                    turnToHeading( TURN_SPEED*5, targetHeading);
+                    holdHeading(TURN_SPEED, targetHeading, 0.1);
+                    if (isCubeThere()) {
+                        msg = "Cube Found Middle!!!";
+                        sendTelemetry(true);
 
-            turnToHeading( TURN_SPEED*5, heading);
-            holdHeading(TURN_SPEED, heading, 0.1);
+                        driveStraight(DRIVE_SPEED, 3, targetHeading);
 
-            // pre-detect
-            // -- add code here
+                        dropTwoPickOne();
+                        driveStraight(DRIVE_SPEED, -(3-MOVE_BACK_AFTER_DROP), targetHeading);
+                        nextState = FSMState.DONE;
 
-            if (isCubeThere()) {
-                msg = "Cube Found!!!";
-                sendTelemetry(true);
+                    } else {
+                        nextState = FSMState.DETECT_LEFT;
+                    }
+                    break;
 
-                if (heading > 0) {
-                    cubeIsFound = FoundTeamProp.FOUND_LEFT;
-                } else if (heading < -20) {
-                    cubeIsFound = FoundTeamProp.FOUND_RIGHT;
-                } else {
-                    cubeIsFound = FoundTeamProp.FOUND_MIDDLE;
-                }
-                holdHeading(TURN_SPEED, heading, 0.05);
+                case DETECT_LEFT:
+                    targetHeading = 45;
+                    turnToHeading( TURN_SPEED*5, targetHeading);
+                    driveStraight(DRIVE_SPEED, -2, targetHeading);
+                    holdHeading(TURN_SPEED, targetHeading, 0.1);
 
-                break;
+                    if (isCubeThere()) {
+                        msg = "Cube Found Left!!!";
+                        sendTelemetry(true);
+
+                        driveStraight(DRIVE_SPEED, 3, targetHeading);
+
+                        dropTwoPickOne();
+                        driveStraight(DRIVE_SPEED, -(-2+3-MOVE_BACK_AFTER_DROP), targetHeading);
+                        nextState = FSMState.DONE;
+
+                    } else {
+                        driveStraight(DRIVE_SPEED, 2, targetHeading);
+                        nextState = FSMState.ASSUME_RIGHT;
+                    }
+                    break;
+
+                case ASSUME_RIGHT:
+                    targetHeading = -90;
+                    turnToHeading( TURN_SPEED*5, targetHeading);
+                    driveStraight(DRIVE_SPEED*5, -2, targetHeading, true, false);
+                    holdHeading(TURN_SPEED, targetHeading, 0.1);
+
+                    dropTwoPickOne();
+                    driveStraight(DRIVE_SPEED*5, -(-2-MOVE_BACK_AFTER_DROP), targetHeading, true, false);
+
+                    nextState = FSMState.DONE;
+                    break;
+
+                case TEST_DRAW_TWO_PICK_ONE:
+                    dropTwoPickOne();
+                    nextState = FSMState.DONE;
+                    break;
+
+                case TEST_LATERAL_RIGHT:
+                    targetHeading = getHeading();
+                    driveStraight(DRIVE_SPEED*5, 3, targetHeading, true, true);
             }
-
-            // post-detect
-            // -- add code here
-            waitRuntime(0.2);
         }
 
-
-        if (cubeIsFound == FoundTeamProp.FOUND_MIDDLE) {
-
-            driveStraight(DRIVE_SPEED, 3, getHeading());
-
-            dropTwoPickOne();
-            driveStraight(DRIVE_SPEED, -(10-MOVE_BACK_AFTER_DROP), -14.0);
-
-
-
-
-        } else if (cubeIsFound == FoundTeamProp.FOUND_LEFT) {
-            // TODO: assume if not found middle or left, it is on te right
-            dropTwoPickOne();
-
-        } else {
-
-            // TODO: assume if not found middle or left, it is on te right
-            dropTwoPickOne();
-
-        }
-
-        driveStraight(DRIVE_SPEED, 10, getHeading(), true, true);
+//        //dropTwoPickOne();
+//        FoundTeamProp cubeIsFound = FoundTeamProp.FOUND_NONE;
+//
+//
+//        List<Integer> headingsToCheck = Arrays.asList(-12, 45, -60);
+//
+//
+//        for (int heading: headingsToCheck) {
+//            targetHeading = heading;
+//            msg = "detecting cube";
+//            sendTelemetry(true);
+//
+//            turnToHeading( TURN_SPEED*5, heading);
+//            holdHeading(TURN_SPEED, heading, 0.1);
+//
+//            // pre-detect
+//            // -- add code here
+//
+//            if (isCubeThere()) {
+//                msg = "Cube Found!!!";
+//                sendTelemetry(true);
+//
+//                if (heading > 0) {
+//                    cubeIsFound = FoundTeamProp.FOUND_LEFT;
+//                } else if (heading < -20) {
+//                    cubeIsFound = FoundTeamProp.FOUND_RIGHT;
+//                } else {
+//                    cubeIsFound = FoundTeamProp.FOUND_MIDDLE;
+//                }
+//                holdHeading(TURN_SPEED, heading, 0.05);
+//
+//                break;
+//            }
+//
+//            // post-detect
+//            // -- add code here
+//            waitRuntime(0.2);
+//        }
+//
+//
+//        if (cubeIsFound == FoundTeamProp.FOUND_MIDDLE) {
+//
+//            driveStraight(DRIVE_SPEED, 3, getHeading());
+//
+//            dropTwoPickOne();
+//            driveStraight(DRIVE_SPEED, -(10-MOVE_BACK_AFTER_DROP), -14.0);
+//
+//
+//
+//
+//        } else if (cubeIsFound == FoundTeamProp.FOUND_LEFT) {
+//            // TODO: assume if not found middle or left, it is on te right
+//            dropTwoPickOne();
+//
+//        } else {
+//
+//            // TODO: assume if not found middle or left, it is on te right
+//            dropTwoPickOne();
+//
+//        }
+//
+//        driveStraight(DRIVE_SPEED, 10, getHeading(), true, true);
 
 //
 //        // Step through each leg of the path,
@@ -483,6 +580,7 @@ public class FirstAutonomousIteration extends LinearOpMode {
 //        turnToHeading(TURN_SPEED, 0.0);
 //        holdHeading(TURN_SPEED, 0.0, 0.05);
 //        driveStraight(DRIVE_SPEED, 22.0, 0.0);
+
 
 
 
