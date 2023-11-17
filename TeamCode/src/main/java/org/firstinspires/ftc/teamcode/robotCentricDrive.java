@@ -60,6 +60,8 @@ public class robotCentricDrive extends LinearOpMode {
       armRotate.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
       armExt.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
       armExt.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+      frontLeftMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+      frontRightMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
 
       while (opModeIsActive()) {
 
@@ -73,13 +75,9 @@ public class robotCentricDrive extends LinearOpMode {
 
 
         //Sets power for driving wheels
-        frontLeftMotor.setPower(y);
         backLeftMotor.setPower(-y);
-        frontRightMotor.setPower(y);
         backRightMotor.setPower(y);
-        frontRightMotor.setPower(x);
         backRightMotor.setPower(-x);
-        frontLeftMotor.setPower(-x);
         backLeftMotor.setPower(-x);
 
         //Arm rotation controls
