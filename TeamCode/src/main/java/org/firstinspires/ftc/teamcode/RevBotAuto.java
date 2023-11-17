@@ -132,31 +132,45 @@ public class RevBotAuto extends OpMode {
       case DETERMINE_ALLIANCE:
         telemetry.addData("Unexpected State: " , state.toString());
         break;
-      case IDENTIFY_SPIKE:
+      case IDENTIFY_SPIKE: {
         selectedSide = visionProcessor.getSelection();
-        if (selectedSide == ScoringElementLocation.UNKNOWN){
+        if (selectedSide == ScoringElementLocation.UNKNOWN) {
           break;
         }
         visionPortal.stopStreaming();
         visionPortal.setProcessorEnabled(visionProcessor, false);
-        telemetry.addData("selectedSide: " , selectedSide.toString());
+        telemetry.addData("selectedSide: ", selectedSide.toString());
         state = State.PLACE_PIXEL_ON_SPIKE;
         lastTime = getRuntime();
+      }
         break;
-      case PLACE_PIXEL_ON_SPIKE:
+      case PLACE_PIXEL_ON_SPIKE: {
         // TODO: Depending on selectedSide, move left, straight, right.
         //  Since we are dragging the pixel there is nothing to drop.
+        boolean targetReached = false;
+        if (selectedSide == ScoringElementLocation.LEFT) {
+          targetReached = driveToLeftSpikeMark();
+        } else if (selectedSide == ScoringElementLocation.CENTER) {
+          targetReached = driveToCenterSpikeMark();
+        } else {
+          targetReached = driveToRightSpikeMark();
+        }
+
+        if (!targetReached) {
+          break;
+        }
 
         //  Move back a little so that we don't drag the pixel away from the desired location.
 
 
         state = State.MOVE_TO_SCOREBOARD;
         lastTime = getRuntime();
+      }
 
         break;
-      case MOVE_TO_SCOREBOARD:
+      case MOVE_TO_SCOREBOARD: {
         desiredTagId = getDesiredTagId(alliance, selectedSide);
-        telemetry.addData("desiredTagId " , desiredTagId);
+        telemetry.addData("desiredTagId ", desiredTagId);
         visionPortal.setProcessorEnabled(aprilTag, true);
         // TODO: Step 1: Move based on approximation - time/ encoder / gyro.
         // Determine which direction to turn. Plan trajectory based on initial location and the goal location.
@@ -164,30 +178,32 @@ public class RevBotAuto extends OpMode {
         boolean targetFound = findDesiredAprilTag(desiredTagId);
 
         // Step 2: Move based on AprilTag location once it is found.
-        if (!targetFound){
+        if (!targetFound) {
           break;
         }
         boolean targetReached = driveToAprilTagTarget(desiredTag);
-        if (!targetReached){
+        if (!targetReached) {
           break;
         }
         state = State.SCORE_PIXEL;
         lastTime = getRuntime();
 
         visionPortal.setProcessorEnabled(aprilTag, false);
+      }
         break;
-      case SCORE_PIXEL:
+      case SCORE_PIXEL: {
         // TODO: raise arm / wrist to the scoring position, open gripper
         state = State.PARK;
         lastTime = getRuntime();
-
+      }
         break;
-      case PARK:
+      case PARK: {
         // If we started on the near side, move towards the corner.
         // If we started on the far side, move to towards the center
         state = State.END;
         lastTime = getRuntime();
-        break;
+      }
+      break;
       case END:
         break;
       default:
@@ -226,7 +242,6 @@ public class RevBotAuto extends OpMode {
     visionPortal.setProcessorEnabled(visionProcessor, true);
   }
 
-  // TODO: Implement this
   private int getDesiredTagId(Alliance alliance, ScoringElementLocation selectedSide){
     if (alliance == Alliance.UNKNOWN || selectedSide == ScoringElementLocation.UNKNOWN){
       return -1;
@@ -245,7 +260,7 @@ public class RevBotAuto extends OpMode {
         return 4;
       } else if (selectedSide == ScoringElementLocation.CENTER) {
         return 5;
-      }else if (selectedSide == ScoringElementLocation.RIGHT){
+      } else if (selectedSide == ScoringElementLocation.RIGHT){
         return 6;
       }
     }
@@ -253,7 +268,6 @@ public class RevBotAuto extends OpMode {
     return -1;
   }
 
-  // TODO: Implement this
   private Alliance getAllianceFromKeyEntry(){
     // red button
     if(gamepad1.b){
@@ -268,7 +282,6 @@ public class RevBotAuto extends OpMode {
   }
 
 
-  // TODO: Implement this
   private FieldPosition getFieldPositionFromKeyEntry(){
     // green button
     if(gamepad1.a){
@@ -328,13 +341,28 @@ public class RevBotAuto extends OpMode {
 
     telemetry.addData("Auto","Drive %5.2f, Turn %5.2f", drive, turn);
     telemetry.addData("Auto","Range Err %5.2f, Heading Err %5.2f", rangeError, headingError);
-    robot.driveRobot(drive, turn);
+    robot.moveRobot(drive, turn);
 
     // TODO: Tune this
     if (rangeError < 2) {
       return true;
     }
 
+    return false;
+  }
+
+  // TODO: Implement this
+  private boolean driveToLeftSpikeMark(){
+    return false;
+  }
+
+  // TODO: Implement this
+  private boolean driveToCenterSpikeMark(){
+    return false;
+  }
+
+  // TODO: Implement this
+  private boolean driveToRightSpikeMark(){
     return false;
   }
 

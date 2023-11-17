@@ -79,7 +79,7 @@ public class RevBotTeleop extends OpMode
         //DRIVE
         double drive = -gamepad1.left_stick_y/5.0;
         double turn  =  gamepad1.right_stick_x/5.0;
-        robot.driveRobot(drive, turn);
+        robot.moveRobot(drive, turn);
 
         //ARM & WRIST
         manualArmPower = gamepad1.right_trigger - gamepad1.left_trigger;
