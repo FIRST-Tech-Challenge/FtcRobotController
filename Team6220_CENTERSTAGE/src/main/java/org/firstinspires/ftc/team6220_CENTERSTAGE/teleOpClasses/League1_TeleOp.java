@@ -6,6 +6,7 @@ import com.acmerobotics.roadrunner.Vector2d;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
+import org.firstinspires.ftc.team6220_CENTERSTAGE.Constants;
 import org.firstinspires.ftc.team6220_CENTERSTAGE.MecanumDrive;
 
 import com.arcrobotics.ftclib.gamepad.GamepadEx;
@@ -41,12 +42,6 @@ public class League1_TeleOp extends LinearOpMode {
         OUTTAKE_DROP_2
     }
 
-    IntakeStates curIntakeState = IntakeStates.INTAKE_INPUT;
-    enum IntakeStates {
-        INTAKE_INPUT,
-        INTAKE_OUTPUT
-    }
-
     // toggle for tilting outtake forward and back
     boolean outtakeTiltedForward = false;
 
@@ -59,15 +54,6 @@ public class League1_TeleOp extends LinearOpMode {
     // holds heading from imu read which is done in roadrunner's mecanum drive class for us
     double currentHeading = 0.0;
     double targetHeading = 0.0;
-
-    // constants
-    final double TURN_STICK_DEADZONE = 0.01;
-    final double TURN_POWER_MULTIPLIER = 1.0;
-    final double DRIVE_POWER_X_MULTIPLIER = 1.0;
-    final double DRIVE_POWER_Y_MULTIPLIER = 0.7;
-    final double MIN_HEADING_ACCURACY = 5.0; // degrees off from target
-    final double SLOWMODE_MULTIPLIER = 0.3;
-    final double INTAKE_POWER_MULTIPLIER = 0.8;
 
     // useful groups of keycodes
     final GamepadKeys.Button[] BUMPER_KEYCODES = {
@@ -93,17 +79,17 @@ public class League1_TeleOp extends LinearOpMode {
 
         while (opModeIsActive()) {
 
-            // udpate gamepads and read inputs
+            // update gamepads and read inputs
             gp1.readButtons();
             gp2.readButtons();
 
-            drivePowerX = gp1.getLeftX() * DRIVE_POWER_X_MULTIPLIER;
-            drivePowerY = gp1.getLeftY() * DRIVE_POWER_Y_MULTIPLIER;
+            drivePowerX = gp1.getLeftX() * Constants.DRIVE_POWER_X_MULTIPLIER;
+            drivePowerY = gp1.getLeftY() * Constants.DRIVE_POWER_Y_MULTIPLIER;
             turnPower = gp1.getRightX();
 
             intakePower = Math.max(gp2.getTrigger(GamepadKeys.Trigger.LEFT_TRIGGER),
                                    gp2.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER))
-                                * INTAKE_POWER_MULTIPLIER;
+                                * Constants.INTAKE_POWER_MULTIPLIER;
             
 
             // get heading from imu in degrees
@@ -111,11 +97,11 @@ public class League1_TeleOp extends LinearOpMode {
 
 
             // update turn state
-            if (Math.abs(turnPower) > TURN_STICK_DEADZONE) {
+            if (Math.abs(turnPower) > Constants.TURN_STICK_DEADZONE) {
                 targetHeading = 0.0;
                 curTurningState = TurnStates.TURNING_MANUAL;
 
-            } else if (justPressedAny(gp1, BUMPER_KEYCODES) > -1) {
+            } else if (Utilities.justPressedAny(gp1, BUMPER_KEYCODES) > -1) {
                 // sets target to 90 added to current heading
                 // if already turning 90, add to target instead of current
                 // also limits target angle between -180 and 180
@@ -125,20 +111,20 @@ public class League1_TeleOp extends LinearOpMode {
                 );
                 curTurningState = TurnStates.TURNING_90;
 
-            } else if (justPressedAny(gp1, DPAD_KEYCODES) > -1) {
+            } else if (Utilities.justPressedAny(gp1, DPAD_KEYCODES) > -1) {
                 // find which dpad button was pressed, use its index * 90 degrees as target
                 // up: 0*90=0, left: 1*90=90, down: 2*90=180, right: 3*90=270 (-> -90)
-                targetHeading = Utilities.limitAngle(justPressedAny(gp1, DPAD_KEYCODES) * 90.0);
+                targetHeading = Utilities.limitAngle(Utilities.justPressedAny(gp1, DPAD_KEYCODES) * 90.0);
                 curTurningState = TurnStates.TURNING_FIELD_CENTRIC;
 
-            } else if (Math.abs(Utilities.shortestDifference(currentHeading, targetHeading)) < MIN_HEADING_ACCURACY) {
+            } else if (Math.abs(Utilities.shortestDifference(currentHeading, targetHeading)) < Constants.TELEOP_MIN_HEADING_ACCURACY) {
                 curTurningState = TurnStates.TURNING_MANUAL;
             }
 
             // use turn state
             switch (curTurningState) {
                 case TURNING_MANUAL:
-                    turnPower *= TURN_POWER_MULTIPLIER;
+                    turnPower *= Constants.TURN_POWER_MULTIPLIER;
                     break;
                 case TURNING_90:
                     // falls through to field centric
@@ -152,9 +138,9 @@ public class League1_TeleOp extends LinearOpMode {
             if (gp1.getTrigger(GamepadKeys.Trigger.LEFT_TRIGGER) > 0.0 ||
                     gp1.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER) > 0.0) {
 
-                drivePowerX *= SLOWMODE_MULTIPLIER;
-                drivePowerY *= SLOWMODE_MULTIPLIER;
-                turnPower *= SLOWMODE_MULTIPLIER;
+                drivePowerX *= Constants.SLOWMODE_MULTIPLIER;
+                drivePowerY *= Constants.SLOWMODE_MULTIPLIER;
+                turnPower *= Constants.SLOWMODE_MULTIPLIER;
             }
             // clamp powers between -1.0 and 1.0
             drivePowerX = Utilities.clamp(drivePowerX);
@@ -199,22 +185,5 @@ public class League1_TeleOp extends LinearOpMode {
 
             telemetry.update();
         }
-    }
-
-
-
-    /**
-     * checks all the buttons from an array to find an index of one that's pressed
-     * @param gamepad gamepad object to read from
-     * @param keycodes array of button enums
-     * @return index of first pressed button, none found returns -1
-     */
-    private static int justPressedAny(GamepadEx gamepad, GamepadKeys.Button[] keycodes) {
-        for (int i = 0; i < keycodes.length; i++) {
-            if (gamepad.wasJustPressed(keycodes[i])) {
-                return i;
-            }
-        }
-        return -1;
     }
 }

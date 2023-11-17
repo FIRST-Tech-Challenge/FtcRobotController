@@ -1,6 +1,25 @@
 package org.firstinspires.ftc.team6220_CENTERSTAGE;
 
+import com.arcrobotics.ftclib.gamepad.GamepadEx;
+import com.arcrobotics.ftclib.gamepad.GamepadKeys;
+
 public class Utilities {
+
+    /**
+     * checks all the buttons from an array to find an index of one that's pressed
+     * @param gamepad gamepad object to read from
+     * @param keycodes array of button enums
+     * @return index of first pressed button, none found returns -1
+     */
+    public static int justPressedAny(GamepadEx gamepad, GamepadKeys.Button[] keycodes) {
+        for (int i = 0; i < keycodes.length; i++) {
+            if (gamepad.wasJustPressed(keycodes[i])) {
+                return i;
+            }
+        }
+        return -1;
+    }
+
     /**
      * keeps angles between [-180,180] so that it does not exceed possible imu readings
      * tested in https://www.desmos.com/calculator/igccxromri

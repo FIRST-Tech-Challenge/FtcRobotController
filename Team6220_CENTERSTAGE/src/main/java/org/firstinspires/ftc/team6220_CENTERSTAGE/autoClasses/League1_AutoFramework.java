@@ -8,22 +8,27 @@ import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.IMU;
 
 import org.firstinspires.ftc.team6220_CENTERSTAGE.Utilities;
+import org.firstinspires.ftc.team6220_CENTERSTAGE.Constants;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 
 @Config
 
 abstract public class League1_AutoFramework extends LinearOpMode {
 
+    // used in determining which alliance side to use in auto path
     public enum AutoAlliance {
         BLUE,
-        RED
+        RED,
     }
-    public enum AutoType {
+    // used in determining which side of the truss to use in auto path
+    // name represents path length to backstage
+    public enum AutoStartingPositionType {
         SHORT,
-        LONG
+        LONG,
     }
 
-    public void doAutoDriveInches(AutoAlliance autoAlliance, AutoType autoType) throws InterruptedException {
+    // run the auto path determined by the chosen starting position details
+    public void runAutoFramework(AutoAlliance autoAlliance, AutoStartingPositionType autoStartingPositionType) throws InterruptedException {
 
         initHardware();
 
@@ -32,7 +37,7 @@ abstract public class League1_AutoFramework extends LinearOpMode {
         // strafe right on red is +x, -x on blue
         double strafeSignFlip = autoAlliance == AutoAlliance.BLUE ? -1 : 1;
 
-        switch (autoType) {
+        switch (autoStartingPositionType) {
 
             case SHORT:
 
@@ -53,20 +58,10 @@ abstract public class League1_AutoFramework extends LinearOpMode {
     }
 
 
-    static final double TICKS_PER_REVOLUTION = 537.7;
-    static final double GEAR_RATIO = 1.0;
-    static final double WHEEL_DIAMETER = 3.78; // inches
-    static final double TICKS_PER_INCH = (TICKS_PER_REVOLUTION * GEAR_RATIO) / (WHEEL_DIAMETER * Math.PI);
-    static final double INCHES_PER_REVOLUTION = Math.PI * WHEEL_DIAMETER;
-    static final double INCHES_PER_TICK = INCHES_PER_REVOLUTION / TICKS_PER_REVOLUTION;
-
-    public static double X_FACTOR = 1.0867924528301887;
-    public static double Y_FACTOR = 0.9411764705882353;
-    public static double ROBOT_SPEED = 0.5;
 
     public void driveInches(double x, double y) {
-        double xTicks = x * TICKS_PER_INCH * X_FACTOR;
-        double yTicks = y * TICKS_PER_INCH * Y_FACTOR;
+        double xTicks = x * Constants.TICKS_PER_INCH * Constants.AUTO_X_FACTOR;
+        double yTicks = y * Constants.TICKS_PER_INCH * Constants.AUTO_Y_FACTOR;
 
         double targetFL = xTicks + yTicks;
         double targetFR = yTicks - xTicks;
@@ -91,11 +86,10 @@ abstract public class League1_AutoFramework extends LinearOpMode {
         BR.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
         // reset the timeout time and start motion.
-        //runtime.reset();
-        FL.setPower(ROBOT_SPEED);
-        FR.setPower(ROBOT_SPEED);
-        BL.setPower(ROBOT_SPEED);
-        BR.setPower(ROBOT_SPEED);
+        FL.setPower(Constants.ROBOT_AUTO_SPEED);
+        FR.setPower(Constants.ROBOT_AUTO_SPEED);
+        BL.setPower(Constants.ROBOT_AUTO_SPEED);
+        BR.setPower(Constants.ROBOT_AUTO_SPEED);
 
         // keep looping while we are still active, and there is time left, and both motors are running.
         // Note: We use (isBusy() || isBusy()) in the loop test, which means that when EITHER motor hits
@@ -104,7 +98,6 @@ abstract public class League1_AutoFramework extends LinearOpMode {
         // However, if you require that BOTH motors have finished their moves before the robot continues
         // onto the next step, use (isBusy() && isBusy()) in the loop test.
         while (opModeIsActive() &&
-                //(runtime.seconds() < 30) &&
                 (FL.isBusy() && FR.isBusy() && BL.isBusy() && BR.isBusy())) {
         }
 
@@ -118,8 +111,6 @@ abstract public class League1_AutoFramework extends LinearOpMode {
         BR.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
     }
 
-    public static double MIN_HEADING_ACCURACY = 5.0; // degrees off from target
-
     // turn to angle -180 to 180
     public void turnToAngle(double targetHeading) {
         targetHeading = Utilities.limitAngle(targetHeading);
@@ -128,7 +119,7 @@ abstract public class League1_AutoFramework extends LinearOpMode {
         double currentHeading = 0.0;
 
         // turn until roughly the right angle
-        while (Math.abs(Utilities.shortestDifference(currentHeading, targetHeading)) > MIN_HEADING_ACCURACY) {
+        while (Math.abs(Utilities.shortestDifference(currentHeading, targetHeading)) > Constants.AUTO_MIN_HEADING_ACCURACY) {
 
             // get heading from imu in degrees
             currentHeading = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES);

@@ -8,7 +8,7 @@ public class League1_Blue_Long extends League1_AutoFramework {
     @Override
     public void runOpMode() throws InterruptedException {
 
-        doAutoDriveInches(AutoAlliance.BLUE, AutoType.LONG);
+        runAutoFramework(AutoAlliance.BLUE, AutoStartingPositionType.LONG);
 
     }
 }
