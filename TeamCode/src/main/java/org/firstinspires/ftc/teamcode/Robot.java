@@ -128,9 +128,9 @@ public class Robot {
     public void autoOuttake() {
         setServoPosBlocking(tray, 0.594); // tray to down position
         opMode.sleep(100);
-        setServoPosBlocking(clamp, 0.5); // close clamp
+        setServoPosBlocking(clamp, 0.6); // close clamp
         opMode.sleep(100);
-        moveLinearSlideByTicks(-1400); // move linear slide up
+        moveLinearSlideByTicks(-1600); // move linear slide up
         opMode.sleep(100);
         setServoPosBlocking(tray, 1); // tray up
         opMode.sleep(100);
@@ -520,7 +520,7 @@ public class Robot {
                 polarity = 1;
             }
 
-            setServoPosBlocking(clamp, 0.5);
+            setServoPosBlocking(clamp, 0.6);
             setServoPosBlocking(hook, 0.5);
             setServoPosBlocking(spikeServo, 0.5);
 
@@ -565,14 +565,14 @@ public class Robot {
                 // Start moving
 
                 straightBlocking(horizontal1, false, 0.7);
-                setHeading(45 * polarity, 0.7);
+                setHeading(-45 * polarity, 0.7);
                 straightBlocking(slantDistance, false, 0.7);
                 setServoPosBlocking(spikeServo, 0.2);
                 straightBlocking(slantDistance, true, 0.7);
-                setHeading(-90 * polarity, 0.7);
+                setHeading(90 * polarity, 0.7);
                 straightBlocking(vertical1, false, 0.7);
-                setHeading(-90 * polarity, 0.7);
-                mecanumBlocking(horizontal2, !isRedAlliance, 0.7);
+                setHeading(90 * polarity, 0.7);
+                mecanumBlocking(horizontal2, isRedAlliance, 0.7);
                 break;
 
             } else { //center, default
@@ -583,7 +583,7 @@ public class Robot {
                 vertical2 = 20;
                 horizontal1 = 26;
                 horizontal2 = 10;
-                horizontal3 = HORIZONTAL_TOTAL - horizontal1 + horizontal2;
+                horizontal3 = 8;
 
                 // Start moving
                 mecanumBlocking(vertical1, !isRedAlliance, 0.5); //go left if blue, go right if red
@@ -675,12 +675,9 @@ public class Robot {
         boolean tagVisible = false;
         boolean aligned = false;
         List<AprilTagDetection> myAprilTagDetections;
-        double distanceToBoard = 14;
+        double distanceToBoard = 12;
         int polarity = isRedAlliance ? -1 : 1;
         int PIXEL_SIZE = 4;
-        int visionTimeout = 4; // timeout detection after 4 seconds
-        elapsedTime.reset();
-        double startingTime = elapsedTime.seconds();
         int inchesMovedBack = 0;
 
         while (opMode.opModeIsActive()) { //while robot isnt aligned to tag
@@ -703,27 +700,26 @@ public class Robot {
                             } else {
                                 Log.d("vision", "runOpMode: aligned");
                                 Log.d("vision", "alignToBoard: Range is " + detection.ftcPose.range);
-                                Log.d("vision", "Bearing is " + detection.ftcPose.bearing);
-                                double absBearing = Math.abs(detection.ftcPose.bearing);
                                 distanceToBoard = Math.abs(detection.ftcPose.range) - PIXEL_SIZE;
-                                Log.d("vision", "alignToBoard: distanceToBoard is " + distanceToBoard);
-                                tagVisible = true;
                                 aligned = true;
                             }
                         }
                     }
-
-                    if (!tagVisible) { //if tag isnt visible
-                        Log.d("vision", "runOpMode: tag not visible, move back");
-                        straightBlocking(1, true, 0.6); //V IMP: should NOT go back into partner's space
-                        inchesMovedBack++;
-                        tagVisible = false;
-                        aligned = false;
-                    }
                 }
-                if (!aligned && elapsedTime.seconds() > startingTime + visionTimeout) { //TIMEOUT SITUATION
+
+                if (!tagVisible) { //if tag isnt visible
+                    Log.d("vision", "runOpMode: tag not visible, move back");
+                    straightBlocking(2, true, 0.6); //V IMP: should NOT go back into partner's space
+                    setHeading(90 * polarity, 0.75);
+                    inchesMovedBack = inchesMovedBack + 2;
+                    tagVisible = false;
+                    aligned = false;
+                }
+
+                if (!aligned && inchesMovedBack >= 4) { //TIMEOUT SITUATION
                     Log.d("vision", "alignToBoard: apriltag detection timed out");
-                    distanceToBoard = 15 + inchesMovedBack;
+                    distanceToBoard = distanceToBoard + inchesMovedBack;
+                    Log.d("vision", "alignToBoard: distanceToBoard is " + distanceToBoard);
                     break;
                 }
             }
