@@ -123,7 +123,7 @@ public class robotCentricDrive extends LinearOpMode {
           }
         } if(gamepad1.right_trigger > 0.5 && gamepad1.left_trigger > 0.5){
           armExt.setPower(-1);
-          sleep(100000);
+          sleep(1000000);
         }
 
         //Inputs for claw grip
