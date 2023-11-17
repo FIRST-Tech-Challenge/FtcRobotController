@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode;
 
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
+import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.hardware.IMU;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -15,6 +16,8 @@ import org.firstinspires.ftc.teamcode.subsystems.HydraPixelPalace;
 import org.firstinspires.ftc.teamcode.types.HydraArmMovements;
 import org.firstinspires.ftc.teamcode.types.HydraObjectLocations;
 import org.firstinspires.ftc.teamcode.types.HydraPixelPalaceActions;
+
+import java.util.List;
 
 //@Autonomous(name = "HydrAutonJava", preselectTeleOp = "HyDrive")
 public class HydrAuton extends HydrAuton_Base {
@@ -43,6 +46,7 @@ public class HydrAuton extends HydrAuton_Base {
         boolean autonAbort = false;
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
         mOp = new HydraOpMode(telemetry, hardwareMap);
+        List<LynxModule> hubs = hardwareMap.getAll(LynxModule.class);
         // Initialization Routines
         // Initialize the IMU with non-default settings. To use this block,
         // plug one of the "new IMU.Parameters" blocks into the parameters socket.
@@ -62,6 +66,10 @@ public class HydrAuton extends HydrAuton_Base {
         HydraObjectDetect ObjDet = new HydraObjectDetect(mOp, modelFilename, cXvalueForLeftToCenterObject);
         // print any telemetry that came from initialization of the subsystems
         mOp.mTelemetry.update();
+        // manual caching mode
+        for (LynxModule mod : hubs) {
+            mod.setBulkCachingMode(LynxModule.BulkCachingMode.MANUAL);
+        }
         // Wait for the match to begin.
         waitForStart();
         // Useful code to load pixels before we run. DISABLE FOR COMPETITION
@@ -79,6 +87,11 @@ public class HydrAuton extends HydrAuton_Base {
         opModeTimer.reset();
         // Find the object so we can drive to it
         while (opModeIsActive()) {
+            // clear the hardware read cache
+            // we probably don't need this here, but just in case..
+            for (LynxModule mod : hubs) {
+                mod.clearBulkCache();
+            }
             // Run tensorflow to see if we can find the object
             ObjLoc = ObjDet.GetObjectLocation();
             // Push telemetry to the Driver Station.
@@ -96,6 +109,10 @@ public class HydrAuton extends HydrAuton_Base {
         }
         // Run the proper auton for the object location
         while (opModeIsActive()) {
+            // clear the hardware read cache
+            for (LynxModule mod : hubs) {
+                mod.clearBulkCache();
+            }
             // The auton returns true when it's done
             if (RunAuton()) {
                 break;
@@ -115,6 +132,10 @@ public class HydrAuton extends HydrAuton_Base {
         }
         // if we had to abort, we allow the arm to return home
         while (autonAbort && opModeIsActive()) {
+            // clear the hardware read cache
+            for (LynxModule mod : hubs) {
+                mod.clearBulkCache();
+            }
             ArmToHome();
             if (autonState >= 500) {
                 break;
