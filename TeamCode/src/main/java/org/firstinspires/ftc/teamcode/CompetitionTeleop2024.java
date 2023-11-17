@@ -20,7 +20,9 @@ public class CompetitionTeleop2024 extends OpMode {
     private DcMotor RB = null; //Located on Control Hub- Motor port 3
     //Declare variables used for our arm lift
     private DcMotor arm = null; //Located on Expansion Hub- Motor port 0
-    //private Servo gripper = null; //Located on Expansion Hub- Servo port 0
+    private Servo gripper = null; //Located on Expansion Hub- Servo port 0
+    private Servo elbow = null; //Located on Expansion Hub- Servo port 0
+
     //variable for Rev Touch Sensor
     //private TouchSensor touch;
 
@@ -56,7 +58,9 @@ public class CompetitionTeleop2024 extends OpMode {
         LB = hardwareMap.get(DcMotor.class, "LB");
         RB = hardwareMap.get(DcMotor.class, "RB");
         arm = hardwareMap.get(DcMotor.class, "arm");
-        //gripper = hardwareMap.get(Servo.class, "gripper");
+        gripper = hardwareMap.get(Servo.class, "gripper");
+        elbow = hardwareMap.get(Servo.class, "elbow");
+
 
         //gripper sensor for pulling arm down
         //touch  = hardwareMap.get(TouchSensor .class, "Touch");
@@ -212,8 +216,8 @@ public class CompetitionTeleop2024 extends OpMode {
         //Code to increase height position
 
         //Allows the drivers to use a single button to open and close gripper
-        /*if (gamepad2.a && !changed) {
-            if (gripper.getPosition() == 0.2)
+        if (gamepad2.a && !changed) {
+            if (gripper.getPosition() == 0.)
             {
                 gripper.setPosition(.6);
                 arm.setTargetPosition(150);
@@ -226,7 +230,7 @@ public class CompetitionTeleop2024 extends OpMode {
         } else if (!gamepad2.a)
         {
             changed = false;
-        }*/
+        }
     // Show the elapsed game time and wheel power.
             telemetry.addData("Status","Run Time: "+runtime.toString());
         //telemetry.addData("touchIsPressed ", touchIsPressed);
