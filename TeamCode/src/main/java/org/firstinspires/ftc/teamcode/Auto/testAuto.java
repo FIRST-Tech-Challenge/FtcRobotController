@@ -19,7 +19,7 @@ import org.openftc.easyopencv.OpenCvCameraRotation;
 import org.openftc.easyopencv.OpenCvPipeline;
 import org.openftc.easyopencv.OpenCvWebcam;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-@Autonomous
+@Autonomous (name = "Blue Backstage")
 public class testAuto extends LinearOpMode {
 
     OpenCvWebcam webcam;
