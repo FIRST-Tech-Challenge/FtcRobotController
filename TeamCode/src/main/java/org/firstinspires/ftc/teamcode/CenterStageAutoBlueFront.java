@@ -204,6 +204,7 @@ public class CenterStageAutoBlueFront extends LinearOpMode {
         if (false) { // Boolean determines the method the robot takes to turn x degrees
             encoderDrive(TURN_SPEED, degrees / 7.5, -degrees / 7.5, degrees / 36);
         } else {
+            degrees *= -1;
             double startAngle = imu.getRobotOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle;
             while (imu.getRobotOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle - startAngle < degrees - TURN_ACCURACY || imu.getRobotOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle - startAngle > degrees + TURN_ACCURACY) {
                 leftBackDrive.setPower(-degrees / Math.abs(degrees) * TURN_SPEED);
@@ -217,16 +218,16 @@ public class CenterStageAutoBlueFront extends LinearOpMode {
 
     public void drive(double inches) {
         double startAngle = imu.getRobotOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle;
-        int checks = 5; // Number of times the robot will check its orientation during a single drive movement and correct itself
+        int checks = 1; // Number of times the robot will check its orientation during a single drive movement and correct itself
         for(int i = 0; i < checks; i++) {
-            encoderDrive(DRIVE_SPEED, inches / checks, inches / checks, inches / checks / 7.5 + 1);
-            turn(startAngle - imu.getRobotOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle);
+            encoderDrive(DRIVE_SPEED, inches / checks, inches / checks, inches / checks / 4 + 1);
+            //turn(startAngle - imu.getRobotOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle);
         }
         stopRobot();
     }
 
     public void ejectPixel() {
-        int t = (int) runtime.milliseconds() + 500;
+        int t = (int) runtime.milliseconds() + 1000;
         carWashMotor.setPower(carWashPower);
         while(true) {
             if (!(t > ((int) runtime.milliseconds()))){
@@ -261,10 +262,10 @@ public class CenterStageAutoBlueFront extends LinearOpMode {
         rightFrontDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
     }
-
     public void dropCarWash() {
         drive(15);
         drive(-15);
+        sleep(100);
     }
 
     public void initTfod() {

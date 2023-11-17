@@ -67,8 +67,8 @@ public class CenterStageAutoRedFront extends LinearOpMode {
     static final double     DRIVE_GEAR_REDUCTION    = 1.0 ;     // No External Gearing
     static final double     WHEEL_DIAMETER_INCHES   = 3.77953 ;     // For figuring circumference
     static final double     COUNTS_PER_INCH         = (COUNTS_PER_MOTOR_REV * DRIVE_GEAR_REDUCTION) / (WHEEL_DIAMETER_INCHES * 3.1415926535897932384626433832795028841);
-    static final double     DRIVE_SPEED             = 0.6;
-    static final double     TURN_SPEED              = 0.5;
+    static final double     DRIVE_SPEED             = 0.4;
+    static final double     TURN_SPEED              = 0.25;
     double carWashPower = 1.0;
 
     private VisionPortal visionPortal;
@@ -99,32 +99,38 @@ public class CenterStageAutoRedFront extends LinearOpMode {
 
 
         // Main code
-        dropCarWash();
-        drive(14);
+        //dropCarWash();
+        //drive(13.5);
+        drive(1);
         List<Recognition> pixels = telemetryTfod();
+        double pixel_distance = 3.0;
+        /*
         if (pixels.size() > 0) {
-            drive(6);
+            drive(pixel_distance);
             ejectPixel();
-            drive(-6);
+            drive(-pixel_distance);
+            turn(90);
         } else {
             turn(-30);
             pixels = telemetryTfod();
             if (pixels.size() > 0) {
-                drive(6);
+                drive(pixel_distance);
                 ejectPixel();
-                drive(-6);
-                turn(30);
+                drive(-pixel_distance);
+                turn(30 + 90);
             } else {
                 turn(60);
-                drive(6);
+                drive(pixel_distance);
                 ejectPixel();
-                drive(-6);
-                turn(-30);
+                drive(-pixel_distance);
+                turn(-30 + 90);
             }
         }
-        turn(90);
-        drive(40);
-        ejectPixel();
+        //*/
+        //ejectPixel();
+        turn(60);
+        drive(100);
+        //ejectPixel();
 
         telemetry.addData("Path", "Complete");
         telemetry.update();
@@ -204,6 +210,7 @@ public class CenterStageAutoRedFront extends LinearOpMode {
         if (false) { // Boolean determines the method the robot takes to turn x degrees
             encoderDrive(TURN_SPEED, degrees / 7.5, -degrees / 7.5, degrees / 36);
         } else {
+            degrees *= -1;
             double startAngle = imu.getRobotOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle;
             while (imu.getRobotOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle - startAngle < degrees - TURN_ACCURACY || imu.getRobotOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle - startAngle > degrees + TURN_ACCURACY) {
                 leftBackDrive.setPower(-degrees / Math.abs(degrees) * TURN_SPEED);
@@ -219,14 +226,14 @@ public class CenterStageAutoRedFront extends LinearOpMode {
         double startAngle = imu.getRobotOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle;
         int checks = 1; // Number of times the robot will check its orientation during a single drive movement and correct itself
         for(int i = 0; i < checks; i++) {
-            encoderDrive(DRIVE_SPEED, inches / checks, inches / checks, inches / checks / 7.5 + 1);
+            encoderDrive(DRIVE_SPEED, inches / checks, inches / checks, inches / checks / 4 + 1);
             //turn(startAngle - imu.getRobotOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle);
         }
         stopRobot();
     }
 
     public void ejectPixel() {
-        int t = (int) runtime.milliseconds() + 500;
+        int t = (int) runtime.milliseconds() + 1000;
         carWashMotor.setPower(carWashPower);
         while(true) {
             if (!(t > ((int) runtime.milliseconds()))){
@@ -264,6 +271,7 @@ public class CenterStageAutoRedFront extends LinearOpMode {
     public void dropCarWash() {
         drive(15);
         drive(-15);
+        sleep(100);
     }
 
     public void initTfod() {
