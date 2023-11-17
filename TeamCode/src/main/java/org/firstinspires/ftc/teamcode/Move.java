@@ -13,7 +13,8 @@ import com.qualcomm.robotcore.util.Range;
 import com.qualcomm.robotcore.hardware.configuration.annotations.I2cDeviceType;
 //import com.qualcomm.robotcore.hardware.configuration.annotations.DeviceProperties;
 //import com.qualcomm.robotcore.hardware.configuration.annotations.I2cDeviceType;
-
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
+@Disabled
 @TeleOp
 @I2cDeviceType()
 

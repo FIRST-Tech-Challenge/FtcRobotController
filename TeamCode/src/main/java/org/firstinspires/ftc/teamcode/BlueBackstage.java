@@ -68,6 +68,7 @@ public class BlueBackstage extends LinearOpMode {
          *
          * If you really want to open synchronously, the old method is still available.
          */
+        webcam.setMillisecondsPermissionTimeout(5000); // Timeout for obtaining permission is configurable. Set before opening.
         webcam.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener()
         {
             @Override
@@ -106,11 +107,6 @@ public class BlueBackstage extends LinearOpMode {
 
         telemetry.addLine("Waiting for start");
         telemetry.update();
-
-        /*
-         * Wait for the user to press start on the Driver Station
-         */
-        waitForStart();
 
         SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
 
@@ -157,17 +153,18 @@ public class BlueBackstage extends LinearOpMode {
                         SampleMecanumDrive.getVelocityConstraint(DriveConstants.MAX_VEL / 2, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
                         SampleMecanumDrive.getAccelerationConstraint(DriveConstants.MAX_ACCEL / 2))
                 .build();
+
+        /*
+         * Wait for the user to press start on the Driver Station
+         */
+        waitForStart();
+
+
         /*
          * Send some stats to the telemetry
          */
         //opencvBlue.processFrame(opencvBlue.maskedInputMat);
         String result = pipeline.getResult();
-
-        try {
-            Thread.sleep(5000); // 5000 milliseconds = 5 seconds
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
 
         if (result == "RIGHT") {
             test = 1;
