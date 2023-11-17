@@ -169,34 +169,7 @@ public class StarterBot2024Teleop extends OpMode
             }
 
             //preset buttons
-            if (gamepad1.a) {
-                armLeft.setTargetPosition(armHomePosition);
-                armRight.setTargetPosition(armHomePosition);
-                armLeft.setPower(armPower);
-                armRight.setPower(armPower);
-                armLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                armRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                //wrist.setPosition(wristUpPosition);
-            }
-            else if (gamepad1.b) {
-                armLeft.setTargetPosition(armIntakePosition);
-                armRight.setTargetPosition(armIntakePosition);
-                armLeft.setPower(armPower);
-                armRight.setPower(armPower);
-                armLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                armRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                //wrist.setPosition(wristDownPosition);
-            }
-            else if (gamepad1.y) {
-                armLeft.setTargetPosition(armScorePosition);
-                armRight.setTargetPosition(armScorePosition);
-                armLeft.setPower(armPower);
-                armRight.setPower(armPower);
-                armLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                armRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                //wrist.setPosition(wristUpPosition);
-            }
-            else if (gamepad2.y) {
+            if (gamepad2.y) {
                 wrist.setPosition(wristUpPosition);
                 telemetry.addData("Gamepad2.y---------", manualArmPower);
             }
