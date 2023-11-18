@@ -47,9 +47,10 @@ public class CurtisMoveClippedNOLIMIT extends OpMode {
 
         //set direction for motors not servos(servos do not need pos set)
 //        Arm.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        Arm.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-//        Slides.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        Slides.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        Arm.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        Arm.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+        Slides.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        Slides.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
 
         //Sets em to back or forward
         leftFrontDrive.setDirection(DcMotorSimple.Direction.REVERSE);

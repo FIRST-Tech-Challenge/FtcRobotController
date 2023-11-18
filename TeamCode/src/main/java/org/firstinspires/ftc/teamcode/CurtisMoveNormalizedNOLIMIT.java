@@ -19,6 +19,14 @@ public class CurtisMoveNormalizedNOLIMIT extends OpMode {
     private double MAXARMPOWER = 0.5;
     private double MAXSLIDEPOWER = 0.5;
 
+    public int arm = 0;
+    public int arm1 = 0;
+
+    public float armmove;
+    public int extend = 0;
+
+    public float extendmove;
+
     private DcMotor leftFrontDrive, rightFrontDrive, leftBackDrive, rightBackDrive, Arm, Slides = null;
 
     private double drive, strafe, turn, armPower, slidesPower = 0.0;
@@ -50,9 +58,14 @@ public class CurtisMoveNormalizedNOLIMIT extends OpMode {
 
         //set direction for motors not servos(servos do not need pos set)
 //        Arm.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        Arm.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
+        Arm.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        Arm.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+
 //        Slides.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        Slides.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
+        Slides.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        Slides.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
 
         //Sets em to back or forward
         leftFrontDrive.setDirection(DcMotorSimple.Direction.REVERSE);
@@ -63,6 +76,7 @@ public class CurtisMoveNormalizedNOLIMIT extends OpMode {
 
         Arm.setDirection(DcMotorSimple.Direction.REVERSE);
         Slides.setDirection(DcMotorSimple.Direction.FORWARD);
+
     }
 
     @Override
@@ -70,6 +84,8 @@ public class CurtisMoveNormalizedNOLIMIT extends OpMode {
     public void start() {
         //reset
         telemetry.clearAll();
+
+
         runtime.reset();
     }
 
@@ -97,12 +113,97 @@ public class CurtisMoveNormalizedNOLIMIT extends OpMode {
         }
 
 
+
+
         // arm
-        armPower = gamepad1.dpad_up ? MAXARMPOWER : gamepad1.dpad_down ? -MAXARMPOWER : 0;
+        if(gamepad2.dpad_up)
+        {
+
+            armmove = 1f;
+
+            armPower = armmove;
+            if(Arm.getCurrentPosition() < 400)
+            {
+                arm = arm + 1;
+                arm1 = arm1 +1;
+                Arm.setTargetPosition(arm);
+                Arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                Arm.setPower(2);
+
+            }
+
+        }
+        else if(gamepad2.dpad_down)
+        {
+            armmove = 1f;
+            armPower = armmove;
+            if(Slides.getCurrentPosition() < -1)
+            {
+                arm = arm - 1;
+                arm1 = arm1 - 1;
+
+                Arm.setTargetPosition(arm);
+                Arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                Arm.setPower(-2);
+            }
+
+
+
+        }
+        else
+        {
+            armPower = 0;
+            arm = 0;
+        }
+
+
+
+
+
         // slides
-        slidesPower = gamepad1.dpad_right ? MAXSLIDEPOWER : gamepad1.dpad_left ? -MAXSLIDEPOWER : 0;
+        //slidesPower = gamepad2.a ? MAXSLIDEPOWER : gamepad2.b ? -MAXSLIDEPOWER : 0;
+
+        if(gamepad2.a)
+        {
+            extendmove = 1f;
 
 
+
+
+            slidesPower = extendmove;
+            extend = extend - 1;
+
+                Slides.setTargetPosition(extend);
+                Slides.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                Slides.setPower(-2);
+
+
+
+        }
+
+        else if(gamepad2.b)
+        {
+            extendmove = 1f;
+
+            slidesPower = extendmove;
+            extend = extend + 1;
+
+                Slides.setTargetPosition(extend);
+                Slides.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                Slides.setPower(2);
+
+
+
+
+
+
+        }
+        else
+        {
+            slidesPower = 0;
+            extend = 0;
+            extendmove = 0;
+        }
         // Set motor powers to updated power
 
         if (gamepad1.right_bumper) {
@@ -121,7 +222,12 @@ public class CurtisMoveNormalizedNOLIMIT extends OpMode {
 
         Arm.setPower(armPower);
         Slides.setPower(slidesPower);
+
+        telemetry.addData("Arm Encoder Ticks: ", Arm.getCurrentPosition());
+        telemetry.addData("Extend Encoder Ticks", Slides.getCurrentPosition());
     }
+
+
 
     @Override
     public void stop() {

@@ -55,10 +55,10 @@ public class CurtisMoveNormalized extends OpMode {
         //-------------------------------------------------------
 
         //set direction for motors not servos(servos do not need pos set)
-//        Arm.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        Arm.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-//        Slides.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        Slides.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        Arm.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        Arm.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+        Slides.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        Slides.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
 
         //Sets em to back or forward
         leftFrontDrive.setDirection(DcMotorSimple.Direction.REVERSE);
@@ -108,7 +108,7 @@ public class CurtisMoveNormalized extends OpMode {
 
         // arm
         if (gamepad2.dpad_up && Arm.getCurrentPosition() <= -2100) armPower = MAXARMPOWER;
-        else if (gamepad2.dpad_down && Arm.getCurrentPosition() <= 10) armPower = -MAXARMPOWER;
+        else if (gamepad2.dpad_down && Arm.getCurrentPosition() >= 10) armPower = -MAXARMPOWER;
         else armPower = 0;
         // slides
         if (gamepad2.dpad_right) {
