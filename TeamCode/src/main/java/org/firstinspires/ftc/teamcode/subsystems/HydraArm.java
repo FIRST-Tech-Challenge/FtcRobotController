@@ -1,55 +1,52 @@
 package org.firstinspires.ftc.teamcode.subsystems;
 
-import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.objects.HydraOpMode;
 import org.firstinspires.ftc.teamcode.types.HydraArmMovements;
 import org.firstinspires.ftc.teamcode.types.HydraArmPositions;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.HardwareMap;
 
 public class HydraArm {
-    private final DcMotor mMotLwrArm;
-    private final DcMotor mMotUprArm;
-    private final double mLowerArmAutoMotorPwr;
-    private final double mUpperArmAutoMotorPwr;
-    HydraArmPositions mArmPositionState;
-    private final int cLowerArmPos0Home = 0;
-    private final int cUpperArmPos0Home = 0;
+    protected final DcMotor mMotLwrArm;
+    protected final DcMotor mMotUprArm;
+    protected final String cfgUprArm = "MotUprArm";
+    protected final String cfgLwrArm = "MotLwrArm";
+    protected final double cLowerArmAutoMotorPwr = 0.5;
+    protected final double cUpperArmAutoMotorPwr = 0.4;
+    protected final int cLowerArmPos0Home = 0;
+    protected final int cUpperArmPos0Home = 0;
     //
-    private final int cLowerArmPos1LiftBox = 0;
-    private final int cUpperArmPos1LiftBox = -120;
+    protected final int cLowerArmPos1LiftBox = 0;
+    protected final int cUpperArmPos1LiftBox = -120;
     //
-    private final int cLowerArmPos2LiftArm = -450;
-    private final int cUpperArmPos2LiftArm = -120;
+    protected final int cLowerArmPos2LiftArm = -450;
+    protected final int cUpperArmPos2LiftArm = -120;
     //
-    private final int cLowerArmPos3BackScore = -1500;
+    protected final int cLowerArmPos3BackScore = -1500;
     // this is different in drive?
-    private final int cUpperArmPos3BackScore = -440;
+    protected final int cUpperArmPos3BackScore = -440;
     //
-    private final int cLowerArmPos4FrontScore = -700;
-    private final int cUpperArmPos4FrontScore = 750;
+    protected final int cLowerArmPos4FrontScore = -700;
+    protected final int cUpperArmPos4FrontScore = 750;
     //
-    private final int cLowerArmPos5Hang = -1200;
-    private final int cUpperArmPos5Hang = 850;
+    protected final int cLowerArmPos5Hang = -1200;
+    protected final int cUpperArmPos5Hang = 850;
     //
-    private final int cLowerArmPos6Hang = -325;
-    private final int cUpperArmPos6Hang = 225;
-    private final int[] mLowerArmPositions = {cLowerArmPos0Home, cLowerArmPos1LiftBox, cLowerArmPos2LiftArm,
+    protected final int cLowerArmPos6Hang = -325;
+    protected final int cUpperArmPos6Hang = 225;
+    protected final int[] mLowerArmPositions = {cLowerArmPos0Home, cLowerArmPos1LiftBox, cLowerArmPos2LiftArm,
             cLowerArmPos3BackScore, cLowerArmPos4FrontScore, cLowerArmPos5Hang, cLowerArmPos6Hang};
-    private final int[] mUpperArmPositions= {cUpperArmPos0Home, cUpperArmPos1LiftBox, cUpperArmPos2LiftArm,
+    protected final int[] mUpperArmPositions= {cUpperArmPos0Home, cUpperArmPos1LiftBox, cUpperArmPos2LiftArm,
             cUpperArmPos3BackScore, cUpperArmPos4FrontScore, cUpperArmPos5Hang, cUpperArmPos6Hang};
-    private final String[] mArmPositionNames = {"Home", "Lift Box", "Lift Arm", "Back Score", "Front Score",
+    protected final String[] mArmPositionNames = {"Home", "Lift Box", "Lift Arm", "Back Score", "Front Score",
             "Hang", "Hang End"};
-    private HydraOpMode mOp;
-    public HydraArm(HydraOpMode op, String uprArm, String lwrArm, double uprArmPwr, double lwrArmPwr) {
+    protected HydraOpMode mOp;
+    protected HydraArmPositions mArmPositionState;
+    public HydraArm(HydraOpMode op) {
         mOp = op;
         // get the motor objects
-        mMotUprArm = mOp.mHardwareMap.get(DcMotor.class, uprArm);
-        mMotLwrArm = mOp.mHardwareMap.get(DcMotor.class, lwrArm);
-        // power levels for the motors
-        mLowerArmAutoMotorPwr = lwrArmPwr;
-        mUpperArmAutoMotorPwr = uprArmPwr;
+        mMotUprArm = mOp.mHardwareMap.get(DcMotor.class, cfgUprArm);
+        mMotLwrArm = mOp.mHardwareMap.get(DcMotor.class, cfgLwrArm);
         // initialize the arm state to the home position
         mArmPositionState = HydraArmPositions.ArmPosition0Home;
         // brake the motors when power is not applied and reset the encoders
@@ -66,7 +63,7 @@ public class HydraArm {
     private void SetLwrArmPos(int inLwrArmPos) {
         mMotLwrArm.setTargetPosition(inLwrArmPos);
         mMotLwrArm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        mMotLwrArm.setPower(mLowerArmAutoMotorPwr);
+        mMotLwrArm.setPower(cLowerArmAutoMotorPwr);
     }
 
     /**
@@ -76,7 +73,7 @@ public class HydraArm {
     private void SetUprArmPos(int inUprArmPos) {
         mMotUprArm.setTargetPosition(inUprArmPos);
         mMotUprArm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        mMotUprArm.setPower(mUpperArmAutoMotorPwr);
+        mMotUprArm.setPower(cUpperArmAutoMotorPwr);
     }
 
     /**

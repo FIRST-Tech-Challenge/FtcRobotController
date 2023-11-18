@@ -11,37 +11,39 @@ import org.firstinspires.ftc.teamcode.objects.HydraOpMode;
 import org.firstinspires.ftc.teamcode.types.HydraPixelPalaceActions;
 
 public class HydraPixelPalace {
-    private final Servo mSrvPxlPos1;
-    private final Servo mSrvPxlPos2;
-    private final DistanceSensor mSenColPxlPos1_DistanceSensor;
-    private final DistanceSensor mSenColPxlPos2_DistanceSensor;
-    private final LED mLED1;
-    private final LED mLED2;
-    private final LED mLED3;
-    private final LED mLED4;
-    private final double mPxlSrvSpeedFrontToBack;
-    private final double mPxlSrvSpeedBackToFront;
-    private final double mPxlPos1DetDist;
-    private final double mPxlPos2DetDist;
-    private HydraOpMode mOp;
-    public HydraPixelPalace(HydraOpMode op, String srvPos1, String srvPos2, String led1, String led2, String led3,
-                            String led4, String snsPos1, String snsPos2, double srvSpeedFrontToBack,
-                            double srvSpeedBackToFront, double pixelDistPos1, double pixelDistPos2) {
+    protected final Servo mSrvPxlPos1;
+    protected final Servo mSrvPxlPos2;
+    protected final DistanceSensor mSenColPxlPos1_DistanceSensor;
+    protected final DistanceSensor mSenColPxlPos2_DistanceSensor;
+    protected final LED mLED1;
+    protected final LED mLED2;
+    protected final LED mLED3;
+    protected final LED mLED4;
+    protected final String cfgSrvPxlPos1 = "SrvPxlPos1";
+    protected final String cfgSrvPxlPos2 = "SrvPxlPos2";
+    protected final String cfgLed1 = "LED1";
+    protected final String cfgLed2 = "LED2";
+    protected final String cfgLed3 = "LED3";
+    protected final String cfgLed4 = "LED4";
+    protected final String cfgSenColPxlPos1 = "SenColPxlPos1";
+    protected final String cfgSenColPxlPos2 = "SenColPxlPos2";
+    protected double cCasBackToFront = 0.2;
+    protected double cCasFrontToBack = 0.8;
+    protected double cPixelPos1Dist = 1;
+    protected double cPixelPos2Dist = 10;
+    protected HydraOpMode mOp;
+    public HydraPixelPalace(HydraOpMode op) {
         mOp = op;
-        mSrvPxlPos1 = mOp.mHardwareMap.get(Servo.class, srvPos1);
-        mSrvPxlPos2 = mOp.mHardwareMap.get(Servo.class, srvPos2);
-        ColorSensor mSenColPxlPos1 = mOp.mHardwareMap.get(ColorSensor.class, snsPos1);
-        mSenColPxlPos1_DistanceSensor = mOp.mHardwareMap.get(DistanceSensor.class, snsPos1);
-        ColorSensor mSenColPxlPos2 = mOp.mHardwareMap.get(ColorSensor.class, snsPos2);
-        mSenColPxlPos2_DistanceSensor = mOp.mHardwareMap.get(DistanceSensor.class, snsPos2);
-        mLED1 = mOp.mHardwareMap.get(LED.class, led1);
-        mLED2 = mOp.mHardwareMap.get(LED.class, led2);
-        mLED3 = mOp.mHardwareMap.get(LED.class, led3);
-        mLED4 = mOp.mHardwareMap.get(LED.class, led4);
-        mPxlSrvSpeedBackToFront = srvSpeedBackToFront;
-        mPxlSrvSpeedFrontToBack = srvSpeedFrontToBack;
-        mPxlPos1DetDist = pixelDistPos1;
-        mPxlPos2DetDist = pixelDistPos2;
+        mSrvPxlPos1 = mOp.mHardwareMap.get(Servo.class, cfgSrvPxlPos1);
+        mSrvPxlPos2 = mOp.mHardwareMap.get(Servo.class, cfgSrvPxlPos2);
+        ColorSensor mSenColPxlPos1 = mOp.mHardwareMap.get(ColorSensor.class, cfgSenColPxlPos1);
+        mSenColPxlPos1_DistanceSensor = mOp.mHardwareMap.get(DistanceSensor.class, cfgSenColPxlPos1);
+        ColorSensor mSenColPxlPos2 = mOp.mHardwareMap.get(ColorSensor.class, cfgSenColPxlPos2);
+        mSenColPxlPos2_DistanceSensor = mOp.mHardwareMap.get(DistanceSensor.class, cfgSenColPxlPos2);
+        mLED1 = mOp.mHardwareMap.get(LED.class, cfgLed1);
+        mLED2 = mOp.mHardwareMap.get(LED.class, cfgLed2);
+        mLED3 = mOp.mHardwareMap.get(LED.class, cfgLed3);
+        mLED4 = mOp.mHardwareMap.get(LED.class, cfgLed4);
         // Set servo direction. Position 2 is reversed
         mSrvPxlPos1.setDirection(Servo.Direction.FORWARD);
         mSrvPxlPos2.setDirection(Servo.Direction.REVERSE);
@@ -111,10 +113,10 @@ public class HydraPixelPalace {
                 direction = 0.5;
                 break;
             case PixelPalaceBackToFront:
-                direction = mPxlSrvSpeedBackToFront;
+                direction = cCasBackToFront;
                 break;
             case PixelPalaceFrontToBack:
-                direction = mPxlSrvSpeedFrontToBack;
+                direction = cCasFrontToBack;
                 break;
         }
         direction = Math.min(Math.max(direction, 0), 1);
@@ -130,7 +132,7 @@ public class HydraPixelPalace {
         boolean detPixelPos1;
 
         distPixelPos1 = mSenColPxlPos1_DistanceSensor.getDistance(DistanceUnit.CM);
-        detPixelPos1 = distPixelPos1 < mPxlPos1DetDist;
+        detPixelPos1 = distPixelPos1 < cPixelPos1Dist;
         //telemetry.addData("PixelPos1Dist", distPixelPos1);
         //telemetry.addData("Pixel1Detect", detPixelPos1);
         return detPixelPos1;
@@ -144,7 +146,7 @@ public class HydraPixelPalace {
         boolean detPixelPos2;
 
         distPixelPos2 = mSenColPxlPos2_DistanceSensor.getDistance(DistanceUnit.CM);
-        detPixelPos2 = distPixelPos2 < mPxlPos2DetDist;
+        detPixelPos2 = distPixelPos2 < cPixelPos2Dist;
         //telemetry.addData("PixelPos2Dist", distPixelPos2);
         //telemetry.addData("Pixel2Detect", detPixelPos2);
         return detPixelPos2;

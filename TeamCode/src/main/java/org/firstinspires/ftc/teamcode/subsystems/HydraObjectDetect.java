@@ -16,13 +16,11 @@ import java.util.List;
 public class HydraObjectDetect {
     private final VisionPortal myVisionPortal;
     private final TfodProcessor myTfodProcessor;
-    private final float mXValueForLeftToCenter;
+    protected final float cXvalueForLeftToCenterObject = 200;
     private HydraOpMode mOp;
 
-    public HydraObjectDetect(HydraOpMode op, String modelFilename, float xValueForLeftToCenter) {
+    public HydraObjectDetect(HydraOpMode op, String modelFilename) {
         mOp = op;
-        // this is the delineator between left and center
-        mXValueForLeftToCenter = xValueForLeftToCenter;
         TfodProcessor.Builder myTfodProcessorBuilder;
         VisionPortal.Builder myVisionPortalBuilder;
         // First, create a TfodProcessor.Builder.
@@ -73,7 +71,7 @@ public class HydraObjectDetect {
             // Display position.
             x = (myTfodRecognition.getLeft() + myTfodRecognition.getRight()) / 2;
             y = (myTfodRecognition.getTop() + myTfodRecognition.getBottom()) / 2;
-            if (x < mXValueForLeftToCenter) {
+            if (x < cXvalueForLeftToCenterObject) {
                 detectedLocation = HydraObjectLocations.ObjLocLeftSpike;
             } else {
                 detectedLocation = HydraObjectLocations.ObjLocCenterSpike;

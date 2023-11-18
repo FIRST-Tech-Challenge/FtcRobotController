@@ -4,34 +4,40 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.MotorControlAlgorithm;
 import com.qualcomm.robotcore.hardware.PIDFCoefficients;
+
 import org.firstinspires.ftc.teamcode.objects.HydraOpMode;
 
 public class HydraDrive {
-    private final DcMotorEx mMotDrFrLt;
-    private final DcMotorEx mMotDrFrRt;
-    private final DcMotorEx mMotDrBkLt;
-    private final DcMotorEx mMotDrBkRt;
-    private final double mBoostedPower;
-    private final double mNormalPower;
-    private final double mSlowPower;
-    private final double mCountsPerInch;
-    private final HydraOpMode mOp;
+    protected final DcMotorEx mMotDrFrLt;
+    protected final DcMotorEx mMotDrFrRt;
+    protected final DcMotorEx mMotDrBkLt;
+    protected final DcMotorEx mMotDrBkRt;
+    protected final String cfgFrLt = "MotDrFrLt";
+    protected final String cfgFrRt = "MotDrFrRt";
+    protected final String cfgBkLt = "MotDrBkLt";
+    protected final String cfgBkRt = "MotDrBkRt";
+    protected final double cWheelDiameter = 3.78;
+    protected final double cWheelCircumference = cWheelDiameter * Math.PI;
+    protected final double cCountsPerWheelRevolution = 537.6;
+    protected final double cCountsPerInch = cCountsPerWheelRevolution / cWheelCircumference;
+    protected final HydraOpMode mOp;
     protected final double cRampDownStartPercentage = 0.9;
     protected final double cRampLowPower = 0.3;
     protected final double cRampUpRate = 0.05;
     protected final double cRampDownRate = 0.05;
+    protected final double cDriveBoosted = 1;
+    protected final double cDriveNormal = 0.9;
+    protected final double cDriveSlow = 0.5;
     protected int mRampDownStart;
     protected double mCurrentDrivePower;
     protected double mCurrentDriveMaxPower;
-
-    public HydraDrive(HydraOpMode op, String frontLeft, String frontRight, String backLeft, String backRight,
-                     double countsPerInch, double driveBoosted, double driveNormal, double driveSlow) {
+    public HydraDrive(HydraOpMode op) {
         mOp = op;
         // grab the motors out of the hardware map
-        mMotDrFrLt = (DcMotorEx)mOp.mHardwareMap.get(DcMotor.class, frontLeft);
-        mMotDrFrRt = (DcMotorEx)mOp.mHardwareMap.get(DcMotor.class, frontRight);
-        mMotDrBkLt = (DcMotorEx)mOp.mHardwareMap.get(DcMotor.class, backLeft);
-        mMotDrBkRt = (DcMotorEx)mOp.mHardwareMap.get(DcMotor.class, backRight);
+        mMotDrFrLt = (DcMotorEx)mOp.mHardwareMap.get(DcMotor.class, cfgFrLt);
+        mMotDrFrRt = (DcMotorEx)mOp.mHardwareMap.get(DcMotor.class, cfgFrRt);
+        mMotDrBkLt = (DcMotorEx)mOp.mHardwareMap.get(DcMotor.class, cfgBkLt);
+        mMotDrBkRt = (DcMotorEx)mOp.mHardwareMap.get(DcMotor.class, cfgBkRt);
         // Grab the PID coefficients so we can play with them
         PIDFCoefficients pid = mMotDrFrLt.getPIDFCoefficients(DcMotor.RunMode.RUN_TO_POSITION);
         mOp.mTelemetry.addData("FrLft PID", pid.toString());
@@ -49,11 +55,6 @@ public class HydraDrive {
             mMotDrFrLt.setPIDFCoefficients(DcMotor.RunMode.RUN_TO_POSITION, newPIDF);
             mMotDrFrRt.setPIDFCoefficients(DcMotor.RunMode.RUN_TO_POSITION, newPIDF);
         }
-        // store the user values for the various drive speeds
-        mBoostedPower = driveBoosted;
-        mNormalPower = driveNormal;
-        mSlowPower = driveSlow;
-        mCountsPerInch = countsPerInch;
         // set the motor directions
         mMotDrFrLt.setDirection(DcMotor.Direction.REVERSE);
         mMotDrBkLt.setDirection(DcMotor.Direction.REVERSE);
@@ -80,16 +81,16 @@ public class HydraDrive {
         SetAllMotorPower(0);
         SetAllMotorMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         // Front left target position
-        int frontLeftTarget = (int)((inDrive + inStrafe + inRotate) * mCountsPerInch);
+        int frontLeftTarget = (int)((inDrive + inStrafe + inRotate) * cCountsPerInch);
         mMotDrFrLt.setTargetPosition(frontLeftTarget);
         // Rear left target position
-        int rearLeftTarget = (int)((inDrive - inStrafe + inRotate) * mCountsPerInch);
+        int rearLeftTarget = (int)((inDrive - inStrafe + inRotate) * cCountsPerInch);
         mMotDrBkLt.setTargetPosition(rearLeftTarget);
         // Front right target position
-        int frontRightTarget = (int)((inDrive - inStrafe - inRotate) * mCountsPerInch);
+        int frontRightTarget = (int)((inDrive - inStrafe - inRotate) * cCountsPerInch);
         mMotDrFrRt.setTargetPosition(frontRightTarget);
         // Rear right target position
-        int rearRightTarget = (int)((inDrive + inStrafe - inRotate) * mCountsPerInch);
+        int rearRightTarget = (int)((inDrive + inStrafe - inRotate) * cCountsPerInch);
         mMotDrBkRt.setTargetPosition(rearRightTarget);
         // Get the total drive so we can calculate when to ramp the power down
         int totalDrive = Math.abs(frontLeftTarget) + Math.abs(rearLeftTarget) + Math.abs(frontRightTarget) + Math.abs(rearRightTarget);
@@ -99,9 +100,9 @@ public class HydraDrive {
         mCurrentDrivePower = cRampLowPower;
         // Ramp up to this power
         if (inRotate != 0) {
-            mCurrentDriveMaxPower = mSlowPower;
+            mCurrentDriveMaxPower = cDriveSlow;
         } else {
-            mCurrentDriveMaxPower = mNormalPower;
+            mCurrentDriveMaxPower = cDriveNormal;
         }
         // Set power
         SetAllMotorPower(mCurrentDrivePower);

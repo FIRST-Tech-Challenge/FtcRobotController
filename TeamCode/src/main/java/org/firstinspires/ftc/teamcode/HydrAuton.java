@@ -4,6 +4,7 @@ import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
+import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.IMU;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
@@ -20,7 +21,7 @@ import org.firstinspires.ftc.teamcode.types.HydraPixelPalaceActions;
 import java.util.List;
 
 //@Autonomous(name = "HydrAutonJava", preselectTeleOp = "HyDrive")
-public class HydrAuton extends HydrAuton_Base {
+public class HydrAuton extends LinearOpMode {
     protected IMU imu;
     protected HydraArm Arm;
     protected HydraDrive Drive;
@@ -32,6 +33,10 @@ public class HydrAuton extends HydrAuton_Base {
     protected String modelFilename = "Blue_Prop.tflite";
     protected HydraOpMode mOp;
     protected MultipleTelemetry dashboard;
+    protected final int cMaxObjectSearchTimeMs = 2000;
+    protected final int cPixelDropRunTimeMs = 2000;
+    protected final int cPixelFrontScoreRunTimeMs = 2000;
+    protected final int cAutonAbortTimeMs = 27000;
 
     /**
      * This function is executed when this OpMode is selected from the Driver Station.
@@ -55,15 +60,11 @@ public class HydrAuton extends HydrAuton_Base {
         // the REV Robotics logo is facing and the direction that the USB ports are facing.
         imu = hardwareMap.get(IMU.class, "imu");
         imu.initialize(new IMU.Parameters(new RevHubOrientationOnRobot(RevHubOrientationOnRobot.LogoFacingDirection.RIGHT, RevHubOrientationOnRobot.UsbFacingDirection.UP)));
-        Arm = new HydraArm(mOp,"MotUprArm", "MotLwrArm", cUpperArmAutoMotorPwr,
-                cLowerArmAutoMotorPwr);
-        Drive = new HydraDrive(mOp,"MotDrFrLt", "MotDrFrRt", "MotDrBkLt",
-                "MotDrBkRt", cCountsPerInch, cDriveBoosted, cDriveNormal, cDriveSlow);
-        PixelPalace = new HydraPixelPalace(mOp, "SrvPxlPos1", "SrvPxlPos2", "LED1",
-                "LED2", "LED3", "LED4", "SenColPxlPos1", "SenColPxlPos2",
-                cCasFrontToBack, cCasBackToFront, cPixelPos1Dist, cPixelPos2Dist);
-        Intake = new HydraIntake(mOp, "MotPxlIntk", cIntakeIn, cIntakeOut);
-        HydraObjectDetect ObjDet = new HydraObjectDetect(mOp, modelFilename, cXvalueForLeftToCenterObject);
+        Arm = new HydraArm(mOp);
+        Drive = new HydraDrive(mOp);
+        PixelPalace = new HydraPixelPalace(mOp);
+        Intake = new HydraIntake(mOp);
+        HydraObjectDetect ObjDet = new HydraObjectDetect(mOp, modelFilename);
         // print any telemetry that came from initialization of the subsystems
         mOp.mTelemetry.update();
         // manual caching mode
