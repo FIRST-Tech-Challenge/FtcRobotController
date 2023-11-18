@@ -47,7 +47,7 @@ Concept:	This is a sample OpMode that illustrates performing a specific function
 After the prefix, other conventions will apply:
 
 * Sensor class names are constructed as:    Sensor - Company - Type
-* Robot class names are constructed as:     Robot - Mode - Action - OpModetype
+* Robot class names are constructed as:     Robot - Mode - org.firstinspires.ftc.teamcode.Action - OpModetype
 * Concept class names are constructed as:   Concept - Topic - OpModetype
 
 Once you are familiar with the range of samples available, you can choose one to be the

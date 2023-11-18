@@ -16,6 +16,7 @@ public class Motor {
     }
 
     void setTargetPosition(int t) {
+        dcMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         targetPos = t;
         dcMotor.setTargetPosition(t);
     }

@@ -1,7 +1,6 @@
 package org.firstinspires.ftc.teamcode.tools;
 
-import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.Servo;
+import org.firstinspires.ftc.teamcode.Action;
 
 import java.util.ArrayList;
 import java.util.function.BooleanSupplier;
@@ -10,7 +9,7 @@ import java.util.function.BooleanSupplier;
 public class StateMachine {
 
     // Inner State class representing an individual state within the StateMachine
-    public class State {
+    public static class State {
         private final ArrayList<Transition> transitions = new ArrayList<>(); // List of transitions from this state
         private Transition currentTransition = null; // The transition that is currently being processed
         public String name; // Name identifier for the state
@@ -21,8 +20,9 @@ public class StateMachine {
         }
 
         // Method to add a transition to this state
-        public void addTransition(Transition transition) {
-            transitions.add(transition);
+        public void addTransition(State nextState, BooleanSupplier trigger, ArrayList<Action> actions)
+        {
+            transitions.add(new Transition(nextState, trigger, actions));
         }
 
         // Inner Transition class representing a possible change from the current state to another
@@ -37,21 +37,6 @@ public class StateMachine {
                 this.nextState = nextState;
                 this.trigger = trigger;
                 this.actions = actions;
-            }
-
-            // Inner Action class representing a single actionable item within a transition
-            public class Action {
-                private final BooleanSupplier performAction; // A function that performs the action and returns true if the action is complete
-
-                // Constructor that sets the action
-                public Action(BooleanSupplier performAction) {
-                    this.performAction = performAction;
-                }
-
-                // Method to determine if the action is complete based on the BooleanSupplier
-                public boolean actionComplete() {
-                    return performAction.getAsBoolean();
-                }
             }
 
             // Method to determine if this transition's condition is met
@@ -74,17 +59,6 @@ public class StateMachine {
             // Method to get the state that this transition leads to
             public State getDestinationState() {
                 return nextState;
-            }
-            private State.Transition.Action setMotor(DcMotor motor, int position){
-                return new State.Transition.Action(()->{motor.setTargetPosition(position);
-                    return true;
-                });
-            }
-
-            private State.Transition.Action setServo(Servo servo, int position){
-                return new State.Transition.Action(()->{servo.setPosition(position);
-                    return true;
-                });
             }
 
         }
@@ -118,6 +92,8 @@ public class StateMachine {
     public void addState(State state) {
         states.add(state);
     }
+
+    //TODO: Find the equivalent of an assert that gives an error message, and doesn't crash the code.
 
     // Method to set the initial state of the state machine. Can only be done once.
     public void setInitialState(State state) {

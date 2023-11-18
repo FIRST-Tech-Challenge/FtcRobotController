@@ -1,26 +1,24 @@
 package org.firstinspires.ftc.teamcode;
 
-import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.hardwareMap;
-
 import java.util.ArrayList;
 
 public class implementingActions {
 
-    static ArrayList<Action> buildFirstMethod(Motor myMotor) {
+    static ArrayList<ActionPrev> buildFirstMethod(Motor myMotor) {
         System.err.println("hi alex, build the old fashion way");
-        Action setMotorTo2Action = new Action("Set motor to 2", () -> {
+        ActionPrev setMotorTo2ActionPrev = new ActionPrev("Set motor to 2", () -> {
             myMotor.setTargetPosition(2);
             return true;
         });
         ActionFunction myWait = () -> { return myMotor.getCurrentPosition() >= 2; };
-        Action waitMotorAt2 = new Action("Wait until 2", myWait);
-        ArrayList<Action> stuff = new ArrayList<Action>();
-        stuff.add(setMotorTo2Action);
+        ActionPrev waitMotorAt2 = new ActionPrev("Wait until 2", myWait);
+        ArrayList<ActionPrev> stuff = new ArrayList<ActionPrev>();
+        stuff.add(setMotorTo2ActionPrev);
         stuff.add(waitMotorAt2);
         return stuff;
     }
 
-    static ArrayList<Action> buildSecondMethod(Motor myMotor, Timer myTimer) {
+    /*static ArrayList<org.firstinspires.ftc.teamcode.Action> buildSecondMethod(Motor myMotor, Timer myTimer) {
         System.err.println("hi alex, build the new fashion way");
         return new ActionBuilder()
                 .resetTimer(myTimer)
@@ -28,14 +26,14 @@ public class implementingActions {
                 .waitForMotorAbovePosition(myMotor, 2)
                 .waitUntil(myTimer, 4)
                 .getList();
-    }
+    }*/
 
 //    public static void main(String[] args) {
 //        // Write your code here
 //        System.out.println("Hello alex!");
 //        Motor myMotor = new Motor(hardwareMap, "lift", 0);
 //        Timer myTimer = new Timer("time to lunch");
-//        ArrayList<Action> stuff;
+//        ArrayList<org.firstinspires.ftc.teamcode.Action> stuff;
 //        if (false)
 //            stuff = buildFirstMethod(myMotor);
 //        else

@@ -1,24 +1,24 @@
 package org.firstinspires.ftc.teamcode;
 
+import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.telemetry;
 
-// This is what an action is: a function with no input parameters which returns
-// true/false when evaluate.
-interface ActionFunction {
-    Boolean evaluate();
-}
+import java.util.function.BooleanSupplier;
 
-public class Action {
-    // Message is for debugging purpose, function is what is being evaluated here.
-    Action(String msg, ActionFunction function) {
-        this.message = msg;
-        this.action = function;
+ public class Action {
+        private final ActionFunction performAction; // A function that performs the action and returns true if the action is complete
+        private final String msg;
+
+        // Constructor that sets the action
+        public Action(String msg, ActionFunction performAction) {
+            this.performAction = performAction;
+            this.msg = msg;
+        }
+
+        // Method to determine if the action is complete based on the BooleanSupplier
+        public boolean actionComplete() {
+            if (msg != null){
+                telemetry.addLine(msg);
+            }
+            return performAction.evaluate();
+        }
     }
-
-    Boolean performAction() {
-        System.err.println("  Evaluate action " + message);
-        return action.evaluate();
-    }
-
-    private ActionFunction action;
-    private String message;
-}

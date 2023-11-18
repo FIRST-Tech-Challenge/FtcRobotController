@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode;
 
 import org.firstinspires.ftc.teamcode.tools.SetDriveMotors;
+import org.firstinspires.ftc.teamcode.tools.RobotStateMachine;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
@@ -13,20 +14,22 @@ public class TeleopDrive extends LinearOpMode {
     private SlideLift slideLiftObj;
     private Intake intakeObj;
     private Hanger hangerObj;
-    private Button driverButtonA;
-    private Button driverButtonB;
+    private Button handlerButtonA;
+    private Button handlerButtonB;
+    RobotStateMachine stateMachine;
 
     public void Setup(){
         setDriveMotorsObj = new SetDriveMotors(hardwareMap, gamepad1);
         //private SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
-        TouchSensor touchDown = hardwareMap.touchSensor.get("touchDown");
+        //TouchSensor touchDown = hardwareMap.touchSensor.get("touchDown");
 
-        slideLiftObj = new SlideLift(hardwareMap);
+       /* slideLiftObj = new SlideLift(hardwareMap);
         intakeObj = new Intake(hardwareMap);
-        hangerObj = new Hanger(hardwareMap);
+        hangerObj = new Hanger(hardwareMap);*/
 
-        driverButtonA = new Button(gamepad2, Button.NAME.A);
-        driverButtonB = new Button(gamepad2, Button.NAME.B);
+        handlerButtonA = new Button(gamepad2, Button.NAME.A);
+        handlerButtonB = new Button(gamepad2, Button.NAME.B);
+        stateMachine = new RobotStateMachine(hardwareMap, handlerButtonA, handlerButtonB);
     }
 
     public boolean atRest(){
@@ -46,6 +49,7 @@ public class TeleopDrive extends LinearOpMode {
 //            if(drive.isBusy()&& atRest()){
 //                drive.update();
 //            }
+            telemetry.update();
             double horizontal = gamepad1.left_stick_x;
             double vertical = -gamepad1.left_stick_y;
             double turn = gamepad1.right_stick_x;
@@ -57,13 +61,15 @@ public class TeleopDrive extends LinearOpMode {
 
             //slideLiftObj.setLiftPower(gamepad2.left_stick_y, touchDown); //not ready to test yet
 
-            intakeObj.setIntakePower(driverButtonA);
-            hangerObj.setHangerPower(driverButtonB);
+            /*intakeObj.setIntakePower(driverButtonA);
+            hangerObj.setHangerPower(driverButtonB);*/
             updateButtons();
+            stateMachine.update();
+            telemetry.addLine("Is handler button A pressed?" + handlerButtonA.Pressed());
         }
     }
     private void updateButtons(){
-        driverButtonA.updateButton(gamepad2);
-        driverButtonB.updateButton(gamepad2);
+        handlerButtonA.updateButton(gamepad2);
+        handlerButtonB.updateButton(gamepad2);
     }
 }
