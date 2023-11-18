@@ -82,9 +82,11 @@ public class AutonomousLeftRed extends AutonomousBase {
             if( forceAlliance && (redAlliance != pipelineLeft.redAlliance) )
                telemetry.addData("WARNING!!", "vision pipeline thinks %s !!!", (pipelineLeft.redAlliance)? "RED":"BLUE");
             telemetry.addData("STARTING", "%s", "LEFT");
-            telemetry.addData("Spike Mark Detect", "L: " + pipelineLeft.avg1 + " C: " +
-                    pipelineLeft.avg2 + " R: " + pipelineLeft.avg3 + " Zone: " +
-                    pipelineLeft.spikeMark);
+            telemetry.addData("TeamProp", " Hue("  + pipelineLeft.target +
+                                          ") L:"   + pipelineLeft.avg1   +
+                                          " C:"    + pipelineLeft.avg2   + 
+                                          " R:"    + pipelineLeft.avg3   +
+                                          " Zone:" + pipelineLeft.spikeMark );
             telemetry.addData("5-stack cycles", "%d", fiveStackCycles );
             telemetry.addLine("   use LEFT/RIGHT bumpers to modify");
             telemetry.update();

@@ -144,7 +144,7 @@ public abstract class AutonomousBase extends LinearOpMode {
     protected VisionPortal visionPortalLeft;
     protected CenterstageSuperPipeline pipelineLeft;
 //    protected VisionPortal visionPortalRight;
-//    protected CenterstageSuperPipeline pipelineRight;
+//  protected CenterstageSuperPipeline pipelineRight;
  // protected VisionPortal visionPortalBack;
  // protected CenterstageSuperPipeline pipelineBack;
     public int spikeMark = 0;   // dynamic (gets updated every cycle during INIT)
