@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode;
 
+import static java.lang.Math.abs;
+
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -44,7 +46,7 @@ import java.util.List;
  */
 
 @Autonomous
-public class CenterStageAutoBlueFrontDummy extends LinearOpMode {
+public class CSAutoRedFrontDummy extends LinearOpMode {
 
     private static final boolean USE_WEBCAM = true;
 
@@ -67,8 +69,8 @@ public class CenterStageAutoBlueFrontDummy extends LinearOpMode {
     static final double     DRIVE_GEAR_REDUCTION    = 1.0 ;     // No External Gearing
     static final double     WHEEL_DIAMETER_INCHES   = 3.77953 ;     // For figuring circumference
     static final double     COUNTS_PER_INCH         = (COUNTS_PER_MOTOR_REV * DRIVE_GEAR_REDUCTION) / (WHEEL_DIAMETER_INCHES * 3.1415926535897932384626433832795028841);
-    static final double     DRIVE_SPEED             = 0.6;
-    static final double     TURN_SPEED              = 0.5;
+    static final double     DRIVE_SPEED             = 0.4;
+    static final double     TURN_SPEED              = 0.25;
     double carWashPower = 1.0;
 
     private VisionPortal visionPortal;
@@ -100,34 +102,37 @@ public class CenterStageAutoBlueFrontDummy extends LinearOpMode {
 
         // Main code
         //dropCarWash();
-        //drive(14);
+        //drive(13.5);
         drive(0);
         /*
         List<Recognition> pixels = telemetryTfod();
+        double pixel_distance = 3.0;
         if (pixels.size() > 0) {
-            drive(6);
+            drive(pixel_distance);
             ejectPixel();
-            drive(-6);
+            drive(-pixel_distance);
+            turn(90);
         } else {
             turn(-30);
             pixels = telemetryTfod();
             if (pixels.size() > 0) {
-                drive(6);
+                drive(pixel_distance);
                 ejectPixel();
-                drive(-6);
-                turn(30);
+                drive(-pixel_distance);
+                turn(30 + 90);
             } else {
                 turn(60);
-                drive(6);
+                drive(pixel_distance);
                 ejectPixel();
-                drive(-6);
-                turn(-30);
+                drive(-pixel_distance);
+                turn(-30 + 90);
             }
         }
         //*/
-        turn(-60);
-        drive(40);
-        ejectPixel();
+        //ejectPixel();
+        turn(60);
+        drive(100);
+        //ejectPixel();
 
         telemetry.addData("Path", "Complete");
         telemetry.update();
@@ -223,7 +228,7 @@ public class CenterStageAutoBlueFrontDummy extends LinearOpMode {
         double startAngle = imu.getRobotOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle;
         int checks = 1; // Number of times the robot will check its orientation during a single drive movement and correct itself
         for(int i = 0; i < checks; i++) {
-            encoderDrive(DRIVE_SPEED, inches / checks, inches / checks, inches / checks / 4 + 1);
+            encoderDrive(DRIVE_SPEED, inches / checks, inches / checks, abs(inches) / checks / 4 + 1);
             //turn(startAngle - imu.getRobotOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle);
         }
         stopRobot();

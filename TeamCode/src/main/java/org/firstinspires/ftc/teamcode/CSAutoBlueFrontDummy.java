@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode;
 
-import org.firstinspires.ftc.robotcore.external.navigation.*;
+import static java.lang.Math.abs;
+
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -9,11 +10,13 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.BuiltinCameraDirection;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.tfod.Recognition;
 import org.firstinspires.ftc.vision.VisionPortal;
 import org.firstinspires.ftc.vision.tfod.TfodProcessor;
+
 import java.util.List;
 
 /*
@@ -43,7 +46,7 @@ import java.util.List;
  */
 
 @Autonomous
-public class CenterStageAutoRedBackDummy extends LinearOpMode {
+public class CSAutoBlueFrontDummy extends LinearOpMode {
 
     private static final boolean USE_WEBCAM = true;
 
@@ -100,7 +103,7 @@ public class CenterStageAutoRedBackDummy extends LinearOpMode {
         // Main code
         //dropCarWash();
         //drive(14);
-        drive(1);
+        drive(0);
         /*
         List<Recognition> pixels = telemetryTfod();
         if (pixels.size() > 0) {
@@ -124,8 +127,8 @@ public class CenterStageAutoRedBackDummy extends LinearOpMode {
             }
         }
         //*/
-        turn(60);
-        drive(30);
+        turn(-60);
+        drive(40);
         ejectPixel();
 
         telemetry.addData("Path", "Complete");
@@ -222,7 +225,7 @@ public class CenterStageAutoRedBackDummy extends LinearOpMode {
         double startAngle = imu.getRobotOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle;
         int checks = 1; // Number of times the robot will check its orientation during a single drive movement and correct itself
         for(int i = 0; i < checks; i++) {
-            encoderDrive(DRIVE_SPEED, inches / checks, inches / checks, inches / checks / 4 + 1);
+            encoderDrive(DRIVE_SPEED, inches / checks, inches / checks, abs(inches) / checks / 4 + 1);
             //turn(startAngle - imu.getRobotOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle);
         }
         stopRobot();

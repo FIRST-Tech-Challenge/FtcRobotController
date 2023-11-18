@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode;
 
+import static java.lang.Math.abs;
+
 import org.firstinspires.ftc.robotcore.external.navigation.*;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -43,7 +45,7 @@ import java.util.List;
  */
 
 @Autonomous
-public class CenterStageAutoRedBack extends LinearOpMode {
+public class CSAutoRedBackDummy extends LinearOpMode {
 
     private static final boolean USE_WEBCAM = true;
 
@@ -99,9 +101,9 @@ public class CenterStageAutoRedBack extends LinearOpMode {
 
         // Main code
         //dropCarWash();
-        drive(13.5);
+        //drive(14);
         drive(1);
-        //*
+        /*
         List<Recognition> pixels = telemetryTfod();
         if (pixels.size() > 0) {
             drive(6);
@@ -125,7 +127,7 @@ public class CenterStageAutoRedBack extends LinearOpMode {
         }
         //*/
         turn(60);
-        drive(20);
+        drive(30);
         ejectPixel();
 
         telemetry.addData("Path", "Complete");
@@ -222,7 +224,7 @@ public class CenterStageAutoRedBack extends LinearOpMode {
         double startAngle = imu.getRobotOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle;
         int checks = 1; // Number of times the robot will check its orientation during a single drive movement and correct itself
         for(int i = 0; i < checks; i++) {
-            encoderDrive(DRIVE_SPEED, inches / checks, inches / checks, inches / checks / 4 + 1);
+            encoderDrive(DRIVE_SPEED, inches / checks, inches / checks, abs(inches) / checks / 4 + 1);
             //turn(startAngle - imu.getRobotOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle);
         }
         stopRobot();

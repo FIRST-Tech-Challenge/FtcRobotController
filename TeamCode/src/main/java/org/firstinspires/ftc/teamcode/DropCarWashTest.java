@@ -1,6 +1,9 @@
 package org.firstinspires.ftc.teamcode;
 
+import static java.lang.Math.abs;
+
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.IMU;
@@ -44,7 +47,8 @@ import java.util.List;
  */
 
 @Autonomous
-public class Nothing extends LinearOpMode {
+@Disabled
+public class DropCarWashTest extends LinearOpMode {
 
     private static final boolean USE_WEBCAM = true;
 
@@ -67,8 +71,8 @@ public class Nothing extends LinearOpMode {
     static final double     DRIVE_GEAR_REDUCTION    = 1.0 ;     // No External Gearing
     static final double     WHEEL_DIAMETER_INCHES   = 3.77953 ;     // For figuring circumference
     static final double     COUNTS_PER_INCH         = (COUNTS_PER_MOTOR_REV * DRIVE_GEAR_REDUCTION) / (WHEEL_DIAMETER_INCHES * 3.1415926535897932384626433832795028841);
-    static final double     DRIVE_SPEED             = 0.4;
-    static final double     TURN_SPEED              = 0.25;
+    static final double     DRIVE_SPEED             = 0.6;
+    static final double     TURN_SPEED              = 0.5;
     double carWashPower = 1.0;
 
     private VisionPortal visionPortal;
@@ -98,11 +102,40 @@ public class Nothing extends LinearOpMode {
         runtime.reset();
 
 
-        // No code
+        // Main code
+        dropCarWash();
+        //drive(13.5);
+        //drive(1);
+        /*
+        List<Recognition> pixels = telemetryTfod();
+        if (pixels.size() > 0) {
+            drive(6);
+            ejectPixel();
+            drive(-6);
+        } else {
+            turn(-30);
+            pixels = telemetryTfod();
+            if (pixels.size() > 0) {
+                drive(6);
+                ejectPixel();
+                drive(-6);
+                turn(30);
+            } else {
+                turn(60);
+                drive(6);
+                ejectPixel();
+                drive(-6);
+                turn(-30);
+            }
+        }
+        //*/
+        //turn(-60);
+        //drive(20);
+        //ejectPixel();
 
-        telemetry.addData("Status", "This program runs nothing.");
+        telemetry.addData("Path", "Complete");
         telemetry.update();
-        sleep(2500);
+        sleep(1000);  // Pause to display final telemetry message.
     }
 
     /*
@@ -121,7 +154,6 @@ public class Nothing extends LinearOpMode {
 
         // Ensure that the OpMode is still active
         if (opModeIsActive()) {
-
             // Determine new target position, and pass to motor controller
             newLeftBackTarget = leftBackDrive.getCurrentPosition() + (int)(leftInches * COUNTS_PER_INCH);
             newRightBackTarget = rightBackDrive.getCurrentPosition() + (int)(rightInches * COUNTS_PER_INCH);
@@ -141,10 +173,10 @@ public class Nothing extends LinearOpMode {
 
             // reset the timeout time and start motion.
             runtime.reset();
-            leftBackDrive.setPower(Math.abs(speed));
-            rightBackDrive.setPower(Math.abs(speed));
-            leftFrontDrive.setPower(Math.abs(speed));
-            rightFrontDrive.setPower(Math.abs(speed));
+            leftBackDrive.setPower(speed);
+            rightBackDrive.setPower(speed);
+            leftFrontDrive.setPower(speed);
+            rightFrontDrive.setPower(speed);
 
             // keep looping while we are still active, and there is time left, and both motors are running.
             // Note: We use (isBusy() && isBusy()) in the loop test, which means that when EITHER motor hits
@@ -181,10 +213,10 @@ public class Nothing extends LinearOpMode {
             degrees *= -1;
             double startAngle = imu.getRobotOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle;
             while (imu.getRobotOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle - startAngle < degrees - TURN_ACCURACY || imu.getRobotOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle - startAngle > degrees + TURN_ACCURACY) {
-                leftBackDrive.setPower(-degrees / Math.abs(degrees) * TURN_SPEED);
-                rightBackDrive.setPower(degrees / Math.abs(degrees) * TURN_SPEED);
-                leftFrontDrive.setPower(-degrees / Math.abs(degrees) * TURN_SPEED);
-                rightFrontDrive.setPower(degrees / Math.abs(degrees) * TURN_SPEED);
+                leftBackDrive.setPower(-degrees / abs(degrees) * TURN_SPEED);
+                rightBackDrive.setPower(degrees / abs(degrees) * TURN_SPEED);
+                leftFrontDrive.setPower(-degrees / abs(degrees) * TURN_SPEED);
+                rightFrontDrive.setPower(degrees / abs(degrees) * TURN_SPEED);
             }
             stopRobot();
         }
@@ -194,7 +226,7 @@ public class Nothing extends LinearOpMode {
         double startAngle = imu.getRobotOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle;
         int checks = 1; // Number of times the robot will check its orientation during a single drive movement and correct itself
         for(int i = 0; i < checks; i++) {
-            encoderDrive(DRIVE_SPEED, inches / checks, inches / checks, inches / checks / 4 + 1);
+            encoderDrive(DRIVE_SPEED, inches / checks, inches / checks, abs(inches) / checks / 4 + 1);
             //turn(startAngle - imu.getRobotOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle);
         }
         stopRobot();
@@ -239,7 +271,6 @@ public class Nothing extends LinearOpMode {
     public void dropCarWash() {
         drive(15);
         drive(-15);
-        sleep(100);
     }
 
     public void initTfod() {

@@ -1,7 +1,8 @@
 package org.firstinspires.ftc.teamcode;
 
+import static java.lang.Math.abs;
+
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.IMU;
@@ -45,8 +46,7 @@ import java.util.List;
  */
 
 @Autonomous
-@Disabled
-public class DropCarWashTestThing extends LinearOpMode {
+public class CSAutoBlueFront extends LinearOpMode {
 
     private static final boolean USE_WEBCAM = true;
 
@@ -102,9 +102,7 @@ public class DropCarWashTestThing extends LinearOpMode {
 
         // Main code
         dropCarWash();
-        //drive(13.5);
-        //drive(1);
-        /*
+        drive(13.5);
         List<Recognition> pixels = telemetryTfod();
         if (pixels.size() > 0) {
             drive(6);
@@ -126,10 +124,9 @@ public class DropCarWashTestThing extends LinearOpMode {
                 turn(-30);
             }
         }
-        //*/
-        //turn(-60);
-        //drive(20);
-        //ejectPixel();
+        turn(-60);
+        drive(40);
+        ejectPixel();
 
         telemetry.addData("Path", "Complete");
         telemetry.update();
@@ -172,10 +169,10 @@ public class DropCarWashTestThing extends LinearOpMode {
 
             // reset the timeout time and start motion.
             runtime.reset();
-            leftBackDrive.setPower(speed);
-            rightBackDrive.setPower(speed);
-            leftFrontDrive.setPower(speed);
-            rightFrontDrive.setPower(speed);
+            leftBackDrive.setPower(Math.abs(speed));
+            rightBackDrive.setPower(Math.abs(speed));
+            leftFrontDrive.setPower(Math.abs(speed));
+            rightFrontDrive.setPower(Math.abs(speed));
 
             // keep looping while we are still active, and there is time left, and both motors are running.
             // Note: We use (isBusy() && isBusy()) in the loop test, which means that when EITHER motor hits
@@ -225,7 +222,7 @@ public class DropCarWashTestThing extends LinearOpMode {
         double startAngle = imu.getRobotOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle;
         int checks = 1; // Number of times the robot will check its orientation during a single drive movement and correct itself
         for(int i = 0; i < checks; i++) {
-            encoderDrive(DRIVE_SPEED, inches / checks, inches / checks, inches / checks / 4 + 1);
+            encoderDrive(DRIVE_SPEED, inches / checks, inches / checks, abs(inches) / checks / 4 + 1);
             //turn(startAngle - imu.getRobotOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle);
         }
         stopRobot();

@@ -1,5 +1,8 @@
 package org.firstinspires.ftc.teamcode;
 
+import static java.lang.Math.abs;
+
+import org.firstinspires.ftc.robotcore.external.navigation.*;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -8,13 +11,11 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.BuiltinCameraDirection;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
-import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.tfod.Recognition;
 import org.firstinspires.ftc.vision.VisionPortal;
 import org.firstinspires.ftc.vision.tfod.TfodProcessor;
-
 import java.util.List;
 
 /*
@@ -44,7 +45,7 @@ import java.util.List;
  */
 
 @Autonomous
-public class CenterStageAutoBlueFront extends LinearOpMode {
+public class CSAutoBlueBack extends LinearOpMode {
 
     private static final boolean USE_WEBCAM = true;
 
@@ -99,8 +100,10 @@ public class CenterStageAutoBlueFront extends LinearOpMode {
 
 
         // Main code
-        dropCarWash();
+        //dropCarWash();
         drive(13.5);
+        //drive(1);
+        //*
         List<Recognition> pixels = telemetryTfod();
         if (pixels.size() > 0) {
             drive(6);
@@ -122,8 +125,9 @@ public class CenterStageAutoBlueFront extends LinearOpMode {
                 turn(-30);
             }
         }
+        //*/
         turn(-60);
-        drive(40);
+        drive(20);
         ejectPixel();
 
         telemetry.addData("Path", "Complete");
@@ -167,10 +171,10 @@ public class CenterStageAutoBlueFront extends LinearOpMode {
 
             // reset the timeout time and start motion.
             runtime.reset();
-            leftBackDrive.setPower(Math.abs(speed));
-            rightBackDrive.setPower(Math.abs(speed));
-            leftFrontDrive.setPower(Math.abs(speed));
-            rightFrontDrive.setPower(Math.abs(speed));
+            leftBackDrive.setPower(abs(speed));
+            rightBackDrive.setPower(abs(speed));
+            leftFrontDrive.setPower(abs(speed));
+            rightFrontDrive.setPower(abs(speed));
 
             // keep looping while we are still active, and there is time left, and both motors are running.
             // Note: We use (isBusy() && isBusy()) in the loop test, which means that when EITHER motor hits
@@ -207,10 +211,10 @@ public class CenterStageAutoBlueFront extends LinearOpMode {
             degrees *= -1;
             double startAngle = imu.getRobotOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle;
             while (imu.getRobotOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle - startAngle < degrees - TURN_ACCURACY || imu.getRobotOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle - startAngle > degrees + TURN_ACCURACY) {
-                leftBackDrive.setPower(-degrees / Math.abs(degrees) * TURN_SPEED);
-                rightBackDrive.setPower(degrees / Math.abs(degrees) * TURN_SPEED);
-                leftFrontDrive.setPower(-degrees / Math.abs(degrees) * TURN_SPEED);
-                rightFrontDrive.setPower(degrees / Math.abs(degrees) * TURN_SPEED);
+                leftBackDrive.setPower(-degrees / abs(degrees) * TURN_SPEED);
+                rightBackDrive.setPower(degrees / abs(degrees) * TURN_SPEED);
+                leftFrontDrive.setPower(-degrees / abs(degrees) * TURN_SPEED);
+                rightFrontDrive.setPower(degrees / abs(degrees) * TURN_SPEED);
             }
             stopRobot();
         }
@@ -220,7 +224,7 @@ public class CenterStageAutoBlueFront extends LinearOpMode {
         double startAngle = imu.getRobotOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle;
         int checks = 1; // Number of times the robot will check its orientation during a single drive movement and correct itself
         for(int i = 0; i < checks; i++) {
-            encoderDrive(DRIVE_SPEED, inches / checks, inches / checks, inches / checks / 4 + 1);
+            encoderDrive(DRIVE_SPEED, inches / checks, inches / checks, abs(inches) / checks / 4 + 1);
             //turn(startAngle - imu.getRobotOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle);
         }
         stopRobot();
