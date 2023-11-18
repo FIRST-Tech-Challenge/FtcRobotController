@@ -96,10 +96,10 @@ public class SampleMecanumDrive extends MecanumDrive {
 
         // TODO: adjust the names of the following hardware devices to match your configuration
 
-        leftFront = hardwareMap.get(DcMotorEx.class, "FrontLeft");
-        leftRear = hardwareMap.get(DcMotorEx.class, "BackLeft");
-        rightFront = hardwareMap.get(DcMotorEx.class, "FrontRight");
-        rightRear = hardwareMap.get(DcMotorEx.class, "BackRight");
+        leftFront = hardwareMap.get(DcMotorEx.class, "FLeft");
+        leftRear = hardwareMap.get(DcMotorEx.class, "RLeft");
+        rightFront = hardwareMap.get(DcMotorEx.class, "FRight");
+        rightRear = hardwareMap.get(DcMotorEx.class, "RRight");
 
         leftFront.setDirection(DcMotor.Direction.REVERSE);
         leftRear.setDirection(DcMotor.Direction.REVERSE);

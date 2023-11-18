@@ -35,6 +35,7 @@ public class drivesample extends LinearOpMode {
                 RevHubOrientationOnRobot.LogoFacingDirection.LEFT,
                 RevHubOrientationOnRobot.UsbFacingDirection.BACKWARD));
         imu.initialize(parameters);
+
         out.setPosition(0.1);
         arm.setPosition(0);
         bla.setPosition(0.5);
