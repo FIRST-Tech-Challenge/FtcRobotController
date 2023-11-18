@@ -14,7 +14,7 @@ public class TeleOp extends LinearOpMode {
     public void runOpMode() throws InterruptedException {
 
         //initialize robot class
-        Robot robot = new Robot(hardwareMap, this, telemetry, true);
+        Robot robot = new Robot(hardwareMap, this, telemetry, true, false);
 
         //getting motors and servos from config
 
