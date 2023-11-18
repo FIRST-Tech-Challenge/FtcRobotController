@@ -54,6 +54,7 @@ public class TeleOp extends LinearOpMode {
         lsFront.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
         double clampPos;
+        double trayPos;
         boolean hangingMode;
         int polarity;
 
@@ -61,6 +62,7 @@ public class TeleOp extends LinearOpMode {
 
         //default positions
         clampPos = 0.5;
+        trayPos = 0.47;
 
         hangingMode = false;
         polarity = 1;
@@ -166,13 +168,13 @@ public class TeleOp extends LinearOpMode {
                 //close
             }
 
-            /*
+
             //gamepad 2 right stick manually pivots tray
             if (Math.abs(gamepad2.right_stick_y) > 0.1) {
                 trayPos -= -(gamepad2.right_stick_y / (1 / 0.004));
-                Log.d("tray debug", "runOpMode: trayPos = " + trayPos);
+                //Log.d("tray debug", "runOpMode: trayPos = " + trayPos);
             }
-            */
+
 
             //set limits on the holder clamp
             if (clampPos > 1) {
@@ -183,9 +185,9 @@ public class TeleOp extends LinearOpMode {
 
             //set intake/outtake positions for tray
             if (gamepad2.a) {
-                robot.trayToIntakePos(); //down (intake) position
+                trayPos = 0.47; //down (intake) position
             } else if (gamepad2.y) {
-                robot.trayToOuttakePos(); //up (outtake) position
+                trayPos = 0.78; //up (outtake) position
             }
 
             //the earlier conditionals set variables based on what was pressed
