@@ -2,10 +2,13 @@ package org.firstinspires.ftc.teamcode.Tests;
 
 import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
 import org.firstinspires.ftc.teamcode.Components.RFModules.Devices.RFMotor;
 @Config
+@Disabled
+
 @Autonomous(name = "liftMotorTest")
 public class TesMotorTest extends RFMotorTest {
     public static double max = 1500, min =0 , RESISTANCE = -350, kS = 0.03,kV =  3.2786E-4,kA= 3E-5,

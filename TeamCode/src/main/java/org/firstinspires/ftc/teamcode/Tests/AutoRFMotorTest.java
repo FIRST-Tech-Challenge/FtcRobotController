@@ -6,6 +6,7 @@ import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.packet;
 import static java.lang.Double.max;
 import static java.lang.Double.min;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
@@ -19,6 +20,9 @@ import java.util.ArrayList;
  * Warren
  * program to auto-tune some RFMotor constants
  */
+
+@Disabled
+
 public abstract class AutoRFMotorTest extends LinearOpMode {
     BasicRobot robot;
     DcMotorEx motor;

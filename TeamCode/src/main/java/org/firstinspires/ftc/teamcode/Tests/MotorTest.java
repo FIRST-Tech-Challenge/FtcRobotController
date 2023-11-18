@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.Tests;
 import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.packet;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.teamcode.Robots.BasicRobot;
@@ -14,6 +15,8 @@ import org.firstinspires.ftc.teamcode.roadrunner.drive.SampleMecanumDrive;
  * 8/16/23
  * Easily find which motor is right or wrong configured
  */
+@Disabled
+
 @Autonomous(name = "MotorTest")
 public class MotorTest extends LinearOpMode {
     public void runOpMode() throws InterruptedException {

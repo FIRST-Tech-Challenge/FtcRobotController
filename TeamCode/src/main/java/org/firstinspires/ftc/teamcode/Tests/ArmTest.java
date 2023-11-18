@@ -4,9 +4,11 @@ import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.packet;
 
 import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 
 import org.firstinspires.ftc.teamcode.Components.RFModules.Devices.RFServo;
 import org.firstinspires.ftc.teamcode.Robots.BradBot;
+@Disabled
 
 @Autonomous
 @Config

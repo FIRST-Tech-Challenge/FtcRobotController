@@ -44,14 +44,15 @@ public class BlueRightAuto extends LinearOpMode {
                         .addTemporalMarker(robot::done)
                         .build();
         TrajectorySequence[] throughTruss = new TrajectorySequence[3];
-        throughTruss[0] =
+        throughTruss[2] =
                 robot
                         .roadrun
                         .trajectorySequenceBuilder(spikePosition[0].end())
                         .setReversed(true)
-                        .lineToLinearHeading(new Pose2d(45,39, toRadians(180)))
+                        .lineToLinearHeading(new Pose2d(27, 42, toRadians(90)))
+                        .lineToLinearHeading(new Pose2d(45,43, toRadians(180)))
                         .waitSeconds(2.0)
-                        .lineToLinearHeading(new Pose2d(52.5, 27, toRadians(181)))
+                        .lineToLinearHeading(new Pose2d(52.5, 28, toRadians(181)))
                         .addTemporalMarker(robot::done)
                         .build();
         throughTruss[1] =
@@ -64,17 +65,16 @@ public class BlueRightAuto extends LinearOpMode {
                         .lineToLinearHeading(new Pose2d(52.5, 36, toRadians(181)))
                         .addTemporalMarker(robot::done)
                         .build();
-        throughTruss[2] =
+        throughTruss[0] =
                 robot
                         .roadrun
                         .trajectorySequenceBuilder(spikePosition[2].end())
                         .lineToLinearHeading(new Pose2d(24.5, 45, toRadians(90)))
                         .lineToLinearHeading(new Pose2d(40.5, 45, toRadians(180)))
-
                         .setReversed(true)
                         .lineToLinearHeading(new Pose2d(45,40, toRadians(180)))
                         .waitSeconds(2.0)
-                        .lineToLinearHeading(new Pose2d(53,     43, toRadians(180)))
+                        .lineToLinearHeading(new Pose2d(53,43, toRadians(180)))
                         .addTemporalMarker(robot::done)
                         .build();
         TrajectorySequence[] dropAndPark = new TrajectorySequence[3];

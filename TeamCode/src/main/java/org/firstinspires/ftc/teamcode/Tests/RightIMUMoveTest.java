@@ -5,6 +5,7 @@ import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.packet;
 
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
@@ -21,6 +22,8 @@ import org.firstinspires.ftc.teamcode.roadrunner.trajectorysequence.TrajectorySe
  * 9/6/23
  * Right IMU Odom localizer 8 24x24 squares
  */
+@Disabled
+
 @Autonomous(name = "RightIMUMoveTest")
 public class RightIMUMoveTest extends LinearOpMode {
     Queuer queuer;

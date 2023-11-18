@@ -27,7 +27,7 @@ public class Wrist extends RFServo {
     HOLD(1-0.2*24/26, false),
     FLIP(0.5*26/24, false),
 
-    DROP(0.0, false);
+    DROP(0.03, false);
     double position;
     boolean state;
 
@@ -58,7 +58,7 @@ public class Wrist extends RFServo {
     HOLD(1-0.2*24/26, false),
     FLIP(0.5*26/24, false),
 
-    DROP(0.05, false);
+    DROP(0.03, false);
     double position;
     public boolean state;
 
@@ -84,7 +84,7 @@ public class Wrist extends RFServo {
     super.superSetPosition(1);
   }
   public void unflatten(){
-    super.superSetPosition(0.87);
+    super.superSetPosition(0.88);
   }
 
   public void flipTo(WristTargetStates p_state) {

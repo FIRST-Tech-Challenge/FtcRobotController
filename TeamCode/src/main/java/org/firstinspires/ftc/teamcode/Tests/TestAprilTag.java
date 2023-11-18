@@ -6,6 +6,7 @@ import android.annotation.SuppressLint;
 import android.util.Size;
 
 import com.acmerobotics.dashboard.config.Config;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.Range;
@@ -24,6 +25,8 @@ import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 @Config
+@Disabled
+
 @TeleOp(name="Optimize AprilTag Exposure", group = "Concept")
 
 public class TestAprilTag extends LinearOpMode{

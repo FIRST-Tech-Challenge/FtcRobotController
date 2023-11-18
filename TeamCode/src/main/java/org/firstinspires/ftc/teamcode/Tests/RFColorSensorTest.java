@@ -4,12 +4,14 @@ import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.lin
 import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.op;
 import static org.firstinspires.ftc.teamcode.Robots.BasicRobot.packet;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 
 import org.firstinspires.ftc.teamcode.Components.RFModules.Devices.RFColorSensor;
 import org.firstinspires.ftc.teamcode.Robots.BasicRobot;
+@Disabled
 
 /**
  * Harry
