@@ -1,9 +1,14 @@
 package org.firstinspires.ftc.teamcode;
 
+
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.Servo;
+
+import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
+
 
 @TeleOp(name="BlackTeleOp", group="Basic")
 public class BlackTeleOp extends LinearOpMode{
@@ -15,8 +20,10 @@ public class BlackTeleOp extends LinearOpMode{
     DcMotor m_elevator;
     Servo m_pixspinner;
     Servo m_pixgrabber;
+    DistanceSensor S_Distance;
     boolean pixelspinnerval = true;
     boolean previousBumper = false;
+
 
     @Override
     public void runOpMode() {
@@ -28,6 +35,7 @@ public class BlackTeleOp extends LinearOpMode{
         m_elevator = hardwareMap.get(DcMotor.class,"elevator");
         m_pixspinner = hardwareMap.get(Servo.class, "pixelSpinner");
         m_pixgrabber = hardwareMap.get(Servo.class, "pixelGrabber");
+        S_Distance = hardwareMap.get(DistanceSensor.class,"Distance Sensor");
 
         m_frontLeft.setDirection(DcMotor.Direction.REVERSE);
         m_rearLeft.setDirection(DcMotor.Direction.REVERSE);
@@ -49,6 +57,8 @@ public class BlackTeleOp extends LinearOpMode{
             double x = gamepad1.left_stick_x;
             double rotation = gamepad1.right_stick_x;
 
+            double DS_Value = S_Distance.getDistance(DistanceUnit.INCH);
+
             m_frontLeft.setPower(y + x + rotation); // Note: pushing stick forward gives negative value
             m_rearLeft.setPower(y - x + rotation);
             m_frontRight.setPower(y - x - rotation);
@@ -62,8 +72,20 @@ public class BlackTeleOp extends LinearOpMode{
                 m_pixgrabber.setPosition(.54);
             }
             else {
-                m_pixgrabber.setPosition(.4);
+                m_pixgrabber.setPosition(.3);
             }
+            if (DS_Value > 0) {
+                //m_pixgrabber.setPosition(.54);
+                telemetry.addData("Distance Sensor, Seen. Value",DS_Value);
+                telemetry.update();
+            }
+            else {
+                //   m_pixgrabber.setPosition(.4);
+                telemetry.addData("Distance Sensor, not seen","");
+                telemetry.update();
+            }
+
+
 
 
             //toggle code
@@ -77,10 +99,12 @@ public class BlackTeleOp extends LinearOpMode{
                 telemetry.addData("PixSpin","Down");
             }
             else{
-                m_pixspinner.setPosition(0);
+                m_pixspinner.setPosition(.5);
                 telemetry.addData("PixSpin", "Up");
             }
             telemetry.update();
+
+
 
         }
 
