@@ -449,7 +449,8 @@ public class FirstAutonomousIteration extends LinearOpMode {
                     break;
 
                 case DETECT_LEFT:
-                    targetHeading = 45;
+                    targetHeading = 35
+                    ;
                     turnToHeading( TURN_SPEED*5, targetHeading);
                     driveStraight(DRIVE_SPEED, -2, targetHeading);
                     holdHeading(TURN_SPEED, targetHeading, 0.1);
@@ -458,10 +459,15 @@ public class FirstAutonomousIteration extends LinearOpMode {
                         msg = "Cube Found Left!!!";
                         sendTelemetry(true);
 
-                        driveStraight(DRIVE_SPEED, 3, targetHeading);
+                        turnToHeading( TURN_SPEED*5, 60);
+                        driveStraight(DRIVE_SPEED, -3, 60);
 
                         dropTwoPickOne();
-                        driveStraight(DRIVE_SPEED, -(-2+3-MOVE_BACK_AFTER_DROP), targetHeading);
+                        driveStraight(DRIVE_SPEED, 3, 60);
+
+                        turnToHeading( TURN_SPEED*5, targetHeading);
+                        driveStraight(DRIVE_SPEED, -(-2-MOVE_BACK_AFTER_DROP), targetHeading);
+
                         nextState = FSMState.DONE;
 
                     } else {
@@ -471,7 +477,7 @@ public class FirstAutonomousIteration extends LinearOpMode {
                     break;
 
                 case ASSUME_RIGHT:
-                    targetHeading = -90;
+                    targetHeading = -75;
                     turnToHeading( TURN_SPEED*5, targetHeading);
                     driveStraight(DRIVE_SPEED*5, -2, targetHeading, true, false);
                     holdHeading(TURN_SPEED, targetHeading, 0.1);
