@@ -10,7 +10,7 @@ public class Constants {
     public static final int CAMERA_IMAGE_HEIGHT = 480;
 
     // Roi (region of interest) for OpenCV detection
-    public static final double xLowerBound = 0;
+    public static final double xLowerBound = 2.0 / 3;
     public static final double xUpperBound = 1;
     public static final double yLowerBound = 2.0 / 3;
     public static final double yUpperBound = 1;
