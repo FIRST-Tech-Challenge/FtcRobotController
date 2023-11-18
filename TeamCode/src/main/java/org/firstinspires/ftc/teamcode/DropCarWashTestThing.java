@@ -1,6 +1,5 @@
 package org.firstinspires.ftc.teamcode;
 
-import org.firstinspires.ftc.robotcore.external.navigation.*;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -9,11 +8,13 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.BuiltinCameraDirection;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.tfod.Recognition;
 import org.firstinspires.ftc.vision.VisionPortal;
 import org.firstinspires.ftc.vision.tfod.TfodProcessor;
+
 import java.util.List;
 
 /*
@@ -43,7 +44,7 @@ import java.util.List;
  */
 
 @Autonomous
-public class CenterStageAutoBlueBack extends LinearOpMode {
+public class DropCarWashTestThing extends LinearOpMode {
 
     private static final boolean USE_WEBCAM = true;
 
@@ -97,11 +98,40 @@ public class CenterStageAutoBlueBack extends LinearOpMode {
         runtime.reset();
 
 
-        // Does nothing
+        // Main code
+        dropCarWash();
+        //drive(13.5);
+        //drive(1);
+        /*
+        List<Recognition> pixels = telemetryTfod();
+        if (pixels.size() > 0) {
+            drive(6);
+            ejectPixel();
+            drive(-6);
+        } else {
+            turn(-30);
+            pixels = telemetryTfod();
+            if (pixels.size() > 0) {
+                drive(6);
+                ejectPixel();
+                drive(-6);
+                turn(30);
+            } else {
+                turn(60);
+                drive(6);
+                ejectPixel();
+                drive(-6);
+                turn(-30);
+            }
+        }
+        //*/
+        //turn(-60);
+        //drive(20);
+        //ejectPixel();
 
-        telemetry.addData("Nothing", "Path Complete");
+        telemetry.addData("Path", "Complete");
         telemetry.update();
-        sleep(2500);  // Pause to display final telemetry message.
+        sleep(1000);  // Pause to display final telemetry message.
     }
 
     /*
@@ -140,10 +170,10 @@ public class CenterStageAutoBlueBack extends LinearOpMode {
 
             // reset the timeout time and start motion.
             runtime.reset();
-            leftBackDrive.setPower(Math.abs(speed));
-            rightBackDrive.setPower(Math.abs(speed));
-            leftFrontDrive.setPower(Math.abs(speed));
-            rightFrontDrive.setPower(Math.abs(speed));
+            leftBackDrive.setPower(speed);
+            rightBackDrive.setPower(speed);
+            leftFrontDrive.setPower(speed);
+            rightFrontDrive.setPower(speed);
 
             // keep looping while we are still active, and there is time left, and both motors are running.
             // Note: We use (isBusy() && isBusy()) in the loop test, which means that when EITHER motor hits
