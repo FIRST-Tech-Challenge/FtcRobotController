@@ -29,7 +29,7 @@ public class robotCentricDrive extends LinearOpMode {
     //Tracks the extension of the arm
     int ext;
     //X and Y values of stick inputs to compile drive outputs
-    float y;
+    double y;
     double x;
 
     leftGrip = hardwareMap.get(Servo.class, "leftGrip");
@@ -44,8 +44,6 @@ public class robotCentricDrive extends LinearOpMode {
     //Sets initial positions and directions for grip servos
     leftGrip.setDirection(Servo.Direction.REVERSE);
     rightGrip.setDirection(Servo.Direction.FORWARD);
-    leftGrip.setPosition(0.75);
-    rightGrip.setPosition(0.75);
 
     //Sets variables to 0 on initialization
     rotation = 0;
@@ -70,15 +68,25 @@ public class robotCentricDrive extends LinearOpMode {
         ext = armExt.getCurrentPosition();
         rotation = armRotate.getCurrentPosition();
         //Multipliers are applied to X and Y and they are tied to sticks on the gamepads
-        y = -1 * -gamepad1.left_stick_y;
-        x = -0.5 * gamepad1.right_stick_x;
+        y = gamepad1.left_stick_y;
+        x = gamepad1.right_stick_x;
+
 
 
         //Sets power for driving wheels
-        backLeftMotor.setPower(-y);
-        backRightMotor.setPower(y);
-        backRightMotor.setPower(-x);
-        backLeftMotor.setPower(-x);
+        if(y > 0.2 || y < -0.2){
+          backLeftMotor.setPower((y-0.1)*-1);
+          backRightMotor.setPower(y);
+        } else if (x > 0.2) {
+          backLeftMotor.setPower(x-0.1);
+          backRightMotor.setPower(x);
+        } else if (x < -0.2) {
+          backLeftMotor.setPower(x-0.1);
+          backRightMotor.setPower(x);
+        } else {
+          backLeftMotor.setPower(0);
+          backRightMotor.setPower(0);
+        }
 
         //Arm rotation controls
           //Rotates up when Right Bumper is pressed
@@ -140,6 +148,8 @@ public class robotCentricDrive extends LinearOpMode {
         //Telemetry for debugging
         telemetry.addData("Current Arm Extension", ext);
         telemetry.addData("Current Arm Rotation", rotation);
+        telemetry.addData("Right Wheel Power", backRightMotor.getPower());
+        telemetry.addData("Left Wheel Power", backLeftMotor.getPower());
         telemetry.update();
       }
     }
