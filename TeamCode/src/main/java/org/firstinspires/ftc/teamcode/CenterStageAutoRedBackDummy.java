@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode;
 
+import org.firstinspires.ftc.robotcore.external.navigation.*;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -8,13 +9,11 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.BuiltinCameraDirection;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
-import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.tfod.Recognition;
 import org.firstinspires.ftc.vision.VisionPortal;
 import org.firstinspires.ftc.vision.tfod.TfodProcessor;
-
 import java.util.List;
 
 /*
@@ -44,7 +43,7 @@ import java.util.List;
  */
 
 @Autonomous
-public class CenterStageAutoRedFront extends LinearOpMode {
+public class CenterStageAutoRedBackDummy extends LinearOpMode {
 
     private static final boolean USE_WEBCAM = true;
 
@@ -67,8 +66,8 @@ public class CenterStageAutoRedFront extends LinearOpMode {
     static final double     DRIVE_GEAR_REDUCTION    = 1.0 ;     // No External Gearing
     static final double     WHEEL_DIAMETER_INCHES   = 3.77953 ;     // For figuring circumference
     static final double     COUNTS_PER_INCH         = (COUNTS_PER_MOTOR_REV * DRIVE_GEAR_REDUCTION) / (WHEEL_DIAMETER_INCHES * 3.1415926535897932384626433832795028841);
-    static final double     DRIVE_SPEED             = 0.4;
-    static final double     TURN_SPEED              = 0.25;
+    static final double     DRIVE_SPEED             = 0.6;
+    static final double     TURN_SPEED              = 0.5;
     double carWashPower = 1.0;
 
     private VisionPortal visionPortal;
@@ -100,37 +99,34 @@ public class CenterStageAutoRedFront extends LinearOpMode {
 
         // Main code
         //dropCarWash();
-        drive(13.5);
-        //drive(1);
+        //drive(14);
+        drive(1);
+        /*
         List<Recognition> pixels = telemetryTfod();
-        double pixel_distance = 3.0;
-        //*
         if (pixels.size() > 0) {
-            drive(pixel_distance);
+            drive(6);
             ejectPixel();
-            drive(-pixel_distance);
-            turn(90);
+            drive(-6);
         } else {
             turn(-30);
             pixels = telemetryTfod();
             if (pixels.size() > 0) {
-                drive(pixel_distance);
+                drive(6);
                 ejectPixel();
-                drive(-pixel_distance);
-                turn(30 + 90);
+                drive(-6);
+                turn(30);
             } else {
                 turn(60);
-                drive(pixel_distance);
+                drive(6);
                 ejectPixel();
-                drive(-pixel_distance);
-                turn(-30 + 90);
+                drive(-6);
+                turn(-30);
             }
         }
         //*/
-        //ejectPixel();
         turn(60);
-        drive(100);
-        //ejectPixel();
+        drive(20);
+        ejectPixel();
 
         telemetry.addData("Path", "Complete");
         telemetry.update();

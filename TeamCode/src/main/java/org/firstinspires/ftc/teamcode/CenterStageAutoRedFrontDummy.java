@@ -44,7 +44,7 @@ import java.util.List;
  */
 
 @Autonomous
-public class CenterStageAutoRedFront extends LinearOpMode {
+public class CenterStageAutoRedFrontDummy extends LinearOpMode {
 
     private static final boolean USE_WEBCAM = true;
 
@@ -100,11 +100,11 @@ public class CenterStageAutoRedFront extends LinearOpMode {
 
         // Main code
         //dropCarWash();
-        drive(13.5);
-        //drive(1);
+        //drive(13.5);
+        drive(1);
+        /*
         List<Recognition> pixels = telemetryTfod();
         double pixel_distance = 3.0;
-        //*
         if (pixels.size() > 0) {
             drive(pixel_distance);
             ejectPixel();
